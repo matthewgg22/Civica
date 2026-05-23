@@ -171,4 +171,25 @@ export const api = {
     resolve: (jwt: string, requestId: string) =>
       apiFetch(`/missing-items/${requestId}/resolve`, jwt, { method: "POST" }),
   },
+  shelterAllocation: {
+    get: (jwt: string, packetId: string) =>
+      apiFetch(`/packets/${packetId}/shelter-allocation`, jwt),
+    upsert: (
+      jwt: string,
+      packetId: string,
+      body: {
+        total_lease_rent_usd: number;
+        allocated_rent_usd: number;
+        allocation_method: "bedroom_split" | "equal_split" | "dollar_amount" | "documented_roommate_agreement";
+        evidence_document_id?: string | null;
+        notes?: string | null;
+      },
+    ) =>
+      apiFetch(`/packets/${packetId}/shelter-allocation`, jwt, {
+        method: "POST",
+        body: JSON.stringify(body),
+      }),
+    remove: (jwt: string, packetId: string) =>
+      apiFetch(`/packets/${packetId}/shelter-allocation`, jwt, { method: "DELETE" }),
+  },
 };

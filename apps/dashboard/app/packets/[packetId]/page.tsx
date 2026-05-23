@@ -14,6 +14,9 @@ import LifecycleStrip from "../../../components/LifecycleStrip";
 import HandoffPanel from "../../../components/HandoffPanel";
 import MissingItemRequestPanel from "../../../components/MissingItemRequestPanel";
 import ExpeditedReviewGate from "./ExpeditedReviewGate";
+import ShelterAllocationPanel from "../../../components/ShelterAllocationPanel";
+import type { ShelterAllocation } from "../../../components/ShelterAllocationPanel";
+import { classifyTenancy } from "@civica/snap-qc-engine";
 import ComplianceNarrative from "../../../components/ComplianceNarrative";
 import APIVerificationPanel from "../../../components/APIVerificationPanel";
 import type { VerificationSummary } from "../../../components/APIVerificationPanel";
@@ -53,7 +56,7 @@ export default async function PacketDetailPage({
   const cookieStore = await cookies();
   const supabase = createServerClientFromCookies(cookieStore);
 
-  const [packetResult, answersResult, docsResult, notesResult, historyResult, fieldsResult, docItemsResult, wrStatusResult, recertResult, extractionsResult, paychecksResult, errorRiskResult] = await Promise.all([
+  const [packetResult, answersResult, docsResult, notesResult, historyResult, fieldsResult, docItemsResult, wrStatusResult, recertResult, extractionsResult, paychecksResult, errorRiskResult, shelterAllocationResult] = await Promise.all([
     supabase.schema("snap_enrollment").from("snap_packets").select(`*, applicants(*)`).eq("packet_id", packetId).is("deleted_at", null).single(),
     supabase.schema("snap_enrollment").from("packet_answers").select("*").eq("packet_id", packetId).order("question_key"),
     supabase.schema("snap_enrollment").from("uploaded_documents").select("*").eq("packet_id", packetId).is("deleted_at", null).order("uploaded_at", { ascending: false }),
@@ -98,6 +101,12 @@ export default async function PacketDetailPage({
       .order("created_at", { ascending: false })
       .limit(1)
       .maybeSingle(),
+    // Shelter allocation — navigator-confirmed rent share for shared-lease cases
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (supabase.schema("snap_enrollment") as any).from("shelter_allocations")
+      .select("*")
+      .eq("packet_id", packetId)
+      .maybeSingle(),
   ]);
 
   if (!packetResult.data) notFound();
@@ -132,6 +141,35 @@ export default async function PacketDetailPage({
     looksExpedited &&
     (packet as { is_expedited?: boolean | null }).is_expedited === null &&
     EXPEDITED_GATE_STATUSES.has(packet.status);
+
+  // Sublease classifier — deterministic v1, drives ShelterAllocationPanel visibility
+  const rentTransactions = docs
+    .filter((d) => d.document_kind === "bank_statement" || d.document_kind === "other")
+    .slice(0, 10)
+    .map((d, i) => ({
+      transaction_id: d.document_id ?? `t${i}`,
+      date: d.uploaded_at ?? new Date().toISOString(),
+      amount: parseFloat(getAnswer("monthly_rent_or_mortgage") ?? "0") || 0,
+      name: "",
+    }));
+  const leaseClassification = classifyTenancy({
+    intake: {
+      lease_in_applicant_name: answersMap["lease_in_applicant_name"] === "true",
+      leaseholder_name: answersMap["leaseholder_name"] ?? undefined,
+      stated_monthly_rent: parseFloat(getAnswer("monthly_rent_or_mortgage") ?? "0") || 0,
+      payment_method: (answersMap["rent_payment_method"] as string | undefined) ?? "unknown",
+      address: answersMap["address"] as string | undefined,
+    },
+    applicant_name: packet.applicants ? (packet.applicants as { full_name_ciphertext?: string | null }).full_name_ciphertext ?? "" : "",
+    household_size: parseFloat(getAnswer("household_size") ?? "1") || 1,
+    named_tenants_on_lease: parseFloat(getAnswer("named_tenants_on_lease") ?? "1") || 1,
+    rent_transactions: rentTransactions,
+    has_lease_document: docs.some((d) => d.document_kind === "lease"),
+  });
+  const showAllocationPanel =
+    leaseClassification.tenancy === "shared_tenancy" ||
+    leaseClassification.tenancy === "sublease" ||
+    shelterAllocation !== null;
 
   // Pre-flight blockers for "Ready for Handoff" + risk data
   const [unresolvedDocsResult, unreviewedFieldsResult, consentResult, riskResult, argyleResult] = await Promise.all([
@@ -284,7 +322,18 @@ export default async function PacketDetailPage({
 
   const suaDef: "moderate" | "weak"   = suaQuestionsAnswered ? "moderate" : "weak";
   const gigDef: "strong"  | "weak"    = isArgyleConnected   ? "strong"   : "weak";
-  const leaseDef: "moderate" | "weak" = hasHousingSituation ? "moderate" : "weak";
+
+  const shelterAllocation = shelterAllocationResult?.data ?? null;
+  // Defensibility ladder for shared-lease:
+  //   no housing situation answered → weak
+  //   housing answered, no allocation needed → moderate
+  //   allocation set by navigator, no evidence doc → moderate
+  //   allocation set + evidence document on file → strong
+  const leaseDef: "strong" | "moderate" | "weak" = (() => {
+    if (!hasHousingSituation) return "weak";
+    if (shelterAllocation?.evidence_document_id) return "strong";
+    return "moderate";
+  })();
 
   const riskFlows: RiskFlow[] = [
     {
@@ -332,11 +381,16 @@ export default async function PacketDetailPage({
       impactIfImproved: impactIfUpgraded(11.4, leaseDef),
       detail: leaseDef === "weak"
         ? "Housing situation was not answered in the questionnaire. Shared-lease arrangements are a known error source — USDA assigns 11.4% weight. A clear housing answer moves this to moderate."
-        : "Housing situation is on file. A sublease classifier (Phase 2) will upgrade this to strong with independent verification.",
+        : leaseDef === "strong"
+          ? `Rent allocation confirmed by navigator (${shelterAllocation ? `$${shelterAllocation.allocated_rent_usd}/mo — ${Math.round(shelterAllocation.household_share_pct * 100)}% of total lease` : "see allocation"}) with supporting evidence document on file. Strong defensibility.`
+          : shelterAllocation
+            ? `Rent allocation set by navigator: $${shelterAllocation.allocated_rent_usd}/mo (${Math.round(shelterAllocation.household_share_pct * 100)}% of $${shelterAllocation.total_lease_rent_usd} total lease). Upload a roommate agreement to reach strong defensibility.`
+            : "Housing situation is on file. Sublease classifier v1 live — if shared tenancy is detected, use the Shared Lease panel to set the rent allocation and reach strong defensibility.",
       evidence: [
         { label: "Housing situation", value: answersMap["housing_situation"] ?? "missing" },
         { label: "Lease document", value: docs.some((d) => d.document_kind.toLowerCase().includes("lease")) ? "uploaded" : "not uploaded" },
-        { label: "Sublease classifier", value: "phase 2" },
+        { label: "Rent allocation", value: shelterAllocation ? `$${shelterAllocation.allocated_rent_usd}/mo (${Math.round(shelterAllocation.household_share_pct * 100)}%)` : "not set" },
+        { label: "Sublease classifier", value: "v1 live" },
       ],
     },
     {
@@ -531,6 +585,23 @@ export default async function PacketDetailPage({
             consentedAt={consentedAt}
           />
         </Section>
+
+        {/* Shared lease allocation — shown when classifier detects shared/sublease tenancy */}
+        {showAllocationPanel && (
+          <Section
+            title="Shared Lease — Rent Allocation"
+            subtitle={`Classifier: ${leaseClassification.tenancy} · confidence ${Math.round(leaseClassification.confidence * 100)}% · ${leaseClassification.signals.slice(0, 2).join("; ")}`}
+          >
+            <ShelterAllocationPanel
+              packetId={packetId}
+              statedMonthlyRent={parseFloat(getAnswer("monthly_rent_or_mortgage") ?? "0") || null}
+              existing={shelterAllocation as ShelterAllocation | null}
+              leaseDocs={docs.filter((d) =>
+                d.document_kind === "lease" || d.document_kind === "other" || d.document_kind === "bank_statement"
+              )}
+            />
+          </Section>
+        )}
 
         {/* Expedited review gate — OBBBA §10102(a) compliance */}
         {showExpeditedGate && <ExpeditedReviewGate packetId={packetId} />}

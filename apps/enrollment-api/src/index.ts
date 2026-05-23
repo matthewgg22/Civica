@@ -25,6 +25,7 @@ import argyleWebhookRouter from "./routes/argyle-webhook.js";
 import oauthCanvasRouter from "./routes/oauth-canvas.js";
 import featureFlagsRouter from "./routes/feature-flags.js";
 import buddyRouter from "./routes/buddy.js";
+import shelterAllocationRouter from "./routes/shelter-allocation.js";
 import { requestLogger } from "./lib/logger.js";
 import { scrubEvent } from "./lib/sentry.js";
 import { withSentry } from "@sentry/cloudflare";
@@ -117,6 +118,7 @@ api.route("/me/work-requirements", meWorkHoursRouter); // /me/work-requirements/
 
 // Buddy Add routes (feature-flagged: BUDDY_ADD_ENABLED=true)
 api.route("/buddy", buddyRouter);             // POST /buddy/invite, /accept; GET /buddy/applicant-summary, /config
+api.route("/", shelterAllocationRouter);      // GET|POST|DELETE /packets/:id/shelter-allocation
 
 api.route("/benefitscal", benefitsCalRouter);  // /benefitscal/prepare-export/:packetId, /benefitscal/status/:packetId
 
