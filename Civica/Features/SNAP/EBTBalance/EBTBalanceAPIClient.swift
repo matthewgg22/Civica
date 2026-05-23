@@ -44,6 +44,21 @@ protocol EBTBalanceAPIClient: Sendable {
     /// travel-mute window changes, and by EBTNotificationPrefsStore on
     /// every toggle. Closes the C↔D bridge TODO in EBTPushWiring.swift.
     func updateNotificationPrefs(_ prefs: EBTNotificationPrefsPayload) async throws
+
+    // MARK: - Phase 2 Lane F — Receipts
+
+    /// POST /ebt/receipts (multipart) — upload a scanned receipt image with
+    /// optional OCR metadata. The gateway stores the image in Supabase Storage
+    /// and inserts an `ebt_receipts` row with `match_status='pending_match'`.
+    func uploadReceipt(
+        imageData: Data,
+        ocrTotalCents: Int?,
+        ocrMerchant: String?,
+        capturedAt: Date
+    ) async throws -> EBTReceipt
+
+    /// GET /ebt/receipts — paginated list scoped to the caller's user_id.
+    func fetchReceipts() async throws -> [EBTReceipt]
 }
 
 // MARK: - Errors
@@ -224,6 +239,62 @@ struct HTTPEBTBalanceAPIClient: EBTBalanceAPIClient {
         )
     }
 
+    // MARK: Phase 2 Lane F — Receipts
+
+    func uploadReceipt(
+        imageData: Data,
+        ocrTotalCents: Int?,
+        ocrMerchant: String?,
+        capturedAt: Date
+    ) async throws -> EBTReceipt {
+        guard let token = await tokenProvider() else { throw EBTBalanceAPIError.unauthenticated }
+        guard let url = URL(string: "receipts", relativeTo: baseURL) else {
+            throw EBTBalanceAPIError.invalidURL
+        }
+        // Multipart/form-data encoding
+        let boundary = "CivicaEBTBoundary-\(UUID().uuidString)"
+        var req = URLRequest(url: url)
+        req.httpMethod = "POST"
+        req.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        req.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+
+        var body = Data()
+        let iso = ISO8601DateFormatter()
+        iso.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+
+        func append(_ string: String) {
+            if let d = string.data(using: .utf8) { body.append(d) }
+        }
+
+        // image field
+        append("--\(boundary)\r\nContent-Disposition: form-data; name=\"image\"; filename=\"receipt.jpg\"\r\nContent-Type: image/jpeg\r\n\r\n")
+        body.append(imageData)
+        append("\r\n")
+
+        // optional scalar fields
+        if let cents = ocrTotalCents {
+            append("--\(boundary)\r\nContent-Disposition: form-data; name=\"ocr_total_cents\"\r\n\r\n\(cents)\r\n")
+        }
+        if let merchant = ocrMerchant {
+            append("--\(boundary)\r\nContent-Disposition: form-data; name=\"ocr_merchant\"\r\n\r\n\(merchant)\r\n")
+        }
+        append("--\(boundary)\r\nContent-Disposition: form-data; name=\"captured_at\"\r\n\r\n\(iso.string(from: capturedAt))\r\n")
+        append("--\(boundary)--\r\n")
+
+        req.httpBody = body
+        let (data, response) = try await session.data(for: req)
+        try validate(response: response, data: data)
+        return try decode(data)
+    }
+
+    func fetchReceipts() async throws -> [EBTReceipt] {
+        struct ReceiptsResponse: Decodable {
+            let items: [EBTReceipt]
+        }
+        let resp: ReceiptsResponse = try await getJSON(path: "receipts")
+        return resp.items
+    }
+
     // MARK: Helpers
 
     private func getJSON<R: Decodable>(path: String) async throws -> R {
@@ -380,5 +451,37 @@ final class MockEBTBalanceAPIClient: EBTBalanceAPIClient, @unchecked Sendable {
 
     func updateNotificationPrefs(_ prefs: EBTNotificationPrefsPayload) async throws {
         // No-op stub for tests and previews.
+    }
+
+    // MARK: Phase 2 Lane F — Receipts
+
+    func uploadReceipt(
+        imageData: Data,
+        ocrTotalCents: Int?,
+        ocrMerchant: String?,
+        capturedAt: Date
+    ) async throws -> EBTReceipt {
+        if let s = shouldFailNextWithScrape {
+            shouldFailNextWithScrape = nil
+            throw EBTBalanceAPIError.scrape(s)
+        }
+        return EBTReceipt(
+            id: UUID(),
+            transactionId: nil,
+            imageURL: URL(string: "https://example.com/receipt-stub.jpg")!,
+            ocrTotalCents: ocrTotalCents,
+            ocrMerchant: ocrMerchant,
+            capturedAt: capturedAt,
+            matchStatus: .pendingMatch,
+            userConfirmed: false
+        )
+    }
+
+    func fetchReceipts() async throws -> [EBTReceipt] {
+        if let s = shouldFailNextWithScrape {
+            shouldFailNextWithScrape = nil
+            throw EBTBalanceAPIError.scrape(s)
+        }
+        return []
     }
 }
