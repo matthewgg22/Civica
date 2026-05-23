@@ -48,6 +48,7 @@ struct EBTBalanceDashboardView: View {
                         banner(icon: "exclamationmark.circle.fill", text: EBTBalanceStrings.lowBalanceBanner.value(in: language))
                     }
                     heroCard(account, insights: insights)
+                    projectionCard(account, insights: insights)
                     spendingInsightsCard(account, insights: insights)
                     if !account.transactions.isEmpty {
                         recentActivitySection(account, insights: insights)
@@ -227,6 +228,91 @@ struct EBTBalanceDashboardView: View {
             .font(CivicaTypography.footnote)
             .foregroundStyle(Color.white.opacity(0.50))
         }
+    }
+
+    // MARK: - "Will it last?" projection card
+    //
+    // Below the hero balance, above the spending insights / recent
+    // activity feed. Three states:
+    //   * tight  — projected zero-date < next deposit, amber warning
+    //   * good   — projected zero-date ≥ next deposit, pine/positive
+    //   * neutral — no next deposit on file, plain ink
+    // When `insights.projection == nil` (insufficient history, zero
+    // balance, etc.), nothing is rendered.
+
+    @ViewBuilder
+    private func projectionCard(_ account: EBTAccount, insights: EBTBalanceInsights) -> some View {
+        if let projection = insights.projection {
+            let isTight = projection.isTightUntilDeposit
+            let accent: Color = isTight ? CivicaColors.warningAmber : CivicaColors.pinePrimary
+            let iconName = isTight ? "exclamationmark.circle.fill" : "calendar.badge.checkmark"
+            HStack(alignment: .top, spacing: CivicaSpacing.md) {
+                Image(systemName: iconName)
+                    .font(.system(size: 20, weight: .semibold))
+                    .foregroundStyle(accent)
+                    .frame(width: 28, alignment: .leading)
+                    .accessibilityHidden(true)
+                VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
+                    Text(EBTBalanceStrings.projectionEyebrow.value(in: language))
+                        .font(CivicaTypography.captionStrong)
+                        .foregroundStyle(CivicaColors.graphite)
+                        .textCase(.uppercase)
+                        .kerning(1.2)
+                    Text(projectionBody(account: account, projection: projection))
+                        .font(CivicaTypography.subhead)
+                        .foregroundStyle(CivicaColors.ink)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+            }
+            .padding(CivicaSpacing.lg)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(isTight ? accent.opacity(0.08) : CivicaColors.surfacePrimary)
+            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
+            .overlay(
+                RoundedRectangle(cornerRadius: CivicaRadius.card)
+                    .strokeBorder(
+                        isTight ? accent.opacity(0.4) : CivicaColors.hairline,
+                        lineWidth: 1
+                    )
+            )
+            .accessibilityElement(children: .combine)
+        }
+    }
+
+    /// Pick the right copy variant for the projection card. Tight
+    /// when the zero-date falls before the next deposit; good when a
+    /// deposit is on file but the runway covers it; neutral when no
+    /// deposit is on file.
+    private func projectionBody(
+        account: EBTAccount,
+        projection: EBTBalanceProjection
+    ) -> String {
+        let dateString = mediumDate(projection.projectedZeroDate)
+        guard let deposit = account.nextDeposit else {
+            return EBTBalanceStrings.projectionNeutral(
+                date: dateString,
+                language: language
+            )
+        }
+        if projection.isTightUntilDeposit {
+            let calendar = Calendar.current
+            let gapStart = calendar.startOfDay(for: projection.projectedZeroDate)
+            let gapEnd = calendar.startOfDay(for: deposit.expectedDate)
+            let gapDays = max(calendar.dateComponents([.day], from: gapStart, to: gapEnd).day ?? 0, 0)
+            return EBTBalanceStrings.projectionTight(
+                date: dateString,
+                gapDays: gapDays,
+                language: language
+            )
+        }
+        return EBTBalanceStrings.projectionGood(
+            date: dateString,
+            depositTiming: EBTBalanceStrings.nextDepositTiming(
+                days: daysUntil(deposit.expectedDate),
+                language: language
+            ),
+            language: language
+        )
     }
 
     // MARK: - Spending insights
