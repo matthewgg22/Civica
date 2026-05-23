@@ -87,6 +87,31 @@ protocol EnrollmentAPIClient: Sendable {
 
     /// DELETE /v1/enrollment/me/work-requirements/:packetId/hours/:logId
     func deleteWorkHoursEntry(packetId: String, logId: String) async throws
+
+    // MARK: Informal housing (no-lease intake wizard)
+
+    /// POST /v1/enrollment/me/packets/:packetId/informal-housing-answers
+    /// Persist informal housing question-bank answers gathered by the wizard.
+    /// A default no-op implementation is provided via a protocol extension so
+    /// existing conformers don't need to implement it until the gateway route
+    /// is live (see InformalHousingWizardView.swift for the HTTP + mock impls).
+    func submitInformalHousingAnswers(
+        packetId: String,
+        answers: IHSubmitRequest
+    ) async throws
+}
+
+// MARK: - Protocol default implementations
+
+extension EnrollmentAPIClient {
+    /// No-op default so existing conformers compile without changes until the
+    /// /informal-housing-answers gateway route is wired and deployed.
+    func submitInformalHousingAnswers(
+        packetId: String,
+        answers: IHSubmitRequest
+    ) async throws {
+        // Default no-op. Concrete implementations in InformalHousingWizardView.swift.
+    }
 }
 
 // MARK: - Errors
