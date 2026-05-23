@@ -26,6 +26,7 @@ import oauthCanvasRouter from "./routes/oauth-canvas.js";
 import featureFlagsRouter from "./routes/feature-flags.js";
 import buddyRouter from "./routes/buddy.js";
 import shelterAllocationRouter from "./routes/shelter-allocation.js";
+import { mountEbt, mountEbtWebhooks } from "./routes/ebt/index.js";
 import { requestLogger } from "./lib/logger.js";
 import { scrubEvent } from "./lib/sentry.js";
 import { withSentry } from "@sentry/cloudflare";
@@ -122,11 +123,21 @@ api.route("/", shelterAllocationRouter);      // GET|POST|DELETE /packets/:id/sh
 
 api.route("/benefitscal", benefitsCalRouter);  // /benefitscal/prepare-export/:packetId, /benefitscal/status/:packetId
 
+// EBT Tracker routes (Lane A T4, plan §16.1). All sub-routes live in src/routes/ebt/.
+// Mounted via mountEbt() onto an /ebt sub-app to keep this file scannable.
+const ebtApi = new Hono<{ Bindings: Env }>();
+mountEbt(ebtApi);
+api.route("/ebt", ebtApi);
+
 app.route("/v1/enrollment", api);
 
 // Argyle webhook — outside auth middleware (inbound from Argyle, HMAC-verified)
 // T-DR3-8: receives paycheck.added, detects cliff event, fires navigator task.
 app.route("/webhooks/argyle", argyleWebhookRouter);
+
+// EBT scraper webhook — outside auth middleware (inbound from Fly scraper,
+// HMAC-verified inside the route). Lane B will set EBT_SCRAPER_WEBHOOK_SECRET.
+mountEbtWebhooks(app);
 
 app.onError((err, c) => {
   if (err instanceof HTTPException) {

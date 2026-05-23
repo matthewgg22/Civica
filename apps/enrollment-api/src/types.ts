@@ -50,6 +50,30 @@ export interface Env {
   // to stub them. lib/rate-limit.ts no-ops cleanly when a binding is absent.
   RL_STRICT?: RateLimit;
   RL_STANDARD?: RateLimit;
+  // EBT Tracker (Lane A T4). HMAC secret shared with the Fly scraper for
+  // verifying inbound POST /webhooks/ebt-scraper requests. Set via:
+  //   wrangler secret put EBT_SCRAPER_WEBHOOK_SECRET
+  // and `fly secrets set EBT_SCRAPER_WEBHOOK_SECRET=...` on the scraper side.
+  // Optional in types so dev/test can run without it; the route returns 503
+  // if the secret is unset when called in production.
+  EBT_SCRAPER_WEBHOOK_SECRET?: string;
+  // EBT scraper webhook URL the gateway POSTs to when a refresh is needed.
+  // When unset, dispatchScrapeRefresh() is a no-op (Lane B will wire prod URL).
+  EBT_SCRAPER_DISPATCH_URL?: string;
+  // Lane D (T10) — APNs token-based auth. All four are required to
+  // actually send pushes; when any is missing the helper returns a
+  // structured no-op (logged but never throws) so dev/test runs
+  // without Apple credentials don't break unrelated flows.
+  // APNS_KEY_P8 is the *contents* of the .p8 file (multiline PEM),
+  // set via: wrangler secret put APNS_KEY_P8
+  APNS_KEY_P8?: string;
+  APNS_KEY_ID?: string;
+  APNS_TEAM_ID?: string;
+  // Bundle id, e.g. "com.civica.app". APNs `apns-topic` header.
+  APNS_TOPIC?: string;
+  // "production" or "development" — chooses api.push.apple.com vs
+  // api.sandbox.push.apple.com. Defaults to development.
+  APNS_ENV?: string;
 }
 
 export interface Variables {

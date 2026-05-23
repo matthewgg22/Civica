@@ -70,3 +70,11 @@ Show post-placement
 
 # Numeric separator in ReviewSummaryView score card — format-only, no translatable content.
 / 100
+
+# WorkHoursLogView numeric unit strings — "hrs" is language-neutral as a unit
+# abbreviation; SwiftUI formats the number, unit is constant. The Delete label
+# is inside Label("Delete", systemImage:) which uses LocalizedStringKey and is
+# automatically localized by SwiftUI's localization system.
+\(formatted(summary.target_hours)) hrs
+\(formatted(entry.hours)) hrs
+Delete

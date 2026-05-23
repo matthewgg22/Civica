@@ -12,6 +12,7 @@ import SwiftUI
 
 struct EBTBalanceDashboardView: View {
     @ObservedObject var store: EBTBalanceStore
+    @ObservedObject var anomalyStore: EBTAnomalyStore
     let language: CivicaLanguage
 
     /// The transaction whose detail sheet is open, paired with the
@@ -22,6 +23,8 @@ struct EBTBalanceDashboardView: View {
         let balanceAfter: Decimal
     }
     @State private var openDetail: TransactionDetail?
+    /// Phase 2 Lane F: receipt scanner sheet state.
+    @State private var isShowingReceiptScanner = false
     /// Amount of the most recent simulated deposit, shown as a
     /// transient "deposit landed" banner on the hero card. Cleared a
     /// few seconds after it posts.
@@ -32,6 +35,19 @@ struct EBTBalanceDashboardView: View {
             if let account = store.account {
                 let insights = EBTBalanceInsights(account: account)
                 VStack(alignment: .leading, spacing: CivicaSpacing.lg) {
+                    // Anti-skimming anomaly banner — highest-severity first.
+                    // Rendered above all status banners and the hero card so
+                    // it can never be obscured. Lane F's "Scan receipt" button
+                    // is injected BELOW spendingInsightsCard; no overlap here.
+                    if !anomalyStore.activeAlerts.isEmpty {
+                        EBTAnomalyBannerView(
+                            alert: anomalyStore.activeAlerts[0],
+                            store: anomalyStore,
+                            language: language
+                        )
+                        .transition(.move(edge: .top).combined(with: .opacity))
+                    }
+
                     // Status banners sit above the dark hero card so they
                     // can use their standard light-background styling.
                     if let landed = depositLanded {
@@ -50,12 +66,17 @@ struct EBTBalanceDashboardView: View {
                     heroCard(account, insights: insights)
                     projectionCard(account, insights: insights)
                     spendingInsightsCard(account, insights: insights)
+                    // Phase 2 Lane F — receipt scanner entry point.
+                    // Positioned below spending insights per plan; Lane G's
+                    // anomaly banner will sit above the hero card (not here).
+                    scanReceiptButton
                     if !account.transactions.isEmpty {
                         recentActivitySection(account, insights: insights)
                     }
                     depositScheduleCard(account)
                     expirationCard(insights)
                     cardSecurityRow
+                    accountServicesRow
                     perksSection
                     newsSection
                     demoDisclosure
@@ -76,6 +97,56 @@ struct EBTBalanceDashboardView: View {
                 onDone: { openDetail = nil }
             )
         }
+        // Phase 2 Lane F — receipt camera sheet.
+        .fullScreenCover(isPresented: $isShowingReceiptScanner) {
+            EBTReceiptCaptureView { image, ocr in
+                isShowingReceiptScanner = false
+                // Phase 2: wire to EBTReceiptsStore when injected here.
+                // For now the button surfaces the camera; store wiring is in
+                // EBTReceiptCaptureSheet which callers can use directly.
+                _ = (image, ocr)
+            }
+        }
+    }
+
+    // MARK: - Phase 2 Lane F — Scan receipt button
+
+    /// Entry point for receipt capture, slotted below the spending insights card.
+    /// Lane G's anomaly banner goes ABOVE the hero card (not here).
+    private var scanReceiptButton: some View {
+        Button {
+            isShowingReceiptScanner = true
+        } label: {
+            HStack(spacing: CivicaSpacing.md) {
+                Image(systemName: "camera.viewfinder")
+                    .font(.system(size: 20, weight: .semibold))
+                    .foregroundStyle(CivicaColors.pinePrimary)
+                    .frame(width: 28, alignment: .leading)
+                    .accessibilityHidden(true)
+                VStack(alignment: .leading, spacing: CivicaSpacing.xxs) {
+                    Text(EBTReceiptStrings.scanReceiptButton.value(in: language))
+                        .font(CivicaTypography.subheadStrong)
+                        .foregroundStyle(CivicaColors.ink)
+                    Text(EBTReceiptStrings.settingsReceiptsSubtitle.value(in: language))
+                        .font(CivicaTypography.footnote)
+                        .foregroundStyle(CivicaColors.graphite)
+                }
+                Spacer(minLength: CivicaSpacing.sm)
+                Image(systemName: "chevron.right")
+                    .foregroundStyle(CivicaColors.graphite)
+                    .accessibilityHidden(true)
+            }
+            .padding(CivicaSpacing.lg)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(CivicaColors.surfacePrimary)
+            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
+            .overlay(
+                RoundedRectangle(cornerRadius: CivicaRadius.card)
+                    .strokeBorder(CivicaColors.hairline, lineWidth: 1)
+            )
+        }
+        .buttonStyle(.plain)
+        .accessibilityElement(children: .combine)
     }
 
     // MARK: - Demo controls (toolbar menu)
@@ -546,6 +617,43 @@ struct EBTBalanceDashboardView: View {
                      : EBTBalanceStrings.securityStatusUnlocked.value(in: language))
                     .font(CivicaTypography.footnoteStrong)
                     .foregroundStyle(store.isCardLocked ? CivicaColors.pinePrimary : CivicaColors.graphite)
+                Image(systemName: "chevron.right")
+                    .foregroundStyle(CivicaColors.graphite)
+                    .accessibilityHidden(true)
+            }
+            .padding(CivicaSpacing.lg)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(CivicaColors.surfacePrimary)
+            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
+            .overlay(
+                RoundedRectangle(cornerRadius: CivicaRadius.card)
+                    .strokeBorder(CivicaColors.hairline, lineWidth: 1)
+            )
+        }
+        .buttonStyle(.plain)
+        .accessibilityElement(children: .combine)
+    }
+
+    // MARK: - Account services row (T13)
+
+    /// Navigation entry into the CA state directory
+    /// (lost card, BenefitsCal, county finder, fraud reporting).
+    /// Pattern mirrors cardSecurityRow — same chevron, same surface
+    /// styling, slotted into the dashboard right after card security.
+    private var accountServicesRow: some View {
+        NavigationLink {
+            EBTAccountServicesView()
+        } label: {
+            HStack(spacing: CivicaSpacing.md) {
+                Image(systemName: "phone.bubble.fill")
+                    .font(.system(size: 20, weight: .semibold))
+                    .foregroundStyle(CivicaColors.pinePrimary)
+                    .frame(width: 28, alignment: .leading)
+                    .accessibilityHidden(true)
+                Text(EBTAccountServicesStrings.screenTitle.value(in: language))
+                    .font(CivicaTypography.subheadStrong)
+                    .foregroundStyle(CivicaColors.ink)
+                Spacer(minLength: CivicaSpacing.sm)
                 Image(systemName: "chevron.right")
                     .foregroundStyle(CivicaColors.graphite)
                     .accessibilityHidden(true)

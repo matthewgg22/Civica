@@ -1,12 +1,16 @@
 import CivicaDesignSystem
 
 // String table for the Check EBT Balance feature. EN/ES parity per
-// HANDOFF #4.
+// HANDOFF #4 (enforced by EBTStringParityTests, per plan §16.8).
 //
-// Framing note: this feature is a *demo* of what a Propel-style
-// balance dashboard would look like in Civica. It does not connect
-// to a real state EBT system. Disclosure copy lives here so every
-// screen pulls from the same source.
+// Per plan Q2/D9: strings are split per feature into Strings/EBT*.swift
+// files. This namespace owns balance-dashboard + link-flow + scrape-
+// error copy. Push, receipt, anomaly, account-services, perks, and
+// referral copy live in sibling files.
+//
+// Framing note: the original "demo" framing is preserved at flag-OFF
+// per the IRON RULE; once `FeatureFlags.ebtRealData` is on, the
+// demoDisclosure string and demo controls are hidden by the views.
 
 enum EBTBalanceStrings {
     static let screenTitle = CivicaText(
@@ -139,11 +143,9 @@ enum EBTBalanceStrings {
         "Card security",
         es: "Seguridad de la tarjeta"
     )
-
-    // Prominent warning banner on the card-lock screen. The toggles on
-    // this screen control demo state only — a real EBT card is not
-    // actually locked. Surfaced loudly so a user can't mistake the demo
-    // for real protection and miss reporting a lost/stolen card.
+    /// Amber banner on EBTCardLockView that names the real action
+    /// (CA EBT 1-877-328-9677) so a confused recipient doesn't
+    /// believe the demo toggle locks their actual card.
     static let lockScreenDemoBannerTitle = CivicaText(
         "Demo mode — your card is not really locked",
         es: "Modo demostración — tu tarjeta no está realmente bloqueada"
@@ -152,7 +154,6 @@ enum EBTBalanceStrings {
         "This is a preview of card-lock in Civica. To actually lock a lost or stolen CalFresh card, call California EBT Customer Service at 1-877-328-9677 (free, 24/7).",
         es: "Esta es una vista previa del bloqueo de tarjeta en Civica. Para bloquear de verdad una tarjeta CalFresh perdida o robada, llama a Servicio al Cliente de EBT de California al 1-877-328-9677 (gratis, 24/7)."
     )
-
     static let lockToggleTitle = CivicaText(
         "Lock my card",
         es: "Bloquear mi tarjeta"
@@ -397,4 +398,181 @@ enum EBTBalanceStrings {
         "Demo — not connected to a real EBT account.",
         es: "Demostración — no está conectado a una cuenta EBT real."
     )
+
+    // MARK: - Card-lock "coming soon" (Phase 2 / Lane H)
+    //
+    // 10 strings for the honest CA card-lock UX. The coming-soon
+    // banner uses pine (action surface), not amber (warning). The
+    // app-only toggle copy is explicit that it does NOT freeze the
+    // card at the processor.
+
+    static let lockComingSoonHeadline = CivicaText(
+        "We can't lock your CalFresh card directly yet.",
+        es: "Aún no podemos bloquear tu tarjeta CalFresh directamente."
+    )
+    static let lockComingSoonBody = CivicaText(
+        "If your card is lost or stolen, use the steps below immediately.",
+        es: "Si perdiste tu tarjeta o te la robaron, sigue los pasos de abajo de inmediato."
+    )
+    static let lockEmergencyStepCall = CivicaText(
+        "Call EBT Customer Service: 1-877-328-9677",
+        es: "Llama al Servicio al Cliente de EBT: 1-877-328-9677"
+    )
+    static let lockEmergencyStepPortal = CivicaText(
+        "Visit ebt.ca.gov to report online",
+        es: "Visita ebt.ca.gov para reportar en línea"
+    )
+    static let lockEmergencyStepPolice = CivicaText(
+        "Report to local police if stolen",
+        es: "Repórtalo a la policía local si fue robada"
+    )
+    static let lockAppOnlyTitle = CivicaText(
+        "Hide card in this app",
+        es: "Ocultar tarjeta en esta aplicación"
+    )
+    static let lockAppOnlySubtitle = CivicaText(
+        "This does NOT prevent transactions. Use the steps above to actually freeze your card.",
+        es: "Esto NO evita transacciones. Usa los pasos de arriba para bloquear tu tarjeta de verdad."
+    )
+    static let lockWhyTitle = CivicaText(
+        "Why can't I lock here?",
+        es: "¿Por qué no puedo bloquearla aquí?"
+    )
+    static let lockWhyParagraph1 = CivicaText(
+        "CalFresh card locks require the California processor (Conduent/FIS) to expose an API to third-party apps. They haven't done this yet.",
+        es: "Los bloqueos de tarjeta CalFresh requieren que el procesador de California (Conduent/FIS) exponga una API a aplicaciones de terceros. Aún no lo han hecho."
+    )
+    static let lockWhyParagraph2 = CivicaText(
+        "Civica is working with CDSS on a 2026 partnership that would enable this. We'll notify you when it's available.",
+        es: "Civica está trabajando con el CDSS en una asociación para 2026 que permitiría esto. Te avisaremos cuando esté disponible."
+    )
+
+    // MARK: - EBTScrapeError banners + CTAs (per plan §16.2 / D10)
+    //
+    // 7 variants — networkTimeout, portalDown, sessionExpired, captcha,
+    // pinLocked, cardClosed, parseError. Each gets a recipient-readable
+    // banner string and a CTA label. The cardLockUnsupported case is a
+    // CA-specific "not available in your state" state — distinct
+    // copy.
+    //
+    // Banner copy reads at fourth-grade level and avoids surfacing the
+    // technical reason. The CTA tells the recipient the single next
+    // action.
+
+    static let networkTimeoutBanner = CivicaText(
+        "We couldn't reach California EBT just now. Try again in a moment.",
+        es: "No pudimos conectar con EBT de California en este momento. Inténtalo de nuevo en un momento."
+    )
+    static let networkTimeoutCTA = CivicaText(
+        "Try again",
+        es: "Intentar de nuevo"
+    )
+
+    static let portalDownBanner = CivicaText(
+        "California EBT is temporarily unavailable. We'll keep trying — check back soon.",
+        es: "EBT de California no está disponible temporalmente. Seguiremos intentando — vuelve pronto."
+    )
+    static let portalDownCTA = CivicaText(
+        "Try again",
+        es: "Intentar de nuevo"
+    )
+
+    static let sessionExpiredBanner = CivicaText(
+        "Your EBT card link expired. Re-link your card to see your balance.",
+        es: "El enlace de tu tarjeta EBT venció. Vuelve a conectar tu tarjeta para ver tu saldo."
+    )
+    static let sessionExpiredCTA = CivicaText(
+        "Re-link card",
+        es: "Reconectar tarjeta"
+    )
+
+    static let captchaBanner = CivicaText(
+        "California EBT asked us to verify it's really you. Re-link your card to continue.",
+        es: "EBT de California nos pidió verificar que eres tú. Vuelve a conectar tu tarjeta para continuar."
+    )
+    static let captchaCTA = CivicaText(
+        "Re-link card",
+        es: "Reconectar tarjeta"
+    )
+
+    static let pinLockedBanner = CivicaText(
+        "Your EBT card is locked after too many PIN attempts. Call California EBT to unlock it.",
+        es: "Tu tarjeta EBT está bloqueada después de demasiados intentos de PIN. Llama a EBT de California para desbloquearla."
+    )
+    static let pinLockedCTA = CivicaText(
+        "Call 1-877-328-9677",
+        es: "Llamar 1-877-328-9677"
+    )
+
+    static let cardClosedBanner = CivicaText(
+        "California EBT shows this card is closed. Contact your county office to get a replacement.",
+        es: "EBT de California muestra que esta tarjeta está cerrada. Comunícate con la oficina de tu condado para obtener un reemplazo."
+    )
+    static let cardClosedCTA = CivicaText(
+        "Find county office",
+        es: "Buscar oficina del condado"
+    )
+
+    static let parseErrorBanner = CivicaText(
+        "We're having trouble reading your EBT balance. Civica's team has been notified.",
+        es: "Tenemos problemas para leer tu saldo de EBT. Notificamos al equipo de Civica."
+    )
+    static let parseErrorCTA = CivicaText(
+        "Try again",
+        es: "Intentar de nuevo"
+    )
+
+    static let cardLockUnsupportedBanner = CivicaText(
+        "Card lock isn't available in California yet. We'll turn it on the moment the state supports it.",
+        es: "El bloqueo de tarjeta aún no está disponible en California. Lo activaremos en cuanto el estado lo permita."
+    )
+    static let cardLockUnsupportedCTA = CivicaText(
+        "Learn more",
+        es: "Más información"
+    )
+
+    // MARK: - Parity introspection
+    //
+    // Swift's `Mirror` cannot reflect static properties on enum
+    // namespaces, so EBTStringParityTests can't auto-discover entries
+    // (the plan §16.8 stub is aspirational on this point). Instead,
+    // each namespace exposes `all` — a manually-curated list of every
+    // CivicaText constant. Adding a new string requires appending it
+    // here; the parity test failing is the safety net if you forget.
+
+    static let all: [CivicaText] = [
+        screenTitle,
+        balanceEyebrow, balanceRemainingSuffix, lastUpdatedPrefix, lastUpdatedJustNow,
+        nextDepositLabel,
+        linkEyebrow, linkTitle, linkBody, linkSecurityEyebrow, linkSecurityBody,
+        linkCardFieldLabel, linkStateLabel, linkStateValue, linkCTA, linkingProgress,
+        recentActivityEyebrow, depositRowLabel,
+        securityRowTitle, securityStatusLocked, securityStatusUnlocked, lockedBannerText,
+        lockScreenTitle, lockScreenDemoBannerTitle, lockScreenDemoBannerBody,
+        lockToggleTitle, lockToggleHelp,
+        lockStatusOnLine, lockStatusOffLine, lockExtrasEyebrow,
+        blockOutOfStateTitle, blockOutOfStateHelp, blockOnlineTitle, blockOnlineHelp,
+        insightsEyebrow, insightsSpentLabel,
+        lowBalanceBanner,
+        detailSheetTitle, detailCategoryLabel, detailDateLabel, detailAmountLabel,
+        detailBalanceAfterLabel, detailDoneButton,
+        depositScheduleEyebrow,
+        perksEyebrow, newsEyebrow,
+        unlinkLink,
+        demoMenuLabel, simulatePurchaseButton, simulateDepositButton,
+        expirationEyebrow,
+        demoDisclosure,
+        lockComingSoonHeadline, lockComingSoonBody,
+        lockEmergencyStepCall, lockEmergencyStepPortal, lockEmergencyStepPolice,
+        lockAppOnlyTitle, lockAppOnlySubtitle,
+        lockWhyTitle, lockWhyParagraph1, lockWhyParagraph2,
+        networkTimeoutBanner, networkTimeoutCTA,
+        portalDownBanner, portalDownCTA,
+        sessionExpiredBanner, sessionExpiredCTA,
+        captchaBanner, captchaCTA,
+        pinLockedBanner, pinLockedCTA,
+        cardClosedBanner, cardClosedCTA,
+        parseErrorBanner, parseErrorCTA,
+        cardLockUnsupportedBanner, cardLockUnsupportedCTA,
+    ]
 }

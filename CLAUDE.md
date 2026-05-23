@@ -16,3 +16,18 @@ Key routing rules:
 - Ship/deploy/PR → invoke /ship or /land-and-deploy
 - Save progress → invoke /context-save
 - Resume context → invoke /context-restore
+
+## EBT module conventions
+
+When working in `Civica/Features/SNAP/EBTBalance/` or `apps/enrollment-api/src/routes/ebt/`:
+- iOS layering: per-concern Store + Repository (see `EBTBalanceRepository.swift` for template). Never add data-fetching to a Store.
+- Strings: split per feature into `Strings/EBT{Concern}Strings.swift`. Every CivicaString MUST have both `.en` and `.es` (parity unit test in EBTStringParityTests catches drift at CI).
+- Scrape errors: typed enum (`EBTScrapeError.swift`), wire format per plan §16.2.
+- Gateway routes: one file per route under `apps/enrollment-api/src/routes/ebt/`, co-located `.test.ts`, mounted via `ebt/index.ts`.
+- Scraper logic: lives in `fly/ebt-scraper/` (separate service), emits typed events to `/webhooks/ebt-scraper`.
+- Tests: Swift Testing (`@Test`/`@Suite`). Suites with `nonisolated(unsafe)` static state get `@Suite(.serialized)`.
+- Test fixtures: `Civica/Features/SNAP/EBTBalance/__fixtures__/`.
+
+To add a new card processor: see `docs/plans/ebt-tracker-propel-parity.md` §16.4.
+To add a new error variant: see §16.2.
+To add a new push category: see §16.5.
