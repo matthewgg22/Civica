@@ -22,6 +22,7 @@ import depositCalendarRouter from './deposit-calendar.js';
 import lockRouter from './lock.js';
 import webhooksRouter from './webhooks.js';
 import notificationsRouter from './notifications.js';
+import receiptsRouter from './receipts.js';
 
 /**
  * Mounts every authed /ebt/* route onto the provided (authed) parent app.
@@ -40,6 +41,8 @@ export function mountEbt(app: Hono<any>): void {
   app.route('/lock', lockRouter);
   // Lane D (T10) — notifications register + prefs
   app.route('/notifications', notificationsRouter);
+  // Phase 2 Lane F — receipt capture + OCR match
+  app.route('/receipts', receiptsRouter);
 }
 
 /**
@@ -62,4 +65,5 @@ export {
   lockRouter,
   webhooksRouter,
   notificationsRouter,
+  receiptsRouter,
 };
