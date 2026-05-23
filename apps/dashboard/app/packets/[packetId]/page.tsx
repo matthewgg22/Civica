@@ -631,7 +631,7 @@ export default async function PacketDetailPage({
         </Section>
 
         {/* Notes */}
-        <Section title="Navigator Notes" count={notes.length} subtitle="Internal notes for your team. Mark internal-only to hide from the applicant.">
+        <Section id="notes" title="Navigator Notes" count={notes.length} subtitle="Internal notes for your team. Mark internal-only to hide from the applicant.">
           <NotesList packetId={packetId} initialNotes={notes} />
         </Section>
 

@@ -4,6 +4,7 @@ import { cookies } from "next/headers";
 import Link from "next/link";
 import { createServerClientFromCookies } from "../../lib/supabase";
 import AppHeader from "../../components/AppHeader";
+import OutreachWelcomeBanner from "../../components/OutreachWelcomeBanner";
 import { formatDateTime, decryptDemoName, firstNameLastInitial } from "../../lib/format";
 import { OutreachTaskActions } from "./OutreachTaskActions";
 
@@ -96,6 +97,7 @@ export default async function OutreachPage() {
       <AppHeader email={user?.email} active="outreach" />
 
       <main className="max-w-5xl mx-auto px-8 py-8">
+        <OutreachWelcomeBanner />
         <div className="flex items-baseline gap-3 mb-2">
           <Link href="/dashboard" className="text-[13px] text-muted hover:text-ink transition-colors">
             ← Dashboard

@@ -25,6 +25,12 @@ export default function AppHeader({ email, active }: { email?: string; active: "
         </nav>
       </div>
       <div className="flex items-center gap-5">
+        <kbd
+          className="hidden sm:inline-flex items-center gap-1 text-[11px] font-mono text-white/45 hover:text-white/80 transition-colors border border-white/15 hover:border-white/30 rounded px-1.5 py-0.5"
+          title="Open command palette (⌘K)"
+        >
+          ⌘K
+        </kbd>
         {email && <span className="text-[13px] text-white/50">{email}</span>}
         <form action="/auth/signout" method="post">
           <button className="text-[13px] font-medium text-white/65 hover:text-white transition-colors">Sign out</button>
