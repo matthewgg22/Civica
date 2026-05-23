@@ -14,6 +14,7 @@ import { validateAddress } from "../lib/smarty.js";
 import { compareIncome } from "../lib/income-verification.js";
 import type { PayPeriod } from "../lib/income-verification.js";
 import { scorePacketRisk, persistPacketRiskScore } from "../lib/scoring.js";
+import { rateLimit } from "../lib/rate-limit.js";
 import type { Logger } from "../lib/logger.js";
 
 const app = new Hono<{ Bindings: Env }>();
@@ -62,6 +63,7 @@ app.get("/", async (c) => {
 // POST /me/packets
 app.post(
   "/",
+  rateLimit("standard"),
   zValidator("json", z.object({ state_code: z.enum(["CA", "MA"]) })),
   async (c) => {
     const body = c.req.valid("json");
@@ -458,7 +460,7 @@ async function scoreAndPersist(
 }
 
 // POST /me/packets/:packetId/error-risk
-app.post("/:packetId/error-risk", async (c) => {
+app.post("/:packetId/error-risk", rateLimit("standard"), async (c) => {
   const applicant = await resolveApplicant(c as Context<{ Bindings: Env }>);
   const packetId = c.req.param("packetId");
   const anonDb = makeAnonClient(c.env, c.get("jwt"));
@@ -712,7 +714,7 @@ app.get("/:packetId/verification-summary", async (c) => {
 // ── Submit ────────────────────────────────────────────────────────────────────
 
 // POST /me/packets/:packetId/submit
-app.post("/:packetId/submit", async (c) => {
+app.post("/:packetId/submit", rateLimit("standard"), async (c) => {
   const applicant = await resolveApplicant(c as Context<{ Bindings: Env }>);
 
   const { data: packet, error: pErr } = await makeAnonClient(c.env, c.get("jwt"))

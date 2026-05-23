@@ -26,6 +26,7 @@ import { HTTPException } from "hono/http-exception";
 import { makeAnonClient, makeServiceClient } from "../lib/supabase.js";
 import { withActorContext } from "../middleware/actorContext.js";
 import { runBenefitsCalSubmission } from "../lib/benefitscal-submit.js";
+import { rateLimit } from "../lib/rate-limit.js";
 import type { BrowserDriverFactory } from "@civica/benefitscal-cbo";
 import { browserlessDriverFactory } from "@civica/benefitscal-cbo/drivers/browserless";
 import type { Env } from "../types.js";
@@ -69,6 +70,7 @@ const prepareExportSchema = z.object({
 
 app.post(
   "/prepare-export/:packetId",
+  rateLimit("standard"),
   zValidator("json", prepareExportSchema),
   async (c) => {
     const packetId = c.req.param("packetId");
@@ -230,6 +232,7 @@ const submitBodySchema = z.object({
 
 app.post(
   "/submit/:packetId",
+  rateLimit("standard"),
   zValidator("json", submitBodySchema),
   async (c) => {
     const packetId = c.req.param("packetId");

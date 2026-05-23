@@ -3,6 +3,27 @@ main = "src/index.ts"
 compatibility_date = "2025-05-01"
 compatibility_flags = ["nodejs_compat"]
 
+# Rate limiting (TODO-2, /plan-eng-review pre-App-Store).
+# Cloudflare Workers Rate Limiting API — per-binding bucket, keyed by the
+# applicant's auth uid when authenticated, else by CF-Connecting-IP.
+#
+# RL_STRICT — token/account-sensitive endpoints. Bot probing the buddy
+# invite token space or hammering oauth exchange should hit this first.
+[[unsafe.bindings]]
+name = "RL_STRICT"
+type = "ratelimit"
+namespace_id = "1001"
+simple = { limit = 10, period = 60 }
+
+# RL_STANDARD — mutating applicant endpoints. Tight enough to stop
+# script-driven fake-packet creation; loose enough that a real user
+# clicking submit twice never hits it.
+[[unsafe.bindings]]
+name = "RL_STANDARD"
+type = "ratelimit"
+namespace_id = "1002"
+simple = { limit = 60, period = 60 }
+
 [vars]
 SUPABASE_URL = "https://zgqphgcqfxsgviofsccs.supabase.co"
 # T15: enable AI-powered coaching in the recert practice interview.
