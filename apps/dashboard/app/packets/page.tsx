@@ -133,7 +133,7 @@ export default async function PacketsPage({ searchParams }: { searchParams: Prom
           <StatCard label="Needs Attention" value={needsAttentionCount} accent="text-amber" bg="bg-amber/8" />
           <StatCard label="In Progress" value={inProgressCount} accent="text-ink" bg="bg-paper" />
           <StatCard label="Ready for Handoff" value={readyCount} accent="text-teal" bg="bg-teal/8" />
-          <StatCard label="Active Total" value={activeCount} accent="text-brick" bg="bg-brick/8" />
+          <StatCard label="Active Total" value={activeCount} accent="text-ink" bg="bg-surface-secondary" />
         </div>
 
         <div className="mb-4">
