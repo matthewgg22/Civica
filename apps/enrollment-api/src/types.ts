@@ -60,6 +60,20 @@ export interface Env {
   // EBT scraper webhook URL the gateway POSTs to when a refresh is needed.
   // When unset, dispatchScrapeRefresh() is a no-op (Lane B will wire prod URL).
   EBT_SCRAPER_DISPATCH_URL?: string;
+  // Lane D (T10) — APNs token-based auth. All four are required to
+  // actually send pushes; when any is missing the helper returns a
+  // structured no-op (logged but never throws) so dev/test runs
+  // without Apple credentials don't break unrelated flows.
+  // APNS_KEY_P8 is the *contents* of the .p8 file (multiline PEM),
+  // set via: wrangler secret put APNS_KEY_P8
+  APNS_KEY_P8?: string;
+  APNS_KEY_ID?: string;
+  APNS_TEAM_ID?: string;
+  // Bundle id, e.g. "com.civica.app". APNs `apns-topic` header.
+  APNS_TOPIC?: string;
+  // "production" or "development" — chooses api.push.apple.com vs
+  // api.sandbox.push.apple.com. Defaults to development.
+  APNS_ENV?: string;
 }
 
 export interface Variables {
