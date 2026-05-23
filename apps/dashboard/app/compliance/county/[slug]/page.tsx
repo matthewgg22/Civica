@@ -173,7 +173,7 @@ export default async function CountyCompliancePage({
         {county.notableContext && (
           <section
             className="rounded-[4px] border border-hairline bg-surface p-5 md:p-6"
-            style={{ borderLeft: "3px solid var(--color-amber)" }}
+            style={{ borderLeft: "3px solid var(--color-warning)" }}
           >
             <p className="eyebrow mb-2">Notable context</p>
             <p className="text-[14px] text-graphite leading-relaxed max-w-3xl">
@@ -366,10 +366,10 @@ function KpiCard({
   variant: "neutral" | "warning";
 }) {
   const accentColor =
-    variant === "warning" ? "var(--color-amber)" : "var(--color-ink)";
+    variant === "warning" ? "var(--color-warning)" : "var(--color-ink)";
   const borderStyle =
     variant === "warning"
-      ? { borderColor: "color-mix(in srgb, var(--color-amber) 30%, transparent)" }
+      ? { borderColor: "color-mix(in srgb, var(--color-warning) 30%, transparent)" }
       : {};
 
   return (

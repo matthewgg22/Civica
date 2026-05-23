@@ -42,7 +42,7 @@ export default function Funnel({ stages }: { stages: Stage[] }) {
               <div className="flex items-baseline gap-3 tabular-nums">
                 {conversion !== null && (
                   <span className={`text-[14px] font-bold ${
-                    conversion >= 80 ? "text-teal" : conversion >= 50 ? "text-amber" : "text-brick"
+                    conversion >= 80 ? "text-teal" : conversion >= 50 ? "text-warning" : "text-brick"
                   }`}>
                     {conversion.toFixed(0)}% advanced
                   </span>

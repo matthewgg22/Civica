@@ -209,12 +209,12 @@ function KpiCard({
     variant === "positive"
       ? "var(--color-ink)"
       : variant === "warning"
-        ? "var(--color-amber)"
+        ? "var(--color-warning)"
         : "var(--color-ink)";
 
   const borderStyle =
     variant === "warning"
-      ? { borderColor: "color-mix(in srgb, var(--color-amber) 30%, transparent)" }
+      ? { borderColor: "color-mix(in srgb, var(--color-warning) 30%, transparent)" }
       : {};
 
   return (

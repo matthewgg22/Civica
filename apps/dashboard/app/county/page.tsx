@@ -211,12 +211,12 @@ function KpiCard({
 }) {
   const accentStyle =
     variant === "warning"
-      ? { color: "var(--color-amber)" }
+      ? { color: "var(--color-warning)" }
       : { color: "var(--color-ink)" };
 
   const borderStyle =
     variant === "warning"
-      ? { borderColor: "color-mix(in srgb, var(--color-amber) 30%, transparent)" }
+      ? { borderColor: "color-mix(in srgb, var(--color-warning) 30%, transparent)" }
       : {};
 
   return (
