@@ -12,17 +12,18 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "@civica/snap-qc-engine": "workspace:*",
+    "@civica/benefitscal-cbo": "workspace:*",
     "@civica/recert-engine": "workspace:*",
     "@civica/snap-calculator": "workspace:*",
+    "@civica/snap-qc-engine": "workspace:*",
     "@civica/snap-rules": "workspace:*",
-    "twilio": "^5.0.0",
     "@civica/state-connectors": "workspace:*",
-    "@civica/benefitscal-cbo": "workspace:*",
+    "@hono/zod-openapi": "^0.18.3",
     "@hono/zod-validator": "^0.4.3",
     "@sentry/cloudflare": "^9.0.0",
     "@supabase/supabase-js": "^2.49.0",
     "hono": "^4.7.0",
+    "twilio": "^5.0.0",
     "zod": "^3.24.0"
   },
   "devDependencies": {

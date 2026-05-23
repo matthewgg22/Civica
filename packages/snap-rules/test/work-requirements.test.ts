@@ -34,9 +34,19 @@ describe('evaluateWorkRequirement', () => {
     expect(result.citations).toEqual(EXPECTED_CITATIONS);
   });
 
-  it('adult age 55 → isSubject: false (above age cutoff)', () => {
+  // OBBBA §10102(a) raised ceiling to 64 — age 55 is now subject
+  it('adult age 55 → isSubject: true (within 18–64 band per OBBBA §10102(a))', () => {
     const result = evaluateWorkRequirement(input({
       members: [{ id: 'm1', age: 55 }],
+    }));
+    expect(result.isSubject).toBe(true);
+    expect(result.subjectMemberIds).toEqual(['m1']);
+    expect(result.timeLimitApplicable).toBe(true);
+  });
+
+  it('adult age 65 → isSubject: false (above 64 ceiling)', () => {
+    const result = evaluateWorkRequirement(input({
+      members: [{ id: 'm1', age: 65 }],
     }));
     expect(result.isSubject).toBe(false);
     expect(result.subjectMemberIds).toEqual([]);

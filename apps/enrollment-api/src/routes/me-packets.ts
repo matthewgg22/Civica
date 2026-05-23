@@ -7,13 +7,13 @@ import { makeAnonClient, makeServiceClient } from "../lib/supabase.js";
 import { getOrCreateApplicant } from "../lib/applicant.js";
 import { getQuestionsForState } from "../lib/questions.js";
 import type { Env } from "../types.js";
-import { scoreErrorRisk } from "@civica/snap-qc-engine";
 import { determineSUATier, checkHEAPCompliance } from "@civica/snap-rules";
 import type { SUATier } from "@civica/snap-rules";
 import { fetchFMR, householdSizeToBedrooms } from "../lib/hud-fmr.js";
 import { validateAddress } from "../lib/smarty.js";
 import { compareIncome } from "../lib/income-verification.js";
 import type { PayPeriod } from "../lib/income-verification.js";
+import { scorePacketRisk, persistPacketRiskScore } from "../lib/scoring.js";
 import type { Logger } from "../lib/logger.js";
 
 const app = new Hono<{ Bindings: Env }>();
@@ -443,157 +443,18 @@ app.post(
 // ── Error Risk Score ──────────────────────────────────────────────────────────
 
 /**
- * Derives QC flow signals from packet data using real computed values:
- * - utility-sua: determineSUATier() + checkHEAPCompliance() instead of monthly_utilities > 0 proxy
- * - gig-income: compareIncome(OCR vs reported) + Argyle instead of Argyle-only proxy
- * - shared-lease: housing_situation heuristic (unchanged; doc resolution not yet wired)
- *
- * Persists the result to packet_error_risk (non-blocking).
+ * Wrapper that scores + persists. Scoring logic lives in lib/scoring.ts so the
+ * navigator endpoint reaches the same authoritative score.
  */
-async function scorePacketRisk(
+async function scoreAndPersist(
   env: Env,
   jwt: string,
   packetId: string,
   applicantId: string,
-): Promise<{ score: number | null; tier: string; factors: string[]; engine_version: string }> {
-  const anonDb = makeAnonClient(env, jwt);
-
-  const [answersResult, argyleResult, fieldsResult] = await Promise.all([
-    anonDb
-      .schema("snap_enrollment")
-      .from("packet_answers")
-      .select("question_key, applicant_answer")
-      .eq("packet_id", packetId)
-      .in("question_key", [
-        "employment_status",
-        "housing_situation",
-        "monthly_utilities",
-        "monthly_gross_income",
-        "has_heating_costs",
-        "has_electric_or_gas",
-        "has_phone",
-        "receives_heap",
-      ]),
-    anonDb
-      .schema("snap_enrollment")
-      .from("argyle_connections")
-      .select("linked_accounts")
-      .eq("applicant_id", applicantId)
-      .is("revoked_at", null)
-      .maybeSingle(),
-    anonDb
-      .schema("snap_enrollment")
-      .from("extraction_fields")
-      .select("field_key, original_ocr_value, confidence")
-      .eq("packet_id", packetId)
-      .in("field_key", ["gross_pay", "pay_amount", "monthly_gross_income", "pay_period"]),
-  ]);
-
-  type AnswerRow = { question_key: string; applicant_answer: string | null };
-  const answers: Record<string, string> = Object.fromEntries(
-    (answersResult.data ?? [])
-      .map((a: AnswerRow) => [a.question_key, a.applicant_answer ?? ""] as [string, string])
-      .filter(([, v]) => v !== "")
-  );
-
-  const linkedAccounts = (argyleResult.data?.linked_accounts as unknown[]) ?? [];
-  const argyleConnected = linkedAccounts.length > 0;
-
-  // OCR income extraction
-  type FieldRow = { field_key: string; original_ocr_value: string | null; confidence: number };
-  const payFields = ((fieldsResult.data ?? []) as FieldRow[])
-    .filter((f) => ["gross_pay", "pay_amount", "monthly_gross_income"].includes(f.field_key))
-    .sort((a, b) => b.confidence - a.confidence);
-  const payPeriodField = ((fieldsResult.data ?? []) as FieldRow[]).find((f) => f.field_key === "pay_period");
-
-  const ocrPayAmount = payFields[0]?.original_ocr_value
-    ? parseFloat(payFields[0].original_ocr_value) || null
-    : null;
-
-  let ocrPayPeriod: PayPeriod | null = null;
-  if (payPeriodField?.original_ocr_value) {
-    const raw = payPeriodField.original_ocr_value.toLowerCase();
-    if (raw.includes("biweekly") || raw.includes("bi-weekly")) ocrPayPeriod = "biweekly";
-    else if (raw.includes("weekly")) ocrPayPeriod = "weekly";
-    else if (raw.includes("semi")) ocrPayPeriod = "semimonthly";
-    else if (raw.includes("monthly")) ocrPayPeriod = "monthly";
-    else if (raw.includes("annual") || raw.includes("yearly")) ocrPayPeriod = "annual";
-  } else if (payFields[0]?.field_key === "monthly_gross_income") {
-    ocrPayPeriod = "monthly";
-  }
-
-  const reportedMonthly = parseFloat(answers["monthly_gross_income"] ?? "") || null;
-  const ocrComparison = compareIncome(reportedMonthly, ocrPayAmount, ocrPayPeriod);
-
-  // SUA tier + OBBBA HEAP compliance
-  const suaAnswers = {
-    has_heating_costs: (answers["has_heating_costs"] as "yes" | "no" | null) ?? null,
-    has_electric_or_gas: (answers["has_electric_or_gas"] as "yes" | "no" | null) ?? null,
-    has_phone: (answers["has_phone"] as "yes" | "no" | null) ?? null,
-  };
-  const suaComputed = determineSUATier(suaAnswers);
-  const heapCheck = checkHEAPCompliance({
-    receives_heap: (answers["receives_heap"] as "yes" | "no" | null) ?? null,
-    sua_tier_claimed: suaComputed,
-  });
-
-  type FlowSignal = { flow: "gig-income" | "utility-sua" | "shared-lease"; defensibility_score: "strong" | "moderate" | "weak" };
-  const flowSignals: FlowSignal[] = [];
-
-  // utility-sua: deterministic SUA tier computation; HEAP flag → weak
-  const hasSuaData = suaAnswers.has_heating_costs !== null
-    || suaAnswers.has_electric_or_gas !== null
-    || suaAnswers.has_phone !== null;
-  const hasFullSuaData = suaAnswers.has_heating_costs !== null
-    && suaAnswers.has_electric_or_gas !== null
-    && suaAnswers.has_phone !== null;
-  const hasMonthlyUtilities = parseFloat(answers["monthly_utilities"] ?? "0") > 0;
-
-  if (hasSuaData || hasMonthlyUtilities) {
-    const suaDef: "strong" | "moderate" | "weak" =
-      heapCheck.heap_flag ? "weak"      // OBBBA HEAP+Full-SUA conflict → high QC risk
-      : hasFullSuaData ? "moderate"     // all questions answered; deterministic tier
-      : "weak";                         // partial SUA data; tier uncertain
-    flowSignals.push({ flow: "utility-sua", defensibility_score: suaDef });
-  }
-
-  // gig-income: Argyle API → strong; OCR match → moderate; OCR mismatch/incomplete/none → weak
-  const incomeStatuses = new Set(["employed_full_time", "employed_part_time", "self_employed"]);
-  const employmentStatus = answers["employment_status"];
-  if (employmentStatus && incomeStatuses.has(employmentStatus)) {
-    let incomeDef: "strong" | "moderate" | "weak";
-    if (argyleConnected) {
-      incomeDef = "strong";
-    } else if (ocrComparison.direction === "incomplete" || ocrComparison.flagged) {
-      incomeDef = "weak";
-    } else if (ocrComparison.ocr_monthly !== null) {
-      incomeDef = "moderate";
-    } else {
-      incomeDef = "weak";
-    }
-    flowSignals.push({ flow: "gig-income", defensibility_score: incomeDef });
-  }
-
-  // shared-lease: housing_situation heuristic (doc resolution status not yet wired)
-  const housingSituation = answers["housing_situation"];
-  if (housingSituation === "renting" || housingSituation === "living_with_family") {
-    flowSignals.push({ flow: "shared-lease", defensibility_score: "moderate" });
-  }
-
-  const result = scoreErrorRisk(flowSignals);
-
-  // Persist for analytics history (non-blocking)
-  if (result.score !== null) {
-    void makeServiceClient(env)
-      .schema("snap_enrollment")
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      .from("packet_error_risk" as any)
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      .insert({ packet_id: packetId, engine_version: result.engine_version, score: result.score, factors: result.factors, tier: result.tier } as any)
-      .then(() => {}, () => {});
-  }
-
-  return { score: result.score, tier: result.tier, factors: result.factors, engine_version: result.engine_version };
+) {
+  const result = await scorePacketRisk(env, jwt, packetId, applicantId);
+  persistPacketRiskScore(env, packetId, result);
+  return result;
 }
 
 // POST /me/packets/:packetId/error-risk
@@ -615,7 +476,7 @@ app.post("/:packetId/error-risk", async (c) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   if (pErr) throw new HTTPException(500, { message: (pErr as any).message });
 
-  const result = await scorePacketRisk(c.env, c.get("jwt"), packetId, packet.applicant_id as string);
+  const result = await scoreAndPersist(c.env, c.get("jwt"), packetId, packet.applicant_id as string);
   return c.json(result);
 });
 
@@ -803,7 +664,7 @@ app.get("/:packetId/verification-summary", async (c) => {
     : null;
 
   // Re-score with enriched data so packet_error_risk stays fresh (§4).
-  void scorePacketRisk(c.env, c.get("jwt"), packetId, packet.applicant_id as string).catch(() => {});
+  void scoreAndPersist(c.env, c.get("jwt"), packetId, packet.applicant_id as string).catch(() => {});
 
   const log = (c.get as (k: string) => Logger | undefined)("log");
   log?.info("verification_summary_fetched", {
@@ -814,7 +675,7 @@ app.get("/:packetId/verification-summary", async (c) => {
     income_flagged: incomeComparison.flagged,
     address_deliverability: addressResult.deliverability,
     rent_flagged: rentFlagged,
-    argyle_connected: !!(argyleResult.data?.linked_accounts?.length),
+    argyle_connected: Array.isArray(argyleResult.data?.linked_accounts) && argyleResult.data.linked_accounts.length > 0,
   });
 
   return c.json({
@@ -885,7 +746,7 @@ app.post("/:packetId/submit", async (c) => {
 
   // Auto-score on submit so packet_error_risk has a row without requiring the iOS
   // app to call /error-risk separately. Non-blocking — submission succeeds regardless.
-  void scorePacketRisk(c.env, c.get("jwt"), c.req.param("packetId"), applicant.applicant_id).catch(() => {});
+  void scoreAndPersist(c.env, c.get("jwt"), c.req.param("packetId"), applicant.applicant_id).catch(() => {});
 
   return c.json(mapPacket(data as Record<string, unknown>));
 });

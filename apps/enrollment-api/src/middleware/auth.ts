@@ -39,7 +39,12 @@ export async function authMiddleware(c: Context<{ Bindings: Env }>, next: Next) 
       orgId: staff.org_id,
     });
   } else {
-    c.set("actor", { kind: "applicant", id: user.id });
+    const metaRole = (user.app_metadata as Record<string, unknown> | null)?.role as string | undefined;
+    if (metaRole === "buddy") {
+      c.set("actor", { kind: "buddy", id: user.id });
+    } else {
+      c.set("actor", { kind: "applicant", id: user.id });
+    }
   }
 
   c.set("jwt", jwt);

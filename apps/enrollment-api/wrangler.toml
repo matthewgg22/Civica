@@ -8,6 +8,9 @@ SUPABASE_URL = "https://zgqphgcqfxsgviofsccs.supabase.co"
 # T15: enable AI-powered coaching in the recert practice interview.
 # ANTHROPIC_API_KEY must be set as a wrangler secret (never in [vars]).
 RECERT_AI_ENABLED = "true"
+# Buddy Add feature gate. Set to "true" to enable the buddy invite / accept flow.
+# Off by default until DB migrations (20260566-20260569) are applied to staging.
+BUDDY_ADD_ENABLED = "false"
 # SENTRY_DSN is intentionally absent from [vars] — set it as a secret:
 #   wrangler secret put SENTRY_DSN
 # This prevents the DSN from being committed to source control.
@@ -56,6 +59,11 @@ RECERT_AI_ENABLED = "true"
 #   BENEFITSCAL_BASE_URL=https://...    # optional override; defaults to https://benefitscal.com
 #                                       # wrangler secret put BENEFITSCAL_BASE_URL
 #
+# Buddy Add (BUDDY_ADD_ENABLED) — dedicated signing key for invite JWTs.
+# Separate from SNAP_FERNET_KEY so buddy invite tokens can be rotated independently.
+# Generate with: openssl rand -base64 32
+#   BUDDY_JWT_SECRET=...              # wrangler secret put BUDDY_JWT_SECRET
+#
 # TODO-15 (Browserless.io driver) — external Playwright service for Phase 2.
 # When set, POST /benefitscal/submit/:packetId auto-builds a Browserless driver
 # and the submitter drives the BenefitsCal portal via Browserless. When absent,
@@ -72,5 +80,7 @@ RECERT_AI_ENABLED = "true"
 # handler is currently stub-mode (no live records ingested) until the public
 # USDA endpoint URL + field map is verified. The cron still runs so
 # find_help_sources timestamps stay fresh and the path is observable.
+# T2 (/plan-eng-review 2026-05-22): every 5 minutes, clear app_metadata.role
+# for completed/revoked buddy relationships. See src/cron/buddy-app-metadata-cleanup.ts.
 [triggers]
-crons = ["0 3 * * *"]
+crons = ["0 3 * * *", "*/5 * * * *"]

@@ -39,6 +39,11 @@ export interface Env {
   HUD_TOKEN?: string;
   SMARTY_AUTH_ID?: string;
   SMARTY_AUTH_TOKEN?: string;
+  // Buddy Add feature (BUDDY_ADD_ENABLED). Off unless "true".
+  BUDDY_ADD_ENABLED?: string;
+  // Dedicated signing key for buddy invite JWTs (separate from SNAP_FERNET_KEY).
+  // Set via: wrangler secret put BUDDY_JWT_SECRET
+  BUDDY_JWT_SECRET?: string;
 }
 
 export interface Variables {
@@ -46,10 +51,11 @@ export interface Variables {
   requestId: string;
 }
 
-export type ActorKind = "applicant" | "navigator" | "admin" | "system" | "api_key";
+export type ActorKind = "applicant" | "navigator" | "admin" | "system" | "api_key" | "buddy";
 
 export interface Actor {
   kind: ActorKind;
   id: string;
   orgId?: string;
+  buddy_relationship_id?: string;
 }

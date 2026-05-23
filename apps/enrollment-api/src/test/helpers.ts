@@ -12,6 +12,7 @@ export const TEST_ENV: Env = {
 
 export const NAVIGATOR: Actor = { kind: 'navigator', id: 'nav-001', orgId: 'org-001' };
 export const APPLICANT: Actor = { kind: 'applicant', id: 'user-001' };
+export const BUDDY: Actor = { kind: 'buddy', id: 'buddy-001', buddy_relationship_id: 'br-001' };
 
 export type MockResult = { data: unknown; error: unknown; count?: number };
 
@@ -25,6 +26,7 @@ export function makeQueryBuilder(result: MockResult): any {
   for (const m of [
     'select', 'eq', 'is', 'order', 'limit', 'insert', 'upsert',
     'update', 'delete', 'in', 'filter', 'neq', 'not', 'single', 'maybeSingle', 'head',
+    'gte', 'lte', 'lt', 'gt',
   ]) {
     qb[m] = vi.fn().mockReturnValue(qb);
   }

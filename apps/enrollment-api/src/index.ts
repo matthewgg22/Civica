@@ -15,6 +15,7 @@ import meRouter from "./routes/me.js";
 import mePacketsRouter from "./routes/me-packets.js";
 import meInboxRouter from "./routes/me-inbox.js";
 import meArgyleRouter from "./routes/me-argyle.js";
+import meWorkHoursRouter from "./routes/me-work-hours.js";
 import benefitsCalRouter from "./routes/benefitscal.js";
 import recertRouter from "./routes/recert.js";
 import twilioWebhookRouter from "./routes/twilio-webhook.js";
@@ -23,6 +24,7 @@ import navigatorRouter from "./routes/navigator.js";
 import argyleWebhookRouter from "./routes/argyle-webhook.js";
 import oauthCanvasRouter from "./routes/oauth-canvas.js";
 import featureFlagsRouter from "./routes/feature-flags.js";
+import buddyRouter from "./routes/buddy.js";
 import { requestLogger } from "./lib/logger.js";
 import { scrubEvent } from "./lib/sentry.js";
 import { withSentry } from "@sentry/cloudflare";
@@ -65,6 +67,14 @@ app.use(
 
 app.get("/health", (c) => c.json({ ok: true, service: "civica-enrollment-api" }));
 
+// OpenAPI spec — public, no auth. Generated from src/openapi/spec.ts which
+// registers all iOS-facing routes with their Zod schemas. Lives at root so
+// iOS / web codegen can fetch it without a JWT.
+app.get("/openapi.json", async (c) => {
+  const { buildOpenAPIDocument } = await import("./openapi/spec.js");
+  return c.json(buildOpenAPIDocument());
+});
+
 // T14: Twilio webhook — no auth middleware (uses Twilio HMAC signature instead of JWT)
 app.route("/", twilioWebhookRouter);
 
@@ -103,6 +113,10 @@ api.route("/me", meRouter);                         // GET/PATCH /me
 api.route("/me/packets", mePacketsRouter);          // /me/packets/*
 api.route("/me/inbox", meInboxRouter);              // /me/inbox/*
 api.route("/me/argyle/connect", meArgyleRouter);    // GET/POST/DELETE /me/argyle/connect (T-DR3-8)
+api.route("/me/work-requirements", meWorkHoursRouter); // /me/work-requirements/:packetId/hours (§10102)
+
+// Buddy Add routes (feature-flagged: BUDDY_ADD_ENABLED=true)
+api.route("/buddy", buddyRouter);             // POST /buddy/invite, /accept; GET /buddy/applicant-summary, /config
 
 api.route("/benefitscal", benefitsCalRouter);  // /benefitscal/prepare-export/:packetId, /benefitscal/status/:packetId
 
@@ -116,17 +130,24 @@ app.onError((err, c) => {
   if (err instanceof HTTPException) {
     return c.json({ error: err.message }, err.status);
   }
+  // Surface the request_id so a user reporting an error gives the team the
+  // exact string to grep Sentry / logs with. requestLogger sets it on every
+  // request; if the middleware was bypassed (e.g. before-middleware error)
+  // we still want a usable correlation handle, so synthesize one.
+  const requestId = (c.get("requestId") as string | undefined) ?? crypto.randomUUID();
   const log = c.get("log");
   if (log) {
-    log.error("unhandled error", { message: err.message, name: err.name });
+    log.error("unhandled error", { message: err.message, name: err.name, request_id: requestId });
   } else {
-    console.error(err);
+    console.error(JSON.stringify({ msg: "unhandled_error", request_id: requestId, error: String(err) }));
   }
-  return c.json({ error: "Internal server error" }, 500);
+  return c.json({ error: "Internal server error", trace_id: requestId }, 500);
 });
 
 // Named export for unit tests — raw Hono app without the Sentry wrapper
 export { app };
+
+import { cleanupBuddyAppMetadata } from "./cron/buddy-app-metadata-cleanup.js";
 
 // Cron dispatch — keep tiny and table-driven so adding/removing
 // schedules in wrangler.toml is the only change needed. Tasks run under
@@ -164,6 +185,19 @@ async function dispatchScheduled(
         log,
       });
       log("info", "scheduled: usda retailer sync finished", { ...result });
+      return;
+    }
+    case "*/5 * * * *": {
+      // Buddy access closure: clear app_metadata.role for revoked/completed
+      // buddies so their JWTs stop authenticating as kind='buddy'. Without this
+      // sweep, the buddy role claim survives until token expiry (~1h).
+      // See src/cron/buddy-app-metadata-cleanup.ts.
+      try {
+        const result = await cleanupBuddyAppMetadata(env);
+        log("info", "scheduled: buddy app_metadata cleanup finished", { ...result });
+      } catch (err) {
+        log("error", "scheduled: buddy app_metadata cleanup failed", { error: String(err) });
+      }
       return;
     }
     default:

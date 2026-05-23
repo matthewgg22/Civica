@@ -242,6 +242,9 @@ importers:
       '@civica/state-connectors':
         specifier: workspace:*
         version: link:../../packages/state-connectors
+      '@hono/zod-openapi':
+        specifier: ^0.18.3
+        version: 0.18.4(hono@4.12.19)(zod@3.25.76)
       '@hono/zod-validator':
         specifier: ^0.4.3
         version: 0.4.3(hono@4.12.19)(zod@3.25.76)

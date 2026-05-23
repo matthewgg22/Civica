@@ -35,16 +35,19 @@ function mockAnonDb(
   packetResult: { data: unknown; error: unknown },
   answersResult: { data: unknown; error: unknown },
   argyleResult: { data: unknown; error: unknown },
+  fieldsResult: { data: unknown; error: unknown } = { data: [], error: null },
 ) {
   const qbPacket = makeQueryBuilder(packetResult);
   const qbAnswers = makeQueryBuilder(answersResult);
   const qbArgyle = makeQueryBuilder(argyleResult);
+  const qbFields = makeQueryBuilder(fieldsResult);
   vi.mocked(makeAnonClient).mockReturnValue({
     schema: vi.fn().mockReturnValue({
       from: vi.fn()
         .mockReturnValueOnce(qbPacket)   // snap_packets ownership
         .mockReturnValueOnce(qbAnswers)  // packet_answers
-        .mockReturnValueOnce(qbArgyle),  // argyle_connections
+        .mockReturnValueOnce(qbArgyle)   // argyle_connections
+        .mockReturnValueOnce(qbFields),  // extraction_fields (OCR data)
     }),
   } as never);
 }

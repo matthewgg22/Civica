@@ -1,8 +1,9 @@
 import type { WorkRequirementInput, WorkRequirementResult, ExemptionType, FeatureFlags } from './types';
 
-// OBBBA §10102 age bounds: adults 18–54 are subject to the expanded work requirement.
+// OBBBA §10102(a) age bounds: 18–64 (raised from 18–54 by P.L. 119-21, eff. July 4 2025).
+// CA implementation: June 1, 2026 per ACL 25-93.
 const MIN_AGE = 18;
-const MAX_AGE = 54;
+const MAX_AGE = 64;
 
 // §10102: household member is NOT subject if they have a dependent child UNDER age 14.
 // (The prior ABAWD rule used under-18; this is the key OBBBA change.)
@@ -25,7 +26,7 @@ const BASE_CITATIONS: WorkRequirementResult['citations'] = [
 type MemberDetermination =
   | { kind: 'subject' }
   | { kind: 'exempt'; exemptionType: ExemptionType; reason: string }
-  | { kind: 'not_subject_age' }        // outside 18–54 age band
+  | { kind: 'not_subject_age' }        // outside 18–64 age band
   | { kind: 'not_subject_dependent' }; // has dependent 6–13 (under-14 cutoff, no explicit exemption)
 
 function determineMember(
@@ -34,7 +35,7 @@ function determineMember(
   state: WorkRequirementInput['state'],
   featureFlags: FeatureFlags,
 ): MemberDetermination {
-  // Age gate: only 18–54 are subject
+  // Age gate: only 18–64 are subject (OBBBA §10102(a))
   if (m.age < MIN_AGE || m.age > MAX_AGE) return { kind: 'not_subject_age' };
 
   // Session A — CA LPIE override (gated by server-side feature flag).
@@ -98,7 +99,7 @@ function determineMember(
  * SNAP work requirements under OBBBA §10102.
  *
  * Logic (per member):
- * 1. Must be aged 18–54.
+ * 1. Must be aged 18–64 (OBBBA §10102(a)).
  * 2. Caretaker of a child under 6 → exempt (caretaker_under_6).
  * 3. Has dependent child 6–13 (under §10102 cutoff of 14) → not subject (no exemption type).
  * 4. SSI/SSDA → exempt (ssdi_ssi).

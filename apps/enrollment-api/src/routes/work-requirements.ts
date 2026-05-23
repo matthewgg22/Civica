@@ -17,6 +17,7 @@ import { z } from 'zod';
 import { HTTPException } from 'hono/http-exception';
 import { makeAnonClient, makeServiceClient } from '../lib/supabase.js';
 import { withActorContext } from '../middleware/actorContext.js';
+import { requireNavigator } from '../lib/auth.js';
 import type { Env } from '../types.js';
 import type { Json } from '@civica/db-types';
 import {
@@ -80,16 +81,6 @@ const eventBodySchema = z.object({
   ]),
   payload: z.record(z.unknown()),
 });
-
-// ---------------------------------------------------------------------------
-// Role guard helper: navigator or above
-// ---------------------------------------------------------------------------
-
-function requireNavigator(actorKind: string): void {
-  if (actorKind === 'applicant') {
-    throw new HTTPException(403, { message: 'Navigator role required' });
-  }
-}
 
 const app = new Hono<{ Bindings: Env }>();
 
