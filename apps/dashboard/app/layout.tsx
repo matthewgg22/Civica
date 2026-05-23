@@ -3,6 +3,7 @@ import { Toaster } from "sonner";
 import "./globals.css";
 import UATFeedbackButton from "../components/UATFeedbackButton";
 import SampleDataBanner from "../components/SampleDataBanner";
+import CommandPalette from "../components/CommandPalette";
 
 export const metadata: Metadata = {
   title: "Civica Navigator Dashboard",
@@ -29,6 +30,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             },
           }}
         />
+        <CommandPalette />
       </body>
     </html>
   );
