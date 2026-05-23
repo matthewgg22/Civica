@@ -23,6 +23,8 @@ struct EBTBalanceDashboardView: View {
         let balanceAfter: Decimal
     }
     @State private var openDetail: TransactionDetail?
+    /// Phase 2 Lane F: receipt scanner sheet state.
+    @State private var isShowingReceiptScanner = false
     /// Amount of the most recent simulated deposit, shown as a
     /// transient "deposit landed" banner on the hero card. Cleared a
     /// few seconds after it posts.
@@ -64,6 +66,10 @@ struct EBTBalanceDashboardView: View {
                     heroCard(account, insights: insights)
                     projectionCard(account, insights: insights)
                     spendingInsightsCard(account, insights: insights)
+                    // Phase 2 Lane F — receipt scanner entry point.
+                    // Positioned below spending insights per plan; Lane G's
+                    // anomaly banner will sit above the hero card (not here).
+                    scanReceiptButton
                     if !account.transactions.isEmpty {
                         recentActivitySection(account, insights: insights)
                     }
@@ -91,6 +97,56 @@ struct EBTBalanceDashboardView: View {
                 onDone: { openDetail = nil }
             )
         }
+        // Phase 2 Lane F — receipt camera sheet.
+        .fullScreenCover(isPresented: $isShowingReceiptScanner) {
+            EBTReceiptCaptureView { image, ocr in
+                isShowingReceiptScanner = false
+                // Phase 2: wire to EBTReceiptsStore when injected here.
+                // For now the button surfaces the camera; store wiring is in
+                // EBTReceiptCaptureSheet which callers can use directly.
+                _ = (image, ocr)
+            }
+        }
+    }
+
+    // MARK: - Phase 2 Lane F — Scan receipt button
+
+    /// Entry point for receipt capture, slotted below the spending insights card.
+    /// Lane G's anomaly banner goes ABOVE the hero card (not here).
+    private var scanReceiptButton: some View {
+        Button {
+            isShowingReceiptScanner = true
+        } label: {
+            HStack(spacing: CivicaSpacing.md) {
+                Image(systemName: "camera.viewfinder")
+                    .font(.system(size: 20, weight: .semibold))
+                    .foregroundStyle(CivicaColors.pinePrimary)
+                    .frame(width: 28, alignment: .leading)
+                    .accessibilityHidden(true)
+                VStack(alignment: .leading, spacing: CivicaSpacing.xxs) {
+                    Text(EBTReceiptStrings.scanReceiptButton.value(in: language))
+                        .font(CivicaTypography.subheadStrong)
+                        .foregroundStyle(CivicaColors.ink)
+                    Text(EBTReceiptStrings.settingsReceiptsSubtitle.value(in: language))
+                        .font(CivicaTypography.footnote)
+                        .foregroundStyle(CivicaColors.graphite)
+                }
+                Spacer(minLength: CivicaSpacing.sm)
+                Image(systemName: "chevron.right")
+                    .foregroundStyle(CivicaColors.graphite)
+                    .accessibilityHidden(true)
+            }
+            .padding(CivicaSpacing.lg)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(CivicaColors.surfacePrimary)
+            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
+            .overlay(
+                RoundedRectangle(cornerRadius: CivicaRadius.card)
+                    .strokeBorder(CivicaColors.hairline, lineWidth: 1)
+            )
+        }
+        .buttonStyle(.plain)
+        .accessibilityElement(children: .combine)
     }
 
     // MARK: - Demo controls (toolbar menu)
