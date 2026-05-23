@@ -248,3 +248,27 @@ export { CA_WAIVER_COUNTY_FIPS, MA_WAIVER_COUNTY_FIPS } from './work-requirement
 
 export type { SUATier } from './sua';
 export { CA_SUA_FFY2026, determineSUATier, checkHEAPCompliance } from './sua';
+
+// ---------------------------------------------------------------------------
+// Informal housing intake — question bank, types, shelter-deduction effects
+// (item 4: replaces self-attestation for non-lease arrangements)
+// ---------------------------------------------------------------------------
+
+export type {
+  InformalArrangementKind,
+  PaymentCadence,
+  EvidenceKind,
+  InformalHousingDefensibility,
+  ShelterDeductionEffect,
+  AnswerKind,
+  BranchCondition,
+  IntakeQuestion,
+  IntakeValidationResult,
+} from './informal-housing/index';
+export {
+  DEFENSIBILITY_LOOKUP,
+  SHELTER_EFFECT,
+  INFORMAL_HOUSING_QUESTIONS,
+  nextUnansweredQuestion,
+  validateIntake,
+} from './informal-housing/index';

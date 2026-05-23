@@ -4,6 +4,7 @@ import AppHeader from "../../components/AppHeader";
 import ApiCoveragePanel from "../../components/qc/ApiCoveragePanel";
 import ScoringPanel from "../../components/qc/ScoringPanel";
 import BaselinePanel from "../../components/qc/BaselinePanel";
+import ErrorReductionProjectionPanel from "../../components/qc/ErrorReductionProjectionPanel";
 import { ENGINE_VERSION } from "@civica/snap-qc-engine";
 
 export const dynamic = "force-dynamic";
@@ -21,7 +22,7 @@ export default async function QCPage() {
   const supabase = createServerClientFromCookies(cookieStore);
   const { data: { user } } = await supabase.auth.getUser();
 
-  const [packetsRes, argyleRes, riskRes, qcRes, answersRes] = await Promise.all([
+  const [packetsRes, argyleRes, riskRes, qcRes, answersRes, shelterDocsRes] = await Promise.all([
     supabase.schema("snap_enrollment").from("snap_packets")
       .select("packet_id, status")
       .is("deleted_at", null)
@@ -45,10 +46,27 @@ export default async function QCPage() {
       .select("packet_id, question_key, applicant_answer")
       .in("question_key", ["has_heating_costs", "has_electric_or_gas", "has_phone", "housing_situation", "employment_status"])
       .limit(10000),
+    // Shelter document coverage: packets with a confirmed lease upload.
+    // document_kind='lease', processing_status='confirmed' = OCR ran and
+    // applicant confirmed the extracted rent figure.
+    // Replaces the previous SUA-answered proxy on ErrorReductionProjectionPanel.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (supabase.schema("snap_enrollment") as any).from("uploaded_documents")
+      .select("packet_id")
+      .eq("document_kind", "lease")
+      .eq("processing_status", "confirmed")
+      .is("deleted_at", null)
+      .limit(10000),
   ]);
 
   const packets = packetsRes.data ?? [];
   const totalPackets = packets.length;
+
+  // Real shelter-doc count: distinct packets with a confirmed lease upload.
+  const shelterDocPacketIds = new Set(
+    (shelterDocsRes.data ?? []).map((r: { packet_id: string }) => r.packet_id)
+  );
+  const shelterDocCount = shelterDocPacketIds.size;
 
   // ── API coverage
   const argylePacketIds = new Set((argyleRes.data ?? []).map((r: { packet_id: string }) => r.packet_id));
@@ -78,9 +96,11 @@ export default async function QCPage() {
       id: "sublease", name: "Sublease classifier", status: "phase2" as const,
       purpose: "Shared-lease detection from uploads",
       flow: "lease", weight: 11.4,
-      connectedPct: 0, connectedN: 0, totalN: totalPackets,
-      detail: "Not yet integrated. Currently navigator-discretion only.",
-      since: "Target Q4 2026",
+      connectedPct: totalPackets > 0 ? Math.round((shelterDocCount / totalPackets) * 100) : 0,
+      connectedN: shelterDocCount,
+      totalN: totalPackets,
+      detail: "Deterministic v1 live (shared-lease/classifier.ts). Routes sublease / shared-tenancy to navigator review; primary tenancies auto-flow. ML v2 planned Q4 2026.",
+      since: "Logic live May 2026 · UI integration pending",
     },
   ];
 
@@ -141,7 +161,7 @@ export default async function QCPage() {
       strong: 0,
       moderate: Math.round((suaModerate / totalForDef) * 100),
       weak: Math.round((suaWeak / totalForDef) * 100),
-      source: "no signal · awaiting UtilityAPI",
+      source: "deterministic SUA engine · questionnaire flags",
     },
     {
       flow: "lease",
@@ -220,6 +240,12 @@ export default async function QCPage() {
           </div>
         </div>
 
+        <ErrorReductionProjectionPanel
+          totalPackets={totalPackets}
+          argyleConnected={argyleConnected}
+          suaAnswered={suaModerate}
+          shelterDocUploaded={shelterDocCount}
+        />
         <ApiCoveragePanel apis={apiData} totalPackets={totalPackets} />
         <ScoringPanel
           total={totalPackets}
