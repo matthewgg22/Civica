@@ -50,6 +50,16 @@ export interface Env {
   // to stub them. lib/rate-limit.ts no-ops cleanly when a binding is absent.
   RL_STRICT?: RateLimit;
   RL_STANDARD?: RateLimit;
+  // EBT Tracker (Lane A T4). HMAC secret shared with the Fly scraper for
+  // verifying inbound POST /webhooks/ebt-scraper requests. Set via:
+  //   wrangler secret put EBT_SCRAPER_WEBHOOK_SECRET
+  // and `fly secrets set EBT_SCRAPER_WEBHOOK_SECRET=...` on the scraper side.
+  // Optional in types so dev/test can run without it; the route returns 503
+  // if the secret is unset when called in production.
+  EBT_SCRAPER_WEBHOOK_SECRET?: string;
+  // EBT scraper webhook URL the gateway POSTs to when a refresh is needed.
+  // When unset, dispatchScrapeRefresh() is a no-op (Lane B will wire prod URL).
+  EBT_SCRAPER_DISPATCH_URL?: string;
 }
 
 export interface Variables {
