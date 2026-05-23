@@ -48,6 +48,20 @@ export type {
   ClassifierAction,
 } from "./flows/shared-lease/classifier";
 
+// Lease OCR verification: cross-checks extracted field values against stated
+// intake answers to produce a rent_match + name_match + defensibility_tier.
+// Called by the OCR webhook after extraction_fields are stored; result is
+// written back as synthetic civica_* extraction_fields rows.
+export { verifyLeaseExtraction, parseRentValue, compareName, LEASE_FIELD_KEYS } from "./flows/shared-lease/lease-verification";
+export type {
+  LeaseVerificationInput,
+  LeaseVerificationResult,
+  ExtractionField,
+  RentMatch,
+  NameMatch,
+  LeaseFieldKey,
+} from "./flows/shared-lease/lease-verification";
+
 export interface EvaluateOptions {
   /** Override timestamp source (for deterministic tests). */
   now?: () => string;
