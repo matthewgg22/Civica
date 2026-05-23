@@ -205,7 +205,7 @@ export default async function PacketDetailPage({
   const reportedMonthly = parseFloat(getAnswer("monthly_gross_income") ?? "") || null;
   const incomeComparison = compareIncome(reportedMonthly, ocrPayAmount, ocrPayPeriod);
 
-  const argyleLinked = ((argyleResult.data?.linked_accounts as unknown[]) ?? []).length > 0;
+  const argyleLinked = (((argyleResult.data as { linked_accounts?: unknown[] } | null)?.linked_accounts ?? []) as unknown[]).length > 0;
 
   const verificationSummary: VerificationSummary = {
     shelter: {
