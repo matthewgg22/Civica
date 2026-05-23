@@ -5,6 +5,7 @@ import { homeForRole } from "../../lib/roleRouting";
 import { perExposure } from "../../lib/analytics/section10105";
 import DemoModeBadge from "../../components/DemoModeBadge";
 import CountyLeaderboard from "../../components/CountyLeaderboard";
+import StatePerTrendRibbon from "../../components/StatePerTrendRibbon";
 
 export const dynamic = "force-dynamic";
 
@@ -248,6 +249,16 @@ export default async function CDSSPage({
             </div>
           </div>
         </div>
+      </section>
+
+      {/* ------------------------------------------------------------------ */}
+      {/* Statewide PER trend ribbon — bridges $ exposure to per-county drill */}
+      {/* ------------------------------------------------------------------ */}
+      <section
+        className="px-6 md:px-8 pb-6"
+        aria-label="Statewide PER trend ribbon: California vs national average over recent fiscal years"
+      >
+        <StatePerTrendRibbon />
       </section>
 
       {/* ------------------------------------------------------------------ */}
