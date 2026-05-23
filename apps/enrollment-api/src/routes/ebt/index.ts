@@ -2,14 +2,15 @@
  * EBT routes — mounted under /v1/enrollment/ebt/* by the parent app.
  *
  * Per §16.1 (DX1): one file per route under apps/enrollment-api/src/routes/ebt/.
- * `mountEbt(app)` registers every child route onto a parent Hono app.
- *
- * Lane D will add notifications.ts here. Phases 2/3 add receipts.ts, perks.ts,
- * referrals.ts. The webhooks route mounts at the app root (not under /ebt/*)
+ * `mountEbt(app)` registers every child route onto a parent (sub)app supplied
+ * by the caller. The webhooks route mounts at the app root (not under /ebt/*)
  * because Fly scraper POSTs land at /webhooks/ebt-scraper.
  *
- *   mountEbt(api):              registers authed /ebt/* routes
+ *   mountEbt(api):              registers authed /ebt/* routes (Lane A + Lane D)
  *   mountEbtWebhooks(app):      registers /webhooks/ebt-scraper at the app root
+ *
+ * Phases 2/3 will add receipts.ts, perks.ts, referrals.ts here. Append one
+ * `app.route('/<name>', router)` line inside mountEbt and one import above.
  */
 
 import type { Hono } from 'hono';
@@ -20,14 +21,10 @@ import refreshRouter from './refresh.js';
 import depositCalendarRouter from './deposit-calendar.js';
 import lockRouter from './lock.js';
 import webhooksRouter from './webhooks.js';
+import notificationsRouter from './notifications.js';
 
 /**
  * Mounts every authed /ebt/* route onto the provided (authed) parent app.
- *
- * Conflict note for Lane D: notifications.ts will be added here too. To keep
- * merges painless, Lane D should add a single line at the end of this function
- * mounting `notificationsRouter` at `/notifications` (not at a path overlapping
- * any existing route below).
  *
  * Param type is intentionally `Hono<any>` — Hono apps with extra Variables
  * still match the structural shape, and we don't want this helper to leak
@@ -41,6 +38,8 @@ export function mountEbt(app: Hono<any>): void {
   app.route('/refresh', refreshRouter);
   app.route('/deposit-calendar', depositCalendarRouter);
   app.route('/lock', lockRouter);
+  // Lane D (T10) — notifications register + prefs
+  app.route('/notifications', notificationsRouter);
 }
 
 /**
@@ -62,4 +61,5 @@ export {
   depositCalendarRouter,
   lockRouter,
   webhooksRouter,
+  notificationsRouter,
 };
