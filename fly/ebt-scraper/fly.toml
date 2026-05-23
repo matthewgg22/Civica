@@ -1,0 +1,53 @@
+# Civica EBT scraper — Fly.io config
+#
+# Service model: HTTP webhook handler. Gateway POSTs to /scrape with HMAC signature;
+# scraper drives Playwright headless Chromium against ebt.ca.gov; emits events back
+# to gateway /webhooks/ebt-scraper.
+#
+# Scaling: auto-stop idle. Issuance-day burst (~160K scrapes in 2h window per
+# plan §4.4 / D13) fans out via Cloudflare Queue (or pgmq) consumer; pool grows
+# up to 50 machines, each handling ~3K scrapes serially with jitter.
+#
+# Deploy flow (per plan §16.7 and memory feedback_fly_deploy_worktree):
+#   cd ~/Developer/Civica   # <-- NOT from a worktree; BuildKit chokes on .git file
+#   fly launch --copy-config --no-deploy --config fly/ebt-scraper/fly.toml
+#   fly secrets set --config fly/ebt-scraper/fly.toml \
+#     EBT_SCRAPER_WEBHOOK_SECRET="..." \
+#     GATEWAY_WEBHOOK_URL="https://civica-snap-api.fly.dev/webhooks/ebt-scraper" \
+#     GATEWAY_WEBHOOK_SECRET="..." \
+#     COOKIE_DECRYPT_KEY="..." \
+#     SENTRY_DSN="..."
+#   flyctl deploy --config fly/ebt-scraper/fly.toml
+
+app = "civica-ebt-scraper"
+primary_region = "sjc"   # California recipients → minimize cross-country latency to ebt.ca.gov
+
+[build]
+  dockerfile = "fly/ebt-scraper/Dockerfile"
+
+[env]
+  NODE_ENV = "production"
+  PORT = "8080"
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = "stop"
+  auto_start_machines = true
+  min_machines_running = 0
+  # Cap at 50 — covers issuance-day burst with headroom; revisit if metrics show queue depth.
+  # See plan §4.4 D13 (Fly pool ~50 + 1-hour jitter on issuance days).
+  max_machines_running = 50
+
+  [[http_service.checks]]
+    grace_period = "10s"
+    interval = "30s"
+    method = "GET"
+    path = "/healthz"
+    timeout = "5s"
+
+# Playwright Chromium is memory-hungry. 2GB gives headroom for 1-2 concurrent
+# scrape sessions per machine; horizontal scale via machine count, not RAM.
+[[vm]]
+  size = "shared-cpu-2x"
+  memory = "2gb"

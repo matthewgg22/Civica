@@ -1,0 +1,23 @@
+<!--
+  Fixture: portal redirected us to the login page (session expired). Triggers
+  the sessionExpired detector via the loginForm marker.
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Sign in — EBT Cardholder Portal</title>
+</head>
+<body>
+  <main>
+    <h1>Sign in to your EBT account</h1>
+    <p>Your session has expired. Please log in again to continue.</p>
+    <form id="loginForm" method="post" action="/cardholder/login">
+      <label for="cardNumber">Card Number</label>
+      <input type="text" name="cardNumber" id="cardNumber" maxlength="16" />
+      <label for="pin">PIN</label>
+      <input type="password" name="pin" id="pin" maxlength="4" />
+      <button type="submit">Sign in</button>
+    </form>
+  </main>
+</body>
+</html>
