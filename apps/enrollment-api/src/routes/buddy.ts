@@ -28,6 +28,7 @@ import { z } from "zod";
 import { HTTPException } from "hono/http-exception";
 import { makeAnonClient, makeServiceClient } from "../lib/supabase.js";
 import { requireApplicant, requireBuddy } from "../lib/auth.js";
+import { rateLimit } from "../lib/rate-limit.js";
 import type { Env } from "../types.js";
 
 const app = new Hono<{ Bindings: Env }>();
@@ -65,7 +66,7 @@ const inviteBodySchema = z.object({
   org_code: z.string().optional(),
 });
 
-app.post("/invite", zValidator("json", inviteBodySchema), async (c) => {
+app.post("/invite", rateLimit("strict"), zValidator("json", inviteBodySchema), async (c) => {
   const actor = c.get("actor");
   requireApplicant(actor.kind);
 
@@ -157,7 +158,7 @@ const acceptBodySchema = z.object({
   token: z.string().min(1),
 });
 
-app.post("/accept", zValidator("json", acceptBodySchema), async (c) => {
+app.post("/accept", rateLimit("strict"), zValidator("json", acceptBodySchema), async (c) => {
   const actor = c.get("actor");
 
   if (!buddyEnabled(c.env)) {

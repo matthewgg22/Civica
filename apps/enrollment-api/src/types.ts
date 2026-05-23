@@ -44,6 +44,12 @@ export interface Env {
   // Dedicated signing key for buddy invite JWTs (separate from SNAP_FERNET_KEY).
   // Set via: wrangler secret put BUDDY_JWT_SECRET
   BUDDY_JWT_SECRET?: string;
+  // Rate-limit bindings (TODO-2). 10/min for token/account-sensitive endpoints,
+  // 60/min for mutating applicant endpoints. See wrangler.toml + lib/rate-limit.ts.
+  // Optional in the type so vitest mocks and pre-deploy environments don't have
+  // to stub them. lib/rate-limit.ts no-ops cleanly when a binding is absent.
+  RL_STRICT?: RateLimit;
+  RL_STANDARD?: RateLimit;
 }
 
 export interface Variables {

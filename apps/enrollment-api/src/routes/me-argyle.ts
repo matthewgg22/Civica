@@ -19,6 +19,7 @@ import { HTTPException } from "hono/http-exception";
 import { makeServiceClient } from "../lib/supabase.js";
 import { getOrCreateApplicant } from "../lib/applicant.js";
 import { requireApplicant } from "../lib/auth.js";
+import { rateLimit } from "../lib/rate-limit.js";
 import type { Env } from "../types.js";
 
 const app = new Hono<{ Bindings: Env }>();
@@ -72,7 +73,7 @@ app.get("/", async (c) => {
 // POST /me/argyle/connect — register Argyle user ID after iOS SDK link
 // ---------------------------------------------------------------------------
 
-app.post("/", zValidator("json", connectBodySchema), async (c) => {
+app.post("/", rateLimit("standard"), zValidator("json", connectBodySchema), async (c) => {
   const actor = c.get("actor");
   requireApplicant(actor.kind);
 

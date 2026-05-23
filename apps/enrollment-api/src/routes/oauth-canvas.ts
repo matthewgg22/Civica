@@ -27,6 +27,7 @@ import { z } from 'zod';
 import { HTTPException } from 'hono/http-exception';
 import { makeAnonClient, makeServiceClient } from '../lib/supabase.js';
 import { getCache, setCache } from '../lib/cache.js';
+import { rateLimit } from '../lib/rate-limit.js';
 import type { Env } from '../types.js';
 
 const SCHEDULE_TTL_SECONDS = 300; // 5-min cache for Canvas schedule
@@ -131,7 +132,7 @@ const exchangeBodySchema = z.object({
 
 const app = new Hono<{ Bindings: Env }>();
 
-app.post('/exchange', zValidator('json', exchangeBodySchema), async (c) => {
+app.post('/exchange', rateLimit('strict'), zValidator('json', exchangeBodySchema), async (c) => {
   const actor = c.get('actor');
   const body = c.req.valid('json');
   if (!c.env.CANVAS_CLIENT_ID || !c.env.CANVAS_CLIENT_SECRET) {
