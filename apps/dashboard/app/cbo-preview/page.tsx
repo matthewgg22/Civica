@@ -28,42 +28,28 @@ const FUNNEL_STEPS = [
   { name: "Handoff", count: 764, pct: "61.6%" },
 ] as const;
 
+// Cut from 6 to 3 cards to (a) drop the AI-template 3-column emoji grid
+// (Slop blacklist #2 + #7) and (b) front-load the props a procurement
+// reader actually evaluates Civica on: federal penalty avoidance,
+// quantified navigator productivity, and out-of-box compliance posture.
 const VALUE_PROPS = [
   {
-    icon: "⚡",
-    headline: "Faster intakes",
-    description:
-      "AI-assisted Q&A reduces intake from ~45 min to ~12 min per applicant.",
+    eyebrow: "Penalty avoidance",
+    headline: "PER below the §10105 threshold",
+    body:
+      "Structured intake catches eligibility errors before submission. Civica cohort runs 4.2% PER vs ~10.8% with manual forms — under the federal payment-error trigger.",
   },
   {
-    icon: "✓",
-    headline: "Lower error rate",
-    description:
-      "Structured data collection cuts PER to below the §10105 penalty threshold.",
+    eyebrow: "Productivity",
+    headline: "3× more households per navigator",
+    body:
+      "AI-assisted Q&A drops intake from ~45 min to ~12 min per applicant. One navigator supports 23 enrollments/month with Civica vs 7 with manual forms.",
   },
   {
-    icon: "👥",
-    headline: "Navigator leverage",
-    description:
-      "One navigator can support 3× more households using Civica than manual forms.",
-  },
-  {
-    icon: "📋",
-    headline: "Document readiness",
-    description:
-      "Auto-checklist reduces missing-document rates by ~60% at handoff.",
-  },
-  {
-    icon: "🔒",
-    headline: "Compliance built-in",
-    description:
-      "Consent logging, data retention, and CCPA/OBBBA guardrails out of the box.",
-  },
-  {
-    icon: "📡",
-    headline: "Real-time status",
-    description:
-      "Applicants self-track on mobile; navigators see live queue with priority flags.",
+    eyebrow: "Audit-ready",
+    headline: "CCPA + OBBBA guardrails out of the box",
+    body:
+      "Consent logging, data retention windows, encryption at rest, role-based access. Configured for California; OBBBA work-requirement updates auto-applied.",
   },
 ] as const;
 
@@ -166,13 +152,13 @@ export default async function CBOPreviewPage() {
       {/* ------------------------------------------------------------------ */}
       <section className="px-6 md:px-8 py-6" aria-label="Value propositions">
         <p className="eyebrow mb-4">Why CBOs license Civica</p>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {VALUE_PROPS.map((vp) => (
             <ValuePropCard
               key={vp.headline}
-              icon={vp.icon}
+              eyebrow={vp.eyebrow}
               headline={vp.headline}
-              description={vp.description}
+              body={vp.body}
             />
           ))}
         </div>
@@ -313,27 +299,23 @@ function FunnelStep({
 // Value proposition card sub-component
 // ---------------------------------------------------------------------------
 function ValuePropCard({
-  icon,
+  eyebrow,
   headline,
-  description,
+  body,
 }: {
-  icon: string;
+  eyebrow: string;
   headline: string;
-  description: string;
+  body: string;
 }) {
   return (
-    <div className="bg-surface border border-hairline rounded-[4px] p-5">
-      <div className="flex items-start gap-3">
-        <span className="text-xl leading-none flex-shrink-0" aria-hidden="true">
-          {icon}
-        </span>
-        <div>
-          <p className="text-sm font-semibold text-ink">{headline}</p>
-          <p className="text-[12px] text-graphite mt-1 leading-relaxed">
-            {description}
-          </p>
-        </div>
-      </div>
+    <div className="bg-surface border border-hairline rounded-[4px] p-6 flex flex-col">
+      <p className="eyebrow mb-2">{eyebrow}</p>
+      <p className="text-[17px] font-semibold text-ink leading-snug tracking-tight">
+        {headline}
+      </p>
+      <p className="text-[13px] text-graphite mt-3 leading-relaxed">
+        {body}
+      </p>
     </div>
   );
 }
