@@ -12,6 +12,7 @@ import SwiftUI
 
 struct EBTBalanceDashboardView: View {
     @ObservedObject var store: EBTBalanceStore
+    @ObservedObject var anomalyStore: EBTAnomalyStore
     let language: CivicaLanguage
 
     /// The transaction whose detail sheet is open, paired with the
@@ -32,6 +33,19 @@ struct EBTBalanceDashboardView: View {
             if let account = store.account {
                 let insights = EBTBalanceInsights(account: account)
                 VStack(alignment: .leading, spacing: CivicaSpacing.lg) {
+                    // Anti-skimming anomaly banner — highest-severity first.
+                    // Rendered above all status banners and the hero card so
+                    // it can never be obscured. Lane F's "Scan receipt" button
+                    // is injected BELOW spendingInsightsCard; no overlap here.
+                    if !anomalyStore.activeAlerts.isEmpty {
+                        EBTAnomalyBannerView(
+                            alert: anomalyStore.activeAlerts[0],
+                            store: anomalyStore,
+                            language: language
+                        )
+                        .transition(.move(edge: .top).combined(with: .opacity))
+                    }
+
                     // Status banners sit above the dark hero card so they
                     // can use their standard light-background styling.
                     if let landed = depositLanded {

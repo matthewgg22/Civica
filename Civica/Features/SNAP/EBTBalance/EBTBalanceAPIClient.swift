@@ -38,6 +38,12 @@ protocol EBTBalanceAPIClient: Sendable {
 
     /// POST /ebt/notifications/register — APNs device-token upsert.
     func registerPushToken(_ token: String) async throws
+
+    /// POST /ebt/notifications/prefs — persist per-user notification
+    /// preferences to the gateway. Called by EBTAnomalyStore when the
+    /// travel-mute window changes, and by EBTNotificationPrefsStore on
+    /// every toggle. Closes the C↔D bridge TODO in EBTPushWiring.swift.
+    func updateNotificationPrefs(_ prefs: EBTNotificationPrefsPayload) async throws
 }
 
 // MARK: - Errors
@@ -211,6 +217,13 @@ struct HTTPEBTBalanceAPIClient: EBTBalanceAPIClient {
         )
     }
 
+    func updateNotificationPrefs(_ prefs: EBTNotificationPrefsPayload) async throws {
+        let _: EmptyResponse = try await post(
+            path: "notifications/prefs",
+            body: prefs
+        )
+    }
+
     // MARK: Helpers
 
     private func getJSON<R: Decodable>(path: String) async throws -> R {
@@ -363,5 +376,9 @@ final class MockEBTBalanceAPIClient: EBTBalanceAPIClient, @unchecked Sendable {
 
     func registerPushToken(_ token: String) async throws {
         registeredTokens.append(token)
+    }
+
+    func updateNotificationPrefs(_ prefs: EBTNotificationPrefsPayload) async throws {
+        // No-op stub for tests and previews.
     }
 }

@@ -35,18 +35,11 @@ final class EBTPushClientBridge: EBTBalancePushAPIClient, EBTNotificationPrefsAP
     // MARK: - EBTNotificationPrefsAPIClient
 
     func updateNotificationPrefs(_ prefs: EBTNotificationPrefsPayload) async throws {
-        // The gateway route POST /ebt/notifications/prefs exists (Lane D
-        // shipped it); the iOS-side wire from HTTPEBTBalanceAPIClient is a
-        // small follow-up — add the method to the EBTBalanceAPIClient
-        // protocol + implement in HTTPEBTBalanceAPIClient + MockEBTBalanceAPIClient,
-        // then call it here.
-        //
-        // For Phase 1 ship: local prefs persist via UserDefaults (Lane D
-        // already does this); backend sync becomes a no-op until the
-        // protocol gains the method. Per Lane D's report, when `apiClient`
-        // is nil the prefs store is local-only — same effective behavior.
-        // TODO[ebt-prefs-backend-sync]: extend EBTBalanceAPIClient + wire here.
-        _ = prefs
+        // C↔D bridge TODO closed by Phase 2 / Lane G:
+        // EBTBalanceAPIClient now declares updateNotificationPrefs(_:)
+        // and HTTPEBTBalanceAPIClient implements it as
+        // POST /ebt/notifications/prefs. Forward the call directly.
+        try await client.updateNotificationPrefs(prefs)
     }
 }
 

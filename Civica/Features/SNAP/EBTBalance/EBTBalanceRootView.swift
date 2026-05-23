@@ -15,12 +15,48 @@ import SwiftUI
 // Demo scope: California only. "Linking" is simulated — see
 // EBTBalanceStore. Civica does not integrate with a real state EBT
 // system, hence the always-visible demo disclosure on both surfaces.
+//
+// Phase 2 / Lane G wires in EBTAnomalyStore (anti-skimming alerts).
+// The anomaly store subscribes to the repository. At flag-OFF the
+// repository is backed by a mock client and serves no transactions,
+// so activeAlerts will always be empty — the banner is invisible.
 
 struct EBTBalanceRootView: View {
     @AppStorage(CivicaLanguage.defaultStorageKey)
     private var languageRaw: String = CivicaLanguage.english.rawValue
 
-    @StateObject private var store = EBTBalanceStore()
+    // The store hierarchy is constructed lazily so production wiring
+    // (flag-ON with a real API client) can be injected by the parent.
+    // For previews + flag-OFF, the defaults produce a fixture-backed
+    // stack with no network calls.
+    @StateObject private var store: EBTBalanceStore
+    @StateObject private var anomalyStore: EBTAnomalyStore
+
+    /// Failable initializer used by previews + the production app entry
+    /// point. Pass nil for both to get the fixture-only stack.
+    init(
+        store: EBTBalanceStore? = nil,
+        anomalyStore: EBTAnomalyStore? = nil
+    ) {
+        let resolvedStore = store ?? EBTBalanceStore()
+        let resolvedAnomalyStore: EBTAnomalyStore
+
+        if let provided = anomalyStore {
+            resolvedAnomalyStore = provided
+        } else {
+            // Fixture-only stack: mock client + in-memory defaults.
+            // No network calls; activeAlerts always empty at flag-OFF.
+            let mockClient = MockEBTBalanceAPIClient()
+            let repo = EBTBalanceRepository(
+                apiClient: mockClient,
+                defaults: UserDefaults(suiteName: "co.civica.ebt.root.preview") ?? .standard
+            )
+            resolvedAnomalyStore = EBTAnomalyStore(repository: repo)
+        }
+
+        _store = StateObject(wrappedValue: resolvedStore)
+        _anomalyStore = StateObject(wrappedValue: resolvedAnomalyStore)
+    }
 
     private var language: CivicaLanguage {
         CivicaLanguage(rawValue: languageRaw) ?? .english
@@ -29,7 +65,7 @@ struct EBTBalanceRootView: View {
     var body: some View {
         Group {
             if store.account != nil {
-                EBTBalanceDashboardView(store: store, language: language)
+                EBTBalanceDashboardView(store: store, anomalyStore: anomalyStore, language: language)
             } else {
                 EBTLinkCardView(store: store, language: language)
             }
