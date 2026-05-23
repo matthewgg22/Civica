@@ -28,6 +28,11 @@ import buddyRouter from "./routes/buddy.js";
 import { requestLogger } from "./lib/logger.js";
 import { scrubEvent } from "./lib/sentry.js";
 import { withSentry } from "@sentry/cloudflare";
+import { makeServiceClient } from "./lib/supabase.js";
+import {
+  StubUsdaRetailerFetcher,
+  syncUsdaRetailers,
+} from "./lib/usda-retailer-sync.js";
 import type { Env, Variables } from "./types.js";
 
 const app = new Hono<{ Bindings: Env; Variables: Variables }>();
@@ -144,6 +149,62 @@ export { app };
 
 import { cleanupBuddyAppMetadata } from "./cron/buddy-app-metadata-cleanup.js";
 
+// Cron dispatch — keep tiny and table-driven so adding/removing
+// schedules in wrangler.toml is the only change needed. Tasks run under
+// the same Sentry envelope as fetch (Sentry's CF integration wires both).
+async function dispatchScheduled(
+  event: ScheduledController,
+  env: Env,
+): Promise<void> {
+  const log = (
+    level: "info" | "warn" | "error",
+    msg: string,
+    extra?: Record<string, unknown>,
+  ) => {
+    console.log(
+      JSON.stringify({
+        level,
+        msg,
+        cron: event.cron,
+        ts: new Date().toISOString(),
+        ...extra,
+      }),
+    );
+  };
+
+  switch (event.cron) {
+    case "0 3 * * *": {
+      // Nightly USDA SNAP Retailer Locator sync. Currently stub-mode —
+      // live USDA endpoint is wired in a follow-up commit once the
+      // public URL + field map is verified.
+      log("info", "scheduled: usda retailer sync starting");
+      const supabase = makeServiceClient(env);
+      const result = await syncUsdaRetailers({
+        fetcher: new StubUsdaRetailerFetcher(),
+        supabase,
+        log,
+      });
+      log("info", "scheduled: usda retailer sync finished", { ...result });
+      return;
+    }
+    case "*/5 * * * *": {
+      // Buddy access closure: clear app_metadata.role for revoked/completed
+      // buddies so their JWTs stop authenticating as kind='buddy'. Without this
+      // sweep, the buddy role claim survives until token expiry (~1h).
+      // See src/cron/buddy-app-metadata-cleanup.ts.
+      try {
+        const result = await cleanupBuddyAppMetadata(env);
+        log("info", "scheduled: buddy app_metadata cleanup finished", { ...result });
+      } catch (err) {
+        log("error", "scheduled: buddy app_metadata cleanup failed", { error: String(err) });
+      }
+      return;
+    }
+    default:
+      log("warn", "scheduled: no handler for cron expression");
+  }
+}
+
 export default withSentry(
   (env: Env) => ({
     dsn: env.SENTRY_DSN,
@@ -154,21 +215,12 @@ export default withSentry(
     async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
       return app.fetch(request, env, ctx);
     },
-    async scheduled(_controller: ScheduledController, env: Env, ctx: ExecutionContext): Promise<void> {
-      // Buddy access closure: clear app_metadata.role for revoked/completed
-      // buddies so their JWTs stop authenticating as kind='buddy'. Without this
-      // sweep, the buddy role claim survives until token expiry (~1h).
-      ctx.waitUntil(
-        cleanupBuddyAppMetadata(env).then(
-          (result) => {
-            const log = { msg: "buddy_app_metadata_cleanup", ...result };
-            console.log(JSON.stringify(log));
-          },
-          (err) => {
-            console.error(JSON.stringify({ msg: "buddy_app_metadata_cleanup_failed", error: String(err) }));
-          },
-        ),
-      );
+    async scheduled(
+      event: ScheduledController,
+      env: Env,
+      ctx: ExecutionContext,
+    ): Promise<void> {
+      ctx.waitUntil(dispatchScheduled(event, env));
     },
   } satisfies ExportedHandler<Env>,
 );

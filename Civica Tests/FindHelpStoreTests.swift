@@ -165,6 +165,22 @@ private final class StubService: FindHelpServiceProtocol, @unchecked Sendable {
         return results
     }
 
+    func searchRetailersNearby(
+        lat: Double,
+        lng: Double,
+        radiusKm: Double,
+        precision: FindHelpLocationPrecision,
+        maxResults: Int
+    ) async throws -> [FindHelpLocation] {
+        callCount += 1
+        // The retailer RPC is the same shape; stub reuses `results` and
+        // remembers the precision so existing assertions keep working.
+        // serviceType is implicit (ebt_retailer) so we don't record it.
+        lastPrecision = precision
+        if let error { throw error }
+        return results.filter { $0.resolvedRecordKind == .ebtRetailer }
+    }
+
     func loadSources() async throws -> [FindHelpSourceAttribution] {
         []
     }

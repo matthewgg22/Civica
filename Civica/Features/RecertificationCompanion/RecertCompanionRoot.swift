@@ -14,6 +14,8 @@ struct RecertCompanionRoot: View {
     private var languageRaw: String = CivicaLanguage.english.rawValue
 
     @EnvironmentObject private var statusStore: SNAPApplicationStatusStore
+    @EnvironmentObject private var enrollmentAuth: CivicaEnrollmentAuth
+    @EnvironmentObject private var recertContext: RecertContextStore
     @StateObject private var scheduleStore = RecertScheduleStore()
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
@@ -147,7 +149,18 @@ struct RecertCompanionRoot: View {
             AppealEntryView(stateCode: stateCode)
         }
         .navigationDestination(isPresented: $presentingInterviewCoach) {
-            PracticeSessionView()
+            // When the shared recert context resolves to .ready we hand
+            // the live recertId + auth to the Practice view; otherwise
+            // the default init lands the VM in a clear failure state
+            // (sign-in required / no active recert).
+            if case .ready(let recert) = recertContext.state {
+                PracticeSessionView(recertId: recert.recertId, auth: enrollmentAuth)
+            } else {
+                PracticeSessionView()
+            }
+        }
+        .task(id: enrollmentAuth.state.isAuthenticated) {
+            await recertContext.refresh(auth: enrollmentAuth, language: language)
         }
         .onAppear {
             RecertCompanionAnalytics.trackHomeViewed()
@@ -520,6 +533,8 @@ struct RecertCompanionRoot_Previews: PreviewProvider {
         NavigationStack {
             RecertCompanionRoot()
                 .environmentObject(SNAPApplicationStatusStore())
+                .environmentObject(CivicaEnrollmentAuth())
+                .environmentObject(RecertContextStore())
         }
     }
 }
@@ -528,6 +543,8 @@ struct RecertCompanionRoot_Previews: PreviewProvider {
     NavigationStack {
         RecertCompanionRoot()
             .environmentObject(SNAPApplicationStatusStore())
+            .environmentObject(CivicaEnrollmentAuth())
+            .environmentObject(RecertContextStore())
     }
     .dynamicTypeSize(.xxxLarge)
 }
@@ -536,6 +553,8 @@ struct RecertCompanionRoot_Previews: PreviewProvider {
     NavigationStack {
         RecertCompanionRoot()
             .environmentObject(SNAPApplicationStatusStore())
+            .environmentObject(CivicaEnrollmentAuth())
+            .environmentObject(RecertContextStore())
     }
     .dynamicTypeSize(.accessibility1)
 }

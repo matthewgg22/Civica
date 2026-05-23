@@ -3,13 +3,6 @@ main = "src/index.ts"
 compatibility_date = "2025-05-01"
 compatibility_flags = ["nodejs_compat"]
 
-# Scheduled handlers. Every 5 minutes the worker invokes the buddy
-# app_metadata cleanup sweep — see src/cron/buddy-app-metadata-cleanup.ts.
-# The /plan-eng-review T2 fix closes the buddy JWT one-way door: max
-# post-revoke exposure is the cron interval, not the JWT TTL.
-[triggers]
-crons = ["*/5 * * * *"]
-
 [vars]
 SUPABASE_URL = "https://zgqphgcqfxsgviofsccs.supabase.co"
 # T15: enable AI-powered coaching in the recert practice interview.
@@ -81,3 +74,13 @@ BUDDY_ADD_ENABLED = "false"
 # in-house browser execution. See packages/benefitscal-cbo/README.md for the
 # v1→v2 migration playbook.
 #   BROWSERLESS_API_KEY=...             # wrangler secret put BROWSERLESS_API_KEY
+
+# Scheduled (cron) triggers — handled by the `scheduled()` export in src/index.ts.
+# Track 1 / M1: nightly USDA SNAP Retailer Locator sync at 03:00 UTC. The
+# handler is currently stub-mode (no live records ingested) until the public
+# USDA endpoint URL + field map is verified. The cron still runs so
+# find_help_sources timestamps stay fresh and the path is observable.
+# T2 (/plan-eng-review 2026-05-22): every 5 minutes, clear app_metadata.role
+# for completed/revoked buddy relationships. See src/cron/buddy-app-metadata-cleanup.ts.
+[triggers]
+crons = ["0 3 * * *", "*/5 * * * *"]
