@@ -27,6 +27,27 @@ export { combineScores, rollupFactors } from "./scoring/defensibility";
 export { scoreErrorRisk, ERROR_WEIGHT } from "./scoring/error-risk";
 export type { ErrorRiskResult, ErrorRiskTier } from "./scoring/error-risk";
 
+// Failure-to-elect detector (item 2): finds deductions/elections the
+// household qualifies for but hasn't claimed — the underpayment iceberg.
+export { detectMissedElections, totalMissedMonthlyValue } from "./scoring/failure-to-elect";
+export type {
+  MissedElection,
+  MissedElectionKind,
+  MissedElectionConfidence,
+  HouseholdElectionProfile,
+} from "./scoring/failure-to-elect";
+
+// Sublease classifier (item 3): deterministic v1 routing — primary tenancy
+// auto-flows, sublease/shared-tenancy routes to navigator review,
+// informal arrangements route to the informal-housing intake wizard.
+export { classifyTenancy } from "./flows/shared-lease/classifier";
+export type {
+  LeaseClassification,
+  LeaseClassifierInput,
+  TenancyKind,
+  ClassifierAction,
+} from "./flows/shared-lease/classifier";
+
 export interface EvaluateOptions {
   /** Override timestamp source (for deterministic tests). */
   now?: () => string;
