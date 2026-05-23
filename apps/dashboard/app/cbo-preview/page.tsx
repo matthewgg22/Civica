@@ -4,6 +4,7 @@ import { createServerClientFromCookies } from "../../lib/supabase";
 import DemoModeBadge from "../../components/DemoModeBadge";
 import CBOContactButton from "../../components/CBOContactButton";
 import StatusPill from "../../components/StatusPill";
+import StatusBadge from "../../components/StatusBadge";
 
 export const dynamic = "force-dynamic";
 
@@ -59,6 +60,8 @@ const VALUE_PROPS = [
 // most common navigator-facing states: needs-attention, in-review, and
 // ready-for-handoff. Risk tiers split low/medium so the dot pattern is
 // visible in the snapshot.
+// badge bg + glyph are derived from `status` by the shared StatusBadge
+// component, so only status/risk/identity fields live on the sample row.
 const SAMPLE_PACKETS = [
   {
     id: "sample-1",
@@ -66,9 +69,6 @@ const SAMPLE_PACKETS = [
     applicantName: "Sarah M.",
     county: "Tracy",
     status: "Needs Documents",
-    badgeBg: "bg-warning",
-    badgeIcon: "!",
-    riskTier: "medium" as const,
     riskLabel: "Medium risk",
     riskDotBg: "bg-warning",
     timeAgo: "2h ago",
@@ -79,9 +79,6 @@ const SAMPLE_PACKETS = [
     applicantName: "Carlos R.",
     county: "Fresno",
     status: "In Navigator Review",
-    badgeBg: "bg-indigo",
-    badgeIcon: "◉",
-    riskTier: "low" as const,
     riskLabel: "Low risk",
     riskDotBg: "bg-teal",
     timeAgo: "5h ago",
@@ -92,9 +89,6 @@ const SAMPLE_PACKETS = [
     applicantName: "Linh T.",
     county: "San Jose",
     status: "Ready for Handoff",
-    badgeBg: "bg-teal",
-    badgeIcon: "✓",
-    riskTier: "low" as const,
     riskLabel: "Low risk",
     riskDotBg: "bg-teal",
     timeAgo: "1d ago",
@@ -206,17 +200,7 @@ export default async function CBOPreviewPage() {
               key={p.id}
               className={`flex items-center gap-4 px-5 py-4 ${i > 0 ? "border-t border-hairline" : ""}`}
             >
-              {/* StatusBadge — reproduced inline; real component lives in
-                  packets/page.tsx. Same a11y pattern as T9: role="img" +
-                  aria-label, glyph wrapped aria-hidden. */}
-              <div
-                role="img"
-                aria-label={`Status: ${p.status}`}
-                title={p.status}
-                className={`w-9 h-9 rounded-full ${p.badgeBg} flex items-center justify-center text-white text-[15px] font-semibold shrink-0`}
-              >
-                <span aria-hidden="true">{p.badgeIcon}</span>
-              </div>
+              <StatusBadge status={p.status} />
               <div className="flex-1 min-w-0">
                 <div className="flex items-baseline gap-2 flex-wrap">
                   <p className="text-[15px] font-semibold text-ink">{p.applicantName}</p>

@@ -2,6 +2,7 @@ import { cookies } from "next/headers";
 import Link from "next/link";
 import { createServerClientFromCookies } from "../../lib/supabase";
 import StatusPill from "../../components/StatusPill";
+import StatusBadge from "../../components/StatusBadge";
 import FilterChips from "../../components/FilterChips";
 import AppHeader from "../../components/AppHeader";
 import { timeAgo, decryptDemoName, firstNameLastInitial, shortId } from "../../lib/format";
@@ -317,27 +318,3 @@ function EmptyQueueState({ filter }: { filter: Filter }) {
   );
 }
 
-const STATUS_BADGE: Record<string, { bg: string; icon: string }> = {
-  "Draft": { bg: "bg-graphite", icon: "✎" },
-  "Submitted for Review": { bg: "bg-teal", icon: "↑" },
-  "Needs Documents": { bg: "bg-warning", icon: "!" },
-  "Needs Applicant Clarification": { bg: "bg-warning", icon: "?" },
-  "In Navigator Review": { bg: "bg-indigo", icon: "◉" },
-  "Ready for Handoff": { bg: "bg-teal", icon: "✓" },
-  "Handed Off": { bg: "bg-pine", icon: "→" },
-  "Closed": { bg: "bg-graphite", icon: "•" },
-};
-
-function StatusBadge({ status }: { status: string }) {
-  const cfg = STATUS_BADGE[status] ?? STATUS_BADGE["Draft"];
-  return (
-    <div
-      role="img"
-      aria-label={`Status: ${status}`}
-      title={status}
-      className={`w-9 h-9 rounded-full ${cfg.bg} flex items-center justify-center text-white text-[15px] font-semibold shrink-0`}
-    >
-      <span aria-hidden="true">{cfg.icon}</span>
-    </div>
-  );
-}
