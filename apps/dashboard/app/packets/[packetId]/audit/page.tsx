@@ -20,9 +20,15 @@ type AuditRow = {
   occurred_at: string;
 };
 
+// Audit-event category colors. INSERT and DELETE keep their semantic
+// tones (teal = data added, brick = data removed). UPDATE was on amber,
+// but per DESIGN.md amber is positive-outcome — an UPDATE isn't a
+// warning, it's just a different category of change. Switched to
+// graphite so all three categories read as event-type differentiators
+// rather than urgency signals.
 const OP_STYLE: Record<string, string> = {
   INSERT: "bg-teal/15 text-teal",
-  UPDATE: "bg-amber/15 text-amber",
+  UPDATE: "bg-graphite/15 text-graphite",
   DELETE: "bg-brick/15 text-brick",
 };
 

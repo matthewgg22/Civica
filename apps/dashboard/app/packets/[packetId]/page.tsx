@@ -901,7 +901,10 @@ function UnifiedTimeline({ history, docs, notes }: { history: HistoryRow[]; docs
       id: `n-${n.note_id}`,
       at: n.created_at,
       icon: "✎",
-      iconBg: "bg-amber/15 text-amber",
+      // Graphite (not amber) — notes are event-type differentiators in
+      // the activity timeline, not warnings. Amber here would mis-signal
+      // urgency on every navigator note.
+      iconBg: "bg-graphite/15 text-graphite",
       title: <span>Navigator added a {n.is_internal ? <span className="font-semibold text-ink">private note</span> : <span className="font-semibold text-ink">note visible to applicant</span>}</span>,
     });
   }
