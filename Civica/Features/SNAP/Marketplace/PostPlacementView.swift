@@ -18,6 +18,10 @@ struct PostPlacementView: View {
     // Set when POST /navigator/outreach has been called successfully.
     var navigatorOutreachScheduled: Bool = false
 
+    @AppStorage(CivicaLanguage.defaultStorageKey)
+    private var languageRaw: String = CivicaLanguage.english.rawValue
+    private var language: CivicaLanguage { CivicaLanguage(rawValue: languageRaw) ?? .english }
+
     var body: some View {
         ScrollView {
             VStack(spacing: 0) {
@@ -40,7 +44,7 @@ struct PostPlacementView: View {
             }
         }
         .background(CivicaColors.paper)
-        .navigationTitle("Update")
+        .navigationTitle(SNAPMarketplaceStrings.updateNavTitle.value(in: language))
         .navigationBarTitleDisplayMode(.inline)
     }
 
@@ -52,7 +56,7 @@ struct PostPlacementView: View {
 
     private var hero: some View {
         VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
-            Text("Paycheck confirmed · \(confirmedPaycheckDate.formatted(.dateTime.month(.wide).day()))")
+            Text(SNAPMarketplaceStrings.paycheckConfirmedPrefix.value(in: language) + confirmedPaycheckDate.formatted(.dateTime.month(.wide).day()))
                 .font(CivicaTypography.support)
                 .foregroundStyle(CivicaColors.graphite)
                 .textCase(.uppercase)
@@ -65,11 +69,11 @@ struct PostPlacementView: View {
                     .foregroundStyle(CivicaColors.graphite)
                 CivicaMoney(amount: confirmedJob.monthlyAmountUSD, font: CivicaTypography.subheadStrong)
                     .foregroundStyle(CivicaColors.ink)
-                Text("(first paycheck)")
+                Text(SNAPMarketplaceStrings.firstPaycheck.value(in: language))
                     .font(CivicaTypography.body)
                     .foregroundStyle(CivicaColors.graphite)
             }
-            Text("Confirmed via Argyle from your direct deposit.")
+            Text(SNAPMarketplaceStrings.confirmedViaArgyle.value(in: language))
                 .font(CivicaTypography.body)
                 .foregroundStyle(CivicaColors.graphite)
         }
@@ -81,7 +85,7 @@ struct PostPlacementView: View {
     // DR3-5: VoiceOver reads as single element "Your monthly benefit went from $X to $Y"
     private var benefitBeforeAfter: some View {
         VStack(alignment: .leading, spacing: CivicaSpacing.md) {
-            Text("Your benefit estimate")
+            Text(SNAPMarketplaceStrings.yourBenefitEstimateLabel.value(in: language))
                 .font(CivicaTypography.support)
                 .foregroundStyle(CivicaColors.graphite)
                 .textCase(.uppercase)
@@ -89,7 +93,7 @@ struct PostPlacementView: View {
 
             HStack(alignment: .firstTextBaseline, spacing: CivicaSpacing.lg) {
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("Was")
+                    Text(SNAPMarketplaceStrings.wasLabel.value(in: language))
                         .font(CivicaTypography.support)
                         .foregroundStyle(CivicaColors.graphite)
                         .textCase(.uppercase)
@@ -102,7 +106,7 @@ struct PostPlacementView: View {
                     .foregroundStyle(CivicaColors.graphite)
                     .font(.system(size: 14))
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("Now")
+                    Text(SNAPMarketplaceStrings.nowLabel.value(in: language))
                         .font(CivicaTypography.support)
                         .foregroundStyle(CivicaColors.graphite)
                         .textCase(.uppercase)
@@ -114,7 +118,7 @@ struct PostPlacementView: View {
             .accessibilityElement(children: .ignore)
             .accessibilityLabel("Your monthly benefit went from \(previousBenefitUSD.formatted(.currency(code: "USD"))) to \(confirmedJob.projectedBenefitUSD.formatted(.currency(code: "USD")))")
 
-            Text("Your county worker has been notified. No action needed.")
+            Text(SNAPMarketplaceStrings.countyNotified.value(in: language))
                 .font(CivicaTypography.body)
                 .foregroundStyle(CivicaColors.amberPrimary)
         }
@@ -129,11 +133,11 @@ struct PostPlacementView: View {
             HStack(spacing: CivicaSpacing.sm) {
                 Image(systemName: "exclamationmark.triangle.fill")
                     .foregroundStyle(CivicaColors.warningAmber)
-                Text("Your income may exceed the benefit limit")
+                Text(SNAPMarketplaceStrings.incomeExceedsLimit.value(in: language))
                     .font(CivicaTypography.subheadStrong)
                     .foregroundStyle(CivicaColors.warningAmber)
             }
-            Text("A navigator is reviewing your case. They can help you understand your options.")
+            Text(SNAPMarketplaceStrings.navigatorReviewingCase.value(in: language))
                 .font(CivicaTypography.body)
                 .foregroundStyle(CivicaColors.graphite)
                 .fixedSize(horizontal: false, vertical: true)
@@ -144,7 +148,7 @@ struct PostPlacementView: View {
                     Image(systemName: "checkmark.circle")
                         .foregroundStyle(CivicaColors.amberPrimary)
                         .font(.system(size: 14))
-                    Text("Navigator outreach scheduled — we'll text you when they call.")
+                    Text(SNAPMarketplaceStrings.navigatorOutreachScheduled.value(in: language))
                         .font(CivicaTypography.footnote)
                         .foregroundStyle(CivicaColors.graphite)
                 }
@@ -169,14 +173,14 @@ struct PostPlacementView: View {
     private var actions: some View {
         VStack(spacing: CivicaSpacing.md) {
             Button(action: onSeeBreakdown) {
-                Text("See full benefit breakdown")
+                Text(SNAPMarketplaceStrings.seeFullBenefitBreakdown.value(in: language))
                     .frame(maxWidth: .infinity)
             }
             .buttonStyle(CivicaSecondaryCTAButtonStyle())
             .accessibilityIdentifier("marketplace.post_placement.see_breakdown")
 
             Button(action: onReportProblem) {
-                Text("Report a problem")
+                Text(SNAPMarketplaceStrings.reportAProblem.value(in: language))
                     .font(CivicaTypography.body)
                     .foregroundStyle(CivicaColors.amberPrimary)
             }

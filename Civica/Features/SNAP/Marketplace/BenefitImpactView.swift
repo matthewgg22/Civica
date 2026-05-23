@@ -10,6 +10,10 @@ struct BenefitImpactView: View {
     let onApply: () -> Void
     let onBack: () -> Void
 
+    @AppStorage(CivicaLanguage.defaultStorageKey)
+    private var languageRaw: String = CivicaLanguage.english.rawValue
+    private var language: CivicaLanguage { CivicaLanguage(rawValue: languageRaw) ?? .english }
+
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: CivicaSpacing.xl) {
@@ -42,7 +46,7 @@ struct BenefitImpactView: View {
 
     // DR3-deferred-1: gig variability copy confirmed.
     private var gigVariabilityNote: some View {
-        Text("\(job.employerName) income changes monthly. We'll recalculate when each paycheck lands.")
+        Text(SNAPMarketplaceStrings.gigVariabilityNote(employerName: job.employerName, language: language))
             .font(CivicaTypography.footnote)
             .foregroundStyle(CivicaColors.graphite)
             .padding(CivicaSpacing.md)
@@ -54,7 +58,7 @@ struct BenefitImpactView: View {
 
     private var applyButton: some View {
         Button(action: onApply) {
-            Text("Apply via Handshake")
+            Text(SNAPMarketplaceStrings.applyViaHandshake.value(in: language))
                 .frame(maxWidth: .infinity)
         }
         .buttonStyle(CivicaPrimaryCTAButtonStyle())

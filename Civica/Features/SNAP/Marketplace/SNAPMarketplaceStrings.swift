@@ -204,6 +204,115 @@ enum SNAPMarketplaceStrings {
         es: "Envía un mensaje a tu trabajador asignado sobre este cambio."
     )
 
+    // MARK: - PostPlacementView (deprecated Screen 05 wrapper)
+
+    static let paycheckConfirmedPrefix = CivicaText(
+        "Paycheck confirmed · ",
+        es: "Cheque confirmado · "
+    )
+    static let confirmedViaArgyle = CivicaText(
+        "Confirmed via Argyle from your direct deposit.",
+        es: "Confirmado mediante Argyle desde tu depósito directo."
+    )
+    static let yourBenefitEstimateLabel = CivicaText(
+        "Your benefit estimate",
+        es: "Tu estimación de beneficio"
+    )
+    static let wasLabel = CivicaText(
+        "Was",
+        es: "Era"
+    )
+    static let nowLabel = CivicaText(
+        "Now",
+        es: "Ahora"
+    )
+    static let incomeExceedsLimit = CivicaText(
+        "Your income may exceed the benefit limit",
+        es: "Tus ingresos pueden superar el límite del beneficio"
+    )
+    static let navigatorReviewingCase = CivicaText(
+        "A navigator is reviewing your case. They can help you understand your options.",
+        es: "Un navegador está revisando tu caso. Pueden ayudarte a entender tus opciones."
+    )
+    static let navigatorOutreachScheduled = CivicaText(
+        "Navigator outreach scheduled — we'll text you when they call.",
+        es: "Contacto del navegador programado — te enviaremos un mensaje cuando llamen."
+    )
+    static let seeFullBenefitBreakdown = CivicaText(
+        "See full benefit breakdown",
+        es: "Ver desglose completo del beneficio"
+    )
+    static let reportAProblem = CivicaText(
+        "Report a problem",
+        es: "Reportar un problema"
+    )
+
+    // MARK: - MarketplaceEntryCard / PendingBenefitBanner
+
+    static let pendingBenefitReassurance = CivicaText(
+        "We'll have your amount within 24 hours. We'll text you.",
+        es: "Tendremos tu monto en 24 horas. Te enviaremos un mensaje."
+    )
+
+    // MARK: - JobMatchListView (deprecated Screen 02 wrapper)
+
+    static let openHoursLine = CivicaText(
+        "Open hours: M/W/F afternoons, T/Th evenings, weekends",
+        es: "Horario: lunes/miércoles/viernes tardes, martes/jueves noches, fines de semana"
+    )
+    static let beforeBenefitChanges = CivicaText(
+        "before benefit changes",
+        es: "antes de cambios en el beneficio"
+    )
+    static let rankingFramingCopy = CivicaText(
+        "We rank jobs by what's best for your income, not what's best for employers.",
+        es: "Ordenamos los empleos según lo mejor para tus ingresos, no para los empleadores."
+    )
+
+    // MARK: - ApplyHandoffSheet (deprecated Screen 04 wrapper)
+
+    static func applyingTo(employerName: String, language: CivicaLanguage) -> String {
+        switch language {
+        case .english: return "Applying to \(employerName)"
+        case .spanish: return "Solicitando en \(employerName)"
+        }
+    }
+    static let cancelButton = CivicaText(
+        "Cancel",
+        es: "Cancelar"
+    )
+    static func wellShareWith(employerName: String, language: CivicaLanguage) -> String {
+        switch language {
+        case .english: return "We'll share the following with \(employerName)"
+        case .spanish: return "Compartiremos lo siguiente con \(employerName)"
+        }
+    }
+    static let handshakeEmployerSystem = CivicaText(
+        "Handshake is the employer's system. Applying there means your application reaches the right person fast.",
+        es: "Handshake es el sistema del empleador. Solicitar ahí hace que tu solicitud llegue a la persona correcta rápidamente."
+    )
+    static let dontShareBenefitAmount = CivicaText(
+        "We don't share your benefit amount with employers.",
+        es: "No compartimos tu monto de beneficio con los empleadores."
+    )
+    static let applyOnHandshake = CivicaText(
+        "Apply on Handshake",
+        es: "Solicitar en Handshake"
+    )
+
+    // MARK: - BenefitImpactView (deprecated Screen 03 wrapper)
+
+    static func gigVariabilityNote(employerName: String, language: CivicaLanguage) -> String {
+        switch language {
+        case .english: return "\(employerName) income changes monthly. We'll recalculate when each paycheck lands."
+        case .spanish: return "Los ingresos de \(employerName) cambian cada mes. Recalcularemos cuando llegue cada cheque."
+        }
+    }
+    static let applyViaHandshake = CivicaText(
+        "Apply via Handshake",
+        es: "Solicitar vía Handshake"
+    )
+
     // MARK: - SNAPEnrolledView (Screen 01)
 
     static let enrolledNavTitle = CivicaText(

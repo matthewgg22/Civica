@@ -11,6 +11,10 @@ struct ApplyHandoffSheet: View {
     @Environment(\.dismiss) private var dismiss
     let onHandoffLogged: () -> Void   // fires after either CTA so Argyle webhook still triggers recalc
 
+    @AppStorage(CivicaLanguage.defaultStorageKey)
+    private var languageRaw: String = CivicaLanguage.english.rawValue
+    private var language: CivicaLanguage { CivicaLanguage(rawValue: languageRaw) ?? .english }
+
     var body: some View {
         NavigationStack {
             ScrollView {
@@ -23,11 +27,11 @@ struct ApplyHandoffSheet: View {
                 .padding(CivicaSpacing.lg)
             }
             .background(CivicaColors.paper)
-            .navigationTitle("Applying to \(job.employerName)")
+            .navigationTitle(SNAPMarketplaceStrings.applyingTo(employerName: job.employerName, language: language))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { dismiss() }
+                    Button(SNAPMarketplaceStrings.cancelButton.value(in: language)) { dismiss() }
                         .foregroundStyle(CivicaColors.amberPrimary)
                 }
             }
@@ -38,10 +42,10 @@ struct ApplyHandoffSheet: View {
 
     private var header: some View {
         VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
-            Text("We'll share the following with \(job.employerName)")
+            Text(SNAPMarketplaceStrings.wellShareWith(employerName: job.employerName, language: language))
                 .font(CivicaTypography.subheadStrong)
                 .foregroundStyle(CivicaColors.ink)
-            Text("Handshake is the employer's system. Applying there means your application reaches the right person fast.")
+            Text(SNAPMarketplaceStrings.handshakeEmployerSystem.value(in: language))
                 .font(CivicaTypography.body)
                 .foregroundStyle(CivicaColors.graphite)
                 .fixedSize(horizontal: false, vertical: true)
@@ -73,7 +77,7 @@ struct ApplyHandoffSheet: View {
     }
 
     private var privacyLine: some View {
-        Text("We don't share your benefit amount with employers.")
+        Text(SNAPMarketplaceStrings.dontShareBenefitAmount.value(in: language))
             .font(CivicaTypography.footnote)
             .foregroundStyle(CivicaColors.graphite)
             .padding(CivicaSpacing.md)
@@ -88,7 +92,7 @@ struct ApplyHandoffSheet: View {
         VStack(spacing: CivicaSpacing.md) {
             if job.handshakeJobURL != nil {
                 Button(action: openHandshake) {
-                    Text("Apply on Handshake")
+                    Text(SNAPMarketplaceStrings.applyOnHandshake.value(in: language))
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(CivicaPrimaryCTAButtonStyle())
