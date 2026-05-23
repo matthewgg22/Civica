@@ -45,6 +45,24 @@ const RESTRICTED_ROLE_ALLOWED_PREFIXES: Record<string, string[]> = {
 // app's internal API calls aren't blocked.
 const PUBLIC_PREFIXES = ["/auth/", "/api/", "/login", "/qc"];
 
+// Routes that bypass auth entirely — no Supabase session required.
+// Reserved for shareable public artifacts (e.g. per-county compliance briefs
+// that procurement officers forward to council members). Resolved in
+// middleware BEFORE supabase.auth.getUser() so the page renders to anyone.
+//
+// IMPORTANT: keep this list tight. Adding a prefix here removes the staff
+// gate for every nested route. /compliance itself is intentionally NOT
+// public — only /compliance/county/* is shareable.
+const FULLY_PUBLIC_PREFIXES = ["/compliance/county/"];
+
+/**
+ * True if `path` should be served without any auth gate.
+ * Used by middleware to short-circuit before the Supabase round-trip.
+ */
+export function isPubliclyAccessible(path: string): boolean {
+  return FULLY_PUBLIC_PREFIXES.some((prefix) => path.startsWith(prefix));
+}
+
 export function isStaff(role: unknown): role is string {
   return typeof role === "string" && STAFF_ROLES.has(role);
 }
