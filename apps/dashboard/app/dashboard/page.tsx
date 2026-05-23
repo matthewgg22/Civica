@@ -1,6 +1,7 @@
 import { cookies } from "next/headers";
 import { createServerClientFromCookies } from "../../lib/supabase";
 import AppHeader from "../../components/AppHeader";
+import FirstVisitCallout from "../../components/FirstVisitCallout";
 import ImpactCounter from "../../components/ImpactCounter";
 import Funnel from "../../components/Funnel";
 import LanguageDonut from "../../components/LanguageDonut";
@@ -399,6 +400,10 @@ export default async function DashboardPage() {
           </div>
           <p className="text-[13px] text-graphite">Live picture of every family Civica is helping enroll.</p>
         </div>
+
+        {/* First-visit callout — explains the morning-briefing pattern;
+            self-dismisses via localStorage, renders null after dismissal. */}
+        <FirstVisitCallout />
 
         {/* Urgent action banner + Mine Today (when there's anything to act on) */}
         {(overdueRecerts + expiringSoon + needsAttention > 0 || mineToday.touchedPackets > 0) && (
