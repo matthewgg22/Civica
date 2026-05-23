@@ -194,22 +194,22 @@ export default async function CDSSPage({
         <div
           className="rounded-[4px] border bg-surface p-5 md:p-6"
           style={{
-            borderColor: "color-mix(in srgb, var(--color-amber) 40%, transparent)",
+            borderColor: "color-mix(in srgb, var(--color-warning) 40%, transparent)",
           }}
         >
           <div className="flex items-start gap-3">
             <div
               className="mt-0.5 w-2 h-2 rounded-full flex-shrink-0"
-              style={{ backgroundColor: "var(--color-amber)" }}
+              style={{ backgroundColor: "var(--color-warning)" }}
               aria-hidden="true"
             />
             <div className="flex-1 min-w-0">
-              <p className="eyebrow mb-1" style={{ color: "var(--color-amber)" }}>
+              <p className="eyebrow mb-1" style={{ color: "var(--color-warning)" }}>
                 §10105 penalty exposure
               </p>
               <p
                 className="text-3xl font-semibold tabular-nums leading-none mt-1"
-                style={{ color: "var(--color-amber)" }}
+                style={{ color: "var(--color-warning)" }}
               >
                 ~$510M
               </p>
@@ -235,7 +235,7 @@ export default async function CDSSPage({
               <div
                 className="mt-4 p-3 rounded-[4px]"
                 style={{
-                  backgroundColor: "color-mix(in srgb, var(--color-amber) 6%, transparent)",
+                  backgroundColor: "color-mix(in srgb, var(--color-warning) 6%, transparent)",
                 }}
               >
                 <p className="text-[12px] text-graphite leading-relaxed">
@@ -328,14 +328,14 @@ function KpiCard({
 }) {
   const accentColor =
     variant === "warning"
-      ? "var(--color-amber)"
+      ? "var(--color-warning)"
       : variant === "success"
       ? "var(--color-ink)" // Use ink; CSS variable --color-green may not exist
       : "var(--color-ink)";
 
   const borderStyle =
     variant === "warning"
-      ? { borderColor: "color-mix(in srgb, var(--color-amber) 30%, transparent)" }
+      ? { borderColor: "color-mix(in srgb, var(--color-warning) 30%, transparent)" }
       : {};
 
   return (
@@ -376,7 +376,7 @@ function CategoryRow({
       <td className="py-2.5 pr-6 pl-1 text-graphite">{label}</td>
       <td
         className="py-2.5 pr-6 text-right tabular-nums font-medium"
-        style={{ color: "var(--color-amber)" }}
+        style={{ color: "var(--color-warning)" }}
       >
         {caBaseline}%
       </td>
@@ -410,9 +410,9 @@ function TimelineStep({
       <div
         className="w-8 h-8 rounded-full border-2 flex items-center justify-center flex-shrink-0 relative z-10"
         style={{
-          borderColor: isActive ? "var(--color-amber)" : "var(--color-hairline)",
+          borderColor: isActive ? "var(--color-warning)" : "var(--color-hairline)",
           backgroundColor: isActive
-            ? "color-mix(in srgb, var(--color-amber) 12%, var(--color-paper))"
+            ? "color-mix(in srgb, var(--color-warning) 12%, var(--color-paper))"
             : "var(--color-surface)",
         }}
         aria-hidden="true"
@@ -420,7 +420,7 @@ function TimelineStep({
         {isActive && (
           <div
             className="w-2.5 h-2.5 rounded-full"
-            style={{ backgroundColor: "var(--color-amber)" }}
+            style={{ backgroundColor: "var(--color-warning)" }}
           />
         )}
       </div>
@@ -428,7 +428,7 @@ function TimelineStep({
       {/* Labels */}
       <p
         className="text-[13px] font-semibold mt-2"
-        style={{ color: isActive ? "var(--color-amber)" : "var(--color-ink)" }}
+        style={{ color: isActive ? "var(--color-warning)" : "var(--color-ink)" }}
       >
         {fy}
       </p>

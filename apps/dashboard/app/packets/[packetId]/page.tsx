@@ -583,7 +583,7 @@ export default async function PacketDetailPage({
           {/* Top accent bar based on status urgency */}
           <div className={`h-1 w-full ${
             ["Needs Documents", "Needs Applicant Clarification"].includes(packet.status)
-              ? "bg-amber"
+              ? "bg-warning"
               : ["Ready for Handoff"].includes(packet.status)
               ? "bg-teal"
               : "bg-brick"
@@ -965,7 +965,7 @@ function RecertBanner({ status, handedOffAt, recert }: { status: string; handedO
     : isOverdue
       ? { border: "border-brick/40",  ring: "ring-brick/10",  tint: "bg-brick/10",  text: "text-brick",  bar: "bg-brick" }
       : isExpiringSoon
-        ? { border: "border-amber/40", ring: "ring-amber/10", tint: "bg-amber/10", text: "text-amber", bar: "bg-amber" }
+        ? { border: "border-warning/40", ring: "ring-warning/10", tint: "bg-warning/10", text: "text-warning", bar: "bg-warning" }
         : { border: "border-teal/40",  ring: "ring-teal/10",  tint: "bg-teal/8",   text: "text-teal",  bar: "bg-teal" };
 
   const headline = isClosed
@@ -1067,7 +1067,7 @@ type WrStatusData = {
 const COMPLIANCE_BADGE: Record<string, string> = {
   unknown: "bg-paper text-muted border border-hairline",
   compliant: "bg-teal/10 text-teal",
-  at_risk: "bg-amber/15 text-amber",
+  at_risk: "bg-warning/15 text-warning",
   non_compliant: "bg-brick/10 text-brick",
 };
 
@@ -1146,7 +1146,7 @@ function WorkRequirementsCard({ wrStatus }: { wrStatus: WrStatusData }) {
 
 const RISK_TIER_STYLE: Record<"high" | "medium" | "low", { bg: string; text: string; dot: string; label: string }> = {
   high:   { bg: "bg-brick/10",   text: "text-brick",   dot: "bg-brick",   label: "High risk" },
-  medium: { bg: "bg-amber/15",   text: "text-amber",   dot: "bg-amber",   label: "Medium risk" },
+  medium: { bg: "bg-warning/15",   text: "text-warning",   dot: "bg-warning",   label: "Medium risk" },
   low:    { bg: "bg-teal/10",    text: "text-teal",    dot: "bg-teal",    label: "Low risk" },
 };
 
