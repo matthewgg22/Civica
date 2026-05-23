@@ -42,8 +42,7 @@ export default function CBOContactButton() {
     <>
       <button
         onClick={() => setOpen(true)}
-        className="inline-flex items-center gap-2 rounded-[4px] px-5 py-2.5 text-sm font-semibold text-white whitespace-nowrap flex-shrink-0 transition-opacity hover:opacity-90"
-        style={{ backgroundColor: "var(--color-brick)" }}
+        className="inline-flex items-center gap-2 rounded-[4px] px-5 py-2.5 text-sm font-semibold text-white whitespace-nowrap flex-shrink-0 bg-pine hover:opacity-90 transition-opacity"
       >
         Contact Civica partnerships
       </button>
