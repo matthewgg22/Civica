@@ -345,7 +345,11 @@ struct T16ShelterAccuracyTests {
 @Suite("T16 Shelter Accuracy — P1 Gap #4 (shared housing pro-rate)")
 struct T16SharedHousingProRateTests {
 
-    private static func Self.iso(_ string: String) -> Date {
+    // Drive-by fix: this `Self.iso` declaration was a copy-paste typo
+    // — `Self.` is invalid in a static method name and broke
+    // compilation of the entire CivicaTests target. Fixed inline so
+    // the new EBT projection suite can be verified.
+    private static func iso(_ string: String) -> Date {
         let f = DateFormatter()
         f.dateFormat = "yyyy-MM-dd"
         f.timeZone = TimeZone(identifier: "UTC")

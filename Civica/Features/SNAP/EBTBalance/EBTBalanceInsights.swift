@@ -83,3 +83,120 @@ struct EBTBalanceInsights {
         return account.foodBalance - sumNewer
     }
 }
+
+// MARK: - "Will it last?" projection
+//
+// Turns the household's balance + recent spend rate into a concrete
+// "balance lasts through <date>" story for the dashboard projection
+// card. Distinct from `projectedRunOutDate` above — that helper is
+// lifetime-averaged from the oldest known purchase, this one uses a
+// fixed 30-day trailing window and exposes whether the projected
+// zero-date falls before the next scheduled deposit.
+
+/// Concrete "will it last?" projection for the EBT balance dashboard.
+/// All fields are non-nil because this struct is only ever produced
+/// when there's enough signal — the producing function returns
+/// `nil` when input data is insufficient.
+struct EBTBalanceProjection: Equatable {
+    /// Average dollars-per-day spent over the last 30 days of
+    /// purchases (deposits excluded).
+    let dailySpendRate: Double
+    /// `floor(balance / dailySpendRate)`, capped at 365 for sanity.
+    let daysRemaining: Int
+    /// `now + daysRemaining`, normalized to start-of-day so date
+    /// formatting reads cleanly.
+    let projectedZeroDate: Date
+    /// True when a next deposit is on file AND the projected zero
+    /// date falls before that deposit — i.e. the household is on
+    /// track to run out before the next benefit lands.
+    let isTightUntilDeposit: Bool
+}
+
+extension EBTBalanceInsights {
+    /// 30-day window used for the projection's spend rate. Long
+    /// enough to smooth out a single big grocery run; short enough
+    /// to reflect a real change in spending habits.
+    static let projectionWindowDays: Int = 30
+
+    /// Minimum number of purchase rows inside the window required to
+    /// project anything. Fewer than this and we silently render no
+    /// card — a projection from one or two purchases would be noise.
+    static let projectionMinPurchases: Int = 3
+
+    /// Sanity cap on `daysRemaining`. A fresh deposit on a card the
+    /// household barely uses can imply hundreds of days of runway;
+    /// past about a year, the number stops being informational.
+    static let projectionMaxDays: Int = 365
+
+    /// Compute a "will it last?" projection for an EBT account.
+    ///
+    /// - Parameters:
+    ///   - balance: current food balance, in dollars.
+    ///   - transactions: full transaction history. Deposits are
+    ///     filtered out internally; only purchases in the last 30
+    ///     days contribute to the spend rate.
+    ///   - nextDeposit: the next scheduled deposit, when known.
+    ///     Drives `isTightUntilDeposit`.
+    ///   - now: current time. Defaults to `Date()`; tests inject a
+    ///     fixed instant so window math is deterministic.
+    /// - Returns: a projection, or `nil` when there isn't enough
+    ///   signal (balance ≤ 0, fewer than 3 purchases in the window,
+    ///   or computed spend rate ≤ 0).
+    static func projection(
+        balance: Double,
+        transactions: [EBTTransaction],
+        nextDeposit: EBTDeposit?,
+        now: Date = Date()
+    ) -> EBTBalanceProjection? {
+        guard balance > 0 else { return nil }
+
+        let calendar = Calendar.current
+        guard let windowStart = calendar.date(
+            byAdding: .day,
+            value: -projectionWindowDays,
+            to: now
+        ) else { return nil }
+
+        let recentPurchases = transactions.filter { txn in
+            !txn.isDeposit && txn.date >= windowStart && txn.date <= now
+        }
+        guard recentPurchases.count >= projectionMinPurchases else { return nil }
+
+        let totalSpent = recentPurchases.reduce(0.0) { sum, txn in
+            sum + abs((txn.amount as NSDecimalNumber).doubleValue)
+        }
+        let dailySpendRate = totalSpent / Double(projectionWindowDays)
+        guard dailySpendRate > 0 else { return nil }
+
+        let rawDays = Int((balance / dailySpendRate).rounded(.down))
+        let daysRemaining = min(max(rawDays, 0), projectionMaxDays)
+
+        let today = calendar.startOfDay(for: now)
+        guard let projectedZeroDate = calendar.date(
+            byAdding: .day,
+            value: daysRemaining,
+            to: today
+        ) else { return nil }
+
+        let isTightUntilDeposit: Bool = {
+            guard let deposit = nextDeposit else { return false }
+            return projectedZeroDate < calendar.startOfDay(for: deposit.expectedDate)
+        }()
+
+        return EBTBalanceProjection(
+            dailySpendRate: dailySpendRate,
+            daysRemaining: daysRemaining,
+            projectedZeroDate: projectedZeroDate,
+            isTightUntilDeposit: isTightUntilDeposit
+        )
+    }
+
+    /// Convenience: project from this insights instance's own account.
+    var projection: EBTBalanceProjection? {
+        Self.projection(
+            balance: (account.foodBalance as NSDecimalNumber).doubleValue,
+            transactions: account.transactions,
+            nextDeposit: account.nextDeposit
+        )
+    }
+}

@@ -225,6 +225,67 @@ enum EBTBalanceStrings {
             : "A este ritmo, tu saldo dura hasta el \(date)."
     }
 
+    // MARK: - "Will it last?" projection card
+
+    /// Eyebrow for the projection card. Frames the math as a story:
+    /// "how long does this balance carry me?" not "you're about to
+    /// run out".
+    static let projectionEyebrow = CivicaText(
+        "Will it last?",
+        es: "¿Te alcanzará?"
+    )
+
+    /// Good case: projection ≥ next deposit, or no deposit on file.
+    /// Pine/positive treatment. "At this pace, your balance lasts
+    /// through May 24. Next deposit in 4 days." The view interpolates
+    /// the formatted date and deposit timing phrase.
+    static func projectionGood(
+        date: String,
+        depositTiming: String,
+        language: CivicaLanguage
+    ) -> String {
+        switch language {
+        case .english:
+            return "At this pace, your balance lasts through \(date). Next deposit \(depositTiming)."
+        case .spanish:
+            return "A este ritmo, tu saldo dura hasta el \(date). Próximo depósito \(depositTiming)."
+        }
+    }
+
+    /// Tight case: projection < next deposit. Amber warning. "At this
+    /// pace, your balance lasts through May 24 — about 3 days before
+    /// your next deposit." The view interpolates the date and the
+    /// integer day gap.
+    static func projectionTight(
+        date: String,
+        gapDays: Int,
+        language: CivicaLanguage
+    ) -> String {
+        switch (gapDays, language) {
+        case (1, .english):
+            return "At this pace, your balance lasts through \(date) — about 1 day before your next deposit."
+        case (1, .spanish):
+            return "A este ritmo, tu saldo dura hasta el \(date) — aproximadamente 1 día antes de tu próximo depósito."
+        case (_, .english):
+            return "At this pace, your balance lasts through \(date) — about \(gapDays) days before your next deposit."
+        case (_, .spanish):
+            return "A este ritmo, tu saldo dura hasta el \(date) — aproximadamente \(gapDays) días antes de tu próximo depósito."
+        }
+    }
+
+    /// Neutral case: projection exists, no next deposit on file. "At
+    /// this pace, your balance lasts through May 24." The view
+    /// interpolates the formatted date.
+    static func projectionNeutral(
+        date: String,
+        language: CivicaLanguage
+    ) -> String {
+        switch language {
+        case .english: return "At this pace, your balance lasts through \(date)."
+        case .spanish: return "A este ritmo, tu saldo dura hasta el \(date)."
+        }
+    }
+
     // MARK: - Low-balance banner
 
     static let lowBalanceBanner = CivicaText(
