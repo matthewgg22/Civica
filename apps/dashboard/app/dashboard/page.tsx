@@ -557,10 +557,9 @@ function UrgentBanner({
 }
 
 function Card({ title, subtitle, children, className = "", weight = "default" }: { title: string; subtitle?: string; children: React.ReactNode; className?: string; weight?: "default" | "secondary" }) {
-  const borderClass = weight === "secondary" ? "border-hairline" : "border-hairline";
   const padClass = weight === "secondary" ? "p-5" : "p-6";
   return (
-    <section className={`bg-surface border ${borderClass} rounded-[4px] ${padClass} ${className}`}>
+    <section className={`bg-surface border border-hairline rounded-[4px] ${padClass} ${className}`}>
       <div className="mb-4">
         <h3 className="section-title">{title}</h3>
         {subtitle && <p className="section-sub mt-1 leading-snug">{subtitle}</p>}

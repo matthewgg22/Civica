@@ -162,19 +162,19 @@ const PROVISIONS: ObbbaProvision[] = [
     heroSubhead: null,
     oneliner: "Age band raised 18→54; tribal members added as exempt; homeless, veteran, and foster-youth exemptions removed. 80 hrs/month required.",
     requires:
-      "The 2025 law raises the work-requirement age band from 18-49 to 18-54 for adults without a child under 14 in the household. It adds an exemption for members of federally recognized tribes and Alaska Native corporations, and removes prior exemptions for homeless individuals, veterans, and former foster youth. Adults in scope must log 80 hours of work, training, or volunteering each month or lose SNAP after three months.",
+      "The 2025 law raises the work-requirement age band from 18-49 to 18-64 for adults without a child under 14 in the household. It adds an exemption for members of federally recognized tribes and Alaska Native corporations, and removes prior exemptions for homeless individuals, veterans, and former foster youth. Adults in scope must log 80 hours of work, training, or volunteering each month or lose SNAP after three months.",
     exposure:
       "Roughly 250,000 to 400,000 Californians sit in the newly expanded age band or lose a prior exemption. If even a fraction are disenrolled without a clean compliance trail, the state and its CBO partners absorb the appeals, churn, and reapplication overhead.",
     marketOpportunity:
       "Counties that demonstrate proactive, defensible work-requirement tracking reduce their disenrollment-driven churn and can argue for lower effective error-rate attribution. Tracking infrastructure that didn't exist before is the wedge.",
     posture:
-      "Civica asks the new tribal exemption question at intake, lowered the dependent-child cutoff to under 14, raised the age ceiling to 54, and removed the now-defunct homeless, veteran, and foster-youth exemption screens. A payroll-API integration provides a corroborating hours-worked signal; employer-issued pay records remain the documentation of record. The formal evidence package that satisfies a federal review is still pending counsel.",
-    effective: "Active July 4, 2025",
-    authorities: ["OBBBA §10102(a)"],
+      "Civica asks the new tribal exemption question at intake, lowered the dependent-child cutoff to under 14, raised the age ceiling to 64, and removed the now-defunct homeless, veteran, and foster-youth exemption screens. A payroll-API integration provides a corroborating hours-worked signal; employer-issued pay records remain the documentation of record. The formal evidence package that satisfies a federal review is still pending counsel.",
+    effective: "Active June 1, 2026 (CA — ACL 25-93)",
+    authorities: ["OBBBA §10102(a)", "ACL 25-93"],
     source: "Civica/Features/SNAP/Rules/FederalDefaultRules.swift",
     status: "Partial",
     stakeholders: ["Household", "State", "CBO"],
-    deadlineIso: "2025-07-04",
+    deadlineIso: "2026-06-01",
     impactLabel: "250K–400K",
     impactSublabel: "Californians in new scope",
     impactKind: "count",

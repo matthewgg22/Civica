@@ -9,6 +9,17 @@ export const dynamic = "force-dynamic";
 const RECERT_MONTHS = 12;
 const EXPIRING_WINDOW_DAYS = 30;
 
+// Pilot cohort: first 10 households end-to-end through enrollment.
+// Anchored to 2026-05-01 (start of pilot window per CEO sprint plan).
+// Extract to env var if pilot windows ever overlap.
+const PILOT_START_ISO = "2026-05-01T00:00:00Z";
+const PILOT_GOAL = 10;
+
+// Navigator throughput benchmarks. CDSS baseline drawn from FY2024 county
+// reporting; Civica modeled target lifts that to 23 with packet-prep tooling.
+const NAVIGATOR_BASELINE_PER_MONTH = 7;
+const NAVIGATOR_TARGET_PER_MONTH = 23;
+
 type Bucket = "active" | "expiring" | "expired" | "recertified";
 
 const BUCKET_META: Record<Bucket, { label: string; description: string; accent: string; bg: string; border: string }> = {
@@ -35,6 +46,27 @@ export default async function EnrollmentsPage({ searchParams }: { searchParams: 
     .is("deleted_at", null)
     .order("handed_off_at", { ascending: false })
     .limit(500);
+
+  // Sprint metrics: pilot cohort progress + 30-day throughput.
+  // Both windows derived from handed_off_at — same field as the existing
+  // bucket query above. We could fold into one query but a separate query
+  // keeps the bucket logic above unchanged and pulls only what the panels
+  // need (no applicants join).
+  const thirtyDaysAgoISO = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
+  const { data: pilotPackets } = await supabase
+    .schema("snap_enrollment")
+    .from("snap_packets")
+    .select("packet_id, handed_off_at")
+    .in("status", ["Handed Off", "Closed"])
+    .is("deleted_at", null)
+    .gte("handed_off_at", PILOT_START_ISO)
+    .order("handed_off_at", { ascending: false });
+
+  const pilotCount = (pilotPackets ?? []).length;
+  const mostRecentEnrollmentISO = pilotPackets?.[0]?.handed_off_at ?? null;
+  const throughput30Day = (pilotPackets ?? []).filter(
+    (p) => p.handed_off_at && p.handed_off_at >= thirtyDaysAgoISO,
+  ).length;
 
   const now = Date.now();
   const oneMonthMs = 30 * 24 * 60 * 60 * 1000;
@@ -111,6 +143,22 @@ export default async function EnrollmentsPage({ searchParams }: { searchParams: 
             Every enrolled household, sorted by recertification urgency. SNAP recertification cycle: {RECERT_MONTHS} months.
           </p>
         </div>
+
+        {/* Sprint metrics — pilot cohort progress + 30-day throughput.
+            Honest about 0/10 if no enrollments yet; the measurement infra
+            is the artifact, not the number. */}
+        <section className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <PilotCohortCard
+            count={pilotCount}
+            goal={PILOT_GOAL}
+            mostRecentISO={mostRecentEnrollmentISO}
+          />
+          <NavigatorThroughputCard
+            count={throughput30Day}
+            baseline={NAVIGATOR_BASELINE_PER_MONTH}
+            target={NAVIGATOR_TARGET_PER_MONTH}
+          />
+        </section>
 
         {/* Bucket summary cards (also filter chips when clicked) */}
         <div className="grid grid-cols-4 gap-4">
@@ -196,7 +244,7 @@ export default async function EnrollmentsPage({ searchParams }: { searchParams: 
                 key={r.packet_id}
                 href={`/packets/${r.packet_id}`}
                 style={{ gridTemplateColumns: "1.4fr 0.9fr 1fr 1.4fr auto" }}
-                className={`grid gap-4 px-6 py-3.5 items-center hover:bg-paper transition-colors ${i > 0 ? "border-t-2 border-[#EDE7DA]" : ""}`}
+                className={`grid gap-4 px-6 py-3.5 items-center hover:bg-paper transition-colors ${i > 0 ? "border-t border-hairline/50" : ""}`}
               >
                 <div className="flex items-baseline gap-2 min-w-0">
                   <span className="text-[16px] font-bold text-ink truncate">{r.name}</span>
@@ -218,6 +266,81 @@ export default async function EnrollmentsPage({ searchParams }: { searchParams: 
           )}
         </section>
       </main>
+    </div>
+  );
+}
+
+function PilotCohortCard({
+  count,
+  goal,
+  mostRecentISO,
+}: {
+  count: number;
+  goal: number;
+  mostRecentISO: string | null;
+}) {
+  const pct = Math.min(100, (count / goal) * 100);
+  const reached = count >= goal;
+  const barColor = reached ? "bg-pine" : count > 0 ? "bg-wheat" : "bg-hairline";
+  const numberColor = reached ? "text-pine" : "text-ink";
+  const recent = mostRecentISO ? formatDate(mostRecentISO) : null;
+
+  return (
+    <div className="bg-surface border border-hairline rounded-[6px] px-5 py-4">
+      <div className="flex items-baseline justify-between">
+        <p className="eyebrow">Pilot cohort</p>
+        <span className="text-[11px] text-graphite tabular-nums">since May 1, 2026</span>
+      </div>
+      <div className="flex items-baseline gap-2 mt-2">
+        <span className={`text-[36px] font-bold tabular-nums leading-none ${numberColor}`}>{count}</span>
+        <span className="text-[18px] text-graphite font-semibold leading-none">/ {goal}</span>
+        <span className="text-[14px] text-graphite font-medium ml-1.5">households enrolled</span>
+      </div>
+      <div className="relative rounded-full overflow-hidden mt-3" style={{ height: 6, background: "rgba(0,0,0,0.08)" }}>
+        <div className={`absolute inset-y-0 left-0 ${barColor}`} style={{ width: `${pct}%` }} />
+      </div>
+      <p className="text-[12px] text-graphite mt-2 leading-snug">
+        {reached
+          ? `Goal reached. Last enrollment: ${recent}.`
+          : count > 0
+            ? `${goal - count} to go. Last enrollment: ${recent}.`
+            : `Awaiting first enrolled household. Pilot window closes end of May 2026.`}
+      </p>
+    </div>
+  );
+}
+
+function NavigatorThroughputCard({
+  count,
+  baseline,
+  target,
+}: {
+  count: number;
+  baseline: number;
+  target: number;
+}) {
+  // Use the count as a single-org proxy; once multi-org data exists, divide
+  // count by active navigator headcount to get the per-navigator number.
+  const pctOfTarget = target > 0 ? Math.min(100, (count / target) * 100) : 0;
+  const barColor = count >= target ? "bg-pine" : count >= baseline ? "bg-wheat" : "bg-hairline";
+
+  return (
+    <div className="bg-surface border border-hairline rounded-[6px] px-5 py-4">
+      <div className="flex items-baseline justify-between">
+        <p className="eyebrow">30-day throughput</p>
+        <span className="text-[11px] text-graphite tabular-nums">rolling 30 days</span>
+      </div>
+      <div className="flex items-baseline gap-2 mt-2">
+        <span className="text-[36px] font-bold tabular-nums leading-none text-ink">{count}</span>
+        <span className="text-[14px] text-graphite font-medium ml-1.5">packets handed off</span>
+      </div>
+      <div className="relative rounded-full overflow-hidden mt-3" style={{ height: 6, background: "rgba(0,0,0,0.08)" }}>
+        <div className={`absolute inset-y-0 left-0 ${barColor}`} style={{ width: `${pctOfTarget}%` }} />
+      </div>
+      <p className="text-[12px] text-graphite mt-2 leading-snug">
+        Modeled target: <span className="font-semibold text-ink tabular-nums">{target}</span>/navigator/month
+        {" "}· CDSS baseline: <span className="tabular-nums">{baseline}</span>/navigator/month. Pre-pilot — divide by active navigator headcount when pilot org seats are filled.
+      </p>
     </div>
   );
 }
@@ -266,7 +389,7 @@ function Countdown({ bucket, days, recertDate }: { bucket: Bucket; days: number;
           </span>
         )}
       </div>
-      <div className="relative rounded-full overflow-hidden" style={{ height: 8, background: "#E8E2D5" }}>
+      <div className="relative rounded-full overflow-hidden" style={{ height: 8, background: "rgba(0,0,0,0.10)" }}>
         <div
           className={`absolute inset-y-0 left-0 ${barColor}`}
           style={{ width: `${pctElapsed}%` }}

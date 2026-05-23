@@ -27,7 +27,7 @@ export default function ScoringPanel({
   const dash = (completePct / 100) * C;
 
   return (
-    <section className="bg-surface border border-hairline rounded-[4px] p-7">
+    <section className="bg-surface border border-hairline border-t-2 border-t-pine-surface rounded-[4px] p-7">
       <div className="flex items-start justify-between gap-6 mb-5 flex-wrap">
         <div>
           <p className="eyebrow mb-1.5">Scoring soundness · scoreErrorRisk()</p>

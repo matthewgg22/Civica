@@ -111,10 +111,10 @@ export default async function CountyPage({
           <p className="text-[11px] text-muted uppercase tracking-wider font-medium">
             Civica · County DPSS
           </p>
-          <h1 className="text-2xl font-semibold text-ink mt-1.5 tracking-tight">
+          <h1 className="text-[26px] font-semibold text-ink mt-1.5 tracking-tight leading-tight">
             §10106 Admin cost-share
           </h1>
-          <p className="text-sm text-graphite mt-0.5">
+          <p className="text-[13px] text-graphite mt-0.5">
             Federal match: 50% now → 25% from Oct 1, 2026
           </p>
         </div>
@@ -134,7 +134,7 @@ export default async function CountyPage({
       {/* ------------------------------------------------------------------ */}
       <section className="px-6 md:px-8 py-6" aria-label="Key metrics">
         {isDemoMode && (
-          <p className="text-[11px] text-muted mb-4">
+          <p className="text-[12px] text-muted mb-4">
             Showing {analytics.stateCode} FY2024 demo data. Pass{" "}
             <code className="font-mono bg-surface border border-hairline rounded px-1 py-0.5">
               ?demo=false
@@ -179,14 +179,14 @@ export default async function CountyPage({
       >
         <div className="border border-hairline rounded-[4px] bg-surface p-6 md:p-8">
           <p className="eyebrow mb-3">State-level breakdown</p>
-          <p className="text-sm text-graphite leading-relaxed">
+          <p className="text-[13px] text-graphite leading-relaxed">
             County-by-county per-case admin processing cost, applications-per-navigator
             throughput, and projected FY2027 admin cost exposure will appear here.
           </p>
-          <p className="text-sm text-graphite mt-2 leading-relaxed">
+          <p className="text-[13px] text-graphite mt-2 leading-relaxed">
             State-level breakdown coming soon.
           </p>
-          <p className="text-xs text-muted mt-4">
+          <p className="text-[11px] text-muted mt-4">
             {analytics.stateCode} PER (FY2024{isDemoMode ? " demo" : ""}): {analytics.perFy2024Pct}%
           </p>
         </div>
@@ -228,7 +228,7 @@ function KpiCard({
         {label}
       </p>
       <p
-        className="text-3xl font-semibold tabular-nums mt-2 leading-none"
+        className="text-[32px] font-semibold tabular-nums mt-2 leading-none"
         style={accentStyle}
       >
         {value}
