@@ -110,7 +110,13 @@ struct EBTBalanceA11yTests {
     func dashboardRendersAtXXXLarge() async {
         let store = EBTBalanceStore(repository: nil, realDataFlag: { false })
         await store.link()
-        let view = EBTBalanceDashboardView(store: store, language: .english)
+        // Provide a fixture-backed anomaly store with no transactions → no alerts.
+        let repo = EBTBalanceRepository(
+            apiClient: MockEBTBalanceAPIClient(),
+            defaults: UserDefaults(suiteName: "a11y-test-\(UUID())")!
+        )
+        let anomalyStore = EBTAnomalyStore(repository: repo)
+        let view = EBTBalanceDashboardView(store: store, anomalyStore: anomalyStore, language: .english)
             .environment(\.sizeCategory, .accessibilityExtraExtraExtraLarge)
         let host = UIHostingController(rootView: NavigationStack { view })
         host.view.frame = CGRect(x: 0, y: 0, width: 390, height: 844)

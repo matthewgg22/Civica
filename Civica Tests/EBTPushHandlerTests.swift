@@ -195,7 +195,7 @@ struct EBTPushHandlerTests {
 
     // MARK: Deep-link routing
 
-    @Test
+    @Test @MainActor
     func deepLinkRoutingMapsCategoriesToTargets() {
         #expect(EBTPushHandler.deepLink(forCategory: "deposit_landed") == .depositLanded)
         #expect(EBTPushHandler.deepLink(forCategory: "low_balance")    == .lowBalance)
