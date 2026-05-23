@@ -42,3 +42,31 @@ No row to export. The current device either hasn't granted TCPA consent, has no 
 \u{2731}
 \u{2192}
  \u{2192}
+
+# Version stamp — hidden from users via accessibilityHidden(true), developer-
+# only affordance tapped 5× to reveal the debug menu.
+v\(version) (\(build))
+
+# Debug menu — not visible in production builds (gated by #if DEBUG / tap gesture).
+Debug
+Done
+
+# Numeric/unit strings — language-neutral format tokens.
+# "hrs" is a SI-style abbreviation that reads the same in both locales.
+\(formatted(summary.target_hours)) hrs
+\(formatted(entry.hours)) hrs
+
+# SwiftUI Label with systemImage — auto-localizes via LocalizedStringKey.
+# Used in swipe-action destructive button; SwiftUI handles the translation.
+Delete
+
+# Score display in SNAPErrorRiskBadge — navigator/admin surface, not end-user facing.
+# The badge auto-hides on network failure and is only shown to county workers.
+Checking submission quality…
+Score \(score)
+
+# UI test harness — opacity(0.01) button invisible to real users.
+Show post-placement
+
+# Numeric separator in ReviewSummaryView score card — format-only, no translatable content.
+/ 100

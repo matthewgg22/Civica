@@ -35,13 +35,18 @@ struct MarketplaceEntryCard: View {
 // DR3-9: "$—" hero with reassurance copy.
 // ---------------------------------------------------------------------------
 struct PendingBenefitBanner: View {
+
+    @AppStorage(CivicaLanguage.defaultStorageKey)
+    private var languageRaw: String = CivicaLanguage.english.rawValue
+    private var language: CivicaLanguage { CivicaLanguage(rawValue: languageRaw) ?? .english }
+
     var body: some View {
         VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
             Text("$—")
                 .font(CivicaTypography.cardHero)
                 .foregroundStyle(CivicaColors.ink)
                 .monospacedDigit()
-            Text("We'll have your amount within 24 hours. We'll text you.")
+            Text(SNAPMarketplaceStrings.pendingBenefitReassurance.value(in: language))
                 .font(CivicaTypography.body)
                 .foregroundStyle(CivicaColors.graphite)
                 .fixedSize(horizontal: false, vertical: true)

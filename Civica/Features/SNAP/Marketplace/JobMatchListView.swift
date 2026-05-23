@@ -13,6 +13,10 @@ struct JobMatchListView: View {
     let onShowMore: () -> Void
     let onFilter: () -> Void
 
+    @AppStorage(CivicaLanguage.defaultStorageKey)
+    private var languageRaw: String = CivicaLanguage.english.rawValue
+    private var language: CivicaLanguage { CivicaLanguage(rawValue: languageRaw) ?? .english }
+
     var body: some View {
         ScrollView {
             VStack(spacing: 0) {
@@ -44,7 +48,7 @@ struct JobMatchListView: View {
             }
         }
         .background(CivicaColors.paper)
-        .navigationTitle("Jobs for you")
+        .navigationTitle(SNAPMarketplaceStrings.jobsNavTitle.value(in: language))
         .navigationBarTitleDisplayMode(.inline)
     }
 
@@ -76,7 +80,7 @@ struct JobMatchListView: View {
     }
 
     private var openHoursLine: some View {
-        Text("Open hours: M/W/F afternoons, T/Th evenings, weekends")
+        Text(SNAPMarketplaceStrings.openHoursLine.value(in: language))
             .font(CivicaTypography.footnote)
             .foregroundStyle(CivicaColors.graphite)
             .padding(.horizontal, CivicaSpacing.xl)
@@ -88,7 +92,7 @@ struct JobMatchListView: View {
         HStack(spacing: CivicaSpacing.sm) {
             CivicaMoney(amount: incomeCap, denominator: "mo", font: CivicaTypography.body)
                 .foregroundStyle(CivicaColors.ink)
-            Text("before benefit changes")
+            Text(SNAPMarketplaceStrings.beforeBenefitChanges.value(in: language))
                 .font(CivicaTypography.body)
                 .foregroundStyle(CivicaColors.ink)
             // Info dot
@@ -109,7 +113,7 @@ struct JobMatchListView: View {
     }
 
     private var framingCopy: some View {
-        Text("We rank jobs by what's best for your income, not what's best for employers.")
+        Text(SNAPMarketplaceStrings.rankingFramingCopy.value(in: language))
             .font(CivicaTypography.footnote)
             .foregroundStyle(CivicaColors.graphite)
             .padding(.horizontal, CivicaSpacing.xl)
@@ -119,13 +123,13 @@ struct JobMatchListView: View {
 
     private var footer: some View {
         HStack(spacing: CivicaSpacing.xl) {
-            Button("Show more", action: onShowMore)
+            Button(SNAPMarketplaceStrings.showMore.value(in: language), action: onShowMore)
                 .font(CivicaTypography.body)
                 .foregroundStyle(CivicaColors.amberPrimary)
             Rectangle()
                 .fill(CivicaColors.hairline)
                 .frame(width: 1, height: 14)
-            Button("Filter", action: onFilter)
+            Button(SNAPMarketplaceStrings.filter.value(in: language), action: onFilter)
                 .font(CivicaTypography.body)
                 .foregroundStyle(CivicaColors.amberPrimary)
         }
