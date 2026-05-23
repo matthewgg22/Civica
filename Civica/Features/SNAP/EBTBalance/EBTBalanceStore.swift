@@ -45,6 +45,7 @@ final class EBTBalanceStore: ObservableObject {
     // MARK: Dependencies
     private let repository: EBTBalanceRepository?
     private let realDataFlag: () -> Bool
+    private let defaults: UserDefaults
     private var cancellables: Set<AnyCancellable> = []
 
     // MARK: Init
@@ -54,18 +55,24 @@ final class EBTBalanceStore: ObservableObject {
     /// real-data flow is enabled when the flag is on; if nil, the
     /// store stays on the fixture-only path regardless of flag (used
     /// for previews + the simplest tests).
+    ///
+    /// The `defaults` parameter allows tests to inject an isolated
+    /// UserDefaults suite, preventing cross-test pollution. Production
+    /// callers omit it (`.standard` is the default).
     init(
         repository: EBTBalanceRepository? = nil,
-        realDataFlag: @escaping () -> Bool = { FeatureFlags.ebtRealData }
+        realDataFlag: @escaping () -> Bool = { FeatureFlags.ebtRealData },
+        defaults: UserDefaults = .standard
     ) {
         self.repository = repository
         self.realDataFlag = realDataFlag
+        self.defaults = defaults
 
-        let linked = UserDefaults.standard.bool(forKey: linkedKey)
+        let linked = defaults.bool(forKey: linkedKey)
         self.linkState = linked ? .linked : .unlinked
-        self.isCardLocked = UserDefaults.standard.bool(forKey: cardLockedKey)
-        self.blockOutOfState = UserDefaults.standard.bool(forKey: blockOutOfStateKey)
-        self.blockOnline = UserDefaults.standard.bool(forKey: blockOnlineKey)
+        self.isCardLocked = defaults.bool(forKey: cardLockedKey)
+        self.blockOutOfState = defaults.bool(forKey: blockOutOfStateKey)
+        self.blockOnline = defaults.bool(forKey: blockOnlineKey)
 
         // Initial account snapshot.
         if realDataFlag(), let repository {
@@ -100,13 +107,13 @@ final class EBTBalanceStore: ObservableObject {
             // briefly + flip to linked so any straggler caller
             // (e.g. EBTLinkCardView still mounted) doesn't dead-end.
             try? await Task.sleep(nanoseconds: 1_400_000_000)
-            UserDefaults.standard.set(true, forKey: linkedKey)
+            defaults.set(true, forKey: linkedKey)
             linkState = .linked
             return
         }
         // Flag-OFF: pre-plan behavior preserved verbatim.
         try? await Task.sleep(nanoseconds: 1_400_000_000)
-        UserDefaults.standard.set(true, forKey: linkedKey)
+        defaults.set(true, forKey: linkedKey)
         account = EBTBalanceFixtures.demoAccount()
         linkState = .linked
     }
@@ -117,7 +124,7 @@ final class EBTBalanceStore: ObservableObject {
         guard realDataFlag(), let repository else { return }
         linkState = .linking
         await repository.link(cookie: cookie, rememberCookie: rememberCookie, expiresAt: expiresAt)
-        UserDefaults.standard.set(true, forKey: linkedKey)
+        defaults.set(true, forKey: linkedKey)
         linkState = .linked
     }
 
@@ -138,7 +145,7 @@ final class EBTBalanceStore: ObservableObject {
 
     /// Reset to unlinked. Clears card-lock flags too.
     func unlink() {
-        UserDefaults.standard.set(false, forKey: linkedKey)
+        defaults.set(false, forKey: linkedKey)
         if realDataFlag(), let repository {
             repository.unlink()
         }
@@ -183,16 +190,16 @@ final class EBTBalanceStore: ObservableObject {
 
     func setCardLocked(_ locked: Bool) {
         isCardLocked = locked
-        UserDefaults.standard.set(locked, forKey: cardLockedKey)
+        defaults.set(locked, forKey: cardLockedKey)
     }
 
     func setBlockOutOfState(_ blocked: Bool) {
         blockOutOfState = blocked
-        UserDefaults.standard.set(blocked, forKey: blockOutOfStateKey)
+        defaults.set(blocked, forKey: blockOutOfStateKey)
     }
 
     func setBlockOnline(_ blocked: Bool) {
         blockOnline = blocked
-        UserDefaults.standard.set(blocked, forKey: blockOnlineKey)
+        defaults.set(blocked, forKey: blockOnlineKey)
     }
 }

@@ -399,6 +399,54 @@ enum EBTBalanceStrings {
         es: "Demostración — no está conectado a una cuenta EBT real."
     )
 
+    // MARK: - Card-lock "coming soon" (Phase 2 / Lane H)
+    //
+    // 10 strings for the honest CA card-lock UX. The coming-soon
+    // banner uses pine (action surface), not amber (warning). The
+    // app-only toggle copy is explicit that it does NOT freeze the
+    // card at the processor.
+
+    static let lockComingSoonHeadline = CivicaText(
+        "We can't lock your CalFresh card directly yet.",
+        es: "Aún no podemos bloquear tu tarjeta CalFresh directamente."
+    )
+    static let lockComingSoonBody = CivicaText(
+        "If your card is lost or stolen, use the steps below immediately.",
+        es: "Si perdiste tu tarjeta o te la robaron, sigue los pasos de abajo de inmediato."
+    )
+    static let lockEmergencyStepCall = CivicaText(
+        "Call EBT Customer Service: 1-877-328-9677",
+        es: "Llama al Servicio al Cliente de EBT: 1-877-328-9677"
+    )
+    static let lockEmergencyStepPortal = CivicaText(
+        "Visit ebt.ca.gov to report online",
+        es: "Visita ebt.ca.gov para reportar en línea"
+    )
+    static let lockEmergencyStepPolice = CivicaText(
+        "Report to local police if stolen",
+        es: "Repórtalo a la policía local si fue robada"
+    )
+    static let lockAppOnlyTitle = CivicaText(
+        "Hide card in this app",
+        es: "Ocultar tarjeta en esta aplicación"
+    )
+    static let lockAppOnlySubtitle = CivicaText(
+        "This does NOT prevent transactions. Use the steps above to actually freeze your card.",
+        es: "Esto NO evita transacciones. Usa los pasos de arriba para bloquear tu tarjeta de verdad."
+    )
+    static let lockWhyTitle = CivicaText(
+        "Why can't I lock here?",
+        es: "¿Por qué no puedo bloquearla aquí?"
+    )
+    static let lockWhyParagraph1 = CivicaText(
+        "CalFresh card locks require the California processor (Conduent/FIS) to expose an API to third-party apps. They haven't done this yet.",
+        es: "Los bloqueos de tarjeta CalFresh requieren que el procesador de California (Conduent/FIS) exponga una API a aplicaciones de terceros. Aún no lo han hecho."
+    )
+    static let lockWhyParagraph2 = CivicaText(
+        "Civica is working with CDSS on a 2026 partnership that would enable this. We'll notify you when it's available.",
+        es: "Civica está trabajando con el CDSS en una asociación para 2026 que permitiría esto. Te avisaremos cuando esté disponible."
+    )
+
     // MARK: - EBTScrapeError banners + CTAs (per plan §16.2 / D10)
     //
     // 7 variants — networkTimeout, portalDown, sessionExpired, captcha,
@@ -514,6 +562,10 @@ enum EBTBalanceStrings {
         demoMenuLabel, simulatePurchaseButton, simulateDepositButton,
         expirationEyebrow,
         demoDisclosure,
+        lockComingSoonHeadline, lockComingSoonBody,
+        lockEmergencyStepCall, lockEmergencyStepPortal, lockEmergencyStepPolice,
+        lockAppOnlyTitle, lockAppOnlySubtitle,
+        lockWhyTitle, lockWhyParagraph1, lockWhyParagraph2,
         networkTimeoutBanner, networkTimeoutCTA,
         portalDownBanner, portalDownCTA,
         sessionExpiredBanner, sessionExpiredCTA,
