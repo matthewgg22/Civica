@@ -42,6 +42,22 @@ describe("middleware", () => {
       const res = await middleware(makeRequest("/login"));
       expect(res.status).toBe(200);
     });
+
+    it("passes through /compliance/county/[slug] without auth", async () => {
+      // Public share-out artifact — must be reachable by a council member
+      // who clicked a forwarded link without ever signing in.
+      const res = await middleware(makeRequest("/compliance/county/los-angeles"));
+      expect(res.status).toBe(200);
+      // Supabase auth lookup must NOT have been called for a fully-public route.
+      expect(mockGetUser).not.toHaveBeenCalled();
+    });
+
+    it("still redirects /compliance (no /county/ suffix) to /login", async () => {
+      // /compliance itself remains staff-gated; only /compliance/county/* is public.
+      const res = await middleware(makeRequest("/compliance"));
+      expect(res.status).toBe(307);
+      expect(res.headers.get("location")).toContain("/login");
+    });
   });
 
   describe("authenticated applicant (no staff role)", () => {

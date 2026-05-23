@@ -1,9 +1,19 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
-import { homeForRole, isPathAllowedForRole, isStaff } from "./lib/roleRouting";
+import { homeForRole, isPathAllowedForRole, isPubliclyAccessible, isStaff } from "./lib/roleRouting";
 
 export async function middleware(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request });
+
+  const path = request.nextUrl.pathname;
+
+  // Fully public routes — no Supabase round-trip, no auth needed. Used for
+  // share-out artifacts (e.g. /compliance/county/[slug]) that procurement
+  // officers forward to council members. Resolved before any auth lookup so
+  // an unauthenticated visitor lands on the page instead of /login.
+  if (isPubliclyAccessible(path)) {
+    return supabaseResponse;
+  }
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -24,7 +34,6 @@ export async function middleware(request: NextRequest) {
 
   const { data: { user } } = await supabase.auth.getUser();
 
-  const path = request.nextUrl.pathname;
   const isLogin = path.startsWith("/login");
 
   if (!user) {
