@@ -128,7 +128,12 @@ export default async function PacketDetailPage({
     (extractionsByDoc[ex.document_id] ??= []).push(ex.extraction_id);
   }
   const latestPaycheck = paychecksResult.data as { monthly_amount_usd: number; pay_date: string; employer_name: string | null } | null;
-  const errorRisk = errorRiskResult.data as { score: number | null; tier: string | null } | null;
+  const errorRisk = errorRiskResult.data as {
+    score: number | null;
+    tier: string | null;
+    engine_version: string | null;
+    created_at: string | null;
+  } | null;
   const nextStatuses = PACKET_STATUS_TRANSITIONS[packet.status as keyof typeof PACKET_STATUS_TRANSITIONS] ?? [];
 
   // ── Answer helpers — hoisted so sublease classifier + failure-to-elect below can use them ──
@@ -253,8 +258,12 @@ export default async function PacketDetailPage({
   const missedElections = detectMissedElections(electionProfile);
   const missedElectionsTotal = totalMissedMonthlyValue(missedElections);
 
-  // Pre-flight blockers for "Ready for Handoff" + risk data
-  const [unresolvedDocsResult, unreviewedFieldsResult, consentResult, riskResult, argyleResult] = await Promise.all([
+  // Pre-flight blockers for "Ready for Handoff" + consent + argyle linkage.
+  // packet_error_risk is NOT fetched here — already retrieved in the first
+  // batch above as `errorRiskResult`, exposed as `errorRisk`. The previous
+  // second-batch risk query was a duplicate that doubled the round-trip
+  // cost on every packet-detail load.
+  const [unresolvedDocsResult, unreviewedFieldsResult, consentResult, argyleResult] = await Promise.all([
     supabase.schema("snap_enrollment").from("required_document_items")
       .select("item_id").eq("packet_id", packetId).eq("is_required", true)
       .is("resolved_at", null).is("waived_at", null),
@@ -263,13 +272,6 @@ export default async function PacketDetailPage({
     supabase.schema("snap_enrollment").from("user_consents")
       .select("consent_id, consented_at").eq("applicant_id", packet.applicant_id)
       .eq("consent_kind", "privacy_notice").is("revoked_at", null).limit(1),
-    (supabase.schema("snap_enrollment") as any)
-      .from("packet_error_risk")
-      .select("score, tier, engine_version, created_at, factors")
-      .eq("packet_id", packetId)
-      .order("created_at", { ascending: false })
-      .limit(1)
-      .maybeSingle(),
     supabase.schema("snap_enrollment")
       .from("argyle_connections")
       .select("connection_id, linked_at, argyle_user_id")
@@ -364,7 +366,9 @@ export default async function PacketDetailPage({
     blockers.push({ kind: "missing_consent", label: "Privacy notice consent not on file" });
 
   // ── Error risk tab data ──────────────────────────────────────────────────
-  const riskRow = riskResult.data ?? null;
+  // `errorRisk` is from the first batch above (errorRiskResult). The old
+  // second-batch `riskResult` query has been removed as duplicate.
+  const riskRow = errorRisk;
   const argyleConn = argyleResult.data ?? null;
   const isArgyleConnected = argyleConn !== null;
 
