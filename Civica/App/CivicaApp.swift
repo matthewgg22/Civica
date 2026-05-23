@@ -45,6 +45,21 @@ struct CivicaApp: App {
 
     @Environment(\.scenePhase) private var scenePhase
 
+    // EBT push wiring (Lane C ↔ D bridge).
+    //
+    // A single EBTNotificationPrefsStore instance is created here so
+    // the same object receives both the wired API client (from
+    // EBTPushWiring.install) and is vended to EBTNotificationPrefsView
+    // via the environment. Without a shared instance, prefs written in
+    // the UI would not reach the API client, and push settings would
+    // be silently dropped.
+    //
+    // The auth object reads the Keychain session written by the
+    // CivicaEnrollmentAuth instance owned by CivicaRootView; both
+    // share the same Keychain service key so token reads are consistent.
+    @StateObject private var ebtPrefsStore = EBTNotificationPrefsStore()
+    @StateObject private var ebtAuth = CivicaEnrollmentAuth()
+
     var body: some Scene {
         WindowGroup {
             if Self.isMarketplaceUITest {
@@ -56,6 +71,20 @@ struct CivicaApp: App {
                         // No-op if already cached; runs once per install in the background.
                         await FindHelpFixtureDownloader.shared.prefetchIfNeeded()
                     }
+                    .task {
+                        // Wire Lane C's HTTPEBTBalanceAPIClient to Lane D's push
+                        // handler + prefs store. Runs once when the root view
+                        // appears. Without this call APNs push notifications
+                        // never fire even after secrets are provisioned in
+                        // production.
+                        guard let baseURL = HTTPEBTBalanceAPIClient.resolveBaseURL() else { return }
+                        let apiClient = HTTPEBTBalanceAPIClient(
+                            baseURL: baseURL,
+                            tokenProvider: { [weak ebtAuth] in await ebtAuth?.currentAccessToken() }
+                        )
+                        EBTPushWiring.install(client: apiClient, prefsStore: ebtPrefsStore)
+                    }
+                    .environmentObject(ebtPrefsStore)
             }
         }
         .onChange(of: scenePhase) { _, newPhase in
