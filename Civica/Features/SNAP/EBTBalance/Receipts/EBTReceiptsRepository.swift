@@ -1,4 +1,5 @@
 import Foundation
+import UIKit
 
 // Repository (data layer) for EBT receipts. Owns the UserDefaults cache
 // and delegates network calls to EBTReceiptAPIClient.
