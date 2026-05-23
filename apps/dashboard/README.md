@@ -1,5 +1,11 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## The CDSS county leaderboard
+
+![CDSS county leaderboard showing all 58 CA counties ranked by estimated §10105 penalty exposure](public/screenshots/cdss-leaderboard.png)
+
+State deputies and county directors see this view on `/cdss` (auth-gated). All 58 CA counties ranked by estimated §10105 federal admin-match exposure for FY2026–FY2028, with an 8-month application-volume sparkline per row. Caseload share is sourced from CDSS CF 296; per-county PER is FOIA-only and the swap is value-only when it lands.
+
 ## Getting Started
 
 First, run the development server:
