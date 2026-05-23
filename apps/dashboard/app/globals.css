@@ -19,16 +19,26 @@
   --color-amber: #C9922A;
   --color-amber-surface: #F5E2C0;
 
-  /* Brick — error / overdue / danger states only */
+  /* Brick — human recovery moments (denial, navigator outreach, distress).
+     Not for generic CTAs or warnings. See DESIGN.md §2.2. */
   --color-brick: #9C3A24;
   --color-brick-pressed: #84311E;
 
-  /* Deprecated — kept so old inline hex references still resolve via
-     the token but new code should use --color-amber or --color-pine. */
-  --color-teal: #C9922A;
+  /* Warning amber — process warnings (expiry, missing doc, stale demo data,
+     packets needing attention). Distinct from --color-amber which is the
+     positive-outcome signal. Achieves 4.6:1 on paper (AA at body size only;
+     do not use at footnote sizes). Source: DESIGN.md §2.2 warningAmber.
+     `--color-amber-warm` kept as an alias for any pre-existing references. */
+  --color-warning: #B5511E;
   --color-amber-warm: #B5511E;
-  --color-indigo: #4F46A5;
+
+  /* Destructive — form validation errors, data-loss actions. Distinct from
+     --color-warning. See DESIGN.md §2.2. */
   --color-error: #C84637;
+
+  /* Aliases — kept so old inline hex references still resolve. */
+  --color-teal: #C9922A;
+  --color-indigo: #4F46A5;
 
   /* Surfaces — 3-layer hierarchy: paper → surface → surface-secondary */
   --color-paper: #F7F5EF;
