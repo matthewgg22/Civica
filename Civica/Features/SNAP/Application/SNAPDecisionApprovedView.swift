@@ -33,12 +33,19 @@ struct SNAPDecisionApprovedView: View {
     let onOpenWICTeaser: () -> Void
     let onStartOver: () -> Void
 
+    @EnvironmentObject private var enrollmentAuth: CivicaEnrollmentAuth
+    /// Resolved on appear; used to wire WorkHoursLogView for §10102 subjects.
+    @State private var activePacketId: String?
+
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: CivicaSpacing.xl) {
                 header
                 monthlyAwardCard
                 recertReminderCard
+                if let packetId = activePacketId {
+                    workHoursCard(packetId: packetId)
+                }
                 if let restaurantMealsCallout {
                     restaurantMealsCallout
                 }
@@ -55,6 +62,59 @@ struct SNAPDecisionApprovedView: View {
         .background(CivicaColors.paper.ignoresSafeArea())
         .navigationTitle("Civica")
         .navigationBarTitleDisplayMode(.inline)
+        .task { await resolveActivePacket() }
+    }
+
+    // MARK: - Work hours card (§10102)
+
+    /// Tappable card navigating to WorkHoursLogView. Only rendered once
+    /// the active packetId is resolved. The work-hours view handles its
+    /// own not-subject / not-yet-evaluated states gracefully.
+    private func workHoursCard(packetId: String) -> some View {
+        NavigationLink {
+            WorkHoursLogView(
+                packetId: packetId,
+                apiClient: enrollmentAuth.makeEnrollmentAPIClient()
+            )
+        } label: {
+            VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
+                Text(language == .english
+                     ? "Track Your Work Hours"
+                     : "Registra tus horas laborales")
+                    .font(CivicaTypography.subheadStrong)
+                    .foregroundStyle(CivicaColors.pinePrimary)
+                    .fixedSize(horizontal: false, vertical: true)
+                Text(language == .english
+                     ? "If you're subject to CalFresh work requirements, log your monthly hours and attach pay stubs here."
+                     : "Si estás sujeto a los requisitos laborales de CalFresh, registra tus horas mensuales y adjunta tus talones de pago aquí.")
+                    .font(CivicaTypography.footnote)
+                    .foregroundStyle(CivicaColors.graphite)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            .padding(CivicaSpacing.lg)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(CivicaColors.surfacePrimary)
+            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
+            .overlay(
+                RoundedRectangle(cornerRadius: CivicaRadius.card)
+                    .strokeBorder(CivicaColors.pinePrimary, lineWidth: 1)
+            )
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(language == .english
+            ? "Track Your Work Hours. Tap to open work hours log."
+            : "Registra tus horas laborales. Toca para abrir el registro.")
+    }
+
+    private func resolveActivePacket() async {
+        guard activePacketId == nil else { return }
+        let client = enrollmentAuth.makeEnrollmentAPIClient()
+        if let packets = try? await client.fetchMyPackets() {
+            activePacketId = packets
+                .filter { $0.status != .closed }
+                .sorted { $0.createdAt > $1.createdAt }
+                .first?.id
+        }
     }
 
     // MARK: - Restaurant Meals Program callout (CA only today)
