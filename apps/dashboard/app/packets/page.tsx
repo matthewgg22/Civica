@@ -331,8 +331,13 @@ const STATUS_BADGE: Record<string, { bg: string; icon: string }> = {
 function StatusBadge({ status }: { status: string }) {
   const cfg = STATUS_BADGE[status] ?? STATUS_BADGE["Draft"];
   return (
-    <div className={`w-9 h-9 rounded-full ${cfg.bg} flex items-center justify-center text-white text-[15px] font-semibold shrink-0`}>
-      {cfg.icon}
+    <div
+      role="img"
+      aria-label={`Status: ${status}`}
+      title={status}
+      className={`w-9 h-9 rounded-full ${cfg.bg} flex items-center justify-center text-white text-[15px] font-semibold shrink-0`}
+    >
+      <span aria-hidden="true">{cfg.icon}</span>
     </div>
   );
 }
