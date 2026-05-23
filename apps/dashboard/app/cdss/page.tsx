@@ -4,6 +4,7 @@ import { createServerClientFromCookies } from "../../lib/supabase";
 import { homeForRole } from "../../lib/roleRouting";
 import { perExposure } from "../../lib/analytics/section10105";
 import DemoModeBadge from "../../components/DemoModeBadge";
+import CountyLeaderboard from "../../components/CountyLeaderboard";
 
 export const dynamic = "force-dynamic";
 
@@ -247,6 +248,16 @@ export default async function CDSSPage({
             </div>
           </div>
         </div>
+      </section>
+
+      {/* ------------------------------------------------------------------ */}
+      {/* County leaderboard — drill-down from statewide exposure              */}
+      {/* ------------------------------------------------------------------ */}
+      <section
+        className="px-6 md:px-8 pb-6"
+        aria-label="California county leaderboard ranked by §10105 exposure"
+      >
+        <CountyLeaderboard />
       </section>
 
       {/* ------------------------------------------------------------------ */}
