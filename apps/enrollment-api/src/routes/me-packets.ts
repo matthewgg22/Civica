@@ -711,6 +711,63 @@ app.get("/:packetId/verification-summary", async (c) => {
   });
 });
 
+// ── Informal housing answers ──────────────────────────────────────────────────
+
+// POST /me/packets/:packetId/informal-housing-answers
+// Batch-upserts informal housing wizard answers into packet_answers.
+// Called by InformalHousingWizardView.swift on completion; returns 204.
+app.post(
+  "/:packetId/informal-housing-answers",
+  zValidator(
+    "json",
+    z.object({
+      answers: z.array(
+        z.object({
+          question_key: z.string().min(1),
+          question_label: z.string(),
+          applicant_answer: z.string(),
+        })
+      ).min(1),
+    })
+  ),
+  async (c) => {
+    const { answers } = c.req.valid("json");
+    const applicant = await resolveApplicant(c as Context<{ Bindings: Env }>);
+    const packetId = c.req.param("packetId");
+
+    // Verify ownership — uses anon client so RLS enforces applicant_id match
+    const { data: packet } = await makeAnonClient(c.env, c.get("jwt"))
+      .schema("snap_enrollment")
+      .from("snap_packets")
+      .select("packet_id")
+      .eq("packet_id", packetId)
+      .eq("applicant_id", applicant.applicant_id)
+      .single();
+
+    if (!packet) throw new HTTPException(404, { message: "Packet not found" });
+
+    // Batch upsert — service client bypasses RLS for the write
+    const rows = answers.map((a) => ({
+      packet_id: packetId,
+      question_key: a.question_key,
+      question_label: a.question_label,
+      answer_source: "applicant_input" as const,
+      applicant_answer: a.applicant_answer,
+      original_ocr_value: null,
+    }));
+
+    const db = makeServiceClient(c.env);
+    const { error } = await db
+      .schema("snap_enrollment")
+      .from("packet_answers")
+      .upsert(rows, { onConflict: "packet_id,question_key" });
+
+    if (error) throw new HTTPException(500, { message: error.message });
+
+    return new Response(null, { status: 204 });
+  }
+);
+
 // ── Submit ────────────────────────────────────────────────────────────────────
 
 // POST /me/packets/:packetId/submit
