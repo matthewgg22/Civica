@@ -504,18 +504,18 @@ function UrgentBanner({
               {expiring > 0 && (
                 <Link
                   href="/enrollments?bucket=expiring"
-                  className="inline-flex items-center gap-2 bg-amber/15 border border-amber/30 hover:bg-amber/20 transition-colors rounded-[3px] px-3 py-2"
+                  className="inline-flex items-center gap-2 bg-warning/15 border border-warning/30 hover:bg-warning/20 transition-colors rounded-[3px] px-3 py-2"
                 >
-                  <span className="text-[22px] font-bold tabular-nums text-amber leading-none">{expiring}</span>
+                  <span className="text-[22px] font-bold tabular-nums text-warning leading-none">{expiring}</span>
                   <span className="text-[12px] font-semibold text-ink leading-tight">expiring<br/>this month</span>
                 </Link>
               )}
               {needsAttention > 0 && (
                 <Link
                   href="/packets?filter=needs-attention"
-                  className="inline-flex items-center gap-2 bg-amber/10 border border-amber/30 hover:bg-amber/15 transition-colors rounded-[3px] px-3 py-2"
+                  className="inline-flex items-center gap-2 bg-warning/10 border border-warning/30 hover:bg-warning/15 transition-colors rounded-[3px] px-3 py-2"
                 >
-                  <span className="text-[22px] font-bold tabular-nums text-amber leading-none">{needsAttention}</span>
+                  <span className="text-[22px] font-bold tabular-nums text-warning leading-none">{needsAttention}</span>
                   <span className="text-[12px] font-semibold text-ink leading-tight">packets need<br/>attention</span>
                 </Link>
               )}

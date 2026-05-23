@@ -15,10 +15,10 @@ export default function ExpeditedReviewGate({ packetId }: Props) {
   }
 
   return (
-    <section className="bg-surface border border-amber/50 rounded-[4px] overflow-hidden ring-1 ring-amber/20">
-      <div className="h-1 w-full bg-amber" />
+    <section className="bg-surface border border-warning/50 rounded-[4px] overflow-hidden ring-1 ring-warning/20">
+      <div className="h-1 w-full bg-warning" />
       <div className="px-6 py-5">
-        <p className="text-[11px] uppercase tracking-[0.15em] font-semibold text-amber mb-1">
+        <p className="text-[11px] uppercase tracking-[0.15em] font-semibold text-warning mb-1">
           Expedited Review Required · OBBBA §10102(a)
         </p>
         <h3 className="text-[17px] font-semibold text-ink leading-snug">
@@ -34,7 +34,7 @@ export default function ExpeditedReviewGate({ packetId }: Props) {
           <button
             onClick={() => decide(true)}
             disabled={isPending}
-            className="px-4 py-2 bg-amber text-white text-[13px] font-semibold rounded-[4px] hover:bg-amber/90 disabled:opacity-50 transition-colors"
+            className="px-4 py-2 bg-warning text-white text-[13px] font-semibold rounded-[4px] hover:bg-warning/90 disabled:opacity-50 transition-colors"
           >
             Confirm expedited routing
           </button>

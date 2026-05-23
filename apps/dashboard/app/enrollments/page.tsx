@@ -24,7 +24,7 @@ type Bucket = "active" | "expiring" | "expired" | "recertified";
 
 const BUCKET_META: Record<Bucket, { label: string; description: string; accent: string; bg: string; border: string }> = {
   active:       { label: "Active",        description: "Benefits in force, recertification not yet due.",                                  accent: "text-teal",   bg: "bg-teal/10",   border: "border-l-teal" },
-  expiring:     { label: "Expiring Soon", description: `Recertification due within ${EXPIRING_WINDOW_DAYS} days — action needed.`,         accent: "text-amber",  bg: "bg-amber/15",  border: "border-l-amber" },
+  expiring:     { label: "Expiring Soon", description: `Recertification due within ${EXPIRING_WINDOW_DAYS} days — action needed.`,         accent: "text-warning",  bg: "bg-warning/15",  border: "border-l-warning" },
   expired:      { label: "Recert Overdue",description: "Recertification window has passed; benefits at risk.",                              accent: "text-brick",  bg: "bg-brick/15",  border: "border-l-brick" },
   recertified:  { label: "Recertified",   description: "Successfully recertified — new benefit period begun.",                              accent: "text-indigo", bg: "bg-indigo/10", border: "border-l-indigo" },
 };
@@ -367,8 +367,8 @@ function Countdown({ bucket, days, recertDate }: { bucket: Bucket; days: number;
   const isOverdue = bucket === "expired";
   const isExpiring = bucket === "expiring";
 
-  const numberColor = isOverdue ? "text-brick" : isExpiring ? "text-amber" : "text-ink";
-  const barColor    = isOverdue ? "bg-brick"   : isExpiring ? "bg-amber"   : "bg-teal";
+  const numberColor = isOverdue ? "text-brick" : isExpiring ? "text-warning" : "text-ink";
+  const barColor    = isOverdue ? "bg-brick"   : isExpiring ? "bg-warning"   : "bg-teal";
 
   // Numeric display: "32d" for upcoming, "−18d" for overdue
   const displayDays = isOverdue ? `−${Math.abs(days)}` : `${days}`;
@@ -399,7 +399,7 @@ function Countdown({ bucket, days, recertDate }: { bucket: Bucket; days: number;
         )}
       </div>
       <p className={`text-[11px] uppercase tracking-wider font-bold mt-1.5 ${
-        isOverdue ? "text-brick" : isExpiring ? "text-amber" : "text-graphite"
+        isOverdue ? "text-brick" : isExpiring ? "text-warning" : "text-graphite"
       }`}>
         {subLabel}
       </p>

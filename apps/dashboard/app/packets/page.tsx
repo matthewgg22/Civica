@@ -19,7 +19,7 @@ const FILTER_STATUSES: Record<Filter, string[]> = {
 };
 
 const BUCKETS: { key: Filter; label: string; statuses: string[]; defaultOpen: boolean; accent: string }[] = [
-  { key: "needs-attention", label: "Needs Attention",   statuses: ["Needs Documents", "Needs Applicant Clarification"], defaultOpen: true,  accent: "bg-amber"    },
+  { key: "needs-attention", label: "Needs Attention",   statuses: ["Needs Documents", "Needs Applicant Clarification"], defaultOpen: true,  accent: "bg-warning"    },
   { key: "in-progress",     label: "In Progress",       statuses: ["Submitted for Review", "In Navigator Review"],      defaultOpen: true,  accent: "bg-indigo"   },
   { key: "ready",           label: "Ready for Handoff", statuses: ["Ready for Handoff"],                                 defaultOpen: true,  accent: "bg-teal"     },
   { key: "draft",           label: "Draft",             statuses: ["Draft"],                                             defaultOpen: false, accent: "bg-graphite" },
@@ -130,7 +130,7 @@ export default async function PacketsPage({ searchParams }: { searchParams: Prom
       <main className="max-w-5xl mx-auto px-8 py-10">
         {/* Overview stats */}
         <div className="grid grid-cols-4 gap-4 mb-8">
-          <StatCard label="Needs Attention" value={needsAttentionCount} accent="text-amber" bg="bg-amber/8" />
+          <StatCard label="Needs Attention" value={needsAttentionCount} accent="text-warning" bg="bg-warning/8" />
           <StatCard label="In Progress" value={inProgressCount} accent="text-ink" bg="bg-paper" />
           <StatCard label="Ready for Handoff" value={readyCount} accent="text-teal" bg="bg-teal/8" />
           <StatCard label="Active Total" value={activeCount} accent="text-ink" bg="bg-surface-secondary" />
@@ -221,7 +221,7 @@ const INACTIVE_STATUSES = new Set(["Handed Off", "Closed"]);
 
 const RISK_DOT: Record<RiskTier, { bg: string; label: string }> = {
   low: { bg: "bg-teal", label: "Low risk" },
-  medium: { bg: "bg-amber", label: "Medium risk" },
+  medium: { bg: "bg-warning", label: "Medium risk" },
   high: { bg: "bg-brick", label: "High risk" },
 };
 
@@ -248,7 +248,7 @@ function PacketList({ packets, riskTiers, riskScoredAt }: { packets: Packet[]; r
           <Link
             key={packet.packet_id}
             href={`/packets/${packet.packet_id}`}
-            className={`flex items-center gap-4 px-5 py-4 hover:bg-paper transition-colors ${i > 0 ? "border-t border-hairline" : ""} ${isStale ? "bg-amber/[0.04]" : ""}`}
+            className={`flex items-center gap-4 px-5 py-4 hover:bg-paper transition-colors ${i > 0 ? "border-t border-hairline" : ""} ${isStale ? "bg-warning/[0.04]" : ""}`}
           >
             <StatusBadge status={packet.status} />
             <div className="flex-1 min-w-0">
@@ -263,7 +263,7 @@ function PacketList({ packets, riskTiers, riskScoredAt }: { packets: Packet[]; r
                   {shortId(packet.packet_id)}
                 </span>
                 {isStale && (
-                  <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-amber bg-amber/15 px-2 py-0.5 rounded-full uppercase tracking-wider">
+                  <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-warning bg-warning/15 px-2 py-0.5 rounded-full uppercase tracking-wider">
                     ⏱ Stale
                   </span>
                 )}
@@ -277,15 +277,15 @@ function PacketList({ packets, riskTiers, riskScoredAt }: { packets: Packet[]; r
                       ? `${riskDot.label} — score may be stale (packet updated after last scoring)`
                       : riskDot.label}
                   >
-                    <span className={`w-2 h-2 rounded-full shrink-0 ${isScoreStale ? "ring-1 ring-amber ring-offset-1" : ""} ${riskDot.bg}`} />
+                    <span className={`w-2 h-2 rounded-full shrink-0 ${isScoreStale ? "ring-1 ring-warning ring-offset-1" : ""} ${riskDot.bg}`} />
                     <span className="text-muted">{riskDot.label}</span>
-                    {isScoreStale && <span className="text-amber">·</span>}
+                    {isScoreStale && <span className="text-warning">·</span>}
                   </span>
                 )}
               </div>
             </div>
             <div className="text-right shrink-0">
-              <p className={`text-[13px] tabular-nums font-medium ${isStale ? "text-amber" : "text-graphite"}`}>
+              <p className={`text-[13px] tabular-nums font-medium ${isStale ? "text-warning" : "text-graphite"}`}>
                 {timeAgo(packet.updated_at)}
               </p>
               <p className="text-[11px] text-muted uppercase tracking-wider mt-0.5">updated</p>
@@ -320,8 +320,8 @@ function EmptyQueueState({ filter }: { filter: Filter }) {
 const STATUS_BADGE: Record<string, { bg: string; icon: string }> = {
   "Draft": { bg: "bg-graphite", icon: "✎" },
   "Submitted for Review": { bg: "bg-teal", icon: "↑" },
-  "Needs Documents": { bg: "bg-amber", icon: "!" },
-  "Needs Applicant Clarification": { bg: "bg-amber", icon: "?" },
+  "Needs Documents": { bg: "bg-warning", icon: "!" },
+  "Needs Applicant Clarification": { bg: "bg-warning", icon: "?" },
   "In Navigator Review": { bg: "bg-indigo", icon: "◉" },
   "Ready for Handoff": { bg: "bg-teal", icon: "✓" },
   "Handed Off": { bg: "bg-pine", icon: "→" },

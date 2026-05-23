@@ -40,7 +40,7 @@ function getUrgency(dueAt: string): UrgencyLevel {
 
 const URGENCY_STYLES: Record<UrgencyLevel, { dot: string; label: string; badge: string }> = {
   "overdue":   { dot: "bg-brick",  label: "Overdue",  badge: "bg-brick/10 text-brick" },
-  "due-soon":  { dot: "bg-amber",  label: "Due soon", badge: "bg-amber/15 text-amber" },
+  "due-soon":  { dot: "bg-warning",  label: "Due soon", badge: "bg-warning/15 text-warning" },
   "on-track":  { dot: "bg-graphite", label: "On track", badge: "bg-surface text-graphite border border-hairline" },
 };
 
