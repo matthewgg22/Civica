@@ -31,7 +31,9 @@ describe("roleRouting", () => {
 
   describe("homeForRole", () => {
     it("returns the configured home for each role", () => {
-      expect(homeForRole("navigator")).toBe("/packets");
+      // Navigators land on the queue-driven daily-driver, not the
+      // browse-everything view. Supervisors/admin stay on /packets.
+      expect(homeForRole("navigator")).toBe("/outreach");
       expect(homeForRole("supervisor")).toBe("/packets");
       expect(homeForRole("admin")).toBe("/packets");
       expect(homeForRole("state_deputy")).toBe("/cdss");

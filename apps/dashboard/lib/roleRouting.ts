@@ -24,7 +24,11 @@ export const STAFF_ROLES = new Set<string>([
 ]);
 
 export const ROLE_HOMES: Record<string, string> = {
-  navigator: "/packets",
+  // Navigators land on the queue-driven daily-driver, not the browse-everything
+  // view. /outreach is "what do I do next?"; /packets is "browse everything".
+  // Supervisors stay on /packets — they do cohort review, not queue work.
+  // Admin stays on /packets — broadest view for full-access roles.
+  navigator: "/outreach",
   supervisor: "/packets",
   admin: "/packets",
   state_deputy: "/cdss",
