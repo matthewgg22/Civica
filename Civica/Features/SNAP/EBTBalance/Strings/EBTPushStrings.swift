@@ -1,20 +1,11 @@
+import CivicaDesignSystem
 import Foundation
 
 // String table for the EBT Push notifications + Notification Preferences
 // surfaces. Populated by Lane D (T10) per the EBT Tracker Propel Parity
 // plan §4.4 + §16.5. Every CivicaString MUST have both .en and .es —
-// EBTStringParityTests guards drift at CI.
-//
-// Categories:
-// - Pre-prompt: surfaced after first successful card link + first balance
-//   render. Per D7, the system APNs prompt is only fired AFTER the user
-//   taps "Yes" on this softer pre-prompt.
-// - Settings deep-link: surfaced if the user previously hard-denied the
-//   system prompt and we need them to flip the switch in iOS Settings.
-// - Notification copy: titles + bodies for the four push categories
-//   (deposit landed, low balance, re-link required, anomaly detected).
-// - Prefs UI: labels for the user-facing notification preferences form
-//   (per-category toggles + quiet hours).
+// EBTStringParityTests guards drift at CI (registered via `all` per
+// Lane C / plan §16.8).
 
 enum EBTPushStrings {
 
@@ -63,8 +54,8 @@ enum EBTPushStrings {
         es: "Tu depósito de CalFresh llegó"
     )
     static let depositLandedBody = CivicaText(
-        "Your benefits are on your card. Tap to see your new balance.",
-        es: "Tus beneficios están en tu tarjeta. Toca para ver tu nuevo saldo."
+        "Tap to see your new balance.",
+        es: "Toca para ver tu nuevo saldo."
     )
 
     static let lowBalanceTitle = CivicaText(
@@ -72,85 +63,74 @@ enum EBTPushStrings {
         es: "Tu saldo de CalFresh está bajo"
     )
     static let lowBalanceBody = CivicaText(
-        "Check your next deposit date and plan your shopping.",
-        es: "Revisa la fecha de tu próximo depósito y planea tus compras."
+        "Tap to check your balance and see when your next deposit lands.",
+        es: "Toca para ver tu saldo y cuándo llegará tu próximo depósito."
     )
 
     static let reLinkTitle = CivicaText(
         "Re-link your EBT card",
-        es: "Vuelve a conectar tu tarjeta EBT"
+        es: "Vuelve a vincular tu tarjeta EBT"
     )
     static let reLinkBody = CivicaText(
-        "Your EBT session expired. Tap to reconnect and keep your balance up to date.",
-        es: "Tu sesión de EBT expiró. Toca para reconectar y mantener tu saldo al día."
+        "Your card link expired. Tap to re-connect so Civica can keep checking your balance.",
+        es: "El enlace de tu tarjeta expiró. Toca para volver a conectarla y que Civica siga verificando tu saldo."
     )
 
     static let anomalyTitle = CivicaText(
-        "Unusual activity on your card",
-        es: "Actividad inusual en tu tarjeta"
+        "Possible out-of-state EBT use",
+        es: "Posible uso de EBT fuera del estado"
     )
     static let anomalyBody = CivicaText(
-        "We noticed a transaction that looks unusual. Tap to review it.",
-        es: "Notamos una transacción que parece inusual. Toca para revisarla."
+        "We noticed a transaction that might not be yours. Tap to review and lock your card if needed.",
+        es: "Notamos una transacción que podría no ser tuya. Toca para revisar y bloquear tu tarjeta si es necesario."
     )
 
     // MARK: - Notification preferences UI
 
-    static let prefsScreenTitle = CivicaText(
-        "Notifications",
-        es: "Notificaciones"
-    )
-
-    static let depositToggle = CivicaText(
-        "Deposit landed",
-        es: "Depósito recibido"
-    )
+    static let prefsScreenTitle = CivicaText("Notifications", es: "Notificaciones")
+    static let depositToggle = CivicaText("Deposit landed", es: "Depósito llegó")
     static let depositToggleHelp = CivicaText(
-        "Get notified the moment your CalFresh deposit hits your card.",
-        es: "Recibe una notificación en el momento en que tu depósito de CalFresh llegue a tu tarjeta."
+        "Notify me the moment my benefits arrive.",
+        es: "Notifícame en el momento en que lleguen mis beneficios."
     )
-
-    static let lowBalanceToggle = CivicaText(
-        "Low balance",
-        es: "Saldo bajo"
-    )
+    static let lowBalanceToggle = CivicaText("Low balance", es: "Saldo bajo")
     static let lowBalanceToggleHelp = CivicaText(
         "Warn me when my balance is running low for the month.",
         es: "Avísame cuando mi saldo esté bajo para el mes."
     )
-
-    static let perksToggle = CivicaText(
-        "Perks & discounts",
-        es: "Beneficios y descuentos"
-    )
+    static let perksToggle = CivicaText("Perks & discounts", es: "Beneficios y descuentos")
     static let perksToggleHelp = CivicaText(
         "Free and discounted offers available with your EBT card.",
         es: "Ofertas gratuitas y con descuento disponibles con tu tarjeta EBT."
     )
-
-    static let recertToggle = CivicaText(
-        "Recertification reminders",
-        es: "Recordatorios de recertificación"
-    )
+    static let recertToggle = CivicaText("Recertification reminders", es: "Recordatorios de recertificación")
     static let recertToggleHelp = CivicaText(
         "Reminders before your CalFresh case needs to be renewed.",
         es: "Recordatorios antes de que tu caso de CalFresh necesite ser renovado."
     )
-
-    static let quietHoursSectionTitle = CivicaText(
-        "Quiet hours",
-        es: "Horas de silencio"
-    )
+    static let quietHoursSectionTitle = CivicaText("Quiet hours", es: "Horas de silencio")
     static let quietHoursLabel = CivicaText(
         "Don't send notifications during these hours",
         es: "No enviar notificaciones durante estas horas"
     )
-    static let quietStartLabel = CivicaText(
-        "Start",
-        es: "Inicio"
-    )
-    static let quietEndLabel = CivicaText(
-        "End",
-        es: "Fin"
-    )
+    static let quietStartLabel = CivicaText("Start", es: "Inicio")
+    static let quietEndLabel = CivicaText("End", es: "Fin")
+
+    /// Curated list of every CivicaText in this namespace. Registered for
+    /// EBTStringParityTests (plan §16.8) per Lane C's convention.
+    static let all: [CivicaText] = [
+        prePromptTitle, prePromptMessage, prePromptYes, prePromptLater,
+        settingsAlertTitle, settingsAlertMessage, settingsAlertGoToSettings, settingsAlertCancel,
+        depositLandedTitle, depositLandedBody,
+        lowBalanceTitle, lowBalanceBody,
+        reLinkTitle, reLinkBody,
+        anomalyTitle, anomalyBody,
+        prefsScreenTitle,
+        depositToggle, depositToggleHelp,
+        lowBalanceToggle, lowBalanceToggleHelp,
+        perksToggle, perksToggleHelp,
+        recertToggle, recertToggleHelp,
+        quietHoursSectionTitle, quietHoursLabel,
+        quietStartLabel, quietEndLabel,
+    ]
 }
