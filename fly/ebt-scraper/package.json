@@ -16,7 +16,8 @@
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "probe": "tsx poc/probe.ts",
-    "probe:authed": "tsx poc/probe-authed.ts"
+    "probe:authed": "tsx poc/probe-authed.ts",
+    "loadtest": "k6 run load-test/scrape.k6.js"
   },
   "dependencies": {
     "@hono/node-server": "^1.13.0",

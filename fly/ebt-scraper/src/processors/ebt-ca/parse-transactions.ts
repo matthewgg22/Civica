@@ -15,9 +15,15 @@
 
 import type { BrowserContext } from "playwright";
 import type { Session, Transaction, TransactionPage } from "../../processor.js";
-import { ScrapeErrorException } from "../../errors.js";
 import { EBT_CA_BASE_URL } from "./login.js";
 import { detectEbtCaErrors } from "./errors.js";
+import { throwAndCapture, DEFAULT_STATE, type ScrapeSentryTags } from "../../sentry-tags.js";
+
+const TAGS_TX: ScrapeSentryTags = {
+  processor: "ebt-ca",
+  state: DEFAULT_STATE,
+  action: "transactions",
+};
 
 export const EBT_CA_TRANSACTIONS_PATH = "/cardholder/transactions";
 
@@ -71,7 +77,7 @@ export function parseTransactionsFromHtml(
 ): TransactionPage {
   const err = detectEbtCaErrors(html);
   if (err) {
-    throw new ScrapeErrorException(err.code, err.message, err.context);
+    throwAndCapture(err.code, err.message, TAGS_TX, err.context);
   }
 
   const items: Transaction[] = [];
@@ -123,9 +129,10 @@ export async function parseEbtCaTransactions(
     const url = `${EBT_CA_BASE_URL}${EBT_CA_TRANSACTIONS_PATH}${offset}`;
     const response = await page.goto(url, { waitUntil: "domcontentloaded" });
     if (response && response.status() >= 400) {
-      throw new ScrapeErrorException(
+      throwAndCapture(
         "portalDown",
         `Portal returned ${response.status()} on transactions fetch.`,
+        TAGS_TX,
       );
     }
     const html = await page.content();

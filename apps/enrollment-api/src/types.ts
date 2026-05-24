@@ -74,6 +74,10 @@ export interface Env {
   // "production" or "development" — chooses api.push.apple.com vs
   // api.sandbox.push.apple.com. Defaults to development.
   APNS_ENV?: string;
+  // T5 (/plan-eng-review): daily authed-probe drift alerting. Optional
+  // incoming-webhook URL; when unset, drift logs to console but skips Slack.
+  // Set via: wrangler secret put SLACK_OBSERVABILITY_WEBHOOK_URL
+  SLACK_OBSERVABILITY_WEBHOOK_URL?: string;
 }
 
 export interface Variables {
