@@ -22,7 +22,17 @@ import { Hono } from 'hono';
 import { z } from 'zod';
 import { HTTPException } from 'hono/http-exception';
 import { makeServiceClient } from '../../lib/supabase.js';
+import {
+  sendDepositLanded,
+  sendLowBalance,
+  sendReLink,
+  type ApnsPrefs,
+  type ApnsSendDeps,
+  type ApnsSendReport,
+} from '../../lib/apns-send.js';
 import type { Env, Variables } from '../../types.js';
+
+type SupabaseClient = ReturnType<typeof makeServiceClient>;
 
 const app = new Hono<{ Bindings: Env; Variables: Variables }>();
 
@@ -123,24 +133,110 @@ const eventSchema = z.discriminatedUnion('type', [
 ]);
 
 // ---------------------------------------------------------------------------
-// APNs fan-out helpers (mock until Lane D wires apns-send.ts)
+// APNs fan-out helpers — real send via lib/apns-send.ts (Web Crypto JWT +
+// HTTP/2 fetch). Push is best-effort: when APNS_* env vars are unset, when
+// the card has no owner row, when the user has no registered devices, or
+// when Apple returns a non-2xx, we log the outcome but never throw — a 200
+// to the Fly scraper means "event persisted", not "push delivered".
 // ---------------------------------------------------------------------------
-// These helpers intentionally only log; Lane D will replace them with real
-// APNs sends using the device tokens persisted in ebt_device_tokens.
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-async function notifyDepositLanded(c: any, cardId: string, amountCents: number): Promise<void> {
-  c.get('log')?.info('ebt push (mock): deposit_landed', { card_id: cardId, amount_cents: amountCents });
+async function lookupCardOwner(db: SupabaseClient, cardId: string): Promise<string | null> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data, error } = await (db.schema('snap_enrollment').from('ebt_cards' as any) as any)
+    .select('user_id')
+    .eq('id', cardId)
+    .maybeSingle() as { data: { user_id: string } | null; error: { message: string } | null };
+  if (error || !data) return null;
+  return data.user_id;
+}
+
+function makeApnsDeps(env: Env, db: SupabaseClient): ApnsSendDeps {
+  return {
+    env,
+    fetchFn: globalThis.fetch.bind(globalThis),
+    now: () => new Date(),
+    fetchPrefs: async (userId: string): Promise<ApnsPrefs | null> => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { data, error } = await (db.schema('snap_enrollment').from('ebt_notification_prefs' as any) as any)
+        .select('deposit_on, low_balance_on, perks_on, recert_on, quiet_start_minutes, quiet_end_minutes')
+        .eq('user_id', userId)
+        .maybeSingle() as { data: ApnsPrefs | null; error: { message: string } | null };
+      if (error) return null; // treat lookup failure as "defaults-on"
+      return data;
+    },
+    fetchTokens: async (userId: string): Promise<string[]> => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { data, error } = await (db.schema('snap_enrollment').from('ebt_device_tokens' as any) as any)
+        .select('apns_token')
+        .eq('user_id', userId) as { data: { apns_token: string }[] | null; error: { message: string } | null };
+      if (error || !data) return [];
+      return data.map((row) => row.apns_token);
+    },
+  };
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-async function notifyLowBalance(c: any, cardId: string, balanceCents: number): Promise<void> {
-  c.get('log')?.info('ebt push (mock): low_balance', { card_id: cardId, balance_cents: balanceCents });
+function logReport(c: any, category: string, cardId: string, report: ApnsSendReport, extra: Record<string, unknown> = {}): void {
+  const log = c.get('log');
+  log?.info('ebt push', { category, card_id: cardId, ...report, ...extra });
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-async function notifySessionExpired(c: any, cardId: string): Promise<void> {
-  c.get('log')?.info('ebt push (mock): session_expired_relink', { card_id: cardId });
+async function notifyDepositLanded(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  c: any,
+  db: SupabaseClient,
+  cardId: string,
+  amountCents: number,
+): Promise<void> {
+  const userId = await lookupCardOwner(db, cardId);
+  if (!userId) {
+    c.get('log')?.warn('ebt push: card owner not found', { category: 'deposit_landed', card_id: cardId });
+    return;
+  }
+  const report = await sendDepositLanded({
+    deps: makeApnsDeps(c.env, db),
+    userId,
+    amount: amountCents,
+  });
+  logReport(c, 'deposit_landed', cardId, report, { amount_cents: amountCents });
+}
+
+async function notifyLowBalance(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  c: any,
+  db: SupabaseClient,
+  cardId: string,
+  thresholdCents: number,
+): Promise<void> {
+  const userId = await lookupCardOwner(db, cardId);
+  if (!userId) {
+    c.get('log')?.warn('ebt push: card owner not found', { category: 'low_balance', card_id: cardId });
+    return;
+  }
+  const report = await sendLowBalance({
+    deps: makeApnsDeps(c.env, db),
+    userId,
+    thresholdCents,
+  });
+  logReport(c, 'low_balance', cardId, report, { threshold_cents: thresholdCents });
+}
+
+async function notifySessionExpired(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  c: any,
+  db: SupabaseClient,
+  cardId: string,
+): Promise<void> {
+  const userId = await lookupCardOwner(db, cardId);
+  if (!userId) {
+    c.get('log')?.warn('ebt push: card owner not found', { category: 're_link', card_id: cardId });
+    return;
+  }
+  const report = await sendReLink({
+    deps: makeApnsDeps(c.env, db),
+    userId,
+  });
+  logReport(c, 're_link', cardId, report);
 }
 
 // ---------------------------------------------------------------------------
@@ -236,17 +332,17 @@ app.post('/', async (c) => {
         if (error) throw new HTTPException(500, { message: error.message });
       }
 
-      await notifyDepositLanded(c, event.card_id, event.amount_cents);
+      await notifyDepositLanded(c, db, event.card_id, event.amount_cents);
       return c.json({ ok: true, action: 'deposit_posted' });
     }
 
     case 'low_balance_crossed': {
-      await notifyLowBalance(c, event.card_id, event.balance_cents);
+      await notifyLowBalance(c, db, event.card_id, event.threshold_cents);
       return c.json({ ok: true, action: 'low_balance_pushed' });
     }
 
     case 'session_expired': {
-      await notifySessionExpired(c, event.card_id);
+      await notifySessionExpired(c, db, event.card_id);
       return c.json({ ok: true, action: 'session_expired_pushed' });
     }
 
