@@ -15,10 +15,10 @@ function makeFetch(
 ): { fetchImpl: typeof fetch; calls: CapturedCall[] } {
   const calls: CapturedCall[] = [];
   let i = 0;
-  const fetchImpl = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+  const fetchImpl = vi.fn(async (input: Parameters<typeof fetch>[0], init?: Parameters<typeof fetch>[1]) => {
     const url = typeof input === "string" ? input : input.toString();
     calls.push({ url, init });
-    const p = payloads[Math.min(i, payloads.length - 1)];
+    const p = payloads[Math.min(i, payloads.length - 1)]!;
     i++;
     const status = p.status ?? 200;
     return new Response(JSON.stringify(p.body), {
