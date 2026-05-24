@@ -17,7 +17,7 @@ import { ScrapeErrorException, isScrapeErrorCode } from "./errors.js";
 import { runStandaloneScrape, type ScrapeRequest } from "./scrape.js";
 import { chromium } from "playwright-extra";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
-import { EBT_CA_LOGIN_URL, IPHONE_CONTEXT } from "./processors/ebt-ca/login.js";
+import { IPHONE_CONTEXT } from "./processors/ebt-ca/login.js";
 chromium.use(StealthPlugin());
 
 interface Env {
