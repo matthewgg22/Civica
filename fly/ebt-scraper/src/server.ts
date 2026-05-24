@@ -87,7 +87,8 @@ export function buildApp(deps: BuildAppDeps): Hono {
     try {
       const context = await browser.newContext(IPHONE_CONTEXT);
       const page = await context.newPage();
-      const response = await page.goto(EBT_CA_LOGIN_URL, { waitUntil: "domcontentloaded" });
+      // Navigate to base cardholder URL and follow redirects to discover real login page.
+      const response = await page.goto("https://www.ebt.ca.gov/cardholder/", { waitUntil: "domcontentloaded" });
       const html = await page.content();
       // Extract input field names + types for selector verification
       const inputs = await page.$$eval("input", (els) =>
