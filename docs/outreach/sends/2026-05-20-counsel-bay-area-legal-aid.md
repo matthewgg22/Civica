@@ -1,11 +1,11 @@
 # Counsel outreach — Bay Area Legal Aid (Economic Justice / Public Benefits)
 
-**Date drafted:** 2026-05-20
+**Date drafted:** 2026-05-20 — refreshed 2026-05-24 (deadline is 9 days out, send today/tomorrow to leave room for the org-general-inbox routing lag)
 **Sender:** Matthew Greer-Gentis <matthewgreergentis@gmail.com>
 **Recipient:** Bay Area Legal Aid — Economic Justice / Public Benefits team <info@baylegal.org>
 **Recipient backup:** Legal Advice Line 800-551-5554 (intake routing for CalFresh cases) — Oakland HQ (510) 663-4744
 **Subject:** Civica SNAP launch — counsel review request, hard deadline 2026-06-02
-**Status:** DRAFT — open mail client + copy/paste body below + attach the linked files
+**Status:** DRAFT (verified send-ready 2026-05-24) — open mail client + copy/paste body below + attach the linked files
 
 > Recipient note: I was not able to verify a named CalFresh / Economic Justice attorney email at BayLegal from public sources. BayLegal's Economic Justice unit (Alameda/Oakland) is the right team — they handle SSI, CalWorks, General Assistance, CalFresh, county-based indigent programs — but published staff pages don't surface a public direct email for that unit's lead. The cleanest paths are:
 > 1. `info@baylegal.org` (org general inbox; standard for routing inbound counsel-engagement requests at legal-aid orgs)

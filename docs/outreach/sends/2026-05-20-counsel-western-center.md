@@ -1,11 +1,11 @@
 # Counsel outreach — Western Center on Law & Poverty
 
-**Date drafted:** 2026-05-20
+**Date drafted:** 2026-05-20 — refreshed 2026-05-24 (deadline is 9 days out, send today/tomorrow to leave room for routing through the WCLP front desk)
 **Sender:** Matthew Greer-Gentis <matthewgreergentis@gmail.com>
 **Recipient:** Christopher Sanchez, Policy Advocate (public benefits / CalFresh) <sanchez-c@wclp.org>
 **Recipient backup:** General contact form at https://wclp.org/contact/ — Sacramento office (916) 442-0753
 **Subject:** Civica SNAP launch — counsel review request, hard deadline 2026-06-02
-**Status:** DRAFT — open mail client + copy/paste body below + attach the linked files
+**Status:** DRAFT (verified send-ready 2026-05-24) — open mail client + copy/paste body below + attach the linked files
 
 > Email-format note: WCLP's published format is `FLast@wclp.org` (LeadIQ) and `lastName-firstNameInitial@wclp.org` is reported as their dominant format (signalhire, 52%). I used the latter for Sanchez (`sanchez-c@wclp.org`). If this bounces, fall back to `csanchez@wclp.org` or call the Sacramento office at (916) 442-0753 and ask the front desk to route to Christopher Sanchez on the public benefits / CalFresh team — they will pass along the email.
 

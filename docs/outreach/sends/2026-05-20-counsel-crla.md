@@ -1,11 +1,11 @@
 # Counsel outreach — California Rural Legal Assistance (CRLA)
 
-**Date drafted:** 2026-05-20
+**Date drafted:** 2026-05-20 — refreshed 2026-05-24 (deadline is 9 days out, send today/tomorrow to leave room for a 5-business-day routing turnaround)
 **Sender:** Matthew Greer-Gentis <matthewgreergentis@gmail.com>
 **Recipient:** Cynthia L. Rice, Director of Litigation, Advocacy & Training <crice@crla.org>
 **Recipient backup:** General intake `msousa@crla.org` (verified on lawhelpca / 211sj listings) or main line 800-337-0690
 **Subject:** Civica SNAP launch — counsel review request, hard deadline 2026-06-02
-**Status:** DRAFT — open mail client + copy/paste body below + attach the linked files
+**Status:** DRAFT (verified send-ready 2026-05-24) — open mail client + copy/paste body below + attach the linked files
 
 > Email-format note: CRLA's published staff emails follow `flast@crla.org` (e.g., `msousa@crla.org` is verified for M. Sousa in Stockton, on multiple public legal-aid directories). `crice@crla.org` for Cynthia Rice is inferred from that pattern, not directly verified. If it bounces, fall back to the verified `msousa@crla.org` (Stockton public-benefits contact) and ask for a routing to Cynthia Rice's office, or call the main line at 800-337-0690 and ask for the LAT (Litigation, Advocacy & Training) unit.
 
