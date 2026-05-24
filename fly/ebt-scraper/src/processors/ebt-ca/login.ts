@@ -54,7 +54,7 @@ export async function loginEbtCa(browser: Browser, input: LoginInput): Promise<S
  * valid. If the portal redirects us to login, the session is expired.
  */
 // iPhone 15 UA — ebt.ca.gov WAF blocks HeadlessChrome but passes mobile Safari.
-const IPHONE_CONTEXT = {
+export const IPHONE_CONTEXT = {
   userAgent:
     "Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Mobile/15E148 Safari/604.1",
   viewport: { width: 390, height: 844 },

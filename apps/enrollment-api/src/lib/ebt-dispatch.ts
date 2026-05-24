@@ -11,6 +11,7 @@
  */
 
 import type { Env } from '../types.js';
+import { makeServiceClient } from './supabase.js';
 
 export interface ScrapeRefreshArgs {
   cardId: string;
@@ -22,6 +23,13 @@ export interface ScrapeRefreshResult {
   dispatched: boolean;
   reason?: string;
 }
+
+/** Maps ebt_cards.processor enum to the Fly scraper's processor id. */
+const PROCESSOR_ID_MAP: Record<string, string> = {
+  ebt_ca: 'ebt-ca',
+  plaid_ca: 'plaid-ca',
+  fis_direct: 'fis-direct',
+};
 
 async function hmacHex(secret: string, body: string): Promise<string> {
   const key = await crypto.subtle.importKey(
@@ -38,10 +46,14 @@ async function hmacHex(secret: string, body: string): Promise<string> {
 }
 
 /**
- * Ask the Fly scraper to refresh a card. Idempotent on the scraper side —
- * the scraper deduplicates by card_id within a short window. The gateway
- * does NOT await scrape completion; this returns as soon as the dispatch
- * POST returns, and the scraper later fans out webhook events back here.
+ * Ask the Fly scraper to refresh a card. Fetches the card's session cookies
+ * from Supabase and builds the full ScrapeRequest payload the scraper expects.
+ *
+ * The gateway does NOT await scrape completion; this returns as soon as the
+ * dispatch POST returns, and the scraper later fans out webhook events back here.
+ *
+ * session_cookie_encrypted is stored as a JSON-serialised SessionCookie[] array,
+ * matching the shape the iOS WKHTTPCookieStore serialises to before POST /ebt/link.
  */
 export async function dispatchScrapeRefresh(
   env: Env,
@@ -56,11 +68,42 @@ export async function dispatchScrapeRefresh(
     return { dispatched: false, reason: 'no_secret' };
   }
 
+  // Fetch the card row so we can include session cookies in the scrape request.
+  const db = makeServiceClient(env);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data: card, error: cardError } = await (db.schema('snap_enrollment').from('ebt_cards' as any) as any)
+    .select('id, processor, session_cookie_encrypted, session_cookie_expires_at')
+    .eq('id', args.cardId)
+    .single() as {
+      data: {
+        id: string;
+        processor: string;
+        session_cookie_encrypted: string;
+        session_cookie_expires_at: string;
+      } | null;
+      error: { message: string } | null;
+    };
+
+  if (cardError || !card) {
+    return { dispatched: false, reason: `card_lookup_failed: ${cardError?.message ?? 'not found'}` };
+  }
+
+  // session_cookie_encrypted is a JSON-serialised SessionCookie[] from iOS.
+  let cookieHandoff: unknown[];
+  try {
+    cookieHandoff = JSON.parse(card.session_cookie_encrypted) as unknown[];
+    if (!Array.isArray(cookieHandoff)) throw new Error('not an array');
+  } catch {
+    return { dispatched: false, reason: 'cookie_parse_failed' };
+  }
+
+  const processorId = PROCESSOR_ID_MAP[card.processor] ?? card.processor;
+
   const body = JSON.stringify({
-    card_id: args.cardId,
-    user_id: args.userId,
-    reason: args.reason,
-    requested_at: new Date().toISOString(),
+    processor: processorId,
+    cardId: card.id,
+    action: 'balance',
+    login: { cookieHandoff },
   });
   const sig = await hmacHex(secret, body);
 

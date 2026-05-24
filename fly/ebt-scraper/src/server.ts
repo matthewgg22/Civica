@@ -15,6 +15,8 @@ import { Hono } from "hono";
 import * as Sentry from "@sentry/node";
 import { ScrapeErrorException, isScrapeErrorCode } from "./errors.js";
 import { runStandaloneScrape, type ScrapeRequest } from "./scrape.js";
+import { chromium } from "playwright";
+import { EBT_CA_LOGIN_URL, IPHONE_CONTEXT } from "./processors/ebt-ca/login.js";
 
 interface Env {
   PORT: string;
@@ -69,9 +71,55 @@ export function buildApp(deps: BuildAppDeps): Hono {
 
   app.get("/healthz", (c) => c.json({ ok: true }));
 
+  // GET /probe-selectors — navigates to the ebt.ca.gov login page and returns
+  // the form HTML + discovered input[name] values. NO form submission; safe to
+  // call without a real card. Use to verify selectors before a live card test.
+  // Protected by the same HMAC secret (query param ?sig=sha256=... or header).
+  app.get("/probe-selectors", async (c) => {
+    const sig = c.req.header("x-civica-signature") ?? c.req.query("sig") ?? "";
+    const probePayload = "probe-selectors";
+    if (!verifySignature(probePayload, sig.replace(/^sha256=/, ""), deps.secret)) {
+      return c.json({ error: "invalid signature" }, 401);
+    }
+    const browser = await chromium.launch({ headless: true });
+    try {
+      const context = await browser.newContext(IPHONE_CONTEXT);
+      const page = await context.newPage();
+      const response = await page.goto(EBT_CA_LOGIN_URL, { waitUntil: "domcontentloaded" });
+      const html = await page.content();
+      // Extract input field names + types for selector verification
+      const inputs = await page.$$eval("input", (els) =>
+        els.map((el) => ({
+          name: el.getAttribute("name"),
+          type: el.getAttribute("type"),
+          id: el.getAttribute("id"),
+          placeholder: el.getAttribute("placeholder"),
+        })),
+      );
+      const buttons = await page.$$eval("button,input[type=submit]", (els) =>
+        els.map((el) => ({
+          tag: el.tagName.toLowerCase(),
+          type: (el as HTMLInputElement).getAttribute("type"),
+          text: el.textContent?.trim().slice(0, 80),
+        })),
+      );
+      await context.close();
+      return c.json({
+        url: page.url(),
+        status: response?.status(),
+        inputs,
+        buttons,
+        htmlLength: html.length,
+        htmlSnippet: html.slice(0, 2000),
+      });
+    } finally {
+      await browser.close();
+    }
+  });
+
   app.post("/scrape", async (c) => {
     const rawBody = await c.req.text();
-    const signature = c.req.header("x-scraper-signature") ?? "";
+    const signature = c.req.header("x-civica-signature") ?? "";
 
     if (!verifySignature(rawBody, signature, deps.secret)) {
       return c.json({ error: "invalid signature" }, 401);
