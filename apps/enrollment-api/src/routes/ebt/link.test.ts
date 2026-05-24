@@ -33,6 +33,18 @@ afterEach(() => vi.resetAllMocks());
 const CARD_ID = 'c0000000-0000-0000-0000-000000000001';
 const HASH = 'a'.repeat(64);
 const FUTURE_ISO = new Date(Date.now() + 86400_000).toISOString();
+const CIPHERTEXT = 'pgs1:ZmFrZS1jaXBoZXJ0ZXh0';
+
+/**
+ * makeDbClient defaults rpc -> { data: null, error: null }, which would make
+ * encryptSessionCookie throw. Wire a sensible ciphertext response so the
+ * non-encryption happy-path tests keep exercising the upsert flow.
+ */
+function mockClient(upsertResult: { data: unknown; error: unknown }) {
+  const client = makeDbClient(upsertResult);
+  client.rpc.mockResolvedValue({ data: CIPHERTEXT, error: null });
+  return client;
+}
 
 const VALID_BODY = {
   card_id_hash: HASH,
@@ -84,7 +96,7 @@ describe('POST /ebt/link', () => {
   });
 
   it('returns 500 when Supabase upsert fails', async () => {
-    vi.mocked(makeServiceClient).mockReturnValue(makeDbClient({
+    vi.mocked(makeServiceClient).mockReturnValue(mockClient({
       data: null,
       error: { code: '23505', message: 'unique violation' },
     }));
@@ -98,7 +110,7 @@ describe('POST /ebt/link', () => {
   });
 
   it('returns 201 with id, processor, session expiry on happy path', async () => {
-    vi.mocked(makeServiceClient).mockReturnValue(makeDbClient({
+    vi.mocked(makeServiceClient).mockReturnValue(mockClient({
       data: {
         id: CARD_ID,
         user_id: APPLICANT.id,
@@ -130,7 +142,7 @@ describe('POST /ebt/link', () => {
   });
 
   it('accepts optional remember_cookie', async () => {
-    vi.mocked(makeServiceClient).mockReturnValue(makeDbClient({
+    vi.mocked(makeServiceClient).mockReturnValue(mockClient({
       data: {
         id: CARD_ID,
         user_id: APPLICANT.id,
