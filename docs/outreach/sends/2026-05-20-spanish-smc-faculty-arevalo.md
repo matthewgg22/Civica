@@ -1,10 +1,10 @@
 # Spanish reviewer outreach — CCC Spanish faculty — Lourdes Arévalo (Santa Monica College)
 
-**Date drafted:** 2026-05-20
+**Date drafted:** 2026-05-20 — refreshed 2026-05-24 (faculty are between spring grading and summer prep right now — narrow window before they go off-grid for July)
 **Sender:** Matthew Greer-Gentis <matthewgreergentis@gmail.com>
 **Recipient:** Lourdes Arévalo <arevalo_lourdes@smc.edu>
 **Subject:** Native Spanish review for SNAP app — 3-4 hours, paid, 1-week turnaround
-**Status:** DRAFT — open mail client + copy/paste below
+**Status:** DRAFT (verified send-ready 2026-05-24) — open mail client + copy/paste below
 
 ## To copy-paste
 

@@ -1,10 +1,10 @@
 # Spanish reviewer outreach — Paid translation service — Gengo
 
-**Date drafted:** 2026-05-20
+**Date drafted:** 2026-05-20 — refreshed 2026-05-24 (portal flow unchanged)
 **Sender:** Matthew Greer-Gentis <matthewgreergentis@gmail.com>
 **Recipient:** Gengo order portal — https://gengo.com/order/
 **Subject:** N/A — submit via portal (no email)
-**Status:** DRAFT — open https://gengo.com/order/ + paste the project description below
+**Status:** DRAFT (verified send-ready 2026-05-24) — open https://gengo.com/order/ + paste the project description below
 
 ## To copy-paste
 

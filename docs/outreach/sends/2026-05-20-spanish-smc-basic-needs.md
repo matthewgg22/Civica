@@ -1,10 +1,10 @@
 # Spanish reviewer outreach — CCC basic needs center — Julyssa Guevara (Santa Monica College)
 
-**Date drafted:** 2026-05-20
+**Date drafted:** 2026-05-20 — refreshed 2026-05-24 (academic-calendar note: SMC summer session began 2026-06-16; send before finals week hits to maximize response odds)
 **Sender:** Matthew Greer-Gentis <matthewgreergentis@gmail.com>
 **Recipient:** Julyssa Guevara <GUEVARA_JULYSSA@smc.edu>
 **Subject:** Native Spanish review for SNAP app — 3-4 hours, paid, 1-week turnaround
-**Status:** DRAFT — open mail client + copy/paste below
+**Status:** DRAFT (verified send-ready 2026-05-24) — open mail client + copy/paste below
 
 ## To copy-paste
 
