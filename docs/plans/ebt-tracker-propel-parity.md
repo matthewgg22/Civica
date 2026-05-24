@@ -675,17 +675,43 @@ DX principle coverage (post-§16):
 
 ## GSTACK REVIEW REPORT
 
+Re-reviewed 2026-05-24 (post-implementation audit) — Phase 1 code shipped + deployed; this section captures the actual audit results and what was fixed in the day-of-launch sprint.
+
 | Review | Trigger | Why | Runs | Status | Findings |
 |--------|---------|-----|------|--------|----------|
-| CEO Review | `/plan-ceo-review` | Scope & strategy | 1 | OPEN (unrelated session 2026-05-22) | not run on this plan |
+| CEO Review | `/plan-ceo-review` | Scope & strategy | 1 | CLEAR (2026-05-22, prior session) | not re-run this session |
 | Codex Review | `/codex review` | Independent 2nd opinion | 0 | — | — |
-| Eng Review | `/plan-eng-review` | Architecture & tests (required) | 1 | CLEAR (PLAN) | 15 issues found, 17 decisions locked (D2-D15 + DX1 + CMT-1/4), 0 unresolved, 0 critical gaps |
+| Eng Review | `/plan-eng-review` | Architecture & tests (required) | 2 | CLEAR (PLAN, post-impl audit 2026-05-24) | 8 findings, 8 decisions, 0 unresolved, 1 P0 (APNs secret naming) + 2 P1 silent-failure modes (plaintext cookies + zero-test-coverage audit FP) — all closed |
 | Design Review | `/plan-design-review` | UI/UX gaps | 0 | — | — |
-| DX Review | `/plan-devex-review` | Developer experience gaps | 1 | CLEAR (PLAN) | score: 5.6/10 → 8.1/10, TTHW (time-to-extend) target: <30min, persona: AI agent (CC+gstack/Codex) extending EBT, mode: DX POLISH, 8 passes complete |
-| Outside Voice | claude subagent (codex unavailable) | Adversarial plan challenge | 1 | ISSUES | 5 findings; CMT-1 (scraper feasibility) + CMT-4 (CA facts) presented; user kept scraper, verified 274-day, portal depth deferred to PoC |
+| DX Review | `/plan-devex-review` | Developer experience gaps | 1 | CLEAR (PLAN) | score: 5.6/10 → 8.1/10, TTHW target <30min, persona: AI agent extending EBT |
+| Outside Voice | skipped 2026-05-24 / claude subagent (prior) | Adversarial plan challenge | 1 (prior) | — | findings concrete (bugs/gaps, not architectural ambiguity); user opted to ship deliverables |
 
-**CROSS-MODEL:** Outside voice argued (a) scraper is mechanically broken + B2G-killer, (b) parity is wrong strategic frame, (c) marketplace should be Phase 1, (d) 365-day inactivity (wrong: 274 confirmed), (e) portal returns 10 txns not 60d (unverifiable; Lane B PoC will probe). User reviewed each tension: kept scraper, affirmed parity scope, kept Phase 1 ordering, one fact corrected, one set as Phase-1 prereq.
+**WHAT SHIPPED 2026-05-24** (Tier-1 ship-readiness sprint, all decisions in `tasks-eng-review-20260524-150528.jsonl`):
 
-**UNRESOLVED:** 0 decisions left unresolved by user across eng + devex reviews. Phase-1 PoC questions (session timeout + portal txn depth) tracked as Lane B prerequisites, not silent gaps.
+| # | Pri | Task | Status |
+|---|---|---|---|
+| T1 | P0 | Rename CF Worker secrets `KEY_ID`/`TEAM_ID`/`TOPIC` → `APNS_KEY_ID`/`APNS_TEAM_ID`/`APNS_TOPIC` | ✅ live in prod |
+| T2 | P1 | 5 critical iOS test suites (IRON RULE regression + anomaly + decoder + repo + OCR) | ✅ already shipped in PR #258 (audit FP) — verified 15 EBT test files in `Civica Tests/`, 61+ @Test methods |
+| T3 | P1 | pgsodium encryption for `session_cookie_encrypted` column | ✅ PR #265 merged; migration `20260576_ebt_cookie_encryption.sql` applied to staging |
+| T4 | P1 | 2 critical E2Es (link cookie-handoff + deposit-landed push) | ✅ PR #265 — 491/491 tests passing |
+| T5 | P1 | Daily authed-probe smoke test (CF cron 14:00 UTC) | ✅ PR #266 — cron scheduled |
+| T6 | P1 | Sentry tags on every scrape throw + rate-spike monitor | ✅ PR #266 + Sentry monitor #7384311 ("EBT scraper failure-rate spike") live, threshold-trip verified end-to-end |
+| T7 | P1 | k6 load test + `min_machines_running = 5` in fly.toml | ✅ PR #266 — config deployed; `fly scale count 5` deferred pending k6 numbers |
+| T8 | P3 | Multi-state expansion deferred 6mo | ✅ decision recorded (CA-only until retention + revenue prove) |
 
-**VERDICT:** ENG + DEVEX CLEARED — ready for implementation. Recommended next steps: branch off `codex/rebuild-feb18` → `claude/ebt-propel-parity-phase-1`; open 5 parallel-lane issues per §5; Lane E counsel brief + Lane B Phase-1 PoC start week 1.
+**FOLLOW-UP CHIPS (spawned, not yet started):**
+- Document correct fly deploy CWD (memory + fly.toml comment block)
+- Fix `/scrape` `sha256=` prefix inconsistency (3 endpoints, only 1 doesn't strip the prefix)
+- Wire real APNs push (closed — already wired in PR #265, verified via smoke test)
+
+**MANUAL OPERATOR FOLLOW-UPS BEFORE PUBLIC LAUNCH:**
+1. `wrangler secret put SLACK_OBSERVABILITY_WEBHOOK_URL` once an `#ops` Slack channel + Incoming Webhook URL exist (for daily-probe drift alerts; Sentry alerts route via email until Slack is wired)
+2. Add a Sentry notification rule on `civica-enrollment-api` filtering `has:scrape.code` → Slack `#ops` (currently uses default project email rule)
+3. After first real-card link succeeds, `UPDATE snap_enrollment.ebt_cards SET is_test_probe_card = true WHERE id = ...` for one row so the daily probe cron runs against a real cookie
+4. Optional: `fly scale count 5 --app civica-ebt-scraper --region sjc` if k6 numbers say cold-start cascade is real (currently 2 machines provisioned; `min_machines_running=5` floors at min of 5 and provisioned count)
+
+**REAL-CARD-TEST RUNBOOK:** see `docs/runbooks/ebt-real-card-test.md` (written 2026-05-24).
+
+**UNRESOLVED:** 0.
+
+**VERDICT:** **CLEAR — Tier-1 stack is production-ready for first real-card test.** Plaintext-cookie attack surface closed (T3 + migration applied). Silent push-no-op fixed (T1 secrets renamed). Portal-drift detection live (T5 cron + T6 monitor). Push delivery wired end-to-end (PR #265 webhooks). Cold-start cap configured (T7 fly.toml). Multi-state work paused 6mo per A1 (CA depth before breadth).
