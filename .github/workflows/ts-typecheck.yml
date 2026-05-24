@@ -1,0 +1,120 @@
+name: TS — typecheck
+
+# Fast pre-check that catches TS interface/type drift the moment it lands.
+#
+# Why this exists (separate from api-ci.yml / enrollment-api-ci.yml):
+#   When a PR changes a shared type in packages/snap-enums, packages/snap-rules,
+#   etc., a downstream consumer that wasn't updated will fail to compile. Vitest
+#   may not catch it (mocks return loosely-typed shapes), but `tsc --noEmit`
+#   fails loudly the moment the drift lands.
+#
+#   This mirrors the defensive posture of ios-build-for-testing.yml (PR #228)
+#   for the TypeScript half of the codebase: parallel per-package jobs,
+#   ~30s–1m each, clear failure attribution (the red check tells you exactly
+#   which package broke).
+#
+#   Existing workflows (api-ci.yml's `turbo run typecheck`, enrollment-api-ci.yml's
+#   `pnpm typecheck`) cover subsets and run alongside vitest. This is the
+#   wide-net pre-check that catches drift in any package, including ones
+#   without their own CI.
+
+on:
+  pull_request:
+    branches:
+      - main
+      - codex/rebuild-feb18
+    paths:
+      - 'apps/**'
+      - 'packages/**'
+      - 'pnpm-lock.yaml'
+      - 'pnpm-workspace.yaml'
+      - 'tsconfig*.json'
+      - 'turbo.json'
+      - '.github/workflows/ts-typecheck.yml'
+  workflow_dispatch:
+
+jobs:
+  # Apps — each gets its own job so the red check names the broken app.
+  api:
+    name: apps/api
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        # version is read from packageManager field in package.json
+      - uses: actions/setup-node@v4
+        with: { node-version: '22', cache: 'pnpm' }
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @civica/api typecheck
+
+  enrollment-api:
+    name: apps/enrollment-api
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '22', cache: 'pnpm' }
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @civica/enrollment-api typecheck
+
+  dashboard:
+    name: apps/dashboard
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '22', cache: 'pnpm' }
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter dashboard typecheck
+
+  web:
+    name: apps/web
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '22', cache: 'pnpm' }
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter civica-web typecheck
+
+  # Packages — grouped into one job to stay under the parallel-jobs cap.
+  # Each package's typecheck still runs in turbo's own parallelism, and the
+  # log clearly attributes failures to the package that broke.
+  packages:
+    name: packages/* (leaf packages)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '22', cache: 'pnpm' }
+      - run: pnpm install --frozen-lockfile
+      - name: Typecheck all leaf packages
+        # Explicit filter list — packages without a typecheck script (api-types,
+        # config — both source-less) are intentionally omitted. snap-verification-prototype
+        # is excluded everywhere in the monorepo (see root `pnpm build` filter) so it's
+        # excluded here too.
+        run: |
+          pnpm turbo run typecheck \
+            --filter=@civica/analytics-engine \
+            --filter=@civica/benefitscal-cbo \
+            --filter=@civica/cfr-273 \
+            --filter=@civica/db \
+            --filter=@civica/fixtures \
+            --filter=@civica/recert-engine \
+            --filter=@civica/snap-calculator \
+            --filter=@civica/snap-compliance-copy \
+            --filter=@civica/snap-enums \
+            --filter=@civica/snap-handoff \
+            --filter=@civica/snap-qc-engine \
+            --filter=@civica/snap-rules \
+            --filter=@civica/state-connectors \
+            --filter=@civica/ui
