@@ -1,7 +1,8 @@
 # Counsel batch — Civica SNAP launch
 
-**Sent:** [date when emailed]
-**Recipients:** [3 attorneys / firms]
+**Status (2026-05-24):** DRAFT — three ready-to-send emails pending in PR #221 (CRLA, Western Center on Law and Poverty, Bay Area Legal Aid). Send-then-merge as the send record. Hard deadline 2026-06-02 = 9 days out.
+**Sent:** [fill in when actually emailed; one row per recipient in the tracking table below]
+**Recipients:** Cynthia L. Rice (CRLA), Western Center on Law and Poverty intake, Bay Area Legal Aid intake — see PR #221 for full contact details and per-recipient drafts
 **Hard deadline:** 2026-06-02
 **Total estimated attorney time:** 2-3 hours across 4 items
 
