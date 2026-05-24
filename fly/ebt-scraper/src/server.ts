@@ -99,7 +99,7 @@ export function buildApp(deps: BuildAppDeps): Hono {
       const buttons = await page.$$eval("button,input[type=submit]", (els) =>
         els.map((el) => ({
           tag: el.tagName.toLowerCase(),
-          type: (el as HTMLInputElement).getAttribute("type"),
+          type: el.getAttribute("type"),
           text: el.textContent?.trim().slice(0, 80),
         })),
       );
