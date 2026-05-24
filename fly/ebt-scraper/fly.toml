@@ -8,16 +8,20 @@
 # plan §4.4 / D13) fans out via Cloudflare Queue (or pgmq) consumer; pool grows
 # up to 50 machines, each handling ~3K scrapes serially with jitter.
 #
-# Deploy flow (per plan §16.7 and memory feedback_fly_deploy_worktree):
-#   cd ~/Developer/Civica   # <-- NOT from a worktree; BuildKit chokes on .git file
-#   fly launch --copy-config --no-deploy --config fly/ebt-scraper/fly.toml
-#   fly secrets set --config fly/ebt-scraper/fly.toml \
+# Deploy flow (per plan §16.7 and memory feedback_fly_deploy_cwd):
+#   cd ~/Developer/Civica/fly/ebt-scraper   # NOT from repo root; build context must be this dir
+#                                           # (Dockerfile uses bare COPY paths like `src/`)
+#   fly launch --copy-config --no-deploy
+#   fly secrets set \
 #     EBT_SCRAPER_WEBHOOK_SECRET="..." \
 #     GATEWAY_WEBHOOK_URL="https://civica-snap-api.fly.dev/webhooks/ebt-scraper" \
 #     GATEWAY_WEBHOOK_SECRET="..." \
 #     COOKIE_DECRYPT_KEY="..." \
 #     SENTRY_DSN="..."
-#   flyctl deploy --config fly/ebt-scraper/fly.toml
+#   fly deploy --app civica-ebt-scraper
+#
+# Also NOT from a git worktree (.claude/worktrees/...) — BuildKit chokes on the .git
+# file. Use the real ~/Developer/Civica/fly/ebt-scraper path.
 
 app = "civica-ebt-scraper"
 primary_region = "sjc"   # California recipients → minimize cross-country latency to ebt.ca.gov
