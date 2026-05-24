@@ -9,14 +9,14 @@
 # which is what Fly machines need to launch headless Chromium without extra apt steps.
 # See: https://mcr.microsoft.com/en-us/product/playwright
 
-FROM mcr.microsoft.com/playwright:v1.49.0-noble AS deps
+FROM mcr.microsoft.com/playwright:v1.60.0-noble AS deps
 
 WORKDIR /app
 COPY package.json package-lock.json* ./
 # Note: --omit=dev gives a leaner final image; build stage installs dev deps separately
 RUN npm ci --omit=dev
 
-FROM mcr.microsoft.com/playwright:v1.49.0-noble AS build
+FROM mcr.microsoft.com/playwright:v1.60.0-noble AS build
 
 WORKDIR /app
 COPY package.json package-lock.json* ./
@@ -25,7 +25,7 @@ COPY tsconfig.json ./
 COPY src/ ./src/
 RUN npm run build
 
-FROM mcr.microsoft.com/playwright:v1.49.0-noble AS runtime
+FROM mcr.microsoft.com/playwright:v1.60.0-noble AS runtime
 
 WORKDIR /app
 ENV NODE_ENV=production
