@@ -22,16 +22,21 @@ import { detectEbtCaErrors } from "./errors.js";
 
 export const EBT_CA_BASE_URL = "https://www.ebt.ca.gov";
 export const EBT_CA_HOME_URL = `${EBT_CA_BASE_URL}/cardholder/`;
-export const EBT_CA_LOGIN_URL = `${EBT_CA_BASE_URL}/cardholder/login`;
+// Login form lives on the home URL (cardholder/login is 404 — confirmed by probe 2026-05-23).
+export const EBT_CA_LOGIN_URL = `${EBT_CA_BASE_URL}/cardholder/`;
 
 /**
- * Selector / form-field names — to be confirmed by PoC. Keep these in one
- * place so updates after PoC findings.md don't sprawl.
+ * Selector / form-field names — confirmed by /probe-selectors against live
+ * ebt.ca.gov on 2026-05-23. Keep in one place so drift is a single-file edit.
+ *
+ * Probe output:
+ *   inputs: [{name:"userid",type:"text",...}, {name:"password",type:"password",...}]
+ *   buttons: [{tag:"button",type:"submit",text:"Login"}]
  */
 export const EBT_CA_SELECTORS = {
-  cardNumberInput: 'input[name="cardNumber"]',
-  pinInput: 'input[name="pin"]',
-  submitButton: 'button[type="submit"], input[type="submit"]',
+  cardNumberInput: 'input[name="userid"]',
+  pinInput: 'input[name="password"]',
+  submitButton: 'button[type="submit"], button:has-text("Login")',
   // Heuristic: balance-page assertion happens via text marker, not a selector,
   // since the portal HTML drifts.
 } as const;
@@ -112,6 +117,7 @@ async function cardAndPinLogin(browser: Browser, input: LoginInput): Promise<Ses
   const context = await browser.newContext(IPHONE_CONTEXT);
   try {
     const page = await context.newPage();
+    // EBT_CA_LOGIN_URL === EBT_CA_HOME_URL — the login form is on the home page.
     await page.goto(EBT_CA_LOGIN_URL, { waitUntil: "domcontentloaded" });
 
     // Pre-flight: did we land on a captcha?
