@@ -85,6 +85,27 @@ BUDDY_ADD_ENABLED = "false"
 # Generate with: openssl rand -base64 32
 #   BUDDY_JWT_SECRET=...              # wrangler secret put BUDDY_JWT_SECRET
 #
+# EBT Tracker (Lane D, T10) — APNs token-based push for deposit/low-balance/
+# re-link notifications fired from POST /webhooks/ebt-scraper. All four
+# secrets are required to actually send pushes; when any is missing the
+# webhook still acks 200 and the apns-send helper logs "not-configured".
+#
+# Apple Push (current credentials):
+#   APNs Key ID:  GLPJR3A3FD
+#   Team ID:      687GD7CA6J
+#   Bundle ID:    co.civica.benefits
+#
+# Bind via:
+#   wrangler secret put APNS_KEY_P8        # paste the multi-line .p8 PEM contents
+#   wrangler secret put APNS_KEY_ID        # "GLPJR3A3FD"
+#   wrangler secret put APNS_TEAM_ID       # "687GD7CA6J"
+#   wrangler secret put APNS_TOPIC         # "co.civica.benefits"
+#   wrangler secret put APNS_ENV           # "production" or "development"
+#
+# EBT_SCRAPER_WEBHOOK_SECRET — HMAC shared with the Fly scraper:
+#   wrangler secret put EBT_SCRAPER_WEBHOOK_SECRET
+#   (and `fly secrets set EBT_SCRAPER_WEBHOOK_SECRET=...` on the scraper side)
+
 # TODO-15 (Browserless.io driver) — external Playwright service for Phase 2.
 # When set, POST /benefitscal/submit/:packetId auto-builds a Browserless driver
 # and the submitter drives the BenefitsCal portal via Browserless. When absent,

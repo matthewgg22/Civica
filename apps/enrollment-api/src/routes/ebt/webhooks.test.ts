@@ -1,10 +1,17 @@
-import { describe, it, expect, vi, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { Hono } from 'hono';
 
 vi.mock('../../lib/supabase.js', () => ({
   makeAnonClient: vi.fn(),
   makeServiceClient: vi.fn(),
 }));
+
+const apnsMocks = vi.hoisted(() => ({
+  sendDepositLanded: vi.fn().mockResolvedValue({ status: 'not-configured', attempts: 0, successes: 0 }),
+  sendLowBalance: vi.fn().mockResolvedValue({ status: 'not-configured', attempts: 0, successes: 0 }),
+  sendReLink: vi.fn().mockResolvedValue({ status: 'not-configured', attempts: 0, successes: 0 }),
+}));
+vi.mock('../../lib/apns-send.js', () => apnsMocks);
 
 import { makeServiceClient } from '../../lib/supabase.js';
 import webhooksRouter from './webhooks.js';
@@ -16,6 +23,14 @@ import {
 import type { Env } from '../../types.js';
 
 afterEach(() => vi.resetAllMocks());
+
+// vi.resetAllMocks() wipes the .mockResolvedValue defaults set in vi.hoisted,
+// so re-arm the apns-send stubs before each test.
+beforeEach(() => {
+  apnsMocks.sendDepositLanded.mockResolvedValue({ status: 'not-configured', attempts: 0, successes: 0 });
+  apnsMocks.sendLowBalance.mockResolvedValue({ status: 'not-configured', attempts: 0, successes: 0 });
+  apnsMocks.sendReLink.mockResolvedValue({ status: 'not-configured', attempts: 0, successes: 0 });
+});
 
 const CARD_ID = 'c0000000-0000-0000-0000-000000000001';
 const SECRET = 'test-secret-12345';
@@ -195,7 +210,8 @@ describe('POST /webhooks/ebt-scraper — event handling', () => {
   });
 
   it('deposit_posted → updates existing deposit row and acks', async () => {
-    // First call returns existing deposit row; second is the update.
+    // 1: select ebt_deposits → existing row; 2: update ebt_deposits;
+    // 3: lookupCardOwner (ebt_cards) → no row, push silently no-ops.
     let calls = 0;
     vi.mocked(makeServiceClient).mockReturnValue({
       schema: vi.fn().mockReturnValue({
@@ -224,14 +240,11 @@ describe('POST /webhooks/ebt-scraper — event handling', () => {
   });
 
   it('deposit_posted → inserts when no existing scheduled row', async () => {
-    let calls = 0;
+    // 1: select ebt_deposits → none; 2: insert ebt_deposits;
+    // 3: lookupCardOwner (ebt_cards) → none, push no-ops.
     vi.mocked(makeServiceClient).mockReturnValue({
       schema: vi.fn().mockReturnValue({
-        from: vi.fn().mockImplementation(() => {
-          calls++;
-          if (calls === 1) return makeQueryBuilder({ data: null, error: null });
-          return makeQueryBuilder({ data: null, error: null });
-        }),
+        from: vi.fn().mockImplementation(() => makeQueryBuilder({ data: null, error: null })),
       }),
       rpc: vi.fn(),
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -249,7 +262,11 @@ describe('POST /webhooks/ebt-scraper — event handling', () => {
     expect(res.status).toBe(200);
   });
 
-  it('low_balance_crossed → acks (mock APNs send)', async () => {
+  it('low_balance_crossed → acks (push best-effort, APNS_* unset → not-configured)', async () => {
+    // lookupCardOwner runs first; with no owner row the push silently
+    // no-ops. TEST_ENV has no APNS_* anyway, so even with an owner the
+    // send helper would return { status: 'not-configured' }.
+    vi.mocked(makeServiceClient).mockReturnValue(makeDbClient({ data: null, error: null }));
     const { app } = makeApp();
     const body = JSON.stringify({
       type: 'low_balance_crossed',
@@ -263,13 +280,67 @@ describe('POST /webhooks/ebt-scraper — event handling', () => {
     expect(result.action).toBe('low_balance_pushed');
   });
 
-  it('session_expired → acks (mock re-link APNs)', async () => {
+  it('session_expired → acks (push best-effort, no owner row)', async () => {
+    vi.mocked(makeServiceClient).mockReturnValue(makeDbClient({ data: null, error: null }));
     const { app } = makeApp();
     const body = JSON.stringify({ type: 'session_expired', card_id: CARD_ID });
     const res = await app.request('/', { method: 'POST', body }, TEST_ENV);
     expect(res.status).toBe(200);
     const result = await res.json() as { action: string };
     expect(result.action).toBe('session_expired_pushed');
+  });
+
+  it('low_balance_crossed → looks up card owner and calls sendLowBalance(userId, threshold)', async () => {
+    // ebt_cards lookup returns the owner row.
+    vi.mocked(makeServiceClient).mockReturnValue(
+      makeDbClient({ data: { user_id: 'user-abc' }, error: null }),
+    );
+    const { app } = makeApp();
+    const body = JSON.stringify({
+      type: 'low_balance_crossed',
+      card_id: CARD_ID,
+      balance_cents: 1000,
+      threshold_cents: 2500,
+    });
+    const res = await app.request('/', { method: 'POST', body }, TEST_ENV);
+    expect(res.status).toBe(200);
+
+    expect(apnsMocks.sendLowBalance).toHaveBeenCalledTimes(1);
+    const call = apnsMocks.sendLowBalance.mock.calls[0]![0] as {
+      userId: string; thresholdCents: number;
+    };
+    expect(call.userId).toBe('user-abc');
+    expect(call.thresholdCents).toBe(2500);
+  });
+
+  it('session_expired → looks up card owner and calls sendReLink(userId)', async () => {
+    vi.mocked(makeServiceClient).mockReturnValue(
+      makeDbClient({ data: { user_id: 'user-xyz' }, error: null }),
+    );
+    const { app } = makeApp();
+    const body = JSON.stringify({ type: 'session_expired', card_id: CARD_ID });
+    const res = await app.request('/', { method: 'POST', body }, TEST_ENV);
+    expect(res.status).toBe(200);
+
+    expect(apnsMocks.sendReLink).toHaveBeenCalledTimes(1);
+    const call = apnsMocks.sendReLink.mock.calls[0]![0] as { userId: string };
+    expect(call.userId).toBe('user-xyz');
+  });
+
+  it('low_balance_crossed → skips push when card owner not found (no throw)', async () => {
+    vi.mocked(makeServiceClient).mockReturnValue(
+      makeDbClient({ data: null, error: null }),
+    );
+    const { app } = makeApp();
+    const body = JSON.stringify({
+      type: 'low_balance_crossed',
+      card_id: CARD_ID,
+      balance_cents: 1000,
+      threshold_cents: 2500,
+    });
+    const res = await app.request('/', { method: 'POST', body }, TEST_ENV);
+    expect(res.status).toBe(200);
+    expect(apnsMocks.sendLowBalance).not.toHaveBeenCalled();
   });
 
   it('scrape_error → logs and acks with code echoed back', async () => {
