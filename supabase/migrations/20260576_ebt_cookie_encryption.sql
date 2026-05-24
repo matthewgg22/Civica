@@ -65,16 +65,18 @@ GRANT SELECT ON snap_enrollment.pgsodium_key_registry TO service_role;
 DO $$
 DECLARE
   v_key_id UUID;
+  v_key    pgsodium.valid_key;
 BEGIN
   SELECT key_id INTO v_key_id
     FROM snap_enrollment.pgsodium_key_registry
    WHERE purpose = 'ebt_session_cookie';
 
   IF v_key_id IS NULL THEN
-    v_key_id := pgsodium.create_key(
+    v_key := pgsodium.create_key(
       key_type := 'aead-det',
       name     := 'ebt_session_cookie_v1'
-    )::uuid;
+    );
+    v_key_id := v_key.id;
     INSERT INTO snap_enrollment.pgsodium_key_registry (purpose, key_id)
     VALUES ('ebt_session_cookie', v_key_id);
   END IF;
