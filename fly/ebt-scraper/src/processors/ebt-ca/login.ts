@@ -17,8 +17,10 @@
 
 import type { Browser } from "playwright";
 import type { LoginInput, Session, SessionCookie } from "../../processor.js";
-import { ScrapeErrorException } from "../../errors.js";
 import { detectEbtCaErrors } from "./errors.js";
+import { throwAndCapture, DEFAULT_STATE } from "../../sentry-tags.js";
+
+const PROCESSOR_ID = "ebt-ca";
 
 export const EBT_CA_BASE_URL = "https://www.ebt.ca.gov";
 export const EBT_CA_HOME_URL = `${EBT_CA_BASE_URL}/cardholder/`;
@@ -48,9 +50,10 @@ export async function loginEbtCa(browser: Browser, input: LoginInput): Promise<S
   if (input.pin) {
     return cardAndPinLogin(browser, input);
   }
-  throw new ScrapeErrorException(
+  throwAndCapture(
     "sessionExpired",
     "No session cookies and no PIN provided — cannot authenticate.",
+    { processor: PROCESSOR_ID, state: DEFAULT_STATE, action: "full" },
   );
 }
 
@@ -79,22 +82,29 @@ async function verifyCookieHandoff(
 
     const finalUrl = page.url();
     if (response && response.status() >= 400) {
-      throw new ScrapeErrorException(
+      throwAndCapture(
         "portalDown",
         `Portal returned ${response.status()} on session verify.`,
+        { processor: PROCESSOR_ID, state: DEFAULT_STATE, action: "full" },
       );
     }
     if (finalUrl.includes("/login")) {
-      throw new ScrapeErrorException(
+      throwAndCapture(
         "sessionExpired",
         "Cookie handoff did not produce an authenticated session.",
+        { processor: PROCESSOR_ID, state: DEFAULT_STATE, action: "full" },
       );
     }
 
     const html = await page.content();
     const err = detectEbtCaErrors(html);
     if (err) {
-      throw new ScrapeErrorException(err.code, err.message, err.context);
+      throwAndCapture(
+        err.code,
+        err.message,
+        { processor: PROCESSOR_ID, state: DEFAULT_STATE, action: "full" },
+        err.context,
+      );
     }
 
     const cookies = await context.cookies();
@@ -124,12 +134,21 @@ async function cardAndPinLogin(browser: Browser, input: LoginInput): Promise<Ses
     const preHtml = await page.content();
     const preErr = detectEbtCaErrors(preHtml);
     if (preErr) {
-      throw new ScrapeErrorException(preErr.code, preErr.message, preErr.context);
+      throwAndCapture(
+        preErr.code,
+        preErr.message,
+        { processor: PROCESSOR_ID, state: DEFAULT_STATE, action: "full" },
+        preErr.context,
+      );
     }
 
     await page.fill(EBT_CA_SELECTORS.cardNumberInput, input.card);
     if (!input.pin) {
-      throw new ScrapeErrorException("sessionExpired", "PIN required for credentialed login path.");
+      throwAndCapture(
+        "sessionExpired",
+        "PIN required for credentialed login path.",
+        { processor: PROCESSOR_ID, state: DEFAULT_STATE, action: "full" },
+      );
     }
     await page.fill(EBT_CA_SELECTORS.pinInput, input.pin);
     await Promise.all([
@@ -140,7 +159,12 @@ async function cardAndPinLogin(browser: Browser, input: LoginInput): Promise<Ses
     const postHtml = await page.content();
     const postErr = detectEbtCaErrors(postHtml);
     if (postErr) {
-      throw new ScrapeErrorException(postErr.code, postErr.message, postErr.context);
+      throwAndCapture(
+        postErr.code,
+        postErr.message,
+        { processor: PROCESSOR_ID, state: DEFAULT_STATE, action: "full" },
+        postErr.context,
+      );
     }
 
     const cookies = await context.cookies();

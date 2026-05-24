@@ -15,9 +15,12 @@ import { Hono } from "hono";
 import * as Sentry from "@sentry/node";
 import { ScrapeErrorException, isScrapeErrorCode } from "./errors.js";
 import { runStandaloneScrape, type ScrapeRequest } from "./scrape.js";
+import { captureScrapeException, DEFAULT_STATE, type ScrapeActionTag } from "./sentry-tags.js";
 import { chromium } from "playwright-extra";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
 import { IPHONE_CONTEXT } from "./processors/ebt-ca/login.js";
+import type { SessionCookie } from "./processor.js";
+import { fingerprintPage, PROBE_PAGES, type ProbeFingerprintResult } from "./probe-fingerprint.js";
 chromium.use(StealthPlugin());
 
 interface Env {
@@ -65,7 +68,44 @@ export interface BuildAppDeps {
   secret: string;
   /** Override for tests — runStandaloneScrape by default. */
   runScrape?: (request: ScrapeRequest) => Promise<unknown>;
+  /**
+   * Override for /probe-selectors-authed tests. Receives the cookieHandoff
+   * payload and returns the structural fingerprint. Default fires up Chromium
+   * and visits the real portal.
+   */
+  runAuthedProbe?: (cookieHandoff: SessionCookie[]) => Promise<ProbeFingerprintResult>;
+  /**
+   * When true, /scrape?stub=1 returns a synthetic balance without spinning
+   * up Playwright. Used by the k6 load test to measure cold-start +
+   * concurrency cost without sending traffic at ebt.ca.gov. Defaults to
+   * `NODE_ENV !== "production"` at the entrypoint so stub mode is never
+   * available in prod even if a caller passes `?stub=1`.
+   */
+  allowStub?: boolean;
 }
+
+/**
+ * Synthetic balance returned by `?stub=1` mode. Same shape as a real scrape
+ * result so the gateway side stays unchanged. Numbers are obviously fake.
+ */
+const STUB_SCRAPE_RESPONSE = {
+  ok: true,
+  result: {
+    processor: "ebt-ca",
+    cardId: "stub-card",
+    action: "balance",
+    balance: {
+      foodBalanceCents: 12345,
+      cashBalanceCents: 0,
+      lastUpdatedAt: "2026-05-24T00:00:00.000Z",
+    },
+    session: {
+      cookies: [],
+      expiresAt: null,
+      rememberMeCookieName: null,
+    },
+  },
+} as const;
 
 export function buildApp(deps: BuildAppDeps): Hono {
   const app = new Hono();
@@ -120,7 +160,51 @@ export function buildApp(deps: BuildAppDeps): Hono {
     }
   });
 
+  // POST /probe-selectors-authed — daily cron-driven structural probe.
+  // Body: { cookieHandoff: SessionCookie[] }. HMAC-signed via x-civica-signature.
+  // The handler navigates the balance + transactions pages READ-ONLY, never
+  // submits a form, and returns a structural fingerprint the cron diffs against
+  // a committed baseline. See docs/sentry-alerts.md for the drift response.
+  app.post("/probe-selectors-authed", async (c) => {
+    const rawBody = await c.req.text();
+    const sig = (c.req.header("x-civica-signature") ?? "").replace(/^sha256=/, "");
+    if (!verifySignature(rawBody, sig, deps.secret)) {
+      return c.json({ error: "invalid signature" }, 401);
+    }
+    let body: { cookieHandoff?: SessionCookie[] };
+    try {
+      body = JSON.parse(rawBody) as { cookieHandoff?: SessionCookie[] };
+    } catch {
+      return c.json({ error: "invalid json" }, 400);
+    }
+    if (!Array.isArray(body.cookieHandoff) || body.cookieHandoff.length === 0) {
+      return c.json({ error: "cookieHandoff is required and must be a non-empty array" }, 400);
+    }
+    try {
+      const probe = deps.runAuthedProbe
+        ? await deps.runAuthedProbe(body.cookieHandoff)
+        : await runAuthedProbeLive(body.cookieHandoff);
+      return c.json(probe);
+    } catch (err) {
+      captureScrapeException(err, {
+        processor: "ebt-ca",
+        state: DEFAULT_STATE,
+        action: "probe",
+      });
+      const message = err instanceof Error ? err.message : String(err);
+      return c.json({ error: "probe_failed", message }, 500);
+    }
+  });
+
   app.post("/scrape", async (c) => {
+    // Stub mode for load testing: short-circuits BEFORE HMAC verification so
+    // the k6 script can hit /scrape?stub=1 without burning a real signature
+    // generation step on every request. Only enabled when deps.allowStub is
+    // true (i.e. NODE_ENV !== "production" at the entrypoint).
+    if (deps.allowStub && c.req.query("stub") === "1") {
+      return c.json(STUB_SCRAPE_RESPONSE);
+    }
+
     const rawBody = await c.req.text();
     const signature = c.req.header("x-civica-signature") ?? "";
 
@@ -155,9 +239,20 @@ export function buildApp(deps: BuildAppDeps): Hono {
           422,
         );
       }
-      // Unexpected — capture to Sentry, return generic parseError so clients
-      // get a typed code instead of a 500.
-      Sentry.captureException(err);
+      // Unexpected — capture to Sentry with scrape.* tags, return generic
+      // parseError so clients get a typed code instead of a 500.
+      // `ScrapeErrorException` returned at 422 above; the dispatcher already
+      // captured it with tags at the throw site, so we only get here for
+      // truly unexpected throws (eg playwright timeout, OOM kill).
+      const action: ScrapeActionTag =
+        request.action === "balance" || request.action === "transactions" || request.action === "full"
+          ? request.action
+          : "full";
+      captureScrapeException(err, {
+        processor: request.processor,
+        state: DEFAULT_STATE,
+        action,
+      });
       const code = "parseError";
       const message = err instanceof Error ? err.message : String(err);
       if (!isScrapeErrorCode(code)) {
@@ -174,6 +269,37 @@ export function buildApp(deps: BuildAppDeps): Hono {
   return app;
 }
 
+/**
+ * Live implementation of the daily authed probe — drives Playwright through
+ * the balance + transactions pages with the supplied cookies and returns the
+ * structural fingerprint. Read-only: never submits a form.
+ */
+async function runAuthedProbeLive(cookieHandoff: SessionCookie[]): Promise<ProbeFingerprintResult> {
+  const browser = await chromium.launch({ headless: true });
+  try {
+    const context = await browser.newContext(IPHONE_CONTEXT);
+    await context.addCookies(cookieHandoff);
+    try {
+      const balance = await fingerprintPage(
+        context,
+        PROBE_PAGES.balance.url,
+        // Spread because anchorText is a readonly tuple in PROBE_PAGES.
+        [...PROBE_PAGES.balance.anchorText],
+      );
+      const transactions = await fingerprintPage(
+        context,
+        PROBE_PAGES.transactions.url,
+        [...PROBE_PAGES.transactions.anchorText],
+      );
+      return { balance, transactions, capturedAt: new Date().toISOString() };
+    } finally {
+      await context.close();
+    }
+  } finally {
+    await browser.close();
+  }
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 // Entrypoint — only runs when started directly (not when imported by tests).
 // ─────────────────────────────────────────────────────────────────────────────
@@ -186,7 +312,12 @@ if (isMain) {
     Sentry.init({ dsn: env.SENTRY_DSN, environment: env.NODE_ENV ?? "development" });
   }
 
-  const app = buildApp({ secret: env.EBT_SCRAPER_WEBHOOK_SECRET });
+  const app = buildApp({
+    secret: env.EBT_SCRAPER_WEBHOOK_SECRET,
+    // Stub mode for the k6 load test — never enabled in production, even if
+    // someone passes ?stub=1, because we hard-gate on NODE_ENV here.
+    allowStub: env.NODE_ENV !== "production",
+  });
   const port = parseInt(env.PORT, 10);
 
   serve({ fetch: app.fetch, port }, (info) => {

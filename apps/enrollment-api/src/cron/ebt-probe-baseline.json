@@ -1,0 +1,26 @@
+{
+  "_comment": "Structural fingerprint baseline for ebt.ca.gov — diffed daily by src/cron/ebt-probe.ts. Update this file when an intentional portal change happens (e.g. CDSS ships a redesign); otherwise leave it alone so drift surfaces in #ops. Seed values are conservative placeholders pending the first authed-probe run against the real card; the diff will surface the seeded values as a drift on day one, which the operator clears by replacing this file with the day-one output.",
+  "balance": {
+    "url": "https://www.ebt.ca.gov/cardholder/Home",
+    "status": 200,
+    "inputNames": [],
+    "tableColumnCounts": [3],
+    "anchorTextPresence": {
+      "Available Balance": true,
+      "Cash Benefits": true,
+      "Food Benefits": true
+    }
+  },
+  "transactions": {
+    "url": "https://www.ebt.ca.gov/cardholder/transactions",
+    "status": 200,
+    "inputNames": [],
+    "tableColumnCounts": [4],
+    "anchorTextPresence": {
+      "Amount": true,
+      "Posted": true,
+      "Transaction History": true
+    }
+  },
+  "capturedAt": "2026-05-24T00:00:00.000Z"
+}

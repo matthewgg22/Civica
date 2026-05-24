@@ -12,6 +12,7 @@ import { chromium as stealthChromium } from "playwright-extra";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
 import type { LoginInput, Processor, SessionCookie } from "./processor.js";
 import { ScrapeErrorException } from "./errors.js";
+import { captureScrapeException, throwAndCapture, DEFAULT_STATE } from "./sentry-tags.js";
 import { ebtCaProcessor } from "./processors/ebt-ca/index.js";
 
 // Apply stealth patches: spoofs ~12 Chromium fingerprinting signals that Akamai
@@ -55,9 +56,12 @@ export interface ScrapeResult {
 export function getProcessor(id: string): Processor {
   const processor = REGISTRY[id];
   if (!processor) {
-    throw new ScrapeErrorException(
+    // Unknown processor — tag with the requested id as the "processor" so the
+    // Sentry alert can spot a misconfigured gateway dispatch immediately.
+    throwAndCapture(
       "portalDown",
       `Unknown processor: ${id}`,
+      { processor: id, state: DEFAULT_STATE, action: "full" },
       { available: Object.keys(REGISTRY) },
     );
   }
@@ -127,6 +131,22 @@ export async function runStandaloneScrape(request: ScrapeRequest): Promise<Scrap
   }
   try {
     return await runScrape(browser, request);
+  } catch (err) {
+    // Capture with tags BEFORE rethrowing so the Sentry metric alert can see
+    // every failure mode, not just the ones that escape the /scrape catch
+    // block in server.ts. `ScrapeErrorException` thrown via `throwAndCapture`
+    // is already captured at the call site — re-capturing here would double-
+    // count, so only mirror non-ScrapeErrorException throws.
+    if (!(err instanceof ScrapeErrorException)) {
+      captureScrapeException(err, {
+        processor: request.processor,
+        state: DEFAULT_STATE,
+        action: request.action === "balance" || request.action === "transactions" || request.action === "full"
+          ? request.action
+          : "full",
+      });
+    }
+    throw err;
   } finally {
     await browser.close();
   }

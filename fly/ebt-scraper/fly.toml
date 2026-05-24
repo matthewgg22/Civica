@@ -34,7 +34,12 @@ primary_region = "sjc"   # California recipients → minimize cross-country late
   force_https = true
   auto_stop_machines = "stop"
   auto_start_machines = true
-  min_machines_running = 0
+  # T7 (/plan-eng-review 2026-05-24): 5 warm machines absorb the initial
+  # issuance-day burst without cold-start (~10s Playwright container boot)
+  # cascading into user-visible latency. Cold-start a 51st machine when the
+  # queue depth crosses the auto-start threshold; the warm pool keeps p95
+  # well under 10s for the first few thousand requests of the burst.
+  min_machines_running = 5
   # Cap at 50 — covers issuance-day burst with headroom; revisit if metrics show queue depth.
   # See plan §4.4 D13 (Fly pool ~50 + 1-hour jitter on issuance days).
   max_machines_running = 50

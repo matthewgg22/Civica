@@ -12,9 +12,15 @@
 
 import type { BrowserContext } from "playwright";
 import type { Balance, Session } from "../../processor.js";
-import { ScrapeErrorException } from "../../errors.js";
 import { EBT_CA_HOME_URL } from "./login.js";
 import { assertBalancePageMarkers, detectEbtCaErrors } from "./errors.js";
+import { throwAndCapture, DEFAULT_STATE, type ScrapeSentryTags } from "../../sentry-tags.js";
+
+const TAGS_BALANCE: ScrapeSentryTags = {
+  processor: "ebt-ca",
+  state: DEFAULT_STATE,
+  action: "balance",
+};
 
 const FOOD_LABEL_PATTERNS = [
   /food\s+(?:benefits|stamps|account)/i,
@@ -69,20 +75,21 @@ export function parseLastUpdated(html: string): string | null {
 export function parseBalanceFromHtml(html: string): Balance {
   const err = detectEbtCaErrors(html);
   if (err) {
-    throw new ScrapeErrorException(err.code, err.message, err.context);
+    throwAndCapture(err.code, err.message, TAGS_BALANCE, err.context);
   }
   const marker = assertBalancePageMarkers(html);
   if (marker) {
-    throw new ScrapeErrorException(marker.code, marker.message, marker.context);
+    throwAndCapture(marker.code, marker.message, TAGS_BALANCE, marker.context);
   }
 
   const foodCents = findBalanceNearLabel(html, FOOD_LABEL_PATTERNS);
   const cashCents = findBalanceNearLabel(html, CASH_LABEL_PATTERNS);
 
   if (foodCents === null) {
-    throw new ScrapeErrorException(
+    throwAndCapture(
       "parseError",
       "Could not locate food benefits balance.",
+      TAGS_BALANCE,
     );
   }
 
@@ -106,9 +113,10 @@ export async function parseEbtCaBalance(
   try {
     const response = await page.goto(EBT_CA_HOME_URL, { waitUntil: "domcontentloaded" });
     if (response && response.status() >= 400) {
-      throw new ScrapeErrorException(
+      throwAndCapture(
         "portalDown",
         `Portal returned ${response.status()} on balance fetch.`,
+        TAGS_BALANCE,
       );
     }
     const html = await page.content();

@@ -124,5 +124,8 @@ BUDDY_ADD_ENABLED = "false"
 # find_help_sources timestamps stay fresh and the path is observable.
 # T2 (/plan-eng-review 2026-05-22): every 5 minutes, clear app_metadata.role
 # for completed/revoked buddy relationships. See src/cron/buddy-app-metadata-cleanup.ts.
+# T5 (/plan-eng-review 2026-05-24): daily authed probe at 14:00 UTC (6 AM PT,
+# after the CA issuance window). Detects ebt.ca.gov structural drift before
+# users hit parseError. See src/cron/ebt-probe.ts.
 [triggers]
-crons = ["0 3 * * *", "*/5 * * * *"]
+crons = ["0 3 * * *", "*/5 * * * *", "0 14 * * *"]

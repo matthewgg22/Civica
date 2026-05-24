@@ -161,6 +161,7 @@ app.onError((err, c) => {
 export { app };
 
 import { cleanupBuddyAppMetadata } from "./cron/buddy-app-metadata-cleanup.js";
+import { runEbtProbe } from "./cron/ebt-probe.js";
 
 // Cron dispatch — keep tiny and table-driven so adding/removing
 // schedules in wrangler.toml is the only change needed. Tasks run under
@@ -210,6 +211,23 @@ async function dispatchScheduled(
         log("info", "scheduled: buddy app_metadata cleanup finished", { ...result });
       } catch (err) {
         log("error", "scheduled: buddy app_metadata cleanup failed", { error: String(err) });
+      }
+      return;
+    }
+    case "0 14 * * *": {
+      // T5: daily authed-probe drift detection against ebt.ca.gov. See
+      // src/cron/ebt-probe.ts for the full design rationale.
+      log("info", "scheduled: ebt probe starting");
+      try {
+        const result = await runEbtProbe(env, log);
+        log("info", "scheduled: ebt probe finished", {
+          ran: result.ran,
+          reason: result.reason,
+          drift: result.diff ? !result.diff.equal : undefined,
+          slackPosted: result.slackPosted,
+        });
+      } catch (err) {
+        log("error", "scheduled: ebt probe failed", { error: String(err) });
       }
       return;
     }
