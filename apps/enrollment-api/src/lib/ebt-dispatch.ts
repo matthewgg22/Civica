@@ -12,6 +12,7 @@
 
 import type { Env } from '../types.js';
 import { makeServiceClient } from './supabase.js';
+import { decryptSessionCookie } from './ebt-cookie-crypto.js';
 
 export interface ScrapeRefreshArgs {
   cardId: string;
@@ -88,10 +89,21 @@ export async function dispatchScrapeRefresh(
     return { dispatched: false, reason: `card_lookup_failed: ${cardError?.message ?? 'not found'}` };
   }
 
-  // session_cookie_encrypted is a JSON-serialised SessionCookie[] from iOS.
+  // Decrypt the pgsodium-wrapped session cookie before handing it to the
+  // scraper. This is the *only* place in the gateway that ever sees the
+  // plaintext cookie (link.ts encrypts on write; decrypt happens here and
+  // immediately leaves the Workers runtime over HTTPS to the Fly scraper).
+  let plaintextCookie: string;
+  try {
+    plaintextCookie = await decryptSessionCookie(db, card.session_cookie_encrypted);
+  } catch (err) {
+    return { dispatched: false, reason: `cookie_decrypt_failed: ${(err as Error)?.message ?? 'unknown'}` };
+  }
+
+  // The plaintext is a JSON-serialised SessionCookie[] from iOS.
   let cookieHandoff: unknown[];
   try {
-    cookieHandoff = JSON.parse(card.session_cookie_encrypted) as unknown[];
+    cookieHandoff = JSON.parse(plaintextCookie) as unknown[];
     if (!Array.isArray(cookieHandoff)) throw new Error('not an array');
   } catch {
     return { dispatched: false, reason: 'cookie_parse_failed' };

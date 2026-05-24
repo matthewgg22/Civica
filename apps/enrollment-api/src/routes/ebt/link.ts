@@ -5,10 +5,12 @@
  * enters card+PIN locally, and WKHTTPCookieStore extracts the session cookie.
  * The cookie travels here; the PIN never leaves the device.
  *
- * The session cookie is stored encrypted at rest. Phase 1 leans on Supabase
- * Vault (KMS-backed) via the column-level encryption we already use for
- * Canvas OAuth tokens — same pattern. Future enhancement: rotate the Vault
- * key per scrape and tear down on session expiry.
+ * The session cookie is encrypted at rest with pgsodium (T3): the gateway
+ * calls the `encrypt_session_cookie` SECURITY DEFINER RPC before writing
+ * `session_cookie_encrypted`, and `ebt-dispatch.ts` calls the matching
+ * `decrypt_session_cookie` RPC immediately before handing the plaintext
+ * cookie to the Fly scraper. A read-only DB breach therefore yields only
+ * AEAD ciphertext, not replayable ebt.ca.gov sessions.
  *
  * Idempotency: upserting on (user_id, card_id_hash) — re-linking the same
  * card replaces the cookie and resets balance cache to NULL so the next
@@ -22,6 +24,7 @@ import { HTTPException } from 'hono/http-exception';
 import { makeServiceClient } from '../../lib/supabase.js';
 import { requireApplicant } from '../../lib/auth.js';
 import { dispatchScrapeRefresh } from '../../lib/ebt-dispatch.js';
+import { encryptSessionCookie } from '../../lib/ebt-cookie-crypto.js';
 import type { Env } from '../../types.js';
 
 const app = new Hono<{ Bindings: Env }>();
@@ -46,17 +49,29 @@ app.post('/', zValidator('json', linkBodySchema), async (c) => {
   const db = makeServiceClient(c.env);
   const now = new Date().toISOString();
 
-  // Phase 1: we lean on column-level encryption applied by Supabase Vault.
-  // The TypeScript layer simply stores the encoded ciphertext the iOS app
-  // already produces. (Full Vault round-trip lands when Lane B wires the
-  // scraper's decrypt-on-machine path.)
+  // Encrypt before write — single explicit site (matches the single explicit
+  // decrypt site in ebt-dispatch.ts). On RPC failure we 500: storing the
+  // plaintext cookie would silently break the security model T3 fixes.
+  let sessionCipher: string;
+  let rememberCipher: string | null = null;
+  try {
+    sessionCipher = await encryptSessionCookie(db, body.session_cookie);
+    if (body.remember_cookie) {
+      rememberCipher = await encryptSessionCookie(db, body.remember_cookie);
+    }
+  } catch (err) {
+    throw new HTTPException(500, {
+      message: `cookie encryption failed: ${(err as Error)?.message ?? 'unknown'}`,
+    });
+  }
+
   const row = {
     user_id: actor.id,
     card_id_hash: body.card_id_hash,
     processor: body.processor,
-    session_cookie_encrypted: body.session_cookie,
+    session_cookie_encrypted: sessionCipher,
     session_cookie_expires_at: body.expires_at,
-    remember_cookie_encrypted: body.remember_cookie ?? null,
+    remember_cookie_encrypted: rememberCipher,
     balance_cents: null as number | null,
     balance_at: null as string | null,
     lock_state: {} as Record<string, unknown>,
