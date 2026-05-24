@@ -27,13 +27,24 @@
 
 set -euo pipefail
 
+# Auto-load EBT_SCRAPER_WEBHOOK_SECRET from .dev.vars (gitignored) if the
+# env var isn't already set. Avoids having to `export` it on every shell.
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+DEV_VARS="${SCRIPT_DIR}/../.dev.vars"
+if [[ -z "${EBT_SCRAPER_WEBHOOK_SECRET:-}" && -f "$DEV_VARS" ]]; then
+  value=$(grep -E '^EBT_SCRAPER_WEBHOOK_SECRET=' "$DEV_VARS" | head -1 | cut -d= -f2-)
+  if [[ -n "$value" ]]; then
+    export EBT_SCRAPER_WEBHOOK_SECRET="$value"
+  fi
+fi
+
 URL="${EBT_WEBHOOK_URL:-https://civica-enrollment-api.civica-api.workers.dev/webhooks/ebt-scraper}"
 SECRET="${EBT_SCRAPER_WEBHOOK_SECRET:-}"
 
 if [[ -z "$SECRET" ]]; then
-  echo "ERROR: EBT_SCRAPER_WEBHOOK_SECRET is not set." >&2
-  echo "Retrieve it from Cloudflare (cannot be read back via wrangler) or from your" >&2
-  echo ".dev.vars / 1Password — then export it before running this script." >&2
+  echo "ERROR: EBT_SCRAPER_WEBHOOK_SECRET is not set and no usable value found in .dev.vars." >&2
+  echo "Either export it explicitly or add a line to apps/enrollment-api/.dev.vars:" >&2
+  echo "  EBT_SCRAPER_WEBHOOK_SECRET=<the-value>" >&2
   exit 2
 fi
 
