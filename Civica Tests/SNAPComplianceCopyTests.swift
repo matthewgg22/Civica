@@ -325,12 +325,17 @@ struct SNAPComplianceCopyTests {
         let snapDir = repoRoot.appendingPathComponent("Civica/Features/SNAP")
 
         let fm = FileManager.default
-        let excludedFile = "SNAPComplianceCopyRegistry.swift"
+        // Exclude the registry itself AND its codegen siblings
+        // (e.g. SNAPComplianceCopyRegistry+Generated.swift from PR #213):
+        // those files legitimately contain banned phrases as data
+        // (the strings counsel is approving). All other Swift files
+        // under Civica/Features/SNAP are still scanned, so the
+        // accidental-introduction safety net remains intact.
         var files: [URL] = []
         if let enumerator = fm.enumerator(at: snapDir,
                                           includingPropertiesForKeys: [.isRegularFileKey]) {
             for case let url as URL in enumerator where url.pathExtension == "swift"
-                && url.lastPathComponent != excludedFile {
+                && !url.lastPathComponent.hasPrefix("SNAPComplianceCopyRegistry") {
                 files.append(url)
             }
         }
@@ -473,15 +478,26 @@ struct SNAPComplianceCopyTests {
 
     /// Decision 3 — the RECERT keyword phrase must be removed from the
     /// recert SMS copy (both flat default and all state-keyed variants).
+    /// Uses a word-boundary regex so "recertification" (which contains
+    /// "RECERT" as a substring) does not trigger a false positive — we
+    /// only want to catch the bare RECERT keyword.
     @Test func recertSMSDropsRECERTKeyword() {
         let row = SNAPComplianceCopyRegistry.pendingCopyRevisions
             .first { $0.id == "recert_one_day_sms" }
         #expect(row != nil)
-        #expect(row?.approvedEnglish?.uppercased().contains("RECERT") == false ||
-                row?.approvedEnglish?.uppercased().contains(" RECERT") == false)
+
+        func containsRecertKeyword(_ s: String) -> Bool {
+            s.range(of: #"\bRECERT\b"#,
+                    options: [.regularExpression, .caseInsensitive]) != nil
+        }
+
+        let approvedEnglish = row?.approvedEnglish ?? ""
+        #expect(!containsRecertKeyword(approvedEnglish),
+                "approvedEnglish still mentions bare RECERT keyword")
         for state in ["CA", "MA"] {
             let en = row?.approvedEnglishByState[state] ?? ""
-            #expect(!en.contains(" RECERT "), "State \(state) variant still mentions RECERT keyword")
+            #expect(!containsRecertKeyword(en),
+                    "State \(state) variant still mentions bare RECERT keyword")
         }
     }
 

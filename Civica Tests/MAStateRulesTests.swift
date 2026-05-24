@@ -89,7 +89,9 @@ struct MAStateRulesTests {
     }
 
     @Test func minimumBenefitDelegatesToFederal() {
-        #expect(rules.minimumBenefit(asOf: fy26Date) == 23)
+        // FY26 federal minimum benefit = $24 (USDA FNS FY26 COLA memo).
+        // Matches FederalDefaultRules.minimumBenefitSnapshots.
+        #expect(rules.minimumBenefit(asOf: fy26Date) == 24)
     }
 
     @Test func earnedIncomeDeductionRateIsTwentyPercent() {
