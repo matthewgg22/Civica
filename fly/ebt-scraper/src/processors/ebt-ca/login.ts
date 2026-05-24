@@ -53,11 +53,20 @@ export async function loginEbtCa(browser: Browser, input: LoginInput): Promise<S
  * Production path: verify the cookies we received from iOS WebView are still
  * valid. If the portal redirects us to login, the session is expired.
  */
+// iPhone 15 UA — ebt.ca.gov WAF blocks HeadlessChrome but passes mobile Safari.
+const IPHONE_CONTEXT = {
+  userAgent:
+    "Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Mobile/15E148 Safari/604.1",
+  viewport: { width: 390, height: 844 },
+  locale: "en-US",
+  timezoneId: "America/Los_Angeles",
+} as const;
+
 async function verifyCookieHandoff(
   browser: Browser,
   cookieHandoff: SessionCookie[],
 ): Promise<Session> {
-  const context = await browser.newContext();
+  const context = await browser.newContext(IPHONE_CONTEXT);
   try {
     await context.addCookies(cookieHandoff);
     const page = await context.newPage();
@@ -100,7 +109,7 @@ async function verifyCookieHandoff(
  * production (gateway never sends a PIN to this server).
  */
 async function cardAndPinLogin(browser: Browser, input: LoginInput): Promise<Session> {
-  const context = await browser.newContext();
+  const context = await browser.newContext(IPHONE_CONTEXT);
   try {
     const page = await context.newPage();
     await page.goto(EBT_CA_LOGIN_URL, { waitUntil: "domcontentloaded" });
