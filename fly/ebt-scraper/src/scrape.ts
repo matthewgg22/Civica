@@ -7,10 +7,17 @@
  */
 
 import type { Browser } from "playwright";
-import { chromium } from "playwright";
+import { chromium as playwrightChromium } from "playwright";
+import { chromium as stealthChromium } from "playwright-extra";
+import StealthPlugin from "puppeteer-extra-plugin-stealth";
 import type { LoginInput, Processor, SessionCookie } from "./processor.js";
 import { ScrapeErrorException } from "./errors.js";
 import { ebtCaProcessor } from "./processors/ebt-ca/index.js";
+
+// Apply stealth patches: spoofs ~12 Chromium fingerprinting signals that Akamai
+// and Cloudflare use to detect headless browsers (TLS JA3, navigator.webdriver,
+// chrome runtime, permissions API, plugin list, etc).
+stealthChromium.use(StealthPlugin());
 
 /** Registered processors keyed by id. Add a new entry here when shipping one. */
 const REGISTRY: Record<string, Processor> = {
@@ -110,7 +117,14 @@ export async function runScrape(
  * inside one machine invocation.
  */
 export async function runStandaloneScrape(request: ScrapeRequest): Promise<ScrapeResult> {
-  const browser = await chromium.launch({ headless: true });
+  // Use stealth chromium to bypass Akamai bot detection on ebt.ca.gov.
+  // Falls back to plain chromium if stealth launch fails (defensive).
+  let browser: Browser;
+  try {
+    browser = await stealthChromium.launch({ headless: true }) as Browser;
+  } catch {
+    browser = await playwrightChromium.launch({ headless: true });
+  }
   try {
     return await runScrape(browser, request);
   } finally {
