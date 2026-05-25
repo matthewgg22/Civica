@@ -4,7 +4,7 @@ import AppHeader from "../../components/AppHeader";
 import ApiCoveragePanel from "../../components/qc/ApiCoveragePanel";
 import ScoringPanel from "../../components/qc/ScoringPanel";
 import BaselinePanel from "../../components/qc/BaselinePanel";
-import ErrorReductionProjectionPanel from "../../components/qc/ErrorReductionProjectionPanel";
+import FormulaHero from "../../components/qc/FormulaHero";
 import { ENGINE_VERSION } from "@civica/snap-qc-engine";
 
 export const dynamic = "force-dynamic";
@@ -240,11 +240,11 @@ export default async function QCPage() {
           </div>
         </div>
 
-        <ErrorReductionProjectionPanel
+        <FormulaHero
           totalPackets={totalPackets}
           argyleConnected={argyleConnected}
+          shelterDocCount={shelterDocCount}
           suaAnswered={suaModerate}
-          shelterDocUploaded={shelterDocCount}
         />
         <ApiCoveragePanel apis={apiData} totalPackets={totalPackets} />
         <ScoringPanel
