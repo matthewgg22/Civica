@@ -1,7 +1,6 @@
 import { cookies } from "next/headers";
 import { createServerClientFromCookies } from "../../lib/supabase";
 import AppHeader from "../../components/AppHeader";
-import ApiCoveragePanel from "../../components/qc/ApiCoveragePanel";
 import BaselinePanel from "../../components/qc/BaselinePanel";
 import FormulaHero from "../../components/qc/FormulaHero";
 import PillarTracking from "../../components/qc/PillarTracking";
@@ -9,6 +8,11 @@ import { ENGINE_VERSION } from "@civica/snap-qc-engine";
 
 export const dynamic = "force-dynamic";
 
+// FLOWS retained for BaselinePanel's USDA-baseline comparison row labels.
+// The numeric weights below are the LEGACY surface labels (pre-T0); the
+// engine's authoritative shares now live in PILLAR_SHARES_UNNORMALIZED. The
+// comparison panel still uses these as display labels until BaselinePanel is
+// migrated to engine constants (T8 follow-up).
 const FLOWS = [
   { id: "sua",    label: "Shelter / Utility (SUA)", weight: 50.5 },
   { id: "gig",    label: "Earned income · gig",     weight: 26.8 },
@@ -68,54 +72,11 @@ export default async function QCPage() {
   );
   const shelterDocCount = shelterDocPacketIds.size;
 
-  // ── API coverage
+  // ── Per-pillar engagement aggregates (used by FormulaHero + PillarTracking)
   const argylePacketIds = new Set((argyleRes.data ?? []).map((r: { packet_id: string }) => r.packet_id));
   const argyleConnected = argylePacketIds.size;
-  const argylePct = totalPackets > 0 ? Math.round((argyleConnected / totalPackets) * 100) : 0;
 
-  const apiData = [
-    {
-      id: "argyle", name: "Argyle", status: "live" as const,
-      purpose: "Earned income (gig) verification",
-      flow: "gig", weight: 26.8,
-      connectedPct: argylePct,
-      connectedN: argyleConnected,
-      totalN: totalPackets,
-      detail: `Income history pulled for ${argyleConnected.toLocaleString()} of ${totalPackets.toLocaleString()} active packets.`,
-      since: "Live since Jan 2026",
-    },
-    {
-      id: "sua-rules", name: "SUA Rules Engine", status: "live" as const,
-      purpose: "Shelter / utility allowance tier determination",
-      flow: "sua", weight: 50.5,
-      connectedPct: 100, connectedN: totalPackets, totalN: totalPackets,
-      detail: "determineSUATier() from @civica/snap-rules — deterministic, free, no external API. HEAP compliance via checkHEAPCompliance(). UtilityAPI removed from roadmap.",
-      since: "Live since May 2026",
-    },
-    {
-      id: "sublease", name: "Sublease classifier", status: "phase2" as const,
-      purpose: "Shared-lease detection from uploads",
-      flow: "lease", weight: 11.4,
-      connectedPct: totalPackets > 0 ? Math.round((shelterDocCount / totalPackets) * 100) : 0,
-      connectedN: shelterDocCount,
-      totalN: totalPackets,
-      detail: "Deterministic v1 live (shared-lease/classifier.ts). Routes sublease / shared-tenancy to navigator review; primary tenancies auto-flow. ML v2 planned Q4 2026.",
-      since: "Logic live May 2026 · UI integration pending",
-    },
-  ];
-
-  // ── Scoring soundness
-  type RiskRow = { packet_id: string; score: number | null; tier: string; factors: string[] };
-  const allRisk: RiskRow[] = riskRes.data ?? [];
-  const latestRisk = new Map<string, RiskRow>();
-  for (const r of allRisk) {
-    if (!latestRisk.has(r.packet_id)) latestRisk.set(r.packet_id, r);
-  }
-  const scored = [...latestRisk.values()];
-  const complete = scored.filter((r) => r.score !== null).length;
-  const incomplete = totalPackets - latestRisk.size + scored.filter((r) => r.score === null).length;
-
-  // Defensibility per flow — derive from actual data where possible
+  // Per-packet answers indexed by packet_id for SUA-flag presence.
   const answers = answersRes.data ?? [];
   const answersByPacket = new Map<string, Record<string, string>>();
   for (const a of answers) {
@@ -124,67 +85,14 @@ export default async function QCPage() {
     answersByPacket.set(a.packet_id, m);
   }
 
-  let gigStrong = 0, gigWeak = 0;
-  let suaModerate = 0, suaWeak = 0;
-  let leaseWeak = 0, leaseModerate = 0;
-  let assetsModerate = 0, assetsWeak = 0;
-  const totalForDef = Math.max(totalPackets, 1);
-
+  // SUA-engaged packet count: at least one of the 3 utility questions answered.
+  let suaModerate = 0;
   for (const p of packets) {
-    const hasArgyle = argylePacketIds.has(p.packet_id);
     const pa = answersByPacket.get(p.packet_id) ?? {};
-
-    // gig: Argyle = strong, else weak
-    if (hasArgyle) gigStrong++; else gigWeak++;
-
-    // sua: any of the 3 SUA utility questions answered = moderate; none answered = weak
-    const hasSuaAnswer = pa["has_heating_costs"] || pa["has_electric_or_gas"] || pa["has_phone"];
-    if (hasSuaAnswer) suaModerate++; else suaWeak++;
-
-    // lease: housing_situation answered = moderate, else weak
-    if (pa["housing_situation"]) leaseModerate++; else leaseWeak++;
-
-    // assets: self-reported → moderate by default
-    assetsModerate++;
+    if (pa["has_heating_costs"] || pa["has_electric_or_gas"] || pa["has_phone"]) {
+      suaModerate++;
+    }
   }
-
-  const defensibility = [
-    {
-      flow: "gig",
-      strong: Math.round((gigStrong / totalForDef) * 100),
-      moderate: 0,
-      weak: Math.round((gigWeak / totalForDef) * 100),
-      source: argyleConnected > 0 ? "Argyle live" : "no signal",
-    },
-    {
-      flow: "sua",
-      strong: 0,
-      moderate: Math.round((suaModerate / totalForDef) * 100),
-      weak: Math.round((suaWeak / totalForDef) * 100),
-      source: "deterministic SUA engine · questionnaire flags",
-    },
-    {
-      flow: "lease",
-      strong: 0,
-      moderate: Math.round((leaseModerate / totalForDef) * 100),
-      weak: Math.round((leaseWeak / totalForDef) * 100),
-      source: "navigator discretion only",
-    },
-    {
-      flow: "assets",
-      strong: 0,
-      moderate: Math.round((assetsModerate / totalForDef) * 100),
-      weak: Math.round((assetsWeak / totalForDef) * 100),
-      source: "self-reported",
-    },
-    {
-      flow: "calc",
-      strong: 100,
-      moderate: 0,
-      weak: 0,
-      source: "deterministic · CDSS rules engine",
-    },
-  ];
 
   // ── Baseline vs actual
   type QcRow = { packet_id: string; qc_sampled: boolean; error_found: boolean | null; error_type: string | null; logged_at: string };
@@ -252,7 +160,6 @@ export default async function QCPage() {
           shelterDocCount={shelterDocCount}
           suaAnswered={suaModerate}
         />
-        <ApiCoveragePanel apis={apiData} totalPackets={totalPackets} />
         <BaselinePanel comparison={comparison} sampleN={sampleN} />
       </div>
 
