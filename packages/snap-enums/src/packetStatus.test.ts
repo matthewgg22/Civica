@@ -76,7 +76,7 @@ describe("PACKET_STATUS_TRANSITIONS", () => {
 describe("Migration parity", () => {
   it("TypeScript enum values match the Postgres packet_status enum in supabase/migrations", () => {
     const migrationUrl = new URL(
-      "../../../supabase/migrations/20260516_snap_enrollment_01_types_and_extensions.sql",
+      "../../../supabase/migrations/20260516001_snap_enrollment_01_types_and_extensions.sql",
       import.meta.url,
     );
     const sql = readFileSync(migrationUrl, "utf-8");
