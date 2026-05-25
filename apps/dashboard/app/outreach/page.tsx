@@ -8,6 +8,8 @@ import OutreachWelcomeBanner from "../../components/OutreachWelcomeBanner";
 import { formatDateTime, decryptDemoName, firstNameLastInitial } from "../../lib/format";
 import { OutreachTaskActions } from "./OutreachTaskActions";
 import { isDemoFallbackEnabled, DEMO_OUTREACH_TASKS, DEMO_PACKETS } from "../../lib/demo-data";
+import OutreachTabs from "../../components/outreach/OutreachTabs";
+import { PENDING_ENTITIES_LIST } from "../../lib/demo-outreach-entities";
 
 // ─────────────────────────────────────────────────────────────────────
 // Outreach page — three lifecycle sections, populated from two sources:
@@ -363,6 +365,7 @@ export default async function OutreachPage() {
       <AppHeader email={user?.email} active="outreach" />
 
       <main className="max-w-5xl mx-auto px-8 py-8">
+        <OutreachTabs active="tasks" pendingCount={PENDING_ENTITIES_LIST.length} />
         <OutreachWelcomeBanner />
         <div className="flex items-baseline gap-3 mb-2">
           <Link href="/dashboard" className="text-[13px] text-muted hover:text-ink transition-colors">
