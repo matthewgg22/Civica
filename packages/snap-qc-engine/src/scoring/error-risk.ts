@@ -215,6 +215,28 @@ export const RESIDUAL_FLOOR_SHARE =
     PILLAR_SHARES_UNNORMALIZED.benefit_impact);
 
 /**
+ * Per-pillar maximum defensibility-shift fraction — the reduction in error
+ * probability a pillar can achieve when fully engaged at its best-achievable
+ * tier (vs. the weak/self-reported baseline).
+ *
+ * Derived from DEFENSIBILITY_ERROR_PROB above:
+ *   shelter / income / calc → weak (0.80) → strong (0.05): shift = 0.75
+ *   shared-lease → weak (0.80) → moderate (0.35): shift = 0.56
+ *   assets → stays weak (self-reported, no API): shift = 0
+ *
+ * These tiers reflect the SHIPPED engineering state, not a theoretical maximum.
+ * The shared-lease classifier achieves moderate (not strong) because OCR + name
+ * matching can't reach the API-verified bar that Argyle provides for income.
+ */
+export const PILLAR_MAX_DEFENSIBILITY_SHIFT = {
+  utility_sua: 0.75,    // weak → strong: SUA engine + lease OCR (API-grade verification)
+  gig_income: 0.75,     // weak → strong: Argyle payroll wire
+  shared_lease: 0.56,   // weak → moderate: sublease classifier (deterministic, not API)
+  assets: 0,            // stays weak: self-reported, no Civica integration
+  benefit_impact: 0.75, // weak → strong: deterministic CDSS calc engine
+} as const;
+
+/**
  * Per-packet pillar coverage [0, 1]. Inputs to the population PER functions.
  * Distinct type from `ScoringInput[]` so TypeScript catches shape mis-use.
  * Closes eng review architecture finding A4 (2026-05-25).
@@ -247,34 +269,67 @@ function clamp01(n: number): number {
   return n;
 }
 
-const ADDRESSABLE_SHARE_TOTAL =
-  PILLAR_SHARES_UNNORMALIZED.utility_sua +
-  PILLAR_SHARES_UNNORMALIZED.gig_income +
-  PILLAR_SHARES_UNNORMALIZED.shared_lease +
-  PILLAR_SHARES_UNNORMALIZED.assets +
-  PILLAR_SHARES_UNNORMALIZED.benefit_impact;
+/**
+ * Theoretical maximum PER reduction in percentage points: what the formula
+ * would produce at full engagement using pure DEFENSIBILITY_ERROR_PROB
+ * arithmetic with no real-world leakage. Computes to ~6.01 pts.
+ */
+const THEORETICAL_MAX_REDUCTION_PTS =
+  CA_BASELINE_PER *
+  (PILLAR_SHARES_UNNORMALIZED.utility_sua * PILLAR_MAX_DEFENSIBILITY_SHIFT.utility_sua +
+    PILLAR_SHARES_UNNORMALIZED.gig_income * PILLAR_MAX_DEFENSIBILITY_SHIFT.gig_income +
+    PILLAR_SHARES_UNNORMALIZED.shared_lease * PILLAR_MAX_DEFENSIBILITY_SHIFT.shared_lease +
+    PILLAR_SHARES_UNNORMALIZED.assets * PILLAR_MAX_DEFENSIBILITY_SHIFT.assets +
+    PILLAR_SHARES_UNNORMALIZED.benefit_impact * PILLAR_MAX_DEFENSIBILITY_SHIFT.benefit_impact);
 
-const ADDRESSABLE_REDUCTION_AT_FULL =
-  CA_BASELINE_PER - PROJECTED_PER_AT_FULL_ENGAGEMENT;
+/**
+ * Calibration factor reconciling the theoretical max PER reduction (~6.01 pts
+ * from pure defensibility-shift × share arithmetic) with the published thesis
+ * target (5.48 pts reduction → 5.5% projected PER per
+ * docs/plans/civica-error-reduction-thesis.md §4).
+ *
+ * Computes to ≈ 0.912.
+ *
+ * Interpretation: even at API-verified strong defensibility, ~9% of the
+ * theoretical reduction is lost to real-world leakage (applicant errors after
+ * verification, document-mismatches the API can't catch, edge-case QC findings).
+ * This is the empirical haircut the thesis applies to anchor at 5.5% rather
+ * than the unrealistic 4.97% theoretical floor.
+ *
+ * Closes eng review choice A (cross-model tension follow-up, 2026-05-25):
+ * the factor is named and traceable in code, not hidden inside interpolation.
+ */
+export const THESIS_CALIBRATION_FACTOR =
+  (CA_BASELINE_PER - PROJECTED_PER_AT_FULL_ENGAGEMENT) /
+  THEORETICAL_MAX_REDUCTION_PTS;
 
 /**
  * Contribution of one pillar's engagement to PER reduction, in percentage
- * points. At full engagement (1.0) and full pillar set, contributions sum to
+ * points. At full engagement (1.0) across all pillars, contributions sum to
  * `CA_BASELINE_PER - PROJECTED_PER_AT_FULL_ENGAGEMENT` (≈ 5.48 pts).
  *
- * Distribution: each pillar's max contribution is proportional to its FNS-380
- * share. This is the simplest interpretation of the thesis's "~5.5%" target —
- * it anchors to the published projection without back-deriving fudge factors
- * on defensibility tiers.
+ * Math (option A, 2026-05-25): tier-aware per-pillar calculation.
+ *
+ *   contribution = baseline × pillar_share × max_defensibility_shift
+ *                × engagement × THESIS_CALIBRATION_FACTOR
+ *
+ * Tier-aware means shared-lease (moderate tier achievable) contributes
+ * proportionally less per share-unit than shelter / income / calc (strong
+ * tier achievable). This honors the per-pillar defensibility story
+ * documented in §3.2 of the redesign plan.
  */
 export function pillarContribution(
   pillar: keyof PillarCoverage,
   engagement: number,
 ): number {
   const e = clamp01(engagement);
-  const shareFraction =
-    PILLAR_SHARES_UNNORMALIZED[pillar] / ADDRESSABLE_SHARE_TOTAL;
-  return ADDRESSABLE_REDUCTION_AT_FULL * shareFraction * e;
+  return (
+    CA_BASELINE_PER *
+    PILLAR_SHARES_UNNORMALIZED[pillar] *
+    PILLAR_MAX_DEFENSIBILITY_SHIFT[pillar] *
+    e *
+    THESIS_CALIBRATION_FACTOR
+  );
 }
 
 /**

@@ -18,9 +18,11 @@
 
 ### Notes
 
-- All additions are additive — no breaking changes to existing `scoreErrorRisk`, `ERROR_WEIGHT`, `CA_ELEMENT_ATTRIBUTION_FY23` consumers. The 199 existing tests (golden fixtures, parity, flows) pass unchanged.
-- The population PER math is an interpolation between baseline (10.98% at zero engagement) and projected (5.5% at full engagement), weighted by un-renormalized USDA shares. This is mathematically distinct from per-packet `scoreErrorRisk` which uses renormalized weights + defensibility tier probabilities.
-- 21 new tests added in `test/population-per.test.ts`.
+- All additions are additive — no breaking changes to existing `scoreErrorRisk`, `ERROR_WEIGHT`, `CA_ELEMENT_ATTRIBUTION_FY23` consumers. The 178 existing tests (golden fixtures, parity, flows) pass unchanged.
+- The population PER math (option A, 2026-05-25) uses tier-aware per-pillar contributions: `contribution = baseline × pillar_share × max_defensibility_shift × engagement × THESIS_CALIBRATION_FACTOR`. The calibration factor (~0.912) is explicit and traceable — it reconciles the theoretical max reduction (~6.01 pts) with the published thesis target (5.48 pts → 5.5% projected). Interpretable as the empirical leakage between pristine API verification and real-world QC findings.
+- `PILLAR_MAX_DEFENSIBILITY_SHIFT` encodes shipped engineering state: shelter/income/calc reach STRONG tier (0.75 shift), shared-lease reaches MODERATE tier (0.56 shift via deterministic classifier, not API), assets stays WEAK (0 shift).
+- Distinct from per-packet `scoreErrorRisk` which uses renormalized weights + per-flow DEFENSIBILITY_ERROR_PROB.
+- 26 new tests added in `test/population-per.test.ts`.
 
 ## 0.2.0 — prior
 

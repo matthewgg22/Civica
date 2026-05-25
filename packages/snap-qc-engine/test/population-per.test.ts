@@ -11,6 +11,8 @@ import {
   CA_BASELINE_PER,
   PROJECTED_PER_AT_FULL_ENGAGEMENT,
   PILLAR_SHARES_UNNORMALIZED,
+  PILLAR_MAX_DEFENSIBILITY_SHIFT,
+  THESIS_CALIBRATION_FACTOR,
   RESIDUAL_FLOOR_SHARE,
   computeProjectedPER,
   computeEngagementImpliedPER,
@@ -117,7 +119,7 @@ describe("computeEngagementImpliedPER (same math, intent-distinguishing name)", 
   });
 });
 
-describe("pillarContribution", () => {
+describe("pillarContribution (option A — tier-aware math)", () => {
   it("at full engagement, all 5 pillar contributions sum to baseline - projected (~5.48 pts)", () => {
     const sum =
       pillarContribution("utility_sua", 1) +
@@ -132,9 +134,29 @@ describe("pillarContribution", () => {
   it("pillar with larger share contributes more at the same engagement", () => {
     const shelter = pillarContribution("utility_sua", 1);
     const gig = pillarContribution("gig_income", 1);
-    const lease = pillarContribution("shared_lease", 1);
     expect(shelter).toBeGreaterThan(gig);
-    expect(gig).toBeGreaterThan(lease);
+  });
+
+  it("shared-lease (moderate tier) contributes LESS per share-unit than shelter (strong tier)", () => {
+    // shared_lease.share = 0.073, shift = 0.56
+    // utility_sua.share = 0.371, shift = 0.75
+    // contribution-per-share = baseline × shift × calibration
+    // shelter: 10.98 × 0.75 × 0.912 ≈ 7.51
+    // lease:   10.98 × 0.56 × 0.912 ≈ 5.61
+    // Per-share, shelter > lease. This is the option-A tier-aware story.
+    const shelterPerShare =
+      pillarContribution("utility_sua", 1) / PILLAR_SHARES_UNNORMALIZED.utility_sua;
+    const leasePerShare =
+      pillarContribution("shared_lease", 1) / PILLAR_SHARES_UNNORMALIZED.shared_lease;
+    expect(shelterPerShare).toBeGreaterThan(leasePerShare);
+    // Ratio should match the defensibility shift ratio (0.75 / 0.56 ≈ 1.34).
+    expect(shelterPerShare / leasePerShare).toBeCloseTo(0.75 / 0.56, 2);
+  });
+
+  it("assets pillar (shift=0, stays weak) contributes zero regardless of engagement", () => {
+    expect(pillarContribution("assets", 1)).toBe(0);
+    expect(pillarContribution("assets", 0.5)).toBe(0);
+    expect(pillarContribution("assets", 1.0)).toBe(0);
   });
 
   it("at zero engagement, contribution is zero", () => {
@@ -146,6 +168,42 @@ describe("pillarContribution", () => {
     const at50 = pillarContribution("utility_sua", 0.5);
     const at100 = pillarContribution("utility_sua", 1.0);
     expect(at100).toBeCloseTo(at50 * 2, 10);
+  });
+});
+
+describe("PILLAR_MAX_DEFENSIBILITY_SHIFT + THESIS_CALIBRATION_FACTOR", () => {
+  it("encodes tier-achievable per pillar (shared-lease at moderate, others at strong)", () => {
+    expect(PILLAR_MAX_DEFENSIBILITY_SHIFT.utility_sua).toBe(0.75);
+    expect(PILLAR_MAX_DEFENSIBILITY_SHIFT.gig_income).toBe(0.75);
+    expect(PILLAR_MAX_DEFENSIBILITY_SHIFT.shared_lease).toBe(0.56);
+    expect(PILLAR_MAX_DEFENSIBILITY_SHIFT.assets).toBe(0);
+    expect(PILLAR_MAX_DEFENSIBILITY_SHIFT.benefit_impact).toBe(0.75);
+  });
+
+  it("THESIS_CALIBRATION_FACTOR is approximately 0.912 (back-derived from thesis target)", () => {
+    expect(THESIS_CALIBRATION_FACTOR).toBeGreaterThan(0.9);
+    expect(THESIS_CALIBRATION_FACTOR).toBeLessThan(0.92);
+  });
+
+  it("THESIS_CALIBRATION_FACTOR exactly anchors projection to 5.5% at full engagement", () => {
+    // Verifies that the calibration factor produces baseline - projected exactly.
+    const expectedReduction = CA_BASELINE_PER - PROJECTED_PER_AT_FULL_ENGAGEMENT;
+    const theoreticalSum =
+      CA_BASELINE_PER *
+      (PILLAR_SHARES_UNNORMALIZED.utility_sua *
+        PILLAR_MAX_DEFENSIBILITY_SHIFT.utility_sua +
+        PILLAR_SHARES_UNNORMALIZED.gig_income *
+          PILLAR_MAX_DEFENSIBILITY_SHIFT.gig_income +
+        PILLAR_SHARES_UNNORMALIZED.shared_lease *
+          PILLAR_MAX_DEFENSIBILITY_SHIFT.shared_lease +
+        PILLAR_SHARES_UNNORMALIZED.assets *
+          PILLAR_MAX_DEFENSIBILITY_SHIFT.assets +
+        PILLAR_SHARES_UNNORMALIZED.benefit_impact *
+          PILLAR_MAX_DEFENSIBILITY_SHIFT.benefit_impact);
+    expect(theoreticalSum * THESIS_CALIBRATION_FACTOR).toBeCloseTo(
+      expectedReduction,
+      10,
+    );
   });
 });
 
