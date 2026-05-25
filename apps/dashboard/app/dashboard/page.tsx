@@ -14,6 +14,7 @@ import Link from "next/link";
 import { caCountyToFips } from "../../lib/caCounties";
 import { decryptDemoName, docKindLabel, firstNameLastInitial, shortId } from "../../lib/format";
 import { isDemoFallbackEnabled, DEMO_PACKETS, DEMO_APPLICANTS, DEMO_HISTORY, DEMO_DOCS, DEMO_RISK_ROWS, DEMO_QC_ROWS } from "../../lib/demo-data";
+import { DEMO_TOTAL_HOUSEHOLDS, DEMO_MARKETSHARE_LABEL } from "../../lib/demo-profile";
 
 export const dynamic = "force-dynamic";
 
@@ -123,8 +124,13 @@ export default async function DashboardPage() {
     }
   }
 
-  // ── Impact: count families that reached Handed Off or Closed
-  const enrolled = packets.filter((p) => p.status === "Handed Off" || p.status === "Closed").length;
+  // ── Impact: count families that reached Handed Off or Closed.
+  // When the demo fallback is on, scale to the centralized 5%-marketshare
+  // projection (~140K HHs) so the band reads as "what Civica looks like at
+  // category-leader scale" instead of "what's in the local sample data."
+  const enrolledFromPackets = packets.filter((p) => p.status === "Handed Off" || p.status === "Closed").length;
+  const enrolled = useDemoFallback ? DEMO_TOTAL_HOUSEHOLDS : enrolledFromPackets;
+  const impactProjectionLabel = useDemoFallback ? DEMO_MARKETSHARE_LABEL : undefined;
 
   // ── Funnel: cumulative count of packets that *reached* each stage
   const reachedStage = (stage: string): number => {
@@ -441,7 +447,7 @@ export default async function DashboardPage() {
         )}
 
         {/* Impact hero */}
-        <ImpactCounter enrolledPackets={enrolled} />
+        <ImpactCounter enrolledPackets={enrolled} projectionLabel={impactProjectionLabel} />
 
         {/* Map + Activity (two-up). items-start so each card sizes to its own
             content instead of stretching to match the taller one. */}

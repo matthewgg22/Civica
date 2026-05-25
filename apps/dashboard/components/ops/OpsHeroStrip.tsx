@@ -1,5 +1,7 @@
 import { CountUp } from "./CountUp";
 import type { EbtAggregateData, PartnerPnLData, NotificationOutlayData, TTFDData } from "../../lib/ops-fetchers";
+import { DEMO_MARKETSHARE_LABEL } from "../../lib/demo-profile";
+import { isDemoOpsFallbackEnabled } from "../../lib/demo-ops-data";
 
 /**
  * Pinned-feeling stats bar that sits above the panel stack.
@@ -96,6 +98,18 @@ export default function OpsHeroStrip({
           {pnl.redistribution_pct}% redistribution
         </span>
       </div>
+
+      {/* Projection-framing footer — when demo fallback is on, surface the
+          "5% CA CalFresh marketshare" assumption so demo viewers see the
+          numbers as projected steady-state, not current run rate. */}
+      {isDemoOpsFallbackEnabled() && (
+        <div
+          className="px-6 py-2 border-t border-hairline text-[10px] uppercase tracking-[0.16em] font-mono text-muted"
+          style={{ backgroundColor: "#DCD9D2" }}
+        >
+          {DEMO_MARKETSHARE_LABEL}
+        </div>
+      )}
     </section>
   );
 }

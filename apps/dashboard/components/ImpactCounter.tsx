@@ -38,7 +38,16 @@ function formatCompact(n: number): string {
  * color still touches the strip without the page opening on a slab of
  * saturated green.
  */
-export default function ImpactCounter({ enrolledPackets }: { enrolledPackets: number }) {
+export default function ImpactCounter({
+  enrolledPackets,
+  projectionLabel,
+}: {
+  enrolledPackets: number;
+  /** Optional small footer (e.g. "Projected · 5% CA CalFresh marketshare").
+      When present, signals to the viewer that the numbers reflect a model
+      assumption rather than current run rate. */
+  projectionLabel?: string;
+}) {
   const families = useCountUp(enrolledPackets);
   const people = Math.round(enrolledPackets * AVG_HOUSEHOLD_SIZE);
   const monthlyBenefits = people * CA_SNAP_AVG_BENEFIT_PER_PERSON;
@@ -70,6 +79,14 @@ export default function ImpactCounter({ enrolledPackets }: { enrolledPackets: nu
           <Stat value={formatCompact(meals)} label="Estimated Meals / Month" sub={`${formatCompact(meals * 12)} per year`} divider />
         </div>
       </div>
+      {projectionLabel && (
+        <div
+          className="px-7 py-2 border-t border-hairline text-[10px] uppercase tracking-[0.16em] font-mono text-muted"
+          style={{ backgroundColor: "#DCD9D2" }}
+        >
+          {projectionLabel}
+        </div>
+      )}
     </div>
   );
 }
