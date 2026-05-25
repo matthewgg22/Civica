@@ -86,9 +86,13 @@ const BUCKET_SORT_ORDER: Record<Bucket, number> = {
   interview_pending: 4, active: 5, recertified: 6,
 };
 
-export default async function EnrollmentsPage({ searchParams }: { searchParams: Promise<{ bucket?: Bucket; q?: string }> }) {
+export default async function EnrollmentsPage({ searchParams }: { searchParams: Promise<{ bucket?: Bucket; stage?: RecertStage; q?: string }> }) {
   const params = await searchParams;
   const activeBucket = (params.bucket as Bucket) ?? "all" as Bucket;
+  // Stage filter only applies when activeBucket === "expiring". Clicking a
+  // cadence sub-card sets bucket=expiring AND stage=stage_N so the list
+  // narrows to just that cadence stage.
+  const activeStage = (params.stage as RecertStage | undefined) ?? null;
   const query = params.q?.trim() ?? "";
   const queryLower = query.toLowerCase();
   const cookieStore = await cookies();
@@ -315,16 +319,31 @@ export default async function EnrollmentsPage({ searchParams }: { searchParams: 
   };
   const urgentTotal = URGENT_BUCKETS.reduce((sum, b) => sum + counts[b], 0);
 
+  // Cadence-stage counts within the Expiring bucket. Drives the sub-card row
+  // below the urgent grid and surfaces the 60/30/14/7 distribution that's
+  // otherwise hidden behind a single Expiring count.
+  const stageCounts: Record<RecertStage, number> = {
+    stage_60: rows.filter((r) => r.bucket === "expiring" && r.recertStage === "stage_60").length,
+    stage_30: rows.filter((r) => r.bucket === "expiring" && r.recertStage === "stage_30").length,
+    stage_14: rows.filter((r) => r.bucket === "expiring" && r.recertStage === "stage_14").length,
+    stage_7:  rows.filter((r) => r.bucket === "expiring" && r.recertStage === "stage_7").length,
+  };
+  const RECERT_STAGES: RecertStage[] = ["stage_60", "stage_30", "stage_14", "stage_7"];
+
   const bucketFiltered = (activeBucket as string) === "all"
     ? rows
     : rows.filter((r) => r.bucket === activeBucket);
+  // Stage filter only narrows further when bucket=expiring AND stage=<one>.
+  const stageFiltered = (activeBucket === "expiring" && activeStage)
+    ? bucketFiltered.filter((r) => r.recertStage === activeStage)
+    : bucketFiltered;
   const filtered = queryLower
-    ? bucketFiltered.filter((r) =>
+    ? stageFiltered.filter((r) =>
         r.name.toLowerCase().includes(queryLower) ||
         (r.county ?? "").toLowerCase().includes(queryLower) ||
         shortId(r.packet_id).toLowerCase().includes(queryLower)
       )
-    : bucketFiltered;
+    : stageFiltered;
 
   // Sort by lifecycle urgency (overdue → at-risk → expiring → verification → pending → active → recertified),
   // then by days-to-recert within each bucket.
@@ -400,6 +419,47 @@ export default async function EnrollmentsPage({ searchParams }: { searchParams: 
               );
             })}
           </div>
+          {/* Recert cadence sub-row — only renders when the Expiring bucket
+              has any households. Drills the single Expiring count into the
+              60/30/14/7-day pipeline so navigators can scan the week's
+              workload at a glance. Each sub-card is a clickable filter that
+              narrows the list to one cadence stage. */}
+          {counts.expiring > 0 && (
+            <>
+              <div className="flex items-baseline justify-between pt-1">
+                <p className="eyebrow">Recert cadence · {counts.expiring} in pipeline</p>
+                {activeStage && (
+                  <Link href={`/enrollments?bucket=expiring${query ? `&q=${encodeURIComponent(query)}` : ""}`} className="text-[12px] text-pine hover:underline font-medium">
+                    show all cadence stages
+                  </Link>
+                )}
+              </div>
+              <div className="grid grid-cols-4 gap-4">
+                {RECERT_STAGES.map((s) => {
+                  const meta = RECERT_STAGE_META[s];
+                  const isActive = activeBucket === "expiring" && activeStage === s;
+                  const href = isActive
+                    ? `/enrollments?bucket=expiring${query ? `&q=${encodeURIComponent(query)}` : ""}`
+                    : `/enrollments?bucket=expiring&stage=${s}${query ? `&q=${encodeURIComponent(query)}` : ""}`;
+                  const count = stageCounts[s];
+                  const isEmpty = count === 0;
+                  return (
+                    <Link
+                      key={s}
+                      href={href}
+                      aria-disabled={isEmpty}
+                      className={`block ${meta.chipBg} border-l-4 border-y border-r border-hairline rounded-[4px] px-4 py-3 transition-all hover:shadow-sm ${isActive ? "ring-2 ring-ink/20" : ""} ${isEmpty ? "opacity-50 pointer-events-none" : ""}`}
+                      style={{ borderLeftColor: `var(--color-${meta.actionUrgency})` }}
+                    >
+                      <p className={`text-[28px] font-bold tabular-nums leading-none ${meta.numColor}`}>{count}</p>
+                      <p className="text-[13px] font-bold text-ink mt-1.5">{meta.label}</p>
+                      <p className="text-[11px] text-graphite mt-1 leading-snug uppercase tracking-wider font-semibold">{meta.action}</p>
+                    </Link>
+                  );
+                })}
+              </div>
+            </>
+          )}
           <div className="flex items-baseline justify-between pt-1">
             <p className="eyebrow">In progress</p>
           </div>
@@ -442,6 +502,11 @@ export default async function EnrollmentsPage({ searchParams }: { searchParams: 
             <div className="flex items-center gap-2 text-[13px]">
               <span className="text-graphite">Filter:</span>
               <span className={`font-semibold ${BUCKET_META[activeBucket].accent}`}>{BUCKET_META[activeBucket].label}</span>
+              {activeStage && (
+                <span className={`font-semibold ${RECERT_STAGE_META[activeStage].numColor}`}>
+                  · {RECERT_STAGE_META[activeStage].label}
+                </span>
+              )}
               <Link
                 href={query ? `/enrollments?q=${encodeURIComponent(query)}` : "/enrollments"}
                 className="text-pine hover:underline font-medium"
