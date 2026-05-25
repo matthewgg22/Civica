@@ -13,6 +13,33 @@ export const TEST_ENV: Env = {
 export const NAVIGATOR: Actor = { kind: 'navigator', id: 'nav-001', orgId: 'org-001' };
 export const APPLICANT: Actor = { kind: 'applicant', id: 'user-001' };
 export const BUDDY: Actor = { kind: 'buddy', id: 'buddy-001', buddy_relationship_id: 'br-001' };
+export const OPERATOR: Actor = { kind: 'operator', id: 'operator-001' };
+
+// Multi-query mock: each table name maps to its own query result.
+// Use when a route reads from multiple Supabase tables in sequence (cohorts, ttfd, partner-pnl).
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function makeMultiTableDbClient(byTable: Record<string, MockResult>): any {
+  return {
+    schema: vi.fn().mockReturnValue({
+      from: vi.fn((table: string) => {
+        const result = byTable[table] ?? { data: null, error: null };
+        return makeQueryBuilder(result);
+      }),
+    }),
+    rpc: vi.fn().mockResolvedValue({ data: null, error: null }),
+    storage: {
+      from: vi.fn().mockReturnValue({
+        upload: vi.fn().mockResolvedValue({ error: null, data: { path: 'test/path' } }),
+        createSignedUrl: vi.fn().mockResolvedValue({
+          data: { signedUrl: 'https://example.com/dl' }, error: null,
+        }),
+        createSignedUploadUrl: vi.fn().mockResolvedValue({
+          data: { signedUrl: 'https://example.com/upload', token: 'tok' }, error: null,
+        }),
+      }),
+    },
+  };
+}
 
 export type MockResult = { data: unknown; error: unknown; count?: number };
 
@@ -26,7 +53,7 @@ export function makeQueryBuilder(result: MockResult): any {
   for (const m of [
     'select', 'eq', 'is', 'order', 'limit', 'insert', 'upsert',
     'update', 'delete', 'in', 'filter', 'neq', 'not', 'single', 'maybeSingle', 'head',
-    'gte', 'lte', 'lt', 'gt',
+    'gte', 'lte', 'lt', 'gt', 'or', 'contains', 'overlaps',
   ]) {
     qb[m] = vi.fn().mockReturnValue(qb);
   }

@@ -21,6 +21,10 @@ export const STAFF_ROLES = new Set<string>([
   "state_deputy",
   "county_director",
   "cbo_preview",
+  // Civica-internal corporate monetization dashboard access (/ops).
+  // Set manually via Supabase admin — no self-serve.
+  // See ceo-plans/2026-05-25-ebt-monetization-dashboard.md.
+  "operator",
 ]);
 
 export const ROLE_HOMES: Record<string, string> = {
@@ -34,6 +38,7 @@ export const ROLE_HOMES: Record<string, string> = {
   state_deputy: "/cdss",
   county_director: "/county",
   cbo_preview: "/cbo-preview",
+  operator: "/ops",
 };
 
 // Restricted roles can ONLY access these prefixes (plus PUBLIC_PREFIXES).
@@ -42,7 +47,33 @@ const RESTRICTED_ROLE_ALLOWED_PREFIXES: Record<string, string[]> = {
   state_deputy: ["/cdss"],
   county_director: ["/county"],
   cbo_preview: ["/cbo-preview"],
+  operator: ["/ops"],
 };
+
+// /ops is operator-ONLY — even operational roles (navigator/supervisor/admin)
+// must not see it. The standard "operational role has full access" pattern
+// would otherwise leak the corporate monetization dashboard to staff who
+// shouldn't see it. Enforced via isOpsRouteAllowed() before the standard
+// allowlist check.
+const OPS_PREFIX = "/ops";
+
+/**
+ * True if `role` is allowed to access `/ops/*`.
+ *
+ * Operational staff (navigator/supervisor/admin) + the dedicated `operator`
+ * role all have access — /ops is the internal corporate dashboard.
+ *
+ * Audience roles (county_director, state_deputy, cbo_preview) are blocked.
+ * They are B2G / external-facing identities and must not see partner-offer
+ * P&L or notification-outlay — that's the audience-segregation guard from
+ * the CEO plan D10/D13 decisions.
+ */
+export function isOpsRouteAllowed(role: string): boolean {
+  return role === "operator"
+      || role === "admin"
+      || role === "navigator"
+      || role === "supervisor";
+}
 
 // Always allowed regardless of role. Auth/sign-out and API routes must
 // remain reachable so users can recover from a stuck session and so the
@@ -93,6 +124,10 @@ export function homeForRole(role: string): string {
  *   assigned route + public prefixes.
  */
 export function isPathAllowedForRole(path: string, role: string): boolean {
+  // /ops/* is operator-ONLY, even for operational roles with otherwise full access.
+  if (path === OPS_PREFIX || path.startsWith(OPS_PREFIX + "/")) {
+    return isOpsRouteAllowed(role);
+  }
   if (PUBLIC_PREFIXES.some((p) => path === p || path.startsWith(p))) return true;
   const allowed = RESTRICTED_ROLE_ALLOWED_PREFIXES[role];
   if (!allowed) return true; // operational role
