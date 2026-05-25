@@ -9,11 +9,37 @@ import Stage3YieldBand from "../../components/Stage3YieldBand";
 export const dynamic = "force-dynamic";
 
 const DEFAULT_CERT_MONTHS = 12;
-const EXPIRING_WINDOW_DAYS = 30;
+// Window starts at 60 days — that's when CA recert packets are mailed and
+// the outreach cadence is supposed to begin. The Expiring bucket is then
+// sub-segmented into 60/30/14/7 day cadence stages, each with a different
+// recommended navigator action.
+const EXPIRING_WINDOW_DAYS = 60;
 // "Interview at risk" = scheduled interview date passed without a completion
 // log. Small grace so an interview that happened "today" doesn't immediately
 // flip to at-risk before the navigator gets to mark it complete.
 const INTERVIEW_GRACE_DAYS = 2;
+
+// Recert cadence sub-stages within the Expiring bucket. Mirrors the cadence
+// CA navigators are expected to run as a household approaches end-of-cert:
+// stage_60 = packet mailed, send first notice;
+// stage_30 = reminder cadence + schedule a check-in;
+// stage_14 = confirm by phone, walk through portal;
+// stage_7  = critical — in-person or warm transfer to CBO partner.
+type RecertStage = "stage_60" | "stage_30" | "stage_14" | "stage_7";
+
+const RECERT_STAGE_META: Record<RecertStage, { label: string; action: string; chipBg: string; chipFg: string; barColor: string; numColor: string }> = {
+  stage_60: { label: "60-day cadence", action: "send first notice",            chipBg: "bg-teal/10",    chipFg: "text-teal",    barColor: "bg-teal",    numColor: "text-teal"    },
+  stage_30: { label: "30-day cadence", action: "reminder + schedule check-in", chipBg: "bg-warning/10", chipFg: "text-warning", barColor: "bg-warning", numColor: "text-warning" },
+  stage_14: { label: "14-day cadence", action: "confirm by phone today",       chipBg: "bg-warning/20", chipFg: "text-warning", barColor: "bg-warning", numColor: "text-warning" },
+  stage_7:  { label: "7-day cadence",  action: "in-person or CBO warm transfer", chipBg: "bg-brick/15",   chipFg: "text-brick",   barColor: "bg-brick",   numColor: "text-brick"   },
+};
+
+function recertStageFromDays(d: number): RecertStage {
+  if (d <= 7)  return "stage_7";
+  if (d <= 14) return "stage_14";
+  if (d <= 30) return "stage_30";
+  return "stage_60";
+}
 
 // Pilot cohort: first 10 households end-to-end through enrollment.
 const PILOT_START_ISO = "2026-05-01T00:00:00Z";
@@ -38,7 +64,7 @@ type BucketGroup = "urgent" | "progress";
 const BUCKET_META: Record<Bucket, { label: string; description: string; accent: string; bg: string; border: string; group: BucketGroup }> = {
   expired:                  { label: "Recert Overdue",          description: "Recertification window has passed; benefits at risk.",                       accent: "text-brick",   bg: "bg-brick/15",   border: "border-l-brick",   group: "urgent" },
   interview_at_risk:        { label: "Interview at Risk",       description: "Interview date passed without confirmation — top SNAP denial reason.",     accent: "text-brick",   bg: "bg-brick/15",   border: "border-l-brick",   group: "urgent" },
-  expiring:                 { label: "Recert Expiring",         description: `Recertification due within ${EXPIRING_WINDOW_DAYS} days — start outreach cadence.`, accent: "text-warning", bg: "bg-warning/15", border: "border-l-warning", group: "urgent" },
+  expiring:                 { label: "Recert Expiring",         description: `Recert due within ${EXPIRING_WINDOW_DAYS} days — running 60/30/14/7-day cadence.`, accent: "text-warning", bg: "bg-warning/15", border: "border-l-warning", group: "urgent" },
   verification_outstanding: { label: "Verification Outstanding",description: "County requested follow-up documents; case stalls until provided.",        accent: "text-warning", bg: "bg-warning/15", border: "border-l-warning", group: "urgent" },
   interview_pending:        { label: "Interview Pending",       description: "Interview scheduled in the upcoming window — confirm attendance.",           accent: "text-teal",    bg: "bg-teal/10",    border: "border-l-teal",    group: "progress" },
   active:                   { label: "Active",                  description: "Benefits in force, recertification not yet due.",                            accent: "text-teal",    bg: "bg-teal/10",    border: "border-l-teal",    group: "progress" },
@@ -139,6 +165,7 @@ export default async function EnrollmentsPage({ searchParams }: { searchParams: 
     bucket: Bucket;
     daysToRecert: number; // negative if overdue
     recertDate: Date | null;
+    recertStage: RecertStage | null; // only set for expiring rows
     // Lifecycle stage signals — surfaced as per-row pills / actions.
     interviewScheduledAt: Date | null;
     interviewCompleted: boolean;
@@ -192,6 +219,8 @@ export default async function EnrollmentsPage({ searchParams }: { searchParams: 
       bucket = "active";
     }
 
+    const recertStage = (bucket === "expiring") ? recertStageFromDays(daysToRecert) : null;
+
     return {
       packet_id: p.packet_id,
       applicant_id: (p as { applicant_id?: string | null }).applicant_id ?? null,
@@ -202,6 +231,7 @@ export default async function EnrollmentsPage({ searchParams }: { searchParams: 
       bucket,
       daysToRecert,
       recertDate,
+      recertStage,
       interviewScheduledAt,
       interviewCompleted,
       verificationOutstanding,
@@ -422,6 +452,7 @@ export default async function EnrollmentsPage({ searchParams }: { searchParams: 
                     bucket={r.bucket}
                     days={r.daysToRecert}
                     recertDate={r.recertDate}
+                    recertStage={r.recertStage}
                     interviewScheduledAt={r.interviewScheduledAt}
                     verificationRequestedAt={r.verificationRequestedAt}
                   />
@@ -616,12 +647,14 @@ function LifecycleStage({
   bucket,
   days,
   recertDate,
+  recertStage,
   interviewScheduledAt,
   verificationRequestedAt,
 }: {
   bucket: Bucket;
   days: number;
   recertDate: Date | null;
+  recertStage: RecertStage | null;
   interviewScheduledAt: Date | null;
   verificationRequestedAt: Date | null;
 }) {
@@ -691,30 +724,45 @@ function LifecycleStage({
     );
   }
 
-  // Recert countdown bar — overdue (brick), expiring ≤30d (warning), or active (teal).
-  // % of nominal 12-month cycle elapsed (clamped 0–100 for the bar).
+  // Recert countdown bar — overdue (brick), expiring (cadence-stage color), or
+  // active (teal). For expiring rows the bar color + sub-label come from the
+  // cadence stage (60/30/14/7), so a 7-day household reads as brick even
+  // though it shares a bucket with 60-day households.
   const totalDays = DEFAULT_CERT_MONTHS * 30;
   const elapsedDays = totalDays - days;
   const pctElapsed = Math.min(100, Math.max(0, (elapsedDays / totalDays) * 100));
 
   const isOverdue = bucket === "expired";
   const isExpiring = bucket === "expiring";
+  const stageMeta = isExpiring && recertStage ? RECERT_STAGE_META[recertStage] : null;
 
-  const numberColor = isOverdue ? "text-brick" : isExpiring ? "text-warning" : "text-ink";
-  const barColor    = isOverdue ? "bg-brick"   : isExpiring ? "bg-warning"   : "bg-teal";
+  const numberColor = isOverdue
+    ? "text-brick"
+    : stageMeta?.numColor ?? "text-ink";
+  const barColor = isOverdue
+    ? "bg-brick"
+    : stageMeta?.barColor ?? "bg-teal";
 
   const displayDays = isOverdue ? `−${Math.abs(days)}` : `${days}`;
   const subLabel = isOverdue
     ? "days past recert"
-    : isExpiring
-      ? "days until recert · action soon"
+    : stageMeta
+      ? `days until recert · ${stageMeta.action}`
       : "days until recert";
+  const subLabelColor = isOverdue
+    ? "text-brick"
+    : stageMeta?.numColor ?? "text-graphite";
 
   return (
     <div className="min-w-0">
       <div className="flex items-baseline gap-2 mb-1.5">
         <span className={`text-[26px] font-bold tabular-nums leading-none ${numberColor}`}>{displayDays}</span>
         <span className="text-[14px] text-graphite font-semibold">d</span>
+        {stageMeta && (
+          <span className={`text-[10px] uppercase tracking-wider font-bold tabular-nums px-1.5 py-0.5 rounded-[3px] ${stageMeta.chipBg} ${stageMeta.chipFg}`}>
+            {stageMeta.label}
+          </span>
+        )}
         {recertDate && (
           <span className="text-[12px] text-graphite tabular-nums ml-auto font-medium">
             {isOverdue ? "due" : "by"} {formatShortDate(recertDate)}
@@ -730,9 +778,7 @@ function LifecycleStage({
           <div className="absolute inset-y-0 right-0 w-1 bg-brick animate-pulse" />
         )}
       </div>
-      <p className={`text-[11px] uppercase tracking-wider font-bold mt-1.5 ${
-        isOverdue ? "text-brick" : isExpiring ? "text-warning" : "text-graphite"
-      }`}>
+      <p className={`text-[11px] uppercase tracking-wider font-bold mt-1.5 ${subLabelColor}`}>
         {subLabel}
       </p>
     </div>
