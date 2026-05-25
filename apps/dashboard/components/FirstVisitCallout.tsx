@@ -31,17 +31,14 @@ export default function FirstVisitCallout() {
     <div
       role="region"
       aria-label="Welcome message"
-      className="bg-pine/8 border border-pine/25 rounded-[4px] px-5 py-3.5 flex items-start gap-4"
+      className="bg-pine/8 border border-pine/25 rounded-[4px] px-4 py-2 flex items-center gap-3"
     >
-      <div className="flex-1 min-w-0">
-        <p className="text-[11px] uppercase tracking-wider font-bold text-pine mb-1">
-          Welcome to Civica
-        </p>
-        <p className="text-[13px] text-graphite leading-relaxed">
-          Below: counts on the left are org-wide priorities; counts on the right are
-          your activity today. Click any number to drill in.
-        </p>
-      </div>
+      <span className="text-[11px] uppercase tracking-wider font-bold text-pine shrink-0">
+        Welcome
+      </span>
+      <p className="text-[12px] text-graphite leading-snug flex-1 min-w-0">
+        Left = org-wide priorities. Right = your activity today. Click any number to drill in.
+      </p>
       <button
         type="button"
         onClick={() => {
@@ -49,11 +46,11 @@ export default function FirstVisitCallout() {
           setDismissed(true);
         }}
         aria-label="Dismiss welcome message"
-        className="text-pine/60 hover:text-pine transition-colors shrink-0 -mt-0.5"
+        className="text-pine/60 hover:text-pine transition-colors shrink-0"
       >
         <svg
-          width="16"
-          height="16"
+          width="14"
+          height="14"
           viewBox="0 0 16 16"
           fill="none"
           stroke="currentColor"
