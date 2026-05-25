@@ -57,6 +57,12 @@ export const DEMO_APPLICANTS = [
   { applicant_id: "app-010", full_name_ciphertext: demoName("Marcus Williams"), preferred_language: "en" },
   { applicant_id: "app-011", full_name_ciphertext: demoName("Priya Patel"), preferred_language: "en" },
   { applicant_id: "app-012", full_name_ciphertext: demoName("Tomas Mendez"), preferred_language: "es" },
+  // Added 2026-05-25 to populate post-handoff lifecycle buckets on /enrollments
+  // (interview at risk, interview pending, verification outstanding, expiring).
+  { applicant_id: "app-013", full_name_ciphertext: demoName("Aisha Khan"), preferred_language: "en" },
+  { applicant_id: "app-014", full_name_ciphertext: demoName("James Park"), preferred_language: "ko" },
+  { applicant_id: "app-015", full_name_ciphertext: demoName("Lucia Rivera"), preferred_language: "es" },
+  { applicant_id: "app-016", full_name_ciphertext: demoName("Daniel Foster"), preferred_language: "en" },
 ];
 
 // ─────────────────────────────────────────────────────────────────────
@@ -78,6 +84,18 @@ export type DemoPacket = {
   updated_at: string;
   deleted_at: null;
   applicants: { full_name_ciphertext: string | null; preferred_language: string } | null;
+  // Post-handoff lifecycle (optional — only set on Handed Off / Closed
+  // packets that have progressed past the agency-receipt step). Absent
+  // means "no signal yet"; the enrollments page degrades gracefully and
+  // falls back to handed_off_at + 12mo math.
+  cert_period_months?: number;
+  interview_scheduled_at?: string | null;
+  interview_completed_at?: string | null;
+  verification_requested_at?: string | null;
+  verification_resolved_at?: string | null;
+  last_outreach_at?: string | null;
+  last_outreach_channel?: "sms" | "call" | "email" | "in_person" | null;
+  outreach_attempts?: number;
 };
 
 export const DEMO_PACKETS: DemoPacket[] = [
@@ -117,7 +135,7 @@ export const DEMO_PACKETS: DemoPacket[] = [
     created_at: daysAgo(2), updated_at: hoursAgo(8), deleted_at: null,
     applicants: { full_name_ciphertext: DEMO_APPLICANTS[3]!.full_name_ciphertext, preferred_language: "zh" },
   },
-  // 5. Anh — Handed Off recently (pilot cohort entry — within 2026-05 window)
+  // 5. Anh — Handed Off recently, interview scheduled in 4 days (interview_pending bucket)
   {
     packet_id: "demo-pkt-005-anh", applicant_id: "app-005",
     status: "Handed Off", state_code: "CA", county: "Santa Clara", county_fips: "06085",
@@ -125,8 +143,13 @@ export const DEMO_PACKETS: DemoPacket[] = [
     submitted_at: daysAgo(12), handed_off_at: daysAgo(10), closed_at: null,
     created_at: daysAgo(14), updated_at: daysAgo(10), deleted_at: null,
     applicants: { full_name_ciphertext: DEMO_APPLICANTS[4]!.full_name_ciphertext, preferred_language: "vi" },
+    cert_period_months: 12,
+    interview_scheduled_at: hoursFromNow(96),
+    last_outreach_at: hoursAgo(20),
+    last_outreach_channel: "call",
+    outreach_attempts: 1,
   },
-  // 6. Robert — Handed Off ~10mo ago (expiring soon!)
+  // 6. Robert — Handed Off ~10mo ago, active mid-cycle (no recert action yet)
   {
     packet_id: "demo-pkt-006-robert", applicant_id: "app-006",
     status: "Handed Off", state_code: "CA", county: "San Diego", county_fips: "06073",
@@ -134,8 +157,10 @@ export const DEMO_PACKETS: DemoPacket[] = [
     submitted_at: monthsAgo(10), handed_off_at: monthsAgo(10), closed_at: null,
     created_at: monthsAgo(10), updated_at: monthsAgo(10), deleted_at: null,
     applicants: { full_name_ciphertext: DEMO_APPLICANTS[5]!.full_name_ciphertext, preferred_language: "en" },
+    cert_period_months: 12,
+    interview_completed_at: monthsAgo(10),
   },
-  // 7. Sofia — Handed Off 13mo ago (OVERDUE recert)
+  // 7. Sofia — Handed Off 13mo ago (OVERDUE recert), 3 outreach attempts logged
   {
     packet_id: "demo-pkt-007-sofia", applicant_id: "app-007",
     status: "Handed Off", state_code: "CA", county: "Riverside", county_fips: "06065",
@@ -143,6 +168,11 @@ export const DEMO_PACKETS: DemoPacket[] = [
     submitted_at: monthsAgo(13), handed_off_at: monthsAgo(13), closed_at: null,
     created_at: monthsAgo(13), updated_at: monthsAgo(13), deleted_at: null,
     applicants: { full_name_ciphertext: DEMO_APPLICANTS[6]!.full_name_ciphertext, preferred_language: "es" },
+    cert_period_months: 12,
+    interview_completed_at: monthsAgo(13),
+    last_outreach_at: daysAgo(4),
+    last_outreach_channel: "sms",
+    outreach_attempts: 3,
   },
   // 8. Kenji — Draft (just started)
   {
@@ -162,7 +192,7 @@ export const DEMO_PACKETS: DemoPacket[] = [
     created_at: daysAgo(9), updated_at: daysAgo(2), deleted_at: null,
     applicants: { full_name_ciphertext: DEMO_APPLICANTS[8]!.full_name_ciphertext, preferred_language: "es" },
   },
-  // 10. Marcus — Closed (recertified)
+  // 10. Marcus — Closed (recertified) — full clean lifecycle
   {
     packet_id: "demo-pkt-010-marcus", applicant_id: "app-010",
     status: "Closed", state_code: "CA", county: "Alameda", county_fips: "06001",
@@ -170,6 +200,11 @@ export const DEMO_PACKETS: DemoPacket[] = [
     submitted_at: monthsAgo(14), handed_off_at: monthsAgo(13), closed_at: daysAgo(15),
     created_at: monthsAgo(14), updated_at: daysAgo(15), deleted_at: null,
     applicants: { full_name_ciphertext: DEMO_APPLICANTS[9]!.full_name_ciphertext, preferred_language: "en" },
+    cert_period_months: 12,
+    interview_completed_at: monthsAgo(12),
+    last_outreach_at: daysAgo(20),
+    last_outreach_channel: "email",
+    outreach_attempts: 2,
   },
   // 11. Priya — In Navigator Review
   {
@@ -180,7 +215,7 @@ export const DEMO_PACKETS: DemoPacket[] = [
     created_at: daysAgo(4), updated_at: hoursAgo(12), deleted_at: null,
     applicants: { full_name_ciphertext: DEMO_APPLICANTS[10]!.full_name_ciphertext, preferred_language: "en" },
   },
-  // 12. Tomas — Handed Off 6mo ago
+  // 12. Tomas — Handed Off 6mo ago, county requested wage verification 6d ago
   {
     packet_id: "demo-pkt-012-tomas", applicant_id: "app-012",
     status: "Handed Off", state_code: "CA", county: "Fresno", county_fips: "06019",
@@ -188,6 +223,69 @@ export const DEMO_PACKETS: DemoPacket[] = [
     submitted_at: monthsAgo(6), handed_off_at: monthsAgo(6), closed_at: null,
     created_at: monthsAgo(6), updated_at: monthsAgo(6), deleted_at: null,
     applicants: { full_name_ciphertext: DEMO_APPLICANTS[11]!.full_name_ciphertext, preferred_language: "es" },
+    cert_period_months: 12,
+    interview_completed_at: monthsAgo(6),
+    verification_requested_at: daysAgo(6),
+    last_outreach_at: daysAgo(2),
+    last_outreach_channel: "sms",
+    outreach_attempts: 1,
+  },
+  // 13. Aisha — interview was 5d ago, applicant didn't confirm attendance.
+  // INTERVIEW AT RISK — most common silent denial reason on SNAP.
+  {
+    packet_id: "demo-pkt-013-aisha", applicant_id: "app-013",
+    status: "Handed Off", state_code: "CA", county: "San Bernardino", county_fips: "06071",
+    is_expedited: false,
+    submitted_at: daysAgo(16), handed_off_at: daysAgo(14), closed_at: null,
+    created_at: daysAgo(18), updated_at: daysAgo(14), deleted_at: null,
+    applicants: { full_name_ciphertext: DEMO_APPLICANTS[12]!.full_name_ciphertext, preferred_language: "en" },
+    cert_period_months: 12,
+    interview_scheduled_at: daysAgo(5),
+    interview_completed_at: null,
+    outreach_attempts: 0,
+  },
+  // 14. James — Handed Off 5mo ago, county requested verification 10d ago — escalating.
+  {
+    packet_id: "demo-pkt-014-james", applicant_id: "app-014",
+    status: "Handed Off", state_code: "CA", county: "Contra Costa", county_fips: "06013",
+    is_expedited: false,
+    submitted_at: monthsAgo(5), handed_off_at: monthsAgo(5), closed_at: null,
+    created_at: monthsAgo(5), updated_at: monthsAgo(5), deleted_at: null,
+    applicants: { full_name_ciphertext: DEMO_APPLICANTS[13]!.full_name_ciphertext, preferred_language: "ko" },
+    cert_period_months: 24, // elderly/disabled cert period
+    interview_completed_at: monthsAgo(5),
+    verification_requested_at: daysAgo(10),
+    last_outreach_at: daysAgo(3),
+    last_outreach_channel: "call",
+    outreach_attempts: 2,
+  },
+  // 15. Lucia — Handed Off 11mo+ ago, recert due in <30d — EXPIRING soon.
+  {
+    packet_id: "demo-pkt-015-lucia", applicant_id: "app-015",
+    status: "Handed Off", state_code: "CA", county: "Kern", county_fips: "06029",
+    is_expedited: false,
+    submitted_at: daysAgo(345), handed_off_at: daysAgo(345), closed_at: null,
+    created_at: daysAgo(345), updated_at: daysAgo(345), deleted_at: null,
+    applicants: { full_name_ciphertext: DEMO_APPLICANTS[14]!.full_name_ciphertext, preferred_language: "es" },
+    cert_period_months: 12,
+    interview_completed_at: daysAgo(340),
+    last_outreach_at: daysAgo(5),
+    last_outreach_channel: "sms",
+    outreach_attempts: 2,
+  },
+  // 16. Daniel — second recertified household (visual density on the indigo bucket).
+  {
+    packet_id: "demo-pkt-016-daniel", applicant_id: "app-016",
+    status: "Closed", state_code: "CA", county: "San Joaquin", county_fips: "06077",
+    is_expedited: false,
+    submitted_at: monthsAgo(13), handed_off_at: monthsAgo(13), closed_at: daysAgo(2),
+    created_at: monthsAgo(13), updated_at: daysAgo(2), deleted_at: null,
+    applicants: { full_name_ciphertext: DEMO_APPLICANTS[15]!.full_name_ciphertext, preferred_language: "en" },
+    cert_period_months: 12,
+    interview_completed_at: monthsAgo(12),
+    last_outreach_at: daysAgo(10),
+    last_outreach_channel: "in_person",
+    outreach_attempts: 3,
   },
 ];
 
@@ -380,6 +478,118 @@ export const DEMO_OUTREACH_TASKS: DemoOutreachTask[] = [
     created_at: hoursAgo(26),
   },
 ];
+
+// ─────────────────────────────────────────────────────────────────────
+// Stage 3 monetization yield — per-household monthly attribution.
+// Wired into the YC pitch (post-issuance daily engagement → 3 revenue
+// lines). Numbers are calibrated against the YC California-only ARR
+// sizing: a blend of ~$3–5 per *monetized* household per month, NOT
+// per all-3M-CA-household (which would imply a $500M TAM and break the
+// pitch's $5–15M ARR math).
+//
+//   - adSavingsThisMonth: closed-loop RMN savings the household captured
+//   - hoursLoggedThisMonth: ABAWD work-hours logged this month (of 80)
+//   - workforceReferralValue: per-placement payout earned this month
+//   - dsnpEligible: cohort flag (age ≥64.5 + Medicare enrollment window)
+//   - dsnpWarmTransferValue: $250 if a warm transfer fired this month
+//
+// Salience: not every household is monetized. ~half the demo cohort
+// shows zero on each stream — that's the honest pattern and what makes
+// the composite math reconcile to YC sizing.
+// ─────────────────────────────────────────────────────────────────────
+
+export type Stage3Yield = {
+  applicant_id: string;
+  adSavingsThisMonth: number;       // dollars, retailer-level attribution
+  hoursLoggedThisMonth: number;     // 0–80, only meaningful for ABAWD-scope
+  workforceReferralValue: number;   // dollars paid for placements this month
+  dsnpEligible: boolean;            // cohort flag — controls iOS DSNPCard render
+  dsnpWarmTransferValue: number;    // dollars (typically 0 or 250 — $250/lead)
+};
+
+export const DEMO_STAGE3_YIELD: Stage3Yield[] = [
+  // Maria — high ad redemption, ABAWD scope, working ~60% of target hrs
+  { applicant_id: "app-001", adSavingsThisMonth: 12.40, hoursLoggedThisMonth: 48, workforceReferralValue: 7,    dsnpEligible: false, dsnpWarmTransferValue: 0 },
+  // Carlos — light ad usage, ABAWD scope, low hours (compliance risk)
+  { applicant_id: "app-002", adSavingsThisMonth: 4.20,  hoursLoggedThisMonth: 22, workforceReferralValue: 14,   dsnpEligible: false, dsnpWarmTransferValue: 0 },
+  // Jasmine — moderate ad usage, no ABAWD, no monetization beyond ads
+  { applicant_id: "app-003", adSavingsThisMonth: 8.70,  hoursLoggedThisMonth: 0,  workforceReferralValue: 0,    dsnpEligible: false, dsnpWarmTransferValue: 0 },
+  // David — ABAWD scope, full hours, workforce placement fired
+  { applicant_id: "app-004", adSavingsThisMonth: 6.10,  hoursLoggedThisMonth: 78, workforceReferralValue: 35,   dsnpEligible: false, dsnpWarmTransferValue: 0 },
+  // Anh — moderate ad, no ABAWD
+  { applicant_id: "app-005", adSavingsThisMonth: 3.20,  hoursLoggedThisMonth: 0,  workforceReferralValue: 0,    dsnpEligible: false, dsnpWarmTransferValue: 0 },
+  // Robert — 67yo, D-SNP eligible cohort, warm transfer fired this month
+  { applicant_id: "app-006", adSavingsThisMonth: 2.80,  hoursLoggedThisMonth: 0,  workforceReferralValue: 0,    dsnpEligible: true,  dsnpWarmTransferValue: 250 },
+  // Sofia — ABAWD scope, exemplary hours
+  { applicant_id: "app-007", adSavingsThisMonth: 5.90,  hoursLoggedThisMonth: 82, workforceReferralValue: 22,   dsnpEligible: false, dsnpWarmTransferValue: 0 },
+  // Kenji — 70yo, D-SNP eligible, no warm transfer yet (in cohort, not yet fired)
+  { applicant_id: "app-008", adSavingsThisMonth: 1.10,  hoursLoggedThisMonth: 0,  workforceReferralValue: 0,    dsnpEligible: true,  dsnpWarmTransferValue: 0 },
+  // Elena — no monetization this month
+  { applicant_id: "app-009", adSavingsThisMonth: 0,     hoursLoggedThisMonth: 0,  workforceReferralValue: 0,    dsnpEligible: false, dsnpWarmTransferValue: 0 },
+  // Marcus — ABAWD scope, moderate hours, mid-placement
+  { applicant_id: "app-010", adSavingsThisMonth: 7.40,  hoursLoggedThisMonth: 56, workforceReferralValue: 18,   dsnpEligible: false, dsnpWarmTransferValue: 0 },
+  // Priya — ad-only, no other streams
+  { applicant_id: "app-011", adSavingsThisMonth: 9.30,  hoursLoggedThisMonth: 0,  workforceReferralValue: 0,    dsnpEligible: false, dsnpWarmTransferValue: 0 },
+  // Tomas — 65yo, D-SNP eligible, warm transfer fired
+  { applicant_id: "app-012", adSavingsThisMonth: 3.60,  hoursLoggedThisMonth: 0,  workforceReferralValue: 0,    dsnpEligible: true,  dsnpWarmTransferValue: 250 },
+  // Aisha (app-013) — interview at risk, benefits not yet issued: no monetization yet.
+  { applicant_id: "app-013", adSavingsThisMonth: 0,     hoursLoggedThisMonth: 0,  workforceReferralValue: 0,    dsnpEligible: false, dsnpWarmTransferValue: 0 },
+  // James (app-014) — 68yo, ko-language, D-SNP eligible cohort; no transfer yet.
+  { applicant_id: "app-014", adSavingsThisMonth: 1.40,  hoursLoggedThisMonth: 0,  workforceReferralValue: 0,    dsnpEligible: true,  dsnpWarmTransferValue: 0 },
+  // Lucia (app-015) — moderate ad, ABAWD scope, partial hours.
+  { applicant_id: "app-015", adSavingsThisMonth: 6.80,  hoursLoggedThisMonth: 52, workforceReferralValue: 11,   dsnpEligible: false, dsnpWarmTransferValue: 0 },
+  // Daniel (app-016) — recertified, steady ad redemption.
+  { applicant_id: "app-016", adSavingsThisMonth: 4.50,  hoursLoggedThisMonth: 0,  workforceReferralValue: 0,    dsnpEligible: false, dsnpWarmTransferValue: 0 },
+];
+
+export function getStage3Yield(applicantId: string | null | undefined): Stage3Yield | null {
+  if (!applicantId) return null;
+  return DEMO_STAGE3_YIELD.find((y) => y.applicant_id === applicantId) ?? null;
+}
+
+export type Stage3Totals = {
+  adSavings: number;
+  workforceReferrals: number;
+  dsnpTransfers: number;                       // $ summed from one-time lead payouts this month
+  dsnpTransferCount: number;                   // count of warm transfers fired this month
+  dsnpEligibleCount: number;                   // households in the cohort (not yet transferred)
+  monetizedHouseholdCount: number;             // households with non-zero recurring stream
+  recurringYield: number;                      // ads + workforce only (monthly composite)
+  totalYieldIncludingOneTime: number;          // recurring + D-SNP this month
+  recurringYieldPerMonetizedHousehold: number; // hero metric
+};
+
+export function getStage3Totals(applicantIds: Array<string | null | undefined>): Stage3Totals {
+  const ids = new Set(applicantIds.filter((id): id is string => !!id));
+  const rows = DEMO_STAGE3_YIELD.filter((y) => ids.has(y.applicant_id));
+  const adSavings = rows.reduce((sum, r) => sum + r.adSavingsThisMonth, 0);
+  const workforceReferrals = rows.reduce((sum, r) => sum + r.workforceReferralValue, 0);
+  const dsnpTransfers = rows.reduce((sum, r) => sum + r.dsnpWarmTransferValue, 0);
+  const dsnpTransferCount = rows.filter((r) => r.dsnpWarmTransferValue > 0).length;
+  const dsnpEligibleCount = rows.filter((r) => r.dsnpEligible).length;
+  // Monetized = has any recurring stream (ads or workforce). D-SNP fired this
+  // month doesn't qualify a household as "recurring monetized" — that lead is
+  // one-time-per-lifetime per premise P5.
+  const monetizedHouseholdCount = rows.filter(
+    (r) => r.adSavingsThisMonth > 0 || r.workforceReferralValue > 0,
+  ).length;
+  const recurringYield = adSavings + workforceReferrals;
+  const totalYieldIncludingOneTime = recurringYield + dsnpTransfers;
+  const recurringYieldPerMonetizedHousehold = monetizedHouseholdCount > 0
+    ? recurringYield / monetizedHouseholdCount
+    : 0;
+  return {
+    adSavings,
+    workforceReferrals,
+    dsnpTransfers,
+    dsnpTransferCount,
+    dsnpEligibleCount,
+    monetizedHouseholdCount,
+    recurringYield,
+    totalYieldIncludingOneTime,
+    recurringYieldPerMonetizedHousehold,
+  };
+}
 
 // ─────────────────────────────────────────────────────────────────────
 // Outreach packet metadata (used to look up packet info from task)
