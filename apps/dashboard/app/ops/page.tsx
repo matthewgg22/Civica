@@ -79,37 +79,27 @@ export default async function OpsPage() {
         {/* Hero strip — animated headline KPIs across the top */}
         <OpsHeroStrip ebt={ebt} pnl={pnl} notifications={notifications} ttfd={ttfd} />
 
-        {/* LTV headline — the fundability metric. "Every tracked HH is worth
-            $X/yr" — composite of every monetization line, with projected
-            ceiling shown as roadmap headroom. */}
-        <LTVPanel data={ltv} />
-
-        {/* Revenue rollup — "where the money comes from" headline panel,
-            anchors the page by surfacing every monetization line at once. */}
-        <RevenueLinesPanel data={revenueLines} />
-
-        {/* Opportunity queue — workflow-defining "what's next" view, sits above
-            the reporting panels so operators see actionable work first. */}
+        {/* Opportunity queue — workflow-defining "what's next" view, sits
+            right under the hero so operators see actionable work first
+            (before any reporting panels). */}
         <EligibilityQueuePanel data={eligibilityQueue} />
 
-        {/* Headline panels */}
+        {/* Operational metrics — the "is the engine running" middle of the
+            page. Balance + map + outbound + retention + speed-to-deposit. */}
         <EBTBalancePanel data={ebt} />
         <PlacementMapPanel data={placements} />
-
-        {/* Operational metrics */}
         <NotificationOutlayPanel data={notifications} />
         <CohortRetentionPanel data={cohorts} />
         <TTFDPanel data={ttfd} />
 
-        {/* Monetization — visually distinct (pine border) and clearly operator-gated */}
+        {/* Monetization arc — the "money story" cluster at the bottom.
+            Rollup ("where the money comes from") opens, per-line panels
+            in the middle, LTV closes with the per-user kicker, then the
+            distress overlay caps the page with the trust-defense beat. */}
+        <RevenueLinesPanel data={revenueLines} />
         <PartnerPnLPanel data={pnl} />
         <MedicareAdvantagePanel data={medicareAdvantage} />
-
-        {/* Distress honor flag — political defense layer. For every
-            monetization line, surface how many HHs were excluded because
-            they're in active distress (denial appeal / OBBBA §10102
-            distress prompt / recert lapse). Sits at the bottom and closes
-            the page on a trust beat. */}
+        <LTVPanel data={ltv} />
         <DistressOverlayPanel data={distressOverlay} />
       </div>
 
