@@ -252,65 +252,50 @@ export default async function PacketsPage({ searchParams }: { searchParams: Prom
 }
 
 function EngineKpiBanner({
-  reviewedToday, avgScore, tierCounts, tieredTotal, readyCount,
+  reviewedToday, avgScore, tierCounts, tieredTotal,
 }: {
   reviewedToday: number;
   avgScore: number | null;
   tierCounts: { low: number; medium: number; high: number };
   tieredTotal: number;
-  readyCount: number;
+  readyCount: number; // accepted for backwards compat; surfaced in StatCard below
 }) {
   const lowPct = Math.round((tierCounts.low / tieredTotal) * 100);
   const medPct = Math.round((tierCounts.medium / tieredTotal) * 100);
   const highPct = 100 - lowPct - medPct;
+  // Slim ambient strip — engine narrative as context, not as headline.
+  // The action-driving counts (Needs Attention / Ready / etc.) live in the
+  // StatCards immediately below; the banner shouldn't compete with them.
+  // Single-line flex (no flex-wrap, no ml-auto) so layout never orphans.
   return (
-    <section className="mb-6 bg-surface border border-pine/30 rounded-[4px] overflow-hidden ring-1 ring-pine/10">
-      <div className="px-6 py-4 bg-pine/8 flex items-center gap-6 flex-wrap">
-        <div className="flex items-center gap-2 shrink-0">
-          <span className="inline-flex w-1.5 h-1.5 rounded-full bg-teal" aria-hidden />
-          <span className="text-[11px] font-semibold uppercase tracking-wider text-pine">Automated review</span>
-        </div>
-
-        <div className="flex items-baseline gap-1.5">
-          <span className="text-[22px] font-semibold text-ink tabular-nums leading-none">{reviewedToday}</span>
-          <span className="text-[13px] text-graphite">packet{reviewedToday === 1 ? "" : "s"} reviewed in last 24h</span>
-        </div>
-
-        {avgScore != null && (
-          <>
-            <span className="text-hairline">·</span>
-            <div className="flex items-baseline gap-1.5">
-              <span className="text-[13px] uppercase tracking-wider text-muted font-semibold">Avg risk</span>
-              <span className="text-[18px] font-semibold text-ink tabular-nums leading-none">{avgScore}</span>
-              <span className="text-[12px] text-muted">/ 100</span>
-            </div>
-          </>
-        )}
-
-        <span className="text-hairline">·</span>
-        <div className="flex items-center gap-3 text-[12px]">
-          <span className="inline-flex items-center gap-1.5">
-            <span className="w-2 h-2 rounded-full bg-teal" />
-            <span className="text-graphite tabular-nums">{lowPct}%</span>
-            <span className="text-muted">low</span>
-          </span>
-          <span className="inline-flex items-center gap-1.5">
-            <span className="w-2 h-2 rounded-full bg-warning" />
-            <span className="text-graphite tabular-nums">{medPct}%</span>
-            <span className="text-muted">med</span>
-          </span>
-          <span className="inline-flex items-center gap-1.5">
-            <span className="w-2 h-2 rounded-full bg-brick" />
-            <span className="text-graphite tabular-nums">{highPct}%</span>
-            <span className="text-muted">high</span>
-          </span>
-        </div>
-
-        <div className="ml-auto flex items-baseline gap-1.5">
-          <span className="text-[22px] font-semibold text-teal tabular-nums leading-none">{readyCount}</span>
-          <span className="text-[13px] text-graphite">ready to hand off</span>
-        </div>
-      </div>
+    <section className="mb-4 bg-pine/5 border border-pine/15 rounded-[4px] px-4 py-2 flex items-center gap-x-5 gap-y-1 flex-wrap text-[12px] text-graphite">
+      <span className="inline-flex items-center gap-1.5 shrink-0">
+        <span className="w-1.5 h-1.5 rounded-full bg-teal" aria-hidden />
+        <span className="text-[10px] font-bold uppercase tracking-[0.12em] text-pine">Automated review</span>
+      </span>
+      <span>
+        <span className="font-semibold text-ink tabular-nums">{reviewedToday}</span> packet{reviewedToday === 1 ? "" : "s"} reviewed · last 24h
+      </span>
+      {avgScore != null && (
+        <span>
+          avg risk <span className="font-semibold text-ink tabular-nums">{avgScore}</span>
+          <span className="text-muted">/100</span>
+        </span>
+      )}
+      <span className="inline-flex items-center gap-2.5">
+        <span className="inline-flex items-center gap-1">
+          <span className="w-1.5 h-1.5 rounded-full bg-teal" />
+          <span className="tabular-nums">{lowPct}% low</span>
+        </span>
+        <span className="inline-flex items-center gap-1">
+          <span className="w-1.5 h-1.5 rounded-full bg-warning" />
+          <span className="tabular-nums">{medPct}% med</span>
+        </span>
+        <span className="inline-flex items-center gap-1">
+          <span className="w-1.5 h-1.5 rounded-full bg-brick" />
+          <span className="tabular-nums">{highPct}% high</span>
+        </span>
+      </span>
     </section>
   );
 }
