@@ -4,6 +4,7 @@ import AppHeader from "../../components/AppHeader";
 import BaselinePanel from "../../components/qc/BaselinePanel";
 import FormulaHero from "../../components/qc/FormulaHero";
 import PillarTracking from "../../components/qc/PillarTracking";
+import OBBBAReadinessStrip from "../../components/qc/OBBBAReadinessStrip";
 import { ENGINE_VERSION } from "@civica/snap-qc-engine";
 
 export const dynamic = "force-dynamic";
@@ -160,6 +161,7 @@ export default async function QCPage() {
           shelterDocCount={shelterDocCount}
           suaAnswered={suaModerate}
         />
+        <OBBBAReadinessStrip />
         <BaselinePanel comparison={comparison} sampleN={sampleN} />
       </div>
 
