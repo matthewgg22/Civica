@@ -6,6 +6,7 @@ import FormulaHero from "../../components/qc/FormulaHero";
 import PillarTracking from "../../components/qc/PillarTracking";
 import OBBBAReadinessStrip from "../../components/qc/OBBBAReadinessStrip";
 import IncomingDataFeed, { type FeedPacket } from "../../components/qc/IncomingDataFeed";
+import { deriveObbbaImpact, isObbbaChainEngaged } from "../../lib/analytics/obbba";
 import { ENGINE_VERSION } from "@civica/snap-qc-engine";
 
 export const dynamic = "force-dynamic";
@@ -87,6 +88,11 @@ export default async function QCPage() {
     answersByPacket.set(a.packet_id, m);
   }
 
+  // Extend the answersByPacket fetch keys for OBBBA-impact derivation.
+  // (The contract in lib/analytics/obbba.ts documents which keys are read.)
+  // For demo / staging where these keys may not yet be present, the helper
+  // returns "not_impacted" with a reason — non-blocking.
+
   // SUA-engaged packet count: at least one of the 3 utility questions answered.
   let suaModerate = 0;
   for (const p of packets) {
@@ -134,6 +140,12 @@ export default async function QCPage() {
     const hasSuaAnswer = Boolean(
       pa["has_heating_costs"] || pa["has_electric_or_gas"] || pa["has_phone"],
     );
+    // OBBBA-impact tag via documented contract (lib/analytics/obbba.ts).
+    // "Engaged" = the rule chain ran to a non-pending decision. Pending-
+    // counsel cases (Track 1.3 / Track 2/3 / Q5) return false so the row
+    // surfaces as "missing OBBBA tag" — directing navigator attention to
+    // packets blocked on counsel.
+    const obbbaState = deriveObbbaImpact({ packetAnswers: pa });
     return {
       packetId: p.packet_id,
       applicantInitials: initialsForPacket(p.packet_id),
@@ -142,10 +154,7 @@ export default async function QCPage() {
         income: argylePacketIds.has(p.packet_id),
         shelter: shelterDocPacketIds.has(p.packet_id),
         suaFlags: hasSuaAnswer,
-        // OBBBA-impact tag: derived heuristically from employment_status
-        // answer presence (work-requirement age band check is the gating
-        // criterion). Full contract deferred per TODO-OBBBA-CONTRACT.
-        obbbaImpactTagged: Boolean(pa["employment_status"]),
+        obbbaImpactTagged: isObbbaChainEngaged(obbbaState),
       },
     };
   });

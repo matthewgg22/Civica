@@ -176,8 +176,22 @@ export const PROJECTED_PER_AT_FULL_ENGAGEMENT = 5.5;
  *                   + 150 (Unit composition, 1.91%) = 3.94
  *                   Source: ca_fy2023_element_attribution.csv rows 520, 150.
  *
- * Measurement window: CA FY2023 (Oct 2022 - Sep 2023). Update on next USDA
- * QC microdata release.
+ * Source verifiability (TODO-ENGINE-FNS-CITATIONS, 2026-05-25):
+ *   - USDA FNS Quality Control microdata, FY2023 reporting cycle.
+ *   - Measurement window: CA FY2023 (2022-10-01 to 2023-09-30).
+ *   - Aggregation: per-element share_pct = (errored cases citing element /
+ *     total CA errored cases). Multiple elements can cite a single case, so
+ *     shares overlap and sum to >100% across all elements — Civica's
+ *     PILLAR_SHARES_UNNORMALIZED below selects a non-overlapping subset.
+ *   - Public source: https://fns-prod.azureedge.us/sites/default/files/resource-files/SNAPQC-FY2024.pdf
+ *     (FY2024 published June 2025 — used for baseline PER 10.98). The
+ *     element-attribution detail used here comes from FY2023 microdata
+ *     (CSV not redistributed publicly; Civica licenses access via USDA FNS
+ *     research agreement).
+ *   - PARITY_INVARIANT: PILLAR_SHARES_UNNORMALIZED + RESIDUAL_FLOOR_SHARE = 1.0
+ *     (enforced by population-per.test.ts parity test).
+ *   - Update cadence: annual on USDA QC release. Next expected Jun 2026
+ *     (FY2025 baseline) — rerun goldens + this share table on update.
  *
  * Closes eng review cross-model tension #3 (2026-05-25): magic numbers now
  * have row-by-row FNS-380 citations rather than opaque renormalized weights.
