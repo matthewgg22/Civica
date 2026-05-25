@@ -129,7 +129,10 @@ function TrackRow({ provision: p }: { provision: ObbbaProvision }) {
   const isOverdue = days !== null && days < 0;
 
   return (
-    <li className="grid grid-cols-[80px_1fr_auto] items-baseline gap-3 px-3 py-2.5">
+    <li
+      className="grid grid-cols-[80px_1fr_auto] items-baseline gap-3 px-3 py-2.5"
+      aria-label={`OBBBA track ${p.section}: ${p.title}. Status ${p.status}. Deadline ${formatDeadline(p.deadlineIso)}.`}
+    >
       {/* Section citation */}
       <span className="font-mono text-[11px] font-semibold text-graphite tracking-wide whitespace-nowrap">
         {p.section}
@@ -144,10 +147,13 @@ function TrackRow({ provision: p }: { provision: ObbbaProvision }) {
           <span
             className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-sm text-[9px] font-bold uppercase tracking-wide whitespace-nowrap"
             style={{ color: statusMeta.color, background: statusMeta.bg }}
+            role="status"
+            aria-label={`Shipping status: ${p.status}`}
           >
             <span
               className="w-1 h-1 rounded-full"
               style={{ background: statusMeta.color }}
+              aria-hidden="true"
             />
             {p.status}
           </span>

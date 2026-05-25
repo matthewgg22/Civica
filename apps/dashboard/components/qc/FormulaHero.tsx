@@ -255,7 +255,7 @@ export default function FormulaHero({
 
         {/* GAP — the single hero number on the page */}
         <tbody>
-          <tr aria-live="polite">
+          <tr aria-live="polite" aria-atomic="true">
             <th
               scope="row"
               className="px-3 pt-5 pb-2 text-left text-[10px] uppercase tracking-[0.14em] font-bold text-ink"
@@ -263,7 +263,10 @@ export default function FormulaHero({
             >
               Engagement realization gap
             </th>
-            <td className="px-3 pt-5 pb-2 text-right text-[10px] text-muted font-medium">
+            <td
+              className="px-3 pt-5 pb-2 text-right text-[10px] text-muted font-medium"
+              aria-hidden="true"
+            >
               {realizationGap > 0.5
                 ? "▲ widening"
                 : realizationGap < -0.5
@@ -273,6 +276,13 @@ export default function FormulaHero({
             <td
               className="px-3 pt-5 pb-2 text-right text-[32px] font-bold leading-none tabular-nums"
               style={{ color: gapColor }}
+              aria-label={`Engagement realization gap: ${realizationGap >= 0 ? "positive" : "negative"} ${Math.abs(realizationGap).toFixed(2)} percentage points, ${
+                realizationGap > 0.5
+                  ? "widening"
+                  : realizationGap < -0.5
+                    ? "narrowing"
+                    : "approximately flat"
+              }`}
             >
               {realizationGap >= 0 ? "+" : ""}
               {realizationGap.toFixed(2)} pts
