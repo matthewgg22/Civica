@@ -59,7 +59,7 @@ function NavTab({ href, label, active }: { href: string; label: string; active: 
   return (
     <Link
       href={href}
-      className={`px-3 py-1.5 rounded-[4px] text-[13px] font-semibold transition-colors ${
+      className={`px-3 py-1.5 rounded-[4px] text-[13px] font-semibold transition-colors whitespace-nowrap ${
         active
           ? "bg-white/15 text-white"
           : "text-white/55 hover:text-white hover:bg-white/10"
