@@ -59,24 +59,47 @@ export default async function PacketsPage({ searchParams }: { searchParams: Prom
   // Fetch the most recent error-risk tier for each packet in one round trip.
   // Multiple rows per packet are possible (one per scoring event); we take
   // the first per packet_id after sorting by created_at DESC.
+  // Also tracks `score` so the queue-header engine KPI banner can render
+  // an honest "avg risk score" + per-packet evaluation count.
   const packetIds = allRaw.map((p) => p.packet_id);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data: riskRows } = packetIds.length > 0
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ? await supabase.schema("snap_enrollment").from("packet_error_risk" as any)
-        .select("packet_id, tier, created_at")
+        .select("packet_id, tier, score, created_at")
         .in("packet_id", packetIds)
         .order("created_at", { ascending: false })
     : { data: [] };
 
   const riskTierByPacket = new Map<string, RiskTier>();
   const riskScoredAtByPacket = new Map<string, string>();
-  for (const row of (riskRows ?? []) as unknown as Array<{ packet_id: string; tier: string | null; created_at: string }>) {
+  const latestScoreByPacket = new Map<string, number>();
+  const evalCountByPacket = new Map<string, number>();
+  const allRiskRows = (riskRows ?? []) as unknown as Array<{ packet_id: string; tier: string | null; score: number | null; created_at: string }>;
+  for (const row of allRiskRows) {
+    evalCountByPacket.set(row.packet_id, (evalCountByPacket.get(row.packet_id) ?? 0) + 1);
     if (!riskTierByPacket.has(row.packet_id) && row.tier) {
       riskTierByPacket.set(row.packet_id, row.tier as RiskTier);
       riskScoredAtByPacket.set(row.packet_id, row.created_at);
+      if (row.score != null) latestScoreByPacket.set(row.packet_id, row.score);
     }
   }
+
+  // Engine KPI: packets the engine has touched in the last 24h (real activity
+  // signal — not "anything updated today"). Avg score is over the latest
+  // score per packet that has been evaluated.
+  const dayAgo = Date.now() - 24 * 60 * 60 * 1000;
+  const reviewedToday = new Set<string>();
+  for (const row of allRiskRows) {
+    if (new Date(row.created_at).getTime() >= dayAgo) reviewedToday.add(row.packet_id);
+  }
+  const allScores = [...latestScoreByPacket.values()];
+  const avgScore = allScores.length > 0
+    ? Math.round(allScores.reduce((a, b) => a + b, 0) / allScores.length)
+    : null;
+  const tierCounts = { low: 0, medium: 0, high: 0 };
+  for (const t of riskTierByPacket.values()) tierCounts[t]++;
+  const tieredTotal = tierCounts.low + tierCounts.medium + tierCounts.high;
 
   // Compute "mine" = packets the current user has personally touched (status changes or notes authored)
   let minePacketIds = new Set<string>();
@@ -129,6 +152,19 @@ export default async function PacketsPage({ searchParams }: { searchParams: Prom
       <AppHeader email={user?.email} active="queue" />
 
       <main className="max-w-5xl mx-auto px-8 py-10">
+        {/* Automated-review activity strip — surfaces "Civica is actively
+            reviewing your queue" before any individual packet is opened.
+            Reuses the risk-rows fetch above; no extra round-trip. */}
+        {tieredTotal > 0 && (
+          <EngineKpiBanner
+            reviewedToday={reviewedToday.size}
+            avgScore={avgScore}
+            tierCounts={tierCounts}
+            tieredTotal={tieredTotal}
+            readyCount={readyCount}
+          />
+        )}
+
         {/* Overview stats */}
         <div className="grid grid-cols-4 gap-4 mb-8">
           <StatCard label="Needs Attention" value={needsAttentionCount} accent="text-warning" bg="bg-warning/8" />
@@ -191,6 +227,70 @@ export default async function PacketsPage({ searchParams }: { searchParams: Prom
         )}
       </main>
     </div>
+  );
+}
+
+function EngineKpiBanner({
+  reviewedToday, avgScore, tierCounts, tieredTotal, readyCount,
+}: {
+  reviewedToday: number;
+  avgScore: number | null;
+  tierCounts: { low: number; medium: number; high: number };
+  tieredTotal: number;
+  readyCount: number;
+}) {
+  const lowPct = Math.round((tierCounts.low / tieredTotal) * 100);
+  const medPct = Math.round((tierCounts.medium / tieredTotal) * 100);
+  const highPct = 100 - lowPct - medPct;
+  return (
+    <section className="mb-6 bg-surface border border-pine/30 rounded-[4px] overflow-hidden ring-1 ring-pine/10">
+      <div className="px-6 py-4 bg-pine/8 flex items-center gap-6 flex-wrap">
+        <div className="flex items-center gap-2 shrink-0">
+          <span className="inline-flex w-1.5 h-1.5 rounded-full bg-teal" aria-hidden />
+          <span className="text-[11px] font-semibold uppercase tracking-wider text-pine">Automated review</span>
+        </div>
+
+        <div className="flex items-baseline gap-1.5">
+          <span className="text-[22px] font-semibold text-ink tabular-nums leading-none">{reviewedToday}</span>
+          <span className="text-[13px] text-graphite">packet{reviewedToday === 1 ? "" : "s"} reviewed in last 24h</span>
+        </div>
+
+        {avgScore != null && (
+          <>
+            <span className="text-hairline">·</span>
+            <div className="flex items-baseline gap-1.5">
+              <span className="text-[13px] uppercase tracking-wider text-muted font-semibold">Avg risk</span>
+              <span className="text-[18px] font-semibold text-ink tabular-nums leading-none">{avgScore}</span>
+              <span className="text-[12px] text-muted">/ 100</span>
+            </div>
+          </>
+        )}
+
+        <span className="text-hairline">·</span>
+        <div className="flex items-center gap-3 text-[12px]">
+          <span className="inline-flex items-center gap-1.5">
+            <span className="w-2 h-2 rounded-full bg-teal" />
+            <span className="text-graphite tabular-nums">{lowPct}%</span>
+            <span className="text-muted">low</span>
+          </span>
+          <span className="inline-flex items-center gap-1.5">
+            <span className="w-2 h-2 rounded-full bg-warning" />
+            <span className="text-graphite tabular-nums">{medPct}%</span>
+            <span className="text-muted">med</span>
+          </span>
+          <span className="inline-flex items-center gap-1.5">
+            <span className="w-2 h-2 rounded-full bg-brick" />
+            <span className="text-graphite tabular-nums">{highPct}%</span>
+            <span className="text-muted">high</span>
+          </span>
+        </div>
+
+        <div className="ml-auto flex items-baseline gap-1.5">
+          <span className="text-[22px] font-semibold text-teal tabular-nums leading-none">{readyCount}</span>
+          <span className="text-[13px] text-graphite">ready to hand off</span>
+        </div>
+      </div>
+    </section>
   );
 }
 

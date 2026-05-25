@@ -55,9 +55,9 @@ function WorkRequirementsCard({ wrStatus }: { wrStatus: WrStatusData }) {
   if (wrStatus === null) {
     return (
       <section className="bg-surface border border-hairline rounded-[4px] p-6">
-        <p className="eyebrow mb-3">OBBBA Work Requirements</p>
+        <p className="eyebrow mb-3">Work-Hours Rule</p>
         <p className="text-[14px] text-graphite leading-snug">
-          Work requirements not yet evaluated. Use the iOS navigator app to run the §10102 evaluation for this household.
+          Work-hours rule not yet evaluated. Use the iOS navigator app to run the evaluation for this household.
         </p>
       </section>
     );
@@ -65,11 +65,11 @@ function WorkRequirementsCard({ wrStatus }: { wrStatus: WrStatusData }) {
 
   const complianceBadgeClass = COMPLIANCE_BADGE[wrStatus.compliance_status ?? "unknown"] ?? COMPLIANCE_BADGE["unknown"];
   const determinationLabel =
-    wrStatus.determination_basis === "rules_engine" ? "rules engine" : "navigator override";
+    wrStatus.determination_basis === "rules_engine" ? "automated rules" : "navigator override";
 
   return (
     <section className="bg-surface border border-hairline rounded-[4px] p-6 space-y-3">
-      <p className="eyebrow">OBBBA Work Requirements</p>
+      <p className="eyebrow">Work-Hours Rule</p>
 
       {/* Subject / not subject headline */}
       <p className={`text-[16px] font-semibold ${wrStatus.is_subject ? "text-brick" : "text-teal"}`}>
