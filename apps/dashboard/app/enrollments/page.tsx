@@ -5,6 +5,7 @@ import AppHeader from "../../components/AppHeader";
 import { decryptDemoName, firstNameLastInitial, formatDate, shortId } from "../../lib/format";
 import { isDemoFallbackEnabled, DEMO_PACKETS, getStage3Totals, getStage3Yield } from "../../lib/demo-data";
 import Stage3YieldBand, { type Stage3Callouts } from "../../components/Stage3YieldBand";
+import RowActionChip from "../../components/RowActionChip";
 
 export const dynamic = "force-dynamic";
 
@@ -27,11 +28,18 @@ const INTERVIEW_GRACE_DAYS = 2;
 // stage_7  = critical — in-person or warm transfer to CBO partner.
 type RecertStage = "stage_60" | "stage_30" | "stage_14" | "stage_7";
 
-const RECERT_STAGE_META: Record<RecertStage, { label: string; action: string; chipBg: string; chipFg: string; barColor: string; numColor: string }> = {
-  stage_60: { label: "60-day cadence", action: "send first notice",            chipBg: "bg-amber/10",   chipFg: "text-amber",   barColor: "bg-amber",   numColor: "text-amber"   },
-  stage_30: { label: "30-day cadence", action: "reminder + schedule check-in", chipBg: "bg-warning/10", chipFg: "text-warning", barColor: "bg-warning", numColor: "text-warning" },
-  stage_14: { label: "14-day cadence", action: "confirm by phone today",       chipBg: "bg-warning/20", chipFg: "text-warning", barColor: "bg-warning", numColor: "text-warning" },
-  stage_7:  { label: "7-day cadence",  action: "in-person or CBO warm transfer", chipBg: "bg-brick/15",   chipFg: "text-brick",   barColor: "bg-brick",   numColor: "text-brick"   },
+const RECERT_STAGE_META: Record<RecertStage, {
+  label: string; action: string; chipBg: string; chipFg: string; barColor: string; numColor: string;
+  actionChipLabel: string; actionConfirmedLabel: string; actionUrgency: "brick" | "warning" | "amber" | "indigo";
+}> = {
+  stage_60: { label: "60-day cadence", action: "send first notice",              chipBg: "bg-amber/10",   chipFg: "text-amber",   barColor: "bg-amber",   numColor: "text-amber",
+              actionChipLabel: "Send first notice",          actionConfirmedLabel: "Notice sent",    actionUrgency: "amber"   },
+  stage_30: { label: "30-day cadence", action: "reminder + schedule check-in",   chipBg: "bg-warning/10", chipFg: "text-warning", barColor: "bg-warning", numColor: "text-warning",
+              actionChipLabel: "Send reminder",              actionConfirmedLabel: "Reminder sent",  actionUrgency: "warning" },
+  stage_14: { label: "14-day cadence", action: "confirm by phone today",         chipBg: "bg-warning/20", chipFg: "text-warning", barColor: "bg-warning", numColor: "text-warning",
+              actionChipLabel: "Call now",                   actionConfirmedLabel: "Call logged",    actionUrgency: "warning" },
+  stage_7:  { label: "7-day cadence",  action: "in-person or CBO warm transfer", chipBg: "bg-brick/15",   chipFg: "text-brick",   barColor: "bg-brick",   numColor: "text-brick",
+              actionChipLabel: "Escalate to CBO",            actionConfirmedLabel: "Escalated",      actionUrgency: "brick"   },
 };
 
 function recertStageFromDays(d: number): RecertStage {
@@ -503,6 +511,7 @@ export default async function EnrollmentsPage({ searchParams }: { searchParams: 
                     days={r.daysToRecert}
                     recertDate={r.recertDate}
                     recertStage={r.recertStage}
+                    applicantName={r.name}
                     interviewScheduledAt={r.interviewScheduledAt}
                     verificationRequestedAt={r.verificationRequestedAt}
                   />
@@ -702,6 +711,7 @@ function LifecycleStage({
   days,
   recertDate,
   recertStage,
+  applicantName,
   interviewScheduledAt,
   verificationRequestedAt,
 }: {
@@ -709,6 +719,7 @@ function LifecycleStage({
   days: number;
   recertDate: Date | null;
   recertStage: RecertStage | null;
+  applicantName: string;
   interviewScheduledAt: Date | null;
   verificationRequestedAt: Date | null;
 }) {
@@ -737,9 +748,12 @@ function LifecycleStage({
         <p className="text-[12px] text-graphite tabular-nums">
           Scheduled {formatShortDate(interviewScheduledAt)} · {daysSince}d ago, unconfirmed
         </p>
-        <p className="text-[11px] uppercase tracking-wider font-bold mt-1.5 text-brick">
-          call applicant today
-        </p>
+        <RowActionChip
+          label="Call applicant"
+          confirmedLabel="Call logged"
+          urgency="brick"
+          ariaLabel={`Log a recovery call to ${applicantName}`}
+        />
       </div>
     );
   }
@@ -755,9 +769,12 @@ function LifecycleStage({
           </span>
         </div>
         <p className="text-[12px] text-graphite">Interview scheduled</p>
-        <p className="text-[11px] uppercase tracking-wider font-bold mt-1.5 text-indigo">
-          confirm attendance
-        </p>
+        <RowActionChip
+          label="Confirm attendance"
+          confirmedLabel="Confirmed"
+          urgency="indigo"
+          ariaLabel={`Confirm interview attendance for ${applicantName}`}
+        />
       </div>
     );
   }
@@ -771,9 +788,12 @@ function LifecycleStage({
         <p className="text-[12px] text-graphite tabular-nums">
           County requested {daysSince}d ago · {formatShortDate(verificationRequestedAt)}
         </p>
-        <p className="text-[11px] uppercase tracking-wider font-bold mt-1.5 text-warning">
-          upload required docs
-        </p>
+        <RowActionChip
+          label="Upload docs"
+          confirmedLabel="Doc uploaded"
+          urgency="warning"
+          ariaLabel={`Upload verification docs for ${applicantName}`}
+        />
       </div>
     );
   }
@@ -836,6 +856,21 @@ function LifecycleStage({
       <p className={`text-[11px] uppercase tracking-wider font-bold mt-1.5 ${subLabelColor}`}>
         {subLabel}
       </p>
+      {isOverdue ? (
+        <RowActionChip
+          label="Call applicant"
+          confirmedLabel="Call logged"
+          urgency="brick"
+          ariaLabel={`Log a recovery call to ${applicantName}`}
+        />
+      ) : stageMeta ? (
+        <RowActionChip
+          label={stageMeta.actionChipLabel}
+          confirmedLabel={stageMeta.actionConfirmedLabel}
+          urgency={stageMeta.actionUrgency}
+          ariaLabel={`${stageMeta.actionChipLabel} for ${applicantName}`}
+        />
+      ) : null}
     </div>
   );
 }
