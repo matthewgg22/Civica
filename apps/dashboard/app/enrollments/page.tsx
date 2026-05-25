@@ -4,7 +4,7 @@ import { createServerClientFromCookies } from "../../lib/supabase";
 import AppHeader from "../../components/AppHeader";
 import { decryptDemoName, firstNameLastInitial, formatDate, shortId } from "../../lib/format";
 import { isDemoFallbackEnabled, DEMO_PACKETS, getStage3Totals, getStage3Yield } from "../../lib/demo-data";
-import Stage3YieldBand from "../../components/Stage3YieldBand";
+import Stage3YieldBand, { type Stage3Callouts } from "../../components/Stage3YieldBand";
 
 export const dynamic = "force-dynamic";
 
@@ -28,7 +28,7 @@ const INTERVIEW_GRACE_DAYS = 2;
 type RecertStage = "stage_60" | "stage_30" | "stage_14" | "stage_7";
 
 const RECERT_STAGE_META: Record<RecertStage, { label: string; action: string; chipBg: string; chipFg: string; barColor: string; numColor: string }> = {
-  stage_60: { label: "60-day cadence", action: "send first notice",            chipBg: "bg-teal/10",    chipFg: "text-teal",    barColor: "bg-teal",    numColor: "text-teal"    },
+  stage_60: { label: "60-day cadence", action: "send first notice",            chipBg: "bg-amber/10",   chipFg: "text-amber",   barColor: "bg-amber",   numColor: "text-amber"   },
   stage_30: { label: "30-day cadence", action: "reminder + schedule check-in", chipBg: "bg-warning/10", chipFg: "text-warning", barColor: "bg-warning", numColor: "text-warning" },
   stage_14: { label: "14-day cadence", action: "confirm by phone today",       chipBg: "bg-warning/20", chipFg: "text-warning", barColor: "bg-warning", numColor: "text-warning" },
   stage_7:  { label: "7-day cadence",  action: "in-person or CBO warm transfer", chipBg: "bg-brick/15",   chipFg: "text-brick",   barColor: "bg-brick",   numColor: "text-brick"   },
@@ -66,9 +66,9 @@ const BUCKET_META: Record<Bucket, { label: string; description: string; accent: 
   interview_at_risk:        { label: "Interview at Risk",       description: "Interview date passed without confirmation — top SNAP denial reason.",     accent: "text-brick",   bg: "bg-brick/15",   border: "border-l-brick",   group: "urgent" },
   expiring:                 { label: "Recert Expiring",         description: `Recert due within ${EXPIRING_WINDOW_DAYS} days — running 60/30/14/7-day cadence.`, accent: "text-warning", bg: "bg-warning/15", border: "border-l-warning", group: "urgent" },
   verification_outstanding: { label: "Verification Outstanding",description: "County requested follow-up documents; case stalls until provided.",        accent: "text-warning", bg: "bg-warning/15", border: "border-l-warning", group: "urgent" },
-  interview_pending:        { label: "Interview Pending",       description: "Interview scheduled in the upcoming window — confirm attendance.",           accent: "text-teal",    bg: "bg-teal/10",    border: "border-l-teal",    group: "progress" },
-  active:                   { label: "Active",                  description: "Benefits in force, recertification not yet due.",                            accent: "text-teal",    bg: "bg-teal/10",    border: "border-l-teal",    group: "progress" },
-  recertified:              { label: "Recertified",             description: "Successfully recertified — new benefit period begun.",                       accent: "text-indigo",  bg: "bg-indigo/10",  border: "border-l-indigo",  group: "progress" },
+  interview_pending:        { label: "Interview Pending",       description: "Interview scheduled in the upcoming window — confirm attendance.",           accent: "text-indigo",  bg: "bg-indigo/10",        border: "border-l-indigo",       group: "progress" },
+  active:                   { label: "Active",                  description: "Benefits in force, recertification not yet due.",                            accent: "text-ink",     bg: "bg-pine-surface/60",  border: "border-l-pine-surface", group: "progress" },
+  recertified:              { label: "Recertified",             description: "Successfully recertified — new benefit period begun.",                       accent: "text-amber",   bg: "bg-amber/10",         border: "border-l-amber",        group: "progress" },
 };
 
 const URGENT_BUCKETS: Bucket[] = ["expired", "interview_at_risk", "expiring", "verification_outstanding"];
@@ -165,7 +165,7 @@ export default async function EnrollmentsPage({ searchParams }: { searchParams: 
     bucket: Bucket;
     daysToRecert: number; // negative if overdue
     recertDate: Date | null;
-    recertStage: RecertStage | null; // only set for expiring rows
+    recertStage: RecertStage | null; // only set for expiring + expired buckets
     // Lifecycle stage signals — surfaced as per-row pills / actions.
     interviewScheduledAt: Date | null;
     interviewCompleted: boolean;
@@ -247,6 +247,55 @@ export default async function EnrollmentsPage({ searchParams }: { searchParams: 
   // returns null and totals stay zero (band still renders with $0/honest).
   const stage3Totals = getStage3Totals(rows.map((r) => r.applicant_id));
 
+  // Stage 3 callouts — names the top contributors per stream + ABAWD-at-risk
+  // households so the band reads as "here is who in your cohort is driving the
+  // numbers" instead of an abstract finance summary. Done in the page (not in
+  // getStage3Totals) because names live on rows, not on the yield fixtures.
+  type YieldNamePair = { name: string; amount: number; applicantId: string };
+  const namedYields: Array<YieldNamePair & { hours: number; dsnpEligible: boolean; dsnpFired: boolean }> = rows
+    .map((r) => {
+      const y = getStage3Yield(r.applicant_id);
+      if (!y) return null;
+      return {
+        name: r.name,
+        applicantId: y.applicant_id,
+        amount: y.adSavingsThisMonth,
+        hours: y.hoursLoggedThisMonth,
+        dsnpEligible: y.dsnpEligible,
+        dsnpFired: y.dsnpWarmTransferValue > 0,
+      };
+    })
+    .filter((v): v is YieldNamePair & { hours: number; dsnpEligible: boolean; dsnpFired: boolean } => v !== null);
+
+  const topRMNEarner = namedYields
+    .filter((y) => y.amount > 0)
+    .sort((a, b) => b.amount - a.amount)[0] ?? null;
+
+  const workforceRanked = rows
+    .map((r) => {
+      const y = getStage3Yield(r.applicant_id);
+      return y ? { name: r.name, amount: y.workforceReferralValue } : null;
+    })
+    .filter((v): v is { name: string; amount: number } => v !== null && v.amount > 0)
+    .sort((a, b) => b.amount - a.amount);
+  const topWorkforceEarner = workforceRanked[0] ?? null;
+
+  const dsnpTransferredNames = namedYields.filter((y) => y.dsnpFired).map((y) => y.name);
+  const dsnpEligibleNames = namedYields.filter((y) => y.dsnpEligible && !y.dsnpFired).map((y) => y.name);
+  // ABAWD at-risk = had hours logged this month (so they're in scope) AND below the
+  // 60-hr 75%-of-pace threshold the lifecycle countdown treats as warning territory.
+  const abawdBehindPaceNames = namedYields
+    .filter((y) => y.hours > 0 && y.hours < 60)
+    .map((y) => y.name);
+
+  const stage3Callouts: Stage3Callouts = {
+    topRMNEarner: topRMNEarner ? { name: topRMNEarner.name, amount: topRMNEarner.amount } : null,
+    topWorkforceEarner,
+    dsnpTransferredNames,
+    dsnpEligibleNames,
+    abawdBehindPaceNames,
+  };
+
   const counts: Record<Bucket, number> = {
     expired: rows.filter((r) => r.bucket === "expired").length,
     interview_at_risk: rows.filter((r) => r.bucket === "interview_at_risk").length,
@@ -283,7 +332,7 @@ export default async function EnrollmentsPage({ searchParams }: { searchParams: 
       <AppHeader email={user?.email} active="enrollments" />
       <main className="max-w-6xl mx-auto px-8 py-8 space-y-5">
         <div>
-          <p className="eyebrow mb-1.5">Enrollments</p>
+          <p className="eyebrow mb-1.5">Renewals</p>
           <h2 className="text-[28px] font-semibold tracking-tight leading-tight text-ink">Enrollment Lifecycle</h2>
           <p className="text-[15px] text-graphite mt-1.5">
             Every household after handoff — interview → verification → active → recert. Sorted by what needs action first. SNAP cert period typically {DEFAULT_CERT_MONTHS} months (24 for elderly/disabled).
@@ -313,6 +362,7 @@ export default async function EnrollmentsPage({ searchParams }: { searchParams: 
             instead of implying a $500M TAM). */}
         <Stage3YieldBand
           totals={stage3Totals}
+          callouts={stage3Callouts}
           enrolledHouseholdCount={rows.length}
         />
 
@@ -484,8 +534,9 @@ function PilotCohortCard({
 }) {
   const pct = Math.min(100, (count / goal) * 100);
   const reached = count >= goal;
-  const barColor = reached ? "bg-pine" : count > 0 ? "bg-wheat" : "bg-hairline";
-  const numberColor = reached ? "text-pine" : "text-ink";
+  // Goal-reached = positive outcome → amber (per DESIGN.md §1, pine is CTAs only).
+  const barColor = reached ? "bg-amber" : count > 0 ? "bg-wheat" : "bg-hairline";
+  const numberColor = reached ? "text-amber" : "text-ink";
   const recent = mostRecentISO ? formatDate(mostRecentISO) : null;
 
   return (
@@ -525,7 +576,8 @@ function NavigatorThroughputCard({
   // Use the count as a single-org proxy; once multi-org data exists, divide
   // count by active navigator headcount to get the per-navigator number.
   const pctOfTarget = target > 0 ? Math.min(100, (count / target) * 100) : 0;
-  const barColor = count >= target ? "bg-pine" : count >= baseline ? "bg-wheat" : "bg-hairline";
+  // Target-met = positive outcome → amber (DESIGN.md §1: pine is CTAs only).
+  const barColor = count >= target ? "bg-amber" : count >= baseline ? "bg-wheat" : "bg-hairline";
 
   return (
     <div className="bg-surface border border-hairline rounded-[6px] px-5 py-4">
@@ -565,11 +617,13 @@ function Stage3Chips({ yieldRow }: { yieldRow: import("../../lib/demo-data").Sta
   if (yieldRow.hoursLoggedThisMonth > 0) {
     const pct = Math.round((yieldRow.hoursLoggedThisMonth / 80) * 100);
     const isAtRisk = yieldRow.hoursLoggedThisMonth < 60;
+    // DESIGN.md §1: pine is CTAs only. Pine-surface fill is allowed (success-adjacent),
+    // but chip FG must be neutral ink — not text-pine.
     chips.push({
       key: "hours",
       label: `${yieldRow.hoursLoggedThisMonth} / 80 hrs`,
       bg: isAtRisk ? "bg-warning/10" : "bg-pine-surface",
-      fg: isAtRisk ? "text-warning" : "text-pine",
+      fg: isAtRisk ? "text-warning" : "text-ink",
       title: `ABAWD work-hours this month (${pct}% of 80-hr requirement)${isAtRisk ? " — behind pace" : ""}`,
     });
   }
@@ -578,7 +632,7 @@ function Stage3Chips({ yieldRow }: { yieldRow: import("../../lib/demo-data").Sta
       key: "workforce",
       label: `+$${yieldRow.workforceReferralValue} placement`,
       bg: "bg-pine-surface",
-      fg: "text-pine",
+      fg: "text-ink",
       title: "Workforce-platform referral payout this month",
     });
   }
@@ -694,14 +748,14 @@ function LifecycleStage({
     return (
       <div className="min-w-0">
         <div className="flex items-baseline gap-2 mb-1.5">
-          <span className="text-[26px] font-bold tabular-nums leading-none text-teal">{daysUntil}</span>
+          <span className="text-[26px] font-bold tabular-nums leading-none text-indigo">{daysUntil}</span>
           <span className="text-[14px] text-graphite font-semibold">d</span>
           <span className="text-[12px] text-graphite tabular-nums ml-auto font-medium">
             on {formatShortDate(interviewScheduledAt)}
           </span>
         </div>
         <p className="text-[12px] text-graphite">Interview scheduled</p>
-        <p className="text-[11px] uppercase tracking-wider font-bold mt-1.5 text-teal">
+        <p className="text-[11px] uppercase tracking-wider font-bold mt-1.5 text-indigo">
           confirm attendance
         </p>
       </div>
@@ -724,10 +778,11 @@ function LifecycleStage({
     );
   }
 
-  // Recert countdown bar — overdue (brick), expiring (cadence-stage color), or
-  // active (teal). For expiring rows the bar color + sub-label come from the
-  // cadence stage (60/30/14/7), so a 7-day household reads as brick even
-  // though it shares a bucket with 60-day households.
+  // Recert countdown bar — overdue (brick), expiring (cadence-stage color),
+  // or active (amber). % of nominal 12-month cycle elapsed (clamped 0–100).
+  // For expiring rows, the bar color + sub-label come from the cadence stage
+  // (60/30/14/7) so a 7-day-window household reads as brick even though
+  // it shares a bucket with 60-day households.
   const totalDays = DEFAULT_CERT_MONTHS * 30;
   const elapsedDays = totalDays - days;
   const pctElapsed = Math.min(100, Math.max(0, (elapsedDays / totalDays) * 100));
@@ -741,7 +796,7 @@ function LifecycleStage({
     : stageMeta?.numColor ?? "text-ink";
   const barColor = isOverdue
     ? "bg-brick"
-    : stageMeta?.barColor ?? "bg-teal";
+    : stageMeta?.barColor ?? "bg-amber";
 
   const displayDays = isOverdue ? `−${Math.abs(days)}` : `${days}`;
   const subLabel = isOverdue

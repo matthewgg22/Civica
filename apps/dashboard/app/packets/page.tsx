@@ -199,7 +199,7 @@ export default async function PacketsPage({ searchParams }: { searchParams: Prom
         </div>
 
         <div className="mb-4">
-          <p className="eyebrow mb-2">Queue</p>
+          <p className="eyebrow mb-2">Applications</p>
           <h2 className="text-[26px] font-semibold tracking-tight leading-tight text-ink">
             {countyFilter ? `Packets in ${countyFilter}` : "All Packets"}
           </h2>
