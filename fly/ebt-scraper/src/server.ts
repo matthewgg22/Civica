@@ -206,7 +206,7 @@ export function buildApp(deps: BuildAppDeps): Hono {
     }
 
     const rawBody = await c.req.text();
-    const signature = c.req.header("x-civica-signature") ?? "";
+    const signature = (c.req.header("x-civica-signature") ?? "").replace(/^sha256=/, "");
 
     if (!verifySignature(rawBody, signature, deps.secret)) {
       return c.json({ error: "invalid signature" }, 401);

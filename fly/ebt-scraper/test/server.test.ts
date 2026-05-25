@@ -133,6 +133,23 @@ describe("POST /scrape", () => {
     expect(invocations[0]!.cardId).toBe("card-001");
   });
 
+  it("accepts a valid signed request with sha256= prefix (matches probe endpoints + gateway convention)", async () => {
+    const body = JSON.stringify({
+      processor: "ebt-ca",
+      cardId: "card-prefixed",
+      action: "balance",
+      login: { card: "4111111111111111", cookieHandoff: [] },
+    });
+    const res = await app.request("/scrape", {
+      method: "POST",
+      body,
+      headers: { "content-type": "application/json", "x-civica-signature": `sha256=${sign(body)}` },
+    });
+    expect(res.status).toBe(200);
+    expect(invocations).toHaveLength(1);
+    expect(invocations[0]!.cardId).toBe("card-prefixed");
+  });
+
   it("rejects requests missing required fields", async () => {
     const body = JSON.stringify({ processor: "ebt-ca" });
     const res = await app.request("/scrape", {
