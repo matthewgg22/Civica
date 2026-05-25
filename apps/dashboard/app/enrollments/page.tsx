@@ -5,6 +5,7 @@ import AppHeader from "../../components/AppHeader";
 import { decryptDemoName, firstNameLastInitial, formatDate, shortId } from "../../lib/format";
 import { isDemoFallbackEnabled, DEMO_PACKETS, getStage3Yield } from "../../lib/demo-data";
 import RowActionChip from "../../components/RowActionChip";
+import BulkActionButton from "../../components/BulkActionButton";
 import ActionsTakenToday from "../../components/ActionsTakenToday";
 
 export const dynamic = "force-dynamic";
@@ -31,15 +32,20 @@ type RecertStage = "stage_60" | "stage_30" | "stage_14" | "stage_7";
 const RECERT_STAGE_META: Record<RecertStage, {
   label: string; action: string; chipBg: string; chipFg: string; barColor: string; numColor: string;
   actionChipLabel: string; actionConfirmedLabel: string; actionUrgency: "brick" | "warning" | "amber" | "indigo";
+  bulkNounSingular: string; bulkNounPlural: string;        // for "Send all 4 notices" / "1 notice queued"
 }> = {
   stage_60: { label: "60-day cadence", action: "send first notice",              chipBg: "bg-amber/10",   chipFg: "text-amber",   barColor: "bg-amber",   numColor: "text-amber",
-              actionChipLabel: "Send first notice",          actionConfirmedLabel: "Notice sent",    actionUrgency: "amber"   },
+              actionChipLabel: "Send first notice",          actionConfirmedLabel: "Notice sent",    actionUrgency: "amber",
+              bulkNounSingular: "notice",   bulkNounPlural: "notices"   },
   stage_30: { label: "30-day cadence", action: "reminder + schedule check-in",   chipBg: "bg-warning/10", chipFg: "text-warning", barColor: "bg-warning", numColor: "text-warning",
-              actionChipLabel: "Send reminder",              actionConfirmedLabel: "Reminder sent",  actionUrgency: "warning" },
+              actionChipLabel: "Send reminder",              actionConfirmedLabel: "Reminder sent",  actionUrgency: "warning",
+              bulkNounSingular: "reminder", bulkNounPlural: "reminders" },
   stage_14: { label: "14-day cadence", action: "confirm by phone today",         chipBg: "bg-warning/20", chipFg: "text-warning", barColor: "bg-warning", numColor: "text-warning",
-              actionChipLabel: "Call now",                   actionConfirmedLabel: "Call logged",    actionUrgency: "warning" },
+              actionChipLabel: "Call now",                   actionConfirmedLabel: "Call logged",    actionUrgency: "warning",
+              bulkNounSingular: "call",     bulkNounPlural: "calls"     },
   stage_7:  { label: "7-day cadence",  action: "in-person or CBO warm transfer", chipBg: "bg-brick/15",   chipFg: "text-brick",   barColor: "bg-brick",   numColor: "text-brick",
-              actionChipLabel: "Escalate to CBO",            actionConfirmedLabel: "Escalated",      actionUrgency: "brick"   },
+              actionChipLabel: "Escalate to CBO",            actionConfirmedLabel: "Escalated",      actionUrgency: "brick",
+              bulkNounSingular: "escalation", bulkNounPlural: "escalations" },
 };
 
 function recertStageFromDays(d: number): RecertStage {
@@ -268,13 +274,21 @@ export default async function EnrollmentsPage({ searchParams }: { searchParams: 
   // Cadence-stage counts within the Expiring bucket. Drives the sub-card row
   // below the urgent grid and surfaces the 60/30/14/7 distribution that's
   // otherwise hidden behind a single Expiring count.
-  const stageCounts: Record<RecertStage, number> = {
-    stage_60: rows.filter((r) => r.bucket === "expiring" && r.recertStage === "stage_60").length,
-    stage_30: rows.filter((r) => r.bucket === "expiring" && r.recertStage === "stage_30").length,
-    stage_14: rows.filter((r) => r.bucket === "expiring" && r.recertStage === "stage_14").length,
-    stage_7:  rows.filter((r) => r.bucket === "expiring" && r.recertStage === "stage_7").length,
-  };
   const RECERT_STAGES: RecertStage[] = ["stage_60", "stage_30", "stage_14", "stage_7"];
+  // Names per cadence stage, so the BulkActionButton can log one entry per
+  // applicant (the daily counter increments by N, not by 1).
+  const stageRowNames: Record<RecertStage, string[]> = {
+    stage_60: rows.filter((r) => r.bucket === "expiring" && r.recertStage === "stage_60").map((r) => r.name),
+    stage_30: rows.filter((r) => r.bucket === "expiring" && r.recertStage === "stage_30").map((r) => r.name),
+    stage_14: rows.filter((r) => r.bucket === "expiring" && r.recertStage === "stage_14").map((r) => r.name),
+    stage_7:  rows.filter((r) => r.bucket === "expiring" && r.recertStage === "stage_7").map((r) => r.name),
+  };
+  const stageCounts: Record<RecertStage, number> = {
+    stage_60: stageRowNames.stage_60.length,
+    stage_30: stageRowNames.stage_30.length,
+    stage_14: stageRowNames.stage_14.length,
+    stage_7:  stageRowNames.stage_7.length,
+  };
 
   const bucketFiltered = (activeBucket as string) === "all"
     ? rows
@@ -402,6 +416,15 @@ export default async function EnrollmentsPage({ searchParams }: { searchParams: 
                       <p className={`text-[28px] font-bold tabular-nums leading-none ${meta.numColor}`}>{count}</p>
                       <p className="text-[13px] font-bold text-ink mt-1.5">{meta.label}</p>
                       <p className="text-[11px] text-graphite mt-1 leading-snug uppercase tracking-wider font-semibold">{meta.action}</p>
+                      {count > 0 && (
+                        <BulkActionButton
+                          label={`${meta.actionChipLabel.toLowerCase()} for all ${count}`}
+                          confirmedLabel={`${count} ${count === 1 ? meta.bulkNounSingular : meta.bulkNounPlural} queued`}
+                          individualAction={meta.actionChipLabel}
+                          applicantNames={stageRowNames[s]}
+                          urgency={meta.actionUrgency}
+                        />
+                      )}
                     </Link>
                   );
                 })}
