@@ -34,7 +34,7 @@ export default function EligibilityQueuePanel({ data }: { data: EligibilityQueue
     <section className="bg-surface border-2 border-pine/30 rounded-[4px] p-6">
       <div className="flex items-start justify-between gap-4 mb-5">
         <div>
-          <p className="eyebrow mb-1 text-pine">Panel 9 · Opportunity queue</p>
+          <p className="eyebrow mb-1">Panel 9 · Opportunity queue</p>
           <h3 className="text-[18px] font-bold tracking-tight text-ink">
             What&apos;s next: eligible but not yet referred
           </h3>
@@ -43,7 +43,7 @@ export default function EligibilityQueuePanel({ data }: { data: EligibilityQueue
           </p>
         </div>
         <div className="text-right shrink-0">
-          <p className="text-[36px] font-bold tabular-nums leading-none text-pine">
+          <p className="text-[36px] font-bold tabular-nums leading-none text-ink">
             {formatUSD(totalProjected, { compact: true })}
           </p>
           <p className="text-[11px] text-graphite mt-1 uppercase tracking-wider font-semibold">
@@ -121,9 +121,9 @@ function ProgramRow({
           <p className="text-[10px] font-semibold uppercase tracking-wider text-muted mb-1">In queue</p>
           <div
             className="inline-flex items-baseline gap-1.5 px-2 py-0.5 rounded-[3px]"
-            style={{ backgroundColor: `rgba(15, 76, 58, ${0.08 + queueIntensity * 0.18})` }}
+            style={{ backgroundColor: `rgba(50, 46, 39, ${0.05 + queueIntensity * 0.12})` }}
           >
-            <span className="text-[15px] font-bold tabular-nums text-pine leading-none">
+            <span className="text-[15px] font-bold tabular-nums text-ink leading-none">
               {row.in_queue.toLocaleString()}
             </span>
           </div>
@@ -155,8 +155,8 @@ function ProgramRow({
         <span
           className={`inline-flex items-center text-[11px] font-semibold px-3 py-1.5 rounded-[3px] border whitespace-nowrap ${
             row.monetized
-              ? "bg-pine text-white border-pine"
-              : "bg-surface text-pine border-pine/30"
+              ? "bg-surface text-ink border-ink/30 hover:border-ink/60"
+              : "bg-surface text-graphite border-hairline"
           }`}
         >
           {row.suggested_action}

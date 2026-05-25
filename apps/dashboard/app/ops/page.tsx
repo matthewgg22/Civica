@@ -61,9 +61,9 @@ export default async function OpsPage() {
         {/* Page header */}
         <div className="flex items-end justify-between gap-6 pb-3">
           <div>
-            <p className="eyebrow mb-1">Pulse · Civica operator console</p>
+            <p className="eyebrow mb-1">Civica operator console</p>
             <h2 className="text-[26px] font-bold tracking-tight leading-none text-ink">
-              Live corporate health
+              Performance
             </h2>
             <p className="text-[13px] text-graphite mt-2 max-w-2xl leading-relaxed">
               SNAP dollars under app, where partner offers are placed, what we&apos;ve spent on
