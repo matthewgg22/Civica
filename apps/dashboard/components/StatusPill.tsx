@@ -11,7 +11,7 @@ const STATUS_STYLES: Record<string, string> = {
   "Needs Applicant Clarification": "bg-warning/15 text-warning",
   "In Navigator Review": "bg-indigo/10 text-indigo",
   "Ready for Handoff": "bg-teal/15 text-teal font-semibold",
-  "Handed Off": "bg-pine text-white",
+  "Handed Off": "bg-pine-surface text-ink font-semibold",
   "Closed": "bg-paper text-muted border border-hairline",
 };
 
