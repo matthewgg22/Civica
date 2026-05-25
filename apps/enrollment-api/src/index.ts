@@ -27,6 +27,7 @@ import featureFlagsRouter from "./routes/feature-flags.js";
 import buddyRouter from "./routes/buddy.js";
 import shelterAllocationRouter from "./routes/shelter-allocation.js";
 import { mountEbt, mountEbtWebhooks } from "./routes/ebt/index.js";
+import { mountOps } from "./routes/ops/index.js";
 import { requestLogger } from "./lib/logger.js";
 import { scrubEvent } from "./lib/sentry.js";
 import { withSentry } from "@sentry/cloudflare";
@@ -128,6 +129,13 @@ api.route("/benefitscal", benefitsCalRouter);  // /benefitscal/prepare-export/:p
 const ebtApi = new Hono<{ Bindings: Env }>();
 mountEbt(ebtApi);
 api.route("/ebt", ebtApi);
+
+// /ops/* — operator-role-only dashboard endpoints.
+// See ceo-plans/2026-05-25-ebt-monetization-dashboard.md for the panel design.
+// Every sub-route calls requireOperator(actor.kind) before any service-role query.
+const opsApi = new Hono<{ Bindings: Env }>();
+mountOps(opsApi);
+api.route("/ops", opsApi);
 
 app.route("/v1/enrollment", api);
 

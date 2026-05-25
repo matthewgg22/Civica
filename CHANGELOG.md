@@ -22,6 +22,12 @@ commit subject — say what changed for the reader of this file.
 ## [Unreleased]
 
 ### Added
+- `supabase`: `v_qc_pillar_coverage` view caches per-pillar engagement
+  rates (income / shelter / SUA flags / OBBBA chain) used by the `/qc`
+  Error Rate Intelligence page. Re-computes from `snap_packets`,
+  `argyle_connections`, `uploaded_documents`, and `packet_answers` so
+  FormulaHero, PillarTracking, and IncomingDataFeed read a single
+  authoritative engagement vector. Migration `20260583_qc_pillar_coverage_view.sql`.
 - `apps/enrollment-api`: `GET /openapi.json` publishes the OpenAPI 3.1 spec
   covering the iOS-facing surface (me, me-packets, me-inbox, me-argyle,
   me-work-hours, buddy, recert, feature-flags). Drift test in
@@ -46,6 +52,12 @@ commit subject — say what changed for the reader of this file.
   README).
 
 ### Changed
+- `apps/dashboard`: `/qc` Error Rate Intelligence page restructured
+  from a single 466-line file into composable section components
+  (`ThesisAggregatesSection`, `IncomingDataFeedSection`,
+  `CalibrationSection`) so each surface reads its own slice of
+  the `v_qc_pillar_coverage` engagement vector and can evolve
+  independently. No visual change for the operator.
 - `apps/enrollment-api`: `POST /navigator/packets/:id/error-risk` and
   `POST /me/packets/:id/error-risk` now call a single shared `scorePacketRisk()`
   in `src/lib/scoring.ts`. The navigator endpoint previously used a simplified

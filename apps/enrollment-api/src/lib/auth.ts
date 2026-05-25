@@ -21,3 +21,20 @@ export function requireBuddy(actorKind: ActorKind): void {
     throw new HTTPException(403, { message: "Buddy role required" });
   }
 }
+
+/**
+ * Allows operator only.
+ *
+ * Operator is Civica's corporate/internal role for /ops dashboard access.
+ * Set via app_metadata.role = 'operator' through the Supabase Admin API.
+ * Membership is managed manually (no self-serve); see ceo-plans/
+ * 2026-05-25-ebt-monetization-dashboard.md.
+ *
+ * Every /ops/* endpoint must call this before any service-role query runs.
+ * The dashboard middleware also gates /ops/* routes; this is the second layer.
+ */
+export function requireOperator(actorKind: ActorKind): void {
+  if (actorKind !== "operator") {
+    throw new HTTPException(403, { message: "Operator role required" });
+  }
+}

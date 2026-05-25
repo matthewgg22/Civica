@@ -49,13 +49,13 @@ afterEach(() => vi.resetAllMocks());
 describe('HandoffPanel disabled states', () => {
   it('disables export button when blockerCount > 0', async () => {
     render(<HandoffPanel packetId={PACKET_ID} packetStatus="Ready for Handoff" blockerCount={2} />);
-    const btn = screen.getByRole('button', { name: /export packet/i });
+    const btn = screen.getByRole('button', { name: /export packet \(json/i });
     expect(btn).toBeDisabled();
   });
 
   it('disables export button when status is not in allowed set', async () => {
     render(<HandoffPanel packetId={PACKET_ID} packetStatus="Draft" blockerCount={0} />);
-    const btn = screen.getByRole('button', { name: /export packet/i });
+    const btn = screen.getByRole('button', { name: /export packet \(json/i });
     expect(btn).toBeDisabled();
   });
 
@@ -73,13 +73,13 @@ describe('HandoffPanel disabled states', () => {
 describe('HandoffPanel enabled state', () => {
   it('enables export button when status=Ready for Handoff and blockerCount=0', async () => {
     render(<HandoffPanel packetId={PACKET_ID} packetStatus="Ready for Handoff" blockerCount={0} />);
-    const btn = screen.getByRole('button', { name: /export packet/i });
+    const btn = screen.getByRole('button', { name: /export packet \(json/i });
     expect(btn).not.toBeDisabled();
   });
 
   it('also enables when status=Handed Off and blockerCount=0', async () => {
     render(<HandoffPanel packetId={PACKET_ID} packetStatus="Handed Off" blockerCount={0} />);
-    const btn = screen.getByRole('button', { name: /export packet/i });
+    const btn = screen.getByRole('button', { name: /export packet \(json/i });
     expect(btn).not.toBeDisabled();
   });
 });
@@ -87,7 +87,7 @@ describe('HandoffPanel enabled state', () => {
 describe('HandoffPanel export action', () => {
   it('calls api.handoff.create with packetId and format on click', async () => {
     render(<HandoffPanel packetId={PACKET_ID} packetStatus="Ready for Handoff" blockerCount={0} />);
-    const btn = screen.getByRole('button', { name: /export packet/i });
+    const btn = screen.getByRole('button', { name: /export packet \(json/i });
     fireEvent.click(btn);
 
     await waitFor(() => expect(mockHandoffCreate).toHaveBeenCalledTimes(1));
@@ -96,7 +96,7 @@ describe('HandoffPanel export action', () => {
 
   it('re-fetches history after a successful export', async () => {
     render(<HandoffPanel packetId={PACKET_ID} packetStatus="Ready for Handoff" blockerCount={0} />);
-    fireEvent.click(screen.getByRole('button', { name: /export packet/i }));
+    fireEvent.click(screen.getByRole('button', { name: /export packet \(json/i }));
 
     await waitFor(() => expect(mockHandoffList).toHaveBeenCalledTimes(2)); // once on mount, once after export
   });

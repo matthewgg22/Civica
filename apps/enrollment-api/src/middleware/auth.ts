@@ -42,6 +42,8 @@ export async function authMiddleware(c: Context<{ Bindings: Env }>, next: Next) 
     const metaRole = (user.app_metadata as Record<string, unknown> | null)?.role as string | undefined;
     if (metaRole === "buddy") {
       c.set("actor", { kind: "buddy", id: user.id });
+    } else if (metaRole === "operator") {
+      c.set("actor", { kind: "operator", id: user.id });
     } else {
       c.set("actor", { kind: "applicant", id: user.id });
     }

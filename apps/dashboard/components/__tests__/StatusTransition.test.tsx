@@ -46,7 +46,10 @@ afterEach(() => vi.resetAllMocks());
 // ── Blocker display ───────────────────────────────────────────────────────
 
 describe('StatusTransition blocker display', () => {
-  it('shows blocker list when advancing to Ready for Handoff with blockers', () => {
+  it('disables the Ready for Handoff button + shows summary when blockers present', () => {
+    // Component-level redesign: the duplicate blocker list moved to the Review
+    // Status card. StatusTransition now only renders a disabled button + tooltip
+    // + summary span. Tests this contract.
     render(
       <StatusTransition
         packetId={PACKET_ID}
@@ -54,12 +57,13 @@ describe('StatusTransition blocker display', () => {
         blockers={BLOCKERS}
       />,
     );
-    expect(screen.getByText(/cannot advance to.*ready for handoff/i)).toBeInTheDocument();
-    expect(screen.getByText('Privacy notice consent not on file')).toBeInTheDocument();
-    expect(screen.getByText('Required documents not yet resolved')).toBeInTheDocument();
+    const btn = screen.getByRole('button', { name: /ready for handoff/i });
+    expect(btn).toBeDisabled();
+    expect(btn).toHaveAttribute('title', expect.stringMatching(/resolve all items in review status/i));
+    expect(screen.getByText(/2 items unresolved — see Review Status above/i)).toBeInTheDocument();
   });
 
-  it('does NOT show blocker panel for other status transitions', () => {
+  it('does NOT disable button for non-Ready-for-Handoff statuses even if blockers exist', () => {
     render(
       <StatusTransition
         packetId={PACKET_ID}
@@ -67,10 +71,11 @@ describe('StatusTransition blocker display', () => {
         blockers={BLOCKERS}
       />,
     );
-    expect(screen.queryByText(/cannot advance to.*ready for handoff/i)).not.toBeInTheDocument();
+    const btn = screen.getByRole('button', { name: /in navigator review/i });
+    expect(btn).not.toBeDisabled();
   });
 
-  it('does NOT show blocker panel when blockers list is empty', () => {
+  it('enables the Ready for Handoff button + omits summary when no blockers', () => {
     render(
       <StatusTransition
         packetId={PACKET_ID}
@@ -78,7 +83,9 @@ describe('StatusTransition blocker display', () => {
         blockers={[]}
       />,
     );
-    expect(screen.queryByText(/cannot advance/i)).not.toBeInTheDocument();
+    const btn = screen.getByRole('button', { name: /ready for handoff/i });
+    expect(btn).not.toBeDisabled();
+    expect(screen.queryByText(/items unresolved/i)).not.toBeInTheDocument();
   });
 });
 

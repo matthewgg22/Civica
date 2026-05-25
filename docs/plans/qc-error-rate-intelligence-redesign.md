@@ -12,6 +12,56 @@
 
 ---
 
+## SHIPPED — implementation status (2026-05-25)
+
+All 16 implementation tasks + 5 follow-up TODOs from this plan are landed and pushed on `feat/dashboard-caseworker-readiness`. Tests green (204/204 engine + 128/128 dashboard /qc + /compliance + obbba + migration shape). TypeScript clean on all /qc-touched code.
+
+| Task | Commit | Note |
+|---|---|---|
+| Plan doc | `51c774f5` | This file |
+| T-test-1 — /compliance regression baseline | `e9b870a9` | 18 behavioral assertions, prerequisite for T4a |
+| T0 — engine population PER functions | `b217a6eb` → `e9b0bf0d` | Final form: tier-aware option-A math + explicit `THESIS_CALIBRATION_FACTOR` |
+| T1, T5 — FormulaHero ships, `ErrorReductionProjectionPanel` retired | `59e6a3b8` | |
+| T2, T6 — PillarTracking ships, `ScoringPanel` retired | `3d8562e6` | |
+| T7 — `ApiCoveragePanel` retired (absorbed into PillarTracking) | `06c015dc` | |
+| T8 — BaselinePanel shrunk + reframed as calibration | `92b6d5b1` | |
+| T4b — OBBBAReadinessStrip (reuses obbbaProvisions, no parallel registry) | `8810690d` | T4a primitive-extraction deferred — DRY win came from shared registry, not row primitive |
+| T3, T11 — IncomingDataFeed + per-row drill-in to /packets/[id] | `a23250ae` | |
+| T-test-2/3/4/5 — Component tests | bundled w/ T1-T4b | 14 / 13 / 20 / 12 tests respectively |
+| T-test-7 — Engine unit tests | `b217a6eb` | 26 new in population-per.test.ts |
+| TODO-OBBBA-CONTRACT + ENGINE-FNS-CITATIONS | `1b9da533` | `ObbbaImpactState` discriminated union + USDA source URL + measurement window |
+| T10 — formal a11y pass + 13-test locked contract | `90c8c180` | |
+| T9 — `v_qc_pillar_coverage` SQL view migration | `d0ecfd72` | |
+| TODO-QC-SUSPENSE — per-section Suspense streaming | `f8825242` | 3 async section wrappers + skeleton fallbacks |
+| T9 wire-up — dashboard reads the view (graceful fallback) | `3a8362e7` | Closes the T9 loop end-to-end |
+
+**Net code change:** ~5 new components, 3 section wrappers, 1 SQL migration, 3 retired panels, 1 engine module extended (semver 0.2.0 → 0.3.0).
+
+**Live page structure:**
+
+```
+/qc shell (static, paints immediately)
+├─ AppHeader · page title · period picker · FNS-380 export button
+├─ ThesisAggregatesSection [Suspense + skeleton] · streams in
+│   ├─ FormulaHero — two-halves equation + 32px engagement realization gap
+│   └─ PillarTracking — 4 strips + residual footer
+├─ OBBBAReadinessStrip — static (obbbaProvisions), no Suspense
+├─ IncomingDataFeedSection [Suspense + skeleton] · streams in
+│   └─ IncomingDataFeed — last 20 packets + filter chips + drill-in
+└─ CalibrationSection [Suspense + skeleton] · streams in
+    └─ BaselinePanel — dumbbell when n ≥ 30 QC outcomes
+```
+
+**Math contract:** at full pillar engagement, projected PER = exactly 5.50% (anchored via `THESIS_CALIBRATION_FACTOR ≈ 0.912` in `packages/snap-qc-engine`). At zero engagement, baseline = 10.98%. Per-pillar contributions are tier-aware: shelter/income/calc at strong tier, shared-lease at moderate (classifier cap), assets at zero (no Civica integration). USDA citations are row-by-row in `error-risk.ts` comments with measurement window + source URL.
+
+**Honest framing locked:** the page renders "engagement-implied PER" not "current-data PER" — the bottom-half formula is the projection recomputed at observed engagement, NOT a Civica-measured error rate. True measured PER fires from `BaselinePanel` only when `qc_outcomes ≥ 30` samples exist.
+
+**OBBBA placement:** regulatory readiness beside the formula, NOT a pillar in it (FY24 baseline predates OBBBA enforcement). `OBBBAReadinessStrip` reads the shared `obbbaProvisions()` registry. Per-packet OBBBA-impact tagging uses the documented `deriveObbbaImpact()` contract with `pending_counsel` semantics for Track 1.3 (Native American) + Q5 (distress gate) that haven't shipped.
+
+---
+
+---
+
 ## 1. Problem
 
 The current `/qc` page reads as four marketing-shaped slides — each panel has its own hero number, its own composition, its own pitch shape:

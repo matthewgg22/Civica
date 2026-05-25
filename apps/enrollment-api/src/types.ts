@@ -85,7 +85,7 @@ export interface Variables {
   requestId: string;
 }
 
-export type ActorKind = "applicant" | "navigator" | "admin" | "system" | "api_key" | "buddy";
+export type ActorKind = "applicant" | "navigator" | "admin" | "system" | "api_key" | "buddy" | "operator";
 
 export interface Actor {
   kind: ActorKind;

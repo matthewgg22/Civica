@@ -93,10 +93,11 @@ describe("middleware", () => {
       expect(res.status).toBe(200);
     });
 
-    it("redirects / to /packets", async () => {
+    it("redirects / to navigator home (/outreach)", async () => {
       const res = await middleware(makeRequest("/"));
       expect(res.status).toBe(307);
-      expect(res.headers.get("location")).toContain("/packets");
+      // ROLE_HOMES.navigator = "/outreach" (queue-driven daily-driver, see roleRouting.ts).
+      expect(res.headers.get("location")).toContain("/outreach");
     });
 
     it("passes through /dashboard", async () => {
@@ -127,6 +128,79 @@ describe("middleware", () => {
       const res = await middleware(makeRequest("/"));
       expect(res.status).toBe(307);
       expect(res.headers.get("location")).toContain("/cdss");
+    });
+  });
+
+  describe("authenticated operator (corporate /ops access)", () => {
+    beforeEach(() => {
+      mockGetUser.mockResolvedValue({
+        data: { user: { app_metadata: { role: "operator" }, email: "op@civica.co" } },
+      });
+    });
+
+    it("passes through /ops", async () => {
+      const res = await middleware(makeRequest("/ops"));
+      expect(res.status).toBe(200);
+    });
+
+    it("passes through /ops/ebt-aggregates", async () => {
+      const res = await middleware(makeRequest("/ops/ebt-aggregates"));
+      expect(res.status).toBe(200);
+    });
+
+    it("redirects / to /ops", async () => {
+      const res = await middleware(makeRequest("/"));
+      expect(res.status).toBe(307);
+      expect(res.headers.get("location")).toContain("/ops");
+    });
+
+    it("redirects /packets to /ops (operator is restricted to /ops)", async () => {
+      const res = await middleware(makeRequest("/packets"));
+      expect(res.status).toBe(307);
+      expect(res.headers.get("location")).toContain("/ops");
+    });
+  });
+
+  describe("/ops route — staff allowed, audience roles blocked", () => {
+    it("allows navigator (operational staff) to /ops", async () => {
+      mockGetUser.mockResolvedValue({
+        data: { user: { app_metadata: { role: "navigator" }, email: "nav@civica.co" } },
+      });
+      const res = await middleware(makeRequest("/ops"));
+      expect(res.status).toBe(200);
+    });
+
+    it("allows admin to /ops", async () => {
+      mockGetUser.mockResolvedValue({
+        data: { user: { app_metadata: { role: "admin" }, email: "admin@civica.co" } },
+      });
+      const res = await middleware(makeRequest("/ops"));
+      expect(res.status).toBe(200);
+    });
+
+    it("blocks county_director (audience role) from /ops", async () => {
+      mockGetUser.mockResolvedValue({
+        data: { user: { app_metadata: { role: "county_director" }, email: "cd@county.ca.gov" } },
+      });
+      const res = await middleware(makeRequest("/ops"));
+      expect(res.status).toBe(307);
+      expect(res.headers.get("location")).toContain("/county");
+    });
+
+    it("blocks state_deputy (audience role) from /ops", async () => {
+      mockGetUser.mockResolvedValue({
+        data: { user: { app_metadata: { role: "state_deputy" }, email: "sd@cdss.ca.gov" } },
+      });
+      const res = await middleware(makeRequest("/ops"));
+      expect(res.status).toBe(307);
+      expect(res.headers.get("location")).toContain("/cdss");
+    });
+
+    it("redirects unauthenticated from /ops to /login", async () => {
+      mockGetUser.mockResolvedValue({ data: { user: null } });
+      const res = await middleware(makeRequest("/ops"));
+      expect(res.status).toBe(307);
+      expect(res.headers.get("location")).toContain("/login");
     });
   });
 });

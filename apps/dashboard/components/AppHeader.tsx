@@ -1,7 +1,7 @@
 import Link from "next/link";
 import MobileNavMenu from "./MobileNavMenu";
 
-type NavKey = "dashboard" | "queue" | "enrollments" | "county" | "outreach" | "qc" | "compliance";
+type NavKey = "dashboard" | "queue" | "enrollments" | "county" | "outreach" | "qc" | "compliance" | "ops";
 
 // §10106 / county cost-share dashboard is intentionally not in the
 // top nav — it's a B2G demo surface, still reachable by direct URL
@@ -14,6 +14,9 @@ const NAV_ITEMS: { key: NavKey; href: string; label: string }[] = [
   { key: "outreach",    href: "/outreach",     label: "Outreach" },
   { key: "qc",          href: "/qc",           label: "Quality Control" },
   { key: "compliance",  href: "/compliance",   label: "Why Civica" },
+  // Internal monetization dashboard — visible in nav for admin/operator only.
+  // Middleware gate ensures non-allowed roles get redirected away from /ops.
+  { key: "ops",         href: "/ops",          label: "Ops" },
 ];
 
 export default function AppHeader({ email, active }: { email?: string; active: NavKey }) {
