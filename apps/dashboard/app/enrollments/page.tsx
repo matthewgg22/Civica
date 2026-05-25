@@ -3,8 +3,7 @@ import Link from "next/link";
 import { createServerClientFromCookies } from "../../lib/supabase";
 import AppHeader from "../../components/AppHeader";
 import { decryptDemoName, firstNameLastInitial, formatDate, shortId } from "../../lib/format";
-import { isDemoFallbackEnabled, DEMO_PACKETS, getStage3Totals, getStage3Yield } from "../../lib/demo-data";
-import Stage3YieldBand, { type Stage3Callouts } from "../../components/Stage3YieldBand";
+import { isDemoFallbackEnabled, DEMO_PACKETS, getStage3Yield } from "../../lib/demo-data";
 import RowActionChip from "../../components/RowActionChip";
 import ActionsTakenToday from "../../components/ActionsTakenToday";
 
@@ -255,60 +254,6 @@ export default async function EnrollmentsPage({ searchParams }: { searchParams: 
     };
   });
 
-  // Stage 3 monetization totals — computed once over the whole enrolled
-  // cohort. Fixture-driven via DEMO_STAGE3_YIELD; for live data the lookup
-  // returns null and totals stay zero (band still renders with $0/honest).
-  const stage3Totals = getStage3Totals(rows.map((r) => r.applicant_id));
-
-  // Stage 3 callouts — names the top contributors per stream + ABAWD-at-risk
-  // households so the band reads as "here is who in your cohort is driving the
-  // numbers" instead of an abstract finance summary. Done in the page (not in
-  // getStage3Totals) because names live on rows, not on the yield fixtures.
-  type YieldNamePair = { name: string; amount: number; applicantId: string };
-  const namedYields: Array<YieldNamePair & { hours: number; dsnpEligible: boolean; dsnpFired: boolean }> = rows
-    .map((r) => {
-      const y = getStage3Yield(r.applicant_id);
-      if (!y) return null;
-      return {
-        name: r.name,
-        applicantId: y.applicant_id,
-        amount: y.adSavingsThisMonth,
-        hours: y.hoursLoggedThisMonth,
-        dsnpEligible: y.dsnpEligible,
-        dsnpFired: y.dsnpWarmTransferValue > 0,
-      };
-    })
-    .filter((v): v is YieldNamePair & { hours: number; dsnpEligible: boolean; dsnpFired: boolean } => v !== null);
-
-  const topRMNEarner = namedYields
-    .filter((y) => y.amount > 0)
-    .sort((a, b) => b.amount - a.amount)[0] ?? null;
-
-  const workforceRanked = rows
-    .map((r) => {
-      const y = getStage3Yield(r.applicant_id);
-      return y ? { name: r.name, amount: y.workforceReferralValue } : null;
-    })
-    .filter((v): v is { name: string; amount: number } => v !== null && v.amount > 0)
-    .sort((a, b) => b.amount - a.amount);
-  const topWorkforceEarner = workforceRanked[0] ?? null;
-
-  const dsnpTransferredNames = namedYields.filter((y) => y.dsnpFired).map((y) => y.name);
-  const dsnpEligibleNames = namedYields.filter((y) => y.dsnpEligible && !y.dsnpFired).map((y) => y.name);
-  // ABAWD at-risk = had hours logged this month (so they're in scope) AND below the
-  // 60-hr 75%-of-pace threshold the lifecycle countdown treats as warning territory.
-  const abawdBehindPaceNames = namedYields
-    .filter((y) => y.hours > 0 && y.hours < 60)
-    .map((y) => y.name);
-
-  const stage3Callouts: Stage3Callouts = {
-    topRMNEarner: topRMNEarner ? { name: topRMNEarner.name, amount: topRMNEarner.amount } : null,
-    topWorkforceEarner,
-    dsnpTransferredNames,
-    dsnpEligibleNames,
-    abawdBehindPaceNames,
-  };
-
   const counts: Record<Bucket, number> = {
     expired: rows.filter((r) => r.bucket === "expired").length,
     interview_at_risk: rows.filter((r) => r.bucket === "interview_at_risk").length,
@@ -388,16 +333,13 @@ export default async function EnrollmentsPage({ searchParams }: { searchParams: 
           />
         </section>
 
-        {/* Stage 3 yield — post-issuance monetization across enrolled cohort.
-            Per the YC application's Stage 3 narrative: ad attribution + workforce
-            referrals + D-SNP warm transfers, sized as $/monetized-household/month
-            (NOT $/household — the distinction reconciles to YC's $5–15M ARR stack
-            instead of implying a $500M TAM). */}
-        <Stage3YieldBand
-          totals={stage3Totals}
-          callouts={stage3Callouts}
-          enrolledHouseholdCount={rows.length}
-        />
+        {/* Stage 3 yield band (revenue / monetization across the enrolled
+            cohort) used to live here. Removed 2026-05-25 — it read as
+            investor-pitch finance on a page whose grammar is per-household
+            navigator action. Component lives at components/Stage3YieldBand
+            for re-mount on /compliance or a /monetization surface. The
+            per-row Stage3 chips (`$X saved`, hrs, D-SNP) stay because
+            they're per-household and contextual to the navigator's view. */}
 
         {/* Bucket summary cards — split into two rows by lifecycle group:
             urgent (needs action today) up top, in-progress states below.
