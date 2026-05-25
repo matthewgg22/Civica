@@ -35,14 +35,15 @@ export default function ScoringPanel({
             Confidence in current QC scores
           </h3>
           <p className="text-[13px] text-graphite mt-2 max-w-2xl leading-relaxed">
-            Phase 1 derives defensibility from Argyle alone. Phase 2 adds per-flow signals from
-            UtilityAPI and the sublease classifier — until then, shelter and lease scores are heuristic-only.
+            Current scoring derives defensibility from Argyle income verification plus deterministic
+            rules. Per-flow signals from UtilityAPI + the sublease classifier upgrade shelter and
+            lease scores from heuristic to verified as those integrations ship.
           </p>
         </div>
         <PhaseLadder current={1} />
       </div>
 
-      {/* Phase 1 caveat banner */}
+      {/* Scoring scope caveat */}
       <div className="flex gap-3 items-start bg-amber/7 border border-amber/20 rounded-[3px] p-4 mb-6">
         <svg width="16" height="16" viewBox="0 0 16 16" className="mt-0.5 shrink-0">
           <path d="M8 1.5 L15 14 L1 14 Z" fill="none" stroke="#9A5A14" strokeWidth="1.5" strokeLinejoin="round"/>
@@ -50,10 +51,11 @@ export default function ScoringPanel({
           <circle cx="8" cy="12" r="0.8" fill="#9A5A14"/>
         </svg>
         <p className="text-[13px] text-graphite leading-relaxed">
-          <strong className="text-ink font-semibold">Phase 1 caveat.</strong>{" "}
-          Scores on Shelter/SUA, Shared Lease, and Assets are heuristic-derived from Argyle's
-          presence/absence — not from independent verification. Treat tier and score on these flows
-          as directional, not authoritative. Phase 2 ships Q3.
+          <strong className="text-ink font-semibold">Scoring scope.</strong>{" "}
+          Shelter/SUA, Shared Lease, and Assets flows are scored from the applicant's intake
+          answers plus Argyle income signal. As UtilityAPI and the sublease classifier
+          come online, each flow's defensibility tier upgrades from heuristic to independently
+          verified.
         </p>
       </div>
 

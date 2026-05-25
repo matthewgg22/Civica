@@ -58,7 +58,12 @@ export default async function CountyPage({
   } = await supabase.auth.getUser();
   const role = (user?.app_metadata as { role?: unknown } | null)?.role;
 
-  if (typeof role !== "string" || (role !== "county_director" && role !== "admin")) {
+  // Operational staff (navigator/supervisor/admin) + county_director can
+  // view the §10106 exposure dashboard. The audience is broader than the
+  // original county-director-only scope so the same surface can be used
+  // for internal review and B2G demos alike.
+  const ALLOWED_ROLES = new Set(["county_director", "admin", "navigator", "supervisor"]);
+  if (typeof role !== "string" || !ALLOWED_ROLES.has(role)) {
     redirect(typeof role === "string" ? homeForRole(role) : "/login");
   }
 

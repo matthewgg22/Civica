@@ -431,7 +431,70 @@ export type DemoPacketDetailBundle = {
 export function getDemoPacketDetail(packetId: string): DemoPacketDetailBundle | null {
   if (packetId === "demo-pkt-001-maria") return buildMariaDetail();
   if (packetId === "demo-pkt-002-carlos") return buildCarlosDetail();
-  return null;
+  // Generic fallback for the other 10 demo packets — assembled from the
+  // shared fixtures so a clicked packet never 404s during a demo. The page
+  // will render with thinner sections (no answers / extracted fields) but
+  // hero + lifecycle + risk + activity timeline all light up correctly.
+  const packet = DEMO_PACKETS.find((p) => p.packet_id === packetId);
+  if (!packet) return null;
+  return buildGenericDetail(packet);
+}
+
+function buildGenericDetail(packet: DemoPacket): DemoPacketDetailBundle {
+  const riskHistory = DEMO_RISK_ROWS.filter((r) => r.packet_id === packet.packet_id);
+  const docs = DEMO_DOCS.filter((d) => d.packet_id === packet.packet_id);
+  const history = DEMO_HISTORY.filter((h) => h.packet_id === packet.packet_id);
+  // A handful of plausible-but-light answers so the eligibility-questions
+  // section isn't an awkward "no answers yet" empty state.
+  const answers = [
+    { question_key: "household_size", applicant_answer: "2" },
+    { question_key: "monthly_gross_income", applicant_answer: "1980" },
+    { question_key: "employment_status", applicant_answer: "employed" },
+    { question_key: "housing_situation", applicant_answer: "renting" },
+    { question_key: "monthly_rent_or_mortgage", applicant_answer: "1450" },
+    { question_key: "has_heating_costs", applicant_answer: "yes" },
+    { question_key: "has_electric_or_gas", applicant_answer: "yes" },
+    { question_key: "has_phone", applicant_answer: "yes" },
+  ];
+  // For Handed Off / Closed packets, treat them as fully-resolved so the
+  // Review Status card paints "Ready" and the lifecycle strip matches the
+  // hero status pill.
+  const isFinal = packet.status === "Handed Off" || packet.status === "Closed";
+  const isNeedsDocs = packet.status === "Needs Documents" || packet.status === "Needs Applicant Clarification";
+  return {
+    packet,
+    answers,
+    docs: docs.map((d) => ({
+      document_id: d.document_id,
+      document_kind: d.document_kind,
+      uploaded_at: d.uploaded_at,
+      original_filename: d.original_filename,
+      processing_status: d.processing_status,
+    })),
+    history,
+    fields: [],
+    docItems: [],
+    extractions: docs.map((d, i) => ({
+      extraction_id: `gen-ex-${packet.packet_id}-${i}`,
+      document_id: d.document_id,
+      extracted_at: d.uploaded_at,
+      extractor_model: "claude-opus-4-7",
+      overall_confidence: d.classification_confidence,
+      uploaded_documents: { document_kind: d.document_kind, original_filename: d.original_filename },
+    })),
+    paychecks: null,
+    riskHistory,
+    argyle: null,
+    shelterAllocation: null,
+    notes: [],
+    unresolvedDocs: isNeedsDocs ? 2 : 0,
+    unreviewedFields: 0,
+    hasConsent: isFinal,
+    consentedAt: isFinal ? packet.handed_off_at : null,
+    wrStatus: isFinal
+      ? { compliance_status: "compliant", determined_at: packet.handed_off_at ?? packet.updated_at, is_subject: true, exemption_type: null }
+      : null,
+  };
 }
 
 function buildMariaDetail(): DemoPacketDetailBundle {

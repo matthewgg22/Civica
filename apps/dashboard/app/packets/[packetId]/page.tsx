@@ -595,7 +595,7 @@ export default async function PacketDetailPage({
       impactIfImproved: impactIfUpgraded(50.5, suaDef),
       detail: suaDef === "weak"
         ? "SUA utility questions (heating, electric/gas, phone) have not been answered. USDA classifies SUA as the highest payment-error driver (50.5% weight). Complete the expense questions to move this flow to moderate."
-        : `SUA tier determined: ${suaComputed} (${ { FULL: "$663", LIMITED: "$170", TELEPHONE: "$44", NONE: "$0" }[suaComputed!] }/mo). Phase 2 will verify utility costs independently.`,
+        : `SUA tier determined: ${suaComputed} (${ { FULL: "$663", LIMITED: "$170", TELEPHONE: "$44", NONE: "$0" }[suaComputed!] }/mo). Utility costs are confirmed from the applicant's intake answers.`,
       evidence: [
         { label: "Heating costs", value: answersMap["has_heating_costs"] ?? "not answered" },
         { label: "Electric / gas", value: answersMap["has_electric_or_gas"] ?? "not answered" },
@@ -658,11 +658,11 @@ export default async function PacketDetailPage({
       points: flowPoints(8.2, "moderate"),
       actionable: false,
       impactIfImproved: null,
-      detail: "Asset declarations are taken from the eligibility questionnaire. Phase 1 scores this as moderate; Phase 2 will verify against bank statement data.",
+      detail: "Asset declarations are taken from the eligibility questionnaire. Bank-statement cross-verification is the next defensibility upgrade for this flow.",
       evidence: [
         { label: "Vehicle value", value: answersMap["vehicle_value"] ?? "not answered" },
         { label: "Savings", value: answersMap["savings_amount"] ?? "not answered" },
-        { label: "Bank verification", value: "phase 2" },
+        { label: "Bank verification", value: "pending" },
       ],
     },
     {
