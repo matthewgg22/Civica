@@ -13,6 +13,7 @@ import QCOutcomesPanel from "../../components/QCOutcomesPanel";
 import Link from "next/link";
 import { caCountyToFips } from "../../lib/caCounties";
 import { decryptDemoName, docKindLabel, firstNameLastInitial, shortId } from "../../lib/format";
+import { isDemoFallbackEnabled, DEMO_PACKETS, DEMO_APPLICANTS, DEMO_HISTORY, DEMO_DOCS, DEMO_RISK_ROWS, DEMO_QC_ROWS } from "../../lib/demo-data";
 
 export const dynamic = "force-dynamic";
 
@@ -56,12 +57,36 @@ export default async function DashboardPage() {
       .limit(2000),
   ]);
 
-  const packets = packetsRes.data ?? [];
-  const applicants = applicantsRes.data ?? [];
-  const history = historyRes.data ?? [];
-  const docs = docsRes.data ?? [];
-  const allRiskRows: Array<{ packet_id: string; score: number | null; tier: string; created_at: string }> = riskRes.data ?? [];
-  const qcRows: Array<{ packet_id: string; qc_sampled: boolean; error_found: boolean | null; error_type: string | null; error_amount: number | null }> = qcRes.data ?? [];
+  // Demo fallback for empty local DB. When the live packets query is empty
+  // and DEMO_FALLBACK=true, all six datasources swap to the shared
+  // fixtures so the funnel, language donut, map, activity ticker, doc AI
+  // panel, and QC outcomes panel all light up coherently.
+  const useDemoFallback = isDemoFallbackEnabled() && (packetsRes.data?.length ?? 0) === 0;
+  const packets = useDemoFallback
+    ? DEMO_PACKETS.map((p) => ({
+        packet_id: p.packet_id, status: p.status, state_code: p.state_code,
+        county: p.county, county_fips: p.county_fips,
+        submitted_at: p.submitted_at, handed_off_at: p.handed_off_at,
+        created_at: p.created_at, updated_at: p.updated_at,
+        applicants: p.applicants,
+      }))
+    : (packetsRes.data ?? []);
+  const applicants = useDemoFallback ? DEMO_APPLICANTS : (applicantsRes.data ?? []);
+  const history = useDemoFallback ? DEMO_HISTORY : (historyRes.data ?? []);
+  const docs = useDemoFallback
+    ? DEMO_DOCS.map((d) => ({
+        document_id: d.document_id, document_kind: d.document_kind,
+        classification_confidence: d.classification_confidence,
+        processing_status: d.processing_status, uploaded_at: d.uploaded_at,
+        packet_id: d.packet_id,
+      }))
+    : (docsRes.data ?? []);
+  const allRiskRows: Array<{ packet_id: string; score: number | null; tier: string; created_at: string }> = useDemoFallback
+    ? DEMO_RISK_ROWS.map((r) => ({ packet_id: r.packet_id, score: r.score, tier: r.tier, created_at: r.created_at }))
+    : (riskRes.data ?? []);
+  const qcRows: Array<{ packet_id: string; qc_sampled: boolean; error_found: boolean | null; error_type: string | null; error_amount: number | null }> = useDemoFallback
+    ? DEMO_QC_ROWS
+    : (qcRes.data ?? []);
 
   // Deduplicate risk rows — keep newest row per packet
   const latestRiskByPacket = new Map<string, (typeof allRiskRows)[0]>();
@@ -434,8 +459,8 @@ export default async function DashboardPage() {
           </Card>
         </div>
 
-        {/* Funnel full-width — primary operational view, given heavier visual weight */}
-        <section className="bg-surface border-2 border-pine/30 rounded-[4px] p-7 shadow-sm">
+        {/* Funnel full-width — primary operational view */}
+        <section className="bg-surface border border-hairline rounded-[4px] p-7">
           <div className="mb-5 flex items-baseline justify-between gap-3 flex-wrap">
             <div>
               <h3 className="section-title">Enrollment Funnel</h3>

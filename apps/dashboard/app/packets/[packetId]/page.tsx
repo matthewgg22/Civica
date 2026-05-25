@@ -1,4 +1,4 @@
-import { Suspense } from "react";
+import React, { Suspense } from "react";
 import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 import Link from "next/link";
@@ -36,6 +36,7 @@ import FlowBreakdown from "../../../components/packet-risk/FlowBreakdown";
 import RecommendedActions from "../../../components/packet-risk/RecommendedActions";
 import type { RiskFlow, RiskAction } from "../../../components/packet-risk/types";
 import { getWrStatus } from "../../../lib/packet-fetchers";
+import { isDemoFallbackEnabled, getDemoPacketDetail } from "../../../lib/demo-data";
 
 // Statuses where the expedited-review gate is relevant
 const EXPEDITED_GATE_STATUSES = new Set(["Submitted for Review", "In Navigator Review"]);
@@ -61,11 +62,22 @@ export default async function PacketDetailPage({
   const cookieStore = await cookies();
   const supabase = createServerClientFromCookies(cookieStore);
 
+  // Demo packet short-circuit: when DEMO_FALLBACK=true and the packetId
+  // matches a fixture, synthesize all the destructured `*Result` shapes
+  // from the hardcoded bundle. Lets the detail page render the full
+  // Review Status card narrative even when the local Supabase has the
+  // pre-existing RLS recursion bug.
+  //
+  // We still run the live queries below for the non-demo case; demo
+  // overrides are applied AFTER the live destructure so TypeScript can
+  // keep its narrowing on the live path.
+  const demoBundle = isDemoFallbackEnabled() ? getDemoPacketDetail(packetId) : null;
+
   // Note: wr_status is NOT fetched here. It's deferred to
   // <WorkRequirementsSection> which fetches via the cached
   // getWrStatus() helper and renders inside a <Suspense> boundary —
   // so a slow wr query doesn't gate the rest of the packet detail.
-  const [packetResult, answersResult, docsResult, notesResult, historyResult, fieldsResult, docItemsResult, recertResult, extractionsResult, paychecksResult, errorRiskResult, shelterAllocationResult] = await Promise.all([
+  const [livePacketResult, liveAnswersResult, liveDocsResult, liveNotesResult, liveHistoryResult, liveFieldsResult, liveDocItemsResult, liveRecertResult, liveExtractionsResult, livePaychecksResult, liveErrorRiskResult, liveShelterAllocationResult] = await Promise.all([
     supabase.schema("snap_enrollment").from("snap_packets").select(`*, applicants(*)`).eq("packet_id", packetId).is("deleted_at", null).single(),
     supabase.schema("snap_enrollment").from("packet_answers").select("*").eq("packet_id", packetId).order("question_key"),
     supabase.schema("snap_enrollment").from("uploaded_documents").select("*").eq("packet_id", packetId).is("deleted_at", null).order("uploaded_at", { ascending: false }),
@@ -118,6 +130,23 @@ export default async function PacketDetailPage({
       .eq("packet_id", packetId)
       .maybeSingle(),
   ]);
+
+  // Apply demo overrides AFTER the live destructure so downstream code
+  // keeps the live result types. Each `*Result` accessor exposes only
+  // `.data` and `.error`, so this is a safe per-field swap.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const packetResult = demoBundle ? ({ data: demoBundle.packet as any, error: null } as typeof livePacketResult) : livePacketResult;
+  const answersResult = demoBundle ? { data: demoBundle.answers, error: null } : liveAnswersResult;
+  const docsResult = demoBundle ? { data: demoBundle.docs, error: null } : liveDocsResult;
+  const notesResult = demoBundle ? { data: demoBundle.notes, error: null } : liveNotesResult;
+  const historyResult = demoBundle ? { data: demoBundle.history, error: null } : liveHistoryResult;
+  const fieldsResult = demoBundle ? { data: demoBundle.fields, error: null } : liveFieldsResult;
+  const docItemsResult = demoBundle ? { data: demoBundle.docItems, error: null } : liveDocItemsResult;
+  const recertResult = liveRecertResult; // demo doesn't seed recertifications
+  const extractionsResult = demoBundle ? { data: demoBundle.extractions, error: null } : liveExtractionsResult;
+  const paychecksResult = demoBundle ? { data: demoBundle.paychecks, error: null } : livePaychecksResult;
+  const errorRiskResult = demoBundle ? { data: demoBundle.riskHistory, error: null } : liveErrorRiskResult;
+  const shelterAllocationResult = demoBundle ? { data: demoBundle.shelterAllocation, error: null } : liveShelterAllocationResult;
 
   if (!packetResult.data) notFound();
   const packet = packetResult.data;
@@ -291,7 +320,7 @@ export default async function PacketDetailPage({
   // row without a second round-trip. The fetch is fast (single indexed
   // lookup) so adding it to the main batch is well under the cost ceiling
   // T6b was guarding against.
-  const [unresolvedDocsResult, unreviewedFieldsResult, consentResult, argyleResult, wrStatusForEngine] = await Promise.all([
+  const [liveUnresolvedDocsResult, liveUnreviewedFieldsResult, liveConsentResult, liveArgyleResult, liveWrStatusForEngine] = await Promise.all([
     supabase.schema("snap_enrollment").from("required_document_items")
       .select("item_id").eq("packet_id", packetId).eq("is_required", true)
       .is("resolved_at", null).is("waived_at", null),
@@ -309,6 +338,21 @@ export default async function PacketDetailPage({
       .maybeSingle(),
     getWrStatus(packetId),
   ]);
+
+  // Apply demo overrides (mirrors the main-batch pattern above).
+  const unresolvedDocsResult = demoBundle
+    ? { data: Array.from({ length: demoBundle.unresolvedDocs }, (_, i) => ({ item_id: `unres-${i}` })), error: null }
+    : liveUnresolvedDocsResult;
+  const unreviewedFieldsResult = demoBundle
+    ? { data: Array.from({ length: demoBundle.unreviewedFields }, (_, i) => ({ field_id: `unrev-${i}` })), error: null }
+    : liveUnreviewedFieldsResult;
+  const consentResult = demoBundle
+    ? { data: demoBundle.hasConsent ? [{ consent_id: "c-demo", consented_at: demoBundle.consentedAt }] : [], error: null }
+    : liveConsentResult;
+  const argyleResult = demoBundle
+    ? { data: demoBundle.argyle, error: null }
+    : liveArgyleResult;
+  const wrStatusForEngine = demoBundle ? demoBundle.wrStatus : liveWrStatusForEngine;
 
   const hasConsent = (consentResult.data?.length ?? 0) > 0;
   const consentedAt = hasConsent ? (consentResult.data![0] as { consented_at: string }).consented_at : null;
@@ -879,7 +923,7 @@ export default async function PacketDetailPage({
               description="will appear as applicant completes the eligibility flow"
             />
           ) : (
-            <AnswerReviewList answers={answers} />
+            <AnswerReviewList answers={answers as unknown as React.ComponentProps<typeof AnswerReviewList>["answers"]} />
           )}
         </Section>
 
@@ -889,7 +933,7 @@ export default async function PacketDetailPage({
           count={docItems.length}
           subtitle="Documents needed before handoff. Mark each resolved once received, or waive with a reason."
         >
-          <DocumentChecklist packetId={packetId} applicantId={packet.applicant_id} stateCode={packet.state_code as "CA" | "MA"} items={docItems} uploadedDocs={docs} />
+          <DocumentChecklist packetId={packetId} applicantId={packet.applicant_id} stateCode={packet.state_code as "CA" | "MA"} items={docItems as unknown as React.ComponentProps<typeof DocumentChecklist>["items"]} uploadedDocs={docs} />
         </Section>
 
         {/* Missing-item requests (navigator-side creator + history) */}
@@ -949,7 +993,7 @@ export default async function PacketDetailPage({
 
         {/* Notes */}
         <Section id="notes" title="Navigator Notes" count={notes.length} subtitle="Internal notes for your team. Mark internal-only to hide from the applicant.">
-          <NotesList packetId={packetId} initialNotes={notes} />
+          <NotesList packetId={packetId} initialNotes={notes as unknown as React.ComponentProps<typeof NotesList>["initialNotes"]} />
         </Section>
 
         {/* Handoff export */}

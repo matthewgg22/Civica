@@ -7,6 +7,7 @@ import AppHeader from "../../components/AppHeader";
 import OutreachWelcomeBanner from "../../components/OutreachWelcomeBanner";
 import { formatDateTime, decryptDemoName, firstNameLastInitial } from "../../lib/format";
 import { OutreachTaskActions } from "./OutreachTaskActions";
+import { isDemoFallbackEnabled, DEMO_OUTREACH_TASKS, getDemoPacketsForOutreach } from "../../lib/demo-data";
 
 type OutreachTask = {
   outreach_task_id: string;
@@ -74,10 +75,15 @@ export default async function OutreachPage() {
     .order("due_at", { ascending: true })
     .limit(100);
 
+  // Demo fallback for empty local DB.
+  const useDemoFallback = isDemoFallbackEnabled() && (tasks?.length ?? 0) === 0;
+  const taskList = useDemoFallback
+    ? (DEMO_OUTREACH_TASKS as OutreachTask[])
+    : ((tasks ?? []) as OutreachTask[]);
+
   // Query 2: packets for context
-  const taskList = (tasks ?? []) as OutreachTask[];
   const packetIds = taskList.map((t) => t.packet_id);
-  const { data: packets } = packetIds.length > 0
+  const { data: livePackets } = packetIds.length > 0 && !useDemoFallback
     ? await supabase
         .schema("snap_enrollment")
         .from("snap_packets")
@@ -86,7 +92,9 @@ export default async function OutreachPage() {
         .is("deleted_at", null)
     : { data: [] as Packet[] };
 
-  const packetList = (packets ?? []) as Packet[];
+  const packetList = useDemoFallback
+    ? (getDemoPacketsForOutreach().filter((p) => packetIds.includes(p.packet_id)) as Packet[])
+    : ((livePackets ?? []) as Packet[]);
   const packetMap = new Map<string, Packet>(
     packetList.map((p) => [p.packet_id, p])
   );
@@ -116,13 +124,13 @@ export default async function OutreachPage() {
           Pending applicant outreach · Ordered by due date
         </p>
 
-        {error && (
+        {error && !useDemoFallback && (
           <div className="bg-brick/10 border border-brick/30 text-brick rounded-[4px] p-4 mb-6 text-[13px]">
             {error.message}
           </div>
         )}
 
-        {taskList.length === 0 && !error ? (
+        {taskList.length === 0 && (!error || useDemoFallback) ? (
           <div className="text-center py-20 bg-surface border border-hairline rounded-[4px]">
             <p className="text-[17px] font-medium text-graphite">No pending outreach tasks</p>
             <p className="text-[13px] mt-1.5 text-muted">The queue is clear.</p>

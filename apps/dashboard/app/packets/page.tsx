@@ -6,6 +6,7 @@ import StatusBadge from "../../components/StatusBadge";
 import FilterChips from "../../components/FilterChips";
 import AppHeader from "../../components/AppHeader";
 import { timeAgo, decryptDemoName, firstNameLastInitial, shortId } from "../../lib/format";
+import { isDemoFallbackEnabled, DEMO_PACKETS, DEMO_RISK_ROWS } from "../../lib/demo-data";
 
 type Filter = "all" | "mine" | "needs-attention" | "in-progress" | "ready" | "complete" | "draft";
 
@@ -54,7 +55,22 @@ export default async function PacketsPage({ searchParams }: { searchParams: Prom
     .order("updated_at", { ascending: false })
     .limit(500);
 
-  const allRaw = (packets ?? []) as Packet[];
+  // Demo fallback: when DEMO_FALLBACK=true and the live query came back
+  // empty (typical on local dev with the pre-existing RLS recursion bug),
+  // swap in the rich hardcoded fixtures so every demo surface lights up.
+  // Production never sets this env var, so this branch is inert there.
+  const livePackets = (packets ?? []) as Packet[];
+  const useDemoFallback = isDemoFallbackEnabled() && livePackets.length === 0;
+  const allRaw: Packet[] = useDemoFallback
+    ? DEMO_PACKETS.map((p) => ({
+        packet_id: p.packet_id,
+        status: p.status,
+        state_code: p.state_code,
+        county: p.county,
+        updated_at: p.updated_at,
+        applicants: p.applicants ? { preferred_language: p.applicants.preferred_language, full_name_ciphertext: p.applicants.full_name_ciphertext } : null,
+      }))
+    : livePackets;
 
   // Fetch the most recent error-risk tier for each packet in one round trip.
   // Multiple rows per packet are possible (one per scoring event); we take
@@ -75,7 +91,12 @@ export default async function PacketsPage({ searchParams }: { searchParams: Prom
   const riskScoredAtByPacket = new Map<string, string>();
   const latestScoreByPacket = new Map<string, number>();
   const evalCountByPacket = new Map<string, number>();
-  const allRiskRows = (riskRows ?? []) as unknown as Array<{ packet_id: string; tier: string | null; score: number | null; created_at: string }>;
+  // Demo-mode: merge in fixture risk rows so the KPI banner + per-row tier
+  // dots populate even when the live query is empty.
+  const liveRiskRows = (riskRows ?? []) as unknown as Array<{ packet_id: string; tier: string | null; score: number | null; created_at: string }>;
+  const allRiskRows = useDemoFallback && liveRiskRows.length === 0
+    ? DEMO_RISK_ROWS.map((r) => ({ packet_id: r.packet_id, tier: r.tier, score: r.score, created_at: r.created_at }))
+    : liveRiskRows;
   for (const row of allRiskRows) {
     evalCountByPacket.set(row.packet_id, (evalCountByPacket.get(row.packet_id) ?? 0) + 1);
     if (!riskTierByPacket.has(row.packet_id) && row.tier) {
@@ -204,13 +225,13 @@ export default async function PacketsPage({ searchParams }: { searchParams: Prom
           <FilterChips options={filterOptions} active={filter} />
         </div>
 
-        {error && (
+        {error && !useDemoFallback && (
           <div className="bg-error/10 border border-error text-error rounded-[4px] p-4 mb-6 text-[13px]">
             {error.message}
           </div>
         )}
 
-        {visible.length === 0 && !error && (
+        {visible.length === 0 && (!error || useDemoFallback) && (
           <EmptyQueueState filter={filter} />
         )}
 
