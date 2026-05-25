@@ -6,6 +6,7 @@ import { decryptDemoName, firstNameLastInitial, formatDate, shortId } from "../.
 import { isDemoFallbackEnabled, DEMO_PACKETS, getStage3Totals, getStage3Yield } from "../../lib/demo-data";
 import Stage3YieldBand, { type Stage3Callouts } from "../../components/Stage3YieldBand";
 import RowActionChip from "../../components/RowActionChip";
+import ActionsTakenToday from "../../components/ActionsTakenToday";
 
 export const dynamic = "force-dynamic";
 
@@ -358,12 +359,17 @@ export default async function EnrollmentsPage({ searchParams }: { searchParams: 
     <div className="min-h-screen bg-paper">
       <AppHeader email={user?.email} active="enrollments" />
       <main className="max-w-6xl mx-auto px-8 py-8 space-y-5">
-        <div>
-          <p className="eyebrow mb-1.5">Renewals</p>
-          <h2 className="text-[28px] font-semibold tracking-tight leading-tight text-ink">Enrollment Lifecycle</h2>
-          <p className="text-[15px] text-graphite mt-1.5">
-            Every household after handoff — interview → verification → active → recert. Sorted by what needs action first. SNAP cert period typically {DEFAULT_CERT_MONTHS} months (24 for elderly/disabled).
-          </p>
+        <div className="flex items-start justify-between gap-6">
+          <div className="min-w-0">
+            <p className="eyebrow mb-1.5">Renewals</p>
+            <h2 className="text-[28px] font-semibold tracking-tight leading-tight text-ink">Enrollment Lifecycle</h2>
+            <p className="text-[15px] text-graphite mt-1.5">
+              Every household after handoff — interview → verification → active → recert. Sorted by what needs action first. SNAP cert period typically {DEFAULT_CERT_MONTHS} months (24 for elderly/disabled).
+            </p>
+          </div>
+          <div className="shrink-0 pt-1">
+            <ActionsTakenToday />
+          </div>
         </div>
 
         {/* Sprint metrics — pilot cohort progress + 30-day throughput.
@@ -818,6 +824,7 @@ function LifecycleStage({
           confirmedLabel="Call logged"
           urgency="brick"
           ariaLabel={`Log a recovery call to ${applicantName}`}
+          applicantName={applicantName}
         />
       </div>
     );
@@ -839,6 +846,7 @@ function LifecycleStage({
           confirmedLabel="Confirmed"
           urgency="indigo"
           ariaLabel={`Confirm interview attendance for ${applicantName}`}
+          applicantName={applicantName}
         />
       </div>
     );
@@ -858,6 +866,7 @@ function LifecycleStage({
           confirmedLabel="Doc uploaded"
           urgency="warning"
           ariaLabel={`Upload verification docs for ${applicantName}`}
+          applicantName={applicantName}
         />
       </div>
     );
@@ -927,6 +936,7 @@ function LifecycleStage({
           confirmedLabel="Call logged"
           urgency="brick"
           ariaLabel={`Log a recovery call to ${applicantName}`}
+          applicantName={applicantName}
         />
       ) : stageMeta ? (
         <RowActionChip
@@ -934,6 +944,7 @@ function LifecycleStage({
           confirmedLabel={stageMeta.actionConfirmedLabel}
           urgency={stageMeta.actionUrgency}
           ariaLabel={`${stageMeta.actionChipLabel} for ${applicantName}`}
+          applicantName={applicantName}
         />
       ) : null}
     </div>

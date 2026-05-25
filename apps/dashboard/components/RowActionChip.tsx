@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { logAction } from "../lib/action-log";
 
 // Stage-aware action button used in /enrollments LifecycleStage. Click swaps
 // the label to a confirmation for 2.5s then reverts. Demo-grade: no backend
@@ -30,11 +31,13 @@ export default function RowActionChip({
   confirmedLabel,
   urgency,
   ariaLabel,
+  applicantName,
 }: {
   label: string;
   confirmedLabel: string;
   urgency: Urgency;
   ariaLabel?: string;
+  applicantName?: string;
 }) {
   const [confirmed, setConfirmed] = useState(false);
   const classes = URGENCY_CLASSES[urgency];
@@ -46,6 +49,7 @@ export default function RowActionChip({
     e.preventDefault();
     if (confirmed) return;
     setConfirmed(true);
+    logAction(label, applicantName ?? "—");
     setTimeout(() => setConfirmed(false), 2500);
   };
 
