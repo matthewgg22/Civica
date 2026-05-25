@@ -37,25 +37,28 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
-          cache: "npm"
-          cache-dependency-path: package-lock.json
+          cache: "pnpm"
 
       - name: Install dependencies (workspace root)
-        run: npm install --no-audit --no-fund
+        run: pnpm install --frozen-lockfile
 
       - name: Build dashboard (production)
         working-directory: apps/dashboard
-        run: npm run build --webpack
+        run: pnpm run build --webpack
         env:
           NEXT_TELEMETRY_DISABLED: "1"
 
       - name: Start dashboard server (background, port 3001)
         working-directory: apps/dashboard
         run: |
-          PORT=3001 npm start &
+          PORT=3001 pnpm start &
           echo "DASH_PID=$!" >> "$GITHUB_ENV"
 
       - name: Wait for dashboard server
