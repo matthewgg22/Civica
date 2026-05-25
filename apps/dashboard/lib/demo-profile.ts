@@ -154,23 +154,51 @@ export const DEMO_COHORT_MONTHLY_COUNTS = COHORT_RAMP.map((share) =>
 
 // ── Geographic distribution shares (top CA CalFresh counties) ───────────────
 // Real CalFresh county-share-of-state figures (CDSS 2024 published totals).
-
-export const DEMO_COUNTY_SHARES: Array<{ fips: string; name: string; share: number }> = [
-  { fips: "06037", name: "Los Angeles",      share: 0.345 }, // LA
-  { fips: "06065", name: "Riverside",        share: 0.062 },
-  { fips: "06071", name: "San Bernardino",   share: 0.068 },
-  { fips: "06019", name: "Fresno",           share: 0.045 },
-  { fips: "06059", name: "Orange",           share: 0.038 },
-  { fips: "06073", name: "San Diego",        share: 0.052 },
-  { fips: "06067", name: "Sacramento",       share: 0.040 },
-  { fips: "06029", name: "Kern",             share: 0.029 },
-  { fips: "06107", name: "Tulare",           share: 0.024 },
-  { fips: "06077", name: "San Joaquin",      share: 0.028 },
-  { fips: "06099", name: "Stanislaus",       share: 0.021 },
-  { fips: "06085", name: "Santa Clara",      share: 0.024 },
-  { fips: "06001", name: "Alameda",          share: 0.027 },
-  { fips: "06013", name: "Contra Costa",     share: 0.019 },
-  { fips: "06075", name: "San Francisco",    share: 0.016 },
+//
+// Per-county `mix` carries operational variance — mature urban counties
+// (LA, Bay Area) skew toward higher Enrolled % and lower in-progress; newer
+// counties or those with higher recert friction show more Attention or
+// In Progress. Without per-county variance, the status bars below the map
+// all render as visually identical stacked clones, which reads as fake
+// data and creates a "symmetrical outline" effect down the row column.
+//
+// Mix tuples sum to 1.00: [draft, in_progress, needs_attention, ready, enrolled]
+export const DEMO_COUNTY_SHARES: Array<{
+  fips: string;
+  name: string;
+  share: number;
+  mix: [number, number, number, number, number];
+}> = [
+  // LA — most mature, big operations team, high throughput
+  { fips: "06037", name: "Los Angeles",      share: 0.345, mix: [0.07, 0.13, 0.04, 0.03, 0.73] },
+  // Riverside — fast-growing, some bottlenecks
+  { fips: "06065", name: "Riverside",        share: 0.062, mix: [0.11, 0.20, 0.07, 0.04, 0.58] },
+  // San Bernardino — newer rollout, heavier in-progress queue
+  { fips: "06071", name: "San Bernardino",   share: 0.068, mix: [0.13, 0.24, 0.06, 0.05, 0.52] },
+  // Fresno — Central Valley, more attention from doc-verification challenges
+  { fips: "06019", name: "Fresno",           share: 0.045, mix: [0.10, 0.18, 0.11, 0.04, 0.57] },
+  // Orange — affluent county, low draft abandonment, high enrolled
+  { fips: "06059", name: "Orange",           share: 0.038, mix: [0.06, 0.11, 0.04, 0.03, 0.76] },
+  // San Diego — large, balanced
+  { fips: "06073", name: "San Diego",        share: 0.052, mix: [0.09, 0.15, 0.05, 0.04, 0.67] },
+  // Sacramento — mature, good navigator workflow
+  { fips: "06067", name: "Sacramento",       share: 0.040, mix: [0.08, 0.14, 0.05, 0.04, 0.69] },
+  // Kern — agricultural/seasonal, more attention
+  { fips: "06029", name: "Kern",             share: 0.029, mix: [0.12, 0.21, 0.10, 0.04, 0.53] },
+  // Tulare — Central Valley, similar to Fresno
+  { fips: "06107", name: "Tulare",           share: 0.024, mix: [0.11, 0.20, 0.09, 0.04, 0.56] },
+  // San Joaquin — newer, heavy in-progress
+  { fips: "06077", name: "San Joaquin",      share: 0.028, mix: [0.14, 0.25, 0.07, 0.05, 0.49] },
+  // Stanislaus — Central Valley
+  { fips: "06099", name: "Stanislaus",       share: 0.021, mix: [0.12, 0.22, 0.08, 0.04, 0.54] },
+  // Santa Clara — tech-heavy, smooth digital pipeline
+  { fips: "06085", name: "Santa Clara",      share: 0.024, mix: [0.05, 0.10, 0.03, 0.03, 0.79] },
+  // Alameda — mature Bay Area, high enrolled
+  { fips: "06001", name: "Alameda",          share: 0.027, mix: [0.06, 0.12, 0.04, 0.04, 0.74] },
+  // Contra Costa — Bay Area, similar to Alameda
+  { fips: "06013", name: "Contra Costa",     share: 0.019, mix: [0.07, 0.13, 0.04, 0.04, 0.72] },
+  // San Francisco — smallest, very mature, dense
+  { fips: "06075", name: "San Francisco",    share: 0.016, mix: [0.05, 0.11, 0.03, 0.04, 0.77] },
 ];
 
 /** HH count per county at current marketshare. */
@@ -200,7 +228,9 @@ export const DEMO_PACKETS_NEEDS_ATTENTION = Math.round(DEMO_TOTAL_PACKETS * DEMO
 export const DEMO_PACKETS_READY = Math.round(DEMO_TOTAL_PACKETS * DEMO_PACKET_STATUS_MIX.ready);
 export const DEMO_PACKETS_ENROLLED = Math.round(DEMO_TOTAL_PACKETS * DEMO_PACKET_STATUS_MIX.enrolled);
 
-/** Per-county status mix, scaled from DEMO_COUNTY_SHARES × DEMO_PACKET_STATUS_MIX. */
+/** Per-county status mix, scaled from DEMO_COUNTY_SHARES × per-county mix tuples.
+    Each county has its own [draft, in_progress, needs_attention, ready, enrolled]
+    proportions so the status bars are visually distinct, not stacked clones. */
 export function buildDemoCountyStatusMix(): Record<string, {
   count: number;
   draft: number;
@@ -212,13 +242,14 @@ export function buildDemoCountyStatusMix(): Record<string, {
   const out: Record<string, { count: number; draft: number; inProgress: number; needsAttention: number; ready: number; enrolled: number }> = {};
   for (const c of DEMO_COUNTY_SHARES) {
     const total = Math.round(DEMO_TOTAL_PACKETS * c.share);
+    const [draftPct, inProgressPct, needsAttnPct, readyPct, enrolledPct] = c.mix;
     out[c.fips] = {
       count: total,
-      draft: Math.round(total * DEMO_PACKET_STATUS_MIX.draft),
-      inProgress: Math.round(total * DEMO_PACKET_STATUS_MIX.in_progress),
-      needsAttention: Math.round(total * DEMO_PACKET_STATUS_MIX.needs_attention),
-      ready: Math.round(total * DEMO_PACKET_STATUS_MIX.ready),
-      enrolled: Math.round(total * DEMO_PACKET_STATUS_MIX.enrolled),
+      draft: Math.round(total * draftPct),
+      inProgress: Math.round(total * inProgressPct),
+      needsAttention: Math.round(total * needsAttnPct),
+      ready: Math.round(total * readyPct),
+      enrolled: Math.round(total * enrolledPct),
     };
   }
   return out;
