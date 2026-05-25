@@ -179,3 +179,82 @@ export function householdsInCounty(fips: string): number {
   if (!entry) return 0;
   return Math.round(DEMO_TOTAL_HOUSEHOLDS * entry.share);
 }
+
+// ── Packet lifecycle distribution (per-HH percentages of the active base) ───
+//
+// Used to derive at-scale county status-mix bars + dashboard urgent banner
+// when demo fallback is on. Percentages sum to 1.00.
+export const DEMO_PACKET_STATUS_MIX = {
+  draft: 0.10,             // mid-application abandonment
+  in_progress: 0.18,       // submitted/in nav review
+  needs_attention: 0.06,   // needs docs / needs applicant clarification
+  ready: 0.04,             // ready for handoff, not yet sent to county
+  enrolled: 0.62,          // handed off / closed
+};
+
+/** Total at-scale packet count = households at marketshare. */
+export const DEMO_TOTAL_PACKETS = DEMO_TOTAL_HOUSEHOLDS;
+export const DEMO_PACKETS_DRAFT = Math.round(DEMO_TOTAL_PACKETS * DEMO_PACKET_STATUS_MIX.draft);
+export const DEMO_PACKETS_IN_PROGRESS = Math.round(DEMO_TOTAL_PACKETS * DEMO_PACKET_STATUS_MIX.in_progress);
+export const DEMO_PACKETS_NEEDS_ATTENTION = Math.round(DEMO_TOTAL_PACKETS * DEMO_PACKET_STATUS_MIX.needs_attention);
+export const DEMO_PACKETS_READY = Math.round(DEMO_TOTAL_PACKETS * DEMO_PACKET_STATUS_MIX.ready);
+export const DEMO_PACKETS_ENROLLED = Math.round(DEMO_TOTAL_PACKETS * DEMO_PACKET_STATUS_MIX.enrolled);
+
+/** Per-county status mix, scaled from DEMO_COUNTY_SHARES × DEMO_PACKET_STATUS_MIX. */
+export function buildDemoCountyStatusMix(): Record<string, {
+  count: number;
+  draft: number;
+  inProgress: number;
+  needsAttention: number;
+  ready: number;
+  enrolled: number;
+}> {
+  const out: Record<string, { count: number; draft: number; inProgress: number; needsAttention: number; ready: number; enrolled: number }> = {};
+  for (const c of DEMO_COUNTY_SHARES) {
+    const total = Math.round(DEMO_TOTAL_PACKETS * c.share);
+    out[c.fips] = {
+      count: total,
+      draft: Math.round(total * DEMO_PACKET_STATUS_MIX.draft),
+      inProgress: Math.round(total * DEMO_PACKET_STATUS_MIX.in_progress),
+      needsAttention: Math.round(total * DEMO_PACKET_STATUS_MIX.needs_attention),
+      ready: Math.round(total * DEMO_PACKET_STATUS_MIX.ready),
+      enrolled: Math.round(total * DEMO_PACKET_STATUS_MIX.enrolled),
+    };
+  }
+  return out;
+}
+
+// ── Urgent banner counts (dashboard "Needs Action Now") ─────────────────────
+//
+// Operational counts for the urgent action banner. Percentages are
+// per-enrolled-HH (not total HHs) so they scale with the enrolled cohort.
+export const DEMO_OVERDUE_RECERT_RATE = 0.012;          // ~1.2% of enrolled overdue on recert
+export const DEMO_EXPIRING_THIS_MONTH_RATE = 0.055;     // ~5.5% have 12mo anniversary in next 30d
+export const DEMO_NEEDS_ATTENTION_RATE = DEMO_PACKET_STATUS_MIX.needs_attention;
+
+export const DEMO_OVERDUE_RECERTS_COUNT = Math.round(DEMO_PACKETS_ENROLLED * DEMO_OVERDUE_RECERT_RATE);
+export const DEMO_EXPIRING_THIS_MONTH_COUNT = Math.round(DEMO_PACKETS_ENROLLED * DEMO_EXPIRING_THIS_MONTH_RATE);
+export const DEMO_NEEDS_ATTENTION_COUNT = DEMO_PACKETS_NEEDS_ATTENTION;
+
+// ── Enrollment funnel (cumulative reach per stage) ──────────────────────────
+//
+// Every HH is at some lifecycle stage. The funnel shows cumulative reach:
+// packets that EVER reached a given stage. Drop-off rates between stages
+// represent real-world abandonment (re-uploads requested, navigator review
+// kicks back, county denials, etc.).
+export const DEMO_FUNNEL_STAGES = {
+  draft:              DEMO_TOTAL_PACKETS,                                  // 140,000 — all start
+  submitted:          Math.round(DEMO_TOTAL_PACKETS * 0.92),               // 90-92% submit
+  in_nav_review:      Math.round(DEMO_TOTAL_PACKETS * 0.86),               // 86% reach review
+  ready_for_handoff:  Math.round(DEMO_TOTAL_PACKETS * 0.71),               // 71% reach ready
+  handed_off:         DEMO_PACKETS_ENROLLED,                               // 62% — matches enrolled
+};
+
+/** Avg days in stage. Per-unit, doesn't scale with marketshare. */
+export const DEMO_FUNNEL_AVG_DAYS = {
+  draft:              2.1,
+  submitted:          1.4,
+  in_nav_review:      2.8,
+  ready_for_handoff:  0.6,
+  handed_off:         null,
+};

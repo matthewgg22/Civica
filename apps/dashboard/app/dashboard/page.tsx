@@ -14,7 +14,16 @@ import Link from "next/link";
 import { caCountyToFips } from "../../lib/caCounties";
 import { decryptDemoName, docKindLabel, firstNameLastInitial, shortId } from "../../lib/format";
 import { isDemoFallbackEnabled, DEMO_PACKETS, DEMO_APPLICANTS, DEMO_HISTORY, DEMO_DOCS, DEMO_RISK_ROWS, DEMO_QC_ROWS } from "../../lib/demo-data";
-import { DEMO_TOTAL_HOUSEHOLDS, DEMO_MARKETSHARE_LABEL } from "../../lib/demo-profile";
+import {
+  DEMO_TOTAL_HOUSEHOLDS,
+  DEMO_MARKETSHARE_LABEL,
+  buildDemoCountyStatusMix,
+  DEMO_OVERDUE_RECERTS_COUNT,
+  DEMO_EXPIRING_THIS_MONTH_COUNT,
+  DEMO_NEEDS_ATTENTION_COUNT,
+  DEMO_FUNNEL_STAGES,
+  DEMO_FUNNEL_AVG_DAYS,
+} from "../../lib/demo-profile";
 
 export const dynamic = "force-dynamic";
 
@@ -164,11 +173,30 @@ export default async function DashboardPage() {
     return durations.reduce((a, b) => a + b, 0) / durations.length;
   };
 
-  const funnelStages = FUNNEL_ORDER.map((s) => ({
-    label: s,
-    count: reachedStage(s),
-    avgDays: avgDaysInStage(s),
-  }));
+  // Funnel stages computed from packets in the sample. When demo fallback is
+  // on, override with the at-scale projection from demo-profile.
+  const FUNNEL_KEY_MAP: Record<string, keyof typeof DEMO_FUNNEL_STAGES> = {
+    "Draft":                  "draft",
+    "Submitted for Review":   "submitted",
+    "In Navigator Review":    "in_nav_review",
+    "Ready for Handoff":      "ready_for_handoff",
+    "Handed Off":             "handed_off",
+  };
+  const funnelStages = FUNNEL_ORDER.map((s) => {
+    if (useDemoFallback) {
+      const key = FUNNEL_KEY_MAP[s];
+      return {
+        label: s,
+        count: key ? DEMO_FUNNEL_STAGES[key] : 0,
+        avgDays: key ? DEMO_FUNNEL_AVG_DAYS[key] : null,
+      };
+    }
+    return {
+      label: s,
+      count: reachedStage(s),
+      avgDays: avgDaysInStage(s),
+    };
+  });
 
   // ── Language donut
   const langCounts: Record<string, number> = {};
@@ -238,20 +266,25 @@ export default async function DashboardPage() {
   };
 
   // ── County map data. Prefer `county_fips`; if missing, derive from `county` text (CA only).
-  const byCountyFips: Record<string, { count: number; draft: number; inProgress: number; needsAttention: number; ready: number; enrolled: number }> = {};
+  const byCountyFipsFromPackets: Record<string, { count: number; draft: number; inProgress: number; needsAttention: number; ready: number; enrolled: number }> = {};
   for (const p of packets) {
     if (p.state_code !== "CA") continue;
     const fips = p.county_fips ?? caCountyToFips(p.county);
     if (!fips) continue;
-    const k = byCountyFips[fips] ?? { count: 0, draft: 0, inProgress: 0, needsAttention: 0, ready: 0, enrolled: 0 };
+    const k = byCountyFipsFromPackets[fips] ?? { count: 0, draft: 0, inProgress: 0, needsAttention: 0, ready: 0, enrolled: 0 };
     k.count += 1;
     if (p.status === "Draft") k.draft += 1;
     if (p.status === "Submitted for Review" || p.status === "In Navigator Review") k.inProgress += 1;
     if (p.status === "Needs Documents" || p.status === "Needs Applicant Clarification") k.needsAttention += 1;
     if (p.status === "Ready for Handoff") k.ready += 1;
     if (p.status === "Handed Off" || p.status === "Closed") k.enrolled += 1;
-    byCountyFips[fips] = k;
+    byCountyFipsFromPackets[fips] = k;
   }
+
+  // When demo fallback is on, replace the small-sample county counts with the
+  // 5%-marketshare projection from demo-profile so the CaliforniaMap +
+  // "Top Counties · Status Mix" reflect 140K HHs instead of ~46 sample packets.
+  const byCountyFips = useDemoFallback ? buildDemoCountyStatusMix() : byCountyFipsFromPackets;
 
   // ── County-level risk aggregation for the risk map mode
   type CountyRiskBuild = { scored: number; high: number; medium: number; low: number; _scores: number[] };
@@ -300,21 +333,27 @@ export default async function DashboardPage() {
     byErrorType: Object.entries(byErrorType).sort((a, b) => b[1] - a[1]) as [string, number][],
   };
 
-  // ── Urgent counts for the top-of-dashboard action banner
+  // ── Urgent counts for the top-of-dashboard action banner.
+  // When demo fallback is on, use the 5%-marketshare projections (hundreds
+  // to thousands at scale) instead of the small-sample packet counts.
   const nowMs = Date.now();
   const monthMs = 30 * 24 * 60 * 60 * 1000;
-  const overdueRecerts = packets.filter((p) =>
+  const overdueRecertsFromPackets = packets.filter((p) =>
     p.status === "Handed Off" && p.handed_off_at &&
     new Date(p.handed_off_at).getTime() + 12 * monthMs < nowMs
   ).length;
-  const expiringSoon = packets.filter((p) => {
+  const expiringSoonFromPackets = packets.filter((p) => {
     if (p.status !== "Handed Off" || !p.handed_off_at) return false;
     const recertAt = new Date(p.handed_off_at).getTime() + 12 * monthMs;
     return recertAt >= nowMs && recertAt - nowMs <= 30 * 24 * 60 * 60 * 1000;
   }).length;
-  const needsAttention = packets.filter((p) =>
+  const needsAttentionFromPackets = packets.filter((p) =>
     p.status === "Needs Documents" || p.status === "Needs Applicant Clarification"
   ).length;
+
+  const overdueRecerts = useDemoFallback ? DEMO_OVERDUE_RECERTS_COUNT : overdueRecertsFromPackets;
+  const expiringSoon = useDemoFallback ? DEMO_EXPIRING_THIS_MONTH_COUNT : expiringSoonFromPackets;
+  const needsAttention = useDemoFallback ? DEMO_NEEDS_ATTENTION_COUNT : needsAttentionFromPackets;
 
   // ── County drill-down: pre-compute packets per county for client-side drawer.
   // The client wrapper opens a drawer with this data — no URL change, no roundtrip.
