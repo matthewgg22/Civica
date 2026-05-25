@@ -3,6 +3,7 @@ import Link from "next/link";
 import { createServerClientFromCookies } from "../../lib/supabase";
 import AppHeader from "../../components/AppHeader";
 import { decryptDemoName, firstNameLastInitial, formatDate, shortId } from "../../lib/format";
+import { isDemoFallbackEnabled, DEMO_PACKETS } from "../../lib/demo-data";
 
 export const dynamic = "force-dynamic";
 
@@ -38,7 +39,7 @@ export default async function EnrollmentsPage({ searchParams }: { searchParams: 
   const supabase = createServerClientFromCookies(cookieStore);
   const { data: { user } } = await supabase.auth.getUser();
 
-  const { data: packets } = await supabase
+  const { data: livePackets } = await supabase
     .schema("snap_enrollment")
     .from("snap_packets")
     .select("packet_id, status, county, state_code, handed_off_at, closed_at, applicants(full_name_ciphertext, preferred_language)")
@@ -47,13 +48,27 @@ export default async function EnrollmentsPage({ searchParams }: { searchParams: 
     .order("handed_off_at", { ascending: false })
     .limit(500);
 
+  // Demo fallback for empty local DB (RLS recursion bug).
+  const useDemoFallback = isDemoFallbackEnabled() && (livePackets?.length ?? 0) === 0;
+  const packets = useDemoFallback
+    ? DEMO_PACKETS.filter((p) => p.status === "Handed Off" || p.status === "Closed").map((p) => ({
+        packet_id: p.packet_id,
+        status: p.status,
+        county: p.county,
+        state_code: p.state_code,
+        handed_off_at: p.handed_off_at,
+        closed_at: p.closed_at,
+        applicants: p.applicants,
+      }))
+    : livePackets;
+
   // Sprint metrics: pilot cohort progress + 30-day throughput.
   // Both windows derived from handed_off_at — same field as the existing
   // bucket query above. We could fold into one query but a separate query
   // keeps the bucket logic above unchanged and pulls only what the panels
   // need (no applicants join).
   const thirtyDaysAgoISO = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
-  const { data: pilotPackets } = await supabase
+  const { data: livePilotPackets } = await supabase
     .schema("snap_enrollment")
     .from("snap_packets")
     .select("packet_id, handed_off_at")
@@ -61,6 +76,12 @@ export default async function EnrollmentsPage({ searchParams }: { searchParams: 
     .is("deleted_at", null)
     .gte("handed_off_at", PILOT_START_ISO)
     .order("handed_off_at", { ascending: false });
+
+  const pilotPackets = useDemoFallback && (livePilotPackets?.length ?? 0) === 0
+    ? DEMO_PACKETS
+        .filter((p) => (p.status === "Handed Off" || p.status === "Closed") && p.handed_off_at && p.handed_off_at >= PILOT_START_ISO)
+        .map((p) => ({ packet_id: p.packet_id, handed_off_at: p.handed_off_at }))
+    : livePilotPackets;
 
   const pilotCount = (pilotPackets ?? []).length;
   const mostRecentEnrollmentISO = pilotPackets?.[0]?.handed_off_at ?? null;

@@ -38,11 +38,8 @@ export default function RiskScoreHero({
       <div className="flex items-start justify-between gap-6 mb-6">
         <p className="eyebrow">Error risk assessment</p>
         <div className="flex flex-col items-end gap-1.5 shrink-0">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-amber bg-amber/10 px-2 py-0.5 rounded-sm">
-            Phase 1 heuristic
-          </span>
-          <span className="text-[11px] text-muted font-mono tracking-wide">
-            {engineVersion}{evaluatedAt ? ` · ${evaluatedAt}` : ""}
+          <span className="text-[11px] text-muted tabular-nums tracking-wide">
+            Civica · {engineVersion}{evaluatedAt ? ` · ${evaluatedAt}` : ""}
           </span>
         </div>
       </div>
@@ -94,9 +91,9 @@ export default function RiskScoreHero({
                     ))}{" "}
                     {weakFlows.length === 1 ? "cannot be independently verified" : "have no independent verification signal"}.
                     {topWeakWeight > 0 && (
-                      <> These flows carry{" "}
+                      <> These factors account for{" "}
                         <strong className="tabular-nums">{topWeakWeight.toFixed(1)}%</strong>{" "}
-                        of USDA payment-error weight.
+                        of the federal audit weight.
                       </>
                     )}
                   </>

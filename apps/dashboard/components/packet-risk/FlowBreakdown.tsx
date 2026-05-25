@@ -35,13 +35,13 @@ export default function FlowBreakdown({ flows }: { flows: RiskFlow[] }) {
             How the {totalPoints}-point score is composed
           </h3>
           <p className="text-[13px] text-graphite mt-2 max-w-2xl leading-relaxed">
-            Each USDA error flow contributes points based on its defensibility × USDA weight. Sorted by
-            contribution. Weak flows with high USDA weight are the highest priority to harden before county submission.
+            Each factor contributes points based on verification strength × federal-audit importance.
+            Sorted by contribution. Weakly-verified factors with high audit weight are the highest priority
+            to firm up before county submission.
           </p>
         </div>
         <div className="text-right shrink-0">
-          <p className="text-[11px] text-muted font-mono tracking-wide">{sorted.length} flows · {scored} scored · {notScored} not yet scored</p>
-          <p className="text-[11px] text-muted font-mono tracking-wide mt-0.5">scoring engine · Phase 1 heuristic</p>
+          <p className="text-[11px] text-muted font-mono tracking-wide">{sorted.length} factors · {scored} reviewed · {notScored} pending</p>
         </div>
       </div>
 

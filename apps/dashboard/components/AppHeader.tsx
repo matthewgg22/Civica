@@ -3,13 +3,16 @@ import MobileNavMenu from "./MobileNavMenu";
 
 type NavKey = "dashboard" | "queue" | "enrollments" | "county" | "outreach" | "qc" | "compliance";
 
+// §10106 / county cost-share dashboard is intentionally not in the
+// top nav — it's a B2G demo surface, still reachable by direct URL
+// (/county) for share-outs to county directors. The content exists;
+// only the nav entry is hidden to keep the daily-driver bar focused.
 const NAV_ITEMS: { key: NavKey; href: string; label: string }[] = [
   { key: "dashboard",   href: "/dashboard",    label: "Dashboard" },
   { key: "queue",       href: "/packets",      label: "Queue" },
   { key: "enrollments", href: "/enrollments",  label: "Enrollments" },
-  { key: "county",      href: "/county",       label: "§10106" },
   { key: "outreach",    href: "/outreach",     label: "Outreach" },
-  { key: "qc",          href: "/qc",           label: "QC" },
+  { key: "qc",          href: "/qc",           label: "Quality" },
   { key: "compliance",  href: "/compliance",   label: "Compliance" },
 ];
 

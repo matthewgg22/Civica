@@ -6,6 +6,7 @@ import StatusBadge from "../../components/StatusBadge";
 import FilterChips from "../../components/FilterChips";
 import AppHeader from "../../components/AppHeader";
 import { timeAgo, decryptDemoName, firstNameLastInitial, shortId } from "../../lib/format";
+import { isDemoFallbackEnabled, DEMO_PACKETS, DEMO_RISK_ROWS } from "../../lib/demo-data";
 
 type Filter = "all" | "mine" | "needs-attention" | "in-progress" | "ready" | "complete" | "draft";
 
@@ -54,29 +55,72 @@ export default async function PacketsPage({ searchParams }: { searchParams: Prom
     .order("updated_at", { ascending: false })
     .limit(500);
 
-  const allRaw = (packets ?? []) as Packet[];
+  // Demo fallback: when DEMO_FALLBACK=true and the live query came back
+  // empty (typical on local dev with the pre-existing RLS recursion bug),
+  // swap in the rich hardcoded fixtures so every demo surface lights up.
+  // Production never sets this env var, so this branch is inert there.
+  const livePackets = (packets ?? []) as Packet[];
+  const useDemoFallback = isDemoFallbackEnabled() && livePackets.length === 0;
+  const allRaw: Packet[] = useDemoFallback
+    ? DEMO_PACKETS.map((p) => ({
+        packet_id: p.packet_id,
+        status: p.status,
+        state_code: p.state_code,
+        county: p.county,
+        updated_at: p.updated_at,
+        applicants: p.applicants ? { preferred_language: p.applicants.preferred_language, full_name_ciphertext: p.applicants.full_name_ciphertext } : null,
+      }))
+    : livePackets;
 
   // Fetch the most recent error-risk tier for each packet in one round trip.
   // Multiple rows per packet are possible (one per scoring event); we take
   // the first per packet_id after sorting by created_at DESC.
+  // Also tracks `score` so the queue-header engine KPI banner can render
+  // an honest "avg risk score" + per-packet evaluation count.
   const packetIds = allRaw.map((p) => p.packet_id);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data: riskRows } = packetIds.length > 0
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ? await supabase.schema("snap_enrollment").from("packet_error_risk" as any)
-        .select("packet_id, tier, created_at")
+        .select("packet_id, tier, score, created_at")
         .in("packet_id", packetIds)
         .order("created_at", { ascending: false })
     : { data: [] };
 
   const riskTierByPacket = new Map<string, RiskTier>();
   const riskScoredAtByPacket = new Map<string, string>();
-  for (const row of (riskRows ?? []) as unknown as Array<{ packet_id: string; tier: string | null; created_at: string }>) {
+  const latestScoreByPacket = new Map<string, number>();
+  const evalCountByPacket = new Map<string, number>();
+  // Demo-mode: merge in fixture risk rows so the KPI banner + per-row tier
+  // dots populate even when the live query is empty.
+  const liveRiskRows = (riskRows ?? []) as unknown as Array<{ packet_id: string; tier: string | null; score: number | null; created_at: string }>;
+  const allRiskRows = useDemoFallback && liveRiskRows.length === 0
+    ? DEMO_RISK_ROWS.map((r) => ({ packet_id: r.packet_id, tier: r.tier, score: r.score, created_at: r.created_at }))
+    : liveRiskRows;
+  for (const row of allRiskRows) {
+    evalCountByPacket.set(row.packet_id, (evalCountByPacket.get(row.packet_id) ?? 0) + 1);
     if (!riskTierByPacket.has(row.packet_id) && row.tier) {
       riskTierByPacket.set(row.packet_id, row.tier as RiskTier);
       riskScoredAtByPacket.set(row.packet_id, row.created_at);
+      if (row.score != null) latestScoreByPacket.set(row.packet_id, row.score);
     }
   }
+
+  // Engine KPI: packets the engine has touched in the last 24h (real activity
+  // signal — not "anything updated today"). Avg score is over the latest
+  // score per packet that has been evaluated.
+  const dayAgo = Date.now() - 24 * 60 * 60 * 1000;
+  const reviewedToday = new Set<string>();
+  for (const row of allRiskRows) {
+    if (new Date(row.created_at).getTime() >= dayAgo) reviewedToday.add(row.packet_id);
+  }
+  const allScores = [...latestScoreByPacket.values()];
+  const avgScore = allScores.length > 0
+    ? Math.round(allScores.reduce((a, b) => a + b, 0) / allScores.length)
+    : null;
+  const tierCounts = { low: 0, medium: 0, high: 0 };
+  for (const t of riskTierByPacket.values()) tierCounts[t]++;
+  const tieredTotal = tierCounts.low + tierCounts.medium + tierCounts.high;
 
   // Compute "mine" = packets the current user has personally touched (status changes or notes authored)
   let minePacketIds = new Set<string>();
@@ -129,6 +173,19 @@ export default async function PacketsPage({ searchParams }: { searchParams: Prom
       <AppHeader email={user?.email} active="queue" />
 
       <main className="max-w-5xl mx-auto px-8 py-10">
+        {/* Automated-review activity strip — surfaces "Civica is actively
+            reviewing your queue" before any individual packet is opened.
+            Reuses the risk-rows fetch above; no extra round-trip. */}
+        {tieredTotal > 0 && (
+          <EngineKpiBanner
+            reviewedToday={reviewedToday.size}
+            avgScore={avgScore}
+            tierCounts={tierCounts}
+            tieredTotal={tieredTotal}
+            readyCount={readyCount}
+          />
+        )}
+
         {/* Overview stats */}
         <div className="grid grid-cols-4 gap-4 mb-8">
           <StatCard label="Needs Attention" value={needsAttentionCount} accent="text-warning" bg="bg-warning/8" />
@@ -168,13 +225,13 @@ export default async function PacketsPage({ searchParams }: { searchParams: Prom
           <FilterChips options={filterOptions} active={filter} />
         </div>
 
-        {error && (
+        {error && !useDemoFallback && (
           <div className="bg-error/10 border border-error text-error rounded-[4px] p-4 mb-6 text-[13px]">
             {error.message}
           </div>
         )}
 
-        {visible.length === 0 && !error && (
+        {visible.length === 0 && (!error || useDemoFallback) && (
           <EmptyQueueState filter={filter} />
         )}
 
@@ -191,6 +248,55 @@ export default async function PacketsPage({ searchParams }: { searchParams: Prom
         )}
       </main>
     </div>
+  );
+}
+
+function EngineKpiBanner({
+  reviewedToday, avgScore, tierCounts, tieredTotal,
+}: {
+  reviewedToday: number;
+  avgScore: number | null;
+  tierCounts: { low: number; medium: number; high: number };
+  tieredTotal: number;
+  readyCount: number; // accepted for backwards compat; surfaced in StatCard below
+}) {
+  const lowPct = Math.round((tierCounts.low / tieredTotal) * 100);
+  const medPct = Math.round((tierCounts.medium / tieredTotal) * 100);
+  const highPct = 100 - lowPct - medPct;
+  // Slim ambient strip — engine narrative as context, not as headline.
+  // The action-driving counts (Needs Attention / Ready / etc.) live in the
+  // StatCards immediately below; the banner shouldn't compete with them.
+  // Single-line flex (no flex-wrap, no ml-auto) so layout never orphans.
+  return (
+    <section className="mb-4 bg-pine/5 border border-pine/15 rounded-[4px] px-4 py-2 flex items-center gap-x-5 gap-y-1 flex-wrap text-[12px] text-graphite">
+      <span className="inline-flex items-center gap-1.5 shrink-0">
+        <span className="w-1.5 h-1.5 rounded-full bg-teal" aria-hidden />
+        <span className="text-[10px] font-bold uppercase tracking-[0.12em] text-pine">Automated review</span>
+      </span>
+      <span>
+        <span className="font-semibold text-ink tabular-nums">{reviewedToday}</span> packet{reviewedToday === 1 ? "" : "s"} reviewed · last 24h
+      </span>
+      {avgScore != null && (
+        <span>
+          avg risk <span className="font-semibold text-ink tabular-nums">{avgScore}</span>
+          <span className="text-muted">/100</span>
+        </span>
+      )}
+      <span className="inline-flex items-center gap-2.5">
+        <span className="inline-flex items-center gap-1">
+          <span className="w-1.5 h-1.5 rounded-full bg-teal" />
+          <span className="tabular-nums">{lowPct}% low</span>
+        </span>
+        <span className="inline-flex items-center gap-1">
+          <span className="w-1.5 h-1.5 rounded-full bg-warning" />
+          <span className="tabular-nums">{medPct}% med</span>
+        </span>
+        <span className="inline-flex items-center gap-1">
+          <span className="w-1.5 h-1.5 rounded-full bg-brick" />
+          <span className="tabular-nums">{highPct}% high</span>
+        </span>
+      </span>
+    </section>
   );
 }
 

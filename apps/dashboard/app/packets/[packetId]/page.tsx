@@ -1,4 +1,4 @@
-import { Suspense } from "react";
+import React, { Suspense } from "react";
 import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 import Link from "next/link";
@@ -29,12 +29,14 @@ import type { SUATier } from "@civica/snap-rules";
 import { compareIncome } from "../../../lib/income-verification";
 import type { PayPeriod } from "../../../lib/income-verification";
 
-import { formatDateTime, formatDate, decryptDemoName, docKindLabel, firstNameLastInitial, shortId } from "../../../lib/format";
+import { formatDateTime, formatDate, decryptDemoName, docKindLabel, firstNameLastInitial, shortId, timeAgo } from "../../../lib/format";
 import { PACKET_STATUS_TRANSITIONS } from "@civica/snap-enums";
 import RiskScoreHero from "../../../components/packet-risk/RiskScoreHero";
 import FlowBreakdown from "../../../components/packet-risk/FlowBreakdown";
 import RecommendedActions from "../../../components/packet-risk/RecommendedActions";
 import type { RiskFlow, RiskAction } from "../../../components/packet-risk/types";
+import { getWrStatus } from "../../../lib/packet-fetchers";
+import { isDemoFallbackEnabled, getDemoPacketDetail } from "../../../lib/demo-data";
 
 // Statuses where the expedited-review gate is relevant
 const EXPEDITED_GATE_STATUSES = new Set(["Submitted for Review", "In Navigator Review"]);
@@ -60,11 +62,22 @@ export default async function PacketDetailPage({
   const cookieStore = await cookies();
   const supabase = createServerClientFromCookies(cookieStore);
 
+  // Demo packet short-circuit: when DEMO_FALLBACK=true and the packetId
+  // matches a fixture, synthesize all the destructured `*Result` shapes
+  // from the hardcoded bundle. Lets the detail page render the full
+  // Review Status card narrative even when the local Supabase has the
+  // pre-existing RLS recursion bug.
+  //
+  // We still run the live queries below for the non-demo case; demo
+  // overrides are applied AFTER the live destructure so TypeScript can
+  // keep its narrowing on the live path.
+  const demoBundle = isDemoFallbackEnabled() ? getDemoPacketDetail(packetId) : null;
+
   // Note: wr_status is NOT fetched here. It's deferred to
   // <WorkRequirementsSection> which fetches via the cached
   // getWrStatus() helper and renders inside a <Suspense> boundary —
   // so a slow wr query doesn't gate the rest of the packet detail.
-  const [packetResult, answersResult, docsResult, notesResult, historyResult, fieldsResult, docItemsResult, recertResult, extractionsResult, paychecksResult, errorRiskResult, shelterAllocationResult] = await Promise.all([
+  const [livePacketResult, liveAnswersResult, liveDocsResult, liveNotesResult, liveHistoryResult, liveFieldsResult, liveDocItemsResult, liveRecertResult, liveExtractionsResult, livePaychecksResult, liveErrorRiskResult, liveShelterAllocationResult] = await Promise.all([
     supabase.schema("snap_enrollment").from("snap_packets").select(`*, applicants(*)`).eq("packet_id", packetId).is("deleted_at", null).single(),
     supabase.schema("snap_enrollment").from("packet_answers").select("*").eq("packet_id", packetId).order("question_key"),
     supabase.schema("snap_enrollment").from("uploaded_documents").select("*").eq("packet_id", packetId).is("deleted_at", null).order("uploaded_at", { ascending: false }),
@@ -83,10 +96,15 @@ export default async function PacketDetailPage({
     // extraction_fields (which only carries extraction_id) to the rows for
     // the opened document. We join via uploaded_documents.packet_id rather
     // than a follow-up query so this stays in the parallel batch.
+    //
+    // Also pulls extracted_at / extractor_model / overall_confidence so the
+    // activity timeline can render engine-extraction events ("Paystub
+    // extracted · 94% confidence").
     supabase.schema("snap_enrollment")
       .from("document_extractions")
-      .select("extraction_id, document_id, uploaded_documents!inner(packet_id)")
-      .eq("uploaded_documents.packet_id", packetId),
+      .select("extraction_id, document_id, extracted_at, extractor_model, overall_confidence, uploaded_documents!inner(packet_id, document_kind, original_filename)")
+      .eq("uploaded_documents.packet_id", packetId)
+      .order("extracted_at", { ascending: false }),
     // Argyle marketplace paychecks for cross-verification income panel
     supabase.schema("snap_enrollment")
       .from("marketplace_paychecks")
@@ -95,13 +113,16 @@ export default async function PacketDetailPage({
       .order("pay_date", { ascending: false })
       .limit(1)
       .maybeSingle(),
+    // History-aware: pull the last 5 risk evaluations so the timeline
+    // can render "Engine re-scored 64 → 41 (−23)" events and the
+    // profile-strength card can show a trend delta. errorRisk (latest)
+    // is just [0].
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     supabase.schema("snap_enrollment").from("packet_error_risk" as any)
       .select("score, tier, factors, engine_version, created_at")
       .eq("packet_id", packetId)
       .order("created_at", { ascending: false })
-      .limit(1)
-      .maybeSingle(),
+      .limit(5),
     // Shelter allocation — navigator-confirmed rent share for shared-lease cases
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (supabase.schema("snap_enrollment") as any).from("shelter_allocations")
@@ -109,6 +130,23 @@ export default async function PacketDetailPage({
       .eq("packet_id", packetId)
       .maybeSingle(),
   ]);
+
+  // Apply demo overrides AFTER the live destructure so downstream code
+  // keeps the live result types. Each `*Result` accessor exposes only
+  // `.data` and `.error`, so this is a safe per-field swap.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const packetResult = demoBundle ? ({ data: demoBundle.packet as any, error: null } as typeof livePacketResult) : livePacketResult;
+  const answersResult = demoBundle ? { data: demoBundle.answers, error: null } : liveAnswersResult;
+  const docsResult = demoBundle ? { data: demoBundle.docs, error: null } : liveDocsResult;
+  const notesResult = demoBundle ? { data: demoBundle.notes, error: null } : liveNotesResult;
+  const historyResult = demoBundle ? { data: demoBundle.history, error: null } : liveHistoryResult;
+  const fieldsResult = demoBundle ? { data: demoBundle.fields, error: null } : liveFieldsResult;
+  const docItemsResult = demoBundle ? { data: demoBundle.docItems, error: null } : liveDocItemsResult;
+  const recertResult = liveRecertResult; // demo doesn't seed recertifications
+  const extractionsResult = demoBundle ? { data: demoBundle.extractions, error: null } : liveExtractionsResult;
+  const paychecksResult = demoBundle ? { data: demoBundle.paychecks, error: null } : livePaychecksResult;
+  const errorRiskResult = demoBundle ? { data: demoBundle.riskHistory, error: null } : liveErrorRiskResult;
+  const shelterAllocationResult = demoBundle ? { data: demoBundle.shelterAllocation, error: null } : liveShelterAllocationResult;
 
   if (!packetResult.data) notFound();
   const packet = packetResult.data;
@@ -121,18 +159,32 @@ export default async function PacketDetailPage({
   const docItems = docItemsResult.data ?? [];
   // wrStatus is no longer fetched here — see WorkRequirementsSection below.
   const recert = recertResult.data ?? null;
-  const extractions = (extractionsResult.data ?? []) as Array<{ extraction_id: string; document_id: string }>;
+  type ExtractionRow = {
+    extraction_id: string;
+    document_id: string;
+    extracted_at: string;
+    extractor_model: string | null;
+    overall_confidence: number | null;
+    uploaded_documents: { document_kind: string; original_filename: string | null } | null;
+  };
+  const extractions = (extractionsResult.data ?? []) as ExtractionRow[];
   const extractionsByDoc: Record<string, string[]> = {};
   for (const ex of extractions) {
     (extractionsByDoc[ex.document_id] ??= []).push(ex.extraction_id);
   }
   const latestPaycheck = paychecksResult.data as { monthly_amount_usd: number; pay_date: string; employer_name: string | null } | null;
-  const errorRisk = errorRiskResult.data as {
+  // errorRiskResult is now an array (last 5 evaluations, newest first).
+  // The chronological history (oldest first) is used for timeline Δ events.
+  // The table is queried via `from("packet_error_risk" as any)` so the
+  // result type is opaque to Supabase's type generator — cast through
+  // `unknown` to get a real shape without disabling narrowing.
+  const errorRiskHistory = ((errorRiskResult.data ?? []) as unknown) as Array<{
     score: number | null;
     tier: string | null;
     engine_version: string | null;
-    created_at: string | null;
-  } | null;
+    created_at: string;
+  }>;
+  const errorRisk = errorRiskHistory[0] ?? null;
   const nextStatuses = PACKET_STATUS_TRANSITIONS[packet.status as keyof typeof PACKET_STATUS_TRANSITIONS] ?? [];
 
   // ── Answer helpers — hoisted so sublease classifier + failure-to-elect below can use them ──
@@ -262,7 +314,13 @@ export default async function PacketDetailPage({
   // batch above as `errorRiskResult`, exposed as `errorRisk`. The previous
   // second-batch risk query was a duplicate that doubled the round-trip
   // cost on every packet-detail load.
-  const [unresolvedDocsResult, unreviewedFieldsResult, consentResult, argyleResult] = await Promise.all([
+  // wrStatusForEngine: shared with the Suspense'd <WorkRequirementsSection>
+  // via React's cache() in lib/packet-fetchers.ts — calling it here lets
+  // the engine sign-off checklist + activity timeline reference the same
+  // row without a second round-trip. The fetch is fast (single indexed
+  // lookup) so adding it to the main batch is well under the cost ceiling
+  // T6b was guarding against.
+  const [liveUnresolvedDocsResult, liveUnreviewedFieldsResult, liveConsentResult, liveArgyleResult, liveWrStatusForEngine] = await Promise.all([
     supabase.schema("snap_enrollment").from("required_document_items")
       .select("item_id").eq("packet_id", packetId).eq("is_required", true)
       .is("resolved_at", null).is("waived_at", null),
@@ -278,7 +336,23 @@ export default async function PacketDetailPage({
       .is("revoked_at", null)
       .limit(1)
       .maybeSingle(),
+    getWrStatus(packetId),
   ]);
+
+  // Apply demo overrides (mirrors the main-batch pattern above).
+  const unresolvedDocsResult = demoBundle
+    ? { data: Array.from({ length: demoBundle.unresolvedDocs }, (_, i) => ({ item_id: `unres-${i}` })), error: null }
+    : liveUnresolvedDocsResult;
+  const unreviewedFieldsResult = demoBundle
+    ? { data: Array.from({ length: demoBundle.unreviewedFields }, (_, i) => ({ field_id: `unrev-${i}` })), error: null }
+    : liveUnreviewedFieldsResult;
+  const consentResult = demoBundle
+    ? { data: demoBundle.hasConsent ? [{ consent_id: "c-demo", consented_at: demoBundle.consentedAt }] : [], error: null }
+    : liveConsentResult;
+  const argyleResult = demoBundle
+    ? { data: demoBundle.argyle, error: null }
+    : liveArgyleResult;
+  const wrStatusForEngine = demoBundle ? demoBundle.wrStatus : liveWrStatusForEngine;
 
   const hasConsent = (consentResult.data?.length ?? 0) > 0;
   const consentedAt = hasConsent ? (consentResult.data![0] as { consented_at: string }).consented_at : null;
@@ -354,8 +428,6 @@ export default async function PacketDetailPage({
     verificationSummary.income.flagged,
   ].filter(Boolean).length;
 
-  void argyleLinked; // used for future Argyle-connected UI indicator
-
   const blockers: Blocker[] = [];
   if ((unresolvedDocsResult.data?.length ?? 0) > 0)
     blockers.push({ kind: "unresolved_docs", label: "Required documents not yet resolved", count: unresolvedDocsResult.data!.length });
@@ -363,6 +435,87 @@ export default async function PacketDetailPage({
     blockers.push({ kind: "unreviewed_fields", label: "Extraction fields flagged for review", count: unreviewedFieldsResult.data!.length });
   if (!hasConsent)
     blockers.push({ kind: "missing_consent", label: "Privacy notice consent not on file" });
+
+  // ── Review-status computations ──────────────────────────────────────────
+  // Verification strength: invert the risk score (so 0=weak, 100=strong),
+  // plus small bonuses for verified data sources and penalties for
+  // unresolved blockers. Intentionally a transparent aggregation of
+  // signals that already exist elsewhere on the page.
+  const errorRiskScore = errorRisk?.score ?? null;
+  const strengthBase = errorRiskScore != null ? 100 - errorRiskScore : null;
+  const strengthBonus =
+    (argyleLinked ? 5 : 0) +
+    (verificationFlagCount === 0 ? 5 : 0) +
+    (wrStatusForEngine?.compliance_status === "compliant" ? 5 : 0);
+  const strengthPenalty = blockers.length * 4;
+  const profileStrength = strengthBase != null
+    ? Math.max(0, Math.min(100, strengthBase + strengthBonus - strengthPenalty))
+    : null;
+  const previousRisk = errorRiskHistory[1]?.score ?? null;
+  const strengthDelta = profileStrength != null && previousRisk != null && errorRiskScore != null
+    ? (100 - errorRiskScore) - (100 - previousRisk)
+    : null;
+
+  // Pre-handoff checks: each gate has pass/blocked + a one-line reason.
+  // Labels are caseworker-facing; keep them in workflow language
+  // ("acceptable", "complete", "captured"), not jargon ("≤ Medium",
+  // "§10102", "extraction fields").
+  type SignoffCheck = { id: string; label: string; passed: boolean; note?: string };
+  const signoffChecks: SignoffCheck[] = [
+    {
+      id: "risk",
+      label: "Error-risk acceptable",
+      passed: errorRisk?.tier === "low" || errorRisk?.tier === "medium",
+      note: errorRisk?.tier
+        ? errorRisk.tier === "high"
+          ? `${errorRiskScore ?? "—"}/100 · high`
+          : `${errorRiskScore ?? "—"}/100 · ${errorRisk.tier}`
+        : "Not yet reviewed",
+    },
+    {
+      id: "verification",
+      label: "Cross-checks passed",
+      passed: verificationFlagCount === 0,
+      note: verificationFlagCount === 0
+        ? argyleLinked ? "Income verified via payroll" : "No flags"
+        : `${verificationFlagCount} flag${verificationFlagCount === 1 ? "" : "s"} to review`,
+    },
+    {
+      id: "work-req",
+      label: "Work-hours rule",
+      passed: !wrStatusForEngine?.is_subject || wrStatusForEngine?.compliance_status === "compliant",
+      note: !wrStatusForEngine
+        ? "Not evaluated"
+        : !wrStatusForEngine.is_subject
+          ? "Not subject"
+          : wrStatusForEngine.compliance_status === "compliant"
+            ? "Compliant"
+            : `${wrStatusForEngine.compliance_status ?? "unknown"}`,
+    },
+    {
+      id: "docs",
+      label: "Required documents",
+      passed: (unresolvedDocsResult.data?.length ?? 0) === 0,
+      note: (unresolvedDocsResult.data?.length ?? 0) === 0
+        ? "All received"
+        : `${unresolvedDocsResult.data!.length} outstanding`,
+    },
+    {
+      id: "extractions",
+      label: "Document field review",
+      passed: (unreviewedFieldsResult.data?.length ?? 0) === 0,
+      note: (unreviewedFieldsResult.data?.length ?? 0) === 0
+        ? "None flagged"
+        : `${unreviewedFieldsResult.data!.length} to review`,
+    },
+    {
+      id: "consent",
+      label: "Privacy consent",
+      passed: hasConsent,
+      note: hasConsent ? "Captured" : "Not captured",
+    },
+  ];
+  const passedChecks = signoffChecks.filter((c) => c.passed).length;
 
   // ── Error risk tab data ──────────────────────────────────────────────────
   // `errorRisk` is from the first batch above (errorRiskResult). The old
@@ -442,7 +595,7 @@ export default async function PacketDetailPage({
       impactIfImproved: impactIfUpgraded(50.5, suaDef),
       detail: suaDef === "weak"
         ? "SUA utility questions (heating, electric/gas, phone) have not been answered. USDA classifies SUA as the highest payment-error driver (50.5% weight). Complete the expense questions to move this flow to moderate."
-        : `SUA tier determined: ${suaComputed} (${ { FULL: "$663", LIMITED: "$170", TELEPHONE: "$44", NONE: "$0" }[suaComputed!] }/mo). Phase 2 will verify utility costs independently.`,
+        : `SUA tier determined: ${suaComputed} (${ { FULL: "$663", LIMITED: "$170", TELEPHONE: "$44", NONE: "$0" }[suaComputed!] }/mo). Utility costs are confirmed from the applicant's intake answers.`,
       evidence: [
         { label: "Heating costs", value: answersMap["has_heating_costs"] ?? "not answered" },
         { label: "Electric / gas", value: answersMap["has_electric_or_gas"] ?? "not answered" },
@@ -505,11 +658,11 @@ export default async function PacketDetailPage({
       points: flowPoints(8.2, "moderate"),
       actionable: false,
       impactIfImproved: null,
-      detail: "Asset declarations are taken from the eligibility questionnaire. Phase 1 scores this as moderate; Phase 2 will verify against bank statement data.",
+      detail: "Asset declarations are taken from the eligibility questionnaire. Bank-statement cross-verification is the next defensibility upgrade for this flow.",
       evidence: [
         { label: "Vehicle value", value: answersMap["vehicle_value"] ?? "not answered" },
         { label: "Savings", value: answersMap["savings_amount"] ?? "not answered" },
-        { label: "Bank verification", value: "phase 2" },
+        { label: "Bank verification", value: "pending" },
       ],
     },
     {
@@ -675,7 +828,26 @@ export default async function PacketDetailPage({
           <RecertBanner status={packet.status} handedOffAt={packet.handed_off_at} recert={recert} />
         )}
 
-        {/* OBBBA Work Requirements */}
+        {/* Review Status — the single at-a-glance answer to
+            "is this packet safe to hand off, and if not, what's next."
+            Consolidates verification strength, automated checks,
+            top next actions, and last-reviewed timestamp into one card. */}
+        <ReviewStatusCard
+          strength={profileStrength}
+          delta={strengthDelta}
+          riskScore={errorRiskScore}
+          riskTier={errorRisk?.tier as "high" | "medium" | "low" | null}
+          lastReviewedAt={errorRisk?.created_at ?? null}
+          evalCount={errorRiskHistory.length}
+          signoffChecks={signoffChecks}
+          passedChecks={passedChecks}
+          totalChecks={signoffChecks.length}
+          topActions={riskActions.slice(0, 2)}
+          argyleLinked={argyleLinked}
+          packetId={packetId}
+        />
+
+        {/* Work-Hours Rule (HR 1 §10102 / OBBBA) */}
         <Suspense fallback={<WorkRequirementsSkeleton />}>
           <WorkRequirementsSection packetId={packetId} />
         </Suspense>
@@ -751,7 +923,7 @@ export default async function PacketDetailPage({
               description="will appear as applicant completes the eligibility flow"
             />
           ) : (
-            <AnswerReviewList answers={answers} />
+            <AnswerReviewList answers={answers as unknown as React.ComponentProps<typeof AnswerReviewList>["answers"]} />
           )}
         </Section>
 
@@ -761,7 +933,7 @@ export default async function PacketDetailPage({
           count={docItems.length}
           subtitle="Documents needed before handoff. Mark each resolved once received, or waive with a reason."
         >
-          <DocumentChecklist packetId={packetId} applicantId={packet.applicant_id} stateCode={packet.state_code as "CA" | "MA"} items={docItems} uploadedDocs={docs} />
+          <DocumentChecklist packetId={packetId} applicantId={packet.applicant_id} stateCode={packet.state_code as "CA" | "MA"} items={docItems as unknown as React.ComponentProps<typeof DocumentChecklist>["items"]} uploadedDocs={docs} />
         </Section>
 
         {/* Missing-item requests (navigator-side creator + history) */}
@@ -821,7 +993,7 @@ export default async function PacketDetailPage({
 
         {/* Notes */}
         <Section id="notes" title="Navigator Notes" count={notes.length} subtitle="Internal notes for your team. Mark internal-only to hide from the applicant.">
-          <NotesList packetId={packetId} initialNotes={notes} />
+          <NotesList packetId={packetId} initialNotes={notes as unknown as React.ComponentProps<typeof NotesList>["initialNotes"]} />
         </Section>
 
         {/* Handoff export */}
@@ -836,9 +1008,19 @@ export default async function PacketDetailPage({
           />
         </Section>
 
-        {/* Unified activity timeline — status changes + uploads + notes, sorted by time desc */}
-        <Section title="Activity Timeline" subtitle="Everything that's happened on this packet, in order.">
-          <UnifiedTimeline history={history} docs={docs} notes={notes} />
+        {/* Unified activity timeline — status changes + uploads + notes +
+            automated-review events (risk scores, extractions, Argyle link,
+            work-hours-rule determination), sorted by time desc. */}
+        <Section title="Activity Timeline" subtitle="Status changes, document work, and every automated review — in order.">
+          <UnifiedTimeline
+            history={history}
+            docs={docs}
+            notes={notes}
+            riskHistory={errorRiskHistory}
+            extractions={extractions}
+            argyleConn={argyleResult.data as { linked_at: string | null } | null}
+            wrStatus={wrStatusForEngine}
+          />
         </Section>
 
         {devtoolsEnabled ? (
@@ -857,8 +1039,28 @@ export default async function PacketDetailPage({
 type HistoryRow = { history_id: string; from_status: string | null; to_status: string; occurred_at: string; reason: string | null };
 type DocRow     = { document_id: string; document_kind: string; uploaded_at: string; original_filename: string | null };
 type NoteRow    = { note_id: string; created_at: string; is_internal: boolean };
+type RiskRow    = { score: number | null; tier: string | null; engine_version: string | null; created_at: string };
+type ExtRow     = {
+  extraction_id: string;
+  document_id: string;
+  extracted_at: string;
+  extractor_model: string | null;
+  overall_confidence: number | null;
+  uploaded_documents: { document_kind: string; original_filename: string | null } | null;
+};
+type WrLite = { compliance_status: string | null; determined_at: string; is_subject: boolean; exemption_type: string | null } | null;
 
-function UnifiedTimeline({ history, docs, notes }: { history: HistoryRow[]; docs: DocRow[]; notes: NoteRow[] }) {
+function UnifiedTimeline({
+  history, docs, notes, riskHistory, extractions, argyleConn, wrStatus,
+}: {
+  history: HistoryRow[];
+  docs: DocRow[];
+  notes: NoteRow[];
+  riskHistory: RiskRow[];
+  extractions: ExtRow[];
+  argyleConn: { linked_at: string | null } | null;
+  wrStatus: WrLite;
+}) {
   type Event = {
     id: string;
     at: string;
@@ -910,10 +1112,119 @@ function UnifiedTimeline({ history, docs, notes }: { history: HistoryRow[]; docs
     });
   }
 
+  // Automated reviews: risk evaluations. riskHistory arrives newest-first;
+  // iterate chronologically so each event can reference the previous
+  // score to compute Δ ("re-scored 64 → 41").
+  const chrono = [...riskHistory].reverse();
+  for (let i = 0; i < chrono.length; i++) {
+    const r = chrono[i];
+    if (!r) continue;
+    const prev = i > 0 ? chrono[i - 1] : null;
+    const isFirst = !prev;
+    if (r.score == null) continue;
+    if (isFirst) {
+      events.push({
+        id: `risk-${r.created_at}`,
+        at: r.created_at,
+        icon: "⚙",
+        iconBg: "bg-indigo/15 text-indigo",
+        title: (
+          <span>
+            Automated review —{" "}
+            <span className="font-semibold text-ink tabular-nums">{r.score}</span>
+            <span className="text-muted"> / 100</span>
+            {r.tier && <span className="text-muted"> · {r.tier}</span>}
+          </span>
+        ),
+      });
+    } else if (prev && prev.score != null) {
+      const delta = r.score - prev.score;
+      if (delta === 0) continue;
+      const improved = delta < 0; // risk going down = profile getting stronger
+      events.push({
+        id: `risk-${r.created_at}`,
+        at: r.created_at,
+        icon: improved ? "↘" : "↗",
+        iconBg: improved ? "bg-teal/15 text-teal" : "bg-warning/15 text-warning",
+        title: (
+          <span>
+            Risk re-scored —{" "}
+            <span className="tabular-nums text-muted">{prev.score}</span>
+            <span className="text-muted"> → </span>
+            <span className="font-semibold text-ink tabular-nums">{r.score}</span>
+            <span className={`ml-2 text-[12px] font-semibold ${improved ? "text-teal" : "text-warning"}`}>
+              {improved ? "−" : "+"}{Math.abs(delta)} pts
+            </span>
+          </span>
+        ),
+        detail: improved ? "verification improved" : "new signal raised risk",
+      });
+    }
+  }
+
+  // Automated reviews: document extractions. Each row = one OCR pass.
+  // Model ID intentionally omitted — caseworkers don't need to know
+  // which LLM extracted the data.
+  for (const ex of extractions) {
+    const kind = ex.uploaded_documents?.document_kind ?? "document";
+    const kindLabel = docKindLabel(kind);
+    const conf = ex.overall_confidence != null ? Math.round(ex.overall_confidence * 100) : null;
+    events.push({
+      id: `ext-${ex.extraction_id}`,
+      at: ex.extracted_at,
+      icon: "⊕",
+      iconBg: "bg-pine/15 text-pine",
+      title: (
+        <span>
+          <span className="font-semibold text-ink">{kindLabel}</span> read by Civica
+          {conf != null && (
+            <span className="ml-2 text-[12px] font-semibold tabular-nums text-pine">{conf}% confidence</span>
+          )}
+        </span>
+      ),
+    });
+  }
+
+  // Argyle payroll connection (one event when linked).
+  if (argyleConn?.linked_at) {
+    events.push({
+      id: `argyle-${argyleConn.linked_at}`,
+      at: argyleConn.linked_at,
+      icon: "⚡",
+      iconBg: "bg-teal/15 text-teal",
+      title: (
+        <span>
+          <span className="font-semibold text-ink">Payroll connected</span> via Argyle
+          <span className="ml-2 text-[12px] font-semibold text-teal">income now independently verified</span>
+        </span>
+      ),
+    });
+  }
+
+  // Work-hours rule (HR 1 §10102) determination (one event).
+  if (wrStatus?.determined_at) {
+    const passed = !wrStatus.is_subject || wrStatus.compliance_status === "compliant";
+    events.push({
+      id: `wr-${wrStatus.determined_at}`,
+      at: wrStatus.determined_at,
+      icon: passed ? "✓" : "!",
+      iconBg: passed ? "bg-teal/15 text-teal" : "bg-warning/15 text-warning",
+      title: (
+        <span>
+          Work-hours rule —{" "}
+          <span className="font-semibold text-ink">
+            {!wrStatus.is_subject ? "not subject" : wrStatus.compliance_status ?? "unknown"}
+          </span>
+        </span>
+      ),
+      detail: wrStatus.exemption_type ?? undefined,
+    });
+  }
+
   events.sort((a, b) => new Date(b.at).getTime() - new Date(a.at).getTime());
 
   if (events.length === 0) {
-    return <EmptyState title="No activity yet" description="status changes, uploads, and notes will appear here in order" />;
+    return <EmptyState title="No activity yet" description="status changes, uploads, and automated reviews will appear here in order" />;
   }
 
   return (
@@ -1062,6 +1373,159 @@ function MetaInline({ label, value, mono }: { label: string; value: string; mono
 // T6b per-section Suspense refactor. Page-level wr_status fetch
 // removed too — the section fetches its own data via the cached
 // getWrStatus() helper in lib/packet-fetchers.ts.
+
+/**
+ * Single at-a-glance card that answers the caseworker's two core
+ * questions about a packet:
+ *   1. Is this safe to hand off?            (status label + gate list)
+ *   2. If not, what's the next action?      (top 2 prioritized fixes)
+ *
+ * Consolidates what were previously four separate surfaces (profile
+ * strength, Argyle uplift, engine sign-off, engine heartbeat) into one
+ * dense panel positioned right under the hero. Everything inside is
+ * derived from data already fetched by the page — no extra round-trips.
+ */
+function ReviewStatusCard({
+  strength, delta, riskScore, riskTier, lastReviewedAt, evalCount,
+  signoffChecks, passedChecks, totalChecks, topActions, argyleLinked, packetId,
+}: {
+  strength: number | null;
+  delta: number | null;
+  riskScore: number | null;
+  riskTier: "high" | "medium" | "low" | null;
+  lastReviewedAt: string | null;
+  evalCount: number;
+  signoffChecks: { id: string; label: string; passed: boolean; note?: string }[];
+  passedChecks: number;
+  totalChecks: number;
+  topActions: RiskAction[];
+  argyleLinked: boolean;
+  packetId: string;
+}) {
+  const remaining = totalChecks - passedChecks;
+  const isReady = remaining === 0 && (riskTier === "low" || riskTier === "medium");
+  const isCritical = riskTier === "high" || remaining >= 4;
+  const isAlmost = !isReady && remaining <= 2 && !isCritical;
+
+  const readinessLabel = strength == null
+    ? "Awaiting review"
+    : isReady
+      ? "Ready to hand off"
+      : isCritical
+        ? "Needs review"
+        : isAlmost
+          ? `Almost ready · ${remaining} check${remaining === 1 ? "" : "s"} remaining`
+          : `In review · ${remaining} check${remaining === 1 ? "" : "s"} remaining`;
+
+  const tone: "teal" | "warning" | "graphite" | "muted" =
+    strength == null ? "muted"
+      : isReady ? "teal"
+        : isCritical ? "warning"
+          : "graphite";
+  const toneClass = {
+    teal: { border: "border-teal/40", ring: "ring-teal/15", band: "bg-teal/10", text: "text-teal", bar: "bg-teal", dot: "bg-teal" },
+    warning: { border: "border-warning/40", ring: "ring-warning/15", band: "bg-warning/10", text: "text-warning", bar: "bg-warning", dot: "bg-warning" },
+    graphite: { border: "border-hairline", ring: "ring-hairline", band: "bg-paper", text: "text-graphite", bar: "bg-graphite", dot: "bg-graphite" },
+    muted: { border: "border-hairline", ring: "ring-hairline", band: "bg-paper", text: "text-muted", bar: "bg-muted", dot: "bg-muted" },
+  }[tone];
+
+  const strengthBand = strength == null
+    ? "—"
+    : strength >= 80 ? "Verified"
+      : strength >= 60 ? "Partial"
+        : strength >= 40 ? "Needs work"
+          : "Critical";
+
+  return (
+    <section className={`bg-surface border ${toneClass.border} rounded-[4px] overflow-hidden ring-1 ${toneClass.ring}`}>
+      {/* Readiness band */}
+      <div className={`${toneClass.band} px-6 py-3 flex items-center gap-3 flex-wrap border-b border-hairline`}>
+        <span className={`inline-flex w-2 h-2 rounded-full ${toneClass.dot}`} aria-hidden />
+        <span className={`text-[13px] font-semibold ${toneClass.text}`}>{readinessLabel}</span>
+        {lastReviewedAt && (
+          <span className="ml-auto text-[12px] text-muted tabular-nums">
+            Reviewed {timeAgo(lastReviewedAt)}
+            {evalCount > 1 && <span className="text-muted"> · {evalCount} reviews on file</span>}
+          </span>
+        )}
+      </div>
+
+      {/* Strength + risk */}
+      <div className="px-6 py-4">
+        <div className="flex items-baseline gap-3 flex-wrap">
+          <span className="text-[28px] font-semibold text-ink tabular-nums leading-none">
+            {strength ?? "—"}
+            <span className="text-[14px] text-muted font-normal"> / 100</span>
+          </span>
+          <span className="text-[13px] uppercase tracking-wider font-semibold text-graphite">
+            verification strength · {strengthBand}
+          </span>
+          {delta != null && delta !== 0 && (
+            <span className={`text-[12px] font-semibold tabular-nums ${delta > 0 ? "text-teal" : "text-warning"}`}>
+              {delta > 0 ? "+" : "−"}{Math.abs(delta)} since last review
+            </span>
+          )}
+        </div>
+        <div className="mt-2 h-1.5 bg-paper rounded-full overflow-hidden">
+          <div className={`h-full ${toneClass.bar} transition-all`} style={{ width: `${strength ?? 0}%` }} />
+        </div>
+        <p className="text-[12px] text-muted mt-2 tabular-nums">
+          Risk score <span className="text-graphite font-medium">{riskScore ?? "—"}/100</span>
+          {riskTier && <span> · {riskTier}</span>}
+          {argyleLinked && <span className="text-teal"> · income verified via payroll</span>}
+        </p>
+      </div>
+
+      {/* Pre-handoff checks */}
+      <div className="px-6 pb-4 grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-1.5">
+        {signoffChecks.map((c) => (
+          <div key={c.id} className="flex items-center gap-2 text-[13px]">
+            <span
+              className={`shrink-0 inline-flex w-4 h-4 items-center justify-center rounded-full text-[10px] font-bold ${
+                c.passed ? "bg-teal text-white" : "bg-paper border border-hairline text-muted"
+              }`}
+              aria-hidden
+            >
+              {c.passed ? "✓" : ""}
+            </span>
+            <span className={c.passed ? "text-graphite" : "text-ink font-medium"}>{c.label}</span>
+            {c.note && <span className="ml-auto text-[12px] text-muted tabular-nums">{c.note}</span>}
+          </div>
+        ))}
+      </div>
+
+      {/* Next actions — promote the top 2 from the Risk tab so caseworkers
+          don't have to tab-switch to see what to do. */}
+      {topActions.length > 0 && (
+        <div className="border-t border-hairline bg-paper/40 px-6 py-4">
+          <div className="flex items-baseline justify-between mb-2.5">
+            <p className="eyebrow">Next actions</p>
+            <Link
+              href={`/packets/${packetId}?tab=risk`}
+              className="text-[12px] font-semibold text-pine hover:underline"
+            >
+              See full breakdown →
+            </Link>
+          </div>
+          <ol className="space-y-1.5">
+            {topActions.map((a) => (
+              <li key={a.id} className="flex items-baseline gap-2 text-[13px]">
+                <span className="tabular-nums text-muted font-semibold shrink-0">{a.n}.</span>
+                <span className="text-ink font-medium">{a.title}</span>
+                <span className="text-[12px] text-muted shrink-0">
+                  · {a.actor} · {a.timeEst}
+                </span>
+                <span className="ml-auto text-[12px] font-semibold text-teal tabular-nums shrink-0">
+                  −{a.impact} pts
+                </span>
+              </li>
+            ))}
+          </ol>
+        </div>
+      )}
+    </section>
+  );
+}
 
 const RISK_TIER_STYLE: Record<"high" | "medium" | "low", { bg: string; text: string; dot: string; label: string }> = {
   high:   { bg: "bg-brick/10",   text: "text-brick",   dot: "bg-brick",   label: "High risk" },

@@ -43,8 +43,8 @@ export default function RecommendedActions({
           <p className="eyebrow mb-1.5">Recommended actions · {actions.length} of {actions.length}</p>
           <h3 className="text-[20px] font-semibold tracking-tight text-ink">Reduce risk before submission</h3>
           <p className="text-[13px] text-graphite mt-2 max-w-2xl leading-relaxed">
-            Each action targets the highest-leverage gaps in the current scoring. Estimated impact is based on
-            the flow's USDA weight and the change in defensibility. Sorted by impact.
+            Each action targets the highest-leverage gaps. Estimated impact reflects each factor&apos;s
+            federal-audit weight and how much firmer the verification would get. Sorted by impact.
           </p>
         </div>
         {projected != null && projectedTier && (
@@ -84,9 +84,9 @@ export default function RecommendedActions({
         </svg>
         <p className="text-[12px] text-graphite leading-relaxed">
           <strong className="text-ink font-semibold">About these estimates.</strong>{" "}
-          Impact figures are the score reduction if each flow's defensibility moves up one level
-          (weak → moderate, or moderate → strong) at its current USDA weight. Actual reductions vary
-          based on downstream evidence quality. Estimates re-compute every time new data is attached.
+          Impact figures are the score reduction if each factor&apos;s verification moves up one level
+          (weak → partial, or partial → verified) at its current federal-audit weight. Actual reductions
+          vary based on the evidence Civica receives. Estimates re-compute every time new data is attached.
         </p>
       </div>
     </section>
@@ -110,7 +110,7 @@ function ActionRow({ action: a }: { action: RiskAction }) {
         <div className="flex items-center gap-3 flex-wrap text-[11px] text-muted font-mono tracking-wide">
           <span>{a.flowLabel}</span>
           <span className="w-px h-3 bg-hairline" />
-          <span>USDA w {a.weight}%</span>
+          <span>audit weight {a.weight}%</span>
           <span className="w-px h-3 bg-hairline" />
           <span className="flex items-center gap-1">
             <ClockIcon />

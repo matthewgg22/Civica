@@ -45,27 +45,17 @@ export default function StatusTransition({ packetId, nextStatuses, blockers = []
     }
   }
 
+  // Note: the duplicate blocker list that used to render here has been
+  // removed. Blockers are surfaced in the consolidated Review Status card
+  // at the top of the packet, so showing them again right above the
+  // button was redundant. The "→ Ready for Handoff" button stays disabled
+  // with a tooltip when blockers exist.
+  const blockerSummary = blockers.length > 0
+    ? `${blockers.length} item${blockers.length === 1 ? "" : "s"} unresolved — see Review Status above`
+    : null;
+
   return (
     <div className="space-y-3">
-      {blockers.length > 0 && nextStatuses.includes(BLOCKED_STATUS) && (
-        <div className="rounded-[3px] border border-amber/40 bg-amber/8 px-4 py-3 space-y-2">
-          <p className="text-[13px] font-semibold text-amber">
-            Cannot advance to &ldquo;Ready for Handoff&rdquo; — resolve the following first:
-          </p>
-          <ul className="space-y-1">
-            {blockers.map((b) => (
-              <li key={b.kind} className="flex items-center gap-2 text-[13px] text-graphite">
-                <span className="text-amber shrink-0">▸</span>
-                {b.label}
-                {b.count !== undefined && b.count > 0 && (
-                  <span className="font-semibold text-ink">({b.count})</span>
-                )}
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
-
       <div>
         <input
           type="text"
@@ -77,7 +67,7 @@ export default function StatusTransition({ packetId, nextStatuses, blockers = []
         <p className="text-[11px] text-muted mt-1.5 italic">↳ This message will appear in the packet's audit trail for compliance review.</p>
       </div>
 
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap items-center gap-2">
         {nextStatuses.map((status) => {
           const isBlocked = status === BLOCKED_STATUS && blockers.length > 0;
           return (
@@ -85,13 +75,16 @@ export default function StatusTransition({ packetId, nextStatuses, blockers = []
               key={status}
               onClick={() => transition(status)}
               disabled={loading !== null || isBlocked}
-              title={isBlocked ? "Resolve all blockers before advancing to Ready for Handoff" : undefined}
+              title={isBlocked ? "Resolve all items in Review Status before advancing to Ready for Handoff" : undefined}
               className="px-4 py-2 text-[13px] font-semibold rounded-[3px] bg-pine text-white hover:bg-pine/90 disabled:bg-graphite/20 disabled:text-graphite disabled:cursor-not-allowed transition-colors"
             >
               {loading === status ? "Moving…" : `→ ${status}`}
             </button>
           );
         })}
+        {blockerSummary && (
+          <span className="text-[12px] text-warning ml-2">{blockerSummary}</span>
+        )}
       </div>
 
       {error && <p className="text-[13px] text-error">{error}</p>}
