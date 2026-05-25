@@ -8,6 +8,11 @@ import NotificationOutlayPanel from "../../components/ops/NotificationOutlayPane
 import CohortRetentionPanel from "../../components/ops/CohortRetentionPanel";
 import TTFDPanel from "../../components/ops/TTFDPanel";
 import PartnerPnLPanel from "../../components/ops/PartnerPnLPanel";
+import MedicareAdvantagePanel from "../../components/ops/MedicareAdvantagePanel";
+import EligibilityQueuePanel from "../../components/ops/EligibilityQueuePanel";
+import RevenueLinesPanel from "../../components/ops/RevenueLinesPanel";
+import LTVPanel from "../../components/ops/LTVPanel";
+import DistressOverlayPanel from "../../components/ops/DistressOverlayPanel";
 import {
   fetchEbtAggregate,
   fetchPlacements,
@@ -15,6 +20,11 @@ import {
   fetchCohorts,
   fetchTTFD,
   fetchPartnerPnL,
+  fetchMedicareAdvantage,
+  fetchEligibilityQueue,
+  fetchRevenueLines,
+  fetchLTV,
+  fetchDistressOverlay,
 } from "../../lib/ops-fetchers";
 
 export const dynamic = "force-dynamic";
@@ -27,12 +37,17 @@ export default async function OpsPage() {
   // Fetch all panel data in parallel. Each fetcher catches missing-relation
   // errors and returns `{ available: false, ... }` so the page renders
   // cleanly when migrations haven't been applied locally.
-  const [ebt, placements, notifications, cohorts, ttfd] = await Promise.all([
+  const [ebt, placements, notifications, cohorts, ttfd, medicareAdvantage, eligibilityQueue, revenueLines, ltv, distressOverlay] = await Promise.all([
     fetchEbtAggregate(),
     fetchPlacements(),
     fetchNotificationOutlay(),
     fetchCohorts(),
     fetchTTFD(),
+    fetchMedicareAdvantage(),
+    fetchEligibilityQueue(),
+    fetchRevenueLines(),
+    fetchLTV(),
+    fetchDistressOverlay(),
   ]);
 
   // P&L denominator depends on the active-tracker count from Panel 1.
@@ -64,6 +79,19 @@ export default async function OpsPage() {
         {/* Hero strip — animated headline KPIs across the top */}
         <OpsHeroStrip ebt={ebt} pnl={pnl} notifications={notifications} ttfd={ttfd} />
 
+        {/* LTV headline — the fundability metric. "Every tracked HH is worth
+            $X/yr" — composite of every monetization line, with projected
+            ceiling shown as roadmap headroom. */}
+        <LTVPanel data={ltv} />
+
+        {/* Revenue rollup — "where the money comes from" headline panel,
+            anchors the page by surfacing every monetization line at once. */}
+        <RevenueLinesPanel data={revenueLines} />
+
+        {/* Opportunity queue — workflow-defining "what's next" view, sits above
+            the reporting panels so operators see actionable work first. */}
+        <EligibilityQueuePanel data={eligibilityQueue} />
+
         {/* Headline panels */}
         <EBTBalancePanel data={ebt} />
         <PlacementMapPanel data={placements} />
@@ -75,6 +103,14 @@ export default async function OpsPage() {
 
         {/* Monetization — visually distinct (pine border) and clearly operator-gated */}
         <PartnerPnLPanel data={pnl} />
+        <MedicareAdvantagePanel data={medicareAdvantage} />
+
+        {/* Distress honor flag — political defense layer. For every
+            monetization line, surface how many HHs were excluded because
+            they're in active distress (denial appeal / OBBBA §10102
+            distress prompt / recert lapse). Sits at the bottom and closes
+            the page on a trust beat. */}
+        <DistressOverlayPanel data={distressOverlay} />
       </div>
 
       <footer className="border-t border-hairline px-8 py-5 flex justify-between items-center text-[11px] text-muted font-mono tracking-wide mt-8">
