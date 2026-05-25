@@ -157,11 +157,15 @@ export default function CaliforniaMap({
         <div className="mt-5 pt-4 border-t border-hairline">
           <div className="flex items-baseline justify-between gap-4 mb-3 flex-wrap">
             <p className="text-[12px] uppercase tracking-wider font-bold text-ink">Top Counties · Status Mix</p>
-            <div className="flex items-center gap-3 text-[12px] text-graphite font-semibold">
-              <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-sm bg-graphite" />Draft</span>
-              <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-sm bg-indigo" />In Progress</span>
-              <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-sm bg-amber" />Attention</span>
-              <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-sm bg-teal" />Ready</span>
+            {/* Color ramp: faded gray → graphite → warning orange (attention)
+                → pine/40 (almost done) → pine (done). Single accent color
+                (warning) breaks the otherwise gray-to-pine progression so
+                "Attention" reads as the call-to-action. */}
+            <div className="flex items-center gap-3 text-[11px] text-graphite font-medium">
+              <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-sm" style={{ backgroundColor: "#C8C2B6" }} />Draft</span>
+              <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-sm bg-graphite" />In Progress</span>
+              <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-sm bg-warning" />Attention</span>
+              <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-sm" style={{ backgroundColor: "#A8C7B3" }} />Ready</span>
               <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-sm bg-pine" />Enrolled</span>
             </div>
           </div>
@@ -175,18 +179,19 @@ export default function CaliforniaMap({
                     href={`/dashboard?county=${encodeURIComponent(c.name)}`}
                     data-county={c.name}
                     data-county-active="true"
-                    className="block hover:bg-paper -mx-2 px-2 py-1.5 rounded-[3px] transition-colors cursor-pointer group"
+                    className="block hover:bg-paper -mx-2 px-2 py-1.5 rounded-[3px] transition-colors cursor-pointer group no-underline focus:outline-none"
                   >
                     <div className="flex items-baseline justify-between mb-1">
-                      <span className="text-[13px] font-semibold text-ink group-hover:text-pine transition-colors">{c.name}</span>
-                      <span className="text-[12px] text-graphite tabular-nums font-semibold">{total}</span>
+                      <span className="text-[13px] font-semibold text-ink">{c.name}</span>
+                      <span className="text-[12px] text-graphite tabular-nums font-semibold">{total.toLocaleString()}</span>
                     </div>
-                    {/* 2px gaps (via gap-0.5) on a white-track parent give visible dividers between segments */}
-                    <div className="relative h-3 rounded-full overflow-hidden flex gap-0.5 bg-white">
-                      {c.stats.draft > 0          && <div className="bg-graphite h-full" style={{ width: `${pct(c.stats.draft)}%` }} />}
-                      {c.stats.inProgress > 0     && <div className="bg-indigo h-full"   style={{ width: `${pct(c.stats.inProgress)}%` }} />}
-                      {c.stats.needsAttention > 0 && <div className="bg-amber h-full"    style={{ width: `${pct(c.stats.needsAttention)}%` }} />}
-                      {c.stats.ready > 0          && <div className="bg-teal h-full"     style={{ width: `${pct(c.stats.ready)}%` }} />}
+                    {/* Track is the paper color; segments use the ramp from
+                        the legend above (gray progression + warning + pine). */}
+                    <div className="relative h-3 rounded-full overflow-hidden flex gap-0.5 bg-paper">
+                      {c.stats.draft > 0          && <div className="h-full" style={{ width: `${pct(c.stats.draft)}%`,          backgroundColor: "#C8C2B6" }} />}
+                      {c.stats.inProgress > 0     && <div className="bg-graphite h-full" style={{ width: `${pct(c.stats.inProgress)}%` }} />}
+                      {c.stats.needsAttention > 0 && <div className="bg-warning h-full"  style={{ width: `${pct(c.stats.needsAttention)}%` }} />}
+                      {c.stats.ready > 0          && <div className="h-full"  style={{ width: `${pct(c.stats.ready)}%`,         backgroundColor: "#A8C7B3" }} />}
                       {c.stats.enrolled > 0       && <div className="bg-pine h-full"     style={{ width: `${pct(c.stats.enrolled)}%` }} />}
                     </div>
                   </a>
