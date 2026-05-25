@@ -24,14 +24,20 @@ const PROJ_W = 520;
 const PROJ_H = 620;
 const PAD = 4;
 
+// Choropleth scale for "packets placed" — pine gradient (the brand
+// primary), NOT brick. Brick is reserved for SNAP denial/appeal/distress
+// recovery flows per the iOS design system; using it for positive
+// enrollment activity read as alarming on the otherwise cream surface.
+// Pine matches the CIVICA IMPACT band above the map and signals
+// presence/coverage rather than emergency.
 function colorFor(count: number, max: number): string {
   if (count === 0) return "#EEEAE0";
   const t = max > 0 ? count / max : 0;
-  if (t < 0.15) return "#F5D8CF";
-  if (t < 0.35) return "#E8A493";
-  if (t < 0.6)  return "#D27158";
-  if (t < 0.85) return "#B0492F";
-  return "#7A2D1B";
+  if (t < 0.15) return "#D8E6DE";  // pine-surface
+  if (t < 0.35) return "#A8C7B3";
+  if (t < 0.6)  return "#6B9B7E";
+  if (t < 0.85) return "#3F7559";
+  return "#224636";  // pine-pressed
 }
 
 function riskColorFor(risk: CountyRiskStats | undefined): string {
@@ -156,7 +162,7 @@ export default function CaliforniaMap({
               <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-sm bg-indigo" />In Progress</span>
               <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-sm bg-amber" />Attention</span>
               <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-sm bg-teal" />Ready</span>
-              <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-sm bg-brick" />Enrolled</span>
+              <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-sm bg-pine" />Enrolled</span>
             </div>
           </div>
           <ul className="space-y-2.5">
@@ -181,7 +187,7 @@ export default function CaliforniaMap({
                       {c.stats.inProgress > 0     && <div className="bg-indigo h-full"   style={{ width: `${pct(c.stats.inProgress)}%` }} />}
                       {c.stats.needsAttention > 0 && <div className="bg-amber h-full"    style={{ width: `${pct(c.stats.needsAttention)}%` }} />}
                       {c.stats.ready > 0          && <div className="bg-teal h-full"     style={{ width: `${pct(c.stats.ready)}%` }} />}
-                      {c.stats.enrolled > 0       && <div className="bg-brick h-full"    style={{ width: `${pct(c.stats.enrolled)}%` }} />}
+                      {c.stats.enrolled > 0       && <div className="bg-pine h-full"     style={{ width: `${pct(c.stats.enrolled)}%` }} />}
                     </div>
                   </a>
                 </li>
@@ -200,11 +206,11 @@ function Legend({ max }: { max: number }) {
   }
   const stops = [
     { color: "#EEEAE0", label: "0" },
-    { color: "#F5D8CF", label: "" },
-    { color: "#E8A493", label: "" },
-    { color: "#D27158", label: "" },
-    { color: "#B0492F", label: "" },
-    { color: "#7A2D1B", label: `${max}+` },
+    { color: "#D8E6DE", label: "" },
+    { color: "#A8C7B3", label: "" },
+    { color: "#6B9B7E", label: "" },
+    { color: "#3F7559", label: "" },
+    { color: "#224636", label: `${max}+` },
   ];
   return (
     <div className="flex items-center gap-2">

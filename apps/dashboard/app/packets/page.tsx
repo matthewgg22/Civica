@@ -186,12 +186,16 @@ export default async function PacketsPage({ searchParams }: { searchParams: Prom
           />
         )}
 
-        {/* Overview stats */}
+        {/* Overview stats — uniform surface bg, color only the number per
+            semantic. Previous warm-pink/neutral/warm-gold/neutral
+            alternation pulled the eye unnaturally and competed with the
+            content below. Per design discipline: one accent per metric,
+            not one per card. */}
         <div className="grid grid-cols-4 gap-4 mb-8">
-          <StatCard label="Needs Attention" value={needsAttentionCount} accent="text-warning" bg="bg-warning/8" />
-          <StatCard label="In Progress" value={inProgressCount} accent="text-ink" bg="bg-paper" />
-          <StatCard label="Ready for Handoff" value={readyCount} accent="text-teal" bg="bg-teal/8" />
-          <StatCard label="Active Total" value={activeCount} accent="text-ink" bg="bg-surface-secondary" />
+          <StatCard label="Needs Attention" value={needsAttentionCount} accent="text-warning" bg="bg-surface" />
+          <StatCard label="In Progress" value={inProgressCount} accent="text-indigo" bg="bg-surface" />
+          <StatCard label="Ready for Handoff" value={readyCount} accent="text-teal" bg="bg-surface" />
+          <StatCard label="Active Total" value={activeCount} accent="text-ink" bg="bg-surface" />
         </div>
 
         <div className="mb-4">
