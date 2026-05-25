@@ -2,9 +2,9 @@ import { cookies } from "next/headers";
 import { createServerClientFromCookies } from "../../lib/supabase";
 import AppHeader from "../../components/AppHeader";
 import ApiCoveragePanel from "../../components/qc/ApiCoveragePanel";
-import ScoringPanel from "../../components/qc/ScoringPanel";
 import BaselinePanel from "../../components/qc/BaselinePanel";
 import FormulaHero from "../../components/qc/FormulaHero";
+import PillarTracking from "../../components/qc/PillarTracking";
 import { ENGINE_VERSION } from "@civica/snap-qc-engine";
 
 export const dynamic = "force-dynamic";
@@ -246,13 +246,13 @@ export default async function QCPage() {
           shelterDocCount={shelterDocCount}
           suaAnswered={suaModerate}
         />
-        <ApiCoveragePanel apis={apiData} totalPackets={totalPackets} />
-        <ScoringPanel
-          total={totalPackets}
-          complete={complete}
-          incomplete={incomplete}
-          defensibility={defensibility}
+        <PillarTracking
+          totalPackets={totalPackets}
+          argyleConnected={argyleConnected}
+          shelterDocCount={shelterDocCount}
+          suaAnswered={suaModerate}
         />
+        <ApiCoveragePanel apis={apiData} totalPackets={totalPackets} />
         <BaselinePanel comparison={comparison} sampleN={sampleN} />
       </div>
 
