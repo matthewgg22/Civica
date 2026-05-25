@@ -40,7 +40,7 @@ export default function ImpactCounter({ enrolledPackets }: { enrolledPackets: nu
   const meals = useCountUp(monthlyMeals);
 
   return (
-    <div className="bg-gradient-to-br from-brick to-brick-pressed text-white rounded-[6px] shadow-sm overflow-hidden relative">
+    <div className="bg-gradient-to-br from-pine to-pine-pressed text-white rounded-[6px] shadow-sm overflow-hidden relative">
       <div className="absolute inset-0 opacity-10 pointer-events-none" style={{
         backgroundImage: "radial-gradient(circle at 85% 15%, white 0%, transparent 50%)",
       }} />
