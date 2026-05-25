@@ -5,6 +5,7 @@ import BaselinePanel from "../../components/qc/BaselinePanel";
 import FormulaHero from "../../components/qc/FormulaHero";
 import PillarTracking from "../../components/qc/PillarTracking";
 import OBBBAReadinessStrip from "../../components/qc/OBBBAReadinessStrip";
+import IncomingDataFeed, { type FeedPacket } from "../../components/qc/IncomingDataFeed";
 import { ENGINE_VERSION } from "@civica/snap-qc-engine";
 
 export const dynamic = "force-dynamic";
@@ -95,6 +96,60 @@ export default async function QCPage() {
     }
   }
 
+  // ── Per-packet feed rows (IncomingDataFeed)
+  // Pull the most-recently-active packets first. packet_error_risk.created_at
+  // is a reasonable proxy for last-touched (score recomputed on relevant
+  // change). Falls back to packets list order if risk row is absent.
+  type RiskRow = { packet_id: string; created_at: string };
+  const riskRows: RiskRow[] = (riskRes.data ?? []) as RiskRow[];
+  const lastTouchedById = new Map<string, string>();
+  for (const r of riskRows) {
+    if (!lastTouchedById.has(r.packet_id)) {
+      lastTouchedById.set(r.packet_id, r.created_at);
+    }
+  }
+  const feedSorted = [...packets].sort((a, b) => {
+    const ta = lastTouchedById.get(a.packet_id) ?? "";
+    const tb = lastTouchedById.get(b.packet_id) ?? "";
+    return tb.localeCompare(ta);
+  });
+
+  function initialsForPacket(packetId: string): string {
+    // Demo-safe pseudo-initials from packet ID hash; real PII access requires
+    // separate Python-backend decrypt path (memory: dashboard launch audit).
+    const tail = packetId.slice(-4).toUpperCase();
+    return `${tail[0] ?? "?"}.${tail[1] ?? "?"}.`;
+  }
+
+  function daysSinceCreated(packetId: string): number {
+    const ts = lastTouchedById.get(packetId);
+    if (!ts) return 0;
+    const ms = Date.now() - new Date(ts).getTime();
+    if (!Number.isFinite(ms)) return 0;
+    return Math.max(0, Math.round(ms / (1000 * 60 * 60 * 24)));
+  }
+
+  const feedPackets: FeedPacket[] = feedSorted.slice(0, 20).map((p) => {
+    const pa = answersByPacket.get(p.packet_id) ?? {};
+    const hasSuaAnswer = Boolean(
+      pa["has_heating_costs"] || pa["has_electric_or_gas"] || pa["has_phone"],
+    );
+    return {
+      packetId: p.packet_id,
+      applicantInitials: initialsForPacket(p.packet_id),
+      daysPending: daysSinceCreated(p.packet_id),
+      engagement: {
+        income: argylePacketIds.has(p.packet_id),
+        shelter: shelterDocPacketIds.has(p.packet_id),
+        suaFlags: hasSuaAnswer,
+        // OBBBA-impact tag: derived heuristically from employment_status
+        // answer presence (work-requirement age band check is the gating
+        // criterion). Full contract deferred per TODO-OBBBA-CONTRACT.
+        obbbaImpactTagged: Boolean(pa["employment_status"]),
+      },
+    };
+  });
+
   // ── Baseline vs actual
   type QcRow = { packet_id: string; qc_sampled: boolean; error_found: boolean | null; error_type: string | null; logged_at: string };
   const qcRows: QcRow[] = qcRes.data ?? [];
@@ -162,6 +217,7 @@ export default async function QCPage() {
           suaAnswered={suaModerate}
         />
         <OBBBAReadinessStrip />
+        <IncomingDataFeed packets={feedPackets} />
         <BaselinePanel comparison={comparison} sampleN={sampleN} />
       </div>
 
