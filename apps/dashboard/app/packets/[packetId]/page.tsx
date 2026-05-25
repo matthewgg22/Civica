@@ -715,7 +715,7 @@ export default async function PacketDetailPage({
     <div className="min-h-screen bg-paper">
       <header className="bg-surface border-b border-hairline px-8 py-4">
         <div className="max-w-5xl mx-auto flex items-center gap-3">
-          <Link href="/packets" className="text-[13px] font-semibold text-pine hover:underline">← Queue</Link>
+          <Link href="/packets" className="text-[13px] font-semibold text-pine hover:underline">← Applications</Link>
           <span className="text-hairline">·</span>
           <span className="text-[12px] font-mono tabular-nums text-muted">{shortId(packetId)}</span>
           <span className="text-hairline">·</span>
@@ -732,13 +732,19 @@ export default async function PacketDetailPage({
 
         {/* Hero */}
         <div className="bg-surface border border-hairline rounded-[4px] overflow-hidden">
-          {/* Top accent bar based on status urgency */}
+          {/* Top accent bar — semantic per status. Brick is reserved for
+              recovery/denial/distress (DESIGN.md §1.3), so the default falls
+              through to hairline rather than shouting brick on every packet. */}
           <div className={`h-1 w-full ${
             ["Needs Documents", "Needs Applicant Clarification"].includes(packet.status)
               ? "bg-warning"
               : ["Ready for Handoff"].includes(packet.status)
               ? "bg-teal"
-              : "bg-brick"
+              : ["Handed Off", "Closed"].includes(packet.status)
+              ? "bg-pine-surface"
+              : ["In Navigator Review", "Submitted for Review"].includes(packet.status)
+              ? "bg-indigo/40"
+              : "bg-hairline"
           }`} />
           <div className="p-8">
             <div className="flex items-center justify-between gap-4 mb-3">

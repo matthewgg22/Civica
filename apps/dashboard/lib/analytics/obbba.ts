@@ -291,6 +291,229 @@ export function obbbaProvisions(): ObbbaProvision[] {
 }
 
 // ---------------------------------------------------------------------------
+// OBBBA-impact contract — per-packet eligibility tagging
+//
+// Resolves TODO-OBBBA-CONTRACT (eng review CMT4, 2026-05-25): replaces the
+// page.tsx heuristic "employment_status answered = OBBBA-tagged" with a real
+// TypeScript contract that documents every packet_answers key consumed,
+// exemption mapping rules, and PENDING_COUNSEL semantics for not-yet-shipped
+// tracks (1.3 Native American exemption, Track 2/3 ABAWD reauth, Q5 distress
+// gate).
+//
+// This contract is INTENTIONALLY narrow at v1 — only the work-requirement
+// (1.1/1.2 shipped) and the most common exemption keys are wired. Returns
+// PENDING_COUNSEL for cases that hit not-yet-shipped tracks; the caller is
+// responsible for showing the right surface (no decision rendered until
+// counsel signs off).
+// ---------------------------------------------------------------------------
+
+/**
+ * Discriminated union describing a packet's OBBBA-impact classification.
+ * Each variant carries the citation that drove the determination.
+ */
+export type ObbbaImpactState =
+  | {
+      kind: "not_impacted";
+      /** Why the packet falls outside OBBBA's impacted population (e.g. age 60+). */
+      reason: string;
+    }
+  | {
+      kind: "work_required";
+      /** Age band per OBBBA §10102 expanded ABAWD work requirement. */
+      ageBand: "18-49" | "50-54" | "55-59";
+      /** Citation for the band determination. */
+      authority: "OBBBA §10102(a)";
+    }
+  | {
+      kind: "exempt";
+      exemptionType:
+        | "caregiver_child_under_14"
+        | "caregiver_incapacitated"
+        | "disability"
+        | "pregnant"
+        | "homeless"
+        | "veteran"
+        | "tribal_pending_counsel"
+        | "other_documented";
+      reason: string;
+      authority: string;
+    }
+  | {
+      kind: "pending_counsel";
+      /** Which OBBBA track is blocked on counsel/external answers. */
+      track: "1.3_native_american" | "Track2_abawd_reauth" | "Track3_external" | "Q5_distress_gate";
+      reason: string;
+    };
+
+/**
+ * Input keys consumed by the helper. Documented here so the contract is
+ * tight — only these fields drive the decision; everything else is ignored.
+ */
+export interface ObbbaImpactInput {
+  /**
+   * Map of packet_answers question_key → applicant_answer.
+   * Keys consumed (all optional):
+   *   - employment_status: "employed" | "unemployed" | "self_employed" | "retired" | "student" | "disabled"
+   *   - date_of_birth: ISO date "YYYY-MM-DD" (used to derive age band)
+   *   - caregiver_status: "child_under_14" | "incapacitated_household_member" | "none"
+   *   - claims_disability_exemption: "true" | "false"
+   *   - claims_pregnant: "true" | "false"
+   *   - housing_situation: "stable" | "homeless" | "shelter" | "doubled_up"
+   *   - veteran_status: "veteran" | "active_duty" | "none"
+   *   - tribal_member: "yes" | "no" | "prefer_not_to_say"
+   *   - distress_self_attestation: "true" | "false" (Q5 gate, counsel-pending)
+   */
+  packetAnswers: Record<string, string | undefined>;
+  /** ISO "YYYY-MM-DD" — overrides packetAnswers.date_of_birth if both present. */
+  asOf?: string;
+}
+
+/**
+ * Derive OBBBA-impact state for one packet.
+ *
+ * Returns:
+ *   - `not_impacted` when age outside 18-59 OR an unambiguous exemption applies
+ *     AND the exemption's track is shipped.
+ *   - `work_required` when the applicant is 18-59 with no exemption.
+ *   - `exempt` when a shipped-track exemption applies (caregiver, disability,
+ *     pregnant, homeless, veteran, other-documented).
+ *   - `pending_counsel` when the packet would qualify under a not-yet-shipped
+ *     track (1.3 Native American, Track 2/3 ABAWD reauth, Q5 distress).
+ *     Caller MUST NOT render a final eligibility decision until counsel
+ *     signs off — surface the pending state instead.
+ *
+ * v1 scope: work-requirement age bands (1.1/1.2 shipped) + caregiver +
+ * disability + pregnant + homeless + veteran + tribal-flag pending. Tribal
+ * exemption is always `pending_counsel` until OBBBA Track 1.3 ships.
+ */
+export function deriveObbbaImpact(input: ObbbaImpactInput): ObbbaImpactState {
+  const pa = input.packetAnswers;
+
+  // Tribal flag — always pending counsel per OBBBA §10103(b)(2)(F)(ii)
+  // pending Native American exemption guidance (Track 1.3, not-yet-shipped).
+  if (pa.tribal_member === "yes") {
+    return {
+      kind: "pending_counsel",
+      track: "1.3_native_american",
+      reason:
+        "Tribal member self-attestation triggers Native American exemption review. Track 1.3 pending counsel guidance on ANCSA-region scope.",
+    };
+  }
+
+  // Q5 distress-prompt gate — also counsel-pending.
+  if (pa.distress_self_attestation === "true") {
+    return {
+      kind: "pending_counsel",
+      track: "Q5_distress_gate",
+      reason:
+        "Distress self-attestation triggers Q5 confirmation gate. Pending counsel guidance on attestation-vs-documentation threshold.",
+    };
+  }
+
+  // Age-band derivation from DOB.
+  const dob = input.asOf ?? pa.date_of_birth;
+  const age = dob ? deriveAge(dob) : null;
+  if (age === null) {
+    return {
+      kind: "not_impacted",
+      reason: "Date of birth not provided; cannot determine work-requirement age band.",
+    };
+  }
+  if (age < 18) {
+    return { kind: "not_impacted", reason: "Under 18 — not subject to ABAWD work requirement." };
+  }
+  if (age >= 60) {
+    return { kind: "not_impacted", reason: "Age 60 or older — exempt per OBBBA §10102(a)(1)." };
+  }
+
+  // Shipped-track exemptions — only apply if applicant is in the work-required age band.
+  if (pa.caregiver_status === "child_under_14") {
+    return {
+      kind: "exempt",
+      exemptionType: "caregiver_child_under_14",
+      reason: "Caregiver of child under 14 — exempt per OBBBA §10102(a)(2)(B).",
+      authority: "OBBBA §10102(a)(2)(B)",
+    };
+  }
+  if (pa.caregiver_status === "incapacitated_household_member") {
+    return {
+      kind: "exempt",
+      exemptionType: "caregiver_incapacitated",
+      reason:
+        "Caregiver of incapacitated household member — exempt per OBBBA §10102(a)(2)(C).",
+      authority: "OBBBA §10102(a)(2)(C)",
+    };
+  }
+  if (pa.claims_disability_exemption === "true") {
+    return {
+      kind: "exempt",
+      exemptionType: "disability",
+      reason: "Disability exemption claimed per OBBBA §10102(a)(2)(A).",
+      authority: "OBBBA §10102(a)(2)(A)",
+    };
+  }
+  if (pa.claims_pregnant === "true") {
+    return {
+      kind: "exempt",
+      exemptionType: "pregnant",
+      reason: "Pregnant — exempt per OBBBA §10102(a)(2)(D).",
+      authority: "OBBBA §10102(a)(2)(D)",
+    };
+  }
+  if (pa.housing_situation === "homeless" || pa.housing_situation === "shelter") {
+    return {
+      kind: "exempt",
+      exemptionType: "homeless",
+      reason: "Experiencing homelessness — exempt per OBBBA §10102(a)(2)(E).",
+      authority: "OBBBA §10102(a)(2)(E)",
+    };
+  }
+  if (pa.veteran_status === "veteran" || pa.veteran_status === "active_duty") {
+    return {
+      kind: "exempt",
+      exemptionType: "veteran",
+      reason: "Veteran or active-duty — exempt per OBBBA §10102(a)(2)(F).",
+      authority: "OBBBA §10102(a)(2)(F)",
+    };
+  }
+
+  // Work-required band assignment (shipped: 1.1 ages 50-54, 1.2 ages 55-59;
+  // base 18-49 ABAWD always work-required).
+  let ageBand: "18-49" | "50-54" | "55-59";
+  if (age < 50) ageBand = "18-49";
+  else if (age < 55) ageBand = "50-54";
+  else ageBand = "55-59";
+
+  return {
+    kind: "work_required",
+    ageBand,
+    authority: "OBBBA §10102(a)",
+  };
+}
+
+function deriveAge(isoDob: string): number | null {
+  const d = new Date(isoDob);
+  if (!Number.isFinite(d.getTime())) return null;
+  const now = new Date();
+  let age = now.getFullYear() - d.getFullYear();
+  const beforeBirthday =
+    now.getMonth() < d.getMonth() ||
+    (now.getMonth() === d.getMonth() && now.getDate() < d.getDate());
+  if (beforeBirthday) age--;
+  return age;
+}
+
+/**
+ * Convenience: did this packet engage the OBBBA rule chain to completion?
+ * "Engaged" means the helper returned a non-pending decision. Used by the
+ * /qc IncomingDataFeed's OBBBA-tag boolean and PillarTracking observed-
+ * engagement rate for the OBBBA subset.
+ */
+export function isObbbaChainEngaged(state: ObbbaImpactState): boolean {
+  return state.kind !== "pending_counsel";
+}
+
+// ---------------------------------------------------------------------------
 // Public / FOIA data sources feeding the QC nationwide framework.
 // ---------------------------------------------------------------------------
 

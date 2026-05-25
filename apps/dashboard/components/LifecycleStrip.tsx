@@ -34,19 +34,24 @@ export default function LifecycleStrip({ status }: { status: string }) {
           const dotColor = isComplete
             ? "bg-teal"
             : isCurrent
-              ? isDetour ? "bg-amber" : "bg-brick"
-              : "bg-[#D9D4CB]";
-          const lineColor = i < currentIdx ? "bg-teal" : "bg-[#D9D4CB]";
+              ? isDetour ? "bg-warning" : "bg-ink"
+              : "bg-hairline";
+          const lineColor = i < currentIdx ? "bg-teal" : "bg-hairline";
+          // boxShadow rgbas derive from the dot color: ink (#1A1714 = 26,23,20)
+          // for normal current; warning (#B5511E = 181,81,30) for detour-current.
+          const currentShadow = isDetour
+            ? "rgba(181,81,30,0.15)"
+            : "rgba(26,23,20,0.15)";
           return (
             <li key={stage} className="flex-1 flex items-center first:flex-none last:flex-none">
               {i > 0 && <div className={`h-px flex-1 ${lineColor}`} />}
               <div className="flex flex-col items-center px-2">
-                <div className={`w-3 h-3 rounded-full ${dotColor} ${isCurrent ? "ring-4 ring-offset-0" : ""}`} style={isCurrent ? { boxShadow: `0 0 0 4px ${isDetour ? "rgba(154,90,20,0.15)" : "rgba(156,58,36,0.15)"}` } : {}} />
+                <div className={`w-3 h-3 rounded-full ${dotColor} ${isCurrent ? "ring-4 ring-offset-0" : ""}`} style={isCurrent ? { boxShadow: `0 0 0 4px ${currentShadow}` } : {}} />
                 <span className={`text-[11px] font-medium uppercase tracking-wider mt-2 whitespace-nowrap ${isCurrent ? "text-ink font-semibold" : isComplete ? "text-teal" : "text-muted"}`}>
                   {SHORT_LABEL[stage]}
                 </span>
               </div>
-              {i < STAGES.length - 1 && <div className={`h-px flex-1 ${i < currentIdx ? "bg-teal" : "bg-[#D9D4CB]"}`} />}
+              {i < STAGES.length - 1 && <div className={`h-px flex-1 ${i < currentIdx ? "bg-teal" : "bg-hairline"}`} />}
             </li>
           );
         })}

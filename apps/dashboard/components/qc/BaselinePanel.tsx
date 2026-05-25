@@ -19,52 +19,34 @@ export default function BaselinePanel({
   const sufficient = sampleN >= SAMPLE_THRESHOLD;
 
   return (
-    <section className="bg-surface border border-hairline border-t-2 border-t-pine-surface rounded-[4px] p-7">
-      <div className="flex items-start justify-between gap-6 mb-6 flex-wrap">
-        <div>
-          <p className="eyebrow mb-1.5">Baseline comparison · USDA FY2024 CA vs. Civica observed</p>
-          <h3 className="text-[20px] font-semibold tracking-tight text-ink leading-tight">
-            Are our errors in the same places as the statewide baseline?
+    <section className="bg-surface border border-hairline border-t-2 border-t-pine-surface rounded-[4px] p-5">
+      <div className="flex items-baseline justify-between gap-4 mb-4 flex-wrap">
+        <div className="min-w-0">
+          <p className="eyebrow mb-1">Calibration · USDA observed vs Civica observed</p>
+          <h3 className="text-[16px] font-semibold tracking-tight text-ink leading-tight">
+            Are observed errors distributing as the formula predicts?
           </h3>
-          <p className="text-[13px] text-graphite mt-2 max-w-2xl leading-relaxed">
-            When Civica's logged error mix tilts away from the USDA baseline, it reveals where our
-            population or intake process produces a different pattern of mistakes. Two-point shifts
-            are noise; four-point shifts merit a navigator-training conversation.
+          <p className="text-[12px] text-graphite mt-1 leading-snug">
+            When QC sampling reaches n ≥ {SAMPLE_THRESHOLD}, this falsifies (or
+            confirms) the formula&apos;s pillar weights. Material disagreement
+            means the engine needs recalibration.
           </p>
         </div>
         <div className="text-right shrink-0">
           <SampleChip n={sampleN} sufficient={sufficient} />
-          <p className="text-[11px] text-muted font-mono tracking-wide mt-1.5">source: qc_outcomes · 90d</p>
+          <p className="text-[10px] text-muted font-mono tracking-wide mt-1">source: qc_outcomes · 90d</p>
         </div>
       </div>
 
       {sampleN === 0 ? (
-        <div className="border border-dashed border-hairline rounded-[3px] p-8 text-center">
-          <p className="text-[14px] font-semibold text-graphite">No QC outcomes logged yet.</p>
-          <p className="text-[12px] text-muted mt-1">
-            Dumbbell chart appears once navigators log QC sampling results.
+        <div className="border border-dashed border-hairline/60 rounded-[3px] px-4 py-3 text-center">
+          <p className="text-[12px] text-graphite">
+            Awaiting QC sampling · dumbbell renders at n ≥ {SAMPLE_THRESHOLD}.
           </p>
         </div>
       ) : (
         <DumbbellChart rows={comparison} />
       )}
-
-      {/* How to read */}
-      <div className="flex gap-4 items-start bg-paper border border-hairline/50 rounded-[3px] p-4 mt-5">
-        <svg width="16" height="16" viewBox="0 0 16 16" className="mt-0.5 shrink-0">
-          <circle cx="8" cy="8" r="7" fill="none" stroke="#5A544D" strokeWidth="1.5"/>
-          <path d="M8 5 V 9" stroke="#5A544D" strokeWidth="1.5" strokeLinecap="round" />
-          <circle cx="8" cy="11.5" r="0.8" fill="#5A544D"/>
-        </svg>
-        <p className="text-[12px] text-graphite leading-relaxed">
-          <strong className="text-ink font-semibold">How to read this.</strong>{" "}
-          The hollow dot is the USDA FY2024 California baseline. The filled dot is Civica's observed share.{" "}
-          <strong className="text-ink">Brick</strong> = over-represented (we make this mistake more);{" "}
-          <strong className="text-ink">teal</strong> = under-represented;{" "}
-          <strong className="text-ink">graphite</strong> = within ±2pts (treat as noise).
-          Comparison is only meaningful above {SAMPLE_THRESHOLD} sampled cases.
-        </p>
-      </div>
     </section>
   );
 }

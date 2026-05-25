@@ -27,6 +27,24 @@ export { combineScores, rollupFactors } from "./scoring/defensibility";
 export { scoreErrorRisk, ERROR_WEIGHT } from "./scoring/error-risk";
 export type { ErrorRiskResult, ErrorRiskTier } from "./scoring/error-risk";
 
+// Population PER projection (added 2026-05-25 for /qc Error Rate Intelligence redesign).
+// Distinct from per-packet scoreErrorRisk — these functions operate on observed
+// engagement rates across the served cohort and return projected / engagement-implied
+// population PER in percentage points. Anchored to CA FY2024 baseline (10.98%)
+// and the thesis's projected ~5.5% at full stack engagement.
+export {
+  CA_BASELINE_PER,
+  PROJECTED_PER_AT_FULL_ENGAGEMENT,
+  PILLAR_SHARES_UNNORMALIZED,
+  PILLAR_MAX_DEFENSIBILITY_SHIFT,
+  THESIS_CALIBRATION_FACTOR,
+  RESIDUAL_FLOOR_SHARE,
+  computeProjectedPER,
+  computeEngagementImpliedPER,
+  pillarContribution,
+} from "./scoring/error-risk";
+export type { PillarCoverage } from "./scoring/error-risk";
+
 // Failure-to-elect detector (item 2): finds deductions/elections the
 // household qualifies for but hasn't claimed — the underpayment iceberg.
 export { detectMissedElections, totalMissedMonthlyValue } from "./scoring/failure-to-elect";

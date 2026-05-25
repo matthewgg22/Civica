@@ -201,3 +201,12 @@ Mirrors iOS DESIGN.md §9; web specifics below.
 - Per-section Suspense boundaries in `/packets/[id]/page.tsx` (12+ parallel queries) would let already-loaded sections render while slow ones spin. Tracked separately.
 - Public `/cbo-preview` (drop role gate, interactive sample-packet flow) tracked separately.
 - Audit remaining `var(--color-amber)` inline-style usages in KpiCard `warning` variants (cbo-preview, county, compliance/county, cdss) and migrate to `var(--color-warning)`.
+
+---
+
+## 9. Decisions log
+
+| Date | Decision | Rationale |
+|------|----------|-----------|
+| 2026-05-25 | `/enrollments` lifecycle audit — 10 token-rule violations fixed | Page introduced post-handoff lifecycle buckets + Stage 3 monetization band; new code did not honor DESIGN.md §1 (pine for CTAs only) and §2 (teal deprecated). Specifics: (a) bucket meta — `interview_pending` migrated teal → indigo (info, scheduled-but-unconfirmed); `active` migrated teal → pine-surface/60 + text-ink (the canonical "enrolled, submitted" success-adjacent fill, FG neutral); `recertified` migrated indigo → amber (positive lifecycle outcome). (b) Stage3Chips — `text-pine` on hours-compliant + workforce-placement chips violated §1; FG changed to `text-ink` while keeping `bg-pine-surface` (fill is allowed). (c) PilotCohort + NavigatorThroughput — goal-reached/target-met used `bg-pine` + `text-pine` (CTA color on a status indicator); migrated to amber. (d) Stage3YieldBand — `text-pine` on WOTC "$200-500/hire" projection migrated to amber (positive projected outcome). (e) LifecycleStage — `text-teal`/`bg-teal` on interview countdown migrated to indigo; default countdown bar migrated to amber. (f) RECERT_STAGE_META — `stage_60` cadence chip migrated teal → amber (gradient amber → warning → warning-deep → brick now uses canonical tokens). |
+| 2026-05-25 | Lifecycle bucket semantics codified | The 7 post-handoff buckets each map to a canonical DESIGN.md token: urgent group → brick (expired, interview_at_risk) + warning (expiring, verification_outstanding); progress group → indigo (interview_pending, info), pine-surface (active, success-adjacent fill), amber (recertified, positive outcome). Each token is semantically motivated, not chosen for visual variety. |
