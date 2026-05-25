@@ -520,6 +520,13 @@ Three TODOs surface from this review. Each has a what/why/effort. User can strik
 - **Depends on:** Next.js Suspense pattern decisions for the broader dashboard.
 - **Priority:** P2 — defer until packet volume forces it.
 
+**TODO-PACKET-REVERSE-BRIDGE** — wire packet detail back into /qc engagement vocabulary
+- **What:** After this redesign lands, close the round-trip with the IncomingDataFeed → packet arrow from §3.3. Three pieces on `apps/dashboard/app/packets/[packetId]/page.tsx`: (1) rename the "VERIFICATION STRENGTH · CRITICAL · Risk score N/100" scorecard header to mirror /qc's engagement-realization vocabulary (e.g., `ENGAGEMENT · PER CONTRIBUTION X.X pts`, or keep "verification strength" with a subtitle naming the four pillars — income · shelter · calc · OBBBA, same as /qc); (2) surface this packet's PER contribution as an inline number; (3) add a `↗ See aggregate impact` link from the scorecard into `/qc?packetFocus={packetId}` (or `/qc#feed`).
+- **Why:** Today the same engine math is named three different ways across surfaces (`VERIFICATION STRENGTH` on packet detail, `ENGAGEMENT REALIZATION GAP` on /qc after redesign, `Risk score N/100` on row badges). Navigator on a single packet has no concrete handle on aggregate impact, so the -15pt SUA deduction in "Next Actions" never connects to the SUA pillar driving the /qc number. Tracked in TODOS.md as TODO-27.
+- **Effort:** S (human ~1.5h / CC ~30min) — 3-4 file changes, leans on engine math already shipped by T0.
+- **Depends on:** T0-T11 of this redesign landing first (destination vocabulary + IncomingDataFeed need to exist). Also: `scoreErrorRisk()` PER-contribution helper exported from snap-qc-engine.
+- **Priority:** P2 — high legibility win, low urgency before /qc ships.
+
 ## 12. Verdict on the user's framing
 
 The user reframed in two passes:

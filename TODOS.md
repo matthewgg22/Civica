@@ -308,3 +308,25 @@ Add new items with `## TODO-N` headings. Never delete — mark as DONE instead.
 **Effort:** XS (human ~15min — staging push + smoke; CC: not the bottleneck)
 **Priority:** P1 — required to activate everything that landed in PR #245.
 **Depends on:** Supabase staging access, Cloudflare account access.
+
+---
+
+## TODO-27 — Reverse bridge: packet detail ↔ /qc engagement realization gap
+
+**What:** After the /qc redesign lands (T0-T11 in [`docs/plans/qc-error-rate-intelligence-redesign.md`](docs/plans/qc-error-rate-intelligence-redesign.md)), wire the packet detail page back into the same engagement-realization vocabulary so a navigator working on a single packet can see this packet's contribution to the aggregate. Three pieces:
+
+1. **Rename the packet scorecard header.** Today the packet detail says `VERIFICATION STRENGTH · CRITICAL · Risk score N/100 · medium`. The /qc redesign names the same engine output `ENGAGEMENT REALIZATION GAP`. Rename the packet header to mirror it — either `ENGAGEMENT · PER CONTRIBUTION X.X pts` or keep "verification strength" with a subtitle naming the four pillars (income · shelter · calc · OBBBA, same as /qc).
+
+2. **Add a per-packet PER contribution number.** `scoreErrorRisk()` already runs per-packet; the /qc redesign exposes the conversion from per-packet risk to PER contribution. Render inline on the scorecard: *"This packet contributes 0.4 pts to the engagement realization gap."* That's the concrete handle tying packet to aggregate.
+
+3. **Add a `↗ See aggregate impact` link.** From the packet's scorecard, link into `/qc?packetFocus={packetId}` (or `/qc#feed`). One-click round-trip — pairs with the existing IncomingDataFeed → packet detail arrow from /qc redesign §3.3.
+
+**Files (estimated):**
+- `apps/dashboard/app/packets/[packetId]/page.tsx` — verification scorecard header rename + contribution number + link
+- `apps/dashboard/components/packet-risk/` — possibly new sub-component for the contribution number + link group
+- `packages/snap-qc-engine/` — export a `perContributionForPacket()` helper if not already public after T0
+
+**Why:** Today /qc and the packet detail talk about the same engine math in three different vocabularies (`VERIFICATION STRENGTH` vs `ENGAGEMENT REALIZATION GAP` vs `Risk score N/100`). A navigator working on a packet has no way to see that the `−15 pt SUA` deduction in "Next Actions" is the same SUA pillar driving the aggregate number on /qc. The redesign builds the one-way bridge (/qc → packet detail via IncomingDataFeed); this reverse bridge closes the round-trip and gives the navigator a concrete handle on aggregate impact.
+**Effort:** S (human ~1.5h / CC ~30min) — small surface, 3-4 file changes, leans on engine math already in place.
+**Priority:** P2 — high legibility win once /qc redesign ships, low urgency before then.
+**Depends on:** /qc redesign (T0-T11) landing first; `scoreErrorRisk()` PER-contribution export from snap-qc-engine.
