@@ -535,10 +535,9 @@ export const DEMO_DISTRESS_OVERLAY: DistressOverlayData = {
 // ── Fallback gate ───────────────────────────────────────────────────────────
 
 export function isDemoOpsFallbackEnabled(): boolean {
-  // Activate demo fixtures when:
-  //   (a) DEMO_FALLBACK=true (intentional demo mode in prod-like environments), OR
-  //   (b) SUPABASE_SERVICE_ROLE_KEY is missing locally (so the page never renders
-  //       all-empty states during dev — see /ops route demo posture).
-  return process.env.DEMO_FALLBACK === "true"
-      || !process.env.SUPABASE_SERVICE_ROLE_KEY;
+  // Default ON. Real-data path is only hit when DEMO_FALLBACK is explicitly
+  // "false" AND a service-role key exists. This keeps preview / demo
+  // environments populated without needing per-env env-var setup, while
+  // letting a real prod deployment opt out by setting DEMO_FALLBACK=false.
+  return process.env.DEMO_FALLBACK !== "false";
 }
