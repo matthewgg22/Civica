@@ -118,22 +118,21 @@ struct CivicaRootView: View {
                 )
             }
         } else if statusStore.status == .decisionApproved {
-            // MobilePendingBoard panel 3: a calm approved landing,
-            // not a celebration. Recert reminder gets set forward
-            // 12 months the same day -- approval doesn't end the
-            // relationship per the board's brief.
-            SNAPDecisionApprovedView(
+            // Phase 3 (Enrolled) of the three-phase main screen.
+            // Replaces SNAPDecisionApprovedView as the post-approval
+            // home: EBT balance hero + recert banner + activity +
+            // find-help. The legacy view still compiles (unreferenced
+            // here) so it can be quickly re-instated if rollback is
+            // needed. DTA Connect and WIC affordances are no longer
+            // on the home — those entry points move to dedicated
+            // surfaces (EBT root + a future "Other benefits" sheet).
+            CivicaHomePhase3View(
                 statusStore: statusStore,
                 language: language,
-                draft: SNAPApplicationDraftStore().load()?.draft,
-                onOpenDTAConnect: {
-                    externalLink = CivicaExternalLinks.applyPortal(for: SNAPApplicationDraftStore().load()?.draft.whereApplying.stateCode)
-                },
-                onOpenWICTeaser: {
-                    externalLink = CivicaExternalLinks.wicInfoPage(for: SNAPApplicationDraftStore().load()?.draft.whereApplying.stateCode)
-                },
-                onStartOver: {
-                    statusStore.reset()
+                onOpenExternalPortal: {
+                    externalLink = CivicaExternalLinks.applyPortal(
+                        for: SNAPApplicationDraftStore().load()?.draft.whereApplying.stateCode
+                    )
                 }
             )
         } else if statusStore.status == .recertDue {
@@ -166,17 +165,20 @@ struct CivicaRootView: View {
                 )
             }
         } else if statusStore.status.isPostSubmission {
-            SNAPWaitingRoomView(
+            // Phase 2 (Pending) of the three-phase main screen.
+            // Replaces SNAPWaitingRoomView for the standard
+            // post-submission path (.submittedToState through
+            // .interviewCompleted). The legacy view still compiles
+            // and is rendered by Phase 2's "How to prepare for
+            // what's next" sheet as a deeper detail surface — when
+            // SNAPWhatHappensNextSheet ships, that bridge goes away.
+            CivicaHomePhase2View(
                 statusStore: statusStore,
                 language: language,
-                onAction: {
-                    // Document upload / interview prep / recert all
-                    // live behind the state portal. Until a dedicated
-                    // in-app document-capture flow ships, the action
-                    // banner deep-links to the state apply portal
-                    // (BenefitsCal / DTA Connect / …) where the upload
-                    // actually happens.
-                    externalLink = CivicaExternalLinks.applyPortal(for: SNAPApplicationDraftStore().load()?.draft.whereApplying.stateCode)
+                onOpenExternalPortal: {
+                    externalLink = CivicaExternalLinks.applyPortal(
+                        for: SNAPApplicationDraftStore().load()?.draft.whereApplying.stateCode
+                    )
                 }
             )
         } else if statusStore.status.isActiveCase {
