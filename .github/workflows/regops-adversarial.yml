@@ -1,0 +1,61 @@
+name: RegOps Engine — Adversarial Fixture Gate
+
+# Load-bearing security control per /plan-eng-review D8.
+#
+# Any PR touching the RegOps Engine package OR the adversarial fixture
+# suite itself must clear the 15-20 prompt-injection fixtures defined
+# in packages/regops-engine/test/adversarial/fixtures.ts. Failure blocks
+# merge.
+#
+# v1: this CI gate drives the placeholder mock drafter, which exists
+# only to validate the harness. When E1 ships the real Cloudflare
+# Workflows drafter, a second test file under test/adversarial/ will
+# drive the production drafter through the same fixtures, and this
+# workflow will run both.
+#
+# See:
+#   - docs/designs/regops-engine.md §Architectural Decisions D8
+#   - docs/regops/runbook.md §"Adversarial fixture failure"
+#   - packages/regops-engine/test/adversarial/
+
+on:
+  push:
+    branches: [main, codex/rebuild-feb18, "claude/*", "codex/*"]
+    paths:
+      - "packages/regops-engine/**"
+      - ".github/workflows/regops-adversarial.yml"
+  pull_request:
+    paths:
+      - "packages/regops-engine/**"
+      - ".github/workflows/regops-adversarial.yml"
+
+jobs:
+  adversarial-gate:
+    name: Adversarial fixture suite
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        # pnpm version is read from packageManager in root package.json
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Typecheck regops-engine
+        run: pnpm --filter @civica/regops-engine typecheck
+
+      - name: Run adversarial fixture suite (CI gate)
+        run: pnpm --filter @civica/regops-engine test:adversarial
+
+      # A separate "full unit suite" step keeps the failure signal
+      # clean — if adversarial alone fails, the gate name on the PR
+      # tells you exactly which control regressed.
+      - name: Run full regops-engine unit suite
+        run: pnpm --filter @civica/regops-engine test
