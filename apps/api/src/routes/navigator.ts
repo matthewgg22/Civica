@@ -43,14 +43,13 @@ navigatorRoutes.get('/sessions', async (c) => {
   const { data, error } = await query;
   if (error) {
     console.error('navigator/sessions list failed', error);
-    return c.json({ error: 'internal_error' }, 500);
+    return c.json({ code: 'internal_error', message: 'Internal server error' }, 500);
   }
 
   const sessions = (data ?? [])
     .filter((p) => !assigned_to || (p.packet_assignments as any[]).some((a) => a.is_current && a.staff_id === assigned_to))
     .map((p) => ({
       session_id: p.packet_id,
-      packet_id: p.packet_id,
       status: p.status,
       navigator_status: p.status,
       state: p.state_code,
@@ -74,8 +73,8 @@ navigatorRoutes.get('/sessions/:id', async (c) => {
     .is('deleted_at', null)
     .single();
 
-  if (pErr?.code === 'PGRST116') return c.json({ error: 'session_not_found' }, 404);
-  if (pErr) return c.json({ error: 'internal_error' }, 500);
+  if (pErr?.code === 'PGRST116') return c.json({ code: 'session_not_found', message: 'Session not found' }, 404);
+  if (pErr) return c.json({ code: 'internal_error', message: 'Internal server error' }, 500);
 
   const [{ data: assignments }, { data: rawNotes }, { data: rawItems }] = await Promise.all([
     se()
@@ -115,7 +114,6 @@ navigatorRoutes.get('/sessions/:id', async (c) => {
   return c.json({
     session: {
       session_id: packet!.packet_id,
-      packet_id: packet!.packet_id,
       navigator_status: packet!.status,
       status: packet!.status,
       state: packet!.state_code,
@@ -134,7 +132,7 @@ navigatorRoutes.patch('/sessions/:id/status', async (c) => {
   const id = c.req.param('id');
   const body = await c.req.json<{ to?: PacketStatus; reason?: string }>();
 
-  if (!body.to) return c.json({ error: 'missing_field', field: 'to' }, 400);
+  if (!body.to) return c.json({ code: 'missing_field', message: 'Missing required field: to', field: 'to' }, 400);
 
   const { data: packet, error: pErr } = await se()
     .from('snap_packets')
@@ -143,8 +141,8 @@ navigatorRoutes.patch('/sessions/:id/status', async (c) => {
     .is('deleted_at', null)
     .single();
 
-  if (pErr?.code === 'PGRST116') return c.json({ error: 'session_not_found' }, 404);
-  if (pErr) return c.json({ error: 'internal_error' }, 500);
+  if (pErr?.code === 'PGRST116') return c.json({ code: 'session_not_found', message: 'Session not found' }, 404);
+  if (pErr) return c.json({ code: 'internal_error', message: 'Internal server error' }, 500);
 
   const [{ data: activeAssignment }, { data: unresolvedItem }] = await Promise.all([
     se().from('packet_assignments').select('assignment_id').eq('packet_id', id).eq('is_current', true).limit(1),
@@ -158,7 +156,7 @@ navigatorRoutes.patch('/sessions/:id/status', async (c) => {
   });
 
   if (!guard.ok) {
-    return c.json({ error: guard.error, message: guard.message }, 422);
+    return c.json({ code: guard.error, message: guard.message }, 422);
   }
 
   const staffId = c.var.staff.staffId;
@@ -172,13 +170,13 @@ navigatorRoutes.patch('/sessions/:id/status', async (c) => {
     .update({ status: body.to })
     .eq('packet_id', id);
 
-  if (updateErr?.code === 'P0001') return c.json({ error: 'invalid_transition', message: updateErr.message }, 422);
+  if (updateErr?.code === 'P0001') return c.json({ code: 'invalid_transition', message: updateErr.message }, 422);
   if (updateErr) {
     console.error('status transition failed', updateErr);
-    return c.json({ error: 'internal_error' }, 500);
+    return c.json({ code: 'internal_error', message: 'Internal server error' }, 500);
   }
 
-  return c.json({ session_id: id, packet_id: id, navigator_status: body.to, status: body.to });
+  return c.json({ session_id: id, navigator_status: body.to, status: body.to });
 });
 
 // ── POST /navigator/sessions/:id/assign ──────────────────────────────────
@@ -187,7 +185,7 @@ navigatorRoutes.post('/sessions/:id/assign', async (c) => {
   const id = c.req.param('id');
   const body = await c.req.json<{ navigator_id?: string }>();
 
-  if (!body.navigator_id) return c.json({ error: 'missing_field', field: 'navigator_id' }, 400);
+  if (!body.navigator_id) return c.json({ code: 'missing_field', message: 'Missing required field: navigator_id', field: 'navigator_id' }, 400);
 
   const { data: packet, error: pErr } = await se()
     .from('snap_packets')
@@ -196,8 +194,8 @@ navigatorRoutes.post('/sessions/:id/assign', async (c) => {
     .is('deleted_at', null)
     .single();
 
-  if (pErr?.code === 'PGRST116') return c.json({ error: 'session_not_found' }, 404);
-  if (pErr) return c.json({ error: 'internal_error' }, 500);
+  if (pErr?.code === 'PGRST116') return c.json({ code: 'session_not_found', message: 'Session not found' }, 404);
+  if (pErr) return c.json({ code: 'internal_error', message: 'Internal server error' }, 500);
 
   const staffId = c.var.staff.staffId;
   const requestId = c.req.header('x-request-id') ?? crypto.randomUUID();
@@ -222,7 +220,7 @@ navigatorRoutes.post('/sessions/:id/assign', async (c) => {
 
   if (aErr) {
     console.error('assign failed', aErr);
-    return c.json({ error: 'internal_error' }, 500);
+    return c.json({ code: 'internal_error', message: 'Internal server error' }, 500);
   }
 
   return c.json({
@@ -241,7 +239,7 @@ navigatorRoutes.post('/sessions/:id/notes', async (c) => {
   const body = await c.req.json<{ body?: string }>();
 
   const noteText = body.body?.trim();
-  if (!noteText) return c.json({ error: 'missing_field', field: 'body' }, 400);
+  if (!noteText) return c.json({ code: 'missing_field', message: 'Missing required field: body', field: 'body' }, 400);
 
   const { data: packet, error: pErr } = await se()
     .from('snap_packets')
@@ -250,8 +248,8 @@ navigatorRoutes.post('/sessions/:id/notes', async (c) => {
     .is('deleted_at', null)
     .single();
 
-  if (pErr?.code === 'PGRST116') return c.json({ error: 'session_not_found' }, 404);
-  if (pErr) return c.json({ error: 'internal_error' }, 500);
+  if (pErr?.code === 'PGRST116') return c.json({ code: 'session_not_found', message: 'Session not found' }, 404);
+  if (pErr) return c.json({ code: 'internal_error', message: 'Internal server error' }, 500);
 
   const staffId = c.var.staff.staffId;
   const requestId = c.req.header('x-request-id') ?? crypto.randomUUID();
@@ -269,7 +267,7 @@ navigatorRoutes.post('/sessions/:id/notes', async (c) => {
 
   if (nErr) {
     console.error('note insert failed', nErr);
-    return c.json({ error: 'internal_error' }, 500);
+    return c.json({ code: 'internal_error', message: 'Internal server error' }, 500);
   }
 
   return c.json({
@@ -290,7 +288,7 @@ navigatorRoutes.post('/sessions/:id/missing-items', async (c) => {
   const body = await c.req.json<{ item_type?: string; item_description?: string }>();
 
   const itemType = body.item_type?.trim();
-  if (!itemType) return c.json({ error: 'missing_field', field: 'item_type' }, 400);
+  if (!itemType) return c.json({ code: 'missing_field', message: 'Missing required field: item_type', field: 'item_type' }, 400);
 
   const { data: packet, error: pErr } = await se()
     .from('snap_packets')
@@ -299,8 +297,8 @@ navigatorRoutes.post('/sessions/:id/missing-items', async (c) => {
     .is('deleted_at', null)
     .single();
 
-  if (pErr?.code === 'PGRST116') return c.json({ error: 'session_not_found' }, 404);
-  if (pErr) return c.json({ error: 'internal_error' }, 500);
+  if (pErr?.code === 'PGRST116') return c.json({ code: 'session_not_found', message: 'Session not found' }, 404);
+  if (pErr) return c.json({ code: 'internal_error', message: 'Internal server error' }, 500);
 
   const staffId = c.var.staff.staffId;
   const requestId = c.req.header('x-request-id') ?? crypto.randomUUID();
@@ -322,7 +320,7 @@ navigatorRoutes.post('/sessions/:id/missing-items', async (c) => {
 
   if (iErr) {
     console.error('missing-item insert failed', iErr);
-    return c.json({ error: 'internal_error' }, 500);
+    return c.json({ code: 'internal_error', message: 'Internal server error' }, 500);
   }
 
   return c.json({
@@ -350,9 +348,9 @@ navigatorRoutes.patch('/sessions/:id/missing-items/:itemId', async (c) => {
     .eq('packet_id', id)
     .single();
 
-  if (eErr?.code === 'PGRST116') return c.json({ error: 'missing_item_not_found' }, 404);
-  if (eErr) return c.json({ error: 'internal_error' }, 500);
-  if (existing!.status !== 'pending') return c.json({ error: 'already_resolved' }, 409);
+  if (eErr?.code === 'PGRST116') return c.json({ code: 'missing_item_not_found', message: 'Missing item request not found' }, 404);
+  if (eErr) return c.json({ code: 'internal_error', message: 'Internal server error' }, 500);
+  if (existing!.status !== 'pending') return c.json({ code: 'already_resolved', message: 'Item already resolved' }, 409);
 
   const staffId = c.var.staff.staffId;
   const requestId = c.req.header('x-request-id') ?? crypto.randomUUID();
@@ -371,7 +369,7 @@ navigatorRoutes.patch('/sessions/:id/missing-items/:itemId', async (c) => {
 
   if (uErr) {
     console.error('missing-item resolve failed', uErr);
-    return c.json({ error: 'internal_error' }, 500);
+    return c.json({ code: 'internal_error', message: 'Internal server error' }, 500);
   }
 
   return c.json({
@@ -399,8 +397,8 @@ navigatorRoutes.get('/sessions/:id/audit-log', async (c) => {
     .is('deleted_at', null)
     .single();
 
-  if (pErr?.code === 'PGRST116') return c.json({ error: 'session_not_found' }, 404);
-  if (pErr) return c.json({ error: 'internal_error' }, 500);
+  if (pErr?.code === 'PGRST116') return c.json({ code: 'session_not_found', message: 'Session not found' }, 404);
+  if (pErr) return c.json({ code: 'internal_error', message: 'Internal server error' }, 500);
 
   const { data: entries, error: aErr } = await se()
     .from('audit_log_events')
@@ -411,8 +409,8 @@ navigatorRoutes.get('/sessions/:id/audit-log', async (c) => {
 
   if (aErr) {
     console.error('audit-log query failed', aErr);
-    return c.json({ error: 'internal_error' }, 500);
+    return c.json({ code: 'internal_error', message: 'Internal server error' }, 500);
   }
 
-  return c.json({ session_id: id, packet_id: id, entries: entries ?? [], limit, offset });
+  return c.json({ session_id: id, entries: entries ?? [], limit, offset });
 });

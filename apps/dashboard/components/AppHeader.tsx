@@ -19,6 +19,9 @@ const NAV_ITEMS: { key: NavKey; href: string; label: string }[] = [
   // the marketing/positioning surface stays rightmost.
   { key: "ops",         href: "/ops",          label: "Performance" },
   { key: "compliance",  href: "/compliance",   label: "Why Civica" },
+  // Internal monetization dashboard — visible in nav for admin/operator only.
+  // Middleware gate ensures non-allowed roles get redirected away from /ops.
+  { key: "ops",         href: "/ops",          label: "Ops" },
 ];
 
 export default function AppHeader({ email, active }: { email?: string; active: NavKey }) {

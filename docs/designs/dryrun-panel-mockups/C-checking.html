@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Civica · State C · Checking Application — 3 Variants</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="_shared.css" />
+</head>
+<body>
+  <div class="canvas">
+    <header class="canvas-head">
+      <p class="canvas-eyebrow">State C · Async resolve in progress</p>
+      <h1 class="canvas-title">Checking your application</h1>
+      <p class="canvas-sub">One row is still resolving via the LLM layer. Spinner uses warning (brick) — never amber. The rest of the page stays useful.</p>
+    </header>
+
+    <div class="canvas-grid">
+
+      <!-- =================== V1 — Quiet ledger =================== -->
+      <figure class="frame-cell">
+        <figcaption class="frame-label"><strong>Variant 1</strong>Quiet ledger</figcaption>
+        <p class="frame-note">Inline status line with spinner; verified items continue as flat ledger rows. No surface chrome.</p>
+        <main class="device" data-screen-label="C1 · Ledger">
+          <div class="status-bar" aria-hidden="true">
+            <span>9:41</span>
+            <div class="status-icons">
+              <svg width="18" height="10" viewBox="0 0 18 10" fill="none"><rect x="0" y="7" width="3" height="3" rx="0.6" fill="#1A1A1A"/><rect x="5" y="5" width="3" height="5" rx="0.6" fill="#1A1A1A"/><rect x="10" y="2.5" width="3" height="7.5" rx="0.6" fill="#1A1A1A"/><rect x="15" y="0" width="3" height="10" rx="0.6" fill="#1A1A1A"/></svg>
+              <svg width="16" height="11" viewBox="0 0 16 11" fill="none"><path d="M8 10.2a1.1 1.1 0 100-2.2 1.1 1.1 0 000 2.2z" fill="#1A1A1A"/><path d="M3.4 6.1a6.5 6.5 0 019.2 0" stroke="#1A1A1A" stroke-width="1.4" stroke-linecap="round"/><path d="M.9 3.5a10 10 0 0114.2 0" stroke="#1A1A1A" stroke-width="1.4" stroke-linecap="round"/></svg>
+              <svg width="26" height="12" viewBox="0 0 26 12" fill="none"><rect x="0.5" y="0.5" width="22" height="11" rx="2.5" stroke="#1A1A1A" opacity="0.4"/><rect x="2" y="2" width="19" height="8" rx="1.5" fill="#1A1A1A"/><rect x="23.5" y="4" width="1.5" height="4" rx="0.6" fill="#1A1A1A" opacity="0.5"/></svg>
+            </div>
+          </div>
+          <div class="scroll">
+            <div class="nav"><button class="nav-back" type="button"><svg width="11" height="18" viewBox="0 0 11 18" fill="none"><path d="M9.5 1 1.5 9l8 8" stroke="#4A4A4A" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Back</span></button></div>
+            <h1 class="title">Checking your application</h1>
+            <p class="subhead">Almost done — confirming one detail.</p>
+
+            <div class="v1-status is-brick" style="margin-top: 20px; padding: 14px 0; border-top: 1px solid var(--hairline); border-bottom: 1px solid var(--hairline); display: grid; grid-template-columns: 20px 1fr; column-gap: 12px;">
+              <svg class="spinner" width="18" height="18" viewBox="0 0 24 24" fill="none" style="margin-top: 2px;"><circle cx="12" cy="12" r="9" stroke="rgba(181, 81, 30, 0.22)" stroke-width="2.4"/><path d="M21 12a9 9 0 0 0-9-9" stroke="#B5511E" stroke-width="2.4" stroke-linecap="round"/></svg>
+              <div>
+                <p style="font-size: 16px; line-height: 22px; font-weight: 600; color: var(--ink); margin: 0;">Reviewing shared-lease situation</p>
+                <p style="font-size: 13px; line-height: 18px; color: var(--graphite); margin: 2px 0 0; font-variant-numeric: tabular-nums;">Typically takes 2–5 seconds</p>
+              </div>
+            </div>
+
+            <h2 class="section-heading">Already verified</h2>
+            <ul class="v1-ledger">
+              <li><p class="v1-ledger-label">Income</p><p class="v1-ledger-value">Employer verified</p></li>
+              <li><p class="v1-ledger-label">Utilities</p><p class="v1-ledger-value">SUA Full · $663</p></li>
+              <li><p class="v1-ledger-label">Household</p><p class="v1-ledger-value">3 people</p></li>
+              <li><p class="v1-ledger-label">Work requirements</p><p class="v1-ledger-value">Compliant</p></li>
+              <li><p class="v1-ledger-label">OBBBA tracking</p><p class="v1-ledger-value">Complete</p></li>
+            </ul>
+          </div>
+          <div class="footer">
+            <button class="cta-disabled" type="button" disabled>Submit when ready</button>
+            <p class="footer-foot">We'll notify you when the check finishes.</p>
+          </div>
+          <div class="home-indicator" aria-hidden="true"></div>
+        </main>
+      </figure>
+
+      <!-- =================== V2 — Stacked notices =================== -->
+      <figure class="frame-cell">
+        <figcaption class="frame-label"><strong>Variant 2</strong>Stacked notices</figcaption>
+        <p class="frame-note">Async lives in a warningSurface card; verified rows as iOS-style grouped panel.</p>
+        <main class="device" data-screen-label="C2 · Stacked">
+          <div class="status-bar" aria-hidden="true">
+            <span>9:41</span>
+            <div class="status-icons">
+              <svg width="18" height="10" viewBox="0 0 18 10" fill="none"><rect x="0" y="7" width="3" height="3" rx="0.6" fill="#1A1A1A"/><rect x="5" y="5" width="3" height="5" rx="0.6" fill="#1A1A1A"/><rect x="10" y="2.5" width="3" height="7.5" rx="0.6" fill="#1A1A1A"/><rect x="15" y="0" width="3" height="10" rx="0.6" fill="#1A1A1A"/></svg>
+              <svg width="16" height="11" viewBox="0 0 16 11" fill="none"><path d="M8 10.2a1.1 1.1 0 100-2.2 1.1 1.1 0 000 2.2z" fill="#1A1A1A"/><path d="M3.4 6.1a6.5 6.5 0 019.2 0" stroke="#1A1A1A" stroke-width="1.4" stroke-linecap="round"/><path d="M.9 3.5a10 10 0 0114.2 0" stroke="#1A1A1A" stroke-width="1.4" stroke-linecap="round"/></svg>
+              <svg width="26" height="12" viewBox="0 0 26 12" fill="none"><rect x="0.5" y="0.5" width="22" height="11" rx="2.5" stroke="#1A1A1A" opacity="0.4"/><rect x="2" y="2" width="19" height="8" rx="1.5" fill="#1A1A1A"/><rect x="23.5" y="4" width="1.5" height="4" rx="0.6" fill="#1A1A1A" opacity="0.5"/></svg>
+            </div>
+          </div>
+          <div class="scroll">
+            <div class="nav"><button class="nav-back" type="button"><svg width="11" height="18" viewBox="0 0 11 18" fill="none"><path d="M9.5 1 1.5 9l8 8" stroke="#4A4A4A" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Back</span></button></div>
+            <h1 class="title">Checking your application</h1>
+            <p class="subhead">Almost done — confirming one detail.</p>
+
+            <section style="margin-top: 20px; background: var(--warningSurface); border-radius: 12px; padding: 16px; display: grid; grid-template-columns: 20px 1fr; column-gap: 12px;">
+              <svg class="spinner" width="18" height="18" viewBox="0 0 24 24" fill="none" style="margin-top: 2px;"><circle cx="12" cy="12" r="9" stroke="rgba(181, 81, 30, 0.22)" stroke-width="2.4"/><path d="M21 12a9 9 0 0 0-9-9" stroke="#B5511E" stroke-width="2.4" stroke-linecap="round"/></svg>
+              <div>
+                <p style="font-size: 16px; line-height: 22px; font-weight: 600; color: var(--ink); margin: 0;">Reviewing shared-lease situation</p>
+                <p style="font-size: 13px; line-height: 18px; color: var(--graphite); margin: 4px 0 0; font-variant-numeric: tabular-nums;">Typically takes 2–5 seconds</p>
+              </div>
+            </section>
+
+            <p class="v2-group-head">Already verified</p>
+            <div class="v2-group">
+              <div class="v2-row"><svg class="check" viewBox="0 0 16 16" fill="none"><path d="M3 8.4 6.4 11.8 13 5.2" stroke="#2D5F4F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><div><p class="v2-row-label">Income verified via your employer</p></div><span></span></div>
+              <div class="v2-row"><svg class="check" viewBox="0 0 16 16" fill="none"><path d="M3 8.4 6.4 11.8 13 5.2" stroke="#2D5F4F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><div><p class="v2-row-label">Utilities — SUA Full tier applied</p></div><span></span></div>
+              <div class="v2-row"><svg class="check" viewBox="0 0 16 16" fill="none"><path d="M3 8.4 6.4 11.8 13 5.2" stroke="#2D5F4F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><div><p class="v2-row-label">Household — 3 people, no changes</p></div><span></span></div>
+              <div class="v2-row"><svg class="check" viewBox="0 0 16 16" fill="none"><path d="M3 8.4 6.4 11.8 13 5.2" stroke="#2D5F4F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><div><p class="v2-row-label">Work requirements — compliant</p></div><span></span></div>
+              <div class="v2-row"><svg class="check" viewBox="0 0 16 16" fill="none"><path d="M3 8.4 6.4 11.8 13 5.2" stroke="#2D5F4F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><div><p class="v2-row-label">OBBBA tracking — all fields complete</p></div><span></span></div>
+            </div>
+          </div>
+          <div class="footer">
+            <button class="cta-disabled" type="button" disabled>Submit when ready</button>
+            <p class="footer-foot">We'll notify you when the check finishes.</p>
+          </div>
+          <div class="home-indicator" aria-hidden="true"></div>
+        </main>
+      </figure>
+
+      <!-- =================== V3 — Status timeline =================== -->
+      <figure class="frame-cell">
+        <figcaption class="frame-label"><strong>Variant 3</strong>Status timeline</figcaption>
+        <p class="frame-note">Spinner dot leads the thread; remaining pine dots show what's already done.</p>
+        <main class="device" data-screen-label="C3 · Timeline">
+          <div class="status-bar" aria-hidden="true">
+            <span>9:41</span>
+            <div class="status-icons">
+              <svg width="18" height="10" viewBox="0 0 18 10" fill="none"><rect x="0" y="7" width="3" height="3" rx="0.6" fill="#1A1A1A"/><rect x="5" y="5" width="3" height="5" rx="0.6" fill="#1A1A1A"/><rect x="10" y="2.5" width="3" height="7.5" rx="0.6" fill="#1A1A1A"/><rect x="15" y="0" width="3" height="10" rx="0.6" fill="#1A1A1A"/></svg>
+              <svg width="16" height="11" viewBox="0 0 16 11" fill="none"><path d="M8 10.2a1.1 1.1 0 100-2.2 1.1 1.1 0 000 2.2z" fill="#1A1A1A"/><path d="M3.4 6.1a6.5 6.5 0 019.2 0" stroke="#1A1A1A" stroke-width="1.4" stroke-linecap="round"/><path d="M.9 3.5a10 10 0 0114.2 0" stroke="#1A1A1A" stroke-width="1.4" stroke-linecap="round"/></svg>
+              <svg width="26" height="12" viewBox="0 0 26 12" fill="none"><rect x="0.5" y="0.5" width="22" height="11" rx="2.5" stroke="#1A1A1A" opacity="0.4"/><rect x="2" y="2" width="19" height="8" rx="1.5" fill="#1A1A1A"/><rect x="23.5" y="4" width="1.5" height="4" rx="0.6" fill="#1A1A1A" opacity="0.5"/></svg>
+            </div>
+          </div>
+          <div class="scroll">
+            <div class="nav"><button class="nav-back" type="button"><svg width="11" height="18" viewBox="0 0 11 18" fill="none"><path d="M9.5 1 1.5 9l8 8" stroke="#4A4A4A" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Back</span></button></div>
+            <h1 class="title">Checking your application</h1>
+            <p class="subhead">Almost done — confirming one detail.</p>
+
+            <ul class="v3-timeline">
+              <li class="v3-node">
+                <span class="v3-dot is-warning" style="background: var(--paper); display: flex; align-items: center; justify-content: center; border-width: 0;" aria-hidden="true">
+                  <svg class="spinner" width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="rgba(181, 81, 30, 0.22)" stroke-width="3"/><path d="M21 12a9 9 0 0 0-9-9" stroke="#B5511E" stroke-width="3" stroke-linecap="round"/></svg>
+                </span>
+                <p class="v3-node-label">Reviewing shared-lease situation</p>
+                <p class="v3-node-foot">Typically takes 2–5 seconds</p>
+              </li>
+              <li class="v3-node">
+                <span class="v3-dot is-filled" aria-hidden="true"></span>
+                <p class="v3-node-label">Income verified via your employer</p>
+              </li>
+              <li class="v3-node">
+                <span class="v3-dot is-filled" aria-hidden="true"></span>
+                <p class="v3-node-label">Utilities — SUA Full tier applied</p>
+              </li>
+              <li class="v3-node">
+                <span class="v3-dot is-filled" aria-hidden="true"></span>
+                <p class="v3-node-label">Household — 3 people, no changes</p>
+              </li>
+              <li class="v3-node">
+                <span class="v3-dot is-filled" aria-hidden="true"></span>
+                <p class="v3-node-label">Work requirements — compliant</p>
+              </li>
+              <li class="v3-node">
+                <span class="v3-dot is-filled" aria-hidden="true"></span>
+                <p class="v3-node-label">OBBBA tracking — all fields complete</p>
+              </li>
+            </ul>
+          </div>
+          <div class="footer">
+            <button class="cta-disabled" type="button" disabled>Submit when ready</button>
+            <p class="footer-foot">We'll notify you when the check finishes.</p>
+          </div>
+          <div class="home-indicator" aria-hidden="true"></div>
+        </main>
+      </figure>
+
+    </div>
+  </div>
+</body>
+</html>

@@ -82,8 +82,8 @@ describe('POST /webhooks/ocr — signature', () => {
       body: JSON.stringify({ document_id: 'doc-1', status: 'success' }),
     });
     expect(res.status).toBe(401);
-    const body = await res.json() as { error: string };
-    expect(body.error).toBe('invalid_signature');
+    const body = await res.json() as { code: string };
+    expect(body.code).toBe('invalid_signature');
   });
 
   it('returns 401 for a wrong secret', async () => {
@@ -138,8 +138,8 @@ describe('POST /webhooks/ocr — document lookup', () => {
       signedRequest({ document_id: 'missing', status: 'success' }),
     );
     expect(res.status).toBe(404);
-    const body = await res.json() as { error: string };
-    expect(body.error).toBe('document_not_found');
+    const body = await res.json() as { code: string };
+    expect(body.code).toBe('document_not_found');
   });
 });
 

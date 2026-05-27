@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Civica · State L · Loading — 3 Variants</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="_shared.css" />
+  <style>
+    /* Centered loading region — fills the scroll area below the header */
+    .l-center {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 0 32px;
+      text-align: center;
+    }
+    .l-spinner {
+      width: 16px;
+      height: 16px;
+    }
+    .l-caption {
+      font-size: 16px;
+      line-height: 22px;
+      color: var(--graphite);
+      margin: 16px 0 0;
+      max-width: 260px;
+      text-wrap: pretty;
+    }
+
+    /* V2 — spinner card */
+    .l-card {
+      background: var(--surfacePrimary);
+      border: 1px solid var(--hairline);
+      border-radius: 12px;
+      padding: 24px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      max-width: 280px;
+    }
+    .l-card .l-caption { margin-top: 14px; }
+
+    /* V3 — empty timeline thread */
+    .l-thread {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      position: relative;
+      width: 100%;
+      max-width: 260px;
+    }
+    .l-thread::before {
+      content: "";
+      position: absolute;
+      left: 7px;
+      top: 8px;
+      bottom: 8px;
+      width: 1px;
+      background: var(--hairline);
+    }
+    .l-thread li {
+      position: relative;
+      padding: 0 0 18px 32px;
+      min-height: 16px;
+    }
+    .l-thread li:last-child { padding-bottom: 0; }
+    .l-empty-dot {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--paper);
+      border: 1.5px solid var(--hairline);
+      box-sizing: border-box;
+    }
+    .l-thread-caption {
+      margin-top: 24px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="canvas">
+    <header class="canvas-head">
+      <p class="canvas-eyebrow">State L · Sync evaluation in progress</p>
+      <h1 class="canvas-title">Checking your application</h1>
+      <p class="canvas-sub">Sub-200ms transient state — the deterministic tree is mid-evaluation. No rows yet, no estimate yet. The screen exists for the rare slow run; in normal cases the user barely sees it.</p>
+    </header>
+
+    <div class="canvas-grid">
+
+      <!-- =================== V1 — Quiet ledger =================== -->
+      <figure class="frame-cell">
+        <figcaption class="frame-label"><strong>Variant 1</strong>Quiet ledger</figcaption>
+        <p class="frame-note">Pure paper. One spinner. One line. Maximum restraint — the state is so brief it shouldn't earn chrome.</p>
+        <main class="device" data-screen-label="L1 · Ledger">
+          <div class="status-bar" aria-hidden="true">
+            <span>9:41</span>
+            <div class="status-icons">
+              <svg width="18" height="10" viewBox="0 0 18 10" fill="none"><rect x="0" y="7" width="3" height="3" rx="0.6" fill="#1A1A1A"/><rect x="5" y="5" width="3" height="5" rx="0.6" fill="#1A1A1A"/><rect x="10" y="2.5" width="3" height="7.5" rx="0.6" fill="#1A1A1A"/><rect x="15" y="0" width="3" height="10" rx="0.6" fill="#1A1A1A"/></svg>
+              <svg width="16" height="11" viewBox="0 0 16 11" fill="none"><path d="M8 10.2a1.1 1.1 0 100-2.2 1.1 1.1 0 000 2.2z" fill="#1A1A1A"/><path d="M3.4 6.1a6.5 6.5 0 019.2 0" stroke="#1A1A1A" stroke-width="1.4" stroke-linecap="round"/><path d="M.9 3.5a10 10 0 0114.2 0" stroke="#1A1A1A" stroke-width="1.4" stroke-linecap="round"/></svg>
+              <svg width="26" height="12" viewBox="0 0 26 12" fill="none"><rect x="0.5" y="0.5" width="22" height="11" rx="2.5" stroke="#1A1A1A" opacity="0.4"/><rect x="2" y="2" width="19" height="8" rx="1.5" fill="#1A1A1A"/><rect x="23.5" y="4" width="1.5" height="4" rx="0.6" fill="#1A1A1A" opacity="0.5"/></svg>
+            </div>
+          </div>
+          <div class="scroll" style="display: flex; flex-direction: column; padding-bottom: 0;">
+            <div class="nav"><button class="nav-back" type="button" disabled style="opacity: 0.5; cursor: not-allowed;"><svg width="11" height="18" viewBox="0 0 11 18" fill="none"><path d="M9.5 1 1.5 9l8 8" stroke="#4A4A4A" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Back</span></button></div>
+            <h1 class="title">Checking your application</h1>
+            <p class="subhead">This takes about 5 seconds.</p>
+
+            <div class="l-center">
+              <svg class="spinner l-spinner" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <circle cx="12" cy="12" r="9" stroke="rgba(45, 95, 79, 0.18)" stroke-width="2.4"/>
+                <path d="M21 12a9 9 0 0 0-9-9" stroke="#2D5F4F" stroke-width="2.4" stroke-linecap="round"/>
+              </svg>
+              <p class="l-caption">Verifying income, housing, household, ABAWD tracking, OBBBA compliance</p>
+            </div>
+          </div>
+          <div class="footer">
+            <button class="cta-disabled" type="button" disabled>Checking…</button>
+          </div>
+          <div class="home-indicator" aria-hidden="true"></div>
+        </main>
+      </figure>
+
+      <!-- =================== V2 — Stacked notices =================== -->
+      <figure class="frame-cell">
+        <figcaption class="frame-label"><strong>Variant 2</strong>Stacked notices</figcaption>
+        <p class="frame-note">Spinner sits inside a surfacePrimary panel — reads as "this is an in-progress operation," like an iOS sheet mid-action.</p>
+        <main class="device" data-screen-label="L2 · Stacked">
+          <div class="status-bar" aria-hidden="true">
+            <span>9:41</span>
+            <div class="status-icons">
+              <svg width="18" height="10" viewBox="0 0 18 10" fill="none"><rect x="0" y="7" width="3" height="3" rx="0.6" fill="#1A1A1A"/><rect x="5" y="5" width="3" height="5" rx="0.6" fill="#1A1A1A"/><rect x="10" y="2.5" width="3" height="7.5" rx="0.6" fill="#1A1A1A"/><rect x="15" y="0" width="3" height="10" rx="0.6" fill="#1A1A1A"/></svg>
+              <svg width="16" height="11" viewBox="0 0 16 11" fill="none"><path d="M8 10.2a1.1 1.1 0 100-2.2 1.1 1.1 0 000 2.2z" fill="#1A1A1A"/><path d="M3.4 6.1a6.5 6.5 0 019.2 0" stroke="#1A1A1A" stroke-width="1.4" stroke-linecap="round"/><path d="M.9 3.5a10 10 0 0114.2 0" stroke="#1A1A1A" stroke-width="1.4" stroke-linecap="round"/></svg>
+              <svg width="26" height="12" viewBox="0 0 26 12" fill="none"><rect x="0.5" y="0.5" width="22" height="11" rx="2.5" stroke="#1A1A1A" opacity="0.4"/><rect x="2" y="2" width="19" height="8" rx="1.5" fill="#1A1A1A"/><rect x="23.5" y="4" width="1.5" height="4" rx="0.6" fill="#1A1A1A" opacity="0.5"/></svg>
+            </div>
+          </div>
+          <div class="scroll" style="display: flex; flex-direction: column; padding-bottom: 0;">
+            <div class="nav"><button class="nav-back" type="button" disabled style="opacity: 0.5; cursor: not-allowed;"><svg width="11" height="18" viewBox="0 0 11 18" fill="none"><path d="M9.5 1 1.5 9l8 8" stroke="#4A4A4A" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Back</span></button></div>
+            <h1 class="title">Checking your application</h1>
+            <p class="subhead">This takes about 5 seconds.</p>
+
+            <div class="l-center">
+              <div class="l-card">
+                <svg class="spinner l-spinner" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <circle cx="12" cy="12" r="9" stroke="rgba(45, 95, 79, 0.18)" stroke-width="2.4"/>
+                  <path d="M21 12a9 9 0 0 0-9-9" stroke="#2D5F4F" stroke-width="2.4" stroke-linecap="round"/>
+                </svg>
+                <p class="l-caption">Verifying income, housing, household, ABAWD tracking, OBBBA compliance</p>
+              </div>
+            </div>
+          </div>
+          <div class="footer">
+            <button class="cta-disabled" type="button" disabled>Checking…</button>
+          </div>
+          <div class="home-indicator" aria-hidden="true"></div>
+        </main>
+      </figure>
+
+      <!-- =================== V3 — Status timeline =================== -->
+      <figure class="frame-cell">
+        <figcaption class="frame-label"><strong>Variant 3</strong>Status timeline</figcaption>
+        <p class="frame-note">Empty thread with unfilled dots — visual promise of the rows about to populate. The structure foreshadows what's coming.</p>
+        <main class="device" data-screen-label="L3 · Timeline">
+          <div class="status-bar" aria-hidden="true">
+            <span>9:41</span>
+            <div class="status-icons">
+              <svg width="18" height="10" viewBox="0 0 18 10" fill="none"><rect x="0" y="7" width="3" height="3" rx="0.6" fill="#1A1A1A"/><rect x="5" y="5" width="3" height="5" rx="0.6" fill="#1A1A1A"/><rect x="10" y="2.5" width="3" height="7.5" rx="0.6" fill="#1A1A1A"/><rect x="15" y="0" width="3" height="10" rx="0.6" fill="#1A1A1A"/></svg>
+              <svg width="16" height="11" viewBox="0 0 16 11" fill="none"><path d="M8 10.2a1.1 1.1 0 100-2.2 1.1 1.1 0 000 2.2z" fill="#1A1A1A"/><path d="M3.4 6.1a6.5 6.5 0 019.2 0" stroke="#1A1A1A" stroke-width="1.4" stroke-linecap="round"/><path d="M.9 3.5a10 10 0 0114.2 0" stroke="#1A1A1A" stroke-width="1.4" stroke-linecap="round"/></svg>
+              <svg width="26" height="12" viewBox="0 0 26 12" fill="none"><rect x="0.5" y="0.5" width="22" height="11" rx="2.5" stroke="#1A1A1A" opacity="0.4"/><rect x="2" y="2" width="19" height="8" rx="1.5" fill="#1A1A1A"/><rect x="23.5" y="4" width="1.5" height="4" rx="0.6" fill="#1A1A1A" opacity="0.5"/></svg>
+            </div>
+          </div>
+          <div class="scroll" style="display: flex; flex-direction: column; padding-bottom: 0;">
+            <div class="nav"><button class="nav-back" type="button" disabled style="opacity: 0.5; cursor: not-allowed;"><svg width="11" height="18" viewBox="0 0 11 18" fill="none"><path d="M9.5 1 1.5 9l8 8" stroke="#4A4A4A" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Back</span></button></div>
+            <h1 class="title">Checking your application</h1>
+            <p class="subhead">This takes about 5 seconds.</p>
+
+            <div class="l-center">
+              <ul class="l-thread" aria-hidden="true">
+                <li><span class="l-empty-dot"></span></li>
+                <li><span class="l-empty-dot"></span></li>
+                <li><span class="l-empty-dot"></span></li>
+                <li><span class="l-empty-dot"></span></li>
+                <li><span class="l-empty-dot"></span></li>
+              </ul>
+              <div class="l-thread-caption">
+                <svg class="spinner l-spinner" viewBox="0 0 24 24" fill="none" aria-hidden="true" style="vertical-align: middle;">
+                  <circle cx="12" cy="12" r="9" stroke="rgba(45, 95, 79, 0.18)" stroke-width="2.4"/>
+                  <path d="M21 12a9 9 0 0 0-9-9" stroke="#2D5F4F" stroke-width="2.4" stroke-linecap="round"/>
+                </svg>
+                <p class="l-caption" style="margin-top: 12px;">Verifying income, housing, household, ABAWD tracking, OBBBA compliance</p>
+              </div>
+            </div>
+          </div>
+          <div class="footer">
+            <button class="cta-disabled" type="button" disabled>Checking…</button>
+          </div>
+          <div class="home-indicator" aria-hidden="true"></div>
+        </main>
+      </figure>
+
+    </div>
+  </div>
+</body>
+</html>
