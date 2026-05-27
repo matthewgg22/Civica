@@ -114,7 +114,13 @@ Add new items with `## TODO-N` headings. Never delete — mark as DONE instead.
 
 ---
 
-## TODO-12 — Pilot cohort definition (replace "first enrolled student" milestone)
+## TODO-12 — Pilot cohort definition (replace "first enrolled student" milestone) — TOOLING DONE (2026-05-27), DEFINITION PENDING
+
+**Status:** Measurement tooling shipped (CC half). New `/pilot` console at `apps/dashboard/app/pilot/page.tsx` renders cohort funnel, stage-transition medians (Created→Submitted, Submitted→Handed Off, Handed Off→Closed), stalled-packet table (>72h since last transition), and aggregate risk across the cohort. URL-param-driven window (`?since&until` on `snap_packets.created_at`) — no DB migration needed; operator bookmarks the URL once the pilot starts. JSON export at `/pilot/export.json` for spreadsheet ingestion. Demo-fallback verified against the 43-packet fixture set.
+
+**Remaining (human, ~2h):** write the cohort definition + "pilot success" criteria. The tooling shows the funnel; you decide the success bar (e.g., "≥7 of 10 reach Handed Off in ≤14 days, ≤2 stuck at Needs Documents at any time, avg risk score <40 at handoff"). When the document lands, link it from TODO-12 and mark this DONE.
+
+**Original spec (kept for traceability):**
 
 **What:** Replace Session L's "first enrolled student" milestone with a cohort definition: 10 students through end-to-end (enrollment → packet submitted → CalFresh confirmation). Track time-to-complete per student, drop-off point, error frequency. Define explicit "pilot success" criteria before any "moat materializes" claim is made externally.
 **Why:** Outside voice flagged: N=1 with no measurement is meaningless. Cohort of ≥10 with explicit measurement is the minimum that supports the data moat thesis.
