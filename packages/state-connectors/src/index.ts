@@ -1,11 +1,15 @@
 // Public API for @civica/state-connectors.
 //
-// Three concerns, exported as namespaces so callers self-document at the
-// call site (usps.validate(), fips.fromAddress(), agencyDirectory.lookup()).
+// Three primitive concerns, exported as namespaces so callers self-document
+// at the call site (usps.validate(), fips.fromAddress(), agencyDirectory.lookup()).
+// Plus a one-shot `resolve` namespace that combines fips + agency-directory
+// into a single call for route handlers.
 
 export * as usps from "./usps/client";
 export * as fips from "./fips/resolver";
 export * as agencyDirectory from "./agency-directory/lookup";
+export * as resolve from "./resolve";
+export type { ResolveOptions, ResolvedAddress } from "./resolve";
 
 export {
   AddressSchema,

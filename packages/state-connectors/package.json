@@ -14,13 +14,15 @@
     "build": "tsc",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "regenerate:zip-to-county": "tsx scripts/regenerate-zip-to-county.ts"
   },
   "dependencies": {
     "zod": "^3.24.0"
   },
   "devDependencies": {
     "@civica/config": "workspace:*",
+    "tsx": "^4.19.2",
     "typescript": "^5.6.3",
     "vitest": "^2.1.9"
   }

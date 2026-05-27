@@ -7,6 +7,7 @@
 import { cookies } from "next/headers";
 import { createServerClientFromCookies } from "../../../lib/supabase";
 import BaselinePanel from "../BaselinePanel";
+import { PROJECTED_PER_AT_FULL_ENGAGEMENT } from "@civica/snap-qc-engine";
 
 const FLOWS = [
   { id: "sua", label: "Shelter / Utility (SUA)", weight: 50.5 },
@@ -77,7 +78,22 @@ export default async function CalibrationSection() {
     };
   });
 
-  return <BaselinePanel comparison={comparison} sampleN={sampleN} />;
+  // Measured PER = fraction of sampled packets where error_found=true.
+  // Null when no samples — BaselinePanel falls back to the sampling state.
+  // Per plan §17 + DES-D2: render null/garbage as "Sampling — X/30",
+  // never half-render measured numbers from a NULL view.
+  const measuredPer = sampleN > 0
+    ? (sampledWithError.length / sampleN) * 100
+    : null;
+
+  return (
+    <BaselinePanel
+      comparison={comparison}
+      sampleN={sampleN}
+      measuredPer={measuredPer}
+      projectedPer={PROJECTED_PER_AT_FULL_ENGAGEMENT}
+    />
+  );
 }
 
 export function CalibrationSkeleton() {

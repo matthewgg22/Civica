@@ -228,11 +228,34 @@ export const QcCategoryCoverageSchema = z.object({
 });
 export type QcCategoryCoverage = z.infer<typeof QcCategoryCoverageSchema>;
 
+// ---------------------------------------------------------------------------
+// Civica-emit QC evaluations (civica-emit/qc-evaluations/) — T8 shadow-mode
+// instrumentation. Mirrors the QcEvaluationEvent shape written by
+// apps/enrollment-api/src/lib/scoring.ts:emitQcEvaluation. Schema is
+// forward-compatible: readers tolerate unknown extra fields. Breaking
+// changes bump `schema_version`.
+// ---------------------------------------------------------------------------
+
+export const FlowSignalSchema = z.object({
+  flow: z.enum(["gig-income", "utility-sua", "shared-lease"]),
+  defensibility_score: z.enum(["strong", "moderate", "weak"]),
+});
+export type FlowSignal = z.infer<typeof FlowSignalSchema>;
+
 export const QcEvaluationSchema = z.object({
-  org_id: z.string(),
-  evaluation_id: z.string(),
+  schema_version: z.literal(1),
+  event_id: z.string(),
+  emitted_at: z.string(),
   packet_id: z.string(),
-  defensibility_score_numeric: z.number(),
-  evaluated_at: z.string(),
+  applicant_id: z.string(),
+  org_id: z.string().nullable(),
+  county: z.string().nullable(),
+  state_code: z.string().nullable(),
+  packet_status: z.string().nullable(),
+  engine_version: z.string(),
+  tier: z.string(),
+  score: z.number().nullable(),
+  factors: z.array(z.string()),
+  flow_signals: z.array(FlowSignalSchema),
 });
 export type QcEvaluation = z.infer<typeof QcEvaluationSchema>;

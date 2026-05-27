@@ -97,6 +97,43 @@ export function scoreErrorRisk(results: ScoringInput[]): ErrorRiskResult {
   return { tier, score, factors, engine_version: ENGINE_VERSION };
 }
 
+/**
+ * Maps a per-packet error-risk score (0–100, from `scoreErrorRisk`) to its
+ * equivalent contribution to the population engagement realization gap, in
+ * percentage points.
+ *
+ * Linear interpolation across the score's calibrated range:
+ *   score=5  (all strong, low tier floor)   → 0 pp contribution
+ *   score=80 (all weak,  high tier ceiling) → 5.48 pp contribution
+ *                                              (≈ CA_BASELINE_PER − PROJECTED_PER_AT_FULL_ENGAGEMENT)
+ *
+ * Interpretation: "if every packet in the cohort had this risk profile, the
+ * engagement realization gap would widen by X pp." Tie-in to /qc's
+ * FormulaHero — same math anchor, single-packet handle.
+ *
+ * Returns null for incomplete packets (no flows evaluated). Clamps to [0, 5.48]
+ * so out-of-range scores (shouldn't happen, but defensible) don't render
+ * negative or absurd values.
+ *
+ * Trade-off: this is a score-based approximation, not a per-flow recomputation.
+ * `packet_error_risk` stores only the aggregate score, not the underlying
+ * QcResult[] used to compute it. When per-flow defensibility is plumbed
+ * through (T8 shadow-mode instrumentation, TODO-5), a more accurate
+ * `perPacketGapContributionFromResults(results)` can layer on top.
+ *
+ * Closes the reverse-bridge half of the /qc redesign — packet detail now
+ * speaks the same vocabulary as the aggregate dashboard.
+ */
+export function perPacketGapContribution(score: number | null): number | null {
+  if (score == null) return null;
+  const SCORE_FLOOR = 5;
+  const SCORE_CEIL = 80;
+  const GAP_AT_CEIL = CA_BASELINE_PER - PROJECTED_PER_AT_FULL_ENGAGEMENT;
+  const normalized = (score - SCORE_FLOOR) / (SCORE_CEIL - SCORE_FLOOR);
+  const clamped = Math.max(0, Math.min(1, normalized));
+  return clamped * GAP_AT_CEIL;
+}
+
 // ---------------------------------------------------------------------------
 // USDA reference data — not used in scoring yet; inform future calibration
 // ---------------------------------------------------------------------------

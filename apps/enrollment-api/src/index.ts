@@ -176,6 +176,7 @@ import { cleanupBuddyAppMetadata } from "./cron/buddy-app-metadata-cleanup.js";
 import { runEbtProbe } from "./cron/ebt-probe.js";
 import { runWeeklyDigest } from "./cron/weekly-digest.js";
 import { purgeOldPushLog } from "./cron/purge-push-log.js";
+import { runInternalQcSampler } from "./cron/internal-qc-sampler.js";
 
 // Cron dispatch — keep tiny and table-driven so adding/removing
 // schedules in wrangler.toml is the only change needed. Tasks run under
@@ -277,6 +278,20 @@ async function dispatchScheduled(
         log("info", "scheduled: purge old push log finished", { ...result });
       } catch (err) {
         log("error", "scheduled: purge old push log failed", { error: String(err) });
+      }
+      return;
+    }
+    case "0 * * * *": {
+      // T4 (error-rate-engine-falsification): hourly QC sampler. Modular
+      // hash over packet_id selects ~10% of submitted packets and inserts
+      // packet_qc_samples rows for navigator review. See
+      // src/cron/internal-qc-sampler.ts.
+      log("info", "scheduled: internal qc sampler starting");
+      try {
+        const result = await runInternalQcSampler(env);
+        log("info", "scheduled: internal qc sampler finished", { ...result });
+      } catch (err) {
+        log("error", "scheduled: internal qc sampler failed", { error: String(err) });
       }
       return;
     }

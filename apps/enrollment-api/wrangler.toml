@@ -133,7 +133,15 @@ BUDDY_ADD_ENABLED = "false"
 # Sunday 14:00 UTC = 09:00 ET (EDT). DST acknowledged limitation. See
 # src/cron/weekly-digest.ts.
 # X-T5 (same plan): daily 04:00 UTC purge of user_push_log rows >30d old.
+#
+# T4 (error-rate-engine-falsification): hourly QC sampler. Reads submitted
+# packets and writes packet_qc_samples rows for the modular-10 subset. See
+# src/cron/internal-qc-sampler.ts. NOTE: this brings us to 6 cron triggers,
+# one over the free-plan limit of 5. Either upgrade the CF Workers plan
+# before `wrangler deploy`, OR drop one of the existing crons (the USDA
+# stub was already dropped for the same reason). Deferring activation to
+# operator step in §9 deployment.
 [triggers]
 # USDA retailer sync ("0 3 * * *") dropped: stub-mode, free plan limit is 5.
 # Re-add when plan upgrades or USDA endpoint is live.
-crons = ["*/5 * * * *", "0 14 * * *", "0 17 * * 7", "0 14 * * 7", "0 4 * * *"]
+crons = ["*/5 * * * *", "0 14 * * *", "0 17 * * 7", "0 14 * * 7", "0 4 * * *", "0 * * * *"]
