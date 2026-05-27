@@ -28,6 +28,12 @@ struct CivicaEntryView: View {
 
     @State private var presentingDebugMenu = false
 
+    /// Optional handler so a DEBUG `CivicaPhaseTab` can swap the
+    /// rendered phase from outside this view without mutating the
+    /// underlying SNAPApplicationStatusStore. Production builds
+    /// ignore this — the tab is only wired in DEBUG.
+    var onDebugPhaseChange: ((CivicaPhase) -> Void)? = nil
+
     private var language: CivicaLanguage {
         CivicaLanguage(rawValue: languageRaw) ?? .english
     }
@@ -43,6 +49,12 @@ struct CivicaEntryView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: CivicaSpacing.lg) {
+                #if DEBUG
+                if let onDebugPhaseChange {
+                    CivicaPhaseTab(current: .enroll, onChange: onDebugPhaseChange)
+                        .padding(.bottom, CivicaSpacing.xs)
+                }
+                #endif
                 heroCard
                 estimatorOffRamp
                 hairline
@@ -354,74 +366,6 @@ enum CivicaEntryStrings {
     static let publicBenefitTag = CivicaText(
         "· Civica · public-benefit project",
         es: "· Civica · proyecto de beneficio público"
-    )
-
-    // ─── Legacy keys (kept for now; some may be referenced by other
-    // call sites — cleanup pass after a grep audit). The design no
-    // longer renders these, but deleting them risks breaking string
-    // parity if another view imports the symbol. Safe to remove after
-    // a targeted grep confirms zero external uses.
-    // ───────────────────────────────────────────────────────────────
-
-    static let eyebrow = CivicaText("Civica", es: "Civica")
-    static let title = CivicaText(
-        "Apply for help with food.",
-        es: "Solicita ayuda con la comida."
-    )
-    static let subtitle = CivicaText(
-        "Walk through a SNAP application at your own pace. Save your answers anytime.",
-        es: "Haz una solicitud de SNAP a tu ritmo. Guarda tus respuestas en cualquier momento."
-    )
-    static let snapTitle = CivicaText("Apply for SNAP", es: "Solicitar SNAP")
-    static let snapSubtitle = CivicaText(
-        "CalFresh / SNAP food assistance — typically about 15 minutes.",
-        es: "Asistencia alimentaria de CalFresh / SNAP — usualmente unos 15 minutos."
-    )
-    static let ebtBalanceTitle = CivicaText(
-        "Check EBT balance",
-        es: "Consultar saldo de EBT"
-    )
-    static let ebtBalanceSubtitle = CivicaText(
-        "See your CalFresh balance, recent activity, and next deposit.",
-        es: "Consulta tu saldo de CalFresh, actividad reciente y próximo depósito."
-    )
-    static let findHelpTitle = CivicaText(
-        "Find help near you",
-        es: "Encuentra ayuda cerca de ti"
-    )
-    static let findHelpSubtitle = CivicaText(
-        "Food banks, pantries, and SNAP navigators within walking distance.",
-        es: "Bancos de alimentos, despensas y asesores de SNAP a distancia caminable."
-    )
-    static let buddyTitle = CivicaText("Add a buddy", es: "Agrega un compañero")
-    static let buddySubtitle = CivicaText(
-        "Loop in someone you trust to follow along and help with next steps.",
-        es: "Incluye a alguien de confianza para que te acompañe y te ayude con los próximos pasos."
-    )
-    static let buddyComingSoonTitle = CivicaText(
-        "Buddy support is almost here",
-        es: "El acompañante está casi listo"
-    )
-    static let buddyComingSoonBody = CivicaText(
-        "Soon you'll be able to send a private link to a family member, friend, or navigator. They'll see your status, deadlines, and what's left to do — never your private documents.",
-        es: "Pronto podrás enviar un enlace privado a un familiar, amigo o asesor. Verá tu estado, fechas límite y lo que falta por hacer — nunca tus documentos privados."
-    )
-    static let buddyComingSoonCTA = CivicaText("Got it", es: "Entendido")
-    static let interviewCoachTitle = CivicaText(
-        "Practice your DTA interview",
-        es: "Practica tu entrevista con DTA"
-    )
-    static let interviewCoachSubtitle = CivicaText(
-        "Rehearse with a simulated caseworker before the real call.",
-        es: "Ensaya con un trabajador social simulado antes de la llamada real."
-    )
-    static let recertCompanionTitle = CivicaText(
-        "Recertification Companion",
-        es: "Acompañante de recertificación"
-    )
-    static let recertCompanionSubtitle = CivicaText(
-        "Preview your recertification, track document deadlines, and draft a procedural appeal if you're denied.",
-        es: "Previsualiza tu recertificación, sigue las fechas de tus documentos y redacta una apelación si te niegan."
     )
 }
 

@@ -47,6 +47,34 @@ public enum CivicaColors {
     /// Soft teal wash — cool civic-engagement backgrounds.
     public static let tealSurface          = Color.dynamic(light: "#BCE0DA", dark: "#2C4D49")
 
+    // MARK: - Terracotta — "urgent neutral · act on this" surface
+    //
+    // Codified during the May 2026 plan-design-review C1 follow-up to
+    // close the wheat-creep gap: cold-start home "Need food today" card,
+    // FindHelp nearest-help pill, waiting-room emergency-CalFresh CTA,
+    // and expiring-benefits reminders previously borrowed wheatPrimary
+    // (positive outcome) for what is really an urgent-action prompt.
+    // Terracotta sits in its own semantic slot:
+    //
+    //   • pinePrimary       — primary CTA / brand anchor
+    //   • amberPrimary      — positive outcome (deposit landed, approval)
+    //   • warningAmber      — process caution (low balance, county may flag)
+    //   • brickAccent       — recovery / denial / human-catch
+    //   • terracottaAccent  — urgent neutral · act on this (NEW)
+    //
+    // Reads warmer than brick (less pink-red, away from denial semantics),
+    // cooler than wheat (no celebration), louder than warning surface.
+    //
+    // Contrast caveat (flagged at codification): terracottaSurface (#F0DCD0)
+    // sits adjacent to brickSurface (#F1D4C8) in hue space. Before any
+    // surface ships with both adjacent, run a side-by-side on a real
+    // device at 30/50/100% brightness and a deuteranopia/protanopia
+    // simulation — reds compress on red-axis colorblindness and the two
+    // tints can collapse.
+    public static let terracottaSurface        = Color.dynamic(light: "#F0DCD0", dark: "#3D2620")
+    public static let terracottaSurfacePressed = Color.dynamic(light: "#E5CFBF", dark: "#34211C")
+    public static let terracottaAccent         = Color.dynamic(light: "#7E3F26", dark: "#C77C5A")
+
     // MARK: - Carried-forward surfaces
 
     public static let surfacePrimary       = Color.dynamic(light: "#FFFFFF", dark: "#1B1F24")
