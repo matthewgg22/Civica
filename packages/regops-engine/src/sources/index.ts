@@ -42,3 +42,16 @@ export {
 
 export type { Clock } from "./clock.js";
 export { FakeClock, SystemClock } from "./clock.js";
+
+export type {
+  FederalRegisterDocument,
+  FederalRegisterDocumentType,
+  FederalRegisterAdapterDeps,
+  FetchLike,
+} from "./federal-register.js";
+export {
+  FederalRegisterAdapter,
+  hashDocuments,
+  parseApiResponse,
+  parseRetryAfter,
+} from "./federal-register.js";

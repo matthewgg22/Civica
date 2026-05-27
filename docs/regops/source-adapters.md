@@ -131,6 +131,16 @@ and effective date are all distinct events to track.
 - API is stable; rate limits are documented (1000/hr)
 - `type` field distinguishes proposed vs. final vs. notice
 - `effective_on` field is authoritative for when the rule takes effect
+- Implementation: `packages/regops-engine/src/sources/federal-register.ts`.
+  Tests cover Success / NoChange / TransientFailure (429 + 5xx + network
+  throw) / StructuralFailure (4xx / malformed JSON / unknown `type` /
+  missing field). Pagination via `next_page_url` is not yet consumed —
+  the v1 adapter reads the first page only (newest-first, 100/page),
+  which covers ~3 months of FNS activity at observed cadence. Multi-page
+  walk lands in a follow-up before historical backfill.
+- Agency field accepts both `["food-and-nutrition-service"]` and
+  `[{slug: "food-and-nutrition-service", name: "FNS"}]` shapes — the API
+  switches between them depending on endpoint.
 
 **Map to rule code:** varies; usually affects `FederalDefaultRules.swift`
 or triggers a war-room event if the rule is large enough.
