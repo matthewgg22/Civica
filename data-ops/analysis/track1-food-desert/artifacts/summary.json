@@ -1,0 +1,13 @@
+{
+  "ca_per_fy2024_total": 10.98,
+  "ca_per_fy2024_over": 7.58,
+  "ca_per_fy2024_under": 3.4,
+  "retailer_total": 30357,
+  "retailer_grocery_share_pct": 25.78,
+  "counties": 57,
+  "top_county": "LOS ANGELES",
+  "top_county_stores": 8192,
+  "pumas": 281,
+  "median_non_enrollment_rate": 0.6366,
+  "total_eligible_population": 4661940
+}
