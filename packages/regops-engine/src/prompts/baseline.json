@@ -1,0 +1,8 @@
+{
+  "$schema": "Frozen SHA-256 baselines for every registered prompt template.",
+  "$instructions": "To edit a template: either (a) bump the version and add a new file, OR (b) deliberately rebaseline this entry. The baseline test (baseline.test.ts) fails if a recorded checksum drifts from the on-disk file. Do not auto-update — see docs/regops/runbook.md 'Drafter precision regression'.",
+  "prompts": {
+    "extract-eligibility-change@v1": "67296175640472867ec37e18fad944092aae73dde809a08d82f2db9b238f636b",
+    "summarize-war-room-event@v1": "0d56269476df370d72a4b9538dd2137b88381a3b49d24d3dcbd9bf1f5c6cd5fc"
+  }
+}
