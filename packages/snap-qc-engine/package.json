@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "@civica/snap-calculator": "workspace:*",
+    "@civica/snap-rules": "workspace:*",
     "zod": "^3.24.0"
   },
   "devDependencies": {

@@ -593,6 +593,9 @@ importers:
       '@civica/snap-calculator':
         specifier: workspace:*
         version: link:../snap-calculator
+      '@civica/snap-rules':
+        specifier: workspace:*
+        version: link:../snap-rules
       zod:
         specifier: ^3.24.0
         version: 3.25.76
