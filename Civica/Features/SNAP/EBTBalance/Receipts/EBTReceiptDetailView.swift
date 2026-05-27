@@ -91,7 +91,7 @@ struct EBTReceiptDetailView: View {
             tint = CivicaColors.pinePrimary
         case .ambiguous:
             label = EBTReceiptStrings.statusAmbiguous.value(in: language)
-            tint = CivicaColors.brickPrimary
+            tint = CivicaColors.warningAmber
         case .standalone:
             label = EBTReceiptStrings.statusStandalone.value(in: language)
             tint = CivicaColors.graphite
@@ -162,7 +162,7 @@ struct EBTReceiptDetailView: View {
                         // Phase 2: PATCH /ebt/receipts/:id { transaction_id: null }
                     }
                     .font(CivicaTypography.footnote)
-                    .foregroundStyle(CivicaColors.brickPrimary)
+                    .foregroundStyle(CivicaColors.brickAccent)
                 }
             } else {
                 Text(EBTReceiptStrings.noTransactionLinked.value(in: language))

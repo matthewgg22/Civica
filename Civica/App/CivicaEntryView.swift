@@ -33,6 +33,7 @@ struct CivicaEntryView: View {
                     estimatorTile
                     ebtBalanceTile
                     findHelpTile
+                    buddyTile
                     if InterviewCoachFeatureFlag.isEnabled {
                         interviewCoachTile
                     }
@@ -108,7 +109,7 @@ struct CivicaEntryView: View {
         } label: {
             tileCard(
                 imageName: "HomeIconEstimator",
-                iconAccent: CivicaColors.accentTeal,
+                iconAccent: CivicaColors.pinePrimary,
                 title: SNAPBenefitEstimatorStrings.entryCardTitle.value(in: language),
                 // Compliance row 4 (estimator_entry_subtitle): counsel-prep
                 // approved (2026-05-19), state-aware. Resolves the [Agency]
@@ -219,7 +220,7 @@ struct CivicaEntryView: View {
         } label: {
             tileCard(
                 imageName: "HomeIconEBTBalance",
-                iconAccent: CivicaColors.accentTeal,
+                iconAccent: CivicaColors.pinePrimary,
                 title: CivicaEntryStrings.ebtBalanceTitle.value(in: language),
                 subtitle: CivicaEntryStrings.ebtBalanceSubtitle.value(in: language)
             )
@@ -235,9 +236,31 @@ struct CivicaEntryView: View {
         } label: {
             tileCard(
                 imageName: "HomeIconFindHelp",
-                iconAccent: CivicaColors.accentTeal,
+                iconAccent: CivicaColors.pinePrimary,
                 title: CivicaEntryStrings.findHelpTitle.value(in: language),
                 subtitle: CivicaEntryStrings.findHelpSubtitle.value(in: language)
+            )
+        }
+        .buttonStyle(.plain)
+    }
+
+    // MARK: - Buddy tile
+
+    // Loops in a trusted family member / friend / caseworker so the
+    // applicant isn't navigating the SNAP process alone. Gateway API
+    // (POST /buddy/invite + /buddy/accept) shipped in PR #245; iOS UI
+    // is still scaffolding. Tile is shown today as a visible "coming
+    // soon" so users know the capability is on the way; tapping opens
+    // a short explainer instead of a real invite flow.
+    private var buddyTile: some View {
+        NavigationLink {
+            BuddyComingSoonView(language: language)
+        } label: {
+            tileCard(
+                icon: "person.2.fill",
+                iconAccent: CivicaColors.pinePrimary,
+                title: CivicaEntryStrings.buddyTitle.value(in: language),
+                subtitle: CivicaEntryStrings.buddySubtitle.value(in: language)
             )
         }
         .buttonStyle(.plain)
@@ -361,6 +384,26 @@ enum CivicaEntryStrings {
         "Food banks, pantries, and SNAP navigators within walking distance.",
         es: "Bancos de alimentos, despensas y asesores de SNAP a distancia caminable."
     )
+    static let buddyTitle = CivicaText(
+        "Add a buddy",
+        es: "Agrega un compañero"
+    )
+    static let buddySubtitle = CivicaText(
+        "Loop in someone you trust to follow along and help with next steps.",
+        es: "Incluye a alguien de confianza para que te acompañe y te ayude con los próximos pasos."
+    )
+    static let buddyComingSoonTitle = CivicaText(
+        "Buddy support is almost here",
+        es: "El acompañante está casi listo"
+    )
+    static let buddyComingSoonBody = CivicaText(
+        "Soon you'll be able to send a private link to a family member, friend, or navigator. They'll see your status, deadlines, and what's left to do — never your private documents.",
+        es: "Pronto podrás enviar un enlace privado a un familiar, amigo o asesor. Verá tu estado, fechas límite y lo que falta por hacer — nunca tus documentos privados."
+    )
+    static let buddyComingSoonCTA = CivicaText(
+        "Got it",
+        es: "Entendido"
+    )
     static let interviewCoachTitle = CivicaText(
         "Practice your DTA interview",
         es: "Practica tu entrevista con DTA"
@@ -381,6 +424,65 @@ enum CivicaEntryStrings {
         "Preview your recertification, track document deadlines, and draft a procedural appeal if you're denied.",
         es: "Previsualiza tu recertificación, sigue las fechas de tus documentos y redacta una apelación si te niegan."
     )
+}
+
+// MARK: - Buddy placeholder destination
+
+// Lightweight stand-in for the future buddy-invite flow. Renders the
+// thesis copy + a single dismissal CTA so the tile in CivicaEntryView
+// has a real destination users can tap into. Replace with the
+// production invite flow (POST /buddy/invite → share-sheet with the
+// returned link) once the iOS side of buddy ships.
+private struct BuddyComingSoonView: View {
+    let language: CivicaLanguage
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: CivicaSpacing.lg) {
+                HStack(spacing: CivicaSpacing.md) {
+                    Image(systemName: "person.2.fill")
+                        .font(.system(size: 32))
+                        .foregroundStyle(CivicaColors.pinePrimary)
+                        .frame(width: 56, height: 56)
+                        .background(
+                            RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
+                                .fill(CivicaColors.pinePrimary.opacity(0.12))
+                        )
+                        .accessibilityHidden(true)
+                    Text(CivicaEntryStrings.buddyComingSoonTitle.value(in: language))
+                        .font(CivicaTypography.pageTitle)
+                        .foregroundStyle(CivicaColors.ink)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .accessibilityAddTraits(.isHeader)
+                }
+
+                Text(CivicaEntryStrings.buddyComingSoonBody.value(in: language))
+                    .font(CivicaTypography.body)
+                    .foregroundStyle(CivicaColors.graphite)
+                    .fixedSize(horizontal: false, vertical: true)
+
+                Button {
+                    dismiss()
+                } label: {
+                    Text(CivicaEntryStrings.buddyComingSoonCTA.value(in: language))
+                        .font(CivicaTypography.subheadStrong)
+                        .foregroundStyle(CivicaColors.onPrimaryText)
+                        .frame(maxWidth: .infinity, minHeight: 48)
+                        .background(
+                            RoundedRectangle(cornerRadius: CivicaRadius.control)
+                                .fill(CivicaColors.pinePrimary)
+                        )
+                }
+                .buttonStyle(.plain)
+                .padding(.top, CivicaSpacing.md)
+            }
+            .padding(CivicaSpacing.xl)
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .background(CivicaColors.paper.ignoresSafeArea())
+        .navigationBarTitleDisplayMode(.inline)
+    }
 }
 
 #if DEBUG

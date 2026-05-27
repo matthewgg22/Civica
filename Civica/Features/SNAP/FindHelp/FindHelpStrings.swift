@@ -163,8 +163,8 @@ enum FindHelpStrings {
         es: "Las áreas rurales suelen necesitar un radio más amplio. También podemos ayudarte por teléfono — eso funciona en cualquier lugar."
     )
     static let emptyExpandCTA = CivicaText(
-        "Search 25 miles",
-        es: "Buscar a 25 millas"
+        "Search 75 miles",
+        es: "Buscar a 75 millas"
     )
     static let emptyHumanLineLabel = CivicaText(
         "Talk to someone",

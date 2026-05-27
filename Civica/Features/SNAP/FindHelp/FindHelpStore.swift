@@ -27,11 +27,11 @@ enum FindHelpLayerSelection: String, CaseIterable, Identifiable {
 
 @MainActor
 final class FindHelpStore: ObservableObject {
-    /// Default search radius — ~15 miles. Wide enough to fill the map
+    /// Default search radius — ~25 miles. Wide enough to fill the map
     /// with nearby results on first load without feeling overwhelming.
-    static let defaultRadiusKm: Double = 25.0
-    /// Empty-state "look farther" radius — ~50 miles.
-    static let expandedRadiusKm: Double = 80.0
+    static let defaultRadiusKm: Double = 40.0
+    /// Empty-state "look farther" radius — ~75 miles.
+    static let expandedRadiusKm: Double = 120.0
     /// Minimum movement before `requestSearch` reissues a query at the
     /// new coordinate. Stops a noisy CoreLocation stream from spamming
     /// the RPC while the user is stationary.
@@ -92,7 +92,7 @@ final class FindHelpStore: ObservableObject {
     func searchNearby(
         lat: Double,
         lng: Double,
-        radiusKm: Double = 25,
+        radiusKm: Double = 40,
         precision: FindHelpLocationPrecision = .coarse,
         maxResults: Int = 50
     ) {

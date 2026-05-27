@@ -16,8 +16,9 @@ import SwiftUI
 /// drawer, scroll the list to navigate within it.
 struct FindHelpBottomSheet: View {
     /// Minimum visible height — grab handle + disclosure row +
-    /// layer toggle + subtitle line. Never collapses below this.
-    private static let peekHeight: CGFloat = 210
+    /// layer toggle + subtitle line + filter bar (segmented picker +
+    /// language menu, two rows). Never collapses below this.
+    private static let peekHeight: CGFloat = 280
     private static let cornerRadius: CGFloat = 16
 
     @ObservedObject var store: FindHelpStore
@@ -122,7 +123,7 @@ struct FindHelpBottomSheet: View {
 
     private var grabHandle: some View {
         Capsule()
-            .fill(Color(uiColor: .systemGray4))
+            .fill(CivicaColors.hairline)
             .frame(width: 36, height: 5)
             .padding(.vertical, CivicaSpacing.sm)
             .frame(maxWidth: .infinity)

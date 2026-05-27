@@ -160,7 +160,7 @@ struct QuestionBrowserView: View {
         Button(action: action) {
             Text(label)
                 .font(CivicaTypography.captionStrong)
-                .foregroundStyle(isSelected ? Color.white : CivicaColors.pinePrimary)
+                .foregroundStyle(isSelected ? CivicaColors.onPrimaryText : CivicaColors.pinePrimary)
                 .padding(.horizontal, CivicaSpacing.sm)
                 .padding(.vertical, CivicaSpacing.xs)
                 .background(
