@@ -21,6 +21,8 @@ export default defineConfig({
   test: {
     environment: 'node',
     globals: false,
-    include: ['src/**/*.test.ts'],
+    // `test/rls/` houses migration-introspection tests for table RLS shapes.
+    // Plan: docs/plans/error-rate-engine-falsification.md (T11 / ENG-D5).
+    include: ['src/**/*.test.ts', 'test/**/*.test.ts'],
   },
 });
