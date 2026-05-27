@@ -138,8 +138,8 @@ function computeReport(
   const stage_durations = STAGE_TRANSITIONS.map(({ key, label, fromCol, toCol }) => {
     const durations: number[] = [];
     for (const p of packets) {
-      const fromVal = (p as Record<string, unknown>)[fromCol] as string | null;
-      const toVal = (p as Record<string, unknown>)[toCol] as string | null;
+      const fromVal = (p as unknown as Record<string, string | null>)[fromCol] ?? null;
+      const toVal = (p as unknown as Record<string, string | null>)[toCol] ?? null;
       if (fromVal && toVal) {
         const h = hoursBetween(fromVal, toVal);
         if (h >= 0) durations.push(h);
@@ -296,7 +296,7 @@ export async function fetchPilotCohort(since: string, until: string): Promise<Pi
     .order("created_at", { ascending: false });
   const latestRiskByPacket = new Map<string, { score: number | null; tier: string | null }>();
   if (Array.isArray(riskRows)) {
-    for (const r of riskRows as Array<{ packet_id: string; score: number | null; tier: string | null }>) {
+    for (const r of riskRows as unknown as Array<{ packet_id: string; score: number | null; tier: string | null }>) {
       if (!latestRiskByPacket.has(r.packet_id)) {
         latestRiskByPacket.set(r.packet_id, { score: r.score, tier: r.tier });
       }
@@ -319,7 +319,7 @@ export async function fetchPilotCohort(since: string, until: string): Promise<Pi
     .order("occurred_at", { ascending: false });
   const latestHistoryByPacket = new Map<string, { to_status: string; occurred_at: string }>();
   if (Array.isArray(histRows)) {
-    for (const h of histRows as Array<{ packet_id: string; to_status: string; occurred_at: string }>) {
+    for (const h of histRows as unknown as Array<{ packet_id: string; to_status: string; occurred_at: string }>) {
       if (!latestHistoryByPacket.has(h.packet_id)) {
         latestHistoryByPacket.set(h.packet_id, { to_status: h.to_status, occurred_at: h.occurred_at });
       }
