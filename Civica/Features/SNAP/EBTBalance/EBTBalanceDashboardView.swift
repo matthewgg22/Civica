@@ -81,6 +81,11 @@ struct EBTBalanceDashboardView: View {
                     expirationCard(insights)
                     cardSecurityRow
                     accountServicesRow
+                    SavedByCivicaCard(
+                        totalSavingsCents: offersStore.totalSavingsCents,
+                        tallyLastUpdated: offersStore.tallyLastUpdated,
+                        language: language
+                    )
                     perksSection
                     newsSection
                     demoDisclosure

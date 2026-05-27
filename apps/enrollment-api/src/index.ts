@@ -245,7 +245,7 @@ async function dispatchScheduled(
       }
       return;
     }
-    case "0 17 * * 0": {
+    case "0 17 * * 7": {
       // B-T7: weekly digest, CA shard (Sunday 09:00 PT during PDT)
       log("info", "scheduled: weekly digest CA shard starting");
       try {
@@ -256,7 +256,7 @@ async function dispatchScheduled(
       }
       return;
     }
-    case "0 14 * * 0": {
+    case "0 14 * * 7": {
       // B-T7: weekly digest, MA shard (Sunday 09:00 ET during EDT). The daily
       // "0 14 * * *" ebt-probe ALSO fires at this UTC slot, but Cloudflare
       // delivers each cron pattern as a separate event so both handlers run.

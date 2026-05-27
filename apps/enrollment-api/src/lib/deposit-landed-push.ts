@@ -25,6 +25,7 @@ import {
   DEFAULT_PREFS,
 } from "./push-cadence.js";
 import { resolveOffers } from "./offers/resolver.js";
+import { makeApnsDeps, sendPerkOffer } from "./apns-send.js";
 import type { Env } from "../types.js";
 
 export interface DepositLandedPushResult {
@@ -85,8 +86,37 @@ export async function dispatchDepositLandedPush(
     return { status: "race_lost", user_id: args.userId, offer_id: topTier.offer_id };
   }
 
-  // v1: stub APNs send. The push_log row is the durable record; once the
-  // partner catalog has live entries (X-T8) we'll wire the existing apns-send
-  // helper (sendPerkOffer category) here in a v1.0.1 commit.
+  // APNs dispatch. The push_log row is the durable record (idempotent via
+  // the unique partial index) — APNs delivery failures don't reopen the
+  // 24h floor.
+  const apnsDeps = makeApnsDeps(env, db);
+  const report = await sendPerkOffer({
+    deps: apnsDeps,
+    userId: args.userId,
+    offerId: topTier.offer_id,
+    partnerName: topTier.partner_name,
+    discount: topTier.name,
+    distanceText: null, // server-side pick has no real distance; v1.1 client geofence will carry one
+    throughDateText: topTier.end_at ? formatThroughDate(topTier.end_at) : null,
+  });
+
+  if (report.status !== "sent" || report.successes === 0) {
+    return {
+      status: "race_lost",
+      user_id: args.userId,
+      offer_id: topTier.offer_id,
+      reason: report.reason ?? `apns_${report.status}`,
+    };
+  }
   return { status: "sent", user_id: args.userId, offer_id: topTier.offer_id };
+}
+
+function formatThroughDate(iso: string): string | null {
+  const date = new Date(iso);
+  if (Number.isNaN(date.getTime())) return null;
+  const daysAway = (date.getTime() - Date.now()) / 86_400_000;
+  if (daysAway >= 0 && daysAway <= 7) {
+    return date.toLocaleDateString("en-US", { weekday: "long" });
+  }
+  return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
 }

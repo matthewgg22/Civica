@@ -30,6 +30,7 @@ import {
   readNotificationPrefs,
 } from "../lib/push-cadence.js";
 import { resolveOffers } from "../lib/offers/resolver.js";
+import { makeApnsDeps, sendPerkOffer } from "../lib/apns-send.js";
 import type { Env } from "../types.js";
 
 export type LogFn = (level: "info" | "warn" | "error", msg: string, ctx?: Record<string, unknown>) => void;
@@ -142,10 +143,32 @@ export async function runWeeklyDigest(env: Env, shard: "CA" | "MA", log: LogFn):
           continue;
         }
 
-        // v1: stub send. Real APNs hookup lands in v1.0.1 once partner_offers
-        // catalog has live entries (X-T8 day-1 catalog gate). The push_log row
-        // is written either way; the index gives us idempotency.
-        result.sent += 1;
+        // APNs dispatch. The push_log row is already written (atomic against
+        // the unique partial index). Even if Apple is down, the push_log row
+        // is the source of truth for the 24h floor — so a future cron tick
+        // for the same user this UTC day is suppressed by the index.
+        const apnsDeps = makeApnsDeps(env, db);
+        const report = await sendPerkOffer({
+          deps: apnsDeps,
+          userId: row.auth_uid,
+          offerId: top.offer_id,
+          partnerName: top.partner_name,
+          discount: top.name,
+          // Digest pushes don't carry distance — the user isn't standing in
+          // front of the store; they're reading a Sunday-morning summary.
+          distanceText: null,
+          throughDateText: top.end_at ? formatThroughDate(top.end_at) : null,
+        });
+        if (report.status === "sent" && report.successes > 0) {
+          result.sent += 1;
+        } else {
+          // APNs returned 0 deliveries (no tokens, all errored, or
+          // not-configured in this env). The push_log row stays as the
+          // record-of-attempt; ops dashboards reconcile from there.
+          result.suppressed += 1;
+          const reason = report.reason ?? report.status;
+          result.reason_counts[`apns_${reason}`] = (result.reason_counts[`apns_${reason}`] ?? 0) + 1;
+        }
       } catch (err) {
         result.errors += 1;
         log("warn", "weekly_digest: per-user error", {
@@ -169,4 +192,21 @@ export async function runWeeklyDigest(env: Env, shard: "CA" | "MA", log: LogFn):
     reason_counts: result.reason_counts,
   });
   return result;
+}
+
+/**
+ * Pre-formats an ISO timestamp as a short human-readable through-date for
+ * the APNs body — "Saturday" if within the next 7 days, else "May 31".
+ * Locale-agnostic en-US; v1.1 takes a language and switches formatters at
+ * the call site.
+ */
+function formatThroughDate(iso: string): string | null {
+  const date = new Date(iso);
+  if (Number.isNaN(date.getTime())) return null;
+  const now = Date.now();
+  const daysAway = (date.getTime() - now) / 86_400_000;
+  if (daysAway >= 0 && daysAway <= 7) {
+    return date.toLocaleDateString("en-US", { weekday: "long" });
+  }
+  return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
 }

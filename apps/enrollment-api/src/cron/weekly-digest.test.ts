@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { runWeeklyDigest } from "./weekly-digest.js";
 import { TEST_ENV, makeQueryBuilder } from "../test/helpers.js";
 import * as supabase from "../lib/supabase.js";
+import * as apnsSend from "../lib/apns-send.js";
 
 const SAMPLE_OFFER = {
   offer_id: "11111111-1111-1111-1111-111111111111",
@@ -9,7 +10,7 @@ const SAMPLE_OFFER = {
   partner_name: "WF",
   category: "groceries",
   description: null,
-  county_fips_list: ["06037"],
+  county_fips_list: ["06037", "06075"],
   expected_revenue_cents: 50,
   expected_savings_cents: 750,
   start_at: null,
@@ -28,6 +29,13 @@ beforeEach(() => {
   // fires at this UTC on Sunday, so this is the real-world clock.
   vi.useFakeTimers();
   vi.setSystemTime(new Date(Date.UTC(2026, 4, 31, 17, 0, 0)));
+  // Default: APNs send succeeds. Override per-test with vi.spyOn if the
+  // test needs to assert APNs failure paths.
+  vi.spyOn(apnsSend, "sendPerkOffer").mockResolvedValue({
+    status: "sent",
+    attempts: 1,
+    successes: 1,
+  });
 });
 
 afterEach(() => {
@@ -106,8 +114,6 @@ describe("runWeeklyDigest", () => {
       ],
     });
     const result = await runWeeklyDigest(TEST_ENV, "CA", noopLog);
-    // eslint-disable-next-line no-console
-    console.log("DEBUG:", JSON.stringify(result));
     expect(result.shard).toBe("CA");
     expect(result.considered).toBe(2);
     expect(result.sent).toBe(2);

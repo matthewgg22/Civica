@@ -25,11 +25,12 @@
  * algorithm + payload without hitting Apple.
  */
 
+import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Env } from "../types.js";
 
 // ─── Wire types ───────────────────────────────────────────────────────────
 
-export type ApnsCategory = "deposit_landed" | "low_balance" | "re_link" | "anomaly";
+export type ApnsCategory = "deposit_landed" | "low_balance" | "re_link" | "anomaly" | "perk_offer";
 
 export interface ApnsSendDeps {
   env: Env;
@@ -200,6 +201,7 @@ function categoryEnabled(prefs: ApnsPrefs, category: ApnsCategory): boolean {
     case "low_balance":    return prefs.low_balance_on;
     case "re_link":        return true; // never muted — recipient must act
     case "anomaly":        return true; // never muted — security signal
+    case "perk_offer":     return prefs.perks_on;
   }
 }
 
@@ -374,4 +376,82 @@ export function sendAnomaly(args: {
       amount_cents: args.transaction.amount_cents,
     },
   });
+}
+
+// ─── Offer-moment platform push (B-T12) ───────────────────────────────────
+//
+// Source plan: ceo-plans/2026-05-26-ebt-offer-moment-platform.md (D6 voice).
+//
+// Voice template (factual-utility per D6):
+//   "{Partner}, {distance}: {discount} {through_date}"
+//   e.g., "Whole Foods, 0.8 mi: 15% off prepared meals through Saturday."
+//
+// The `offer_id` rides in the APNs payload's `extra` so the iOS push
+// handler can route the tap to OfferDetailView via
+// EBTPushDeepLink.perkOffer(offerId:).
+//
+// Distance + through-date are formatted by the CALLER — this helper just
+// composes them into the body. When unknown, pass null and the phrase
+// drops out entirely.
+export function sendPerkOffer(args: {
+  deps: ApnsSendDeps;
+  userId: string;
+  offerId: string;
+  partnerName: string;
+  /** Human-readable discount headline, e.g., "15% off prepared meals". */
+  discount: string;
+  /** Pre-formatted distance like "0.8 mi" or null. */
+  distanceText: string | null;
+  /** Pre-formatted through-date like "Saturday" or "May 31" or null. */
+  throughDateText: string | null;
+}): Promise<ApnsSendReport> {
+  const headParts: string[] = [args.partnerName];
+  if (args.distanceText) headParts.push(args.distanceText);
+  const head = headParts.join(", ");
+  const through = args.throughDateText ? ` through ${args.throughDateText}` : "";
+  const body = `${head}: ${args.discount}${through}.`;
+  return sendCategory({
+    deps: args.deps,
+    userId: args.userId,
+    category: "perk_offer",
+    title: "Deal near you",
+    body,
+    extra: {
+      offer_id: args.offerId,
+      partner_name: args.partnerName,
+    },
+  });
+}
+
+// ─── Shared deps factory ──────────────────────────────────────────────────
+//
+// Production callers (webhooks, crons) construct ApnsSendDeps from
+// (env, db). Tests pass a hand-built struct with stub fetchers. The
+// webhooks router was the first caller; the cron jobs (B-T7 weekly digest,
+// B-T8 deposit-landed push) share the same shape, so the factory lives
+// here instead of being duplicated.
+
+export function makeApnsDeps(env: Env, db: SupabaseClient): ApnsSendDeps {
+  return {
+    env,
+    fetchFn: globalThis.fetch.bind(globalThis),
+    now: () => new Date(),
+    fetchPrefs: async (userId: string): Promise<ApnsPrefs | null> => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { data, error } = await (db.schema('snap_enrollment').from('ebt_notification_prefs' as any) as any)
+        .select('deposit_on, low_balance_on, perks_on, recert_on, quiet_start_minutes, quiet_end_minutes')
+        .eq('user_id', userId)
+        .maybeSingle() as { data: ApnsPrefs | null; error: { message: string } | null };
+      if (error) return null;
+      return data;
+    },
+    fetchTokens: async (userId: string): Promise<string[]> => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { data, error } = await (db.schema('snap_enrollment').from('ebt_device_tokens' as any) as any)
+        .select('apns_token')
+        .eq('user_id', userId) as { data: { apns_token: string }[] | null; error: { message: string } | null };
+      if (error || !data) return [];
+      return data.map((row) => row.apns_token);
+    },
+  };
 }
