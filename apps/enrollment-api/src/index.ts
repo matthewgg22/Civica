@@ -14,6 +14,8 @@ import missingItemsRouter from "./routes/missing-items.js";
 import meRouter from "./routes/me.js";
 import mePacketsRouter from "./routes/me-packets.js";
 import meInboxRouter from "./routes/me-inbox.js";
+import meOffersRouter from "./routes/me-offers.js";
+import meRedemptionsRouter from "./routes/me-redemptions.js";
 import meArgyleRouter from "./routes/me-argyle.js";
 import meWorkHoursRouter from "./routes/me-work-hours.js";
 import benefitsCalRouter from "./routes/benefitscal.js";
@@ -115,6 +117,8 @@ api.route("/oauth/canvas", oauthCanvasRouter);            // /oauth/canvas/excha
 api.route("/me", meRouter);                         // GET/PATCH /me
 api.route("/me/packets", mePacketsRouter);          // /me/packets/*
 api.route("/me/inbox", meInboxRouter);              // /me/inbox/*
+api.route("/me/offers", meOffersRouter);            // /me/offers, /me/offers/:id, /me/offers/events
+api.route("/me/redemptions", meRedemptionsRouter);  // POST /me/redemptions (atomic UPSERT)
 api.route("/me/argyle/connect", meArgyleRouter);    // GET/POST/DELETE /me/argyle/connect (T-DR3-8)
 api.route("/me/work-requirements", meWorkHoursRouter); // /me/work-requirements/:packetId/hours (§10102)
 
@@ -170,6 +174,8 @@ export { app };
 
 import { cleanupBuddyAppMetadata } from "./cron/buddy-app-metadata-cleanup.js";
 import { runEbtProbe } from "./cron/ebt-probe.js";
+import { runWeeklyDigest } from "./cron/weekly-digest.js";
+import { purgeOldPushLog } from "./cron/purge-push-log.js";
 
 // Cron dispatch — keep tiny and table-driven so adding/removing
 // schedules in wrangler.toml is the only change needed. Tasks run under
@@ -236,6 +242,41 @@ async function dispatchScheduled(
         });
       } catch (err) {
         log("error", "scheduled: ebt probe failed", { error: String(err) });
+      }
+      return;
+    }
+    case "0 17 * * 0": {
+      // B-T7: weekly digest, CA shard (Sunday 09:00 PT during PDT)
+      log("info", "scheduled: weekly digest CA shard starting");
+      try {
+        const result = await runWeeklyDigest(env, "CA", log);
+        log("info", "scheduled: weekly digest CA shard finished", { ...result });
+      } catch (err) {
+        log("error", "scheduled: weekly digest CA shard failed", { error: String(err) });
+      }
+      return;
+    }
+    case "0 14 * * 0": {
+      // B-T7: weekly digest, MA shard (Sunday 09:00 ET during EDT). The daily
+      // "0 14 * * *" ebt-probe ALSO fires at this UTC slot, but Cloudflare
+      // delivers each cron pattern as a separate event so both handlers run.
+      log("info", "scheduled: weekly digest MA shard starting");
+      try {
+        const result = await runWeeklyDigest(env, "MA", log);
+        log("info", "scheduled: weekly digest MA shard finished", { ...result });
+      } catch (err) {
+        log("error", "scheduled: weekly digest MA shard failed", { error: String(err) });
+      }
+      return;
+    }
+    case "0 4 * * *": {
+      // X-T5: daily 04:00 UTC purge of user_push_log rows >30d old.
+      log("info", "scheduled: purge old push log starting");
+      try {
+        const result = await purgeOldPushLog(env, log);
+        log("info", "scheduled: purge old push log finished", { ...result });
+      } catch (err) {
+        log("error", "scheduled: purge old push log failed", { error: String(err) });
       }
       return;
     }
