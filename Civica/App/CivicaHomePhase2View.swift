@@ -54,12 +54,35 @@ struct CivicaHomePhase2View: View {
         errorRiskBodyOverride ?? errorRiskStore.body(in: language)
     }
 
-    // MARK: - TODO wiring: replace with real document-requests +
-    // messages-inbox stores once those ship. Defaults of 0 hide
-    // the rows in production.
-    var pendingDocumentCount: Int = 0
-    var documentsDueDateLabel: String = ""
-    var documentsListSummary: String = ""
+    // Documents-requested binding (wired in this PR — see SNAPInboxStore).
+    // Same override-or-store pattern the error-risk row uses: previews
+    // and tests can force a count without hitting the network;
+    // production reads from the live store.
+    var pendingDocumentCountOverride: Int? = nil
+    var documentsDueDateLabelOverride: String? = nil
+    var documentsListSummaryOverride: String? = nil
+
+    @StateObject private var inboxStore = SNAPInboxStore()
+
+    private var pendingDocumentCount: Int {
+        pendingDocumentCountOverride ?? inboxStore.unresolvedCount
+    }
+    private var documentsDueDateLabel: String {
+        documentsDueDateLabelOverride ?? inboxStore.relativeDueLabel(in: language)
+    }
+    private var documentsListSummary: String {
+        documentsListSummaryOverride ?? inboxStore.summary(in: language)
+    }
+
+    // Messages-inbox slot — intentionally NOT bound in this PR. The
+    // gateway today stores doc requests + free-form navigator prompts
+    // in one `missing_item_requests` stream (read via /me/inbox); that
+    // stream is already surfaced above as the documents-requested row.
+    // A distinct applicant-facing messages channel (1:1 conversations,
+    // unread state, separate model, separate endpoint) doesn't exist
+    // yet. When it does, add a `SNAPMessagesInboxStore` and bind these
+    // slots the same way the error-risk + documents-requested rows
+    // are bound.
     var unreadMessageCount: Int = 0
     var mostRecentMessageSender: String = ""
     var mostRecentMessageRelative: String = ""
@@ -159,12 +182,16 @@ struct CivicaHomePhase2View: View {
             )
         }
         .task {
-            // Bind the live enrollment client + fetch the applicant's
-            // current error-risk score. Silent fail — the home view
-            // hides the row on any error.
+            // Bind the live enrollment client + fetch error-risk +
+            // inbox in parallel. Silent fail per store — the home
+            // view hides each row independently on any error.
             guard enrollmentAuth.state.isAuthenticated else { return }
-            errorRiskStore.bind(client: enrollmentAuth.makeEnrollmentAPIClient())
-            await errorRiskStore.load()
+            let client = enrollmentAuth.makeEnrollmentAPIClient()
+            errorRiskStore.bind(client: client)
+            inboxStore.bind(client: client)
+            async let errorRisk: Void = errorRiskStore.load()
+            async let inbox: Void = inboxStore.load()
+            _ = await (errorRisk, inbox)
         }
     }
 
