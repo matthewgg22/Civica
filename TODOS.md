@@ -99,7 +99,21 @@ Helper: `pillarReductionAtFullEngagement()` returns the per-pillar pp breakdown 
 
 ---
 
-## TODO-6 — T9 state connectors Phase 2 (county-resolver + agency-lookup)
+## TODO-6 — T9 state connectors Phase 2 (county-resolver + agency-lookup) — DONE (2026-05-27)
+
+**Status:** DONE — three pieces shipped, all 42 state-connectors tests green:
+
+1. **ZIP-to-county anchor coverage** — `packages/state-connectors/src/fips/data/zip-to-county.json` expanded from 34 entries to 80, covering every CA county (58) and every MA county (14) with at least one anchor ZIP. Tests assert no missing FIPS via deterministic enumeration; downstream agency-directory joins can rely on the fast path resolving SOMETHING for every legitimate launch-state address.
+
+2. **`resolve.byAddress` / `resolve.byZip` convenience API** — `packages/state-connectors/src/resolve.ts`. One call from full address → `{ county FIPS + name, administering agency }`. Tries the ZIP fast path first, falls back to Census geocoder, then hits agency-directory. `byZip` is a no-network variant for low-friction surfaces. Exported as a namespace from `index.ts` alongside the three existing primitives.
+
+3. **Regeneration script** — `packages/state-connectors/scripts/regenerate-zip-to-county.ts` consumes the HUD ZIP_COUNTY crosswalk CSV (downloaded quarterly from `huduser.gov`), filters by state FIPS, picks the dominant county per ZIP (max RES_RATIO), emits the same JSON shape with `_meta` on top and sorted-ZIP keys. Hand-curated CA + MA county-name authority baked into the script so it errors loud on unknown FIPS instead of inventing names. Wired as `pnpm --filter @civica/state-connectors regenerate:zip-to-county`. Re-run quarterly against each new HUD vintage to swap anchor mode for full mode.
+
+`SOURCES.md` documents both modes (anchor vs full) + the regeneration command.
+
+**Open follow-on:** swap from anchor mode to full mode by running the seed script against a downloaded HUD CSV. Optional — anchor mode is correct for all county-level routing; full mode just means more ZIPs hit the fast path before falling through to Census.
+
+**Original spec (kept for traceability):**
 
 **What:** Complete `packages/state-connectors` with county FIPS resolver and SNAP agency lookup (beyond USPS address validation already wired).
 **Why:** Needed for live submission routing (which county agency handles this address?) and for QC audit trail (county-level error category attribution). USPS validation already shipped; county lookup is the next layer.
