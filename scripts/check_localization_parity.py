@@ -49,6 +49,59 @@ SKIP_PATH_FRAGMENTS = (
 PUNCT_FORMAT_ONLY = re.compile(r'^[\W\d%@a-z\s·\-—.,:;()\[\]{}]+$')
 
 
+def strip_swift_interpolations(s: str) -> str:
+    r"""
+    Strip Swift `\(...)` string interpolations, handling NESTED parentheses.
+
+    The previous regex-based stripper (`re.sub(r'\\\([^)]*\)', '', s)`)
+    matched a `\(` then ran to the first `)` it found — which fails on
+    any interpolation that contains parens of its own. The most common
+    real-world example is a localizable accessor inside an interpolation:
+
+        Text("~$\(cents / 100) \(EBTPerksStrings.savingsLabel.value(in: lang))")
+
+    The non-greedy regex stops at the `)` of `value(in:`, leaving ` lang))`
+    behind in the stripped string. The leftover letters then make the
+    `is_meaningful_user_string` check return True, so the checker flags
+    what is in fact a fully-CivicaText-routed surface as a raw string.
+
+    This balanced-paren scanner walks left-to-right tracking depth, so it
+    consumes the whole `\(...)` even when the interior contains call
+    expressions, tuples, or further interpolations.
+
+    Doctests (run via `python3 -m doctest scripts/check_localization_parity.py`):
+
+    >>> strip_swift_interpolations(r"Hello, \(name)!")
+    'Hello, !'
+    >>> strip_swift_interpolations(r"~$\(cents / 100) \(foo.bar(in: lang))")
+    '~$ '
+    >>> strip_swift_interpolations(r"plain text, no interp")
+    'plain text, no interp'
+    >>> strip_swift_interpolations(r"depth: \(a(b(c))) trailing")
+    'depth:  trailing'
+    """
+    out: list[str] = []
+    i = 0
+    n = len(s)
+    while i < n:
+        if i + 1 < n and s[i] == "\\" and s[i + 1] == "(":
+            # Interpolation start. Scan forward to the matching ')'.
+            depth = 1
+            j = i + 2
+            while j < n and depth > 0:
+                if s[j] == "(":
+                    depth += 1
+                elif s[j] == ")":
+                    depth -= 1
+                j += 1
+            # j is now one past the matching ')' (or end-of-string).
+            i = j
+        else:
+            out.append(s[i])
+            i += 1
+    return "".join(out)
+
+
 def load_allowlist() -> set[str]:
     if not ALLOWLIST.exists():
         return set()
@@ -66,7 +119,9 @@ def is_meaningful_user_string(s: str) -> bool:
         return False
     # Strip Swift string interpolations (\(...)) — these are values
     # routed through other code paths, not literal user copy.
-    without_interp = re.sub(r'\\\([^)]*\)', '', s).strip()
+    # Uses a balanced-paren scanner so interpolations with internal
+    # parentheses (e.g. `\(foo.bar(in: lang))`) get fully consumed.
+    without_interp = strip_swift_interpolations(s).strip()
     # Strip currency/format markers + punctuation.
     cleaned = re.sub(r'%[@a-z]|%lld|[·\-—.,:;()\[\]{}\s$\d]', '', without_interp).strip()
     if not cleaned:
