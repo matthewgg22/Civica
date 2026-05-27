@@ -10,14 +10,14 @@ type NavKey = "dashboard" | "queue" | "enrollments" | "county" | "outreach" | "q
 const NAV_ITEMS: { key: NavKey; href: string; label: string }[] = [
   { key: "dashboard",   href: "/dashboard",    label: "Home" },
   { key: "queue",       href: "/packets",      label: "Applications" },
-  { key: "enrollments", href: "/enrollments",  label: "Renewals" },
   { key: "outreach",    href: "/outreach",     label: "Outreach" },
+  { key: "enrollments", href: "/enrollments",  label: "Renewals" },
   { key: "qc",          href: "/qc",           label: "Quality Control" },
   // Internal corporate dashboard — visible in nav for admin/operator/navigator.
   // Middleware gate blocks audience roles (county/state_deputy/cbo_preview).
   // Sits before "Why Civica" so the daily-driver tabs stay grouped left and
   // the marketing/positioning surface stays rightmost.
-  { key: "ops",         href: "/ops",          label: "Pulse" },
+  { key: "ops",         href: "/ops",          label: "Performance" },
   { key: "compliance",  href: "/compliance",   label: "Why Civica" },
   // Internal monetization dashboard — visible in nav for admin/operator only.
   // Middleware gate ensures non-allowed roles get redirected away from /ops.

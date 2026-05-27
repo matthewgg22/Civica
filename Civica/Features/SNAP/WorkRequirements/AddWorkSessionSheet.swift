@@ -73,7 +73,7 @@ struct AddWorkSessionSheet: View {
                     if let error = saveError {
                         Text(error)
                             .font(CivicaTypography.footnote)
-                            .foregroundStyle(Color.red)
+                            .foregroundStyle(CivicaColors.brickAccent)
                     }
 
                     saveButton

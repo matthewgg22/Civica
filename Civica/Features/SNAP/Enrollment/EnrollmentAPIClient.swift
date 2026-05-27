@@ -99,6 +99,7 @@ protocol EnrollmentAPIClient: Sendable {
         packetId: String,
         answers: IHSubmitRequest
     ) async throws
+
 }
 
 // MARK: - Protocol default implementations
@@ -112,6 +113,7 @@ extension EnrollmentAPIClient {
     ) async throws {
         // Default no-op. Concrete implementations in InformalHousingWizardView.swift.
     }
+
 }
 
 // MARK: - Errors
@@ -667,6 +669,7 @@ final class MockEnrollmentAPIClient: EnrollmentAPIClient, @unchecked Sendable {
     func deleteWorkHoursEntry(packetId: String, logId: String) async throws {
         mockWorkHoursEntries.removeAll { $0.log_id == logId }
     }
+
 }
 
 // MARK: - Factory

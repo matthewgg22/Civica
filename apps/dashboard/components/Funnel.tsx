@@ -6,10 +6,10 @@ type Stage = {
   avgDays?: number | null;
 };
 
-// Progression palette: neutral early → indigo mid → teal at handoff.
-// Avoids the muddy amber-next-to-brick clash, while still telling a "warming"
-// story as packets move toward enrollment.
-const STAGE_COLORS = ["bg-graphite", "bg-indigo/70", "bg-indigo", "bg-teal/70", "bg-teal"];
+// Progression palette: faded gray → graphite → pine ramp. Single accent
+// (pine) carries the "moving toward success" story. Avoids the prior
+// gray/indigo/teal carnival that read as 4 distinct colors per page.
+const STAGE_COLORS = ["bg-[#C8C2B6]", "bg-graphite", "bg-[#A8C7B3]", "bg-pine/70", "bg-pine"];
 
 // Maps a funnel stage to the queue filter that shows those packets.
 // "Submitted for Review" + "In Navigator Review" both fall under in-progress.
@@ -42,7 +42,7 @@ export default function Funnel({ stages }: { stages: Stage[] }) {
               <div className="flex items-baseline gap-3 tabular-nums">
                 {conversion !== null && (
                   <span className={`text-[14px] font-bold ${
-                    conversion >= 80 ? "text-teal" : conversion >= 50 ? "text-warning" : "text-brick"
+                    conversion >= 80 ? "text-pine" : conversion >= 50 ? "text-graphite" : "text-warning"
                   }`}>
                     {conversion.toFixed(0)}% advanced
                   </span>

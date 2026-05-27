@@ -97,7 +97,7 @@ private func chipProps(for status: EBTReceiptMatchStatus, language: CivicaLangua
     case .matched:
         return (EBTReceiptStrings.statusMatched.value(in: language), CivicaColors.pinePrimary)
     case .ambiguous:
-        return (EBTReceiptStrings.statusAmbiguous.value(in: language), CivicaColors.brickPrimary)
+        return (EBTReceiptStrings.statusAmbiguous.value(in: language), CivicaColors.warningAmber)
     case .standalone:
         return (EBTReceiptStrings.statusStandalone.value(in: language), CivicaColors.graphite)
     }

@@ -527,6 +527,50 @@ export type Database = {
           },
         ]
       }
+      packet_qc_samples: {
+        Row: {
+          applicant_id: string
+          closed_reason: string | null
+          completed_at: string | null
+          org_id: string
+          packet_id: string
+          sample_id: string
+          sample_stage: string
+          sampled_at: string
+          submitted_at: string | null
+        }
+        Insert: {
+          applicant_id: string
+          closed_reason?: string | null
+          completed_at?: string | null
+          org_id: string
+          packet_id: string
+          sample_id?: string
+          sample_stage: string
+          sampled_at?: string
+          submitted_at?: string | null
+        }
+        Update: {
+          applicant_id?: string
+          closed_reason?: string | null
+          completed_at?: string | null
+          org_id?: string
+          packet_id?: string
+          sample_id?: string
+          sample_stage?: string
+          sampled_at?: string
+          submitted_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "packet_qc_samples_packet_id_fkey"
+            columns: ["packet_id"]
+            isOneToOne: false
+            referencedRelation: "snap_packets"
+            referencedColumns: ["packet_id"]
+          },
+        ]
+      }
       packet_status_history: {
         Row: {
           changed_by_applicant_id: string | null

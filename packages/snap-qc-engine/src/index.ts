@@ -24,7 +24,7 @@ export {
   evaluateBenefitImpact,
 } from "./flows/benefit-impact-projection/index";
 export { combineScores, rollupFactors } from "./scoring/defensibility";
-export { scoreErrorRisk, ERROR_WEIGHT } from "./scoring/error-risk";
+export { scoreErrorRisk, ERROR_WEIGHT, perPacketGapContribution } from "./scoring/error-risk";
 export type { ErrorRiskResult, ErrorRiskTier } from "./scoring/error-risk";
 
 // Population PER projection (added 2026-05-25 for /qc Error Rate Intelligence redesign).
@@ -44,6 +44,27 @@ export {
   pillarContribution,
 } from "./scoring/error-risk";
 export type { PillarCoverage } from "./scoring/error-risk";
+export { INCOME_GROUP_PER_FY23, CA_INCOME_GROUP_PER_FY23, CA_ELEMENT_ATTRIBUTION_FY23 } from "./scoring/error-risk";
+
+// CDSS / county-facing baseline mapping (added 2026-05-27 for TODO-4).
+// Three artifacts that turn the population PER math into county-sales-ready
+// talking points: USDA element → Civica pillar mapping, BBCE-removal
+// counterargument, and the earned-income TAM profile.
+export {
+  CDSS_ERROR_CATEGORY_TO_CIVICA_CONTROLS,
+  CIVICA_ADDRESSABLE_SHARE_PCT,
+  BBCE_REMOVAL_SCENARIO,
+  CIVICA_TAM_PROFILE,
+  pillarReductionAtFullEngagement,
+  listMappedFnsElements,
+  civicaAddressableCategories,
+  residualCategories,
+} from "./scoring/cdss-mapping";
+export type {
+  CdssErrorCategoryRow,
+  CivicaPillar,
+  CivicaControl,
+} from "./scoring/cdss-mapping";
 
 // Failure-to-elect detector (item 2): finds deductions/elections the
 // household qualifies for but hasn't claimed — the underpayment iceberg.

@@ -26,6 +26,12 @@ struct CivicaEntryView: View {
     @AppStorage(CivicaLanguage.defaultStorageKey)
     private var languageRaw: String = CivicaLanguage.english.rawValue
 
+    /// Offers-aware EBT entry. The base branch (`codex/rebuild-feb18`
+    /// post PR #272) wires the EBT root with an authenticated offers
+    /// client when the user is signed in; preserve that contract on
+    /// the new secondary row so the offers feature continues to surface.
+    @EnvironmentObject private var enrollmentAuth: CivicaEnrollmentAuth
+
     @State private var presentingDebugMenu = false
 
     /// Optional handler so a DEBUG `CivicaPhaseTab` can swap the
@@ -205,11 +211,15 @@ struct CivicaEntryView: View {
 
     private var ebtBalanceRow: some View {
         NavigationLink {
-            // Worktree branched from codex/rebuild-feb18 — EBT root
-            // here takes (store, anomalyStore) only. The offers-aware
-            // initializer lives on feat/dashboard-caseworker-readiness
-            // and will be re-introduced when those features land.
-            EBTBalanceRootView()
+            // Preserves the PR #272 offers wiring on the new secondary
+            // row: authenticated users get an offers-aware EBT root;
+            // anonymous users get the fixture-only stack. Both paths
+            // are nil-safe in EBTBalanceRootView's init.
+            EBTBalanceRootView(
+                offersAPIClient: enrollmentAuth.state.isAuthenticated
+                    ? enrollmentAuth.makeOffersAPIClient()
+                    : nil
+            )
         } label: {
             secondaryRowLabel(
                 icon: "creditcard",
@@ -375,6 +385,7 @@ struct CivicaEntryView_Previews: PreviewProvider {
         NavigationStack {
             CivicaEntryView()
                 .environmentObject(SNAPApplicationStatusStore())
+                .environmentObject(CivicaEnrollmentAuth())
         }
     }
 }

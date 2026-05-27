@@ -328,4 +328,13 @@ extension CivicaEnrollmentAuth {
             await self?.currentAccessToken()
         })
     }
+
+    func makeOffersAPIClient() -> any EBTOffersAPIClient {
+        guard let baseURL = HTTPEnrollmentAPIClient.resolveBaseURL() else {
+            return MockEBTOffersAPIClient()
+        }
+        return HTTPEBTOffersAPIClient(baseURL: baseURL, tokenProvider: { [weak self] in
+            await self?.currentAccessToken()
+        })
+    }
 }

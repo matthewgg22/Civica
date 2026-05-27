@@ -28,6 +28,8 @@ struct EBTStringParityTests {
         ("EBTAccountServicesStrings", EBTAccountServicesStrings.all),
         ("EBTPerksStrings", EBTPerksStrings.all),
         ("EBTReferralStrings", EBTReferralStrings.all),
+        ("EBTOffersStrings", EBTOffersStrings.all),
+        ("EBTFreeResourcesStrings", EBTFreeResourcesStrings.all),
     ]
 
     @Test("Every CivicaText has non-empty EN and ES")

@@ -42,7 +42,21 @@ Add new items with `## TODO-N` headings. Never delete — mark as DONE instead.
 
 ---
 
-## TODO-4 — T7 historical-baseline mapping pipeline
+## TODO-4 — T7 historical-baseline mapping pipeline — DONE (2026-05-27)
+
+**Status:** DONE — three artifacts shipped in `packages/snap-qc-engine/src/scoring/cdss-mapping.ts` (+ 18 vitest tests, all 222 engine tests green):
+
+1. **`CDSS_ERROR_CATEGORY_TO_CIVICA_CONTROLS`** — 16-row declarative table mapping USDA FNS-380 error elements (363 Shelter, 311 Wages, 312 SE, etc.) to Civica pillars + shipped controls. Civica-addressable rows pair to pillars/controls; residual rows (RSDI, SSI, medical, etc.) carry an explicit `no_civica_control` marker so the "what we DON'T cover" honesty surface is in code, not just talking points. Covers ≥95% of CA error volume.
+
+2. **`BBCE_REMOVAL_SCENARIO`** — 6-7pp structural PER drop + $275M operational gap codified, with explicit `counter_argument` framing ("measurement-frame narrowing, not verification improvement") and a `provenance: "TODO-4-spec"` marker. Test forces a deliberate citation update before public use.
+
+3. **`CIVICA_TAM_PROFILE`** — 27.3% caseload share (wage-only + mixed + SE-only), 13.95% expected PER, 5.84% non-earner baseline, 2.4× elevation factor, packaged `pitch_framing` sentence. Anchors the county pitch on "the population you're worried about is the population Civica was built for" rather than the misleading 10.98% statewide average.
+
+Helper: `pillarReductionAtFullEngagement()` returns the per-pillar pp breakdown summing to 5.48 (CA_BASELINE_PER − PROJECTED_PER_AT_FULL_ENGAGEMENT).
+
+**Follow-on:** before any external pitch use, replace `BBCE_REMOVAL_SCENARIO.provenance` with a CBPP / USDA citation. The test will fail loudly if the marker is removed without a replacement matching the existing pattern.
+
+**Original spec (kept for traceability):**
 
 **What:** Complete `packages/snap-qc-engine` historical baseline mapping: CDSS QC error categories → Civica controls. Include BBCE-removal counterargument (CA structural PER may drop 6-7%; $275M operational gap remains). Wire earned-income household targeting (27.3% caseload / 13.95% PER vs 5.84% non-earners).
 **Why:** Required to make the quantitative CDSS/county pitch ("Civica reduces error rate by X%") defensible with data, not just claims. Currently in-flight but blocked behind T4 test suite.
@@ -52,7 +66,30 @@ Add new items with `## TODO-N` headings. Never delete — mark as DONE instead.
 
 ---
 
-## TODO-5 — T8 shadow-mode full instrumentation
+## TODO-5 — T8 shadow-mode full instrumentation — DONE (2026-05-27)
+
+**Status:** DONE — emit pipeline + read pipeline both live.
+
+**Emit side** (`apps/enrollment-api/src/lib/scoring.ts`):
+- `scorePacketRisk` now returns `{ result, flowSignals }` so callers have access to the per-flow defensibility list (was previously discarded).
+- New `emitQcEvaluation(env, packetId, applicantId, result, flowSignals, context)` fire-and-forget helper writes one JSON event per persisted score to `civica-analytics/civica-emit/qc-evaluations/date=YYYY-MM-DD/{packet_id}-{ts}-{shortId}.json`. Storage errors are caught and logged; never throw back to the request handler.
+- `QcEvaluationEvent` type (schema_version=1) carries packet/applicant/org/county/state/status context + the full engine result + per-flow signals.
+- Wired at `me-packets.ts` `/error-risk` (full context), `/verification-summary` auto-rescore, and `/submit` auto-score paths. Navigator endpoint reads but does NOT emit (preserves "navigator scores but doesn't persist" semantics; emit mirrors persist volume).
+
+**Read side** (`packages/analytics-engine/src/datasets/civicaEmit.ts`):
+- New `qcEvaluationsByOrg({ orgId })` replaces the `blocked()` stub. Reads via DuckDB JSON glob over httpfs in production; local-fs walk via `ANALYTICS_LOCAL_PARQUET_DIR` for tests. Filters by org_id, sorts by emitted_at, returns `{ rows, provenance }` matching the rest of the engine.
+- `QcEvaluationSchema` in `schemas.ts` expanded to match the emit shape (Zod-validates on read so emit-side schema drift fails loudly with a clear error).
+
+**Tests:** 8 new emit tests (`scoring.test.ts`) covering null-score skip, path format, body contents, error swallow paths; 6 new reader tests (`civicaEmit.test.ts`) covering empty bucket, org filter, cross-partition sort, provenance shape, schema-drift detection. All 614 enrollment-api + 33 analytics-engine tests green. Dashboard typecheck clean.
+
+**Forward-compat path unlocked:** the per-flow `flow_signals` in the emit shape enables the `perPacketGapContributionFromResults(results)` engine variant that TODO-27's commit explicitly waits on. Real PER-contribution math (not score-based approximation) lands as soon as one cohort of events accrues.
+
+**Out of scope (intentional):**
+- Backfill of historical `packet_error_risk` rows into the emit bucket → separable one-shot script if/when the analytical tier wants pre-pilot data.
+- Dashboard UI for emit-side data → follow-on once data accrues (the reader API is the contract).
+- Pilot validation of PER claims → waits on Session L; tooling is ready.
+
+**Original spec (kept for traceability):**
 
 **What:** Complete shadow-mode QC evaluation logging: capture every enrollment event, recertification, and defensibility score as an analytical export to `civica-emit/qc-evaluations/` in Supabase Storage.
 **Why:** PR #167 shipped lead capture and page-view events; full shadow-mode eval logging requires the first real enrolled student to have meaningful data. Pilot instrumentation validates the PER reduction claim with real case data.
@@ -62,7 +99,21 @@ Add new items with `## TODO-N` headings. Never delete — mark as DONE instead.
 
 ---
 
-## TODO-6 — T9 state connectors Phase 2 (county-resolver + agency-lookup)
+## TODO-6 — T9 state connectors Phase 2 (county-resolver + agency-lookup) — DONE (2026-05-27)
+
+**Status:** DONE — three pieces shipped, all 42 state-connectors tests green:
+
+1. **ZIP-to-county anchor coverage** — `packages/state-connectors/src/fips/data/zip-to-county.json` expanded from 34 entries to 80, covering every CA county (58) and every MA county (14) with at least one anchor ZIP. Tests assert no missing FIPS via deterministic enumeration; downstream agency-directory joins can rely on the fast path resolving SOMETHING for every legitimate launch-state address.
+
+2. **`resolve.byAddress` / `resolve.byZip` convenience API** — `packages/state-connectors/src/resolve.ts`. One call from full address → `{ county FIPS + name, administering agency }`. Tries the ZIP fast path first, falls back to Census geocoder, then hits agency-directory. `byZip` is a no-network variant for low-friction surfaces. Exported as a namespace from `index.ts` alongside the three existing primitives.
+
+3. **Regeneration script** — `packages/state-connectors/scripts/regenerate-zip-to-county.ts` consumes the HUD ZIP_COUNTY crosswalk CSV (downloaded quarterly from `huduser.gov`), filters by state FIPS, picks the dominant county per ZIP (max RES_RATIO), emits the same JSON shape with `_meta` on top and sorted-ZIP keys. Hand-curated CA + MA county-name authority baked into the script so it errors loud on unknown FIPS instead of inventing names. Wired as `pnpm --filter @civica/state-connectors regenerate:zip-to-county`. Re-run quarterly against each new HUD vintage to swap anchor mode for full mode.
+
+`SOURCES.md` documents both modes (anchor vs full) + the regeneration command.
+
+**Open follow-on:** swap from anchor mode to full mode by running the seed script against a downloaded HUD CSV. Optional — anchor mode is correct for all county-level routing; full mode just means more ZIPs hit the fast path before falling through to Census.
+
+**Original spec (kept for traceability):**
 
 **What:** Complete `packages/state-connectors` with county FIPS resolver and SNAP agency lookup (beyond USPS address validation already wired).
 **Why:** Needed for live submission routing (which county agency handles this address?) and for QC audit trail (county-level error category attribution). USPS validation already shipped; county lookup is the next layer.
@@ -114,7 +165,13 @@ Add new items with `## TODO-N` headings. Never delete — mark as DONE instead.
 
 ---
 
-## TODO-12 — Pilot cohort definition (replace "first enrolled student" milestone)
+## TODO-12 — Pilot cohort definition (replace "first enrolled student" milestone) — TOOLING DONE (2026-05-27), DEFINITION PENDING
+
+**Status:** Measurement tooling shipped (CC half). New `/pilot` console at `apps/dashboard/app/pilot/page.tsx` renders cohort funnel, stage-transition medians (Created→Submitted, Submitted→Handed Off, Handed Off→Closed), stalled-packet table (>72h since last transition), and aggregate risk across the cohort. URL-param-driven window (`?since&until` on `snap_packets.created_at`) — no DB migration needed; operator bookmarks the URL once the pilot starts. JSON export at `/pilot/export.json` for spreadsheet ingestion. Demo-fallback verified against the 43-packet fixture set.
+
+**Remaining (human, ~2h):** write the cohort definition + "pilot success" criteria. The tooling shows the funnel; you decide the success bar (e.g., "≥7 of 10 reach Handed Off in ≤14 days, ≤2 stuck at Needs Documents at any time, avg risk score <40 at handoff"). When the document lands, link it from TODO-12 and mark this DONE.
+
+**Original spec (kept for traceability):**
 
 **What:** Replace Session L's "first enrolled student" milestone with a cohort definition: 10 students through end-to-end (enrollment → packet submitted → CalFresh confirmation). Track time-to-complete per student, drop-off point, error frequency. Define explicit "pilot success" criteria before any "moat materializes" claim is made externally.
 **Why:** Outside voice flagged: N=1 with no measurement is meaningless. Cohort of ≥10 with explicit measurement is the minimum that supports the data moat thesis.
@@ -311,7 +368,13 @@ Add new items with `## TODO-N` headings. Never delete — mark as DONE instead.
 
 ---
 
-## TODO-27 — Reverse bridge: packet detail ↔ /qc engagement realization gap
+## TODO-27 — Reverse bridge: packet detail ↔ /qc engagement realization gap — DONE (2026-05-27)
+
+**Status:** DONE — shipped on `feat/dashboard-caseworker-readiness`. Pillar subtitle (`shelter · income · shared-lease · calc`), per-packet contribution line (`This packet contributes X.X pts to the engagement realization gap`), and `See aggregate impact ↗` link into `/qc?packetFocus={packetId}#feed` all render in `ReviewStatusCard` on `apps/dashboard/app/packets/[packetId]/page.tsx`. Math via new `perPacketGapContribution(score)` helper in `@civica/snap-qc-engine` — linear map from the calibrated risk-score range (5–80) to the gap-pp range (0–5.48), anchored to `CA_BASELINE_PER − PROJECTED_PER_AT_FULL_ENGAGEMENT`. Verified against Maria demo packet (score 22 → 1.2 pts ✓).
+
+**Follow-on:** when per-flow defensibility lands in `packet_error_risk` (T8 shadow-mode instrumentation, TODO-5), add a more accurate `perPacketGapContributionFromResults(results)` variant alongside the score-based one. The current score-based approximation is directionally correct but loses pillar-level attribution.
+
+**Original spec (kept for traceability):**
 
 **What:** After the /qc redesign lands (T0-T11 in [`docs/plans/qc-error-rate-intelligence-redesign.md`](docs/plans/qc-error-rate-intelligence-redesign.md)), wire the packet detail page back into the same engagement-realization vocabulary so a navigator working on a single packet can see this packet's contribution to the aggregate. Three pieces:
 

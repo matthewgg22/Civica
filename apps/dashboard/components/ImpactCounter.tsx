@@ -30,7 +30,24 @@ function formatCompact(n: number): string {
   return n.toLocaleString();
 }
 
-export default function ImpactCounter({ enrolledPackets }: { enrolledPackets: number }) {
+/**
+ * CIVICA IMPACT band on /dashboard.
+ *
+ * Color treatment: light warm-gray surface with dark ink text, matched to
+ * OpsHeroStrip on /ops. Pine stays only as the LIVE pulse so the brand
+ * color still touches the strip without the page opening on a slab of
+ * saturated green.
+ */
+export default function ImpactCounter({
+  enrolledPackets,
+  projectionLabel,
+}: {
+  enrolledPackets: number;
+  /** Optional small footer (e.g. "Projected · 5% CA CalFresh marketshare").
+      When present, signals to the viewer that the numbers reflect a model
+      assumption rather than current run rate. */
+  projectionLabel?: string;
+}) {
   const families = useCountUp(enrolledPackets);
   const people = Math.round(enrolledPackets * AVG_HOUSEHOLD_SIZE);
   const monthlyBenefits = people * CA_SNAP_AVG_BENEFIT_PER_PERSON;
@@ -40,14 +57,21 @@ export default function ImpactCounter({ enrolledPackets }: { enrolledPackets: nu
   const meals = useCountUp(monthlyMeals);
 
   return (
-    <div className="bg-gradient-to-br from-pine to-pine-pressed text-white rounded-[6px] shadow-sm overflow-hidden relative">
-      <div className="absolute inset-0 opacity-10 pointer-events-none" style={{
-        backgroundImage: "radial-gradient(circle at 85% 15%, white 0%, transparent 50%)",
-      }} />
-      <div className="relative px-7 py-6">
+    <div
+      className="text-ink rounded-[6px] overflow-hidden border border-hairline"
+      style={{ backgroundColor: "#E7E5E2" }}
+    >
+      <div className="px-7 py-6">
         <div className="flex items-center justify-between mb-5">
-          <p className="text-[12px] uppercase tracking-[0.15em] font-semibold opacity-85">Civica Impact</p>
-          <p className="text-[12px] uppercase tracking-[0.15em] font-medium opacity-70">California · live</p>
+          <div className="flex items-center gap-3">
+            {/* LIVE pulse stays pine — the brand color touchpoint on the strip. */}
+            <span className="relative flex items-center justify-center w-2.5 h-2.5">
+              <span className="absolute inline-flex h-full w-full rounded-full bg-pine opacity-70 animate-ping"></span>
+              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-pine"></span>
+            </span>
+            <p className="text-[12px] uppercase tracking-[0.15em] font-semibold text-graphite">Civica Impact</p>
+          </div>
+          <p className="text-[12px] uppercase tracking-[0.15em] font-medium text-muted">California · live</p>
         </div>
         <div className="grid grid-cols-3 gap-6">
           <Stat value={families.toLocaleString()} label="Families Enrolled" sub={`~${people.toLocaleString()} individuals served`} />
@@ -55,16 +79,24 @@ export default function ImpactCounter({ enrolledPackets }: { enrolledPackets: nu
           <Stat value={formatCompact(meals)} label="Estimated Meals / Month" sub={`${formatCompact(meals * 12)} per year`} divider />
         </div>
       </div>
+      {projectionLabel && (
+        <div
+          className="px-7 py-2 border-t border-hairline text-[10px] uppercase tracking-[0.16em] font-mono text-muted"
+          style={{ backgroundColor: "#DCD9D2" }}
+        >
+          {projectionLabel}
+        </div>
+      )}
     </div>
   );
 }
 
 function Stat({ value, label, sub, divider }: { value: string; label: string; sub: string; divider?: boolean }) {
   return (
-    <div className={divider ? "pl-6 border-l border-white/15" : ""}>
-      <p className="text-[36px] font-semibold tabular-nums tracking-tight leading-none">{value}</p>
-      <p className="text-[13px] font-semibold opacity-95 mt-3 uppercase tracking-wider">{label}</p>
-      <p className="text-[12px] opacity-75 mt-1">{sub}</p>
+    <div className={divider ? "pl-6 border-l border-hairline" : ""}>
+      <p className="text-[36px] font-bold tabular-nums tracking-tight leading-none text-ink">{value}</p>
+      <p className="text-[13px] font-semibold text-graphite mt-3 uppercase tracking-wider">{label}</p>
+      <p className="text-[12px] text-muted mt-1">{sub}</p>
     </div>
   );
 }

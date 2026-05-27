@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Civica · DryRunPanel Variants — Index</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="_shared.css" />
+  <style>
+    .idx { max-width: 920px; margin: 0 auto; padding: 80px 32px 120px; }
+    .idx h1 {
+      font-size: 40px;
+      line-height: 46px;
+      font-weight: 700;
+      color: #F0EDE6;
+      letter-spacing: -0.6px;
+      margin: 0 0 8px;
+    }
+    .idx .eyebrow {
+      font-size: 13px;
+      line-height: 18px;
+      font-weight: 500;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: #8A857A;
+      margin: 0 0 12px;
+    }
+    .idx p.lede {
+      font-size: 18px;
+      line-height: 26px;
+      color: #B5B0A4;
+      max-width: 640px;
+      margin: 0 0 56px;
+    }
+    .idx-section-title {
+      font-size: 13px;
+      line-height: 18px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: #8A857A;
+      margin: 56px 0 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #3A3833;
+    }
+    .idx-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .idx-list a {
+      display: grid;
+      grid-template-columns: 72px 1fr auto;
+      column-gap: 24px;
+      align-items: center;
+      padding: 18px 4px;
+      border-bottom: 1px solid #3A3833;
+      color: #F0EDE6;
+      text-decoration: none;
+      transition: background 0.12s ease;
+    }
+    .idx-list a:hover { background: rgba(255,255,255,0.03); }
+    .idx-key {
+      font-size: 32px;
+      line-height: 36px;
+      font-weight: 700;
+      color: #F0EDE6;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: -0.5px;
+    }
+    .idx-body { display: flex; flex-direction: column; gap: 2px; }
+    .idx-title {
+      font-size: 18px;
+      line-height: 24px;
+      font-weight: 600;
+      color: #F0EDE6;
+    }
+    .idx-sub {
+      font-size: 14px;
+      line-height: 20px;
+      color: #8A857A;
+    }
+    .idx-arrow { color: #8A857A; font-size: 20px; }
+    .idx-list a:hover .idx-arrow { color: #F0EDE6; }
+    .idx-meta {
+      margin-top: 64px;
+      padding: 24px;
+      border: 1px solid #3A3833;
+      border-radius: 12px;
+      color: #B5B0A4;
+      font-size: 14px;
+      line-height: 22px;
+    }
+    .idx-meta strong { color: #F0EDE6; font-weight: 600; }
+    .idx-meta a { color: #F0EDE6; }
+    .idx-meta code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 13px;
+      background: rgba(255,255,255,0.06);
+      padding: 1px 6px;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <div class="idx">
+    <p class="eyebrow">Civica · SNAP DryRunPanel</p>
+    <h1>State variants explorer</h1>
+    <p class="lede">Six dry-run states, each in three visual directions. All use the Civica token system — no improvised colors. Pick a state to compare its ledger, stacked-cards, and timeline treatments side-by-side.</p>
+
+    <p class="idx-section-title">States · 3 variants each</p>
+    <ul class="idx-list">
+      <li><a href="A-ready.html">
+        <span class="idx-key">A</span>
+        <span class="idx-body">
+          <span class="idx-title">Application ready to submit</span>
+          <span class="idx-sub">Dry-run PASS — all rows verified, estimate ready</span>
+        </span>
+        <span class="idx-arrow">→</span>
+      </a></li>
+      <li><a href="B-fix.html">
+        <span class="idx-key">B</span>
+        <span class="idx-body">
+          <span class="idx-title">Two things to fix before submitting</span>
+          <span class="idx-sub">Mixed pass/fail — 2 cure-asks plus 4 verified rows</span>
+        </span>
+        <span class="idx-arrow">→</span>
+      </a></li>
+      <li><a href="C-checking.html">
+        <span class="idx-key">C</span>
+        <span class="idx-body">
+          <span class="idx-title">Checking your application</span>
+          <span class="idx-sub">Async resolve — 1 row still working (2–5s)</span>
+        </span>
+        <span class="idx-arrow">→</span>
+      </a></li>
+      <li><a href="D-navigator.html">
+        <span class="idx-key">D</span>
+        <span class="idx-body">
+          <span class="idx-title">A specialist will review your application</span>
+          <span class="idx-sub">Route to navigator — handoff state, not failure</span>
+        </span>
+        <span class="idx-arrow">→</span>
+      </a></li>
+      <li><a href="E-entry.html">
+        <span class="idx-key">E</span>
+        <span class="idx-body">
+          <span class="idx-title">Check your application before you submit</span>
+          <span class="idx-sub">First-time entry — pitch + trust stat</span>
+        </span>
+        <span class="idx-arrow">→</span>
+      </a></li>
+      <li><a href="F-lease.html">
+        <span class="idx-key">F</span>
+        <span class="idx-body">
+          <span class="idx-title">Lease photo</span>
+          <span class="idx-sub">Cure detail — viewfinder + requirements checklist</span>
+        </span>
+        <span class="idx-arrow">→</span>
+      </a></li>
+      <li><a href="L-loading.html">
+        <span class="idx-key">L</span>
+        <span class="idx-body">
+          <span class="idx-title">Checking your application</span>
+          <span class="idx-sub">Sync loading — sub-200ms transient, no rows yet</span>
+        </span>
+        <span class="idx-arrow">→</span>
+      </a></li>
+      <li><a href="G-fail.html">
+        <span class="idx-key">G</span>
+        <span class="idx-body">
+          <span class="idx-title">We don't think this will be approved as-is</span>
+          <span class="idx-sub">Engine-confident FAIL — recovery path, not dead end</span>
+        </span>
+        <span class="idx-arrow">→</span>
+      </a></li>
+      <li><a href="H-error.html">
+        <span class="idx-key">H</span>
+        <span class="idx-body">
+          <span class="idx-title">Couldn't check your application right now</span>
+          <span class="idx-sub">System unavailable — honest, options-first, no blame</span>
+        </span>
+        <span class="idx-arrow">→</span>
+      </a></li>
+      <li><a href="P-partial.html">
+        <span class="idx-key">P</span>
+        <span class="idx-body">
+          <span class="idx-title">Showing results from 2 hours ago</span>
+          <span class="idx-sub">Cached + offline — every row honestly stale</span>
+        </span>
+        <span class="idx-arrow">→</span>
+      </a></li>
+    </ul>
+
+    <p class="idx-section-title">v0 — originals from this session</p>
+    <ul class="idx-list">
+      <li><a href="v0-originals/A-ready-to-submit.html"><span class="idx-key">A</span><span class="idx-body"><span class="idx-title">Application ready to submit</span><span class="idx-sub">Original v0 single-frame design</span></span><span class="idx-arrow">→</span></a></li>
+      <li><a href="v0-originals/B-two-things-to-fix.html"><span class="idx-key">B</span><span class="idx-body"><span class="idx-title">Two things to fix before submitting</span><span class="idx-sub">Original v0 single-frame design</span></span><span class="idx-arrow">→</span></a></li>
+      <li><a href="v0-originals/C-checking-application.html"><span class="idx-key">C</span><span class="idx-body"><span class="idx-title">Checking your application</span><span class="idx-sub">Original v0 single-frame design</span></span><span class="idx-arrow">→</span></a></li>
+      <li><a href="v0-originals/D-route-to-navigator.html"><span class="idx-key">D</span><span class="idx-body"><span class="idx-title">A specialist will review your application</span><span class="idx-sub">Original v0 single-frame design</span></span><span class="idx-arrow">→</span></a></li>
+      <li><a href="v0-originals/E-dry-run-entry.html"><span class="idx-key">E</span><span class="idx-body"><span class="idx-title">Check your application before you submit</span><span class="idx-sub">Original v0 single-frame design</span></span><span class="idx-arrow">→</span></a></li>
+      <li><a href="v0-originals/F-lease-photo-capture.html"><span class="idx-key">F</span><span class="idx-body"><span class="idx-title">Lease photo</span><span class="idx-sub">Original v0 single-frame design</span></span><span class="idx-arrow">→</span></a></li>
+    </ul>
+
+    <p class="idx-section-title">Read me</p>
+    <div class="idx-meta">
+      <p style="margin: 0 0 12px;"><strong>SYNTHESIS.md</strong> — design principles distilled from this session: color semantics, anti-patterns hit during iteration ("too much green" was flagged twice), variant-to-state pairings recommended for production.</p>
+      <p style="margin: 0;"><strong>_shared.css</strong> — the design system in CSS. Tokens, typography, frame chrome, variant-specific atoms (<code>.v1-*</code> / <code>.v2-*</code> / <code>.v3-*</code>) reused across all 18 mockups.</p>
+    </div>
+  </div>
+</body>
+</html>

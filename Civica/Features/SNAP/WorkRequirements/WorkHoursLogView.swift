@@ -166,7 +166,7 @@ struct WorkHoursLogView: View {
             } else if summary.is_on_track {
                 return (WorkHoursStrings.statusOnTrack.value(in: language), CivicaColors.pinePrimary)
             } else {
-                return (WorkHoursStrings.statusAtRisk.value(in: language), Color.orange)
+                return (WorkHoursStrings.statusAtRisk.value(in: language), CivicaColors.warningAmber)
             }
         }()
         return Text(label)
@@ -309,7 +309,7 @@ struct WorkHoursLogView: View {
         }
         .padding(CivicaSpacing.lg)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color.red.opacity(0.06))
+        .background(CivicaColors.brickAccent.opacity(0.06))
         .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous))
     }
 

@@ -41,6 +41,10 @@ enum EBTPushDeepLink: Equatable {
     case lowBalance
     case reLink
     case anomaly
+    /// Offer-moment platform push (deposit-landed nearest-partner pick OR
+    /// weekly digest). Tap routes to OfferDetailView for the carried offerId.
+    /// Source plan: ceo-plans/2026-05-26-ebt-offer-moment-platform.md (B-T12).
+    case perkOffer(offerId: String)
 }
 
 /// EBTBalanceAPIClient is owned by Lane C. We forward-declare a tiny
@@ -256,8 +260,22 @@ final class EBTPushHandler: NSObject {
         case "low_balance":     return .lowBalance
         case "re_link":         return .reLink
         case "anomaly":         return .anomaly
+        // perk_offer is dispatched separately by deepLink(forCategory:userInfo:)
+        // because it needs the offer_id from the APNs payload's userInfo.
+        case "perk_offer":      return nil
         default:                return nil
         }
+    }
+
+    /// Variant that reads the offer_id from the APNs userInfo dictionary
+    /// for perk_offer pushes. Falls back to the category-only routing for
+    /// other categories.
+    static func deepLink(forCategory category: String, userInfo: [AnyHashable: Any]) -> EBTPushDeepLink? {
+        if category == "perk_offer",
+           let offerId = userInfo["offer_id"] as? String, !offerId.isEmpty {
+            return .perkOffer(offerId: offerId)
+        }
+        return deepLink(forCategory: category)
     }
 
     /// SwiftUI root calls this on appear to drain the pending deep
