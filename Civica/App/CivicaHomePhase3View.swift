@@ -46,12 +46,7 @@ struct CivicaHomePhase3View: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: CivicaSpacing.lg) {
-                #if DEBUG
-                if let onDebugPhaseChange {
-                    CivicaPhaseTab(current: .enrolled, onChange: onDebugPhaseChange)
-                        .padding(.bottom, CivicaSpacing.xs)
-                }
-                #endif
+                phaseTab
 
                 balanceHeroOrPlaceholder
 
@@ -80,6 +75,24 @@ struct CivicaHomePhase3View: View {
         .background(CivicaColors.paper.ignoresSafeArea())
         .navigationTitle("Civica")
         .navigationBarTitleDisplayMode(.inline)
+    }
+
+    // MARK: - Phase tab
+
+    /// Production: locked journey indicator (.enroll ✓ + .pending ✓
+    /// + .enrolled current). DEBUG with an injected change handler:
+    /// free toggle for engineers / QA.
+    @ViewBuilder
+    private var phaseTab: some View {
+        #if DEBUG
+        if let onDebugPhaseChange {
+            CivicaPhaseTab(current: .enrolled, onChange: onDebugPhaseChange)
+        } else {
+            CivicaPhaseTab(lockedJourneyAt: .enrolled)
+        }
+        #else
+        CivicaPhaseTab(lockedJourneyAt: .enrolled)
+        #endif
     }
 
     // MARK: - EBT balance hero (or fallback)

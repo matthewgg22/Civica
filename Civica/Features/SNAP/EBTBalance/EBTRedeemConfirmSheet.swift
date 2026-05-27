@@ -70,7 +70,7 @@ struct EBTRedeemConfirmSheet: View {
                             onConfirm(dollars * 100)
                             dismiss()
                         } label: {
-                            Text("Save")
+                            Text(EBTPerksStrings.redeemConfirmSaveButton.value(in: language))
                                 .font(CivicaTypography.captionStrong)
                                 .foregroundStyle(.white)
                                 .padding(.horizontal, CivicaSpacing.md)
@@ -95,7 +95,9 @@ struct EBTRedeemConfirmSheet: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { dismiss() }
+                    Button(EBTPerksStrings.redeemConfirmCancelButton.value(in: language)) {
+                        dismiss()
+                    }
                 }
             }
         }

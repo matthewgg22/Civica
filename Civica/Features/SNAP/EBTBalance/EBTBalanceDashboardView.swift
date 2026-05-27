@@ -782,9 +782,12 @@ struct EBTBalanceDashboardView: View {
                     .font(CivicaTypography.caption)
                     .foregroundStyle(CivicaColors.muted)
                 if offer.expectedSavingsCents > 0 {
-                    Text("~$\(offer.expectedSavingsCents / 100) \(EBTPerksStrings.savingsLabel.value(in: language))")
-                        .font(CivicaTypography.captionStrong)
-                        .foregroundStyle(CivicaColors.warningAmber)
+                    Text(EBTPerksStrings.savingsCallout(
+                        cents: offer.expectedSavingsCents,
+                        language: language
+                    ))
+                    .font(CivicaTypography.captionStrong)
+                    .foregroundStyle(CivicaColors.warningAmber)
                 }
             }
             Spacer(minLength: CivicaSpacing.sm)

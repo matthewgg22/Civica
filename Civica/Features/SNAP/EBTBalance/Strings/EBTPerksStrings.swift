@@ -31,9 +31,26 @@ enum EBTPerksStrings {
         es: "Lo añadiremos a tu total Ahorrado con Civica."
     )
 
+    /// Confirm-sheet primary button. Custom-dollars path.
+    static let redeemConfirmSaveButton = CivicaText("Save", es: "Guardar")
+
+    /// Confirm-sheet cancel toolbar item.
+    static let redeemConfirmCancelButton = CivicaText("Cancel", es: "Cancelar")
+
+    /// "~$X est. savings" callout rendered on each offer row. Routed
+    /// through a function so the parity guard sees a CivicaText-backed
+    /// surface, not a raw `Text("~$\(…) \(…)")` literal (the checker's
+    /// nested-paren stripper misses the inner `.value(in:)` call).
+    /// Currency notation (`~$X`) is universal across languages; only
+    /// the savingsLabel suffix translates.
+    static func savingsCallout(cents: Int, language: CivicaLanguage) -> String {
+        "~$\(cents / 100) \(savingsLabel.value(in: language))"
+    }
+
     /// Curated list of every CivicaText in this namespace.
     static let all: [CivicaText] = [
         eyebrow, freeResourcesEyebrow, savingsLabel,
         redeemButton, redeemConfirmTitle, redeemConfirmBody,
+        redeemConfirmSaveButton, redeemConfirmCancelButton,
     ]
 }

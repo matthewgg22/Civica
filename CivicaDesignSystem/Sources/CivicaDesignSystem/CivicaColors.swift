@@ -65,12 +65,27 @@ public enum CivicaColors {
     // Reads warmer than brick (less pink-red, away from denial semantics),
     // cooler than wheat (no celebration), louder than warning surface.
     //
-    // Contrast caveat (flagged at codification): terracottaSurface (#F0DCD0)
-    // sits adjacent to brickSurface (#F1D4C8) in hue space. Before any
-    // surface ships with both adjacent, run a side-by-side on a real
-    // device at 30/50/100% brightness and a deuteranopia/protanopia
-    // simulation — reds compress on red-axis colorblindness and the two
-    // tints can collapse.
+    // ⚠ ADJACENCY CONSTRAINT — DO NOT PLACE TERRACOTTA AND BRICK
+    // SURFACES VISIBLE IN THE SAME COMPOSITION WITHOUT A SEPARATOR.
+    //
+    // scripts/check_terracotta_brick_contrast.py confirmed at
+    // codification: terracottaSurface (#F0DCD0) and brickSurface
+    // (#F1D4C8) have a 1.06:1 luminance contrast — well below the
+    // 1.3:1 adjacency-differentiation target (Apple HIG, BBC GEL).
+    // Deuteranopia and protanopia simulations yield the same ratio.
+    // The two surfaces visually collapse when placed next to each
+    // other.
+    //
+    // If a future design needs both visible at once, choose ONE of:
+    //   (a) insert a hairline / paper gap between them so the
+    //       boundary itself carries the differentiation, or
+    //   (b) propose a terracotta hue shift toward salmon / amber-
+    //       orange (further from brick's pink-red), re-run the
+    //       script, and update the hex here.
+    //
+    // The accent value passes body-text contrast on its own surface
+    // (terracottaAccent on terracottaSurface = 6.04:1, WCAG AA OK),
+    // so single-surface use is safe.
     public static let terracottaSurface        = Color.dynamic(light: "#F0DCD0", dark: "#3D2620")
     public static let terracottaSurfacePressed = Color.dynamic(light: "#E5CFBF", dark: "#34211C")
     public static let terracottaAccent         = Color.dynamic(light: "#7E3F26", dark: "#C77C5A")
