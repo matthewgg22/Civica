@@ -42,7 +42,21 @@ Add new items with `## TODO-N` headings. Never delete — mark as DONE instead.
 
 ---
 
-## TODO-4 — T7 historical-baseline mapping pipeline
+## TODO-4 — T7 historical-baseline mapping pipeline — DONE (2026-05-27)
+
+**Status:** DONE — three artifacts shipped in `packages/snap-qc-engine/src/scoring/cdss-mapping.ts` (+ 18 vitest tests, all 222 engine tests green):
+
+1. **`CDSS_ERROR_CATEGORY_TO_CIVICA_CONTROLS`** — 16-row declarative table mapping USDA FNS-380 error elements (363 Shelter, 311 Wages, 312 SE, etc.) to Civica pillars + shipped controls. Civica-addressable rows pair to pillars/controls; residual rows (RSDI, SSI, medical, etc.) carry an explicit `no_civica_control` marker so the "what we DON'T cover" honesty surface is in code, not just talking points. Covers ≥95% of CA error volume.
+
+2. **`BBCE_REMOVAL_SCENARIO`** — 6-7pp structural PER drop + $275M operational gap codified, with explicit `counter_argument` framing ("measurement-frame narrowing, not verification improvement") and a `provenance: "TODO-4-spec"` marker. Test forces a deliberate citation update before public use.
+
+3. **`CIVICA_TAM_PROFILE`** — 27.3% caseload share (wage-only + mixed + SE-only), 13.95% expected PER, 5.84% non-earner baseline, 2.4× elevation factor, packaged `pitch_framing` sentence. Anchors the county pitch on "the population you're worried about is the population Civica was built for" rather than the misleading 10.98% statewide average.
+
+Helper: `pillarReductionAtFullEngagement()` returns the per-pillar pp breakdown summing to 5.48 (CA_BASELINE_PER − PROJECTED_PER_AT_FULL_ENGAGEMENT).
+
+**Follow-on:** before any external pitch use, replace `BBCE_REMOVAL_SCENARIO.provenance` with a CBPP / USDA citation. The test will fail loudly if the marker is removed without a replacement matching the existing pattern.
+
+**Original spec (kept for traceability):**
 
 **What:** Complete `packages/snap-qc-engine` historical baseline mapping: CDSS QC error categories → Civica controls. Include BBCE-removal counterargument (CA structural PER may drop 6-7%; $275M operational gap remains). Wire earned-income household targeting (27.3% caseload / 13.95% PER vs 5.84% non-earners).
 **Why:** Required to make the quantitative CDSS/county pitch ("Civica reduces error rate by X%") defensible with data, not just claims. Currently in-flight but blocked behind T4 test suite.
