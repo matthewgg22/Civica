@@ -31,6 +31,7 @@ estimated eligible Californians across 281 PUMAs, median 63.7% non-enrollment.
 - **`snap_gap_summary.png`** — PUMA non-enrollment distribution; pairs the supply (retailers) story with the demand-side gap.
 - **`retailers_by_county.csv`** — 57-row per-county aggregation (total / grocery / non-grocery / grocery_share). Drop-in for further analysis.
 - **`summary.json`** — top-line numbers for slides.
+- **`interactive_map.html`** — self-contained Folium map (~5 MB). Three toggleable layers: all-retailers heatmap, grocery-only heatmap, sampled marker cluster colored by `Store_Type`. The load-bearing interaction is the all-vs-grocery toggle: dense urban hexes collapse when convenience stores are removed, making the food-desert geography visible. Built by `build_interactive.py`.
 
 ## What's load-bearing for the pitch
 
@@ -54,8 +55,7 @@ estimated eligible Californians across 281 PUMAs, median 63.7% non-enrollment.
 
 ## Where to take it next
 
-1. **Interactive layer**: re-emit `food_access_hexbin` as a Folium / deck.gl HTML map
-   with PUMA non-enrollment overlay. Source data is in `retailers.geojson` already.
+1. ~~Interactive layer~~ — shipped as `artifacts/interactive_map.html` (Folium, self-contained). Next: add PUMA non-enrollment polygon overlay once the crosswalk lands.
 2. **PUMA → county crosswalk**: vendor the Census 2020 PUMA-to-county relationship file
    into `data-ops/reference/`, then aggregate `ca_snap_gap_puma.csv` to county grain. Unlocks a true two-axis county choropleth (gap × grocery share).
 3. **Mobility / drive-time**: layer `nearest_grocery_distance_km` per census tract using
@@ -68,7 +68,8 @@ estimated eligible Californians across 281 PUMAs, median 63.7% non-enrollment.
 
 ```
 tools/ca-snap-gap/.venv/bin/python data-ops/analysis/track1-food-desert/build.py
+tools/ca-snap-gap/.venv/bin/python data-ops/analysis/track1-food-desert/build_interactive.py
 ```
 
-(Uses the existing `ca-snap-gap` venv. `matplotlib` was added on top of its
-`requirements.txt`; if rebuilding, `pip install matplotlib pandas numpy`.)
+(Uses the existing `ca-snap-gap` venv. `matplotlib` and `folium` were added on
+top of its `requirements.txt`; if rebuilding, `pip install matplotlib folium pandas numpy`.)
