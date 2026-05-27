@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Civica · State H · ERROR — 3 Variants</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="_shared.css" />
+  <style>
+    /* Centered failure region (V1 + V2) */
+    .h-fail-region {
+      margin-top: 24px;
+      padding: 24px 0;
+      border-top: 1px solid var(--hairline);
+      border-bottom: 1px solid var(--hairline);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+    .h-fail-icon { width: 24px; height: 24px; }
+    .h-fail-body {
+      font-size: 16px;
+      line-height: 22px;
+      color: var(--graphite);
+      margin: 14px 0 0;
+      max-width: 280px;
+    }
+    .h-fail-foot {
+      font-size: 13px;
+      line-height: 18px;
+      color: var(--graphite);
+      margin: 6px 0 0;
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* V1 — flat hairline-divided "what you can do" rows */
+    .h-actions-flat {
+      list-style: none;
+      padding: 0;
+      margin: 4px 0 0;
+    }
+    .h-actions-flat > li {
+      display: grid;
+      grid-template-columns: 16px 1fr;
+      column-gap: 14px;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--hairline);
+      align-items: start;
+    }
+    .h-actions-flat > li:last-child { border-bottom: 0; }
+    .h-action-dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--paper);
+      border: 1.5px solid var(--pine);
+      box-sizing: border-box;
+      margin-top: 4px;
+    }
+    .h-action-label {
+      font-size: 16px;
+      line-height: 22px;
+      font-weight: 600;
+      color: var(--ink);
+      margin: 0 0 2px;
+    }
+    .h-action-detail {
+      font-size: 16px;
+      line-height: 22px;
+      color: var(--graphite);
+      margin: 0;
+    }
+
+    /* V2 — grouped iOS panel */
+    .h-actions-panel {
+      background: var(--surfacePrimary);
+      border: 1px solid var(--hairline);
+      border-radius: 12px;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+    .h-actions-panel > div {
+      display: grid;
+      grid-template-columns: 16px 1fr;
+      column-gap: 14px;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--hairline);
+      align-items: start;
+    }
+    .h-actions-panel > div:last-child { border-bottom: 0; }
+
+    /* V3 — retry timing as timeline; "what you can do" as future thread */
+    .h-attempt-label {
+      font-size: 16px;
+      line-height: 22px;
+      font-weight: 600;
+      color: var(--ink);
+      margin: 0 0 2px;
+    }
+    .h-attempt-foot {
+      font-size: 13px;
+      line-height: 18px;
+      color: var(--graphite);
+      margin: 0;
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Footer status footnote */
+    .h-status-footnote {
+      font-size: 13px;
+      line-height: 18px;
+      color: var(--graphite);
+      margin: 12px 4px 0;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="canvas">
+    <header class="canvas-head">
+      <p class="canvas-eyebrow">State H · ERROR · system unavailable</p>
+      <h1 class="canvas-title">Couldn't check your application right now</h1>
+      <p class="canvas-sub">System failure, not user failure. Honest acknowledgment + clear options + graceful escape hatch. Brick warning triangle is outlined; no red, no apologetic copy.</p>
+    </header>
+
+    <div class="canvas-grid">
+
+      <!-- =================== V1 — Quiet ledger =================== -->
+      <figure class="frame-cell">
+        <figcaption class="frame-label"><strong>Variant 1</strong>Quiet ledger</figcaption>
+        <p class="frame-note">Failure block lives between hairlines; options as flat pine-outlined-dot rows. Reads like a system status page.</p>
+        <main class="device" data-screen-label="H1 · Ledger">
+          <div class="status-bar" aria-hidden="true">
+            <span>9:41</span>
+            <div class="status-icons">
+              <svg width="18" height="10" viewBox="0 0 18 10" fill="none"><rect x="0" y="7" width="3" height="3" rx="0.6" fill="#1A1A1A"/><rect x="5" y="5" width="3" height="5" rx="0.6" fill="#1A1A1A"/><rect x="10" y="2.5" width="3" height="7.5" rx="0.6" fill="#1A1A1A"/><rect x="15" y="0" width="3" height="10" rx="0.6" fill="#1A1A1A"/></svg>
+              <svg width="16" height="11" viewBox="0 0 16 11" fill="none"><path d="M8 10.2a1.1 1.1 0 100-2.2 1.1 1.1 0 000 2.2z" fill="#1A1A1A"/><path d="M3.4 6.1a6.5 6.5 0 019.2 0" stroke="#1A1A1A" stroke-width="1.4" stroke-linecap="round"/><path d="M.9 3.5a10 10 0 0114.2 0" stroke="#1A1A1A" stroke-width="1.4" stroke-linecap="round"/></svg>
+              <svg width="26" height="12" viewBox="0 0 26 12" fill="none"><rect x="0.5" y="0.5" width="22" height="11" rx="2.5" stroke="#1A1A1A" opacity="0.4"/><rect x="2" y="2" width="19" height="8" rx="1.5" fill="#1A1A1A"/><rect x="23.5" y="4" width="1.5" height="4" rx="0.6" fill="#1A1A1A" opacity="0.5"/></svg>
+            </div>
+          </div>
+          <div class="scroll">
+            <div class="nav"><button class="nav-back" type="button"><svg width="11" height="18" viewBox="0 0 11 18" fill="none"><path d="M9.5 1 1.5 9l8 8" stroke="#4A4A4A" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Back</span></button></div>
+            <h1 class="title">Couldn't check your application right now</h1>
+            <p class="subhead">Our system is temporarily unavailable. Your application is saved — you can try again in a few minutes or submit without the check.</p>
+
+            <div class="h-fail-region">
+              <svg class="h-fail-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M12 3 1.6 21h20.8L12 3Z" stroke="#B5511E" stroke-width="1.8" stroke-linejoin="round"/>
+                <path d="M12 9.6v4.8" stroke="#B5511E" stroke-width="1.8" stroke-linecap="round"/>
+                <circle cx="12" cy="17.4" r="1.05" fill="#B5511E"/>
+              </svg>
+              <p class="h-fail-body">We'll try again automatically every 30 seconds.</p>
+              <p class="h-fail-foot">Last attempt: 14 seconds ago</p>
+            </div>
+
+            <h2 class="section-heading">What you can do</h2>
+            <ul class="h-actions-flat">
+              <li>
+                <span class="h-action-dot" aria-hidden="true"></span>
+                <div>
+                  <p class="h-action-label">Wait and retry</p>
+                  <p class="h-action-detail">Your application is saved. We'll keep trying.</p>
+                </div>
+              </li>
+              <li>
+                <span class="h-action-dot" aria-hidden="true"></span>
+                <div>
+                  <p class="h-action-label">Submit without the check</p>
+                  <p class="h-action-detail">Your application will go to the county worker without our verification. They may request additional documents.</p>
+                </div>
+              </li>
+              <li>
+                <span class="h-action-dot" aria-hidden="true"></span>
+                <div>
+                  <p class="h-action-label">Come back later</p>
+                  <p class="h-action-detail">Closing the app won't lose your application.</p>
+                </div>
+              </li>
+            </ul>
+          </div>
+          <div class="footer">
+            <button class="cta" type="button">Try again now</button>
+            <button class="cta-text" type="button">Submit without check</button>
+            <p class="h-status-footnote">Status: civica.status.io · We'll notify you when service returns.</p>
+          </div>
+          <div class="home-indicator" aria-hidden="true"></div>
+        </main>
+      </figure>
+
+      <!-- =================== V2 — Stacked notices =================== -->
+      <figure class="frame-cell">
+        <figcaption class="frame-label"><strong>Variant 2</strong>Stacked notices</figcaption>
+        <p class="frame-note">Options collected in one grouped panel; failure block stays as a hairline-bounded band to keep the trouble in the upper register.</p>
+        <main class="device" data-screen-label="H2 · Stacked">
+          <div class="status-bar" aria-hidden="true">
+            <span>9:41</span>
+            <div class="status-icons">
+              <svg width="18" height="10" viewBox="0 0 18 10" fill="none"><rect x="0" y="7" width="3" height="3" rx="0.6" fill="#1A1A1A"/><rect x="5" y="5" width="3" height="5" rx="0.6" fill="#1A1A1A"/><rect x="10" y="2.5" width="3" height="7.5" rx="0.6" fill="#1A1A1A"/><rect x="15" y="0" width="3" height="10" rx="0.6" fill="#1A1A1A"/></svg>
+              <svg width="16" height="11" viewBox="0 0 16 11" fill="none"><path d="M8 10.2a1.1 1.1 0 100-2.2 1.1 1.1 0 000 2.2z" fill="#1A1A1A"/><path d="M3.4 6.1a6.5 6.5 0 019.2 0" stroke="#1A1A1A" stroke-width="1.4" stroke-linecap="round"/><path d="M.9 3.5a10 10 0 0114.2 0" stroke="#1A1A1A" stroke-width="1.4" stroke-linecap="round"/></svg>
+              <svg width="26" height="12" viewBox="0 0 26 12" fill="none"><rect x="0.5" y="0.5" width="22" height="11" rx="2.5" stroke="#1A1A1A" opacity="0.4"/><rect x="2" y="2" width="19" height="8" rx="1.5" fill="#1A1A1A"/><rect x="23.5" y="4" width="1.5" height="4" rx="0.6" fill="#1A1A1A" opacity="0.5"/></svg>
+            </div>
+          </div>
+          <div class="scroll">
+            <div class="nav"><button class="nav-back" type="button"><svg width="11" height="18" viewBox="0 0 11 18" fill="none"><path d="M9.5 1 1.5 9l8 8" stroke="#4A4A4A" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Back</span></button></div>
+            <h1 class="title">Couldn't check your application right now</h1>
+            <p class="subhead">Our system is temporarily unavailable. Your application is saved — you can try again in a few minutes or submit without the check.</p>
+
+            <div class="h-fail-region">
+              <svg class="h-fail-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M12 3 1.6 21h20.8L12 3Z" stroke="#B5511E" stroke-width="1.8" stroke-linejoin="round"/>
+                <path d="M12 9.6v4.8" stroke="#B5511E" stroke-width="1.8" stroke-linecap="round"/>
+                <circle cx="12" cy="17.4" r="1.05" fill="#B5511E"/>
+              </svg>
+              <p class="h-fail-body">We'll try again automatically every 30 seconds.</p>
+              <p class="h-fail-foot">Last attempt: 14 seconds ago</p>
+            </div>
+
+            <h2 class="section-heading">What you can do</h2>
+            <div class="h-actions-panel">
+              <div>
+                <span class="h-action-dot" aria-hidden="true"></span>
+                <div>
+                  <p class="h-action-label">Wait and retry</p>
+                  <p class="h-action-detail">Your application is saved. We'll keep trying.</p>
+                </div>
+              </div>
+              <div>
+                <span class="h-action-dot" aria-hidden="true"></span>
+                <div>
+                  <p class="h-action-label">Submit without the check</p>
+                  <p class="h-action-detail">Your application will go to the county worker without our verification. They may request additional documents.</p>
+                </div>
+              </div>
+              <div>
+                <span class="h-action-dot" aria-hidden="true"></span>
+                <div>
+                  <p class="h-action-label">Come back later</p>
+                  <p class="h-action-detail">Closing the app won't lose your application.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="footer">
+            <button class="cta" type="button">Try again now</button>
+            <button class="cta-text" type="button">Submit without check</button>
+            <p class="h-status-footnote">Status: civica.status.io · We'll notify you when service returns.</p>
+          </div>
+          <div class="home-indicator" aria-hidden="true"></div>
+        </main>
+      </figure>
+
+      <!-- =================== V3 — Status timeline =================== -->
+      <figure class="frame-cell">
+        <figcaption class="frame-label"><strong>Variant 3</strong>Status timeline</figcaption>
+        <p class="frame-note">Retry timing becomes a literal thread: past attempt (brick), pending attempt (warning), then forward options as outlined-pine nodes.</p>
+        <main class="device" data-screen-label="H3 · Timeline">
+          <div class="status-bar" aria-hidden="true">
+            <span>9:41</span>
+            <div class="status-icons">
+              <svg width="18" height="10" viewBox="0 0 18 10" fill="none"><rect x="0" y="7" width="3" height="3" rx="0.6" fill="#1A1A1A"/><rect x="5" y="5" width="3" height="5" rx="0.6" fill="#1A1A1A"/><rect x="10" y="2.5" width="3" height="7.5" rx="0.6" fill="#1A1A1A"/><rect x="15" y="0" width="3" height="10" rx="0.6" fill="#1A1A1A"/></svg>
+              <svg width="16" height="11" viewBox="0 0 16 11" fill="none"><path d="M8 10.2a1.1 1.1 0 100-2.2 1.1 1.1 0 000 2.2z" fill="#1A1A1A"/><path d="M3.4 6.1a6.5 6.5 0 019.2 0" stroke="#1A1A1A" stroke-width="1.4" stroke-linecap="round"/><path d="M.9 3.5a10 10 0 0114.2 0" stroke="#1A1A1A" stroke-width="1.4" stroke-linecap="round"/></svg>
+              <svg width="26" height="12" viewBox="0 0 26 12" fill="none"><rect x="0.5" y="0.5" width="22" height="11" rx="2.5" stroke="#1A1A1A" opacity="0.4"/><rect x="2" y="2" width="19" height="8" rx="1.5" fill="#1A1A1A"/><rect x="23.5" y="4" width="1.5" height="4" rx="0.6" fill="#1A1A1A" opacity="0.5"/></svg>
+            </div>
+          </div>
+          <div class="scroll">
+            <div class="nav"><button class="nav-back" type="button"><svg width="11" height="18" viewBox="0 0 11 18" fill="none"><path d="M9.5 1 1.5 9l8 8" stroke="#4A4A4A" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Back</span></button></div>
+            <h1 class="title">Couldn't check your application right now</h1>
+            <p class="subhead">System is temporarily unavailable. Your application is saved.</p>
+
+            <h2 class="section-heading">Auto-retry</h2>
+            <ul class="v3-timeline">
+              <li class="v3-node">
+                <span class="v3-dot is-brick is-filled" aria-hidden="true"></span>
+                <p class="h-attempt-label">Last attempt failed</p>
+                <p class="h-attempt-foot">14 seconds ago</p>
+              </li>
+              <li class="v3-node">
+                <span class="v3-dot is-warning" style="background: var(--paper); display: flex; align-items: center; justify-content: center; border-width: 0;" aria-hidden="true">
+                  <svg class="spinner" width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="rgba(181, 81, 30, 0.22)" stroke-width="3"/><path d="M21 12a9 9 0 0 0-9-9" stroke="#B5511E" stroke-width="3" stroke-linecap="round"/></svg>
+                </span>
+                <p class="h-attempt-label">Next attempt in 16 seconds</p>
+                <p class="h-attempt-foot">Automatically retrying every 30s</p>
+              </li>
+            </ul>
+
+            <h2 class="section-heading">What you can do</h2>
+            <ul class="v3-timeline">
+              <li class="v3-node">
+                <span class="v3-dot" aria-hidden="true"></span>
+                <p class="h-attempt-label">Wait and retry</p>
+                <p class="h-attempt-foot">Your application is saved. We'll keep trying.</p>
+              </li>
+              <li class="v3-node">
+                <span class="v3-dot" aria-hidden="true"></span>
+                <p class="h-attempt-label">Submit without the check</p>
+                <p class="h-attempt-foot">Goes to the county worker without our verification — they may request additional documents.</p>
+              </li>
+              <li class="v3-node">
+                <span class="v3-dot" aria-hidden="true"></span>
+                <p class="h-attempt-label">Come back later</p>
+                <p class="h-attempt-foot">Closing the app won't lose your application.</p>
+              </li>
+            </ul>
+          </div>
+          <div class="footer">
+            <button class="cta" type="button">Try again now</button>
+            <button class="cta-text" type="button">Submit without check</button>
+            <p class="h-status-footnote">Status: civica.status.io · We'll notify you when service returns.</p>
+          </div>
+          <div class="home-indicator" aria-hidden="true"></div>
+        </main>
+      </figure>
+
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,474 @@
+/* Civica · shared variant CSS */
+:root {
+  --paper: #FAF8F4;
+  --surfacePrimary: #FFFFFF;
+  --ink: #1A1A1A;
+  --graphite: #4A4A4A;
+  --hairline: #E8E2D9;
+  --pine: #2D5F4F;
+  --brick: #B5511E;
+  --warning: #B5511E;
+  --amber: #C9922A;
+  --amberSurface: rgba(201, 146, 42, 0.12);
+  --pineSurface: rgba(45, 95, 79, 0.10);
+  --brickSurface: rgba(181, 81, 30, 0.10);
+  --warningSurface: rgba(181, 81, 30, 0.10);
+}
+html, body {
+  margin: 0;
+  padding: 0;
+  background: #232323;
+  font-family: -apple-system, "SF Pro Display", "SF Pro Text", BlinkMacSystemFont, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  color: #F0EDE6;
+}
+
+/* Canvas page chrome */
+.canvas {
+  min-height: 100vh;
+  padding: 56px 40px 80px;
+  box-sizing: border-box;
+}
+.canvas-head {
+  max-width: 1280px;
+  margin: 0 auto 40px;
+}
+.canvas-eyebrow {
+  font-size: 13px;
+  line-height: 18px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: #8A857A;
+  margin: 0 0 8px;
+}
+.canvas-title {
+  font-size: 28px;
+  line-height: 34px;
+  font-weight: 700;
+  color: #F0EDE6;
+  letter-spacing: -0.4px;
+  margin: 0 0 8px;
+}
+.canvas-sub {
+  font-size: 16px;
+  line-height: 22px;
+  font-weight: 400;
+  color: #B5B0A4;
+  margin: 0;
+  max-width: 680px;
+}
+.canvas-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 393px);
+  gap: 40px;
+  justify-content: center;
+}
+.frame-cell { display: flex; flex-direction: column; gap: 14px; }
+.frame-label {
+  font-size: 13px;
+  line-height: 18px;
+  font-weight: 500;
+  color: #B5B0A4;
+  letter-spacing: 0.2px;
+}
+.frame-label strong {
+  color: #F0EDE6;
+  font-weight: 600;
+  margin-right: 8px;
+}
+.frame-note {
+  font-size: 12px;
+  line-height: 16px;
+  color: #8A857A;
+  margin: -6px 0 0;
+}
+
+/* iPhone frame */
+.device {
+  width: 393px;
+  height: 852px;
+  background: var(--paper);
+  border-radius: 44px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  display: flex;
+  flex-direction: column;
+  color: var(--ink);
+}
+
+.status-bar {
+  height: 54px;
+  padding: 18px 32px 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink);
+  flex-shrink: 0;
+}
+.status-icons { display: flex; align-items: center; gap: 6px; }
+
+.scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 20px 16px;
+}
+.scroll::-webkit-scrollbar { display: none; }
+
+.nav {
+  height: 44px;
+  display: flex;
+  align-items: center;
+  margin: 0 -4px 12px;
+}
+.nav-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--graphite);
+  font-size: 16px;
+  line-height: 22px;
+  background: none;
+  border: 0;
+  padding: 10px 4px;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.title {
+  font-size: 22px;
+  line-height: 28px;
+  font-weight: 600;
+  color: var(--ink);
+  letter-spacing: -0.2px;
+  margin: 4px 0 8px;
+}
+.subhead {
+  font-size: 16px;
+  line-height: 22px;
+  font-weight: 400;
+  color: var(--graphite);
+  margin: 0;
+}
+.section-heading {
+  font-size: 17px;
+  line-height: 22px;
+  font-weight: 600;
+  color: var(--ink);
+  margin: 24px 0 8px;
+}
+
+/* Footer */
+.footer {
+  flex-shrink: 0;
+  padding: 14px 20px 28px;
+  background: var(--paper);
+  border-top: 1px solid var(--hairline);
+}
+.cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 56px;
+  background: var(--pine);
+  color: #FFFFFF;
+  border: 0;
+  border-radius: 12px;
+  font-family: inherit;
+  font-size: 17px;
+  line-height: 22px;
+  font-weight: 600;
+  letter-spacing: -0.1px;
+  cursor: pointer;
+}
+.cta-disabled {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 56px;
+  background: var(--hairline);
+  color: var(--graphite);
+  border: 0;
+  border-radius: 12px;
+  font-family: inherit;
+  font-size: 17px;
+  line-height: 22px;
+  font-weight: 600;
+  cursor: not-allowed;
+}
+.cta-outline {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 56px;
+  background: transparent;
+  color: var(--graphite);
+  border: 1px solid var(--hairline);
+  border-radius: 12px;
+  font-family: inherit;
+  font-size: 17px;
+  line-height: 22px;
+  font-weight: 600;
+  margin-top: 10px;
+  cursor: pointer;
+}
+.cta-text {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 44px;
+  margin-top: 8px;
+  background: transparent;
+  color: var(--graphite);
+  border: 0;
+  font-family: inherit;
+  font-size: 16px;
+  line-height: 22px;
+  font-weight: 400;
+  cursor: pointer;
+}
+.footer-foot {
+  font-size: 13px;
+  line-height: 18px;
+  color: var(--graphite);
+  margin: 10px 4px 0;
+  text-align: center;
+}
+.home-indicator {
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 134px;
+  height: 5px;
+  background: var(--ink);
+  border-radius: 3px;
+  opacity: 0.85;
+  pointer-events: none;
+}
+
+/* === Shared atoms === */
+.check {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+.tabnum { font-variant-numeric: tabular-nums; }
+
+/* =========================================================
+   V1 — Quiet ledger
+   ========================================================= */
+.v1-status {
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.v1-status .check { margin-top: 0; }
+.v1-status-text {
+  font-size: 16px;
+  line-height: 22px;
+  font-weight: 600;
+  color: var(--pine);
+  letter-spacing: -0.1px;
+}
+.v1-status.is-brick .v1-status-text { color: var(--brick); }
+.v1-status.is-graphite .v1-status-text { color: var(--graphite); font-weight: 500; }
+
+.v1-ledger { list-style: none; padding: 0; margin: 4px 0 0; }
+.v1-ledger li {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  column-gap: 16px;
+  align-items: baseline;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--hairline);
+}
+.v1-ledger li:last-child { border-bottom: 0; }
+.v1-ledger-label {
+  font-size: 16px;
+  line-height: 22px;
+  font-weight: 600;
+  color: var(--ink);
+  margin: 0;
+}
+.v1-ledger-value {
+  font-size: 16px;
+  line-height: 22px;
+  font-weight: 400;
+  color: var(--graphite);
+  text-align: right;
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+}
+.v1-total {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: baseline;
+  border-top: 1px solid var(--ink);
+  margin-top: 16px;
+  padding: 14px 0 4px;
+}
+.v1-total-label {
+  font-size: 13px;
+  line-height: 18px;
+  font-weight: 500;
+  color: var(--graphite);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  margin: 0;
+}
+.v1-total-value {
+  font-size: 22px;
+  line-height: 28px;
+  font-weight: 600;
+  color: var(--ink);
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.2px;
+}
+.v1-foot {
+  font-size: 13px;
+  line-height: 18px;
+  color: var(--graphite);
+  margin: 12px 0 0;
+}
+
+/* =========================================================
+   V2 — Stacked notices (iOS Settings)
+   ========================================================= */
+.v2-group {
+  background: var(--surfacePrimary);
+  border-radius: 12px;
+  border: 1px solid var(--hairline);
+  margin-top: 12px;
+  overflow: hidden;
+}
+.v2-group-head {
+  font-size: 13px;
+  line-height: 18px;
+  font-weight: 500;
+  color: var(--graphite);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  margin: 28px 4px 8px;
+}
+.v2-row {
+  display: grid;
+  grid-template-columns: 20px 1fr 18px;
+  column-gap: 12px;
+  align-items: center;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--hairline);
+}
+.v2-row:last-child { border-bottom: 0; }
+.v2-row-label {
+  font-size: 16px;
+  line-height: 22px;
+  font-weight: 400;
+  color: var(--ink);
+  margin: 0;
+}
+.v2-row-detail {
+  font-size: 13px;
+  line-height: 18px;
+  color: var(--graphite);
+  margin: 2px 0 0;
+}
+.v2-chevron {
+  width: 8px;
+  height: 14px;
+  opacity: 0.45;
+  justify-self: end;
+}
+.v2-status {
+  margin-top: 20px;
+  background: var(--pineSurface);
+  border-radius: 12px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.v2-status-text {
+  font-size: 16px;
+  line-height: 22px;
+  font-weight: 600;
+  color: var(--pine);
+  margin: 0;
+}
+
+/* =========================================================
+   V3 — Status timeline
+   ========================================================= */
+.v3-timeline {
+  position: relative;
+  margin: 24px 0 0;
+  padding-left: 0;
+  list-style: none;
+}
+.v3-timeline::before {
+  content: "";
+  position: absolute;
+  left: 7px;
+  top: 8px;
+  bottom: 12px;
+  width: 1px;
+  background: var(--hairline);
+}
+.v3-node {
+  position: relative;
+  padding: 0 0 18px 32px;
+  min-height: 32px;
+}
+.v3-node:last-child { padding-bottom: 0; }
+.v3-dot {
+  position: absolute;
+  left: 0;
+  top: 4px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--paper);
+  border: 2px solid var(--pine);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+}
+.v3-dot.is-filled { background: var(--pine); border-color: var(--pine); }
+.v3-dot.is-brick { border-color: var(--brick); }
+.v3-dot.is-brick.is-filled { background: var(--brick); }
+.v3-dot.is-warning { border-color: var(--warning); }
+.v3-dot.is-amber.is-filled { background: var(--amber); border-color: var(--amber); }
+.v3-node-label {
+  font-size: 16px;
+  line-height: 22px;
+  font-weight: 600;
+  color: var(--ink);
+  margin: 0 0 2px;
+}
+.v3-node-detail {
+  font-size: 16px;
+  line-height: 22px;
+  color: var(--graphite);
+  margin: 0;
+}
+.v3-node-foot {
+  font-size: 13px;
+  line-height: 18px;
+  color: var(--graphite);
+  margin: 6px 0 0;
+}
+.v3-node.is-terminal .v3-node-label { color: var(--ink); }
+
+/* Spinner used in V1/V2/V3 */
+@keyframes spin { to { transform: rotate(360deg); } }
+.spinner { animation: spin 1s linear infinite; }

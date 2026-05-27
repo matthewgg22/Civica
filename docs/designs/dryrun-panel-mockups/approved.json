@@ -1,0 +1,28 @@
+{
+  "branch": "feat/dashboard-caseworker-readiness",
+  "screen": "DryRunPanel-iOS-T7",
+  "approved_at": "2026-05-27T00:50:00Z",
+  "audit_rounds": 3,
+  "spec_source": "~/.gstack/projects/matthewgg22-Civica/matthewgreer-gentis-codex-rebuild-feb18-design-20260526-230032.md",
+  "approved_variants": {
+    "A-ready":     { "variant": "V1", "rationale": "Quiet-ledger receipt metaphor; $315 total line lands." },
+    "B-fix":       { "variant": "V2", "rationale": "Stacked notices keep brick cure cards as discrete actionable units." },
+    "C-checking":  { "variant": "V1", "rationale": "Inline async strip stays unobtrusive; V3 acceptable alternate." },
+    "D-navigator": { "variant": "V3", "rationale": "Status timeline is honest match for 'what happens next' content." },
+    "E-entry":     { "variant": "V2", "rationale": "iOS-native cadence for first-time UX. 96% claim removed in audit round 2." },
+    "F-lease":     { "variant": "V1", "rationale": "Quiet ledger keeps viewfinder dominant; flat checklist below." },
+    "L-loading":   { "variant": "V1", "rationale": "Maximum restraint; state is transient and shouldn't earn chrome." },
+    "G-fail":      { "variant": "V2", "rationale": "Brick explanation cards need discrete chrome; numbered next-steps in iOS-Settings cadence." },
+    "H-error":     { "variant": "V1", "rationale": "System-status-page voice reads cleanest as flat hairline rows." },
+    "P-partial":   { "variant": "V2", "rationale": "Stale-strip surface chrome conveys 'still useful but not fresh.'" }
+  },
+  "approved_animations": {
+    "Transition-MixedToPass": {
+      "frames": ["T+0ms (chip appears)", "T+750ms (chip mid-life)", "T+1500ms (crossfade begin)", "T+1800ms (PASS final)"],
+      "spec_section": "Q5 — Cure-resolved transitions",
+      "rationale": "Visual choreography reference for T7 implementer. Layout (B-V2 → A-V1), verdict copy ('Two things to fix' → 'Application ready to submit'), footer CTA ('Fix items above' → 'Submit application'), and amber benefit tile all cross-fade together over 300ms following the 1.5s satisfaction beat."
+    }
+  },
+  "audit_notes": "Round 1 (civica-11) caught Q4 96% violation. Round 2 (civica-12) resolved it + added 4 missing states. Round 3 (civica-13) added cure-resolved transition sequence. 10 states + 1 transition sequence = 31 visual references locked.",
+  "next_step": "Visual reference complete. T7 implementer builds DryRunPanel.swift against approved mockups + iOS Design Specification (with Q5 transition spec) in the design doc."
+}
