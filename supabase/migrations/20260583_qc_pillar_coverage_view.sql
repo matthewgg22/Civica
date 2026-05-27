@@ -32,7 +32,7 @@ WITH packets AS (
 argyle AS (
   SELECT DISTINCT packet_id
   FROM snap_enrollment.argyle_connections
-  WHERE connected_at IS NOT NULL
+  WHERE linked_at IS NOT NULL
 ),
 shelter_docs AS (
   SELECT DISTINCT packet_id
