@@ -1,9 +1,12 @@
 // Top-level public surface of @civica/regops-engine.
 //
-// v1 scope: source-adapter contract types only. Drafter, war-room
-// trigger, counsel-queue plumbing, and audit-log writers land in
-// subsequent tasks (E1, E3, E6, E7, E9) and will re-export from here as
-// they ship. See docs/designs/regops-engine.md for the implementation
-// sequencing.
+// v1 scope (landing incrementally per docs/designs/regops-engine.md
+// implementation sequencing):
+//   - sources/ — SourceAdapter contract types (E5)
+//   - audit/   — append-only audit-log writer interface + impls (E3)
+// Still to land: drafter (E1), versioned prompts (E6), base adapter +
+// polling hygiene (E9), adversarial fixtures (E7), war-room (T7),
+// counsel queue UI (T5), ERE coverage gate (E8).
 
 export * from "./sources/index.js";
+export * from "./audit/index.js";

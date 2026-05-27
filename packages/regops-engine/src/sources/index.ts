@@ -24,3 +24,21 @@ export {
   isSuccess,
   isTransientFailure,
 } from "./types.js";
+
+export type {
+  DomainTag,
+  FetchContext,
+  SourceAdapter,
+  SourceAdapterBaseDeps,
+  SourceAdapterPolicyOverrides,
+} from "./base.js";
+export {
+  BACKOFF_SCHEDULE_MS,
+  DEFAULT_POLL_INTERVAL_MS,
+  DEFAULT_WEDGED_THRESHOLD_MS,
+  REGOPS_USER_AGENT,
+  SourceAdapterBase,
+} from "./base.js";
+
+export type { Clock } from "./clock.js";
+export { FakeClock, SystemClock } from "./clock.js";
