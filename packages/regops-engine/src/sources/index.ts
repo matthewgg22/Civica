@@ -55,3 +55,18 @@ export {
   parseApiResponse,
   parseRetryAfter,
 } from "./federal-register.js";
+
+export type {
+  UsdaColaRegion,
+  UsdaColaResourceKind,
+  UsdaColaResourceLink,
+  UsdaFnsColaAdapterDeps,
+} from "./usda-fns-cola.js";
+export {
+  UsdaFnsColaAdapter,
+  hashColaLinks,
+  inferFiscalYear,
+  inferKind,
+  inferRegion,
+  parseColaIndexHtml,
+} from "./usda-fns-cola.js";
