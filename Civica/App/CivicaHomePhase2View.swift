@@ -27,19 +27,36 @@ struct CivicaHomePhase2View: View {
     let language: CivicaLanguage
     let onOpenExternalPortal: () -> Void
 
+    @EnvironmentObject private var enrollmentAuth: CivicaEnrollmentAuth
+
     /// Optional handler so a DEBUG `CivicaPhaseTab` can swap the
     /// rendered phase from outside this view. Production ignores.
     var onDebugPhaseChange: ((CivicaPhase) -> Void)? = nil
 
-    // MARK: - TODO wiring: surface the error-risk engine result here
-    // once the iOS-side hook lands. For now this defaults false and
-    // the row stays hidden; the design degrades gracefully.
-    var showErrorRisk: Bool = false
-    var errorRiskHeadline: String = ""
-    var errorRiskBody: String = ""
+    // Error-risk binding (wired in this PR — see SNAPErrorRiskStore).
+    // The override parameters below stay for previews / tests that
+    // want to force a specific tier without hitting the network;
+    // production reads from the live store.
+    var showErrorRiskOverride: Bool? = nil
+    var errorRiskHeadlineOverride: String? = nil
+    var errorRiskBodyOverride: String? = nil
 
-    // MARK: - TODO wiring: replace with real `EBTDocumentRequestsStore`
-    // / messages-inbox state once those ship.
+    @StateObject private var errorRiskStore = SNAPErrorRiskStore()
+
+    /// Derived: prefer the explicit override, else the live store.
+    private var showErrorRisk: Bool {
+        showErrorRiskOverride ?? errorRiskStore.shouldSurface
+    }
+    private var errorRiskHeadline: String {
+        errorRiskHeadlineOverride ?? errorRiskStore.headline(in: language)
+    }
+    private var errorRiskBody: String {
+        errorRiskBodyOverride ?? errorRiskStore.body(in: language)
+    }
+
+    // MARK: - TODO wiring: replace with real document-requests +
+    // messages-inbox stores once those ship. Defaults of 0 hide
+    // the rows in production.
     var pendingDocumentCount: Int = 0
     var documentsDueDateLabel: String = ""
     var documentsListSummary: String = ""
@@ -140,6 +157,14 @@ struct CivicaHomePhase2View: View {
                     onOpenExternalPortal()
                 }
             )
+        }
+        .task {
+            // Bind the live enrollment client + fetch the applicant's
+            // current error-risk score. Silent fail — the home view
+            // hides the row on any error.
+            guard enrollmentAuth.state.isAuthenticated else { return }
+            errorRiskStore.bind(client: enrollmentAuth.makeEnrollmentAPIClient())
+            await errorRiskStore.load()
         }
     }
 
@@ -515,6 +540,7 @@ struct CivicaHomePhase2View_Previews: PreviewProvider {
                 language: .english,
                 onOpenExternalPortal: {}
             )
+            .environmentObject(CivicaEnrollmentAuth())
         }
     }
 }
