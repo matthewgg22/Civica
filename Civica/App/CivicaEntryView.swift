@@ -55,12 +55,7 @@ struct CivicaEntryView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: CivicaSpacing.lg) {
-                #if DEBUG
-                if let onDebugPhaseChange {
-                    CivicaPhaseTab(current: .enroll, onChange: onDebugPhaseChange)
-                        .padding(.bottom, CivicaSpacing.xs)
-                }
-                #endif
+                phaseTab
                 heroCard
                 estimatorOffRamp
                 hairline
@@ -78,6 +73,28 @@ struct CivicaEntryView: View {
         .sheet(isPresented: $presentingDebugMenu) {
             DebugMenuView()
         }
+    }
+
+    // MARK: - Phase tab (production journey indicator + DEBUG override)
+
+    /// Production renders the locked journey indicator (current
+    /// highlighted, future phases locked). DEBUG with an injected
+    /// `onDebugPhaseChange` swaps in the free toggle so engineers
+    /// can flip phases at runtime.
+    @ViewBuilder
+    private var phaseTab: some View {
+        #if DEBUG
+        if let onDebugPhaseChange {
+            CivicaPhaseTab(current: .enroll, onChange: onDebugPhaseChange)
+                .padding(.bottom, CivicaSpacing.xs)
+        } else {
+            CivicaPhaseTab(lockedJourneyAt: .enroll)
+                .padding(.bottom, CivicaSpacing.xs)
+        }
+        #else
+        CivicaPhaseTab(lockedJourneyAt: .enroll)
+            .padding(.bottom, CivicaSpacing.xs)
+        #endif
     }
 
     // MARK: - Hero card (filled pine, owns the primary action)

@@ -24,19 +24,51 @@ public enum CivicaPhase: String, CaseIterable, Sendable {
 
 // MARK: - CivicaPhaseTab
 
-/// Pinned three-segment journey indicator. Currently rendered in
-/// DEBUG builds only — production semantics (production-journey-
-/// indicator with locked future phases, vs free toggle for demos)
-/// is still pending product decision. DEBUG users (engineers, QA,
-/// demo flows) get a free toggle so they can flip phases without
-/// mutating the status store.
+/// Pinned three-segment journey indicator. Two modes:
+///
+///   • `.lockedJourney(current:)` — production mode. Shows where
+///     the user is in their CalFresh journey: past phases get a
+///     small checkmark, current phase is highlighted in a pine
+///     pill, future phases get a lock glyph and are visibly
+///     disabled. No tap handler — the tab is a status indicator,
+///     not navigation. Past phases stay non-tappable until per-
+///     phase "history" surfaces exist; landing there with no
+///     content would be worse than not landing there at all.
+///
+///   • `.freeToggle(current:onChange:)` — DEBUG mode. All three
+///     segments interactive, the handler swaps the rendered
+///     phase without mutating SNAPApplicationStatusStore. Used by
+///     engineers and QA to flip phases at runtime without
+///     scrubbing status state.
+///
+/// Resolved during the May 2026 plan-design-review C2 follow-up.
+/// The "free toggle in production" alternative was rejected — real
+/// users tapping into a phase they haven't earned would land on
+/// empty or inconsistent surfaces (Phase 3 with no EBT account,
+/// Phase 2 with no submission timestamp). That degrades the UX
+/// more than no tab at all.
 public struct CivicaPhaseTab: View {
-    let current: CivicaPhase
-    let onChange: (CivicaPhase) -> Void
+    public enum Mode {
+        case lockedJourney(current: CivicaPhase)
+        case freeToggle(current: CivicaPhase, onChange: (CivicaPhase) -> Void)
+    }
 
+    let mode: Mode
+
+    public init(mode: Mode) {
+        self.mode = mode
+    }
+
+    /// Free-toggle convenience init (preserves the v1.0 call site
+    /// signature so the DEBUG-gated tab in each Phase view doesn't
+    /// need an update).
     public init(current: CivicaPhase, onChange: @escaping (CivicaPhase) -> Void) {
-        self.current = current
-        self.onChange = onChange
+        self.mode = .freeToggle(current: current, onChange: onChange)
+    }
+
+    /// Locked-journey convenience init.
+    public init(lockedJourneyAt current: CivicaPhase) {
+        self.mode = .lockedJourney(current: current)
     }
 
     public var body: some View {
@@ -52,7 +84,40 @@ public struct CivicaPhaseTab: View {
         )
     }
 
+    private var current: CivicaPhase {
+        switch mode {
+        case .lockedJourney(let c):  return c
+        case .freeToggle(let c, _):  return c
+        }
+    }
+
+    private func phaseState(_ phase: CivicaPhase) -> PhaseSegmentState {
+        let order: [CivicaPhase] = [.enroll, .pending, .enrolled]
+        guard let segIdx = order.firstIndex(of: phase),
+              let currIdx = order.firstIndex(of: current) else { return .future }
+        if segIdx < currIdx { return .past }
+        if segIdx == currIdx { return .current }
+        return .future
+    }
+
+    private enum PhaseSegmentState { case past, current, future }
+
+    @ViewBuilder
     private func segmentButton(_ phase: CivicaPhase) -> some View {
+        switch mode {
+        case .freeToggle(_, let onChange):
+            freeToggleSegment(phase: phase, onChange: onChange)
+        case .lockedJourney:
+            lockedSegment(phase: phase)
+        }
+    }
+
+    /// Free-toggle button: every segment tappable, current shown in a
+    /// white pill with pine text + soft shadow.
+    private func freeToggleSegment(
+        phase: CivicaPhase,
+        onChange: @escaping (CivicaPhase) -> Void
+    ) -> some View {
         let active = (phase == current)
         return Button {
             onChange(phase)
@@ -74,6 +139,56 @@ public struct CivicaPhaseTab: View {
         .buttonStyle(.plain)
         .accessibilityLabel("\(label(for: phase)) phase")
         .accessibilityAddTraits(active ? .isSelected : [])
+    }
+
+    /// Locked-journey segment: past = ✓ + pine text, current = pine
+    /// pill, future = lock glyph + muted text. None are tappable.
+    @ViewBuilder
+    private func lockedSegment(phase: CivicaPhase) -> some View {
+        let state = phaseState(phase)
+        HStack(spacing: 4) {
+            switch state {
+            case .past:
+                Image(systemName: "checkmark")
+                    .font(.system(size: 9, weight: .bold))
+                    .foregroundStyle(CivicaColors.pinePrimary)
+                Text(label(for: phase))
+                    .font(CivicaTypography.captionStrong)
+                    .foregroundStyle(CivicaColors.pinePrimary)
+            case .current:
+                Text(label(for: phase))
+                    .font(CivicaTypography.captionStrong)
+                    .foregroundStyle(CivicaColors.pinePrimary)
+            case .future:
+                Image(systemName: "lock.fill")
+                    .font(.system(size: 9, weight: .semibold))
+                    .foregroundStyle(CivicaColors.muted)
+                Text(label(for: phase))
+                    .font(CivicaTypography.captionStrong)
+                    .foregroundStyle(CivicaColors.muted)
+            }
+        }
+        .frame(maxWidth: .infinity, minHeight: 28)
+        .padding(.horizontal, CivicaSpacing.sm)
+        .background(
+            RoundedRectangle(cornerRadius: 999)
+                .fill(state == .current ? CivicaColors.surfacePrimary : Color.clear)
+                .shadow(
+                    color: state == .current ? CivicaColors.ink.opacity(0.10) : .clear,
+                    radius: 2, x: 0, y: 1
+                )
+        )
+        .accessibilityLabel(accessibilityLabel(for: phase, state: state))
+        .accessibilityAddTraits(state == .current ? .isSelected : [])
+    }
+
+    private func accessibilityLabel(for phase: CivicaPhase, state: PhaseSegmentState) -> String {
+        let name = label(for: phase)
+        switch state {
+        case .past:    return "\(name) phase, completed"
+        case .current: return "\(name) phase, current step"
+        case .future:  return "\(name) phase, locked"
+        }
     }
 
     private func label(for phase: CivicaPhase) -> String {

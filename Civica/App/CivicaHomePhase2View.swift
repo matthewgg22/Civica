@@ -76,12 +76,7 @@ struct CivicaHomePhase2View: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: CivicaSpacing.lg) {
-                #if DEBUG
-                if let onDebugPhaseChange {
-                    CivicaPhaseTab(current: .pending, onChange: onDebugPhaseChange)
-                        .padding(.bottom, CivicaSpacing.xs)
-                }
-                #endif
+                phaseTab
 
                 statusPill
                 headline
@@ -137,21 +132,33 @@ struct CivicaHomePhase2View: View {
         .navigationTitle("Civica")
         .navigationBarTitleDisplayMode(.inline)
         .sheet(isPresented: $presentingWhatHappensNext) {
-            // TODO wiring: replace with the dedicated
-            // SNAPWhatHappensNextSheet once that view lands. For now
-            // the existing waiting-room view doubles as the sheet
-            // body so users still reach a deeper status surface.
-            NavigationStack {
-                SNAPWaitingRoomView(
-                    statusStore: statusStore,
-                    language: language,
-                    onAction: {
-                        presentingWhatHappensNext = false
-                        onOpenExternalPortal()
-                    }
-                )
-            }
+            SNAPWhatHappensNextSheet(
+                statusStore: statusStore,
+                language: language,
+                onMessageNavigator: {
+                    presentingWhatHappensNext = false
+                    onOpenExternalPortal()
+                }
+            )
         }
+    }
+
+    // MARK: - Phase tab
+
+    /// Production: locked journey indicator (.enroll ✓ + .pending
+    /// current + .enrolled locked). DEBUG with an injected change
+    /// handler: free toggle for engineers / QA.
+    @ViewBuilder
+    private var phaseTab: some View {
+        #if DEBUG
+        if let onDebugPhaseChange {
+            CivicaPhaseTab(current: .pending, onChange: onDebugPhaseChange)
+        } else {
+            CivicaPhaseTab(lockedJourneyAt: .pending)
+        }
+        #else
+        CivicaPhaseTab(lockedJourneyAt: .pending)
+        #endif
     }
 
     // MARK: - Status pill + headline
