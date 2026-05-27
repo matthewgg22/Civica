@@ -409,6 +409,14 @@ enum CivicaSNAPFlowStrings {
         "Share invite link",
         es: "Compartir enlace de invitación"
     )
+    /// `subject:` for the ShareLink (email subject when the share is
+    /// routed to Mail). Recipient may be a different locale than the
+    /// sender — but iOS share sheets use the sender's locale, so we
+    /// resolve in the user's preferred language.
+    static let buddyInviteShareSubject = CivicaText(
+        "Civica buddy invite",
+        es: "Invitación de compañero de Civica"
+    )
     static let buddyInviteSentDoneCTA = CivicaText(
         "Back to my application",
         es: "Volver a mi solicitud"
@@ -905,7 +913,10 @@ private struct BuddyInviteSentView: View {
     }
 
     private var shareButton: some View {
-        ShareLink(item: shareMessage, subject: Text("Civica buddy invite")) {
+        ShareLink(
+            item: shareMessage,
+            subject: Text(CivicaSNAPFlowStrings.buddyInviteShareSubject.value(in: language))
+        ) {
             HStack(spacing: CivicaSpacing.sm) {
                 Image(systemName: "square.and.arrow.up")
                 Text(CivicaSNAPFlowStrings.buddyInviteSentShareCTA.value(in: language))
