@@ -12,11 +12,26 @@ type ComparisonRow = {
 export default function BaselinePanel({
   comparison,
   sampleN,
+  measuredPer,
+  projectedPer,
 }: {
   comparison: ComparisonRow[];
   sampleN: number;
+  /** % of sampled packets with error_found=true. Null when no samples or
+   *  data view returned NULL despite n>=30 (graceful fallback to sampling
+   *  state per plan §17 critical gap + DES-D2). */
+  measuredPer: number | null;
+  /** Engine's engagement-implied projection in percentage points. v1 uses
+   *  PROJECTED_PER_AT_FULL_ENGAGEMENT (5.50); a future revision computes
+   *  per-cohort engagement and projects from there. */
+  projectedPer: number;
 }) {
-  const sufficient = sampleN >= SAMPLE_THRESHOLD;
+  // n=30 gate fires only when (a) we have enough samples AND (b) the
+  // measured PER is non-null. The null-data case falls back to the
+  // sampling state on purpose — per plan §17, half-rendering measured
+  // numbers from a NULL view is the failure mode we explicitly defend
+  // against.
+  const sufficient = sampleN >= SAMPLE_THRESHOLD && measuredPer !== null;
 
   return (
     <section className="bg-surface border border-hairline border-t-2 border-t-pine-surface rounded-[4px] p-5">
@@ -38,16 +53,97 @@ export default function BaselinePanel({
         </div>
       </div>
 
-      {sampleN === 0 ? (
-        <div className="border border-dashed border-hairline/60 rounded-[3px] px-4 py-3 text-center">
-          <p className="text-[12px] text-graphite">
-            Awaiting QC sampling · dumbbell renders at n ≥ {SAMPLE_THRESHOLD}.
-          </p>
-        </div>
+      {/* Measured-PER + residual pill (DES-D3). Renders only at the
+          validation gate. n=30 transition is a 400ms opacity cross-fade
+          (DES-D4) — calm, no toast, no confetti. */}
+      <div
+        className="transition-opacity"
+        style={{ transitionDuration: "400ms", opacity: sufficient ? 1 : 0, pointerEvents: sufficient ? "auto" : "none" }}
+        aria-hidden={!sufficient}
+      >
+        {sufficient && (
+          <MeasuredPerSummary measuredPer={measuredPer!} projectedPer={projectedPer} />
+        )}
+      </div>
+
+      {sampleN === 0 || !sufficient ? (
+        <SamplingProgress sampleN={sampleN} />
       ) : (
         <DumbbellChart rows={comparison} />
       )}
     </section>
+  );
+}
+
+/** Top-of-panel measured-PER number + sign-tinted residual pill.
+ *  DES-D3 color logic: |residual| <= 0.5 -> graphite/surface-secondary,
+ *  0.5 < |residual| <= 1.0 -> warning, > 1.0 -> brick (thesis at risk). */
+function MeasuredPerSummary({
+  measuredPer,
+  projectedPer,
+}: {
+  measuredPer: number;
+  projectedPer: number;
+}) {
+  const residual = measuredPer - projectedPer;
+  const mag = Math.abs(residual);
+  const tier =
+    mag <= 0.5 ? "neutral"
+      : mag <= 1.0 ? "warning"
+      : "brick";
+
+  const pillClass =
+    tier === "neutral"
+      ? "text-graphite bg-surface-secondary"
+      : tier === "warning"
+        ? "text-warning bg-warning/10"
+        : "text-brick bg-brick/10";
+
+  const sign = residual >= 0 ? "+" : "−"; // U+2212 MINUS SIGN, not hyphen
+  const formatted = `${sign}${mag.toFixed(2)}pt vs projected`;
+
+  return (
+    <div className="mb-5 pb-5 border-b border-hairline">
+      <p className="eyebrow text-[11px] uppercase tracking-wider text-muted mb-1">
+        Measured PER
+      </p>
+      <p className="text-[24px] font-semibold leading-none text-ink tabular-nums">
+        {measuredPer.toFixed(2)}%
+      </p>
+      <span
+        className={`inline-block mt-2 text-[12px] tabular-nums font-medium rounded-[3px] px-2 py-1 ${pillClass}`}
+        aria-label={`Residual ${formatted}; thesis projection ${projectedPer.toFixed(2)} percent`}
+      >
+        {formatted}
+      </span>
+    </div>
+  );
+}
+
+/** Sampling state (n < SAMPLE_THRESHOLD OR data not ready). DES-D2:
+ *  "Sampling — X/30 outcomes collected" with a thin progress bar. */
+function SamplingProgress({ sampleN }: { sampleN: number }) {
+  const clamped = Math.min(sampleN, SAMPLE_THRESHOLD);
+  const pct = (clamped / SAMPLE_THRESHOLD) * 100;
+  return (
+    <div className="border border-dashed border-hairline/60 rounded-[3px] px-4 py-4">
+      <p className="text-[12px] text-graphite leading-snug">
+        {sampleN === 0
+          ? `Awaiting QC sampling · falsification test fires at n ≥ ${SAMPLE_THRESHOLD}.`
+          : `Sampling · ${sampleN}/${SAMPLE_THRESHOLD} outcomes collected.`}
+      </p>
+      <div className="mt-3 h-1 bg-hairline/40 rounded-full overflow-hidden">
+        <div
+          className="h-full bg-pine transition-all"
+          style={{ width: `${pct}%`, transitionDuration: "400ms" }}
+          role="progressbar"
+          aria-valuenow={sampleN}
+          aria-valuemin={0}
+          aria-valuemax={SAMPLE_THRESHOLD}
+          aria-label={`QC sampling progress: ${sampleN} of ${SAMPLE_THRESHOLD}`}
+        />
+      </div>
+    </div>
   );
 }
 
