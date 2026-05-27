@@ -260,8 +260,11 @@ app.post('/packets/:packetId/error-risk', async (c) => {
 
   // Call the same scoring function the applicant endpoint uses so navigator
   // casework decisions see the authoritative score (OCR comparison, HEAP check,
-  // SUA tier) — not a simplified proxy.
-  const result = await scorePacketRisk(
+  // SUA tier) — not a simplified proxy. Navigator does NOT persist or emit:
+  // this is a read-mostly view, so analytical-emit volume mirrors persist
+  // volume exactly. Every persisted score is one real evaluation event;
+  // navigator-side recomputes are not events.
+  const { result } = await scorePacketRisk(
     c.env,
     c.get('jwt'),
     packetId,

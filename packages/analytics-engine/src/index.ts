@@ -15,10 +15,12 @@
  *   - analytics.cfr273.bySection({ section })
  *   - analytics.obbbaScenarios.compare({ metric? })
  *
+ * Implemented (TODO-5 — T8 shadow-mode instrumentation, 2026-05-27):
+ *   - analytics.civicaEmit.qcEvaluations.byOrg({ orgId })
+ *
  * Still stubbed (blocked on data Civica doesn't emit yet):
  *   - analytics.qcMicrodata.* — blocked on USDA QC public-use microdata load
  *   - analytics.stateFoia.* / federalFoia.* — blocked on FOIA inventory parser
- *   - analytics.civicaEmit.qcEvaluations.byOrg — blocked on pilot QC emit
  *
  * Every query returns `{ rows, provenance }` so consumers can render
  * citation footnotes alongside data.
@@ -38,6 +40,7 @@ import {
   bySection as cfr273BySection,
 } from "./datasets/cfr273";
 import { compare as obbbaScenariosCompare } from "./datasets/obbbaScenarios";
+import { qcEvaluationsByOrg } from "./datasets/civicaEmit";
 
 export * from "./schemas";
 
@@ -91,11 +94,7 @@ export const analytics = {
   },
   civicaEmit: {
     qcEvaluations: {
-      byOrg: (_opts: { orgId: string }) =>
-        blocked(
-          "civicaEmit.qcEvaluations.byOrg",
-          "blocked on pilot start (apps/enrollment-api emits to civica-emit/qc-evaluations/date=*/)",
-        ),
+      byOrg: qcEvaluationsByOrg,
     },
   },
 };

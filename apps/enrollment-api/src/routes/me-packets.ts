@@ -13,7 +13,7 @@ import { fetchFMR, householdSizeToBedrooms } from "../lib/hud-fmr.js";
 import { validateAddress } from "../lib/smarty.js";
 import { compareIncome } from "../lib/income-verification.js";
 import type { PayPeriod } from "../lib/income-verification.js";
-import { scorePacketRisk, persistPacketRiskScore } from "../lib/scoring.js";
+import { scorePacketRisk, persistPacketRiskScore, emitQcEvaluation } from "../lib/scoring.js";
 import { rateLimit } from "../lib/rate-limit.js";
 import type { Logger } from "../lib/logger.js";
 
@@ -445,17 +445,25 @@ app.post(
 // ── Error Risk Score ──────────────────────────────────────────────────────────
 
 /**
- * Wrapper that scores + persists. Scoring logic lives in lib/scoring.ts so the
- * navigator endpoint reaches the same authoritative score.
+ * Wrapper that scores, persists, and emits a shadow-mode QC evaluation event.
+ * Scoring logic lives in lib/scoring.ts so the navigator endpoint reaches
+ * the same authoritative score. Emit fires per persist — see TODO-5.
  */
 async function scoreAndPersist(
   env: Env,
   jwt: string,
   packetId: string,
   applicantId: string,
+  context: { org_id: string | null; county: string | null; state_code: string | null; packet_status: string | null } = {
+    org_id: null,
+    county: null,
+    state_code: null,
+    packet_status: null,
+  },
 ) {
-  const result = await scorePacketRisk(env, jwt, packetId, applicantId);
+  const { result, flowSignals } = await scorePacketRisk(env, jwt, packetId, applicantId);
   persistPacketRiskScore(env, packetId, result);
+  void emitQcEvaluation(env, packetId, applicantId, result, flowSignals, context);
   return result;
 }
 
@@ -465,10 +473,14 @@ app.post("/:packetId/error-risk", rateLimit("standard"), async (c) => {
   const packetId = c.req.param("packetId");
   const anonDb = makeAnonClient(c.env, c.get("jwt"));
 
+  // Pulls extra context (org_id, county, state_code, status) so the emit
+  // event is self-contained — analytical readers shouldn't have to join
+  // back to snap_enrollment.snap_packets to know which org / county the
+  // evaluation belongs to.
   const { data: packet, error: pErr } = await anonDb
     .schema("snap_enrollment")
     .from("snap_packets")
-    .select("packet_id, applicant_id")
+    .select("packet_id, applicant_id, org_id, county, state_code, status")
     .eq("packet_id", packetId)
     .eq("applicant_id", applicant.applicant_id)
     .is("deleted_at", null)
@@ -478,7 +490,18 @@ app.post("/:packetId/error-risk", rateLimit("standard"), async (c) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   if (pErr) throw new HTTPException(500, { message: (pErr as any).message });
 
-  const result = await scoreAndPersist(c.env, c.get("jwt"), packetId, packet.applicant_id as string);
+  const result = await scoreAndPersist(
+    c.env,
+    c.get("jwt"),
+    packetId,
+    packet.applicant_id as string,
+    {
+      org_id: (packet.org_id as string | null) ?? null,
+      county: (packet.county as string | null) ?? null,
+      state_code: (packet.state_code as string | null) ?? null,
+      packet_status: (packet.status as string | null) ?? null,
+    },
+  );
   return c.json(result);
 });
 

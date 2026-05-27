@@ -66,7 +66,30 @@ Helper: `pillarReductionAtFullEngagement()` returns the per-pillar pp breakdown 
 
 ---
 
-## TODO-5 — T8 shadow-mode full instrumentation
+## TODO-5 — T8 shadow-mode full instrumentation — DONE (2026-05-27)
+
+**Status:** DONE — emit pipeline + read pipeline both live.
+
+**Emit side** (`apps/enrollment-api/src/lib/scoring.ts`):
+- `scorePacketRisk` now returns `{ result, flowSignals }` so callers have access to the per-flow defensibility list (was previously discarded).
+- New `emitQcEvaluation(env, packetId, applicantId, result, flowSignals, context)` fire-and-forget helper writes one JSON event per persisted score to `civica-analytics/civica-emit/qc-evaluations/date=YYYY-MM-DD/{packet_id}-{ts}-{shortId}.json`. Storage errors are caught and logged; never throw back to the request handler.
+- `QcEvaluationEvent` type (schema_version=1) carries packet/applicant/org/county/state/status context + the full engine result + per-flow signals.
+- Wired at `me-packets.ts` `/error-risk` (full context), `/verification-summary` auto-rescore, and `/submit` auto-score paths. Navigator endpoint reads but does NOT emit (preserves "navigator scores but doesn't persist" semantics; emit mirrors persist volume).
+
+**Read side** (`packages/analytics-engine/src/datasets/civicaEmit.ts`):
+- New `qcEvaluationsByOrg({ orgId })` replaces the `blocked()` stub. Reads via DuckDB JSON glob over httpfs in production; local-fs walk via `ANALYTICS_LOCAL_PARQUET_DIR` for tests. Filters by org_id, sorts by emitted_at, returns `{ rows, provenance }` matching the rest of the engine.
+- `QcEvaluationSchema` in `schemas.ts` expanded to match the emit shape (Zod-validates on read so emit-side schema drift fails loudly with a clear error).
+
+**Tests:** 8 new emit tests (`scoring.test.ts`) covering null-score skip, path format, body contents, error swallow paths; 6 new reader tests (`civicaEmit.test.ts`) covering empty bucket, org filter, cross-partition sort, provenance shape, schema-drift detection. All 614 enrollment-api + 33 analytics-engine tests green. Dashboard typecheck clean.
+
+**Forward-compat path unlocked:** the per-flow `flow_signals` in the emit shape enables the `perPacketGapContributionFromResults(results)` engine variant that TODO-27's commit explicitly waits on. Real PER-contribution math (not score-based approximation) lands as soon as one cohort of events accrues.
+
+**Out of scope (intentional):**
+- Backfill of historical `packet_error_risk` rows into the emit bucket → separable one-shot script if/when the analytical tier wants pre-pilot data.
+- Dashboard UI for emit-side data → follow-on once data accrues (the reader API is the contract).
+- Pilot validation of PER claims → waits on Session L; tooling is ready.
+
+**Original spec (kept for traceability):**
 
 **What:** Complete shadow-mode QC evaluation logging: capture every enrollment event, recertification, and defensibility score as an analytical export to `civica-emit/qc-evaluations/` in Supabase Storage.
 **Why:** PR #167 shipped lead capture and page-view events; full shadow-mode eval logging requires the first real enrolled student to have meaningful data. Pilot instrumentation validates the PER reduction claim with real case data.
