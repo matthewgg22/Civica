@@ -39,6 +39,12 @@ enum SNAPAnalytics {
         static let interview24hNotificationScheduled = "snap_interview_24h_notification_scheduled"
         // Enrollment API persistence events — no PII, no eligibility result.
         static let packetSubmitted = "snap_packet_submitted"
+        // Re-entry assist (Unrath retention pillar, G2) — counts only,
+        // never the prior packet_id, county, or any household detail.
+        static let reEntryCardImpression = "snap_reentry_card_impression"
+        static let reEntryConfirmed = "snap_reentry_confirmed"
+        static let reEntryDismissed = "snap_reentry_dismissed"
+        static let reEntryError = "snap_reentry_error"
     }
 
     /// Track a single conversation turn. `topic` is the QuestionTopic the
@@ -115,6 +121,38 @@ enum SNAPAnalytics {
 
     static func trackInterview24hNotificationScheduled() {
         send(Event.interview24hNotificationScheduled, stepName: nil, stepIndex: nil)
+    }
+
+    // MARK: - Re-entry assist (Unrath retention pillar, G2)
+
+    /// Card surfaced to the applicant (state became .candidate). Fires once
+    /// per appearance — the store de-dupes via state-machine transitions.
+    static func trackReEntryCardImpression() {
+        send(Event.reEntryCardImpression, stepName: nil, stepIndex: nil)
+    }
+
+    /// User confirmed re-enrollment. `idempotent` distinguishes a freshly
+    /// created Draft ("new") from a pre-existing one returned by the
+    /// gateway's idempotency branch ("existing"). Encoded into `topic`
+    /// since it's the only allowlisted free-form key.
+    static func trackReEntryConfirmed(idempotent: Bool) {
+        send(
+            Event.reEntryConfirmed,
+            stepName: nil,
+            stepIndex: nil,
+            topic: idempotent ? "existing" : "new"
+        )
+    }
+
+    /// User tapped "Not now" on the card.
+    static func trackReEntryDismissed() {
+        send(Event.reEntryDismissed, stepName: nil, stepIndex: nil)
+    }
+
+    /// Failure surfaced to the user. `stage` is "load" (suggestion fetch
+    /// failed) or "enroll" (POST re-enroll-from failed). Encoded via topic.
+    static func trackReEntryError(stage: String) {
+        send(Event.reEntryError, stepName: nil, stepIndex: nil, topic: stage)
     }
 
     static func makeParameters(
