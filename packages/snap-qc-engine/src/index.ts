@@ -24,7 +24,7 @@ export {
   evaluateBenefitImpact,
 } from "./flows/benefit-impact-projection/index";
 export { combineScores, rollupFactors } from "./scoring/defensibility";
-export { scoreErrorRisk, ERROR_WEIGHT } from "./scoring/error-risk";
+export { scoreErrorRisk, ERROR_WEIGHT, perPacketGapContribution } from "./scoring/error-risk";
 export type { ErrorRiskResult, ErrorRiskTier } from "./scoring/error-risk";
 
 // Population PER projection (added 2026-05-25 for /qc Error Rate Intelligence redesign).

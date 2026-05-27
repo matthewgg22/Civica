@@ -19,7 +19,7 @@ import HandoffPanel from "../../../components/HandoffPanel";
 import ExpeditedReviewGate from "./ExpeditedReviewGate";
 import ShelterAllocationPanel from "../../../components/ShelterAllocationPanel";
 import type { ShelterAllocation } from "../../../components/ShelterAllocationPanel";
-import { classifyTenancy, detectMissedElections, totalMissedMonthlyValue } from "@civica/snap-qc-engine";
+import { classifyTenancy, detectMissedElections, totalMissedMonthlyValue, perPacketGapContribution } from "@civica/snap-qc-engine";
 import type { HouseholdElectionProfile } from "@civica/snap-qc-engine";
 import MissedElectionsPanel from "../../../components/MissedElectionsPanel";
 import ComplianceNarrative from "../../../components/ComplianceNarrative";
@@ -1204,6 +1204,12 @@ function ReviewStatusCard({
             </span>
           )}
         </div>
+        {/* Pillar subtitle — names the four engine inputs in the same
+            vocabulary /qc's FormulaHero uses, so a navigator can trace this
+            packet's score back to the aggregate engagement realization gap. */}
+        <p className="text-[11px] text-muted mt-1 leading-snug">
+          shelter · income · shared-lease · calc
+        </p>
         <div className="mt-2 h-1.5 bg-paper rounded-full overflow-hidden">
           <div className={`h-full ${toneClass.bar} transition-all`} style={{ width: `${strength ?? 0}%` }} />
         </div>
@@ -1212,6 +1218,29 @@ function ReviewStatusCard({
           {riskTier && <span> · {riskTier}</span>}
           {argyleLinked && <span className="text-teal"> · income verified via payroll</span>}
         </p>
+        {/* Reverse bridge to /qc: this packet's contribution to the
+            engagement realization gap, in the same pp unit /qc's
+            FormulaHero renders. perPacketGapContribution returns null
+            when the packet is incomplete (no flows evaluated yet). */}
+        {(() => {
+          const gapPp = perPacketGapContribution(riskScore);
+          if (gapPp == null) return null;
+          return (
+            <p className="text-[12px] text-graphite mt-2 leading-snug">
+              This packet contributes{" "}
+              <span className="font-semibold text-ink tabular-nums">
+                {gapPp.toFixed(1)} pts
+              </span>{" "}
+              to the engagement realization gap.{" "}
+              <Link
+                href={`/qc?packetFocus=${encodeURIComponent(packetId)}#feed`}
+                className="font-semibold text-pine hover:underline"
+              >
+                See aggregate impact ↗
+              </Link>
+            </p>
+          );
+        })()}
       </div>
 
       {/* Pre-handoff checks */}

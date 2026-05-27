@@ -311,7 +311,13 @@ Add new items with `## TODO-N` headings. Never delete — mark as DONE instead.
 
 ---
 
-## TODO-27 — Reverse bridge: packet detail ↔ /qc engagement realization gap
+## TODO-27 — Reverse bridge: packet detail ↔ /qc engagement realization gap — DONE (2026-05-27)
+
+**Status:** DONE — shipped on `feat/dashboard-caseworker-readiness`. Pillar subtitle (`shelter · income · shared-lease · calc`), per-packet contribution line (`This packet contributes X.X pts to the engagement realization gap`), and `See aggregate impact ↗` link into `/qc?packetFocus={packetId}#feed` all render in `ReviewStatusCard` on `apps/dashboard/app/packets/[packetId]/page.tsx`. Math via new `perPacketGapContribution(score)` helper in `@civica/snap-qc-engine` — linear map from the calibrated risk-score range (5–80) to the gap-pp range (0–5.48), anchored to `CA_BASELINE_PER − PROJECTED_PER_AT_FULL_ENGAGEMENT`. Verified against Maria demo packet (score 22 → 1.2 pts ✓).
+
+**Follow-on:** when per-flow defensibility lands in `packet_error_risk` (T8 shadow-mode instrumentation, TODO-5), add a more accurate `perPacketGapContributionFromResults(results)` variant alongside the score-based one. The current score-based approximation is directionally correct but loses pillar-level attribution.
+
+**Original spec (kept for traceability):**
 
 **What:** After the /qc redesign lands (T0-T11 in [`docs/plans/qc-error-rate-intelligence-redesign.md`](docs/plans/qc-error-rate-intelligence-redesign.md)), wire the packet detail page back into the same engagement-realization vocabulary so a navigator working on a single packet can see this packet's contribution to the aggregate. Three pieces:
 
