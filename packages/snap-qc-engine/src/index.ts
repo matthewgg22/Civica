@@ -66,6 +66,20 @@ export type {
   CivicaControl,
 } from "./scoring/cdss-mapping";
 
+// Retention-risk scorer (Unrath 2024 retention pillar, 2026-05-27):
+// predicts P(exit at next reporting moment | currently eligible) and surfaces
+// the Type-1 error case where a still-eligible household is at risk of
+// paperwork-driven exit. See packages/snap-qc-engine/src/scoring/retention-risk.ts
+// for calibration anchors. Pure package; no API wiring yet.
+export { scoreRetentionRisk } from "./scoring/retention-risk";
+export type {
+  RetentionRiskInput,
+  RetentionRiskResult,
+  RetentionRiskTier,
+  PriorRecertOutcome,
+  EarningsTrajectory,
+} from "./scoring/retention-risk";
+
 // Failure-to-elect detector (item 2): finds deductions/elections the
 // household qualifies for but hasn't claimed — the underpayment iceberg.
 export { detectMissedElections, totalMissedMonthlyValue } from "./scoring/failure-to-elect";
