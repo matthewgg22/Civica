@@ -47,6 +47,10 @@ struct SNAPWaitingRoomView: View {
     /// Bumped after a successful upload so the inbox section re-fetches.
     @State private var inboxRefreshID: UUID = UUID()
 
+    /// ID of the user's most recent packet; drives SNAPErrorRiskBadge.
+    /// Nil until fetched; badge hides itself when nil or on network failure.
+    @State private var latestPacketId: String?
+
     /// External link target (DTA Connect, MA WIC page) presented via
     /// CivicaSafariSheet. The waiting room owns this rather than
     /// pushing it to the root so the submission-timeline footer cards
@@ -57,6 +61,12 @@ struct SNAPWaitingRoomView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: CivicaSpacing.xl) {
                 header
+                if let packetId = latestPacketId {
+                    SNAPErrorRiskBadge(
+                        packetId: packetId,
+                        apiClient: enrollmentAuth.makeEnrollmentAPIClient()
+                    )
+                }
                 interviewNavigatorSection
                 SNAPEnrollmentInboxSection(language: language, refreshID: inboxRefreshID).fetchOnAppear()
                 if currentStatusHasAction {
@@ -95,6 +105,9 @@ struct SNAPWaitingRoomView: View {
         .task {
             persistedDraft = SNAPApplicationDraftStore().load()?.draft
             estimatorResult = SNAPEstimatorResultStore().load()
+            if enrollmentAuth.state.isAuthenticated {
+                latestPacketId = (try? await enrollmentAuth.makeEnrollmentAPIClient().fetchMyPackets())?.first?.id
+            }
         }
         .sheet(item: $externalLink) { url in
             CivicaSafariSheet(url: url)
