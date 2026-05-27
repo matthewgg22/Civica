@@ -16,6 +16,10 @@
     "./audit": {
       "types": "./src/audit/index.ts",
       "default": "./src/audit/index.ts"
+    },
+    "./prompts": {
+      "types": "./src/prompts/index.ts",
+      "default": "./src/prompts/index.ts"
     }
   },
   "scripts": {
@@ -23,7 +27,8 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:adversarial": "vitest run test/adversarial"
+    "test:adversarial": "vitest run test/adversarial",
+    "test:prompts": "vitest run src/prompts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.49.0"

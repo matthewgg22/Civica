@@ -2,11 +2,12 @@
 //
 // v1 scope (landing incrementally per docs/designs/regops-engine.md
 // implementation sequencing):
-//   - sources/ — SourceAdapter contract types (E5)
+//   - sources/ — SourceAdapter contract types + base class (E5, E9)
 //   - audit/   — append-only audit-log writer interface + impls (E3)
-// Still to land: drafter (E1), versioned prompts (E6), base adapter +
-// polling hygiene (E9), adversarial fixtures (E7), war-room (T7),
-// counsel queue UI (T5), ERE coverage gate (E8).
+//   - prompts/ — versioned LLM templates + checksum baseline gate (E6)
+// Still to land: drafter (E1), war-room (T7), counsel queue UI (T5),
+// ERE coverage gate (E8).
 
 export * from "./sources/index.js";
 export * from "./audit/index.js";
+export * from "./prompts/index.js";
