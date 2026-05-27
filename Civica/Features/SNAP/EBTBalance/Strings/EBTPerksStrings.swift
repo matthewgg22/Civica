@@ -1,18 +1,39 @@
 import CivicaDesignSystem
 
-// Marketplace / perks copy for the Check EBT Balance feature. Populated
-// by Phase 3 (T21) — perk tile titles, claim-flow strings, partner
-// disclosure copy, impression-tracking opt-in.
+// Marketplace / perks copy for the Check EBT Balance feature.
 //
 // Every CivicaText added here MUST have both .en and .es. The
-// EBTStringParityTests parity guard (plan §16.8) will fail in CI
-// otherwise.
+// EBTStringParityTests parity guard (plan §16.8) will fail in CI otherwise.
 
 enum EBTPerksStrings {
-    // Phase 3 (T21) populates this namespace.
+    static let eyebrow = CivicaText(
+        "PERKS FOR YOU",
+        es: "BENEFICIOS PARA TI"
+    )
+    static let freeResourcesEyebrow = CivicaText(
+        "FREE RESOURCES NEAR YOU",
+        es: "RECURSOS GRATUITOS CERCA"
+    )
+    static let savingsLabel = CivicaText(
+        "est. savings",
+        es: "ahorro estimado"
+    )
+    static let redeemButton = CivicaText(
+        "I used this",
+        es: "Lo usé"
+    )
+    static let redeemConfirmTitle = CivicaText(
+        "How much did you save?",
+        es: "¿Cuánto ahorraste?"
+    )
+    static let redeemConfirmBody = CivicaText(
+        "We'll add it to your Saved by Civica total.",
+        es: "Lo añadiremos a tu total Ahorrado con Civica."
+    )
 
-    /// Curated list of every CivicaText in this namespace. Add new
-    /// entries here so EBTStringParityTests catches EN/ES drift. See
-    /// EBTBalanceStrings.all for the rationale.
-    static let all: [CivicaText] = []
+    /// Curated list of every CivicaText in this namespace.
+    static let all: [CivicaText] = [
+        eyebrow, freeResourcesEyebrow, savingsLabel,
+        redeemButton, redeemConfirmTitle, redeemConfirmBody,
+    ]
 }

@@ -13,7 +13,9 @@ import SwiftUI
 struct EBTBalanceDashboardView: View {
     @ObservedObject var store: EBTBalanceStore
     @ObservedObject var anomalyStore: EBTAnomalyStore
+    @ObservedObject var offersStore: EBTOffersStore
     let language: CivicaLanguage
+    let stateCode: String
 
     /// The transaction whose detail sheet is open, paired with the
     /// running balance after it posted.
@@ -29,6 +31,8 @@ struct EBTBalanceDashboardView: View {
     /// transient "deposit landed" banner on the hero card. Cleared a
     /// few seconds after it posts.
     @State private var depositLanded: Decimal?
+    /// Offer currently being confirmed for redemption.
+    @State private var pendingRedemptionOffer: EBTOffer?
 
     var body: some View {
         ScrollView {
@@ -87,8 +91,22 @@ struct EBTBalanceDashboardView: View {
             }
         }
         .background(CivicaColors.paper.ignoresSafeArea())
+        .onAppear {
+            Task {
+                await offersStore.refresh(
+                    packetCountyFips: nil,
+                    currentCountyFips: nil,
+                    stateCode: stateCode
+                )
+            }
+        }
         .refreshable { await store.refresh() }
         .toolbar { demoToolbarMenu }
+        .sheet(item: $pendingRedemptionOffer) { offer in
+            EBTRedeemConfirmSheet(offer: offer, language: language) { savingsCents in
+                Task { try? await offersStore.repository.recordRedemption(offerId: offer.id, savingsCents: savingsCents) }
+            }
+        }
         .sheet(item: $openDetail) { detail in
             EBTTransactionDetailSheet(
                 transaction: detail.transaction,
@@ -673,13 +691,115 @@ struct EBTBalanceDashboardView: View {
 
     // MARK: - Perks + news sections
 
+    @ViewBuilder
     private var perksSection: some View {
-        contentSection(
-            eyebrow: EBTBalanceStrings.perksEyebrow.value(in: language),
-            rows: EBTBalanceFixtures.perks.map { perk in
-                contentRow(icon: perk.iconName, title: perk.title.value(in: language), detail: perk.detail.value(in: language))
+        if case .loading = offersStore.dealsSection {
+            VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
+                RoundedRectangle(cornerRadius: 4).fill(CivicaColors.hairline).frame(width: 120, height: 10)
+                RoundedRectangle(cornerRadius: CivicaRadius.card).fill(CivicaColors.surfacePrimary)
+                    .frame(height: 100)
+                    .overlay(RoundedRectangle(cornerRadius: CivicaRadius.card).strokeBorder(CivicaColors.hairline))
             }
-        )
+            .redacted(reason: .placeholder)
+        } else if case .freeResources(let resources) = offersStore.dealsSection {
+            // Silent-honor: free resources in identical shelf structure — no visible difference to user.
+            contentSection(
+                eyebrow: EBTPerksStrings.freeResourcesEyebrow.value(in: language),
+                rows: resources.map { r in
+                    contentRow(
+                        icon: freeResourceIcon(r.iconGlyph),
+                        title: r.title(in: language),
+                        detail: r.subtitle(in: language)
+                    )
+                }
+            )
+        } else if case .offers(let offers) = offersStore.dealsSection {
+            VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
+                Text(EBTPerksStrings.eyebrow.value(in: language))
+                    .font(CivicaTypography.captionStrong)
+                    .foregroundStyle(CivicaColors.graphite)
+                    .textCase(.uppercase)
+                    .kerning(1.2)
+                    .padding(.horizontal, CivicaSpacing.xs)
+
+                VStack(spacing: 0) {
+                    ForEach(Array(offers.enumerated()), id: \.element.id) { index, offer in
+                        perksOfferRow(offer: offer)
+                        if index < offers.count - 1 {
+                            Divider().overlay(CivicaColors.hairline)
+                        }
+                    }
+                }
+                .background(CivicaColors.surfacePrimary)
+                .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
+                .overlay(
+                    RoundedRectangle(cornerRadius: CivicaRadius.card)
+                        .strokeBorder(CivicaColors.hairline, lineWidth: 1)
+                )
+            }
+        } else {
+            // .empty — show static fixtures as fallback.
+            contentSection(
+                eyebrow: EBTBalanceStrings.perksEyebrow.value(in: language),
+                rows: EBTBalanceFixtures.perks.map { perk in
+                    contentRow(icon: perk.iconName, title: perk.title.value(in: language), detail: perk.detail.value(in: language))
+                }
+            )
+        }
+    }
+
+    private func freeResourceIcon(_ glyph: EBTFreeResource.IconGlyph) -> String {
+        switch glyph {
+        case .house: return "house.fill"
+        case .phone: return "phone.fill"
+        case .document: return "doc.fill"
+        }
+    }
+
+    private func perksOfferRow(offer: EBTOffer) -> some View {
+        HStack(alignment: .top, spacing: CivicaSpacing.md) {
+            Image(systemName: "tag.fill")
+                .font(.system(size: 16, weight: .semibold))
+                .foregroundStyle(CivicaColors.pinePrimary)
+                .frame(width: 24)
+                .accessibilityHidden(true)
+            VStack(alignment: .leading, spacing: 2) {
+                Text(offer.name)
+                    .font(CivicaTypography.subheadStrong)
+                    .foregroundStyle(CivicaColors.ink)
+                if let desc = offer.description {
+                    Text(desc)
+                        .font(CivicaTypography.footnote)
+                        .foregroundStyle(CivicaColors.graphite)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                Text(offer.partnerName)
+                    .font(CivicaTypography.caption)
+                    .foregroundStyle(CivicaColors.muted)
+                if offer.expectedSavingsCents > 0 {
+                    Text("~$\(offer.expectedSavingsCents / 100) \(EBTPerksStrings.savingsLabel.value(in: language))")
+                        .font(CivicaTypography.captionStrong)
+                        .foregroundStyle(CivicaColors.warningAmber)
+                }
+            }
+            Spacer(minLength: CivicaSpacing.sm)
+            Button {
+                pendingRedemptionOffer = offer
+            } label: {
+                Text(EBTPerksStrings.redeemButton.value(in: language))
+                    .font(CivicaTypography.captionStrong)
+                    .foregroundStyle(CivicaColors.pinePrimary)
+                    .padding(.horizontal, CivicaSpacing.sm)
+                    .padding(.vertical, 6)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 6)
+                            .strokeBorder(CivicaColors.pinePrimary, lineWidth: 1)
+                    )
+            }
+        }
+        .padding(CivicaSpacing.md)
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("\(offer.name). \(offer.partnerName). \(EBTPerksStrings.redeemButton.value(in: language))")
     }
 
     private var newsSection: some View {

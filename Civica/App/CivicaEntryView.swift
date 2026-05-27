@@ -18,6 +18,8 @@ struct CivicaEntryView: View {
     @AppStorage(CivicaLanguage.defaultStorageKey)
     private var languageRaw: String = CivicaLanguage.english.rawValue
 
+    @EnvironmentObject private var enrollmentAuth: CivicaEnrollmentAuth
+
     @State private var presentingDebugMenu = false
 
     private var language: CivicaLanguage {
@@ -216,7 +218,11 @@ struct CivicaEntryView: View {
     // EBTBalanceRootView for the phased build-out.
     private var ebtBalanceTile: some View {
         NavigationLink {
-            EBTBalanceRootView()
+            EBTBalanceRootView(
+                offersAPIClient: enrollmentAuth.state.isAuthenticated
+                    ? enrollmentAuth.makeOffersAPIClient()
+                    : nil
+            )
         } label: {
             tileCard(
                 imageName: "HomeIconEBTBalance",
