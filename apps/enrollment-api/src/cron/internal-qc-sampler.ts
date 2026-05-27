@@ -57,28 +57,24 @@ export async function runInternalQcSampler(env: Env): Promise<SamplerResult> {
   // Pull submitted packets that don't already have a submission-stage sample.
   // We anti-join via a NOT IN subquery — fine at our volume, swap to a left-
   // join NULL filter if the candidate table grows beyond a few thousand rows.
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const sampledRowsResp = await (db.schema("snap_enrollment").from("packet_qc_samples" as any) as any)
+  const sampledRowsResp = await db
+    .schema("snap_enrollment")
+    .from("packet_qc_samples")
     .select("packet_id")
-    .eq("sample_stage", "submission") as {
-      data: Array<{ packet_id: string }> | null;
-      error: { message: string } | null;
-    };
+    .eq("sample_stage", "submission");
   if (sampledRowsResp.error) {
     throw new Error(`packet_qc_samples select failed: ${sampledRowsResp.error.message}`);
   }
   const alreadySampled = new Set((sampledRowsResp.data ?? []).map((r) => r.packet_id));
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const candidatesResp = await (db.schema("snap_enrollment").from("snap_packets" as any) as any)
+  const candidatesResp = await db
+    .schema("snap_enrollment")
+    .from("snap_packets")
     .select("packet_id, applicant_id, org_id, submitted_at")
     .not("submitted_at", "is", null)
     .is("deleted_at", null)
     .order("submitted_at", { ascending: true })
-    .limit(CANDIDATE_BATCH) as {
-      data: CandidatePacket[] | null;
-      error: { message: string } | null;
-    };
+    .limit(CANDIDATE_BATCH);
   if (candidatesResp.error) {
     throw new Error(`snap_packets select failed: ${candidatesResp.error.message}`);
   }
@@ -119,13 +115,11 @@ export async function runInternalQcSampler(env: Env): Promise<SamplerResult> {
 
   // ON CONFLICT DO NOTHING via supabase-js: `upsert` with ignoreDuplicates.
   // The unique index uq_packet_qc_samples_packet_stage backs the ON CONFLICT.
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const insertResp = await (db.schema("snap_enrollment").from("packet_qc_samples" as any) as any)
+  const insertResp = await db
+    .schema("snap_enrollment")
+    .from("packet_qc_samples")
     .upsert(rows, { onConflict: "packet_id,sample_stage", ignoreDuplicates: true })
-    .select("sample_id") as {
-      data: Array<{ sample_id: string }> | null;
-      error: { message: string } | null;
-    };
+    .select("sample_id");
   if (insertResp.error) {
     throw new Error(`packet_qc_samples insert failed: ${insertResp.error.message}`);
   }

@@ -43,11 +43,9 @@ export default async function QcReviewQueuePage() {
   // RLS narrows the result set; we sort by sampled_at ASC so the oldest
   // sample is at the top — prevents navigators from cherry-picking
   // newly-flagged easy packets (sample-bias mitigation).
-  // db-types doesn't know about packet_qc_samples yet — same pattern
-  // as packet_error_risk in apps/dashboard/app/packets/page.tsx.
   const { data: pendingSamples } = await supabase
     .schema("snap_enrollment")
-    .from("packet_qc_samples" as never)
+    .from("packet_qc_samples")
     .select("sample_id, packet_id, sample_stage, sampled_at, completed_at")
     .eq("sample_stage", "submission")
     .is("completed_at", null)
@@ -62,7 +60,7 @@ export default async function QcReviewQueuePage() {
   startOfWeek.setUTCHours(0, 0, 0, 0);
   const { count: completedThisWeek } = await supabase
     .schema("snap_enrollment")
-    .from("packet_qc_samples" as never)
+    .from("packet_qc_samples")
     .select("sample_id", { count: "exact", head: true })
     .eq("sample_stage", "submission")
     .gte("completed_at", startOfWeek.toISOString());
@@ -71,7 +69,7 @@ export default async function QcReviewQueuePage() {
   // (the D3 stopping rule fires at >= 30 + back-test + residual <= 1pt).
   const { count: completedTotal } = await supabase
     .schema("snap_enrollment")
-    .from("packet_qc_samples" as never)
+    .from("packet_qc_samples")
     .select("sample_id", { count: "exact", head: true })
     .eq("sample_stage", "submission")
     .not("completed_at", "is", null);
