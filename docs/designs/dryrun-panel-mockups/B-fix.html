@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Civica · State B · Two Things to Fix — 3 Variants</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="_shared.css" />
+  <style>
+    /* B-specific atoms */
+    .b-cure-card {
+      background: var(--brickSurface);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 12px;
+    }
+    .b-cure-head {
+      display: grid;
+      grid-template-columns: 20px 1fr;
+      column-gap: 10px;
+      align-items: start;
+    }
+    .b-cure-label {
+      font-size: 16px;
+      line-height: 22px;
+      font-weight: 600;
+      color: var(--ink);
+      margin: 0;
+    }
+    .b-cure-detail {
+      font-size: 16px;
+      line-height: 22px;
+      color: var(--graphite);
+      margin: 6px 0 14px 30px;
+    }
+    .b-cure-action {
+      margin-left: 30px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      height: 44px;
+      padding: 0 18px;
+      background: var(--pine);
+      color: #FFFFFF;
+      border: 0;
+      border-radius: 10px;
+      font: 600 16px/22px inherit;
+      letter-spacing: -0.1px;
+      cursor: pointer;
+    }
+    .b-cure-foot {
+      font-size: 13px;
+      line-height: 18px;
+      color: var(--graphite);
+      margin: 14px 0 0 30px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* V1 ledger fix-row */
+    .v1-fixrow {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      column-gap: 12px;
+      align-items: baseline;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--hairline);
+    }
+    .v1-fixtag {
+      display: inline-block;
+      font-size: 11px;
+      line-height: 14px;
+      font-weight: 700;
+      letter-spacing: 0.6px;
+      color: var(--brick);
+      border: 1px solid var(--brick);
+      padding: 3px 6px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      font-variant-numeric: tabular-nums;
+    }
+    .v1-fixrow .v1-ledger-label { font-weight: 600; }
+    .v1-fixrow-detail {
+      grid-column: 2 / -1;
+      font-size: 16px;
+      line-height: 22px;
+      color: var(--graphite);
+      margin: 4px 0 0;
+    }
+    .v1-fixrow-foot {
+      grid-column: 2 / -1;
+      font-size: 13px;
+      line-height: 18px;
+      color: var(--graphite);
+      margin: 8px 0 0;
+      font-variant-numeric: tabular-nums;
+    }
+    .v1-fixrow-cta {
+      grid-column: 2 / -1;
+      margin: 12px 0 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: fit-content;
+      height: 40px;
+      padding: 0 16px;
+      background: var(--pine);
+      color: #FFFFFF;
+      border: 0;
+      border-radius: 8px;
+      font: 600 15px/20px inherit;
+      cursor: pointer;
+    }
+
+    /* V3 brick action node */
+    .v3-action {
+      margin-top: 12px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      height: 40px;
+      padding: 0 16px;
+      background: var(--pine);
+      color: #FFFFFF;
+      border: 0;
+      border-radius: 8px;
+      font: 600 15px/20px inherit;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="canvas">
+    <header class="canvas-head">
+      <p class="canvas-eyebrow">State B · Cure asks</p>
+      <h1 class="canvas-title">Two things to fix before submitting</h1>
+      <p class="canvas-sub">Brick semantic = recovery, not alarm. In-card actions stay pine in all three. Primary CTA scrolls to first cure row.</p>
+    </header>
+
+    <div class="canvas-grid">
+
+      <!-- =================== V1 — Quiet ledger =================== -->
+      <figure class="frame-cell">
+        <figcaption class="frame-label"><strong>Variant 1</strong>Quiet ledger</figcaption>
+        <p class="frame-note">Cure asks read like flagged line items with a "FIX" tag — same row rhythm as verified items.</p>
+        <main class="device" data-screen-label="B1 · Ledger">
+          <div class="status-bar" aria-hidden="true">
+            <span>9:41</span>
+            <div class="status-icons">
+              <svg width="18" height="10" viewBox="0 0 18 10" fill="none"><rect x="0" y="7" width="3" height="3" rx="0.6" fill="#1A1A1A"/><rect x="5" y="5" width="3" height="5" rx="0.6" fill="#1A1A1A"/><rect x="10" y="2.5" width="3" height="7.5" rx="0.6" fill="#1A1A1A"/><rect x="15" y="0" width="3" height="10" rx="0.6" fill="#1A1A1A"/></svg>
+              <svg width="16" height="11" viewBox="0 0 16 11" fill="none"><path d="M8 10.2a1.1 1.1 0 100-2.2 1.1 1.1 0 000 2.2z" fill="#1A1A1A"/><path d="M3.4 6.1a6.5 6.5 0 019.2 0" stroke="#1A1A1A" stroke-width="1.4" stroke-linecap="round"/><path d="M.9 3.5a10 10 0 0114.2 0" stroke="#1A1A1A" stroke-width="1.4" stroke-linecap="round"/></svg>
+              <svg width="26" height="12" viewBox="0 0 26 12" fill="none"><rect x="0.5" y="0.5" width="22" height="11" rx="2.5" stroke="#1A1A1A" opacity="0.4"/><rect x="2" y="2" width="19" height="8" rx="1.5" fill="#1A1A1A"/><rect x="23.5" y="4" width="1.5" height="4" rx="0.6" fill="#1A1A1A" opacity="0.5"/></svg>
+            </div>
+          </div>
+          <div class="scroll">
+            <div class="nav"><button class="nav-back" type="button"><svg width="11" height="18" viewBox="0 0 11 18" fill="none"><path d="M9.5 1 1.5 9l8 8" stroke="#4A4A4A" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Back</span></button></div>
+            <h1 class="title">Two things to fix before submitting</h1>
+            <p class="subhead">These will cause delays if you submit now. Each takes about 2 minutes to fix.</p>
+
+            <h2 class="section-heading">Needs your attention</h2>
+            <ul class="v1-ledger">
+              <li class="v1-fixrow">
+                <span class="v1-fixtag">Fix</span>
+                <p class="v1-ledger-label">Lease photo unclear</p>
+                <span></span>
+                <p class="v1-fixrow-detail">We couldn't read the monthly rent line. Take a clearer photo of just the rent section.</p>
+                <button class="v1-fixrow-cta" type="button">Retake photo</button>
+                <p class="v1-fixrow-foot">Required by 7 CFR 273.9(d)(6)(ii)</p>
+              </li>
+              <li class="v1-fixrow">
+                <span class="v1-fixtag">Fix</span>
+                <p class="v1-ledger-label">Pay stub needs more recent date</p>
+                <span></span>
+                <p class="v1-fixrow-detail">Your most recent stub is from 6 weeks ago. SNAP requires stubs within the last 30 days.</p>
+                <button class="v1-fixrow-cta" type="button">Add recent stub</button>
+                <p class="v1-fixrow-foot">Required by 7 CFR 273.2(f)(1)(i)</p>
+              </li>
+            </ul>
+
+            <h2 class="section-heading" style="color: var(--graphite); font-weight: 500;">Already verified</h2>
+            <ul class="v1-ledger">
+              <li><p class="v1-ledger-label" style="font-weight: 400; color: var(--graphite);">Income</p><p class="v1-ledger-value">Employer verified</p></li>
+              <li><p class="v1-ledger-label" style="font-weight: 400; color: var(--graphite);">Utilities</p><p class="v1-ledger-value">SUA Full · $663</p></li>
+              <li><p class="v1-ledger-label" style="font-weight: 400; color: var(--graphite);">Household</p><p class="v1-ledger-value">3 people</p></li>
+              <li><p class="v1-ledger-label" style="font-weight: 400; color: var(--graphite);">Work requirements</p><p class="v1-ledger-value">Compliant</p></li>
+            </ul>
+          </div>
+          <div class="footer">
+            <button class="cta" type="button">Fix items above</button>
+            <button class="cta-outline" type="button">Submit anyway</button>
+            <p class="footer-foot">2 items above will likely cause a 10-day cure notice.</p>
+          </div>
+          <div class="home-indicator" aria-hidden="true"></div>
+        </main>
+      </figure>
+
+      <!-- =================== V2 — Stacked notices =================== -->
+      <figure class="frame-cell">
+        <figcaption class="frame-label"><strong>Variant 2</strong>Stacked notices</figcaption>
+        <p class="frame-note">Brick-tinted notice cards stack on top; verified items in a separate iOS-style group below.</p>
+        <main class="device" data-screen-label="B2 · Stacked">
+          <div class="status-bar" aria-hidden="true">
+            <span>9:41</span>
+            <div class="status-icons">
+              <svg width="18" height="10" viewBox="0 0 18 10" fill="none"><rect x="0" y="7" width="3" height="3" rx="0.6" fill="#1A1A1A"/><rect x="5" y="5" width="3" height="5" rx="0.6" fill="#1A1A1A"/><rect x="10" y="2.5" width="3" height="7.5" rx="0.6" fill="#1A1A1A"/><rect x="15" y="0" width="3" height="10" rx="0.6" fill="#1A1A1A"/></svg>
+              <svg width="16" height="11" viewBox="0 0 16 11" fill="none"><path d="M8 10.2a1.1 1.1 0 100-2.2 1.1 1.1 0 000 2.2z" fill="#1A1A1A"/><path d="M3.4 6.1a6.5 6.5 0 019.2 0" stroke="#1A1A1A" stroke-width="1.4" stroke-linecap="round"/><path d="M.9 3.5a10 10 0 0114.2 0" stroke="#1A1A1A" stroke-width="1.4" stroke-linecap="round"/></svg>
+              <svg width="26" height="12" viewBox="0 0 26 12" fill="none"><rect x="0.5" y="0.5" width="22" height="11" rx="2.5" stroke="#1A1A1A" opacity="0.4"/><rect x="2" y="2" width="19" height="8" rx="1.5" fill="#1A1A1A"/><rect x="23.5" y="4" width="1.5" height="4" rx="0.6" fill="#1A1A1A" opacity="0.5"/></svg>
+            </div>
+          </div>
+          <div class="scroll">
+            <div class="nav"><button class="nav-back" type="button"><svg width="11" height="18" viewBox="0 0 11 18" fill="none"><path d="M9.5 1 1.5 9l8 8" stroke="#4A4A4A" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Back</span></button></div>
+            <h1 class="title">Two things to fix before submitting</h1>
+            <p class="subhead">These will cause delays if you submit now.</p>
+
+            <h2 class="section-heading">Needs your attention</h2>
+
+            <section class="b-cure-card">
+              <div class="b-cure-head">
+                <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9 2.2 1.6 15.3h14.8L9 2.2Z" stroke="#B5511E" stroke-width="1.6" stroke-linejoin="round"/><path d="M9 7.3v3.6" stroke="#B5511E" stroke-width="1.6" stroke-linecap="round"/><circle cx="9" cy="12.9" r="0.9" fill="#B5511E"/></svg>
+                <p class="b-cure-label">Lease photo unclear</p>
+              </div>
+              <p class="b-cure-detail">We couldn't read the monthly rent line. Take a clearer photo of just the rent section.</p>
+              <button class="b-cure-action" type="button">Retake photo</button>
+              <p class="b-cure-foot">Required by 7 CFR 273.9(d)(6)(ii)</p>
+            </section>
+            <section class="b-cure-card">
+              <div class="b-cure-head">
+                <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9 2.2 1.6 15.3h14.8L9 2.2Z" stroke="#B5511E" stroke-width="1.6" stroke-linejoin="round"/><path d="M9 7.3v3.6" stroke="#B5511E" stroke-width="1.6" stroke-linecap="round"/><circle cx="9" cy="12.9" r="0.9" fill="#B5511E"/></svg>
+                <p class="b-cure-label">Pay stub needs more recent date</p>
+              </div>
+              <p class="b-cure-detail">Your most recent stub is from 6 weeks ago. SNAP requires stubs within the last 30 days.</p>
+              <button class="b-cure-action" type="button">Add recent stub</button>
+              <p class="b-cure-foot">Required by 7 CFR 273.2(f)(1)(i)</p>
+            </section>
+
+            <p class="v2-group-head">Already verified</p>
+            <div class="v2-group">
+              <div class="v2-row"><svg class="check" viewBox="0 0 16 16" fill="none"><path d="M3 8.4 6.4 11.8 13 5.2" stroke="#2D5F4F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><div><p class="v2-row-label">Income verified via your employer</p></div><span></span></div>
+              <div class="v2-row"><svg class="check" viewBox="0 0 16 16" fill="none"><path d="M3 8.4 6.4 11.8 13 5.2" stroke="#2D5F4F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><div><p class="v2-row-label">Utilities — SUA Full tier applied</p></div><span></span></div>
+              <div class="v2-row"><svg class="check" viewBox="0 0 16 16" fill="none"><path d="M3 8.4 6.4 11.8 13 5.2" stroke="#2D5F4F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><div><p class="v2-row-label">Household — 3 people, no changes</p></div><span></span></div>
+              <div class="v2-row"><svg class="check" viewBox="0 0 16 16" fill="none"><path d="M3 8.4 6.4 11.8 13 5.2" stroke="#2D5F4F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><div><p class="v2-row-label">Work requirements — compliant</p></div><span></span></div>
+            </div>
+          </div>
+          <div class="footer">
+            <button class="cta" type="button">Fix items above</button>
+            <button class="cta-outline" type="button">Submit anyway</button>
+            <p class="footer-foot">2 items above will likely cause a 10-day cure notice.</p>
+          </div>
+          <div class="home-indicator" aria-hidden="true"></div>
+        </main>
+      </figure>
+
+      <!-- =================== V3 — Status timeline =================== -->
+      <figure class="frame-cell">
+        <figcaption class="frame-label"><strong>Variant 3</strong>Status timeline</figcaption>
+        <p class="frame-note">Brick dots interrupt the pine thread — cure actions live on the rail itself.</p>
+        <main class="device" data-screen-label="B3 · Timeline">
+          <div class="status-bar" aria-hidden="true">
+            <span>9:41</span>
+            <div class="status-icons">
+              <svg width="18" height="10" viewBox="0 0 18 10" fill="none"><rect x="0" y="7" width="3" height="3" rx="0.6" fill="#1A1A1A"/><rect x="5" y="5" width="3" height="5" rx="0.6" fill="#1A1A1A"/><rect x="10" y="2.5" width="3" height="7.5" rx="0.6" fill="#1A1A1A"/><rect x="15" y="0" width="3" height="10" rx="0.6" fill="#1A1A1A"/></svg>
+              <svg width="16" height="11" viewBox="0 0 16 11" fill="none"><path d="M8 10.2a1.1 1.1 0 100-2.2 1.1 1.1 0 000 2.2z" fill="#1A1A1A"/><path d="M3.4 6.1a6.5 6.5 0 019.2 0" stroke="#1A1A1A" stroke-width="1.4" stroke-linecap="round"/><path d="M.9 3.5a10 10 0 0114.2 0" stroke="#1A1A1A" stroke-width="1.4" stroke-linecap="round"/></svg>
+              <svg width="26" height="12" viewBox="0 0 26 12" fill="none"><rect x="0.5" y="0.5" width="22" height="11" rx="2.5" stroke="#1A1A1A" opacity="0.4"/><rect x="2" y="2" width="19" height="8" rx="1.5" fill="#1A1A1A"/><rect x="23.5" y="4" width="1.5" height="4" rx="0.6" fill="#1A1A1A" opacity="0.5"/></svg>
+            </div>
+          </div>
+          <div class="scroll">
+            <div class="nav"><button class="nav-back" type="button"><svg width="11" height="18" viewBox="0 0 11 18" fill="none"><path d="M9.5 1 1.5 9l8 8" stroke="#4A4A4A" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Back</span></button></div>
+            <h1 class="title">Two things to fix</h1>
+            <p class="subhead">Each takes about 2 minutes. Verified items continue below.</p>
+
+            <ul class="v3-timeline">
+              <li class="v3-node">
+                <span class="v3-dot is-brick" aria-hidden="true"></span>
+                <p class="v3-node-label">Lease photo unclear</p>
+                <p class="v3-node-detail">We couldn't read the monthly rent line. Retake a clearer shot of just the rent section.</p>
+                <button class="v3-action" type="button">Retake photo</button>
+                <p class="v3-node-foot">Required by 7 CFR 273.9(d)(6)(ii)</p>
+              </li>
+              <li class="v3-node">
+                <span class="v3-dot is-brick" aria-hidden="true"></span>
+                <p class="v3-node-label">Pay stub needs more recent date</p>
+                <p class="v3-node-detail">Your most recent stub is from 6 weeks ago. SNAP requires stubs within the last 30 days.</p>
+                <button class="v3-action" type="button">Add recent stub</button>
+                <p class="v3-node-foot">Required by 7 CFR 273.2(f)(1)(i)</p>
+              </li>
+              <li class="v3-node">
+                <span class="v3-dot is-filled" aria-hidden="true"></span>
+                <p class="v3-node-label" style="font-weight: 400; color: var(--graphite);">Income verified</p>
+              </li>
+              <li class="v3-node">
+                <span class="v3-dot is-filled" aria-hidden="true"></span>
+                <p class="v3-node-label" style="font-weight: 400; color: var(--graphite);">Utilities · SUA Full</p>
+              </li>
+              <li class="v3-node">
+                <span class="v3-dot is-filled" aria-hidden="true"></span>
+                <p class="v3-node-label" style="font-weight: 400; color: var(--graphite);">Household · 3 people</p>
+              </li>
+              <li class="v3-node">
+                <span class="v3-dot is-filled" aria-hidden="true"></span>
+                <p class="v3-node-label" style="font-weight: 400; color: var(--graphite);">Work requirements · compliant</p>
+              </li>
+            </ul>
+          </div>
+          <div class="footer">
+            <button class="cta" type="button">Fix items above</button>
+            <button class="cta-outline" type="button">Submit anyway</button>
+            <p class="footer-foot">2 items above will likely cause a 10-day cure notice.</p>
+          </div>
+          <div class="home-indicator" aria-hidden="true"></div>
+        </main>
+      </figure>
+
+    </div>
+  </div>
+</body>
+</html>

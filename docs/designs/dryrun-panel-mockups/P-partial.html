@@ -1,0 +1,397 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Civica · State P · PARTIAL — 3 Variants</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="_shared.css" />
+  <style>
+    /* ===== Shared atoms ===== */
+    .p-stale-link {
+      color: var(--pine);
+      text-decoration: underline;
+      text-underline-offset: 2px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .p-stale-chip-text {
+      color: var(--graphite);
+      font-weight: 400;
+      font-size: 13px;
+      line-height: 18px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* V1 + V3 stale strip — warningSurface full-bleed band */
+    .p-stale-strip-warning {
+      background: var(--warningSurface);
+      padding: 12px 20px;
+      border-top: 1px solid rgba(181, 81, 30, 0.18);
+      border-bottom: 1px solid rgba(181, 81, 30, 0.18);
+      flex-shrink: 0;
+    }
+    .p-stale-head {
+      display: grid;
+      grid-template-columns: 18px 1fr;
+      column-gap: 10px;
+      align-items: start;
+    }
+    .p-stale-title {
+      font-size: 16px;
+      line-height: 22px;
+      font-weight: 600;
+      color: var(--ink);
+      margin: 0;
+    }
+    .p-stale-title .p-stale-link { margin-left: 8px; font-size: 16px; line-height: 22px; }
+    .p-stale-foot {
+      font-size: 13px;
+      line-height: 18px;
+      color: var(--graphite);
+      margin: 4px 0 0 28px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* V2 stale strip — surfacePrimary card */
+    .p-stale-strip-card {
+      margin: 12px 20px 0;
+      background: var(--surfacePrimary);
+      border: 1px solid var(--hairline);
+      border-radius: 12px;
+      padding: 12px 14px;
+    }
+    .p-stale-strip-card .p-stale-foot { margin-left: 28px; }
+
+    /* Verdict strip */
+    .p-verdict {
+      padding-top: 20px;
+    }
+
+    /* V1 — flat ledger rows with appended Footnote stale chip */
+    .p-rows-flat {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .p-rows-flat > li {
+      display: grid;
+      grid-template-columns: 18px 1fr;
+      column-gap: 12px;
+      align-items: start;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--hairline);
+    }
+    .p-rows-flat > li:last-child { border-bottom: 0; }
+    .p-row-icon { width: 16px; height: 16px; margin-top: 3px; }
+    .p-row-label {
+      font-size: 16px;
+      line-height: 22px;
+      font-weight: 600;
+      color: var(--ink);
+      margin: 0;
+    }
+    .p-row-detail {
+      font-size: 16px;
+      line-height: 22px;
+      color: var(--graphite);
+      margin: 0;
+    }
+    .p-row-stale-inline {
+      color: var(--graphite);
+      font-weight: 400;
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* V2 — grouped iOS panel + pill stale chips */
+    .p-cure-card {
+      background: var(--brickSurface);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 12px;
+    }
+    .p-cure-head {
+      display: grid;
+      grid-template-columns: 20px 1fr;
+      column-gap: 10px;
+      align-items: start;
+    }
+    .p-cure-label {
+      font-size: 16px;
+      line-height: 22px;
+      font-weight: 600;
+      color: var(--ink);
+      margin: 0;
+    }
+    .p-cure-detail {
+      font-size: 16px;
+      line-height: 22px;
+      color: var(--graphite);
+      margin: 6px 0 12px 30px;
+    }
+    .p-stale-pill {
+      display: inline-flex;
+      align-items: center;
+      height: 22px;
+      padding: 0 8px;
+      background: var(--warningSurface);
+      color: var(--warning);
+      font-size: 12px;
+      line-height: 14px;
+      font-weight: 600;
+      letter-spacing: 0.2px;
+      border-radius: 6px;
+      margin-left: 30px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* V3 — timeline dot with warning ring */
+    .p-dot-stale {
+      box-shadow: 0 0 0 3px var(--warningSurface);
+    }
+    .p-dot-stale-outline {
+      box-shadow: 0 0 0 3px var(--warningSurface);
+      background: var(--paper);
+      border: 2px solid var(--pine);
+    }
+
+    /* Footer status footnote */
+    .p-status-footnote {
+      font-size: 13px;
+      line-height: 18px;
+      color: var(--graphite);
+      margin: 12px 4px 0;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="canvas">
+    <header class="canvas-head">
+      <p class="canvas-eyebrow">State P · PARTIAL · cached result + offline</p>
+      <h1 class="canvas-title">Showing results from 2 hours ago</h1>
+      <p class="canvas-sub">User opened the app offline; the cached DryRunReport renders but every row honestly carries its staleness. No silent reuse of old data. Primary CTA is gray-disabled because re-checking needs network.</p>
+    </header>
+
+    <div class="canvas-grid">
+
+      <!-- =================== V1 — Quiet ledger =================== -->
+      <figure class="frame-cell">
+        <figcaption class="frame-label"><strong>Variant 1</strong>Quiet ledger</figcaption>
+        <p class="frame-note">Warning strip is full-bleed band. Each row gets an inline "(as of 2hr ago)" Footnote appended to its value. Tight, no extra chrome.</p>
+        <main class="device" data-screen-label="P1 · Ledger">
+          <div class="status-bar" aria-hidden="true">
+            <span>9:41</span>
+            <div class="status-icons">
+              <svg width="18" height="10" viewBox="0 0 18 10" fill="none" style="opacity: 0.3;"><rect x="0" y="7" width="3" height="3" rx="0.6" fill="#1A1A1A"/><rect x="5" y="5" width="3" height="5" rx="0.6" fill="#1A1A1A"/><rect x="10" y="2.5" width="3" height="7.5" rx="0.6" fill="#1A1A1A"/><rect x="15" y="0" width="3" height="10" rx="0.6" fill="#1A1A1A"/></svg>
+              <svg width="16" height="11" viewBox="0 0 16 11" fill="none" style="opacity: 0.3;"><path d="M8 10.2a1.1 1.1 0 100-2.2 1.1 1.1 0 000 2.2z" fill="#1A1A1A"/><path d="M3.4 6.1a6.5 6.5 0 019.2 0" stroke="#1A1A1A" stroke-width="1.4" stroke-linecap="round"/><path d="M.9 3.5a10 10 0 0114.2 0" stroke="#1A1A1A" stroke-width="1.4" stroke-linecap="round"/><path d="M.5 0.5l15 10" stroke="#1A1A1A" stroke-width="1.4" stroke-linecap="round"/></svg>
+              <svg width="26" height="12" viewBox="0 0 26 12" fill="none"><rect x="0.5" y="0.5" width="22" height="11" rx="2.5" stroke="#1A1A1A" opacity="0.4"/><rect x="2" y="2" width="19" height="8" rx="1.5" fill="#1A1A1A"/><rect x="23.5" y="4" width="1.5" height="4" rx="0.6" fill="#1A1A1A" opacity="0.5"/></svg>
+            </div>
+          </div>
+
+          <section class="p-stale-strip-warning" role="status">
+            <div class="p-stale-head">
+              <svg width="16" height="16" viewBox="0 0 18 18" fill="none" aria-hidden="true" style="margin-top: 3px;">
+                <path d="M9 2.2 1.6 15.3h14.8L9 2.2Z" stroke="#B5511E" stroke-width="1.6" stroke-linejoin="round"/>
+                <path d="M9 7.3v3.6" stroke="#B5511E" stroke-width="1.6" stroke-linecap="round"/>
+                <circle cx="9" cy="12.9" r="0.9" fill="#B5511E"/>
+              </svg>
+              <p class="p-stale-title">Showing results from 2 hours ago <span class="p-stale-link">Re-check now</span></p>
+            </div>
+            <p class="p-stale-foot">Offline since 11:42 AM</p>
+          </section>
+
+          <div class="scroll">
+            <div class="nav"><button class="nav-back" type="button"><svg width="11" height="18" viewBox="0 0 11 18" fill="none"><path d="M9.5 1 1.5 9l8 8" stroke="#4A4A4A" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Back</span></button></div>
+            <h1 class="title p-verdict" style="padding-top: 0;">Two things to fix before submitting</h1>
+            <p class="subhead">From the last check we ran 2 hours ago.</p>
+
+            <h2 class="section-heading">Needs your attention</h2>
+            <ul class="p-rows-flat">
+              <li>
+                <svg class="p-row-icon" viewBox="0 0 18 18" fill="none"><path d="M9 2.2 1.6 15.3h14.8L9 2.2Z" stroke="#B5511E" stroke-width="1.6" stroke-linejoin="round"/><path d="M9 7.3v3.6" stroke="#B5511E" stroke-width="1.6" stroke-linecap="round"/><circle cx="9" cy="12.9" r="0.9" fill="#B5511E"/></svg>
+                <div>
+                  <p class="p-row-label">Pay stub needs more recent date</p>
+                  <p class="p-row-detail">Stub from 6 weeks ago; SNAP requires within 30 days. <span class="p-row-stale-inline">(as of 2hr ago — may have changed)</span></p>
+                </div>
+              </li>
+              <li>
+                <svg class="p-row-icon" viewBox="0 0 18 18" fill="none"><path d="M9 2.2 1.6 15.3h14.8L9 2.2Z" stroke="#B5511E" stroke-width="1.6" stroke-linejoin="round"/><path d="M9 7.3v3.6" stroke="#B5511E" stroke-width="1.6" stroke-linecap="round"/><circle cx="9" cy="12.9" r="0.9" fill="#B5511E"/></svg>
+                <div>
+                  <p class="p-row-label">Self-employment receipts missing</p>
+                  <p class="p-row-detail">Need 3 months of business expense records. <span class="p-row-stale-inline">(as of 2hr ago — may have changed)</span></p>
+                </div>
+              </li>
+            </ul>
+
+            <h2 class="section-heading">Already verified</h2>
+            <ul class="p-rows-flat">
+              <li>
+                <svg class="p-row-icon" viewBox="0 0 16 16" fill="none"><path d="M3 8.4 6.4 11.8 13 5.2" stroke="#2D5F4F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <div><p class="p-row-detail">Income — verified via your employer <span class="p-row-stale-inline">(as of 2hr ago)</span></p></div>
+              </li>
+              <li>
+                <svg class="p-row-icon" viewBox="0 0 16 16" fill="none"><path d="M3 8.4 6.4 11.8 13 5.2" stroke="#2D5F4F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <div><p class="p-row-detail">Lease — confirmed at $1,840/mo <span class="p-row-stale-inline">(as of 2hr ago)</span></p></div>
+              </li>
+              <li>
+                <svg class="p-row-icon" viewBox="0 0 16 16" fill="none"><path d="M3 8.4 6.4 11.8 13 5.2" stroke="#2D5F4F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <div><p class="p-row-detail">Utilities — SUA Full tier applied <span class="p-row-stale-inline">(as of 2hr ago)</span></p></div>
+              </li>
+              <li>
+                <svg class="p-row-icon" viewBox="0 0 16 16" fill="none"><path d="M3 8.4 6.4 11.8 13 5.2" stroke="#2D5F4F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <div><p class="p-row-detail">Household — 3 people <span class="p-row-stale-inline">(as of 2hr ago)</span></p></div>
+              </li>
+            </ul>
+          </div>
+          <div class="footer">
+            <button class="cta-disabled" type="button" disabled>Re-check when online</button>
+            <button class="cta-text" type="button">Submit with cached results</button>
+            <p class="p-status-footnote">Civica will re-check automatically when you're back online.</p>
+          </div>
+          <div class="home-indicator" aria-hidden="true"></div>
+        </main>
+      </figure>
+
+      <!-- =================== V2 — Stacked notices =================== -->
+      <figure class="frame-cell">
+        <figcaption class="frame-label"><strong>Variant 2</strong>Stacked notices</figcaption>
+        <p class="frame-note">Stale strip elevates to a surfacePrimary card. Cure rows keep brick chrome; staleness lives on each row as a small warning pill.</p>
+        <main class="device" data-screen-label="P2 · Stacked">
+          <div class="status-bar" aria-hidden="true">
+            <span>9:41</span>
+            <div class="status-icons">
+              <svg width="18" height="10" viewBox="0 0 18 10" fill="none" style="opacity: 0.3;"><rect x="0" y="7" width="3" height="3" rx="0.6" fill="#1A1A1A"/><rect x="5" y="5" width="3" height="5" rx="0.6" fill="#1A1A1A"/><rect x="10" y="2.5" width="3" height="7.5" rx="0.6" fill="#1A1A1A"/><rect x="15" y="0" width="3" height="10" rx="0.6" fill="#1A1A1A"/></svg>
+              <svg width="16" height="11" viewBox="0 0 16 11" fill="none" style="opacity: 0.3;"><path d="M8 10.2a1.1 1.1 0 100-2.2 1.1 1.1 0 000 2.2z" fill="#1A1A1A"/><path d="M3.4 6.1a6.5 6.5 0 019.2 0" stroke="#1A1A1A" stroke-width="1.4" stroke-linecap="round"/><path d="M.9 3.5a10 10 0 0114.2 0" stroke="#1A1A1A" stroke-width="1.4" stroke-linecap="round"/><path d="M.5 0.5l15 10" stroke="#1A1A1A" stroke-width="1.4" stroke-linecap="round"/></svg>
+              <svg width="26" height="12" viewBox="0 0 26 12" fill="none"><rect x="0.5" y="0.5" width="22" height="11" rx="2.5" stroke="#1A1A1A" opacity="0.4"/><rect x="2" y="2" width="19" height="8" rx="1.5" fill="#1A1A1A"/><rect x="23.5" y="4" width="1.5" height="4" rx="0.6" fill="#1A1A1A" opacity="0.5"/></svg>
+            </div>
+          </div>
+
+          <section class="p-stale-strip-card" role="status">
+            <div class="p-stale-head">
+              <svg width="16" height="16" viewBox="0 0 18 18" fill="none" aria-hidden="true" style="margin-top: 3px;">
+                <path d="M9 2.2 1.6 15.3h14.8L9 2.2Z" stroke="#B5511E" stroke-width="1.6" stroke-linejoin="round"/>
+                <path d="M9 7.3v3.6" stroke="#B5511E" stroke-width="1.6" stroke-linecap="round"/>
+                <circle cx="9" cy="12.9" r="0.9" fill="#B5511E"/>
+              </svg>
+              <p class="p-stale-title">Showing results from 2 hours ago <span class="p-stale-link">Re-check now</span></p>
+            </div>
+            <p class="p-stale-foot">Offline since 11:42 AM</p>
+          </section>
+
+          <div class="scroll">
+            <div class="nav"><button class="nav-back" type="button"><svg width="11" height="18" viewBox="0 0 11 18" fill="none"><path d="M9.5 1 1.5 9l8 8" stroke="#4A4A4A" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Back</span></button></div>
+            <h1 class="title">Two things to fix before submitting</h1>
+            <p class="subhead">From the last check we ran 2 hours ago.</p>
+
+            <h2 class="section-heading">Needs your attention</h2>
+
+            <section class="p-cure-card">
+              <div class="p-cure-head">
+                <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9 2.2 1.6 15.3h14.8L9 2.2Z" stroke="#B5511E" stroke-width="1.6" stroke-linejoin="round"/><path d="M9 7.3v3.6" stroke="#B5511E" stroke-width="1.6" stroke-linecap="round"/><circle cx="9" cy="12.9" r="0.9" fill="#B5511E"/></svg>
+                <p class="p-cure-label">Pay stub needs more recent date</p>
+              </div>
+              <p class="p-cure-detail">Stub from 6 weeks ago; SNAP requires within 30 days.</p>
+              <span class="p-stale-pill">AS OF 2HR AGO · MAY HAVE CHANGED</span>
+            </section>
+
+            <section class="p-cure-card">
+              <div class="p-cure-head">
+                <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9 2.2 1.6 15.3h14.8L9 2.2Z" stroke="#B5511E" stroke-width="1.6" stroke-linejoin="round"/><path d="M9 7.3v3.6" stroke="#B5511E" stroke-width="1.6" stroke-linecap="round"/><circle cx="9" cy="12.9" r="0.9" fill="#B5511E"/></svg>
+                <p class="p-cure-label">Self-employment receipts missing</p>
+              </div>
+              <p class="p-cure-detail">Need 3 months of business expense records.</p>
+              <span class="p-stale-pill">AS OF 2HR AGO · MAY HAVE CHANGED</span>
+            </section>
+
+            <p class="v2-group-head">Already verified</p>
+            <div class="v2-group">
+              <div class="v2-row"><svg class="check" viewBox="0 0 16 16" fill="none"><path d="M3 8.4 6.4 11.8 13 5.2" stroke="#2D5F4F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><div><p class="v2-row-label">Income — employer verified</p><p class="v2-row-detail">as of 2hr ago</p></div><span></span></div>
+              <div class="v2-row"><svg class="check" viewBox="0 0 16 16" fill="none"><path d="M3 8.4 6.4 11.8 13 5.2" stroke="#2D5F4F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><div><p class="v2-row-label">Lease — confirmed at $1,840/mo</p><p class="v2-row-detail">as of 2hr ago</p></div><span></span></div>
+              <div class="v2-row"><svg class="check" viewBox="0 0 16 16" fill="none"><path d="M3 8.4 6.4 11.8 13 5.2" stroke="#2D5F4F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><div><p class="v2-row-label">Utilities — SUA Full tier</p><p class="v2-row-detail">as of 2hr ago</p></div><span></span></div>
+              <div class="v2-row"><svg class="check" viewBox="0 0 16 16" fill="none"><path d="M3 8.4 6.4 11.8 13 5.2" stroke="#2D5F4F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><div><p class="v2-row-label">Household — 3 people</p><p class="v2-row-detail">as of 2hr ago</p></div><span></span></div>
+            </div>
+          </div>
+          <div class="footer">
+            <button class="cta-disabled" type="button" disabled>Re-check when online</button>
+            <button class="cta-text" type="button">Submit with cached results</button>
+            <p class="p-status-footnote">Civica will re-check automatically when you're back online.</p>
+          </div>
+          <div class="home-indicator" aria-hidden="true"></div>
+        </main>
+      </figure>
+
+      <!-- =================== V3 — Status timeline =================== -->
+      <figure class="frame-cell">
+        <figcaption class="frame-label"><strong>Variant 3</strong>Status timeline</figcaption>
+        <p class="frame-note">Every timeline dot picks up a warning-color halo around its existing fill — pine-with-halo = "verified, stale"; brick-with-halo = "needs fix, stale."</p>
+        <main class="device" data-screen-label="P3 · Timeline">
+          <div class="status-bar" aria-hidden="true">
+            <span>9:41</span>
+            <div class="status-icons">
+              <svg width="18" height="10" viewBox="0 0 18 10" fill="none" style="opacity: 0.3;"><rect x="0" y="7" width="3" height="3" rx="0.6" fill="#1A1A1A"/><rect x="5" y="5" width="3" height="5" rx="0.6" fill="#1A1A1A"/><rect x="10" y="2.5" width="3" height="7.5" rx="0.6" fill="#1A1A1A"/><rect x="15" y="0" width="3" height="10" rx="0.6" fill="#1A1A1A"/></svg>
+              <svg width="16" height="11" viewBox="0 0 16 11" fill="none" style="opacity: 0.3;"><path d="M8 10.2a1.1 1.1 0 100-2.2 1.1 1.1 0 000 2.2z" fill="#1A1A1A"/><path d="M3.4 6.1a6.5 6.5 0 019.2 0" stroke="#1A1A1A" stroke-width="1.4" stroke-linecap="round"/><path d="M.9 3.5a10 10 0 0114.2 0" stroke="#1A1A1A" stroke-width="1.4" stroke-linecap="round"/><path d="M.5 0.5l15 10" stroke="#1A1A1A" stroke-width="1.4" stroke-linecap="round"/></svg>
+              <svg width="26" height="12" viewBox="0 0 26 12" fill="none"><rect x="0.5" y="0.5" width="22" height="11" rx="2.5" stroke="#1A1A1A" opacity="0.4"/><rect x="2" y="2" width="19" height="8" rx="1.5" fill="#1A1A1A"/><rect x="23.5" y="4" width="1.5" height="4" rx="0.6" fill="#1A1A1A" opacity="0.5"/></svg>
+            </div>
+          </div>
+
+          <section class="p-stale-strip-warning" role="status">
+            <div class="p-stale-head">
+              <svg width="16" height="16" viewBox="0 0 18 18" fill="none" aria-hidden="true" style="margin-top: 3px;">
+                <path d="M9 2.2 1.6 15.3h14.8L9 2.2Z" stroke="#B5511E" stroke-width="1.6" stroke-linejoin="round"/>
+                <path d="M9 7.3v3.6" stroke="#B5511E" stroke-width="1.6" stroke-linecap="round"/>
+                <circle cx="9" cy="12.9" r="0.9" fill="#B5511E"/>
+              </svg>
+              <p class="p-stale-title">Showing results from 2 hours ago <span class="p-stale-link">Re-check now</span></p>
+            </div>
+            <p class="p-stale-foot">Offline since 11:42 AM</p>
+          </section>
+
+          <div class="scroll">
+            <div class="nav"><button class="nav-back" type="button"><svg width="11" height="18" viewBox="0 0 11 18" fill="none"><path d="M9.5 1 1.5 9l8 8" stroke="#4A4A4A" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Back</span></button></div>
+            <h1 class="title">Two things to fix</h1>
+            <p class="subhead">Cached results — every dot's halo signals "may have changed."</p>
+
+            <ul class="v3-timeline">
+              <li class="v3-node">
+                <span class="v3-dot is-brick p-dot-stale" aria-hidden="true"></span>
+                <p class="v3-node-label">Pay stub needs more recent date</p>
+                <p class="v3-node-detail">Stub from 6 weeks ago; SNAP requires within 30 days.</p>
+              </li>
+              <li class="v3-node">
+                <span class="v3-dot is-brick p-dot-stale" aria-hidden="true"></span>
+                <p class="v3-node-label">Self-employment receipts missing</p>
+                <p class="v3-node-detail">Need 3 months of business expense records.</p>
+              </li>
+              <li class="v3-node">
+                <span class="v3-dot is-filled p-dot-stale" aria-hidden="true"></span>
+                <p class="v3-node-label" style="font-weight: 400; color: var(--graphite);">Income — employer verified</p>
+              </li>
+              <li class="v3-node">
+                <span class="v3-dot is-filled p-dot-stale" aria-hidden="true"></span>
+                <p class="v3-node-label" style="font-weight: 400; color: var(--graphite);">Lease — confirmed at $1,840/mo</p>
+              </li>
+              <li class="v3-node">
+                <span class="v3-dot is-filled p-dot-stale" aria-hidden="true"></span>
+                <p class="v3-node-label" style="font-weight: 400; color: var(--graphite);">Utilities — SUA Full tier</p>
+              </li>
+              <li class="v3-node">
+                <span class="v3-dot is-filled p-dot-stale" aria-hidden="true"></span>
+                <p class="v3-node-label" style="font-weight: 400; color: var(--graphite);">Household — 3 people</p>
+              </li>
+            </ul>
+
+            <p style="margin: 16px 0 0; font-size: 13px; line-height: 18px; color: var(--graphite); font-variant-numeric: tabular-nums;">All values as of 2hr ago. The warning ring around each dot signals staleness.</p>
+          </div>
+          <div class="footer">
+            <button class="cta-disabled" type="button" disabled>Re-check when online</button>
+            <button class="cta-text" type="button">Submit with cached results</button>
+            <p class="p-status-footnote">Civica will re-check automatically when you're back online.</p>
+          </div>
+          <div class="home-indicator" aria-hidden="true"></div>
+        </main>
+      </figure>
+
+    </div>
+  </div>
+</body>
+</html>

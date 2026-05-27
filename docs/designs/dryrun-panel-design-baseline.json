@@ -1,0 +1,30 @@
+{
+  "date": "2026-05-27",
+  "target": "file:// mockups at ~/.gstack/projects/matthewgg22-Civica/designs/dryrunpanel-20260527/",
+  "designScore": "A",
+  "aiSlopScore": "A",
+  "categoryGrades": {
+    "visualHierarchy": "A",
+    "typography": "A",
+    "colorContrast": "A",
+    "spacingLayout": "A",
+    "interactionStates": "A",
+    "responsive": "N/A — iPhone fixed viewport",
+    "motion": "A",
+    "contentMicrocopy": "A",
+    "aiSlop": "A",
+    "performanceFeel": "A"
+  },
+  "consoleErrors": 0,
+  "aiSlopViolations": 0,
+  "tokenValueViolations": 0,
+  "polishItems": 4,
+  "findings": [
+    {"id": "POLISH-001", "title": "E-entry: increase top padding on 'What this check actually does' section to ~20pt", "impact": "polish", "category": "spacingLayout"},
+    {"id": "POLISH-002", "title": "G-fail: apply text-wrap: balance on verdict-strip headline", "impact": "polish", "category": "typography"},
+    {"id": "POLISH-003", "title": "P-partial V1: increase visual separation between disabled CTA and text link", "impact": "polish", "category": "visualHierarchy"},
+    {"id": "POLISH-004", "title": "DryRunPanel.swift header should document warningSurface/brickSurface shared hex with distinct semantic", "impact": "polish", "category": "interactionStates"}
+  ],
+  "goodwillReservoir": 95,
+  "notes": "Mockup audit only. Post-T7 SwiftUI implementation audit recommended via /ios-qa for runtime-specific issues."
+}
