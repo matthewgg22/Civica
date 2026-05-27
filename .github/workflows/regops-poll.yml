@@ -1,0 +1,58 @@
+name: regops-poll
+
+# RegOps Engine — scheduled polling loop.
+#
+# Runs every hour. The SourceAdapterBase rate cap (1h floor per source)
+# means each source gets polled at most once per cron tick. Sources with
+# their own faster cadence override pollIntervalMs and run more often
+# inside their own adapter logic — that's a per-source detail, not a
+# scheduling concern here.
+#
+# What this workflow does today (v1):
+#   - constructs the production adapter registry
+#   - runs one pollOnce() tick
+#   - prints snapshots to stdout (JSONL) and alerts to stderr
+#   - fails the run on structural failure / source-wedged / unexpected
+#     throws (page-severity outcomes per the runbook)
+#
+# What this workflow does NOT do yet:
+#   - persist snapshots to Supabase (operator wires SupabaseSnapshotStore
+#     once regops_snapshots migration lands)
+#   - route alerts to Sentry (operator wires SentryAlertEmitter once
+#     SENTRY_DSN secret is set on the repo)
+#
+# Both wiring steps are documented in docs/regops/runbook.md.
+
+on:
+  schedule:
+    - cron: "5 * * * *" # 5 minutes past every hour
+  workflow_dispatch:
+
+concurrency:
+  group: regops-poll
+  cancel-in-progress: false
+
+jobs:
+  poll:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: "1.1.34"
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+          run_install: false
+
+      - name: Install workspace deps
+        run: pnpm install --frozen-lockfile
+
+      - name: Run polling tick
+        working-directory: packages/regops-engine
+        run: bun run regops:poll

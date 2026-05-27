@@ -20,6 +20,10 @@
     "./prompts": {
       "types": "./src/prompts/index.ts",
       "default": "./src/prompts/index.ts"
+    },
+    "./polling": {
+      "types": "./src/polling/index.ts",
+      "default": "./src/polling/index.ts"
     }
   },
   "scripts": {
@@ -28,7 +32,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:adversarial": "vitest run test/adversarial",
-    "test:prompts": "vitest run src/prompts"
+    "test:prompts": "vitest run src/prompts",
+    "regops:poll": "bun ./scripts/poll.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.49.0"
