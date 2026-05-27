@@ -25,6 +25,14 @@ export const STAFF_ROLES = new Set<string>([
   // Set manually via Supabase admin — no self-serve.
   // See ceo-plans/2026-05-25-ebt-monetization-dashboard.md.
   "operator",
+  // RegOps Engine counsel reviewers (external lawyers). Domain
+  // scoping (federal / CA / MA / FTC) is enforced by RLS reading
+  // regops.counsel_assignments — see
+  // supabase/migrations/20260594_regops_counsel_role.sql and
+  // apps/dashboard/lib/counselAuth.ts. The role gate here only
+  // controls URL-path access (/regops/*); a counsel user with the
+  // role but no domain assignment sees an empty inbox, not a 403.
+  "counsel",
 ]);
 
 export const ROLE_HOMES: Record<string, string> = {
@@ -39,6 +47,7 @@ export const ROLE_HOMES: Record<string, string> = {
   county_director: "/county",
   cbo_preview: "/cbo-preview",
   operator: "/ops",
+  counsel: "/regops/queue",
 };
 
 // Restricted roles can ONLY access these prefixes (plus PUBLIC_PREFIXES).
@@ -48,6 +57,10 @@ const RESTRICTED_ROLE_ALLOWED_PREFIXES: Record<string, string[]> = {
   county_director: ["/county"],
   cbo_preview: ["/cbo-preview"],
   operator: ["/ops"],
+  // Counsel reviewers can ONLY see /regops/*. They are external
+  // attorneys and must not see operational staff routes, audience
+  // routes, or the corporate /ops dashboard.
+  counsel: ["/regops"],
 };
 
 // /ops is operator-ONLY — even operational roles (navigator/supervisor/admin)

@@ -75,6 +75,23 @@ most important source to never miss.
 - The "Maximum SNAP Allotments" table is consistently formatted YoY
 - Watch for footnote drift — USDA occasionally adds/removes notes that
   affect interpretation (rare, but happened in FY24)
+- Implementation: `packages/regops-engine/src/sources/usda-fns-cola.ts`.
+  **v1 is detection-only:** the adapter fetches the index HTML, extracts
+  COLA-relevant PDF links via regex on `<a href="*.pdf">…</a>` tags
+  filtered by keyword (`cola`, `allotment`, `income`, `deduction`,
+  `shelter`, `snap`), and surfaces them as `UsdaColaResourceLink` rows
+  with inferred fiscal year + region + kind. PDF body parsing (Table 1,
+  Page 3, etc.) is the drafter's (E1) job, per the design doc's
+  "PDF format changed: extract via Claude API" guidance.
+- StructuralFailure threshold: < 2 plausible COLA PDF links on the
+  index. Anything fewer = USDA changed the layout and the parser
+  needs an update before next FY refresh.
+- 30s fetch timeout via `AbortSignal.timeout` so a slow USDA CDN
+  doesn't burn the cron's 10-minute workflow budget.
+- Known v1 gap: silent in-place PDF replacement (same URL, new content)
+  is NOT caught — we'd need to HEAD/GET each PDF on every poll to
+  notice. Deferred until we observe a real false-negative justifying
+  the bandwidth cost.
 
 **Map to rule code:**
 - Table 1 → `FederalDefaultRules.maxAllotmentSnapshots`

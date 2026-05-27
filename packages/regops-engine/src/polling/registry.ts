@@ -6,7 +6,7 @@
 // this module (so test failures don't cascade through the production
 // registry).
 
-import { FederalRegisterAdapter } from "../sources/index.js";
+import { FederalRegisterAdapter, UsdaFnsColaAdapter } from "../sources/index.js";
 import type { AuditLogWriter } from "../audit/index.js";
 
 import type { PollableAdapter } from "./types.js";
@@ -20,13 +20,16 @@ export interface DefaultAdaptersDeps {
  * (rather than auto-discovered) so adding/removing a source is a code
  * change visible in PR review.
  *
- * Today: just FederalRegisterAdapter (E10). Forthcoming:
- *   - UsdaFnsColaAdapter
+ * Today: FederalRegisterAdapter (E10) + UsdaFnsColaAdapter (E12).
+ * Forthcoming:
  *   - UsdaFnsMemosAdapter
  *   - CaCdssAclAdapter
  *   - MaDtaChartsAdapter
  *   - FtcActionsAdapter
  */
 export function defaultAdapters(deps: DefaultAdaptersDeps): readonly PollableAdapter[] {
-  return [new FederalRegisterAdapter({ auditLog: deps.auditLog })];
+  return [
+    new FederalRegisterAdapter({ auditLog: deps.auditLog }),
+    new UsdaFnsColaAdapter({ auditLog: deps.auditLog }),
+  ];
 }

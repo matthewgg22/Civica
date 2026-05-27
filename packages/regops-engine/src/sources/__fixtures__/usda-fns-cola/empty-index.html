@@ -1,0 +1,15 @@
+<!-- Fixture: page exists but has zero COLA PDF links.
+     Models the "USDA broke the page layout" or "site outage replaced
+     with placeholder" cases. The adapter should StructuralFailure on
+     this so on-call investigates. -->
+<!DOCTYPE html>
+<html lang="en">
+<head><title>SNAP Cost-of-Living Adjustments | FNS</title></head>
+<body>
+  <main>
+    <h1>SNAP Cost-of-Living Adjustments</h1>
+    <p>This page is undergoing maintenance. Please check back later.</p>
+    <p><a href="https://www.fns.usda.gov/">Return to homepage</a></p>
+  </main>
+</body>
+</html>
