@@ -3,6 +3,12 @@
 First demo artifact for the **Map + USDA + heatmap** track (decided 2026-05-22). Static,
 committed visuals — no UI integration, no DB writes.
 
+> **Status:** ready to merge. Three build scripts (static, interactive, choropleth +
+> quadrant) reproduce all artifacts from the data slices vendored under
+> `data-ops/sample/` and `data-ops/reference/`. The 14 MB `retailers.geojson` is
+> intentionally **not** committed (the CSV is sufficient); it's regenerable from the
+> source URL in `data-ops/sample/usda-snap-retailers-ca/manifest.json`.
+
 ## What this is
 
 A cross-join of three public datasets that gives the pitch its load-bearing line:
@@ -34,6 +40,7 @@ estimated eligible Californians across 281 PUMAs, median 63.7% non-enrollment.
 - **`county_choropleth.png`** — two-panel matplotlib choropleth: non-enrollment rate (left) × grocery share (right). PUMA→county allocation is tract-count weighted (see caveats).
 - **`county_choropleth.html`** — Folium interactive: toggle layers + hover tooltips per county. Self-contained, ~870 KB.
 - **`county_metrics.csv`** — 58-row per-county join: `eligible_pop`, `non_enroll_rate`, `total_retailers`, `grocery_share`, `grocery_per_10k_eligible`. Drop-in for further analysis.
+- **`county_quadrant.png`** — gap × access scatter, bubbles sized by eligible population. Four quadrants split at the medians; the upper-left (low grocery share × high non-enrollment) lights up San Diego, Orange, Solano, Humboldt, El Dorado, Tuolumne, Mariposa as the priority set.
 - **`interactive_map.html`** — self-contained Folium map (~5 MB). Three toggleable layers: all-retailers heatmap, grocery-only heatmap, sampled marker cluster colored by `Store_Type`. The load-bearing interaction is the all-vs-grocery toggle: dense urban hexes collapse when convenience stores are removed, making the food-desert geography visible. Built by `build_interactive.py`.
 
 ## What's load-bearing for the pitch
@@ -82,7 +89,12 @@ estimated eligible Californians across 281 PUMAs, median 63.7% non-enrollment.
 tools/ca-snap-gap/.venv/bin/python data-ops/analysis/track1-food-desert/build.py
 tools/ca-snap-gap/.venv/bin/python data-ops/analysis/track1-food-desert/build_interactive.py
 tools/ca-snap-gap/.venv/bin/python data-ops/analysis/track1-food-desert/build_choropleth.py  # requires data-ops/reference/
+tools/ca-snap-gap/.venv/bin/python data-ops/analysis/track1-food-desert/build_quadrant.py    # consumes county_metrics.csv from the previous step
 ```
+
+Build scripts are ordered. `build.py` writes `retailers_by_county.csv`; `build_choropleth.py`
+consumes it and writes `county_metrics.csv`; `build_quadrant.py` consumes that. Run in
+sequence after a clean checkout.
 
 (Uses the existing `ca-snap-gap` venv. `matplotlib` and `folium` were added on
 top of its `requirements.txt`; if rebuilding, `pip install matplotlib folium pandas numpy`.)

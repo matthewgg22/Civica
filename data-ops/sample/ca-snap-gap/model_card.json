@@ -1,0 +1,32 @@
+{
+  "model_auc_cv5": 0.8010940137175284,
+  "n_eligible_households_sample": 18034,
+  "n_eligible_households_weighted": 1914350.0,
+  "n_eligible_persons_weighted": 4661940.0,
+  "weighted_observed_non_enroll": 0.6111797738135659,
+  "feature_importance_top20": {
+    "GRNTP": 0.08353892762717201,
+    "any_pap": 0.042788483088189354,
+    "householder_age": 0.025174721505329328,
+    "n_disabled": 0.02218100812788008,
+    "HHT": 0.017803162654125182,
+    "income_to_fpl": 0.017500853157750813,
+    "n_noncitizen": 0.015846979970111457,
+    "VEH": 0.0139766714056353,
+    "any_ssi": 0.012859328979145471,
+    "householder_schl": 0.011988521469318355,
+    "FINCP": 0.01176466588724597,
+    "avg_hours_worked": 0.011756250059550758,
+    "sum_ssp": 0.011607429592732052,
+    "VALP": 0.01143790647672501,
+    "HINCP_ADJ": 0.009652818096040091,
+    "n_no_hs": 0.00897359786765665,
+    "HHL": 0.007522824665559498,
+    "n_persons": 0.007192547260888915,
+    "n_children": 0.006918876322441776,
+    "n_workers": 0.0062462267790326376
+  },
+  "acs_vintage": "2023 1-Year PUMS",
+  "fpl_vintage": "2023 HHS Poverty Guidelines",
+  "gross_income_multiplier": 1.3
+}
