@@ -1,0 +1,41 @@
+{
+  "name": "@civica/regops-engine",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Regulatory-change detection + LLM-assisted drafting pipeline. Polls federal + state SNAP sources, drafts PRs against snap-rules + snap-compliance-copy, routes via counsel queue. Internal ops infrastructure; not user-facing.",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    },
+    "./sources": {
+      "types": "./src/sources/index.ts",
+      "default": "./src/sources/index.ts"
+    },
+    "./audit": {
+      "types": "./src/audit/index.ts",
+      "default": "./src/audit/index.ts"
+    },
+    "./prompts": {
+      "types": "./src/prompts/index.ts",
+      "default": "./src/prompts/index.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:adversarial": "vitest run test/adversarial",
+    "test:prompts": "vitest run src/prompts"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.49.0"
+  },
+  "devDependencies": {
+    "@civica/config": "workspace:*",
+    "typescript": "^5.6.3",
+    "vitest": "^2.1.9"
+  }
+}

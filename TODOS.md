@@ -393,3 +393,134 @@ Helper: `pillarReductionAtFullEngagement()` returns the per-pillar pp breakdown 
 **Effort:** S (human ~1.5h / CC ~30min) — small surface, 3-4 file changes, leans on engine math already in place.
 **Priority:** P2 — high legibility win once /qc redesign ships, low urgency before then.
 **Depends on:** /qc redesign (T0-T11) landing first; `scoreErrorRisk()` PER-contribution export from snap-qc-engine.
+
+---
+
+## TODO-28 — RegOps Engine B2B product spin-out (paid SaaS for benefits orgs)
+
+**What:** Productize the RegOps regulatory-inbox infra as a paid SaaS for county welfare offices, CBOs running navigation programs, and food banks. Multi-tenant data model, RBAC, billing, admin UI.
+**Why:** Every benefits org needs regulatory tracking; no one has it. Civica is building the infra anyway. Revenue model compounds household-side investment.
+**Pros:** Defensible position with state agencies + same orgs we enroll households through. Revenue stream from sunk-cost infra.
+**Cons:** Separate sales motion. Splits leadership attention from SEIU/UFW/gig distribution priority.
+**Context:** Reviewed and deferred in /plan-ceo-review 2026-05-27 (`~/.gstack/projects/matthewgg22-Civica/ceo-plans/2026-05-27-regops-engine.md` D2). Build RegOps Engine v1 with clean API boundaries (multi-tenant-ready data shape, RBAC interface, billing-friendly event log) so productization is feasible. Don't sell yet.
+**Effort:** XL (human ~2-3 months / CC: not the bottleneck — sales motion is)
+**Priority:** P3 — revisit at 10K active households OR first unsolicited county inbound.
+**Depends on:** RegOps Engine v1 shipped with clean API boundaries.
+
+---
+
+## TODO-29 — RegOps Engine: full FTC marketing-copy LLM drafting
+
+**What:** Extend FTC sub-pipeline from v1 (detection + counsel routing only) to full LLM drafting against marketing/app store copy.
+**Why:** v1 cut scope to honor 6-8 week timeline. Full FTC drafting closes OBBBA audit Q16/Q17 inside the engine instead of via annual external audit.
+**Pros:** Closes the loop on FTC domain. Same engine handles all regulatory cadences.
+**Cons:** Marketing copy is a different problem shape than eligibility rules; lower cadence means lower ROI per engineering week than other follow-ups.
+**Context:** Per RegOps Engine plan Open Question §FTC.
+**Effort:** S (human ~1 wk / CC ~1 d)
+**Priority:** P3 — after first 3 months of v1 production data, decide if FTC drafting earns its keep.
+**Depends on:** RegOps Engine v1 shipped + drafter quality validated.
+
+---
+
+## TODO-30 — RegOps Engine: state #5+ generalization
+
+**What:** Add NY, TX, FL, IL (or whichever states the caseworker mode roadmap unlocks) to the SourceAdapter registry.
+**Why:** v1 ships CA + Federal + MA. The source-pluggable architecture means each additional state is config + a thin adapter, not engineering work.
+**Pros:** Real per-state cost should be ≤2 days each if the SourceAdapter contract holds.
+**Cons:** Each state also needs counsel staffing for its policy domain — engineering isn't the bottleneck.
+**Context:** RegOps Engine plan Deferred Scope §State #5+.
+**Effort:** S per state (human ~2 d / CC ~4 h) — assuming SourceAdapter contract is real.
+**Priority:** P3 — driven by caseworker mode expansion + counsel staffing.
+**Depends on:** RegOps Engine v1 shipped + SourceAdapter contract proven on the first 3 states.
+
+---
+
+## TODO-31 — RegOps Engine: counsel-labeled eval set (precision bar upgrade)
+
+**What:** Retain SNAP counsel for ~20 hours (~$5k) to hand-label the 20-30 historical-diff eval dataset. Upgrade precision gate from founder-validated smoke test to counsel-graded ≥90% precision hard gate.
+**Why:** v1 default is option (b) — founder-labeled smoke test — because founder is not a SNAP attorney. Counsel-graded gate is the proper bar but costs money and counsel time.
+**Pros:** Real quality gate; defensible if a draft slips past internal review.
+**Cons:** $5k + counsel time + must update labels as rules evolve.
+**Context:** RegOps Engine plan Open Question §LLM extraction quality bar.
+**Effort:** S (human ~3-5 d coordination / counsel ~20 h)
+**Priority:** P2 — upgrade after week 4 if v1 quality is unstable.
+**Depends on:** Counsel staffing (TODO-T11 in tasks JSONL).
+
+---
+
+## TODO-32 — RegOps Engine: annual external counsel audit of engine behavior
+
+**What:** Engage external counsel annually to audit whether the engine's behavior matches what actually happened in the regulatory landscape during that 12-month window.
+**Why:** Defensible compliance posture requires external verification, not just internal self-grading.
+**Pros:** Hard external check on quality. Catches drift in source adapters.
+**Cons:** Annual cost (~$10-20k); requires evidence trail (already built into citation provenance).
+**Context:** RegOps Engine plan Liability Posture #6.
+**Effort:** S (human ~1 wk coordination / counsel ~1-2 wk)
+**Priority:** P2 — first audit 12 months post-ship.
+**Depends on:** RegOps Engine v1 shipped + 12 months production data.
+
+---
+
+## TODO-33 — Retention-risk scorer in snap-qc-engine (G1, Unrath retention pillar)
+
+**What:** New scoring flow `scoreRetentionRisk()` in `packages/snap-qc-engine/src/scoring/retention-risk.ts`. Outputs `P(exit at next reporting moment | still eligible)` plus a `likely_still_eligible` flag for the Type-1 error story. Inputs: monthly earned income (from Argyle), monthly benefit amount, household has children, days to next SAR7, prior recert outcomes (completed/missed/churned), earnings trajectory (rising/stable/falling).
+**Why:** Unrath (2024) shows 2 of every 3 SNAP exits at reporting moments are still-eligible households (Type-1 error). Civica has Argyle income wired, recert-engine deadline math shipped, and the QC engine architecture supports a second output type — but no surface targets retention. This is the foundation for G2 (re-entry assist) and G4 (PhantomRecert as home hero).
+**Pros:** Reuses existing flow architecture; pure package (no API wiring this PR); unblocks the retention pillar without disturbing the county/intake-QC pitch.
+**Cons:** Calibration is anchored to Unrath's CA panel; coefficients will need refinement once Civica has its own retention data.
+**Context:** Strategic decision 2026-05-27 — see [retention-pillar memory](~/.claude/projects/-Users-matthewgreer-gentis-Developer-Civica/memory/project_unrath_retention_pillar.md). Add cohort to "retention pillar" — county pitch stays primary, retention is the second sellable artifact.
+**Effort:** M (human ~1 wk / CC ~half day)
+**Priority:** P2 — foundation for G2/G4
+**Depends on:** nothing — pure package work
+
+---
+
+## TODO-34 — Re-entry assist flow on iOS (G2, Unrath retention pillar)
+
+**What:** Detect case-closed-within-90d AND eligibility-signals-positive → one-screen re-enrollment that hydrates from prior packet version. New SwiftUI flow under `Civica/Features/SNAP/Enrollment/` that pulls `packets.version - 1`, surfaces stale fields for re-confirmation only, submits as a new packet without re-doing the full intake.
+**Why:** Unrath's "churn" finding — households re-enroll within 1-3 months at high rates, proving the original exit was a paperwork artifact not an eligibility change. Currently Civica treats re-enrollment as a brand-new application (full intake). Highest-leverage iOS surface per the paper.
+**Pros:** `packets.version` column already exists (PR #275); `packet-fetchers.ts` foundation supports prior-version reads; matches Propel-parity expectation (returning users get a fast path).
+**Cons:** Need to handle policy-rule version drift (rules may have changed between original packet and re-entry); need clear UI for "this field changed since you applied, please re-verify."
+**Context:** Strategic decision 2026-05-27 — pairs with TODO-33 (uses retention-risk score to decide who to nudge).
+**Effort:** M (human ~3 d / CC ~2 hr)
+**Priority:** P2
+**Depends on:** TODO-33 retention-risk scorer (for the eligibility-signals-positive check)
+
+---
+
+## TODO-35 — PhantomRecert as home-screen hero (G4, Unrath retention pillar)
+
+**What:** Promote `RecertificationCompanion` from feature-flagged sidebar to a real cold-start home card. When `days_to_next_sar7 < 30 AND retention_risk_tier in {medium, high}`, the home screen leads with "Your SAR7 is due in N days — let's dry-run it" instead of acquisition CTAs.
+**Why:** Phase 1 cold-start home (commit aeb4248c) recently dropped the tile grid for a pine hero. The hero slot is the most valuable real estate in the app. Unrath C1 — exits cluster at reporting moments — makes recert prep the highest-leverage surface for active users.
+**Pros:** RecertCompanion + recert-engine + PhantomRecert prep already exist; activation is mostly product surfacing, not new infra.
+**Cons:** Requires careful logic so first-time/active applicants (no SAR7 yet) still see appropriate hero content; A/B-able vs current pine hero for measurement.
+**Context:** Strategic decision 2026-05-27 — `Civica/Features/RecertificationCompanion/` is the existing module; drop the feature flag once the flow is wired end-to-end.
+**Effort:** M (human ~1 wk / CC ~1 d)
+**Priority:** P2
+**Depends on:** TODO-33 retention-risk scorer; TODO-34 re-entry assist (for the "just-closed" branch of the same hero)
+
+---
+
+## TODO-36 — CDSS / state-level pitch deck (G3, deferred)
+
+**What:** Second pitch artifact: "Civica reduces SAR7-driven retention loss for the income-eligible population by X%." MVPF framing borrowed from Unrath (2024). Customer = CDSS policy team or CalSAWS consortium, not county QC.
+**Why:** Unrath's retention argument scales to the full eligible population at reporting moments (~16M Californians over 18 years), not just the 27.3% earned-income cohort. Stronger TAM story, but only valuable when there's a named state-side relationship to send it to.
+**Pros:** Leverages existing CIVICA_TAM_PROFILE; deck-only work, no engineering.
+**Cons:** Building pitch artifacts ahead of relationships is wasted work; the MVPF=4.25 number is assumption-dependent and shouldn't be quoted verbatim.
+**Context:** Strategic decision 2026-05-27 — explicitly DEFERRED until a named state contact exists.
+**Effort:** S (human ~1 d / CC ~2 hr)
+**Priority:** P3 — deferred
+**Depends on:** Named CDSS or CalSAWS contact
+
+---
+
+## TODO-37 — "Still-eligible at closure" surface in caseworker mode (G5, deferred)
+
+**What:** New view in caseworker dashboard: "Your caseload's recent SAR7 closures — N% appear still eligible based on Argyle income trajectory and household composition." Direct application of Unrath C2 to MA Project Bread caseworkers.
+**Why:** Caseworker mode is MA-first (PR #275). Adding this surface lets a CBO see their own Type-1 error rate in near-real-time and intervene. But adding views before The Assignment (named CBO ED commitment) lands is premature.
+**Pros:** Same data as TODO-33; just a different aggregation; high social proof for the retention pillar's customer story.
+**Cons:** Speculative without a named CBO partner; MA SAR7 cadence differs from CA so calibration needs MA-specific data we don't have yet.
+**Context:** Strategic decision 2026-05-27 — explicitly DEFERRED until The Assignment lands + first MA caseworker UAT signal.
+**Effort:** S (human ~3 d / CC ~3 hr)
+**Priority:** P3 — deferred
+**Depends on:** The Assignment (named CBO ED commitment); MA SAR7 cadence data
+
