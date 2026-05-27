@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 import { HTTPException } from "hono/http-exception";
 import {
   requireApplicant,
+  requireAuthenticated,
   requireBuddy,
   requireNavigator,
   requireOperator,
@@ -74,6 +75,27 @@ describe("requireOperator", () => {
     for (const k of ALL_KINDS) {
       if (k === "operator") continue;
       expectDeny(() => requireOperator(k), /Operator role required/);
+    }
+  });
+});
+
+describe("requireAuthenticated", () => {
+  it("allows every ActorKind (gate is auth-not-role)", () => {
+    for (const k of ALL_KINDS) {
+      expectAllow(() => requireAuthenticated(k));
+    }
+  });
+  it("throws 401 with auth-required message for an unknown kind (defense in depth)", () => {
+    // Cast bypasses TS — simulates a runtime that hands us something not in
+    // the union. ActorKind is closed; this exercises the safety guard.
+    const bogus = "anonymous" as unknown as ActorKind;
+    try {
+      requireAuthenticated(bogus);
+      throw new Error("expected throw");
+    } catch (err) {
+      expect(err).toBeInstanceOf(HTTPException);
+      expect((err as HTTPException).status).toBe(401);
+      expect((err as HTTPException).message).toMatch(/Authentication required/);
     }
   });
 });

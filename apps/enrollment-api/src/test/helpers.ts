@@ -53,7 +53,7 @@ export function makeQueryBuilder(result: MockResult): any {
   for (const m of [
     'select', 'eq', 'is', 'order', 'limit', 'insert', 'upsert',
     'update', 'delete', 'in', 'filter', 'neq', 'not', 'single', 'maybeSingle', 'head',
-    'gte', 'lte', 'lt', 'gt', 'or', 'contains', 'overlaps',
+    'gte', 'lte', 'lt', 'gt', 'or', 'contains', 'overlaps', 'range',
   ]) {
     qb[m] = vi.fn().mockReturnValue(qb);
   }

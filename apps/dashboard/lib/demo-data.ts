@@ -15,7 +15,11 @@
  */
 
 export function isDemoFallbackEnabled(): boolean {
-  return process.env.DEMO_FALLBACK === "true";
+  // Default ON. Demo fallback only triggers when the live DB query also
+  // came back empty (per-page guard), so this is safe even in environments
+  // with real data — real data always wins. Explicit DEMO_FALLBACK=false
+  // turns it off (e.g. for QA against an actually-empty staging DB).
+  return process.env.DEMO_FALLBACK !== "false";
 }
 
 // Deterministic timestamps anchored relative to today so the demo

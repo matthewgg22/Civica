@@ -331,7 +331,7 @@ struct SNAPConversationView: View {
                 .padding(.vertical, CivicaSpacing.sm)
                 .background(
                     style == .primary
-                        ? (enabled ? CivicaColors.pinePrimary : CivicaColors.brickPrimaryDisabled)
+                        ? (enabled ? CivicaColors.pinePrimary : CivicaColors.pinePrimaryDisabled)
                         : CivicaColors.secondaryButtonFill
                 )
                 .overlay(

@@ -8,6 +8,11 @@ import NotificationOutlayPanel from "../../components/ops/NotificationOutlayPane
 import CohortRetentionPanel from "../../components/ops/CohortRetentionPanel";
 import TTFDPanel from "../../components/ops/TTFDPanel";
 import PartnerPnLPanel from "../../components/ops/PartnerPnLPanel";
+import MedicareAdvantagePanel from "../../components/ops/MedicareAdvantagePanel";
+import EligibilityQueuePanel from "../../components/ops/EligibilityQueuePanel";
+import RevenueLinesPanel from "../../components/ops/RevenueLinesPanel";
+import LTVPanel from "../../components/ops/LTVPanel";
+import DistressOverlayPanel from "../../components/ops/DistressOverlayPanel";
 import {
   fetchEbtAggregate,
   fetchPlacements,
@@ -15,6 +20,11 @@ import {
   fetchCohorts,
   fetchTTFD,
   fetchPartnerPnL,
+  fetchMedicareAdvantage,
+  fetchEligibilityQueue,
+  fetchRevenueLines,
+  fetchLTV,
+  fetchDistressOverlay,
 } from "../../lib/ops-fetchers";
 
 export const dynamic = "force-dynamic";
@@ -27,12 +37,17 @@ export default async function OpsPage() {
   // Fetch all panel data in parallel. Each fetcher catches missing-relation
   // errors and returns `{ available: false, ... }` so the page renders
   // cleanly when migrations haven't been applied locally.
-  const [ebt, placements, notifications, cohorts, ttfd] = await Promise.all([
+  const [ebt, placements, notifications, cohorts, ttfd, medicareAdvantage, eligibilityQueue, revenueLines, ltv, distressOverlay] = await Promise.all([
     fetchEbtAggregate(),
     fetchPlacements(),
     fetchNotificationOutlay(),
     fetchCohorts(),
     fetchTTFD(),
+    fetchMedicareAdvantage(),
+    fetchEligibilityQueue(),
+    fetchRevenueLines(),
+    fetchLTV(),
+    fetchDistressOverlay(),
   ]);
 
   // P&L denominator depends on the active-tracker count from Panel 1.
@@ -46,9 +61,9 @@ export default async function OpsPage() {
         {/* Page header */}
         <div className="flex items-end justify-between gap-6 pb-3">
           <div>
-            <p className="eyebrow mb-1">Pulse · Civica operator console</p>
+            <p className="eyebrow mb-1">Civica operator console</p>
             <h2 className="text-[26px] font-bold tracking-tight leading-none text-ink">
-              Live corporate health
+              Performance
             </h2>
             <p className="text-[13px] text-graphite mt-2 max-w-2xl leading-relaxed">
               SNAP dollars under app, where partner offers are placed, what we&apos;ve spent on
@@ -64,17 +79,28 @@ export default async function OpsPage() {
         {/* Hero strip — animated headline KPIs across the top */}
         <OpsHeroStrip ebt={ebt} pnl={pnl} notifications={notifications} ttfd={ttfd} />
 
-        {/* Headline panels */}
+        {/* Opportunity queue — workflow-defining "what's next" view, sits
+            right under the hero so operators see actionable work first
+            (before any reporting panels). */}
+        <EligibilityQueuePanel data={eligibilityQueue} />
+
+        {/* Operational metrics — the "is the engine running" middle of the
+            page. Balance + map + outbound + retention + speed-to-deposit. */}
         <EBTBalancePanel data={ebt} />
         <PlacementMapPanel data={placements} />
-
-        {/* Operational metrics */}
         <NotificationOutlayPanel data={notifications} />
         <CohortRetentionPanel data={cohorts} />
         <TTFDPanel data={ttfd} />
 
-        {/* Monetization — visually distinct (pine border) and clearly operator-gated */}
+        {/* Monetization arc — the "money story" cluster at the bottom.
+            Rollup ("where the money comes from") opens, per-line panels
+            in the middle, LTV closes with the per-user kicker, then the
+            distress overlay caps the page with the trust-defense beat. */}
+        <RevenueLinesPanel data={revenueLines} />
         <PartnerPnLPanel data={pnl} />
+        <MedicareAdvantagePanel data={medicareAdvantage} />
+        <LTVPanel data={ltv} />
+        <DistressOverlayPanel data={distressOverlay} />
       </div>
 
       <footer className="border-t border-hairline px-8 py-5 flex justify-between items-center text-[11px] text-muted font-mono tracking-wide mt-8">

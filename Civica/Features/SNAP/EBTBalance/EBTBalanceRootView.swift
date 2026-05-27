@@ -32,11 +32,14 @@ struct EBTBalanceRootView: View {
     @StateObject private var store: EBTBalanceStore
     @StateObject private var anomalyStore: EBTAnomalyStore
 
+    @StateObject private var offersStore: EBTOffersStore
+
     /// Failable initializer used by previews + the production app entry
-    /// point. Pass nil for both to get the fixture-only stack.
+    /// point. Pass nil for all to get the fixture-only stack.
     init(
         store: EBTBalanceStore? = nil,
-        anomalyStore: EBTAnomalyStore? = nil
+        anomalyStore: EBTAnomalyStore? = nil,
+        offersAPIClient: (any EBTOffersAPIClient)? = nil
     ) {
         let resolvedStore = store ?? EBTBalanceStore()
         let resolvedAnomalyStore: EBTAnomalyStore
@@ -54,8 +57,14 @@ struct EBTBalanceRootView: View {
             resolvedAnomalyStore = EBTAnomalyStore(repository: repo)
         }
 
+        let offersRepo = EBTOffersRepository(
+            apiClient: offersAPIClient ?? MockEBTOffersAPIClient(),
+            defaults: UserDefaults(suiteName: "co.civica.ebt.offers.root") ?? .standard
+        )
+
         _store = StateObject(wrappedValue: resolvedStore)
         _anomalyStore = StateObject(wrappedValue: resolvedAnomalyStore)
+        _offersStore = StateObject(wrappedValue: EBTOffersStore(repository: offersRepo))
     }
 
     private var language: CivicaLanguage {
@@ -65,7 +74,13 @@ struct EBTBalanceRootView: View {
     var body: some View {
         Group {
             if store.account != nil {
-                EBTBalanceDashboardView(store: store, anomalyStore: anomalyStore, language: language)
+                EBTBalanceDashboardView(
+                    store: store,
+                    anomalyStore: anomalyStore,
+                    offersStore: offersStore,
+                    language: language,
+                    stateCode: "CA"
+                )
             } else {
                 EBTLinkCardView(store: store, language: language)
             }

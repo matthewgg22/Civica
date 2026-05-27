@@ -273,10 +273,10 @@ struct SNAPWorkRequirementsView: View {
         let prefix = SNAPWorkRequirementsStrings.evaluationErrorPrefix.value(in: language)
         return Text("\(prefix): \(message)")
             .font(CivicaTypography.body)
-            .foregroundStyle(Color.red)
+            .foregroundStyle(CivicaColors.brickAccent)
             .padding(CivicaSpacing.md)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .background(Color.red.opacity(0.08))
+            .background(CivicaColors.brickAccent.opacity(0.08))
             .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous))
     }
 }

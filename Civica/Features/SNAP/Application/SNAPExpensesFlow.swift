@@ -181,7 +181,14 @@ final class SNAPExpensesFlowViewModel: ObservableObject {
     }
 
     var isAtFirstStep: Bool { step == .rent }
-    var isAtLastStep: Bool { step == .medical }
+    /// Last step is whichever Step is currently last in effectiveSteps —
+    /// NOT a hard-coded `.medical`. When the household has no minors
+    /// and no elderly/disabled members, `.medical` and `.childcare` are
+    /// pruned, so the real terminal step is `.utilityShutoff` (or
+    /// `.utilityTypes` if no utilities were selected). Hard-coding
+    /// `.medical` here caused Continue to silently no-op on the shutoff
+    /// screen for childless / non-elderly applicants.
+    var isAtLastStep: Bool { step == effectiveSteps.last }
 
     // Empty / non-numeric input is intentionally "no answer" rather
     // than $0 — that distinction lets the rules engine flag missing

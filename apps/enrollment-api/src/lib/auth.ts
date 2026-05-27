@@ -38,3 +38,29 @@ export function requireOperator(actorKind: ActorKind): void {
     throw new HTTPException(403, { message: "Operator role required" });
   }
 }
+
+/**
+ * Allows any authenticated actor. Rejects only unauthenticated requests.
+ *
+ * Used by /me/offers/* routes (offer-moment platform per ceo-plans/
+ * 2026-05-26-ebt-offer-moment-platform.md). Pre-packet applicants need to
+ * read statewide offers before they file, so requireApplicant is too tight;
+ * but anon access defeats per-user distress-honor and event emission.
+ *
+ * Accepts every ActorKind. The route still resolves user_id from the JWT
+ * for resolver inputs (county lookup, distress check, rate limit).
+ */
+export function requireAuthenticated(actorKind: ActorKind): void {
+  const allowed: readonly ActorKind[] = [
+    "applicant",
+    "navigator",
+    "admin",
+    "buddy",
+    "operator",
+    "system",
+    "api_key",
+  ];
+  if (!allowed.includes(actorKind)) {
+    throw new HTTPException(401, { message: "Authentication required" });
+  }
+}

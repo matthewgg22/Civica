@@ -19,6 +19,11 @@ import {
   DEMO_COHORTS,
   DEMO_TTFD,
   DEMO_PARTNER_PNL,
+  DEMO_MEDICARE_ADVANTAGE,
+  DEMO_ELIGIBILITY_QUEUE,
+  DEMO_REVENUE_LINES,
+  DEMO_LTV,
+  DEMO_DISTRESS_OVERLAY,
   isDemoOpsFallbackEnabled,
 } from "./demo-ops-data";
 
@@ -439,4 +444,185 @@ export async function fetchPartnerPnL(days = 30, activeTrackers = 0): Promise<Pa
     revenue_per_active_tracker_cents, redistribution_pct,
     active_trackers: activeTrackers,
   };
+}
+
+// ── Panel 8: Medicare Advantage Referrals ───────────────────────────────────
+
+export interface MedicareAdvantageData {
+  available: boolean;
+  // Cohort sizing
+  active_trackers: number;
+  eligible_seniors: number;            // 60+ HHs in tracker population
+  // Political-defense surface: Medi-Cal-first routing
+  medi_cal_routed_count: number;       // routed to Medi-Cal (zero Civica fee)
+  // Funnel (non-Medi-Cal cohort)
+  eligible_non_medi_cal: number;
+  referred_to_partners: number;
+  enrolled: number;
+  // Revenue
+  revenue_cents: number;
+  avg_fee_per_enrollment_cents: number;
+  // CMS marketing-rule compliance (Title 42 CFR §422.2274)
+  cms_compliant: boolean;
+  last_cms_audit_at: string;
+  disclosure_version: string;
+}
+
+const MEDICARE_ADVANTAGE_UNAVAILABLE: MedicareAdvantageData = {
+  available: false,
+  active_trackers: 0,
+  eligible_seniors: 0,
+  medi_cal_routed_count: 0,
+  eligible_non_medi_cal: 0,
+  referred_to_partners: 0,
+  enrolled: 0,
+  revenue_cents: 0,
+  avg_fee_per_enrollment_cents: 0,
+  cms_compliant: false,
+  last_cms_audit_at: new Date(0).toISOString(),
+  disclosure_version: "—",
+};
+
+export async function fetchMedicareAdvantage(): Promise<MedicareAdvantageData> {
+  if (isDemoOpsFallbackEnabled()) return DEMO_MEDICARE_ADVANTAGE;
+  // No real DB query yet — the medicare_advantage_referrals aggregate view
+  // ships in a later migration. Return the unavailable shape so the panel
+  // renders the "apply migrations" empty state.
+  return MEDICARE_ADVANTAGE_UNAVAILABLE;
+}
+
+// ── Panel 9: Eligibility Queue (Opportunity queue) ──────────────────────────
+
+export interface EligibilityQueueData {
+  available: boolean;
+  rows: Array<{
+    program_id: string;
+    program_name: string;
+    eligible: number;
+    contacted: number;
+    in_queue: number;
+    conv_pct: number;                 // 0..100, expected conversion rate of queued HHs
+    dollars_per_conversion_cents: number; // average revenue per converted HH (0 if non-monetized)
+    projected_revenue_cents: number;  // in_queue × conv_pct/100 × dollars_per_conversion_cents
+    monetized: boolean;               // false = referral-only / no Civica fee
+    suggested_action: string;         // visual chip label (e.g. "Run outreach")
+  }>;
+}
+
+const ELIGIBILITY_QUEUE_UNAVAILABLE: EligibilityQueueData = {
+  available: false,
+  rows: [],
+};
+
+export async function fetchEligibilityQueue(): Promise<EligibilityQueueData> {
+  if (isDemoOpsFallbackEnabled()) return DEMO_ELIGIBILITY_QUEUE;
+  // No real DB query yet — the program_eligibility_v view + referral_events
+  // table ship in a later migration. Return the unavailable shape so the
+  // panel renders the "apply migrations" empty state.
+  return ELIGIBILITY_QUEUE_UNAVAILABLE;
+}
+
+// ── Panel 10: Revenue Lines Rollup ──────────────────────────────────────────
+
+export type RevenueLineStatus = "live" | "gated" | "planned" | "no_fee" | "cost";
+
+export interface RevenueLine {
+  key: string;
+  label: string;
+  status: RevenueLineStatus;
+  gross_cents: number;     // positive for revenue, positive magnitude for cost (status="cost")
+  share_pct: number | null; // share of revenue mix (null = N/A / planned / no_fee / cost)
+  note?: string;
+}
+
+export interface RevenueLinesData {
+  available: boolean;
+  lines: RevenueLine[];
+  net_cents: number;        // revenue minus outlay (cents)
+  wow_delta_pct: number;    // week-over-week delta on net, e.g. +4.8
+}
+
+const REVENUE_LINES_UNAVAILABLE: RevenueLinesData = {
+  available: false,
+  lines: [],
+  net_cents: 0,
+  wow_delta_pct: 0,
+};
+
+export async function fetchRevenueLines(): Promise<RevenueLinesData> {
+  if (isDemoOpsFallbackEnabled()) return DEMO_REVENUE_LINES;
+  // No real DB query yet — this view rolls up MA referrals + partner-offer
+  // events + notification outlay. Returns unavailable until those underlying
+  // aggregates land in production.
+  return REVENUE_LINES_UNAVAILABLE;
+}
+
+// ── Panel 11: LTV per active tracker ─────────────────────────────────────────
+
+export interface LTVRevenueLine {
+  key: string;
+  label: string;
+  dollars_per_tracker_year: number;
+  share_pct: number;
+}
+
+export interface LTVData {
+  available: boolean;
+  headline_dollars_per_tracker_year: number;
+  trajectory_mom_pct: number;
+  active_trackers: number;
+  live_lines: LTVRevenueLine[];
+  projected_lines: LTVRevenueLine[];
+}
+
+const LTV_UNAVAILABLE: LTVData = {
+  available: false,
+  headline_dollars_per_tracker_year: 0,
+  trajectory_mom_pct: 0,
+  active_trackers: 0,
+  live_lines: [],
+  projected_lines: [],
+};
+
+export async function fetchLTV(): Promise<LTVData> {
+  if (isDemoOpsFallbackEnabled()) return DEMO_LTV;
+  // No real rollup view yet — LTV is composed downstream from MA referrals
+  // + partner-offer P&L + (future) WOTC + tax-prep revenue lines. Returns
+  // unavailable until those component aggregates have a unifying view.
+  return LTV_UNAVAILABLE;
+}
+
+// ── Panel 12: Distress-Flag Honor Commitment ────────────────────────────────
+
+export interface DistressOverlayData {
+  available: boolean;
+  total_active_flags: number;
+  flag_window_days: number;
+  withheld_by_line: Array<{
+    line_key: string;
+    line_label: string;
+    withheld_count: number | null; // null = placeholder / line not yet live
+    unit: string;                  // "impressions" | "referrals" | "—"
+  }>;
+  recent_events: Array<{
+    ts: string;
+    flag_type: string;             // "denial_appeal_opened" | "obbba_distress_prompt" | "recert_lapse_14d" | ...
+    county_fips: string;           // D13: county only — never user_id / name
+  }>;
+}
+
+const DISTRESS_OVERLAY_UNAVAILABLE: DistressOverlayData = {
+  available: false,
+  total_active_flags: 0,
+  flag_window_days: 30,
+  withheld_by_line: [],
+  recent_events: [],
+};
+
+export async function fetchDistressOverlay(): Promise<DistressOverlayData> {
+  if (isDemoOpsFallbackEnabled()) return DEMO_DISTRESS_OVERLAY;
+  // No real DB query yet — the distress_flag_events table + withhold rollup
+  // view ship in a later migration. Until then, return the unavailable shape
+  // so the panel renders the "apply migrations" empty state instead of 500.
+  return DISTRESS_OVERLAY_UNAVAILABLE;
 }

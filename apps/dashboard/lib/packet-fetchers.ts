@@ -13,7 +13,51 @@ import { createServerClientFromCookies } from "./supabase";
  * out of the page-level Promise.all batch into its own Suspense
  * boundary. Each fetcher should mirror the SELECT columns the section
  * actually needs (avoid over-fetching).
+ *
+ * Sections that own their fetch (true Suspense deferral):
+ *   getNotes       → NotesSection    (navigator_notes)
+ *   getStatusHistory → TimelineSection (packet_status_history)
+ *   getDocItems    → DocumentsSection (required_document_items)
+ * Sections using cache dedup (data also needed above-fold by page):
+ *   getWrStatus    → WorkRequirementsSection + TimelineSection
  */
+
+export const getNotes = cache(async (packetId: string) => {
+  const cookieStore = await cookies();
+  const supabase = createServerClientFromCookies(cookieStore);
+  const { data } = await supabase
+    .schema("snap_enrollment")
+    .from("navigator_notes")
+    .select("*")
+    .eq("packet_id", packetId)
+    .is("deleted_at", null)
+    .order("created_at", { ascending: false });
+  return data ?? [];
+});
+
+export const getStatusHistory = cache(async (packetId: string) => {
+  const cookieStore = await cookies();
+  const supabase = createServerClientFromCookies(cookieStore);
+  const { data } = await supabase
+    .schema("snap_enrollment")
+    .from("packet_status_history")
+    .select("*")
+    .eq("packet_id", packetId)
+    .order("occurred_at", { ascending: false });
+  return data ?? [];
+});
+
+export const getDocItems = cache(async (packetId: string) => {
+  const cookieStore = await cookies();
+  const supabase = createServerClientFromCookies(cookieStore);
+  const { data } = await supabase
+    .schema("snap_enrollment")
+    .from("required_document_items")
+    .select("*")
+    .eq("packet_id", packetId)
+    .order("created_at");
+  return data ?? [];
+});
 
 /**
  * Latest work-requirement status row for a packet (OBBBA §10102

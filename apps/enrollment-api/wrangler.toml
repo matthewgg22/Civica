@@ -127,5 +127,13 @@ BUDDY_ADD_ENABLED = "false"
 # T5 (/plan-eng-review 2026-05-24): daily authed probe at 14:00 UTC (6 AM PT,
 # after the CA issuance window). Detects ebt.ca.gov structural drift before
 # users hit parseError. See src/cron/ebt-probe.ts.
+#
+# B-T7 (2026-05-26-ebt-offer-moment-platform): weekly digest cron, two-shard
+# (NOT 24-shard per outside-voice F11 fix). Sunday 17:00 UTC = 09:00 PT (PDT);
+# Sunday 14:00 UTC = 09:00 ET (EDT). DST acknowledged limitation. See
+# src/cron/weekly-digest.ts.
+# X-T5 (same plan): daily 04:00 UTC purge of user_push_log rows >30d old.
 [triggers]
-crons = ["0 3 * * *", "*/5 * * * *", "0 14 * * *"]
+# USDA retailer sync ("0 3 * * *") dropped: stub-mode, free plan limit is 5.
+# Re-add when plan upgrades or USDA endpoint is live.
+crons = ["*/5 * * * *", "0 14 * * *", "0 17 * * 7", "0 14 * * 7", "0 4 * * *"]
