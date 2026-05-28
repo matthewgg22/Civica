@@ -58,8 +58,6 @@ export default async function PacketDetailPage({
   const resolvedSearchParams = (await searchParams) ?? {};
   const devtoolsEnabled = resolvedSearchParams.devtools === "1";
   const tab = typeof resolvedSearchParams.tab === "string" ? resolvedSearchParams.tab : "overview";
-  const cookieStore = await cookies();
-  const supabase = createServerClientFromCookies(cookieStore);
 
   // Demo packet short-circuit: when DEMO_FALLBACK=true and the packetId
   // matches a fixture, synthesize all the destructured `*Result` shapes
@@ -67,9 +65,12 @@ export default async function PacketDetailPage({
   // Review Status card narrative even when the local Supabase has the
   // pre-existing RLS recursion bug.
   //
-  // We still run the live queries below for the non-demo case; demo
-  // overrides are applied AFTER the live destructure so TypeScript can
-  // keep its narrowing on the live path.
+  // CRITICAL: for demo packets we must SKIP the live Supabase queries
+  // entirely, not just override results afterward. The /cbo-preview
+  // landing page links unauthenticated CBO previewers directly into
+  // this surface using demo-pkt-* IDs; the RLS recursion bug hangs every
+  // query without a valid session → Vercel 504. Per-section Suspense
+  // fetchers in lib/packet-fetchers.ts get the same short-circuit.
   const demoBundle = isDemoFallbackEnabled() ? getDemoPacketDetail(packetId) : null;
 
   // Note: wr_status is NOT fetched here. It's deferred to
@@ -79,56 +80,78 @@ export default async function PacketDetailPage({
   // navigator_notes, packet_status_history, required_document_items are deferred —
   // they're fetched inside their own Suspense sections (NotesSection, TimelineSection,
   // DocumentsSection) via the cache()-wrapped fetchers in lib/packet-fetchers.ts.
-  const [livePacketResult, liveAnswersResult, liveDocsResult, liveFieldsResult, liveRecertResult, liveExtractionsResult, livePaychecksResult, liveErrorRiskResult, liveShelterAllocationResult] = await Promise.all([
-    supabase.schema("snap_enrollment").from("snap_packets").select(`*, applicants(*)`).eq("packet_id", packetId).is("deleted_at", null).single(),
-    supabase.schema("snap_enrollment").from("packet_answers").select("*").eq("packet_id", packetId).order("question_key"),
-    supabase.schema("snap_enrollment").from("uploaded_documents").select("*").eq("packet_id", packetId).is("deleted_at", null).order("uploaded_at", { ascending: false }),
-    supabase.schema("snap_enrollment").from("extraction_fields").select("*").eq("packet_id", packetId).order("needs_review", { ascending: false }).order("field_key"),
-    supabase.schema("snap_enrollment")
-      .from("recertifications")
-      .select("recert_id, cert_period_end, cert_period_end_source, status")
-      .eq("packet_id", packetId)
-      .order("created_at", { ascending: false })
-      .limit(1)
-      .maybeSingle(),
-    // Map document_id -> extraction_id so the document viewer can filter
-    // extraction_fields (which only carries extraction_id) to the rows for
-    // the opened document. We join via uploaded_documents.packet_id rather
-    // than a follow-up query so this stays in the parallel batch.
-    //
-    // Also pulls extracted_at / extractor_model / overall_confidence so the
-    // activity timeline can render engine-extraction events ("Paystub
-    // extracted · 94% confidence").
-    supabase.schema("snap_enrollment")
-      .from("document_extractions")
-      .select("extraction_id, document_id, extracted_at, extractor_model, overall_confidence, uploaded_documents!inner(packet_id, document_kind, original_filename)")
-      .eq("uploaded_documents.packet_id", packetId)
-      .order("extracted_at", { ascending: false }),
-    // Argyle marketplace paychecks for cross-verification income panel
-    supabase.schema("snap_enrollment")
-      .from("marketplace_paychecks")
-      .select("monthly_amount_usd, pay_date, employer_name")
-      .eq("packet_id", packetId)
-      .order("pay_date", { ascending: false })
-      .limit(1)
-      .maybeSingle(),
-    // History-aware: pull the last 5 risk evaluations so the timeline
-    // can render "Engine re-scored 64 → 41 (−23)" events and the
-    // profile-strength card can show a trend delta. errorRisk (latest)
-    // is just [0].
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    supabase.schema("snap_enrollment").from("packet_error_risk" as any)
-      .select("score, tier, factors, engine_version, created_at")
-      .eq("packet_id", packetId)
-      .order("created_at", { ascending: false })
-      .limit(5),
-    // Shelter allocation — navigator-confirmed rent share for shared-lease cases
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (supabase.schema("snap_enrollment") as any).from("shelter_allocations")
-      .select("*")
-      .eq("packet_id", packetId)
-      .maybeSingle(),
-  ]);
+  //
+  // The `let`-declared live result vars stay `undefined` on the demo path
+  // because the demoBundle ternaries below pick the demo branch before
+  // ever reading them. Type-erase to `any`: each Supabase query returns a
+  // distinct generic shape and re-deriving 9 tuple types here would dwarf
+  // the actual fix.
+  /* eslint-disable @typescript-eslint/no-explicit-any */
+  let livePacketResult: any;
+  let liveAnswersResult: any;
+  let liveDocsResult: any;
+  let liveFieldsResult: any;
+  let liveRecertResult: any;
+  let liveExtractionsResult: any;
+  let livePaychecksResult: any;
+  let liveErrorRiskResult: any;
+  let liveShelterAllocationResult: any;
+  /* eslint-enable @typescript-eslint/no-explicit-any */
+
+  if (!demoBundle) {
+    const cookieStore = await cookies();
+    const supabase = createServerClientFromCookies(cookieStore);
+    [livePacketResult, liveAnswersResult, liveDocsResult, liveFieldsResult, liveRecertResult, liveExtractionsResult, livePaychecksResult, liveErrorRiskResult, liveShelterAllocationResult] = await Promise.all([
+      supabase.schema("snap_enrollment").from("snap_packets").select(`*, applicants(*)`).eq("packet_id", packetId).is("deleted_at", null).single(),
+      supabase.schema("snap_enrollment").from("packet_answers").select("*").eq("packet_id", packetId).order("question_key"),
+      supabase.schema("snap_enrollment").from("uploaded_documents").select("*").eq("packet_id", packetId).is("deleted_at", null).order("uploaded_at", { ascending: false }),
+      supabase.schema("snap_enrollment").from("extraction_fields").select("*").eq("packet_id", packetId).order("needs_review", { ascending: false }).order("field_key"),
+      supabase.schema("snap_enrollment")
+        .from("recertifications")
+        .select("recert_id, cert_period_end, cert_period_end_source, status")
+        .eq("packet_id", packetId)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle(),
+      // Map document_id -> extraction_id so the document viewer can filter
+      // extraction_fields (which only carries extraction_id) to the rows for
+      // the opened document. We join via uploaded_documents.packet_id rather
+      // than a follow-up query so this stays in the parallel batch.
+      //
+      // Also pulls extracted_at / extractor_model / overall_confidence so the
+      // activity timeline can render engine-extraction events ("Paystub
+      // extracted · 94% confidence").
+      supabase.schema("snap_enrollment")
+        .from("document_extractions")
+        .select("extraction_id, document_id, extracted_at, extractor_model, overall_confidence, uploaded_documents!inner(packet_id, document_kind, original_filename)")
+        .eq("uploaded_documents.packet_id", packetId)
+        .order("extracted_at", { ascending: false }),
+      // Argyle marketplace paychecks for cross-verification income panel
+      supabase.schema("snap_enrollment")
+        .from("marketplace_paychecks")
+        .select("monthly_amount_usd, pay_date, employer_name")
+        .eq("packet_id", packetId)
+        .order("pay_date", { ascending: false })
+        .limit(1)
+        .maybeSingle(),
+      // History-aware: pull the last 5 risk evaluations so the timeline
+      // can render "Engine re-scored 64 → 41 (−23)" events and the
+      // profile-strength card can show a trend delta. errorRisk (latest)
+      // is just [0].
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      supabase.schema("snap_enrollment").from("packet_error_risk" as any)
+        .select("score, tier, factors, engine_version, created_at")
+        .eq("packet_id", packetId)
+        .order("created_at", { ascending: false })
+        .limit(5),
+      // Shelter allocation — navigator-confirmed rent share for shared-lease cases
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (supabase.schema("snap_enrollment") as any).from("shelter_allocations")
+        .select("*")
+        .eq("packet_id", packetId)
+        .maybeSingle(),
+    ]);
+  }
 
   // Apply demo overrides AFTER the live destructure so downstream code
   // keeps the live result types. Each `*Result` accessor exposes only
@@ -147,9 +170,35 @@ export default async function PacketDetailPage({
   if (!packetResult.data) notFound();
   const packet = packetResult.data;
   const applicant = packet.applicants as { full_name_ciphertext: string | null; preferred_language: string } | null;
-  const answers = answersResult.data ?? [];
-  const docs = docsResult.data ?? [];
-  const fields = fieldsResult.data ?? [];
+  // Concrete shapes for downstream `.find`/`.filter`/`.some` callbacks.
+  // Inference through the `any`-typed live result vars (kept loose so the
+  // demo-bundle short-circuit can fall through without re-deriving every
+  // Supabase generic tuple) would otherwise hand back `any[]` here and
+  // break TS narrowing in 8 downstream callbacks.
+  type AnswerListRow = { question_key: string; applicant_answer: string | null };
+  type DocListRow = {
+    document_id: string;
+    document_kind: string;
+    original_filename: string | null;
+    processing_status: string;
+    uploaded_at: string;
+  };
+  type FieldListRow = {
+    field_id: string;
+    extraction_id: string;
+    field_key: string;
+    field_label: string;
+    original_ocr_value: string | null;
+    applicant_answer: string | null;
+    navigator_confirmed_value: string | null;
+    confidence: number;
+    needs_review: boolean;
+    reviewed_at: string | null;
+    review_note: string | null;
+  };
+  const answers = (answersResult.data ?? []) as AnswerListRow[];
+  const docs = (docsResult.data ?? []) as DocListRow[];
+  const fields = (fieldsResult.data ?? []) as FieldListRow[];
   // notes, history, docItems are fetched inside their Suspense sections — not needed here.
   const recert = recertResult.data ?? null;
   type ExtractionRow = {
@@ -313,24 +362,39 @@ export default async function PacketDetailPage({
   // row without a second round-trip. The fetch is fast (single indexed
   // lookup) so adding it to the main batch is well under the cost ceiling
   // T6b was guarding against.
-  const [liveUnresolvedDocsResult, liveUnreviewedFieldsResult, liveConsentResult, liveArgyleResult, liveWrStatusForEngine] = await Promise.all([
-    supabase.schema("snap_enrollment").from("required_document_items")
-      .select("item_id").eq("packet_id", packetId).eq("is_required", true)
-      .is("resolved_at", null).is("waived_at", null),
-    supabase.schema("snap_enrollment").from("extraction_fields")
-      .select("field_id").eq("packet_id", packetId).eq("needs_review", true).is("reviewed_at", null),
-    supabase.schema("snap_enrollment").from("user_consents")
-      .select("consent_id, consented_at").eq("applicant_id", packet.applicant_id)
-      .eq("consent_kind", "privacy_notice").is("revoked_at", null).limit(1),
-    supabase.schema("snap_enrollment")
-      .from("argyle_connections")
-      .select("connection_id, linked_at, argyle_user_id, linked_accounts")
-      .eq("applicant_id", packet.applicant_id)
-      .is("revoked_at", null)
-      .limit(1)
-      .maybeSingle(),
-    getWrStatus(packetId),
-  ]);
+  //
+  // Same demo-mode gate as the first batch — skipped entirely for demo
+  // packets so unauthenticated CBO previewers never hit Supabase.
+  /* eslint-disable @typescript-eslint/no-explicit-any */
+  let liveUnresolvedDocsResult: any;
+  let liveUnreviewedFieldsResult: any;
+  let liveConsentResult: any;
+  let liveArgyleResult: any;
+  let liveWrStatusForEngine: any;
+  /* eslint-enable @typescript-eslint/no-explicit-any */
+
+  if (!demoBundle) {
+    const cookieStore = await cookies();
+    const supabase = createServerClientFromCookies(cookieStore);
+    [liveUnresolvedDocsResult, liveUnreviewedFieldsResult, liveConsentResult, liveArgyleResult, liveWrStatusForEngine] = await Promise.all([
+      supabase.schema("snap_enrollment").from("required_document_items")
+        .select("item_id").eq("packet_id", packetId).eq("is_required", true)
+        .is("resolved_at", null).is("waived_at", null),
+      supabase.schema("snap_enrollment").from("extraction_fields")
+        .select("field_id").eq("packet_id", packetId).eq("needs_review", true).is("reviewed_at", null),
+      supabase.schema("snap_enrollment").from("user_consents")
+        .select("consent_id, consented_at").eq("applicant_id", packet.applicant_id)
+        .eq("consent_kind", "privacy_notice").is("revoked_at", null).limit(1),
+      supabase.schema("snap_enrollment")
+        .from("argyle_connections")
+        .select("connection_id, linked_at, argyle_user_id, linked_accounts")
+        .eq("applicant_id", packet.applicant_id)
+        .is("revoked_at", null)
+        .limit(1)
+        .maybeSingle(),
+      getWrStatus(packetId),
+    ]);
+  }
 
   // Apply demo overrides (mirrors the main-batch pattern above).
   const unresolvedDocsResult = demoBundle
