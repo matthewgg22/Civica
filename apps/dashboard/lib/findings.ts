@@ -16,6 +16,7 @@ import "server-only";
 import fs from "node:fs";
 import path from "node:path";
 import matter from "gray-matter";
+import { normalizeFindingDate } from "./findings-date";
 
 // ---------------------------------------------------------------------------
 // Types — match the YAML frontmatter schema in docs/findings/README.md.
@@ -121,7 +122,7 @@ function parseFinding(filename: string): Finding | null {
 
   return {
     id,
-    date: typeof data.date === "string" ? data.date : String(data.date ?? ""),
+    date: normalizeFindingDate(data.date),
     scope: toStringArray(data.scope),
     confidence: (data.confidence as FindingConfidence) ?? "unknown",
     status: (data.status as FindingStatus) ?? "active",
