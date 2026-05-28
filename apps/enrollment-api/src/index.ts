@@ -57,6 +57,11 @@ const CORS_ALLOWED_ORIGINS = [
   "http://localhost:3000",
 ];
 const CORS_VERCEL_PREVIEW = /^https:\/\/civica-api-.*\.vercel\.app$/;
+// Chrome extensions (Civica Submitter, sideload MVP) send Origin: chrome-extension://<id>
+// from their background service worker. Each install has its own 32-char lowercase id.
+// The bearer token on /v1/enrollment/extension/* is the real auth boundary; CORS just
+// needs to permit the preflight so the fetch can reach the bearer check.
+const CORS_CHROME_EXTENSION = /^chrome-extension:\/\/[a-z]{32}$/;
 app.use(
   "*",
   cors({
@@ -64,6 +69,7 @@ app.use(
       if (!origin) return null;
       if (CORS_ALLOWED_ORIGINS.includes(origin)) return origin;
       if (CORS_VERCEL_PREVIEW.test(origin)) return origin;
+      if (CORS_CHROME_EXTENSION.test(origin)) return origin;
       return null;
     },
     allowMethods: ["GET", "POST", "PATCH", "PUT", "DELETE"],

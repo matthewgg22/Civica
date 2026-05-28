@@ -4,8 +4,12 @@ vi.mock("../../lib/supabase.js", () => ({
   makeAnonClient: vi.fn(),
   makeServiceClient: vi.fn(),
 }));
+vi.mock("../../middleware/actorContext.js", () => ({
+  withActorContext: vi.fn(),
+}));
 
 import { makeServiceClient } from "../../lib/supabase.js";
+import { withActorContext } from "../../middleware/actorContext.js";
 import confirmRouter from "./confirm.js";
 import { Hono } from "hono";
 import { TEST_ENV, makeMultiTableDbClient, JSON_HEADERS } from "../../test/helpers.js";
@@ -22,6 +26,14 @@ function buildApp() {
   const app = new Hono<{ Bindings: Env }>();
   app.route("/v1/enrollment/extension", confirmRouter);
   return app;
+}
+
+// See payload.test.ts for the rationale. withActorContext is the DB-client
+// source the route consumes; makeServiceClient is still mocked because some
+// code paths (e.g., lib/supabase imports) read it at module load.
+function mockClient(client: ReturnType<typeof makeMultiTableDbClient>): void {
+  vi.mocked(makeServiceClient).mockReturnValue(client);
+  vi.mocked(withActorContext).mockResolvedValue(client);
 }
 
 const VALID_BODY = JSON.stringify({
@@ -69,7 +81,7 @@ describe("POST /v1/enrollment/extension/packets/:packetId/confirm — body valid
 
 describe("POST /v1/enrollment/extension/packets/:packetId/confirm — behavior", () => {
   it("returns 404 when the packet does not exist", async () => {
-    vi.mocked(makeServiceClient).mockReturnValue(
+    mockClient(
       makeMultiTableDbClient({
         snap_packets: { data: null, error: { code: "PGRST116", message: "no rows" } },
       }),
@@ -83,6 +95,27 @@ describe("POST /v1/enrollment/extension/packets/:packetId/confirm — behavior",
     expect(res.status).toBe(404);
   });
 
+  it("returns 422 when the packet has no assigned org_id (A3 fix)", async () => {
+    mockClient(
+      makeMultiTableDbClient({
+        snap_packets: {
+          data: { packet_id: PACKET_ID, org_id: null },
+          error: null,
+        },
+      }),
+    );
+    const app = buildApp();
+    const res = await app.request(
+      `/v1/enrollment/extension/packets/${PACKET_ID}/confirm`,
+      { method: "POST", headers: { Authorization: `Bearer ${BEARER}`, ...JSON_HEADERS }, body: VALID_BODY },
+      ENV,
+    );
+    expect(res.status).toBe(422);
+    // Hono's HTTPException returns the message as plaintext, not JSON.
+    const text = await res.text();
+    expect(text).toMatch(/no assigned org/i);
+  });
+
   it("updates an existing in-flight submission row to succeeded with the confirmation number", async () => {
     const existingRow = { submission_id: "sub-1", status: "queued" };
     const updatedRow = {
@@ -91,20 +124,6 @@ describe("POST /v1/enrollment/extension/packets/:packetId/confirm — behavior",
       benefitscal_confirmation_number: "BC-12345678",
       submitted_at: new Date().toISOString(),
     };
-    vi.mocked(makeServiceClient).mockReturnValue(
-      makeMultiTableDbClient({
-        snap_packets: {
-          data: { packet_id: PACKET_ID, org_id: "org-001" },
-          error: null,
-        },
-        // Sequential reads share one mock entry per table; the update path
-        // returns the updated row from a chained .single() call.
-        benefitscal_submissions: { data: existingRow, error: null },
-      }),
-    );
-    // The update path goes: select(maybeSingle) → update(single). The mock's
-    // shared query builder returns the same data for both, but the second
-    // call needs to return the *updated* row. Override the second invocation.
     let invocations = 0;
     const dynamicMock = makeMultiTableDbClient({});
     dynamicMock.schema = vi.fn().mockReturnValue({
@@ -119,7 +138,7 @@ describe("POST /v1/enrollment/extension/packets/:packetId/confirm — behavior",
         });
       }),
     });
-    vi.mocked(makeServiceClient).mockReturnValue(dynamicMock);
+    mockClient(dynamicMock);
     const app = buildApp();
     const res = await app.request(
       `/v1/enrollment/extension/packets/${PACKET_ID}/confirm`,
@@ -140,8 +159,6 @@ describe("POST /v1/enrollment/extension/packets/:packetId/confirm — behavior",
       benefitscal_confirmation_number: "BC-12345678",
       submitted_at: new Date().toISOString(),
     };
-    // benefitscal_submissions select returns null (no in-flight row); next
-    // call (insert) returns the new row.
     let calls = 0;
     const mock = makeMultiTableDbClient({});
     mock.schema = vi.fn().mockReturnValue({
@@ -156,7 +173,7 @@ describe("POST /v1/enrollment/extension/packets/:packetId/confirm — behavior",
         });
       }),
     });
-    vi.mocked(makeServiceClient).mockReturnValue(mock);
+    mockClient(mock);
     const app = buildApp();
     const res = await app.request(
       `/v1/enrollment/extension/packets/${PACKET_ID}/confirm`,
