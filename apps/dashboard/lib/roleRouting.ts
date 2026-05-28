@@ -117,6 +117,13 @@ const FULLY_PUBLIC_PREFIXES = [
   // Lets the public /cbo-preview queue link directly into the navigator
   // review surface without exposing real packet data.
   "/packets/demo-pkt-",
+  // Findings ledger — public read-only surface over docs/findings/*.md.
+  // Each finding has an evidence trail; the index is intentionally
+  // shareable so a county / CBO / counsel reader can land on a specific
+  // analytical claim via OG-card'd URL (e.g. /findings/2026-05-28-…).
+  // No auth, no Supabase round-trip; all data comes from build-time
+  // markdown reads via apps/dashboard/lib/findings.ts.
+  "/findings",
 ];
 
 /**
