@@ -77,8 +77,16 @@ jobs:
           # allows service_role to INSERT (counsel get domain-scoped
           # SELECT via the policies in migrations 20260594 + 20260595).
           # Both secrets must be set together; either alone falls back
-          # to in-memory + JSONL stdout. Provisioned via Settings →
-          # Secrets → Actions.
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          # to in-memory + JSONL stdout.
+          #
+          # NOTE: sourced from the existing E2E_SUPABASE_* secrets to
+          # avoid duplicating the canonical Civica project URL + key
+          # into two secret slots that would drift on key rotation.
+          # The E2E_ prefix is historical (the secrets were originally
+          # provisioned for e2e-nightly.yml); they point to the same
+          # production Supabase project the regops-engine writes into.
+          # A separate cleanup PR can rename E2E_SUPABASE_* →
+          # SUPABASE_* and update both consumers in lockstep.
+          SUPABASE_URL: ${{ secrets.E2E_SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.E2E_SUPABASE_SERVICE_ROLE_KEY }}
         run: bun run regops:poll
