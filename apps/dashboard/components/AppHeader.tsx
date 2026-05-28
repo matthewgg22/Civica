@@ -1,7 +1,7 @@
 import Link from "next/link";
 import MobileNavMenu from "./MobileNavMenu";
 
-type NavKey = "dashboard" | "queue" | "enrollments" | "county" | "outreach" | "qc" | "compliance" | "ops";
+type NavKey = "dashboard" | "queue" | "enrollments" | "county" | "outreach" | "qc" | "compliance" | "ops" | "findings";
 
 // §10106 / county cost-share dashboard is intentionally not in the
 // top nav — it's a B2G demo surface, still reachable by direct URL
@@ -19,9 +19,10 @@ const NAV_ITEMS: { key: NavKey; href: string; label: string }[] = [
   // the marketing/positioning surface stays rightmost.
   { key: "ops",         href: "/ops",          label: "Performance" },
   { key: "compliance",  href: "/compliance",   label: "Why Civica" },
-  // Internal monetization dashboard — visible in nav for admin/operator only.
-  // Middleware gate ensures non-allowed roles get redirected away from /ops.
-  { key: "ops",         href: "/ops",          label: "Ops" },
+  // Partner-facing evidence ledger — sourced from docs/findings/ at build time.
+  // Public route (in FULLY_PUBLIC_PREFIXES), so it renders for every role and
+  // is shareable without a login. Replaced the internal /ops "Ops" tab here.
+  { key: "findings",    href: "/findings",     label: "Findings" },
 ];
 
 export default function AppHeader({ email, active }: { email?: string; active: NavKey }) {
