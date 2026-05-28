@@ -16,6 +16,7 @@ import AnswerReviewList from "../../../components/AnswerReviewList";
 import StatusPill from "../../../components/StatusPill";
 import LifecycleStrip from "../../../components/LifecycleStrip";
 import HandoffPanel from "../../../components/HandoffPanel";
+import BenefitsCalPanel from "../../../components/BenefitsCalPanel";
 import ExpeditedReviewGate from "./ExpeditedReviewGate";
 import ShelterAllocationPanel from "../../../components/ShelterAllocationPanel";
 import type { ShelterAllocation } from "../../../components/ShelterAllocationPanel";
@@ -949,7 +950,22 @@ export default async function PacketDetailPage({
           <NotesSection packetId={packetId} />
         </Suspense>
 
-        {/* Handoff export */}
+        {/* BenefitsCal automated submission (Phase 2 — runs the CBO Assister
+            Playwright pipeline against the real portal). Sits above the manual
+            export panel so it's the primary CA path; HandoffPanel below is the
+            fallback for environments where the driver isn't wired. */}
+        <Section
+          title="BenefitsCal Submission"
+          subtitle="Send the prepared packet to BenefitsCal via the CBO Assister automation. Prepare → review payload → submit; the background worker drives the live portal."
+        >
+          <BenefitsCalPanel
+            packetId={packetId}
+            packetStatus={packet.status}
+            blockerCount={blockers.length}
+          />
+        </Section>
+
+        {/* Handoff export (manual fallback) */}
         <Section
           title="Handoff &amp; Export"
           subtitle="Generate a structured packet for the official SNAP application channel. Civica does not determine eligibility."

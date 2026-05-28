@@ -171,6 +171,43 @@ export const api = {
     resolve: (jwt: string, requestId: string) =>
       apiFetch(`/missing-items/${requestId}/resolve`, jwt, { method: "POST" }),
   },
+  benefitscal: {
+    // POST /v1/enrollment/benefitscal/prepare-export/:packetId
+    //
+    // Builds a BenefitsCalPayload snapshot from the packet, inserts a
+    // benefitscal_submissions row with status='pending_review', and returns
+    // the payload for navigator review before Phase 2 submission.
+    prepareExport: (
+      jwt: string,
+      packetId: string,
+      body: {
+        consent_type?: "in_person" | "telephonic" | "async_portal";
+        telephonic_consent_recorded_at?: string;
+      } = {},
+    ) =>
+      apiFetch(`/benefitscal/prepare-export/${packetId}`, jwt, {
+        method: "POST",
+        body: JSON.stringify(body),
+      }),
+
+    // POST /v1/enrollment/benefitscal/submit/:packetId
+    //
+    // Triggers Phase 2 async submission via ctx.waitUntil. Requires a prior
+    // 'pending_review' row from prepare-export. Returns 202 with
+    // { submission_id, status: 'queued', idempotent }.
+    submit: (jwt: string, packetId: string) =>
+      apiFetch(`/benefitscal/submit/${packetId}`, jwt, {
+        method: "POST",
+        body: JSON.stringify({ confirm: true }),
+      }),
+
+    // GET /v1/enrollment/benefitscal/status/:packetId
+    //
+    // Returns the most recent benefitscal_submissions row for the packet.
+    // 404 when no submission exists yet.
+    status: (jwt: string, packetId: string) =>
+      apiFetch(`/benefitscal/status/${packetId}`, jwt),
+  },
   shelterAllocation: {
     get: (jwt: string, packetId: string) =>
       apiFetch(`/packets/${packetId}/shelter-allocation`, jwt),
