@@ -1,0 +1,58 @@
+---
+title: "Findings ledger — example report"
+subtitle: "Embedding citable findings in a reproducible artifact"
+format:
+  html: default
+  pdf: default
+---
+
+# Purpose
+
+This is a starter Quarto report demonstrating the pattern: a partner-facing
+deliverable that **cites findings by id** and re-runs from source. When the
+underlying findings change, regenerating this report shows the delta.
+
+# Active findings (live from `findings.db`)
+
+```{python}
+#| label: findings-table
+#| tbl-cap: "Active findings as of the build date."
+import sqlite3, json
+from pathlib import Path
+
+db_path = Path("../../findings.db")
+if not db_path.exists():
+    print("Run `make findings` first to build findings.db")
+else:
+    conn = sqlite3.connect(db_path)
+    rows = conn.execute("""
+        SELECT id, date, confidence,
+               json_extract(scope_json, '$') AS scope
+        FROM findings
+        WHERE status = 'active'
+        ORDER BY date DESC
+    """).fetchall()
+    print(f"{'id':<48} {'date':<12} {'conf':<8} scope")
+    print("-" * 90)
+    for r in rows:
+        scope = ", ".join(json.loads(r[3])) if r[3] else ""
+        print(f"{r[0]:<48} {r[1]:<12} {r[2]:<8} {scope}")
+```
+
+# Citing a specific finding
+
+The commit-prefix audit (id `2026-05-28-test-prefix-empty`) found that
+**0 of 100 commits** in the last 7 days matched the `test:` convention.
+See the [full finding](../findings/2026-05-28-test-prefix-empty.md) for
+evidence and remediation.
+
+The architectural rationale for this report format itself lives in
+[2026-05-28-evidence-ledger-architecture](../findings/2026-05-28-evidence-ledger-architecture.md).
+
+# How to regenerate
+
+```bash
+make report   # renders all .qmd in this directory to docs/reports/_output/
+```
+
+If `findings.db` is missing, run `make findings` first.

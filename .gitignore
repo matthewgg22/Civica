@@ -64,3 +64,11 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 .gstack/
+
+# Findings ledger — derived from docs/findings/*.md, regenerate with `make findings`
+/findings.db
+/findings.db-journal
+
+# Quarto rendered output — regenerate with `make report`
+/docs/reports/_output/
+/docs/reports/.quarto/

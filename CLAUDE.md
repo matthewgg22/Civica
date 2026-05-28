@@ -1,4 +1,17 @@
 
+## Findings ledger
+
+Evidence-backed analytical findings live in `docs/findings/` — read [INDEX.md](docs/findings/INDEX.md) for the current list and [README.md](docs/findings/README.md) for the schema. Every claim cites a primary source (git ref, file:line, PR, dataset version, URL, or auto-memory id).
+
+This is the source of truth for *what we know*, distinct from:
+- auto-memory (`~/.claude/.../memory/`) — private session preferences, not findings
+- plans / runbooks (`docs/plans/`, `docs/runbooks/`) — intent, not evidence
+- code — implementation, not claims
+
+When adding a new finding: copy `docs/findings/_template.md`, fill in evidence, append to `INDEX.md`, then `make findings` to rebuild `findings.db`. `make datasette` serves a queryable UI.
+
+When superseding a finding: set the old one's `status: superseded` and `superseded_by: [new-id]` — do not delete. Lineage is the point.
+
 ## Commit message conventions
 
 Test work is tracked in retros by commit-prefix grep. Tag accordingly:

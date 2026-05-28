@@ -1,0 +1,59 @@
+title: Civica findings ledger
+description_html: |
+  <p>Evidence-backed, append-only record of analytical findings.
+  Source of truth is <code>docs/findings/*.md</code> — this UI is a derived view.</p>
+  <p>See <a href="https://github.com/matthewgg22/Civica/blob/codex/rebuild-feb18/docs/findings/README.md">README</a> for schema.</p>
+license: Internal — Civica
+license_url: https://github.com/matthewgg22/Civica
+
+databases:
+  findings:
+    title: Findings
+    description: Schema-validated analytical findings with cited evidence.
+    tables:
+      findings:
+        title: Findings
+        description: One row per analytical finding. Body is markdown.
+        sort_desc: date
+        label_column: id
+        facets: [status, confidence]
+      evidence:
+        title: Evidence
+        description: Citations supporting each finding.
+        facets: [kind]
+      finding_links:
+        title: Cross-references
+        description: "[[other-id]] backlinks parsed from finding bodies."
+
+    queries:
+      active_findings:
+        title: Active findings (newest first)
+        sql: |
+          SELECT id, date, confidence, scope_json AS scope, path
+          FROM findings
+          WHERE status = 'active'
+          ORDER BY date DESC
+
+      evidence_by_kind:
+        title: Evidence distribution by kind
+        sql: |
+          SELECT kind, COUNT(*) AS n
+          FROM evidence
+          GROUP BY kind
+          ORDER BY n DESC
+
+      low_confidence:
+        title: Low-confidence findings (audit candidates)
+        sql: |
+          SELECT id, date, scope_json AS scope
+          FROM findings
+          WHERE confidence = 'low' AND status = 'active'
+          ORDER BY date DESC
+
+      superseded_chain:
+        title: Supersession history
+        sql: |
+          SELECT id, date, status, superseded_by_json AS superseded_by
+          FROM findings
+          WHERE status = 'superseded'
+          ORDER BY date DESC
