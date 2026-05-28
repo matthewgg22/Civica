@@ -24,6 +24,8 @@ export {
   evaluateBenefitImpact,
 } from "./flows/benefit-impact-projection/index";
 export { combineScores, rollupFactors } from "./scoring/defensibility";
+export { wilsonInterval } from "./scoring/wilson";
+export type { WilsonInterval } from "./scoring/wilson";
 export { scoreErrorRisk, ERROR_WEIGHT, perPacketGapContribution } from "./scoring/error-risk";
 export type { ErrorRiskResult, ErrorRiskTier } from "./scoring/error-risk";
 
