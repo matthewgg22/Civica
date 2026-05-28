@@ -5,6 +5,7 @@ import {
   isStaff,
   homeForRole,
   isPathAllowedForRole,
+  isPubliclyAccessible,
 } from "../roleRouting";
 
 describe("roleRouting", () => {
@@ -105,6 +106,18 @@ describe("roleRouting", () => {
       // their page makes XHR/fetch calls to.
       expect(isPathAllowedForRole("/api/uat-feedback", "state_deputy")).toBe(true);
       expect(isPathAllowedForRole("/api/anything", "county_director")).toBe(true);
+    });
+
+    it("demo packet detail pages are publicly accessible", () => {
+      // /packets/demo-pkt-* opens the navigator review surface for prospective
+      // CBOs via the public /cbo-preview queue. Real packet IDs are UUIDs and
+      // do NOT match this prefix, so production data stays gated.
+      expect(isPubliclyAccessible("/packets/demo-pkt-001-maria")).toBe(true);
+      expect(isPubliclyAccessible("/packets/demo-pkt-002-carlos")).toBe(true);
+      expect(isPubliclyAccessible("/packets/demo-pkt-003-jasmine")).toBe(true);
+      // Real packet IDs (UUID-shaped) must NOT match the demo prefix.
+      expect(isPubliclyAccessible("/packets/a1b2c3d4-e5f6-7890-abcd-ef1234567890")).toBe(false);
+      expect(isPubliclyAccessible("/packets")).toBe(false);
     });
   });
 
