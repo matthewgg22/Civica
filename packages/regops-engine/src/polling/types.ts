@@ -44,6 +44,18 @@ export interface Alert {
 
 export interface AlertEmitter {
   emit(alert: Alert): Promise<void>;
+
+  /**
+   * Drain queued alerts before the process exits. Optional because
+   * synchronous emitters (in-memory, console) have nothing to drain.
+   * Network-backed emitters (SentryAlertEmitter) implement it as a
+   * real network wait. cli.ts calls this after the poll tick finishes
+   * so short-lived GH Actions runs don't exit before alerts ship.
+   *
+   * Returns true if drain completed within the emitter's configured
+   * timeout; false indicates events may have been dropped.
+   */
+  flush?(): Promise<boolean>;
 }
 
 /**
