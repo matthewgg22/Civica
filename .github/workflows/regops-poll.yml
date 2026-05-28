@@ -8,20 +8,28 @@ name: regops-poll
 # inside their own adapter logic — that's a per-source detail, not a
 # scheduling concern here.
 #
-# What this workflow does today (v1):
+# What this workflow does today:
 #   - constructs the production adapter registry
 #   - runs one pollOnce() tick
-#   - prints snapshots to stdout (JSONL)
+#   - persists snapshots to regops.snapshots (Supabase) when the
+#     SUPABASE_URL + SUPABASE_SERVICE_ROLE_KEY secrets are set; otherwise
+#     prints them as JSONL to stdout for the run log to capture
+#   - writes audit-log entries to regops.source_audit_log (Supabase) when
+#     those same secrets are set; otherwise keeps them in-memory (lost
+#     on process exit, only acceptable for local dev)
 #   - routes alerts to Sentry via SentryAlertEmitter when the SENTRY_DSN
 #     repo secret is set; otherwise falls back to stderr-only output
 #   - fails the run on structural failure / source-wedged / unexpected
 #     throws (page-severity outcomes per the runbook)
 #
-# What this workflow does NOT do yet:
-#   - persist snapshots to Supabase (operator wires SupabaseSnapshotStore
-#     once regops_snapshots migration lands)
+# Operator activation (all three groups of secrets are independent):
+#   - SENTRY_DSN                  → alert delivery
+#   - SUPABASE_URL +              → audit log + snapshot persistence
+#     SUPABASE_SERVICE_ROLE_KEY      (both required; either alone falls back)
 #
-# The remaining wiring step is documented in docs/regops/runbook.md.
+# Without any secrets, the cron still runs and exercises the adapters
+# end-to-end — outputs just stay in the GH Actions log instead of
+# persisting / paging. Useful for first-deploy smoke tests on a fork.
 
 on:
   schedule:
@@ -62,6 +70,15 @@ jobs:
           # When set, SentryAlertEmitter routes page/warn alerts to Sentry
           # (which alert rules then page on). When unset, alerts still
           # land in the GH Actions stderr log but don't page anywhere.
-          # Provisioned manually via Settings → Secrets → Actions.
           SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+          # SUPABASE_URL + SUPABASE_SERVICE_ROLE_KEY: writes-side
+          # credentials for regops.source_audit_log + regops.snapshots.
+          # Service-role key is required because both tables' RLS only
+          # allows service_role to INSERT (counsel get domain-scoped
+          # SELECT via the policies in migrations 20260594 + 20260595).
+          # Both secrets must be set together; either alone falls back
+          # to in-memory + JSONL stdout. Provisioned via Settings →
+          # Secrets → Actions.
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: bun run regops:poll

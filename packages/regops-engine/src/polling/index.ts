@@ -24,7 +24,11 @@ export type {
   SentryLike,
 } from "./sentry-alert-emitter.js";
 
-export { InMemorySnapshotStore, JsonlSnapshotStore } from "./snapshot-store.js";
+export {
+  InMemorySnapshotStore,
+  JsonlSnapshotStore,
+  SupabaseSnapshotStore,
+} from "./snapshot-store.js";
 export type { LineWriter } from "./snapshot-store.js";
 
 export { defaultAdapters } from "./registry.js";
