@@ -70,3 +70,15 @@ export {
   inferRegion,
   parseColaIndexHtml,
 } from "./usda-fns-cola.js";
+
+export type {
+  CdssAclEntry,
+  CdssLetterType,
+  CaCdssAclAdapterDeps,
+} from "./ca-cdss-acl.js";
+export {
+  CaCdssAclAdapter,
+  parseAclIndexHtml,
+  parseCdssDateToIso,
+  extractFirstNonEmptyTextLine,
+} from "./ca-cdss-acl.js";

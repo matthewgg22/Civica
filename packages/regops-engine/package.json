@@ -24,6 +24,10 @@
     "./polling": {
       "types": "./src/polling/index.ts",
       "default": "./src/polling/index.ts"
+    },
+    "./classifier": {
+      "types": "./src/classifier/index.ts",
+      "default": "./src/classifier/index.ts"
     }
   },
   "scripts": {
