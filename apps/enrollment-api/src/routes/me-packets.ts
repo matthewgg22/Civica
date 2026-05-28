@@ -14,6 +14,8 @@ import { validateAddress } from "../lib/smarty.js";
 import { compareIncome } from "../lib/income-verification.js";
 import type { PayPeriod } from "../lib/income-verification.js";
 import { scorePacketRisk, persistPacketRiskScore, emitQcEvaluation } from "../lib/scoring.js";
+import { scoreRetentionRisk } from "@civica/snap-qc-engine";
+import type { PriorRecertOutcome } from "@civica/snap-qc-engine";
 import { rateLimit } from "../lib/rate-limit.js";
 import type { Logger } from "../lib/logger.js";
 
@@ -504,6 +506,155 @@ app.post("/:packetId/error-risk", rateLimit("standard"), async (c) => {
   );
   return c.json(result);
 });
+
+// ── Retention risk (Unrath retention pillar, G1 integration) ──────────────────
+
+// GET /me/packets/:packetId/retention-risk
+//
+// Predicts P(exit at next reporting moment | currently eligible) for an
+// ACTIVE packet, plus the Type-1 error surface from Unrath (2024). Built for
+// G4 (PhantomRecert hero) — surfaces households whose paperwork burden is
+// likely to push them off SAR7 despite continued eligibility.
+//
+// Input assembly (server-side, single call): walks packet_answers for the
+// children flag, recertifications for the most recent recert outcome and
+// the cert_period_end (which becomes days_to_next_reporting). Rich Unrath
+// inputs that require multi-table joins (earnings trend from Argyle,
+// monthly benefit amount from benefit_calculations) default to neutral
+// values — wire them as separate enrichment passes if/when the G4 home
+// hero requires sharper scores.
+//
+// Defaults applied:
+//   - monthly_earned_income_usd: 0 (Argyle aggregation deferred)
+//   - monthly_benefit_amount_usd: 0 (benefit_calculations join deferred)
+//   - earnings_trajectory: "unknown"
+//   - currently_eligible_per_rules: true (the caller — typically G4 hero
+//     logic — should override with a snap-rules evaluation before showing
+//     the would_be_type_1_error_if_exits badge)
+app.get("/:packetId/retention-risk", async (c) => {
+  const applicant = await resolveApplicant(c as Context<{ Bindings: Env }>);
+  const packetId = c.req.param("packetId");
+  const anonDb = makeAnonClient(c.env, c.get("jwt"));
+
+  // 1. Confirm packet ownership + grab status (the scorer treats Closed
+  //    packets differently — no upcoming reporting moment).
+  const { data: packet, error: pErr } = await anonDb
+    .schema("snap_enrollment")
+    .from("snap_packets")
+    .select("packet_id, applicant_id, status")
+    .eq("packet_id", packetId)
+    .eq("applicant_id", applicant.applicant_id)
+    .is("deleted_at", null)
+    .single();
+
+  // Error-first split avoids Supabase TS narrowing to `never`
+  // (see feedback_supabase_ts_narrowing.md).
+  if (pErr && pErr.code !== "PGRST116") {
+    throw new HTTPException(500, { message: pErr.message });
+  }
+  if (!packet) {
+    throw new HTTPException(404, { message: "Packet not found" });
+  }
+
+  // 2. household_has_children — derived from packet_answers. We look for
+  //    a few known answer keys; if none present, default false (the
+  //    scorer's children dampener is small enough that the default is
+  //    conservative — slightly elevates risk score).
+  const { data: answers } = await anonDb
+    .schema("snap_enrollment")
+    .from("packet_answers")
+    .select("question_key, applicant_answer")
+    .eq("packet_id", packetId);
+
+  const householdHasChildren = deriveHasChildren(answers ?? []);
+
+  // 3. days_to_next_reporting — from the applicant's active recertification.
+  //    For Closed packets, set to null so the scorer returns
+  //    no-reporting-window.
+  let daysToNextReporting: number | null = null;
+  if (packet.status !== "Closed") {
+    const { data: recert } = await anonDb
+      .schema("snap_enrollment")
+      .from("recertifications")
+      .select("cert_period_end")
+      .eq("packet_id", packetId)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    if (recert?.cert_period_end) {
+      const endDate = new Date(recert.cert_period_end);
+      daysToNextReporting = Math.max(
+        0,
+        Math.floor((endDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24)),
+      );
+    }
+  }
+
+  // 4. prior_recert_outcomes — most recent first, up to 4.
+  const { data: priorRecerts } = await anonDb
+    .schema("snap_enrollment")
+    .from("recertifications")
+    .select("status")
+    .eq("applicant_id", applicant.applicant_id)
+    .order("created_at", { ascending: false })
+    .limit(4);
+
+  const priorOutcomes: PriorRecertOutcome[] = (priorRecerts ?? [])
+    .map((r) => mapRecertStatus(r.status as string));
+
+  const result = scoreRetentionRisk({
+    monthly_earned_income_usd: 0,
+    monthly_benefit_amount_usd: 0,
+    household_has_children: householdHasChildren,
+    days_to_next_reporting: daysToNextReporting,
+    prior_recert_outcomes: priorOutcomes,
+    earnings_trajectory: "unknown",
+    currently_eligible_per_rules: true,
+  });
+
+  return c.json(result);
+});
+
+// Maps `recertifications.status` to the scorer's `PriorRecertOutcome` enum.
+// Unknown values default to "completed" (optimistic) — better to under-
+// weight the prior-churn signal than to fabricate elevated risk.
+function mapRecertStatus(status: string): PriorRecertOutcome {
+  switch (status) {
+    case "approved":
+    case "complete":
+    case "completed":
+    case "submitted":
+      return "completed";
+    case "denied":
+    case "missed":
+    case "expired":
+      return "missed";
+    case "churned_and_returned":
+      return "churned_and_returned";
+    default:
+      return "completed";
+  }
+}
+
+// Derives the household_has_children flag from packet_answers. Looks for
+// a few known answer-key patterns; returns false when nothing matches.
+function deriveHasChildren(
+  answers: Array<{ question_key: string; applicant_answer: string | null }>,
+): boolean {
+  for (const a of answers) {
+    if (!a.applicant_answer) continue;
+    const key = a.question_key.toLowerCase();
+    const val = a.applicant_answer.toLowerCase();
+    if (key.includes("has_children") || key.includes("household_has_children")) {
+      return val === "true" || val === "yes" || val === "1";
+    }
+    if (key.includes("children_count") || key.includes("num_children")) {
+      const n = parseInt(a.applicant_answer, 10);
+      if (Number.isFinite(n) && n > 0) return true;
+    }
+  }
+  return false;
+}
 
 // ── Verification Summary ──────────────────────────────────────────────────────
 
