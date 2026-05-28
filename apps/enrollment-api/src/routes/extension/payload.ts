@@ -19,10 +19,21 @@
 import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
 import { makeServiceClient } from "../../lib/supabase.js";
+import { withActorContext } from "../../middleware/actorContext.js";
 import { rateLimit } from "../../lib/rate-limit.js";
-import type { Env } from "../../types.js";
+import type { Actor, Env } from "../../types.js";
 
 const app = new Hono<{ Bindings: Env }>();
+
+// Synthetic actor for audit attribution on all extension-route DB access.
+// Per /plan-eng-review A2 (2026-05-27): every gateway write should set
+// app.actor_* via withActorContext so audit triggers attribute the action
+// rather than logging NULL. When per-CBO bearer tokens land, this becomes
+// 'cbo_assister' with a real org_id derived from the token.
+const EXTENSION_ACTOR: Actor = {
+  kind: "extension",
+  id: "civica-submitter-ext",
+};
 
 app.get("/packets/:packetId/payload", rateLimit("standard"), async (c) => {
   const bearer = c.req.header("Authorization");
@@ -41,7 +52,11 @@ app.get("/packets/:packetId/payload", rateLimit("standard"), async (c) => {
   const packetId = c.req.param("packetId");
   if (!packetId) throw new HTTPException(400, { message: "packetId is required" });
 
-  const db = makeServiceClient(c.env);
+  // Set actor so withActorContext + downstream audit triggers attribute
+  // reads to 'extension'. The payload endpoint is read-only but the actor
+  // context is cheap to set and keeps the pattern consistent with confirm.ts.
+  c.set("actor", EXTENSION_ACTOR);
+  const db = await withActorContext(c);
 
   // 1. Packet + applicant join (mirrors benefitscal.prepare-export at L101-110).
   const { data: packet, error: packetErr } = await db

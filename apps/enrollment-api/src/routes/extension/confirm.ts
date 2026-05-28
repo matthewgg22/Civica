@@ -19,13 +19,20 @@ import { HTTPException } from "hono/http-exception";
 import { zValidator } from "@hono/zod-validator";
 import { z } from "zod";
 import { makeServiceClient } from "../../lib/supabase.js";
+import { withActorContext } from "../../middleware/actorContext.js";
 import { rateLimit } from "../../lib/rate-limit.js";
-import type { Env } from "../../types.js";
+import type { Actor, Env } from "../../types.js";
 
 const bodySchema = z.object({
   benefitscal_confirmation_number: z.string().min(1).max(64),
   benefitscal_application_id: z.string().min(1).max(64).optional(),
 });
+
+// Synthetic actor for audit attribution. See payload.ts for rationale.
+const EXTENSION_ACTOR: Actor = {
+  kind: "extension",
+  id: "civica-submitter-ext",
+};
 
 const app = new Hono<{ Bindings: Env }>();
 
@@ -51,7 +58,11 @@ app.post(
     if (!packetId) throw new HTTPException(400, { message: "packetId is required" });
 
     const body = c.req.valid("json");
-    const db = makeServiceClient(c.env);
+
+    // Set actor + acquire actor-context-scoped DB client so audit triggers
+    // attribute the write to 'extension' instead of NULL. See A2 finding.
+    c.set("actor", EXTENSION_ACTOR);
+    const db = await withActorContext(c);
 
     // Sanity check: packet exists.
     const { data: packet, error: packetErr } = await db
@@ -66,6 +77,17 @@ app.post(
     }
     if (packetErr) throw new HTTPException(500, { message: packetErr.message });
     if (!packet) throw new HTTPException(404, { message: "Packet not found" });
+
+    // A3: packet must have an assigned org before we can record a submission.
+    // The defensive insert path needs org_id (FK to staff_orgs). Without it
+    // we'd violate the FK and 500 with an opaque DB error — return a clear
+    // 422 instead so the navigator can resolve the upstream data gap.
+    if (!packet.org_id) {
+      throw new HTTPException(422, {
+        message:
+          "Packet has no assigned org. Assign a navigator/CBO to the packet before recording a BenefitsCal submission.",
+      });
+    }
 
     // Look for an in-flight submission row to upgrade.
     const { data: existing } = await db
@@ -109,14 +131,15 @@ app.post(
       return c.json({ ...updated, idempotent: false }, 200);
     }
 
-    // Defensive insert when no prior row exists.
+    // Defensive insert when no prior row exists. org_id is guaranteed non-null
+    // by the 422 check above.
     const { data: inserted, error: insertErr } = await db
       .schema("snap_enrollment")
       .from("benefitscal_submissions")
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       .insert({
         packet_id: packetId,
-        org_id: packet.org_id ?? "",
+        org_id: packet.org_id,
         payload_json: { source: "extension_confirmation_only" },
         status: "succeeded",
         consent_type: "async_portal",

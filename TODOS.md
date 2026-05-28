@@ -524,3 +524,42 @@ Helper: `pillarReductionAtFullEngagement()` returns the per-pillar pp breakdown 
 **Priority:** P3 — deferred
 **Depends on:** The Assignment (named CBO ED commitment); MA SAR7 cadence data
 
+---
+
+## TODO-38 — Per-CBO bearer tokens for Civica Submitter extension
+
+**What:** Replace the single shared `EXTENSION_BEARER_TOKEN` with a `cbo_extension_tokens` table mapping tokens to `staff_orgs.org_id`. Gateway routes under `/v1/enrollment/extension/*` filter packets by the token's org and audit-log the org_id alongside the synthetic `extension` actor.
+**Why:** Today every assister at every partner CBO would share the same token. That defeats per-org RLS, makes revocation a global event, and gives no per-CBO usage attribution. Blocks Model B at any partner count > 1.
+**Pros:** Real multi-tenant story; per-CBO revocation; per-CBO rate limits; clean audit attribution; matches the existing pattern of `staff_users.org_id`.
+**Cons:** Adds a token-issuance flow (admin UI or CLI) and onboarding step; extension options page needs a "which org are you?" capture or token-bound org lookup.
+**Context:** Introduced in claude/civica-submission-lane (commit d756ce8d, 2026-05-27). The README under `apps/civica-submitter-extension/` explicitly flags this as v2. The single-token design is intentional MVP scope.
+**Effort:** S-M (human ~1 d / CC ~3 hr — table migration, gateway route refactor, options-page UX, docs)
+**Priority:** P2 — blocks second-partner onboarding
+**Depends on:** First partner CBO sign-off (proves the extension is worth scaling)
+
+---
+
+## TODO-39 — Civica Submitter extension CI/CD + Chrome Web Store packaging
+
+**What:** GitHub Actions workflow that runs `pnpm --filter @civica/civica-submitter-extension build` on push to main, archives `apps/civica-submitter-extension/dist/`, attaches the zip as a release artifact, and (later) submits to the Chrome Web Store. Includes manifest-version validation, smoke test of `dist/manifest.json`, and per-tag versioning.
+**Why:** Sideload-only with dev-mode install doesn't scale. Once one partner CBO is using the extension, every fix requires manually rebuilding + redistributing the zip. CWS review is 2-3 weeks lead time — start the listing now so it's ready when adoption arrives.
+**Pros:** Automated builds; auditable distribution; auto-updates for assisters; signed installs.
+**Cons:** Chrome Web Store requires privacy disclosure, store listing assets (screenshots, icon, description), and a Google developer account ($5 one-time + ongoing compliance). Submission rejections are common on first pass.
+**Context:** Documented as "Out of scope for MVP" in the extension README. Pre-store CI (build + dist zip artifact) is independently useful and can land before the store listing.
+**Effort:** M (human ~2 d / CC ~4 hr for CI; +1 week of human time for store listing + review cycle)
+**Priority:** P2 — blocks scaling past hand-coordinated installs
+**Depends on:** TODO-38 (per-CBO tokens) for the store listing to be honest about multi-tenancy; first-partner adoption signal
+
+---
+
+## TODO-40 — PII Fernet decryption helper for SNAP_FERNET_KEY
+
+**What:** Implement a `decryptPii(ciphertext: string, env: Env): Promise<string>` helper at `apps/enrollment-api/src/lib/fernet.ts` using WebCrypto + `SNAP_FERNET_KEY`. Wire it into the BenefitsCal `/prepare-export`, `/extension/payload`, and the Phase 2 server-side submitter so applicant PII (name, DOB, phone, address) arrives at the actuators decrypted.
+**Why:** Every BenefitsCal-bound flow today returns ciphertext for PII columns because Phase-1 deferred decryption (note in `apps/enrollment-api/src/routes/benefitscal.ts:17`: "Phase 2 will decrypt via the Fernet key and normalizeForPortal before Playwright field-fill"). Without decryption, neither the server-side submitter nor the extension can actually fill name/DOB/phone/address into the portal — the entire submission lane is structurally inoperative even after TODO-14 (selector capture) lands.
+**Pros:** Unlocks both actuator surfaces (server-side Playwright + extension) simultaneously. Plus point: a real decryption helper retires a TODO that's been latent since the original BenefitsCal route shipped.
+**Cons:** Workers can't import Python's `cryptography` package; Fernet on WebCrypto requires a custom implementation (HMAC-SHA256 verify + AES-128-CBC decrypt with the right key derivation). Crypto code needs careful review — test against known-good Python-encrypted ciphertexts to validate compatibility. Roughly 100-200 lines of crypto + tests.
+**Context:** `SNAP_FERNET_KEY` is declared in `apps/enrollment-api/src/types.ts:5` and `apps/enrollment-api/src/test/helpers.ts:9`. Search for `SNAP_FERNET_KEY` shows it's referenced in 3 lib + 3 route files but no module actually USES it for decryption. iOS encrypts PII before write (the `snap_v1::` prefix). Same Fernet primitive is used elsewhere in the Python `apps/backend/` engine.
+**Effort:** M-L (human ~1 d for the helper, +0.5 d for compatibility testing with Python-encrypted fixtures, +0.5 d for wire-in across consumers / CC ~4-6 hr)
+**Priority:** P1 — blocks end-to-end live operation alongside TODO-14. The two together are the gate to "first real submission."
+**Depends on:** Known-good Python-encrypted ciphertext fixtures for compatibility testing.
+

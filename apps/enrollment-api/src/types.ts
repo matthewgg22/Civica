@@ -92,7 +92,19 @@ export interface Variables {
   requestId: string;
 }
 
-export type ActorKind = "applicant" | "navigator" | "admin" | "system" | "api_key" | "buddy" | "operator";
+export type ActorKind =
+  | "applicant"
+  | "navigator"
+  | "admin"
+  | "system"
+  | "api_key"
+  | "buddy"
+  | "operator"
+  // Civica Submitter browser extension (Model B). Used by the
+  // /v1/enrollment/extension/* routes so their DB writes carry a
+  // distinguishable actor in the audit trail. When per-CBO bearer
+  // tokens land, this becomes 'cbo_assister' with a real org_id.
+  | "extension";
 
 export interface Actor {
   kind: ActorKind;
