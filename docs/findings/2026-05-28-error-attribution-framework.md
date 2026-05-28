@@ -1,7 +1,7 @@
 ---
 id: 2026-05-28-error-attribution-framework
 date: 2026-05-28
-scope: [error-rate-engine, architecture, snap-rules]
+scope: [snap-qc-engine, architecture, snap-rules]
 confidence: medium
 status: active
 supersedes: []
@@ -9,10 +9,10 @@ superseded_by: []
 evidence:
   - kind: pr
     ref: "https://github.com/matthewgg22/Civica/pull/199"
-    note: "Current `scoreErrorRisk()` v0.2.0 — a single scalar per packet. No per-slice attribution, no calibration to ground truth."
+    note: "PR #199 shipped `scoreErrorRisk()` v0.2.0. Since bumped to v0.3.0 via the /qc redesign (weighted element-attribution model). Still emits one tier/score per packet: no per-slice attribution, no calibration to ground truth."
   - kind: file
-    ref: packages/error-rate-engine/src/scoreErrorRisk.ts
-    note: "Implementation of the scalar to be replaced with a per-slice Bayesian weight."
+    ref: packages/snap-qc-engine/src/scoring/error-risk.ts
+    note: "Actual scorer (v0.3.0). A weighted element-attribution model — `ERROR_WEIGHT` (USDA CA FY2023) × `DEFENSIBILITY_ERROR_PROB`, renormalized. NOT per-cohort constants. To be extended with per-slice Bayesian weights read from the rollup."
   - kind: memory
     ref: project_error_rate_engine
     note: "PR #199 status. Open items: staging migration apply, RLS verify, iOS badge UI, CDSS FOIA."
@@ -26,7 +26,7 @@ evidence:
 
 ## What we found
 
-`scoreErrorRisk()` is a scalar — useful as a leaderboard sort key, but **structurally unable** to answer "where do errors emerge?", "which rule is overfiring in Fresno?", or "is the spike at intake or at verification?" Those are exactly the questions the caseworker-mode pitch and the Unrath retention pillar both need to answer.
+`scoreErrorRisk()` (v0.3.0, a weighted element-attribution model) collapses to **one tier/score per packet** — useful as a leaderboard sort key, but **structurally unable** to answer "where do errors emerge?", "which rule is overfiring in Fresno?", or "is the spike at intake or at verification?" Those are exactly the questions the caseworker-mode pitch and the Unrath retention pillar both need to answer.
 
 Proposed architecture is a 3-layer composition (none of these layers individually is the answer):
 
@@ -38,7 +38,7 @@ PolicyEngine US (offline fixtures only — AGPL-3.0 prevents runtime linking) is
 
 ## Why it matters
 
-- **Replaces the scalar without breaking it.** `scoreErrorRisk()` keeps its signature; internals swap the per-cohort constants for a Beta-Binomial read against the rollup table. iOS badge UI doesn't need to change.
+- **Extends the scorer without breaking it.** `scoreErrorRisk()` keeps its signature; internals swap the static `ERROR_WEIGHT` element constants for a Beta-Binomial read against the rollup table. iOS badge UI doesn't need to change.
 - **One schema covers all three pillars.** County / intake-QC (primary pitch), retention / Type-1 reduction (Unrath), and the demo / heatmap track all write to and read from the same `error_events` table. No parallel pipelines.
 - **Auditable.** Every weight traces back to the events that produced it; every event traces back to a source + occurred_at. That trail is what makes the B2G pitch defensible under the USDA Advanced Automation guidance.
 
@@ -49,8 +49,8 @@ Sequenced — **not yet implemented**, this finding is the proposal:
 1. Migration: `error_events` table superseding `packet_qc_samples` (keep `packet_qc_samples` as a view for back-compat).
 2. Wire snap-rules failures, OCR-mismatch events, retention-scorer outputs, and county-kickback events to write into `error_events`.
 3. Materialized view for `(rule_id × county)` rollup with Beta-Binomial posterior columns.
-4. Replace `scoreErrorRisk()` v0.2.0 constants with a rollup read; bump to v0.3.0.
-5. Stub causal DAG as a YAML in `packages/error-rate-engine/dag.yaml`; render in Datasette later.
+4. Replace `scoreErrorRisk()` static `ERROR_WEIGHT` constants with a rollup read; bump v0.3.0 → v0.4.0.
+5. Stub causal DAG as a YAML in `packages/snap-qc-engine/dag.yaml`; render in Datasette later.
 
 Not chosen alternatives + why:
 - **Feature store (Feast / Tecton)** — solves serving/offline parity, not attribution. Doesn't tell us *where* errors emerge.
@@ -59,8 +59,10 @@ Not chosen alternatives + why:
 
 ## Open questions
 
-- **Update cadence.** Online conjugate update on every event vs. nightly batch? Probably nightly to start; online is a v0.4 question.
+- **Update cadence.** Online conjugate update on every event vs. nightly batch? Probably nightly to start; online is a later-version question (post-v0.4).
 - **Hierarchical priors.** Empirical-Bayes shrinkage to parent slice is standard, but pinning the prior strength `(α₀, β₀)` is a judgment call. Start with weak priors `(1, 1)` and tune from real volume.
 - **Causal DAG schema.** Use an existing format (DOT, mermaid, networkx JSON) or coin our own YAML? Coining is faster; existing format pays off once we want to render the graph in Datasette + Quarto.
+
+**Reviewed design:** `docs/plans/error-attribution-ledger.md` — locked via `/plan-eng-review` 2026-05-28 (seven design decisions; corrects this finding's scope). Build tracked as TODO-41.
 
 Related: [[2026-05-28-evidence-ledger-architecture]] — same evidence-grounded pattern applied to analysis rather than errors. [[2026-05-28-test-prefix-empty]] — illustrates why we need an audit trail at all.
