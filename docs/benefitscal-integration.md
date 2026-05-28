@@ -1,15 +1,9 @@
 # BenefitsCal CBO Integration Design
 
-**Status:** SUPERSEDED 2026-05-27 by [docs/designs/submission-lane-v1.md](./designs/submission-lane-v1.md)
-**Reason:** Architectural disagreement on actuator location (server-side Playwright vs. browser extension) and ABCDM 229 storage. See the new doc's "Why this supersedes the locked design" section.
-**Original status:** LOCKED 2026-05-18 via /plan-eng-review T13 investigation spike
-**Pattern (superseded):** Hybrid navigator workflow + Playwright UI automation (no API exists)
-**Owner (superseded):** Coordinator session (claude/clever-albattani-816917)
-**Critical non-eng blocker (still applies):** BenefitsCal CBO Manager account approval (county-gated, ~2-4 weeks)
-
-> The text below is preserved verbatim for historical reference. Do not implement against this spec.
-
----
+**Status:** LOCKED 2026-05-18 via /plan-eng-review T13 investigation spike
+**Pattern:** Hybrid navigator workflow + Playwright UI automation (no API exists)
+**Owner:** Coordinator session (claude/clever-albattani-816917)
+**Critical non-eng blocker:** BenefitsCal CBO Manager account approval (county-gated, ~2-4 weeks)
 
 ## Summary
 
