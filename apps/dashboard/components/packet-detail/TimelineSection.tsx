@@ -4,18 +4,18 @@ import { formatDateTime, docKindLabel, formatDate, timeAgo } from "../../lib/for
 
 export function TimelineSkeleton() {
   return (
-    <section className="bg-surface border border-hairline rounded-[4px] p-6 space-y-1 animate-pulse">
-      <div className="h-3 w-36 bg-paper rounded mb-4" />
+    <div className="space-y-1 animate-pulse">
+      <div className="h-3 w-36 bg-surface rounded mb-4" />
       {[1, 2, 3, 4].map((i) => (
         <div key={i} className="flex items-start gap-3 py-2">
-          <div className="w-8 h-8 rounded-full bg-paper shrink-0" />
+          <div className="w-8 h-8 rounded-full bg-surface shrink-0" />
           <div className="flex-1 space-y-1.5 pt-1.5">
-            <div className="h-3 bg-paper rounded" style={{ width: `${55 + i * 8}%` }} />
+            <div className="h-3 bg-surface rounded" style={{ width: `${55 + i * 8}%` }} />
           </div>
-          <div className="h-3 w-20 bg-paper rounded shrink-0 mt-2" />
+          <div className="h-3 w-20 bg-surface rounded shrink-0 mt-2" />
         </div>
       ))}
-    </section>
+    </div>
   );
 }
 
@@ -328,13 +328,10 @@ export default async function TimelineSection({
   void formatDate;
 
   return (
-    <section className="bg-surface border border-hairline rounded-[4px] p-6">
-      <div className="mb-5">
-        <h2 className="section-title">Activity Timeline</h2>
-        <p className="section-sub mt-1 leading-snug">
-          Status changes, document work, and every automated review — in order.
-        </p>
-      </div>
+    <>
+      <p className="section-sub leading-snug -mt-1 mb-4">
+        Status changes, document work, and every automated review — in order.
+      </p>
       <UnifiedTimeline
         history={history as HistoryRow[]}
         docs={docs}
@@ -344,6 +341,6 @@ export default async function TimelineSection({
         argyleConn={argyleConn}
         wrStatus={wrStatus as WrLite}
       />
-    </section>
+    </>
   );
 }

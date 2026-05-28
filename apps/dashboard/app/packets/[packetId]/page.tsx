@@ -9,6 +9,7 @@ import TimelineSection, { TimelineSkeleton } from "../../../components/packet-de
 import DocumentsSection, { DocumentsSkeleton } from "../../../components/packet-detail/DocumentsSection";
 import VerificationSection, { VerificationSkeleton } from "../../../components/packet-detail/VerificationSection";
 import RiskTabSection, { RiskTabSkeleton } from "../../../components/packet-detail/RiskTabSection";
+import EvidenceSection from "../../../components/packet-detail/EvidenceSection";
 import StatusTransition, { type Blocker } from "../../../components/StatusTransition";
 import ConsentCapture from "../../../components/ConsentCapture";
 import ExtractionFieldList from "../../../components/ExtractionFieldList";
@@ -16,6 +17,7 @@ import AnswerReviewList from "../../../components/AnswerReviewList";
 import StatusPill from "../../../components/StatusPill";
 import LifecycleStrip from "../../../components/LifecycleStrip";
 import HandoffPanel from "../../../components/HandoffPanel";
+import BenefitsCalPanel from "../../../components/BenefitsCalPanel";
 import ExpeditedReviewGate from "./ExpeditedReviewGate";
 import ShelterAllocationPanel from "../../../components/ShelterAllocationPanel";
 import type { ShelterAllocation } from "../../../components/ShelterAllocationPanel";
@@ -419,11 +421,14 @@ export default async function PacketDetailPage({
     verificationSummary.income.flagged,
   ].filter(Boolean).length;
 
+  const unresolvedDocsCount = unresolvedDocsResult.data?.length ?? 0;
+  const unreviewedFieldsCount = unreviewedFieldsResult.data?.length ?? 0;
+
   const blockers: Blocker[] = [];
-  if ((unresolvedDocsResult.data?.length ?? 0) > 0)
-    blockers.push({ kind: "unresolved_docs", label: "Required documents not yet resolved", count: unresolvedDocsResult.data!.length });
-  if ((unreviewedFieldsResult.data?.length ?? 0) > 0)
-    blockers.push({ kind: "unreviewed_fields", label: "Extraction fields flagged for review", count: unreviewedFieldsResult.data!.length });
+  if (unresolvedDocsCount > 0)
+    blockers.push({ kind: "unresolved_docs", label: "Required documents not yet resolved", count: unresolvedDocsCount });
+  if (unreviewedFieldsCount > 0)
+    blockers.push({ kind: "unreviewed_fields", label: "Extraction fields flagged for review", count: unreviewedFieldsCount });
   if (!hasConsent)
     blockers.push({ kind: "missing_consent", label: "Privacy notice consent not on file" });
 
@@ -817,6 +822,10 @@ export default async function PacketDetailPage({
           <RecertBanner status={packet.status} handedOffAt={packet.handed_off_at} recert={recert} />
         )}
 
+        {/* ── DECIDE zone — sign-off gates + actions. Same-weight cards, all
+            open. The reviewer's "what do I do?" surface. See
+            docs/plans/packet-detail-decide-evidence-layout.md. ─────────── */}
+
         {/* Review Status — the single at-a-glance answer to
             "is this packet safe to hand off, and if not, what's next."
             Consolidates verification strength, automated checks,
@@ -870,18 +879,6 @@ export default async function PacketDetailPage({
           </Section>
         )}
 
-        {/* Failure-to-elect — unclaimed deductions / elections */}
-        <Section
-          title="Missed Elections"
-          subtitle={
-            missedElections.length > 0
-              ? `${missedElections.length} unclaimed deduction${missedElections.length > 1 ? "s" : ""} detected — ${new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(missedElectionsTotal)}/mo potential`
-              : "All applicable elections and deductions appear to be claimed"
-          }
-        >
-          <MissedElectionsPanel elections={missedElections} totalMonthlyValue={missedElectionsTotal} />
-        </Section>
-
         {/* Expedited review gate — OBBBA §10102(a) compliance */}
         {showExpeditedGate && <ExpeditedReviewGate packetId={packetId} />}
 
@@ -892,64 +889,22 @@ export default async function PacketDetailPage({
           </Section>
         )}
 
-        {/* Packet metadata — compact horizontal strip */}
-        <section className="bg-surface border border-hairline rounded-[4px] px-6 py-4">
-          <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-[14px]">
-            <MetaInline label="State"     value={packet.state_code} />
-            <MetaInline label="County"    value={packet.county ?? "—"} />
-            <MetaInline label="Created"   value={formatDateTime(packet.created_at)} mono />
-            <MetaInline label="Submitted" value={packet.submitted_at ? formatDateTime(packet.submitted_at) : "—"} mono={!!packet.submitted_at} />
-            {packet.handed_off_at && <MetaInline label="Handed Off" value={formatDateTime(packet.handed_off_at)} mono />}
-            <MetaInline label="Language"  value={language ?? "—"} />
-          </div>
-        </section>
-
-        {/* Answers */}
-        <Section title="Application Answers" count={answers.length} subtitle="Responses from the eligibility questionnaire.">
-          {answers.length === 0 ? (
-            <EmptyState
-              title="No answers yet"
-              description="will appear as applicant completes the eligibility flow"
-            />
-          ) : (
-            <AnswerReviewList answers={answers as unknown as React.ComponentProps<typeof AnswerReviewList>["answers"]} />
-          )}
+        {/* BenefitsCal automated submission (Phase 2 — runs the CBO Assister
+            Playwright pipeline against the real portal). Sits above the manual
+            export panel so it's the primary CA path; HandoffPanel below is the
+            fallback for environments where the driver isn't wired. */}
+        <Section
+          title="BenefitsCal Submission"
+          subtitle="Send the prepared packet to BenefitsCal via the CBO Assister automation. Prepare → review payload → submit; the background worker drives the live portal."
+        >
+          <BenefitsCalPanel
+            packetId={packetId}
+            packetStatus={packet.status}
+            blockerCount={blockers.length}
+          />
         </Section>
 
-        {/* Extraction field review */}
-        {fields.length > 0 && (
-          <Section
-            title="Extracted Fields"
-            subtitle="Values extracted by OCR from uploaded documents. Fields below 85% confidence require review."
-          >
-            <ExtractionFieldList fields={fields} />
-          </Section>
-        )}
-
-        {/* API Cross-Verification */}
-        {/* API Cross-Verification */}
-        <Suspense fallback={<VerificationSkeleton />}>
-          <VerificationSection summary={verificationSummary} flagCount={verificationFlagCount} />
-        </Suspense>
-
-        {/* Documents, checklist, and missing-item requests — deferred (docItems fetched by section) */}
-        <Suspense fallback={<DocumentsSkeleton />}>
-          <DocumentsSection
-            packetId={packetId}
-            applicantId={packet.applicant_id}
-            stateCode={packet.state_code as string}
-            uploadedDocs={docs as Array<{ document_id: string; document_kind: string; original_filename: string | null; processing_status: string; uploaded_at: string }>}
-            fields={fields as Array<{ field_id: string; extraction_id: string; field_key: string; field_label: string; original_ocr_value: string | null; applicant_answer: string | null; navigator_confirmed_value: string | null; confidence: number; needs_review: boolean; reviewed_at: string | null; review_note: string | null }>}
-            extractionsByDoc={extractionsByDoc}
-          />
-        </Suspense>
-
-        {/* Notes — deferred (fetched inside NotesSection) */}
-        <Suspense fallback={<NotesSkeleton />}>
-          <NotesSection packetId={packetId} />
-        </Suspense>
-
-        {/* Handoff export */}
+        {/* Handoff export (manual fallback) */}
         <Section
           title="Handoff &amp; Export"
           subtitle="Generate a structured packet for the official SNAP application channel. Civica does not determine eligibility."
@@ -961,16 +916,117 @@ export default async function PacketDetailPage({
           />
         </Section>
 
-        {/* Activity timeline — deferred (history + notes fetched by section; docs/extractions/riskHistory/argyleConn passed from page batch) */}
-        <Suspense fallback={<TimelineSkeleton />}>
-          <TimelineSection
-            packetId={packetId}
-            riskHistory={errorRiskHistory}
-            docs={docs as Array<{ document_id: string; document_kind: string; uploaded_at: string; original_filename: string | null }>}
-            extractions={extractions as Array<{ extraction_id: string; document_id: string; extracted_at: string; extractor_model: string | null; overall_confidence: number | null; uploaded_documents: { document_kind: string; original_filename: string | null } | null }>}
-            argyleConn={argyleResult.data as { linked_at: string | null } | null}
-          />
-        </Suspense>
+        {/* ── EVIDENCE zone — source material + computed advisory. Collapsible
+            <details> rows. Auto-open when underlying data has flags;
+            otherwise closed. Summary chip text announces state so a closed
+            row never hides a problem. ─────────────────────────────────── */}
+        <div className="pt-6">
+          <p className="eyebrow mb-3">Evidence</p>
+          <div className="space-y-3">
+
+            {/* Documents — required checklist, missing-item requests, uploaded grid */}
+            <EvidenceSection
+              title="Documents"
+              count={docs.length}
+              summary={unresolvedDocsCount > 0 ? `${unresolvedDocsCount} unresolved` : "all received"}
+              flagged={unresolvedDocsCount > 0}
+            >
+              <Suspense fallback={<DocumentsSkeleton />}>
+                <DocumentsSection
+                  packetId={packetId}
+                  applicantId={packet.applicant_id}
+                  stateCode={packet.state_code as string}
+                  uploadedDocs={docs as Array<{ document_id: string; document_kind: string; original_filename: string | null; processing_status: string; uploaded_at: string }>}
+                  fields={fields as Array<{ field_id: string; extraction_id: string; field_key: string; field_label: string; original_ocr_value: string | null; applicant_answer: string | null; navigator_confirmed_value: string | null; confidence: number; needs_review: boolean; reviewed_at: string | null; review_note: string | null }>}
+                  extractionsByDoc={extractionsByDoc}
+                />
+              </Suspense>
+            </EvidenceSection>
+
+            {/* Application Answers — reference, never auto-open */}
+            <EvidenceSection title="Application Answers" count={answers.length}>
+              {answers.length === 0 ? (
+                <EmptyState
+                  title="No answers yet"
+                  description="will appear as applicant completes the eligibility flow"
+                />
+              ) : (
+                <AnswerReviewList answers={answers as unknown as React.ComponentProps<typeof AnswerReviewList>["answers"]} />
+              )}
+            </EvidenceSection>
+
+            {/* Extracted Fields — auto-open when any need review */}
+            {fields.length > 0 && (
+              <EvidenceSection
+                title="Extracted Fields"
+                count={fields.length}
+                summary={unreviewedFieldsCount > 0 ? `${unreviewedFieldsCount} need review` : "all reviewed"}
+                flagged={unreviewedFieldsCount > 0}
+              >
+                <ExtractionFieldList fields={fields} />
+              </EvidenceSection>
+            )}
+
+            {/* API Cross-Verification — auto-open when flagged */}
+            <EvidenceSection
+              id="api-verification"
+              title="API Cross-Verification"
+              summary={verificationFlagCount > 0
+                ? `${verificationFlagCount} flag${verificationFlagCount === 1 ? "" : "s"}`
+                : "no flags"}
+              flagged={verificationFlagCount > 0}
+            >
+              <Suspense fallback={<VerificationSkeleton />}>
+                <VerificationSection summary={verificationSummary} flagCount={verificationFlagCount} />
+              </Suspense>
+            </EvidenceSection>
+
+            {/* Missed Elections — advisory; auto-open when any detected */}
+            <EvidenceSection
+              title="Missed Elections"
+              count={missedElections.length}
+              summary={missedElections.length > 0
+                ? `${new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(missedElectionsTotal)}/mo potential`
+                : "all claimed"}
+              flagged={missedElections.length > 0}
+            >
+              <MissedElectionsPanel elections={missedElections} totalMonthlyValue={missedElectionsTotal} />
+            </EvidenceSection>
+
+            {/* Notes — reference, never auto-open */}
+            <EvidenceSection title="Navigator Notes">
+              <Suspense fallback={<NotesSkeleton />}>
+                <NotesSection packetId={packetId} />
+              </Suspense>
+            </EvidenceSection>
+
+            {/* Activity Timeline — reference, never auto-open */}
+            <EvidenceSection title="Activity Timeline">
+              <Suspense fallback={<TimelineSkeleton />}>
+                <TimelineSection
+                  packetId={packetId}
+                  riskHistory={errorRiskHistory}
+                  docs={docs as Array<{ document_id: string; document_kind: string; uploaded_at: string; original_filename: string | null }>}
+                  extractions={extractions as Array<{ extraction_id: string; document_id: string; extracted_at: string; extractor_model: string | null; overall_confidence: number | null; uploaded_documents: { document_kind: string; original_filename: string | null } | null }>}
+                  argyleConn={argyleResult.data as { linked_at: string | null } | null}
+                />
+              </Suspense>
+            </EvidenceSection>
+
+            {/* Packet metadata — collapsed row in Evidence zone */}
+            <EvidenceSection title="Packet metadata">
+              <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-[14px]">
+                <MetaInline label="State"     value={packet.state_code} />
+                <MetaInline label="County"    value={packet.county ?? "—"} />
+                <MetaInline label="Created"   value={formatDateTime(packet.created_at)} mono />
+                <MetaInline label="Submitted" value={packet.submitted_at ? formatDateTime(packet.submitted_at) : "—"} mono={!!packet.submitted_at} />
+                {packet.handed_off_at && <MetaInline label="Handed Off" value={formatDateTime(packet.handed_off_at)} mono />}
+                <MetaInline label="Language"  value={language ?? "—"} />
+              </div>
+            </EvidenceSection>
+
+          </div>
+        </div>
 
         {devtoolsEnabled ? (
           <Section title="Compliance Narrative (devtools)" subtitle="Proof-of-life: rendered from @civica/snap-compliance-copy.">

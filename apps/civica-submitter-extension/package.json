@@ -1,0 +1,24 @@
+{
+  "name": "@civica/civica-submitter-extension",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Chrome MV3 extension — autofills BenefitsCal CBO Manager forms from a Civica packet. Sideload-only MVP for partner-CBO trials.",
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@civica/benefitscal-cbo": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.0.270",
+    "@types/node": "^20.11.0",
+    "@vitest/coverage-v8": "^2.1.9",
+    "esbuild": "^0.24.0",
+    "jsdom": "^25.0.0",
+    "typescript": "^5.5.0",
+    "vitest": "^2.1.9"
+  }
+}

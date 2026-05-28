@@ -1,0 +1,24 @@
+{
+  "manifest_version": 3,
+  "name": "Civica Submitter",
+  "version": "0.0.1",
+  "description": "Autofill BenefitsCal CBO Manager forms from a Civica packet. Internal trial build.",
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://benefitscal.com/cbo/*", "https://*.benefitscal.com/cbo/*"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "options_page": "options.html",
+  "permissions": ["storage", "activeTab"],
+  "host_permissions": [
+    "https://benefitscal.com/*",
+    "https://*.benefitscal.com/*"
+  ],
+  "minimum_chrome_version": "120"
+}

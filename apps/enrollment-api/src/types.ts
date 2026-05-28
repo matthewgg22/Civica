@@ -78,6 +78,13 @@ export interface Env {
   // incoming-webhook URL; when unset, drift logs to console but skips Slack.
   // Set via: wrangler secret put SLACK_OBSERVABILITY_WEBHOOK_URL
   SLACK_OBSERVABILITY_WEBHOOK_URL?: string;
+  // Civica Submitter browser extension (Model B — partner-CBO autofill).
+  // Bearer token the extension presents on every /extension/* call. When
+  // unset, the extension routes return 503 (feature dark). Set via:
+  //   wrangler secret put EXTENSION_BEARER_TOKEN
+  // MVP uses a single shared secret per environment; multi-tenant tokens
+  // come when more than one partner CBO is onboarded.
+  EXTENSION_BEARER_TOKEN?: string;
 }
 
 export interface Variables {
