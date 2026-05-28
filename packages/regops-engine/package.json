@@ -36,6 +36,7 @@
     "regops:poll": "bun ./scripts/poll.ts"
   },
   "dependencies": {
+    "@sentry/node": "^8.0.0",
     "@supabase/supabase-js": "^2.49.0"
   },
   "devDependencies": {

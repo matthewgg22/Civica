@@ -11,17 +11,17 @@ name: regops-poll
 # What this workflow does today (v1):
 #   - constructs the production adapter registry
 #   - runs one pollOnce() tick
-#   - prints snapshots to stdout (JSONL) and alerts to stderr
+#   - prints snapshots to stdout (JSONL)
+#   - routes alerts to Sentry via SentryAlertEmitter when the SENTRY_DSN
+#     repo secret is set; otherwise falls back to stderr-only output
 #   - fails the run on structural failure / source-wedged / unexpected
 #     throws (page-severity outcomes per the runbook)
 #
 # What this workflow does NOT do yet:
 #   - persist snapshots to Supabase (operator wires SupabaseSnapshotStore
 #     once regops_snapshots migration lands)
-#   - route alerts to Sentry (operator wires SentryAlertEmitter once
-#     SENTRY_DSN secret is set on the repo)
 #
-# Both wiring steps are documented in docs/regops/runbook.md.
+# The remaining wiring step is documented in docs/regops/runbook.md.
 
 on:
   schedule:
@@ -55,4 +55,11 @@ jobs:
 
       - name: Run polling tick
         working-directory: packages/regops-engine
+        env:
+          # SENTRY_DSN: Sentry project DSN for the `civica-regops` project.
+          # When set, SentryAlertEmitter routes page/warn alerts to Sentry
+          # (which alert rules then page on). When unset, alerts still
+          # land in the GH Actions stderr log but don't page anywhere.
+          # Provisioned manually via Settings → Secrets → Actions.
+          SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
         run: bun run regops:poll
