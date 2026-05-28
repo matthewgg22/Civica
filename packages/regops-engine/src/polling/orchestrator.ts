@@ -18,6 +18,7 @@
 //     will retry. The adapter base class already implements backoff
 //     enrichment for the retry-soon advice value.
 
+import { classifyTopics } from "../classifier/index.js";
 import { assertNever, type FetchResult } from "../sources/index.js";
 
 import type {
@@ -77,12 +78,19 @@ export async function pollOnce(options: PollOnceOptions): Promise<PollTickResult
       case "Success": {
         successes += 1;
         try {
+          // Topic classification runs over a JSON-ish stringification of
+          // the payload. We pass the raw data through JSON.stringify so
+          // adapter shape is uniform; the classifier already lowercases
+          // and substring-matches, so JSON quoting + commas don't
+          // interfere with keyword detection.
+          const topicTags = classifyTopics(JSON.stringify(result.data));
           await options.snapshotStore.record({
             sourceId: adapter.id,
             domainTag: adapter.domainTag,
             fetchedAt: result.fetchedAt,
             urlHash: result.urlHash,
             data: result.data,
+            topicTags,
           });
         } catch (err) {
           const message = err instanceof Error ? err.message : String(err);

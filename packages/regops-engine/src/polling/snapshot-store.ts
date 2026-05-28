@@ -54,6 +54,7 @@ export class JsonlSnapshotStore implements SnapshotStore {
       fetched_at: snapshot.fetchedAt.toISOString(),
       url_hash: snapshot.urlHash,
       data: snapshot.data,
+      topic_tags: snapshot.topicTags ?? [],
     };
     this.writer(JSON.stringify(payload));
   }
@@ -90,6 +91,10 @@ export class SupabaseSnapshotStore implements SnapshotStore {
       // pass the readonly TRaw[] without the SupabaseClient<any>
       // signature complaining about variance.
       data: snapshot.data as unknown as Record<string, unknown>,
+      // topic_tags is TEXT[] on the db side (migration 20260596).
+      // Default to [] when the orchestrator didn't classify so the
+      // NOT NULL DEFAULT array[] constraint isn't relied on.
+      topic_tags: snapshot.topicTags ?? [],
     };
 
     const { error } = await this.client

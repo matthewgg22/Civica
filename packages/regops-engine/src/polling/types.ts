@@ -21,6 +21,13 @@ export interface SnapshotRecord<TRaw = unknown> {
   readonly fetchedAt: Date;
   readonly urlHash: string;
   readonly data: readonly TRaw[];
+  /**
+   * Classifier-derived topic tags (e.g. ["obbba", "abawd"]). Defaults
+   * to empty array when not provided so legacy callers (in-memory
+   * tests etc.) don't have to update. Production orchestrator always
+   * sets this via classifyTopics() before record().
+   */
+  readonly topicTags?: readonly string[];
 }
 
 export interface SnapshotStore {
