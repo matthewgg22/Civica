@@ -101,9 +101,11 @@ export default async function FindingDetail({
   const supersedesFindings = finding.supersedes
     .map((sid) => getFinding(sid))
     .filter((f): f is Finding => f !== null);
-  const outgoingLinks = finding.links
-    .map((lid) => getFinding(lid))
-    .filter((f): f is Finding => f !== null);
+  // Outgoing references are intentionally NOT surfaced as a structured group:
+  // the body already carries a hand-written "Related:" prose line that names
+  // them AND explains *why* they relate (context this footer can't). The
+  // footer is reserved for relationships the prose can't express — the
+  // supersession chain and incoming backlinks (who references THIS finding).
 
   const transformedBody = rewriteMarkdownLinks(finding.body);
 
@@ -253,9 +255,7 @@ export default async function FindingDetail({
       {/* ----------------------------------------------------------------- */}
       {/* Supersession chain + backlinks                                    */}
       {/* ----------------------------------------------------------------- */}
-      {(supersedesFindings.length > 0 ||
-        outgoingLinks.length > 0 ||
-        incomingLinks.length > 0) && (
+      {(supersedesFindings.length > 0 || incomingLinks.length > 0) && (
         <section className="mt-12 border-t border-graphite/15 pt-8">
           <h2 className="text-sm font-semibold uppercase tracking-wider text-graphite">
             Related
@@ -263,9 +263,6 @@ export default async function FindingDetail({
           <dl className="mt-4 space-y-4 text-sm">
             {supersedesFindings.length > 0 && (
               <RelatedGroup label="Supersedes" findings={supersedesFindings} />
-            )}
-            {outgoingLinks.length > 0 && (
-              <RelatedGroup label="References" findings={outgoingLinks} />
             )}
             {incomingLinks.length > 0 && (
               <RelatedGroup label="Referenced by" findings={incomingLinks} />
