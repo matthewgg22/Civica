@@ -1,6 +1,11 @@
 import { cache } from "react";
 import { cookies } from "next/headers";
 import { createServerClientFromCookies } from "./supabase";
+import {
+  isDemoFallbackEnabled,
+  getDemoPacketDetail,
+  DEMO_HISTORY,
+} from "./demo-data";
 
 /**
  * React `cache()`-deduplicated server-side fetchers for packet-detail
@@ -20,9 +25,23 @@ import { createServerClientFromCookies } from "./supabase";
  *   getDocItems    → DocumentsSection (required_document_items)
  * Sections using cache dedup (data also needed above-fold by page):
  *   getWrStatus    → WorkRequirementsSection + TimelineSection
+ *
+ * Demo-mode short-circuit: when packetId starts with `demo-pkt-` AND
+ * isDemoFallbackEnabled() is true, return synthesized fixture data
+ * instead of hitting Supabase. The public /cbo-preview queue links
+ * directly into the navigator review surface using these IDs; the
+ * previewer has no Supabase session, and the pre-existing RLS
+ * recursion bug would otherwise hang every query → Vercel 504. See
+ * docs/plans/packet-detail-decide-evidence-layout.md (follow-up) and
+ * lib/demo-data.ts (single source of truth for demo fixtures).
  */
 
+function isDemoPacket(packetId: string): boolean {
+  return isDemoFallbackEnabled() && packetId.startsWith("demo-pkt-");
+}
+
 export const getNotes = cache(async (packetId: string) => {
+  if (isDemoPacket(packetId)) return [];
   const cookieStore = await cookies();
   const supabase = createServerClientFromCookies(cookieStore);
   const { data } = await supabase
@@ -36,6 +55,9 @@ export const getNotes = cache(async (packetId: string) => {
 });
 
 export const getStatusHistory = cache(async (packetId: string) => {
+  if (isDemoPacket(packetId)) {
+    return DEMO_HISTORY.filter((h) => h.packet_id === packetId);
+  }
   const cookieStore = await cookies();
   const supabase = createServerClientFromCookies(cookieStore);
   const { data } = await supabase
@@ -48,6 +70,7 @@ export const getStatusHistory = cache(async (packetId: string) => {
 });
 
 export const getDocItems = cache(async (packetId: string) => {
+  if (isDemoPacket(packetId)) return [];
   const cookieStore = await cookies();
   const supabase = createServerClientFromCookies(cookieStore);
   const { data } = await supabase
@@ -65,6 +88,9 @@ export const getDocItems = cache(async (packetId: string) => {
  * Returns null when the packet has never been evaluated.
  */
 export const getWrStatus = cache(async (packetId: string) => {
+  if (isDemoPacket(packetId)) {
+    return getDemoPacketDetail(packetId)?.wrStatus ?? null;
+  }
   const cookieStore = await cookies();
   const supabase = createServerClientFromCookies(cookieStore);
   const { data } = await supabase
