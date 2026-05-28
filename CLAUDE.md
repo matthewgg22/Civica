@@ -1,4 +1,14 @@
 
+## Commit message conventions
+
+Test work is tracked in retros by commit-prefix grep. Tag accordingly:
+
+- New or expanded test files → `test:` (or `test(<scope>):` to clarify — `test(qa):`, `test(design):`, `test(e2e):`).
+- **Post-merge bug fixes: the fix PR MUST include a `test(qa): <regression>` commit** reproducing the bug, separate from the `fix:` commit. No exceptions, even for one-line fixes.
+- Mixed feature + test diffs → split into a `feat:`/`fix:` commit and a `test:` commit so the prefix is greppable.
+
+Retro/health metric: `git log --since=… --pretty=%s | grep -cE '^test(\(|:)'` — should be non-zero any week with test work.
+
 ## Skill routing
 
 When the user's request matches an available skill, invoke it via the Skill tool. When in doubt, invoke the skill.
