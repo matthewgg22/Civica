@@ -2,41 +2,36 @@ import React from "react";
 import APIVerificationPanel from "../APIVerificationPanel";
 import type { VerificationSummary } from "../APIVerificationPanel";
 
+/**
+ * Chromeless body — wrapped by <EvidenceSection> on /packets/[id].
+ */
 export function VerificationSkeleton() {
   return (
-    <section className="bg-surface border border-hairline rounded-[4px] p-6 space-y-3 animate-pulse">
-      <div className="h-3 w-44 bg-paper rounded" />
+    <div className="space-y-3 animate-pulse">
+      <div className="h-3 w-44 bg-surface rounded" />
       <div className="space-y-2 mt-4">
         {[1, 2, 3].map((i) => (
-          <div key={i} className="h-12 bg-paper rounded" />
+          <div key={i} className="h-12 bg-surface rounded" />
         ))}
       </div>
-    </section>
+    </div>
   );
 }
 
 export default async function VerificationSection({
   summary,
-  flagCount,
 }: {
   summary: VerificationSummary;
-  flagCount: number;
+  /** Retained for compatibility with prior call sites; surface chrome lives on the wrapper now. */
+  flagCount?: number;
 }) {
   return (
-    <section id="api-verification" className="bg-surface border border-hairline rounded-[4px] p-6">
-      <div className="mb-5">
-        <div className="flex items-baseline gap-2">
-          <h2 className="section-title">API Cross-Verification</h2>
-          {flagCount > 0 && (
-            <span className="text-[12px] text-muted tabular-nums">({flagCount})</span>
-          )}
-        </div>
-        <p className="section-sub mt-1 leading-snug">
-          Rules-first accuracy checks: address deliverability, rent vs FMR, SUA tier, income OCR
-          vs reported, OBBBA compliance.
-        </p>
-      </div>
+    <div id="api-verification">
+      <p className="section-sub leading-snug -mt-1 mb-4">
+        Rules-first accuracy checks: address deliverability, rent vs FMR, SUA tier, income OCR vs
+        reported, OBBBA compliance.
+      </p>
       <APIVerificationPanel summary={summary} />
-    </section>
+    </div>
   );
 }

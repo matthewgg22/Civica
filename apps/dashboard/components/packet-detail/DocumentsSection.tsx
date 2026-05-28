@@ -6,14 +6,14 @@ import MissingItemRequestPanel from "../MissingItemRequestPanel";
 
 export function DocumentsSkeleton() {
   return (
-    <section className="bg-surface border border-hairline rounded-[4px] p-6 space-y-3 animate-pulse">
-      <div className="h-3 w-40 bg-paper rounded" />
+    <div className="space-y-3 animate-pulse">
+      <div className="h-3 w-40 bg-surface rounded" />
       <div className="grid grid-cols-3 gap-3 mt-4">
         {[1, 2, 3].map((i) => (
-          <div key={i} className="h-24 bg-paper rounded" />
+          <div key={i} className="h-24 bg-surface rounded" />
         ))}
       </div>
-    </section>
+    </div>
   );
 }
 
