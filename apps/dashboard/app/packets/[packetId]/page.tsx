@@ -59,6 +59,17 @@ export default async function PacketDetailPage({
   const devtoolsEnabled = resolvedSearchParams.devtools === "1";
   const tab = typeof resolvedSearchParams.tab === "string" ? resolvedSearchParams.tab : "overview";
 
+  // Reject stale-link IDs before they hit Supabase. Real packet IDs are UUIDs;
+  // demo IDs start with `demo-pkt-`. Anything else is a leftover from
+  // pre-#290 /cbo-preview tabs (where the queue rows pointed at `sample-1`
+  // etc.) or a typo. The RLS recursion bug hangs every Supabase query
+  // regardless of whether the row exists, so even a `notFound()` after the
+  // query would 504 for staff users. Short-circuit to 404 instead.
+  const isValidPacketShape =
+    packetId.startsWith("demo-pkt-") ||
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(packetId);
+  if (!isValidPacketShape) notFound();
+
   // Demo packet short-circuit: when DEMO_FALLBACK=true and the packetId
   // matches a fixture, synthesize all the destructured `*Result` shapes
   // from the hardcoded bundle. Lets the detail page render the full
