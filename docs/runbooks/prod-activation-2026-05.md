@@ -87,6 +87,107 @@ These have no code dependencies and unblock outreach. Kick them off first becaus
 
 ---
 
+## Step 1b — Apply RegOps engine migrations (PR #282 + PR #286)
+
+**Precondition:** Step 1 applied (the migrations below depend on `snap_enrollment.gen_uuidv7()`, which landed in `20260516001_uuidv7.sql` and is also required by Step 1's tables — verify it exists before pasting):
+```sql
+select 1 from pg_proc where proname = 'gen_uuidv7'
+  and pronamespace = 'snap_enrollment'::regnamespace;
+-- expect one row
+```
+
+Without these migrations the `.github/workflows/regops-poll.yml` cron does nothing useful: the engine's `InMemoryAuditLogWriter` discards every fetch record at process exit, and counsel reviewers have no read path into the queue they're meant to staff.
+
+**Migrations to apply, in order** (20260593 first — it creates `regops.source_audit_log`; 20260594 references that table for the counsel SELECT policy and will fail if applied first):
+
+| Order | Filename | Lines | What it does |
+|---|---|---|---|
+| 1 | `supabase/migrations/20260593_regops_audit_log.sql` | 198 | `regops` schema + append-only `source_audit_log` table, immutability triggers (UPDATE/DELETE/TRUNCATE), service_role-only RLS (PR #282) |
+| 2 | `supabase/migrations/20260594_regops_counsel_role.sql` | 194 | `regops.counsel_domain` enum, `counsel_assignments` table, `is_active_counsel_for()` + `source_id_to_domain()` helpers, domain-scoped counsel SELECT policy on `source_audit_log` (PR #286) |
+
+**Action (per environment — STAGING FIRST):**
+1. Open the staging Supabase project in dashboard → SQL Editor → New query.
+2. Paste `20260593_regops_audit_log.sql` contents, Run, confirm success.
+3. New query: paste `20260594_regops_counsel_role.sql` contents, Run, confirm success.
+4. Repeat against PROD as part of Step 9 (staging → prod promote). Do **not** apply to PROD before the worker deploy + smoke tests on staging.
+
+**Verification queries** (run in dashboard SQL Editor after both migrations):
+
+```sql
+-- (a) Column count — source_audit_log has 12 columns (log_id, source_id,
+--     fetched_at, url, url_hash, http_status, result_kind, response_headers,
+--     body_ref, error, metadata + the two named CHECK constraints don't add
+--     columns). Expect: 12.
+select count(*) from information_schema.columns
+  where table_schema = 'regops' and table_name = 'source_audit_log';
+
+-- (b) Immutability triggers — expect three rows
+--     (source_audit_log_block_update / _delete / _truncate).
+select trigger_name, event_manipulation, action_timing
+  from information_schema.triggers
+  where event_object_schema = 'regops'
+    and event_object_table = 'source_audit_log'
+  order by trigger_name;
+
+-- (c) RLS policies on source_audit_log — expect two:
+--     source_audit_log_service_role_all (ALL) +
+--     source_audit_log_counsel_domain_read (SELECT, authenticated).
+select policyname, cmd, roles
+  from pg_policies
+  where schemaname = 'regops' and tablename = 'source_audit_log'
+  order by policyname;
+
+-- (d) counsel_domain enum values — expect federal, CA, MA, FTC.
+select unnest(enum_range(null::regops.counsel_domain));
+
+-- (e) Helper functions exist — expect two rows.
+select proname from pg_proc
+  where pronamespace = 'regops'::regnamespace
+    and proname in ('is_active_counsel_for', 'source_id_to_domain')
+  order by proname;
+
+-- (f) source_id → domain mapping smoke test — expect federal, CA, MA, FTC, null.
+select
+  regops.source_id_to_domain('usda-fns-cola')   as a_federal,
+  regops.source_id_to_domain('ca-cdss-acl')     as b_ca,
+  regops.source_id_to_domain('ma-dta-charts')   as c_ma,
+  regops.source_id_to_domain('ftc-actions')     as d_ftc,
+  regops.source_id_to_domain('unknown-source')  as e_null;
+```
+
+**Immutability smoke test** (run in dashboard SQL Editor — these prove the trigger fires for service_role, which is the load-bearing guarantee):
+
+```sql
+-- Insert one probe row (this should succeed).
+insert into regops.source_audit_log
+  (source_id, url, url_hash, http_status, result_kind, metadata)
+values
+  ('usda-fns-cola', 'https://example.test/probe', 'probe-hash', 200,
+   'Success', '{"probe": true}'::jsonb)
+returning log_id;
+
+-- Now try to mutate / delete — both MUST raise the
+-- "regops.source_audit_log is append-only" exception.
+-- Run each as a separate query; expect both to fail loudly.
+update regops.source_audit_log
+   set error = 'tampered'
+ where metadata->>'probe' = 'true';
+
+delete from regops.source_audit_log
+ where metadata->>'probe' = 'true';
+
+-- The probe row is permanent. That's the point. If you need to clean up
+-- on staging only, follow the documented operational procedure: drop the
+-- three block triggers, delete the row, recreate the triggers. Do NOT do
+-- this on PROD.
+```
+
+If the UPDATE or DELETE succeeds, halt — the trigger is missing or disabled and the audit log is no longer regulator-defensible.
+
+**Rollback:** Forward-only per repo convention (see Step 1 rollback note). If a column-name typo or RLS misalignment ships, halt the `regops-poll.yml` cron (GitHub → Actions → Disable workflow), write a `20260595_*.sql` forward fix on a branch off `codex/rebuild-feb18`, land it, then re-apply via this runbook. Never `DROP TABLE regops.source_audit_log` on PROD — once any cron run has written rows, those are the chain-of-custody record the counsel-facing posture relies on.
+
+---
+
 ## Step 2 — Provision CF rate-limit bindings (TODO-2)
 
 **Precondition:** none (independent of migrations).
@@ -296,7 +397,7 @@ npx wrangler deploy
 **Precondition:** Steps 1–8 verified on staging; iOS smoke ran the navigator UAT flow end-to-end without errors.
 
 **Action:**
-1. Re-run Step 1 (migrations) on PROD Supabase project.
+1. Re-run Step 1 + Step 1b (migrations) on PROD Supabase project.
 2. Re-run Step 6 (`wrangler deploy`) against the prod worker environment (default `wrangler deploy` deploys to the production environment unless `--env staging` is passed — confirm `wrangler.toml` doesn't gate behind `[env.production]` overrides before running).
 3. Flip `BUDDY_ADD_ENABLED = "true"` in `wrangler.toml` (currently `"false"`) **only after** counsel has signed off on the buddy invite copy strings — that gate is enforced per memory `project_pr245_buddy_work_hours.md`.
 
@@ -313,6 +414,7 @@ npx wrangler deploy
 - [ ] 0.3 Browserless key in 1Password
 - [ ] 0.4 Argyle webhook secret in 1Password
 - [ ] 1   Migrations 20260565–71, 20260590–91 applied to STAGING
+- [ ] 1b  RegOps migrations 20260593 (audit log) + 20260594 (counsel role) applied to STAGING; immutability smoke test fails as expected on UPDATE/DELETE
 - [ ] 2   RL_STRICT (1001) + RL_STANDARD (1002) namespaces created
 - [ ] 3   Workers plan upgraded OR one cron dropped
 - [ ] 4   Vercel `civica-web` project created + first deploy green
