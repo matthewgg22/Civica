@@ -2,57 +2,65 @@
 title: "Findings ledger — example report"
 subtitle: "Embedding citable findings in a reproducible artifact"
 format:
-  html: default
+  html:
+    embed-resources: true
   pdf: default
 ---
 
 # Purpose
 
 This is a starter Quarto report demonstrating the pattern: a partner-facing
-deliverable that **cites findings by id** and re-runs from source. When the
-underlying findings change, regenerating this report shows the delta.
+deliverable that **cites findings by id** and re-runs from source. Each
+finding link points at the canonical markdown under `docs/findings/`;
+the underlying claims are evidence-backed and survive session restart
+(see [README](../findings/README.md) for the schema).
 
-# Active findings (live from `findings.db`)
+# Current findings (snapshot)
 
-```{python}
-#| label: findings-table
-#| tbl-cap: "Active findings as of the build date."
-import sqlite3, json
-from pathlib import Path
+As of the last build, three findings are active. The canonical list lives
+in [`docs/findings/INDEX.md`](../findings/INDEX.md). Highlights:
 
-db_path = Path("../../findings.db")
-if not db_path.exists():
-    print("Run `make findings` first to build findings.db")
-else:
-    conn = sqlite3.connect(db_path)
-    rows = conn.execute("""
-        SELECT id, date, confidence,
-               json_extract(scope_json, '$') AS scope
-        FROM findings
-        WHERE status = 'active'
-        ORDER BY date DESC
-    """).fetchall()
-    print(f"{'id':<48} {'date':<12} {'conf':<8} scope")
-    print("-" * 90)
-    for r in rows:
-        scope = ", ".join(json.loads(r[3])) if r[3] else ""
-        print(f"{r[0]:<48} {r[1]:<12} {r[2]:<8} {scope}")
-```
+- **[2026-05-28-test-prefix-empty](../findings/2026-05-28-test-prefix-empty.md)** —
+  Audit of the last 100 commits found zero `test:` / `test(qa):` prefixes
+  despite ~18k lines of test code. CLAUDE.md now encodes the convention.
 
-# Citing a specific finding
+- **[2026-05-28-error-attribution-framework](../findings/2026-05-28-error-attribution-framework.md)** —
+  Proposed replacement for the scalar `scoreErrorRisk()`: event-sourced
+  error ledger + per-slice Bayesian weights + causal DAG. Substantive;
+  not yet implemented.
 
-The commit-prefix audit (id `2026-05-28-test-prefix-empty`) found that
-**0 of 100 commits** in the last 7 days matched the `test:` convention.
-See the [full finding](../findings/2026-05-28-test-prefix-empty.md) for
-evidence and remediation.
-
-The architectural rationale for this report format itself lives in
-[2026-05-28-evidence-ledger-architecture](../findings/2026-05-28-evidence-ledger-architecture.md).
+- **[2026-05-28-evidence-ledger-architecture](../findings/2026-05-28-evidence-ledger-architecture.md)** —
+  Meta-finding: rationale and tooling choices behind this very ledger
+  (Datasette + DVC + Quarto + gbrain).
 
 # How to regenerate
 
 ```bash
-make report   # renders all .qmd in this directory to docs/reports/_output/
+make findings   # rebuild findings.db (canonical: docs/findings/*.md)
+make report     # render this report to HTML in _output/
+make report-pdf # same, to PDF
 ```
 
-If `findings.db` is missing, run `make findings` first.
+# Adding live data queries (optional)
+
+This starter renders as pure markdown. To embed live `findings.db` queries
+(SQL or Python) inside a report, install Jupyter into a venv and use a
+Quarto Python code block:
+
+```bash
+python3 -m venv .venv-reports
+source .venv-reports/bin/activate
+pip install jupyter pyyaml
+# then in the .qmd: ```{python} ... ```
+```
+
+Or use Quarto's built-in SQL engine to query `findings.db` directly without
+Python. See [Quarto docs — SQL](https://quarto.org/docs/computations/sql.html).
+
+# How to add a new finding to cite here
+
+1. Copy `docs/findings/_template.md` → `docs/findings/YYYY-MM-DD-slug.md`
+2. Fill in frontmatter (id, date, scope, evidence — every claim cited)
+3. Append a one-liner to `docs/findings/INDEX.md`
+4. Add a `[link text](../findings/your-slug.md)` reference above
+5. `make findings && make report` to rebuild
