@@ -125,8 +125,29 @@ describe("SupabaseSnapshotStore", () => {
         fetched_at: "2026-05-28T19:28:13.198Z",
         url_hash: "3ae09aecc51a2b4a93fd8a7145221f78",
         data: [{ document_number: "2026-10468" }],
+        topic_tags: [],
       },
     });
+  });
+
+  it("passes through topic_tags when SnapshotRecord includes them", async () => {
+    const { client, captures } = makeMockSupabase();
+    const store = new SupabaseSnapshotStore(client);
+
+    await store.record({
+      ...sample(),
+      topicTags: ["obbba", "abawd"],
+    });
+
+    expect(captures[0]!.row.topic_tags).toEqual(["obbba", "abawd"]);
+  });
+
+  it("defaults topic_tags to empty array when omitted (matches NOT NULL DEFAULT)", async () => {
+    const { client, captures } = makeMockSupabase();
+    const store = new SupabaseSnapshotStore(client);
+
+    await store.record(sample()); // no topicTags
+    expect(captures[0]!.row.topic_tags).toEqual([]);
   });
 
   it("serializes fetchedAt as ISO (matches db's timestamptz expectation)", async () => {
