@@ -1,5 +1,6 @@
 import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
+import Link from "next/link";
 import { createServerClientFromCookies } from "../../lib/supabase";
 import DemoModeBadge from "../../components/DemoModeBadge";
 import CBOContactButton from "../../components/CBOContactButton";
@@ -62,32 +63,37 @@ const VALUE_PROPS = [
 // visible in the snapshot.
 // badge bg + glyph are derived from `status` by the shared StatusBadge
 // component, so only status/risk/identity fields live on the sample row.
+// Each `id` is a real demo packet ID handled by getDemoPacketDetail() in
+// lib/demo-data.ts. Clicking a row navigates to /packets/<id>, which is
+// allowed through middleware via the `/packets/demo-pkt-` entry in
+// FULLY_PUBLIC_PREFIXES — so prospective CBOs land directly on the
+// navigator review surface without an auth wall.
 const SAMPLE_PACKETS = [
   {
-    id: "sample-1",
-    shortId: "8c41a2",
-    applicantName: "Sarah M.",
-    county: "Tracy",
+    id: "demo-pkt-003-jasmine",
+    shortId: "jasmine",
+    applicantName: "Jasmine T.",
+    county: "Los Angeles",
     status: "Needs Documents",
     riskLabel: "Medium risk",
     riskDotBg: "bg-warning",
     timeAgo: "2h ago",
   },
   {
-    id: "sample-2",
-    shortId: "f73d09",
+    id: "demo-pkt-002-carlos",
+    shortId: "carlos",
     applicantName: "Carlos R.",
     county: "Fresno",
     status: "In Navigator Review",
-    riskLabel: "Low risk",
-    riskDotBg: "bg-teal",
+    riskLabel: "Medium risk",
+    riskDotBg: "bg-warning",
     timeAgo: "5h ago",
   },
   {
-    id: "sample-3",
-    shortId: "21b8f4",
-    applicantName: "Linh T.",
-    county: "San Jose",
+    id: "demo-pkt-001-maria",
+    shortId: "maria",
+    applicantName: "Maria G.",
+    county: "Alameda",
     status: "Ready for Handoff",
     riskLabel: "Low risk",
     riskDotBg: "bg-teal",
@@ -190,15 +196,21 @@ export default async function CBOPreviewPage() {
       </section>
 
       {/* ------------------------------------------------------------------ */}
-      {/* Sample queue — illustrates the navigator queue UI with static rows  */}
+      {/* Sample queue — clickable rows into the navigator review surface     */}
       {/* ------------------------------------------------------------------ */}
       <section className="px-6 md:px-8 py-6" aria-label="Sample navigator queue">
-        <p className="eyebrow mb-4">What navigators see · sample queue</p>
+        <div className="flex items-baseline justify-between gap-3 mb-4 flex-wrap">
+          <p className="eyebrow">What navigators see · sample queue</p>
+          <p className="text-[12px] text-graphite">
+            Click a row to open the packet review surface →
+          </p>
+        </div>
         <div className="bg-surface border border-hairline rounded-[4px] overflow-hidden">
           {SAMPLE_PACKETS.map((p, i) => (
-            <div
+            <Link
               key={p.id}
-              className={`flex items-center gap-4 px-5 py-4 ${i > 0 ? "border-t border-hairline" : ""}`}
+              href={`/packets/${p.id}`}
+              className={`flex items-center gap-4 px-5 py-4 hover:bg-paper focus-visible:bg-paper focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pine/30 transition-colors ${i > 0 ? "border-t border-hairline" : ""}`}
             >
               <StatusBadge status={p.status} />
               <div className="flex-1 min-w-0">
@@ -215,15 +227,18 @@ export default async function CBOPreviewPage() {
                   </span>
                 </div>
               </div>
-              <div className="text-right shrink-0">
-                <p className="text-[13px] tabular-nums font-medium text-graphite">{p.timeAgo}</p>
-                <p className="text-[11px] text-muted uppercase tracking-wider mt-0.5">updated</p>
+              <div className="text-right shrink-0 flex items-center gap-3">
+                <div>
+                  <p className="text-[13px] tabular-nums font-medium text-graphite">{p.timeAgo}</p>
+                  <p className="text-[11px] text-muted uppercase tracking-wider mt-0.5">updated</p>
+                </div>
+                <span aria-hidden="true" className="text-muted text-[14px]">→</span>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
         <p className="text-[11px] text-muted mt-3">
-          Sample data — illustrates the navigator queue layout. Real packet data isn&apos;t shown here.
+          Sample data — synthetic packets seeded from <code className="font-mono">demo-data.ts</code>. No real applicant information is shown.
         </p>
       </section>
 

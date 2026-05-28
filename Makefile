@@ -1,7 +1,8 @@
 .PHONY: ingest ingest-absentee l10n-sync-appshell l10n-sync-myinfo l10n-sync-all l10n-sync-dry-run \
 	api-install api-dev api-test api-typecheck api-build api-openapi \
 	compose-up compose-down compose-postgres db-reset db-migrate db-gen-types \
-	fly-deploy-api fly-deploy-engine fly-logs-api fly-logs-engine
+	fly-deploy-api fly-deploy-engine fly-logs-api fly-logs-engine \
+	findings datasette serve report report-pdf clean-findings dvc-status
 
 ingest:
 	python3 scripts/ingest_votenow_metrics.py --input data/source/votenow_voter_participation_metrics_catalog_v3.xlsx --out data/derived
@@ -81,3 +82,30 @@ fly-logs-api:
 
 fly-logs-engine:
 	fly logs --config fly.engine.toml
+
+# ======================================================================
+# Findings ledger (docs/findings/) + Datasette + Quarto + DVC
+# See docs/findings/README.md for the schema spec.
+# ======================================================================
+
+DATASETTE_PORT ?= 8001
+
+findings:
+	python3 scripts/findings_to_sqlite.py
+
+datasette: findings
+	datasette findings.db -m datasette/metadata.yaml -p $(DATASETTE_PORT) --open
+
+serve: datasette
+
+report: findings
+	cd docs/reports && quarto render --to html
+
+report-pdf: findings
+	cd docs/reports && quarto render --to pdf
+
+clean-findings:
+	rm -f findings.db
+
+dvc-status:
+	dvc status && dvc remote list

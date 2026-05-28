@@ -1,0 +1,27 @@
+project:
+  type: default
+  output-dir: _output
+
+execute:
+  echo: false       # don't show code in rendered reports by default
+  warning: false
+  message: false
+
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    theme: cosmo
+    fig-width: 8
+    fig-height: 5
+  pdf:
+    documentclass: article
+    geometry:
+      - margin=1in
+    toc: true
+    toc-depth: 3
+    colorlinks: true
+
+# Default metadata applied to every .qmd in this dir.
+author: "Civica"
+date: today

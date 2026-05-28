@@ -111,6 +111,12 @@ const FULLY_PUBLIC_PREFIXES = [
   "/compliance/county/",
   "/county-demo",
   "/cbo-preview",
+  // Demo packet detail pages — IDs begin with `demo-pkt-` and are served
+  // from in-memory fixtures via getDemoPacketDetail() (see lib/demo-data.ts).
+  // Real packets use UUIDs, so this prefix cannot match a production row.
+  // Lets the public /cbo-preview queue link directly into the navigator
+  // review surface without exposing real packet data.
+  "/packets/demo-pkt-",
 ];
 
 /**
