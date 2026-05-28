@@ -19,19 +19,34 @@
 //      Local dev / unconfigured CI lands here — alerts still appear in
 //      logs, just don't reach Sentry.
 //
-// In v1 the audit log writes to an InMemoryAuditLogWriter — the cron
-// process is single-shot, so there's nothing to retain across runs.
-// When the regops_audit_log Supabase table is wired in production,
-// swap to SupabaseAuditLogWriter here.
+// Audit log + snapshot store selection (in order of precedence):
+//   1. Test injection via options → that wins.
+//   2. SUPABASE_URL + SUPABASE_SERVICE_ROLE_KEY both set → Supabase
+//      backends. Audit log → regops.source_audit_log (migration 20260593);
+//      snapshots → regops.snapshots (migration 20260595).
+//   3. Otherwise → InMemoryAuditLogWriter + JsonlSnapshotStore. Local
+//      dev / unconfigured CI lands here — fetches still happen, audit
+//      stays in-process, snapshots get printed to stdout for the run log
+//      to capture.
+//
+// A single SupabaseClient is constructed once per process and shared
+// between the audit log writer and the snapshot store — the client has
+// internal state and creating two is wasteful.
 
-import { InMemoryAuditLogWriter } from "../audit/index.js";
+import { createClient, type SupabaseClient } from "@supabase/supabase-js";
+
+import {
+  InMemoryAuditLogWriter,
+  SupabaseAuditLogWriter,
+  type AuditLogWriter,
+} from "../audit/index.js";
 
 import { ConsoleAlertEmitter } from "./alert-emitter.js";
 import { pollOnce } from "./orchestrator.js";
 import { defaultAdapters } from "./registry.js";
 import { SentryAlertEmitter } from "./sentry-alert-emitter.js";
-import { JsonlSnapshotStore } from "./snapshot-store.js";
-import type { AlertEmitter } from "./types.js";
+import { JsonlSnapshotStore, SupabaseSnapshotStore } from "./snapshot-store.js";
+import type { AlertEmitter, SnapshotStore } from "./types.js";
 
 export interface RunCliOptions {
   /** Override the registry for tests. */
@@ -45,6 +60,16 @@ export interface RunCliOptions {
    * production path in selectAlertEmitter() applies.
    */
   readonly alertEmitter?: AlertEmitter;
+  /**
+   * Override the snapshot store selection (test-only). When omitted,
+   * selectSnapshotStore() chooses based on stdout / SUPABASE_URL env.
+   */
+  readonly snapshotStore?: SnapshotStore;
+  /**
+   * Override the audit log writer (test-only). When omitted,
+   * selectAuditLogWriter() chooses based on SUPABASE_URL env.
+   */
+  readonly auditLog?: AuditLogWriter;
 }
 
 /**
@@ -52,9 +77,15 @@ export interface RunCliOptions {
  * Pure return value rather than process.exit so tests can drive it.
  */
 export async function runCli(options: RunCliOptions = {}): Promise<number> {
-  const auditLog = new InMemoryAuditLogWriter();
+  // One Supabase client per process, shared by audit log writer +
+  // snapshot store. Returns null when env is unconfigured; the selector
+  // helpers handle the fallback.
+  const supabase = createSupabaseClientIfConfigured();
+
+  const auditLog = options.auditLog ?? selectAuditLogWriter(supabase);
   const adapters = options.adapters ?? defaultAdapters({ auditLog });
-  const snapshotStore = new JsonlSnapshotStore(options.stdout);
+  const snapshotStore =
+    options.snapshotStore ?? selectSnapshotStore(options, supabase);
   const alertEmitter = options.alertEmitter ?? selectAlertEmitter(options);
 
   const writeErr =
@@ -120,4 +151,78 @@ export function selectAlertEmitter(options: RunCliOptions): AlertEmitter {
   }
 
   return new ConsoleAlertEmitter();
+}
+
+/**
+ * Decide which AuditLogWriter the polling tick should use. Supabase
+ * wins when configured; otherwise in-memory. Local dev / tests / forks
+ * without secrets get the in-memory path — audit entries vanish at
+ * process exit, which is acceptable for non-prod.
+ *
+ * Exported for cli.test.ts.
+ */
+export function selectAuditLogWriter(
+  supabase: SupabaseClient | null,
+): AuditLogWriter {
+  if (supabase !== null) {
+    return new SupabaseAuditLogWriter(supabase);
+  }
+  return new InMemoryAuditLogWriter();
+}
+
+/**
+ * Decide which SnapshotStore the polling tick should use. Precedence:
+ *   1. Test stdout writer present → JsonlSnapshotStore(writer)
+ *      preserves the existing cli.test.ts contract where snapshots
+ *      land in a captured array.
+ *   2. Supabase client configured → SupabaseSnapshotStore (production).
+ *   3. Otherwise → JsonlSnapshotStore() to process.stdout. Local dev /
+ *      unconfigured CI lands here; snapshots appear in the GH Actions
+ *      run log but are NOT queryable after the retention window.
+ *
+ * Exported for cli.test.ts.
+ */
+export function selectSnapshotStore(
+  options: RunCliOptions,
+  supabase: SupabaseClient | null,
+): SnapshotStore {
+  if (options.stdout !== undefined) {
+    return new JsonlSnapshotStore(options.stdout);
+  }
+  if (supabase !== null) {
+    return new SupabaseSnapshotStore(supabase);
+  }
+  return new JsonlSnapshotStore();
+}
+
+/**
+ * Build a SupabaseClient if both URL + service-role-key env vars are
+ * set; otherwise return null. The service-role key is required because
+ * the regops.* tables' RLS policies only allow service_role to INSERT
+ * (counsel gets domain-scoped SELECT, but the cron writes, doesn't read).
+ *
+ * Misconfiguration is handled by returning null rather than throwing —
+ * the cron gracefully falls back to in-memory + JSONL so a missing-secret
+ * deploy doesn't take down the polling loop. The fallback shows up in
+ * the run log as JSONL snapshot lines instead of Supabase writes, which
+ * operators notice quickly.
+ *
+ * Exported for cli.test.ts.
+ */
+export function createSupabaseClientIfConfigured(): SupabaseClient | null {
+  const url = process.env.SUPABASE_URL;
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (url === undefined || url.trim().length === 0) {
+    return null;
+  }
+  if (key === undefined || key.trim().length === 0) {
+    return null;
+  }
+  return createClient(url, key, {
+    auth: {
+      // One-shot cron — no user sessions to persist or refresh.
+      persistSession: false,
+      autoRefreshToken: false,
+    },
+  });
 }
