@@ -46,9 +46,11 @@ jobs:
           bun-version: "1.1.34"
 
       - uses: pnpm/action-setup@v4
-        with:
-          version: 9
-          run_install: false
+        # Version is read from packageManager in root package.json. Do NOT
+        # specify `with: version:` here — pnpm/action-setup@v4 errors with
+        # "Multiple versions of pnpm specified" when both sources declare
+        # a version, even if the versions agree.
+        # run_install defaults to false, which is what we want.
 
       - name: Install workspace deps
         run: pnpm install --frozen-lockfile
