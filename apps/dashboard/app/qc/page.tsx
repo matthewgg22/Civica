@@ -29,6 +29,9 @@ import IncomingDataFeedSection, {
 import CalibrationSection, {
   CalibrationSkeleton,
 } from "../../components/qc/sections/CalibrationSection";
+import SliceErrorRatesSection, {
+  SliceErrorRatesSkeleton,
+} from "../../components/qc/sections/SliceErrorRatesSection";
 import { ENGINE_VERSION } from "@civica/snap-qc-engine";
 
 export const dynamic = "force-dynamic";
@@ -84,6 +87,11 @@ export default async function QCPage() {
         {/* Streaming section: calibration dumbbell */}
         <Suspense fallback={<CalibrationSkeleton />}>
           <CalibrationSection />
+        </Suspense>
+
+        {/* Streaming section: per-slice error rates + Wilson bands (A1) */}
+        <Suspense fallback={<SliceErrorRatesSkeleton />}>
+          <SliceErrorRatesSection />
         </Suspense>
       </div>
 
