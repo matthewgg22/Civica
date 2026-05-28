@@ -1,6 +1,6 @@
 # Error-attribution ledger — reviewed design
 
-**Status:** PLANNED — not implemented. Locked via `/plan-eng-review` 2026-05-28, then **amended after an independent second-opinion pass** (see "Post-review amendments" at the foot of this doc). Two items gate any build: a missing per-slice denominator (A1, hard prerequisite) and an unresolved correctness challenge to Decision 7 (A5, operator call). A simpler Wilson/Jeffreys-interval alternative may be the right first step — read the amendments before starting.
+**Status:** PLANNED — not implemented. Locked via `/plan-eng-review` 2026-05-28, then **amended after an independent second-opinion pass** (see "Post-review amendments" at the foot of this doc). A5 was **resolved 2026-05-28**: the operator confirmed the reviewer's recommendation — **nightly batch recompute (`REFRESH MATERIALIZED VIEW CONCURRENTLY`)**, overriding the original Decision 7 online-trigger choice. One hard prerequisite still gates any build: the missing per-slice denominator (A1). A simpler Wilson/Jeffreys-interval alternative may be the right first step — read the amendments before starting.
 **Source finding:** `docs/findings/2026-05-28-error-attribution-framework.md` (facts corrected in the same session).
 **Scope:** `snap-qc-engine`, `apps/enrollment-api`, Supabase migrations. iOS unchanged (badge consumes the same signature).
 
@@ -44,24 +44,27 @@ place of a primitive scalar.
 | 4 | Where the rollup read happens | **Caller fetches, passes weights in.** Gateway reads the rollup; `scoreErrorRisk(results, { sliceWeights? })` takes weights as an optional data arg and falls back to static `ERROR_WEIGHT` when absent. Engine stays pure and fixture-testable; no Supabase dependency leaks into the math package. |
 | 5 | v0.3.0 → v0.4.0 cutover | **Shadow period behind a flag.** Compute heuristic (shown) and calibrated (logged) in parallel; record divergence. Flip per-slice only when posterior variance is low (enough N) AND the calibrated score tracks ground truth. Low-N slices stay on the static weight (the Decision-4 fallback IS the safety net). No silent semantic change to on-screen numbers. |
 | 6 | Testing the math pre-volume | **Property tests + PolicyEngine oracle + immutability.** Synthetic events with known true rates assert posterior properties (mean ∈ [prior, empirical]; variance ↓ as N ↑; small-N shrinks to parent; `(α₀,β₀)=(1,1)` → empirical at high N). PolicyEngine US offline fixtures as the eligibility oracle (AGPL: fixtures only, no runtime link). UPDATE/DELETE-rejected test. Shadow-divergence snapshot. |
-| 7 | Rollup refresh cadence | **Incremental / online** (operator's call, against the reviewer's nightly recommendation — see caveat below). Conjugate updates ARE count increments, so a trigger-maintained aggregate is *exact*, not approximate. Pulls the "online cadence" open question into v0.4 scope. |
+| 7 | Rollup refresh cadence | **~~Incremental / online~~ → SUPERSEDED by A5 (2026-05-28): nightly batch recompute.** Originally the operator chose an online trigger; the second-opinion pass showed it can't fold `reversed` corrections (A4) or keep EB shrinkage consistent (A3) without recompute. Operator confirmed **nightly `REFRESH MATERIALIZED VIEW CONCURRENTLY`** — correct folding + shrinkage for free, trivially cheap at pilot volume. See the resolved Decision 7 section and A5 below. |
 
-### Decision 7 caveat (read before building Layer 2)
+### Decision 7 — resolved to nightly batch recompute (2026-05-28)
 
-The reviewer recommended nightly `REFRESH MATERIALIZED VIEW CONCURRENTLY` (trivially
-cheap at pilot volume). The operator chose online/incremental. That is defensible
-*because* Beta-Binomial is conjugate — each `confirmed` event does `α += 1`, each
-non-error trial does `β += 1`, per slice. So the rollup is **not a matview** under
-this decision; it is a trigger-maintained **aggregate table** (`error_rollup`) whose
-counters are bumped on insert. Two real constraints:
+The operator initially chose online/incremental, then **confirmed the reviewer's
+nightly recommendation** once A4 (reversed-event folding) and A5 (shrinkage coherence)
+showed the online trigger to be the *less correct* option, not merely the more complex
+one. Final decision: **`error_rollup` is a materialized view**, recomputed by a nightly
+`REFRESH MATERIALIZED VIEW CONCURRENTLY` job.
 
-- **pg_ivm is not available on Supabase managed Postgres** — do not plan around it.
-  Use an `AFTER INSERT` trigger doing an atomic `UPSERT ... SET alpha = alpha + ...`
-  (or insert-only counter rows with periodic compaction) to avoid lost updates under
-  concurrent inserts to the same slice.
-- Online counters make the **shadow period (Decision 5) more important**, not less —
-  a live-updating weight that drives on-screen numbers must stay flag-gated until
-  validated.
+- **Why nightly wins here.** A full recompute is a *fold* over the whole event stream,
+  so `reversed` corrections net out by construction (signed deltas, no counter mutation —
+  resolves A4) and EB shrinkage sees one consistent parent/child snapshot per pass
+  (resolves A3's consistency concern). At pilot volume the refresh is trivially cheap.
+- **No pg_ivm, no triggers.** Supabase managed Postgres lacks pg_ivm; the nightly matview
+  needs neither it nor an `AFTER INSERT` counter trigger. Schedule via pg_cron (or the
+  existing job runner).
+- **Staleness is acceptable.** The rollup drives a QC leaderboard humans read daily; up to
+  24h lag is irrelevant. Revisit online cadence only post-v0.4 if a real-time need appears.
+- Nightly recompute does **not** relax the shadow period (Decision 5) — a calibrated weight
+  that drives on-screen numbers stays flag-gated until validated against ground truth.
 
 ---
 
@@ -75,10 +78,10 @@ counters are bumped on insert. Two real constraints:
    kickbacks,       │  event_class ∈ {predicted, prevented,    │
    reversals)       │    confirmed, reversed}                  │
                     └───────────────┬─────────────────────────┘
-                                    │ trigger: bump counters
+                                    │ nightly REFRESH MATERIALIZED VIEW
   ┌──────────────────────────┐     ▼
   │ packet_qc_samples (KEEP)  │   ┌──────────────────────────────┐
-  │  sampling frame =         │──►│ error_rollup (aggregate table)│
+  │  sampling frame =         │──►│ error_rollup (nightly matview)│
   │  DENOMINATOR              │   │  per slice: (α, β) conjugate  │
   └──────────────────────────┘   │  posterior mean = weight      │
                                   │  posterior var  = trust       │
@@ -105,10 +108,13 @@ counters are bumped on insert. Two real constraints:
    retention-scorer churn (`reversed`/Type-1), county kickbacks (`confirmed`) all
    append with identical provenance + correct `event_class`. One thin append helper;
    each emitter call-site sets `event_class`.
-3. **`error_rollup` aggregate table + trigger** (Decision 7) — `AFTER INSERT` on
-   `error_events` does atomic conjugate counter UPSERT per slice; JOIN against
-   `packet_qc_samples` for the denominator. Empirical-Bayes shrinkage small-N → parent
-   (county → state → national). Start priors `(α₀,β₀)=(1,1)`.
+3. **`error_rollup` materialized view + nightly refresh** (Decision 7, resolved via A5) —
+   `REFRESH MATERIALIZED VIEW CONCURRENTLY` recomputes the fold over `error_events`
+   (signed deltas per `event_class`, so `reversed` nets out), JOINed against
+   `packet_qc_samples` for the denominator. Empirical-Bayes shrinkage on the **single
+   canonical hierarchy** only (county → state → national, packet-level — per A3); cross-cut
+   slices stay descriptive (raw rate + interval). Start priors `(α₀,β₀)=(1,1)`. Schedule via
+   pg_cron. **Gated on A1** — the per-slice denominator must exist first.
 4. **Scorer v0.4.0** — add optional `sliceWeights` param to `scoreErrorRisk`; falls back
    to static `ERROR_WEIGHT`. Gateway fetches the rollup slice and passes it. Shadow:
    compute + log both; on-screen stays heuristic behind the flag.
@@ -128,8 +134,9 @@ counters are bumped on insert. Two real constraints:
   an appended `reversed` row; readers fold the stream rather than mutate.
 - **Denominator JOIN:** a clean sampled packet (zero events) still appears in the
   frame and contributes to `β`, not `α`.
-- **Concurrency:** concurrent inserts to the same slice do not lose counter updates
-  (atomic UPSERT).
+- **Refresh correctness:** a `reversed` event flips its prior `confirmed` contribution
+  after the next nightly refresh (the fold nets signed deltas — no counter drift, no lost
+  updates, since there are no incremental counters to race on).
 - **Cutover:** shadow-divergence snapshot (heuristic vs calibrated) per slice.
 - **Regression:** existing `packet_qc_samples` queries / RLS / `v_qc_pillar_coverage`
   unchanged (Decision 1 means no view supersession, so this surface is small).
@@ -140,8 +147,9 @@ counters are bumped on insert. Two real constraints:
 
 - Real causal inference / do-calculus / structure learning (Decision 3 — descriptive
   ontology only).
-- Online conjugate update *beyond* the trigger-maintained counter table — no pg_ivm,
-  no streaming framework.
+- Online / streaming conjugate update — explicitly rejected (A5). The rollup is a
+  nightly-refreshed materialized view; no pg_ivm, no per-insert counter trigger, no
+  streaming framework.
 - Feature store (Feast/Tecton), LightGBM-on-everything, dbt+OpenLineage — rejected in
   the finding; not revisited.
 - iOS changes — the badge consumes the same `scoreErrorRisk` signature.
@@ -213,17 +221,20 @@ and (b) self-correcting counts where a `reversed` event undoes a prior `confirme
 per `event_class`), not a set of immutable increment-only counters. Folding is exactly
 what a nightly `REFRESH MATERIALIZED VIEW` gives for free — see A5.
 
-### A5 — ⚠️ Decision 7 correctness challenge (UNRESOLVED — needs operator call)
+### A5 — ✅ Decision 7 correctness challenge (RESOLVED 2026-05-28 — operator chose nightly matview)
 
-The reviewer argues the **online/incremental trigger (Decision 7) is not just more
+The reviewer argued the **online/incremental trigger (original Decision 7) is not just more
 complex but less correct** here: (1) it can't fold `reversed` corrections without
 counter mutation (A4); (2) per-row triggers can't keep EB shrinkage consistent because
 a child's shrunk posterior depends on the parent's *current* posterior, which moves with
 every sibling insert; (3) at pilot volume nightly `REFRESH MATERIALIZED VIEW
 CONCURRENTLY` is trivially cheap and gives correct folding + shrinkage for free.
-**Status:** This contradicts the operator's Decision 7 (made before this objection
-existed). The reviewer's recommendation is **nightly matview**. Flagged for the operator
-to confirm or override — do not start build step 3 until resolved.
+**Resolution (2026-05-28):** the operator **confirmed the reviewer's recommendation** and
+overrode the original Decision 7. `error_rollup` is now a **nightly-refreshed materialized
+view** (see "Decision 7 — resolved to nightly batch recompute" above). This also closes A4
+(the fold nets `reversed` signed deltas for free) and A3's consistency concern (one coherent
+snapshot per refresh). Build step 3 is unblocked; **A1 (per-slice denominator) is now the
+sole hard prerequisite** before any build starts.
 
 ### Considered simpler alternative (recorded, not chosen)
 
