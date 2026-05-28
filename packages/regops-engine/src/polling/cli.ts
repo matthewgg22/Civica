@@ -82,6 +82,24 @@ export async function runCli(options: RunCliOptions = {}): Promise<number> {
   // helpers handle the fallback.
   const supabase = createSupabaseClientIfConfigured();
 
+  // TEMPORARY DEBUG (revert in follow-up PR): probe PostgREST directly
+  // with a raw fetch to verify (a) what URL the cron is actually hitting
+  // and (b) what schemas PostgREST really reports as exposed. Helps
+  // diagnose the persistent "Invalid schema: regops" error that survived
+  // every standard fix (dashboard re-toggle, restart, NOTIFY, explicit
+  // grants, both key formats). Only runs when env is configured AND in
+  // production (no options.stderr override).
+  if (
+    options.stderr === undefined &&
+    process.env.SUPABASE_URL !== undefined &&
+    process.env.SUPABASE_SERVICE_ROLE_KEY !== undefined
+  ) {
+    await debugProbePostgrest(
+      process.env.SUPABASE_URL,
+      process.env.SUPABASE_SERVICE_ROLE_KEY,
+    );
+  }
+
   const auditLog = options.auditLog ?? selectAuditLogWriter(supabase);
   const adapters = options.adapters ?? defaultAdapters({ auditLog });
   const snapshotStore =
@@ -209,6 +227,72 @@ export function selectSnapshotStore(
  *
  * Exported for cli.test.ts.
  */
+/**
+ * TEMPORARY DEBUG (revert in follow-up PR).
+ *
+ * Hit PostgREST directly with raw fetch — bypasses the Supabase SDK so
+ * we see exactly what the API returns. Logs:
+ *   - URL last 30 chars (to verify which project the cron talks to;
+ *     GH Actions masks the full secret but substrings pass through)
+ *   - Service-role key format (legacy "eyJ..." JWT vs new "sb_secret_*"
+ *     vs unknown) — tells us if the SDK is using the format PostgREST
+ *     expects
+ *   - HTTP status + first 600 chars of response body for two probes:
+ *       1. GET /rest/v1/  with apikey header → returns OpenAPI spec,
+ *          which lists exposed schemas in the `tags` array
+ *       2. GET /rest/v1/source_audit_log?select=count with
+ *          Accept-Profile: regops → returns either rows or the exact
+ *          PostgREST error the SDK is hitting
+ *
+ * Nothing about this function is correct for production; it's a probe
+ * only. The next PR removes it.
+ */
+async function debugProbePostgrest(url: string, key: string): Promise<void> {
+  const log = (msg: string): void => {
+    process.stderr.write(`[regops:debug] ${msg}\n`);
+  };
+
+  try {
+    log(`URL length: ${url.length}`);
+    log(`URL last 30: ${url.slice(-30)}`);
+    const keyFormat = key.startsWith("eyJ")
+      ? "legacy-jwt"
+      : key.startsWith("sb_secret_")
+        ? "new-secret"
+        : "unknown";
+    log(`KEY format: ${keyFormat}`);
+    log(`KEY length: ${key.length}`);
+
+    // Probe 1: root → OpenAPI spec lists exposed schemas.
+    const root = await fetch(`${url}/rest/v1/`, {
+      headers: {
+        apikey: key,
+        Authorization: `Bearer ${key}`,
+      },
+    });
+    log(`root status: ${root.status} ${root.statusText}`);
+    const rootBody = (await root.text()).slice(0, 600);
+    log(`root body[0:600]: ${rootBody.replace(/\n/g, " ")}`);
+
+    // Probe 2: regops.source_audit_log → reveals the real PostgREST error.
+    const r = await fetch(
+      `${url}/rest/v1/source_audit_log?select=count`,
+      {
+        headers: {
+          apikey: key,
+          Authorization: `Bearer ${key}`,
+          "Accept-Profile": "regops",
+        },
+      },
+    );
+    log(`regops probe status: ${r.status} ${r.statusText}`);
+    const body = (await r.text()).slice(0, 600);
+    log(`regops probe body[0:600]: ${body.replace(/\n/g, " ")}`);
+  } catch (err) {
+    log(`probe threw: ${err instanceof Error ? err.message : String(err)}`);
+  }
+}
+
 export function createSupabaseClientIfConfigured(): SupabaseClient | null {
   const url = process.env.SUPABASE_URL;
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
