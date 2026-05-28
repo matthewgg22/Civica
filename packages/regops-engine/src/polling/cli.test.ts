@@ -1,11 +1,26 @@
+import type { SupabaseClient } from "@supabase/supabase-js";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
+import {
+  InMemoryAuditLogWriter,
+  SupabaseAuditLogWriter,
+} from "../audit/index.js";
 import type { DomainTag } from "../sources/index.js";
 import type { FetchResult } from "../sources/index.js";
 
 import { ConsoleAlertEmitter } from "./alert-emitter.js";
-import { runCli, selectAlertEmitter } from "./cli.js";
+import {
+  createSupabaseClientIfConfigured,
+  runCli,
+  selectAlertEmitter,
+  selectAuditLogWriter,
+  selectSnapshotStore,
+} from "./cli.js";
 import { SentryAlertEmitter } from "./sentry-alert-emitter.js";
+import {
+  JsonlSnapshotStore,
+  SupabaseSnapshotStore,
+} from "./snapshot-store.js";
 import type { PollableAdapter } from "./types.js";
 
 class StubAdapter implements PollableAdapter {
@@ -169,5 +184,99 @@ describe("selectAlertEmitter", () => {
     process.env.SENTRY_DSN = "   ";
     const emitter = selectAlertEmitter({});
     expect(emitter).toBeInstanceOf(ConsoleAlertEmitter);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Supabase env helper — must wipe BOTH vars per test so individual cases
+// don't bleed env state across each other. Reused by the next three blocks.
+// ---------------------------------------------------------------------------
+
+function wipeSupabaseEnv(): void {
+  delete process.env.SUPABASE_URL;
+  delete process.env.SUPABASE_SERVICE_ROLE_KEY;
+}
+
+// Truthy fake — not a real Supabase client; we only need a non-null
+// reference to thread through the selector signatures.
+const FAKE_SUPABASE = {} as unknown as SupabaseClient;
+
+describe("createSupabaseClientIfConfigured", () => {
+  const ORIGINAL_ENV = { ...process.env };
+
+  beforeEach(() => {
+    wipeSupabaseEnv();
+  });
+
+  afterEach(() => {
+    process.env = { ...ORIGINAL_ENV };
+  });
+
+  it("returns null when both env vars are missing", () => {
+    expect(createSupabaseClientIfConfigured()).toBeNull();
+  });
+
+  it("returns null when only SUPABASE_URL is set", () => {
+    process.env.SUPABASE_URL = "https://example.supabase.co";
+    expect(createSupabaseClientIfConfigured()).toBeNull();
+  });
+
+  it("returns null when only SUPABASE_SERVICE_ROLE_KEY is set", () => {
+    process.env.SUPABASE_SERVICE_ROLE_KEY = "service-role-token";
+    expect(createSupabaseClientIfConfigured()).toBeNull();
+  });
+
+  it("returns null when either var is empty / whitespace", () => {
+    process.env.SUPABASE_URL = "   ";
+    process.env.SUPABASE_SERVICE_ROLE_KEY = "service-role-token";
+    expect(createSupabaseClientIfConfigured()).toBeNull();
+
+    process.env.SUPABASE_URL = "https://example.supabase.co";
+    process.env.SUPABASE_SERVICE_ROLE_KEY = "";
+    expect(createSupabaseClientIfConfigured()).toBeNull();
+  });
+
+  it("returns a SupabaseClient when both env vars are set", () => {
+    process.env.SUPABASE_URL = "https://example.supabase.co";
+    process.env.SUPABASE_SERVICE_ROLE_KEY = "service-role-token";
+    const client = createSupabaseClientIfConfigured();
+    expect(client).not.toBeNull();
+    // Smoke: the real client exposes a `from()` method. We don't call it
+    // (would hit the network); just confirm the shape.
+    expect(typeof (client as unknown as { from: unknown }).from).toBe(
+      "function",
+    );
+  });
+});
+
+describe("selectAuditLogWriter", () => {
+  it("returns SupabaseAuditLogWriter when a client is provided", () => {
+    const writer = selectAuditLogWriter(FAKE_SUPABASE);
+    expect(writer).toBeInstanceOf(SupabaseAuditLogWriter);
+  });
+
+  it("returns InMemoryAuditLogWriter as the null-client fallback", () => {
+    const writer = selectAuditLogWriter(null);
+    expect(writer).toBeInstanceOf(InMemoryAuditLogWriter);
+  });
+});
+
+describe("selectSnapshotStore", () => {
+  it("returns JsonlSnapshotStore when test stdout writer present (test mode wins)", () => {
+    const store = selectSnapshotStore(
+      { stdout: () => undefined },
+      FAKE_SUPABASE,
+    );
+    expect(store).toBeInstanceOf(JsonlSnapshotStore);
+  });
+
+  it("returns SupabaseSnapshotStore when client provided and no stdout override", () => {
+    const store = selectSnapshotStore({}, FAKE_SUPABASE);
+    expect(store).toBeInstanceOf(SupabaseSnapshotStore);
+  });
+
+  it("returns JsonlSnapshotStore as the null-client unconfigured fallback", () => {
+    const store = selectSnapshotStore({}, null);
+    expect(store).toBeInstanceOf(JsonlSnapshotStore);
   });
 });
