@@ -19,6 +19,7 @@ import meRedemptionsRouter from "./routes/me-redemptions.js";
 import meArgyleRouter from "./routes/me-argyle.js";
 import meWorkHoursRouter from "./routes/me-work-hours.js";
 import benefitsCalRouter from "./routes/benefitscal.js";
+import extensionRouter from "./routes/extension/index.js";
 import recertRouter from "./routes/recert.js";
 import twilioWebhookRouter from "./routes/twilio-webhook.js";
 import workRequirementsRouter from "./routes/work-requirements.js";
@@ -86,6 +87,12 @@ app.route("/", twilioWebhookRouter);
 // Session A — feature flags public read (no auth: non-sensitive product config).
 // Mounted BEFORE the authed /v1/enrollment subtree so it bypasses authMiddleware.
 app.route("/v1/enrollment/feature-flags", featureFlagsRouter);
+
+// Civica Submitter browser extension routes (Model B — partner-CBO autofill).
+// Uses EXTENSION_BEARER_TOKEN for auth, NOT a Supabase JWT — so it bypasses
+// the standard authMiddleware. Each handler inside performs its own bearer-
+// token check against c.env.EXTENSION_BEARER_TOKEN.
+app.route("/v1/enrollment/extension", extensionRouter);
 
 // All enrollment routes require a valid Supabase JWT
 const api = new Hono<{ Bindings: Env }>();
