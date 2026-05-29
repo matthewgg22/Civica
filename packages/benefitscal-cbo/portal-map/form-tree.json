@@ -7,7 +7,8 @@
     "captured_via": "production CBO walk (VoteNow)",
     "step_count_snap_only": 8,
     "navigation": "hub ABNAV -> Start (first enabled) -> section pages -> 'START THE NEXT SECTION' (section-complete page) -> hub -> next section unlocks",
-    "notes": "Assets is omitted entirely for SNAP-only applications (CA BBCE bypass): when only #snap is checked on ABPRI the portal collapses 9 steps -> 8 and never presents the Assets section. ~15% of the full tree is captured (FORM-TREE.md). Section 1 pages and most data-bearing fields are 'partial' (missing verbatim help-text, full options, validation errors); People is a gate + per-member sub-form template ('partial'); sections 3-8 are section shells only ('not yet walked')."
+    "notes": "Assets is omitted entirely for SNAP-only applications (CA BBCE bypass): when only #snap is checked on ABPRI the portal collapses 9 steps -> 8 and never presents the Assets section. ~15% of the full tree is captured (FORM-TREE.md). Section 1 pages and most data-bearing fields are 'partial' (missing verbatim help-text, full options, validation errors); People is a gate + per-member sub-form template ('partial'); sections 3-8 are section shells only ('not yet walked').",
+    "last_capture": "2026-05-29: step 7 Document Upload (APDMC) + submit-confirmation gate (A#skip) fully characterized; step 8 Review & Submit documented as gated-uncaptured (production-safety boundary)."
   },
   "branch_points_note": "Dominant pattern: a gate question (Yes/No or checklist) opens a detail sub-flow on affirmative, skips on negative. CONFIRMED edges observed diverging; INFERRED edges need a follow-up walk answering affirmatively to capture the detail sub-forms. Consumers: (a) extension must evaluate each gate from packet data + follow the right branch; (b) iOS-survey audit = does iOS branch the same way; (c) chatbot = branch-aware 'next you'll be asked…' guidance.",
   "branch_points": [
@@ -17,8 +18,14 @@
       "field": null,
       "status": "confirmed",
       "edges": [
-        { "whenAnswer": "Only Food/CalFresh (#snap) checked", "leadsTo": "8-step SNAP-only flow (Assets section omitted — CA BBCE bypass)" },
-        { "whenAnswer": "Cash Aid (#tanf) and/or Medi-Cal (#medicaid) also checked", "leadsTo": "additional sections incl. Assets (full 9-step flow)" }
+        {
+          "whenAnswer": "Only Food/CalFresh (#snap) checked",
+          "leadsTo": "8-step SNAP-only flow (Assets section omitted — CA BBCE bypass)"
+        },
+        {
+          "whenAnswer": "Cash Aid (#tanf) and/or Medi-Cal (#medicaid) also checked",
+          "leadsTo": "additional sections incl. Assets (full 9-step flow)"
+        }
       ],
       "eligibility_critical": true,
       "notes": "program selection determines which whole sections exist. checklist (multi-checkbox: calfresh/cash_aid/medi_cal), not a single field. Civica v1 always checks CalFresh only -> Assets bypass."
@@ -29,8 +36,14 @@
       "field": "hshld_radiogrp",
       "status": "confirmed",
       "edges": [
-        { "whenAnswer": "Yes", "leadsTo": "member sub-flow (ABNMI→ABHHR→ABPSM→ABBPF→ABLNA→ABHAD)" },
-        { "whenAnswer": "No", "leadsTo": "ABPLS (skip members)" }
+        {
+          "whenAnswer": "Yes",
+          "leadsTo": "member sub-flow (ABNMI→ABHHR→ABPSM→ABBPF→ABLNA→ABHAD)"
+        },
+        {
+          "whenAnswer": "No",
+          "leadsTo": "ABPLS (skip members)"
+        }
       ],
       "eligibility_critical": false,
       "notes": "per-member repeating sub-flow; No path observed (ABHSD No -> ABPLS -> ABTCD complete), members path is the captured sub-form template."
@@ -41,8 +54,14 @@
       "field": "living_radio",
       "status": "confirmed",
       "edges": [
-        { "whenAnswer": "Lives elsewhere", "leadsTo": "ABHAD (member address)" },
-        { "whenAnswer": "Lives with you", "leadsTo": "skip address (continue member sub-flow)" }
+        {
+          "whenAnswer": "Lives elsewhere",
+          "leadsTo": "ABHAD (member address)"
+        },
+        {
+          "whenAnswer": "Lives with you",
+          "leadsTo": "skip address (continue member sub-flow)"
+        }
       ],
       "eligibility_critical": false,
       "notes": "per-member; 'Elsewhere' branch observed forcing ABHAD (bad dummy address server-errored the draft)."
@@ -53,8 +72,14 @@
       "field": null,
       "status": "confirmed",
       "edges": [
-        { "whenAnswer": "USPS cannot validate the entered address", "leadsTo": "2-modal flow (Modal #1 'USE THIS ADDRESS' → Modal #2 county select+ 'CONTINUE') → Next" },
-        { "whenAnswer": "USPS validates the address", "leadsTo": "straight to Next (no modals)" }
+        {
+          "whenAnswer": "USPS cannot validate the entered address",
+          "leadsTo": "2-modal flow (Modal #1 'USE THIS ADDRESS' → Modal #2 county select+ 'CONTINUE') → Next"
+        },
+        {
+          "whenAnswer": "USPS validates the address",
+          "leadsTo": "straight to Next (no modals)"
+        }
       ],
       "eligibility_critical": false,
       "notes": "condition-driven branch, not answer-driven. The validation modal is where select#county (2-digit CA ordinal) is collected."
@@ -65,8 +90,14 @@
       "field": "citizen_radio",
       "status": "inferred",
       "edges": [
-        { "whenAnswer": "No (non-citizen)", "leadsTo": "immigration-status detail (ABISS + more)" },
-        { "whenAnswer": "Yes", "leadsTo": "skip immigration detail (continue)" }
+        {
+          "whenAnswer": "No (non-citizen)",
+          "leadsTo": "immigration-status detail (ABISS + more)"
+        },
+        {
+          "whenAnswer": "Yes",
+          "leadsTo": "skip immigration detail (continue)"
+        }
       ],
       "eligibility_critical": true,
       "notes": "only the Yes/skip path walked; the No (immigration-status) sub-flow needs a follow-up walk. ABISS likely asks immigration status / alien # / sponsor."
@@ -77,8 +108,14 @@
       "field": "SSN_IND",
       "status": "inferred",
       "edges": [
-        { "whenAnswer": "Yes", "leadsTo": "SSN-input page (not walked)" },
-        { "whenAnswer": "No / I don't have it right now", "leadsTo": "ABNSN (reason for no SSN)" }
+        {
+          "whenAnswer": "Yes",
+          "leadsTo": "SSN-input page (not walked)"
+        },
+        {
+          "whenAnswer": "No / I don't have it right now",
+          "leadsTo": "ABNSN (reason for no SSN)"
+        }
       ],
       "eligibility_critical": false,
       "notes": "No-path to ABNSN known; Yes-path (SSN-entry page) not walked."
@@ -89,8 +126,14 @@
       "field": null,
       "status": "inferred",
       "edges": [
-        { "whenAnswer": "Any situation checked (govtaid/disability/college/food/living/breastfeeding/military)", "leadsTo": "that situation's own detail sub-pages (one sub-flow per checked box)" },
-        { "whenAnswer": "None of these apply", "leadsTo": "ABRGS (household-details summary)" }
+        {
+          "whenAnswer": "Any situation checked (govtaid/disability/college/food/living/breastfeeding/military)",
+          "leadsTo": "that situation's own detail sub-pages (one sub-flow per checked box)"
+        },
+        {
+          "whenAnswer": "None of these apply",
+          "leadsTo": "ABRGS (household-details summary)"
+        }
       ],
       "eligibility_critical": false,
       "notes": "multi-branch; one detail sub-flow per checked box. Only the 'None' path walked (ABHGW → ABRGS → ABSDE complete). Maps to disability/student/military/public-assistance/group-living eligibility flags."
@@ -101,8 +144,14 @@
       "field": "mailadr_radio",
       "status": "inferred",
       "edges": [
-        { "whenAnswer": "Yes", "leadsTo": "job-detail sub-form (employer/amount/frequency, repeating per job)" },
-        { "whenAnswer": "No", "leadsTo": "skip job detail (continue Income)" }
+        {
+          "whenAnswer": "Yes",
+          "leadsTo": "job-detail sub-form (employer/amount/frequency, repeating per job)"
+        },
+        {
+          "whenAnswer": "No",
+          "leadsTo": "skip job detail (continue Income)"
+        }
       ],
       "eligibility_critical": false,
       "notes": "carries income_sources[]; job-detail repeating sub-form not walked. radio name=mailadr_radio reused on other pages — key on page+label."
@@ -113,8 +162,14 @@
       "field": "select_group",
       "status": "inferred",
       "edges": [
-        { "whenAnswer": "Yes", "leadsTo": "income-source detail (type/amount/frequency)" },
-        { "whenAnswer": "No", "leadsTo": "skip (continue Income)" }
+        {
+          "whenAnswer": "Yes",
+          "leadsTo": "income-source detail (type/amount/frequency)"
+        },
+        {
+          "whenAnswer": "No",
+          "leadsTo": "skip (continue Income)"
+        }
       ],
       "eligibility_critical": false,
       "notes": "non-work income (support/unemployment/gov aid/disability/pension/etc.); detail sub-form not walked. radio name=select_group reused elsewhere — key on page+label."
@@ -125,8 +180,14 @@
       "field": "mailadr_radio",
       "status": "inferred",
       "edges": [
-        { "whenAnswer": "Yes", "leadsTo": "employment-change detail" },
-        { "whenAnswer": "No", "leadsTo": "skip (continue Income)" }
+        {
+          "whenAnswer": "Yes",
+          "leadsTo": "employment-change detail"
+        },
+        {
+          "whenAnswer": "No",
+          "leadsTo": "skip (continue Income)"
+        }
       ],
       "eligibility_critical": false,
       "notes": "change detail (lost/changed job, reduced hours, laid off, quit) not walked."
@@ -137,8 +198,14 @@
       "field": null,
       "status": "inferred",
       "edges": [
-        { "whenAnswer": "Any expense checked (rent/mortgage, property tax/ins, gas-electric-fuel, phone, water-sewage-garbage, homeless shelter)", "leadsTo": "an amount sub-page per checked expense" },
-        { "whenAnswer": "None of These Apply", "leadsTo": "skip (continue Expenses)" }
+        {
+          "whenAnswer": "Any expense checked (rent/mortgage, property tax/ins, gas-electric-fuel, phone, water-sewage-garbage, homeless shelter)",
+          "leadsTo": "an amount sub-page per checked expense"
+        },
+        {
+          "whenAnswer": "None of These Apply",
+          "leadsTo": "skip (continue Expenses)"
+        }
       ],
       "eligibility_critical": false,
       "notes": "multi-branch; maps to utility_allowance_type (SUA tier — gas/electric/fuel is the heating-cooling trigger) + shelter. Amount sub-pages not walked."
@@ -149,8 +216,14 @@
       "field": "select_group",
       "status": "inferred",
       "edges": [
-        { "whenAnswer": "Yes", "leadsTo": "dependent-care amount page" },
-        { "whenAnswer": "No", "leadsTo": "skip (continue Expenses)" }
+        {
+          "whenAnswer": "Yes",
+          "leadsTo": "dependent-care amount page"
+        },
+        {
+          "whenAnswer": "No",
+          "leadsTo": "skip (continue Expenses)"
+        }
       ],
       "eligibility_critical": false,
       "notes": "dependent-care deduction; amount page not walked."
@@ -161,8 +234,14 @@
       "field": "label",
       "status": "inferred",
       "edges": [
-        { "whenAnswer": "Yes", "leadsTo": "child-support amount page" },
-        { "whenAnswer": "No", "leadsTo": "skip (continue Expenses)" }
+        {
+          "whenAnswer": "Yes",
+          "leadsTo": "child-support amount page"
+        },
+        {
+          "whenAnswer": "No",
+          "leadsTo": "skip (continue Expenses)"
+        }
       ],
       "eligibility_critical": false,
       "notes": "court-ordered child support deduction; amount page not walked."
@@ -173,8 +252,14 @@
       "field": "label_spf",
       "status": "inferred",
       "edges": [
-        { "whenAnswer": "Yes", "leadsTo": "spousal-support amount page" },
-        { "whenAnswer": "No", "leadsTo": "skip (continue Expenses)" }
+        {
+          "whenAnswer": "Yes",
+          "leadsTo": "spousal-support amount page"
+        },
+        {
+          "whenAnswer": "No",
+          "leadsTo": "skip (continue Expenses)"
+        }
       ],
       "eligibility_critical": false,
       "notes": "court-ordered spousal support/alimony deduction; amount page not walked."
@@ -185,8 +270,14 @@
       "field": "mailadr1_radio",
       "status": "inferred",
       "edges": [
-        { "whenAnswer": "Yes", "leadsTo": "mailing-address form (2nd address)" },
-        { "whenAnswer": "No", "leadsTo": "skip (continue to ABCON)" }
+        {
+          "whenAnswer": "Yes",
+          "leadsTo": "mailing-address form (2nd address)"
+        },
+        {
+          "whenAnswer": "No",
+          "leadsTo": "skip (continue to ABCON)"
+        }
       ],
       "eligibility_critical": false,
       "notes": "Yes branch (second mailing-address form) not walked — submitter picks No."
@@ -197,8 +288,14 @@
       "field": "maritalStatus",
       "status": "inferred",
       "edges": [
-        { "whenAnswer": "Married", "leadsTo": "spouse info (likely)" },
-        { "whenAnswer": "Other (Single/Divorced/Separated/Widowed/Domestic Partner/Common Law/Never Married)", "leadsTo": "skip (continue)" }
+        {
+          "whenAnswer": "Married",
+          "leadsTo": "spouse info (likely)"
+        },
+        {
+          "whenAnswer": "Other (Single/Divorced/Separated/Widowed/Domestic Partner/Common Law/Never Married)",
+          "leadsTo": "skip (continue)"
+        }
       ],
       "eligibility_critical": false,
       "notes": "branch inferred from option semantics — divergence not observed; needs a follow-up walk answering 'Married'."
@@ -209,8 +306,14 @@
       "field": null,
       "status": "inferred",
       "edges": [
-        { "whenAnswer": "Any 'Yes' (duplicate food aid / EBT trafficking / probation violation / drug felony / firearm felony / fleeing to avoid jail)", "leadsTo": "explanation/detail page (likely)" },
-        { "whenAnswer": "All 'No'", "leadsTo": "continue (ABSND section-complete)" }
+        {
+          "whenAnswer": "Any 'Yes' (duplicate food aid / EBT trafficking / probation violation / drug felony / firearm felony / fleeing to avoid jail)",
+          "leadsTo": "explanation/detail page (likely)"
+        },
+        {
+          "whenAnswer": "All 'No'",
+          "leadsTo": "continue (ABSND section-complete)"
+        }
       ],
       "eligibility_critical": true,
       "notes": "Other Situations gate; 6 Yes/No statements (duplicatefood_radio, sellingEBT_radio, probation_violation_radio, foodAssistanceDrug_radio, foodAssistanceGun_radio, avoidJail_radio). Detail/explanation pages on 'Yes' not walked."
@@ -234,7 +337,10 @@
               "key": "read_language",
               "questionText": "What language do you prefer to read?",
               "type": "select",
-              "selector": { "label": "What language do you prefer to read?", "fallbackSelector": "select#primarylang" },
+              "selector": {
+                "label": "What language do you prefer to read?",
+                "fallbackSelector": "select#primarylang"
+              },
               "required": false,
               "source": null,
               "transform": null,
@@ -244,7 +350,10 @@
               "key": "spoken_language",
               "questionText": "What language do you prefer to speak?",
               "type": "select",
-              "selector": { "label": "What language do you prefer to speak?", "fallbackSelector": "select#spokenlang" },
+              "selector": {
+                "label": "What language do you prefer to speak?",
+                "fallbackSelector": "select#spokenlang"
+              },
               "required": false,
               "source": null,
               "transform": null,
@@ -254,7 +363,10 @@
               "key": "application_language",
               "questionText": "In what language would you like to complete this application?",
               "type": "select",
-              "selector": { "label": "In what language would you like to complete this application?", "fallbackSelector": "select#applang" },
+              "selector": {
+                "label": "In what language would you like to complete this application?",
+                "fallbackSelector": "select#applang"
+              },
               "required": false,
               "source": null,
               "transform": null,
@@ -279,7 +391,10 @@
               "key": "first_name",
               "questionText": "First Name (required)",
               "type": "text",
-              "selector": { "label": "First Name (required)", "fallbackSelector": "#text1" },
+              "selector": {
+                "label": "First Name (required)",
+                "fallbackSelector": "#text1"
+              },
               "required": true,
               "source": "first_name",
               "transform": null,
@@ -289,7 +404,10 @@
               "key": "middle_name",
               "questionText": "Middle Name",
               "type": "text",
-              "selector": { "label": "Middle Name", "fallbackSelector": "#text2" },
+              "selector": {
+                "label": "Middle Name",
+                "fallbackSelector": "#text2"
+              },
               "required": false,
               "source": null,
               "transform": null,
@@ -299,7 +417,10 @@
               "key": "last_name",
               "questionText": "Last Name (required)",
               "type": "text",
-              "selector": { "label": "Last Name (required)", "fallbackSelector": "#text3" },
+              "selector": {
+                "label": "Last Name (required)",
+                "fallbackSelector": "#text3"
+              },
               "required": true,
               "source": "last_name",
               "transform": null,
@@ -309,7 +430,10 @@
               "key": "suffix",
               "questionText": "Suffix",
               "type": "select",
-              "selector": { "label": "Suffix", "fallbackSelector": "select#suffix" },
+              "selector": {
+                "label": "Suffix",
+                "fallbackSelector": "select#suffix"
+              },
               "required": false,
               "source": null,
               "transform": null,
@@ -319,7 +443,10 @@
               "key": "other_names",
               "questionText": "Other Names",
               "type": "text",
-              "selector": { "label": "Other Names", "fallbackSelector": "#text4" },
+              "selector": {
+                "label": "Other Names",
+                "fallbackSelector": "#text4"
+              },
               "required": false,
               "source": null,
               "transform": null,
@@ -344,11 +471,20 @@
               "key": "experiencing_homelessness",
               "questionText": "Are you experiencing homelessness?",
               "type": "radio",
-              "selector": { "label": "Are you experiencing homelessness?", "fallbackSelector": "[name=radioCard]" },
+              "selector": {
+                "label": "Are you experiencing homelessness?",
+                "fallbackSelector": "[name=radioCard]"
+              },
               "required": false,
               "options": [
-                { "value": "#radioCard_0", "label": "Yes" },
-                { "value": "#radioCard_1", "label": "No" }
+                {
+                  "value": "#radioCard_0",
+                  "label": "Yes"
+                },
+                {
+                  "value": "#radioCard_1",
+                  "label": "No"
+                }
               ],
               "source": "is_homeless",
               "transform": null,
@@ -358,7 +494,10 @@
               "key": "address_line_1",
               "questionText": "Address Line 1 (required)",
               "type": "text",
-              "selector": { "label": "Address Line 1 (required)", "fallbackSelector": "#addressLine1" },
+              "selector": {
+                "label": "Address Line 1 (required)",
+                "fallbackSelector": "#addressLine1"
+              },
               "required": true,
               "source": "address.street",
               "transform": null,
@@ -368,7 +507,10 @@
               "key": "address_line_2",
               "questionText": "Address Line 2",
               "type": "text",
-              "selector": { "label": "Address Line 2", "fallbackSelector": "#addressLine2" },
+              "selector": {
+                "label": "Address Line 2",
+                "fallbackSelector": "#addressLine2"
+              },
               "required": false,
               "source": null,
               "transform": null,
@@ -378,7 +520,10 @@
               "key": "city",
               "questionText": "City (required)",
               "type": "text",
-              "selector": { "label": "City (required)", "fallbackSelector": "#city" },
+              "selector": {
+                "label": "City (required)",
+                "fallbackSelector": "#city"
+              },
               "required": true,
               "source": "address.city",
               "transform": null,
@@ -388,7 +533,10 @@
               "key": "state",
               "questionText": "State",
               "type": "select",
-              "selector": { "label": "State", "fallbackSelector": "select#state" },
+              "selector": {
+                "label": "State",
+                "fallbackSelector": "select#state"
+              },
               "required": false,
               "source": "address.state",
               "transform": null,
@@ -398,7 +546,10 @@
               "key": "zip",
               "questionText": "Zip Code (required)",
               "type": "text",
-              "selector": { "label": "Zip Code (required)", "fallbackSelector": "#zip5" },
+              "selector": {
+                "label": "Zip Code (required)",
+                "fallbackSelector": "#zip5"
+              },
               "required": true,
               "source": "address.zip",
               "transform": null,
@@ -408,11 +559,20 @@
               "key": "validation_modal_county",
               "questionText": "County",
               "type": "select",
-              "selector": { "label": "County", "fallbackSelector": "select#county" },
+              "selector": {
+                "label": "County",
+                "fallbackSelector": "select#county"
+              },
               "required": true,
               "options": [
-                { "value": "01", "label": "Alameda" },
-                { "value": "34", "label": "Sacramento" }
+                {
+                  "value": "01",
+                  "label": "Alameda"
+                },
+                {
+                  "value": "34",
+                  "label": "Sacramento"
+                }
               ],
               "source": "address.county",
               "transform": "ca-county-ordinal",
@@ -428,7 +588,11 @@
           ],
           "errors": [],
           "branches": [
-            { "whenField": "address_validation", "whenValue": "USPS cannot validate", "targetPage": "ABNHA(address-validation-modals)" }
+            {
+              "whenField": "address_validation",
+              "whenValue": "USPS cannot validate",
+              "targetPage": "ABNHA(address-validation-modals)"
+            }
           ],
           "status": "partial",
           "notes": "2-modal address-validation flow (RESOLVED in SELECTORS.md 1.3): when USPS can't validate, Modal #1 'Can't validate' -> click 'USE THIS ADDRESS'; Modal #2 'What county?' -> select#county (2-digit ordinal) + click 'CONTINUE' (uppercase); then click Next to advance to ABMAD."
@@ -445,11 +609,20 @@
               "key": "mailing_differs",
               "questionText": "Is your mailing address different from your home address?",
               "type": "radio",
-              "selector": { "label": "Is your mailing address different from your home address?", "fallbackSelector": "[name=mailadr1_radio]" },
+              "selector": {
+                "label": "Is your mailing address different from your home address?",
+                "fallbackSelector": "[name=mailadr1_radio]"
+              },
               "required": false,
               "options": [
-                { "value": "#mailadr1_radio_0", "label": "Yes" },
-                { "value": "#mailadr1_radio_1", "label": "No" }
+                {
+                  "value": "#mailadr1_radio_0",
+                  "label": "Yes"
+                },
+                {
+                  "value": "#mailadr1_radio_1",
+                  "label": "No"
+                }
               ],
               "source": null,
               "transform": null,
@@ -459,7 +632,11 @@
           "helpLinks": [],
           "errors": [],
           "branches": [
-            { "whenField": "mailing_differs", "whenValue": "Yes", "targetPage": "ABMAD(mailing-address-form)" }
+            {
+              "whenField": "mailing_differs",
+              "whenValue": "Yes",
+              "targetPage": "ABMAD(mailing-address-form)"
+            }
           ],
           "status": "partial",
           "notes": "Yes branch (second mailing-address form) not walked."
@@ -476,7 +653,10 @@
               "key": "home_phone",
               "questionText": "Home Phone",
               "type": "text",
-              "selector": { "label": "Home Phone", "fallbackSelector": "#homePhone" },
+              "selector": {
+                "label": "Home Phone",
+                "fallbackSelector": "#homePhone"
+              },
               "required": false,
               "source": null,
               "transform": null,
@@ -486,7 +666,10 @@
               "key": "mobile_phone",
               "questionText": "Mobile Phone",
               "type": "text",
-              "selector": { "label": "Mobile Phone", "fallbackSelector": "#mobilePhone" },
+              "selector": {
+                "label": "Mobile Phone",
+                "fallbackSelector": "#mobilePhone"
+              },
               "required": false,
               "source": "phone",
               "transform": "phone-10digit",
@@ -496,7 +679,10 @@
               "key": "alternate_phone",
               "questionText": "Alternate Phone",
               "type": "text",
-              "selector": { "label": "Alternate Phone", "fallbackSelector": "#altPhone" },
+              "selector": {
+                "label": "Alternate Phone",
+                "fallbackSelector": "#altPhone"
+              },
               "required": false,
               "source": null,
               "transform": null,
@@ -506,7 +692,10 @@
               "key": "email",
               "questionText": "Email",
               "type": "text",
-              "selector": { "label": "Email", "fallbackSelector": "#mail" },
+              "selector": {
+                "label": "Email",
+                "fallbackSelector": "#mail"
+              },
               "required": false,
               "source": null,
               "transform": null,
@@ -531,7 +720,10 @@
               "key": "email_alerts",
               "questionText": "Email alerts",
               "type": "checkbox",
-              "selector": { "label": "Email alerts", "fallbackSelector": "input[type=checkbox]#mail" },
+              "selector": {
+                "label": "Email alerts",
+                "fallbackSelector": "input[type=checkbox]#mail"
+              },
               "required": false,
               "source": null,
               "transform": null,
@@ -541,7 +733,10 @@
               "key": "text_alerts",
               "questionText": "Text alerts",
               "type": "checkbox",
-              "selector": { "label": "Text alerts", "fallbackSelector": "input[type=checkbox]#phone" },
+              "selector": {
+                "label": "Text alerts",
+                "fallbackSelector": "input[type=checkbox]#phone"
+              },
               "required": false,
               "source": null,
               "transform": null,
@@ -551,7 +746,10 @@
               "key": "tcpa_acknowledgment",
               "questionText": "TCPA acknowledgment",
               "type": "checkbox",
-              "selector": { "label": "TCPA acknowledgment", "fallbackSelector": "input[type=checkbox]#acceptance_agreement" },
+              "selector": {
+                "label": "TCPA acknowledgment",
+                "fallbackSelector": "input[type=checkbox]#acceptance_agreement"
+              },
               "required": false,
               "source": null,
               "transform": null,
@@ -576,7 +774,10 @@
               "key": "email",
               "questionText": "Email",
               "type": "text",
-              "selector": { "label": "Email", "fallbackSelector": "#mail" },
+              "selector": {
+                "label": "Email",
+                "fallbackSelector": "#mail"
+              },
               "required": true,
               "source": null,
               "transform": null,
@@ -586,7 +787,10 @@
               "key": "mobile_phone",
               "questionText": "Mobile Phone",
               "type": "text",
-              "selector": { "label": "Mobile Phone", "fallbackSelector": "#mobilePhone" },
+              "selector": {
+                "label": "Mobile Phone",
+                "fallbackSelector": "#mobilePhone"
+              },
               "required": true,
               "source": "phone",
               "transform": "phone-10digit",
@@ -595,7 +799,11 @@
           ],
           "helpLinks": [],
           "errors": [
-            { "field": "email", "message": "TODO: capture verbatim (valid-email-format error)", "trigger": "advance with invalid or empty email" }
+            {
+              "field": "email",
+              "message": "TODO: capture verbatim (valid-email-format error)",
+              "trigger": "advance with invalid or empty email"
+            }
           ],
           "branches": [],
           "status": "discovered",
@@ -613,7 +821,10 @@
               "key": "calfresh",
               "questionText": "CalFresh",
               "type": "checkbox",
-              "selector": { "label": "CalFresh", "fallbackSelector": "input[type=checkbox]#snap" },
+              "selector": {
+                "label": "CalFresh",
+                "fallbackSelector": "input[type=checkbox]#snap"
+              },
               "required": true,
               "source": null,
               "transform": null,
@@ -623,7 +834,10 @@
               "key": "cash_aid",
               "questionText": "Cash Aid",
               "type": "checkbox",
-              "selector": { "label": "Cash Aid", "fallbackSelector": "input[type=checkbox]#tanf" },
+              "selector": {
+                "label": "Cash Aid",
+                "fallbackSelector": "input[type=checkbox]#tanf"
+              },
               "required": false,
               "source": null,
               "transform": null,
@@ -633,7 +847,10 @@
               "key": "medi_cal",
               "questionText": "Medi-Cal",
               "type": "checkbox",
-              "selector": { "label": "Medi-Cal", "fallbackSelector": "input[type=checkbox]#medicaid" },
+              "selector": {
+                "label": "Medi-Cal",
+                "fallbackSelector": "input[type=checkbox]#medicaid"
+              },
               "required": false,
               "source": null,
               "transform": null,
@@ -643,11 +860,20 @@
               "key": "applying_for_self",
               "questionText": "Are you applying for benefits for yourself?",
               "type": "radio",
-              "selector": { "label": "Are you applying for benefits for yourself?", "fallbackSelector": "[name=label]" },
+              "selector": {
+                "label": "Are you applying for benefits for yourself?",
+                "fallbackSelector": "[name=label]"
+              },
               "required": true,
               "options": [
-                { "value": "#label_0", "label": "Yes" },
-                { "value": "#label_1", "label": "No" }
+                {
+                  "value": "#label_0",
+                  "label": "Yes"
+                },
+                {
+                  "value": "#label_1",
+                  "label": "No"
+                }
               ],
               "source": null,
               "transform": null,
@@ -663,9 +889,21 @@
           ],
           "errors": [],
           "branches": [
-            { "whenField": "calfresh", "whenValue": "checked (SNAP-only)", "targetPage": "(Assets section omitted — BBCE bypass)" },
-            { "whenField": "cash_aid", "whenValue": "checked", "targetPage": "(Assets section appears)" },
-            { "whenField": "medi_cal", "whenValue": "checked", "targetPage": "(Assets section appears)" }
+            {
+              "whenField": "calfresh",
+              "whenValue": "checked (SNAP-only)",
+              "targetPage": "(Assets section omitted — BBCE bypass)"
+            },
+            {
+              "whenField": "cash_aid",
+              "whenValue": "checked",
+              "targetPage": "(Assets section appears)"
+            },
+            {
+              "whenField": "medi_cal",
+              "whenValue": "checked",
+              "targetPage": "(Assets section appears)"
+            }
           ],
           "status": "partial",
           "notes": "The 'Not sure what to choose?' help link is listed in FORM-TREE.md's HelpNode checklist as belonging to ABPRI; verify its exact presence/trigger on a future walk."
@@ -681,7 +919,11 @@
           "helpLinks": [],
           "errors": [],
           "branches": [
-            { "whenField": "advanceButton", "whenValue": "Skip and submit now (not recommended)", "targetPage": "(early-submit path — not walked)" }
+            {
+              "whenField": "advanceButton",
+              "whenValue": "Skip and submit now (not recommended)",
+              "targetPage": "(early-submit path — not walked)"
+            }
           ],
           "status": "partial",
           "notes": "Info/decision page, no inputs. Two controls: button 'CONTINUE APPLICATION' (normal flow, submitter always picks this) vs link 'Skip and submit now (not recommended)'. Documented in SELECTORS.md 1.8 but absent from the WALK-STEPS-2-9.md step-1 sequence list."
@@ -698,11 +940,20 @@
               "key": "need_help_to_apply",
               "questionText": "Need help to apply?",
               "type": "radio",
-              "selector": { "label": "Need help to apply?", "fallbackSelector": "[name=disability]" },
+              "selector": {
+                "label": "Need help to apply?",
+                "fallbackSelector": "[name=disability]"
+              },
               "required": false,
               "options": [
-                { "value": "#disability0", "label": "Yes" },
-                { "value": "#disability1", "label": "No" }
+                {
+                  "value": "#disability0",
+                  "label": "Yes"
+                },
+                {
+                  "value": "#disability1",
+                  "label": "No"
+                }
               ],
               "source": null,
               "transform": null,
@@ -712,11 +963,20 @@
               "key": "deaf_or_hard_of_hearing",
               "questionText": "Deaf or hard of hearing?",
               "type": "radio",
-              "selector": { "label": "Deaf or hard of hearing?", "fallbackSelector": "[name=deaf]" },
+              "selector": {
+                "label": "Deaf or hard of hearing?",
+                "fallbackSelector": "[name=deaf]"
+              },
               "required": false,
               "options": [
-                { "value": "#deaf0", "label": "Yes" },
-                { "value": "#deaf1", "label": "No" }
+                {
+                  "value": "#deaf0",
+                  "label": "Yes"
+                },
+                {
+                  "value": "#deaf1",
+                  "label": "No"
+                }
               ],
               "source": null,
               "transform": null,
@@ -741,11 +1001,20 @@
               "key": "college_student",
               "questionText": "Are you a college student?",
               "type": "radio",
-              "selector": { "label": "Are you a college student?", "fallbackSelector": "[name=CollegeStudentE_radio_button]" },
+              "selector": {
+                "label": "Are you a college student?",
+                "fallbackSelector": "[name=CollegeStudentE_radio_button]"
+              },
               "required": true,
               "options": [
-                { "value": "#CollegeStudentE_radio_button_0", "label": "Yes" },
-                { "value": "#CollegeStudentE_radio_button_1", "label": "No" }
+                {
+                  "value": "#CollegeStudentE_radio_button_0",
+                  "label": "Yes"
+                },
+                {
+                  "value": "#CollegeStudentE_radio_button_1",
+                  "label": "No"
+                }
               ],
               "source": "is_college_student",
               "transform": null,
@@ -770,11 +1039,20 @@
               "key": "calfresh_authorized_representative",
               "questionText": "Do you want a CalFresh Authorized Representative?",
               "type": "radio",
-              "selector": { "label": "Do you want a CalFresh Authorized Representative?", "fallbackSelector": "[name=filingTax]" },
+              "selector": {
+                "label": "Do you want a CalFresh Authorized Representative?",
+                "fallbackSelector": "[name=filingTax]"
+              },
               "required": false,
               "options": [
-                { "value": "#filingTax_0", "label": "Yes" },
-                { "value": "#filingTax_1", "label": "No" }
+                {
+                  "value": "#filingTax_0",
+                  "label": "Yes"
+                },
+                {
+                  "value": "#filingTax_1",
+                  "label": "No"
+                }
               ],
               "source": null,
               "transform": null,
@@ -790,7 +1068,11 @@
           ],
           "errors": [],
           "branches": [
-            { "whenField": "calfresh_authorized_representative", "whenValue": "Yes", "targetPage": "(auth-rep detail form — not walked)" }
+            {
+              "whenField": "calfresh_authorized_representative",
+              "whenValue": "Yes",
+              "targetPage": "(auth-rep detail form — not walked)"
+            }
           ],
           "status": "partial",
           "notes": ""
@@ -807,11 +1089,20 @@
               "key": "benefits_spend_representative",
               "questionText": "Do you want someone who can use your benefits (EBT card)?",
               "type": "radio",
-              "selector": { "label": "Do you want someone who can use your benefits (EBT card)?", "fallbackSelector": "[name=select_group]" },
+              "selector": {
+                "label": "Do you want someone who can use your benefits (EBT card)?",
+                "fallbackSelector": "[name=select_group]"
+              },
               "required": false,
               "options": [
-                { "value": "#select_group_0", "label": "Yes" },
-                { "value": "#select_group_1", "label": "No" }
+                {
+                  "value": "#select_group_0",
+                  "label": "Yes"
+                },
+                {
+                  "value": "#select_group_1",
+                  "label": "No"
+                }
               ],
               "source": null,
               "transform": null,
@@ -821,7 +1112,11 @@
           "helpLinks": [],
           "errors": [],
           "branches": [
-            { "whenField": "benefits_spend_representative", "whenValue": "Yes", "targetPage": "(spend-rep detail form — not walked)" }
+            {
+              "whenField": "benefits_spend_representative",
+              "whenValue": "Yes",
+              "targetPage": "(spend-rep detail form — not walked)"
+            }
           ],
           "status": "partial",
           "notes": ""
@@ -838,7 +1133,10 @@
               "key": "date_of_birth",
               "questionText": "Date of Birth (required)",
               "type": "date-password",
-              "selector": { "label": "Date of Birth (required)", "fallbackSelector": "#birthDate_primary_input" },
+              "selector": {
+                "label": "Date of Birth (required)",
+                "fallbackSelector": "#birthDate_primary_input"
+              },
               "required": true,
               "source": "date_of_birth",
               "transform": null,
@@ -863,12 +1161,24 @@
               "key": "ssn_existence",
               "questionText": "Do you have a Social Security Number?",
               "type": "radio",
-              "selector": { "label": "Do you have a Social Security Number?", "fallbackSelector": "[name=SSN_IND]" },
+              "selector": {
+                "label": "Do you have a Social Security Number?",
+                "fallbackSelector": "[name=SSN_IND]"
+              },
               "required": false,
               "options": [
-                { "value": "#ssn_group0", "label": "Yes" },
-                { "value": "#ssn_group1", "label": "No" },
-                { "value": "#ssn_group2", "label": "I don't have it right now" }
+                {
+                  "value": "#ssn_group0",
+                  "label": "Yes"
+                },
+                {
+                  "value": "#ssn_group1",
+                  "label": "No"
+                },
+                {
+                  "value": "#ssn_group2",
+                  "label": "I don't have it right now"
+                }
               ],
               "source": "ssn_last4",
               "transform": null,
@@ -878,8 +1188,16 @@
           "helpLinks": [],
           "errors": [],
           "branches": [
-            { "whenField": "ssn_existence", "whenValue": "Yes", "targetPage": "(SSN-entry page — not walked)" },
-            { "whenField": "ssn_existence", "whenValue": "No / I don't have it right now", "targetPage": "ABNSN" }
+            {
+              "whenField": "ssn_existence",
+              "whenValue": "Yes",
+              "targetPage": "(SSN-entry page — not walked)"
+            },
+            {
+              "whenField": "ssn_existence",
+              "whenValue": "No / I don't have it right now",
+              "targetPage": "ABNSN"
+            }
           ],
           "status": "partial",
           "notes": "Yes branch (SSN input page) not walked. No/'don't have it' branch leads to ABNSN."
@@ -896,13 +1214,28 @@
               "key": "reason_for_no_ssn",
               "questionText": "Reason for not having a Social Security Number",
               "type": "select",
-              "selector": { "label": "Reason for not having a Social Security Number", "fallbackSelector": null },
+              "selector": {
+                "label": "Reason for not having a Social Security Number",
+                "fallbackSelector": null
+              },
               "required": false,
               "options": [
-                { "value": "01", "label": "Adoption Taxpayer ID / ITIN" },
-                { "value": "02", "label": "Religious Exemption" },
-                { "value": "03", "label": "Does not qualify, or only issuable for non-work reason" },
-                { "value": "05", "label": "I have applied for an SSN" }
+                {
+                  "value": "01",
+                  "label": "Adoption Taxpayer ID / ITIN"
+                },
+                {
+                  "value": "02",
+                  "label": "Religious Exemption"
+                },
+                {
+                  "value": "03",
+                  "label": "Does not qualify, or only issuable for non-work reason"
+                },
+                {
+                  "value": "05",
+                  "label": "I have applied for an SSN"
+                }
               ],
               "source": null,
               "transform": null,
@@ -927,17 +1260,44 @@
               "key": "marital_status",
               "questionText": "Marital status",
               "type": "radio",
-              "selector": { "label": "Marital status", "fallbackSelector": "[name=maritalStatus]" },
+              "selector": {
+                "label": "Marital status",
+                "fallbackSelector": "[name=maritalStatus]"
+              },
               "required": false,
               "options": [
-                { "value": "#maritalStatus_0", "label": "Common Law" },
-                { "value": "#maritalStatus_1", "label": "Divorced" },
-                { "value": "#maritalStatus_2", "label": "Married" },
-                { "value": "#maritalStatus_3", "label": "Never Married" },
-                { "value": "#maritalStatus_4", "label": "Registered Domestic Partner" },
-                { "value": "#maritalStatus_5", "label": "Separated" },
-                { "value": "#maritalStatus_6", "label": "Single" },
-                { "value": "#maritalStatus_7", "label": "Widowed" }
+                {
+                  "value": "#maritalStatus_0",
+                  "label": "Common Law"
+                },
+                {
+                  "value": "#maritalStatus_1",
+                  "label": "Divorced"
+                },
+                {
+                  "value": "#maritalStatus_2",
+                  "label": "Married"
+                },
+                {
+                  "value": "#maritalStatus_3",
+                  "label": "Never Married"
+                },
+                {
+                  "value": "#maritalStatus_4",
+                  "label": "Registered Domestic Partner"
+                },
+                {
+                  "value": "#maritalStatus_5",
+                  "label": "Separated"
+                },
+                {
+                  "value": "#maritalStatus_6",
+                  "label": "Single"
+                },
+                {
+                  "value": "#maritalStatus_7",
+                  "label": "Widowed"
+                }
               ],
               "source": "marital_status",
               "transform": null,
@@ -947,7 +1307,11 @@
           "helpLinks": [],
           "errors": [],
           "branches": [
-            { "whenField": "marital_status", "whenValue": "Married", "targetPage": "(spouse-info form — inferred, not walked)" }
+            {
+              "whenField": "marital_status",
+              "whenValue": "Married",
+              "targetPage": "(spouse-info form — inferred, not walked)"
+            }
           ],
           "status": "partial",
           "notes": "Branch inferred from option semantics — divergence not observed; 'Married' likely reveals spouse info, others skip."
@@ -978,11 +1342,20 @@
               "key": "citizen",
               "questionText": "Are you a U.S. citizen?",
               "type": "radio",
-              "selector": { "label": "Are you a U.S. citizen?", "fallbackSelector": "[name=citizen_radio]" },
+              "selector": {
+                "label": "Are you a U.S. citizen?",
+                "fallbackSelector": "[name=citizen_radio]"
+              },
               "required": true,
               "options": [
-                { "value": "#citizen_radio_0", "label": "Yes" },
-                { "value": "#citizen_radio_1", "label": "No" }
+                {
+                  "value": "#citizen_radio_0",
+                  "label": "Yes"
+                },
+                {
+                  "value": "#citizen_radio_1",
+                  "label": "No"
+                }
               ],
               "source": "citizenship_status",
               "transform": null,
@@ -1003,7 +1376,11 @@
           ],
           "errors": [],
           "branches": [
-            { "whenField": "citizen", "whenValue": "No", "targetPage": "ABISS" }
+            {
+              "whenField": "citizen",
+              "whenValue": "No",
+              "targetPage": "ABISS"
+            }
           ],
           "status": "partial",
           "notes": "Non-citizen (No) branch leads to immigration-status flow (ABISS, not walked) — likely asks immigration status, alien #, sponsor info (eligibility-critical)."
@@ -1076,12 +1453,24 @@
               "key": "assigned_sex",
               "questionText": "Sex assigned at birth",
               "type": "radio",
-              "selector": { "label": "Sex assigned at birth", "fallbackSelector": "[name=assignedSex]" },
+              "selector": {
+                "label": "Sex assigned at birth",
+                "fallbackSelector": "[name=assignedSex]"
+              },
               "required": false,
               "options": [
-                { "value": "0", "label": "Female" },
-                { "value": "1", "label": "Male" },
-                { "value": "2", "label": "I prefer not to answer" }
+                {
+                  "value": "0",
+                  "label": "Female"
+                },
+                {
+                  "value": "1",
+                  "label": "Male"
+                },
+                {
+                  "value": "2",
+                  "label": "I prefer not to answer"
+                }
               ],
               "source": null,
               "transform": null,
@@ -1106,7 +1495,10 @@
               "key": "gender_identity",
               "questionText": "Gender identity",
               "type": "radio",
-              "selector": { "label": "Gender identity", "fallbackSelector": "[name=gender]" },
+              "selector": {
+                "label": "Gender identity",
+                "fallbackSelector": "[name=gender]"
+              },
               "required": false,
               "source": null,
               "transform": null,
@@ -1172,7 +1564,11 @@
           "helpLinks": [],
           "errors": [],
           "branches": [
-            { "whenField": "advanceButton", "whenValue": "START THE NEXT SECTION", "targetPage": "ABNAV" }
+            {
+              "whenField": "advanceButton",
+              "whenValue": "START THE NEXT SECTION",
+              "targetPage": "ABNAV"
+            }
           ],
           "status": "discovered",
           "notes": "Section-complete page for Your Information (per WALK-STEPS-2-9.md: 'Great job! ... START THE NEXT SECTION'). advanceButton 'START THE NEXT SECTION' returns to the ABNAV hub, where the People section's Start button is now enabled. Title is the verbatim fragment captured; full copy not captured."
@@ -1196,11 +1592,20 @@
               "key": "other_household_members",
               "questionText": "Do you have other people living in your household?",
               "type": "radio",
-              "selector": { "label": "Do you have other people living in your household?", "fallbackSelector": "[name=hshld_radiogrp]" },
+              "selector": {
+                "label": "Do you have other people living in your household?",
+                "fallbackSelector": "[name=hshld_radiogrp]"
+              },
               "required": false,
               "options": [
-                { "value": "#hshld_radiogrp_0", "label": "Yes" },
-                { "value": "#hshld_radiogrp_1", "label": "No" }
+                {
+                  "value": "#hshld_radiogrp_0",
+                  "label": "Yes"
+                },
+                {
+                  "value": "#hshld_radiogrp_1",
+                  "label": "No"
+                }
               ],
               "source": null,
               "transform": null,
@@ -1216,8 +1621,16 @@
           ],
           "errors": [],
           "branches": [
-            { "whenField": "other_household_members", "whenValue": "Yes", "targetPage": "ABNMI(member)" },
-            { "whenField": "other_household_members", "whenValue": "No", "targetPage": "ABPLS" }
+            {
+              "whenField": "other_household_members",
+              "whenValue": "Yes",
+              "targetPage": "ABNMI(member)"
+            },
+            {
+              "whenField": "other_household_members",
+              "whenValue": "No",
+              "targetPage": "ABPLS"
+            }
           ],
           "status": "partial",
           "notes": "Household-members gate. No -> skip member sub-flow (fast path) -> ABPLS -> ABTCD (section complete)."
@@ -1234,7 +1647,10 @@
               "key": "first_name",
               "questionText": "First Name (required)",
               "type": "text",
-              "selector": { "label": "First Name (required)", "fallbackSelector": "#text1" },
+              "selector": {
+                "label": "First Name (required)",
+                "fallbackSelector": "#text1"
+              },
               "required": true,
               "source": "household_members[].first_name",
               "transform": null,
@@ -1244,7 +1660,10 @@
               "key": "middle_name",
               "questionText": "Middle Name",
               "type": "text",
-              "selector": { "label": "Middle Name", "fallbackSelector": "#text2" },
+              "selector": {
+                "label": "Middle Name",
+                "fallbackSelector": "#text2"
+              },
               "required": false,
               "source": null,
               "transform": null,
@@ -1254,7 +1673,10 @@
               "key": "last_name",
               "questionText": "Last Name (required)",
               "type": "text",
-              "selector": { "label": "Last Name (required)", "fallbackSelector": "#text3" },
+              "selector": {
+                "label": "Last Name (required)",
+                "fallbackSelector": "#text3"
+              },
               "required": true,
               "source": "household_members[].last_name",
               "transform": null,
@@ -1264,7 +1686,10 @@
               "key": "suffix",
               "questionText": "Suffix",
               "type": "select",
-              "selector": { "label": "Suffix", "fallbackSelector": "select#suffix" },
+              "selector": {
+                "label": "Suffix",
+                "fallbackSelector": "select#suffix"
+              },
               "required": false,
               "source": null,
               "transform": null,
@@ -1274,7 +1699,10 @@
               "key": "other_names",
               "questionText": "Other Names",
               "type": "text",
-              "selector": { "label": "Other Names", "fallbackSelector": "#text4" },
+              "selector": {
+                "label": "Other Names",
+                "fallbackSelector": "#text4"
+              },
               "required": false,
               "source": null,
               "transform": null,
@@ -1299,7 +1727,10 @@
               "key": "relationship",
               "questionText": "How is <name> related to you?",
               "type": "select",
-              "selector": { "label": "How is <name> related to you?", "fallbackSelector": "select#optiongroup" },
+              "selector": {
+                "label": "How is <name> related to you?",
+                "fallbackSelector": "select#optiongroup"
+              },
               "required": false,
               "source": "household_members[].relationship",
               "transform": null,
@@ -1324,7 +1755,10 @@
               "key": "included_in_snap",
               "questionText": "We included <name> in the Food (CalFresh) household",
               "type": "checkbox",
-              "selector": { "label": "Food (CalFresh)", "fallbackSelector": "input[type=checkbox]#snap" },
+              "selector": {
+                "label": "Food (CalFresh)",
+                "fallbackSelector": "input[type=checkbox]#snap"
+              },
               "required": false,
               "source": null,
               "transform": null,
@@ -1334,7 +1768,10 @@
               "key": "does_not_apply",
               "questionText": "Does not apply",
               "type": "checkbox",
-              "selector": { "label": "Does not apply", "fallbackSelector": "input[type=checkbox]#notApply" },
+              "selector": {
+                "label": "Does not apply",
+                "fallbackSelector": "input[type=checkbox]#notApply"
+              },
               "required": false,
               "source": null,
               "transform": null,
@@ -1359,11 +1796,20 @@
               "key": "buy_prepare_food_together",
               "questionText": "Do you buy and prepare food together?",
               "type": "radio",
-              "selector": { "label": "Do you buy and prepare food together?", "fallbackSelector": "[name=label]" },
+              "selector": {
+                "label": "Do you buy and prepare food together?",
+                "fallbackSelector": "[name=label]"
+              },
               "required": false,
               "options": [
-                { "value": "#label_0", "label": "Yes" },
-                { "value": "#label_1", "label": "No" }
+                {
+                  "value": "#label_0",
+                  "label": "Yes"
+                },
+                {
+                  "value": "#label_1",
+                  "label": "No"
+                }
               ],
               "source": null,
               "transform": null,
@@ -1388,12 +1834,24 @@
               "key": "lives_with_you",
               "questionText": "Does <name> live with you?",
               "type": "radio",
-              "selector": { "label": "Does <name> live with you?", "fallbackSelector": "[name=living_radio]" },
+              "selector": {
+                "label": "Does <name> live with you?",
+                "fallbackSelector": "[name=living_radio]"
+              },
               "required": false,
               "options": [
-                { "value": "#living_radio_0", "label": "With you" },
-                { "value": "#living_radio_1", "label": "Sometimes" },
-                { "value": "#living_radio_2", "label": "Elsewhere" }
+                {
+                  "value": "#living_radio_0",
+                  "label": "With you"
+                },
+                {
+                  "value": "#living_radio_1",
+                  "label": "Sometimes"
+                },
+                {
+                  "value": "#living_radio_2",
+                  "label": "Elsewhere"
+                }
               ],
               "source": null,
               "transform": null,
@@ -1403,7 +1861,11 @@
           "helpLinks": [],
           "errors": [],
           "branches": [
-            { "whenField": "lives_with_you", "whenValue": "Elsewhere", "targetPage": "ABHAD" }
+            {
+              "whenField": "lives_with_you",
+              "whenValue": "Elsewhere",
+              "targetPage": "ABHAD"
+            }
           ],
           "status": "partial",
           "notes": "Recommendation (WALK-STEPS-2-9.md): answer 'with you' to AVOID the member-address branch on follow-up walks (bad dummy member addresses server-error the draft)."
@@ -1420,7 +1882,10 @@
               "key": "address_line_1",
               "questionText": "Address Line 1 (required)",
               "type": "text",
-              "selector": { "label": "Address Line 1 (required)", "fallbackSelector": "#addressLine1" },
+              "selector": {
+                "label": "Address Line 1 (required)",
+                "fallbackSelector": "#addressLine1"
+              },
               "required": true,
               "source": "household_members[].address.street",
               "transform": null,
@@ -1430,7 +1895,10 @@
               "key": "address_line_2",
               "questionText": "Address Line 2",
               "type": "text",
-              "selector": { "label": "Address Line 2", "fallbackSelector": "#addressLine2" },
+              "selector": {
+                "label": "Address Line 2",
+                "fallbackSelector": "#addressLine2"
+              },
               "required": false,
               "source": null,
               "transform": null,
@@ -1440,7 +1908,10 @@
               "key": "city",
               "questionText": "City (required)",
               "type": "text",
-              "selector": { "label": "City (required)", "fallbackSelector": "#city" },
+              "selector": {
+                "label": "City (required)",
+                "fallbackSelector": "#city"
+              },
               "required": true,
               "source": "household_members[].address.city",
               "transform": null,
@@ -1450,7 +1921,10 @@
               "key": "county",
               "questionText": "County",
               "type": "select",
-              "selector": { "label": "County", "fallbackSelector": "select#county" },
+              "selector": {
+                "label": "County",
+                "fallbackSelector": "select#county"
+              },
               "required": false,
               "source": "household_members[].address.county",
               "transform": "ca-county-ordinal",
@@ -1460,7 +1934,10 @@
               "key": "state",
               "questionText": "State",
               "type": "select",
-              "selector": { "label": "State", "fallbackSelector": "select#state" },
+              "selector": {
+                "label": "State",
+                "fallbackSelector": "select#state"
+              },
               "required": false,
               "source": "household_members[].address.state",
               "transform": null,
@@ -1470,7 +1947,10 @@
               "key": "zip",
               "questionText": "Zip Code (required)",
               "type": "text",
-              "selector": { "label": "Zip Code (required)", "fallbackSelector": "#zip5" },
+              "selector": {
+                "label": "Zip Code (required)",
+                "fallbackSelector": "#zip5"
+              },
               "required": true,
               "source": "household_members[].address.zip",
               "transform": null,
@@ -1479,7 +1959,11 @@
           ],
           "helpLinks": [],
           "errors": [
-            { "field": "address", "message": "We're sorry, something went wrong", "trigger": "bad/invalid member address submitted (observed as a repeating server-error loop on the walk)" }
+            {
+              "field": "address",
+              "message": "We're sorry, something went wrong",
+              "trigger": "bad/invalid member address submitted (observed as a repeating server-error loop on the walk)"
+            }
           ],
           "branches": [],
           "status": "partial",
@@ -1523,17 +2007,69 @@
       "code": "document-upload",
       "name": "Document Upload",
       "order": 7,
-      "pages": [],
-      "status": "discovered",
-      "notes": "Not yet walked — see FORM-TREE.md remaining-to-capture. File-input handling (extension skips file uploads by design); capture the page + the 'what to upload' list. Distinct from the step-1 ABDOC citizenship page."
+      "pages": [
+        {
+          "pageCode": "APDMC",
+          "urlPattern": "\\/ApplyForBenefits\\/APDMC",
+          "title": "Here are some suggested documents to upload.",
+          "repeating": false,
+          "repeatsOver": null,
+          "advanceButton": "Next",
+          "fields": [],
+          "helpLinks": [
+            {
+              "trigger": "Not sure what to upload? Let's look at some examples.",
+              "text": "TODO: capture verbatim popover",
+              "kind": "popover"
+            }
+          ],
+          "errors": [],
+          "branches": [
+            {
+              "whenField": "(advance)",
+              "whenValue": "Next clicked",
+              "targetPage": "APDMC-submit-modal"
+            }
+          ],
+          "status": "captured",
+          "notes": "Step 7 of 8. 'AP' URL prefix (not AB) — first non-AB page code. Response-driven suggested-doc categories, each an H3 + an UPLOAD button, keyed to the applicant: (1) Identity Proof (2) Release of Information (ABCDM228 — the CBO/authorized-rep consent form) (3) Income/Employment-Related Documents (4) Rent/Lease/Mortgage (5) Expenses (6) Address Proof. Plus ADD OTHER DOCUMENT, ADD A PERSON. Extension SKIPS file uploads by design (content scripts cannot fill input[type=file]); the human uploads manually. Capture the category list for the chatbot 'what to upload / why this doc' guidance — do NOT autofill. Clicking Next does NOT advance the page; it raises the submit-confirmation modal (the step 7->8 gate, see APDMC-submit-modal)."
+        },
+        {
+          "pageCode": "APDMC-submit-modal",
+          "urlPattern": "\\/ApplyForBenefits\\/APDMC",
+          "title": "Are you sure you're ready to submit your application?",
+          "repeating": false,
+          "repeatsOver": null,
+          "advanceButton": null,
+          "fields": [],
+          "helpLinks": [],
+          "errors": [],
+          "branches": [
+            {
+              "whenField": "(button)",
+              "whenValue": "UPLOAD MORE DOCUMENTS",
+              "targetPage": "APDMC (SAFE back-action — closes modal, returns to doc list)"
+            },
+            {
+              "whenField": "(button)",
+              "whenValue": "Continue to submit [A#skip]",
+              "targetPage": "review-submit (step 8) OR direct submission — AMBIGUOUS, deliberately NOT crossed"
+            }
+          ],
+          "status": "captured-boundary",
+          "notes": "Blocking MODAL raised by APDMC Next (no X/close control; dismiss only via the back-button). Body: 'We recommend you upload as many documents as you can. It could help to process your application more quickly. If you don't have all your documents, you can still submit your application.' Buttons: [UPLOAD MORE DOCUMENTS] = <button>, SAFE back-action -> closes modal, returns to APDMC doc list. ['Continue to submit'] = A#skip.cursor-pointer (href='javascript:;') = THE SUBMIT GATE. *** A#skip IS the extension's HARD-STOP boundary: the autofill driver must reach this modal and then HAND OFF to the human — it must NEVER auto-click A#skip. Record in selector-map as submitGate with neverAutoClick:true. *** Deliberately NOT crossed on the production VoteNow CBO account: crossing it risks an irreversible county-side submission to CalSAWS under VoteNow's CBO registration, and the gate's semantics are ambiguous (pre-submit Review page vs. direct submit — STEP 8 unknown). 'Probably safe' is insufficient for an irreversible production action."
+        }
+      ],
+      "status": "captured",
+      "notes": "Step 7 of 8. Main structure CAPTURED 2026-05-29 (APDMC doc-upload page + the submit-confirmation gate modal). Extension skips file uploads by design; the submit-gate modal's 'Continue to submit' (A#skip) is the extension hard-stop / human-handoff boundary. See pages[] and WALK-STEPS-2-9.md STOP POINT."
     },
     {
       "code": "review-submit",
       "name": "Review & Submit",
       "order": 8,
       "pages": [],
-      "status": "discovered",
-      "notes": "Not yet walked — see FORM-TREE.md remaining-to-capture. Confirmation-number selector + final submit control (trust-panel + capture target). Side-nav labels it 'Review & Submit' (with &); the ABNAV summary aria-label uses 'Review and Submit' (with and). Post-submit success-screen selectors remain UNVERIFIED (selector-map CONFIRMATION_PAGE.verified=false)."
+      "status": "gated-uncaptured",
+      "notes": "Step 8 of 8 — GATED behind the submit-confirmation modal (A#skip 'Continue to submit', in section 7 / APDMC-submit-modal). NOT freely navigable: the ABNAV hub redirects to the active incomplete page (APDMC) until doc-upload is 'done', and the only way to mark doc-upload done is to cross the submit gate. AMBIGUOUS SEMANTICS (the load-bearing unknown): A#skip either -> (a) a pre-submit Review page (read-only summary + a separate real Submit button — safe to capture) OR -> (b) a direct, irreversible submission to CalSAWS. Cannot disambiguate without clicking. Deliberately NOT crossed on the production VoteNow CBO account. The confirmation-number selector + pre-submit trust-panel + final Submit control remain the ONE uncaptured node; capturing them needs a USER DECISION (non-prod/staging context, or a deliberate dummy submit-then-withdraw on a throwaway draft). Side-nav labels it 'Review & Submit' (with &); the ABNAV aria-label uses 'Review and Submit' (with 'and'). selector-map CONFIRMATION_PAGE.verified=false. This is the documented edge of the safely-capturable tree."
     }
   ]
 }

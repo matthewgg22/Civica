@@ -205,28 +205,51 @@ These mirror the member sub-form pattern: a gate → repeating detail pages → 
 - **ABSND** — section-complete ("next you'll upload your papers").
 
 ## STEP 7 — Document Upload
-- **APDMC** — "Here are some suggested documents to upload. Based on your responses, we suggest…" + explainer **"Not sure what to upload? Let's look at some examples."** Buttons: `UPLOAD`, `ADD OTHER DOCUMENT`, `ADD A PERSON`, `UPLOAD MORE DOCUMENTS`, Next.
+- **APDMC** ("Step 7 of 8") — "Here are some suggested documents to upload. Based on your responses, we suggest…" + explainer **"Not sure what to upload? Let's look at some examples."** Buttons: `UPLOAD` (×1 per category), `ADD OTHER DOCUMENT`, `ADD A PERSON`, `Next`.
   - **`AP` URL prefix** (not `AB`) — first non-AB page code seen.
+  - **Suggested-doc categories (CAPTURED, 2026-05-29)** — one `H3` + one `UPLOAD` button each, keyed to the applicant ("Test Applicant (36)"):
+    1. **Identity Proof**
+    2. **Release of Information (ABCDM228)** — the CBO/authorized-rep consent form
+    3. **Income/Employment-Related Documents**
+    4. **Rent/Lease/Mortgage**
+    5. **Expenses**
+    6. **Address Proof**
+    (Categories are response-driven — they reflect what the applicant declared in steps 1–6; the chatbot can explain "why this doc" per category.)
   - **Extension skips file uploads by design** (content scripts can't fill `<input type=file>`); the assister uploads manually. Capture the page + suggested-doc list for the chatbot ("what to upload"), don't autofill.
+  - **Clicking `Next` does NOT advance** — it raises the submit-confirmation modal (see STOP POINT below). APDMC is the last fillable page before the submit gate.
 
-## STEP 8 — Review & Submit
-- Not reached this walk (driver stuck on APDMC doc-upload Next). The confirmation-number selector + final submit control still need capture (the extension's confirmation scrape target + the pre-submit trust-panel target). Reach via APDMC → Next (may require acknowledging no-docs).
+## STEP 8 — Review & Submit (GATED — production-safety boundary)
+- **Sits behind the submit-confirmation gate** (`A#skip` "Continue to submit", below). NOT a freely-navigable page: the hub redirects to the active incomplete page (APDMC) until doc-upload is "done", and the only way to mark doc-upload done is to pass through the submit gate.
+- **Ambiguous gate semantics (the load-bearing unknown):** the modal title "Are you sure you're ready to submit your application?" + button "Continue to submit" reads like a *final* submit, but the step counter ("Step 7 of 8") implies a distinct Step 8 ahead. So `A#skip` either → (a) a pre-submit **Review** page (read-only summary + a separate real Submit button — safe to capture), or → (b) a **direct submission** to CalSAWS (irreversible). Cannot be disambiguated without clicking.
+- **Deliberately NOT clicked** on this production VoteNow CBO account — see STOP POINT. The confirmation-number selector + pre-submit trust-panel + final Submit control remain the one uncaptured node, and capturing them requires a **user decision** (test/staging context, or a deliberate dummy submit-then-withdraw). This is the documented edge of the safely-capturable tree.
 
 ## AUDIT TREE STATUS after this walk
-**All 8 sections' main-path structure now captured** (gates, key questions, summaries, section-completes, + many inline explainers): Your Information(1) ✓, People(2) ✓ (+ member sub-form), Household Details(3) ✓, Income(4) ✓, Expenses(5) ✓, Other Situations(6) ✓, Document Upload(7) ✓, Review & Submit(8) ✗ (not reached).
+**All 8 sections' main-path structure now captured** (gates, key questions, summaries, section-completes, + many inline explainers): Your Information(1) ✓, People(2) ✓ (+ member sub-form), Household Details(3) ✓, Income(4) ✓, Expenses(5) ✓, Other Situations(6) ✓, Document Upload(7) ✓, Review & Submit(8) ◑ (boundary captured — `A#skip` submit gate; post-gate content gated by production-safety, needs a user decision to capture).
 **Still to capture:** Review/Submit page; the repeating DETAIL sub-forms (job/income amounts, expense amounts, household-detail per-category, member DOB/SSN); the step-1 "?" explainer popovers; verify ABCPA ids. Rough completion of the reframed tree now **~40%** (main-path + explainers across 7 of 8 sections; detail sub-forms + popovers + Review remain).
 
-### STOP POINT — pre-submit confirmation (step 7→8 gateway)
-APDMC Next triggers a modal: "Are you sure you're ready to submit your application?
-We recommend you upload as many documents as you can... If you don't have all your
-documents [you can submit anyway]." This is the gateway to Review & Submit (step 8).
+### STOP POINT — submit-confirmation gate (step 7→8) — FULLY CHARACTERIZED 2026-05-29
+APDMC `Next` raises a blocking modal (no `X`/close control; dismiss only via the back-button):
 
-**Deliberately NOT driven past** — this is a production CBO account; proceeding
-risks a real junk submission to CalSAWS under VoteNow credentials. Review/Submit
-(step 8) + the confirmation-number selector + final submit control must be
-captured MANUALLY (human navigates, agent snapshots) — never by an automated
-driver near a live submit button. This is the one remaining section + the
-repeating detail sub-forms + step-1 explainer popovers.
+- **Title:** "Are you sure you're ready to submit your application?"
+- **Body:** "We recommend you upload as many documents as you can. It could help to process your application more quickly. If you don't have all your documents, you can still submit your application."
+- **Buttons:**
+  - **`UPLOAD MORE DOCUMENTS`** — `<button>`; **SAFE back-action** — closes the modal, returns to the APDMC doc list. (This is how to escape the gate without submitting.)
+  - **`Continue to submit`** — **`A#skip.cursor-pointer`** (`href="javascript:;"`) — **THE SUBMIT GATE. Crossing this is the irreversible boundary.**
+
+**Deliberately NOT clicked** — production VoteNow CBO account; crossing `A#skip` risks
+a real junk submission to CalSAWS under VoteNow's CBO registration (a county-side
+record). The gate's semantics are ambiguous (review-page vs. direct-submit — see
+STEP 8) so "probably safe" is not good enough for an irreversible production action.
+
+**This `A#skip` selector IS the extension's hard-stop boundary.** The autofill
+extension must drive *up to* this modal and then **hand off to the human** — it must
+NEVER auto-click `A#skip`. A human reviews and clicks submit (the whole human-in-loop
+premise). Record `A#skip` in the selector-map as `submitGate` with an explicit
+`neverAutoClick: true` so no future change wires it into a driver loop.
+
+**To capture Step 8 (the only remaining node):** needs a user decision — a non-prod /
+staging context, or a deliberate dummy submit-then-withdraw on a throwaway draft.
+Until then, the tree is **complete up to the production-safe boundary.**
 
 ## STEP 1 demographic tail — verbatim options + explainers (captured)
 - **ABGNR — gender identity.** Explainer "Why are we asking about your gender identity? If you do not want to answer this question, click Next to continue." Options: Another Gender Identity / Female / Transgender: Female to Male / Male / Transgender: Male to Female / Non Binary (Neither Male Nor Female) / I prefer not to answer.
@@ -297,3 +320,13 @@ ABJIS is the income hub: cards "Jobs and Self-Employment" / "Government Support 
 ## SESSION-2 capture summary (2026-05-29)
 Added this session: step-1 demographics (options+explainers), income job-detail ABEIC (income_sources template), self-employed gate ABEQH, full Expenses flow (ABHEG checklist → ABAPH amount → ABHEX per-expense summary → ABCST/ABCOC/ABSSQ gates → ABESU/ABESC), income card model ABJIS, 17-edge branch map. Reframed-tree completion now **~65%**. Core extension data (program, eligibility, income_sources, expense amounts) fully mapped.
 Remaining for 100%: gov/other/in-kind income detail forms; household-category detail branches; member DOB/SSN; non-citizen(ABDOC=No)/has-SSN(ABSSN=Yes)/married(ABMRS) branches; **Review & Submit (step 8) — careful MANUAL capture**; click-to-open step-1 popovers.
+
+## SESSION-3 capture summary (2026-05-29 eve) — Step 7 + the submit gate
+Walked to **Step 7 Document Upload (APDMC)** and **fully characterized the step 7→8 submit-confirmation gate** — the last *structural* gap:
+- **APDMC** = "Step 7 of 8", 6 response-driven suggested-doc categories (Identity / Release-of-Info ABCDM228 / Income-Employment / Rent-Lease-Mortgage / Expenses / Address), each with an UPLOAD button + ADD OTHER DOCUMENT + ADD A PERSON. Extension skips file inputs by design.
+- **Submit gate modal** (raised by APDMC `Next`): title "Are you sure you're ready to submit your application?"; buttons `UPLOAD MORE DOCUMENTS` (SAFE back) and **`Continue to submit` = `A#skip.cursor-pointer`** = the irreversible submit boundary.
+- **`A#skip` is the extension's hard-stop / human-handoff point** — drive up to it, never auto-click. Recorded in form-tree.json (`document-upload` now `captured` with 2 pages; `review-submit` now `gated-uncaptured`).
+
+**The tree is now structurally complete up to the production-safe boundary.** The single remaining node — Step 8's post-gate Review/Submit page (confirmation-number + final Submit selectors) — cannot be captured on the production VoteNow CBO account without an irreversible county submission. Capturing it is a **user decision**: (a) a non-prod/staging BenefitsCal context, or (b) a deliberate dummy submit-then-withdraw on a throwaway draft. Everything else that remains (income gov/other/in-kind detail forms, household-category branches, member DOB/SSN, non-citizen/has-SSN/married branches, step-1 "?" popovers) is safely capturable in follow-up affirmative-path walks.
+
+**Reframed-tree completion: ~70%** of the full tree; **~95% of the safely-capturable-on-production tree** (only the gated Step 8 post-submit page is out of reach without a user decision).
