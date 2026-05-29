@@ -108,6 +108,29 @@ export default function FindingsIndex() {
       </Link>
 
       {/* ----------------------------------------------------------------- */}
+      {/* Live credibility one-pager — the truth point rendered as a page.  */}
+      {/* ----------------------------------------------------------------- */}
+      <Link
+        href="/findings/error-rate"
+        className="group mb-12 block rounded-lg border border-pine/25 bg-pine/[0.04] p-5 transition hover:border-pine/40 hover:bg-pine/[0.07]"
+      >
+        <p className="text-xs font-semibold uppercase tracking-wider text-pine">
+          Live credibility one-pager
+        </p>
+        <h2 className="mt-1.5 text-xl font-semibold text-ink group-hover:text-pine">
+          Why you can audit our error-rate claims
+        </h2>
+        <p className="mt-1.5 text-sm leading-relaxed text-graphite">
+          The method, the live truth-point reading, and the published reference
+          layer in one place — with a guardrail that flags a non-signal instead
+          of overclaiming.
+        </p>
+        <span className="mt-2 inline-block text-sm font-medium text-pine">
+          View the page →
+        </span>
+      </Link>
+
+      {/* ----------------------------------------------------------------- */}
       {/* Empty state — should never happen in practice, but guard for it.  */}
       {/* ----------------------------------------------------------------- */}
       {total === 0 && (
