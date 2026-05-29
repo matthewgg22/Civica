@@ -56,8 +56,18 @@ await build({
   format: "iife",
 });
 
+// popup.js: the action popup (Connect-with-Civica device flow + packet picker,
+// #317). IIFE so the inline <script src> loads without module-loader quirks.
+await build({
+  ...shared,
+  entryPoints: [resolve(root, "src/popup.ts")],
+  outfile: resolve(dist, "popup.js"),
+  format: "iife",
+});
+
 // 2. Copy static assets.
 copyFileSync(resolve(root, "manifest.json"), resolve(dist, "manifest.json"));
 copyFileSync(resolve(root, "src/options.html"), resolve(dist, "options.html"));
+copyFileSync(resolve(root, "src/popup.html"), resolve(dist, "popup.html"));
 
 console.log("✓ Built dist/ — load it as an unpacked extension via chrome://extensions");

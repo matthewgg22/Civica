@@ -20,11 +20,18 @@
 import { Hono } from "hono";
 import payloadRouter from "./payload.js";
 import confirmRouter from "./confirm.js";
+import packetsListRouter from "./packets-list.js";
 import type { Env } from "../../types.js";
 
 const extension = new Hono<{ Bindings: Env }>();
 
-extension.route("/", payloadRouter);
-extension.route("/", confirmRouter);
+// NB ordering: the static /packets list must be registered before the
+// parameterized /packets/:packetId/* routes so "packets" isn't captured as a
+// :packetId. (payloadRouter/confirmRouter only define /packets/:packetId/*, so
+// in practice there's no collision, but registering the literal first is the
+// safe convention.)
+extension.route("/", packetsListRouter); // GET /packets (device-token only)
+extension.route("/", payloadRouter); // GET /packets/:packetId/payload
+extension.route("/", confirmRouter); // POST /packets/:packetId/confirm
 
 export default extension;

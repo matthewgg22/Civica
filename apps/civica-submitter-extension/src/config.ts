@@ -51,6 +51,21 @@ export async function writeConfig(patch: Partial<ExtensionConfig>): Promise<void
   await chrome.storage.local.set(updates);
 }
 
+/**
+ * Set (or clear, with null) the packet the content script autofills. This is
+ * THE dashboard↔extension connection point: the popup picker calls this after
+ * the assister selects an applicant, and content.ts reads
+ * `civica.activePacketId` from chrome.storage.local on each page load.
+ *
+ * activePacketId is NOT a secret (it's an org-scoped UUID), so it stays in
+ * chrome.storage.local — unlike the tokens, which live in session storage.
+ */
+export async function setActivePacketId(packetId: string | null): Promise<void> {
+  await chrome.storage.local.set({
+    [STORAGE_KEYS.activePacketId]: packetId,
+  });
+}
+
 // ---------------------------------------------------------------------------
 // Per-page fill state (V1-6, #315) — cross-step continuity.
 //

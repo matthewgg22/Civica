@@ -13,12 +13,14 @@ import { withActorContext } from "../../middleware/actorContext.js";
 import confirmRouter from "./confirm.js";
 import { Hono } from "hono";
 import { TEST_ENV, makeMultiTableDbClient, JSON_HEADERS } from "../../test/helpers.js";
+import { sha256Hex } from "../../lib/device-token.js";
 import type { Env } from "../../types.js";
 
 afterEach(() => vi.resetAllMocks());
 
 const PACKET_ID = "p0000000-0000-0000-0000-000000000001";
 const BEARER = "ext-token-secret";
+const DEVICE_ACCESS_TOKEN = "device-access-token-confirm";
 
 const ENV: Env = { ...TEST_ENV, EXTENSION_BEARER_TOKEN: BEARER };
 
@@ -128,6 +130,11 @@ describe("POST /v1/enrollment/extension/packets/:packetId/confirm — behavior",
     const dynamicMock = makeMultiTableDbClient({});
     dynamicMock.schema = vi.fn().mockReturnValue({
       from: vi.fn((table: string) => {
+        // Auth resolver looks up extension_device_tokens first; legacy shared
+        // token path wants this to miss so it falls through to the env compare.
+        if (table === "extension_device_tokens") {
+          return makeFromMock({ data: null, error: null });
+        }
         if (table === "snap_packets") {
           return makeFromMock({ data: { packet_id: PACKET_ID, org_id: "org-001" }, error: null });
         }
@@ -163,6 +170,11 @@ describe("POST /v1/enrollment/extension/packets/:packetId/confirm — behavior",
     const mock = makeMultiTableDbClient({});
     mock.schema = vi.fn().mockReturnValue({
       from: vi.fn((table: string) => {
+        // Auth resolver looks up extension_device_tokens first; miss → legacy
+        // shared token path.
+        if (table === "extension_device_tokens") {
+          return makeFromMock({ data: null, error: null });
+        }
         if (table === "snap_packets") {
           return makeFromMock({ data: { packet_id: PACKET_ID, org_id: "org-001" }, error: null });
         }
@@ -184,6 +196,93 @@ describe("POST /v1/enrollment/extension/packets/:packetId/confirm — behavior",
     const body = (await res.json()) as Record<string, unknown>;
     expect(body.defensive_insert).toBe(true);
     expect(body.benefitscal_confirmation_number).toBe("BC-12345678");
+  });
+});
+
+async function liveDeviceTokenRow(orgId: string) {
+  return {
+    token_id: "t-1",
+    family_id: "f-1",
+    org_id: orgId,
+    staff_id: "staff-1",
+    access_expires_at: new Date(Date.now() + 3600_000).toISOString(),
+    rotated_at: null,
+    revoked_at: null,
+    access_token_hash: await sha256Hex(DEVICE_ACCESS_TOKEN),
+  };
+}
+
+describe("POST confirm — per-CBO device-token auth", () => {
+  it("accepts a valid in-org device token and records the confirmation", async () => {
+    const updatedRow = {
+      submission_id: "sub-1",
+      status: "succeeded",
+      benefitscal_confirmation_number: "BC-12345678",
+      submitted_at: new Date().toISOString(),
+    };
+    const mock = makeMultiTableDbClient({});
+    let subCalls = 0;
+    const liveRow = await liveDeviceTokenRow("org-001");
+    mock.schema = vi.fn().mockReturnValue({
+      from: vi.fn((table: string) => {
+        if (table === "extension_device_tokens") {
+          return makeFromMock({ data: liveRow, error: null });
+        }
+        if (table === "snap_packets") {
+          return makeFromMock({ data: { packet_id: PACKET_ID, org_id: "org-001" }, error: null });
+        }
+        subCalls++;
+        return makeFromMock({
+          data: subCalls === 1 ? { submission_id: "sub-1", status: "queued" } : updatedRow,
+          error: null,
+        });
+      }),
+    });
+    mockClient(mock);
+    const app = buildApp();
+    const res = await app.request(
+      `/v1/enrollment/extension/packets/${PACKET_ID}/confirm`,
+      {
+        method: "POST",
+        headers: { Authorization: `Bearer ${DEVICE_ACCESS_TOKEN}`, ...JSON_HEADERS },
+        body: VALID_BODY,
+      },
+      ENV,
+    );
+    expect(res.status).toBe(200);
+    expect(((await res.json()) as Record<string, unknown>).status).toBe("succeeded");
+  });
+
+  it("404s on CROSS-ORG access — token org-ZZZ cannot confirm an org-001 packet", async () => {
+    const liveRow = await liveDeviceTokenRow("org-ZZZ");
+    const mock = makeMultiTableDbClient({});
+    let wrote = false;
+    mock.schema = vi.fn().mockReturnValue({
+      from: vi.fn((table: string) => {
+        if (table === "extension_device_tokens") {
+          return makeFromMock({ data: liveRow, error: null });
+        }
+        if (table === "snap_packets") {
+          return makeFromMock({ data: { packet_id: PACKET_ID, org_id: "org-001" }, error: null });
+        }
+        // Any write to benefitscal_submissions would be a leak — flag it.
+        wrote = true;
+        return makeFromMock({ data: null, error: null });
+      }),
+    });
+    mockClient(mock);
+    const app = buildApp();
+    const res = await app.request(
+      `/v1/enrollment/extension/packets/${PACKET_ID}/confirm`,
+      {
+        method: "POST",
+        headers: { Authorization: `Bearer ${DEVICE_ACCESS_TOKEN}`, ...JSON_HEADERS },
+        body: VALID_BODY,
+      },
+      ENV,
+    );
+    expect(res.status).toBe(404);
+    expect(wrote).toBe(false); // never touched the submissions table
   });
 });
 

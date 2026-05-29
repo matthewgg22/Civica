@@ -84,7 +84,16 @@ export interface Env {
   //   wrangler secret put EXTENSION_BEARER_TOKEN
   // MVP uses a single shared secret per environment; multi-tenant tokens
   // come when more than one partner CBO is onboarded.
+  //
+  // DEPRECATED once the extension migrates to per-CBO device-flow tokens
+  // (issue #317 / RFC 8628). Both auth methods are accepted on /extension/*
+  // during the transition; remove this when the last extension build ships.
   EXTENSION_BEARER_TOKEN?: string;
+  // Base origin of the Civica dashboard that hosts the device-flow approval
+  // page (issue #317). The device/authorize response returns
+  //   `${EXTENSION_VERIFICATION_BASE_URL}/extension/connect`
+  // as the verification_uri. Optional — defaults to the production dashboard.
+  EXTENSION_VERIFICATION_BASE_URL?: string;
   // On-demand error-rate snapshot refresh trigger
   // (POST /internal/error-rate-snapshot/refresh). Bearer secret; when unset the
   // route returns 503 (trigger dark). Runs the same refresh as the 04:00 cron.
@@ -105,11 +114,14 @@ export type ActorKind =
   | "api_key"
   | "buddy"
   | "operator"
-  // Civica Submitter browser extension (Model B). Used by the
-  // /v1/enrollment/extension/* routes so their DB writes carry a
-  // distinguishable actor in the audit trail. When per-CBO bearer
-  // tokens land, this becomes 'cbo_assister' with a real org_id.
-  | "extension";
+  // Civica Submitter browser extension (Model B), legacy shared-token auth.
+  // Used by the /v1/enrollment/extension/* routes so their DB writes carry a
+  // distinguishable actor in the audit trail.
+  | "extension"
+  // Civica Submitter browser extension authenticated via a per-CBO device-flow
+  // token (issue #317 / RFC 8628). Carries a real org_id resolved from the
+  // token, so DB writes + audit rows attribute to the approving CBO.
+  | "cbo_assister";
 
 export interface Actor {
   kind: ActorKind;

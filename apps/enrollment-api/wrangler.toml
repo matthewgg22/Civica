@@ -106,6 +106,28 @@ BUDDY_ADD_ENABLED = "false"
 #   wrangler secret put EBT_SCRAPER_WEBHOOK_SECRET
 #   (and `fly secrets set EBT_SCRAPER_WEBHOOK_SECRET=...` on the scraper side)
 
+# Civica Submitter extension — OAuth 2.0 device flow (issue #317).
+#
+# EXTENSION_BEARER_TOKEN (legacy, DEPRECATED): the single shared bearer the
+# extension used before per-CBO device tokens. Still accepted on /extension/*
+# for back-compat; remove once the extension ships the device-flow client.
+#   wrangler secret put EXTENSION_BEARER_TOKEN
+#
+# EXTENSION_VERIFICATION_BASE_URL (optional [vars] or secret): origin of the
+# dashboard that hosts the approval page. The device/authorize response returns
+# `${EXTENSION_VERIFICATION_BASE_URL}/extension/connect` as verification_uri.
+# Defaults to the production dashboard (https://civica-api.vercel.app) if unset.
+# Set in [vars] for staging/preview overrides, e.g.:
+#   EXTENSION_VERIFICATION_BASE_URL = "https://civica-api.vercel.app"
+#
+# No new secret is required for the device-flow tokens themselves — they are
+# crypto-random, hashed in snap_enrollment.extension_device_tokens, and never
+# derive from an env secret.
+#
+# DB: apply supabase/migrations/20260598_extension_device_oauth.sql via the
+# Supabase dashboard SQL editor before enabling the flow (Civica has no
+# automated migration pipeline; `supabase db push --linked` targets PROD).
+
 # TODO-15 (Browserless.io driver) — external Playwright service for Phase 2.
 # When set, POST /benefitscal/submit/:packetId auto-builds a Browserless driver
 # and the submitter drives the BenefitsCal portal via Browserless. When absent,
