@@ -10,6 +10,7 @@
 
 import Link from "next/link";
 import type { ErrorRateTruthPoint, ErrorRateMetricView } from "../../lib/analytics/error-rate-snapshot";
+import { CA_QC_GROUNDING } from "../../lib/analytics/ca-qc-grounding";
 
 function pct(x: number | null | undefined): string {
   return x == null ? "—" : `${x.toFixed(2)}%`;
@@ -97,13 +98,30 @@ export default function ErrorRateOnePager({ truthPoint }: { truthPoint: ErrorRat
       <section className="rounded-lg border border-graphite/15 bg-surface-secondary p-4">
         <h2 className="text-sm font-semibold text-ink">These are operational errors, not policy</h2>
         <p className="mt-1.5 text-sm leading-relaxed text-graphite">
-          Almost none of this is fraud (under 2%) or bad rules. It is the
-          day-to-day: income that is hard to verify, deductions families do not
-          know to claim, changes that never got processed. Anyone who has done
-          casework knows the feeling. That is the whole point — operational
-          problems are the kind a tool fixes. You do not change a law to get an
+          In the real federal data,{" "}
+          <span className="font-semibold text-ink">
+            ~{CA_QC_GROUNDING.operationalPct}% of California&rsquo;s error dollars
+            are operational
+          </span>{" "}
+          — income that is hard to verify, a deduction miscalculated, a change
+          that never got processed. The other ~{CA_QC_GROUNDING.clientPct}% is on
+          the household to report. There is no &ldquo;policy&rdquo; category at
+          all: the federal review marks every error as the agency&rsquo;s or the
+          household&rsquo;s, nothing in between. Almost none is fraud (under 2%).
+          That is the whole point — roughly two-thirds of the problem is the
+          day-to-day kind a tool fixes. You do not change a law to get an
           application right; you verify the parts that are hard to get right by
           hand.
+        </p>
+        <p className="mt-2 text-xs text-graphite">
+          USDA QC FY{CA_QC_GROUNDING.fiscalYear}, California (n=
+          {CA_QC_GROUNDING.caCases}) ·{" "}
+          <Link
+            href={`/findings/${CA_QC_GROUNDING.findingId}`}
+            className="text-pine underline-offset-2 hover:underline"
+          >
+            how we counted
+          </Link>
         </p>
       </section>
 
@@ -132,11 +150,23 @@ export default function ErrorRateOnePager({ truthPoint }: { truthPoint: ErrorRat
             </tbody>
           </table>
         </div>
+        <p className="mt-2 text-xs text-graphite">
+          ✓ These shares reproduce from the raw USDA QC microdata within ~
+          {CA_QC_GROUNDING.elementMaxDeltaPp} pp —{" "}
+          <Link
+            href={`/findings/${CA_QC_GROUNDING.findingId}`}
+            className="text-pine underline-offset-2 hover:underline"
+          >
+            not our estimate, the federal file
+          </Link>
+          .
+        </p>
         <Means>
           The two parts caseworkers fight hardest — rent/shelter and wage income —
-          are <span className="text-ink">6 of every 10</span> California errors.
-          Get those two right and most of the error is simply gone. They are the
-          first two parts Civica verifies automatically.
+          are <span className="text-ink">6 of every 10</span> California errors
+          ({CA_QC_GROUNDING.shelterOrWagesPct}% in the federal file). Get those
+          two right and most of the error is simply gone. They are the first two
+          parts Civica verifies automatically.
         </Means>
       </section>
 
