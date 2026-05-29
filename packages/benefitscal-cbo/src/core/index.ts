@@ -62,6 +62,21 @@ export type {
   PortalPage,
 } from "./selector-map";
 
+// React-safe DOM fill primitive (V1-1b, #311). Pure DOM; the shared, correct
+// fill engine that `content.ts` adopts in V1-5 (#314). See fill.ts header for
+// why a plain `el.value = x` is dropped by React's controlled inputs.
+export {
+  reactSetValue,
+  fillElement,
+  fillText,
+  fillDatePassword,
+  fillSelect,
+  fillRadio,
+  fillCheckbox,
+  formatDateForPortal,
+  coerceBoolean,
+} from "./fill";
+
 // New unified field-map shape — consumed by both the server-side Playwright
 // submitter and the browser extension content script. Selectors carry TODO
 // markers until TODO-14 (live CBO Manager portal walkthrough) clears them.

@@ -22,6 +22,7 @@
   },
   "devDependencies": {
     "@civica/config": "workspace:*",
+    "jsdom": "^25.0.0",
     "typescript": "^5.5.3",
     "vitest": "^2.1.9"
   }
