@@ -190,17 +190,17 @@ struct CivicaHomePhase3View: View {
                     HStack(spacing: CivicaSpacing.md) {
                         Image(systemName: "clock.arrow.circlepath")
                             .font(.system(size: 22))
-                            .foregroundStyle(CivicaColors.amberPrimary)
+                            .foregroundStyle(CivicaColors.warningAmber)
                             .frame(width: 36, height: 36)
                             .background(
                                 Circle()
-                                    .fill(CivicaColors.amberPrimary.opacity(0.16))
+                                    .fill(CivicaColors.warningAmber.opacity(0.16))
                             )
                             .accessibilityHidden(true)
                         VStack(alignment: .leading, spacing: 2) {
                             Text(CivicaPhase3Strings.recertEyebrow.value(in: language))
                                 .font(CivicaTypography.captionStrong)
-                                .foregroundStyle(CivicaColors.amberPrimary)
+                                .foregroundStyle(CivicaColors.warningAmber)
                                 .textCase(.uppercase)
                                 .kerning(1.2)
                             Text(CivicaPhase3Strings.recertDueIn(date: dueDate, days: days, language: language))
@@ -211,15 +211,15 @@ struct CivicaHomePhase3View: View {
                         HStack(spacing: 4) {
                             Text(CivicaPhase3Strings.recertStartCTA.value(in: language))
                                 .font(CivicaTypography.subheadStrong)
-                                .foregroundStyle(CivicaColors.amberPrimary)
+                                .foregroundStyle(CivicaColors.warningAmber)
                             Image(systemName: "arrow.right")
                                 .font(.system(size: 12, weight: .semibold))
-                                .foregroundStyle(CivicaColors.amberPrimary)
+                                .foregroundStyle(CivicaColors.warningAmber)
                         }
                     }
                     .padding(CivicaSpacing.md)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(CivicaColors.amberSurface)
+                    .background(CivicaColors.statusWarningSurface)
                     .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control))
                 }
                 .buttonStyle(.plain)
