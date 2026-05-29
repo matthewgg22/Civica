@@ -215,3 +215,15 @@ These mirror the member sub-form pattern: a gate → repeating detail pages → 
 ## AUDIT TREE STATUS after this walk
 **All 8 sections' main-path structure now captured** (gates, key questions, summaries, section-completes, + many inline explainers): Your Information(1) ✓, People(2) ✓ (+ member sub-form), Household Details(3) ✓, Income(4) ✓, Expenses(5) ✓, Other Situations(6) ✓, Document Upload(7) ✓, Review & Submit(8) ✗ (not reached).
 **Still to capture:** Review/Submit page; the repeating DETAIL sub-forms (job/income amounts, expense amounts, household-detail per-category, member DOB/SSN); the step-1 "?" explainer popovers; verify ABCPA ids. Rough completion of the reframed tree now **~40%** (main-path + explainers across 7 of 8 sections; detail sub-forms + popovers + Review remain).
+
+### STOP POINT — pre-submit confirmation (step 7→8 gateway)
+APDMC Next triggers a modal: "Are you sure you're ready to submit your application?
+We recommend you upload as many documents as you can... If you don't have all your
+documents [you can submit anyway]." This is the gateway to Review & Submit (step 8).
+
+**Deliberately NOT driven past** — this is a production CBO account; proceeding
+risks a real junk submission to CalSAWS under VoteNow credentials. Review/Submit
+(step 8) + the confirmation-number selector + final submit control must be
+captured MANUALLY (human navigates, agent snapshots) — never by an automated
+driver near a live submit button. This is the one remaining section + the
+repeating detail sub-forms + step-1 explainer popovers.
