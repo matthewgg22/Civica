@@ -208,6 +208,38 @@ export const api = {
     status: (jwt: string, packetId: string) =>
       apiFetch(`/benefitscal/status/${packetId}`, jwt),
   },
+  oauth: {
+    // OAuth 2.0 Device Authorization Grant (RFC 8628) — Civica Submitter
+    // extension. Backend: apps/enrollment-api/src/routes/oauth.ts (authed
+    // router, mounted under /v1/enrollment). The org the device is bound to
+    // is resolved from the caller's JWT on the server — never sent from here.
+    //
+    // GET /oauth/device/lookup?user_code=XXXX-XXXX
+    //   Read-only. Returns { status, client_label, expires_at } for the
+    //   pending device so the approval screen can render "Connect this
+    //   device?". 404 when the code is unknown / expired / no longer pending.
+    lookup: (jwt: string, userCode: string) =>
+      apiFetch(`/oauth/device/lookup?user_code=${encodeURIComponent(userCode)}`, jwt),
+
+    // POST /oauth/device/approve { user_code }
+    //   Binds the pending device to the signed-in assister's org + staff id
+    //   and marks it approved. Returns { approved: true }. 410 expired,
+    //   409 already approved / no longer pending, 404 unknown.
+    approve: (jwt: string, userCode: string) =>
+      apiFetch("/oauth/device/approve", jwt, {
+        method: "POST",
+        body: JSON.stringify({ user_code: userCode }),
+      }),
+
+    // POST /oauth/device/deny { user_code }
+    //   Rejects a pending device. Returns { denied: true }. 404 when the code
+    //   is unknown or no longer pending.
+    deny: (jwt: string, userCode: string) =>
+      apiFetch("/oauth/device/deny", jwt, {
+        method: "POST",
+        body: JSON.stringify({ user_code: userCode }),
+      }),
+  },
   shelterAllocation: {
     get: (jwt: string, packetId: string) =>
       apiFetch(`/packets/${packetId}/shelter-allocation`, jwt),
