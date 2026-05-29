@@ -227,3 +227,11 @@ risks a real junk submission to CalSAWS under VoteNow credentials. Review/Submit
 captured MANUALLY (human navigates, agent snapshots) — never by an automated
 driver near a live submit button. This is the one remaining section + the
 repeating detail sub-forms + step-1 explainer popovers.
+
+## STEP 1 demographic tail — verbatim options + explainers (captured)
+- **ABGNR — gender identity.** Explainer "Why are we asking about your gender identity? If you do not want to answer this question, click Next to continue." Options: Another Gender Identity / Female / Transgender: Female to Male / Male / Transgender: Male to Female / Non Binary (Neither Male Nor Female) / I prefer not to answer.
+- **ABSXO — sexual orientation.** Explainer "Why are we asking about your sexual orientation? If you do not want to answer, click Next." Options: Straight or Heterosexual / Gay or Lesbian / Bisexual / Queer / Another Sexual Orientation / Unknown / I prefer not to answer.
+- **ABHSP — Hispanic/Latino/Spanish origin.** Explainer (inline): "It's optional, but it helps to assure that benefits are given without regard to race, color, or national origin. Your answers will not affect your eligibility or benefit amount." + "Why are we asking?" link. Options: Yes / No / I prefer not to answer.
+- **ABRAE — race & ethnic origin.** Same optional-disclaimer inline + "What is this used for?" link. `select#Race`: American Indian or Alaskan Native / Asian / Black or African American / Native Hawaiian or Other Pacific Islander / Other or Mixed (+ likely more).
+
+These were `discovered` stubs — now have options + explainer text. All optional (skippable via Next), human-fill / chatbot-explainable, not extension-autofilled.
