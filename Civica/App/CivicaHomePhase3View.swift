@@ -238,13 +238,16 @@ struct CivicaHomePhase3View: View {
 
     private var secondaryRows: some View {
         VStack(alignment: .leading, spacing: 0) {
+            // IA-3 (audit 2026-05-29): row routes to EBTCardLockView
+            // (lock/freeze, report lost, change PIN) — a distinct dest
+            // from the hero balance card, not a second entry to it.
             NavigationLink {
-                EBTBalanceRootView()
+                EBTCardLockView(store: ebtStore, language: language)
             } label: {
                 secondaryRowLabel(
-                    icon: "clock",
-                    eyebrow: CivicaPhase3Strings.activityEyebrow.value(in: language),
-                    link: CivicaPhase3Strings.activityLink.value(in: language)
+                    icon: "lock.shield",
+                    eyebrow: CivicaPhase3Strings.cardServicesEyebrow.value(in: language),
+                    link: EBTBalanceStrings.lockScreenTitle.value(in: language)
                 )
             }
             .buttonStyle(.plain)
@@ -406,8 +409,13 @@ enum CivicaPhase3Strings {
     }
 
     // Secondary rows
-    static let activityEyebrow = CivicaText("EBT activity", es: "Actividad EBT")
-    static let activityLink    = CivicaText("Recent transactions", es: "Transacciones recientes")
+    // IA-3 (audit 2026-05-29): activityEyebrow/activityLink removed.
+    // The row that used them duplicated the hero card's destination
+    // (both went to EBTBalanceRootView). Replaced by a card-services
+    // row routing to EBTCardLockView — the link string reuses
+    // EBTBalanceStrings.lockScreenTitle so the two surfaces stay in
+    // sync if the lock screen's name changes.
+    static let cardServicesEyebrow = CivicaText("EBT card", es: "Tarjeta EBT")
     static let findHelpEyebrow = CivicaText("In your neighborhood", es: "En tu vecindario")
     static let findHelpLink    = CivicaText("Find help nearby", es: "Encuentra ayuda cerca")
 }
