@@ -68,7 +68,7 @@ export default async function Image() {
               borderRadius: 999,
               padding: "4px 16px",
               fontSize: 14,
-              color: "var(--color-wheat)",
+              color: "#E8C547",
               letterSpacing: 1,
             }}
           >
@@ -77,7 +77,7 @@ export default async function Image() {
                 width: 8,
                 height: 8,
                 borderRadius: 999,
-                background: "var(--color-wheat)",
+                background: "#E8C547",
               }}
             />
             <div>CA · LIVE</div>
@@ -124,7 +124,7 @@ export default async function Image() {
                 style={{
                   display: "flex",
                   alignItems: "baseline",
-                  color: "var(--color-wheat)",
+                  color: "#E8C547",
                 }}
               >
                 <div style={{ fontSize: 52, fontWeight: 700, lineHeight: 1 }}>
