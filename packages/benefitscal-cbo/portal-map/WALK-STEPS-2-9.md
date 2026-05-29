@@ -287,3 +287,6 @@ Plus all 8 sections' main paths, gates, branch map (17 edges), and step-1 + demo
 - Review & Submit (step 8) — MANUAL capture.
 - Click-to-open step-1 "?" popovers (the few non-inline ones).
 Estimated reframed-tree completion now ~55-60%.
+
+### Expenses amount flow — CONFIRMED full pattern
+Per checked expense on ABHEG: **ABAPH** (amount #text1 + frequency select#dropdownoptiongroup + outside-help radio) → **ABHEX** (per-expense summary list: "Below are the X you added" — shows entry + Edit/Remove + Next). Repeats per expense type (Rent, Gas/Electric, …). Then gates: **ABCST** dependent/childcare → **ABCOC** child support → **ABSSQ** spousal support → **ABESU** expenses summary → **ABESC** complete. Maps shelter + utility (SUA) + dependent-care + support deductions.
