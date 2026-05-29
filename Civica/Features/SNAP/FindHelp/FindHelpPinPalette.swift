@@ -1,21 +1,28 @@
+import CivicaDesignSystem
 import MapKit
+import SwiftUI
 import UIKit
 
-/// Color + glyph + cached teardrop image for every pin category on the
-/// FindHelp map. Lifted out of `FindHelpAnnotationView` so the table
-/// has a single home; the annotation view becomes a thin consumer.
+/// Glyph + cached teardrop image dispatcher for every pin category on
+/// the FindHelp map. Lifted out of `FindHelpAnnotationView` so the
+/// table has a single home; the annotation view becomes a thin consumer.
 ///
-/// Pin colors by (record_kind, service_type / retailer_category):
-///   • Help directory + SNAP application help → Brick #9C3A24
-///   • Help directory + Food assistance       → Teal  #2A6F66
-///   • Help directory + Both                  → Graphite #3A342E
-///   • EBT retailer  + Supermarket            → Teal-deep #1F4F4A
-///   • EBT retailer  + Small grocer           → Amber #B5762A
-///   • EBT retailer  + Farmers market         → Green #3B6B33
-///   • EBT retailer  + Co-op                  → Indigo #3D4E6E
-///   • EBT retailer  + Restaurant RMP         → Brick #9C3A24
+/// Pin colors source from `CivicaColors.pinX` design tokens (audit
+/// DS-7, 2026-05-29). The inline hex literals previously declared
+/// here have been deleted — see DESIGN.md §13 (Map Pin tokens) for
+/// the cartography palette + rationale.
 ///
-/// Glyphs are SF Symbols rendered in paper-cream inside the bulb.
+/// Dispatch table by (record_kind, service_type / retailer_category):
+///   • Help directory + SNAP application help → `pinFood`         (brick)
+///   • Help directory + Food assistance       → `pinHelp`         (teal)
+///   • Help directory + Both                  → `pinHelpBoth`     (graphite)
+///   • EBT retailer  + Supermarket            → `pinSupermarket`  (teal-deep)
+///   • EBT retailer  + Small grocer           → `pinSmallGrocer`  (amber)
+///   • EBT retailer  + Farmers market         → `pinFarmersMarket`(green)
+///   • EBT retailer  + Co-op                  → `pinCoop`         (indigo)
+///   • EBT retailer  + Restaurant RMP         → `pinRestaurant`   (brick)
+///
+/// Glyphs are SF Symbols rendered in paper inside the bulb.
 ///
 /// Teardrop renders are cached in a static `[String: UIImage]` keyed
 /// by `categoryKey`. There are 8 unique combinations, so the cache
@@ -24,22 +31,25 @@ import UIKit
 /// hundreds of times per pan/zoom as annotation views are recycled.
 enum FindHelpPinPalette {
     static let teardropSize = CGSize(width: 28, height: 35)
-    static let paperColor = UIColor(red: 0xF5/255, green: 0xF2/255, blue: 0xEC/255, alpha: 1)
-    static let graphite = UIColor(red: 0x3A/255, green: 0x34/255, blue: 0x2E/255, alpha: 1)
+
+    /// Bulb glyph fill — canonical paper from the design token.
+    /// Resolved through `CivicaColors.paper` (#F7F5EF, v2 warm-neutral)
+    /// rather than the legacy inline hex (#F5F2EC, pre-v2 paper).
+    static let paperColor = UIColor(CivicaColors.paper)
+
+    /// Help-directory "both" pin color — same as `pinHelpBoth` in the
+    /// dispatch table. Exposed for callers (e.g. cluster pin code)
+    /// that still expect a top-level `graphite` symbol on the palette.
+    static let graphite = UIColor(CivicaColors.pinHelpBoth)
+
     /// Lighter graphite used only for MIXED-category cluster pins on
     /// the map. The single-pin graphite above is too dark to read
     /// against dark-mode map tiles when applied to MKMarkerAnnotation
     /// View's rounded-rect marker; this lifts the cluster off the tile
     /// without changing the teardrop fill semantics for individual
-    /// help-directory "both" pins.
+    /// help-directory "both" pins. Not in the §13 pin token set —
+    /// cluster-only adaptation; revisit when dark variants land in T7.
     static let mixedClusterColor = UIColor(red: 0x6E/255, green: 0x66/255, blue: 0x5E/255, alpha: 1)
-
-    private static let brickColor = UIColor(red: 0x9C/255, green: 0x3A/255, blue: 0x24/255, alpha: 1)
-    private static let tealColor = UIColor(red: 0x2A/255, green: 0x6F/255, blue: 0x66/255, alpha: 1)
-    private static let tealDeepColor = UIColor(red: 0x1F/255, green: 0x4F/255, blue: 0x4A/255, alpha: 1)
-    private static let amberColor = UIColor(red: 0xB5/255, green: 0x76/255, blue: 0x2A/255, alpha: 1)
-    private static let greenColor = UIColor(red: 0x3B/255, green: 0x6B/255, blue: 0x33/255, alpha: 1)
-    private static let indigoColor = UIColor(red: 0x3D/255, green: 0x4E/255, blue: 0x6E/255, alpha: 1)
 
     /// Stable key identifying a (record_kind, inner-axis) pair. Used
     /// both for clustering-color decisions and as the cache key for
@@ -55,17 +65,17 @@ enum FindHelpPinPalette {
         switch location.resolvedRecordKind {
         case .helpDirectory:
             switch location.primaryServiceType {
-            case .snapApplicationHelp: return brickColor
-            case .foodAssistance:      return tealColor
-            case .both:                return graphite
+            case .snapApplicationHelp: return UIColor(CivicaColors.pinFood)
+            case .foodAssistance:      return UIColor(CivicaColors.pinHelp)
+            case .both:                return UIColor(CivicaColors.pinHelpBoth)
             }
         case .ebtRetailer:
             switch location.retailerCategory ?? .supermarket {
-            case .supermarket:   return tealDeepColor
-            case .smallGrocer:   return amberColor
-            case .farmersMarket: return greenColor
-            case .coOp:          return indigoColor
-            case .restaurantRMP: return brickColor
+            case .supermarket:   return UIColor(CivicaColors.pinSupermarket)
+            case .smallGrocer:   return UIColor(CivicaColors.pinSmallGrocer)
+            case .farmersMarket: return UIColor(CivicaColors.pinFarmersMarket)
+            case .coOp:          return UIColor(CivicaColors.pinCoop)
+            case .restaurantRMP: return UIColor(CivicaColors.pinRestaurant)
             }
         }
     }
