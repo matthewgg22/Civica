@@ -91,6 +91,8 @@ export async function refreshErrorRateSnapshot(env: Env, log: LogFn): Promise<Sn
     computed_at: computedAt,
     engine_version: r.engine_version,
     metric: r.metric,
+    slice_dim: r.slice_dim,
+    slice_value: r.slice_value,
     per_pct: r.per_pct,
     ci_low: r.ci_low,
     ci_high: r.ci_high,

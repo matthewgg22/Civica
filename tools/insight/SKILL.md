@@ -56,6 +56,17 @@ Read the metric rows. The canonical four:
 - `measured_overall` — observed PER from QC sampling; `per_pct` is null and
   `meta.status = "insufficient_sample"` until n ≥ 30.
 
+Plus SLICED breakdowns (rows where `slice_dim` is set) for depth:
+
+- `pillar_contribution` (`slice_dim: pillar`) — pp of the reduction each pillar
+  earns at today's coverage (utility_sua, gig_income, shared_lease, assets,
+  benefit_impact). `meta.unit = reduction_pp`. Names the bottleneck pillar.
+- `income_group_per` (`slice_dim: income_group`) — PER by income cohort
+  (wage_only, no_earned, civica_tam = the earned-income TAM). National FY23.
+- `element_attribution` (`slice_dim: element`) — share of CA errors by USDA
+  element (363 Shelter, 311 Wages, 331 RSDI…). `meta.unit =
+  share_of_errored_cases_pct` (a SHARE, not a PER — say so).
+
 Write the key findings using ONLY these values. Useful framings:
 
 - engagement-implied vs baseline: the reduction at *current* coverage
@@ -64,6 +75,9 @@ Write the key findings using ONLY these values. Useful framings:
 - measured: if n ≥ 30, report `per_pct` with the 95% CI `[ci_low, ci_high]`;
   otherwise say "measured PER pending — n = {n} of 30".
 - always state provenance inline: "as of {computed_at}, engine {engine_version}".
+- depth: name the top pillar contributor (largest `pillar_contribution.per_pct`)
+  and the top error element (largest `element_attribution` share); contrast the
+  earned-income cohort (`income_group` civica_tam) vs no_earned to frame the TAM.
 
 Pick a confidence level honestly: `high` only once measured n ≥ 30 corroborates
 the projection; otherwise `medium` (engagement-implied is a model output) or
