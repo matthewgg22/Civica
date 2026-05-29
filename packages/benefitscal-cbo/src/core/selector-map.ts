@@ -100,6 +100,52 @@ export interface FieldSelector {
    * rather than writing garbage. Fields with no transform are filled verbatim.
    */
   transform?: string;
+  /**
+   * Radio/checkbox option-selection map (V1-6, #314). For an eligibility radio
+   * *group* (ABNHA homelessness, ABCOS student, ABDOC citizenship, ABMRS marital
+   * status, ABPRI applying-for-self) or a checkbox driven by a boolean, this
+   * maps a NORMALIZED schema value → an option key. The option key resolves
+   * against this field's `options` map to the specific radio/checkbox element to
+   * click; for a single checkbox the mapped value is coerced to boolean.
+   *
+   * Booleans normalize to the strings `"true"`/`"false"`; enums (marital status,
+   * citizenship) normalize to their canonical Civica enum string. The map MUST
+   * be EXHAUSTIVE over the schema's possible values — eligibility-critical
+   * fields never fall through to a default. A resolved value with no `optionMap`
+   * entry is treated as "needs review" (the consumer clicks nothing), never a
+   * guess. See `core/select-option.ts` for the normalization + lookup.
+   */
+  optionMap?: Record<string, string>;
+  /**
+   * Per-option locators for a radio *group* field, keyed by the SAME option keys
+   * `optionMap`/`constant`/`presenceOf` resolve to (e.g. `{ Yes: {...}, No:
+   * {...} }`). Each value is itself a `FieldSelector` (label + optional
+   * `fallbackSelector` + `type`) locating that one option's input. The consumer,
+   * having mapped a schema value → option key, looks the key up here, resolves
+   * the element, and clicks it. Present only on group fields; an individual
+   * option field (one Yes radio) does not carry `options`.
+   */
+  options?: Record<string, FieldSelector>;
+  /**
+   * A FIXED value to fill, independent of any packet data (V1-6, #314). Used for
+   * the ABPRI program selection, which is policy, not packet-sourced: the
+   * applicant is applying for CalFresh, so `calFresh` is `constant: "true"`
+   * (always check `#snap`) and `applyingForSelf` is `constant: "Yes"` (the Civica
+   * applicant IS the beneficiary). For a radio group, the constant is an option
+   * key resolved via `options`; for a checkbox it is coerced to boolean. A field
+   * with `constant` set ignores `source`/`optionMap` and never reads the payload.
+   */
+  constant?: string;
+  /**
+   * ABSSN-only presence hint (V1-6, #314). The "Do you have an SSN?" radio can't
+   * be expressed by a value→option map because the signal is the PRESENCE of
+   * `ssn_last4`, not its value. `presenceOf` names a payload dot-path; the
+   * consumer selects the `"present"` option key when the path resolves to a
+   * non-empty value and the `"absent"` option key when it does not. Both keys
+   * MUST exist in `options`. If `"absent"` is omitted from `options`, a missing
+   * value is left for the human (needs-review) rather than guessing.
+   */
+  presenceOf?: string;
   /** True for portal-required fields (per SELECTORS.md "REQUIRED" tags). */
   required?: boolean;
   /**
@@ -457,17 +503,21 @@ export const PORTAL_PAGES: PortalPage[] = [
     urlPattern: /\/ApplyForBenefits\/ABNHA/,
     step: 1,
     fields: {
-      experiencingHomelessnessYes: {
-        label: "Yes",
-        fallbackSelector: "#radioCard_0",
+      // "Are you experiencing homelessness?" Yes/No radio group (name=radioCard).
+      // Modeled as ONE group field so the boolean is_homeless drives which option
+      // is clicked; the per-option locators live in `options`. Eligibility-
+      // critical (shelter/expedite): absent is_homeless → needs-review, never a
+      // guess.
+      experiencingHomelessness: {
+        label: "Are you experiencing homelessness?",
         type: "radio",
-        note: 'name=radioCard; "Are you experiencing homelessness?"',
-      },
-      experiencingHomelessnessNo: {
-        label: "No",
-        fallbackSelector: "#radioCard_1",
-        type: "radio",
-        note: 'name=radioCard; "Are you experiencing homelessness?"',
+        source: "is_homeless",
+        optionMap: { true: "Yes", false: "No" },
+        options: {
+          Yes: { label: "Yes", fallbackSelector: "#radioCard_0", type: "radio" },
+          No: { label: "No", fallbackSelector: "#radioCard_1", type: "radio" },
+        },
+        note: 'name=radioCard; source=is_homeless → Yes/No. Absent → needs-review',
       },
       addressLine1: {
         label: "Address Line 1 (required)",
@@ -585,38 +635,46 @@ export const PORTAL_PAGES: PortalPage[] = [
     urlPattern: /\/ApplyForBenefits\/ABPRI/,
     step: 1,
     fields: {
+      // CalFresh is the WHOLE POINT of the submission, not packet-driven — always
+      // check #snap. `constant: "true"` (coerced to a checkbox check). SNAP-only
+      // (just this box) makes the portal omit the Assets step (CA BBCE bypass).
       calFresh: {
         label: "CalFresh",
         fallbackSelector: "input[type=checkbox]#snap",
         type: "checkbox",
         required: true,
-        note: "Civica always checks this; SNAP-only omits the Assets step (CA BBCE bypass)",
+        constant: "true",
+        note: "Civica ALWAYS checks this (constant, not packet data); SNAP-only omits the Assets step (CA BBCE bypass)",
       },
+      // Cash Aid / Medi-Cal: CalFresh-only for v1 — intentionally NOT checked.
+      // No `source` and no `constant` → left untouched (the box defaults
+      // unchecked; checking either would add the Assets step). Counted as
+      // needs-review like any sourceless field.
       cashAid: {
         label: "Cash Aid",
         fallbackSelector: "input[type=checkbox]#tanf",
         type: "checkbox",
-        note: "CalWORKs/TCVAP/RCA; if checked, Assets step appears",
+        note: "CalWORKs/TCVAP/RCA; CalFresh-only v1 → never checked by Civica; if checked, Assets step appears",
       },
       mediCal: {
         label: "Medi-Cal",
         fallbackSelector: "input[type=checkbox]#medicaid",
         type: "checkbox",
-        note: "if checked, Assets step appears",
+        note: "CalFresh-only v1 → never checked by Civica; if checked, Assets step appears",
       },
-      applyingForSelfYes: {
-        label: "Yes",
-        fallbackSelector: "#label_0",
+      // "Are you applying for benefits for yourself?" — the Civica applicant IS
+      // the beneficiary, so this is ALWAYS Yes (constant, not packet data).
+      // Modeled as a Yes/No radio group (name=label) with a constant option key.
+      applyingForSelf: {
+        label: "Are you applying for benefits for yourself?",
         type: "radio",
         required: true,
-        note: 'name=label; "Are you applying for benefits for yourself?" — CBO usage: typically Yes',
-      },
-      applyingForSelfNo: {
-        label: "No",
-        fallbackSelector: "#label_1",
-        type: "radio",
-        required: true,
-        note: "name=label",
+        constant: "Yes",
+        options: {
+          Yes: { label: "Yes", fallbackSelector: "#label_0", type: "radio" },
+          No: { label: "No", fallbackSelector: "#label_1", type: "radio" },
+        },
+        note: 'name=label; constant Yes — the Civica applicant is always the beneficiary',
       },
     },
     advanceButton: NEXT_BUTTON,
@@ -673,19 +731,29 @@ export const PORTAL_PAGES: PortalPage[] = [
     urlPattern: /\/ApplyForBenefits\/ABCOS/,
     step: 1,
     fields: {
-      collegeStudentYes: {
-        label: "Yes",
-        fallbackSelector: "#CollegeStudentE_radio_button_0",
+      // "Are you a college student?" Yes/No radio group
+      // (name=CollegeStudentE_radio_button). Drives a SNAP student-restriction
+      // determination → eligibility-critical: absent is_college_student →
+      // needs-review, never defaulted to "not a student".
+      collegeStudent: {
+        label: "Are you a college student?",
         type: "radio",
         required: true,
-        note: "name=CollegeStudentE_radio_button; schema gap — must flow through to payload",
-      },
-      collegeStudentNo: {
-        label: "No",
-        fallbackSelector: "#CollegeStudentE_radio_button_1",
-        type: "radio",
-        required: true,
-        note: "name=CollegeStudentE_radio_button",
+        source: "is_college_student",
+        optionMap: { true: "Yes", false: "No" },
+        options: {
+          Yes: {
+            label: "Yes",
+            fallbackSelector: "#CollegeStudentE_radio_button_0",
+            type: "radio",
+          },
+          No: {
+            label: "No",
+            fallbackSelector: "#CollegeStudentE_radio_button_1",
+            type: "radio",
+          },
+        },
+        note: "name=CollegeStudentE_radio_button; source=is_college_student → Yes/No. Absent → needs-review",
       },
     },
     advanceButton: NEXT_BUTTON,
@@ -755,16 +823,25 @@ export const PORTAL_PAGES: PortalPage[] = [
     urlPattern: /\/ApplyForBenefits\/ABSSN/,
     step: 1,
     fields: {
+      // "Do you have an SSN?" radio group (name=SSN_IND). This is a PRESENCE
+      // question, not a value→option map: the signal is whether the packet
+      // carries an SSN at all, so it uses `presenceOf` rather than
+      // source+optionMap. ssn_last4 present → click "Yes" (#ssn_group0). When
+      // ABSENT we deliberately DO NOT auto-pick a no-SSN answer: a simple
+      // presence test can't distinguish "No" (#ssn_group1) from "I don't have it
+      // right now" (#ssn_group2), and choosing wrong is eligibility-relevant — so
+      // the `absent` option key is intentionally OMITTED from `options`, leaving
+      // the field for the human (needs-review). The Yes branch leads to ABNSN
+      // (why no SSN); the no-SSN branches aren't auto-driven.
       ssnExistence: {
         label: "Do you have a Social Security Number?",
         type: "radio",
-        note: "name=SSN_IND; pick yes if payload.ssn_last4 present, else dontHaveRightNow",
-        optionValues: {
-          // value here is the element id (radio values not exposed in walk)
-          yes: "ssn_group0",
-          no: "ssn_group1",
-          dontHaveRightNow: "ssn_group2",
+        presenceOf: "ssn_last4",
+        options: {
+          present: { label: "Yes", fallbackSelector: "#ssn_group0", type: "radio" },
+          // `absent` intentionally omitted — see note above.
         },
+        note: "name=SSN_IND; presenceOf=ssn_last4 → Yes (#ssn_group0). Absent → needs-review (human picks No / 'don't have it right now')",
       },
     },
     advanceButton: NEXT_BUTTON,
@@ -798,20 +875,68 @@ export const PORTAL_PAGES: PortalPage[] = [
     urlPattern: /\/ApplyForBenefits\/ABMRS/,
     step: 1,
     fields: {
+      // Marital status radio group (name=maritalStatus), 8 options indexed _0.._7
+      // per the walk. Each MaritalStatusSchema enum value maps explicitly to one
+      // option (no default). domestic_partner → the portal's "Registered Domestic
+      // Partner"; common_law → "Common Law"; never_married is distinct from
+      // single. Optional page: absent marital_status → needs-review.
       maritalStatus: {
         label: "Marital status",
         type: "radio",
-        note: "name=maritalStatus; schema gap. value = element id suffix index",
-        optionValues: {
-          commonLaw: "0",
-          divorced: "1",
-          married: "2",
-          neverMarried: "3",
-          registeredDomesticPartner: "4",
-          separated: "5",
-          single: "6",
-          widowed: "7",
+        source: "marital_status",
+        optionMap: {
+          single: "single",
+          married: "married",
+          divorced: "divorced",
+          separated: "separated",
+          widowed: "widowed",
+          domestic_partner: "registeredDomesticPartner",
+          common_law: "commonLaw",
+          never_married: "neverMarried",
         },
+        options: {
+          commonLaw: {
+            label: "Common Law",
+            fallbackSelector: "#maritalStatus_0",
+            type: "radio",
+          },
+          divorced: {
+            label: "Divorced",
+            fallbackSelector: "#maritalStatus_1",
+            type: "radio",
+          },
+          married: {
+            label: "Married",
+            fallbackSelector: "#maritalStatus_2",
+            type: "radio",
+          },
+          neverMarried: {
+            label: "Never Married",
+            fallbackSelector: "#maritalStatus_3",
+            type: "radio",
+          },
+          registeredDomesticPartner: {
+            label: "Registered Domestic Partner",
+            fallbackSelector: "#maritalStatus_4",
+            type: "radio",
+          },
+          separated: {
+            label: "Separated",
+            fallbackSelector: "#maritalStatus_5",
+            type: "radio",
+          },
+          single: {
+            label: "Single",
+            fallbackSelector: "#maritalStatus_6",
+            type: "radio",
+          },
+          widowed: {
+            label: "Widowed",
+            fallbackSelector: "#maritalStatus_7",
+            type: "radio",
+          },
+        },
+        note: "name=maritalStatus; source=marital_status, each enum value mapped to its radio (_0.._7). Absent → needs-review",
       },
     },
     advanceButton: NEXT_BUTTON,
@@ -831,19 +956,23 @@ export const PORTAL_PAGES: PortalPage[] = [
     urlPattern: /\/ApplyForBenefits\/ABDOC/,
     step: 1,
     fields: {
-      citizenYes: {
-        label: "Yes",
-        fallbackSelector: "#citizen_radio_0",
+      // "Are you a U.S. citizen?" Yes/No radio group (name=citizen_radio). The
+      // schema's citizenship_status is 3-way (us_citizen | us_national |
+      // non_citizen); ALL THREE map explicitly here — us_citizen AND us_national
+      // → Yes (a U.S. national answers "yes" to the citizenship gate), non_citizen
+      // → No. Eligibility-critical (non-citizen SNAP rules): absent
+      // citizenship_status → needs-review, never defaulted to us_citizen.
+      citizen: {
+        label: "Are you a U.S. citizen?",
         type: "radio",
         required: true,
-        note: "name=citizen_radio; ABDOC is NOT the step-8 Document Upload",
-      },
-      citizenNo: {
-        label: "No",
-        fallbackSelector: "#citizen_radio_1",
-        type: "radio",
-        required: true,
-        note: "name=citizen_radio; non-citizen branch (not walked) asks immigration status",
+        source: "citizenship_status",
+        optionMap: { us_citizen: "Yes", us_national: "Yes", non_citizen: "No" },
+        options: {
+          Yes: { label: "Yes", fallbackSelector: "#citizen_radio_0", type: "radio" },
+          No: { label: "No", fallbackSelector: "#citizen_radio_1", type: "radio" },
+        },
+        note: "name=citizen_radio; ABDOC is NOT the step-8 Document Upload. source=citizenship_status; non_citizen → No (immigration-status branch not walked)",
       },
     },
     advanceButton: NEXT_BUTTON,

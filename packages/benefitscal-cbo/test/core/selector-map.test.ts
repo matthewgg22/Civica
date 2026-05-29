@@ -24,6 +24,10 @@ import {
   type PortalPage,
 } from "../../src/core/selector-map";
 import { TRANSFORMS } from "../../src/core/transforms";
+import {
+  MaritalStatusSchema,
+  CitizenshipStatusSchema,
+} from "../../src/core/schemas";
 
 const VALID_FIELD_TYPES: ReadonlySet<FieldType> = new Set<FieldType>([
   "text",
@@ -312,6 +316,131 @@ describe("field transforms (V1-3, #313)", () => {
             Object.keys(TRANSFORMS),
             `${page.pageCode}.${name}`,
           ).toContain(field.transform);
+        }
+      }
+    }
+  });
+});
+
+describe("eligibility option-selection wiring (V1-6, #314)", () => {
+  it("ABNHA homelessness: source=is_homeless, maps both booleans to Yes/No options", () => {
+    const f = PORTAL_PAGES_BY_CODE.ABNHA?.fields.experiencingHomelessness;
+    expect(f?.source).toBe("is_homeless");
+    expect(f?.optionMap).toEqual({ true: "Yes", false: "No" });
+    expect(f?.options?.Yes?.fallbackSelector).toBe("#radioCard_0");
+    expect(f?.options?.No?.fallbackSelector).toBe("#radioCard_1");
+  });
+
+  it("ABCOS college student: source=is_college_student, both booleans → Yes/No", () => {
+    const f = PORTAL_PAGES_BY_CODE.ABCOS?.fields.collegeStudent;
+    expect(f?.source).toBe("is_college_student");
+    expect(f?.optionMap).toEqual({ true: "Yes", false: "No" });
+    expect(f?.options?.Yes?.fallbackSelector).toBe("#CollegeStudentE_radio_button_0");
+    expect(f?.options?.No?.fallbackSelector).toBe("#CollegeStudentE_radio_button_1");
+  });
+
+  it("ABDOC citizenship: source=citizenship_status, ALL 3 enum values mapped (no default)", () => {
+    const f = PORTAL_PAGES_BY_CODE.ABDOC?.fields.citizen;
+    expect(f?.source).toBe("citizenship_status");
+    // Every CitizenshipStatusSchema value must have an explicit mapping.
+    const enumValues = CitizenshipStatusSchema.options;
+    expect(enumValues.length).toBe(3);
+    for (const v of enumValues) {
+      expect(
+        f?.optionMap?.[v],
+        `citizenship value "${v}" must map to a Yes/No option`,
+      ).toBeDefined();
+    }
+    expect(f?.optionMap).toEqual({
+      us_citizen: "Yes",
+      us_national: "Yes",
+      non_citizen: "No",
+    });
+    expect(f?.options?.Yes?.fallbackSelector).toBe("#citizen_radio_0");
+    expect(f?.options?.No?.fallbackSelector).toBe("#citizen_radio_1");
+  });
+
+  it("ABMRS marital status: source=marital_status, EVERY enum value maps to a real option", () => {
+    const f = PORTAL_PAGES_BY_CODE.ABMRS?.fields.maritalStatus;
+    expect(f?.source).toBe("marital_status");
+    const enumValues = MaritalStatusSchema.options;
+    expect(enumValues.length).toBe(8);
+    for (const v of enumValues) {
+      const key = f?.optionMap?.[v];
+      expect(key, `marital value "${v}" must map to an option key`).toBeDefined();
+      // …and that option key must resolve to a real per-option locator.
+      expect(
+        f?.options?.[key as string],
+        `marital option key "${key}" must exist in options`,
+      ).toBeDefined();
+    }
+    // domestic_partner / common_law / never_married land on the portal's labels.
+    expect(f?.options?.[f?.optionMap?.domestic_partner as string]?.label).toBe(
+      "Registered Domestic Partner",
+    );
+    expect(f?.options?.[f?.optionMap?.common_law as string]?.label).toBe("Common Law");
+    expect(f?.options?.[f?.optionMap?.never_married as string]?.label).toBe("Never Married");
+  });
+
+  it("ABSSN: presenceOf=ssn_last4 with a 'present' option and NO 'absent' option", () => {
+    const f = PORTAL_PAGES_BY_CODE.ABSSN?.fields.ssnExistence;
+    expect(f?.presenceOf).toBe("ssn_last4");
+    expect(f?.source).toBeUndefined();
+    expect(f?.options?.present?.fallbackSelector).toBe("#ssn_group0");
+    // Deliberately no `absent` option — a missing SSN is left for the human.
+    expect(f?.options?.absent).toBeUndefined();
+  });
+
+  it("ABPRI program selection: #snap is a constant-checked checkbox", () => {
+    const calFresh = PORTAL_PAGES_BY_CODE.ABPRI?.fields.calFresh;
+    expect(calFresh?.type).toBe("checkbox");
+    expect(calFresh?.constant).toBe("true");
+    expect(calFresh?.fallbackSelector).toContain("#snap");
+    // CalFresh-only for v1: TANF/Medi-Cal are NOT auto-driven.
+    expect(PORTAL_PAGES_BY_CODE.ABPRI?.fields.cashAid?.constant).toBeUndefined();
+    expect(PORTAL_PAGES_BY_CODE.ABPRI?.fields.cashAid?.source).toBeUndefined();
+    expect(PORTAL_PAGES_BY_CODE.ABPRI?.fields.mediCal?.constant).toBeUndefined();
+    expect(PORTAL_PAGES_BY_CODE.ABPRI?.fields.mediCal?.source).toBeUndefined();
+  });
+
+  it("ABPRI applying-for-self: constant 'Yes' radio group (applicant is the beneficiary)", () => {
+    const f = PORTAL_PAGES_BY_CODE.ABPRI?.fields.applyingForSelf;
+    expect(f?.type).toBe("radio");
+    expect(f?.constant).toBe("Yes");
+    expect(f?.options?.Yes?.fallbackSelector).toBe("#label_0");
+    expect(f?.options?.No?.fallbackSelector).toBe("#label_1");
+  });
+
+  it("every group field's optionMap values reference a real option key", () => {
+    for (const page of PORTAL_PAGES) {
+      for (const [name, field] of Object.entries(page.fields)) {
+        if (!field.optionMap) continue;
+        for (const [val, key] of Object.entries(field.optionMap)) {
+          expect(
+            field.options?.[key],
+            `${page.pageCode}.${name}: optionMap[${val}]="${key}" has no matching options entry`,
+          ).toBeDefined();
+        }
+      }
+    }
+  });
+
+  it("every constant/presenceOf group field carries its option locators", () => {
+    for (const page of PORTAL_PAGES) {
+      for (const [name, field] of Object.entries(page.fields)) {
+        // A constant or optionMap on a RADIO group must carry options.
+        if (field.optionMap && field.type === "radio") {
+          expect(
+            field.options,
+            `${page.pageCode}.${name}: radio optionMap field needs options`,
+          ).toBeDefined();
+        }
+        // presenceOf always needs at least a 'present' option.
+        if (field.presenceOf) {
+          expect(
+            field.options?.present,
+            `${page.pageCode}.${name}: presenceOf field needs a 'present' option`,
+          ).toBeDefined();
         }
       }
     }
