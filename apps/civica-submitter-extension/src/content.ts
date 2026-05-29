@@ -39,6 +39,11 @@ import {
   CONFIRMATION_PAGE,
   resolveField,
   fillElement,
+  fillRadio,
+  fillCheckbox,
+  resolveOption,
+  isOptionGroupField,
+  constantValue,
   TRANSFORMS,
   type PortalPage,
   type FieldSelector,
@@ -168,11 +173,13 @@ export function fillPage(
 
   const fields = Object.values(page.fields);
   for (const field of fields) {
-    // No packet source → the assister fills this by hand (language prefs,
-    // gender, marital status, program-selection policy, etc.).
-    if (!field.source) {
+    // A field is auto-fillable when it has a packet `source`, a `constant`
+    // (program selection), or a `presenceOf` test (ABSSN). Everything else
+    // (language prefs, gender, unmapped marital status, etc.) is left for the
+    // assister to fill by hand and counted as needs-review.
+    if (!isAutoFillable(field)) {
       needsReview++;
-      console.debug(LOG_PREFIX, `needs review (no source): ${field.label}`);
+      console.debug(LOG_PREFIX, `needs review (no source/constant): ${field.label}`);
       continue;
     }
     fillable++;
@@ -209,9 +216,33 @@ export function fillPage(
 type FieldOutcome = "filled" | "no-value" | "not-found" | "needs-review";
 
 /**
+ * Whether a field can be auto-filled at all: it has a packet `source`, a
+ * `constant` value (program selection — always check #snap, always "applying for
+ * self = Yes"), or a `presenceOf` test (ABSSN "do you have an SSN?"). Fields with
+ * none of these are left for the assister (needs-review). Buttons never qualify.
+ */
+function isAutoFillable(field: FieldSelector): boolean {
+  if (field.type === "button") return false;
+  return (
+    field.source !== undefined ||
+    field.constant !== undefined ||
+    field.presenceOf !== undefined
+  );
+}
+
+/**
  * Attempt to fill a single field. Returns the outcome so `fillPage` can tally
- * filled / no-value / not-found separately. A field with no `source` returns
- * "needs-review" (callers usually filter these out before calling).
+ * filled / no-value / not-found / needs-review separately.
+ *
+ * Routing (V1-6, #314):
+ *   1. buttons → needs-review (never data entry).
+ *   2. constant-direct fill (a `constant` on a field with no `options`, e.g. the
+ *      ABPRI CalFresh checkbox) → fill the field itself with the constant.
+ *   3. radio/checkbox option *group* (`optionMap`/`presenceOf`/`constant` +
+ *      `options`) → {@link fillOptionGroup}: map the schema value (or presence,
+ *      or constant) to the specific option to click. An unmapped/absent
+ *      eligibility value clicks NOTHING (needs-review) — never a default.
+ *   4. otherwise the plain source → transform → fillElement path.
  */
 export function fillField(
   field: FieldSelector,
@@ -221,6 +252,31 @@ export function fillField(
   // Buttons are navigation, never data entry — never resolve or click them.
   // (advanceButtons live off `page.fields` entirely, but guard anyway.)
   if (field.type === "button") return "needs-review";
+
+  // (3) Radio/checkbox option group — resolve which option to click. Checked
+  // BEFORE the constant-direct path so a constant-on-a-group (ABPRI
+  // applying-for-self) routes through the option resolver.
+  if (isOptionGroupField(field)) {
+    return fillOptionGroup(field, payload, root);
+  }
+
+  // (2) Constant-direct fill: a fixed value with no option indirection (the
+  // ABPRI #snap checkbox = constant "true"). Ignores the payload.
+  const constant = constantValue(field);
+  if (constant !== null) {
+    const el = resolveField(field, root);
+    if (!el) {
+      console.debug(LOG_PREFIX, `not found: ${field.label} (${field.fallbackSelector ?? "label-only"})`);
+      return "not-found";
+    }
+    const ok = fillElement(el, field.type, constant);
+    if (!ok) {
+      console.warn(LOG_PREFIX, `could not fill constant: ${field.label} (type ${field.type})`);
+      return "not-found";
+    }
+    return "filled";
+  }
+
   if (!field.source) return "needs-review";
 
   const value = resolvePath(payload, field.source);
@@ -263,6 +319,72 @@ export function fillField(
     // fillElement returns false for a wrong element type or a missing <select>
     // option — surface it like a not-found so the assister double-checks.
     console.warn(LOG_PREFIX, `could not fill: ${field.label} (type ${field.type})`);
+    return "not-found";
+  }
+  return "filled";
+}
+
+/**
+ * Fill a radio/checkbox *option group* (V1-6, #314): ABNHA homelessness, ABCOS
+ * student, ABDOC citizenship, ABMRS marital status, ABPRI applying-for-self,
+ * ABSSN SSN presence. The group's option-selection mechanism
+ * (`constant`/`presenceOf`/`optionMap`) is resolved by the pure `resolveOption`
+ * helper to the specific per-option FieldSelector; we then locate THAT option's
+ * element and click it via fillElement.
+ *
+ * Eligibility correctness: `resolveOption` NEVER falls through to a default — an
+ * unmapped or absent value yields a "needs-review" reason and we click nothing.
+ */
+function fillOptionGroup(
+  field: FieldSelector,
+  payload: unknown,
+  root: ParentNode,
+): FieldOutcome {
+  // The value `resolveOption` reasons over: for a presence test it's the value
+  // at the `presenceOf` path; for an optionMap it's the value at `source`; a
+  // pure `constant` group ignores it.
+  let resolvedValue: unknown = undefined;
+  if (field.presenceOf !== undefined) {
+    resolvedValue = resolvePath(payload, field.presenceOf);
+  } else if (field.source !== undefined) {
+    resolvedValue = resolvePath(payload, field.source);
+  }
+
+  const resolution = resolveOption(field, resolvedValue);
+  if (!resolution.ok) {
+    if (resolution.reason === "no-value") {
+      console.debug(LOG_PREFIX, `no value for option group: ${field.label}`);
+      return "no-value";
+    }
+    // needs-review: unmapped/absent eligibility value — click NOTHING.
+    console.debug(LOG_PREFIX, `needs review (unmapped option): ${field.label}`);
+    return "needs-review";
+  }
+
+  // Locate the chosen option's specific input and click/check it.
+  const el = resolveField(resolution.option, root);
+  if (!el) {
+    console.debug(
+      LOG_PREFIX,
+      `option not found: ${field.label} → ${resolution.key} (${resolution.option.fallbackSelector ?? "label-only"})`,
+    );
+    return "not-found";
+  }
+
+  // The option element is already pinned (we located THIS specific radio/
+  // checkbox), so select it unconditionally: `fillRadio(el)` with no value
+  // clicks the resolved radio (its DOM `.value` is a portal-internal token, not
+  // the option key, so we must NOT gate on it); `fillCheckbox(el, true)` checks
+  // it. Both are idempotent and dispatch React's synthetic change event.
+  const ok =
+    resolution.option.type === "checkbox"
+      ? fillCheckbox(el, true)
+      : fillRadio(el);
+  if (!ok) {
+    console.warn(
+      LOG_PREFIX,
+      `could not fill option: ${field.label} → ${resolution.key} (type ${resolution.option.type})`,
+    );
     return "not-found";
   }
   return "filled";

@@ -87,6 +87,23 @@ export type { TransformName } from "./transforms";
 // element it points at. Pure DOM; consumed by the browser extension.
 export { resolveField } from "./locate";
 
+// Radio/checkbox option-selection resolver (V1-6, #314). Turns a schema value
+// (or a constant / a presence test) into the specific option of a radio/checkbox
+// group to click — or a typed "needs-review" reason, never a default. Pure
+// compute; consumed by the browser extension's fill loop.
+export {
+  resolveOption,
+  isOptionGroupField,
+  constantValue,
+  normalizeOptionValue,
+} from "./select-option";
+export type {
+  OptionResolution,
+  ResolvedOption,
+  UnresolvedOption,
+  OptionResolutionReason,
+} from "./select-option";
+
 // React-safe DOM fill primitive (V1-1b, #311). Pure DOM; the shared, correct
 // fill engine that `content.ts` adopts in V1-5 (#314). See fill.ts header for
 // why a plain `el.value = x` is dropped by React's controlled inputs.
