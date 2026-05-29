@@ -9,7 +9,7 @@
   },
   "content_scripts": [
     {
-      "matches": ["https://benefitscal.com/cbo/*", "https://*.benefitscal.com/cbo/*"],
+      "matches": ["https://benefitscal.com/*", "https://*.benefitscal.com/*"],
       "js": ["content.js"],
       "run_at": "document_idle"
     }
