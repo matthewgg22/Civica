@@ -133,8 +133,9 @@ function resolveAnswer(answers: PacketAnswer[], key: string): string | null {
  * BenefitsCal will accept the resulting payload. The Phase 2 Playwright worker
  * is responsible for form-level validation during the submission flow.
  *
- * Field ID mapping is in field-map.ts. Unconfirmed field IDs are marked TODO
- * there — they will be updated once the CBO Assister account is approved.
+ * Portal field selectors live in selector-map.ts (`PORTAL_PAGES`), captured
+ * from the live CBO portal walk; each fillable field's `source` is a dotted
+ * path back into the BenefitsCalPayload this function produces.
  */
 export function normalizeForPortal(input: NormalizeInput): BenefitsCalPayload {
   const {

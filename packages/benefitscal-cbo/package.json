@@ -9,7 +9,6 @@
     "./core": "./src/core/index.ts",
     "./driver": "./src/driver/index.ts",
     "./drivers/browserless": "./src/driver/browserless.ts",
-    "./field-map": "./src/core/field-map.ts",
     "./schemas": "./src/core/schemas.ts"
   },
   "scripts": {

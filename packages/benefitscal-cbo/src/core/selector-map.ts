@@ -27,10 +27,11 @@
  * Pure data. Browser-safe: no imports of playwright/submitter/driver, per the
  * `/core` contract in `./index.ts`.
  *
- * NOTE: this does NOT replace `./field-map.ts` yet. The browser extension
- * still imports the legacy `APPLICATION_FORM_PAGES`/`CONFIRMATION_PAGE` shape;
- * migrating `content.ts` onto `PORTAL_PAGES` and deleting `field-map.ts`
- * happens in V1-5 (#314).
+ * This is the sole portal field-map: the stale `./field-map.ts` placeholder it
+ * superseded was deleted in V1-5 (#314) once the browser extension's
+ * `content.ts` migrated onto `PORTAL_PAGES` + `resolveField` + `fillElement`.
+ * Each fillable field carries a `source` (a dotted path into BenefitsCalPayload)
+ * so the extension can map packet data → portal field.
  */
 
 // ---------------------------------------------------------------------------
@@ -76,6 +77,19 @@ export interface FieldSelector {
    * no-SSN reason codes.
    */
   optionValues?: Record<string, string>;
+  /**
+   * Dot-path into the prepared `BenefitsCalPayload` (see `core/schemas.ts`)
+   * where this field's value comes from — e.g. `first_name`, `address.zip`.
+   * Consumers (the browser extension content script) resolve it with a tiny
+   * path walker and skip the field when the value is missing.
+   *
+   * Only set on fields with an obvious packet → portal mapping (name, address,
+   * DOB, SSN-last-4, program selection). Fields with no sensible payload source
+   * (language prefs, gender, sex-assigned-at-birth, marital status) leave this
+   * `undefined`, which the consumer treats as "human fills this" → skipped.
+   * Buttons and info-only navigation never carry a `source`.
+   */
+  source?: string;
   /** True for portal-required fields (per SELECTORS.md "REQUIRED" tags). */
   required?: boolean;
   /**
@@ -267,7 +281,8 @@ export const ADDRESS_VALIDATION_FLOW = {
     type: "select",
     required: true,
     optionValues: CA_COUNTY_ORDINALS,
-    note: "name=county; appears only in the address-validation modal #2",
+    source: "address.county",
+    note: "name=county; appears only in the address-validation modal #2. source=address.county is added by V1-2/#312; until that merges PostalAddress has no county field and the resolver returns undefined → skipped (human fills the modal)",
   } as FieldSelector,
   /** Modal #2 — confirm county (uppercase accessible name). */
   continueButton: { label: "CONTINUE", type: "button" } as FieldSelector,
@@ -391,6 +406,7 @@ export const PORTAL_PAGES: PortalPage[] = [
         type: "text",
         required: true,
         unstableSelector: true,
+        source: "first_name",
         note: "positional id #text1 — prefer label",
       },
       middleName: {
@@ -398,7 +414,7 @@ export const PORTAL_PAGES: PortalPage[] = [
         fallbackSelector: "#text2",
         type: "text",
         unstableSelector: true,
-        note: "positional id #text2 — prefer label",
+        note: "positional id #text2 — prefer label; no payload field — human fills",
       },
       lastName: {
         label: "Last Name (required)",
@@ -406,6 +422,7 @@ export const PORTAL_PAGES: PortalPage[] = [
         type: "text",
         required: true,
         unstableSelector: true,
+        source: "last_name",
         note: "positional id #text3 — prefer label",
       },
       suffix: {
@@ -446,29 +463,34 @@ export const PORTAL_PAGES: PortalPage[] = [
         fallbackSelector: "#addressLine1",
         type: "text",
         required: true,
+        source: "address.street",
       },
       addressLine2: {
         label: "Address Line 2",
         fallbackSelector: "#addressLine2",
         type: "text",
+        note: "no payload field (unit/apt) — human fills",
       },
       city: {
         label: "City (required)",
         fallbackSelector: "#city",
         type: "text",
         required: true,
+        source: "address.city",
       },
       state: {
         label: "State",
         fallbackSelector: "select#state",
         type: "select",
-        note: "option values are 2-letter codes, e.g. CA",
+        source: "address.state",
+        note: "option values are 2-letter codes, e.g. CA; payload address.state is already a 2-letter code",
       },
       zip: {
         label: "Zip Code (required)",
         fallbackSelector: "#zip5",
         type: "text",
         required: true,
+        source: "address.zip",
       },
     },
     // The address-validation modals (USE THIS ADDRESS, county select, CONTINUE)
@@ -503,13 +525,18 @@ export const PORTAL_PAGES: PortalPage[] = [
     step: 1,
     fields: {
       homePhone: { label: "Home Phone", fallbackSelector: "#homePhone", type: "text" },
-      mobilePhone: { label: "Mobile Phone", fallbackSelector: "#mobilePhone", type: "text" },
+      mobilePhone: {
+        label: "Mobile Phone",
+        fallbackSelector: "#mobilePhone",
+        type: "text",
+        note: "payload.phone is E.164 (+1XXXXXXXXXX); the new fill primitive writes text verbatim and has no phone-normalization step (the old field-map's 'phone' kind that stripped +1 was dropped). Leaving source undefined so we don't write a +1-prefixed value the portal historically rejects — human fills. Wire once fill.ts gains a phone kind or payload carries a pre-formatted national number.",
+      },
       altPhone: { label: "Alternate Phone", fallbackSelector: "#altPhone", type: "text" },
       email: {
         label: "Email",
         fallbackSelector: "#mail",
         type: "text",
-        note: "id #mail collides with ABCOP email checkbox (different page)",
+        note: "id #mail collides with ABCOP email checkbox (different page); no payload email field — human fills",
       },
     },
     advanceButton: NEXT_BUTTON,
@@ -703,7 +730,8 @@ export const PORTAL_PAGES: PortalPage[] = [
         fallbackSelector: "#birthDate_primary_input",
         type: "date-password",
         required: true,
-        note: 'type=password (defeats autofill); format MM/DD/YYYY; no name attribute',
+        source: "date_of_birth",
+        note: 'type=password (defeats autofill); format MM/DD/YYYY; no name attribute. payload date_of_birth is ISO YYYY-MM-DD; fillElement normalizes to MM/DD/YYYY',
       },
     },
     advanceButton: NEXT_BUTTON,
@@ -856,3 +884,37 @@ export const PORTAL_PAGES: PortalPage[] = [
  */
 export const PORTAL_PAGES_BY_CODE: Record<string, PortalPage> =
   Object.fromEntries(PORTAL_PAGES.map((p) => [p.pageCode, p]));
+
+// ---------------------------------------------------------------------------
+// Confirmation / success page.
+//
+// The live walk (portal-map/SELECTORS.md) covered only the entry flow + step-1
+// sub-pages; it did NOT reach the post-submit success screen, so the selectors
+// below are UNVERIFIED placeholders (carried over from the deleted field-map's
+// CONFIRMATION_PAGE). `verified: false` is the signal that V1-4's later walk
+// must confirm the real urlPattern + case-number selector. The extension uses
+// this only to scrape the BenefitsCal case number for write-back; it never
+// auto-submits to reach this page.
+// ---------------------------------------------------------------------------
+
+export interface ConfirmationPageSelector {
+  /** Matches window.location.pathname on the success screen. */
+  urlPattern: RegExp;
+  /** CSS selector for the confirmation/case-number element. */
+  caseNumberSelector: string;
+  /** Optional secondary selector for an application-id field. */
+  applicationIdSelector?: string;
+  /**
+   * False until V1-4's walk confirms these selectors against the live success
+   * screen. While false, the extension surfaces a "copy the case number
+   * manually" warning rather than trusting an unverified scrape.
+   */
+  verified: boolean;
+}
+
+export const CONFIRMATION_PAGE: ConfirmationPageSelector = {
+  urlPattern: /\/cbo\/application\/success/,
+  caseNumberSelector: "[data-testid=confirmation-number]",
+  applicationIdSelector: "[data-testid=application-id]",
+  verified: false,
+};
