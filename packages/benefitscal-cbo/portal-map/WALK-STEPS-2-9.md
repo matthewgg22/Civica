@@ -121,3 +121,36 @@ not reached on this walk. See "Remaining to capture" below.
   + **lives-with (ABLNA)** are SNAP household-unit determinations not currently in
   `household_members[]` schema — add if the extension is to fill member pages.
 - **Relationship (ABHHR)** is a UUID-id `select#optiongroup` → label-based fill.
+
+---
+
+## STEP 3 — Household Details
+
+### ABHGW — situations checklist (branching multi-select)
+Prompt: "Let's see if any of the below apply to you. Select if you..."
+Checkboxes (id → label → state's inline explainer — chatbot grounding):
+- `#govtaid` — "Received public assistance in any state" — *"This includes Temporary Assistance for Needy Families (TANF)/CalWORKs, Tribal TANF, Medicaid/Medi-Cal, Supplemental Nutrition Assistance Program (CalFresh/SNAP), General Assistance/General Relief (GA/GR)."*
+- `#disability` — "Are a person with a disability" — *"Are a person with a physical, mental, emotional, or developmental disability."*
+- `#college` — "Are enrolled in college or trade school" — (no inline explainer)
+- `#food` — "Get food from somewhere other than at home" — *"This could be a dining facility for elderly or disabled people, or another food program."*
+- `#living` — "Live in a facility, shelter or other living arrangement" — *"This could be a hospital, long-term care facility, rehabilitation center, shelter for battered women, homeless shelter, or Reservation for Native Americans."*
+- `#breastfeeding` — "Are breastfeeding a child" — (no inline explainer)
+- `#military` — "Are currently serving or have served in the U.S Military, or are a dependent of someone who is" — *"A dependent can include a spouse, parent, or child of person in active duty or a veteran."*
+- `#none` — "None of these apply"
+
+Each checked box branches into follow-up detail pages (not yet walked). Maps to
+eligibility flags the extension/QC engine cares about: disability, student,
+military/veteran, public-assistance history, group-living. Button: Next.
+
+### Confirmed sequences this walk
+- **Step 1 full sequence (re-verified):** ABLPR → ABNMI → ABNHA (2-modal addr) →
+  ABMAD → ABCON → ABCOP → **ABCPA** → ABPRI → (ABCSD upsell) → ABDIS → ABCOS →
+  ABCFA → ABCFS → ABRDT → ABSSN → ABNSN → ABMRS → ABCID → ABDOC → ABISS → ABDSM →
+  ABDSC → ABBID → ABASX → ABGNR → ABSXO → ABHSP → ABRAE → ABYSD (complete).
+- **Step 2 People — No-members path:** ABHSD (No) → ABPLS → ABTCD (complete).
+  (Members path = the sub-form template captured earlier.)
+- **Step 3 Household Details** starts at **ABHGW** (above).
+
+_Remaining: ABHGW branch follow-ups; Income (step 4); Expenses (step 5); Other
+Situations (step 6); Document Upload (step 7); Review & Submit (step 8). Plus
+the explainer popovers on step-1 pages (mostly "?" links) + verifying ABCPA ids._
