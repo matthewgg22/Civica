@@ -529,12 +529,29 @@ enum CivicaPhase2Strings {
     )
 
     // Action rows
+    // JR-2 (audit 2026-05-29): reframe the headline from a count-led
+    // demand ("2 documents requested") to routine-step framing
+    // ("A routine step — 2 documents to upload"). A document request
+    // mid-review reads as "my case is failing" without normalization;
+    // leading with "a routine step" defuses that anxiety spike.
+    //
+    // The count stays in the headline (the WHAT), and the live
+    // due-date + filename summary stays in `documentsSecondary` (the
+    // WHEN + WHICH) — see line 374. This deliberately preserves the
+    // dynamic secondary the audit's literal sample dropped; the
+    // normalization lands in the headline instead so no live data is
+    // lost. The em-dash construction mirrors `bodyInterviewCompleted`
+    // and carries no second-person pronoun, sidestepping tú/usted.
     static func documentsRequestedHeadline(count: Int, language: CivicaLanguage) -> String {
         switch language {
         case .english:
-            return count == 1 ? "1 document requested" : "\(count) documents requested"
+            return count == 1
+                ? "A routine step — 1 document to upload"
+                : "A routine step — \(count) documents to upload"
         case .spanish:
-            return count == 1 ? "1 documento solicitado" : "\(count) documentos solicitados"
+            return count == 1
+                ? "Un paso de rutina — 1 documento por subir"
+                : "Un paso de rutina — \(count) documentos por subir"
         }
     }
     static func unreadMessagesHeadline(count: Int, language: CivicaLanguage) -> String {
