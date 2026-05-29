@@ -260,3 +260,30 @@ Prompt: "Can you share a little more about your job?" Fields:
 **Extension wiring:** for each `income_sources[]` of type employment → fill ABEIC (employerName?, payAmount=amount, oftenPaid=freq-transform, avgHour?). Self-employment → ABEQH Yes branch (TODO capture). Non-work income → ABUIN Yes branch (TODO capture).
 
 NB: `#city`/`#state`/`#zipCode` ids collide with the address pages (ABNHA/ABHAD) — same ids, different page → reinforces key-on-page+label.
+
+## STEP 5 Expenses — amount sub-page TEMPLATE (CAPTURED — extension core data)
+
+### ABAPH — per-expense amount page (one per checked expense on ABHEG)
+Prompt e.g. "What are your Rent or Mortgage Payments? If this bill is split with someone else, only enter the amount <applicant> pays." Fields:
+- `#text1` — Amount (the expense $)
+- `select#dropdownoptiongroup` — How often? Weekly / Bi-Weekly / Semi-Monthly / Monthly / Quarterly / Semi Annually / Annually / One-Time Only (frequency)
+- `radio[name=AmountPaidHousingExpenses_radio_dropdown]` Yes/No — "Does anyone outside your household help pay?"
+- **Repeating: one ABAPH-style page per checked ABHEG expense** (Rent/Mortgage, then Gas/Electric, Water, Telephone, etc.). Maps shelter + `utility_allowance_type` $ amounts.
+- positional id `#text1` reused (same as the name page) → key on page+label.
+
+### Income flow tail (no-affirmative): ABEIS (jobs summary) → ABUIN (non-work income gate) → ABCIA (strike) → ABCIB (employment change) → ABJIS (income summary) → ABISE (complete).
+
+## AUDIT STATUS — core extension data now CAPTURED
+Both repeating detail templates the extension most needs are mapped:
+- **income_sources[]** → ABEIC (employer/payAmount/oftenPaid/avgHour)
+- **expense amounts** → ABAPH (amount/frequency per expense)
+Plus all 8 sections' main paths, gates, branch map (17 edges), and step-1 + demographic explainers.
+
+### Remaining for 100%
+- Per-expense amount pages beyond rent (utility/water/phone/dependent-care/support — same ABAPH pattern).
+- Self-employment income detail (ABEQH=Yes branch); non-work income detail (ABUIN=Yes).
+- Household-Details per-category detail branches (disability/college/military/etc.).
+- Member DOB/SSN/demographics; non-citizen immigration (ABDOC=No); has-SSN input (ABSSN=Yes); married→spouse.
+- Review & Submit (step 8) — MANUAL capture.
+- Click-to-open step-1 "?" popovers (the few non-inline ones).
+Estimated reframed-tree completion now ~55-60%.
