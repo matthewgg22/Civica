@@ -21,7 +21,7 @@ struct SNAPConfirmationView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: CivicaSpacing.lg) {
                 Text(SNAPConfirmationStrings.title.value(in: language))
-                    .font(CivicaTypography.cardSubtitle)
+                    .font(CivicaTypography.cardTitle)
                     .foregroundStyle(CivicaColors.ink)
 
                 Text(SNAPConfirmationStrings.subtitle.value(in: language))

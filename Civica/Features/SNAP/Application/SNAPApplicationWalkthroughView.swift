@@ -94,7 +94,7 @@ struct SNAPApplicationWalkthroughView: View {
     ) -> some View {
         HStack(alignment: .top, spacing: CivicaSpacing.md) {
             Text("\(number)")
-                .font(CivicaTypography.subheadBold)
+                .font(CivicaTypography.subheadStrong)
                 .foregroundColor(CivicaColors.onPrimaryText)
                 .frame(width: 28, height: 28)
                 .background(CivicaColors.pinePrimary)
