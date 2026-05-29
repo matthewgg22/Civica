@@ -89,6 +89,8 @@ Residents arrive with different levels of SNAP knowledge. Never front-load compl
 **Pine = CTAs only.**  
 `pinePrimary` is reserved for primary action buttons and text links. It must not appear on icons, decorative elements, or status indicators. Using it outside CTAs dilutes the signal that something is tappable.
 
+**Exception:** `pinePrimary` may be used as a card background ONLY when the card is itself the primary tap target (e.g., a `NavigationLink`-wrapped hero card occupying the full hero slot). The Phase 1 hero card ([Civica/App/CivicaEntryView.swift:148-150](Civica/App/CivicaEntryView.swift:148)) is the sanctioned use. Do NOT propagate this pattern to non-CTA hero cards or to any card where the tap target is smaller than the card surface.
+
 **Wheat = benefit fills, never text.**  
 `wheatPrimary` (#E8C547) achieves only 2.1:1 contrast on `paper` — it fails WCAG AA at every size. It may appear as a fill color for EBT balance or enrollment celebration; it must never be used as foreground text.
 
