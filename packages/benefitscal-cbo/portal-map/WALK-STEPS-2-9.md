@@ -290,3 +290,10 @@ Estimated reframed-tree completion now ~55-60%.
 
 ### Expenses amount flow — CONFIRMED full pattern
 Per checked expense on ABHEG: **ABAPH** (amount #text1 + frequency select#dropdownoptiongroup + outside-help radio) → **ABHEX** (per-expense summary list: "Below are the X you added" — shows entry + Edit/Remove + Next). Repeats per expense type (Rent, Gas/Electric, …). Then gates: **ABCST** dependent/childcare → **ABCOC** child support → **ABSSQ** spousal support → **ABESU** expenses summary → **ABESC** complete. Maps shelter + utility (SUA) + dependent-care + support deductions.
+
+### Income summary ABJIS — card model (how income detail is reached)
+ABJIS is the income hub: cards "Jobs and Self-Employment" / "Government Support and School Aid" / "Other Income" / "In-kind Income (free or in exchange of work)" / "Yearly Income Change". Each card expands → **Add Another** → a detail sub-form (amount + frequency, same pattern as ABEIC). Re-entering Income via the hub **Update** lands here (ABJIS), not ABEIQ. Extension fills income_sources[] by: card per type → Add Another → detail. Employment detail = ABEIC (captured); gov-support/other/in-kind detail forms follow the same amount+frequency shape (not individually walked).
+
+## SESSION-2 capture summary (2026-05-29)
+Added this session: step-1 demographics (options+explainers), income job-detail ABEIC (income_sources template), self-employed gate ABEQH, full Expenses flow (ABHEG checklist → ABAPH amount → ABHEX per-expense summary → ABCST/ABCOC/ABSSQ gates → ABESU/ABESC), income card model ABJIS, 17-edge branch map. Reframed-tree completion now **~65%**. Core extension data (program, eligibility, income_sources, expense amounts) fully mapped.
+Remaining for 100%: gov/other/in-kind income detail forms; household-category detail branches; member DOB/SSN; non-citizen(ABDOC=No)/has-SSN(ABSSN=Yes)/married(ABMRS) branches; **Review & Submit (step 8) — careful MANUAL capture**; click-to-open step-1 popovers.
