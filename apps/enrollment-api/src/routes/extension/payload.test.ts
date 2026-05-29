@@ -13,12 +13,15 @@ import { withActorContext } from "../../middleware/actorContext.js";
 import payloadRouter from "./payload.js";
 import { Hono } from "hono";
 import { TEST_ENV, makeMultiTableDbClient } from "../../test/helpers.js";
+import { sha256Hex } from "../../lib/device-token.js";
 import type { Env } from "../../types.js";
 
 afterEach(() => vi.resetAllMocks());
 
 const PACKET_ID = "p0000000-0000-0000-0000-000000000001";
 const BEARER = "ext-token-secret";
+const DEVICE_ACCESS_TOKEN = "device-access-token-xyz";
+const TOKEN_ORG = "org-001"; // matches packetRow.org_id
 
 const packetRow = {
   packet_id: PACKET_ID,
@@ -160,5 +163,81 @@ describe("GET /v1/enrollment/extension/packets/:packetId/payload — happy path"
     const body = (await res.json()) as { document_urls: Array<{ type: string; url: string }> };
     expect(body.document_urls).toHaveLength(1);
     expect(body.document_urls[0]?.type).toBe("paystub");
+  });
+});
+
+// Live device-token row scoped to TOKEN_ORG. Built async because the
+// access_token_hash is SHA-256 of the plaintext the request presents.
+async function liveDeviceTokenRow(orgId: string) {
+  return {
+    token_id: "t-1",
+    family_id: "f-1",
+    org_id: orgId,
+    staff_id: "staff-1",
+    access_expires_at: new Date(Date.now() + 3600_000).toISOString(),
+    rotated_at: null,
+    revoked_at: null,
+    access_token_hash: await sha256Hex(DEVICE_ACCESS_TOKEN),
+  };
+}
+
+describe("GET payload — per-CBO device-token auth", () => {
+  it("accepts a valid device token and returns the payload when the packet is in-org", async () => {
+    mockClient(
+      makeMultiTableDbClient({
+        extension_device_tokens: { data: await liveDeviceTokenRow(TOKEN_ORG), error: null },
+        snap_packets: { data: packetRow, error: null }, // org_id === 'org-001'
+        packet_answers: { data: [], error: null },
+        uploaded_documents: { data: [], error: null },
+      }),
+    );
+    const app = buildApp();
+    const res = await app.request(
+      `/v1/enrollment/extension/packets/${PACKET_ID}/payload`,
+      { headers: { Authorization: `Bearer ${DEVICE_ACCESS_TOKEN}` } },
+      ENV,
+    );
+    expect(res.status).toBe(200);
+    const body = (await res.json()) as Record<string, unknown>;
+    expect(body.packet_id).toBe(PACKET_ID);
+  });
+
+  it("404s on CROSS-ORG access — a token for org-ZZZ cannot read an org-001 packet", async () => {
+    mockClient(
+      makeMultiTableDbClient({
+        // Token scoped to a DIFFERENT org than the packet's org_id ('org-001').
+        extension_device_tokens: { data: await liveDeviceTokenRow("org-ZZZ"), error: null },
+        snap_packets: { data: packetRow, error: null },
+        packet_answers: { data: [], error: null },
+        uploaded_documents: { data: [], error: null },
+      }),
+    );
+    const app = buildApp();
+    const res = await app.request(
+      `/v1/enrollment/extension/packets/${PACKET_ID}/payload`,
+      { headers: { Authorization: `Bearer ${DEVICE_ACCESS_TOKEN}` } },
+      ENV,
+    );
+    // 404 (not 403) so the existence of org-001's packet is never disclosed.
+    expect(res.status).toBe(404);
+  });
+
+  it("still accepts the LEGACY shared token (back-compat) for the same packet", async () => {
+    mockClient(
+      makeMultiTableDbClient({
+        // No device-token row → falls through to the shared-token compare.
+        extension_device_tokens: { data: null, error: null },
+        snap_packets: { data: packetRow, error: null },
+        packet_answers: { data: [], error: null },
+        uploaded_documents: { data: [], error: null },
+      }),
+    );
+    const app = buildApp();
+    const res = await app.request(
+      `/v1/enrollment/extension/packets/${PACKET_ID}/payload`,
+      { headers: { Authorization: `Bearer ${BEARER}` } },
+      ENV,
+    );
+    expect(res.status).toBe(200);
   });
 });
