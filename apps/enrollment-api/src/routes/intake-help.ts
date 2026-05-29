@@ -72,6 +72,52 @@ type HelpResponse = {
 // rather than refuse.
 // ---------------------------------------------------------------------------
 
+// ---------------------------------------------------------------------------
+// CA reference guidance — hand-authored by Civica for the existing Interview
+// Coach product. Copied here from
+// Civica/Features/SNAP/InterviewCoach/InterviewQuestions_CA.json so the LLM
+// can use it as background when the applicant's question relates to one of
+// these CA-specific topics (household, income, gig, expenses, student,
+// immigration, identity, expedited, change reporting). The LLM still
+// generates the explainer; the corpus primes it with Civica's voice on the
+// topics that matter most for the CA launch.
+//
+// Update path: when InterviewQuestions_CA.json changes upstream, mirror the
+// edits here. v1.1 will centralize via a build-time JSON import; for v1 we
+// inline to keep the Worker deploy unit small and the prompt review easy.
+// ---------------------------------------------------------------------------
+
+const CA_REFERENCE_GUIDANCE = [
+  "REFERENCE KNOWLEDGE — Civica's curated guidance for common CA SNAP topics. Use as background when the applicant's question relates to one of these. Do not quote verbatim. Adapt to the explainer format above. Do not list citations.",
+  "",
+  "[1] Household composition / who shares food costs",
+  "A CalFresh household is everyone who buys and prepares food together — not necessarily everyone on the lease. Roommates who shop and cook separately are different households even if they share a kitchen. The frame: who shares food, not who shares an address.",
+  "",
+  "[2] Gross monthly income",
+  "Gross means pre-tax earnings from all sources for everyone in the CalFresh household. If income varies week to week, a recent four-week average is acceptable. Do not estimate downward — the county verifies with pay stubs, and mismatches delay or deny benefits.",
+  "",
+  "[3] Gig / self-employment income",
+  "Report gross self-employment income; allowable business expenses reduce the net amount used for CalFresh. Platform drivers (Uber, DoorDash, Instacart): mileage, platform fees, and gas count as expenses. CalFresh allows actual expenses OR a flat 40% deduction. A recent earnings summary from the platform is a helpful document to bring.",
+  "",
+  "[4] Rent, utilities, and housing costs",
+  "Include rent or mortgage plus separate amounts for heat, electricity, gas, water, trash, phone, and internet. California grants the Standard Utility Allowance (SUA) when a heat or cooling bill is paid separately from rent — usually the higher deduction, so the applicant should mention any utility bill in their name.",
+  "",
+  "[5] Student work-requirement exemption",
+  "Half-time students 18-49 are typically not eligible for CalFresh without an exemption. Common exemptions: working 20+ hours per week, caring for a dependent under 12, enrolled in EOPS/CARE/CalWORKs, enrolled in a Local Program That Increases Employability (LPTIE — many CA community colleges qualify), or receiving certain disability benefits.",
+  "",
+  "[6] Immigration / mixed-status households",
+  "Only applying members need to disclose immigration status. Members not applying do not need to. Children born in the US are citizens regardless of parent status. Non-citizens who do not qualify for federal CalFresh may qualify for the California Food Assistance Program (CFAP) — same benefit, state-funded. When unsure, a CalFresh outreach worker can help clarify before answering.",
+  "",
+  "[7] Identity verification documents",
+  "Acceptable CA ID includes state ID, driver license or AB 60 license, passport, Matrícula Consular, work or school ID, voter card, or two of: birth certificate, social security card, hospital records. If no ID is available at interview, federal rules require the county to accept a sworn statement plus a collateral contact (someone who can vouch for the applicant).",
+  "",
+  "[8] Expedited (three-day) CalFresh",
+  "Expedited service requires household resources under $100 plus gross income under $150 for the month, OR rent and utilities exceeding combined income and resources. If the interview is completed at intake, same-day benefits are sometimes possible.",
+  "",
+  "[9] Reporting changes in household",
+  "Report every change in who shares food costs, not just lease changes. Even temporary changes (sibling staying a month) should be mentioned if they affect food sharing. In California, changes can be reported via BenefitsCal.com, by phone, or in person at the county office.",
+].join("\n");
+
 const TIER_B_SYSTEM_PROMPT_EN = [
   "You are Civica's SNAP application assistant. An applicant has tapped a help button next to a specific question on a 17+ page CalFresh (California SNAP) intake form. Your job is to explain what the question is asking in plain, friendly, 6th-grade English so the applicant can answer with confidence.",
   "",
@@ -84,6 +130,8 @@ const TIER_B_SYSTEM_PROMPT_EN = [
   "6. RAG grounding (informational only, not a citation list to the applicant): your background knowledge of CDSS guidance, 7 CFR 273, packages/snap-rules canonical rule data, and SNAPAgencyDirectory state-conditioned copy informs your explanation. The applicant never sees citations; they see a clean explanation.",
   "",
   "Format: 2-5 short sentences. No bullet points unless the question is genuinely a list. No headers. No greeting or sign-off. Just the explanation.",
+  "",
+  CA_REFERENCE_GUIDANCE,
 ].join("\n");
 
 const TIER_B_SYSTEM_PROMPT_ES = [
@@ -98,6 +146,10 @@ const TIER_B_SYSTEM_PROMPT_ES = [
   "6. Fuentes de fundamentación (solo informativas, no es una lista de citas para el solicitante): tu conocimiento de fondo sobre la guía del CDSS, 7 CFR 273, los datos canónicos de packages/snap-rules y SNAPAgencyDirectory con copy condicionado por estado informa tu explicación. El solicitante nunca ve citas; ve una explicación clara.",
   "",
   "Formato: 2-5 oraciones cortas. Sin viñetas a menos que la pregunta sea genuinamente una lista. Sin encabezados. Sin saludo ni despedida. Solo la explicación.",
+  "",
+  "REFERENCIA — Civica mantiene la guía siguiente en inglés para los temas clave de CalFresh CA. Úsala como conocimiento de fondo cuando la pregunta del solicitante se relacione con uno de estos temas. Traduce los conceptos al español al responder. No cites textualmente. No incluyas lista de fuentes.",
+  "",
+  CA_REFERENCE_GUIDANCE,
 ].join("\n");
 
 // ---------------------------------------------------------------------------
