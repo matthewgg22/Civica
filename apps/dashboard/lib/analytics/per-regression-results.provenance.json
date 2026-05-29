@@ -1,0 +1,34 @@
+{
+  "source_kind": "synthetic",
+  "generated_at": "2026-05-29T03:35:33Z",
+  "seed": 20260528,
+  "spec_version": "1.0.0",
+  "prereg_locked_at": "2026-05-28",
+  "prereg_finding": "docs/findings/2026-05-28-per-regression-preregistration.md",
+  "git_sha": "53beca58",
+  "environment": {
+    "python": "3.13.13",
+    "numpy": "2.4.6",
+    "pandas": "2.3.3",
+    "statsmodels": "0.14.6"
+  },
+  "treatment_key": "civica_assisted",
+  "baseline_anchor": {
+    "ca_total_per_fy2024": 10.98,
+    "source": "apps/dashboard/lib/analytics/per-history.ts"
+  },
+  "argv": [
+    "src/build_per_regression.py",
+    "--write-csv"
+  ],
+  "out": "/Users/matthewgreer-gentis/Developer/civica-wt-per-regression/apps/dashboard/lib/analytics/per-regression-results.json",
+  "n_cases": 800,
+  "n_navigator_months": 399,
+  "planted_effects": {
+    "payment_error": -3.0,
+    "time_to_decision_days": -6.5,
+    "intake_to_handoff_complete": 0.85,
+    "recert_success": 0.65,
+    "apps_per_navigator_month": 0.3
+  }
+}

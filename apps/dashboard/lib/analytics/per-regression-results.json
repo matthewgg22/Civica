@@ -1,0 +1,147 @@
+{
+  "schema_version": "1.0.0",
+  "source_kind": "synthetic",
+  "watermark": "SYNTHETIC — illustrative power analysis on simulated cases with planted effects, NOT real outcomes. Swap in FOIA'd CDSS QC data to make these estimates live.",
+  "n_cases": 800,
+  "n_navigator_months": 399,
+  "controls": [
+    "household_size",
+    "earned_income_share",
+    "primary_language",
+    "county",
+    "intake_channel",
+    "expedited"
+  ],
+  "provenance": {
+    "source_kind": "synthetic",
+    "generated_at": "2026-05-29T03:35:33Z",
+    "seed": 20260528,
+    "spec_version": "1.0.0",
+    "prereg_locked_at": "2026-05-28",
+    "prereg_finding": "docs/findings/2026-05-28-per-regression-preregistration.md",
+    "git_sha": "53beca58",
+    "environment": {
+      "python": "3.13.13",
+      "numpy": "2.4.6",
+      "pandas": "2.3.3",
+      "statsmodels": "0.14.6"
+    },
+    "treatment_key": "civica_assisted",
+    "baseline_anchor": {
+      "ca_total_per_fy2024": 10.98,
+      "source": "apps/dashboard/lib/analytics/per-history.ts"
+    }
+  },
+  "models": [
+    {
+      "dv_key": "payment_error",
+      "dv_label": "Payment error rate per case",
+      "unit": "percentage points",
+      "model_family": "ols",
+      "frame": "case",
+      "hypothesized_sign": "negative",
+      "interpretation": "Change in a case's payment error magnitude (pp) when enrolled via Civica, holding household, income, language, county, channel and expedited status constant.",
+      "treatment_key": "civica_assisted",
+      "treatment": {
+        "estimate": -2.9285803100631362,
+        "std_error": 0.3526721792414285,
+        "statistic": -8.303973158195504,
+        "p_value": 1.006863984586265e-16,
+        "ci_low": -3.6198050797255905,
+        "ci_high": -2.237355540400682,
+        "n": 800,
+        "r2": 0.1544183348453808,
+        "pseudo_r2": null,
+        "true_effect": -3.0
+      }
+    },
+    {
+      "dv_key": "time_to_decision_days",
+      "dv_label": "Time to eligibility decision",
+      "unit": "days",
+      "model_family": "ols",
+      "frame": "case",
+      "hypothesized_sign": "negative",
+      "interpretation": "Change in days from application to decision for a Civica-assisted case, controls held constant.",
+      "treatment_key": "civica_assisted",
+      "treatment": {
+        "estimate": -6.299148228951305,
+        "std_error": 0.5211443006707859,
+        "statistic": -12.087147879854806,
+        "p_value": 1.2349997108798194e-33,
+        "ci_low": -7.3205722890143585,
+        "ci_high": -5.277724168888251,
+        "n": 800,
+        "r2": 0.29462299940150205,
+        "pseudo_r2": null,
+        "true_effect": -6.5
+      }
+    },
+    {
+      "dv_key": "intake_to_handoff_complete",
+      "dv_label": "Intake → handoff completion",
+      "unit": "log-odds",
+      "model_family": "logit",
+      "frame": "case",
+      "hypothesized_sign": "positive",
+      "interpretation": "Change in the log-odds that a case reaches a complete, submission-ready handoff when Civica-assisted.",
+      "treatment_key": "civica_assisted",
+      "treatment": {
+        "estimate": 0.888059039825746,
+        "std_error": 0.17698301445922007,
+        "statistic": 5.017764233134192,
+        "p_value": 5.227627471404736e-07,
+        "ci_low": 0.541178705610343,
+        "ci_high": 1.234939374041149,
+        "n": 800,
+        "r2": null,
+        "pseudo_r2": 0.0631437567569948,
+        "true_effect": 0.85
+      }
+    },
+    {
+      "dv_key": "recert_success",
+      "dv_label": "Recertification success",
+      "unit": "log-odds",
+      "model_family": "logit",
+      "frame": "case",
+      "hypothesized_sign": "positive",
+      "interpretation": "Change in the log-odds that a household successfully recertifies (no churn-off) when Civica-assisted.",
+      "treatment_key": "civica_assisted",
+      "treatment": {
+        "estimate": 1.0124047163267926,
+        "std_error": 0.18535877833522182,
+        "statistic": 5.461865499004618,
+        "p_value": 4.711570033474288e-08,
+        "ci_low": 0.6491081865714146,
+        "ci_high": 1.3757012460821707,
+        "n": 800,
+        "r2": null,
+        "pseudo_r2": 0.06865717410912842,
+        "true_effect": 0.65
+      }
+    },
+    {
+      "dv_key": "apps_per_navigator_month",
+      "dv_label": "Apps per navigator-month",
+      "unit": "log-rate",
+      "model_family": "poisson",
+      "frame": "navigator_month",
+      "hypothesized_sign": "positive",
+      "interpretation": "Change in the log of completed apps per navigator-month per unit increase in that navigator-month's Civica-assisted share.",
+      "treatment_key": "civica_assisted",
+      "treatment": {
+        "estimate": 0.2773705341910856,
+        "std_error": 0.029820096345292407,
+        "statistic": 9.301463381585389,
+        "p_value": 1.385257754740025e-20,
+        "ci_low": 0.218924219338798,
+        "ci_high": 0.3358168490433732,
+        "n": 399,
+        "r2": null,
+        "pseudo_r2": 0.0612456511277899,
+        "true_effect": 0.3
+      }
+    }
+  ]
+}
