@@ -9,6 +9,213 @@
     "navigation": "hub ABNAV -> Start (first enabled) -> section pages -> 'START THE NEXT SECTION' (section-complete page) -> hub -> next section unlocks",
     "notes": "Assets is omitted entirely for SNAP-only applications (CA BBCE bypass): when only #snap is checked on ABPRI the portal collapses 9 steps -> 8 and never presents the Assets section. ~15% of the full tree is captured (FORM-TREE.md). Section 1 pages and most data-bearing fields are 'partial' (missing verbatim help-text, full options, validation errors); People is a gate + per-member sub-form template ('partial'); sections 3-8 are section shells only ('not yet walked')."
   },
+  "branch_points_note": "Dominant pattern: a gate question (Yes/No or checklist) opens a detail sub-flow on affirmative, skips on negative. CONFIRMED edges observed diverging; INFERRED edges need a follow-up walk answering affirmatively to capture the detail sub-forms. Consumers: (a) extension must evaluate each gate from packet data + follow the right branch; (b) iOS-survey audit = does iOS branch the same way; (c) chatbot = branch-aware 'next you'll be asked…' guidance.",
+  "branch_points": [
+    {
+      "page": "ABPRI",
+      "question": "Which programs are you applying for? (CalFresh / Cash Aid / Medi-Cal)",
+      "field": null,
+      "status": "confirmed",
+      "edges": [
+        { "whenAnswer": "Only Food/CalFresh (#snap) checked", "leadsTo": "8-step SNAP-only flow (Assets section omitted — CA BBCE bypass)" },
+        { "whenAnswer": "Cash Aid (#tanf) and/or Medi-Cal (#medicaid) also checked", "leadsTo": "additional sections incl. Assets (full 9-step flow)" }
+      ],
+      "eligibility_critical": true,
+      "notes": "program selection determines which whole sections exist. checklist (multi-checkbox: calfresh/cash_aid/medi_cal), not a single field. Civica v1 always checks CalFresh only -> Assets bypass."
+    },
+    {
+      "page": "ABHSD",
+      "question": "Do you have other people living in your household?",
+      "field": "hshld_radiogrp",
+      "status": "confirmed",
+      "edges": [
+        { "whenAnswer": "Yes", "leadsTo": "member sub-flow (ABNMI→ABHHR→ABPSM→ABBPF→ABLNA→ABHAD)" },
+        { "whenAnswer": "No", "leadsTo": "ABPLS (skip members)" }
+      ],
+      "eligibility_critical": false,
+      "notes": "per-member repeating sub-flow; No path observed (ABHSD No -> ABPLS -> ABTCD complete), members path is the captured sub-form template."
+    },
+    {
+      "page": "ABLNA",
+      "question": "Does <name> live with you?",
+      "field": "living_radio",
+      "status": "confirmed",
+      "edges": [
+        { "whenAnswer": "Lives elsewhere", "leadsTo": "ABHAD (member address)" },
+        { "whenAnswer": "Lives with you", "leadsTo": "skip address (continue member sub-flow)" }
+      ],
+      "eligibility_critical": false,
+      "notes": "per-member; 'Elsewhere' branch observed forcing ABHAD (bad dummy address server-errored the draft)."
+    },
+    {
+      "page": "ABNHA",
+      "question": "Home address (branch is on USPS validation result, not on an answer)",
+      "field": null,
+      "status": "confirmed",
+      "edges": [
+        { "whenAnswer": "USPS cannot validate the entered address", "leadsTo": "2-modal flow (Modal #1 'USE THIS ADDRESS' → Modal #2 county select+ 'CONTINUE') → Next" },
+        { "whenAnswer": "USPS validates the address", "leadsTo": "straight to Next (no modals)" }
+      ],
+      "eligibility_critical": false,
+      "notes": "condition-driven branch, not answer-driven. The validation modal is where select#county (2-digit CA ordinal) is collected."
+    },
+    {
+      "page": "ABDOC",
+      "question": "Are you a U.S. citizen?",
+      "field": "citizen_radio",
+      "status": "inferred",
+      "edges": [
+        { "whenAnswer": "No (non-citizen)", "leadsTo": "immigration-status detail (ABISS + more)" },
+        { "whenAnswer": "Yes", "leadsTo": "skip immigration detail (continue)" }
+      ],
+      "eligibility_critical": true,
+      "notes": "only the Yes/skip path walked; the No (immigration-status) sub-flow needs a follow-up walk. ABISS likely asks immigration status / alien # / sponsor."
+    },
+    {
+      "page": "ABSSN",
+      "question": "Do you have a Social Security Number?",
+      "field": "SSN_IND",
+      "status": "inferred",
+      "edges": [
+        { "whenAnswer": "Yes", "leadsTo": "SSN-input page (not walked)" },
+        { "whenAnswer": "No / I don't have it right now", "leadsTo": "ABNSN (reason for no SSN)" }
+      ],
+      "eligibility_critical": false,
+      "notes": "No-path to ABNSN known; Yes-path (SSN-entry page) not walked."
+    },
+    {
+      "page": "ABHGW",
+      "question": "Let's see if any of the below apply to you. Select if you… (Household Details situations checklist)",
+      "field": null,
+      "status": "inferred",
+      "edges": [
+        { "whenAnswer": "Any situation checked (govtaid/disability/college/food/living/breastfeeding/military)", "leadsTo": "that situation's own detail sub-pages (one sub-flow per checked box)" },
+        { "whenAnswer": "None of these apply", "leadsTo": "ABRGS (household-details summary)" }
+      ],
+      "eligibility_critical": false,
+      "notes": "multi-branch; one detail sub-flow per checked box. Only the 'None' path walked (ABHGW → ABRGS → ABSDE complete). Maps to disability/student/military/public-assistance/group-living eligibility flags."
+    },
+    {
+      "page": "ABEIQ",
+      "question": "Do you have a job?",
+      "field": "mailadr_radio",
+      "status": "inferred",
+      "edges": [
+        { "whenAnswer": "Yes", "leadsTo": "job-detail sub-form (employer/amount/frequency, repeating per job)" },
+        { "whenAnswer": "No", "leadsTo": "skip job detail (continue Income)" }
+      ],
+      "eligibility_critical": false,
+      "notes": "carries income_sources[]; job-detail repeating sub-form not walked. radio name=mailadr_radio reused on other pages — key on page+label."
+    },
+    {
+      "page": "ABUIN",
+      "question": "Do you get money that doesn't come from work?",
+      "field": "select_group",
+      "status": "inferred",
+      "edges": [
+        { "whenAnswer": "Yes", "leadsTo": "income-source detail (type/amount/frequency)" },
+        { "whenAnswer": "No", "leadsTo": "skip (continue Income)" }
+      ],
+      "eligibility_critical": false,
+      "notes": "non-work income (support/unemployment/gov aid/disability/pension/etc.); detail sub-form not walked. radio name=select_group reused elsewhere — key on page+label."
+    },
+    {
+      "page": "ABCIB",
+      "question": "Did your employment change in the last two months?",
+      "field": "mailadr_radio",
+      "status": "inferred",
+      "edges": [
+        { "whenAnswer": "Yes", "leadsTo": "employment-change detail" },
+        { "whenAnswer": "No", "leadsTo": "skip (continue Income)" }
+      ],
+      "eligibility_critical": false,
+      "notes": "change detail (lost/changed job, reduced hours, laid off, quit) not walked."
+    },
+    {
+      "page": "ABHEG",
+      "question": "Tell us more about your housing and utilities expenses. Select all that apply.",
+      "field": null,
+      "status": "inferred",
+      "edges": [
+        { "whenAnswer": "Any expense checked (rent/mortgage, property tax/ins, gas-electric-fuel, phone, water-sewage-garbage, homeless shelter)", "leadsTo": "an amount sub-page per checked expense" },
+        { "whenAnswer": "None of These Apply", "leadsTo": "skip (continue Expenses)" }
+      ],
+      "eligibility_critical": false,
+      "notes": "multi-branch; maps to utility_allowance_type (SUA tier — gas/electric/fuel is the heating-cooling trigger) + shelter. Amount sub-pages not walked."
+    },
+    {
+      "page": "ABCST",
+      "question": "Do you pay for adult care or childcare so you can go to work, school, or look for a job?",
+      "field": "select_group",
+      "status": "inferred",
+      "edges": [
+        { "whenAnswer": "Yes", "leadsTo": "dependent-care amount page" },
+        { "whenAnswer": "No", "leadsTo": "skip (continue Expenses)" }
+      ],
+      "eligibility_critical": false,
+      "notes": "dependent-care deduction; amount page not walked."
+    },
+    {
+      "page": "ABCOC",
+      "question": "Do you pay court-ordered child support?",
+      "field": "label",
+      "status": "inferred",
+      "edges": [
+        { "whenAnswer": "Yes", "leadsTo": "child-support amount page" },
+        { "whenAnswer": "No", "leadsTo": "skip (continue Expenses)" }
+      ],
+      "eligibility_critical": false,
+      "notes": "court-ordered child support deduction; amount page not walked."
+    },
+    {
+      "page": "ABSSQ",
+      "question": "Do you pay court-ordered spousal support or alimony?",
+      "field": "label_spf",
+      "status": "inferred",
+      "edges": [
+        { "whenAnswer": "Yes", "leadsTo": "spousal-support amount page" },
+        { "whenAnswer": "No", "leadsTo": "skip (continue Expenses)" }
+      ],
+      "eligibility_critical": false,
+      "notes": "court-ordered spousal support/alimony deduction; amount page not walked."
+    },
+    {
+      "page": "ABMAD",
+      "question": "Is your mailing address different from your home address?",
+      "field": "mailadr1_radio",
+      "status": "inferred",
+      "edges": [
+        { "whenAnswer": "Yes", "leadsTo": "mailing-address form (2nd address)" },
+        { "whenAnswer": "No", "leadsTo": "skip (continue to ABCON)" }
+      ],
+      "eligibility_critical": false,
+      "notes": "Yes branch (second mailing-address form) not walked — submitter picks No."
+    },
+    {
+      "page": "ABMRS",
+      "question": "Marital status",
+      "field": "maritalStatus",
+      "status": "inferred",
+      "edges": [
+        { "whenAnswer": "Married", "leadsTo": "spouse info (likely)" },
+        { "whenAnswer": "Other (Single/Divorced/Separated/Widowed/Domestic Partner/Common Law/Never Married)", "leadsTo": "skip (continue)" }
+      ],
+      "eligibility_critical": false,
+      "notes": "branch inferred from option semantics — divergence not observed; needs a follow-up walk answering 'Married'."
+    },
+    {
+      "page": "ABPFG",
+      "question": "Please answer the statements below. (felony / disqualification statements)",
+      "field": null,
+      "status": "inferred",
+      "edges": [
+        { "whenAnswer": "Any 'Yes' (duplicate food aid / EBT trafficking / probation violation / drug felony / firearm felony / fleeing to avoid jail)", "leadsTo": "explanation/detail page (likely)" },
+        { "whenAnswer": "All 'No'", "leadsTo": "continue (ABSND section-complete)" }
+      ],
+      "eligibility_critical": true,
+      "notes": "Other Situations gate; 6 Yes/No statements (duplicatefood_radio, sellingEBT_radio, probation_violation_radio, foodAssistanceDrug_radio, foodAssistanceGun_radio, avoidJail_radio). Detail/explanation pages on 'Yes' not walked."
+    }
+  ],
   "sections": [
     {
       "code": "your-information",
@@ -739,9 +946,11 @@
           ],
           "helpLinks": [],
           "errors": [],
-          "branches": [],
+          "branches": [
+            { "whenField": "marital_status", "whenValue": "Married", "targetPage": "(spouse-info form — inferred, not walked)" }
+          ],
           "status": "partial",
-          "notes": ""
+          "notes": "Branch inferred from option semantics — divergence not observed; 'Married' likely reveals spouse info, others skip."
         },
         {
           "pageCode": "ABCID",
@@ -1007,10 +1216,11 @@
           ],
           "errors": [],
           "branches": [
-            { "whenField": "other_household_members", "whenValue": "Yes", "targetPage": "ABNMI(member)" }
+            { "whenField": "other_household_members", "whenValue": "Yes", "targetPage": "ABNMI(member)" },
+            { "whenField": "other_household_members", "whenValue": "No", "targetPage": "ABPLS" }
           ],
           "status": "partial",
-          "notes": "Household-members gate. No -> skip member sub-flow (fast path)."
+          "notes": "Household-members gate. No -> skip member sub-flow (fast path) -> ABPLS -> ABTCD (section complete)."
         },
         {
           "pageCode": "ABNMI",
