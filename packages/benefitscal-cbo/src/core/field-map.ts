@@ -1,4 +1,18 @@
 /**
+ * @deprecated Superseded by `./selector-map.ts` (`PORTAL_PAGES`), which encodes
+ * the REAL selectors captured from the live production CBO portal walk
+ * (`portal-map/SELECTORS.md`). The selectors in THIS file are stale best-guess
+ * placeholders derived from the publicly-visible applicant flow and are all
+ * still `todo: true`.
+ *
+ * This file is intentionally retained because the browser extension
+ * (`apps/civica-submitter-extension/src/content.ts`) still imports
+ * `APPLICATION_FORM_PAGES`, `CONFIRMATION_PAGE`, `FieldFill`, and `FormPage`
+ * from `@civica/benefitscal-cbo/field-map`. Deleting it now would break the
+ * extension build + tests. The migration of `content.ts` onto `PORTAL_PAGES`
+ * and the deletion of this file happen later in V1-5 (#314). Do NOT remove
+ * the `./field-map` package export or this file before then.
+ *
  * BenefitsCal CBO portal field map
  *
  * Two surfaces consume this file:

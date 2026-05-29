@@ -43,9 +43,29 @@ export {
   SubmissionStatusSchema,
 } from "./schemas";
 
+// Typed selector map (V1-1a, #310) — the materialized form of the live
+// production CBO portal walk in `portal-map/SELECTORS.md`. This is the
+// authoritative selector data; `field-map.ts` below is the deprecated
+// placeholder kept only until the extension migrates in V1-5 (#314).
+export {
+  PORTAL_PAGES,
+  PORTAL_PAGES_BY_CODE,
+  ABNAV_START_BUTTONS,
+  ENTRY_FLOW_BUTTONS,
+  ADDRESS_VALIDATION_FLOW,
+  CA_COUNTY_ORDINALS,
+  NEXT_BUTTON,
+} from "./selector-map";
+export type {
+  FieldType,
+  FieldSelector,
+  PortalPage,
+} from "./selector-map";
+
 // New unified field-map shape — consumed by both the server-side Playwright
 // submitter and the browser extension content script. Selectors carry TODO
 // markers until TODO-14 (live CBO Manager portal walkthrough) clears them.
+// DEPRECATED: prefer PORTAL_PAGES above; see selector-map.ts / field-map.ts.
 export { APPLICATION_FORM_PAGES, CONFIRMATION_PAGE } from "./field-map";
 export type {
   FieldFillKind,
