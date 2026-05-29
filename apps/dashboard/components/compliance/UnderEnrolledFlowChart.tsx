@@ -64,7 +64,7 @@ const NODE_PADDING = 18;
 // 60+ cohort tag). Teal = product-addressable (matches Pillar 5 wins token).
 // Amber = populations (matches the gap-amber across Section D). Graphite =
 // already enrolled (neutral).
-const COLOR_POP = "#C9922A";
+const COLOR_POP = "var(--color-amber)";
 const COLOR_CHANNEL = "#5C1F11";
 const COLOR_PRODUCT = "#2A6F66";
 const COLOR_ENROLLED = "#8E8579";

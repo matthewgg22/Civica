@@ -6,7 +6,7 @@ const LANG_LABEL: Record<string, string> = {
   tl: "Tagalog",
 };
 
-const PALETTE = ["#9C3A24", "#2A6F66", "#9A5A14", "#4F46A5", "#5A544D"];
+const PALETTE = ["#9C3A24", "#2A6F66", "var(--color-amber-dark)", "#4F46A5", "#5A544D"];
 
 export default function LanguageDonut({ counts }: { counts: Record<string, number> }) {
   const entries = Object.entries(counts).sort((a, b) => b[1] - a[1]);

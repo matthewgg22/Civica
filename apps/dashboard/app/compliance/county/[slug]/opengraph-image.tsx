@@ -76,7 +76,7 @@ export default async function Image({
               borderRadius: 999,
               padding: "4px 16px",
               fontSize: 14,
-              color: "#E8C547",
+              color: "var(--color-wheat)",
               letterSpacing: 1,
             }}
           >
@@ -85,7 +85,7 @@ export default async function Image({
                 width: 8,
                 height: 8,
                 borderRadius: 999,
-                background: "#E8C547",
+                background: "var(--color-wheat)",
               }}
             />
             <div>§10105 · FY2026–FY2028</div>
@@ -123,7 +123,7 @@ export default async function Image({
                 fontSize: 84,
                 fontWeight: 700,
                 lineHeight: 1,
-                color: "#E8C547",
+                color: "var(--color-wheat)",
               }}
             >
               {exposureLabel}

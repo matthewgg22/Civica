@@ -71,7 +71,7 @@ export async function QcCategoryCoverage() {
               className={
                 r.has_civica_control
                   ? "inline-flex h-4 w-4 items-center justify-center rounded-full bg-emerald-500/20 text-emerald-700"
-                  : "inline-flex h-4 w-4 items-center justify-center rounded-full bg-amber-500/20 text-amber-700"
+                  : "inline-flex h-4 w-4 items-center justify-center rounded-full bg-amber/20 text-amber-dark"
               }
             >
               {r.has_civica_control ? "✓" : "·"}

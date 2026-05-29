@@ -21,7 +21,7 @@ import type {
 
 const TIER_META: Record<VerificationTier, { color: string; bg: string; hint: string }> = {
   Strong:        { color: "#2D5A45", bg: "rgba(45,90,69,0.10)", hint: "third-party data source" },
-  Moderate:      { color: "#B5511E", bg: "rgba(181,81,30,0.10)",  hint: "derived from intake answers" },
+  Moderate:      { color: "var(--color-warning)", bg: "rgba(181,81,30,0.10)",  hint: "derived from intake answers" },
   Weak:          { color: "#9C3A24", bg: "rgba(156,58,36,0.10)",  hint: "applicant self-reports" },
   Discretionary: { color: "#5A544D", bg: "rgba(90,84,77,0.10)",   hint: "navigator judgment" },
 };
@@ -359,9 +359,9 @@ function MockupAnswerUI({ screen }: { screen: MockupScreen }) {
         <div style={{ borderRadius: 3, background: "rgba(181,81,30,0.09)", border: "1px solid rgba(181,81,30,0.22)", padding: "4px 5px" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 2, marginBottom: 2 }}>
             <span style={{ fontSize: 6, lineHeight: 1 }}>⚠</span>
-            <span style={{ fontSize: 5.5, fontWeight: 700, color: "#B5511E" }}>Review required</span>
+            <span style={{ fontSize: 5.5, fontWeight: 700, color: "var(--color-warning)" }}>Review required</span>
           </div>
-          <p style={{ fontSize: 4.5, color: "#B5511E", lineHeight: 1.3, margin: 0 }}>{screen.answer}</p>
+          <p style={{ fontSize: 4.5, color: "var(--color-warning)", lineHeight: 1.3, margin: 0 }}>{screen.answer}</p>
         </div>
       );
     case "checklist":
@@ -712,7 +712,7 @@ function DistributionMath() {
               <th className="text-right text-[10px] uppercase tracking-wider font-semibold text-muted pb-2 pr-3">Coordinators</th>
               <th className="text-right text-[10px] uppercase tracking-wider font-semibold text-muted pb-2 pr-3">Per coordinator / yr</th>
               <th className="text-right text-[10px] uppercase tracking-wider font-semibold text-muted pb-2 pr-3">≈ Full channel</th>
-              <th className="text-right text-[10px] uppercase tracking-wider font-semibold text-muted pb-2" style={{ color: "#C9922A" }}>5% lift</th>
+              <th className="text-right text-[10px] uppercase tracking-wider font-semibold text-muted pb-2" style={{ color: "var(--color-amber)" }}>5% lift</th>
             </tr>
           </thead>
           <tbody>
@@ -725,7 +725,7 @@ function DistributionMath() {
               <td className="py-2.5 pr-3 text-right tabular-nums text-graphite">~115</td>
               <td className="py-2.5 pr-3 text-right tabular-nums text-graphite">~100 students</td>
               <td className="py-2.5 pr-3 text-right tabular-nums text-graphite">~11K</td>
-              <td className="py-2.5 text-right tabular-nums font-semibold" style={{ color: "#C9922A" }}>~550</td>
+              <td className="py-2.5 text-right tabular-nums font-semibold" style={{ color: "var(--color-amber)" }}>~550</td>
             </tr>
             <tr className="border-b border-hairline/50">
               <td className="py-2.5 pr-3 text-ink">
@@ -736,7 +736,7 @@ function DistributionMath() {
               <td className="py-2.5 pr-3 text-right tabular-nums text-graphite">~6,000+</td>
               <td className="py-2.5 pr-3 text-right tabular-nums text-graphite">~75 residents</td>
               <td className="py-2.5 pr-3 text-right tabular-nums text-graphite">~450K</td>
-              <td className="py-2.5 text-right tabular-nums font-semibold" style={{ color: "#C9922A" }}>~22.5K</td>
+              <td className="py-2.5 text-right tabular-nums font-semibold" style={{ color: "var(--color-amber)" }}>~22.5K</td>
             </tr>
             <tr className="border-b border-hairline/50">
               <td className="py-2.5 pr-3 text-ink">
@@ -747,7 +747,7 @@ function DistributionMath() {
               <td className="py-2.5 pr-3 text-right tabular-nums text-graphite">3 platforms</td>
               <td className="py-2.5 pr-3 text-right tabular-nums text-graphite">~17K / platform</td>
               <td className="py-2.5 pr-3 text-right tabular-nums text-graphite">~52K</td>
-              <td className="py-2.5 text-right tabular-nums font-semibold" style={{ color: "#C9922A" }}>~2.6K</td>
+              <td className="py-2.5 text-right tabular-nums font-semibold" style={{ color: "var(--color-amber)" }}>~2.6K</td>
             </tr>
             <tr className="border-b border-hairline/50">
               <td className="py-2.5 pr-3 text-ink">
@@ -758,14 +758,14 @@ function DistributionMath() {
               <td className="py-2.5 pr-3 text-right tabular-nums text-graphite">~2,600 stewards</td>
               <td className="py-2.5 pr-3 text-right tabular-nums text-graphite">~12 members</td>
               <td className="py-2.5 pr-3 text-right tabular-nums text-graphite">~31K</td>
-              <td className="py-2.5 text-right tabular-nums font-semibold" style={{ color: "#C9922A" }}>~1.6K</td>
+              <td className="py-2.5 text-right tabular-nums font-semibold" style={{ color: "var(--color-amber)" }}>~1.6K</td>
             </tr>
             <tr className="border-t-2 border-hairline">
               <td className="pt-2.5 text-[10px] uppercase tracking-wider font-semibold text-muted" colSpan={3}>
                 Combined addressable cohort
               </td>
               <td className="pt-2.5 pr-3 text-right tabular-nums font-bold text-[#5C1F11] text-[15px]">~544K / yr</td>
-              <td className="pt-2.5 text-right tabular-nums font-bold text-[15px]" style={{ color: "#C9922A" }}>~27K / yr</td>
+              <td className="pt-2.5 text-right tabular-nums font-bold text-[15px]" style={{ color: "var(--color-amber)" }}>~27K / yr</td>
             </tr>
             <tr>
               <td className="text-[10px] text-graphite italic" colSpan={3}>

@@ -62,7 +62,7 @@ function colorForLinkValue(value: number, maxValue: number): string {
 
 function nodeColorForStage(stage: StageKind): string {
   switch (stage) {
-    case "intake":  return "#C9922A";
+    case "intake":  return "var(--color-amber)";
     case "error":   return "#5C1F11";
     case "outcome": return "#1A1714";
   }
@@ -210,7 +210,7 @@ export default function CoverageMapPanel() {
               style={{
                 width: "88%",
                 background: "rgba(201,146,42,0.18)",
-                color: "#C9922A",
+                color: "var(--color-amber)",
               }}
             >
               <span className="text-[12px] font-semibold tabular-nums">

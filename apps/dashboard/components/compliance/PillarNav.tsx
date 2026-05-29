@@ -104,7 +104,7 @@ export default function PillarNav() {
             className="px-3 py-1 rounded-full text-[11px] tracking-wide font-semibold transition-colors whitespace-nowrap shrink-0 snap-start"
             style={
               active === id
-                ? { background: "rgba(201,146,42,0.12)", color: "#C9922A" }
+                ? { background: "rgba(201,146,42,0.12)", color: "var(--color-amber)" }
                 : { color: "#6B655C" }
             }
           >

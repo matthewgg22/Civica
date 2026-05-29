@@ -27,7 +27,7 @@ const PROVISION_DEFS = [
     sublabel: "FY2028 deadline",
     startIso:    "2025-01-01",
     deadlineIso: "2028-09-30",
-    color: "#C9922A",
+    color: "var(--color-amber)",
     unitFn: (days: number) => ({ val: (days / 365).toFixed(1), unit: "yrs" }),
   },
   {

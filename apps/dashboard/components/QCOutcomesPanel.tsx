@@ -64,7 +64,7 @@ export default function QCOutcomesPanel({ stats }: { stats: QCStats }) {
               label="Coverage"
               value={`${coveragePct}%`}
               sub={`${stats.packetsCovered} packets touched`}
-              accent={coveragePct >= 5 ? "text-teal" : "text-amber"}
+              accent={coveragePct >= 5 ? "text-teal" : "text-warning"}
             />
             <StatCard
               label="Errors found"
@@ -79,7 +79,7 @@ export default function QCOutcomesPanel({ stats }: { stats: QCStats }) {
               accent={
                 stats.errorRate === null ? "text-graphite"
                   : stats.errorRate >= 0.15 ? "text-brick"
-                  : stats.errorRate >= 0.08 ? "text-amber"
+                  : stats.errorRate >= 0.08 ? "text-warning"
                   : "text-teal"
               }
             />

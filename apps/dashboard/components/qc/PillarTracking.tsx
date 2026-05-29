@@ -172,11 +172,11 @@ function PillarStrip({ meta, observed, isLast }: PillarStripProps) {
   // Color: brick if dormant (Phase 2), teal if shipped + fully realized,
   // warning amber if shipped + partially realized.
   const tierColor = isDormant
-    ? "#B5511E" // warning — Phase 2 not engaged
+    ? "var(--color-warning)" // warning — Phase 2 not engaged
     : realizationPct >= 90
       ? "#2A6F66" // teal — at target
       : realizationPct >= 50
-        ? "#9A5A14" // warning — moderate gap
+        ? "var(--color-amber-dark)" // warning — moderate gap
         : "#9C3A24"; // brick — large gap
 
   return (
@@ -255,7 +255,7 @@ function PillarStrip({ meta, observed, isLast }: PillarStripProps) {
         <div className="rounded-[3px] bg-warning/8 border border-warning/20 px-3 py-2 mb-2 flex items-baseline gap-2">
           <span
             className="text-[10px] uppercase tracking-[0.12em] font-semibold"
-            style={{ color: "#B5511E" }}
+            style={{ color: "var(--color-warning)" }}
           >
             Phase 2
           </span>

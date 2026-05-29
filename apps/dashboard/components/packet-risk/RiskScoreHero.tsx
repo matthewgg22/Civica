@@ -2,7 +2,7 @@ import type { RiskFlow } from "./types";
 
 const TIER_TONE = {
   high:       { color: "#9C3A24", label: "High risk",   bg: "rgba(156,58,36,0.10)"  },
-  medium:     { color: "#9A5A14", label: "Medium risk",  bg: "rgba(154,90,20,0.10)"  },
+  medium:     { color: "var(--color-amber-dark)", label: "Medium risk",  bg: "rgba(154,90,20,0.10)"  },
   low:        { color: "#2A6F66", label: "Low risk",     bg: "rgba(42,111,102,0.10)" },
   incomplete: { color: "#5A544D", label: "Incomplete",   bg: "rgba(90,84,77,0.10)"   },
 } as const;
@@ -156,7 +156,7 @@ function TierBand({ score, tier }: { score: number; tier: string }) {
       </div>
       <div className="flex justify-between">
         <BandLabel label="Low"    range="0–34"   color="#2A6F66" active={tier === "low"}    />
-        <BandLabel label="Medium" range="35–59"  color="#9A5A14" active={tier === "medium"} />
+        <BandLabel label="Medium" range="35–59"  color="var(--color-amber-dark)" active={tier === "medium"} />
         <BandLabel label="High"   range="60–100" color="#9C3A24" active={tier === "high"}   />
       </div>
     </div>
