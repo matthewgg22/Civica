@@ -27,6 +27,12 @@ public enum CivicaTypography {
     /// title clearly the largest element on the page without pushing
     /// the affordance below the fold on smaller iPhones.
     public static let pageTitle           = Font.custom(semibold, size: 28, relativeTo: .largeTitle)
+    /// 24/30 — display number / hero amount. Sits between `pageTitle` (screen
+    /// titles, 28pt) and `cardHero` (card section headers, 22pt). Use for the
+    /// single load-bearing numeric on a screen — EBT balance, estimator
+    /// result, deposit hero. Reserves `pageTitle` for actual screen titles
+    /// so size hierarchy stays readable. Added 2026-05-29 per audit DS-3.
+    public static let display             = Font.custom(semibold, size: 24, relativeTo: .largeTitle)
     /// 22/28 — card hero ("Make a Plan to Vote", "Next election").
     public static let cardHero            = Font.custom(semibold, size: 22, relativeTo: .title2)
     /// 20/25 — small card title / subsection header.
