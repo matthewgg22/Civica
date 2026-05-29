@@ -134,10 +134,11 @@ struct CivicaHomePhase2View: View {
 
                 primaryCTA
 
-                if showErrorRisk {
-                    errorRiskRow
-                }
-
+                // IA-2 (audit 2026-05-29): documents-requested renders ABOVE
+                // error-risk. Documents-requested is concrete and finite
+                // ("upload these 2 paystubs"); error-risk is a probabilistic
+                // prediction. Actionable + finite outranks probabilistic +
+                // open-ended in the post-CTA priority stack.
                 if pendingDocumentCount > 0 {
                     CivicaActionRow(
                         icon: "doc.text",
@@ -146,6 +147,10 @@ struct CivicaHomePhase2View: View {
                         secondary: documentsSecondary,
                         action: onOpenExternalPortal
                     )
+                }
+
+                if showErrorRisk {
+                    errorRiskRow
                 }
 
                 if unreadMessageCount > 0 {
