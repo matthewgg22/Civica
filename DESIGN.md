@@ -19,6 +19,7 @@
 9. [Accessibility Contracts](#9-accessibility-contracts)
 10. [Brand Voice & Copy Rules](#10-brand-voice--copy-rules)
 11. [Known Issues & Remediation Plan](#11-known-issues--remediation-plan)
+12. [Component Anti-Patterns](#12-component-anti-patterns)
 
 ---
 
@@ -388,6 +389,21 @@ Listed by severity.
 | L4 | Returning user "Waiting…" primary CTA has no affordance when status = interviewScheduled | `SNAPReturningUserHomeView.swift` | Show status-specific text and a "What to expect" link per interview stage |
 | L5 | captionStrong with `.kerning(1.2)` + `.textCase(.uppercase)` is repeated in 5+ views with no view modifier helper | Multiple SNAP views | Extract `func civicaOverline() -> some View` modifier into design system |
 | L6 | Dark mode values exist in all tokens but app forces light mode (`UIUserInterfaceStyle = Light`) | `CivicaColors.swift`, `Colors+v2.swift`, Info.plist | When dark mode ships, audit accentTeal dark (5FA89E on 1B1F24 = 4.6:1 — just passes AA) and wheat dark (F4D670 — still fails as text) |
+
+---
+
+## 12. Component Anti-Patterns
+
+Patterns the design review has explicitly killed or capped. New code should not reach for these without referencing the sanctioned-use carve-out below.
+
+### 12.1 Icon-in-tinted-circle
+
+The pattern `Image(systemName:).foregroundStyle(token).background(Circle().fill(token.opacity(N)))` is allowed at most **once per screen**, and only as a **banner/state eyebrow** — never as section decoration or repeating tile-row affordance. Repeating this pattern across multiple cards or sections produces the textbook AI-slop look the May 2026 design review explicitly killed (blacklist pattern #3).
+
+Sanctioned use: the Phase 3 recert banner clock-arrow icon ([CivicaHomePhase3View.swift:191-199](Civica/App/CivicaHomePhase3View.swift:191)).
+Unsanctioned use: any tile-grid or 3-column "feature highlights" pattern.
+
+Cross-ref: same posture as the cold-start tile-grid rule from the May 2026 review (CivicaEntryView.swift design comment).
 
 ---
 
