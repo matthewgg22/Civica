@@ -154,3 +154,35 @@ military/veteran, public-assistance history, group-living. Button: Next.
 _Remaining: ABHGW branch follow-ups; Income (step 4); Expenses (step 5); Other
 Situations (step 6); Document Upload (step 7); Review & Submit (step 8). Plus
 the explainer popovers on step-1 pages (mostly "?" links) + verifying ABCPA ids._
+
+### Step 3 Household Details (full path, no-detail)
+- ABHGW (situations checklist, above) → **ABRGS** "summary of your household details" (cards: Public Assistance, Pregnancy, Person With A Disability, College/Trade School, Food Programs, Facility/Shelter, Breastfeeding, U.S. Military — each "add" to enter detail) → **ABSDE** section-complete ("Next, let's review your job and income information"). Each checklist item branches to its own detail sub-pages (not walked — checked "None" to pass).
+
+## STEP 4 — Income (extension core data: income_sources[])
+- **ABEIQ** — "Do you have a job?" `radio[name=mailadr_radio]` Yes/No. Inline explainer: "anything you do to earn money: full/part-time, seasonal, **self-employment, freelance, independent contractor (Uber/Lyft/DoorDash/Postmates)**". Yes → job-detail sub-form (employer/amount/frequency — repeating per job, NOT walked; same pattern as members).
+- **ABUIN** — "Do you get money that doesn't come from work?" `radio[name=select_group]` Yes/No. Explainer: "Work Study, child/spousal support, gifts/loans, unemployment, worker's comp, government aid, disability, retirement/pension, foster care."
+- **ABCIA** — "Are you on strike?" Yes/No (`mailadr_radio`).
+- **ABCIB** — "Did your employment change in the last two months?" Yes/No. Explainer: "lost a job, changed jobs, reduction in hours, laid off, quit."
+- **ABJIS** — income summary (cards: Jobs and Self-Employment / Government Support and School Aid / Other Income / In-kind Income / Yearly Income Change — click card to edit).
+- **ABISE** — section-complete.
+- NB: radio `name` reuse is rampant (`mailadr_radio`, `select_group` appear on many unrelated pages) → **must key on page + label, never name alone.**
+
+## STEP 5 — Expenses (extension core data: utility_allowance_type / shelter)
+- **ABHEG** — "Tell us more about your housing and utilities expenses. Select all that apply." Checkboxes (UUID-id group `lift-ux-id-…_0.._6` → label-based):
+  - Rent or Mortgage Payments
+  - Property Taxes or Insurance (if billed separate)
+  - **Gas, Electric, or Other Fuel Used for Heating or Cooling** (the SUA heating/cooling trigger)
+  - Telephone/Mobile Phone
+  - Water, Sewage and Garbage
+  - Homeless Shelter
+  - None of These Apply
+  **→ maps to `utility_allowance_type` (SUA tier) + shelter.** Each checked → amount sub-page.
+- **ABCST** — "Do you pay for adult care or childcare so you can go to work, school, or look for a job?" `radio[name=select_group]` Yes/No (dependent-care deduction).
+- **ABCOD** — (next; capture continues).
+
+### Remaining repeating sub-forms (NOT yet walked — high value for extension)
+- Income job-detail (employer, gross amount, pay frequency) — per `income_sources[]`.
+- Income non-work-source detail (type, amount, frequency).
+- Expense amount pages (rent $, utility $, dependent-care $).
+- Household Details per-category detail pages.
+These mirror the member sub-form pattern: a gate → repeating detail pages → summary card.
