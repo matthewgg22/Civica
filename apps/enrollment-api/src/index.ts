@@ -20,6 +20,7 @@ import meArgyleRouter from "./routes/me-argyle.js";
 import meWorkHoursRouter from "./routes/me-work-hours.js";
 import benefitsCalRouter from "./routes/benefitscal.js";
 import extensionRouter from "./routes/extension/index.js";
+import { publicDeviceRouter, authedDeviceRouter } from "./routes/oauth.js";
 import recertRouter from "./routes/recert.js";
 import twilioWebhookRouter from "./routes/twilio-webhook.js";
 import workRequirementsRouter from "./routes/work-requirements.js";
@@ -95,10 +96,17 @@ app.route("/", twilioWebhookRouter);
 app.route("/v1/enrollment/feature-flags", featureFlagsRouter);
 
 // Civica Submitter browser extension routes (Model B — partner-CBO autofill).
-// Uses EXTENSION_BEARER_TOKEN for auth, NOT a Supabase JWT — so it bypasses
-// the standard authMiddleware. Each handler inside performs its own bearer-
-// token check against c.env.EXTENSION_BEARER_TOKEN.
+// Auth is per-route (per-CBO device token OR legacy EXTENSION_BEARER_TOKEN),
+// NOT a Supabase JWT — so it bypasses the standard authMiddleware. Each handler
+// resolves auth via routes/extension/auth.ts.
 app.route("/v1/enrollment/extension", extensionRouter);
+
+// OAuth 2.0 device authorization grant (RFC 8628) — extension ↔ CBO account
+// (issue #317). The authorize + token endpoints are PUBLIC (the polling
+// extension has no JWT yet), so they mount here BEFORE authMiddleware. The
+// approve/lookup/deny endpoints require a staff JWT and mount inside the authed
+// /v1/enrollment subtree below.
+app.route("/v1/enrollment/oauth/device", publicDeviceRouter);
 
 // All enrollment routes require a valid Supabase JWT
 const api = new Hono<{ Bindings: Env }>();
@@ -125,6 +133,11 @@ api.route("/navigator", navigatorRouter);                 // /navigator/outreach
 
 // Canvas OAuth proxy (T-DR3-9 — schedule integration)
 api.route("/oauth/canvas", oauthCanvasRouter);            // /oauth/canvas/exchange, /status, DELETE
+
+// Device-flow approval surface (issue #317). Staff-authenticated: the CBO
+// assister approves/denies a pending device code from the dashboard. The
+// public authorize/token endpoints are mounted above (pre-auth).
+api.route("/oauth/device", authedDeviceRouter);           // /oauth/device/approve, /lookup, /deny
 
 // Applicant self-service routes
 api.route("/me", meRouter);                         // GET/PATCH /me

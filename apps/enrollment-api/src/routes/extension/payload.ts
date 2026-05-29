@@ -6,9 +6,11 @@
  * shape produced by POST /benefitscal/prepare-export so consumers don't
  * need a second integration.
  *
- * Auth: Bearer token via EXTENSION_BEARER_TOKEN. Single shared secret in
- * the MVP scope. Per-CBO tokens are the v2 — see TODO entry added by this
- * branch.
+ * Auth: accepts EITHER a per-CBO device-flow access token (issue #317,
+ * org-scoped) OR the legacy shared EXTENSION_BEARER_TOKEN (deprecated,
+ * org-agnostic — kept working until the extension migrates). When a device
+ * token is used, the target packet MUST belong to the token's org or the
+ * request 404s (cross-org reads are impossible). See ./auth.ts.
  *
  * PII posture: returns ciphertext as-is for full_name / DOB / phone /
  * address. The extension content script reports skipped fields in its
@@ -21,41 +23,32 @@ import { HTTPException } from "hono/http-exception";
 import { makeServiceClient } from "../../lib/supabase.js";
 import { withActorContext } from "../../middleware/actorContext.js";
 import { rateLimit } from "../../lib/rate-limit.js";
-import type { Actor, Env } from "../../types.js";
+import { resolveExtensionAuth } from "./auth.js";
+import type { Env } from "../../types.js";
 
 const app = new Hono<{ Bindings: Env }>();
 
-// Synthetic actor for audit attribution on all extension-route DB access.
-// Per /plan-eng-review A2 (2026-05-27): every gateway write should set
-// app.actor_* via withActorContext so audit triggers attribute the action
-// rather than logging NULL. When per-CBO bearer tokens land, this becomes
-// 'cbo_assister' with a real org_id derived from the token.
-const EXTENSION_ACTOR: Actor = {
-  kind: "extension",
-  id: "civica-submitter-ext",
-};
-
 app.get("/packets/:packetId/payload", rateLimit("standard"), async (c) => {
-  const bearer = c.req.header("Authorization");
-  const expected = c.env.EXTENSION_BEARER_TOKEN;
-
-  if (!expected) {
+  // Auth: per-CBO device token (org-scoped) OR legacy shared token (deprecated,
+  // org-agnostic). See ./auth.ts.
+  const auth = await resolveExtensionAuth(c.env, c.req.header("Authorization"));
+  if (auth === "unconfigured") {
     throw new HTTPException(503, {
       message:
-        "Extension bearer token is not configured for this environment. Set EXTENSION_BEARER_TOKEN.",
+        "Extension auth is not configured for this environment. Set EXTENSION_BEARER_TOKEN or use a device token.",
     });
   }
-  if (!bearer || bearer !== `Bearer ${expected}`) {
+  if (auth === "unauthorized") {
     throw new HTTPException(401, { message: "Unauthorized" });
   }
 
   const packetId = c.req.param("packetId");
   if (!packetId) throw new HTTPException(400, { message: "packetId is required" });
 
-  // Set actor so withActorContext + downstream audit triggers attribute
-  // reads to 'extension'. The payload endpoint is read-only but the actor
-  // context is cheap to set and keeps the pattern consistent with confirm.ts.
-  c.set("actor", EXTENSION_ACTOR);
+  // Set actor so withActorContext + downstream audit triggers attribute the
+  // read to the right actor: 'cbo_assister' (real org_id) for a device token,
+  // 'extension' (shared) for the legacy path. Per /plan-eng-review A2.
+  c.set("actor", auth.actor);
   const db = await withActorContext(c);
 
   // 1. Packet + applicant join (mirrors benefitscal.prepare-export at L101-110).
@@ -75,6 +68,14 @@ app.get("/packets/:packetId/payload", rateLimit("standard"), async (c) => {
   }
   if (packetErr) throw new HTTPException(500, { message: packetErr.message });
   if (!packet) throw new HTTPException(404, { message: "Packet not found" });
+
+  // ORG ISOLATION: a device token may only read packets in its own org. We
+  // return 404 (not 403) on mismatch so the existence of another org's packet
+  // is never disclosed. The legacy shared token has no org scope (orgId=null)
+  // and skips this check — that's the documented back-compat posture.
+  if (auth.method === "device_token" && packet.org_id !== auth.orgId) {
+    throw new HTTPException(404, { message: "Packet not found" });
+  }
 
   // 2. Answers + documents.
   const [{ data: answers }, { data: docRows }] = await Promise.all([

@@ -11,7 +11,10 @@
  * assister submits via the extension without first calling prepare-export
  * from the dashboard (which is a supported MVP flow).
  *
- * Auth: same bearer token as the payload endpoint.
+ * Auth: accepts EITHER a per-CBO device-flow access token (issue #317,
+ * org-scoped) OR the legacy shared EXTENSION_BEARER_TOKEN (deprecated). With a
+ * device token the packet must belong to the token's org (else 404). See
+ * ./auth.ts.
  */
 
 import { Hono } from "hono";
@@ -21,18 +24,13 @@ import { z } from "zod";
 import { makeServiceClient } from "../../lib/supabase.js";
 import { withActorContext } from "../../middleware/actorContext.js";
 import { rateLimit } from "../../lib/rate-limit.js";
-import type { Actor, Env } from "../../types.js";
+import { resolveExtensionAuth } from "./auth.js";
+import type { Env } from "../../types.js";
 
 const bodySchema = z.object({
   benefitscal_confirmation_number: z.string().min(1).max(64),
   benefitscal_application_id: z.string().min(1).max(64).optional(),
 });
-
-// Synthetic actor for audit attribution. See payload.ts for rationale.
-const EXTENSION_ACTOR: Actor = {
-  kind: "extension",
-  id: "civica-submitter-ext",
-};
 
 const app = new Hono<{ Bindings: Env }>();
 
@@ -41,16 +39,15 @@ app.post(
   rateLimit("standard"),
   zValidator("json", bodySchema),
   async (c) => {
-    const bearer = c.req.header("Authorization");
-    const expected = c.env.EXTENSION_BEARER_TOKEN;
-
-    if (!expected) {
+    // Auth: device token (org-scoped) OR legacy shared token. See ./auth.ts.
+    const auth = await resolveExtensionAuth(c.env, c.req.header("Authorization"));
+    if (auth === "unconfigured") {
       throw new HTTPException(503, {
         message:
-          "Extension bearer token is not configured for this environment. Set EXTENSION_BEARER_TOKEN.",
+          "Extension auth is not configured for this environment. Set EXTENSION_BEARER_TOKEN or use a device token.",
       });
     }
-    if (!bearer || bearer !== `Bearer ${expected}`) {
+    if (auth === "unauthorized") {
       throw new HTTPException(401, { message: "Unauthorized" });
     }
 
@@ -60,8 +57,9 @@ app.post(
     const body = c.req.valid("json");
 
     // Set actor + acquire actor-context-scoped DB client so audit triggers
-    // attribute the write to 'extension' instead of NULL. See A2 finding.
-    c.set("actor", EXTENSION_ACTOR);
+    // attribute the write to 'cbo_assister' (device token, real org) or
+    // 'extension' (legacy shared) instead of NULL. See A2 finding.
+    c.set("actor", auth.actor);
     const db = await withActorContext(c);
 
     // Sanity check: packet exists.
@@ -77,6 +75,13 @@ app.post(
     }
     if (packetErr) throw new HTTPException(500, { message: packetErr.message });
     if (!packet) throw new HTTPException(404, { message: "Packet not found" });
+
+    // ORG ISOLATION: a device token may only write confirmations for packets in
+    // its own org. 404 on mismatch (never disclose another org's packet). The
+    // legacy shared token (orgId=null) skips this — documented back-compat.
+    if (auth.method === "device_token" && packet.org_id !== auth.orgId) {
+      throw new HTTPException(404, { message: "Packet not found" });
+    }
 
     // A3: packet must have an assigned org before we can record a submission.
     // The defensive insert path needs org_id (FK to staff_orgs). Without it
