@@ -235,3 +235,28 @@ repeating detail sub-forms + step-1 explainer popovers.
 - **ABRAE — race & ethnic origin.** Same optional-disclaimer inline + "What is this used for?" link. `select#Race`: American Indian or Alaskan Native / Asian / Black or African American / Native Hawaiian or Other Pacific Islander / Other or Mixed (+ likely more).
 
 These were `discovered` stubs — now have options + explainer text. All optional (skippable via Next), human-fill / chatbot-explainable, not extension-autofilled.
+
+## STEP 4 Income — affirmative detail sub-forms (CAPTURED — extension core data)
+
+### ABEQH — "Are you self-employed?" `radio[name=select_group]` Yes/No
+Explainer (verbatim, gig-work — chatbot gold): "This is anything you do to earn money, like freelance or independent contractor work. This might include: Owning a business / Running an online store/sales / Driving for Uber/Lyft/DoorDash/Postmates / Babysitting / Walking dogs / Hairdressing (such as a barber) / Recycling / Repairing houses / Selling cultural items / …"
+- Yes → self-employment income detail (not yet walked).
+- No → W-2 employer detail (ABEIC, below).
+
+### ABEIC — W-2 job detail = `income_sources[]` TEMPLATE (the autofill prize)
+Prompt: "Can you share a little more about your job?" Fields:
+- `#employerName` — Employer's Name
+- `#employerAddr` — Employer's Address
+- `#city` — City
+- `select#state` — State (full state list, default California)
+- `#zipCode` — Zip Code
+- `#employerPhone` — Employer's Phone
+- **`select#oftenPaid` (REQUIRED)** — pay frequency: Weekly / Bi-Weekly / Semi-Monthly / Monthly / Daily / Quarterly / Semi Annually / Annually / One-Time Only → **maps `income_sources[].income_frequency`** (extension transform: monthly→Monthly, biweekly→Bi-Weekly, weekly→Weekly, annual→Annually; "irregular"→? maybe One-Time/Daily — needs decision)
+- **`#payAmount` (REQUIRED)** → **`income_sources[].income_amount`**
+- `#avgHour` — Average Hours per Week
+- `radio[name=select_group]` Yes/No (likely "still employed?" or "more jobs?")
+- repeating: one ABEIC per job; reached again per `income_sources[]` entry. Field ids stable (employerName/payAmount/oftenPaid) — extension can fill by id here (unlike the UUID-button pages).
+
+**Extension wiring:** for each `income_sources[]` of type employment → fill ABEIC (employerName?, payAmount=amount, oftenPaid=freq-transform, avgHour?). Self-employment → ABEQH Yes branch (TODO capture). Non-work income → ABUIN Yes branch (TODO capture).
+
+NB: `#city`/`#state`/`#zipCode` ids collide with the address pages (ABNHA/ABHAD) — same ids, different page → reinforces key-on-page+label.
