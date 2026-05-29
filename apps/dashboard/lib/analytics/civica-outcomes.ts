@@ -217,93 +217,12 @@ const FOIA_OUTCOMES: FoiaPendingOutcome[] = [
   },
 ];
 
-// ---------------------------------------------------------------------------
-// Effect isolation — pre-pilot regression estimates that defang the
-// cohort-bias critique. For each flagship outcome, the raw cohort
-// difference is decomposed into (a) the part attributable to which
-// households Civica enrolls vs the comparison group ("composition effect")
-// and (b) the part attributable to the engine itself ("isolated effect").
-//
-// CRITICAL HONESTY MARK: these are MODELED ESTIMATES, not measured
-// regressions. Civica's actual pilot cohort hasn't closed (per TODO-12,
-// the cohort-of-10 milestone). The numbers below are pre-pilot illustrative
-// effects based on (i) the published USDA QC microdata calibration, (ii)
-// adjacent benefits-navigator intervention literature where typical
-// effect sizes run ~50-70% of the raw cohort gap for PER-style outcomes
-// and ~80-90% for workflow outcomes like time-to-decision, and (iii) the
-// composition signal in TODO-4 (working-household concentration drives
-// most of the PER differential).
-//
-// The card on the panel labels these as MODELED · PRE-PILOT so a skeptic
-// can grade them as projections, not as measured statistics. When the
-// pilot closes the model swaps for real regression output.
-// ---------------------------------------------------------------------------
-
-export interface EffectIsolationRow {
-  /** Sequence number for layout. */
-  step: number;
-  /** Flagship metric this isolation applies to (matches OutcomeRow.flagshipLabel). */
-  metric: string;
-  /** Raw cohort difference, plain-English. */
-  rawAdvantage: string;
-  /** Modeled engine-attributable effect, plain-English with units. */
-  isolatedEffect: string;
-  /** Confidence interval string for the isolated effect. */
-  ciRange: string;
-  /** Significance tag — "p < 0.01" etc. */
-  significance: string;
-  /** Share of the raw gap that the model attributes to the engine (0-100). */
-  engineSharePct: number;
-  /** One-sentence plain-English interpretation. */
-  interpretation: string;
-}
-
-const EFFECT_ISOLATION: EffectIsolationRow[] = [
-  {
-    step: 1,
-    metric: "Lower PER",
-    rawAdvantage: "6.6 percentage points lower vs CA statewide (4.2% vs 10.8%)",
-    isolatedEffect: "~3.5 pp lower",
-    ciRange: "scenario range: 2.1–4.9 pp",
-    significance: "pre-pilot projection",
-    engineSharePct: 53,
-    interpretation:
-      "Even after accounting for serving slightly simpler cases, Civica's packet prep still cuts error rates by ~3.5 percentage points — that's the engine working, not who applied.",
-  },
-  {
-    step: 3,
-    metric: "Faster decisions",
-    rawAdvantage: "~16 days faster vs typical CA timeline (6 vs 22 days)",
-    isolatedEffect: "~13 days faster",
-    ciRange: "scenario range: 11–15 days",
-    significance: "pre-pilot projection",
-    engineSharePct: 81,
-    interpretation:
-      "Pre-verified documents at handoff is a process change, not a caseload effect — 13 of the 16 days saved hold regardless of who applied.",
-  },
-  {
-    step: 4,
-    metric: "Apps per navigator",
-    rawAdvantage: "~16 more applications per navigator-month (23 vs 7)",
-    isolatedEffect: "~14 more apps/nav-month",
-    ciRange: "scenario range: 12–16 apps",
-    significance: "pre-pilot projection",
-    engineSharePct: 88,
-    interpretation:
-      "The 3× throughput lift comes from structured intake and auto-document classification — nearly all of it holds on matched caseloads.",
-  },
-];
-
 export function civicaOutcomes(): OutcomeRow[] {
   return ROWS;
 }
 
 export function foiaPendingOutcomes(): FoiaPendingOutcome[] {
   return FOIA_OUTCOMES;
-}
-
-export function effectIsolation(): EffectIsolationRow[] {
-  return EFFECT_ISOLATION;
 }
 
 export function outcomesSummary(): {

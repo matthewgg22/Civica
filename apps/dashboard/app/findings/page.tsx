@@ -83,6 +83,31 @@ export default function FindingsIndex() {
       </header>
 
       {/* ----------------------------------------------------------------- */}
+      {/* Featured analysis — the flagship pre-registered regression. Lives */}
+      {/* at its own static route (/findings/regression), surfaced here so   */}
+      {/* it is the first thing a partner sees.                              */}
+      {/* ----------------------------------------------------------------- */}
+      <Link
+        href="/findings/regression"
+        className="group mb-12 block rounded-lg border border-pine/25 bg-pine/[0.04] p-5 transition hover:border-pine/40 hover:bg-pine/[0.07]"
+      >
+        <p className="text-xs font-semibold uppercase tracking-wider text-pine">
+          Flagship analysis
+        </p>
+        <h2 className="mt-1.5 text-xl font-semibold text-ink group-hover:text-pine">
+          Does Civica cut the error rate?
+        </h2>
+        <p className="mt-1.5 text-sm leading-relaxed text-graphite">
+          A pre-registered regression — five outcomes, each with a confidence
+          interval, the plan locked before the data. Synthetic today; one
+          command swaps in the FOIA CDSS data.
+        </p>
+        <span className="mt-2 inline-block text-sm font-medium text-pine">
+          View the analysis →
+        </span>
+      </Link>
+
+      {/* ----------------------------------------------------------------- */}
       {/* Empty state — should never happen in practice, but guard for it.  */}
       {/* ----------------------------------------------------------------- */}
       {total === 0 && (

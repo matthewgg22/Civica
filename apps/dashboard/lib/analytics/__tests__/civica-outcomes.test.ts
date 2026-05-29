@@ -2,7 +2,6 @@ import { describe, it, expect } from "vitest";
 import {
   civicaOutcomes,
   foiaPendingOutcomes,
-  effectIsolation,
   outcomesSummary,
 } from "../civica-outcomes";
 
@@ -48,13 +47,6 @@ describe("foiaPendingOutcomes", () => {
       expect(i.foiaSource).toBeTruthy();
       expect(i.impact).toBeTruthy();
     }
-  });
-});
-
-describe("effectIsolation", () => {
-  it("returns rows describing what we can isolate vs not", () => {
-    const rows = effectIsolation();
-    expect(Array.isArray(rows)).toBe(true);
   });
 });
 

@@ -8,11 +8,11 @@
  *
  * Data: `lib/analytics/civica-outcomes.ts`.
  */
+import Link from "next/link";
 import type {
   OutcomeRow,
   OutcomeSourceKind,
   FoiaPendingOutcome,
-  EffectIsolationRow,
 } from "../../lib/analytics/civica-outcomes";
 import { RadialGauges } from "./RadialGauges";
 
@@ -301,111 +301,59 @@ function ValueOrPending({
 }
 
 // ---------------------------------------------------------------------------
-// Effect isolation — defangs the "cohort bias?" critique. For each flagship
-// metric, shows raw cohort gap, modeled engine-attributable effect with CI,
-// significance, and the "engine share" — what % of the raw gap survives
-// controls for household type, county, and intake channel.
-// Marked MODELED · PRE-PILOT so a skeptic grades them as projections.
+// "Is the advantage real?" — answers the cohort-bias critique by pointing to
+// the pre-registered regression at /findings/regression instead of restating
+// hand-typed estimates here. The analysis page is the single home for the
+// effect sizes (plan locked before the data; fitted on a synthetic pilot
+// population today, reruns on CDSS QC when the FOIA lands), so nothing on
+// this panel can drift out of sync with the fitted model.
 // ---------------------------------------------------------------------------
 
-function EffectIsolationCard({ rows }: { rows: EffectIsolationRow[] }) {
-  if (rows.length === 0) return null;
+function RegressionEvidenceCallout() {
   return (
     <div className="mt-8 pt-6 border-t-2 border-hairline">
-      {/* Header */}
-      <div className="flex items-start justify-between gap-3 mb-5 flex-wrap">
+      <div className="flex items-start justify-between gap-3 mb-4 flex-wrap">
         <div>
           <p className="text-[10px] uppercase tracking-[0.13em] font-semibold text-muted mb-1">
             Is the advantage real?
           </p>
           <h4 className="text-[16px] font-semibold tracking-tight text-ink leading-tight">
-            The gap holds even when we control for caseload mix
+            We pre-registered the test, then ran it
           </h4>
-          <p className="text-[12px] text-graphite mt-1.5 leading-snug max-w-2xl">
-            Civica&apos;s enrolled households skew slightly simpler than the statewide average.
-            The cards below show how much of each advantage survives after accounting for that —
-            the number that matters is the adjusted figure on the right.
-          </p>
         </div>
         <span
           className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold tracking-wide whitespace-nowrap shrink-0"
-          style={{ color: "#C9922A", background: "rgba(201,146,42,0.10)" }}
+          style={{ color: CIVICA_COLOR, background: "rgba(42,111,102,0.10)" }}
         >
-          <span className="w-1 h-1 rounded-full" style={{ background: "#C9922A" }} />
-          MODELED · PRE-PILOT
+          <span className="w-1 h-1 rounded-full" style={{ background: CIVICA_COLOR }} />
+          PRE-REGISTERED
         </span>
       </div>
 
-      <div className="space-y-2">
-        {rows.map((r) => {
-          const engineShare = r.engineSharePct;
-          const compositionShare = 100 - engineShare;
-          return (
-            <div
-              key={r.step}
-              className="rounded-[4px] border border-hairline bg-paper p-4"
-            >
-              <div className="flex items-start gap-6 flex-wrap">
+      <p className="text-[13px] text-graphite leading-relaxed max-w-2xl">
+        The cohort-bias critique — the worry that Civica simply enrolls easier
+        cases — deserves a measured answer, not a hand-typed one. So the
+        measurement plan is fixed before the data: five pre-registered outcomes
+        (payment error, decision speed, handoff and recertification completion,
+        navigator throughput), each fitted with controls held constant and
+        reported with a confidence interval and a p-value.
+      </p>
 
-                {/* Left: metric + raw gap */}
-                <div className="w-[160px] shrink-0">
-                  <p className="text-[13px] font-semibold text-ink leading-snug">
-                    {r.metric}
-                  </p>
-                  <p className="text-[11px] text-muted leading-snug mt-0.5">
-                    {r.rawAdvantage}
-                  </p>
-                </div>
-
-                {/* Middle: plain-English split */}
-                <div className="flex-1 min-w-0">
-                  <p className="text-[9px] uppercase tracking-[0.12em] font-semibold text-muted mb-2">
-                    Where the advantage comes from
-                  </p>
-                  <div className="flex items-center gap-2 flex-wrap mb-2">
-                    <span
-                      className="px-2 py-0.5 rounded-full text-[10px] font-semibold text-white"
-                      style={{ background: CIVICA_COLOR }}
-                    >
-                      {engineShare}% from Civica&apos;s process
-                    </span>
-                    <span
-                      className="px-2 py-0.5 rounded-full text-[10px] font-semibold text-graphite"
-                      style={{ background: "rgba(142,133,121,0.15)", border: "1px solid rgba(142,133,121,0.25)" }}
-                    >
-                      {compositionShare}% from who we serve
-                    </span>
-                  </div>
-                  <p className="text-[11px] text-graphite leading-relaxed">
-                    {r.interpretation}
-                  </p>
-                </div>
-
-                {/* Right: adjusted figure — the number that matters */}
-                <div className="shrink-0 text-right">
-                  <p className="text-[9px] uppercase tracking-[0.12em] font-semibold text-muted mb-0.5">
-                    Adjusted advantage
-                  </p>
-                  <p
-                    className="text-[18px] font-bold tabular-nums leading-none"
-                    style={{ color: CIVICA_COLOR }}
-                  >
-                    {r.isolatedEffect}
-                  </p>
-                  <p className="text-[9px] text-muted font-mono mt-1 leading-snug">
-                    {r.ciRange}
-                  </p>
-                </div>
-
-              </div>
-            </div>
-          );
-        })}
+      <div className="mt-4">
+        <Link
+          href="/findings/regression"
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-[13px] font-semibold text-white transition-opacity hover:opacity-90"
+          style={{ background: CIVICA_COLOR }}
+        >
+          See the pre-registered regression
+          <span aria-hidden="true">→</span>
+        </Link>
       </div>
 
-      <p className="text-[10px] text-muted/70 italic leading-snug mt-3">
-        Controlled for household type, CA county, and intake channel. Modeled pre-pilot;
-        regression updates when the pilot cohort closes.
+      <p className="text-[10px] text-muted/70 italic leading-snug mt-3 max-w-2xl">
+        Fitted today on a FOIA-shaped synthetic population (watermarked on the
+        analysis page); the same locked plan reruns on real CDSS QC cases the
+        moment the FOIA lands — no effect sizes are hand-entered on this panel.
       </p>
     </div>
   );
@@ -475,7 +423,6 @@ export default function OutcomesPanel({
   rows,
   summary,
   foiaOutcomes,
-  effectIsolationRows,
 }: {
   rows: OutcomeRow[];
   summary: {
@@ -485,7 +432,6 @@ export default function OutcomesPanel({
     headline: string;
   };
   foiaOutcomes: FoiaPendingOutcome[];
-  effectIsolationRows: EffectIsolationRow[];
 }) {
   return (
     <section
@@ -614,8 +560,8 @@ export default function OutcomesPanel({
         })}
       </ol>
 
-      {/* Effect isolation — defangs the cohort-bias critique */}
-      <EffectIsolationCard rows={effectIsolationRows} />
+      {/* Is the advantage real? — points to the pre-registered regression */}
+      <RegressionEvidenceCallout />
 
       {/* FOIA-pending — fleshed out, not collapsed */}
       <FoiaSection outcomes={foiaOutcomes} />
