@@ -32,7 +32,7 @@ export interface SliceErrorRatesProps {
 const BASELINE_FRAC = CA_BASELINE_PER / 100; // 0.1098
 
 const TEAL = "#2A6F66";
-const WARNING = "#9A5A14";
+const WARNING = "var(--color-amber-dark)";
 const BRICK = "#9C3A24";
 
 /** Color a slice by its rate relative to the CA statewide baseline. */

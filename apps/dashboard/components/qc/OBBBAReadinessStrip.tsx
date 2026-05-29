@@ -24,8 +24,8 @@ import {
 } from "../../lib/analytics/obbba";
 
 const STATUS_META = {
-  Ready: { color: "#C9922A", bg: "rgba(201,146,42,0.10)" },
-  Partial: { color: "#9A5A14", bg: "rgba(154,90,20,0.10)" },
+  Ready: { color: "var(--color-amber)", bg: "rgba(201,146,42,0.10)" },
+  Partial: { color: "var(--color-amber-dark)", bg: "rgba(154,90,20,0.10)" },
 } as const;
 
 // Indigo accent (per DESIGN.md §1 "info accent, secondary status") to make
@@ -171,7 +171,7 @@ function TrackRow({ provision: p }: { provision: ObbbaProvision }) {
             color: isOverdue
               ? "#9C3A24"
               : isUrgent
-                ? "#B5511E"
+                ? "var(--color-warning)"
                 : "#5A544D",
           }}
         >

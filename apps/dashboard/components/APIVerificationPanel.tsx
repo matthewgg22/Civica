@@ -44,7 +44,7 @@ export interface VerificationSummary {
 
 const DELIVERY_BADGE: Record<AddressVerification["deliverability"], { label: string; cls: string }> = {
   deliverable: { label: "Deliverable", cls: "bg-teal/10 text-teal" },
-  "deliverable-missing-unit": { label: "Missing unit", cls: "bg-amber/15 text-amber" },
+  "deliverable-missing-unit": { label: "Missing unit", cls: "bg-warning/15 text-warning" },
   undeliverable: { label: "Undeliverable", cls: "bg-brick/10 text-brick" },
   unavailable: { label: "Not checked", cls: "bg-paper text-muted border border-hairline" },
 };
@@ -110,7 +110,7 @@ export default function APIVerificationPanel({ summary }: { summary: Verificatio
               <Chip {...RDI_BADGE[shelter.address.rdi]} />
             )}
             {shelter.address.advisory && (
-              <p className="text-[12px] text-amber w-full mt-1 text-right">{shelter.address.advisory}</p>
+              <p className="text-[12px] text-warning w-full mt-1 text-right">{shelter.address.advisory}</p>
             )}
           </div>
         </Row>
@@ -129,7 +129,7 @@ export default function APIVerificationPanel({ summary }: { summary: Verificatio
                 <FlagDot flagged={shelter.rent.flagged} />
               </p>
               {shelter.rent.ratio !== null && (
-                <p className={`text-[12px] mt-0.5 ${shelter.rent.flagged ? "text-amber font-medium" : "text-muted"}`}>
+                <p className={`text-[12px] mt-0.5 ${shelter.rent.flagged ? "text-warning font-medium" : "text-muted"}`}>
                   {(shelter.rent.ratio * 100).toFixed(0)}% of FMR
                   {shelter.rent.flagged && " — exceeds 150%, verify lease"}
                 </p>
@@ -149,7 +149,7 @@ export default function APIVerificationPanel({ summary }: { summary: Verificatio
                 <FlagDot flagged={shelter.sua_tier.flagged} />
               </p>
               {shelter.sua_tier.heap_flag && (
-                <p className="text-[12px] text-amber font-medium mt-0.5">
+                <p className="text-[12px] text-warning font-medium mt-0.5">
                   OBBBA: HEAP recipient may not auto-qualify for Full SUA
                 </p>
               )}
@@ -167,7 +167,7 @@ export default function APIVerificationPanel({ summary }: { summary: Verificatio
         </Row>
         <Row label="OCR (paystub)">
           {income.direction === "incomplete" ? (
-            <p className="text-[13px] text-amber italic">Partial extraction — pay period missing</p>
+            <p className="text-[13px] text-warning italic">Partial extraction — pay period missing</p>
           ) : income.ocr_monthly === null ? (
             <p className="text-[13px] text-muted italic">No paystub extraction</p>
           ) : (
@@ -177,7 +177,7 @@ export default function APIVerificationPanel({ summary }: { summary: Verificatio
                 <FlagDot flagged={income.flagged} />
               </p>
               {income.delta_pct !== null && (
-                <p className={`text-[12px] mt-0.5 ${income.flagged ? "text-amber font-medium" : "text-muted"}`}>
+                <p className={`text-[12px] mt-0.5 ${income.flagged ? "text-warning font-medium" : "text-muted"}`}>
                   {fmtPct(income.delta_pct)} vs reported
                   {income.direction === "over" && " — OCR higher"}
                   {income.direction === "under" && " — OCR lower"}
@@ -199,7 +199,7 @@ export default function APIVerificationPanel({ summary }: { summary: Verificatio
           <p className="text-[13px] text-muted italic">No compliance flags</p>
         ) : (
           <div className="flex items-start gap-2 py-2">
-            <span className="text-amber text-[16px] shrink-0">⚑</span>
+            <span className="text-warning text-[16px] shrink-0">⚑</span>
             <div>
               <p className="text-[13px] font-semibold text-ink">HEAP / Full SUA conflict</p>
               <p className="text-[12px] text-graphite mt-0.5 leading-snug">

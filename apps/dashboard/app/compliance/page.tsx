@@ -110,7 +110,7 @@ const PILOT_STATUS: {
 
 const PILOT_STATUS_META = {
   RECRUITING: { border: "rgba(232,165,71,0.65)",  text: "#E8A547", label: "RECRUITING" },
-  LIVE:       { border: "rgba(232,197,71,0.75)",  text: "#E8C547", label: "LIVE" },
+  LIVE:       { border: "rgba(232,197,71,0.75)",  text: "var(--color-wheat)", label: "LIVE" },
   POST_PILOT: { border: "rgba(80,180,168,0.70)",  text: "#50B4A8", label: "POST-PILOT" },
 } as const;
 
@@ -187,7 +187,7 @@ export default async function CompliancePage() {
             {/* TL;DR strip — the four numbers a YC reader / collaborator wants in 5 seconds */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-y-5 pt-5 border-t border-white/10">
               <div className="md:pr-6">
-                <p className="text-[32px] font-bold tabular-nums leading-none" style={{ color: "#E8C547" }}>
+                <p className="text-[32px] font-bold tabular-nums leading-none" style={{ color: "var(--color-wheat)" }}>
                   $13B<span className="text-[14px] font-mono text-white/35 ml-1">/yr</span>
                 </p>
                 <p className="text-[10px] uppercase tracking-[0.12em] mt-1.5 text-white/55">
@@ -198,7 +198,7 @@ export default async function CompliancePage() {
                 </p>
               </div>
               <div className="md:pl-6 md:pr-6 md:border-l md:border-white/10">
-                <p className="text-[32px] font-bold tabular-nums leading-none" style={{ color: "#E8C547" }}>
+                <p className="text-[32px] font-bold tabular-nums leading-none" style={{ color: "var(--color-wheat)" }}>
                   16M
                 </p>
                 <p className="text-[10px] uppercase tracking-[0.12em] mt-1.5 text-white/55">
@@ -209,7 +209,7 @@ export default async function CompliancePage() {
                 </p>
               </div>
               <div className="md:pl-6 md:pr-6 md:border-l md:border-white/10">
-                <p className="text-[32px] font-bold tabular-nums leading-none" style={{ color: "#E8C547" }}>
+                <p className="text-[32px] font-bold tabular-nums leading-none" style={{ color: "var(--color-wheat)" }}>
                   3<span className="text-[14px] font-mono text-white/35 ml-1">layers</span>
                 </p>
                 <p className="text-[10px] uppercase tracking-[0.12em] mt-1.5 text-white/55">
@@ -220,7 +220,7 @@ export default async function CompliancePage() {
                 </p>
               </div>
               <div className="md:pl-6 md:border-l md:border-white/10">
-                <p className="text-[32px] font-bold tabular-nums leading-none" style={{ color: "#E8C547" }}>
+                <p className="text-[32px] font-bold tabular-nums leading-none" style={{ color: "var(--color-wheat)" }}>
                   $1B+<span className="text-[14px] font-mono text-white/35 ml-1">/yr</span>
                 </p>
                 <p className="text-[10px] uppercase tracking-[0.12em] mt-1.5 text-white/55">
@@ -694,7 +694,7 @@ export default async function CompliancePage() {
                 <p className="text-[13px] text-white/85 leading-snug mb-2">
                   Let&apos;s talk thesis, traction, and the path to first paying contract.
                 </p>
-                <p className="text-[11px] font-mono" style={{ color: "#E8C547" }}>
+                <p className="text-[11px] font-mono" style={{ color: "var(--color-wheat)" }}>
                   hello@civica.app →
                 </p>
               </a>
@@ -708,7 +708,7 @@ export default async function CompliancePage() {
                 <p className="text-[13px] text-white/85 leading-snug mb-2">
                   Demo the navigator dashboard. See the §10105 / §10106 exposure attribution flow.
                 </p>
-                <p className="text-[11px] font-mono" style={{ color: "#E8C547" }}>
+                <p className="text-[11px] font-mono" style={{ color: "var(--color-wheat)" }}>
                   hello@civica.app →
                 </p>
               </a>
@@ -722,7 +722,7 @@ export default async function CompliancePage() {
                 <p className="text-[13px] text-white/85 leading-snug mb-2">
                   Pilot inquiry for RCFE / Section 202 / PACE operators. ~$168K/yr in unlocked resident income per 100 residents.
                 </p>
-                <p className="text-[11px] font-mono" style={{ color: "#E8C547" }}>
+                <p className="text-[11px] font-mono" style={{ color: "var(--color-wheat)" }}>
                   hello@civica.app →
                 </p>
               </a>

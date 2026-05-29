@@ -79,7 +79,7 @@ export default function Sparkline({
         <polygon points={areaPoints} fill="rgba(42,111,102,0.22)" />
         <polyline points={points} fill="none" stroke="#2A6F66" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" />
         {goal != null && (
-          <line x1={pad} x2={w - pad} y1={y(goal)} y2={y(goal)} stroke="#9A5A14" strokeWidth="1" strokeDasharray="3 3" opacity="0.6" />
+          <line x1={pad} x2={w - pad} y1={y(goal)} y2={y(goal)} stroke="var(--color-amber-dark)" strokeWidth="1" strokeDasharray="3 3" opacity="0.6" />
         )}
         <circle cx={pad + (data.length - 1) * stepX} cy={y(latest)} r="3.5" fill="#2A6F66" />
       </svg>

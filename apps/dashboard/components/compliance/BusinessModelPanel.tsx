@@ -140,7 +140,7 @@ const POOLS = [
     lineColor: "rgba(232,197,71,0.75)",
     areaColor: "rgba(232,197,71,0.10)",
     statColor: "rgba(232,197,71,0.90)",
-    accentColor: "#C9922A",
+    accentColor: "var(--color-amber)",
     whoPays:
       "California faces $510M in cumulative federal penalties if it can't bring its SNAP error rate below the threshold. Civica reduces the error rate without new appropriations or headcount — and under 7 CFR 272.1(c), USDA reimburses states 50% of SNAP admin costs, so a $1M Civica contract costs California $500K net.",
     bottomLine:
@@ -210,7 +210,11 @@ const POOLS = [
 ];
 
 const STATUS_CHIP = {
-  "Near-term":  { background: "#C9922A14", color: "#9A5A14", border: "1px solid #C9922A30" },
+  "Near-term":  {
+    background: "color-mix(in srgb, var(--color-amber) 8%, transparent)",
+    color: "var(--color-amber-dark)",
+    border: "1px solid color-mix(in srgb, var(--color-amber) 19%, transparent)",
+  },
   "Future":     { background: "rgba(0,0,0,0.04)", color: "#6B7280", border: "1px solid rgba(0,0,0,0.10)" },
   "Regulatory": { background: "#5C1F1108", color: "#5C1F11", border: "1px solid #5C1F1120" },
 } as const;
@@ -298,7 +302,7 @@ export default function BusinessModelPanel() {
               Near-term total
             </p>
             <p className="text-[22px] font-bold tabular-nums leading-none font-mono"
-              style={{ color: "#E8C547" }}>
+              style={{ color: "var(--color-wheat)" }}>
               {fmtRev(nearTotal)}
             </p>
           </div>
@@ -415,7 +419,7 @@ export default function BusinessModelPanel() {
               height: "3px",
               borderRadius: "2px",
               background: `linear-gradient(to right, rgba(255,255,255,0.45) ${slider}%, rgba(255,255,255,0.10) ${slider}%)`,
-              accentColor: "#E8C547",
+              accentColor: "var(--color-wheat)",
               outline: "none",
             }}
           />

@@ -312,7 +312,7 @@ export default function DocumentViewer({ doc, fields, extractionsByDoc, onClose 
                   return (
                     <li
                       key={f.field_id}
-                      className={`rounded-[4px] border ${isLow && !isReviewed ? "border-amber/40 bg-amber/5" : "border-hairline bg-surface"} p-3`}
+                      className={`rounded-[4px] border ${isLow && !isReviewed ? "border-warning/40 bg-warning/5" : "border-hairline bg-surface"} p-3`}
                       data-testid={`field-row-${f.field_id}`}
                     >
                       <div className="flex items-center justify-between mb-2 gap-2">
@@ -399,7 +399,7 @@ function ConfidencePill({ confidence, needsReview }: { confidence: number; needs
   const cls = confidence >= 0.85
     ? "bg-teal/10 text-teal"
     : confidence >= 0.6
-      ? "bg-amber/15 text-amber"
+      ? "bg-warning/15 text-warning"
       : "bg-brick/10 text-brick";
   return (
     <div className="flex items-center gap-1 shrink-0">
@@ -407,7 +407,7 @@ function ConfidencePill({ confidence, needsReview }: { confidence: number; needs
         {pct}%
       </span>
       {needsReview && (
-        <span className="text-[10px] uppercase tracking-wider font-bold text-amber" aria-label="Needs review">
+        <span className="text-[10px] uppercase tracking-wider font-bold text-warning" aria-label="Needs review">
           REVIEW
         </span>
       )}

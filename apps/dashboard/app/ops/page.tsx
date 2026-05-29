@@ -1,64 +1,56 @@
+// /ops — operator console.
+//
+// Per-section Suspense streaming (T4 from /plan-design-review + locked in
+// /plan-eng-review D1/D2 + /plan-ceo-review D9). The page-level fetch is
+// now narrow: just the auth check for the header. Each panel owns its own
+// fetcher inside a <Suspense> boundary, matching the /qc template.
+//
+// Streaming flow:
+//   1. Shell + header + PeriodPicker paint immediately (no async data).
+//   2. OpsHeroStripSection streams in (Promise.all of 4 fetchers).
+//   3. Each panel section streams in independently as its fetcher resolves.
+//
+// Per /plan-eng-review D2 + T4-a: fetchPartnerPnL no longer depends on a
+// caller-provided activeTrackers; it fetches its own EBT aggregate
+// internally. Full decoupling means PartnerPnLSection can run in parallel
+// with EBTBalanceSection rather than serially after it.
+
+import { Suspense } from "react";
 import { cookies } from "next/headers";
 import { createServerClientFromCookies } from "../../lib/supabase";
 import AppHeader from "../../components/AppHeader";
-import OpsHeroStrip from "../../components/ops/OpsHeroStrip";
-import EBTBalancePanel from "../../components/ops/EBTBalancePanel";
-import PlacementMapPanel from "../../components/ops/PlacementMapPanel";
-import NotificationOutlayPanel from "../../components/ops/NotificationOutlayPanel";
-import CohortRetentionPanel from "../../components/ops/CohortRetentionPanel";
-import TTFDPanel from "../../components/ops/TTFDPanel";
-import PartnerPnLPanel from "../../components/ops/PartnerPnLPanel";
-import MedicareAdvantagePanel from "../../components/ops/MedicareAdvantagePanel";
-import EligibilityQueuePanel from "../../components/ops/EligibilityQueuePanel";
-import RevenueLinesPanel from "../../components/ops/RevenueLinesPanel";
-import LTVPanel from "../../components/ops/LTVPanel";
-import DistressOverlayPanel from "../../components/ops/DistressOverlayPanel";
 import {
-  fetchEbtAggregate,
-  fetchPlacements,
-  fetchNotificationOutlay,
-  fetchCohorts,
-  fetchTTFD,
-  fetchPartnerPnL,
-  fetchMedicareAdvantage,
-  fetchEligibilityQueue,
-  fetchRevenueLines,
-  fetchLTV,
-  fetchDistressOverlay,
-} from "../../lib/ops-fetchers";
+  OpsHeroStripSection,
+  OpsHeroStripSkeleton,
+  EligibilityQueueSection,
+  EBTBalanceSection,
+  PlacementMapSection,
+  NotificationOutlaySection,
+  CohortRetentionSection,
+  TTFDSection,
+  RevenueLinesSection,
+  PartnerPnLSection,
+  MedicareAdvantageSection,
+  LTVSection,
+  DistressOverlaySection,
+  OpsPanelSkeleton,
+} from "../../components/ops/sections";
 
 export const dynamic = "force-dynamic";
 
 export default async function OpsPage() {
+  // The page-level fetch is now narrow: just the auth check for the header.
+  // All data-bound sections own their own fetches inside Suspense boundaries.
   const cookieStore = await cookies();
   const supabase = createServerClientFromCookies(cookieStore);
   const { data: { user } } = await supabase.auth.getUser();
-
-  // Fetch all panel data in parallel. Each fetcher catches missing-relation
-  // errors and returns `{ available: false, ... }` so the page renders
-  // cleanly when migrations haven't been applied locally.
-  const [ebt, placements, notifications, cohorts, ttfd, medicareAdvantage, eligibilityQueue, revenueLines, ltv, distressOverlay] = await Promise.all([
-    fetchEbtAggregate(),
-    fetchPlacements(),
-    fetchNotificationOutlay(),
-    fetchCohorts(),
-    fetchTTFD(),
-    fetchMedicareAdvantage(),
-    fetchEligibilityQueue(),
-    fetchRevenueLines(),
-    fetchLTV(),
-    fetchDistressOverlay(),
-  ]);
-
-  // P&L denominator depends on the active-tracker count from Panel 1.
-  const pnl = await fetchPartnerPnL(30, ebt.active_tracker_count);
 
   return (
     <div className="min-h-screen bg-paper">
       <AppHeader email={user?.email} active="ops" />
 
       <div className="max-w-6xl mx-auto px-8 py-8 space-y-3">
-        {/* Page header */}
+        {/* Page header (static — paints in the first chunk) */}
         <div className="flex items-end justify-between gap-6 pb-3">
           <div>
             <p className="eyebrow mb-1">Civica operator console</p>
@@ -76,31 +68,56 @@ export default async function OpsPage() {
           </div>
         </div>
 
-        {/* Hero strip — animated headline KPIs across the top */}
-        <OpsHeroStrip ebt={ebt} pnl={pnl} notifications={notifications} ttfd={ttfd} />
+        {/* Hero strip — animated headline KPIs across the top. Streams as a
+            unit so partial headlines never paint. */}
+        <Suspense fallback={<OpsHeroStripSkeleton />}>
+          <OpsHeroStripSection />
+        </Suspense>
 
         {/* Opportunity queue — workflow-defining "what's next" view, sits
             right under the hero so operators see actionable work first
             (before any reporting panels). */}
-        <EligibilityQueuePanel data={eligibilityQueue} />
+        <Suspense fallback={<OpsPanelSkeleton height={220} />}>
+          <EligibilityQueueSection />
+        </Suspense>
 
         {/* Operational metrics — the "is the engine running" middle of the
             page. Balance + map + outbound + retention + speed-to-deposit. */}
-        <EBTBalancePanel data={ebt} />
-        <PlacementMapPanel data={placements} />
-        <NotificationOutlayPanel data={notifications} />
-        <CohortRetentionPanel data={cohorts} />
-        <TTFDPanel data={ttfd} />
+        <Suspense fallback={<OpsPanelSkeleton />}>
+          <EBTBalanceSection />
+        </Suspense>
+        <Suspense fallback={<OpsPanelSkeleton height={300} />}>
+          <PlacementMapSection />
+        </Suspense>
+        <Suspense fallback={<OpsPanelSkeleton />}>
+          <NotificationOutlaySection />
+        </Suspense>
+        <Suspense fallback={<OpsPanelSkeleton />}>
+          <CohortRetentionSection />
+        </Suspense>
+        <Suspense fallback={<OpsPanelSkeleton />}>
+          <TTFDSection />
+        </Suspense>
 
         {/* Monetization arc — the "money story" cluster at the bottom.
             Rollup ("where the money comes from") opens, per-line panels
             in the middle, LTV closes with the per-user kicker, then the
             distress overlay caps the page with the trust-defense beat. */}
-        <RevenueLinesPanel data={revenueLines} />
-        <PartnerPnLPanel data={pnl} />
-        <MedicareAdvantagePanel data={medicareAdvantage} />
-        <LTVPanel data={ltv} />
-        <DistressOverlayPanel data={distressOverlay} />
+        <Suspense fallback={<OpsPanelSkeleton height={240} />}>
+          <RevenueLinesSection />
+        </Suspense>
+        <Suspense fallback={<OpsPanelSkeleton />}>
+          <PartnerPnLSection />
+        </Suspense>
+        <Suspense fallback={<OpsPanelSkeleton />}>
+          <MedicareAdvantageSection />
+        </Suspense>
+        <Suspense fallback={<OpsPanelSkeleton />}>
+          <LTVSection />
+        </Suspense>
+        <Suspense fallback={<OpsPanelSkeleton />}>
+          <DistressOverlaySection />
+        </Suspense>
       </div>
 
       <footer className="border-t border-hairline px-8 py-5 flex justify-between items-center text-[11px] text-muted font-mono tracking-wide mt-8">

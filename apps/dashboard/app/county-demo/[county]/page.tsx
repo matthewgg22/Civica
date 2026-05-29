@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Breadcrumbs from "../../../components/Breadcrumbs";
 import type { Metadata } from "next";
 import CountyExposurePanel from "../../../components/compliance/CountyExposurePanel";
 import { getCountyDemoData, listDemoCounties } from "../../../lib/countyDemoExposure";
@@ -74,6 +75,15 @@ export default async function CountyDemoPage({ params }: { params: Promise<Route
   return (
     <div className="min-h-screen bg-paper">
       <main className="max-w-5xl mx-auto px-8 py-10">
+        {/* Breadcrumb omits a "Counties" parent intentionally — /county is
+            a B2G demo surface hidden from primary nav, so we go straight
+            from Dashboard to the county leaf per /plan-design-review D4. */}
+        <Breadcrumbs
+          items={[
+            { label: "Dashboard", href: "/dashboard" },
+            { label: `${data.displayName} (demo)` },
+          ]}
+        />
         <CountyExposurePanel county={data} />
         <CountyDirectory current={data.slug} supported={supported} />
         <Footer />

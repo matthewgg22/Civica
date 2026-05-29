@@ -102,7 +102,7 @@ export default function CountyDetailDrawer({
               <div className="grid grid-cols-5 gap-2">
                 <Metric label="Draft"     value={draft}          accent="text-graphite" bg="bg-paper" />
                 <Metric label="In Prog"   value={inProgress}     accent="text-indigo"   bg="bg-indigo/8" />
-                <Metric label="Attention" value={needsAttention} accent="text-amber"    bg="bg-amber/8" />
+                <Metric label="Attention" value={needsAttention} accent="text-warning" bg="bg-warning/8" />
                 <Metric label="Ready"     value={ready}          accent="text-teal"     bg="bg-teal/8" />
                 <Metric label="Enrolled"  value={enrolled}       accent="text-brick"    bg="bg-brick/8" />
               </div>
@@ -171,7 +171,7 @@ export default function CountyDetailDrawer({
 
 const TIER_TONE = {
   high:   { color: "#9C3A24", label: "High",   bg: "rgba(156,58,36,0.10)" },
-  medium: { color: "#9A5A14", label: "Med",    bg: "rgba(154,90,20,0.10)" },
+  medium: { color: "var(--color-amber-dark)", label: "Med",    bg: "rgba(154,90,20,0.10)" },
   low:    { color: "#2A6F66", label: "Low",    bg: "rgba(42,111,102,0.10)" },
 } as const;
 
@@ -216,7 +216,7 @@ function RiskTab({ packets, packetRiskMap }: { packets: CountyPacket[]; packetRi
       {total > 0 && (
         <div className="flex h-2 rounded-full overflow-hidden border border-hairline/50">
           {high > 0   && <div style={{ width: `${(high / total) * 100}%`,   background: "#9C3A24" }} />}
-          {medium > 0 && <div style={{ width: `${(medium / total) * 100}%`, background: "#9A5A14" }} />}
+          {medium > 0 && <div style={{ width: `${(medium / total) * 100}%`, background: "var(--color-amber-dark)" }} />}
           {low > 0    && <div style={{ width: `${(low / total) * 100}%`,    background: "#2A6F66" }} />}
         </div>
       )}

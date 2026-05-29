@@ -49,8 +49,8 @@ const SUPPORTED_STATE_FIPS = new Set([CA_FIPS]);
 const EXCLUDED_FIPS = new Set(["02", "15", "60", "66", "69", "72", "74", "78"]);
 
 const STATUS_META: Record<FrameworkStatus, { color: string; bg: string }> = {
-  Implemented:    { color: "#C9922A", bg: "rgba(201,146,42,0.10)" },
-  Partial:        { color: "#9A5A14", bg: "rgba(154,90,20,0.10)" },
+  Implemented:    { color: "var(--color-amber)", bg: "rgba(201,146,42,0.10)" },
+  Partial:        { color: "var(--color-amber-dark)", bg: "rgba(154,90,20,0.10)" },
   Discretionary:  { color: "#9C3A24", bg: "rgba(156,58,36,0.10)" },
 };
 
@@ -199,10 +199,10 @@ export default function CaliforniaOverlaysMap({
               //  - unsupported:            cream fill, 0.18-opacity gray border
               const fill = isSupported
                 ? isSelected
-                  ? "#C9922A"
+                  ? "var(--color-amber)"
                   : "rgba(201,146,42,0.22)"
                 : "rgba(0,0,0,0.035)";
-              const stroke = isSupported ? "#C9922A" : "rgba(0,0,0,0.18)";
+              const stroke = isSupported ? "var(--color-amber)" : "rgba(0,0,0,0.18)";
               const strokeWidth = isSupported ? 1.75 : 0.6;
               const cursor = isSupported ? "pointer" : "default";
               const label = isSupported
@@ -256,7 +256,7 @@ export default function CaliforniaOverlaysMap({
                   dominantBaseline="middle"
                   className="text-[10px] font-semibold tracking-wide"
                   style={{
-                    fill: isSelected ? "#FFFFFF" : "#C9922A",
+                    fill: isSelected ? "#FFFFFF" : "var(--color-amber)",
                     paintOrder: "stroke",
                     stroke: isSelected ? "transparent" : "rgba(248,245,239,0.92)",
                     strokeWidth: 3,

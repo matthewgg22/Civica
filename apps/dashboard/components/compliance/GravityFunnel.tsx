@@ -121,7 +121,7 @@ export function GravityFunnel() {
             <text
               x={CX} y={s.midY + 10}
               textAnchor="middle" fontSize={28} fontWeight={700}
-              fill="#E8C547" letterSpacing={-0.6}
+              fill="var(--color-wheat)" letterSpacing={-0.6}
             >
               {s.n.toFixed(1)}M
             </text>

@@ -42,7 +42,7 @@ export default function DocumentAIPanel({ stats }: { stats: DocStats }) {
       <div className="grid grid-cols-3 gap-4">
         <Metric label="Auto-extracted" value={`${autoPct.toFixed(0)}%`} sub={`${stats.autoExtracted} of ${stats.total} docs`} accent="text-teal" />
         <Metric label="Avg confidence" value={stats.avgConfidence != null ? stats.avgConfidence.toFixed(2) : "—"} sub="classification model" accent="text-ink" />
-        <Metric label="Manual review" value={`${(100 - autoPct).toFixed(0)}%`} sub="needs navigator action" accent="text-amber" />
+        <Metric label="Manual review" value={`${(100 - autoPct).toFixed(0)}%`} sub="needs navigator action" accent="text-warning" />
       </div>
       {stats.byKind.length > 0 && (
         <div>
@@ -54,12 +54,12 @@ export default function DocumentAIPanel({ stats }: { stats: DocStats }) {
               const lowConfidence = pct < 50 && k.count >= 3;
               const barColor = pct >= 80 ? "bg-teal" : pct >= 50 ? "bg-amber" : "bg-brick";
               return (
-                <li key={k.kind} className={lowConfidence ? "bg-amber/8 -mx-2 px-2 py-1.5 rounded-[3px]" : ""}>
+                <li key={k.kind} className={lowConfidence ? "bg-warning/8 -mx-2 px-2 py-1.5 rounded-[3px]" : ""}>
                   <div className="flex items-baseline justify-between mb-1.5">
                     <div className="flex items-baseline gap-2">
                       <span className="text-[14px] font-semibold text-ink">{kindLabel(k.kind)}</span>
                       {lowConfidence && (
-                        <span className="text-[10px] uppercase tracking-wider font-bold text-amber bg-amber/15 px-1.5 py-0.5 rounded-full">
+                        <span className="text-[10px] uppercase tracking-wider font-bold text-warning bg-warning/15 px-1.5 py-0.5 rounded-full">
                           model attention
                         </span>
                       )}

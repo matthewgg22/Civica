@@ -18,6 +18,7 @@
 
 import type { Metadata } from "next";
 import Link from "next/link";
+import Breadcrumbs from "../../../components/Breadcrumbs";
 import { notFound } from "next/navigation";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -112,8 +113,17 @@ export default async function FindingDetail({
   return (
     <main className="mx-auto max-w-3xl px-6 py-12 sm:py-16">
       {/* ----------------------------------------------------------------- */}
-      {/* Breadcrumb back to index                                          */}
+      {/* Breadcrumbs + back-arrow per /plan-design-review D11               */}
+      {/* (both kept — breadcrumbs answer "where am I", back-arrow is the    */}
+      {/* one-click escape).                                                */}
       {/* ----------------------------------------------------------------- */}
+      <Breadcrumbs
+        items={[
+          { label: "Dashboard", href: "/dashboard" },
+          { label: "Findings", href: "/findings" },
+          { label: humanizeId(finding.id) },
+        ]}
+      />
       <nav className="mb-8 text-sm">
         <Link
           href="/findings"
