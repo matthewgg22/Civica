@@ -147,7 +147,14 @@ const topicVocabulary: readonly TopicDefinition[] = [
     tag: "error_rate",
     keywords: [
       "payment error rate",
-      /\bper\b/i, // intentionally broad; will co-match with "per capita" etc
+      // Match only the uppercase canonical SNAP acronym "PER". The
+      // lowercase preposition "per" is too common — every CDSS ACL
+      // payload contained it as boilerplate ("per the regulations",
+      // "income limits per applicant") which false-positive-tagged
+      // every CA snapshot with error_rate prior to the fix. See
+      // topic-classifier.test.ts "false-positive regressions" block
+      // for the regression cases.
+      /\bPER\b/, // no /i flag — uppercase only
       "quality control sample",
       "qc review",
       "case and procedural error rate",
@@ -189,30 +196,37 @@ const topicVocabulary: readonly TopicDefinition[] = [
  * so callers can pass (title, description) without manual join.
  */
 export function classifyTopics(...inputs: readonly string[]): TopicTag[] {
-  const haystack = inputs.join("\n").toLowerCase();
-  if (haystack.length === 0) {
+  const haystackOrig = inputs.join("\n");
+  if (haystackOrig.length === 0) {
     return [];
   }
+  const haystackLower = haystackOrig.toLowerCase();
 
   const matched: TopicTag[] = [];
   for (const topic of topicVocabulary) {
-    if (matchesAnyKeyword(haystack, topic.keywords)) {
+    if (matchesAnyKeyword(haystackOrig, haystackLower, topic.keywords)) {
       matched.push(topic.tag);
     }
   }
   return matched;
 }
 
+/**
+ * Regexes are tested against the original-case haystack so case-sensitive
+ * patterns (like /\bPER\b/ for the SNAP acronym) work. Substring matches
+ * use the lowercased haystack for cheap case-insensitive comparison.
+ *
+ * If you want a case-insensitive regex, include the /i flag on the pattern
+ * itself — the keywords array carries its own flag policy per entry.
+ */
 function matchesAnyKeyword(
+  haystackOrig: string,
   haystackLower: string,
   keywords: readonly KeywordPattern[],
 ): boolean {
   for (const k of keywords) {
     if (k instanceof RegExp) {
-      // RegExp patterns are pre-flagged case-insensitive; test against
-      // the original-case haystack would be cleaner but we already
-      // lowercased it. Patterns in this file use /i anyway.
-      if (k.test(haystackLower)) {
+      if (k.test(haystackOrig)) {
         return true;
       }
     } else if (haystackLower.includes(k.toLowerCase())) {
