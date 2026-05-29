@@ -177,6 +177,12 @@ export const CA_INCOME_GROUP_PER_FY23 = {
 export const CA_BASELINE_PER = 10.98;
 
 /**
+ * Fiscal year of the CA baseline PER above (USDA FNS-380 FY2024). Single source
+ * for the snapshot's baseline-row label so the FY travels with the figure.
+ */
+export const CA_BASELINE_FISCAL_YEAR = 2024;
+
+/**
  * Projected PER for a Civica-served household at full stack engagement.
  * Per docs/plans/civica-error-reduction-thesis.md §4.
  *

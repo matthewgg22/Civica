@@ -190,6 +190,7 @@ import { runEbtProbe } from "./cron/ebt-probe.js";
 import { runWeeklyDigest } from "./cron/weekly-digest.js";
 import { purgeOldPushLog } from "./cron/purge-push-log.js";
 import { runInternalQcSampler } from "./cron/internal-qc-sampler.js";
+import { refreshErrorRateSnapshot } from "./cron/error-rate-snapshot.js";
 
 // Cron dispatch — keep tiny and table-driven so adding/removing
 // schedules in wrangler.toml is the only change needed. Tasks run under
@@ -291,6 +292,16 @@ async function dispatchScheduled(
         log("info", "scheduled: purge old push log finished", { ...result });
       } catch (err) {
         log("error", "scheduled: purge old push log failed", { error: String(err) });
+      }
+      // Truth point: refresh the canonical error-rate snapshot. Piggybacks this
+      // existing 04:00 slot (CF free-tier cron cap is 5, already reached) — no
+      // new trigger. docs/findings/2026-05-29-error-rate-truth-point.md
+      log("info", "scheduled: error-rate snapshot refresh starting");
+      try {
+        const result = await refreshErrorRateSnapshot(env, log);
+        log("info", "scheduled: error-rate snapshot refresh finished", { ...result });
+      } catch (err) {
+        log("error", "scheduled: error-rate snapshot refresh failed", { error: String(err) });
       }
       return;
     }

@@ -36,6 +36,7 @@ export type { ErrorRiskResult, ErrorRiskTier } from "./scoring/error-risk";
 // and the thesis's projected ~5.5% at full stack engagement.
 export {
   CA_BASELINE_PER,
+  CA_BASELINE_FISCAL_YEAR,
   PROJECTED_PER_AT_FULL_ENGAGEMENT,
   PILLAR_SHARES_UNNORMALIZED,
   PILLAR_MAX_DEFENSIBILITY_SHIFT,
@@ -47,6 +48,19 @@ export {
 } from "./scoring/error-risk";
 export type { PillarCoverage } from "./scoring/error-risk";
 export { INCOME_GROUP_PER_FY23, CA_INCOME_GROUP_PER_FY23, CA_ELEMENT_ATTRIBUTION_FY23 } from "./scoring/error-risk";
+
+// Canonical error-rate snapshot ("truth point") builder. Composes the four
+// canonical PER metrics (baseline / projected / engagement-implied / measured)
+// into provenanced rows for snap_enrollment.error_rate_snapshot. Pure +
+// deterministic — see docs/findings/2026-05-29-error-rate-truth-point.md.
+export { buildErrorRateSnapshot, MEASURED_MIN_N } from "./scoring/error-rate-snapshot";
+export type {
+  ErrorRateSnapshotRow,
+  ErrorRateSnapshotInputs,
+  ErrorRateMetric,
+  ErrorRateSource,
+  MeasuredCounts,
+} from "./scoring/error-rate-snapshot";
 
 // CDSS / county-facing baseline mapping (added 2026-05-27 for TODO-4).
 // Three artifacts that turn the population PER math into county-sales-ready
