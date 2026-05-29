@@ -113,6 +113,17 @@ struct CivicaQuestionScreen<Affordance: View>: View {
     @State private var displayedFraction: Double = 0
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
+    /// Environment fallback for the contextual-help marker. Wired by
+    /// `SNAPApplicationContextualHelpHost` at the SNAP application
+    /// root so every question screen downstream gets marker -> sheet
+    /// presentation without per-callsite edits. When the explicit
+    /// `onHelpRequested` initializer arg is non-nil, it takes precedence
+    /// (preserves any future per-screen override); otherwise the
+    /// environment closure is invoked. Both nil = silent tap (still
+    /// renders the marker because universal coverage is the visible
+    /// product thesis per D5).
+    @Environment(\.snapApplicationContextualHelp) private var contextualHelpEnvironment
+
     init(
         progress: Progress? = nil,
         title: String,
@@ -311,7 +322,17 @@ struct CivicaQuestionScreen<Affordance: View>: View {
     /// `SNAPApplicationContextualHelpSheet` separately.
     private var helpMarker: some View {
         Button {
-            onHelpRequested?(title, language)
+            // Per-callsite closure wins when supplied; otherwise the
+            // env-value fallback runs. Either path may be nil — the
+            // marker is universal and renders even when nothing is
+            // wired, so the tap is silently swallowed. Real wiring
+            // happens at `SNAPApplicationFlowOrchestratorView` via
+            // `SNAPApplicationContextualHelpHost`.
+            if let onHelpRequested {
+                onHelpRequested(title, language)
+            } else {
+                contextualHelpEnvironment?(title, language)
+            }
         } label: {
             Image(systemName: "questionmark.circle")
                 .font(.system(size: 22))
