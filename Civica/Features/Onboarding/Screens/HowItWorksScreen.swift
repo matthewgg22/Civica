@@ -56,7 +56,7 @@ struct HowItWorksScreen: View {
             // Numeric pill — uses tabular-nums via Hanken Grotesk per
             // HANDOFF money rule ("everywhere money or counts appear").
             Text("\(number)")
-                .font(CivicaTypography.subheadBold.monospacedDigit())
+                .font(CivicaTypography.subheadStrong.monospacedDigit())
                 .foregroundStyle(CivicaColors.onPrimaryText)
                 .frame(width: 32, height: 32)
                 .background(

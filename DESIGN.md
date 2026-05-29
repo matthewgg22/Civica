@@ -20,6 +20,7 @@
 10. [Brand Voice & Copy Rules](#10-brand-voice--copy-rules)
 11. [Known Issues & Remediation Plan](#11-known-issues--remediation-plan)
 12. [Component Anti-Patterns](#12-component-anti-patterns)
+13. [Map Pin tokens](#13-map-pin-tokens)
 
 ---
 
@@ -88,6 +89,8 @@ Residents arrive with different levels of SNAP knowledge. Never front-load compl
 
 **Pine = CTAs only.**  
 `pinePrimary` is reserved for primary action buttons and text links. It must not appear on icons, decorative elements, or status indicators. Using it outside CTAs dilutes the signal that something is tappable.
+
+**Exception:** `pinePrimary` may be used as a card background ONLY when the card is itself the primary tap target (e.g., a `NavigationLink`-wrapped hero card occupying the full hero slot). The Phase 1 hero card ([Civica/App/CivicaEntryView.swift:148-150](Civica/App/CivicaEntryView.swift:148)) is the sanctioned use. Do NOT propagate this pattern to non-CTA hero cards or to any card where the tap target is smaller than the card surface.
 
 **Wheat = benefit fills, never text.**  
 `wheatPrimary` (#E8C547) achieves only 2.1:1 contrast on `paper` — it fails WCAG AA at every size. It may appear as a fill color for EBT balance or enrollment celebration; it must never be used as foreground text.
@@ -404,6 +407,33 @@ Sanctioned use: the Phase 3 recert banner clock-arrow icon ([CivicaHomePhase3Vie
 Unsanctioned use: any tile-grid or 3-column "feature highlights" pattern.
 
 Cross-ref: same posture as the cold-start tile-grid rule from the May 2026 review (CivicaEntryView.swift design comment).
+
+---
+
+## 13. Map Pin tokens
+
+Map cartography needs a category-distinguishable palette that the main brand semantic vocabulary cannot supply on its own. The FindHelp map pins five EBT-retailer categories and three help-directory categories — eight unique pins. The brand palette ships ~six semantic foreground hues, none of which are reserved for cartography. So `CivicaColors.pinX` exists as a separate axis.
+
+**Rationale.** Category-specific palettes on a map are intentional. A map pin's color is not communicating brand semantics ("approved," "warning," "recovery"); it is communicating *which kind of place this is* against varied basemap tiles. Reusing brand semantics here would dilute both vocabularies — a brick-red `pinFood` would read as a denial signal everywhere else in the app.
+
+**Token list.** Defined in `CivicaColors.swift` under `MARK: - Map Pin tokens`:
+
+| Token              | Light hex  | Maps to                                              |
+|--------------------|------------|------------------------------------------------------|
+| `pinFood`          | `#9C3A24`  | Help directory + SNAP application help (brick)       |
+| `pinHelp`          | `#2A6F66`  | Help directory + Food assistance (teal)              |
+| `pinHelpBoth`      | `#3A342E`  | Help directory + Both services (graphite)            |
+| `pinSupermarket`   | `#1F4F4A`  | EBT retailer + Supermarket (teal-deep)               |
+| `pinSmallGrocer`   | `#B5762A`  | EBT retailer + Small grocer (amber)                  |
+| `pinFarmersMarket` | `#3B6B33`  | EBT retailer + Farmers market (green)                |
+| `pinCoop`          | `#3D4E6E`  | EBT retailer + Co-op (indigo)                        |
+| `pinRestaurant`    | `#9C3A24`  | EBT retailer + Restaurant Meals Program (brick)      |
+
+Dispatch from `FindHelpLocation` to token lives in `FindHelpPinPalette.color(for:)` — kept in the FindHelp domain because the dispatch depends on the location model.
+
+**Dark-mode contract — LIGHT ONLY as of 2026-05-29.** Dark variants are deferred to audit task T7 (the Pass 6 dark-mode rollout, which already owns the design-system contrast story). The pin tokens currently render with their light hex in both light + dark interface styles. Single-pin readability against dark-mode MapKit tiles has not been verified — the existing `FindHelpPinPalette.mixedClusterColor` lift is the only dark-tile adaptation today, and it applies only to mixed-category clusters. When T7 lands, each pin needs a +20 luminance variant verified against the chosen basemap tile at three zoom levels.
+
+Do not propagate `pinX` tokens outside map / cartography contexts. They are not a general accent palette — they are the FindHelp pin axis. The brand semantic palette covers all non-cartography needs.
 
 ---
 
