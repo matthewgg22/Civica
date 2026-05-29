@@ -86,6 +86,16 @@ struct CivicaQuestionScreen<Affordance: View>: View {
     let secondaryActionTitle: String?
     let onSecondary: (() -> Void)?
     let language: CivicaLanguage
+    /// Universal contextual-help hook. The marker (`questionmark.circle`)
+    /// renders next to every question title; tapping it invokes this
+    /// closure with `(title, language)`. The component does NOT present
+    /// the explainer sheet itself — the caller wires that up. Default
+    /// `nil` keeps every existing caller compiling without changes; when
+    /// nil the marker still renders (universal coverage is the visible
+    /// product thesis per the v1 design doc) but tapping it is a no-op.
+    /// See design doc D5 + T5 + T10 of
+    /// `matthewgreer-gentis-claude-dashboard-state-coverage-design-20260529-135546.md`.
+    let onHelpRequested: ((String, CivicaLanguage) -> Void)?
     let affordance: () -> Affordance
 
     /// Drives the overall-progress bar fill + the percent counter.
@@ -113,6 +123,7 @@ struct CivicaQuestionScreen<Affordance: View>: View {
         secondaryActionTitle: String? = nil,
         onSecondary: (() -> Void)? = nil,
         language: CivicaLanguage = .english,
+        onHelpRequested: ((String, CivicaLanguage) -> Void)? = nil,
         @ViewBuilder affordance: @escaping () -> Affordance
     ) {
         self.progress = progress
@@ -124,6 +135,7 @@ struct CivicaQuestionScreen<Affordance: View>: View {
         self.secondaryActionTitle = secondaryActionTitle
         self.onSecondary = onSecondary
         self.language = language
+        self.onHelpRequested = onHelpRequested
         self.affordance = affordance
     }
 
@@ -137,11 +149,15 @@ struct CivicaQuestionScreen<Affordance: View>: View {
                     if let progress {
                         progressChip(progress)
                     }
-                    Text(title)
-                        .font(CivicaTypography.cardHero)
-                        .foregroundStyle(CivicaColors.ink)
-                        .fixedSize(horizontal: false, vertical: true)
-                        .accessibilityAddTraits(.isHeader)
+                    HStack(alignment: .firstTextBaseline, spacing: CivicaSpacing.sm) {
+                        Text(title)
+                            .font(CivicaTypography.cardHero)
+                            .foregroundStyle(CivicaColors.ink)
+                            .fixedSize(horizontal: false, vertical: true)
+                            .accessibilityAddTraits(.isHeader)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        helpMarker
+                    }
 
                     if let helper, !helper.isEmpty {
                         Text(helper)
@@ -280,6 +296,41 @@ struct CivicaQuestionScreen<Affordance: View>: View {
             .contentTransition(.numericText())
             .animation(reduceMotion ? nil : .easeOut(duration: 0.35), value: p.current)
             .accessibilityLabel(CivicaQuestionStrings.progressAccessibilityLabel(current: p.current, total: p.total, language: language))
+    }
+
+    /// Universal contextual-help marker rendered next to every question
+    /// title. Visual: `questionmark.circle` in `CivicaColors.pinePrimary`.
+    /// Tapping calls `onHelpRequested?(title, language)` — the component
+    /// does not own the explainer sheet. 32pt minimum tap target meets
+    /// HIG; accessibility label is locale-aware ("Help with this question"
+    /// in EN, "Ayuda con esta pregunta" in ES).
+    ///
+    /// The marker ALWAYS renders, even when `onHelpRequested` is nil, so
+    /// the marker is a visible promise of help across all 17+ pages of
+    /// the SNAP application. Callers wire the closure to present the
+    /// `SNAPApplicationContextualHelpSheet` separately.
+    private var helpMarker: some View {
+        Button {
+            onHelpRequested?(title, language)
+        } label: {
+            Image(systemName: "questionmark.circle")
+                .font(.system(size: 22))
+                .foregroundStyle(CivicaColors.pinePrimary)
+                .frame(minWidth: 32, minHeight: 32)
+                .contentShape(Rectangle())
+        }
+        .accessibilityLabel(helpMarkerAccessibilityLabel)
+    }
+
+    /// Locale-aware accessibility label for the marker. Kept inline so
+    /// CivicaQuestionScreen.swift remains the sole edit surface — once
+    /// the v1.1 IntakeHelpStrings ships, callers can override at the
+    /// sheet level without re-touching this file.
+    private var helpMarkerAccessibilityLabel: String {
+        switch language {
+        case .english: return "Help with this question"
+        case .spanish: return "Ayuda con esta pregunta"
+        }
     }
 
     private var actionFooter: some View {
