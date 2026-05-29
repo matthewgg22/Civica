@@ -6,12 +6,20 @@
 // only READS + MAPS, never computes. That separation is the whole point:
 // everyone (this dashboard, the API, an AI insight-draft step) references one
 // identical source. See docs/findings/2026-05-29-error-rate-truth-point.md.
+//
+// Two row layers: TOP-LINE metrics (slice_dim null → byMetric) and SLICED
+// breakdowns (slice_dim set → slices[metric]): per-pillar attribution,
+// income-group PER cohorts, and USDA element shares.
 
 import type { ErrorRateMetric } from "@civica/snap-qc-engine";
 import { createServiceClient } from "../supabase";
 
 export interface ErrorRateMetricView {
   metric: ErrorRateMetric;
+  /** Breakdown dimension ('pillar'|'income_group'|'element'); null for top-line. */
+  sliceDim: string | null;
+  /** Value within sliceDim (e.g. 'utility_sua', 'wage_only', '363'); null for top-line. */
+  sliceValue: string | null;
   /** Point estimate in percentage points; null when not yet computable. */
   perPct: number | null;
   ciLow: number | null;
@@ -27,12 +35,19 @@ export interface ErrorRateTruthPoint {
   available: boolean;
   computedAt: string | null;
   engineVersion: string | null;
+  /** Top-line metrics (slice_dim null), keyed by metric. */
   byMetric: Partial<Record<ErrorRateMetric, ErrorRateMetricView>>;
-  // Convenience accessors (null until the metric exists in the latest run).
+  /** Sliced rows grouped by metric (pillar_contribution / income_group_per / element_attribution). */
+  slices: Partial<Record<ErrorRateMetric, ErrorRateMetricView[]>>;
+  // Top-line convenience accessors (null until the metric exists).
   baselineCa: number | null;
   projected: number | null;
   engagementImplied: number | null;
   measured: ErrorRateMetricView | null;
+  // Sliced convenience accessors (empty until populated).
+  pillarContributions: ErrorRateMetricView[];
+  incomeGroups: ErrorRateMetricView[];
+  elements: ErrorRateMetricView[];
 }
 
 /** Raw row shape from v_error_rate_current (NUMERIC arrives as string). */
@@ -40,6 +55,8 @@ interface RawSnapshotRow {
   computed_at: string | null;
   engine_version: string | null;
   metric: string;
+  slice_dim: string | null;
+  slice_value: string | null;
   per_pct: number | string | null;
   ci_low: number | string | null;
   ci_high: number | string | null;
@@ -54,10 +71,14 @@ const UNAVAILABLE: ErrorRateTruthPoint = {
   computedAt: null,
   engineVersion: null,
   byMetric: {},
+  slices: {},
   baselineCa: null,
   projected: null,
   engagementImplied: null,
   measured: null,
+  pillarContributions: [],
+  incomeGroups: [],
+  elements: [],
 };
 
 // Postgres NUMERIC comes over the wire as a string; coerce defensively.
@@ -65,6 +86,21 @@ function num(v: number | string | null): number | null {
   if (v === null || v === undefined) return null;
   const n = typeof v === "string" ? Number(v) : v;
   return Number.isFinite(n) ? n : null;
+}
+
+function toView(r: RawSnapshotRow): ErrorRateMetricView {
+  return {
+    metric: r.metric as ErrorRateMetric,
+    sliceDim: r.slice_dim ?? null,
+    sliceValue: r.slice_value ?? null,
+    perPct: num(r.per_pct),
+    ciLow: num(r.ci_low),
+    ciHigh: num(r.ci_high),
+    n: r.n ?? null,
+    fiscalYear: r.fiscal_year ?? null,
+    source: r.source ?? "",
+    meta: r.meta ?? {},
+  };
 }
 
 /**
@@ -75,17 +111,15 @@ export function mapTruthPointRows(rows: RawSnapshotRow[]): ErrorRateTruthPoint {
   if (!rows || rows.length === 0) return UNAVAILABLE;
 
   const byMetric: Partial<Record<ErrorRateMetric, ErrorRateMetricView>> = {};
+  const slices: Partial<Record<ErrorRateMetric, ErrorRateMetricView[]>> = {};
+
   for (const r of rows) {
-    byMetric[r.metric as ErrorRateMetric] = {
-      metric: r.metric as ErrorRateMetric,
-      perPct: num(r.per_pct),
-      ciLow: num(r.ci_low),
-      ciHigh: num(r.ci_high),
-      n: r.n ?? null,
-      fiscalYear: r.fiscal_year ?? null,
-      source: r.source ?? "",
-      meta: r.meta ?? {},
-    };
+    const view = toView(r);
+    if (view.sliceDim === null) {
+      byMetric[view.metric] = view;
+    } else {
+      (slices[view.metric] ??= []).push(view);
+    }
   }
 
   return {
@@ -93,10 +127,14 @@ export function mapTruthPointRows(rows: RawSnapshotRow[]): ErrorRateTruthPoint {
     computedAt: rows[0]?.computed_at ?? null,
     engineVersion: rows[0]?.engine_version ?? null,
     byMetric,
+    slices,
     baselineCa: byMetric.baseline_ca?.perPct ?? null,
     projected: byMetric.projected_full_engagement?.perPct ?? null,
     engagementImplied: byMetric.engagement_implied?.perPct ?? null,
     measured: byMetric.measured_overall ?? null,
+    pillarContributions: slices.pillar_contribution ?? [],
+    incomeGroups: slices.income_group_per ?? [],
+    elements: slices.element_attribution ?? [],
   };
 }
 
@@ -120,7 +158,7 @@ export async function getErrorRateTruthPoint(): Promise<ErrorRateTruthPoint> {
     .schema("snap_enrollment")
     .from("v_error_rate_current")
     .select(
-      "computed_at, engine_version, metric, per_pct, ci_low, ci_high, n, fiscal_year, source, meta",
+      "computed_at, engine_version, metric, slice_dim, slice_value, per_pct, ci_low, ci_high, n, fiscal_year, source, meta",
     );
 
   if (error) return UNAVAILABLE; // missing relation / migration not applied yet

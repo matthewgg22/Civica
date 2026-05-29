@@ -36,9 +36,10 @@ function inputs(over: Partial<ErrorRateSnapshotInputs> = {}): ErrorRateSnapshotI
 }
 
 describe("buildErrorRateSnapshot — shape", () => {
-  it("returns exactly the four canonical metrics, in order", () => {
+  it("returns the four top-line metrics (slice_dim null), in order", () => {
     const rows = buildErrorRateSnapshot(inputs());
-    expect(rows.map((r) => r.metric)).toEqual([
+    const topline = rows.filter((r) => r.slice_dim === null);
+    expect(topline.map((r) => r.metric)).toEqual([
       "baseline_ca",
       "projected_full_engagement",
       "engagement_implied",
@@ -136,6 +137,66 @@ describe("buildErrorRateSnapshot — measured is n-gated", () => {
     ).find((r) => r.metric === "measured_overall")!;
     expect(row.per_pct).toBeCloseTo(10, 3);
     expect(row.meta.min_n).toBe(5);
+  });
+});
+
+describe("buildErrorRateSnapshot — sliced depth", () => {
+  it("emits one pillar_contribution row per pillar (slice_dim 'pillar')", () => {
+    const pillars = buildErrorRateSnapshot(inputs()).filter((r) => r.metric === "pillar_contribution");
+    expect(pillars).toHaveLength(5);
+    for (const r of pillars) {
+      expect(r.slice_dim).toBe("pillar");
+      expect(r.source).toBe("engine_pillar_attribution");
+      expect(r.slice_value).toBeTruthy();
+    }
+    expect(pillars.map((r) => r.slice_value)).toContain("utility_sua");
+  });
+
+  it("pillar contributions are 0 at zero coverage and sum to ~(baseline−projected) at full", () => {
+    const zero = buildErrorRateSnapshot(inputs({ coverage: ZERO_COVERAGE })).filter(
+      (r) => r.metric === "pillar_contribution",
+    );
+    for (const r of zero) expect(r.per_pct).toBe(0);
+
+    const full = buildErrorRateSnapshot(inputs({ coverage: FULL_COVERAGE })).filter(
+      (r) => r.metric === "pillar_contribution",
+    );
+    const sum = full.reduce((a, r) => a + (r.per_pct ?? 0), 0);
+    expect(sum).toBeCloseTo(CA_BASELINE_PER - PROJECTED_PER_AT_FULL_ENGAGEMENT, 1);
+  });
+
+  it("emits income-group PER cohorts incl. the earned-income TAM figure", () => {
+    const groups = buildErrorRateSnapshot(inputs()).filter((r) => r.metric === "income_group_per");
+    expect(groups.length).toBeGreaterThanOrEqual(4);
+    const tam = groups.find((r) => r.slice_value === "civica_tam");
+    expect(tam?.per_pct).toBe(13.95);
+    for (const r of groups) {
+      expect(r.slice_dim).toBe("income_group");
+      expect(r.source).toBe("usda_income_group");
+    }
+  });
+
+  it("emits USDA element attribution incl. shelter as the top share", () => {
+    const elements = buildErrorRateSnapshot(inputs()).filter((r) => r.metric === "element_attribution");
+    expect(elements.length).toBeGreaterThanOrEqual(10);
+    const shelter = elements.find((r) => r.slice_value === "363");
+    expect(shelter?.per_pct).toBe(39.94);
+    expect(shelter?.meta.label).toBe("Shelter deduction");
+    for (const r of elements) {
+      expect(r.slice_dim).toBe("element");
+      expect(r.source).toBe("usda_element_share");
+      expect(r.meta.unit).toBe("share_of_errored_cases_pct");
+    }
+  });
+
+  it("every sliced row keeps n/ci null (aggregate, not measured)", () => {
+    const sliced = buildErrorRateSnapshot(inputs()).filter((r) => r.slice_dim !== null);
+    expect(sliced.length).toBeGreaterThan(0);
+    for (const r of sliced) {
+      expect(r.n).toBeNull();
+      expect(r.ci_low).toBeNull();
+      expect(r.ci_high).toBeNull();
+    }
   });
 });
 
