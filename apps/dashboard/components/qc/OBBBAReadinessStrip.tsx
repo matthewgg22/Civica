@@ -90,7 +90,7 @@ export default function OBBBAReadinessStrip() {
             <span className="w-1 h-1 rounded-full bg-current" />
             {ready.length} ready · {partial.length} partial
           </span>
-          <p className="text-[10px] text-muted font-mono tracking-wide mt-1">
+          <p className="text-[10px] text-graphite font-mono tracking-wide mt-1">
             source: lib/analytics/obbba.ts
           </p>
         </div>
@@ -103,7 +103,7 @@ export default function OBBBAReadinessStrip() {
         ))}
       </ul>
 
-      <p className="text-[11px] text-muted leading-snug mt-3">
+      <p className="text-[11px] text-graphite leading-snug mt-3">
         Detail and exposure dollars live on{" "}
         <code className="font-mono text-[10px] bg-paper rounded px-1 py-0.5">
           /compliance

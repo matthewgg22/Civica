@@ -20,7 +20,7 @@ export default function EntityKPIStrip({ kpis }: { kpis: OutreachNetworkKPIs }) 
             Outreach network · attribution + governance
           </p>
         </div>
-        <p className="text-[10px] font-mono text-muted">
+        <p className="text-[10px] font-mono text-graphite">
           Demo data · live system writes attribution at packet-submit time
         </p>
       </div>
@@ -50,7 +50,7 @@ export default function EntityKPIStrip({ kpis }: { kpis: OutreachNetworkKPIs }) 
       </div>
 
       <div
-        className="px-6 py-2 border-t border-hairline text-[10px] uppercase tracking-[0.16em] font-mono text-muted"
+        className="px-6 py-2 border-t border-hairline text-[10px] uppercase tracking-[0.16em] font-mono text-graphite"
         style={{ backgroundColor: "#DCD9D2" }}
       >
         {kpis.projection_label}
@@ -72,7 +72,7 @@ function Stat({
 }) {
   return (
     <div className="pr-2 border-r border-hairline last:border-r-0">
-      <p className="text-[10px] uppercase tracking-[0.18em] font-semibold text-muted mb-2">
+      <p className="text-[10px] uppercase tracking-[0.18em] font-semibold text-graphite mb-2">
         {label}
       </p>
       <p className={`text-[28px] font-bold tracking-tight leading-none tabular-nums ${accentWarning ? "text-warning" : "text-ink"}`}>

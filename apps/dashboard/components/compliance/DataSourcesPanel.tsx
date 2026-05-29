@@ -42,16 +42,16 @@ export default function DataSourcesPanel({
         <table className="w-full text-[13px] border-collapse">
           <thead>
             <tr className="border-b border-hairline">
-              <th className="text-left text-[11px] text-muted uppercase tracking-wider font-semibold pb-2 pr-4">
+              <th className="text-left text-[11px] text-graphite uppercase tracking-wider font-semibold pb-2 pr-4">
                 Source
               </th>
-              <th className="text-left text-[11px] text-muted uppercase tracking-wider font-semibold pb-2 pr-4">
+              <th className="text-left text-[11px] text-graphite uppercase tracking-wider font-semibold pb-2 pr-4">
                 Notes
               </th>
-              <th className="text-left text-[11px] text-muted uppercase tracking-wider font-semibold pb-2 pr-4 w-[140px]">
+              <th className="text-left text-[11px] text-graphite uppercase tracking-wider font-semibold pb-2 pr-4 w-[140px]">
                 Last refreshed
               </th>
-              <th className="text-left text-[11px] text-muted uppercase tracking-wider font-semibold pb-2 w-[140px]">
+              <th className="text-left text-[11px] text-graphite uppercase tracking-wider font-semibold pb-2 w-[140px]">
                 Status
               </th>
             </tr>

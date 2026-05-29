@@ -89,7 +89,7 @@ export default function PillarNav() {
         className="max-w-6xl mx-auto px-8 py-2 flex items-center gap-1 overflow-x-auto snap-x scroll-px-8"
         style={{ scrollbarWidth: "none" }}
       >
-        <span className="text-[10px] uppercase tracking-[0.14em] font-semibold text-muted mr-3 whitespace-nowrap shrink-0">
+        <span className="text-[10px] uppercase tracking-[0.14em] font-semibold text-graphite mr-3 whitespace-nowrap shrink-0">
           Jump to
         </span>
         {PILLARS.map(({ id, label }) => (

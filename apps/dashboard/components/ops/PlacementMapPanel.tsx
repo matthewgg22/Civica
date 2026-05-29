@@ -30,7 +30,7 @@ export default function PlacementMapPanel({ data }: { data: PlacementsData }) {
             <span className="font-semibold text-ink tabular-nums">{data.total_active_offers}</span> active offers · <span className="font-semibold text-ink tabular-nums">{formatUSD(totalRevenue)}</span> projected revenue
           </p>
         </div>
-        <span className="text-[10px] font-mono text-muted uppercase tracking-wider whitespace-nowrap">
+        <span className="text-[10px] font-mono text-graphite uppercase tracking-wider whitespace-nowrap">
           Planned placements (v1)
         </span>
       </div>
@@ -55,11 +55,11 @@ export default function PlacementMapPanel({ data }: { data: PlacementsData }) {
           {/* Top counties + category mix — right rail */}
           <div className="w-72 space-y-5">
             <div>
-              <p className="text-[10px] font-semibold uppercase tracking-wider text-muted mb-2">Top placements</p>
+              <p className="text-[10px] font-semibold uppercase tracking-wider text-graphite mb-2">Top placements</p>
               <TopCountiesList placements={data.placements} />
             </div>
             <div>
-              <p className="text-[10px] font-semibold uppercase tracking-wider text-muted mb-2">Category mix</p>
+              <p className="text-[10px] font-semibold uppercase tracking-wider text-graphite mb-2">Category mix</p>
               <CategoryMix placements={data.placements} />
             </div>
           </div>

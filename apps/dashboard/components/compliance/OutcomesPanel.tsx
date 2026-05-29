@@ -133,7 +133,7 @@ function BentoGrid({
             className="bg-paper border border-hairline rounded-[4px] p-3.5 flex flex-col min-h-[136px]"
           >
             <div className="flex items-start justify-between gap-2 mb-2">
-              <span className="text-[10px] font-mono text-muted tabular-nums font-semibold">
+              <span className="text-[10px] font-mono text-graphite tabular-nums font-semibold">
                 {r.step.toString().padStart(2, "0")}
               </span>
               <span
@@ -177,7 +177,7 @@ function BentoGrid({
       {/* FOIA summary cell — what's still coming */}
       <div className="bg-paper border border-hairline border-dashed rounded-[4px] p-3.5 flex flex-col min-h-[136px]">
         <div className="flex items-start justify-between gap-2 mb-2">
-          <span className="text-[10px] font-mono text-muted font-semibold tracking-wide">
+          <span className="text-[10px] font-mono text-graphite font-semibold tracking-wide">
             FOIA
           </span>
           <span
@@ -220,7 +220,7 @@ function HeroScoreboard({ rows }: { rows: OutcomeRow[] }) {
             className="border-l-4 rounded-r-[3px] p-5 bg-paper"
             style={{ borderColor: CIVICA_COLOR }}
           >
-            <p className="text-[10px] uppercase tracking-[0.12em] font-semibold text-muted mb-1">
+            <p className="text-[10px] uppercase tracking-[0.12em] font-semibold text-graphite mb-1">
               {r.flagshipLabel ?? r.metric}
             </p>
 
@@ -234,7 +234,7 @@ function HeroScoreboard({ rows }: { rows: OutcomeRow[] }) {
               </p>
             )}
             {r.baseline && (
-              <p className="text-[11px] text-muted mt-1.5 leading-snug">
+              <p className="text-[11px] text-graphite mt-1.5 leading-snug">
                 vs {r.baseline.split("·")[0].trim()}
               </p>
             )}
@@ -314,7 +314,7 @@ function RegressionEvidenceCallout() {
     <div className="mt-8 pt-6 border-t-2 border-hairline">
       <div className="flex items-start justify-between gap-3 mb-4 flex-wrap">
         <div>
-          <p className="text-[10px] uppercase tracking-[0.13em] font-semibold text-muted mb-1">
+          <p className="text-[10px] uppercase tracking-[0.13em] font-semibold text-graphite mb-1">
             Is the advantage real?
           </p>
           <h4 className="text-[16px] font-semibold tracking-tight text-ink leading-tight">
@@ -350,7 +350,7 @@ function RegressionEvidenceCallout() {
         </Link>
       </div>
 
-      <p className="text-[10px] text-muted/70 italic leading-snug mt-3 max-w-2xl">
+      <p className="text-[10px] text-graphite/70 italic leading-snug mt-3 max-w-2xl">
         Fitted today on a FOIA-shaped synthetic population (watermarked on the
         analysis page); the same locked plan reruns on real CDSS QC cases the
         moment the FOIA lands — no effect sizes are hand-entered on this panel.
@@ -405,7 +405,7 @@ function FoiaSection({ outcomes }: { outcomes: FoiaPendingOutcome[] }) {
               {o.impact}
             </p>
 
-            <p className="text-[10px] text-muted font-mono mt-3 pt-3 border-t border-hairline/50 leading-snug">
+            <p className="text-[10px] text-graphite font-mono mt-3 pt-3 border-t border-hairline/50 leading-snug">
               source: {o.foiaSource}
             </p>
           </div>
@@ -471,13 +471,13 @@ export default function OutcomesPanel({
       <RadialGauges rows={rows} />
 
       {/* Bento — compact 2x4 scan view of all 7 outcomes + FOIA cell */}
-      <p className="text-[10px] uppercase tracking-[0.13em] font-semibold text-muted mb-3 mt-2">
+      <p className="text-[10px] uppercase tracking-[0.13em] font-semibold text-graphite mb-3 mt-2">
         Scan view · all 7 outcomes at a glance
       </p>
       <BentoGrid rows={rows} foiaCount={foiaOutcomes.length} />
 
       {/* Long-form P&L rows — diligence read */}
-      <p className="text-[10px] uppercase tracking-[0.13em] font-semibold text-muted mb-3 mt-2">
+      <p className="text-[10px] uppercase tracking-[0.13em] font-semibold text-graphite mb-3 mt-2">
         Detail · per-outcome explanation + Civica vs baseline
       </p>
       <ol className="border-t border-hairline">
@@ -524,13 +524,13 @@ export default function OutcomesPanel({
                   // Text-only row: fall back to side-by-side values
                   <div className="mt-2.5 flex flex-wrap items-baseline gap-x-5 gap-y-1">
                     <span>
-                      <span className="text-[10px] uppercase tracking-[0.12em] font-semibold text-muted mr-1.5">
+                      <span className="text-[10px] uppercase tracking-[0.12em] font-semibold text-graphite mr-1.5">
                         Civica
                       </span>
                       <ValueOrPending value={r.civica} source={r.civicaSource} />
                     </span>
                     <span>
-                      <span className="text-[10px] uppercase tracking-[0.12em] font-semibold text-muted mr-1.5">
+                      <span className="text-[10px] uppercase tracking-[0.12em] font-semibold text-graphite mr-1.5">
                         Baseline
                       </span>
                       <ValueOrPending value={r.baseline} source={r.baselineSource} />

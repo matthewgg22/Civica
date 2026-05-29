@@ -186,7 +186,7 @@ function PillarStrip({ meta, observed, isLast }: PillarStripProps) {
       {/* Header: label, tool, contribution */}
       <div className="flex items-baseline justify-between gap-4 mb-3 flex-wrap">
         <div className="min-w-0">
-          <p className="text-[10px] uppercase tracking-[0.12em] font-semibold text-muted">
+          <p className="text-[10px] uppercase tracking-[0.12em] font-semibold text-graphite">
             {meta.label}
           </p>
           <p className="text-[15px] font-semibold text-ink leading-tight mt-0.5">
@@ -194,7 +194,7 @@ function PillarStrip({ meta, observed, isLast }: PillarStripProps) {
           </p>
         </div>
         <div className="text-right shrink-0">
-          <p className="text-[10px] uppercase tracking-[0.12em] font-semibold text-muted">
+          <p className="text-[10px] uppercase tracking-[0.12em] font-semibold text-graphite">
             PER contribution at full engagement
           </p>
           <p
@@ -282,7 +282,7 @@ function PillarStrip({ meta, observed, isLast }: PillarStripProps) {
               −{contributionToday.toFixed(2)} pts
             </span>
           </span>
-          <span className="text-[10px] text-muted font-mono tracking-wide">
+          <span className="text-[10px] text-graphite font-mono tracking-wide">
             USDA weight {(PILLAR_SHARES_UNNORMALIZED[meta.key] * 100).toFixed(1)}% · max
             shift {(PILLAR_MAX_DEFENSIBILITY_SHIFT[meta.key] * 100).toFixed(0)}%
           </span>
@@ -292,7 +292,7 @@ function PillarStrip({ meta, observed, isLast }: PillarStripProps) {
       {/* Bottleneck + lever */}
       {meta.bottleneck !== "—" && (
         <div className="mt-3 pt-3 border-t border-hairline/50 grid grid-cols-[80px_1fr] gap-x-3 gap-y-1.5">
-          <span className="text-[10px] uppercase tracking-[0.12em] font-semibold text-muted">
+          <span className="text-[10px] uppercase tracking-[0.12em] font-semibold text-graphite">
             Bottleneck
           </span>
           <p className="text-[12px] text-graphite leading-snug">
@@ -318,7 +318,7 @@ function PillarStrip({ meta, observed, isLast }: PillarStripProps) {
 function ResidualFooter() {
   return (
     <div className="mt-4 px-4 py-3 rounded-[3px] bg-paper border border-hairline/60 flex items-baseline gap-3">
-      <span className="text-[10px] uppercase tracking-[0.14em] font-bold text-muted shrink-0">
+      <span className="text-[10px] uppercase tracking-[0.14em] font-bold text-graphite shrink-0">
         Residual
       </span>
       <p className="text-[12px] text-graphite leading-snug flex-1">

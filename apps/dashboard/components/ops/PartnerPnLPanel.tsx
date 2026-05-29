@@ -19,7 +19,7 @@ export default function PartnerPnLPanel({ data }: { data: PartnerPnLData }) {
             Impressions, revenue, household savings · with redistribution framing
           </p>
         </div>
-        <span className="text-[10px] font-mono text-muted uppercase tracking-wider whitespace-nowrap">
+        <span className="text-[10px] font-mono text-graphite uppercase tracking-wider whitespace-nowrap">
           Past 30 days · impressions-only v1
         </span>
       </div>
@@ -81,7 +81,7 @@ function FunnelStrip({ impressions, clicks, conversions }: { impressions: number
   const max = Math.max(1, impressions);
   return (
     <div>
-      <p className="text-[10px] font-semibold uppercase tracking-wider text-muted mb-2">Engagement funnel</p>
+      <p className="text-[10px] font-semibold uppercase tracking-wider text-graphite mb-2">Engagement funnel</p>
       <div className="space-y-2">
         {[
           { label: "Impressions", value: impressions, color: "bg-pine/85" },
@@ -114,7 +114,7 @@ function ValueSplitBar({ revenueCents, savedCents }: { revenueCents: number; sav
   return (
     <div>
       <div className="flex items-baseline justify-between mb-2">
-        <p className="text-[10px] font-semibold uppercase tracking-wider text-muted">
+        <p className="text-[10px] font-semibold uppercase tracking-wider text-graphite">
           Value created · 30d
         </p>
         <p className="text-[11px] font-mono text-graphite tabular-nums">
@@ -182,7 +182,7 @@ function RedistributionDonut({ pct }: { pct: number }) {
         <p className="text-[36px] font-bold tabular-nums text-pine leading-none">
           {clamped.toFixed(0)}%
         </p>
-        <p className="text-[10px] uppercase tracking-wider text-muted mt-1 font-semibold">
+        <p className="text-[10px] uppercase tracking-wider text-graphite mt-1 font-semibold">
           Redistribution
         </p>
       </div>
@@ -193,7 +193,7 @@ function RedistributionDonut({ pct }: { pct: number }) {
 function Metric({ label, value, sublabel }: { label: string; value: string; sublabel: string }) {
   return (
     <div>
-      <p className="text-[10px] font-semibold uppercase tracking-wider text-muted mb-1">{label}</p>
+      <p className="text-[10px] font-semibold uppercase tracking-wider text-graphite mb-1">{label}</p>
       <p className="text-[20px] font-bold tabular-nums leading-none text-ink">{value}</p>
       <p className="text-[11px] text-graphite mt-1">{sublabel}</p>
     </div>

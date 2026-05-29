@@ -23,7 +23,7 @@ export default function CohortRetentionPanel({ data }: { data: CohortData }) {
             % of HHs still tracking at 30 / 60 / 90 / 180 days · by enrollment month
           </p>
         </div>
-        <span className="text-[10px] font-mono text-muted uppercase tracking-wider whitespace-nowrap">
+        <span className="text-[10px] font-mono text-graphite uppercase tracking-wider whitespace-nowrap">
           {useDemoCurve ? "v1.1 preview shape" : "v1 · single-bucket"}
         </span>
       </div>
@@ -169,11 +169,11 @@ function SimpleCohortBars({ data }: { data: CohortData }) {
       <table className="w-full text-[12px]">
         <thead>
           <tr className="text-left">
-            <th className="font-semibold text-muted pb-2 uppercase tracking-wider text-[10px]">Enrollment month</th>
-            <th className="font-semibold text-muted pb-2 px-3 uppercase tracking-wider text-[10px] text-right">Packets</th>
-            <th className="font-semibold text-muted pb-2 px-3 uppercase tracking-wider text-[10px] text-right">Active now</th>
-            <th className="font-semibold text-muted pb-2 px-3 uppercase tracking-wider text-[10px] text-right">% Active</th>
-            <th className="font-semibold text-muted pb-2 pl-3 uppercase tracking-wider text-[10px]">Visual</th>
+            <th className="font-semibold text-graphite pb-2 uppercase tracking-wider text-[10px]">Enrollment month</th>
+            <th className="font-semibold text-graphite pb-2 px-3 uppercase tracking-wider text-[10px] text-right">Packets</th>
+            <th className="font-semibold text-graphite pb-2 px-3 uppercase tracking-wider text-[10px] text-right">Active now</th>
+            <th className="font-semibold text-graphite pb-2 px-3 uppercase tracking-wider text-[10px] text-right">% Active</th>
+            <th className="font-semibold text-graphite pb-2 pl-3 uppercase tracking-wider text-[10px]">Visual</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-hairline">

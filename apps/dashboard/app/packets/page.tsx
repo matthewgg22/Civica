@@ -370,7 +370,7 @@ function PacketList({ packets, riskTiers, riskScoredAt }: { packets: Packet[]; r
                 <p className="text-[14px] text-graphite">
                   {packet.county ?? "Unknown county"}, {packet.state_code}
                 </p>
-                <span className="text-[11px] text-muted font-mono tabular-nums">
+                <span className="text-[11px] text-graphite font-mono tabular-nums">
                   {shortId(packet.packet_id)}
                 </span>
                 {isStale && (
@@ -399,7 +399,7 @@ function PacketList({ packets, riskTiers, riskScoredAt }: { packets: Packet[]; r
               <p className={`text-[13px] tabular-nums font-medium ${isStale ? "text-warning" : "text-graphite"}`}>
                 {timeAgo(packet.updated_at)}
               </p>
-              <p className="text-[11px] text-muted uppercase tracking-wider mt-0.5">updated</p>
+              <p className="text-[11px] text-graphite uppercase tracking-wider mt-0.5">updated</p>
             </div>
             <span className="text-muted text-[18px] shrink-0">›</span>
           </Link>

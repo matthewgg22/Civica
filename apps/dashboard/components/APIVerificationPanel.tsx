@@ -82,13 +82,13 @@ function Row({ label, children }: { label: string; children: React.ReactNode }) 
 
 function FlagDot({ flagged }: { flagged: boolean }) {
   if (!flagged) return null;
-  return <span className="ml-1.5 inline-block w-2 h-2 rounded-full bg-amber align-middle" title="Flagged for review" />;
+  return <span className="ml-1.5 inline-block w-2 h-2 rounded-full bg-amber align-middle" role="img" aria-label="Flagged for review" title="Flagged for review" />;
 }
 
 function SubSection({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div className="mb-5 last:mb-0">
-      <p className="text-[11px] uppercase tracking-[0.12em] font-semibold text-muted mb-2">{title}</p>
+      <p className="text-[11px] uppercase tracking-[0.12em] font-semibold text-graphite mb-2">{title}</p>
       {children}
     </div>
   );

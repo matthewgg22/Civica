@@ -111,7 +111,7 @@ function DocCard({
         ) : loaded ? (
           <GenericIcon kind={doc.document_kind} />
         ) : (
-          <div className="text-muted text-[11px]">…</div>
+          <div className="text-graphite text-[11px]">…</div>
         )}
       </div>
 
@@ -119,7 +119,7 @@ function DocCard({
         <p className="text-[13px] font-semibold text-ink leading-snug truncate">
           {docKindLabel(doc.document_kind)}
         </p>
-        <p className="text-[11px] text-muted truncate" title={doc.original_filename ?? undefined}>
+        <p className="text-[11px] text-graphite truncate" title={doc.original_filename ?? undefined}>
           {doc.original_filename ?? shortId(doc.document_id)}
         </p>
         <div className="flex items-center justify-between gap-2">
@@ -127,7 +127,7 @@ function DocCard({
             {status.replace(/_/g, " ")}
           </span>
           {fieldCount > 0 && (
-            <span className="text-[11px] text-muted tabular-nums">{fieldCount} field{fieldCount === 1 ? "" : "s"}</span>
+            <span className="text-[11px] text-graphite tabular-nums">{fieldCount} field{fieldCount === 1 ? "" : "s"}</span>
           )}
         </div>
       </div>

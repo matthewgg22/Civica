@@ -77,7 +77,7 @@ function OverlayRow({ item }: { item: FrameworkItem }) {
         <p className="text-[12px] font-medium text-ink mt-1.5 tabular-nums">
           {item.figures}
         </p>
-        <p className="mt-1.5 font-mono text-[10px] tracking-wide text-muted leading-snug">
+        <p className="mt-1.5 font-mono text-[10px] tracking-wide text-graphite leading-snug">
           <span className="text-graphite">{item.authorities.join(" · ")}</span>
           <span className="mx-2 text-muted/50">·</span>
           <span className="break-all">{item.source}</span>
@@ -160,7 +160,7 @@ export default function CaliforniaOverlaysMap({
   return (
     <div>
       <div className="mb-3">
-        <p className="text-[10px] uppercase tracking-[0.12em] font-semibold text-muted mb-1">
+        <p className="text-[10px] uppercase tracking-[0.12em] font-semibold text-graphite mb-1">
           Section C · California overlays
         </p>
         <h4 className="text-[16px] font-semibold tracking-tight text-ink leading-tight">
@@ -271,7 +271,7 @@ export default function CaliforniaOverlaysMap({
         </svg>
       </div>
 
-      <div className="mt-4 flex items-center justify-center gap-4 text-[11px] text-muted">
+      <div className="mt-4 flex items-center justify-center gap-4 text-[11px] text-graphite">
         <span className="inline-flex items-center gap-1.5">
           <span className="w-3 h-3 rounded-sm" style={{ background: "rgba(201,146,42,0.22)", border: "1px solid #C9922A" }} />
           Supported state — tap to expand

@@ -22,6 +22,13 @@ vi.mock("next/link", () => ({
   ),
 }));
 
+// FirstVisitHints renders below the header after localStorage check; mock it
+// out so AppHeader structure tests don't have to coordinate dismissal state.
+// The hint component has its own test file (FirstVisitHints.test.tsx).
+vi.mock("../FirstVisitHints", () => ({
+  default: () => null,
+}));
+
 describe("AppHeader", () => {
   it("renders exactly 6 primary nav tabs (post-trim)", () => {
     render(<AppHeader active="dashboard" />);

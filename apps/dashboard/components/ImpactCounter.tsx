@@ -81,7 +81,7 @@ export default function ImpactCounter({
       </div>
       {projectionLabel && (
         <div
-          className="px-7 py-2 border-t border-hairline text-[10px] uppercase tracking-[0.16em] font-mono text-muted"
+          className="px-7 py-2 border-t border-hairline text-[10px] uppercase tracking-[0.16em] font-mono text-graphite"
           style={{ backgroundColor: "#DCD9D2" }}
         >
           {projectionLabel}

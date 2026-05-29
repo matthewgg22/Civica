@@ -167,7 +167,7 @@ export default function CoverageMapPanel() {
           framing above: $13B errored payments are the loss landscape the
           law's §10105 / §10106 thresholds charge against. */}
       <div className="border border-hairline rounded-[4px] bg-paper p-5 mb-7">
-        <p className="text-[10px] uppercase tracking-[0.12em] font-semibold text-muted mb-4">
+        <p className="text-[10px] uppercase tracking-[0.12em] font-semibold text-graphite mb-4">
           The volume · what gets paid · what goes wrong
         </p>
 
@@ -201,7 +201,7 @@ export default function CoverageMapPanel() {
 
         {/* Layer 2 — issuance / errored stacked bar */}
         <div className="mb-6">
-          <p className="text-[10px] uppercase tracking-[0.12em] font-semibold text-muted mb-2">
+          <p className="text-[10px] uppercase tracking-[0.12em] font-semibold text-graphite mb-2">
             Out of every $1 of SNAP issued nationally
           </p>
           <div className="flex h-9 rounded-sm overflow-hidden border border-hairline">
@@ -230,7 +230,7 @@ export default function CoverageMapPanel() {
 
         {/* Layer 3 — how the $13B in errored dollars actually lands */}
         <div>
-          <p className="text-[10px] uppercase tracking-[0.12em] font-semibold text-muted mb-3">
+          <p className="text-[10px] uppercase tracking-[0.12em] font-semibold text-graphite mb-3">
             How the $13B errored dollars land · these are the four flows the Sankey explains
           </p>
           <div className="space-y-2.5">
@@ -270,7 +270,7 @@ export default function CoverageMapPanel() {
                   <p className="text-[13px] font-semibold text-ink leading-tight">
                     {row.label}
                   </p>
-                  <p className="text-[10px] text-muted leading-snug mt-0.5">
+                  <p className="text-[10px] text-graphite leading-snug mt-0.5">
                     {row.note ?? row.detail}
                   </p>
                 </div>
@@ -290,7 +290,7 @@ export default function CoverageMapPanel() {
               </div>
             ))}
           </div>
-          <p className="text-[10px] text-muted leading-snug mt-3 italic">
+          <p className="text-[10px] text-graphite leading-snug mt-3 italic">
             Figures are FY2023 USDA FNS aggregates · errored-dollar breakdown
             uses national QC outcome shares applied to the $13B total.
           </p>
@@ -300,7 +300,7 @@ export default function CoverageMapPanel() {
       {/* Glossary — what each error category actually means in plain English.
           Anchors the Stage 2 node labels in the Sankey below. */}
       <div className="mb-7">
-        <p className="text-[10px] uppercase tracking-[0.12em] font-semibold text-muted mb-2">
+        <p className="text-[10px] uppercase tracking-[0.12em] font-semibold text-graphite mb-2">
           What each error category actually means
         </p>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -355,7 +355,7 @@ export default function CoverageMapPanel() {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-7 pb-5 border-b border-hairline">
         {tiles.map((t) => (
           <div key={t.label} className="border-l-2 border-amber/40 pl-3">
-            <p className="text-[10px] uppercase tracking-[0.12em] font-semibold text-muted">
+            <p className="text-[10px] uppercase tracking-[0.12em] font-semibold text-graphite">
               {t.label}
             </p>
             <p className="text-[14px] font-semibold text-ink leading-snug mt-0.5">
@@ -610,7 +610,7 @@ export default function CoverageMapPanel() {
       </div>
 
       {/* Legend — pulled tight to the chart, no separator rule above */}
-      <div className="mt-5 flex flex-wrap items-center gap-x-6 gap-y-2 text-[11px] text-muted">
+      <div className="mt-5 flex flex-wrap items-center gap-x-6 gap-y-2 text-[11px] text-graphite">
         <span className="text-graphite font-semibold uppercase tracking-wider text-[10px]">
           band color
         </span>

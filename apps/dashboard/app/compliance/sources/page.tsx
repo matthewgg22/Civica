@@ -26,7 +26,7 @@ export default async function ComplianceSourcesPage() {
           >
             ← Back to compliance
           </Link>
-          <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted mb-1.5">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-graphite mb-1.5">
             Provenance · public data sources behind all five pillars
           </p>
           <h1 className="text-[28px] font-bold tracking-tight text-ink leading-tight">

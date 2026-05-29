@@ -47,7 +47,7 @@ export default function EvidenceSection({
         <div className="flex items-baseline gap-3 min-w-0">
           <span
             aria-hidden="true"
-            className="text-muted text-[11px] shrink-0 inline-block w-2 transition-transform duration-150 motion-reduce:transition-none group-open:rotate-90"
+            className="text-graphite text-[11px] shrink-0 inline-block w-2 transition-transform duration-150 motion-reduce:transition-none group-open:rotate-90"
           >
             ▶
           </span>

@@ -41,7 +41,7 @@ export default function FlowBreakdown({ flows }: { flows: RiskFlow[] }) {
           </p>
         </div>
         <div className="text-right shrink-0">
-          <p className="text-[11px] text-muted font-mono tracking-wide">{sorted.length} factors · {scored} reviewed · {notScored} pending</p>
+          <p className="text-[11px] text-graphite font-mono tracking-wide">{sorted.length} factors · {scored} reviewed · {notScored} pending</p>
         </div>
       </div>
 
@@ -84,7 +84,7 @@ function ParetoStack({ flows, total }: { flows: RiskFlow[]; total: number }) {
     <div className="flex flex-col gap-2.5">
       <div className="flex justify-between items-baseline">
         <p className="eyebrow">Contribution to score</p>
-        <span className="text-[11px] text-muted font-mono tracking-wide">{total} of 100 points</span>
+        <span className="text-[11px] text-graphite font-mono tracking-wide">{total} of 100 points</span>
       </div>
       <div className="flex h-7 rounded-sm overflow-hidden border border-hairline">
         {flows.map((f, i) => {
@@ -116,7 +116,7 @@ function ParetoStack({ flows, total }: { flows: RiskFlow[]; total: number }) {
               className="pl-1.5 flex flex-col gap-0.5 overflow-hidden py-1"
             >
               <span className="text-[11px] font-medium text-ink truncate">{f.label}</span>
-              <span className="text-[10px] text-muted font-mono tracking-wide">w {f.weight}%</span>
+              <span className="text-[10px] text-graphite font-mono tracking-wide">w {f.weight}%</span>
             </div>
           );
         })}
@@ -145,7 +145,7 @@ function FlowRow({ flow, index, priority }: { flow: RiskFlow; index: number; pri
         <div className="flex items-start justify-between gap-4 flex-wrap">
           <div className="flex items-center gap-3 flex-wrap">
             <span className="text-[16px] font-semibold text-ink">{flow.label}</span>
-            <span className="text-[11px] text-muted font-mono tracking-wide">w {flow.weight}%</span>
+            <span className="text-[11px] text-graphite font-mono tracking-wide">w {flow.weight}%</span>
             <span
               className="text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-sm"
               style={{ color: def.color, background: def.bg }}
@@ -165,7 +165,7 @@ function FlowRow({ flow, index, priority }: { flow: RiskFlow; index: number; pri
             >
               {notScored ? "—" : `+${flow.points}`}
             </span>
-            {!notScored && <span className="text-[11px] text-muted font-mono">pts</span>}
+            {!notScored && <span className="text-[11px] text-graphite font-mono">pts</span>}
           </div>
         </div>
 

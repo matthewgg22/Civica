@@ -113,7 +113,7 @@ export default function CountyDetailDrawer({
                 <p className="text-[14px] text-muted text-center py-8">No packets in this county yet.</p>
               ) : (
                 <>
-                  <p className="text-[11px] uppercase tracking-wider font-semibold text-muted mb-3">Recent Packets</p>
+                  <p className="text-[11px] uppercase tracking-wider font-semibold text-graphite mb-3">Recent Packets</p>
                   <ul className="divide-y divide-hairline">
                     {packets.slice(0, 8).map((p) => {
                       const name = p.applicants ? firstNameLastInitial(decryptDemoName(p.applicants.full_name_ciphertext)) : "Unknown";
@@ -126,11 +126,11 @@ export default function CountyDetailDrawer({
                             <div className="flex-1 min-w-0">
                               <div className="flex items-baseline gap-2">
                                 <p className="text-[15px] font-semibold text-ink truncate">{name}</p>
-                                <span className="text-[10px] text-muted font-mono tabular-nums shrink-0">{shortId(p.packet_id)}</span>
+                                <span className="text-[10px] text-graphite font-mono tabular-nums shrink-0">{shortId(p.packet_id)}</span>
                               </div>
                               <div className="flex items-center gap-2 mt-1">
                                 <StatusPill status={p.status} />
-                                <span className="text-[11px] text-muted tabular-nums">{timeAgo(p.updated_at)}</span>
+                                <span className="text-[11px] text-graphite tabular-nums">{timeAgo(p.updated_at)}</span>
                               </div>
                             </div>
                             <span className="text-muted text-[18px] shrink-0">›</span>
@@ -222,7 +222,7 @@ function RiskTab({ packets, packetRiskMap }: { packets: CountyPacket[]; packetRi
       )}
       {topRisk.length > 0 && (
         <div>
-          <p className="text-[11px] uppercase tracking-wider font-semibold text-muted mb-3">High / Medium Risk Packets</p>
+          <p className="text-[11px] uppercase tracking-wider font-semibold text-graphite mb-3">High / Medium Risk Packets</p>
           <ul className="divide-y divide-hairline">
             {topRisk.map((p) => {
               const name = p.applicants ? firstNameLastInitial(decryptDemoName(p.applicants.full_name_ciphertext)) : "Unknown";
@@ -236,7 +236,7 @@ function RiskTab({ packets, packetRiskMap }: { packets: CountyPacket[]; packetRi
                   >
                     <div className="flex-1 min-w-0">
                       <p className="text-[14px] font-semibold text-ink truncate">{name}</p>
-                      <p className="text-[11px] text-muted">{shortId(p.packet_id)}</p>
+                      <p className="text-[11px] text-graphite">{shortId(p.packet_id)}</p>
                     </div>
                     <div className="flex items-baseline gap-1.5 shrink-0">
                       <span className="text-[18px] font-bold tabular-nums" style={{ color: tone.color }}>{p.risk!.score ?? "—"}</span>

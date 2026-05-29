@@ -172,7 +172,7 @@ function MetricTile({
 }) {
   return (
     <div className="bg-surface-secondary rounded-[4px] p-4 border border-hairline">
-      <p className="eyebrow text-[11px] uppercase tracking-wider text-muted mb-1">
+      <p className="eyebrow text-[11px] uppercase tracking-wider text-graphite mb-1">
         {eyebrow}
       </p>
       <p className={`text-[24px] font-semibold leading-none ${valueClass}`}>
@@ -198,7 +198,7 @@ function QueueTable({
     <div className="bg-surface rounded-[4px] border border-hairline overflow-hidden">
       {/* Header — semantic <table> for screen-reader correctness (DES-D5 a11y) */}
       <table className="w-full text-[14px]">
-        <thead className="bg-surface-secondary text-[11px] uppercase tracking-wider text-muted">
+        <thead className="bg-surface-secondary text-[11px] uppercase tracking-wider text-graphite">
           <tr>
             <th className="text-left font-medium px-4 py-3">Sampled</th>
             <th className="text-left font-medium px-4 py-3">Packet</th>

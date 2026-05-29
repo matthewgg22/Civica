@@ -62,11 +62,11 @@ export default function NotificationOutlayPanel({ data }: { data: NotificationOu
           <table className="w-full border-separate" style={{ borderSpacing: "4px" }}>
             <thead>
               <tr>
-                <th className="w-44 text-left text-[10px] font-semibold uppercase tracking-wider text-muted pb-1">Category</th>
+                <th className="w-44 text-left text-[10px] font-semibold uppercase tracking-wider text-graphite pb-1">Category</th>
                 {CHANNELS.map((ch) => (
-                  <th key={ch} className="text-[10px] font-semibold uppercase tracking-wider text-muted pb-1 text-center">{ch}</th>
+                  <th key={ch} className="text-[10px] font-semibold uppercase tracking-wider text-graphite pb-1 text-center">{ch}</th>
                 ))}
-                <th className="w-24 text-[10px] font-semibold uppercase tracking-wider text-muted pb-1 text-right pr-1">Row total</th>
+                <th className="w-24 text-[10px] font-semibold uppercase tracking-wider text-graphite pb-1 text-right pr-1">Row total</th>
               </tr>
             </thead>
             <tbody>
@@ -91,7 +91,7 @@ export default function NotificationOutlayPanel({ data }: { data: NotificationOu
                 );
               })}
               <tr>
-                <td className="pt-2 text-[10px] font-semibold uppercase tracking-wider text-muted">Column total</td>
+                <td className="pt-2 text-[10px] font-semibold uppercase tracking-wider text-graphite">Column total</td>
                 {CHANNELS.map((ch) => {
                   const tot = channelTotals.get(ch);
                   return (
@@ -144,7 +144,7 @@ function HeatCell({ count, costCents, max }: { count: number; costCents: number;
 function Legend({ max }: { max: number }) {
   return (
     <div className="flex items-center gap-2 shrink-0">
-      <span className="text-[10px] font-mono text-muted">0</span>
+      <span className="text-[10px] font-mono text-graphite">0</span>
       <div className="flex">
         {[0.2, 0.4, 0.6, 0.8, 1.0].map((a) => (
           <span
@@ -154,7 +154,7 @@ function Legend({ max }: { max: number }) {
           />
         ))}
       </div>
-      <span className="text-[10px] font-mono text-muted tabular-nums">{max.toLocaleString()}</span>
+      <span className="text-[10px] font-mono text-graphite tabular-nums">{max.toLocaleString()}</span>
     </div>
   );
 }

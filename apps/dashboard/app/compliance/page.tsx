@@ -256,7 +256,7 @@ export default async function CompliancePage() {
             every other tool in this space exits before the part of the
             application that decides whether she ever receives benefits.
           </p>
-          <p className="text-[11px] text-muted font-mono tracking-wide mt-3">
+          <p className="text-[11px] text-graphite font-mono tracking-wide mt-3">
             Built by Matthew Greer-Gentis · solo on /codex/rebuild-feb18
           </p>
         </div>
@@ -265,7 +265,7 @@ export default async function CompliancePage() {
             to the under-enrolled chart in Pillar 1 and the $1B+/yr CA stat
             in the hero TL;DR strip. */}
         <div className="rounded-[4px] border border-hairline bg-paper p-7 mb-3">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted mb-1.5">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-graphite mb-1.5">
             Market sizing · the addressable arc
           </p>
           <h3 className="text-[20px] font-semibold tracking-tight text-ink leading-tight mb-1">
@@ -280,7 +280,7 @@ export default async function CompliancePage() {
             {/* TAM */}
             <div className="rounded-[4px] bg-surface border border-hairline p-4">
               <div className="flex items-baseline justify-between mb-1.5">
-                <p className="text-[10px] uppercase tracking-[0.12em] font-bold text-muted">
+                <p className="text-[10px] uppercase tracking-[0.12em] font-bold text-graphite">
                   TAM
                 </p>
                 <p className="text-[9px] uppercase tracking-[0.10em] font-semibold text-muted">
@@ -290,7 +290,7 @@ export default async function CompliancePage() {
               <p className="text-[32px] font-bold tabular-nums leading-none text-ink">
                 ~16M
               </p>
-              <p className="text-[10px] text-muted mt-0.5">
+              <p className="text-[10px] text-graphite mt-0.5">
                 households · out of 35.5M total US eligible
               </p>
               <p className="text-[12px] text-graphite mt-3 leading-snug">
@@ -303,7 +303,7 @@ export default async function CompliancePage() {
             {/* SAM */}
             <div className="rounded-[4px] bg-surface border border-hairline p-4">
               <div className="flex items-baseline justify-between mb-1.5">
-                <p className="text-[10px] uppercase tracking-[0.12em] font-bold text-muted">
+                <p className="text-[10px] uppercase tracking-[0.12em] font-bold text-graphite">
                   SAM
                 </p>
                 <p className="text-[9px] uppercase tracking-[0.10em] font-semibold text-muted">
@@ -313,7 +313,7 @@ export default async function CompliancePage() {
               <p className="text-[32px] font-bold tabular-nums leading-none text-ink">
                 ~2M
               </p>
-              <p className="text-[10px] text-muted mt-0.5">
+              <p className="text-[10px] text-graphite mt-0.5">
                 households · CA eligible-but-unenrolled
               </p>
               <p className="text-[12px] text-graphite mt-3 leading-snug">
@@ -352,7 +352,7 @@ export default async function CompliancePage() {
               >
                 ~544K
               </p>
-              <p className="text-[10px] text-muted mt-0.5">
+              <p className="text-[10px] text-graphite mt-0.5">
                 CA households · 3 confirmed channels
               </p>
               <p className="text-[12px] text-graphite mt-3 leading-snug">
@@ -365,7 +365,7 @@ export default async function CompliancePage() {
             </div>
           </div>
 
-          <p className="text-[11px] text-muted italic mt-4 max-w-3xl leading-relaxed">
+          <p className="text-[11px] text-graphite italic mt-4 max-w-3xl leading-relaxed">
             TAM → SAM → SOM is the standard investor frame: total addressable, serviceable available, serviceable obtainable.
             All figures are pre-pilot estimates; numbers tighten as the first cohort closes and channel partnerships sign.
           </p>
@@ -514,7 +514,7 @@ export default async function CompliancePage() {
           <div className="rounded-[4px] border border-hairline bg-paper p-7">
             <div className="flex items-start justify-between gap-4 mb-3 flex-wrap">
               <div>
-                <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted mb-1.5">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-graphite mb-1.5">
                   Unit economics · modeled · pre-pilot
                 </p>
                 <h3 className="text-[20px] font-semibold tracking-tight text-ink leading-tight">
@@ -538,31 +538,31 @@ export default async function CompliancePage() {
             {/* Stat grid — four headline numbers */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-5">
               <div className="rounded-[4px] bg-surface border border-hairline p-4">
-                <p className="text-[10px] uppercase tracking-[0.12em] font-bold text-muted mb-1.5">
+                <p className="text-[10px] uppercase tracking-[0.12em] font-bold text-graphite mb-1.5">
                   CAC
                 </p>
                 <p className="text-[26px] font-bold tabular-nums leading-none text-ink">
                   $20–100
                 </p>
-                <p className="text-[10px] text-muted mt-1">per enrolled household, by channel</p>
+                <p className="text-[10px] text-graphite mt-1">per enrolled household, by channel</p>
               </div>
               <div className="rounded-[4px] bg-surface border border-hairline p-4">
-                <p className="text-[10px] uppercase tracking-[0.12em] font-bold text-muted mb-1.5">
+                <p className="text-[10px] uppercase tracking-[0.12em] font-bold text-graphite mb-1.5">
                   Revenue
                 </p>
                 <p className="text-[26px] font-bold tabular-nums leading-none text-ink">
                   $171<span className="text-[12px] font-mono text-muted ml-1">/yr</span>
                 </p>
-                <p className="text-[10px] text-muted mt-1">per enrolled · steady state, 3 pools</p>
+                <p className="text-[10px] text-graphite mt-1">per enrolled · steady state, 3 pools</p>
               </div>
               <div className="rounded-[4px] bg-surface border border-hairline p-4">
-                <p className="text-[10px] uppercase tracking-[0.12em] font-bold text-muted mb-1.5">
+                <p className="text-[10px] uppercase tracking-[0.12em] font-bold text-graphite mb-1.5">
                   Payback
                 </p>
                 <p className="text-[26px] font-bold tabular-nums leading-none text-ink">
                   2–12<span className="text-[12px] font-mono text-muted ml-1">mo</span>
                 </p>
-                <p className="text-[10px] text-muted mt-1">CAC ÷ gross profit per period</p>
+                <p className="text-[10px] text-graphite mt-1">CAC ÷ gross profit per period</p>
               </div>
               <div
                 className="rounded-[4px] border p-4"
@@ -574,13 +574,13 @@ export default async function CompliancePage() {
                 <p className="text-[26px] font-bold tabular-nums leading-none" style={{ color: "#2A6F66" }}>
                   4–15×
                 </p>
-                <p className="text-[10px] text-muted mt-1">$360 LTV · varies by CAC band</p>
+                <p className="text-[10px] text-graphite mt-1">$360 LTV · varies by CAC band</p>
               </div>
             </div>
 
             {/* Channel breakdown */}
             <div className="mt-5 rounded-[4px] border border-hairline/60 bg-surface p-4">
-              <p className="text-[10px] uppercase tracking-[0.12em] font-semibold text-muted mb-3">
+              <p className="text-[10px] uppercase tracking-[0.12em] font-semibold text-graphite mb-3">
                 CAC by channel — why the range is wide
               </p>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-x-5 gap-y-2.5">
@@ -615,7 +615,7 @@ export default async function CompliancePage() {
             </div>
 
             {/* Math footnote */}
-            <p className="text-[11px] text-muted italic mt-4 max-w-3xl leading-relaxed">
+            <p className="text-[11px] text-graphite italic mt-4 max-w-3xl leading-relaxed">
               Math: $171 revenue/yr × 70% gross margin = ~$120 gross profit/enrolled/yr.
               At a $50 mid-band CAC, payback ≈ 5 months. 3-year LTV assumes typical SNAP
               retention across one full recertification cycle (~75% retain through year 2).
@@ -633,7 +633,7 @@ export default async function CompliancePage() {
                      className="rounded-full object-cover" />
             (drop the file in apps/dashboard/public/ first). */}
         <div className="rounded-[4px] bg-paper border border-hairline p-6 mt-4">
-          <p className="text-[10px] uppercase tracking-[0.14em] font-semibold text-muted mb-4">
+          <p className="text-[10px] uppercase tracking-[0.14em] font-semibold text-graphite mb-4">
             From the founder
           </p>
           <div className="flex items-start gap-4">
@@ -734,7 +734,7 @@ export default async function CompliancePage() {
         </div>
       </div>
 
-      <footer className="border-t border-hairline px-8 py-5 flex justify-between items-center text-[11px] text-muted font-mono tracking-wide mt-8">
+      <footer className="border-t border-hairline px-8 py-5 flex justify-between items-center text-[11px] text-graphite font-mono tracking-wide mt-8">
         <span>Civica · compliance framework · operator view</span>
         <span>OBBBA windows: §10102 Jun 2026 · §10105 FY2026→FY2028 · §10106 Oct 2026</span>
       </footer>

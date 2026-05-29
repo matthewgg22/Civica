@@ -15,7 +15,7 @@ export default function ComplianceNarrative() {
     <div className="space-y-4 text-[13px]">
       {banned ? (
         <div className="rounded border border-hairline bg-surface p-3">
-          <div className="text-[11px] uppercase tracking-wider text-muted">
+          <div className="text-[11px] uppercase tracking-wider text-graphite">
             Banned phrase · {banned.audit_reference}
           </div>
           <div className="mt-1 font-semibold text-ink">"{banned.phrase}"</div>
@@ -26,7 +26,7 @@ export default function ComplianceNarrative() {
       {revision ? (
         <div className="rounded border border-hairline bg-surface p-3">
           <div className="flex items-center justify-between">
-            <div className="text-[11px] uppercase tracking-wider text-muted">
+            <div className="text-[11px] uppercase tracking-wider text-graphite">
               Pending revision · {revision.audit_reference}
             </div>
             <span
@@ -40,12 +40,12 @@ export default function ComplianceNarrative() {
             </span>
           </div>
           <div className="mt-2">
-            <div className="text-[11px] text-muted">Current (EN)</div>
+            <div className="text-[11px] text-graphite">Current (EN)</div>
             <div className="font-mono text-[12px]">{revision.current_english}</div>
           </div>
           {revision.approved_english ? (
             <div className="mt-2">
-              <div className="text-[11px] text-muted">Proposed (EN)</div>
+              <div className="text-[11px] text-graphite">Proposed (EN)</div>
               <div className="font-mono text-[12px]">{revision.approved_english}</div>
             </div>
           ) : null}

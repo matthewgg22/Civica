@@ -47,7 +47,7 @@ export default function KpiCard({
       className="bg-surface rounded-[4px] border border-hairline p-5"
       style={borderStyle}
     >
-      <p className="text-[11px] font-semibold uppercase tracking-wider text-muted">
+      <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite">
         {label}
       </p>
       <p

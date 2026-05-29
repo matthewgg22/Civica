@@ -68,7 +68,7 @@ export default function ObbbaTimeline({
 
   return (
     <div className="mb-7 pb-6 border-b border-hairline">
-      <p className="text-[10px] uppercase tracking-[0.14em] font-semibold text-muted mb-4">
+      <p className="text-[10px] uppercase tracking-[0.14em] font-semibold text-graphite mb-4">
         Implementation timeline · 7 provisions · FY2025 → FY2028
       </p>
 

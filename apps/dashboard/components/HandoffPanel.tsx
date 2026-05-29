@@ -171,6 +171,7 @@ export default function HandoffPanel({ packetId, packetStatus, blockerCount }: P
           <button
             type="button"
             disabled
+            aria-label="SNAP ECS XML — coming in a future release"
             title="SNAP ECS XML — coming in a future release"
             className="px-4 py-2 text-[13px] font-semibold rounded-[3px] bg-graphite/10 text-muted cursor-not-allowed"
           >

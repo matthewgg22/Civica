@@ -71,7 +71,7 @@ export default async function OutreachNetworkPage() {
         <EntityAttributionTable entities={tableEntities} />
       </div>
 
-      <footer className="border-t border-hairline px-8 py-5 flex justify-between items-center text-[11px] text-muted font-mono tracking-wide mt-8">
+      <footer className="border-t border-hairline px-8 py-5 flex justify-between items-center text-[11px] text-graphite font-mono tracking-wide mt-8">
         <span>Civica · outreach network · operator console</span>
         <span>attribution recorded via outreach_entities table + snap_packets.outreach_entity_id</span>
       </footer>

@@ -121,7 +121,7 @@ function SliceGroupBlock({
 }) {
   return (
     <div>
-      <p className="text-[10px] uppercase tracking-[0.12em] font-semibold text-muted mb-2">
+      <p className="text-[10px] uppercase tracking-[0.12em] font-semibold text-graphite mb-2">
         {group.label}
       </p>
       <div className="border border-hairline rounded-[3px] overflow-hidden">
@@ -183,7 +183,7 @@ function SliceRowView({
         <p className="text-[12px] font-semibold text-ink truncate" title={sliceValue}>
           {sliceValue}
         </p>
-        <p className="text-[10px] text-muted font-mono tabular-nums tracking-wide">
+        <p className="text-[10px] text-graphite font-mono tabular-nums tracking-wide">
           {errors}/{n} {n === 1 ? "review" : "reviews"}
           {lowConfidence && (
             <span className="ml-1 text-warning">· low n</span>
@@ -228,7 +228,7 @@ function SliceRowView({
         >
           {pct1(rate)}
         </p>
-        <p className="text-[10px] text-muted font-mono tabular-nums tracking-wide mt-0.5">
+        <p className="text-[10px] text-graphite font-mono tabular-nums tracking-wide mt-0.5">
           [{pct1(lower)}, {pct1(upper)}]
         </p>
       </div>
@@ -238,7 +238,7 @@ function SliceRowView({
 
 function Legend() {
   return (
-    <div className="flex flex-wrap items-center gap-x-5 gap-y-2 pt-1 text-[10px] text-muted">
+    <div className="flex flex-wrap items-center gap-x-5 gap-y-2 pt-1 text-[10px] text-graphite">
       <LegendDot color={TEAL} label={`at/under CA baseline (≤${CA_BASELINE_PER.toFixed(1)}%)`} />
       <LegendDot color={WARNING} label={`elevated (≤${(CA_BASELINE_PER * 2).toFixed(1)}%)`} />
       <LegendDot color={BRICK} label="high" />

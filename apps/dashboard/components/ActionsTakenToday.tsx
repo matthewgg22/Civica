@@ -32,7 +32,7 @@ export default function ActionsTakenToday() {
     // Pre-engagement state — show a quiet hint so the counter is discoverable
     // before the navigator has clicked any chip.
     return (
-      <div className="text-[11px] text-muted uppercase tracking-wider font-semibold">
+      <div className="text-[11px] text-graphite uppercase tracking-wider font-semibold">
         no actions logged yet today
       </div>
     );

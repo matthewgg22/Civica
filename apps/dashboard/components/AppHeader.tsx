@@ -1,6 +1,7 @@
 import Link from "next/link";
 import MobileNavMenu from "./MobileNavMenu";
 import ShareDropdown from "./ShareDropdown";
+import FirstVisitHints from "./FirstVisitHints";
 
 type NavKey =
   | "dashboard"
@@ -42,6 +43,7 @@ const ALL_NAV_ITEMS = [...NAV_ITEMS, ...SHARE_NAV_ITEMS];
 
 export default function AppHeader({ email, active }: { email?: string; active: NavKey }) {
   return (
+    <>
     <header className="bg-pine px-4 sm:px-8 py-3.5 flex items-center justify-between gap-3">
       <div className="flex items-center gap-4 sm:gap-8 min-w-0">
         <Link href="/dashboard" className="flex items-center gap-3 group shrink-0">
@@ -69,6 +71,7 @@ export default function AppHeader({ email, active }: { email?: string; active: N
         </div>
         <kbd
           className="hidden sm:inline-flex items-center gap-1 text-[11px] font-mono text-white/45 hover:text-white/80 transition-colors border border-white/15 hover:border-white/30 rounded px-1.5 py-0.5"
+          aria-label="Open command palette, Command K"
           title="Open command palette (⌘K)"
         >
           ⌘K
@@ -83,6 +86,8 @@ export default function AppHeader({ email, active }: { email?: string; active: N
         <MobileNavMenu items={ALL_NAV_ITEMS} active={active} />
       </div>
     </header>
+    <FirstVisitHints />
+    </>
   );
 }
 

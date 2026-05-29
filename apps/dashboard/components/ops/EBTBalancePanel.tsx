@@ -24,7 +24,7 @@ export default function EBTBalancePanel({ data }: { data: EbtAggregateData }) {
             Full-precision balance figure · per-tracker average · linked-vs-active coverage
           </p>
         </div>
-        <span className="text-[10px] font-mono text-muted uppercase tracking-wider whitespace-nowrap">
+        <span className="text-[10px] font-mono text-graphite uppercase tracking-wider whitespace-nowrap">
           Updated every 30s · scraper freshness ≤30 min
         </span>
       </div>
@@ -37,7 +37,7 @@ export default function EBTBalancePanel({ data }: { data: EbtAggregateData }) {
       ) : (
         <div className="grid grid-cols-3 gap-6 pt-5 border-t border-hairline">
           <div>
-            <p className="text-[10px] font-semibold uppercase tracking-wider text-muted mb-1">Total balance</p>
+            <p className="text-[10px] font-semibold uppercase tracking-wider text-graphite mb-1">Total balance</p>
             <p className="text-[28px] font-bold tracking-tight text-ink leading-none tabular-nums">
               <CountUp target={data.total_balance_cents} format="usd-full" durationMs={1800} />
             </p>
@@ -47,7 +47,7 @@ export default function EBTBalancePanel({ data }: { data: EbtAggregateData }) {
           </div>
 
           <div>
-            <p className="text-[10px] font-semibold uppercase tracking-wider text-muted mb-1">Avg / active tracker</p>
+            <p className="text-[10px] font-semibold uppercase tracking-wider text-graphite mb-1">Avg / active tracker</p>
             <p className="text-[28px] font-bold tracking-tight text-ink leading-none tabular-nums">
               <CountUp target={avgPerActive} format="usd-compact" durationMs={1400} />
             </p>
@@ -57,7 +57,7 @@ export default function EBTBalancePanel({ data }: { data: EbtAggregateData }) {
           </div>
 
           <div>
-            <p className="text-[10px] font-semibold uppercase tracking-wider text-muted mb-1">Coverage</p>
+            <p className="text-[10px] font-semibold uppercase tracking-wider text-graphite mb-1">Coverage</p>
             <p className="text-[28px] font-bold tracking-tight text-ink leading-none tabular-nums">
               <CountUp target={coveragePct} format="percent" durationMs={1100} />
             </p>

@@ -64,7 +64,7 @@ export default function StatusTransition({ packetId, nextStatuses, blockers = []
           onChange={(e) => setReason(e.target.value)}
           className="w-full border border-hairline rounded-[3px] px-3 py-2.5 text-[15px] bg-paper focus:outline-none focus:border-pine focus:bg-white transition-colors"
         />
-        <p className="text-[11px] text-muted mt-1.5 italic">↳ This message will appear in the packet's audit trail for compliance review.</p>
+        <p className="text-[11px] text-graphite mt-1.5 italic">↳ This message will appear in the packet's audit trail for compliance review.</p>
       </div>
 
       <div className="flex flex-wrap items-center gap-2">
