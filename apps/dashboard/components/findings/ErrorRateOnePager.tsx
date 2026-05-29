@@ -11,6 +11,7 @@
 import Link from "next/link";
 import type { ErrorRateTruthPoint, ErrorRateMetricView } from "../../lib/analytics/error-rate-snapshot";
 import { CA_QC_GROUNDING } from "../../lib/analytics/ca-qc-grounding";
+import { CA_CAPER_GROUNDING } from "../../lib/analytics/ca-caper-grounding";
 
 function pct(x: number | null | undefined): string {
   return x == null ? "—" : `${x.toFixed(2)}%`;
@@ -121,6 +122,96 @@ export default function ErrorRateOnePager({ truthPoint }: { truthPoint: ErrorRat
             className="text-pine underline-offset-2 hover:underline"
           >
             how we counted
+          </Link>
+        </p>
+      </section>
+
+      {/* ── A caution from the witness lens (Guarino) ──────────────────── */}
+      <section className="rounded-lg border border-graphite/15 bg-surface-secondary p-4">
+        <h2 className="text-sm font-semibold text-ink">A caution worth taking seriously</h2>
+        <p className="mt-1.5 text-sm leading-relaxed text-graphite">
+          The rate is a partial scoreboard, and chasing it the wrong way
+          backfires. Dave Guarino — who built GetCalFresh, the tool that
+          processed millions of CalFresh applications — points out that the rate
+          only counts overpayments in cases that actually got processed, and that
+          the usual way agencies push it down (demanding more documentation)
+          quietly pushes eligible people back out.
+        </p>
+        <blockquote className="mt-3 border-l-2 border-graphite/30 pl-3 text-sm italic leading-relaxed text-graphite">
+          &ldquo;When does asking for more documentation actually lead to eligible
+          people not getting benefits due to that extra burden?&rdquo;
+          <span className="mt-1 block text-xs not-italic text-graphite">
+            — Dave Guarino,{" "}
+            <a
+              href="https://daveguarino.substack.com/p/government-stuff-1"
+              className="text-pine underline-offset-2 hover:underline"
+              target="_blank"
+              rel="noreferrer noopener"
+            >
+              Plausible Legibility
+            </a>
+          </span>
+        </blockquote>
+        <p className="mt-3 text-sm leading-relaxed text-graphite">
+          That is the line Civica sits on the right side of: it lowers the rate by
+          making the application{" "}
+          <span className="text-ink">correct before it is submitted</span>, not by
+          adding hoops. The error falls because the case is right — not because
+          the applicant cleared one more burden.
+        </p>
+        <p className="mt-2 text-xs text-graphite">
+          Practitioner perspective — not federal data ·{" "}
+          <Link
+            href="/findings/2026-05-29-guarino-error-rate-metric"
+            className="text-pine underline-offset-2 hover:underline"
+          >
+            how we read this
+          </Link>
+        </p>
+      </section>
+
+      {/* ── The other side of error: CAPER (denial-side, federal) ──────── */}
+      <section>
+        <h2 className="mb-3 text-xs font-semibold uppercase tracking-wider text-graphite">
+          The other side of the rate: improper denials (USDA CAPER FY{CA_CAPER_GROUNDING.fiscalYear})
+        </h2>
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+          <Metric
+            label="California"
+            value={`${CA_CAPER_GROUNDING.caRatePct.toFixed(2)}%`}
+            sub="of denial/cut-off actions had an error"
+            highlight
+          />
+          <Metric
+            label="United States"
+            value={`${CA_CAPER_GROUNDING.usRatePct.toFixed(2)}%`}
+            sub="national"
+          />
+          <Metric
+            label="Massachusetts"
+            value={`${CA_CAPER_GROUNDING.maRatePct.toFixed(2)}%`}
+            sub="lowest-burden peer"
+          />
+        </div>
+        <Means>
+          The payment rate only watches money that went <em>out</em>. The federal
+          Case and Procedural Error Rate watches the other door — denials,
+          terminations, and cut-offs. In FY{CA_CAPER_GROUNDING.fiscalYear},{" "}
+          <span className="text-ink">roughly 2 in 5</span> of California&rsquo;s
+          negative actions carried a case or procedural error. That is the witness
+          point made in federal data: error lives on <em>both</em> doors of the
+          application, and both are operational — process and paperwork, not policy
+          or fraud. (A flagged action is not proof the household was eligible —
+          many are procedural — but it is the agency&rsquo;s error to own, and the
+          kind a tool prevents.)
+        </Means>
+        <p className="mt-2 text-xs text-graphite">
+          USDA CAPER FY{CA_CAPER_GROUNDING.fiscalYear} (dated {CA_CAPER_GROUNDING.dated}) ·{" "}
+          <Link
+            href={`/findings/${CA_CAPER_GROUNDING.findingId}`}
+            className="text-pine underline-offset-2 hover:underline"
+          >
+            how we read this
           </Link>
         </p>
       </section>
