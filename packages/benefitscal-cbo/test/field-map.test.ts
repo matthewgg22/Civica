@@ -18,7 +18,7 @@ import {
   APPLICATION_FORM_PAGES,
   CONFIRMATION_PAGE,
   type FieldFillKind,
-} from "../src/field-map";
+} from "../src/core/field-map";
 
 const VALID_KINDS: ReadonlySet<FieldFillKind> = new Set<FieldFillKind>([
   "text",

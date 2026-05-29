@@ -4,7 +4,7 @@
  * Why Browserless v1
  * ------------------
  * Cloudflare Workers cannot run Playwright/Chromium in-process. The
- * submitter framework (`packages/benefitscal-cbo/src/submitter.ts`) takes a
+ * submitter framework (`packages/benefitscal-cbo/src/driver/submitter.ts`) takes a
  * `BrowserDriverFactory` so production can delegate the actual browser
  * automation to an external service. For the pilot (≤100 submissions/month)
  * we use Browserless's hosted /function endpoint:
@@ -43,8 +43,9 @@
 import type {
   BrowserDriver,
   BrowserDriverFactory,
+  BrowserDriverLocator,
   BrowserDriverPage,
-} from "../submitter";
+} from "./submitter";
 
 export interface BrowserlessDriverOptions {
   /** Browserless.io API key (token). Set via `wrangler secret put BROWSERLESS_API_KEY`. */
@@ -204,6 +205,60 @@ function makeBrowserlessPage(
         // Screenshot is best-effort per the BrowserDriverPage contract.
         return null;
       }
+    },
+    getByLabel(label) {
+      // Each locator op is one POST. We re-resolve the locator on every
+      // call (cheap on the Browserless side, keeps the host driver
+      // stateless) instead of caching a remote handle.
+      const expr = `page.getByLabel(${JSON.stringify(label)})`;
+      return makeBrowserlessLocator(opts, session, expr);
+    },
+    getByRole(role, options) {
+      const expr = `page.getByRole(${JSON.stringify(role)}, ${JSON.stringify(options)})`;
+      return makeBrowserlessLocator(opts, session, expr);
+    },
+  };
+}
+
+function makeBrowserlessLocator(
+  opts: BrowserlessDriverOptions,
+  session: { browserWSEndpoint?: string },
+  locatorExpr: string,
+): BrowserDriverLocator {
+  return {
+    async fill(value) {
+      await runScript(
+        opts,
+        session,
+        `await ${locatorExpr}.fill(${JSON.stringify(value)});
+       return { ok: true };`,
+      );
+    },
+    async click() {
+      await runScript(
+        opts,
+        session,
+        `await ${locatorExpr}.click();
+       return { ok: true };`,
+      );
+    },
+    async isVisible() {
+      const value = await runScript<boolean>(
+        opts,
+        session,
+        `const v = await ${locatorExpr}.isVisible();
+       return { ok: true, value: v };`,
+      );
+      return value === true;
+    },
+    async textContent() {
+      const value = await runScript<string | null>(
+        opts,
+        session,
+        `const v = await ${locatorExpr}.textContent();
+       return { ok: true, value: v };`,
+      );
+      return value ?? null;
     },
   };
 }

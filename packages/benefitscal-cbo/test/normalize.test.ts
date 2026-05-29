@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
-import { normalizeForPortal } from "../src/normalize";
-import { BenefitsCalPayloadSchema } from "../src/schemas";
-import type { NormalizeInput } from "../src/normalize";
+import { normalizeForPortal } from "../src/core/normalize";
+import { BenefitsCalPayloadSchema } from "../src/core/schemas";
+import type { NormalizeInput } from "../src/core/normalize";
 
 // ---------------------------------------------------------------------------
 // Shared fixture helpers

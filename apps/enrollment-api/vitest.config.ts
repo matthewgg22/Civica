@@ -12,7 +12,7 @@ export default defineConfig({
       '@civica/recert-engine':         resolve(__dirname, '../../packages/recert-engine/src/index.ts'),
       // Subpath alias MUST come before the root '@civica/benefitscal-cbo' entry —
       // Vite uses prefix matching and the longer key has to be registered first.
-      '@civica/benefitscal-cbo/drivers/browserless': resolve(__dirname, '../../packages/benefitscal-cbo/src/drivers/browserless.ts'),
+      '@civica/benefitscal-cbo/drivers/browserless': resolve(__dirname, '../../packages/benefitscal-cbo/src/driver/browserless.ts'),
       '@civica/benefitscal-cbo': resolve(__dirname, '../../packages/benefitscal-cbo/src/index.ts'),
       '@civica/snap-rules':      resolve(__dirname, '../../packages/snap-rules/src/index.ts'),
       '@civica/snap-qc-engine':  resolve(__dirname, '../../packages/snap-qc-engine/src/index.ts'),
