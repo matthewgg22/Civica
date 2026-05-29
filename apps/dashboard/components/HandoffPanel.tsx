@@ -179,7 +179,7 @@ export default function HandoffPanel({ packetId, packetStatus, blockerCount }: P
         </div>
 
         {!canExport && disabledReason && (
-          <p className="text-[12px] text-amber">{disabledReason}</p>
+          <p className="text-[12px] text-warning">{disabledReason}</p>
         )}
         {error && <p className="text-[13px] text-error">{error}</p>}
       </div>

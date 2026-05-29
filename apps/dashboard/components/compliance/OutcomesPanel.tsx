@@ -28,7 +28,7 @@ const SOURCE_META: Record<OutcomeSourceKind, { label: string; color: string; bg:
   live:     { label: "live cohort",         color: "#2A6F66", bg: "rgba(42,111,102,0.10)" },
   modeled:  { label: "modeled · pre-pilot", color: "#5C1F11", bg: "rgba(92,31,17,0.08)"   },
   baseline: { label: "system baseline",     color: "#5A544D", bg: "rgba(90,84,77,0.10)"   },
-  foia:     { label: "measurement pending", color: "#B5511E", bg: "rgba(181,81,30,0.10)"  },
+  foia:     { label: "measurement pending", color: "var(--color-warning)", bg: "rgba(181,81,30,0.10)"  },
 };
 
 // Flagship metrics shown in the hero scoreboard (by step index)
@@ -369,7 +369,7 @@ function FoiaSection({ outcomes }: { outcomes: FoiaPendingOutcome[] }) {
     <div className="mt-8 pt-6 border-t-2 border-hairline">
       <div className="mb-4 flex items-baseline justify-between gap-4 flex-wrap">
         <div>
-          <p className="text-[10px] uppercase tracking-[0.13em] font-semibold text-[#B5511E] mb-1">
+          <p className="text-[10px] uppercase tracking-[0.13em] font-semibold text-warning mb-1">
             Measurement pending · {outcomes.length} FOIA returns
           </p>
           <h4 className="text-[16px] font-semibold tracking-tight text-ink leading-tight">
@@ -385,14 +385,14 @@ function FoiaSection({ outcomes }: { outcomes: FoiaPendingOutcome[] }) {
             className="rounded-[4px] border border-hairline bg-paper p-4 flex flex-col"
           >
             <div className="flex items-start justify-between gap-2 mb-3">
-              <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-[rgba(181,81,30,0.08)] border border-[rgba(181,81,30,0.30)] font-mono text-[10px] font-semibold text-[#B5511E] tabular-nums shrink-0">
+              <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-[rgba(181,81,30,0.08)] border border-[rgba(181,81,30,0.30)] font-mono text-[10px] font-semibold text-warning tabular-nums shrink-0">
                 {o.step.toString().padStart(2, "0")}
               </span>
               <span
                 className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold whitespace-nowrap"
-                style={{ color: "#B5511E", background: "rgba(181,81,30,0.10)" }}
+                style={{ color: "var(--color-warning)", background: "rgba(181,81,30,0.10)" }}
               >
-                <span className="w-1 h-1 rounded-full" style={{ background: "#B5511E" }} />
+                <span className="w-1 h-1 rounded-full" style={{ background: "var(--color-warning)" }} />
                 FOIA pending
               </span>
             </div>

@@ -875,7 +875,7 @@ export default async function PacketDetailPage({
               <span
                 className="text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-sm"
                 style={{
-                  color: riskRow.tier === "high" ? "#9C3A24" : riskRow.tier === "medium" ? "#9A5A14" : "#2A6F66",
+                  color: riskRow.tier === "high" ? "#9C3A24" : riskRow.tier === "medium" ? "var(--color-amber-dark)" : "#2A6F66",
                   background: riskRow.tier === "high" ? "rgba(156,58,36,0.10)" : riskRow.tier === "medium" ? "rgba(154,90,20,0.10)" : "rgba(42,111,102,0.10)",
                 }}
               >

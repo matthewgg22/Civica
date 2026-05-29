@@ -2,14 +2,14 @@ import type { RiskFlow } from "./types";
 
 const DEF_TONE = {
   strong:       { color: "#2A6F66", label: "Strong",     bg: "rgba(42,111,102,0.10)"  },
-  moderate:     { color: "#9A5A14", label: "Moderate",   bg: "rgba(154,90,20,0.10)"   },
+  moderate:     { color: "var(--color-amber-dark)", label: "Moderate",   bg: "rgba(154,90,20,0.10)"   },
   weak:         { color: "#9C3A24", label: "Weak",       bg: "rgba(156,58,36,0.10)"   },
   "not-scored": { color: "#5A544D", label: "Not scored", bg: "rgba(90,84,77,0.10)"    },
 } as const;
 
 const TIER_TONE = {
   high:       { color: "#9C3A24", label: "High risk"   },
-  medium:     { color: "#9A5A14", label: "Medium risk"  },
+  medium:     { color: "var(--color-amber-dark)", label: "Medium risk"  },
   low:        { color: "#2A6F66", label: "Low risk"     },
   incomplete: { color: "#5A544D", label: "Incomplete"   },
 } as const;

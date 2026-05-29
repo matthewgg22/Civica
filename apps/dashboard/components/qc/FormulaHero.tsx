@@ -297,17 +297,17 @@ export default function FormulaHero({
           <path
             d="M8 1.5 L15 14 L1 14 Z"
             fill="none"
-            stroke="#9A5A14"
+            stroke="var(--color-amber-dark)"
             strokeWidth="1.5"
             strokeLinejoin="round"
           />
           <path
             d="M8 6.5 V 10"
-            stroke="#9A5A14"
+            stroke="var(--color-amber-dark)"
             strokeWidth="1.5"
             strokeLinecap="round"
           />
-          <circle cx="8" cy="12" r="0.8" fill="#9A5A14" />
+          <circle cx="8" cy="12" r="0.8" fill="var(--color-amber-dark)" />
         </svg>
         <p className="text-[12px] text-graphite leading-relaxed">
           <strong className="text-ink font-semibold">

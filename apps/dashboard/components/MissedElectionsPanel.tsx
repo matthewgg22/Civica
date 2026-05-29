@@ -16,13 +16,13 @@ interface Props {
 
 const CONFIDENCE_STYLE: Record<string, string> = {
   high:   "bg-red-50 border-red-200 text-red-700",
-  medium: "bg-amber-50 border-amber-200 text-amber-700",
+  medium: "bg-amber/10 border-amber/30 text-amber-dark",
   low:    "bg-gray-50 border-gray-200 text-gray-500",
 };
 
 const CONFIDENCE_BADGE: Record<string, string> = {
   high:   "bg-red-100 text-red-800",
-  medium: "bg-amber-100 text-amber-800",
+  medium: "bg-amber/20 text-amber-dark",
   low:    "bg-gray-100 text-gray-600",
 };
 

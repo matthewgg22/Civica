@@ -147,7 +147,7 @@ function OutcomeBar({
       <div className="flex h-4 rounded-sm overflow-hidden mb-3">
         <div
           className="flex items-center justify-center"
-          style={{ width: `${approvedPct}%`, background: "#C9922A" }}
+          style={{ width: `${approvedPct}%`, background: "var(--color-amber)" }}
         />
         <div
           className="flex items-center justify-center"
@@ -169,7 +169,7 @@ function OutcomeBar({
 
       {/* Legend row */}
       <div className="flex flex-wrap gap-x-4 gap-y-1">
-        <RateChip color="#C9922A" label="Approved" pct={approvedPct} />
+        <RateChip color="var(--color-amber)" label="Approved" pct={approvedPct} />
         <RateChip color="#9C3A24" label="Denied" pct={deniedPct} />
         {withdrawnPct !== undefined && (
           <RateChip color="#C4B89A" label="Withdrawn" pct={withdrawnPct} />
@@ -195,7 +195,7 @@ function RateChip({ color, label, pct }: { color: string; label: string; pct: nu
 function LiftCallout({ lift, decided }: { lift: number; decided: number }) {
   const isPositive = lift > 0;
   const isNoise = Math.abs(lift) < 2;
-  const color = isNoise ? "#5A544D" : isPositive ? "#C9922A" : "#9C3A24";
+  const color = isNoise ? "#5A544D" : isPositive ? "var(--color-amber)" : "#9C3A24";
   const arrow = isNoise ? "≈" : isPositive ? "▲" : "▼";
 
   return (

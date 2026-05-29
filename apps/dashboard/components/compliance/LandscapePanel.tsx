@@ -353,7 +353,11 @@ export default function LandscapePanel() {
             <div key={s} className="flex items-center gap-1.5">
               <span
                 className="shrink-0 w-3.5 h-3.5 rounded-full flex items-center justify-center text-[8px] font-bold"
-                style={{ background: "#C9922A20", color: "#C9922A", border: "1px solid #C9922A40" }}
+                style={{
+                  background: "color-mix(in srgb, var(--color-amber) 12%, transparent)",
+                  color: "var(--color-amber)",
+                  border: "1px solid color-mix(in srgb, var(--color-amber) 25%, transparent)",
+                }}
               >
                 ✓
               </span>
