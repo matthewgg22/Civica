@@ -85,6 +85,11 @@ export interface Env {
   // MVP uses a single shared secret per environment; multi-tenant tokens
   // come when more than one partner CBO is onboarded.
   EXTENSION_BEARER_TOKEN?: string;
+  // On-demand error-rate snapshot refresh trigger
+  // (POST /internal/error-rate-snapshot/refresh). Bearer secret; when unset the
+  // route returns 503 (trigger dark). Runs the same refresh as the 04:00 cron.
+  // Set via: wrangler secret put ERROR_RATE_REFRESH_SECRET
+  ERROR_RATE_REFRESH_SECRET?: string;
 }
 
 export interface Variables {

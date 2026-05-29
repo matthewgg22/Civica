@@ -29,6 +29,7 @@ import oauthCanvasRouter from "./routes/oauth-canvas.js";
 import featureFlagsRouter from "./routes/feature-flags.js";
 import buddyRouter from "./routes/buddy.js";
 import shelterAllocationRouter from "./routes/shelter-allocation.js";
+import { errorRateRefreshRouter } from "./routes/error-rate-refresh.js";
 import { mountEbt, mountEbtWebhooks } from "./routes/ebt/index.js";
 import { mountOps } from "./routes/ops/index.js";
 import { requestLogger } from "./lib/logger.js";
@@ -163,6 +164,11 @@ app.route("/webhooks/argyle", argyleWebhookRouter);
 // EBT scraper webhook — outside auth middleware (inbound from Fly scraper,
 // HMAC-verified inside the route). Lane B will set EBT_SCRAPER_WEBHOOK_SECRET.
 mountEbtWebhooks(app);
+
+// Internal ops trigger — on-demand error-rate snapshot refresh. Secret-guarded
+// (ERROR_RATE_REFRESH_SECRET), mounted outside the user-auth `api` group. Lets
+// ops or the /insight loop populate the truth point without the 04:00 cron.
+app.route("/internal/error-rate-snapshot/refresh", errorRateRefreshRouter);
 
 app.onError((err, c) => {
   if (err instanceof HTTPException) {
