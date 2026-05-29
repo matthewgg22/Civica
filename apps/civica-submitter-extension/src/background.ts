@@ -6,10 +6,22 @@
 // directly without falling out of CORS — it sends a message here, this
 // worker forwards via fetch, and returns the response.
 //
-// This keeps the bearer token out of the content script's memory
-// (background-only storage read) and centralizes the auth shape.
+// AUTH (#317 part 3): the primary credential is the per-CBO device-flow
+// ACCESS TOKEN (chrome.storage.session, obtained via the popup "Connect with
+// Civica" flow). On a 401 we refresh once and retry. The legacy manually-pasted
+// bearer token remains ONLY as a fallback when no device token is connected, so
+// existing sideload setups keep working until they re-connect.
+//
+// Tokens never reach the content script — this worker reads them from session
+// storage and centralizes the auth shape.
 
 import { readConfig } from "./config";
+import {
+  getAccessToken,
+  forceRefresh,
+  clearTokens,
+  DeviceFlowError,
+} from "./auth/device-flow";
 
 interface FetchPayloadMessage {
   type: "fetchPayload";
@@ -30,6 +42,8 @@ interface MessageResponse<T = unknown> {
   status?: number;
   data?: T;
   error?: string;
+  /** Set when auth is gone and the assister must re-run the popup connect flow. */
+  reconnectNeeded?: boolean;
 }
 
 chrome.runtime.onMessage.addListener(
@@ -49,23 +63,41 @@ chrome.runtime.onMessage.addListener(
 
 async function handle(msg: Message): Promise<MessageResponse> {
   const config = await readConfig();
-  if (!config.bearerToken) {
+
+  // Resolve auth: device access token (preferred) → legacy pasted bearer.
+  let auth: ResolvedAuth;
+  try {
+    auth = await resolveAuth(config.bearerToken);
+  } catch (err) {
+    // A refresh was attempted (token expired) and failed → reconnect needed.
+    if (err instanceof DeviceFlowError) {
+      return { ok: false, reconnectNeeded: true, error: reconnectMessage(err) };
+    }
+    throw err;
+  }
+  if (!auth) {
     return {
       ok: false,
-      error: "No bearer token configured. Open the extension options to set one.",
+      reconnectNeeded: true,
+      error:
+        "Not connected to Civica. Open the extension popup and click “Connect with Civica”.",
     };
   }
 
   switch (msg.type) {
     case "fetchPayload":
-      return fetchPayload(config.baseUrl, config.bearerToken, msg.packetId);
+      return withAuthRetry(auth, (token) =>
+        fetchPayload(config.baseUrl, token, msg.packetId),
+      );
     case "reportConfirm":
-      return reportConfirm(
-        config.baseUrl,
-        config.bearerToken,
-        msg.packetId,
-        msg.benefitscalCaseNumber,
-        msg.benefitscalApplicationId,
+      return withAuthRetry(auth, (token) =>
+        reportConfirm(
+          config.baseUrl,
+          token,
+          msg.packetId,
+          msg.benefitscalCaseNumber,
+          msg.benefitscalApplicationId,
+        ),
       );
     default: {
       const exhaustive: never = msg;
@@ -75,6 +107,61 @@ async function handle(msg: Message): Promise<MessageResponse> {
       };
     }
   }
+}
+
+/** How a request is being authorized this turn. */
+type ResolvedAuth =
+  | { kind: "device"; token: string }
+  | { kind: "legacy"; token: string }
+  | null;
+
+/**
+ * Device token takes precedence; getAccessToken() transparently refreshes an
+ * expired access token (and may throw DeviceFlowError if that refresh fails).
+ * Falls back to the legacy pasted bearer only when NOT connected via the device
+ * flow — so existing sideload installs keep working until they re-connect.
+ */
+async function resolveAuth(legacyBearer: string): Promise<ResolvedAuth> {
+  const deviceToken = await getAccessToken();
+  if (deviceToken) return { kind: "device", token: deviceToken };
+  if (legacyBearer) return { kind: "legacy", token: legacyBearer };
+  return null;
+}
+
+/**
+ * Runs a forwarder; on a 401 with a DEVICE token, refreshes once and retries.
+ * A 401 on the legacy bearer is returned as-is (nothing to refresh). If the
+ * forced refresh itself fails, clears tokens and signals reconnectNeeded.
+ */
+async function withAuthRetry(
+  auth: NonNullable<ResolvedAuth>,
+  run: (token: string) => Promise<MessageResponse>,
+): Promise<MessageResponse> {
+  const first = await run(auth.token);
+  if (first.status !== 401 || auth.kind !== "device") return first;
+
+  // Device token rejected — try exactly one forced refresh + retry.
+  let refreshed: string | null;
+  try {
+    refreshed = await forceRefresh();
+  } catch (err) {
+    await clearTokens();
+    return {
+      ok: false,
+      reconnectNeeded: true,
+      error: err instanceof DeviceFlowError ? reconnectMessage(err) : "Reconnect with Civica.",
+    };
+  }
+  if (!refreshed) {
+    return { ok: false, reconnectNeeded: true, error: "Reconnect with Civica." };
+  }
+  return run(refreshed);
+}
+
+function reconnectMessage(err: DeviceFlowError): string {
+  return err.code === "network"
+    ? "Network error reaching Civica. Check your connection and try again."
+    : "Your Civica session expired. Open the popup and reconnect.";
 }
 
 async function fetchPayload(

@@ -7,6 +7,10 @@
     "service_worker": "background.js",
     "type": "module"
   },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Civica Submitter"
+  },
   "content_scripts": [
     {
       "matches": ["https://benefitscal.com/*", "https://*.benefitscal.com/*"],
