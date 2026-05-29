@@ -49,7 +49,7 @@ export default function LTVPanel({ data }: { data: LTVData }) {
             Annualized from current 30d run-rate · decomposed by revenue line · projected ceiling shows roadmap potential
           </p>
         </div>
-        <span className="text-[10px] font-mono text-muted uppercase tracking-wider whitespace-nowrap">
+        <span className="text-[10px] font-mono text-graphite uppercase tracking-wider whitespace-nowrap">
           Annualized · ×12 from 30d revenue
         </span>
       </div>
@@ -57,7 +57,7 @@ export default function LTVPanel({ data }: { data: LTVData }) {
       <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)] gap-8 pt-5 border-t border-hairline">
         {/* Left: big headline number */}
         <div className="flex flex-col justify-center">
-          <p className="text-[10px] font-semibold uppercase tracking-wider text-muted mb-2">
+          <p className="text-[10px] font-semibold uppercase tracking-wider text-graphite mb-2">
             Current LTV · per active tracker · per year
           </p>
           <div className="flex items-baseline gap-2">
@@ -88,7 +88,7 @@ export default function LTVPanel({ data }: { data: LTVData }) {
           </p>
 
           <div className="mt-5 pt-4 border-t border-hairline">
-            <p className="text-[10px] font-semibold uppercase tracking-wider text-muted mb-1">
+            <p className="text-[10px] font-semibold uppercase tracking-wider text-graphite mb-1">
               Projected post-roadmap ceiling
             </p>
             <p className="text-[24px] font-bold tabular-nums text-ink leading-none">
@@ -103,7 +103,7 @@ export default function LTVPanel({ data }: { data: LTVData }) {
         {/* Right: decomposition bar chart */}
         <div>
           <div className="flex items-baseline justify-between mb-3">
-            <p className="text-[10px] font-semibold uppercase tracking-wider text-muted">
+            <p className="text-[10px] font-semibold uppercase tracking-wider text-graphite">
               Revenue decomposition · $ / tracker / yr
             </p>
             <p className="text-[11px] font-mono text-graphite tabular-nums">
@@ -124,7 +124,7 @@ export default function LTVPanel({ data }: { data: LTVData }) {
             ))}
 
             <div className="pt-2 mt-2 border-t border-dashed border-hairline">
-              <p className="text-[10px] font-semibold uppercase tracking-wider text-muted/80 mb-2">
+              <p className="text-[10px] font-semibold uppercase tracking-wider text-graphite/80 mb-2">
                 Projected · roadmap monetization
               </p>
               {data.projected_lines.map((line) => (

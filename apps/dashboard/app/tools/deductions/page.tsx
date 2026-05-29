@@ -95,7 +95,7 @@ function DeductionsInner() {
           {/* Input panel */}
           <div className="bg-surface border border-hairline rounded-[4px] p-5 space-y-4">
             <div>
-              <p className="text-[11px] uppercase tracking-wider font-semibold text-muted mb-3">Household</p>
+              <p className="text-[11px] uppercase tracking-wider font-semibold text-graphite mb-3">Household</p>
               <Field label="State">
                 <select value={stateCode} onChange={(e) => setStateCode(e.target.value as StateCode)} className={input}>
                   <option value="CA">California</option>
@@ -109,7 +109,7 @@ function DeductionsInner() {
             </div>
 
             <div>
-              <p className="text-[11px] uppercase tracking-wider font-semibold text-muted mb-3">Income (monthly)</p>
+              <p className="text-[11px] uppercase tracking-wider font-semibold text-graphite mb-3">Income (monthly)</p>
               <Field label="Gross earned income">
                 <input type="number" value={earnedIncome} className={input}
                   onChange={(e) => setEarnedIncome(Number(e.target.value) || 0)} />
@@ -121,7 +121,7 @@ function DeductionsInner() {
             </div>
 
             <div>
-              <p className="text-[11px] uppercase tracking-wider font-semibold text-muted mb-3">Shelter (monthly)</p>
+              <p className="text-[11px] uppercase tracking-wider font-semibold text-graphite mb-3">Shelter (monthly)</p>
               <Field label="Monthly rent / housing cost">
                 <input type="number" value={monthlyRent} className={input}
                   onChange={(e) => setMonthlyRent(Number(e.target.value) || 0)} />
@@ -137,7 +137,7 @@ function DeductionsInner() {
             </div>
 
             <div>
-              <p className="text-[11px] uppercase tracking-wider font-semibold text-muted mb-3">Other deductions</p>
+              <p className="text-[11px] uppercase tracking-wider font-semibold text-graphite mb-3">Other deductions</p>
               <Field label="Monthly dependent care">
                 <input type="number" value={depCare} className={input}
                   onChange={(e) => setDepCare(Number(e.target.value) || 0)} />
@@ -237,7 +237,7 @@ function DeductionsInner() {
                   )}
                 </tbody>
               </table>
-              <p className="text-[11px] text-muted mt-4 leading-relaxed">
+              <p className="text-[11px] text-graphite mt-4 leading-relaxed">
                 <strong>Citations:</strong> 7 CFR 273.10(e)(1) earned income deduction ·
                 7 CFR 273.10(d)(4) dependent care · 7 CFR 273.10(d)(6) shelter deduction ·
                 7 CFR 273.10(e)(4) benefit calculation
@@ -283,7 +283,7 @@ function WRow({ label, value, indent, bold }: { label: string; value: number; in
 function WSection({ label }: { label: string }) {
   return (
     <tr>
-      <td colSpan={2} className="pt-3 pb-1 text-[11px] uppercase tracking-wider font-semibold text-muted">{label}</td>
+      <td colSpan={2} className="pt-3 pb-1 text-[11px] uppercase tracking-wider font-semibold text-graphite">{label}</td>
     </tr>
   );
 }

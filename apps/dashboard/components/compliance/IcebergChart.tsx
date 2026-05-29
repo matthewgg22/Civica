@@ -73,7 +73,7 @@ export function IcebergChart({ populations }: { populations: Pop[] }) {
             The waterline is the enrollment surface. The submerged mass is eligible households that qualify but never apply.
           </p>
         </div>
-        <p className="text-[11px] font-mono text-muted tracking-wide shrink-0 mt-0.5">
+        <p className="text-[11px] font-mono text-graphite tracking-wide shrink-0 mt-0.5">
           n = {totalEligible.toFixed(1)}M eligible · national
         </p>
       </div>
@@ -175,7 +175,7 @@ export function IcebergChart({ populations }: { populations: Pop[] }) {
         </g>
       </svg>
 
-      <p className="text-[11px] text-muted mt-2.5 leading-relaxed">
+      <p className="text-[11px] text-graphite mt-2.5 leading-relaxed">
         Vertical scale is illustrative. Numbers are accurate: {totalEnrolled.toFixed(1)}M enrolled vs {totalEligible.toFixed(1)}M eligible nationally. Populations overlap; sum is illustrative.
       </p>
     </div>

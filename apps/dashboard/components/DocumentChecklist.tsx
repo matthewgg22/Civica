@@ -208,7 +208,7 @@ export default function DocumentChecklist({ packetId, applicantId, stateCode, it
       {cleared.length > 0 && (
         <div>
           {pending.length > 0 && (
-            <p className="text-[11px] uppercase tracking-wider font-semibold text-muted mb-2 mt-5">
+            <p className="text-[11px] uppercase tracking-wider font-semibold text-graphite mb-2 mt-5">
               Cleared ({cleared.length})
             </p>
           )}

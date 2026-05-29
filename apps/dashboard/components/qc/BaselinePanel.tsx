@@ -49,7 +49,7 @@ export default function BaselinePanel({
         </div>
         <div className="text-right shrink-0">
           <SampleChip n={sampleN} sufficient={sufficient} />
-          <p className="text-[10px] text-muted font-mono tracking-wide mt-1">source: qc_outcomes · 90d</p>
+          <p className="text-[10px] text-graphite font-mono tracking-wide mt-1">source: qc_outcomes · 90d</p>
         </div>
       </div>
 
@@ -104,7 +104,7 @@ function MeasuredPerSummary({
 
   return (
     <div className="mb-5 pb-5 border-b border-hairline">
-      <p className="eyebrow text-[11px] uppercase tracking-wider text-muted mb-1">
+      <p className="eyebrow text-[11px] uppercase tracking-wider text-graphite mb-1">
         Measured PER
       </p>
       <p className="text-[24px] font-semibold leading-none text-ink tabular-nums">
@@ -158,7 +158,7 @@ function DumbbellChart({ rows }: { rows: ComparisonRow[] }) {
       <div className="grid gap-4 mb-3" style={{ gridTemplateColumns: "220px 64px 1fr 80px" }}>
         <span />
         <span />
-        <div className="relative h-5 font-mono text-[10px] text-muted tracking-wide">
+        <div className="relative h-5 font-mono text-[10px] text-graphite tracking-wide">
           {ticks.map((t) => (
             <span
               key={t}
@@ -201,7 +201,7 @@ function DumbbellChart({ rows }: { rows: ComparisonRow[] }) {
             {/* Label */}
             <div>
               <p className="text-[13px] font-medium text-ink">{row.label}</p>
-              <p className="text-[10px] text-muted font-mono tracking-wide">w {row.weight}%</p>
+              <p className="text-[10px] text-graphite font-mono tracking-wide">w {row.weight}%</p>
             </div>
 
             {/* Numbers */}

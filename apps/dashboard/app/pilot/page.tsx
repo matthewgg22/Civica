@@ -78,7 +78,7 @@ export default async function PilotPage({
         <section className="bg-surface border border-hairline rounded-[4px] px-6 py-4">
           <form method="get" className="flex flex-wrap items-end gap-4">
             <label className="flex flex-col gap-1">
-              <span className="text-[11px] uppercase tracking-wider font-semibold text-muted">
+              <span className="text-[11px] uppercase tracking-wider font-semibold text-graphite">
                 Since
               </span>
               <input
@@ -89,7 +89,7 @@ export default async function PilotPage({
               />
             </label>
             <label className="flex flex-col gap-1">
-              <span className="text-[11px] uppercase tracking-wider font-semibold text-muted">
+              <span className="text-[11px] uppercase tracking-wider font-semibold text-graphite">
                 Until
               </span>
               <input
@@ -133,7 +133,7 @@ export default async function PilotPage({
           </div>
           <table className="w-full text-[13px]">
             <thead>
-              <tr className="text-[11px] uppercase tracking-wider text-muted">
+              <tr className="text-[11px] uppercase tracking-wider text-graphite">
                 <th className="text-left font-semibold pb-2">Status</th>
                 <th className="text-right font-semibold pb-2 tabular-nums">Count</th>
                 <th className="text-right font-semibold pb-2 tabular-nums">% of cohort</th>
@@ -177,7 +177,7 @@ export default async function PilotPage({
           </div>
           <table className="w-full text-[13px]">
             <thead>
-              <tr className="text-[11px] uppercase tracking-wider text-muted">
+              <tr className="text-[11px] uppercase tracking-wider text-graphite">
                 <th className="text-left font-semibold pb-2">Transition</th>
                 <th className="text-right font-semibold pb-2 tabular-nums">n</th>
                 <th className="text-right font-semibold pb-2 tabular-nums">Median</th>
@@ -218,7 +218,7 @@ export default async function PilotPage({
           ) : (
             <table className="w-full text-[13px]">
               <thead>
-                <tr className="text-[11px] uppercase tracking-wider text-muted">
+                <tr className="text-[11px] uppercase tracking-wider text-graphite">
                   <th className="text-left font-semibold pb-2">Packet</th>
                   <th className="text-left font-semibold pb-2">Status</th>
                   <th className="text-left font-semibold pb-2">County</th>
@@ -288,7 +288,7 @@ export default async function PilotPage({
         </section>
 
         {/* Method footnote */}
-        <p className="text-[11px] text-muted leading-relaxed">
+        <p className="text-[11px] text-graphite leading-relaxed">
           Cohort = packets whose <span className="font-mono">created_at</span>{" "}
           falls in <span className="font-mono">[{since}, {until})</span>.
           Stage durations use the trigger-populated columns on{" "}
@@ -319,7 +319,7 @@ function Stat({
     tone === "warning" ? "text-warning" : tone === "teal" ? "text-teal" : "text-ink";
   return (
     <div className="border-l-2 border-hairline pl-3">
-      <p className="text-[11px] uppercase tracking-wider font-semibold text-muted">{label}</p>
+      <p className="text-[11px] uppercase tracking-wider font-semibold text-graphite">{label}</p>
       <p className={`text-[24px] font-semibold tabular-nums leading-tight mt-1 ${valueColor}`}>
         {value}
       </p>

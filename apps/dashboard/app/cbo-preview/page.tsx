@@ -191,7 +191,7 @@ export default async function CBOPreviewPage() {
             />
           ))}
         </div>
-        <p className="text-[11px] text-muted mt-3">
+        <p className="text-[11px] text-graphite mt-3">
           Conversion % relative to intake (1,240 applicants).
         </p>
       </section>
@@ -218,7 +218,7 @@ export default async function CBOPreviewPage() {
                 <div className="flex items-baseline gap-2 flex-wrap">
                   <p className="text-[15px] font-semibold text-ink">{p.applicantName}</p>
                   <p className="text-[14px] text-graphite">{p.county}, CA</p>
-                  <span className="text-[11px] text-muted font-mono tabular-nums">{p.shortId}</span>
+                  <span className="text-[11px] text-graphite font-mono tabular-nums">{p.shortId}</span>
                 </div>
                 <div className="flex items-center gap-2 mt-1.5">
                   <StatusPill status={p.status} />
@@ -231,14 +231,14 @@ export default async function CBOPreviewPage() {
               <div className="text-right shrink-0 flex items-center gap-3">
                 <div>
                   <p className="text-[13px] tabular-nums font-medium text-graphite">{p.timeAgo}</p>
-                  <p className="text-[11px] text-muted uppercase tracking-wider mt-0.5">updated</p>
+                  <p className="text-[11px] text-graphite uppercase tracking-wider mt-0.5">updated</p>
                 </div>
                 <span aria-hidden="true" className="text-muted text-[14px]">→</span>
               </div>
             </Link>
           ))}
         </div>
-        <p className="text-[11px] text-muted mt-3">
+        <p className="text-[11px] text-graphite mt-3">
           Sample data — synthetic packets seeded from <code className="font-mono">demo-data.ts</code>. No real applicant information is shown.
         </p>
       </section>
@@ -321,7 +321,7 @@ function FunnelStep({
             : {}
         }
       >
-        <p className="text-[11px] font-semibold uppercase tracking-wider text-muted">
+        <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite">
           {name}
         </p>
         <p className="text-xl font-semibold tabular-nums text-ink mt-1">
@@ -331,7 +331,7 @@ function FunnelStep({
           <p className="text-[11px] text-graphite mt-0.5">{pct}</p>
         )}
         {isFirst && (
-          <p className="text-[11px] text-muted mt-0.5">applicants</p>
+          <p className="text-[11px] text-graphite mt-0.5">applicants</p>
         )}
       </div>
       {!isLast && (

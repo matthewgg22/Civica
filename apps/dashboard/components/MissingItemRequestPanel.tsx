@@ -149,7 +149,7 @@ export default function MissingItemRequestPanel({ packetId, unresolvedItems }: P
             rows={3}
             className="w-full border border-hairline rounded-[3px] px-3 py-2 text-[14px] bg-paper focus:outline-none focus:border-pine focus:bg-white"
           />
-          <p className="text-[11px] text-muted italic">
+          <p className="text-[11px] text-graphite italic">
             Do not use threatening language. Do not imply the applicant will lose benefits.
           </p>
         </div>

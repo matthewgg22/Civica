@@ -50,7 +50,7 @@ function BenefitFormulaCard() {
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-paper border border-hairline rounded-[4px] p-5">
       {/* LEFT — the formula */}
       <div className="md:border-r md:border-hairline md:pr-5">
-        <p className="text-[10px] uppercase tracking-[0.12em] font-semibold text-muted mb-3">
+        <p className="text-[10px] uppercase tracking-[0.12em] font-semibold text-graphite mb-3">
           How the benefit is computed
         </p>
 
@@ -76,7 +76,7 @@ function BenefitFormulaCard() {
               <p>max allotment (by household size)</p>
               <p className="text-graphite">− 30% × net income</p>
             </div>
-            <p className="text-[11px] text-muted italic mt-1.5 pl-3">
+            <p className="text-[11px] text-graphite italic mt-1.5 pl-3">
               floored at $24/mo for 1-2 person households
             </p>
           </div>
@@ -85,7 +85,7 @@ function BenefitFormulaCard() {
 
       {/* RIGHT — worked example */}
       <div>
-        <p className="text-[10px] uppercase tracking-[0.12em] font-semibold text-muted mb-1">
+        <p className="text-[10px] uppercase tracking-[0.12em] font-semibold text-graphite mb-1">
           Example
         </p>
         <p className="text-[12px] text-graphite mb-3 leading-snug">
@@ -154,7 +154,7 @@ function Subsection({
   return (
     <div>
       <div className="mb-3">
-        <p className="text-[10px] uppercase tracking-[0.12em] font-semibold text-muted mb-1">
+        <p className="text-[10px] uppercase tracking-[0.12em] font-semibold text-graphite mb-1">
           {eyebrow}
         </p>
         <h4 className="text-[16px] font-semibold tracking-tight text-ink leading-tight">
@@ -193,7 +193,7 @@ function Subsection({
                 <p className="text-[12px] font-medium text-ink mt-1.5 tabular-nums">
                   {n.figures}
                 </p>
-                <p className="mt-1.5 font-mono text-[10px] tracking-wide text-muted leading-snug">
+                <p className="mt-1.5 font-mono text-[10px] tracking-wide text-graphite leading-snug">
                   {n.authorities.length > 0 && (
                     <>
                       <span className="text-graphite">{n.authorities.join(" · ")}</span>
@@ -454,7 +454,7 @@ function UnderEnrolledSection({
   return (
     <div>
       <div className="mb-4">
-        <p className="text-[10px] uppercase tracking-[0.12em] font-semibold text-muted mb-1">
+        <p className="text-[10px] uppercase tracking-[0.12em] font-semibold text-graphite mb-1">
           Section D · applying the rules
         </p>
         <h4 className="text-[16px] font-semibold tracking-tight text-ink leading-tight">
@@ -491,7 +491,7 @@ function UnderEnrolledSection({
           </p>
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-[10px] uppercase tracking-[0.12em] font-semibold text-muted mb-1">
+          <p className="text-[10px] uppercase tracking-[0.12em] font-semibold text-graphite mb-1">
             Data behind these numbers
           </p>
           <p className="text-[12px] text-graphite leading-snug mb-1.5">
@@ -507,7 +507,7 @@ function UnderEnrolledSection({
             <span className="font-mono text-[11px] text-amber-dark">HUD</span>
             {" "}— feeding the four under-enrolled population cards below.
           </p>
-          <p className="text-[11px] text-muted italic leading-snug">
+          <p className="text-[11px] text-graphite italic leading-snug">
             Two figures (gig-worker 30–40% and IHSS 50–60% eligibility rates) are model-derived
             from wage distributions × BBCE income tests, not direct survey data. Both flagged in
             the relevant population cards.
@@ -527,7 +527,7 @@ function UnderEnrolledSection({
           <p className="text-[10px] text-graphite mt-0.5">US households</p>
         </div>
         <div>
-          <p className="text-[10px] uppercase tracking-[0.12em] font-semibold text-muted">
+          <p className="text-[10px] uppercase tracking-[0.12em] font-semibold text-graphite">
             Share of combined eligible
           </p>
           <p className="text-[32px] font-bold text-ink tabular-nums leading-none mt-1">
@@ -579,7 +579,7 @@ function UnderEnrolledSection({
                   >
                     {gapMillions.toFixed(1)}M
                   </p>
-                  <p className="text-[10px] text-muted uppercase tracking-wider mt-0.5">
+                  <p className="text-[10px] text-graphite uppercase tracking-wider mt-0.5">
                     gap
                   </p>
                 </div>
@@ -658,7 +658,7 @@ function UnderEnrolledSection({
                   )}
                 </dl>
                 <details className="group/src mt-2.5">
-                  <summary className="cursor-pointer list-none text-[10px] text-muted hover:text-graphite transition-colors">
+                  <summary className="cursor-pointer list-none text-[10px] text-graphite hover:text-graphite transition-colors">
                     <span className="group-open/src:hidden">sources + rule anchor →</span>
                     <span className="hidden group-open/src:inline">− collapse</span>
                   </summary>
@@ -733,7 +733,7 @@ export default function RulesFrameworkPanel({
           A YC / mission reader lands here and needs "how big is this thing?" answered
           before they're asked to care about eligibility gates and calc steps. */}
       <div className="bg-paper border border-hairline rounded-[4px] p-5 mb-7">
-        <p className="text-[10px] uppercase tracking-[0.12em] font-semibold text-muted mb-3">
+        <p className="text-[10px] uppercase tracking-[0.12em] font-semibold text-graphite mb-3">
           Program scope · USDA FNS · annual
         </p>
         <div className="grid grid-cols-2 md:grid-cols-5 gap-y-4">
@@ -741,7 +741,7 @@ export default function RulesFrameworkPanel({
             <p className="text-[22px] font-bold tabular-nums leading-none text-ink">
               $100B<span className="text-[12px] font-mono text-muted ml-0.5">+/yr</span>
             </p>
-            <p className="text-[10px] uppercase tracking-[0.10em] mt-1.5 text-muted">
+            <p className="text-[10px] uppercase tracking-[0.10em] mt-1.5 text-graphite">
               Federal SNAP outlay
             </p>
           </div>
@@ -749,7 +749,7 @@ export default function RulesFrameworkPanel({
             <p className="text-[22px] font-bold tabular-nums leading-none text-ink">
               42M
             </p>
-            <p className="text-[10px] uppercase tracking-[0.10em] mt-1.5 text-muted">
+            <p className="text-[10px] uppercase tracking-[0.10em] mt-1.5 text-graphite">
               Americans enrolled
             </p>
           </div>
@@ -757,7 +757,7 @@ export default function RulesFrameworkPanel({
             <p className="text-[22px] font-bold tabular-nums leading-none text-ink">
               22M
             </p>
-            <p className="text-[10px] uppercase tracking-[0.10em] mt-1.5 text-muted">
+            <p className="text-[10px] uppercase tracking-[0.10em] mt-1.5 text-graphite">
               Households
             </p>
           </div>
@@ -765,7 +765,7 @@ export default function RulesFrameworkPanel({
             <p className="text-[22px] font-bold tabular-nums leading-none text-ink">
               53
             </p>
-            <p className="text-[10px] uppercase tracking-[0.10em] mt-1.5 text-muted">
+            <p className="text-[10px] uppercase tracking-[0.10em] mt-1.5 text-graphite">
               State + territory programs
             </p>
           </div>

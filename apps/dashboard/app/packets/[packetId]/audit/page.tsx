@@ -104,7 +104,7 @@ export default async function AuditPage({ params }: { params: Promise<{ packetId
                     <div className="text-ink">
                       {summarize(e)}
                     </div>
-                    <div className="mt-0.5 text-[11px] text-muted">
+                    <div className="mt-0.5 text-[11px] text-graphite">
                       actor: <span className="font-mono">{e.actor_kind}</span>
                       {e.actor_id && <span className="font-mono"> · {shortId(e.actor_id)}</span>}
                       {e.request_id && <span className="font-mono"> · req={shortId(e.request_id)}</span>}

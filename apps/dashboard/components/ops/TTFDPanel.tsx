@@ -30,7 +30,7 @@ export default function TTFDPanel({ data }: { data: TTFDData }) {
       ) : (
         <div className="mt-5 pt-5 border-t border-hairline grid grid-cols-3 gap-6">
           <div className="col-span-1">
-            <p className="text-[10px] font-semibold uppercase tracking-wider text-muted mb-1">Median</p>
+            <p className="text-[10px] font-semibold uppercase tracking-wider text-graphite mb-1">Median</p>
             <p className="text-[40px] font-bold tracking-tight text-ink leading-none tabular-nums">
               {data.median_days !== null ? `${data.median_days.toFixed(1)}` : "—"}
             </p>
@@ -40,7 +40,7 @@ export default function TTFDPanel({ data }: { data: TTFDData }) {
           </div>
 
           <div className="col-span-2">
-            <p className="text-[10px] font-semibold uppercase tracking-wider text-muted mb-2">Top counties (by n)</p>
+            <p className="text-[10px] font-semibold uppercase tracking-wider text-graphite mb-2">Top counties (by n)</p>
             {data.county_trend.length === 0 ? (
               <p className="text-[12px] text-graphite">No county data yet.</p>
             ) : (

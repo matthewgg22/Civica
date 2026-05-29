@@ -237,7 +237,7 @@ export default function LandscapePanel() {
                   </span>
                 )}
               </div>
-              <p className="text-[10px] text-muted/70 italic leading-snug text-right max-w-[260px] shrink-0">
+              <p className="text-[10px] text-graphite/70 italic leading-snug text-right max-w-[260px] shrink-0">
                 {row.scale}
               </p>
             </div>

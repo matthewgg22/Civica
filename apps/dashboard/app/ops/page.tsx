@@ -120,7 +120,7 @@ export default async function OpsPage() {
         </Suspense>
       </div>
 
-      <footer className="border-t border-hairline px-8 py-5 flex justify-between items-center text-[11px] text-muted font-mono tracking-wide mt-8">
+      <footer className="border-t border-hairline px-8 py-5 flex justify-between items-center text-[11px] text-graphite font-mono tracking-wide mt-8">
         <span>Civica · ops dashboard · internal · operator-gated</span>
         <span>see ceo-plans/2026-05-25-ebt-monetization-dashboard.md</span>
       </footer>

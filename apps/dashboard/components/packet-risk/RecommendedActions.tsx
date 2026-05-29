@@ -107,7 +107,7 @@ function ActionRow({ action: a }: { action: RiskAction }) {
       {/* Body */}
       <div className="flex flex-col gap-2">
         <h4 className="text-[16px] font-semibold text-ink" style={{ letterSpacing: -0.2 }}>{a.title}</h4>
-        <div className="flex items-center gap-3 flex-wrap text-[11px] text-muted font-mono tracking-wide">
+        <div className="flex items-center gap-3 flex-wrap text-[11px] text-graphite font-mono tracking-wide">
           <span>{a.flowLabel}</span>
           <span className="w-px h-3 bg-hairline" />
           <span>audit weight {a.weight}%</span>
@@ -129,12 +129,12 @@ function ActionRow({ action: a }: { action: RiskAction }) {
           <span className="text-[28px] font-bold tabular-nums text-pine leading-none" style={{ letterSpacing: -0.6 }}>
             −{a.impact}
           </span>
-          <span className="text-[11px] text-muted font-mono">pts</span>
+          <span className="text-[11px] text-graphite font-mono">pts</span>
         </div>
         <button className="bg-pine text-white text-[13px] font-medium px-3 py-2 rounded-[3px] hover:bg-pine/90 transition-colors whitespace-nowrap w-full text-center">
           {a.cta}
         </button>
-        <span className="text-[10px] text-muted font-mono tracking-wide text-right">{a.ctaSub}</span>
+        <span className="text-[10px] text-graphite font-mono tracking-wide text-right">{a.ctaSub}</span>
       </div>
     </article>
   );

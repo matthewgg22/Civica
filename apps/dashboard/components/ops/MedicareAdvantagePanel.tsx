@@ -122,7 +122,7 @@ function ComplianceBadge({
         <p className="text-[10px] font-mono text-warning mt-1 tabular-nums">
           last audit · {formatDate(lastAuditAt)}
         </p>
-        <p className="text-[10px] font-mono text-muted mt-0.5 tabular-nums">
+        <p className="text-[10px] font-mono text-graphite mt-0.5 tabular-nums">
           {disclosureVersion}
         </p>
       </div>
@@ -148,7 +148,7 @@ function ComplianceBadge({
       <p className="text-[10px] font-mono text-graphite mt-1 tabular-nums">
         last audit · {formatDate(lastAuditAt)}
       </p>
-      <p className="text-[10px] font-mono text-muted mt-0.5 tabular-nums">
+      <p className="text-[10px] font-mono text-graphite mt-0.5 tabular-nums">
         {disclosureVersion}
       </p>
     </div>
@@ -165,7 +165,7 @@ function CohortBlock({
   const pct = activeTrackers > 0 ? (eligibleSeniors / activeTrackers) * 100 : 0;
   return (
     <div>
-      <p className="text-[10px] font-semibold uppercase tracking-wider text-muted mb-2">
+      <p className="text-[10px] font-semibold uppercase tracking-wider text-graphite mb-2">
         Eligible cohort
       </p>
       <p className="text-[28px] font-bold tabular-nums leading-none text-ink">
@@ -225,7 +225,7 @@ function ReferralFunnel({
   const max = Math.max(1, eligibleNonMediCal);
   return (
     <div>
-      <p className="text-[10px] font-semibold uppercase tracking-wider text-muted mb-2">
+      <p className="text-[10px] font-semibold uppercase tracking-wider text-graphite mb-2">
         MA referral funnel · non-Medi-Cal cohort
       </p>
       <div className="space-y-2">
@@ -256,7 +256,7 @@ function ReferralFunnel({
 function Metric({ label, value, sublabel }: { label: string; value: string; sublabel: string }) {
   return (
     <div>
-      <p className="text-[10px] font-semibold uppercase tracking-wider text-muted mb-1">{label}</p>
+      <p className="text-[10px] font-semibold uppercase tracking-wider text-graphite mb-1">{label}</p>
       <p className="text-[20px] font-bold tabular-nums leading-none text-ink">{value}</p>
       <p className="text-[11px] text-graphite mt-1">{sublabel}</p>
     </div>

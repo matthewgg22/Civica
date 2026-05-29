@@ -766,7 +766,7 @@ function LifecycleStage({
         <span className="inline-block w-2 h-2 rounded-full bg-indigo" />
         <div>
           <p className="text-[14px] font-semibold text-indigo">Recertified</p>
-          <p className="text-[11px] text-muted">new cycle started</p>
+          <p className="text-[11px] text-graphite">new cycle started</p>
         </div>
       </div>
     );

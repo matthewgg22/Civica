@@ -123,7 +123,7 @@ export default async function QcOutcomesPage() {
                       <div className="flex items-baseline gap-2">
                         <p className="text-[14px] font-semibold text-ink">{name}</p>
                         <p className="text-[13px] text-graphite">{packet.county ?? "—"}, {packet.state_code}</p>
-                        <span className="text-[11px] text-muted font-mono">{shortId(packet.packet_id)}</span>
+                        <span className="text-[11px] text-graphite font-mono">{shortId(packet.packet_id)}</span>
                       </div>
                       {packet.handed_off_at && (
                         <p className="text-[12px] text-muted mt-0.5">Handed off {formatDateTime(packet.handed_off_at)}</p>
@@ -177,7 +177,7 @@ export default async function QcOutcomesPage() {
                           {ERROR_TYPE_LABELS[outcome.error_type] ?? outcome.error_type}
                         </span>
                       )}
-                      <Link href={`/packets/${outcome.packet_id}`} className="text-[11px] text-muted font-mono hover:text-ink">
+                      <Link href={`/packets/${outcome.packet_id}`} className="text-[11px] text-graphite font-mono hover:text-ink">
                         {shortId(outcome.packet_id)}
                       </Link>
                     </div>

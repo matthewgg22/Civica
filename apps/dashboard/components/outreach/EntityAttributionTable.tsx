@@ -46,14 +46,14 @@ export default function EntityAttributionTable({
         <table className="w-full text-[12px]">
           <thead>
             <tr className="text-left">
-              <th className="font-semibold text-muted uppercase tracking-wider text-[10px] pb-2 pr-3">Entity</th>
-              <th className="font-semibold text-muted uppercase tracking-wider text-[10px] pb-2 px-3">Type</th>
-              <th className="font-semibold text-muted uppercase tracking-wider text-[10px] pb-2 px-3">Focus</th>
-              <th className="font-semibold text-muted uppercase tracking-wider text-[10px] pb-2 px-3 text-right">This month</th>
-              <th className="font-semibold text-muted uppercase tracking-wider text-[10px] pb-2 px-3">Volume</th>
-              <th className="font-semibold text-muted uppercase tracking-wider text-[10px] pb-2 px-3 text-right">Cumulative</th>
-              <th className="font-semibold text-muted uppercase tracking-wider text-[10px] pb-2 px-3">Last activity</th>
-              <th className="font-semibold text-muted uppercase tracking-wider text-[10px] pb-2 pl-3">Status</th>
+              <th className="font-semibold text-graphite uppercase tracking-wider text-[10px] pb-2 pr-3">Entity</th>
+              <th className="font-semibold text-graphite uppercase tracking-wider text-[10px] pb-2 px-3">Type</th>
+              <th className="font-semibold text-graphite uppercase tracking-wider text-[10px] pb-2 px-3">Focus</th>
+              <th className="font-semibold text-graphite uppercase tracking-wider text-[10px] pb-2 px-3 text-right">This month</th>
+              <th className="font-semibold text-graphite uppercase tracking-wider text-[10px] pb-2 px-3">Volume</th>
+              <th className="font-semibold text-graphite uppercase tracking-wider text-[10px] pb-2 px-3 text-right">Cumulative</th>
+              <th className="font-semibold text-graphite uppercase tracking-wider text-[10px] pb-2 px-3">Last activity</th>
+              <th className="font-semibold text-graphite uppercase tracking-wider text-[10px] pb-2 pl-3">Status</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-hairline">

@@ -112,7 +112,7 @@ function WorkRequirementsCard({ wrStatus }: { wrStatus: WrStatusData }) {
       )}
 
       {/* Footer */}
-      <div className="pt-2 border-t border-hairline text-[11px] text-muted space-y-0.5">
+      <div className="pt-2 border-t border-hairline text-[11px] text-graphite space-y-0.5">
         <p>
           Evaluated {formatDate(wrStatus.determined_at)} · via {determinationLabel}
         </p>

@@ -145,7 +145,7 @@ export default function FormulaHero({
         <tbody className="bg-paper/40">
           <tr className="border-b border-hairline">
             <td
-              className="px-3 py-2 text-[10px] uppercase tracking-[0.12em] font-semibold text-muted"
+              className="px-3 py-2 text-[10px] uppercase tracking-[0.12em] font-semibold text-graphite"
               colSpan={4}
             >
               Projected · at full stack engagement
@@ -187,10 +187,10 @@ export default function FormulaHero({
               className="px-3 py-2.5 text-left text-[14px] text-ink"
               colSpan={2}
             >
-              <span className="text-[11px] text-muted mr-2 font-bold">=</span>
+              <span className="text-[11px] text-graphite mr-2 font-bold">=</span>
               PROJECTED PER · at full stack engagement
             </th>
-            <td className="px-3 py-2.5 text-right text-[10px] text-muted font-medium">
+            <td className="px-3 py-2.5 text-right text-[10px] text-graphite font-medium">
               sums to 100%
             </td>
             <td className="px-3 py-2.5 text-right text-[18px] font-bold text-ink">
@@ -210,7 +210,7 @@ export default function FormulaHero({
         <tbody className="bg-paper/40">
           <tr className="border-b border-hairline">
             <td
-              className="px-3 py-2 text-[10px] uppercase tracking-[0.12em] font-semibold text-muted"
+              className="px-3 py-2 text-[10px] uppercase tracking-[0.12em] font-semibold text-graphite"
               colSpan={4}
             >
               Engagement-implied · at observed coverage today
@@ -243,7 +243,7 @@ export default function FormulaHero({
               className="px-3 py-2.5 text-left text-[14px] text-ink"
               colSpan={2}
             >
-              <span className="text-[11px] text-muted mr-2 font-bold">=</span>
+              <span className="text-[11px] text-graphite mr-2 font-bold">=</span>
               ENGAGEMENT-IMPLIED PER · at observed coverage
             </th>
             <td />
@@ -264,7 +264,7 @@ export default function FormulaHero({
               Engagement realization gap
             </th>
             <td
-              className="px-3 pt-5 pb-2 text-right text-[10px] text-muted font-medium"
+              className="px-3 pt-5 pb-2 text-right text-[10px] text-graphite font-medium"
               aria-hidden="true"
             >
               {realizationGap > 0.5
@@ -358,18 +358,18 @@ function FormulaRow({
 
   return (
     <tr className="border-b border-hairline/50">
-      <td className="px-3 py-2 text-[11px] text-muted font-bold w-6 align-top">
+      <td className="px-3 py-2 text-[11px] text-graphite font-bold w-6 align-top">
         {sign}
       </td>
       <td className="px-1 py-2 text-[12px] text-graphite leading-snug">
         <div>{label}</div>
         {sublabel && (
-          <div className="text-[10px] text-muted font-mono tracking-wide mt-0.5">
+          <div className="text-[10px] text-graphite font-mono tracking-wide mt-0.5">
             {sublabel}
           </div>
         )}
       </td>
-      <td className="px-3 py-2 text-right text-[11px] text-muted font-mono tracking-wide whitespace-nowrap">
+      <td className="px-3 py-2 text-right text-[11px] text-graphite font-mono tracking-wide whitespace-nowrap">
         {weight}
       </td>
       <td

@@ -46,7 +46,7 @@ export default function PendingApprovalQueue({ entities }: { entities: OutreachE
               </p>
             </div>
             <div className="text-[11px] text-graphite">
-              <p className="font-mono uppercase tracking-wider text-muted text-[10px]">Submitted</p>
+              <p className="font-mono uppercase tracking-wider text-graphite text-[10px]">Submitted</p>
               <p className="mt-0.5">{formatRelative(e.notes ? extractAppDate(e.notes) : null)}</p>
             </div>
             <div className="text-[11px] text-graphite italic">

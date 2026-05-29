@@ -99,7 +99,7 @@ export function ObbbaCountdownArc() {
             Time remaining to compliance
           </p>
         </div>
-        <div className="flex items-center gap-1.5 text-[10px] text-muted">
+        <div className="flex items-center gap-1.5 text-[10px] text-graphite">
           <span className="font-mono">arc fill = window elapsed</span>
           <span>·</span>
           <span>full arc = urgent</span>

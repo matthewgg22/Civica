@@ -77,7 +77,7 @@ export default function LeadCaptureModal({ open, onClose }: LeadCaptureModalProp
       >
         {/* Header */}
         <div className="px-6 pt-6 pb-4 border-b border-hairline">
-          <p className="text-[11px] text-muted uppercase tracking-wider font-medium">
+          <p className="text-[11px] text-graphite uppercase tracking-wider font-medium">
             §10106 county walkthrough
           </p>
           <h2

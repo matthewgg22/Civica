@@ -38,7 +38,7 @@ export default function RiskScoreHero({
       <div className="flex items-start justify-between gap-6 mb-6">
         <p className="eyebrow">Error risk assessment</p>
         <div className="flex flex-col items-end gap-1.5 shrink-0">
-          <span className="text-[11px] text-muted tabular-nums tracking-wide">
+          <span className="text-[11px] text-graphite tabular-nums tracking-wide">
             Civica · {engineVersion}{evaluatedAt ? ` · ${evaluatedAt}` : ""}
           </span>
         </div>
@@ -167,7 +167,7 @@ function BandLabel({ label, range, color, active }: { label: string; range: stri
   return (
     <div className={`flex flex-col gap-0.5 ${active ? "" : "opacity-60"}`}>
       <span className="text-[12px] font-semibold" style={{ color: active ? color : "#5A544D" }}>{label}</span>
-      <span className="text-[10px] text-muted font-mono tracking-wide">{range}</span>
+      <span className="text-[10px] text-graphite font-mono tracking-wide">{range}</span>
     </div>
   );
 }

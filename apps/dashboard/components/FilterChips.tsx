@@ -28,7 +28,7 @@ export default function FilterChips({
             }`}
           >
             {opt.label}
-            <span className={`tabular-nums text-[11px] ${isActive ? "text-white/70" : "text-muted"}`}>
+            <span className={`tabular-nums text-[11px] ${isActive ? "text-white/70" : "text-graphite"}`}>
               {opt.count}
             </span>
           </Link>

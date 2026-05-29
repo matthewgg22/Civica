@@ -137,7 +137,7 @@ function HeroCard({ p }: { p: ObbbaProvision }) {
 
         {/* Full analysis collapsed */}
         <details className="group">
-          <summary className="cursor-pointer list-none flex items-center gap-1.5 text-[10px] uppercase tracking-[0.12em] font-semibold text-muted hover:text-ink transition-colors">
+          <summary className="cursor-pointer list-none flex items-center gap-1.5 text-[10px] uppercase tracking-[0.12em] font-semibold text-graphite hover:text-ink transition-colors">
             <span className="group-open:hidden">Full analysis · posture · sources</span>
             <span className="hidden group-open:inline">Collapse</span>
             <span className="transition-transform group-open:rotate-180 text-[8px]">▼</span>
@@ -161,7 +161,7 @@ function HeroCard({ p }: { p: ObbbaProvision }) {
               <span className="text-[9px] uppercase tracking-[0.12em] font-semibold text-muted mr-1.5">Civica today</span>
               {p.posture}
             </p>
-            <p className="font-mono text-[10px] tracking-wide text-muted leading-snug pt-1">
+            <p className="font-mono text-[10px] tracking-wide text-graphite leading-snug pt-1">
               {[...p.authorities, p.source, p.effective].filter(Boolean).join(" · ")}
             </p>
           </div>
@@ -199,7 +199,7 @@ function ProvisionRow({ p }: { p: ObbbaProvision }) {
         <p className="text-[9px] uppercase tracking-[0.12em] font-semibold text-muted mt-1.5 mb-0.5">
           California
         </p>
-        <p className="text-[11px] text-muted leading-snug">
+        <p className="text-[11px] text-graphite leading-snug">
           {p.impactKind === "dollar"
             ? p.impactSublabel.replace(/^California\s*·\s*/i, "")
             : p.impactSublabel}
@@ -245,7 +245,7 @@ function ProvisionRow({ p }: { p: ObbbaProvision }) {
 
         {/* Details toggle */}
         <details className="group">
-          <summary className="cursor-pointer list-none flex items-center gap-1.5 text-[10px] uppercase tracking-[0.12em] font-semibold text-muted hover:text-ink transition-colors mt-1">
+          <summary className="cursor-pointer list-none flex items-center gap-1.5 text-[10px] uppercase tracking-[0.12em] font-semibold text-graphite hover:text-ink transition-colors mt-1">
             <span className="group-open:hidden">If wrong · if right · posture</span>
             <span className="hidden group-open:inline">Collapse</span>
             <span className="transition-transform group-open:rotate-180 text-[8px]">▼</span>
@@ -265,7 +265,7 @@ function ProvisionRow({ p }: { p: ObbbaProvision }) {
               <span className="text-[9px] uppercase tracking-[0.12em] font-semibold text-muted mr-1.5">Civica today</span>
               {p.posture}
             </p>
-            <p className="font-mono text-[10px] tracking-wide text-muted leading-snug pt-1">
+            <p className="font-mono text-[10px] tracking-wide text-graphite leading-snug pt-1">
               {[...p.authorities, p.source, p.effective].filter(Boolean).join(" · ")}
             </p>
           </div>
@@ -326,7 +326,7 @@ export default function ObbbaReadinessPanel({
 
       {/* Stakeholder legend */}
       <div className="flex flex-wrap gap-x-4 gap-y-1.5 mb-6 pb-5 border-b border-hairline">
-        <span className="text-[10px] uppercase tracking-[0.12em] font-semibold text-muted self-center mr-1">
+        <span className="text-[10px] uppercase tracking-[0.12em] font-semibold text-graphite self-center mr-1">
           Affected parties
         </span>
         {(Object.keys(STAKEHOLDER_META) as ObbbaStakeholder[]).map((key) => (
@@ -345,10 +345,10 @@ export default function ObbbaReadinessPanel({
 
       {/* Column headers */}
       <div className="grid grid-cols-[200px_1fr] mb-1">
-        <p className="text-[10px] uppercase tracking-[0.12em] font-semibold text-muted pr-5">
+        <p className="text-[10px] uppercase tracking-[0.12em] font-semibold text-graphite pr-5">
           Impact
         </p>
-        <p className="text-[10px] uppercase tracking-[0.12em] font-semibold text-muted pl-5">
+        <p className="text-[10px] uppercase tracking-[0.12em] font-semibold text-graphite pl-5">
           Provision · what the law requires
         </p>
       </div>

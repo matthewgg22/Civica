@@ -65,7 +65,7 @@ export default async function CDSSPage({
       {/* ------------------------------------------------------------------ */}
       <header className="px-6 md:px-8 py-5 border-b border-hairline flex items-start justify-between gap-4 flex-wrap">
         <div>
-          <p className="text-[11px] text-muted uppercase tracking-wider font-medium">
+          <p className="text-[11px] text-graphite uppercase tracking-wider font-medium">
             Civica · CDSS State Deputy
           </p>
           <h1 className="text-2xl font-semibold text-ink mt-1.5 tracking-tight">
@@ -89,7 +89,7 @@ export default async function CDSSPage({
       {/* ------------------------------------------------------------------ */}
       <section className="px-6 md:px-8 py-6" aria-label="Key payment error rate metrics">
         {isDemoMode && (
-          <p className="text-[11px] text-muted mb-4">
+          <p className="text-[11px] text-graphite mb-4">
             Showing CA FY2024 demo data. Pass{" "}
             <code className="font-mono bg-surface border border-hairline rounded px-1 py-0.5">
               ?demo=true
@@ -142,13 +142,13 @@ export default async function CDSSPage({
             >
               <thead>
                 <tr className="border-b border-hairline">
-                  <th className="text-left text-[11px] text-muted uppercase tracking-wider font-semibold pb-2 pr-6 pl-1">
+                  <th className="text-left text-[11px] text-graphite uppercase tracking-wider font-semibold pb-2 pr-6 pl-1">
                     Error category
                   </th>
-                  <th className="text-right text-[11px] text-muted uppercase tracking-wider font-semibold pb-2 pr-6">
+                  <th className="text-right text-[11px] text-graphite uppercase tracking-wider font-semibold pb-2 pr-6">
                     CA baseline
                   </th>
-                  <th className="text-right text-[11px] text-muted uppercase tracking-wider font-semibold pb-2 pr-1">
+                  <th className="text-right text-[11px] text-graphite uppercase tracking-wider font-semibold pb-2 pr-1">
                     Civica cohort
                   </th>
                 </tr>
@@ -178,7 +178,7 @@ export default async function CDSSPage({
             </table>
           </div>
 
-          <p className="text-[11px] text-muted mt-4 leading-relaxed">
+          <p className="text-[11px] text-graphite mt-4 leading-relaxed">
             Source: CA FNS/HHS QC reports (FY2024). Civica cohort figures are
             derived from verified applicant outcomes in enrolled counties.
           </p>
@@ -340,7 +340,7 @@ function CategoryRow({
       </td>
       <td className="py-2.5 pr-1 text-right">
         <span className="tabular-nums font-semibold text-ink">{civicaCohort}%</span>
-        <span className="ml-2 text-[11px] text-muted">
+        <span className="ml-2 text-[11px] text-graphite">
           ↓{reduction} pp
         </span>
       </td>
@@ -391,7 +391,7 @@ function TimelineStep({
         {fy}
       </p>
       <p className="text-[12px] text-graphite mt-0.5 leading-snug">{label}</p>
-      <p className="text-[11px] text-muted mt-0.5">{note}</p>
+      <p className="text-[11px] text-graphite mt-0.5">{note}</p>
     </div>
   );
 }

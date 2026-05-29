@@ -65,7 +65,7 @@ export default function DenialRatePanel({
         </div>
         <div className="text-right shrink-0">
           <SampleChip n={decided} sufficient={sufficient} />
-          <p className="text-[11px] text-muted font-mono tracking-wide mt-1.5">
+          <p className="text-[11px] text-graphite font-mono tracking-wide mt-1.5">
             source: snap_packets.county_outcome
           </p>
         </div>
@@ -136,10 +136,10 @@ function OutcomeBar({
       <div className="flex items-baseline justify-between mb-3">
         <p className="text-[13px] font-semibold text-ink">{label}</p>
         {n !== null && (
-          <p className="text-[11px] text-muted font-mono">n = {n}</p>
+          <p className="text-[11px] text-graphite font-mono">n = {n}</p>
         )}
         {n === null && (
-          <p className="text-[11px] text-muted font-mono">CF 296 · FY2023</p>
+          <p className="text-[11px] text-graphite font-mono">CF 296 · FY2023</p>
         )}
       </div>
 

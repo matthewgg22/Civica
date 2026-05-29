@@ -84,7 +84,7 @@ export default function StatePerTrendRibbon() {
         </p>
       </div>
 
-      <p className="text-[11px] text-muted mt-4 leading-relaxed">
+      <p className="text-[11px] text-graphite mt-4 leading-relaxed">
         Source: USDA FNS official QC payment error rate publications.
         FY2020–FY2021 excluded (FNS suspended measurement during COVID-19).
       </p>
@@ -120,7 +120,7 @@ function TrendColumn({
 
   return (
     <div className="flex flex-col">
-      <p className="text-[11px] font-semibold uppercase tracking-wider text-muted">
+      <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite">
         {label}
       </p>
       <p

@@ -418,7 +418,7 @@ function ConfidencePill({ confidence, needsReview }: { confidence: number; needs
 function ValueRow({ label, value, confirmedStyle }: { label: string; value: string | null; confirmedStyle?: boolean }) {
   return (
     <div className="flex items-baseline gap-2">
-      <span className="text-[10px] uppercase tracking-wider text-muted font-semibold w-16 shrink-0">{label}</span>
+      <span className="text-[10px] uppercase tracking-wider text-graphite font-semibold w-16 shrink-0">{label}</span>
       {value ? (
         <span className={confirmedStyle ? "text-teal font-semibold" : "text-ink"}>{value}</span>
       ) : (

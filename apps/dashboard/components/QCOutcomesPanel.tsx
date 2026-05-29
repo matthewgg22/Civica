@@ -107,9 +107,9 @@ export default function QCOutcomesPanel({ stats }: { stats: QCStats }) {
                 />
               </div>
               <div className="flex justify-between mt-1">
-                <span className="text-[10px] text-muted">0%</span>
+                <span className="text-[10px] text-graphite">0%</span>
                 <span className="text-[10px] text-graphite/60">↑ CA baseline 10.98%</span>
-                <span className="text-[10px] text-muted">100%</span>
+                <span className="text-[10px] text-graphite">100%</span>
               </div>
             </div>
           )}
@@ -117,7 +117,7 @@ export default function QCOutcomesPanel({ stats }: { stats: QCStats }) {
           {/* Error type breakdown */}
           {stats.byErrorType.length > 0 && (
             <div>
-              <p className="text-[11px] uppercase tracking-wider font-semibold text-muted mb-3">Errors by Type</p>
+              <p className="text-[11px] uppercase tracking-wider font-semibold text-graphite mb-3">Errors by Type</p>
               <ul className="space-y-2">
                 {stats.byErrorType.map(([type, count]) => {
                   const label = ERROR_TYPE_LABELS[type] ?? type;
@@ -137,7 +137,7 @@ export default function QCOutcomesPanel({ stats }: { stats: QCStats }) {
           )}
 
           {/* Context note */}
-          <p className="text-[11px] text-muted border-t border-hairline pt-3">
+          <p className="text-[11px] text-graphite border-t border-hairline pt-3">
             USDA CA FY2024 baseline: 10.98% PER · sampled cases only (unsampled ≠ clean) ·
             error rate becomes meaningful above ~30 sampled cases.
           </p>
@@ -150,7 +150,7 @@ export default function QCOutcomesPanel({ stats }: { stats: QCStats }) {
 function StatCard({ label, value, sub, accent }: { label: string; value: string; sub: string; accent: string }) {
   return (
     <div className="bg-paper rounded-[4px] px-4 py-4 border border-hairline">
-      <p className="text-[11px] uppercase tracking-wider font-semibold text-muted mb-2">{label}</p>
+      <p className="text-[11px] uppercase tracking-wider font-semibold text-graphite mb-2">{label}</p>
       <p className={`text-[26px] font-bold tabular-nums leading-none ${accent}`}>{value}</p>
       <p className="text-[11px] text-graphite mt-1.5">{sub}</p>
     </div>

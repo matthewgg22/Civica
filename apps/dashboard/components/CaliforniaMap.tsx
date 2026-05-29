@@ -207,7 +207,7 @@ export default function CaliforniaMap({
 
 function Legend({ max }: { max: number }) {
   if (max === 0) {
-    return <p className="text-[11px] text-muted">No packets yet</p>;
+    return <p className="text-[11px] text-graphite">No packets yet</p>;
   }
   const stops = [
     { color: "#EEEAE0", label: "0" },
@@ -219,13 +219,13 @@ function Legend({ max }: { max: number }) {
   ];
   return (
     <div className="flex items-center gap-2">
-      <span className="text-[10px] text-muted uppercase tracking-wider font-medium">Packets</span>
+      <span className="text-[10px] text-graphite uppercase tracking-wider font-medium">Packets</span>
       <div className="flex">
         {stops.map((s, i) => (
           <div key={i} className="w-5 h-3" style={{ background: s.color }} />
         ))}
       </div>
-      <span className="text-[10px] text-muted tabular-nums">{stops[0].label}–{stops[stops.length - 1].label}</span>
+      <span className="text-[10px] text-graphite tabular-nums">{stops[0].label}–{stops[stops.length - 1].label}</span>
     </div>
   );
 }
@@ -239,13 +239,13 @@ function RiskLegend() {
   ];
   return (
     <div className="flex items-center gap-2">
-      <span className="text-[10px] text-muted uppercase tracking-wider font-medium">Risk</span>
+      <span className="text-[10px] text-graphite uppercase tracking-wider font-medium">Risk</span>
       <div className="flex">
         {stops.map((s, i) => (
           <div key={i} className="w-5 h-3" style={{ background: s.color }} />
         ))}
       </div>
-      <span className="text-[10px] text-muted">{stops[0].label}→{stops[stops.length - 1].label}</span>
+      <span className="text-[10px] text-graphite">{stops[0].label}→{stops[stops.length - 1].label}</span>
     </div>
   );
 }

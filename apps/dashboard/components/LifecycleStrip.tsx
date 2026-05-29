@@ -47,7 +47,7 @@ export default function LifecycleStrip({ status }: { status: string }) {
               {i > 0 && <div className={`h-px flex-1 ${lineColor}`} />}
               <div className="flex flex-col items-center px-2">
                 <div className={`w-3 h-3 rounded-full ${dotColor} ${isCurrent ? "ring-4 ring-offset-0" : ""}`} style={isCurrent ? { boxShadow: `0 0 0 4px ${currentShadow}` } : {}} />
-                <span className={`text-[11px] font-medium uppercase tracking-wider mt-2 whitespace-nowrap ${isCurrent ? "text-ink font-semibold" : isComplete ? "text-teal" : "text-muted"}`}>
+                <span className={`text-[11px] font-medium uppercase tracking-wider mt-2 whitespace-nowrap ${isCurrent ? "text-ink font-semibold" : isComplete ? "text-teal" : "text-graphite"}`}>
                   {SHORT_LABEL[stage]}
                 </span>
               </div>

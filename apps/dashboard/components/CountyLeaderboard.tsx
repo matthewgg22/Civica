@@ -51,19 +51,19 @@ export default function CountyLeaderboard({
         >
           <thead>
             <tr className="border-b border-hairline">
-              <th className="text-left text-[11px] text-muted uppercase tracking-wider font-semibold pb-2 pr-3 pl-1 w-12">
+              <th className="text-left text-[11px] text-graphite uppercase tracking-wider font-semibold pb-2 pr-3 pl-1 w-12">
                 Rank
               </th>
-              <th className="text-left text-[11px] text-muted uppercase tracking-wider font-semibold pb-2 pr-4">
+              <th className="text-left text-[11px] text-graphite uppercase tracking-wider font-semibold pb-2 pr-4">
                 County
               </th>
-              <th className="text-right text-[11px] text-muted uppercase tracking-wider font-semibold pb-2 pr-4">
+              <th className="text-right text-[11px] text-graphite uppercase tracking-wider font-semibold pb-2 pr-4">
                 Caseload share
               </th>
-              <th className="text-right text-[11px] text-muted uppercase tracking-wider font-semibold pb-2 pr-4">
+              <th className="text-right text-[11px] text-graphite uppercase tracking-wider font-semibold pb-2 pr-4">
                 Est. §10105 exposure
               </th>
-              <th className="text-left text-[11px] text-muted uppercase tracking-wider font-semibold pb-2 pr-1 w-32">
+              <th className="text-left text-[11px] text-graphite uppercase tracking-wider font-semibold pb-2 pr-1 w-32">
                 Application volume (8-mo)
               </th>
             </tr>
@@ -76,7 +76,7 @@ export default function CountyLeaderboard({
         </table>
       </div>
 
-      <p className="text-[11px] text-muted mt-4 leading-relaxed">
+      <p className="text-[11px] text-graphite mt-4 leading-relaxed">
         Methodology: §10105 imposes a proportional loss of federal admin
         match on states whose PER ≥ 105% of the national average. County-level
         exposure here = county&apos;s % of CA CalFresh application volume ×
@@ -109,7 +109,7 @@ function LeaderboardRow({
         <span className="font-medium text-ink">{county.displayName}</span>
         {county.notableContext && (
           <span
-            className="ml-1 text-[10px] text-muted"
+            className="ml-1 text-[10px] text-graphite"
             title={county.notableContext}
             aria-label={`Note: ${county.notableContext}`}
           >
@@ -155,7 +155,7 @@ function Sparkline({ values, monthLabels, countyName }: SparklineProps) {
   const meaningful = values.filter((v, i) => !(v === 0 && i === values.length - 1));
   if (meaningful.length < 2) {
     return (
-      <span className="text-[10px] text-muted italic">insufficient data</span>
+      <span className="text-[10px] text-graphite italic">insufficient data</span>
     );
   }
 
