@@ -49,6 +49,19 @@ import {
   type FieldSelector,
 } from "@civica/benefitscal-cbo/core";
 import { resolvePath } from "./payload-path";
+import {
+  markElement,
+  clearAllMarkers,
+  clearCivicaFills,
+  fingerprintOf,
+  type FillFingerprint,
+} from "./fill-markers";
+import { waitFor } from "./readiness";
+import {
+  readPageFillState,
+  writePageFillState,
+  clearPageFillState,
+} from "./config";
 
 interface PayloadFetchResponse {
   ok: boolean;
@@ -57,13 +70,49 @@ interface PayloadFetchResponse {
   error?: string;
 }
 
-interface OverlayState {
+/**
+ * The five explicit states the overlay can be in (V1-6, #315). The assister is
+ * the compliance gate, so the overlay must tell them precisely where things
+ * stand and what to do next — not just emit an ad-hoc count.
+ *   - `loading` — fetching the packet payload.
+ *   - `empty`   — no active packet / first run; tell them to pick one in Civica.
+ *   - `error`   — fetch failed, page structure changed, or the page never
+ *                 hydrated; user-visible and actionable.
+ *   - `partial` — some fields filled, some need a human; show the breakdown.
+ *   - `success` — every known field filled; "review and click Next".
+ */
+export type OverlayStatus = "loading" | "empty" | "error" | "partial" | "success";
+
+/** A control button rendered in the overlay (Re-fill / Clear). */
+interface OverlayAction {
+  id: string;
+  label: string;
+  onClick: () => void | Promise<void>;
+}
+
+export interface OverlayState {
+  status: OverlayStatus;
+  /** Headline shown in bold. */
+  title: string;
+  /** Body copy: the actionable detail. */
   message: string;
-  tone: "info" | "warning" | "success" | "error";
+  /** Optional per-step controls (Re-fill / Clear). */
+  actions?: OverlayAction[];
 }
 
 const OVERLAY_ID = "civica-submitter-overlay";
 const LOG_PREFIX = "[Civica Submitter]";
+
+/** A single field's fill outcome, paired with the element it touched (if any). */
+export interface FieldFillEvent {
+  field: FieldSelector;
+  outcome: FieldOutcome;
+  /** The DOM element resolved/filled, when one was located. */
+  element: Element | null;
+}
+
+/** Callback invoked once per field as `fillPage`/`fillField` processes it. */
+export type FieldFillReporter = (event: FieldFillEvent) => void;
 
 // ---------------------------------------------------------------------------
 // Entry — wired only on benefitscal.com per manifest.
@@ -72,20 +121,30 @@ const LOG_PREFIX = "[Civica Submitter]";
 void main().catch((err: unknown) => {
   console.error(LOG_PREFIX, "fatal", err);
   renderOverlay({
-    message: `Civica Submitter error: ${err instanceof Error ? err.message : String(err)}`,
-    tone: "error",
+    status: "error",
+    title: "Civica Submitter error",
+    message: err instanceof Error ? err.message : String(err),
   });
 });
 
 async function main(): Promise<void> {
-  // 1. Look up the active packet id. If none, surface a quiet banner and
+  // Show `loading` immediately so the assister knows the extension is alive
+  // while we read storage + fetch the payload.
+  renderOverlay({
+    status: "loading",
+    title: "Civica Submitter",
+    message: "Loading the selected packet…",
+  });
+
+  // 1. Look up the active packet id. If none, surface the `empty` state and
   //    bail — the assister hasn't selected a packet from Civica yet.
   const activePacketId = await readActivePacketId();
   if (!activePacketId) {
     renderOverlay({
+      status: "empty",
+      title: "No packet selected",
       message:
         "Civica Submitter is installed but no packet is selected. Open the Civica dashboard, pick a packet, then return here.",
-      tone: "info",
     });
     return;
   }
@@ -97,18 +156,18 @@ async function main(): Promise<void> {
   });
   if (!resp.ok || !resp.data) {
     renderOverlay({
-      message: `Civica Submitter could not load packet ${activePacketId}: ${resp.error ?? "unknown error"}`,
-      tone: "error",
+      status: "error",
+      title: "Could not load packet",
+      message: `Civica could not load packet ${activePacketId.slice(0, 8)}: ${resp.error ?? "unknown error"}. Check the extension options (gateway URL + token), then reload this page.`,
     });
     return;
   }
   const payload = resp.data;
 
-  // 3. Match the current URL.
+  // 3. Match the current URL against a known form page.
   const page = findPageForUrl(window.location.pathname);
   if (page) {
-    const result = fillPage(page, payload);
-    renderOverlay(describeFill(result));
+    await runPageFill(page, payload, activePacketId);
     return;
   }
 
@@ -118,11 +177,111 @@ async function main(): Promise<void> {
     return;
   }
 
-  // 5. Neither a known form page nor the confirmation page — quiet banner.
+  // 5. Neither a known form page nor the confirmation page — quiet info state.
   renderOverlay({
-    message: `Civica Submitter is active. Navigate to a CalFresh application page to autofill packet ${activePacketId.slice(0, 8)}.`,
-    tone: "info",
+    status: "empty",
+    title: "Civica Submitter active",
+    message: `Navigate to a CalFresh application page to autofill packet ${activePacketId.slice(0, 8)}.`,
   });
+}
+
+// ---------------------------------------------------------------------------
+// Page-fill orchestration (V1-6, #315): readiness gate → fill → mark →
+// persist → render state → wire Re-fill / Clear controls.
+// ---------------------------------------------------------------------------
+
+/**
+ * Drive one form page end-to-end. Pure-additive around the existing
+ * `fillPage` core: it adds a hydration wait, per-field markers, fill-state
+ * persistence, the 5-state overlay, and the Re-fill / Clear controls. None of
+ * the fill/transform/option-group logic changed.
+ */
+export async function runPageFill(
+  page: PortalPage,
+  payload: unknown,
+  packetId: string,
+  root: ParentNode = document,
+  opts: { readinessTimeoutMs?: number } = {},
+): Promise<void> {
+  const readinessTimeoutMs = opts.readinessTimeoutMs ?? 5000;
+  // (a) Readiness gate. The portal is a React SPA that can soft-update; filling
+  // before the fields hydrate would no-op every field. Wait (≤5s) for the
+  // page's first fillable field to actually exist in the DOM. Pages with no
+  // auto-fillable fields skip the wait (nothing to wait for).
+  const probe = firstFillableSelector(page);
+  if (probe) {
+    const ready = await waitFor((r) => resolveField(probe, r) !== null, {
+      root,
+      timeoutMs: readinessTimeoutMs,
+    });
+    if (!ready) {
+      renderOverlay({
+        status: "error",
+        title: "Page didn't finish loading",
+        message:
+          "Civica couldn't find this page's fields — it may not have finished loading. Reload the page and try again.",
+        actions: [
+          {
+            id: "refill",
+            label: "Re-fill this page",
+            onClick: () => runPageFill(page, payload, packetId, root, opts),
+          },
+        ],
+      });
+      return;
+    }
+  }
+
+  // (b) Clear any stale markers from a prior fill of this page before re-filling
+  // (e.g. a soft re-render, or the assister hitting "Re-fill"). Keeps the
+  // markers honest — they always reflect the most recent fill.
+  clearAllMarkers(root);
+
+  // (c) Fill, collecting per-field events so we can mark elements + fingerprint
+  // what we wrote (for safe clearing later).
+  const fingerprints: FillFingerprint[] = [];
+  const result = fillPage(page, payload, root, (ev) => {
+    if (!ev.element) return;
+    if (ev.outcome === "filled") {
+      markElement(ev.element, "filled", ev.field.label);
+      fingerprints.push(fingerprintOf(ev.element, ev.field.type));
+    } else if (ev.outcome === "needs-review" || ev.outcome === "not-found") {
+      // A located element we deliberately did NOT write (unmapped eligibility
+      // value) — flag it for the human. `not-found` rarely has an element.
+      markElement(ev.element, "review", ev.field.label);
+    }
+  });
+
+  // (d) Persist this page's fill state so Clear works even after navigating
+  // away and back (a fresh content-script load rebinds these fingerprints).
+  await writePageFillState({
+    packetId,
+    pageCode: page.pageCode,
+    filledAt: Date.now(),
+    fingerprints,
+  });
+
+  // (e) Render the resulting state with Re-fill / Clear controls.
+  renderOverlay(describeFill(result, page, payload, packetId, root));
+}
+
+/**
+ * The first auto-fillable field on a page, used as the readiness probe. We wait
+ * for THIS field's element to exist before filling. Returns null for info-only
+ * pages (nothing to wait for).
+ */
+function firstFillableSelector(page: PortalPage): FieldSelector | null {
+  for (const field of Object.values(page.fields)) {
+    if (!isAutoFillable(field)) continue;
+    // For an option group, probe the first option's element; otherwise the
+    // field itself.
+    if (isOptionGroupField(field) && field.options) {
+      const firstOpt = Object.values(field.options)[0];
+      if (firstOpt) return firstOpt;
+    }
+    return field;
+  }
+  return null;
 }
 
 // ---------------------------------------------------------------------------
@@ -164,6 +323,7 @@ export function fillPage(
   page: PortalPage,
   payload: unknown,
   root: ParentNode = document,
+  onField?: FieldFillReporter,
 ): FillResult {
   let filled = 0;
   let skippedNoValue = 0;
@@ -180,10 +340,12 @@ export function fillPage(
     if (!isAutoFillable(field)) {
       needsReview++;
       console.debug(LOG_PREFIX, `needs review (no source/constant): ${field.label}`);
+      // No DOM element resolved — still report so a UI can note it if desired.
+      onField?.({ field, outcome: "needs-review", element: null });
       continue;
     }
     fillable++;
-    const outcome = fillField(field, payload, root);
+    const outcome = fillField(field, payload, root, onField);
     switch (outcome) {
       case "filled":
         filled++;
@@ -248,16 +410,27 @@ export function fillField(
   field: FieldSelector,
   payload: unknown,
   root: ParentNode = document,
+  onField?: FieldFillReporter,
 ): FieldOutcome {
+  // Track the DOM element this field resolved to (if any) so we can report it
+  // to `onField` for marking. A single `done()` exit reports + returns, keeping
+  // the existing outcome contract byte-for-byte for callers passing no reporter.
+  let resolved: Element | null = null;
+  const done = (outcome: FieldOutcome): FieldOutcome => {
+    onField?.({ field, outcome, element: resolved });
+    return outcome;
+  };
+
   // Buttons are navigation, never data entry — never resolve or click them.
   // (advanceButtons live off `page.fields` entirely, but guard anyway.)
-  if (field.type === "button") return "needs-review";
+  if (field.type === "button") return done("needs-review");
 
   // (3) Radio/checkbox option group — resolve which option to click. Checked
   // BEFORE the constant-direct path so a constant-on-a-group (ABPRI
-  // applying-for-self) routes through the option resolver.
+  // applying-for-self) routes through the option resolver. fillOptionGroup
+  // reports its own element directly through `onField`.
   if (isOptionGroupField(field)) {
-    return fillOptionGroup(field, payload, root);
+    return fillOptionGroup(field, payload, root, onField);
   }
 
   // (2) Constant-direct fill: a fixed value with no option indirection (the
@@ -265,24 +438,25 @@ export function fillField(
   const constant = constantValue(field);
   if (constant !== null) {
     const el = resolveField(field, root);
+    resolved = el;
     if (!el) {
       console.debug(LOG_PREFIX, `not found: ${field.label} (${field.fallbackSelector ?? "label-only"})`);
-      return "not-found";
+      return done("not-found");
     }
     const ok = fillElement(el, field.type, constant);
     if (!ok) {
       console.warn(LOG_PREFIX, `could not fill constant: ${field.label} (type ${field.type})`);
-      return "not-found";
+      return done("not-found");
     }
-    return "filled";
+    return done("filled");
   }
 
-  if (!field.source) return "needs-review";
+  if (!field.source) return done("needs-review");
 
   const value = resolvePath(payload, field.source);
   if (value === null || value === undefined || value === "") {
     console.debug(LOG_PREFIX, `no value at path: ${field.source}`);
-    return "no-value";
+    return done("no-value");
   }
 
   // Apply the field's value transform, if any (V1-3, #313): county NAME →
@@ -295,7 +469,7 @@ export function fillField(
     if (!fn) {
       // An unknown transform name is a selector-map bug; don't guess — flag it.
       console.warn(LOG_PREFIX, `unknown transform "${field.transform}" for ${field.label}`);
-      return "needs-review";
+      return done("needs-review");
     }
     const transformed = fn(fillValue);
     if (transformed === null) {
@@ -303,15 +477,20 @@ export function fillField(
         LOG_PREFIX,
         `transform "${field.transform}" could not map value for ${field.label}`,
       );
-      return "needs-review";
+      // Resolve (but never write) the element so a UI can flag THIS control for
+      // the assister — the value couldn't be mapped (e.g. an out-of-CA county),
+      // so they must fill it by hand.
+      resolved = resolveField(field, root);
+      return done("needs-review");
     }
     fillValue = transformed;
   }
 
   const el = resolveField(field, root);
+  resolved = el;
   if (!el) {
     console.debug(LOG_PREFIX, `not found: ${field.label} (${field.fallbackSelector ?? "label-only"})`);
-    return "not-found";
+    return done("not-found");
   }
 
   const ok = fillElement(el, field.type, fillValue);
@@ -319,9 +498,9 @@ export function fillField(
     // fillElement returns false for a wrong element type or a missing <select>
     // option — surface it like a not-found so the assister double-checks.
     console.warn(LOG_PREFIX, `could not fill: ${field.label} (type ${field.type})`);
-    return "not-found";
+    return done("not-found");
   }
-  return "filled";
+  return done("filled");
 }
 
 /**
@@ -339,7 +518,17 @@ function fillOptionGroup(
   field: FieldSelector,
   payload: unknown,
   root: ParentNode,
+  onField?: FieldFillReporter,
 ): FieldOutcome {
+  // Single reporting exit, mirroring `fillField`. `resolved` is the SPECIFIC
+  // option element we clicked (Yes/No/married/…), so markers/fingerprints pin
+  // to the exact control, while `field` stays the group (for the label).
+  let resolved: Element | null = null;
+  const done = (outcome: FieldOutcome): FieldOutcome => {
+    onField?.({ field, outcome, element: resolved });
+    return outcome;
+  };
+
   // The value `resolveOption` reasons over: for a presence test it's the value
   // at the `presenceOf` path; for an optionMap it's the value at `source`; a
   // pure `constant` group ignores it.
@@ -354,21 +543,22 @@ function fillOptionGroup(
   if (!resolution.ok) {
     if (resolution.reason === "no-value") {
       console.debug(LOG_PREFIX, `no value for option group: ${field.label}`);
-      return "no-value";
+      return done("no-value");
     }
     // needs-review: unmapped/absent eligibility value — click NOTHING.
     console.debug(LOG_PREFIX, `needs review (unmapped option): ${field.label}`);
-    return "needs-review";
+    return done("needs-review");
   }
 
   // Locate the chosen option's specific input and click/check it.
   const el = resolveField(resolution.option, root);
+  resolved = el;
   if (!el) {
     console.debug(
       LOG_PREFIX,
       `option not found: ${field.label} → ${resolution.key} (${resolution.option.fallbackSelector ?? "label-only"})`,
     );
-    return "not-found";
+    return done("not-found");
   }
 
   // The option element is already pinned (we located THIS specific radio/
@@ -385,34 +575,115 @@ function fillOptionGroup(
       LOG_PREFIX,
       `could not fill option: ${field.label} → ${resolution.key} (type ${resolution.option.type})`,
     );
-    return "not-found";
+    return done("not-found");
   }
-  return "filled";
+  return done("filled");
 }
 
-/** Turn a fill tally into an overlay message + tone. */
-function describeFill(r: FillResult): OverlayState {
-  const parts: string[] = [`Filled ${r.filled} of ${r.fillable} auto-fillable fields`];
+/**
+ * Map a fill tally onto one of the five overlay states (V1-6, #315) and attach
+ * the per-step Re-fill / Clear controls.
+ *
+ * State selection:
+ *   - `error`   — every fillable field came back not-found (filled 0). A strong
+ *                 signal the portal's structure changed under us; actionable.
+ *   - `success` — every fillable field was filled and nothing needs a human
+ *                 (no needs-review, no not-found, no no-value).
+ *   - `partial` — anything in between (some filled, some need review / had no
+ *                 data / weren't found), including a human-only page (no
+ *                 auto-fillable fields).
+ *
+ * The `loading` and `empty` states are produced upstream in `main()`, not here.
+ */
+export function describeFill(
+  r: FillResult,
+  page: PortalPage,
+  payload: unknown,
+  packetId: string,
+  root: ParentNode,
+): OverlayState {
+  const refill: OverlayAction = {
+    id: "refill",
+    label: "Re-fill this page",
+    onClick: () => runPageFill(page, payload, packetId, root),
+  };
+  const clear: OverlayAction = {
+    id: "clear",
+    label: "Clear Civica fills on this page",
+    onClick: () => clearPage(packetId, page.pageCode, root),
+  };
+
+  // Page-structure failure: we had fields to fill but located NONE of them.
+  if (r.fillable > 0 && r.filled === 0 && r.notFound === r.fillable) {
+    return {
+      status: "error",
+      title: "Page structure may have changed",
+      message:
+        "Civica recognized this page but couldn't locate any of its fields — the portal layout may have changed. Reload and try again; if it persists, fill this page by hand.",
+      actions: [refill],
+    };
+  }
+
+  const parts: string[] = [];
   if (r.skippedNoValue > 0) parts.push(`${r.skippedNoValue} had no packet data`);
   if (r.notFound > 0) parts.push(`${r.notFound} not found on the page`);
   if (r.needsReview > 0) parts.push(`${r.needsReview} need manual review`);
-  const detail = parts.length > 1 ? ` (${parts.slice(1).join(", ")})` : "";
-  const tone: OverlayState["tone"] =
-    r.notFound > 0
-      ? "warning"
-      : r.skippedNoValue > 0 || r.needsReview > 0
-        ? "warning"
-        : r.filled > 0
-          ? "success"
-          : "info";
+  const breakdown = parts.length > 0 ? ` ${parts.join(", ")}.` : "";
+
+  const allDone =
+    r.fillable > 0 &&
+    r.filled === r.fillable &&
+    r.needsReview === 0 &&
+    r.notFound === 0 &&
+    r.skippedNoValue === 0;
+
+  if (allDone) {
+    return {
+      status: "success",
+      title: `Filled all ${r.filled} field${r.filled === 1 ? "" : "s"}`,
+      message:
+        "Every field Civica can fill on this page is done. Review the form, then click Next/Continue yourself.",
+      actions: [refill, clear],
+    };
+  }
+
+  // Partial — some combination of filled + needs-human.
   const lead =
     r.fillable === 0
-      ? `No auto-fillable fields on this page${r.needsReview > 0 ? ` — ${r.needsReview} need manual review` : ""}.`
-      : `${parts[0]}${detail}.`;
+      ? `No auto-fillable fields here${r.needsReview > 0 ? ` — ${r.needsReview} need your input` : ""}.`
+      : `Filled ${r.filled} of ${r.fillable} fields.${breakdown}`;
   return {
-    message: `${lead} Review the form, then click Next/Continue yourself.`,
-    tone,
+    status: "partial",
+    title: "Review needed",
+    message: `${lead} Check the highlighted fields, then click Next/Continue yourself.`,
+    actions: r.filled > 0 ? [refill, clear] : [refill],
   };
+}
+
+/**
+ * "Clear Civica fills on this page" handler. Reads the persisted fingerprints
+ * for (packet, page), reverts ONLY the fields whose current value still equals
+ * what Civica wrote (human edits preserved), removes the markers, drops the
+ * persisted state, and re-renders the overlay with the tally.
+ */
+export async function clearPage(
+  packetId: string,
+  pageCode: string,
+  root: ParentNode,
+): Promise<void> {
+  const state = await readPageFillState(packetId, pageCode);
+  const fingerprints = state?.fingerprints ?? [];
+  const res = clearCivicaFills(fingerprints, root);
+  await clearPageFillState(packetId, pageCode);
+  const preserved =
+    res.preservedHumanEdits > 0
+      ? ` ${res.preservedHumanEdits} you had edited were left untouched.`
+      : "";
+  renderOverlay({
+    status: "empty",
+    title: "Civica fills cleared",
+    message: `Cleared ${res.cleared} field${res.cleared === 1 ? "" : "s"} Civica wrote.${preserved} Re-open this page or reload to fill again.`,
+  });
 }
 
 // ---------------------------------------------------------------------------
@@ -422,9 +693,10 @@ function describeFill(r: FillResult): OverlayState {
 async function handleConfirmation(packetId: string): Promise<void> {
   if (!CONFIRMATION_PAGE.verified) {
     renderOverlay({
+      status: "partial",
+      title: "Success page detected",
       message:
-        "Civica Submitter detected the success page, but the confirmation-number selector hasn't been verified against the live portal yet. Copy the case number from the page and paste it into Civica's dashboard manually.",
-      tone: "warning",
+        "Civica saw the confirmation page, but the case-number selector isn't verified against the live portal yet. Copy the case number from the page into Civica's dashboard manually.",
     });
     return;
   }
@@ -432,9 +704,10 @@ async function handleConfirmation(packetId: string): Promise<void> {
   const caseNumber = caseEl?.textContent?.trim() ?? null;
   if (!caseNumber) {
     renderOverlay({
+      status: "error",
+      title: "Couldn't read the case number",
       message:
-        "Civica Submitter saw the success page but could not find the confirmation number. Copy it manually into the Civica dashboard.",
-      tone: "warning",
+        "Civica saw the success page but could not find the confirmation number. Copy it into the Civica dashboard manually.",
     });
     return;
   }
@@ -451,13 +724,15 @@ async function handleConfirmation(packetId: string): Promise<void> {
   });
   if (resp.ok) {
     renderOverlay({
-      message: `Submission confirmed. Civica recorded case ${caseNumber}.`,
-      tone: "success",
+      status: "success",
+      title: "Submission confirmed",
+      message: `Civica recorded case ${caseNumber}.`,
     });
   } else {
     renderOverlay({
-      message: `Captured case ${caseNumber} but failed to report it back to Civica: ${resp.error ?? "unknown error"}. Record manually.`,
-      tone: "error",
+      status: "error",
+      title: "Couldn't report the case number",
+      message: `Captured case ${caseNumber} but failed to report it to Civica: ${resp.error ?? "unknown error"}. Record it manually.`,
     });
   }
 }
@@ -493,56 +768,132 @@ async function sendMessage<T = { ok: boolean; data?: unknown; error?: string }>(
 // ---------------------------------------------------------------------------
 // Overlay
 //
-// Small fixed-position banner. Renders into a Shadow DOM so BenefitsCal's
-// own styles can't accidentally collide with ours.
+// Small fixed-position banner. Renders into a Shadow DOM so BenefitsCal's own
+// styles can't collide with ours (and ours can't leak into the portal). Renders
+// one of the five explicit states with a status pill, headline, body, and any
+// per-step controls (Re-fill / Clear). Buttons are `type="button"` and live
+// inside the shadow root, fully isolated from the portal's <form> — they can
+// never submit or advance the application.
 // ---------------------------------------------------------------------------
 
-function renderOverlay(state: OverlayState): void {
+/** Per-status palette + the human-facing status pill text. */
+const STATUS_STYLES: Record<
+  OverlayStatus,
+  { bg: string; fg: string; border: string; pill: string; pillLabel: string }
+> = {
+  loading: { bg: "#f4f1eb", fg: "#1f2722", border: "#cbc6bc", pill: "#6b7280", pillLabel: "Loading" },
+  empty: { bg: "#f4f1eb", fg: "#1f2722", border: "#cbc6bc", pill: "#6b7280", pillLabel: "Idle" },
+  partial: { bg: "#fff4d6", fg: "#5a3b00", border: "#d8b566", pill: "#B5511E", pillLabel: "Review" },
+  success: { bg: "#1f4d3b", fg: "#ffffff", border: "#163a2c", pill: "#bfe3cf", pillLabel: "Filled" },
+  error: { bg: "#fde8e4", fg: "#8b1d11", border: "#d88a78", pill: "#b3261e", pillLabel: "Error" },
+};
+
+export function renderOverlay(state: OverlayState): void {
   const existing = document.getElementById(OVERLAY_ID);
   if (existing) existing.remove();
   const host = document.createElement("div");
   host.id = OVERLAY_ID;
+  // Expose the state on the host for tests / debugging (shadow root is closed
+  // to portal CSS but this attr lets a test assert which state rendered).
+  host.setAttribute("data-civica-state", state.status);
   host.style.position = "fixed";
   host.style.bottom = "16px";
   host.style.right = "16px";
   host.style.zIndex = "2147483647"; // max — sit above any BenefitsCal modal
   const shadow = host.attachShadow({ mode: "open" });
-  const tones: Record<OverlayState["tone"], { bg: string; fg: string; border: string }> = {
-    info: { bg: "#f4f1eb", fg: "#1f2722", border: "#cbc6bc" },
-    success: { bg: "#1f4d3b", fg: "#ffffff", border: "#163a2c" },
-    warning: { bg: "#fff4d6", fg: "#5a3b00", border: "#d8b566" },
-    error: { bg: "#fde8e4", fg: "#8b1d11", border: "#d88a78" },
-  };
-  const tone = tones[state.tone];
-  shadow.innerHTML = `
-    <style>
-      :host { all: initial; }
-      .root {
-        font: 13px/1.4 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-        background: ${tone.bg};
-        color: ${tone.fg};
-        border: 1px solid ${tone.border};
-        border-radius: 4px;
-        padding: 10px 12px;
-        max-width: 360px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.12);
-      }
-      .label {
-        font-size: 11px;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.06em;
-        opacity: 0.7;
-        margin-bottom: 4px;
-      }
-      .body { white-space: pre-wrap; }
-    </style>
-    <div class="root">
-      <div class="label">Civica Submitter</div>
-      <div class="body"></div>
-    </div>
+  const s = STATUS_STYLES[state.status];
+
+  const style = document.createElement("style");
+  style.textContent = `
+    :host { all: initial; }
+    .root {
+      font: 13px/1.4 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: ${s.bg};
+      color: ${s.fg};
+      border: 1px solid ${s.border};
+      border-radius: 6px;
+      padding: 10px 12px;
+      max-width: 360px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+    }
+    .head { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
+    .brand {
+      font-size: 11px; font-weight: 600; text-transform: uppercase;
+      letter-spacing: 0.06em; opacity: 0.7;
+    }
+    .pill {
+      font-size: 10px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.04em; color: #fff; background: ${s.pill};
+      border-radius: 10px; padding: 1px 7px;
+    }
+    .spinner {
+      width: 11px; height: 11px; border-radius: 50%;
+      border: 2px solid currentColor; border-right-color: transparent;
+      display: inline-block; animation: civspin 0.7s linear infinite; opacity: 0.7;
+    }
+    @keyframes civspin { to { transform: rotate(360deg); } }
+    .title { font-weight: 600; margin-bottom: 2px; }
+    .body { white-space: pre-wrap; }
+    .actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+    button {
+      font: 600 12px/1 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      cursor: pointer; padding: 5px 9px; border-radius: 4px;
+      border: 1px solid ${s.border};
+      background: rgba(255,255,255,0.6); color: ${s.fg};
+    }
+    button:hover { background: rgba(255,255,255,0.9); }
+    button:disabled { opacity: 0.5; cursor: default; }
   `;
-  const body = shadow.querySelector(".body");
-  if (body) body.textContent = state.message;
+
+  const root = document.createElement("div");
+  root.className = "root";
+
+  const head = document.createElement("div");
+  head.className = "head";
+  const brand = document.createElement("span");
+  brand.className = "brand";
+  brand.textContent = "Civica Submitter";
+  const pill = document.createElement("span");
+  pill.className = "pill";
+  pill.textContent = s.pillLabel;
+  head.append(brand, pill);
+  if (state.status === "loading") {
+    const spin = document.createElement("span");
+    spin.className = "spinner";
+    head.append(spin);
+  }
+
+  const title = document.createElement("div");
+  title.className = "title";
+  title.textContent = state.title;
+
+  const body = document.createElement("div");
+  body.className = "body";
+  body.textContent = state.message;
+
+  root.append(head, title, body);
+
+  if (state.actions && state.actions.length > 0) {
+    const actions = document.createElement("div");
+    actions.className = "actions";
+    for (const action of state.actions) {
+      const btn = document.createElement("button");
+      btn.type = "button"; // never a submit — isolated from the portal form
+      btn.textContent = action.label;
+      btn.dataset.action = action.id;
+      btn.addEventListener("click", () => {
+        // Guard against double-clicks while the async handler runs.
+        btn.disabled = true;
+        void Promise.resolve(action.onClick()).catch((err: unknown) => {
+          console.error(LOG_PREFIX, "action failed", action.id, err);
+          btn.disabled = false;
+        });
+      });
+      actions.append(btn);
+    }
+    root.append(actions);
+  }
+
+  shadow.append(style, root);
   document.body.appendChild(host);
 }
