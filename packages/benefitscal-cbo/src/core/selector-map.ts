@@ -90,6 +90,16 @@ export interface FieldSelector {
    * Buttons and info-only navigation never carry a `source`.
    */
   source?: string;
+  /**
+   * Optional value transform applied to the resolved `source` value before
+   * `fillElement` (V1-3, #313). Names a function in `core/transforms.ts`'s
+   * `TRANSFORMS` registry — e.g. `"ca-county-ordinal"` (county NAME → the
+   * portal's 2-digit ordinal option value) or `"phone-10digit"` (E.164 → bare
+   * 10-digit national number). A transform that returns `null` means the value
+   * can't be mapped: the consumer SKIPS the fill and counts it "needs review"
+   * rather than writing garbage. Fields with no transform are filled verbatim.
+   */
+  transform?: string;
   /** True for portal-required fields (per SELECTORS.md "REQUIRED" tags). */
   required?: boolean;
   /**
@@ -282,7 +292,8 @@ export const ADDRESS_VALIDATION_FLOW = {
     required: true,
     optionValues: CA_COUNTY_ORDINALS,
     source: "address.county",
-    note: "name=county; appears only in the address-validation modal #2. source=address.county is added by V1-2/#312; until that merges PostalAddress has no county field and the resolver returns undefined → skipped (human fills the modal)",
+    transform: "ca-county-ordinal",
+    note: "name=county; appears only in the address-validation modal #2. source=address.county (county NAME) lands via V1-2/#312; the ca-county-ordinal transform (V1-3/#313) maps the name → the 2-digit option value. Unknown county → transform returns null → skipped (human fills the modal)",
   } as FieldSelector,
   /** Modal #2 — confirm county (uppercase accessible name). */
   continueButton: { label: "CONTINUE", type: "button" } as FieldSelector,
@@ -529,7 +540,9 @@ export const PORTAL_PAGES: PortalPage[] = [
         label: "Mobile Phone",
         fallbackSelector: "#mobilePhone",
         type: "text",
-        note: "payload.phone is E.164 (+1XXXXXXXXXX); the new fill primitive writes text verbatim and has no phone-normalization step (the old field-map's 'phone' kind that stripped +1 was dropped). Leaving source undefined so we don't write a +1-prefixed value the portal historically rejects — human fills. Wire once fill.ts gains a phone kind or payload carries a pre-formatted national number.",
+        source: "phone",
+        transform: "phone-10digit",
+        note: "payload.phone is E.164 (+1XXXXXXXXXX); the portal historically rejects the +1 prefix. V1-3/#313 wires source=phone + the phone-10digit transform so the +1/punctuation is stripped to a bare 10-digit national number before fill. Applicant's single phone fills the Mobile Phone field; Home/Alternate are left for the assister.",
       },
       altPhone: { label: "Alternate Phone", fallbackSelector: "#altPhone", type: "text" },
       email: {

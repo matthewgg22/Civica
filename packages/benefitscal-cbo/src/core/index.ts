@@ -31,6 +31,9 @@ export type {
   UtilityAllowanceType,
   ClientSignatureType,
   SubmissionStatus,
+  MaritalStatus,
+  CitizenshipStatus,
+  SexAssignedAtBirth,
 } from "./schemas";
 export {
   BenefitsCalPayloadSchema,
@@ -42,6 +45,9 @@ export {
   UtilityAllowanceTypeSchema,
   ClientSignatureTypeSchema,
   SubmissionStatusSchema,
+  MaritalStatusSchema,
+  CitizenshipStatusSchema,
+  SexAssignedAtBirthSchema,
 } from "./schemas";
 
 // Typed selector map (V1-1a, #310) — the materialized form of the live
@@ -64,6 +70,17 @@ export type {
   PortalPage,
   ConfirmationPageSelector,
 } from "./selector-map";
+
+// Fill-value transforms (V1-3, #313). Map a resolved payload value to the
+// representation a portal control expects (county NAME → ordinal, E.164 →
+// 10-digit). Pure functions; the extension applies the named transform from a
+// FieldSelector's `transform` before fillElement. Returning null → skip + flag.
+export {
+  resolveCountyOrdinal,
+  formatPhone10Digit,
+  TRANSFORMS,
+} from "./transforms";
+export type { TransformName } from "./transforms";
 
 // Label-first DOM resolver (V1-5, #314). The runtime counterpart to
 // Playwright's getByLabel — turns a label-first FieldSelector into the DOM

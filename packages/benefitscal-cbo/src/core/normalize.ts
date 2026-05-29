@@ -21,7 +21,14 @@
  * inside the `packet` argument.
  */
 
-import type { BenefitsCalPayload, HouseholdMember, IncomeSource } from "./schemas";
+import type {
+  BenefitsCalPayload,
+  HouseholdMember,
+  IncomeSource,
+  MaritalStatus,
+  CitizenshipStatus,
+  SexAssignedAtBirth,
+} from "./schemas";
 
 // ---------------------------------------------------------------------------
 // Input types
@@ -79,6 +86,13 @@ export interface ApplicantInfo {
   city: string;
   state: string;
   zip: string;
+  /**
+   * California county NAME (e.g. "Sacramento"). Optional — intake collects it
+   * for SNAPAgencyDirectory routing and the route layer reads it from the
+   * `snap_packets.county` column. The portal's ordinal mapping happens at fill
+   * time via the `"ca-county-ordinal"` transform (V1-3, #313).
+   */
+  county?: string;
 }
 
 export interface NormalizeInput {
@@ -120,6 +134,118 @@ function resolveAnswer(answers: PacketAnswer[], key: string): string | null {
   const row = answers.find((a) => a.question_key === key);
   if (!row) return null;
   return row.navigator_confirmed_value ?? row.applicant_answer ?? null;
+}
+
+/**
+ * Resolve a boolean-ish intake answer. Treats "yes"/"true"/"1" (any case) as
+ * true, "no"/"false"/"0" as false, and anything else (incl. a missing or
+ * unrecognized answer) as `undefined` — the field is then OMITTED from the
+ * payload so the extension surfaces it as needs-review rather than guessing.
+ * Used for the Yes/No intake question backing is_college_student.
+ */
+function resolveBooleanAnswer(
+  answers: PacketAnswer[],
+  key: string,
+): boolean | undefined {
+  const raw = resolveAnswer(answers, key);
+  if (raw === null) return undefined;
+  const s = raw.trim().toLowerCase();
+  if (s === "yes" || s === "true" || s === "1") return true;
+  if (s === "no" || s === "false" || s === "0") return false;
+  return undefined;
+}
+
+/**
+ * Derive `is_homeless` from intake. Civica's intake stores the living
+ * situation under the `housing_situation` key (values like "renting",
+ * "homeless", "owning"); a dedicated `is_homeless` Yes/No answer takes priority
+ * when present. Returns `undefined` when intake collected NEITHER signal — the
+ * field is omitted so the reviewer fills it (shelter/expedite is eligibility-
+ * critical; we never default homelessness to false silently).
+ */
+function deriveIsHomeless(answers: PacketAnswer[]): boolean | undefined {
+  const direct = resolveAnswer(answers, "is_homeless");
+  if (direct !== null) {
+    return resolveBooleanAnswer(answers, "is_homeless");
+  }
+  const housing = resolveAnswer(answers, "housing_situation");
+  if (housing !== null) {
+    return housing.trim().toLowerCase() === "homeless";
+  }
+  return undefined;
+}
+
+/**
+ * Map an intake `marital_status` answer to the MaritalStatus enum. Accepts the
+ * canonical enum strings directly and a few common aliases. Returns `undefined`
+ * when intake has no answer OR the value is unrecognized — the field is then
+ * omitted and surfaced as needs-review rather than silently defaulted.
+ */
+function deriveMaritalStatus(answers: PacketAnswer[]): MaritalStatus | undefined {
+  const raw = resolveAnswer(answers, "marital_status");
+  if (raw === null) return undefined;
+  const s = raw.trim().toLowerCase().replace(/[\s-]+/g, "_");
+  const map: Record<string, MaritalStatus> = {
+    single: "single",
+    married: "married",
+    divorced: "divorced",
+    separated: "separated",
+    widowed: "widowed",
+    domestic_partner: "domestic_partner",
+    registered_domestic_partner: "domestic_partner",
+    common_law: "common_law",
+    never_married: "never_married",
+  };
+  return map[s];
+}
+
+/**
+ * Map an intake `citizenship_status` answer to the CitizenshipStatus enum.
+ * Accepts the canonical enum strings plus the boolean-ish answer the ABDOC-style
+ * "are you a U.S. citizen?" question produces ("yes" ⇒ us_citizen). Returns
+ * `undefined` when intake has no answer OR the value is unrecognized — the field
+ * is then omitted and surfaced as needs-review. Citizenship drives non-citizen
+ * SNAP rules, so we never silently default it to us_citizen.
+ */
+function deriveCitizenshipStatus(
+  answers: PacketAnswer[],
+): CitizenshipStatus | undefined {
+  const raw = resolveAnswer(answers, "citizenship_status");
+  if (raw === null) return undefined;
+  const s = raw.trim().toLowerCase().replace(/[\s-]+/g, "_");
+  const map: Record<string, CitizenshipStatus> = {
+    us_citizen: "us_citizen",
+    citizen: "us_citizen",
+    yes: "us_citizen",
+    us_national: "us_national",
+    national: "us_national",
+    non_citizen: "non_citizen",
+    noncitizen: "non_citizen",
+    no: "non_citizen",
+  };
+  return map[s];
+}
+
+/**
+ * Map an intake `sex_assigned_at_birth` answer to the SexAssignedAtBirth enum.
+ * Returns undefined when intake didn't collect it (the portal page is optional)
+ * so the optional payload field is omitted rather than guessed.
+ */
+function deriveSexAssignedAtBirth(
+  answers: PacketAnswer[],
+): SexAssignedAtBirth | undefined {
+  const raw = resolveAnswer(answers, "sex_assigned_at_birth");
+  if (raw === null) return undefined;
+  const s = raw.trim().toLowerCase().replace(/[\s-]+/g, "_");
+  const map: Record<string, SexAssignedAtBirth> = {
+    female: "female",
+    f: "female",
+    male: "male",
+    m: "male",
+    prefer_not_to_say: "prefer_not_to_say",
+    prefer_not_to_answer: "prefer_not_to_say",
+  };
+  return map[s];
 }
 
 // ---------------------------------------------------------------------------
@@ -188,6 +314,17 @@ export function normalizeForPortal(input: NormalizeInput): BenefitsCalPayload {
   // Signature type — default to async_portal
   const sigType = client_signature_type ?? "async_portal";
 
+  // Demographic / eligibility answers (V1-2, #312). Each is OPTIONAL and OMITTED
+  // when intake has no answer — a missing eligibility field is surfaced to the
+  // reviewer as needs-review, never silently defaulted (autoplan Code Quality
+  // #3 + #311/V1-11). Compute once here, then spread conditionally below.
+  const isHomeless = deriveIsHomeless(answers);
+  const maritalStatus = deriveMaritalStatus(answers);
+  const isCollegeStudent = resolveBooleanAnswer(answers, "college_student");
+  const citizenshipStatus = deriveCitizenshipStatus(answers);
+  const sexAssignedAtBirth = deriveSexAssignedAtBirth(answers);
+  const gender = resolveAnswer(answers, "gender")?.trim();
+
   const payload: BenefitsCalPayload = {
     packet_id,
 
@@ -201,8 +338,27 @@ export function normalizeForPortal(input: NormalizeInput): BenefitsCalPayload {
       city: applicant.city,
       state: applicant.state,
       zip: applicant.zip,
+      // County is optional on the schema — only include the key when intake
+      // supplied a non-empty value so the optional field stays truly absent
+      // (rather than undefined) on packets that didn't collect it.
+      ...(applicant.county && applicant.county.trim().length > 0
+        ? { county: applicant.county.trim() }
+        : {}),
     },
     phone: applicant.phone,
+
+    // Demographic / eligibility answers (V1-2, #312) — derived from intake
+    // packet_answers. ALL optional: each key is only included when intake
+    // actually supplied a value. A missing answer leaves the key undefined so
+    // the extension surfaces it as needs-review (never silently defaulted).
+    ...(isHomeless !== undefined && { is_homeless: isHomeless }),
+    ...(maritalStatus !== undefined && { marital_status: maritalStatus }),
+    ...(isCollegeStudent !== undefined && { is_college_student: isCollegeStudent }),
+    ...(citizenshipStatus !== undefined && { citizenship_status: citizenshipStatus }),
+    ...(sexAssignedAtBirth !== undefined && {
+      sex_assigned_at_birth: sexAssignedAtBirth,
+    }),
+    ...(gender ? { gender } : {}),
 
     // Household
     household_members: mappedMembers,

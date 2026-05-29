@@ -39,6 +39,7 @@ import {
   CONFIRMATION_PAGE,
   resolveField,
   fillElement,
+  TRANSFORMS,
   type PortalPage,
   type FieldSelector,
 } from "@civica/benefitscal-cbo/core";
@@ -143,9 +144,14 @@ interface FillResult {
   skippedNoValue: number;
   /** Fillable fields whose DOM element could not be located on the page. */
   notFound: number;
-  /** Fields with no `source` — left for the assister to fill by hand. */
+  /**
+   * Fields left for the assister to fill by hand: either no `source`, or a
+   * `source` whose `transform` returned null (value couldn't be mapped, e.g. a
+   * county with no CA ordinal). The latter is also counted in `fillable`, so
+   * `fillable + needsReview` may exceed `total` by the number of such fields.
+   */
   needsReview: number;
-  /** Total fields on the page (fillable + needsReview). */
+  /** Total fields on the page (= `Object.values(page.fields).length`). */
   total: number;
 }
 
@@ -180,6 +186,12 @@ export function fillPage(
         break;
       case "not-found":
         notFound++;
+        break;
+      case "needs-review":
+        // A field with a `source` whose transform returned null (e.g. a county
+        // with no CA ordinal) — the value couldn't be mapped, so the assister
+        // fills it. Counted as needs-review like a source-less field.
+        needsReview++;
         break;
     }
   }
@@ -217,13 +229,36 @@ export function fillField(
     return "no-value";
   }
 
+  // Apply the field's value transform, if any (V1-3, #313): county NAME →
+  // 2-digit ordinal, E.164 phone → bare 10-digit, etc. A transform returning
+  // null means the value can't be mapped (e.g. an out-of-CA county) — skip the
+  // fill and flag it for the assister rather than writing a garbage value.
+  let fillValue = String(value);
+  if (field.transform) {
+    const fn = TRANSFORMS[field.transform];
+    if (!fn) {
+      // An unknown transform name is a selector-map bug; don't guess — flag it.
+      console.warn(LOG_PREFIX, `unknown transform "${field.transform}" for ${field.label}`);
+      return "needs-review";
+    }
+    const transformed = fn(fillValue);
+    if (transformed === null) {
+      console.debug(
+        LOG_PREFIX,
+        `transform "${field.transform}" could not map value for ${field.label}`,
+      );
+      return "needs-review";
+    }
+    fillValue = transformed;
+  }
+
   const el = resolveField(field, root);
   if (!el) {
     console.debug(LOG_PREFIX, `not found: ${field.label} (${field.fallbackSelector ?? "label-only"})`);
     return "not-found";
   }
 
-  const ok = fillElement(el, field.type, String(value));
+  const ok = fillElement(el, field.type, fillValue);
   if (!ok) {
     // fillElement returns false for a wrong element type or a missing <select>
     // option — surface it like a not-found so the assister double-checks.
