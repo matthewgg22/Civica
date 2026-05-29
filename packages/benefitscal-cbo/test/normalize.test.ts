@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
-import { normalizeForPortal } from "../src/normalize";
-import { BenefitsCalPayloadSchema } from "../src/schemas";
-import type { NormalizeInput } from "../src/normalize";
+import { normalizeForPortal } from "../src/core/normalize";
+import { BenefitsCalPayloadSchema } from "../src/core/schemas";
+import type { NormalizeInput } from "../src/core/normalize";
 
 // ---------------------------------------------------------------------------
 // Shared fixture helpers
@@ -324,5 +324,303 @@ describe("normalizeForPortal — edge cases", () => {
     };
     const payload = normalizeForPortal(input);
     expect(payload.income_sources).toHaveLength(0);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// V1-2 (#312): demographic / eligibility fields + address.county
+// ---------------------------------------------------------------------------
+
+function answer(question_key: string, value: string) {
+  return { question_key, navigator_confirmed_value: null, applicant_answer: value };
+}
+
+describe("normalizeForPortal — V1-2 demographic fields (missing → omitted)", () => {
+  // No demographic answers + no county → ALL eligibility-critical fields are
+  // OMITTED (left undefined) so the extension surfaces them as needs-review.
+  // A missing citizenship/student/homeless/marital answer must NOT be silently
+  // defaulted (autoplan Code Quality #3 + #311/V1-11). The payload still
+  // validates because these fields are optional, not required.
+  const payload = normalizeForPortal({
+    ...utilityHouseholdInput,
+    packet_id: "d1111111-0000-0000-0000-000000000001",
+    answers: [],
+  });
+
+  it("still passes Zod schema validation with the demographic fields absent", () => {
+    const result = BenefitsCalPayloadSchema.safeParse(payload);
+    expect(result.success, result.error?.message).toBe(true);
+  });
+
+  it("omits is_homeless and is_college_student when intake has no answer (needs-review, not defaulted)", () => {
+    expect(payload.is_homeless).toBeUndefined();
+    expect(payload.is_college_student).toBeUndefined();
+    expect("is_homeless" in payload).toBe(false);
+    expect("is_college_student" in payload).toBe(false);
+  });
+
+  it("omits marital_status and citizenship_status when intake has no answer (no silent default)", () => {
+    expect(payload.marital_status).toBeUndefined();
+    expect(payload.citizenship_status).toBeUndefined();
+    expect("marital_status" in payload).toBe(false);
+    expect("citizenship_status" in payload).toBe(false);
+  });
+
+  it("never silently defaults citizenship to us_citizen — the key is absent so the reviewer fills it", () => {
+    // Regression guard: a defaulted us_citizen that LOOKS filled is a silent
+    // wrong-data risk (non-citizen SNAP rules). The extension must see undefined.
+    expect(payload.citizenship_status).not.toBe("us_citizen");
+    expect(payload.citizenship_status).toBeUndefined();
+  });
+
+  it("omits the optional sex_assigned_at_birth and gender when absent", () => {
+    expect(payload.sex_assigned_at_birth).toBeUndefined();
+    expect(payload.gender).toBeUndefined();
+    expect("sex_assigned_at_birth" in payload).toBe(false);
+    expect("gender" in payload).toBe(false);
+  });
+
+  it("omits address.county when the applicant has no county", () => {
+    expect(payload.address.county).toBeUndefined();
+    expect("county" in payload.address).toBe(false);
+  });
+});
+
+describe("normalizeForPortal — V1-2 demographic fields (populated)", () => {
+  const payload = normalizeForPortal({
+    ...gigHouseholdInput,
+    packet_id: "d2222222-0000-0000-0000-000000000002",
+    applicant: { ...gigHouseholdInput.applicant, county: "Sacramento County" },
+    answers: [
+      answer("housing_situation", "homeless"),
+      answer("marital_status", "Registered Domestic Partner"),
+      answer("college_student", "yes"),
+      answer("citizenship_status", "non_citizen"),
+      answer("sex_assigned_at_birth", "Female"),
+      answer("gender", "Nonbinary"),
+    ],
+  });
+
+  it("passes Zod schema validation with all new fields populated", () => {
+    const result = BenefitsCalPayloadSchema.safeParse(payload);
+    expect(result.success, result.error?.message).toBe(true);
+  });
+
+  it("derives is_homeless from housing_situation=homeless", () => {
+    expect(payload.is_homeless).toBe(true);
+  });
+
+  it("maps a marital_status alias to the enum (domestic_partner)", () => {
+    expect(payload.marital_status).toBe("domestic_partner");
+  });
+
+  it("derives is_college_student from a yes answer", () => {
+    expect(payload.is_college_student).toBe(true);
+  });
+
+  it("maps citizenship_status to the enum", () => {
+    expect(payload.citizenship_status).toBe("non_citizen");
+  });
+
+  it("maps sex_assigned_at_birth case-insensitively", () => {
+    expect(payload.sex_assigned_at_birth).toBe("female");
+  });
+
+  it("carries gender through as a free string", () => {
+    expect(payload.gender).toBe("Nonbinary");
+  });
+
+  it("trims and stores address.county as the NAME (not an ordinal)", () => {
+    // county stays the name; the ca-county-ordinal transform maps it at fill time.
+    expect(payload.address.county).toBe("Sacramento County");
+  });
+});
+
+describe("normalizeForPortal — V1-2 edge cases", () => {
+  it("prefers a direct is_homeless answer over housing_situation", () => {
+    const payload = normalizeForPortal({
+      ...utilityHouseholdInput,
+      packet_id: "d3333333-0000-0000-0000-000000000003",
+      answers: [answer("housing_situation", "homeless"), answer("is_homeless", "no")],
+    });
+    expect(payload.is_homeless).toBe(false);
+  });
+
+  it("maps a 'yes' citizenship answer (ABDOC-style) to us_citizen", () => {
+    const payload = normalizeForPortal({
+      ...utilityHouseholdInput,
+      packet_id: "d4444444-0000-0000-0000-000000000004",
+      answers: [answer("citizenship_status", "yes")],
+    });
+    expect(payload.citizenship_status).toBe("us_citizen");
+  });
+
+  it("omits marital_status for an unrecognized value (no silent default)", () => {
+    const payload = normalizeForPortal({
+      ...utilityHouseholdInput,
+      packet_id: "d5555555-0000-0000-0000-000000000005",
+      answers: [answer("marital_status", "its complicated")],
+    });
+    expect(payload.marital_status).toBeUndefined();
+    expect("marital_status" in payload).toBe(false);
+  });
+
+  it("omits citizenship_status for an unrecognized value (no silent default)", () => {
+    const payload = normalizeForPortal({
+      ...utilityHouseholdInput,
+      packet_id: "d5a55555-0000-0000-0000-000000000005",
+      answers: [answer("citizenship_status", "green card holder")],
+    });
+    expect(payload.citizenship_status).toBeUndefined();
+    expect("citizenship_status" in payload).toBe(false);
+  });
+
+  it("omits is_college_student for an unrecognized value (no silent default)", () => {
+    const payload = normalizeForPortal({
+      ...utilityHouseholdInput,
+      packet_id: "d5b55555-0000-0000-0000-000000000005",
+      answers: [answer("college_student", "maybe")],
+    });
+    expect(payload.is_college_student).toBeUndefined();
+    expect("is_college_student" in payload).toBe(false);
+  });
+
+  it("includes is_college_student=false only when intake explicitly answered no", () => {
+    const payload = normalizeForPortal({
+      ...utilityHouseholdInput,
+      packet_id: "d5c55555-0000-0000-0000-000000000005",
+      answers: [answer("college_student", "no")],
+    });
+    expect(payload.is_college_student).toBe(false);
+    expect("is_college_student" in payload).toBe(true);
+  });
+
+  it("omits sex_assigned_at_birth for an unrecognized value (no guess)", () => {
+    const payload = normalizeForPortal({
+      ...utilityHouseholdInput,
+      packet_id: "d6666666-0000-0000-0000-000000000006",
+      answers: [answer("sex_assigned_at_birth", "intersex")],
+    });
+    expect(payload.sex_assigned_at_birth).toBeUndefined();
+  });
+
+  it("omits address.county when the value is whitespace-only", () => {
+    const payload = normalizeForPortal({
+      ...utilityHouseholdInput,
+      packet_id: "d7777777-0000-0000-0000-000000000007",
+      applicant: { ...baseApplicant(), county: "   " },
+    });
+    expect(payload.address.county).toBeUndefined();
+  });
+
+  it("prefers navigator_confirmed_value for demographic answers", () => {
+    const payload = normalizeForPortal({
+      ...utilityHouseholdInput,
+      packet_id: "d8888888-0000-0000-0000-000000000008",
+      answers: [
+        {
+          question_key: "marital_status",
+          navigator_confirmed_value: "married",
+          applicant_answer: "single",
+        },
+      ],
+    });
+    expect(payload.marital_status).toBe("married");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// V1-2 (#312): schema-level validation of the new enums + fields
+// ---------------------------------------------------------------------------
+
+describe("BenefitsCalPayloadSchema — V1-2 field validation", () => {
+  const valid = normalizeForPortal({
+    ...utilityHouseholdInput,
+    packet_id: "d9999999-0000-0000-0000-000000000009",
+    applicant: { ...baseApplicant(), county: "Fresno" },
+    answers: [
+      answer("marital_status", "married"),
+      answer("citizenship_status", "us_national"),
+      answer("sex_assigned_at_birth", "male"),
+      answer("gender", "Man"),
+    ],
+  });
+
+  it("accepts a fully-populated payload", () => {
+    expect(BenefitsCalPayloadSchema.safeParse(valid).success).toBe(true);
+  });
+
+  it("rejects an out-of-enum marital_status", () => {
+    const bad = { ...valid, marital_status: "engaged" };
+    expect(BenefitsCalPayloadSchema.safeParse(bad).success).toBe(false);
+  });
+
+  it("rejects an out-of-enum citizenship_status", () => {
+    const bad = { ...valid, citizenship_status: "green_card" };
+    expect(BenefitsCalPayloadSchema.safeParse(bad).success).toBe(false);
+  });
+
+  it("rejects an out-of-enum sex_assigned_at_birth", () => {
+    const bad = { ...valid, sex_assigned_at_birth: "other" };
+    expect(BenefitsCalPayloadSchema.safeParse(bad).success).toBe(false);
+  });
+
+  it("rejects a non-boolean is_homeless / is_college_student", () => {
+    expect(
+      BenefitsCalPayloadSchema.safeParse({ ...valid, is_homeless: "yes" }).success,
+    ).toBe(false);
+    expect(
+      BenefitsCalPayloadSchema.safeParse({ ...valid, is_college_student: 1 }).success,
+    ).toBe(false);
+  });
+
+  it("treats is_homeless, marital_status, is_college_student, citizenship_status as OPTIONAL (omitted → still valid)", () => {
+    // Eligibility-critical fields are optional, not required: the extension-first
+    // model produces a partial payload and the human fills the rest. Omitting any
+    // one must still validate so it can surface as needs-review (autoplan Code
+    // Quality #3 + #311/V1-11) — NOT throw like the headless model would.
+    for (const key of [
+      "is_homeless",
+      "marital_status",
+      "is_college_student",
+      "citizenship_status",
+    ] as const) {
+      const { [key]: _omit, ...rest } = valid;
+      expect(
+        BenefitsCalPayloadSchema.safeParse(rest).success,
+        `missing ${key} should still validate (optional)`,
+      ).toBe(true);
+    }
+  });
+
+  it("validates a payload with ALL demographic fields omitted (fully partial)", () => {
+    const {
+      is_homeless: _h,
+      marital_status: _m,
+      is_college_student: _cs,
+      citizenship_status: _c,
+      sex_assigned_at_birth: _s,
+      gender: _g,
+      ...rest
+    } = valid;
+    expect(BenefitsCalPayloadSchema.safeParse(rest).success).toBe(true);
+  });
+
+  it("treats sex_assigned_at_birth and gender as optional", () => {
+    const { sex_assigned_at_birth: _s, gender: _g, ...rest } = valid;
+    expect(BenefitsCalPayloadSchema.safeParse(rest).success).toBe(true);
+  });
+
+  it("accepts address.county as an optional free string", () => {
+    expect(valid.address.county).toBe("Fresno");
+    const { county: _c, ...addrRest } = valid.address;
+    expect(
+      BenefitsCalPayloadSchema.safeParse({ ...valid, address: addrRest }).success,
+    ).toBe(true);
+  });
+
+  it("rejects an empty-string gender (min length 1)", () => {
+    const bad = { ...valid, gender: "" };
+    expect(BenefitsCalPayloadSchema.safeParse(bad).success).toBe(false);
   });
 });

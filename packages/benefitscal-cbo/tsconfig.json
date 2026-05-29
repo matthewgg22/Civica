@@ -1,7 +1,11 @@
 {
   "extends": "@civica/config/tsconfig.base.json",
   "compilerOptions": {
-    "outDir": "dist"
+    "outDir": "dist",
+    // `/core` is browser-safe by contract (the Chrome extension imports from
+    // it) and now ships a pure-DOM fill primitive (src/core/fill.ts, #311), so
+    // this package needs the DOM typings. Overrides the base lib (["ES2022"]).
+    "lib": ["ES2022", "DOM", "DOM.Iterable"]
   },
   "include": ["src/**/*.ts", "test/**/*.ts"],
   "exclude": ["node_modules", "dist"]

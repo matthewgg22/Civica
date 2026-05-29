@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from "vitest";
-import { browserlessDriverFactory } from "../../src/drivers/browserless";
+import { browserlessDriverFactory } from "../../src/driver/browserless";
 
 interface CapturedCall {
   url: string;

@@ -1,18 +1,21 @@
 /**
- * Targeted tests for the content script's field-fill loop.
+ * Targeted tests for the content script's field-fill loop (V1-5, #314).
  *
- * The real APPLICATION_FORM_PAGES from @civica/benefitscal-cbo are all
- * tagged `todo: true` until TODO-14 (live CBO portal selector capture)
- * lands. To exercise the fill machinery, we construct synthetic page +
- * field definitions in tests rather than reaching into the real data.
+ * The content script now drives off the typed `PORTAL_PAGES` selector map +
+ * the React-safe `fillElement` primitive + the label-first `resolveField`
+ * resolver, all from `@civica/benefitscal-cbo/core`. To exercise the fill
+ * machinery deterministically we construct synthetic PortalPage + FieldSelector
+ * definitions rather than depending on the real map's exact field set.
  *
  * What we ARE testing:
- *   - TODO-flagged fields are skipped (no DOM mutation)
- *   - file_upload kind is always skipped (browser security)
+ *   - Fields with no `source` are counted as "needs review" (no DOM mutation)
+ *   - Fields resolve label-first (a <label> beats nothing) and fill
  *   - Text fields are written and dispatch input/change events
- *   - Date fields are reformatted from ISO to MM/DD/YYYY
- *   - Phone fields drop the leading +1
- *   - Selects, checkboxes are written when matching options exist
+ *   - date-password fields reformat ISO → MM/DD/YYYY
+ *   - Selects fill when a matching option exists, report not-found otherwise
+ *   - Checkboxes toggle via click
+ *   - Missing packet value → no-value; missing DOM element → not-found
+ *   - fillPage aggregates filled / skippedNoValue / notFound / needsReview
  *
  * What we ARE NOT testing here:
  *   - The chrome.* messaging surface (jsdom doesn't ship it; covered by
@@ -22,7 +25,7 @@
 
 import { describe, it, expect, beforeEach } from "vitest";
 import { fillField, fillPage } from "../src/content";
-import type { FieldFill, FormPage } from "@civica/benefitscal-cbo/field-map";
+import type { FieldSelector, PortalPage } from "@civica/benefitscal-cbo/core";
 
 function makeForm(html: string): ParentNode {
   const div = document.createElement("div");
@@ -30,200 +33,289 @@ function makeForm(html: string): ParentNode {
   return div;
 }
 
+/** Build a minimal synthetic PortalPage from a fields object. */
+function page(fields: Record<string, FieldSelector>): PortalPage {
+  return {
+    pageCode: "TEST",
+    title: "synthetic test page",
+    urlPattern: /\/never-matches/,
+    step: 1,
+    fields,
+  };
+}
+
 beforeEach(() => {
   document.body.innerHTML = "";
 });
 
-describe("fillField — skip rules", () => {
-  it("skips fields tagged todo: true", () => {
-    const root = makeForm(`<input name="firstName" />`);
-    const field: FieldFill = {
-      selector: "[name=firstName]",
-      source: "first_name",
-      kind: "text",
-      todo: true,
-    };
-    const filled = fillField(field, { first_name: "Maria" }, root);
-    expect(filled).toBe(false);
-    const input = root.querySelector<HTMLInputElement>("[name=firstName]");
-    expect(input?.value).toBe("");
+describe("fillField — skip / needs-review rules", () => {
+  it("returns needs-review for a field with no source (human fills)", () => {
+    const root = makeForm(`<input aria-label="Gender identity" />`);
+    const field: FieldSelector = { label: "Gender identity", type: "radio" };
+    expect(fillField(field, { gender: "x" }, root)).toBe("needs-review");
   });
 
-  it("skips file_upload kind even when not tagged todo", () => {
-    const root = makeForm(`<input type="file" name="photo" />`);
-    const field: FieldFill = {
-      selector: "[name=photo]",
-      source: "document_urls",
-      kind: "file_upload",
-    };
-    const filled = fillField(field, { document_urls: [{ url: "https://x/y" }] }, root);
-    expect(filled).toBe(false);
+  it("returns needs-review for a button field even if it has a source", () => {
+    const root = makeForm(`<button aria-label="Next">Next</button>`);
+    const field: FieldSelector = { label: "Next", type: "button", source: "first_name" };
+    expect(fillField(field, { first_name: "Maria" }, root)).toBe("needs-review");
   });
 
-  it("skips when the source path resolves to null", () => {
-    const root = makeForm(`<input name="firstName" />`);
-    const field: FieldFill = {
-      selector: "[name=firstName]",
-      source: "first_name",
-      kind: "text",
-    };
-    const filled = fillField(field, {}, root);
-    expect(filled).toBe(false);
+  it("returns no-value when the source path resolves to nothing", () => {
+    const root = makeForm(`<input aria-label="First Name" />`);
+    const field: FieldSelector = { label: "First Name", type: "text", source: "first_name" };
+    expect(fillField(field, {}, root)).toBe("no-value");
   });
 
-  it("skips when the selector does not match anything", () => {
+  it("returns not-found when the element cannot be located", () => {
     const root = makeForm(`<div></div>`);
-    const field: FieldFill = {
-      selector: "[name=missing]",
+    const field: FieldSelector = {
+      label: "First Name",
+      type: "text",
       source: "first_name",
-      kind: "text",
+      fallbackSelector: "#missing",
     };
-    const filled = fillField(field, { first_name: "Maria" }, root);
-    expect(filled).toBe(false);
+    expect(fillField(field, { first_name: "Maria" }, root)).toBe("not-found");
   });
 });
 
-describe("fillField — write paths", () => {
-  it("writes a text value and dispatches input + change events", () => {
-    const root = makeForm(`<input name="firstName" />`);
-    const input = root.querySelector<HTMLInputElement>("[name=firstName]");
-    expect(input).not.toBeNull();
+describe("fillField — write paths (label-first resolution)", () => {
+  it("writes a text value located by <label for> and dispatches input + change", () => {
+    const root = makeForm(`
+      <label for="fn">First Name (required)</label>
+      <input id="fn" />
+    `);
+    const input = root.querySelector<HTMLInputElement>("#fn");
     let inputFired = 0;
     let changeFired = 0;
     input?.addEventListener("input", () => inputFired++);
     input?.addEventListener("change", () => changeFired++);
 
-    const field: FieldFill = {
-      selector: "[name=firstName]",
+    const field: FieldSelector = {
+      label: "First Name (required)",
+      type: "text",
       source: "first_name",
-      kind: "text",
     };
-    const filled = fillField(field, { first_name: "Maria" }, root);
-
-    expect(filled).toBe(true);
+    expect(fillField(field, { first_name: "Maria" }, root)).toBe("filled");
     expect(input?.value).toBe("Maria");
     expect(inputFired).toBe(1);
     expect(changeFired).toBe(1);
   });
 
-  it("reformats ISO dates to MM/DD/YYYY", () => {
-    const root = makeForm(`<input name="dob" />`);
-    const field: FieldFill = {
-      selector: "[name=dob]",
+  it("resolves via fallbackSelector when no label is present (positional id)", () => {
+    const root = makeForm(`<input id="text1" />`);
+    const field: FieldSelector = {
+      label: "First Name (required)",
+      fallbackSelector: "#text1",
+      type: "text",
+      source: "first_name",
+    };
+    expect(fillField(field, { first_name: "Maria" }, root)).toBe("filled");
+    expect(root.querySelector<HTMLInputElement>("#text1")?.value).toBe("Maria");
+  });
+
+  it("reformats ISO date-of-birth to MM/DD/YYYY for date-password fields", () => {
+    const root = makeForm(`<input id="dob" type="password" />`);
+    const field: FieldSelector = {
+      label: "Date of Birth (required)",
+      fallbackSelector: "#dob",
+      type: "date-password",
       source: "date_of_birth",
-      kind: "date",
     };
-    fillField(field, { date_of_birth: "1985-03-12" }, root);
-    expect(root.querySelector<HTMLInputElement>("[name=dob]")?.value).toBe("03/12/1985");
+    expect(fillField(field, { date_of_birth: "1985-03-12" }, root)).toBe("filled");
+    expect(root.querySelector<HTMLInputElement>("#dob")?.value).toBe("03/12/1985");
   });
 
-  it("strips +1 country code from phones (E.164 → 10 digits)", () => {
-    const root = makeForm(`<input name="phone" />`);
-    const field: FieldFill = {
-      selector: "[name=phone]",
-      source: "phone",
-      kind: "phone",
+  it("resolves a nested dotted source path (address.zip)", () => {
+    const root = makeForm(`<input aria-label="Zip Code (required)" />`);
+    const field: FieldSelector = {
+      label: "Zip Code (required)",
+      type: "text",
+      source: "address.zip",
     };
-    fillField(field, { phone: "+14155551234" }, root);
-    expect(root.querySelector<HTMLInputElement>("[name=phone]")?.value).toBe("4155551234");
-  });
-
-  it("writes ssn_last4 verbatim", () => {
-    const root = makeForm(`<input name="ssn" />`);
-    const field: FieldFill = {
-      selector: "[name=ssn]",
-      source: "ssn_last4",
-      kind: "ssn_last4",
-    };
-    fillField(field, { ssn_last4: "1234" }, root);
-    expect(root.querySelector<HTMLInputElement>("[name=ssn]")?.value).toBe("1234");
+    expect(fillField(field, { address: { zip: "95814" } }, root)).toBe("filled");
+    expect(
+      root.querySelector<HTMLInputElement>('[aria-label="Zip Code (required)"]')?.value,
+    ).toBe("95814");
   });
 
   it("selects an option when it exists in a <select>", () => {
     const root = makeForm(`
-      <select name="state">
+      <label for="st">State</label>
+      <select id="st">
         <option value="CA">California</option>
         <option value="MA">Massachusetts</option>
       </select>
     `);
-    const field: FieldFill = {
-      selector: "[name=state]",
-      source: "address.state",
-      kind: "select",
-    };
-    const filled = fillField(field, { address: { state: "CA" } }, root);
-    expect(filled).toBe(true);
-    expect(root.querySelector<HTMLSelectElement>("[name=state]")?.value).toBe("CA");
+    const field: FieldSelector = { label: "State", type: "select", source: "address.state" };
+    expect(fillField(field, { address: { state: "CA" } }, root)).toBe("filled");
+    expect(root.querySelector<HTMLSelectElement>("#st")?.value).toBe("CA");
   });
 
-  it("returns false when a select option does not exist", () => {
+  it("returns not-found when a select option does not exist", () => {
     const root = makeForm(`
-      <select name="state">
-        <option value="CA">California</option>
-      </select>
+      <label for="st">State</label>
+      <select id="st"><option value="CA">California</option></select>
     `);
-    const field: FieldFill = {
-      selector: "[name=state]",
-      source: "address.state",
-      kind: "select",
-    };
-    const filled = fillField(field, { address: { state: "NY" } }, root);
-    expect(filled).toBe(false);
+    const field: FieldSelector = { label: "State", type: "select", source: "address.state" };
+    // fillElement returns false (no matching option) → surfaced as not-found.
+    expect(fillField(field, { address: { state: "NY" } }, root)).toBe("not-found");
   });
 
   it("clicks a checkbox to flip its state", () => {
-    const root = makeForm(`<input type="checkbox" name="paysHeat" />`);
-    const cb = root.querySelector<HTMLInputElement>("[name=paysHeat]");
+    const root = makeForm(`<input type="checkbox" aria-label="CalFresh" />`);
+    const cb = root.querySelector<HTMLInputElement>('[aria-label="CalFresh"]');
     expect(cb?.checked).toBe(false);
-    const field: FieldFill = {
-      selector: "[name=paysHeat]",
-      source: "utility_allowance_type",
-      kind: "checkbox",
+    const field: FieldSelector = {
+      label: "CalFresh",
+      type: "checkbox",
+      source: "wants_calfresh",
     };
-    const filled = fillField(field, { utility_allowance_type: true }, root);
-    expect(filled).toBe(true);
+    expect(fillField(field, { wants_calfresh: true }, root)).toBe("filled");
     expect(cb?.checked).toBe(true);
   });
 });
 
-describe("fillPage — aggregate counts", () => {
-  it("returns counts split by filled vs skipped (TODO fields count as skipped)", () => {
+describe("fillField — value transforms (V1-3, #313)", () => {
+  it("applies ca-county-ordinal: county NAME → ordinal lands in the select", () => {
     const root = makeForm(`
-      <input name="firstName" />
-      <input name="lastName" />
-      <input name="ssn" />
+      <label for="cty">County</label>
+      <select id="cty">
+        <option value="">--</option>
+        <option value="01">Alameda</option>
+        <option value="34">Sacramento</option>
+      </select>
     `);
-    const page: FormPage = {
-      step: "synthetic_test_page",
-      urlPattern: /\/never-matches/,
-      fields: [
-        { selector: "[name=firstName]", source: "first_name", kind: "text" },
-        { selector: "[name=lastName]", source: "last_name", kind: "text" },
-        // tagged todo — counts as skipped
-        { selector: "[name=ssn]", source: "ssn_last4", kind: "ssn_last4", todo: true },
-      ],
+    const field: FieldSelector = {
+      label: "County",
+      type: "select",
+      source: "address.county",
+      transform: "ca-county-ordinal",
     };
-    const result = fillPage(
-      page,
-      { first_name: "Maria", last_name: "G", ssn_last4: "1234" },
-      root,
+    // Packet carries the NAME (with the " County" suffix); the transform maps it
+    // to "34" before fillElement, which selects the matching option.
+    expect(fillField(field, { address: { county: "Sacramento County" } }, root)).toBe(
+      "filled",
     );
-    expect(result.total).toBe(3);
-    expect(result.filled).toBe(2);
-    expect(result.skipped).toBe(1);
-    // SSN field was tagged todo — should NOT have been written
-    expect(root.querySelector<HTMLInputElement>("[name=ssn]")?.value).toBe("");
+    expect(root.querySelector<HTMLSelectElement>("#cty")?.value).toBe("34");
   });
 
-  it("returns all-skipped counts when nothing in the payload matches", () => {
-    const root = makeForm(`<input name="firstName" />`);
-    const page: FormPage = {
-      step: "synthetic_test_page",
-      urlPattern: /\/never-matches/,
-      fields: [{ selector: "[name=firstName]", source: "first_name", kind: "text" }],
+  it("counts an unmappable county as needs-review (no garbage written)", () => {
+    const root = makeForm(`
+      <label for="cty">County</label>
+      <select id="cty"><option value="">--</option><option value="34">Sacramento</option></select>
+    `);
+    const field: FieldSelector = {
+      label: "County",
+      type: "select",
+      source: "address.county",
+      transform: "ca-county-ordinal",
     };
-    const result = fillPage(page, {}, root);
+    // "Cook" has no CA ordinal → transform returns null → skipped.
+    expect(fillField(field, { address: { county: "Cook" } }, root)).toBe(
+      "needs-review",
+    );
+    // The select keeps its default (empty) value — nothing garbage written.
+    expect(root.querySelector<HTMLSelectElement>("#cty")?.value).toBe("");
+  });
+
+  it("applies phone-10digit: E.164 → bare 10-digit before fill", () => {
+    const root = makeForm(`<input aria-label="Mobile Phone" />`);
+    const field: FieldSelector = {
+      label: "Mobile Phone",
+      type: "text",
+      source: "phone",
+      transform: "phone-10digit",
+    };
+    expect(fillField(field, { phone: "+15551234567" }, root)).toBe("filled");
+    expect(
+      root.querySelector<HTMLInputElement>('[aria-label="Mobile Phone"]')?.value,
+    ).toBe("5551234567");
+  });
+
+  it("treats an unknown transform name as needs-review (selector-map bug guard)", () => {
+    const root = makeForm(`<input aria-label="County" />`);
+    const field: FieldSelector = {
+      label: "County",
+      type: "text",
+      source: "address.county",
+      transform: "does-not-exist",
+    };
+    expect(fillField(field, { address: { county: "Sacramento" } }, root)).toBe(
+      "needs-review",
+    );
+  });
+
+  it("a no-value source short-circuits before the transform runs", () => {
+    const root = makeForm(`<input aria-label="Mobile Phone" />`);
+    const field: FieldSelector = {
+      label: "Mobile Phone",
+      type: "text",
+      source: "phone",
+      transform: "phone-10digit",
+    };
+    expect(fillField(field, {}, root)).toBe("no-value");
+  });
+});
+
+describe("fillPage — aggregate counts", () => {
+  it("splits counts across filled / no-value / not-found / needs-review", () => {
+    const root = makeForm(`
+      <label for="fn">First Name</label><input id="fn" />
+      <label for="ln">Last Name</label><input id="ln" />
+      <input aria-label="Gender identity" />
+    `);
+    const p = page({
+      firstName: { label: "First Name", type: "text", source: "first_name" },
+      lastName: { label: "Last Name", type: "text", source: "last_name" },
+      // no source → needs manual review
+      gender: { label: "Gender identity", type: "radio" },
+      // has source but element absent → not found
+      ssn: { label: "SSN", type: "text", source: "ssn_last4", fallbackSelector: "#nope" },
+      // has source but payload has no value → no-value
+      dob: { label: "Date of Birth", type: "date-password", source: "date_of_birth", fallbackSelector: "#dobx" },
+    });
+    const result = fillPage(p, { first_name: "Maria", last_name: "G", ssn_last4: "1234" }, root);
+
+    expect(result.total).toBe(5);
+    expect(result.fillable).toBe(4); // all but `gender`
+    expect(result.filled).toBe(2); // firstName + lastName
+    expect(result.needsReview).toBe(1); // gender
+    expect(result.notFound).toBe(1); // ssn — element absent
+    expect(result.skippedNoValue).toBe(1); // dob — no payload value
+  });
+
+  it("counts an all-needs-review page (no sources) with zero fillable", () => {
+    const root = makeForm(`<input aria-label="Gender identity" />`);
+    const p = page({
+      gender: { label: "Gender identity", type: "radio" },
+    });
+    const result = fillPage(p, {}, root);
+    expect(result.fillable).toBe(0);
     expect(result.filled).toBe(0);
-    expect(result.skipped).toBe(1);
+    expect(result.needsReview).toBe(1);
+  });
+
+  it("counts a transform-null field as fillable AND needs-review", () => {
+    const root = makeForm(`
+      <label for="cty">County</label>
+      <select id="cty"><option value="">--</option><option value="34">Sacramento</option></select>
+    `);
+    const p = page({
+      county: {
+        label: "County",
+        type: "select",
+        source: "address.county",
+        transform: "ca-county-ordinal",
+      },
+    });
+    // "Cook" → null from the transform → skipped, but it HAS a source so it
+    // counts as fillable too (fillable + needsReview can exceed total).
+    const result = fillPage(p, { address: { county: "Cook" } }, root);
+    expect(result.total).toBe(1);
+    expect(result.fillable).toBe(1);
+    expect(result.filled).toBe(0);
+    expect(result.needsReview).toBe(1);
+    expect(root.querySelector<HTMLSelectElement>("#cty")?.value).toBe("");
   });
 });

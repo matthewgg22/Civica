@@ -22,6 +22,24 @@ commit subject — say what changed for the reader of this file.
 ## [Unreleased]
 
 ### Added
+- `apps/civica-submitter-extension`: the extension now fills BenefitsCal
+  application pages for real (previously every field was a `todo` no-op). Driven
+  by a typed selector map captured from the live CBO portal walk, with a
+  React-safe fill primitive (writes through the native value setter so
+  React-controlled inputs register the change), a label-first DOM resolver, and
+  county-name→ordinal + phone E.164→10-digit transforms. A human still reviews
+  and clicks submit; unknown/absent fields surface as needs-review rather than
+  being silently defaulted.
+- `@civica/benefitscal-cbo`: new `./core` subpath export (browser-safe selector
+  map, field-map, normalize, schemas — no Playwright) and `./driver` subpath
+  (server-side Playwright submitter, deferred to v2). Adds `core/selector-map.ts`
+  (28 portal pages), `core/fill.ts` (React-safe fill), `core/locate.ts` (label
+  resolver), `core/transforms.ts` (county/phone).
+- `@civica/benefitscal-cbo`: `BenefitsCalPayload` gains `address.county`,
+  `is_homeless`, `is_college_student`, `marital_status`, `citizenship_status`,
+  and optional `sex_assigned_at_birth` / `gender`. Eligibility-critical fields
+  are optional and omitted when intake lacks an answer — never silently
+  defaulted. `ssn_last4` remains the only SSN field stored.
 - `supabase`: `v_qc_pillar_coverage` view caches per-pillar engagement
   rates (income / shelter / SUA flags / OBBBA chain) used by the `/qc`
   Error Rate Intelligence page. Re-computes from `snap_packets`,

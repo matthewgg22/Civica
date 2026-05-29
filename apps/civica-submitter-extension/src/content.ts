@@ -10,31 +10,39 @@
 // Lifecycle:
 //   1. On page load, request the active packet's payload from background.
 //      (Background reads from chrome.storage.local + Civica gateway.)
-//   2. Match current URL against APPLICATION_FORM_PAGES.urlPattern.
-//   3. For each matched field, resolve the source path into the payload
-//      and write the value into the DOM element. Fields tagged `todo: true`
-//      are skipped with a console warning (selectors not yet verified
-//      against the live CBO Manager portal — TODO-14).
+//   2. Match current URL against PORTAL_PAGES[].urlPattern.
+//   3. For each field that carries a `source` (a dotted payload path), resolve
+//      the value out of the payload and the DOM element via resolveField()
+//      (label-first, like Playwright's getByLabel), then fill it with the
+//      React-safe fillElement() primitive. Fields with no `source` are left for
+//      the assister to fill by hand (counted as "needs review", not errors).
 //   4. After fill, render a small toast/banner indicating how many fields
-//      were filled and how many were skipped (TODOs).
+//      were filled, skipped (no packet source), and not found in the DOM.
 //   5. On SPA navigation to the CONFIRMATION_PAGE URL, scrape the case
 //      number selector and POST it back via background.
 //
 // Hard guarantees (anti-foot-gun):
-//   - Never calls .click() on any submit button.
+//   - Never calls .click() on any submit button (we never resolve/advance
+//     `advanceButton`s; FieldType "button" is not a fill target).
 //   - Never calls .submit() on any form.
 //   - Never inspects DOM outside benefitscal.com (manifest-restricted).
-//   - Skips file_upload kinds entirely (browser security forbids).
+//   - Skips file inputs entirely (browser security forbids; the map has no
+//     file fields in step-1, but resolveField + fillElement also refuse them).
 
-// Import directly from the field-map subpath so we don't pull in submitter.ts
-// (which has a dynamic `import("playwright")` that Vite's import analysis
-// chokes on in extension test contexts).
+// Import from the browser-safe /core surface (PORTAL_PAGES selector map, the
+// React-safe fill primitive, and the label-first DOM resolver). NOT /field-map
+// (deleted in V1-5, #314) and NOT the package root (its driver subtree has a
+// dynamic `import("playwright")` that Vite's import analysis chokes on in
+// extension test contexts).
 import {
-  APPLICATION_FORM_PAGES,
+  PORTAL_PAGES,
   CONFIRMATION_PAGE,
-  type FieldFill,
-  type FormPage,
-} from "@civica/benefitscal-cbo/field-map";
+  resolveField,
+  fillElement,
+  TRANSFORMS,
+  type PortalPage,
+  type FieldSelector,
+} from "@civica/benefitscal-cbo/core";
 import { resolvePath } from "./payload-path";
 
 interface PayloadFetchResponse {
@@ -95,10 +103,7 @@ async function main(): Promise<void> {
   const page = findPageForUrl(window.location.pathname);
   if (page) {
     const result = fillPage(page, payload);
-    renderOverlay({
-      message: `Filled ${result.filled} of ${result.total} fields on this page${result.skipped > 0 ? ` (${result.skipped} skipped — selectors not yet verified)` : ""}. Review the form, then click Continue.`,
-      tone: result.skipped > 0 ? "warning" : "success",
-    });
+    renderOverlay(describeFill(result));
     return;
   }
 
@@ -119,8 +124,8 @@ async function main(): Promise<void> {
 // Page matching
 // ---------------------------------------------------------------------------
 
-function findPageForUrl(pathname: string): FormPage | null {
-  for (const page of APPLICATION_FORM_PAGES) {
+function findPageForUrl(pathname: string): PortalPage | null {
+  for (const page of PORTAL_PAGES) {
     if (page.urlPattern.test(pathname)) return page;
   }
   return null;
@@ -131,152 +136,161 @@ function findPageForUrl(pathname: string): FormPage | null {
 // ---------------------------------------------------------------------------
 
 interface FillResult {
-  total: number;
+  /** Fields on this page that carry a `source` (i.e. are auto-fillable). */
+  fillable: number;
+  /** Fields actually written into the DOM. */
   filled: number;
-  skipped: number;
+  /** Fillable fields skipped because the packet had no value at the source. */
+  skippedNoValue: number;
+  /** Fillable fields whose DOM element could not be located on the page. */
+  notFound: number;
+  /**
+   * Fields left for the assister to fill by hand: either no `source`, or a
+   * `source` whose `transform` returned null (value couldn't be mapped, e.g. a
+   * county with no CA ordinal). The latter is also counted in `fillable`, so
+   * `fillable + needsReview` may exceed `total` by the number of such fields.
+   */
+  needsReview: number;
+  /** Total fields on the page (= `Object.values(page.fields).length`). */
+  total: number;
 }
 
 export function fillPage(
-  page: FormPage,
+  page: PortalPage,
   payload: unknown,
   root: ParentNode = document,
 ): FillResult {
   let filled = 0;
-  let skipped = 0;
-  for (const field of page.fields) {
-    if (fillField(field, payload, root)) {
-      filled++;
-    } else {
-      skipped++;
+  let skippedNoValue = 0;
+  let notFound = 0;
+  let needsReview = 0;
+  let fillable = 0;
+
+  const fields = Object.values(page.fields);
+  for (const field of fields) {
+    // No packet source → the assister fills this by hand (language prefs,
+    // gender, marital status, program-selection policy, etc.).
+    if (!field.source) {
+      needsReview++;
+      console.debug(LOG_PREFIX, `needs review (no source): ${field.label}`);
+      continue;
+    }
+    fillable++;
+    const outcome = fillField(field, payload, root);
+    switch (outcome) {
+      case "filled":
+        filled++;
+        break;
+      case "no-value":
+        skippedNoValue++;
+        break;
+      case "not-found":
+        notFound++;
+        break;
+      case "needs-review":
+        // A field with a `source` whose transform returned null (e.g. a county
+        // with no CA ordinal) — the value couldn't be mapped, so the assister
+        // fills it. Counted as needs-review like a source-less field.
+        needsReview++;
+        break;
     }
   }
-  return { total: page.fields.length, filled, skipped };
+
+  return {
+    fillable,
+    filled,
+    skippedNoValue,
+    notFound,
+    needsReview,
+    total: fields.length,
+  };
 }
 
-/** Returns true when the field was actually written; false otherwise. */
+type FieldOutcome = "filled" | "no-value" | "not-found" | "needs-review";
+
+/**
+ * Attempt to fill a single field. Returns the outcome so `fillPage` can tally
+ * filled / no-value / not-found separately. A field with no `source` returns
+ * "needs-review" (callers usually filter these out before calling).
+ */
 export function fillField(
-  field: FieldFill,
+  field: FieldSelector,
   payload: unknown,
   root: ParentNode = document,
-): boolean {
-  // TODO-14: every current field has `todo: true` because selectors haven't
-  // been captured against the live CBO Manager portal yet. We skip them
-  // here with a debug log so the structure is exercised in tests but no
-  // accidental fills happen against random matching elements on
-  // unverified selectors.
-  if (field.todo) {
-    console.debug(LOG_PREFIX, `skipped (todo): ${field.label ?? field.source}`);
-    return false;
-  }
-
-  if (field.kind === "file_upload") {
-    // File inputs cannot be filled programmatically from a content script
-    // for security reasons (the assister must drag-drop or click).
-    console.debug(LOG_PREFIX, `skipped (file_upload): ${field.label ?? field.source}`);
-    return false;
-  }
-
-  const el = root.querySelector(field.selector);
-  if (!el) {
-    console.debug(LOG_PREFIX, `not found: ${field.selector}`);
-    return false;
-  }
+): FieldOutcome {
+  // Buttons are navigation, never data entry — never resolve or click them.
+  // (advanceButtons live off `page.fields` entirely, but guard anyway.)
+  if (field.type === "button") return "needs-review";
+  if (!field.source) return "needs-review";
 
   const value = resolvePath(payload, field.source);
   if (value === null || value === undefined || value === "") {
     console.debug(LOG_PREFIX, `no value at path: ${field.source}`);
-    return false;
+    return "no-value";
   }
 
-  return writeValue(el, field, value);
-}
-
-function writeValue(el: Element, field: FieldFill, value: unknown): boolean {
-  switch (field.kind) {
-    case "text":
-    case "ssn_last4":
-    case "currency_monthly":
-      return writeText(el, String(value));
-    case "phone":
-      // Convert E.164 (+15551234567) → portal-preferred 10-digit (5551234567).
-      // BenefitsCal forms historically reject leading +; if that turns out
-      // not to be the case after TODO-14 verification, drop this transform.
-      return writeText(el, String(value).replace(/^\+1/, "").replace(/\D/g, ""));
-    case "date":
-      return writeText(el, formatDateForPortal(String(value)));
-    case "select":
-      return writeSelect(el, String(value));
-    case "checkbox":
-      return writeCheckbox(el, coerceBoolean(value));
-    case "radio":
-      return writeRadio(el, String(value));
-    case "file_upload":
-      // Unreachable in practice — fillField() filters file_upload before
-      // calling writeValue(). Included here for switch exhaustiveness.
-      return false;
-    default: {
-      const exhaustive: never = field.kind;
-      console.warn(LOG_PREFIX, `unhandled kind: ${exhaustive as string}`);
-      return false;
+  // Apply the field's value transform, if any (V1-3, #313): county NAME →
+  // 2-digit ordinal, E.164 phone → bare 10-digit, etc. A transform returning
+  // null means the value can't be mapped (e.g. an out-of-CA county) — skip the
+  // fill and flag it for the assister rather than writing a garbage value.
+  let fillValue = String(value);
+  if (field.transform) {
+    const fn = TRANSFORMS[field.transform];
+    if (!fn) {
+      // An unknown transform name is a selector-map bug; don't guess — flag it.
+      console.warn(LOG_PREFIX, `unknown transform "${field.transform}" for ${field.label}`);
+      return "needs-review";
     }
+    const transformed = fn(fillValue);
+    if (transformed === null) {
+      console.debug(
+        LOG_PREFIX,
+        `transform "${field.transform}" could not map value for ${field.label}`,
+      );
+      return "needs-review";
+    }
+    fillValue = transformed;
   }
-}
 
-function writeText(el: Element, value: string): boolean {
-  if (!(el instanceof HTMLInputElement) && !(el instanceof HTMLTextAreaElement)) return false;
-  el.focus();
-  el.value = value;
-  el.dispatchEvent(new Event("input", { bubbles: true }));
-  el.dispatchEvent(new Event("change", { bubbles: true }));
-  el.blur();
-  return true;
-}
-
-function writeSelect(el: Element, value: string): boolean {
-  if (!(el instanceof HTMLSelectElement)) return false;
-  el.value = value;
-  if (el.value !== value) {
-    // Couldn't find the option — common when option labels differ from the
-    // value we have. Surface in the console so the assister knows.
-    console.warn(LOG_PREFIX, `select option not found for value: ${value}`);
-    return false;
+  const el = resolveField(field, root);
+  if (!el) {
+    console.debug(LOG_PREFIX, `not found: ${field.label} (${field.fallbackSelector ?? "label-only"})`);
+    return "not-found";
   }
-  el.dispatchEvent(new Event("change", { bubbles: true }));
-  return true;
-}
 
-function writeCheckbox(el: Element, checked: boolean): boolean {
-  if (!(el instanceof HTMLInputElement) || el.type !== "checkbox") return false;
-  if (el.checked === checked) return true;
-  el.click();
-  return true;
-}
-
-function writeRadio(el: Element, value: string): boolean {
-  // For radio groups, the consumer is expected to pass the selector for the
-  // specific radio button to select (e.g., "[name=foo][value=yes]"). If the
-  // current element's value matches, click it.
-  if (!(el instanceof HTMLInputElement) || el.type !== "radio") return false;
-  if (el.value === value) {
-    if (!el.checked) el.click();
-    return true;
+  const ok = fillElement(el, field.type, fillValue);
+  if (!ok) {
+    // fillElement returns false for a wrong element type or a missing <select>
+    // option — surface it like a not-found so the assister double-checks.
+    console.warn(LOG_PREFIX, `could not fill: ${field.label} (type ${field.type})`);
+    return "not-found";
   }
-  return false;
+  return "filled";
 }
 
-function formatDateForPortal(iso: string): string {
-  // Many SAWS-style portals want MM/DD/YYYY. TODO-14: verify exact
-  // expected format. ISO YYYY-MM-DD passes through if the input accepts it.
-  const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso);
-  if (!m) return iso;
-  return `${m[2]}/${m[3]}/${m[1]}`;
-}
-
-function coerceBoolean(v: unknown): boolean {
-  if (typeof v === "boolean") return v;
-  if (typeof v === "string") return v === "true" || v === "yes" || v === "1";
-  if (typeof v === "number") return v !== 0;
-  return false;
+/** Turn a fill tally into an overlay message + tone. */
+function describeFill(r: FillResult): OverlayState {
+  const parts: string[] = [`Filled ${r.filled} of ${r.fillable} auto-fillable fields`];
+  if (r.skippedNoValue > 0) parts.push(`${r.skippedNoValue} had no packet data`);
+  if (r.notFound > 0) parts.push(`${r.notFound} not found on the page`);
+  if (r.needsReview > 0) parts.push(`${r.needsReview} need manual review`);
+  const detail = parts.length > 1 ? ` (${parts.slice(1).join(", ")})` : "";
+  const tone: OverlayState["tone"] =
+    r.notFound > 0
+      ? "warning"
+      : r.skippedNoValue > 0 || r.needsReview > 0
+        ? "warning"
+        : r.filled > 0
+          ? "success"
+          : "info";
+  const lead =
+    r.fillable === 0
+      ? `No auto-fillable fields on this page${r.needsReview > 0 ? ` — ${r.needsReview} need manual review` : ""}.`
+      : `${parts[0]}${detail}.`;
+  return {
+    message: `${lead} Review the form, then click Next/Continue yourself.`,
+    tone,
+  };
 }
 
 // ---------------------------------------------------------------------------
@@ -284,10 +298,10 @@ function coerceBoolean(v: unknown): boolean {
 // ---------------------------------------------------------------------------
 
 async function handleConfirmation(packetId: string): Promise<void> {
-  if (CONFIRMATION_PAGE.todo) {
+  if (!CONFIRMATION_PAGE.verified) {
     renderOverlay({
       message:
-        "Civica Submitter detected the success page, but the confirmation-number selector hasn't been verified against the live portal yet (TODO-14). Copy the case number from the page and paste it into Civica's dashboard manually.",
+        "Civica Submitter detected the success page, but the confirmation-number selector hasn't been verified against the live portal yet. Copy the case number from the page and paste it into Civica's dashboard manually.",
       tone: "warning",
     });
     return;
