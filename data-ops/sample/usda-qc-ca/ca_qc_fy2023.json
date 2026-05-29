@@ -1,0 +1,83 @@
+{
+  "scope": "CA",
+  "fiscal_year": 2023,
+  "weight": "FYWGT",
+  "n_ca_cases": 867,
+  "n_ca_errored_cases": 379,
+  "element_share_pct": {
+    "363": 41.5,
+    "311": 22.18,
+    "331": 11.49,
+    "333": 7.95,
+    "346": 6.49,
+    "312": 5.11,
+    "364": 4.92,
+    "365": 4.03,
+    "350": 2.4,
+    "334": 2.31
+  },
+  "element_validation_vs_engine": {
+    "363": {
+      "real": 41.5,
+      "engine": 39.94,
+      "label": "Shelter deduction"
+    },
+    "311": {
+      "real": 22.18,
+      "engine": 21.35,
+      "label": "Wages"
+    },
+    "331": {
+      "real": 11.49,
+      "engine": 11.06,
+      "label": "RSDI"
+    },
+    "333": {
+      "real": 7.95,
+      "engine": 7.65,
+      "label": "SSI"
+    },
+    "346": {
+      "real": 6.49,
+      "engine": 6.25,
+      "label": "Other unearned income"
+    },
+    "312": {
+      "real": 5.11,
+      "engine": 5.16,
+      "label": "Self-employment"
+    },
+    "364": {
+      "real": 4.92,
+      "engine": 4.49,
+      "label": "Standard utility allowance"
+    },
+    "365": {
+      "real": 4.03,
+      "engine": 3.88,
+      "label": "Medical expense deduction"
+    }
+  },
+  "shelter_or_wages_share_of_errored_pct": 60.8,
+  "responsibility_dollar_weighted": {
+    "operational_pct": 64.6,
+    "client_pct": 35.4,
+    "raw_shares": {
+      "agency_operational": 61.3,
+      "client": 33.7,
+      "excluded": 0.0,
+      "other": 5.0
+    }
+  },
+  "responsibility_count": {
+    "agency_operational": 177,
+    "client": 209,
+    "excluded": 2,
+    "other": 48
+  },
+  "notes": [
+    "Element share = weighted errored cases citing element / total errored cases (engine denominator).",
+    "Operational vs client is dollar-weighted variance (AMOUNT x FYWGT); excludes code 8 and 'other'(99) from the base.",
+    "No 'policy-design' category exists in QC — errors are agency (operational) or client (household)."
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "source": "USDA SNAP QC Public-Use File — snapqcdata.net (qcfy2023_csv.zip)",
+  "fiscal_year": 2023,
+  "input_basename": "qc_pub_fy2023.csv",
+  "generated_at": "2026-05-29T19:05:00Z",
+  "weight": "FYWGT",
+  "agency_operational_codes": [
+    10,
+    12,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21
+  ],
+  "client_codes": [
+    1,
+    2,
+    3,
+    4,
+    7
+  ],
+  "excluded_codes": [
+    8
+  ],
+  "codebook": "FY2023 Tech Doc Ch. V — AGENCY1..9 = AGENCY OR CLIENT RESPONSIBILITY"
+}
