@@ -27,7 +27,9 @@ import { makeAnonClient, makeServiceClient } from "../lib/supabase.js";
 import { withActorContext } from "../middleware/actorContext.js";
 import { runBenefitsCalSubmission } from "../lib/benefitscal-submit.js";
 import { rateLimit } from "../lib/rate-limit.js";
-import type { BrowserDriverFactory } from "@civica/benefitscal-cbo";
+// /driver subpath, not the root barrel — keeps /core DOM primitives out of
+// this DOM-less Worker's compilation. See feedback: benefitscal-cbo subpath layering.
+import type { BrowserDriverFactory } from "@civica/benefitscal-cbo/driver";
 import { browserlessDriverFactory } from "@civica/benefitscal-cbo/drivers/browserless";
 import type { Env } from "../types.js";
 
