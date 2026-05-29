@@ -186,3 +186,32 @@ the explainer popovers on step-1 pages (mostly "?" links) + verifying ABCPA ids.
 - Expense amount pages (rent $, utility $, dependent-care $).
 - Household Details per-category detail pages.
 These mirror the member sub-form pattern: a gate → repeating detail pages → summary card.
+
+### Step 5 Expenses (remainder)
+- **ABCOC** — "Do you pay court-ordered child support?" `radio[name=label]` Yes/No.
+- **ABSSQ** — "court-ordered spousal support or alimony?" `radio[name=label_spf]` Yes/No.
+- **ABESU** — expenses summary (Housing / Adult Care-Childcare / Medical / Court-Ordered / Tax-Deductible, Total per month).
+- **ABESC** — section-complete ("You're halfway done… next is 'other'").
+
+## STEP 6 — Other Situations
+- **ABOSS** — "You may be able to get even more help. Select the services that interest you" — optional services checkboxes (e.g. `#immunity` Vaccine Services). Opt-in referrals, non-eligibility.
+- **ABPFG** — "Please answer the statements below." + explainer link **"Why do we ask these questions?"** — the felony/disqualification gate (eligibility-CRITICAL). Yes/No radios:
+  - `duplicatefood_radio` — duplicate food assistance in any state after 09/22/1996
+  - `sellingEBT_radio` — trafficking EBT cards worth $500+
+  - `probation_violation_radio` — probation/parole violation
+  - `foodAssistanceDrug_radio` — drug felony
+  - `foodAssistanceGun_radio` — firearm felony
+  - `avoidJail_radio` — fleeing to avoid jail
+- **ABSND** — section-complete ("next you'll upload your papers").
+
+## STEP 7 — Document Upload
+- **APDMC** — "Here are some suggested documents to upload. Based on your responses, we suggest…" + explainer **"Not sure what to upload? Let's look at some examples."** Buttons: `UPLOAD`, `ADD OTHER DOCUMENT`, `ADD A PERSON`, `UPLOAD MORE DOCUMENTS`, Next.
+  - **`AP` URL prefix** (not `AB`) — first non-AB page code seen.
+  - **Extension skips file uploads by design** (content scripts can't fill `<input type=file>`); the assister uploads manually. Capture the page + suggested-doc list for the chatbot ("what to upload"), don't autofill.
+
+## STEP 8 — Review & Submit
+- Not reached this walk (driver stuck on APDMC doc-upload Next). The confirmation-number selector + final submit control still need capture (the extension's confirmation scrape target + the pre-submit trust-panel target). Reach via APDMC → Next (may require acknowledging no-docs).
+
+## AUDIT TREE STATUS after this walk
+**All 8 sections' main-path structure now captured** (gates, key questions, summaries, section-completes, + many inline explainers): Your Information(1) ✓, People(2) ✓ (+ member sub-form), Household Details(3) ✓, Income(4) ✓, Expenses(5) ✓, Other Situations(6) ✓, Document Upload(7) ✓, Review & Submit(8) ✗ (not reached).
+**Still to capture:** Review/Submit page; the repeating DETAIL sub-forms (job/income amounts, expense amounts, household-detail per-category, member DOB/SSN); the step-1 "?" explainer popovers; verify ABCPA ids. Rough completion of the reframed tree now **~40%** (main-path + explainers across 7 of 8 sections; detail sub-forms + popovers + Review remain).
