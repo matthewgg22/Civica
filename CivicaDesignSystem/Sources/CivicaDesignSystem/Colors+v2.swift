@@ -15,6 +15,25 @@ extension CivicaColors {
     // MARK: Wheat — benefit-positive fill ONLY (deposits, balance updates, streaks)
     // NEVER use as text on paper — fails AA at all body sizes (2.1:1).
     // Text on wheatSurface: ink only.
+    //
+    // MARK: - DANGER ZONE
+    //
+    // wheatPrimary fails WCAG AA on every Civica light surface
+    // (2.1:1 contrast on #F7F5EF paper, 2.0:1 on #FFFFFF).
+    // It is a FILL-ONLY token. Never set as text foreground on any
+    // light surface — eyebrows, captions, body copy, button labels.
+    //
+    // Sanctioned use sites (audit confirmed): EBT balance hero
+    // (dark pine background → 6.9:1, AA OK), wheatSurface fills,
+    // wheatBright tally accents on dark pine.
+    //
+    // The compiler cannot enforce this — Color is the same type
+    // whether used as fill or foreground. Code review must catch
+    // foreground misuse. See DESIGN.md §9.1 contract 1 + §2.2
+    // "Wheat = benefit fills, never text."
+    //
+    // Audit DS-6 (2026-05-29) — comment added in lieu of SwiftLint
+    // rule pending lint config landing.
     public static let wheatPrimary        = Color.dynamic(light: "#E8C547", dark: "#F4D670")
     public static let wheatPrimaryPressed = Color.dynamic(light: "#C9A046", dark: "#DEB94F")
     public static let wheatSurface        = Color.dynamic(light: "#F7E89C", dark: "#4A3D1F")
