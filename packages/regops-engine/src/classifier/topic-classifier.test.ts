@@ -176,6 +176,58 @@ describe("classifyTopics — input combination", () => {
   });
 });
 
+describe("classifyTopics — false-positive regressions", () => {
+  // Regression: prior to the fix, the error_rate topic used a
+  // case-insensitive /\bper\b/i regex. Every CDSS ACL payload contains
+  // "per" as an ordinary preposition ("per the regulations") which
+  // false-positive-tagged every CA snapshot with error_rate.
+  //
+  // Verified in prod 2026-05-29: all four ca-cdss-acl rows from
+  // 2026-05-28 23:36 → 2026-05-29 12:25 carried error_rate despite
+  // CDSS not publishing PER data this period.
+  //
+  // Fix: only match the uppercase canonical acronym "PER" (the SNAP
+  // term of art); the lowercase preposition is too common to disambiguate.
+
+  it("does NOT tag error_rate on 'per the regulations' (common preposition)", () => {
+    expect(classifyTopics("Per the regulations, applicants must...")).not.toContain(
+      "error_rate",
+    );
+  });
+
+  it("does NOT tag error_rate on 'per applicant' or 'as per CDSS'", () => {
+    expect(classifyTopics("Income limits per applicant per month")).not.toContain(
+      "error_rate",
+    );
+    expect(classifyTopics("As per CDSS ACL 26-29")).not.toContain("error_rate");
+  });
+
+  it("DOES tag error_rate on the canonical uppercase SNAP acronym 'PER'", () => {
+    expect(classifyTopics("The PER for FY2026 is 6.2%")).toContain("error_rate");
+    expect(classifyTopics("PER computation methodology")).toContain("error_rate");
+  });
+
+  it("DOES tag error_rate on spelled-out phrases (case-insensitive)", () => {
+    expect(classifyTopics("Payment Error Rate quarterly report")).toContain(
+      "error_rate",
+    );
+    expect(
+      classifyTopics("Case and Procedural Error Rate findings"),
+    ).toContain("error_rate");
+  });
+
+  it("real ACL title pattern from CDSS does NOT trigger error_rate", () => {
+    // CDSS ACL 26-30 — "CalFresh Employment And Training Civil Rights Notice"
+    // contains no PER-related content. The /\bper\b/i regression flagged
+    // it because the JSON-stringified payload included words like
+    // "Information per County" or similar boilerplate elsewhere on the page.
+    const tags = classifyTopics(
+      "CalFresh Employment And Training Civil Rights Notice as per CDSS",
+    );
+    expect(tags).not.toContain("error_rate");
+  });
+});
+
 describe("getAllTopicTags — vocabulary completeness", () => {
   it("returns the full vocabulary in declared order", () => {
     const all = getAllTopicTags();
