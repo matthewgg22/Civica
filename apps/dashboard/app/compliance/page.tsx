@@ -69,7 +69,6 @@ import {
 import {
   civicaOutcomes,
   foiaPendingOutcomes,
-  effectIsolation,
   outcomesSummary,
 } from "../../lib/analytics/civica-outcomes";
 
@@ -132,7 +131,6 @@ export default async function CompliancePage() {
   const stackSummary = verificationStackSummary();
   const outcomes = civicaOutcomes();
   const foiaOutcomes = foiaPendingOutcomes();
-  const effectIsolationRows = effectIsolation();
   const outcomesHeadline = outcomesSummary();
 
   return (
@@ -489,7 +487,6 @@ export default async function CompliancePage() {
             rows={outcomes}
             summary={outcomesHeadline}
             foiaOutcomes={foiaOutcomes}
-            effectIsolationRows={effectIsolationRows}
           />
         </section>
         {/* Bridge P5→Model */}
