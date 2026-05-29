@@ -49,9 +49,11 @@ python tools/cdss-cf18/src/ingest_cf18.py --data-dir cf18 \
   --out data-ops/sample/cdss-cf18/cf18_churn_statewide.json
 ```
 
-The script also keeps the monthly statewide series. County-level churn (all 58
-counties are in the workbook) is a one-line filter change — useful for the
-heatmap/distribution tracks.
+The script also keeps the monthly statewide series and emits a per-county table
+(`cf18_churn_by_county.json`, latest complete FY, counties with ≥6,000 scheduled
+recerts). Across those counties recert benefit-loss ranges **1.3%–10.6% (~8×)**
+under identical state rules — useful for the heatmap/distribution tracks and the
+`/findings/retention` readout.
 
 ## Caveats
 

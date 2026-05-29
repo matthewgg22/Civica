@@ -58,6 +58,8 @@ def main(argv=None) -> None:
     p = argparse.ArgumentParser()
     p.add_argument("--data-dir", required=True, help="dir of CF18FY*.xlsx files")
     p.add_argument("--out", default="data-ops/sample/cdss-cf18/cf18_churn_statewide.json")
+    p.add_argument("--out-county", default="data-ops/sample/cdss-cf18/cf18_churn_by_county.json")
+    p.add_argument("--min-rrr-scheduled", type=int, default=6000, help="drop tiny counties (noisy rates)")
     p.add_argument("--generated-at", default="unset")
     a = p.parse_args(argv)
 
@@ -69,8 +71,10 @@ def main(argv=None) -> None:
 
     years: dict[str, dict] = {}
     monthly: list[dict] = []
+    paths_by_fy: dict[str, str] = {}
     for path in files:
         fy = fy_from_name(path)
+        paths_by_fy[fy] = path
         df = pd.read_excel(path, sheet_name="Data_Internal", header=5)
         df = df[df["County Name"] == "Statewide"].copy()
         for cell in CELLS:
@@ -115,6 +119,48 @@ def main(argv=None) -> None:
     for fy, y in years.items():
         print(f"  {fy}: RRR {y['rrr_loss_rate_pct']}%  SAR7 {y['sar7_loss_rate_pct']}%  "
               f"events-with-loss {y['household_events_with_loss']:,} (months={y['months']})")
+
+    # County-level for the latest COMPLETE fiscal year (12 months of reporting).
+    complete = [fy for fy, y in years.items() if y["months"] == 12]
+    if complete and a.out_county:
+        latest = sorted(complete)[-1]
+        cdf = pd.read_excel(paths_by_fy[latest], sheet_name="Data_Internal", header=5)
+        cdf = cdf[
+            cdf["County Name"].notna()
+            & ~cdf["County Name"].isin(["Statewide", "County Name"])
+        ].copy()
+        for cell in CELLS:
+            cdf[cell] = pd.to_numeric(cdf[cell], errors="coerce")
+        g = cdf.groupby("County Name", as_index=False)[list(CELLS)].sum()
+        rows = []
+        for _, r in g.iterrows():
+            rrr_s, sar_s = r["Cell 2"], r["Cell 1"]
+            if pd.isna(rrr_s) or rrr_s < a.min_rrr_scheduled:
+                continue
+            rows.append({
+                "county": r["County Name"],
+                "rrr_scheduled": int(rrr_s),
+                "rrr_loss_rate_pct": round(r["Cell 16"] / rrr_s * 100, 1) if rrr_s else None,
+                "sar7_scheduled": int(sar_s) if pd.notna(sar_s) else None,
+                "sar7_loss_rate_pct": round(r["Cell 15"] / sar_s * 100, 1) if pd.notna(sar_s) and sar_s else None,
+            })
+        rows.sort(key=lambda x: (x["rrr_loss_rate_pct"] or 0), reverse=True)
+        county_out = {
+            "source": result["source"],
+            "scope": "California, by county",
+            "fiscal_year": latest,
+            "generated_at": a.generated_at,
+            "definition": result["definition"],
+            "min_rrr_scheduled_filter": a.min_rrr_scheduled,
+            "n_counties": len(rows),
+            "counties": rows,
+        }
+        os.makedirs(os.path.dirname(a.out_county), exist_ok=True)
+        with open(a.out_county, "w", encoding="utf-8") as fh:
+            json.dump(county_out, fh, indent=2)
+        print(f"wrote {a.out_county} ({len(rows)} counties, FY {latest})")
+        for x in rows[:8]:
+            print(f"    {x['county']}: RRR {x['rrr_loss_rate_pct']}%  SAR7 {x['sar7_loss_rate_pct']}%")
 
 
 if __name__ == "__main__":

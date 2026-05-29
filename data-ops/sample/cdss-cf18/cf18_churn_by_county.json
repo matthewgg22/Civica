@@ -1,0 +1,263 @@
+{
+  "source": "CDSS CalFresh Churn Monthly Report (CF 18)",
+  "scope": "California, by county",
+  "fiscal_year": "FY2024-25",
+  "generated_at": "2026-05-29",
+  "definition": "Procedural benefit interruption at periodic reporting. 'with loss' = SAR 7 / RRR submitted late AND the household experienced a loss of benefits (CF-18 item 6b). Rate = late-with-loss / scheduled. RRR = recertification; SAR 7 = semi-annual report.",
+  "min_rrr_scheduled_filter": 6000,
+  "n_counties": 36,
+  "counties": [
+    {
+      "county": "Yuba",
+      "rrr_scheduled": 6641,
+      "rrr_loss_rate_pct": 10.6,
+      "sar7_scheduled": 7743,
+      "sar7_loss_rate_pct": 11.5
+    },
+    {
+      "county": "San Francisco",
+      "rrr_scheduled": 44457,
+      "rrr_loss_rate_pct": 9.9,
+      "sar7_scheduled": 47123,
+      "sar7_loss_rate_pct": 7.9
+    },
+    {
+      "county": "Ventura",
+      "rrr_scheduled": 27243,
+      "rrr_loss_rate_pct": 8.2,
+      "sar7_scheduled": 36189,
+      "sar7_loss_rate_pct": 12.2
+    },
+    {
+      "county": "San Joaquin",
+      "rrr_scheduled": 42068,
+      "rrr_loss_rate_pct": 7.7,
+      "sar7_scheduled": 49381,
+      "sar7_loss_rate_pct": 10.2
+    },
+    {
+      "county": "Stanislaus",
+      "rrr_scheduled": 32653,
+      "rrr_loss_rate_pct": 7.7,
+      "sar7_scheduled": 39479,
+      "sar7_loss_rate_pct": 8.3
+    },
+    {
+      "county": "Tulare",
+      "rrr_scheduled": 45123,
+      "rrr_loss_rate_pct": 7.7,
+      "sar7_scheduled": 53188,
+      "sar7_loss_rate_pct": 8.2
+    },
+    {
+      "county": "Santa Cruz",
+      "rrr_scheduled": 12420,
+      "rrr_loss_rate_pct": 7.3,
+      "sar7_scheduled": 16970,
+      "sar7_loss_rate_pct": 10.7
+    },
+    {
+      "county": "San Bernardino",
+      "rrr_scheduled": 130772,
+      "rrr_loss_rate_pct": 6.9,
+      "sar7_scheduled": 162094,
+      "sar7_loss_rate_pct": 7.3
+    },
+    {
+      "county": "Yolo",
+      "rrr_scheduled": 11725,
+      "rrr_loss_rate_pct": 6.8,
+      "sar7_scheduled": 15129,
+      "sar7_loss_rate_pct": 9.4
+    },
+    {
+      "county": "San Luis Obispo",
+      "rrr_scheduled": 11125,
+      "rrr_loss_rate_pct": 6.6,
+      "sar7_scheduled": 18789,
+      "sar7_loss_rate_pct": 10.5
+    },
+    {
+      "county": "Lake",
+      "rrr_scheduled": 6168,
+      "rrr_loss_rate_pct": 6.4,
+      "sar7_scheduled": 7009,
+      "sar7_loss_rate_pct": 6.4
+    },
+    {
+      "county": "Los Angeles",
+      "rrr_scheduled": 603611,
+      "rrr_loss_rate_pct": 5.9,
+      "sar7_scheduled": 727072,
+      "sar7_loss_rate_pct": 10.8
+    },
+    {
+      "county": "Orange",
+      "rrr_scheduled": 111284,
+      "rrr_loss_rate_pct": 5.9,
+      "sar7_scheduled": 144204,
+      "sar7_loss_rate_pct": 8.7
+    },
+    {
+      "county": "Shasta",
+      "rrr_scheduled": 10657,
+      "rrr_loss_rate_pct": 5.6,
+      "sar7_scheduled": 13408,
+      "sar7_loss_rate_pct": 15.8
+    },
+    {
+      "county": "Sonoma",
+      "rrr_scheduled": 15031,
+      "rrr_loss_rate_pct": 5.5,
+      "sar7_scheduled": 17342,
+      "sar7_loss_rate_pct": 7.7
+    },
+    {
+      "county": "Kern",
+      "rrr_scheduled": 68039,
+      "rrr_loss_rate_pct": 5.3,
+      "sar7_scheduled": 86192,
+      "sar7_loss_rate_pct": 9.7
+    },
+    {
+      "county": "Merced",
+      "rrr_scheduled": 136557,
+      "rrr_loss_rate_pct": 5.2,
+      "sar7_scheduled": 179839,
+      "sar7_loss_rate_pct": 7.5
+    },
+    {
+      "county": "Placer",
+      "rrr_scheduled": 8747,
+      "rrr_loss_rate_pct": 5.2,
+      "sar7_scheduled": 11467,
+      "sar7_loss_rate_pct": 7.5
+    },
+    {
+      "county": "Fresno",
+      "rrr_scheduled": 79671,
+      "rrr_loss_rate_pct": 5.1,
+      "sar7_scheduled": 107612,
+      "sar7_loss_rate_pct": 8.9
+    },
+    {
+      "county": "Imperial",
+      "rrr_scheduled": 16157,
+      "rrr_loss_rate_pct": 4.8,
+      "sar7_scheduled": 18909,
+      "sar7_loss_rate_pct": 7.2
+    },
+    {
+      "county": "Butte",
+      "rrr_scheduled": 17221,
+      "rrr_loss_rate_pct": 4.7,
+      "sar7_scheduled": 21257,
+      "sar7_loss_rate_pct": 10.0
+    },
+    {
+      "county": "Sacramento",
+      "rrr_scheduled": 76376,
+      "rrr_loss_rate_pct": 4.4,
+      "sar7_scheduled": 99906,
+      "sar7_loss_rate_pct": 8.9
+    },
+    {
+      "county": "San Diego",
+      "rrr_scheduled": 138063,
+      "rrr_loss_rate_pct": 4.3,
+      "sar7_scheduled": 182968,
+      "sar7_loss_rate_pct": 7.9
+    },
+    {
+      "county": "Mendocino",
+      "rrr_scheduled": 6453,
+      "rrr_loss_rate_pct": 4.1,
+      "sar7_scheduled": 7755,
+      "sar7_loss_rate_pct": 7.4
+    },
+    {
+      "county": "Santa Barbara",
+      "rrr_scheduled": 20928,
+      "rrr_loss_rate_pct": 4.1,
+      "sar7_scheduled": 29823,
+      "sar7_loss_rate_pct": 5.3
+    },
+    {
+      "county": "Alameda",
+      "rrr_scheduled": 62327,
+      "rrr_loss_rate_pct": 3.2,
+      "sar7_scheduled": 77456,
+      "sar7_loss_rate_pct": 7.4
+    },
+    {
+      "county": "San Mateo",
+      "rrr_scheduled": 10970,
+      "rrr_loss_rate_pct": 3.2,
+      "sar7_scheduled": 15157,
+      "sar7_loss_rate_pct": 10.8
+    },
+    {
+      "county": "Humboldt",
+      "rrr_scheduled": 12456,
+      "rrr_loss_rate_pct": 3.0,
+      "sar7_scheduled": 15606,
+      "sar7_loss_rate_pct": 2.9
+    },
+    {
+      "county": "Marin",
+      "rrr_scheduled": 6506,
+      "rrr_loss_rate_pct": 2.9,
+      "sar7_scheduled": 7706,
+      "sar7_loss_rate_pct": 7.0
+    },
+    {
+      "county": "Solano",
+      "rrr_scheduled": 18743,
+      "rrr_loss_rate_pct": 2.5,
+      "sar7_scheduled": 24669,
+      "sar7_loss_rate_pct": 3.5
+    },
+    {
+      "county": "Contra Costa",
+      "rrr_scheduled": 36587,
+      "rrr_loss_rate_pct": 2.4,
+      "sar7_scheduled": 45713,
+      "sar7_loss_rate_pct": 5.4
+    },
+    {
+      "county": "Monterey",
+      "rrr_scheduled": 18718,
+      "rrr_loss_rate_pct": 2.3,
+      "sar7_scheduled": 26801,
+      "sar7_loss_rate_pct": 6.7
+    },
+    {
+      "county": "Madera",
+      "rrr_scheduled": 11770,
+      "rrr_loss_rate_pct": 2.1,
+      "sar7_scheduled": 14016,
+      "sar7_loss_rate_pct": 5.0
+    },
+    {
+      "county": "Santa Clara",
+      "rrr_scheduled": 49405,
+      "rrr_loss_rate_pct": 1.5,
+      "sar7_scheduled": 55171,
+      "sar7_loss_rate_pct": 1.9
+    },
+    {
+      "county": "Kings",
+      "rrr_scheduled": 10012,
+      "rrr_loss_rate_pct": 1.4,
+      "sar7_scheduled": 12507,
+      "sar7_loss_rate_pct": 7.0
+    },
+    {
+      "county": "Riverside",
+      "rrr_scheduled": 113992,
+      "rrr_loss_rate_pct": 1.3,
+      "sar7_scheduled": 150471,
+      "sar7_loss_rate_pct": 4.5
+    }
+  ]
+}
