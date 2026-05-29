@@ -37,6 +37,13 @@ In FY2024-25, **~5.2% of recertifications and ~8.5% of semi-annual reports** end
 in a benefit loss for an *eligible* household — and the recert rate is **rising**
 (3.8% → 5.2% in one year).
 
+**Same rules, very different results.** Across the 36 counties with enough volume
+to rate, recert benefit-loss ranges from **1.3%** (Riverside) to **10.6%** (Yuba)
+— a roughly **8×** spread under one identical state rulebook. Los Angeles, the
+largest caseload (~604K recerts), sits at 5.9%. An 8× gap with the same rules
+everywhere is the signature of an *operational* problem, not a policy one — the
+same lesson the federal QC/CAPER data teaches on the application side.
+
 ## Why it matters
 
 - **It is the retention pillar in hard CA numbers.** [[2026-05-28-retention-pillar-unrath]]
@@ -54,11 +61,12 @@ in a benefit loss for an *eligible* household — and the recert rate is **risin
 
 ## What changes
 
-- Vendored `data-ops/sample/cdss-cf18/cf18_churn_statewide.json` + reproducible
-  `tools/cdss-cf18/`. County-level churn (all 58 counties present) is a one-line
-  filter change — a candidate layer for the heatmap/distribution tracks.
-- Candidate surface: a retention readout (not the error-rate one-pager, which is
-  scoped to the *application* side).
+- Vendored `data-ops/sample/cdss-cf18/cf18_churn_statewide.json` (statewide +
+  monthly series) **and `cf18_churn_by_county.json`** (per-county, latest complete
+  FY), both reproducible via `tools/cdss-cf18/`. The county layer also feeds the
+  heatmap/distribution tracks.
+- Live surface: **`/findings/retention`** — a readout built like the error-rate
+  one-pager (the renewal side), citing this finding.
 
 ## Open questions / honest limits
 
