@@ -23,6 +23,7 @@ import {
   type FieldType,
   type PortalPage,
 } from "../../src/core/selector-map";
+import { TRANSFORMS } from "../../src/core/transforms";
 
 const VALID_FIELD_TYPES: ReadonlySet<FieldType> = new Set<FieldType>([
   "text",
@@ -117,6 +118,13 @@ describe("address-validation flow — county select", () => {
       "34",
     );
     expect(CA_COUNTY_ORDINALS.Sacramento).toBe("34");
+  });
+
+  it("carries source=address.county + the ca-county-ordinal transform (V1-3)", () => {
+    expect(ADDRESS_VALIDATION_FLOW.countySelect.source).toBe("address.county");
+    expect(ADDRESS_VALIDATION_FLOW.countySelect.transform).toBe(
+      "ca-county-ordinal",
+    );
   });
 
   it("maps Alameda to ordinal '01' (alphabetical-first anchor)", () => {
@@ -267,5 +275,45 @@ describe("ABNAV hub + entry-flow buttons", () => {
   it("the shared NEXT_BUTTON is a button selected by the label 'Next'", () => {
     expect(NEXT_BUTTON.type).toBe("button");
     expect(NEXT_BUTTON.label).toBe("Next");
+  });
+});
+
+describe("field transforms (V1-3, #313)", () => {
+  it("every `transform` referenced by a field exists in TRANSFORMS", () => {
+    const referenced = new Set<string>();
+    for (const page of PORTAL_PAGES) {
+      for (const field of Object.values(page.fields)) {
+        if (field.transform) referenced.add(field.transform);
+      }
+    }
+    // The address-validation county select lives off PORTAL_PAGES.
+    if (ADDRESS_VALIDATION_FLOW.countySelect.transform) {
+      referenced.add(ADDRESS_VALIDATION_FLOW.countySelect.transform);
+    }
+    for (const name of referenced) {
+      expect(
+        typeof TRANSFORMS[name],
+        `transform "${name}" referenced by the selector map is not in TRANSFORMS`,
+      ).toBe("function");
+    }
+  });
+
+  it("wires the ABCON Mobile Phone field to source=phone + phone-10digit", () => {
+    const mobile = PORTAL_PAGES_BY_CODE.ABCON?.fields.mobilePhone;
+    expect(mobile?.source).toBe("phone");
+    expect(mobile?.transform).toBe("phone-10digit");
+  });
+
+  it("a field's transform, when set, names a registered transform", () => {
+    for (const page of PORTAL_PAGES) {
+      for (const [name, field] of Object.entries(page.fields)) {
+        if (field.transform !== undefined) {
+          expect(
+            Object.keys(TRANSFORMS),
+            `${page.pageCode}.${name}`,
+          ).toContain(field.transform);
+        }
+      }
+    }
   });
 });

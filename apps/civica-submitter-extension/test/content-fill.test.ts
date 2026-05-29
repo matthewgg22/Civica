@@ -176,6 +176,88 @@ describe("fillField — write paths (label-first resolution)", () => {
   });
 });
 
+describe("fillField — value transforms (V1-3, #313)", () => {
+  it("applies ca-county-ordinal: county NAME → ordinal lands in the select", () => {
+    const root = makeForm(`
+      <label for="cty">County</label>
+      <select id="cty">
+        <option value="">--</option>
+        <option value="01">Alameda</option>
+        <option value="34">Sacramento</option>
+      </select>
+    `);
+    const field: FieldSelector = {
+      label: "County",
+      type: "select",
+      source: "address.county",
+      transform: "ca-county-ordinal",
+    };
+    // Packet carries the NAME (with the " County" suffix); the transform maps it
+    // to "34" before fillElement, which selects the matching option.
+    expect(fillField(field, { address: { county: "Sacramento County" } }, root)).toBe(
+      "filled",
+    );
+    expect(root.querySelector<HTMLSelectElement>("#cty")?.value).toBe("34");
+  });
+
+  it("counts an unmappable county as needs-review (no garbage written)", () => {
+    const root = makeForm(`
+      <label for="cty">County</label>
+      <select id="cty"><option value="">--</option><option value="34">Sacramento</option></select>
+    `);
+    const field: FieldSelector = {
+      label: "County",
+      type: "select",
+      source: "address.county",
+      transform: "ca-county-ordinal",
+    };
+    // "Cook" has no CA ordinal → transform returns null → skipped.
+    expect(fillField(field, { address: { county: "Cook" } }, root)).toBe(
+      "needs-review",
+    );
+    // The select keeps its default (empty) value — nothing garbage written.
+    expect(root.querySelector<HTMLSelectElement>("#cty")?.value).toBe("");
+  });
+
+  it("applies phone-10digit: E.164 → bare 10-digit before fill", () => {
+    const root = makeForm(`<input aria-label="Mobile Phone" />`);
+    const field: FieldSelector = {
+      label: "Mobile Phone",
+      type: "text",
+      source: "phone",
+      transform: "phone-10digit",
+    };
+    expect(fillField(field, { phone: "+15551234567" }, root)).toBe("filled");
+    expect(
+      root.querySelector<HTMLInputElement>('[aria-label="Mobile Phone"]')?.value,
+    ).toBe("5551234567");
+  });
+
+  it("treats an unknown transform name as needs-review (selector-map bug guard)", () => {
+    const root = makeForm(`<input aria-label="County" />`);
+    const field: FieldSelector = {
+      label: "County",
+      type: "text",
+      source: "address.county",
+      transform: "does-not-exist",
+    };
+    expect(fillField(field, { address: { county: "Sacramento" } }, root)).toBe(
+      "needs-review",
+    );
+  });
+
+  it("a no-value source short-circuits before the transform runs", () => {
+    const root = makeForm(`<input aria-label="Mobile Phone" />`);
+    const field: FieldSelector = {
+      label: "Mobile Phone",
+      type: "text",
+      source: "phone",
+      transform: "phone-10digit",
+    };
+    expect(fillField(field, {}, root)).toBe("no-value");
+  });
+});
+
 describe("fillPage — aggregate counts", () => {
   it("splits counts across filled / no-value / not-found / needs-review", () => {
     const root = makeForm(`
@@ -212,5 +294,28 @@ describe("fillPage — aggregate counts", () => {
     expect(result.fillable).toBe(0);
     expect(result.filled).toBe(0);
     expect(result.needsReview).toBe(1);
+  });
+
+  it("counts a transform-null field as fillable AND needs-review", () => {
+    const root = makeForm(`
+      <label for="cty">County</label>
+      <select id="cty"><option value="">--</option><option value="34">Sacramento</option></select>
+    `);
+    const p = page({
+      county: {
+        label: "County",
+        type: "select",
+        source: "address.county",
+        transform: "ca-county-ordinal",
+      },
+    });
+    // "Cook" → null from the transform → skipped, but it HAS a source so it
+    // counts as fillable too (fillable + needsReview can exceed total).
+    const result = fillPage(p, { address: { county: "Cook" } }, root);
+    expect(result.total).toBe(1);
+    expect(result.fillable).toBe(1);
+    expect(result.filled).toBe(0);
+    expect(result.needsReview).toBe(1);
+    expect(root.querySelector<HTMLSelectElement>("#cty")?.value).toBe("");
   });
 });
