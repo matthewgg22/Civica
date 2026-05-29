@@ -83,7 +83,7 @@ export default function ConsentCapture({ applicantId, hasConsent, consentedAt }:
         <select
           value={method}
           onChange={(e) => setMethod(e.target.value as ConsentMethod)}
-          className="w-full border border-hairline rounded-[3px] px-3 py-2.5 text-[14px] bg-paper focus:outline-none focus:border-pine focus:bg-white transition-colors"
+          className="w-full border border-hairline rounded-[3px] px-3 py-2.5 text-[14px] bg-paper focus:outline-none focus:border-pine focus:bg-white focus:ring-2 focus:ring-pine/30 transition-colors"
         >
           {CONSENT_METHODS.map((m) => (
             <option key={m.value} value={m.value}>{m.label}</option>

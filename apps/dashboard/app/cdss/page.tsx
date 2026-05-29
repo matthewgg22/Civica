@@ -1,3 +1,4 @@
+import KpiCard from "../../components/KpiCard";
 import { cookies } from "next/headers";
 import { redirect, notFound } from "next/navigation";
 import { createServerClientFromCookies } from "../../lib/supabase";
@@ -116,7 +117,7 @@ export default async function CDSSPage({
             label="Civica-enrolled cohort PER"
             value={`${analytics.civicaCohortPER}%`}
             subtext="✓ Below §10105 penalty threshold"
-            variant="success"
+            variant="neutral"
           />
         </div>
       </section>
@@ -312,50 +313,7 @@ export default async function CDSSPage({
   );
 }
 
-// ---------------------------------------------------------------------------
-// KPI card sub-component (server-only, no interactivity needed)
-// ---------------------------------------------------------------------------
-function KpiCard({
-  label,
-  value,
-  subtext,
-  variant,
-}: {
-  label: string;
-  value: string;
-  subtext: string;
-  variant: "neutral" | "warning" | "success";
-}) {
-  const accentColor =
-    variant === "warning"
-      ? "var(--color-warning)"
-      : variant === "success"
-      ? "var(--color-ink)" // Use ink; CSS variable --color-green may not exist
-      : "var(--color-ink)";
-
-  const borderStyle =
-    variant === "warning"
-      ? { borderColor: "color-mix(in srgb, var(--color-warning) 30%, transparent)" }
-      : {};
-
-  return (
-    <div
-      className="bg-surface rounded-[4px] border border-hairline p-5"
-      style={borderStyle}
-    >
-      <p className="text-[11px] font-semibold uppercase tracking-wider text-muted">
-        {label}
-      </p>
-      <p
-        className="text-3xl font-semibold tabular-nums mt-2 leading-none"
-        style={{ color: accentColor }}
-      >
-        {value}
-      </p>
-      <p className="text-[12px] text-graphite mt-1.5 leading-relaxed">{subtext}</p>
-    </div>
-  );
-}
+// KpiCard extracted to ../../components/KpiCard.tsx (T10).
 
 // ---------------------------------------------------------------------------
 // Error category table row
