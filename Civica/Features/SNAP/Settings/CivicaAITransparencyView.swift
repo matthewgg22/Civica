@@ -91,7 +91,7 @@ struct CivicaAITransparencyView: View {
 
     private var header: some View {
         Text(CivicaAITransparencyStrings.navTitle.value(in: language))
-            .font(CivicaTypography.cardSubtitle)
+            .font(CivicaTypography.cardTitle)
             .foregroundStyle(CivicaColors.ink)
     }
 

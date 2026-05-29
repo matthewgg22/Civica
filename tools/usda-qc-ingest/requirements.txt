@@ -1,0 +1,5 @@
+# USDA SNAP QC microdata ingest — Python 3.13 (cp313 wheels exist; 3.14 too new).
+# CSV variant needs only pandas. SAS/Stata variants additionally need pyreadstat
+# (a native build) — install it only if you downloaded a .sas7bdat / .dta file.
+pandas>=2.1,<3
+# pyreadstat>=1.2,<2   # uncomment if reading .sas7bdat / .dta instead of CSV

@@ -26,7 +26,7 @@ struct SNAPReviewView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: CivicaSpacing.md) {
                 Text(SNAPReviewStrings.title.value(in: language))
-                    .font(CivicaTypography.cardSubtitle)
+                    .font(CivicaTypography.cardTitle)
                     .foregroundStyle(CivicaColors.ink)
 
                 Text(SNAPReviewStrings.reviewBeforeSubmitting.value(in: language))

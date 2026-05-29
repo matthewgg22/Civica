@@ -39,7 +39,7 @@ private struct FindHelpListRow: View {
 
             VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
                 Text(location.name)
-                    .font(CivicaTypography.subheadBold)
+                    .font(CivicaTypography.subheadStrong)
                     .foregroundStyle(CivicaColors.ink)
                     .lineLimit(2)
 

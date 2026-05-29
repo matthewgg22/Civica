@@ -38,7 +38,7 @@ struct SNAPPrivacyNoticeView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: CivicaSpacing.lg) {
                 Text(SNAPPrivacyNoticeStrings.beforeYouStart)
-                    .font(CivicaTypography.cardSubtitle)
+                    .font(CivicaTypography.cardTitle)
                     .foregroundStyle(CivicaColors.ink)
 
                 privacySection(

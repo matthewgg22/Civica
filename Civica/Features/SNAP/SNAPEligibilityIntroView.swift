@@ -78,7 +78,7 @@ struct SNAPEligibilityIntroView: View {
                                     .font(CivicaTypography.subheadStrong)
                                     .foregroundStyle(CivicaColors.graphite)
                                 Text(SNAPEligibilityIntroStrings.prepCompleted.value(in: language))
-                                    .font(CivicaTypography.subheadBold)
+                                    .font(CivicaTypography.subheadStrong)
                                     .foregroundStyle(CivicaColors.amberPrimary)
                             }
 

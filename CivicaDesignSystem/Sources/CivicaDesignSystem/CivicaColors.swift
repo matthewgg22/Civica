@@ -123,6 +123,38 @@ public enum CivicaColors {
     public static let supportPageBackground = Color.dynamic(light: "#ACD5E3", dark: "#1A2833")
     public static let supportWarmSurface   = Color.dynamic(light: "#F3D487", dark: "#3A2D15")
     // timelineFocusGold → deprecated shim at bottom (v2: wheatPop).
+
+    // MARK: - Map Pin tokens
+    //
+    // Category-specific cartography palette. Map pins benefit from
+    // hue-distinguishable categories that exceed the main palette's
+    // semantic vocabulary — a five-category EBT retailer breakdown
+    // needs five legible hues against varied basemap tiles, which
+    // the brand semantic palette cannot supply on its own.
+    //
+    // Promoted from `FindHelpPinPalette` private hex literals
+    // (2026-05-29, audit DS-7) so the cartography palette is
+    // discoverable as design-system tokens rather than an inline
+    // bypass. See DESIGN.md §13 (Map Pin tokens) for the
+    // cartography rationale.
+    //
+    // CONTRACT (light-only as of 2026-05-29):
+    // Dark-mode variants are deferred to audit task T7 (Pass 6
+    // dark-mode rollout), which already owns the design-system
+    // contrast story. These tokens currently render with the same
+    // light hex in light + dark. Map readability against dark-mode
+    // MapKit tiles has not been verified for single-pin colors —
+    // the existing `mixedClusterColor` lift in `FindHelpPinPalette`
+    // is the only dark-tile adaptation today.
+
+    public static let pinFood          = Color(red: 0x9C/255, green: 0x3A/255, blue: 0x24/255) // brick
+    public static let pinHelp          = Color(red: 0x2A/255, green: 0x6F/255, blue: 0x66/255) // teal
+    public static let pinHelpBoth      = Color(red: 0x3A/255, green: 0x34/255, blue: 0x2E/255) // graphite
+    public static let pinSupermarket   = Color(red: 0x1F/255, green: 0x4F/255, blue: 0x4A/255) // teal-deep
+    public static let pinSmallGrocer   = Color(red: 0xB5/255, green: 0x76/255, blue: 0x2A/255) // amber
+    public static let pinFarmersMarket = Color(red: 0x3B/255, green: 0x6B/255, blue: 0x33/255) // green
+    public static let pinCoop          = Color(red: 0x3D/255, green: 0x4E/255, blue: 0x6E/255) // indigo
+    public static let pinRestaurant    = Color(red: 0x9C/255, green: 0x3A/255, blue: 0x24/255) // brick
 }
 
 public extension Color {

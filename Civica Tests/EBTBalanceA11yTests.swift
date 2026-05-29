@@ -116,8 +116,22 @@ struct EBTBalanceA11yTests {
             defaults: UserDefaults(suiteName: "a11y-test-\(UUID())")!
         )
         let anomalyStore = EBTAnomalyStore(repository: repo)
-        let view = EBTBalanceDashboardView(store: store, anomalyStore: anomalyStore, language: .english)
-            .environment(\.sizeCategory, .accessibilityExtraExtraExtraLarge)
+        // Offers store added to the dashboard view init after PR #272. A
+        // mock-backed fixture keeps this a11y check independent of the
+        // offers network path. stateCode wires the CA-routed catalog.
+        let offersRepo = EBTOffersRepository(
+            apiClient: MockEBTOffersAPIClient(),
+            defaults: UserDefaults(suiteName: "a11y-offers-test-\(UUID())")!
+        )
+        let offersStore = EBTOffersStore(repository: offersRepo)
+        let view = EBTBalanceDashboardView(
+            store: store,
+            anomalyStore: anomalyStore,
+            offersStore: offersStore,
+            language: .english,
+            stateCode: "CA"
+        )
+        .environment(\.sizeCategory, .accessibilityExtraExtraExtraLarge)
         let host = UIHostingController(rootView: NavigationStack { view })
         host.view.frame = CGRect(x: 0, y: 0, width: 390, height: 844)
         host.view.layoutIfNeeded()

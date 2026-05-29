@@ -220,7 +220,7 @@ struct EBTBalanceDashboardView: View {
                 .kerning(1.2)
 
             HStack(alignment: .firstTextBaseline, spacing: CivicaSpacing.sm) {
-                CivicaMoney(amount: account.foodBalance, font: CivicaTypography.pageTitle)
+                CivicaMoney(amount: account.foodBalance, font: CivicaTypography.display)
                     .foregroundStyle(CivicaColors.wheatPrimary)
                     .contentTransition(.numericText())
                     .animation(.spring(response: 0.25, dampingFraction: 0.8), value: account.foodBalance)

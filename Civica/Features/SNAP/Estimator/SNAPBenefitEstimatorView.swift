@@ -341,7 +341,7 @@ struct SNAPBenefitEstimatorView: View {
                 CivicaMoney(
                     amount: monthly,
                     denominator: language == .english ? "mo" : "mes",
-                    font: CivicaTypography.pageTitle
+                    font: CivicaTypography.display
                 )
                 .foregroundStyle(CivicaColors.amberPrimary)
                 // Roll the number when the estimate changes as the

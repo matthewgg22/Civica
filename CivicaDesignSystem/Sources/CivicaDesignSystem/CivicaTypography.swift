@@ -27,17 +27,26 @@ public enum CivicaTypography {
     /// title clearly the largest element on the page without pushing
     /// the affordance below the fold on smaller iPhones.
     public static let pageTitle           = Font.custom(semibold, size: 28, relativeTo: .largeTitle)
+    /// 24/30 — display number / hero amount. Sits between `pageTitle` (screen
+    /// titles, 28pt) and `cardHero` (card section headers, 22pt). Use for the
+    /// single load-bearing numeric on a screen — EBT balance, estimator
+    /// result, deposit hero. Reserves `pageTitle` for actual screen titles
+    /// so size hierarchy stays readable. Added 2026-05-29 per audit DS-3.
+    public static let display             = Font.custom(semibold, size: 24, relativeTo: .largeTitle)
     /// 22/28 — card hero ("Make a Plan to Vote", "Next election").
     public static let cardHero            = Font.custom(semibold, size: 22, relativeTo: .title2)
     /// 20/25 — small card title / subsection header.
     public static let cardTitle           = Font.custom(semibold, size: 20, relativeTo: .title3)
-    /// 20/25 — quieter card title / sheet header. Same Hanken weight as cardTitle
-    /// since the handoff caps weight at SemiBold; differentiation should be via
-    /// hierarchy/color, not synthetic boldness.
+    /// 20/25 — alias of `cardTitle` (same Hanken SemiBold weight; the handoff
+    /// caps weight at SemiBold, so a "quieter card title" is identical to a
+    /// regular one — differentiation belongs in hierarchy/color, not weight).
+    /// Deprecated 2026-05-29 per audit DS-2; use `cardTitle` directly.
+    @available(*, deprecated, renamed: "cardTitle")
     public static let cardSubtitle        = Font.custom(semibold, size: 20, relativeTo: .title3)
     /// 17/22 — list/section headers, primary card titles.
     public static let sectionHeader       = Font.custom(semibold, size: 17, relativeTo: .headline)
-    /// 17/22 — heaviest section header. Same Hanken weight as sectionHeader.
+    /// 17/22 — alias of `sectionHeader`. Deprecated 2026-05-29 per audit DS-2.
+    @available(*, deprecated, renamed: "sectionHeader")
     public static let sectionHeaderBold   = Font.custom(semibold, size: 17, relativeTo: .headline)
     /// 17/22 — body text, list row title.
     public static let body                = Font.custom(regular, size: 17, relativeTo: .body).monospacedDigit()
@@ -47,7 +56,8 @@ public enum CivicaTypography {
     public static let subhead             = Font.custom(medium, size: 15, relativeTo: .subheadline)
     /// 15/20 — strongly emphasized subhead.
     public static let subheadStrong       = Font.custom(semibold, size: 15, relativeTo: .subheadline)
-    /// 15/20 — heaviest subhead (same Hanken weight as subheadStrong).
+    /// 15/20 — alias of `subheadStrong`. Deprecated 2026-05-29 per audit DS-2.
+    @available(*, deprecated, renamed: "subheadStrong")
     public static let subheadBold         = Font.custom(semibold, size: 15, relativeTo: .subheadline)
     /// 16/21 — supporting copy under a row title.
     public static let support             = Font.custom(regular, size: 16, relativeTo: .callout).monospacedDigit()
