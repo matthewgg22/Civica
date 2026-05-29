@@ -21,6 +21,8 @@ Welcome to Civica
 Bienvenido a Civica
 Pick a language to continue.
 Elige un idioma para continuar.
+You can switch anytime. We won't translate answers you've already typed.
+Puedes cambiar en cualquier momento. No traduciremos las respuestas que ya hayas escrito.
 
 # Debug-only QA checklist (not visible in production builds).
 SNAP QA Checklist
