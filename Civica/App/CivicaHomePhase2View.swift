@@ -359,15 +359,6 @@ struct CivicaHomePhase2View: View {
             .padding(.horizontal, CivicaSpacing.md)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(CivicaColors.statusWarningSurface)
-            .overlay(alignment: .leading) {
-                Rectangle()
-                    .fill(CivicaColors.warningAmber)
-                    .frame(width: 3)
-            }
-            .overlay(
-                Rectangle()
-                    .stroke(CivicaColors.warningAmber.opacity(0.22), lineWidth: 1)
-            )
         }
         .buttonStyle(.plain)
         .accessibilityElement(children: .combine)
