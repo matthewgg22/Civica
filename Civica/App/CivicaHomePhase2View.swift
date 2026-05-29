@@ -544,8 +544,13 @@ enum CivicaPhase2Strings {
     // Secondary rows
     static let findHelpEyebrow = CivicaText("Need food while you wait?", es: "¿Necesitas comida mientras esperas?")
     static let findHelpLink    = CivicaText("Find help nearby", es: "Encuentra ayuda cerca")
+    // UD-6 (audit 2026-05-29): row link renamed from "Message a navigator"
+    // → "Open the state portal". Civica does not yet have a real human-
+    // navigator channel wired (per docs/plans/real-navigator-handoff-2026-Q3.md
+    // when that plan lands); honest copy describes the actual destination
+    // and avoids the trust break that fires the moment the user taps.
     static let navigatorEyebrow = CivicaText("Have a question?", es: "¿Tienes una pregunta?")
-    static let navigatorLink    = CivicaText("Message a navigator", es: "Mensajea un asesor")
+    static let navigatorLink    = CivicaText("Open the state portal", es: "Abrir el portal estatal")
 }
 
 #if DEBUG
