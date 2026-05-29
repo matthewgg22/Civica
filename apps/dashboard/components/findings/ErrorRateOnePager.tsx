@@ -125,6 +125,50 @@ export default function ErrorRateOnePager({ truthPoint }: { truthPoint: ErrorRat
         </p>
       </section>
 
+      {/* ── A caution from the witness lens (Guarino) ──────────────────── */}
+      <section className="rounded-lg border border-graphite/15 bg-surface-secondary p-4">
+        <h2 className="text-sm font-semibold text-ink">A caution worth taking seriously</h2>
+        <p className="mt-1.5 text-sm leading-relaxed text-graphite">
+          The rate is a partial scoreboard, and chasing it the wrong way
+          backfires. Dave Guarino — who built GetCalFresh, the tool that
+          processed millions of CalFresh applications — points out that the rate
+          only counts overpayments in cases that actually got processed, and that
+          the usual way agencies push it down (demanding more documentation)
+          quietly pushes eligible people back out.
+        </p>
+        <blockquote className="mt-3 border-l-2 border-graphite/30 pl-3 text-sm italic leading-relaxed text-graphite">
+          &ldquo;When does asking for more documentation actually lead to eligible
+          people not getting benefits due to that extra burden?&rdquo;
+          <span className="mt-1 block text-xs not-italic text-graphite">
+            — Dave Guarino,{" "}
+            <a
+              href="https://daveguarino.substack.com/p/government-stuff-1"
+              className="text-pine underline-offset-2 hover:underline"
+              target="_blank"
+              rel="noreferrer noopener"
+            >
+              Plausible Legibility
+            </a>
+          </span>
+        </blockquote>
+        <p className="mt-3 text-sm leading-relaxed text-graphite">
+          That is the line Civica sits on the right side of: it lowers the rate by
+          making the application{" "}
+          <span className="text-ink">correct before it is submitted</span>, not by
+          adding hoops. The error falls because the case is right — not because
+          the applicant cleared one more burden.
+        </p>
+        <p className="mt-2 text-xs text-graphite">
+          Practitioner perspective — not federal data ·{" "}
+          <Link
+            href="/findings/2026-05-29-guarino-error-rate-metric"
+            className="text-pine underline-offset-2 hover:underline"
+          >
+            how we read this
+          </Link>
+        </p>
+      </section>
+
       {/* ── Where errors live ──────────────────────────────────────────── */}
       <section>
         <h2 className="mb-3 text-xs font-semibold uppercase tracking-wider text-graphite">
