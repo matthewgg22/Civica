@@ -197,15 +197,25 @@ struct CivicaHomePhase3View: View {
                                     .fill(CivicaColors.warningAmber.opacity(0.16))
                             )
                             .accessibilityHidden(true)
+                        // JR-5 (audit 2026-05-29): banner leads with continuity
+                        // reassurance ("Renew your CalFresh — we'll pre-fill what we
+                        // have"), demotes the deadline countdown to a metadata line.
+                        // Recert is a renewal moment for an already-approved user,
+                        // not a fresh-application threat — the headline now mirrors
+                        // that reality.
                         VStack(alignment: .leading, spacing: 2) {
                             Text(CivicaPhase3Strings.recertEyebrow.value(in: language))
                                 .font(CivicaTypography.captionStrong)
                                 .foregroundStyle(CivicaColors.warningAmber)
                                 .textCase(.uppercase)
                                 .kerning(1.2)
-                            Text(CivicaPhase3Strings.recertDueIn(date: dueDate, days: days, language: language))
+                            Text(CivicaPhase3Strings.recertHeadline.value(in: language))
                                 .font(CivicaTypography.subheadStrong)
                                 .foregroundStyle(CivicaColors.ink)
+                                .fixedSize(horizontal: false, vertical: true)
+                            Text(CivicaPhase3Strings.recertDueIn(date: dueDate, days: days, language: language))
+                                .font(CivicaTypography.footnote)
+                                .foregroundStyle(CivicaColors.graphite)
                         }
                         Spacer(minLength: CivicaSpacing.sm)
                         HStack(spacing: 4) {
@@ -380,6 +390,13 @@ enum CivicaPhase3Strings {
     static let recertEyebrow = CivicaText(
         "Recertification",
         es: "Recertificación"
+    )
+    /// JR-5 (audit 2026-05-29): continuity-led headline. Recert is renewal
+    /// for an already-approved user; lead with the lighter lift, not the
+    /// deadline. The deadline countdown still renders below as metadata.
+    static let recertHeadline = CivicaText(
+        "Renew your CalFresh — we'll pre-fill what we have",
+        es: "Renueva tu CalFresh — usaremos los datos que ya tenemos"
     )
     static func recertDueIn(date: Date, days: Int, language: CivicaLanguage) -> String {
         let formatter = DateFormatter()
