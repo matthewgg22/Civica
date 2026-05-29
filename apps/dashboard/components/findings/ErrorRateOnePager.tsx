@@ -12,6 +12,7 @@ import Link from "next/link";
 import type { ErrorRateTruthPoint, ErrorRateMetricView } from "../../lib/analytics/error-rate-snapshot";
 import { CA_QC_GROUNDING } from "../../lib/analytics/ca-qc-grounding";
 import { CA_CAPER_GROUNDING } from "../../lib/analytics/ca-caper-grounding";
+import { CA_POLICYENGINE_GROUNDING } from "../../lib/analytics/ca-policyengine-grounding";
 
 function pct(x: number | null | undefined): string {
   return x == null ? "—" : `${x.toFixed(2)}%`;
@@ -330,6 +331,48 @@ export default function ErrorRateOnePager({ truthPoint }: { truthPoint: ErrorRat
         </Means>
       </section>
 
+      {/* ── What a mistake costs: modeled (PolicyEngine) ───────────────── */}
+      <section>
+        <h2 className="mb-3 text-xs font-semibold uppercase tracking-wider text-graphite">
+          What a mistake actually costs (modeled · PolicyEngine FY{CA_POLICYENGINE_GROUNDING.paramYear})
+        </h2>
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+          <Metric
+            label="$1 of unreported income"
+            value={`${Math.round(CA_POLICYENGINE_GROUNDING.unearnedLeverage * 100)}¢`}
+            sub="lost benefit per $1"
+            highlight
+          />
+          <Metric
+            label="$1 of unreported wages"
+            value={`${Math.round(CA_POLICYENGINE_GROUNDING.wagesLeverage * 100)}¢`}
+            sub="work gets a 20% discount"
+          />
+          <Metric label="$1 of rent · most CA renters" value="0¢" sub="already over the shelter cap" />
+        </div>
+        <Means>
+          Not every mistake costs the same. Run a representative California caseload
+          through the open-source benefit model and a dollar of unreported{" "}
+          <span className="text-ink">income</span> lowers the benefit about{" "}
+          <span className="text-ink">30¢</span> (24¢ for wages — work gets a
+          discount). Rent only counts up to a cap, and roughly{" "}
+          <span className="text-ink">7 in 10</span> non-elderly California renters
+          are already over it, so for them a rent error moves the benefit nothing;
+          only elderly and disabled households see the full 30¢. The
+          highest-<em>dollar</em> error is income — which is exactly the part Civica
+          verifies automatically.
+        </Means>
+        <p className="mt-2 text-xs text-graphite">
+          Modeled — PolicyEngine US (offline), FY{CA_POLICYENGINE_GROUNDING.paramYear} ·{" "}
+          <Link
+            href={`/findings/${CA_POLICYENGINE_GROUNDING.findingId}`}
+            className="text-pine underline-offset-2 hover:underline"
+          >
+            how we modeled this
+          </Link>
+        </p>
+      </section>
+
       {/* ── The close — the dam ────────────────────────────────────────── */}
       <section className="rounded-lg border border-pine/25 bg-pine/[0.04] p-5">
         <h2 className="text-base font-semibold text-ink">Implementation is not the leap. It is the release.</h2>
@@ -337,7 +380,9 @@ export default function ErrorRateOnePager({ truthPoint }: { truthPoint: ErrorRat
           Put it together. We know which parts of an application go wrong (shelter,
           wages), who struggles most (working families), and which verification
           perfects each one. None of that is a hypothesis to test in the field — it
-          is drawn from federal data before we shipped a single line. The perfect
+          is drawn from three independent lenses that agree — the federal error
+          samples, an open-source benefit model, and the person who built
+          California&rsquo;s intake — before we shipped a single line. The perfect
           application is not the aspiration; it is what the product builds. There is
           a reservoir of homework behind this — and turning it on is just letting it
           through.

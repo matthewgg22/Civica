@@ -1,0 +1,58 @@
+{
+  "source": "PolicyEngine US (AGPL-3.0) run OFFLINE; outputs are facts (not the model code)",
+  "pe_version": "1.715.2",
+  "param_year": 2024,
+  "state": "CA",
+  "metric": "benefit_leverage_per_dollar",
+  "definition": "|d(annual SNAP benefit)| / |d(input $)|, central +/-$100/mo slope, summarized over a representative CA household panel.",
+  "panel": {
+    "n_households": 64,
+    "definition": "structured grid: size 1-4 x {earned/unearned mixes} x shelter {1000,1600}/mo x elderly/disabled flag",
+    "mean_correct_benefit_monthly": 353.92
+  },
+  "leverage_per_dollar": {
+    "wages": {
+      "median": 0.135,
+      "p25": 0.09,
+      "p75": 0.24,
+      "n": 64,
+      "share_zero": 0.094
+    },
+    "unearned": {
+      "median": 0.3,
+      "p25": 0.056,
+      "p75": 0.331,
+      "n": 64,
+      "share_zero": 0.125
+    },
+    "shelter": {
+      "median": 0.138,
+      "p25": 0.0,
+      "p75": 0.3,
+      "n": 64,
+      "share_zero": 0.453
+    }
+  },
+  "shelter_split": {
+    "nonelderly_capped": {
+      "median": 0.0,
+      "p25": 0.0,
+      "p75": 0.1,
+      "n": 32,
+      "share_zero": 0.719
+    },
+    "elderly_disabled_uncapped": {
+      "median": 0.3,
+      "p25": 0.3,
+      "p75": 0.3,
+      "n": 32,
+      "share_zero": 0.188
+    }
+  },
+  "notes": [
+    "Unearned income leverage ~0.30: counts ~dollar-for-dollar into net income x 30% benefit reduction.",
+    "Wages leverage < unearned: 20% earned-income deduction softens each dollar.",
+    "Shelter leverage is bimodal: ~0 for non-elderly households over the excess-shelter cap (most high-rent CA renters), ~0.30 for elderly/disabled (uncapped).",
+    "Implication: the highest-DOLLAR-leverage error is income, which is exactly the part automated payroll verification fixes -- so the dollar-weighted error tilts more toward income than the case-count shares suggest."
+  ]
+}

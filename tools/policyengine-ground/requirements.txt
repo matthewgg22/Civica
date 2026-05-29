@@ -1,0 +1,4 @@
+# Offline-only. AGPL-3.0 — never import into a Civica runtime (apps/*, backend/*).
+# This venv exists solely to GENERATE fixture outputs (facts); the outputs ship,
+# the library does not.
+policyengine-us==1.715.2
