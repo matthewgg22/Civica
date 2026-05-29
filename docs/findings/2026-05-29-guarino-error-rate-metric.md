@@ -76,4 +76,8 @@ distinct from the *measured* lens (USDA QC microdata,
 - His "access vs accuracy vs timeliness" framing deserves its own treatment in
   the B2G deck (not just this page).
 
-Related: [[2026-05-29-usda-qc-ca-grounding]] · [[2026-05-29-error-rate-truth-point]]
+His access-side point is now grounded in federal data —
+[[2026-05-29-caper-denial-side-error]] (CAPER FY2024: ~40% of CA negative
+actions carry a case or procedural error).
+
+Related: [[2026-05-29-usda-qc-ca-grounding]] · [[2026-05-29-caper-denial-side-error]] · [[2026-05-29-error-rate-truth-point]]
