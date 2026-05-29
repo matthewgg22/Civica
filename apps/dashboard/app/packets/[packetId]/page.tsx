@@ -2,6 +2,7 @@ import React, { Suspense } from "react";
 import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import Breadcrumbs from "../../../components/Breadcrumbs";
 import { createServerClientFromCookies } from "../../../lib/supabase";
 import WorkRequirementsSection, { WorkRequirementsSkeleton } from "../../../components/packet-detail/WorkRequirementsSection";
 import NotesSection, { NotesSkeleton } from "../../../components/packet-detail/NotesSection";
@@ -785,6 +786,15 @@ export default async function PacketDetailPage({
   return (
     <div className="min-h-screen bg-paper">
       <header className="bg-surface border-b border-hairline px-8 py-4">
+        <div className="max-w-5xl mx-auto">
+          <Breadcrumbs
+            items={[
+              { label: "Dashboard", href: "/dashboard" },
+              { label: "Applications", href: "/packets" },
+              { label: `#${shortId(packetId)}` },
+            ]}
+          />
+        </div>
         <div className="max-w-5xl mx-auto flex items-center gap-3">
           <Link href="/packets" className="text-[13px] font-semibold text-pine hover:underline">← Applications</Link>
           <span className="text-hairline">·</span>

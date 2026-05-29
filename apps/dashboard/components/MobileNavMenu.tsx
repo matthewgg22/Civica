@@ -51,7 +51,7 @@ export default function MobileNavMenu({
         aria-label={open ? "Close navigation menu" : "Open navigation menu"}
         aria-expanded={open}
         aria-controls="mobile-nav-panel"
-        className="inline-flex items-center justify-center w-9 h-9 rounded-[4px] text-white/65 hover:text-white hover:bg-white/10 transition-colors"
+        className="inline-flex items-center justify-center w-11 h-11 rounded-[4px] text-white/65 hover:text-white hover:bg-white/10 transition-colors focus:outline-none focus:ring-2 focus:ring-white/30"
       >
         <svg
           width="20"
