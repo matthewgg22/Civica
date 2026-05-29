@@ -22,6 +22,7 @@ import benefitsCalRouter from "./routes/benefitscal.js";
 import extensionRouter from "./routes/extension/index.js";
 import { publicDeviceRouter, authedDeviceRouter } from "./routes/oauth.js";
 import recertRouter from "./routes/recert.js";
+import intakeHelpRouter from "./routes/intake-help.js";
 import twilioWebhookRouter from "./routes/twilio-webhook.js";
 import workRequirementsRouter from "./routes/work-requirements.js";
 import navigatorRouter from "./routes/navigator.js";
@@ -108,6 +109,13 @@ app.route("/v1/enrollment/extension", extensionRouter);
 // approve/lookup/deny endpoints require a staff JWT and mount inside the authed
 // /v1/enrollment subtree below.
 app.route("/v1/enrollment/oauth/device", publicDeviceRouter);
+
+// POST /v1/intake/help — Tier B universal contextual-help explainer.
+// Public (anonymous via x-anonymous-id header, no JWT). Mounts here BEFORE
+// the authed /v1/enrollment subtree. Rate-limited (strict tier) inside the
+// route. See src/routes/intake-help.ts for the safety-filter design + the
+// Monday 2026-06-01 TestFlight demo contract.
+app.route("/v1/intake/help", intakeHelpRouter);
 
 // All enrollment routes require a valid Supabase JWT
 const api = new Hono<{ Bindings: Env }>();
