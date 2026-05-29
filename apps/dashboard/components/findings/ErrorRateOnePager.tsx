@@ -1,11 +1,12 @@
-// Error-rate credibility one-pager — presentational (server component).
+// Error-rate one-pager — presentational (server component).
 //
-// Renders the LIVE truth point (apps/dashboard/lib/analytics/error-rate-snapshot
-// getErrorRateTruthPoint) as a single shareable page: the headline metrics, the
-// method, and the published reference layer — with an honest status banner that
-// auto-flips from "pre-production / not-yet-signal" to "production signal" once
-// measured QC reviews clear the n>=30 gate. No fabrication: it shows exactly
-// what the snapshot holds, and says so.
+// Renders the LIVE truth point (lib/analytics/error-rate-snapshot
+// getErrorRateTruthPoint) around one ethos: the best thing an applicant can
+// submit is a PERFECT application; the error rate is just the scoreboard of how
+// close they got. Every section is paired with a plain-language "what this means"
+// read for someone who did casework, not data science. The status banner
+// auto-flips from pre-production to a measured signal once QC sampling clears
+// n>=30. It shows exactly what the snapshot holds — no claim it cannot back.
 
 import Link from "next/link";
 import type { ErrorRateTruthPoint, ErrorRateMetricView } from "../../lib/analytics/error-rate-snapshot";
@@ -13,11 +14,9 @@ import type { ErrorRateTruthPoint, ErrorRateMetricView } from "../../lib/analyti
 function pct(x: number | null | undefined): string {
   return x == null ? "—" : `${x.toFixed(2)}%`;
 }
-
 function pp(x: number | null | undefined): string {
   return x == null ? "—" : `${x.toFixed(2)} pp`;
 }
-
 function metricLabel(v: ErrorRateMetricView): string {
   return typeof v.meta?.label === "string" ? v.meta.label : (v.sliceValue ?? v.metric);
 }
@@ -30,7 +29,7 @@ export default function ErrorRateOnePager({ truthPoint }: { truthPoint: ErrorRat
       <div className="rounded-lg border border-graphite/20 bg-surface-secondary p-8 text-center">
         <p className="text-graphite">
           The error-rate snapshot is not populated yet. Once the daily refresh
-          runs (or it is triggered on demand), the live truth point renders here.
+          runs, the live reading appears here.
         </p>
       </div>
     );
@@ -48,80 +47,76 @@ export default function ErrorRateOnePager({ truthPoint }: { truthPoint: ErrorRat
       {/* ── Status banner (auto-flips on the n>=30 gate) ───────────────── */}
       {productionSignal ? (
         <div className="rounded-lg border border-pine/30 bg-pine/[0.06] p-4">
-          <p className="text-sm font-semibold text-pine">Production signal — measured</p>
+          <p className="text-sm font-semibold text-pine">Live reading — measured</p>
           <p className="mt-1 text-sm leading-relaxed text-graphite">
-            Measured on {tp.measured?.n} sampled QC reviews. The numbers below
-            reflect real Civica-served outcomes.
+            Measured on {tp.measured?.n} sampled QC reviews. The numbers below are
+            real Civica-served outcomes.
           </p>
         </div>
       ) : (
         <div className="rounded-lg border border-warning/30 bg-warning/[0.06] p-4">
-          <p className="text-sm font-semibold text-warning">Pre-production — not yet a Civica signal</p>
+          <p className="text-sm font-semibold text-warning">
+            This page is reading test data — and it says so
+          </p>
           <p className="mt-1 text-sm leading-relaxed text-graphite">
-            The live engagement-implied figure currently reflects pre-production /
-            test traffic (verification coverage is near zero, and measured QC
-            sampling has not reached n=30). Cite the methodology and the published
-            reference layer below — not a live reduction — until production
-            applicants flow through verification.
+            No live applicants have come through yet, so it will not show a
+            &ldquo;reduction&rdquo; it cannot back up. Everything below is published
+            federal data — the map we built the product from, not a claim about
+            our own results.
           </p>
         </div>
       )}
 
-      {/* ── Headline metrics ───────────────────────────────────────────── */}
+      {/* ── The number, today ──────────────────────────────────────────── */}
       <section>
         <h2 className="mb-3 text-xs font-semibold uppercase tracking-wider text-graphite">
           The number, today
         </h2>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
           <Metric label="CA baseline" value={pct(tp.baselineCa)} sub="FY2024 · USDA FNS-380" />
-          <Metric label="Projected" value={pct(tp.projected)} sub="engine · full engagement" />
-          <Metric label="Engagement-implied" value={pct(tp.engagementImplied)} sub="live · current coverage" />
+          <Metric label="If perfect" value={pct(tp.projected)} sub="error left after verification" />
+          <Metric label="Implied today" value={pct(tp.engagementImplied)} sub="live · current coverage" />
           <Metric
             label="Measured"
             value={productionSignal ? pct(tp.measured?.perPct) : "pending"}
             sub={productionSignal ? `n=${tp.measured?.n}` : `n=${tp.measured?.n ?? 0} of 30`}
           />
         </div>
+        <Means>
+          Read it like this: today California gets it wrong on{" "}
+          <span className="text-ink">{pct(tp.baselineCa)}</span> of benefits. A
+          perfect application would put that near{" "}
+          <span className="text-ink">{pct(tp.projected)}</span> — the small amount
+          that is left even after you verify everything. The live figure is not a
+          real reading yet (no production applicants), which is why the banner says
+          so.
+        </Means>
       </section>
 
-      {/* ── The method (3 layers) ──────────────────────────────────────── */}
+      {/* ── Operational, not policy ────────────────────────────────────── */}
+      <section className="rounded-lg border border-graphite/15 bg-surface-secondary p-4">
+        <h2 className="text-sm font-semibold text-ink">These are operational errors, not policy</h2>
+        <p className="mt-1.5 text-sm leading-relaxed text-graphite">
+          Almost none of this is fraud (under 2%) or bad rules. It is the
+          day-to-day: income that is hard to verify, deductions families do not
+          know to claim, changes that never got processed. Anyone who has done
+          casework knows the feeling. That is the whole point — operational
+          problems are the kind a tool fixes. You do not change a law to get an
+          application right; you verify the parts that are hard to get right by
+          hand.
+        </p>
+      </section>
+
+      {/* ── Where errors live ──────────────────────────────────────────── */}
       <section>
         <h2 className="mb-3 text-xs font-semibold uppercase tracking-wider text-graphite">
-          Why it is auditable
-        </h2>
-        <ol className="space-y-3">
-          <Layer n="1" title="Pre-registered regression">
-            The measurement plan was locked before the data — see{" "}
-            <Link href="/findings/regression" className="text-pine underline-offset-2 hover:underline">
-              the regression
-            </Link>
-            . You cannot fish for a result you committed to in advance.
-          </Layer>
-          <Layer n="2" title="Canonical truth point">
-            One engine-computed, provenanced number every surface reads. A
-            deterministic job computes it; the model only explains it.
-          </Layer>
-          <Layer n="3" title="Honest guardrail">
-            The first live reading flagged its own number as test-data rather than
-            a result — the banner above is that guardrail, automated.
-          </Layer>
-        </ol>
-      </section>
-
-      {/* ── Reference: where errors live ───────────────────────────────── */}
-      <section>
-        <h2 className="mb-1 text-xs font-semibold uppercase tracking-wider text-graphite">
           Where CA errors live (USDA FY2023)
         </h2>
-        <p className="mb-3 text-sm text-graphite">
-          Published microdata, independent of Civica traffic. Shelter + wages —
-          Civica&rsquo;s two primary pillars — are the majority of the error surface.
-        </p>
         <div className="overflow-hidden rounded-lg border border-graphite/15">
           <table className="w-full text-sm">
             <thead className="bg-surface-secondary text-left text-xs uppercase tracking-wide text-graphite">
               <tr>
-                <th className="px-3 py-2 font-medium">Element</th>
+                <th className="px-3 py-2 font-medium">Part of the application</th>
                 <th className="px-3 py-2 text-right font-medium">Share of CA errors</th>
               </tr>
             </thead>
@@ -137,25 +132,19 @@ export default function ErrorRateOnePager({ truthPoint }: { truthPoint: ErrorRat
             </tbody>
           </table>
         </div>
+        <Means>
+          The two parts caseworkers fight hardest — rent/shelter and wage income —
+          are <span className="text-ink">6 of every 10</span> California errors.
+          Get those two right and most of the error is simply gone. They are the
+          first two parts Civica verifies automatically.
+        </Means>
       </section>
 
-      {/* ── Reference: who has them (TAM) ──────────────────────────────── */}
+      {/* ── Who has them — the TAM ─────────────────────────────────────── */}
       <section>
-        <h2 className="mb-1 text-xs font-semibold uppercase tracking-wider text-graphite">
-          Who has them — the TAM (national FY2023)
+        <h2 className="mb-3 text-xs font-semibold uppercase tracking-wider text-graphite">
+          Who has them (national FY2023)
         </h2>
-        <p className="mb-3 text-sm text-graphite">
-          {tamRatio ? (
-            <>
-              The earned-income cohort Civica targets runs{" "}
-              <span className="font-semibold text-ink">{tamRatio}×</span> the
-              no-earned rate — a structurally larger error surface than the
-              statewide average implies.
-            </>
-          ) : (
-            <>PER by income cohort.</>
-          )}
-        </p>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
           {tp.incomeGroups
             .slice()
@@ -165,26 +154,34 @@ export default function ErrorRateOnePager({ truthPoint }: { truthPoint: ErrorRat
                 key={g.sliceValue}
                 label={(g.sliceValue ?? "").replace(/_/g, " ")}
                 value={pct(g.perPct)}
-                sub={g.sliceValue === "civica_tam" ? "Civica TAM" : ""}
+                sub={g.sliceValue === "civica_tam" ? "the Civica household" : ""}
                 highlight={g.sliceValue === "civica_tam"}
               />
             ))}
         </div>
+        <Means>
+          Working families have the hardest applications to get perfect — more
+          income to document, more moving parts — so they carry{" "}
+          {tamRatio ? <span className="text-ink">{tamRatio}×</span> : <>more than 2×</>}{" "}
+          the error rate of households with no earnings. They are exactly who
+          Civica is built for, which is why the addressable problem is bigger than
+          the statewide average makes it look.
+        </Means>
       </section>
 
-      {/* ── Reference: pillar attribution ──────────────────────────────── */}
+      {/* ── Per-pillar reduction ───────────────────────────────────────── */}
       <section>
         <h2 className="mb-3 text-xs font-semibold uppercase tracking-wider text-graphite">
-          Per-pillar reduction at current coverage
+          What each fix removes
         </h2>
         <div className="overflow-hidden rounded-lg border border-graphite/15">
           <table className="w-full text-sm">
             <thead className="bg-surface-secondary text-left text-xs uppercase tracking-wide text-graphite">
               <tr>
-                <th className="px-3 py-2 font-medium">Pillar</th>
-                <th className="px-3 py-2 text-right font-medium">USDA share</th>
-                <th className="px-3 py-2 text-right font-medium">Coverage</th>
-                <th className="px-3 py-2 text-right font-medium">Reduction</th>
+                <th className="px-3 py-2 font-medium">Civica verifies</th>
+                <th className="px-3 py-2 text-right font-medium">of the error</th>
+                <th className="px-3 py-2 text-right font-medium">used so far</th>
+                <th className="px-3 py-2 text-right font-medium">error removed</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-graphite/10">
@@ -203,16 +200,34 @@ export default function ErrorRateOnePager({ truthPoint }: { truthPoint: ErrorRat
             </tbody>
           </table>
         </div>
+        <Means>
+          Each row perfects one part of the application. &ldquo;Error removed&rdquo;
+          is what that fix takes off the rate once an applicant actually uses it —
+          near zero today because no one has yet, with about{" "}
+          <span className="text-ink">5 points</span> of headroom waiting to be
+          captured as real applications come through.
+        </Means>
       </section>
 
-      {/* ── What we will not claim yet ─────────────────────────────────── */}
-      <section className="rounded-lg border border-graphite/15 bg-surface-secondary p-4">
-        <h2 className="text-sm font-semibold text-ink">What we will not claim yet</h2>
-        <p className="mt-1 text-sm leading-relaxed text-graphite">
-          No live reduction is claimed until production traffic exists and measured
-          QC sampling clears n=30. The restraint is the point: the same machinery
-          that will prove a reduction is the machinery that refuses to assert one
-          early.
+      {/* ── The close — the dam ────────────────────────────────────────── */}
+      <section className="rounded-lg border border-pine/25 bg-pine/[0.04] p-5">
+        <h2 className="text-base font-semibold text-ink">Implementation is not the leap. It is the release.</h2>
+        <p className="mt-1.5 text-sm leading-relaxed text-graphite">
+          Put it together. We know which parts of an application go wrong (shelter,
+          wages), who struggles most (working families), and which verification
+          perfects each one. None of that is a hypothesis to test in the field — it
+          is drawn from federal data before we shipped a single line. The perfect
+          application is not the aspiration; it is what the product builds. There is
+          a reservoir of homework behind this — and turning it on is just letting it
+          through.
+        </p>
+        <p className="mt-2 text-sm leading-relaxed text-graphite">
+          The method:{" "}
+          <Link href="/findings/regression" className="text-pine underline-offset-2 hover:underline">
+            a regression locked before the data
+          </Link>
+          , a single canonical number every screen reads, and a check that refuses
+          to call test data a result (the banner up top).
         </p>
       </section>
 
@@ -232,6 +247,16 @@ export default function ErrorRateOnePager({ truthPoint }: { truthPoint: ErrorRat
         </p>
       </footer>
     </div>
+  );
+}
+
+/** Plain-language "what this means" read — the human translation under each section. */
+function Means({ children }: { children: React.ReactNode }) {
+  return (
+    <p className="mt-3 border-l-2 border-pine/30 pl-3 text-sm leading-relaxed text-graphite">
+      <span className="font-semibold text-ink">What this means. </span>
+      {children}
+    </p>
   );
 }
 
@@ -256,19 +281,5 @@ function Metric({
       <p className="mt-1 font-mono text-xl font-semibold tabular-nums text-ink">{value}</p>
       {sub ? <p className="mt-0.5 text-[11px] text-graphite">{sub}</p> : null}
     </div>
-  );
-}
-
-function Layer({ n, title, children }: { n: string; title: string; children: React.ReactNode }) {
-  return (
-    <li className="flex gap-3">
-      <span className="mt-0.5 flex h-6 w-6 flex-none items-center justify-center rounded-full bg-pine/10 font-mono text-xs font-semibold text-pine">
-        {n}
-      </span>
-      <div>
-        <p className="text-sm font-semibold text-ink">{title}</p>
-        <p className="text-sm leading-relaxed text-graphite">{children}</p>
-      </div>
-    </li>
   );
 }

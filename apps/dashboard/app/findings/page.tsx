@@ -118,12 +118,12 @@ export default function FindingsIndex() {
           Live credibility one-pager
         </p>
         <h2 className="mt-1.5 text-xl font-semibold text-ink group-hover:text-pine">
-          Why you can audit our error-rate claims
+          Where California&rsquo;s SNAP errors come from
         </h2>
         <p className="mt-1.5 text-sm leading-relaxed text-graphite">
-          The method, the live truth-point reading, and the published reference
-          layer in one place — with a guardrail that flags a non-signal instead
-          of overclaiming.
+          The best application is a perfect one. Where applications go wrong, who
+          it hits, and how Civica perfects each part — the live reading plus the
+          federal map, in plain language.
         </p>
         <span className="mt-2 inline-block text-sm font-medium text-pine">
           View the page →
