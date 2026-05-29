@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1F7AC58FF918596F6758DD22 /* SnapshotTesting in Frameworks */ = {isa = PBXBuildFile; productRef = A32847FBB3163049FEC210E7 /* SnapshotTesting */; };
 		CCAA000000000000000000B1 /* CivicaDesignSystem in Frameworks */ = {isa = PBXBuildFile; productRef = CCAA000000000000000000B0 /* CivicaDesignSystem */; };
 /* End PBXBuildFile section */
 
@@ -106,6 +107,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1F7AC58FF918596F6758DD22 /* SnapshotTesting in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -211,6 +213,7 @@
 			);
 			name = CivicaTests;
 			packageProductDependencies = (
+				A32847FBB3163049FEC210E7 /* SnapshotTesting */,
 			);
 			productName = CivicaTests;
 			productReference = CCBB000000000000000000A2 /* CivicaTests.xctest */;
@@ -253,6 +256,7 @@
 				C3B8633B2D9B07130092C1CB /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				C36C759F2F42719F007CB83D /* XCRemoteSwiftPackageReference "supabase-swift" */,
 				C343D0BA2FAFDCE300D0F262 /* XCLocalSwiftPackageReference "CivicaDesignSystem" */,
+				A86ACAC0C752FDB93AD84FEF /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = C3B862E92D9A42E00092C1CB /* Products */;
@@ -585,6 +589,14 @@
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		A86ACAC0C752FDB93AD84FEF /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/pointfreeco/swift-snapshot-testing";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.17.0;
+			};
+		};
 		C36C759F2F42719F007CB83D /* XCRemoteSwiftPackageReference "supabase-swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/supabase/supabase-swift";
@@ -612,6 +624,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		A32847FBB3163049FEC210E7 /* SnapshotTesting */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A86ACAC0C752FDB93AD84FEF /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */;
+			productName = SnapshotTesting;
+		};
 		CCAA000000000000000000B0 /* CivicaDesignSystem */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = CivicaDesignSystem;
