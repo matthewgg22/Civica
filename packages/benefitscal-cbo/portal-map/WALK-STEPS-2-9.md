@@ -398,6 +398,9 @@ Walked a fresh CBO application (guest-accessible; login only gates save/submit).
 ### Method gotcha learned
 Collapsing an accordion **shifts trigger indices** — `cap N` after a collapse can hit a different element (twice landed on the "Learn more about BenefitsCal" nav-link → info.benefitscal.com, derailing the walk). Fix: re-`detect` before every `cap`, or never collapse mid-page (just leave accordions open and read the newest block).
 
+### WAF block (operational — important for next session)
+After ~100 scripted navigations in one session, BenefitsCal's CDN/WAF (CloudFront "Request blocked. We can't connect.") **hard-blocks the automated browser** — every benefitscal.com request 403s, persistently. Mitigations for future audit walks: (1) pace navigation (the WAF tolerates human-speed clicks, not rapid scripted bursts); (2) batch captures per page to minimize page loads; (3) if blocked, the block is per-session/browser — needs a fresh GStack browser session and likely a cooldown. **This does NOT affect the real extension**: the production content script runs inside the assister's own human-driven browser at human speed, so it never trips the WAF the way scripted auditing does. The block is a limit on *my scripted capture*, not on the product.
+
 ### STILL TO CAPTURE (after this pass)
 - **ABHSD** "How does each program define household?" (step 2 / People gate — needs a draft walked to step 2)
 - **ABPFG** "Why do we ask these questions?" (step 6 / Other Situations felony gate — deepest; needs steps 1-5 completed incl. income/expense required amounts)
