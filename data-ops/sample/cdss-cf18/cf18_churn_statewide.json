@@ -1,0 +1,309 @@
+{
+  "source": "CDSS CalFresh Churn Monthly Report (CF 18)",
+  "source_landing": "https://www.cdss.ca.gov/inforesources/data-portal/research-and-data/calfresh-data-tables/cf-18",
+  "scope": "California statewide",
+  "generated_at": "2026-05-29",
+  "generated_from": [
+    "CF18FY23-24.xlsx",
+    "CF18FY24-25.xlsx",
+    "CF18FY25-26.xlsx"
+  ],
+  "definition": "Procedural benefit interruption at periodic reporting. 'with loss' = SAR 7 / RRR submitted late AND the household experienced a loss of benefits (CF-18 item 6b). Rate = late-with-loss / scheduled. RRR = recertification; SAR 7 = semi-annual report.",
+  "cell_map": {
+    "Cell 1": "sar7_scheduled",
+    "Cell 2": "rrr_scheduled",
+    "Cell 4": "rrr_timely_eligible",
+    "Cell 15": "sar7_late_with_loss",
+    "Cell 16": "rrr_late_with_loss"
+  },
+  "years": {
+    "FY2023-24": {
+      "sar7_scheduled": 2338714,
+      "rrr_scheduled": 1709762,
+      "rrr_timely_eligible": 539399,
+      "sar7_late_with_loss": 174373,
+      "rrr_late_with_loss": 65709,
+      "months": 12,
+      "rrr_loss_rate_pct": 3.8,
+      "sar7_loss_rate_pct": 7.5,
+      "household_events_with_loss": 240082
+    },
+    "FY2024-25": {
+      "sar7_scheduled": 2604113,
+      "rrr_scheduled": 2075312,
+      "rrr_timely_eligible": 778683,
+      "sar7_late_with_loss": 222084,
+      "rrr_late_with_loss": 108247,
+      "months": 12,
+      "rrr_loss_rate_pct": 5.2,
+      "sar7_loss_rate_pct": 8.5,
+      "household_events_with_loss": 330331
+    },
+    "FY2025-26": {
+      "sar7_scheduled": 1594849,
+      "rrr_scheduled": 1358110,
+      "rrr_timely_eligible": 523532,
+      "sar7_late_with_loss": 135812,
+      "rrr_late_with_loss": 70126,
+      "months": 7,
+      "rrr_loss_rate_pct": 5.2,
+      "sar7_loss_rate_pct": 8.5,
+      "household_events_with_loss": 205938
+    }
+  },
+  "monthly_statewide": [
+    {
+      "fy": "FY2023-24",
+      "month": "2023-07",
+      "rrr_scheduled": 128805,
+      "rrr_late_with_loss": 4696,
+      "sar7_scheduled": 198574,
+      "sar7_late_with_loss": 17390
+    },
+    {
+      "fy": "FY2023-24",
+      "month": "2023-08",
+      "rrr_scheduled": 137318,
+      "rrr_late_with_loss": 4095,
+      "sar7_scheduled": 222947,
+      "sar7_late_with_loss": 13414
+    },
+    {
+      "fy": "FY2023-24",
+      "month": "2023-09",
+      "rrr_scheduled": 112781,
+      "rrr_late_with_loss": 4314,
+      "sar7_scheduled": 210652,
+      "sar7_late_with_loss": 16196
+    },
+    {
+      "fy": "FY2023-24",
+      "month": "2023-10",
+      "rrr_scheduled": 113236,
+      "rrr_late_with_loss": 3813,
+      "sar7_scheduled": 201241,
+      "sar7_late_with_loss": 12170
+    },
+    {
+      "fy": "FY2023-24",
+      "month": "2023-11",
+      "rrr_scheduled": 130459,
+      "rrr_late_with_loss": 4609,
+      "sar7_scheduled": 202437,
+      "sar7_late_with_loss": 12060
+    },
+    {
+      "fy": "FY2023-24",
+      "month": "2023-12",
+      "rrr_scheduled": 147352,
+      "rrr_late_with_loss": 4820,
+      "sar7_scheduled": 180407,
+      "sar7_late_with_loss": 11831
+    },
+    {
+      "fy": "FY2023-24",
+      "month": "2024-01",
+      "rrr_scheduled": 149219,
+      "rrr_late_with_loss": 4932,
+      "sar7_scheduled": 194420,
+      "sar7_late_with_loss": 13722
+    },
+    {
+      "fy": "FY2023-24",
+      "month": "2024-02",
+      "rrr_scheduled": 162381,
+      "rrr_late_with_loss": 6457,
+      "sar7_scheduled": 181461,
+      "sar7_late_with_loss": 14850
+    },
+    {
+      "fy": "FY2023-24",
+      "month": "2024-03",
+      "rrr_scheduled": 157044,
+      "rrr_late_with_loss": 6303,
+      "sar7_scheduled": 170828,
+      "sar7_late_with_loss": 16236
+    },
+    {
+      "fy": "FY2023-24",
+      "month": "2024-04",
+      "rrr_scheduled": 158721,
+      "rrr_late_with_loss": 6947,
+      "sar7_scheduled": 174337,
+      "sar7_late_with_loss": 14711
+    },
+    {
+      "fy": "FY2023-24",
+      "month": "2024-05",
+      "rrr_scheduled": 151398,
+      "rrr_late_with_loss": 7951,
+      "sar7_scheduled": 193523,
+      "sar7_late_with_loss": 15992
+    },
+    {
+      "fy": "FY2023-24",
+      "month": "2024-06",
+      "rrr_scheduled": 161048,
+      "rrr_late_with_loss": 6772,
+      "sar7_scheduled": 207887,
+      "sar7_late_with_loss": 15801
+    },
+    {
+      "fy": "FY2024-25",
+      "month": "2024-07",
+      "rrr_scheduled": 152489,
+      "rrr_late_with_loss": 7157,
+      "sar7_scheduled": 211794,
+      "sar7_late_with_loss": 16538
+    },
+    {
+      "fy": "FY2024-25",
+      "month": "2024-08",
+      "rrr_scheduled": 143047,
+      "rrr_late_with_loss": 7561,
+      "sar7_scheduled": 226273,
+      "sar7_late_with_loss": 19303
+    },
+    {
+      "fy": "FY2024-25",
+      "month": "2024-09",
+      "rrr_scheduled": 134870,
+      "rrr_late_with_loss": 7314,
+      "sar7_scheduled": 214366,
+      "sar7_late_with_loss": 16961
+    },
+    {
+      "fy": "FY2024-25",
+      "month": "2024-10",
+      "rrr_scheduled": 138454,
+      "rrr_late_with_loss": 8260,
+      "sar7_scheduled": 209112,
+      "sar7_late_with_loss": 16716
+    },
+    {
+      "fy": "FY2024-25",
+      "month": "2024-11",
+      "rrr_scheduled": 158515,
+      "rrr_late_with_loss": 7909,
+      "sar7_scheduled": 216309,
+      "sar7_late_with_loss": 19552
+    },
+    {
+      "fy": "FY2024-25",
+      "month": "2024-12",
+      "rrr_scheduled": 172279,
+      "rrr_late_with_loss": 8139,
+      "sar7_scheduled": 195648,
+      "sar7_late_with_loss": 17194
+    },
+    {
+      "fy": "FY2024-25",
+      "month": "2025-01",
+      "rrr_scheduled": 172539,
+      "rrr_late_with_loss": 8531,
+      "sar7_scheduled": 195746,
+      "sar7_late_with_loss": 17247
+    },
+    {
+      "fy": "FY2024-25",
+      "month": "2025-02",
+      "rrr_scheduled": 182738,
+      "rrr_late_with_loss": 8913,
+      "sar7_scheduled": 194193,
+      "sar7_late_with_loss": 17937
+    },
+    {
+      "fy": "FY2024-25",
+      "month": "2025-03",
+      "rrr_scheduled": 171496,
+      "rrr_late_with_loss": 8132,
+      "sar7_scheduled": 176656,
+      "sar7_late_with_loss": 16420
+    },
+    {
+      "fy": "FY2024-25",
+      "month": "2025-04",
+      "rrr_scheduled": 176445,
+      "rrr_late_with_loss": 10077,
+      "sar7_scheduled": 183423,
+      "sar7_late_with_loss": 17917
+    },
+    {
+      "fy": "FY2024-25",
+      "month": "2025-05",
+      "rrr_scheduled": 297224,
+      "rrr_late_with_loss": 16998,
+      "sar7_scheduled": 361653,
+      "sar7_late_with_loss": 29560
+    },
+    {
+      "fy": "FY2024-25",
+      "month": "2025-06",
+      "rrr_scheduled": 175216,
+      "rrr_late_with_loss": 9256,
+      "sar7_scheduled": 218940,
+      "sar7_late_with_loss": 16739
+    },
+    {
+      "fy": "FY2025-26",
+      "month": "2025-07",
+      "rrr_scheduled": 184038,
+      "rrr_late_with_loss": 9893,
+      "sar7_scheduled": 222338,
+      "sar7_late_with_loss": 17825
+    },
+    {
+      "fy": "FY2025-26",
+      "month": "2025-08",
+      "rrr_scheduled": 178586,
+      "rrr_late_with_loss": 9285,
+      "sar7_scheduled": 221779,
+      "sar7_late_with_loss": 18668
+    },
+    {
+      "fy": "FY2025-26",
+      "month": "2025-09",
+      "rrr_scheduled": 172975,
+      "rrr_late_with_loss": 9827,
+      "sar7_scheduled": 208115,
+      "sar7_late_with_loss": 17100
+    },
+    {
+      "fy": "FY2025-26",
+      "month": "2025-10",
+      "rrr_scheduled": 163335,
+      "rrr_late_with_loss": 9131,
+      "sar7_scheduled": 214171,
+      "sar7_late_with_loss": 18151
+    },
+    {
+      "fy": "FY2025-26",
+      "month": "2025-11",
+      "rrr_scheduled": 174868,
+      "rrr_late_with_loss": 8816,
+      "sar7_scheduled": 209063,
+      "sar7_late_with_loss": 18648
+    },
+    {
+      "fy": "FY2025-26",
+      "month": "2025-12",
+      "rrr_scheduled": 306565,
+      "rrr_late_with_loss": 14955,
+      "sar7_scheduled": 330068,
+      "sar7_late_with_loss": 28638
+    },
+    {
+      "fy": "FY2025-26",
+      "month": "2026-01",
+      "rrr_scheduled": 177743,
+      "rrr_late_with_loss": 8219,
+      "sar7_scheduled": 189315,
+      "sar7_late_with_loss": 16782
+    }
+  ],
+  "caveats": [
+    "Per-EVENT rate, not per-household-per-year: a household faces SAR 7 + RRR multiple times a year, so annual probability of >=1 interruption is higher.",
+    "'late with loss' is a benefit INTERRUPTION, not necessarily a permanent exit; some reinstate, some churn off fully.",
+    "CFAP households are included with CalFresh per the CF-18 definition."
+  ]
+}
