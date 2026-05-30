@@ -373,7 +373,8 @@ struct SNAPExpensesFlowView: View {
         } label: {
             HStack(spacing: CivicaSpacing.md) {
                 Image(systemName: isSelected ? "checkmark.square.fill" : "square")
-                    .font(.system(size: 22))
+                    .imageScale(.large)
+                    .font(.body)
                     .foregroundStyle(isSelected ? CivicaColors.amberPrimary : CivicaColors.graphite)
                     .frame(width: 28)
                 Text(utilityType.displayName(in: language))

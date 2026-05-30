@@ -104,7 +104,8 @@ struct ServiceTypeBadge: View {
 
     var body: some View {
         Image(systemName: iconName)
-            .font(.system(size: 14, weight: .semibold))
+            .imageScale(.large)
+            .font(.body)
             .foregroundStyle(CivicaColors.onPrimaryText)
             .frame(width: 28, height: 28)
             .background(Circle().fill(backgroundColor))

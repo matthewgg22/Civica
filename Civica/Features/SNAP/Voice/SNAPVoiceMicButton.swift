@@ -47,7 +47,8 @@ struct SNAPVoiceMicButton: View {
                     )
 
                 iconView
-                    .font(.system(size: 16, weight: .semibold))
+                    .imageScale(.large)
+                    .font(.body)
                     .foregroundStyle(iconColor)
             }
             .frame(minWidth: 44, minHeight: 44)

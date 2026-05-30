@@ -105,6 +105,7 @@ struct ReviewSummaryView: View {
 
             HStack(alignment: .lastTextBaseline, spacing: CivicaSpacing.xs) {
                 Text("\(score.overallScore)")
+                    // Rounded-design hero numeric (interview score) — keep system size; design intentional.
                     .font(.system(size: 56, weight: .bold, design: .rounded))
                     .foregroundStyle(scoreTint)
                 Text("/ 100")

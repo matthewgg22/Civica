@@ -124,7 +124,8 @@ struct FindHelpLocationDetailSheet: View {
     private var categoryBadge: some View {
         if location.resolvedRecordKind == .ebtRetailer {
             Image(systemName: FindHelpPinPalette.glyphSymbolName(for: location))
-                .font(.system(size: 14, weight: .semibold))
+                .imageScale(.large)
+                .font(.body)
                 .foregroundStyle(CivicaColors.onPrimaryText)
                 .frame(width: 28, height: 28)
                 .background(

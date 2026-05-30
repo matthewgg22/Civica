@@ -42,7 +42,8 @@ struct EBTReceiptListView: View {
     private func receiptRow(_ receipt: EBTReceipt) -> some View {
         HStack(alignment: .center, spacing: CivicaSpacing.md) {
             Image(systemName: "doc.text.viewfinder")
-                .font(.system(size: 22, weight: .semibold))
+                .imageScale(.large)
+                .font(.body)
                 .foregroundStyle(CivicaColors.pinePrimary)
                 .frame(width: 32, alignment: .center)
                 .accessibilityHidden(true)
@@ -65,7 +66,8 @@ struct EBTReceiptListView: View {
     private var emptyState: some View {
         VStack(spacing: CivicaSpacing.lg) {
             Image(systemName: "doc.text.viewfinder")
-                .font(.system(size: 48))
+                .imageScale(.large)
+                .font(.body)
                 .foregroundStyle(CivicaColors.graphite)
                 .accessibilityHidden(true)
             Text(EBTReceiptStrings.emptyListMessage.value(in: language))

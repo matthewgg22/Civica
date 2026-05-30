@@ -76,7 +76,8 @@ struct SNAPReportProblemView: View {
         Link(destination: URL(string: "mailto:support@civica.app?subject=Marketplace%20Issue")!) {
             HStack {
                 Image(systemName: "envelope")
-                    .font(.system(size: 16, weight: .medium))
+                    .imageScale(.large)
+                    .font(.body)
                     .accessibilityHidden(true)
                 Text(emailLinkLabel)
                     .font(CivicaTypography.subheadStrong)

@@ -371,7 +371,8 @@ struct SNAPWaitingRoomView: View {
     private func findHelpCard(icon: String, title: String, body: String, accent: Color) -> some View {
         HStack(alignment: .top, spacing: CivicaSpacing.md) {
             Image(systemName: icon)
-                .font(.system(size: 20, weight: .semibold))
+                .imageScale(.large)
+                .font(.body)
                 .foregroundStyle(accent)
                 .frame(width: 28, alignment: .leading)
                 .accessibilityHidden(true)

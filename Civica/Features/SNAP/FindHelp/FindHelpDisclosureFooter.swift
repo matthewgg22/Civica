@@ -24,7 +24,8 @@ struct FindHelpDisclosureFooter: View {
                         .multilineTextAlignment(.leading)
                     Spacer()
                     Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
-                        .font(.system(size: 11, weight: .semibold))
+                        .imageScale(.large)
+                        .font(.body)
                         .foregroundStyle(CivicaColors.graphite)
                         .accessibilityHidden(true)
                 }

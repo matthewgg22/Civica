@@ -29,7 +29,8 @@ struct SNAPDistressConfirmationView: View {
                 // MARK: Header icon + title
                 VStack(alignment: .leading, spacing: CivicaSpacing.md) {
                     Image(systemName: "heart.text.square.fill")
-                        .font(.system(size: 40))
+                        .imageScale(.large)
+                        .font(.body)
                         .foregroundColor(CivicaColors.warningAmber)
 
                     Text(SNAPVoiceStrings.distressSheetTitle.value(in: language))
@@ -113,7 +114,8 @@ struct SNAPDistressConfirmationView: View {
             Spacer(minLength: 0)
             Link(destination: url) {
                 Image(systemName: "phone.fill")
-                    .font(.system(size: 15, weight: .semibold))
+                    .imageScale(.large)
+                    .font(.body)
                     .foregroundColor(CivicaColors.pinePrimary)
                     .frame(width: 44, height: 44)
             }

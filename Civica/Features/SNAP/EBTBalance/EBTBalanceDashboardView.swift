@@ -167,7 +167,8 @@ struct EBTBalanceDashboardView: View {
                     store.clearRefreshError()
                 } label: {
                     Image(systemName: "xmark")
-                        .font(.system(size: 13, weight: .semibold))
+                        .imageScale(.large)
+                        .font(.body)
                         .foregroundStyle(CivicaColors.graphite)
                         .padding(4)
                         .contentShape(Rectangle())
@@ -244,7 +245,8 @@ struct EBTBalanceDashboardView: View {
         } label: {
             HStack(spacing: CivicaSpacing.md) {
                 Image(systemName: "camera.viewfinder")
-                    .font(.system(size: 20, weight: .semibold))
+                    .imageScale(.large)
+                    .font(.body)
                     .foregroundStyle(CivicaColors.pinePrimary)
                     .frame(width: 28, alignment: .leading)
                     .accessibilityHidden(true)
@@ -446,7 +448,8 @@ struct EBTBalanceDashboardView: View {
             let iconName = isTight ? "exclamationmark.circle.fill" : "calendar.badge.checkmark"
             HStack(alignment: .top, spacing: CivicaSpacing.md) {
                 Image(systemName: iconName)
-                    .font(.system(size: 20, weight: .semibold))
+                    .imageScale(.large)
+                    .font(.body)
                     .foregroundStyle(accent)
                     .frame(width: 28, alignment: .leading)
                     .accessibilityHidden(true)
@@ -607,7 +610,8 @@ struct EBTBalanceDashboardView: View {
             Spacer(minLength: CivicaSpacing.sm)
             transactionAmount(transaction)
             Image(systemName: "chevron.right")
-                .font(.system(size: 12, weight: .semibold))
+                .imageScale(.large)
+                .font(.body)
                 .foregroundStyle(CivicaColors.graphite)
                 .accessibilityHidden(true)
         }
@@ -625,7 +629,8 @@ struct EBTBalanceDashboardView: View {
             Circle().fill(tint.opacity(0.12))
             if transaction.isDeposit {
                 Image(systemName: "arrow.down")
-                    .font(.system(size: 14, weight: .bold))
+                    .imageScale(.large)
+                    .font(.body)
                     .foregroundStyle(tint)
             } else {
                 Text(transaction.monogram)
@@ -658,7 +663,8 @@ struct EBTBalanceDashboardView: View {
     private func depositScheduleCard(_ account: EBTAccount) -> some View {
         HStack(alignment: .top, spacing: CivicaSpacing.md) {
             Image(systemName: "calendar")
-                .font(.system(size: 20, weight: .semibold))
+                .imageScale(.large)
+                .font(.body)
                 .foregroundStyle(CivicaColors.amberPrimary)
                 .frame(width: 28, alignment: .leading)
                 .accessibilityHidden(true)
@@ -693,7 +699,8 @@ struct EBTBalanceDashboardView: View {
     private func expirationCard(_ insights: EBTBalanceInsights) -> some View {
         HStack(alignment: .top, spacing: CivicaSpacing.md) {
             Image(systemName: "hourglass")
-                .font(.system(size: 20, weight: .semibold))
+                .imageScale(.large)
+                .font(.body)
                 .foregroundStyle(CivicaColors.warningAmber)
                 .frame(width: 28, alignment: .leading)
                 .accessibilityHidden(true)
@@ -731,7 +738,8 @@ struct EBTBalanceDashboardView: View {
         } label: {
             HStack(spacing: CivicaSpacing.md) {
                 Image(systemName: store.isCardLocked ? "lock.fill" : "lock.open")
-                    .font(.system(size: 20, weight: .semibold))
+                    .imageScale(.large)
+                    .font(.body)
                     .foregroundStyle(store.isCardLocked ? CivicaColors.pinePrimary : CivicaColors.graphite)
                     .frame(width: 28, alignment: .leading)
                     .accessibilityHidden(true)
@@ -773,7 +781,8 @@ struct EBTBalanceDashboardView: View {
         } label: {
             HStack(spacing: CivicaSpacing.md) {
                 Image(systemName: "phone.bubble.fill")
-                    .font(.system(size: 20, weight: .semibold))
+                    .imageScale(.large)
+                    .font(.body)
                     .foregroundStyle(CivicaColors.pinePrimary)
                     .frame(width: 28, alignment: .leading)
                     .accessibilityHidden(true)
@@ -868,7 +877,8 @@ struct EBTBalanceDashboardView: View {
     private func perksOfferRow(offer: EBTOffer) -> some View {
         HStack(alignment: .top, spacing: CivicaSpacing.md) {
             Image(systemName: "tag.fill")
-                .font(.system(size: 16, weight: .semibold))
+                .imageScale(.large)
+                .font(.body)
                 .foregroundStyle(CivicaColors.pinePrimary)
                 .frame(width: 24)
                 .accessibilityHidden(true)
@@ -952,7 +962,8 @@ struct EBTBalanceDashboardView: View {
     private func contentRow(icon: String, title: String, detail: String) -> some View {
         HStack(alignment: .top, spacing: CivicaSpacing.md) {
             Image(systemName: icon)
-                .font(.system(size: 18, weight: .semibold))
+                .imageScale(.large)
+                .font(.body)
                 .foregroundStyle(CivicaColors.pinePrimary)
                 .frame(width: 28, height: 28, alignment: .center)
                 .accessibilityHidden(true)

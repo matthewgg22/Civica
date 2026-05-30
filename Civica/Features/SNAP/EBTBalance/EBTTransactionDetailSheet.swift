@@ -87,7 +87,8 @@ struct EBTTransactionDetailSheet: View {
                 .fill(tint.opacity(0.12))
             if transaction.isDeposit {
                 Image(systemName: "arrow.down")
-                    .font(.system(size: 20, weight: .bold))
+                    .imageScale(.large)
+                    .font(.body)
                     .foregroundStyle(tint)
             } else {
                 Text(transaction.monogram)
@@ -102,7 +103,8 @@ struct EBTTransactionDetailSheet: View {
     private var categoryValue: some View {
         HStack(spacing: CivicaSpacing.xs) {
             Image(systemName: transaction.category.iconName)
-                .font(.system(size: 13, weight: .semibold))
+                .imageScale(.large)
+                .font(.body)
                 .foregroundStyle(CivicaColors.graphite)
                 .accessibilityHidden(true)
             Text(EBTBalanceStrings.categoryLabel(transaction.category, language: language))

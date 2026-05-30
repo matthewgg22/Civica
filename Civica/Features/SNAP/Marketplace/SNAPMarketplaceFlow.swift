@@ -174,7 +174,8 @@ private struct SavedForLaterBanner: View {
     var body: some View {
         HStack(spacing: CivicaSpacing.sm) {
             Image(systemName: "checkmark.circle.fill")
-                .font(.system(size: 14, weight: .semibold))
+                .imageScale(.large)
+                .font(.body)
                 .foregroundStyle(CivicaColors.onPrimaryText)
             Text(label)
                 .font(CivicaTypography.footnote)

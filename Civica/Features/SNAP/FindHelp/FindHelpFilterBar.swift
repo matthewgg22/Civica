@@ -65,7 +65,8 @@ struct FindHelpFilterBar: View {
                 Text(currentLanguageLabel(from: options))
                     .font(CivicaTypography.footnoteStrong)
                 Image(systemName: "chevron.down")
-                    .font(.system(size: 11, weight: .semibold))
+                    .imageScale(.large)
+                    .font(.body)
                     .accessibilityHidden(true)
             }
             .foregroundStyle(CivicaColors.pinePrimary)

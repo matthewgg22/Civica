@@ -60,7 +60,8 @@ struct FindHelpEmptyView: View {
         VStack(spacing: CivicaSpacing.lg) {
             VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
                 Image(systemName: "mappin.slash")
-                    .font(.system(size: 28))
+                    .imageScale(.large)
+                    .font(.body)
                     .foregroundStyle(CivicaColors.graphite)
                     .accessibilityHidden(true)
                 Text(FindHelpStrings.emptyTitleFormatted(
@@ -117,7 +118,8 @@ struct FindHelpTransportErrorView: View {
         VStack(spacing: CivicaSpacing.lg) {
             VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
                 Image(systemName: "wifi.slash")
-                    .font(.system(size: 28))
+                    .imageScale(.large)
+                    .font(.body)
                     .foregroundStyle(CivicaColors.graphite)
                     .accessibilityHidden(true)
                 Text(FindHelpStrings.transportErrorTitle.value(in: language))
@@ -176,7 +178,8 @@ struct FindHelpErrorMessageView: View {
     var body: some View {
         VStack(spacing: CivicaSpacing.md) {
             Image(systemName: "exclamationmark.triangle")
-                .font(.system(size: 36))
+                .imageScale(.large)
+                .font(.body)
                 .foregroundStyle(CivicaColors.destructive)
             Text(message)
                 .font(CivicaTypography.subheadStrong)
