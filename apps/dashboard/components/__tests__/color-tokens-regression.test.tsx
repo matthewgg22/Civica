@@ -31,8 +31,11 @@ describe("color tokens — DESIGN.md §8 amber audit regression", () => {
       expect(src).toMatch(/recertified:\s*\{[^}]*accent:\s*"text-amber"/);
     });
 
-    it("mineToday.notes count on /dashboard stays text-amber", () => {
-      const src = read("app/dashboard/page.tsx");
+    it("mineToday.notes count stays text-amber (now in dashboard sections)", () => {
+      // Moved from app/dashboard/page.tsx to the streaming section component
+      // in the /dashboard per-section Suspense refactor; the positive-outcome
+      // amber must survive the relocation.
+      const src = read("components/dashboard/sections.tsx");
       expect(src).toMatch(/text-amber[^"]*">\{mineToday\.notes\}/);
     });
 

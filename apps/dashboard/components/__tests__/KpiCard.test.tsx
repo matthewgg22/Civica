@@ -63,11 +63,15 @@ describe("KpiCard", () => {
     expect(card.style.borderColor).toBe("");
   });
 
-  it("uses semantic uppercase label styling with text-muted", () => {
+  it("uses semantic uppercase label styling with AA-safe text-graphite", () => {
     render(<KpiCard label="Label" value="42" subtext="Subtext" />);
     const labelEl = screen.getByText("Label");
     expect(labelEl.className).toMatch(/uppercase/);
-    expect(labelEl.className).toMatch(/text-muted/);
+    // text-graphite, not text-muted: the label is 11px and text-muted fails
+    // WCAG AA at footnote sizes (DESIGN.md §6.6). Swept in the T11 contrast
+    // pass (PR6).
+    expect(labelEl.className).toMatch(/text-graphite/);
+    expect(labelEl.className).not.toMatch(/text-muted/);
     expect(labelEl.className).toMatch(/tracking-wider/);
   });
 
