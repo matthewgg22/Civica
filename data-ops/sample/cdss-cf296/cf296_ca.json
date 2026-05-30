@@ -1,0 +1,59 @@
+{
+  "source": "CDSS CF 296 CalFresh Statistical Report (county-month)",
+  "scope": "California statewide annual sums",
+  "generated_at": "2026-05-29",
+  "cells": {
+    "denied": "2B Total",
+    "denied_procedural": "2B.2 Total (procedural)",
+    "withdrawn": "2C Total",
+    "discontinued": "7 Total",
+    "disc_failure_to_complete": "7A Total"
+  },
+  "by_fy": {
+    "2020-21": {
+      "apps_received": 1209739,
+      "denied": 749267,
+      "denied_procedural": 505724,
+      "withdrawn": 103162,
+      "discontinued": 553667,
+      "disc_failure_to_complete": 14855,
+      "procedural_share_of_denials_pct": 67.5
+    },
+    "2021-22": {
+      "apps_received": 1397456,
+      "denied": 1097001,
+      "denied_procedural": 782576,
+      "withdrawn": 122777,
+      "discontinued": 1463342,
+      "disc_failure_to_complete": 24762,
+      "procedural_share_of_denials_pct": 71.3
+    },
+    "2022-23": {
+      "apps_received": 2922119,
+      "denied": 1175750,
+      "denied_procedural": 790885,
+      "withdrawn": 130287,
+      "discontinued": 2178367,
+      "disc_failure_to_complete": 27639,
+      "procedural_share_of_denials_pct": 67.3
+    },
+    "2023-24": {
+      "apps_received": 2789305,
+      "denied": 1173407,
+      "denied_procedural": 775513,
+      "withdrawn": 133849,
+      "discontinued": 2308038,
+      "disc_failure_to_complete": 17923,
+      "procedural_share_of_denials_pct": 66.1
+    },
+    "2024-25": {
+      "apps_received": 2576717,
+      "denied": 1098556,
+      "denied_procedural": 744927,
+      "withdrawn": 135736,
+      "discontinued": 2318111,
+      "disc_failure_to_complete": 16906,
+      "procedural_share_of_denials_pct": 67.8
+    }
+  }
+}
