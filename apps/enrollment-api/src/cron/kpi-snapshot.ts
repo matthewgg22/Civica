@@ -10,9 +10,11 @@
 //   • LEADING  — packet_error_risk (20260555), the LATEST row per SUBMITTED packet.
 //                scoreAndPersist() writes one at submit (best-effort). CPR = tier=low
 //                share; element-clean = per-risk-label trigger share.
-//   • MEASURED — packet_outcomes (20260600): denial_rate (ANY source, self-reportable)
-//                and measured_per (county_authoritative / qc_sample ONLY — the P2
-//                fidelity exclusion; self-report can never move PER).
+//   • MEASURED · denial_rate — packet_outcomes (20260600), ANY source (self-reportable).
+//   • MEASURED · measured_per — AUTHORITATIVE feeds ONLY (P2 fidelity; never self_report):
+//                internal QC review (qc_outcomes, 20260555 — same source as
+//                error_rate_snapshot.measured_overall, so the two agree) + county-
+//                authoritative packet_outcomes (the future webhook feed, TODO-44).
 //
 // Scheduling: piggybacks the existing 04:00 UTC daily slot in src/index.ts,
 // right after the error-rate snapshot refresh — no new cron trigger.
@@ -35,12 +37,13 @@ export type KpiSnapshotResult = {
   rows_written: number;
   clean_packet_rate: number | null;
   total_scored: number;
+  /** Total authoritative outcomes behind measured_per (qc + county). */
   measured_per_n: number;
+  /** Provenance split: internal QC reviews vs county-authoritative outcomes. */
+  qc_n: number;
+  county_n: number;
   computed_at: string;
 };
-
-/** packet_outcomes.source values that may move the MEASURED PER (fidelity firewall). */
-const AUTHORITATIVE_SOURCES = ["county_authoritative", "qc_sample"];
 
 /**
  * Run one KPI snapshot refresh. Returns counts so the scheduled handler can log
@@ -91,11 +94,10 @@ export async function refreshKpiSnapshot(env: Env, log: LogFn): Promise<KpiSnaps
     .sort((a, b) => b[1] - a[1])
     .map(([element, triggered]) => ({ element, triggered }));
 
-  // 2. Pillar-1 MEASURED — packet_outcomes.
+  // 2a. Pillar-1 MEASURED · denial_rate — packet_outcomes, ANY source (denial is
+  //     self-reportable). decided = approved + denied.
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const outcomes = () => db.schema("snap_enrollment").from("packet_outcomes" as any) as any;
-
-  // denial_rate: ANY source. decided = approved + denied.
   const decidedResp = await outcomes()
     .select("*", { count: "exact", head: true })
     .in("outcome", ["approved", "denied"]);
@@ -109,21 +111,45 @@ export async function refreshKpiSnapshot(env: Env, log: LogFn): Promise<KpiSnaps
     throw new Error(`packet_outcomes denied read failed: ${deniedResp.error.message}`);
   }
 
-  // measured_per: AUTHORITATIVE sources ONLY (fidelity exclusion). A payment
-  // error = per_pct > 0 (authoritative rows carry the county/QC-reported PER).
-  const authNResp = await outcomes()
+  // 2b. Pillar-1 MEASURED · measured_per — AUTHORITATIVE feeds ONLY (fidelity
+  //     exclusion; never self_report). Two feeds, summed:
+  //       • Internal QC review — qc_outcomes (completed reviews; error_found).
+  //         SAME source + math as error_rate_snapshot.measured_overall, so the two
+  //         measured PERs agree by construction. Live TODAY (the hourly QC sampler).
+  //       • County-authoritative — packet_outcomes(source=county_authoritative),
+  //         the future signed-webhook feed (TODO-44); 0 until it lands.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const qcOutcomes = () => db.schema("snap_enrollment").from("qc_outcomes" as any) as any;
+  const qcNResp = await qcOutcomes()
     .select("*", { count: "exact", head: true })
-    .in("source", AUTHORITATIVE_SOURCES);
-  if (authNResp.error) {
-    throw new Error(`packet_outcomes authoritative n read failed: ${authNResp.error.message}`);
+    .eq("qc_sampled", true)
+    .not("error_found", "is", null);
+  if (qcNResp.error) {
+    throw new Error(`qc_outcomes n read failed: ${qcNResp.error.message}`);
   }
-  const authErrResp = await outcomes()
+  const qcErrResp = await qcOutcomes()
     .select("*", { count: "exact", head: true })
-    .in("source", AUTHORITATIVE_SOURCES)
+    .eq("qc_sampled", true)
+    .eq("error_found", true);
+  if (qcErrResp.error) {
+    throw new Error(`qc_outcomes errors read failed: ${qcErrResp.error.message}`);
+  }
+  const countyNResp = await outcomes()
+    .select("*", { count: "exact", head: true })
+    .eq("source", "county_authoritative");
+  if (countyNResp.error) {
+    throw new Error(`packet_outcomes county n read failed: ${countyNResp.error.message}`);
+  }
+  const countyErrResp = await outcomes()
+    .select("*", { count: "exact", head: true })
+    .eq("source", "county_authoritative")
     .gt("per_pct", 0);
-  if (authErrResp.error) {
-    throw new Error(`packet_outcomes authoritative errors read failed: ${authErrResp.error.message}`);
+  if (countyErrResp.error) {
+    throw new Error(`packet_outcomes county errors read failed: ${countyErrResp.error.message}`);
   }
+
+  const qcN = qcNResp.count ?? 0;
+  const countyN = countyNResp.count ?? 0;
 
   const inputs: KpiSnapshotInputs = {
     cpr: { cleanPackets, totalScored },
@@ -131,7 +157,11 @@ export async function refreshKpiSnapshot(env: Env, log: LogFn): Promise<KpiSnaps
     outcomes: {
       decided: decidedResp.count ?? 0,
       denied: deniedResp.count ?? 0,
-      authoritative: { n: authNResp.count ?? 0, errors: authErrResp.count ?? 0 },
+      authoritative: {
+        n: qcN + countyN,
+        errors: (qcErrResp.count ?? 0) + (countyErrResp.count ?? 0),
+        bySource: { qc_sample: qcN, county_authoritative: countyN },
+      },
     },
   };
 
@@ -168,6 +198,8 @@ export async function refreshKpiSnapshot(env: Env, log: LogFn): Promise<KpiSnaps
     clean_packet_rate: cpr,
     total_scored: totalScored,
     measured_per_n: inputs.outcomes.authoritative.n,
+    qc_n: qcN,
+    county_n: countyN,
     computed_at: computedAt,
   };
   log("info", "kpi_snapshot: refreshed", { ...result });

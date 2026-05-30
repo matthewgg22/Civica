@@ -66,10 +66,12 @@ export interface ElementTriggerCount {
 
 /** Authoritative outcome counts for measured PER — county_authoritative + qc_sample ONLY. */
 export interface AuthoritativeCounts {
-  /** Authoritative outcomes (denominator). */
+  /** Authoritative outcomes (denominator) — QC reviews + county outcomes. */
   n: number;
-  /** Those carrying a payment error (per_pct > 0). */
+  /** Those carrying a payment error (QC error_found, or county per_pct > 0). */
   errors: number;
+  /** Optional provenance: how n splits across measured sources (e.g. { qc_sample, county_authoritative }). Surfaced in the measured_per row's meta.by_source. */
+  bySource?: Record<string, number>;
 }
 
 export interface KpiSnapshotInputs {
@@ -161,6 +163,15 @@ export function buildKpiSnapshot(inputs: KpiSnapshotInputs): KpiSnapshotRow[] {
   );
 
   // ── Pillar 1 · MEASURED · measured_per (AUTHORITATIVE ONLY — fidelity P2) ──
+  // Authoritative = internal QC review (qc_outcomes) + county-authoritative
+  // outcomes; NEVER self_report. by_source records the n split for provenance.
+  const perMeta: Record<string, unknown> = {
+    definition: "share of authoritative outcomes (qc / county) with a payment error",
+    fidelity: "authoritative_only",
+  };
+  if (inputs.outcomes.authoritative.bySource) {
+    perMeta.by_source = inputs.outcomes.authoritative.bySource;
+  }
   rows.push(
     measuredRate({
       pillar: "get_in",
@@ -169,10 +180,7 @@ export function buildKpiSnapshot(inputs: KpiSnapshotInputs): KpiSnapshotRow[] {
       denominator: inputs.outcomes.authoritative.n,
       minN,
       baselineRef,
-      meta: {
-        definition: "share of authoritative outcomes (county/qc) with a payment error",
-        fidelity: "authoritative_only",
-      },
+      meta: perMeta,
     }),
   );
 
