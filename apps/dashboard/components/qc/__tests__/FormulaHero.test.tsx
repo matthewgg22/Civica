@@ -16,7 +16,7 @@ describe("FormulaHero — render with realistic fixture", () => {
     );
     expect(
       screen.getByRole("heading", {
-        level: 3,
+        level: 2,
         name: /How the projected payment-error rate moves with engagement/i,
       }),
     ).toBeInTheDocument();
@@ -147,7 +147,7 @@ describe("FormulaHero — empty state (n=0 packets)", () => {
     );
     expect(
       screen.getByRole("heading", {
-        level: 3,
+        level: 2,
         name: /How the projected payment-error rate moves with engagement/i,
       }),
     ).toBeInTheDocument();
@@ -236,7 +236,7 @@ describe("FormulaHero — CQ2 defensive boundaries via engine", () => {
     expect(screen.queryByText(/NaN/)).not.toBeInTheDocument();
     expect(
       screen.getByRole("heading", {
-        level: 3,
+        level: 2,
         name: /How the projected payment-error rate moves with engagement/i,
       }),
     ).toBeInTheDocument();

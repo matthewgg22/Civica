@@ -52,9 +52,9 @@ export default async function OutreachNetworkPage() {
         <div className="flex items-end justify-between gap-6 pb-3 mb-2">
           <div>
             <p className="eyebrow mb-1">Outreach · attribution + governance</p>
-            <h2 className="text-[26px] font-bold tracking-tight leading-none text-ink">
+            <h1 className="text-[26px] font-bold tracking-tight leading-none text-ink">
               Outreach network
-            </h2>
+            </h1>
             <p className="text-[13px] text-graphite mt-2 max-w-2xl leading-relaxed">
               Every enrollment recorded through Civica is attributed to an approved entity —
               a CBO, an internal employee, a labor union, a gig-platform partner, or a county

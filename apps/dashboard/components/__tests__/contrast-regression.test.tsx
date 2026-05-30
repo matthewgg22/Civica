@@ -12,6 +12,7 @@
  */
 import { describe, it, expect } from "vitest";
 import { execSync } from "node:child_process";
+import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
 const ROOT = join(__dirname, "..", "..");
@@ -58,5 +59,32 @@ describe("contrast — DESIGN.md §6.6 text-muted at <12px regression", () => {
       offending,
       `Found text-muted co-located with text-[11px] (fails WCAG AA per DESIGN.md §6.6). Use text-graphite for captions <12px.`
     ).toEqual([]);
+  });
+});
+
+/**
+ * Regression for the live /design-review (deployed /login) finding: form
+ * inputs used border-hairline (rgba(0,0,0,0.12), ~1.2:1) which fails WCAG
+ * 1.4.11 (UI component boundaries need 3:1). They now use a dedicated
+ * --color-input token (rgba(0,0,0,0.45), ~3.25:1 vs the paper fill). The
+ * decorative hairline is intentionally left faint and is exempt.
+ */
+describe("form-input border — WCAG 1.4.11 perceivable boundary", () => {
+  const read = (p: string) => readFileSync(join(ROOT, p), "utf8");
+
+  it("globals.css defines the dedicated --color-input token", () => {
+    expect(read("app/globals.css")).toContain("--color-input: rgba(0, 0, 0, 0.45)");
+  });
+
+  it("login inputs use border-input, not the faint border-hairline", () => {
+    const src = read("app/login/page.tsx");
+    expect(src).toContain("border border-input rounded-[3px] px-3 py-2.5 text-[15px] bg-paper");
+    expect(src).not.toContain("border border-hairline rounded-[3px] px-3 py-2.5");
+  });
+
+  it("deductions form inputs use border-input, not border-hairline", () => {
+    const src = read("app/tools/deductions/page.tsx");
+    expect(src).toContain("border border-input rounded-[3px] px-3 py-2 text-[13px] bg-paper");
+    expect(src).not.toContain("const input = \"w-full border border-hairline");
   });
 });

@@ -237,6 +237,15 @@ enum StudentExemption: Equatable {
 enum ExemptionReason: Equatable {
     case worksTwentyHoursPerWeek
     case workStudy
+    /// Participating in a federal or state employment & training or
+    /// student-support program: SNAP E&T, WIOA, on-the-job training,
+    /// or a state program (CA EOPS/CARE, CalWORKs/Cal Grant work
+    /// component, adult/career-ed pathways). A federal 7 CFR 273.5(b)
+    /// student exemption path that applies in every state. The intake
+    /// flow previously did not collect this, so the federal checklist
+    /// returned `.categoricallyDisqualified` for these students — a
+    /// false disqualification. See PARITY-AUDIT.md Gap 1.
+    case employmentTrainingProgram
     case dependentChildCare
     case under18OrOver50
     case lessThanHalfTime

@@ -18,7 +18,7 @@ export default function PendingApprovalQueue({ entities }: { entities: OutreachE
       <div className="flex items-start justify-between gap-4 mb-4">
         <div>
           <p className="eyebrow mb-1 text-warning">Pending approval · {entities.length}</p>
-          <h3 className="text-[18px] font-bold tracking-tight text-ink">Entities awaiting operator review</h3>
+          <h2 className="text-[18px] font-bold tracking-tight text-ink">Entities awaiting operator review</h2>
           <p className="text-[12px] text-graphite mt-1">
             New CBOs, employees, and partners must be approved before they can attribute enrollments.
             Review references, BCP/W-9, and MOU countersign before approving.

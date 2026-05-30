@@ -74,6 +74,8 @@ struct CivicaHomePhase2View: View {
         documentsListSummaryOverride ?? inboxStore.summary(in: language)
     }
 
+    // MARK: - HIDDEN UNTIL BACKEND
+    //
     // Messages-inbox slot — intentionally NOT bound in this PR. The
     // gateway today stores doc requests + free-form navigator prompts
     // in one `missing_item_requests` stream (read via /me/inbox); that
@@ -82,7 +84,7 @@ struct CivicaHomePhase2View: View {
     // unread state, separate model, separate endpoint) doesn't exist
     // yet. When it does, add a `SNAPMessagesInboxStore` and bind these
     // slots the same way the error-risk + documents-requested rows
-    // are bound.
+    // are bound. Ledger: docs/runbooks/wiring-todo.md (audit IS-7).
     var unreadMessageCount: Int = 0
     var mostRecentMessageSender: String = ""
     var mostRecentMessageRelative: String = ""

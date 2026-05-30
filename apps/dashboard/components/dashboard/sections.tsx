@@ -77,7 +77,7 @@ function CardShell({
   return (
     <section className={`bg-surface border border-hairline rounded-[4px] ${padClass} ${className}`}>
       <div className="mb-4">
-        <h3 className="section-title">{title}</h3>
+        <h2 className="section-title">{title}</h2>
         {subtitle && <p className="section-sub mt-1 leading-snug">{subtitle}</p>}
       </div>
       {children}
@@ -256,7 +256,7 @@ export async function FunnelSection() {
     <section className="bg-surface border border-hairline rounded-[4px] p-7">
       <div className="mb-5 flex items-baseline justify-between gap-3 flex-wrap">
         <div>
-          <h3 className="section-title">Enrollment Funnel</h3>
+          <h2 className="section-title">Enrollment Funnel</h2>
           <p className="section-sub mt-1 leading-snug">From Draft to Handed Off — conversion and time-in-stage averages.</p>
         </div>
         <span className="inline-flex items-center gap-1.5 text-[11px] font-bold text-pine uppercase tracking-wider bg-pine/10 px-2.5 py-1 rounded-full">

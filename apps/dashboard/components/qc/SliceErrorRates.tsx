@@ -68,12 +68,12 @@ export default function SliceErrorRates({ groups }: SliceErrorRatesProps) {
         <p className="eyebrow mb-1.5">
           QC · per-slice error rate · Wilson 95% band
         </p>
-        <h3
+        <h2
           id="slice-rates-title"
           className="text-[20px] font-semibold tracking-tight text-ink leading-tight"
         >
           Where measured errors concentrate
-        </h3>
+        </h2>
         <p className="text-[13px] text-graphite mt-2 max-w-2xl leading-relaxed">
           Measured error rate over completed QC reviews, broken out by category,
           county, and language. Each bar is the Wilson 95% confidence band; the

@@ -18,7 +18,7 @@ export default function CohortRetentionPanel({ data }: { data: CohortData }) {
       <div className="flex items-start justify-between gap-4 mb-4">
         <div>
           <p className="eyebrow mb-1">Panel 4 · Retention</p>
-          <h3 className="text-[18px] font-bold tracking-tight text-ink">Cohort retention curve</h3>
+          <h2 className="text-[18px] font-bold tracking-tight text-ink">Cohort retention curve</h2>
           <p className="text-[12px] text-graphite mt-1">
             % of HHs still tracking at 30 / 60 / 90 / 180 days · by enrollment month
           </p>

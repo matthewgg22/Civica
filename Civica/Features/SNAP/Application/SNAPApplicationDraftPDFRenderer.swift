@@ -180,7 +180,8 @@ enum SNAPApplicationDraftPDFRenderer {
             let exceptions = [
                 answers.works20PlusHours == true ? "20+ hr/wk" : nil,
                 answers.inWorkStudy == true ? "work-study" : nil,
-                answers.responsibleForDependentChild == true ? "dependent child" : nil
+                answers.responsibleForDependentChild == true ? "dependent child" : nil,
+                answers.inApprovedJobProgram == true ? "job-training program" : nil
             ].compactMap { $0 }
             if !exceptions.isEmpty {
                 rows.append(.init(

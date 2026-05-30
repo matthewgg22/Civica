@@ -78,7 +78,7 @@ export default function AppHeader({ email, active }: { email?: string; active: N
         </kbd>
         {email && <span className="hidden md:inline text-[13px] text-white/50">{email}</span>}
         <form action="/auth/signout" method="post">
-          <button className="text-[13px] font-medium text-white/65 hover:text-white transition-colors">Sign out</button>
+          <button className="inline-flex items-center min-h-[44px] px-1.5 rounded text-[13px] font-medium text-white/80 hover:text-white focus:outline-none focus:ring-2 focus:ring-white/30 transition-colors">Sign out</button>
         </form>
         {/* Mobile hamburger — md:hidden internally. Shows ALL nav items
             (including the Share ones) since the mobile dropdown has plenty

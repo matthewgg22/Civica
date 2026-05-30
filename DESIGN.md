@@ -82,7 +82,7 @@ Residents arrive with different levels of SNAP knowledge. Never front-load compl
 | `wheatSurface` | `#F7E89C` | `#4A3D1F` | EBT balance, enrollment confirmation |
 | `brickAccent` | `#9C3A24` | `#E8856E` | Recovery / human moments: navigator calls, denials, distress |
 | `brickSurface` | `#F1D4C8` | `#3D2B24` | Recovery surfaces |
-| `warningAmber` | `#B5511E` | `#D4845A` | Warnings (expiry, missing doc) — NOT errors |
+| `warningAmber` | `#9E4218` | `#9E4218` | Warnings (expiry, missing doc) — NOT errors |
 | `destructive` | `#C84637` | `#E87060` | Error states, data-loss actions |
 
 ### 2.2 Color use rules
@@ -105,7 +105,7 @@ On the dark pine hero card (EBT balance, eligibility result box), use `wheatPrim
 `brickAccent` and `brickSurface` are for screens where a person needs help from a navigator, has been denied, or is in distress. They are not generic warning colors. The warm tone signals "human support is here." Do not use brick for form validation errors (use `destructive`) or process warnings (use `warningAmber`).
 
 **warningAmber ≠ destructive.**  
-Amber (#B5511E) means "pay attention / something will expire." Red (#C84637) means "data loss / error." Never use them interchangeably. Both appear brownish-orange at low saturation — in code, never assign by visual approximation; always use the named semantic token.
+Amber (#9E4218) means "pay attention / something will expire." Red (#C84637) means "data loss / error." Never use them interchangeably. Both appear brownish-orange at low saturation — in code, never assign by visual approximation; always use the named semantic token.
 
 **Teal surfaces = benefit context only.**  
 `tealSurface` and `tealSurface` are result-positive surfaces. Using them on the SNAP intro screen (before any eligibility is known) would imply a positive outcome before the user has earned one. Intro/onboarding screens use `paper`. Confirmed-eligible screens use `tealSurface`.
@@ -120,7 +120,7 @@ Amber (#B5511E) means "pay attention / something will expire." Red (#C84637) mea
 | `pinePrimary` | `white` | 9.01:1 | AAA ✅ |
 | `accentTeal` | `paper` | 4.7:1 | AA ✅ |
 | `wheatPrimary` | `paper` | 2.1:1 | **FAIL** ❌ |
-| `warningAmber` | `paper` | 4.6:1 | AA ✅ (barely) |
+| `warningAmber` | `paper` | 5.9:1 | AA ✅ |
 | `brickAccent` | `paper` | 5.2:1 | AA ✅ |
 
 ---
@@ -380,7 +380,7 @@ Listed by severity.
 | H1 | tealSurface on the SNAP intro screen implied positive outcome before eligibility check | `SNAPEligibilityIntroView.swift` | Fixed 2026-05-20 — changed to paper |
 | H2 | Duplicate typography tokens (`sectionHeaderBold`, `cardSubtitle`, `subheadBold`) create inconsistent usage across the codebase | `CivicaTypography.swift` | Deprecate the `*Bold` aliases; point to canonical names. Schedule for design-system refactor sprint. |
 | H3 | Lever cards (childcare, medical, rent) are dead ends — tapping them does nothing | `SNAPDecisionLeversView.swift` | Add NavigationLink or `.sheet` to the relevant questionnaire question. Requires UX design for edit-path deeplink. |
-| H4 | `warningAmber` (#B5511E) on paper achieves 4.6:1 at body size — barely AA, fails at footnote sizes | `CivicaColors.swift` | Add a `@warn` at small sizes; only use warningAmber at ≥17pt, or increase the value to #9E4218 for wider margin |
+| H4 | **RESOLVED (RA-6, 2026-05-29):** `warningAmber` was #B5511E (4.6:1 on paper — barely AA, failed at footnote sizes). Bumped to **#9E4218 (5.9:1 on paper)** — AA with margin at small sizes. | `CivicaColors.swift` | Done — token darkened. |
 
 ### 🟢 Low / Quality of Life
 
@@ -448,7 +448,7 @@ CTAs           pinePrimary (#2D5A45) — ONLY for primary actions
 POSITIVE LIGHT amberPrimary (#C9922A) — eligible results, deposit amounts on light bg
 POSITIVE DARK  wheatPrimary (#E8C547) — benefit amounts on dark pine hero cards
 RECOVERY       brickAccent (#9C3A24) — denial, navigator, distress
-WARNING        warningAmber (#B5511E) — expiry, missing doc
+WARNING        warningAmber (#9E4218) — expiry, missing doc
 ERROR          destructive (#C84637) — data errors, form validation
 
 DARK HERO RULE  One dark (pinePrimary) hero card per screen.

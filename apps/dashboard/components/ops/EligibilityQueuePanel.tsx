@@ -35,9 +35,9 @@ export default function EligibilityQueuePanel({ data }: { data: EligibilityQueue
       <div className="flex items-start justify-between gap-4 mb-5">
         <div>
           <p className="eyebrow mb-1">Panel 9 · Opportunity queue</p>
-          <h3 className="text-[18px] font-bold tracking-tight text-ink">
+          <h2 className="text-[18px] font-bold tracking-tight text-ink">
             What&apos;s next: eligible but not yet referred
-          </h3>
+          </h2>
           <p className="text-[12px] text-graphite mt-1">
             <span className="font-semibold text-ink tabular-nums">{totalInQueue.toLocaleString()}</span> HHs in queue across {rows.length} programs · {monetizedQueueCount.toLocaleString()} monetized · sorted by projected revenue
           </p>

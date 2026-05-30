@@ -238,6 +238,40 @@ struct FederalDefaultRulesTests {
         )
     }
 
+    // Regression (PARITY-AUDIT.md Gap 1): a half-time student whose ONLY
+    // exemption is a job-training / student-support program (SNAP E&T,
+    // WIOA, EOPS/CARE, CalWORKs, Cal Grant work component) was wrongly
+    // returned `.categoricallyDisqualified` because the intake never
+    // collected the program. With `inApprovedJobProgram == true` it must
+    // now be `.exempted(reason: .employmentTrainingProgram)`.
+    @Test func studentInEmploymentTrainingProgramIsExempted() {
+        var draft = SNAPApplicationDraft()
+        draft.studentStatus.enrolledInHigherEd = true
+        draft.studentStatus.enrolledHalfTime = true
+        draft.studentStatus.works20PlusHours = false
+        draft.studentStatus.inWorkStudy = false
+        draft.studentStatus.responsibleForDependentChild = false
+        draft.studentStatus.inApprovedJobProgram = true
+        #expect(
+            rules.studentExemption(for: draft, asOf: fy26Date)
+                == .exempted(reason: .employmentTrainingProgram)
+        )
+    }
+
+    // Guard the bug's original shape stays fixed: same student WITHOUT the
+    // job program (field nil) is still disqualified — the fix must not
+    // exempt students who answer "no" / leave it unanswered.
+    @Test func studentWithoutJobProgramStillDisqualified() {
+        var draft = SNAPApplicationDraft()
+        draft.studentStatus.enrolledInHigherEd = true
+        draft.studentStatus.enrolledHalfTime = true
+        draft.studentStatus.works20PlusHours = false
+        draft.studentStatus.inWorkStudy = false
+        draft.studentStatus.responsibleForDependentChild = false
+        draft.studentStatus.inApprovedJobProgram = false
+        #expect(rules.studentExemption(for: draft, asOf: fy26Date) == .categoricallyDisqualified)
+    }
+
     @Test func studentLessThanHalfTimeIsExempted() {
         var draft = SNAPApplicationDraft()
         draft.studentStatus.enrolledInHigherEd = true
