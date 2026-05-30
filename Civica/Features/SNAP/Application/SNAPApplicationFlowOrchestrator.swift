@@ -301,11 +301,18 @@ struct SNAPApplicationFlowOrchestratorView: View {
         // orchestrator's intra-flow steps (and dismisses the whole
         // flow at the first step). Rendering both produced the
         // stacked `< Civica <` chevron pair on every question screen.
-        currentDestination
-            .navigationBarBackButtonHidden(true)
-            .onChange(of: viewModel.draft) { _, _ in
-                viewModel.autosave()
-            }
+        //
+        // `SNAPApplicationContextualHelpHost` wires the universal
+        // help marker on every CivicaQuestionScreen below this point
+        // to `SNAPApplicationContextualHelpSheet`. One wrap covers
+        // all 17+ application pages per the design doc D5/T5.
+        SNAPApplicationContextualHelpHost {
+            currentDestination
+                .navigationBarBackButtonHidden(true)
+                .onChange(of: viewModel.draft) { _, _ in
+                    viewModel.autosave()
+                }
+        }
     }
 
     @ViewBuilder
