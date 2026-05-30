@@ -12,7 +12,10 @@ evidence:
     note: "The harness (schema 2.x). Assembles the national panel and fits an R² ladder by policy family across 3 outcomes, a parsimonious interpretable-coefficient spec, a state-trend robustness pass, + a BBCE event study (linearmodels PanelOLS, cluster-robust by state)."
   - kind: file
     ref: data-ops/sample/snap-policy-regression/analysis_panel.csv
-    note: "The committed analysis panel (15,300 state-months, 51 states × 1996-2020): 13 policy levers (3 families) + FNS participation/caseload/issuance. The regression reproduces from this with no raw files."
+    note: "The committed analysis panel (15,300 state-months, 51 states × 1996-2020): 13 policy levers (3 families) + FNS participation/caseload/issuance + state unemployment (the cycle control). Reproduces from this with no raw files."
+  - kind: dataset
+    ref: "FRED state monthly Unemployment Rate ({ST}UR, SA) → data-ops/sample/snap-policy-regression/state_unemployment.csv"
+    note: "The Model-S1 business-cycle control, 51 states 1996-2020. Ingested by tools/snap-policy-regression/src/ingest_unemployment.py."
   - kind: file
     ref: apps/dashboard/lib/analytics/policy-regression-results.json
     note: "The fitted artifact the /findings/regression replication panel renders."
@@ -28,16 +31,24 @@ evidence:
 
 The first **real causal estimate** in the evidence ledger — not synthetic, not
 FOIA-pending. Run on **51 states × 1996–2020 (15,300 state-months)**, two-way
-fixed effects (state + calendar-month), cluster-robust by state: **policies that
-cut applicant burden measurably raise SNAP participation.**
+fixed effects (state + calendar-month), cluster-robust by state, **with state
+unemployment as an explicit business-cycle control**: **burden-reducing policy
+raises SNAP participation even after netting out the economy.**
 
-| Policy lever | Effect on participation | 95% CI | p |
-| --- | --- | --- | --- |
-| Simplified / periodic reporting | **+8.9%** | [+3.3, +14.5] | 0.002 |
-| Broad-based categorical eligibility | **+7.6%** | [+1.5, +13.7] | 0.014 |
-| Call-center case management | **+6.3%** | [+1.3, +11.3] | 0.014 |
-| Online application | +0.8% | [−4.0, +5.7] | 0.74 |
-| In-person interview required (initial / recert) | +4.8% / +2.0% | — | ns |
+| Lever (participation, cycle-controlled) | Effect | p |
+| --- | --- | --- |
+| *Unemployment (control, per pp)* | *+5.98* | *<0.001* |
+| Simplified / periodic reporting | **+9.4%** | 0.002 |
+| Call-center case management | **+5.7%** | 0.015 |
+| Broad-based categorical eligibility | +4.8% | 0.10 (ns) |
+| Online application · interview rules | ns | — |
+
+The headline shift from the cycle control: the **burden-reducers (simplified
+reporting, call centers) hold**, while **BBCE — an eligibility expansion —
+attenuates to non-significance** for participation (it was partly confounded
+with the recession it was adopted during; it stays marginal for caseload). What
+survives an explicit cycle control is *friction-reduction*, not
+*eligibility-expansion* — precisely Civica's lever.
 
 The **BBCE event study** (vs the year before adoption, 10 never-adopters as
 controls) is textbook: pre-adoption effects are flat and insignificant
@@ -52,31 +63,30 @@ validates the whole estimation pipeline on a known benchmark.
 
 ## What each variable family captures (the R² ladder)
 
-Beyond a single coefficient, the analysis decomposes *what explains SNAP
-participation*. Levers are added in families under the same state + month fixed
-effects; each cell is the cumulative within-R² — the share of within-state,
-within-month variation the levers explain:
+The analysis decomposes *what explains SNAP participation* — starting with the
+**business cycle** (state unemployment, the Model-S1 control), then each policy
+family. Each cell is the cumulative within-R² (share of within-state,
+within-month variation explained):
 
-| Outcome | Eligibility | + Transaction-cost | + Procedural (full) |
-| --- | --- | --- | --- |
-| Participation (persons) | 0.17 | **0.36** | 0.45 |
-| Caseload (households) | 0.17 | 0.34 | 0.43 |
-| Avg benefit / person | ≈0 | ≈0 | ≈0 |
+| Outcome | Business cycle | + Eligibility | + Transaction-cost | + Procedural |
+| --- | --- | --- | --- | --- |
+| Participation (persons) | **0.26** | 0.34 | 0.49 | 0.55 |
+| Caseload (households) | 0.24 | 0.32 | 0.46 | 0.52 |
+| Avg benefit / person | 0.06 | ≈0 | ≈0 | ≈0 |
 
-Two reads jump out. **Transaction-cost modernization** (call centers, online
-apps, simplified reporting) captures the **largest jump** — +0.19 for
-participation, more than eligibility breadth or procedural rules. And **no
-policy family explains average benefit per person** (≈0): the benefit *level* is
-federally set, so state policy moves *who is enrolled*, not how much they get —
-precisely the retention margin Civica targets. **Caseload tracks participation**
-(BBCE +8.8%, simplified reporting +7.9%, call centers +6.4%, all significant) —
-the effect is households entering and staying, not a per-household artifact.
+Three reads. (1) **The business cycle is the single biggest factor** — state
+unemployment alone explains ~0.26 of the within-variation (each +1pp of
+unemployment → ~6% more participation; counter-cyclical, as expected). (2) On
+top of it, **transaction-cost modernization** adds the largest *policy* jump
+(+0.16) — more than eligibility breadth or procedural rules. (3) **No family
+explains average benefit per person** (≈0): the benefit *level* is federally
+set, so state policy moves *who is enrolled*, not how much they get.
 
-**Robustness.** Adding a state-specific linear trend (the smooth part of
-state-economic divergence the national time effects miss): **BBCE (+6.7%) and
-simplified reporting (+5.8%) stay significant**; call centers attenuate to
-non-significant. The two strongest levers survive the toughest control
-available without external data.
+**Robustness — two controls, not one.** Beyond the unemployment control, adding
+a state-specific linear trend: **simplified reporting survives both** (+6.2%,
+p=0.015); call centers survive the cycle control but fade under state trends;
+BBCE is non-significant under either. The lever that clears every hurdle is the
+burden-reducer.
 
 **A note on method.** The *saturated* all-13-lever model is multicollinear (BBCE
 and its asset/income sub-variants move together — BBCE's coefficient even flips
@@ -111,12 +121,11 @@ in the headline table.
 - **TWFE caveat.** Two-way fixed effects with staggered binary treatment and
   heterogeneous effects can be biased (Goodman-Bacon); the **event study is the
   more credible read**, and it agrees.
-- **State economic shocks** are the main confounder. National shocks are
-  absorbed by the calendar-month fixed effects; the **state-trend robustness**
-  (above) absorbs smooth state divergence, and the two strongest levers survive
-  it. A state-unemployment control would be tighter still — but FRED and BLS were
-  unreachable from the build environment, so it is the declared next refinement,
-  alongside a Callaway–Sant'Anna estimator for the staggered timing.
+- **The business cycle — the main confounder — is now an explicit control**
+  (state unemployment, FRED state UR, seasonally adjusted), not merely absorbed
+  by the time FE; it is the single biggest factor, and the burden-reducers
+  survive it. State-specific linear trends are a second control. The remaining
+  refinement is a Callaway–Sant'Anna estimator for the staggered timing.
 - **Participation ≠ payment error.** This measures the *retention margin* — the
   door the thesis is about (fewer eligible people lost to friction) — not QC
   dollars-in-error directly. Those remain the QC/PER/CF-296/CF-18 datasets.
