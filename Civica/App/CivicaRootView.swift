@@ -156,6 +156,15 @@ struct CivicaRootView: View {
                     },
                     onStartOver: {
                         statusStore.reset()
+                    },
+                    onOpenExternalPortal: {
+                        // IA-5: when AppealabilityService demotes
+                        // Appeal, the primary CTA becomes "Speak with
+                        // a navigator" and routes through the state
+                        // portal — same posture as Phase 2/3.
+                        externalLink = CivicaExternalLinks.applyPortal(
+                            for: SNAPApplicationDraftStore().load()?.draft.whereApplying.stateCode
+                        )
                     }
                 )
             }
