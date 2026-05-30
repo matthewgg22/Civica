@@ -223,6 +223,20 @@ struct CivicaHomePhase2View: View {
 
                 primaryCTA
 
+                // JR-1 (audit 2026-05-29): "What I can do today" — a
+                // small, status-aware checklist that gives the user
+                // something concrete to do during the otherwise-opaque
+                // county-review stretch. Suppressed on
+                // `.interviewCompleted` so the pre-decision quiet stretch
+                // doesn't feel cluttered.
+                if statusStore.status.isPostSubmission
+                    && statusStore.status != .interviewCompleted {
+                    SNAPDailyChecklistCard(
+                        status: statusStore.status,
+                        language: language
+                    )
+                }
+
                 // IA-2 (audit 2026-05-29): documents-requested renders ABOVE
                 // error-risk. Documents-requested is concrete and finite
                 // ("upload these 2 paystubs"); error-risk is a probabilistic
