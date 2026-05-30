@@ -82,6 +82,7 @@ struct EBTNotificationPrefsView: View {
                     .foregroundStyle(.secondary)
             }
         }
+        .accessibilityLabel(title.value(in: language))
     }
 
     // MARK: - Minutes-since-midnight ⇄ Date conversion

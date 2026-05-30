@@ -55,6 +55,7 @@ struct EBTAnomalyBannerView: View {
         }
         .buttonStyle(.plain)
         .accessibilityElement(children: .combine)
+        .accessibilityLabel(alert.bannerCopy.value(in: language))
         .accessibilityHint("Tap to see details and take action")
         .sheet(isPresented: $isDetailPresented) {
             EBTAnomalyDetailView(alert: alert, store: store, language: language)

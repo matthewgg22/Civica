@@ -219,6 +219,7 @@ struct SNAPWorkRequirementsView: View {
         .background(CivicaColors.pinePrimary)
         .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
         .disabled(isEvaluating)
+        .accessibilityLabel(evaluateLabel)
     }
 
     // MARK: - Result card

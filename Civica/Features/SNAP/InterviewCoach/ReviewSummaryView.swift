@@ -6,6 +6,7 @@ import CivicaDesignSystem
 // bilingual one-paragraph summary returned by POST .../practice/:sessionId/score.
 // UI chrome is bilingual via InterviewCoachStrings; the LLM-generated
 // content (strengths/improvements/summary) comes back already-translated.
+// MARK: - AccessibilityElement = parent
 struct ReviewSummaryView: View {
     let score: InterviewScoreResponseDTO
 

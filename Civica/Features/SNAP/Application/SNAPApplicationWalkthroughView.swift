@@ -112,6 +112,7 @@ struct SNAPApplicationWalkthroughView: View {
                             .font(CivicaTypography.footnoteStrong)
                             .foregroundColor(CivicaColors.pinePrimary)
                     }
+                    .accessibilityLabel(label)
                 }
             }
         }

@@ -109,6 +109,7 @@ struct EBTAnomalyDetailView: View {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button(EBTAnomalyStrings.dismissCTA.value(in: language)) { dismiss() }
                         .font(CivicaTypography.footnoteStrong)
+                        .accessibilityLabel(EBTAnomalyStrings.dismissCTA.value(in: language))
                 }
             }
         }

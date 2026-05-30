@@ -10,6 +10,7 @@ import VisionKit
 // Single-page capture only at v1 — paystubs are typically one page,
 // and multi-page UX needs a separate paging surface.
 
+// MARK: - AccessibilityElement = parent
 struct SNAPDocumentCameraView: UIViewControllerRepresentable {
     /// Called with the captured page image and the quality-check
     /// result. Caller decides whether to accept either way, accept

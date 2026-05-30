@@ -51,6 +51,7 @@ struct AdminInterviewExportView: View {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("Close", action: onDismiss)
                         .foregroundStyle(CivicaColors.pinePrimary)
+                        .accessibilityLabel("Close admin export")
                 }
             }
         }

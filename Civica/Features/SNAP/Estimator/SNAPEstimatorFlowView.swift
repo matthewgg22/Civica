@@ -6,6 +6,7 @@ import SwiftUI
 // — this wrapper owns the navigation so "Apply" routes into
 // CivicaSNAPFlowView (the real intake) when tapped.
 
+// MARK: - AccessibilityElement = parent
 struct SNAPEstimatorFlowView: View {
     let language: CivicaLanguage
     @State private var showsIntake = false

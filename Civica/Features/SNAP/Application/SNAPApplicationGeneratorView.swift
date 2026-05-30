@@ -120,6 +120,7 @@ struct SNAPApplicationGeneratorView: View {
                     .foregroundColor(CivicaColors.onPrimaryText)
                     .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control))
             }
+            .accessibilityLabel(SNAPApplicationGeneratorStrings.saveOrShare.value(in: language))
         case .error:
             Button {
                 Task { await viewModel.generate() }
@@ -135,6 +136,7 @@ struct SNAPApplicationGeneratorView: View {
                     .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control))
                     .foregroundColor(CivicaColors.ink)
             }
+            .accessibilityLabel(SNAPApplicationGeneratorStrings.tryAgain.value(in: language))
         case .idle, .generating:
             EmptyView()
         }

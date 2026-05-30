@@ -34,6 +34,7 @@ struct EBTReceiptListView: View {
             } label: {
                 receiptRow(receipt)
             }
+            .accessibilityLabel(receipt.ocrMerchant ?? EBTReceiptStrings.unknownMerchant.value(in: language))
         }
         .listStyle(.insetGrouped)
     }

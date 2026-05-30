@@ -71,6 +71,7 @@ struct SNAPPrivacyNoticeView: View {
                         continueToEligibility = true
                     }
                     .buttonStyle(CivicaPrimaryCTAButtonStyle())
+                    .accessibilityLabel(SNAPPrivacyNoticeNavStrings.continueToPrep.value(in: language))
 
                     if let officialURL {
                         Button(SNAPPrivacyNoticeNavStrings.goToOfficial.value(in: language)) {

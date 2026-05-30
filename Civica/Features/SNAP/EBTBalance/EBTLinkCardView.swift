@@ -167,6 +167,7 @@ struct EBTLinkCardView: View {
         .buttonStyle(.plain)
         .disabled(isLinking)
         .padding(.top, CivicaSpacing.xs)
+        .accessibilityLabel(EBTBalanceStrings.linkCTA.value(in: language))
     }
 
     // MARK: - Demo disclosure

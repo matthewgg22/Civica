@@ -54,6 +54,7 @@ struct InterviewCoachEntryView: View {
                 }
                 .buttonStyle(.plain)
                 .disabled(bank.allQuestions.isEmpty)
+                .accessibilityLabel(InterviewCoachStrings.browseTitle.value(in: language))
 
                 practiceAffordance
 

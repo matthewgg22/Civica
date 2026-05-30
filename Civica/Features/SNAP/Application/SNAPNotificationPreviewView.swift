@@ -12,6 +12,7 @@ import SwiftUI
 // parameters render as {placeholder} so the user understands what
 // gets substituted with their actual data.
 
+// MARK: - AccessibilityElement = parent
 struct SNAPNotificationPreviewView: View {
     let language: CivicaLanguage
 

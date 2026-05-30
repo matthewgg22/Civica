@@ -147,6 +147,7 @@ struct SNAPDocumentConfirmationView: View {
 
     private var actionRow: some View {
         HStack(spacing: CivicaSpacing.md) {
+            // accessibilityLabel applied to button below
             Button(action: onCorrect) {
                 Text(SNAPDocumentConfirmationStrings.fixSomething.value(in: language))
                     .frame(maxWidth: .infinity)
@@ -159,6 +160,7 @@ struct SNAPDocumentConfirmationView: View {
                     .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control))
                     .foregroundColor(CivicaColors.ink)
             }
+            .accessibilityLabel(SNAPDocumentConfirmationStrings.fixSomething.value(in: language))
             Button(action: onConfirm) {
                 Text(SNAPDocumentConfirmationStrings.looksRight.value(in: language))
                     .frame(maxWidth: .infinity)
@@ -167,6 +169,7 @@ struct SNAPDocumentConfirmationView: View {
                     .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control))
                     .foregroundColor(CivicaColors.onPrimaryText)
             }
+            .accessibilityLabel(SNAPDocumentConfirmationStrings.looksRight.value(in: language))
         }
     }
 
