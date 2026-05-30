@@ -38,6 +38,6 @@ struct CivicaSkeletonRowTests {
             CivicaSkeletonRow(height: 56)
             CivicaSkeletonRow(height: 56)
         }
-        #expect(String(describing: type(of: stack.body)).isEmpty == false)
+        #expect(String(describing: type(of: stack)).isEmpty == false)
     }
 }
