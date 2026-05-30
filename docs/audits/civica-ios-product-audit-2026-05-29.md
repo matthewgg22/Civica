@@ -174,7 +174,7 @@ Phase 2/3 messages-inbox row code exists but defaults to `unreadMessageCount = 0
 
 Onboarding's emotional arc is excellent (warm/transparent/non-coercive). Denial is honest. EBT's "Will it last?" projection is humane. The wins are real. The losses cluster around two long stretches with no design attention: the pending wait (days 5-30) and the recert window. Plus a missing dignity moment at approval.
 
-### JR-1 — Pending wait opacity **[approved: "What I can do today" interactive checklist]**
+### JR-1 — Pending wait opacity **[approved: "What I can do today" interactive checklist]** ✅ PR #392
 
 **Decision:** Add a dismissible checklist card to Phase 2 below the timeline. 3-5 items the user can do *while they wait* to improve their odds:
 
@@ -551,7 +551,7 @@ Synthesized from the audit's findings. Each task derives from a specific finding
   - Surfaced by: Pass 2 — IS-1 through IS-9
   - Files: `EBTBalanceDashboardView.swift`, `CivicaHomePhase2View.swift`, `CivicaHomePhase3View.swift`, `SNAPConversationView.swift`, new `Civica/Features/SNAP/Components/SNAPSoftIneligibilityCard.swift`, `SNAPApplicationDraftStore.swift`, `CivicaEntryView.swift`
   - Verify: tests on each silent-fail path; visual regression on first-paint flicker
-- [ ] **T5 (P2, human: ~1-2 weeks / CC: ~3h)** — Pass 3 journey PR — JR-1 "What I can do today" checklist (blocks on UD-2 content), JR-2 doc-request reframe, JR-3 verify Interview Coach routing, JR-4 approval banner + persistence schema, JR-5 recert continuity copy, JR-6 returning-user CTA preview, JR-7 language one-liner
+- [ ] **T5 (P2, human: ~1-2 weeks / CC: ~3h)** — Pass 3 journey PR — ~~JR-1 "What I can do today" checklist~~ ✅ PR #392, JR-2 doc-request reframe, JR-3 verify Interview Coach routing ✅ PR #386, JR-4 approval banner + persistence schema, JR-5 recert continuity copy, JR-6 returning-user CTA preview ✅ PR #384, JR-7 language one-liner ✅ PR #361
   - Surfaced by: Pass 3 — JR-1 through JR-7
   - Files: `CivicaHomePhase2View.swift`, `CivicaHomePhase3View.swift`, `SNAPReturningUserHomeView.swift`, `Civica/Features/Onboarding/Screens/LanguagePickerScreen.swift`, new `Civica/Features/SNAP/Components/SNAPDailyChecklistCard.swift`, new `SNAPApprovalBannerCard.swift`
   - Verify: tests on banner persistence semantics, checklist persistence, status-aware checklist content
