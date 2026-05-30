@@ -29,6 +29,33 @@ import Foundation
 // Keeping it non-isolated lets the orchestrator view model's
 // default `init(store: = SNAPApplicationDraftStore())` parameter
 // evaluate cleanly from any context.
+
+// MARK: - Error type
+
+/// Typed errors from SNAPApplicationDraftStore.loadResult().
+///
+/// Pre-IS-9 the store collapsed every failure to nil, making schema
+/// mismatches after an app upgrade indistinguishable from "no draft"
+/// — the entry view silently flipped Resume → Start. Typed errors let
+/// the entry view render an explicit fallback card instead.
+enum DraftLoadError: Error {
+    /// No draft was ever saved — the normal "new user" state.
+    case empty
+    /// The JSON decoded but the shape doesn't match PersistedState —
+    /// e.g. a field was renamed or changed type in a new app version.
+    /// The associated value is the current app version string for
+    /// telemetry bucketing.
+    case schemaMismatch(version: String)
+    /// The data loader (UserDefaults.data(forKey:)) itself threw —
+    /// e.g. a sandboxing or disk-read error.
+    case ioError(underlying: Error)
+    /// The bytes were present but couldn't be parsed as JSON at all —
+    /// e.g. truncated write, storage corruption.
+    case decodingError(underlying: Error)
+}
+
+// MARK: - Store
+
 final class SNAPApplicationDraftStore {
     enum PersistedMode: String, Codable {
         case sequential
@@ -59,15 +86,72 @@ final class SNAPApplicationDraftStore {
 
     private let defaults: UserDefaults
     private let storageKey: String
+    // Injectable data loader — real code reads UserDefaults; tests
+    // can inject a throwing closure to exercise .ioError.
+    private let dataLoader: (String) throws -> Data?
 
-    init(defaults: UserDefaults = .standard, storageKey: String = SNAPApplicationDraftStore.liveDraftKey) {
+    init(
+        defaults: UserDefaults = .standard,
+        storageKey: String = SNAPApplicationDraftStore.liveDraftKey,
+        dataLoader: ((String) throws -> Data?)? = nil
+    ) {
         self.defaults = defaults
         self.storageKey = storageKey
+        self.dataLoader = dataLoader ?? { key in defaults.data(forKey: key) }
     }
 
+    // MARK: - Typed load
+
+    /// Returns the persisted state as a typed Result.
+    ///
+    /// Switch on the failure case to decide how to surface the error:
+    ///   .empty          → no draft exists; normal new-user state
+    ///   .schemaMismatch → draft exists but is from an older schema
+    ///   .ioError        → disk read failed
+    ///   .decodingError  → bytes present but not parseable JSON
+    func loadResult() -> Result<PersistedState, DraftLoadError> {
+        let data: Data?
+        do {
+            data = try dataLoader(storageKey)
+        } catch {
+            return .failure(.ioError(underlying: error))
+        }
+
+        guard let data else {
+            return .failure(.empty)
+        }
+
+        do {
+            let state = try JSONDecoder().decode(PersistedState.self, from: data)
+            return .success(state)
+        } catch let decodingError as DecodingError {
+            switch decodingError {
+            case .dataCorrupted:
+                return .failure(.decodingError(underlying: decodingError))
+            case .typeMismatch, .keyNotFound, .valueNotFound:
+                let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "unknown"
+                return .failure(.schemaMismatch(version: version))
+            @unknown default:
+                return .failure(.decodingError(underlying: decodingError))
+            }
+        } catch {
+            return .failure(.decodingError(underlying: error))
+        }
+    }
+
+    // MARK: - Legacy shim
+
+    /// Loads the persisted draft, returning nil for any error condition.
+    ///
+    /// Prefer `loadResult()` to distinguish between no-draft and
+    /// load-failure states. This shim exists only to avoid breaking
+    /// the ~15 existing call sites during migration.
+    @available(*, deprecated, message: "Use loadResult() to handle typed errors")
     func load() -> PersistedState? {
-        guard let data = defaults.data(forKey: storageKey) else { return nil }
-        return try? JSONDecoder().decode(PersistedState.self, from: data)
+        switch loadResult() {
+        case .success(let state): return state
+        case .failure: return nil
+        }
     }
 
     func save(_ state: PersistedState) {

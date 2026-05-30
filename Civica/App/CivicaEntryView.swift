@@ -33,6 +33,10 @@ struct CivicaEntryView: View {
     @EnvironmentObject private var enrollmentAuth: CivicaEnrollmentAuth
 
     @State private var presentingDebugMenu = false
+    /// Captured once on appear; nil means "not yet loaded" (avoids a
+    /// visible flash between the skeleton and the resolved state on
+    /// first render).
+    @State private var draftLoadResult: Result<SNAPApplicationDraftStore.PersistedState, DraftLoadError>? = nil
 
     /// Optional handler so a DEBUG `CivicaPhaseTab` can swap the
     /// rendered phase from outside this view without mutating the
@@ -44,18 +48,18 @@ struct CivicaEntryView: View {
         CivicaLanguage(rawValue: languageRaw) ?? .english
     }
 
-    /// True when a persisted draft exists. Flips the hero CTA label
-    /// from "Start" to "Resume" so returning-in-progress users land
-    /// on continuity, not a fresh "start over" CTA they didn't ask
-    /// for.
     private var hasActiveDraft: Bool {
-        SNAPApplicationDraftStore().load() != nil
+        if case .success = draftLoadResult { return true }
+        return false
     }
 
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: CivicaSpacing.lg) {
                 phaseTab
+                if let loadError = draftLoadError {
+                    draftFallbackCard(error: loadError)
+                }
                 heroCard
                 estimatorOffRamp
                 hairline
@@ -73,6 +77,26 @@ struct CivicaEntryView: View {
         .sheet(isPresented: $presentingDebugMenu) {
             DebugMenuView()
         }
+        .onAppear {
+            let result = SNAPApplicationDraftStore().loadResult()
+            draftLoadResult = result
+            if case .failure(let error) = result, case .empty = error {
+                // .empty is normal; no telemetry needed
+            } else if case .failure(let error) = result {
+                SNAPAnalytics.trackDraftLoadFailure(error: error)
+            }
+        }
+    }
+
+    // MARK: - Draft load error (non-empty failures only)
+
+    /// Returns the load error when the disk had bytes that couldn't be
+    /// decoded. Returns nil for .success (normal resume) or .empty
+    /// (normal new-user path) — both of those don't need a card.
+    private var draftLoadError: DraftLoadError? {
+        guard case .failure(let error) = draftLoadResult else { return nil }
+        if case .empty = error { return nil }
+        return error
     }
 
     // MARK: - Phase tab (production journey indicator + DEBUG override)
@@ -95,6 +119,64 @@ struct CivicaEntryView: View {
         CivicaPhaseTab(lockedJourneyAt: .enroll)
             .padding(.bottom, CivicaSpacing.xs)
         #endif
+    }
+
+    // MARK: - Draft fallback card (IS-9)
+
+    /// Rendered above the hero when a draft existed on disk but
+    /// couldn't be decoded. Presents two recovery CTAs so the user
+    /// isn't silently dropped into a "Start" flow and surprised.
+    @ViewBuilder
+    private func draftFallbackCard(error: DraftLoadError) -> some View {
+        let bodyText: String
+        switch error {
+        case .schemaMismatch:
+            bodyText = CivicaEntryStrings.draftFallbackBodySchemaMismatch.value(in: language)
+        case .ioError:
+            bodyText = CivicaEntryStrings.draftFallbackBodyIOError.value(in: language)
+        case .decodingError, .empty:
+            bodyText = CivicaEntryStrings.draftFallbackBodyDecoding.value(in: language)
+        }
+
+        VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
+            Text(CivicaEntryStrings.draftFallbackTitle.value(in: language))
+                .font(CivicaTypography.footnoteStrong)
+                .foregroundStyle(CivicaColors.destructive)
+
+            Text(bodyText)
+                .font(CivicaTypography.footnote)
+                .foregroundStyle(CivicaColors.ink)
+                .fixedSize(horizontal: false, vertical: true)
+
+            HStack(spacing: CivicaSpacing.sm) {
+                NavigationLink {
+                    CivicaSNAPFlowView(language: language)
+                } label: {
+                    Text(CivicaEntryStrings.draftFallbackRerunCTA.value(in: language))
+                        .font(CivicaTypography.footnoteStrong)
+                        .foregroundStyle(CivicaColors.pinePrimary)
+                }
+                .buttonStyle(.plain)
+
+                Text("·")
+                    .font(CivicaTypography.footnote)
+                    .foregroundStyle(CivicaColors.graphite)
+
+                Button {
+                    SNAPApplicationDraftStore().clear()
+                    draftLoadResult = .failure(.empty)
+                } label: {
+                    Text(CivicaEntryStrings.draftFallbackStartFreshCTA.value(in: language))
+                        .font(CivicaTypography.footnoteStrong)
+                        .foregroundStyle(CivicaColors.graphite)
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .padding(CivicaSpacing.md)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(CivicaColors.statusErrorSurface)
+        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
     }
 
     // MARK: - Hero card (filled pine, owns the primary action)
@@ -382,6 +464,33 @@ enum CivicaEntryStrings {
     static let ebtBalanceRowLink = CivicaText(
         "Check your EBT balance",
         es: "Consulta tu saldo de EBT"
+    )
+
+    // ─── Draft fallback card (IS-9) ────────────────────────────────
+
+    static let draftFallbackTitle = CivicaText(
+        "We couldn't read your saved progress.",
+        es: "No pudimos leer tu progreso guardado."
+    )
+    static let draftFallbackBodySchemaMismatch = CivicaText(
+        "Your data is from an older version of the app. Re-run the screener (2 min) or start fresh.",
+        es: "Tus datos son de una versión anterior de la aplicación. Vuelve a hacer el cuestionario (2 min) o empieza de nuevo."
+    )
+    static let draftFallbackBodyIOError = CivicaText(
+        "Couldn't read your saved progress — try restarting the app. Or start fresh below.",
+        es: "No se pudo leer tu progreso guardado — intenta reiniciar la app. O empieza de nuevo."
+    )
+    static let draftFallbackBodyDecoding = CivicaText(
+        "Your saved data appears corrupted. Re-run the screener (2 min) or start fresh.",
+        es: "Tus datos guardados parecen dañados. Vuelve a hacer el cuestionario (2 min) o empieza de nuevo."
+    )
+    static let draftFallbackRerunCTA = CivicaText(
+        "Re-run the screener (2 min)",
+        es: "Volver a hacer el cuestionario (2 min)"
+    )
+    static let draftFallbackStartFreshCTA = CivicaText(
+        "Start fresh",
+        es: "Empezar de nuevo"
     )
 
     // ─── Footer ────────────────────────────────────────────────────
