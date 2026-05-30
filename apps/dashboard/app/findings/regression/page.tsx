@@ -14,7 +14,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getRegressionReport } from "../../../lib/analytics/per-regression";
+import { getPolicyRegressionReport } from "../../../lib/analytics/policy-regression";
 import RegressionEvidencePanel from "../../../components/findings/RegressionEvidencePanel";
+import RegressionReplicationPanel from "../../../components/findings/RegressionReplicationPanel";
 
 export const revalidate = 3600;
 
@@ -33,6 +35,7 @@ export const metadata: Metadata = {
 
 export default function RegressionFindingPage() {
   const report = getRegressionReport();
+  const policyReport = getPolicyRegressionReport();
 
   return (
     <main className="mx-auto max-w-3xl px-6 py-12 sm:py-16">
@@ -73,6 +76,28 @@ export default function RegressionFindingPage() {
       </header>
 
       <RegressionEvidencePanel report={report} />
+
+      {/* External replication on real public data — the mechanism test that
+          stands while Civica's own production data is still pending. */}
+      <div className="my-14 border-t border-graphite/15" />
+      <header className="mb-8">
+        <p className="text-sm font-medium uppercase tracking-wider text-graphite">
+          External replication
+        </p>
+        <h2 className="mt-2 text-2xl font-semibold tracking-tight text-ink sm:text-3xl">
+          Does lower burden actually raise enrollment?
+        </h2>
+        <p className="mt-3 text-base leading-relaxed text-graphite">
+          The plan above measures Civica directly, but waits on production data.
+          So here is the mechanism, measured now on 25 years of public
+          state-panel data: when states cut the paperwork — simplified
+          reporting, call centers, broad-based categorical eligibility — does
+          participation rise? It does, and the effect is the kind a perfect,
+          low-friction application is built to capture.
+        </p>
+      </header>
+
+      <RegressionReplicationPanel report={policyReport} />
     </main>
   );
 }
