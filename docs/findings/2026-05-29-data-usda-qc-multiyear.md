@@ -8,8 +8,8 @@ supersedes: []
 superseded_by: []
 evidence:
   - kind: dataset
-    ref: "USDA SNAP QC Public-Use Files FY2021–FY2023 (snapqcdata.net/datafiles)"
-    note: "Pulled qcfy2021_csv.zip (partial, ~3mo COVID) + qcfy2022_csv.zip; FY2023 already vendored. CA=STATE 6, weighted FYWGT."
+    ref: "USDA SNAP QC Public-Use Files FY2016, FY2021–FY2023 (snapqcdata.net; FY2016 via the Homonoff–Somerville openICPSR replication package)"
+    note: "Pulled qcfy2021/2022 zips; FY2023 already vendored; FY2016 .dta from the SF recert replication package. CA=STATE 6, weighted FYWGT."
   - kind: file
     ref: data-ops/sample/usda-qc-multiyear/qc_ca_panel.json
     note: "CA error structure by FY (operational/client split, shelter|wages share, n)."
@@ -26,6 +26,7 @@ FOIA:
 
 | FY | CA cases | operational % | client % | shelter\|wages % |
 |----|---|---|---|---|
+| 2016 | 829 | 65.0 | 35.0 | 59.4 |
 | 2021\* | 194 | 62.4 | 37.6 | 57.8 |
 | 2022 | 809 | 54.5 | 45.5 | 57.4 |
 | 2023 | 867 | 64.6 | 35.4 | 60.8 |
@@ -34,8 +35,9 @@ FOIA:
 
 This **answers the grounding finding's open question** ("is the 65/35 split
 stable?"): directionally **yes** — error is agency/operational-dominant in *every*
-year — but the split **ranges 54.5–64.6%**, so the headline "65/35" is the FY2023
-point, not a fixed constant. Shelter|wages stays ~57–61% throughout.
+year — but the split **ranges 54.5–65.0%**. The FY2016 (pre-COVID) and FY2023
+endpoints both land ~65/35, confirming the headline; only FY2022 dipped to 54.5%.
+Shelter|wages stays ~57–61% throughout.
 
 ## Why it matters
 
