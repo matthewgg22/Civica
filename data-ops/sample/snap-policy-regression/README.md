@@ -8,12 +8,16 @@ reproduce from the repo with **no raw downloads**.
   `state_fips`, `statename`, `yearmonth`, **13 policy levers in 3 families**
   (eligibility: `bbce`, `cap`, `vehexclall`, `bbce_inclmt`; transaction-cost:
   `call_any`, `oapp`, `reportsimple`, `ebtissuance`, `transben`, `outreach`;
-  procedural: `faceini`, `facerec`, `fingerprint`), and FNS outcomes
-  (`households`, `persons`, `issuance`).
+  procedural: `faceini`, `facerec`, `fingerprint`), FNS outcomes
+  (`households`, `persons`, `issuance`), and `unemployment` (the cycle control).
+- `state_unemployment.csv` — `state_fips, yearmonth, unemployment`: the
+  standalone Model-S1 control (FRED state UR, SA), 51 states × 1996–2020.
 
-**Sources** (both public, no FOIA), joined 1:1 on state × month:
+**Sources** (all public, no FOIA), joined 1:1 on state × month:
 - *Treatment* — USDA ERS **SNAP Policy Database** (`snap-policy-database.xlsx`).
 - *Outcome* — USDA FNS **National/State Monthly Data** (`snap-zip-fy69tocurrent`).
+- *Control* — **FRED state Unemployment Rate** (`{ST}UR`, seasonally adjusted),
+  ingested by `tools/snap-policy-regression/src/ingest_unemployment.py`.
 
 **Reproduce:**
 ```
