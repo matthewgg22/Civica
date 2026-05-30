@@ -330,3 +330,29 @@ Walked to **Step 7 Document Upload (APDMC)** and **fully characterized the step 
 **The tree is now structurally complete up to the production-safe boundary.** The single remaining node — Step 8's post-gate Review/Submit page (confirmation-number + final Submit selectors) — cannot be captured on the production VoteNow CBO account without an irreversible county submission. Capturing it is a **user decision**: (a) a non-prod/staging BenefitsCal context, or (b) a deliberate dummy submit-then-withdraw on a throwaway draft. Everything else that remains (income gov/other/in-kind detail forms, household-category branches, member DOB/SSN, non-citizen/has-SSN/married branches, step-1 "?" popovers) is safely capturable in follow-up affirmative-path walks.
 
 **Reframed-tree completion: ~70%** of the full tree; **~95% of the safely-capturable-on-production tree** (only the gated Step 8 post-submit page is out of reach without a user decision).
+
+## EXPLAINER-CAPTURE PASS (2026-05-29 eve) — verbatim popover/accordion text
+Dedicated pass to open every `?`/`i` explainer and record its text verbatim (use-case (c): chatbot dropdown explainers). Run on a fresh guest CBO application (all pre-submit, no extra credentials). **Interrupted partway when the GStack browser daemon hung** (PID stuck, needs `/open-gstack-browser` restart + BenefitsCal re-login). Captured so far + the inventory + method below so the next run resumes fast.
+
+### Begin-flow page sequence (pre-program-selection, newly mapped)
+`begin/ABOVR` (overview, advance = **`BEGIN`** button) → `ABHLT` (Helpful Tips, no inputs, Next) → `ABDEI` (Diversity, Equity & Inclusion Statement, Next) → `ABSNC` → `ABNAV` (the Application Summary hub — click **`Start`** to enter the first section). All show "Step 1 of 9" until SNAP-only collapses it to 8 at ABPRI.
+
+### CAPTURED this pass — ABOVR begin/overview, 3 inline accordions (verbatim)
+- **"What to expect?"** → "Give yourself 30 - 60 minutes to apply. Fill out as much as you can as that can speed up your application process. Be ready to share about the money you earn and the things you pay for/own. Remember, if you create an account you can save and come back later to finish."
+- **"Type of documents you may need to provide"** → "You do not have to upload documents to apply. We'll let you know what you need to provide. You can come back to this website to upload them later. — Proof of identity (Driver's License, State ID card, Student ID) / Proof of income (like recent pay stubs, or unemployment benefits) / Proof of expenses (like medical costs, or child care)"
+- **"Interview tips"** → "When you're done and you submit, your county will set up an interview. For food (CalFresh), you can choose between an in-person or phone interview. For cash aid (CalWORKs), you may be able to choose between an in-person or phone interview. For health coverage (Medi-Cal) you won't need to do an interview. Plan for about an hour."
+- (NB: "Learn more about BenefitsCal" is a nav-link to info.benefitscal.com — NOT an explainer; skip. It has `href="Javascript:;"` but still navigates via handler, derailing the walk — capture triggers ONE AT A TIME, never batch.)
+
+### STILL TO CAPTURE — the high-value per-question popovers (inventory)
+These are the survey-question explainers the chatbot most needs; triggers known, text NOT yet opened:
+- **ABPRI** — "Not sure what to choose?" (program selection)
+- **ABNHA** — "What is homelessness?"
+- **ABCFA** — "What is a CalFresh Authorized Representative?"
+- **ABDOC** — "What do we mean by U.S. citizen?" + "What do we mean by U.S. national?"
+- **ABHSD** — "How does each program define household?"
+- **ABPFG** — "Why do we ask these questions?" (felony/disqualification gate)
+- **APDMC** — "Not sure what to upload? Let's look at some examples."
+- **ABHSP** — "Why are we asking?" (Hispanic origin) · **ABRAE** — "What is this used for?" (race) — confirm whether separate popovers vs the inline disclaimer already captured.
+
+### METHOD (reusable) — `/tmp/pop.sh` + `/tmp/{detect,capclick,dialog}.js`
+`detect` lists explainer triggers (text matches `?$`/"why are we asking"/"what is"/"not sure"/"how does"/… OR info/help/tooltip class) with `{NAV:href}` flagged. `cap N` clicks trigger #N (stable index) via full pointer-event sequence, then captures the result: a `[role=dialog]`/tooltip overlay **or** an expanded accordion (`[aria-expanded=true]`/`.mat-expansion-panel-body`). One trigger at a time; skip `{NAV}` links. To collapse an accordion before the next, re-click the same index. `adv` advances (Next/Continue/BEGIN/Start). The browse `js` tool wraps input as a single parenthesized expression — every snippet must be ONE IIFE expression (no `def; call`).
