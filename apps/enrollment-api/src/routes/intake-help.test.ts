@@ -214,6 +214,110 @@ describe('POST /v1/intake/help — happy paths', () => {
 });
 
 // ---------------------------------------------------------------------------
+// Helper-text grounding — the optional question_helper field
+// ---------------------------------------------------------------------------
+
+describe('POST /v1/intake/help — question_helper grounding', () => {
+  it('threads on-screen helper text into the LLM user message + grounding instruction', async () => {
+    hoisted.nextResponse = {
+      status: 200,
+      body: {
+        content: [
+          {
+            type: 'text',
+            text:
+              'This asks about everyone who shares food costs with you — not just who is on the lease. Roommates who shop and cook separately are a different household.',
+          },
+        ],
+      },
+    };
+
+    const helper =
+      'Include anyone who shares groceries with you — partners, kids, roommates who eat together.';
+
+    const res = await buildIntakeHelpApp().request(
+      '/v1/intake/help',
+      {
+        method: 'POST',
+        headers: JSON_HEADERS,
+        body: JSON.stringify({
+          question_title: 'How many people live in your household?',
+          question_helper: helper,
+          locale: 'en',
+        }),
+      },
+      TEST_ENV_WITH_API_KEY,
+    );
+
+    expect(res.status).toBe(200);
+    const body = await res.json() as { explainer_text: string; was_filtered: boolean };
+    expect(body.was_filtered).toBe(false);
+    expect(body.explainer_text.length).toBeGreaterThan(40);
+
+    // The user message must carry both the helper text AND the grounding
+    // instruction so the model expands Civica's own copy rather than guessing.
+    const call = hoisted.capturedCalls[0]!;
+    const reqBody = call.body as { messages: Array<{ content: string }> };
+    const userMsg = reqBody.messages[0]!.content;
+    expect(userMsg).toContain(helper);
+    expect(userMsg).toContain('Ground your explanation in that helper');
+  });
+
+  it('omitting question_helper is backward compatible (no grounding block)', async () => {
+    hoisted.nextResponse = {
+      status: 200,
+      body: {
+        content: [
+          {
+            type: 'text',
+            text: 'This question asks how much you pay for housing each month.',
+          },
+        ],
+      },
+    };
+
+    const res = await buildIntakeHelpApp().request(
+      '/v1/intake/help',
+      {
+        method: 'POST',
+        headers: JSON_HEADERS,
+        body: JSON.stringify({
+          question_title: 'About how much is your rent each month?',
+          locale: 'en',
+        }),
+      },
+      TEST_ENV_WITH_API_KEY,
+    );
+
+    expect(res.status).toBe(200);
+    const body = await res.json() as { was_filtered: boolean };
+    expect(body.was_filtered).toBe(false);
+
+    // No helper → no grounding instruction in the user message.
+    const call = hoisted.capturedCalls[0]!;
+    const reqBody = call.body as { messages: Array<{ content: string }> };
+    expect(reqBody.messages[0]!.content).not.toContain('Ground your explanation in that helper');
+  });
+
+  it('rejects question_helper exceeding the max length (400)', async () => {
+    const res = await buildIntakeHelpApp().request(
+      '/v1/intake/help',
+      {
+        method: 'POST',
+        headers: JSON_HEADERS,
+        body: JSON.stringify({
+          question_title: 'A valid title',
+          question_helper: 'x'.repeat(801),
+          locale: 'en',
+        }),
+      },
+      TEST_ENV_WITH_API_KEY,
+    );
+    expect(res.status).toBe(400);
+  });
+});
+
+// ---------------------------------------------------------------------------
 // Safety filter — the load-bearing test for demo credibility
 // ---------------------------------------------------------------------------
 

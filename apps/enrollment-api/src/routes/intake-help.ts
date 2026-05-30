@@ -54,8 +54,16 @@ const REQUEST_TIMEOUT_MS = 15_000;
 // Request / response schemas
 // ---------------------------------------------------------------------------
 
+const MAX_HELPER_CHARS = 800;
+
 const helpRequestSchema = z.object({
   question_title: z.string().min(1).max(MAX_TITLE_CHARS),
+  // Optional on-screen helper text the applicant is already looking at,
+  // copied from the CivicaQuestionScreen `helper` prop. When present, the
+  // LLM grounds its explanation in Civica's own authored copy for that exact
+  // question rather than inferring from the title alone. Backward compatible:
+  // omitting it reproduces the prior behavior exactly.
+  question_helper: z.string().max(MAX_HELPER_CHARS).optional(),
   locale: z.enum(["en", "es"]),
 });
 
@@ -312,10 +320,26 @@ type AnthropicResponse = {
 
 export type FetchImpl = typeof fetch;
 
+/**
+ * Builds the user message. When `questionHelper` is present, the model is
+ * told to ground its explanation in Civica's own on-screen helper copy for
+ * that exact question — expand and clarify it, never contradict it.
+ */
+function buildUserMessage(questionTitle: string, questionHelper?: string): string {
+  const base = `The applicant tapped the help button next to this question:\n\n"${questionTitle}"`;
+  const trimmed = questionHelper?.trim();
+  const helperBlock =
+    trimmed && trimmed.length > 0
+      ? `\n\nCivica already shows the applicant this helper text for this question:\n"${trimmed}"\n\nGround your explanation in that helper — expand and clarify it in plain language. Do not contradict it.`
+      : "";
+  return `${base}${helperBlock}\n\nExplain what this question is asking in 2-5 short sentences.`;
+}
+
 async function callAnthropic(
   apiKey: string,
   systemPrompt: string,
   questionTitle: string,
+  questionHelper: string | undefined,
   fetchImpl: FetchImpl = fetch,
 ): Promise<string> {
   const controller = new AbortController();
@@ -338,7 +362,7 @@ async function callAnthropic(
         messages: [
           {
             role: "user",
-            content: `The applicant tapped the help button next to this question:\n\n"${questionTitle}"\n\nExplain what this question is asking in 2-5 short sentences.`,
+            content: buildUserMessage(questionTitle, questionHelper),
           },
         ],
       }),
@@ -370,6 +394,75 @@ export function __setFetchForTests(impl: FetchImpl | null): void {
 }
 
 // ---------------------------------------------------------------------------
+// Response caching via the Workers Cache API (caches.default).
+//
+// No KV namespace, no wrangler.toml binding — the Cache API is the idiomatic
+// Workers primitive for HTTP response caching. We key on a SHA-256 of
+// (question_title + question_helper + locale) wrapped in a synthetic GET
+// Request (the Cache API keys on GET URLs). Only CLEAN responses are cached;
+// filtered fallbacks are never cached so a later prompt fix is not masked.
+//
+// Everything here is fail-open: any cache error is swallowed and the request
+// proceeds to a live generation. Caching must never break a response.
+//
+// `caches` is undefined under vitest/node, so cacheAvailable() returns false
+// and the whole layer no-ops in tests.
+// ---------------------------------------------------------------------------
+
+const CACHE_TTL_SECONDS = 86_400; // 24h
+
+function cacheAvailable(): boolean {
+  try {
+    return typeof caches !== "undefined" && !!(caches as { default?: Cache }).default;
+  } catch {
+    return false;
+  }
+}
+
+async function cacheKeyFor(
+  questionTitle: string,
+  questionHelper: string | undefined,
+  locale: string,
+): Promise<Request> {
+  const material = `${questionTitle} ${questionHelper ?? ""} ${locale}`;
+  const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(material));
+  const hex = [...new Uint8Array(digest)].map((b) => b.toString(16).padStart(2, "0")).join("");
+  return new Request(`https://intake-help-cache.civica.internal/${hex}`);
+}
+
+async function tryCacheMatch(key: Request): Promise<HelpResponse | null> {
+  try {
+    if (!cacheAvailable()) return null;
+    const hit = await caches.default.match(key);
+    if (!hit) return null;
+    return (await hit.json()) as HelpResponse;
+  } catch {
+    return null;
+  }
+}
+
+function tryCachePut(c: Context<{ Bindings: Env }>, key: Request, body: HelpResponse): void {
+  try {
+    if (!cacheAvailable()) return;
+    const resp = new Response(JSON.stringify(body), {
+      headers: {
+        "content-type": "application/json",
+        "cache-control": `max-age=${CACHE_TTL_SECONDS}`,
+      },
+    });
+    const put = caches.default.put(key, resp);
+    try {
+      c.executionCtx.waitUntil(put);
+    } catch {
+      // No execution context (tests / unusual host) — fire and forget.
+      void put;
+    }
+  } catch {
+    // Fail open: never let a cache write break the response.
+  }
+}
+
+// ---------------------------------------------------------------------------
 // POST /v1/intake/help
 // ---------------------------------------------------------------------------
 
@@ -379,11 +472,20 @@ app.post(
   rateLimit("strict"),
   zValidator("json", helpRequestSchema),
   async (c) => {
-    const { question_title, locale } = c.req.valid("json");
+    const { question_title, question_helper, locale } = c.req.valid("json");
 
     const apiKey = c.env.ANTHROPIC_API_KEY;
     if (!apiKey) {
       throw new HTTPException(500, { message: "ANTHROPIC_API_KEY is not configured" });
+    }
+
+    // Cache check (fail-open). A hit skips the LLM call entirely.
+    const cacheKey = await cacheKeyFor(question_title, question_helper, locale).catch(() => null);
+    if (cacheKey) {
+      const cached = await tryCacheMatch(cacheKey);
+      if (cached) {
+        return c.json(cached);
+      }
     }
 
     const systemPrompt = locale === "es" ? TIER_B_SYSTEM_PROMPT_ES : TIER_B_SYSTEM_PROMPT_EN;
@@ -391,7 +493,7 @@ app.post(
 
     let rawText: string;
     try {
-      rawText = await callAnthropic(apiKey, systemPrompt, question_title, fetchImpl);
+      rawText = await callAnthropic(apiKey, systemPrompt, question_title, question_helper, fetchImpl);
     } catch (err) {
       const message = err instanceof Error ? err.message : "Anthropic call failed";
       // Log the failure server-side; surface a 500 so the iOS sheet can show
@@ -420,6 +522,13 @@ app.post(
       explainer_text: filtered.text,
       was_filtered: filtered.was_filtered,
     };
+
+    // Cache only CLEAN responses — never cache a filtered fallback, so a
+    // later prompt fix is not masked by a stale safe-fallback.
+    if (cacheKey && !filtered.was_filtered) {
+      tryCachePut(c, cacheKey, body);
+    }
+
     return c.json(body);
   },
 );
