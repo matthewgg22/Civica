@@ -1,4 +1,5 @@
 import CivicaDesignSystem
+import OSLog
 import SwiftUI
 
 // HANDOFF board 12: returning user home.
@@ -17,6 +18,7 @@ struct SNAPReturningUserHomeView: View {
     @ObservedObject var statusStore: SNAPApplicationStatusStore
     let language: CivicaLanguage
     let onResume: () -> Void
+    let onReRunScreener: () -> Void
     let onStartOver: () -> Void
 
     var body: some View {
@@ -26,6 +28,11 @@ struct SNAPReturningUserHomeView: View {
                 statusBanner
                 if let result = statusStore.eligibilityResult {
                     verdictCard(result)
+                } else if SNAPReturningUserHomeView.shouldShowFallbackCard(
+                    status: statusStore.status,
+                    eligibilityResult: nil
+                ) {
+                    fallbackCard
                 }
                 timeline
                 primaryActionRow
@@ -36,6 +43,48 @@ struct SNAPReturningUserHomeView: View {
         .background(CivicaColors.paper.ignoresSafeArea())
         .navigationTitle("Civica")
         .navigationBarTitleDisplayMode(.inline)
+    }
+
+    // MARK: - Fallback card (IA-6)
+
+    /// True when the view is reached but eligibilityResult is nil — i.e.
+    /// the keychain payload was lost across a crash or version upgrade.
+    /// Drives the quiet recovery card so returning users always have a
+    /// forward path, not a silent omission.
+    static func shouldShowFallbackCard(
+        status: SNAPApplicationStatus,
+        eligibilityResult: SNAPEligibilityResult?
+    ) -> Bool {
+        guard eligibilityResult == nil else { return false }
+        return status.isActiveCase
+    }
+
+    private var fallbackCard: some View {
+        VStack(alignment: .leading, spacing: CivicaSpacing.md) {
+            Text(SNAPReturningHomeStrings.fallbackHeadline.value(in: language))
+                .font(CivicaTypography.body)
+                .foregroundStyle(CivicaColors.ink)
+                .fixedSize(horizontal: false, vertical: true)
+            VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
+                Button { onReRunScreener() } label: {
+                    Text(SNAPReturningHomeStrings.fallbackReRunAction.value(in: language))
+                        .font(CivicaTypography.footnote)
+                        .foregroundStyle(CivicaColors.pinePrimary)
+                }
+                Button { onResume() } label: {
+                    Text(SNAPReturningHomeStrings.fallbackSkipAction.value(in: language))
+                        .font(CivicaTypography.footnote)
+                        .foregroundStyle(CivicaColors.graphite)
+                }
+            }
+        }
+        .padding(CivicaSpacing.lg)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(CivicaColors.surfaceSecondary)
+        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
+        .onAppear {
+            SNAPReturningHomeTelemetry.trackFallbackCardShown(status: statusStore.status)
+        }
     }
 
     /// "Your previous result" card — only renders when the orchestrator
@@ -304,6 +353,34 @@ enum SNAPReturningHomeStrings {
         case .spanish: return "Paso \(step) de \(total) \u{00B7} \(name)"
         }
     }
+
+    // IA-6: fallback card copy when eligibilityResult is nil.
+    static let fallbackHeadline = CivicaText(
+        "We couldn't pull up your screener result.",
+        es: "No pudimos encontrar tu resultado de la evaluación."
+    )
+    static let fallbackReRunAction = CivicaText(
+        "Re-run the screener (2 min)",
+        es: "Repetir la evaluación (2 min)"
+    )
+    static let fallbackSkipAction = CivicaText(
+        "Skip and continue",
+        es: "Omitir y continuar"
+    )
+}
+
+private enum SNAPReturningHomeTelemetry {
+    private static let logger = Logger(subsystem: "Civica", category: "SNAPReturningUserHome")
+
+    /// Logged on first render of the fallback card — fires when
+    /// eligibilityResult is nil on an active-case status. Rate of this
+    /// event in production measures how often keychain loss occurs post-
+    /// migration.
+    static func trackFallbackCardShown(status: SNAPApplicationStatus) {
+        logger.info(
+            "snap.returning_home.fallback_card_shown status=\(status.rawValue, privacy: .public)"
+        )
+    }
 }
 
 #if DEBUG
@@ -316,6 +393,7 @@ struct SNAPReturningUserHomeView_Previews: PreviewProvider {
                 statusStore: store,
                 language: .english,
                 onResume: {},
+                onReRunScreener: {},
                 onStartOver: {}
             )
         }

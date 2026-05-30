@@ -22,6 +22,26 @@ struct SNAPConversationRetryBannerTests {
         func recoverSession(token: String) async throws -> SNAPStartSessionResponse {
             throw SNAPNetworkError.unexpectedStatus(503)
         }
+        func uploadDocument(
+            sessionId: String,
+            imageData: Data,
+            mediaType: String,
+            onDeviceQualityPassed: Bool
+        ) async throws -> SNAPDocumentUploadResponse {
+            throw SNAPNetworkError.unexpectedStatus(503)
+        }
+        func getDocumentStatus(documentId: String) async throws -> SNAPDocumentStatusResponse {
+            throw SNAPNetworkError.unexpectedStatus(503)
+        }
+        func confirmDocument(
+            documentId: String,
+            corrections: [String: String]?
+        ) async throws -> SNAPDocumentStatusResponse {
+            throw SNAPNetworkError.unexpectedStatus(503)
+        }
+        func generateApplicationPDF(sessionId: String) async throws -> Data {
+            throw SNAPNetworkError.unexpectedStatus(503)
+        }
     }
 
     // MARK: - (a) Banner shows on error
@@ -81,7 +101,8 @@ struct SNAPConversationRetryBannerTests {
             return
         }
         let path = url.absoluteString.replacingOccurrences(of: "tel:", with: "")
-        #expect(path.allSatisfy(\.isNumber), "tel: URL path must be digits only, got \(path)")
+        let allDigits = path.allSatisfy { $0.isNumber }
+        #expect(allDigits, "tel: URL path must be digits only, got \(path)")
         #expect(path.count >= 10, "US phone number must have at least 10 digits, got \(path.count)")
     }
 
