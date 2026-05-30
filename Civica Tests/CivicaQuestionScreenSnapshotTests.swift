@@ -42,7 +42,7 @@ struct CivicaQuestionScreenSnapshotTests {
             secondaryActionTitle: "I'm not sure",
             onSecondary: {},
             language: .english,
-            onHelpRequested: { _, _ in }
+            onHelpRequested: { _, _, _ in }
         ) {
             CivicaQuestionChoices(
                 options: ["Just me", "2 people", "3 people", "4 or more"],
@@ -62,7 +62,7 @@ struct CivicaQuestionScreenSnapshotTests {
             primaryActionEnabled: true,
             onPrimary: {},
             language: .english,
-            onHelpRequested: { _, _ in }
+            onHelpRequested: { _, _, _ in }
         ) {
             CivicaQuestionFreeText(
                 text: .constant(""),

@@ -28,12 +28,20 @@ import SwiftUI
 // MARK: - Identifiable sheet payload
 
 /// Payload that drives the `.sheet(item:)` presentation. Carries the
-/// question title + the language captured at tap time, so the sheet
-/// can request the explainer in the user's active locale even if
-/// language toggles mid-session.
+/// question title + the on-screen helper paragraph + the language
+/// captured at tap time, so the sheet can request the explainer in the
+/// user's active locale (even if language toggles mid-session) and
+/// ground it in the helper text the applicant is already reading.
 struct SNAPApplicationContextualHelpRequest: Identifiable, Equatable {
     let id = UUID()
     let questionTitle: String
+    /// The on-screen helper paragraph the applicant is already reading
+    /// (the question screen's `helper` prop), captured at tap time so
+    /// the explainer endpoint can ground its answer in what the user
+    /// can already see. Optional — many questions ship without a
+    /// helper, in which case the request omits it downstream (backward
+    /// compatible with the endpoint contract).
+    let questionHelper: String?
     let language: CivicaLanguage
 }
 
@@ -46,11 +54,14 @@ struct SNAPApplicationContextualHelpRequest: Identifiable, Equatable {
 /// because universal coverage is the visible product thesis, but the
 /// tap is silent until a host is in scope.
 struct SNAPApplicationContextualHelpEnvironmentKey: EnvironmentKey {
-    static let defaultValue: ((String, CivicaLanguage) -> Void)? = nil
+    static let defaultValue: ((String, String?, CivicaLanguage) -> Void)? = nil
 }
 
 extension EnvironmentValues {
-    var snapApplicationContextualHelp: ((String, CivicaLanguage) -> Void)? {
+    /// Invoked with `(title, helper, language)` when the marker is
+    /// tapped. `helper` is the on-screen helper paragraph the applicant
+    /// is reading; nil when the question ships without one.
+    var snapApplicationContextualHelp: ((String, String?, CivicaLanguage) -> Void)? {
         get { self[SNAPApplicationContextualHelpEnvironmentKey.self] }
         set { self[SNAPApplicationContextualHelpEnvironmentKey.self] = newValue }
     }
@@ -80,9 +91,10 @@ struct SNAPApplicationContextualHelpHost<Content: View>: View {
         content()
             .environment(
                 \.snapApplicationContextualHelp,
-                { title, language in
+                { title, helper, language in
                     activeRequest = SNAPApplicationContextualHelpRequest(
                         questionTitle: title,
+                        questionHelper: helper,
                         language: language
                     )
                 }
@@ -90,6 +102,7 @@ struct SNAPApplicationContextualHelpHost<Content: View>: View {
             .sheet(item: $activeRequest) { request in
                 SNAPApplicationContextualHelpSheet(
                     questionTitle: request.questionTitle,
+                    questionHelper: request.questionHelper,
                     language: request.language
                 )
             }

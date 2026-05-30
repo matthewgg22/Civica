@@ -88,14 +88,18 @@ struct CivicaQuestionScreen<Affordance: View>: View {
     let language: CivicaLanguage
     /// Universal contextual-help hook. The marker (`questionmark.circle`)
     /// renders next to every question title; tapping it invokes this
-    /// closure with `(title, language)`. The component does NOT present
-    /// the explainer sheet itself — the caller wires that up. Default
-    /// `nil` keeps every existing caller compiling without changes; when
-    /// nil the marker still renders (universal coverage is the visible
-    /// product thesis per the v1 design doc) but tapping it is a no-op.
+    /// closure with `(title, helper, language)`. `helper` is the
+    /// on-screen helper paragraph the applicant is already reading
+    /// (this screen's `helper` prop) so the explainer endpoint can
+    /// ground its answer in what the user can already see. The
+    /// component does NOT present the explainer sheet itself — the
+    /// caller wires that up. Default `nil` keeps every existing caller
+    /// compiling without changes; when nil the marker still renders
+    /// (universal coverage is the visible product thesis per the v1
+    /// design doc) but tapping it is a no-op.
     /// See design doc D5 + T5 + T10 of
     /// `matthewgreer-gentis-claude-dashboard-state-coverage-design-20260529-135546.md`.
-    let onHelpRequested: ((String, CivicaLanguage) -> Void)?
+    let onHelpRequested: ((String, String?, CivicaLanguage) -> Void)?
     let affordance: () -> Affordance
 
     /// Drives the overall-progress bar fill + the percent counter.
@@ -134,7 +138,7 @@ struct CivicaQuestionScreen<Affordance: View>: View {
         secondaryActionTitle: String? = nil,
         onSecondary: (() -> Void)? = nil,
         language: CivicaLanguage = .english,
-        onHelpRequested: ((String, CivicaLanguage) -> Void)? = nil,
+        onHelpRequested: ((String, String?, CivicaLanguage) -> Void)? = nil,
         @ViewBuilder affordance: @escaping () -> Affordance
     ) {
         self.progress = progress
@@ -311,7 +315,7 @@ struct CivicaQuestionScreen<Affordance: View>: View {
 
     /// Universal contextual-help marker rendered next to every question
     /// title. Visual: `questionmark.circle` in `CivicaColors.pinePrimary`.
-    /// Tapping calls `onHelpRequested?(title, language)` — the component
+    /// Tapping calls `onHelpRequested?(title, helper, language)` — the component
     /// does not own the explainer sheet. 32pt minimum tap target meets
     /// HIG; accessibility label is locale-aware ("Help with this question"
     /// in EN, "Ayuda con esta pregunta" in ES).
@@ -322,16 +326,26 @@ struct CivicaQuestionScreen<Affordance: View>: View {
     /// `SNAPApplicationContextualHelpSheet` separately.
     private var helpMarker: some View {
         Button {
+            // Tap analytics: the question title is a closed-set static
+            // UI string (never a user utterance), safe to log. Fired
+            // here so it counts every tap regardless of which wiring
+            // path (per-callsite closure vs env fallback) handles the
+            // presentation. The helper paragraph is NEVER logged.
+            SNAPAnalytics.trackIntakeHelpOpened(questionTitle: title)
+
             // Per-callsite closure wins when supplied; otherwise the
             // env-value fallback runs. Either path may be nil — the
             // marker is universal and renders even when nothing is
             // wired, so the tap is silently swallowed. Real wiring
             // happens at `SNAPApplicationFlowOrchestratorView` via
-            // `SNAPApplicationContextualHelpHost`.
+            // `SNAPApplicationContextualHelpHost`. `helper` is this
+            // screen's on-screen helper paragraph, threaded through so
+            // the explainer can ground its answer in what the user
+            // already sees.
             if let onHelpRequested {
-                onHelpRequested(title, language)
+                onHelpRequested(title, helper, language)
             } else {
-                contextualHelpEnvironment?(title, language)
+                contextualHelpEnvironment?(title, helper, language)
             }
         } label: {
             Image(systemName: "questionmark.circle")
