@@ -106,7 +106,8 @@ struct SNAPApprovalBannerCard: View {
     private var headerRow: some View {
         HStack(alignment: .top, spacing: CivicaSpacing.md) {
             Image(systemName: "checkmark.circle.fill")
-                .font(.system(size: 28, weight: .semibold))
+                .imageScale(.large)
+                .font(.body)
                 .foregroundStyle(CivicaColors.pinePrimary)
                 .accessibilityHidden(true)
             VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
@@ -129,7 +130,8 @@ struct SNAPApprovalBannerCard: View {
             Spacer(minLength: CivicaSpacing.sm)
             Button(action: onDismiss) {
                 Image(systemName: "xmark")
-                    .font(.system(size: 14, weight: .semibold))
+                    .imageScale(.large)
+                    .font(.body)
                     .foregroundStyle(CivicaColors.graphite)
                     .padding(CivicaSpacing.xs)
                     .contentShape(Rectangle())
@@ -166,7 +168,8 @@ struct SNAPApprovalBannerCard: View {
                     .foregroundStyle(CivicaColors.pinePrimary)
                 Spacer(minLength: CivicaSpacing.sm)
                 Image(systemName: "chevron.right")
-                    .font(.system(size: 13, weight: .semibold))
+                    .imageScale(.large)
+                    .font(.body)
                     .foregroundStyle(CivicaColors.pinePrimary)
                     .accessibilityHidden(true)
             }

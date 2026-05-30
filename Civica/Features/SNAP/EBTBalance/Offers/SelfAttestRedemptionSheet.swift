@@ -118,12 +118,12 @@ struct SelfAttestRedemptionSheet: View {
 
             HStack(alignment: .firstTextBaseline, spacing: CivicaSpacing.sm) {
                 Text("$")
-                    .font(.system(size: 28, weight: .semibold))
+                    .font(CivicaTypography.pageTitle)
                     .foregroundStyle(CivicaColors.graphite)
 
                 TextField("0", text: $amountDollars)
                     .keyboardType(.numberPad)
-                    .font(.system(size: 28, weight: .semibold))
+                    .font(CivicaTypography.pageTitle)
                     .foregroundStyle(CivicaColors.ink)
                     .focused($amountFocused)
                     .accessibilityLabel(EBTOffersStrings.selfAttestAmountLabel.value(in: language))

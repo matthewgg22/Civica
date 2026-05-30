@@ -118,7 +118,8 @@ struct AppealEntryView: View {
     private func optionCard(icon: String, title: String, subtitle: String) -> some View {
         HStack(spacing: CivicaSpacing.md) {
             Image(systemName: icon)
-                .font(.system(size: 28))
+                .imageScale(.large)
+                .font(.body)
                 .foregroundStyle(CivicaColors.brickAccent)
                 .frame(width: 48, height: 48)
                 .background(

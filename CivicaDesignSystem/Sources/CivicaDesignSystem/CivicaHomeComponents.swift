@@ -150,7 +150,8 @@ public struct CivicaPhaseTab: View {
             switch state {
             case .past:
                 Image(systemName: "checkmark")
-                    .font(.system(size: 9, weight: .bold))
+                    .imageScale(.large)
+                    .font(.body)
                     .foregroundStyle(CivicaColors.pinePrimary)
                 Text(label(for: phase))
                     .font(CivicaTypography.captionStrong)
@@ -161,7 +162,8 @@ public struct CivicaPhaseTab: View {
                     .foregroundStyle(CivicaColors.pinePrimary)
             case .future:
                 Image(systemName: "lock.fill")
-                    .font(.system(size: 9, weight: .semibold))
+                    .imageScale(.large)
+                    .font(.body)
                     .foregroundStyle(CivicaColors.muted)
                 Text(label(for: phase))
                     .font(CivicaTypography.captionStrong)
@@ -230,7 +232,8 @@ public struct CivicaActionRow: View {
         Button(action: action) {
             HStack(alignment: .top, spacing: CivicaSpacing.md) {
                 Image(systemName: icon)
-                    .font(.system(size: 18))
+                    .imageScale(.large)
+                    .font(.body)
                     .foregroundStyle(CivicaColors.ink)
                     .frame(width: 22, alignment: .leading)
                     .accessibilityHidden(true)
@@ -250,7 +253,8 @@ public struct CivicaActionRow: View {
                 }
                 Spacer(minLength: CivicaSpacing.sm)
                 Image(systemName: "chevron.right")
-                    .font(.system(size: 12, weight: .semibold))
+                    .imageScale(.large)
+                    .font(.body)
                     .foregroundStyle(CivicaColors.graphite)
                     .accessibilityHidden(true)
                     .padding(.top, 4)
@@ -353,7 +357,8 @@ public struct CivicaPhaseTimeline: View {
                 .frame(width: 18, height: 18)
                 .overlay {
                     Image(systemName: "checkmark")
-                        .font(.system(size: 9, weight: .bold))
+                        .imageScale(.large)
+                        .font(.body)
                         .foregroundStyle(CivicaColors.onPrimaryText)
                 }
         case .current:
@@ -429,7 +434,7 @@ public struct CivicaEBTBalanceHeroCard: View {
         VStack(alignment: .leading, spacing: 0) {
             HStack(alignment: .firstTextBaseline) {
                 Text("FOOD BALANCE")
-                    .font(.system(size: 10.5, weight: .semibold, design: .monospaced))
+                    .font(CivicaTypography.codeChip)
                     .kerning(1.8)
                     .foregroundStyle(CivicaColors.onPrimaryText.opacity(0.62))
                 Spacer(minLength: CivicaSpacing.sm)
@@ -438,7 +443,7 @@ public struct CivicaEBTBalanceHeroCard: View {
                         .fill(CivicaColors.onPrimaryText.opacity(0.55))
                         .frame(width: 6, height: 6)
                     Text(updatedTimestamp.uppercased())
-                        .font(.system(size: 10, weight: .semibold, design: .monospaced))
+                        .font(CivicaTypography.codeChip)
                         .kerning(1.0)
                         .foregroundStyle(CivicaColors.onPrimaryText.opacity(0.55))
                 }
@@ -447,10 +452,10 @@ public struct CivicaEBTBalanceHeroCard: View {
 
             HStack(alignment: .firstTextBaseline, spacing: 0) {
                 Text("$\(balanceDollars)")
-                    .font(.system(size: 44, weight: .semibold))
+                    .font(CivicaTypography.currencyHero)
                     .foregroundStyle(CivicaColors.onPrimaryText)
                 Text(String(format: ".%02d", balanceCents))
-                    .font(.system(size: 28, weight: .semibold))
+                    .font(CivicaTypography.pageTitle)
                     .foregroundStyle(CivicaColors.onPrimaryText.opacity(0.65))
             }
             .padding(.bottom, CivicaSpacing.md)
@@ -463,7 +468,7 @@ public struct CivicaEBTBalanceHeroCard: View {
             HStack(alignment: .top, spacing: CivicaSpacing.md) {
                 VStack(alignment: .leading, spacing: 3) {
                     Text("NEXT DEPOSIT")
-                        .font(.system(size: 10, weight: .semibold, design: .monospaced))
+                        .font(CivicaTypography.codeChip)
                         .kerning(1.2)
                         .foregroundStyle(CivicaColors.onPrimaryText.opacity(0.55))
                     Text("\(nextDepositAmount) · \(nextDepositDate)")
@@ -473,7 +478,7 @@ public struct CivicaEBTBalanceHeroCard: View {
                 Spacer(minLength: 0)
                 VStack(alignment: .trailing, spacing: 3) {
                     Text("PROJECTED TO LAST")
-                        .font(.system(size: 10, weight: .semibold, design: .monospaced))
+                        .font(CivicaTypography.codeChip)
                         .kerning(1.2)
                         .foregroundStyle(CivicaColors.onPrimaryText.opacity(0.55))
                     Text(projectedThrough)

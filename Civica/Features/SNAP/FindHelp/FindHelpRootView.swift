@@ -188,7 +188,8 @@ struct FindHelpRootView: View {
                         } label: {
                             HStack(spacing: 6) {
                                 Image(systemName: "arrow.clockwise")
-                                    .font(.system(size: 13, weight: .semibold))
+                                    .imageScale(.large)
+                                    .font(.body)
                                     .accessibilityHidden(true)
                                 Text(SNAPGenericStrings.searchThisArea.value(in: language))
                                     .font(CivicaTypography.footnoteStrong)

@@ -64,7 +64,8 @@ struct ApplyHandoffSheet: View {
         HStack(alignment: .top, spacing: CivicaSpacing.md) {
             Image(systemName: "checkmark.circle.fill")
                 .foregroundStyle(CivicaColors.amberPrimary)
-                .font(.system(size: 16))
+                .imageScale(.large)
+                .font(.body)
             VStack(alignment: .leading, spacing: 2) {
                 Text(label)
                     .font(CivicaTypography.body)

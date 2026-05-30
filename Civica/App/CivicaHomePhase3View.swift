@@ -289,7 +289,8 @@ struct CivicaHomePhase3View: View {
                 } label: {
                     HStack(spacing: CivicaSpacing.md) {
                         Image(systemName: "clock.arrow.circlepath")
-                            .font(.system(size: 22))
+                            .imageScale(.large)
+                            .font(.body)
                             .foregroundStyle(CivicaColors.warningAmber)
                             .frame(width: 36, height: 36)
                             .background(
@@ -323,7 +324,8 @@ struct CivicaHomePhase3View: View {
                                 .font(CivicaTypography.subheadStrong)
                                 .foregroundStyle(CivicaColors.warningAmber)
                             Image(systemName: "arrow.right")
-                                .font(.system(size: 12, weight: .semibold))
+                                .imageScale(.large)
+                                .font(.body)
                                 .foregroundStyle(CivicaColors.warningAmber)
                         }
                     }
@@ -373,7 +375,8 @@ struct CivicaHomePhase3View: View {
                     link: CivicaPhase3Strings.findHelpLink.value(in: language),
                     trailing: AnyView(
                         Image(systemName: "mappin.circle")
-                            .font(.system(size: 22))
+                            .imageScale(.large)
+                            .font(.body)
                             .foregroundStyle(CivicaColors.pinePrimary)
                             .accessibilityHidden(true)
                     )
@@ -391,7 +394,8 @@ struct CivicaHomePhase3View: View {
     ) -> some View {
         HStack(spacing: CivicaSpacing.md) {
             Image(systemName: icon)
-                .font(.system(size: 22))
+                .imageScale(.large)
+                .font(.body)
                 .foregroundStyle(CivicaColors.ink)
                 .frame(width: 32, alignment: .leading)
                 .accessibilityHidden(true)

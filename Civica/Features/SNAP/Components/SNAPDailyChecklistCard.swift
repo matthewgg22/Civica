@@ -246,7 +246,8 @@ private struct SNAPDailyChecklistRow: View {
         } label: {
             HStack(alignment: .top, spacing: CivicaSpacing.md) {
                 Image(systemName: checked ? "checkmark.square.fill" : "square")
-                    .font(.system(size: 20))
+                    .imageScale(.large)
+                    .font(.body)
                     .foregroundStyle(checked ? CivicaColors.pinePrimary : CivicaColors.graphite)
                     .frame(width: 22, alignment: .leading)
                     .padding(.top, 1)

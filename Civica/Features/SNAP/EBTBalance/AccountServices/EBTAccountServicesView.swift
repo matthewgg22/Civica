@@ -111,7 +111,8 @@ struct EBTAccountServicesView: View {
     private func rowContent(_ entry: EBTAccountServicesEntry, tint: Color) -> some View {
         HStack(alignment: .top, spacing: CivicaSpacing.md) {
             Image(systemName: entry.iconName)
-                .font(.system(size: 20, weight: .semibold))
+                .imageScale(.large)
+                .font(.body)
                 .foregroundStyle(tint)
                 .frame(width: 28, alignment: .center)
                 .accessibilityHidden(true)
@@ -127,7 +128,8 @@ struct EBTAccountServicesView: View {
             }
             Spacer(minLength: 0)
             Image(systemName: ctaChevron(for: entry.action))
-                .font(.system(size: 13, weight: .semibold))
+                .imageScale(.large)
+                .font(.body)
                 .foregroundStyle(CivicaColors.graphite)
                 .accessibilityHidden(true)
         }

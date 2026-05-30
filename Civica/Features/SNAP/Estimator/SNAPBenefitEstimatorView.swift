@@ -569,7 +569,8 @@ struct SNAPBenefitEstimatorView: View {
     ) -> some View {
         Button(action: action) {
             Image(systemName: systemName)
-                .font(.system(size: 18, weight: .semibold))
+                .imageScale(.large)
+                .font(.body)
                 .foregroundStyle(enabled ? CivicaColors.graphite : CivicaColors.muted)
                 .frame(width: 44, height: 44)
                 .background(

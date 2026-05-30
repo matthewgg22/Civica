@@ -343,7 +343,8 @@ struct InformalHousingWizardView: View {
                             .foregroundStyle(
                                 isChecked ? CivicaColors.pinePrimary : CivicaColors.graphite.opacity(0.5)
                             )
-                            .font(.system(size: 22))
+                            .imageScale(.large)
+                            .font(.body)
                             .frame(width: 28, alignment: .center)
 
                         Text(option.label)

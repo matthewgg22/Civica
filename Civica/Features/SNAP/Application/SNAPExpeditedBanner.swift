@@ -50,7 +50,8 @@ struct SNAPExpeditedBanner: View {
         VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
             HStack(alignment: .top, spacing: CivicaSpacing.md) {
                 Image(systemName: "bolt.fill")
-                    .font(.system(size: 18, weight: .semibold))
+                    .imageScale(.large)
+                    .font(.body)
                     .foregroundStyle(CivicaColors.pinePrimary)
                     .frame(width: 24, alignment: .leading)
                     .accessibilityHidden(true)
@@ -102,7 +103,8 @@ struct SNAPExpeditedBanner: View {
         return VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
             HStack(alignment: .top, spacing: CivicaSpacing.md) {
                 Image(systemName: "questionmark.circle.fill")
-                    .font(.system(size: 18, weight: .semibold))
+                    .imageScale(.large)
+                    .font(.body)
                     .foregroundStyle(CivicaColors.warningAmber)
                     .frame(width: 24, alignment: .leading)
                     .accessibilityHidden(true)

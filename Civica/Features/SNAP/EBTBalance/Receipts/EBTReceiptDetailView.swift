@@ -65,7 +65,8 @@ struct EBTReceiptDetailView: View {
             .frame(height: 180)
             .overlay(
                 Image(systemName: systemName)
-                    .font(.system(size: 36))
+                    .imageScale(.large)
+                    .font(.body)
                     .foregroundStyle(CivicaColors.graphite)
             )
     }

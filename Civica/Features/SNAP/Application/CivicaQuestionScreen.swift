@@ -321,7 +321,8 @@ struct CivicaQuestionChoices: View {
                     HStack(spacing: CivicaSpacing.md) {
                         Image(systemName: selection == option ? "checkmark.circle.fill" : "circle")
                             .foregroundStyle(selection == option ? CivicaColors.pinePrimary : CivicaColors.graphite)
-                            .font(.system(size: 22))
+                            .imageScale(.large)
+                            .font(.body)
                             .accessibilityHidden(true)
                         Text(option)
                             .font(CivicaTypography.subheadStrong)

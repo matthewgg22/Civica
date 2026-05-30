@@ -27,7 +27,8 @@ struct EBTAnomalyBannerView: View {
         } label: {
             HStack(spacing: CivicaSpacing.sm) {
                 Image(systemName: iconName)
-                    .font(.system(size: 16, weight: .semibold))
+                    .imageScale(.large)
+                    .font(.body)
                     .foregroundStyle(tint)
                     .accessibilityHidden(true)
 

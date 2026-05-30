@@ -47,7 +47,8 @@ struct SNAPEnrollmentInboxSection: View {
     private func inboxCard(_ item: EnrollmentInboxItem) -> some View {
         HStack(alignment: .top, spacing: CivicaSpacing.md) {
             Image(systemName: item.resolved ? "checkmark.circle.fill" : "exclamationmark.circle.fill")
-                .font(.system(size: 18, weight: .semibold))
+                .imageScale(.large)
+                .font(.body)
                 .foregroundStyle(item.resolved ? CivicaColors.amberPrimary : CivicaColors.warningAmber)
                 .accessibilityHidden(true)
 

@@ -339,7 +339,8 @@ struct CivicaEntryView: View {
     private func secondaryRowLabel(icon: String, eyebrow: String, link: String) -> some View {
         HStack(spacing: CivicaSpacing.md) {
             Image(systemName: icon)
-                .font(.system(size: 22))
+                .imageScale(.large)
+                .font(.body)
                 .foregroundStyle(CivicaColors.ink)
                 .frame(width: 32, alignment: .leading)
                 .accessibilityHidden(true)

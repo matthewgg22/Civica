@@ -104,7 +104,8 @@ struct PostPlacementView: View {
                 }
                 Image(systemName: "arrow.right")
                     .foregroundStyle(CivicaColors.graphite)
-                    .font(.system(size: 14))
+                    .imageScale(.large)
+                    .font(.body)
                 VStack(alignment: .leading, spacing: 2) {
                     Text(SNAPMarketplaceStrings.nowLabel.value(in: language))
                         .font(CivicaTypography.support)
@@ -147,7 +148,8 @@ struct PostPlacementView: View {
                 HStack(spacing: CivicaSpacing.sm) {
                     Image(systemName: "checkmark.circle")
                         .foregroundStyle(CivicaColors.amberPrimary)
-                        .font(.system(size: 14))
+                        .imageScale(.large)
+                        .font(.body)
                     Text(SNAPMarketplaceStrings.navigatorOutreachScheduled.value(in: language))
                         .font(CivicaTypography.footnote)
                         .foregroundStyle(CivicaColors.graphite)

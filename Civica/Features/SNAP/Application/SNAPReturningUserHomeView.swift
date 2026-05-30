@@ -97,7 +97,8 @@ struct SNAPReturningUserHomeView: View {
         } label: {
             HStack(alignment: .top, spacing: CivicaSpacing.md) {
                 Image(systemName: verdictIcon(for: result.status))
-                    .font(.system(size: 20, weight: .semibold))
+                    .imageScale(.large)
+                    .font(.body)
                     .foregroundStyle(verdictAccent(for: result.status))
                     .frame(width: 28, alignment: .leading)
                     .accessibilityHidden(true)

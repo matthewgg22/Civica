@@ -51,7 +51,8 @@ struct RecertNotificationPermissionView: View {
         VStack(alignment: .leading, spacing: CivicaSpacing.md) {
             HStack(spacing: CivicaSpacing.sm) {
                 Image(systemName: "bell.badge")
-                    .font(.system(size: 22))
+                    .imageScale(.large)
+                    .font(.body)
                     .foregroundStyle(CivicaColors.pinePrimary)
                 Text(RecertCompanionStrings.reminderPermissionTitle.value(in: language))
                     .font(CivicaTypography.sectionHeader)
