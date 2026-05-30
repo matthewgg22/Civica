@@ -1,14 +1,21 @@
 {
-  "source": "USDA SNAP QC Public-Use Files FY2021-FY2023 (snapqcdata.net)",
+  "source": "USDA SNAP QC Public-Use Files FY2016, FY2021-FY2023 (snapqcdata.net; FY2016 via the Homonoff-Somerville openICPSR replication package)",
   "scope": "California",
   "unit": "dollar-weighted % of errored CA cases / agency-vs-client of error $",
   "generated_at": "2026-05-29",
-  "note": "FY2021 is a PARTIAL year (~3 months) due to the COVID QC suspension \u2014 small n, not comparable. FY2020 absent.",
+  "note": "FY2016 is a pre-COVID anchor. FY2021 PARTIAL (~3 months, COVID QC suspension) - small n, not comparable. FY2017-2020 not yet pulled.",
   "operational_share_range_pct": [
     54.5,
-    64.6
+    65.0
   ],
   "by_year": {
+    "2016": {
+      "n_ca_cases": 829,
+      "n_errored": 293,
+      "operational_pct": 65.0,
+      "client_pct": 35.0,
+      "shelter_or_wages_pct": 59.4
+    },
     "2021": {
       "n_ca_cases": 194,
       "n_errored": 65,
