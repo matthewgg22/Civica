@@ -58,7 +58,7 @@ struct SNAPBenefitCalendarView: View {
     private var monthNavHeader: some View {
         HStack {
             Button {
-                withAnimation(.easeInOut(duration: 0.2)) {
+                civicaWithAnimation(CivicaAnimation.standard) {
                     displayedMonth = calendar.date(byAdding: .month, value: -1, to: displayedMonth) ?? displayedMonth
                 }
             } label: {
@@ -72,7 +72,7 @@ struct SNAPBenefitCalendarView: View {
                 .foregroundStyle(CivicaColors.ink)
             Spacer()
             Button {
-                withAnimation(.easeInOut(duration: 0.2)) {
+                civicaWithAnimation(CivicaAnimation.standard) {
                     displayedMonth = calendar.date(byAdding: .month, value: 1, to: displayedMonth) ?? displayedMonth
                 }
             } label: {

@@ -42,7 +42,7 @@ struct SNAPVoiceTranscriptOverlay: View {
             .shadow(color: CivicaColors.shadowSoft, radius: 6, x: 0, y: 2)
             .frame(maxWidth: .infinity, alignment: .leading)
             .transition(.move(edge: .bottom).combined(with: .opacity))
-            .animation(reduceMotion ? nil : CivicaAnimation.standard, value: service.partialTranscript)
+            .civicaAnimation(CivicaAnimation.standard, value: service.partialTranscript)
         }
     }
 

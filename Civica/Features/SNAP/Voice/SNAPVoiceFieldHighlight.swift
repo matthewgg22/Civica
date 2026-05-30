@@ -31,7 +31,7 @@ struct SNAPVoiceFieldHighlight: ViewModifier {
                         .allowsHitTesting(false)
                 }
             }
-            .animation(reduceMotion ? nil : CivicaAnimation.standard, value: needsReview)
+            .civicaAnimation(CivicaAnimation.standard, value: needsReview)
     }
 
     private var needsReview: Bool {

@@ -224,14 +224,14 @@ struct SNAPExpensesFlowView: View {
         currentScreen
             .id(viewModel.step)
             .transition(.opacity.animation(.easeInOut(duration: 0.18)))
-            .animation(.easeInOut(duration: 0.18), value: viewModel.step)
+            .civicaAnimation(.easeInOut(duration: 0.18), value: viewModel.step)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button {
                         if viewModel.isAtFirstStep {
                             onExit()
                         } else {
-                            withAnimation(.easeInOut(duration: 0.18)) { viewModel.goBack() }
+                            civicaWithAnimation(.easeInOut(duration: 0.18)) { viewModel.goBack() }
                         }
                     } label: {
                         Image(systemName: viewModel.isAtFirstStep ? "xmark" : "chevron.left")
@@ -329,7 +329,7 @@ struct SNAPExpensesFlowView: View {
                 .overlay(RoundedRectangle(cornerRadius: CivicaRadius.control)
                     .strokeBorder(CivicaColors.hairline, lineWidth: 1))
                 .opacity(viewModel.answers.sharedHousingOccupants == nil ? 0.4 : 1)
-                .animation(.easeInOut(duration: 0.15), value: viewModel.answers.sharedHousingOccupants)
+                .civicaAnimation(.easeInOut(duration: 0.15), value: viewModel.answers.sharedHousingOccupants)
                 .disabled(viewModel.answers.sharedHousingOccupants == nil)
                 .onTapGesture {
                     if viewModel.answers.sharedHousingOccupants == nil {
@@ -394,7 +394,7 @@ struct SNAPExpensesFlowView: View {
                         lineWidth: isSelected ? 2 : 1
                     )
             )
-            .animation(.easeInOut(duration: 0.12), value: isSelected)
+            .civicaAnimation(CivicaAnimation.fast, value: isSelected)
         }
         .buttonStyle(.plain)
         .accessibilityAddTraits(isSelected ? .isSelected : [])
@@ -500,7 +500,7 @@ struct SNAPExpensesFlowView: View {
     }
 
     private func advanceOrComplete() {
-        withAnimation(.easeInOut(duration: 0.18)) {
+        civicaWithAnimation(.easeInOut(duration: 0.18)) {
             viewModel.recordCurrentField()
             if viewModel.isAtLastStep {
                 onComplete(viewModel.answers)

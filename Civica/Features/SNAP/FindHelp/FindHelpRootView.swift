@@ -168,7 +168,7 @@ struct FindHelpRootView: View {
                             let meters = panned.distance(from: anchor)
                             guard meters >= Self.searchAreaArmThresholdKm * 1_000 else { return }
                         }
-                        withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                        civicaWithAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
                             searchAreaCenter = center
                         }
                     }
@@ -177,7 +177,7 @@ struct FindHelpRootView: View {
                 .overlay(alignment: .top) {
                     if let center = searchAreaCenter {
                         Button {
-                            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                            civicaWithAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
                                 searchAreaCenter = nil
                             }
                             store.searchNearby(
@@ -240,7 +240,7 @@ struct FindHelpRootView: View {
                 FindHelpOnboardingCard(
                     language: language,
                     onDismiss: {
-                        withAnimation(.easeOut(duration: 0.2)) {
+                        civicaWithAnimation(.easeOut(duration: 0.2)) {
                             hasSeenOnboarding = true
                         }
                         FindHelpAnalytics.trackOnboardingDismissed()

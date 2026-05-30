@@ -195,7 +195,7 @@ struct InformalHousingWizardView: View {
                     RoundedRectangle(cornerRadius: 4, style: .continuous)
                         .fill(CivicaColors.pinePrimary)
                         .frame(width: max(geo.size.width * progressFraction, 8), height: 4)
-                        .animation(.easeInOut(duration: 0.3), value: progressFraction)
+                        .civicaAnimation(CivicaAnimation.slow, value: progressFraction)
                 }
             }
             .frame(height: 4)

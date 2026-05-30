@@ -91,7 +91,7 @@ struct EBTAnomalyDetailView: View {
                 // Dismiss
                 Section {
                     Button(role: .cancel) {
-                        withAnimation(.easeInOut(duration: 0.2)) {
+                        civicaWithAnimation(CivicaAnimation.standard) {
                             store.dismiss(alert)
                         }
                         dismiss()

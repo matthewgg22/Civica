@@ -39,7 +39,7 @@ struct EBTAnomalyBannerView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
 
                 Button {
-                    withAnimation(.easeInOut(duration: 0.2)) {
+                    civicaWithAnimation(CivicaAnimation.standard) {
                         store.dismiss(alert)
                     }
                 } label: {

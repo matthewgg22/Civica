@@ -99,7 +99,8 @@ struct CivicaRootView: View {
                 } else {
                     OnboardingFlowView { chosenLanguage in
                         languageRaw = chosenLanguage.rawValue
-                        withAnimation(.easeInOut(duration: 0.32)) {
+                        // Non-token duration (0.32) intentional — onboarding→root crossfade.
+                        civicaWithAnimation(.easeInOut(duration: 0.32)) {
                             hasCompletedOnboarding = true
                         }
                     }

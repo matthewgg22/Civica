@@ -79,7 +79,7 @@ private struct FindHelpListRow: View {
                     lineWidth: isSelected ? 1.5 : 1
                 )
         )
-        .animation(.easeInOut(duration: 0.15), value: isSelected)
+        .civicaAnimation(.easeInOut(duration: 0.15), value: isSelected)
     }
 
     private func formattedAddress() -> String? {

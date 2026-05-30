@@ -286,17 +286,17 @@ struct EBTBalanceDashboardView: View {
         ToolbarItem(placement: .topBarTrailing) {
             Menu {
                 Button {
-                    withAnimation(.easeInOut(duration: 0.3)) { store.simulatePurchase() }
+                    civicaWithAnimation(CivicaAnimation.slow) { store.simulatePurchase() }
                 } label: {
                     Label(EBTBalanceStrings.simulatePurchaseButton.value(in: language), systemImage: "cart.badge.minus")
                 }
                 Button {
                     let amount = store.account?.nextDeposit?.amount ?? 200
-                    withAnimation(.easeInOut(duration: 0.3)) { store.simulateDeposit() }
+                    civicaWithAnimation(CivicaAnimation.slow) { store.simulateDeposit() }
                     depositLanded = amount
                     Task {
                         try? await Task.sleep(nanoseconds: 4_500_000_000)
-                        withAnimation { depositLanded = nil }
+                        civicaWithAnimation(.default) { depositLanded = nil }
                     }
                 } label: {
                     Label(EBTBalanceStrings.simulateDepositButton.value(in: language), systemImage: "arrow.down.circle")
@@ -327,6 +327,9 @@ struct EBTBalanceDashboardView: View {
                 CivicaMoney(amount: account.foodBalance, font: CivicaTypography.display)
                     .foregroundStyle(CivicaColors.wheatPrimary)
                     .contentTransition(.numericText())
+                    // MARK: - REDUCE-MOTION EXEMPT — numericText counter spring
+                    // physics is tied to a specific bouncy feel (RA-4 audit
+                    // 2026-05-29 explicit exception, same as estimator).
                     .animation(.spring(response: 0.25, dampingFraction: 0.8), value: account.foodBalance)
                 Text(EBTBalanceStrings.balanceRemainingSuffix.value(in: language))
                     .font(CivicaTypography.subhead)
@@ -356,8 +359,8 @@ struct EBTBalanceDashboardView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(CivicaColors.pinePrimary)
         .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
-        .animation(.easeInOut(duration: 0.25), value: store.isCardLocked)
-        .animation(.easeInOut(duration: 0.25), value: depositLanded)
+        .civicaAnimation(.easeInOut(duration: 0.25), value: store.isCardLocked)
+        .civicaAnimation(.easeInOut(duration: 0.25), value: depositLanded)
     }
 
     /// 3pt progress bar showing spending velocity for the current month.
@@ -371,7 +374,7 @@ struct EBTBalanceDashboardView: View {
                     Capsule()
                         .fill(CivicaColors.wheatPrimary.opacity(0.85))
                         .frame(width: geo.size.width * insights.spentPercent, height: 3)
-                        .animation(CivicaAnimation.standard, value: insights.spentPercent)
+                        .civicaAnimation(CivicaAnimation.standard, value: insights.spentPercent)
                 }
             }
             .frame(height: 3)

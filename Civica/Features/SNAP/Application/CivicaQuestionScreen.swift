@@ -167,7 +167,7 @@ struct CivicaQuestionScreen<Affordance: View>: View {
             let target = progress?.overallFraction ?? 0
             displayedFraction = previousStepFraction(target: target)
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
-                withAnimation(reduceMotion ? nil : .spring(response: 0.7, dampingFraction: 0.82)) {
+                civicaWithAnimation(.spring(response: 0.7, dampingFraction: 0.82)) {
                     displayedFraction = target
                 }
             }
@@ -278,7 +278,7 @@ struct CivicaQuestionScreen<Affordance: View>: View {
             .textCase(.uppercase)
             .kerning(1.2)
             .contentTransition(.numericText())
-            .animation(reduceMotion ? nil : .easeOut(duration: 0.35), value: p.current)
+            .civicaAnimation(.easeOut(duration: 0.35), value: p.current)
             .accessibilityLabel(CivicaQuestionStrings.progressAccessibilityLabel(current: p.current, total: p.total, language: language))
     }
 
