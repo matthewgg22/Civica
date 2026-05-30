@@ -34,7 +34,7 @@ struct FindHelpRootView: View {
     /// One-time first-launch onboarding card visibility. Persisted
     /// per-install via AppStorage so the card never resurfaces after
     /// the user dismisses it.
-    @AppStorage("find_help.has_seen_onboarding")
+    (CivicaAppStorageKeys.findHelpHasSeenOnboarding)
     private var hasSeenOnboarding: Bool = false
 
     @AppStorage(CivicaLanguage.defaultStorageKey)
