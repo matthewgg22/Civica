@@ -49,8 +49,14 @@ final class CivicaSyncBannerCoordinator: ObservableObject {
         self.failureThreshold = failureThreshold
         self.now = now
 
-        if startPathMonitor {
-            let monitor = NWPathMonitor()
+        // Swift 6 strict concurrency: every stored property must be initialized
+        // before `self` can be captured in a closure (even weakly). Construct
+        // the monitor + assign self.pathMonitor BEFORE wiring the
+        // pathUpdateHandler closure.
+        let resolvedMonitor: NWPathMonitor? = startPathMonitor ? NWPathMonitor() : nil
+        self.pathMonitor = resolvedMonitor
+
+        if let monitor = resolvedMonitor {
             monitor.pathUpdateHandler = { [weak self] path in
                 let satisfied = path.status == .satisfied
                 Task { @MainActor [weak self] in
@@ -58,9 +64,6 @@ final class CivicaSyncBannerCoordinator: ObservableObject {
                 }
             }
             monitor.start(queue: DispatchQueue.global(qos: .utility))
-            self.pathMonitor = monitor
-        } else {
-            self.pathMonitor = nil
         }
     }
 
