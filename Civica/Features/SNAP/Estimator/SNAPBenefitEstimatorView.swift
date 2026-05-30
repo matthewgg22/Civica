@@ -20,6 +20,13 @@ struct SNAPBenefitEstimatorView: View {
 
     let onApply: () -> Void
     let onClose: (() -> Void)?
+    // IS-4 / UD-3 (audit 2026-05-29): soft-ineligibility surfaces three
+    // explicit next steps. The flow view (SNAPEstimatorFlowView) owns
+    // navigation; the pure view just calls the closures. Optional so
+    // legacy call sites and previews keep compiling without forcing
+    // every caller to wire navigation it doesn't need.
+    let onFindHelp: (() -> Void)?
+    let onOpenStatePortal: (() -> Void)?
 
     @State private var inputs: SNAPBenefitEstimatorInputs
     @State private var showsMath: Bool = false
@@ -29,10 +36,14 @@ struct SNAPBenefitEstimatorView: View {
     init(
         onApply: @escaping () -> Void,
         onClose: (() -> Void)? = nil,
+        onFindHelp: (() -> Void)? = nil,
+        onOpenStatePortal: (() -> Void)? = nil,
         initialState: InitialState? = nil
     ) {
         self.onApply = onApply
         self.onClose = onClose
+        self.onFindHelp = onFindHelp
+        self.onOpenStatePortal = onOpenStatePortal
         let seed = initialState ?? InitialState()
         self._inputs = State(initialValue: SNAPBenefitEstimatorInputs(
             householdSize: seed.householdSize,
@@ -255,7 +266,13 @@ struct SNAPBenefitEstimatorView: View {
                 staleRulesBanner
             }
             resultCard
-            applyCTA
+            // The soft-ineligibility card (IS-4 / UD-3) carries its own
+            // Apply-Anyway row, so the standalone Apply CTA below would
+            // double up. Suppress it in the ineligible case; eligible
+            // outcomes keep the bottom-of-screen CTA.
+            if case .eligible = outcome {
+                applyCTA
+            }
         }
         .padding(.horizontal, CivicaSpacing.xl)
         .padding(.top, CivicaSpacing.sm)
@@ -394,47 +411,32 @@ struct SNAPBenefitEstimatorView: View {
     }
 
     private func ineligibleResultCard(reason: SNAPBenefitEstimatorIneligibilityReason) -> some View {
-        // Compact mirror of the eligible card. Headline + one-line
-        // context. The BBCE soft note (worth-applying-anyway encouragement)
-        // moves to the scroll area above so it doesn't double the
-        // height of the sticky footer when the user's inputs land
-        // them in the ineligible band.
-        VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
-            Text(SNAPBenefitEstimatorStrings.resultEyebrow.value(in: language))
-                .font(CivicaTypography.captionStrong)
-                .foregroundStyle(CivicaColors.graphite)
-                .textCase(.uppercase)
-                .kerning(1.2)
-
-            Text(SNAPBenefitEstimatorStrings.ineligibleHeadline.value(in: language))
-                .font(CivicaTypography.cardTitle)
-                .foregroundStyle(CivicaColors.destructive)
-
-            Text(ineligibleContextLine(reason: reason))
-                .font(CivicaTypography.footnote)
-                .foregroundStyle(CivicaColors.ink)
-                .fixedSize(horizontal: false, vertical: true)
-
-            // Source-citation footer (matches the eligible card).
-            Text(SNAPBenefitEstimatorStrings.citationFooter.value(in: language))
-                .font(CivicaTypography.caption)
-                .foregroundStyle(CivicaColors.graphite)
-                .fixedSize(horizontal: false, vertical: true)
-        }
-        .padding(CivicaSpacing.md)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(CivicaColors.brickSurface)
-        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
+        // IS-4 + UD-3 (audit 2026-05-29): the prior red destructive
+        // card read as a door slam on what's already the highest-emotion
+        // moment in the flow. Replaced with the shared warm-but-honest
+        // SNAPSoftIneligibilityCard, which surfaces three explicit
+        // next-step rows (Apply Anyway → CivicaSNAPFlowView, Find Food
+        // → FindHelpRootView, Open the State Portal → Safari sheet).
+        // Eyebrow + citation footer are dropped here — the card's own
+        // confidence line ("Based on what you told us. The county makes
+        // the final decision.") carries the same defensibility signal.
+        SNAPSoftIneligibilityCard(
+            verdictReason: ineligibleContextLine(reason: reason),
+            language: language,
+            onApplyAnyway: { onApply() },
+            onFindHelp: { onFindHelp?() },
+            onOpenStatePortal: { onOpenStatePortal?() }
+        )
     }
 
-    private func ineligibleContextLine(reason: SNAPBenefitEstimatorIneligibilityReason) -> String {
+    private func ineligibleContextLine(reason: SNAPBenefitEstimatorIneligibilityReason) -> CivicaText {
         switch reason {
         case .grossIncomeOverLimit:
-            return SNAPBenefitEstimatorStrings.ineligibleContextGrossOver.value(in: language)
+            return SNAPBenefitEstimatorStrings.ineligibleContextGrossOver
         case .netIncomeOverLimit:
-            return SNAPBenefitEstimatorStrings.ineligibleContextNetOver.value(in: language)
+            return SNAPBenefitEstimatorStrings.ineligibleContextNetOver
         case .benefitBelowMinThreshold:
-            return SNAPBenefitEstimatorStrings.ineligibleContextBelowMin.value(in: language)
+            return SNAPBenefitEstimatorStrings.ineligibleContextBelowMin
         }
     }
 

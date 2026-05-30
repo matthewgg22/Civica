@@ -272,3 +272,19 @@ export {
   nextUnansweredQuestion,
   validateIntake,
 } from './informal-housing/index';
+
+// ---------------------------------------------------------------------------
+// Appealability (CQ-4 of iOS audit 2026-05-29) — denial fair-hearing window
+// + non-appealable category gating. Rule data lives in rules/appealability/.
+// ---------------------------------------------------------------------------
+
+export type {
+  AppealabilityRules,
+  AppealabilityReason,
+  AppealabilityResult,
+} from './appealability';
+export {
+  AppealabilityRulesSchema,
+  loadAppealabilityRules,
+  evaluateAppealability,
+} from './appealability';

@@ -46,6 +46,14 @@ struct CivicaHomePhase3View: View {
     // the hero reflects whatever the user sees inside the EBT root.
     @StateObject private var ebtStore: EBTBalanceStore = EBTBalanceStore()
 
+    // IS-8 (audit 2026-05-29): true on first render, flipped false at
+    // the end of the `.task` below. While true AND `ebtStore.account`
+    // is nil, the EBT hero slot renders a shimmered skeleton instead
+    // of jumping straight to the "card on the way" placeholder — so
+    // returning users with a linked card don't see the placeholder
+    // flash before the real balance hero resolves.
+    @State private var isFirstPaintLoading: Bool = true
+
     // JR-4 / UD-7 / ARCH-3 / CQ-5 (audit 2026-05-29): approval banner
     // persistence + flavor selection. `approvalAcknowledged` is set true
     // on dismiss or EBT-card link. `hasBeenApprovedBefore` drives the
@@ -117,6 +125,17 @@ struct CivicaHomePhase3View: View {
                 SNAPApprovalAcknowledgmentResetter().acknowledge()
             }
         }
+        .task {
+            // IS-8: one-shot first-paint settle. The EBT store
+            // initializes synchronously, so the skeleton only renders
+            // for the brief window before the next render pass picks
+            // up the resolved account — that's by design (per audit
+            // IS-8: "if the data loads in <100ms the skeleton is
+            // barely visible, which is fine"). Yield so the first
+            // body() completes before flipping the flag.
+            await Task.yield()
+            isFirstPaintLoading = false
+        }
     }
 
     // MARK: - Approval banner (JR-4 / UD-7 / CQ-5)
@@ -164,17 +183,16 @@ struct CivicaHomePhase3View: View {
     @ViewBuilder
     private var balanceHeroOrPlaceholder: some View {
         if let account = ebtStore.account {
-            let dollars = (account.foodBalance as NSDecimalNumber).intValue
-            let centsDecimal = (account.foodBalance - Decimal(dollars)) * 100
-            let cents = (centsDecimal as NSDecimalNumber).intValue
-            CivicaEBTBalanceHeroCard(
-                balanceDollars: dollars,
-                balanceCents: cents,
-                updatedTimestamp: updatedLabel(for: account.lastUpdated),
-                nextDepositAmount: formattedNextDeposit(account),
-                nextDepositDate: formattedNextDepositDate(account),
-                projectedThrough: CivicaPhase3Strings.projectedThroughPlaceholder.value(in: language)
-            )
+            balanceHero(for: account)
+        } else if isFirstPaintLoading {
+            // IS-8: skeleton slot for the EBT hero card while the
+            // first-paint load resolves. Matches the dashboard's
+            // existing shimmer pattern so the two surfaces feel of a
+            // piece.
+            VStack(spacing: CivicaSpacing.lg) {
+                CivicaSkeletonRow(height: 96, cornerRadius: CivicaRadius.card)
+                CivicaSkeletonRow(height: 56)
+            }
         } else {
             NavigationLink {
                 EBTBalanceRootView()
@@ -183,6 +201,20 @@ struct CivicaHomePhase3View: View {
             }
             .buttonStyle(.plain)
         }
+    }
+
+    private func balanceHero(for account: EBTAccount) -> some View {
+        let dollars = (account.foodBalance as NSDecimalNumber).intValue
+        let centsDecimal = (account.foodBalance - Decimal(dollars)) * 100
+        let cents = (centsDecimal as NSDecimalNumber).intValue
+        return CivicaEBTBalanceHeroCard(
+            balanceDollars: dollars,
+            balanceCents: cents,
+            updatedTimestamp: updatedLabel(for: account.lastUpdated),
+            nextDepositAmount: formattedNextDeposit(account),
+            nextDepositDate: formattedNextDepositDate(account),
+            projectedThrough: CivicaPhase3Strings.projectedThroughPlaceholder.value(in: language)
+        )
     }
 
     /// "Your card is on the way" placeholder for approved users who

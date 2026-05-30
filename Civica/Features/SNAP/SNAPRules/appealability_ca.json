@@ -1,0 +1,12 @@
+{
+  "state_code": "CA",
+  "version": 1,
+  "as_of_date": "2026-05-30",
+  "window_days": 90,
+  "non_appealable_categories": [
+    "already_active_other_county",
+    "withdrew_application",
+    "expired_without_recert"
+  ],
+  "source": "Federal floor: 7 CFR 273.15 (90-day fair hearing right). CA: MPP Division 22 §22-009."
+}
