@@ -26,17 +26,27 @@ public enum CivicaTypography {
     /// per-page titles inside the application flow. 28pt keeps the
     /// title clearly the largest element on the page without pushing
     /// the affordance below the fold on smaller iPhones.
-    public static let pageTitle           = Font.custom(semibold, size: 28, relativeTo: .largeTitle)
+    ///
+    /// Resolved through `CivicaTypographyResolver` as of 2026-05-30
+    /// (RA-1 step 1) so the underlying UIFontMetrics scaling can be
+    /// observed and cached uniformly across the ladder.
+    public static var pageTitle: Font {
+        CivicaTypographyResolver.shared.font(for: .pageTitle)
+    }
     /// 24/30 — display number / hero amount. Sits between `pageTitle` (screen
     /// titles, 28pt) and `cardHero` (card section headers, 22pt). Use for the
     /// single load-bearing numeric on a screen — EBT balance, estimator
     /// result, deposit hero. Reserves `pageTitle` for actual screen titles
     /// so size hierarchy stays readable. Added 2026-05-29 per audit DS-3.
-    public static let display             = Font.custom(semibold, size: 24, relativeTo: .largeTitle)
+    public static var display: Font {
+        CivicaTypographyResolver.shared.font(for: .display)
+    }
     /// 22/28 — card hero ("Make a Plan to Vote", "Next election").
     public static let cardHero            = Font.custom(semibold, size: 22, relativeTo: .title2)
     /// 20/25 — small card title / subsection header.
-    public static let cardTitle           = Font.custom(semibold, size: 20, relativeTo: .title3)
+    public static var cardTitle: Font {
+        CivicaTypographyResolver.shared.font(for: .cardTitle)
+    }
     /// 20/25 — alias of `cardTitle` (same Hanken SemiBold weight; the handoff
     /// caps weight at SemiBold, so a "quieter card title" is identical to a
     /// regular one — differentiation belongs in hierarchy/color, not weight).
@@ -44,18 +54,28 @@ public enum CivicaTypography {
     @available(*, deprecated, renamed: "cardTitle")
     public static let cardSubtitle        = Font.custom(semibold, size: 20, relativeTo: .title3)
     /// 17/22 — list/section headers, primary card titles.
-    public static let sectionHeader       = Font.custom(semibold, size: 17, relativeTo: .headline)
+    public static var sectionHeader: Font {
+        CivicaTypographyResolver.shared.font(for: .sectionHeader)
+    }
     /// 17/22 — alias of `sectionHeader`. Deprecated 2026-05-29 per audit DS-2.
     @available(*, deprecated, renamed: "sectionHeader")
     public static let sectionHeaderBold   = Font.custom(semibold, size: 17, relativeTo: .headline)
     /// 17/22 — body text, list row title.
-    public static let body                = Font.custom(regular, size: 17, relativeTo: .body).monospacedDigit()
+    public static var body: Font {
+        CivicaTypographyResolver.shared.font(for: .body)
+    }
     /// 17/22 — emphasized body, primary stat in a row.
-    public static let bodyStrong          = Font.custom(semibold, size: 17, relativeTo: .body).monospacedDigit()
+    public static var bodyStrong: Font {
+        CivicaTypographyResolver.shared.font(for: .bodyStrong)
+    }
     /// 15/20 — emphasis subhead, stat callout.
-    public static let subhead             = Font.custom(medium, size: 15, relativeTo: .subheadline)
+    public static var subhead: Font {
+        CivicaTypographyResolver.shared.font(for: .subhead)
+    }
     /// 15/20 — strongly emphasized subhead.
-    public static let subheadStrong       = Font.custom(semibold, size: 15, relativeTo: .subheadline)
+    public static var subheadStrong: Font {
+        CivicaTypographyResolver.shared.font(for: .subheadStrong)
+    }
     /// 15/20 — alias of `subheadStrong`. Deprecated 2026-05-29 per audit DS-2.
     @available(*, deprecated, renamed: "subheadStrong")
     public static let subheadBold         = Font.custom(semibold, size: 15, relativeTo: .subheadline)
@@ -66,15 +86,23 @@ public enum CivicaTypography {
     /// 16/21 — heaviest supporting copy (same Hanken weight as supportStrong).
     public static let supportBold         = Font.custom(semibold, size: 16, relativeTo: .callout).monospacedDigit()
     /// 13/18 — fine print.
-    public static let footnote            = Font.custom(regular, size: 13, relativeTo: .footnote).monospacedDigit()
+    public static var footnote: Font {
+        CivicaTypographyResolver.shared.font(for: .footnote)
+    }
     /// 13/18 — fine print needing slight emphasis (form helper text).
     public static let footnoteMedium      = Font.custom(medium, size: 13, relativeTo: .footnote).monospacedDigit()
     /// 13/18 — emphasized fine print.
-    public static let footnoteStrong      = Font.custom(semibold, size: 13, relativeTo: .footnote).monospacedDigit()
+    public static var footnoteStrong: Font {
+        CivicaTypographyResolver.shared.font(for: .footnoteStrong)
+    }
     /// 12/16 — meta, timestamps, small captions.
-    public static let caption             = Font.custom(regular, size: 12, relativeTo: .caption).monospacedDigit()
+    public static var caption: Font {
+        CivicaTypographyResolver.shared.font(for: .caption)
+    }
     /// 12/16 — strongly emphasized meta.
-    public static let captionStrong       = Font.custom(semibold, size: 12, relativeTo: .caption).monospacedDigit()
+    public static var captionStrong: Font {
+        CivicaTypographyResolver.shared.font(for: .captionStrong)
+    }
     /// 12/16 — heaviest meta (same Hanken weight as captionStrong).
     public static let captionBold         = Font.custom(semibold, size: 12, relativeTo: .caption).monospacedDigit()
     /// 11/14 monospace — token chips, race codes (HR-3214). Stays on system
