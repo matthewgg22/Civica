@@ -33,4 +33,14 @@ describe("heading hierarchy — /dashboard a11y outline", () => {
     expect(sections).toMatch(/<h2 className="section-title"/);
     expect(qc).toMatch(/<h2 className="section-title"/);
   });
+
+  it("packets page title is an <h1>, not <h2>", () => {
+    const src = read("app/packets/page.tsx");
+    expect(src).toMatch(
+      /<h1 className="text-\[26px\] font-semibold tracking-tight leading-tight text-ink">/
+    );
+    expect(src).not.toMatch(
+      /<h2 className="text-\[26px\] font-semibold tracking-tight leading-tight text-ink">/
+    );
+  });
 });
