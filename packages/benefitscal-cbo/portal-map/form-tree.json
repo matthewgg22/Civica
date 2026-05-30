@@ -2024,8 +2024,9 @@
           "helpLinks": [
             {
               "trigger": "Not sure what to upload? Let's look at some examples.",
-              "text": "TODO: capture verbatim popover",
-              "kind": "popover"
+              "text": "Links to the 'Documents for Verification' Help page — 14 categories of acceptable documents, each mapped to an upload document-type. Captured verbatim in DOC-VERIFICATION-REFERENCE.md.",
+              "kind": "link",
+              "captured": "2026-05-29 verbatim (see DOC-VERIFICATION-REFERENCE.md)"
             }
           ],
           "errors": [],
