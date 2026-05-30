@@ -240,6 +240,14 @@ struct CivicaRootView: View {
                         isResumingApplication = true
                     }
                 },
+                onReRunScreener: {
+                    // IA-6: user lost their eligibility result and chose to
+                    // re-walk the screener. Reset to screenerInProgress so
+                    // the orchestrator starts from the top, then push the
+                    // flow the same way onResume does.
+                    statusStore.advance(to: .screenerInProgress)
+                    isResumingApplication = true
+                },
                 onStartOver: {
                     statusStore.reset()
                 }
