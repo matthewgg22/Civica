@@ -297,6 +297,8 @@
 			inputPaths = (
 				"$(SRCROOT)/packages/snap-rules/data/ca.json",
 				"$(SRCROOT)/packages/snap-rules/data/ma.json",
+				"$(SRCROOT)/packages/snap-rules/rules/appealability/CA.json",
+				"$(SRCROOT)/packages/snap-rules/rules/appealability/MA.json",
 			);
 			name = "Sync SNAP Rules JSON";
 			outputFileListPaths = (
@@ -304,10 +306,12 @@
 			outputPaths = (
 				"$(SRCROOT)/Civica/Features/SNAP/SNAPRules/snap_rules_ca.json",
 				"$(SRCROOT)/Civica/Features/SNAP/SNAPRules/snap_rules_ma.json",
+				"$(SRCROOT)/Civica/Features/SNAP/SNAPRules/appealability_ca.json",
+				"$(SRCROOT)/Civica/Features/SNAP/SNAPRules/appealability_ma.json",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Copies canonical SNAP rules JSON from packages/snap-rules/data/\n# into the iOS resource tree so Civica/Features/SNAP/SNAPRules/*.json\n# never drift from the H-web authored source.\n#\n# No-op when packages/snap-rules/data/ does not exist yet (stub mode).\n# Remove the existence guard once H-web merges packages/snap-rules.\nset -euo pipefail\nRULES_SRC=\"${SRCROOT}/packages/snap-rules/data\"\nRULES_DST=\"${SRCROOT}/Civica/Features/SNAP/SNAPRules\"\nif [ -d \"${RULES_SRC}\" ]; then\n  cp \"${RULES_SRC}/ca.json\" \"${RULES_DST}/snap_rules_ca.json\"\n  cp \"${RULES_SRC}/ma.json\" \"${RULES_DST}/snap_rules_ma.json\"\n  echo \"Sync SNAP Rules JSON: copied ca.json + ma.json\"\nelse\n  echo \"Sync SNAP Rules JSON: packages/snap-rules/data not found — using stubs\"\nfi\n";
+			shellScript = "# Copies canonical SNAP rules JSON from packages/snap-rules/ into\n# the iOS resource tree so Civica/Features/SNAP/SNAPRules/*.json\n# never drift from the H-web authored source.\n#\n# - data/*.json    → snap_rules_{state}.json   (document checklist + flags)\n# - rules/appealability/*.json → appealability_{state}.json (IA-5 / CQ-4)\n#\n# No-op for any input set that doesn't exist yet (stub mode).\nset -euo pipefail\nRULES_DST=\"${SRCROOT}/Civica/Features/SNAP/SNAPRules\"\n\nDATA_SRC=\"${SRCROOT}/packages/snap-rules/data\"\nif [ -d \"${DATA_SRC}\" ]; then\n  cp \"${DATA_SRC}/ca.json\" \"${RULES_DST}/snap_rules_ca.json\"\n  cp \"${DATA_SRC}/ma.json\" \"${RULES_DST}/snap_rules_ma.json\"\n  echo \"Sync SNAP Rules JSON: copied ca.json + ma.json\"\nelse\n  echo \"Sync SNAP Rules JSON: packages/snap-rules/data not found — using stubs\"\nfi\n\nAPPEAL_SRC=\"${SRCROOT}/packages/snap-rules/rules/appealability\"\nif [ -d \"${APPEAL_SRC}\" ]; then\n  cp \"${APPEAL_SRC}/CA.json\" \"${RULES_DST}/appealability_ca.json\"\n  cp \"${APPEAL_SRC}/MA.json\" \"${RULES_DST}/appealability_ma.json\"\n  echo \"Sync SNAP Rules JSON: copied appealability CA + MA\"\nelse\n  echo \"Sync SNAP Rules JSON: appealability rules not found — using stubs\"\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
