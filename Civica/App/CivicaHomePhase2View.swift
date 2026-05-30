@@ -388,27 +388,54 @@ struct CivicaHomePhase2View: View {
 
     // MARK: - Primary CTA
 
+    @ViewBuilder
     private var primaryCTA: some View {
-        Button {
-            presentingWhatHappensNext = true
-        } label: {
-            HStack {
-                Text(primaryCTAText)
-                    .font(CivicaTypography.subheadStrong)
-                    .foregroundStyle(CivicaColors.onPrimaryText)
-                Spacer(minLength: 0)
-                Image(systemName: "arrow.right")
-                    .foregroundStyle(CivicaColors.onPrimaryText)
+        // JR-3 (audit 2026-05-29): the .interviewScheduled sub-state
+        // escalates the primary CTA from the generic "What Happens
+        // Next" sheet onto a NavigationLink that pushes the in-app
+        // SNAPInterviewCoachView. The coach lowers activation energy
+        // for the call (the highest-attrition moment in the SNAP
+        // application). Other Phase 2 sub-states keep the existing
+        // sheet flow. The routing rule is pinned by
+        // `phase2PrimaryCTAPushesInterviewCoach` on SNAPApplicationStatus.
+        if statusStore.status.phase2PrimaryCTAPushesInterviewCoach {
+            NavigationLink {
+                SNAPInterviewCoachView(
+                    language: language,
+                    interviewDate: statusStore.interviewScheduledFor,
+                    onDismiss: {}
+                )
+            } label: {
+                primaryCTALabel
             }
-            .padding(.horizontal, CivicaSpacing.lg)
-            .frame(maxWidth: .infinity, minHeight: 50)
-            .background(
-                RoundedRectangle(cornerRadius: CivicaRadius.control)
-                    .fill(CivicaColors.pinePrimary)
-            )
+            .buttonStyle(.plain)
+            .accessibilityLabel(primaryCTAText)
+        } else {
+            Button {
+                presentingWhatHappensNext = true
+            } label: {
+                primaryCTALabel
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel(primaryCTAText)
         }
-        .buttonStyle(.plain)
-        .accessibilityLabel(primaryCTAText)
+    }
+
+    private var primaryCTALabel: some View {
+        HStack {
+            Text(primaryCTAText)
+                .font(CivicaTypography.subheadStrong)
+                .foregroundStyle(CivicaColors.onPrimaryText)
+            Spacer(minLength: 0)
+            Image(systemName: "arrow.right")
+                .foregroundStyle(CivicaColors.onPrimaryText)
+        }
+        .padding(.horizontal, CivicaSpacing.lg)
+        .frame(maxWidth: .infinity, minHeight: 50)
+        .background(
+            RoundedRectangle(cornerRadius: CivicaRadius.control)
+                .fill(CivicaColors.pinePrimary)
+        )
     }
 
     private var primaryCTAText: String {
