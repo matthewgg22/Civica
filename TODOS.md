@@ -641,3 +641,16 @@ Helper: `pillarReductionAtFullEngagement()` returns the per-pillar pp breakdown 
 **Priority:** P2 — sharpens the dollar pitch; build after measured PER (TODO-44) and ideally alongside the attribution ledger (TODO-41).
 **Depends on:** TODO-44 (measured outcomes); PolicyEngine dollar-leverage fixtures; ideally TODO-41 (per-element dollar attribution).
 
+---
+
+## TODO-47 — Wire iOS CountyOutcomeClient to POST /me/packets/:id/outcome
+
+**What:** Replace the `defaultNetworkSubmit` no-op stub in `Civica/Features/CountyOutcome/CountyOutcomeClient.swift` with a real authed POST to `POST /me/packets/{id}/outcome` (shipped on `claude/kpi-error-rate`). JSON body `{ "outcome": "<approved|denied|pending_decision>" }` (the `CountyOutcomeSelection` rawValue). Needs an auth token provider (`CivicaEnrollmentAuth.currentAccessToken`) + `HTTPEnrollmentAPIClient.resolveBaseURL()` injected into the `CountyOutcomeClient.shared` singleton (it takes neither today), mirroring `makeEnrollmentAPIClient()`. Keep the local-first persistence + best-effort POST semantics already in `submit()`.
+**Why:** The backend route exists and feeds the Pillar-1 `denial_rate` KPI, but the iOS client still no-ops the network call — applicant self-reports never leave the device. Until this wires, `denial_rate` never sees the iOS prompt that actually collects the outcome.
+**Pros:** Closes the self-report loop end-to-end (iOS prompt → enrollment-api → packet_outcomes → kpi_snapshot); the route + idempotent upsert + fidelity firewall are already built and tested; local persistence already makes the POST safely best-effort.
+**Cons:** Must be done in an iOS-focused change with Xcode/CI verification (can't be validated in a backend flow); injecting auth into a `@MainActor` singleton needs care (it's constructed without an auth instance today); branch hygiene — keep it out of backend-only branches.
+**Context:** Route: `apps/enrollment-api/src/routes/me-packets.ts` (`POST /:packetId/outcome`). iOS stub: `CountyOutcomeClient.defaultNetworkSubmit` (its comment points here). Auth/client pattern: `CivicaEnrollmentAuth.makeEnrollmentAPIClient()` + `HTTPEnrollmentAPIClient`. The enum already matches the dashboard `CountyOutcomeButton`.
+**Effort:** S (human ~0.5 d incl. an iOS build + a client unit test / CC ~2 hr, gated on Xcode CI)
+**Priority:** P1 — without it the iOS self-report prompt is decorative; it is the last hop of the outcome-ingestion loop.
+**Depends on:** The route merged + deployed to the gateway the iOS build points at (staging base URL).
+
