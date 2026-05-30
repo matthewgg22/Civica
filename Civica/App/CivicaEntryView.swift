@@ -126,7 +126,13 @@ struct CivicaEntryView: View {
     /// Rendered above the hero when a draft existed on disk but
     /// couldn't be decoded. Presents two recovery CTAs so the user
     /// isn't silently dropped into a "Start" flow and surprised.
-    @ViewBuilder
+    ///
+    /// NOT marked `@ViewBuilder`: the body opens with a `let bodyText`
+    /// + switch-assignment block before the returned VStack. With
+    /// `@ViewBuilder` applied, the result builder reads each top-level
+    /// statement as a view expression and fails on the switch with
+    /// "type '()' cannot conform to 'View'". The function returns a
+    /// single composed VStack anyway, so the annotation is redundant.
     private func draftFallbackCard(error: DraftLoadError) -> some View {
         let bodyText: String
         switch error {
@@ -138,7 +144,7 @@ struct CivicaEntryView: View {
             bodyText = CivicaEntryStrings.draftFallbackBodyDecoding.value(in: language)
         }
 
-        VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
+        return VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
             Text(CivicaEntryStrings.draftFallbackTitle.value(in: language))
                 .font(CivicaTypography.footnoteStrong)
                 .foregroundStyle(CivicaColors.destructive)
