@@ -38,9 +38,9 @@ export default function BaselinePanel({
       <div className="flex items-baseline justify-between gap-4 mb-4 flex-wrap">
         <div className="min-w-0">
           <p className="eyebrow mb-1">Calibration · USDA observed vs Civica observed</p>
-          <h3 className="text-[16px] font-semibold tracking-tight text-ink leading-tight">
+          <h2 className="text-[16px] font-semibold tracking-tight text-ink leading-tight">
             Are observed errors distributing as the formula predicts?
-          </h3>
+          </h2>
           <p className="text-[12px] text-graphite mt-1 leading-snug">
             When QC sampling reaches n ≥ {SAMPLE_THRESHOLD}, this falsifies (or
             confirms) the formula&apos;s pillar weights. Material disagreement

@@ -54,12 +54,12 @@ export default async function DashboardPage() {
     <div className="min-h-screen bg-paper">
       <AppHeader email={user?.email} active="dashboard" />
       <main className="max-w-6xl mx-auto px-8 py-8 space-y-5">
-        {/* Compact header — H2 + subtitle inline */}
+        {/* Compact header — H1 (page landmark) + subtitle inline */}
         <div className="flex items-baseline justify-between gap-6 flex-wrap pb-1">
           <div className="flex items-baseline gap-3 flex-wrap">
-            <h2 className="text-[26px] font-bold tracking-tight leading-none text-ink">
+            <h1 className="text-[26px] font-bold tracking-tight leading-none text-ink">
               SNAP Enrollment Overview
-            </h2>
+            </h1>
             <span className="eyebrow">California</span>
           </div>
           <p className="text-[13px] text-graphite">Live picture of every family Civica is helping enroll.</p>

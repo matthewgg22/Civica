@@ -39,7 +39,7 @@ export default function NotificationOutlayPanel({ data }: { data: NotificationOu
       <div className="flex items-start justify-between gap-4 mb-4">
         <div>
           <p className="eyebrow mb-1">Panel 3 · Outbound</p>
-          <h3 className="text-[18px] font-bold tracking-tight text-ink">Notification outlay heatmap</h3>
+          <h2 className="text-[18px] font-bold tracking-tight text-ink">Notification outlay heatmap</h2>
           <p className="text-[12px] text-graphite mt-1">
             <span className="font-semibold text-ink tabular-nums">{data.total_count.toLocaleString()}</span> sent · <span className="font-semibold text-ink tabular-nums">{formatUSD(data.total_cost_cents)}</span> total cost · past 30 days
           </p>

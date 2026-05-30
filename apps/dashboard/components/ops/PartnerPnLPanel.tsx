@@ -14,7 +14,7 @@ export default function PartnerPnLPanel({ data }: { data: PartnerPnLData }) {
       <div className="flex items-start justify-between gap-4 mb-4">
         <div>
           <p className="eyebrow mb-1 text-pine">Panel 6 · Partner monetization · Operator-gated</p>
-          <h3 className="text-[18px] font-bold tracking-tight text-ink">Partner-offer P&amp;L</h3>
+          <h2 className="text-[18px] font-bold tracking-tight text-ink">Partner-offer P&amp;L</h2>
           <p className="text-[12px] text-graphite mt-1">
             Impressions, revenue, household savings · with redistribution framing
           </p>

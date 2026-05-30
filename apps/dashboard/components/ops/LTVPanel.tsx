@@ -19,7 +19,7 @@ export default function LTVPanel({ data }: { data: LTVData }) {
       <section className="bg-surface border-2 border-pine/30 rounded-[4px] p-6">
         <div className="mb-4">
           <p className="eyebrow mb-1 text-pine">Panel 11 · LTV</p>
-          <h3 className="text-[18px] font-bold tracking-tight text-ink">Lifetime value per active tracker</h3>
+          <h2 className="text-[18px] font-bold tracking-tight text-ink">Lifetime value per active tracker</h2>
         </div>
         <EmptyState
           message="Apply migrations to populate this panel."
@@ -44,7 +44,7 @@ export default function LTVPanel({ data }: { data: LTVData }) {
       <div className="flex items-start justify-between gap-4 mb-4">
         <div>
           <p className="eyebrow mb-1 text-pine">Panel 11 · LTV</p>
-          <h3 className="text-[18px] font-bold tracking-tight text-ink">Lifetime value per active tracker</h3>
+          <h2 className="text-[18px] font-bold tracking-tight text-ink">Lifetime value per active tracker</h2>
           <p className="text-[12px] text-graphite mt-1">
             Annualized from current 30d run-rate · decomposed by revenue line · projected ceiling shows roadmap potential
           </p>

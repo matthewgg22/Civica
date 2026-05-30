@@ -54,9 +54,9 @@ export default async function OpsPage() {
         <div className="flex items-end justify-between gap-6 pb-3">
           <div>
             <p className="eyebrow mb-1">Civica operator console</p>
-            <h2 className="text-[26px] font-bold tracking-tight leading-none text-ink">
+            <h1 className="text-[26px] font-bold tracking-tight leading-none text-ink">
               Performance
-            </h2>
+            </h1>
             <p className="text-[13px] text-graphite mt-2 max-w-2xl leading-relaxed">
               SNAP dollars under app, where partner offers are placed, what we&apos;ve spent on
               outbound, who&apos;s still tracking, and how fast new enrollments hit their first

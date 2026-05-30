@@ -28,7 +28,7 @@ export default function MedicareAdvantagePanel({ data }: { data: MedicareAdvanta
       <div className="flex items-start justify-between gap-4 mb-4">
         <div>
           <p className="eyebrow mb-1 text-pine">Panel 8 · Senior monetization · Operator-gated</p>
-          <h3 className="text-[18px] font-bold tracking-tight text-ink">Medicare Advantage referrals</h3>
+          <h2 className="text-[18px] font-bold tracking-tight text-ink">Medicare Advantage referrals</h2>
           <p className="text-[12px] text-graphite mt-1">
             Tracked SNAP recipients aged 60+ · Medi-Cal-first routing · MA partner fee revenue
           </p>

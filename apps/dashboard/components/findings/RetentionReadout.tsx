@@ -7,6 +7,7 @@
 
 import Link from "next/link";
 import { CF18_CHURN as C } from "../../lib/analytics/cf18-churn";
+import ChurnHeatmap from "./ChurnHeatmap";
 
 export default function RetentionReadout() {
   return (
@@ -53,6 +54,20 @@ export default function RetentionReadout() {
           interruptions in a single year, and the recert rate is{" "}
           <span className="text-ink">rising</span> — up from{" "}
           {C.statewide.rrrLossPctPrior}% the year before.
+        </Means>
+      </section>
+
+      {/* ── The map — where churn concentrates ─────────────────────────── */}
+      <section>
+        <h2 className="mb-3 text-xs font-semibold uppercase tracking-wider text-graphite">
+          Where churn concentrates
+        </h2>
+        <ChurnHeatmap />
+        <Means>
+          The renewal wall, mapped. The deep-brick counties lose benefits at two to
+          eight times the rate of the pale-green ones — under the exact same state
+          rules. Churn is not weather that happens to a county; it is something a
+          county <em>does</em>, which means it is something a tool can change.
         </Means>
       </section>
 
