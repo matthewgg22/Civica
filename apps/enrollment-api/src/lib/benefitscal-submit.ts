@@ -25,11 +25,16 @@
  *   the failure to the submission row.
  */
 
+// Import from the /driver subpath, NOT the root barrel. The root barrel
+// re-exports /core, which ships DOM primitives (fill.ts, locate.ts) that
+// don't typecheck under enrollment-api's DOM-less Workers lib config.
+// /driver is the server-only surface and carries everything this Worker
+// needs. See feedback: benefitscal-cbo subpath layering.
 import type {
   BrowserDriverFactory,
   SubmitterResult,
-} from "@civica/benefitscal-cbo";
-import { submitToBenefitsCal } from "@civica/benefitscal-cbo";
+} from "@civica/benefitscal-cbo/driver";
+import { submitToBenefitsCal } from "@civica/benefitscal-cbo/driver";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { makeServiceClient } from "./supabase.js";
 import type { Env } from "../types.js";
