@@ -146,7 +146,7 @@ struct SNAPMarketplaceFlow: View {
                     .transition(.move(edge: .bottom).combined(with: .opacity))
             }
         }
-        .animation(.easeInOut(duration: 0.25), value: savedJobTitle)
+        .civicaAnimation(.easeInOut(duration: 0.25), value: savedJobTitle)
         .onChange(of: savedJobTitle) { _, newValue in
             guard newValue != nil else { return }
             bannerDismissTask?.cancel()

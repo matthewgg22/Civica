@@ -88,7 +88,7 @@ struct EBTBalanceRootView: View {
         }
         .navigationTitle(EBTBalanceStrings.screenTitle.value(in: language))
         .navigationBarTitleDisplayMode(.inline)
-        .animation(.easeInOut(duration: 0.28), value: store.linkState)
+        .civicaAnimation(.easeInOut(duration: 0.28), value: store.linkState)
     }
 }
 
