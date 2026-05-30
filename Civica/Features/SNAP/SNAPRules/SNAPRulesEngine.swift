@@ -118,6 +118,7 @@ enum SNAPRulesEngine {
         case "studentStatus.enrolledHalfTime":   return draft.studentStatus.enrolledHalfTime
         case "studentStatus.works20PlusHours":   return draft.studentStatus.works20PlusHours
         case "studentStatus.inWorkStudy":        return draft.studentStatus.inWorkStudy
+        case "studentStatus.inApprovedJobProgram": return draft.studentStatus.inApprovedJobProgram
         case "expenses.paysUtilitiesSeparately": return draft.expenses.paysUtilitiesSeparately
         default:                                 return nil
         }
