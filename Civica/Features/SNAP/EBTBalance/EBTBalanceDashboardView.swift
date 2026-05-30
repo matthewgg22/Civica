@@ -39,6 +39,12 @@ struct EBTBalanceDashboardView: View {
             if let account = store.account {
                 let insights = EBTBalanceInsights(account: account)
                 VStack(alignment: .leading, spacing: CivicaSpacing.lg) {
+                    // IS-1: refresh-failure banner. Sits ABOVE everything so
+                    // users can't miss that the balance shown is stale.
+                    if store.lastRefreshError != nil {
+                        refreshErrorBanner
+                            .transition(.move(edge: .top).combined(with: .opacity))
+                    }
                     // Anti-skimming anomaly banner — highest-severity first.
                     // Rendered above all status banners and the hero card so
                     // it can never be obscured. Lane F's "Scan receipt" button
@@ -130,6 +136,102 @@ struct EBTBalanceDashboardView: View {
                 _ = (image, ocr)
             }
         }
+    }
+
+    // MARK: - IS-1 refresh error banner (audit 2026-05-29)
+
+    /// Dismissible amber-warning banner shown above the hero card when
+    /// `store.lastRefreshError != nil`. Retry is disabled while a
+    /// refresh is in flight (PF-1 coalesce); the store enforces the
+    /// 3s cooldown internally so the button stays interactive.
+    private var refreshErrorBanner: some View {
+        let asOfString = store.lastSuccessfulRefreshAt.map(shortTimestamp)
+        let bodyText: String = {
+            if let asOf = asOfString {
+                return EBTBalanceStrings.refreshErrorBannerBody(asOf: asOf, language: language)
+            }
+            return EBTBalanceStrings.refreshErrorBannerNoTimestamp.value(in: language)
+        }()
+
+        return VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
+            HStack(alignment: .top, spacing: CivicaSpacing.sm) {
+                Image(systemName: "exclamationmark.triangle")
+                    .foregroundStyle(CivicaColors.warningAmber)
+                    .accessibilityHidden(true)
+                Text(bodyText)
+                    .font(CivicaTypography.footnoteStrong)
+                    .foregroundStyle(CivicaColors.ink)
+                    .fixedSize(horizontal: false, vertical: true)
+                Spacer(minLength: CivicaSpacing.sm)
+                Button {
+                    store.clearRefreshError()
+                } label: {
+                    Image(systemName: "xmark")
+                        .font(.system(size: 13, weight: .semibold))
+                        .foregroundStyle(CivicaColors.graphite)
+                        .padding(4)
+                        .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel(EBTBalanceStrings.refreshErrorDismiss.value(in: language))
+            }
+            HStack {
+                Spacer(minLength: 0)
+                Button {
+                    Task { await store.refresh() }
+                } label: {
+                    HStack(spacing: CivicaSpacing.xs) {
+                        if store.isRefreshing {
+                            ProgressView()
+                                .controlSize(.small)
+                                .tint(CivicaColors.pinePrimary)
+                        }
+                        Text(EBTBalanceStrings.refreshErrorRetry.value(in: language))
+                            .font(CivicaTypography.captionStrong)
+                            .foregroundStyle(CivicaColors.pinePrimary)
+                    }
+                    .padding(.horizontal, CivicaSpacing.sm)
+                    .padding(.vertical, 6)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 6)
+                            .strokeBorder(CivicaColors.pinePrimary, lineWidth: 1)
+                    )
+                }
+                .buttonStyle(.plain)
+                .disabled(store.isRefreshing)
+                .accessibilityLabel(EBTBalanceStrings.refreshErrorRetry.value(in: language))
+            }
+        }
+        .padding(CivicaSpacing.md)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(CivicaColors.statusWarningSurface)
+        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control))
+        .overlay(
+            RoundedRectangle(cornerRadius: CivicaRadius.control)
+                .strokeBorder(CivicaColors.warningAmber.opacity(0.4), lineWidth: 1)
+        )
+        .accessibilityElement(children: .contain)
+        .accessibilityLabel(
+            EBTBalanceStrings.refreshErrorAccessibilityLabel(
+                asOf: asOfString,
+                language: language
+            )
+        )
+    }
+
+    /// Short-style local time, e.g. "2:30 PM". Used in the IS-1 banner.
+    private func shortTimestamp(_ date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: language == .spanish ? "es" : "en")
+        formatter.timeStyle = .short
+        formatter.dateStyle = .none
+        return formatter.string(from: date)
+    }
+
+    /// IS-1 / T14: the hero "Updated …" timestamp is bolded once the
+    /// snapshot is more than 5 minutes old, drawing the eye to its age.
+    private func isStaleTimestamp(_ date: Date) -> Bool {
+        Date().timeIntervalSince(date) > 300
     }
 
     // MARK: - Phase 2 Lane F — Scan receipt button
@@ -236,7 +338,9 @@ struct EBTBalanceDashboardView: View {
             }
 
             Text(lastUpdatedLine(account))
-                .font(CivicaTypography.footnote)
+                .font(isStaleTimestamp(account.lastUpdated)
+                      ? CivicaTypography.footnoteStrong
+                      : CivicaTypography.footnote)
                 .foregroundStyle(Color.white.opacity(0.45))
 
             if let deposit = account.nextDeposit {

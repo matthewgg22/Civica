@@ -390,6 +390,7 @@ extension HTTPEBTBalanceAPIClient {
 final class MockEBTBalanceAPIClient: EBTBalanceAPIClient, @unchecked Sendable {
     var linkCalled = false
     var refreshCount = 0
+    var fetchBalanceCount = 0
     var balanceResponse: EBTBalanceResponse?
     var transactionsResponse: EBTTransactionsResponse?
     var registeredTokens: [String] = []
@@ -417,6 +418,7 @@ final class MockEBTBalanceAPIClient: EBTBalanceAPIClient, @unchecked Sendable {
             shouldFailNextWithScrape = nil
             throw EBTBalanceAPIError.scrape(s)
         }
+        fetchBalanceCount += 1
         return balanceResponse ?? EBTBalanceResponse(
             foodBalanceCents: 7612,
             cashBalanceCents: nil,

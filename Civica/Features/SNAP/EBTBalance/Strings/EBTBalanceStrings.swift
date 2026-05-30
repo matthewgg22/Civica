@@ -377,6 +377,43 @@ enum EBTBalanceStrings {
             : "Tu depósito de CalFresh de \(amount) llegó."
     }
 
+    // MARK: - IS-1 refresh error banner (audit 2026-05-29)
+
+    /// Headline copy in the dismissible "couldn't update" banner. The
+    /// view interpolates the short-style timestamp of the last
+    /// successful refresh (or a fallback when none exists yet).
+    static func refreshErrorBannerBody(asOf: String, language: CivicaLanguage) -> String {
+        language == .english
+            ? "Couldn't update. Showing balance as of \(asOf)."
+            : "No se pudo actualizar. Mostrando el saldo a las \(asOf)."
+    }
+    /// Fallback when no prior successful refresh exists (first launch
+    /// after a fresh install, etc).
+    static let refreshErrorBannerNoTimestamp = CivicaText(
+        "Couldn't update right now.",
+        es: "No se pudo actualizar ahora."
+    )
+    static let refreshErrorRetry = CivicaText(
+        "Retry",
+        es: "Reintentar"
+    )
+    static let refreshErrorDismiss = CivicaText(
+        "Dismiss",
+        es: "Cerrar"
+    )
+    static func refreshErrorAccessibilityLabel(asOf: String?, language: CivicaLanguage) -> String {
+        switch (asOf, language) {
+        case (let when?, .english):
+            return "Could not update balance. Last update at \(when)."
+        case (let when?, .spanish):
+            return "No se pudo actualizar el saldo. Última actualización a las \(when)."
+        case (nil, .english):
+            return "Could not update balance."
+        case (nil, .spanish):
+            return "No se pudo actualizar el saldo."
+        }
+    }
+
     // MARK: - Benefits expiration note
 
     static let expirationEyebrow = CivicaText(
@@ -574,5 +611,6 @@ enum EBTBalanceStrings {
         cardClosedBanner, cardClosedCTA,
         parseErrorBanner, parseErrorCTA,
         cardLockUnsupportedBanner, cardLockUnsupportedCTA,
+        refreshErrorBannerNoTimestamp, refreshErrorRetry, refreshErrorDismiss,
     ]
 }
