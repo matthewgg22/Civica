@@ -87,7 +87,7 @@ enum SNAPApplicationDraftPDFRenderer {
                     rows: documentsRows(draft.documentsChecklist, language: language)
                 )
 
-                cursor.drawFooter(language: language)
+                cursor.drawFooter(language: language, stateCode: draft.whereApplying.stateCode)
             }
         } catch {
             throw RenderError.writeFailed
@@ -304,10 +304,10 @@ private struct RenderCursor {
         y += 6
     }
 
-    mutating func drawFooter(language: CivicaLanguage) {
+    mutating func drawFooter(language: CivicaLanguage, stateCode: String?) {
         let footerY = pageRect.height - footerReserve + 10
-        let rulesLine = SNAPPacketPDFStrings.rulesLine(language: language)
-        let disclosure = SNAPPacketPDFStrings.disclosure.value(in: language)
+        let rulesLine = SNAPPacketPDFStrings.rulesLine(stateCode: stateCode, language: language)
+        let disclosure = SNAPPacketPDFStrings.disclosure(stateCode: stateCode, language: language)
 
         drawText(rulesLine, at: footerY, font: .systemFont(ofSize: 8, weight: .regular), color: .gray)
         drawText(
@@ -371,15 +371,34 @@ enum SNAPPacketPDFStrings {
         }
     }
 
-    static let disclosure = CivicaText(
-        "This is a personal reference document prepared from your answers in Civica. It is NOT an official application. Submit your real application via DTA Connect (dtaconnect.eohhs.mass.gov) or in person at a DTA office.",
-        es: "Este es un documento personal de referencia preparado a partir de tus respuestas en Civica. NO es una solicitud oficial. Envía tu solicitud real a través de DTA Connect (dtaconnect.eohhs.mass.gov) o en persona en una oficina del DTA."
-    )
-
-    static func rulesLine(language: CivicaLanguage) -> String {
+    // State-conditioned: portal name/URL and agency short name come from
+    // SNAPAgencyDirectory (the single source) rather than hardcoding MA's
+    // DTA Connect / dtaconnect.eohhs.mass.gov, which was wrong for CA
+    // applicants. Falls back to generic copy when the state is untuned.
+    static func disclosure(stateCode: String?, language: CivicaLanguage) -> String {
+        let portal = SNAPAgencyDirectory.portalName(for: stateCode)
+        let host = SNAPAgencyDirectory.portalShortURL(for: stateCode)
+        let agency = SNAPAgencyDirectory.agencyShortName(for: stateCode, language: language)
+        let portalRef = portal.isEmpty
+            ? (language == .english ? "your state SNAP portal" : "el portal de SNAP de tu estado")
+            : (host.isEmpty ? portal : "\(portal) (\(host))")
         switch language {
-        case .english: return "Civica · local v1 · FY26 federal poverty guidelines · MA BBCE 200%"
-        case .spanish: return "Civica · v1 local · pautas federales de pobreza AF26 · MA BBCE 200%"
+        case .english:
+            return "This is a personal reference document prepared from your answers in Civica. It is NOT an official application. Submit your real application via \(portalRef) or in person at a \(agency) office."
+        case .spanish:
+            return "Este es un documento personal de referencia preparado a partir de tus respuestas en Civica. NO es una solicitud oficial. Envía tu solicitud real a través de \(portalRef) o en persona en una oficina de \(agency)."
+        }
+    }
+
+    static func rulesLine(stateCode: String?, language: CivicaLanguage) -> String {
+        // BBCE gross-income limit is state-set; name the selected state
+        // instead of hardcoding "MA". Falls back to the launch state (CA)
+        // when no state was captured. CA and MA both use 200% FPL.
+        let normalized = (stateCode ?? "").trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
+        let state = normalized.isEmpty ? SNAPAgencyDirectory.launchStateCode : normalized
+        switch language {
+        case .english: return "Civica · local v1 · FY26 federal poverty guidelines · \(state) BBCE 200%"
+        case .spanish: return "Civica · v1 local · pautas federales de pobreza AF26 · \(state) BBCE 200%"
         }
     }
 }

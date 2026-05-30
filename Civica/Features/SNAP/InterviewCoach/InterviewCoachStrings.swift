@@ -39,9 +39,12 @@ enum InterviewCoachStrings {
         "Start a practice session",
         es: "Iniciar sesión de práctica"
     )
+    // Scenario label mirrors the default practice context, which is
+    // SessionContext.defaultCA (PracticeSessionViewModel) since the CA
+    // launch. Keep this in sync if the default state changes.
     static let practiceSubtitle = CivicaText(
-        "Roleplay with a simulated caseworker. Massachusetts initial-application scenario.",
-        es: "Practica con un trabajador social simulado. Escenario de solicitud inicial de Massachusetts."
+        "Roleplay with a simulated caseworker. California initial-application scenario.",
+        es: "Practica con un trabajador social simulado. Escenario de solicitud inicial de California."
     )
 
     // MARK: Persona picker
@@ -292,13 +295,28 @@ enum InterviewCoachStrings {
     //
     // Conservative legal-protection language for the practice tool.
     // Bilingual; rendered as a footer on every Interview Coach surface.
-    // Phrasing is intentionally cautious until MLRI / GBLS or another
-    // SNAP-knowledgeable legal partner signs off on the question bank
-    // itself.
+    // Points at California resources (CalFresh / CDSS, 2-1-1 California,
+    // LawHelpCA) because CA is the launch state. The prior copy pointed
+    // at Massachusetts DTA / masslegalhelp, which was wrong for CA
+    // applicants.
+    //
+    // TODO(legal/CA-counsel): This is legal-protection copy. A
+    // California SNAP-knowledgeable legal partner — e.g. CRLA, Bay Area
+    // Legal Aid, or Western Center on Law & Poverty — must sign off
+    // before this ships. NOT MLRI / GBLS: those are Massachusetts orgs
+    // and no longer the right reviewers now that the launch state is CA.
+    // Phrasing stays intentionally cautious until that CA sign-off lands.
+    //
+    // NOTE: these strings hardcode CA rather than reading from
+    // SNAPStateResources because the Interview Coach is single-state for
+    // the CA launch. If the coach goes multi-state, the agency name /
+    // URL / hotline should come from SNAPStateResources.resource(for:)
+    // (the single source for state-conditioned copy); the legal-aid +
+    // 2-1-1 pointers would still need per-state data added there first.
 
     static let disclaimerBody = CivicaText(
-        "This is a practice tool, not legal advice. For binding answers about your SNAP application, contact your local DTA office (mass.gov/dta) or a Massachusetts legal aid organization (masslegalhelp.org). Practice prompts and AI feedback are illustrative — they may not match your situation.",
-        es: "Esto es una herramienta de práctica, no asesoría legal. Para respuestas vinculantes sobre tu solicitud de SNAP, comunícate con tu oficina local del DTA (mass.gov/dta) o una organización de asistencia legal de Massachusetts (masslegalhelp.org). Las preguntas de práctica y los comentarios de la IA son ilustrativos — pueden no aplicar a tu situación."
+        "This is a practice tool, not legal advice. For binding answers about your CalFresh (SNAP) application, contact your county CalFresh office (cdss.ca.gov), call 2-1-1 California, or reach a California legal aid organization (lawhelpca.org). Practice prompts and AI feedback are illustrative — they may not match your situation.",
+        es: "Esto es una herramienta de práctica, no asesoría legal. Para respuestas vinculantes sobre tu solicitud de CalFresh (SNAP), comunícate con tu oficina local de CalFresh (cdss.ca.gov), llama al 2-1-1 California, o contacta una organización de asistencia legal de California (lawhelpca.org). Las preguntas de práctica y los comentarios de la IA son ilustrativos — pueden no aplicar a tu situación."
     )
 
     static let disclaimerCompact = CivicaText(
