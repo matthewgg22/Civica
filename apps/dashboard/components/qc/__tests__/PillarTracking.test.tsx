@@ -16,7 +16,7 @@ describe("PillarTracking — render with realistic fixture", () => {
     render(<PillarTracking {...props} />);
     expect(
       screen.getByRole("heading", {
-        level: 3,
+        level: 2,
         name: /Where each pillar sits today vs full engagement/i,
       }),
     ).toBeInTheDocument();
@@ -96,7 +96,7 @@ describe("PillarTracking — n=0 empty state", () => {
     );
     expect(
       screen.getByRole("heading", {
-        level: 3,
+        level: 2,
         name: /Where each pillar sits today vs full engagement/i,
       }),
     ).toBeInTheDocument();
