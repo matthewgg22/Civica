@@ -1,80 +1,312 @@
 {
-  "schema_version": "1.0.0",
+  "schema_version": "2.0.0",
   "source_kind": "public_panel",
   "analysis": "burden_levers_to_participation",
   "analysis_locked_at": "2026-05-30",
+  "design": "two-way fixed effects (state + calendar-month), cluster-robust by state; 51 states × 1996-2020",
   "panel": {
     "unit": "state-month",
     "n_rows": 15300,
     "states": 51,
-    "period": "1996-01..2020-12"
+    "period": "1996-01..2020-12",
+    "n_levers": 13
   },
-  "twfe": {
-    "outcome": "ln(SNAP persons)",
-    "spec": "two-way fixed effects (state + calendar-month), cluster-robust by state",
+  "r2_ladder": {
+    "block_labels": [
+      "Eligibility breadth",
+      "Transaction-cost / modernization",
+      "Procedural friction"
+    ],
+    "cumulative": [
+      "Eligibility",
+      "+ Transaction-cost",
+      "+ Procedural (full)"
+    ],
+    "outcomes": [
+      {
+        "key": "participation",
+        "label": "SNAP participation (persons)",
+        "within_r2": [
+          0.1672,
+          0.3615,
+          0.4483
+        ]
+      },
+      {
+        "key": "households",
+        "label": "SNAP caseload (households)",
+        "within_r2": [
+          0.1713,
+          0.3444,
+          0.4314
+        ]
+      },
+      {
+        "key": "avg_benefit",
+        "label": "Average benefit per person",
+        "within_r2": [
+          -0.0269,
+          -0.0353,
+          -0.0347
+        ]
+      }
+    ],
+    "note": "within-R² = share of the within-state, within-month variation the levers explain (the calendar-month FE absorb the national cycle; the state FE absorb fixed state differences)."
+  },
+  "parsimonious": {
+    "levers_used": [
+      "bbce",
+      "reportsimple",
+      "call_any",
+      "oapp",
+      "faceini",
+      "facerec"
+    ],
     "n": 12852,
     "states": 51,
-    "within_r2": 0.41687968895901883,
-    "levers": [
+    "outcomes": [
       {
-        "key": "reportsimple",
-        "label": "Simplified / periodic reporting",
-        "kind": "reduces_burden",
-        "estimate_pct": 8.898779315773085,
-        "ci_low_pct": 3.2962152199228036,
-        "ci_high_pct": 14.501343411623365,
-        "std_error_pct": 2.858227779761069,
-        "p_value": 0.0018536721295805414
+        "key": "participation",
+        "label": "SNAP participation (persons)",
+        "within_r2": 0.41687968895901883,
+        "levers": [
+          {
+            "key": "bbce",
+            "label": "Broad-based categorical eligibility",
+            "kind": "expands_eligibility",
+            "estimate_pct": 7.601078989773373,
+            "ci_low_pct": 1.5153803639244,
+            "ci_high_pct": 13.686777615622347,
+            "p_value": 0.014369016968112769
+          },
+          {
+            "key": "reportsimple",
+            "label": "Simplified / periodic reporting",
+            "kind": "reduces_burden",
+            "estimate_pct": 8.898779315773085,
+            "ci_low_pct": 3.2962152199228045,
+            "ci_high_pct": 14.501343411623365,
+            "p_value": 0.0018536721295805414
+          },
+          {
+            "key": "call_any",
+            "label": "Call-center case management",
+            "kind": "reduces_burden",
+            "estimate_pct": 6.277771342923744,
+            "ci_low_pct": 1.2875140392562976,
+            "ci_high_pct": 11.26802864659119,
+            "p_value": 0.013680857962628856
+          },
+          {
+            "key": "oapp",
+            "label": "Online application",
+            "kind": "reduces_burden",
+            "estimate_pct": 0.8267231661495233,
+            "ci_low_pct": -4.023788562980828,
+            "ci_high_pct": 5.677234895279875,
+            "p_value": 0.7383177707910895
+          },
+          {
+            "key": "faceini",
+            "label": "In-person interview at application",
+            "kind": "increases_burden",
+            "estimate_pct": 4.7566293622894396,
+            "ci_low_pct": -1.633761715584004,
+            "ci_high_pct": 11.147020440162883,
+            "p_value": 0.14458406121049405
+          },
+          {
+            "key": "facerec",
+            "label": "In-person interview at recert",
+            "kind": "increases_burden",
+            "estimate_pct": 1.9820420914622539,
+            "ci_low_pct": -2.294463413209299,
+            "ci_high_pct": 6.258547596133806,
+            "p_value": 0.36364382494601855
+          }
+        ]
       },
+      {
+        "key": "households",
+        "label": "SNAP caseload (households)",
+        "within_r2": 0.39819692313619404,
+        "levers": [
+          {
+            "key": "bbce",
+            "label": "Broad-based categorical eligibility",
+            "kind": "expands_eligibility",
+            "estimate_pct": 8.798786044171504,
+            "ci_low_pct": 2.7198961128251993,
+            "ci_high_pct": 14.877675975517809,
+            "p_value": 0.004558544342096349
+          },
+          {
+            "key": "reportsimple",
+            "label": "Simplified / periodic reporting",
+            "kind": "reduces_burden",
+            "estimate_pct": 7.855959682578871,
+            "ci_low_pct": 2.330600493583263,
+            "ci_high_pct": 13.38131887157448,
+            "p_value": 0.005328714126196177
+          },
+          {
+            "key": "call_any",
+            "label": "Call-center case management",
+            "kind": "reduces_burden",
+            "estimate_pct": 6.441915507828987,
+            "ci_low_pct": 1.5153310713417771,
+            "ci_high_pct": 11.368499944316197,
+            "p_value": 0.010386912681425553
+          },
+          {
+            "key": "oapp",
+            "label": "Online application",
+            "kind": "reduces_burden",
+            "estimate_pct": 0.7866391765446062,
+            "ci_low_pct": -3.850702008607201,
+            "ci_high_pct": 5.423980361696413,
+            "p_value": 0.7395144807693366
+          },
+          {
+            "key": "faceini",
+            "label": "In-person interview at application",
+            "kind": "increases_burden",
+            "estimate_pct": 5.093973769222479,
+            "ci_low_pct": -1.3525951173361805,
+            "ci_high_pct": 11.540542655781138,
+            "p_value": 0.12143553743903657
+          },
+          {
+            "key": "facerec",
+            "label": "In-person interview at recert",
+            "kind": "increases_burden",
+            "estimate_pct": 2.2005701833502953,
+            "ci_low_pct": -2.132583295274512,
+            "ci_high_pct": 6.5337236619751025,
+            "p_value": 0.3195347588633164
+          }
+        ]
+      },
+      {
+        "key": "avg_benefit",
+        "label": "Average benefit per person",
+        "within_r2": -0.013952878106123112,
+        "levers": [
+          {
+            "key": "bbce",
+            "label": "Broad-based categorical eligibility",
+            "kind": "expands_eligibility",
+            "estimate_pct": -0.08114450887766937,
+            "ci_low_pct": -1.6756653817585305,
+            "ci_high_pct": 1.5133763640031916,
+            "p_value": 0.9205433003191175
+          },
+          {
+            "key": "reportsimple",
+            "label": "Simplified / periodic reporting",
+            "kind": "reduces_burden",
+            "estimate_pct": 0.15546059848670774,
+            "ci_low_pct": -1.5461562939552382,
+            "ci_high_pct": 1.8570774909286536,
+            "p_value": 0.8578773056310207
+          },
+          {
+            "key": "call_any",
+            "label": "Call-center case management",
+            "kind": "reduces_burden",
+            "estimate_pct": -0.4213282128660954,
+            "ci_low_pct": -2.153362801318966,
+            "ci_high_pct": 1.3107063755867747,
+            "p_value": 0.6334989878850865
+          },
+          {
+            "key": "oapp",
+            "label": "Online application",
+            "kind": "reduces_burden",
+            "estimate_pct": -0.26075585392101674,
+            "ci_low_pct": -1.5711523488124102,
+            "ci_high_pct": 1.0496406409703765,
+            "p_value": 0.6965054932359511
+          },
+          {
+            "key": "faceini",
+            "label": "In-person interview at application",
+            "kind": "increases_burden",
+            "estimate_pct": 0.6116291295879196,
+            "ci_low_pct": -0.6520440231567177,
+            "ci_high_pct": 1.875302282332557,
+            "p_value": 0.34277537706438643
+          },
+          {
+            "key": "facerec",
+            "label": "In-person interview at recert",
+            "kind": "increases_burden",
+            "estimate_pct": -0.6355365806722264,
+            "ci_low_pct": -1.955785082934671,
+            "ci_high_pct": 0.6847119215902185,
+            "p_value": 0.3454067759449917
+          }
+        ]
+      }
+    ]
+  },
+  "robustness": {
+    "spec": "participation, parsimonious + state-specific linear trends",
+    "within_r2": 0.07163014166169102,
+    "levers": [
       {
         "key": "bbce",
         "label": "Broad-based categorical eligibility",
         "kind": "expands_eligibility",
-        "estimate_pct": 7.601078989773373,
-        "ci_low_pct": 1.5153803639244,
-        "ci_high_pct": 13.686777615622347,
-        "std_error_pct": 3.104705733672722,
-        "p_value": 0.014369016968112769
+        "estimate_pct": 6.739749945015712,
+        "ci_low_pct": 0.19959665358083856,
+        "ci_high_pct": 13.279903236450586,
+        "p_value": 0.043407264954826275
+      },
+      {
+        "key": "reportsimple",
+        "label": "Simplified / periodic reporting",
+        "kind": "reduces_burden",
+        "estimate_pct": 5.8168986000579705,
+        "ci_low_pct": 0.975259811784017,
+        "ci_high_pct": 10.658537388331926,
+        "p_value": 0.018538510813578934
       },
       {
         "key": "call_any",
         "label": "Call-center case management",
         "kind": "reduces_burden",
-        "estimate_pct": 6.277771342923744,
-        "ci_low_pct": 1.2875140392562976,
-        "ci_high_pct": 11.26802864659119,
-        "std_error_pct": 2.5458507585950563,
-        "p_value": 0.013680857962628856
+        "estimate_pct": 1.0972934253710724,
+        "ci_low_pct": -2.6937234166613124,
+        "ci_high_pct": 4.888310267403457,
+        "p_value": 0.5704812400022305
       },
       {
         "key": "oapp",
         "label": "Online application",
         "kind": "reduces_burden",
-        "estimate_pct": 0.8267231661495233,
-        "ci_low_pct": -4.023788562980828,
-        "ci_high_pct": 5.677234895279875,
-        "std_error_pct": 2.4745575656199965,
-        "p_value": 0.7383177707910895
+        "estimate_pct": -2.4305094862547123,
+        "ci_low_pct": -4.960581242615504,
+        "ci_high_pct": 0.09956227010607943,
+        "p_value": 0.05972104238394227
       },
       {
         "key": "faceini",
-        "label": "In-person interview required at application",
+        "label": "In-person interview at application",
         "kind": "increases_burden",
-        "estimate_pct": 4.7566293622894396,
-        "ci_low_pct": -1.633761715584004,
-        "ci_high_pct": 11.147020440162883,
-        "std_error_pct": 3.2601489228554934,
-        "p_value": 0.14458406121049405
+        "estimate_pct": 0.6751642381410244,
+        "ci_low_pct": -4.297466408909536,
+        "ci_high_pct": 5.647794885191585,
+        "p_value": 0.7901343135001182
       },
       {
         "key": "facerec",
-        "label": "In-person interview required at recert",
+        "label": "In-person interview at recert",
         "kind": "increases_burden",
-        "estimate_pct": 1.9820420914622539,
-        "ci_low_pct": -2.294463413209299,
-        "ci_high_pct": 6.258547596133806,
-        "std_error_pct": 2.181720123970895,
-        "p_value": 0.36364382494601855
+        "estimate_pct": 0.7961372377337308,
+        "ci_low_pct": -2.8686107130281955,
+        "ci_high_pct": 4.4608851884956575,
+        "p_value": 0.670240766881204
       }
     ]
   },
@@ -127,10 +359,11 @@
       }
     ]
   },
-  "benchmark": "Replicates the administrative-burden / transaction-cost literature (Ganong & Liebman 2018; Klerman & Danielson 2011): burden-reducing modernization (BBCE, call centers, simplified reporting) raised SNAP participation several percent — recovered here within CI.",
+  "collinearity_note": "The saturated all-levers model is multicollinear (BBCE + its asset/income sub-variants + categorical eligibility move together), so individual saturated coefficients are unstable. Block-level R² is robust; interpretable coefficients come from the parsimonious spec.",
+  "benchmark": "Replicates the administrative-burden / transaction-cost literature (Ganong & Liebman 2018; Klerman & Danielson 2011): burden-reducing modernization raised SNAP participation several percent.",
   "provenance": {
-    "generated_at": "2026-05-30T05:48:52Z",
-    "git_sha": "1661f1af",
+    "generated_at": "2026-05-30T19:21:56Z",
+    "git_sha": "a2f5260e",
     "environment": {
       "python": "3.14.5",
       "numpy": "2.4.6",
@@ -139,6 +372,7 @@
     },
     "outcome_source": "USDA FNS SNAP Data Tables — National/State Monthly Data (snap-zip-fy69tocurrent)",
     "treatment_source": "USDA ERS SNAP Policy Database (snap-policy-database.xlsx)",
-    "panel_file": "data-ops/sample/snap-policy-regression/analysis_panel.csv"
+    "panel_file": "data-ops/sample/snap-policy-regression/analysis_panel.csv",
+    "cycle_control": "national cycle via calendar-month FE; state divergence via state-trend robustness; state-unemployment control blocked (FRED/BLS unreachable) — declared next refinement."
   }
 }

@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-05-30T05:48:52Z",
-  "git_sha": "1661f1af",
+  "generated_at": "2026-05-30T19:21:56Z",
+  "git_sha": "a2f5260e",
   "environment": {
     "python": "3.14.5",
     "numpy": "2.4.6",
@@ -10,9 +10,9 @@
   "outcome_source": "USDA FNS SNAP Data Tables — National/State Monthly Data (snap-zip-fy69tocurrent)",
   "treatment_source": "USDA ERS SNAP Policy Database (snap-policy-database.xlsx)",
   "panel_file": "data-ops/sample/snap-policy-regression/analysis_panel.csv",
+  "cycle_control": "national cycle via calendar-month FE; state divergence via state-trend robustness; state-unemployment control blocked (FRED/BLS unreachable) — declared next refinement.",
   "argv": [
     "tools/snap-policy-regression/src/build_policy_regression.py"
   ],
-  "twfe_n": 12852,
-  "within_r2": 0.41687968895901883
+  "n_rows": 15300
 }
