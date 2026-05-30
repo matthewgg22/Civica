@@ -395,11 +395,13 @@ Total: **~3-4 weeks human / ~10h CC** of pair work. Worth scoping as its own mil
 
 **Recommendation:** Add a `civicaAnimation(_:value:)` view modifier in `CivicaDesignSystem` that wraps `withAnimation(reduceMotion ? nil : animation, value:)`. Codemod all 60+ existing `.withAnimation(CivicaAnimation.foo) { … }` callsites to use the modifier. ReduceMotion becomes a one-line concern, not a per-callsite vigilance task. ~3 days human / ~1.5h CC.
 
-### RA-5 — VoiceOver coverage at 77%
+### RA-5 — VoiceOver coverage at 77% **[DONE: PR #396]**
 
 19 of 83 `*View.swift` files have zero `accessibilityLabel`. Some are pure container views (acceptable); others are real screens.
 
 **Recommendation:** Run an audit pass on the 19 zero-coverage files. Where they're container-only (no user-facing affordances), document with a `// MARK: - AccessibilityElement = parent` comment. Where they have any tappable element, fail the audit and add labels. ~1 day human.
+
+**Shipped:** Fresh scan found 43/83 uncovered (not 19). 32 interactive views received `.accessibilityLabel(...)` reusing existing bilingual `*Strings` tables; 11 pure containers received the MARK comment. Coverage 40/83 → 83/83 (100%). `A11yLabelCoverageTests.swift` gates regressions. Merged [PR #396](https://github.com/matthewgg22/Civica/pull/396) 2026-05-30.
 
 ### RA-6 — `warningAmber` borderline at footnote
 
