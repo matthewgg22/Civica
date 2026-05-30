@@ -81,6 +81,7 @@ struct CivicaAppStorageKeysTests {
             CivicaAppStorageKeys.buddyName,
             CivicaAppStorageKeys.buddyContact,
             CivicaAppStorageKeys.recertCompanionPermissionDismissed,
+            CivicaAppStorageKeys.dailyChecklistPrefix,
         ]
         for key in coKeys {
             #expect(key.hasPrefix("co.civica."), "Key '\(key)' should start with 'co.civica.'")
