@@ -9,10 +9,10 @@ superseded_by: []
 evidence:
   - kind: file
     ref: tools/snap-policy-regression/src/build_policy_regression.py
-    note: "The harness. Assembles the national panel from the two public sources and fits a two-way fixed-effects model + a BBCE event study (linearmodels PanelOLS, cluster-robust by state)."
+    note: "The harness (schema 2.x). Assembles the national panel and fits an R² ladder by policy family across 3 outcomes, a parsimonious interpretable-coefficient spec, a state-trend robustness pass, + a BBCE event study (linearmodels PanelOLS, cluster-robust by state)."
   - kind: file
     ref: data-ops/sample/snap-policy-regression/analysis_panel.csv
-    note: "The committed analysis panel (15,300 state-months, 51 states × 1996-2020): policy levers + FNS participation. The regression reproduces from this with no raw files."
+    note: "The committed analysis panel (15,300 state-months, 51 states × 1996-2020): 13 policy levers (3 families) + FNS participation/caseload/issuance. The regression reproduces from this with no raw files."
   - kind: file
     ref: apps/dashboard/lib/analytics/policy-regression-results.json
     note: "The fitted artifact the /findings/regression replication panel renders."
@@ -50,6 +50,40 @@ These magnitudes **recover the published administrative-burden literature**
 (Ganong & Liebman 2018; Klerman & Danielson 2011) on independent data — which
 validates the whole estimation pipeline on a known benchmark.
 
+## What each variable family captures (the R² ladder)
+
+Beyond a single coefficient, the analysis decomposes *what explains SNAP
+participation*. Levers are added in families under the same state + month fixed
+effects; each cell is the cumulative within-R² — the share of within-state,
+within-month variation the levers explain:
+
+| Outcome | Eligibility | + Transaction-cost | + Procedural (full) |
+| --- | --- | --- | --- |
+| Participation (persons) | 0.17 | **0.36** | 0.45 |
+| Caseload (households) | 0.17 | 0.34 | 0.43 |
+| Avg benefit / person | ≈0 | ≈0 | ≈0 |
+
+Two reads jump out. **Transaction-cost modernization** (call centers, online
+apps, simplified reporting) captures the **largest jump** — +0.19 for
+participation, more than eligibility breadth or procedural rules. And **no
+policy family explains average benefit per person** (≈0): the benefit *level* is
+federally set, so state policy moves *who is enrolled*, not how much they get —
+precisely the retention margin Civica targets. **Caseload tracks participation**
+(BBCE +8.8%, simplified reporting +7.9%, call centers +6.4%, all significant) —
+the effect is households entering and staying, not a per-household artifact.
+
+**Robustness.** Adding a state-specific linear trend (the smooth part of
+state-economic divergence the national time effects miss): **BBCE (+6.7%) and
+simplified reporting (+5.8%) stay significant**; call centers attenuate to
+non-significant. The two strongest levers survive the toughest control
+available without external data.
+
+**A note on method.** The *saturated* all-13-lever model is multicollinear (BBCE
+and its asset/income sub-variants move together — BBCE's coefficient even flips
+to −40%, an artifact). So block-level R² answers "what's captured" and a
+*parsimonious* one-lever-per-family spec gives the interpretable coefficients
+in the headline table.
+
 ## Why it matters
 
 - **It proves the mechanism before Civica has a single case.** The pre-registered
@@ -77,9 +111,12 @@ validates the whole estimation pipeline on a known benchmark.
 - **TWFE caveat.** Two-way fixed effects with staggered binary treatment and
   heterogeneous effects can be biased (Goodman-Bacon); the **event study is the
   more credible read**, and it agrees.
-- **State economic shocks** are not fully absorbed by the national time effects.
-  The flat BBCE pre-trends mitigate this; a state-unemployment control (BLS LAUS)
-  is the declared next robustness, alongside a Callaway–Sant'Anna estimator.
+- **State economic shocks** are the main confounder. National shocks are
+  absorbed by the calendar-month fixed effects; the **state-trend robustness**
+  (above) absorbs smooth state divergence, and the two strongest levers survive
+  it. A state-unemployment control would be tighter still — but FRED and BLS were
+  unreachable from the build environment, so it is the declared next refinement,
+  alongside a Callaway–Sant'Anna estimator for the staggered timing.
 - **Participation ≠ payment error.** This measures the *retention margin* — the
   door the thesis is about (fewer eligible people lost to friction) — not QC
   dollars-in-error directly. Those remain the QC/PER/CF-296/CF-18 datasets.
