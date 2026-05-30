@@ -408,4 +408,21 @@ After ~100 scripted navigations in one session, BenefitsCal's CDN/WAF (CloudFron
 - Demographic popover-vs-inline confirm (ABGNR/ABSXO/ABHSP "Why are we asking?" / ABRAE "What is this used for?") — inline disclaimer text already captured; confirm whether a separate popover exists.
 
 **Pass result: 15 explainers verbatim + the full doc-verification reference; 6 of 7 form-tree helpLink stubs filled.** Only ABHSD + ABPFG remain (both behind deep walks). Every explainer on the early application (the part most applicants see, plus the eligibility-critical program + citizenship questions) is now captured.
+
+### USER-PASTED CAPTURES (WAF workaround, 2026-05-29) — gaps the scripted walk missed
+After the WAF block, the operator pasted page text directly. Two real gaps the scripted pass had NOT committed:
+
+**ABSSN — "Do you have a Social Security Number?"** (`name=SSN_IND`; options #ssn_group0 Yes / #ssn_group1 No / #ssn_group2 "I don't have it right now") — eligibility-relevant.
+- Page intro: "A Social Security number is optional for household members who are not applying for benefits."
+- **Explainer "Do I need to provide my Social Security number?"** → "If you have a Social Security number (SSN), we strongly recommend including it here. It may help to process your application faster. You may be eligible for assistance, even if you do not provide an SSN. An SSN is not needed for people who do not have one or are not applying for coverage for themselves. If you or someone in your household wants help getting an SSN, call 1-800-772-1213 or visit socialsecurity.gov."
+
+**APDMC — full page body** (the scripted pass committed the doc categories + the 14-category reference, but NOT this body note):
+- "Here are some suggested documents to upload. Based on your responses, we suggest you upload documents from the list below or add any additional document."
+- "You can submit your Application now and upload documents later if needed. Need help? Contact the county office."
+- "Note: Proof of citizenship/immigration isn't required to submit this application, but your county may ask for it later. If you want to, you can add files under the 'Citizenship/Immigration/Birth Certificate' document type for a specific person."
+- Suggested Documents: "We recommend you submit these documents with your Application. If you can't upload them now, you can still submit this Application without them." → 6 categories each with UPLOAD (Identity Proof / Release of Information ABCDM228 / Income/Employment-Related Documents / Rent/Lease/Mortgage / Expenses / Address Proof) + ADD OTHER DOCUMENT + "Need to upload for someone else? ADD A PERSON".
+
+CONFIRMED already-committed (operator double-checked): ABCFA authorized-rep + ABCFS EBT-payee explainers — both present in form-tree.json + this doc.
+
+**Operator-paste is the reliable path for the remaining/deep ones** (ABHSD, ABPFG, demographics) — bypasses the WAF entirely.
 - New page codes seen this walk (not yet in form-tree): ABLPR, ABNMI(primary), ABMAD, ABCON, ABCOP, ABCSD (skip-and-submit upsell), ABDIS, ABCOS, ABCFA, ABCFS, ABRDT (DOB = `birthDate_primary_input`), ABMRS, ABCID, ABDOC. Address modal v2: radios `sugg_adr`/`ent_adr` + `USE SELECTED ADDRESS`.

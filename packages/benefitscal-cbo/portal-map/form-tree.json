@@ -1188,7 +1188,14 @@
               "notes": "name=SSN_IND; PRESENCE question (presenceOf=ssn_last4): ssn_last4 present -> click Yes (#ssn_group0). When ABSENT the absent option is intentionally NOT auto-picked — a presence test can't distinguish 'No' (#ssn_group1) from 'I don't have it right now' (#ssn_group2), both eligibility-relevant -> needs-review. questionText paraphrased in docs."
             }
           ],
-          "helpLinks": [],
+          "helpLinks": [
+            {
+              "trigger": "Do I need to provide my Social Security number?",
+              "text": "If you have a Social Security number (SSN), we strongly recommend including it here. It may help to process your application faster. You may be eligible for assistance, even if you do not provide an SSN. An SSN is not needed for people who do not have one or are not applying for coverage for themselves. If you or someone in your household wants help getting an SSN, call 1-800-772-1213 or visit socialsecurity.gov.",
+              "kind": "popover",
+              "captured": "2026-05-29 verbatim (user-pasted, WAF workaround)"
+            }
+          ],
           "errors": [],
           "branches": [
             {
@@ -1203,7 +1210,7 @@
             }
           ],
           "status": "partial",
-          "notes": "Yes branch (SSN input page) not walked. No/'don't have it' branch leads to ABNSN."
+          "notes": "Yes branch (SSN input page) not walked. No/'don't have it' branch leads to ABNSN. | Page intro: 'A Social Security number is optional for household members who are not applying for benefits.' Options: Yes / No / I don't have it right now."
         },
         {
           "pageCode": "ABNSN",
@@ -2038,7 +2045,7 @@
             }
           ],
           "status": "captured",
-          "notes": "Step 7 of 8. 'AP' URL prefix (not AB) — first non-AB page code. Response-driven suggested-doc categories, each an H3 + an UPLOAD button, keyed to the applicant: (1) Identity Proof (2) Release of Information (ABCDM228 — the CBO/authorized-rep consent form) (3) Income/Employment-Related Documents (4) Rent/Lease/Mortgage (5) Expenses (6) Address Proof. Plus ADD OTHER DOCUMENT, ADD A PERSON. Extension SKIPS file uploads by design (content scripts cannot fill input[type=file]); the human uploads manually. Capture the category list for the chatbot 'what to upload / why this doc' guidance — do NOT autofill. Clicking Next does NOT advance the page; it raises the submit-confirmation modal (the step 7->8 gate, see APDMC-submit-modal)."
+          "notes": "Step 7 of 8. 'AP' URL prefix (not AB) — first non-AB page code. Response-driven suggested-doc categories, each an H3 + an UPLOAD button, keyed to the applicant: (1) Identity Proof (2) Release of Information (ABCDM228 — the CBO/authorized-rep consent form) (3) Income/Employment-Related Documents (4) Rent/Lease/Mortgage (5) Expenses (6) Address Proof. Plus ADD OTHER DOCUMENT, ADD A PERSON. Extension SKIPS file uploads by design (content scripts cannot fill input[type=file]); the human uploads manually. Capture the category list for the chatbot 'what to upload / why this doc' guidance — do NOT autofill. Clicking Next does NOT advance the page; it raises the submit-confirmation modal (the step 7->8 gate, see APDMC-submit-modal). | Page body (verbatim): 'Here are some suggested documents to upload. Based on your responses, we suggest you upload documents from the list below or add any additional document. You can submit your Application now and upload documents later if needed. Need help? Contact the county office. Note: Proof of citizenship/immigration isn't required to submit this application, but your county may ask for it later. If you want to, you can add files under the Citizenship/Immigration/Birth Certificate document type for a specific person.' Suggested Documents intro: 'We recommend you submit these documents with your Application. If you can't upload them now, you can still submit this Application without them.'"
         },
         {
           "pageCode": "APDMC-submit-modal",
