@@ -202,9 +202,14 @@ export default function ErrorRateOnePager({ truthPoint }: { truthPoint: ErrorRat
           negative actions carried a case or procedural error. That is the witness
           point made in federal data: error lives on <em>both</em> doors of the
           application, and both are operational — process and paperwork, not policy
-          or fraud. (A flagged action is not proof the household was eligible —
-          many are procedural — but it is the agency&rsquo;s error to own, and the
-          kind a tool prevents.)
+          or fraud. And it is not new: CA has sat between{" "}
+          <span className="text-ink">
+            {CA_CAPER_GROUNDING.caTrendMinPct}–{CA_CAPER_GROUNDING.caTrendMaxPct}%
+          </span>{" "}
+          every reported year since {CA_CAPER_GROUNDING.caTrendFirstFy} (FY2020–21
+          paused for COVID) — a structural gap, not a blip. (A flagged action is not
+          proof the household was eligible — many are procedural — but it is the
+          agency&rsquo;s error to own, and the kind a tool prevents.)
         </Means>
         <p className="mt-2 text-xs text-graphite">
           USDA CAPER FY{CA_CAPER_GROUNDING.fiscalYear} (dated {CA_CAPER_GROUNDING.dated}) ·{" "}

@@ -33,5 +33,9 @@ curl -A "<browser-UA>" -o caper_fy24.pdf \
 pdftotext -layout caper_fy24.pdf -        # table is a single page; parse "STATE  NN.NN"
 ```
 
-Prior years (for the national trend) are linked off the landing page:
-`snap-qc-caper-fy23.pdf`, `snap-qc-caper-fy22.pdf`, … back to FY2012.
+Prior years use `snap-qc-caper-fy{NN}.pdf` (back to FY2012). The **CA trend
+FY2012–FY2024** is vendored at `caper_ca_trend.json` — CA has held a **32%–40%
+band every reported year** (32.5% FY2012 → 39.8% FY2024). Two gaps read honestly:
+**FY2020–21 are absent** (USDA waived QC during COVID — the URLs 404), and
+**FY2018 = 60.9%** is a one-year outlier. Regenerate by downloading each year's
+PDF and parsing the CALIFORNIA / UNITED STATES rows.
