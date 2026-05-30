@@ -55,7 +55,7 @@ struct OnboardingFlowView: View {
                 .transition(.move(edge: .trailing).combined(with: .opacity))
             }
         }
-        .animation(.easeInOut(duration: 0.28), value: viewModel.currentStep)
+        .civicaAnimation(.easeInOut(duration: 0.28), value: viewModel.currentStep)
     }
 }
 

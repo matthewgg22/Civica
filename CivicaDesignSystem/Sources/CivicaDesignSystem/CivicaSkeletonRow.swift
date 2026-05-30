@@ -42,7 +42,8 @@ public struct CivicaSkeletonRow: View {
             .accessibilityHidden(true)
             .onAppear {
                 guard !reduceMotion else { return }
-                withAnimation(.linear(duration: 1.2).repeatForever(autoreverses: false)) {
+                // Non-token duration (1.2 linear, infinite shimmer loop).
+                civicaWithAnimation(.linear(duration: 1.2).repeatForever(autoreverses: false)) {
                     phase = 1.2
                 }
             }
