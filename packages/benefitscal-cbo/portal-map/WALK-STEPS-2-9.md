@@ -356,3 +356,51 @@ These are the survey-question explainers the chatbot most needs; triggers known,
 
 ### METHOD (reusable) — `/tmp/pop.sh` + `/tmp/{detect,capclick,dialog}.js`
 `detect` lists explainer triggers (text matches `?$`/"why are we asking"/"what is"/"not sure"/"how does"/… OR info/help/tooltip class) with `{NAV:href}` flagged. `cap N` clicks trigger #N (stable index) via full pointer-event sequence, then captures the result: a `[role=dialog]`/tooltip overlay **or** an expanded accordion (`[aria-expanded=true]`/`.mat-expansion-panel-body`). One trigger at a time; skip `{NAV}` links. To collapse an accordion before the next, re-click the same index. `adv` advances (Next/Continue/BEGIN/Start). The browse `js` tool wraps input as a single parenthesized expression — every snippet must be ONE IIFE expression (no `def; call`).
+
+### CAPTURED — step-1 question popovers, verbatim (2026-05-29, guest walk, SNAP-only)
+Walked a fresh CBO application (guest-accessible; login only gates save/submit). Begin-flow → section pages, answering minimal dummy data (name "Test Applicant", DOB 01/15/1985, Sacramento address, all gates "No", SNAP-only). 14 explainers captured verbatim:
+
+**Begin / overview (ABOVR)** — see the 3 intro accordions above.
+
+**ABLPR — "What's your preferred language?"**
+- **"Need Language Help?"** → "Your county office can provide an interpreter for you at no cost."
+
+**ABNMI — "Who should fill out this application?"** (Primary Applicant)
+- **"Who should fill out this application?"** → "The person entered here will likely be the Primary Applicant for their household. The Primary Applicant has to submit renewals and more for their household. A person can be a Primary Applicant even if they don't apply for or get benefits. To fill out this application, you don't have to apply for benefits for yourself. You can apply for other people in your household. You'll add their details later in this application."
+
+**ABNHA — homelessness ("Tell us more about where you currently live")**
+- **"What is homelessness?"** → "This could include: Staying in a supervised shelter, halfway house, or similar place / Staying with another person or family for no more than 90 days in a row / Sleeping in a place not designed for, or normally used as, a place to sleep (a hallway, a bus station, a lobby, or similar)."
+
+**ABPRI — program selection** (HIGH VALUE)
+- **"Not sure what to choose?"** → "That's ok. Take your best guess and when you talk to your caseworker, they can help you decide. Here, you should select the programs that anybody in the household is applying for. Later, you'll add your household members and select the programs they're applying for. You can find more information about each program in the Help Center."
+- Instruction line: "Select at least one. For Cash Aid, select the one that best applies to your situation."
+- **Per-program inline descriptions:**
+  - CalFresh (#snap): "The CalFresh Program can add to your food budget to help you put healthy food on the table."
+  - CalWORKs (#tanf): "The California Work Opportunity and Responsibility for Kids (CalWORKs) gives temporary cash assistance to families who have a pregnancy or a child in the home."
+  - TCVAP: "The Trafficking and Crime Victim Assistance Program (TCVAP) is a cash aid program for non-citizen victims of crime who need urgent support."
+  - RCA: "The Refugee Cash Assistance (RCA) program is for non-citizens who don't qualify for other cash aid."
+  - Medi-Cal (#medicaid): "Medi-Cal is free or low-cost health care for individuals (adults and children) and families. Based on your income and other criteria, you may qualify for Medi-Cal. Or, you may qualify to get help paying for private health care."
+
+**ABCFA — CalFresh Authorized Representative**
+- **"What is a CalFresh Authorized Representative?"** → "This person can: Speak for you at the interview / Help you complete forms / Report changes for you. This person should be 18 years or older."
+
+**ABCFS — "Do you want to name someone to get and spend your CalFresh benefits for you?"** (EBT payee)
+- **"What does this mean?"** → "This person can use your Electronic Benefits Transfer (EBT) card to buy food for you."
+
+**ABCID — citizenship/immigration intro**
+- **"Need more information?"** → "For more information, visit the CalFresh guide for immigrants. For more information about the California Food Assistance Program (CFAP) for non-citizens, visit CDSS."
+
+**ABDOC — citizenship question** (HIGH VALUE, 3 explainers)
+- **"What do we mean by U.S. citizen?"** → "U.S. citizens include: Those born in the U.S. / Those born outside of the U.S. to at least one U.S. citizen parent who lived in the U.S. for a certain period of time. / Those who have been naturalized. This means they became a citizen after meeting certain requirements."
+- **"What do we mean by U.S. national?"** → "[U.S. nationals include:] Those living in the Northern Mariana Islands who choose not to become U.S. citizens / Those with at least one parent who is a U.S. national."
+- **"Why are we asking?"** → "The county needs to know the immigration status of the people in your household to see: Who is eligible for benefits / How much benefits your household may qualify for. Your information won't be shared with immigration enforcement. You can apply for and get benefits for people who are eligible, even if your household includes those who aren't eligible. For example, parents with ineligible immigration statuses may apply for benefits for their U.S. citizen or eligible immigrant children. For more information, visit the CalFresh guide for immigrants."
+
+### Method gotcha learned
+Collapsing an accordion **shifts trigger indices** — `cap N` after a collapse can hit a different element (twice landed on the "Learn more about BenefitsCal" nav-link → info.benefitscal.com, derailing the walk). Fix: re-`detect` before every `cap`, or never collapse mid-page (just leave accordions open and read the newest block).
+
+### STILL TO CAPTURE (after this pass)
+- **ABHSD** "How does each program define household?" (step 2 / People gate — deeper in flow)
+- **ABPFG** "Why do we ask these questions?" (step 6 / Other Situations felony gate — deepest)
+- **APDMC** "Not sure what to upload? Let's look at some examples." (step 7 doc upload)
+- Demographic popover-vs-inline confirm (ABGNR/ABSXO/ABHSP "Why are we asking?" / ABRAE "What is this used for?") — inline disclaimer text already captured; confirm whether a separate popover exists.
+- New page codes seen this walk (not yet in form-tree): ABLPR, ABNMI(primary), ABMAD, ABCON, ABCOP, ABCSD (skip-and-submit upsell), ABDIS, ABCOS, ABCFA, ABCFS, ABRDT (DOB = `birthDate_primary_input`), ABMRS, ABCID, ABDOC. Address modal v2: radios `sugg_adr`/`ent_adr` + `USE SELECTED ADDRESS`.

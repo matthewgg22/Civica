@@ -8,7 +8,7 @@
     "step_count_snap_only": 8,
     "navigation": "hub ABNAV -> Start (first enabled) -> section pages -> 'START THE NEXT SECTION' (section-complete page) -> hub -> next section unlocks",
     "notes": "Assets is omitted entirely for SNAP-only applications (CA BBCE bypass): when only #snap is checked on ABPRI the portal collapses 9 steps -> 8 and never presents the Assets section. ~15% of the full tree is captured (FORM-TREE.md). Section 1 pages and most data-bearing fields are 'partial' (missing verbatim help-text, full options, validation errors); People is a gate + per-member sub-form template ('partial'); sections 3-8 are section shells only ('not yet walked').",
-    "last_capture": "2026-05-29: step 7 Document Upload (APDMC) + submit-confirmation gate (A#skip) fully characterized; step 8 Review & Submit documented as gated-uncaptured (production-safety boundary)."
+    "last_capture": "2026-05-29: explainer-capture pass — 14 popovers verbatim (ABLPR/ABNMI/ABNHA/ABPRI+prog-descs/ABCFA/ABCFS/ABCID/ABDOC x3 + ABOVR intro); 5 helpLink stubs filled. Remaining: ABHSD, ABPFG, APDMC."
   },
   "branch_points_note": "Dominant pattern: a gate question (Yes/No or checklist) opens a detail sub-flow on affirmative, skips on negative. CONFIRMED edges observed diverging; INFERRED edges need a follow-up walk answering affirmatively to capture the detail sub-forms. Consumers: (a) extension must evaluate each gate from packet data + follow the right branch; (b) iOS-survey audit = does iOS branch the same way; (c) chatbot = branch-aware 'next you'll be asked…' guidance.",
   "branch_points": [
@@ -582,8 +582,9 @@
           "helpLinks": [
             {
               "trigger": "What is homelessness?",
-              "text": "TODO: capture verbatim",
-              "kind": "popover"
+              "text": "This could include: Staying in a supervised shelter, halfway house, or similar place / Staying with another person or family for no more than 90 days in a row / Sleeping in a place not designed for, or normally used as, a place to sleep (a hallway, a bus station, a lobby, or similar).",
+              "kind": "popover",
+              "captured": "2026-05-29 verbatim"
             }
           ],
           "errors": [],
@@ -883,8 +884,9 @@
           "helpLinks": [
             {
               "trigger": "Not sure what to choose?",
-              "text": "TODO: capture verbatim",
-              "kind": "popover"
+              "text": "That's ok. Take your best guess and when you talk to your caseworker, they can help you decide. Here, you should select the programs that anybody in the household is applying for. Later, you'll add your household members and select the programs they're applying for. You can find more information about each program in the Help Center.",
+              "kind": "popover",
+              "captured": "2026-05-29 verbatim"
             }
           ],
           "errors": [],
@@ -1062,8 +1064,9 @@
           "helpLinks": [
             {
               "trigger": "What is a CalFresh Authorized Representative?",
-              "text": "TODO: capture verbatim",
-              "kind": "popover"
+              "text": "This person can: Speak for you at the interview / Help you complete forms / Report changes for you. This person should be 18 years or older.",
+              "kind": "popover",
+              "captured": "2026-05-29 verbatim"
             }
           ],
           "errors": [],
@@ -1365,13 +1368,15 @@
           "helpLinks": [
             {
               "trigger": "What do we mean by U.S. citizen?",
-              "text": "TODO: capture verbatim",
-              "kind": "popover"
+              "text": "U.S. citizens include: Those born in the U.S.; Those born outside of the U.S. to at least one U.S. citizen parent who lived in the U.S. for a certain period of time; Those who have been naturalized (became a citizen after meeting certain requirements).",
+              "kind": "popover",
+              "captured": "2026-05-29 verbatim"
             },
             {
               "trigger": "What do we mean by U.S. national?",
-              "text": "TODO: capture verbatim",
-              "kind": "popover"
+              "text": "[U.S. nationals include:] Those living in the Northern Mariana Islands who choose not to become U.S. citizens; Those with at least one parent who is a U.S. national.",
+              "kind": "popover",
+              "captured": "2026-05-29 verbatim"
             }
           ],
           "errors": [],
