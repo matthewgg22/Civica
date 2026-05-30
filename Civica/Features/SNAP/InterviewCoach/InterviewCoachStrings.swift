@@ -20,12 +20,12 @@ enum InterviewCoachStrings {
     // MARK: Entry hub
 
     static let entryTitle = CivicaText(
-        "Practice your SNAP interview",
-        es: "Practica tu entrevista de SNAP"
+        "Practice your SNAP interview with Mae",
+        es: "Practica tu entrevista de SNAP con Mae"
     )
     static let entryBody = CivicaText(
-        "Rehearse the questions caseworkers actually ask. Pick your state, choose a scenario, and practice communicating your situation clearly. Preparation doesn't affect eligibility — but it can reduce the stress of the interview.",
-        es: "Practica las preguntas que realmente hacen los trabajadores sociales. Elige tu estado, elige un escenario, y practica comunicar tu situación con claridad. La preparación no afecta la elegibilidad — pero puede reducir el estrés de la entrevista."
+        "Mae helps you rehearse the questions caseworkers actually ask. Pick your state, choose a scenario, and practice communicating your situation clearly. Preparation doesn't affect eligibility — but it can reduce the stress of the interview.",
+        es: "Mae te ayuda a practicar las preguntas que realmente hacen los trabajadores sociales. Elige tu estado, elige un escenario, y practica comunicar tu situación con claridad. La preparación no afecta la elegibilidad — pero puede reducir el estrés de la entrevista."
     )
     static let browseTitle = CivicaText(
         "Browse practice questions",
