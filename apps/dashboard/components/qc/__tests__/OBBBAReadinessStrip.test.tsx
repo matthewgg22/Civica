@@ -15,7 +15,7 @@ describe("OBBBAReadinessStrip — render contract", () => {
     ).toBeInTheDocument();
     expect(
       screen.getByRole("heading", {
-        level: 3,
+        level: 2,
         name: /Seven federal SNAP tracks tightened in 2025/i,
       }),
     ).toBeInTheDocument();

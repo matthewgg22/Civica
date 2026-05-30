@@ -55,6 +55,15 @@ export function CountUp({
 
   useEffect(() => {
     if (target === 0) { setV(0); return; }
+    // Respect prefers-reduced-motion: opt-out users see the final value with
+    // no count-up animation (WCAG 2.3.3 + DESIGN.md motion rules).
+    if (
+      typeof window !== "undefined" &&
+      window.matchMedia?.("(prefers-reduced-motion: reduce)").matches
+    ) {
+      setV(target);
+      return;
+    }
     const start = performance.now();
     let raf = 0;
     const tick = (now: number) => {

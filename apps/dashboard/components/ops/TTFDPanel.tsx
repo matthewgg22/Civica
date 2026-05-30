@@ -15,7 +15,7 @@ export default function TTFDPanel({ data }: { data: TTFDData }) {
       <div className="flex items-start justify-between gap-4">
         <div>
           <p className="eyebrow mb-1">Panel 5 · Speed-to-value</p>
-          <h3 className="text-[18px] font-bold tracking-tight text-ink">Time to first deposit</h3>
+          <h2 className="text-[18px] font-bold tracking-tight text-ink">Time to first deposit</h2>
           <p className="text-[12px] text-graphite mt-1">
             Median days · packet submitted → first SNAP deposit on tracked card
           </p>

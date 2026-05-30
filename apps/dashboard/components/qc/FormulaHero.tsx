@@ -116,12 +116,12 @@ export default function FormulaHero({
         <p className="eyebrow mb-1.5">
           Thesis realization · formula and current data
         </p>
-        <h3
+        <h2
           id="formula-hero-title"
           className="text-[20px] font-semibold tracking-tight text-ink leading-tight"
         >
           How the projected payment-error rate moves with engagement
-        </h3>
+        </h2>
         <p className="text-[13px] text-graphite mt-2 max-w-2xl leading-relaxed">
           The formula projects PER by applying per-pillar defensibility shifts
           to USDA FY2023 element-attribution shares. Top half: at full stack

@@ -19,7 +19,7 @@ export default function DistressOverlayPanel({ data }: { data: DistressOverlayDa
       <div className="flex items-start justify-between gap-4 mb-4">
         <div>
           <p className="eyebrow mb-1 text-pine">Panel 12 · Compliance · Distress honor flag</p>
-          <h3 className="text-[18px] font-bold tracking-tight text-ink">Withheld from monetization</h3>
+          <h2 className="text-[18px] font-bold tracking-tight text-ink">Withheld from monetization</h2>
           <p className="text-[12px] text-graphite mt-1">
             Distress-flagged HHs are excluded from every monetization line ·
             past {data.flag_window_days} days
