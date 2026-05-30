@@ -121,12 +121,12 @@ export default function PillarTracking({
         <p className="eyebrow mb-1.5">
           Pillar tracking · per-axis adoption against thesis target
         </p>
-        <h3
+        <h2
           id="pillar-tracking-title"
           className="text-[20px] font-semibold tracking-tight text-ink leading-tight"
         >
           Where each pillar sits today vs full engagement
-        </h3>
+        </h2>
         <p className="text-[13px] text-graphite mt-2 max-w-2xl leading-relaxed">
           Four pillars contribute to the projected PER reduction. Each strip
           shows the pillar&apos;s PER contribution at full engagement, how far

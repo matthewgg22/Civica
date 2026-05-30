@@ -141,12 +141,12 @@ export default function IncomingDataFeed({ packets }: IncomingDataFeedProps) {
           <p className="eyebrow mb-1">
             Incoming data feed · per-applicant signal feeding the formula
           </p>
-          <h3
+          <h2
             id="data-feed-title"
             className="text-[16px] font-semibold tracking-tight text-ink leading-tight"
           >
             Last {Math.min(packets.length, 20)} packets · engagement vector + per-packet realization
-          </h3>
+          </h2>
           <p className="text-[12px] text-graphite mt-1 max-w-2xl leading-snug">
             Each row is one applicant&apos;s contribution to the engagement
             realization gap. Filter to{" "}

@@ -19,7 +19,7 @@ export default function EBTBalancePanel({ data }: { data: EbtAggregateData }) {
       <div className="flex items-start justify-between gap-4 mb-4">
         <div>
           <p className="eyebrow mb-1">Panel 1 · EBT Tracker · Detail</p>
-          <h3 className="text-[18px] font-bold tracking-tight text-ink">SNAP balance breakdown</h3>
+          <h2 className="text-[18px] font-bold tracking-tight text-ink">SNAP balance breakdown</h2>
           <p className="text-[12px] text-graphite mt-1">
             Full-precision balance figure · per-tracker average · linked-vs-active coverage
           </p>

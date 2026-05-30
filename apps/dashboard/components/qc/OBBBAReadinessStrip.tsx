@@ -70,12 +70,12 @@ export default function OBBBAReadinessStrip() {
           >
             Regulatory readiness · OBBBA
           </p>
-          <h3
+          <h2
             id="obbba-strip-title"
             className="text-[16px] font-semibold tracking-tight text-ink leading-tight"
           >
             Seven federal SNAP tracks tightened in 2025 — shipping state
-          </h3>
+          </h2>
           <p className="text-[12px] text-graphite mt-1 max-w-2xl leading-snug">
             OBBBA does NOT enter the formula above (FY24 baseline predates
             enforcement). Tracked here as engineering readiness for the new

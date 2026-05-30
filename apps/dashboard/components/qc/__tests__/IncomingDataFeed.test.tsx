@@ -61,7 +61,7 @@ describe("IncomingDataFeed — render with fixture", () => {
     ).toBeInTheDocument();
     expect(
       screen.getByRole("heading", {
-        level: 3,
+        level: 2,
         name: /Last 5 packets · engagement vector/i,
       }),
     ).toBeInTheDocument();
