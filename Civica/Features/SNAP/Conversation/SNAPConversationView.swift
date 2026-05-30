@@ -72,7 +72,7 @@ struct SNAPConversationView: View {
             }
             .onChange(of: viewModel.transcript.count) {
                 if let last = viewModel.transcript.last {
-                    withAnimation(reduceMotion ? nil : .default) { proxy.scrollTo(last.id, anchor: .bottom) }
+                    civicaWithAnimation(.default) { proxy.scrollTo(last.id, anchor: .bottom) }
                 }
             }
             .onChange(of: viewModel.phase) { _, newPhase in

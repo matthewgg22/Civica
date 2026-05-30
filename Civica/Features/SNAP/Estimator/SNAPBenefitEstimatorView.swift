@@ -365,6 +365,9 @@ struct SNAPBenefitEstimatorView: View {
                 // user moves a slider — makes the live-calc feel
                 // responsive rather than a static snap to new value.
                 .contentTransition(.numericText())
+                // MARK: - REDUCE-MOTION EXEMPT — numericText counter spring
+                // physics is tied to a specific bouncy feel that snaps look
+                // jarring under (audit RA-4 explicit exception 2026-05-29).
                 .animation(.spring(response: 0.25, dampingFraction: 0.8), value: monthly)
 
                 Spacer(minLength: 0)
@@ -376,6 +379,7 @@ struct SNAPBenefitEstimatorView: View {
                     CivicaMoney(amount: annual, font: CivicaTypography.footnoteStrong)
                         .foregroundStyle(CivicaColors.graphite)
                         .contentTransition(.numericText())
+                        // REDUCE-MOTION EXEMPT — numericText counter spring (see above).
                         .animation(.spring(response: 0.25, dampingFraction: 0.8), value: annual)
                     Text("/" + (language == .english ? "yr" : "año"))
                         .font(CivicaTypography.footnote)

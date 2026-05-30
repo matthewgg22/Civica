@@ -12,7 +12,7 @@ struct FindHelpDisclosureFooter: View {
     var body: some View {
         VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
             Button {
-                withAnimation(reduceMotion ? nil : .easeInOut(duration: 0.2)) { isExpanded.toggle() }
+                civicaWithAnimation(CivicaAnimation.standard) { isExpanded.toggle() }
             } label: {
                 HStack(alignment: .center, spacing: CivicaSpacing.sm) {
                     Image(systemName: "info.circle.fill")

@@ -154,14 +154,14 @@ struct SNAPContactFlowView: View {
         currentScreen
             .id(viewModel.step)
             .transition(.opacity.animation(.easeInOut(duration: 0.18)))
-            .animation(.easeInOut(duration: 0.18), value: viewModel.step)
+            .civicaAnimation(.easeInOut(duration: 0.18), value: viewModel.step)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button {
                         if viewModel.isAtFirstStep {
                             onExit()
                         } else {
-                            withAnimation(.easeInOut(duration: 0.18)) { viewModel.goBack() }
+                            civicaWithAnimation(.easeInOut(duration: 0.18)) { viewModel.goBack() }
                         }
                     } label: {
                         Image(systemName: viewModel.isAtFirstStep ? "xmark" : "chevron.left")
@@ -355,7 +355,7 @@ struct SNAPContactFlowView: View {
     }
 
     private func completeOrAdvance() {
-        withAnimation(.easeInOut(duration: 0.18)) {
+        civicaWithAnimation(.easeInOut(duration: 0.18)) {
             viewModel.recordCurrentField()
             if viewModel.isAtFunctionalLastStep {
                 onComplete(viewModel.answers)
@@ -366,7 +366,7 @@ struct SNAPContactFlowView: View {
     }
 
     private func skipOrComplete() {
-        withAnimation(.easeInOut(duration: 0.18)) {
+        civicaWithAnimation(.easeInOut(duration: 0.18)) {
             if viewModel.isAtFunctionalLastStep {
                 onComplete(viewModel.answers)
             } else {

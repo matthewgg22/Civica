@@ -36,7 +36,7 @@ private struct LoadingWaveDots: View {
                     .fill(CivicaColors.pinePrimary)
                     .frame(width: 11, height: 11)
                     .offset(y: animating ? -10 : 0)
-                    .animation(
+                    .civicaAnimation(
                         .easeInOut(duration: 0.45)
                             .repeatForever(autoreverses: true)
                             .delay(Double(index) * 0.14),
