@@ -576,3 +576,68 @@ Helper: `pillarReductionAtFullEngagement()` returns the per-pillar pp breakdown 
 **Priority:** P2 — the v0.3.0 scorer + `packet_qc_samples` cover the near-term pitch; build when a county asks for per-slice attribution or QC volume is sufficient to calibrate.
 **Depends on:** QC sample volume to calibrate weights; a concrete numeric flip threshold (open question in the plan).
 
+---
+
+## TODO-42 — Pillar 2 & 3 KPIs (Active-Relationship Rate + Reporting-Moment Coverage)
+
+**What:** Instrument the two deferred-pillar leading KPIs in the `kpi-snapshot` builder (`apps/enrollment-api/src/cron/kpi-snapshot.ts`): `active_relationship_rate` (Pillar 2 — Stay Engaged) and `reporting_moment_coverage` (Pillar 3 — Stay On), plus the `churn_rate` measured/lagging row. Also report the ARR↔retention correlation (does the high-ARR cohort churn less than the low-ARR cohort?). No migration needed — `kpi_snapshot` (`20260599`) already lists all three pillars + these `kpi_key`s in its CHECK constraints.
+**Why:** Phase 1 shipped only Pillar 1 (Get In). The framework is explicitly pillar-aligned (compose all three — design doc §"Approach A"). Pillars 2/3 complete the steering tree so the dashboard shows one leading KPI per pillar.
+**Pros:** Completes the three-pillar tree; the self-upgrading-hybrid plumbing + table already exist so this is builder logic + data sources only; the ARR↔retention correlation directly tests premise **P4**.
+**Cons:** **P4 risk is real** — Pillar 2 (engagement) is a *hypothesis*, not a proven retention driver; if the correlation is ~0, ARR has not earned its place and the pillar may need to be cut. Requires an engagement-event source (app opens, recert reminders acted on) that isn't yet aggregated, and a churn definition keyed to reporting moments (CF-18/CF-296 windows).
+**Context:** Design doc `~/.gstack/projects/matthewgg22-Civica/matthewgreer-gentis-kpi-framework-design-20260530.md` §Pillar 2 (line ~180) + §Pillar 3 (line ~189). The eng-review scoped Phase 1 to Pillar 1 + the outcome unlock and explicitly deferred 2/3.
+**Effort:** M (human ~2-3 d / CC ~4 hr — builder steps + engagement/churn aggregation queries + correlation reporting + tests)
+**Priority:** P2 — the Get-In error-rate pillar carries the near-term pitch; build 2/3 once Pillar-1 measured data exists.
+**Depends on:** An engagement-event aggregate (Pillar 2) and a reporting-moment / churn signal (Pillar 3); ideally some measured outcome volume so the ARR↔retention correlation is more than noise.
+
+---
+
+## TODO-43 — §10105 external-benchmark layer on the KPI tree (dollar-exposure view)
+
+**What:** Add a builder step + dashboard layer that maps the measured Get-In PER and Stay-On churn onto the OBBBA §10105 cost-share tiers (`apps/dashboard/lib/analytics/section10105.ts`) and the four-door error-map, populating `kpi_snapshot.baseline_ref` + `meta` with (a) the §10105 tier the cohort currently sits in, (b) the percentage-point move needed to cross to the next-cheaper tier, and (c) the dollar exposure of closing that gap. Render it as the "external/benchmark" skin beneath the pillar tree.
+**Why:** This is Approach C (the §10105 external layer) folded into the chosen Approach A. The design notes CPR's target maps to *crossing a §10105 tier* (get the cohort under 10%). It converts internal KPIs into the B2G dollar pitch a county/state actually feels.
+**Pros:** Ties product KPIs to real statute-driven dollars (the wedge); reuses the already-grounded `section10105.ts` (shipped in #381) and `per-by-state-fy24.json`; gives the dashboard a "you are here on the tier ladder" story.
+**Cons:** Only meaningful once a *measured* cohort PER exists (leading CPR is not a §10105 input); the tier schedule is STATUTORY + counsel-flagged, so the dollar figures must stay clearly labeled as modeled exposure, not a claim of realized savings.
+**Context:** `docs/findings/2026-05-30-obbba-10105-grounding.md` + `docs/strategy/mission-map-data-audit-2026-05-30.md`. The error-map gaps (vs 10.98% PER, ~5.2/8.5% churn, ~67% procedural) are the lagging benchmark layer in the design doc §"Approach A composing B and C" (line ~233).
+**Effort:** M (human ~2 d / CC ~3 hr — builder mapping + dashboard benchmark layer + tests)
+**Priority:** P2 — high pitch value, but gated on measured PER (TODO-44) to be honest.
+**Depends on:** TODO-44 (authoritative measured PER); `section10105.ts` (shipped).
+
+---
+
+## TODO-44 — Authoritative county-outcome signed webhook (the fidelity unlock)
+
+**What:** `POST /webhooks/county-outcome` in enrollment-api — HMAC-signed, runs as service_role — that writes `packet_outcomes` rows with `source = 'county_authoritative'`, carrying `error_dollars` + `per_pct`. This is the authoritative counterpart to the Phase-1 self-report me-route (`POST /me/packets/:id/outcome`, `source = 'self_report'`). The measured-PER builder reads ONLY `source IN ('county_authoritative','qc_sample')`.
+**Why:** Premise **P2** (the load-bearing one): the measured error rate must come from authoritative data, NEVER applicant self-report. Until this webhook exists, the `measured_per` row in `kpi_snapshot` stays null and the dashboard shows the leading CPR with a "leading" badge. This webhook is what flips Get-In from leading → measured — i.e. the moment Civica can show *real* error-rate reduction.
+**Pros:** Closes the self-report→authoritative fidelity gap; the table + RLS + CHECK firewall (self_report-no-dollars) already enforce the separation, so this is a route + signature-verify + idempotent upsert; the eng-review explicitly reserved this lane ("me-route now + reserve signed webhook later").
+**Cons:** Blocked on a real county/CDSS data-sharing channel — likely the longest-lead external dependency in the whole KPI program. Signature scheme + replay protection + key rotation need care. No county feed format is confirmed yet.
+**Context:** Migration `20260600_packet_outcomes_cpr.sql` (the `source` discriminator + `ck_packet_outcomes_self_report_no_dollars` CHECK were built for exactly this). iOS `CountyOutcomeClient.swift` is the self-report side. Eng-review test plan: "PER reads only `source IN (county_authoritative, qc_sample)`."
+**Effort:** L (human ~3-5 d once a feed exists / CC ~5 hr for the route + signature verify + tests; excludes the external data-agreement timeline)
+**Priority:** P1 — without it, "we reduced error rate" can never be *measured*, only projected. It is the single gate to a data-proven outcome claim.
+**Depends on:** A county/CDSS outcome data channel (agreement + format); a shared signing secret in CF secrets.
+
+---
+
+## TODO-45 — Composite Benefit Integrity Rate (top-line skin)
+
+**What:** A single composite headline KPI folding Pillar-1 Clean-Packet Rate and Pillar-3 retention into one number ("get in correctly, stay on"). Compute it in the builder from the existing pillar rows and render it as the dashboard's top-line; if it needs to persist as its own row, extend the `kpi_snapshot.kpi_key` CHECK in a small follow-up migration.
+**Why:** This is Approach B (the composite index) which the design folded into A "as the top-line skin." Executives and partners want one number; the pillar tree is the internal-steering detail beneath it.
+**Pros:** One legible headline for pitches/board; derivable from already-computed pillar KPIs (cheap); satisfies the "one number that captures the whole thesis" framing (design line ~52).
+**Cons:** The design's own warning — a composite is **opaque, gameable, collapses pillars, and has fuzzy ownership**. Must be rendered as a *derived* headline (no independent owner) so it never becomes the metric people optimize directly.
+**Context:** Design doc §"Approach B" (line ~229: "folded into A as the top-line skin") + the thesis line "get in correctly, stay on" (line ~53).
+**Effort:** S (human ~0.5 d / CC ~1-2 hr — a derived calc + one dashboard card)
+**Priority:** P3 — presentation polish; only meaningful once Pillars 1 and 3 are both measured.
+**Depends on:** Pillar-1 (CPR/measured PER) and Pillar-3 (retention/churn) rows existing.
+
+---
+
+## TODO-46 — Dollar-weighted error rate (PolicyEngine $-leverage)
+
+**What:** A dollar-weighted variant of `measured_per` / CPR that weights each error's contribution by its benefit-dollar impact rather than by case count, using PolicyEngine dollar-leverage coefficients (income errors ≈ 24-30¢ per $1 of error; over-cap shelter ≈ 0). Surface as a parallel `meta`-tagged measured row (or a `dollar_weighted: true` flag) so the dashboard can toggle count-weighted vs dollar-weighted.
+**Why:** Case-count error ≠ dollar error, and OBBBA §10105 cost-share is levied on benefit *dollars*. The design notes over-cap shelter is high-count / ~0-leverage → don't over-invest CPR effort there. Dollar-weighting focuses remediation where it actually moves the §10105 needle.
+**Pros:** Aligns the error KPI with the dollar mechanism that drives the B2G pitch; prevents wasting effort on high-count/low-dollar elements; reuses already-vendored PolicyEngine leverage figures.
+**Cons:** Adds a second weighting scheme to explain (count vs dollar), risking confusion; per-element dollar attribution is most credible on top of the error-attribution ledger (TODO-41), which isn't built; PolicyEngine coefficients are modeled, not Civica-measured.
+**Context:** PolicyEngine reference (`reference_policyengine_us`); design doc §1c (the 65/35 operational split, line ~86) + the dollar-leverage note (line ~122). Complements `operational_addressable_clean_rate`.
+**Effort:** M (human ~1-2 d / CC ~3 hr — leverage table + weighted aggregation + dashboard toggle + tests)
+**Priority:** P2 — sharpens the dollar pitch; build after measured PER (TODO-44) and ideally alongside the attribution ledger (TODO-41).
+**Depends on:** TODO-44 (measured outcomes); PolicyEngine dollar-leverage fixtures; ideally TODO-41 (per-element dollar attribution).
+
