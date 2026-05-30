@@ -99,6 +99,14 @@ struct CivicaHomePhase2View: View {
 
     @State private var presentingWhatHappensNext: Bool = false
 
+    // IS-8 (audit 2026-05-29): true on first render, flipped false at
+    // the end of the parallel `.task` below. While true AND the
+    // conditional-row band would otherwise be empty, three shimmered
+    // skeleton rows render in the band's slot so the screen never
+    // shows a blank gap between the primary CTA and the hairline
+    // while inbox / error-risk fetches resolve.
+    @State private var isFirstPaintLoading: Bool = true
+
     private var county: String {
         // Best-effort: read the county name from the persisted draft
         // when present. Falls back to a neutral phrase when the draft
@@ -266,6 +274,22 @@ struct CivicaHomePhase2View: View {
                     )
                 }
 
+                // IS-8 (audit 2026-05-29): first-paint skeleton fills
+                // the conditional-row band while the parallel `.task`
+                // fetches inbox + error-risk. Renders only when the
+                // band would otherwise be empty so we don't double up
+                // with real rows once they resolve.
+                if isFirstPaintLoading
+                    && pendingDocumentCount == 0
+                    && !showErrorRisk
+                    && unreadMessageCount == 0 {
+                    VStack(spacing: CivicaSpacing.lg) {
+                        CivicaSkeletonRow(height: 56)
+                        CivicaSkeletonRow(height: 56)
+                        CivicaSkeletonRow(height: 56)
+                    }
+                }
+
                 hairline
 
                 secondaryRows
@@ -293,13 +317,17 @@ struct CivicaHomePhase2View: View {
             // Bind the live enrollment client + fetch error-risk +
             // inbox in parallel. Silent fail per store — the home
             // view hides each row independently on any error.
-            guard enrollmentAuth.state.isAuthenticated else { return }
+            guard enrollmentAuth.state.isAuthenticated else {
+                isFirstPaintLoading = false
+                return
+            }
             let client = enrollmentAuth.makeEnrollmentAPIClient()
             errorRiskStore.bind(client: client)
             inboxStore.bind(client: client)
             async let errorRisk: Void = errorRiskStore.load()
             async let inbox: Void = inboxStore.load()
             _ = await (errorRisk, inbox)
+            isFirstPaintLoading = false
         }
     }
 
