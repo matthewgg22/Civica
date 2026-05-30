@@ -160,7 +160,8 @@ struct AppealExportSheetView: View {
     private func exportCTA(icon: String, title: String) -> some View {
         HStack(spacing: CivicaSpacing.md) {
             Image(systemName: icon)
-                .font(.system(size: 22))
+                .imageScale(.large)
+                .font(.body)
                 .foregroundStyle(CivicaColors.brickAccent)
                 .frame(width: 32)
             Text(title)

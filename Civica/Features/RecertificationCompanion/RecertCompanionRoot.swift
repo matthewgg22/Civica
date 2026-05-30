@@ -172,7 +172,8 @@ struct RecertCompanionRoot: View {
         Button(action: { presentingAppeal = true }) {
             HStack(spacing: CivicaSpacing.md) {
                 Image(systemName: "scale.3d")
-                    .font(.system(size: 28))
+                    .imageScale(.large)
+                    .font(.body)
                     .foregroundStyle(CivicaColors.pinePrimary)
                     .frame(width: 48, height: 48)
                     .background(
@@ -210,7 +211,8 @@ struct RecertCompanionRoot: View {
     private var interviewCoachEntryTile: some View {
         HStack(spacing: CivicaSpacing.md) {
             Image(systemName: "person.wave.2.fill")
-                .font(.system(size: 28))
+                .imageScale(.large)
+                .font(.body)
                 .foregroundStyle(CivicaColors.pinePrimary)
                 .frame(width: 48, height: 48)
                 .background(
@@ -442,7 +444,8 @@ struct RecertCompanionRoot: View {
     private var recertDateCardVertical: some View {
         VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
             Image(systemName: "calendar")
-                .font(.system(size: 24))
+                .imageScale(.large)
+                .font(.body)
                 .foregroundStyle(CivicaColors.pinePrimary)
                 .frame(width: 44, height: 44)
                 .background(
@@ -480,7 +483,8 @@ struct RecertCompanionRoot: View {
     private var recertDateCardHorizontal: some View {
         HStack(spacing: CivicaSpacing.md) {
             Image(systemName: "calendar")
-                .font(.system(size: 24))
+                .imageScale(.large)
+                .font(.body)
                 .foregroundStyle(CivicaColors.pinePrimary)
                 .frame(width: 44, height: 44)
                 .background(

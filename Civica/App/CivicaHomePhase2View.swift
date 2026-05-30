@@ -146,7 +146,8 @@ struct CivicaHomePhase2View: View {
             let accent = isUrgent ? CivicaColors.warningAmber : CivicaColors.pinePrimary
             HStack(alignment: .top, spacing: CivicaSpacing.md) {
                 Image(systemName: "calendar")
-                    .font(.system(size: 20))
+                    .imageScale(.large)
+                    .font(.body)
                     .foregroundStyle(accent)
                     .frame(width: 22, alignment: .leading)
                     .padding(.top, 1)
@@ -496,7 +497,8 @@ struct CivicaHomePhase2View: View {
         Button(action: onOpenExternalPortal) {
             HStack(alignment: .top, spacing: CivicaSpacing.md) {
                 Image(systemName: "exclamationmark.triangle")
-                    .font(.system(size: 17))
+                    .imageScale(.large)
+                    .font(.body)
                     .foregroundStyle(CivicaColors.warningAmber)
                     .accessibilityHidden(true)
                     .padding(.top, 1)
@@ -513,7 +515,8 @@ struct CivicaHomePhase2View: View {
                 }
                 Spacer(minLength: CivicaSpacing.sm)
                 Image(systemName: "chevron.right")
-                    .font(.system(size: 12, weight: .semibold))
+                    .imageScale(.large)
+                    .font(.body)
                     .foregroundStyle(CivicaColors.graphite)
                     .accessibilityHidden(true)
                     .padding(.top, 4)
@@ -579,7 +582,8 @@ struct CivicaHomePhase2View: View {
     private func secondaryRowLabel(icon: String, eyebrow: String, link: String) -> some View {
         HStack(spacing: CivicaSpacing.md) {
             Image(systemName: icon)
-                .font(.system(size: 22))
+                .imageScale(.large)
+                .font(.body)
                 .foregroundStyle(CivicaColors.ink)
                 .frame(width: 32, alignment: .leading)
                 .accessibilityHidden(true)

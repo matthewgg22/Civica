@@ -26,7 +26,8 @@ struct InAppReminderPromptView: View {
         VStack(alignment: .leading, spacing: CivicaSpacing.md) {
             HStack(spacing: CivicaSpacing.sm) {
                 Image(systemName: "bell.fill")
-                    .font(.system(size: 22))
+                    .imageScale(.large)
+                    .font(.body)
                     .foregroundStyle(CivicaColors.pinePrimary)
                 Text(promptTitle)
                     .font(CivicaTypography.sectionHeader)
