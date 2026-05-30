@@ -8,7 +8,7 @@
     "step_count_snap_only": 8,
     "navigation": "hub ABNAV -> Start (first enabled) -> section pages -> 'START THE NEXT SECTION' (section-complete page) -> hub -> next section unlocks",
     "notes": "Assets is omitted entirely for SNAP-only applications (CA BBCE bypass): when only #snap is checked on ABPRI the portal collapses 9 steps -> 8 and never presents the Assets section. ~15% of the full tree is captured (FORM-TREE.md). Section 1 pages and most data-bearing fields are 'partial' (missing verbatim help-text, full options, validation errors); People is a gate + per-member sub-form template ('partial'); sections 3-8 are section shells only ('not yet walked').",
-    "last_capture": "2026-05-29: explainer-capture pass — 14 popovers verbatim (ABLPR/ABNMI/ABNHA/ABPRI+prog-descs/ABCFA/ABCFS/ABCID/ABDOC x3 + ABOVR intro); 5 helpLink stubs filled. Remaining: ABHSD, ABPFG, APDMC."
+    "last_capture": "2026-05-29: operator-pasted detail forms + explainers (disability/student/military branches, 3 CalFresh student-eligibility explainers, ABLPR language) -> DETAIL-FORMS-AND-EXPLAINERS.md. ABSSN + APDMC body earlier."
   },
   "branch_points_note": "Dominant pattern: a gate question (Yes/No or checklist) opens a detail sub-flow on affirmative, skips on negative. CONFIRMED edges observed diverging; INFERRED edges need a follow-up walk answering affirmatively to capture the detail sub-forms. Consumers: (a) extension must evaluate each gate from packet data + follow the right branch; (b) iOS-survey audit = does iOS branch the same way; (c) chatbot = branch-aware 'next you'll be asked…' guidance.",
   "branch_points": [
@@ -124,7 +124,7 @@
       "page": "ABHGW",
       "question": "Let's see if any of the below apply to you. Select if you… (Household Details situations checklist)",
       "field": null,
-      "status": "inferred",
+      "status": "confirmed",
       "edges": [
         {
           "whenAnswer": "Any situation checked (govtaid/disability/college/food/living/breastfeeding/military)",
@@ -136,7 +136,8 @@
         }
       ],
       "eligibility_critical": false,
-      "notes": "multi-branch; one detail sub-flow per checked box. Only the 'None' path walked (ABHGW → ABRGS → ABSDE complete). Maps to disability/student/military/public-assistance/group-living eligibility flags."
+      "notes": "multi-branch; one detail sub-flow per checked box. Only the 'None' path walked (ABHGW → ABRGS → ABSDE complete). Maps to disability/student/military/public-assistance/group-living eligibility flags.",
+      "detail_forms_ref": "DETAIL-FORMS-AND-EXPLAINERS.md (operator-pasted 2026-05-29)"
     },
     {
       "page": "ABEIQ",
@@ -160,7 +161,7 @@
       "page": "ABUIN",
       "question": "Do you get money that doesn't come from work?",
       "field": "select_group",
-      "status": "inferred",
+      "status": "confirmed",
       "edges": [
         {
           "whenAnswer": "Yes",
@@ -172,7 +173,8 @@
         }
       ],
       "eligibility_critical": false,
-      "notes": "non-work income (support/unemployment/gov aid/disability/pension/etc.); detail sub-form not walked. radio name=select_group reused elsewhere — key on page+label."
+      "notes": "non-work income (support/unemployment/gov aid/disability/pension/etc.); detail sub-form not walked. radio name=select_group reused elsewhere — key on page+label.",
+      "detail_forms_ref": "DETAIL-FORMS-AND-EXPLAINERS.md (operator-pasted 2026-05-29)"
     },
     {
       "page": "ABCIB",
