@@ -27,10 +27,10 @@ export default function ObbbaTimeline({
       badge: "In effect",
       urgency: "FY2025 — 4 provisions",
       isDone: true,
-      borderColor: "#C9922A",
-      headingColor: "#C9922A",
+      borderColor: "var(--color-amber)",
+      headingColor: "var(--color-amber)",
       badgeBg: "rgba(201,146,42,0.10)",
-      badgeColor: "#C9922A",
+      badgeColor: "var(--color-amber)",
       provisions: provisions.filter(
         (p) => new Date(p.deadlineIso) < new Date("2026-01-01")
       ),
@@ -41,10 +41,10 @@ export default function ObbbaTimeline({
       badge: "~5 months out",
       urgency: "2 provisions incoming",
       isDone: false,
-      borderColor: "#9A5A14",
-      headingColor: "#9A5A14",
+      borderColor: "var(--color-amber-dark)",
+      headingColor: "var(--color-amber-dark)",
       badgeBg: "rgba(154,90,20,0.10)",
-      badgeColor: "#9A5A14",
+      badgeColor: "var(--color-amber-dark)",
       provisions: provisions.filter((p) => {
         const d = new Date(p.deadlineIso);
         return d >= new Date("2026-01-01") && d < new Date("2027-01-01");
@@ -56,10 +56,10 @@ export default function ObbbaTimeline({
       badge: "Deadline Sep 2028",
       urgency: "1 provision — largest exposure",
       isDone: false,
-      borderColor: "#9A5A14",
-      headingColor: "#9A5A14",
+      borderColor: "var(--color-amber-dark)",
+      headingColor: "var(--color-amber-dark)",
       badgeBg: "rgba(154,90,20,0.08)",
-      badgeColor: "#9A5A14",
+      badgeColor: "var(--color-amber-dark)",
       provisions: provisions.filter(
         (p) => new Date(p.deadlineIso) >= new Date("2027-01-01")
       ),
@@ -68,7 +68,7 @@ export default function ObbbaTimeline({
 
   return (
     <div className="mb-7 pb-6 border-b border-hairline">
-      <p className="text-[10px] uppercase tracking-[0.14em] font-semibold text-muted mb-4">
+      <p className="text-[10px] uppercase tracking-[0.14em] font-semibold text-graphite mb-4">
         Implementation timeline · 7 provisions · FY2025 → FY2028
       </p>
 

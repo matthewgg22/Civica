@@ -19,13 +19,13 @@ export default function DistressOverlayPanel({ data }: { data: DistressOverlayDa
       <div className="flex items-start justify-between gap-4 mb-4">
         <div>
           <p className="eyebrow mb-1 text-pine">Panel 12 · Compliance · Distress honor flag</p>
-          <h3 className="text-[18px] font-bold tracking-tight text-ink">Withheld from monetization</h3>
+          <h2 className="text-[18px] font-bold tracking-tight text-ink">Withheld from monetization</h2>
           <p className="text-[12px] text-graphite mt-1">
             Distress-flagged HHs are excluded from every monetization line ·
             past {data.flag_window_days} days
           </p>
         </div>
-        <span className="text-[10px] font-mono text-muted uppercase tracking-wider whitespace-nowrap">
+        <span className="text-[10px] font-mono text-graphite uppercase tracking-wider whitespace-nowrap">
           County-bucketed · no user IDs (D13)
         </span>
       </div>
@@ -111,7 +111,7 @@ function ActiveFlagsBlock({
 }) {
   return (
     <div className="flex flex-col justify-center px-5 py-4 border border-hairline rounded-[4px] bg-paper min-w-[180px]">
-      <p className="text-[10px] font-semibold uppercase tracking-wider text-muted mb-1">
+      <p className="text-[10px] font-semibold uppercase tracking-wider text-graphite mb-1">
         Active distress flags
       </p>
       <p className="text-[36px] font-bold tabular-nums leading-none text-ink">
@@ -134,13 +134,13 @@ function WithholdTable({
       <table className="w-full">
         <thead>
           <tr className="bg-paper">
-            <th className="text-left text-[10px] font-semibold uppercase tracking-wider text-muted px-3 py-2">
+            <th className="text-left text-[10px] font-semibold uppercase tracking-wider text-graphite px-3 py-2">
               Monetization line
             </th>
-            <th className="text-right text-[10px] font-semibold uppercase tracking-wider text-muted px-3 py-2">
+            <th className="text-right text-[10px] font-semibold uppercase tracking-wider text-graphite px-3 py-2">
               Withheld
             </th>
-            <th className="text-left text-[10px] font-semibold uppercase tracking-wider text-muted px-3 py-2 w-28">
+            <th className="text-left text-[10px] font-semibold uppercase tracking-wider text-graphite px-3 py-2 w-28">
               Unit
             </th>
           </tr>
@@ -165,7 +165,7 @@ function WithholdTable({
                       {row.line_label}
                     </span>
                     {isPlaceholder && (
-                      <span className="text-[10px] font-mono uppercase tracking-wider text-muted">
+                      <span className="text-[10px] font-mono uppercase tracking-wider text-graphite">
                         not live
                       </span>
                     )}
@@ -196,10 +196,10 @@ function RecentEventsStrip({
   return (
     <div className="pt-4 border-t border-hairline">
       <div className="flex items-baseline justify-between mb-2">
-        <p className="text-[10px] font-semibold uppercase tracking-wider text-muted">
+        <p className="text-[10px] font-semibold uppercase tracking-wider text-graphite">
           Recent distress flags raised
         </p>
-        <p className="text-[10px] font-mono text-muted">
+        <p className="text-[10px] font-mono text-graphite">
           last {events.length} · county only
         </p>
       </div>

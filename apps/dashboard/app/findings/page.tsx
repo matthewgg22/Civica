@@ -131,6 +131,29 @@ export default function FindingsIndex() {
       </Link>
 
       {/* ----------------------------------------------------------------- */}
+      {/* Retention readout — the renewal side, from CA CF-18 churn data.    */}
+      {/* ----------------------------------------------------------------- */}
+      <Link
+        href="/findings/retention"
+        className="group mb-12 block rounded-lg border border-pine/25 bg-pine/[0.04] p-5 transition hover:border-pine/40 hover:bg-pine/[0.07]"
+      >
+        <p className="text-xs font-semibold uppercase tracking-wider text-pine">
+          Retention readout
+        </p>
+        <h2 className="mt-1.5 text-xl font-semibold text-ink group-hover:text-pine">
+          Where benefits are lost at renewal
+        </h2>
+        <p className="mt-1.5 text-sm leading-relaxed text-graphite">
+          A perfect application is only half the job. Using California&rsquo;s own
+          CF-18 churn data, where eligible families lose CalFresh at renewal — and
+          why an 8× county gap makes it an operational problem, not a policy one.
+        </p>
+        <span className="mt-2 inline-block text-sm font-medium text-pine">
+          View the page →
+        </span>
+      </Link>
+
+      {/* ----------------------------------------------------------------- */}
       {/* Empty state — should never happen in practice, but guard for it.  */}
       {/* ----------------------------------------------------------------- */}
       {total === 0 && (

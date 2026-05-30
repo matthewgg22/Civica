@@ -16,6 +16,7 @@
 // in JS, no DB). The 58 CA county slugs are pre-rendered via
 // generateStaticParams so every URL maps to a static page.
 
+import KpiCard from "../../../../components/KpiCard";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -117,7 +118,7 @@ export default async function CountyCompliancePage({
               </p>
             </div>
           </Link>
-          <p className="text-[10px] text-muted font-mono tracking-wide">
+          <p className="text-[10px] text-graphite font-mono tracking-wide">
             Public · §10105 measurement window FY2026–FY2028
           </p>
         </div>
@@ -125,7 +126,7 @@ export default async function CountyCompliancePage({
         {/* Header card — eyebrow + H1 + subtitle. Mirrors the /cdss header
             structure but tuned for a per-county artifact. */}
         <header className="rounded-[4px] border border-hairline bg-paper p-7">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted mb-1.5">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-graphite mb-1.5">
             Civica · Compliance brief · {county.displayName}
           </p>
           <h1 className="text-[28px] font-bold tracking-tight text-ink leading-tight">
@@ -137,7 +138,7 @@ export default async function CountyCompliancePage({
             CDSS CF 296 application volume (Jul 2025 – Feb 2026, 8-month
             rolling).
           </p>
-          <p className="text-[11px] text-muted font-mono tracking-wide mt-3">
+          <p className="text-[11px] text-graphite font-mono tracking-wide mt-3">
             {county.displayName} · rank {overallRank} of {totalCounties}{" "}
             by estimated exposure
           </p>
@@ -245,7 +246,7 @@ export default async function CountyCompliancePage({
                   </tbody>
                 </table>
               </div>
-              <p className="text-[11px] text-muted mt-2 leading-relaxed">
+              <p className="text-[11px] text-graphite mt-2 leading-relaxed">
                 {county.displayName} ranks {overallRank} of {totalCounties}{" "}
                 statewide — outside the top 20 above, included here so the
                 brief reads cleanly.
@@ -333,7 +334,7 @@ export default async function CountyCompliancePage({
           </div>
         </section>
 
-        <footer className="border-t border-hairline pt-5 pb-2 flex justify-between items-center text-[11px] text-muted font-mono tracking-wide">
+        <footer className="border-t border-hairline pt-5 pb-2 flex justify-between items-center text-[11px] text-graphite font-mono tracking-wide">
           <span>
             Civica · compliance brief · {county.displayName} · public
           </span>
@@ -350,45 +351,4 @@ export default async function CountyCompliancePage({
   );
 }
 
-// ---------------------------------------------------------------------------
-// KPI card — matches the /cdss KpiCard footprint so the brief reads as a
-// natural per-county slice of the same dashboard.
-// ---------------------------------------------------------------------------
-function KpiCard({
-  label,
-  value,
-  subtext,
-  variant,
-}: {
-  label: string;
-  value: string;
-  subtext: string;
-  variant: "neutral" | "warning";
-}) {
-  const accentColor =
-    variant === "warning" ? "var(--color-warning)" : "var(--color-ink)";
-  const borderStyle =
-    variant === "warning"
-      ? { borderColor: "color-mix(in srgb, var(--color-warning) 30%, transparent)" }
-      : {};
-
-  return (
-    <div
-      className="bg-surface rounded-[4px] border border-hairline p-5"
-      style={borderStyle}
-    >
-      <p className="text-[11px] font-semibold uppercase tracking-wider text-muted">
-        {label}
-      </p>
-      <p
-        className="text-3xl font-semibold tabular-nums mt-2 leading-none"
-        style={{ color: accentColor }}
-      >
-        {value}
-      </p>
-      <p className="text-[12px] text-graphite mt-1.5 leading-relaxed">
-        {subtext}
-      </p>
-    </div>
-  );
-}
+// KpiCard extracted to ../../../../components/KpiCard.tsx (T10).

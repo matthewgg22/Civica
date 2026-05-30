@@ -7,7 +7,7 @@ import type { DataSourceStatus, PublicDataSource } from "../../lib/analytics/obb
 const STATUS_META: Record<DataSourceStatus, { color: string; bg: string }> = {
   Live:            { color: "#2D5A45", bg: "rgba(45,90,69,0.10)" },   // pine — operational/active
   Static:          { color: "#5A544D", bg: "rgba(90,84,77,0.10)" },
-  "Planned FOIA":  { color: "#9A5A14", bg: "rgba(154,90,20,0.10)" }, // amber-brown — pending/cautionary (correct)
+  "Planned FOIA":  { color: "var(--color-amber-dark)", bg: "rgba(154,90,20,0.10)" }, // amber-brown — pending/cautionary (correct)
 };
 
 export default function DataSourcesPanel({
@@ -42,16 +42,16 @@ export default function DataSourcesPanel({
         <table className="w-full text-[13px] border-collapse">
           <thead>
             <tr className="border-b border-hairline">
-              <th className="text-left text-[11px] text-muted uppercase tracking-wider font-semibold pb-2 pr-4">
+              <th className="text-left text-[11px] text-graphite uppercase tracking-wider font-semibold pb-2 pr-4">
                 Source
               </th>
-              <th className="text-left text-[11px] text-muted uppercase tracking-wider font-semibold pb-2 pr-4">
+              <th className="text-left text-[11px] text-graphite uppercase tracking-wider font-semibold pb-2 pr-4">
                 Notes
               </th>
-              <th className="text-left text-[11px] text-muted uppercase tracking-wider font-semibold pb-2 pr-4 w-[140px]">
+              <th className="text-left text-[11px] text-graphite uppercase tracking-wider font-semibold pb-2 pr-4 w-[140px]">
                 Last refreshed
               </th>
-              <th className="text-left text-[11px] text-muted uppercase tracking-wider font-semibold pb-2 w-[140px]">
+              <th className="text-left text-[11px] text-graphite uppercase tracking-wider font-semibold pb-2 w-[140px]">
                 Status
               </th>
             </tr>

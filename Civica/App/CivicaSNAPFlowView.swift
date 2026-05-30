@@ -36,13 +36,13 @@ struct CivicaSNAPFlowView: View {
     /// explains "this is your recert" and primes any future per-step
     /// copy adjustments. Status-store advancement on completion also
     /// clears the recert-in-progress flag at the root.
-    @AppStorage("co.civica.recertInProgress")
+    @AppStorage(CivicaAppStorageKeys.recertInProgress)
     private var isRecertInProgress: Bool = false
 
     /// One-time first-entry buddy modal flag. Auto-presents the buddy
     /// 3-panel intro the very first time a user opens the apply flow;
     /// after dismissal the banner stays as the persistent re-entry path.
-    @AppStorage("co.civica.buddy.hasSeenApplyIntro")
+    @AppStorage(CivicaAppStorageKeys.buddyHasSeenApplyIntro)
     private var hasSeenBuddyIntro: Bool = false
     @State private var showingBuddyIntro: Bool = false
 
@@ -50,9 +50,9 @@ struct CivicaSNAPFlowView: View {
     /// yet. Set by the dummy invite form so the banner and the modal
     /// can render an invited state until backend wire-up replaces this
     /// with the real /buddy/invite response.
-    @AppStorage("co.civica.buddy.name")
+    @AppStorage(CivicaAppStorageKeys.buddyName)
     private var buddyName: String = ""
-    @AppStorage("co.civica.buddy.contact")
+    @AppStorage(CivicaAppStorageKeys.buddyContact)
     private var buddyContact: String = ""
 
     let language: CivicaLanguage
@@ -187,7 +187,8 @@ struct CivicaSNAPFlowView: View {
         } label: {
             HStack(alignment: .center, spacing: CivicaSpacing.sm) {
                 Image(systemName: buddyName.isEmpty ? "person.2.fill" : "person.2.badge.gearshape.fill")
-                    .font(.system(size: 18, weight: .semibold))
+                    .imageScale(.large)
+                    .font(.body)
                     .foregroundStyle(CivicaColors.pinePrimary)
                     .frame(width: 36, height: 36)
                     .background(
@@ -196,7 +197,8 @@ struct CivicaSNAPFlowView: View {
                     .overlay(alignment: .topTrailing) {
                         if !buddyName.isEmpty {
                             Image(systemName: "checkmark.circle.fill")
-                                .font(.system(size: 14, weight: .bold))
+                                .imageScale(.large)
+                                .font(.body)
                                 .foregroundStyle(CivicaColors.pinePrimary)
                                 .background(Circle().fill(CivicaColors.pineSurface))
                                 .offset(x: 4, y: -2)
@@ -218,7 +220,8 @@ struct CivicaSNAPFlowView: View {
                 }
                 Spacer(minLength: CivicaSpacing.sm)
                 Image(systemName: "chevron.right")
-                    .font(.system(size: 13, weight: .semibold))
+                    .imageScale(.large)
+                    .font(.body)
                     .foregroundStyle(CivicaColors.graphite)
                     .accessibilityHidden(true)
             }
@@ -475,7 +478,8 @@ private struct BuddyApplyIntroView: View {
                         dismiss()
                     } label: {
                         Image(systemName: "xmark.circle.fill")
-                            .font(.system(size: 22))
+                            .imageScale(.large)
+                            .font(.body)
                             .foregroundStyle(CivicaColors.graphite.opacity(0.6))
                     }
                     .accessibilityLabel("Close")
@@ -504,7 +508,8 @@ private struct BuddyApplyIntroView: View {
         VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
             HStack(spacing: CivicaSpacing.md) {
                 Image(systemName: "person.2.fill")
-                    .font(.system(size: 32))
+                    .imageScale(.large)
+                    .font(.body)
                     .foregroundStyle(CivicaColors.pinePrimary)
                     .frame(width: 56, height: 56)
                     .background(
@@ -577,7 +582,8 @@ private struct BuddyApplyIntroView: View {
             VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
                 HStack(spacing: CivicaSpacing.xs) {
                     Image(systemName: icon)
-                        .font(.system(size: 15, weight: .semibold))
+                        .imageScale(.large)
+                        .font(.body)
                         .foregroundStyle(CivicaColors.pinePrimary)
                         .accessibilityHidden(true)
                     Text(title)
@@ -868,7 +874,8 @@ private struct BuddyInviteSentView: View {
     private var successHeader: some View {
         VStack(alignment: .leading, spacing: CivicaSpacing.md) {
             Image(systemName: "checkmark.seal.fill")
-                .font(.system(size: 44))
+                .imageScale(.large)
+                .font(.body)
                 .foregroundStyle(CivicaColors.pinePrimary)
                 .accessibilityHidden(true)
             Text(CivicaSNAPFlowStrings.buddyInviteSentTitle(name: buddyName, language: language))

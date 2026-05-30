@@ -143,7 +143,8 @@ struct SNAPWhatHappensNextSheet: View {
                 .frame(width: 18, height: 18)
                 .overlay {
                     Image(systemName: "checkmark")
-                        .font(.system(size: 9, weight: .bold))
+                        .imageScale(.large)
+                        .font(.body)
                         .foregroundStyle(CivicaColors.onPrimaryText)
                 }
             Text(label(for: milestone))
@@ -258,7 +259,8 @@ struct SNAPWhatHappensNextSheet: View {
         }) {
             HStack(spacing: CivicaSpacing.md) {
                 Image(systemName: "bubble.left")
-                    .font(.system(size: 22))
+                    .imageScale(.large)
+                    .font(.body)
                     .foregroundStyle(CivicaColors.ink)
                     .accessibilityHidden(true)
                 VStack(alignment: .leading, spacing: 1) {

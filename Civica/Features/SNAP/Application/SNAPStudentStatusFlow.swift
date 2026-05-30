@@ -5,13 +5,15 @@ import SwiftUI
 // (7 CFR 273.5) are real: most enrolled higher-ed students don't
 // qualify unless they meet a specific exception — working 20+ hours
 // a week, doing federal/state work-study, caring for a dependent
-// under 6 (or under 12 with no adequate childcare), etc. The legacy
-// form asks the gating yes/no plus four follow-ups; this flow keeps
-// that exact shape but spreads it across five conversational screens.
+// under 6 (or under 12 with no adequate childcare), participating in
+// an employment & training / student-support program, etc. This flow
+// asks the gating yes/no plus follow-ups, one per conversational screen.
 //
 // Skip logic: if the user is not enrolled in higher ed, screen 1 is
-// the only screen. The four follow-ups (half-time / 20-hr / work-
-// study / dependent-child) only render for enrolled students.
+// the only screen. The follow-ups (half-time / CA-LPIE degree program /
+// 20-hr / work-study / dependent-child / job-training program) only
+// render for enrolled students; the CA LPIE fast-path can short-circuit
+// before the federal exception screens.
 
 struct SNAPStudentStatusAnswers: Equatable, Codable {
     var enrolledInHigherEd: Bool?
@@ -26,6 +28,16 @@ struct SNAPStudentStatusAnswers: Equatable, Codable {
     /// CAStateRules.studentExemption returns .exempted(reason: .lpie)
     /// without consulting the federal 5-path checklist.
     var degreeOrCertificateProgram: Bool?
+    /// True when the applicant participates in a federal or state
+    /// employment & training or student-support program: SNAP E&T, WIOA,
+    /// on-the-job training, or a state program (CA EOPS/CARE, CalWORKs/
+    /// Cal Grant work component, career/adult-ed pathways). A 7 CFR
+    /// 273.5(b) student exemption the intake previously didn't ask — so
+    /// these students were wrongly screened as disqualified. The state's
+    /// BenefitsCal application surfaces these on its student checklist;
+    /// Civica's own InterviewCoach already documents them. See
+    /// PARITY-AUDIT.md Gap 1.
+    var inApprovedJobProgram: Bool?
 }
 
 @MainActor
@@ -41,6 +53,10 @@ final class SNAPStudentStatusFlowViewModel: ObservableObject {
         case twentyHours
         case workStudy
         case dependentChild
+        // Employment & training / student-support program exemption
+        // (SNAP E&T, WIOA, CA EOPS/CARE, CalWORKs/Cal Grant, etc.).
+        // Last federal screen; LPIE short-circuits before it.
+        case jobProgram
 
         var oneBasedIndex: Int { rawValue + 1 }
         static let total = Self.allCases.count
@@ -114,6 +130,7 @@ final class SNAPStudentStatusFlowViewModel: ObservableObject {
         case .twentyHours:    return answers.works20PlusHours != nil
         case .workStudy:      return answers.inWorkStudy != nil
         case .dependentChild: return answers.responsibleForDependentChild != nil
+        case .jobProgram:     return answers.inApprovedJobProgram != nil
         }
     }
 
@@ -126,7 +143,7 @@ final class SNAPStudentStatusFlowViewModel: ObservableObject {
             return true
         }
         // degreeProgram can be last if LPIE fires (handled in advance()).
-        return step == .dependentChild
+        return step == .jobProgram
     }
 
     /// True when the LPIE exemption would fire on the current answers.
@@ -167,14 +184,14 @@ struct SNAPStudentStatusFlowView: View {
         currentScreen
             .id(viewModel.step)
             .transition(.opacity.animation(.easeInOut(duration: 0.18)))
-            .animation(.easeInOut(duration: 0.18), value: viewModel.step)
+            .civicaAnimation(.easeInOut(duration: 0.18), value: viewModel.step)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button {
                         if viewModel.isAtFirstStep {
                             onExit()
                         } else {
-                            withAnimation(.easeInOut(duration: 0.18)) { viewModel.goBack() }
+                            civicaWithAnimation(.easeInOut(duration: 0.18)) { viewModel.goBack() }
                         }
                     } label: {
                         Image(systemName: viewModel.isAtFirstStep ? "xmark" : "chevron.left")
@@ -197,6 +214,7 @@ struct SNAPStudentStatusFlowView: View {
         case .twentyHours:    twentyHoursScreen
         case .workStudy:      workStudyScreen
         case .dependentChild: dependentChildScreen
+        case .jobProgram:     jobProgramScreen
         }
     }
 
@@ -326,6 +344,18 @@ struct SNAPStudentStatusFlowView: View {
         )
     }
 
+    private var jobProgramScreen: some View {
+        yesNoScreen(
+            step: .jobProgram,
+            title: SNAPStudentStatusStrings.jobProgramTitle.value(in: language),
+            helper: SNAPStudentStatusStrings.jobProgramHelper.value(in: language),
+            value: Binding(
+                get: { viewModel.answers.inApprovedJobProgram },
+                set: { viewModel.answers.inApprovedJobProgram = $0 }
+            )
+        )
+    }
+
     // MARK: - Shared yes/no affordance
 
     private func yesNoScreen(
@@ -358,7 +388,7 @@ struct SNAPStudentStatusFlowView: View {
     }
 
     private func advanceOrComplete() {
-        withAnimation(.easeInOut(duration: 0.18)) {
+        civicaWithAnimation(.easeInOut(duration: 0.18)) {
             if viewModel.isAtFunctionalLastStep {
                 onComplete(viewModel.answers)
             } else {
@@ -418,6 +448,20 @@ enum SNAPStudentStatusStrings {
     static let dependentChildHelper = CivicaText(
         "Caring for a child under 6 is a SNAP student exception. Caring for a child under 12 may also qualify if you can't find adequate childcare.",
         es: "Cuidar a un menor de 6 años es una excepción estudiantil de SNAP. Cuidar a un menor de 12 años también puede calificar si no encuentras cuidado infantil adecuado."
+    )
+
+    // Employment & training / student-support program exemption
+    // (7 CFR 273.5(b)). Program list ported from Civica's own
+    // InterviewCoach guidance (InterviewQuestions_CA.json) and the
+    // state's BenefitsCal student checklist. Captures the exemption
+    // paths the intake previously missed (PARITY-AUDIT.md Gap 1).
+    static let jobProgramTitle = CivicaText(
+        "Are you in a job-training or college support program?",
+        es: "¿Estás en un programa de capacitación laboral o de apoyo estudiantil?"
+    )
+    static let jobProgramHelper = CivicaText(
+        "This includes SNAP Employment & Training (E&T), WIOA, on-the-job training, EOPS or CARE, CalWORKs welfare-to-work, or a Cal Grant work component. Any of these counts as a SNAP student exception, even part-time.",
+        es: "Esto incluye Empleo y Capacitación de SNAP (E&T), WIOA, capacitación en el trabajo, EOPS o CARE, el programa welfare-to-work de CalWORKs, o un componente laboral de Cal Grant. Cualquiera de estos cuenta como excepción estudiantil de SNAP, incluso de medio tiempo."
     )
 
     // MARK: - CA LPIE strings (Session A)

@@ -330,7 +330,7 @@ export default function CommandPalette() {
           <div className="max-h-[60vh] overflow-y-auto py-1.5">
             {grouped.map((group) => (
               <div key={group.group} className="px-1.5 pb-1">
-                <p className="px-3 pt-2 pb-1 text-[11px] uppercase tracking-wider font-semibold text-muted">
+                <p className="px-3 pt-2 pb-1 text-[11px] uppercase tracking-wider font-semibold text-graphite">
                   {group.group}
                 </p>
                 {group.items.map(({ cmd, idx }) => {
@@ -360,10 +360,10 @@ export default function CommandPalette() {
                       <span className="truncate">{cmd.label}</span>
                       <span className="flex items-center gap-2 shrink-0">
                         {cmd.hint && (
-                          <span className="text-[11px] text-muted">{cmd.hint}</span>
+                          <span className="text-[11px] text-graphite">{cmd.hint}</span>
                         )}
                         {cmd.shortcut && (
-                          <kbd className="text-[10px] font-mono text-muted bg-paper border border-hairline rounded px-1.5 py-0.5">
+                          <kbd className="text-[10px] font-mono text-graphite bg-paper border border-hairline rounded px-1.5 py-0.5">
                             {cmd.shortcut}
                           </kbd>
                         )}
@@ -376,7 +376,7 @@ export default function CommandPalette() {
           </div>
         )}
 
-        <div className="border-t border-hairline px-4 py-2 flex items-center justify-between text-[11px] text-muted">
+        <div className="border-t border-hairline px-4 py-2 flex items-center justify-between text-[11px] text-graphite">
           <span>
             <kbd className="font-mono bg-paper border border-hairline rounded px-1 py-0.5">↑↓</kbd> navigate
             <span className="mx-2">·</span>

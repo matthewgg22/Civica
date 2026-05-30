@@ -65,7 +65,7 @@ export default function OutreachWelcomeBanner() {
       >
         ×
       </button>
-      <p className="text-[11px] font-semibold uppercase tracking-widest text-muted mb-2">
+      <p className="text-[11px] font-semibold uppercase tracking-widest text-graphite mb-2">
         How this queue works
       </p>
       <p className="text-[14px] text-ink leading-relaxed pr-6">

@@ -1,3 +1,4 @@
+import CivicaDesignSystem
 import SwiftUI
 
 /// Screen 05 — Post-placement update (quiet competence).
@@ -37,7 +38,7 @@ struct SNAPPlacementUpdateView: View {
         .navigationBarTitleDisplayMode(.inline)
         .onAppear {
             // 300ms ease-out fill — only on first appearance
-            withAnimation(.easeOut(duration: 0.3)) {
+            civicaWithAnimation(.easeOut(duration: 0.3)) {
                 barProgress = vm.obbbaProgress
             }
         }

@@ -141,12 +141,12 @@ export default function IncomingDataFeed({ packets }: IncomingDataFeedProps) {
           <p className="eyebrow mb-1">
             Incoming data feed · per-applicant signal feeding the formula
           </p>
-          <h3
+          <h2
             id="data-feed-title"
             className="text-[16px] font-semibold tracking-tight text-ink leading-tight"
           >
             Last {Math.min(packets.length, 20)} packets · engagement vector + per-packet realization
-          </h3>
+          </h2>
           <p className="text-[12px] text-graphite mt-1 max-w-2xl leading-snug">
             Each row is one applicant&apos;s contribution to the engagement
             realization gap. Filter to{" "}
@@ -154,7 +154,7 @@ export default function IncomingDataFeed({ packets }: IncomingDataFeedProps) {
             isolate the cohort the projection is calibrated against.
           </p>
         </div>
-        <span className="text-[11px] text-muted font-mono tracking-wide shrink-0">
+        <span className="text-[11px] text-graphite font-mono tracking-wide shrink-0">
           n = {packets.length} packets
         </span>
       </div>
@@ -233,7 +233,7 @@ function FeedRow({ packet: p }: { packet: FeedPacket }) {
         <p className="font-mono text-[11px] font-semibold text-ink tracking-wide truncate">
           {p.packetId.slice(0, 8)}
         </p>
-        <p className="text-[10px] text-muted">{p.applicantInitials}</p>
+        <p className="text-[10px] text-graphite">{p.applicantInitials}</p>
       </div>
 
       {/* Engagement vector pills */}
@@ -266,7 +266,7 @@ function FeedRow({ packet: p }: { packet: FeedPacket }) {
             {gap >= 0 ? "+" : ""}
             {gap.toFixed(2)} pts
           </span>
-          <span className="text-[10px] text-muted">vs thesis</span>
+          <span className="text-[10px] text-graphite">vs thesis</span>
         </div>
         <p className="text-[10px] text-graphite leading-snug mt-0.5 truncate">
           {whatWouldClose(p)}

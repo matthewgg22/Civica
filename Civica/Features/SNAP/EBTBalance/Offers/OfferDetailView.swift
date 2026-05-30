@@ -76,6 +76,7 @@ struct OfferDetailView: View {
                     Image(systemName: "chevron.left")
                         .foregroundStyle(CivicaColors.ink)
                 }
+                .accessibilityLabel(language == .english ? "Back" : "Atrás")
             }
         }
     }
@@ -85,7 +86,7 @@ struct OfferDetailView: View {
     private var headerBlock: some View {
         VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
             Text(offer.name)
-                .font(.system(size: 28, weight: .semibold))
+                .font(CivicaTypography.pageTitle)
                 .foregroundStyle(CivicaColors.ink)
                 .fixedSize(horizontal: false, vertical: true)
         }
@@ -123,6 +124,7 @@ struct OfferDetailView: View {
                     .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
             }
             .buttonStyle(.plain)
+            .accessibilityLabel(EBTOffersStrings.offerGetDirectionsCTA.value(in: language))
             .accessibilityHint("Opens the partner's location in Maps")
         }
     }

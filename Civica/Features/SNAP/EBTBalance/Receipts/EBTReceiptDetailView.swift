@@ -65,7 +65,8 @@ struct EBTReceiptDetailView: View {
             .frame(height: 180)
             .overlay(
                 Image(systemName: systemName)
-                    .font(.system(size: 36))
+                    .imageScale(.large)
+                    .font(.body)
                     .foregroundStyle(CivicaColors.graphite)
             )
     }
@@ -163,6 +164,7 @@ struct EBTReceiptDetailView: View {
                     }
                     .font(CivicaTypography.footnote)
                     .foregroundStyle(CivicaColors.brickAccent)
+                    .accessibilityLabel(EBTReceiptStrings.unlinkButton.value(in: language))
                 }
             } else {
                 Text(EBTReceiptStrings.noTransactionLinked.value(in: language))

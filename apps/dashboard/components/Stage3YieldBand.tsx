@@ -78,7 +78,7 @@ export default function Stage3YieldBand({ totals, callouts, enrolledHouseholdCou
             Where the post-issuance moat shows up in this cohort: which households are redeeming Civica RMN offers, which logged ABAWD hours into the Marketplace, and which entered the D-SNP broker funnel.
           </p>
         </div>
-        <span className="text-[11px] text-muted tabular-nums shrink-0">
+        <span className="text-[11px] text-graphite tabular-nums shrink-0">
           {monetizedHouseholdCount} of {enrolledHouseholdCount} monetized ({monetizedPctOfEnrolled}%)
         </span>
       </div>
@@ -94,7 +94,7 @@ export default function Stage3YieldBand({ totals, callouts, enrolledHouseholdCou
           <p className="text-[12px] text-graphite mt-2 leading-snug max-w-[210px]">
             recurring yield per <span className="font-semibold text-ink">monetized</span> household / month
           </p>
-          <p className="text-[11px] text-muted mt-1 tabular-nums">
+          <p className="text-[11px] text-graphite mt-1 tabular-nums">
             {fmtUSD(recurringYield, 2)} recurring · {fmtUSD(totalYieldIncludingOneTime, 2)} with D-SNP
           </p>
         </div>
@@ -149,13 +149,13 @@ export default function Stage3YieldBand({ totals, callouts, enrolledHouseholdCou
             </p>
           )}
           {dsnpUntransferred.length > 0 && (
-            <p className="text-[11px] text-muted leading-snug pl-12">
+            <p className="text-[11px] text-graphite leading-snug pl-12">
               Cohort-eligible, not yet fired: <span className="font-medium text-graphite">{fmtNameList(dsnpUntransferred, 4)}</span>
               <span className="ml-1 italic">— iOS prompt pending</span>
             </p>
           )}
         </div>
-        <span className="text-[10px] text-muted uppercase tracking-wider font-semibold shrink-0">one-time per household</span>
+        <span className="text-[10px] text-graphite uppercase tracking-wider font-semibold shrink-0">one-time per household</span>
       </div>
 
       {/* ABAWD compliance callout — ties Stage 3 workforce stream back to the

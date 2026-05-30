@@ -197,17 +197,17 @@ export default function ShelterAllocationPanel({
 
   // ── Edit / create form ────────────────────────────────────────────────────
   return (
-    <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 space-y-4">
+    <div className="rounded-lg border border-amber/30 bg-amber/10 p-4 space-y-4">
       <div className="flex items-center gap-2">
-        <span className="text-amber-700 font-semibold text-sm">
+        <span className="text-amber-dark font-semibold text-sm">
           {existing ? "Edit rent allocation" : "Resolve shared lease — set rent allocation"}
         </span>
-        <span className="px-2 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-800">
+        <span className="px-2 py-0.5 rounded text-xs font-medium bg-amber/20 text-amber-dark">
           Pending · Weak defensibility
         </span>
       </div>
 
-      <p className="text-xs text-amber-800">
+      <p className="text-xs text-amber-dark">
         The lease lists more tenants than this household. Set the household's actual share of the
         rent so the shelter deduction is calculated correctly. This navigator decision is logged for
         QC audit.

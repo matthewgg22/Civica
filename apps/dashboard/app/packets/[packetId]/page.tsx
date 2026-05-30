@@ -2,6 +2,7 @@ import React, { Suspense } from "react";
 import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import Breadcrumbs from "../../../components/Breadcrumbs";
 import { createServerClientFromCookies } from "../../../lib/supabase";
 import WorkRequirementsSection, { WorkRequirementsSkeleton } from "../../../components/packet-detail/WorkRequirementsSection";
 import NotesSection, { NotesSkeleton } from "../../../components/packet-detail/NotesSection";
@@ -785,6 +786,15 @@ export default async function PacketDetailPage({
   return (
     <div className="min-h-screen bg-paper">
       <header className="bg-surface border-b border-hairline px-8 py-4">
+        <div className="max-w-5xl mx-auto">
+          <Breadcrumbs
+            items={[
+              { label: "Dashboard", href: "/dashboard" },
+              { label: "Applications", href: "/packets" },
+              { label: `#${shortId(packetId)}` },
+            ]}
+          />
+        </div>
         <div className="max-w-5xl mx-auto flex items-center gap-3">
           <Link href="/packets" className="text-[13px] font-semibold text-pine hover:underline">← Applications</Link>
           <span className="text-hairline">·</span>
@@ -875,7 +885,7 @@ export default async function PacketDetailPage({
               <span
                 className="text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-sm"
                 style={{
-                  color: riskRow.tier === "high" ? "#9C3A24" : riskRow.tier === "medium" ? "#9A5A14" : "#2A6F66",
+                  color: riskRow.tier === "high" ? "#9C3A24" : riskRow.tier === "medium" ? "var(--color-amber-dark)" : "#2A6F66",
                   background: riskRow.tier === "high" ? "rgba(156,58,36,0.10)" : riskRow.tier === "medium" ? "rgba(154,90,20,0.10)" : "rgba(42,111,102,0.10)",
                 }}
               >
@@ -1182,7 +1192,7 @@ function RecertBanner({ status, handedOffAt, recert }: { status: string; handedO
               {isOverdue ? `−${Math.abs(daysToRecert)}` : daysToRecert}
               <span className="text-[16px] text-graphite font-normal ml-1">d</span>
             </p>
-            <p className="text-[11px] uppercase tracking-wider text-muted mt-1">
+            <p className="text-[11px] uppercase tracking-wider text-graphite mt-1">
               {isOverdue ? "past recert" : "until recert"}
             </p>
           </div>
@@ -1193,7 +1203,7 @@ function RecertBanner({ status, handedOffAt, recert }: { status: string; handedO
           <div className="h-2 bg-paper rounded-full overflow-hidden">
             <div className={`h-full ${theme.bar} transition-all`} style={{ width: `${pctElapsed}%` }} />
           </div>
-          <div className="flex justify-between text-[10px] text-muted uppercase tracking-wider mt-1.5 font-medium">
+          <div className="flex justify-between text-[10px] text-graphite uppercase tracking-wider mt-1.5 font-medium">
             <span>enrolled</span>
             <span>{pctElapsed.toFixed(0)}% through 12-month cycle</span>
             <span>recert due</span>
@@ -1222,7 +1232,7 @@ function Section({ id, title, count, subtitle, children }: { id?: string; title:
 function MetaRow({ label, value, mono, muted }: { label: string; value: string; mono?: boolean; muted?: boolean }) {
   return (
     <div>
-      <p className="text-[11px] text-muted uppercase tracking-wider font-medium mb-0.5">{label}</p>
+      <p className="text-[11px] text-graphite uppercase tracking-wider font-medium mb-0.5">{label}</p>
       <p className={`text-[15px] ${mono ? "font-mono tabular-nums" : ""} ${muted ? "text-muted italic" : "text-ink"}`}>{value}</p>
     </div>
   );
@@ -1231,7 +1241,7 @@ function MetaRow({ label, value, mono, muted }: { label: string; value: string; 
 function MetaInline({ label, value, mono }: { label: string; value: string; mono?: boolean }) {
   return (
     <span className="inline-flex items-baseline gap-1.5">
-      <span className="text-[11px] uppercase tracking-wider font-semibold text-muted">{label}</span>
+      <span className="text-[11px] uppercase tracking-wider font-semibold text-graphite">{label}</span>
       <span className={`text-ink ${mono ? "font-mono tabular-nums text-[13px]" : "font-medium"}`}>{value}</span>
     </span>
   );
@@ -1338,7 +1348,7 @@ function ReviewStatusCard({
         {/* Pillar subtitle — names the four engine inputs in the same
             vocabulary /qc's FormulaHero uses, so a navigator can trace this
             packet's score back to the aggregate engagement realization gap. */}
-        <p className="text-[11px] text-muted mt-1 leading-snug">
+        <p className="text-[11px] text-graphite mt-1 leading-snug">
           shelter · income · shared-lease · calc
         </p>
         <div className="mt-2 h-1.5 bg-paper rounded-full overflow-hidden">

@@ -45,7 +45,7 @@ import type {
   BrowserDriverFactory,
   BrowserDriver,
   BrowserDriverPage,
-} from '@civica/benefitscal-cbo';
+} from '@civica/benefitscal-cbo/driver';
 
 afterEach(() => {
   vi.resetAllMocks();
@@ -180,6 +180,14 @@ describe('POST /benefitscal/submit/:packetId', () => {
     );
 
     // Wire a mock driver factory so the submitter is invoked.
+    // Locator returned by getByLabel/getByRole — minimal stub matching
+    // BrowserDriverLocator. The submitter chains .click()/.fill() on these.
+    const fakeLocator = {
+      fill: vi.fn().mockResolvedValue(undefined),
+      click: vi.fn().mockResolvedValue(undefined),
+      isVisible: vi.fn().mockResolvedValue(true),
+      textContent: vi.fn().mockResolvedValue(null),
+    };
     const fakePage: BrowserDriverPage = {
       goto: vi.fn().mockResolvedValue(undefined),
       fill: vi.fn().mockResolvedValue(undefined),
@@ -187,6 +195,8 @@ describe('POST /benefitscal/submit/:packetId', () => {
       waitForURL: vi.fn().mockResolvedValue(undefined),
       textContent: vi.fn().mockResolvedValue(null),
       screenshot: vi.fn().mockResolvedValue(null),
+      getByLabel: vi.fn().mockReturnValue(fakeLocator),
+      getByRole: vi.fn().mockReturnValue(fakeLocator),
     };
     const fakeBrowser: BrowserDriver = {
       newPage: vi.fn().mockResolvedValue(fakePage),

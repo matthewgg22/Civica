@@ -131,7 +131,8 @@ struct ExpirationCalendarView: View {
     private func actionRow(action: DocumentExpirationAction) -> some View {
         HStack(spacing: CivicaSpacing.md) {
             Image(systemName: action.reason == .missing ? "doc.badge.plus" : "arrow.triangle.2.circlepath")
-                .font(.system(size: 22))
+                .imageScale(.large)
+                .font(.body)
                 .foregroundStyle(CivicaColors.pinePrimary)
                 .frame(width: 40, height: 40)
                 .background(

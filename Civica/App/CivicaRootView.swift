@@ -10,7 +10,7 @@ import SwiftUI
 // behind the same root.
 
 struct CivicaRootView: View {
-    @AppStorage("co.civica.hasCompletedOnboarding")
+    @AppStorage(CivicaAppStorageKeys.hasCompletedOnboarding)
     private var hasCompletedOnboarding: Bool = false
 
     @AppStorage(CivicaLanguage.defaultStorageKey)
@@ -29,8 +29,22 @@ struct CivicaRootView: View {
     /// flow. Routes them through CivicaSNAPFlowView with the recert
     /// banner instead of the standard recertification intro. Cleared
     /// when packet generation moves status forward to .packetGenerated.
-    @AppStorage("co.civica.recertInProgress")
+    @AppStorage(CivicaAppStorageKeys.recertInProgress)
     private var isRecertInProgress: Bool = false
+
+    /// IA-4 (audit 2026-05-29): presents SNAPSettingsSheet from a gear
+    /// in the nav bar shown on every status surface, so language /
+    /// AI-transparency / sign-out are reachable without first drilling
+    /// into the EBT dashboard.
+    @State private var presentingSettings = false
+
+    /// Drives the returning-user-home "resume" push. Set true by
+    /// SNAPReturningUserHomeView's primary action (for the active-case
+    /// states that `resumesIntoApplicationFlow`) to push CivicaSNAPFlowView
+    /// onto the root NavigationStack — the same way CivicaEntryView's hero
+    /// card enters the flow. Ephemeral @State, not persisted: a resume is
+    /// an in-session navigation, not a launch-time route.
+    @State private var isResumingApplication = false
 
     private var language: CivicaLanguage {
         CivicaLanguage(rawValue: languageRaw) ?? .english
@@ -42,6 +56,28 @@ struct CivicaRootView: View {
                 if hasCompletedOnboarding {
                     NavigationStack {
                         rootSurface
+                            .toolbar {
+                                ToolbarItem(placement: .topBarTrailing) {
+                                    Button {
+                                        presentingSettings = true
+                                    } label: {
+                                        Image(systemName: "gearshape")
+                                            .foregroundStyle(CivicaColors.pinePrimary)
+                                    }
+                                    .accessibilityLabel(
+                                        SNAPSettingsStrings.title.value(in: language)
+                                    )
+                                }
+                            }
+                            // Returning-user-home "resume" push. Attached to
+                            // the stable rootSurface (not the conditional
+                            // .isActiveCase branch) so the destination stays
+                            // registered for the whole NavigationStack — the
+                            // same pattern CivicaSNAPFlowView uses for its own
+                            // verdict / packet pushes.
+                            .navigationDestination(isPresented: $isResumingApplication) {
+                                CivicaSNAPFlowView(language: language)
+                            }
                     }
                     .tint(CivicaColors.pinePrimary)
                     // Single shared status store for everything below the
@@ -54,10 +90,17 @@ struct CivicaRootView: View {
                     .sheet(item: $externalLink) { url in
                         CivicaSafariSheet(url: url)
                     }
+                    .sheet(isPresented: $presentingSettings) {
+                        SNAPSettingsSheet(
+                            languageRaw: $languageRaw,
+                            auth: enrollmentAuth
+                        )
+                    }
                 } else {
                     OnboardingFlowView { chosenLanguage in
                         languageRaw = chosenLanguage.rawValue
-                        withAnimation(.easeInOut(duration: 0.32)) {
+                        // Non-token duration (0.32) intentional — onboarding→root crossfade.
+                        civicaWithAnimation(.easeInOut(duration: 0.32)) {
                             hasCompletedOnboarding = true
                         }
                     }
@@ -114,6 +157,15 @@ struct CivicaRootView: View {
                     },
                     onStartOver: {
                         statusStore.reset()
+                    },
+                    onOpenExternalPortal: {
+                        // IA-5: when AppealabilityService demotes
+                        // Appeal, the primary CTA becomes "Speak with
+                        // a navigator" and routes through the state
+                        // portal — same posture as Phase 2/3.
+                        externalLink = CivicaExternalLinks.applyPortal(
+                            for: SNAPApplicationDraftStore().load()?.draft.whereApplying.stateCode
+                        )
                     }
                 )
             }
@@ -186,10 +238,25 @@ struct CivicaRootView: View {
                 statusStore: statusStore,
                 language: language,
                 onResume: {
-                    // Resume hands off to SNAPEntryView; subsequent
-                    // navigation lands the user back in the conversation
-                    // flow or the application-packet generator depending
-                    // on where they stopped.
+                    // Re-enter the orchestrator, which restores the saved
+                    // section / review / packet step from
+                    // SNAPApplicationDraftStore — the user lands back where
+                    // they stopped (the review surface for .screenerComplete,
+                    // an idempotent re-render of the packet for
+                    // .packetGenerated). Gated on resumesIntoApplicationFlow
+                    // so only the two states that actually render this
+                    // surface's primary button trigger the push.
+                    if statusStore.status.resumesIntoApplicationFlow {
+                        isResumingApplication = true
+                    }
+                },
+                onReRunScreener: {
+                    // IA-6: user lost their eligibility result and chose to
+                    // re-walk the screener. Reset to screenerInProgress so
+                    // the orchestrator starts from the top, then push the
+                    // flow the same way onResume does.
+                    statusStore.advance(to: .screenerInProgress)
+                    isResumingApplication = true
                 },
                 onStartOver: {
                     statusStore.reset()

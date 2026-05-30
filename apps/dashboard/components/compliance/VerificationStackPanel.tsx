@@ -21,7 +21,7 @@ import type {
 
 const TIER_META: Record<VerificationTier, { color: string; bg: string; hint: string }> = {
   Strong:        { color: "#2D5A45", bg: "rgba(45,90,69,0.10)", hint: "third-party data source" },
-  Moderate:      { color: "#B5511E", bg: "rgba(181,81,30,0.10)",  hint: "derived from intake answers" },
+  Moderate:      { color: "var(--color-warning)", bg: "rgba(181,81,30,0.10)",  hint: "derived from intake answers" },
   Weak:          { color: "#9C3A24", bg: "rgba(156,58,36,0.10)",  hint: "applicant self-reports" },
   Discretionary: { color: "#5A544D", bg: "rgba(90,84,77,0.10)",   hint: "navigator judgment" },
 };
@@ -181,7 +181,7 @@ function CoverageMatrix({ tools }: { tools: VerificationTool[] }) {
 
   return (
     <div>
-      <p className="text-[10px] uppercase tracking-[0.13em] font-semibold text-muted mb-3">
+      <p className="text-[10px] uppercase tracking-[0.13em] font-semibold text-graphite mb-3">
         Coverage matrix — all {tools.length} tools by QC audit category
       </p>
       <div className="grid grid-cols-4 gap-3">
@@ -195,7 +195,7 @@ function CoverageMatrix({ tools }: { tools: VerificationTool[] }) {
               <p className="text-[11px] font-semibold text-ink leading-tight">
                 {cat.title}
               </p>
-              <p className="text-[10px] text-muted mt-0.5 leading-snug">
+              <p className="text-[10px] text-graphite mt-0.5 leading-snug">
                 {cat.subtitle}
               </p>
             </div>
@@ -226,7 +226,7 @@ function CoverageMatrix({ tools }: { tools: VerificationTool[] }) {
                           <CohortBadge key={c} cohort={c} />
                         ))}
                       </p>
-                      <p className="text-[10px] text-muted leading-tight mt-0.5">
+                      <p className="text-[10px] text-graphite leading-tight mt-0.5">
                         {tool.tier}{isPlanned ? " · roadmap" : ""}
                       </p>
                     </div>
@@ -253,7 +253,7 @@ function CoverageMatrix({ tools }: { tools: VerificationTool[] }) {
           Civica twelve times this year, not a cold contact. The engagement loop is the moat:
           without it, every other tool in this column ships into a dark inbox.
         </p>
-        <p className="text-[10px] text-muted italic leading-snug mt-2">
+        <p className="text-[10px] text-graphite italic leading-snug mt-2">
           EBT integration is on the roadmap (CA: FIS via ebt.ca.gov pipeline). Interim path:
           user-pasted balance + receipt OCR.
         </p>
@@ -359,9 +359,9 @@ function MockupAnswerUI({ screen }: { screen: MockupScreen }) {
         <div style={{ borderRadius: 3, background: "rgba(181,81,30,0.09)", border: "1px solid rgba(181,81,30,0.22)", padding: "4px 5px" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 2, marginBottom: 2 }}>
             <span style={{ fontSize: 6, lineHeight: 1 }}>⚠</span>
-            <span style={{ fontSize: 5.5, fontWeight: 700, color: "#B5511E" }}>Review required</span>
+            <span style={{ fontSize: 5.5, fontWeight: 700, color: "var(--color-warning)" }}>Review required</span>
           </div>
-          <p style={{ fontSize: 4.5, color: "#B5511E", lineHeight: 1.3, margin: 0 }}>{screen.answer}</p>
+          <p style={{ fontSize: 4.5, color: "var(--color-warning)", lineHeight: 1.3, margin: 0 }}>{screen.answer}</p>
         </div>
       );
     case "checklist":
@@ -488,7 +488,7 @@ function FlagshipStrip({ tools }: { tools: VerificationTool[] }) {
           );
         })}
       </div>
-      <p className="mt-4 text-[11px] text-muted text-center italic">
+      <p className="mt-4 text-[11px] text-graphite text-center italic">
         Same screens run in two modes: applicant-driven on their own phone,
         <span className="text-graphite font-semibold not-italic"> or coordinator-driven on a shared device </span>
         in a campus basic-needs office or senior housing services room.
@@ -504,7 +504,7 @@ function FlagshipStrip({ tools }: { tools: VerificationTool[] }) {
 function TierLegend() {
   return (
     <div className="flex flex-wrap gap-x-5 gap-y-1.5 mb-6 pb-5 border-b border-hairline">
-      <span className="text-[10px] uppercase tracking-[0.12em] font-semibold text-muted self-center mr-1">
+      <span className="text-[10px] uppercase tracking-[0.12em] font-semibold text-graphite self-center mr-1">
         Evidence tiers
       </span>
       {(Object.entries(TIER_META) as [VerificationTier, typeof TIER_META[VerificationTier]][]).map(
@@ -597,7 +597,7 @@ function CohortHeaderStrip() {
   return (
     <div className="mb-6 pb-6 border-b border-hairline">
       <div className="mb-4">
-        <p className="text-[10px] uppercase tracking-[0.13em] font-semibold text-muted mb-1">
+        <p className="text-[10px] uppercase tracking-[0.13em] font-semibold text-graphite mb-1">
           Target users · four cohorts
         </p>
         <h4 className="text-[16px] font-semibold tracking-tight text-ink leading-tight">
@@ -701,18 +701,18 @@ function CohortHeaderStrip() {
 function DistributionMath() {
   return (
     <div className="mt-6 pt-5 border-t border-hairline">
-      <p className="text-[10px] uppercase tracking-[0.13em] font-semibold text-muted mb-3">
+      <p className="text-[10px] uppercase tracking-[0.13em] font-semibold text-graphite mb-3">
         Distribution math · addressable cohort by channel at full California coverage
       </p>
       <div className="rounded-[4px] border border-hairline bg-paper p-4">
         <table className="w-full text-[12px]">
           <thead>
             <tr className="border-b border-hairline">
-              <th className="text-left text-[10px] uppercase tracking-wider font-semibold text-muted pb-2 pr-3">Channel</th>
-              <th className="text-right text-[10px] uppercase tracking-wider font-semibold text-muted pb-2 pr-3">Coordinators</th>
-              <th className="text-right text-[10px] uppercase tracking-wider font-semibold text-muted pb-2 pr-3">Per coordinator / yr</th>
-              <th className="text-right text-[10px] uppercase tracking-wider font-semibold text-muted pb-2 pr-3">≈ Full channel</th>
-              <th className="text-right text-[10px] uppercase tracking-wider font-semibold text-muted pb-2" style={{ color: "#C9922A" }}>5% lift</th>
+              <th className="text-left text-[10px] uppercase tracking-wider font-semibold text-graphite pb-2 pr-3">Channel</th>
+              <th className="text-right text-[10px] uppercase tracking-wider font-semibold text-graphite pb-2 pr-3">Coordinators</th>
+              <th className="text-right text-[10px] uppercase tracking-wider font-semibold text-graphite pb-2 pr-3">Per coordinator / yr</th>
+              <th className="text-right text-[10px] uppercase tracking-wider font-semibold text-graphite pb-2 pr-3">≈ Full channel</th>
+              <th className="text-right text-[10px] uppercase tracking-wider font-semibold text-graphite pb-2" style={{ color: "var(--color-amber)" }}>5% lift</th>
             </tr>
           </thead>
           <tbody>
@@ -720,52 +720,52 @@ function DistributionMath() {
               <td className="py-2.5 pr-3 text-ink">
                 <span className="font-semibold">Campus basic-needs</span>
                 <CohortBadge cohort="students" />
-                <p className="text-[10px] text-muted leading-snug mt-0.5">CCC, UC, CSU — financial aid + basic needs offices</p>
+                <p className="text-[10px] text-graphite leading-snug mt-0.5">CCC, UC, CSU — financial aid + basic needs offices</p>
               </td>
               <td className="py-2.5 pr-3 text-right tabular-nums text-graphite">~115</td>
               <td className="py-2.5 pr-3 text-right tabular-nums text-graphite">~100 students</td>
               <td className="py-2.5 pr-3 text-right tabular-nums text-graphite">~11K</td>
-              <td className="py-2.5 text-right tabular-nums font-semibold" style={{ color: "#C9922A" }}>~550</td>
+              <td className="py-2.5 text-right tabular-nums font-semibold" style={{ color: "var(--color-amber)" }}>~550</td>
             </tr>
             <tr className="border-b border-hairline/50">
               <td className="py-2.5 pr-3 text-ink">
                 <span className="font-semibold">Senior housing services</span>
                 <CohortBadge cohort="elderly" />
-                <p className="text-[10px] text-muted leading-snug mt-0.5">RCFE, HUD Section 202, LIHTC senior — resident services coordinators</p>
+                <p className="text-[10px] text-graphite leading-snug mt-0.5">RCFE, HUD Section 202, LIHTC senior — resident services coordinators</p>
               </td>
               <td className="py-2.5 pr-3 text-right tabular-nums text-graphite">~6,000+</td>
               <td className="py-2.5 pr-3 text-right tabular-nums text-graphite">~75 residents</td>
               <td className="py-2.5 pr-3 text-right tabular-nums text-graphite">~450K</td>
-              <td className="py-2.5 text-right tabular-nums font-semibold" style={{ color: "#C9922A" }}>~22.5K</td>
+              <td className="py-2.5 text-right tabular-nums font-semibold" style={{ color: "var(--color-amber)" }}>~22.5K</td>
             </tr>
             <tr className="border-b border-hairline/50">
               <td className="py-2.5 pr-3 text-ink">
                 <span className="font-semibold">Gig & platform workers</span>
                 <CohortBadge cohort="gig" />
-                <p className="text-[10px] text-muted leading-snug mt-0.5">Uber, DoorDash, Instacart — in-app enrollment at driver/courier onboarding</p>
+                <p className="text-[10px] text-graphite leading-snug mt-0.5">Uber, DoorDash, Instacart — in-app enrollment at driver/courier onboarding</p>
               </td>
               <td className="py-2.5 pr-3 text-right tabular-nums text-graphite">3 platforms</td>
               <td className="py-2.5 pr-3 text-right tabular-nums text-graphite">~17K / platform</td>
               <td className="py-2.5 pr-3 text-right tabular-nums text-graphite">~52K</td>
-              <td className="py-2.5 text-right tabular-nums font-semibold" style={{ color: "#C9922A" }}>~2.6K</td>
+              <td className="py-2.5 text-right tabular-nums font-semibold" style={{ color: "var(--color-amber)" }}>~2.6K</td>
             </tr>
             <tr className="border-b border-hairline/50">
               <td className="py-2.5 pr-3 text-ink">
                 <span className="font-semibold">Home care &amp; agricultural</span>
                 <CohortBadge cohort="labor" />
-                <p className="text-[10px] text-muted leading-snug mt-0.5">SEIU 2015 IHSS stewards + UFW regional organizers — enrollment via union hall</p>
+                <p className="text-[10px] text-graphite leading-snug mt-0.5">SEIU 2015 IHSS stewards + UFW regional organizers — enrollment via union hall</p>
               </td>
               <td className="py-2.5 pr-3 text-right tabular-nums text-graphite">~2,600 stewards</td>
               <td className="py-2.5 pr-3 text-right tabular-nums text-graphite">~12 members</td>
               <td className="py-2.5 pr-3 text-right tabular-nums text-graphite">~31K</td>
-              <td className="py-2.5 text-right tabular-nums font-semibold" style={{ color: "#C9922A" }}>~1.6K</td>
+              <td className="py-2.5 text-right tabular-nums font-semibold" style={{ color: "var(--color-amber)" }}>~1.6K</td>
             </tr>
             <tr className="border-t-2 border-hairline">
-              <td className="pt-2.5 text-[10px] uppercase tracking-wider font-semibold text-muted" colSpan={3}>
+              <td className="pt-2.5 text-[10px] uppercase tracking-wider font-semibold text-graphite" colSpan={3}>
                 Combined addressable cohort
               </td>
               <td className="pt-2.5 pr-3 text-right tabular-nums font-bold text-[#5C1F11] text-[15px]">~544K / yr</td>
-              <td className="pt-2.5 text-right tabular-nums font-bold text-[15px]" style={{ color: "#C9922A" }}>~27K / yr</td>
+              <td className="pt-2.5 text-right tabular-nums font-bold text-[15px]" style={{ color: "var(--color-amber)" }}>~27K / yr</td>
             </tr>
             <tr>
               <td className="text-[10px] text-graphite italic" colSpan={3}>
@@ -780,7 +780,7 @@ function DistributionMath() {
             </tr>
           </tbody>
         </table>
-        <p className="text-[10px] text-muted italic leading-snug mt-3">
+        <p className="text-[10px] text-graphite italic leading-snug mt-3">
           Full channel = coordinator model at saturation. 5% lift = conservative Year 1 capture across all four channels (~27K households, ~$52M/yr household-side). Senior housing is the scale channel; gig + labor are greenfield. Civica&apos;s revenue is a small fraction, paid by the channel partner, never by the household.
         </p>
       </div>
@@ -795,7 +795,7 @@ function DistributionMath() {
 function MonetizationFramework() {
   return (
     <div className="mt-6 pt-5 border-t border-hairline">
-      <p className="text-[10px] uppercase tracking-[0.13em] font-semibold text-muted mb-3">
+      <p className="text-[10px] uppercase tracking-[0.13em] font-semibold text-graphite mb-3">
         How Civica gets paid · plain-English value chain
       </p>
       <div className="rounded-[4px] border border-hairline bg-paper p-5">
@@ -872,7 +872,7 @@ function MonetizationFramework() {
 
           {/* Sources of org funding */}
           <div className="mt-4 pt-4 border-t border-hairline/60">
-            <p className="text-[10px] uppercase tracking-[0.12em] font-semibold text-muted mb-2">
+            <p className="text-[10px] uppercase tracking-[0.12em] font-semibold text-graphite mb-2">
               Where the org gets the money to pay Civica
             </p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -901,7 +901,7 @@ function MonetizationFramework() {
           </div>
         </div>
       </div>
-      <p className="text-[10px] text-muted italic leading-snug mt-3">
+      <p className="text-[10px] text-graphite italic leading-snug mt-3">
         Pricing is structural, not committal — exact rates are partner-by-partner. The model holds:
         Civica costs the org a small fraction of the value the household receives, and Civica scales
         with the partner&apos;s own success metric.

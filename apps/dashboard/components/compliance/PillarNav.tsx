@@ -89,7 +89,7 @@ export default function PillarNav() {
         className="max-w-6xl mx-auto px-8 py-2 flex items-center gap-1 overflow-x-auto snap-x scroll-px-8"
         style={{ scrollbarWidth: "none" }}
       >
-        <span className="text-[10px] uppercase tracking-[0.14em] font-semibold text-muted mr-3 whitespace-nowrap shrink-0">
+        <span className="text-[10px] uppercase tracking-[0.14em] font-semibold text-graphite mr-3 whitespace-nowrap shrink-0">
           Jump to
         </span>
         {PILLARS.map(({ id, label }) => (
@@ -104,7 +104,7 @@ export default function PillarNav() {
             className="px-3 py-1 rounded-full text-[11px] tracking-wide font-semibold transition-colors whitespace-nowrap shrink-0 snap-start"
             style={
               active === id
-                ? { background: "rgba(201,146,42,0.12)", color: "#C9922A" }
+                ? { background: "rgba(201,146,42,0.12)", color: "var(--color-amber)" }
                 : { color: "#6B655C" }
             }
           >

@@ -405,7 +405,7 @@ export default async function OutreachPage() {
                 <section key={bucket}>
                   <div className="flex items-baseline gap-2 mb-1">
                     <p className="eyebrow">{meta.eyebrow}</p>
-                    <span className="text-[11px] font-mono text-muted tabular-nums">
+                    <span className="text-[11px] font-mono text-graphite tabular-nums">
                       {sectionRows.length}
                     </span>
                   </div>

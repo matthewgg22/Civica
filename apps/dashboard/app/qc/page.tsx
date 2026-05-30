@@ -54,9 +54,9 @@ export default async function QCPage() {
         <div className="flex items-end justify-between gap-6 pb-3">
           <div>
             <p className="eyebrow mb-1">QC · Compliance intelligence</p>
-            <h2 className="text-[26px] font-bold tracking-tight leading-none text-ink">
+            <h1 className="text-[26px] font-bold tracking-tight leading-none text-ink">
               Error Rate Intelligence
-            </h2>
+            </h1>
             <p className="text-[13px] text-graphite mt-2 max-w-2xl leading-relaxed">
               How well Civica&apos;s evaluation signals cover the USDA
               payment-error categories, and how navigator-logged QC outcomes
@@ -95,7 +95,7 @@ export default async function QCPage() {
         </Suspense>
       </div>
 
-      <footer className="border-t border-hairline px-8 py-5 flex justify-between items-center text-[11px] text-muted font-mono tracking-wide mt-8">
+      <footer className="border-t border-hairline px-8 py-5 flex justify-between items-center text-[11px] text-graphite font-mono tracking-wide mt-8">
         <span>
           Civica · error-rate intelligence · qc-engine v{ENGINE_VERSION} · live
         </span>

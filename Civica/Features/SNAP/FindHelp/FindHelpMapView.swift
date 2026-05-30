@@ -3,6 +3,7 @@ import CoreLocation
 import MapKit
 import SwiftUI
 
+// MARK: - AccessibilityElement = parent
 struct FindHelpMapView: UIViewRepresentable {
     /// Initial latitudinal/longitudinal span used to center on the
     /// user's location on first mount. 0.3° ≈ a 20-mile diameter at MA

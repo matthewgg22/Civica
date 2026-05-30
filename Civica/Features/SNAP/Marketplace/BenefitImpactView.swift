@@ -63,6 +63,7 @@ struct BenefitImpactView: View {
         }
         .buttonStyle(CivicaPrimaryCTAButtonStyle())
         .accessibilityIdentifier("marketplace.benefit_impact.apply_button")
+        .accessibilityLabel(SNAPMarketplaceStrings.applyViaHandshake.value(in: language))
     }
 
     private var benefitReduction: Decimal {

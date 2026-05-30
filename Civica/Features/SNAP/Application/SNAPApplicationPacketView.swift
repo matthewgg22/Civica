@@ -131,6 +131,7 @@ struct SNAPApplicationPacketView: View {
                 }
                 .font(CivicaTypography.subheadStrong)
                 .foregroundStyle(CivicaColors.pinePrimary)
+                .accessibilityLabel(SNAPApplicationPacketStrings.retry.value(in: language))
             }
             .padding(CivicaSpacing.lg)
             .frame(maxWidth: .infinity, alignment: .leading)

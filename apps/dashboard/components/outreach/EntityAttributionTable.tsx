@@ -28,7 +28,7 @@ export default function EntityAttributionTable({
       <div className="flex items-start justify-between gap-4 mb-4">
         <div>
           <p className="eyebrow mb-1">Active attribution · last 30 days</p>
-          <h3 className="text-[18px] font-bold tracking-tight text-ink">Who&apos;s enrolling individuals through Civica</h3>
+          <h2 className="text-[18px] font-bold tracking-tight text-ink">Who&apos;s enrolling individuals through Civica</h2>
           <p className="text-[12px] text-graphite mt-1">
             {sorted.filter((e) => e.status === "approved").length} approved entities ·
             sorted by this-month volume · attribution recorded at packet-submit time
@@ -46,14 +46,14 @@ export default function EntityAttributionTable({
         <table className="w-full text-[12px]">
           <thead>
             <tr className="text-left">
-              <th className="font-semibold text-muted uppercase tracking-wider text-[10px] pb-2 pr-3">Entity</th>
-              <th className="font-semibold text-muted uppercase tracking-wider text-[10px] pb-2 px-3">Type</th>
-              <th className="font-semibold text-muted uppercase tracking-wider text-[10px] pb-2 px-3">Focus</th>
-              <th className="font-semibold text-muted uppercase tracking-wider text-[10px] pb-2 px-3 text-right">This month</th>
-              <th className="font-semibold text-muted uppercase tracking-wider text-[10px] pb-2 px-3">Volume</th>
-              <th className="font-semibold text-muted uppercase tracking-wider text-[10px] pb-2 px-3 text-right">Cumulative</th>
-              <th className="font-semibold text-muted uppercase tracking-wider text-[10px] pb-2 px-3">Last activity</th>
-              <th className="font-semibold text-muted uppercase tracking-wider text-[10px] pb-2 pl-3">Status</th>
+              <th className="font-semibold text-graphite uppercase tracking-wider text-[10px] pb-2 pr-3">Entity</th>
+              <th className="font-semibold text-graphite uppercase tracking-wider text-[10px] pb-2 px-3">Type</th>
+              <th className="font-semibold text-graphite uppercase tracking-wider text-[10px] pb-2 px-3">Focus</th>
+              <th className="font-semibold text-graphite uppercase tracking-wider text-[10px] pb-2 px-3 text-right">This month</th>
+              <th className="font-semibold text-graphite uppercase tracking-wider text-[10px] pb-2 px-3">Volume</th>
+              <th className="font-semibold text-graphite uppercase tracking-wider text-[10px] pb-2 px-3 text-right">Cumulative</th>
+              <th className="font-semibold text-graphite uppercase tracking-wider text-[10px] pb-2 px-3">Last activity</th>
+              <th className="font-semibold text-graphite uppercase tracking-wider text-[10px] pb-2 pl-3">Status</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-hairline">

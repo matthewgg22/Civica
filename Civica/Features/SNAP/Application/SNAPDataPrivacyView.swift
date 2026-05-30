@@ -207,6 +207,7 @@ struct SNAPDataPrivacyView: View {
                 )
             }
             .buttonStyle(.plain)
+            .accessibilityLabel(SNAPDataPrivacyStrings.downloadCopy.value(in: language))
 
             NavigationLink {
                 SNAPDataDeletionView(language: language)

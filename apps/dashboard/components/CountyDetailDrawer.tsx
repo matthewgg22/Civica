@@ -102,7 +102,7 @@ export default function CountyDetailDrawer({
               <div className="grid grid-cols-5 gap-2">
                 <Metric label="Draft"     value={draft}          accent="text-graphite" bg="bg-paper" />
                 <Metric label="In Prog"   value={inProgress}     accent="text-indigo"   bg="bg-indigo/8" />
-                <Metric label="Attention" value={needsAttention} accent="text-amber"    bg="bg-amber/8" />
+                <Metric label="Attention" value={needsAttention} accent="text-warning" bg="bg-warning/8" />
                 <Metric label="Ready"     value={ready}          accent="text-teal"     bg="bg-teal/8" />
                 <Metric label="Enrolled"  value={enrolled}       accent="text-brick"    bg="bg-brick/8" />
               </div>
@@ -113,7 +113,7 @@ export default function CountyDetailDrawer({
                 <p className="text-[14px] text-muted text-center py-8">No packets in this county yet.</p>
               ) : (
                 <>
-                  <p className="text-[11px] uppercase tracking-wider font-semibold text-muted mb-3">Recent Packets</p>
+                  <p className="text-[11px] uppercase tracking-wider font-semibold text-graphite mb-3">Recent Packets</p>
                   <ul className="divide-y divide-hairline">
                     {packets.slice(0, 8).map((p) => {
                       const name = p.applicants ? firstNameLastInitial(decryptDemoName(p.applicants.full_name_ciphertext)) : "Unknown";
@@ -126,11 +126,11 @@ export default function CountyDetailDrawer({
                             <div className="flex-1 min-w-0">
                               <div className="flex items-baseline gap-2">
                                 <p className="text-[15px] font-semibold text-ink truncate">{name}</p>
-                                <span className="text-[10px] text-muted font-mono tabular-nums shrink-0">{shortId(p.packet_id)}</span>
+                                <span className="text-[10px] text-graphite font-mono tabular-nums shrink-0">{shortId(p.packet_id)}</span>
                               </div>
                               <div className="flex items-center gap-2 mt-1">
                                 <StatusPill status={p.status} />
-                                <span className="text-[11px] text-muted tabular-nums">{timeAgo(p.updated_at)}</span>
+                                <span className="text-[11px] text-graphite tabular-nums">{timeAgo(p.updated_at)}</span>
                               </div>
                             </div>
                             <span className="text-muted text-[18px] shrink-0">›</span>
@@ -171,7 +171,7 @@ export default function CountyDetailDrawer({
 
 const TIER_TONE = {
   high:   { color: "#9C3A24", label: "High",   bg: "rgba(156,58,36,0.10)" },
-  medium: { color: "#9A5A14", label: "Med",    bg: "rgba(154,90,20,0.10)" },
+  medium: { color: "var(--color-amber-dark)", label: "Med",    bg: "rgba(154,90,20,0.10)" },
   low:    { color: "#2A6F66", label: "Low",    bg: "rgba(42,111,102,0.10)" },
 } as const;
 
@@ -216,13 +216,13 @@ function RiskTab({ packets, packetRiskMap }: { packets: CountyPacket[]; packetRi
       {total > 0 && (
         <div className="flex h-2 rounded-full overflow-hidden border border-hairline/50">
           {high > 0   && <div style={{ width: `${(high / total) * 100}%`,   background: "#9C3A24" }} />}
-          {medium > 0 && <div style={{ width: `${(medium / total) * 100}%`, background: "#9A5A14" }} />}
+          {medium > 0 && <div style={{ width: `${(medium / total) * 100}%`, background: "var(--color-amber-dark)" }} />}
           {low > 0    && <div style={{ width: `${(low / total) * 100}%`,    background: "#2A6F66" }} />}
         </div>
       )}
       {topRisk.length > 0 && (
         <div>
-          <p className="text-[11px] uppercase tracking-wider font-semibold text-muted mb-3">High / Medium Risk Packets</p>
+          <p className="text-[11px] uppercase tracking-wider font-semibold text-graphite mb-3">High / Medium Risk Packets</p>
           <ul className="divide-y divide-hairline">
             {topRisk.map((p) => {
               const name = p.applicants ? firstNameLastInitial(decryptDemoName(p.applicants.full_name_ciphertext)) : "Unknown";
@@ -236,7 +236,7 @@ function RiskTab({ packets, packetRiskMap }: { packets: CountyPacket[]; packetRi
                   >
                     <div className="flex-1 min-w-0">
                       <p className="text-[14px] font-semibold text-ink truncate">{name}</p>
-                      <p className="text-[11px] text-muted">{shortId(p.packet_id)}</p>
+                      <p className="text-[11px] text-graphite">{shortId(p.packet_id)}</p>
                     </div>
                     <div className="flex items-baseline gap-1.5 shrink-0">
                       <span className="text-[18px] font-bold tabular-nums" style={{ color: tone.color }}>{p.risk!.score ?? "—"}</span>

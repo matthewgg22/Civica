@@ -41,7 +41,7 @@ export default function OpsHeroStrip({
             Live · scraper freshness ≤30 min · operator console
           </p>
         </div>
-        <span className="text-[10px] font-mono text-muted tabular-nums">
+        <span className="text-[10px] font-mono text-graphite tabular-nums">
           {ebt.latest_balance_at ? `last refresh ${formatRelative(ebt.latest_balance_at)}` : "no refresh yet"}
         </span>
       </div>
@@ -52,7 +52,7 @@ export default function OpsHeroStrip({
       >
         {/* Hero — total balance */}
         <div className="col-span-2 pr-2 border-r border-hairline">
-          <p className="text-[10px] uppercase tracking-[0.18em] font-semibold text-muted mb-2">
+          <p className="text-[10px] uppercase tracking-[0.18em] font-semibold text-graphite mb-2">
             SNAP balance under app
           </p>
           <p className="text-[56px] font-bold tracking-tight text-ink leading-none tabular-nums">
@@ -104,7 +104,7 @@ export default function OpsHeroStrip({
           numbers as projected steady-state, not current run rate. */}
       {isDemoOpsFallbackEnabled() && (
         <div
-          className="px-6 py-2 border-t border-hairline text-[10px] uppercase tracking-[0.16em] font-mono text-muted"
+          className="px-6 py-2 border-t border-hairline text-[10px] uppercase tracking-[0.16em] font-mono text-graphite"
           style={{ backgroundColor: "#DCD9D2" }}
         >
           {DEMO_MARKETSHARE_LABEL}
@@ -127,7 +127,7 @@ function HeroStat({
 }) {
   return (
     <div className="pl-6 pr-2 border-r border-hairline last:border-r-0">
-      <p className="text-[10px] uppercase tracking-[0.18em] font-semibold text-muted mb-2">
+      <p className="text-[10px] uppercase tracking-[0.18em] font-semibold text-graphite mb-2">
         {label}
       </p>
       <p className="text-[28px] font-bold tracking-tight text-ink leading-none tabular-nums">

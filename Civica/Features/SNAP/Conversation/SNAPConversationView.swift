@@ -7,8 +7,17 @@ import SwiftUI
 
 struct SNAPConversationView: View {
     @StateObject var viewModel: SNAPConversationViewModel
+    // IS-5 + UD-3 (audit 2026-05-29): when the screener lands on an
+    // ineligible verdict, SNAPSoftIneligibilityCard surfaces three
+    // next-step rows. The flow view (SNAPConversationFlowView) owns
+    // navigation; the pure conversation view just calls the closures.
+    // All three default to nil so legacy callers / previews compile.
+    var onApplyAnyway: (() -> Void)? = nil
+    var onFindHelp: (() -> Void)? = nil
+    var onOpenStatePortal: (() -> Void)? = nil
     @State private var pendingFreeText: String = ""
     @State private var pendingNumeric: String = ""
+    @State private var bannerDismissed: Bool = false
     @FocusState private var isInputFocused: Bool
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
@@ -17,6 +26,13 @@ struct SNAPConversationView: View {
 
     private var language: CivicaLanguage {
         CivicaLanguage(rawValue: languageRaw) ?? .english
+    }
+
+    private var navigatorPhoneURL: URL? {
+        let number = SNAPAgencyDirectory.helplineNumber(for: viewModel.stateCode)
+        let digits = number.filter(\.isNumber)
+        guard !digits.isEmpty else { return nil }
+        return URL(string: "tel:\(digits)")
     }
 
     var body: some View {
@@ -47,7 +63,7 @@ struct SNAPConversationView: View {
                     if case .terminal(let result) = viewModel.phase, let result {
                         verdictCard(result).id("verdict")
                     }
-                    if case .error(let message) = viewModel.phase {
+                    if case .error(let message) = viewModel.phase, !bannerDismissed {
                         errorBanner(message).id("error")
                     }
                 }
@@ -56,7 +72,12 @@ struct SNAPConversationView: View {
             }
             .onChange(of: viewModel.transcript.count) {
                 if let last = viewModel.transcript.last {
-                    withAnimation(reduceMotion ? nil : .default) { proxy.scrollTo(last.id, anchor: .bottom) }
+                    civicaWithAnimation(.default) { proxy.scrollTo(last.id, anchor: .bottom) }
+                }
+            }
+            .onChange(of: viewModel.phase) { _, newPhase in
+                if case .error = newPhase {
+                    bannerDismissed = false
                 }
             }
         }
@@ -106,7 +127,39 @@ struct SNAPConversationView: View {
         .padding(.vertical, CivicaSpacing.sm)
     }
 
+    @ViewBuilder
     private func verdictCard(_ result: SNAPEligibilityResult) -> some View {
+        // IS-5 + UD-3 (audit 2026-05-29): ineligible verdicts route
+        // into the shared warm soft-ineligibility card with three
+        // explicit next steps. Other statuses keep the prior verdict
+        // card — eligible / eligibleWithConditions / insufficientInformation
+        // all still need the "you'll need these documents" affordance
+        // and the math link.
+        if result.status == .ineligible {
+            SNAPSoftIneligibilityCard(
+                verdictReason: ineligibilityVerdictReason(from: result),
+                language: language,
+                onApplyAnyway: { onApplyAnyway?() },
+                onFindHelp: { onFindHelp?() },
+                onOpenStatePortal: { onOpenStatePortal?() }
+            )
+        } else {
+            eligibleVerdictCard(result)
+        }
+    }
+
+    /// Wraps the conversation engine's `ineligibilityReason` (a plain
+    /// String emitted by the FastAPI backend, language-routed server
+    /// side) into a CivicaText so the shared soft-ineligibility card's
+    /// CivicaText API stays consistent. TODO(copy-review): if the
+    /// engine ever returns separate EN/ES copies, plumb both fields
+    /// here instead of duplicating the active-language string.
+    private func ineligibilityVerdictReason(from result: SNAPEligibilityResult) -> CivicaText {
+        let reason = result.ineligibilityReason ?? verdictHeadline(result)
+        return CivicaText(reason, es: reason)
+    }
+
+    private func eligibleVerdictCard(_ result: SNAPEligibilityResult) -> some View {
         VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
             HStack {
                 Image(systemName: result.status == .eligible ? "checkmark.seal.fill" : "info.circle.fill")
@@ -205,6 +258,14 @@ struct SNAPConversationView: View {
             Text(message)
                 .font(CivicaTypography.subhead)
                 .foregroundColor(CivicaColors.ink)
+                .frame(maxWidth: .infinity, alignment: .leading)
+            Button {
+                bannerDismissed = true
+            } label: {
+                Image(systemName: "xmark")
+                    .foregroundColor(CivicaColors.graphite)
+            }
+            .accessibilityLabel(SNAPConversationViewStrings.dismissErrorBanner.value(in: language))
         }
         .padding(CivicaSpacing.md)
         .background(CivicaColors.statusErrorSurface)
@@ -218,11 +279,28 @@ struct SNAPConversationView: View {
         if case .terminal = viewModel.phase {
             EmptyView()
         } else if case .error = viewModel.phase {
-            Button(SNAPConversationViewStrings.retry.value(in: language)) {
-                Task {
-                    if viewModel.sessionId == nil {
-                        await viewModel.start()
+            HStack(spacing: CivicaSpacing.sm) {
+                Button(SNAPConversationViewStrings.retry.value(in: language)) {
+                    Task {
+                        if viewModel.sessionId == nil {
+                            await viewModel.start()
+                        }
                     }
+                }
+                if let phoneURL = navigatorPhoneURL {
+                    Text(SNAPConversationViewStrings.orConnector.value(in: language))
+                        .font(CivicaTypography.subhead)
+                        .foregroundColor(CivicaColors.graphite)
+                    Link(destination: phoneURL) {
+                        HStack(spacing: CivicaSpacing.xs) {
+                            Text(SNAPConversationViewStrings.getHelpByPhone.value(in: language))
+                            Image(systemName: "arrow.right")
+                                .accessibilityHidden(true)
+                        }
+                        .font(CivicaTypography.subheadStrong)
+                        .foregroundColor(CivicaColors.pinePrimary)
+                    }
+                    .accessibilityLabel(SNAPConversationViewStrings.callNavigator.value(in: language))
                 }
             }
             .padding(CivicaSpacing.lg)

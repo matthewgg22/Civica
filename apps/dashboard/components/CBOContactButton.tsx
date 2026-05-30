@@ -60,7 +60,7 @@ export default function CBOContactButton() {
             aria-labelledby="cbo-lead-title"
           >
             <div className="px-6 pt-6 pb-4 border-b border-hairline">
-              <p className="text-[11px] text-muted uppercase tracking-wider font-medium">
+              <p className="text-[11px] text-graphite uppercase tracking-wider font-medium">
                 CBO licensing inquiry
               </p>
               <h2 id="cbo-lead-title" className="text-lg font-semibold text-ink mt-1 tracking-tight">

@@ -200,9 +200,9 @@ export default async function PacketsPage({ searchParams }: { searchParams: Prom
 
         <div className="mb-4">
           <p className="eyebrow mb-2">Applications</p>
-          <h2 className="text-[26px] font-semibold tracking-tight leading-tight text-ink">
+          <h1 className="text-[26px] font-semibold tracking-tight leading-tight text-ink">
             {countyFilter ? `Packets in ${countyFilter}` : "All Packets"}
-          </h2>
+          </h1>
           <p className="text-[14px] text-muted mt-1">
             {countyFilter
               ? `${all.length} packet${all.length === 1 ? "" : "s"} matching this county`
@@ -370,7 +370,7 @@ function PacketList({ packets, riskTiers, riskScoredAt }: { packets: Packet[]; r
                 <p className="text-[14px] text-graphite">
                   {packet.county ?? "Unknown county"}, {packet.state_code}
                 </p>
-                <span className="text-[11px] text-muted font-mono tabular-nums">
+                <span className="text-[11px] text-graphite font-mono tabular-nums">
                   {shortId(packet.packet_id)}
                 </span>
                 {isStale && (
@@ -399,7 +399,7 @@ function PacketList({ packets, riskTiers, riskScoredAt }: { packets: Packet[]; r
               <p className={`text-[13px] tabular-nums font-medium ${isStale ? "text-warning" : "text-graphite"}`}>
                 {timeAgo(packet.updated_at)}
               </p>
-              <p className="text-[11px] text-muted uppercase tracking-wider mt-0.5">updated</p>
+              <p className="text-[11px] text-graphite uppercase tracking-wider mt-0.5">updated</p>
             </div>
             <span className="text-muted text-[18px] shrink-0">›</span>
           </Link>

@@ -112,7 +112,8 @@ struct SNAPDocumentUploadView: View {
     private var noActivePacketView: some View {
         VStack(spacing: CivicaSpacing.md) {
             Image(systemName: "doc.questionmark")
-                .font(.system(size: 40))
+                .imageScale(.large)
+                .font(.body)
                 .foregroundStyle(CivicaColors.graphite)
                 .accessibilityHidden(true)
             Text(Strings.noActivePacket.value(in: language))
@@ -142,7 +143,8 @@ struct SNAPDocumentUploadView: View {
                         .foregroundStyle(CivicaColors.ink)
                     Spacer()
                     Image(systemName: "chevron.up.chevron.down")
-                        .font(.system(size: 13))
+                        .imageScale(.large)
+                        .font(.body)
                         .foregroundStyle(CivicaColors.graphite)
                 }
                 .padding(CivicaSpacing.sm)
@@ -236,7 +238,8 @@ struct SNAPDocumentUploadView: View {
     private func documentRow(_ doc: EnrollmentDocument) -> some View {
         HStack(alignment: .top, spacing: CivicaSpacing.md) {
             Image(systemName: statusIcon(doc.processingStatus))
-                .font(.system(size: 18, weight: .semibold))
+                .imageScale(.large)
+                .font(.body)
                 .foregroundStyle(statusColor(doc.processingStatus))
                 .accessibilityHidden(true)
 

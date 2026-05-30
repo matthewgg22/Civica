@@ -146,7 +146,7 @@ struct SNAPMarketplaceFlow: View {
                     .transition(.move(edge: .bottom).combined(with: .opacity))
             }
         }
-        .animation(.easeInOut(duration: 0.25), value: savedJobTitle)
+        .civicaAnimation(.easeInOut(duration: 0.25), value: savedJobTitle)
         .onChange(of: savedJobTitle) { _, newValue in
             guard newValue != nil else { return }
             bannerDismissTask?.cancel()
@@ -174,7 +174,8 @@ private struct SavedForLaterBanner: View {
     var body: some View {
         HStack(spacing: CivicaSpacing.sm) {
             Image(systemName: "checkmark.circle.fill")
-                .font(.system(size: 14, weight: .semibold))
+                .imageScale(.large)
+                .font(.body)
                 .foregroundStyle(CivicaColors.onPrimaryText)
             Text(label)
                 .font(CivicaTypography.footnote)

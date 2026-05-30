@@ -22,7 +22,8 @@ struct PhantomRecertEntryView: View {
         } label: {
             HStack(spacing: CivicaSpacing.md) {
                 Image(systemName: "wand.and.stars")
-                    .font(.system(size: 28))
+                    .imageScale(.large)
+                    .font(.body)
                     .foregroundStyle(CivicaColors.pinePrimary)
                     .frame(width: 48, height: 48)
                     .background(

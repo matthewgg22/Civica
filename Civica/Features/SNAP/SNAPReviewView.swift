@@ -112,6 +112,7 @@ struct SNAPReviewView: View {
                     }
                 }
                 .buttonStyle(CivicaPrimaryCTAButtonStyle())
+                .accessibilityLabel(SNAPReviewStrings.showNextSteps.value(in: language))
             }
             .padding(CivicaSpacing.lg)
         }

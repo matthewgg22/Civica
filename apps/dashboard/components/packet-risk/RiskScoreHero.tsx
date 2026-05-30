@@ -2,7 +2,7 @@ import type { RiskFlow } from "./types";
 
 const TIER_TONE = {
   high:       { color: "#9C3A24", label: "High risk",   bg: "rgba(156,58,36,0.10)"  },
-  medium:     { color: "#9A5A14", label: "Medium risk",  bg: "rgba(154,90,20,0.10)"  },
+  medium:     { color: "var(--color-amber-dark)", label: "Medium risk",  bg: "rgba(154,90,20,0.10)"  },
   low:        { color: "#2A6F66", label: "Low risk",     bg: "rgba(42,111,102,0.10)" },
   incomplete: { color: "#5A544D", label: "Incomplete",   bg: "rgba(90,84,77,0.10)"   },
 } as const;
@@ -38,7 +38,7 @@ export default function RiskScoreHero({
       <div className="flex items-start justify-between gap-6 mb-6">
         <p className="eyebrow">Error risk assessment</p>
         <div className="flex flex-col items-end gap-1.5 shrink-0">
-          <span className="text-[11px] text-muted tabular-nums tracking-wide">
+          <span className="text-[11px] text-graphite tabular-nums tracking-wide">
             Civica · {engineVersion}{evaluatedAt ? ` · ${evaluatedAt}` : ""}
           </span>
         </div>
@@ -156,7 +156,7 @@ function TierBand({ score, tier }: { score: number; tier: string }) {
       </div>
       <div className="flex justify-between">
         <BandLabel label="Low"    range="0–34"   color="#2A6F66" active={tier === "low"}    />
-        <BandLabel label="Medium" range="35–59"  color="#9A5A14" active={tier === "medium"} />
+        <BandLabel label="Medium" range="35–59"  color="var(--color-amber-dark)" active={tier === "medium"} />
         <BandLabel label="High"   range="60–100" color="#9C3A24" active={tier === "high"}   />
       </div>
     </div>
@@ -167,7 +167,7 @@ function BandLabel({ label, range, color, active }: { label: string; range: stri
   return (
     <div className={`flex flex-col gap-0.5 ${active ? "" : "opacity-60"}`}>
       <span className="text-[12px] font-semibold" style={{ color: active ? color : "#5A544D" }}>{label}</span>
-      <span className="text-[10px] text-muted font-mono tracking-wide">{range}</span>
+      <span className="text-[10px] text-graphite font-mono tracking-wide">{range}</span>
     </div>
   );
 }

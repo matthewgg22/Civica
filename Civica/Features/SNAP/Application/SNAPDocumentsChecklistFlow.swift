@@ -268,7 +268,8 @@ struct SNAPDocumentsChecklistFlowView: View {
             } label: {
                 HStack(alignment: .top, spacing: CivicaSpacing.md) {
                     Image(systemName: isChecked ? "checkmark.circle.fill" : "circle")
-                        .font(.system(size: 22))
+                        .imageScale(.large)
+                        .font(.body)
                         .foregroundStyle(isChecked ? CivicaColors.pinePrimary : CivicaColors.graphite)
                         .padding(.top, 2)
                         .accessibilityHidden(true)

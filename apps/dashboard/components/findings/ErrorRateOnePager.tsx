@@ -10,6 +10,9 @@
 
 import Link from "next/link";
 import type { ErrorRateTruthPoint, ErrorRateMetricView } from "../../lib/analytics/error-rate-snapshot";
+import { CA_QC_GROUNDING } from "../../lib/analytics/ca-qc-grounding";
+import { CA_CAPER_GROUNDING } from "../../lib/analytics/ca-caper-grounding";
+import { CA_POLICYENGINE_GROUNDING } from "../../lib/analytics/ca-policyengine-grounding";
 
 function pct(x: number | null | undefined): string {
   return x == null ? "—" : `${x.toFixed(2)}%`;
@@ -97,13 +100,125 @@ export default function ErrorRateOnePager({ truthPoint }: { truthPoint: ErrorRat
       <section className="rounded-lg border border-graphite/15 bg-surface-secondary p-4">
         <h2 className="text-sm font-semibold text-ink">These are operational errors, not policy</h2>
         <p className="mt-1.5 text-sm leading-relaxed text-graphite">
-          Almost none of this is fraud (under 2%) or bad rules. It is the
-          day-to-day: income that is hard to verify, deductions families do not
-          know to claim, changes that never got processed. Anyone who has done
-          casework knows the feeling. That is the whole point — operational
-          problems are the kind a tool fixes. You do not change a law to get an
+          In the real federal data,{" "}
+          <span className="font-semibold text-ink">
+            ~{CA_QC_GROUNDING.operationalPct}% of California&rsquo;s error dollars
+            are operational
+          </span>{" "}
+          — income that is hard to verify, a deduction miscalculated, a change
+          that never got processed. The other ~{CA_QC_GROUNDING.clientPct}% is on
+          the household to report. There is no &ldquo;policy&rdquo; category at
+          all: the federal review marks every error as the agency&rsquo;s or the
+          household&rsquo;s, nothing in between. Almost none is fraud (under 2%).
+          That is the whole point — roughly two-thirds of the problem is the
+          day-to-day kind a tool fixes. You do not change a law to get an
           application right; you verify the parts that are hard to get right by
           hand.
+        </p>
+        <p className="mt-2 text-xs text-graphite">
+          USDA QC FY{CA_QC_GROUNDING.fiscalYear}, California (n=
+          {CA_QC_GROUNDING.caCases}) ·{" "}
+          <Link
+            href={`/findings/${CA_QC_GROUNDING.findingId}`}
+            className="text-pine underline-offset-2 hover:underline"
+          >
+            how we counted
+          </Link>
+        </p>
+      </section>
+
+      {/* ── A caution from the witness lens (Guarino) ──────────────────── */}
+      <section className="rounded-lg border border-graphite/15 bg-surface-secondary p-4">
+        <h2 className="text-sm font-semibold text-ink">A caution worth taking seriously</h2>
+        <p className="mt-1.5 text-sm leading-relaxed text-graphite">
+          The rate is a partial scoreboard, and chasing it the wrong way
+          backfires. Dave Guarino — who built GetCalFresh, the tool that
+          processed millions of CalFresh applications — points out that the rate
+          only counts overpayments in cases that actually got processed, and that
+          the usual way agencies push it down (demanding more documentation)
+          quietly pushes eligible people back out.
+        </p>
+        <blockquote className="mt-3 border-l-2 border-graphite/30 pl-3 text-sm italic leading-relaxed text-graphite">
+          &ldquo;When does asking for more documentation actually lead to eligible
+          people not getting benefits due to that extra burden?&rdquo;
+          <span className="mt-1 block text-xs not-italic text-graphite">
+            — Dave Guarino,{" "}
+            <a
+              href="https://daveguarino.substack.com/p/government-stuff-1"
+              className="text-pine underline-offset-2 hover:underline"
+              target="_blank"
+              rel="noreferrer noopener"
+            >
+              Plausible Legibility
+            </a>
+          </span>
+        </blockquote>
+        <p className="mt-3 text-sm leading-relaxed text-graphite">
+          That is the line Civica sits on the right side of: it lowers the rate by
+          making the application{" "}
+          <span className="text-ink">correct before it is submitted</span>, not by
+          adding hoops. The error falls because the case is right — not because
+          the applicant cleared one more burden.
+        </p>
+        <p className="mt-2 text-xs text-graphite">
+          Practitioner perspective — not federal data ·{" "}
+          <Link
+            href="/findings/2026-05-29-guarino-error-rate-metric"
+            className="text-pine underline-offset-2 hover:underline"
+          >
+            how we read this
+          </Link>
+        </p>
+      </section>
+
+      {/* ── The other side of error: CAPER (denial-side, federal) ──────── */}
+      <section>
+        <h2 className="mb-3 text-xs font-semibold uppercase tracking-wider text-graphite">
+          The other side of the rate: improper denials (USDA CAPER FY{CA_CAPER_GROUNDING.fiscalYear})
+        </h2>
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+          <Metric
+            label="California"
+            value={`${CA_CAPER_GROUNDING.caRatePct.toFixed(2)}%`}
+            sub="of denial/cut-off actions had an error"
+            highlight
+          />
+          <Metric
+            label="United States"
+            value={`${CA_CAPER_GROUNDING.usRatePct.toFixed(2)}%`}
+            sub="national"
+          />
+          <Metric
+            label="Massachusetts"
+            value={`${CA_CAPER_GROUNDING.maRatePct.toFixed(2)}%`}
+            sub="lowest-burden peer"
+          />
+        </div>
+        <Means>
+          The payment rate only watches money that went <em>out</em>. The federal
+          Case and Procedural Error Rate watches the other door — denials,
+          terminations, and cut-offs. In FY{CA_CAPER_GROUNDING.fiscalYear},{" "}
+          <span className="text-ink">roughly 2 in 5</span> of California&rsquo;s
+          negative actions carried a case or procedural error. That is the witness
+          point made in federal data: error lives on <em>both</em> doors of the
+          application, and both are operational — process and paperwork, not policy
+          or fraud. And it is not new: CA has sat between{" "}
+          <span className="text-ink">
+            {CA_CAPER_GROUNDING.caTrendMinPct}–{CA_CAPER_GROUNDING.caTrendMaxPct}%
+          </span>{" "}
+          every reported year since {CA_CAPER_GROUNDING.caTrendFirstFy} (FY2020–21
+          paused for COVID) — a structural gap, not a blip. (A flagged action is not
+          proof the household was eligible — many are procedural — but it is the
+          agency&rsquo;s error to own, and the kind a tool prevents.)
+        </Means>
+        <p className="mt-2 text-xs text-graphite">
+          USDA CAPER FY{CA_CAPER_GROUNDING.fiscalYear} (dated {CA_CAPER_GROUNDING.dated}) ·{" "}
+          <Link
+            href={`/findings/${CA_CAPER_GROUNDING.findingId}`}
+            className="text-pine underline-offset-2 hover:underline"
+          >
+            how we read this
+          </Link>
         </p>
       </section>
 
@@ -132,11 +247,23 @@ export default function ErrorRateOnePager({ truthPoint }: { truthPoint: ErrorRat
             </tbody>
           </table>
         </div>
+        <p className="mt-2 text-xs text-graphite">
+          ✓ These shares reproduce from the raw USDA QC microdata within ~
+          {CA_QC_GROUNDING.elementMaxDeltaPp} pp —{" "}
+          <Link
+            href={`/findings/${CA_QC_GROUNDING.findingId}`}
+            className="text-pine underline-offset-2 hover:underline"
+          >
+            not our estimate, the federal file
+          </Link>
+          .
+        </p>
         <Means>
           The two parts caseworkers fight hardest — rent/shelter and wage income —
-          are <span className="text-ink">6 of every 10</span> California errors.
-          Get those two right and most of the error is simply gone. They are the
-          first two parts Civica verifies automatically.
+          are <span className="text-ink">6 of every 10</span> California errors
+          ({CA_QC_GROUNDING.shelterOrWagesPct}% in the federal file). Get those
+          two right and most of the error is simply gone. They are the first two
+          parts Civica verifies automatically.
         </Means>
       </section>
 
@@ -209,6 +336,48 @@ export default function ErrorRateOnePager({ truthPoint }: { truthPoint: ErrorRat
         </Means>
       </section>
 
+      {/* ── What a mistake costs: modeled (PolicyEngine) ───────────────── */}
+      <section>
+        <h2 className="mb-3 text-xs font-semibold uppercase tracking-wider text-graphite">
+          What a mistake actually costs (modeled · PolicyEngine FY{CA_POLICYENGINE_GROUNDING.paramYear})
+        </h2>
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+          <Metric
+            label="$1 of unreported income"
+            value={`${Math.round(CA_POLICYENGINE_GROUNDING.unearnedLeverage * 100)}¢`}
+            sub="lost benefit per $1"
+            highlight
+          />
+          <Metric
+            label="$1 of unreported wages"
+            value={`${Math.round(CA_POLICYENGINE_GROUNDING.wagesLeverage * 100)}¢`}
+            sub="work gets a 20% discount"
+          />
+          <Metric label="$1 of rent · most CA renters" value="0¢" sub="already over the shelter cap" />
+        </div>
+        <Means>
+          Not every mistake costs the same. Run a representative California caseload
+          through the open-source benefit model and a dollar of unreported{" "}
+          <span className="text-ink">income</span> lowers the benefit about{" "}
+          <span className="text-ink">30¢</span> (24¢ for wages — work gets a
+          discount). Rent only counts up to a cap, and roughly{" "}
+          <span className="text-ink">7 in 10</span> non-elderly California renters
+          are already over it, so for them a rent error moves the benefit nothing;
+          only elderly and disabled households see the full 30¢. The
+          highest-<em>dollar</em> error is income — which is exactly the part Civica
+          verifies automatically.
+        </Means>
+        <p className="mt-2 text-xs text-graphite">
+          Modeled — PolicyEngine US (offline), FY{CA_POLICYENGINE_GROUNDING.paramYear} ·{" "}
+          <Link
+            href={`/findings/${CA_POLICYENGINE_GROUNDING.findingId}`}
+            className="text-pine underline-offset-2 hover:underline"
+          >
+            how we modeled this
+          </Link>
+        </p>
+      </section>
+
       {/* ── The close — the dam ────────────────────────────────────────── */}
       <section className="rounded-lg border border-pine/25 bg-pine/[0.04] p-5">
         <h2 className="text-base font-semibold text-ink">Implementation is not the leap. It is the release.</h2>
@@ -216,7 +385,9 @@ export default function ErrorRateOnePager({ truthPoint }: { truthPoint: ErrorRat
           Put it together. We know which parts of an application go wrong (shelter,
           wages), who struggles most (working families), and which verification
           perfects each one. None of that is a hypothesis to test in the field — it
-          is drawn from federal data before we shipped a single line. The perfect
+          is drawn from three independent lenses that agree — the federal error
+          samples, an open-source benefit model, and the person who built
+          California&rsquo;s intake — before we shipped a single line. The perfect
           application is not the aspiration; it is what the product builds. There is
           a reservoir of homework behind this — and turning it on is just letting it
           through.

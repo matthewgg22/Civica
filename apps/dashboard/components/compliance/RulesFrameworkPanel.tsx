@@ -22,7 +22,7 @@ import UnderEnrolledFlowChart from "./UnderEnrolledFlowChart";
 
 const STATUS_META: Record<FrameworkStatus, { color: string; bg: string }> = {
   Implemented:    { color: "#2D5A45", bg: "rgba(45,90,69,0.10)" },   // pine — operational
-  Partial:        { color: "#9A5A14", bg: "rgba(154,90,20,0.10)" },  // amber-brown — incomplete
+  Partial:        { color: "var(--color-amber-dark)", bg: "rgba(154,90,20,0.10)" },  // amber-brown — incomplete
   Discretionary:  { color: "#9C3A24", bg: "rgba(156,58,36,0.10)" }, // brick — risk/judgment call
 };
 
@@ -50,7 +50,7 @@ function BenefitFormulaCard() {
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-paper border border-hairline rounded-[4px] p-5">
       {/* LEFT — the formula */}
       <div className="md:border-r md:border-hairline md:pr-5">
-        <p className="text-[10px] uppercase tracking-[0.12em] font-semibold text-muted mb-3">
+        <p className="text-[10px] uppercase tracking-[0.12em] font-semibold text-graphite mb-3">
           How the benefit is computed
         </p>
 
@@ -76,7 +76,7 @@ function BenefitFormulaCard() {
               <p>max allotment (by household size)</p>
               <p className="text-graphite">− 30% × net income</p>
             </div>
-            <p className="text-[11px] text-muted italic mt-1.5 pl-3">
+            <p className="text-[11px] text-graphite italic mt-1.5 pl-3">
               floored at $24/mo for 1-2 person households
             </p>
           </div>
@@ -85,7 +85,7 @@ function BenefitFormulaCard() {
 
       {/* RIGHT — worked example */}
       <div>
-        <p className="text-[10px] uppercase tracking-[0.12em] font-semibold text-muted mb-1">
+        <p className="text-[10px] uppercase tracking-[0.12em] font-semibold text-graphite mb-1">
           Example
         </p>
         <p className="text-[12px] text-graphite mb-3 leading-snug">
@@ -125,9 +125,9 @@ function BenefitFormulaCard() {
             <span>− 30% × net income</span>
             <span>− $386</span>
           </div>
-          <div className="flex justify-between border-t-2 border-[#C9922A] pt-1 mt-1">
-            <span className="font-bold text-[#C9922A]">Monthly benefit</span>
-            <span className="font-bold text-[#C9922A] text-[14px]">$399</span>
+          <div className="flex justify-between border-t-2 border-amber pt-1 mt-1">
+            <span className="font-bold text-amber">Monthly benefit</span>
+            <span className="font-bold text-amber text-[14px]">$399</span>
           </div>
         </div>
       </div>
@@ -154,7 +154,7 @@ function Subsection({
   return (
     <div>
       <div className="mb-3">
-        <p className="text-[10px] uppercase tracking-[0.12em] font-semibold text-muted mb-1">
+        <p className="text-[10px] uppercase tracking-[0.12em] font-semibold text-graphite mb-1">
           {eyebrow}
         </p>
         <h4 className="text-[16px] font-semibold tracking-tight text-ink leading-tight">
@@ -193,7 +193,7 @@ function Subsection({
                 <p className="text-[12px] font-medium text-ink mt-1.5 tabular-nums">
                   {n.figures}
                 </p>
-                <p className="mt-1.5 font-mono text-[10px] tracking-wide text-muted leading-snug">
+                <p className="mt-1.5 font-mono text-[10px] tracking-wide text-graphite leading-snug">
                   {n.authorities.length > 0 && (
                     <>
                       <span className="text-graphite">{n.authorities.join(" · ")}</span>
@@ -233,8 +233,8 @@ const CHART_TOP = 28;
 const CHART_LEFT = 230; // label column — fits 2-line wrapped names
 const CHART_RIGHT = 110; // right column — fits stacked gap + enrolled callout
 
-const ENROLLED_COLOR = "#C9922A";
-const GAP_COLOR = "#9A5A14";
+const ENROLLED_COLOR = "var(--color-amber)";
+const GAP_COLOR = "var(--color-amber-dark)";
 
 // Wrap a population label to a max-chars width, returning 1-2 tspan-ready
 // lines. Long labels wrap; short ones stay single-line.
@@ -388,7 +388,7 @@ function UnderEnrolledChart({
               x={CHART_LEFT + totalWidth + 10}
               y={y + BAR_HEIGHT / 2 - 8}
               dominantBaseline="middle"
-              className="fill-[#9A5A14] text-[15px] font-bold tabular-nums"
+              className="fill-amber-dark text-[15px] font-bold tabular-nums"
             >
               {gapMillions.toFixed(1)}M gap
             </text>
@@ -454,7 +454,7 @@ function UnderEnrolledSection({
   return (
     <div>
       <div className="mb-4">
-        <p className="text-[10px] uppercase tracking-[0.12em] font-semibold text-muted mb-1">
+        <p className="text-[10px] uppercase tracking-[0.12em] font-semibold text-graphite mb-1">
           Section D · applying the rules
         </p>
         <h4 className="text-[16px] font-semibold tracking-tight text-ink leading-tight">
@@ -482,7 +482,7 @@ function UnderEnrolledSection({
         <div className="shrink-0 pr-4 md:border-r md:border-[rgba(154,90,20,0.20)]">
           <p
             className="text-[32px] font-bold tabular-nums leading-none"
-            style={{ color: "#9A5A14" }}
+            style={{ color: "var(--color-amber-dark)" }}
           >
             11
           </p>
@@ -491,23 +491,23 @@ function UnderEnrolledSection({
           </p>
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-[10px] uppercase tracking-[0.12em] font-semibold text-muted mb-1">
+          <p className="text-[10px] uppercase tracking-[0.12em] font-semibold text-graphite mb-1">
             Data behind these numbers
           </p>
           <p className="text-[12px] text-graphite leading-snug mb-1.5">
             Across <span className="font-semibold text-ink">5 federal + state agencies</span>{" "}
-            — <span className="font-mono text-[11px] text-[#9A5A14]">USDA FNS</span>
+            — <span className="font-mono text-[11px] text-amber-dark">USDA FNS</span>
             {" · "}
-            <span className="font-mono text-[11px] text-[#9A5A14]">CDSS</span>
+            <span className="font-mono text-[11px] text-amber-dark">CDSS</span>
             {" · "}
-            <span className="font-mono text-[11px] text-[#9A5A14]">BLS</span>
+            <span className="font-mono text-[11px] text-amber-dark">BLS</span>
             {" · "}
-            <span className="font-mono text-[11px] text-[#9A5A14]">GAO</span>
+            <span className="font-mono text-[11px] text-amber-dark">GAO</span>
             {" · "}
-            <span className="font-mono text-[11px] text-[#9A5A14]">HUD</span>
+            <span className="font-mono text-[11px] text-amber-dark">HUD</span>
             {" "}— feeding the four under-enrolled population cards below.
           </p>
-          <p className="text-[11px] text-muted italic leading-snug">
+          <p className="text-[11px] text-graphite italic leading-snug">
             Two figures (gig-worker 30–40% and IHSS 50–60% eligibility rates) are model-derived
             from wage distributions × BBCE income tests, not direct survey data. Both flagged in
             the relevant population cards.
@@ -518,16 +518,16 @@ function UnderEnrolledSection({
       {/* Hero — total expected un-enrolled across all populations */}
       <div className="bg-paper border-l-4 border-hairline rounded-r-[3px] px-5 py-4 mb-5 grid grid-cols-1 md:grid-cols-[auto_auto_1fr] gap-x-8 gap-y-2 items-baseline">
         <div>
-          <p className="text-[10px] uppercase tracking-[0.12em] font-semibold text-[#9A5A14]">
+          <p className="text-[10px] uppercase tracking-[0.12em] font-semibold text-amber-dark">
             Total expected un-enrolled
           </p>
-          <p className="text-[32px] font-bold text-[#9A5A14] tabular-nums leading-none mt-1">
+          <p className="text-[32px] font-bold text-amber-dark tabular-nums leading-none mt-1">
             ~{totalGap.toFixed(1)}M
           </p>
           <p className="text-[10px] text-graphite mt-0.5">US households</p>
         </div>
         <div>
-          <p className="text-[10px] uppercase tracking-[0.12em] font-semibold text-muted">
+          <p className="text-[10px] uppercase tracking-[0.12em] font-semibold text-graphite">
             Share of combined eligible
           </p>
           <p className="text-[32px] font-bold text-ink tabular-nums leading-none mt-1">
@@ -575,11 +575,11 @@ function UnderEnrolledSection({
                 <div className="shrink-0">
                   <p
                     className="text-[32px] font-bold tabular-nums leading-none"
-                    style={{ color: isPrimary ? "#5C1F11" : "#9A5A14" }}
+                    style={{ color: isPrimary ? "#5C1F11" : "var(--color-amber-dark)" }}
                   >
                     {gapMillions.toFixed(1)}M
                   </p>
-                  <p className="text-[10px] text-muted uppercase tracking-wider mt-0.5">
+                  <p className="text-[10px] text-graphite uppercase tracking-wider mt-0.5">
                     gap
                   </p>
                 </div>
@@ -599,7 +599,7 @@ function UnderEnrolledSection({
                       p.distributionChannel && (
                         <span
                           className="text-[9px] uppercase tracking-[0.12em] font-semibold px-1.5 py-0.5 rounded-full whitespace-nowrap"
-                          style={{ background: "rgba(201,146,42,0.10)", color: "#C9922A" }}
+                          style={{ background: "rgba(201,146,42,0.10)", color: "var(--color-amber)" }}
                         >
                           Greenfield target
                         </span>
@@ -634,7 +634,7 @@ function UnderEnrolledSection({
                     <div>
                       <dt
                         className="text-[9px] uppercase tracking-[0.12em] font-semibold mb-0.5"
-                        style={{ color: isPrimary ? "#5C1F11" : "#9A5A14" }}
+                        style={{ color: isPrimary ? "#5C1F11" : "var(--color-amber-dark)" }}
                       >
                         Channel
                       </dt>
@@ -647,7 +647,7 @@ function UnderEnrolledSection({
                     <div>
                       <dt
                         className="text-[9px] uppercase tracking-[0.12em] font-semibold mb-0.5"
-                        style={{ color: isPrimary ? "#5C1F11" : "#9A5A14" }}
+                        style={{ color: isPrimary ? "#5C1F11" : "var(--color-amber-dark)" }}
                       >
                         Math
                       </dt>
@@ -658,7 +658,7 @@ function UnderEnrolledSection({
                   )}
                 </dl>
                 <details className="group/src mt-2.5">
-                  <summary className="cursor-pointer list-none text-[10px] text-muted hover:text-graphite transition-colors">
+                  <summary className="cursor-pointer list-none text-[10px] text-graphite hover:text-graphite transition-colors">
                     <span className="group-open/src:hidden">sources + rule anchor →</span>
                     <span className="hidden group-open/src:inline">− collapse</span>
                   </summary>
@@ -733,7 +733,7 @@ export default function RulesFrameworkPanel({
           A YC / mission reader lands here and needs "how big is this thing?" answered
           before they're asked to care about eligibility gates and calc steps. */}
       <div className="bg-paper border border-hairline rounded-[4px] p-5 mb-7">
-        <p className="text-[10px] uppercase tracking-[0.12em] font-semibold text-muted mb-3">
+        <p className="text-[10px] uppercase tracking-[0.12em] font-semibold text-graphite mb-3">
           Program scope · USDA FNS · annual
         </p>
         <div className="grid grid-cols-2 md:grid-cols-5 gap-y-4">
@@ -741,7 +741,7 @@ export default function RulesFrameworkPanel({
             <p className="text-[22px] font-bold tabular-nums leading-none text-ink">
               $100B<span className="text-[12px] font-mono text-muted ml-0.5">+/yr</span>
             </p>
-            <p className="text-[10px] uppercase tracking-[0.10em] mt-1.5 text-muted">
+            <p className="text-[10px] uppercase tracking-[0.10em] mt-1.5 text-graphite">
               Federal SNAP outlay
             </p>
           </div>
@@ -749,7 +749,7 @@ export default function RulesFrameworkPanel({
             <p className="text-[22px] font-bold tabular-nums leading-none text-ink">
               42M
             </p>
-            <p className="text-[10px] uppercase tracking-[0.10em] mt-1.5 text-muted">
+            <p className="text-[10px] uppercase tracking-[0.10em] mt-1.5 text-graphite">
               Americans enrolled
             </p>
           </div>
@@ -757,7 +757,7 @@ export default function RulesFrameworkPanel({
             <p className="text-[22px] font-bold tabular-nums leading-none text-ink">
               22M
             </p>
-            <p className="text-[10px] uppercase tracking-[0.10em] mt-1.5 text-muted">
+            <p className="text-[10px] uppercase tracking-[0.10em] mt-1.5 text-graphite">
               Households
             </p>
           </div>
@@ -765,15 +765,15 @@ export default function RulesFrameworkPanel({
             <p className="text-[22px] font-bold tabular-nums leading-none text-ink">
               53
             </p>
-            <p className="text-[10px] uppercase tracking-[0.10em] mt-1.5 text-muted">
+            <p className="text-[10px] uppercase tracking-[0.10em] mt-1.5 text-graphite">
               State + territory programs
             </p>
           </div>
           <div className="md:pl-5 md:border-l md:border-hairline">
-            <p className="text-[22px] font-bold tabular-nums leading-none" style={{ color: "#9A5A14" }}>
+            <p className="text-[22px] font-bold tabular-nums leading-none" style={{ color: "var(--color-amber-dark)" }}>
               $11B<span className="text-[12px] font-mono text-muted ml-0.5">+/yr</span>
             </p>
-            <p className="text-[10px] uppercase tracking-[0.10em] mt-1.5" style={{ color: "#9A5A14" }}>
+            <p className="text-[10px] uppercase tracking-[0.10em] mt-1.5" style={{ color: "var(--color-amber-dark)" }}>
               California share (largest)
             </p>
           </div>

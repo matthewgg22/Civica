@@ -124,7 +124,7 @@ struct SNAPHouseholdQuestionFlowView: View {
         currentScreen
             .id(viewModel.step)
             .transition(.opacity.animation(.easeInOut(duration: 0.18)))
-            .animation(.easeInOut(duration: 0.18), value: viewModel.step)
+            .civicaAnimation(.easeInOut(duration: 0.18), value: viewModel.step)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     if viewModel.isAtFirstStep {
@@ -135,7 +135,7 @@ struct SNAPHouseholdQuestionFlowView: View {
                         .accessibilityLabel(CivicaQuestionStrings.backLabel.value(in: language))
                     } else {
                         Button {
-                            withAnimation(.easeInOut(duration: 0.18)) { viewModel.goBack() }
+                            civicaWithAnimation(.easeInOut(duration: 0.18)) { viewModel.goBack() }
                         } label: {
                             Image(systemName: "chevron.left")
                                 .foregroundStyle(CivicaColors.ink)
@@ -290,7 +290,7 @@ struct SNAPHouseholdQuestionFlowView: View {
     }
 
     private func advanceOrComplete() {
-        withAnimation(.easeInOut(duration: 0.18)) {
+        civicaWithAnimation(.easeInOut(duration: 0.18)) {
             if viewModel.isAtLastStep {
                 onComplete(viewModel.answers)
             } else {

@@ -8,7 +8,7 @@ type Pop = {
   enrolledMillions: number;
 };
 
-const COLORS = ["#9C3A24", "#9A5A14", "#2A6F66", "#4F46A5"];
+const COLORS = ["#9C3A24", "var(--color-amber-dark)", "#2A6F66", "#4F46A5"];
 
 export function IcebergChart({ populations }: { populations: Pop[] }) {
   const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
@@ -73,7 +73,7 @@ export function IcebergChart({ populations }: { populations: Pop[] }) {
             The waterline is the enrollment surface. The submerged mass is eligible households that qualify but never apply.
           </p>
         </div>
-        <p className="text-[11px] font-mono text-muted tracking-wide shrink-0 mt-0.5">
+        <p className="text-[11px] font-mono text-graphite tracking-wide shrink-0 mt-0.5">
           n = {totalEligible.toFixed(1)}M eligible · national
         </p>
       </div>
@@ -104,8 +104,8 @@ export function IcebergChart({ populations }: { populations: Pop[] }) {
         <polygon points={ptsStr(icebergPts)} fill="none" stroke="#9C3A24" strokeWidth={1.5} strokeOpacity={0.4} clipPath="url(#iceberg-below)" />
 
         {/* enrolled tip */}
-        <polygon points={ptsStr(icebergPts)} fill="#C9922A" fillOpacity={0.52} clipPath="url(#iceberg-above)" />
-        <polygon points={ptsStr(icebergPts)} fill="none" stroke="#9A5A14" strokeWidth={1.5} clipPath="url(#iceberg-above)" />
+        <polygon points={ptsStr(icebergPts)} fill="var(--color-amber)" fillOpacity={0.52} clipPath="url(#iceberg-above)" />
+        <polygon points={ptsStr(icebergPts)} fill="none" stroke="var(--color-amber-dark)" strokeWidth={1.5} clipPath="url(#iceberg-above)" />
 
         {/* waterline */}
         <line x1={0} y1={WL} x2={W} y2={WL} stroke="#3D7A96" strokeWidth={1.5} strokeDasharray="5 4" strokeOpacity={0.6} />
@@ -117,8 +117,8 @@ export function IcebergChart({ populations }: { populations: Pop[] }) {
         <text x={440} y={72}  textAnchor="middle" fontSize={34} fontWeight={700} fill="#7A4A10" letterSpacing={-0.5}>
           {totalEnrolled.toFixed(1)}M
         </text>
-        <text x={440} y={94}  textAnchor="middle" fontSize={9}  fill="#9A5A14" letterSpacing={2}>ENROLLED</text>
-        <text x={440} y={112} textAnchor="middle" fontSize={10} fill="#9A5A14" opacity={0.75}>{enrolledPct}% of eligible</text>
+        <text x={440} y={94}  textAnchor="middle" fontSize={9}  fill="var(--color-amber-dark)" letterSpacing={2}>ENROLLED</text>
+        <text x={440} y={112} textAnchor="middle" fontSize={10} fill="var(--color-amber-dark)" opacity={0.75}>{enrolledPct}% of eligible</text>
 
         {/* ── Gap label — same font weight, slightly larger font because area is wider ── */}
         <text x={336} y={282} textAnchor="middle" fontSize={38} fontWeight={700} fill="#9C3A24" letterSpacing={-0.5}>
@@ -168,14 +168,14 @@ export function IcebergChart({ populations }: { populations: Pop[] }) {
 
         {/* legend */}
         <g transform={`translate(20, ${H - 22})`}>
-          <rect x={0}  y={0} width={12} height={9} rx={1} fill="#C9922A" fillOpacity={0.65} />
+          <rect x={0}  y={0} width={12} height={9} rx={1} fill="var(--color-amber)" fillOpacity={0.65} />
           <text x={17} y={8} fontSize={9} fill="#5A544D">Enrolled</text>
           <rect x={82} y={0} width={12} height={9} rx={1} fill="url(#iceberg-gap)" stroke="#9C3A24" strokeWidth={0.8} strokeOpacity={0.5} />
           <text x={99} y={8} fontSize={9} fill="#5A544D">Eligible · not enrolled</text>
         </g>
       </svg>
 
-      <p className="text-[11px] text-muted mt-2.5 leading-relaxed">
+      <p className="text-[11px] text-graphite mt-2.5 leading-relaxed">
         Vertical scale is illustrative. Numbers are accurate: {totalEnrolled.toFixed(1)}M enrolled vs {totalEligible.toFixed(1)}M eligible nationally. Populations overlap; sum is illustrative.
       </p>
     </div>

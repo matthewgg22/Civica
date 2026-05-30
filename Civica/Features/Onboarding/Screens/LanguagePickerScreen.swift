@@ -40,6 +40,24 @@ struct LanguagePickerScreen: View {
                 languageRow(.spanish, sample: "Continuar en español")
             }
 
+            // JR-7 (audit 2026-05-29): bilingual users hesitate to switch
+            // language mid-journey because nothing tells them their typed
+            // answers stay. Set expectation here forward of typing, and
+            // again on any in-app language settings sheet when IA-4 lands.
+            // Matches the bilingual side-by-side pattern of the welcome
+            // and "Pick a language" copy above so neither user is asked
+            // to read a language they can't yet.
+            VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
+                Text("You can switch anytime. We won't translate answers you've already typed.")
+                    .font(CivicaTypography.footnote)
+                    .foregroundStyle(CivicaColors.graphite)
+                Text("Puedes cambiar en cualquier momento. No traduciremos las respuestas que ya hayas escrito.")
+                    .font(CivicaTypography.footnote)
+                    .foregroundStyle(CivicaColors.graphite)
+            }
+            .padding(.top, CivicaSpacing.md)
+            .accessibilityElement(children: .combine)
+
             Spacer()
         }
         .padding(CivicaSpacing.xl)

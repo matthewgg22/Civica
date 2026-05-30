@@ -10,6 +10,16 @@ function useCountUp(target: number, durationMs = 1400) {
   const [v, setV] = useState(0);
   useEffect(() => {
     if (target === 0) { setV(0); return; }
+    // Respect prefers-reduced-motion: opt-out users see the final value with
+    // no count-up (WCAG 2.3.3 + DESIGN.md motion rules). Without this, the
+    // band also opens on a literal "0" for the animation's duration.
+    if (
+      typeof window !== "undefined" &&
+      window.matchMedia?.("(prefers-reduced-motion: reduce)").matches
+    ) {
+      setV(target);
+      return;
+    }
     const start = performance.now();
     let raf = 0;
     const tick = (now: number) => {
@@ -81,7 +91,7 @@ export default function ImpactCounter({
       </div>
       {projectionLabel && (
         <div
-          className="px-7 py-2 border-t border-hairline text-[10px] uppercase tracking-[0.16em] font-mono text-muted"
+          className="px-7 py-2 border-t border-hairline text-[10px] uppercase tracking-[0.16em] font-mono text-graphite"
           style={{ backgroundColor: "#DCD9D2" }}
         >
           {projectionLabel}

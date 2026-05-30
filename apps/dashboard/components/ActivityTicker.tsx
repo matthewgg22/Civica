@@ -64,7 +64,7 @@ export default function ActivityTicker({ initial }: { initial: Activity[] }) {
     return (
       <div className="py-6 text-center">
         <p className="text-[13px] text-muted">Waiting for activity…</p>
-        <p className="text-[11px] text-muted mt-1">Live updates appear in real time</p>
+        <p className="text-[11px] text-graphite mt-1">Live updates appear in real time</p>
       </div>
     );
   }

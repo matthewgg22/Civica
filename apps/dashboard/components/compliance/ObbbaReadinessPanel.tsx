@@ -29,16 +29,16 @@ import ObbbaTimeline from "./ObbbaTimeline";
 import { ObbbaCountdownArc } from "./ObbbaCountdownArc";
 
 const STATUS_META: Record<ObbbaStatus, { color: string; bg: string }> = {
-  Ready:   { color: "#C9922A", bg: "rgba(201,146,42,0.10)" },
-  Partial: { color: "#9A5A14", bg: "rgba(154,90,20,0.10)" },
+  Ready:   { color: "var(--color-amber)", bg: "rgba(201,146,42,0.10)" },
+  Partial: { color: "var(--color-amber-dark)", bg: "rgba(154,90,20,0.10)" },
 };
 
 const STAKEHOLDER_META: Record<ObbbaStakeholder, { color: string; bg: string }> = {
-  State:     { color: "#B5511E", bg: "rgba(181,81,30,0.09)"  },
+  State:     { color: "var(--color-warning)", bg: "rgba(181,81,30,0.09)"  },
   County:    { color: "#7A3A1F", bg: "rgba(122,58,31,0.09)"  },
   CBO:       { color: "#2D5A45", bg: "rgba(45,90,69,0.09)"   },
   Household: { color: "#5A544D", bg: "rgba(90,84,77,0.09)"   },
-  Civica:    { color: "#C9922A", bg: "rgba(201,146,42,0.09)" },
+  Civica:    { color: "var(--color-amber)", bg: "rgba(201,146,42,0.09)" },
 };
 
 function StakeholderChips({ stakeholders }: { stakeholders: ObbbaStakeholder[] }) {
@@ -119,7 +119,7 @@ function HeroCard({ p }: { p: ObbbaProvision }) {
           <p className="text-[12px] text-graphite leading-relaxed">
             <span
               className="text-[9px] uppercase tracking-[0.12em] font-semibold mr-1.5"
-              style={{ color: "#9A5A14" }}
+              style={{ color: "var(--color-amber-dark)" }}
             >
               If wrong
             </span>
@@ -127,7 +127,7 @@ function HeroCard({ p }: { p: ObbbaProvision }) {
           </p>
           {p.marketOpportunity && (
             <p className="text-[12px] text-graphite leading-relaxed">
-              <span className="text-[9px] uppercase tracking-[0.12em] font-semibold mr-1.5" style={{ color: "#C9922A" }}>
+              <span className="text-[9px] uppercase tracking-[0.12em] font-semibold mr-1.5" style={{ color: "var(--color-amber)" }}>
                 If right
               </span>
               {firstSentence(p.marketOpportunity)}
@@ -137,19 +137,19 @@ function HeroCard({ p }: { p: ObbbaProvision }) {
 
         {/* Full analysis collapsed */}
         <details className="group">
-          <summary className="cursor-pointer list-none flex items-center gap-1.5 text-[10px] uppercase tracking-[0.12em] font-semibold text-muted hover:text-ink transition-colors">
+          <summary className="cursor-pointer list-none flex items-center gap-1.5 text-[10px] uppercase tracking-[0.12em] font-semibold text-graphite hover:text-ink transition-colors">
             <span className="group-open:hidden">Full analysis · posture · sources</span>
             <span className="hidden group-open:inline">Collapse</span>
             <span className="transition-transform group-open:rotate-180 text-[8px]">▼</span>
           </summary>
           <div className="mt-3 pt-3 border-t border-hairline/50 space-y-2.5">
             <p className="text-[12px] text-graphite leading-relaxed">
-              <span className="text-[9px] uppercase tracking-[0.12em] font-semibold mr-1.5" style={{ color: "#9A5A14" }}>Full risk</span>
+              <span className="text-[9px] uppercase tracking-[0.12em] font-semibold mr-1.5" style={{ color: "var(--color-amber-dark)" }}>Full risk</span>
               {p.exposure}
             </p>
             {p.marketOpportunity && (
               <p className="text-[12px] text-graphite leading-relaxed">
-                <span className="text-[9px] uppercase tracking-[0.12em] font-semibold mr-1.5" style={{ color: "#C9922A" }}>Full upside</span>
+                <span className="text-[9px] uppercase tracking-[0.12em] font-semibold mr-1.5" style={{ color: "var(--color-amber)" }}>Full upside</span>
                 {p.marketOpportunity}
               </p>
             )}
@@ -161,7 +161,7 @@ function HeroCard({ p }: { p: ObbbaProvision }) {
               <span className="text-[9px] uppercase tracking-[0.12em] font-semibold text-muted mr-1.5">Civica today</span>
               {p.posture}
             </p>
-            <p className="font-mono text-[10px] tracking-wide text-muted leading-snug pt-1">
+            <p className="font-mono text-[10px] tracking-wide text-graphite leading-snug pt-1">
               {[...p.authorities, p.source, p.effective].filter(Boolean).join(" · ")}
             </p>
           </div>
@@ -178,8 +178,8 @@ function HeroCard({ p }: { p: ObbbaProvision }) {
 const IMPACT_STYLES: Record<ObbbaProvision["impactKind"], { labelClass: string; color: string }> = {
   dollar:  { labelClass: "text-[32px] font-bold leading-none", color: "#5C1F11" },
   count:   { labelClass: "text-[20px] font-bold leading-tight", color: "#5A544D" },
-  risk:    { labelClass: "text-[14px] font-semibold leading-snug", color: "#9A5A14" },
-  ready:   { labelClass: "text-[14px] font-semibold leading-snug", color: "#C9922A" },
+  risk:    { labelClass: "text-[14px] font-semibold leading-snug", color: "var(--color-amber-dark)" },
+  ready:   { labelClass: "text-[14px] font-semibold leading-snug", color: "var(--color-amber)" },
 };
 
 function ProvisionRow({ p }: { p: ObbbaProvision }) {
@@ -199,7 +199,7 @@ function ProvisionRow({ p }: { p: ObbbaProvision }) {
         <p className="text-[9px] uppercase tracking-[0.12em] font-semibold text-muted mt-1.5 mb-0.5">
           California
         </p>
-        <p className="text-[11px] text-muted leading-snug">
+        <p className="text-[11px] text-graphite leading-snug">
           {p.impactKind === "dollar"
             ? p.impactSublabel.replace(/^California\s*·\s*/i, "")
             : p.impactSublabel}
@@ -245,19 +245,19 @@ function ProvisionRow({ p }: { p: ObbbaProvision }) {
 
         {/* Details toggle */}
         <details className="group">
-          <summary className="cursor-pointer list-none flex items-center gap-1.5 text-[10px] uppercase tracking-[0.12em] font-semibold text-muted hover:text-ink transition-colors mt-1">
+          <summary className="cursor-pointer list-none flex items-center gap-1.5 text-[10px] uppercase tracking-[0.12em] font-semibold text-graphite hover:text-ink transition-colors mt-1">
             <span className="group-open:hidden">If wrong · if right · posture</span>
             <span className="hidden group-open:inline">Collapse</span>
             <span className="transition-transform group-open:rotate-180 text-[8px]">▼</span>
           </summary>
           <div className="mt-3 pt-3 border-t border-hairline/50 space-y-2">
             <p className="text-[12px] text-graphite leading-relaxed">
-              <span className="text-[9px] uppercase tracking-[0.12em] font-semibold mr-1.5" style={{ color: "#9A5A14" }}>If wrong</span>
+              <span className="text-[9px] uppercase tracking-[0.12em] font-semibold mr-1.5" style={{ color: "var(--color-amber-dark)" }}>If wrong</span>
               {p.exposure}
             </p>
             {p.marketOpportunity && (
               <p className="text-[12px] text-graphite leading-relaxed">
-                <span className="text-[9px] uppercase tracking-[0.12em] font-semibold mr-1.5" style={{ color: "#C9922A" }}>If right</span>
+                <span className="text-[9px] uppercase tracking-[0.12em] font-semibold mr-1.5" style={{ color: "var(--color-amber)" }}>If right</span>
                 {p.marketOpportunity}
               </p>
             )}
@@ -265,7 +265,7 @@ function ProvisionRow({ p }: { p: ObbbaProvision }) {
               <span className="text-[9px] uppercase tracking-[0.12em] font-semibold text-muted mr-1.5">Civica today</span>
               {p.posture}
             </p>
-            <p className="font-mono text-[10px] tracking-wide text-muted leading-snug pt-1">
+            <p className="font-mono text-[10px] tracking-wide text-graphite leading-snug pt-1">
               {[...p.authorities, p.source, p.effective].filter(Boolean).join(" · ")}
             </p>
           </div>
@@ -314,8 +314,8 @@ export default function ObbbaReadinessPanel({
             className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[12px] font-semibold"
             style={
               partialCount > 0
-                ? { background: "rgba(154,90,20,0.10)", color: "#9A5A14" }
-                : { background: "rgba(201,146,42,0.10)", color: "#C9922A" }
+                ? { background: "rgba(154,90,20,0.10)", color: "var(--color-amber-dark)" }
+                : { background: "rgba(201,146,42,0.10)", color: "var(--color-amber)" }
             }
           >
             <span className="w-1.5 h-1.5 rounded-full bg-current" />
@@ -326,7 +326,7 @@ export default function ObbbaReadinessPanel({
 
       {/* Stakeholder legend */}
       <div className="flex flex-wrap gap-x-4 gap-y-1.5 mb-6 pb-5 border-b border-hairline">
-        <span className="text-[10px] uppercase tracking-[0.12em] font-semibold text-muted self-center mr-1">
+        <span className="text-[10px] uppercase tracking-[0.12em] font-semibold text-graphite self-center mr-1">
           Affected parties
         </span>
         {(Object.keys(STAKEHOLDER_META) as ObbbaStakeholder[]).map((key) => (
@@ -345,10 +345,10 @@ export default function ObbbaReadinessPanel({
 
       {/* Column headers */}
       <div className="grid grid-cols-[200px_1fr] mb-1">
-        <p className="text-[10px] uppercase tracking-[0.12em] font-semibold text-muted pr-5">
+        <p className="text-[10px] uppercase tracking-[0.12em] font-semibold text-graphite pr-5">
           Impact
         </p>
-        <p className="text-[10px] uppercase tracking-[0.12em] font-semibold text-muted pl-5">
+        <p className="text-[10px] uppercase tracking-[0.12em] font-semibold text-graphite pl-5">
           Provision · what the law requires
         </p>
       </div>

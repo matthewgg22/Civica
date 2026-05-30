@@ -116,12 +116,12 @@ export default function FormulaHero({
         <p className="eyebrow mb-1.5">
           Thesis realization · formula and current data
         </p>
-        <h3
+        <h2
           id="formula-hero-title"
           className="text-[20px] font-semibold tracking-tight text-ink leading-tight"
         >
           How the projected payment-error rate moves with engagement
-        </h3>
+        </h2>
         <p className="text-[13px] text-graphite mt-2 max-w-2xl leading-relaxed">
           The formula projects PER by applying per-pillar defensibility shifts
           to USDA FY2023 element-attribution shares. Top half: at full stack
@@ -145,7 +145,7 @@ export default function FormulaHero({
         <tbody className="bg-paper/40">
           <tr className="border-b border-hairline">
             <td
-              className="px-3 py-2 text-[10px] uppercase tracking-[0.12em] font-semibold text-muted"
+              className="px-3 py-2 text-[10px] uppercase tracking-[0.12em] font-semibold text-graphite"
               colSpan={4}
             >
               Projected · at full stack engagement
@@ -187,10 +187,10 @@ export default function FormulaHero({
               className="px-3 py-2.5 text-left text-[14px] text-ink"
               colSpan={2}
             >
-              <span className="text-[11px] text-muted mr-2 font-bold">=</span>
+              <span className="text-[11px] text-graphite mr-2 font-bold">=</span>
               PROJECTED PER · at full stack engagement
             </th>
-            <td className="px-3 py-2.5 text-right text-[10px] text-muted font-medium">
+            <td className="px-3 py-2.5 text-right text-[10px] text-graphite font-medium">
               sums to 100%
             </td>
             <td className="px-3 py-2.5 text-right text-[18px] font-bold text-ink">
@@ -210,7 +210,7 @@ export default function FormulaHero({
         <tbody className="bg-paper/40">
           <tr className="border-b border-hairline">
             <td
-              className="px-3 py-2 text-[10px] uppercase tracking-[0.12em] font-semibold text-muted"
+              className="px-3 py-2 text-[10px] uppercase tracking-[0.12em] font-semibold text-graphite"
               colSpan={4}
             >
               Engagement-implied · at observed coverage today
@@ -243,7 +243,7 @@ export default function FormulaHero({
               className="px-3 py-2.5 text-left text-[14px] text-ink"
               colSpan={2}
             >
-              <span className="text-[11px] text-muted mr-2 font-bold">=</span>
+              <span className="text-[11px] text-graphite mr-2 font-bold">=</span>
               ENGAGEMENT-IMPLIED PER · at observed coverage
             </th>
             <td />
@@ -264,7 +264,7 @@ export default function FormulaHero({
               Engagement realization gap
             </th>
             <td
-              className="px-3 pt-5 pb-2 text-right text-[10px] text-muted font-medium"
+              className="px-3 pt-5 pb-2 text-right text-[10px] text-graphite font-medium"
               aria-hidden="true"
             >
               {realizationGap > 0.5
@@ -297,17 +297,17 @@ export default function FormulaHero({
           <path
             d="M8 1.5 L15 14 L1 14 Z"
             fill="none"
-            stroke="#9A5A14"
+            stroke="var(--color-amber-dark)"
             strokeWidth="1.5"
             strokeLinejoin="round"
           />
           <path
             d="M8 6.5 V 10"
-            stroke="#9A5A14"
+            stroke="var(--color-amber-dark)"
             strokeWidth="1.5"
             strokeLinecap="round"
           />
-          <circle cx="8" cy="12" r="0.8" fill="#9A5A14" />
+          <circle cx="8" cy="12" r="0.8" fill="var(--color-amber-dark)" />
         </svg>
         <p className="text-[12px] text-graphite leading-relaxed">
           <strong className="text-ink font-semibold">
@@ -358,18 +358,18 @@ function FormulaRow({
 
   return (
     <tr className="border-b border-hairline/50">
-      <td className="px-3 py-2 text-[11px] text-muted font-bold w-6 align-top">
+      <td className="px-3 py-2 text-[11px] text-graphite font-bold w-6 align-top">
         {sign}
       </td>
       <td className="px-1 py-2 text-[12px] text-graphite leading-snug">
         <div>{label}</div>
         {sublabel && (
-          <div className="text-[10px] text-muted font-mono tracking-wide mt-0.5">
+          <div className="text-[10px] text-graphite font-mono tracking-wide mt-0.5">
             {sublabel}
           </div>
         )}
       </td>
-      <td className="px-3 py-2 text-right text-[11px] text-muted font-mono tracking-wide whitespace-nowrap">
+      <td className="px-3 py-2 text-right text-[11px] text-graphite font-mono tracking-wide whitespace-nowrap">
         {weight}
       </td>
       <td

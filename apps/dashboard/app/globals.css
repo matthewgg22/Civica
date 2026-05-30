@@ -19,6 +19,13 @@
   --color-amber: #C9922A;
   --color-amber-surface: #F5E2C0;
 
+  /* Amber-dark — same hue family as amber but darker for readability when
+     used as TEXT on paper. Many data-viz components (charts, maps,
+     compliance panels) need text labels that don't blend into paper at
+     small sizes; --color-amber is too light at 11-13px. Use this token
+     when you want "amber semantics" but need 5.4:1+ contrast. */
+  --color-amber-dark: #9A5A14;
+
   /* Brick — human recovery moments (denial, navigator outreach, distress).
      Not for generic CTAs or warnings. See DESIGN.md §2.2. */
   --color-brick: #9C3A24;
@@ -48,6 +55,10 @@
   --color-graphite: #443F38;
   --color-muted: #57524A;
   --color-hairline: rgba(0, 0, 0, 0.12);
+  /* Form-control border — must stay perceivable (WCAG 1.4.11, 3:1 vs the
+     paper fill). Deliberately darker than --color-hairline, which is a
+     decorative separator and is exempt from the 3:1 rule. */
+  --color-input: rgba(0, 0, 0, 0.45);
 
   /* Typography */
   --font-sans: "Hanken Grotesk", system-ui, -apple-system, sans-serif;

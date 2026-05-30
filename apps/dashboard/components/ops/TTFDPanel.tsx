@@ -15,7 +15,7 @@ export default function TTFDPanel({ data }: { data: TTFDData }) {
       <div className="flex items-start justify-between gap-4">
         <div>
           <p className="eyebrow mb-1">Panel 5 · Speed-to-value</p>
-          <h3 className="text-[18px] font-bold tracking-tight text-ink">Time to first deposit</h3>
+          <h2 className="text-[18px] font-bold tracking-tight text-ink">Time to first deposit</h2>
           <p className="text-[12px] text-graphite mt-1">
             Median days · packet submitted → first SNAP deposit on tracked card
           </p>
@@ -30,7 +30,7 @@ export default function TTFDPanel({ data }: { data: TTFDData }) {
       ) : (
         <div className="mt-5 pt-5 border-t border-hairline grid grid-cols-3 gap-6">
           <div className="col-span-1">
-            <p className="text-[10px] font-semibold uppercase tracking-wider text-muted mb-1">Median</p>
+            <p className="text-[10px] font-semibold uppercase tracking-wider text-graphite mb-1">Median</p>
             <p className="text-[40px] font-bold tracking-tight text-ink leading-none tabular-nums">
               {data.median_days !== null ? `${data.median_days.toFixed(1)}` : "—"}
             </p>
@@ -40,7 +40,7 @@ export default function TTFDPanel({ data }: { data: TTFDData }) {
           </div>
 
           <div className="col-span-2">
-            <p className="text-[10px] font-semibold uppercase tracking-wider text-muted mb-2">Top counties (by n)</p>
+            <p className="text-[10px] font-semibold uppercase tracking-wider text-graphite mb-2">Top counties (by n)</p>
             {data.county_trend.length === 0 ? (
               <p className="text-[12px] text-graphite">No county data yet.</p>
             ) : (

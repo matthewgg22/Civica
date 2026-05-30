@@ -75,7 +75,7 @@ export default function CountyOutcomeButton({
             sub="County issued CalFresh approval"
             selected={outcome === "approved"}
             onSelect={() => setOutcome("approved")}
-            color="#C9922A"
+            color="var(--color-amber)"
           />
           <OutcomeChoice
             value="denied"

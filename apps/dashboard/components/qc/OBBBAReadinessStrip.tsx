@@ -24,8 +24,8 @@ import {
 } from "../../lib/analytics/obbba";
 
 const STATUS_META = {
-  Ready: { color: "#C9922A", bg: "rgba(201,146,42,0.10)" },
-  Partial: { color: "#9A5A14", bg: "rgba(154,90,20,0.10)" },
+  Ready: { color: "var(--color-amber)", bg: "rgba(201,146,42,0.10)" },
+  Partial: { color: "var(--color-amber-dark)", bg: "rgba(154,90,20,0.10)" },
 } as const;
 
 // Indigo accent (per DESIGN.md §1 "info accent, secondary status") to make
@@ -70,12 +70,12 @@ export default function OBBBAReadinessStrip() {
           >
             Regulatory readiness · OBBBA
           </p>
-          <h3
+          <h2
             id="obbba-strip-title"
             className="text-[16px] font-semibold tracking-tight text-ink leading-tight"
           >
             Seven federal SNAP tracks tightened in 2025 — shipping state
-          </h3>
+          </h2>
           <p className="text-[12px] text-graphite mt-1 max-w-2xl leading-snug">
             OBBBA does NOT enter the formula above (FY24 baseline predates
             enforcement). Tracked here as engineering readiness for the new
@@ -90,7 +90,7 @@ export default function OBBBAReadinessStrip() {
             <span className="w-1 h-1 rounded-full bg-current" />
             {ready.length} ready · {partial.length} partial
           </span>
-          <p className="text-[10px] text-muted font-mono tracking-wide mt-1">
+          <p className="text-[10px] text-graphite font-mono tracking-wide mt-1">
             source: lib/analytics/obbba.ts
           </p>
         </div>
@@ -103,7 +103,7 @@ export default function OBBBAReadinessStrip() {
         ))}
       </ul>
 
-      <p className="text-[11px] text-muted leading-snug mt-3">
+      <p className="text-[11px] text-graphite leading-snug mt-3">
         Detail and exposure dollars live on{" "}
         <code className="font-mono text-[10px] bg-paper rounded px-1 py-0.5">
           /compliance
@@ -171,7 +171,7 @@ function TrackRow({ provision: p }: { provision: ObbbaProvision }) {
             color: isOverdue
               ? "#9C3A24"
               : isUrgent
-                ? "#B5511E"
+                ? "var(--color-warning)"
                 : "#5A544D",
           }}
         >

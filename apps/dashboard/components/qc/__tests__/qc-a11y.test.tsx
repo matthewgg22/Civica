@@ -32,7 +32,7 @@ const SAMPLE_PACKETS: FeedPacket[] = [
 ];
 
 describe("FormulaHero — a11y contract", () => {
-  it("section is labelled by its <h3> title", () => {
+  it("section is labelled by its <h2> title", () => {
     const { container } = render(
       <FormulaHero
         totalPackets={100}
@@ -113,7 +113,7 @@ describe("FormulaHero — a11y contract", () => {
 });
 
 describe("PillarTracking — a11y contract", () => {
-  it("section is labelled by its <h3> title", () => {
+  it("section is labelled by its <h2> title", () => {
     const { container } = render(
       <PillarTracking
         totalPackets={100}
@@ -147,7 +147,7 @@ describe("PillarTracking — a11y contract", () => {
 });
 
 describe("OBBBAReadinessStrip — a11y contract", () => {
-  it("section is labelled by its <h3> title", () => {
+  it("section is labelled by its <h2> title", () => {
     const { container } = render(<OBBBAReadinessStrip />);
     const section = container.querySelector(
       "section[aria-labelledby='obbba-strip-title']",

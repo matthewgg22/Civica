@@ -100,8 +100,10 @@ public enum CivicaColors {
     public static let iconOnPrimaryBorder  = Color.dynamic(light: "#FFFFFFE0", dark: "#DCE8F4E0")
     public static let shadowSoft           = Color.dynamic(light: "#00000029", dark: "#00000080")
 
-    /// v2: shifted to burnt orange — separates from wheatPressed (#9A5A14 → #B5511E).
-    public static let warningAmber         = Color.dynamic(light: "#B5511E", dark: "#B5511E")
+    /// v2: burnt orange, separated from wheatPressed (#9A5A14).
+    /// RA-6 (2026-05-29): darkened #B5511E → #9E4218 — 5.93:1 on paper
+    /// (was 4.63:1, borderline AA and failing below 17pt). Mode-invariant.
+    public static let warningAmber         = Color.dynamic(light: "#9E4218", dark: "#9E4218")
     public static let neutralStatus        = Color.dynamic(light: "#5A5F66", dark: "#5A5F66")
     public static let indigoStatus         = Color.dynamic(light: "#4F46A5", dark: "#4F46A5")
 

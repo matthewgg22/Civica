@@ -18,6 +18,7 @@ struct FindHelpListView: View {
                 .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
+            .accessibilityLabel(location.name)
             .listRowBackground(CivicaColors.surfaceSecondary)
             .listRowSeparator(.hidden)
             .listRowInsets(EdgeInsets(top: CivicaSpacing.xs, leading: CivicaSpacing.lg, bottom: CivicaSpacing.xs, trailing: CivicaSpacing.lg))
@@ -78,7 +79,7 @@ private struct FindHelpListRow: View {
                     lineWidth: isSelected ? 1.5 : 1
                 )
         )
-        .animation(.easeInOut(duration: 0.15), value: isSelected)
+        .civicaAnimation(.easeInOut(duration: 0.15), value: isSelected)
     }
 
     private func formattedAddress() -> String? {
@@ -103,7 +104,8 @@ struct ServiceTypeBadge: View {
 
     var body: some View {
         Image(systemName: iconName)
-            .font(.system(size: 14, weight: .semibold))
+            .imageScale(.large)
+            .font(.body)
             .foregroundStyle(CivicaColors.onPrimaryText)
             .frame(width: 28, height: 28)
             .background(Circle().fill(backgroundColor))

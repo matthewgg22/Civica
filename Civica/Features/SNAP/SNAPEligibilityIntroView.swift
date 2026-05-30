@@ -120,6 +120,7 @@ struct SNAPEligibilityIntroView: View {
                             continueToGuidedDraft = true
                         }
                         .buttonStyle(CivicaPrimaryCTAButtonStyle())
+                        .accessibilityLabel(SNAPEligibilityIntroStrings.prepareApplication.value(in: language))
                         Spacer(minLength: 0)
                     }
                 }

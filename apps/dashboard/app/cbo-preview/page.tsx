@@ -1,3 +1,4 @@
+import KpiCard from "../../components/KpiCard";
 import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 import Link from "next/link";
@@ -156,19 +157,19 @@ export default async function CBOPreviewPage() {
             label="Avg applications / navigator / mo"
             value="23"
             subtext="Without Civica: 7 (manual process)"
-            variant="positive"
+            variant="neutral"
           />
           <KpiCard
             label="Error rate (Civica cohort)"
             value="4.2%"
             subtext="Without Civica: ~10.8%"
-            variant="positive"
+            variant="neutral"
           />
           <KpiCard
             label="Avg time to handoff"
             value="6 days"
             subtext="Without Civica: ~22 days"
-            variant="positive"
+            variant="neutral"
           />
         </div>
       </section>
@@ -190,7 +191,7 @@ export default async function CBOPreviewPage() {
             />
           ))}
         </div>
-        <p className="text-[11px] text-muted mt-3">
+        <p className="text-[11px] text-graphite mt-3">
           Conversion % relative to intake (1,240 applicants).
         </p>
       </section>
@@ -217,7 +218,7 @@ export default async function CBOPreviewPage() {
                 <div className="flex items-baseline gap-2 flex-wrap">
                   <p className="text-[15px] font-semibold text-ink">{p.applicantName}</p>
                   <p className="text-[14px] text-graphite">{p.county}, CA</p>
-                  <span className="text-[11px] text-muted font-mono tabular-nums">{p.shortId}</span>
+                  <span className="text-[11px] text-graphite font-mono tabular-nums">{p.shortId}</span>
                 </div>
                 <div className="flex items-center gap-2 mt-1.5">
                   <StatusPill status={p.status} />
@@ -230,14 +231,14 @@ export default async function CBOPreviewPage() {
               <div className="text-right shrink-0 flex items-center gap-3">
                 <div>
                   <p className="text-[13px] tabular-nums font-medium text-graphite">{p.timeAgo}</p>
-                  <p className="text-[11px] text-muted uppercase tracking-wider mt-0.5">updated</p>
+                  <p className="text-[11px] text-graphite uppercase tracking-wider mt-0.5">updated</p>
                 </div>
                 <span aria-hidden="true" className="text-muted text-[14px]">→</span>
               </div>
             </Link>
           ))}
         </div>
-        <p className="text-[11px] text-muted mt-3">
+        <p className="text-[11px] text-graphite mt-3">
           Sample data — synthetic packets seeded from <code className="font-mono">demo-data.ts</code>. No real applicant information is shown.
         </p>
       </section>
@@ -286,52 +287,8 @@ export default async function CBOPreviewPage() {
   );
 }
 
-// ---------------------------------------------------------------------------
-// KPI card sub-component
-// ---------------------------------------------------------------------------
-function KpiCard({
-  label,
-  value,
-  subtext,
-  variant,
-}: {
-  label: string;
-  value: string;
-  subtext: string;
-  variant: "neutral" | "positive" | "warning";
-}) {
-  const valueColor =
-    variant === "positive"
-      ? "var(--color-ink)"
-      : variant === "warning"
-        ? "var(--color-warning)"
-        : "var(--color-ink)";
-
-  const borderStyle =
-    variant === "warning"
-      ? { borderColor: "color-mix(in srgb, var(--color-warning) 30%, transparent)" }
-      : {};
-
-  return (
-    <div
-      className="bg-surface rounded-[4px] border border-hairline p-5"
-      style={borderStyle}
-    >
-      <p className="text-[11px] font-semibold uppercase tracking-wider text-muted">
-        {label}
-      </p>
-      <p
-        className="text-3xl font-semibold tabular-nums mt-2 leading-none"
-        style={{ color: valueColor }}
-      >
-        {value}
-      </p>
-      <p className="text-[12px] text-graphite mt-1.5 leading-relaxed">
-        {subtext}
-      </p>
-    </div>
-  );
-}
+// KpiCard extracted to ../../components/KpiCard.tsx per /plan-design-review
+// T10. Imported at the top of this file.
 
 // ---------------------------------------------------------------------------
 // Funnel step sub-component
@@ -364,7 +321,7 @@ function FunnelStep({
             : {}
         }
       >
-        <p className="text-[11px] font-semibold uppercase tracking-wider text-muted">
+        <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite">
           {name}
         </p>
         <p className="text-xl font-semibold tabular-nums text-ink mt-1">
@@ -374,7 +331,7 @@ function FunnelStep({
           <p className="text-[11px] text-graphite mt-0.5">{pct}</p>
         )}
         {isFirst && (
-          <p className="text-[11px] text-muted mt-0.5">applicants</p>
+          <p className="text-[11px] text-graphite mt-0.5">applicants</p>
         )}
       </div>
       {!isLast && (

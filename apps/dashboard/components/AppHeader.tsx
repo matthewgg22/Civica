@@ -1,12 +1,26 @@
 import Link from "next/link";
 import MobileNavMenu from "./MobileNavMenu";
+import ShareDropdown from "./ShareDropdown";
+import FirstVisitHints from "./FirstVisitHints";
 
-type NavKey = "dashboard" | "queue" | "enrollments" | "county" | "outreach" | "qc" | "compliance" | "ops" | "findings";
+type NavKey =
+  | "dashboard"
+  | "queue"
+  | "enrollments"
+  | "county"
+  | "outreach"
+  | "qc"
+  | "compliance"
+  | "ops"
+  | "findings";
 
-// §10106 / county cost-share dashboard is intentionally not in the
-// top nav — it's a B2G demo surface, still reachable by direct URL
-// (/county) for share-outs to county directors. The content exists;
-// only the nav entry is hidden to keep the daily-driver bar focused.
+// Primary nav — 6 daily-driver tabs. Why Civica + Findings were demoted
+// to the right-anchored Share dropdown per /plan-design-review D8 +
+// /plan-ceo-review D2 (selective expansion) — they're partner-facing
+// shareable surfaces, not navigator-routine destinations.
+//
+// §10106 / county cost-share dashboard remains hidden from nav (still
+// reachable by direct URL /county) for B2G demo flexibility.
 const NAV_ITEMS: { key: NavKey; href: string; label: string }[] = [
   { key: "dashboard",   href: "/dashboard",    label: "Home" },
   { key: "queue",       href: "/packets",      label: "Applications" },
@@ -15,18 +29,21 @@ const NAV_ITEMS: { key: NavKey; href: string; label: string }[] = [
   { key: "qc",          href: "/qc",           label: "Quality Control" },
   // Internal corporate dashboard — visible in nav for admin/operator/navigator.
   // Middleware gate blocks audience roles (county/state_deputy/cbo_preview).
-  // Sits before "Why Civica" so the daily-driver tabs stay grouped left and
-  // the marketing/positioning surface stays rightmost.
   { key: "ops",         href: "/ops",          label: "Performance" },
+];
+
+// Items folded into the Share dropdown (rendered separately by ShareDropdown).
+// Used by MobileNavMenu so the mobile hamburger still shows them.
+const SHARE_NAV_ITEMS: { key: NavKey; href: string; label: string }[] = [
   { key: "compliance",  href: "/compliance",   label: "Why Civica" },
-  // Partner-facing evidence ledger — sourced from docs/findings/ at build time.
-  // Public route (in FULLY_PUBLIC_PREFIXES), so it renders for every role and
-  // is shareable without a login. Replaced the internal /ops "Ops" tab here.
   { key: "findings",    href: "/findings",     label: "Findings" },
 ];
 
+const ALL_NAV_ITEMS = [...NAV_ITEMS, ...SHARE_NAV_ITEMS];
+
 export default function AppHeader({ email, active }: { email?: string; active: NavKey }) {
   return (
+    <>
     <header className="bg-pine px-4 sm:px-8 py-3.5 flex items-center justify-between gap-3">
       <div className="flex items-center gap-4 sm:gap-8 min-w-0">
         <Link href="/dashboard" className="flex items-center gap-3 group shrink-0">
@@ -47,20 +64,30 @@ export default function AppHeader({ email, active }: { email?: string; active: N
         </nav>
       </div>
       <div className="flex items-center gap-3 sm:gap-5">
+        {/* Share dropdown — partner-facing surfaces demoted from primary nav.
+            Client component; renders only a button until the user opens it. */}
+        <div className="hidden md:block">
+          <ShareDropdown active={active} />
+        </div>
         <kbd
           className="hidden sm:inline-flex items-center gap-1 text-[11px] font-mono text-white/45 hover:text-white/80 transition-colors border border-white/15 hover:border-white/30 rounded px-1.5 py-0.5"
+          aria-label="Open command palette, Command K"
           title="Open command palette (⌘K)"
         >
           ⌘K
         </kbd>
         {email && <span className="hidden md:inline text-[13px] text-white/50">{email}</span>}
         <form action="/auth/signout" method="post">
-          <button className="text-[13px] font-medium text-white/65 hover:text-white transition-colors">Sign out</button>
+          <button className="inline-flex items-center min-h-[44px] px-1.5 rounded text-[13px] font-medium text-white/80 hover:text-white focus:outline-none focus:ring-2 focus:ring-white/30 transition-colors">Sign out</button>
         </form>
-        {/* Mobile hamburger — md:hidden internally */}
-        <MobileNavMenu items={NAV_ITEMS} active={active} />
+        {/* Mobile hamburger — md:hidden internally. Shows ALL nav items
+            (including the Share ones) since the mobile dropdown has plenty
+            of room and we'd rather not nest another dropdown on mobile. */}
+        <MobileNavMenu items={ALL_NAV_ITEMS} active={active} />
       </div>
     </header>
+    <FirstVisitHints />
+    </>
   );
 }
 
@@ -68,7 +95,7 @@ function NavTab({ href, label, active }: { href: string; label: string; active: 
   return (
     <Link
       href={href}
-      className={`px-3 py-1.5 rounded-[4px] text-[13px] font-semibold transition-colors whitespace-nowrap ${
+      className={`px-3 py-1.5 rounded-[4px] text-[13px] font-semibold transition-colors whitespace-nowrap min-h-[44px] flex items-center focus:outline-none focus:ring-2 focus:ring-white/30 ${
         active
           ? "bg-white/15 text-white"
           : "text-white/55 hover:text-white hover:bg-white/10"

@@ -71,4 +71,47 @@ enum SNAPApplicationStatus: String, Codable, CaseIterable, Sendable {
             return false
         }
     }
+
+    /// True when the returning-user home's primary action should resume
+    /// the application by re-entering CivicaSNAPFlowView — the orchestrator
+    /// restores the saved section / review / packet step from
+    /// SNAPApplicationDraftStore, so the user lands back where they
+    /// stopped (the review surface for `.screenerComplete`, an idempotent
+    /// re-render of the packet for `.packetGenerated`).
+    ///
+    /// Only these two pre-submission active-case states actually reach
+    /// SNAPReturningUserHomeView: `rootSurface` rules out `.recertDue`,
+    /// the two decisions, and everything `isPostSubmission` (which covers
+    /// `.documentsRequested` onward) before the `.isActiveCase` branch.
+    /// Every other status routes elsewhere first, so resume-into-flow does
+    /// not apply to it. CivicaRootView gates its resume navigation on this
+    /// predicate — keeping the no-op CTA bug from silently returning.
+    var resumesIntoApplicationFlow: Bool {
+        switch self {
+        case .screenerComplete, .packetGenerated:
+            return true
+        default:
+            return false
+        }
+    }
+
+    /// True when the Phase 2 (Pending) home's primary CTA should push
+    /// the in-app SNAPInterviewCoachView instead of presenting the
+    /// generic SNAPWhatHappensNextSheet. Today that's only
+    /// `.interviewScheduled` — the highest-attrition moment in the SNAP
+    /// application, where coaching the user through a 15–20 minute
+    /// phone call is the highest-leverage thing Civica can do.
+    ///
+    /// JR-3 (audit 2026-05-29): the Phase 2 surface already flipped its
+    /// CTA copy to "Prepare for your interview" for this sub-state but
+    /// still routed it through the same sheet as every other Phase 2
+    /// status. CivicaHomePhase2View.primaryCTA now gates on this
+    /// predicate so the copy and the destination stay in lockstep.
+    /// SNAPWaitingRoomView's actionBanner used the same in-app coach
+    /// for `.interviewScheduled` before this PR; Phase 2 had simply
+    /// not inherited the rule when it took over the post-submission
+    /// surface from the waiting room.
+    var phase2PrimaryCTAPushesInterviewCoach: Bool {
+        self == .interviewScheduled
+    }
 }

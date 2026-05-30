@@ -367,6 +367,22 @@ enum SNAPConversationViewStrings {
         "Just to confirm, did I understand your answer correctly?",
         es: "Solo para confirmar, ¿entendí tu respuesta correctamente?"
     )
+    static let dismissErrorBanner = CivicaText(
+        "Dismiss error banner",
+        es: "Cerrar aviso de error"
+    )
+    static let getHelpByPhone = CivicaText(
+        "Get help by phone",
+        es: "Obtén ayuda por teléfono"
+    )
+    static let callNavigator = CivicaText(
+        "Call Civica navigator",
+        es: "Llamar al navegador de Civica"
+    )
+    static let orConnector = CivicaText(
+        "or",
+        es: "o"
+    )
 }
 
 // Existing `SNAPPrivacyNoticeStrings` enum (in SNAPPrivacyNoticeView.swift)

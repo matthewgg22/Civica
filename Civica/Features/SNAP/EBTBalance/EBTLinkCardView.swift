@@ -59,7 +59,8 @@ struct EBTLinkCardView: View {
     private var securityCard: some View {
         HStack(alignment: .top, spacing: CivicaSpacing.md) {
             Image(systemName: "lock.shield")
-                .font(.system(size: 20, weight: .semibold))
+                .imageScale(.large)
+                .font(.body)
                 .foregroundStyle(CivicaColors.amberPrimary)
                 .accessibilityHidden(true)
             VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
@@ -167,6 +168,7 @@ struct EBTLinkCardView: View {
         .buttonStyle(.plain)
         .disabled(isLinking)
         .padding(.top, CivicaSpacing.xs)
+        .accessibilityLabel(EBTBalanceStrings.linkCTA.value(in: language))
     }
 
     // MARK: - Demo disclosure

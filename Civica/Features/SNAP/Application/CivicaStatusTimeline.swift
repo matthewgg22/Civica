@@ -110,7 +110,8 @@ struct CivicaStatusTimeline: View {
                 .strokeBorder(markerBorder(for: step), lineWidth: step.state == .future ? 1 : 0)
                 .frame(width: 28, height: 28)
             Image(systemName: markerIcon(for: step))
-                .font(.system(size: 12, weight: .bold))
+                .imageScale(.large)
+                .font(.body)
                 .foregroundStyle(markerIconColor(for: step))
         }
     }

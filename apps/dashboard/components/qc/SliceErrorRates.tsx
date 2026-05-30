@@ -32,7 +32,7 @@ export interface SliceErrorRatesProps {
 const BASELINE_FRAC = CA_BASELINE_PER / 100; // 0.1098
 
 const TEAL = "#2A6F66";
-const WARNING = "#9A5A14";
+const WARNING = "var(--color-amber-dark)";
 const BRICK = "#9C3A24";
 
 /** Color a slice by its rate relative to the CA statewide baseline. */
@@ -68,12 +68,12 @@ export default function SliceErrorRates({ groups }: SliceErrorRatesProps) {
         <p className="eyebrow mb-1.5">
           QC · per-slice error rate · Wilson 95% band
         </p>
-        <h3
+        <h2
           id="slice-rates-title"
           className="text-[20px] font-semibold tracking-tight text-ink leading-tight"
         >
           Where measured errors concentrate
-        </h3>
+        </h2>
         <p className="text-[13px] text-graphite mt-2 max-w-2xl leading-relaxed">
           Measured error rate over completed QC reviews, broken out by category,
           county, and language. Each bar is the Wilson 95% confidence band; the
@@ -121,7 +121,7 @@ function SliceGroupBlock({
 }) {
   return (
     <div>
-      <p className="text-[10px] uppercase tracking-[0.12em] font-semibold text-muted mb-2">
+      <p className="text-[10px] uppercase tracking-[0.12em] font-semibold text-graphite mb-2">
         {group.label}
       </p>
       <div className="border border-hairline rounded-[3px] overflow-hidden">
@@ -183,7 +183,7 @@ function SliceRowView({
         <p className="text-[12px] font-semibold text-ink truncate" title={sliceValue}>
           {sliceValue}
         </p>
-        <p className="text-[10px] text-muted font-mono tabular-nums tracking-wide">
+        <p className="text-[10px] text-graphite font-mono tabular-nums tracking-wide">
           {errors}/{n} {n === 1 ? "review" : "reviews"}
           {lowConfidence && (
             <span className="ml-1 text-warning">· low n</span>
@@ -228,7 +228,7 @@ function SliceRowView({
         >
           {pct1(rate)}
         </p>
-        <p className="text-[10px] text-muted font-mono tabular-nums tracking-wide mt-0.5">
+        <p className="text-[10px] text-graphite font-mono tabular-nums tracking-wide mt-0.5">
           [{pct1(lower)}, {pct1(upper)}]
         </p>
       </div>
@@ -238,7 +238,7 @@ function SliceRowView({
 
 function Legend() {
   return (
-    <div className="flex flex-wrap items-center gap-x-5 gap-y-2 pt-1 text-[10px] text-muted">
+    <div className="flex flex-wrap items-center gap-x-5 gap-y-2 pt-1 text-[10px] text-graphite">
       <LegendDot color={TEAL} label={`at/under CA baseline (≤${CA_BASELINE_PER.toFixed(1)}%)`} />
       <LegendDot color={WARNING} label={`elevated (≤${(CA_BASELINE_PER * 2).toFixed(1)}%)`} />
       <LegendDot color={BRICK} label="high" />

@@ -91,8 +91,31 @@ struct SNAPInterviewCoachView: View {
 
     // MARK: - Phase 1: prep
 
+    /// JR-3 (audit 2026-05-29): leading reassurance card above the
+    /// day-before topics. surfaceSecondary background reads as a quiet
+    /// first beat — not a CTA or a warning.
+    private var reassuranceLead: some View {
+        VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
+            Text(SNAPInterviewPrepStrings.reassuranceLead.value(in: language))
+                .font(CivicaTypography.body)
+                .foregroundStyle(CivicaColors.ink)
+                .fixedSize(horizontal: false, vertical: true)
+            Text(SNAPInterviewPrepStrings.reassuranceFollowupsFootnote.value(in: language))
+                .font(CivicaTypography.footnote)
+                .foregroundStyle(CivicaColors.graphite)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .padding(CivicaSpacing.lg)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(CivicaColors.surfaceSecondary)
+        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
+        .accessibilityElement(children: .combine)
+    }
+
     private var prepContent: some View {
         VStack(alignment: .leading, spacing: CivicaSpacing.lg) {
+            reassuranceLead
+
             Text(SNAPInterviewPrepStrings.eyebrow.value(in: language))
                 .font(CivicaTypography.captionStrong)
                 .foregroundStyle(CivicaColors.pinePrimary)

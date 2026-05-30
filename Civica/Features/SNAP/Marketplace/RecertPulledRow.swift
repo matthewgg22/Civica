@@ -41,7 +41,7 @@ struct RecertPulledRow: View {
                 .fill(sourceDotColor)
                 .frame(width: 5, height: 5)
             Text(sourceTagText)
-                .font(.system(size: 11))
+                .font(CivicaTypography.caption)
                 .foregroundStyle(CivicaColors.graphite)
         }
     }

@@ -20,6 +20,13 @@ struct SNAPConversationFlowView: View {
 
     @StateObject private var viewModel: SNAPConversationViewModel
 
+    // IS-5 + UD-3 (audit 2026-05-29): the shared soft-ineligibility
+    // card surfaces three navigation destinations the conversation
+    // didn't previously own. State-driven sheet / nav links live here.
+    @State private var showsIntake: Bool = false
+    @State private var showsFindHelp: Bool = false
+    @State private var statePortalURL: URL?
+
     init(
         stateCode: String,
         language: String = "en",
@@ -44,16 +51,38 @@ struct SNAPConversationFlowView: View {
     }
 
     var body: some View {
-        SNAPConversationView(viewModel: viewModel)
-            .navigationTitle(SNAPConversationViewStrings.screenerTitle.value(in: resolvedLanguage))
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                if let onClose = onClose {
-                    ToolbarItem(placement: .topBarLeading) {
-                        Button(SNAPConversationViewStrings.close.value(in: resolvedLanguage)) { onClose() }
-                    }
+        SNAPConversationView(
+            viewModel: viewModel,
+            onApplyAnyway: { showsIntake = true },
+            onFindHelp: { showsFindHelp = true },
+            onOpenStatePortal: {
+                statePortalURL = CivicaExternalLinks.applyPortal(for: stateCode)
+            }
+        )
+        .navigationTitle(SNAPConversationViewStrings.screenerTitle.value(in: resolvedLanguage))
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            if let onClose = onClose {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button(SNAPConversationViewStrings.close.value(in: resolvedLanguage)) { onClose() }
+                        .accessibilityLabel(SNAPConversationViewStrings.close.value(in: resolvedLanguage))
                 }
             }
+        }
+        .navigationDestination(isPresented: $showsIntake) {
+            CivicaSNAPFlowView(language: resolvedLanguage)
+        }
+        .navigationDestination(isPresented: $showsFindHelp) {
+            FindHelpRootView(
+                initialFilter: FindHelpFilterState(
+                    serviceType: .foodAssistance,
+                    languageCode: nil
+                )
+            )
+        }
+        .sheet(item: $statePortalURL) { url in
+            CivicaSafariSheet(url: url)
+        }
     }
 
     /// Default network client. Mock when no backend URL is configured;

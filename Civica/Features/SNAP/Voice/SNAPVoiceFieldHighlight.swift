@@ -13,7 +13,8 @@ struct SNAPVoiceFieldHighlight: ViewModifier {
             .overlay(alignment: .topTrailing) {
                 if needsReview {
                     Image(systemName: "exclamationmark.bubble.fill")
-                        .font(.system(size: 10, weight: .bold))
+                        .imageScale(.large)
+                        .font(.body)
                         .foregroundStyle(CivicaColors.warningAmber)
                         .padding(2)
                         .background(
@@ -30,7 +31,7 @@ struct SNAPVoiceFieldHighlight: ViewModifier {
                         .allowsHitTesting(false)
                 }
             }
-            .animation(reduceMotion ? nil : CivicaAnimation.standard, value: needsReview)
+            .civicaAnimation(CivicaAnimation.standard, value: needsReview)
     }
 
     private var needsReview: Bool {

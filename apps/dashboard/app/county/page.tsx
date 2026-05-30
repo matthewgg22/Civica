@@ -113,7 +113,7 @@ export default async function CountyPage({
       {/* Page header */}
       <header className="px-6 md:px-8 py-5 border-b border-hairline flex items-start justify-between gap-4 flex-wrap">
         <div>
-          <p className="text-[11px] text-muted uppercase tracking-wider font-medium">
+          <p className="text-[11px] text-graphite uppercase tracking-wider font-medium">
             Civica · County DPSS
           </p>
           <h1 className="text-[26px] font-semibold text-ink mt-1.5 tracking-tight leading-tight">
@@ -191,7 +191,7 @@ export default async function CountyPage({
           <p className="text-[13px] text-graphite mt-2 leading-relaxed">
             State-level breakdown coming soon.
           </p>
-          <p className="text-[11px] text-muted mt-4">
+          <p className="text-[11px] text-graphite mt-4">
             {analytics.stateCode} PER (FY2024{isDemoMode ? " demo" : ""}): {analytics.perFy2024Pct}%
           </p>
         </div>
@@ -229,7 +229,7 @@ function KpiCard({
       className="bg-surface rounded-[4px] border border-hairline p-5"
       style={borderStyle}
     >
-      <p className="text-[11px] font-semibold uppercase tracking-wider text-muted">
+      <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite">
         {label}
       </p>
       <p

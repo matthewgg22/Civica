@@ -18,12 +18,12 @@ export default function CohortRetentionPanel({ data }: { data: CohortData }) {
       <div className="flex items-start justify-between gap-4 mb-4">
         <div>
           <p className="eyebrow mb-1">Panel 4 · Retention</p>
-          <h3 className="text-[18px] font-bold tracking-tight text-ink">Cohort retention curve</h3>
+          <h2 className="text-[18px] font-bold tracking-tight text-ink">Cohort retention curve</h2>
           <p className="text-[12px] text-graphite mt-1">
             % of HHs still tracking at 30 / 60 / 90 / 180 days · by enrollment month
           </p>
         </div>
-        <span className="text-[10px] font-mono text-muted uppercase tracking-wider whitespace-nowrap">
+        <span className="text-[10px] font-mono text-graphite uppercase tracking-wider whitespace-nowrap">
           {useDemoCurve ? "v1.1 preview shape" : "v1 · single-bucket"}
         </span>
       </div>
@@ -169,11 +169,11 @@ function SimpleCohortBars({ data }: { data: CohortData }) {
       <table className="w-full text-[12px]">
         <thead>
           <tr className="text-left">
-            <th className="font-semibold text-muted pb-2 uppercase tracking-wider text-[10px]">Enrollment month</th>
-            <th className="font-semibold text-muted pb-2 px-3 uppercase tracking-wider text-[10px] text-right">Packets</th>
-            <th className="font-semibold text-muted pb-2 px-3 uppercase tracking-wider text-[10px] text-right">Active now</th>
-            <th className="font-semibold text-muted pb-2 px-3 uppercase tracking-wider text-[10px] text-right">% Active</th>
-            <th className="font-semibold text-muted pb-2 pl-3 uppercase tracking-wider text-[10px]">Visual</th>
+            <th className="font-semibold text-graphite pb-2 uppercase tracking-wider text-[10px]">Enrollment month</th>
+            <th className="font-semibold text-graphite pb-2 px-3 uppercase tracking-wider text-[10px] text-right">Packets</th>
+            <th className="font-semibold text-graphite pb-2 px-3 uppercase tracking-wider text-[10px] text-right">Active now</th>
+            <th className="font-semibold text-graphite pb-2 px-3 uppercase tracking-wider text-[10px] text-right">% Active</th>
+            <th className="font-semibold text-graphite pb-2 pl-3 uppercase tracking-wider text-[10px]">Visual</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-hairline">

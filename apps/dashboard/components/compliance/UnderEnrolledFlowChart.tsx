@@ -64,7 +64,7 @@ const NODE_PADDING = 18;
 // 60+ cohort tag). Teal = product-addressable (matches Pillar 5 wins token).
 // Amber = populations (matches the gap-amber across Section D). Graphite =
 // already enrolled (neutral).
-const COLOR_POP = "#C9922A";
+const COLOR_POP = "var(--color-amber)";
 const COLOR_CHANNEL = "#5C1F11";
 const COLOR_PRODUCT = "#2A6F66";
 const COLOR_ENROLLED = "#8E8579";
@@ -236,7 +236,7 @@ export default function UnderEnrolledFlowChart() {
       {/* Header */}
       <div className="flex items-start justify-between gap-4 mb-3 flex-wrap">
         <div>
-          <p className="text-[10px] uppercase tracking-[0.12em] font-semibold text-muted mb-1">
+          <p className="text-[10px] uppercase tracking-[0.12em] font-semibold text-graphite mb-1">
             Flow view · where each population falls out
           </p>
           <h4 className="text-[16px] font-semibold tracking-tight text-ink leading-tight">
@@ -473,7 +473,7 @@ export default function UnderEnrolledFlowChart() {
       </div>
 
       {/* Footnote */}
-      <p className="text-[11px] text-muted italic mt-3 max-w-3xl leading-relaxed">
+      <p className="text-[11px] text-graphite italic mt-3 max-w-3xl leading-relaxed">
         Band widths are millions of US households. Population sizes use the same USDA FNS gap data
         as the bar chart above; barrier shares per population are modeled from the qualifying-rules
         anchor and existing literature on benefits-navigation barriers. Hover any band for its

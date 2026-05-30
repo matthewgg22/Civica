@@ -54,9 +54,9 @@ export default async function PilotPage({
         <div className="flex items-end justify-between gap-6 pb-3">
           <div>
             <p className="eyebrow mb-1">Pilot cohort console</p>
-            <h2 className="text-[26px] font-bold tracking-tight leading-none text-ink">
+            <h1 className="text-[26px] font-bold tracking-tight leading-none text-ink">
               Cohort measurement
-            </h2>
+            </h1>
             <p className="text-[13px] text-graphite mt-2 max-w-2xl leading-relaxed">
               Funnel, stage-transition timing, stalled packets, and aggregate
               risk for the pilot cohort — defined by the packet creation window
@@ -78,7 +78,7 @@ export default async function PilotPage({
         <section className="bg-surface border border-hairline rounded-[4px] px-6 py-4">
           <form method="get" className="flex flex-wrap items-end gap-4">
             <label className="flex flex-col gap-1">
-              <span className="text-[11px] uppercase tracking-wider font-semibold text-muted">
+              <span className="text-[11px] uppercase tracking-wider font-semibold text-graphite">
                 Since
               </span>
               <input
@@ -89,7 +89,7 @@ export default async function PilotPage({
               />
             </label>
             <label className="flex flex-col gap-1">
-              <span className="text-[11px] uppercase tracking-wider font-semibold text-muted">
+              <span className="text-[11px] uppercase tracking-wider font-semibold text-graphite">
                 Until
               </span>
               <input
@@ -123,9 +123,9 @@ export default async function PilotPage({
         <section className="bg-surface border border-hairline rounded-[4px] p-6">
           <div className="mb-4">
             <p className="eyebrow mb-1">Funnel</p>
-            <h3 className="text-[18px] font-semibold tracking-tight text-ink leading-tight">
+            <h2 className="text-[18px] font-semibold tracking-tight text-ink leading-tight">
               Where the cohort is right now
-            </h3>
+            </h2>
             <p className="text-[12px] text-graphite mt-1">
               Current status counts. Use this to find the drop-off stage — the
               one packets enter but few leave.
@@ -133,7 +133,7 @@ export default async function PilotPage({
           </div>
           <table className="w-full text-[13px]">
             <thead>
-              <tr className="text-[11px] uppercase tracking-wider text-muted">
+              <tr className="text-[11px] uppercase tracking-wider text-graphite">
                 <th className="text-left font-semibold pb-2">Status</th>
                 <th className="text-right font-semibold pb-2 tabular-nums">Count</th>
                 <th className="text-right font-semibold pb-2 tabular-nums">% of cohort</th>
@@ -166,9 +166,9 @@ export default async function PilotPage({
         <section className="bg-surface border border-hairline rounded-[4px] p-6">
           <div className="mb-4">
             <p className="eyebrow mb-1">Time to complete</p>
-            <h3 className="text-[18px] font-semibold tracking-tight text-ink leading-tight">
+            <h2 className="text-[18px] font-semibold tracking-tight text-ink leading-tight">
               Stage-transition durations
-            </h3>
+            </h2>
             <p className="text-[12px] text-graphite mt-1">
               Median and 75th-percentile time across packets that completed each
               transition. Small n means the median moves with each new packet —
@@ -177,7 +177,7 @@ export default async function PilotPage({
           </div>
           <table className="w-full text-[13px]">
             <thead>
-              <tr className="text-[11px] uppercase tracking-wider text-muted">
+              <tr className="text-[11px] uppercase tracking-wider text-graphite">
                 <th className="text-left font-semibold pb-2">Transition</th>
                 <th className="text-right font-semibold pb-2 tabular-nums">n</th>
                 <th className="text-right font-semibold pb-2 tabular-nums">Median</th>
@@ -205,9 +205,9 @@ export default async function PilotPage({
         <section className="bg-surface border border-hairline rounded-[4px] p-6">
           <div className="mb-4">
             <p className="eyebrow mb-1">Stalled packets</p>
-            <h3 className="text-[18px] font-semibold tracking-tight text-ink leading-tight">
+            <h2 className="text-[18px] font-semibold tracking-tight text-ink leading-tight">
               No status change in &gt;72h ({report.stalled.length} of {report.cohort_size})
-            </h3>
+            </h2>
             <p className="text-[12px] text-graphite mt-1">
               Non-terminal packets where the last transition is older than 72h.
               These are your drop-off candidates — chase them before they age out.
@@ -218,7 +218,7 @@ export default async function PilotPage({
           ) : (
             <table className="w-full text-[13px]">
               <thead>
-                <tr className="text-[11px] uppercase tracking-wider text-muted">
+                <tr className="text-[11px] uppercase tracking-wider text-graphite">
                   <th className="text-left font-semibold pb-2">Packet</th>
                   <th className="text-left font-semibold pb-2">Status</th>
                   <th className="text-left font-semibold pb-2">County</th>
@@ -252,9 +252,9 @@ export default async function PilotPage({
         <section className="bg-surface border border-hairline rounded-[4px] p-6">
           <div className="mb-4">
             <p className="eyebrow mb-1">Error frequency</p>
-            <h3 className="text-[18px] font-semibold tracking-tight text-ink leading-tight">
+            <h2 className="text-[18px] font-semibold tracking-tight text-ink leading-tight">
               Aggregate engine risk across the cohort
-            </h3>
+            </h2>
             <p className="text-[12px] text-graphite mt-1">
               Latest scoreErrorRisk per packet. High-tier count is the headline:
               that's how many cohort packets would fail the &quot;error-risk
@@ -288,7 +288,7 @@ export default async function PilotPage({
         </section>
 
         {/* Method footnote */}
-        <p className="text-[11px] text-muted leading-relaxed">
+        <p className="text-[11px] text-graphite leading-relaxed">
           Cohort = packets whose <span className="font-mono">created_at</span>{" "}
           falls in <span className="font-mono">[{since}, {until})</span>.
           Stage durations use the trigger-populated columns on{" "}
@@ -319,7 +319,7 @@ function Stat({
     tone === "warning" ? "text-warning" : tone === "teal" ? "text-teal" : "text-ink";
   return (
     <div className="border-l-2 border-hairline pl-3">
-      <p className="text-[11px] uppercase tracking-wider font-semibold text-muted">{label}</p>
+      <p className="text-[11px] uppercase tracking-wider font-semibold text-graphite">{label}</p>
       <p className={`text-[24px] font-semibold tabular-nums leading-tight mt-1 ${valueColor}`}>
         {value}
       </p>

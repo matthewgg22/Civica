@@ -35,9 +35,9 @@ export default function EligibilityQueuePanel({ data }: { data: EligibilityQueue
       <div className="flex items-start justify-between gap-4 mb-5">
         <div>
           <p className="eyebrow mb-1">Panel 9 · Opportunity queue</p>
-          <h3 className="text-[18px] font-bold tracking-tight text-ink">
+          <h2 className="text-[18px] font-bold tracking-tight text-ink">
             What&apos;s next: eligible but not yet referred
-          </h3>
+          </h2>
           <p className="text-[12px] text-graphite mt-1">
             <span className="font-semibold text-ink tabular-nums">{totalInQueue.toLocaleString()}</span> HHs in queue across {rows.length} programs · {monetizedQueueCount.toLocaleString()} monetized · sorted by projected revenue
           </p>
@@ -118,7 +118,7 @@ function ProgramRow({
           subtle={row.eligible > 0 ? `${refPct}%` : undefined}
         />
         <div>
-          <p className="text-[10px] font-semibold uppercase tracking-wider text-muted mb-1">In queue</p>
+          <p className="text-[10px] font-semibold uppercase tracking-wider text-graphite mb-1">In queue</p>
           <div
             className="inline-flex items-baseline gap-1.5 px-2 py-0.5 rounded-[3px]"
             style={{ backgroundColor: `rgba(50, 46, 39, ${0.05 + queueIntensity * 0.12})` }}
@@ -132,7 +132,7 @@ function ProgramRow({
 
       {/* Projected revenue + bar */}
       <div>
-        <p className="text-[10px] font-semibold uppercase tracking-wider text-muted mb-1">Projected</p>
+        <p className="text-[10px] font-semibold uppercase tracking-wider text-graphite mb-1">Projected</p>
         {row.monetized ? (
           <>
             <p className="text-[16px] font-bold tabular-nums text-ink leading-none">
@@ -179,7 +179,7 @@ function NumberCell({
 }) {
   return (
     <div>
-      <p className="text-[10px] font-semibold uppercase tracking-wider text-muted mb-1">{label}</p>
+      <p className="text-[10px] font-semibold uppercase tracking-wider text-graphite mb-1">{label}</p>
       <p className={`text-[15px] font-bold tabular-nums leading-none ${muted ? "text-graphite" : "text-ink"}`}>
         {value.toLocaleString()}
       </p>

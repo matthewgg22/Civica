@@ -53,6 +53,8 @@ enum SNAPAnalytics {
         static let intakeHelpOpened = "snap_intake_help_opened"
         static let intakeHelpFiltered = "snap_intake_help_filtered"
         static let intakeHelpError = "snap_intake_help_error"
+        // IS-9: draft load failure surface on entry view.
+        static let draftLoadFailed = "snap_draft_load_failed"
     }
 
     /// Track a single conversation turn. `topic` is the QuestionTopic the
@@ -129,6 +131,24 @@ enum SNAPAnalytics {
 
     static func trackInterview24hNotificationScheduled() {
         send(Event.interview24hNotificationScheduled, stepName: nil, stepIndex: nil)
+    }
+
+    // MARK: - Draft load failure (IS-9)
+
+    /// Fires once on first render when a draft existed on disk but
+    /// couldn't be decoded. The `topic` slot encodes the error variant
+    /// ("schema_mismatch" | "io_error" | "decoding_error") — closed set,
+    /// no PII. Version is omitted per the allowlist; telemetry bucket
+    /// is the event itself.
+    static func trackDraftLoadFailure(error: DraftLoadError) {
+        let variant: String
+        switch error {
+        case .schemaMismatch: variant = "schema_mismatch"
+        case .ioError:        variant = "io_error"
+        case .decodingError:  variant = "decoding_error"
+        case .empty:          return
+        }
+        send(Event.draftLoadFailed, stepName: nil, stepIndex: nil, topic: variant)
     }
 
     // MARK: - Re-entry assist (Unrath retention pillar, G2)

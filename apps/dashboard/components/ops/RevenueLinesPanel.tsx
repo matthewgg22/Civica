@@ -83,10 +83,10 @@ export default function RevenueLinesPanel({ data }: { data: RevenueLinesData }) 
         <table className="w-full">
           <thead>
             <tr className="border-b border-hairline">
-              <th className="text-left text-[10px] font-semibold uppercase tracking-wider text-muted pb-2 pr-4">Line</th>
-              <th className="text-left text-[10px] font-semibold uppercase tracking-wider text-muted pb-2 pr-4 w-44">Status</th>
-              <th className="text-right text-[10px] font-semibold uppercase tracking-wider text-muted pb-2 pr-4 w-28">30d $</th>
-              <th className="text-right text-[10px] font-semibold uppercase tracking-wider text-muted pb-2 w-24">% of revenue</th>
+              <th className="text-left text-[10px] font-semibold uppercase tracking-wider text-graphite pb-2 pr-4">Line</th>
+              <th className="text-left text-[10px] font-semibold uppercase tracking-wider text-graphite pb-2 pr-4 w-44">Status</th>
+              <th className="text-right text-[10px] font-semibold uppercase tracking-wider text-graphite pb-2 pr-4 w-28">30d $</th>
+              <th className="text-right text-[10px] font-semibold uppercase tracking-wider text-graphite pb-2 w-24">% of revenue</th>
             </tr>
           </thead>
           <tbody>
@@ -110,12 +110,12 @@ function Header() {
     <div className="flex items-start justify-between gap-4 mb-4">
       <div>
         <p className="eyebrow mb-1 text-pine">Panel 10 · Revenue rollup</p>
-        <h3 className="text-[18px] font-bold tracking-tight text-ink">Where the money comes from</h3>
+        <h2 className="text-[18px] font-bold tracking-tight text-ink">Where the money comes from</h2>
         <p className="text-[12px] text-graphite mt-1">
           Every monetization line, stacked · past 30 days
         </p>
       </div>
-      <span className="text-[10px] font-mono text-muted uppercase tracking-wider whitespace-nowrap">
+      <span className="text-[10px] font-mono text-graphite uppercase tracking-wider whitespace-nowrap">
         Operator-gated · v1
       </span>
     </div>
@@ -138,7 +138,7 @@ function RevenueStackBar({
   return (
     <div>
       <div className="flex items-baseline justify-between mb-2">
-        <p className="text-[10px] font-semibold uppercase tracking-wider text-muted">
+        <p className="text-[10px] font-semibold uppercase tracking-wider text-graphite">
           Revenue stack · 30d
         </p>
         <p className="text-[11px] font-mono text-graphite tabular-nums">
@@ -224,7 +224,7 @@ function NetCallout({
   const positive = wowDeltaPct >= 0;
   return (
     <div className="w-56 border-l border-hairline pl-6">
-      <p className="text-[10px] font-semibold uppercase tracking-wider text-muted mb-2">
+      <p className="text-[10px] font-semibold uppercase tracking-wider text-graphite mb-2">
         Net monetization
       </p>
       <p className="text-[36px] font-bold tabular-nums leading-none text-pine">
@@ -245,11 +245,11 @@ function NetCallout({
 
       <div className="mt-4 pt-3 border-t border-hairline space-y-1">
         <div className="flex items-baseline justify-between gap-3">
-          <span className="text-[10px] uppercase tracking-wider text-muted font-semibold">Revenue</span>
+          <span className="text-[10px] uppercase tracking-wider text-graphite font-semibold">Revenue</span>
           <span className="text-[12px] font-mono tabular-nums text-ink">{formatUSD(revenueCents, { compact: true })}</span>
         </div>
         <div className="flex items-baseline justify-between gap-3">
-          <span className="text-[10px] uppercase tracking-wider text-muted font-semibold">Outlay</span>
+          <span className="text-[10px] uppercase tracking-wider text-graphite font-semibold">Outlay</span>
           <span className="text-[12px] font-mono tabular-nums text-warning">− {formatUSD(costCents, { precise: true })}</span>
         </div>
       </div>

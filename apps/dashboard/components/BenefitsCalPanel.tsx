@@ -543,7 +543,7 @@ function PayloadPreview({
         <dt className="text-muted">Consent</dt>
         <dd className="text-ink">{payload.consent_type ?? "async_portal"}</dd>
       </dl>
-      <p className="mt-2 text-[11px] text-muted italic">
+      <p className="mt-2 text-[11px] text-graphite italic">
         PII fields stay encrypted until the Phase 2 worker decrypts them inline.
         Nothing on this preview is decrypted in the dashboard.
       </p>

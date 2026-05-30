@@ -19,7 +19,8 @@ struct ValuePropScreen: View {
             Spacer()
 
             Image(systemName: "clock.arrow.circlepath")
-                .font(.system(size: 56, weight: .light))
+                .imageScale(.large)
+                .font(.body)
                 .foregroundStyle(CivicaColors.pinePrimary)
                 .accessibilityHidden(true)
 
@@ -57,7 +58,8 @@ struct OnboardingStepHeader: View {
         HStack(alignment: .center, spacing: CivicaSpacing.md) {
             Button(action: onBack) {
                 Image(systemName: "chevron.left")
-                    .font(.system(size: 16, weight: .semibold))
+                    .imageScale(.large)
+                    .font(.body)
                     .foregroundStyle(CivicaColors.ink)
                     .frame(width: 44, height: 44, alignment: .leading)
                     .contentShape(Rectangle())

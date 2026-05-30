@@ -39,6 +39,12 @@ struct EBTBalanceDashboardView: View {
             if let account = store.account {
                 let insights = EBTBalanceInsights(account: account)
                 VStack(alignment: .leading, spacing: CivicaSpacing.lg) {
+                    // IS-1: refresh-failure banner. Sits ABOVE everything so
+                    // users can't miss that the balance shown is stale.
+                    if store.lastRefreshError != nil {
+                        refreshErrorBanner
+                            .transition(.move(edge: .top).combined(with: .opacity))
+                    }
                     // Anti-skimming anomaly banner — highest-severity first.
                     // Rendered above all status banners and the hero card so
                     // it can never be obscured. Lane F's "Scan receipt" button
@@ -132,6 +138,103 @@ struct EBTBalanceDashboardView: View {
         }
     }
 
+    // MARK: - IS-1 refresh error banner (audit 2026-05-29)
+
+    /// Dismissible amber-warning banner shown above the hero card when
+    /// `store.lastRefreshError != nil`. Retry is disabled while a
+    /// refresh is in flight (PF-1 coalesce); the store enforces the
+    /// 3s cooldown internally so the button stays interactive.
+    private var refreshErrorBanner: some View {
+        let asOfString = store.lastSuccessfulRefreshAt.map(shortTimestamp)
+        let bodyText: String = {
+            if let asOf = asOfString {
+                return EBTBalanceStrings.refreshErrorBannerBody(asOf: asOf, language: language)
+            }
+            return EBTBalanceStrings.refreshErrorBannerNoTimestamp.value(in: language)
+        }()
+
+        return VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
+            HStack(alignment: .top, spacing: CivicaSpacing.sm) {
+                Image(systemName: "exclamationmark.triangle")
+                    .foregroundStyle(CivicaColors.warningAmber)
+                    .accessibilityHidden(true)
+                Text(bodyText)
+                    .font(CivicaTypography.footnoteStrong)
+                    .foregroundStyle(CivicaColors.ink)
+                    .fixedSize(horizontal: false, vertical: true)
+                Spacer(minLength: CivicaSpacing.sm)
+                Button {
+                    store.clearRefreshError()
+                } label: {
+                    Image(systemName: "xmark")
+                        .imageScale(.large)
+                        .font(.body)
+                        .foregroundStyle(CivicaColors.graphite)
+                        .padding(4)
+                        .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel(EBTBalanceStrings.refreshErrorDismiss.value(in: language))
+            }
+            HStack {
+                Spacer(minLength: 0)
+                Button {
+                    Task { await store.refresh() }
+                } label: {
+                    HStack(spacing: CivicaSpacing.xs) {
+                        if store.isRefreshing {
+                            ProgressView()
+                                .controlSize(.small)
+                                .tint(CivicaColors.pinePrimary)
+                        }
+                        Text(EBTBalanceStrings.refreshErrorRetry.value(in: language))
+                            .font(CivicaTypography.captionStrong)
+                            .foregroundStyle(CivicaColors.pinePrimary)
+                    }
+                    .padding(.horizontal, CivicaSpacing.sm)
+                    .padding(.vertical, 6)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 6)
+                            .strokeBorder(CivicaColors.pinePrimary, lineWidth: 1)
+                    )
+                }
+                .buttonStyle(.plain)
+                .disabled(store.isRefreshing)
+                .accessibilityLabel(EBTBalanceStrings.refreshErrorRetry.value(in: language))
+            }
+        }
+        .padding(CivicaSpacing.md)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(CivicaColors.statusWarningSurface)
+        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control))
+        .overlay(
+            RoundedRectangle(cornerRadius: CivicaRadius.control)
+                .strokeBorder(CivicaColors.warningAmber.opacity(0.4), lineWidth: 1)
+        )
+        .accessibilityElement(children: .contain)
+        .accessibilityLabel(
+            EBTBalanceStrings.refreshErrorAccessibilityLabel(
+                asOf: asOfString,
+                language: language
+            )
+        )
+    }
+
+    /// Short-style local time, e.g. "2:30 PM". Used in the IS-1 banner.
+    private func shortTimestamp(_ date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: language == .spanish ? "es" : "en")
+        formatter.timeStyle = .short
+        formatter.dateStyle = .none
+        return formatter.string(from: date)
+    }
+
+    /// IS-1 / T14: the hero "Updated …" timestamp is bolded once the
+    /// snapshot is more than 5 minutes old, drawing the eye to its age.
+    private func isStaleTimestamp(_ date: Date) -> Bool {
+        Date().timeIntervalSince(date) > 300
+    }
+
     // MARK: - Phase 2 Lane F — Scan receipt button
 
     /// Entry point for receipt capture, slotted below the spending insights card.
@@ -142,7 +245,8 @@ struct EBTBalanceDashboardView: View {
         } label: {
             HStack(spacing: CivicaSpacing.md) {
                 Image(systemName: "camera.viewfinder")
-                    .font(.system(size: 20, weight: .semibold))
+                    .imageScale(.large)
+                    .font(.body)
                     .foregroundStyle(CivicaColors.pinePrimary)
                     .frame(width: 28, alignment: .leading)
                     .accessibilityHidden(true)
@@ -182,17 +286,17 @@ struct EBTBalanceDashboardView: View {
         ToolbarItem(placement: .topBarTrailing) {
             Menu {
                 Button {
-                    withAnimation(.easeInOut(duration: 0.3)) { store.simulatePurchase() }
+                    civicaWithAnimation(CivicaAnimation.slow) { store.simulatePurchase() }
                 } label: {
                     Label(EBTBalanceStrings.simulatePurchaseButton.value(in: language), systemImage: "cart.badge.minus")
                 }
                 Button {
                     let amount = store.account?.nextDeposit?.amount ?? 200
-                    withAnimation(.easeInOut(duration: 0.3)) { store.simulateDeposit() }
+                    civicaWithAnimation(CivicaAnimation.slow) { store.simulateDeposit() }
                     depositLanded = amount
                     Task {
                         try? await Task.sleep(nanoseconds: 4_500_000_000)
-                        withAnimation { depositLanded = nil }
+                        civicaWithAnimation(.default) { depositLanded = nil }
                     }
                 } label: {
                     Label(EBTBalanceStrings.simulateDepositButton.value(in: language), systemImage: "arrow.down.circle")
@@ -223,6 +327,9 @@ struct EBTBalanceDashboardView: View {
                 CivicaMoney(amount: account.foodBalance, font: CivicaTypography.display)
                     .foregroundStyle(CivicaColors.wheatPrimary)
                     .contentTransition(.numericText())
+                    // MARK: - REDUCE-MOTION EXEMPT — numericText counter spring
+                    // physics is tied to a specific bouncy feel (RA-4 audit
+                    // 2026-05-29 explicit exception, same as estimator).
                     .animation(.spring(response: 0.25, dampingFraction: 0.8), value: account.foodBalance)
                 Text(EBTBalanceStrings.balanceRemainingSuffix.value(in: language))
                     .font(CivicaTypography.subhead)
@@ -236,7 +343,9 @@ struct EBTBalanceDashboardView: View {
             }
 
             Text(lastUpdatedLine(account))
-                .font(CivicaTypography.footnote)
+                .font(isStaleTimestamp(account.lastUpdated)
+                      ? CivicaTypography.footnoteStrong
+                      : CivicaTypography.footnote)
                 .foregroundStyle(Color.white.opacity(0.45))
 
             if let deposit = account.nextDeposit {
@@ -250,8 +359,8 @@ struct EBTBalanceDashboardView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(CivicaColors.pinePrimary)
         .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
-        .animation(.easeInOut(duration: 0.25), value: store.isCardLocked)
-        .animation(.easeInOut(duration: 0.25), value: depositLanded)
+        .civicaAnimation(.easeInOut(duration: 0.25), value: store.isCardLocked)
+        .civicaAnimation(.easeInOut(duration: 0.25), value: depositLanded)
     }
 
     /// 3pt progress bar showing spending velocity for the current month.
@@ -265,7 +374,7 @@ struct EBTBalanceDashboardView: View {
                     Capsule()
                         .fill(CivicaColors.wheatPrimary.opacity(0.85))
                         .frame(width: geo.size.width * insights.spentPercent, height: 3)
-                        .animation(CivicaAnimation.standard, value: insights.spentPercent)
+                        .civicaAnimation(CivicaAnimation.standard, value: insights.spentPercent)
                 }
             }
             .frame(height: 3)
@@ -342,7 +451,8 @@ struct EBTBalanceDashboardView: View {
             let iconName = isTight ? "exclamationmark.circle.fill" : "calendar.badge.checkmark"
             HStack(alignment: .top, spacing: CivicaSpacing.md) {
                 Image(systemName: iconName)
-                    .font(.system(size: 20, weight: .semibold))
+                    .imageScale(.large)
+                    .font(.body)
                     .foregroundStyle(accent)
                     .frame(width: 28, alignment: .leading)
                     .accessibilityHidden(true)
@@ -503,7 +613,8 @@ struct EBTBalanceDashboardView: View {
             Spacer(minLength: CivicaSpacing.sm)
             transactionAmount(transaction)
             Image(systemName: "chevron.right")
-                .font(.system(size: 12, weight: .semibold))
+                .imageScale(.large)
+                .font(.body)
                 .foregroundStyle(CivicaColors.graphite)
                 .accessibilityHidden(true)
         }
@@ -521,7 +632,8 @@ struct EBTBalanceDashboardView: View {
             Circle().fill(tint.opacity(0.12))
             if transaction.isDeposit {
                 Image(systemName: "arrow.down")
-                    .font(.system(size: 14, weight: .bold))
+                    .imageScale(.large)
+                    .font(.body)
                     .foregroundStyle(tint)
             } else {
                 Text(transaction.monogram)
@@ -554,7 +666,8 @@ struct EBTBalanceDashboardView: View {
     private func depositScheduleCard(_ account: EBTAccount) -> some View {
         HStack(alignment: .top, spacing: CivicaSpacing.md) {
             Image(systemName: "calendar")
-                .font(.system(size: 20, weight: .semibold))
+                .imageScale(.large)
+                .font(.body)
                 .foregroundStyle(CivicaColors.amberPrimary)
                 .frame(width: 28, alignment: .leading)
                 .accessibilityHidden(true)
@@ -589,7 +702,8 @@ struct EBTBalanceDashboardView: View {
     private func expirationCard(_ insights: EBTBalanceInsights) -> some View {
         HStack(alignment: .top, spacing: CivicaSpacing.md) {
             Image(systemName: "hourglass")
-                .font(.system(size: 20, weight: .semibold))
+                .imageScale(.large)
+                .font(.body)
                 .foregroundStyle(CivicaColors.warningAmber)
                 .frame(width: 28, alignment: .leading)
                 .accessibilityHidden(true)
@@ -627,7 +741,8 @@ struct EBTBalanceDashboardView: View {
         } label: {
             HStack(spacing: CivicaSpacing.md) {
                 Image(systemName: store.isCardLocked ? "lock.fill" : "lock.open")
-                    .font(.system(size: 20, weight: .semibold))
+                    .imageScale(.large)
+                    .font(.body)
                     .foregroundStyle(store.isCardLocked ? CivicaColors.pinePrimary : CivicaColors.graphite)
                     .frame(width: 28, alignment: .leading)
                     .accessibilityHidden(true)
@@ -669,7 +784,8 @@ struct EBTBalanceDashboardView: View {
         } label: {
             HStack(spacing: CivicaSpacing.md) {
                 Image(systemName: "phone.bubble.fill")
-                    .font(.system(size: 20, weight: .semibold))
+                    .imageScale(.large)
+                    .font(.body)
                     .foregroundStyle(CivicaColors.pinePrimary)
                     .frame(width: 28, alignment: .leading)
                     .accessibilityHidden(true)
@@ -764,7 +880,8 @@ struct EBTBalanceDashboardView: View {
     private func perksOfferRow(offer: EBTOffer) -> some View {
         HStack(alignment: .top, spacing: CivicaSpacing.md) {
             Image(systemName: "tag.fill")
-                .font(.system(size: 16, weight: .semibold))
+                .imageScale(.large)
+                .font(.body)
                 .foregroundStyle(CivicaColors.pinePrimary)
                 .frame(width: 24)
                 .accessibilityHidden(true)
@@ -848,7 +965,8 @@ struct EBTBalanceDashboardView: View {
     private func contentRow(icon: String, title: String, detail: String) -> some View {
         HStack(alignment: .top, spacing: CivicaSpacing.md) {
             Image(systemName: icon)
-                .font(.system(size: 18, weight: .semibold))
+                .imageScale(.large)
+                .font(.body)
                 .foregroundStyle(CivicaColors.pinePrimary)
                 .frame(width: 28, height: 28, alignment: .center)
                 .accessibilityHidden(true)

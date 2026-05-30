@@ -12,6 +12,15 @@ When adding a new finding: copy `docs/findings/_template.md`, fill in evidence, 
 
 When superseding a finding: set the old one's `status: superseded` and `superseded_by: [new-id]` — do not delete. Lineage is the point.
 
+## Open work / next-up
+
+Actionable work items (bugs to fix, PRs to make, follow-ups) live as **GitHub issues** — not in auto-memory, not only in a session note. At the start of a work session — especially SNAP / eligibility / iOS-test work — check the queue:
+
+- `gh issue list --state open` (or filter: `gh issue list --label bug`)
+- The fixing PR closes it with `Closes #N` (auto-closes on merge).
+
+This is the source of truth for *what to do next*, distinct from `docs/findings/` (*what we know*), auto-memory (*where a session left off*), and `docs/plans/` (*intent*). When you discover an out-of-scope issue mid-task, **file it** (`gh issue create`) rather than only noting it in auto-memory — issues are team-visible, survive across sessions, and a cold agent finds them in one command. Reserve auto-memory for genuine session handoff state.
+
 ## Commit message conventions
 
 Test work is tracked in retros by commit-prefix grep. Tag accordingly:

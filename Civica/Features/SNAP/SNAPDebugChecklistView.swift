@@ -5,6 +5,7 @@ import SwiftUI
 // EXPERIMENTAL SILOED MODULE:
 // Internal-only QA checklist for SNAP safeguards.
 // This file is compiled in DEBUG builds only and must not ship to production UI.
+// MARK: - AccessibilityElement = parent
 struct SNAPDebugChecklistView: View {
     private struct ChecklistItem: Identifiable {
         let id = UUID()

@@ -395,8 +395,15 @@ function pnlUnavailable(activeTrackers: number): PartnerPnLData {
   };
 }
 
-export async function fetchPartnerPnL(days = 30, activeTrackers = 0): Promise<PartnerPnLData> {
+export async function fetchPartnerPnL(days = 30): Promise<PartnerPnLData> {
   if (isDemoOpsFallbackEnabled()) return DEMO_PARTNER_PNL;
+  // PnL's denominator (revenue_per_active_tracker_cents) depends on the
+  // active_tracker_count from EBT. Per /plan-eng-review D2 we fetch our own
+  // EBT aggregate here rather than threading it through callers — the cost
+  // (~5ms duplicate query) buys full per-panel decoupling so the /ops page
+  // can stream each panel independently in Suspense boundaries.
+  const ebt = await fetchEbtAggregate();
+  const activeTrackers = ebt.active_tracker_count;
   const db = safeServiceClient();
   if (!db) return pnlUnavailable(activeTrackers);
   const sinceIso = new Date(Date.now() - days * 86_400_000).toISOString();
