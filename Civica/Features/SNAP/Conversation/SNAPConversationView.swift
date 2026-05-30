@@ -9,6 +9,7 @@ struct SNAPConversationView: View {
     @StateObject var viewModel: SNAPConversationViewModel
     @State private var pendingFreeText: String = ""
     @State private var pendingNumeric: String = ""
+    @State private var bannerDismissed: Bool = false
     @FocusState private var isInputFocused: Bool
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
@@ -17,6 +18,13 @@ struct SNAPConversationView: View {
 
     private var language: CivicaLanguage {
         CivicaLanguage(rawValue: languageRaw) ?? .english
+    }
+
+    private var navigatorPhoneURL: URL? {
+        let number = SNAPAgencyDirectory.helplineNumber(for: viewModel.stateCode)
+        let digits = number.filter(\.isNumber)
+        guard !digits.isEmpty else { return nil }
+        return URL(string: "tel:\(digits)")
     }
 
     var body: some View {
@@ -47,7 +55,7 @@ struct SNAPConversationView: View {
                     if case .terminal(let result) = viewModel.phase, let result {
                         verdictCard(result).id("verdict")
                     }
-                    if case .error(let message) = viewModel.phase {
+                    if case .error(let message) = viewModel.phase, !bannerDismissed {
                         errorBanner(message).id("error")
                     }
                 }
@@ -57,6 +65,11 @@ struct SNAPConversationView: View {
             .onChange(of: viewModel.transcript.count) {
                 if let last = viewModel.transcript.last {
                     withAnimation(reduceMotion ? nil : .default) { proxy.scrollTo(last.id, anchor: .bottom) }
+                }
+            }
+            .onChange(of: viewModel.phase) { _, newPhase in
+                if case .error = newPhase {
+                    bannerDismissed = false
                 }
             }
         }
@@ -205,6 +218,14 @@ struct SNAPConversationView: View {
             Text(message)
                 .font(CivicaTypography.subhead)
                 .foregroundColor(CivicaColors.ink)
+                .frame(maxWidth: .infinity, alignment: .leading)
+            Button {
+                bannerDismissed = true
+            } label: {
+                Image(systemName: "xmark")
+                    .foregroundColor(CivicaColors.graphite)
+            }
+            .accessibilityLabel(SNAPConversationViewStrings.dismissErrorBanner.value(in: language))
         }
         .padding(CivicaSpacing.md)
         .background(CivicaColors.statusErrorSurface)
@@ -218,11 +239,28 @@ struct SNAPConversationView: View {
         if case .terminal = viewModel.phase {
             EmptyView()
         } else if case .error = viewModel.phase {
-            Button(SNAPConversationViewStrings.retry.value(in: language)) {
-                Task {
-                    if viewModel.sessionId == nil {
-                        await viewModel.start()
+            HStack(spacing: CivicaSpacing.sm) {
+                Button(SNAPConversationViewStrings.retry.value(in: language)) {
+                    Task {
+                        if viewModel.sessionId == nil {
+                            await viewModel.start()
+                        }
                     }
+                }
+                if let phoneURL = navigatorPhoneURL {
+                    Text(SNAPConversationViewStrings.orConnector.value(in: language))
+                        .font(CivicaTypography.subhead)
+                        .foregroundColor(CivicaColors.graphite)
+                    Link(destination: phoneURL) {
+                        HStack(spacing: CivicaSpacing.xs) {
+                            Text(SNAPConversationViewStrings.getHelpByPhone.value(in: language))
+                            Image(systemName: "arrow.right")
+                                .accessibilityHidden(true)
+                        }
+                        .font(CivicaTypography.subheadStrong)
+                        .foregroundColor(CivicaColors.pinePrimary)
+                    }
+                    .accessibilityLabel(SNAPConversationViewStrings.callNavigator.value(in: language))
                 }
             }
             .padding(CivicaSpacing.lg)
