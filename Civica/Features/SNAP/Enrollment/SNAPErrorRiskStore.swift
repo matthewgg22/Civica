@@ -24,6 +24,11 @@ import SwiftUI
 final class SNAPErrorRiskStore: ObservableObject {
     @Published private(set) var result: ErrorRiskResult?
     @Published private(set) var isLoading: Bool = false
+    /// IS-2 (audit 2026-05-29) — surfaces the load outcome to the
+    /// coordinated `CivicaSyncBannerCoordinator`. Per-row hide on
+    /// failure stays intact (`result = nil` still wins for rendering);
+    /// this flag is purely a signal for the cross-store banner.
+    @Published private(set) var lastLoadFailed: Bool = false
 
     private var apiClient: (any EnrollmentAPIClient)?
 
@@ -67,13 +72,18 @@ final class SNAPErrorRiskStore: ObservableObject {
                 })
             guard let activePacket else {
                 result = nil
+                lastLoadFailed = false
                 return
             }
             let r = try await apiClient.fetchErrorRisk(packetId: activePacket.id)
             result = r
+            lastLoadFailed = false
         } catch {
             // Silent fail: the home view degrades by hiding the row.
+            // The IS-2 sync banner reads `lastLoadFailed` to coordinate
+            // across stores.
             result = nil
+            lastLoadFailed = true
         }
     }
 

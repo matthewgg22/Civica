@@ -26,6 +26,11 @@ import SwiftUI
 final class SNAPInboxStore: ObservableObject {
     @Published private(set) var items: [EnrollmentInboxItem] = []
     @Published private(set) var isLoading: Bool = false
+    /// IS-2 (audit 2026-05-29) — surfaces the load outcome to the
+    /// coordinated `CivicaSyncBannerCoordinator`. Per-row hide on
+    /// failure stays intact (`items = []` still wins for rendering);
+    /// this flag is purely a signal for the cross-store banner.
+    @Published private(set) var lastLoadFailed: Bool = false
 
     private var apiClient: (any EnrollmentAPIClient)?
 
@@ -43,9 +48,13 @@ final class SNAPInboxStore: ObservableObject {
         defer { isLoading = false }
         do {
             items = try await apiClient.fetchInbox()
+            lastLoadFailed = false
         } catch {
             // Silent fail — the home view degrades by hiding the row.
+            // The IS-2 sync banner reads `lastLoadFailed` to coordinate
+            // across stores.
             items = []
+            lastLoadFailed = true
         }
     }
 
