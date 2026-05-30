@@ -33,7 +33,7 @@ export default function QCOutcomesPanel({ stats }: { stats: QCStats }) {
     <section className="bg-surface border border-hairline rounded-[4px] p-6">
       <div className="mb-5 flex items-baseline justify-between gap-3 flex-wrap">
         <div>
-          <h3 className="section-title">QC Outcome Tracker</h3>
+          <h2 className="section-title">QC Outcome Tracker</h2>
           <p className="section-sub mt-1 leading-snug">
             Navigator-logged quality control sampling results — ground truth for error rate tracking.
           </p>
