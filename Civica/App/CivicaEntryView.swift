@@ -128,15 +128,16 @@ struct CivicaEntryView: View {
     /// isn't silently dropped into a "Start" flow and surprised.
     @ViewBuilder
     private func draftFallbackCard(error: DraftLoadError) -> some View {
-        let bodyText: String
-        switch error {
-        case .schemaMismatch:
-            bodyText = CivicaEntryStrings.draftFallbackBodySchemaMismatch.value(in: language)
-        case .ioError:
-            bodyText = CivicaEntryStrings.draftFallbackBodyIOError.value(in: language)
-        case .decodingError, .empty:
-            bodyText = CivicaEntryStrings.draftFallbackBodyDecoding.value(in: language)
-        }
+        let bodyText: String = {
+            switch error {
+            case .schemaMismatch:
+                return CivicaEntryStrings.draftFallbackBodySchemaMismatch.value(in: language)
+            case .ioError:
+                return CivicaEntryStrings.draftFallbackBodyIOError.value(in: language)
+            case .decodingError, .empty:
+                return CivicaEntryStrings.draftFallbackBodyDecoding.value(in: language)
+            }
+        }()
 
         VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
             Text(CivicaEntryStrings.draftFallbackTitle.value(in: language))
