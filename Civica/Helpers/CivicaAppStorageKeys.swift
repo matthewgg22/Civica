@@ -29,6 +29,15 @@ enum CivicaAppStorageKeys {
 
     static let recertCompanionPermissionDismissed = "co.civica.recertCompanion.permissionDismissed"
 
+    /// Prefix for per-status, per-item checked state on the JR-1
+    /// "What I can do today" daily checklist card (Phase 2 home).
+    /// Full key format: `\(dailyChecklistPrefix).<status-raw>.<item-slug>`.
+    /// Status scoping is intentional — each status sub-state owns its own
+    /// checklist, so transitioning from `.submittedToState` to
+    /// `.documentsRequested` renders a fresh set of items without losing
+    /// the previously-checked state for the prior status.
+    static let dailyChecklistPrefix = "co.civica.dailyChecklist"
+
     /// Find Help onboarding card has been dismissed.
     /// Note the `find_help.` prefix is intentional — it predates the
     /// `co.civica.` convention and is preserved to avoid invalidating
