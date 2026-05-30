@@ -74,6 +74,14 @@ struct CivicaHomePhase2View: View {
         documentsListSummaryOverride ?? inboxStore.summary(in: language)
     }
 
+    // Interview appointment (IA-1). The scheduled date already lives on
+    // the status store (interviewScheduledFor, captured on the waiting
+    // room) — no new plumbing. Override slot is for previews/tests.
+    var nextAppointmentOverride: Date? = nil
+    private var nextAppointment: Date? {
+        nextAppointmentOverride ?? statusStore.interviewScheduledFor
+    }
+
     // MARK: - HIDDEN UNTIL BACKEND
     //
     // Messages-inbox slot — intentionally NOT bound in this PR. The
@@ -115,6 +123,77 @@ struct CivicaHomePhase2View: View {
         return max(0, days)
     }
 
+    // MARK: - Interview appointment card (IA-1)
+
+    /// Inline appointment block, rendered above the timeline only when
+    /// status == .interviewScheduled and a date is known. Surface goes
+    /// warning-amber (process-attention) inside 48h, neutral otherwise.
+    /// Channel hint ("By phone") and Add-to-Calendar are deferred — the
+    /// former has no backend field yet, the latter needs an Info.plist
+    /// calendar-usage key (kept out of feature PRs per branch hygiene).
+    @ViewBuilder
+    private var appointmentCard: some View {
+        if statusStore.status == .interviewScheduled, let appt = nextAppointment {
+            let isUrgent = appt.timeIntervalSinceNow <= 48 * 3600
+            let accent = isUrgent ? CivicaColors.warningAmber : CivicaColors.pinePrimary
+            HStack(alignment: .top, spacing: CivicaSpacing.md) {
+                Image(systemName: "calendar")
+                    .font(.system(size: 20))
+                    .foregroundStyle(accent)
+                    .frame(width: 22, alignment: .leading)
+                    .padding(.top, 1)
+                    .accessibilityHidden(true)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(appointmentPrimaryLine(appt))
+                        .font(CivicaTypography.subheadStrong)
+                        .foregroundStyle(CivicaColors.ink)
+                        .fixedSize(horizontal: false, vertical: true)
+                    if let relative = appointmentRelativeLine(appt) {
+                        Text(relative)
+                            .font(CivicaTypography.footnote)
+                            .foregroundStyle(CivicaColors.graphite)
+                    }
+                }
+                Spacer(minLength: 0)
+            }
+            .padding(CivicaSpacing.md)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(isUrgent ? CivicaColors.statusWarningSurface : CivicaColors.surfaceSecondary)
+            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control))
+            .accessibilityElement(children: .combine)
+        }
+    }
+
+    /// "Interview · Wed Jun 12 · 2:30 PM" — locale-aware date + time.
+    private func appointmentPrimaryLine(_ date: Date) -> String {
+        let locale = Locale(identifier: language == .spanish ? "es" : "en")
+        let dateFormatter = DateFormatter()
+        dateFormatter.locale = locale
+        dateFormatter.setLocalizedDateFormatFromTemplate("EEE MMM d")
+        let timeFormatter = DateFormatter()
+        timeFormatter.locale = locale
+        timeFormatter.timeStyle = .short
+        timeFormatter.dateStyle = .none
+        let label = CivicaPhase2Strings.timelineInterview.value(in: language)
+        return "\(label) · \(dateFormatter.string(from: date)) · \(timeFormatter.string(from: date))"
+    }
+
+    /// "Today" / "Tomorrow" / "In N days" — nil when the date is past
+    /// (a stale .interviewScheduled state shouldn't show a misleading
+    /// countdown; the date+time line still renders).
+    private func appointmentRelativeLine(_ date: Date) -> String? {
+        let calendar = Calendar.current
+        let days = calendar.dateComponents(
+            [.day],
+            from: calendar.startOfDay(for: Date()),
+            to: calendar.startOfDay(for: date)
+        ).day ?? 0
+        if days < 0 { return nil }
+        if days == 0 { return CivicaPhase2Strings.appointmentToday.value(in: language) }
+        if days == 1 { return CivicaPhase2Strings.appointmentTomorrow.value(in: language) }
+        return CivicaPhase2Strings.appointmentInDays(days: days, language: language)
+    }
+
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: CivicaSpacing.lg) {
@@ -122,6 +201,14 @@ struct CivicaHomePhase2View: View {
 
                 statusPill
                 headline
+
+                // IA-1 (audit 2026-05-29): when an interview is scheduled,
+                // surface the date+time above the timeline. Previously the
+                // body copy said "a caseworker will call at the scheduled
+                // time" but the time was nowhere on screen — the #1 question
+                // at this moment. A missed interview is a denied case.
+                appointmentCard
+
                 CivicaPhaseTimeline(
                     current: currentMilestone,
                     labels: [
@@ -493,6 +580,17 @@ enum CivicaPhase2Strings {
     static let timelineInReview  = CivicaText("In review", es: "En revisión")
     static let timelineInterview = CivicaText("Interview", es: "Entrevista")
     static let timelineDecision  = CivicaText("Decision", es: "Decisión")
+
+    // Interview appointment card (IA-1). Label reuses timelineInterview
+    // ("Interview" / "Entrevista"). Relative-time phrases below:
+    static let appointmentToday    = CivicaText("Today", es: "Hoy")
+    static let appointmentTomorrow = CivicaText("Tomorrow", es: "Mañana")
+    static func appointmentInDays(days: Int, language: CivicaLanguage) -> String {
+        switch language {
+        case .english: return "In \(days) days"
+        case .spanish: return "En \(days) días"
+        }
+    }
 
     // Headline
     static func headline(county: String, language: CivicaLanguage) -> String {
