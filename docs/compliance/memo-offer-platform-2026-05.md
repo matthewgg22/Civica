@@ -19,7 +19,7 @@ The load-bearing privacy rule — that personal data collected for SNAP enrollme
 
 ## Section 1 — Regulatory framing
 
-### 1.1 7 CFR §277.4(b)(5)(ii) — recruitment-and-persuasion carve-outs
+### 1.1 7 CFR §277.4(b)(5) — recruitment ban, broadcast restriction, retailer-identification carve-out (master R-5, R-6, R-11)
 
 Section 277.4 governs federal financial participation in State agency administrative expenses for SNAP outreach. Paragraph (b)(5) lists categories of activity that are **not** permitted to be funded as outreach because they are deemed to "recruit" or "persuade" persons to apply for SNAP. Subparagraph (b)(5)(ii) carves out from this prohibition the **dissemination of factual information about retail locations that accept SNAP benefits** — i.e., the federal rule itself names retailer-identification as outside the recruitment/persuasion zone. Two operative consequences for Civica:
 
@@ -44,7 +44,7 @@ The California Consumer Privacy Act, as amended by CPRA, treats (a) purpose limi
 - SNAP enrollment status is a strong proxy for low income. Counsel should opine on whether, in California, this proxy itself triggers SPI treatment, or whether SPI treatment attaches only when the data is used in a way that reveals or acts on the proxy.
 - Using offer-side data for "cross-context behavioral advertising" triggers a "do not share" opt-out under CPRA. Civica's working design (Section 4) is that retailer revenue is flat (per-listing / per-impression / per-click) and there is no cross-context profile built; counsel should confirm that this model stays outside the "share" definition.
 
-### 1.4 FTC Act §5 (15 U.S.C. §45) and the .com Disclosures / Endorsement Guides
+### 1.4 FTC Act §5 (15 U.S.C. §45) and the .com Disclosures / Endorsement Guides (master R-14)
 
 Section 5 prohibits unfair or deceptive acts or practices. The FTC's modern interpretation, expressed in the *.com Disclosures* guidance and the Endorsement Guides, requires (a) **clear and conspicuous disclosure** that paid placements are paid, and (b) **format-neutrality** — a paid placement that looks like a neutral recommendation is deceptive regardless of fine-print labeling. For Civica's offer platform, the rule structure cashes out as three concrete obligations:
 
@@ -52,7 +52,7 @@ Section 5 prohibits unfair or deceptive acts or practices. The FTC's modern inte
 - If the placement is **Civica-seeded** (factual aggregation of public discounts, no retailer payment), no advertising label is required — but the line between "aggregated public deal" and "retailer-paid placement" must be schema-enforced, not editorial.
 - Every claim about a discount (percentage off, validity period, store location, "accepts EBT") must be **substantiated and current**. Stale discounts are deceptive even if they were accurate when posted.
 
-### 1.5 16 CFR Part 461 — government impersonation
+### 1.5 16 CFR Part 461 — government impersonation (master R-13)
 
 Cited for completeness. 16 CFR Part 461, finalized by the FTC in 2024, makes it an unfair or deceptive practice to misrepresent affiliation with a government agency. Civica's enrollment surface already carries non-governmental framing; the offer surface must do the same. A "deals near you that accept your EBT" banner that visually echoes a CalFresh or USDA mark would trigger Part 461 even if the underlying offer is factual.
 

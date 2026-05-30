@@ -14,8 +14,14 @@ evidence:
     ref: "https://oag.ca.gov/privacy/ccpa"
     note: "CCPA/CPRA purpose-limitation + sensitive-personal-information rules; benefit-status proxies trigger opt-out + disclosure obligations."
   - kind: external
-    ref: "https://www.ecfr.gov/current/title-7/chapter-II/subchapter-C/part-277/section-277.4#p-277.4(b)(5)(ii)"
-    note: "7 CFR §277.4(b)(5)(ii) — recruitment-and-persuasion prohibition the firewall is the privacy-side dual of."
+    ref: "https://www.ecfr.gov/current/title-7/chapter-II/subchapter-C/part-277/section-277.4#p-277.4(b)(5)(i)"
+    note: "7 CFR §277.4(b)(5)(i) — recruitment-and-persuasion prohibition (master rule R-5) the firewall is the privacy-side dual of."
+  - kind: external
+    ref: "https://www.congress.gov/crs-product/R48552"
+    note: "OBBBA §10105 — state benefit cost share keyed to payment-error rate (master rule R-2). The macro driver that makes Type-1-error reduction a B2G value: a documented §272.1(c) cross-use would torpedo precisely the sale this rule creates."
+  - kind: file
+    ref: "Desktop/Civica USDA data/deliverables/civica_snap_obbba_compliance_master.docx"
+    note: "Master compliance registry — R-1 through R-15. R-2 (OBBBA §10105 cost share), R-5 (§277.4(b)(5)(i) recruitment ban), R-13 (16 CFR Part 461 government impersonation), R-14 (FTC §5), R-15 (USDA/FNS scam-alert environment) co-fire on the offer platform."
   - kind: file
     ref: apps/enrollment-api/src/routes/me-offers.ts
     line: 75
@@ -49,7 +55,7 @@ evidence:
 
 The rule: **personal data collected to help a person get or keep SNAP benefits — application income/household data, recertification data, EBT card data, BenefitsCal credentials, or any derivative (packet status, enrollment flag, benefit-level estimate) — must not be repurposed to drive offer targeting, ranking, or eligibility.** Offer surfaces run on a **separate, opt-in, location-based** dataset with its own consent, or they do not run.
 
-This is the privacy-side dual of the recruitment-and-persuasion ban in 7 CFR §277.4(b)(5)(ii): the counsel memo at [docs/compliance/memo-offer-platform-2026-05.md](../compliance/memo-offer-platform-2026-05.md) treats the *advertising* side; this finding treats the *data* side. Together they form one obligation.
+This is the privacy-side dual of the recruitment-and-persuasion ban in 7 CFR §277.4(b)(5)(i) (master rule R-5): the counsel memo at [docs/compliance/memo-offer-platform-2026-05.md](../compliance/memo-offer-platform-2026-05.md) treats the *advertising* side; this finding treats the *data* side. Together they form one obligation.
 
 Concretely, the firewall has three layers:
 
@@ -64,7 +70,7 @@ Concretely, the firewall has three layers:
   - 7 CFR §272.1(c) restricts use and disclosure of applicant/recipient information; using it to drive an advertising product is a textbook misuse, even if the surface looks like a money-saving feature.
   - CCPA/CPRA treats benefit status (and proxies for benefit status, including packet metadata) as a strong income proxy → sensitive personal information → opt-out + disclosure obligations the moment retailers pay.
 - **Trust posture.** The combined product (enrollment + EBT + recert + offers) is, feature-for-feature, the silhouette USDA's scam-alert program warns about. The firewall is what keeps Civica visibly *not* that silhouette.
-- **B2G blast radius.** A documented cross-use of §272.1(c) data, in code, would torpedo the caseworker-mode and B2G-contract paths ([[2026-05-28-argyle-evidentiary-standard]], [[2026-05-28-usda-advanced-automation-scope]]) far harder than a UX miss in the offer surface itself. The firewall protects the higher-value sale.
+- **B2G blast radius.** A documented cross-use of §272.1(c) data, in code, would torpedo the caseworker-mode and B2G-contract paths ([[2026-05-28-argyle-evidentiary-standard]], [[2026-05-28-usda-advanced-automation-scope]]) far harder than a UX miss in the offer surface itself. The firewall protects the higher-value sale — which, under OBBBA §10105 (master rule R-2), is the sale where Type-1-error reduction and intake-QC become directly cost-share-relevant to the state. The cost-share-by-PER mechanic is what makes the higher-value sale a real number; the firewall is what keeps Civica eligible to make it.
 
 ## What changes
 
