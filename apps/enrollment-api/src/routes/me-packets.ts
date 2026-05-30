@@ -984,4 +984,61 @@ app.post("/:packetId/submit", rateLimit("standard"), async (c) => {
   return c.json(mapPacket(data as Record<string, unknown>));
 });
 
+// POST /me/packets/:packetId/outcome
+// Applicant self-reports the county's decision on their application. Feeds the
+// Pillar-1 lagging KPI (denial_rate) via the kpi-snapshot cron. `source` is
+// HARD-CODED to self_report: the fidelity firewall (migration 20260600) then
+// guarantees this row can never carry authoritative dollars or move measured PER
+// (premise P2). Idempotent — re-reporting upserts on (packet_id, source), so a
+// re-fired prompt or two tabs never double-count. Written via the anon client so
+// RLS enforces source=self_report + ownership (defense in depth behind the
+// route's own ownership check).
+app.post(
+  "/:packetId/outcome",
+  rateLimit("standard"),
+  zValidator("json", z.object({ outcome: z.enum(["approved", "denied", "pending_decision"]) })),
+  async (c) => {
+    const actor = c.get("actor");
+    const applicant = await resolveApplicant(c as Context<{ Bindings: Env }>);
+    const packetId = c.req.param("packetId");
+    const { outcome } = c.req.valid("json");
+    const db = makeAnonClient(c.env, c.get("jwt"));
+
+    // Ownership: anon + RLS → a packet that isn't the caller's reads as not-found.
+    // 404 (not 403) is deliberate — it does not reveal that another applicant's
+    // packet exists; it also matches the /submit + /error-risk routes.
+    const { data: packet, error: pErr } = await db
+      .schema("snap_enrollment")
+      .from("snap_packets")
+      .select("packet_id")
+      .eq("packet_id", packetId)
+      .eq("applicant_id", applicant.applicant_id)
+      .is("deleted_at", null)
+      .single();
+    if (pErr?.code === "PGRST116" || !packet) {
+      throw new HTTPException(404, { message: "Packet not found" });
+    }
+
+    // Idempotent upsert of the self-report (one row per packet per source).
+    // packet_outcomes isn't in the generated db-types yet (migration not applied)
+    // — cast, mirroring persistPacketRiskScore's packet_error_risk pattern.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data, error } = await (db.schema("snap_enrollment").from("packet_outcomes" as any) as any)
+      .upsert(
+        { packet_id: packetId, source: "self_report", outcome, reported_by: actor.id },
+        { onConflict: "packet_id,source" },
+      )
+      .select("packet_id, source, outcome, reported_at")
+      .single();
+    if (error) throw new HTTPException(500, { message: error.message });
+
+    return c.json({
+      packet_id: data.packet_id,
+      source: data.source,
+      outcome: data.outcome,
+      reported_at: data.reported_at,
+    });
+  },
+);
+
 export default app;
