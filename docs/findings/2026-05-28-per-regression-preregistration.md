@@ -63,6 +63,46 @@ recovers what was planted — the 95% CI covers the truth on all five outcomes.
 
 Live panel: [/findings/regression](/findings/regression).
 
+## Sample target & power (added 2026-05-30)
+
+The pre-registration also fixes **how much data** the headline claim needs, so
+"not significant yet" can never be quietly moved later. The load-bearing DV is
+payment error: detecting a drop from the **CA baseline (~11%, the ≥10% top
+§10105 cost-share tier) to 8%** — a ≈3 pp move, chosen because it is the move
+with real dollars behind it (it crosses §10105 tiers; see
+[[2026-05-30-obbba-10105-grounding]]).
+
+Two-proportion power at α = 0.05 (two-sided), 1 − β = 0.80:
+
+```
+n/arm ≈ (z_.975 + z_.80)² · [p₁(1−p₁) + p₂(1−p₂)] / (p₁−p₂)²
+      = (1.96 + 0.8416)² · [0.11·0.89 + 0.08·0.92] / 0.03²
+      ≈ 7.85 · 0.1715 / 0.0009  ≈  ~1,500 cases per arm
+```
+
+So the live claim needs **≈1,500 Civica-assisted cases and ≈1,500 matched
+comparison cases** before the payment-error coefficient can clear significance
+at the tier-crossing effect size. Smaller true effects cost more: an 11→9.5%
+(1.5 pp) move needs ~4× the sample (~6,000/arm). The target is pre-committed —
+we report the coefficient + CI at whatever n we have and only *claim* the effect
+once n clears this bar.
+
+**Comparison group — the committed design.** CDSS QC data carries no Civica
+flag, so the comparison arm is built by **matching** on the same controls the
+models hold constant (household size, earned-income share, primary language,
+county, intake channel, expedited flag) between Civica-assisted cases and the QC
+frame. The treatment coefficient is read off the matched sample, never the raw
+gap (Civica serves harder cases, so the raw gap understates the effect).
+
+**Where the n comes from — and why the outcome loop is the build target.**
+CDSS's state QC sample is only ~1,000 cases/yr, so a FOIA pull *alone* reaches
+1,500/arm only over multiple years. The Civica-side **outcome-ingestion loop**
+(self-reported `packet_outcomes` now; authoritative county/QC outcomes via the
+signed webhook, TODO-44) is what accrues per-case outcomes in *months* — see
+[[2026-05-29-error-rate-truth-point]] and the `kpi_snapshot` pipeline. The power
+target is therefore also the engineering target: ship the loop, reach n, read
+the coefficient.
+
 ## Why it matters
 
 - **It defangs the obvious critique.** "You just kept slicing until you found
@@ -90,11 +130,13 @@ Live panel: [/findings/regression](/findings/regression).
 
 ## Open questions
 
-- **Comparison group.** Synthetic uses a clean `civica_assisted` indicator.
-  Real CDSS QC data has no Civica flag — we will need a defensible comparison
-  (matched county/cohort, or pre/post Civica adoption). This is the single
-  biggest threat to the causal read and must be settled before claiming a
-  treatment effect on real data.
+- **Comparison group — matching method.** The *design* is now committed (match
+  on the model controls; build the comparison arm from the QC frame — see
+  *Sample target & power*). What stays open is the *method* on real data: exact
+  vs. propensity-score matching, caliper width, and the fallback for thin cells
+  (a pre/post Civica-adoption split). This is still the biggest threat to the
+  causal read — the matching spec must be frozen before the treatment effect is
+  read, the same way the outcome plan was.
 - **Clustering.** Effects may cluster by navigator/county; the synthetic fit
   uses HC1 (OLS) / MLE (Logit, Poisson) SEs. Real data may warrant
   cluster-robust SEs — a spec amendment to document, not a quiet change.
