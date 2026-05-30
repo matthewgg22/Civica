@@ -166,7 +166,11 @@ struct CivicaHomePhase3View: View {
     private func formattedNextDeposit(_ account: EBTAccount) -> String {
         guard let deposit = account.nextDeposit else { return "—" }
         let amount = (deposit.amount as NSDecimalNumber).doubleValue
-        return String(format: "$%.0f", amount)
+        // IS-6 (audit 2026-05-29): "$%.2f" so the next-deposit line
+        // renders dollars+cents, matching the hero balance directly
+        // above it (which shows e.g. "$194.00"). "$%.0f" stripped the
+        // cents and read as a visible mismatch on the same EBT card.
+        return String(format: "$%.2f", amount)
     }
 
     private func formattedNextDepositDate(_ account: EBTAccount) -> String {
