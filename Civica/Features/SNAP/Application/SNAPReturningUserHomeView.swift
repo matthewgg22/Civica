@@ -127,6 +127,7 @@ struct SNAPReturningUserHomeView: View {
             )
         }
         .buttonStyle(.plain)
+        .accessibilityLabel(verdictCardTitle(for: result.status))
     }
 
     private func verdictIcon(for status: SNAPEligibilityStatus) -> String {
@@ -225,6 +226,7 @@ struct SNAPReturningUserHomeView: View {
                 .underline()
         }
         .frame(maxWidth: .infinity)
+        .accessibilityLabel(SNAPStatusHomeStrings.returningStartOver.value(in: language))
     }
 
     // MARK: - Status-specific copy

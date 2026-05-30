@@ -100,6 +100,7 @@ enum EBTLinkCookieExtractor {
 /// UIViewControllerRepresentable wrapping a WKWebView pointed at
 /// ebt.ca.gov. The hosting view should embed this inside a
 /// NavigationStack and present a cancel button.
+// MARK: - AccessibilityElement = parent
 struct EBTLinkWebView: UIViewControllerRepresentable {
     /// Called once on successful capture. The hosting view tears
     /// down the WebView and forwards to EBTBalanceStore.linkWithCookie.

@@ -88,6 +88,7 @@ struct ReEntryCardView: View {
                 }
                 .background(CivicaColors.pinePrimary)
                 .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                .accessibilityLabel(ReEntryStrings.cardPrimaryCTA.value(in: language))
 
                 Button {
                     store.dismiss()

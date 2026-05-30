@@ -21,6 +21,7 @@ import SwiftUI
 // repository is backed by a mock client and serves no transactions,
 // so activeAlerts will always be empty — the banner is invisible.
 
+// MARK: - AccessibilityElement = parent
 struct EBTBalanceRootView: View {
     @AppStorage(CivicaLanguage.defaultStorageKey)
     private var languageRaw: String = CivicaLanguage.english.rawValue

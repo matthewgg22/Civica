@@ -39,6 +39,7 @@ struct DebugMenuView: View {
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Done") { dismiss() }
+                        .accessibilityLabel("Done. Close debug menu.")
                 }
             }
         }

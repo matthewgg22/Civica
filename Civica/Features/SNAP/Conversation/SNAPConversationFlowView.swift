@@ -51,6 +51,7 @@ struct SNAPConversationFlowView: View {
                 if let onClose = onClose {
                     ToolbarItem(placement: .topBarLeading) {
                         Button(SNAPConversationViewStrings.close.value(in: resolvedLanguage)) { onClose() }
+                            .accessibilityLabel(SNAPConversationViewStrings.close.value(in: resolvedLanguage))
                     }
                 }
             }

@@ -8,6 +8,7 @@ import CivicaDesignSystem
 // "How to answer", "Especially relevant for", nav title, chips --
 // localizes from InterviewCoachStrings. A Spanish-only notice flags
 // the mismatch when language is .spanish.
+// MARK: - AccessibilityElement = parent
 struct QuestionDetailView: View {
     let question: InterviewQuestion
 

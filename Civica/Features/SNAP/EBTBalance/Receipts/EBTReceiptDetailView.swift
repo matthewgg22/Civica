@@ -163,6 +163,7 @@ struct EBTReceiptDetailView: View {
                     }
                     .font(CivicaTypography.footnote)
                     .foregroundStyle(CivicaColors.brickAccent)
+                    .accessibilityLabel(EBTReceiptStrings.unlinkButton.value(in: language))
                 }
             } else {
                 Text(EBTReceiptStrings.noTransactionLinked.value(in: language))

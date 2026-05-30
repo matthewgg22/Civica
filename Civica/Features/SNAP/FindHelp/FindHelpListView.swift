@@ -18,6 +18,7 @@ struct FindHelpListView: View {
                 .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
+            .accessibilityLabel(location.name)
             .listRowBackground(CivicaColors.surfaceSecondary)
             .listRowSeparator(.hidden)
             .listRowInsets(EdgeInsets(top: CivicaSpacing.xs, leading: CivicaSpacing.lg, bottom: CivicaSpacing.xs, trailing: CivicaSpacing.lg))

@@ -15,6 +15,7 @@ import Vision
 
 // MARK: - Representable
 
+// MARK: - AccessibilityElement = parent
 struct EBTReceiptCaptureView: UIViewControllerRepresentable {
     /// Called once the scan completes and OCR finishes. Always on the main
     /// thread. Pass (nil, .init(nil, nil, 0.0)) on cancellation.

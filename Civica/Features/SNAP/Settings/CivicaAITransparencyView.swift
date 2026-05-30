@@ -84,6 +84,7 @@ struct CivicaAITransparencyView: View {
                     Button(CivicaAITransparencyStrings.closeButton.value(in: language)) {
                         dismiss()
                     }
+                    .accessibilityLabel(CivicaAITransparencyStrings.closeButton.value(in: language))
                 }
             }
         }

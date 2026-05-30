@@ -101,6 +101,7 @@ struct SNAPPhoneSignInView: View {
             .buttonStyle(.borderedProminent)
             .tint(CivicaColors.pinePrimary)
             .disabled(phoneText.trimmingCharacters(in: .whitespaces).isEmpty)
+            .accessibilityLabel(Strings.sendCode.value(in: language))
 
             Text(Strings.phoneDisclosure.value(in: language))
                 .font(CivicaTypography.footnote)

@@ -203,6 +203,7 @@ struct FindHelpRootView: View {
                         }
                         .padding(.top, CivicaSpacing.lg)
                         .transition(.move(edge: .top).combined(with: .opacity))
+                        .accessibilityLabel(SNAPGenericStrings.searchThisArea.value(in: language))
                     }
                 }
 

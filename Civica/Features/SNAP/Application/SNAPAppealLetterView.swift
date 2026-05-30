@@ -194,6 +194,7 @@ struct SNAPAppealLetterView: View {
                 .padding(.vertical, CivicaSpacing.xs)
             }
             .buttonStyle(.plain)
+            .accessibilityLabel(SNAPAppealLetterScreenStrings.openOnlinePortalText(language: language, stateCode: stateCode))
         }
     }
 
