@@ -25,16 +25,16 @@ enum IntakeHelpStrings {
     /// next to every question title. Visual is icon-only — VoiceOver
     /// users get the full label.
     static let helpButtonAccessibilityLabel = CivicaText(
-        "Help with this question",
-        es: "Ayuda con esta pregunta"
+        "Ask Mae about this question",
+        es: "Pregúntale a Mae sobre esta pregunta"
     )
 
     // MARK: - Sheet chrome
 
     /// Navigation title on the contextual-help sheet.
     static let sheetTitle = CivicaText(
-        "About this question",
-        es: "Sobre esta pregunta"
+        "Ask Mae",
+        es: "Pregúntale a Mae"
     )
 
     /// Dismiss control on the sheet.
