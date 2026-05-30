@@ -16,5 +16,9 @@ export const CA_CAPER_GROUNDING = {
   maRatePct: 21.08,
   /** Date the USDA PDF was published. */
   dated: "2025-06-30",
+  /** CA CAPER has sat in this band every reported FY since 2012 (excl. the FY2018 outlier; FY2020–21 paused for COVID). */
+  caTrendMinPct: 32.3,
+  caTrendMaxPct: 39.9,
+  caTrendFirstFy: 2012,
   findingId: "2026-05-29-caper-denial-side-error",
 } as const;

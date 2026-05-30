@@ -1,0 +1,73 @@
+{
+  "source": "USDA FNS \u2014 SNAP Case and Procedural Error Rates (CAPER)",
+  "source_url_pattern": "https://www.fns.usda.gov/sites/default/files/resource-files/snap-qc-caper-fy{NN}.pdf (FY2024: snap-fy24QC-CAPER.pdf)",
+  "scope": "California (US shown where the per-year PDF lists it)",
+  "unit": "percent of negative actions (denial/termination/suspension) with a case or procedural error",
+  "generated_at": "2026-05-29",
+  "notes": [
+    "FY2020 and FY2021 absent: USDA waived SNAP QC reporting during COVID-19 (404 on the data portal).",
+    "FY2018 CA=60.92% is an outlier vs the ~32-40% band in every other year; flagged, not smoothed.",
+    "US national parsed only where the per-year PDF lists it (FY2024 = 43.81)."
+  ],
+  "ca_band_excl_2018_covid": {
+    "min": 32.28,
+    "max": 39.94
+  },
+  "ca_series": [
+    {
+      "fy": 2012,
+      "ca_pct": 32.47,
+      "us_pct": null
+    },
+    {
+      "fy": 2013,
+      "ca_pct": 32.28,
+      "us_pct": null
+    },
+    {
+      "fy": 2014,
+      "ca_pct": 35.79,
+      "us_pct": null
+    },
+    {
+      "fy": 2015,
+      "ca_pct": 36.02,
+      "us_pct": null
+    },
+    {
+      "fy": 2016,
+      "ca_pct": 36.77,
+      "us_pct": null
+    },
+    {
+      "fy": 2017,
+      "ca_pct": 38.99,
+      "us_pct": null
+    },
+    {
+      "fy": 2018,
+      "ca_pct": 60.92,
+      "us_pct": null
+    },
+    {
+      "fy": 2019,
+      "ca_pct": 34.3,
+      "us_pct": null
+    },
+    {
+      "fy": 2022,
+      "ca_pct": 39.6,
+      "us_pct": null
+    },
+    {
+      "fy": 2023,
+      "ca_pct": 39.94,
+      "us_pct": null
+    },
+    {
+      "fy": 2024,
+      "ca_pct": 39.84,
+      "us_pct": 43.81
+    }
+  ]
+}
