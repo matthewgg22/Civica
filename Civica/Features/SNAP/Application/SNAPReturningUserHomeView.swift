@@ -151,7 +151,21 @@ struct SNAPReturningUserHomeView: View {
     }
 
     private var primaryActionRow: some View {
-        CivicaPrimaryButton(primaryActionTitle, action: onResume)
+        VStack(spacing: CivicaSpacing.sm) {
+            CivicaPrimaryButton(primaryActionTitle, action: onResume)
+            let previewLine = SNAPReturningHomeStrings.ctaPreviewLine(
+                status: statusStore.status,
+                persistedState: SNAPApplicationDraftStore().load(),
+                language: language
+            )
+            if !previewLine.isEmpty {
+                Text(previewLine)
+                    .font(CivicaTypography.footnote)
+                    .foregroundStyle(CivicaColors.graphite)
+                    .frame(maxWidth: .infinity, alignment: .center)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+        }
     }
 
     private var startOverLink: some View {
@@ -249,6 +263,47 @@ enum SNAPReturningHomeStrings {
         "We needed more info last time. See what's missing.",
         es: "Necesitábamos más información la última vez. Ver qué falta."
     )
+
+    /// JR-6 (iOS audit 2026-05-29): destination-preview line under the
+    /// returning-user primary CTA. Removes the "where will this take me"
+    /// cognitive cost. Pure function so unit tests can exercise every
+    /// status branch without touching UserDefaults.
+    static func ctaPreviewLine(
+        status: SNAPApplicationStatus,
+        persistedState: SNAPApplicationDraftStore.PersistedState?,
+        language: CivicaLanguage
+    ) -> String {
+        switch status {
+        case .screenerInProgress:
+            let section = persistedState?.sequentialSection ?? .whereApplying
+            return previewStepLine(section: section, language: language)
+        case .screenerComplete:
+            return SNAPStatusHomeStrings.actionGeneratePacket.value(in: language)
+        case .packetGenerated:
+            return SNAPStatusHomeStrings.actionSubmitToState(
+                stateCode: persistedState?.draft.whereApplying.stateCode,
+                language: language
+            )
+        case .documentsRequested:
+            return SNAPStatusHomeStrings.actionUploadRequested.value(in: language)
+        case .notStarted, .submittedToState, .interviewScheduled,
+             .interviewCompleted, .decisionApproved, .decisionDenied, .recertDue:
+            return ""
+        }
+    }
+
+    private static func previewStepLine(
+        section: SNAPApplicationSection,
+        language: CivicaLanguage
+    ) -> String {
+        let step = section.oneBasedIndex
+        let total = SNAPApplicationSection.count
+        let name = section.title(in: language)
+        switch language {
+        case .english: return "Step \(step) of \(total) \u{00B7} \(name)"
+        case .spanish: return "Paso \(step) de \(total) \u{00B7} \(name)"
+        }
+    }
 }
 
 #if DEBUG
