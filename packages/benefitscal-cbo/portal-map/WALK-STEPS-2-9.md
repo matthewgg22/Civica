@@ -399,8 +399,10 @@ Walked a fresh CBO application (guest-accessible; login only gates save/submit).
 Collapsing an accordion **shifts trigger indices** — `cap N` after a collapse can hit a different element (twice landed on the "Learn more about BenefitsCal" nav-link → info.benefitscal.com, derailing the walk). Fix: re-`detect` before every `cap`, or never collapse mid-page (just leave accordions open and read the newest block).
 
 ### STILL TO CAPTURE (after this pass)
-- **ABHSD** "How does each program define household?" (step 2 / People gate — deeper in flow)
-- **ABPFG** "Why do we ask these questions?" (step 6 / Other Situations felony gate — deepest)
-- **APDMC** "Not sure what to upload? Let's look at some examples." (step 7 doc upload)
+- **ABHSD** "How does each program define household?" (step 2 / People gate — needs a draft walked to step 2)
+- **ABPFG** "Why do we ask these questions?" (step 6 / Other Situations felony gate — deepest; needs steps 1-5 completed incl. income/expense required amounts)
+- ✅ **APDMC** "Not sure what to upload?" — DONE (→ DOC-VERIFICATION-REFERENCE.md, the 14-category Help page)
 - Demographic popover-vs-inline confirm (ABGNR/ABSXO/ABHSP "Why are we asking?" / ABRAE "What is this used for?") — inline disclaimer text already captured; confirm whether a separate popover exists.
+
+**Pass result: 15 explainers verbatim + the full doc-verification reference; 6 of 7 form-tree helpLink stubs filled.** Only ABHSD + ABPFG remain (both behind deep walks). Every explainer on the early application (the part most applicants see, plus the eligibility-critical program + citizenship questions) is now captured.
 - New page codes seen this walk (not yet in form-tree): ABLPR, ABNMI(primary), ABMAD, ABCON, ABCOP, ABCSD (skip-and-submit upsell), ABDIS, ABCOS, ABCFA, ABCFS, ABRDT (DOB = `birthDate_primary_input`), ABMRS, ABCID, ABDOC. Address modal v2: radios `sugg_adr`/`ent_adr` + `USE SELECTED ADDRESS`.
