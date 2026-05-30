@@ -58,7 +58,13 @@ export default function GlobalError({
               fontWeight: 700,
               letterSpacing: "0.12em",
               textTransform: "uppercase",
-              color: "var(--color-warning)",
+              // Inline hex, NOT var(--color-warning): global-error renders
+              // when the root layout itself threw, so globals.css may not be
+              // loaded and the CSS variable would resolve to nothing. Every
+              // other color in this file is a hex literal for the same
+              // reason. #B5511E === --color-warning. See PR #352 (same bug
+              // class in the Satori opengraph images).
+              color: "#B5511E",
               marginBottom: "1.25rem",
             }}
           >
