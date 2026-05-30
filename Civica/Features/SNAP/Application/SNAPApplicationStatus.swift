@@ -71,4 +71,27 @@ enum SNAPApplicationStatus: String, Codable, CaseIterable, Sendable {
             return false
         }
     }
+
+    /// True when the returning-user home's primary action should resume
+    /// the application by re-entering CivicaSNAPFlowView — the orchestrator
+    /// restores the saved section / review / packet step from
+    /// SNAPApplicationDraftStore, so the user lands back where they
+    /// stopped (the review surface for `.screenerComplete`, an idempotent
+    /// re-render of the packet for `.packetGenerated`).
+    ///
+    /// Only these two pre-submission active-case states actually reach
+    /// SNAPReturningUserHomeView: `rootSurface` rules out `.recertDue`,
+    /// the two decisions, and everything `isPostSubmission` (which covers
+    /// `.documentsRequested` onward) before the `.isActiveCase` branch.
+    /// Every other status routes elsewhere first, so resume-into-flow does
+    /// not apply to it. CivicaRootView gates its resume navigation on this
+    /// predicate — keeping the no-op CTA bug from silently returning.
+    var resumesIntoApplicationFlow: Bool {
+        switch self {
+        case .screenerComplete, .packetGenerated:
+            return true
+        default:
+            return false
+        }
+    }
 }
