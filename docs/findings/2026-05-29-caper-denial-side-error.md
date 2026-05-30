@@ -39,6 +39,14 @@ FY2024, straight from the USDA PDF:
 Roughly **2 in 5** California denial/termination/suspension actions carried a
 case or procedural error.
 
+**And it is structural, not new.** Pulling every available CAPER report
+(FY2012–FY2024), CA has stayed in a **32%–40% band every single year** — 32.5%
+(FY2012) drifting up to ~39.9% (FY2023–24). Two gaps to read honestly: **FY2020
+and FY2021 are absent** (USDA waived SNAP QC during COVID), and **FY2018 = 60.9%**
+is a one-year outlier well outside the band. A decade of ~1-in-3 negative actions
+carrying an error is a persistent operational gap, not a recent blip. Trend
+vendored at `data-ops/sample/usda-caper/caper_ca_trend.json`.
+
 ## Why it matters
 
 This is the **measured** answer to the question "is there *data* behind the
