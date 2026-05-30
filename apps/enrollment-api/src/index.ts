@@ -218,6 +218,7 @@ import { runWeeklyDigest } from "./cron/weekly-digest.js";
 import { purgeOldPushLog } from "./cron/purge-push-log.js";
 import { runInternalQcSampler } from "./cron/internal-qc-sampler.js";
 import { refreshErrorRateSnapshot } from "./cron/error-rate-snapshot.js";
+import { refreshKpiSnapshot } from "./cron/kpi-snapshot.js";
 
 // Cron dispatch — keep tiny and table-driven so adding/removing
 // schedules in wrangler.toml is the only change needed. Tasks run under
@@ -329,6 +330,16 @@ async function dispatchScheduled(
         log("info", "scheduled: error-rate snapshot refresh finished", { ...result });
       } catch (err) {
         log("error", "scheduled: error-rate snapshot refresh failed", { error: String(err) });
+      }
+      // KPI snapshot: refresh the three-pillar steering-tree truth point. Same
+      // 04:00 slot as the error-rate snapshot (no new cron trigger). T3 of the
+      // KPI framework (/plan-eng-review 2026-05-30).
+      log("info", "scheduled: kpi snapshot refresh starting");
+      try {
+        const result = await refreshKpiSnapshot(env, log);
+        log("info", "scheduled: kpi snapshot refresh finished", { ...result });
+      } catch (err) {
+        log("error", "scheduled: kpi snapshot refresh failed", { error: String(err) });
       }
       return;
     }
