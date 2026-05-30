@@ -17,7 +17,8 @@
 --
 -- LEADING vs MEASURED (the self-upgrading hybrid): each KPI exists as a
 -- `leading` row (an in-app proxy we can compute today, e.g. Clean-Packet Rate
--- from at-submission scoring) and, once outcome data exists, a `measured` row
+-- read from packet_error_risk, which me-packets scoreAndPersist() writes at
+-- submit) and, once outcome data exists, a `measured` row
 -- (the real lagging outcome, e.g. observed PER / denial / churn). The dashboard
 -- shows the leading value with a "leading" badge until a measured row appears,
 -- then flips. source_kind is that discriminator.

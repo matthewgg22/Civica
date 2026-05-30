@@ -1,29 +1,30 @@
--- snap_enrollment — Migration: KPI raw inputs (packet_outcomes + packet_cpr_capture).
+-- snap_enrollment — Migration: KPI lagging-outcome input (packet_outcomes).
 --
--- Locked by /plan-eng-review 2026-05-30. These are the two per-packet input
--- tables the kpi-snapshot builder (20260599) aggregates. Both reference
--- snap_packets(packet_id); the builder runs as service_role and reads them.
+-- Locked by /plan-eng-review 2026-05-30. packet_outcomes is the per-packet
+-- lagging-outcome input the kpi-snapshot builder (20260599) aggregates. It
+-- references snap_packets(packet_id); the builder runs as service_role.
 --
--- 1) packet_outcomes  — what happened to the application (lagging outcome).
---    Written either by the applicant self-reporting (POST /me/packets/:id/outcome,
---    source=self_report, RLS-scoped to their own packet) or, later, by an
---    authoritative county/QC signed webhook running as service_role.
+-- packet_outcomes — what happened to the application (lagging outcome).
+--   Written either by the applicant self-reporting (POST /me/packets/:id/outcome,
+--   source=self_report, RLS-scoped to their own packet) or, later, by an
+--   authoritative county/QC signed webhook running as service_role (TODO-44).
 --
---    FIDELITY (premise P2 / CRITICAL): `source` is the discriminator that keeps
---    self-reported outcomes out of the measured PER. A self_report row may
---    NEVER carry error_dollars / per_pct (CHECK enforced) and the builder reads
---    PER only from county_authoritative / qc_sample rows. Self-report still
---    feeds denial_rate / churn_rate (those are honestly self-reportable).
+--   FIDELITY (premise P2 / CRITICAL): `source` is the discriminator that keeps
+--   self-reported outcomes out of the measured PER. A self_report row may
+--   NEVER carry error_dollars / per_pct (CHECK enforced) and the builder reads
+--   PER only from county_authoritative / qc_sample rows. Self-report still
+--   feeds denial_rate / churn_rate (those are honestly self-reportable).
 --
--- 2) packet_cpr_capture — the at-submission Clean-Packet-Rate stamp (Pillar 1
---    leading proxy). Computed best-effort by @civica/snap-qc-engine at submit
---    time; a scoring failure must NEVER block submission (handled in the route).
---    Internal QC signal (risk score, element triggers are gameable) — exposed
---    to service_role only, never to applicants.
+-- NOTE — no packet_cpr_capture table: the Pillar-1 LEADING proxy (Clean-Packet
+-- Rate) does NOT need a new table. The packet-submit path already scores every
+-- packet best-effort into snap_enrollment.packet_error_risk (20260555) via
+-- me-packets.ts scoreAndPersist() at submit — that row carries tier / score /
+-- factors / engine_version, everything the CPR builder needs (1a from tier, 1b
+-- from factors, 1c = 65/35 applied at aggregate). The kpi-snapshot builder reads
+-- packet_error_risk for submitted packets. Do not reintroduce a duplicate
+-- capture table — single-source the scoring through snap-qc-engine + the existing
+-- scoreAndPersist call.
 
--- ===========================================================================
--- packet_outcomes
--- ===========================================================================
 CREATE TABLE snap_enrollment.packet_outcomes (
   outcome_id    UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
   packet_id     UUID        NOT NULL
@@ -32,7 +33,7 @@ CREATE TABLE snap_enrollment.packet_outcomes (
   -- authoritative and are the ONLY sources allowed to move measured PER.
   source        TEXT        NOT NULL CHECK (source IN (
                   'self_report',          -- applicant told us (in-app prompt)
-                  'county_authoritative', -- county/CDSS confirmed (future webhook)
+                  'county_authoritative', -- county/CDSS confirmed (future webhook, TODO-44)
                   'qc_sample'             -- pulled into a QC review
                 )),
   -- Wire-compatible with iOS CountyOutcomeSelection + dashboard CountyOutcomeButton.
@@ -63,7 +64,9 @@ CREATE INDEX ON snap_enrollment.packet_outcomes (source, reported_at DESC);
 
 ALTER TABLE snap_enrollment.packet_outcomes ENABLE ROW LEVEL SECURITY;
 
--- Applicants may read outcomes for their OWN packets (mirrors packets_own_select).
+-- Applicants may read outcomes for their OWN packets (mirrors packets_own_select:
+-- snap_packets.applicant_id is an FK to applicants.applicant_id, which maps to
+-- auth.uid() via applicants.auth_uid — NOT applicant_id = auth.uid() directly).
 CREATE POLICY packet_outcomes_own_select
   ON snap_enrollment.packet_outcomes FOR SELECT TO authenticated
   USING (
@@ -126,46 +129,3 @@ COMMENT ON TABLE snap_enrollment.packet_outcomes IS
   'county_authoritative / qc_sample (authoritative, the ONLY sources that move '
   'measured PER). One row per (packet_id, source); re-reports upsert. RLS: '
   'applicants read/write self_report on their own packets only.';
-
--- ===========================================================================
--- packet_cpr_capture
--- ===========================================================================
-CREATE TABLE snap_enrollment.packet_cpr_capture (
-  capture_id        UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
-  packet_id         UUID        NOT NULL
-                      REFERENCES snap_enrollment.snap_packets(packet_id) ON DELETE CASCADE,
-  -- snap-qc-engine version that scored the packet (weights evolve → provenance).
-  engine_version    TEXT        NOT NULL,
-  -- Binary CPR contribution: did the packet score below the "clean" threshold?
-  is_clean          BOOLEAN     NOT NULL,
-  -- Continuous error-risk score (scorePacketRisk) — 1c's continuous cousin.
-  risk_score        NUMERIC(6, 3),
-  -- Which QC elements tripped, for 1b Element-Clean Rate. Array of
-  -- {element, weight, ...} objects produced by the engine.
-  element_triggers  JSONB       NOT NULL DEFAULT '[]'::jsonb,
-  -- Share of this packet's risk that is operationally addressable (the 65/35),
-  -- for 1c Operational-Addressable Clean Rate.
-  operational_share NUMERIC(6, 3),
-  -- When the stamp was taken (at submission).
-  captured_at       TIMESTAMPTZ NOT NULL DEFAULT now(),
-  meta              JSONB       NOT NULL DEFAULT '{}'::jsonb,
-  -- One CPR capture per packet (the at-submission snapshot). Re-submit upserts.
-  CONSTRAINT uq_packet_cpr_capture_packet UNIQUE (packet_id)
-);
-
--- Builder aggregates CPR over a recent submission window.
-CREATE INDEX ON snap_enrollment.packet_cpr_capture (captured_at DESC);
-
-ALTER TABLE snap_enrollment.packet_cpr_capture ENABLE ROW LEVEL SECURITY;
-
--- Internal QC signal only. RLS is ENABLED with NO authenticated policy →
--- authenticated users get nothing (risk scores / element triggers are gameable;
--- the design flags this). Written and read by the submit path + cron builder,
--- both service_role (which bypasses RLS). No grants to authenticated.
-GRANT SELECT, INSERT, UPDATE ON snap_enrollment.packet_cpr_capture TO service_role;
-
-COMMENT ON TABLE snap_enrollment.packet_cpr_capture IS
-  'At-submission Clean-Packet-Rate stamp (Pillar 1 leading proxy). Computed '
-  'best-effort by @civica/snap-qc-engine at submit time; never blocks submission. '
-  'Internal QC signal (risk_score / element_triggers are gameable) — service_role '
-  'only, no applicant access. One row per packet; re-submit upserts.';
