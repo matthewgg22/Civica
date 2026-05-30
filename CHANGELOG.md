@@ -86,6 +86,16 @@ commit subject — say what changed for the reader of this file.
   of 3–4 sequential `set_config` round-trips. Saves ~60–80 ms on every
   mutating request.
 
+### Fixed
+- `Civica` (SNAP intake): the CalFresh student-status survey now asks whether
+  the applicant is in an employment & training or student-support program
+  (SNAP E&T, WIOA, EOPS/CARE, CalWORKs, Cal Grant). Before this, a half-time
+  student whose only exemption was such a program was screened as "you may not
+  qualify," a false disqualification, since 7 CFR 273.5(b) recognizes the
+  program path federally. The new `inApprovedJobProgram` answer maps to
+  `ExemptionReason.employmentTrainingProgram` in the federal rules engine, which
+  every state conformer (including CA) inherits. See `PARITY-AUDIT.md` Gap 1.
+
 ### Security
 - `supabase`: dropped `buddy_read_active_packet` policy from `snap_packets`
   (it granted SELECT on the full row, including SSN ciphertext, income, and

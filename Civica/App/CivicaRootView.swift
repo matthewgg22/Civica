@@ -32,6 +32,12 @@ struct CivicaRootView: View {
     @AppStorage("co.civica.recertInProgress")
     private var isRecertInProgress: Bool = false
 
+    /// IA-4 (audit 2026-05-29): presents SNAPSettingsSheet from a gear
+    /// in the nav bar shown on every status surface, so language /
+    /// AI-transparency / sign-out are reachable without first drilling
+    /// into the EBT dashboard.
+    @State private var presentingSettings = false
+
     private var language: CivicaLanguage {
         CivicaLanguage(rawValue: languageRaw) ?? .english
     }
@@ -42,6 +48,19 @@ struct CivicaRootView: View {
                 if hasCompletedOnboarding {
                     NavigationStack {
                         rootSurface
+                            .toolbar {
+                                ToolbarItem(placement: .topBarTrailing) {
+                                    Button {
+                                        presentingSettings = true
+                                    } label: {
+                                        Image(systemName: "gearshape")
+                                            .foregroundStyle(CivicaColors.pinePrimary)
+                                    }
+                                    .accessibilityLabel(
+                                        SNAPSettingsStrings.title.value(in: language)
+                                    )
+                                }
+                            }
                     }
                     .tint(CivicaColors.pinePrimary)
                     // Single shared status store for everything below the
@@ -53,6 +72,12 @@ struct CivicaRootView: View {
                     .environmentObject(recertContextStore)
                     .sheet(item: $externalLink) { url in
                         CivicaSafariSheet(url: url)
+                    }
+                    .sheet(isPresented: $presentingSettings) {
+                        SNAPSettingsSheet(
+                            languageRaw: $languageRaw,
+                            auth: enrollmentAuth
+                        )
                     }
                 } else {
                     OnboardingFlowView { chosenLanguage in

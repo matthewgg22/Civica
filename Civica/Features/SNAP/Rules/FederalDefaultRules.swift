@@ -71,6 +71,12 @@ struct FederalDefaultRules: SNAPStateRuleEngine {
         if s.works20PlusHours == true { return .exempted(reason: .worksTwentyHoursPerWeek) }
         if s.inWorkStudy == true { return .exempted(reason: .workStudy) }
         if s.responsibleForDependentChild == true { return .exempted(reason: .dependentChildCare) }
+        // 7 CFR 273.5(b) employment & training / student-support program
+        // path (SNAP E&T, WIOA, CA EOPS/CARE, CalWORKs E&T, etc.). The
+        // intake flow now collects this; before, a half-time student whose
+        // only exemption was a job/training program was wrongly returned
+        // `.categoricallyDisqualified`. See PARITY-AUDIT.md Gap 1.
+        if s.inApprovedJobProgram == true { return .exempted(reason: .employmentTrainingProgram) }
 
         return .categoricallyDisqualified
     }

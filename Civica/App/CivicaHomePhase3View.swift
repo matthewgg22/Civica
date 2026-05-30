@@ -33,8 +33,11 @@ struct CivicaHomePhase3View: View {
     /// rendered phase from outside this view. Production ignores.
     var onDebugPhaseChange: ((CivicaPhase) -> Void)? = nil
 
-    // MARK: - TODO wiring: replace with real messages-inbox store
-    // once that ships. Defaults hide the row in production.
+    // MARK: - HIDDEN UNTIL BACKEND
+    //
+    // TODO wiring: replace with real messages-inbox store once that
+    // ships. Defaults hide the row in production (never shows a fake
+    // row to the user). Ledger: docs/runbooks/wiring-todo.md (audit IS-7).
     var unreadMessageCount: Int = 0
     var mostRecentMessageSender: String = ""
     var mostRecentMessageTopic: String = ""
@@ -166,7 +169,11 @@ struct CivicaHomePhase3View: View {
     private func formattedNextDeposit(_ account: EBTAccount) -> String {
         guard let deposit = account.nextDeposit else { return "—" }
         let amount = (deposit.amount as NSDecimalNumber).doubleValue
-        return String(format: "$%.0f", amount)
+        // IS-6 (audit 2026-05-29): "$%.2f" so the next-deposit line
+        // renders dollars+cents, matching the hero balance directly
+        // above it (which shows e.g. "$194.00"). "$%.0f" stripped the
+        // cents and read as a visible mismatch on the same EBT card.
+        return String(format: "$%.2f", amount)
     }
 
     private func formattedNextDepositDate(_ account: EBTAccount) -> String {
