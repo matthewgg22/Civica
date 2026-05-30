@@ -210,6 +210,58 @@ enum SNAPStatusHomeStrings {
         es: "Iniciar una nueva solicitud"
     )
 
+    // IA-5: confirmation dialog when the user taps the Reapply card.
+    // We clear the saved draft, so they need a beat to confirm.
+    static let deniedReapplyConfirmTitle = CivicaText(
+        "Start a new application?",
+        es: "¿Iniciar una nueva solicitud?"
+    )
+    static let deniedReapplyConfirmBody = CivicaText(
+        "Your previous answers will be cleared. You can pick up the appeal flow any time before the 90-day deadline.",
+        es: "Se borrarán tus respuestas anteriores. Puedes retomar la apelación en cualquier momento antes de la fecha límite de 90 días."
+    )
+    static let deniedReapplyConfirmAction = CivicaText(
+        "Start a new application",
+        es: "Iniciar una nueva solicitud"
+    )
+    static let deniedReapplyCancelAction = CivicaText(
+        "Keep my answers",
+        es: "Mantener mis respuestas"
+    )
+
+    // IA-5: Review-what-you-submitted card destination.
+    static let deniedReviewPacketTitle = CivicaText(
+        "What you submitted",
+        es: "Lo que enviaste"
+    )
+    static let deniedReviewPacketBody = CivicaText(
+        "A read-only copy of the application Civica handed to the county. No changes here — when you're ready to send something new, tap below.",
+        es: "Una copia de solo lectura de la solicitud que Civica entregó al condado. Aquí no puedes editar — cuando estés listo para enviar algo nuevo, toca abajo."
+    )
+    static let deniedReviewReapplyCTA = CivicaText(
+        "Reapply with these answers",
+        es: "Solicitar de nuevo con estas respuestas"
+    )
+
+    // IA-5: appealability gate copy. Shown on the demoted Appeal card
+    // when AppealabilityService.evaluate(...) returns isAppealable=false.
+    static let deniedAppealWindowClosed = CivicaText(
+        "The 90-day appeal window has closed.",
+        es: "Se cerró el plazo de 90 días para apelar."
+    )
+    static let deniedAppealCategoryExcluded = CivicaText(
+        "This kind of denial isn't appealable through a fair hearing.",
+        es: "Este tipo de denegación no se puede apelar mediante una audiencia justa."
+    )
+
+    // IA-5: when Appeal is demoted, the primary action becomes
+    // "Speak with a navigator" — already wired via onOpenExternalPortal
+    // for non-denial surfaces. Copy mirrors RecertCompanion's pattern.
+    static let deniedPrimaryActionNavigator = CivicaText(
+        "Speak with a navigator",
+        es: "Hablar con un navegador"
+    )
+
     // MARK: - Recertification surface
     //
     // SNAP recertification: every 12 months for most MA households,
