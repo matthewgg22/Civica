@@ -136,9 +136,12 @@ struct CivicaEntryView: View {
     private func draftFallbackCard(error: DraftLoadError) -> some View {
         let bodyText: String = {
             switch error {
-            case .schemaMismatch: return CivicaEntryStrings.draftFallbackBodySchemaMismatch.value(in: language)
-            case .ioError: return CivicaEntryStrings.draftFallbackBodyIOError.value(in: language)
-            case .decodingError, .empty: return CivicaEntryStrings.draftFallbackBodyDecoding.value(in: language)
+            case .schemaMismatch:
+                return CivicaEntryStrings.draftFallbackBodySchemaMismatch.value(in: language)
+            case .ioError:
+                return CivicaEntryStrings.draftFallbackBodyIOError.value(in: language)
+            case .decodingError, .empty:
+                return CivicaEntryStrings.draftFallbackBodyDecoding.value(in: language)
             }
         }()
 

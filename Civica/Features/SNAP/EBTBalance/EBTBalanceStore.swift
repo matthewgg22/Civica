@@ -42,6 +42,19 @@ final class EBTBalanceStore: ObservableObject {
     @Published private(set) var blockOutOfState: Bool
     @Published private(set) var blockOnline: Bool
 
+    // IS-1 + T14 (audit 2026-05-29): refresh observability.
+    // The dashboard renders an inline error banner when `lastRefreshError`
+    // is non-nil and bolds the "Updated" timestamp when
+    // `lastSuccessfulRefreshAt` is >5 min stale.
+    @Published private(set) var isRefreshing: Bool = false
+    @Published private(set) var lastRefreshError: Error? = nil
+    @Published private(set) var lastSuccessfulRefreshAt: Date? = nil
+
+    // Cooldown anchor for refresh() — see PF-1 in the audit.
+    private var lastRefreshAttemptAt: Date? = nil
+    private let refreshCooldown: TimeInterval = 3
+    private let now: () -> Date
+
     // MARK: Dependencies
     private let repository: EBTBalanceRepository?
     private let realDataFlag: () -> Bool
@@ -62,11 +75,13 @@ final class EBTBalanceStore: ObservableObject {
     init(
         repository: EBTBalanceRepository? = nil,
         realDataFlag: @escaping () -> Bool = { FeatureFlags.ebtRealData },
-        defaults: UserDefaults = .standard
+        defaults: UserDefaults = .standard,
+        now: @escaping () -> Date = { Date() }
     ) {
         self.repository = repository
         self.realDataFlag = realDataFlag
         self.defaults = defaults
+        self.now = now
 
         let linked = defaults.bool(forKey: linkedKey)
         self.linkState = linked ? .linked : .unlinked
@@ -128,19 +143,52 @@ final class EBTBalanceStore: ObservableObject {
         linkState = .linked
     }
 
-    /// Pull-to-refresh. Flag-OFF: re-stamps "last updated" on the
-    /// fixture in place (pre-plan behavior). Flag-ON: delegates to
-    /// the repository.
+    /// Pull-to-refresh. Coalesces concurrent calls + enforces a 3s
+    /// cooldown between attempts (PF-1). Surfaces success/failure via
+    /// `lastSuccessfulRefreshAt` / `lastRefreshError` so the dashboard
+    /// can render the IS-1 inline error banner instead of silently
+    /// dropping the failure.
+    ///
+    /// Flag-OFF: re-stamps "last updated" on the fixture in place
+    /// (pre-plan behavior, never errors). Flag-ON: delegates to the
+    /// repository and inspects its `lastError` afterwards.
     func refresh() async {
-        if realDataFlag(), let repository {
-            await repository.refresh()
+        if isRefreshing { return }
+        if let last = lastRefreshAttemptAt,
+           now().timeIntervalSince(last) < refreshCooldown {
             return
         }
-        // Flag-OFF: pre-plan behavior preserved verbatim.
-        guard linkState == .linked, var current = account else { return }
+        lastRefreshAttemptAt = now()
+        isRefreshing = true
+        defer { isRefreshing = false }
+
+        if realDataFlag(), let repository {
+            await repository.refresh()
+            if let err = repository.lastError {
+                lastRefreshError = err
+            } else {
+                lastSuccessfulRefreshAt = now()
+                lastRefreshError = nil
+            }
+            return
+        }
+        // Flag-OFF: pre-plan behavior preserved verbatim — and treated
+        // as always-succeeding since there's no network in this path.
+        guard linkState == .linked, var current = account else {
+            // Nothing to refresh; don't claim success.
+            return
+        }
         try? await Task.sleep(nanoseconds: 700_000_000)
-        current.lastUpdated = Date()
+        current.lastUpdated = now()
         account = current
+        lastSuccessfulRefreshAt = now()
+        lastRefreshError = nil
+    }
+
+    /// Dismiss the IS-1 error banner. Called when the user taps "×".
+    /// A subsequent successful refresh also clears the error.
+    func clearRefreshError() {
+        lastRefreshError = nil
     }
 
     /// Reset to unlinked. Clears card-lock flags too.
