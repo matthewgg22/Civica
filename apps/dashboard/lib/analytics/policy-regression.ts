@@ -27,7 +27,8 @@ import { formatPValue, isSignificant, significanceStars } from "./per-regression
 export type LeverKind =
   | "reduces_burden"
   | "expands_eligibility"
-  | "increases_burden";
+  | "increases_burden"
+  | "control"; // business-cycle control (unemployment), not a policy lever
 
 export interface LeverEstimate {
   key: string;
@@ -107,7 +108,10 @@ const ARTIFACT = rawResults as unknown as PolicyRegressionArtifact;
 // ---------------------------------------------------------------------------
 
 export function hypothesizedPositive(kind: LeverKind): boolean {
-  return kind !== "increases_burden";
+  // Burden-reducers / eligibility-expanders are hypothesized to RAISE
+  // participation; interview requirements to lower it; a control has no
+  // directional hypothesis.
+  return kind === "reduces_burden" || kind === "expands_eligibility";
 }
 
 /** Percent with a real minus glyph: 8.9 → "+8.9%", -4.0 → "−4.0%". */

@@ -101,12 +101,14 @@ export default function RegressionReplicationPanel({
         </div>
         <p className="mt-3 border-l-2 border-pine/30 pl-3 text-sm leading-relaxed text-graphite">
           <span className="font-semibold text-ink">What this means. </span>
-          Transaction-cost modernization (call centers, online apps, simplified
-          reporting) captures the biggest jump in participation and caseload —
-          but <span className="text-ink">no family explains average benefit per
-          person</span> (≈0), because the benefit <em>level</em> is set by federal
-          formula. State policy moves <em>who is enrolled</em>, not how much they
-          get — exactly the retention margin Civica targets.
+          The <span className="text-ink">business cycle</span> (unemployment) is
+          the single biggest factor — it alone explains the first ~0.26. On top
+          of it, <span className="text-ink">transaction-cost modernization</span>{" "}
+          (call centers, online apps, simplified reporting) adds the largest
+          <em> policy</em> jump. But <span className="text-ink">no family explains
+          average benefit per person</span> (≈0): the benefit <em>level</em> is
+          set by federal formula. State policy moves <em>who is enrolled</em>, not
+          how much they get — exactly the retention margin Civica targets.
         </p>
       </div>
 
@@ -138,9 +140,22 @@ export default function RegressionReplicationPanel({
           </table>
         </div>
         <p className="mt-3 text-xs leading-relaxed text-graphite">
-          % change in the outcome when the lever is on; stars *** p&lt;0.001, **
-          p&lt;0.01, * p&lt;0.05. Average benefit omitted — every lever is &lt;1%
-          and non-significant there.
+          % change in the outcome when the lever is on; the{" "}
+          <span className="font-mono">unemployment</span> row is the
+          business-cycle control (per pp). Stars *** p&lt;0.001, ** p&lt;0.01, *
+          p&lt;0.05. Average benefit omitted — every lever is &lt;1% and
+          non-significant there.
+        </p>
+        <p className="mt-3 border-l-2 border-pine/30 pl-3 text-sm leading-relaxed text-graphite">
+          <span className="font-semibold text-ink">What this means. </span>
+          Once the economy is an explicit control, the{" "}
+          <span className="text-ink">burden-reducing</span> levers — simplified
+          reporting and call centers — hold their effect, but{" "}
+          <span className="text-ink">BBCE (an eligibility expansion) attenuates
+          and loses significance</span> (it was partly confounded with the
+          recession it was adopted during). What survives the cycle is
+          friction-reduction, not eligibility-expansion — which is exactly
+          Civica&rsquo;s lever.
         </p>
       </div>
 
@@ -252,6 +267,7 @@ function KindTag({ kind }: { kind: RenderedLever["kind"] }) {
     reduces_burden: { label: "burden ↓", cls: "bg-pine/10 text-pine" },
     expands_eligibility: { label: "eligibility ↑", cls: "bg-pine/10 text-pine" },
     increases_burden: { label: "burden ↑", cls: "bg-graphite/10 text-graphite" },
+    control: { label: "control", cls: "bg-ink/[0.06] text-graphite" },
   }[kind];
   return (
     <span

@@ -66,7 +66,7 @@ from typing import Any
 import numpy as np
 import pandas as pd
 
-SCHEMA_VERSION = "2.0.0"
+SCHEMA_VERSION = "2.1.0"
 ANALYSIS_LOCKED_AT = "2026-05-30"
 
 # Policy-lever families. Block-level within-R² is robust to the collinearity
@@ -92,6 +92,12 @@ PARSIMONIOUS: list[dict[str, str]] = [
     {"key": "facerec", "label": "In-person interview at recert", "kind": "increases_burden"},
 ]
 PARS_KEYS = [l["key"] for l in PARSIMONIOUS]
+
+# Business-cycle control: state monthly unemployment rate (FRED/BLS LAUS,
+# seasonally adjusted). The dominant confounder — recessions drive SNAP
+# caseloads. Reported as a "control" alongside the policy levers.
+CYCLE = "unemployment"
+CYCLE_SPEC = {"key": CYCLE, "label": "State unemployment rate", "kind": "control"}
 
 OUTCOMES: list[dict[str, str]] = [
     {"key": "participation", "label": "SNAP participation (persons)", "col": "ln_persons"},
@@ -179,6 +185,13 @@ def build_panel(ers_xlsx: str, fns_dir: str) -> pd.DataFrame:
     pdb = pd.read_excel(ers_xlsx, sheet_name='SNAP Policy Database')
     keep = ['state_fips', 'statename', 'yearmonth'] + ALL_LEVER_KEYS
     mg = pdb[keep].merge(en, on=['state_fips', 'yearmonth'], how='inner')
+    # Merge the vendored state unemployment control (FRED state UR, prepared by
+    # tools/snap-policy-regression/src/ingest_unemployment.py).
+    ue_path = (Path(__file__).resolve().parents[3] / "data-ops" / "sample"
+               / "snap-policy-regression" / "state_unemployment.csv")
+    if ue_path.exists():
+        ue = pd.read_csv(ue_path)[['state_fips', 'yearmonth', CYCLE]]
+        mg = mg.merge(ue, on=['state_fips', 'yearmonth'], how='left')
     return mg.sort_values(['state_fips', 'yearmonth']).reset_index(drop=True)
 
 
@@ -187,7 +200,7 @@ def build_panel(ers_xlsx: str, fns_dir: str) -> pd.DataFrame:
 # --------------------------------------------------------------------------
 
 def _frame(panel: pd.DataFrame) -> pd.DataFrame:
-    d = panel[panel['persons'] > 0].dropna(subset=ALL_LEVER_KEYS + ['persons', 'households', 'issuance']).copy()
+    d = panel[panel['persons'] > 0].dropna(subset=ALL_LEVER_KEYS + [CYCLE, 'persons', 'households', 'issuance']).copy()
     d['ln_persons'] = np.log(d['persons'])
     d['ln_households'] = np.log(d['households'])
     d['ln_benefit'] = np.log(d['issuance'] / d['persons'])
@@ -212,16 +225,18 @@ def fit_r2_ladder(panel: pd.DataFrame) -> dict:
     for b in BLOCKS:
         cum += b["levers"]
         labels.append(b["label"])
-    steps = [BLOCKS[0]["levers"],
-             BLOCKS[0]["levers"] + BLOCKS[1]["levers"],
-             ALL_LEVER_KEYS]
+    # Model S1 first: the business cycle, then each policy family on top.
+    steps = [[CYCLE],
+             [CYCLE] + BLOCKS[0]["levers"],
+             [CYCLE] + BLOCKS[0]["levers"] + BLOCKS[1]["levers"],
+             [CYCLE] + ALL_LEVER_KEYS]
     outcomes = []
     for oc in OUTCOMES:
         wr = [round(_within_r2(pan, oc["col"], regs), 4) for regs in steps]
         outcomes.append({"key": oc["key"], "label": oc["label"], "within_r2": wr})
     return {
         "block_labels": labels,
-        "cumulative": ["Eligibility", "+ Transaction-cost", "+ Procedural (full)"],
+        "cumulative": ["Business cycle", "+ Eligibility", "+ Transaction-cost", "+ Procedural"],
         "outcomes": outcomes,
         "note": ("within-R² = share of the within-state, within-month variation "
                  "the levers explain (the calendar-month FE absorb the national "
@@ -247,17 +262,20 @@ def fit_parsimonious(panel: pd.DataFrame) -> dict:
     from linearmodels.panel import PanelOLS
     d = _frame(panel)
     pan = d.set_index(['state_fips', 't'])
+    # Report the unemployment control first, then the policy levers.
+    report_keys = [CYCLE] + PARS_KEYS
     kind_map = {l["key"]: l for l in PARSIMONIOUS}
+    kind_map[CYCLE] = CYCLE_SPEC
     outcomes = []
     for oc in OUTCOMES:
-        f = f"{oc['col']} ~ " + " + ".join(PARS_KEYS) + " + EntityEffects + TimeEffects"
+        f = f"{oc['col']} ~ " + " + ".join(report_keys) + " + EntityEffects + TimeEffects"
         r = PanelOLS.from_formula(f, pan).fit(cov_type='clustered', cluster_entity=True)
         outcomes.append({
             "key": oc["key"], "label": oc["label"],
             "within_r2": float(r.rsquared_within),
-            "levers": _coef_rows(r, PARS_KEYS, kind_map),
+            "levers": _coef_rows(r, report_keys, kind_map),
         })
-    return {"levers_used": PARS_KEYS, "n": int(d.shape[0]),
+    return {"levers_used": report_keys, "n": int(d.shape[0]),
             "states": int(d['state_fips'].nunique()), "outcomes": outcomes}
 
 
@@ -272,15 +290,17 @@ def fit_robustness(panel: pd.DataFrame) -> dict:
         return d.groupby('state_fips')[col].transform(
             lambda s: s - np.polyval(np.polyfit(d.loc[s.index, 'trend'], s, 1),
                                      d.loc[s.index, 'trend']))
+    rkeys = [CYCLE] + PARS_KEYS  # control + levers
     d['y_dt'] = detrend('ln_persons')
-    for k in PARS_KEYS:
+    for k in rkeys:
         d[k + '_dt'] = detrend(k)
     pan = d.set_index(['state_fips', 't'])
-    f = "y_dt ~ " + " + ".join(k + '_dt' for k in PARS_KEYS) + " + EntityEffects + TimeEffects"
+    f = "y_dt ~ " + " + ".join(k + '_dt' for k in rkeys) + " + EntityEffects + TimeEffects"
     r = PanelOLS.from_formula(f, pan).fit(cov_type='clustered', cluster_entity=True)
     kind_map = {l["key"] + '_dt': l for l in PARSIMONIOUS}
+    kind_map[CYCLE + '_dt'] = CYCLE_SPEC
     rows = []
-    for k in PARS_KEYS:
+    for k in rkeys:
         kk = k + '_dt'
         lo, hi = r.conf_int().loc[kk]
         rows.append({
@@ -396,7 +416,7 @@ def build_artifact(panel: pd.DataFrame, ladder, parsimonious, robustness, event)
             "outcome_source": "USDA FNS SNAP Data Tables — National/State Monthly Data (snap-zip-fy69tocurrent)",
             "treatment_source": "USDA ERS SNAP Policy Database (snap-policy-database.xlsx)",
             "panel_file": "data-ops/sample/snap-policy-regression/analysis_panel.csv",
-            "cycle_control": "national cycle via calendar-month FE; state divergence via state-trend robustness; state-unemployment control blocked (FRED/BLS unreachable) — declared next refinement.",
+            "cycle_control": "Model S1: state monthly unemployment rate (FRED state UR, SA) is now an explicit control + the first rung of the R² ladder. National cycle also absorbed by calendar-month FE; state divergence by the state-trend robustness.",
         },
     }
 
