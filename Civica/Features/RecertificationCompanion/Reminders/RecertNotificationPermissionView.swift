@@ -21,7 +21,7 @@ struct RecertNotificationPermissionView: View {
 
     /// One-time dismissal flag. Re-shown only when the user enters a
     /// new phase of the recert flow (e.g. completes Phantom Recert).
-    @AppStorage("co.civica.recertCompanion.permissionDismissed")
+    (CivicaAppStorageKeys.recertCompanionPermissionDismissed)
     private var hasDismissed: Bool = false
 
     @State private var systemStatus: UNAuthorizationStatus = .notDetermined

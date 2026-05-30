@@ -39,12 +39,12 @@ enum CivicaUserData {
     // can wipe the exact set without any stragglers, and so
     // the inventory function can be trivially audited.
     private static let userDefaultsKeys: [String] = [
-        "co.civica.hasCompletedOnboarding",
-        "co.civica.language",
+        CivicaAppStorageKeys.hasCompletedOnboarding,
+        CivicaAppStorageKeys.language,
         "co.civica.applicationStatus",
         "co.civica.applicationMilestones",
-        "co.civica.applicationDraft",
-        "co.civica.recertInProgress"
+        SNAPApplicationDraftStore.liveDraftKey,
+        CivicaAppStorageKeys.recertInProgress
     ]
 
     // Keys retired by a prior code change. New code does not read or
@@ -143,8 +143,8 @@ enum CivicaUserData {
             capturedDocumentCount: capturedCount,
             status: store.status,
             hasEligibilityResult: store.eligibilityResult != nil,
-            languageRaw: defaults.string(forKey: "co.civica.language") ?? CivicaLanguage.english.rawValue,
-            hasCompletedOnboarding: defaults.bool(forKey: "co.civica.hasCompletedOnboarding")
+            languageRaw: defaults.string(forKey: CivicaAppStorageKeys.language) ?? CivicaLanguage.english.rawValue,
+            hasCompletedOnboarding: defaults.bool(forKey: CivicaAppStorageKeys.hasCompletedOnboarding)
         )
     }
 

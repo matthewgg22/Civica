@@ -105,7 +105,7 @@ struct PhantomRecertFlowView: View {
                         // dismiss back to home; the caller will see
                         // the user landed there and offer the live
                         // CTA.
-                        UserDefaults.standard.set(true, forKey: "co.civica.recertInProgress")
+                        UserDefaults.standard.set(true, forKey: CivicaAppStorageKeys.recertInProgress)
                         presentingSummary = false
                         dismiss()
                     }

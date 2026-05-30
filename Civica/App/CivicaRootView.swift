@@ -10,7 +10,7 @@ import SwiftUI
 // behind the same root.
 
 struct CivicaRootView: View {
-    @AppStorage("co.civica.hasCompletedOnboarding")
+    (CivicaAppStorageKeys.hasCompletedOnboarding)
     private var hasCompletedOnboarding: Bool = false
 
     @AppStorage(CivicaLanguage.defaultStorageKey)
@@ -29,7 +29,7 @@ struct CivicaRootView: View {
     /// flow. Routes them through CivicaSNAPFlowView with the recert
     /// banner instead of the standard recertification intro. Cleared
     /// when packet generation moves status forward to .packetGenerated.
-    @AppStorage("co.civica.recertInProgress")
+    (CivicaAppStorageKeys.recertInProgress)
     private var isRecertInProgress: Bool = false
 
     /// IA-4 (audit 2026-05-29): presents SNAPSettingsSheet from a gear

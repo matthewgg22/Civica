@@ -19,10 +19,10 @@ import SwiftUI
 struct SNAPDataDeletionView: View {
     @Environment(\.dismiss) private var dismiss
 
-    @AppStorage("co.civica.hasCompletedOnboarding")
+    (CivicaAppStorageKeys.hasCompletedOnboarding)
     private var hasCompletedOnboarding: Bool = false
 
-    @AppStorage("co.civica.recertInProgress")
+    (CivicaAppStorageKeys.recertInProgress)
     private var recertInProgress: Bool = false
 
     @State private var didDelete: Bool = false
