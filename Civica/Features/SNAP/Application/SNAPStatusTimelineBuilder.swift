@@ -46,7 +46,7 @@ enum SNAPStatusTimelineBuilder {
             .init(
                 id: "submit",
                 title: SNAPStatusHomeStrings.stepSubmit(stateCode: stateCode, language: language),
-                detail: submitDetail(for: status, language: language),
+                detail: submitDetail(for: status, language: language, stateCode: stateCode),
                 state: submitState(for: status),
                 timestamp: stamp(for: .submittedToState)
             ),
@@ -102,12 +102,20 @@ enum SNAPStatusTimelineBuilder {
 
     private static func submitDetail(
         for current: SNAPApplicationStatus,
-        language: CivicaLanguage
+        language: CivicaLanguage,
+        stateCode: String?
     ) -> String? {
         guard current == .packetGenerated else { return nil }
+        // State-conditioned: pull the apply-portal host from the single
+        // source (SNAPAgencyDirectory) instead of hardcoding MA's
+        // dtaconnect.eohhs.mass.gov — which was wrong for CA applicants.
+        let host = SNAPAgencyDirectory.portalShortURL(for: stateCode)
+        let target = host.isEmpty ? nil : host
         switch language {
-        case .english: return "Open dtaconnect.eohhs.mass.gov to file."
-        case .spanish: return "Abre dtaconnect.eohhs.mass.gov para presentar."
+        case .english:
+            return target.map { "Open \($0) to file." } ?? "Open your state SNAP portal to file."
+        case .spanish:
+            return target.map { "Abre \($0) para presentar." } ?? "Abre el portal de SNAP de tu estado para presentar."
         }
     }
 
