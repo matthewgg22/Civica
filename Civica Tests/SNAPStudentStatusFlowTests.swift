@@ -16,7 +16,7 @@ import Testing
 //   4. LPIE fast-path calls onComplete immediately (isComplete)
 //   5. Non-CCC/CSU/UC students fall through to federal screens
 //   6. goBack() routes correctly from twentyHours based on path taken
-//   7. visibleTotal reflects the new 6-step total
+//   7. visibleTotal reflects the 7-step total (incl. jobProgram, PARITY-AUDIT.md Gap 1)
 
 @Suite("SNAPStudentStatusFlow — LPIE fast-path")
 @MainActor
@@ -200,12 +200,25 @@ struct SNAPStudentStatusFlowTests {
 
     // MARK: - visibleTotal
 
-    @Test("visibleTotal is 6 for enrolled students (Step.total includes degreeProgram)")
-    func visibleTotal_enrolledStudent_isSix() {
+    @Test("visibleTotal is 7 for enrolled students (Step.total: enrollment, halfTime, degreeProgram, twentyHours, workStudy, dependentChild, jobProgram)")
+    func visibleTotal_enrolledStudent_isSeven() {
         let vm = SNAPStudentStatusFlowViewModel()
         vm.answers.enrolledInHigherEd = true
         #expect(vm.visibleTotal == SNAPStudentStatusFlowViewModel.Step.total)
-        #expect(SNAPStudentStatusFlowViewModel.Step.total == 6)
+        #expect(SNAPStudentStatusFlowViewModel.Step.total == 7)
+    }
+
+    // PARITY-AUDIT.md Gap 1: jobProgram is the new last federal screen
+    // and the flow's functional last step for a non-LPIE enrolled student.
+    @Test("canAdvance gated on inApprovedJobProgram; jobProgram is the functional last step")
+    func jobProgram_canAdvanceAndIsLastStep() {
+        let vm = SNAPStudentStatusFlowViewModel()
+        vm.answers.enrolledInHigherEd = true
+        vm.step = .jobProgram
+        #expect(vm.canAdvanceFromCurrentStep == false)
+        vm.answers.inApprovedJobProgram = true
+        #expect(vm.canAdvanceFromCurrentStep == true)
+        #expect(vm.isAtFunctionalLastStep == true)
     }
 
     @Test("visibleTotal is 1 for non-students")
