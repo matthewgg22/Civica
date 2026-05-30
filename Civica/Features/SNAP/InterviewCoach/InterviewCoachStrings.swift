@@ -136,8 +136,8 @@ enum InterviewCoachStrings {
     // MARK: Navigation titles
 
     static let navInterviewCoach = CivicaText(
-        "Interview Coach",
-        es: "Coach de entrevista"
+        "Interview prep with Mae",
+        es: "Preparación de entrevista con Mae"
     )
     static let navPracticeSession = CivicaText(
         "Practice session",
@@ -152,8 +152,8 @@ enum InterviewCoachStrings {
         es: "Preguntas de práctica"
     )
     static let navFeedback = CivicaText(
-        "Feedback",
-        es: "Comentarios"
+        "Mae's feedback",
+        es: "Comentarios de Mae"
     )
 
     // MARK: Browser
@@ -202,8 +202,8 @@ enum InterviewCoachStrings {
         es: "El trabajador social está escribiendo…"
     )
     static let scoringSession = CivicaText(
-        "Scoring your session…",
-        es: "Evaluando tu sesión…"
+        "Mae is reviewing your session…",
+        es: "Mae está revisando tu sesión…"
     )
     static let yourAnswerPlaceholder = CivicaText(
         "Your answer…",
@@ -214,12 +214,12 @@ enum InterviewCoachStrings {
         es: "Entrevista completada."
     )
     static let getFeedback = CivicaText(
-        "Get feedback",
-        es: "Obtener comentarios"
+        "Get Mae's feedback",
+        es: "Obtener los comentarios de Mae"
     )
     static let seeFeedback = CivicaText(
-        "See feedback",
-        es: "Ver comentarios"
+        "See Mae's notes",
+        es: "Ver las notas de Mae"
     )
     static let tryAgain = CivicaText(
         "Try again",
@@ -233,12 +233,12 @@ enum InterviewCoachStrings {
     // MARK: Review summary
 
     static let sessionFeedbackTitle = CivicaText(
-        "Session feedback",
-        es: "Comentarios de la sesión"
+        "Mae's feedback",
+        es: "Comentarios de Mae"
     )
     static let sessionFeedbackIntro = CivicaText(
-        "This is practice feedback, not a prediction of your real interview. It's meant to help you spot strengths to lean on and rough edges to polish before the real thing.",
-        es: "Estos son comentarios de práctica, no una predicción de tu entrevista real. Te ayudarán a identificar fortalezas y áreas a mejorar antes de la entrevista oficial."
+        "Here's Mae's read on your practice session — not a prediction of your real interview. It's meant to help you spot strengths to lean on and rough edges to polish before the real thing.",
+        es: "Esto es lo que Mae observó en tu sesión de práctica — no una predicción de tu entrevista real. Te ayudará a identificar fortalezas y áreas a mejorar antes de la entrevista oficial."
     )
     static let overallScoreLabel = CivicaText(
         "Overall readiness",
