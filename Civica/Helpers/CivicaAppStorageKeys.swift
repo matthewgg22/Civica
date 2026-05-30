@@ -43,4 +43,21 @@ enum CivicaAppStorageKeys {
     /// `co.civica.` convention and is preserved to avoid invalidating
     /// existing user state.
     static let findHelpHasSeenOnboarding = "find_help.has_seen_onboarding"
+
+    /// JR-4 / UD-7 / ARCH-3 of the iOS audit (2026-05-29) — approval banner
+    /// persistence schema. The banner appears on Phase 3 (Enrolled) home
+    /// when `status == .decisionApproved && ebtAccount == nil`. The flag
+    /// is set to true on dismiss OR when the EBT card is linked, and
+    /// reset to false on `.notStarted` transition (fresh case) or on
+    /// `.recertDue → .decisionApproved` transition (per CQ-5, so the
+    /// renewal-flavor banner fires).
+    static let approvalAcknowledged = "co.civica.approvalAcknowledged"
+
+    /// CQ-5 of the iOS audit (2026-05-29) — tracks whether the user has
+    /// ever seen a `.decisionApproved` state before. Drives the
+    /// `SNAPApprovalBannerCard` flavor: `.firstApproval` while false,
+    /// `.renewal` once true. Set to true alongside `approvalAcknowledged`
+    /// (so the first dismissal/link advances flavor); reset to false on
+    /// `.notStarted` transition (fresh case).
+    static let hasBeenApprovedBefore = "co.civica.hasBeenApprovedBefore"
 }
