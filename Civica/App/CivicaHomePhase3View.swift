@@ -33,8 +33,11 @@ struct CivicaHomePhase3View: View {
     /// rendered phase from outside this view. Production ignores.
     var onDebugPhaseChange: ((CivicaPhase) -> Void)? = nil
 
-    // MARK: - TODO wiring: replace with real messages-inbox store
-    // once that ships. Defaults hide the row in production.
+    // MARK: - HIDDEN UNTIL BACKEND
+    //
+    // TODO wiring: replace with real messages-inbox store once that
+    // ships. Defaults hide the row in production (never shows a fake
+    // row to the user). Ledger: docs/runbooks/wiring-todo.md (audit IS-7).
     var unreadMessageCount: Int = 0
     var mostRecentMessageSender: String = ""
     var mostRecentMessageTopic: String = ""
