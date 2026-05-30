@@ -25,7 +25,7 @@ export default function PlacementMapPanel({ data }: { data: PlacementsData }) {
       <div className="flex items-start justify-between gap-4 mb-4">
         <div>
           <p className="eyebrow mb-1">Panel 2 · Monetization geography</p>
-          <h3 className="text-[18px] font-bold tracking-tight text-ink">Ad / discount placement map</h3>
+          <h2 className="text-[18px] font-bold tracking-tight text-ink">Ad / discount placement map</h2>
           <p className="text-[12px] text-graphite mt-1">
             <span className="font-semibold text-ink tabular-nums">{data.total_active_offers}</span> active offers · <span className="font-semibold text-ink tabular-nums">{formatUSD(totalRevenue)}</span> projected revenue
           </p>
