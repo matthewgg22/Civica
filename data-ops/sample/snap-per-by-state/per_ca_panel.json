@@ -1,0 +1,94 @@
+{
+  "source": "USDA FNS SNAP Payment Error Rates, annual (fns.usda.gov/snap/qc/per)",
+  "scope": "California overpay/underpay/total % + national total",
+  "generated_at": "2026-05-29",
+  "note": "From the annual FNS PER PDFs. Gaps: FY2011-12 charts; FY2015/2019 chart-format not parsed; FY2016/2018/2020/2021 unpublished or COVID-waived.",
+  "ca_total_min": 3.63,
+  "ca_total_max": 13.4,
+  "by_year": {
+    "2003": {
+      "ca_over": 5.71,
+      "ca_under": 2.25,
+      "ca_total": 7.96,
+      "us_total": null
+    },
+    "2004": {
+      "ca_over": 4.73,
+      "ca_under": 1.6,
+      "ca_total": 6.32,
+      "us_total": null
+    },
+    "2005": {
+      "ca_over": 4.27,
+      "ca_under": 2.12,
+      "ca_total": 6.38,
+      "us_total": null
+    },
+    "2006": {
+      "ca_over": 5.28,
+      "ca_under": 1.7,
+      "ca_total": 6.98,
+      "us_total": null
+    },
+    "2007": {
+      "ca_over": 4.08,
+      "ca_under": 1.23,
+      "ca_total": 5.31,
+      "us_total": null
+    },
+    "2008": {
+      "ca_over": 4.07,
+      "ca_under": 1.7,
+      "ca_total": 5.77,
+      "us_total": null
+    },
+    "2009": {
+      "ca_over": 3.07,
+      "ca_under": 1.29,
+      "ca_total": 4.36,
+      "us_total": null
+    },
+    "2010": {
+      "ca_over": 3.56,
+      "ca_under": 1.26,
+      "ca_total": 4.81,
+      "us_total": null
+    },
+    "2013": {
+      "ca_over": 2.82,
+      "ca_under": 0.81,
+      "ca_total": 3.63,
+      "us_total": null
+    },
+    "2014": {
+      "ca_over": 4.14,
+      "ca_under": 0.99,
+      "ca_total": 5.13,
+      "us_total": null
+    },
+    "2017": {
+      "ca_over": 6.61,
+      "ca_under": 1.33,
+      "ca_total": 7.93,
+      "us_total": null
+    },
+    "2022": {
+      "ca_over": 9.59,
+      "ca_under": 1.51,
+      "ca_total": 11.1,
+      "us_total": 11.54
+    },
+    "2023": {
+      "ca_over": 11.61,
+      "ca_under": 1.78,
+      "ca_total": 13.4,
+      "us_total": 11.68
+    },
+    "2024": {
+      "ca_over": 9.01,
+      "ca_under": 1.98,
+      "ca_total": 10.98,
+      "us_total": 10.93
+    }
+  }
+}
