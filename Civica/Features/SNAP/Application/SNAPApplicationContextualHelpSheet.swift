@@ -39,6 +39,13 @@ struct SNAPApplicationContextualHelpSheet: View {
     }
 
     let questionTitle: String
+    /// The on-screen helper paragraph the applicant is already reading
+    /// (the question screen's `helper` prop). Forwarded to the endpoint
+    /// as the optional `question_helper` field so the explainer can
+    /// ground its answer in what the user already sees. Nil when the
+    /// question ships without a helper — the request omits the key and
+    /// behavior is identical to before.
+    let questionHelper: String?
     let language: CivicaLanguage
 
     /// Test seam: swap in a stub client (e.g. one that throws
@@ -60,24 +67,29 @@ struct SNAPApplicationContextualHelpSheet: View {
 
     public init(
         questionTitle: String,
+        questionHelper: String? = nil,
         language: CivicaLanguage
     ) {
         self.init(
             questionTitle: questionTitle,
+            questionHelper: questionHelper,
             language: language,
             client: SNAPApplicationContextualHelpAPIClient()
         )
     }
 
     /// Internal initializer used by tests + previews to inject a
-    /// stub client. The public API stays simple (title + language)
-    /// so call sites don't need to know about the client surface.
+    /// stub client. The public API stays simple (title + helper +
+    /// language) so call sites don't need to know about the client
+    /// surface.
     init(
         questionTitle: String,
+        questionHelper: String? = nil,
         language: CivicaLanguage,
         client: SNAPApplicationContextualHelpAPIClient
     ) {
         self.questionTitle = questionTitle
+        self.questionHelper = questionHelper
         self.language = language
         self.client = client
     }
@@ -215,17 +227,31 @@ struct SNAPApplicationContextualHelpSheet: View {
         do {
             let response = try await client.fetchHelp(
                 questionTitle: questionTitle,
+                questionHelper: questionHelper,
                 language: language
             )
             stillThinkingTask.cancel()
+            // A filtered response means the backend's safety layer
+            // scrubbed the explainer — log it (counts only, title is a
+            // closed-set static UI string) so we can see which
+            // questions trip the filter.
+            if response.wasFiltered {
+                SNAPAnalytics.trackIntakeHelpFiltered(questionTitle: questionTitle)
+            }
             let trimmed = response.explainerText.trimmingCharacters(in: .whitespacesAndNewlines)
             if trimmed.isEmpty {
+                // Empty body falls back to the navigator nudge — treat
+                // it as an error for telemetry so the failure surface
+                // is one number.
+                SNAPAnalytics.trackIntakeHelpError(questionTitle: questionTitle)
                 state = .error
             } else {
                 state = .success(trimmed)
             }
         } catch {
             stillThinkingTask.cancel()
+            // Network / 429 / 500 / timeout / decode → safe fallback.
+            SNAPAnalytics.trackIntakeHelpError(questionTitle: questionTitle)
             state = .error
         }
     }

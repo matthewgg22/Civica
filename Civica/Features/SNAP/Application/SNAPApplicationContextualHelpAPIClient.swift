@@ -69,11 +69,19 @@ final class SNAPApplicationContextualHelpAPIClient {
     }
 
     /// Wire-format request body. Same snake-case strategy on the
-    /// encoder side; properties get serialized as `question_title`
-    /// and `locale`.
+    /// encoder side; properties get serialized as `question_title`,
+    /// `locale`, and (when non-nil) `question_helper`.
+    ///
+    /// `questionHelper` is optional and carries the on-screen helper
+    /// paragraph the applicant is already reading. Swift's synthesized
+    /// `Encodable` uses `encodeIfPresent` for optionals, so when it is
+    /// nil the `question_helper` key is OMITTED entirely — the request
+    /// is byte-identical to the pre-helper contract (backward
+    /// compatible per the endpoint agreement).
     private struct HelpRequest: Encodable {
         let questionTitle: String
         let locale: String
+        let questionHelper: String?
     }
 
     /// UserDefaults key for the stable per-install anonymous ID sent
@@ -125,11 +133,18 @@ final class SNAPApplicationContextualHelpAPIClient {
 
     // MARK: - Public API
 
-    /// POST /v1/intake/help with the user's question title and locale.
-    /// Surfaces typed errors per `IntakeHelpError` so the sheet can
-    /// route each one to the safe fallback.
+    /// POST /v1/intake/help with the user's question title, locale, and
+    /// (optionally) the on-screen helper paragraph. Surfaces typed
+    /// errors per `IntakeHelpError` so the sheet can route each one to
+    /// the safe fallback.
+    ///
+    /// `questionHelper` is the helper text the applicant is already
+    /// reading on the question screen. When nil or blank the
+    /// `question_helper` key is omitted from the body, keeping the
+    /// request byte-identical to the pre-helper contract.
     func fetchHelp(
         questionTitle: String,
+        questionHelper: String? = nil,
         language: CivicaLanguage
     ) async throws -> HelpResponse {
         var request = URLRequest(url: endpoint("v1/intake/help"))
@@ -139,9 +154,15 @@ final class SNAPApplicationContextualHelpAPIClient {
         request.setValue(stableAnonymousID(), forHTTPHeaderField: "x-anonymous-id")
         request.timeoutInterval = requestTimeout
 
+        // Normalize blank/whitespace-only helpers to nil so the key is
+        // omitted rather than sent as an empty string.
+        let trimmedHelper = questionHelper?.trimmingCharacters(in: .whitespacesAndNewlines)
+        let normalizedHelper = (trimmedHelper?.isEmpty ?? true) ? nil : trimmedHelper
+
         let body = HelpRequest(
             questionTitle: questionTitle,
-            locale: language.rawValue
+            locale: language.rawValue,
+            questionHelper: normalizedHelper
         )
         request.httpBody = try encoder.encode(body)
 
