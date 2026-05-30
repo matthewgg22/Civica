@@ -308,7 +308,8 @@ struct SNAPReviewDraftFlowView: View {
                draft.studentStatus.enrolledHalfTime != nil,
                draft.studentStatus.works20PlusHours != nil,
                draft.studentStatus.inWorkStudy != nil,
-               draft.studentStatus.responsibleForDependentChild != nil {
+               draft.studentStatus.responsibleForDependentChild != nil,
+               draft.studentStatus.inApprovedJobProgram != nil {
                 return .complete
             }
             if draft.studentStatus.enrolledInHigherEd != nil { return .inProgress }

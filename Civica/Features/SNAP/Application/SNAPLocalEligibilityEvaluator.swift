@@ -61,6 +61,7 @@ enum SNAPLocalEligibilityEvaluator {
             switch reason {
             case .worksTwentyHoursPerWeek,
                  .workStudy,
+                 .employmentTrainingProgram,
                  .dependentChildCare,
                  .under18OrOver50,
                  .lpie,
