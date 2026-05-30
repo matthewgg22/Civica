@@ -65,7 +65,7 @@ So most "gaps" are intentional and fine. The ones that actually matter fall into
 
 ### 1. Eligibility-screening gaps (could make Civica's QC guidance wrong)
 
-**1a. CA student exemptions — partial coverage.** The state's ABHGW student checklist ("Select all that apply") surfaces **five** CA-recognized paths:
+**1a. CA student exemptions — partial coverage.** ✅ **FIXED in [PR #373](https://github.com/matthewgg22/Civica/pull/373)** (the employment & training path; see Recommendations). The state's ABHGW student checklist ("Select all that apply") surfaces **five** CA-recognized paths:
 - Approved for Work Study → Civica asks ✓ (`SNAPStudentStatusFlow` work-study)
 - Participating in a student employment training program (LPIE/WIOA/Campus Employment/E&T) → Civica asks **only LPIE** (CCC/CSU/UC), ✗ the broader WIOA/E&T/campus-employment set
 - **Getting a TANF-funded Cal Grant A or B → Civica ✗ (not asked)**
@@ -96,7 +96,7 @@ Civica screens several expedited-service / accuracy signals the state form doesn
 
 ## Recommendations (priority order)
 
-1. **Close 1a (CA student exemptions).** Add Cal-Grant and adult-education paths to `SNAPStudentStatusFlow`, and broaden the training-program question beyond LPIE to the state's WIOA/E&T/campus-employment set. Highest eligibility-accuracy value; small UI change. *(test: `test(qa):` student-exemption parity regression.)*
+1. ~~**Close 1a (CA student exemptions).**~~ ✅ **RESOLVED** — [PR #373](https://github.com/matthewgg22/Civica/pull/373) (merged into `codex/rebuild-feb18`, 2026-05-30). Added an `inApprovedJobProgram` intake question + `jobProgram` flow screen covering the federal/state employment & training path (SNAP E&T, WIOA, EOPS/CARE, CalWORKs, Cal Grant), wired to `ExemptionReason.employmentTrainingProgram` in `FederalDefaultRules.studentExemption` (every state conformer inherits it). `test(qa):` regression pins the bug + a no-over-exemption guard. Note: the *broader* state checklist still has adult-ed/non-credit and "not enrolled next term" paths not yet collected — lower priority, folded into the single job-program question's scope for now.
 2. **Wire paystub extraction → per-job income rows** to close the Income autofill gap (the on-device extraction already exists; it's a plumbing connect).
 3. **Consider collecting non-sensitive per-member basics** (name/DOB/relationship — NOT SSN/citizenship) to cut the People-section manual work, *if* it survives a privacy review.
 4. **Leave the intentional omissions**; have the extension surface them as "human must fill on portal: SSN, citizenship, felony, auth-rep" in its UI so the assister knows what's left.
