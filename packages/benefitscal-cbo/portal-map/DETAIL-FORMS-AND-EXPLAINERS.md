@@ -70,6 +70,11 @@ Inline sub-text under the last option: "A few examples of these are: Local Progr
 
 ---
 
+## OTHER-SITUATIONS entry gates (feed the summary pages)
+
+### Public Assistance (entry)
+"Did you get public assistance in California?" Yes / No → (Yes) **County** select (58 CA counties, first option "Amador" — alphabetical, Alameda likely above; default unselected). Feeds the "Public Assistance" summary card below.
+
 ## Repeating SUMMARY pages (the "you added" list pattern)
 Each declared situation/program shows a summary card with Edit / Remove:
 - **Public Assistance** — "Below is the public assistance information that you added. Public Assistance / Test Applicant (36) / Edit / Remove"
