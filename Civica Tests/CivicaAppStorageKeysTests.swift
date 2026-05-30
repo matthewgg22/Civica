@@ -81,9 +81,55 @@ struct CivicaAppStorageKeysTests {
             CivicaAppStorageKeys.buddyName,
             CivicaAppStorageKeys.buddyContact,
             CivicaAppStorageKeys.recertCompanionPermissionDismissed,
+            CivicaAppStorageKeys.dailyChecklistPrefix,
         ]
         for key in coKeys {
             #expect(key.hasPrefix("co.civica."), "Key '\(key)' should start with 'co.civica.'")
         }
+    }
+
+    // MARK: - Regression: PR #383 @AppStorage macro stripping (fix PR closes this)
+    //
+    // When PR #383 landed, the @AppStorage macro was stripped from every
+    // migrated call site, leaving bare `(CivicaAppStorageKeys.<key>)` lines.
+    // Those lines are valid Swift (they evaluate and discard the key string)
+    // but the property wrapper is gone, so the property is never bound to
+    // UserDefaults.  The pattern `^\s+\(CivicaAppStorageKeys\.` is the
+    // fingerprint; this test fails if it reappears.
+
+    @Test func noBareCivicaAppStorageKeysCallSites() throws {
+        let fm = FileManager.default
+        // Resolve the project root relative to this test bundle.
+        // The test bundle lives at …/Civica.app or …/CivicaTests.xctest;
+        // walk up until we find Civica.xcodeproj.
+        var dir = URL(fileURLWithPath: #filePath)
+            .deletingLastPathComponent() // Civica Tests/
+            .deletingLastPathComponent() // project root
+        // Verify we landed in the right place.
+        let proj = dir.appendingPathComponent("Civica.xcodeproj")
+        guard fm.fileExists(atPath: proj.path) else {
+            // Can't locate project root from test runner path — skip rather than false-fail.
+            return
+        }
+        let civicaDir = dir.appendingPathComponent("Civica")
+        guard let enumerator = fm.enumerator(at: civicaDir,
+                                              includingPropertiesForKeys: nil,
+                                              options: [.skipsHiddenFiles]) else { return }
+
+        var offenders: [String] = []
+        for case let fileURL as URL in enumerator {
+            guard fileURL.pathExtension == "swift" else { continue }
+            guard let content = try? String(contentsOf: fileURL, encoding: .utf8) else { continue }
+            for (i, line) in content.components(separatedBy: "\n").enumerated() {
+                // Match the bare-paren pattern: whitespace + `(CivicaAppStorageKeys.`
+                let trimmed = line.drop(while: \.isWhitespace)
+                if trimmed.hasPrefix("(CivicaAppStorageKeys.") {
+                    let rel = fileURL.path.replacingOccurrences(of: dir.path + "/", with: "")
+                    offenders.append("\(rel):\(i + 1)")
+                }
+            }
+        }
+        #expect(offenders.isEmpty,
+                "@AppStorage macro missing — bare (CivicaAppStorageKeys.) at: \(offenders.joined(separator: ", "))")
     }
 }
