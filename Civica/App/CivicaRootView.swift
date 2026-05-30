@@ -38,6 +38,14 @@ struct CivicaRootView: View {
     /// into the EBT dashboard.
     @State private var presentingSettings = false
 
+    /// Drives the returning-user-home "resume" push. Set true by
+    /// SNAPReturningUserHomeView's primary action (for the active-case
+    /// states that `resumesIntoApplicationFlow`) to push CivicaSNAPFlowView
+    /// onto the root NavigationStack — the same way CivicaEntryView's hero
+    /// card enters the flow. Ephemeral @State, not persisted: a resume is
+    /// an in-session navigation, not a launch-time route.
+    @State private var isResumingApplication = false
+
     private var language: CivicaLanguage {
         CivicaLanguage(rawValue: languageRaw) ?? .english
     }
@@ -60,6 +68,15 @@ struct CivicaRootView: View {
                                         SNAPSettingsStrings.title.value(in: language)
                                     )
                                 }
+                            }
+                            // Returning-user-home "resume" push. Attached to
+                            // the stable rootSurface (not the conditional
+                            // .isActiveCase branch) so the destination stays
+                            // registered for the whole NavigationStack — the
+                            // same pattern CivicaSNAPFlowView uses for its own
+                            // verdict / packet pushes.
+                            .navigationDestination(isPresented: $isResumingApplication) {
+                                CivicaSNAPFlowView(language: language)
                             }
                     }
                     .tint(CivicaColors.pinePrimary)
@@ -211,10 +228,17 @@ struct CivicaRootView: View {
                 statusStore: statusStore,
                 language: language,
                 onResume: {
-                    // Resume hands off to SNAPEntryView; subsequent
-                    // navigation lands the user back in the conversation
-                    // flow or the application-packet generator depending
-                    // on where they stopped.
+                    // Re-enter the orchestrator, which restores the saved
+                    // section / review / packet step from
+                    // SNAPApplicationDraftStore — the user lands back where
+                    // they stopped (the review surface for .screenerComplete,
+                    // an idempotent re-render of the packet for
+                    // .packetGenerated). Gated on resumesIntoApplicationFlow
+                    // so only the two states that actually render this
+                    // surface's primary button trigger the push.
+                    if statusStore.status.resumesIntoApplicationFlow {
+                        isResumingApplication = true
+                    }
                 },
                 onStartOver: {
                     statusStore.reset()
