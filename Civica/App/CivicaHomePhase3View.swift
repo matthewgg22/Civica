@@ -46,10 +46,28 @@ struct CivicaHomePhase3View: View {
     // the hero reflects whatever the user sees inside the EBT root.
     @StateObject private var ebtStore: EBTBalanceStore = EBTBalanceStore()
 
+    // JR-4 / UD-7 / ARCH-3 / CQ-5 (audit 2026-05-29): approval banner
+    // persistence + flavor selection. `approvalAcknowledged` is set true
+    // on dismiss or EBT-card link. `hasBeenApprovedBefore` drives the
+    // .firstApproval vs .renewal flavor. Reset rules (handled by
+    // SNAPApprovalAcknowledgmentResetter in the onChange below):
+    //   - any → .notStarted: both flags clear (fresh case).
+    //   - .recertDue → .decisionApproved: acknowledged clears so the
+    //     renewal-flavor banner re-fires; hasBeenApprovedBefore stays.
+    @AppStorage(CivicaAppStorageKeys.approvalAcknowledged)
+    private var approvalAcknowledged: Bool = false
+    @AppStorage(CivicaAppStorageKeys.hasBeenApprovedBefore)
+    private var hasBeenApprovedBefore: Bool = false
+
+    @State private var showingApprovalExplainer: Bool = false
+    @State private var navigateToFindHelp: Bool = false
+
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: CivicaSpacing.lg) {
                 phaseTab
+
+                approvalBanner
 
                 balanceHeroOrPlaceholder
 
@@ -78,6 +96,49 @@ struct CivicaHomePhase3View: View {
         .background(CivicaColors.paper.ignoresSafeArea())
         .navigationTitle("Civica")
         .navigationBarTitleDisplayMode(.inline)
+        .navigationDestination(isPresented: $navigateToFindHelp) {
+            FindHelpRootView()
+        }
+        .sheet(isPresented: $showingApprovalExplainer) {
+            SNAPApprovalExplainerView(language: language)
+        }
+        // CQ-5: apply the reset rules on every status transition. The
+        // resetter writes through the same UserDefaults keys the
+        // @AppStorage props above observe, so a transition causes the
+        // banner to re-render on the next runloop tick.
+        .onChange(of: statusStore.status) { oldValue, newValue in
+            SNAPApprovalAcknowledgmentResetter().handleTransition(from: oldValue, to: newValue)
+        }
+        // JR-4: linking the EBT card auto-acknowledges the banner.
+        // EBTBalanceStore exposes linkState as a @Published value; this
+        // keeps the banner-acknowledgment concern out of the store.
+        .onChange(of: ebtStore.linkState) { _, newValue in
+            if newValue == .linked {
+                SNAPApprovalAcknowledgmentResetter().acknowledge()
+            }
+        }
+    }
+
+    // MARK: - Approval banner (JR-4 / UD-7 / CQ-5)
+
+    /// Shown the moment `.decisionApproved` lands and the user hasn't
+    /// yet linked an EBT card OR dismissed the banner. Sits ABOVE the
+    /// existing "card is on the way" placeholder (different roles —
+    /// the banner is the celebration-substitute moment, the placeholder
+    /// is the persistent link affordance).
+    @ViewBuilder
+    private var approvalBanner: some View {
+        if statusStore.status == .decisionApproved,
+           ebtStore.account == nil,
+           !approvalAcknowledged {
+            SNAPApprovalBannerCard(
+                flavor: hasBeenApprovedBefore ? .renewal : .firstApproval,
+                language: language,
+                onWhatThisMeans: { showingApprovalExplainer = true },
+                onFindHelp: { navigateToFindHelp = true },
+                onDismiss: { SNAPApprovalAcknowledgmentResetter().acknowledge() }
+            )
+        }
     }
 
     // MARK: - Phase tab
