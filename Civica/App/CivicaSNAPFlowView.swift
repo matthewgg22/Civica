@@ -36,13 +36,13 @@ struct CivicaSNAPFlowView: View {
     /// explains "this is your recert" and primes any future per-step
     /// copy adjustments. Status-store advancement on completion also
     /// clears the recert-in-progress flag at the root.
-    (CivicaAppStorageKeys.recertInProgress)
+    @AppStorage(CivicaAppStorageKeys.recertInProgress)
     private var isRecertInProgress: Bool = false
 
     /// One-time first-entry buddy modal flag. Auto-presents the buddy
     /// 3-panel intro the very first time a user opens the apply flow;
     /// after dismissal the banner stays as the persistent re-entry path.
-    (CivicaAppStorageKeys.buddyHasSeenApplyIntro)
+    @AppStorage(CivicaAppStorageKeys.buddyHasSeenApplyIntro)
     private var hasSeenBuddyIntro: Bool = false
     @State private var showingBuddyIntro: Bool = false
 
@@ -50,9 +50,9 @@ struct CivicaSNAPFlowView: View {
     /// yet. Set by the dummy invite form so the banner and the modal
     /// can render an invited state until backend wire-up replaces this
     /// with the real /buddy/invite response.
-    (CivicaAppStorageKeys.buddyName)
+    @AppStorage(CivicaAppStorageKeys.buddyName)
     private var buddyName: String = ""
-    (CivicaAppStorageKeys.buddyContact)
+    @AppStorage(CivicaAppStorageKeys.buddyContact)
     private var buddyContact: String = ""
 
     let language: CivicaLanguage
