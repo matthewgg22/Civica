@@ -106,6 +106,7 @@ struct SNAPInlineDocScanCTA: View {
                 let other = result.extractedOther ?? [:]
                 let parsed = SNAPInlineDocScanResult(
                     primaryAmount: other["amount"],
+                    fullName: other["name"],
                     address: other["address"],
                     dateOfBirth: other["date_of_birth"],
                     zipCode: other["zip"],
@@ -130,6 +131,8 @@ struct SNAPInlineDocScanResult {
     /// Primary money amount on the doc (rent, utility total, balance).
     /// Plain decimal string like "1400.50", no $ / commas.
     let primaryAmount: String?
+    /// Full legal name printed on the doc (photo ID). nil for money docs.
+    var fullName: String? = nil
     /// Address printed on the doc (e.g. service address on a utility bill).
     let address: String?
     /// ISO 8601 date string (YYYY-MM-DD) for documents that carry a DOB.

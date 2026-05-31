@@ -333,9 +333,27 @@ struct SNAPApplicationFlowOrchestratorView: View {
             case .idScanOffer:
                 SNAPIDScanOfferView(
                     language: language,
-                    onScanComplete: { image, dateOfBirth in
-                        if let dob = dateOfBirth {
-                            viewModel.draft.applicantAge.dateOfBirth = dob
+                    onScanComplete: { image, result in
+                        // Prefill the easy low-sensitivity fields from
+                        // the ID. Each lands in the normal application
+                        // field for the applicant to confirm/edit
+                        // downstream — the scan suggests, the applicant
+                        // decides. Draft-local, no server-side PII store.
+                        if let result {
+                            if let dob = result.dateOfBirthDate {
+                                viewModel.draft.applicantAge.dateOfBirth = dob
+                            }
+                            if let name = result.fullName?.trimmingCharacters(in: .whitespaces),
+                               !name.isEmpty {
+                                viewModel.draft.scannedApplicantName = name
+                            }
+                            if let addr = result.address?.trimmingCharacters(in: .whitespaces),
+                               !addr.isEmpty {
+                                viewModel.draft.scannedResidentialAddress = addr
+                            }
+                            if let zip = result.zipCode?.filter(\.isNumber), zip.count == 5 {
+                                viewModel.draft.scannedResidentialZIP = zip
+                            }
                         }
                         if let image {
                             viewModel.draft.documentsChecklist.capturedDocuments.insert(.photoID)

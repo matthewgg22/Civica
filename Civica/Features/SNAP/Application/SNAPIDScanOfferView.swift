@@ -3,27 +3,32 @@ import SwiftUI
 import UIKit
 import VisionKit
 
-// Optional ID scan offered before the first application question.
-// Captures a photo of a driver's license or state ID, extracts
-// the date of birth to pre-fill the applicantAge section, and
-// saves the image as the photoID document so it's already checked
-// off on the end-of-flow documents checklist.
+// Optional ID scan offered as the FIRST step of the application.
+// Captures a photo of a driver's license or state ID and runs
+// on-device extraction to pre-fill the easy low-sensitivity fields:
+// full name, date of birth, and (when present) address. Each scraped
+// value lands in the normal application fields downstream, where the
+// applicant confirms or edits it — the scan suggests, the applicant
+// stays the source of truth. The image is also saved as the photoID
+// document so it's pre-checked on the end-of-flow checklist.
 //
-// The user can skip at any time — nothing here is required. The
-// only pre-fill side effect is dateOfBirth; name and address fields
-// aren't captured by the current draft model so extraction is
-// limited to DOB. Future: Vision-based OCR could extract name +
-// address and pre-fill contact answers.
+// The user can skip at any time — nothing here is required. Name /
+// DOB / address are draft-local + session-only (no server-side PII
+// store). SSN / immigration are NEVER extracted (privacy firewall).
 
 struct SNAPIDScanOfferView: View {
     let language: CivicaLanguage
-    let onScanComplete: (UIImage?, Date?) -> Void
+    /// Returns the captured image + the parsed fields (name / DOB /
+    /// address). `result` is nil when extraction is unavailable or
+    /// returned nothing — the image still saves and the user proceeds.
+    let onScanComplete: (UIImage?, SNAPInlineDocScanResult?) -> Void
     let onSkip: () -> Void
     let onExit: () -> Void
 
     @State private var documentBeingCaptured = false
     @State private var pendingRetry: PendingRetry?
     @State private var showScannerUnavailableAlert = false
+    @State private var isExtracting = false
 
     private struct PendingRetry: Identifiable {
         let id = UUID()
@@ -113,7 +118,7 @@ struct SNAPIDScanOfferView: View {
                     if !quality.passed {
                         pendingRetry = PendingRetry(image: image, quality: quality)
                     } else {
-                        onScanComplete(image, nil)
+                        extractThenComplete(image)
                     }
                 },
                 onCancel: { documentBeingCaptured = false }
@@ -134,7 +139,7 @@ struct SNAPIDScanOfferView: View {
                     },
                     onKeepAnyway: {
                         pendingRetry = nil
-                        onScanComplete(retry.image, nil)
+                        extractThenComplete(retry.image)
                     },
                     onUseDifferentDocument: {
                         pendingRetry = nil
@@ -150,6 +155,37 @@ struct SNAPIDScanOfferView: View {
             Button(CivicaQuestionStrings.closeLabel.value(in: language), role: .cancel) {}
         } message: {
             Text(SNAPDocumentsChecklistStrings.scannerUnavailableBody.value(in: language))
+        }
+    }
+
+    /// Run on-device extraction on the captured ID, then hand the
+    /// parsed fields (name / DOB / address) back to the orchestrator.
+    /// Fail-open: any extraction error still completes with the image
+    /// (nil result) so the user proceeds — the photo is saved either
+    /// way and the applicant fills the fields manually.
+    private func extractThenComplete(_ image: UIImage) {
+        guard SNAPOnDeviceExtractor.isAvailable, #available(iOS 26, *) else {
+            onScanComplete(image, nil)
+            return
+        }
+        isExtracting = true
+        Task { @MainActor in
+            defer { isExtracting = false }
+            do {
+                let res = try await SNAPOnDeviceExtractor.extract(image: image, capturedAs: .photoID)
+                let other = res.extractedOther ?? [:]
+                let parsed = SNAPInlineDocScanResult(
+                    primaryAmount: nil,
+                    fullName: other["name"],
+                    address: other["address"],
+                    dateOfBirth: other["date_of_birth"],
+                    zipCode: other["zip"],
+                    rawConfidence: res.extractionConfidence
+                )
+                onScanComplete(image, parsed)
+            } catch {
+                onScanComplete(image, nil)
+            }
         }
     }
 
@@ -195,12 +231,12 @@ enum SNAPIDScanStrings {
         es: "Escanea tu ID para empezar más rápido."
     )
     static let body = CivicaText(
-        "A driver's license or state ID lets Civica pre-fill your date of birth and saves the photo for your documents checklist.",
-        es: "Una licencia de conducir o ID estatal permite que Civica pre-llene tu fecha de nacimiento y guarda la foto para tu lista de documentos."
+        "A driver's license or state ID lets Civica pre-fill your name, date of birth, and address — you'll confirm each one as you go. The photo is also saved for your documents checklist.",
+        es: "Una licencia de conducir o ID estatal permite que Civica pre-llene tu nombre, fecha de nacimiento y dirección — confirmarás cada uno mientras avanzas. La foto también se guarda para tu lista de documentos."
     )
     static let benefit1 = CivicaText(
-        "Pre-fills your date of birth",
-        es: "Pre-llena tu fecha de nacimiento"
+        "Pre-fills your name, date of birth, and address",
+        es: "Pre-llena tu nombre, fecha de nacimiento y dirección"
     )
     static let benefit2 = CivicaText(
         "Checks off your photo ID on the documents list",

@@ -29,6 +29,19 @@ struct SNAPApplicationDraft: Equatable, Codable {
     var studentStatus: SNAPStudentStatusAnswers = .init()
     var expenses: SNAPExpensesAnswers = .init()
     var documentsChecklist: SNAPDocumentsChecklistAnswers = .init()
+
+    // Prefill fields captured by the optional first-step ID scan. The
+    // privacy-minimized intake never ASKS for these (name/street
+    // address aren't application questions), but the extension can
+    // autofill them into BenefitsCal (ABNMI name, ABNHA address). The
+    // applicant never has to type them; they were read off their own
+    // ID and can be corrected on the review surface. Draft-local +
+    // session-only like every other answer — NOT a server-side PII
+    // store. Empty when no ID was scanned. SSN/immigration are NEVER
+    // captured (privacy firewall).
+    var scannedApplicantName: String = ""
+    var scannedResidentialAddress: String = ""
+    var scannedResidentialZIP: String = ""
 }
 
 /// Stable identifier for which flow to jump back into when the user
