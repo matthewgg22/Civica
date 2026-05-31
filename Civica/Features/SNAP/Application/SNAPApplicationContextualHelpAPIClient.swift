@@ -114,11 +114,16 @@ final class SNAPApplicationContextualHelpAPIClient {
     private let decoder: JSONDecoder
     private let logger = Logger(subsystem: "Civica", category: "SNAPApplicationContextualHelpAPIClient")
 
-    /// Hard 3s ceiling per design D6 — the sheet must fail fast and
-    /// fall back to the navigator-nudge copy before the user
-    /// disengages. Cold-start risk noted in the design doc; we
-    /// accept that risk and own the fallback UX.
-    private let requestTimeout: TimeInterval = 3
+    /// Original design D6 hard-coded 3s "fail-fast" ceiling — but
+    /// real Anthropic Claude responses on the worker side run 3–6s
+    /// (Tier-B prompt + helper-text grounding + Cache API miss),
+    /// which meant every cold call timed out and the user only ever
+    /// saw the fallback copy. Device QA confirmed it: NSURLError
+    /// -1001 every time. Raising to 20s gives generous headroom for
+    /// the real LLM round-trip while leaving the sheet's existing
+    /// "still thinking…" copy to keep the user oriented past the 3s
+    /// mark (that timer fires regardless of this ceiling).
+    private let requestTimeout: TimeInterval = 20
 
     /// Default enrollment-api host. Mirrors InterviewCoachAPIClient's
     /// resolver: env var → Info.plist → production fallback. Keeping
