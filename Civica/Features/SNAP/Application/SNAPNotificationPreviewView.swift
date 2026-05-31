@@ -28,16 +28,36 @@ struct SNAPNotificationPreviewView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: CivicaSpacing.xl) {
                 header
-                previewOnlyBanner
+                previewOnlyNotice
                 emailsSection
                 smsSection
-                rulesFooter
             }
             .padding(CivicaSpacing.xl)
         }
         .background(CivicaColors.paper.ignoresSafeArea())
         .navigationTitle("Civica")
         .navigationBarTitleDisplayMode(.inline)
+    }
+
+    /// Substitute the preview-only tokens (deadline / recertDate /
+    /// monthlyBenefit / etc.) with concrete example values so the
+    /// preview reads as a finished message instead of a broken
+    /// template. Tokens replaced server-side at production time —
+    /// this is purely for the in-app preview.
+    private func renderPreview(_ text: CivicaText) -> String {
+        let rendered = CivicaNotificationTemplates.render(
+            text,
+            stateCode: previewStateCode,
+            language: language
+        )
+        return rendered
+            .replacingOccurrences(of: "{deadline}", with: "Jun 24, 2026")
+            .replacingOccurrences(of: "{recertDate}", with: "Mar 1, 2027")
+            .replacingOccurrences(of: "{monthlyBenefit}", with: "232")
+            .replacingOccurrences(of: "{annualBenefit}", with: "$2,784")
+            .replacingOccurrences(of: "{householdSize}", with: "3")
+            .replacingOccurrences(of: "{ebtArrivalWindow}", with: "Jun 6-9")
+            .replacingOccurrences(of: "{session}", with: "preview")
     }
 
     private var header: some View {
@@ -59,22 +79,17 @@ struct SNAPNotificationPreviewView: View {
         }
     }
 
-    // MARK: - Preview-only banner
+    // MARK: - Preview-only notice
 
-    private var previewOnlyBanner: some View {
-        HStack(alignment: .top, spacing: CivicaSpacing.sm) {
-            Image(systemName: "clock.fill")
-                .foregroundStyle(CivicaColors.warningAmber)
-                .accessibilityHidden(true)
-            Text(SNAPNotificationPreviewStrings.previewOnlyNotice.value(in: language))
-                .font(CivicaTypography.footnoteStrong)
-                .foregroundStyle(CivicaColors.ink)
-                .fixedSize(horizontal: false, vertical: true)
-        }
-        .padding(CivicaSpacing.md)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(CivicaColors.statusWarningSurface)
-        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
+    /// One-line caption instead of the earlier amber-tinted chip. The
+    /// chip read as a warning/error; a quiet caption keeps the same
+    /// disclosure without flagging the screen as broken.
+    private var previewOnlyNotice: some View {
+        Text(SNAPNotificationPreviewStrings.previewOnlyNotice.value(in: language))
+            .font(CivicaTypography.footnote)
+            .foregroundStyle(CivicaColors.graphite)
+            .fixedSize(horizontal: false, vertical: true)
+            .frame(maxWidth: .infinity, alignment: .leading)
     }
 
     // MARK: - Email section
@@ -105,11 +120,11 @@ struct SNAPNotificationPreviewView: View {
                     .foregroundStyle(CivicaColors.graphite)
                     .textCase(.uppercase)
                     .kerning(0.6)
-                Text(CivicaNotificationTemplates.render(template.subject, stateCode: previewStateCode, language: language))
+                Text(renderPreview(template.subject))
                     .font(CivicaTypography.subheadStrong)
                     .foregroundStyle(CivicaColors.ink)
                     .fixedSize(horizontal: false, vertical: true)
-                Text(CivicaNotificationTemplates.render(template.preheader, stateCode: previewStateCode, language: language))
+                Text(renderPreview(template.preheader))
                     .font(CivicaTypography.footnote)
                     .foregroundStyle(CivicaColors.graphite)
                     .fixedSize(horizontal: false, vertical: true)
@@ -120,25 +135,21 @@ struct SNAPNotificationPreviewView: View {
 
             Divider().background(CivicaColors.hairline)
 
-            // Body stanzas
+            // Body stanzas. Email previews are read-only transcripts —
+            // we no longer render the template's CTA button inline (a
+            // pine "See your status" button inside a preview card read
+            // as interactive, mixing metaphors). The button label
+            // shows up at the end of the body as a small footer line
+            // so the user still knows the action exists.
             VStack(alignment: .leading, spacing: CivicaSpacing.md) {
                 ForEach(Array(template.body.enumerated()), id: \.offset) { _, stanza in
-                    Text(CivicaNotificationTemplates.render(stanza, stateCode: previewStateCode, language: language))
-                        .font(CivicaTypography.body)
-                        .foregroundStyle(CivicaColors.ink)
-                        .fixedSize(horizontal: false, vertical: true)
-                        .frame(maxWidth: .infinity, alignment: .leading)
+                    stanzaContent(renderPreview(stanza))
                 }
                 if let buttonLabel = template.buttonLabel {
-                    Text(buttonLabel.value(in: language))
-                        .font(CivicaTypography.subheadStrong)
-                        .foregroundStyle(CivicaColors.onPrimaryText)
-                        .padding(.horizontal, CivicaSpacing.lg)
-                        .padding(.vertical, CivicaSpacing.sm)
-                        .background(
-                            RoundedRectangle(cornerRadius: CivicaRadius.control)
-                                .fill(CivicaColors.pinePrimary)
-                        )
+                    Text("→ \(buttonLabel.value(in: language))")
+                        .font(CivicaTypography.footnoteStrong)
+                        .foregroundStyle(CivicaColors.pinePrimary)
+                        .padding(.top, CivicaSpacing.xs)
                 }
                 Text(SNAPNotificationPreviewStrings.emailFooter.value(in: language))
                     .font(CivicaTypography.caption.monospacedDigit())
@@ -154,6 +165,70 @@ struct SNAPNotificationPreviewView: View {
             RoundedRectangle(cornerRadius: CivicaRadius.card)
                 .strokeBorder(CivicaColors.hairline, lineWidth: 1)
         )
+    }
+
+    /// Renders one body stanza. If the stanza contains bullet markers
+    /// (`\n  • ` or `\n• `), splits the intro from the bullet block
+    /// and renders the bullets as a proper VStack of
+    /// HStack(bullet, text) rows with hanging indent. Plain stanzas
+    /// fall through as a single Text. Closes the "raw markdown
+    /// bullets show up flush-left" issue device QA flagged.
+    @ViewBuilder
+    private func stanzaContent(_ text: String) -> some View {
+        let lines = text.components(separatedBy: "\n")
+        let bulletIndex = lines.firstIndex(where: { isBulletLine($0) })
+        if let bulletIndex {
+            VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
+                let intro = lines[0..<bulletIndex]
+                    .joined(separator: "\n")
+                    .trimmingCharacters(in: .whitespacesAndNewlines)
+                if !intro.isEmpty {
+                    Text(intro)
+                        .font(CivicaTypography.body)
+                        .foregroundStyle(CivicaColors.ink)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
+                let bullets = lines[bulletIndex...]
+                    .filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty }
+                    .map { stripBullet($0) }
+                VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
+                    ForEach(Array(bullets.enumerated()), id: \.offset) { _, item in
+                        HStack(alignment: .firstTextBaseline, spacing: CivicaSpacing.sm) {
+                            Text("•")
+                                .font(CivicaTypography.body)
+                                .foregroundStyle(CivicaColors.pinePrimary)
+                                .accessibilityHidden(true)
+                            Text(item)
+                                .font(CivicaTypography.body)
+                                .foregroundStyle(CivicaColors.ink)
+                                .fixedSize(horizontal: false, vertical: true)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                        }
+                    }
+                }
+                .padding(.leading, CivicaSpacing.xs)
+            }
+        } else {
+            Text(text)
+                .font(CivicaTypography.body)
+                .foregroundStyle(CivicaColors.ink)
+                .fixedSize(horizontal: false, vertical: true)
+                .frame(maxWidth: .infinity, alignment: .leading)
+        }
+    }
+
+    private func isBulletLine(_ line: String) -> Bool {
+        let trimmed = line.trimmingCharacters(in: .whitespaces)
+        return trimmed.hasPrefix("•")
+    }
+
+    private func stripBullet(_ line: String) -> String {
+        let trimmed = line.trimmingCharacters(in: .whitespaces)
+        if trimmed.hasPrefix("•") {
+            return String(trimmed.dropFirst()).trimmingCharacters(in: .whitespaces)
+        }
+        return trimmed
     }
 
     // MARK: - SMS section
@@ -177,7 +252,7 @@ struct SNAPNotificationPreviewView: View {
 
     private func smsCard(_ template: CivicaNotificationTemplate) -> some View {
         VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
-            Text(CivicaNotificationTemplates.render(template.subject, stateCode: previewStateCode, language: language))
+            Text(renderPreview(template.subject))
                 .font(CivicaTypography.captionStrong)
                 .foregroundStyle(CivicaColors.graphite)
                 .textCase(.uppercase)
@@ -188,7 +263,7 @@ struct SNAPNotificationPreviewView: View {
                     .font(CivicaTypography.caption.monospacedDigit())
                     .foregroundStyle(CivicaColors.graphite)
                 ForEach(Array(template.body.enumerated()), id: \.offset) { _, stanza in
-                    smsBubble(CivicaNotificationTemplates.render(stanza, stateCode: previewStateCode, language: language))
+                    smsBubble(renderPreview(stanza))
                 }
                 if let buttonLabel = template.buttonLabel,
                    let url = template.buttonURLHint {
@@ -206,13 +281,17 @@ struct SNAPNotificationPreviewView: View {
         )
     }
 
+    /// SMS bubble — pine TINT background (not solid pine fill) + ink
+    /// text. Closer to iOS Messages convention (light tinted bubbles)
+    /// than the earlier solid pine bricks, which made the SMS section
+    /// read as a wall of pine.
     private func smsBubble(_ text: String) -> some View {
         Text(text)
             .font(CivicaTypography.body)
-            .foregroundStyle(CivicaColors.onPrimaryText)
+            .foregroundStyle(CivicaColors.ink)
             .padding(.horizontal, CivicaSpacing.md)
             .padding(.vertical, CivicaSpacing.sm)
-            .background(CivicaColors.pinePrimary)
+            .background(CivicaColors.pinePrimary.opacity(0.10))
             .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
             .frame(maxWidth: .infinity, alignment: .leading)
             .fixedSize(horizontal: false, vertical: true)
@@ -231,41 +310,11 @@ struct SNAPNotificationPreviewView: View {
         }
     }
 
-    // MARK: - Rules footer
-
-    /// Civica's notification rules — the ones from HANDOFF that
-    /// shape every template. Showing them on the same screen the
-    /// user reads the templates makes the "we promise X" / "the
-    /// templates do X" pair verifiable.
-    private var rulesFooter: some View {
-        VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
-            Text(SNAPNotificationPreviewStrings.rulesHeading.value(in: language))
-                .font(CivicaTypography.captionStrong)
-                .foregroundStyle(CivicaColors.graphite)
-                .textCase(.uppercase)
-                .kerning(1.0)
-            ForEach(SNAPNotificationPreviewStrings.rules(language: language), id: \.self) { rule in
-                HStack(alignment: .top, spacing: CivicaSpacing.sm) {
-                    Text("·")
-                        .font(CivicaTypography.subheadStrong)
-                        .foregroundStyle(CivicaColors.amberPrimary)
-                        .accessibilityHidden(true)
-                    Text(rule)
-                        .font(CivicaTypography.footnote)
-                        .foregroundStyle(CivicaColors.ink)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
-            }
-        }
-        .padding(CivicaSpacing.lg)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(CivicaColors.surfacePrimary)
-        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
-        .overlay(
-            RoundedRectangle(cornerRadius: CivicaRadius.card)
-                .strokeBorder(CivicaColors.hairline, lineWidth: 1)
-        )
-    }
+    // The "How Civica writes notifications" footer was removed —
+    // it was an internal style guide ("Every message names the
+    // next action…") that didn't belong on a user-facing preview.
+    // Rules still live in `SNAPNotificationPreviewStrings.rules` for
+    // any future internal-only surface.
 }
 
 // MARK: - Strings
