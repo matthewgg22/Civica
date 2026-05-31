@@ -97,11 +97,11 @@ struct CivicaHomePhase3View: View {
 
                 balanceHeroOrPlaceholder
 
-                // "Will it last?" projection — unique Civica insight
-                // (no other SNAP app surfaces this). Renders only when
-                // there's enough purchase history to project; silent
-                // otherwise so the home doesn't read empty.
-                willItLastCard
+                // The "Will it last?" projection now lives inside the
+                // hero card itself (PROJECTED TO LAST slot, wired in
+                // balanceHero via EBTBalanceInsights.projection). The
+                // standalone card that previously rendered here was
+                // showing the same number twice — removed.
 
                 // Top-3 transactions preview + See-all link.
                 recentActivityPreview
@@ -271,8 +271,29 @@ struct CivicaHomePhase3View: View {
             updatedTimestamp: updatedLabel(for: account.lastUpdated),
             nextDepositAmount: formattedNextDeposit(account),
             nextDepositDate: formattedNextDepositDate(account),
-            projectedThrough: CivicaPhase3Strings.projectedThroughPlaceholder.value(in: language)
+            projectedThrough: projectedThroughLabel(for: account)
         )
+    }
+
+    /// Real projected-zero date computed from the account's purchases
+    /// over the last 30 days. Falls back to the placeholder copy when
+    /// there isn't enough signal (fewer than 3 purchases in the
+    /// window) so the hero never reads an empty slot.
+    private func projectedThroughLabel(for account: EBTAccount) -> String {
+        let balance = (account.foodBalance as NSDecimalNumber).doubleValue
+        guard let projection = EBTBalanceInsights.projection(
+            balance: balance,
+            transactions: account.transactions,
+            nextDeposit: account.nextDeposit
+        ) else {
+            return CivicaPhase3Strings.projectedThroughPlaceholder.value(in: language)
+        }
+        let date = DateFormatter.localizedString(
+            from: projection.projectedZeroDate,
+            dateStyle: .medium,
+            timeStyle: .none
+        )
+        return date
     }
 
     /// "Your card is on the way" placeholder for approved users who
@@ -394,71 +415,6 @@ struct CivicaHomePhase3View: View {
                 }
                 .buttonStyle(.plain)
             }
-        }
-    }
-
-    // MARK: - Will it last? projection (compact)
-
-    @ViewBuilder
-    private var willItLastCard: some View {
-        if let account = ebtStore.account,
-           let projection = EBTBalanceInsights.projection(
-               balance: (account.foodBalance as NSDecimalNumber).doubleValue,
-               transactions: account.transactions,
-               nextDeposit: account.nextDeposit
-           ) {
-            let isTight = projection.isTightUntilDeposit
-            let accent: Color = isTight ? CivicaColors.warningAmber : CivicaColors.pinePrimary
-            let iconName = isTight ? "exclamationmark.circle.fill" : "calendar.badge.checkmark"
-            HStack(alignment: .top, spacing: CivicaSpacing.md) {
-                Image(systemName: iconName)
-                    .imageScale(.large)
-                    .font(.body)
-                    .foregroundStyle(accent)
-                    .frame(width: 28, alignment: .leading)
-                    .accessibilityHidden(true)
-                VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
-                    Text(EBTBalanceStrings.projectionEyebrow.value(in: language))
-                        .font(CivicaTypography.captionStrong)
-                        .foregroundStyle(CivicaColors.graphite)
-                        .textCase(.uppercase)
-                        .kerning(1.2)
-                    Text(willItLastBody(projection: projection))
-                        .font(CivicaTypography.subhead)
-                        .foregroundStyle(CivicaColors.ink)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
-            }
-            .padding(CivicaSpacing.lg)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .background(isTight ? accent.opacity(0.08) : CivicaColors.surfacePrimary)
-            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
-            .overlay(
-                RoundedRectangle(cornerRadius: CivicaRadius.card)
-                    .strokeBorder(
-                        isTight ? accent.opacity(0.4) : CivicaColors.hairline,
-                        lineWidth: 1
-                    )
-            )
-            .accessibilityElement(children: .combine)
-        }
-    }
-
-    /// Compact "lasts through Jun 18 at current pace" copy. Mirrors
-    /// the dashboard's projectionBody routing but always uses the
-    /// neutral phrasing so the home reads quiet — the tight variant
-    /// would compete with the dark-pine hero immediately above.
-    private func willItLastBody(projection: EBTBalanceProjection) -> String {
-        let date = DateFormatter.localizedString(
-            from: projection.projectedZeroDate,
-            dateStyle: .medium,
-            timeStyle: .none
-        )
-        switch language {
-        case .english:
-            return "At this pace, your balance lasts through \(date)."
-        case .spanish:
-            return "A este ritmo, tu saldo dura hasta el \(date)."
         }
     }
 
