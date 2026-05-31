@@ -99,26 +99,22 @@ struct CivicaEntryView: View {
         return error
     }
 
-    // MARK: - Phase tab (production journey indicator + DEBUG override)
+    // MARK: - Phase tab (gear-toggle-only visibility)
 
-    /// Production renders the locked journey indicator (current
-    /// highlighted, future phases locked). DEBUG with an injected
-    /// `onDebugPhaseChange` swaps in the free toggle so engineers
-    /// can flip phases at runtime.
+    /// Phase indicator is now demo-only. When `onDebugPhaseChange`
+    /// is non-nil — which happens only in two cases: (a) the user
+    /// has flipped "Demo mode — Unlock all phases" in the gear, or
+    /// (b) a SwiftUI Preview injecting it directly — the tabs
+    /// render as free-tap toggles for jumping between Enroll /
+    /// Pending / Enrolled homes. Otherwise: nothing renders. The
+    /// previous locked-indicator variant created visual noise that
+    /// most applicants read as "I can't do anything yet."
     @ViewBuilder
     private var phaseTab: some View {
-        #if DEBUG
         if let onDebugPhaseChange {
             CivicaPhaseTab(current: .enroll, onChange: onDebugPhaseChange)
                 .padding(.bottom, CivicaSpacing.xs)
-        } else {
-            CivicaPhaseTab(lockedJourneyAt: .enroll)
-                .padding(.bottom, CivicaSpacing.xs)
         }
-        #else
-        CivicaPhaseTab(lockedJourneyAt: .enroll)
-            .padding(.bottom, CivicaSpacing.xs)
-        #endif
     }
 
     // MARK: - Draft fallback card (IS-9)

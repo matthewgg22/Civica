@@ -294,9 +294,13 @@ enum SNAPWhereApplyingStrings {
         "Which state are you applying in?",
         es: "¿En qué estado estás solicitando?"
     )
+    // State-neutral helper. Earlier copy named Massachusetts
+    // specifically, which became wrong once California and New York
+    // ship their own tuned packets. The neutral version respects every
+    // supported state equally and just explains the why.
     static let stateHelper = CivicaText(
-        "SNAP rules and timelines vary by state. Civica is tuned for Massachusetts right now — other states still get a general application packet.",
-        es: "Las reglas y plazos de SNAP varían según el estado. Civica está ajustada para Massachusetts ahora mismo — los otros estados aún reciben un paquete de solicitud general."
+        "SNAP rules and timelines vary by state. Pick the state where you're applying so the rest of the application fits your situation.",
+        es: "Las reglas y plazos de SNAP varían según el estado. Elige el estado donde estás solicitando para que el resto de la solicitud se ajuste a tu situación."
     )
 
     /// Geo-suggestion token copy. The state name is interpolated at the

@@ -195,15 +195,11 @@ struct CivicaHomePhase3View: View {
     /// free toggle for engineers / QA.
     @ViewBuilder
     private var phaseTab: some View {
-        #if DEBUG
+        // Demo-only visibility. See CivicaEntryView.phaseTab for the
+        // rationale; same gating across all three phase homes.
         if let onDebugPhaseChange {
             CivicaPhaseTab(current: .enrolled, onChange: onDebugPhaseChange)
-        } else {
-            CivicaPhaseTab(lockedJourneyAt: .enrolled)
         }
-        #else
-        CivicaPhaseTab(lockedJourneyAt: .enrolled)
-        #endif
     }
 
     // MARK: - EBT balance hero (or fallback)

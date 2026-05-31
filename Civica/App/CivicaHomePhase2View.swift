@@ -366,15 +366,11 @@ struct CivicaHomePhase2View: View {
     /// handler: free toggle for engineers / QA.
     @ViewBuilder
     private var phaseTab: some View {
-        #if DEBUG
+        // Demo-only visibility. See CivicaEntryView.phaseTab for the
+        // rationale; same gating across all three phase homes.
         if let onDebugPhaseChange {
             CivicaPhaseTab(current: .pending, onChange: onDebugPhaseChange)
-        } else {
-            CivicaPhaseTab(lockedJourneyAt: .pending)
         }
-        #else
-        CivicaPhaseTab(lockedJourneyAt: .pending)
-        #endif
     }
 
     // MARK: - Status pill + headline
