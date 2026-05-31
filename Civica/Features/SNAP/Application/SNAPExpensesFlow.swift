@@ -70,6 +70,18 @@ struct SNAPExpensesAnswers: Equatable, Codable {
 
     var monthlyChildcare: Decimal?
     var monthlyMedical: Decimal?
+
+    // Wave 3 — Court-ordered support deductions (BenefitsCal ABCOC + ABSSQ).
+    //
+    // SNAP deducts court-ordered child support and spousal support paid
+    // OUTSIDE the household from gross income (7 CFR 273.9(d)(5)). An
+    // applicant paying $400/mo court-ordered child support to an ex
+    // partner currently gets a worse benefit estimate from Civica
+    // because we never asked. New Y/N gate (`paysCourtOrderedSupport`)
+    // branches into two amount fields when affirmative.
+    var paysCourtOrderedSupport: SNAPTri?
+    var monthlyChildSupportPaid: Decimal?
+    var monthlySpousalSupportPaid: Decimal?
 }
 
 @MainActor
@@ -80,6 +92,8 @@ final class SNAPExpensesFlowViewModel: ObservableObject {
         //         housingStatus is NOT .unhoused (unhoused students don't
         //         have a lease to pro-rate).
         case rent, sharedHousing, utilityTypes, utilities, utilityShutoff, childcare, medical
+        // Wave 3 — court-ordered support (BenefitsCal ABCOC + ABSSQ)
+        case courtOrderedSupportGate, childSupportAmount, spousalSupportAmount
 
         var oneBasedIndex: Int { rawValue + 1 }
         static let total = Self.allCases.count
@@ -90,6 +104,8 @@ final class SNAPExpensesFlowViewModel: ObservableObject {
     @Published var utilitiesField: String
     @Published var childcareField: String
     @Published var medicalField: String
+    @Published var childSupportField: String = ""
+    @Published var spousalSupportField: String = ""
     @Published var answers: SNAPExpensesAnswers
 
     private let hasMinorInHousehold: Bool
@@ -114,6 +130,13 @@ final class SNAPExpensesFlowViewModel: ObservableObject {
         }
         if hasMinorInHousehold { steps.append(.childcare) }
         if hasElderlyOrDisabled { steps.append(.medical) }
+        // Wave 3 — court-ordered support gate, always asked. When
+        // the answer is Yes, branch into the per-type amount pages.
+        steps.append(.courtOrderedSupportGate)
+        if answers.paysCourtOrderedSupport == .yes {
+            steps.append(.childSupportAmount)
+            steps.append(.spousalSupportAmount)
+        }
         return steps
     }
 
@@ -136,6 +159,8 @@ final class SNAPExpensesFlowViewModel: ObservableObject {
         self.utilitiesField = render(answers.monthlyUtilities)
         self.childcareField = render(answers.monthlyChildcare)
         self.medicalField = render(answers.monthlyMedical)
+        self.childSupportField = render(answers.monthlyChildSupportPaid)
+        self.spousalSupportField = render(answers.monthlySpousalSupportPaid)
     }
 
     func recordCurrentField() {
@@ -147,17 +172,23 @@ final class SNAPExpensesFlowViewModel: ObservableObject {
         case .utilityShutoff: break  // bound directly into answers.utilityShutoffNotice
         case .childcare:     answers.monthlyChildcare     = decimalValue(childcareField)
         case .medical:       answers.monthlyMedical       = decimalValue(medicalField)
+        case .courtOrderedSupportGate: break  // Tri bound directly
+        case .childSupportAmount:   answers.monthlyChildSupportPaid   = decimalValue(childSupportField)
+        case .spousalSupportAmount: answers.monthlySpousalSupportPaid = decimalValue(spousalSupportField)
         }
     }
 
     var canAdvanceFromCurrentStep: Bool {
         switch step {
-        case .rent, .utilities, .childcare, .medical:
+        case .rent, .utilities, .childcare, .medical,
+             .childSupportAmount, .spousalSupportAmount:
             return true  // empty = $0, always a valid answer
         case .sharedHousing, .utilityTypes:
             return true  // no required selection
         case .utilityShutoff:
             return answers.utilityShutoffNotice != nil
+        case .courtOrderedSupportGate:
+            return answers.paysCourtOrderedSupport != nil
         }
     }
 
@@ -253,6 +284,44 @@ struct SNAPExpensesFlowView: View {
         case .utilityShutoff: utilityShutoffScreen
         case .childcare:     moneyScreen(.childcare, binding: $viewModel.childcareField)
         case .medical:       moneyScreen(.medical, binding: $viewModel.medicalField)
+        // Wave 3 — court-ordered support (BenefitsCal ABCOC + ABSSQ)
+        case .courtOrderedSupportGate: courtOrderedSupportGateScreen
+        case .childSupportAmount:      moneyScreen(.childSupportAmount, binding: $viewModel.childSupportField)
+        case .spousalSupportAmount:    moneyScreen(.spousalSupportAmount, binding: $viewModel.spousalSupportField)
+        }
+    }
+
+    // MARK: - Wave 3: court-ordered support gate
+
+    private var courtOrderedSupportGateScreen: some View {
+        CivicaQuestionScreen(
+            progress: progress(for: .courtOrderedSupportGate),
+            title: SNAPExpensesStrings.courtOrderedSupportTitle.value(in: language),
+            helper: SNAPExpensesStrings.courtOrderedSupportHelper.value(in: language),
+            primaryActionTitle: CivicaQuestionStrings.continueLabel.value(in: language),
+            primaryActionEnabled: viewModel.canAdvanceFromCurrentStep,
+            onPrimary: advanceOrComplete,
+            language: language
+        ) {
+            CivicaQuestionChoices(
+                options: [
+                    CivicaQuestionStrings.yesLabel.value(in: language),
+                    CivicaQuestionStrings.noLabel.value(in: language),
+                ],
+                selection: Binding(
+                    get: {
+                        switch viewModel.answers.paysCourtOrderedSupport {
+                        case .yes: return CivicaQuestionStrings.yesLabel.value(in: language)
+                        case .no:  return CivicaQuestionStrings.noLabel.value(in: language)
+                        default:   return nil
+                        }
+                    },
+                    set: { label in
+                        let yes = CivicaQuestionStrings.yesLabel.value(in: language)
+                        viewModel.answers.paysCourtOrderedSupport = (label == yes) ? .yes : .no
+                    }
+                )
+            )
         }
     }
 
@@ -545,6 +614,17 @@ enum SNAPExpensesStrings {
             return "Any out-of-pocket medical costs each month?"
         case (.medical, .spanish):
             return "¿Algún gasto médico de tu bolsillo cada mes?"
+        // Wave 3 — court-ordered support (BenefitsCal ABCOC + ABSSQ)
+        case (.courtOrderedSupportGate, _):
+            return ""  // gate uses its own dedicated strings
+        case (.childSupportAmount, .english):
+            return "How much child support do you pay each month?"
+        case (.childSupportAmount, .spanish):
+            return "¿Cuánta manutención de hijos pagas cada mes?"
+        case (.spousalSupportAmount, .english):
+            return "How much spousal support or alimony do you pay each month?"
+        case (.spousalSupportAmount, .spanish):
+            return "¿Cuánta manutención conyugal o pensión alimenticia pagas cada mes?"
         }
     }
 
@@ -580,6 +660,17 @@ enum SNAPExpensesStrings {
             return "Only counts if someone in your household is 60+ or has a disability. We're asking about co-pays, prescriptions, dental, or insurance premiums you pay out of pocket. Don't share diagnoses."
         case (.medical, .spanish):
             return "Solo cuenta si alguien en tu hogar tiene 60 años o más o vive con una discapacidad. Preguntamos por copagos, medicamentos, dentista o primas de seguro que pagas de tu bolsillo. No compartas diagnósticos."
+        // Wave 3 — court-ordered support
+        case (.courtOrderedSupportGate, _):
+            return ""  // gate uses its own dedicated strings
+        case (.childSupportAmount, .english):
+            return "Court-ordered child support paid to someone OUTSIDE your household. SNAP deducts this from your gross income before calculating benefits."
+        case (.childSupportAmount, .spanish):
+            return "Manutención de hijos ordenada por la corte que pagas a alguien FUERA de tu hogar. SNAP deduce esto de tu ingreso bruto antes de calcular los beneficios."
+        case (.spousalSupportAmount, .english):
+            return "Court-ordered spousal support or alimony. SNAP deducts this from your gross income too."
+        case (.spousalSupportAmount, .spanish):
+            return "Manutención conyugal o pensión alimenticia ordenada por la corte. SNAP también deduce esto de tu ingreso bruto."
         }
     }
 
@@ -603,8 +694,23 @@ enum SNAPExpensesStrings {
         case (.utilityShutoff, _):      return ""
         case (.utilityTypes, _):        return ""  // each row has its own accessibilityLabel
         case (.sharedHousing, _):       return ""  // stepper and pill have their own labels
+        case (.courtOrderedSupportGate, _): return ""
+        case (.childSupportAmount, .english):  return "Monthly child support paid, in dollars"
+        case (.childSupportAmount, .spanish):  return "Manutención mensual de hijos pagada, en dólares"
+        case (.spousalSupportAmount, .english): return "Monthly spousal support paid, in dollars"
+        case (.spousalSupportAmount, .spanish): return "Manutención mensual conyugal pagada, en dólares"
         }
     }
+
+    // Wave 3 — court-ordered support gate strings
+    static let courtOrderedSupportTitle = CivicaText(
+        "Do you pay court-ordered child or spousal support?",
+        es: "¿Pagas manutención de hijos o conyugal ordenada por la corte?"
+    )
+    static let courtOrderedSupportHelper = CivicaText(
+        "Only what's court-ordered, paid to someone OUTSIDE your household. SNAP deducts these payments from your gross income — answering Yes can increase your benefit estimate.",
+        es: "Solo lo ordenado por la corte que pagas a alguien FUERA de tu hogar. SNAP deduce estos pagos de tu ingreso bruto — responder Sí puede aumentar tu estimación de beneficios."
+    )
 
     static func notSharingLabel(language: CivicaLanguage) -> String {
         switch language {
