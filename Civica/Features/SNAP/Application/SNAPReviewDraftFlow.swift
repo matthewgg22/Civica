@@ -135,6 +135,10 @@ struct SNAPReviewDraftFlowView: View {
     @State private var scannedAddress: String = ""
     @State private var scannedZIP: String = ""
     @State private var didSeedScannedFields = false
+    /// Guards the destructive "clear everything" action behind an
+    /// explicit confirm so a stray tap right after generating can't
+    /// wipe a completed application.
+    @State private var showStartOverConfirm = false
 
     init(
         draft: SNAPApplicationDraft,
@@ -169,10 +173,6 @@ struct SNAPReviewDraftFlowView: View {
             primaryActionTitle: SNAPReviewDraftStrings.primaryAction.value(in: language),
             primaryActionEnabled: requiredSectionsAllComplete,
             onPrimary: onGeneratePacket,
-            secondaryActionTitle: onStartOver != nil
-                ? SNAPReviewDraftStrings.startOverLabel.value(in: language)
-                : nil,
-            onSecondary: onStartOver,
             language: language
         ) {
             VStack(spacing: CivicaSpacing.md) {
@@ -181,6 +181,9 @@ struct SNAPReviewDraftFlowView: View {
                 }
                 ForEach(SNAPApplicationSection.allCases) { section in
                     sectionCard(section)
+                }
+                if onStartOver != nil {
+                    startOverLink
                 }
             }
             .onAppear {
@@ -201,6 +204,45 @@ struct SNAPReviewDraftFlowView: View {
             }
         }
         .navigationBarTitleDisplayMode(.inline)
+        .confirmationDialog(
+            SNAPReviewDraftStrings.startOverConfirmTitle.value(in: language),
+            isPresented: $showStartOverConfirm,
+            titleVisibility: .visible
+        ) {
+            Button(
+                SNAPReviewDraftStrings.startOverConfirmAction.value(in: language),
+                role: .destructive
+            ) {
+                onStartOver?()
+            }
+            Button(
+                SNAPReviewDraftStrings.startOverConfirmCancel.value(in: language),
+                role: .cancel
+            ) {}
+        } message: {
+            Text(SNAPReviewDraftStrings.startOverConfirmMessage.value(in: language))
+        }
+    }
+
+    // MARK: - Start-over (destructive, de-emphasized)
+
+    /// A small, low-prominence destructive link at the very bottom of
+    /// the review content — deliberately NOT a full-width peer of the
+    /// "Generate" CTA, and always routed through a confirm dialog so a
+    /// stray tap can't delete a completed application.
+    private var startOverLink: some View {
+        Button {
+            showStartOverConfirm = true
+        } label: {
+            Text(SNAPReviewDraftStrings.startOverLabel.value(in: language))
+                .font(CivicaTypography.footnote)
+                .foregroundStyle(CivicaColors.terracottaAccent)
+                .frame(maxWidth: .infinity)
+                .padding(.top, CivicaSpacing.lg)
+                .contentShape(Rectangle())
+        }
+        .accessibilityLabel(SNAPReviewDraftStrings.startOverLabel.value(in: language))
+        .accessibilityHint(SNAPReviewDraftStrings.startOverConfirmMessage.value(in: language))
     }
 
     // MARK: - Scanned-ID confirmation card
@@ -636,6 +678,27 @@ enum SNAPReviewDraftStrings {
     static let startOverLabel = CivicaText(
         "Clear my answers and start over",
         es: "Borrar mis respuestas y empezar de nuevo"
+    )
+
+    // Destructive-confirm dialog guarding the clear-everything action.
+    static let startOverConfirmTitle = CivicaText(
+        "Clear all your answers?",
+        es: "¿Borrar todas tus respuestas?"
+    )
+
+    static let startOverConfirmMessage = CivicaText(
+        "This deletes everything you've entered and can't be undone.",
+        es: "Esto elimina todo lo que ingresaste y no se puede deshacer."
+    )
+
+    static let startOverConfirmAction = CivicaText(
+        "Clear everything",
+        es: "Borrar todo"
+    )
+
+    static let startOverConfirmCancel = CivicaText(
+        "Keep my answers",
+        es: "Conservar mis respuestas"
     )
 
     static func progressLine(completed: Int, total: Int, language: CivicaLanguage) -> String {
