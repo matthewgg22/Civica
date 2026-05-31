@@ -1,0 +1,314 @@
+{
+  "fiscal_year": 2024,
+  "national_avg_per": 10.93,
+  "source": "USDA FNS \u2014 SNAP QC Payment Error Rates FY2024 (per) + FNS National/State Monthly Data (issuance)",
+  "note": "Real published data. Tier schedule + cost-share mechanism are statutory parameters encoded in section10105.ts, not here.",
+  "states": [
+    {
+      "state": "Alabama",
+      "fips": 1,
+      "per": 8.32,
+      "fy24_issuance_usd": 1733693703
+    },
+    {
+      "state": "Alaska",
+      "fips": 2,
+      "per": 24.66,
+      "fy24_issuance_usd": 249618195
+    },
+    {
+      "state": "Arizona",
+      "fips": 4,
+      "per": 8.84,
+      "fy24_issuance_usd": 2015185004
+    },
+    {
+      "state": "Arkansas",
+      "fips": 5,
+      "per": 9.56,
+      "fy24_issuance_usd": 515343148
+    },
+    {
+      "state": "California",
+      "fips": 6,
+      "per": 10.98,
+      "fy24_issuance_usd": 12183085552
+    },
+    {
+      "state": "Colorado",
+      "fips": 8,
+      "per": 9.97,
+      "fy24_issuance_usd": 1303172697
+    },
+    {
+      "state": "Connecticut",
+      "fips": 9,
+      "per": 10.25,
+      "fy24_issuance_usd": 892819650
+    },
+    {
+      "state": "Delaware",
+      "fips": 10,
+      "per": 12.37,
+      "fy24_issuance_usd": 254854243
+    },
+    {
+      "state": "District Of Columbia",
+      "fips": 11,
+      "per": 17.38,
+      "fy24_issuance_usd": 319119173
+    },
+    {
+      "state": "Florida",
+      "fips": 12,
+      "per": 15.13,
+      "fy24_issuance_usd": 6548475145
+    },
+    {
+      "state": "Georgia",
+      "fips": 13,
+      "per": 15.65,
+      "fy24_issuance_usd": 3181329856
+    },
+    {
+      "state": "Hawaii",
+      "fips": 15,
+      "per": 6.68,
+      "fy24_issuance_usd": 731331421
+    },
+    {
+      "state": "Idaho",
+      "fips": 16,
+      "per": 3.59,
+      "fy24_issuance_usd": 281230283
+    },
+    {
+      "state": "Illinois",
+      "fips": 17,
+      "per": 11.56,
+      "fy24_issuance_usd": 4469341818
+    },
+    {
+      "state": "Indiana",
+      "fips": 18,
+      "per": 9.52,
+      "fy24_issuance_usd": 1435952329
+    },
+    {
+      "state": "Iowa",
+      "fips": 19,
+      "per": 6.14,
+      "fy24_issuance_usd": 528905499
+    },
+    {
+      "state": "Kansas",
+      "fips": 20,
+      "per": 9.98,
+      "fy24_issuance_usd": 408410165
+    },
+    {
+      "state": "Kentucky",
+      "fips": 21,
+      "per": 9.11,
+      "fy24_issuance_usd": 1150201172
+    },
+    {
+      "state": "Louisiana",
+      "fips": 22,
+      "per": 6.62,
+      "fy24_issuance_usd": 1902455806
+    },
+    {
+      "state": "Maine",
+      "fips": 23,
+      "per": 10.26,
+      "fy24_issuance_usd": 363838898
+    },
+    {
+      "state": "Maryland",
+      "fips": 24,
+      "per": 13.64,
+      "fy24_issuance_usd": 1498308252
+    },
+    {
+      "state": "Massachusetts",
+      "fips": 25,
+      "per": 14.1,
+      "fy24_issuance_usd": 2617666701
+    },
+    {
+      "state": "Michigan",
+      "fips": 26,
+      "per": 9.53,
+      "fy24_issuance_usd": 3061361572
+    },
+    {
+      "state": "Minnesota",
+      "fips": 27,
+      "per": 8.98,
+      "fy24_issuance_usd": 859038624
+    },
+    {
+      "state": "Mississippi",
+      "fips": 28,
+      "per": 10.69,
+      "fy24_issuance_usd": 842267063
+    },
+    {
+      "state": "Missouri",
+      "fips": 29,
+      "per": 9.42,
+      "fy24_issuance_usd": 1512570795
+    },
+    {
+      "state": "Montana",
+      "fips": 30,
+      "per": 8.89,
+      "fy24_issuance_usd": 169446871
+    },
+    {
+      "state": "Nebraska",
+      "fips": 31,
+      "per": 5.5,
+      "fy24_issuance_usd": 331710249
+    },
+    {
+      "state": "Nevada",
+      "fips": 32,
+      "per": 5.94,
+      "fy24_issuance_usd": 1006600692
+    },
+    {
+      "state": "New Hampshire",
+      "fips": 33,
+      "per": 7.57,
+      "fy24_issuance_usd": 154254645
+    },
+    {
+      "state": "New Jersey",
+      "fips": 34,
+      "per": 14.33,
+      "fy24_issuance_usd": 1925707853
+    },
+    {
+      "state": "New Mexico",
+      "fips": 35,
+      "per": 14.61,
+      "fy24_issuance_usd": 1028090754
+    },
+    {
+      "state": "New York",
+      "fips": 36,
+      "per": 14.09,
+      "fy24_issuance_usd": 7231611169
+    },
+    {
+      "state": "North Carolina",
+      "fips": 37,
+      "per": 10.21,
+      "fy24_issuance_usd": 2934626410
+    },
+    {
+      "state": "North Dakota",
+      "fips": 38,
+      "per": 7.91,
+      "fy24_issuance_usd": 111448901
+    },
+    {
+      "state": "Ohio",
+      "fips": 39,
+      "per": 9.01,
+      "fy24_issuance_usd": 3186433783
+    },
+    {
+      "state": "Oklahoma",
+      "fips": 40,
+      "per": 10.87,
+      "fy24_issuance_usd": 1506326652
+    },
+    {
+      "state": "Oregon",
+      "fips": 41,
+      "per": 14.06,
+      "fy24_issuance_usd": 1596585242
+    },
+    {
+      "state": "Pennsylvania",
+      "fips": 42,
+      "per": 10.76,
+      "fy24_issuance_usd": 4268035433
+    },
+    {
+      "state": "Rhode Island",
+      "fips": 44,
+      "per": 12.29,
+      "fy24_issuance_usd": 343066538
+    },
+    {
+      "state": "South Carolina",
+      "fips": 45,
+      "per": 9.25,
+      "fy24_issuance_usd": 1293584986
+    },
+    {
+      "state": "South Dakota",
+      "fips": 46,
+      "per": 3.28,
+      "fy24_issuance_usd": 180195817
+    },
+    {
+      "state": "Tennessee",
+      "fips": 47,
+      "per": 9.47,
+      "fy24_issuance_usd": 1623231075
+    },
+    {
+      "state": "Texas",
+      "fips": 48,
+      "per": 8.32,
+      "fy24_issuance_usd": 7332023032
+    },
+    {
+      "state": "Utah",
+      "fips": 49,
+      "per": 5.74,
+      "fy24_issuance_usd": 382660017
+    },
+    {
+      "state": "Vermont",
+      "fips": 50,
+      "per": 5.13,
+      "fy24_issuance_usd": 148302129
+    },
+    {
+      "state": "Virginia",
+      "fips": 51,
+      "per": 11.5,
+      "fy24_issuance_usd": 1465193891
+    },
+    {
+      "state": "Washington",
+      "fips": 53,
+      "per": 6.06,
+      "fy24_issuance_usd": 1920375025
+    },
+    {
+      "state": "West Virginia",
+      "fips": 54,
+      "per": 9.43,
+      "fy24_issuance_usd": 565647589
+    },
+    {
+      "state": "Wisconsin",
+      "fips": 55,
+      "per": 4.47,
+      "fy24_issuance_usd": 1363921863
+    },
+    {
+      "state": "Wyoming",
+      "fips": 56,
+      "per": 5.12,
+      "fy24_issuance_usd": 56701860
+    }
+  ]
+}
