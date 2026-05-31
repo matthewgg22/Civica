@@ -158,7 +158,18 @@ struct SNAPApplicantAgeFlowView: View {
         )
         .datePickerStyle(.wheel)
         .labelsHidden()
+        // Fixed height is REQUIRED. A .wheel DatePicker has no intrinsic
+        // height, and CivicaQuestionScreen renders its content inside a
+        // ScrollView — an unbounded wheel proposes an ambiguous/NaN
+        // height to its rows, which spams "invalid numeric value (NaN)
+        // to CoreGraphics" on every scroll tick and triggers gesture-
+        // gate timeouts + hangs (device QA). Bounding the height makes
+        // the wheel's internal layout deterministic and stops the NaN.
         .frame(maxWidth: .infinity)
+        .frame(height: 200)
+        // Keep the scroll gesture inside the wheel from fighting the
+        // parent ScrollView during a spin.
+        .contentShape(Rectangle())
         .padding(.horizontal, CivicaSpacing.lg)
         .padding(.vertical, CivicaSpacing.md)
         .background(CivicaColors.surfacePrimary)
