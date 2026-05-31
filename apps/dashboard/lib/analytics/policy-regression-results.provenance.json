@@ -1,0 +1,18 @@
+{
+  "generated_at": "2026-05-30T20:32:22Z",
+  "git_sha": "a4c8a16a",
+  "environment": {
+    "python": "3.14.5",
+    "numpy": "2.4.6",
+    "pandas": "3.0.3",
+    "linearmodels": "7.0"
+  },
+  "outcome_source": "USDA FNS SNAP Data Tables — National/State Monthly Data (snap-zip-fy69tocurrent)",
+  "treatment_source": "USDA ERS SNAP Policy Database (snap-policy-database.xlsx)",
+  "panel_file": "data-ops/sample/snap-policy-regression/analysis_panel.csv",
+  "cycle_control": "Model S1: state monthly unemployment rate (FRED state UR, SA) is now an explicit control + the first rung of the R² ladder. National cycle also absorbed by calendar-month FE; state divergence by the state-trend robustness.",
+  "argv": [
+    "tools/snap-policy-regression/src/build_policy_regression.py"
+  ],
+  "n_rows": 15300
+}
