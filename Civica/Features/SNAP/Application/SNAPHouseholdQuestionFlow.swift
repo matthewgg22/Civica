@@ -201,6 +201,27 @@ struct SNAPHouseholdQuestionFlowView: View {
 
     // MARK: - Screen 1: household size
 
+    /// Canonical stored values — must match
+    /// SNAPLocalEligibilityEvaluator.parseHouseholdSize ("Just me" → 1,
+    /// "N people" → N).
+    private static let sizeJustMe = "Just me"
+    private static let sizeTwo = "2 people"
+    private static let sizeThree = "3 people"
+    /// Max the 4+ stepper goes to. Beyond the calculator's 1...8 range
+    /// the federal allotment extrapolates per additional person, so a
+    /// larger exact count is still meaningful for eligibility.
+    private static let sizeStepperMax = 12
+
+    /// Parsed integer of the current stored size (0 when unset).
+    private var currentSizeCount: Int {
+        guard let raw = viewModel.answers.householdSize else { return 0 }
+        if raw == Self.sizeJustMe { return 1 }
+        return Int(String(raw.prefix(while: \.isNumber))) ?? 0
+    }
+
+    /// True once the user is in the "4 or more" exact-count path.
+    private var isFourPlusSelected: Bool { currentSizeCount >= 4 }
+
     private var sizeScreen: some View {
         CivicaQuestionScreen(
             progress: progress(for: .size),
@@ -211,16 +232,103 @@ struct SNAPHouseholdQuestionFlowView: View {
             onPrimary: advanceOrComplete,
             language: language
         ) {
-            CivicaQuestionChoices(
-                options: [
-                    SNAPHouseholdQuestionStrings.sizeOptionJustMe.value(in: language),
-                    SNAPHouseholdQuestionStrings.sizeOptionTwo.value(in: language),
-                    SNAPHouseholdQuestionStrings.sizeOptionThree.value(in: language),
-                    SNAPHouseholdQuestionStrings.sizeOptionFourPlus.value(in: language)
-                ],
-                selection: $viewModel.answers.householdSize
+            VStack(spacing: CivicaSpacing.sm) {
+                sizeRow(
+                    label: SNAPHouseholdQuestionStrings.sizeOptionJustMe.value(in: language),
+                    isSelected: viewModel.answers.householdSize == Self.sizeJustMe
+                ) { viewModel.answers.householdSize = Self.sizeJustMe }
+                sizeRow(
+                    label: SNAPHouseholdQuestionStrings.sizeOptionTwo.value(in: language),
+                    isSelected: viewModel.answers.householdSize == Self.sizeTwo
+                ) { viewModel.answers.householdSize = Self.sizeTwo }
+                sizeRow(
+                    label: SNAPHouseholdQuestionStrings.sizeOptionThree.value(in: language),
+                    isSelected: viewModel.answers.householdSize == Self.sizeThree
+                ) { viewModel.answers.householdSize = Self.sizeThree }
+
+                // "4 or more" — tapping selects it (defaults to 4) and
+                // reveals a stepper to set the exact count, which is
+                // what the benefit math actually needs (a flat "4"
+                // under-counts a household of 6).
+                sizeRow(
+                    label: SNAPHouseholdQuestionStrings.sizeOptionFourPlus.value(in: language),
+                    isSelected: isFourPlusSelected
+                ) {
+                    if !isFourPlusSelected {
+                        viewModel.answers.householdSize = "4 people"
+                    }
+                }
+
+                if isFourPlusSelected {
+                    fourPlusStepper
+                }
+            }
+        }
+    }
+
+    /// Single tappable size option, ink-selection styling (matches
+    /// CivicaQuestionChoices after the §2.2 color pass).
+    private func sizeRow(label: String, isSelected: Bool, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            HStack(spacing: CivicaSpacing.md) {
+                Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
+                    .imageScale(.large)
+                    .font(.body)
+                    .foregroundStyle(isSelected ? CivicaColors.pinePrimary : CivicaColors.graphite.opacity(0.6))
+                    .accessibilityHidden(true)
+                Text(label)
+                    .font(CivicaTypography.subheadStrong)
+                    .foregroundStyle(CivicaColors.ink)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
+            .padding(.horizontal, CivicaSpacing.lg)
+            .padding(.vertical, CivicaSpacing.md)
+            .frame(minHeight: 56)
+            .background(isSelected ? CivicaColors.surfaceSecondary : CivicaColors.surfacePrimary)
+            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control))
+            .overlay(
+                RoundedRectangle(cornerRadius: CivicaRadius.control)
+                    .strokeBorder(isSelected ? CivicaColors.ink : CivicaColors.hairline,
+                                  lineWidth: isSelected ? 2 : 1)
             )
         }
+        .buttonStyle(.plain)
+        .accessibilityAddTraits(isSelected ? [.isButton, .isSelected] : .isButton)
+    }
+
+    /// +/- stepper for the exact count once "4 or more" is chosen.
+    private var fourPlusStepper: some View {
+        let count = max(4, currentSizeCount)
+        return HStack(spacing: CivicaSpacing.md) {
+            Text(SNAPHouseholdQuestionStrings.sizeStepperLabel.value(in: language))
+                .font(CivicaTypography.body)
+                .foregroundStyle(CivicaColors.ink)
+            Spacer()
+            Stepper(
+                value: Binding(
+                    get: { count },
+                    set: { viewModel.answers.householdSize = "\($0) people" }
+                ),
+                in: 4...Self.sizeStepperMax
+            ) {
+                Text("\(count)\(count == Self.sizeStepperMax ? "+" : "")")
+                    .font(CivicaTypography.cardTitle.monospacedDigit())
+                    .foregroundStyle(CivicaColors.ink)
+                    .accessibilityLabel(
+                        SNAPHouseholdQuestionStrings.sizeStepperAccessibility(count: count, language: language)
+                    )
+            }
+            .labelsHidden()
+        }
+        .padding(.horizontal, CivicaSpacing.lg)
+        .padding(.vertical, CivicaSpacing.md)
+        .frame(minHeight: 56)
+        .background(CivicaColors.surfaceSecondary)
+        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control))
+        .overlay(
+            RoundedRectangle(cornerRadius: CivicaRadius.control)
+                .strokeBorder(CivicaColors.ink, lineWidth: 2)
+        )
     }
 
     // MARK: - Screen 2: minors present?
@@ -423,6 +531,16 @@ enum SNAPHouseholdQuestionStrings {
     static let sizeOptionTwo = CivicaText("2 people", es: "2 personas")
     static let sizeOptionThree = CivicaText("3 people", es: "3 personas")
     static let sizeOptionFourPlus = CivicaText("4 or more", es: "4 o más")
+    static let sizeStepperLabel = CivicaText(
+        "How many people total?",
+        es: "¿Cuántas personas en total?"
+    )
+    static func sizeStepperAccessibility(count: Int, language: CivicaLanguage) -> String {
+        switch language {
+        case .english: return "\(count) people in your household"
+        case .spanish: return "\(count) personas en tu hogar"
+        }
+    }
 
     static let minorsTitle = CivicaText(
         "Is anyone in your household 18 or under?",
