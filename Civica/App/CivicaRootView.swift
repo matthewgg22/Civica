@@ -285,6 +285,14 @@ struct CivicaRootView: View {
     /// application status to the canonical first status for that
     /// phase, which cascades through `rootSurface` to swap the home
     /// view. Off-mode → nil, which restores the locked production tab.
+    ///
+    /// Pending lands on `.interviewScheduled` rather than the earlier
+    /// `.submittedToState` so a reviewer can see the Phase 2 surface
+    /// in its richest form — appointment card + interview coach CTA
+    /// + the same daily-checklist set. The interview coach is gated
+    /// by `phase2PrimaryCTAPushesInterviewCoach` on the status, so
+    /// landing on `.submittedToState` previously hid that whole
+    /// affordance from anyone exploring via demo mode.
     private var demoPhaseSwitcher: ((CivicaPhase) -> Void)? {
         guard demoUnlockAllPhases else { return nil }
         return { phase in
@@ -292,7 +300,7 @@ struct CivicaRootView: View {
             case .enroll:
                 statusStore.advance(to: .notStarted)
             case .pending:
-                statusStore.advance(to: .submittedToState)
+                statusStore.advance(to: .interviewScheduled)
             case .enrolled:
                 statusStore.advance(to: .decisionApproved)
             }

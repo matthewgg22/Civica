@@ -15,14 +15,17 @@ import SwiftUI
 /// The list scrolls independently — drag the header area to resize the
 /// drawer, scroll the list to navigate within it.
 struct FindHelpBottomSheet: View {
-    /// Minimum visible height — sized to the header chrome ONLY (grab
-    /// handle + disclosure + layer toggle + subtitle + filter bar), no
-    /// list rows. Apple Maps pattern: the bottom sheet at rest hides
-    /// itself out of the way so the map gets the real estate, and the
-    /// user drags up to reveal the list of places. Earlier attempts
-    /// (280 and 380) showed half a list row at peek, which read as a
-    /// bottom-crop bug AND covered too much of the map.
-    private static let peekHeight: CGFloat = 240
+    /// Minimum visible height — sized to fully clear the header chrome
+    /// on devices that wrap the disclosure footer to 2 lines (iPhone 13
+    /// mini, iPhone SE class). The header stack:
+    ///   grab handle (~22) + disclosure footer 2 lines (~58) +
+    ///   layer toggle (~44) + subtitle (~22) + filter bar (~44) +
+    ///   spacing (md+sm+xs ~20) = ~210pt typical, ~250pt worst case
+    /// with Dynamic Type bumped. Earlier values (240/280/380) all
+    /// either covered too much map or clipped the filter bar bottom
+    /// edge on cramped screens. 300pt clears the chrome and leaves
+    /// enough map breathing room on every device class.
+    private static let peekHeight: CGFloat = 300
     private static let cornerRadius: CGFloat = 16
 
     @ObservedObject var store: FindHelpStore
