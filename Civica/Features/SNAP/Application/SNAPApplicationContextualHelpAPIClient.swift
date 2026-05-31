@@ -100,6 +100,18 @@ final class SNAPApplicationContextualHelpAPIClient {
         let questionTitle: String
         let locale: String
         let questionHelper: String?
+        /// Optional conversation history for multi-turn chat. Same
+        /// `encodeIfPresent` semantics: when nil the `messages` key is
+        /// omitted entirely and the request is byte-identical to the
+        /// original one-shot contract.
+        let messages: [ChatMessageWire]?
+    }
+
+    /// Wire-format conversation turn. Snake-case is irrelevant here
+    /// (`role` and `content` already match the worker's Zod schema).
+    struct ChatMessageWire: Encodable, Equatable {
+        let role: String
+        let content: String
     }
 
     /// UserDefaults key for the stable per-install anonymous ID sent
@@ -168,7 +180,8 @@ final class SNAPApplicationContextualHelpAPIClient {
     func fetchHelp(
         questionTitle: String,
         questionHelper: String? = nil,
-        language: CivicaLanguage
+        language: CivicaLanguage,
+        history: [ChatMessageWire]? = nil
     ) async throws -> HelpResponse {
         var request = URLRequest(url: endpoint("v1/intake/help"))
         request.httpMethod = "POST"
@@ -185,7 +198,8 @@ final class SNAPApplicationContextualHelpAPIClient {
         let body = HelpRequest(
             questionTitle: questionTitle,
             locale: language.rawValue,
-            questionHelper: normalizedHelper
+            questionHelper: normalizedHelper,
+            messages: (history?.isEmpty ?? true) ? nil : history
         )
         request.httpBody = try encoder.encode(body)
 

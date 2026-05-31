@@ -86,6 +86,31 @@ enum IntakeHelpStrings {
         es: "Tu orientador del condado puede aclarar lo que pregunta esta pregunta."
     )
 
+    // MARK: - Chat input
+
+    /// Placeholder text in the chat TextField at the bottom of the
+    /// sheet. Visible when the field is empty so the affordance is
+    /// obvious without needing a label above it.
+    static let chatInputPlaceholder = CivicaText(
+        "Ask a follow-up…",
+        es: "Haz una pregunta…"
+    )
+
+    /// Accessibility label on the send button next to the TextField.
+    static let chatSendButtonLabel = CivicaText(
+        "Send",
+        es: "Enviar"
+    )
+
+    /// Tiny header label above the chat scroll area introducing Mae as
+    /// the assistant the applicant is talking with. Reuses the same
+    /// "Ask Mae" framing as the nav-bar title so the voice is
+    /// consistent.
+    static let chatIntroLabel = CivicaText(
+        "Mae · SNAP assistant",
+        es: "Mae · asistente de SNAP"
+    )
+
     // MARK: - View helpers
     //
     // Convenience for the sheet view: substitute the question title
@@ -116,5 +141,8 @@ enum IntakeHelpStrings {
         stillThinkingText,
         errorFallbackTemplate,
         navigatorNudge,
+        chatInputPlaceholder,
+        chatSendButtonLabel,
+        chatIntroLabel,
     ]
 }

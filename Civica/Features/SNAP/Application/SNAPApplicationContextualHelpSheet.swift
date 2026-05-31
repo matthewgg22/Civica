@@ -28,21 +28,21 @@ import SwiftUI
 
 struct SNAPApplicationContextualHelpSheet: View {
 
-    /// View state machine: loading (with a derived "still thinking"
-    /// substate) → success or error. The error fallback is rendered
-    /// inline rather than as a separate sheet so the user always sees
-    /// useful content; the safe fallback IS the page on failure.
-    private enum ViewState: Equatable {
-        case loading
-        case success(String)
-        /// `diagnosticDetail` carries the underlying error so the user
-        /// (or a reviewer collecting feedback) can see WHY the assistant
-        /// fell back to the human-escalation copy. Empty string means
-        /// "no detail" (e.g. backend-empty-body fallback). Diagnostic
-        /// text is rendered in a small caption below the fallback;
-        /// hiding it again is a single string-empty change once we're
-        /// past device QA.
-        case error(diagnosticDetail: String)
+    /// One row in the chat thread. Mae's responses, the applicant's
+    /// follow-ups, and inline error bubbles share the same shape so
+    /// the conversation can grow as a single ordered list.
+    private struct ChatMessage: Identifiable, Equatable {
+        enum Role: Equatable {
+            case mae
+            case user
+            /// Inline error bubble — rendered with the error fallback
+            /// copy + diagnostic detail, distinguishable from a
+            /// regular Mae reply visually.
+            case error(diagnosticDetail: String)
+        }
+        let id = UUID()
+        let role: Role
+        let content: String
     }
 
     let questionTitle: String
@@ -62,14 +62,15 @@ struct SNAPApplicationContextualHelpSheet: View {
     private let client: SNAPApplicationContextualHelpAPIClient
 
     @Environment(\.dismiss) private var dismiss
-    @State private var state: ViewState = .loading
+    @State private var messages: [ChatMessage] = []
+    @State private var inputText: String = ""
+    @State private var isAwaitingReply: Bool = false
     @State private var stillThinking: Bool = false
+    @State private var hasLoadedInitialReply: Bool = false
+    @FocusState private var inputFocused: Bool
 
-    /// Delay before the loading copy swaps from "Looking that up…" to
-    /// "Still thinking…". 1.5s per the design doc — long enough that
-    /// a fast response never sees the swap, short enough that the
-    /// user notices we're actively working before the 3s timeout
-    /// trips.
+    /// Delay before the "still thinking…" indicator joins the spinner
+    /// bubble. Long enough that a sub-1.5s reply never shows it.
     private static let stillThinkingDelay: TimeInterval = 1.5
 
     public init(
@@ -103,15 +104,47 @@ struct SNAPApplicationContextualHelpSheet: View {
 
     var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack(alignment: .leading, spacing: CivicaSpacing.lg) {
-                    questionHeader
-
-                    contentForCurrentState
+            VStack(spacing: 0) {
+                ScrollViewReader { proxy in
+                    ScrollView {
+                        VStack(alignment: .leading, spacing: CivicaSpacing.lg) {
+                            questionHeader
+                            chatIntroLabel
+                            ForEach(messages) { message in
+                                bubble(for: message)
+                                    .id(message.id)
+                            }
+                            if isAwaitingReply {
+                                pendingReplyBubble
+                                    .id("pending")
+                            }
+                        }
+                        .padding(.horizontal, CivicaSpacing.lg)
+                        .padding(.vertical, CivicaSpacing.xl)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                    .background(CivicaColors.paper)
+                    .onChange(of: messages.count) { _, _ in
+                        // Scroll the latest message into view on
+                        // every append. SwiftUI's default anchor is
+                        // .center; .bottom keeps the user oriented on
+                        // the newest content as the thread grows.
+                        if let last = messages.last {
+                            withAnimation(.easeOut(duration: 0.22)) {
+                                proxy.scrollTo(last.id, anchor: .bottom)
+                            }
+                        }
+                    }
+                    .onChange(of: isAwaitingReply) { _, awaiting in
+                        if awaiting {
+                            withAnimation(.easeOut(duration: 0.22)) {
+                                proxy.scrollTo("pending", anchor: .bottom)
+                            }
+                        }
+                    }
                 }
-                .padding(.horizontal, CivicaSpacing.lg)
-                .padding(.vertical, CivicaSpacing.xl)
-                .frame(maxWidth: .infinity, alignment: .leading)
+                Divider().background(CivicaColors.hairline)
+                inputBar
             }
             .background(CivicaColors.paper.ignoresSafeArea())
             .navigationTitle(IntakeHelpStrings.sheetTitle.value(in: language))
@@ -124,8 +157,220 @@ struct SNAPApplicationContextualHelpSheet: View {
                     .foregroundStyle(CivicaColors.pinePrimary)
                 }
             }
-            .task { await loadHelp() }
+            .task {
+                guard !hasLoadedInitialReply else { return }
+                hasLoadedInitialReply = true
+                await sendInitialExplainer()
+            }
         }
+    }
+
+    // MARK: - Chat bubbles
+
+    private var chatIntroLabel: some View {
+        Text(IntakeHelpStrings.chatIntroLabel.value(in: language))
+            .font(CivicaTypography.captionStrong)
+            .foregroundStyle(CivicaColors.graphite)
+            .textCase(.uppercase)
+            .kerning(1.0)
+    }
+
+    @ViewBuilder
+    private func bubble(for message: ChatMessage) -> some View {
+        switch message.role {
+        case .mae:
+            maeBubble(text: message.content)
+        case .user:
+            userBubble(text: message.content)
+        case .error(let detail):
+            errorBubble(diagnosticDetail: detail)
+        }
+    }
+
+    /// Left-aligned cream bubble. Renders the message body, splitting
+    /// on double-newlines to give multi-paragraph replies the same
+    /// breathing room the single-shot view had — and detects bullet
+    /// lines so a list-shaped answer reads as a real list.
+    private func maeBubble(text: String) -> some View {
+        VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
+            ForEach(Array(paragraphs(in: text).enumerated()), id: \.offset) { _, paragraph in
+                paragraphView(paragraph)
+            }
+        }
+        .padding(CivicaSpacing.md)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(CivicaColors.surfacePrimary)
+        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
+        .overlay(
+            RoundedRectangle(cornerRadius: CivicaRadius.card)
+                .strokeBorder(CivicaColors.hairline, lineWidth: 1)
+        )
+    }
+
+    /// Right-aligned pine-tint bubble. iMessage convention without
+    /// the loud solid-pine fill — keeps the visual hierarchy quiet so
+    /// Mae's reply stays the focal point.
+    private func userBubble(text: String) -> some View {
+        HStack(spacing: 0) {
+            Spacer(minLength: CivicaSpacing.xl)
+            Text(text)
+                .font(CivicaTypography.body)
+                .foregroundStyle(CivicaColors.ink)
+                .multilineTextAlignment(.leading)
+                .fixedSize(horizontal: false, vertical: true)
+                .padding(.horizontal, CivicaSpacing.md)
+                .padding(.vertical, CivicaSpacing.sm)
+                .background(CivicaColors.pinePrimary.opacity(0.14))
+                .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
+        }
+    }
+
+    /// Error bubble — same visual shape as a Mae bubble but with the
+    /// fallback copy and an optional diagnostic line beneath. Lets
+    /// the conversation continue (the user can still ask a new
+    /// question) instead of dead-ending the sheet on the first
+    /// transient failure.
+    private func errorBubble(diagnosticDetail: String) -> some View {
+        VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
+            Text(IntakeHelpStrings.errorFallback(title: questionTitle, language: language))
+                .font(CivicaTypography.body)
+                .foregroundStyle(CivicaColors.ink)
+                .fixedSize(horizontal: false, vertical: true)
+                .frame(maxWidth: .infinity, alignment: .leading)
+            if !diagnosticDetail.isEmpty {
+                Text("Debug: \(diagnosticDetail)")
+                    .font(CivicaTypography.footnote)
+                    .foregroundStyle(CivicaColors.graphite)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
+        }
+        .padding(CivicaSpacing.md)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(CivicaColors.surfacePrimary)
+        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
+        .overlay(
+            RoundedRectangle(cornerRadius: CivicaRadius.card)
+                .strokeBorder(CivicaColors.hairline, lineWidth: 1)
+        )
+    }
+
+    private var pendingReplyBubble: some View {
+        HStack(spacing: CivicaSpacing.md) {
+            ProgressView()
+                .progressViewStyle(.circular)
+                .tint(CivicaColors.pinePrimary)
+            Text(
+                stillThinking
+                    ? IntakeHelpStrings.stillThinkingText.value(in: language)
+                    : IntakeHelpStrings.loadingText.value(in: language)
+            )
+            .font(CivicaTypography.body)
+            .foregroundStyle(CivicaColors.graphite)
+            .accessibilityIdentifier("intakeHelp.loading.label")
+            Spacer(minLength: 0)
+        }
+        .padding(CivicaSpacing.md)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(CivicaColors.surfacePrimary)
+        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
+        .overlay(
+            RoundedRectangle(cornerRadius: CivicaRadius.card)
+                .strokeBorder(CivicaColors.hairline, lineWidth: 1)
+        )
+    }
+
+    /// Render one paragraph. If the paragraph is a bullet block
+    /// (each line starts with `-` or `•`), render as a proper
+    /// VStack of bullet rows with hanging indent. Otherwise render
+    /// as a single Text.
+    @ViewBuilder
+    private func paragraphView(_ text: String) -> some View {
+        let lines = text.split(separator: "\n", omittingEmptySubsequences: false).map(String.init)
+        let trimmedLines = lines.map { $0.trimmingCharacters(in: .whitespaces) }
+        let allBullets = trimmedLines.allSatisfy { isBulletLine($0) }
+        if trimmedLines.count > 1, allBullets {
+            VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
+                ForEach(Array(trimmedLines.enumerated()), id: \.offset) { _, line in
+                    HStack(alignment: .firstTextBaseline, spacing: CivicaSpacing.sm) {
+                        Text("•")
+                            .font(CivicaTypography.body)
+                            .foregroundStyle(CivicaColors.pinePrimary)
+                            .accessibilityHidden(true)
+                        Text(stripBullet(line))
+                            .font(CivicaTypography.body)
+                            .foregroundStyle(CivicaColors.ink)
+                            .fixedSize(horizontal: false, vertical: true)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                }
+            }
+        } else {
+            Text(text)
+                .font(CivicaTypography.body)
+                .foregroundStyle(CivicaColors.ink)
+                .fixedSize(horizontal: false, vertical: true)
+                .frame(maxWidth: .infinity, alignment: .leading)
+        }
+    }
+
+    private func isBulletLine(_ line: String) -> Bool {
+        line.hasPrefix("- ") || line.hasPrefix("• ") || line == "-" || line == "•"
+    }
+
+    private func stripBullet(_ line: String) -> String {
+        if line.hasPrefix("- ") { return String(line.dropFirst(2)) }
+        if line.hasPrefix("• ") { return String(line.dropFirst(2)) }
+        return line
+    }
+
+    // MARK: - Input bar
+
+    private var inputBar: some View {
+        HStack(spacing: CivicaSpacing.sm) {
+            TextField(
+                IntakeHelpStrings.chatInputPlaceholder.value(in: language),
+                text: $inputText,
+                axis: .vertical
+            )
+            .font(CivicaTypography.body)
+            .lineLimit(1...4)
+            .padding(.horizontal, CivicaSpacing.md)
+            .padding(.vertical, CivicaSpacing.sm)
+            .background(CivicaColors.surfacePrimary)
+            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
+            .overlay(
+                RoundedRectangle(cornerRadius: CivicaRadius.card)
+                    .strokeBorder(CivicaColors.hairline, lineWidth: 1)
+            )
+            .focused($inputFocused)
+            .submitLabel(.send)
+            .onSubmit { sendFollowUp() }
+            Button(action: sendFollowUp) {
+                Image(systemName: "arrow.up.circle.fill")
+                    .font(.system(size: 32, weight: .regular))
+                    .foregroundStyle(canSend ? CivicaColors.pinePrimary : CivicaColors.graphite.opacity(0.4))
+            }
+            .buttonStyle(.plain)
+            .disabled(!canSend)
+            .accessibilityLabel(IntakeHelpStrings.chatSendButtonLabel.value(in: language))
+        }
+        .padding(.horizontal, CivicaSpacing.lg)
+        .padding(.vertical, CivicaSpacing.md)
+        .background(CivicaColors.paper)
+    }
+
+    private var canSend: Bool {
+        !isAwaitingReply
+            && !inputText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    }
+
+    private func sendFollowUp() {
+        guard canSend else { return }
+        let trimmed = inputText.trimmingCharacters(in: .whitespacesAndNewlines)
+        inputText = ""
+        messages.append(ChatMessage(role: .user, content: trimmed))
+        Task { await fetchReply() }
     }
 
     // MARK: - Question header
@@ -144,141 +389,81 @@ struct SNAPApplicationContextualHelpSheet: View {
         }
     }
 
-    // MARK: - State router
-
-    @ViewBuilder
-    private var contentForCurrentState: some View {
-        switch state {
-        case .loading:
-            loadingView
-        case .success(let text):
-            successView(text: text)
-        case .error(let detail):
-            errorView(diagnosticDetail: detail)
-        }
-    }
-
-    // MARK: - Loading
-
-    private var loadingView: some View {
-        HStack(spacing: CivicaSpacing.md) {
-            ProgressView()
-                .progressViewStyle(.circular)
-                .tint(CivicaColors.pinePrimary)
-
-            Text(
-                stillThinking
-                    ? IntakeHelpStrings.stillThinkingText.value(in: language)
-                    : IntakeHelpStrings.loadingText.value(in: language)
-            )
-            .font(CivicaTypography.body)
-            .foregroundStyle(CivicaColors.graphite)
-            .accessibilityIdentifier("intakeHelp.loading.label")
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(.vertical, CivicaSpacing.md)
-        .accessibilityElement(children: .combine)
-    }
-
-    // MARK: - Success
-    //
-    // The LLM response is rendered as a single body paragraph. Multi-
-    // paragraph responses are split on \n\n so they read with the
-    // breathing room CivicaQuestionScreen's "single question, big
-    // breathing room" cadence calls for.
-
-    private func successView(text: String) -> some View {
-        VStack(alignment: .leading, spacing: CivicaSpacing.md) {
-            ForEach(Array(paragraphs(in: text).enumerated()), id: \.offset) { _, paragraph in
-                Text(paragraph)
-                    .font(CivicaTypography.body)
-                    .foregroundStyle(CivicaColors.ink)
-                    .fixedSize(horizontal: false, vertical: true)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-            }
-        }
-        .accessibilityIdentifier("intakeHelp.success.body")
-    }
-
-    // MARK: - Error fallback (load-bearing per D6)
-    //
-    // Renders the IntakeHelpStrings.errorFallback string with the
-    // question title substituted. The user always sees something
-    // useful: the title they tapped on, plus the navigator nudge.
-    // No "something went wrong" framing, no apology — just the
-    // honest punt to the human escalation path.
-
-    private func errorView(diagnosticDetail: String) -> some View {
-        VStack(alignment: .leading, spacing: CivicaSpacing.md) {
-            Text(IntakeHelpStrings.errorFallback(title: questionTitle, language: language))
-                .font(CivicaTypography.body)
-                .foregroundStyle(CivicaColors.ink)
-                .fixedSize(horizontal: false, vertical: true)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .accessibilityIdentifier("intakeHelp.errorFallback.body")
-
-            // Diagnostic detail (pre-launch only) — shows the underlying
-            // error so a tester can see WHY the assistant fell back.
-            // Pass an empty string to suppress (or remove this block
-            // entirely once we're past QA).
-            if !diagnosticDetail.isEmpty {
-                Text("Debug: \(diagnosticDetail)")
-                    .font(CivicaTypography.footnote)
-                    .foregroundStyle(CivicaColors.graphite)
-                    .fixedSize(horizontal: false, vertical: true)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .accessibilityIdentifier("intakeHelp.errorFallback.debug")
-            }
-        }
-    }
-
     // MARK: - Side effects
 
-    private func loadHelp() async {
-        // Kick off the "still thinking" swap on a parallel task so the
-        // sheet shows the secondary copy if the response is slow but
-        // not yet timed out. Skipped (no-op'd) when the response
-        // beats the timer.
+    /// Initial Mae call on sheet appear — no user message yet, no
+    /// history. Behaves exactly like the original one-shot endpoint
+    /// for the first turn so the response shape and caching path are
+    /// unchanged.
+    private func sendInitialExplainer() async {
+        await fetchReply()
+    }
+
+    /// Shared fetch path. Sends every accumulated user/Mae turn back
+    /// to the worker so Claude has the full conversation context.
+    /// On success appends a Mae bubble; on failure appends an error
+    /// bubble that the conversation can still grow past.
+    private func fetchReply() async {
+        isAwaitingReply = true
+        stillThinking = false
         let stillThinkingTask = Task {
             try? await Task.sleep(nanoseconds: UInt64(Self.stillThinkingDelay * 1_000_000_000))
-            if case .loading = state { stillThinking = true }
+            if isAwaitingReply { stillThinking = true }
         }
-
+        defer {
+            stillThinkingTask.cancel()
+            isAwaitingReply = false
+            stillThinking = false
+        }
         do {
             let response = try await client.fetchHelp(
                 questionTitle: questionTitle,
                 questionHelper: questionHelper,
-                language: language
+                language: language,
+                history: historyWire()
             )
-            stillThinkingTask.cancel()
-            // A filtered response means the backend's safety layer
-            // scrubbed the explainer — log it (counts only, title is a
-            // closed-set static UI string) so we can see which
-            // questions trip the filter.
             if response.wasFiltered {
                 SNAPAnalytics.trackIntakeHelpFiltered(questionTitle: questionTitle)
             }
             let trimmed = response.explainerText.trimmingCharacters(in: .whitespacesAndNewlines)
             if trimmed.isEmpty {
-                // Empty body falls back to the navigator nudge — treat
-                // it as an error for telemetry so the failure surface
-                // is one number.
                 SNAPAnalytics.trackIntakeHelpError(questionTitle: questionTitle)
-                state = .error(diagnosticDetail: "empty response body")
+                messages.append(ChatMessage(
+                    role: .error(diagnosticDetail: "empty response body"),
+                    content: ""
+                ))
             } else {
-                state = .success(trimmed)
+                messages.append(ChatMessage(role: .mae, content: trimmed))
             }
         } catch let error as SNAPApplicationContextualHelpAPIClient.IntakeHelpError {
-            stillThinkingTask.cancel()
             SNAPAnalytics.trackIntakeHelpError(questionTitle: questionTitle)
-            // Surface typed details so device QA can see exactly which
-            // failure mode is hitting (status code + body excerpt for
-            // serverError, transport string for networkError, etc.).
-            state = .error(diagnosticDetail: error.diagnosticSummary)
+            messages.append(ChatMessage(
+                role: .error(diagnosticDetail: error.diagnosticSummary),
+                content: ""
+            ))
         } catch {
-            stillThinkingTask.cancel()
             SNAPAnalytics.trackIntakeHelpError(questionTitle: questionTitle)
-            state = .error(diagnosticDetail: error.localizedDescription)
+            messages.append(ChatMessage(
+                role: .error(diagnosticDetail: error.localizedDescription),
+                content: ""
+            ))
+        }
+    }
+
+    /// Map the in-memory chat thread into the wire format the worker
+    /// expects: `[{role: "user"|"assistant", content: ...}]`. Error
+    /// bubbles are skipped — they aren't part of the LLM conversation,
+    /// they're just inline feedback.
+    private func historyWire() -> [SNAPApplicationContextualHelpAPIClient.ChatMessageWire] {
+        messages.compactMap { msg in
+            switch msg.role {
+            case .mae:
+                return .init(role: "assistant", content: msg.content)
+            case .user:
+                return .init(role: "user", content: msg.content)
+            case .error:
+                return nil
+            }
         }
     }
 
