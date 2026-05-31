@@ -126,20 +126,24 @@ struct SNAPApplicationContextualHelpSheet: View {
                     .background(CivicaColors.paper)
                     .onChange(of: messages.count) { _, _ in
                         // Scroll the latest message into view on
-                        // every append. SwiftUI's default anchor is
-                        // .center; .bottom keeps the user oriented on
-                        // the newest content as the thread grows.
-                        if let last = messages.last {
-                            withAnimation(.easeOut(duration: 0.22)) {
-                                proxy.scrollTo(last.id, anchor: .bottom)
-                            }
+                        // every append. Dispatch async to the next
+                        // runloop tick — calling withAnimation
+                        // synchronously inside .onChange during a
+                        // sheet's first-load body pass has been
+                        // observed to trip a NavigationStack
+                        // re-layout that auto-dismisses the sheet on
+                        // iOS 17+. Async + no withAnimation avoids
+                        // both that hazard and the visible jump.
+                        let lastId = messages.last?.id
+                        guard let lastId else { return }
+                        DispatchQueue.main.async {
+                            proxy.scrollTo(lastId, anchor: .bottom)
                         }
                     }
                     .onChange(of: isAwaitingReply) { _, awaiting in
-                        if awaiting {
-                            withAnimation(.easeOut(duration: 0.22)) {
-                                proxy.scrollTo("pending", anchor: .bottom)
-                            }
+                        guard awaiting else { return }
+                        DispatchQueue.main.async {
+                            proxy.scrollTo("pending", anchor: .bottom)
                         }
                     }
                 }
@@ -157,10 +161,24 @@ struct SNAPApplicationContextualHelpSheet: View {
                     .foregroundStyle(CivicaColors.pinePrimary)
                 }
             }
-            .task {
+            // Prevent the sheet from being swipe-dismissed while the
+            // first Mae reply is still in flight. A reviewer who
+            // accidentally drags the sheet during the 3-5s LLM wait
+            // would otherwise lose context with nothing useful
+            // rendered yet.
+            .interactiveDismissDisabled(isAwaitingReply && messages.isEmpty)
+            .onAppear {
+                // Use `.onAppear` + manually-dispatched Task instead
+                // of `.task` — the latter has shown lifecycle quirks
+                // when its body mutates state during a sheet's first
+                // present pass, intermittently triggering the sheet
+                // to dismiss itself. `.onAppear` runs exactly once
+                // per view appearance, and the `hasLoadedInitialReply`
+                // guard prevents a second fetch on re-appear (e.g.
+                // app returns from background).
                 guard !hasLoadedInitialReply else { return }
                 hasLoadedInitialReply = true
-                await sendInitialExplainer()
+                Task { await sendInitialExplainer() }
             }
         }
     }
