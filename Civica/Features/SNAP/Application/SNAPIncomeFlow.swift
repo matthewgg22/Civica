@@ -268,6 +268,13 @@ struct SNAPIncomeFlowView: View {
     let onComplete: (SNAPIncomeAnswers) -> Void
     let onExit: () -> Void
 
+    /// Focus chain for the employer-detail text fields so the keyboard
+    /// "next" key moves to the following field instead of just
+    /// toggling. ZIP / phone are numeric (no return key) — reached by
+    /// tap. `name → street → city → state → dismiss`.
+    private enum EmployerField: Hashable { case name, street, city, state }
+    @FocusState private var employerFocus: EmployerField?
+
     init(
         viewModel: SNAPIncomeFlowViewModel,
         language: CivicaLanguage = .english,
@@ -472,7 +479,10 @@ struct SNAPIncomeFlowView: View {
                     get: { viewModel.answers.employerName },
                     set: { viewModel.answers.employerName = $0 }
                 ),
-                keyboard: .default
+                keyboard: .default,
+                focusValue: .name,
+                submitLabel: .next,
+                onSubmit: { employerFocus = .street }
             )
             labeledTextField(
                 label: SNAPIncomeStrings.employerStreetLabel.value(in: language),
@@ -481,7 +491,10 @@ struct SNAPIncomeFlowView: View {
                     get: { viewModel.answers.employerStreet },
                     set: { viewModel.answers.employerStreet = $0 }
                 ),
-                keyboard: .default
+                keyboard: .default,
+                focusValue: .street,
+                submitLabel: .next,
+                onSubmit: { employerFocus = .city }
             )
             HStack(spacing: CivicaSpacing.sm) {
                 labeledTextField(
@@ -491,7 +504,10 @@ struct SNAPIncomeFlowView: View {
                         get: { viewModel.answers.employerCity },
                         set: { viewModel.answers.employerCity = $0 }
                     ),
-                    keyboard: .default
+                    keyboard: .default,
+                    focusValue: .city,
+                    submitLabel: .next,
+                    onSubmit: { employerFocus = .state }
                 )
                 labeledTextField(
                     label: SNAPIncomeStrings.employerStateLabel.value(in: language),
@@ -500,7 +516,10 @@ struct SNAPIncomeFlowView: View {
                         get: { viewModel.answers.employerState },
                         set: { viewModel.answers.employerState = String($0.uppercased().prefix(2)) }
                     ),
-                    keyboard: .default
+                    keyboard: .default,
+                    focusValue: .state,
+                    submitLabel: .done,
+                    onSubmit: { employerFocus = nil }
                 )
                 .frame(width: 80)
                 labeledTextField(
@@ -535,24 +554,57 @@ struct SNAPIncomeFlowView: View {
         label: String,
         placeholder: String,
         text: Binding<String>,
-        keyboard: UIKeyboardType
+        keyboard: UIKeyboardType,
+        focusValue: EmployerField? = nil,
+        submitLabel: SubmitLabel = .return,
+        onSubmit: (() -> Void)? = nil
     ) -> some View {
         VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
             Text(label)
                 .font(CivicaTypography.captionStrong)
                 .foregroundStyle(CivicaColors.graphite)
-            TextField(placeholder, text: text)
-                .font(CivicaTypography.body)
-                .keyboardType(keyboard)
-                .textInputAutocapitalization(keyboard == .default ? .words : .never)
-                .padding(.horizontal, CivicaSpacing.md)
-                .padding(.vertical, CivicaSpacing.sm)
-                .background(CivicaColors.surfacePrimary)
-                .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control))
-                .overlay(
-                    RoundedRectangle(cornerRadius: CivicaRadius.control)
-                        .strokeBorder(CivicaColors.hairline, lineWidth: 1)
-                )
+            employerTextField(
+                placeholder: placeholder,
+                text: text,
+                keyboard: keyboard,
+                focusValue: focusValue,
+                submitLabel: submitLabel,
+                onSubmit: onSubmit
+            )
+            .padding(.horizontal, CivicaSpacing.md)
+            .padding(.vertical, CivicaSpacing.sm)
+            .background(CivicaColors.surfacePrimary)
+            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control))
+            .overlay(
+                RoundedRectangle(cornerRadius: CivicaRadius.control)
+                    .strokeBorder(CivicaColors.hairline, lineWidth: 1)
+            )
+        }
+    }
+
+    /// The bare TextField + focus wiring. Only fields with a non-nil
+    /// `focusValue` join the focus chain (numeric ZIP/phone have no
+    /// return key, so they're reached by tap and stay out of it).
+    @ViewBuilder
+    private func employerTextField(
+        placeholder: String,
+        text: Binding<String>,
+        keyboard: UIKeyboardType,
+        focusValue: EmployerField?,
+        submitLabel: SubmitLabel,
+        onSubmit: (() -> Void)?
+    ) -> some View {
+        let base = TextField(placeholder, text: text)
+            .font(CivicaTypography.body)
+            .keyboardType(keyboard)
+            .textInputAutocapitalization(keyboard == .default ? .words : .never)
+        if let focusValue {
+            base
+                .focused($employerFocus, equals: focusValue)
+                .submitLabel(submitLabel)
+                .onSubmit { onSubmit?() }
+        } else {
+            base
         }
     }
 

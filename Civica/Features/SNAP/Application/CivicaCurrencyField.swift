@@ -50,7 +50,15 @@ struct CivicaCurrencyField: View {
     private static let maxDigits: Int = 9
 
     var body: some View {
-        TextField(placeholder, text: $displayText)
+        // Always show "0.00" as the empty-state placeholder, ignoring
+        // whatever the caller passed. The cents-first format means the
+        // first keystroke produces "0.0X" — if the empty state showed
+        // a differently-shaped placeholder (blank, "Amount", "0"), the
+        // field visibly jumped/reshaped on that first tap. Anchoring
+        // the placeholder to the zero-state of the format removes the
+        // cognitive shift: the field reads "0.00" before and after the
+        // first digit, just grey → ink.
+        TextField("0.00", text: $displayText)
             .font(font)
             .foregroundStyle(foregroundColor)
             // numberPad (no decimal key) keeps the cents-first
