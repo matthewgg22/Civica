@@ -1,0 +1,6 @@
+# Per-element SNAP-QC error regression harness — pinned for reproducible artifacts.
+# Python 3.13 (statsmodels has cp313 wheels; 3.14 does not yet).
+numpy>=1.26,<3
+pandas>=2.1,<3
+scipy>=1.11,<2
+statsmodels>=0.14,<1

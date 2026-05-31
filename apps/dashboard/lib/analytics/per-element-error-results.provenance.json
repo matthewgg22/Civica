@@ -1,0 +1,26 @@
+{
+  "source": "USDA SNAP QC Public-Use File — snapqcdata.net (qcfy2023_csv.zip)",
+  "fiscal_year": 2023,
+  "input_basename": "qc_pub_fy2023.csv",
+  "generated_at": "2026-05-31T00:00:00Z",
+  "spec_version": "1.0.0",
+  "scope": "CA (STATE==6)",
+  "weight_for_prevalence": "FYWGT",
+  "element_codes": {
+    "363": "Shelter deduction",
+    "311": "Wages",
+    "331": "RSDI",
+    "333": "SSI",
+    "346": "Other unearned income",
+    "312": "Self-employment",
+    "364": "Standard utility allowance"
+  },
+  "predictors": [
+    "household_size",
+    "has_earned_income",
+    "has_elderly",
+    "has_child"
+  ],
+  "model": "statsmodels Logit, unweighted, HC1 robust covariance",
+  "codebook": "FY2023 Tech Doc Ch. V (ELEMENT1..9 element-of-error; AGE/WAGES/CERTHHSZ household chars)"
+}
