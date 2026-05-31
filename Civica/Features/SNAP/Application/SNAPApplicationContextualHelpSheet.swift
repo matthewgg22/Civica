@@ -62,11 +62,18 @@ struct SNAPApplicationContextualHelpSheet: View {
     private let client: SNAPApplicationContextualHelpAPIClient
 
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var messages: [ChatMessage] = []
     @State private var inputText: String = ""
     @State private var isAwaitingReply: Bool = false
     @State private var stillThinking: Bool = false
     @State private var hasLoadedInitialReply: Bool = false
+    /// Drives the typewriter reveal of the most recent Mae bubble.
+    /// `revealingMessageID` is the message currently animating in;
+    /// `revealedChars` is how many characters of it are shown. nil ID
+    /// = nothing animating (all bubbles render in full).
+    @State private var revealingMessageID: UUID?
+    @State private var revealedChars: Int = 0
     @FocusState private var inputFocused: Bool
 
     /// Delay before the "still thinking…" indicator joins the spinner
@@ -148,6 +155,7 @@ struct SNAPApplicationContextualHelpSheet: View {
                     }
                 }
                 Divider().background(CivicaColors.hairline)
+                aiDisclaimer
                 inputBar
             }
             .background(CivicaColors.paper.ignoresSafeArea())
@@ -197,7 +205,7 @@ struct SNAPApplicationContextualHelpSheet: View {
     private func bubble(for message: ChatMessage) -> some View {
         switch message.role {
         case .mae:
-            maeBubble(text: message.content)
+            maeBubble(message: message)
         case .user:
             userBubble(text: message.content)
         case .error(let detail):
@@ -206,12 +214,20 @@ struct SNAPApplicationContextualHelpSheet: View {
     }
 
     /// Left-aligned cream bubble. Renders the message body, splitting
-    /// on double-newlines to give multi-paragraph replies the same
-    /// breathing room the single-shot view had — and detects bullet
-    /// lines so a list-shaped answer reads as a real list.
-    private func maeBubble(text: String) -> some View {
-        VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
-            ForEach(Array(paragraphs(in: text).enumerated()), id: \.offset) { _, paragraph in
+    /// on double-newlines to give multi-paragraph replies breathing
+    /// room and detecting bullet lines so a list-shaped answer reads
+    /// as a real list. When this is the message currently revealing,
+    /// only the first `revealedChars` characters show (+ a caret), so
+    /// the reply types in conversationally instead of dumping in all
+    /// at once.
+    private func maeBubble(message: ChatMessage) -> some View {
+        let isRevealing = message.id == revealingMessageID
+        let shownBody = isRevealing
+            ? String(message.content.prefix(revealedChars))
+            : message.content
+        let caret = isRevealing ? " ▍" : ""
+        return VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
+            ForEach(Array(paragraphs(in: shownBody + caret).enumerated()), id: \.offset) { _, paragraph in
                 paragraphView(paragraph)
             }
         }
@@ -223,6 +239,24 @@ struct SNAPApplicationContextualHelpSheet: View {
             RoundedRectangle(cornerRadius: CivicaRadius.card)
                 .strokeBorder(CivicaColors.hairline, lineWidth: 1)
         )
+    }
+
+    /// Type the message in character-by-character (chunked so total
+    /// reveal time stays ~1s regardless of length). Skipped entirely
+    /// when Reduce Motion is on — that user sees the full text at once.
+    private func startReveal(messageID: UUID, fullText: String) {
+        guard !reduceMotion else { return }
+        revealingMessageID = messageID
+        revealedChars = 0
+        let total = fullText.count
+        let step = max(1, total / 50)   // ~50 ticks → ~1s at 20ms/tick
+        Task { @MainActor in
+            while revealedChars < total, revealingMessageID == messageID {
+                try? await Task.sleep(nanoseconds: 20_000_000)
+                revealedChars = min(total, revealedChars + step)
+            }
+            if revealingMessageID == messageID { revealingMessageID = nil }
+        }
     }
 
     /// Right-aligned pine-tint bubble. iMessage convention without
@@ -344,6 +378,27 @@ struct SNAPApplicationContextualHelpSheet: View {
 
     // MARK: - Input bar
 
+    /// Small AI-transparency line above the input. Tells the applicant
+    /// Mae is an AI assistant and to verify anything important with a
+    /// human — sits right where they're about to ask a follow-up.
+    private var aiDisclaimer: some View {
+        HStack(spacing: CivicaSpacing.xs) {
+            Image(systemName: "sparkles")
+                .imageScale(.small)
+                .foregroundStyle(CivicaColors.graphite)
+                .accessibilityHidden(true)
+            Text(IntakeHelpStrings.aiDisclaimer.value(in: language))
+                .font(CivicaTypography.caption)
+                .foregroundStyle(CivicaColors.graphite)
+                .fixedSize(horizontal: false, vertical: true)
+            Spacer(minLength: 0)
+        }
+        .padding(.horizontal, CivicaSpacing.lg)
+        .padding(.top, CivicaSpacing.sm)
+        .padding(.bottom, CivicaSpacing.xs)
+        .accessibilityElement(children: .combine)
+    }
+
     private var inputBar: some View {
         HStack(spacing: CivicaSpacing.sm) {
             TextField(
@@ -451,7 +506,9 @@ struct SNAPApplicationContextualHelpSheet: View {
                     content: ""
                 ))
             } else {
-                messages.append(ChatMessage(role: .mae, content: trimmed))
+                let msg = ChatMessage(role: .mae, content: trimmed)
+                messages.append(msg)
+                startReveal(messageID: msg.id, fullText: trimmed)
             }
         } catch let error as SNAPApplicationContextualHelpAPIClient.IntakeHelpError {
             SNAPAnalytics.trackIntakeHelpError(questionTitle: questionTitle)

@@ -111,6 +111,14 @@ enum IntakeHelpStrings {
         es: "Mae · asistente de SNAP"
     )
 
+    /// AI-transparency line shown just above the chat input. Keeps the
+    /// disclosure where the applicant is about to type, not buried in
+    /// settings.
+    static let aiDisclaimer = CivicaText(
+        "Mae is an AI assistant. Double-check anything important with your county navigator.",
+        es: "Mae es un asistente de IA. Confirma cualquier cosa importante con tu orientador del condado."
+    )
+
     // MARK: - View helpers
     //
     // Convenience for the sheet view: substitute the question title
@@ -144,5 +152,6 @@ enum IntakeHelpStrings {
         chatInputPlaceholder,
         chatSendButtonLabel,
         chatIntroLabel,
+        aiDisclaimer,
     ]
 }
