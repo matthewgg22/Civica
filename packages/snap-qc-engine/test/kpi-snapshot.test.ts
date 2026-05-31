@@ -95,6 +95,21 @@ describe("buildKpiSnapshot", () => {
     expect(per!.ci_low).not.toBeNull();
   });
 
+  it("carries the authoritative source split into measured_per meta.by_source", () => {
+    const rows = buildKpiSnapshot(
+      baseInputs({
+        outcomes: {
+          decided: 0,
+          denied: 0,
+          authoritative: { n: 50, errors: 5, bySource: { qc_sample: 50, county_authoritative: 0 } },
+        },
+      }),
+    );
+    const per = find(rows, "measured_per");
+    expect(per!.value_pct).toBe(10); // 5/50, fed entirely by internal QC
+    expect(per!.meta.by_source).toEqual({ qc_sample: 50, county_authoritative: 0 });
+  });
+
   it("honors a measuredMinN override (lets small samples report a rate)", () => {
     const rows = buildKpiSnapshot(baseInputs({ outcomes: { decided: 4, denied: 1, authoritative: { n: 0, errors: 0 } }, measuredMinN: 1 }));
     const dr = find(rows, "denial_rate");

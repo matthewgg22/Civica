@@ -31,15 +31,17 @@ type InsertRow = {
   meta: Record<string, unknown>;
 };
 
-// The cron reads in this order: packet_error_risk (embed), then packet_outcomes
-// ×4 (decided / denied / authoritative-n / authoritative-errors), then inserts
-// kpi_snapshot. Provision one query builder per call, in order.
+// The cron reads in this order: packet_error_risk (embed), packet_outcomes
+// decided + denied, qc_outcomes n + errors, packet_outcomes county n + errors,
+// then inserts kpi_snapshot. Provision one query builder per call, in order.
 function mockDb(opts: {
   riskRows: RiskRow[];
   decided: number;
   denied: number;
-  authN: number;
-  authErr: number;
+  qcN: number;
+  qcErr: number;
+  countyN?: number;
+  countyErr?: number;
 }) {
   const insertSpy = vi.fn();
   const insertQb = makeQueryBuilder({ data: [{ snapshot_id: "s1" }], error: null });
@@ -52,12 +54,14 @@ function mockDb(opts: {
     schema: vi.fn().mockReturnValue({
       from: vi
         .fn()
-        .mockReturnValueOnce(makeQueryBuilder({ data: opts.riskRows, error: null }))
-        .mockReturnValueOnce(makeQueryBuilder({ data: null, error: null, count: opts.decided }))
-        .mockReturnValueOnce(makeQueryBuilder({ data: null, error: null, count: opts.denied }))
-        .mockReturnValueOnce(makeQueryBuilder({ data: null, error: null, count: opts.authN }))
-        .mockReturnValueOnce(makeQueryBuilder({ data: null, error: null, count: opts.authErr }))
-        .mockReturnValue(insertQb),
+        .mockReturnValueOnce(makeQueryBuilder({ data: opts.riskRows, error: null }))             // packet_error_risk
+        .mockReturnValueOnce(makeQueryBuilder({ data: null, error: null, count: opts.decided }))  // packet_outcomes decided
+        .mockReturnValueOnce(makeQueryBuilder({ data: null, error: null, count: opts.denied }))   // packet_outcomes denied
+        .mockReturnValueOnce(makeQueryBuilder({ data: null, error: null, count: opts.qcN }))      // qc_outcomes n
+        .mockReturnValueOnce(makeQueryBuilder({ data: null, error: null, count: opts.qcErr }))    // qc_outcomes errors
+        .mockReturnValueOnce(makeQueryBuilder({ data: null, error: null, count: opts.countyN ?? 0 }))   // packet_outcomes county n
+        .mockReturnValueOnce(makeQueryBuilder({ data: null, error: null, count: opts.countyErr ?? 0 })) // packet_outcomes county errors
+        .mockReturnValue(insertQb),                                                              // kpi_snapshot insert
     }),
   } as never);
 
@@ -80,8 +84,9 @@ describe("refreshKpiSnapshot", () => {
       ],
       decided: 40,
       denied: 8,
-      authN: 0, // no authoritative outcomes yet (pre-TODO-44)
-      authErr: 0,
+      qcN: 0, // no completed QC reviews
+      qcErr: 0,
+      // county defaults to 0 — no authoritative outcomes of any kind yet
     });
 
     const result = await refreshKpiSnapshot(TEST_ENV, noopLog);
@@ -123,8 +128,55 @@ describe("refreshKpiSnapshot", () => {
     expect(result.clean_packet_rate).toBeCloseTo(66.667, 3);
   });
 
+  it("internal QC review makes measured_per REAL (the Lane-A bridge) without any county feed", async () => {
+    const { insertSpy } = mockDb({
+      riskRows: [{ packet_id: "A", tier: "low", factors: [], created_at: "2026-05-30T03:00:00Z" }],
+      decided: 10,
+      denied: 2,
+      qcN: 40, // 40 completed internal QC reviews
+      qcErr: 4, // 4 found a payment error
+      // no county feed (TODO-44 not live) — measured_per is real from QC alone
+    });
+
+    const result = await refreshKpiSnapshot(TEST_ENV, noopLog);
+    const rows = insertSpy.mock.calls[0]![0] as InsertRow[];
+
+    const per = row(rows, "measured_per");
+    expect(per.value_pct).toBe(10); // 4 / 40, from internal QC alone
+    expect(per.n).toBe(40);
+    expect(per.source_kind).toBe("measured");
+    expect(per.meta.status).toBe("measured");
+    // Provenance: all of n came from QC, none from county.
+    expect(per.meta.by_source).toEqual({ qc_sample: 40, county_authoritative: 0 });
+    expect(result.measured_per_n).toBe(40);
+    expect(result.qc_n).toBe(40);
+    expect(result.county_n).toBe(0);
+  });
+
+  it("sums QC + county authoritative feeds into one measured_per", async () => {
+    const { insertSpy } = mockDb({
+      riskRows: [{ packet_id: "A", tier: "low", factors: [], created_at: "2026-05-30T03:00:00Z" }],
+      decided: 0,
+      denied: 0,
+      qcN: 20,
+      qcErr: 2,
+      countyN: 20,
+      countyErr: 4,
+    });
+
+    const result = await refreshKpiSnapshot(TEST_ENV, noopLog);
+    const rows = insertSpy.mock.calls[0]![0] as InsertRow[];
+
+    const per = row(rows, "measured_per");
+    expect(per.n).toBe(40); // 20 QC + 20 county
+    expect(per.value_pct).toBe(15); // (2 + 4) / 40
+    expect(per.meta.by_source).toEqual({ qc_sample: 20, county_authoritative: 20 });
+    expect(result.qc_n).toBe(20);
+    expect(result.county_n).toBe(20);
+  });
+
   it("writes a valid run with no packets / no outcomes (never NaN)", async () => {
-    const { insertSpy } = mockDb({ riskRows: [], decided: 0, denied: 0, authN: 0, authErr: 0 });
+    const { insertSpy } = mockDb({ riskRows: [], decided: 0, denied: 0, qcN: 0, qcErr: 0 });
 
     const result = await refreshKpiSnapshot(TEST_ENV, noopLog);
 
