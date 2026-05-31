@@ -11,6 +11,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { getKpiTruthPoint } from "../../../lib/analytics/kpi-snapshot";
 import KpiPillarTree from "../../../components/findings/KpiPillarTree";
+import PerGapPanel from "../../../components/findings/PerGapPanel";
 
 // Live data — revalidate every 5 minutes (the snapshot refreshes daily + on demand).
 export const revalidate = 300;
@@ -52,6 +53,10 @@ export default async function KpiPage() {
       </header>
 
       <KpiPillarTree truthPoint={truthPoint} />
+
+      <div className="mt-10 border-t border-hairline pt-10">
+        <PerGapPanel truthPoint={truthPoint} />
+      </div>
     </main>
   );
 }
