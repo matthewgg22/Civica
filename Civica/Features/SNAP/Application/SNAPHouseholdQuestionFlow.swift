@@ -15,6 +15,19 @@ import SwiftUI
 // remaining 8 application steps will follow when the migration
 // commit lands.
 
+/// BenefitsCal ABMRS marital-status options. Optional throughout —
+/// an applicant who prefers not to say still passes through. The
+/// extension maps each case to the state portal's matching label.
+enum SNAPMaritalStatus: String, Codable, CaseIterable, Equatable {
+    case single
+    case married
+    case domesticPartnership
+    case separated
+    case divorced
+    case widowed
+    case preferNotToSay
+}
+
 struct SNAPHouseholdAnswers: Equatable, Codable {
     var householdSize: String?              // choice from buckets
     var hasMinorInHousehold: Bool?
@@ -28,6 +41,9 @@ struct SNAPHouseholdAnswers: Equatable, Codable {
     /// the household qualifies for expedited service regardless of
     /// income. Asked as Tri because "not sure" is common.
     var migrantSeasonalFarmworker: SNAPTri?
+    /// Wave 4 — BenefitsCal ABMRS. Optional. Used to autofill the
+    /// state portal's marital-status field.
+    var maritalStatus: SNAPMaritalStatus?
 
     // Categorical eligibility inputs (7 CFR 273.2(j)). The question
     // flow does not yet ask these directly -- they're plumbed
@@ -56,6 +72,7 @@ final class SNAPHouseholdQuestionFlowViewModel: ObservableObject {
         case childrenUnder14    // shown only when hasMinorInHousehold == true
         case elderlyOrDisabled
         case migrantFarmworker
+        case maritalStatus      // Wave 4 — always asked, optional
 
         static let total = Self.allCases.count
         var oneBasedIndex: Int { rawValue + 1 }
@@ -95,6 +112,7 @@ final class SNAPHouseholdQuestionFlowViewModel: ObservableObject {
         case .childrenUnder14: return answers.hasChildUnder14InHousehold != nil
         case .elderlyOrDisabled: return answers.hasElderlyOrDisabled != nil
         case .migrantFarmworker: return answers.migrantSeasonalFarmworker != nil
+        case .maritalStatus: return answers.maritalStatus != nil
         }
     }
 
@@ -155,6 +173,7 @@ struct SNAPHouseholdQuestionFlowView: View {
         case .childrenUnder14: childrenUnder14Screen
         case .elderlyOrDisabled: elderlyOrDisabledScreen
         case .migrantFarmworker: migrantFarmworkerScreen
+        case .maritalStatus: maritalStatusScreen
         }
     }
 
@@ -223,6 +242,39 @@ struct SNAPHouseholdQuestionFlowView: View {
     }
 
     // MARK: - Screen 4: migrant or seasonal farmworker?
+
+    // MARK: - Wave 4: marital status (BenefitsCal ABMRS)
+
+    private var maritalStatusScreen: some View {
+        let options = SNAPMaritalStatus.allCases
+        return CivicaQuestionScreen(
+            progress: progress(for: .maritalStatus),
+            title: SNAPHouseholdQuestionStrings.maritalStatusTitle.value(in: language),
+            helper: SNAPHouseholdQuestionStrings.maritalStatusHelper.value(in: language),
+            primaryActionTitle: CivicaQuestionStrings.continueLabel.value(in: language),
+            primaryActionEnabled: viewModel.canAdvanceFromCurrentStep,
+            onPrimary: advanceOrComplete,
+            language: language
+        ) {
+            CivicaQuestionChoices(
+                options: options.map {
+                    SNAPHouseholdQuestionStrings.maritalStatusLabel(for: $0, language: language)
+                },
+                selection: Binding(
+                    get: {
+                        viewModel.answers.maritalStatus.map {
+                            SNAPHouseholdQuestionStrings.maritalStatusLabel(for: $0, language: language)
+                        }
+                    },
+                    set: { label in
+                        viewModel.answers.maritalStatus = options.first { status in
+                            SNAPHouseholdQuestionStrings.maritalStatusLabel(for: status, language: language) == label
+                        }
+                    }
+                )
+            )
+        }
+    }
 
     private var migrantFarmworkerScreen: some View {
         let options: [SNAPTri] = [.yes, .no, .notSure]
@@ -344,6 +396,35 @@ enum SNAPHouseholdQuestionStrings {
         "This matters for SNAP — older adults and people with disabilities get extra deductions and don't face an asset test in Massachusetts.",
         es: "Esto importa para SNAP — los adultos mayores y las personas con discapacidad reciben deducciones adicionales y no enfrentan una prueba de bienes en Massachusetts."
     )
+
+    // Wave 4 — marital status (BenefitsCal ABMRS)
+    static let maritalStatusTitle = CivicaText(
+        "What's your marital status?",
+        es: "¿Cuál es tu estado civil?"
+    )
+    static let maritalStatusHelper = CivicaText(
+        "California asks this on the SNAP application. Pick what fits — \"Prefer not to say\" is a valid answer and your benefits aren't affected by your choice.",
+        es: "California pregunta esto en la solicitud de SNAP. Elige lo que aplica — \"Prefiero no decir\" es una respuesta válida y tus beneficios no se ven afectados por tu elección."
+    )
+
+    static func maritalStatusLabel(for value: SNAPMaritalStatus, language: CivicaLanguage) -> String {
+        switch (value, language) {
+        case (.single,              .english): return "Single"
+        case (.single,              .spanish): return "Soltero/a"
+        case (.married,             .english): return "Married"
+        case (.married,             .spanish): return "Casado/a"
+        case (.domesticPartnership, .english): return "Domestic partnership"
+        case (.domesticPartnership, .spanish): return "Unión doméstica"
+        case (.separated,           .english): return "Separated"
+        case (.separated,           .spanish): return "Separado/a"
+        case (.divorced,            .english): return "Divorced"
+        case (.divorced,            .spanish): return "Divorciado/a"
+        case (.widowed,             .english): return "Widowed"
+        case (.widowed,             .spanish): return "Viudo/a"
+        case (.preferNotToSay,      .english): return "Prefer not to say"
+        case (.preferNotToSay,      .spanish): return "Prefiero no decir"
+        }
+    }
 
     static let migrantFarmworkerTitle = CivicaText(
         "Is anyone in your household a migrant or seasonal farmworker?",
