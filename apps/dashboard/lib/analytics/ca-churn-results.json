@@ -1,0 +1,49 @@
+{
+  "schema_version": "1.0.0",
+  "source_kind": "icpsr_39331_panel",
+  "analysis": "ca_procedural_denial_panel",
+  "scope": "CA",
+  "outcome": "procedural-denial rate per application (APPS_DENIED_PROCEDURAL / APPS_RECEIVED)",
+  "panel": {
+    "unit": "county-month",
+    "n_obs": 4423,
+    "n_counties": 58,
+    "period": "2016m10..2024m2"
+  },
+  "headline": {
+    "weighted_mean_proc_rate_pct": 23.95,
+    "interpretation": "~1 in 4 CA SNAP applications is procedurally denied (failed-to-complete), not denied on eligibility."
+  },
+  "operational": {
+    "between_county_r2": 0.306,
+    "time_r2": 0.306,
+    "spread": {
+      "n_counties_adequate": 56,
+      "min_median_apps_floor": 30,
+      "p10_pct": 18.81,
+      "median_pct": 24.4,
+      "p90_pct": 31.81,
+      "min_pct": 13.99,
+      "min_county": "tulare",
+      "max_pct": 44.74,
+      "max_county": "sonoma"
+    },
+    "interpretation": "County fixed effects alone explain 31% of procedural-denial-rate variance — a substantial, PERSISTENT between-county (operational/administrative) component under identical statewide rules — comparable to the 31% from time (seasonality + COVID-era shocks). So a meaningful share of procedural churn is operational (a tool can move that part), though NOT the majority — time/period explains an equal share."
+  },
+  "ea_cliff": {
+    "cliff_month": "2023m3",
+    "ea_program_end_date": "2023-02-28",
+    "post_coef_pp": -1.369,
+    "ci_low_pp": -3.18,
+    "ci_high_pp": 0.442,
+    "p_value": 0.1383,
+    "n_post_months": 12,
+    "design": "interrupted time series (single statewide event; NOT a diff-in-diff — no within-CA control group)",
+    "significant": false
+  },
+  "notes": [
+    "Volume-weighted by APPS_RECEIVED so tiny rural counties (e.g. Alpine, ~0 apps) don't dominate; spread reported p10–p90 among counties with median monthly apps >= 30.",
+    "Model B is an INTERRUPTED TIME SERIES, not a diff-in-diff: CA's EA cliff is a single statewide date (no within-CA control). Interpret cautiously.",
+    "Procedural-denial rate is the APPLICATION-side churn proxy in this panel; it is not the dollar PER nor the recert/SAR-7 churn (CF-18)."
+  ]
+}
