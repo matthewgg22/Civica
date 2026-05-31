@@ -12,7 +12,7 @@ struct FindHelpDisclosureFooter: View {
     var body: some View {
         VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
             Button {
-                withAnimation(reduceMotion ? nil : .easeInOut(duration: 0.2)) { isExpanded.toggle() }
+                civicaWithAnimation(CivicaAnimation.standard) { isExpanded.toggle() }
             } label: {
                 HStack(alignment: .center, spacing: CivicaSpacing.sm) {
                     Image(systemName: "info.circle.fill")
@@ -24,7 +24,8 @@ struct FindHelpDisclosureFooter: View {
                         .multilineTextAlignment(.leading)
                     Spacer()
                     Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
-                        .font(.system(size: 11, weight: .semibold))
+                        .imageScale(.large)
+                        .font(.body)
                         .foregroundStyle(CivicaColors.graphite)
                         .accessibilityHidden(true)
                 }

@@ -39,6 +39,7 @@ struct FindHelpZipFallbackView: View {
                 }
                 .buttonStyle(.borderedProminent)
                 .disabled(zip.count < 5 || isGeocoding)
+                .accessibilityLabel(language == .english ? "Search by ZIP code" : "Buscar por código postal")
             }
 
             if let error = store.error {

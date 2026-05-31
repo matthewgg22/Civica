@@ -77,7 +77,8 @@ struct SNAPSettingsSheet: View {
                         Spacer(minLength: 0)
                         if lang == language {
                             Image(systemName: "checkmark")
-                                .font(.system(size: 15, weight: .semibold))
+                                .imageScale(.large)
+                                .font(.body)
                                 .foregroundStyle(CivicaColors.pinePrimary)
                                 .accessibilityHidden(true)
                         }
@@ -201,7 +202,8 @@ struct SNAPSettingsSheet: View {
     ) -> some View {
         HStack(spacing: CivicaSpacing.md) {
             Image(systemName: icon)
-                .font(.system(size: 18))
+                .imageScale(.large)
+                .font(.body)
                 .foregroundStyle(tint)
                 .frame(width: 24, alignment: .leading)
                 .accessibilityHidden(true)
@@ -211,7 +213,8 @@ struct SNAPSettingsSheet: View {
             Spacer(minLength: 0)
             if showChevron {
                 Image(systemName: "chevron.right")
-                    .font(.system(size: 13, weight: .semibold))
+                    .imageScale(.large)
+                    .font(.body)
                     .foregroundStyle(CivicaColors.graphite)
                     .accessibilityHidden(true)
             }

@@ -46,10 +46,49 @@ struct CivicaHomePhase3View: View {
     // the hero reflects whatever the user sees inside the EBT root.
     @StateObject private var ebtStore: EBTBalanceStore = EBTBalanceStore()
 
+    // IS-8 (audit 2026-05-29): true on first render, flipped false at
+    // the end of the `.task` below. While true AND `ebtStore.account`
+    // is nil, the EBT hero slot renders a shimmered skeleton instead
+    // of jumping straight to the "card on the way" placeholder — so
+    // returning users with a linked card don't see the placeholder
+    // flash before the real balance hero resolves.
+    @State private var isFirstPaintLoading: Bool = true
+
+    // JR-4 / UD-7 / ARCH-3 / CQ-5 (audit 2026-05-29): approval banner
+    // persistence + flavor selection. `approvalAcknowledged` is set true
+    // on dismiss or EBT-card link. `hasBeenApprovedBefore` drives the
+    // .firstApproval vs .renewal flavor. Reset rules (handled by
+    // SNAPApprovalAcknowledgmentResetter in the onChange below):
+    //   - any → .notStarted: both flags clear (fresh case).
+    //   - .recertDue → .decisionApproved: acknowledged clears so the
+    //     renewal-flavor banner re-fires; hasBeenApprovedBefore stays.
+    @AppStorage(CivicaAppStorageKeys.approvalAcknowledged)
+    private var approvalAcknowledged: Bool = false
+    @AppStorage(CivicaAppStorageKeys.hasBeenApprovedBefore)
+    private var hasBeenApprovedBefore: Bool = false
+
+    @State private var showingApprovalExplainer: Bool = false
+    @State private var navigateToFindHelp: Bool = false
+
+    /// IS-2 (audit 2026-05-29) — coordinated sync-degraded banner.
+    /// Same pattern as `CivicaHomePhase2View`. Phase 3 only owns one
+    /// remote store (`EBTBalanceStore`), so cross-store coordination
+    /// can't reach the 2-failure threshold on its own; the
+    /// `NWPathMonitor` offline signal is what realistically surfaces
+    /// the banner here. Per-row hides stay intact.
+    @StateObject private var syncBanner = CivicaSyncBannerCoordinator()
+
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: CivicaSpacing.lg) {
+                // IS-2 (audit 2026-05-29): coordinated sync-degraded
+                // banner sits above the phase tab so it's the first
+                // thing the user sees when remote data is failing.
+                CivicaSyncBanner(coordinator: syncBanner, language: language)
+
                 phaseTab
+
+                approvalBanner
 
                 balanceHeroOrPlaceholder
 
@@ -78,6 +117,75 @@ struct CivicaHomePhase3View: View {
         .background(CivicaColors.paper.ignoresSafeArea())
         .navigationTitle("Civica")
         .navigationBarTitleDisplayMode(.inline)
+        .navigationDestination(isPresented: $navigateToFindHelp) {
+            FindHelpRootView()
+        }
+        .sheet(isPresented: $showingApprovalExplainer) {
+            SNAPApprovalExplainerView(language: language)
+        }
+        // CQ-5: apply the reset rules on every status transition. The
+        // resetter writes through the same UserDefaults keys the
+        // @AppStorage props above observe, so a transition causes the
+        // banner to re-render on the next runloop tick.
+        .onChange(of: statusStore.status) { oldValue, newValue in
+            SNAPApprovalAcknowledgmentResetter().handleTransition(from: oldValue, to: newValue)
+        }
+        // JR-4: linking the EBT card auto-acknowledges the banner.
+        // EBTBalanceStore exposes linkState as a @Published value; this
+        // keeps the banner-acknowledgment concern out of the store.
+        .onChange(of: ebtStore.linkState) { _, newValue in
+            if newValue == .linked {
+                SNAPApprovalAcknowledgmentResetter().acknowledge()
+            }
+        }
+        .task {
+            // IS-8: one-shot first-paint settle. The EBT store
+            // initializes synchronously, so the skeleton only renders
+            // for the brief window before the next render pass picks
+            // up the resolved account — that's by design (per audit
+            // IS-8: "if the data loads in <100ms the skeleton is
+            // barely visible, which is fine"). Yield so the first
+            // body() completes before flipping the flag.
+            await Task.yield()
+            isFirstPaintLoading = false
+        }
+        // IS-2 (audit 2026-05-29): bridge the EBT store's refresh
+        // outcome into the sync banner coordinator. Per-row hide on
+        // failure stays intact (the dashboard already shows its own
+        // inline error banner via `lastRefreshError`); this signal
+        // feeds the coordinated top-of-screen banner. Phase 3 only
+        // owns one remote store, so reaching the 2-failure threshold
+        // here requires repeated refreshes — but the `NWPathMonitor`
+        // offline path still surfaces the banner on connectivity loss.
+        .onChange(of: ebtStore.lastRefreshError == nil) { _, isOK in
+            if isOK {
+                syncBanner.registerStoreSuccess()
+            } else {
+                syncBanner.registerStoreFailure()
+            }
+        }
+    }
+
+    // MARK: - Approval banner (JR-4 / UD-7 / CQ-5)
+
+    /// Shown the moment `.decisionApproved` lands and the user hasn't
+    /// yet linked an EBT card OR dismissed the banner. Sits ABOVE the
+    /// existing "card is on the way" placeholder (different roles —
+    /// the banner is the celebration-substitute moment, the placeholder
+    /// is the persistent link affordance).
+    @ViewBuilder
+    private var approvalBanner: some View {
+        if statusStore.status == .decisionApproved,
+           ebtStore.account == nil,
+           !approvalAcknowledged {
+            SNAPApprovalBannerCard(
+                flavor: hasBeenApprovedBefore ? .renewal : .firstApproval,
+                language: language,
+                onWhatThisMeans: { showingApprovalExplainer = true },
+                onFindHelp: { navigateToFindHelp = true },
+                onDismiss: { SNAPApprovalAcknowledgmentResetter().acknowledge() }
+            )
+        }
     }
 
     // MARK: - Phase tab
@@ -103,17 +211,16 @@ struct CivicaHomePhase3View: View {
     @ViewBuilder
     private var balanceHeroOrPlaceholder: some View {
         if let account = ebtStore.account {
-            let dollars = (account.foodBalance as NSDecimalNumber).intValue
-            let centsDecimal = (account.foodBalance - Decimal(dollars)) * 100
-            let cents = (centsDecimal as NSDecimalNumber).intValue
-            CivicaEBTBalanceHeroCard(
-                balanceDollars: dollars,
-                balanceCents: cents,
-                updatedTimestamp: updatedLabel(for: account.lastUpdated),
-                nextDepositAmount: formattedNextDeposit(account),
-                nextDepositDate: formattedNextDepositDate(account),
-                projectedThrough: CivicaPhase3Strings.projectedThroughPlaceholder.value(in: language)
-            )
+            balanceHero(for: account)
+        } else if isFirstPaintLoading {
+            // IS-8: skeleton slot for the EBT hero card while the
+            // first-paint load resolves. Matches the dashboard's
+            // existing shimmer pattern so the two surfaces feel of a
+            // piece.
+            VStack(spacing: CivicaSpacing.lg) {
+                CivicaSkeletonRow(height: 96, cornerRadius: CivicaRadius.card)
+                CivicaSkeletonRow(height: 56)
+            }
         } else {
             NavigationLink {
                 EBTBalanceRootView()
@@ -122,6 +229,20 @@ struct CivicaHomePhase3View: View {
             }
             .buttonStyle(.plain)
         }
+    }
+
+    private func balanceHero(for account: EBTAccount) -> some View {
+        let dollars = (account.foodBalance as NSDecimalNumber).intValue
+        let centsDecimal = (account.foodBalance - Decimal(dollars)) * 100
+        let cents = (centsDecimal as NSDecimalNumber).intValue
+        return CivicaEBTBalanceHeroCard(
+            balanceDollars: dollars,
+            balanceCents: cents,
+            updatedTimestamp: updatedLabel(for: account.lastUpdated),
+            nextDepositAmount: formattedNextDeposit(account),
+            nextDepositDate: formattedNextDepositDate(account),
+            projectedThrough: CivicaPhase3Strings.projectedThroughPlaceholder.value(in: language)
+        )
     }
 
     /// "Your card is on the way" placeholder for approved users who
@@ -196,7 +317,8 @@ struct CivicaHomePhase3View: View {
                 } label: {
                     HStack(spacing: CivicaSpacing.md) {
                         Image(systemName: "clock.arrow.circlepath")
-                            .font(.system(size: 22))
+                            .imageScale(.large)
+                            .font(.body)
                             .foregroundStyle(CivicaColors.warningAmber)
                             .frame(width: 36, height: 36)
                             .background(
@@ -230,7 +352,8 @@ struct CivicaHomePhase3View: View {
                                 .font(CivicaTypography.subheadStrong)
                                 .foregroundStyle(CivicaColors.warningAmber)
                             Image(systemName: "arrow.right")
-                                .font(.system(size: 12, weight: .semibold))
+                                .imageScale(.large)
+                                .font(.body)
                                 .foregroundStyle(CivicaColors.warningAmber)
                         }
                     }
@@ -280,7 +403,8 @@ struct CivicaHomePhase3View: View {
                     link: CivicaPhase3Strings.findHelpLink.value(in: language),
                     trailing: AnyView(
                         Image(systemName: "mappin.circle")
-                            .font(.system(size: 22))
+                            .imageScale(.large)
+                            .font(.body)
                             .foregroundStyle(CivicaColors.pinePrimary)
                             .accessibilityHidden(true)
                     )
@@ -298,7 +422,8 @@ struct CivicaHomePhase3View: View {
     ) -> some View {
         HStack(spacing: CivicaSpacing.md) {
             Image(systemName: icon)
-                .font(.system(size: 22))
+                .imageScale(.large)
+                .font(.body)
                 .foregroundStyle(CivicaColors.ink)
                 .frame(width: 32, alignment: .leading)
                 .accessibilityHidden(true)

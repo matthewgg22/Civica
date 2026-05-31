@@ -1,4 +1,5 @@
 import CivicaDesignSystem
+import OSLog
 import SwiftUI
 
 // HANDOFF board 12: returning user home.
@@ -17,6 +18,7 @@ struct SNAPReturningUserHomeView: View {
     @ObservedObject var statusStore: SNAPApplicationStatusStore
     let language: CivicaLanguage
     let onResume: () -> Void
+    let onReRunScreener: () -> Void
     let onStartOver: () -> Void
 
     var body: some View {
@@ -26,6 +28,11 @@ struct SNAPReturningUserHomeView: View {
                 statusBanner
                 if let result = statusStore.eligibilityResult {
                     verdictCard(result)
+                } else if SNAPReturningUserHomeView.shouldShowFallbackCard(
+                    status: statusStore.status,
+                    eligibilityResult: nil
+                ) {
+                    fallbackCard
                 }
                 timeline
                 primaryActionRow
@@ -38,6 +45,48 @@ struct SNAPReturningUserHomeView: View {
         .navigationBarTitleDisplayMode(.inline)
     }
 
+    // MARK: - Fallback card (IA-6)
+
+    /// True when the view is reached but eligibilityResult is nil — i.e.
+    /// the keychain payload was lost across a crash or version upgrade.
+    /// Drives the quiet recovery card so returning users always have a
+    /// forward path, not a silent omission.
+    static func shouldShowFallbackCard(
+        status: SNAPApplicationStatus,
+        eligibilityResult: SNAPEligibilityResult?
+    ) -> Bool {
+        guard eligibilityResult == nil else { return false }
+        return status.isActiveCase
+    }
+
+    private var fallbackCard: some View {
+        VStack(alignment: .leading, spacing: CivicaSpacing.md) {
+            Text(SNAPReturningHomeStrings.fallbackHeadline.value(in: language))
+                .font(CivicaTypography.body)
+                .foregroundStyle(CivicaColors.ink)
+                .fixedSize(horizontal: false, vertical: true)
+            VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
+                Button { onReRunScreener() } label: {
+                    Text(SNAPReturningHomeStrings.fallbackReRunAction.value(in: language))
+                        .font(CivicaTypography.footnote)
+                        .foregroundStyle(CivicaColors.pinePrimary)
+                }
+                Button { onResume() } label: {
+                    Text(SNAPReturningHomeStrings.fallbackSkipAction.value(in: language))
+                        .font(CivicaTypography.footnote)
+                        .foregroundStyle(CivicaColors.graphite)
+                }
+            }
+        }
+        .padding(CivicaSpacing.lg)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(CivicaColors.surfaceSecondary)
+        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
+        .onAppear {
+            SNAPReturningHomeTelemetry.trackFallbackCardShown(status: statusStore.status)
+        }
+    }
+
     /// "Your previous result" card — only renders when the orchestrator
     /// has recorded a verdict via statusStore.recordEligibilityResult.
     /// Tapping pushes SNAPDecisionMathView with the saved result so the
@@ -48,7 +97,8 @@ struct SNAPReturningUserHomeView: View {
         } label: {
             HStack(alignment: .top, spacing: CivicaSpacing.md) {
                 Image(systemName: verdictIcon(for: result.status))
-                    .font(.system(size: 20, weight: .semibold))
+                    .imageScale(.large)
+                    .font(.body)
                     .foregroundStyle(verdictAccent(for: result.status))
                     .frame(width: 28, alignment: .leading)
                     .accessibilityHidden(true)
@@ -78,6 +128,7 @@ struct SNAPReturningUserHomeView: View {
             )
         }
         .buttonStyle(.plain)
+        .accessibilityLabel(verdictCardTitle(for: result.status))
     }
 
     private func verdictIcon(for status: SNAPEligibilityStatus) -> String {
@@ -151,7 +202,21 @@ struct SNAPReturningUserHomeView: View {
     }
 
     private var primaryActionRow: some View {
-        CivicaPrimaryButton(primaryActionTitle, action: onResume)
+        VStack(spacing: CivicaSpacing.sm) {
+            CivicaPrimaryButton(primaryActionTitle, action: onResume)
+            let previewLine = SNAPReturningHomeStrings.ctaPreviewLine(
+                status: statusStore.status,
+                persistedState: SNAPApplicationDraftStore().load(),
+                language: language
+            )
+            if !previewLine.isEmpty {
+                Text(previewLine)
+                    .font(CivicaTypography.footnote)
+                    .foregroundStyle(CivicaColors.graphite)
+                    .frame(maxWidth: .infinity, alignment: .center)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+        }
     }
 
     private var startOverLink: some View {
@@ -162,6 +227,7 @@ struct SNAPReturningUserHomeView: View {
                 .underline()
         }
         .frame(maxWidth: .infinity)
+        .accessibilityLabel(SNAPStatusHomeStrings.returningStartOver.value(in: language))
     }
 
     // MARK: - Status-specific copy
@@ -249,6 +315,75 @@ enum SNAPReturningHomeStrings {
         "We needed more info last time. See what's missing.",
         es: "Necesitábamos más información la última vez. Ver qué falta."
     )
+
+    /// JR-6 (iOS audit 2026-05-29): destination-preview line under the
+    /// returning-user primary CTA. Removes the "where will this take me"
+    /// cognitive cost. Pure function so unit tests can exercise every
+    /// status branch without touching UserDefaults.
+    static func ctaPreviewLine(
+        status: SNAPApplicationStatus,
+        persistedState: SNAPApplicationDraftStore.PersistedState?,
+        language: CivicaLanguage
+    ) -> String {
+        switch status {
+        case .screenerInProgress:
+            let section = persistedState?.sequentialSection ?? .whereApplying
+            return previewStepLine(section: section, language: language)
+        case .screenerComplete:
+            return SNAPStatusHomeStrings.actionGeneratePacket.value(in: language)
+        case .packetGenerated:
+            return SNAPStatusHomeStrings.actionSubmitToState(
+                stateCode: persistedState?.draft.whereApplying.stateCode,
+                language: language
+            )
+        case .documentsRequested:
+            return SNAPStatusHomeStrings.actionUploadRequested.value(in: language)
+        case .notStarted, .submittedToState, .interviewScheduled,
+             .interviewCompleted, .decisionApproved, .decisionDenied, .recertDue:
+            return ""
+        }
+    }
+
+    private static func previewStepLine(
+        section: SNAPApplicationSection,
+        language: CivicaLanguage
+    ) -> String {
+        let step = section.oneBasedIndex
+        let total = SNAPApplicationSection.count
+        let name = section.title(in: language)
+        switch language {
+        case .english: return "Step \(step) of \(total) \u{00B7} \(name)"
+        case .spanish: return "Paso \(step) de \(total) \u{00B7} \(name)"
+        }
+    }
+
+    // IA-6: fallback card copy when eligibilityResult is nil.
+    static let fallbackHeadline = CivicaText(
+        "We couldn't pull up your screener result.",
+        es: "No pudimos encontrar tu resultado de la evaluación."
+    )
+    static let fallbackReRunAction = CivicaText(
+        "Re-run the screener (2 min)",
+        es: "Repetir la evaluación (2 min)"
+    )
+    static let fallbackSkipAction = CivicaText(
+        "Skip and continue",
+        es: "Omitir y continuar"
+    )
+}
+
+private enum SNAPReturningHomeTelemetry {
+    private static let logger = Logger(subsystem: "Civica", category: "SNAPReturningUserHome")
+
+    /// Logged on first render of the fallback card — fires when
+    /// eligibilityResult is nil on an active-case status. Rate of this
+    /// event in production measures how often keychain loss occurs post-
+    /// migration.
+    static func trackFallbackCardShown(status: SNAPApplicationStatus) {
+        logger.info(
+            "snap.returning_home.fallback_card_shown status=\(status.rawValue, privacy: .public)"
+        )
+    }
 }
 
 #if DEBUG
@@ -261,6 +396,7 @@ struct SNAPReturningUserHomeView_Previews: PreviewProvider {
                 statusStore: store,
                 language: .english,
                 onResume: {},
+                onReRunScreener: {},
                 onStartOver: {}
             )
         }

@@ -86,6 +86,20 @@ struct CivicaQuestionScreen<Affordance: View>: View {
     let secondaryActionTitle: String?
     let onSecondary: (() -> Void)?
     let language: CivicaLanguage
+    /// Universal contextual-help hook. The marker (`questionmark.circle`)
+    /// renders next to every question title; tapping it invokes this
+    /// closure with `(title, helper, language)`. `helper` is the
+    /// on-screen helper paragraph the applicant is already reading
+    /// (this screen's `helper` prop) so the explainer endpoint can
+    /// ground its answer in what the user can already see. The
+    /// component does NOT present the explainer sheet itself — the
+    /// caller wires that up. Default `nil` keeps every existing caller
+    /// compiling without changes; when nil the marker still renders
+    /// (universal coverage is the visible product thesis per the v1
+    /// design doc) but tapping it is a no-op.
+    /// See design doc D5 + T5 + T10 of
+    /// `matthewgreer-gentis-claude-dashboard-state-coverage-design-20260529-135546.md`.
+    let onHelpRequested: ((String, String?, CivicaLanguage) -> Void)?
     let affordance: () -> Affordance
 
     /// Drives the overall-progress bar fill + the percent counter.
@@ -103,6 +117,17 @@ struct CivicaQuestionScreen<Affordance: View>: View {
     @State private var displayedFraction: Double = 0
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
+    /// Environment fallback for the contextual-help marker. Wired by
+    /// `SNAPApplicationContextualHelpHost` at the SNAP application
+    /// root so every question screen downstream gets marker -> sheet
+    /// presentation without per-callsite edits. When the explicit
+    /// `onHelpRequested` initializer arg is non-nil, it takes precedence
+    /// (preserves any future per-screen override); otherwise the
+    /// environment closure is invoked. Both nil = silent tap (still
+    /// renders the marker because universal coverage is the visible
+    /// product thesis per D5).
+    @Environment(\.snapApplicationContextualHelp) private var contextualHelpEnvironment
+
     init(
         progress: Progress? = nil,
         title: String,
@@ -113,6 +138,7 @@ struct CivicaQuestionScreen<Affordance: View>: View {
         secondaryActionTitle: String? = nil,
         onSecondary: (() -> Void)? = nil,
         language: CivicaLanguage = .english,
+        onHelpRequested: ((String, String?, CivicaLanguage) -> Void)? = nil,
         @ViewBuilder affordance: @escaping () -> Affordance
     ) {
         self.progress = progress
@@ -124,6 +150,7 @@ struct CivicaQuestionScreen<Affordance: View>: View {
         self.secondaryActionTitle = secondaryActionTitle
         self.onSecondary = onSecondary
         self.language = language
+        self.onHelpRequested = onHelpRequested
         self.affordance = affordance
     }
 
@@ -137,11 +164,15 @@ struct CivicaQuestionScreen<Affordance: View>: View {
                     if let progress {
                         progressChip(progress)
                     }
-                    Text(title)
-                        .font(CivicaTypography.cardHero)
-                        .foregroundStyle(CivicaColors.ink)
-                        .fixedSize(horizontal: false, vertical: true)
-                        .accessibilityAddTraits(.isHeader)
+                    HStack(alignment: .firstTextBaseline, spacing: CivicaSpacing.sm) {
+                        Text(title)
+                            .font(CivicaTypography.cardHero)
+                            .foregroundStyle(CivicaColors.ink)
+                            .fixedSize(horizontal: false, vertical: true)
+                            .accessibilityAddTraits(.isHeader)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        helpMarker
+                    }
 
                     if let helper, !helper.isEmpty {
                         Text(helper)
@@ -167,7 +198,7 @@ struct CivicaQuestionScreen<Affordance: View>: View {
             let target = progress?.overallFraction ?? 0
             displayedFraction = previousStepFraction(target: target)
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
-                withAnimation(reduceMotion ? nil : .spring(response: 0.7, dampingFraction: 0.82)) {
+                civicaWithAnimation(.spring(response: 0.7, dampingFraction: 0.82)) {
                     displayedFraction = target
                 }
             }
@@ -278,8 +309,63 @@ struct CivicaQuestionScreen<Affordance: View>: View {
             .textCase(.uppercase)
             .kerning(1.2)
             .contentTransition(.numericText())
-            .animation(reduceMotion ? nil : .easeOut(duration: 0.35), value: p.current)
+            .civicaAnimation(.easeOut(duration: 0.35), value: p.current)
             .accessibilityLabel(CivicaQuestionStrings.progressAccessibilityLabel(current: p.current, total: p.total, language: language))
+    }
+
+    /// Universal contextual-help marker rendered next to every question
+    /// title. Visual: `questionmark.circle` in `CivicaColors.pinePrimary`.
+    /// Tapping calls `onHelpRequested?(title, helper, language)` — the component
+    /// does not own the explainer sheet. 32pt minimum tap target meets
+    /// HIG; accessibility label is locale-aware ("Help with this question"
+    /// in EN, "Ayuda con esta pregunta" in ES).
+    ///
+    /// The marker ALWAYS renders, even when `onHelpRequested` is nil, so
+    /// the marker is a visible promise of help across all 17+ pages of
+    /// the SNAP application. Callers wire the closure to present the
+    /// `SNAPApplicationContextualHelpSheet` separately.
+    private var helpMarker: some View {
+        Button {
+            // Tap analytics: the question title is a closed-set static
+            // UI string (never a user utterance), safe to log. Fired
+            // here so it counts every tap regardless of which wiring
+            // path (per-callsite closure vs env fallback) handles the
+            // presentation. The helper paragraph is NEVER logged.
+            SNAPAnalytics.trackIntakeHelpOpened(questionTitle: title)
+
+            // Per-callsite closure wins when supplied; otherwise the
+            // env-value fallback runs. Either path may be nil — the
+            // marker is universal and renders even when nothing is
+            // wired, so the tap is silently swallowed. Real wiring
+            // happens at `SNAPApplicationFlowOrchestratorView` via
+            // `SNAPApplicationContextualHelpHost`. `helper` is this
+            // screen's on-screen helper paragraph, threaded through so
+            // the explainer can ground its answer in what the user
+            // already sees.
+            if let onHelpRequested {
+                onHelpRequested(title, helper, language)
+            } else {
+                contextualHelpEnvironment?(title, helper, language)
+            }
+        } label: {
+            Image(systemName: "questionmark.circle")
+                .font(.system(size: 22))
+                .foregroundStyle(CivicaColors.pinePrimary)
+                .frame(minWidth: 32, minHeight: 32)
+                .contentShape(Rectangle())
+        }
+        .accessibilityLabel(helpMarkerAccessibilityLabel)
+    }
+
+    /// Locale-aware accessibility label for the marker. Kept inline so
+    /// CivicaQuestionScreen.swift remains the sole edit surface — once
+    /// the v1.1 IntakeHelpStrings ships, callers can override at the
+    /// sheet level without re-touching this file.
+    private var helpMarkerAccessibilityLabel: String {
+        switch language {
+        case .english: return "Help with this question"
+        case .spanish: return "Ayuda con esta pregunta"
+        }
     }
 
     private var actionFooter: some View {
@@ -321,7 +407,8 @@ struct CivicaQuestionChoices: View {
                     HStack(spacing: CivicaSpacing.md) {
                         Image(systemName: selection == option ? "checkmark.circle.fill" : "circle")
                             .foregroundStyle(selection == option ? CivicaColors.pinePrimary : CivicaColors.graphite)
-                            .font(.system(size: 22))
+                            .imageScale(.large)
+                            .font(.body)
                             .accessibilityHidden(true)
                         Text(option)
                             .font(CivicaTypography.subheadStrong)

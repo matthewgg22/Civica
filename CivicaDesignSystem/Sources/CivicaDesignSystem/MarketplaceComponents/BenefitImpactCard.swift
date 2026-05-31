@@ -162,7 +162,7 @@ public struct BenefitImpactCard: View {
             }
             if let note {
                 Text(note)
-                    .font(.system(size: 11))
+                    .font(CivicaTypography.caption)
                     .foregroundStyle(CivicaColors.graphite.opacity(0.7))
             }
         }
@@ -180,7 +180,8 @@ public struct BenefitImpactCard: View {
                         .foregroundStyle(CivicaColors.graphite)
                         .strikethrough(color: CivicaColors.graphite.opacity(0.6))
                     Image(systemName: "arrow.right")
-                        .font(.system(size: 12))
+                        .imageScale(.large)
+                        .font(.body)
                         .foregroundStyle(CivicaColors.graphite)
                     CivicaMoney(amount: projectedBenefit, denominator: "mo", font: CivicaTypography.cardHero)
                         .foregroundStyle(projectedBenefit < currentBenefit ? CivicaColors.warningAmber : CivicaColors.ink)

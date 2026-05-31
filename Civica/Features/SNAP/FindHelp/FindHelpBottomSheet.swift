@@ -141,7 +141,7 @@ struct FindHelpBottomSheet: View {
                 // current detent even if the finger lifts early.
                 let predicted = drawerHeight - value.predictedEndTranslation.height
                 let snapped = nearestDetent(to: predicted)
-                withAnimation(.spring(response: 0.32, dampingFraction: 0.72)) {
+                civicaWithAnimation(.spring(response: 0.32, dampingFraction: 0.72)) {
                     drawerHeight = snapped
                 }
             }

@@ -20,12 +20,12 @@ enum InterviewCoachStrings {
     // MARK: Entry hub
 
     static let entryTitle = CivicaText(
-        "Practice your SNAP interview",
-        es: "Practica tu entrevista de SNAP"
+        "Practice your SNAP interview with Mae",
+        es: "Practica tu entrevista de SNAP con Mae"
     )
     static let entryBody = CivicaText(
-        "Rehearse the questions caseworkers actually ask. Pick your state, choose a scenario, and practice communicating your situation clearly. Preparation doesn't affect eligibility — but it can reduce the stress of the interview.",
-        es: "Practica las preguntas que realmente hacen los trabajadores sociales. Elige tu estado, elige un escenario, y practica comunicar tu situación con claridad. La preparación no afecta la elegibilidad — pero puede reducir el estrés de la entrevista."
+        "Mae helps you rehearse the questions caseworkers actually ask. Pick your state, choose a scenario, and practice communicating your situation clearly. Preparation doesn't affect eligibility — but it can reduce the stress of the interview.",
+        es: "Mae te ayuda a practicar las preguntas que realmente hacen los trabajadores sociales. Elige tu estado, elige un escenario, y practica comunicar tu situación con claridad. La preparación no afecta la elegibilidad — pero puede reducir el estrés de la entrevista."
     )
     static let browseTitle = CivicaText(
         "Browse practice questions",
@@ -39,9 +39,12 @@ enum InterviewCoachStrings {
         "Start a practice session",
         es: "Iniciar sesión de práctica"
     )
+    // Scenario label mirrors the default practice context, which is
+    // SessionContext.defaultCA (PracticeSessionViewModel) since the CA
+    // launch. Keep this in sync if the default state changes.
     static let practiceSubtitle = CivicaText(
-        "Roleplay with a simulated caseworker. Massachusetts initial-application scenario.",
-        es: "Practica con un trabajador social simulado. Escenario de solicitud inicial de Massachusetts."
+        "Roleplay with a simulated caseworker. California initial-application scenario.",
+        es: "Practica con un trabajador social simulado. Escenario de solicitud inicial de California."
     )
 
     // MARK: Persona picker
@@ -136,8 +139,8 @@ enum InterviewCoachStrings {
     // MARK: Navigation titles
 
     static let navInterviewCoach = CivicaText(
-        "Interview Coach",
-        es: "Coach de entrevista"
+        "Interview prep with Mae",
+        es: "Preparación de entrevista con Mae"
     )
     static let navPracticeSession = CivicaText(
         "Practice session",
@@ -152,8 +155,8 @@ enum InterviewCoachStrings {
         es: "Preguntas de práctica"
     )
     static let navFeedback = CivicaText(
-        "Feedback",
-        es: "Comentarios"
+        "Mae's feedback",
+        es: "Comentarios de Mae"
     )
 
     // MARK: Browser
@@ -202,8 +205,8 @@ enum InterviewCoachStrings {
         es: "El trabajador social está escribiendo…"
     )
     static let scoringSession = CivicaText(
-        "Scoring your session…",
-        es: "Evaluando tu sesión…"
+        "Mae is reviewing your session…",
+        es: "Mae está revisando tu sesión…"
     )
     static let yourAnswerPlaceholder = CivicaText(
         "Your answer…",
@@ -214,12 +217,12 @@ enum InterviewCoachStrings {
         es: "Entrevista completada."
     )
     static let getFeedback = CivicaText(
-        "Get feedback",
-        es: "Obtener comentarios"
+        "Get Mae's feedback",
+        es: "Obtener los comentarios de Mae"
     )
     static let seeFeedback = CivicaText(
-        "See feedback",
-        es: "Ver comentarios"
+        "See Mae's notes",
+        es: "Ver las notas de Mae"
     )
     static let tryAgain = CivicaText(
         "Try again",
@@ -233,12 +236,12 @@ enum InterviewCoachStrings {
     // MARK: Review summary
 
     static let sessionFeedbackTitle = CivicaText(
-        "Session feedback",
-        es: "Comentarios de la sesión"
+        "Mae's feedback",
+        es: "Comentarios de Mae"
     )
     static let sessionFeedbackIntro = CivicaText(
-        "This is practice feedback, not a prediction of your real interview. It's meant to help you spot strengths to lean on and rough edges to polish before the real thing.",
-        es: "Estos son comentarios de práctica, no una predicción de tu entrevista real. Te ayudarán a identificar fortalezas y áreas a mejorar antes de la entrevista oficial."
+        "Here's Mae's read on your practice session — not a prediction of your real interview. It's meant to help you spot strengths to lean on and rough edges to polish before the real thing.",
+        es: "Esto es lo que Mae observó en tu sesión de práctica — no una predicción de tu entrevista real. Te ayudará a identificar fortalezas y áreas a mejorar antes de la entrevista oficial."
     )
     static let overallScoreLabel = CivicaText(
         "Overall readiness",
@@ -292,13 +295,28 @@ enum InterviewCoachStrings {
     //
     // Conservative legal-protection language for the practice tool.
     // Bilingual; rendered as a footer on every Interview Coach surface.
-    // Phrasing is intentionally cautious until MLRI / GBLS or another
-    // SNAP-knowledgeable legal partner signs off on the question bank
-    // itself.
+    // Points at California resources (CalFresh / CDSS, 2-1-1 California,
+    // LawHelpCA) because CA is the launch state. The prior copy pointed
+    // at Massachusetts DTA / masslegalhelp, which was wrong for CA
+    // applicants.
+    //
+    // TODO(legal/CA-counsel): This is legal-protection copy. A
+    // California SNAP-knowledgeable legal partner — e.g. CRLA, Bay Area
+    // Legal Aid, or Western Center on Law & Poverty — must sign off
+    // before this ships. NOT MLRI / GBLS: those are Massachusetts orgs
+    // and no longer the right reviewers now that the launch state is CA.
+    // Phrasing stays intentionally cautious until that CA sign-off lands.
+    //
+    // NOTE: these strings hardcode CA rather than reading from
+    // SNAPStateResources because the Interview Coach is single-state for
+    // the CA launch. If the coach goes multi-state, the agency name /
+    // URL / hotline should come from SNAPStateResources.resource(for:)
+    // (the single source for state-conditioned copy); the legal-aid +
+    // 2-1-1 pointers would still need per-state data added there first.
 
     static let disclaimerBody = CivicaText(
-        "This is a practice tool, not legal advice. For binding answers about your SNAP application, contact your local DTA office (mass.gov/dta) or a Massachusetts legal aid organization (masslegalhelp.org). Practice prompts and AI feedback are illustrative — they may not match your situation.",
-        es: "Esto es una herramienta de práctica, no asesoría legal. Para respuestas vinculantes sobre tu solicitud de SNAP, comunícate con tu oficina local del DTA (mass.gov/dta) o una organización de asistencia legal de Massachusetts (masslegalhelp.org). Las preguntas de práctica y los comentarios de la IA son ilustrativos — pueden no aplicar a tu situación."
+        "This is a practice tool, not legal advice. For binding answers about your CalFresh (SNAP) application, contact your county CalFresh office (cdss.ca.gov), call 2-1-1 California, or reach a California legal aid organization (lawhelpca.org). Practice prompts and AI feedback are illustrative — they may not match your situation.",
+        es: "Esto es una herramienta de práctica, no asesoría legal. Para respuestas vinculantes sobre tu solicitud de CalFresh (SNAP), comunícate con tu oficina local de CalFresh (cdss.ca.gov), llama al 2-1-1 California, o contacta una organización de asistencia legal de California (lawhelpca.org). Las preguntas de práctica y los comentarios de la IA son ilustrativos — pueden no aplicar a tu situación."
     )
 
     static let disclaimerCompact = CivicaText(

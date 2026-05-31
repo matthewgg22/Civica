@@ -286,6 +286,7 @@ struct WorkHoursLogView: View {
         }
         .background(CivicaColors.pinePrimary)
         .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous))
+        .accessibilityLabel(WorkHoursStrings.addSession.value(in: language))
     }
 
     // MARK: - Loading / error states

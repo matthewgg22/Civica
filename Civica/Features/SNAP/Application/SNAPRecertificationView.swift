@@ -68,7 +68,8 @@ struct SNAPRecertificationView: View {
     private var deadlineBadge: some View {
         HStack(spacing: CivicaSpacing.xs) {
             Image(systemName: "clock.fill")
-                .font(.system(size: 12, weight: .semibold))
+                .imageScale(.large)
+                .font(.body)
                 .foregroundStyle(CivicaColors.warningAmber)
                 .accessibilityHidden(true)
             Text(deadlineLine)
@@ -130,7 +131,8 @@ struct SNAPRecertificationView: View {
     private func checklistRow(_ label: String) -> some View {
         HStack(alignment: .top, spacing: CivicaSpacing.md) {
             Image(systemName: "checkmark.circle")
-                .font(.system(size: 18, weight: .semibold))
+                .imageScale(.large)
+                .font(.body)
                 .foregroundStyle(CivicaColors.amberPrimary)
                 .frame(width: 22, alignment: .leading)
                 .padding(.top, 2)
@@ -162,7 +164,8 @@ struct SNAPRecertificationView: View {
         } label: {
             HStack(alignment: .top, spacing: CivicaSpacing.md) {
                 Image(systemName: "person.2.fill")
-                    .font(.system(size: 20, weight: .semibold))
+                    .imageScale(.large)
+                    .font(.body)
                     .foregroundStyle(CivicaColors.pinePrimary)
                     .frame(width: 28, alignment: .leading)
                     .accessibilityHidden(true)

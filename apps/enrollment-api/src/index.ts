@@ -22,10 +22,12 @@ import benefitsCalRouter from "./routes/benefitscal.js";
 import extensionRouter from "./routes/extension/index.js";
 import { publicDeviceRouter, authedDeviceRouter } from "./routes/oauth.js";
 import recertRouter from "./routes/recert.js";
+import intakeHelpRouter from "./routes/intake-help.js";
 import twilioWebhookRouter from "./routes/twilio-webhook.js";
 import workRequirementsRouter from "./routes/work-requirements.js";
 import navigatorRouter from "./routes/navigator.js";
 import argyleWebhookRouter from "./routes/argyle-webhook.js";
+import countyOutcomeWebhookRouter from "./routes/county-outcome-webhook.js";
 import oauthCanvasRouter from "./routes/oauth-canvas.js";
 import featureFlagsRouter from "./routes/feature-flags.js";
 import buddyRouter from "./routes/buddy.js";
@@ -109,6 +111,13 @@ app.route("/v1/enrollment/extension", extensionRouter);
 // /v1/enrollment subtree below.
 app.route("/v1/enrollment/oauth/device", publicDeviceRouter);
 
+// POST /v1/intake/help — Tier B universal contextual-help explainer.
+// Public (anonymous via x-anonymous-id header, no JWT). Mounts here BEFORE
+// the authed /v1/enrollment subtree. Rate-limited (strict tier) inside the
+// route. See src/routes/intake-help.ts for the safety-filter design + the
+// Monday 2026-06-01 TestFlight demo contract.
+app.route("/v1/intake/help", intakeHelpRouter);
+
 // All enrollment routes require a valid Supabase JWT
 const api = new Hono<{ Bindings: Env }>();
 api.use("*", authMiddleware);
@@ -174,6 +183,11 @@ app.route("/v1/enrollment", api);
 // T-DR3-8: receives paycheck.added, detects cliff event, fires navigator task.
 app.route("/webhooks/argyle", argyleWebhookRouter);
 
+// County-authoritative outcome webhook (TODO-44) — outside auth middleware
+// (inbound from county/CDSS feed, HMAC-verified inside the route; mandatory
+// secret). Upserts packet_outcomes(source=county_authoritative) → measured_per.
+app.route("/webhooks/county-outcome", countyOutcomeWebhookRouter);
+
 // EBT scraper webhook — outside auth middleware (inbound from Fly scraper,
 // HMAC-verified inside the route). Lane B will set EBT_SCRAPER_WEBHOOK_SECRET.
 mountEbtWebhooks(app);
@@ -210,6 +224,7 @@ import { runWeeklyDigest } from "./cron/weekly-digest.js";
 import { purgeOldPushLog } from "./cron/purge-push-log.js";
 import { runInternalQcSampler } from "./cron/internal-qc-sampler.js";
 import { refreshErrorRateSnapshot } from "./cron/error-rate-snapshot.js";
+import { refreshKpiSnapshot } from "./cron/kpi-snapshot.js";
 
 // Cron dispatch — keep tiny and table-driven so adding/removing
 // schedules in wrangler.toml is the only change needed. Tasks run under
@@ -321,6 +336,16 @@ async function dispatchScheduled(
         log("info", "scheduled: error-rate snapshot refresh finished", { ...result });
       } catch (err) {
         log("error", "scheduled: error-rate snapshot refresh failed", { error: String(err) });
+      }
+      // KPI snapshot: refresh the three-pillar steering-tree truth point. Same
+      // 04:00 slot as the error-rate snapshot (no new cron trigger). T3 of the
+      // KPI framework (/plan-eng-review 2026-05-30).
+      log("info", "scheduled: kpi snapshot refresh starting");
+      try {
+        const result = await refreshKpiSnapshot(env, log);
+        log("info", "scheduled: kpi snapshot refresh finished", { ...result });
+      } catch (err) {
+        log("error", "scheduled: kpi snapshot refresh failed", { error: String(err) });
       }
       return;
     }

@@ -62,6 +62,20 @@ export type {
   MeasuredCounts,
 } from "./scoring/error-rate-snapshot";
 
+// KPI snapshot ("three-pillar steering tree") builder. Composes the leading /
+// measured KPI rows for snap_enrollment.kpi_snapshot. Pure + deterministic;
+// the engine owns the n-gate + Wilson band. See scoring/kpi-snapshot.ts.
+export { buildKpiSnapshot } from "./scoring/kpi-snapshot";
+export type {
+  KpiSnapshotRow,
+  KpiSnapshotInputs,
+  KpiPillar,
+  KpiKey,
+  KpiSourceKind,
+  ElementTriggerCount,
+  AuthoritativeCounts,
+} from "./scoring/kpi-snapshot";
+
 // CDSS / county-facing baseline mapping (added 2026-05-27 for TODO-4).
 // Three artifacts that turn the population PER math into county-sales-ready
 // talking points: USDA element → Civica pillar mapping, BBCE-removal

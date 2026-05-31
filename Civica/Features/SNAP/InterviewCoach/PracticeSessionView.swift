@@ -155,7 +155,7 @@ struct PracticeSessionView: View {
                 }
                 .onChange(of: viewModel.transcript.count) { _, newCount in
                     if newCount > 0 {
-                        withAnimation(.easeOut(duration: 0.2)) {
+                        civicaWithAnimation(.easeOut(duration: 0.2)) {
                             proxy.scrollTo(newCount - 1, anchor: .bottom)
                         }
                     }

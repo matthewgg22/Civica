@@ -49,6 +49,7 @@ struct SNAPUnsupportedStateView: View {
                         Text(SNAPUnsupportedStateStrings.changeStateCTA.value(in: language))
                     }
                     .buttonStyle(CivicaPrimaryCTAButtonStyle())
+                    .accessibilityLabel(SNAPUnsupportedStateStrings.changeStateCTA.value(in: language))
 
                     HStack(spacing: CivicaSpacing.lg) {
                         Button {

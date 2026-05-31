@@ -37,17 +37,16 @@ struct SNAPVoiceMicButton: View {
                             .stroke(borderColor, lineWidth: 1.5)
                     )
                     .scaleEffect(isPulsing && isListening && !reduceMotion ? 1.12 : 1.0)
-                    .animation(
-                        reduceMotion
-                            ? nil
-                            : (isListening
-                                ? .easeInOut(duration: 0.9).repeatForever(autoreverses: true)
-                                : CivicaAnimation.standard),
+                    .civicaAnimation(
+                        isListening
+                            ? .easeInOut(duration: 0.9).repeatForever(autoreverses: true)
+                            : CivicaAnimation.standard,
                         value: isPulsing
                     )
 
                 iconView
-                    .font(.system(size: 16, weight: .semibold))
+                    .imageScale(.large)
+                    .font(.body)
                     .foregroundStyle(iconColor)
             }
             .frame(minWidth: 44, minHeight: 44)

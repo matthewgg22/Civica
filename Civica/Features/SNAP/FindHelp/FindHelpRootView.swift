@@ -34,7 +34,7 @@ struct FindHelpRootView: View {
     /// One-time first-launch onboarding card visibility. Persisted
     /// per-install via AppStorage so the card never resurfaces after
     /// the user dismisses it.
-    @AppStorage("find_help.has_seen_onboarding")
+    @AppStorage(CivicaAppStorageKeys.findHelpHasSeenOnboarding)
     private var hasSeenOnboarding: Bool = false
 
     @AppStorage(CivicaLanguage.defaultStorageKey)
@@ -168,7 +168,7 @@ struct FindHelpRootView: View {
                             let meters = panned.distance(from: anchor)
                             guard meters >= Self.searchAreaArmThresholdKm * 1_000 else { return }
                         }
-                        withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                        civicaWithAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
                             searchAreaCenter = center
                         }
                     }
@@ -177,7 +177,7 @@ struct FindHelpRootView: View {
                 .overlay(alignment: .top) {
                     if let center = searchAreaCenter {
                         Button {
-                            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                            civicaWithAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
                                 searchAreaCenter = nil
                             }
                             store.searchNearby(
@@ -188,7 +188,8 @@ struct FindHelpRootView: View {
                         } label: {
                             HStack(spacing: 6) {
                                 Image(systemName: "arrow.clockwise")
-                                    .font(.system(size: 13, weight: .semibold))
+                                    .imageScale(.large)
+                                    .font(.body)
                                     .accessibilityHidden(true)
                                 Text(SNAPGenericStrings.searchThisArea.value(in: language))
                                     .font(CivicaTypography.footnoteStrong)
@@ -203,6 +204,7 @@ struct FindHelpRootView: View {
                         }
                         .padding(.top, CivicaSpacing.lg)
                         .transition(.move(edge: .top).combined(with: .opacity))
+                        .accessibilityLabel(SNAPGenericStrings.searchThisArea.value(in: language))
                     }
                 }
 
@@ -238,7 +240,7 @@ struct FindHelpRootView: View {
                 FindHelpOnboardingCard(
                     language: language,
                     onDismiss: {
-                        withAnimation(.easeOut(duration: 0.2)) {
+                        civicaWithAnimation(.easeOut(duration: 0.2)) {
                             hasSeenOnboarding = true
                         }
                         FindHelpAnalytics.trackOnboardingDismissed()

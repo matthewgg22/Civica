@@ -27,7 +27,8 @@ struct EBTAnomalyBannerView: View {
         } label: {
             HStack(spacing: CivicaSpacing.sm) {
                 Image(systemName: iconName)
-                    .font(.system(size: 16, weight: .semibold))
+                    .imageScale(.large)
+                    .font(.body)
                     .foregroundStyle(tint)
                     .accessibilityHidden(true)
 
@@ -38,7 +39,7 @@ struct EBTAnomalyBannerView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
 
                 Button {
-                    withAnimation(.easeInOut(duration: 0.2)) {
+                    civicaWithAnimation(CivicaAnimation.standard) {
                         store.dismiss(alert)
                     }
                 } label: {
@@ -55,6 +56,7 @@ struct EBTAnomalyBannerView: View {
         }
         .buttonStyle(.plain)
         .accessibilityElement(children: .combine)
+        .accessibilityLabel(alert.bannerCopy.value(in: language))
         .accessibilityHint("Tap to see details and take action")
         .sheet(isPresented: $isDetailPresented) {
             EBTAnomalyDetailView(alert: alert, store: store, language: language)

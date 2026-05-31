@@ -172,7 +172,8 @@ struct SNAPIDScanOfferView: View {
     private func benefitRow(icon: String, text: String) -> some View {
         HStack(alignment: .top, spacing: CivicaSpacing.sm) {
             Image(systemName: icon)
-                .font(.system(size: 15, weight: .medium))
+                .imageScale(.large)
+                .font(.body)
                 .foregroundStyle(CivicaColors.pinePrimary)
                 .frame(width: 20)
                 .accessibilityHidden(true)

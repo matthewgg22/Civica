@@ -91,7 +91,7 @@ struct EBTAnomalyDetailView: View {
                 // Dismiss
                 Section {
                     Button(role: .cancel) {
-                        withAnimation(.easeInOut(duration: 0.2)) {
+                        civicaWithAnimation(CivicaAnimation.standard) {
                             store.dismiss(alert)
                         }
                         dismiss()
@@ -109,6 +109,7 @@ struct EBTAnomalyDetailView: View {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button(EBTAnomalyStrings.dismissCTA.value(in: language)) { dismiss() }
                         .font(CivicaTypography.footnoteStrong)
+                        .accessibilityLabel(EBTAnomalyStrings.dismissCTA.value(in: language))
                 }
             }
         }

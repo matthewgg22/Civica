@@ -21,7 +21,7 @@ struct RecertNotificationPermissionView: View {
 
     /// One-time dismissal flag. Re-shown only when the user enters a
     /// new phase of the recert flow (e.g. completes Phantom Recert).
-    @AppStorage("co.civica.recertCompanion.permissionDismissed")
+    @AppStorage(CivicaAppStorageKeys.recertCompanionPermissionDismissed)
     private var hasDismissed: Bool = false
 
     @State private var systemStatus: UNAuthorizationStatus = .notDetermined
@@ -51,7 +51,8 @@ struct RecertNotificationPermissionView: View {
         VStack(alignment: .leading, spacing: CivicaSpacing.md) {
             HStack(spacing: CivicaSpacing.sm) {
                 Image(systemName: "bell.badge")
-                    .font(.system(size: 22))
+                    .imageScale(.large)
+                    .font(.body)
                     .foregroundStyle(CivicaColors.pinePrimary)
                 Text(RecertCompanionStrings.reminderPermissionTitle.value(in: language))
                     .font(CivicaTypography.sectionHeader)

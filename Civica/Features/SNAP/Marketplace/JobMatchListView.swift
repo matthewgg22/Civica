@@ -101,6 +101,7 @@ struct JobMatchListView: View {
                     .strokeBorder(CivicaColors.amberPrimary, lineWidth: 1)
                     .frame(width: 16, height: 16)
                 Text("i")
+                    // Info badge sized to fit fixed 16pt circle — keep system size.
                     .font(.system(size: 10, weight: .semibold))
                     .foregroundStyle(CivicaColors.amberPrimary)
             }

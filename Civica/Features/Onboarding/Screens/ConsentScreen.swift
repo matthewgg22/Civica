@@ -70,7 +70,8 @@ struct ConsentScreen: View {
                 Image(systemName: viewModel.hasConsented
                       ? "checkmark.square.fill"
                       : "square")
-                    .font(.system(size: 22, weight: .regular))
+                    .imageScale(.large)
+                    .font(.body)
                     .foregroundStyle(viewModel.hasConsented
                                      ? CivicaColors.pinePrimary
                                      : CivicaColors.graphite)

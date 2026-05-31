@@ -10,7 +10,7 @@ import SwiftUI
 // behind the same root.
 
 struct CivicaRootView: View {
-    @AppStorage("co.civica.hasCompletedOnboarding")
+    @AppStorage(CivicaAppStorageKeys.hasCompletedOnboarding)
     private var hasCompletedOnboarding: Bool = false
 
     @AppStorage(CivicaLanguage.defaultStorageKey)
@@ -29,7 +29,7 @@ struct CivicaRootView: View {
     /// flow. Routes them through CivicaSNAPFlowView with the recert
     /// banner instead of the standard recertification intro. Cleared
     /// when packet generation moves status forward to .packetGenerated.
-    @AppStorage("co.civica.recertInProgress")
+    @AppStorage(CivicaAppStorageKeys.recertInProgress)
     private var isRecertInProgress: Bool = false
 
     /// IA-4 (audit 2026-05-29): presents SNAPSettingsSheet from a gear
@@ -99,7 +99,8 @@ struct CivicaRootView: View {
                 } else {
                     OnboardingFlowView { chosenLanguage in
                         languageRaw = chosenLanguage.rawValue
-                        withAnimation(.easeInOut(duration: 0.32)) {
+                        // Non-token duration (0.32) intentional — onboarding→root crossfade.
+                        civicaWithAnimation(.easeInOut(duration: 0.32)) {
                             hasCompletedOnboarding = true
                         }
                     }
@@ -156,6 +157,15 @@ struct CivicaRootView: View {
                     },
                     onStartOver: {
                         statusStore.reset()
+                    },
+                    onOpenExternalPortal: {
+                        // IA-5: when AppealabilityService demotes
+                        // Appeal, the primary CTA becomes "Speak with
+                        // a navigator" and routes through the state
+                        // portal — same posture as Phase 2/3.
+                        externalLink = CivicaExternalLinks.applyPortal(
+                            for: SNAPApplicationDraftStore().load()?.draft.whereApplying.stateCode
+                        )
                     }
                 )
             }
@@ -239,6 +249,14 @@ struct CivicaRootView: View {
                     if statusStore.status.resumesIntoApplicationFlow {
                         isResumingApplication = true
                     }
+                },
+                onReRunScreener: {
+                    // IA-6: user lost their eligibility result and chose to
+                    // re-walk the screener. Reset to screenerInProgress so
+                    // the orchestrator starts from the top, then push the
+                    // flow the same way onResume does.
+                    statusStore.advance(to: .screenerInProgress)
+                    isResumingApplication = true
                 },
                 onStartOver: {
                     statusStore.reset()

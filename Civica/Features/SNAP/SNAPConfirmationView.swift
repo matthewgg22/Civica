@@ -53,6 +53,7 @@ struct SNAPConfirmationView: View {
                 }
                 .buttonStyle(CivicaPrimaryCTAButtonStyle())
                 .disabled(officialURL == nil)
+                .accessibilityLabel(SNAPConfirmationStrings.openOfficialSite.value(in: language))
 
                 if officialURL == nil {
                     Text(SNAPConfirmationStrings.officialLinkComingSoon.value(in: language))

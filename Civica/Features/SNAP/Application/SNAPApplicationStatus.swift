@@ -94,4 +94,24 @@ enum SNAPApplicationStatus: String, Codable, CaseIterable, Sendable {
             return false
         }
     }
+
+    /// True when the Phase 2 (Pending) home's primary CTA should push
+    /// the in-app SNAPInterviewCoachView instead of presenting the
+    /// generic SNAPWhatHappensNextSheet. Today that's only
+    /// `.interviewScheduled` — the highest-attrition moment in the SNAP
+    /// application, where coaching the user through a 15–20 minute
+    /// phone call is the highest-leverage thing Civica can do.
+    ///
+    /// JR-3 (audit 2026-05-29): the Phase 2 surface already flipped its
+    /// CTA copy to "Prepare for your interview" for this sub-state but
+    /// still routed it through the same sheet as every other Phase 2
+    /// status. CivicaHomePhase2View.primaryCTA now gates on this
+    /// predicate so the copy and the destination stay in lockstep.
+    /// SNAPWaitingRoomView's actionBanner used the same in-app coach
+    /// for `.interviewScheduled` before this PR; Phase 2 had simply
+    /// not inherited the rule when it took over the post-submission
+    /// surface from the waiting room.
+    var phase2PrimaryCTAPushesInterviewCoach: Bool {
+        self == .interviewScheduled
+    }
 }

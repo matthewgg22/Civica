@@ -99,11 +99,17 @@ final class CountyOutcomeClient {
         }
     }
 
-    // TODO: wire to /me/packets/{id}/county-outcome on enrollment-api.
-    // Until that endpoint ships (separate PR), this is a no-op so
-    // local persistence is the source of truth. Match the dashboard's
-    // PATCH payload shape: { packet_id, county_outcome }.
+    // The endpoint now EXISTS: POST /me/packets/{id}/outcome on enrollment-api
+    // (authed; JSON body { "outcome": "<approved|denied|pending_decision>" } —
+    // the CountyOutcomeSelection rawValue). It upserts source=self_report
+    // idempotently and feeds the Pillar-1 denial_rate KPI.
+    //
+    // This stays a no-op stub for now: the real POST needs an auth token provider
+    // (CivicaEnrollmentAuth.currentAccessToken) + HTTPEnrollmentAPIClient
+    // .resolveBaseURL() injected into this singleton, and must be verified on a
+    // real iOS build — tracked as TODO-47. Local persistence remains the source
+    // of truth until then (offline-safe; the prompt won't re-fire).
     static func defaultNetworkSubmit(_ record: CountyOutcomeRecord) async throws {
-        // No-op stub.
+        // No-op stub — see TODO-47 for the real wire-up (auth + base-URL injection).
     }
 }

@@ -216,7 +216,8 @@ struct MShimmer: View {
             .fill(Color.civicaGraphite.opacity(phase))
             .frame(width: width, height: height)
             .onAppear {
-                withAnimation(.easeInOut(duration: 0.9).repeatForever(autoreverses: true)) {
+                // Non-token duration (0.9 pulse loop).
+                civicaWithAnimation(.easeInOut(duration: 0.9).repeatForever(autoreverses: true)) {
                     phase = 0.1
                 }
             }

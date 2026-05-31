@@ -45,6 +45,16 @@ enum SNAPAnalytics {
         static let reEntryConfirmed = "snap_reentry_confirmed"
         static let reEntryDismissed = "snap_reentry_dismissed"
         static let reEntryError = "snap_reentry_error"
+        // Intake contextual-help ("Ask Mae") funnel. Counts only — the
+        // question title is a closed-set static UI string (never a user
+        // utterance or eligibility answer), carried via the `topic`
+        // slot. Never logs the helper paragraph, the explainer text,
+        // or any draft field.
+        static let intakeHelpOpened = "snap_intake_help_opened"
+        static let intakeHelpFiltered = "snap_intake_help_filtered"
+        static let intakeHelpError = "snap_intake_help_error"
+        // IS-9: draft load failure surface on entry view.
+        static let draftLoadFailed = "snap_draft_load_failed"
     }
 
     /// Track a single conversation turn. `topic` is the QuestionTopic the
@@ -123,6 +133,24 @@ enum SNAPAnalytics {
         send(Event.interview24hNotificationScheduled, stepName: nil, stepIndex: nil)
     }
 
+    // MARK: - Draft load failure (IS-9)
+
+    /// Fires once on first render when a draft existed on disk but
+    /// couldn't be decoded. The `topic` slot encodes the error variant
+    /// ("schema_mismatch" | "io_error" | "decoding_error") — closed set,
+    /// no PII. Version is omitted per the allowlist; telemetry bucket
+    /// is the event itself.
+    static func trackDraftLoadFailure(error: DraftLoadError) {
+        let variant: String
+        switch error {
+        case .schemaMismatch: variant = "schema_mismatch"
+        case .ioError:        variant = "io_error"
+        case .decodingError:  variant = "decoding_error"
+        case .empty:          return
+        }
+        send(Event.draftLoadFailed, stepName: nil, stepIndex: nil, topic: variant)
+    }
+
     // MARK: - Re-entry assist (Unrath retention pillar, G2)
 
     /// Card surfaced to the applicant (state became .candidate). Fires once
@@ -153,6 +181,30 @@ enum SNAPAnalytics {
     /// failed) or "enroll" (POST re-enroll-from failed). Encoded via topic.
     static func trackReEntryError(stage: String) {
         send(Event.reEntryError, stepName: nil, stepIndex: nil, topic: stage)
+    }
+
+    // MARK: - Intake contextual-help ("Ask Mae")
+
+    /// The applicant tapped the universal help marker on a question
+    /// screen. `questionTitle` is the closed-set static UI question
+    /// string the marker sits next to — never a user-entered value —
+    /// carried via the `topic` slot for consistency with the
+    /// conversation/re-entry funnels.
+    static func trackIntakeHelpOpened(questionTitle: String) {
+        send(Event.intakeHelpOpened, stepName: nil, stepIndex: nil, topic: questionTitle)
+    }
+
+    /// The intake-help endpoint returned a filtered response (the
+    /// backend's safety layer scrubbed the explainer). Counts only.
+    static func trackIntakeHelpFiltered(questionTitle: String) {
+        send(Event.intakeHelpFiltered, stepName: nil, stepIndex: nil, topic: questionTitle)
+    }
+
+    /// The intake-help request failed (network / 429 / 500 / timeout /
+    /// decode / empty) and the sheet fell back to the navigator nudge.
+    /// Counts only — no error body, no PII.
+    static func trackIntakeHelpError(questionTitle: String) {
+        send(Event.intakeHelpError, stepName: nil, stepIndex: nil, topic: questionTitle)
     }
 
     static func makeParameters(

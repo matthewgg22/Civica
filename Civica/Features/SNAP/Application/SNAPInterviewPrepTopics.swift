@@ -180,4 +180,21 @@ enum SNAPInterviewPrepStrings {
         "It's okay if:",
         es: "Está bien si:"
     )
+
+    // JR-3 (audit 2026-05-29): leading reassurance card above the
+    // day-before topics. Three sentences pre-defuse the dread loop
+    // (short call, notes allowed, you will see the questions).
+    static let reassuranceLead = CivicaText(
+        "Interviews usually take 15\u{2013}20 minutes. You\u{2019}re allowed to have notes. Here\u{2019}s exactly what they\u{2019}ll ask.",
+        es: "Las entrevistas usualmente duran de 15 a 20 minutos. Puedes tener notas. Aqu\u{00ED} est\u{00E1} exactamente lo que te van a preguntar."
+    )
+
+    // Footnote: the second-most-cited worry before a SNAP interview
+    // (per GetCalFresh field notes) is not having every document ready.
+    // Stating up front that follow-ups are normal lowers the stakes of
+    // showing up at all, without misrepresenting the interview's role.
+    static let reassuranceFollowupsFootnote = CivicaText(
+        "Don\u{2019}t worry if you don\u{2019}t have every doc \u{2014} caseworkers can ask follow-ups.",
+        es: "No te preocupes si no tienes todos los documentos \u{2014} los trabajadores sociales pueden hacer preguntas de seguimiento."
+    )
 }
