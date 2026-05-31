@@ -57,6 +57,12 @@ export interface Env {
   // Optional in types so dev/test can run without it; the route returns 503
   // if the secret is unset when called in production.
   EBT_SCRAPER_WEBHOOK_SECRET?: string;
+  // County-authoritative outcome webhook (TODO-44). HMAC secret shared with the
+  // county / CDSS feed for verifying inbound POST /webhooks/county-outcome. These
+  // rows move the MEASURED PER, so verification is mandatory: the route returns
+  // 503 when this is unset (never silently accepts unsigned authoritative data).
+  // Set via: wrangler secret put COUNTY_OUTCOME_WEBHOOK_SECRET
+  COUNTY_OUTCOME_WEBHOOK_SECRET?: string;
   // EBT scraper webhook URL the gateway POSTs to when a refresh is needed.
   // When unset, dispatchScrapeRefresh() is a no-op (Lane B will wire prod URL).
   EBT_SCRAPER_DISPATCH_URL?: string;
