@@ -383,6 +383,8 @@ enum SNAPDocumentsChecklistStrings {
         case (.rentOrHousingCostProof, .spanish):        return "Renta o costo de vivienda"
         case (.utilityBill, .english):                   return "A recent utility bill"
         case (.utilityBill, .spanish):                   return "Un recibo reciente de servicios"
+        case (.bankStatement, .english):                 return "Recent bank statement"
+        case (.bankStatement, .spanish):                 return "Estado de cuenta bancario reciente"
         case (.studentStatusDocuments, .english):        return "Student enrollment paper"
         case (.studentStatusDocuments, .spanish):        return "Comprobante de inscripción estudiantil"
         case (.workStatusOrExemptions, .english):        return "Letter about work status or work exemption"
@@ -410,6 +412,8 @@ enum SNAPDocumentsChecklistStrings {
         case (.rentOrHousingCostProof, .spanish):        return "Contrato, estado de cuenta de hipoteca o recibo de refugio"
         case (.utilityBill, .english):                   return "Electricity, gas, heat, water, or phone"
         case (.utilityBill, .spanish):                   return "Electricidad, gas, calefacción, agua o teléfono"
+        case (.bankStatement, .english):                 return "Most recent statement showing your ending balance"
+        case (.bankStatement, .spanish):                 return "Estado de cuenta más reciente que muestre tu saldo final"
         case (.studentStatusDocuments, .english):        return "A letter from the school or financial aid office"
         case (.studentStatusDocuments, .spanish):        return "Una carta de la escuela o la oficina de ayuda financiera"
         case (.workStatusOrExemptions, .english):        return nil

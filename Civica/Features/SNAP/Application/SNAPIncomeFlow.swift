@@ -88,6 +88,9 @@ final class SNAPIncomeFlowViewModel: ObservableObject {
     @Published var step: Step = .earningPresence
     @Published var grossIncomeField: String
     @Published var liquidResourcesField: String
+    /// Wave D — true once the liquid-resources field has been
+    /// populated by a bank-statement scan. Ephemeral, not persisted.
+    @Published var liquidResourcesPrefilledFromScan: Bool = false
     @Published var answers: SNAPIncomeAnswers
     /// Derivation from a paystub confirmed earlier in the documents
     /// checklist. Nil when no paystub is available or the derivation
@@ -621,6 +624,25 @@ struct SNAPIncomeFlowView: View {
             Text(SNAPIncomeStrings.liquidResourcesSuffix.value(in: language))
                 .font(CivicaTypography.footnote)
                 .foregroundStyle(CivicaColors.graphite)
+            // Wave D — bank-statement scan to pre-fill liquid
+            // resources. Hidden on devices without on-device
+            // extraction available.
+            SNAPInlineDocScanCTA(
+                documentType: .bankStatement,
+                ctaLabel: SNAPIncomeStrings.scanBankCTA.value(in: language),
+                onExtracted: { result in
+                    if let amount = result.primaryAmount, !amount.isEmpty {
+                        viewModel.liquidResourcesField = amount
+                        viewModel.liquidResourcesPrefilledFromScan = true
+                    }
+                }
+            )
+            if viewModel.liquidResourcesPrefilledFromScan {
+                Text(SNAPIncomeStrings.scanBankPrefilledNote.value(in: language))
+                    .font(CivicaTypography.footnote)
+                    .foregroundStyle(CivicaColors.pinePrimary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
         }
     }
 
@@ -791,6 +813,16 @@ enum SNAPIncomeStrings {
     static let employerOptionalNote = CivicaText(
         "All fields here are optional. Blanks become \"human must fill\" hints to the assister.",
         es: "Todos los campos aquí son opcionales. Los espacios en blanco se convierten en notas de \"completar manualmente\" para el asistente."
+    )
+
+    // Wave D — bank-statement-scan affordance strings
+    static let scanBankCTA = CivicaText(
+        "Scan a bank statement to autofill",
+        es: "Escanea un estado bancario para autollenar"
+    )
+    static let scanBankPrefilledNote = CivicaText(
+        "Pre-filled from your statement — change above if needed.",
+        es: "Pre-llenado desde tu estado bancario — cámbialo arriba si es necesario."
     )
 
     static let grossSuffix = CivicaText(

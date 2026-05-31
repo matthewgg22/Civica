@@ -106,6 +106,15 @@ final class SNAPExpensesFlowViewModel: ObservableObject {
     @Published var medicalField: String
     @Published var childSupportField: String = ""
     @Published var spousalSupportField: String = ""
+    /// Wave A — true once the rent field has been populated by a lease
+    /// scan in the current session. Surfaces a pine pre-fill note so
+    /// the applicant knows where the value came from and can change
+    /// it. Reset on flow re-entry (ephemeral, not persisted).
+    @Published var rentPrefilledFromScan: Bool = false
+    /// Wave B — true once the utilities field has been populated by a
+    /// utility-bill scan. Same ephemeral semantics as
+    /// `rentPrefilledFromScan`.
+    @Published var utilitiesPrefilledFromScan: Bool = false
     @Published var answers: SNAPExpensesAnswers
 
     private let hasMinorInHousehold: Bool
@@ -277,10 +286,10 @@ struct SNAPExpensesFlowView: View {
     @ViewBuilder
     private var currentScreen: some View {
         switch viewModel.step {
-        case .rent:          moneyScreen(.rent, binding: $viewModel.rentField)
+        case .rent:          rentScreen      // Wave A — money screen + lease scan CTA
         case .sharedHousing: sharedHousingScreen
         case .utilityTypes:  utilityTypesScreen
-        case .utilities:     moneyScreen(.utilities, binding: $viewModel.utilitiesField)
+        case .utilities:     utilitiesScreen     // Wave B — money screen + utility-bill scan CTA
         case .utilityShutoff: utilityShutoffScreen
         case .childcare:     moneyScreen(.childcare, binding: $viewModel.childcareField)
         case .medical:       moneyScreen(.medical, binding: $viewModel.medicalField)
@@ -503,6 +512,91 @@ struct SNAPExpensesFlowView: View {
         }
     }
 
+    // MARK: - Wave A: rent screen with lease-scan CTA
+
+    /// Wraps the shared `moneyScreen` for `.rent` and adds an inline
+    /// "Scan your lease to autofill" affordance below the input. On
+    /// extract, populates the rent field directly — the applicant
+    /// can still edit the value in the same field, preserving the
+    /// "applicant is always the source of truth" property.
+    private var rentScreen: some View {
+        CivicaQuestionScreen(
+            progress: progress(for: .rent),
+            title: SNAPExpensesStrings.title(for: .rent, language: language),
+            helper: SNAPExpensesStrings.helper(for: .rent, language: language),
+            primaryActionTitle: CivicaQuestionStrings.continueLabel.value(in: language),
+            primaryActionEnabled: true,
+            onPrimary: advanceOrComplete,
+            language: language
+        ) {
+            VStack(alignment: .leading, spacing: CivicaSpacing.md) {
+                moneyAffordance(
+                    binding: $viewModel.rentField,
+                    suffix: SNAPExpensesStrings.suffix(for: .rent, language: language)
+                )
+                SNAPInlineDocScanCTA(
+                    documentType: .rentOrHousingCostProof,
+                    ctaLabel: SNAPExpensesStrings.scanLeaseCTA.value(in: language),
+                    onExtracted: { result in
+                        if let amount = result.primaryAmount, !amount.isEmpty {
+                            viewModel.rentField = amount
+                            viewModel.rentPrefilledFromScan = true
+                        }
+                    }
+                )
+                if viewModel.rentPrefilledFromScan {
+                    Text(SNAPExpensesStrings.scanPrefilledNote.value(in: language))
+                        .font(CivicaTypography.footnote)
+                        .foregroundStyle(CivicaColors.pinePrimary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+            }
+        }
+    }
+
+    // MARK: - Wave B: utilities screen with utility-bill scan CTA
+
+    /// Mirrors `rentScreen`: shared money input + inline scan CTA.
+    /// Wave B intentionally scans only the AMOUNT — the utility-type
+    /// selection on the prior `utilityTypes` screen stays declaration-
+    /// first because a single bill rarely covers all the types a
+    /// household pays, and over-claiming the SUA tier on an OCR
+    /// guess would be a real error class.
+    private var utilitiesScreen: some View {
+        CivicaQuestionScreen(
+            progress: progress(for: .utilities),
+            title: SNAPExpensesStrings.title(for: .utilities, language: language),
+            helper: SNAPExpensesStrings.helper(for: .utilities, language: language),
+            primaryActionTitle: CivicaQuestionStrings.continueLabel.value(in: language),
+            primaryActionEnabled: true,
+            onPrimary: advanceOrComplete,
+            language: language
+        ) {
+            VStack(alignment: .leading, spacing: CivicaSpacing.md) {
+                moneyAffordance(
+                    binding: $viewModel.utilitiesField,
+                    suffix: SNAPExpensesStrings.suffix(for: .utilities, language: language)
+                )
+                SNAPInlineDocScanCTA(
+                    documentType: .utilityBill,
+                    ctaLabel: SNAPExpensesStrings.scanUtilityCTA.value(in: language),
+                    onExtracted: { result in
+                        if let amount = result.primaryAmount, !amount.isEmpty {
+                            viewModel.utilitiesField = amount
+                            viewModel.utilitiesPrefilledFromScan = true
+                        }
+                    }
+                )
+                if viewModel.utilitiesPrefilledFromScan {
+                    Text(SNAPExpensesStrings.scanUtilityPrefilledNote.value(in: language))
+                        .font(CivicaTypography.footnote)
+                        .foregroundStyle(CivicaColors.pinePrimary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+            }
+        }
+    }
+
     // MARK: - Shared money-screen affordance
 
     private func moneyScreen(
@@ -701,6 +795,26 @@ enum SNAPExpensesStrings {
         case (.spousalSupportAmount, .spanish): return "Manutención mensual conyugal pagada, en dólares"
         }
     }
+
+    // Wave A — lease-scan affordance strings
+    static let scanLeaseCTA = CivicaText(
+        "Scan your lease to autofill",
+        es: "Escanea tu contrato para autollenar"
+    )
+    static let scanPrefilledNote = CivicaText(
+        "Pre-filled from your lease — change above if needed.",
+        es: "Pre-llenado desde tu contrato — cámbialo arriba si es necesario."
+    )
+
+    // Wave B — utility-bill-scan affordance strings
+    static let scanUtilityCTA = CivicaText(
+        "Scan a utility bill to autofill",
+        es: "Escanea una factura de servicios para autollenar"
+    )
+    static let scanUtilityPrefilledNote = CivicaText(
+        "Pre-filled from your bill — change above if needed.",
+        es: "Pre-llenado desde tu factura — cámbialo arriba si es necesario."
+    )
 
     // Wave 3 — court-ordered support gate strings
     static let courtOrderedSupportTitle = CivicaText(
