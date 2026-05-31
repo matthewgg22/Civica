@@ -100,7 +100,9 @@ struct CivicaRootView: View {
                     .sheet(isPresented: $presentingSettings) {
                         SNAPSettingsSheet(
                             languageRaw: $languageRaw,
-                            auth: enrollmentAuth
+                            auth: enrollmentAuth,
+                            currentPhase: currentDemoPhase,
+                            onSelectDemoPhase: demoPhaseSwitcher
                         )
                     }
                 } else {
@@ -280,19 +282,18 @@ struct CivicaRootView: View {
         }
     }
 
-    /// When demo mode is on, this closure powers the unlocked
-    /// `CivicaPhaseTab` in each home view: tapping a tab rewrites the
+    /// When demo mode is on, this closure powers the phase picker in
+    /// the gear settings sheet: tapping a phase rewrites the
     /// application status to the canonical first status for that
     /// phase, which cascades through `rootSurface` to swap the home
-    /// view. Off-mode → nil, which restores the locked production tab.
+    /// view. Off-mode → nil so the picker hides itself.
     ///
     /// Pending lands on `.interviewScheduled` rather than the earlier
-    /// `.submittedToState` so a reviewer can see the Phase 2 surface
-    /// in its richest form — appointment card + interview coach CTA
-    /// + the same daily-checklist set. The interview coach is gated
-    /// by `phase2PrimaryCTAPushesInterviewCoach` on the status, so
-    /// landing on `.submittedToState` previously hid that whole
-    /// affordance from anyone exploring via demo mode.
+    /// `.submittedToState` so a reviewer sees the Phase 2 surface in
+    /// its richest form — appointment card + Prepare-for-Interview
+    /// CTA + daily checklist. The interview coach is gated by
+    /// `phase2PrimaryCTAPushesInterviewCoach`, which only fires on
+    /// `.interviewScheduled`.
     private var demoPhaseSwitcher: ((CivicaPhase) -> Void)? {
         guard demoUnlockAllPhases else { return nil }
         return { phase in
@@ -304,6 +305,21 @@ struct CivicaRootView: View {
             case .enrolled:
                 statusStore.advance(to: .decisionApproved)
             }
+        }
+    }
+
+    /// Maps the current applicant status back to a `CivicaPhase` for
+    /// the gear's phase picker so the picker highlights whichever
+    /// phase the user is currently on.
+    private var currentDemoPhase: CivicaPhase {
+        switch statusStore.status {
+        case .decisionApproved:
+            return .enrolled
+        case .submittedToState, .documentsRequested,
+             .interviewScheduled, .interviewCompleted:
+            return .pending
+        default:
+            return .enroll
         }
     }
 }

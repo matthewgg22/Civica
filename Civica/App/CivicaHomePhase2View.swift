@@ -366,11 +366,10 @@ struct CivicaHomePhase2View: View {
     /// handler: free toggle for engineers / QA.
     @ViewBuilder
     private var phaseTab: some View {
-        // Demo-only visibility. See CivicaEntryView.phaseTab for the
-        // rationale; same gating across all three phase homes.
-        if let onDebugPhaseChange {
-            CivicaPhaseTab(current: .pending, onChange: onDebugPhaseChange)
-        }
+        // Phase picker has moved into the gear settings sheet so it
+        // never appears on the applicant-facing home. See
+        // CivicaEntryView.phaseTab for the rationale.
+        EmptyView()
     }
 
     // MARK: - Status pill + headline

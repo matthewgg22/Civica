@@ -21,14 +21,35 @@ struct SNAPSettingsSheet: View {
     @Binding var languageRaw: String
     @ObservedObject var auth: CivicaEnrollmentAuth
 
+    /// The phase the applicant is currently on, used to highlight the
+    /// matching segment in the demo-mode phase picker.
+    let currentPhase: CivicaPhase
+
+    /// Demo phase switcher. Set when `demoUnlockAllPhases` is true so
+    /// the picker can dispatch a phase change up to CivicaRootView.
+    /// nil → picker hides (toggle is off, or production build).
+    let onSelectDemoPhase: ((CivicaPhase) -> Void)?
+
     @Environment(\.dismiss) private var dismiss
     @State private var confirmingSignOut = false
 
-    /// Demo / preview mode toggle. When on, the phase tabs unlock so a
-    /// reviewer can jump between Enroll / Pending / Enrolled surfaces
-    /// without going through the application flow.
+    /// Demo / preview mode toggle. When on, the phase picker appears
+    /// below so a reviewer can jump between Enroll / Pending /
+    /// Enrolled surfaces without going through the application flow.
     @AppStorage(CivicaAppStorageKeys.demoUnlockAllPhases)
     private var demoUnlockAllPhases: Bool = false
+
+    init(
+        languageRaw: Binding<String>,
+        auth: CivicaEnrollmentAuth,
+        currentPhase: CivicaPhase = .enroll,
+        onSelectDemoPhase: ((CivicaPhase) -> Void)? = nil
+    ) {
+        self._languageRaw = languageRaw
+        self.auth = auth
+        self.currentPhase = currentPhase
+        self.onSelectDemoPhase = onSelectDemoPhase
+    }
 
     private var language: CivicaLanguage {
         CivicaLanguage(rawValue: languageRaw) ?? .english
@@ -122,9 +143,11 @@ struct SNAPSettingsSheet: View {
 
     // MARK: - Demo mode
 
-    /// Section that lets a reviewer unlock the phase tabs so they can
-    /// jump between Enroll / Pending / Enrolled surfaces. Off by
-    /// default; persistent across launches via `@AppStorage`.
+    /// Section that lets a reviewer unlock + drive the phase picker
+    /// from inside the gear. Off by default; persistent across
+    /// launches via `@AppStorage`. The picker only appears when the
+    /// toggle is on AND a switcher closure was provided (production
+    /// builds in normal mode get nil → picker hides).
     private var demoModeSection: some View {
         settingsGroup(SNAPSettingsStrings.demoModeHeading.value(in: language)) {
             VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
@@ -143,13 +166,69 @@ struct SNAPSettingsSheet: View {
                 }
                 .tint(CivicaColors.pinePrimary)
                 .padding(CivicaSpacing.md)
+
+                if demoUnlockAllPhases, let onSelectDemoPhase {
+                    // Hairline + picker, indented to align with the
+                    // toggle row's text so the picker reads as an
+                    // affordance OF the toggle.
+                    Divider().overlay(CivicaColors.hairline)
+                        .padding(.horizontal, CivicaSpacing.md)
+                    phasePicker(onSelect: onSelectDemoPhase)
+                        .padding(.horizontal, CivicaSpacing.md)
+                        .padding(.top, CivicaSpacing.sm)
+                }
+
                 Text(SNAPSettingsStrings.demoModeCaption.value(in: language))
                     .font(CivicaTypography.footnote)
                     .foregroundStyle(CivicaColors.graphite)
                     .fixedSize(horizontal: false, vertical: true)
                     .padding(.horizontal, CivicaSpacing.md)
+                    .padding(.top, CivicaSpacing.sm)
                     .padding(.bottom, CivicaSpacing.md)
             }
+        }
+    }
+
+    /// Pine-tinted segmented control for jumping between Enroll /
+    /// Pending / Enrolled. Closes the settings sheet on selection so
+    /// the reviewer lands directly on the chosen home surface.
+    private func phasePicker(onSelect: @escaping (CivicaPhase) -> Void) -> some View {
+        HStack(spacing: CivicaSpacing.xs) {
+            ForEach(CivicaPhase.allCases, id: \.self) { phase in
+                let isCurrent = phase == currentPhase
+                Button {
+                    onSelect(phase)
+                    dismiss()
+                } label: {
+                    Text(label(for: phase))
+                        .font(CivicaTypography.footnoteStrong)
+                        .foregroundStyle(isCurrent ? CivicaColors.onPrimaryText : CivicaColors.ink)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, CivicaSpacing.sm)
+                        .background(
+                            RoundedRectangle(cornerRadius: 999, style: .continuous)
+                                .fill(isCurrent ? CivicaColors.pinePrimary : CivicaColors.surfacePrimary)
+                        )
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 999, style: .continuous)
+                                .strokeBorder(CivicaColors.pinePrimary.opacity(isCurrent ? 0 : 0.25), lineWidth: 1)
+                        )
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel(label(for: phase))
+                .accessibilityAddTraits(isCurrent ? [.isButton, .isSelected] : .isButton)
+            }
+        }
+    }
+
+    private func label(for phase: CivicaPhase) -> String {
+        switch (phase, language) {
+        case (.enroll,   .english): return "Enroll"
+        case (.enroll,   .spanish): return "Solicitar"
+        case (.pending,  .english): return "Pending"
+        case (.pending,  .spanish): return "En espera"
+        case (.enrolled, .english): return "Enrolled"
+        case (.enrolled, .spanish): return "Inscrito"
         }
     }
 
@@ -280,8 +359,8 @@ enum SNAPSettingsStrings {
     static let demoModeHeading = CivicaText("Demo mode", es: "Modo demo")
     static let demoModeRow = CivicaText("Unlock all phases", es: "Desbloquear todas las fases")
     static let demoModeCaption = CivicaText(
-        "When on, you can tap between Enroll, Pending, and Enrolled tabs to preview each home. Tapping resets local application status to that phase — leave off for normal use.",
-        es: "Cuando está activado, puedes tocar entre las pestañas Solicitar, En espera e Inscrito para previsualizar cada inicio. Al tocar, se restablece el estado local de la solicitud a esa fase — déjalo desactivado para uso normal."
+        "When on, pick Enroll, Pending, or Enrolled below to jump straight to that home. Selection resets local application status to that phase — leave off for normal use.",
+        es: "Cuando está activado, elige Solicitar, En espera o Inscrito debajo para ir directamente a ese inicio. La selección restablece el estado local de la solicitud a esa fase — déjalo desactivado para uso normal."
     )
 
     static let signOut = CivicaText("Sign out", es: "Cerrar sesión")

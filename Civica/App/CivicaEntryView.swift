@@ -99,22 +99,18 @@ struct CivicaEntryView: View {
         return error
     }
 
-    // MARK: - Phase tab (gear-toggle-only visibility)
+    // MARK: - Phase tab (moved off the home — now lives in the gear)
 
-    /// Phase indicator is now demo-only. When `onDebugPhaseChange`
-    /// is non-nil — which happens only in two cases: (a) the user
-    /// has flipped "Demo mode — Unlock all phases" in the gear, or
-    /// (b) a SwiftUI Preview injecting it directly — the tabs
-    /// render as free-tap toggles for jumping between Enroll /
-    /// Pending / Enrolled homes. Otherwise: nothing renders. The
-    /// previous locked-indicator variant created visual noise that
-    /// most applicants read as "I can't do anything yet."
+    /// Phase indicator no longer renders on the home surface. The
+    /// reviewer-facing phase picker has moved into the settings sheet
+    /// (gear) under "Demo mode" so it never bleeds into the
+    /// applicant-facing UI even when demo mode is on. `onDebugPhaseChange`
+    /// is still threaded through the view because SwiftUI Previews
+    /// inject it directly to drive the inline preview tabs — production
+    /// & device builds get an empty view here.
     @ViewBuilder
     private var phaseTab: some View {
-        if let onDebugPhaseChange {
-            CivicaPhaseTab(current: .enroll, onChange: onDebugPhaseChange)
-                .padding(.bottom, CivicaSpacing.xs)
-        }
+        EmptyView()
     }
 
     // MARK: - Draft fallback card (IS-9)
