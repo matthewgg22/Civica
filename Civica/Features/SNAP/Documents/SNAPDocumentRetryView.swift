@@ -98,27 +98,33 @@ struct SNAPDocumentRetryView: View {
     }
 
     private var reasonBanner: some View {
-        HStack(alignment: .top, spacing: CivicaSpacing.sm) {
-            Rectangle()
+        // Text VStack hugs its own height; the pine accent bar is a
+        // LEADING-EDGE OVERLAY (not an HStack sibling). The previous
+        // layout used a flexible `Rectangle().frame(width: 4)` as a
+        // sibling — a Shape with no height is infinitely flexible
+        // vertically, so it stretched the banner to the full proposed
+        // height, producing the giant empty box device QA flagged.
+        VStack(alignment: .leading, spacing: 2) {
+            Text(headlineReason)
+                .font(CivicaTypography.subheadStrong)
+                .foregroundStyle(CivicaColors.ink)
+                .fixedSize(horizontal: false, vertical: true)
+            Text(detailedReason)
+                .font(CivicaTypography.footnote)
+                .foregroundStyle(CivicaColors.ink)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(CivicaSpacing.md)
+        .padding(.leading, CivicaSpacing.sm)   // room for the stripe
+        .background(CivicaColors.surfacePrimary)
+        .overlay(alignment: .leading) {
+            RoundedRectangle(cornerRadius: 2)
                 .fill(CivicaColors.pinePrimary)
                 .frame(width: 4)
-                .clipShape(RoundedRectangle(cornerRadius: 2))
+                .padding(.vertical, CivicaSpacing.sm)
                 .accessibilityHidden(true)
-            VStack(alignment: .leading, spacing: 2) {
-                Text(headlineReason)
-                    .font(CivicaTypography.subheadStrong)
-                    .foregroundStyle(CivicaColors.ink)
-                    .fixedSize(horizontal: false, vertical: true)
-                Text(detailedReason)
-                    .font(CivicaTypography.footnote)
-                    .foregroundStyle(CivicaColors.ink)
-                    .fixedSize(horizontal: false, vertical: true)
-            }
-            Spacer(minLength: 0)
         }
-        .padding(CivicaSpacing.md)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(CivicaColors.surfacePrimary)
         .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
         .overlay(
             RoundedRectangle(cornerRadius: CivicaRadius.card)

@@ -215,7 +215,7 @@ struct SNAPDocumentsChecklistFlowView: View {
                 )
             }
         }
-        .sheet(item: $pendingRetry) { retry in
+        .fullScreenCover(item: $pendingRetry) { retry in
             NavigationStack {
                 SNAPDocumentRetryView(
                     capturedImage: retry.image,
