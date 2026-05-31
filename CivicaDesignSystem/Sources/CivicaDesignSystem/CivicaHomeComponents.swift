@@ -362,12 +362,22 @@ public struct CivicaPhaseTimeline: View {
                         .foregroundStyle(CivicaColors.onPrimaryText)
                 }
         case .current:
+            // "In review" reads differently from "Submitted" — a hollow
+            // pine ring (not the filled+check used by done) so the user
+            // can tell at a glance which milestone is complete vs which
+            // is in flight. Earlier version used solid pine with a
+            // light halo; reviewers couldn't distinguish it from .done.
             Circle()
-                .fill(CivicaColors.pinePrimary)
+                .fill(CivicaColors.paper)
                 .frame(width: 18, height: 18)
                 .overlay(
                     Circle()
-                        .stroke(CivicaColors.pinePrimary.opacity(0.20), lineWidth: 5)
+                        .stroke(CivicaColors.pinePrimary, lineWidth: 3)
+                )
+                .overlay(
+                    Circle()
+                        .fill(CivicaColors.pinePrimary)
+                        .frame(width: 7, height: 7)
                 )
         case .future:
             Circle()

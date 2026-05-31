@@ -26,6 +26,11 @@ import SwiftUI
 
 struct CivicaHomePhase3View: View {
     @ObservedObject var statusStore: SNAPApplicationStatusStore
+
+    /// Mirrors the gear toggle so the EBT dashboard auto-seeds when
+    /// a reviewer is exploring the Enrolled surface via demo mode.
+    @AppStorage(CivicaAppStorageKeys.demoUnlockAllPhases)
+    private var demoUnlockAllPhases: Bool = false
     let language: CivicaLanguage
     let onOpenExternalPortal: () -> Void
 
@@ -148,6 +153,19 @@ struct CivicaHomePhase3View: View {
             // body() completes before flipping the flag.
             await Task.yield()
             isFirstPaintLoading = false
+        }
+        .onAppear {
+            // Demo-mode seeding: a reviewer who jumped to Phase 3 via
+            // the gear toggle hasn't linked an EBT card, so the
+            // dashboard would show the empty link form instead of the
+            // populated balance + transaction surfaces this phase is
+            // *about*. Seed an in-memory demo account so they can see
+            // the real Phase 3 experience. No persistence — flipping
+            // demo mode off and relaunching restores the user's actual
+            // linkState.
+            if demoUnlockAllPhases {
+                ebtStore.seedDemoAccountIfNeeded()
+            }
         }
         // IS-2 (audit 2026-05-29): bridge the EBT store's refresh
         // outcome into the sync banner coordinator. Per-row hide on
