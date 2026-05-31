@@ -62,6 +62,14 @@ struct CivicaSNAPFlowView: View {
     @AppStorage(CivicaAppStorageKeys.buddyFeatureEnabled)
     private var buddyFeatureEnabled: Bool = false
 
+    /// Demo / preview mode. When ON, packet generation bypasses the
+    /// phone-OTP sign-in gate so a reviewer walking the application
+    /// end-to-end isn't blocked when Supabase phone auth returns a
+    /// non-2xx (project misconfig, SMS provider unwired, etc.). Off
+    /// in production — the sign-in gate is the right default.
+    @AppStorage(CivicaAppStorageKeys.demoUnlockAllPhases)
+    private var demoUnlockAllPhases: Bool = false
+
     let language: CivicaLanguage
     let recertMode: Bool
 
@@ -82,7 +90,11 @@ struct CivicaSNAPFlowView: View {
                 viewModel: SNAPApplicationFlowOrchestratorViewModel(),
                 language: language,
                 onGeneratePacket: { draft in
-                    if enrollmentAuth.state.isAuthenticated {
+                    // Demo bypass: when the gear's "Unlock all phases"
+                    // toggle is on, generate the packet directly even
+                    // when not signed in. Keeps the demo walk-through
+                    // unblocked if phone OTP is misconfigured.
+                    if enrollmentAuth.state.isAuthenticated || demoUnlockAllPhases {
                         runGeneratePacket(draft)
                     } else {
                         pendingDraft = draft
