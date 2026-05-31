@@ -1,0 +1,11 @@
+{
+  "source": "ICPSR 39331 (Pukelis) DS0002 CA county-month + ICPSR 39703 EA_PEXD",
+  "input_basename": "ca_county_month_enrollment.csv",
+  "generated_at": "2026-05-31T00:00:00Z",
+  "spec_version": "1.0.0",
+  "outcome": "APPS_DENIED_PROCEDURAL / APPS_RECEIVED",
+  "weight": "APPS_RECEIVED",
+  "model_a": "WLS variance shares (C(COUNTY) vs C(YM)) + volume-weighted county-mean spread",
+  "model_b": "WLS proc_rate ~ post + trend + C(COUNTY) + C(month), cluster-robust by county; cliff=2023m3",
+  "cliff_source": "ICPSR 39703 EA_PEXD (CA) = 2023-02-28"
+}
