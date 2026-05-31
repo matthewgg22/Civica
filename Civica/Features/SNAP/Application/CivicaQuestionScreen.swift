@@ -350,7 +350,12 @@ struct CivicaQuestionScreen<Affordance: View>: View {
         } label: {
             Image(systemName: "questionmark.circle")
                 .font(.system(size: 22))
-                .foregroundStyle(CivicaColors.pinePrimary)
+                // accentTeal = "assist affordance" per DESIGN.md §2.2.
+                // Pine is reserved for the primary CTA; the help marker
+                // is a secondary assist, and §2.2 explicitly bans pine
+                // on icons. Teal keeps it discoverable without competing
+                // with the Continue button.
+                .foregroundStyle(CivicaColors.accentTeal)
                 .frame(minWidth: 32, minHeight: 32)
                 .contentShape(Rectangle())
         }

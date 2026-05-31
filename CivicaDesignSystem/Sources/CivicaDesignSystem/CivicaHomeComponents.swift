@@ -264,8 +264,12 @@ public struct CivicaActionRow: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(CivicaColors.surfacePrimary)
             .overlay(alignment: .leading) {
+                // Neutral accent stripe (graphite, not pine). A pine
+                // left-border is both a §2.2 violation and AI-slop
+                // pattern #8 (colored left-border on cards). Graphite
+                // keeps the structural emphasis without the green.
                 Rectangle()
-                    .fill(CivicaColors.pinePrimary)
+                    .fill(CivicaColors.graphite.opacity(0.4))
                     .frame(width: 3)
             }
             .overlay(
@@ -318,10 +322,12 @@ public struct CivicaPhaseTimeline: View {
                         .fill(CivicaColors.ink.opacity(0.10))
                         .frame(height: 2)
                     // completed connector — done -> midpoint of current.
+                    // Graphite to match the neutral status dots (§2.2:
+                    // timeline is a status indicator, not a CTA).
                     // Animated so a status advance fills smoothly to
                     // the next milestone instead of snapping.
                     Rectangle()
-                        .fill(CivicaColors.pinePrimary)
+                        .fill(CivicaColors.graphite)
                         .frame(
                             width: completedWidth(in: proxy.size.width),
                             height: 2
@@ -382,30 +388,29 @@ public struct CivicaPhaseTimeline: View {
         let s = state(of: m)
         switch s {
         case .done:
-            // Reduced visual weight on done — smaller dot, no
-            // checkmark — so the current stage stays the focal point
-            // of the timeline. Earlier treatment (18pt + solid pine +
-            // checkmark) flooded the screen with green; with two
-            // milestones done you saw five pine elements above the
-            // fold. Smaller filled dot still reads as "complete."
+            // Timeline dots are STATUS INDICATORS — DESIGN.md §2.2 bans
+            // pine here (pine = CTA only). Done = neutral graphite dot;
+            // it still reads "complete" without competing with the
+            // Continue CTA for the eye.
             Circle()
-                .fill(CivicaColors.pinePrimary)
+                .fill(CivicaColors.graphite)
                 .frame(width: 12, height: 12)
         case .current:
-            // Current is the timeline's focal point: larger than done,
-            // bold pine ring + pine inner dot so it reads as "you are
-            // here." Bigger than the previous 18pt so the visual
-            // hierarchy (current > done > future) is unambiguous.
+            // Current is the timeline's focal point: ink ring + ink
+            // inner dot (not pine). Larger than done so the hierarchy
+            // (current > done > future) is unambiguous through size +
+            // weight, not color — per §1.2 "hierarchy by weight + size,
+            // not color alone."
             Circle()
                 .fill(CivicaColors.paper)
                 .frame(width: 22, height: 22)
                 .overlay(
                     Circle()
-                        .stroke(CivicaColors.pinePrimary, lineWidth: 3)
+                        .stroke(CivicaColors.ink, lineWidth: 3)
                 )
                 .overlay(
                     Circle()
-                        .fill(CivicaColors.pinePrimary)
+                        .fill(CivicaColors.ink)
                         .frame(width: 9, height: 9)
                 )
         case .future:
