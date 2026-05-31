@@ -27,6 +27,7 @@ import twilioWebhookRouter from "./routes/twilio-webhook.js";
 import workRequirementsRouter from "./routes/work-requirements.js";
 import navigatorRouter from "./routes/navigator.js";
 import argyleWebhookRouter from "./routes/argyle-webhook.js";
+import countyOutcomeWebhookRouter from "./routes/county-outcome-webhook.js";
 import oauthCanvasRouter from "./routes/oauth-canvas.js";
 import featureFlagsRouter from "./routes/feature-flags.js";
 import buddyRouter from "./routes/buddy.js";
@@ -181,6 +182,11 @@ app.route("/v1/enrollment", api);
 // Argyle webhook — outside auth middleware (inbound from Argyle, HMAC-verified)
 // T-DR3-8: receives paycheck.added, detects cliff event, fires navigator task.
 app.route("/webhooks/argyle", argyleWebhookRouter);
+
+// County-authoritative outcome webhook (TODO-44) — outside auth middleware
+// (inbound from county/CDSS feed, HMAC-verified inside the route; mandatory
+// secret). Upserts packet_outcomes(source=county_authoritative) → measured_per.
+app.route("/webhooks/county-outcome", countyOutcomeWebhookRouter);
 
 // EBT scraper webhook — outside auth middleware (inbound from Fly scraper,
 // HMAC-verified inside the route). Lane B will set EBT_SCRAPER_WEBHOOK_SECRET.
