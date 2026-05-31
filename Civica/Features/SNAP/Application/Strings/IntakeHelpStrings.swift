@@ -50,16 +50,19 @@ enum IntakeHelpStrings {
     // swaps to the "still thinking" message so the user knows we're
     // not stuck.
 
-    /// Immediate loading text on sheet appear.
+    /// Immediate loading text on sheet appear. Names what Mae is
+    /// actually doing (reading the question + helper) in a calm,
+    /// human voice — no "thinking"/"searching" robot-speak.
     static let loadingText = CivicaText(
-        "Looking that up…",
-        es: "Buscando esa información…"
+        "Reading your question…",
+        es: "Leyendo tu pregunta…"
     )
 
-    /// Swap-in after ~1.5s elapsed without a response.
+    /// Swap-in after ~1.5s elapsed without a response. Universal
+    /// calm-wait phrase, no anthropomorphizing.
     static let stillThinkingText = CivicaText(
-        "Still thinking…",
-        es: "Todavía buscando…"
+        "One moment…",
+        es: "Un momento…"
     )
 
     // MARK: - Error fallback (per D6 — load-bearing)
