@@ -60,7 +60,17 @@ enum SNAPApplicationSection: String, CaseIterable, Identifiable, Codable {
 
     var isRequired: Bool {
         switch self {
-        case .contact, .documentsChecklist: return false
+        // studentStatus is eligibility-ENHANCEMENT screening (it
+        // catches a false student-disqualification), not a submission
+        // prerequisite — BenefitsCal collects student status itself,
+        // and SNAPLocalEligibilityEvaluator handles missing student
+        // data gracefully. Leaving it required hard-locked the
+        // "Generate my application packet" button whenever the section
+        // was unanswered at review (demo phase-jump, partial/edited
+        // drafts), even though every required answer was complete.
+        // Treat it like contact + documents: shown + screened in the
+        // flow, but never a gate on packet generation.
+        case .contact, .documentsChecklist, .studentStatus: return false
         default: return true
         }
     }
