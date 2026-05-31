@@ -431,9 +431,14 @@ enum CivicaEntryStrings {
         "Apply for SNAP",
         es: "Solicita SNAP"
     )
+    // Entry runs before the user picks a state, so the body stays
+    // state-neutral here ("SNAP food assistance"). The state-conditioned
+    // wording ("CalFresh" for CA, "DTA SNAP" for MA) is applied
+    // downstream by SNAPAgencyDirectory once the state question is
+    // answered.
     static let heroBody = CivicaText(
-        "CalFresh / SNAP food assistance. About 15 minutes. Save anytime, no commitment to submit.",
-        es: "Asistencia alimentaria de CalFresh / SNAP. Unos 15 minutos. Guarda en cualquier momento; no hay compromiso de enviar."
+        "SNAP food assistance. About 15 minutes. Save anytime, no commitment to submit.",
+        es: "Asistencia alimentaria de SNAP. Unos 15 minutos. Guarda en cualquier momento; no hay compromiso de enviar."
     )
     static let heroStartCTA = CivicaText(
         "Start your application",
@@ -465,9 +470,11 @@ enum CivicaEntryStrings {
         "Find help nearby",
         es: "Encuentra ayuda cerca"
     )
+    // State-neutral on the entry surface; the "CalFresh" / "DTA SNAP"
+    // wording is applied downstream once the state is known.
     static let ebtBalanceRowEyebrow = CivicaText(
-        "Already have CalFresh?",
-        es: "¿Ya tienes CalFresh?"
+        "Already have SNAP?",
+        es: "¿Ya tienes SNAP?"
     )
     static let ebtBalanceRowLink = CivicaText(
         "Check your EBT balance",

@@ -24,6 +24,12 @@ struct SNAPSettingsSheet: View {
     @Environment(\.dismiss) private var dismiss
     @State private var confirmingSignOut = false
 
+    /// Demo / preview mode toggle. When on, the phase tabs unlock so a
+    /// reviewer can jump between Enroll / Pending / Enrolled surfaces
+    /// without going through the application flow.
+    @AppStorage(CivicaAppStorageKeys.demoUnlockAllPhases)
+    private var demoUnlockAllPhases: Bool = false
+
     private var language: CivicaLanguage {
         CivicaLanguage(rawValue: languageRaw) ?? .english
     }
@@ -41,6 +47,7 @@ struct SNAPSettingsSheet: View {
                 VStack(alignment: .leading, spacing: CivicaSpacing.xl) {
                     languageSection
                     transparencySection
+                    demoModeSection
                     if auth.state.isAuthenticated {
                         signOutSection
                     }
@@ -110,6 +117,39 @@ struct SNAPSettingsSheet: View {
                 )
             }
             .buttonStyle(.plain)
+        }
+    }
+
+    // MARK: - Demo mode
+
+    /// Section that lets a reviewer unlock the phase tabs so they can
+    /// jump between Enroll / Pending / Enrolled surfaces. Off by
+    /// default; persistent across launches via `@AppStorage`.
+    private var demoModeSection: some View {
+        settingsGroup(SNAPSettingsStrings.demoModeHeading.value(in: language)) {
+            VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
+                Toggle(isOn: $demoUnlockAllPhases) {
+                    HStack(spacing: CivicaSpacing.md) {
+                        Image(systemName: "lock.open.rotation")
+                            .imageScale(.large)
+                            .font(.body)
+                            .foregroundStyle(CivicaColors.ink)
+                            .frame(width: 24, alignment: .leading)
+                            .accessibilityHidden(true)
+                        Text(SNAPSettingsStrings.demoModeRow.value(in: language))
+                            .font(CivicaTypography.body)
+                            .foregroundStyle(CivicaColors.ink)
+                    }
+                }
+                .tint(CivicaColors.pinePrimary)
+                .padding(CivicaSpacing.md)
+                Text(SNAPSettingsStrings.demoModeCaption.value(in: language))
+                    .font(CivicaTypography.footnote)
+                    .foregroundStyle(CivicaColors.graphite)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .padding(.horizontal, CivicaSpacing.md)
+                    .padding(.bottom, CivicaSpacing.md)
+            }
         }
     }
 
@@ -236,6 +276,13 @@ enum SNAPSettingsStrings {
 
     static let transparencyHeading = CivicaText("Transparency", es: "Transparencia")
     static let transparencyRow = CivicaText("What Civica uses AI for", es: "Para qué Civica usa IA")
+
+    static let demoModeHeading = CivicaText("Demo mode", es: "Modo demo")
+    static let demoModeRow = CivicaText("Unlock all phases", es: "Desbloquear todas las fases")
+    static let demoModeCaption = CivicaText(
+        "When on, you can tap between Enroll, Pending, and Enrolled tabs to preview each home. Tapping resets local application status to that phase — leave off for normal use.",
+        es: "Cuando está activado, puedes tocar entre las pestañas Solicitar, En espera e Inscrito para previsualizar cada inicio. Al tocar, se restablece el estado local de la solicitud a esa fase — déjalo desactivado para uso normal."
+    )
 
     static let signOut = CivicaText("Sign out", es: "Cerrar sesión")
     static let signOutConfirm = CivicaText(

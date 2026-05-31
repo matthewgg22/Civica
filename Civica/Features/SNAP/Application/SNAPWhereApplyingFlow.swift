@@ -74,6 +74,13 @@ final class SNAPWhereApplyingFlowViewModel: ObservableObject {
 
 struct SNAPWhereApplyingFlowView: View {
     @StateObject var viewModel: SNAPWhereApplyingFlowViewModel
+    /// Geo-suggester for the state question. Asks for while-using
+    /// location permission lazily on first appearance of the state
+    /// screen, then reverse-geocodes to derive the user's state. The
+    /// suggestion renders as a one-tap token above the picker; the
+    /// picker itself still works fully if the user declines or the
+    /// suggestion can't be resolved.
+    @StateObject private var stateSuggester = SNAPStateSuggester()
     let language: CivicaLanguage
     let onComplete: (SNAPWhereApplyingAnswers) -> Void
     let onExit: () -> Void
@@ -134,18 +141,34 @@ struct SNAPWhereApplyingFlowView: View {
             onPrimary: advanceOrComplete,
             language: language
         ) {
-            CivicaQuestionChoices(
-                options: options.map(\.label),
-                selection: Binding(
-                    get: {
-                        options.first(where: { $0.code == viewModel.answers.stateCode })?.label
-                    },
-                    set: { label in
-                        viewModel.answers.stateCode = options.first(where: { $0.label == label })?.code
-                    }
+            VStack(alignment: .leading, spacing: CivicaSpacing.md) {
+                if let stateName = stateSuggester.suggestedStateName,
+                   let stateCode = stateSuggester.suggestedStateCode {
+                    SNAPStateSuggestionToken(
+                        stateName: stateName,
+                        isAlreadySelected: viewModel.answers.stateCode == stateCode,
+                        language: language,
+                        onTap: {
+                            civicaWithAnimation(.easeInOut(duration: 0.18)) {
+                                viewModel.answers.stateCode = stateCode
+                            }
+                        }
+                    )
+                }
+                CivicaQuestionChoices(
+                    options: options.map(\.label),
+                    selection: Binding(
+                        get: {
+                            options.first(where: { $0.code == viewModel.answers.stateCode })?.label
+                        },
+                        set: { label in
+                            viewModel.answers.stateCode = options.first(where: { $0.label == label })?.code
+                        }
+                    )
                 )
-            )
+            }
         }
+        .onAppear { stateSuggester.start() }
     }
 
     // MARK: - Screen 2: housing status
@@ -204,6 +227,65 @@ struct SNAPWhereApplyingFlowView: View {
     }
 }
 
+// MARK: - Suggestion token
+
+/// Pine-tinted pill above the state picker. Renders the resolved
+/// state from `SNAPStateSuggester` with a "Use this" CTA; once the
+/// user taps (or the picker matches), the pill flips to a quieter
+/// "Pre-filled" affirmation rather than disappearing, so it never
+/// looks like the suggestion was lost.
+struct SNAPStateSuggestionToken: View {
+    let stateName: String
+    let isAlreadySelected: Bool
+    let language: CivicaLanguage
+    let onTap: () -> Void
+
+    var body: some View {
+        HStack(alignment: .center, spacing: CivicaSpacing.sm) {
+            Image(systemName: isAlreadySelected ? "checkmark.circle.fill" : "location.fill")
+                .imageScale(.medium)
+                .foregroundStyle(CivicaColors.pinePrimary)
+                .accessibilityHidden(true)
+            Text(
+                isAlreadySelected
+                    ? SNAPWhereApplyingStrings.suggestionTokenSelected(stateName: stateName, language: language)
+                    : SNAPWhereApplyingStrings.suggestionTokenLooksLike(stateName: stateName, language: language)
+            )
+            .font(CivicaTypography.footnote)
+            .foregroundStyle(CivicaColors.ink)
+            .multilineTextAlignment(.leading)
+            Spacer(minLength: 0)
+            if !isAlreadySelected {
+                Button(SNAPWhereApplyingStrings.suggestionTokenCTA.value(in: language)) {
+                    onTap()
+                }
+                .font(CivicaTypography.footnoteStrong)
+                .foregroundStyle(CivicaColors.pinePrimary)
+                .accessibilityLabel(
+                    SNAPWhereApplyingStrings.suggestionTokenLooksLike(stateName: stateName, language: language)
+                )
+            }
+        }
+        .padding(.horizontal, CivicaSpacing.md)
+        .padding(.vertical, CivicaSpacing.sm)
+        .background(
+            RoundedRectangle(cornerRadius: CivicaRadius.card)
+                .fill(CivicaColors.pinePrimary.opacity(0.10))
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: CivicaRadius.card)
+                .strokeBorder(CivicaColors.pinePrimary.opacity(0.22), lineWidth: 1)
+        )
+        .contentShape(Rectangle())
+        .onTapGesture {
+            // Tap anywhere on the pill (not just the CTA) flips the
+            // selection — bigger hit target for one-handed entry.
+            if !isAlreadySelected { onTap() }
+        }
+        .accessibilityElement(children: .combine)
+    }
+}
+
 // MARK: - Strings
 
 enum SNAPWhereApplyingStrings {
@@ -215,6 +297,30 @@ enum SNAPWhereApplyingStrings {
     static let stateHelper = CivicaText(
         "SNAP rules and timelines vary by state. Civica is tuned for Massachusetts right now — other states still get a general application packet.",
         es: "Las reglas y plazos de SNAP varían según el estado. Civica está ajustada para Massachusetts ahora mismo — los otros estados aún reciben un paquete de solicitud general."
+    )
+
+    /// Geo-suggestion token copy. The state name is interpolated at the
+    /// call site; the surrounding sentence respects EN+ES parity.
+    static func suggestionTokenLooksLike(stateName: String, language: CivicaLanguage) -> String {
+        switch language {
+        case .english: return "Looks like you're in \(stateName)"
+        case .spanish: return "Parece que estás en \(stateName)"
+        }
+    }
+
+    /// Confirmation copy once the suggestion is selected. Same string
+    /// shape so the token can stay in place after tap as a stable
+    /// "yes, we got you" affirmation rather than disappearing.
+    static func suggestionTokenSelected(stateName: String, language: CivicaLanguage) -> String {
+        switch language {
+        case .english: return "Pre-filled \(stateName) — change above if needed"
+        case .spanish: return "\(stateName) pre-seleccionado — cámbialo arriba si es necesario"
+        }
+    }
+
+    static let suggestionTokenCTA = CivicaText(
+        "Use this",
+        es: "Usar esto"
     )
 
     struct StateOption: Equatable {

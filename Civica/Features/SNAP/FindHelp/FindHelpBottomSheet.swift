@@ -17,8 +17,11 @@ import SwiftUI
 struct FindHelpBottomSheet: View {
     /// Minimum visible height — grab handle + disclosure row +
     /// layer toggle + subtitle line + filter bar (segmented picker +
-    /// language menu, two rows). Never collapses below this.
-    private static let peekHeight: CGFloat = 280
+    /// language menu, two rows) + at least 1.5 list rows so the
+    /// peek state reads as "here are some places nearby" rather than
+    /// "tap to see more." Earlier value (280) only showed the header
+    /// chrome + half a row, which read as a bottom-crop bug.
+    private static let peekHeight: CGFloat = 380
     private static let cornerRadius: CGFloat = 16
 
     @ObservedObject var store: FindHelpStore

@@ -27,6 +27,23 @@ enum CivicaAppStorageKeys {
     static let buddyName              = "co.civica.buddy.name"
     static let buddyContact           = "co.civica.buddy.contact"
 
+    /// Master gate for the apply-flow buddy banner + intro modal. Defaults to
+    /// `false` because the share link currently lands on a broken
+    /// `civica.app/b/<token>` route (the marketing host returns ASP.NET 404 —
+    /// no Universal Link / redirect page is live yet). Flip to `true` once
+    /// either (a) the `civica.app/b/<token>` route is real, or (b) the share
+    /// URL is moved to a domain we control.
+    static let buddyFeatureEnabled    = "co.civica.buddy.featureEnabled"
+
+    /// Demo / preview mode: when `true`, the locked phase tabs
+    /// (Enroll / Pending / Enrolled) become tappable so a reviewer can
+    /// jump between the three home surfaces without producing real
+    /// application state. Tap-to-jump rewrites the application status
+    /// store to the canonical first status for that phase
+    /// (`.notStarted` / `.submittedToState` / `.decisionApproved`).
+    /// Default `false`; toggled from `SNAPSettingsSheet`.
+    static let demoUnlockAllPhases    = "co.civica.demo.unlockAllPhases"
+
     static let recertCompanionPermissionDismissed = "co.civica.recertCompanion.permissionDismissed"
 
     /// Prefix for per-status, per-item checked state on the JR-1

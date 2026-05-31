@@ -32,6 +32,13 @@ struct CivicaRootView: View {
     @AppStorage(CivicaAppStorageKeys.recertInProgress)
     private var isRecertInProgress: Bool = false
 
+    /// Demo / preview mode — when on, the locked phase tabs become
+    /// tappable and tapping jumps the local application status to the
+    /// canonical first status for that phase. Off by default; toggled
+    /// from `SNAPSettingsSheet`.
+    @AppStorage(CivicaAppStorageKeys.demoUnlockAllPhases)
+    private var demoUnlockAllPhases: Bool = false
+
     /// IA-4 (audit 2026-05-29): presents SNAPSettingsSheet from a gear
     /// in the nav bar shown on every status surface, so language /
     /// AI-transparency / sign-out are reachable without first drilling
@@ -185,7 +192,8 @@ struct CivicaRootView: View {
                     externalLink = CivicaExternalLinks.applyPortal(
                         for: SNAPApplicationDraftStore().load()?.draft.whereApplying.stateCode
                     )
-                }
+                },
+                onDebugPhaseChange: demoPhaseSwitcher
             )
         } else if statusStore.status == .recertDue {
             if RecertCompanionFeatureFlag.isEnabled {
@@ -231,7 +239,8 @@ struct CivicaRootView: View {
                     externalLink = CivicaExternalLinks.applyPortal(
                         for: SNAPApplicationDraftStore().load()?.draft.whereApplying.stateCode
                     )
-                }
+                },
+                onDebugPhaseChange: demoPhaseSwitcher
             )
         } else if statusStore.status.isActiveCase {
             SNAPReturningUserHomeView(
@@ -267,7 +276,26 @@ struct CivicaRootView: View {
             // entry tile. Replaces the legacy SNAPEntryView, which
             // depended on VoteNow-specific PlanViewModel /
             // MyRepsViewModel address-prefill plumbing.
-            CivicaEntryView()
+            CivicaEntryView(onDebugPhaseChange: demoPhaseSwitcher)
+        }
+    }
+
+    /// When demo mode is on, this closure powers the unlocked
+    /// `CivicaPhaseTab` in each home view: tapping a tab rewrites the
+    /// application status to the canonical first status for that
+    /// phase, which cascades through `rootSurface` to swap the home
+    /// view. Off-mode → nil, which restores the locked production tab.
+    private var demoPhaseSwitcher: ((CivicaPhase) -> Void)? {
+        guard demoUnlockAllPhases else { return nil }
+        return { phase in
+            switch phase {
+            case .enroll:
+                statusStore.advance(to: .notStarted)
+            case .pending:
+                statusStore.advance(to: .submittedToState)
+            case .enrolled:
+                statusStore.advance(to: .decisionApproved)
+            }
         }
     }
 }
