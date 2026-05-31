@@ -114,16 +114,30 @@ struct FindHelpBottomSheet: View {
         }
         .frame(height: displayHeight, alignment: .top)
         .frame(maxWidth: .infinity)
-        .background(CivicaColors.surfaceSecondary.ignoresSafeArea(edges: .bottom))
-        .clipShape(
+        // Background is a rounded-top rectangle painted DIRECTLY behind
+        // the content. We do NOT use a wrapping `.clipShape` because
+        // clipShape would constrain the background back to the
+        // safe-area frame and re-open the visible map strip under the
+        // home indicator. With the shape baked into the background
+        // and `.ignoresSafeArea(.bottom)` applied at the outer level,
+        // the sheet's pine-cream fill paints all the way to the
+        // physical bottom of the screen.
+        .background(
             UnevenRoundedRectangle(
                 topLeadingRadius: Self.cornerRadius,
                 bottomLeadingRadius: 0,
                 bottomTrailingRadius: 0,
                 topTrailingRadius: Self.cornerRadius
             )
+            .fill(CivicaColors.surfaceSecondary)
         )
         .shadow(color: .black.opacity(0.10), radius: 10, y: -3)
+        // Extend the whole sheet (background, shadow, content frame)
+        // past the bottom safe area so the cream fill reaches the
+        // physical screen edge. Without this the map (which
+        // `.ignoresSafeArea(.all)`) shows through under the home
+        // indicator and reads as a crop bug.
+        .ignoresSafeArea(edges: .bottom)
         .sheet(item: $store.selectedLocation) { location in
             FindHelpPeekSheet(
                 location: location,
