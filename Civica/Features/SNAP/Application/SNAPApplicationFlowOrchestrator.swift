@@ -298,6 +298,7 @@ final class SNAPApplicationFlowOrchestratorViewModel: ObservableObject {
 
 struct SNAPApplicationFlowOrchestratorView: View {
     @StateObject var viewModel: SNAPApplicationFlowOrchestratorViewModel
+    @Environment(\.scenePhase) private var scenePhase
     let language: CivicaLanguage
     let onGeneratePacket: (SNAPApplicationDraft) -> Void
     let onDismiss: () -> Void
@@ -329,7 +330,21 @@ struct SNAPApplicationFlowOrchestratorView: View {
             currentDestination
                 .navigationBarBackButtonHidden(true)
                 .onChange(of: viewModel.draft) { _, _ in
+                    // Persist on every draft mutation (covers the
+                    // write-through fields: ID-scan prefill, review-
+                    // card edits, and any slice already on the draft).
                     viewModel.autosave()
+                }
+                .onChange(of: scenePhase) { _, phase in
+                    // Scene-phase backstop: guarantee a flush the moment
+                    // the app leaves the foreground (lock, app-switch,
+                    // termination) so a kill never loses the persisted
+                    // draft + current-section pointer. iOS gives a
+                    // brief window on .inactive/.background; autosave's
+                    // write is fast + detached.
+                    if phase == .inactive || phase == .background {
+                        viewModel.autosave()
+                    }
                 }
         }
     }
