@@ -58,6 +58,24 @@ final class SNAPApplicationContextualHelpAPIClient {
             case .emptyResponse:              return "Intake-help returned an empty response."
             }
         }
+
+        /// Short, single-line summary suitable for inline display in the
+        /// sheet's diagnostic footer. Trims long response bodies so the
+        /// caption stays readable on a phone.
+        var diagnosticSummary: String {
+            switch self {
+            case .missingBaseURL(let reason): return "config: \(reason)"
+            case .networkError(let msg):      return "network: \(msg)"
+            case .rateLimited:                return "rate-limited (429)"
+            case .serverError(let status, let body):
+                let trimmed = body.trimmingCharacters(in: .whitespacesAndNewlines)
+                let preview = trimmed.count > 160 ? String(trimmed.prefix(160)) + "…" : trimmed
+                return "HTTP \(status): \(preview)"
+            case .decodingFailed(let msg):    return "decode: \(msg)"
+            case .timeout:                    return "timeout"
+            case .emptyResponse:              return "empty response"
+            }
+        }
     }
 
     /// Wire-format response. snake_case decoded via

@@ -35,7 +35,14 @@ struct SNAPApplicationContextualHelpSheet: View {
     private enum ViewState: Equatable {
         case loading
         case success(String)
-        case error
+        /// `diagnosticDetail` carries the underlying error so the user
+        /// (or a reviewer collecting feedback) can see WHY the assistant
+        /// fell back to the human-escalation copy. Empty string means
+        /// "no detail" (e.g. backend-empty-body fallback). Diagnostic
+        /// text is rendered in a small caption below the fallback;
+        /// hiding it again is a single string-empty change once we're
+        /// past device QA.
+        case error(diagnosticDetail: String)
     }
 
     let questionTitle: String
@@ -146,8 +153,8 @@ struct SNAPApplicationContextualHelpSheet: View {
             loadingView
         case .success(let text):
             successView(text: text)
-        case .error:
-            errorView
+        case .error(let detail):
+            errorView(diagnosticDetail: detail)
         }
     }
 
@@ -201,7 +208,7 @@ struct SNAPApplicationContextualHelpSheet: View {
     // No "something went wrong" framing, no apology — just the
     // honest punt to the human escalation path.
 
-    private var errorView: some View {
+    private func errorView(diagnosticDetail: String) -> some View {
         VStack(alignment: .leading, spacing: CivicaSpacing.md) {
             Text(IntakeHelpStrings.errorFallback(title: questionTitle, language: language))
                 .font(CivicaTypography.body)
@@ -209,6 +216,19 @@ struct SNAPApplicationContextualHelpSheet: View {
                 .fixedSize(horizontal: false, vertical: true)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .accessibilityIdentifier("intakeHelp.errorFallback.body")
+
+            // Diagnostic detail (pre-launch only) — shows the underlying
+            // error so a tester can see WHY the assistant fell back.
+            // Pass an empty string to suppress (or remove this block
+            // entirely once we're past QA).
+            if !diagnosticDetail.isEmpty {
+                Text("Debug: \(diagnosticDetail)")
+                    .font(CivicaTypography.footnote)
+                    .foregroundStyle(CivicaColors.graphite)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .accessibilityIdentifier("intakeHelp.errorFallback.debug")
+            }
         }
     }
 
@@ -244,15 +264,21 @@ struct SNAPApplicationContextualHelpSheet: View {
                 // it as an error for telemetry so the failure surface
                 // is one number.
                 SNAPAnalytics.trackIntakeHelpError(questionTitle: questionTitle)
-                state = .error
+                state = .error(diagnosticDetail: "empty response body")
             } else {
                 state = .success(trimmed)
             }
+        } catch let error as SNAPApplicationContextualHelpAPIClient.IntakeHelpError {
+            stillThinkingTask.cancel()
+            SNAPAnalytics.trackIntakeHelpError(questionTitle: questionTitle)
+            // Surface typed details so device QA can see exactly which
+            // failure mode is hitting (status code + body excerpt for
+            // serverError, transport string for networkError, etc.).
+            state = .error(diagnosticDetail: error.diagnosticSummary)
         } catch {
             stillThinkingTask.cancel()
-            // Network / 429 / 500 / timeout / decode → safe fallback.
             SNAPAnalytics.trackIntakeHelpError(questionTitle: questionTitle)
-            state = .error
+            state = .error(diagnosticDetail: error.localizedDescription)
         }
     }
 
