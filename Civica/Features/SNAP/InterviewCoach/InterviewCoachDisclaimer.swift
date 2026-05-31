@@ -5,14 +5,16 @@ import CivicaDesignSystem
 // Coach surfaces.
 //
 // Two visual variants. `.standard` is a multi-line footer with
-// Massachusetts Legal Aid + DTA pointers, used on the entry hub,
-// question detail, and feedback views where the user has time to read.
-// `.compact` is a single-line strip used in the practice session
-// header, where vertical space is precious and the user is mid-task.
+// California CalFresh / CDSS + legal-aid pointers (the CA launch
+// state), used on the entry hub, question detail, and feedback views
+// where the user has time to read. `.compact` is a single-line strip
+// used in the practice session header, where vertical space is precious
+// and the user is mid-task.
 //
 // Both render in the user's chosen language via InterviewCoachStrings.
-// Phrasing is conservative until MLRI / GBLS sign-off on the question
-// bank lands; revisit then.
+// Phrasing is conservative until CA counsel signs off — see the
+// TODO(legal/CA-counsel) note on disclaimerBody. (Not MLRI / GBLS;
+// those are Massachusetts orgs, no longer the right reviewers for CA.)
 struct InterviewCoachDisclaimer: View {
     enum Variant {
         case standard
