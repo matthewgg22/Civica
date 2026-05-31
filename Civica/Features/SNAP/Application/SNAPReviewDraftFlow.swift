@@ -110,6 +110,21 @@ struct SNAPReviewDraftFlowView: View {
     let onGeneratePacket: () -> Void
     let onStartOver: (() -> Void)?
     let onExit: () -> Void
+    /// Commit edited ID-scanned fields (name / address / zip) back to
+    /// the draft. nil when the host doesn't own a mutable draft (e.g.
+    /// phantom/recert review). When nil, the "From your ID" card is
+    /// hidden entirely.
+    let onConfirmScannedFields: ((String, String, String) -> Void)?
+
+    // Local editable copies of the ID-scanned fields, seeded from the
+    // draft on appear. The review screen is where the applicant
+    // confirms or corrects what the ID scan read — DOB is already
+    // confirmed on the age wheel; this closes the loop for name +
+    // address, which have no dedicated question screen.
+    @State private var scannedName: String = ""
+    @State private var scannedAddress: String = ""
+    @State private var scannedZIP: String = ""
+    @State private var didSeedScannedFields = false
 
     init(
         draft: SNAPApplicationDraft,
@@ -117,7 +132,8 @@ struct SNAPReviewDraftFlowView: View {
         onEdit: @escaping (SNAPApplicationSection) -> Void,
         onGeneratePacket: @escaping () -> Void,
         onStartOver: (() -> Void)? = nil,
-        onExit: @escaping () -> Void
+        onExit: @escaping () -> Void,
+        onConfirmScannedFields: ((String, String, String) -> Void)? = nil
     ) {
         self.draft = draft
         self.language = language
@@ -125,6 +141,15 @@ struct SNAPReviewDraftFlowView: View {
         self.onGeneratePacket = onGeneratePacket
         self.onStartOver = onStartOver
         self.onExit = onExit
+        self.onConfirmScannedFields = onConfirmScannedFields
+    }
+
+    /// True when an ID scan populated at least one prefill field, so
+    /// the confirmation card has something to show.
+    private var hasScannedFields: Bool {
+        !draft.scannedApplicantName.isEmpty
+            || !draft.scannedResidentialAddress.isEmpty
+            || !draft.scannedResidentialZIP.isEmpty
     }
 
     var body: some View {
@@ -141,9 +166,19 @@ struct SNAPReviewDraftFlowView: View {
             language: language
         ) {
             VStack(spacing: CivicaSpacing.md) {
+                if onConfirmScannedFields != nil && hasScannedFields {
+                    scannedIDCard
+                }
                 ForEach(SNAPApplicationSection.allCases) { section in
                     sectionCard(section)
                 }
+            }
+            .onAppear {
+                guard !didSeedScannedFields else { return }
+                didSeedScannedFields = true
+                scannedName = draft.scannedApplicantName
+                scannedAddress = draft.scannedResidentialAddress
+                scannedZIP = draft.scannedResidentialZIP
             }
         }
         .toolbar {
@@ -156,6 +191,79 @@ struct SNAPReviewDraftFlowView: View {
             }
         }
         .navigationBarTitleDisplayMode(.inline)
+    }
+
+    // MARK: - Scanned-ID confirmation card
+
+    /// "From your ID" card — editable name + address + ZIP the ID scan
+    /// prefilled. The applicant confirms or corrects here; edits commit
+    /// back to the draft via onConfirmScannedFields so the extension
+    /// autofills the corrected values into BenefitsCal.
+    private var scannedIDCard: some View {
+        VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
+            Text(SNAPReviewDraftStrings.scannedIDTitle.value(in: language))
+                .font(CivicaTypography.subheadStrong)
+                .foregroundStyle(CivicaColors.ink)
+            Text(SNAPReviewDraftStrings.scannedIDHelper.value(in: language))
+                .font(CivicaTypography.footnote)
+                .foregroundStyle(CivicaColors.graphite)
+                .fixedSize(horizontal: false, vertical: true)
+
+            scannedField(
+                label: SNAPReviewDraftStrings.scannedNameLabel.value(in: language),
+                text: $scannedName,
+                keyboard: .default
+            )
+            scannedField(
+                label: SNAPReviewDraftStrings.scannedAddressLabel.value(in: language),
+                text: $scannedAddress,
+                keyboard: .default
+            )
+            scannedField(
+                label: SNAPReviewDraftStrings.scannedZIPLabel.value(in: language),
+                text: $scannedZIP,
+                keyboard: .numberPad
+            )
+        }
+        .padding(CivicaSpacing.lg)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(CivicaColors.surfacePrimary)
+        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
+        .overlay(
+            RoundedRectangle(cornerRadius: CivicaRadius.card)
+                .strokeBorder(CivicaColors.hairline, lineWidth: 1)
+        )
+    }
+
+    private func scannedField(
+        label: String,
+        text: Binding<String>,
+        keyboard: UIKeyboardType
+    ) -> some View {
+        VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
+            Text(label)
+                .font(CivicaTypography.captionStrong)
+                .foregroundStyle(CivicaColors.graphite)
+            TextField("", text: text)
+                .font(CivicaTypography.body)
+                .keyboardType(keyboard)
+                .textInputAutocapitalization(keyboard == .default ? .words : .never)
+                .padding(.horizontal, CivicaSpacing.md)
+                .padding(.vertical, CivicaSpacing.sm)
+                .background(CivicaColors.surfaceSecondary)
+                .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control))
+                .overlay(
+                    RoundedRectangle(cornerRadius: CivicaRadius.control)
+                        .strokeBorder(CivicaColors.hairline, lineWidth: 1)
+                )
+                .onChange(of: text.wrappedValue) { _, _ in
+                    onConfirmScannedFields?(
+                        scannedName.trimmingCharacters(in: .whitespaces),
+                        scannedAddress.trimmingCharacters(in: .whitespaces),
+                        scannedZIP.filter(\.isNumber)
+                    )
+                }
+        }
     }
 
     // MARK: - Section card
@@ -497,6 +605,19 @@ enum SNAPReviewDraftStrings {
         es: "Generar mi paquete de solicitud"
     )
     static let editLabel = CivicaText("Edit", es: "Editar")
+
+    // Scanned-ID confirmation card
+    static let scannedIDTitle = CivicaText(
+        "From your ID",
+        es: "De tu identificación"
+    )
+    static let scannedIDHelper = CivicaText(
+        "We read these off the ID you scanned. Check them and fix anything that's wrong before you submit.",
+        es: "Leímos esto de la identificación que escaneaste. Revísalo y corrige lo que esté mal antes de enviar."
+    )
+    static let scannedNameLabel = CivicaText("Full name", es: "Nombre completo")
+    static let scannedAddressLabel = CivicaText("Address", es: "Dirección")
+    static let scannedZIPLabel = CivicaText("ZIP", es: "Código postal")
     static let nothingYet = CivicaText(
         "Nothing here yet — tap Edit to add.",
         es: "Nada aquí todavía — toca Editar para añadir."

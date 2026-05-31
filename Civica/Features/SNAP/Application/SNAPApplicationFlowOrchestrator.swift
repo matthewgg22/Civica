@@ -374,7 +374,15 @@ struct SNAPApplicationFlowOrchestratorView: View {
                     onEdit: viewModel.startEditing,
                     onGeneratePacket: { onGeneratePacket(viewModel.draft) },
                     onStartOver: { viewModel.resetDraft() },
-                    onExit: onDismiss
+                    onExit: onDismiss,
+                    onConfirmScannedFields: { name, address, zip in
+                        // Commit the applicant's confirmed/corrected
+                        // ID-scan values back to the draft + persist.
+                        viewModel.draft.scannedApplicantName = name
+                        viewModel.draft.scannedResidentialAddress = address
+                        viewModel.draft.scannedResidentialZIP = zip
+                        viewModel.autosave()
+                    }
                 )
             }
         }
