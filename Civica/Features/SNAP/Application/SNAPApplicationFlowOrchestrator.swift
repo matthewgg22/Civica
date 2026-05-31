@@ -103,15 +103,27 @@ final class SNAPApplicationFlowOrchestratorViewModel: ObservableObject {
             self.mode = .phantom(currentSection: .whereApplying)
         } else {
             self.draft = SNAPApplicationDraft()
-            self.mode = .idScanOffer
+            // Fresh run starts at the state question. The ID-scan offer
+            // is detoured to AFTER whereApplying completes (see
+            // finishSection) so it can prefill the screens that follow.
+            self.mode = .sequential(currentSection: .whereApplying)
         }
         // Seed the triage result from any restored draft so the banner
         // is correct on launch without waiting for a step transition.
         recomputeTriage()
     }
 
+    /// True once the ID-scan offer has been shown (scanned or skipped)
+    /// this session, so completing `whereApplying` again (e.g. after a
+    /// back-and-forward) doesn't re-trigger it. In-memory only.
+    @Published private(set) var hasOfferedIDScan = false
+
     func finishIDScanOffer() {
-        mode = .sequential(currentSection: .whereApplying)
+        hasOfferedIDScan = true
+        // The ID scan now sits AFTER the state question, feeding the
+        // screens that follow it (DOB on applicantAge, name/address on
+        // review). Advance to the section after whereApplying.
+        mode = .sequential(currentSection: .applicantAge)
         persist()
     }
 
@@ -120,7 +132,13 @@ final class SNAPApplicationFlowOrchestratorViewModel: ObservableObject {
         case .editing:
             mode = .review
         case .sequential, .review, .idScanOffer:
-            if let next = nextSection(after: section) {
+            // Detour: right after the applicant picks their state
+            // (whereApplying completes), surface the optional ID scan
+            // ONCE — it prefills DOB / name / address for the screens
+            // that come next. Skipped on re-entry (hasOfferedIDScan).
+            if section == .whereApplying, !hasOfferedIDScan {
+                mode = .idScanOffer
+            } else if let next = nextSection(after: section) {
                 mode = .sequential(currentSection: next)
             } else {
                 mode = .review
@@ -169,11 +187,11 @@ final class SNAPApplicationFlowOrchestratorViewModel: ObservableObject {
         case .sequential(let current):
             if let prev = previousSection(before: current) {
                 mode = .sequential(currentSection: prev)
-            } else {
-                // At first section — go back to ID scan offer so the
-                // back button from whereApplying returns there.
-                mode = .idScanOffer
             }
+            // At the first section (whereApplying) there's no earlier
+            // step — the ID offer now comes AFTER it, not before. The
+            // sub-flow's own back arrow calls onExit/onDismiss in that
+            // case, so leave mode unchanged here.
         case .phantom(let current):
             if let prev = previousSection(before: current) {
                 mode = .phantom(currentSection: prev)
@@ -191,7 +209,8 @@ final class SNAPApplicationFlowOrchestratorViewModel: ObservableObject {
     func resetDraft() {
         draft = SNAPApplicationDraft()
         voiceConfidence.removeAll()
-        mode = .idScanOffer
+        hasOfferedIDScan = false
+        mode = .sequential(currentSection: .whereApplying)
         store.clear()
         SNAPCapturedDocumentStore.clearAll()
         SNAPCapturedDocumentStore.clearPacketPDFs()
