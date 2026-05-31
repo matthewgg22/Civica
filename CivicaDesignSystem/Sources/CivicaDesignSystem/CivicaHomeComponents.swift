@@ -293,14 +293,20 @@ public struct CivicaPhaseTimeline: View {
 
     let current: Milestone
     let labels: [String]
+    let onMilestoneTap: ((Milestone) -> Void)?
 
-    public init(current: Milestone, labels: [String]) {
+    public init(
+        current: Milestone,
+        labels: [String],
+        onMilestoneTap: ((Milestone) -> Void)? = nil
+    ) {
         self.current = current
         // Pad / trim to 4 to keep the layout predictable even if a
         // caller passes a wrong-length label set.
         var resolved = labels
         while resolved.count < 4 { resolved.append("") }
         self.labels = Array(resolved.prefix(4))
+        self.onMilestoneTap = onMilestoneTap
     }
 
     public var body: some View {
@@ -311,7 +317,9 @@ public struct CivicaPhaseTimeline: View {
                     Rectangle()
                         .fill(CivicaColors.ink.opacity(0.10))
                         .frame(height: 2)
-                    // completed connector — done -> midpoint of current
+                    // completed connector — done -> midpoint of current.
+                    // Animated so a status advance fills smoothly to
+                    // the next milestone instead of snapping.
                     Rectangle()
                         .fill(CivicaColors.pinePrimary)
                         .frame(
@@ -319,15 +327,16 @@ public struct CivicaPhaseTimeline: View {
                             height: 2
                         )
                         .frame(maxWidth: .infinity, alignment: .leading)
+                        .animation(.easeInOut(duration: 0.65), value: current)
                     HStack(spacing: 0) {
                         ForEach(Milestone.allCases, id: \.self) { m in
-                            milestoneDot(m)
+                            dotButton(m)
                                 .frame(maxWidth: .infinity)
                         }
                     }
                 }
             }
-            .frame(height: 22)
+            .frame(height: 26)
             HStack(spacing: 0) {
                 ForEach(Array(labels.enumerated()), id: \.offset) { idx, label in
                     let m = Milestone(rawValue: idx)!
@@ -347,29 +356,49 @@ public struct CivicaPhaseTimeline: View {
         return .future
     }
 
+    /// Wraps the milestone dot in a tap target so the parent can
+    /// open a detail sheet on tap. If `onMilestoneTap` is nil the dot
+    /// stays a static view (preserves the original timeline contract).
+    @ViewBuilder
+    private func dotButton(_ m: Milestone) -> some View {
+        if let onMilestoneTap {
+            Button { onMilestoneTap(m) } label: {
+                milestoneDot(m)
+                    // Bigger hit-target than the visual dot so taps on
+                    // older / smaller fingers still register.
+                    .frame(width: 44, height: 44)
+                    .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel(labels[m.rawValue])
+            .accessibilityAddTraits(state(of: m) == .current ? [.isButton, .isSelected] : .isButton)
+        } else {
+            milestoneDot(m)
+        }
+    }
+
     @ViewBuilder
     private func milestoneDot(_ m: Milestone) -> some View {
         let s = state(of: m)
         switch s {
         case .done:
+            // Reduced visual weight on done — smaller dot, no
+            // checkmark — so the current stage stays the focal point
+            // of the timeline. Earlier treatment (18pt + solid pine +
+            // checkmark) flooded the screen with green; with two
+            // milestones done you saw five pine elements above the
+            // fold. Smaller filled dot still reads as "complete."
             Circle()
                 .fill(CivicaColors.pinePrimary)
-                .frame(width: 18, height: 18)
-                .overlay {
-                    Image(systemName: "checkmark")
-                        .imageScale(.large)
-                        .font(.body)
-                        .foregroundStyle(CivicaColors.onPrimaryText)
-                }
+                .frame(width: 12, height: 12)
         case .current:
-            // "In review" reads differently from "Submitted" — a hollow
-            // pine ring (not the filled+check used by done) so the user
-            // can tell at a glance which milestone is complete vs which
-            // is in flight. Earlier version used solid pine with a
-            // light halo; reviewers couldn't distinguish it from .done.
+            // Current is the timeline's focal point: larger than done,
+            // bold pine ring + pine inner dot so it reads as "you are
+            // here." Bigger than the previous 18pt so the visual
+            // hierarchy (current > done > future) is unambiguous.
             Circle()
                 .fill(CivicaColors.paper)
-                .frame(width: 18, height: 18)
+                .frame(width: 22, height: 22)
                 .overlay(
                     Circle()
                         .stroke(CivicaColors.pinePrimary, lineWidth: 3)
@@ -377,13 +406,13 @@ public struct CivicaPhaseTimeline: View {
                 .overlay(
                     Circle()
                         .fill(CivicaColors.pinePrimary)
-                        .frame(width: 7, height: 7)
+                        .frame(width: 9, height: 9)
                 )
         case .future:
             Circle()
                 .stroke(CivicaColors.ink.opacity(0.22), lineWidth: 1.5)
                 .background(Circle().fill(CivicaColors.paper))
-                .frame(width: 14, height: 14)
+                .frame(width: 12, height: 12)
         }
     }
 

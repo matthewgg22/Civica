@@ -307,10 +307,13 @@ private struct SNAPDailyChecklistRow: View {
             } label: {
                 HStack(alignment: .firstTextBaseline, spacing: CivicaSpacing.md) {
                     Image(systemName: checked ? "checkmark.circle.fill" : "circle")
-                        .imageScale(.large)
-                        .font(.body)
+                        // Title-class sizing — body-class circles read
+                        // anemic next to multi-line item text and made
+                        // the column hard to scan. Title3 puts the
+                        // glyph at ~26pt visual width.
+                        .font(.title3)
                         .foregroundStyle(checked ? CivicaColors.pinePrimary : CivicaColors.graphite.opacity(0.6))
-                        .frame(width: 22, alignment: .leading)
+                        .frame(width: 28, alignment: .leading)
                         .accessibilityHidden(true)
                     Text(item.title.value(in: language))
                         .font(CivicaTypography.body)
@@ -341,7 +344,7 @@ private struct SNAPDailyChecklistRow: View {
                             .font(CivicaTypography.footnoteStrong)
                     }
                     .foregroundStyle(CivicaColors.pinePrimary)
-                    .padding(.leading, 22 + CivicaSpacing.md)
+                    .padding(.leading, 28 + CivicaSpacing.md)
                 }
                 .buttonStyle(.plain)
                 .accessibilityLabel(actionCTA(for: action, language: language))

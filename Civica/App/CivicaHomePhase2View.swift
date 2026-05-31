@@ -105,6 +105,12 @@ struct CivicaHomePhase2View: View {
 
     @State private var presentingWhatHappensNext: Bool = false
 
+    /// Milestone the user tapped on the timeline. Drives the small
+    /// detail sheet that explains what's happening at that stage —
+    /// turns the timeline from a passive indicator into an
+    /// information surface.
+    @State private var tappedMilestone: CivicaPhaseTimeline.Milestone?
+
     // IS-8 (audit 2026-05-29): true on first render, flipped false at
     // the end of the parallel `.task` below. While true AND the
     // conditional-row band would otherwise be empty, three shimmered
@@ -236,7 +242,10 @@ struct CivicaHomePhase2View: View {
                         CivicaPhase2Strings.timelineInReview.value(in: language),
                         CivicaPhase2Strings.timelineInterview.value(in: language),
                         CivicaPhase2Strings.timelineDecision.value(in: language),
-                    ]
+                    ],
+                    onMilestoneTap: { milestone in
+                        tappedMilestone = milestone
+                    }
                 )
 
                 whatCountyIsDoing
@@ -324,6 +333,11 @@ struct CivicaHomePhase2View: View {
                     onOpenExternalPortal()
                 }
             )
+        }
+        .sheet(item: $tappedMilestone) { milestone in
+            CivicaPhase2MilestoneDetailSheet(milestone: milestone, language: language)
+                .presentationDetents([.medium])
+                .presentationDragIndicator(.visible)
         }
         .task {
             // Bind the live enrollment client + fetch error-risk +
@@ -649,6 +663,128 @@ struct CivicaHomePhase2View: View {
             .padding(.vertical, CivicaSpacing.sm)
         }
         .buttonStyle(.plain)
+    }
+}
+
+// MARK: - Milestone detail sheet
+
+extension CivicaPhaseTimeline.Milestone: Identifiable {
+    public var id: Int { rawValue }
+}
+
+/// Bottom sheet shown when the user taps a dot on the Phase 2
+/// timeline. Each milestone gets a one-paragraph description of
+/// what's happening at that stage and roughly how long it lasts,
+/// in the same vocabulary the timeline strip uses.
+private struct CivicaPhase2MilestoneDetailSheet: View {
+    let milestone: CivicaPhaseTimeline.Milestone
+    let language: CivicaLanguage
+
+    @Environment(\.dismiss) private var dismiss
+
+    private struct Content {
+        let title: String
+        let body: String
+        let timeframe: String?
+    }
+
+    private var content: Content {
+        switch (milestone, language) {
+        case (.submitted, .english):
+            return Content(
+                title: "Submitted",
+                body: "Your application has been received by the county. A caseworker will be assigned within one business day.",
+                timeframe: "Usually completes within 1 business day"
+            )
+        case (.submitted, .spanish):
+            return Content(
+                title: "Enviada",
+                body: "Tu solicitud fue recibida por el condado. Te asignarán un trabajador del caso dentro de un día hábil.",
+                timeframe: "Suele completarse en 1 día hábil"
+            )
+        case (.inReview, .english):
+            return Content(
+                title: "In review",
+                body: "A caseworker is checking your documents and looking for anything missing. If something is missing they'll send a Documents Requested notice through this app.",
+                timeframe: "Usually 7–14 days"
+            )
+        case (.inReview, .spanish):
+            return Content(
+                title: "En revisión",
+                body: "Un trabajador del caso está revisando tus documentos y notando lo que falta. Si falta algo te enviará un aviso de Documentos Solicitados por esta app.",
+                timeframe: "Suele tomar de 7 a 14 días"
+            )
+        case (.interview, .english):
+            return Content(
+                title: "Interview",
+                body: "The county calls you for a 15-minute eligibility interview. They'll verify your application and ask about anything that wasn't clear. Missing this call is the most common reason cases get closed — set an alarm 15 minutes before.",
+                timeframe: "Usually within 2 weeks of submission"
+            )
+        case (.interview, .spanish):
+            return Content(
+                title: "Entrevista",
+                body: "El condado te llama para una entrevista de elegibilidad de 15 minutos. Verificará tu solicitud y preguntará por lo que no haya quedado claro. Perder esta llamada es la razón más común por la que se cierran los casos — pon una alarma 15 minutos antes.",
+                timeframe: "Usualmente dentro de 2 semanas tras enviar"
+            )
+        case (.decision, .english):
+            return Content(
+                title: "Decision",
+                body: "By federal rule, the county has 30 days from submission to issue a decision. Expedited (emergency) cases are 7 days. You'll see the result here and get a separate letter from the county.",
+                timeframe: "Federal rule: 30 days (7 days for expedited)"
+            )
+        case (.decision, .spanish):
+            return Content(
+                title: "Decisión",
+                body: "Por regla federal, el condado tiene 30 días tras enviar para emitir una decisión. Los casos urgentes son 7 días. Verás el resultado aquí y recibirás una carta aparte del condado.",
+                timeframe: "Regla federal: 30 días (7 días en casos urgentes)"
+            )
+        }
+    }
+
+    var body: some View {
+        NavigationStack {
+            ScrollView {
+                VStack(alignment: .leading, spacing: CivicaSpacing.lg) {
+                    Text(content.title)
+                        .font(CivicaTypography.cardHero)
+                        .foregroundStyle(CivicaColors.ink)
+
+                    Text(content.body)
+                        .font(CivicaTypography.body)
+                        .foregroundStyle(CivicaColors.graphite)
+                        .fixedSize(horizontal: false, vertical: true)
+
+                    if let timeframe = content.timeframe {
+                        HStack(spacing: CivicaSpacing.sm) {
+                            Image(systemName: "clock")
+                                .imageScale(.medium)
+                                .foregroundStyle(CivicaColors.pinePrimary)
+                                .accessibilityHidden(true)
+                            Text(timeframe)
+                                .font(CivicaTypography.footnoteStrong)
+                                .foregroundStyle(CivicaColors.ink)
+                        }
+                        .padding(CivicaSpacing.md)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .background(
+                            RoundedRectangle(cornerRadius: CivicaRadius.card)
+                                .fill(CivicaColors.pinePrimary.opacity(0.10))
+                        )
+                    }
+
+                    Spacer(minLength: 0)
+                }
+                .padding(CivicaSpacing.xl)
+            }
+            .background(CivicaColors.paper.ignoresSafeArea())
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button(language == .spanish ? "Listo" : "Done") { dismiss() }
+                        .foregroundStyle(CivicaColors.pinePrimary)
+                }
+            }
+        }
     }
 }
 
