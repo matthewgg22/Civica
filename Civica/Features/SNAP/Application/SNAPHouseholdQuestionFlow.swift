@@ -44,6 +44,14 @@ struct SNAPHouseholdAnswers: Equatable, Codable {
     /// Wave 4 — BenefitsCal ABMRS. Optional. Used to autofill the
     /// state portal's marital-status field.
     var maritalStatus: SNAPMaritalStatus?
+    /// Wave 5 — BenefitsCal ABBPF, aggregated. The state portal asks
+    /// per-household-member; Civica asks once at the household level
+    /// to keep the privacy posture (no per-member PII). When
+    /// `householdSize > 1` and this is `.no`, the SNAP household unit
+    /// may be smaller than the residence — a determination that
+    /// affects benefit math. When household size is 1, the question
+    /// is skipped (trivially yes).
+    var everyoneBuysPreparesFoodTogether: SNAPTri?
 
     // Categorical eligibility inputs (7 CFR 273.2(j)). The question
     // flow does not yet ask these directly -- they're plumbed
@@ -73,6 +81,7 @@ final class SNAPHouseholdQuestionFlowViewModel: ObservableObject {
         case elderlyOrDisabled
         case migrantFarmworker
         case maritalStatus      // Wave 4 — always asked, optional
+        case buyPrepareFood     // Wave 5 — shown only when householdSize > 1
 
         static let total = Self.allCases.count
         var oneBasedIndex: Int { rawValue + 1 }
@@ -91,6 +100,17 @@ final class SNAPHouseholdQuestionFlowViewModel: ObservableObject {
         case .minors:
             // Skip childrenUnder14 when no minors in the household.
             step = answers.hasMinorInHousehold == true ? .childrenUnder14 : .elderlyOrDisabled
+        case .maritalStatus:
+            // Wave 5 — skip buyPrepareFood for single-person
+            // households (trivially Yes). Household size buckets
+            // include "1 person" as a discrete value.
+            let isSingle = answers.householdSize == "1" || answers.householdSize?.lowercased() == "just me"
+            if isSingle {
+                answers.everyoneBuysPreparesFoodTogether = .yes
+                // Done — no further steps after buyPrepareFood.
+                return
+            }
+            step = .buyPrepareFood
         default:
             if let next = Step(rawValue: step.rawValue + 1) { step = next }
         }
@@ -113,6 +133,7 @@ final class SNAPHouseholdQuestionFlowViewModel: ObservableObject {
         case .elderlyOrDisabled: return answers.hasElderlyOrDisabled != nil
         case .migrantFarmworker: return answers.migrantSeasonalFarmworker != nil
         case .maritalStatus: return answers.maritalStatus != nil
+        case .buyPrepareFood: return answers.everyoneBuysPreparesFoodTogether != nil
         }
     }
 
@@ -174,6 +195,7 @@ struct SNAPHouseholdQuestionFlowView: View {
         case .elderlyOrDisabled: elderlyOrDisabledScreen
         case .migrantFarmworker: migrantFarmworkerScreen
         case .maritalStatus: maritalStatusScreen
+        case .buyPrepareFood: buyPrepareFoodScreen
         }
     }
 
@@ -242,6 +264,39 @@ struct SNAPHouseholdQuestionFlowView: View {
     }
 
     // MARK: - Screen 4: migrant or seasonal farmworker?
+
+    // MARK: - Wave 5: buy & prepare food together (BenefitsCal ABBPF, aggregated)
+
+    private var buyPrepareFoodScreen: some View {
+        let options: [SNAPTri] = [.yes, .no, .notSure]
+        return CivicaQuestionScreen(
+            progress: progress(for: .buyPrepareFood),
+            title: SNAPHouseholdQuestionStrings.buyPrepareFoodTitle.value(in: language),
+            helper: SNAPHouseholdQuestionStrings.buyPrepareFoodHelper.value(in: language),
+            primaryActionTitle: CivicaQuestionStrings.continueLabel.value(in: language),
+            primaryActionEnabled: viewModel.canAdvanceFromCurrentStep,
+            onPrimary: advanceOrComplete,
+            language: language
+        ) {
+            CivicaQuestionChoices(
+                options: options.map {
+                    SNAPHouseholdQuestionStrings.migrantTriLabel(for: $0, language: language)
+                },
+                selection: Binding(
+                    get: {
+                        viewModel.answers.everyoneBuysPreparesFoodTogether.map {
+                            SNAPHouseholdQuestionStrings.migrantTriLabel(for: $0, language: language)
+                        }
+                    },
+                    set: { label in
+                        viewModel.answers.everyoneBuysPreparesFoodTogether = options.first { tri in
+                            SNAPHouseholdQuestionStrings.migrantTriLabel(for: tri, language: language) == label
+                        }
+                    }
+                )
+            )
+        }
+    }
 
     // MARK: - Wave 4: marital status (BenefitsCal ABMRS)
 
@@ -395,6 +450,16 @@ enum SNAPHouseholdQuestionStrings {
     static let elderlyOrDisabledHelper = CivicaText(
         "This matters for SNAP — older adults and people with disabilities get extra deductions and don't face an asset test in Massachusetts.",
         es: "Esto importa para SNAP — los adultos mayores y las personas con discapacidad reciben deducciones adicionales y no enfrentan una prueba de bienes en Massachusetts."
+    )
+
+    // Wave 5 — aggregate buy-prepare-food (BenefitsCal ABBPF, household-level)
+    static let buyPrepareFoodTitle = CivicaText(
+        "Does everyone in your household buy and prepare food together?",
+        es: "¿Todos en tu hogar compran y preparan la comida juntos?"
+    )
+    static let buyPrepareFoodHelper = CivicaText(
+        "SNAP counts people who share food costs as one household — even if they're not related. Roommates who buy and cook separately may be separate SNAP cases.",
+        es: "SNAP cuenta a las personas que comparten los costos de comida como un solo hogar — aunque no estén emparentadas. Compañeros de cuarto que compran y cocinan por separado pueden ser casos de SNAP separados."
     )
 
     // Wave 4 — marital status (BenefitsCal ABMRS)
