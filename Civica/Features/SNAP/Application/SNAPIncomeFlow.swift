@@ -392,13 +392,11 @@ struct SNAPIncomeFlowView: View {
                 Text("$")
                     .font(CivicaTypography.currencyHero)
                     .foregroundStyle(CivicaColors.graphite)
-                TextField(
-                    SNAPIncomeStrings.grossPlaceholder.value(in: language),
-                    text: $viewModel.grossIncomeField
+                CivicaCurrencyField(
+                    text: $viewModel.grossIncomeField,
+                    placeholder: SNAPIncomeStrings.grossPlaceholder.value(in: language),
+                    font: CivicaTypography.currencyHero
                 )
-                .font(CivicaTypography.currencyHero)
-                .foregroundStyle(CivicaColors.ink)
-                .keyboardType(.decimalPad)
             }
             .padding(.horizontal, CivicaSpacing.lg)
             .padding(.vertical, CivicaSpacing.md)
@@ -465,13 +463,11 @@ struct SNAPIncomeFlowView: View {
                 Text("$")
                     .font(CivicaTypography.currencyHero)
                     .foregroundStyle(CivicaColors.graphite)
-                TextField(
-                    SNAPIncomeStrings.liquidResourcesPlaceholder.value(in: language),
-                    text: $viewModel.liquidResourcesField
+                CivicaCurrencyField(
+                    text: $viewModel.liquidResourcesField,
+                    placeholder: SNAPIncomeStrings.liquidResourcesPlaceholder.value(in: language),
+                    font: CivicaTypography.currencyHero
                 )
-                .font(CivicaTypography.currencyHero)
-                .foregroundStyle(CivicaColors.ink)
-                .keyboardType(.decimalPad)
             }
             .padding(.horizontal, CivicaSpacing.lg)
             .padding(.vertical, CivicaSpacing.md)

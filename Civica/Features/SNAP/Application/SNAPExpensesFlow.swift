@@ -462,13 +462,11 @@ struct SNAPExpensesFlowView: View {
                 Text("$")
                     .font(CivicaTypography.currencyHero)
                     .foregroundStyle(CivicaColors.graphite)
-                TextField(
-                    CivicaQuestionStrings.amountPlaceholder.value(in: language),
-                    text: binding
+                CivicaCurrencyField(
+                    text: binding,
+                    placeholder: CivicaQuestionStrings.amountPlaceholder.value(in: language),
+                    font: CivicaTypography.currencyHero
                 )
-                .font(CivicaTypography.currencyHero)
-                .foregroundStyle(CivicaColors.ink)
-                .keyboardType(.decimalPad)
             }
             .padding(.horizontal, CivicaSpacing.lg)
             .padding(.vertical, CivicaSpacing.md)

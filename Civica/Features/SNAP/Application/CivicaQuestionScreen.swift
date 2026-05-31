@@ -493,11 +493,19 @@ struct CivicaQuestionNumberInput: View {
                 Text("$")
                     .font(CivicaTypography.cardTitle)
                     .foregroundStyle(CivicaColors.graphite)
+                // Cents-first formatter — user types digits, display
+                // fills from the right (Venmo / BofA pattern).
+                CivicaCurrencyField(
+                    text: $value,
+                    placeholder: placeholder,
+                    font: CivicaTypography.cardTitle.monospacedDigit()
+                )
+            } else {
+                TextField(placeholder, text: $value)
+                    .font(CivicaTypography.cardTitle.monospacedDigit())
+                    .keyboardType(.numberPad)
+                    .foregroundStyle(CivicaColors.ink)
             }
-            TextField(placeholder, text: $value)
-                .font(CivicaTypography.cardTitle.monospacedDigit())
-                .keyboardType(kind == .dollars ? .decimalPad : .numberPad)
-                .foregroundStyle(CivicaColors.ink)
         }
         .padding(.horizontal, CivicaSpacing.lg)
         .padding(.vertical, CivicaSpacing.md)
