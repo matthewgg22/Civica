@@ -239,13 +239,12 @@ struct SNAPBenefitEstimatorView: View {
     }
 
     private var utilitiesCard: some View {
-        // Helper re-added: the SUA toggle now moves the estimate by
-        // $663 (CA FY26), so the clarification "not included in your
-        // rent" earns its space. HStack(alignment: .top) in the parent
-        // row handles differing card heights cleanly.
+        // Helper subtitle dropped per device-QA feedback (2026-05-31):
+        // the "electric, gas, or heating… even one qualifies" line read
+        // as clutter in the 2-col row. The question "Pay utilities
+        // separately?" stands on its own.
         inputCard(
-            question: SNAPBenefitEstimatorStrings.utilitiesQuestion.value(in: language),
-            helper: SNAPBenefitEstimatorStrings.utilitiesHelper.value(in: language)
+            question: SNAPBenefitEstimatorStrings.utilitiesQuestion.value(in: language)
         ) {
             yesNoToggle(isOn: $inputs.paysUtilitiesSeparately)
         }

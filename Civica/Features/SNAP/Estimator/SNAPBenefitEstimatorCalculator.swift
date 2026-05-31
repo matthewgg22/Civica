@@ -112,8 +112,18 @@ enum SNAPBenefitEstimatorCalculator {
         let rent = max(0, inputs.monthlyRent)
         let eld = inputs.elderlyOrDisabled
 
+        // The 20% earned-income deduction applies to the income the
+        // user entered regardless of elderly/disabled status — being
+        // 60+/disabled does NOT forfeit it. (The earlier `eld ? 0`
+        // coupling wrongly zeroed the deduction for elderly/disabled
+        // households, raising net income and DROPPING the estimate when
+        // the toggle flipped to Yes — the exact opposite of what the
+        // elderly/disabled provisions do.) The elderly/disabled toggle's
+        // only effects are: waive the gross-income test (below) and
+        // uncap the excess-shelter deduction (via shelterDeductionCap) —
+        // both can only hold the benefit equal or raise it.
         let earnedIncomeRate = rules.earnedIncomeDeductionRate(asOf: today)
-        let earnedIncomeDeduction = eld ? 0 : (gross * earnedIncomeRate).roundedWhole(.bankers)
+        let earnedIncomeDeduction = (gross * earnedIncomeRate).roundedWhole(.bankers)
         let standardDeduction = rules.standardDeduction(householdSize: hh, asOf: today)
         let netBefore = max(0, gross - earnedIncomeDeduction - standardDeduction)
 
