@@ -15,18 +15,18 @@ import SwiftUI
 /// The list scrolls independently — drag the header area to resize the
 /// drawer, scroll the list to navigate within it.
 struct FindHelpBottomSheet: View {
-    /// Minimum visible height — sized to fully clear the header chrome
-    /// on devices that wrap the disclosure footer to 2 lines (iPhone 13
-    /// mini, iPhone SE class). The header stack:
-    ///   grab handle (~22) + disclosure footer 2 lines (~58) +
-    ///   layer toggle (~44) + subtitle (~22) + filter bar (~44) +
-    ///   spacing (md+sm+xs ~20) = ~210pt typical, ~250pt worst case
-    /// with Dynamic Type bumped. Earlier values (240/280/380) all
-    /// either covered too much map or clipped the filter bar bottom
-    /// edge on cramped screens. 300pt clears the chrome and leaves
-    /// enough map breathing room on every device class.
-    private static let peekHeight: CGFloat = 300
+    /// Minimum visible height — Apple-Maps-style minimal peek. At rest
+    /// we only show grab handle + disclosure + layer toggle. Subtitle
+    /// and filter chips appear once the user drags the drawer up
+    /// (`isExpanded`), so the map gets its real estate back at rest.
+    /// Earlier values (240 / 280 / 300 / 380) all covered too much
+    /// map or clipped chrome on cramped screens — the right answer
+    /// turned out to be "less chrome at peek," not "more peek."
+    private static let peekHeight: CGFloat = 200
     private static let cornerRadius: CGFloat = 16
+    /// Drawer is "expanded" once the live height exceeds peek by this
+    /// margin. Drives the conditional reveal of subtitle + filter.
+    private static let expandedThreshold: CGFloat = 32
 
     @ObservedObject var store: FindHelpStore
     let language: CivicaLanguage
@@ -54,6 +54,13 @@ struct FindHelpBottomSheet: View {
         min(largeHeight, max(Self.peekHeight, drawerHeight - dragDelta))
     }
 
+    /// True once the drawer is dragged up off its peek detent. Drives
+    /// the conditional reveal of the layer subtitle + filter chips,
+    /// which only crowd the map when shown at rest.
+    private var isExpanded: Bool {
+        displayHeight > Self.peekHeight + Self.expandedThreshold
+    }
+
     // MARK: - Body
 
     var body: some View {
@@ -71,21 +78,27 @@ struct FindHelpBottomSheet: View {
                     .padding(.horizontal, CivicaSpacing.lg)
                     .padding(.top, CivicaSpacing.md)
 
-                Text(layerSubtitle(for: store.layerSelection))
-                    .font(CivicaTypography.footnote)
-                    .foregroundStyle(CivicaColors.graphite)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.horizontal, CivicaSpacing.lg)
-                    .padding(.top, CivicaSpacing.xs)
+                // Subtitle + filter chips only render once the user
+                // has dragged the drawer up off peek. At rest the
+                // map stays uncluttered and the user sees only the
+                // grab handle + disclosure + layer toggle.
+                if isExpanded {
+                    Text(layerSubtitle(for: store.layerSelection))
+                        .font(CivicaTypography.footnote)
+                        .foregroundStyle(CivicaColors.graphite)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.horizontal, CivicaSpacing.lg)
+                        .padding(.top, CivicaSpacing.xs)
 
-                if store.layerSelection == .findHelp {
-                    FindHelpFilterBar(
-                        filter: $store.filter,
-                        layerSelection: store.layerSelection,
-                        onChange: onFilterChanged
-                    )
-                    .padding(.horizontal, CivicaSpacing.lg)
-                    .padding(.top, CivicaSpacing.sm)
+                    if store.layerSelection == .findHelp {
+                        FindHelpFilterBar(
+                            filter: $store.filter,
+                            layerSelection: store.layerSelection,
+                            onChange: onFilterChanged
+                        )
+                        .padding(.horizontal, CivicaSpacing.lg)
+                        .padding(.top, CivicaSpacing.sm)
+                    }
                 }
             }
             .contentShape(Rectangle())
