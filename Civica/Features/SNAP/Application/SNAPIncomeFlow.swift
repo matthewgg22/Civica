@@ -47,6 +47,19 @@ struct SNAPIncomeAnswers: Equatable, Codable {
     /// 7 CFR 273.9(c)(3). Must be subtracted from grossMonthlyIncome
     /// before passing to SNAPBenefitCalculator.
     var fwsMonthlyAmount: Decimal?
+
+    // Wave 1 — Per-job employer detail. Optional fields the extension
+    // can autofill into BenefitsCal's ABEIC page (employer name +
+    // address + phone). All optional: an applicant who skips them
+    // surfaces a "human must fill" hint to the assister on the
+    // packet, instead of blocking advancement. Empty strings = "not
+    // provided yet" (matches the existing String defaults pattern).
+    var employerName: String = ""
+    var employerStreet: String = ""
+    var employerCity: String = ""
+    var employerState: String = ""
+    var employerZIP: String = ""
+    var employerPhone: String = ""
 }
 
 @MainActor
@@ -54,6 +67,7 @@ final class SNAPIncomeFlowViewModel: ObservableObject {
     enum Step: Int, CaseIterable {
         case earningPresence
         case grossMonthlyIncome
+        case employerDetail            // Wave 1 — branched on anyoneEarning == .yes
         case incomeVariability
         case unearnedIncome
         case liquidResources
@@ -145,12 +159,14 @@ final class SNAPIncomeFlowViewModel: ObservableObject {
     }
 
     /// Skip earned-income subquestions when the user says no one
-    /// is earning. They go straight from screen 1 to screen 4.
+    /// is earning. They go straight from screen 1 to unearned income,
+    /// bypassing gross-income + employer-detail.
     private func nextStep(after current: Step) -> Step? {
         var rawNext = current.rawValue + 1
         if answers.anyoneEarning == .no {
-            // From earningPresence (0) → unearnedIncome (3).
+            // From earningPresence → unearnedIncome (skip gross / employer / variability).
             if rawNext == Step.grossMonthlyIncome.rawValue ||
+               rawNext == Step.employerDetail.rawValue ||
                rawNext == Step.incomeVariability.rawValue {
                 rawNext = Step.unearnedIncome.rawValue
             }
@@ -162,6 +178,7 @@ final class SNAPIncomeFlowViewModel: ObservableObject {
         var rawPrev = current.rawValue - 1
         if answers.anyoneEarning == .no {
             if rawPrev == Step.incomeVariability.rawValue ||
+               rawPrev == Step.employerDetail.rawValue ||
                rawPrev == Step.grossMonthlyIncome.rawValue {
                 rawPrev = Step.earningPresence.rawValue
             }
@@ -209,6 +226,12 @@ final class SNAPIncomeFlowViewModel: ObservableObject {
             let trimmed = grossIncomeField.trimmingCharacters(in: .whitespaces)
                 .replacingOccurrences(of: ",", with: "")
             return Decimal(string: trimmed) != nil
+        case .employerDetail:
+            // All employer-detail fields are optional — an applicant
+            // who doesn't know their employer's address can still
+            // advance. The packet surfaces blank fields as
+            // "human must fill" hints to the assister.
+            return true
         case .incomeVariability:
             return answers.incomeChangesMonthToMonth != nil
         case .unearnedIncome:
@@ -287,6 +310,7 @@ struct SNAPIncomeFlowView: View {
         switch viewModel.step {
         case .earningPresence:    return AnyView(earningPresenceScreen)
         case .grossMonthlyIncome: return AnyView(grossMonthlyIncomeContent)
+        case .employerDetail:     return AnyView(employerDetailScreen)
         case .incomeVariability:  return AnyView(incomeVariabilityScreen)
         case .unearnedIncome:     return AnyView(unearnedIncomeScreen)
         case .liquidResources:    return AnyView(liquidResourcesScreen)
@@ -410,6 +434,122 @@ struct SNAPIncomeFlowView: View {
             Text(SNAPIncomeStrings.grossSuffix.value(in: language))
                 .font(CivicaTypography.footnote)
                 .foregroundStyle(CivicaColors.graphite)
+        }
+    }
+
+    // MARK: - Screen 2b: employer detail (Wave 1 — BenefitsCal ABEIC)
+    //
+    // Branched on anyoneEarning == .yes. All fields optional so an
+    // applicant who doesn't know their employer's address can still
+    // advance — the assister fills the gaps on BenefitsCal directly.
+    // For applicants who DO know the details, this is the per-job
+    // autofill content the extension writes into the state's
+    // employer/address/phone fields.
+
+    private var employerDetailScreen: some View {
+        CivicaQuestionScreen(
+            progress: progress(for: .employerDetail),
+            title: SNAPIncomeStrings.employerTitle.value(in: language),
+            helper: SNAPIncomeStrings.employerHelper.value(in: language),
+            primaryActionTitle: CivicaQuestionStrings.continueLabel.value(in: language),
+            primaryActionEnabled: viewModel.canAdvanceFromCurrentStep,
+            onPrimary: advanceOrComplete,
+            language: language
+        ) {
+            employerDetailAffordance
+        }
+    }
+
+    private var employerDetailAffordance: some View {
+        VStack(alignment: .leading, spacing: CivicaSpacing.md) {
+            labeledTextField(
+                label: SNAPIncomeStrings.employerNameLabel.value(in: language),
+                placeholder: SNAPIncomeStrings.employerNamePlaceholder.value(in: language),
+                text: Binding(
+                    get: { viewModel.answers.employerName },
+                    set: { viewModel.answers.employerName = $0 }
+                ),
+                keyboard: .default
+            )
+            labeledTextField(
+                label: SNAPIncomeStrings.employerStreetLabel.value(in: language),
+                placeholder: SNAPIncomeStrings.employerStreetPlaceholder.value(in: language),
+                text: Binding(
+                    get: { viewModel.answers.employerStreet },
+                    set: { viewModel.answers.employerStreet = $0 }
+                ),
+                keyboard: .default
+            )
+            HStack(spacing: CivicaSpacing.sm) {
+                labeledTextField(
+                    label: SNAPIncomeStrings.employerCityLabel.value(in: language),
+                    placeholder: SNAPIncomeStrings.employerCityPlaceholder.value(in: language),
+                    text: Binding(
+                        get: { viewModel.answers.employerCity },
+                        set: { viewModel.answers.employerCity = $0 }
+                    ),
+                    keyboard: .default
+                )
+                labeledTextField(
+                    label: SNAPIncomeStrings.employerStateLabel.value(in: language),
+                    placeholder: "CA",
+                    text: Binding(
+                        get: { viewModel.answers.employerState },
+                        set: { viewModel.answers.employerState = String($0.uppercased().prefix(2)) }
+                    ),
+                    keyboard: .default
+                )
+                .frame(width: 80)
+                labeledTextField(
+                    label: SNAPIncomeStrings.employerZIPLabel.value(in: language),
+                    placeholder: "94110",
+                    text: Binding(
+                        get: { viewModel.answers.employerZIP },
+                        set: { viewModel.answers.employerZIP = String($0.filter(\.isNumber).prefix(5)) }
+                    ),
+                    keyboard: .numberPad
+                )
+                .frame(width: 110)
+            }
+            labeledTextField(
+                label: SNAPIncomeStrings.employerPhoneLabel.value(in: language),
+                placeholder: "555-555-5555",
+                text: Binding(
+                    get: { viewModel.answers.employerPhone },
+                    set: { viewModel.answers.employerPhone = $0 }
+                ),
+                keyboard: .phonePad
+            )
+            Text(SNAPIncomeStrings.employerOptionalNote.value(in: language))
+                .font(CivicaTypography.footnote)
+                .foregroundStyle(CivicaColors.graphite)
+                .fixedSize(horizontal: false, vertical: true)
+                .padding(.top, CivicaSpacing.xs)
+        }
+    }
+
+    private func labeledTextField(
+        label: String,
+        placeholder: String,
+        text: Binding<String>,
+        keyboard: UIKeyboardType
+    ) -> some View {
+        VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
+            Text(label)
+                .font(CivicaTypography.captionStrong)
+                .foregroundStyle(CivicaColors.graphite)
+            TextField(placeholder, text: text)
+                .font(CivicaTypography.body)
+                .keyboardType(keyboard)
+                .textInputAutocapitalization(keyboard == .default ? .words : .never)
+                .padding(.horizontal, CivicaSpacing.md)
+                .padding(.vertical, CivicaSpacing.sm)
+                .background(CivicaColors.surfacePrimary)
+                .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control))
+                .overlay(
+                    RoundedRectangle(cornerRadius: CivicaRadius.control)
+                        .strokeBorder(CivicaColors.hairline, lineWidth: 1)
+                )
         }
     }
 
@@ -602,6 +742,57 @@ enum SNAPIncomeStrings {
     /// empty state is unambiguous — see CivicaQuestionStrings for the
     /// shared rationale.
     static let grossPlaceholder = CivicaQuestionStrings.amountPlaceholder
+    // Wave 1 — employer detail strings (branched on anyoneEarning == .yes)
+
+    static let employerTitle = CivicaText(
+        "Tell us about your employer",
+        es: "Cuéntanos sobre tu empleador"
+    )
+    static let employerHelper = CivicaText(
+        "These details speed up the county's verification step. Skip anything you don't know — the assister can fill it in later.",
+        es: "Estos datos aceleran la verificación del condado. Omite lo que no sepas — el asistente puede completarlo después."
+    )
+    static let employerNameLabel = CivicaText(
+        "Employer name",
+        es: "Nombre del empleador"
+    )
+    static let employerNamePlaceholder = CivicaText(
+        "Acme Corp",
+        es: "Empresa Acme"
+    )
+    static let employerStreetLabel = CivicaText(
+        "Employer address",
+        es: "Dirección del empleador"
+    )
+    static let employerStreetPlaceholder = CivicaText(
+        "123 Main St",
+        es: "Calle Principal 123"
+    )
+    static let employerCityLabel = CivicaText(
+        "City",
+        es: "Ciudad"
+    )
+    static let employerCityPlaceholder = CivicaText(
+        "San Francisco",
+        es: "San Francisco"
+    )
+    static let employerStateLabel = CivicaText(
+        "State",
+        es: "Estado"
+    )
+    static let employerZIPLabel = CivicaText(
+        "ZIP",
+        es: "Código postal"
+    )
+    static let employerPhoneLabel = CivicaText(
+        "Employer phone",
+        es: "Teléfono del empleador"
+    )
+    static let employerOptionalNote = CivicaText(
+        "All fields here are optional. Blanks become \"human must fill\" hints to the assister.",
+        es: "Todos los campos aquí son opcionales. Los espacios en blanco se convierten en notas de \"completar manualmente\" para el asistente."
+    )
+
     static let grossSuffix = CivicaText(
         "Total monthly, before taxes",
         es: "Total mensual, antes de impuestos"
