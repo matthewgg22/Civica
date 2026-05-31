@@ -1,0 +1,339 @@
+{
+  "schema_version": "1.0.0",
+  "source_kind": "qc_microdata",
+  "analysis": "per_element_error_logistic",
+  "scope": "CA",
+  "fiscal_year": 2023,
+  "n_cases": 867,
+  "n_modeled": 867,
+  "predictors": [
+    "household_size",
+    "has_earned_income",
+    "has_elderly",
+    "has_child"
+  ],
+  "model_family": "logistic (statsmodels Logit), unweighted, HC1 robust SEs",
+  "dv_basis": "case cites the element in any variance (ELEMENT1..9) — QC variance-citation, NOT the dollar PER",
+  "min_events_for_power": 30,
+  "models": [
+    {
+      "dv_key": "any_error",
+      "element_code": null,
+      "label": "Any cited variance",
+      "n": 867,
+      "n_events": 379,
+      "sample_prevalence_pct": 43.71,
+      "weighted_prevalence_pct": 43.53,
+      "weighted_share_of_errored_pct": null,
+      "underpowered": false,
+      "converged": true,
+      "pseudo_r2": 0.064,
+      "terms": [
+        {
+          "name": "household_size",
+          "coef": 0.1051,
+          "odds_ratio": 1.111,
+          "or_ci_low": 0.939,
+          "or_ci_high": 1.314,
+          "p_value": 0.2208
+        },
+        {
+          "name": "has_earned_income",
+          "coef": 0.9749,
+          "odds_ratio": 2.651,
+          "or_ci_low": 1.763,
+          "or_ci_high": 3.987,
+          "p_value": 0.0
+        },
+        {
+          "name": "has_elderly",
+          "coef": 1.1842,
+          "odds_ratio": 3.268,
+          "or_ci_low": 2.297,
+          "or_ci_high": 4.649,
+          "p_value": 0.0
+        },
+        {
+          "name": "has_child",
+          "coef": 0.4176,
+          "odds_ratio": 1.518,
+          "or_ci_low": 0.93,
+          "or_ci_high": 2.479,
+          "p_value": 0.0952
+        }
+      ],
+      "quasi_separation": false
+    },
+    {
+      "dv_key": "element_363",
+      "element_code": 363,
+      "label": "Shelter deduction",
+      "n": 867,
+      "n_events": 158,
+      "sample_prevalence_pct": 18.22,
+      "weighted_prevalence_pct": 18.06,
+      "weighted_share_of_errored_pct": 41.5,
+      "underpowered": false,
+      "converged": true,
+      "pseudo_r2": 0.0575,
+      "terms": [
+        {
+          "name": "household_size",
+          "coef": -0.0245,
+          "odds_ratio": 0.976,
+          "or_ci_low": 0.763,
+          "or_ci_high": 1.247,
+          "p_value": 0.8447
+        },
+        {
+          "name": "has_earned_income",
+          "coef": -0.0829,
+          "odds_ratio": 0.92,
+          "or_ci_low": 0.548,
+          "or_ci_high": 1.545,
+          "p_value": 0.7537
+        },
+        {
+          "name": "has_elderly",
+          "coef": 1.2911,
+          "odds_ratio": 3.637,
+          "or_ci_low": 2.412,
+          "or_ci_high": 5.485,
+          "p_value": 0.0
+        },
+        {
+          "name": "has_child",
+          "coef": 0.2285,
+          "odds_ratio": 1.257,
+          "or_ci_low": 0.629,
+          "or_ci_high": 2.511,
+          "p_value": 0.5178
+        }
+      ],
+      "quasi_separation": false
+    },
+    {
+      "dv_key": "element_311",
+      "element_code": 311,
+      "label": "Wages",
+      "n": 867,
+      "n_events": 83,
+      "sample_prevalence_pct": 9.57,
+      "weighted_prevalence_pct": 9.65,
+      "weighted_share_of_errored_pct": 22.18,
+      "underpowered": false,
+      "converged": true,
+      "pseudo_r2": 0.4817,
+      "terms": [
+        {
+          "name": "household_size",
+          "coef": -0.0301,
+          "odds_ratio": 0.97,
+          "or_ci_low": 0.784,
+          "or_ci_high": 1.201,
+          "p_value": 0.7824
+        },
+        {
+          "name": "has_earned_income",
+          "coef": 4.9054,
+          "odds_ratio": 135.023,
+          "or_ci_low": 43.519,
+          "or_ci_high": 418.92,
+          "p_value": 0.0
+        },
+        {
+          "name": "has_elderly",
+          "coef": -0.4463,
+          "odds_ratio": 0.64,
+          "or_ci_low": 0.248,
+          "or_ci_high": 1.65,
+          "p_value": 0.3557
+        },
+        {
+          "name": "has_child",
+          "coef": 0.4521,
+          "odds_ratio": 1.572,
+          "or_ci_low": 0.701,
+          "or_ci_high": 3.523,
+          "p_value": 0.2723
+        }
+      ],
+      "quasi_separation": true
+    },
+    {
+      "dv_key": "element_331",
+      "element_code": 331,
+      "label": "RSDI",
+      "n": 867,
+      "n_events": 43,
+      "sample_prevalence_pct": 4.96,
+      "weighted_prevalence_pct": 5.0,
+      "weighted_share_of_errored_pct": 11.49,
+      "underpowered": false,
+      "converged": false,
+      "reason": "MLE did not converge (likely separation)"
+    },
+    {
+      "dv_key": "element_333",
+      "element_code": 333,
+      "label": "SSI",
+      "n": 867,
+      "n_events": 30,
+      "sample_prevalence_pct": 3.46,
+      "weighted_prevalence_pct": 3.46,
+      "weighted_share_of_errored_pct": 7.95,
+      "underpowered": false,
+      "converged": false,
+      "reason": "MLE did not converge (likely separation)"
+    },
+    {
+      "dv_key": "element_346",
+      "element_code": 346,
+      "label": "Other unearned income",
+      "n": 867,
+      "n_events": 25,
+      "sample_prevalence_pct": 2.88,
+      "weighted_prevalence_pct": 2.83,
+      "weighted_share_of_errored_pct": 6.49,
+      "underpowered": true,
+      "converged": true,
+      "pseudo_r2": 0.0179,
+      "terms": [
+        {
+          "name": "household_size",
+          "coef": 0.1041,
+          "odds_ratio": 1.11,
+          "or_ci_low": 0.723,
+          "or_ci_high": 1.704,
+          "p_value": 0.6345
+        },
+        {
+          "name": "has_earned_income",
+          "coef": 0.6133,
+          "odds_ratio": 1.847,
+          "or_ci_low": 0.654,
+          "or_ci_high": 5.216,
+          "p_value": 0.247
+        },
+        {
+          "name": "has_elderly",
+          "coef": 0.6117,
+          "odds_ratio": 1.844,
+          "or_ci_low": 0.82,
+          "or_ci_high": 4.146,
+          "p_value": 0.1391
+        },
+        {
+          "name": "has_child",
+          "coef": -0.6772,
+          "odds_ratio": 0.508,
+          "or_ci_low": 0.106,
+          "or_ci_high": 2.438,
+          "p_value": 0.3974
+        }
+      ],
+      "quasi_separation": false
+    },
+    {
+      "dv_key": "element_312",
+      "element_code": 312,
+      "label": "Self-employment",
+      "n": 867,
+      "n_events": 19,
+      "sample_prevalence_pct": 2.19,
+      "weighted_prevalence_pct": 2.23,
+      "weighted_share_of_errored_pct": 5.11,
+      "underpowered": true,
+      "converged": true,
+      "pseudo_r2": 0.1187,
+      "terms": [
+        {
+          "name": "household_size",
+          "coef": 0.1052,
+          "odds_ratio": 1.111,
+          "or_ci_low": 0.764,
+          "or_ci_high": 1.615,
+          "p_value": 0.5813
+        },
+        {
+          "name": "has_earned_income",
+          "coef": -1.381,
+          "odds_ratio": 0.251,
+          "or_ci_low": 0.068,
+          "or_ci_high": 0.934,
+          "p_value": 0.0392
+        },
+        {
+          "name": "has_elderly",
+          "coef": 0.2405,
+          "odds_ratio": 1.272,
+          "or_ci_low": 0.431,
+          "or_ci_high": 3.755,
+          "p_value": 0.6632
+        },
+        {
+          "name": "has_child",
+          "coef": 2.2669,
+          "odds_ratio": 9.649,
+          "or_ci_low": 2.712,
+          "or_ci_high": 34.335,
+          "p_value": 0.0005
+        }
+      ],
+      "quasi_separation": false
+    },
+    {
+      "dv_key": "element_364",
+      "element_code": 364,
+      "label": "Standard utility allowance",
+      "n": 867,
+      "n_events": 20,
+      "sample_prevalence_pct": 2.31,
+      "weighted_prevalence_pct": 2.14,
+      "weighted_share_of_errored_pct": 4.92,
+      "underpowered": true,
+      "converged": true,
+      "pseudo_r2": 0.0226,
+      "terms": [
+        {
+          "name": "household_size",
+          "coef": 0.037,
+          "odds_ratio": 1.038,
+          "or_ci_low": 0.734,
+          "or_ci_high": 1.467,
+          "p_value": 0.8337
+        },
+        {
+          "name": "has_earned_income",
+          "coef": -1.7417,
+          "odds_ratio": 0.175,
+          "or_ci_low": 0.023,
+          "or_ci_high": 1.338,
+          "p_value": 0.0931
+        },
+        {
+          "name": "has_elderly",
+          "coef": -0.0018,
+          "odds_ratio": 0.998,
+          "or_ci_low": 0.373,
+          "or_ci_high": 2.668,
+          "p_value": 0.9971
+        },
+        {
+          "name": "has_child",
+          "coef": 0.1221,
+          "odds_ratio": 1.13,
+          "or_ci_low": 0.273,
+          "or_ci_high": 4.681,
+          "p_value": 0.8663
+        }
+      ],
+      "quasi_separation": false
+    }
+  ],
+  "notes": [
+    "DV = QC variance-citation per element (engine element-attribution basis), NOT the dollar-weighted PER (~11%); ~43% of CA cases cite some variance.",
+    "Unweighted logistic → honest inference on the n CA sample; FYWGT used only for the descriptive weighted prevalence/share. Design-based SEs need replicate weights/strata absent from the public-use file.",
+    "Elements with n_events < 30 are flagged underpowered — reported with wide CIs, never hidden."
+  ]
+}
