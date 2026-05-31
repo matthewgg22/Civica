@@ -70,9 +70,22 @@ struct CivicaHomePhase3View: View {
     @State private var showingApprovalExplainer: Bool = false
     @State private var navigateToFindHelp: Bool = false
 
+    /// IS-2 (audit 2026-05-29) — coordinated sync-degraded banner.
+    /// Same pattern as `CivicaHomePhase2View`. Phase 3 only owns one
+    /// remote store (`EBTBalanceStore`), so cross-store coordination
+    /// can't reach the 2-failure threshold on its own; the
+    /// `NWPathMonitor` offline signal is what realistically surfaces
+    /// the banner here. Per-row hides stay intact.
+    @StateObject private var syncBanner = CivicaSyncBannerCoordinator()
+
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: CivicaSpacing.lg) {
+                // IS-2 (audit 2026-05-29): coordinated sync-degraded
+                // banner sits above the phase tab so it's the first
+                // thing the user sees when remote data is failing.
+                CivicaSyncBanner(coordinator: syncBanner, language: language)
+
                 phaseTab
 
                 approvalBanner
@@ -135,6 +148,21 @@ struct CivicaHomePhase3View: View {
             // body() completes before flipping the flag.
             await Task.yield()
             isFirstPaintLoading = false
+        }
+        // IS-2 (audit 2026-05-29): bridge the EBT store's refresh
+        // outcome into the sync banner coordinator. Per-row hide on
+        // failure stays intact (the dashboard already shows its own
+        // inline error banner via `lastRefreshError`); this signal
+        // feeds the coordinated top-of-screen banner. Phase 3 only
+        // owns one remote store, so reaching the 2-failure threshold
+        // here requires repeated refreshes — but the `NWPathMonitor`
+        // offline path still surfaces the banner on connectivity loss.
+        .onChange(of: ebtStore.lastRefreshError == nil) { _, isOK in
+            if isOK {
+                syncBanner.registerStoreSuccess()
+            } else {
+                syncBanner.registerStoreFailure()
+            }
         }
     }
 

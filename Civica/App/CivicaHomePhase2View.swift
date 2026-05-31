@@ -64,6 +64,12 @@ struct CivicaHomePhase2View: View {
 
     @StateObject private var inboxStore = SNAPInboxStore()
 
+    /// IS-2 (audit 2026-05-29) — coordinated sync-degraded banner.
+    /// Listens to store-load outcomes + `NWPathMonitor`; surfaces a
+    /// single dismissible banner when 2+ stores fail in a row or the
+    /// network path goes unsatisfied. Per-row hides stay intact.
+    @StateObject private var syncBanner = CivicaSyncBannerCoordinator()
+
     private var pendingDocumentCount: Int {
         pendingDocumentCountOverride ?? inboxStore.unresolvedCount
     }
@@ -206,6 +212,11 @@ struct CivicaHomePhase2View: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: CivicaSpacing.lg) {
+                // IS-2 (audit 2026-05-29): coordinated sync-degraded
+                // banner sits above the phase tab so it's the first
+                // thing the user sees when remote data is failing.
+                CivicaSyncBanner(coordinator: syncBanner, language: language)
+
                 phaseTab
 
                 statusPill
@@ -329,6 +340,22 @@ struct CivicaHomePhase2View: View {
             async let inbox: Void = inboxStore.load()
             _ = await (errorRisk, inbox)
             isFirstPaintLoading = false
+
+            // IS-2 (audit 2026-05-29): after both stores settle, feed
+            // each outcome into the sync banner coordinator. Per-row
+            // hides above already silenced individual rows; this is
+            // the cross-store signal that decides whether the
+            // coordinated banner surfaces.
+            registerSyncOutcome(failed: errorRiskStore.lastLoadFailed)
+            registerSyncOutcome(failed: inboxStore.lastLoadFailed)
+        }
+    }
+
+    private func registerSyncOutcome(failed: Bool) {
+        if failed {
+            syncBanner.registerStoreFailure()
+        } else {
+            syncBanner.registerStoreSuccess()
         }
     }
 
