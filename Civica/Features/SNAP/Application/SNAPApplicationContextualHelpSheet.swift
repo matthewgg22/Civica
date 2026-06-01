@@ -289,6 +289,10 @@ struct SNAPApplicationContextualHelpSheet: View {
                 .foregroundStyle(CivicaColors.ink)
                 .fixedSize(horizontal: false, vertical: true)
                 .frame(maxWidth: .infinity, alignment: .leading)
+            // Developer diagnostic only — never shown to end users in
+            // production. The friendly, localized fallback above is all
+            // a real applicant sees when Mae's endpoint errors.
+            #if DEBUG
             if !diagnosticDetail.isEmpty {
                 Text("Debug: \(diagnosticDetail)")
                     .font(CivicaTypography.footnote)
@@ -296,6 +300,7 @@ struct SNAPApplicationContextualHelpSheet: View {
                     .fixedSize(horizontal: false, vertical: true)
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
+            #endif
         }
         .padding(CivicaSpacing.md)
         .frame(maxWidth: .infinity, alignment: .leading)
