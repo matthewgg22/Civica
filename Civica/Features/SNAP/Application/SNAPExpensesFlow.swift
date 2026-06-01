@@ -70,6 +70,18 @@ struct SNAPExpensesAnswers: Equatable, Codable {
 
     var monthlyChildcare: Decimal?
     var monthlyMedical: Decimal?
+
+    // Wave 3 — Court-ordered support deductions (BenefitsCal ABCOC + ABSSQ).
+    //
+    // SNAP deducts court-ordered child support and spousal support paid
+    // OUTSIDE the household from gross income (7 CFR 273.9(d)(5)). An
+    // applicant paying $400/mo court-ordered child support to an ex
+    // partner currently gets a worse benefit estimate from Civica
+    // because we never asked. New Y/N gate (`paysCourtOrderedSupport`)
+    // branches into two amount fields when affirmative.
+    var paysCourtOrderedSupport: SNAPTri?
+    var monthlyChildSupportPaid: Decimal?
+    var monthlySpousalSupportPaid: Decimal?
 }
 
 @MainActor
@@ -80,6 +92,8 @@ final class SNAPExpensesFlowViewModel: ObservableObject {
         //         housingStatus is NOT .unhoused (unhoused students don't
         //         have a lease to pro-rate).
         case rent, sharedHousing, utilityTypes, utilities, utilityShutoff, childcare, medical
+        // Wave 3 — court-ordered support (BenefitsCal ABCOC + ABSSQ)
+        case courtOrderedSupportGate, childSupportAmount, spousalSupportAmount
 
         var oneBasedIndex: Int { rawValue + 1 }
         static let total = Self.allCases.count
@@ -90,6 +104,17 @@ final class SNAPExpensesFlowViewModel: ObservableObject {
     @Published var utilitiesField: String
     @Published var childcareField: String
     @Published var medicalField: String
+    @Published var childSupportField: String = ""
+    @Published var spousalSupportField: String = ""
+    /// Wave A — true once the rent field has been populated by a lease
+    /// scan in the current session. Surfaces a pine pre-fill note so
+    /// the applicant knows where the value came from and can change
+    /// it. Reset on flow re-entry (ephemeral, not persisted).
+    @Published var rentPrefilledFromScan: Bool = false
+    /// Wave B — true once the utilities field has been populated by a
+    /// utility-bill scan. Same ephemeral semantics as
+    /// `rentPrefilledFromScan`.
+    @Published var utilitiesPrefilledFromScan: Bool = false
     @Published var answers: SNAPExpensesAnswers
 
     private let hasMinorInHousehold: Bool
@@ -114,6 +139,13 @@ final class SNAPExpensesFlowViewModel: ObservableObject {
         }
         if hasMinorInHousehold { steps.append(.childcare) }
         if hasElderlyOrDisabled { steps.append(.medical) }
+        // Wave 3 — court-ordered support gate, always asked. When
+        // the answer is Yes, branch into the per-type amount pages.
+        steps.append(.courtOrderedSupportGate)
+        if answers.paysCourtOrderedSupport == .yes {
+            steps.append(.childSupportAmount)
+            steps.append(.spousalSupportAmount)
+        }
         return steps
     }
 
@@ -136,6 +168,8 @@ final class SNAPExpensesFlowViewModel: ObservableObject {
         self.utilitiesField = render(answers.monthlyUtilities)
         self.childcareField = render(answers.monthlyChildcare)
         self.medicalField = render(answers.monthlyMedical)
+        self.childSupportField = render(answers.monthlyChildSupportPaid)
+        self.spousalSupportField = render(answers.monthlySpousalSupportPaid)
     }
 
     func recordCurrentField() {
@@ -147,17 +181,23 @@ final class SNAPExpensesFlowViewModel: ObservableObject {
         case .utilityShutoff: break  // bound directly into answers.utilityShutoffNotice
         case .childcare:     answers.monthlyChildcare     = decimalValue(childcareField)
         case .medical:       answers.monthlyMedical       = decimalValue(medicalField)
+        case .courtOrderedSupportGate: break  // Tri bound directly
+        case .childSupportAmount:   answers.monthlyChildSupportPaid   = decimalValue(childSupportField)
+        case .spousalSupportAmount: answers.monthlySpousalSupportPaid = decimalValue(spousalSupportField)
         }
     }
 
     var canAdvanceFromCurrentStep: Bool {
         switch step {
-        case .rent, .utilities, .childcare, .medical:
+        case .rent, .utilities, .childcare, .medical,
+             .childSupportAmount, .spousalSupportAmount:
             return true  // empty = $0, always a valid answer
         case .sharedHousing, .utilityTypes:
             return true  // no required selection
         case .utilityShutoff:
             return answers.utilityShutoffNotice != nil
+        case .courtOrderedSupportGate:
+            return answers.paysCourtOrderedSupport != nil
         }
     }
 
@@ -246,13 +286,51 @@ struct SNAPExpensesFlowView: View {
     @ViewBuilder
     private var currentScreen: some View {
         switch viewModel.step {
-        case .rent:          moneyScreen(.rent, binding: $viewModel.rentField)
+        case .rent:          rentScreen      // Wave A — money screen + lease scan CTA
         case .sharedHousing: sharedHousingScreen
         case .utilityTypes:  utilityTypesScreen
-        case .utilities:     moneyScreen(.utilities, binding: $viewModel.utilitiesField)
+        case .utilities:     utilitiesScreen     // Wave B — money screen + utility-bill scan CTA
         case .utilityShutoff: utilityShutoffScreen
         case .childcare:     moneyScreen(.childcare, binding: $viewModel.childcareField)
         case .medical:       moneyScreen(.medical, binding: $viewModel.medicalField)
+        // Wave 3 — court-ordered support (BenefitsCal ABCOC + ABSSQ)
+        case .courtOrderedSupportGate: courtOrderedSupportGateScreen
+        case .childSupportAmount:      moneyScreen(.childSupportAmount, binding: $viewModel.childSupportField)
+        case .spousalSupportAmount:    moneyScreen(.spousalSupportAmount, binding: $viewModel.spousalSupportField)
+        }
+    }
+
+    // MARK: - Wave 3: court-ordered support gate
+
+    private var courtOrderedSupportGateScreen: some View {
+        CivicaQuestionScreen(
+            progress: progress(for: .courtOrderedSupportGate),
+            title: SNAPExpensesStrings.courtOrderedSupportTitle.value(in: language),
+            helper: SNAPExpensesStrings.courtOrderedSupportHelper.value(in: language),
+            primaryActionTitle: CivicaQuestionStrings.continueLabel.value(in: language),
+            primaryActionEnabled: viewModel.canAdvanceFromCurrentStep,
+            onPrimary: advanceOrComplete,
+            language: language
+        ) {
+            CivicaQuestionChoices(
+                options: [
+                    CivicaQuestionStrings.yesLabel.value(in: language),
+                    CivicaQuestionStrings.noLabel.value(in: language),
+                ],
+                selection: Binding(
+                    get: {
+                        switch viewModel.answers.paysCourtOrderedSupport {
+                        case .yes: return CivicaQuestionStrings.yesLabel.value(in: language)
+                        case .no:  return CivicaQuestionStrings.noLabel.value(in: language)
+                        default:   return nil
+                        }
+                    },
+                    set: { label in
+                        let yes = CivicaQuestionStrings.yesLabel.value(in: language)
+                        viewModel.answers.paysCourtOrderedSupport = (label == yes) ? .yes : .no
+                    }
+                )
+            )
         }
     }
 
@@ -434,6 +512,91 @@ struct SNAPExpensesFlowView: View {
         }
     }
 
+    // MARK: - Wave A: rent screen with lease-scan CTA
+
+    /// Wraps the shared `moneyScreen` for `.rent` and adds an inline
+    /// "Scan your lease to autofill" affordance below the input. On
+    /// extract, populates the rent field directly — the applicant
+    /// can still edit the value in the same field, preserving the
+    /// "applicant is always the source of truth" property.
+    private var rentScreen: some View {
+        CivicaQuestionScreen(
+            progress: progress(for: .rent),
+            title: SNAPExpensesStrings.title(for: .rent, language: language),
+            helper: SNAPExpensesStrings.helper(for: .rent, language: language),
+            primaryActionTitle: CivicaQuestionStrings.continueLabel.value(in: language),
+            primaryActionEnabled: true,
+            onPrimary: advanceOrComplete,
+            language: language
+        ) {
+            VStack(alignment: .leading, spacing: CivicaSpacing.md) {
+                moneyAffordance(
+                    binding: $viewModel.rentField,
+                    suffix: SNAPExpensesStrings.suffix(for: .rent, language: language)
+                )
+                SNAPInlineDocScanCTA(
+                    documentType: .rentOrHousingCostProof,
+                    ctaLabel: SNAPExpensesStrings.scanLeaseCTA.value(in: language),
+                    onExtracted: { result in
+                        if let amount = result.primaryAmount, !amount.isEmpty {
+                            viewModel.rentField = amount
+                            viewModel.rentPrefilledFromScan = true
+                        }
+                    }
+                )
+                if viewModel.rentPrefilledFromScan {
+                    Text(SNAPExpensesStrings.scanPrefilledNote.value(in: language))
+                        .font(CivicaTypography.footnote)
+                        .foregroundStyle(CivicaColors.pinePrimary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+            }
+        }
+    }
+
+    // MARK: - Wave B: utilities screen with utility-bill scan CTA
+
+    /// Mirrors `rentScreen`: shared money input + inline scan CTA.
+    /// Wave B intentionally scans only the AMOUNT — the utility-type
+    /// selection on the prior `utilityTypes` screen stays declaration-
+    /// first because a single bill rarely covers all the types a
+    /// household pays, and over-claiming the SUA tier on an OCR
+    /// guess would be a real error class.
+    private var utilitiesScreen: some View {
+        CivicaQuestionScreen(
+            progress: progress(for: .utilities),
+            title: SNAPExpensesStrings.title(for: .utilities, language: language),
+            helper: SNAPExpensesStrings.helper(for: .utilities, language: language),
+            primaryActionTitle: CivicaQuestionStrings.continueLabel.value(in: language),
+            primaryActionEnabled: true,
+            onPrimary: advanceOrComplete,
+            language: language
+        ) {
+            VStack(alignment: .leading, spacing: CivicaSpacing.md) {
+                moneyAffordance(
+                    binding: $viewModel.utilitiesField,
+                    suffix: SNAPExpensesStrings.suffix(for: .utilities, language: language)
+                )
+                SNAPInlineDocScanCTA(
+                    documentType: .utilityBill,
+                    ctaLabel: SNAPExpensesStrings.scanUtilityCTA.value(in: language),
+                    onExtracted: { result in
+                        if let amount = result.primaryAmount, !amount.isEmpty {
+                            viewModel.utilitiesField = amount
+                            viewModel.utilitiesPrefilledFromScan = true
+                        }
+                    }
+                )
+                if viewModel.utilitiesPrefilledFromScan {
+                    Text(SNAPExpensesStrings.scanUtilityPrefilledNote.value(in: language))
+                        .font(CivicaTypography.footnote)
+                        .foregroundStyle(CivicaColors.pinePrimary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+            }
+        }
+    }
+
     // MARK: - Shared money-screen affordance
 
     private func moneyScreen(
@@ -462,13 +625,11 @@ struct SNAPExpensesFlowView: View {
                 Text("$")
                     .font(CivicaTypography.currencyHero)
                     .foregroundStyle(CivicaColors.graphite)
-                TextField(
-                    CivicaQuestionStrings.amountPlaceholder.value(in: language),
-                    text: binding
+                CivicaCurrencyField(
+                    text: binding,
+                    placeholder: CivicaQuestionStrings.amountPlaceholder.value(in: language),
+                    font: CivicaTypography.currencyHero
                 )
-                .font(CivicaTypography.currencyHero)
-                .foregroundStyle(CivicaColors.ink)
-                .keyboardType(.decimalPad)
             }
             .padding(.horizontal, CivicaSpacing.lg)
             .padding(.vertical, CivicaSpacing.md)
@@ -547,6 +708,17 @@ enum SNAPExpensesStrings {
             return "Any out-of-pocket medical costs each month?"
         case (.medical, .spanish):
             return "¿Algún gasto médico de tu bolsillo cada mes?"
+        // Wave 3 — court-ordered support (BenefitsCal ABCOC + ABSSQ)
+        case (.courtOrderedSupportGate, _):
+            return ""  // gate uses its own dedicated strings
+        case (.childSupportAmount, .english):
+            return "How much child support do you pay each month?"
+        case (.childSupportAmount, .spanish):
+            return "¿Cuánta manutención de hijos pagas cada mes?"
+        case (.spousalSupportAmount, .english):
+            return "How much spousal support or alimony do you pay each month?"
+        case (.spousalSupportAmount, .spanish):
+            return "¿Cuánta manutención conyugal o pensión alimenticia pagas cada mes?"
         }
     }
 
@@ -582,6 +754,17 @@ enum SNAPExpensesStrings {
             return "Only counts if someone in your household is 60+ or has a disability. We're asking about co-pays, prescriptions, dental, or insurance premiums you pay out of pocket. Don't share diagnoses."
         case (.medical, .spanish):
             return "Solo cuenta si alguien en tu hogar tiene 60 años o más o vive con una discapacidad. Preguntamos por copagos, medicamentos, dentista o primas de seguro que pagas de tu bolsillo. No compartas diagnósticos."
+        // Wave 3 — court-ordered support
+        case (.courtOrderedSupportGate, _):
+            return ""  // gate uses its own dedicated strings
+        case (.childSupportAmount, .english):
+            return "Court-ordered child support paid to someone OUTSIDE your household. SNAP deducts this from your gross income before calculating benefits."
+        case (.childSupportAmount, .spanish):
+            return "Manutención de hijos ordenada por la corte que pagas a alguien FUERA de tu hogar. SNAP deduce esto de tu ingreso bruto antes de calcular los beneficios."
+        case (.spousalSupportAmount, .english):
+            return "Court-ordered spousal support or alimony. SNAP deducts this from your gross income too."
+        case (.spousalSupportAmount, .spanish):
+            return "Manutención conyugal o pensión alimenticia ordenada por la corte. SNAP también deduce esto de tu ingreso bruto."
         }
     }
 
@@ -605,8 +788,43 @@ enum SNAPExpensesStrings {
         case (.utilityShutoff, _):      return ""
         case (.utilityTypes, _):        return ""  // each row has its own accessibilityLabel
         case (.sharedHousing, _):       return ""  // stepper and pill have their own labels
+        case (.courtOrderedSupportGate, _): return ""
+        case (.childSupportAmount, .english):  return "Monthly child support paid, in dollars"
+        case (.childSupportAmount, .spanish):  return "Manutención mensual de hijos pagada, en dólares"
+        case (.spousalSupportAmount, .english): return "Monthly spousal support paid, in dollars"
+        case (.spousalSupportAmount, .spanish): return "Manutención mensual conyugal pagada, en dólares"
         }
     }
+
+    // Wave A — lease-scan affordance strings
+    static let scanLeaseCTA = CivicaText(
+        "Scan your lease to autofill",
+        es: "Escanea tu contrato para autollenar"
+    )
+    static let scanPrefilledNote = CivicaText(
+        "Pre-filled from your lease — change above if needed.",
+        es: "Pre-llenado desde tu contrato — cámbialo arriba si es necesario."
+    )
+
+    // Wave B — utility-bill-scan affordance strings
+    static let scanUtilityCTA = CivicaText(
+        "Scan a utility bill to autofill",
+        es: "Escanea una factura de servicios para autollenar"
+    )
+    static let scanUtilityPrefilledNote = CivicaText(
+        "Pre-filled from your bill — change above if needed.",
+        es: "Pre-llenado desde tu factura — cámbialo arriba si es necesario."
+    )
+
+    // Wave 3 — court-ordered support gate strings
+    static let courtOrderedSupportTitle = CivicaText(
+        "Do you pay court-ordered child or spousal support?",
+        es: "¿Pagas manutención de hijos o conyugal ordenada por la corte?"
+    )
+    static let courtOrderedSupportHelper = CivicaText(
+        "Only what's court-ordered, paid to someone OUTSIDE your household. SNAP deducts these payments from your gross income — answering Yes can increase your benefit estimate.",
+        es: "Solo lo ordenado por la corte que pagas a alguien FUERA de tu hogar. SNAP deduce estos pagos de tu ingreso bruto — responder Sí puede aumentar tu estimación de beneficios."
+    )
 
     static func notSharingLabel(language: CivicaLanguage) -> String {
         switch language {

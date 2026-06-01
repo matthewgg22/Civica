@@ -28,8 +28,10 @@
 	<true/>
 	<key>NSCameraUsageDescription</key>
 	<string>Civica uses the camera to scan paystubs and identity documents you upload to support your SNAP application.</string>
+	<key>NSCalendarsWriteOnlyAccessUsageDescription</key>
+	<string>Civica adds your SNAP follow-up reminders to your calendar so you don't miss the 30-day check-in.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Civica uses your location to show nearby SNAP offices and food assistance locations on the map.</string>
+	<string>Civica uses your location to suggest your state on the SNAP application and to show nearby SNAP offices and food assistance locations on the map.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Civica uses the microphone so you can speak your answers to SNAP application questions. Audio is processed on your device and is not stored or sent anywhere.</string>
 	<key>NSPhotoLibraryUsageDescription</key>

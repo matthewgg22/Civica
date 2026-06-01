@@ -133,6 +133,18 @@ final class EBTBalanceStore: ObservableObject {
         linkState = .linked
     }
 
+    /// Demo helper: synchronously seed a populated demo account so a
+    /// reviewer landing on Phase 3 (Enrolled) via the gear's
+    /// "Unlock all phases" toggle sees the full balance + transactions
+    /// dashboard instead of the link-card form. No persistence — the
+    /// next launch reverts to whatever the user's real linkState was.
+    /// No-op when an account is already present.
+    func seedDemoAccountIfNeeded() {
+        guard account == nil else { return }
+        account = EBTBalanceFixtures.demoAccount()
+        linkState = .linked
+    }
+
     /// Real-data link entry point invoked from EBTLinkWebView once
     /// the session cookie has been captured. No-op at flag-OFF.
     func linkWithCookie(_ cookie: String, rememberCookie: String?, expiresAt: Date) async {

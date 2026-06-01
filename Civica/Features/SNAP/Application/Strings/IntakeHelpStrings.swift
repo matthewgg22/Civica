@@ -50,16 +50,19 @@ enum IntakeHelpStrings {
     // swaps to the "still thinking" message so the user knows we're
     // not stuck.
 
-    /// Immediate loading text on sheet appear.
+    /// Immediate loading text on sheet appear. Names what Mae is
+    /// actually doing (reading the question + helper) in a calm,
+    /// human voice — no "thinking"/"searching" robot-speak.
     static let loadingText = CivicaText(
-        "Looking that up…",
-        es: "Buscando esa información…"
+        "Reading your question…",
+        es: "Leyendo tu pregunta…"
     )
 
-    /// Swap-in after ~1.5s elapsed without a response.
+    /// Swap-in after ~1.5s elapsed without a response. Universal
+    /// calm-wait phrase, no anthropomorphizing.
     static let stillThinkingText = CivicaText(
-        "Still thinking…",
-        es: "Todavía buscando…"
+        "One moment…",
+        es: "Un momento…"
     )
 
     // MARK: - Error fallback (per D6 — load-bearing)
@@ -84,6 +87,39 @@ enum IntakeHelpStrings {
     static let navigatorNudge = CivicaText(
         "Your county navigator can clarify what this question is asking.",
         es: "Tu orientador del condado puede aclarar lo que pregunta esta pregunta."
+    )
+
+    // MARK: - Chat input
+
+    /// Placeholder text in the chat TextField at the bottom of the
+    /// sheet. Visible when the field is empty so the affordance is
+    /// obvious without needing a label above it.
+    static let chatInputPlaceholder = CivicaText(
+        "Ask a follow-up…",
+        es: "Haz una pregunta…"
+    )
+
+    /// Accessibility label on the send button next to the TextField.
+    static let chatSendButtonLabel = CivicaText(
+        "Send",
+        es: "Enviar"
+    )
+
+    /// Tiny header label above the chat scroll area introducing Mae as
+    /// the assistant the applicant is talking with. Reuses the same
+    /// "Ask Mae" framing as the nav-bar title so the voice is
+    /// consistent.
+    static let chatIntroLabel = CivicaText(
+        "Mae · SNAP assistant",
+        es: "Mae · asistente de SNAP"
+    )
+
+    /// AI-transparency line shown just above the chat input. Keeps the
+    /// disclosure where the applicant is about to type, not buried in
+    /// settings.
+    static let aiDisclaimer = CivicaText(
+        "Mae is an AI assistant. Double-check anything important with your county navigator.",
+        es: "Mae es un asistente de IA. Confirma cualquier cosa importante con tu orientador del condado."
     )
 
     // MARK: - View helpers
@@ -116,5 +152,9 @@ enum IntakeHelpStrings {
         stillThinkingText,
         errorFallbackTemplate,
         navigatorNudge,
+        chatInputPlaceholder,
+        chatSendButtonLabel,
+        chatIntroLabel,
+        aiDisclaimer,
     ]
 }

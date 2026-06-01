@@ -125,12 +125,14 @@ struct EBTReceiptDetailView: View {
             Divider()
 
             LabeledContent(EBTReceiptStrings.totalLabel.value(in: language)) {
-                TextField(
-                    EBTReceiptStrings.totalPlaceholder.value(in: language),
-                    text: $totalText
+                // Cents-first input — receipt totals are precise
+                // amounts the user copies straight off the printout.
+                // parseCents() in the upload path handles the
+                // "1234.56" plain-decimal string the field binds.
+                CivicaCurrencyField(
+                    text: $totalText,
+                    placeholder: EBTReceiptStrings.totalPlaceholder.value(in: language)
                 )
-                .keyboardType(.decimalPad)
-                .multilineTextAlignment(.trailing)
             }
         }
         .padding(CivicaSpacing.lg)

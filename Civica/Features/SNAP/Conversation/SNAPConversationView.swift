@@ -357,15 +357,33 @@ struct SNAPConversationView: View {
                     inputButton(option, fullWidth: true) { Task { await submit(option) } }
                 }
             }
-        case .numericDollars, .integer:
+        case .numericDollars:
+            // Dollars: cents-first input (Venmo / BofA pattern).
             HStack(spacing: CivicaSpacing.sm) {
-                TextField(
-                    viewModel.pendingInputType == .numericDollars ? "$0" : "0",
-                    text: $pendingNumeric
+                Text("$")
+                    .font(.body)
+                    .foregroundStyle(CivicaColors.graphite)
+                CivicaCurrencyField(
+                    text: $pendingNumeric,
+                    placeholder: "0.00",
+                    font: .body
                 )
-                .keyboardType(.decimalPad)
-                .textFieldStyle(.roundedBorder)
                 .focused($isInputFocused)
+                inputButton("Send", enabled: !pendingNumeric.isEmpty) {
+                    Task {
+                        await submit(pendingNumeric)
+                        pendingNumeric = ""
+                    }
+                }
+            }
+        case .integer:
+            // Integer: plain numberPad — headcount / age / number-of
+            // questions where cents-first would be the wrong metaphor.
+            HStack(spacing: CivicaSpacing.sm) {
+                TextField("0", text: $pendingNumeric)
+                    .keyboardType(.numberPad)
+                    .textFieldStyle(.roundedBorder)
+                    .focused($isInputFocused)
                 inputButton("Send", enabled: !pendingNumeric.isEmpty) {
                     Task {
                         await submit(pendingNumeric)

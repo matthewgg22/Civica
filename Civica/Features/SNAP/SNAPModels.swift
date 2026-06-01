@@ -401,6 +401,7 @@ enum SNAPDocumentType: String, CaseIterable, Identifiable, Codable {
     case proofOfIncome = "proof_of_income"
     case rentOrHousingCostProof = "rent_or_housing_cost_proof"
     case utilityBill = "utility_bill"
+    case bankStatement = "bank_statement"  // Wave D — liquid-resources scan
     case studentStatusDocuments = "student_status_documents"
     case workStatusOrExemptions = "work_status_or_exemptions"
     case childcareCostProof = "childcare_cost_proof"
@@ -415,6 +416,7 @@ enum SNAPDocumentType: String, CaseIterable, Identifiable, Codable {
         case .proofOfIncome: return "Proof of income"
         case .rentOrHousingCostProof: return "Rent or housing costs"
         case .utilityBill: return "Utility bill"
+        case .bankStatement: return "Bank statement"
         case .studentStatusDocuments: return "Student enrollment letter"
         case .workStatusOrExemptions: return "Work status or exemption"
         case .childcareCostProof: return "Childcare cost receipt"
@@ -429,6 +431,7 @@ enum SNAPDocumentType: String, CaseIterable, Identifiable, Codable {
         case .proofOfIncome: return "Recent pay stubs or benefit letters"
         case .rentOrHousingCostProof: return "Lease agreement or landlord statement"
         case .utilityBill: return "Current electric, gas, or heat bill"
+        case .bankStatement: return "Most recent bank statement showing your balance"
         case .studentStatusDocuments: return "Enrollment letter or student ID"
         case .workStatusOrExemptions: return "Work schedule or exemption documentation"
         case .childcareCostProof: return "Receipts or provider statement"

@@ -350,7 +350,12 @@ struct CivicaQuestionScreen<Affordance: View>: View {
         } label: {
             Image(systemName: "questionmark.circle")
                 .font(.system(size: 22))
-                .foregroundStyle(CivicaColors.pinePrimary)
+                // accentTeal = "assist affordance" per DESIGN.md §2.2.
+                // Pine is reserved for the primary CTA; the help marker
+                // is a secondary assist, and §2.2 explicitly bans pine
+                // on icons. Teal keeps it discoverable without competing
+                // with the Continue button.
+                .foregroundStyle(CivicaColors.accentTeal)
                 .frame(minWidth: 32, minHeight: 32)
                 .contentShape(Rectangle())
         }
@@ -405,6 +410,12 @@ struct CivicaQuestionChoices: View {
                     selection = option
                 } label: {
                     HStack(spacing: CivicaSpacing.md) {
+                        // Selection uses an INK treatment (border + filled
+                        // surface), not a saturated pine fill. Pine is
+                        // reserved for the primary CTA so the Continue
+                        // button is the only saturated-green element on
+                        // screen. A small pine checkmark is the lone brand
+                        // accent on the selected row.
                         Image(systemName: selection == option ? "checkmark.circle.fill" : "circle")
                             .foregroundStyle(selection == option ? CivicaColors.pinePrimary : CivicaColors.graphite)
                             .imageScale(.large)
@@ -418,12 +429,16 @@ struct CivicaQuestionChoices: View {
                     .padding(.horizontal, CivicaSpacing.lg)
                     .padding(.vertical, CivicaSpacing.md)
                     .frame(minHeight: 56)
-                    .background(CivicaColors.surfacePrimary)
+                    .background(
+                        selection == option
+                            ? CivicaColors.surfaceSecondary
+                            : CivicaColors.surfacePrimary
+                    )
                     .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control))
                     .overlay(
                         RoundedRectangle(cornerRadius: CivicaRadius.control)
                             .strokeBorder(
-                                selection == option ? CivicaColors.pinePrimary : CivicaColors.hairline,
+                                selection == option ? CivicaColors.ink : CivicaColors.hairline,
                                 lineWidth: selection == option ? 2 : 1
                             )
                     )
@@ -457,21 +472,34 @@ struct CivicaQuestionYesNo: View {
 
     private func yesNoButton(_ label: String, isSelected: Bool, action: @escaping () -> Void) -> some View {
         Button(action: action) {
-            Text(label)
-                .font(CivicaTypography.subheadStrong)
-                .foregroundStyle(isSelected ? CivicaColors.onPrimaryText : CivicaColors.ink)
-                .frame(maxWidth: .infinity, minHeight: 56)
-                .background(
-                    RoundedRectangle(cornerRadius: CivicaRadius.control)
-                        .fill(isSelected ? CivicaColors.pinePrimary : CivicaColors.surfacePrimary)
-                )
-                .overlay(
-                    RoundedRectangle(cornerRadius: CivicaRadius.control)
-                        .strokeBorder(
-                            isSelected ? CivicaColors.pinePrimary : CivicaColors.hairline,
-                            lineWidth: isSelected ? 2 : 1
-                        )
-                )
+            HStack(spacing: CivicaSpacing.xs) {
+                // Selected = ink border + filled neutral surface + a
+                // small pine checkmark. NOT a saturated pine fill —
+                // that read identically to the Continue CTA and made
+                // every question screen look like a wall of green.
+                // Ink text stays legible on the neutral surface.
+                if isSelected {
+                    Image(systemName: "checkmark.circle.fill")
+                        .foregroundStyle(CivicaColors.pinePrimary)
+                        .imageScale(.medium)
+                        .accessibilityHidden(true)
+                }
+                Text(label)
+                    .font(CivicaTypography.subheadStrong)
+                    .foregroundStyle(CivicaColors.ink)
+            }
+            .frame(maxWidth: .infinity, minHeight: 56)
+            .background(
+                RoundedRectangle(cornerRadius: CivicaRadius.control)
+                    .fill(isSelected ? CivicaColors.surfaceSecondary : CivicaColors.surfacePrimary)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: CivicaRadius.control)
+                    .strokeBorder(
+                        isSelected ? CivicaColors.ink : CivicaColors.hairline,
+                        lineWidth: isSelected ? 2 : 1
+                    )
+            )
         }
         .accessibilityLabel(label)
         .accessibilityAddTraits(isSelected ? [.isButton, .isSelected] : .isButton)
@@ -493,11 +521,19 @@ struct CivicaQuestionNumberInput: View {
                 Text("$")
                     .font(CivicaTypography.cardTitle)
                     .foregroundStyle(CivicaColors.graphite)
+                // Cents-first formatter — user types digits, display
+                // fills from the right (Venmo / BofA pattern).
+                CivicaCurrencyField(
+                    text: $value,
+                    placeholder: placeholder,
+                    font: CivicaTypography.cardTitle.monospacedDigit()
+                )
+            } else {
+                TextField(placeholder, text: $value)
+                    .font(CivicaTypography.cardTitle.monospacedDigit())
+                    .keyboardType(.numberPad)
+                    .foregroundStyle(CivicaColors.ink)
             }
-            TextField(placeholder, text: $value)
-                .font(CivicaTypography.cardTitle.monospacedDigit())
-                .keyboardType(kind == .dollars ? .decimalPad : .numberPad)
-                .foregroundStyle(CivicaColors.ink)
         }
         .padding(.horizontal, CivicaSpacing.lg)
         .padding(.vertical, CivicaSpacing.md)

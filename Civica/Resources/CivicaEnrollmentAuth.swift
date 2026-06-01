@@ -193,9 +193,25 @@ final class CivicaEnrollmentAuth: ObservableObject {
         req.httpMethod = "POST"
         req.setValue("application/json", forHTTPHeaderField: "Content-Type")
         req.setValue(anonKey, forHTTPHeaderField: "apikey")
-        req.httpBody = try JSONEncoder().encode(["phone": phone])
-        let (_, response) = try await session.data(for: req)
-        try validateHTTP(response)
+        // Supabase Auth REST endpoints expect BOTH `apikey` AND
+        // `Authorization: Bearer <anon-key>`. Sending only `apikey`
+        // intermittently surfaces as a 400 from the GoTrue server
+        // ("invalid jwt" / "no auth header") rather than a 401. Set
+        // both — matches the Supabase JS client behavior.
+        req.setValue("Bearer \(anonKey)", forHTTPHeaderField: "Authorization")
+        // Include the data body Supabase expects: `create_user`
+        // defaults to true but several GoTrue versions reject the
+        // body when it's missing.
+        req.httpBody = try JSONSerialization.data(withJSONObject: [
+            "phone": phone,
+            "create_user": true,
+        ])
+        let (data, response) = try await session.data(for: req)
+        // Pass the response body into validateHTTP so the user sees
+        // the actual GoTrue error message instead of a bare status
+        // code — turns "400 error" into "400: Signups not allowed"
+        // when the project has phone signups disabled, etc.
+        try validateHTTP(response, data: data)
     }
 
     private struct OTPVerifyResponse: Decodable {
@@ -212,6 +228,9 @@ final class CivicaEnrollmentAuth: ObservableObject {
         req.httpMethod = "POST"
         req.setValue("application/json", forHTTPHeaderField: "Content-Type")
         req.setValue(anonKey, forHTTPHeaderField: "apikey")
+        // Same `Authorization: Bearer` requirement as the OTP request —
+        // GoTrue routes that look unauth often expect it anyway.
+        req.setValue("Bearer \(anonKey)", forHTTPHeaderField: "Authorization")
         struct Body: Encodable { let phone, token, type: String }
         req.httpBody = try JSONEncoder().encode(Body(phone: phone, token: token, type: "sms"))
         let (data, response) = try await session.data(for: req)

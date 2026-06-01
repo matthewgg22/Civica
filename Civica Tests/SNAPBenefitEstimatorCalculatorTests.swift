@@ -128,22 +128,79 @@ struct SNAPBenefitEstimatorCalculatorTests {
         }
     }
 
-    /// Federal-default has no SUA chart, so `paysUtilitiesSeparately`
-    /// must not add a synthetic utility deduction. The estimator's
-    /// excessShelterDeduction must equal the rent-only computation.
-    @Test func paysUtilitiesSeparatelyAddsNothingWhenSUAUnavailable() {
-        // Confirm precondition: the active rules engine has no SUA
-        // chart. If a future change wires MA rules in here, this
-        // test's precondition fails loudly and the test should be
-        // rewritten to reflect SUA behavior.
+    /// Regression (device-QA 2026-05-31): flipping the
+    /// elderly/disabled toggle to YES must never DECREASE the estimate.
+    /// A prior bug zeroed the 20% earned-income deduction for
+    /// elderly/disabled households, which raised net income and dropped
+    /// the monthly benefit by ~$108–130 when the toggle flipped to Yes —
+    /// the opposite of what the elderly/disabled provisions (waived
+    /// gross test + uncapped shelter deduction) are supposed to do.
+    /// Holding every other input fixed, the elderly/disabled benefit
+    /// must be >= the non-elderly benefit.
+    @Test func elderlyOrDisabledNeverLowersBenefit() {
+        let base = SNAPBenefitEstimatorInputs(
+            householdSize: 2,
+            elderlyOrDisabled: false,
+            grossMonthlyIncome: 1_800,
+            monthlyRent: 1_400,
+            paysUtilitiesSeparately: true
+        )
+        var elderly = base
+        elderly.elderlyOrDisabled = true
+
+        let baseBenefit = SNAPBenefitEstimatorCalculator.calculate(base).detail.monthlyBenefit
+        let elderlyBenefit = SNAPBenefitEstimatorCalculator.calculate(elderly).detail.monthlyBenefit
+
+        #expect(
+            elderlyBenefit >= baseBenefit,
+            "Elderly/disabled benefit (\(elderlyBenefit)) dropped below non-elderly (\(baseBenefit)); the toggle must never reduce the estimate"
+        )
+    }
+
+    /// The 20% earned-income deduction is independent of
+    /// elderly/disabled status — both cases must report the SAME
+    /// earnedIncomeDeduction for identical income. Guards against the
+    /// re-introduction of the `eld ? 0` coupling at the source.
+    @Test func earnedIncomeDeductionIsIndependentOfElderlyStatus() {
+        let base = SNAPBenefitEstimatorInputs(
+            householdSize: 2,
+            elderlyOrDisabled: false,
+            grossMonthlyIncome: 1_800,
+            monthlyRent: 1_400,
+            paysUtilitiesSeparately: true
+        )
+        var elderly = base
+        elderly.elderlyOrDisabled = true
+
+        let baseDed = SNAPBenefitEstimatorCalculator.calculate(base).detail.earnedIncomeDeduction
+        let elderlyDed = SNAPBenefitEstimatorCalculator.calculate(elderly).detail.earnedIncomeDeduction
+
+        #expect(baseDed == elderlyDed)
+        #expect(baseDed > 0, "20% earned-income deduction should be non-zero for $1,800 gross")
+    }
+
+    /// The calculator runs on `CAStateRules` (launch state), which
+    /// publishes a real heating/cooling SUA. So answering "I pay
+    /// utilities separately = Yes" must ADD the SUA to shelter costs,
+    /// producing a strictly larger excess-shelter deduction (and a
+    /// benefit that is at least as high) than the bundled-utilities
+    /// case, all other inputs equal.
+    ///
+    /// (Rewritten 2026-05-31 from the obsolete
+    /// `paysUtilitiesSeparatelyAddsNothingWhenSUAUnavailable`, which
+    /// asserted the federal-default no-SUA behavior and went stale the
+    /// moment CA rules were wired into the estimator — exactly the
+    /// rewrite that test's own docstring called for.)
+    @Test func paysUtilitiesSeparatelyAddsSUAUnderCARules() {
+        // Precondition: the active engine actually publishes an SUA.
         let suaValue = SNAPBenefitEstimatorCalculator.rules.suaValue(
             tier: .heatingCooling, asOf: Date()
         )
-        guard suaValue == nil else {
-            Issue.record("Test precondition broken: rules engine now returns an SUA value (\(String(describing: suaValue))). Rewrite this test to assert SUA substitution behavior.")
-            return
-        }
+        #expect(suaValue != nil, "CA rules should publish a heating/cooling SUA")
+        #expect((suaValue ?? 0) > 0)
 
+        // Rent kept modest so excess shelter stays positive in both
+        // cases and the SUA genuinely moves the deduction.
         let inputs = SNAPBenefitEstimatorInputs(
             householdSize: 2,
             elderlyOrDisabled: false,
@@ -158,8 +215,12 @@ struct SNAPBenefitEstimatorCalculatorTests {
         let withoutSeparate = SNAPBenefitEstimatorCalculator.calculate(bundled)
 
         #expect(
-            withSeparate.detail.excessShelterDeduction == withoutSeparate.detail.excessShelterDeduction,
-            "paysUtilitiesSeparately must not affect the deduction when the rules engine has no SUA chart"
+            withSeparate.detail.excessShelterDeduction > withoutSeparate.detail.excessShelterDeduction,
+            "Paying utilities separately must increase the excess-shelter deduction via the SUA"
+        )
+        #expect(
+            withSeparate.detail.monthlyBenefit >= withoutSeparate.detail.monthlyBenefit,
+            "A larger shelter deduction can only hold the benefit equal or raise it"
         )
     }
 

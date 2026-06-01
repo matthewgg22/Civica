@@ -1,5 +1,11 @@
 import CivicaDesignSystem
+import Contacts
+import ContactsUI
+import EventKit
+import EventKitUI
 import SwiftUI
+import UIKit
+import UniformTypeIdentifiers
 
 // PLACEHOLDER CONTENT — UD-2 SME review pending.
 // Real content authored by CBO advisor (Project Bread / Dave Guarino
@@ -29,6 +35,31 @@ struct SNAPDailyChecklistItem: Identifiable, Equatable, Sendable {
     let title: CivicaText
 
     var id: String { slug }
+}
+
+/// What an item lets the applicant *do*, beyond just ticking it off.
+/// Each case opens a native iOS sheet so the action feels real and the
+/// applicant isn't asked to context-switch to a different app.
+///
+/// Slugs are mapped to actions in `SNAPDailyChecklist.action(for:)`.
+/// Items without an action just behave as a tap-to-check row.
+enum SNAPDailyChecklistAction: Equatable, Sendable {
+    /// Open the system document picker to attach a file / photo from
+    /// Files. The selection itself is discarded today — the affordance
+    /// matters more than the persistence for this demo surface.
+    case pickDocument
+    /// Open the contacts editor pre-filled with the county's name +
+    /// phone number so the applicant taps Save and it lands in their
+    /// address book. No Contacts permission required — the editor is
+    /// a sandboxed UI from Apple.
+    case saveContact(name: String, phone: String)
+    /// Present the existing "How to prepare for what's next" sheet so
+    /// the applicant can read through the timeline detail in place.
+    case openTimelineSheet
+    /// Open the system calendar event editor pre-filled with a Civica
+    /// follow-up reminder N days out. Apple's editor handles the
+    /// permission prompt and lets the user adjust the date.
+    case addCalendarReminderDaysOut(Int)
 }
 
 // MARK: - Item catalog
@@ -176,6 +207,30 @@ enum SNAPDailyChecklist {
     static func storageKey(status: SNAPApplicationStatus, slug: String) -> String {
         "\(CivicaAppStorageKeys.dailyChecklistPrefix).\(status.rawValue).\(slug)"
     }
+
+    /// Maps a slug to the native iOS action that backs it. Slugs without
+    /// an action are pure tap-to-check rows. Phone numbers / county
+    /// names below are placeholders until SNAPAgencyDirectory wires in
+    /// per-county data — the editor lets the user edit before saving.
+    static func action(for slug: String) -> SNAPDailyChecklistAction? {
+        switch slug {
+        case "gather-backup-paystub",
+             "gather-requested-docs",
+             "gather-interview-docs",
+             "save-county-confirmation":
+            return .pickDocument
+        case "save-county-number":
+            // California-default placeholder; the user can edit name +
+            // number in the contact editor before tapping Save.
+            return .saveContact(name: "County SNAP office", phone: "+18772850808")
+        case "look-up-timeline":
+            return .openTimelineSheet
+        case "set-day-30-reminder":
+            return .addCalendarReminderDaysOut(30)
+        default:
+            return nil
+        }
+    }
 }
 
 // MARK: - Card
@@ -231,6 +286,7 @@ private struct SNAPDailyChecklistRow: View {
     let language: CivicaLanguage
 
     @AppStorage private var checked: Bool
+    @State private var presentingAction: SNAPDailyChecklistAction?
 
     init(status: SNAPApplicationStatus, item: SNAPDailyChecklistItem, language: CivicaLanguage) {
         self.status = status
@@ -240,33 +296,327 @@ private struct SNAPDailyChecklistRow: View {
         self._checked = AppStorage(wrappedValue: false, key)
     }
 
+    private var action: SNAPDailyChecklistAction? {
+        SNAPDailyChecklist.action(for: item.slug)
+    }
+
     var body: some View {
-        Button {
-            checked.toggle()
-        } label: {
-            HStack(alignment: .top, spacing: CivicaSpacing.md) {
-                Image(systemName: checked ? "checkmark.square.fill" : "square")
-                    .imageScale(.large)
-                    .font(.body)
-                    .foregroundStyle(checked ? CivicaColors.pinePrimary : CivicaColors.graphite)
-                    .frame(width: 22, alignment: .leading)
-                    .padding(.top, 1)
-                    .accessibilityHidden(true)
-                Text(item.title.value(in: language))
-                    .font(CivicaTypography.body)
-                    .foregroundStyle(checked ? CivicaColors.graphite : CivicaColors.ink)
-                    .strikethrough(checked, color: CivicaColors.graphite)
-                    .multilineTextAlignment(.leading)
-                    .fixedSize(horizontal: false, vertical: true)
-                Spacer(minLength: 0)
+        VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
+            Button {
+                checked.toggle()
+            } label: {
+                HStack(alignment: .firstTextBaseline, spacing: CivicaSpacing.md) {
+                    Image(systemName: checked ? "checkmark.circle.fill" : "circle")
+                        // Title-class sizing — body-class circles read
+                        // anemic next to multi-line item text and made
+                        // the column hard to scan. Title3 puts the
+                        // glyph at ~26pt visual width.
+                        .font(.title3)
+                        .foregroundStyle(checked ? CivicaColors.pinePrimary : CivicaColors.graphite.opacity(0.6))
+                        .frame(width: 28, alignment: .leading)
+                        .accessibilityHidden(true)
+                    Text(item.title.value(in: language))
+                        .font(CivicaTypography.body)
+                        .foregroundStyle(checked ? CivicaColors.graphite.opacity(0.7) : CivicaColors.ink)
+                        .multilineTextAlignment(.leading)
+                        .fixedSize(horizontal: false, vertical: true)
+                    Spacer(minLength: 0)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .contentShape(Rectangle())
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .contentShape(Rectangle())
+            .buttonStyle(.plain)
+            .accessibilityElement(children: .combine)
+            .accessibilityLabel(item.title.value(in: language))
+            .accessibilityAddTraits(checked ? [.isButton, .isSelected] : .isButton)
+
+            // Real-action CTA, indented under the checkbox column.
+            // Tapping fires the native iOS sheet for the item's slug.
+            if let action {
+                Button {
+                    presentingAction = action
+                } label: {
+                    HStack(spacing: 4) {
+                        Image(systemName: actionIcon(for: action))
+                            .imageScale(.small)
+                            .accessibilityHidden(true)
+                        Text(actionCTA(for: action, language: language))
+                            .font(CivicaTypography.footnoteStrong)
+                    }
+                    .foregroundStyle(CivicaColors.pinePrimary)
+                    .padding(.leading, 28 + CivicaSpacing.md)
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel(actionCTA(for: action, language: language))
+            }
         }
-        .buttonStyle(.plain)
-        .accessibilityElement(children: .combine)
-        .accessibilityLabel(item.title.value(in: language))
-        .accessibilityAddTraits(checked ? [.isButton, .isSelected] : .isButton)
+        .sheet(item: $presentingAction) { action in
+            SNAPDailyChecklistActionPresenter(action: action, language: language) {
+                presentingAction = nil
+                if !checked { checked = true }
+            }
+        }
+    }
+
+    private func actionIcon(for action: SNAPDailyChecklistAction) -> String {
+        switch action {
+        case .pickDocument:                 return "doc.fill.badge.plus"
+        case .saveContact:                  return "person.crop.circle.badge.plus"
+        case .openTimelineSheet:            return "calendar.badge.clock"
+        case .addCalendarReminderDaysOut:   return "bell.badge"
+        }
+    }
+
+    private func actionCTA(for action: SNAPDailyChecklistAction, language: CivicaLanguage) -> String {
+        switch (action, language) {
+        case (.pickDocument, .english):                 return "Attach a file"
+        case (.pickDocument, .spanish):                 return "Adjuntar un archivo"
+        case (.saveContact, .english):                  return "Add to Contacts"
+        case (.saveContact, .spanish):                  return "Añadir a Contactos"
+        case (.openTimelineSheet, .english):            return "Open the timeline"
+        case (.openTimelineSheet, .spanish):            return "Abrir el cronograma"
+        case (.addCalendarReminderDaysOut, .english):   return "Add to Calendar"
+        case (.addCalendarReminderDaysOut, .spanish):   return "Añadir al Calendario"
+        }
+    }
+}
+
+extension SNAPDailyChecklistAction: Identifiable {
+    var id: String {
+        switch self {
+        case .pickDocument:                 return "pickDocument"
+        case .saveContact(let n, let p):    return "saveContact:\(n):\(p)"
+        case .openTimelineSheet:            return "openTimelineSheet"
+        case .addCalendarReminderDaysOut(let d): return "addCalendarReminderDaysOut:\(d)"
+        }
+    }
+}
+
+// MARK: - Action presenter
+
+/// Sheet dispatcher — picks the right UIViewControllerRepresentable
+/// wrapper for the action and dismisses on completion.
+private struct SNAPDailyChecklistActionPresenter: View {
+    let action: SNAPDailyChecklistAction
+    let language: CivicaLanguage
+    let onComplete: () -> Void
+
+    var body: some View {
+        switch action {
+        case .pickDocument:
+            DocumentPickerRepresentable(onComplete: onComplete)
+                .ignoresSafeArea()
+        case .saveContact(let name, let phone):
+            ContactEditorRepresentable(prefilledName: name, prefilledPhone: phone, onComplete: onComplete)
+                .ignoresSafeArea()
+        case .openTimelineSheet:
+            // Lightweight inline timeline sheet — the rich
+            // SNAPWhatHappensNextSheet depends on `statusStore` +
+            // `onMessageNavigator`, which the checklist row doesn't
+            // have. The summary is the same vocabulary the timeline
+            // header on Phase 2 uses, so it lands consistently.
+            SNAPDailyChecklistTimelineSheet(language: language, onClose: onComplete)
+        case .addCalendarReminderDaysOut(let days):
+            CalendarEventRepresentable(
+                title: language == .spanish
+                    ? "Seguimiento del SNAP con el condado"
+                    : "Follow up with the county on SNAP",
+                daysOut: days,
+                onComplete: onComplete
+            )
+            .ignoresSafeArea()
+        }
+    }
+}
+
+// MARK: - Inline timeline sheet
+
+/// Read-only summary of the four county-side milestones. Independent
+/// of the full Phase 2 timeline sheet so the daily checklist row can
+/// present it without needing a status store or navigator-message
+/// callback.
+private struct SNAPDailyChecklistTimelineSheet: View {
+    let language: CivicaLanguage
+    let onClose: () -> Void
+
+    @Environment(\.dismiss) private var dismiss
+
+    private struct Step {
+        let title: String
+        let body: String
+    }
+
+    private var steps: [Step] {
+        switch language {
+        case .english:
+            return [
+                .init(title: "Submitted",
+                      body: "Your application is with the county. Most files are picked up within 1 business day."),
+                .init(title: "In review",
+                      body: "A caseworker checks your documents and notes anything missing. This usually takes 7 to 14 days."),
+                .init(title: "Interview",
+                      body: "The county calls for a 15-minute eligibility interview, usually within 2 weeks of submission."),
+                .init(title: "Decision",
+                      body: "By federal rule a decision lands within 30 days of submission (7 days for expedited / emergency cases)."),
+            ]
+        case .spanish:
+            return [
+                .init(title: "Enviado",
+                      body: "Tu solicitud está con el condado. La mayoría de los archivos se reciben en 1 día hábil."),
+                .init(title: "En revisión",
+                      body: "Un trabajador del caso revisa tus documentos y anota lo que falta. Suele tomar de 7 a 14 días."),
+                .init(title: "Entrevista",
+                      body: "El condado llama para una entrevista de elegibilidad de 15 minutos, usualmente dentro de 2 semanas tras enviar."),
+                .init(title: "Decisión",
+                      body: "Por regla federal, la decisión llega en 30 días tras enviar (7 días en casos urgentes)."),
+            ]
+        }
+    }
+
+    private var title: String {
+        switch language {
+        case .english: return "What to expect from the county"
+        case .spanish: return "Lo que puedes esperar del condado"
+        }
+    }
+
+    var body: some View {
+        NavigationStack {
+            ScrollView {
+                VStack(alignment: .leading, spacing: CivicaSpacing.lg) {
+                    ForEach(Array(steps.enumerated()), id: \.offset) { _, step in
+                        VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
+                            Text(step.title)
+                                .font(CivicaTypography.sectionHeader)
+                                .foregroundStyle(CivicaColors.ink)
+                            Text(step.body)
+                                .font(CivicaTypography.body)
+                                .foregroundStyle(CivicaColors.graphite)
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                }
+                .padding(CivicaSpacing.xl)
+            }
+            .background(CivicaColors.paper.ignoresSafeArea())
+            .navigationTitle(title)
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button(language == .spanish ? "Listo" : "Done") {
+                        onClose()
+                        dismiss()
+                    }
+                    .foregroundStyle(CivicaColors.pinePrimary)
+                }
+            }
+        }
+    }
+}
+
+// MARK: - UIViewControllerRepresentable bridges
+
+/// System Files picker. Accepts any item type — we don't persist the
+/// selection; the affordance + system UI is the whole point.
+private struct DocumentPickerRepresentable: UIViewControllerRepresentable {
+    let onComplete: () -> Void
+
+    func makeCoordinator() -> Coordinator { Coordinator(onComplete: onComplete) }
+
+    func makeUIViewController(context: Context) -> UIDocumentPickerViewController {
+        let types: [UTType] = [.pdf, .image, .text, .item]
+        let vc = UIDocumentPickerViewController(forOpeningContentTypes: types, asCopy: true)
+        vc.allowsMultipleSelection = false
+        vc.delegate = context.coordinator
+        return vc
+    }
+
+    func updateUIViewController(_ uiViewController: UIDocumentPickerViewController, context: Context) {}
+
+    final class Coordinator: NSObject, UIDocumentPickerDelegate {
+        let onComplete: () -> Void
+        init(onComplete: @escaping () -> Void) { self.onComplete = onComplete }
+
+        func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
+            onComplete()
+        }
+        func documentPickerWasCancelled(_ controller: UIDocumentPickerViewController) {
+            onComplete()
+        }
+    }
+}
+
+/// Contacts editor for a brand-new contact. No Contacts permission
+/// required because CNContactViewController.forNewContact ships its
+/// own sandboxed UI that the user explicitly saves.
+private struct ContactEditorRepresentable: UIViewControllerRepresentable {
+    let prefilledName: String
+    let prefilledPhone: String
+    let onComplete: () -> Void
+
+    func makeCoordinator() -> Coordinator { Coordinator(onComplete: onComplete) }
+
+    func makeUIViewController(context: Context) -> UINavigationController {
+        let contact = CNMutableContact()
+        contact.organizationName = prefilledName
+        contact.phoneNumbers = [
+            CNLabeledValue(label: CNLabelPhoneNumberMain, value: CNPhoneNumber(stringValue: prefilledPhone))
+        ]
+        let editor = CNContactViewController(forNewContact: contact)
+        editor.delegate = context.coordinator
+        editor.allowsActions = false
+        return UINavigationController(rootViewController: editor)
+    }
+
+    func updateUIViewController(_ uiViewController: UINavigationController, context: Context) {}
+
+    final class Coordinator: NSObject, CNContactViewControllerDelegate {
+        let onComplete: () -> Void
+        init(onComplete: @escaping () -> Void) { self.onComplete = onComplete }
+
+        func contactViewController(_ viewController: CNContactViewController, didCompleteWith contact: CNContact?) {
+            onComplete()
+        }
+    }
+}
+
+/// Calendar event editor pre-filled with a Civica follow-up event N
+/// days out. EKEventEditViewController handles the WriteOnlyAccess
+/// permission prompt internally.
+private struct CalendarEventRepresentable: UIViewControllerRepresentable {
+    let title: String
+    let daysOut: Int
+    let onComplete: () -> Void
+
+    func makeCoordinator() -> Coordinator { Coordinator(onComplete: onComplete) }
+
+    func makeUIViewController(context: Context) -> EKEventEditViewController {
+        let store = EKEventStore()
+        let editor = EKEventEditViewController()
+        editor.eventStore = store
+
+        let event = EKEvent(eventStore: store)
+        event.title = title
+        event.notes = "Reminder set from Civica to check on your SNAP application."
+        let startDate = Calendar.current.date(byAdding: .day, value: daysOut, to: Date()) ?? Date()
+        event.startDate = startDate
+        event.endDate = startDate.addingTimeInterval(30 * 60)
+        event.isAllDay = false
+        editor.event = event
+        editor.editViewDelegate = context.coordinator
+        return editor
+    }
+
+    func updateUIViewController(_ uiViewController: EKEventEditViewController, context: Context) {}
+
+    final class Coordinator: NSObject, EKEventEditViewDelegate {
+        let onComplete: () -> Void
+        init(onComplete: @escaping () -> Void) { self.onComplete = onComplete }
+
+        func eventEditViewController(_ controller: EKEventEditViewController, didCompleteWith action: EKEventEditViewAction) {
+            onComplete()
+        }
     }
 }
 

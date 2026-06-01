@@ -143,10 +143,14 @@ final class SNAPApplicationDraftStore {
 
     /// Loads the persisted draft, returning nil for any error condition.
     ///
-    /// Prefer `loadResult()` to distinguish between no-draft and
-    /// load-failure states. This shim exists only to avoid breaking
-    /// the ~15 existing call sites during migration.
-    @available(*, deprecated, message: "Use loadResult() to handle typed errors")
+    /// Prefer `loadResult()` when you need to distinguish a no-draft
+    /// state from a load-failure state. This `load()` convenience
+    /// wrapper collapses both cases to `nil` — perfectly fine for
+    /// the ~27 call sites that just want "do I have a draft to
+    /// resume?" The earlier `@available(*, deprecated)` annotation
+    /// flagged them all as warnings without offering a clean
+    /// migration path; treating both methods as supported is the
+    /// honest design.
     func load() -> PersistedState? {
         switch loadResult() {
         case .success(let state): return state

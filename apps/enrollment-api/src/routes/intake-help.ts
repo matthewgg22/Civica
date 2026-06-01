@@ -56,6 +56,9 @@ const REQUEST_TIMEOUT_MS = 15_000;
 
 const MAX_HELPER_CHARS = 800;
 
+const MAX_MESSAGE_CHARS = 2000;
+const MAX_HISTORY_TURNS = 12; // 6 round-trips of (user + assistant)
+
 const helpRequestSchema = z.object({
   question_title: z.string().min(1).max(MAX_TITLE_CHARS),
   // Optional on-screen helper text the applicant is already looking at,
@@ -65,6 +68,19 @@ const helpRequestSchema = z.object({
   // omitting it reproduces the prior behavior exactly.
   question_helper: z.string().max(MAX_HELPER_CHARS).optional(),
   locale: z.enum(["en", "es"]),
+  // Optional conversation history for multi-turn chat. When present, the
+  // sequence is appended after the initial framing user message so Claude
+  // sees the full thread. When absent, the route behaves exactly as the
+  // original one-shot explainer endpoint did.
+  messages: z
+    .array(
+      z.object({
+        role: z.enum(["user", "assistant"]),
+        content: z.string().min(1).max(MAX_MESSAGE_CHARS),
+      }),
+    )
+    .max(MAX_HISTORY_TURNS)
+    .optional(),
 });
 
 type HelpResponse = {
@@ -171,7 +187,9 @@ const TIER_B_SYSTEM_PROMPT_EN = [
   "5. Locale-aware. The applicant's locale is English. Respond in English only. Do not switch languages mid-response.",
   "6. RAG grounding (informational only, not a citation list to the applicant): your background knowledge of CDSS guidance, 7 CFR 273, packages/snap-rules canonical rule data, and SNAPAgencyDirectory state-conditioned copy informs your explanation. The applicant never sees citations; they see a clean explanation.",
   "",
-  "Format: 2-5 short sentences. No bullet points unless the question is genuinely a list. No headers. No greeting or sign-off. Just the explanation.",
+  "Format (initial explanation): 2-4 short sentences MAX. If the answer naturally involves a list (criteria, examples, eligible categories), use Markdown-style bullet lines (\"- item\" or \"• item\", one per line) instead of prose. Prefer bullets over long paragraphs whenever the content is enumerable. No headers. No greeting or sign-off.",
+  "",
+  "Follow-up turns (when the applicant has asked a clarifying question): respond to THEIR specific question in 1-3 sentences, or a short bulleted list if listing things. Do not re-explain the original question unless asked.",
   "",
   CA_REFERENCE_GUIDANCE,
 ].join("\n");
@@ -188,7 +206,9 @@ const TIER_B_SYSTEM_PROMPT_ES = [
   "5. Consciente del idioma. El idioma del solicitante es español. Responde solo en español. No cambies de idioma a mitad de respuesta.",
   "6. Fuentes de fundamentación (solo informativas, no es una lista de citas para el solicitante): tu conocimiento de fondo sobre la guía del CDSS, 7 CFR 273, los datos canónicos de packages/snap-rules y SNAPAgencyDirectory con copy condicionado por estado informa tu explicación. El solicitante nunca ve citas; ve una explicación clara.",
   "",
-  "Formato: 2-5 oraciones cortas. Sin viñetas a menos que la pregunta sea genuinamente una lista. Sin encabezados. Sin saludo ni despedida. Solo la explicación.",
+  "Formato (explicación inicial): MÁX 2-4 oraciones cortas. Si la respuesta naturalmente involucra una lista (criterios, ejemplos, categorías), usa viñetas estilo Markdown (\"- ítem\" o \"• ítem\", una por línea) en lugar de párrafos. Prefiere viñetas a párrafos largos cuando el contenido sea enumerable. Sin encabezados. Sin saludo ni despedida.",
+  "",
+  "Turnos de seguimiento (cuando el solicitante haya hecho una pregunta aclaratoria): responde a SU pregunta específica en 1-3 oraciones, o una lista breve con viñetas si enumeras cosas. No vuelvas a explicar la pregunta original a menos que te lo pidan.",
   "",
   "REFERENCIA — Civica mantiene la guía siguiente en inglés para los temas clave de CalFresh CA. Úsala como conocimiento de fondo cuando la pregunta del solicitante se relacione con uno de estos temas. Traduce los conceptos al español al responder. No cites textualmente. No incluyas lista de fuentes.",
   "",
@@ -335,15 +355,30 @@ function buildUserMessage(questionTitle: string, questionHelper?: string): strin
   return `${base}${helperBlock}\n\nExplain what this question is asking in 2-5 short sentences.`;
 }
 
+type ConversationTurn = { role: "user" | "assistant"; content: string };
+
 async function callAnthropic(
   apiKey: string,
   systemPrompt: string,
   questionTitle: string,
   questionHelper: string | undefined,
+  history: ConversationTurn[] | undefined,
   fetchImpl: FetchImpl = fetch,
 ): Promise<string> {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+
+  // The first message is always the framing prompt that anchors Claude in
+  // the specific question the applicant tapped. Any prior conversation
+  // history is appended after; an empty history yields the original one-shot
+  // explainer contract.
+  const messages: ConversationTurn[] = [
+    {
+      role: "user",
+      content: buildUserMessage(questionTitle, questionHelper),
+    },
+    ...(history ?? []),
+  ];
 
   try {
     const response = await fetchImpl("https://api.anthropic.com/v1/messages", {
@@ -359,12 +394,7 @@ async function callAnthropic(
         max_tokens: MAX_TOKENS,
         temperature: 0.3,
         system: systemPrompt,
-        messages: [
-          {
-            role: "user",
-            content: buildUserMessage(questionTitle, questionHelper),
-          },
-        ],
+        messages,
       }),
     });
 
@@ -472,15 +502,20 @@ app.post(
   rateLimit("strict"),
   zValidator("json", helpRequestSchema),
   async (c) => {
-    const { question_title, question_helper, locale } = c.req.valid("json");
+    const { question_title, question_helper, locale, messages } = c.req.valid("json");
+    const isFollowUp = !!messages && messages.length > 0;
 
     const apiKey = c.env.ANTHROPIC_API_KEY;
     if (!apiKey) {
       throw new HTTPException(500, { message: "ANTHROPIC_API_KEY is not configured" });
     }
 
-    // Cache check (fail-open). A hit skips the LLM call entirely.
-    const cacheKey = await cacheKeyFor(question_title, question_helper, locale).catch(() => null);
+    // Cache only the initial-turn explainer (no conversation history).
+    // Follow-up turns depend on the specific message sequence and would
+    // poison the cache with one-off content.
+    const cacheKey = !isFollowUp
+      ? await cacheKeyFor(question_title, question_helper, locale).catch(() => null)
+      : null;
     if (cacheKey) {
       const cached = await tryCacheMatch(cacheKey);
       if (cached) {
@@ -493,7 +528,14 @@ app.post(
 
     let rawText: string;
     try {
-      rawText = await callAnthropic(apiKey, systemPrompt, question_title, question_helper, fetchImpl);
+      rawText = await callAnthropic(
+        apiKey,
+        systemPrompt,
+        question_title,
+        question_helper,
+        messages,
+        fetchImpl,
+      );
     } catch (err) {
       const message = err instanceof Error ? err.message : "Anthropic call failed";
       // Log the failure server-side; surface a 500 so the iOS sheet can show

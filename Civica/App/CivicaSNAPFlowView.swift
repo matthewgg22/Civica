@@ -55,6 +55,21 @@ struct CivicaSNAPFlowView: View {
     @AppStorage(CivicaAppStorageKeys.buddyContact)
     private var buddyContact: String = ""
 
+    /// Master gate. While `false`, the buddy banner, auto-presented intro,
+    /// and re-share sheet are all suppressed — the share URL currently
+    /// resolves to a broken `civica.app/b/<token>` page so surfacing the
+    /// flow at all is a regression for the demo.
+    @AppStorage(CivicaAppStorageKeys.buddyFeatureEnabled)
+    private var buddyFeatureEnabled: Bool = false
+
+    /// Demo / preview mode. When ON, packet generation bypasses the
+    /// phone-OTP sign-in gate so a reviewer walking the application
+    /// end-to-end isn't blocked when Supabase phone auth returns a
+    /// non-2xx (project misconfig, SMS provider unwired, etc.). Off
+    /// in production — the sign-in gate is the right default.
+    @AppStorage(CivicaAppStorageKeys.demoUnlockAllPhases)
+    private var demoUnlockAllPhases: Bool = false
+
     let language: CivicaLanguage
     let recertMode: Bool
 
@@ -68,12 +83,18 @@ struct CivicaSNAPFlowView: View {
             if recertMode {
                 recertBanner
             }
-            buddyBanner
+            if buddyFeatureEnabled {
+                buddyBanner
+            }
             SNAPApplicationFlowOrchestratorView(
                 viewModel: SNAPApplicationFlowOrchestratorViewModel(),
                 language: language,
                 onGeneratePacket: { draft in
-                    if enrollmentAuth.state.isAuthenticated {
+                    // Demo bypass: when the gear's "Unlock all phases"
+                    // toggle is on, generate the packet directly even
+                    // when not signed in. Keeps the demo walk-through
+                    // unblocked if phone OTP is misconfigured.
+                    if enrollmentAuth.state.isAuthenticated || demoUnlockAllPhases {
                         runGeneratePacket(draft)
                     } else {
                         pendingDraft = draft
@@ -88,8 +109,10 @@ struct CivicaSNAPFlowView: View {
         .onAppear {
             // First entry: present the 3-panel buddy intro once, then
             // never again. The banner stays as the persistent re-entry
-            // path for users who skipped or dismissed the modal.
-            if !hasSeenBuddyIntro {
+            // path for users who skipped or dismissed the modal. Gated
+            // by `buddyFeatureEnabled` because the share link currently
+            // resolves to a broken civica.app/b/<token> page.
+            if buddyFeatureEnabled, !hasSeenBuddyIntro {
                 showingBuddyIntro = true
             }
         }

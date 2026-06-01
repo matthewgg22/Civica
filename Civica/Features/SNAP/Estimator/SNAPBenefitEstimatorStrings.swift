@@ -78,10 +78,6 @@ enum SNAPBenefitEstimatorStrings {
         "Pay utilities separately?",
         es: "¿Pagas servicios aparte?"
     )
-    static let utilitiesHelper = CivicaText(
-        "Electric, gas, or heating bill not covered by your rent — even one qualifies.",
-        es: "Factura de luz, gas o calefacción que no está incluida en tu renta — aunque sea una cuenta."
-    )
 
     // MARK: - Yes / No toggle
 

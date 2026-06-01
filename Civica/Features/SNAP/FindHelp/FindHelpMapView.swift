@@ -207,10 +207,17 @@ final class FindHelpAnnotationView: MKAnnotationView {
     }
 
     func configure(with location: FindHelpLocation) {
-        // Clustering disabled — a "50" badge on a single dot hides
-        // all the pins and feels broken. Individual pins at all zoom
-        // levels let users orient themselves immediately.
-        clusteringIdentifier = nil
+        // Cluster only by record kind: help-directory pins cluster with
+        // each other, EBT retailers cluster with each other, so a mixed
+        // dense area (a retail strip with two food pantries down the
+        // block) still reads as two distinct groups instead of one
+        // ambiguous mass. The cluster annotation view in the Coordinator
+        // tints the badge via FindHelpPinPalette.dominantColor for
+        // homogeneous clusters, so the hue carries the meaning.
+        // Previously disabled because of a "50" badge UX concern; the
+        // alternative (no clustering at all) created the pin-pile-up
+        // visible in dense Boston / LA areas, which is worse.
+        clusteringIdentifier = "findhelp.\(location.resolvedRecordKind.rawValue)"
         canShowCallout = false
         image = FindHelpPinPalette.teardropImage(for: location)
         // Anchor the tip of the teardrop on the coordinate rather

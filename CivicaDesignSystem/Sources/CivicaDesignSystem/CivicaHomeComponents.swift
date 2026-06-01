@@ -264,8 +264,12 @@ public struct CivicaActionRow: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(CivicaColors.surfacePrimary)
             .overlay(alignment: .leading) {
+                // Neutral accent stripe (graphite, not pine). A pine
+                // left-border is both a §2.2 violation and AI-slop
+                // pattern #8 (colored left-border on cards). Graphite
+                // keeps the structural emphasis without the green.
                 Rectangle()
-                    .fill(CivicaColors.pinePrimary)
+                    .fill(CivicaColors.graphite.opacity(0.4))
                     .frame(width: 3)
             }
             .overlay(
@@ -293,14 +297,20 @@ public struct CivicaPhaseTimeline: View {
 
     let current: Milestone
     let labels: [String]
+    let onMilestoneTap: ((Milestone) -> Void)?
 
-    public init(current: Milestone, labels: [String]) {
+    public init(
+        current: Milestone,
+        labels: [String],
+        onMilestoneTap: ((Milestone) -> Void)? = nil
+    ) {
         self.current = current
         // Pad / trim to 4 to keep the layout predictable even if a
         // caller passes a wrong-length label set.
         var resolved = labels
         while resolved.count < 4 { resolved.append("") }
         self.labels = Array(resolved.prefix(4))
+        self.onMilestoneTap = onMilestoneTap
     }
 
     public var body: some View {
@@ -311,23 +321,28 @@ public struct CivicaPhaseTimeline: View {
                     Rectangle()
                         .fill(CivicaColors.ink.opacity(0.10))
                         .frame(height: 2)
-                    // completed connector — done -> midpoint of current
+                    // completed connector — done -> midpoint of current.
+                    // Graphite to match the neutral status dots (§2.2:
+                    // timeline is a status indicator, not a CTA).
+                    // Animated so a status advance fills smoothly to
+                    // the next milestone instead of snapping.
                     Rectangle()
-                        .fill(CivicaColors.pinePrimary)
+                        .fill(CivicaColors.graphite)
                         .frame(
                             width: completedWidth(in: proxy.size.width),
                             height: 2
                         )
                         .frame(maxWidth: .infinity, alignment: .leading)
+                        .animation(.easeInOut(duration: 0.65), value: current)
                     HStack(spacing: 0) {
                         ForEach(Milestone.allCases, id: \.self) { m in
-                            milestoneDot(m)
+                            dotButton(m)
                                 .frame(maxWidth: .infinity)
                         }
                     }
                 }
             }
-            .frame(height: 22)
+            .frame(height: 26)
             HStack(spacing: 0) {
                 ForEach(Array(labels.enumerated()), id: \.offset) { idx, label in
                     let m = Milestone(rawValue: idx)!
@@ -347,33 +362,62 @@ public struct CivicaPhaseTimeline: View {
         return .future
     }
 
+    /// Wraps the milestone dot in a tap target so the parent can
+    /// open a detail sheet on tap. If `onMilestoneTap` is nil the dot
+    /// stays a static view (preserves the original timeline contract).
+    @ViewBuilder
+    private func dotButton(_ m: Milestone) -> some View {
+        if let onMilestoneTap {
+            Button { onMilestoneTap(m) } label: {
+                milestoneDot(m)
+                    // Bigger hit-target than the visual dot so taps on
+                    // older / smaller fingers still register.
+                    .frame(width: 44, height: 44)
+                    .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel(labels[m.rawValue])
+            .accessibilityAddTraits(state(of: m) == .current ? [.isButton, .isSelected] : .isButton)
+        } else {
+            milestoneDot(m)
+        }
+    }
+
     @ViewBuilder
     private func milestoneDot(_ m: Milestone) -> some View {
         let s = state(of: m)
         switch s {
         case .done:
+            // Timeline dots are STATUS INDICATORS — DESIGN.md §2.2 bans
+            // pine here (pine = CTA only). Done = neutral graphite dot;
+            // it still reads "complete" without competing with the
+            // Continue CTA for the eye.
             Circle()
-                .fill(CivicaColors.pinePrimary)
-                .frame(width: 18, height: 18)
-                .overlay {
-                    Image(systemName: "checkmark")
-                        .imageScale(.large)
-                        .font(.body)
-                        .foregroundStyle(CivicaColors.onPrimaryText)
-                }
+                .fill(CivicaColors.graphite)
+                .frame(width: 12, height: 12)
         case .current:
+            // Current is the timeline's focal point: ink ring + ink
+            // inner dot (not pine). Larger than done so the hierarchy
+            // (current > done > future) is unambiguous through size +
+            // weight, not color — per §1.2 "hierarchy by weight + size,
+            // not color alone."
             Circle()
-                .fill(CivicaColors.pinePrimary)
-                .frame(width: 18, height: 18)
+                .fill(CivicaColors.paper)
+                .frame(width: 22, height: 22)
                 .overlay(
                     Circle()
-                        .stroke(CivicaColors.pinePrimary.opacity(0.20), lineWidth: 5)
+                        .stroke(CivicaColors.ink, lineWidth: 3)
+                )
+                .overlay(
+                    Circle()
+                        .fill(CivicaColors.ink)
+                        .frame(width: 9, height: 9)
                 )
         case .future:
             Circle()
                 .stroke(CivicaColors.ink.opacity(0.22), lineWidth: 1.5)
                 .background(Circle().fill(CivicaColors.paper))
-                .frame(width: 14, height: 14)
+                .frame(width: 12, height: 12)
         }
     }
 

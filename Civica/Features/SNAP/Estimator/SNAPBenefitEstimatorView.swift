@@ -30,6 +30,7 @@ struct SNAPBenefitEstimatorView: View {
 
     @State private var inputs: SNAPBenefitEstimatorInputs
     @State private var showsMath: Bool = false
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @AppStorage(CivicaLanguage.defaultStorageKey)
     private var languageRaw: String = CivicaLanguage.english.rawValue
 
@@ -62,6 +63,21 @@ struct SNAPBenefitEstimatorView: View {
         SNAPBenefitEstimatorCalculator.calculate(inputs)
     }
 
+    /// Single Bool the eligible↔ineligible crossfade animates on, so
+    /// sliding income across the threshold dissolves between the two
+    /// result cards (and resizes the sticky footer) instead of a hard
+    /// cut between very differently-sized layouts.
+    private var isEligibleOutcome: Bool {
+        if case .eligible = outcome { return true }
+        return false
+    }
+
+    /// Easing for the outcome transition — nil (instant) under
+    /// Reduce Motion so we don't fight the accessibility setting.
+    private var outcomeAnimation: Animation? {
+        reduceMotion ? nil : .easeInOut(duration: 0.28)
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             // Inputs (+ the math link + disclaimer footnote) scroll
@@ -80,17 +96,22 @@ struct SNAPBenefitEstimatorView: View {
                     // back to the plain disclaimer + BBCE soft note.
                     if case .eligible = outcome {
                         seeTheMathButton
+                            .transition(.opacity)
                     } else {
-                        Text(SNAPBenefitEstimatorStrings.disclaimerFooter.value(in: language))
-                            .font(CivicaTypography.footnote)
-                            .foregroundStyle(CivicaColors.graphite)
-                            .fixedSize(horizontal: false, vertical: true)
-                        Text(SNAPBenefitEstimatorStrings.bbceSoftNote.value(in: language))
-                            .font(CivicaTypography.footnote)
-                            .foregroundStyle(CivicaColors.graphite)
-                            .fixedSize(horizontal: false, vertical: true)
+                        VStack(alignment: .leading, spacing: CivicaSpacing.md) {
+                            Text(SNAPBenefitEstimatorStrings.disclaimerFooter.value(in: language))
+                                .font(CivicaTypography.footnote)
+                                .foregroundStyle(CivicaColors.graphite)
+                                .fixedSize(horizontal: false, vertical: true)
+                            Text(SNAPBenefitEstimatorStrings.bbceSoftNote.value(in: language))
+                                .font(CivicaTypography.footnote)
+                                .foregroundStyle(CivicaColors.graphite)
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
+                        .transition(.opacity)
                     }
                 }
+                .animation(outcomeAnimation, value: isEligibleOutcome)
                 .padding(.horizontal, CivicaSpacing.xl)
                 .padding(.top, CivicaSpacing.lg)
                 .padding(.bottom, CivicaSpacing.md)
@@ -239,13 +260,12 @@ struct SNAPBenefitEstimatorView: View {
     }
 
     private var utilitiesCard: some View {
-        // Helper re-added: the SUA toggle now moves the estimate by
-        // $663 (CA FY26), so the clarification "not included in your
-        // rent" earns its space. HStack(alignment: .top) in the parent
-        // row handles differing card heights cleanly.
+        // Helper subtitle dropped per device-QA feedback (2026-05-31):
+        // the "electric, gas, or heating… even one qualifies" line read
+        // as clutter in the 2-col row. The question "Pay utilities
+        // separately?" stands on its own.
         inputCard(
-            question: SNAPBenefitEstimatorStrings.utilitiesQuestion.value(in: language),
-            helper: SNAPBenefitEstimatorStrings.utilitiesHelper.value(in: language)
+            question: SNAPBenefitEstimatorStrings.utilitiesQuestion.value(in: language)
         ) {
             yesNoToggle(isOn: $inputs.paysUtilitiesSeparately)
         }
@@ -272,8 +292,13 @@ struct SNAPBenefitEstimatorView: View {
             // outcomes keep the bottom-of-screen CTA.
             if case .eligible = outcome {
                 applyCTA
+                    .transition(.opacity)
             }
         }
+        // Crossfade + resize the whole footer when eligibility flips,
+        // so crossing the income threshold dissolves between the two
+        // differently-sized cards instead of snapping.
+        .animation(outcomeAnimation, value: isEligibleOutcome)
         .padding(.horizontal, CivicaSpacing.xl)
         .padding(.top, CivicaSpacing.sm)
         .padding(.bottom, CivicaSpacing.md)
@@ -328,8 +353,10 @@ struct SNAPBenefitEstimatorView: View {
         switch outcome {
         case .eligible(let monthlyBenefit, let annual, _):
             eligibleResultCard(monthly: monthlyBenefit, annual: annual)
+                .transition(.opacity)
         case .ineligible(let reason, _):
             ineligibleResultCard(reason: reason)
+                .transition(.opacity)
         }
     }
 

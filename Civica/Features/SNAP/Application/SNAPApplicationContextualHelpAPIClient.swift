@@ -58,6 +58,24 @@ final class SNAPApplicationContextualHelpAPIClient {
             case .emptyResponse:              return "Intake-help returned an empty response."
             }
         }
+
+        /// Short, single-line summary suitable for inline display in the
+        /// sheet's diagnostic footer. Trims long response bodies so the
+        /// caption stays readable on a phone.
+        var diagnosticSummary: String {
+            switch self {
+            case .missingBaseURL(let reason): return "config: \(reason)"
+            case .networkError(let msg):      return "network: \(msg)"
+            case .rateLimited:                return "rate-limited (429)"
+            case .serverError(let status, let body):
+                let trimmed = body.trimmingCharacters(in: .whitespacesAndNewlines)
+                let preview = trimmed.count > 160 ? String(trimmed.prefix(160)) + "…" : trimmed
+                return "HTTP \(status): \(preview)"
+            case .decodingFailed(let msg):    return "decode: \(msg)"
+            case .timeout:                    return "timeout"
+            case .emptyResponse:              return "empty response"
+            }
+        }
     }
 
     /// Wire-format response. snake_case decoded via
@@ -82,6 +100,18 @@ final class SNAPApplicationContextualHelpAPIClient {
         let questionTitle: String
         let locale: String
         let questionHelper: String?
+        /// Optional conversation history for multi-turn chat. Same
+        /// `encodeIfPresent` semantics: when nil the `messages` key is
+        /// omitted entirely and the request is byte-identical to the
+        /// original one-shot contract.
+        let messages: [ChatMessageWire]?
+    }
+
+    /// Wire-format conversation turn. Snake-case is irrelevant here
+    /// (`role` and `content` already match the worker's Zod schema).
+    struct ChatMessageWire: Encodable, Equatable {
+        let role: String
+        let content: String
     }
 
     /// UserDefaults key for the stable per-install anonymous ID sent
@@ -96,11 +126,16 @@ final class SNAPApplicationContextualHelpAPIClient {
     private let decoder: JSONDecoder
     private let logger = Logger(subsystem: "Civica", category: "SNAPApplicationContextualHelpAPIClient")
 
-    /// Hard 3s ceiling per design D6 — the sheet must fail fast and
-    /// fall back to the navigator-nudge copy before the user
-    /// disengages. Cold-start risk noted in the design doc; we
-    /// accept that risk and own the fallback UX.
-    private let requestTimeout: TimeInterval = 3
+    /// Original design D6 hard-coded 3s "fail-fast" ceiling — but
+    /// real Anthropic Claude responses on the worker side run 3–6s
+    /// (Tier-B prompt + helper-text grounding + Cache API miss),
+    /// which meant every cold call timed out and the user only ever
+    /// saw the fallback copy. Device QA confirmed it: NSURLError
+    /// -1001 every time. Raising to 20s gives generous headroom for
+    /// the real LLM round-trip while leaving the sheet's existing
+    /// "still thinking…" copy to keep the user oriented past the 3s
+    /// mark (that timer fires regardless of this ceiling).
+    private let requestTimeout: TimeInterval = 20
 
     /// Default enrollment-api host. Mirrors InterviewCoachAPIClient's
     /// resolver: env var → Info.plist → production fallback. Keeping
@@ -145,7 +180,8 @@ final class SNAPApplicationContextualHelpAPIClient {
     func fetchHelp(
         questionTitle: String,
         questionHelper: String? = nil,
-        language: CivicaLanguage
+        language: CivicaLanguage,
+        history: [ChatMessageWire]? = nil
     ) async throws -> HelpResponse {
         var request = URLRequest(url: endpoint("v1/intake/help"))
         request.httpMethod = "POST"
@@ -162,7 +198,8 @@ final class SNAPApplicationContextualHelpAPIClient {
         let body = HelpRequest(
             questionTitle: questionTitle,
             locale: language.rawValue,
-            questionHelper: normalizedHelper
+            questionHelper: normalizedHelper,
+            messages: (history?.isEmpty ?? true) ? nil : history
         )
         request.httpBody = try encoder.encode(body)
 

@@ -107,6 +107,19 @@ struct SNAPApplicantAgeFlowView: View {
             VStack(alignment: .leading, spacing: CivicaSpacing.md) {
                 ageReadout
                 datePicker
+                // Wave C — ID-scan to pre-fill DOB. Hidden on
+                // devices without on-device extraction available.
+                // Name extraction is intentionally DROPPED here per
+                // Civica's privacy firewall; only the DOB lands.
+                SNAPInlineDocScanCTA(
+                    documentType: .photoID,
+                    ctaLabel: SNAPApplicantAgeStrings.scanIDCTA.value(in: language),
+                    onExtracted: { result in
+                        if let dob = result.dateOfBirthDate {
+                            viewModel.recordInteraction(dob)
+                        }
+                    }
+                )
             }
         }
         .toolbar {
@@ -145,7 +158,18 @@ struct SNAPApplicantAgeFlowView: View {
         )
         .datePickerStyle(.wheel)
         .labelsHidden()
+        // Fixed height is REQUIRED. A .wheel DatePicker has no intrinsic
+        // height, and CivicaQuestionScreen renders its content inside a
+        // ScrollView — an unbounded wheel proposes an ambiguous/NaN
+        // height to its rows, which spams "invalid numeric value (NaN)
+        // to CoreGraphics" on every scroll tick and triggers gesture-
+        // gate timeouts + hangs (device QA). Bounding the height makes
+        // the wheel's internal layout deterministic and stops the NaN.
         .frame(maxWidth: .infinity)
+        .frame(height: 200)
+        // Keep the scroll gesture inside the wheel from fighting the
+        // parent ScrollView during a spin.
+        .contentShape(Rectangle())
         .padding(.horizontal, CivicaSpacing.lg)
         .padding(.vertical, CivicaSpacing.md)
         .background(CivicaColors.surfacePrimary)
@@ -169,6 +193,13 @@ enum SNAPApplicantAgeStrings {
         "When were you born?",
         es: "¿Cuándo naciste?"
     )
+    // Wave C — ID-scan affordance for DOB only (name dropped per
+    // privacy firewall).
+    static let scanIDCTA = CivicaText(
+        "Scan your ID to fill DOB",
+        es: "Escanea tu identificación para llenar la fecha"
+    )
+
     static let helper = CivicaText(
         "Your exact age changes which SNAP deductions you can get. We don't share your birth date with anyone.",
         es: "Tu edad exacta cambia qué deducciones de SNAP puedes recibir. No compartimos tu fecha de nacimiento con nadie."

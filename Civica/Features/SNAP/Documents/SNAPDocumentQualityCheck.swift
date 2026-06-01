@@ -82,10 +82,18 @@ enum SNAPDocumentQualityChecker {
 
         var rejections: [SNAPDocumentQualityRejection] = []
 
+        // Blur is ADVISORY ONLY. The approximate-Laplacian variance
+        // heuristic was systematically scoring crisp, perfectly
+        // legible IDs below threshold (device QA: a sharp NV license
+        // failed the gate), producing false "we couldn't read it"
+        // rejections on good photos — far worse than letting a
+        // slightly-soft photo through, which the user can still see
+        // in the preview and the assister can re-request if needed.
+        // We keep computing the score for telemetry/tuning but no
+        // longer reject on it alone. Luminance remains a hard gate
+        // because dark/blown-out detection is reliable.
         let blur = approximateBlurScore(cgImage)
-        if blur < blurThreshold {
-            rejections.append(.tooBlurry)
-        }
+        _ = blurThreshold  // retained for future re-tuning; intentionally unused as a gate
 
         let lum = averageLuminance(cgImage)
         if lum < darkThreshold {

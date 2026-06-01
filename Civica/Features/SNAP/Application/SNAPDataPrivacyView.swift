@@ -249,8 +249,18 @@ struct SNAPDataPrivacyView: View {
         // Reuse the application-packet renderer so users get the same
         // PDF they'd export at packet-generation time. Their answers
         // get materialized exactly as Civica has them.
+        //
+        // Guard against the "no draft yet" path: an applicant who taps
+        // Your data + privacy before filling anything in would
+        // otherwise get a near-empty PDF and think the export silently
+        // failed. Surface an honest "nothing to download yet" message
+        // instead of the generic download-error string.
         let draftStore = SNAPApplicationDraftStore()
-        let draft = draftStore.load()?.draft ?? SNAPApplicationDraft()
+        guard let payload = draftStore.load() else {
+            downloadError = SNAPDataPrivacyStrings.downloadNothingYet.value(in: language)
+            return
+        }
+        let draft = payload.draft
         do {
             let url = try SNAPApplicationDraftPDFRenderer.render(draft, language: language)
             downloadURL = url
@@ -409,6 +419,15 @@ enum SNAPDataPrivacyStrings {
     static let downloadError = CivicaText(
         "We couldn't prepare the download. Try again in a moment.",
         es: "No pudimos preparar la descarga. Inténtalo de nuevo en un momento."
+    )
+
+    /// Shown when the applicant hits Download a copy before any
+    /// application draft exists on device. Earlier behavior was to
+    /// render an empty PDF and present a share sheet over nothing,
+    /// which read as "the button is broken."
+    static let downloadNothingYet = CivicaText(
+        "There's nothing to download yet — start your SNAP application first and the export will fill in.",
+        es: "Aún no hay nada que descargar — primero comienza tu solicitud de SNAP y la exportación se rellenará."
     )
 }
 

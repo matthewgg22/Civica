@@ -64,9 +64,12 @@ final class FindHelpStore: ObservableObject {
 
     /// Which layers of the SNAP ecosystem the user is browsing.
     /// Drives `filteredLocations` and the layer-toggle UI. Default
-    /// is `.both` — first-time users see help directory + EBT
-    /// retailers together so the "full ecosystem" pitch lands.
-    @Published var layerSelection: FindHelpLayerSelection = .both
+    /// is `.findHelp` because the on-ramp from Enroll is "where can
+    /// I get application help" — `.both` was confusing first-time
+    /// users by surfacing EBT-spend retailers before they have a
+    /// card. Callers presenting the map for a different intent (e.g.
+    /// post-approval EBT-spend) can flip this after init.
+    @Published var layerSelection: FindHelpLayerSelection = .findHelp
 
     private let fixtures: FindHelpFallbackProviding
 

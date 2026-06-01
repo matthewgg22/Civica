@@ -189,11 +189,15 @@ enum SNAPLocalEligibilityEvaluator {
     private static func parseHouseholdSize(_ raw: String?) -> Int {
         guard let raw else { return 1 }
         switch raw {
-        case "Just me", "Solo yo":          return 1
-        case "2 people", "2 personas":       return 2
-        case "3 people", "3 personas":       return 3
-        case "4 or more", "4 o más":         return 4
-        default:                             return 1
+        case "Just me", "Solo yo": return 1
+        default:
+            // Exact-count strings ("2 people", "5 people", "10
+            // personas") parse from the leading integer, so the
+            // 4+-stepper's exact value flows into the benefit math
+            // instead of collapsing to a flat "4". Back-compatible
+            // with the old fixed buckets.
+            let digits = String(raw.prefix(while: \.isNumber))
+            return Int(digits).map { max(1, $0) } ?? 1
         }
     }
 

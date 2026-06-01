@@ -26,6 +26,11 @@ import SwiftUI
 
 struct CivicaHomePhase3View: View {
     @ObservedObject var statusStore: SNAPApplicationStatusStore
+
+    /// Mirrors the gear toggle so the EBT dashboard auto-seeds when
+    /// a reviewer is exploring the Enrolled surface via demo mode.
+    @AppStorage(CivicaAppStorageKeys.demoUnlockAllPhases)
+    private var demoUnlockAllPhases: Bool = false
     let language: CivicaLanguage
     let onOpenExternalPortal: () -> Void
 
@@ -92,6 +97,23 @@ struct CivicaHomePhase3View: View {
 
                 balanceHeroOrPlaceholder
 
+                // The "Will it last?" projection now lives inside the
+                // hero card itself (PROJECTED TO LAST slot, wired in
+                // balanceHero via EBTBalanceInsights.projection). The
+                // standalone card that previously rendered here was
+                // showing the same number twice — removed.
+
+                // Top-3 transactions preview + See-all link.
+                recentActivityPreview
+
+                // Recertify reminder — surface ahead of recert window
+                // so the user has runway to gather paperwork.
+                recertifyOnTimeCard
+
+                // Dormancy nudge — only fires when card has gone unused
+                // long enough that CalFresh's 9-month rule is in play.
+                useItOrLoseItCard
+
                 if unreadMessageCount > 0 {
                     CivicaActionRow(
                         icon: "envelope",
@@ -149,6 +171,19 @@ struct CivicaHomePhase3View: View {
             await Task.yield()
             isFirstPaintLoading = false
         }
+        .onAppear {
+            // Demo-mode seeding: a reviewer who jumped to Phase 3 via
+            // the gear toggle hasn't linked an EBT card, so the
+            // dashboard would show the empty link form instead of the
+            // populated balance + transaction surfaces this phase is
+            // *about*. Seed an in-memory demo account so they can see
+            // the real Phase 3 experience. No persistence — flipping
+            // demo mode off and relaunching restores the user's actual
+            // linkState.
+            if demoUnlockAllPhases {
+                ebtStore.seedDemoAccountIfNeeded()
+            }
+        }
         // IS-2 (audit 2026-05-29): bridge the EBT store's refresh
         // outcome into the sync banner coordinator. Per-row hide on
         // failure stays intact (the dashboard already shows its own
@@ -195,15 +230,10 @@ struct CivicaHomePhase3View: View {
     /// free toggle for engineers / QA.
     @ViewBuilder
     private var phaseTab: some View {
-        #if DEBUG
-        if let onDebugPhaseChange {
-            CivicaPhaseTab(current: .enrolled, onChange: onDebugPhaseChange)
-        } else {
-            CivicaPhaseTab(lockedJourneyAt: .enrolled)
-        }
-        #else
-        CivicaPhaseTab(lockedJourneyAt: .enrolled)
-        #endif
+        // Phase picker has moved into the gear settings sheet so it
+        // never appears on the applicant-facing home. See
+        // CivicaEntryView.phaseTab for the rationale.
+        EmptyView()
     }
 
     // MARK: - EBT balance hero (or fallback)
@@ -241,8 +271,29 @@ struct CivicaHomePhase3View: View {
             updatedTimestamp: updatedLabel(for: account.lastUpdated),
             nextDepositAmount: formattedNextDeposit(account),
             nextDepositDate: formattedNextDepositDate(account),
-            projectedThrough: CivicaPhase3Strings.projectedThroughPlaceholder.value(in: language)
+            projectedThrough: projectedThroughLabel(for: account)
         )
+    }
+
+    /// Real projected-zero date computed from the account's purchases
+    /// over the last 30 days. Falls back to the placeholder copy when
+    /// there isn't enough signal (fewer than 3 purchases in the
+    /// window) so the hero never reads an empty slot.
+    private func projectedThroughLabel(for account: EBTAccount) -> String {
+        let balance = (account.foodBalance as NSDecimalNumber).doubleValue
+        guard let projection = EBTBalanceInsights.projection(
+            balance: balance,
+            transactions: account.transactions,
+            nextDeposit: account.nextDeposit
+        ) else {
+            return CivicaPhase3Strings.projectedThroughPlaceholder.value(in: language)
+        }
+        let date = DateFormatter.localizedString(
+            from: projection.projectedZeroDate,
+            dateStyle: .medium,
+            timeStyle: .none
+        )
+        return date
     }
 
     /// "Your card is on the way" placeholder for approved users who
@@ -367,6 +418,203 @@ struct CivicaHomePhase3View: View {
         }
     }
 
+    // MARK: - Recent activity preview
+
+    /// Top-3 transactions with a See-all link into the full EBT
+    /// dashboard. Hidden when the account has no transactions so the
+    /// card doesn't ship an empty "Recent activity" header.
+    @ViewBuilder
+    private var recentActivityPreview: some View {
+        if let account = ebtStore.account, !account.transactions.isEmpty {
+            VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
+                Text(EBTBalanceStrings.recentActivityEyebrow.value(in: language))
+                    .font(CivicaTypography.captionStrong)
+                    .foregroundStyle(CivicaColors.graphite)
+                    .textCase(.uppercase)
+                    .kerning(1.2)
+                    .padding(.horizontal, CivicaSpacing.xs)
+
+                let top = Array(account.transactions.prefix(3))
+                VStack(spacing: 0) {
+                    ForEach(Array(top.enumerated()), id: \.element.id) { index, txn in
+                        compactTransactionRow(txn)
+                        if index < top.count - 1 {
+                            Divider().overlay(CivicaColors.hairline)
+                        }
+                    }
+                    Divider().overlay(CivicaColors.hairline)
+                    NavigationLink {
+                        EBTBalanceRootView()
+                    } label: {
+                        HStack(spacing: CivicaSpacing.xs) {
+                            Text(CivicaPhase3Strings.seeAllActivity.value(in: language))
+                                .font(CivicaTypography.footnoteStrong)
+                            Image(systemName: "chevron.right")
+                                .imageScale(.small)
+                                .accessibilityHidden(true)
+                        }
+                        .foregroundStyle(CivicaColors.pinePrimary)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(CivicaSpacing.md)
+                        .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
+                }
+                .background(CivicaColors.surfacePrimary)
+                .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
+                .overlay(
+                    RoundedRectangle(cornerRadius: CivicaRadius.card)
+                        .strokeBorder(CivicaColors.hairline, lineWidth: 1)
+                )
+            }
+        }
+    }
+
+    private func compactTransactionRow(_ txn: EBTTransaction) -> some View {
+        let tint = txn.isDeposit ? CivicaColors.amberPrimary : CivicaColors.brickAccent
+        return HStack(spacing: CivicaSpacing.md) {
+            ZStack {
+                Circle().fill(tint.opacity(0.12))
+                if txn.isDeposit {
+                    Image(systemName: "arrow.down")
+                        .imageScale(.medium)
+                        .foregroundStyle(tint)
+                } else {
+                    Text(txn.monogram)
+                        .font(CivicaTypography.footnoteStrong)
+                        .foregroundStyle(tint)
+                }
+            }
+            .frame(width: 36, height: 36)
+            VStack(alignment: .leading, spacing: 2) {
+                Text(txn.merchant)
+                    .font(CivicaTypography.subhead)
+                    .foregroundStyle(CivicaColors.ink)
+                    .lineLimit(1)
+                Text(shortDate(txn.date))
+                    .font(CivicaTypography.footnote)
+                    .foregroundStyle(CivicaColors.graphite)
+            }
+            Spacer(minLength: 0)
+            Text(formattedAmount(txn))
+                .font(CivicaTypography.subheadStrong)
+                .foregroundStyle(txn.isDeposit ? CivicaColors.amberPrimary : CivicaColors.ink)
+                .monospacedDigit()
+        }
+        .padding(.horizontal, CivicaSpacing.lg)
+        .padding(.vertical, CivicaSpacing.md)
+    }
+
+    private func shortDate(_ date: Date) -> String {
+        let calendar = Calendar.current
+        if calendar.isDateInToday(date) {
+            return language == .spanish ? "Hoy" : "Today"
+        }
+        if calendar.isDateInYesterday(date) {
+            return language == .spanish ? "Ayer" : "Yesterday"
+        }
+        let f = DateFormatter()
+        f.dateFormat = "MMM d"
+        return f.string(from: date)
+    }
+
+    private func formattedAmount(_ txn: EBTTransaction) -> String {
+        let value = (txn.amount as NSDecimalNumber).doubleValue
+        let abs = Swift.abs(value)
+        let f = NumberFormatter()
+        f.numberStyle = .currency
+        f.currencyCode = "USD"
+        f.maximumFractionDigits = 2
+        f.minimumFractionDigits = abs < 100 && value.truncatingRemainder(dividingBy: 1) == 0 ? 0 : 2
+        let body = f.string(from: NSNumber(value: abs)) ?? "$\(abs)"
+        return txn.isDeposit ? "+\(body)" : "-\(body)"
+    }
+
+    // MARK: - Recertify on time reminder
+
+    /// Surfaces when the user has been approved long enough that
+    /// recertification is a real planning concern, but `.recertDue`
+    /// hasn't yet flipped (which has its own dedicated surface). For
+    /// the demo, fires whenever Phase 3 is the home — once a real
+    /// recert-date wiring lands the predicate should gate on a 60-day
+    /// proximity window.
+    @ViewBuilder
+    private var recertifyOnTimeCard: some View {
+        if ebtStore.account != nil {
+            HStack(alignment: .top, spacing: CivicaSpacing.md) {
+                Image(systemName: "calendar.badge.clock")
+                    .imageScale(.large)
+                    .font(.body)
+                    .foregroundStyle(CivicaColors.pinePrimary)
+                    .frame(width: 28, alignment: .leading)
+                    .accessibilityHidden(true)
+                VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
+                    Text(CivicaPhase3Strings.recertifyHeadline.value(in: language))
+                        .font(CivicaTypography.subheadStrong)
+                        .foregroundStyle(CivicaColors.ink)
+                        .fixedSize(horizontal: false, vertical: true)
+                    Text(CivicaPhase3Strings.recertifyBody.value(in: language))
+                        .font(CivicaTypography.footnote)
+                        .foregroundStyle(CivicaColors.graphite)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+            }
+            .padding(CivicaSpacing.lg)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(CivicaColors.surfacePrimary)
+            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
+            .overlay(
+                RoundedRectangle(cornerRadius: CivicaRadius.card)
+                    .strokeBorder(CivicaColors.hairline, lineWidth: 1)
+            )
+            .accessibilityElement(children: .combine)
+        }
+    }
+
+    // MARK: - Use it or lose it (dormancy nudge)
+
+    /// California removes benefits left completely unused for 9 months.
+    /// Show only when the most recent purchase is older than 6 months
+    /// (gives the user three months of warning). Hidden in all other
+    /// cases so the home doesn't ship a noise card.
+    @ViewBuilder
+    private var useItOrLoseItCard: some View {
+        if let account = ebtStore.account,
+           let lastPurchase = account.transactions
+               .filter({ !$0.isDeposit })
+               .map(\.date)
+               .max(),
+           let sixMonthsAgo = Calendar.current.date(byAdding: .month, value: -6, to: Date()),
+           lastPurchase < sixMonthsAgo {
+            HStack(alignment: .top, spacing: CivicaSpacing.md) {
+                Image(systemName: "hourglass")
+                    .imageScale(.large)
+                    .font(.body)
+                    .foregroundStyle(CivicaColors.warningAmber)
+                    .frame(width: 28, alignment: .leading)
+                    .accessibilityHidden(true)
+                VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
+                    Text(CivicaPhase3Strings.dormancyHeadline.value(in: language))
+                        .font(CivicaTypography.subheadStrong)
+                        .foregroundStyle(CivicaColors.ink)
+                    Text(CivicaPhase3Strings.dormancyBody.value(in: language))
+                        .font(CivicaTypography.footnote)
+                        .foregroundStyle(CivicaColors.graphite)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+            }
+            .padding(CivicaSpacing.lg)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(CivicaColors.warningAmber.opacity(0.08))
+            .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
+            .overlay(
+                RoundedRectangle(cornerRadius: CivicaRadius.card)
+                    .strokeBorder(CivicaColors.warningAmber.opacity(0.4), lineWidth: 1)
+            )
+            .accessibilityElement(children: .combine)
+        }
+    }
+
     // MARK: - Secondary rows
 
     private var hairline: some View {
@@ -388,6 +636,22 @@ struct CivicaHomePhase3View: View {
                     icon: "lock.shield",
                     eyebrow: CivicaPhase3Strings.cardServicesEyebrow.value(in: language),
                     link: EBTBalanceStrings.lockScreenTitle.value(in: language)
+                )
+            }
+            .buttonStyle(.plain)
+            Rectangle()
+                .fill(CivicaColors.hairline)
+                .frame(height: 1)
+            // Account services — paired with Card security as the two
+            // utility rows applicants need without drilling into the
+            // full EBT dashboard.
+            NavigationLink {
+                EBTAccountServicesView()
+            } label: {
+                secondaryRowLabel(
+                    icon: "phone.bubble",
+                    eyebrow: CivicaPhase3Strings.accountServicesEyebrow.value(in: language),
+                    link: CivicaPhase3Strings.accountServicesLink.value(in: language)
                 )
             }
             .buttonStyle(.plain)
@@ -565,8 +829,36 @@ enum CivicaPhase3Strings {
     // EBTBalanceStrings.lockScreenTitle so the two surfaces stay in
     // sync if the lock screen's name changes.
     static let cardServicesEyebrow = CivicaText("EBT card", es: "Tarjeta EBT")
+    static let accountServicesEyebrow = CivicaText("EBT account", es: "Cuenta EBT")
+    static let accountServicesLink    = CivicaText("Account services", es: "Servicios de cuenta")
     static let findHelpEyebrow = CivicaText("In your neighborhood", es: "En tu vecindario")
     static let findHelpLink    = CivicaText("Find help nearby", es: "Encuentra ayuda cerca")
+
+    // See-all CTA at the bottom of the recent-activity preview card.
+    static let seeAllActivity = CivicaText(
+        "See all activity",
+        es: "Ver toda la actividad"
+    )
+
+    // Recertify-on-time reminder card.
+    static let recertifyHeadline = CivicaText(
+        "Keep your benefits — recertify on time",
+        es: "Mantén tus beneficios — recertifica a tiempo"
+    )
+    static let recertifyBody = CivicaText(
+        "CalFresh has to be renewed periodically. Civica will remind you before your deadline so your benefits don't pause.",
+        es: "CalFresh debe renovarse periódicamente. Civica te recordará antes de tu fecha límite para que tus beneficios no se pausen."
+    )
+
+    // Use-it-or-lose-it dormancy nudge.
+    static let dormancyHeadline = CivicaText(
+        "Use it or lose it",
+        es: "Úsalo o piérdelo"
+    )
+    static let dormancyBody = CivicaText(
+        "CalFresh removes benefits left completely unused for 9 months. Use your card to keep your balance.",
+        es: "CalFresh elimina los beneficios sin usar durante 9 meses. Usa tu tarjeta para conservar tu saldo."
+    )
 }
 
 #if DEBUG

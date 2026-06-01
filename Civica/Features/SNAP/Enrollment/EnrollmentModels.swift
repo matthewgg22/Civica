@@ -45,10 +45,57 @@ struct EnrollmentPacket: Codable, Identifiable, Equatable {
 
 // MARK: - Document
 
+/// Wave 6 — BenefitsCal APDMC document-upload taxonomy. The state
+/// portal organizes uploaded docs into six buckets; Civica maps each
+/// `EnrollmentDocumentKind` to one of these so the autofill extension
+/// can drop the file into the right portal slot. Exposed via
+/// `EnrollmentDocumentKind.benefitsCalCategory` below.
+enum BenefitsCalDocumentCategory: String, Codable, CaseIterable {
+    case identityProof
+    case releaseOfInformation
+    case income
+    case rentOrLease
+    case expenses
+    case addressProof
+
+    func displayLabel(in language: CivicaLanguage) -> String {
+        switch (self, language) {
+        case (.identityProof,        .english): return "Identity proof"
+        case (.identityProof,        .spanish): return "Comprobante de identidad"
+        case (.releaseOfInformation, .english): return "Release of information"
+        case (.releaseOfInformation, .spanish): return "Liberación de información"
+        case (.income,               .english): return "Income / employment"
+        case (.income,               .spanish): return "Ingresos / empleo"
+        case (.rentOrLease,          .english): return "Rent, lease, or mortgage"
+        case (.rentOrLease,          .spanish): return "Renta, contrato o hipoteca"
+        case (.expenses,             .english): return "Expenses"
+        case (.expenses,             .spanish): return "Gastos"
+        case (.addressProof,         .english): return "Address proof"
+        case (.addressProof,         .spanish): return "Comprobante de domicilio"
+        }
+    }
+}
+
 enum EnrollmentDocumentKind: String, Codable, CaseIterable {
     case paystub, photoId = "photo_id", lease, utilityBill = "utility_bill"
     case bankStatement = "bank_statement", taxReturn = "tax_return"
     case benefitLetter = "benefit_letter", other
+
+    /// Wave 6 — Maps each Civica document kind to BenefitsCal's six
+    /// portal-side categories so the extension drops the file in the
+    /// right slot during autofill.
+    var benefitsCalCategory: BenefitsCalDocumentCategory {
+        switch self {
+        case .photoId:       return .identityProof
+        case .paystub:       return .income
+        case .taxReturn:     return .income
+        case .benefitLetter: return .income
+        case .lease:         return .rentOrLease
+        case .utilityBill:   return .expenses
+        case .bankStatement: return .expenses
+        case .other:         return .addressProof
+        }
+    }
 
     /// UI display order — most-requested categories first.
     static let orderedCases: [EnrollmentDocumentKind] = [

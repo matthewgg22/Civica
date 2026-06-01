@@ -29,6 +29,19 @@ struct SNAPApplicationDraft: Equatable, Codable {
     var studentStatus: SNAPStudentStatusAnswers = .init()
     var expenses: SNAPExpensesAnswers = .init()
     var documentsChecklist: SNAPDocumentsChecklistAnswers = .init()
+
+    // Prefill fields captured by the optional first-step ID scan. The
+    // privacy-minimized intake never ASKS for these (name/street
+    // address aren't application questions), but the extension can
+    // autofill them into BenefitsCal (ABNMI name, ABNHA address). The
+    // applicant never has to type them; they were read off their own
+    // ID and can be corrected on the review surface. Draft-local +
+    // session-only like every other answer — NOT a server-side PII
+    // store. Empty when no ID was scanned. SSN/immigration are NEVER
+    // captured (privacy firewall).
+    var scannedApplicantName: String = ""
+    var scannedResidentialAddress: String = ""
+    var scannedResidentialZIP: String = ""
 }
 
 /// Stable identifier for which flow to jump back into when the user
@@ -47,7 +60,17 @@ enum SNAPApplicationSection: String, CaseIterable, Identifiable, Codable {
 
     var isRequired: Bool {
         switch self {
-        case .contact, .documentsChecklist: return false
+        // studentStatus is eligibility-ENHANCEMENT screening (it
+        // catches a false student-disqualification), not a submission
+        // prerequisite — BenefitsCal collects student status itself,
+        // and SNAPLocalEligibilityEvaluator handles missing student
+        // data gracefully. Leaving it required hard-locked the
+        // "Generate my application packet" button whenever the section
+        // was unanswered at review (demo phase-jump, partial/edited
+        // drafts), even though every required answer was complete.
+        // Treat it like contact + documents: shown + screened in the
+        // flow, but never a gate on packet generation.
+        case .contact, .documentsChecklist, .studentStatus: return false
         default: return true
         }
     }
@@ -97,6 +120,25 @@ struct SNAPReviewDraftFlowView: View {
     let onGeneratePacket: () -> Void
     let onStartOver: (() -> Void)?
     let onExit: () -> Void
+    /// Commit edited ID-scanned fields (name / address / zip) back to
+    /// the draft. nil when the host doesn't own a mutable draft (e.g.
+    /// phantom/recert review). When nil, the "From your ID" card is
+    /// hidden entirely.
+    let onConfirmScannedFields: ((String, String, String) -> Void)?
+
+    // Local editable copies of the ID-scanned fields, seeded from the
+    // draft on appear. The review screen is where the applicant
+    // confirms or corrects what the ID scan read — DOB is already
+    // confirmed on the age wheel; this closes the loop for name +
+    // address, which have no dedicated question screen.
+    @State private var scannedName: String = ""
+    @State private var scannedAddress: String = ""
+    @State private var scannedZIP: String = ""
+    @State private var didSeedScannedFields = false
+    /// Guards the destructive "clear everything" action behind an
+    /// explicit confirm so a stray tap right after generating can't
+    /// wipe a completed application.
+    @State private var showStartOverConfirm = false
 
     init(
         draft: SNAPApplicationDraft,
@@ -104,7 +146,8 @@ struct SNAPReviewDraftFlowView: View {
         onEdit: @escaping (SNAPApplicationSection) -> Void,
         onGeneratePacket: @escaping () -> Void,
         onStartOver: (() -> Void)? = nil,
-        onExit: @escaping () -> Void
+        onExit: @escaping () -> Void,
+        onConfirmScannedFields: ((String, String, String) -> Void)? = nil
     ) {
         self.draft = draft
         self.language = language
@@ -112,6 +155,15 @@ struct SNAPReviewDraftFlowView: View {
         self.onGeneratePacket = onGeneratePacket
         self.onStartOver = onStartOver
         self.onExit = onExit
+        self.onConfirmScannedFields = onConfirmScannedFields
+    }
+
+    /// True when an ID scan populated at least one prefill field, so
+    /// the confirmation card has something to show.
+    private var hasScannedFields: Bool {
+        !draft.scannedApplicantName.isEmpty
+            || !draft.scannedResidentialAddress.isEmpty
+            || !draft.scannedResidentialZIP.isEmpty
     }
 
     var body: some View {
@@ -121,16 +173,25 @@ struct SNAPReviewDraftFlowView: View {
             primaryActionTitle: SNAPReviewDraftStrings.primaryAction.value(in: language),
             primaryActionEnabled: requiredSectionsAllComplete,
             onPrimary: onGeneratePacket,
-            secondaryActionTitle: onStartOver != nil
-                ? SNAPReviewDraftStrings.startOverLabel.value(in: language)
-                : nil,
-            onSecondary: onStartOver,
             language: language
         ) {
             VStack(spacing: CivicaSpacing.md) {
+                if onConfirmScannedFields != nil && hasScannedFields {
+                    scannedIDCard
+                }
                 ForEach(SNAPApplicationSection.allCases) { section in
                     sectionCard(section)
                 }
+                if onStartOver != nil {
+                    startOverLink
+                }
+            }
+            .onAppear {
+                guard !didSeedScannedFields else { return }
+                didSeedScannedFields = true
+                scannedName = draft.scannedApplicantName
+                scannedAddress = draft.scannedResidentialAddress
+                scannedZIP = draft.scannedResidentialZIP
             }
         }
         .toolbar {
@@ -143,6 +204,118 @@ struct SNAPReviewDraftFlowView: View {
             }
         }
         .navigationBarTitleDisplayMode(.inline)
+        .confirmationDialog(
+            SNAPReviewDraftStrings.startOverConfirmTitle.value(in: language),
+            isPresented: $showStartOverConfirm,
+            titleVisibility: .visible
+        ) {
+            Button(
+                SNAPReviewDraftStrings.startOverConfirmAction.value(in: language),
+                role: .destructive
+            ) {
+                onStartOver?()
+            }
+            Button(
+                SNAPReviewDraftStrings.startOverConfirmCancel.value(in: language),
+                role: .cancel
+            ) {}
+        } message: {
+            Text(SNAPReviewDraftStrings.startOverConfirmMessage.value(in: language))
+        }
+    }
+
+    // MARK: - Start-over (destructive, de-emphasized)
+
+    /// A small, low-prominence destructive link at the very bottom of
+    /// the review content — deliberately NOT a full-width peer of the
+    /// "Generate" CTA, and always routed through a confirm dialog so a
+    /// stray tap can't delete a completed application.
+    private var startOverLink: some View {
+        Button {
+            showStartOverConfirm = true
+        } label: {
+            Text(SNAPReviewDraftStrings.startOverLabel.value(in: language))
+                .font(CivicaTypography.footnote)
+                .foregroundStyle(CivicaColors.terracottaAccent)
+                .frame(maxWidth: .infinity)
+                .padding(.top, CivicaSpacing.lg)
+                .contentShape(Rectangle())
+        }
+        .accessibilityLabel(SNAPReviewDraftStrings.startOverLabel.value(in: language))
+        .accessibilityHint(SNAPReviewDraftStrings.startOverConfirmMessage.value(in: language))
+    }
+
+    // MARK: - Scanned-ID confirmation card
+
+    /// "From your ID" card — editable name + address + ZIP the ID scan
+    /// prefilled. The applicant confirms or corrects here; edits commit
+    /// back to the draft via onConfirmScannedFields so the extension
+    /// autofills the corrected values into BenefitsCal.
+    private var scannedIDCard: some View {
+        VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
+            Text(SNAPReviewDraftStrings.scannedIDTitle.value(in: language))
+                .font(CivicaTypography.subheadStrong)
+                .foregroundStyle(CivicaColors.ink)
+            Text(SNAPReviewDraftStrings.scannedIDHelper.value(in: language))
+                .font(CivicaTypography.footnote)
+                .foregroundStyle(CivicaColors.graphite)
+                .fixedSize(horizontal: false, vertical: true)
+
+            scannedField(
+                label: SNAPReviewDraftStrings.scannedNameLabel.value(in: language),
+                text: $scannedName,
+                keyboard: .default
+            )
+            scannedField(
+                label: SNAPReviewDraftStrings.scannedAddressLabel.value(in: language),
+                text: $scannedAddress,
+                keyboard: .default
+            )
+            scannedField(
+                label: SNAPReviewDraftStrings.scannedZIPLabel.value(in: language),
+                text: $scannedZIP,
+                keyboard: .numberPad
+            )
+        }
+        .padding(CivicaSpacing.lg)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(CivicaColors.surfacePrimary)
+        .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
+        .overlay(
+            RoundedRectangle(cornerRadius: CivicaRadius.card)
+                .strokeBorder(CivicaColors.hairline, lineWidth: 1)
+        )
+    }
+
+    private func scannedField(
+        label: String,
+        text: Binding<String>,
+        keyboard: UIKeyboardType
+    ) -> some View {
+        VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
+            Text(label)
+                .font(CivicaTypography.captionStrong)
+                .foregroundStyle(CivicaColors.graphite)
+            TextField("", text: text)
+                .font(CivicaTypography.body)
+                .keyboardType(keyboard)
+                .textInputAutocapitalization(keyboard == .default ? .words : .never)
+                .padding(.horizontal, CivicaSpacing.md)
+                .padding(.vertical, CivicaSpacing.sm)
+                .background(CivicaColors.surfaceSecondary)
+                .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.control))
+                .overlay(
+                    RoundedRectangle(cornerRadius: CivicaRadius.control)
+                        .strokeBorder(CivicaColors.hairline, lineWidth: 1)
+                )
+                .onChange(of: text.wrappedValue) { _, _ in
+                    onConfirmScannedFields?(
+                        scannedName.trimmingCharacters(in: .whitespaces),
+                        scannedAddress.trimmingCharacters(in: .whitespaces),
+                        scannedZIP.filter(\.isNumber)
+                    )
+                }
+        }
     }
 
     // MARK: - Section card
@@ -484,6 +657,19 @@ enum SNAPReviewDraftStrings {
         es: "Generar mi paquete de solicitud"
     )
     static let editLabel = CivicaText("Edit", es: "Editar")
+
+    // Scanned-ID confirmation card
+    static let scannedIDTitle = CivicaText(
+        "From your ID",
+        es: "De tu identificación"
+    )
+    static let scannedIDHelper = CivicaText(
+        "We read these off the ID you scanned. Check them and fix anything that's wrong before you submit.",
+        es: "Leímos esto de la identificación que escaneaste. Revísalo y corrige lo que esté mal antes de enviar."
+    )
+    static let scannedNameLabel = CivicaText("Full name", es: "Nombre completo")
+    static let scannedAddressLabel = CivicaText("Address", es: "Dirección")
+    static let scannedZIPLabel = CivicaText("ZIP", es: "Código postal")
     static let nothingYet = CivicaText(
         "Nothing here yet — tap Edit to add.",
         es: "Nada aquí todavía — toca Editar para añadir."
@@ -492,6 +678,27 @@ enum SNAPReviewDraftStrings {
     static let startOverLabel = CivicaText(
         "Clear my answers and start over",
         es: "Borrar mis respuestas y empezar de nuevo"
+    )
+
+    // Destructive-confirm dialog guarding the clear-everything action.
+    static let startOverConfirmTitle = CivicaText(
+        "Clear all your answers?",
+        es: "¿Borrar todas tus respuestas?"
+    )
+
+    static let startOverConfirmMessage = CivicaText(
+        "This deletes everything you've entered and can't be undone.",
+        es: "Esto elimina todo lo que ingresaste y no se puede deshacer."
+    )
+
+    static let startOverConfirmAction = CivicaText(
+        "Clear everything",
+        es: "Borrar todo"
+    )
+
+    static let startOverConfirmCancel = CivicaText(
+        "Keep my answers",
+        es: "Conservar mis respuestas"
     )
 
     static func progressLine(completed: Int, total: Int, language: CivicaLanguage) -> String {

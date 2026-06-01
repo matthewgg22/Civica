@@ -15,11 +15,18 @@ import SwiftUI
 /// The list scrolls independently — drag the header area to resize the
 /// drawer, scroll the list to navigate within it.
 struct FindHelpBottomSheet: View {
-    /// Minimum visible height — grab handle + disclosure row +
-    /// layer toggle + subtitle line + filter bar (segmented picker +
-    /// language menu, two rows). Never collapses below this.
-    private static let peekHeight: CGFloat = 280
+    /// Minimum visible height — Apple-Maps-style minimal peek. At rest
+    /// we only show grab handle + disclosure + layer toggle. Subtitle
+    /// and filter chips appear once the user drags the drawer up
+    /// (`isExpanded`), so the map gets its real estate back at rest.
+    /// Earlier values (240 / 280 / 300 / 380) all covered too much
+    /// map or clipped chrome on cramped screens — the right answer
+    /// turned out to be "less chrome at peek," not "more peek."
+    private static let peekHeight: CGFloat = 200
     private static let cornerRadius: CGFloat = 16
+    /// Drawer is "expanded" once the live height exceeds peek by this
+    /// margin. Drives the conditional reveal of subtitle + filter.
+    private static let expandedThreshold: CGFloat = 32
 
     @ObservedObject var store: FindHelpStore
     let language: CivicaLanguage
@@ -47,6 +54,13 @@ struct FindHelpBottomSheet: View {
         min(largeHeight, max(Self.peekHeight, drawerHeight - dragDelta))
     }
 
+    /// True once the drawer is dragged up off its peek detent. Drives
+    /// the conditional reveal of the layer subtitle + filter chips,
+    /// which only crowd the map when shown at rest.
+    private var isExpanded: Bool {
+        displayHeight > Self.peekHeight + Self.expandedThreshold
+    }
+
     // MARK: - Body
 
     var body: some View {
@@ -64,21 +78,27 @@ struct FindHelpBottomSheet: View {
                     .padding(.horizontal, CivicaSpacing.lg)
                     .padding(.top, CivicaSpacing.md)
 
-                Text(layerSubtitle(for: store.layerSelection))
-                    .font(CivicaTypography.footnote)
-                    .foregroundStyle(CivicaColors.graphite)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.horizontal, CivicaSpacing.lg)
-                    .padding(.top, CivicaSpacing.xs)
+                // Subtitle + filter chips only render once the user
+                // has dragged the drawer up off peek. At rest the
+                // map stays uncluttered and the user sees only the
+                // grab handle + disclosure + layer toggle.
+                if isExpanded {
+                    Text(layerSubtitle(for: store.layerSelection))
+                        .font(CivicaTypography.footnote)
+                        .foregroundStyle(CivicaColors.graphite)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.horizontal, CivicaSpacing.lg)
+                        .padding(.top, CivicaSpacing.xs)
 
-                if store.layerSelection == .findHelp {
-                    FindHelpFilterBar(
-                        filter: $store.filter,
-                        layerSelection: store.layerSelection,
-                        onChange: onFilterChanged
-                    )
-                    .padding(.horizontal, CivicaSpacing.lg)
-                    .padding(.top, CivicaSpacing.sm)
+                    if store.layerSelection == .findHelp {
+                        FindHelpFilterBar(
+                            filter: $store.filter,
+                            layerSelection: store.layerSelection,
+                            onChange: onFilterChanged
+                        )
+                        .padding(.horizontal, CivicaSpacing.lg)
+                        .padding(.top, CivicaSpacing.sm)
+                    }
                 }
             }
             .contentShape(Rectangle())
@@ -94,16 +114,30 @@ struct FindHelpBottomSheet: View {
         }
         .frame(height: displayHeight, alignment: .top)
         .frame(maxWidth: .infinity)
-        .background(CivicaColors.surfaceSecondary.ignoresSafeArea(edges: .bottom))
-        .clipShape(
+        // Background is a rounded-top rectangle painted DIRECTLY behind
+        // the content. We do NOT use a wrapping `.clipShape` because
+        // clipShape would constrain the background back to the
+        // safe-area frame and re-open the visible map strip under the
+        // home indicator. With the shape baked into the background
+        // and `.ignoresSafeArea(.bottom)` applied at the outer level,
+        // the sheet's pine-cream fill paints all the way to the
+        // physical bottom of the screen.
+        .background(
             UnevenRoundedRectangle(
                 topLeadingRadius: Self.cornerRadius,
                 bottomLeadingRadius: 0,
                 bottomTrailingRadius: 0,
                 topTrailingRadius: Self.cornerRadius
             )
+            .fill(CivicaColors.surfaceSecondary)
         )
         .shadow(color: .black.opacity(0.10), radius: 10, y: -3)
+        // Extend the whole sheet (background, shadow, content frame)
+        // past the bottom safe area so the cream fill reaches the
+        // physical screen edge. Without this the map (which
+        // `.ignoresSafeArea(.all)`) shows through under the home
+        // indicator and reads as a crop bug.
+        .ignoresSafeArea(edges: .bottom)
         .sheet(item: $store.selectedLocation) { location in
             FindHelpPeekSheet(
                 location: location,

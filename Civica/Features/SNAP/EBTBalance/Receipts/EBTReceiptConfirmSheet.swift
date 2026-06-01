@@ -56,12 +56,10 @@ struct EBTReceiptConfirmSheet: View {
                         Text(EBTReceiptStrings.totalLabel.value(in: language))
                             .font(CivicaTypography.captionStrong)
                             .foregroundStyle(CivicaColors.graphite)
-                        TextField(
-                            EBTReceiptStrings.totalPlaceholder.value(in: language),
-                            text: $totalText
+                        CivicaCurrencyField(
+                            text: $totalText,
+                            placeholder: EBTReceiptStrings.totalPlaceholder.value(in: language)
                         )
-                        .textFieldStyle(.roundedBorder)
-                        .keyboardType(.decimalPad)
                     }
 
                     Button {
