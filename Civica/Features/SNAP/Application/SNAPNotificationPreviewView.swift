@@ -146,10 +146,19 @@ struct SNAPNotificationPreviewView: View {
                     stanzaContent(renderPreview(stanza))
                 }
                 if let buttonLabel = template.buttonLabel {
-                    Text("→ \(buttonLabel.value(in: language))")
-                        .font(CivicaTypography.footnoteStrong)
-                        .foregroundStyle(CivicaColors.pinePrimary)
-                        .padding(.top, CivicaSpacing.xs)
+                    // Arrow is a decorative SF Symbol, not a string
+                    // literal, so the only text here is the already-
+                    // localized button label.
+                    HStack(spacing: CivicaSpacing.xs) {
+                        Image(systemName: "arrow.right")
+                            .font(CivicaTypography.footnoteStrong)
+                            .foregroundStyle(CivicaColors.pinePrimary)
+                            .accessibilityHidden(true)
+                        Text(buttonLabel.value(in: language))
+                            .font(CivicaTypography.footnoteStrong)
+                            .foregroundStyle(CivicaColors.pinePrimary)
+                    }
+                    .padding(.top, CivicaSpacing.xs)
                 }
                 Text(SNAPNotificationPreviewStrings.emailFooter.value(in: language))
                     .font(CivicaTypography.caption.monospacedDigit())
