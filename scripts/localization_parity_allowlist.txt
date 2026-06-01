@@ -80,3 +80,12 @@ Show post-placement
 \(formatted(summary.target_hours)) hrs
 \(formatted(entry.hours)) hrs
 Delete
+
+# Developer diagnostic in the Mae help sheet error bubble — gated behind
+# #if DEBUG, so it never reaches an end user (the localized fallback above
+# it is what production shows). SNAPApplicationContextualHelpSheet.swift
+Debug: \(diagnosticDetail)
+
+# Xcode preview placeholder filler inside #if DEBUG — never shipped.
+# SNAPApplicationContextualHelpEnvironment.swift
+Affordance goes here
