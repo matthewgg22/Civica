@@ -361,7 +361,7 @@ enum CivicaSNAPFlowStrings {
     // Banner — invited state
     static func buddyBannerInvitedTitle(name: String, language: CivicaLanguage) -> String {
         switch language {
-        case .english: return "\(name) is following along"
+        case .english, .mandarin, .vietnamese, .tagalog: return "\(name) is following along"
         case .spanish: return "\(name) está siguiendo el proceso"
         }
     }
@@ -419,7 +419,7 @@ enum CivicaSNAPFlowStrings {
     // Invite sent
     static func buddyInviteSentTitle(name: String, language: CivicaLanguage) -> String {
         switch language {
-        case .english: return "Invite sent to \(name)"
+        case .english, .mandarin, .vietnamese, .tagalog: return "Invite sent to \(name)"
         case .spanish: return "Invitación enviada a \(name)"
         }
     }
@@ -869,7 +869,7 @@ private struct BuddyInviteSentView: View {
 
     private var shareMessage: String {
         switch language {
-        case .english:
+        case .english, .mandarin, .vietnamese, .tagalog:
             return "Hey \(buddyName) — I'm applying for SNAP through Civica and could use a buddy to help me stay on top of deadlines. Tap this private link to follow along: \(inviteLink.absoluteString)"
         case .spanish:
             return "Hola \(buddyName) — Estoy solicitando SNAP a través de Civica y me ayudaría tener un compañero pendiente de las fechas. Toca este enlace privado para seguir el proceso: \(inviteLink.absoluteString)"

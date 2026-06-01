@@ -156,7 +156,7 @@ struct SNAPDecisionApprovedView: View {
     ) -> String {
         let reasonPhrase = restaurantMealsReasonPhrase(reasons: reasons, language: language)
         switch language {
-        case .english:
+        case .english, .mandarin, .vietnamese, .tagalog:
             return "Because \(reasonPhrase), your EBT card can also be used at participating restaurants for hot prepared meals. Look for the Restaurant Meals Program decal at the door — the FindHelp map will list participating spots when it's tuned for your county."
         case .spanish:
             return "Porque \(reasonPhrase), tu tarjeta EBT también puede usarse en restaurantes participantes para comidas calientes preparadas. Busca la calcomanía del Programa de Comidas en Restaurantes en la puerta — el mapa de Buscar Ayuda mostrará los lugares participantes cuando esté ajustado para tu condado."
@@ -445,7 +445,7 @@ enum SNAPDecisionApprovedStrings {
     /// `headline` CivicaText (the state-agnostic default) when no state.
     static func headline(stateCode: String?, language: CivicaLanguage) -> String {
         switch language {
-        case .english:
+        case .english, .mandarin, .vietnamese, .tagalog:
             return SNAPComplianceCopyRegistry.approvedEnglish(
                 for: "decision_approved_headline",
                 stateCode: stateCode
@@ -468,7 +468,7 @@ enum SNAPDecisionApprovedStrings {
         let portalEN = portal.isEmpty ? "your state portal" : portal
         let portalES = portal.isEmpty ? "el portal estatal" : portal
         switch language {
-        case .english:
+        case .english, .mandarin, .vietnamese, .tagalog:
             return "\(agency)'s official letter has your monthly amount. Open \(portalEN) to see it."
         case .spanish:
             return "La carta oficial de \(agency) tiene tu cantidad mensual. Abre \(portalES) para verla."

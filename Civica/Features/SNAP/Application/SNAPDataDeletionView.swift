@@ -191,7 +191,7 @@ enum SNAPDataDeletionStrings {
         let portalEN = portal.isEmpty ? "your state portal" : portal
         let portalES = portal.isEmpty ? "el portal estatal" : portal
         switch language {
-        case .english:
+        case .english, .mandarin, .vietnamese, .tagalog:
             return [
                 Step(
                     title: "Right now",

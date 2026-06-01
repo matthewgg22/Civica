@@ -130,14 +130,14 @@ struct SNAPApplicationPacketReviewView: View {
 
     private var notOnFile: String {
         switch language {
-        case .english: return "Not on file"
+        case .english, .mandarin, .vietnamese, .tagalog: return "Not on file"
         case .spanish: return "No registrado"
         }
     }
 
     private var householdTitle: String {
         switch language {
-        case .english: return "Household"
+        case .english, .mandarin, .vietnamese, .tagalog: return "Household"
         case .spanish: return "Hogar"
         }
     }
@@ -145,14 +145,14 @@ struct SNAPApplicationPacketReviewView: View {
     private var householdSummary: String {
         let size = draft.household.householdSize ?? notOnFile
         switch language {
-        case .english: return "Household size: \(size)"
+        case .english, .mandarin, .vietnamese, .tagalog: return "Household size: \(size)"
         case .spanish: return "Tamaño del hogar: \(size)"
         }
     }
 
     private var incomeTitle: String {
         switch language {
-        case .english: return "Income"
+        case .english, .mandarin, .vietnamese, .tagalog: return "Income"
         case .spanish: return "Ingresos"
         }
     }
@@ -160,20 +160,20 @@ struct SNAPApplicationPacketReviewView: View {
     private var incomeSummary: String {
         guard let gross = draft.income.grossMonthlyIncome else {
             switch language {
-            case .english: return "Monthly income: \(notOnFile)"
+            case .english, .mandarin, .vietnamese, .tagalog: return "Monthly income: \(notOnFile)"
             case .spanish: return "Ingreso mensual: \(notOnFile)"
             }
         }
         let formatted = currencyString(gross)
         switch language {
-        case .english: return "Monthly income: \(formatted)"
+        case .english, .mandarin, .vietnamese, .tagalog: return "Monthly income: \(formatted)"
         case .spanish: return "Ingreso mensual: \(formatted)"
         }
     }
 
     private var expensesTitle: String {
         switch language {
-        case .english: return "Expenses"
+        case .english, .mandarin, .vietnamese, .tagalog: return "Expenses"
         case .spanish: return "Gastos"
         }
     }
@@ -181,20 +181,20 @@ struct SNAPApplicationPacketReviewView: View {
     private var expensesSummary: String {
         guard let rent = draft.expenses.monthlyRentOrHousing else {
             switch language {
-            case .english: return "Monthly rent or housing: \(notOnFile)"
+            case .english, .mandarin, .vietnamese, .tagalog: return "Monthly rent or housing: \(notOnFile)"
             case .spanish: return "Renta o vivienda mensual: \(notOnFile)"
             }
         }
         let formatted = currencyString(rent)
         switch language {
-        case .english: return "Monthly rent or housing: \(formatted)"
+        case .english, .mandarin, .vietnamese, .tagalog: return "Monthly rent or housing: \(formatted)"
         case .spanish: return "Renta o vivienda mensual: \(formatted)"
         }
     }
 
     private var documentsTitle: String {
         switch language {
-        case .english: return "Documents"
+        case .english, .mandarin, .vietnamese, .tagalog: return "Documents"
         case .spanish: return "Documentos"
         }
     }
@@ -202,7 +202,7 @@ struct SNAPApplicationPacketReviewView: View {
     private var documentsSummary: String {
         let count = draft.documentsChecklist.documentsAvailable.count
         switch language {
-        case .english:
+        case .english, .mandarin, .vietnamese, .tagalog:
             return count == 1 ? "1 document on file" : "\(count) documents on file"
         case .spanish:
             return count == 1 ? "1 documento registrado" : "\(count) documentos registrados"

@@ -784,11 +784,11 @@ enum SNAPIncomeStrings {
     // 3-way option labels — shared across all four screens.
     static func triLabel(for value: SNAPIncomeAnswers.Tri, language: CivicaLanguage) -> String {
         switch (value, language) {
-        case (.yes, .english): return "Yes"
+        case (.yes, .english), (.yes, .mandarin), (.yes, .vietnamese), (.yes, .tagalog): return "Yes"
         case (.yes, .spanish): return "Sí"
-        case (.no, .english):  return "No"
+        case (.no, .english), (.no, .mandarin), (.no, .vietnamese), (.no, .tagalog):  return "No"
         case (.no, .spanish):  return "No"
-        case (.notSure, .english): return "I'm not sure"
+        case (.notSure, .english), (.notSure, .mandarin), (.notSure, .vietnamese), (.notSure, .tagalog): return "I'm not sure"
         case (.notSure, .spanish): return "No estoy seguro"
         }
     }
@@ -960,7 +960,7 @@ enum SNAPIncomeStrings {
     ) -> String {
         let amount = formatCurrency(derivation.monthlyEarnedIncome)
         switch language {
-        case .english: return "≈ \(amount)/month"
+        case .english, .mandarin, .vietnamese, .tagalog: return "≈ \(amount)/month"
         case .spanish: return "≈ \(amount)/mes"
         }
     }
@@ -970,13 +970,13 @@ enum SNAPIncomeStrings {
         language: CivicaLanguage
     ) -> String {
         switch (frequency, language) {
-        case (.weekly, .english):       return "every week"
+        case (.weekly, .english), (.weekly, .mandarin), (.weekly, .vietnamese), (.weekly, .tagalog):       return "every week"
         case (.weekly, .spanish):       return "cada semana"
-        case (.biweekly, .english):     return "every 2 weeks"
+        case (.biweekly, .english), (.biweekly, .mandarin), (.biweekly, .vietnamese), (.biweekly, .tagalog):     return "every 2 weeks"
         case (.biweekly, .spanish):     return "cada 2 semanas"
-        case (.semimonthly, .english):  return "twice a month"
+        case (.semimonthly, .english), (.semimonthly, .mandarin), (.semimonthly, .vietnamese), (.semimonthly, .tagalog):  return "twice a month"
         case (.semimonthly, .spanish):  return "dos veces al mes"
-        case (.monthly, .english):      return "every month"
+        case (.monthly, .english), (.monthly, .mandarin), (.monthly, .vietnamese), (.monthly, .tagalog):      return "every month"
         case (.monthly, .spanish):      return "cada mes"
         }
     }

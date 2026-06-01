@@ -678,44 +678,44 @@ enum SNAPExpensesStrings {
 
     static func title(for step: SNAPExpensesFlowViewModel.Step, language: CivicaLanguage) -> String {
         switch (step, language) {
-        case (.rent, .english):
+        case (.rent, .english), (.rent, .mandarin), (.rent, .vietnamese), (.rent, .tagalog):
             return "About how much is your rent or housing payment each month?"
         case (.rent, .spanish):
             return "¿Cuánto es tu renta o pago de vivienda cada mes?"
         // T16 Gap #4
-        case (.sharedHousing, .english):
+        case (.sharedHousing, .english), (.sharedHousing, .mandarin), (.sharedHousing, .vietnamese), (.sharedHousing, .tagalog):
             return "Do you share your home with people who are NOT on your SNAP case?"
         case (.sharedHousing, .spanish):
             return "¿Compartes tu hogar con personas que NO están en tu caso de SNAP?"
         // T16: replaces paysUtilitiesSeparately yes/no
-        case (.utilityTypes, .english):
+        case (.utilityTypes, .english), (.utilityTypes, .mandarin), (.utilityTypes, .vietnamese), (.utilityTypes, .tagalog):
             return "Which utilities do you pay on your own — not included in rent?"
         case (.utilityTypes, .spanish):
             return "¿Cuáles servicios pagas tú directamente, sin incluirlos en la renta?"
-        case (.utilities, .english):
+        case (.utilities, .english), (.utilities, .mandarin), (.utilities, .vietnamese), (.utilities, .tagalog):
             return "About how much do you spend on those utilities each month?"
         case (.utilities, .spanish):
             return "¿Cuánto gastas en esos servicios cada mes?"
-        case (.utilityShutoff, .english):
+        case (.utilityShutoff, .english), (.utilityShutoff, .mandarin), (.utilityShutoff, .vietnamese), (.utilityShutoff, .tagalog):
             return "Have you received a shutoff notice from any utility?"
         case (.utilityShutoff, .spanish):
             return "¿Has recibido un aviso de corte de algún servicio?"
-        case (.childcare, .english):
+        case (.childcare, .english), (.childcare, .mandarin), (.childcare, .vietnamese), (.childcare, .tagalog):
             return "Do you pay for childcare?"
         case (.childcare, .spanish):
             return "¿Pagas por el cuidado infantil?"
-        case (.medical, .english):
+        case (.medical, .english), (.medical, .mandarin), (.medical, .vietnamese), (.medical, .tagalog):
             return "Any out-of-pocket medical costs each month?"
         case (.medical, .spanish):
             return "¿Algún gasto médico de tu bolsillo cada mes?"
         // Wave 3 — court-ordered support (BenefitsCal ABCOC + ABSSQ)
         case (.courtOrderedSupportGate, _):
             return ""  // gate uses its own dedicated strings
-        case (.childSupportAmount, .english):
+        case (.childSupportAmount, .english), (.childSupportAmount, .mandarin), (.childSupportAmount, .vietnamese), (.childSupportAmount, .tagalog):
             return "How much child support do you pay each month?"
         case (.childSupportAmount, .spanish):
             return "¿Cuánta manutención de hijos pagas cada mes?"
-        case (.spousalSupportAmount, .english):
+        case (.spousalSupportAmount, .english), (.spousalSupportAmount, .mandarin), (.spousalSupportAmount, .vietnamese), (.spousalSupportAmount, .tagalog):
             return "How much spousal support or alimony do you pay each month?"
         case (.spousalSupportAmount, .spanish):
             return "¿Cuánta manutención conyugal o pensión alimenticia pagas cada mes?"
@@ -724,44 +724,44 @@ enum SNAPExpensesStrings {
 
     static func helper(for step: SNAPExpensesFlowViewModel.Step, language: CivicaLanguage) -> String {
         switch (step, language) {
-        case (.rent, .english):
+        case (.rent, .english), (.rent, .mandarin), (.rent, .vietnamese), (.rent, .tagalog):
             return "Include rent, mortgage, or anything you pay regularly to live where you live. Estimate is fine. Enter 0 if you don't pay rent right now."
         case (.rent, .spanish):
             return "Incluye renta, hipoteca o cualquier pago regular por donde vives. Una estimación está bien. Pon 0 si no pagas renta ahora mismo."
         // T16 Gap #4
-        case (.sharedHousing, .english):
+        case (.sharedHousing, .english), (.sharedHousing, .mandarin), (.sharedHousing, .vietnamese), (.sharedHousing, .tagalog):
             return "If roommates or family members share your address but are NOT on your SNAP case, only your share of the rent counts. Select 'Not sharing' if you live alone or everyone at your address is on your case."
         case (.sharedHousing, .spanish):
             return "Si compañeros de cuarto o familiares comparten tu domicilio pero NO están en tu caso de SNAP, solo tu parte de la renta cuenta. Selecciona 'No comparto' si vives solo o todos en tu domicilio están en tu caso."
         // T16: replaces paysUtilitiesSeparately yes/no helper
-        case (.utilityTypes, .english):
+        case (.utilityTypes, .english), (.utilityTypes, .mandarin), (.utilityTypes, .vietnamese), (.utilityTypes, .tagalog):
             return "Select everything that applies. If utilities are included in your rent, leave everything unchecked. Air conditioning counts in California. Internet is not counted by SNAP."
         case (.utilityTypes, .spanish):
             return "Selecciona todo lo que aplique. Si los servicios están incluidos en tu renta, deja todo sin marcar. El aire acondicionado cuenta en California. Internet no cuenta para SNAP."
-        case (.utilities, .english):
+        case (.utilities, .english), (.utilities, .mandarin), (.utilities, .vietnamese), (.utilities, .tagalog):
             return "Add up a typical month for the utilities you selected. Estimate is fine — the total is what matters."
         case (.utilities, .spanish):
             return "Suma un mes típico de los servicios que seleccionaste. Una estimación está bien — el total es lo que importa."
-        case (.utilityShutoff, .english):
+        case (.utilityShutoff, .english), (.utilityShutoff, .mandarin), (.utilityShutoff, .vietnamese), (.utilityShutoff, .tagalog):
             return "A written or paper notice that power, gas, water, or heat will be cut off if you don't pay. This can speed up your SNAP application."
         case (.utilityShutoff, .spanish):
             return "Un aviso escrito o en papel de que cortarán la luz, el gas, el agua o la calefacción si no pagas. Esto puede acelerar tu solicitud de SNAP."
-        case (.childcare, .english):
+        case (.childcare, .english), (.childcare, .mandarin), (.childcare, .vietnamese), (.childcare, .tagalog):
             return "Daycare, after-school, or anything that lets a working adult in your household keep working. Enter 0 if none."
         case (.childcare, .spanish):
             return "Guardería, programas después de la escuela, o cualquier cosa que permita a un adulto trabajador del hogar seguir trabajando. Pon 0 si no aplica."
-        case (.medical, .english):
+        case (.medical, .english), (.medical, .mandarin), (.medical, .vietnamese), (.medical, .tagalog):
             return "Only counts if someone in your household is 60+ or has a disability. We're asking about co-pays, prescriptions, dental, or insurance premiums you pay out of pocket. Don't share diagnoses."
         case (.medical, .spanish):
             return "Solo cuenta si alguien en tu hogar tiene 60 años o más o vive con una discapacidad. Preguntamos por copagos, medicamentos, dentista o primas de seguro que pagas de tu bolsillo. No compartas diagnósticos."
         // Wave 3 — court-ordered support
         case (.courtOrderedSupportGate, _):
             return ""  // gate uses its own dedicated strings
-        case (.childSupportAmount, .english):
+        case (.childSupportAmount, .english), (.childSupportAmount, .mandarin), (.childSupportAmount, .vietnamese), (.childSupportAmount, .tagalog):
             return "Court-ordered child support paid to someone OUTSIDE your household. SNAP deducts this from your gross income before calculating benefits."
         case (.childSupportAmount, .spanish):
             return "Manutención de hijos ordenada por la corte que pagas a alguien FUERA de tu hogar. SNAP deduce esto de tu ingreso bruto antes de calcular los beneficios."
-        case (.spousalSupportAmount, .english):
+        case (.spousalSupportAmount, .english), (.spousalSupportAmount, .mandarin), (.spousalSupportAmount, .vietnamese), (.spousalSupportAmount, .tagalog):
             return "Court-ordered spousal support or alimony. SNAP deducts this from your gross income too."
         case (.spousalSupportAmount, .spanish):
             return "Manutención conyugal o pensión alimenticia ordenada por la corte. SNAP también deduce esto de tu ingreso bruto."
@@ -770,28 +770,28 @@ enum SNAPExpensesStrings {
 
     static func suffix(for step: SNAPExpensesFlowViewModel.Step, language: CivicaLanguage) -> String {
         switch language {
-        case .english: return "Per month"
+        case .english, .mandarin, .vietnamese, .tagalog: return "Per month"
         case .spanish: return "Por mes"
         }
     }
 
     static func fieldAccessibilityLabel(for step: SNAPExpensesFlowViewModel.Step, language: CivicaLanguage) -> String {
         switch (step, language) {
-        case (.rent, .english):         return "Monthly rent or housing payment, in dollars"
+        case (.rent, .english), (.rent, .mandarin), (.rent, .vietnamese), (.rent, .tagalog):         return "Monthly rent or housing payment, in dollars"
         case (.rent, .spanish):         return "Pago mensual de renta o vivienda, en dólares"
-        case (.utilities, .english):    return "Monthly utilities total, in dollars"
+        case (.utilities, .english), (.utilities, .mandarin), (.utilities, .vietnamese), (.utilities, .tagalog):    return "Monthly utilities total, in dollars"
         case (.utilities, .spanish):    return "Total de servicios mensuales, en dólares"
-        case (.childcare, .english):    return "Monthly childcare costs, in dollars"
+        case (.childcare, .english), (.childcare, .mandarin), (.childcare, .vietnamese), (.childcare, .tagalog):    return "Monthly childcare costs, in dollars"
         case (.childcare, .spanish):    return "Costos mensuales de cuidado infantil, en dólares"
-        case (.medical, .english):      return "Monthly out-of-pocket medical costs, in dollars"
+        case (.medical, .english), (.medical, .mandarin), (.medical, .vietnamese), (.medical, .tagalog):      return "Monthly out-of-pocket medical costs, in dollars"
         case (.medical, .spanish):      return "Gastos médicos mensuales de bolsillo, en dólares"
         case (.utilityShutoff, _):      return ""
         case (.utilityTypes, _):        return ""  // each row has its own accessibilityLabel
         case (.sharedHousing, _):       return ""  // stepper and pill have their own labels
         case (.courtOrderedSupportGate, _): return ""
-        case (.childSupportAmount, .english):  return "Monthly child support paid, in dollars"
+        case (.childSupportAmount, .english), (.childSupportAmount, .mandarin), (.childSupportAmount, .vietnamese), (.childSupportAmount, .tagalog):  return "Monthly child support paid, in dollars"
         case (.childSupportAmount, .spanish):  return "Manutención mensual de hijos pagada, en dólares"
-        case (.spousalSupportAmount, .english): return "Monthly spousal support paid, in dollars"
+        case (.spousalSupportAmount, .english), (.spousalSupportAmount, .mandarin), (.spousalSupportAmount, .vietnamese), (.spousalSupportAmount, .tagalog): return "Monthly spousal support paid, in dollars"
         case (.spousalSupportAmount, .spanish): return "Manutención mensual conyugal pagada, en dólares"
         }
     }
@@ -828,39 +828,39 @@ enum SNAPExpensesStrings {
 
     static func notSharingLabel(language: CivicaLanguage) -> String {
         switch language {
-        case .english: return "Not sharing — this rent is just mine"
+        case .english, .mandarin, .vietnamese, .tagalog: return "Not sharing — this rent is just mine"
         case .spanish: return "No comparto — esta renta es solo mía"
         }
     }
 
     static func totalOccupantsLabel(language: CivicaLanguage) -> String {
         switch language {
-        case .english: return "Total people at this address"
+        case .english, .mandarin, .vietnamese, .tagalog: return "Total people at this address"
         case .spanish: return "Total de personas en este domicilio"
         }
     }
 
     static func selectHint(language: CivicaLanguage) -> String {
         switch language {
-        case .english: return "Double tap to select"
+        case .english, .mandarin, .vietnamese, .tagalog: return "Double tap to select"
         case .spanish: return "Toca dos veces para seleccionar"
         }
     }
 
     static func deselectHint(language: CivicaLanguage) -> String {
         switch language {
-        case .english: return "Double tap to deselect"
+        case .english, .mandarin, .vietnamese, .tagalog: return "Double tap to deselect"
         case .spanish: return "Toca dos veces para deseleccionar"
         }
     }
 
     static func triLabel(for value: SNAPTri, language: CivicaLanguage) -> String {
         switch (value, language) {
-        case (.yes, .english):     return "Yes"
+        case (.yes, .english), (.yes, .mandarin), (.yes, .vietnamese), (.yes, .tagalog):     return "Yes"
         case (.yes, .spanish):     return "Sí"
-        case (.no, .english):      return "No"
+        case (.no, .english), (.no, .mandarin), (.no, .vietnamese), (.no, .tagalog):      return "No"
         case (.no, .spanish):      return "No"
-        case (.notSure, .english): return "I'm not sure"
+        case (.notSure, .english), (.notSure, .mandarin), (.notSure, .vietnamese), (.notSure, .tagalog): return "I'm not sure"
         case (.notSure, .spanish): return "No estoy seguro"
         }
     }

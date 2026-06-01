@@ -168,7 +168,7 @@ enum CivicaNotificationTemplates {
     ) -> String {
         let fallback = language == .english ? fallbackEN : fallbackES
         switch language {
-        case .english:
+        case .english, .mandarin, .vietnamese, .tagalog:
             return SNAPComplianceCopyRegistry.approvedEnglish(for: id, stateCode: stateCode) ?? fallback
         case .spanish:
             return SNAPComplianceCopyRegistry.approvedSpanish(for: id, stateCode: stateCode) ?? fallback

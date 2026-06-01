@@ -24,7 +24,7 @@ enum SNAPInterviewQuestions {
 
     static func list(language: CivicaLanguage) -> [Question] {
         switch language {
-        case .english:
+        case .english, .mandarin, .vietnamese, .tagalog:
             return englishQuestions
         case .spanish:
             return spanishQuestions
@@ -218,7 +218,7 @@ enum SNAPInterviewStrings {
 
     static func questionOfLabel(current: Int, total: Int, language: CivicaLanguage) -> String {
         switch language {
-        case .english: return "Question \(current) of \(total)"
+        case .english, .mandarin, .vietnamese, .tagalog: return "Question \(current) of \(total)"
         case .spanish: return "Pregunta \(current) de \(total)"
         }
     }
@@ -249,7 +249,7 @@ enum SNAPInterviewStrings {
 
     static func wrapupOption(_ option: SNAPInterviewCoachView.WrapupOption, language: CivicaLanguage) -> WrapupOptionCopy {
         switch (option, language) {
-        case (.smooth, .english):
+        case (.smooth, .english), (.smooth, .mandarin), (.smooth, .vietnamese), (.smooth, .tagalog):
             return .init(
                 title: "Smooth — got through everything",
                 body: "We mark you done and watch for the decision."
@@ -259,7 +259,7 @@ enum SNAPInterviewStrings {
                 title: "Sin problemas — pasé por todo",
                 body: "Te marcamos como completado y esperamos la decisión."
             )
-        case (.stuck, .english):
+        case (.stuck, .english), (.stuck, .mandarin), (.stuck, .vietnamese), (.stuck, .tagalog):
             return .init(
                 title: "They asked something I couldn't answer",
                 body: "We'll coach you on what to send next — and what \"self-attested\" really means."
@@ -269,7 +269,7 @@ enum SNAPInterviewStrings {
                 title: "Me preguntaron algo que no pude responder",
                 body: "Te ayudaremos con qué enviar a continuación — y qué significa \"self-attested\"."
             )
-        case (.rude, .english):
+        case (.rude, .english), (.rude, .mandarin), (.rude, .vietnamese), (.rude, .tagalog):
             return .init(
                 title: "It felt off / they were rude",
                 body: "A real person reads this. We can flag the case if you'd like us to."
@@ -279,7 +279,7 @@ enum SNAPInterviewStrings {
                 title: "Se sintió raro / fueron groseros",
                 body: "Una persona real lee esto. Podemos marcar el caso si quieres."
             )
-        case (.noCall, .english):
+        case (.noCall, .english), (.noCall, .mandarin), (.noCall, .vietnamese), (.noCall, .tagalog):
             return .init(
                 title: "They never called",
                 body: "Missed-interview is the #2 reason applications get denied. We'll help you reach the supervisor today."

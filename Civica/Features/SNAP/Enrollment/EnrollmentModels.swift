@@ -60,17 +60,17 @@ enum BenefitsCalDocumentCategory: String, Codable, CaseIterable {
 
     func displayLabel(in language: CivicaLanguage) -> String {
         switch (self, language) {
-        case (.identityProof,        .english): return "Identity proof"
+        case (.identityProof, .english), (.identityProof, .mandarin), (.identityProof, .vietnamese), (.identityProof, .tagalog): return "Identity proof"
         case (.identityProof,        .spanish): return "Comprobante de identidad"
-        case (.releaseOfInformation, .english): return "Release of information"
+        case (.releaseOfInformation, .english), (.releaseOfInformation, .mandarin), (.releaseOfInformation, .vietnamese), (.releaseOfInformation, .tagalog): return "Release of information"
         case (.releaseOfInformation, .spanish): return "Liberación de información"
-        case (.income,               .english): return "Income / employment"
+        case (.income, .english), (.income, .mandarin), (.income, .vietnamese), (.income, .tagalog): return "Income / employment"
         case (.income,               .spanish): return "Ingresos / empleo"
-        case (.rentOrLease,          .english): return "Rent, lease, or mortgage"
+        case (.rentOrLease, .english), (.rentOrLease, .mandarin), (.rentOrLease, .vietnamese), (.rentOrLease, .tagalog): return "Rent, lease, or mortgage"
         case (.rentOrLease,          .spanish): return "Renta, contrato o hipoteca"
-        case (.expenses,             .english): return "Expenses"
+        case (.expenses, .english), (.expenses, .mandarin), (.expenses, .vietnamese), (.expenses, .tagalog): return "Expenses"
         case (.expenses,             .spanish): return "Gastos"
-        case (.addressProof,         .english): return "Address proof"
+        case (.addressProof, .english), (.addressProof, .mandarin), (.addressProof, .vietnamese), (.addressProof, .tagalog): return "Address proof"
         case (.addressProof,         .spanish): return "Comprobante de domicilio"
         }
     }

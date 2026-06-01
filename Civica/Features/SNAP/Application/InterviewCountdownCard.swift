@@ -69,7 +69,7 @@ struct InterviewCountdownCard: View {
 
     private var headlineLine: String {
         switch language {
-        case .english:
+        case .english, .mandarin, .vietnamese, .tagalog:
             if daysUntil == 0 { return "Your interview is today." }
             if daysUntil == 1 { return "Your interview is tomorrow." }
             return "Your interview is in \(daysUntil) days."
@@ -83,7 +83,7 @@ struct InterviewCountdownCard: View {
     private var deltaLine: String {
         let amount = NSDecimalNumber(decimal: dailyValue).intValue
         switch language {
-        case .english:
+        case .english, .mandarin, .vietnamese, .tagalog:
             return "Once approved, you'd receive about $\(amount)/day."
         case .spanish:
             return "Una vez aprobado, recibirías cerca de $\(amount)/día."
@@ -173,7 +173,7 @@ enum InterviewCountdownStrings {
     static func dateCaptureBody(stateCode: String?, language: CivicaLanguage) -> String {
         let agency = SNAPAgencyDirectory.agencyShortName(for: stateCode, language: language)
         switch language {
-        case .english:
+        case .english, .mandarin, .vietnamese, .tagalog:
             return "Enter the date and time from your \(agency) confirmation letter. We'll remind you the day before."
         case .spanish:
             return "Ingresa la fecha y hora de tu carta de confirmación de \(agency). Te recordaremos el día anterior."

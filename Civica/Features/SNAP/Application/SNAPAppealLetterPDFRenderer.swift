@@ -295,7 +295,7 @@ enum SNAPAppealLetterStrings {
 
     static func bodyParagraphs(language: CivicaLanguage) -> [String] {
         switch language {
-        case .english:
+        case .english, .mandarin, .vietnamese, .tagalog:
             return [
                 "I am requesting a fair hearing to appeal the denial of my SNAP (Supplemental Nutrition Assistance Program) application. I am submitting this request within the 90-day window allowed under 7 CFR 273.15.",
                 "I believe the denial decision should be reconsidered. I would like the opportunity to present my case and any supporting information at the hearing."
@@ -310,7 +310,7 @@ enum SNAPAppealLetterStrings {
 
     static func fillInLines(language: CivicaLanguage) -> [String] {
         switch language {
-        case .english:
+        case .english, .mandarin, .vietnamese, .tagalog:
             return [
                 "My information:",
                 "    Name:             ________________________________",
@@ -335,7 +335,7 @@ enum SNAPAppealLetterStrings {
 
     static func hearingPreferenceLines(language: CivicaLanguage) -> [String] {
         switch language {
-        case .english:
+        case .english, .mandarin, .vietnamese, .tagalog:
             return [
                 "I am requesting:",
                 "    [ ]  An in-person hearing",
@@ -371,7 +371,7 @@ enum SNAPAppealLetterStrings {
             portalSuffix = ""
         }
         switch language {
-        case .english:
+        case .english, .mandarin, .vietnamese, .tagalog:
             return "Prepared with Civica on \(today). This is a personal reference document — sign and date by hand before mailing to the hearing office above\(portalSuffix)."
         case .spanish:
             return "Preparado con Civica el \(today). Este es un documento personal de referencia — firma y fecha a mano antes de enviar por correo a la oficina de audiencias arriba\(portalSuffix)."

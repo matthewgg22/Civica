@@ -283,7 +283,7 @@ struct SNAPWaitingRoomView: View {
 
     private var timelineSectionTitle: String {
         switch language {
-        case .english: return "Your application"
+        case .english, .mandarin, .vietnamese, .tagalog: return "Your application"
         case .spanish: return "Tu solicitud"
         }
     }

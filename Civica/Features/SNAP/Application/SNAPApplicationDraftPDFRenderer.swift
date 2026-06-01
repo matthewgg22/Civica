@@ -366,7 +366,7 @@ enum SNAPPacketPDFStrings {
 
     static func subtitle(formattedDate: String, language: CivicaLanguage) -> String {
         switch language {
-        case .english: return "Prepared on \(formattedDate)"
+        case .english, .mandarin, .vietnamese, .tagalog: return "Prepared on \(formattedDate)"
         case .spanish: return "Preparado el \(formattedDate)"
         }
     }
@@ -383,7 +383,7 @@ enum SNAPPacketPDFStrings {
             ? (language == .english ? "your state SNAP portal" : "el portal de SNAP de tu estado")
             : (host.isEmpty ? portal : "\(portal) (\(host))")
         switch language {
-        case .english:
+        case .english, .mandarin, .vietnamese, .tagalog:
             return "This is a personal reference document prepared from your answers in Civica. It is NOT an official application. Submit your real application via \(portalRef) or in person at a \(agency) office."
         case .spanish:
             return "Este es un documento personal de referencia preparado a partir de tus respuestas en Civica. NO es una solicitud oficial. Envía tu solicitud real a través de \(portalRef) o en persona en una oficina de \(agency)."
@@ -397,7 +397,7 @@ enum SNAPPacketPDFStrings {
         let normalized = (stateCode ?? "").trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
         let state = normalized.isEmpty ? SNAPAgencyDirectory.launchStateCode : normalized
         switch language {
-        case .english: return "Civica · local v1 · FY26 federal poverty guidelines · \(state) BBCE 200%"
+        case .english, .mandarin, .vietnamese, .tagalog: return "Civica · local v1 · FY26 federal poverty guidelines · \(state) BBCE 200%"
         case .spanish: return "Civica · v1 local · pautas federales de pobreza AF26 · \(state) BBCE 200%"
         }
     }

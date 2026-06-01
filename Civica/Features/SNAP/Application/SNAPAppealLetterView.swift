@@ -278,7 +278,7 @@ enum SNAPAppealLetterScreenStrings {
                 : "tu oficina estatal de audiencias de SNAP"
         }
         switch language {
-        case .english:
+        case .english, .mandarin, .vietnamese, .tagalog:
             return "We prepared a letter requesting a fair hearing under federal SNAP rules (7 CFR 273.15). Sign and date it, fill in your information, and mail or hand-deliver it to \(office)."
         case .spanish:
             return "Preparamos una carta que solicita una audiencia justa bajo las reglas federales de SNAP (7 CFR 273.15). Fírmala y féchala, completa tu información, y envíala por correo o entrégala en persona a \(office)."
@@ -318,7 +318,7 @@ enum SNAPAppealLetterScreenStrings {
             portalSentence = ""
         }
         switch language {
-        case .english:
+        case .english, .mandarin, .vietnamese, .tagalog:
             return "Save the PDF, print it, sign it, fill in your name and address by hand, then mail or hand-deliver to \(address).\(portalSentence)"
         case .spanish:
             return "Guarda el PDF, imprímelo, fírmalo, completa tu nombre y dirección a mano, y luego envíalo por correo o entrégalo en persona en \(address).\(portalSentence)"
@@ -336,7 +336,7 @@ enum SNAPAppealLetterScreenStrings {
             stateLabel = language == .english ? "state SNAP" : "estatal de SNAP"
         }
         switch language {
-        case .english:
+        case .english, .mandarin, .vietnamese, .tagalog:
             return "Open the \(stateLabel) fair-hearing page online"
         case .spanish:
             return "Abrir la página de audiencia justa \(stateLabel) en línea"

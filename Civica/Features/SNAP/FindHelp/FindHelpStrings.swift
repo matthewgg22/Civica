@@ -115,19 +115,19 @@ enum FindHelpStrings {
     // hoursJson short-form keys (mon, tue, ...) the backend uses.
     static func weekdayLabel(for key: String, language: CivicaLanguage) -> String? {
         switch (key, language) {
-        case ("mon", .english): return "Monday"
+        case ("mon", .english), ("mon", .mandarin), ("mon", .vietnamese), ("mon", .tagalog): return "Monday"
         case ("mon", .spanish): return "Lunes"
-        case ("tue", .english): return "Tuesday"
+        case ("tue", .english), ("tue", .mandarin), ("tue", .vietnamese), ("tue", .tagalog): return "Tuesday"
         case ("tue", .spanish): return "Martes"
-        case ("wed", .english): return "Wednesday"
+        case ("wed", .english), ("wed", .mandarin), ("wed", .vietnamese), ("wed", .tagalog): return "Wednesday"
         case ("wed", .spanish): return "Miércoles"
-        case ("thu", .english): return "Thursday"
+        case ("thu", .english), ("thu", .mandarin), ("thu", .vietnamese), ("thu", .tagalog): return "Thursday"
         case ("thu", .spanish): return "Jueves"
-        case ("fri", .english): return "Friday"
+        case ("fri", .english), ("fri", .mandarin), ("fri", .vietnamese), ("fri", .tagalog): return "Friday"
         case ("fri", .spanish): return "Viernes"
-        case ("sat", .english): return "Saturday"
+        case ("sat", .english), ("sat", .mandarin), ("sat", .vietnamese), ("sat", .tagalog): return "Saturday"
         case ("sat", .spanish): return "Sábado"
-        case ("sun", .english): return "Sunday"
+        case ("sun", .english), ("sun", .mandarin), ("sun", .vietnamese), ("sun", .tagalog): return "Sunday"
         case ("sun", .spanish): return "Domingo"
         default: return nil
         }

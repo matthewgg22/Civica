@@ -690,7 +690,7 @@ private struct CivicaPhase2MilestoneDetailSheet: View {
 
     private var content: Content {
         switch (milestone, language) {
-        case (.submitted, .english):
+        case (.submitted, .english), (.submitted, .mandarin), (.submitted, .vietnamese), (.submitted, .tagalog):
             return Content(
                 title: "Submitted",
                 body: "Your application has been received by the county. A caseworker will be assigned within one business day.",
@@ -702,7 +702,7 @@ private struct CivicaPhase2MilestoneDetailSheet: View {
                 body: "Tu solicitud fue recibida por el condado. Te asignarán un trabajador del caso dentro de un día hábil.",
                 timeframe: "Suele completarse en 1 día hábil"
             )
-        case (.inReview, .english):
+        case (.inReview, .english), (.inReview, .mandarin), (.inReview, .vietnamese), (.inReview, .tagalog):
             return Content(
                 title: "In review",
                 body: "A caseworker is checking your documents and looking for anything missing. If something is missing they'll send a Documents Requested notice through this app.",
@@ -714,7 +714,7 @@ private struct CivicaPhase2MilestoneDetailSheet: View {
                 body: "Un trabajador del caso está revisando tus documentos y notando lo que falta. Si falta algo te enviará un aviso de Documentos Solicitados por esta app.",
                 timeframe: "Suele tomar de 7 a 14 días"
             )
-        case (.interview, .english):
+        case (.interview, .english), (.interview, .mandarin), (.interview, .vietnamese), (.interview, .tagalog):
             return Content(
                 title: "Interview",
                 body: "The county calls you for a 15-minute eligibility interview. They'll verify your application and ask about anything that wasn't clear. Missing this call is the most common reason cases get closed — set an alarm 15 minutes before.",
@@ -726,7 +726,7 @@ private struct CivicaPhase2MilestoneDetailSheet: View {
                 body: "El condado te llama para una entrevista de elegibilidad de 15 minutos. Verificará tu solicitud y preguntará por lo que no haya quedado claro. Perder esta llamada es la razón más común por la que se cierran los casos — pon una alarma 15 minutos antes.",
                 timeframe: "Usualmente dentro de 2 semanas tras enviar"
             )
-        case (.decision, .english):
+        case (.decision, .english), (.decision, .mandarin), (.decision, .vietnamese), (.decision, .tagalog):
             return Content(
                 title: "Decision",
                 body: "By federal rule, the county has 30 days from submission to issue a decision. Expedited (emergency) cases are 7 days. You'll see the result here and get a separate letter from the county.",
@@ -801,7 +801,7 @@ enum CivicaPhase2Strings {
 
     static func dayN(count: Int, language: CivicaLanguage) -> String {
         switch language {
-        case .english: return "Day \(count) of ~10"
+        case .english, .mandarin, .vietnamese, .tagalog: return "Day \(count) of ~10"
         case .spanish: return "Día \(count) de ~10"
         }
     }
@@ -818,7 +818,7 @@ enum CivicaPhase2Strings {
     static let appointmentTomorrow = CivicaText("Tomorrow", es: "Mañana")
     static func appointmentInDays(days: Int, language: CivicaLanguage) -> String {
         switch language {
-        case .english: return "In \(days) days"
+        case .english, .mandarin, .vietnamese, .tagalog: return "In \(days) days"
         case .spanish: return "En \(days) días"
         }
     }
@@ -826,7 +826,7 @@ enum CivicaPhase2Strings {
     // Headline
     static func headline(county: String, language: CivicaLanguage) -> String {
         switch language {
-        case .english: return "Your application is with \(county)."
+        case .english, .mandarin, .vietnamese, .tagalog: return "Your application is with \(county)."
         case .spanish: return "Tu solicitud está con \(county)."
         }
     }
@@ -875,7 +875,7 @@ enum CivicaPhase2Strings {
     // and carries no second-person pronoun, sidestepping tú/usted.
     static func documentsRequestedHeadline(count: Int, language: CivicaLanguage) -> String {
         switch language {
-        case .english:
+        case .english, .mandarin, .vietnamese, .tagalog:
             return count == 1
                 ? "A routine step — 1 document to upload"
                 : "A routine step — \(count) documents to upload"
@@ -887,7 +887,7 @@ enum CivicaPhase2Strings {
     }
     static func unreadMessagesHeadline(count: Int, language: CivicaLanguage) -> String {
         switch language {
-        case .english:
+        case .english, .mandarin, .vietnamese, .tagalog:
             return count == 1 ? "1 new message" : "\(count) new messages"
         case .spanish:
             return count == 1 ? "1 mensaje nuevo" : "\(count) mensajes nuevos"

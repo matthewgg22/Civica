@@ -296,7 +296,7 @@ enum SNAPSubmissionTimelineStrings {
     static func subhead(stateCode: String?, language: CivicaLanguage) -> String {
         let agency = SNAPAgencyDirectory.agencyFullName(for: stateCode, language: language)
         switch language {
-        case .english:
+        case .english, .mandarin, .vietnamese, .tagalog:
             return "\(agency) owns the next steps. We'll text you the moment anything changes."
         case .spanish:
             return "\(agency) maneja los próximos pasos. Te enviaremos un mensaje cuando algo cambie."
@@ -335,7 +335,7 @@ enum SNAPSubmissionTimelineStrings {
         let portalRef = portal.isEmpty ? "the state portal" : "\(portal) (\(portalURL))"
         let portalRefES = portal.isEmpty ? "el portal estatal" : "\(portal) (\(portalURL))"
         switch language {
-        case .english:
+        case .english, .mandarin, .vietnamese, .tagalog:
             return "Sent to \(agency) through \(portalRef). You should also see it listed under \"My Applications\" in your \(portal.isEmpty ? "portal" : portal) account."
         case .spanish:
             return "Enviada a \(agency) a través de \(portalRefES). También debes verla en \"Mis Solicitudes\" de tu cuenta de \(portal.isEmpty ? "portal" : portal)."
@@ -357,7 +357,7 @@ enum SNAPSubmissionTimelineStrings {
             codesPhrase = ""
         }
         switch language {
-        case .english:
+        case .english, .mandarin, .vietnamese, .tagalog:
             return "A \(agency) caseworker reads your application and may call to confirm details.\(codesPhrase) We'll never ask you for payment."
         case .spanish:
             return "Un asesor de \(agency) lee tu solicitud y puede llamarte para confirmar detalles.\(codesPhrase) Nunca te pediremos pago."
@@ -370,7 +370,7 @@ enum SNAPSubmissionTimelineStrings {
     static func stationDecisionBody(stateCode: String?, language: CivicaLanguage) -> String {
         let agency = SNAPAgencyDirectory.agencyShortName(for: stateCode, language: language)
         switch language {
-        case .english:
+        case .english, .mandarin, .vietnamese, .tagalog:
             return "\(agency) sends a letter by mail and we'll text you. If approved, an EBT card is mailed within 5 business days."
         case .spanish:
             return "\(agency) envía una carta por correo y te enviaremos un mensaje. Si te aprueban, la tarjeta EBT llega por correo dentro de 5 días hábiles."

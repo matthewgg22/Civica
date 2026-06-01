@@ -89,7 +89,7 @@ struct ConsentScreen: View {
 
     private var consentToggleText: String {
         switch lang {
-        case .english: return "I agree to the terms above."
+        case .english, .mandarin, .vietnamese, .tagalog: return "I agree to the terms above."
         case .spanish: return "Acepto los términos anteriores."
         }
     }

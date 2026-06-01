@@ -307,7 +307,7 @@ enum SNAPWhereApplyingStrings {
     /// call site; the surrounding sentence respects EN+ES parity.
     static func suggestionTokenLooksLike(stateName: String, language: CivicaLanguage) -> String {
         switch language {
-        case .english: return "Looks like you're in \(stateName)"
+        case .english, .mandarin, .vietnamese, .tagalog: return "Looks like you're in \(stateName)"
         case .spanish: return "Parece que estás en \(stateName)"
         }
     }
@@ -317,7 +317,7 @@ enum SNAPWhereApplyingStrings {
     /// "yes, we got you" affirmation rather than disappearing.
     static func suggestionTokenSelected(stateName: String, language: CivicaLanguage) -> String {
         switch language {
-        case .english: return "Pre-filled \(stateName) — change above if needed"
+        case .english, .mandarin, .vietnamese, .tagalog: return "Pre-filled \(stateName) — change above if needed"
         case .spanish: return "\(stateName) pre-seleccionado — cámbialo arriba si es necesario"
         }
     }
@@ -337,7 +337,7 @@ enum SNAPWhereApplyingStrings {
     /// once we add per-state rules engines.
     static func stateOptionsOrdered(language: CivicaLanguage) -> [StateOption] {
         switch language {
-        case .english:
+        case .english, .mandarin, .vietnamese, .tagalog:
             return [
                 .init(code: "MA", label: "Massachusetts"),
                 .init(code: "NY", label: "New York"),
@@ -365,13 +365,13 @@ enum SNAPWhereApplyingStrings {
 
     static func housingLabel(for status: HousingStatus, language: CivicaLanguage) -> String {
         switch (status, language) {
-        case (.stableHome, .english):         return "Stable home"
+        case (.stableHome, .english), (.stableHome, .mandarin), (.stableHome, .vietnamese), (.stableHome, .tagalog):         return "Stable home"
         case (.stableHome, .spanish):         return "Hogar estable"
-        case (.temporaryHousing, .english):   return "Temporary housing"
+        case (.temporaryHousing, .english), (.temporaryHousing, .mandarin), (.temporaryHousing, .vietnamese), (.temporaryHousing, .tagalog):   return "Temporary housing"
         case (.temporaryHousing, .spanish):   return "Vivienda temporal"
-        case (.stayingWithOthers, .english):  return "Staying with someone else"
+        case (.stayingWithOthers, .english), (.stayingWithOthers, .mandarin), (.stayingWithOthers, .vietnamese), (.stayingWithOthers, .tagalog):  return "Staying with someone else"
         case (.stayingWithOthers, .spanish):  return "Quedándome con alguien"
-        case (.unhoused, .english):           return "Unhoused right now"
+        case (.unhoused, .english), (.unhoused, .mandarin), (.unhoused, .vietnamese), (.unhoused, .tagalog):           return "Unhoused right now"
         case (.unhoused, .spanish):           return "Sin hogar en este momento"
         }
     }

@@ -369,13 +369,13 @@ private struct SNAPDailyChecklistRow: View {
 
     private func actionCTA(for action: SNAPDailyChecklistAction, language: CivicaLanguage) -> String {
         switch (action, language) {
-        case (.pickDocument, .english):                 return "Attach a file"
+        case (.pickDocument, .english), (.pickDocument, .mandarin), (.pickDocument, .vietnamese), (.pickDocument, .tagalog):                 return "Attach a file"
         case (.pickDocument, .spanish):                 return "Adjuntar un archivo"
-        case (.saveContact, .english):                  return "Add to Contacts"
+        case (.saveContact, .english), (.saveContact, .mandarin), (.saveContact, .vietnamese), (.saveContact, .tagalog):                  return "Add to Contacts"
         case (.saveContact, .spanish):                  return "Añadir a Contactos"
-        case (.openTimelineSheet, .english):            return "Open the timeline"
+        case (.openTimelineSheet, .english), (.openTimelineSheet, .mandarin), (.openTimelineSheet, .vietnamese), (.openTimelineSheet, .tagalog):            return "Open the timeline"
         case (.openTimelineSheet, .spanish):            return "Abrir el cronograma"
-        case (.addCalendarReminderDaysOut, .english):   return "Add to Calendar"
+        case (.addCalendarReminderDaysOut, .english), (.addCalendarReminderDaysOut, .mandarin), (.addCalendarReminderDaysOut, .vietnamese), (.addCalendarReminderDaysOut, .tagalog):   return "Add to Calendar"
         case (.addCalendarReminderDaysOut, .spanish):   return "Añadir al Calendario"
         }
     }
@@ -448,7 +448,7 @@ private struct SNAPDailyChecklistTimelineSheet: View {
 
     private var steps: [Step] {
         switch language {
-        case .english:
+        case .english, .mandarin, .vietnamese, .tagalog:
             return [
                 .init(title: "Submitted",
                       body: "Your application is with the county. Most files are picked up within 1 business day."),
@@ -475,7 +475,7 @@ private struct SNAPDailyChecklistTimelineSheet: View {
 
     private var title: String {
         switch language {
-        case .english: return "What to expect from the county"
+        case .english, .mandarin, .vietnamese, .tagalog: return "What to expect from the county"
         case .spanish: return "Lo que puedes esperar del condado"
         }
     }

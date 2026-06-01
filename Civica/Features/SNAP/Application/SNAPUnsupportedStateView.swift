@@ -123,7 +123,7 @@ enum SNAPUnsupportedStateStrings {
 
     static func title(stateName: String, language: CivicaLanguage) -> String {
         switch language {
-        case .english: return "Civica doesn't cover \(stateName) yet."
+        case .english, .mandarin, .vietnamese, .tagalog: return "Civica doesn't cover \(stateName) yet."
         case .spanish: return "Civica aún no cubre \(stateName)."
         }
     }

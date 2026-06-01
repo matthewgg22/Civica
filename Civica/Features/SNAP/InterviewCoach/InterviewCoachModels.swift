@@ -125,7 +125,7 @@ struct InterviewQuestion: Codable, Identifiable, Hashable {
 extension QuestionCategory {
     func localizedLabel(in language: CivicaLanguage) -> String {
         switch language {
-        case .english: return label
+        case .english, .mandarin, .vietnamese, .tagalog: return label
         case .spanish:
             switch self {
             case .income: return "Ingresos"
@@ -142,7 +142,7 @@ extension QuestionCategory {
 extension InterviewScenario {
     func localizedLabel(in language: CivicaLanguage) -> String {
         switch language {
-        case .english: return label
+        case .english, .mandarin, .vietnamese, .tagalog: return label
         case .spanish:
             switch self {
             case .initial: return "Solicitud inicial"
@@ -157,7 +157,7 @@ extension InterviewScenario {
 extension ApplicantArchetype {
     func localizedLabel(in language: CivicaLanguage) -> String {
         switch language {
-        case .english: return label
+        case .english, .mandarin, .vietnamese, .tagalog: return label
         case .spanish:
             switch self {
             case .student: return "Estudiante"
@@ -173,7 +173,7 @@ extension ApplicantArchetype {
 extension CaseworkerArchetype {
     func localizedLabel(in language: CivicaLanguage) -> String {
         switch language {
-        case .english: return label
+        case .english, .mandarin, .vietnamese, .tagalog: return label
         case .spanish:
             switch self {
             case .friendlyRushed: return "Amistoso pero apurado"

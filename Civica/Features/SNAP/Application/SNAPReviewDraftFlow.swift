@@ -93,21 +93,21 @@ enum SNAPApplicationSection: String, CaseIterable, Identifiable, Codable {
     /// Kept concise (one or two words) so the chip stays scannable.
     func title(in language: CivicaLanguage) -> String {
         switch (self, language) {
-        case (.whereApplying, .english):       return "Where you're applying"
+        case (.whereApplying, .english), (.whereApplying, .mandarin), (.whereApplying, .vietnamese), (.whereApplying, .tagalog):       return "Where you're applying"
         case (.whereApplying, .spanish):       return "Dónde solicitas"
-        case (.applicantAge, .english):        return "About you"
+        case (.applicantAge, .english), (.applicantAge, .mandarin), (.applicantAge, .vietnamese), (.applicantAge, .tagalog):        return "About you"
         case (.applicantAge, .spanish):        return "Sobre ti"
-        case (.household, .english):           return "Your household"
+        case (.household, .english), (.household, .mandarin), (.household, .vietnamese), (.household, .tagalog):           return "Your household"
         case (.household, .spanish):           return "Tu hogar"
-        case (.contact, .english):             return "Staying in touch"
+        case (.contact, .english), (.contact, .mandarin), (.contact, .vietnamese), (.contact, .tagalog):             return "Staying in touch"
         case (.contact, .spanish):             return "Mantenerse en contacto"
-        case (.income, .english):              return "Income"
+        case (.income, .english), (.income, .mandarin), (.income, .vietnamese), (.income, .tagalog):              return "Income"
         case (.income, .spanish):              return "Ingresos"
-        case (.studentStatus, .english):       return "Student status"
+        case (.studentStatus, .english), (.studentStatus, .mandarin), (.studentStatus, .vietnamese), (.studentStatus, .tagalog):       return "Student status"
         case (.studentStatus, .spanish):       return "Estatus estudiantil"
-        case (.expenses, .english):            return "Expenses"
+        case (.expenses, .english), (.expenses, .mandarin), (.expenses, .vietnamese), (.expenses, .tagalog):            return "Expenses"
         case (.expenses, .spanish):            return "Gastos"
-        case (.documentsChecklist, .english):  return "Documents"
+        case (.documentsChecklist, .english), (.documentsChecklist, .mandarin), (.documentsChecklist, .vietnamese), (.documentsChecklist, .tagalog):  return "Documents"
         case (.documentsChecklist, .spanish):  return "Documentos"
         }
     }
@@ -703,7 +703,7 @@ enum SNAPReviewDraftStrings {
 
     static func progressLine(completed: Int, total: Int, language: CivicaLanguage) -> String {
         switch language {
-        case .english:
+        case .english, .mandarin, .vietnamese, .tagalog:
             return "\(completed) of \(total) sections done. Tap Edit on any section to update it."
         case .spanish:
             return "\(completed) de \(total) secciones completas. Toca Editar en cualquier sección para actualizarla."
@@ -712,21 +712,21 @@ enum SNAPReviewDraftStrings {
 
     static func sectionTitle(_ section: SNAPApplicationSection, language: CivicaLanguage) -> String {
         switch (section, language) {
-        case (.whereApplying, .english):     return "Where applying"
+        case (.whereApplying, .english), (.whereApplying, .mandarin), (.whereApplying, .vietnamese), (.whereApplying, .tagalog):     return "Where applying"
         case (.whereApplying, .spanish):     return "Dónde solicitas"
-        case (.applicantAge, .english):      return "Applicant age"
+        case (.applicantAge, .english), (.applicantAge, .mandarin), (.applicantAge, .vietnamese), (.applicantAge, .tagalog):      return "Applicant age"
         case (.applicantAge, .spanish):      return "Edad del solicitante"
-        case (.household, .english):         return "Household"
+        case (.household, .english), (.household, .mandarin), (.household, .vietnamese), (.household, .tagalog):         return "Household"
         case (.household, .spanish):         return "Hogar"
-        case (.contact, .english):           return "Contact info"
+        case (.contact, .english), (.contact, .mandarin), (.contact, .vietnamese), (.contact, .tagalog):           return "Contact info"
         case (.contact, .spanish):           return "Información de contacto"
-        case (.income, .english):            return "Income"
+        case (.income, .english), (.income, .mandarin), (.income, .vietnamese), (.income, .tagalog):            return "Income"
         case (.income, .spanish):            return "Ingresos"
-        case (.studentStatus, .english):     return "Student status"
+        case (.studentStatus, .english), (.studentStatus, .mandarin), (.studentStatus, .vietnamese), (.studentStatus, .tagalog):     return "Student status"
         case (.studentStatus, .spanish):     return "Estado estudiantil"
-        case (.expenses, .english):          return "Monthly expenses"
+        case (.expenses, .english), (.expenses, .mandarin), (.expenses, .vietnamese), (.expenses, .tagalog):          return "Monthly expenses"
         case (.expenses, .spanish):          return "Gastos mensuales"
-        case (.documentsChecklist, .english): return "Documents on hand"
+        case (.documentsChecklist, .english), (.documentsChecklist, .mandarin), (.documentsChecklist, .vietnamese), (.documentsChecklist, .tagalog): return "Documents on hand"
         case (.documentsChecklist, .spanish): return "Documentos a la mano"
         }
     }

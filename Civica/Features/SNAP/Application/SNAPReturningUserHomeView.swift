@@ -352,7 +352,7 @@ enum SNAPReturningHomeStrings {
         let total = SNAPApplicationSection.count
         let name = section.title(in: language)
         switch language {
-        case .english: return "Step \(step) of \(total) \u{00B7} \(name)"
+        case .english, .mandarin, .vietnamese, .tagalog: return "Step \(step) of \(total) \u{00B7} \(name)"
         case .spanish: return "Paso \(step) de \(total) \u{00B7} \(name)"
         }
     }

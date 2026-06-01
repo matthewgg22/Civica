@@ -50,7 +50,7 @@ enum SNAPApplicationGeneratorStrings {
         let portalEN = portal.isEmpty ? "your state portal" : portal
         let portalES = portal.isEmpty ? "el portal estatal" : portal
         switch language {
-        case .english:
+        case .english, .mandarin, .vietnamese, .tagalog:
             return "Save or share the summary, then finish the official application in \(portalEN)."
         case .spanish:
             return "Guarda o comparte el resumen, luego completa la solicitud oficial en \(portalES)."
@@ -332,7 +332,7 @@ enum SNAPDocumentConfirmationStrings {
     static func documentTypeAcknowledgement(rawType: String, language: CivicaLanguage) -> String {
         let prettyType = rawType.replacingOccurrences(of: "_", with: " ")
         switch language {
-        case .english: return "We saw a \(prettyType)"
+        case .english, .mandarin, .vietnamese, .tagalog: return "We saw a \(prettyType)"
         case .spanish: return "Vimos un \(prettyType)"
         }
     }
@@ -416,19 +416,19 @@ enum SNAPApplicationWalkthroughStrings {
     static func submitTo(stateCode: String?, language: CivicaLanguage) -> String {
         let agency = SNAPAgencyDirectory.agencyFullName(for: stateCode, language: language)
         switch language {
-        case .english: return "Submit to \(agency)"
+        case .english, .mandarin, .vietnamese, .tagalog: return "Submit to \(agency)"
         case .spanish: return "Enviar a \(agency)"
         }
     }
     static func openPortalTitle(portal: String, language: CivicaLanguage) -> String {
         switch language {
-        case .english: return "Open \(portal)"
+        case .english, .mandarin, .vietnamese, .tagalog: return "Open \(portal)"
         case .spanish: return "Abrir \(portal)"
         }
     }
     static func openPortalDetail(shortURL: String, language: CivicaLanguage) -> String {
         switch language {
-        case .english: return "Go to \(shortURL) on your phone or computer."
+        case .english, .mandarin, .vietnamese, .tagalog: return "Go to \(shortURL) on your phone or computer."
         case .spanish: return "Ve a \(shortURL) en tu teléfono o computadora."
         }
     }
@@ -438,7 +438,7 @@ enum SNAPApplicationWalkthroughStrings {
     )
     static func applyForSNAPDetail(portal: String, language: CivicaLanguage) -> String {
         switch language {
-        case .english: return "Tap Apply for SNAP and create or sign into your \(portal) account."
+        case .english, .mandarin, .vietnamese, .tagalog: return "Tap Apply for SNAP and create or sign into your \(portal) account."
         case .spanish: return "Toca Solicitar SNAP y crea o inicia sesión en tu cuenta de \(portal)."
         }
     }
@@ -448,7 +448,7 @@ enum SNAPApplicationWalkthroughStrings {
     )
     static func useYourPacketDetail(agencyShort: String, language: CivicaLanguage) -> String {
         switch language {
-        case .english:
+        case .english, .mandarin, .vietnamese, .tagalog:
             return "Answer the official application's questions using the summary you just saved. Upload the documents listed on the last page when \(agencyShort) asks for them."
         case .spanish:
             return "Responde las preguntas de la solicitud oficial usando el resumen que acabas de guardar. Sube los documentos de la última página cuando \(agencyShort) los pida."
@@ -456,7 +456,7 @@ enum SNAPApplicationWalkthroughStrings {
     }
     static func footnote(agencyShort: String, language: CivicaLanguage) -> String {
         switch language {
-        case .english:
+        case .english, .mandarin, .vietnamese, .tagalog:
             return "Need help? Most \(agencyShort) offices have community navigators who can walk you through the application in person."
         case .spanish:
             return "¿Necesitas ayuda? La mayoría de las oficinas de \(agencyShort) tienen navegadores comunitarios que pueden ayudarte con la solicitud en persona."

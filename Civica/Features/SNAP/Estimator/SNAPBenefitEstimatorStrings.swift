@@ -101,7 +101,7 @@ enum SNAPBenefitEstimatorStrings {
     static func resultContextEligible(stateCode: String?, language: CivicaLanguage) -> String {
         let agency = SNAPAgencyDirectory.agencyFullName(for: stateCode, language: language)
         switch language {
-        case .english:
+        case .english, .mandarin, .vietnamese, .tagalog:
             return "This is an estimate — \(agency) reviews your full application and confirms the amount."
         case .spanish:
             return "Esto es una estimación — \(agency) revisa tu solicitud completa y confirma el monto."
@@ -111,7 +111,7 @@ enum SNAPBenefitEstimatorStrings {
     static func resultContextMinBenefit(stateCode: String?, language: CivicaLanguage) -> String {
         let agency = SNAPAgencyDirectory.agencyShortName(for: stateCode, language: language)
         switch language {
-        case .english:
+        case .english, .mandarin, .vietnamese, .tagalog:
             return "Under federal law, most 1–2 person households receive at least $24/month if approved. \(agency) confirms your exact amount."
         case .spanish:
             return "Bajo la ley federal, la mayoría de los hogares de 1 a 2 personas reciben al menos $24/mes si son aprobados. \(agency) confirma tu monto exacto."
@@ -159,7 +159,7 @@ enum SNAPBenefitEstimatorStrings {
         }
         let portal = SNAPAgencyDirectory.portalName(for: stateCode)
         switch language {
-        case .english:
+        case .english, .mandarin, .vietnamese, .tagalog:
             return portal.isEmpty ? "Apply for SNAP benefits" : "Apply on \(portal)"
         case .spanish:
             return portal.isEmpty ? "Solicitar beneficios de SNAP" : "Solicitar en \(portal)"
@@ -191,7 +191,7 @@ enum SNAPBenefitEstimatorStrings {
     static func entryCardSubtitle(stateCode: String?, language: CivicaLanguage) -> String {
         // State-keyed lookup first.
         switch language {
-        case .english:
+        case .english, .mandarin, .vietnamese, .tagalog:
             if let stateKeyed = SNAPComplianceCopyRegistry.approvedEnglish(
                 for: "estimator_entry_subtitle",
                 stateCode: stateCode
@@ -248,7 +248,7 @@ enum SNAPBenefitEstimatorStrings {
         let resolved = stateCode ?? SNAPAgencyDirectory.launchStateCode
         let agency = SNAPAgencyDirectory.agencyShortName(for: resolved, language: language)
         switch language {
-        case .english:
+        case .english, .mandarin, .vietnamese, .tagalog:
             return "CalFresh estimate. Your official \(agency) determination uses your full case file and may differ."
         case .spanish:
             return "Estimación de CalFresh. La determinación oficial de \(agency) usa tu expediente completo y puede ser diferente."

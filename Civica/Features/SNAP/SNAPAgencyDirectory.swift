@@ -203,11 +203,11 @@ enum SNAPAgencyDirectory {
     static func produceMatchDescription(for stateCode: String?, language: CivicaLanguage) -> String? {
         guard let program = produceMatchProgram(for: stateCode) else { return nil }
         switch (normalized(stateCode), language) {
-        case ("CA", .english):
+        case ("CA", .english), ("CA", .mandarin), ("CA", .vietnamese), ("CA", .tagalog):
             return "\(program.name): \(program.englishTagline)"
         case ("CA", .spanish):
             return "Market Match: Duplica tus dólares de CalFresh en frutas y verduras frescas en los mercados de agricultores participantes — hasta un tope mensual que varía por mercado."
-        case ("MA", .english):
+        case ("MA", .english), ("MA", .mandarin), ("MA", .vietnamese), ("MA", .tagalog):
             return "\(program.name): \(program.englishTagline)"
         case ("MA", .spanish):
             return "HIP (Programa de Incentivos Saludables) de Massachusetts agrega dinero a tu tarjeta EBT por cada dólar gastado en frutas y verduras frescas en minoristas HIP participantes — hasta un tope mensual del hogar."

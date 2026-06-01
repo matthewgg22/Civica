@@ -34,7 +34,7 @@ enum SNAPStatusHomeStrings {
     static func waitingBody(stateCode: String?, language: CivicaLanguage) -> String {
         let agency = SNAPAgencyDirectory.agencyFullName(for: stateCode, language: language)
         switch language {
-        case .english:
+        case .english, .mandarin, .vietnamese, .tagalog:
             return "Your application is with \(agency). Most decisions take 7–30 days. We'll let you know when something changes."
         case .spanish:
             return "Tu solicitud está con \(agency). La mayoría de las decisiones tardan de 7 a 30 días. Te avisaremos cuando algo cambie."
@@ -54,7 +54,7 @@ enum SNAPStatusHomeStrings {
         let portal = SNAPAgencyDirectory.portalName(for: stateCode)
         let portalLabel = portal.isEmpty ? "your state portal" : portal
         switch language {
-        case .english: return "Open \(portalLabel) to submit"
+        case .english, .mandarin, .vietnamese, .tagalog: return "Open \(portalLabel) to submit"
         case .spanish: return "Abrir \(portalLabel) para enviar"
         }
     }
@@ -138,7 +138,7 @@ enum SNAPStatusHomeStrings {
     static func deniedBody(stateCode: String?, language: CivicaLanguage) -> String {
         let agency = SNAPAgencyDirectory.agencyFullName(for: stateCode, language: language)
         switch language {
-        case .english:
+        case .english, .mandarin, .vietnamese, .tagalog:
             return "\(agency) decided you don't qualify right now. You have options — denials are not the end of the road."
         case .spanish:
             return "\(agency) decidió que no calificas en este momento. Tienes opciones — una denegación no es el final del camino."
@@ -152,7 +152,7 @@ enum SNAPStatusHomeStrings {
         let portal = SNAPAgencyDirectory.portalName(for: stateCode)
         let portalRef = portal.isEmpty ? "your state portal" : portal
         switch language {
-        case .english:
+        case .english, .mandarin, .vietnamese, .tagalog:
             return "The state hasn't shared a specific reason with Civica yet. Check your \(portalRef) inbox or the denial notice you received in the mail."
         case .spanish:
             return "El estado todavía no ha compartido una razón específica con Civica. Revisa tu bandeja de \(portalRef) o la carta de denegación que recibiste por correo."
@@ -281,7 +281,7 @@ enum SNAPStatusHomeStrings {
         default:   stateName = language == .english ? "your state" : "tu estado"
         }
         switch language {
-        case .english:
+        case .english, .mandarin, .vietnamese, .tagalog:
             return "Recertification is how \(stateName) checks that you still qualify. It's basically reapplying — most of the questions will look familiar."
         case .spanish:
             return "La recertificación es cómo \(stateName) verifica que aún calificas. Básicamente es volver a solicitar — la mayoría de las preguntas te resultarán familiares."
@@ -293,7 +293,7 @@ enum SNAPStatusHomeStrings {
     /// this just slots the date into the surrounding phrase.
     static func recertDueLine(formattedDate: String, language: CivicaLanguage) -> String {
         switch language {
-        case .english: return "Due by \(formattedDate)"
+        case .english, .mandarin, .vietnamese, .tagalog: return "Due by \(formattedDate)"
         case .spanish: return "Vence el \(formattedDate)"
         }
     }
@@ -343,7 +343,7 @@ enum SNAPStatusHomeStrings {
         let portal = SNAPAgencyDirectory.portalName(for: stateCode)
         let portalLabel = portal.isEmpty ? "your state portal" : portal
         switch language {
-        case .english: return "Open \(portalLabel)"
+        case .english, .mandarin, .vietnamese, .tagalog: return "Open \(portalLabel)"
         case .spanish: return "Abrir \(portalLabel)"
         }
     }

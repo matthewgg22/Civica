@@ -321,7 +321,7 @@ enum SNAPDataPrivacyStrings {
 
     static func sectionsCompleted(completed: Int, total: Int, language: CivicaLanguage) -> String {
         switch language {
-        case .english: return completed == 0
+        case .english, .mandarin, .vietnamese, .tagalog: return completed == 0
             ? "Nothing yet"
             : "\(completed) of \(total) sections"
         case .spanish: return completed == 0
@@ -332,7 +332,7 @@ enum SNAPDataPrivacyStrings {
 
     static func photosOnDevice(count: Int, language: CivicaLanguage) -> String {
         switch language {
-        case .english: return count == 0
+        case .english, .mandarin, .vietnamese, .tagalog: return count == 0
             ? "None on device"
             : (count == 1 ? "1 photo on device" : "\(count) photos on device")
         case .spanish: return count == 0
@@ -344,27 +344,27 @@ enum SNAPDataPrivacyStrings {
     static func statusLabel(status: SNAPApplicationStatus, language: CivicaLanguage, stateCode: String? = nil) -> String {
         let agency = SNAPAgencyDirectory.agencyShortName(for: stateCode, language: language)
         switch (status, language) {
-        case (.notStarted, .english):              return "Not started"
+        case (.notStarted, .english), (.notStarted, .mandarin), (.notStarted, .vietnamese), (.notStarted, .tagalog):              return "Not started"
         case (.notStarted, .spanish):              return "No iniciado"
-        case (.screenerInProgress, .english):      return "Screener in progress"
+        case (.screenerInProgress, .english), (.screenerInProgress, .mandarin), (.screenerInProgress, .vietnamese), (.screenerInProgress, .tagalog):      return "Screener in progress"
         case (.screenerInProgress, .spanish):      return "Evaluación en curso"
-        case (.screenerComplete, .english):        return "Screener complete"
+        case (.screenerComplete, .english), (.screenerComplete, .mandarin), (.screenerComplete, .vietnamese), (.screenerComplete, .tagalog):        return "Screener complete"
         case (.screenerComplete, .spanish):        return "Evaluación completada"
-        case (.packetGenerated, .english):         return "Packet generated"
+        case (.packetGenerated, .english), (.packetGenerated, .mandarin), (.packetGenerated, .vietnamese), (.packetGenerated, .tagalog):         return "Packet generated"
         case (.packetGenerated, .spanish):         return "Paquete generado"
-        case (.submittedToState, .english):        return "Submitted to \(agency)"
+        case (.submittedToState, .english), (.submittedToState, .mandarin), (.submittedToState, .vietnamese), (.submittedToState, .tagalog):        return "Submitted to \(agency)"
         case (.submittedToState, .spanish):        return "Enviado a \(agency)"
-        case (.documentsRequested, .english):      return "Documents requested by \(agency)"
+        case (.documentsRequested, .english), (.documentsRequested, .mandarin), (.documentsRequested, .vietnamese), (.documentsRequested, .tagalog):      return "Documents requested by \(agency)"
         case (.documentsRequested, .spanish):      return "Documentos solicitados por \(agency)"
-        case (.interviewScheduled, .english):      return "Interview scheduled"
+        case (.interviewScheduled, .english), (.interviewScheduled, .mandarin), (.interviewScheduled, .vietnamese), (.interviewScheduled, .tagalog):      return "Interview scheduled"
         case (.interviewScheduled, .spanish):      return "Entrevista programada"
-        case (.interviewCompleted, .english):      return "Interview completed"
+        case (.interviewCompleted, .english), (.interviewCompleted, .mandarin), (.interviewCompleted, .vietnamese), (.interviewCompleted, .tagalog):      return "Interview completed"
         case (.interviewCompleted, .spanish):      return "Entrevista completada"
-        case (.decisionApproved, .english):        return "Approved"
+        case (.decisionApproved, .english), (.decisionApproved, .mandarin), (.decisionApproved, .vietnamese), (.decisionApproved, .tagalog):        return "Approved"
         case (.decisionApproved, .spanish):        return "Aprobado"
-        case (.decisionDenied, .english):          return "Denied"
+        case (.decisionDenied, .english), (.decisionDenied, .mandarin), (.decisionDenied, .vietnamese), (.decisionDenied, .tagalog):          return "Denied"
         case (.decisionDenied, .spanish):          return "Denegado"
-        case (.recertDue, .english):               return "Recertification due"
+        case (.recertDue, .english), (.recertDue, .mandarin), (.recertDue, .vietnamese), (.recertDue, .tagalog):               return "Recertification due"
         case (.recertDue, .spanish):               return "Recertificación pendiente"
         }
     }
@@ -385,7 +385,7 @@ enum SNAPDataPrivacyStrings {
     static func sharedWithStateTitle(stateCode: String?, language: CivicaLanguage) -> String {
         let agency = SNAPAgencyDirectory.agencyFullName(for: stateCode, language: language)
         switch language {
-        case .english: return "\(agency) has your application"
+        case .english, .mandarin, .vietnamese, .tagalog: return "\(agency) has your application"
         case .spanish: return "\(agency) tiene tu solicitud"
         }
     }
@@ -395,7 +395,7 @@ enum SNAPDataPrivacyStrings {
         let agency = SNAPAgencyDirectory.agencyShortName(for: stateCode, language: language)
         let portalRef = portal.isEmpty ? (language == .english ? "the state portal" : "el portal estatal") : portal
         switch language {
-        case .english:
+        case .english, .mandarin, .vietnamese, .tagalog:
             return "Once an application is submitted to \(portalRef), it becomes the state's record. Civica can't pull that back — only \(agency) can change or close it."
         case .spanish:
             return "Una vez que la solicitud se envía a \(portalRef), se convierte en el registro del estado. Civica no puede recuperarla — solo \(agency) puede cambiarla o cerrarla."

@@ -368,7 +368,7 @@ struct CivicaQuestionScreen<Affordance: View>: View {
     /// sheet level without re-touching this file.
     private var helpMarkerAccessibilityLabel: String {
         switch language {
-        case .english: return "Help with this question"
+        case .english, .mandarin, .vietnamese, .tagalog: return "Help with this question"
         case .spanish: return "Ayuda con esta pregunta"
         }
     }
