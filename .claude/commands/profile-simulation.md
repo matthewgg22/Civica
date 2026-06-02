@@ -1,10 +1,15 @@
 ---
-description: Run the Civica SNAP profile-harness; grades the rules engine against the v0.6 test-profile oracle.
+description: Run the Civica SNAP profile simulation; grades the rules engine against the v0.6 test-profile oracle.
 ---
 
-Run the SNAP profile-harness against the v0.6 fixture and surface the
+Run the SNAP profile simulation against the v0.6 fixture and surface the
 markdown report. This grades **engine-vs-oracle agreement** — it is NOT a
 payment-error-rate calculator. Per-element pass rate is the headline.
+
+> **Naming note:** the slash command surface is `/profile-simulation`. The
+> underlying tool keeps its package name `@civica/profile-harness` at
+> `tools/profile-harness/` (renaming the package would churn imports +
+> the mutation-score driver). Both names refer to the same thing.
 
 ## Behavior
 
