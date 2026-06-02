@@ -161,9 +161,13 @@ struct SNAPAgencyDirectoryTests {
         #expect(codes.contains("(415)"))
     }
 
-    @Test func caseworkerAreaCodesMA() {
+    @Test func caseworkerAreaCodesMACoversProjectBreadCatchment() {
+        // MA list must cover Boston (617), Springfield/Western MA (413),
+        // Worcester (508) — the three regions Project Bread serves.
         let codes = SNAPAgencyDirectory.caseworkerAreaCodes(for: "MA")
-        #expect(codes == ["(617)", "(508)"])
+        #expect(codes.contains("(617)"))
+        #expect(codes.contains("(413)"))
+        #expect(codes.contains("(508)"))
     }
 
     @Test func caseworkerAreaCodesUnknownIsEmpty() {
@@ -171,13 +175,15 @@ struct SNAPAgencyDirectoryTests {
     }
 
     @Test func caseworkerAreaCodesInlineEnglishUsesOr() {
+        // Inline renders codes[0] + " or " + codes[1] — the Boston +
+        // Springfield pair brackets MA's bimodal geography.
         let value = SNAPAgencyDirectory.caseworkerAreaCodesInline(for: "MA", language: .english)
-        #expect(value == "(617) or (508)")
+        #expect(value == "(617) or (413)")
     }
 
     @Test func caseworkerAreaCodesInlineSpanishUsesO() {
         let value = SNAPAgencyDirectory.caseworkerAreaCodesInline(for: "MA", language: .spanish)
-        #expect(value == "(617) o (508)")
+        #expect(value == "(617) o (413)")
     }
 
     @Test func caseworkerAreaCodesInlineUnknownIsEmpty() {

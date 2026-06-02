@@ -17,9 +17,14 @@ enum SNAPAgencyDirectory {
 
     /// Two-letter USPS code for the current launch state. Surfaces
     /// that need to display agency copy but don't yet have a draft
-    /// state in scope fall back to this. When the launch state
-    /// changes, edit this single line.
-    static let launchStateCode: String = "CA"
+    /// state in scope fall back to this.
+    ///
+    /// Reads from `LaunchStateConfig.current` so the value can be
+    /// flipped at runtime (server-side feature flag, test override,
+    /// or operator-set UserDefaults) without recompiling. Default is
+    /// "CA" per the 2026-05-13 launch-state decision; MA-pilot builds
+    /// flip to "MA" via the feature-flag cache.
+    static var launchStateCode: String { LaunchStateConfig.current }
 
     /// Short agency name suitable for inline mention
     /// ("If <agency> approves your application…"). Use this when
@@ -226,7 +231,12 @@ enum SNAPAgencyDirectory {
             // The five most populous CalFresh-serving counties.
             return ["(213)", "(415)", "(510)", "(619)", "(916)"]
         case "MA":
-            return ["(617)", "(508)"]
+            // The five most populous MA SNAP-serving regions, covering
+            // Project Bread's primary catchment (Boston, Springfield,
+            // Worcester, North Shore, Boston suburbs). 617 + 413 are
+            // the inline-displayed pair — they bracket MA's bimodal
+            // geography (Greater Boston + Western MA).
+            return ["(617)", "(413)", "(508)", "(781)", "(978)"]
         default:
             return []
         }
