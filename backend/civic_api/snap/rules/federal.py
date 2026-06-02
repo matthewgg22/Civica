@@ -31,8 +31,10 @@ from .interfaces import (
     BenefitCalculationDetail,
 )
 from .immigration import resolve_immigration
+from .income_adjustments import exclude_minor_student_earnings
 from .parameters import params_for
 from .proration import countable_household
+from .state_parameters import state_params_for
 from .work_requirement import resolve_work_requirements
 from .poverty_guidelines import (
     max_allotment_for,
@@ -61,9 +63,11 @@ class FederalSNAPRules:
 
     def determine_eligibility(self, household: Household) -> EligibilityResult:
         # Pre-transforms — each identity when its fields are unset, so ordinary
-        # determinations are byte-identical: §10108 immigration flags ineligible
-        # noncitizens for regime-B exclusion; §10102 ABAWD timeout flags timed-out
-        # members for regime-A exclusion; §16 proration then collapses to the countable view.
+        # determinations are byte-identical: §20 minor-student earnings exclusion;
+        # §10108 immigration flags ineligible noncitizens for regime-B exclusion;
+        # §10102 ABAWD timeout flags timed-out members for regime-A exclusion; §16
+        # proration then collapses to the countable view.
+        household = exclude_minor_student_earnings(household)
         household = resolve_immigration(household, self.effective_date)
         household = resolve_work_requirements(household, self.effective_date)
         household = countable_household(household)
@@ -262,7 +266,12 @@ class FederalSNAPRules:
         if household.has_elderly_or_disabled:
             raw_medical = household.expenses.medical_out_of_pocket_elderly_disabled
             if raw_medical > Decimal("35"):
-                medical = raw_medical - Decimal("35")
+                itemized = raw_medical - Decimal("35")
+                # Standard medical deduction (state option): take the flat standard, or the
+                # itemized excess-over-$35 when that is higher. Federal/no-standard states
+                # keep the itemized excess only — so those determinations are unchanged.
+                standard = state_params_for(household.state).standard_medical_deduction
+                medical = max(standard, itemized) if standard is not None else itemized
 
         # Excess shelter: shelter costs above 50% of (gross - earned_deduction
         # - standard_deduction - dep_care - medical - child_support), capped
