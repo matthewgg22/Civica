@@ -51,8 +51,8 @@ def test_tier_weight_near_edge_vs_mid():
     assert tier_weight(Decimal("8.0")) == Decimal("3")    # at a §10105 tier step
     assert tier_weight(Decimal("7.0")) == Decimal("1")    # mid-tier
     assert tier_weight(None) == Decimal("1")              # unknown → neutral
-    assert tier_weight(Decimal("13.32")) == Decimal("3")  # the exemption cliff is "live"
-    assert tier_weight(Decimal("15.0")) == Decimal("0")   # already exempt → no marginal liability
+    assert tier_weight(Decimal("13.32")) == Decimal("3")  # near the §10105 delay cliff → "live"
+    assert tier_weight(Decimal("15.0")) == Decimal("0")   # cost-share delayed (FY2029/30) → ~0 near-term liability
 
 
 def _unit(value):
