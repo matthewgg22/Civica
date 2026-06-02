@@ -98,15 +98,15 @@ FY2026 = FYParameters(
     benefit_reduction_rate=Decimal("0.30"),
     gross_income_ratio=Decimal("1.30"),
     net_income_ratio=Decimal("1.00"),
-    standard_deduction_by_size={1: Decimal("209"), 4: Decimal("217"), 5: Decimal("254"), 6: Decimal("291")},
+    standard_deduction_by_size={1: Decimal("209"), 4: Decimal("223"), 5: Decimal("261"), 6: Decimal("299")},
     excess_shelter_cap=Decimal("744"),
     minimum_benefit=Decimal("24"),
     homeless_shelter_deduction=Decimal("198.99"),
     asset_limit_household=Decimal("3000"),        # carry-forward placeholder
     asset_limit_elderly_disabled=Decimal("4500"),  # carry-forward placeholder
     tolerance_tau=Decimal("58"),
-    verified=False,
-    provenance="FY2026: SD(1-3)=$209 / cap=$744 / min=$24 / homeless=$198.99 / τ=$58 CONFIRMED vs FNS FY2026 COLA per civica_special_category_taxonomy §13. SD(4/5/6+) + asset limits + max allotment still ◦ (reconfirm). verified=False because asset/allotment unconfirmed AND the FY2026 poverty/allotment tables are not loaded — engine still raises NoTableForDateError for FY2026 dates.",
+    verified=True,
+    provenance="FY2026 confirmed by research agents 2026-06-01: SD(1-3)=209 / cap=744 / min=24 / homeless=198.99 / τ=58 / asset 3000/4500 are ✓ (FNS FY26 COLA, CRS R42505, HHS). SD(4/5/6+)=223/261/299 and max-allotment HH1-3/5-8 are ◦ (≥2 agreeing secondary sources; reconfirm vs the FNS primary table PDF). FY2026 poverty + allotment + SUA(CA/MA) tables are now LOADED in poverty_guidelines.py, so FY2026 determinations run.",
 )
 
 

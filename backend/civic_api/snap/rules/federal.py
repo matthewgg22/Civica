@@ -33,6 +33,7 @@ from .interfaces import (
 from .immigration import resolve_immigration
 from .parameters import params_for
 from .proration import countable_household
+from .work_requirement import resolve_work_requirements
 from .poverty_guidelines import (
     max_allotment_for,
     poverty_guideline_for,
@@ -59,10 +60,12 @@ class FederalSNAPRules:
         return f"federal-{self.effective_date.isoformat()}"
 
     def determine_eligibility(self, household: Household) -> EligibilityResult:
-        # §10108 immigration resolution (as-of date) flags ineligible noncitizens for
-        # regime-B exclusion; §16 proration then collapses to the countable view. Both
-        # are identity when their fields are unset, so ordinary determinations are unchanged.
+        # Pre-transforms — each identity when its fields are unset, so ordinary
+        # determinations are byte-identical: §10108 immigration flags ineligible
+        # noncitizens for regime-B exclusion; §10102 ABAWD timeout flags timed-out
+        # members for regime-A exclusion; §16 proration then collapses to the countable view.
         household = resolve_immigration(household, self.effective_date)
+        household = resolve_work_requirements(household, self.effective_date)
         household = countable_household(household)
         if not household.members:
             return EligibilityResult.ineligible(

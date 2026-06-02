@@ -12,10 +12,11 @@ the structured YAML described there. State BBCE/MCE variants cite the federal
 BBCE enabler (7 CFR 273.2(j)) as the primary authority; the state handbook
 (CDSS MPP Div 63 / 106 CMR) is the secondary authority in STATE_AUTHORITY.
 
-⚠ VALIDATE before relying on these in an audit response: the CFR subsection
-assignments are lifted from the engine's own docstrings, NOT re-verified against
-the live eCFR. Confirm 273.4 (citizenship), 273.5 (students), 273.9(a)(1)/(a)(2)
-(gross/net income), 273.8 (resources), and 273.2(j) (BBCE) against primary text.
+✓ VALIDATED 2026-06-01 (research agent, vs eCFR Title 7 Part 273): 273.4 (citizenship),
+273.5 (students), 273.9(a)(1)/(a)(2) (gross/net income), 273.8 (resources), 273.2(j) (BBCE),
+273.10(e) (allotment), 273.9(d)(6) (shelter), 273.2(f) (verification), 273.24 (ABAWD),
+273.11(c) (proration) — all current and correctly mapped. NOTE: OBBBA amends ABAWD scope
+statutorily; follow PL 119-21 §10102 over the 273.24 text where they diverge.
 """
 from __future__ import annotations
 

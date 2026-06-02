@@ -174,6 +174,14 @@ class HouseholdMember(BaseModel):
         "by rules/immigration.py (§10108). When set it drives eligibility/exclusion and "
         "overrides the coarse `citizenship` for the determination.",
     )
+    # §10102 work-requirement inputs. work_class is DERIVED (rules/work_requirement.py),
+    # never accepted as input — these are the facts the derivation reads.
+    monthly_work_hours: Decimal = Field(default=Decimal("0"), ge=0)
+    abawd_countable_months_used: int = Field(default=0, ge=0)
+    is_veteran: bool = False
+    is_former_foster_youth: bool = False   # ≤24; OBBBA-removed ABAWD exemption
+    is_tribal_member: bool = False         # OBBBA-added ABAWD exemption
+    in_abawd_waived_area: bool = False
 
 
 class IncomeSource(BaseModel):
