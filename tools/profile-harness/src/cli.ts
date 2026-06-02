@@ -20,12 +20,14 @@ import { runHarness } from "./runner.ts";
 import { renderMarkdownReport } from "./report.ts";
 import { SentinelAdapter } from "./adapters/sentinel.ts";
 import { TsSnapRulesAdapter } from "./adapters/ts-snap-rules.ts";
+import { SwiftCliAdapter } from "./adapters/swift-cli.ts";
 import { TS_MANIFEST_WAVE_A, TS_MANIFEST_WAVE_B } from "./capability-manifest.ts";
+import { renderDivergenceReport, runCrossEngine } from "./cross-engine.ts";
 import type { CapabilityManifest, EngineAdapter } from "./types.ts";
 
 interface ParsedArgs {
   state: string;
-  engine: "ts" | "sentinel";
+  engine: "ts" | "sentinel" | "swift" | "both";
   verdictOnly: boolean;
   fixturePath?: string;
   out?: string;
@@ -44,8 +46,8 @@ function parseArgs(argv: string[]): ParsedArgs {
     if (a === "--state") out.state = argv[++i];
     else if (a === "--engine") {
       const v = argv[++i];
-      if (v !== "ts" && v !== "sentinel") {
-        throw new Error(`Unknown engine: ${v}. Use ts | sentinel`);
+      if (v !== "ts" && v !== "sentinel" && v !== "swift" && v !== "both") {
+        throw new Error(`Unknown engine: ${v}. Use ts | sentinel | swift | both`);
       }
       out.engine = v;
     }
@@ -90,11 +92,42 @@ async function main(): Promise<void> {
     skipValidation: args.skipSchema,
   });
 
+  // ── --engine both: dual-run + divergence report ──────────────────────
+  if (args.engine === "both") {
+    const ts = new TsSnapRulesAdapter();
+    const swift = new SwiftCliAdapter();
+    const { tsSummary, swiftSummary, divergence } = runCrossEngine(suite, {
+      state: args.state,
+      tsEngine: ts,
+      swiftEngine: swift,
+      manifest: TS_MANIFEST_WAVE_B,
+      verdictOnly: args.verdictOnly,
+    });
+    const dualReport =
+      renderMarkdownReport(tsSummary) +
+      "\n\n# ── Swift engine run ──\n\n" +
+      renderMarkdownReport(swiftSummary) +
+      "\n\n" +
+      renderDivergenceReport(divergence);
+    if (args.out) {
+      writeFileSync(args.out, dualReport, "utf-8");
+      process.stderr.write(
+        `Report written to ${args.out}\nTS: ${tsSummary.totals.pass}/${tsSummary.totals.fail}/${tsSummary.totals.skip}  Swift: ${swiftSummary.totals.pass}/${swiftSummary.totals.fail}/${swiftSummary.totals.skip}  Divergence: ${divergence.count}\n`,
+      );
+    } else {
+      process.stdout.write(dualReport);
+    }
+    process.exit(tsSummary.totals.fail > 0 || swiftSummary.totals.fail > 0 ? 1 : 0);
+  }
+
   let engine: EngineAdapter;
   let manifest: CapabilityManifest;
   if (args.engine === "sentinel") {
     engine = new SentinelAdapter();
     manifest = TS_MANIFEST_WAVE_A;
+  } else if (args.engine === "swift") {
+    engine = new SwiftCliAdapter();
+    manifest = TS_MANIFEST_WAVE_B;
   } else {
     engine = new TsSnapRulesAdapter();
     manifest = TS_MANIFEST_WAVE_B;

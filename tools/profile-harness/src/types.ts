@@ -267,6 +267,8 @@ export interface HarnessRunSummary {
   must_reject_results: ProfileResult[];
   negative_control_results: ProfileResult[];
   fails: ProfileResult[];
+  /** All ProfileResults (used by cross-engine divergence sweep). */
+  all_results: ProfileResult[];
   skip_surfaces: Map<string, number>;  // surface -> #profiles blocked
   params_mismatch?: ParamsMismatch;
   generated_at_iso: string;

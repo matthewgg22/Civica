@@ -372,6 +372,7 @@ function summarize(
     must_reject_results,
     negative_control_results,
     fails,
+    all_results: results,
     skip_surfaces,
     params_mismatch,
     generated_at_iso: new Date().toISOString(),
