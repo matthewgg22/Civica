@@ -24,7 +24,7 @@ The taxonomy's sharpest engine warning (§17): analytic distance-to-130%-FPL **m
 | 3 — Disability (benefit-receipt defined) | 🟡 | engine | E/D lever set ✓ (no gross test, uncapped shelter, medical); separate-HH @165% FPL not modeled |
 | 4 — Household composition / **proration** | 🟡 | engine | **regime A/B proration (§16) BUILT** (`rules/proration.py`); boarders/roomers/sponsor-deeming still gap |
 | 5 — Living situation (homeless/destitute/shelter/GLA) | 🟡 | engine | homeless deduction param ✓ (not yet *applied*); **destitute calc mode** ❌; expedited partial |
-| 6 — Work-requirement / ABAWD | 🟡 | scoring | flip **class** scored `P(status err)×B*` ✓; **work_class derivation + the 3-in-36 clock** ❌ |
+| 6 — Work-requirement / ABAWD | ✅ | engine+scoring | **BUILT** (`rules/work_requirement.py`): `derive_work_class` (date-versioned ceiling 54→64 + OBBBA-removed homeless/veteran/foster exemptions + tribal/caregiver-u14/disabled); timeout → regime-A exclusion → §16 proration. Flip class also scored. 3-in-36 clock read from a field (not tracked); general-WR out of v1 |
 | 7 — Immigration (§10108) | ✅ | engine | **BUILT** (`rules/immigration.py`): granular `ImmigrationStatus`, §10108 removals with the **2025-07-04 point-in-time** boundary, DACA/undocumented/H-2A ineligible, T-visa contested (flagged), ineligible → regime-B proration. 5-yr-bar simplified (flag) |
 | 8 — Income-type | 🟡 | engine+scoring | earned/unearned/SE math ✓; minor-student exclusion, SE 40%-vs-actual, gig mileage ❌ |
 | 9 — Expense/deduction + **region** | ✅ | engine+scoring | shelter clamp + 4 regions ✓; medical (E/D) ✓; SUA-tier + §10104 internet-removed partial |
@@ -48,8 +48,18 @@ Highest error-coverage per unit effort, by wing:
 1. ~~**Proration A/B (§16)**~~ — ✅ **DONE** (2026-06-01): `rules/proration.py` countable-household transform; regime A full-count / regime B ×f; region-transition handled; 5-case policy deck green; no-exclusion path byte-identical.
 2. ~~**§10108 immigration + mixed-status (§7)**~~ — ✅ **DONE** (2026-06-01): `rules/immigration.py` resolver + the 2025-07-04 point-in-time boundary; ineligible noncitizens compose with regime-B proration; 7-case deck incl. the refugee pre/post-July-4 flip. 5-yr-bar + T-visa contested are flagged.
 3. ~~**Verification-status axis formalized (§11)**~~ — ✅ **DONE** (2026-06-01): `scoring/verification.py` (6-state vocabulary + evidence_class + verification-keyed P(error), postponed/refused highest), wired into `InputUncertainty.p_error` + the sweep's provenance bridge. Capturing true verification state in intake is the remaining §14 gap.
-4. **work_class derivation + ABAWD clock (§6)** — *determination*. Turns the scored flip class into a real derived determinant.
+4. ~~**work_class derivation + ABAWD clock (§6)**~~ — ✅ **DONE** (2026-06-01): `rules/work_requirement.py` derived work_class + date-versioned ABAWD seam + timeout→regime-A exclusion; 4-case deck incl. the 54→64 seam and the homeless/veteran removed-exemption flip.
 5. **§20 sub-mechanics** (minor-student exclusion, SE 40%-vs-actual, split-custody) — *determination*. Where QC error mass actually lives; each is small + high-frequency.
 6. **QC-universe exclusions (§21)** + **destitute/program modes (§19/§24)** + **Axis-13 access universe (§25)** — larger, sequence later.
 
-Everything above is gated on the same two unlocks already tracked: intake collection (per-member ages/citizenship — see [intake-collection-gap.md](intake-collection-gap.md)) and FY2026 reference tables ([fy2026-reference-tables.md](fy2026-reference-tables.md)). No determination runs on live data until those land.
+Everything above is gated on the same two unlocks already tracked: intake collection (per-member ages/citizenship — see [intake-collection-gap.md](intake-collection-gap.md)) and FY2026 reference tables ([fy2026-reference-tables.md](fy2026-reference-tables.md) — now LOADED). No determination runs on live data until intake collection lands.
+
+## Research-agent data + corrections (2026-06-01)
+
+Three independent agents retrieved CA / MA / federal rules + citations. Folded in:
+- **FY2026 federal (✓):** loaded — poverty $15,650+$5,500, allotment HH1–8, SD $209/$223/$261/$299, cap $744, homeless $198.99, min $24, asset $3,000/$4,500, τ $58. The MA `mass.gov` calculator showed **stale FY2025** ($204/$712); FNS-authoritative FY2026 is **$209/$744** — discrepancy resolved by the federal agent. ◦ cells (allotment HH1-3/5-8, SD 4/5/6) reconfirm vs the FNS primary table PDF.
+- **CA / MA SUA (loaded):** CA $663/$170/$20 · MA $890/$542/$62.
+- **§10105 (✓ CRS R48552):** 0/5/10/15% at <6/6–8/8–10/≥10%; the ~13.33% (PER×1.5≥20%) is a **start-DELAY (FY2029/30), not a permanent exemption** — `tier.py` corrected.
+- **CFR citations (✓ vs eCFR):** all 11 validated; `citations.py` flag upgraded. (OBBBA amends ABAWD statutorily — follow §10102 over 273.24 text.)
+- **Corrections to the taxonomy:** unborn child is **NOT** counted in CalFresh household size (taxonomy §20 said it is — CDSS MPP §63-402.142); MA disability standard lives at **106 CMR 361.210** (taxonomy §3 said 361.230, which is "Nonhousehold Members").
+- **State data captured for later wiring (not yet in the engine):** CA MCE 200% + asset waiver, MA BBCE 200% **calendar-basis** (eff ~Feb 1); CA standard medical deduction $150 / MA $155 (engine lacks a standard medical deduction); `se_calc_method` CA = 40%-or-actual (default 40%), MA = **actual** (no 40% option); CA LPIE student rule; CA RMP (12 opt-in counties); CFAP (state-funded, OBBBA 2026-04-01 caveat). These feed the §9/§8/§20 build items.

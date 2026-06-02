@@ -1,6 +1,8 @@
 # FY2026 SNAP reference tables — staging + load plan
 
-**Status:** staged (figures NOT yet loaded) · **Date:** 2026-06-01 · **Companion:** [snap-rules-matrix.md](snap-rules-matrix.md)
+**Status:** ✅ retrieved + LOADED (2026-06-01, via research agents) · **Date:** 2026-06-01 · **Companion:** [snap-rules-matrix.md](snap-rules-matrix.md)
+
+> **Update 2026-06-01:** the FY2026 figures were retrieved by research agents and **loaded** — `poverty_guidelines.py` now has FY2026 poverty ($15,650 + $5,500), max allotment (HH1–8), and SUA (CA $663/$170/$20 · MA $890/$542/$62); `parameters.py` FY2026 is confirmed (SD $209/$223/$261/$299, cap $744, homeless $198.99, min $24, τ $58, asset $3,000/$4,500). **FY2026 determinations now run.** ✓ items are FNS/HHS/CRS-primary; ◦ items (max-allotment HH1-3/5-8, SD 4/5/6) are ≥2-source-corroborated — reconfirm against the FNS primary table PDF before production. The original staging plan below is retained for provenance.
 
 The engine raises `NoTableForDateError` for any 2026-dated determination — [poverty_guidelines.py](../../backend/civic_api/snap/rules/poverty_guidelines.py) loads **FY2025 only** (effective 2024-10-01 → 2025-09-30). This is the documented deployment TODO at `poverty_guidelines.py:18`. Until FY2026 tables load, the shadow sweep counts 2026 packets as `skipped (no FY ref table)`.
 
