@@ -1,0 +1,17 @@
+{
+  "state": "MA",
+  "asOf": "2026-06-01",
+  "facts": {
+    "household": [
+      {"member_id": "m1", "age": 67, "role": "head", "elderly": true, "immigration": "citizen"}
+    ],
+    "income": [
+      {"member": "m1", "type": "unearned_rsdi", "amount": 1100, "freq": "monthly"},
+      {"member": "m1", "type": "wages", "amount": 1200, "freq": "monthly"}
+    ],
+    "shelter": {"rent": 700, "sua_tier": "HCSUA", "sua_amount": 914, "internet": 0, "homeless_deduction": false},
+    "deductions": {"dependent_care": 0, "medical_unreimbursed": 0, "child_support_paid": 0},
+    "assets": "n/a:not_authored",
+    "cat_elig": "NPA"
+  }
+}

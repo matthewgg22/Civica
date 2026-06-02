@@ -1,0 +1,16 @@
+{
+  "state": "CA",
+  "asOf": "2026-06-01",
+  "facts": {
+    "household": [
+      {"member_id": "m1", "age": 72, "role": "head", "elderly": true, "immigration": "citizen"}
+    ],
+    "income": [
+      {"member": "m1", "type": "ssi", "amount": 960, "freq": "monthly"}
+    ],
+    "shelter": {"rent": 700, "sua_tier": "LUA", "sua_amount": 170, "internet": 0, "homeless_deduction": false},
+    "deductions": {"dependent_care": 0, "medical_unreimbursed": 0, "child_support_paid": 0},
+    "assets": "n/a:categorical_no_asset_test",
+    "cat_elig": "pure_SSI"
+  }
+}

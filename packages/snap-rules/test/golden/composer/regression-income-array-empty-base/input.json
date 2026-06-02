@@ -1,0 +1,14 @@
+{
+  "state": "CA",
+  "asOf": "2026-06-01",
+  "facts": {
+    "household": [
+      {"member_id": "m1", "age": 35, "role": "head", "immigration": "citizen", "work_class": "gen_work_subject"}
+    ],
+    "income": [],
+    "shelter": {"rent": 800, "sua_tier": "HCSUA", "sua_amount": 663, "internet": 0, "homeless_deduction": false},
+    "deductions": {"dependent_care": 0, "medical_unreimbursed": 0, "child_support_paid": 0},
+    "assets": 200,
+    "cat_elig": "NPA"
+  }
+}

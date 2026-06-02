@@ -1,0 +1,5 @@
+{
+  "verdict": "DENY",
+  "benefit": null,
+  "reason_substring": "no_eligible_household_member"
+}
