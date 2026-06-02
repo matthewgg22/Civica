@@ -30,17 +30,12 @@ from .interfaces import (
     TestOutcome,
     BenefitCalculationDetail,
 )
+from .immigration import resolve_immigration
+from .parameters import params_for
+from .proration import countable_household
 from .poverty_guidelines import (
-    EARNED_INCOME_DEDUCTION_RATE,
-    FY25_ASSET_LIMIT_ELDERLY_DISABLED,
-    FY25_ASSET_LIMIT_HOUSEHOLD,
-    FY25_MAX_EXCESS_SHELTER_DEDUCTION_48,
-    GROSS_INCOME_TEST_RATIO,
-    NET_INCOME_TEST_RATIO,
     max_allotment_for,
-    minimum_benefit_for,
     poverty_guideline_for,
-    standard_deduction_for_size_fy25,
 )
 
 
@@ -64,6 +59,18 @@ class FederalSNAPRules:
         return f"federal-{self.effective_date.isoformat()}"
 
     def determine_eligibility(self, household: Household) -> EligibilityResult:
+        # §10108 immigration resolution (as-of date) flags ineligible noncitizens for
+        # regime-B exclusion; §16 proration then collapses to the countable view. Both
+        # are identity when their fields are unset, so ordinary determinations are unchanged.
+        household = resolve_immigration(household, self.effective_date)
+        household = countable_household(household)
+        if not household.members:
+            return EligibilityResult.ineligible(
+                reason="No eligible household members after exclusions.",
+                effective_date=self.effective_date,
+                rules_version=self.rules_version,
+                test_outcomes=[],
+            )
         outcomes: list[TestOutcome] = []
 
         # 1. Citizenship gate.
@@ -190,7 +197,7 @@ class FederalSNAPRules:
         table = poverty_guideline_for(self.effective_date)
         threshold = _round_dollar(
             table.monthly_for_household_size(household.household_size)
-            * GROSS_INCOME_TEST_RATIO
+            * params_for(self.effective_date).gross_income_ratio
         )
         actual = _round_dollar(household.income.gross_monthly_total)
         return TestOutcome(
@@ -206,7 +213,7 @@ class FederalSNAPRules:
         table = poverty_guideline_for(self.effective_date)
         threshold = _round_dollar(
             table.monthly_for_household_size(household.household_size)
-            * NET_INCOME_TEST_RATIO
+            * params_for(self.effective_date).net_income_ratio
         )
         actual = _round_dollar(net_monthly)
         return TestOutcome(
@@ -217,10 +224,11 @@ class FederalSNAPRules:
         )
 
     def _asset_test(self, household: Household) -> TestOutcome:
+        p = params_for(self.effective_date)
         limit = (
-            FY25_ASSET_LIMIT_ELDERLY_DISABLED
+            p.asset_limit_elderly_disabled
             if household.has_elderly_or_disabled
-            else FY25_ASSET_LIMIT_HOUSEHOLD
+            else p.asset_limit_household
         )
         actual = household.assets.countable_resources
         return TestOutcome(
@@ -238,8 +246,9 @@ class FederalSNAPRules:
         gross = household.income.gross_monthly_total
         earned = household.income.earned_monthly_total
 
-        earned_deduction = _round_dollar(earned * EARNED_INCOME_DEDUCTION_RATE)
-        standard_deduction = standard_deduction_for_size_fy25(household.household_size)
+        p = params_for(self.effective_date)
+        earned_deduction = _round_dollar(earned * p.earned_income_deduction_rate)
+        standard_deduction = p.standard_deduction(household.household_size)
 
         dep_care = household.expenses.dependent_care
         child_support = household.expenses.legally_obligated_child_support_paid
@@ -254,7 +263,7 @@ class FederalSNAPRules:
 
         # Excess shelter: shelter costs above 50% of (gross - earned_deduction
         # - standard_deduction - dep_care - medical - child_support), capped
-        # at FY25_MAX_EXCESS_SHELTER_DEDUCTION_48 unless household has an
+        # at the FY excess-shelter cap unless household has an
         # elderly or disabled member.
         adjusted_income = (
             gross - earned_deduction - standard_deduction - dep_care - medical - child_support
@@ -274,7 +283,7 @@ class FederalSNAPRules:
         elif household.has_elderly_or_disabled:
             excess_shelter = excess_shelter_raw
         else:
-            excess_shelter = min(excess_shelter_raw, FY25_MAX_EXCESS_SHELTER_DEDUCTION_48)
+            excess_shelter = min(excess_shelter_raw, p.excess_shelter_cap)
 
         net = (
             gross
@@ -288,14 +297,14 @@ class FederalSNAPRules:
         if net < 0:
             net = Decimal("0")
 
-        thirty_pct_net = _round_dollar(net * Decimal("0.30"))
+        thirty_pct_net = _round_dollar(net * p.benefit_reduction_rate)
         max_allot = max_allotment_for(self.effective_date).for_household_size(
             household.household_size
         )
         monthly_benefit = max_allot - thirty_pct_net
         # Federal minimum benefit for 1- and 2-person households.
         # Larger households can be approved with $0; small households cannot.
-        min_benefit = minimum_benefit_for(self.effective_date)
+        min_benefit = p.minimum_benefit
         if household.household_size <= 2 and Decimal("0") < monthly_benefit < min_benefit:
             monthly_benefit = min_benefit
         if monthly_benefit < 0:
