@@ -103,6 +103,17 @@ export function aggregateIncome(facts: Facts): IncomeAggregate {
     unearned = Math.max(0, unearned + earned);
     earned = 0;
   }
+  // Sponsor income deeming (7 CFR 273.11(j)): if any household member is
+  // sponsored AND facts.sponsor_income is set, deem the sponsor's income
+  // to the household as unearned. The full amount is added; indigence and
+  // other adjustments (273.11(j)(3)) are not yet modeled.
+  if (
+    typeof facts.sponsor_income === "number" &&
+    facts.sponsor_income > 0 &&
+    facts.household.some((m) => m.sponsored === true)
+  ) {
+    unearned += facts.sponsor_income;
+  }
   return {
     earned_total: earned,
     unearned_total: unearned,

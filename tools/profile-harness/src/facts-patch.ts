@@ -45,6 +45,11 @@ function setByDottedPath(
           `facts_patch path "${pathStr}" expected array at segment "${part}" but got ${typeof cur}`,
         );
       }
+      // Variant patches sometimes target an array index that's beyond
+      // the current array length (e.g. M23 patches income.0.* when the
+      // base profile has an empty income[] — variant intends to add the
+      // line). Pad with empty objects so the rest of the path resolves.
+      while (cur.length <= idx) cur.push({});
       cur = cur[idx];
     } else {
       if (cur === null || typeof cur !== "object") {

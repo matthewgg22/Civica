@@ -68,32 +68,33 @@ export const TS_MANIFEST_WAVE_A: CapabilityManifest = {
 };
 
 export const TS_MANIFEST_WAVE_B: CapabilityManifest = {
-  engine: "ts:snap-rules@wave-1-finish",
+  engine: "ts:snap-rules@wave-2",
   implemented: new Set<string>([
     "test.gross_net_fpl",
     "test.net_only",
     "eligibility.student",
     "eligibility.categorical",
+    "eligibility.immigration",       // gates/immigration.ts (Wave 2)
+    "eligibility.disqualification",  // gates/disqualifications.ts (Wave 2)
+    "household.composition",         // gates/composition.ts (Wave 2)
     "shelter.sua.HCSUA",
     "shelter.sua.LUA",
     "shelter.sua.phone",
     "shelter.uncapped",
     "shelter.homeless",
-    "shelter.internet",              // OBBBA §10104 cutoff in benefit-calc
+    "shelter.internet",
     "deductions.medical",
     "deductions.dependent_care",
     "deductions.child_support",
     "income.wages",
     "income.unearned",
-    "income.exclusion",              // isExcludedIncome filter in facts.ts
-    "workreq.abawd",                 // gates/abawd.ts wired in verdict.ts
-    "income.self_employment",        // SE treated as earned via federal default
+    "income.exclusion",
+    "workreq.abawd",
+    "income.self_employment",
   ]),
-  known_gaps: new Set<string>([
-    "eligibility.immigration",       // needs immigration module (Wave 2)
-    "eligibility.disqualification",  // needs HH disqual module (Wave 2)
-    "household.composition",         // proration etc. (Wave 2)
-  ]),
+  // Wave 2 unlocks the full taxonomy. Any new surface that lands in
+  // requires_taxonomy.json after this point becomes the next gap.
+  known_gaps: new Set<string>([]),
 };
 
 /**

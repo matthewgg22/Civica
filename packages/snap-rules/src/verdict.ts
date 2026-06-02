@@ -21,6 +21,9 @@ import { hasElderlyOrDisabled, householdSize } from "./facts.ts";
 import { evaluateCategorical } from "./gates/categorical.ts";
 import { evaluateStudentGate } from "./gates/student.ts";
 import { evaluateAbawd } from "./gates/abawd.ts";
+import { evaluateImmigration, anySponsored } from "./gates/immigration.ts";
+import { evaluateDisqualifications } from "./gates/disqualifications.ts";
+import { evaluateComposition } from "./gates/composition.ts";
 import {
   grossIncomeTest,
   netIncomeTest,
@@ -79,6 +82,33 @@ export function composeVerdict(facts: Facts, state: string, asOf: Date): Verdict
   }
 
   const trace: Record<string, unknown> = {};
+
+  // ── Immigration eligibility (per Python source `_citizenship_test`) ──
+  // First gate in regulatory order: if no member is in an eligible
+  // citizenship/immigration category, HH is denied immediately.
+  const imm = evaluateImmigration(facts, asOf);
+  trace.immigration = imm;
+  if (!imm.passes) {
+    return { verdict: "DENY", benefit: null, reason: imm.reason, trace };
+  }
+
+  // ── HH-level disqualifications (lottery / IPV / fleeing felon / drug) ─
+  // Per 7 CFR 272.17, 273.16, 273.11(m,n). State-option drug-felony ban
+  // is honored via policy.drug_felony_ban.
+  const disq = evaluateDisqualifications(facts, state, asOf);
+  trace.disqualifications = disq;
+  if (!disq.passes) {
+    return { verdict: "DENY", benefit: null, reason: disq.reason, trace };
+  }
+
+  // ── Household composition (7 CFR 273.1) ──────────────────────────────
+  // Variant-driven: mandatory under-22 combination, coresident-income
+  // deeming for elderly separate HH, boarder vs roomer split.
+  const comp = evaluateComposition(facts);
+  trace.composition = comp;
+  if (!comp.passes) {
+    return { verdict: "DENY", benefit: null, reason: comp.reason, trace };
+  }
 
   // ── Categorical eligibility ──────────────────────────────────────────
   const cat = evaluateCategorical(facts);
