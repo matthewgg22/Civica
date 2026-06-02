@@ -136,6 +136,24 @@ function runVariantProfile(
   const result = engine.composeVerdict(patchedFacts, state, asOf);
 
   if (result.not_implemented_surfaces && result.not_implemented_surfaces.length > 0) {
+    // Composer-threw sentinels are engine bugs, NOT unimplemented surfaces.
+    // Classify as FAIL with the throw message so the bug is visible in the
+    // failures table instead of being hidden in the SKIP roadmap.
+    // (See 2026-06-02 audit: 4 type-missing crashes were silent SKIPs.)
+    if (isComposerCrash(result.not_implemented_surfaces)) {
+      return {
+        profile_id: `${profile.id}[${variantKey}]`,
+        legacy_id: `${profile.legacy_id}[${variantKey}]`,
+        label: `${profile.label} · ${variantKey}${variant.note ? " — " + variant.note : ""}`,
+        state,
+        kind: "FAIL",
+        failure_detail: `composer threw: ${result.reason ?? "(no message)"}`,
+        citation: profile.citation,
+        error_element: profile.error_surface.element ?? undefined,
+        negative_control: profile.negative_control,
+        must_reject: profile.must_reject,
+      };
+    }
     return {
       ...buildSkipResult(profile, state, result.not_implemented_surfaces),
       profile_id: `${profile.id}[${variantKey}]`,
@@ -190,6 +208,21 @@ function runStatefulProfile(
   const result = engine.composeVerdict(profile.facts, state, asOf);
 
   if (result.not_implemented_surfaces && result.not_implemented_surfaces.length > 0) {
+    // Composer crashes get classified as FAIL — see comment in runVariantProfile.
+    if (isComposerCrash(result.not_implemented_surfaces)) {
+      return {
+        profile_id: profile.id,
+        legacy_id: profile.legacy_id,
+        label: profile.label,
+        state,
+        kind: "FAIL",
+        failure_detail: `composer threw: ${result.reason ?? "(no message)"}`,
+        citation: profile.citation,
+        error_element: profile.error_surface.element ?? undefined,
+        negative_control: profile.negative_control,
+        must_reject: profile.must_reject,
+      };
+    }
     return buildSkipResult(profile, state, result.not_implemented_surfaces);
   }
 
@@ -243,6 +276,25 @@ function buildFailDetail(
   }
   if (reason) parts.push(`reason=${reason}`);
   return parts.join("; ");
+}
+
+/**
+ * Detects the `__composer-threw__` / `__swift-cli-error__` / similar
+ * sentinels that adapters use to wrap engine crashes. These represent
+ * engine bugs and must be classified as FAIL, never SKIP — otherwise
+ * a crash hides in the SKIP roadmap as "engine surface not implemented"
+ * instead of being visible in the failures table.
+ */
+function isComposerCrash(surfaces: string[]): boolean {
+  // `__composer-threw__` — uncaught exception in the composer.
+  // `__invalid-input-shape__` — Zod facts-schema rejection at the door.
+  // Both indicate the engine bailed on a Facts shape; classify as FAIL,
+  // never SKIP. (Engine bugs vs unimplemented surfaces.)
+  return surfaces.some(
+    (s) =>
+      (s.startsWith("__") && s.includes("threw")) ||
+      s === "__invalid-input-shape__",
+  );
 }
 
 function buildSkipResult(
