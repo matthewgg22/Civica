@@ -136,7 +136,7 @@ export function computeBenefit(facts: Facts, state: string, asOf: Date): Benefit
   if (net.lt(ZERO)) net = ZERO;
 
   // Benefit calc.
-  const thirtyPctNet = net.mul("0.30").roundDollar();
+  const thirtyPctNet = net.mul(0.30).roundDollar();
   const maxAllot = maxAllotmentFor(size, asOf);
   let benefit = maxAllot.sub(thirtyPctNet);
   if (benefit.lt(ZERO)) benefit = ZERO;

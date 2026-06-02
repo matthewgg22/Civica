@@ -40,7 +40,11 @@ export type Verdict = "APPROVE" | "DENY";
 export interface VerdictResult {
   verdict?: Verdict;
   benefit?: number | null;
-  reason?: string;
+  // `reason` is `string | undefined` (not just `string?`) so gate
+  // results that bubble up an optional reason — e.g. `gate.reason` typed
+  // as `string | undefined` — type-check cleanly under
+  // tsconfig.json's `exactOptionalPropertyTypes: true`.
+  reason?: string | undefined;
   not_implemented_surfaces?: string[];
   trace?: Record<string, unknown>;
 }

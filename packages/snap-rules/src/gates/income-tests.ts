@@ -24,7 +24,11 @@ export interface IncomeTestResult {
   passes: boolean;
   threshold: number;
   actual: number;
-  reason?: string;
+  // Under `exactOptionalPropertyTypes: true`, plain `?:` excludes explicit
+  // `undefined` values. `| undefined` lets gates assign a value computed
+  // from a possibly-undefined source without each call site having to
+  // narrow first.
+  reason?: string | undefined;
 }
 
 export function grossIncomeTest(facts: Facts, state: string, asOf: Date): IncomeTestResult {

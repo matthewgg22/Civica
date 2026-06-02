@@ -15,15 +15,20 @@ import { snapshotFor } from "./federal-tables.ts";
 import { statePolicyFor } from "./states.ts";
 
 export interface EngineParams {
-  sd?: Record<string, number>;
-  fpl?: Record<string, number>;
-  max_allotment?: Record<string, number>;
-  asset_limit?: number;
-  asset_limit_ed?: number;
-  shelter_cap?: number;
-  min_benefit?: number;
-  homeless_ded?: number;
-  sua?: Record<string, number>;
+  // Each field is `?: T | undefined` so this struct can be populated
+  // from intermediate computations that may yield undefined (e.g.
+  // state-without-authored-SUA), without each assignment having to
+  // narrow first. Required by tsconfig.base's
+  // `exactOptionalPropertyTypes: true`.
+  sd?: Record<string, number> | undefined;
+  fpl?: Record<string, number> | undefined;
+  max_allotment?: Record<string, number> | undefined;
+  asset_limit?: number | undefined;
+  asset_limit_ed?: number | undefined;
+  shelter_cap?: number | undefined;
+  min_benefit?: number | undefined;
+  homeless_ded?: number | undefined;
+  sua?: Record<string, number> | undefined;
 }
 
 export function getEngineParams(state: string, asOf: Date): EngineParams {

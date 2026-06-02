@@ -299,5 +299,7 @@ export { composeVerdict } from "./verdict.ts";
 export type { Verdict, VerdictResult } from "./verdict.ts";
 export { computeBenefit } from "./benefit-calc.ts";
 export type { BenefitCalcDetail } from "./benefit-calc.ts";
-export type { Facts, Member, IncomeLine, Shelter, Deductions, SUATier } from "./facts.ts";
+// SUATier already re-exported from "./sua" above; the facts.ts variant
+// uses the same name + members so consumers don't notice the difference.
+export type { Facts, Member, IncomeLine, Shelter, Deductions } from "./facts.ts";
 export { getEngineParams } from "./constants/index.ts";

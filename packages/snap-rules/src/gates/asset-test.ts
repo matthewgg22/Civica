@@ -11,9 +11,9 @@ import { statePolicyFor } from "../constants/states.ts";
 
 export interface AssetTestResult {
   passes: boolean;
-  threshold?: number;
-  actual?: number;
-  reason?: string;
+  threshold?: number | undefined;
+  actual?: number | undefined;
+  reason?: string | undefined;
   /** True if the test was waived (BBCE, asset_waiver, or cat-elig path). */
   waived: boolean;
 }

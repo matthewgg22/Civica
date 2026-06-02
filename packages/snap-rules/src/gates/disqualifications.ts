@@ -16,9 +16,9 @@ import { statePolicyFor } from "../constants/states.ts";
 
 export interface DisqualResult {
   passes: boolean;
-  reason?: string;
+  reason?: string | undefined;
   /** Member IDs disqualified at the member level (for benefit proration). */
-  disqualified_member_ids?: string[];
+  disqualified_member_ids?: string[] | undefined;
 }
 
 export function evaluateDisqualifications(
