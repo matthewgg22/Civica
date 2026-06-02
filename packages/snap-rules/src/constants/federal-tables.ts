@@ -105,7 +105,13 @@ const FY26: FederalTableSnapshot = {
     [7, new Decimal("1571")],
     [8, new Decimal("1789")],
   ]),
-  max_allotment_each_additional: new Decimal("224"),
+  // FNS COLA FY26 memo (verified live 2026-06-02): +$218 per additional
+  // member beyond HH8. Prior value "224" was a $6 over-credit; dormant
+  // in test scope because Python generator stops at HH8 and v0.6
+  // fixture tops at HH7 (profile P60). Surfaced during the oracle
+  // contamination sanity check
+  // (docs/findings/2026-06-02-snap-oracle-contamination-sanity-check.md).
+  max_allotment_each_additional: new Decimal("218"),
   standard_deduction: new Map<number, Decimal>([
     [1, new Decimal("209")],
     [2, new Decimal("209")],
