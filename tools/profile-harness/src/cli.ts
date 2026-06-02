@@ -33,6 +33,8 @@ interface ParsedArgs {
   fixturePath?: string;
   out?: string;
   skipSchema: boolean;
+  /** Emit machine-readable JSON instead of markdown (single-engine modes only). */
+  json: boolean;
 }
 
 function parseArgs(argv: string[]): ParsedArgs {
@@ -41,6 +43,7 @@ function parseArgs(argv: string[]): ParsedArgs {
     engine: "ts",
     verdictOnly: false,
     skipSchema: false,
+    json: false,
   };
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
@@ -59,6 +62,7 @@ function parseArgs(argv: string[]): ParsedArgs {
     else if (a === "--fixture") out.fixturePath = argv[++i];
     else if (a === "--out") out.out = argv[++i];
     else if (a === "--skip-schema") out.skipSchema = true;
+    else if (a === "--json") out.json = true;
     else if (a === "-h" || a === "--help") {
       console.log(HELP);
       process.exit(0);
@@ -182,6 +186,21 @@ async function main(): Promise<void> {
     manifest,
     verdictOnly: args.verdictOnly,
   });
+
+  if (args.json) {
+    // Machine-readable mode: emit full HarnessRunSummary JSON. Used by
+    // tools/profile-harness/src/mutation-score/ to compare baseline vs
+    // mutated engine output per profile. Set Maps to arrays so JSON
+    // serializes cleanly.
+    const jsonSafe = {
+      ...summary,
+      skip_surfaces: Array.from(summary.skip_surfaces.entries()),
+    };
+    const out = JSON.stringify(jsonSafe, null, 2);
+    if (args.out) writeFileSync(args.out, out, "utf-8");
+    else process.stdout.write(out);
+    process.exit(0);
+  }
 
   const report = renderMarkdownReport(summary);
   if (args.out) {

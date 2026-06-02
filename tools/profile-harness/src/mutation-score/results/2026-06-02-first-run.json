@@ -1,0 +1,1967 @@
+{
+  "generated_at_iso": "2026-06-02T22:25:51.242Z",
+  "mutations_version": "1.0.0",
+  "mutations_as_of": "2026-06-02",
+  "baseline": {
+    "CA": {
+      "pass": 123,
+      "fail": 6,
+      "skip": 0,
+      "total": 129
+    },
+    "KS": {
+      "pass": 2,
+      "fail": 32,
+      "skip": 95,
+      "total": 129
+    }
+  },
+  "results": [
+    {
+      "id": "M01",
+      "citation": "7 CFR 273.10(e)",
+      "bucket": "benefit",
+      "description": "Benefit reduction rate 0.30 → 0.32 (determinative on every positive-net benefit row)",
+      "baseline_totals": {
+        "CA": {
+          "pass": 123,
+          "fail": 6,
+          "skip": 0
+        }
+      },
+      "mutated_totals": {
+        "CA": {
+          "pass": 82,
+          "fail": 47,
+          "skip": 0
+        }
+      },
+      "flipped_profiles": [
+        {
+          "legacy_id": "A01",
+          "profile_id": "A01-single-mother-2-kids-low-wage",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "FAIL",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 759,
+          "mutated_benefit": 757,
+          "flipped": true
+        },
+        {
+          "legacy_id": "A04",
+          "profile_id": "A04-working-family-of-4",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "FAIL",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 804,
+          "mutated_benefit": 791,
+          "flipped": true
+        },
+        {
+          "legacy_id": "A02",
+          "profile_id": "A02-elderly-woman-ssi-only",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "FAIL",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 221,
+          "mutated_benefit": 216,
+          "flipped": true
+        },
+        {
+          "legacy_id": "A09",
+          "profile_id": "A09-lpr-40-quarters-low-income",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "FAIL",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 451,
+          "mutated_benefit": 445,
+          "flipped": true
+        },
+        {
+          "legacy_id": "M01",
+          "profile_id": "M01-gross-at-165-fpl-bbce-flip",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "FAIL",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 119,
+          "mutated_benefit": 74,
+          "flipped": true
+        },
+        {
+          "legacy_id": "M02",
+          "profile_id": "M02-assets-3-500-asset-test-flip",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "FAIL",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 496,
+          "mutated_benefit": 493,
+          "flipped": true
+        },
+        {
+          "legacy_id": "M03",
+          "profile_id": "M03-gross-just-under-130",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "FAIL",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 176,
+          "mutated_benefit": 135,
+          "flipped": true
+        },
+        {
+          "legacy_id": "M04",
+          "profile_id": "M04-gross-just-over-130",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "FAIL",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 256,
+          "mutated_benefit": 237,
+          "flipped": true
+        },
+        {
+          "legacy_id": "M06",
+          "profile_id": "M06-net-income-at-the-100-fpl-edge",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "FAIL",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 327,
+          "mutated_benefit": 296,
+          "flipped": true
+        },
+        {
+          "legacy_id": "M07",
+          "profile_id": "M07-mixed-wage-self-employment-near-limit",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "FAIL",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 423,
+          "mutated_benefit": 399,
+          "flipped": true
+        },
+        {
+          "legacy_id": "M08",
+          "profile_id": "M08-farm-self-employment-loss-offset",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "FAIL",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 424,
+          "mutated_benefit": 416,
+          "flipped": true
+        },
+        {
+          "legacy_id": "M09",
+          "profile_id": "M09-shelter-crossing-744-cap-non-e-d",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "FAIL",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 687,
+          "mutated_benefit": 680,
+          "flipped": true
+        },
+        {
+          "legacy_id": "M11",
+          "profile_id": "M11-low-no-shelter-household-s-0",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "FAIL",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 177,
+          "mutated_benefit": 152,
+          "flipped": true
+        },
+        {
+          "legacy_id": "M18",
+          "profile_id": "M18-mixed-status-undoc-parent-citizen-kids",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "FAIL",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 591,
+          "mutated_benefit": 578,
+          "flipped": true
+        },
+        {
+          "legacy_id": "M20",
+          "profile_id": "M20-cofa-migrant-retained-post-obbba",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "FAIL",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 520,
+          "mutated_benefit": 518,
+          "flipped": true
+        },
+        {
+          "legacy_id": "P53[medical_30]",
+          "profile_id": "P53-medical-deduction-flip[medical_30]",
+          "state": "CA",
+          "baseline_kind": "FAIL",
+          "mutated_kind": "FAIL",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 268,
+          "mutated_benefit": 266,
+          "flipped": false
+        },
+        {
+          "legacy_id": "P57",
+          "profile_id": "P57-roomer-rents-a-room-shared-housing",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "FAIL",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 203,
+          "mutated_benefit": 197,
+          "flipped": true
+        },
+        {
+          "legacy_id": "P58[below_net_limit]",
+          "profile_id": "P58-elderly-retiree-tips-over-net-limit[below_net_limit]",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "PASS",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 162,
+          "mutated_benefit": 153,
+          "flipped": false
+        },
+        {
+          "legacy_id": "P60",
+          "profile_id": "P60-large-household-family-of-7",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "FAIL",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 1284,
+          "mutated_benefit": 1265,
+          "flipped": true
+        },
+        {
+          "legacy_id": "G03",
+          "profile_id": "G03-income-ladder-pt",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "FAIL",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 639,
+          "mutated_benefit": 629,
+          "flipped": true
+        },
+        {
+          "legacy_id": "G04",
+          "profile_id": "G04-income-ladder-pt",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "FAIL",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 459,
+          "mutated_benefit": 437,
+          "flipped": true
+        },
+        {
+          "legacy_id": "G05",
+          "profile_id": "G05-income-ladder-pt",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "FAIL",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 279,
+          "mutated_benefit": 245,
+          "flipped": true
+        },
+        {
+          "legacy_id": "G06",
+          "profile_id": "G06-income-ladder-pt",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "FAIL",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 155,
+          "mutated_benefit": 113,
+          "flipped": true
+        },
+        {
+          "legacy_id": "G08",
+          "profile_id": "G08-income-ladder-pt",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "FAIL",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 212,
+          "mutated_benefit": 206,
+          "flipped": true
+        },
+        {
+          "legacy_id": "G09",
+          "profile_id": "G09-income-ladder-pt",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "FAIL",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 104,
+          "mutated_benefit": 91,
+          "flipped": true
+        },
+        {
+          "legacy_id": "G10",
+          "profile_id": "G10-income-ladder-pt",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "FAIL",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 32,
+          "mutated_benefit": 24,
+          "flipped": true
+        },
+        {
+          "legacy_id": "G12",
+          "profile_id": "G12-net-driven-rent-1000",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "FAIL",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 459,
+          "mutated_benefit": 437,
+          "flipped": true
+        },
+        {
+          "legacy_id": "G13",
+          "profile_id": "G13-net-driven-rent-1600-capped",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "FAIL",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 591,
+          "mutated_benefit": 578,
+          "flipped": true
+        },
+        {
+          "legacy_id": "G14",
+          "profile_id": "G14-net-driven-rent-1600-elderly-uncapped",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "FAIL",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 459,
+          "mutated_benefit": 437,
+          "flipped": true
+        },
+        {
+          "legacy_id": "MX3",
+          "profile_id": "MX3-integrity-contrast-same-income-not-e-d",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "FAIL",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 112,
+          "mutated_benefit": 83,
+          "flipped": true
+        },
+        {
+          "legacy_id": "H01",
+          "profile_id": "H01-shelter-sweep-pt-shelter-400",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "FAIL",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 416,
+          "mutated_benefit": 391,
+          "flipped": true
+        },
+        {
+          "legacy_id": "H02",
+          "profile_id": "H02-shelter-sweep-pt-shelter-800",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "FAIL",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 471,
+          "mutated_benefit": 450,
+          "flipped": true
+        },
+        {
+          "legacy_id": "H03",
+          "profile_id": "H03-shelter-sweep-pt-shelter-1200",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "FAIL",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 591,
+          "mutated_benefit": 578,
+          "flipped": true
+        },
+        {
+          "legacy_id": "H04",
+          "profile_id": "H04-shelter-sweep-pt-shelter-1360",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "FAIL",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 639,
+          "mutated_benefit": 629,
+          "flipped": true
+        },
+        {
+          "legacy_id": "H05",
+          "profile_id": "H05-shelter-sweep-pt-shelter-2000",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "FAIL",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 639,
+          "mutated_benefit": 629,
+          "flipped": true
+        },
+        {
+          "legacy_id": "H06",
+          "profile_id": "H06-shelter-sweep-pt-shelter-3000",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "FAIL",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 639,
+          "mutated_benefit": 629,
+          "flipped": true
+        },
+        {
+          "legacy_id": "H07",
+          "profile_id": "H07-shelter-sweep-pt-shelter-400",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "FAIL",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 308,
+          "mutated_benefit": 276,
+          "flipped": true
+        },
+        {
+          "legacy_id": "H08",
+          "profile_id": "H08-shelter-sweep-pt-shelter-1200",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "FAIL",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 429,
+          "mutated_benefit": 405,
+          "flipped": true
+        },
+        {
+          "legacy_id": "H09",
+          "profile_id": "H09-shelter-sweep-pt-shelter-1360",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "FAIL",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 477,
+          "mutated_benefit": 457,
+          "flipped": true
+        },
+        {
+          "legacy_id": "H10",
+          "profile_id": "H10-shelter-sweep-pt-shelter-2000",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "FAIL",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 669,
+          "mutated_benefit": 661,
+          "flipped": true
+        },
+        {
+          "legacy_id": "P63[vista_no_prior]",
+          "profile_id": "P63-americorps-stipend-program-split[vista_no_prior]",
+          "state": "CA",
+          "baseline_kind": "FAIL",
+          "mutated_kind": "FAIL",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 382,
+          "mutated_benefit": 371,
+          "flipped": false
+        },
+        {
+          "legacy_id": "P64",
+          "profile_id": "P64-school-contract-seasonal-income-annualized",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "FAIL",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 677,
+          "mutated_benefit": 644,
+          "flipped": true
+        },
+        {
+          "legacy_id": "P65",
+          "profile_id": "P65-tax-refund-eitc-negative-control",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "FAIL",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 956,
+          "mutated_benefit": 941,
+          "flipped": true
+        },
+        {
+          "legacy_id": "P68",
+          "profile_id": "P68-roommate-leaseholder-shelter",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "FAIL",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 203,
+          "mutated_benefit": 197,
+          "flipped": true
+        }
+      ],
+      "caught_by_legacy_ids": [
+        "A01",
+        "A04",
+        "A02",
+        "A09",
+        "M01",
+        "M02",
+        "M03",
+        "M04",
+        "M06",
+        "M07",
+        "M08",
+        "M09",
+        "M11",
+        "M18",
+        "M20",
+        "P57",
+        "P60",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G08",
+        "G09",
+        "G10",
+        "G12",
+        "G13",
+        "G14",
+        "MX3",
+        "H01",
+        "H02",
+        "H03",
+        "H04",
+        "H05",
+        "H06",
+        "H07",
+        "H08",
+        "H09",
+        "H10",
+        "P64",
+        "P65",
+        "P68"
+      ],
+      "params_mismatch_triggered_by_mutation": false,
+      "classification": "CAUGHT"
+    },
+    {
+      "id": "M02",
+      "citation": "7 CFR 273.9(d)(2)",
+      "bucket": "benefit",
+      "description": "Earned income deduction rate 0.20 → 0.18",
+      "baseline_totals": {
+        "CA": {
+          "pass": 123,
+          "fail": 6,
+          "skip": 0
+        }
+      },
+      "mutated_totals": {
+        "CA": {
+          "pass": 85,
+          "fail": 44,
+          "skip": 0
+        }
+      },
+      "flipped_profiles": [
+        {
+          "legacy_id": "A01",
+          "profile_id": "A01-single-mother-2-kids-low-wage",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "FAIL",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 759,
+          "mutated_benefit": 751,
+          "flipped": true
+        },
+        {
+          "legacy_id": "A04",
+          "profile_id": "A04-working-family-of-4",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "FAIL",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 804,
+          "mutated_benefit": 792,
+          "flipped": true
+        },
+        {
+          "legacy_id": "A09",
+          "profile_id": "A09-lpr-40-quarters-low-income",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "FAIL",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 451,
+          "mutated_benefit": 438,
+          "flipped": true
+        },
+        {
+          "legacy_id": "A10",
+          "profile_id": "A10-refugee-adjusted-to-lpr",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "FAIL",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 783,
+          "mutated_benefit": 776,
+          "flipped": true
+        },
+        {
+          "legacy_id": "M01",
+          "profile_id": "M01-gross-at-165-fpl-bbce-flip",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "FAIL",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 119,
+          "mutated_benefit": 86,
+          "flipped": true
+        },
+        {
+          "legacy_id": "M02",
+          "profile_id": "M02-assets-3-500-asset-test-flip",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "FAIL",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 496,
+          "mutated_benefit": 487,
+          "flipped": true
+        },
+        {
+          "legacy_id": "M03",
+          "profile_id": "M03-gross-just-under-130",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "FAIL",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 176,
+          "mutated_benefit": 159,
+          "flipped": true
+        },
+        {
+          "legacy_id": "M04",
+          "profile_id": "M04-gross-just-over-130",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "FAIL",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 256,
+          "mutated_benefit": 241,
+          "flipped": true
+        },
+        {
+          "legacy_id": "M06",
+          "profile_id": "M06-net-income-at-the-100-fpl-edge",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "FAIL",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 327,
+          "mutated_benefit": 308,
+          "flipped": true
+        },
+        {
+          "legacy_id": "M07",
+          "profile_id": "M07-mixed-wage-self-employment-near-limit",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "FAIL",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 423,
+          "mutated_benefit": 407,
+          "flipped": true
+        },
+        {
+          "legacy_id": "M08",
+          "profile_id": "M08-farm-self-employment-loss-offset",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "FAIL",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 424,
+          "mutated_benefit": 414,
+          "flipped": true
+        },
+        {
+          "legacy_id": "M09",
+          "profile_id": "M09-shelter-crossing-744-cap-non-e-d",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "FAIL",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 687,
+          "mutated_benefit": 677,
+          "flipped": true
+        },
+        {
+          "legacy_id": "M11",
+          "profile_id": "M11-low-no-shelter-household-s-0",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "FAIL",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 177,
+          "mutated_benefit": 166,
+          "flipped": true
+        },
+        {
+          "legacy_id": "M18",
+          "profile_id": "M18-mixed-status-undoc-parent-citizen-kids",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "FAIL",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 591,
+          "mutated_benefit": 579,
+          "flipped": true
+        },
+        {
+          "legacy_id": "M20",
+          "profile_id": "M20-cofa-migrant-retained-post-obbba",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "FAIL",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 520,
+          "mutated_benefit": 512,
+          "flipped": true
+        },
+        {
+          "legacy_id": "M29",
+          "profile_id": "M29-drug-felony-individual-state-option",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "FAIL",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 544,
+          "mutated_benefit": 537,
+          "flipped": true
+        },
+        {
+          "legacy_id": "P57",
+          "profile_id": "P57-roomer-rents-a-room-shared-housing",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "FAIL",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 203,
+          "mutated_benefit": 195,
+          "flipped": true
+        },
+        {
+          "legacy_id": "P58[below_net_limit]",
+          "profile_id": "P58-elderly-retiree-tips-over-net-limit[below_net_limit]",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "PASS",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 162,
+          "mutated_benefit": 158,
+          "flipped": false
+        },
+        {
+          "legacy_id": "P60",
+          "profile_id": "P60-large-household-family-of-7",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "FAIL",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 1284,
+          "mutated_benefit": 1269,
+          "flipped": true
+        },
+        {
+          "legacy_id": "G03",
+          "profile_id": "G03-income-ladder-pt",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "FAIL",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 639,
+          "mutated_benefit": 626,
+          "flipped": true
+        },
+        {
+          "legacy_id": "G04",
+          "profile_id": "G04-income-ladder-pt",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "FAIL",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 459,
+          "mutated_benefit": 441,
+          "flipped": true
+        },
+        {
+          "legacy_id": "G05",
+          "profile_id": "G05-income-ladder-pt",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "FAIL",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 279,
+          "mutated_benefit": 257,
+          "flipped": true
+        },
+        {
+          "legacy_id": "G06",
+          "profile_id": "G06-income-ladder-pt",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "FAIL",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 155,
+          "mutated_benefit": 137,
+          "flipped": true
+        },
+        {
+          "legacy_id": "G08",
+          "profile_id": "G08-income-ladder-pt",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "FAIL",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 212,
+          "mutated_benefit": 203,
+          "flipped": true
+        },
+        {
+          "legacy_id": "G09",
+          "profile_id": "G09-income-ladder-pt",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "FAIL",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 104,
+          "mutated_benefit": 92,
+          "flipped": true
+        },
+        {
+          "legacy_id": "G10",
+          "profile_id": "G10-income-ladder-pt",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "FAIL",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 32,
+          "mutated_benefit": 24,
+          "flipped": true
+        },
+        {
+          "legacy_id": "G12",
+          "profile_id": "G12-net-driven-rent-1000",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "FAIL",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 459,
+          "mutated_benefit": 441,
+          "flipped": true
+        },
+        {
+          "legacy_id": "G13",
+          "profile_id": "G13-net-driven-rent-1600-capped",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "FAIL",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 591,
+          "mutated_benefit": 579,
+          "flipped": true
+        },
+        {
+          "legacy_id": "MX3",
+          "profile_id": "MX3-integrity-contrast-same-income-not-e-d",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "FAIL",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 112,
+          "mutated_benefit": 94,
+          "flipped": true
+        },
+        {
+          "legacy_id": "H01",
+          "profile_id": "H01-shelter-sweep-pt-shelter-400",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "FAIL",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 416,
+          "mutated_benefit": 405,
+          "flipped": true
+        },
+        {
+          "legacy_id": "H02",
+          "profile_id": "H02-shelter-sweep-pt-shelter-800",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "FAIL",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 471,
+          "mutated_benefit": 455,
+          "flipped": true
+        },
+        {
+          "legacy_id": "H03",
+          "profile_id": "H03-shelter-sweep-pt-shelter-1200",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "FAIL",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 591,
+          "mutated_benefit": 575,
+          "flipped": true
+        },
+        {
+          "legacy_id": "H04",
+          "profile_id": "H04-shelter-sweep-pt-shelter-1360",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "FAIL",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 639,
+          "mutated_benefit": 623,
+          "flipped": true
+        },
+        {
+          "legacy_id": "H05",
+          "profile_id": "H05-shelter-sweep-pt-shelter-2000",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "FAIL",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 639,
+          "mutated_benefit": 628,
+          "flipped": true
+        },
+        {
+          "legacy_id": "H06",
+          "profile_id": "H06-shelter-sweep-pt-shelter-3000",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "FAIL",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 639,
+          "mutated_benefit": 628,
+          "flipped": true
+        },
+        {
+          "legacy_id": "P64",
+          "profile_id": "P64-school-contract-seasonal-income-annualized",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "FAIL",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 677,
+          "mutated_benefit": 649,
+          "flipped": true
+        },
+        {
+          "legacy_id": "P65",
+          "profile_id": "P65-tax-refund-eitc-negative-control",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "FAIL",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 956,
+          "mutated_benefit": 943,
+          "flipped": true
+        },
+        {
+          "legacy_id": "P68",
+          "profile_id": "P68-roommate-leaseholder-shelter",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "FAIL",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 203,
+          "mutated_benefit": 195,
+          "flipped": true
+        },
+        {
+          "legacy_id": "S06",
+          "profile_id": "S06-single-parent-student-child-12",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "FAIL",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 544,
+          "mutated_benefit": 537,
+          "flipped": true
+        }
+      ],
+      "caught_by_legacy_ids": [
+        "A01",
+        "A04",
+        "A09",
+        "A10",
+        "M01",
+        "M02",
+        "M03",
+        "M04",
+        "M06",
+        "M07",
+        "M08",
+        "M09",
+        "M11",
+        "M18",
+        "M20",
+        "M29",
+        "P57",
+        "P60",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "G08",
+        "G09",
+        "G10",
+        "G12",
+        "G13",
+        "MX3",
+        "H01",
+        "H02",
+        "H03",
+        "H04",
+        "H05",
+        "H06",
+        "P64",
+        "P65",
+        "P68",
+        "S06"
+      ],
+      "params_mismatch_triggered_by_mutation": false,
+      "classification": "CAUGHT"
+    },
+    {
+      "id": "M03",
+      "citation": "7 CFR 273.9(d)(1)",
+      "bucket": "benefit",
+      "description": "Standard deduction band 4 (HH4 only): 223 → 173 (broad-constant mutation)",
+      "baseline_totals": {
+        "CA": {
+          "pass": 123,
+          "fail": 6,
+          "skip": 0
+        }
+      },
+      "mutated_totals": {
+        "CA": {
+          "pass": 123,
+          "fail": 6,
+          "skip": 0
+        }
+      },
+      "flipped_profiles": [
+        {
+          "legacy_id": "A04",
+          "profile_id": "A04-working-family-of-4",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "PASS",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 804,
+          "mutated_benefit": 789,
+          "flipped": false
+        }
+      ],
+      "caught_by_legacy_ids": [],
+      "params_mismatch_triggered_by_mutation": true,
+      "classification": "CAUGHT",
+      "notes": "Caught via PARAMS_MISMATCH banner (engine params block diverged from oracle's expected params; benefit assertions were skipped run-wide as a defensive measure)."
+    },
+    {
+      "id": "M04",
+      "citation": "7 CFR 273.9(d)(6)",
+      "bucket": "benefit",
+      "description": "Shelter cap $744 → $644 (non-E/D excess shelter cap)",
+      "baseline_totals": {
+        "CA": {
+          "pass": 123,
+          "fail": 6,
+          "skip": 0
+        }
+      },
+      "mutated_totals": {
+        "CA": {
+          "pass": 123,
+          "fail": 6,
+          "skip": 0
+        }
+      },
+      "flipped_profiles": [
+        {
+          "legacy_id": "A01",
+          "profile_id": "A01-single-mother-2-kids-low-wage",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "PASS",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 759,
+          "mutated_benefit": 729,
+          "flipped": false
+        },
+        {
+          "legacy_id": "A04",
+          "profile_id": "A04-working-family-of-4",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "PASS",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 804,
+          "mutated_benefit": 774,
+          "flipped": false
+        },
+        {
+          "legacy_id": "A09",
+          "profile_id": "A09-lpr-40-quarters-low-income",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "PASS",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 451,
+          "mutated_benefit": 442,
+          "flipped": false
+        },
+        {
+          "legacy_id": "A10",
+          "profile_id": "A10-refugee-adjusted-to-lpr",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "PASS",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 783,
+          "mutated_benefit": 753,
+          "flipped": false
+        },
+        {
+          "legacy_id": "M02",
+          "profile_id": "M02-assets-3-500-asset-test-flip",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "PASS",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 496,
+          "mutated_benefit": 466,
+          "flipped": false
+        },
+        {
+          "legacy_id": "M04",
+          "profile_id": "M04-gross-just-over-130",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "PASS",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 256,
+          "mutated_benefit": 226,
+          "flipped": false
+        },
+        {
+          "legacy_id": "M06",
+          "profile_id": "M06-net-income-at-the-100-fpl-edge",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "PASS",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 327,
+          "mutated_benefit": 297,
+          "flipped": false
+        },
+        {
+          "legacy_id": "M07",
+          "profile_id": "M07-mixed-wage-self-employment-near-limit",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "PASS",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 423,
+          "mutated_benefit": 393,
+          "flipped": false
+        },
+        {
+          "legacy_id": "M08",
+          "profile_id": "M08-farm-self-employment-loss-offset",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "PASS",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 424,
+          "mutated_benefit": 394,
+          "flipped": false
+        },
+        {
+          "legacy_id": "M09",
+          "profile_id": "M09-shelter-crossing-744-cap-non-e-d",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "PASS",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 687,
+          "mutated_benefit": 657,
+          "flipped": false
+        },
+        {
+          "legacy_id": "M18",
+          "profile_id": "M18-mixed-status-undoc-parent-citizen-kids",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "PASS",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 591,
+          "mutated_benefit": 561,
+          "flipped": false
+        },
+        {
+          "legacy_id": "M20",
+          "profile_id": "M20-cofa-migrant-retained-post-obbba",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "PASS",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 520,
+          "mutated_benefit": 490,
+          "flipped": false
+        },
+        {
+          "legacy_id": "M29",
+          "profile_id": "M29-drug-felony-individual-state-option",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "PASS",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 544,
+          "mutated_benefit": 514,
+          "flipped": false
+        },
+        {
+          "legacy_id": "P60",
+          "profile_id": "P60-large-household-family-of-7",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "PASS",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 1284,
+          "mutated_benefit": 1254,
+          "flipped": false
+        },
+        {
+          "legacy_id": "G13",
+          "profile_id": "G13-net-driven-rent-1600-capped",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "PASS",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 591,
+          "mutated_benefit": 561,
+          "flipped": false
+        },
+        {
+          "legacy_id": "MX3",
+          "profile_id": "MX3-integrity-contrast-same-income-not-e-d",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "PASS",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 112,
+          "mutated_benefit": 82,
+          "flipped": false
+        },
+        {
+          "legacy_id": "H04",
+          "profile_id": "H04-shelter-sweep-pt-shelter-1360",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "PASS",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 639,
+          "mutated_benefit": 609,
+          "flipped": false
+        },
+        {
+          "legacy_id": "H05",
+          "profile_id": "H05-shelter-sweep-pt-shelter-2000",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "PASS",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 639,
+          "mutated_benefit": 609,
+          "flipped": false
+        },
+        {
+          "legacy_id": "H06",
+          "profile_id": "H06-shelter-sweep-pt-shelter-3000",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "PASS",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 639,
+          "mutated_benefit": 609,
+          "flipped": false
+        },
+        {
+          "legacy_id": "P63[vista_no_prior]",
+          "profile_id": "P63-americorps-stipend-program-split[vista_no_prior]",
+          "state": "CA",
+          "baseline_kind": "FAIL",
+          "mutated_kind": "FAIL",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 382,
+          "mutated_benefit": 352,
+          "flipped": false
+        },
+        {
+          "legacy_id": "P65",
+          "profile_id": "P65-tax-refund-eitc-negative-control",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "PASS",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 956,
+          "mutated_benefit": 926,
+          "flipped": false
+        },
+        {
+          "legacy_id": "P66",
+          "profile_id": "P66-unemployment-counted-phantom-income-error",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "PASS",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 546,
+          "mutated_benefit": 542,
+          "flipped": false
+        },
+        {
+          "legacy_id": "S06",
+          "profile_id": "S06-single-parent-student-child-12",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "PASS",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 544,
+          "mutated_benefit": 514,
+          "flipped": false
+        }
+      ],
+      "caught_by_legacy_ids": [],
+      "params_mismatch_triggered_by_mutation": true,
+      "classification": "CAUGHT",
+      "notes": "Caught via PARAMS_MISMATCH banner (engine params block diverged from oracle's expected params; benefit assertions were skipped run-wide as a defensive measure)."
+    },
+    {
+      "id": "M05",
+      "citation": "7 CFR 273.9(d)(6)",
+      "bucket": "benefit",
+      "description": "Cap exemption for E/D — always cap (ignore E/D)",
+      "baseline_totals": {
+        "CA": {
+          "pass": 123,
+          "fail": 6,
+          "skip": 0
+        }
+      },
+      "mutated_totals": {
+        "CA": {
+          "pass": 115,
+          "fail": 14,
+          "skip": 0
+        }
+      },
+      "flipped_profiles": [
+        {
+          "legacy_id": "A07",
+          "profile_id": "A07-elderly-couple-low-ss-high-shelter",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "FAIL",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 546,
+          "mutated_benefit": 395,
+          "flipped": true
+        },
+        {
+          "legacy_id": "M05",
+          "profile_id": "M05-elderly-assets-near-e-d-limit",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "FAIL",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 298,
+          "mutated_benefit": 284,
+          "flipped": true
+        },
+        {
+          "legacy_id": "M10",
+          "profile_id": "M10-same-as-m09-but-elderly-uncapped",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "FAIL",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 785,
+          "mutated_benefit": 687,
+          "flipped": true
+        },
+        {
+          "legacy_id": "P53[medical_200]",
+          "profile_id": "P53-medical-deduction-flip[medical_200]",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "PASS",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 298,
+          "mutated_benefit": 258,
+          "flipped": false
+        },
+        {
+          "legacy_id": "P53[medical_30]",
+          "profile_id": "P53-medical-deduction-flip[medical_30]",
+          "state": "CA",
+          "baseline_kind": "FAIL",
+          "mutated_kind": "FAIL",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 268,
+          "mutated_benefit": 209,
+          "flipped": false
+        },
+        {
+          "legacy_id": "P58[below_net_limit]",
+          "profile_id": "P58-elderly-retiree-tips-over-net-limit[below_net_limit]",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "PASS",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 162,
+          "mutated_benefit": 158,
+          "flipped": false
+        },
+        {
+          "legacy_id": "MX1",
+          "profile_id": "MX1-arguable-max-e-d-deduction-stacked-3000-gross",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "FAIL",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 546,
+          "mutated_benefit": 191,
+          "flipped": true
+        },
+        {
+          "legacy_id": "H10",
+          "profile_id": "H10-shelter-sweep-pt-shelter-2000",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "FAIL",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 669,
+          "mutated_benefit": 531,
+          "flipped": true
+        },
+        {
+          "legacy_id": "H11",
+          "profile_id": "H11-shelter-sweep-pt-shelter-2600",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "FAIL",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 785,
+          "mutated_benefit": 531,
+          "flipped": true
+        },
+        {
+          "legacy_id": "H12",
+          "profile_id": "H12-shelter-sweep-pt-shelter-3000",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "FAIL",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 785,
+          "mutated_benefit": 531,
+          "flipped": true
+        },
+        {
+          "legacy_id": "P69",
+          "profile_id": "P69-disabled-wrongly-clocked-abawd",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "FAIL",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 298,
+          "mutated_benefit": 284,
+          "flipped": true
+        }
+      ],
+      "caught_by_legacy_ids": [
+        "A07",
+        "M05",
+        "M10",
+        "MX1",
+        "H10",
+        "H11",
+        "H12",
+        "P69"
+      ],
+      "params_mismatch_triggered_by_mutation": false,
+      "classification": "CAUGHT"
+    },
+    {
+      "id": "M06",
+      "citation": "7 CFR 273.9(a)(1)",
+      "bucket": "verdict",
+      "description": "Gross income limit 130% → 140% (loosen; flips just-over rows to APPROVE)",
+      "baseline_totals": {
+        "KS": {
+          "pass": 2,
+          "fail": 32,
+          "skip": 95
+        }
+      },
+      "mutated_totals": {
+        "KS": {
+          "pass": 2,
+          "fail": 32,
+          "skip": 95
+        }
+      },
+      "flipped_profiles": [],
+      "caught_by_legacy_ids": [],
+      "params_mismatch_triggered_by_mutation": false,
+      "classification": "COVERAGE_GAP",
+      "notes": "No profile was determinative on this mutation. Add a fixture profile that exercises 7 CFR 273.9(a)(1)."
+    },
+    {
+      "id": "M07",
+      "citation": "7 CFR 273.9(a)(1)",
+      "bucket": "verdict",
+      "description": "Gross income limit 130% → 120% (tighten; flips just-under rows to DENY)",
+      "baseline_totals": {
+        "KS": {
+          "pass": 2,
+          "fail": 32,
+          "skip": 95
+        }
+      },
+      "mutated_totals": {
+        "KS": {
+          "pass": 2,
+          "fail": 32,
+          "skip": 95
+        }
+      },
+      "flipped_profiles": [
+        {
+          "legacy_id": "M03",
+          "profile_id": "M03-gross-just-under-130",
+          "state": "KS",
+          "baseline_kind": "FAIL",
+          "mutated_kind": "FAIL",
+          "mutated_verdict": "DENY",
+          "mutated_benefit": null,
+          "flipped": false
+        },
+        {
+          "legacy_id": "G06",
+          "profile_id": "G06-income-ladder-pt",
+          "state": "KS",
+          "baseline_kind": "FAIL",
+          "mutated_kind": "FAIL",
+          "mutated_verdict": "DENY",
+          "mutated_benefit": null,
+          "flipped": false
+        },
+        {
+          "legacy_id": "G11",
+          "profile_id": "G11-income-ladder-pt",
+          "state": "KS",
+          "baseline_kind": "FAIL",
+          "mutated_kind": "FAIL",
+          "mutated_verdict": "DENY",
+          "mutated_benefit": null,
+          "flipped": false
+        }
+      ],
+      "caught_by_legacy_ids": [],
+      "params_mismatch_triggered_by_mutation": false,
+      "classification": "COVERAGE_GAP",
+      "notes": "No profile was determinative on this mutation. Add a fixture profile that exercises 7 CFR 273.9(a)(1)."
+    },
+    {
+      "id": "M08",
+      "citation": "7 CFR 273.9(a)(2)",
+      "bucket": "verdict",
+      "description": "Net income limit 100% → 110% (loosen net test; flips net-edge rows)",
+      "baseline_totals": {
+        "CA": {
+          "pass": 123,
+          "fail": 6,
+          "skip": 0
+        },
+        "KS": {
+          "pass": 2,
+          "fail": 32,
+          "skip": 95
+        }
+      },
+      "mutated_totals": {
+        "CA": {
+          "pass": 122,
+          "fail": 7,
+          "skip": 0
+        },
+        "KS": {
+          "pass": 2,
+          "fail": 32,
+          "skip": 95
+        }
+      },
+      "flipped_profiles": [
+        {
+          "legacy_id": "P58[above_net_limit]",
+          "profile_id": "P58-elderly-retiree-tips-over-net-limit[above_net_limit]",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "FAIL",
+          "baseline_verdict": "DENY",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": null,
+          "mutated_benefit": 24,
+          "flipped": true
+        }
+      ],
+      "caught_by_legacy_ids": [
+        "P58[above_net_limit]"
+      ],
+      "params_mismatch_triggered_by_mutation": false,
+      "classification": "CAUGHT"
+    },
+    {
+      "id": "M09",
+      "citation": "7 CFR 273.8",
+      "bucket": "verdict",
+      "description": "Asset limit $3000 → $4000 (only bites in non-BBCE state)",
+      "baseline_totals": {
+        "KS": {
+          "pass": 2,
+          "fail": 32,
+          "skip": 95
+        }
+      },
+      "mutated_totals": {
+        "KS": {
+          "pass": 2,
+          "fail": 32,
+          "skip": 95
+        }
+      },
+      "flipped_profiles": [],
+      "caught_by_legacy_ids": [],
+      "params_mismatch_triggered_by_mutation": true,
+      "classification": "CAUGHT",
+      "notes": "Caught via PARAMS_MISMATCH banner (engine params block diverged from oracle's expected params; benefit assertions were skipped run-wide as a defensive measure)."
+    },
+    {
+      "id": "M12",
+      "citation": "7 CFR 273.9(d)(3)",
+      "bucket": "benefit",
+      "description": "Medical floor $35 → $0 (count all medical for E/D)",
+      "baseline_totals": {
+        "CA": {
+          "pass": 123,
+          "fail": 6,
+          "skip": 0
+        }
+      },
+      "mutated_totals": {
+        "CA": {
+          "pass": 123,
+          "fail": 6,
+          "skip": 0
+        }
+      },
+      "flipped_profiles": [
+        {
+          "legacy_id": "P53[medical_30]",
+          "profile_id": "P53-medical-deduction-flip[medical_30]",
+          "state": "CA",
+          "baseline_kind": "FAIL",
+          "mutated_kind": "FAIL",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 268,
+          "mutated_benefit": 282,
+          "flipped": false
+        }
+      ],
+      "caught_by_legacy_ids": [],
+      "params_mismatch_triggered_by_mutation": false,
+      "classification": "COVERAGE_GAP",
+      "notes": "No profile was determinative on this mutation. Add a fixture profile that exercises 7 CFR 273.9(d)(3)."
+    },
+    {
+      "id": "M20",
+      "citation": "7 CFR 273.10(e)(2)",
+      "bucket": "benefit",
+      "description": "Minimum benefit $24 → $0 (HH1-2 floor removed)",
+      "baseline_totals": {
+        "CA": {
+          "pass": 123,
+          "fail": 6,
+          "skip": 0
+        }
+      },
+      "mutated_totals": {
+        "CA": {
+          "pass": 123,
+          "fail": 6,
+          "skip": 0
+        }
+      },
+      "flipped_profiles": [
+        {
+          "legacy_id": "D01",
+          "profile_id": "D01-single-adult-over-gross-limit",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "PASS",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 24,
+          "mutated_benefit": 0,
+          "flipped": false
+        },
+        {
+          "legacy_id": "M23[averaged]",
+          "profile_id": "M23-variable-gig-income-anticipation[averaged]",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "PASS",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 24,
+          "mutated_benefit": 21,
+          "flipped": false
+        },
+        {
+          "legacy_id": "M23[recent_high_month]",
+          "profile_id": "M23-variable-gig-income-anticipation[recent_high_month]",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "PASS",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 24,
+          "mutated_benefit": 0,
+          "flipped": false
+        },
+        {
+          "legacy_id": "P59",
+          "profile_id": "P59-single-adult-at-hh1-bbce-boundary",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "PASS",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 24,
+          "mutated_benefit": 11,
+          "flipped": false
+        },
+        {
+          "legacy_id": "G11",
+          "profile_id": "G11-income-ladder-pt",
+          "state": "CA",
+          "baseline_kind": "PASS",
+          "mutated_kind": "PASS",
+          "baseline_verdict": "APPROVE",
+          "mutated_verdict": "APPROVE",
+          "baseline_benefit": 24,
+          "mutated_benefit": 0,
+          "flipped": false
+        }
+      ],
+      "caught_by_legacy_ids": [],
+      "params_mismatch_triggered_by_mutation": true,
+      "classification": "CAUGHT",
+      "notes": "Caught via PARAMS_MISMATCH banner (engine params block diverged from oracle's expected params; benefit assertions were skipped run-wide as a defensive measure)."
+    },
+    {
+      "id": "M21",
+      "citation": "OBBBA §10104 (P.L. 119-21)",
+      "bucket": "benefit",
+      "description": "OBBBA §10104 internet exclusion cutoff 2025-11-01 → 2025-07-04 (the engine's cutoff was flagged by the triple-check as possibly wrong; this mutation tests whether any profile has facts that bracket the contested window — if uncaught, real coverage gap)",
+      "baseline_totals": {
+        "CA": {
+          "pass": 123,
+          "fail": 6,
+          "skip": 0
+        }
+      },
+      "mutated_totals": {
+        "CA": {
+          "pass": 123,
+          "fail": 6,
+          "skip": 0
+        }
+      },
+      "flipped_profiles": [],
+      "caught_by_legacy_ids": [],
+      "params_mismatch_triggered_by_mutation": false,
+      "classification": "EXPECTED_UNCAUGHT",
+      "notes": "Documented coverage gap if no profile's as_of_date sits between 2025-07-04 and 2025-11-01 AND has internet expense — finding it surfaces a real missing fixture profile"
+    }
+  ],
+  "summary": {
+    "total": 12,
+    "caught": 8,
+    "coverage_gap": 3,
+    "contamination_red_flag": 0,
+    "expected_uncaught": 1,
+    "pre_flight_fail": 0,
+    "mutation_score_pct": 72.7
+  }
+}

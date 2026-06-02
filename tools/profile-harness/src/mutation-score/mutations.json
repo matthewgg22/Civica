@@ -1,0 +1,213 @@
+{
+  "$schema": "./mutations.schema.json",
+  "version": "1.0.0",
+  "as_of": "2026-06-02",
+  "based_on": "~/Desktop/Civica USDA data/analysis/civica_engine_independence_mutation_plan.md",
+  "doc": "Each mutation is a single-point bug injection into the TS engine ONLY (canonical port). bucket=verdict mutations prove oracle ≠ engine when caught (true independence proof); bucket=benefit mutations prove TS=Python-twin consistency when caught (not full independence — needs PolicyEngine US pairing). Run mutations one at a time; revert between via `git checkout HEAD -- <files>`.",
+  "mutations": [
+    {
+      "id": "M01",
+      "citation": "7 CFR 273.10(e)",
+      "bucket": "benefit",
+      "kind": "constant",
+      "description": "Benefit reduction rate 0.30 → 0.32 (determinative on every positive-net benefit row)",
+      "patch": {
+        "file": "packages/snap-rules/src/benefit-calc.ts",
+        "find": "const thirtyPctNet = net.mul(0.30).roundDollar();",
+        "replace": "const thirtyPctNet = net.mul(0.32).roundDollar();"
+      },
+      "run_states": ["CA"],
+      "expected_catch_legacy_ids": ["G03","G04","G05","G06","G08","G09","G10","H03","H05","M09","M11"],
+      "red_flag_if_uncaught": true,
+      "rationale": "Determinative across 30+ benefit assertions; uncaught = contamination signal"
+    },
+    {
+      "id": "M02",
+      "citation": "7 CFR 273.9(d)(2)",
+      "bucket": "benefit",
+      "kind": "constant",
+      "description": "Earned income deduction rate 0.20 → 0.18",
+      "patch": {
+        "file": "packages/snap-rules/src/constants/federal-tables.ts",
+        "find": "  earned_income_deduction_rate: new Decimal(\"0.20\"),\n  medical_floor: new Decimal(\"35\"),\n};\n\nconst SNAPSHOTS",
+        "replace": "  earned_income_deduction_rate: new Decimal(\"0.18\"),\n  medical_floor: new Decimal(\"35\"),\n};\n\nconst SNAPSHOTS"
+      },
+      "run_states": ["CA"],
+      "expected_catch_legacy_ids": ["G03","G04","G05","G06","H03","H05","A01","A04"]
+    },
+    {
+      "id": "M03",
+      "citation": "7 CFR 273.9(d)(1)",
+      "bucket": "benefit",
+      "kind": "constant",
+      "description": "Standard deduction band 4 (HH4 only): 223 → 173 (broad-constant mutation)",
+      "patch": {
+        "file": "packages/snap-rules/src/constants/federal-tables.ts",
+        "find": "    [4, new Decimal(\"223\")],\n    [5, new Decimal(\"261\")],\n    [6, new Decimal(\"299\")],\n  ]),\n  shelter_cap: new Decimal(\"744\"),",
+        "replace": "    [4, new Decimal(\"173\")],\n    [5, new Decimal(\"261\")],\n    [6, new Decimal(\"299\")],\n  ]),\n  shelter_cap: new Decimal(\"744\"),"
+      },
+      "run_states": ["CA"],
+      "expected_catch_legacy_ids": ["G03","H03","M09","M11"],
+      "red_flag_if_uncaught": true,
+      "rationale": "Standard deduction affects every positive-net benefit row at HH4; broad constant"
+    },
+    {
+      "id": "M04",
+      "citation": "7 CFR 273.9(d)(6)",
+      "bucket": "benefit",
+      "kind": "constant",
+      "description": "Shelter cap $744 → $644 (non-E/D excess shelter cap)",
+      "patch": {
+        "file": "packages/snap-rules/src/constants/federal-tables.ts",
+        "find": "  shelter_cap: new Decimal(\"744\"),\n  minimum_benefit: new Decimal(\"24\"),",
+        "replace": "  shelter_cap: new Decimal(\"644\"),\n  minimum_benefit: new Decimal(\"24\"),"
+      },
+      "run_states": ["CA"],
+      "expected_catch_legacy_ids": ["M09","H04","H05","H06","G13"]
+    },
+    {
+      "id": "M05",
+      "citation": "7 CFR 273.9(d)(6)",
+      "bucket": "benefit",
+      "kind": "structural",
+      "description": "Cap exemption for E/D — always cap (ignore E/D)",
+      "patch": {
+        "file": "packages/snap-rules/src/benefit-calc.ts",
+        "find": "    } else if (isED) {\n      excessShelter = rawExcess;\n    } else {",
+        "replace": "    } else if (false /* MUTATION M05: ignore E/D cap exemption */) {\n      excessShelter = rawExcess;\n    } else {"
+      },
+      "run_states": ["CA"],
+      "expected_catch_legacy_ids": ["M10","MX1","H10","H11","H12"]
+    },
+    {
+      "id": "M06",
+      "citation": "7 CFR 273.9(a)(1)",
+      "bucket": "verdict",
+      "kind": "constant",
+      "description": "Gross income limit 130% → 140% (loosen; flips just-over rows to APPROVE)",
+      "patch": {
+        "file": "packages/snap-rules/src/constants/federal-tables.ts",
+        "find": "export const GROSS_INCOME_TEST_RATIO = new Decimal(\"1.30\");",
+        "replace": "export const GROSS_INCOME_TEST_RATIO = new Decimal(\"1.40\");"
+      },
+      "run_states": ["KS"],
+      "expected_catch_legacy_ids": ["M04","D01"]
+    },
+    {
+      "id": "M07",
+      "citation": "7 CFR 273.9(a)(1)",
+      "bucket": "verdict",
+      "kind": "constant",
+      "description": "Gross income limit 130% → 120% (tighten; flips just-under rows to DENY)",
+      "patch": {
+        "file": "packages/snap-rules/src/constants/federal-tables.ts",
+        "find": "export const GROSS_INCOME_TEST_RATIO = new Decimal(\"1.30\");",
+        "replace": "export const GROSS_INCOME_TEST_RATIO = new Decimal(\"1.20\");"
+      },
+      "run_states": ["KS"],
+      "expected_catch_legacy_ids": ["M03","A04"]
+    },
+    {
+      "id": "M08",
+      "citation": "7 CFR 273.9(a)(2)",
+      "bucket": "verdict",
+      "kind": "constant",
+      "description": "Net income limit 100% → 110% (loosen net test; flips net-edge rows)",
+      "patch": {
+        "file": "packages/snap-rules/src/constants/federal-tables.ts",
+        "find": "export const NET_INCOME_TEST_RATIO = new Decimal(\"1.00\");",
+        "replace": "export const NET_INCOME_TEST_RATIO = new Decimal(\"1.10\");"
+      },
+      "run_states": ["CA", "KS"],
+      "expected_catch_legacy_ids": ["M06"]
+    },
+    {
+      "id": "M09",
+      "citation": "7 CFR 273.8",
+      "bucket": "verdict",
+      "kind": "constant",
+      "description": "Asset limit $3000 → $4000 (only bites in non-BBCE state)",
+      "patch": {
+        "file": "packages/snap-rules/src/constants/federal-tables.ts",
+        "find": "  asset_limit_household: new Decimal(\"3000\"),\n  asset_limit_elderly_disabled: new Decimal(\"4500\"),\n  earned_income_deduction_rate: new Decimal(\"0.20\"),\n  medical_floor: new Decimal(\"35\"),\n};\n\nconst SNAPSHOTS",
+        "replace": "  asset_limit_household: new Decimal(\"4000\"),\n  asset_limit_elderly_disabled: new Decimal(\"4500\"),\n  earned_income_deduction_rate: new Decimal(\"0.20\"),\n  medical_floor: new Decimal(\"35\"),\n};\n\nconst SNAPSHOTS"
+      },
+      "run_states": ["KS"],
+      "expected_catch_legacy_ids": ["M02","D02"]
+    },
+    {
+      "id": "M12",
+      "citation": "7 CFR 273.9(d)(3)",
+      "bucket": "benefit",
+      "kind": "constant",
+      "description": "Medical floor $35 → $0 (count all medical for E/D)",
+      "patch": {
+        "file": "packages/snap-rules/src/constants/federal-tables.ts",
+        "find": "  medical_floor: new Decimal(\"35\"),\n};\n\nconst SNAPSHOTS",
+        "replace": "  medical_floor: new Decimal(\"0\"),\n};\n\nconst SNAPSHOTS"
+      },
+      "run_states": ["CA"],
+      "expected_catch_legacy_ids": ["A03"]
+    },
+    {
+      "id": "M20",
+      "citation": "7 CFR 273.10(e)(2)",
+      "bucket": "benefit",
+      "kind": "constant",
+      "description": "Minimum benefit $24 → $0 (HH1-2 floor removed)",
+      "patch": {
+        "file": "packages/snap-rules/src/constants/federal-tables.ts",
+        "find": "  minimum_benefit: new Decimal(\"24\"),",
+        "replace": "  minimum_benefit: new Decimal(\"0\"),"
+      },
+      "run_states": ["CA"],
+      "expected_catch_legacy_ids": ["G11"]
+    },
+    {
+      "id": "M21",
+      "citation": "OBBBA §10104 (P.L. 119-21)",
+      "bucket": "benefit",
+      "kind": "constant",
+      "description": "OBBBA §10104 internet exclusion cutoff 2025-11-01 → 2025-07-04 (the engine's cutoff was flagged by the triple-check as possibly wrong; this mutation tests whether any profile has facts that bracket the contested window — if uncaught, real coverage gap)",
+      "patch": {
+        "file": "packages/snap-rules/src/benefit-calc.ts",
+        "find": "    const obbbaCutoff = new Date(Date.UTC(2025, 10, 1));",
+        "replace": "    const obbbaCutoff = new Date(Date.UTC(2025, 6, 4));"
+      },
+      "run_states": ["CA"],
+      "expected_uncaught": true,
+      "rationale": "Documented coverage gap if no profile's as_of_date sits between 2025-07-04 and 2025-11-01 AND has internet expense — finding it surfaces a real missing fixture profile"
+    }
+  ],
+  "deferred_structural_mutations": {
+    "doc": "These need composer-level surgery (multi-line code path inversions, not constant flips). Filed for v1.1 of the mutation harness.",
+    "list": [
+      {
+        "id": "M11",
+        "citation": "7 CFR 273.9(a)",
+        "bucket": "verdict",
+        "description": "Apply gross test to E/D households (skip the E/D exemption)",
+        "deferred_because": "Requires inverting grossTestApplies() return value; multi-site code change"
+      },
+      {
+        "id": "M13",
+        "citation": "7 CFR 273.9(d)(2)",
+        "bucket": "benefit",
+        "description": "EID wrongly applied to unearned income",
+        "deferred_because": "Requires altering aggregateIncome's earned/unearned split logic"
+      },
+      {
+        "id": "M14",
+        "citation": "7 CFR 273.2(j)",
+        "bucket": "verdict",
+        "description": "Categorical waiver — run income test on SSI/TANF",
+        "deferred_because": "Requires bypassing categorical short-circuit in composer; expected uncaught per plan (no high-income SSI profile)"
+      },
+      {
+        "id": "M15-M19",
+        "description": "Student / ABAWD / immigration / COFA mutations",
+        "deferred_because": "Each requires gate-specific code changes; sequence after the constant-mutation pass establishes baseline"
+      }
+    ]
+  }
+}
