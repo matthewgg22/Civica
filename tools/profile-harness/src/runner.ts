@@ -16,7 +16,7 @@ import type {
   Variant,
 } from "./types.ts";
 import { applyFactsPatch } from "./facts-patch.ts";
-import { CapabilityManifest, missingSurfaces } from "./capability-manifest.ts";
+import { type CapabilityManifest, missingSurfaces } from "./capability-manifest.ts";
 
 export interface RunOptions {
   state: string;
@@ -60,19 +60,13 @@ export function runHarness(
       }
       results.push(runStatefulProfile(profile, exp, state, engine, benefitsAllowed));
     } else if (profile.expected?.variants) {
-      // A/B variant rows — Wave A: not yet supported. Wave B can add.
-      results.push({
-        profile_id: profile.id,
-        legacy_id: profile.legacy_id,
-        label: profile.label,
-        state,
-        kind: "SKIP",
-        skip_reason: "ab-variant-not-supported-yet",
-        citation: profile.citation,
-        error_element: profile.error_surface.element ?? undefined,
-        negative_control: profile.negative_control,
-        must_reject: profile.must_reject,
-      });
+      // A/B variant rows — one result per variant. Each variant applies
+      // its facts_patch to a deep-cloned base, then runs the composer.
+      for (const [variantKey, variant] of Object.entries(profile.expected.variants)) {
+        results.push(
+          runVariantProfile(profile, variantKey, variant, state, engine, benefitsAllowed),
+        );
+      }
     } else {
       // Profile has neither shape — fixture authoring bug.
       results.push({
@@ -92,6 +86,84 @@ export function runHarness(
 }
 
 // ─── Per-profile execution ────────────────────────────────────────────────
+
+function runVariantProfile(
+  profile: Profile,
+  variantKey: string,
+  variant: Variant,
+  state: string,
+  engine: EngineAdapter,
+  benefitsAllowed: boolean,
+): ProfileResult {
+  // Deep clone + apply patch. The applier accepts `as_of_date` as a
+  // pseudo-field on Facts, which the composer reads when threading asOf.
+  let patchedFacts: Facts;
+  try {
+    patchedFacts = applyFactsPatch(profile.facts, variant.facts_patch);
+  } catch (err) {
+    return {
+      profile_id: `${profile.id}[${variantKey}]`,
+      legacy_id: `${profile.legacy_id}[${variantKey}]`,
+      label: `${profile.label} · ${variantKey}${variant.note ? " — " + variant.note : ""}`,
+      state,
+      kind: "FAIL",
+      failure_detail: `facts_patch apply error: ${(err as Error).message}`,
+      citation: profile.citation,
+      error_element: profile.error_surface.element ?? undefined,
+      negative_control: profile.negative_control,
+      must_reject: profile.must_reject,
+    };
+  }
+
+  // Variant may override as_of_date.
+  const asOf = parseAsOf(
+    (patchedFacts as any).as_of_date ?? profile.as_of_date,
+  );
+  const result = engine.composeVerdict(patchedFacts, state, asOf);
+
+  if (result.not_implemented_surfaces && result.not_implemented_surfaces.length > 0) {
+    return {
+      ...buildSkipResult(profile, state, result.not_implemented_surfaces),
+      profile_id: `${profile.id}[${variantKey}]`,
+      legacy_id: `${profile.legacy_id}[${variantKey}]`,
+      label: `${profile.label} · ${variantKey}`,
+    };
+  }
+
+  const verdictOk = result.verdict === variant.verdict;
+  let benefitOk: boolean | null = null;
+  if (benefitsAllowed && variant.benefit != null) {
+    benefitOk = result.benefit === variant.benefit;
+  }
+
+  let kind: ResultKind;
+  if (!verdictOk) kind = "FAIL";
+  else if (benefitOk === false) kind = "FAIL";
+  else kind = "PASS";
+
+  return {
+    profile_id: `${profile.id}[${variantKey}]`,
+    legacy_id: `${profile.legacy_id}[${variantKey}]`,
+    label: `${profile.label} · ${variantKey}${variant.note ? " — " + variant.note : ""}`,
+    state,
+    kind,
+    expected_verdict: variant.verdict,
+    actual_verdict: result.verdict,
+    expected_benefit: variant.benefit,
+    actual_benefit: result.benefit ?? null,
+    failure_detail: buildFailDetail(
+      verdictOk,
+      benefitOk,
+      { verdict: variant.verdict, benefit: variant.benefit ?? null } as any,
+      result,
+      result.reason,
+    ),
+    citation: profile.citation,
+    error_element: profile.error_surface.element ?? undefined,
+    negative_control: profile.negative_control,
+    must_reject: profile.must_reject,
+  };
+}
 
 function runStatefulProfile(
   profile: Profile,

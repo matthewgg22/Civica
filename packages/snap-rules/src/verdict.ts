@@ -20,6 +20,7 @@ import type { Facts } from "./facts.ts";
 import { hasElderlyOrDisabled, householdSize } from "./facts.ts";
 import { evaluateCategorical } from "./gates/categorical.ts";
 import { evaluateStudentGate } from "./gates/student.ts";
+import { evaluateAbawd } from "./gates/abawd.ts";
 import {
   grossIncomeTest,
   netIncomeTest,
@@ -88,6 +89,13 @@ export function composeVerdict(facts: Facts, state: string, asOf: Date): Verdict
   trace.student = stu;
   if (!stu.passes) {
     return { verdict: "DENY", benefit: null, reason: stu.reason, trace };
+  }
+
+  // ── ABAWD work requirement (7 CFR 273.24, as amended by OBBBA §10102) ─
+  const abawd = evaluateAbawd(facts, asOf);
+  trace.abawd = abawd;
+  if (!abawd.passes) {
+    return { verdict: "DENY", benefit: null, reason: abawd.reason, trace };
   }
 
   // ── Gross income test (federal default; BBCE raises threshold) ──────

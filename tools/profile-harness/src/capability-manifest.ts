@@ -68,7 +68,7 @@ export const TS_MANIFEST_WAVE_A: CapabilityManifest = {
 };
 
 export const TS_MANIFEST_WAVE_B: CapabilityManifest = {
-  engine: "ts:snap-rules@wave-b",
+  engine: "ts:snap-rules@wave-1-finish",
   implemented: new Set<string>([
     "test.gross_net_fpl",
     "test.net_only",
@@ -79,20 +79,20 @@ export const TS_MANIFEST_WAVE_B: CapabilityManifest = {
     "shelter.sua.phone",
     "shelter.uncapped",
     "shelter.homeless",
+    "shelter.internet",              // OBBBA §10104 cutoff in benefit-calc
     "deductions.medical",
     "deductions.dependent_care",
     "deductions.child_support",
     "income.wages",
     "income.unearned",
+    "income.exclusion",              // isExcludedIncome filter in facts.ts
+    "workreq.abawd",                 // gates/abawd.ts wired in verdict.ts
+    "income.self_employment",        // SE treated as earned via federal default
   ]),
   known_gaps: new Set<string>([
     "eligibility.immigration",       // needs immigration module (Wave 2)
     "eligibility.disqualification",  // needs HH disqual module (Wave 2)
     "household.composition",         // proration etc. (Wave 2)
-    "workreq.abawd",                 // evaluateWorkRequirement exists, not wired to verdict yet
-    "income.self_employment",        // SE-calc method per state option
-    "income.exclusion",              // AmeriCorps / vendor / tax-refund
-    "shelter.internet",              // OBBBA §10104 cutoff handling
   ]),
 };
 
