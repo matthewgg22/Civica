@@ -1,0 +1,123 @@
+{
+  "scope": "MA",
+  "fiscal_year": 2022,
+  "n_unweighted": 922,
+  "weighted": true,
+  "weighted_n": 585398.48576992,
+  "metrics": {
+    "total_per_pct": 8.81,
+    "income_group_per": {
+      "earned_any": {
+        "n": 191,
+        "per_pct": 16.658
+      },
+      "no_earned": {
+        "n": 731,
+        "per_pct": 6.15
+      }
+    },
+    "n_cases_in_scope": 922,
+    "n_errored_cases": 333,
+    "weighted_n_errored": 218040.23507061,
+    "element_share_pct": {
+      "363": 40.66,
+      "311": 19.06,
+      "331": 13.37,
+      "365": 6.87,
+      "333": 6.22,
+      "364": 5.27,
+      "350": 4.23,
+      "150": 3.72,
+      "323": 3.52,
+      "346": 3.11,
+      "312": 2.49,
+      "334": 2.41,
+      "332": 1.35,
+      "130": 0.65,
+      "371": 0.49,
+      "344": 0.34,
+      "520": 0.31,
+      "111": 0.27,
+      "361": 0.27,
+      "342": 0.25,
+      "335": 0.22,
+      "314": 0.19
+    },
+    "element_validation": {
+      "363": {
+        "real": 40.66,
+        "label": "Shelter deduction"
+      },
+      "311": {
+        "real": 19.06,
+        "label": "Wages"
+      },
+      "331": {
+        "real": 13.37,
+        "label": "RSDI"
+      },
+      "365": {
+        "real": 6.87,
+        "label": "Medical expense deduction"
+      },
+      "333": {
+        "real": 6.22,
+        "label": "SSI"
+      },
+      "364": {
+        "real": 5.27,
+        "label": "Standard utility allowance"
+      },
+      "350": {
+        "real": 4.23,
+        "label": "Dependent care deduction"
+      },
+      "150": {
+        "real": 3.72,
+        "label": "Household composition"
+      },
+      "323": {
+        "real": 3.52,
+        "label": "Unemployment compensation"
+      },
+      "346": {
+        "real": 3.11,
+        "label": "Other unearned income"
+      }
+    },
+    "shelter_or_wages_share_of_errored_pct": 58.01,
+    "responsibility_dollar_weighted": {
+      "operational_pct": 17.4,
+      "client_pct": 82.6,
+      "raw_shares": {
+        "agency_operational": 17.1,
+        "client": 80.9,
+        "excluded": 0.1,
+        "other": 1.8
+      }
+    },
+    "responsibility_count": {
+      "agency_operational": 37,
+      "client": 103,
+      "excluded": 1,
+      "other": 4
+    },
+    "slots_used": 9
+  },
+  "columns_used": {
+    "state": "STATE",
+    "weight": "FYWGT",
+    "error": "AMTERR",
+    "benefit": "FSBEN",
+    "earned": "FSEARN",
+    "unearned": "FSUNEARN",
+    "element": null
+  },
+  "notes": [
+    "total_per_pct = sum(w*|error$|)/sum(w*benefit$)*100; approximate (no QC dollar-tolerance threshold applied).",
+    "Element share = weighted slot-count citing element / total weighted slot-count across ELEMENT1..N (engine denominator).",
+    "Operational vs client = $-weighted variance (FYWGT × |AMTERR|) per slot, AGENCY ∈ {operational: [10, 12, 14, 15, 16, 17, 18, 19, 20, 21], client: [1, 2, 3, 4, 7], excluded: [8]}.",
+    "No 'policy-design' category exists in QC — errors are agency (operational) or client (household)."
+  ],
+  "skipped": {}
+}

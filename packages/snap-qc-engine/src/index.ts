@@ -49,6 +49,23 @@ export {
 export type { PillarCoverage } from "./scoring/error-risk";
 export { INCOME_GROUP_PER_FY23, CA_INCOME_GROUP_PER_FY23, CA_ELEMENT_ATTRIBUTION_FY23 } from "./scoring/error-risk";
 
+// MA-state constants + state-aware functions (added 2026-06-01 for MA pilot — Project Bread track).
+// CA-default callers keep their existing API; pass a state arg to the *ForState variants
+// to opt into MA math. See packages/snap-qc-engine/src/scoring/error-risk.ts for derivation
+// and docs/findings/2026-06-01-ma-state-baseline.md for the data source.
+export {
+  MA_BASELINE_PER,
+  MA_BASELINE_FISCAL_YEAR,
+  MA_INCOME_GROUP_PER_FY23,
+  MA_ELEMENT_ATTRIBUTION_FY23,
+  STATE_CONSTANTS,
+  pillarContributionForState,
+  computeProjectedPERForState,
+  computeEngagementImpliedPERForState,
+  perPacketGapContributionForState,
+} from "./scoring/error-risk";
+export type { StateConstants, SupportedState } from "./scoring/error-risk";
+
 // Canonical error-rate snapshot ("truth point") builder. Composes the four
 // canonical PER metrics (baseline / projected / engagement-implied / measured)
 // into provenanced rows for snap_enrollment.error_rate_snapshot. Pure +

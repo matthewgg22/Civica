@@ -35,6 +35,9 @@ YEAR = 2024
 STEP_M = 100  # +/- $100/month perturbation for the central slope
 
 
+STATE = "CA"  # overridden by --state at runtime
+
+
 def make_situation(size, earn_m, unearn_m, shelter_m, elderly):
     from policyengine_us import Simulation  # noqa: F401  (import here for clear errors)
 
@@ -57,7 +60,7 @@ def make_situation(size, earn_m, unearn_m, shelter_m, elderly):
                 "utility_expense": {YEAR: 3600},
             }
         },
-        "households": {"hh": {"members": members, "state_name": {YEAR: "CA"}}},
+        "households": {"hh": {"members": members, "state_name": {YEAR: STATE}}},
     }
 
 
@@ -113,10 +116,15 @@ def summarize(vals):
 
 def main(argv=None):
     p = argparse.ArgumentParser()
-    p.add_argument("--out", default="data-ops/sample/policyengine-ca/element_leverage_fy2024.json")
+    p.add_argument("--state", default="CA", help="2-letter state code (e.g. CA, MA)")
+    p.add_argument("--out", default=None, help="defaults to data-ops/sample/policyengine-<state>/element_leverage_fy<YYYY>.json")
     p.add_argument("--quick", action="store_true")
     p.add_argument("--pe-version", default="unknown")
     a = p.parse_args(argv)
+
+    global STATE
+    STATE = a.state.upper()
+    out_path = a.out or f"data-ops/sample/policyengine-{STATE.lower()}/element_leverage_fy{YEAR}.json"
 
     panel = build_panel(quick=a.quick)
     elements = ["wages", "unearned", "shelter"]
@@ -135,9 +143,9 @@ def main(argv=None):
         "source": "PolicyEngine US (AGPL-3.0) run OFFLINE; outputs are facts (not the model code)",
         "pe_version": a.pe_version,
         "param_year": YEAR,
-        "state": "CA",
+        "state": STATE,
         "metric": "benefit_leverage_per_dollar",
-        "definition": "|d(annual SNAP benefit)| / |d(input $)|, central +/-$100/mo slope, summarized over a representative CA household panel.",
+        "definition": f"|d(annual SNAP benefit)| / |d(input $)|, central +/-$100/mo slope, summarized over a representative {STATE} household panel.",
         "panel": {
             "n_households": len(panel),
             "definition": "structured grid: size 1-4 x {earned/unearned mixes} x shelter {1000,1600}/mo x elderly/disabled flag",
@@ -149,18 +157,19 @@ def main(argv=None):
             "elderly_disabled_uncapped": summarize(shelter_by_elderly[True]),
         },
         "notes": [
-            "Unearned income leverage ~0.30: counts ~dollar-for-dollar into net income x 30% benefit reduction.",
+            "Unearned income theoretical max ~0.30: counts ~dollar-for-dollar into net income x 30% federal benefit-reduction rate.",
             "Wages leverage < unearned: 20% earned-income deduction softens each dollar.",
-            "Shelter leverage is bimodal: ~0 for non-elderly households over the excess-shelter cap (most high-rent CA renters), ~0.30 for elderly/disabled (uncapped).",
-            "Implication: the highest-DOLLAR-leverage error is income, which is exactly the part automated payroll verification fixes -- so the dollar-weighted error tilts more toward income than the case-count shares suggest.",
+            "Shelter leverage is bimodal: ~0 for non-elderly households at/above the excess-shelter cap, ~0.30 for elderly/disabled (uncapped).",
+            "Households where the marginal $100 tips them off SNAP eligibility entirely contribute leverage 0 to the median; share_zero quantifies this.",
+            "Implication: dollar-weighted error attribution can diverge sharply from case-count attribution. See README for state-specific commentary.",
         ],
     }
-    os.makedirs(os.path.dirname(a.out), exist_ok=True)
-    with open(a.out, "w", encoding="utf-8") as fh:
+    os.makedirs(os.path.dirname(out_path), exist_ok=True)
+    with open(out_path, "w", encoding="utf-8") as fh:
         json.dump(result, fh, indent=2)
     print(json.dumps(result["leverage_per_dollar"], indent=2))
     print("shelter_split:", json.dumps(result["shelter_split"]))
-    print("wrote", a.out)
+    print("wrote", out_path)
 
 
 if __name__ == "__main__":

@@ -104,6 +104,174 @@ def _require(df, cols: dict, names: list[str]) -> list[str]:
     return [n for n in names if cols[n] not in df.columns]
 
 
+# AGENCY-code partition per FY2023 Tech Doc Ch. V (AGENCY OR CLIENT RESPONSIBILITY).
+# Source: data-ops/sample/usda-qc-ca/ca_qc_fy2023.provenance.json.
+AGENCY_OPERATIONAL = {10, 12, 14, 15, 16, 17, 18, 19, 20, 21}
+AGENCY_CLIENT = {1, 2, 3, 4, 7}
+AGENCY_EXCLUDED = {8}
+ELEMENT_LABELS = {
+    "363": "Shelter deduction",
+    "311": "Wages",
+    "331": "RSDI",
+    "333": "SSI",
+    "346": "Other unearned income",
+    "312": "Self-employment",
+    "364": "Standard utility allowance",
+    "365": "Medical expense deduction",
+    "350": "Dependent care deduction",
+    "334": "Other earned income",
+    "323": "Unemployment compensation",
+    "366": "Child support deduction",
+    "342": "Child support received",
+    "332": "Veterans benefits",
+    "130": "Resources",
+    "140": "Vehicles",
+    "150": "Household composition",
+    "371": "Earned-income deduction",
+    "520": "Work requirement / ABAWD",
+}
+
+
+def _agency_category(code: int) -> str:
+    if code in AGENCY_OPERATIONAL:
+        return "agency_operational"
+    if code in AGENCY_CLIENT:
+        return "client"
+    if code in AGENCY_EXCLUDED:
+        return "excluded"
+    return "other"
+
+
+def _multi_element_metrics(state_df, w, cols, error_col: str) -> dict:
+    """Multi-element + multi-AGENCY attribution mirroring the CA reference build.
+
+    Iterates ELEMENT1..9 + AGENCY1..9 per case. Element share = weighted
+    per-case-distinct elements / total weighted attributable-errored cases.
+    Responsibility ($-weighted) = sum of (FYWGT * |AMTERR|) per slot,
+    classified by the slot's AGENCY code partition. Errored case = AMTERR ≠ 0
+    AND has at least one non-null ELEMENT slot (excludes ~3% unattributable
+    errored cases — matches CA reference build, n=378 vs 379 ref).
+    """
+    import pandas as pd  # noqa: PLC0415
+
+    element_cols = [f"ELEMENT{i}" for i in range(1, 10) if f"ELEMENT{i}" in state_df.columns]
+    agency_cols = [f"AGENCY{i}" for i in range(1, 10) if f"AGENCY{i}" in state_df.columns]
+    n_slots = min(len(element_cols), len(agency_cols))
+    if n_slots == 0:
+        return {"_skipped": "no ELEMENT1..9 / AGENCY1..9 columns found"}
+
+    err_abs = state_df[error_col].astype("float64").abs()
+    has_any_element = state_df[[f"ELEMENT{i}" for i in range(1, n_slots + 1)]].notna().any(axis=1)
+    errored_mask = (err_abs > 0) & has_any_element
+    errored = state_df[errored_mask]
+    if len(errored) == 0:
+        return {"_skipped": "no errored cases in scope"}
+
+    w_err = (w.loc[errored.index] if w is not None else pd.Series(1.0, index=errored.index))
+    err_abs_err = err_abs.loc[errored.index]
+
+    # Flatten (case × slot) into long-form rows. Build two long tables:
+    #   long_el  — element-only (ELEMENT non-null, AGENCY may be null) for
+    #              element-share denominators.
+    #   long_resp — both ELEMENT and AGENCY non-null, for responsibility
+    #              classification (null-AGENCY slots can't be classified).
+    rows_el: list[pd.DataFrame] = []
+    rows_resp: list[pd.DataFrame] = []
+    for i in range(1, n_slots + 1):
+        ec, ac = f"ELEMENT{i}", f"AGENCY{i}"
+        e = errored[ec]
+        a = errored[ac]
+        em = e.notna()
+        am = em & a.notna()
+        if em.any():
+            sub = errored[em]
+            rows_el.append(pd.DataFrame({
+                "case_idx": sub.index,
+                "element": e[em].astype("Int64").astype("string"),
+                "w": w_err.loc[sub.index].astype("float64").values,
+            }))
+        if am.any():
+            sub = errored[am]
+            rows_resp.append(pd.DataFrame({
+                "case_idx": sub.index,
+                "agency": a[am].astype("Int64"),
+                "w": w_err.loc[sub.index].astype("float64").values,
+                "err_abs": err_abs_err.loc[sub.index].astype("float64").values,
+            }))
+    if not rows_el:
+        return {"_skipped": "all ELEMENT slots null in errored cases"}
+    long_el = pd.concat(rows_el, ignore_index=True)
+    long = pd.concat(rows_resp, ignore_index=True) if rows_resp else pd.DataFrame(
+        columns=["case_idx", "agency", "w", "err_abs"]
+    )
+
+    # Element share — per-case (dedupe element occurrences within a case),
+    # weighted by FYWGT, divided by total weighted errored cases. Includes
+    # slots where AGENCY is null (CA reference build matches this).
+    per_case = long_el.drop_duplicates(subset=["case_idx", "element"])
+    total_err_w = float(w_err.sum())
+    el_counts = per_case.groupby("element")["w"].sum().sort_values(ascending=False)
+    element_share_pct = {
+        str(k): round(float(v) / total_err_w * 100, 2)
+        for k, v in el_counts.items()
+    } if total_err_w else {}
+
+    # Shelter (363) OR Wages (311) — share of errored cases citing either
+    # (dedupe so a case with both is counted once).
+    sw_cases = per_case[per_case["element"].isin(["363", "311"])].drop_duplicates(subset=["case_idx"])
+    shelter_wages = round(float(sw_cases["w"].sum()) / total_err_w * 100, 2) if total_err_w else 0.0
+
+    # Element validation labels vs engine.
+    element_validation = {
+        code: {
+            "real": pct,
+            "label": ELEMENT_LABELS.get(code, "(verify w/ codebook)"),
+        }
+        for code, pct in list(element_share_pct.items())[:10]
+    }
+
+    # Responsibility ($-weighted) — sum (FYWGT * |error$|) per slot, classified
+    # by AGENCY partition. Raw shares include all four buckets; the
+    # operational/client normalization restricts to those two.
+    long["category"] = long["agency"].fillna(-1).astype("int64").map(_agency_category).fillna("other")
+    long["wd"] = long["w"] * long["err_abs"]
+    dollar_by_cat = long.groupby("category")["wd"].sum()
+    total_d = float(dollar_by_cat.sum())
+    raw_shares = {
+        k: round(float(v) / total_d * 100, 1) if total_d else 0.0
+        for k, v in dollar_by_cat.items()
+    }
+    for k in ("agency_operational", "client", "excluded", "other"):
+        raw_shares.setdefault(k, 0.0)
+    op_d = float(dollar_by_cat.get("agency_operational", 0.0))
+    cl_d = float(dollar_by_cat.get("client", 0.0))
+    norm = op_d + cl_d
+    responsibility_dollar = {
+        "operational_pct": round(op_d / norm * 100, 1) if norm else None,
+        "client_pct": round(cl_d / norm * 100, 1) if norm else None,
+        "raw_shares": raw_shares,
+    }
+
+    # Responsibility count — slot occurrences (NOT $-weighted).
+    count_by_cat = long.groupby("category").size().to_dict()
+    responsibility_count = {
+        k: int(count_by_cat.get(k, 0))
+        for k in ("agency_operational", "client", "excluded", "other")
+    }
+
+    return {
+        "n_cases_in_scope": int(len(state_df)),
+        "n_errored_cases": int(len(errored)),
+        "weighted_n_errored": float(w_err.sum()) if w is not None else None,
+        "element_share_pct": element_share_pct,
+        "element_validation": element_validation,
+        "shelter_or_wages_share_of_errored_pct": shelter_wages,
+        "responsibility_dollar_weighted": responsibility_dollar,
+        "responsibility_count": responsibility_count,
+        "slots_used": n_slots,
+    }
+
+
 def cmd_build(args) -> None:
     df = load_df(args.data)
     cols = {
@@ -116,18 +284,23 @@ def cmd_build(args) -> None:
         "element": args.col_element,
     }
 
+    state_label = args.state.upper()
+    state_code = str(args.state_code if args.state_code is not None else args.ca_code)
+    # FIPS may appear as "6" or "06" (CA) / "25" (MA); accept both representations.
+    fips_variants = list({state_code, state_code.zfill(2), state_code.lstrip("0") or "0"})
+
     skipped: dict[str, str] = {}
 
-    # --- California filter -------------------------------------------------
+    # --- State filter ------------------------------------------------------
     if cols["state"] not in df.columns:
         sys.exit(
             f"state column {cols['state']!r} not found. Run `inspect` and pass "
             f"--col-state. Available sample: {list(df.columns)[:20]}"
         )
-    ca = df[df[cols["state"]].astype("string").str.strip().isin([str(args.ca_code), "06", "6"])]
+    ca = df[df[cols["state"]].astype("string").str.strip().isin(fips_variants)]
     n_ca = len(ca)
     if n_ca == 0:
-        sys.exit(f"0 CA rows for {cols['state']}=={args.ca_code}. Check --col-state/--ca-code.")
+        sys.exit(f"0 {state_label} rows for {cols['state']} in {fips_variants}. Check --col-state/--state-code.")
 
     weighted = cols["weight"] in ca.columns
     w = ca[cols["weight"]].astype("float64") if weighted else None
@@ -135,9 +308,9 @@ def cmd_build(args) -> None:
         skipped["weighting"] = f"weight column {cols['weight']!r} missing — counts are UNWEIGHTED"
 
     result: dict = {
-        "scope": "CA",
+        "scope": state_label,
         "fiscal_year": args.fiscal_year,
-        "n_ca_unweighted": int(n_ca),
+        "n_unweighted": int(n_ca),
         "weighted": weighted,
         "weighted_n": float(w.sum()) if weighted else None,
         "metrics": {},
@@ -181,8 +354,33 @@ def cmd_build(args) -> None:
     else:
         skipped["income_group_per"] = f"need {cols['error']} + {cols['benefit']} + {cols['earned']}"
 
-    # --- Element attribution (share of errored cases) ----------------------
-    if cols["element"] and cols["element"] in ca.columns and cols["error"] in ca.columns:
+    # --- Element attribution -----------------------------------------------
+    if args.multi_element:
+        # Authoritative methodology: iterate ELEMENT1..9 + AGENCY1..9 per case.
+        # Mirrors the CA reference build (data-ops/sample/usda-qc-ca/ca_qc_fy2023.json).
+        if cols["error"] in ca.columns:
+            me = _multi_element_metrics(ca, w if weighted else None, cols, cols["error"])
+            if "_skipped" in me:
+                skipped["multi_element"] = me["_skipped"]
+            else:
+                result["metrics"].update(me)
+                result["notes"].append(
+                    "Element share = weighted slot-count citing element / total weighted slot-count "
+                    "across ELEMENT1..N (engine denominator)."
+                )
+                result["notes"].append(
+                    "Operational vs client = $-weighted variance (FYWGT × |AMTERR|) per slot, "
+                    f"AGENCY ∈ {{operational: {sorted(AGENCY_OPERATIONAL)}, "
+                    f"client: {sorted(AGENCY_CLIENT)}, excluded: {sorted(AGENCY_EXCLUDED)}}}."
+                )
+                result["notes"].append(
+                    "No 'policy-design' category exists in QC — errors are agency (operational) "
+                    "or client (household)."
+                )
+        else:
+            skipped["multi_element"] = f"need {cols['error']} column for errored-case filter"
+    elif cols["element"] and cols["element"] in ca.columns and cols["error"] in ca.columns:
+        # Single-element fallback (legacy / quick-look mode).
         errored = ca[ca[cols["error"]].astype("float64").abs() > 0]
         ww = (w.loc[errored.index] if weighted else None)
         counts = (
@@ -202,8 +400,10 @@ def cmd_build(args) -> None:
     result["skipped"] = skipped
 
     # --- Write artifact + provenance --------------------------------------
-    os.makedirs(args.out_dir, exist_ok=True)
-    out = os.path.join(args.out_dir, f"ca_qc_fy{args.fiscal_year}.json")
+    out_dir = args.out_dir or f"data-ops/sample/usda-qc-{state_label.lower()}"
+    os.makedirs(out_dir, exist_ok=True)
+    prefix = f"{state_label.lower()}_qc_fy{args.fiscal_year}"
+    out = os.path.join(out_dir, f"{prefix}.json")
     with open(out, "w", encoding="utf-8") as fh:
         json.dump(result, fh, indent=2, ensure_ascii=False)
     prov = {
@@ -212,25 +412,42 @@ def cmd_build(args) -> None:
         "input_file": os.path.abspath(args.data),
         "input_mtime": os.path.getmtime(args.data),
         "generated_at": args.generated_at,
+        "state_label": state_label,
+        "state_fips_filter": fips_variants,
         "columns_used": cols,
         "codebook": "FY2023 Tech Doc, Chapter V (~p.55) — verify column names here",
     }
-    with open(os.path.join(args.out_dir, f"ca_qc_fy{args.fiscal_year}.provenance.json"), "w", encoding="utf-8") as fh:
+    with open(os.path.join(out_dir, f"{prefix}.provenance.json"), "w", encoding="utf-8") as fh:
         json.dump(prov, fh, indent=2, ensure_ascii=False)
 
     # --- Validation table: microdata-derived vs engine constants ----------
     print(f"\nWrote {out}")
-    print(f"CA rows: {n_ca:,}  (weighted: {weighted})\n")
-    print("VALIDATION — microdata-derived vs engine reference (FY2023)")
-    print("-" * 58)
-    per = result["metrics"].get("total_per_pct")
-    print(f"CA total PER       derived={_fmt(per)}   engine={ENGINE_CA_TOTAL_PER_FY2023}")
-    ig = result["metrics"].get("income_group_per", {})
-    if ig:
-        print(f"  earned-any PER   derived={_fmt(ig.get('earned_any', {}).get('per_pct'))}"
-              f"   engine(wage_only)={ENGINE_CA_INCOME_GROUP_PER_FY23['wage_only']}")
-        print(f"  no-earned PER    derived={_fmt(ig.get('no_earned', {}).get('per_pct'))}"
-              f"   engine={ENGINE_CA_INCOME_GROUP_PER_FY23['no_earned']}")
+    print(f"{state_label} rows: {n_ca:,}  (weighted: {weighted})\n")
+    if state_label == "CA":
+        print("VALIDATION — microdata-derived vs engine reference (FY2023, CA)")
+        print("-" * 58)
+        per = result["metrics"].get("total_per_pct")
+        print(f"CA total PER       derived={_fmt(per)}   engine={ENGINE_CA_TOTAL_PER_FY2023}")
+        ig = result["metrics"].get("income_group_per", {})
+        if ig:
+            print(f"  earned-any PER   derived={_fmt(ig.get('earned_any', {}).get('per_pct'))}"
+                  f"   engine(wage_only)={ENGINE_CA_INCOME_GROUP_PER_FY23['wage_only']}")
+            print(f"  no-earned PER    derived={_fmt(ig.get('no_earned', {}).get('per_pct'))}"
+                  f"   engine={ENGINE_CA_INCOME_GROUP_PER_FY23['no_earned']}")
+    else:
+        print(f"METRICS ({state_label}, FY{args.fiscal_year}) — no engine reference to validate against yet")
+        print("-" * 58)
+        per = result["metrics"].get("total_per_pct")
+        print(f"{state_label} total PER       derived={_fmt(per)}")
+        ig = result["metrics"].get("income_group_per", {})
+        if ig:
+            print(f"  earned-any PER   derived={_fmt(ig.get('earned_any', {}).get('per_pct'))}")
+            print(f"  no-earned PER    derived={_fmt(ig.get('no_earned', {}).get('per_pct'))}")
+        es = result["metrics"].get("element_share_pct", {})
+        if es:
+            print("  top element shares:")
+            for k, v in list(es.items())[:7]:
+                print(f"    {k:>5}  {v}%")
     if skipped:
         print("\nSKIPPED (missing columns — map via `inspect` then re-run):")
         for k, v in skipped.items():
@@ -249,19 +466,24 @@ def main(argv=None) -> None:
     pi.add_argument("--data", required=True, help="path to the QC file (.csv/.sas7bdat/.dta/.sav)")
     pi.set_defaults(func=cmd_inspect)
 
-    pb = sub.add_parser("build", help="filter CA + compute aggregates + provenance")
+    pb = sub.add_parser("build", help="filter state + compute aggregates + provenance")
     pb.add_argument("--data", required=True)
+    pb.add_argument("--state", default="CA", help="state label, e.g. CA / MA (controls output filenames + dir)")
+    pb.add_argument("--state-code", default=None, help="state FIPS as string, e.g. 6 for CA, 25 for MA")
     pb.add_argument("--fiscal-year", type=int, default=2023)
-    pb.add_argument("--out-dir", default="data-ops/sample/usda-qc-ca")
+    pb.add_argument("--out-dir", default=None, help="defaults to data-ops/sample/usda-qc-<state>")
     pb.add_argument("--generated-at", default="unset", help="ISO timestamp for provenance")
     pb.add_argument("--col-state", default="STATEFIP")
-    pb.add_argument("--ca-code", default="6")
+    pb.add_argument("--ca-code", default="6", help="DEPRECATED alias for --state-code; kept for back-compat")
     pb.add_argument("--col-weight", default="FSUWGT")
     pb.add_argument("--col-error", default="RAWERR")
     pb.add_argument("--col-benefit", default="FSBEN")
     pb.add_argument("--col-earned", default="FSEARN")
     pb.add_argument("--col-unearned", default="FSUNEARN")
     pb.add_argument("--col-element", default=None, help="element-of-error code column (from inspect)")
+    pb.add_argument("--multi-element", action="store_true",
+                    help="iterate ELEMENT1..9 + AGENCY1..9 (authoritative methodology, "
+                         "mirrors CA reference build). Overrides --col-element.")
     pb.set_defaults(func=cmd_build)
 
     args = p.parse_args(argv)

@@ -2,51 +2,51 @@
   "source": "PolicyEngine US (AGPL-3.0) run OFFLINE; outputs are facts (not the model code)",
   "pe_version": "1.715.2",
   "param_year": 2024,
-  "state": "CA",
+  "state": "MA",
   "metric": "benefit_leverage_per_dollar",
-  "definition": "|d(annual SNAP benefit)| / |d(input $)|, central +/-$100/mo slope, summarized over a representative CA household panel.",
+  "definition": "|d(annual SNAP benefit)| / |d(input $)|, central +/-$100/mo slope, summarized over a representative MA household panel.",
   "panel": {
     "n_households": 64,
     "definition": "structured grid: size 1-4 x {earned/unearned mixes} x shelter {1000,1600}/mo x elderly/disabled flag",
-    "mean_correct_benefit_monthly": 353.92
+    "mean_correct_benefit_monthly": 572.23
   },
   "leverage_per_dollar": {
     "wages": {
-      "median": 0.135,
-      "p25": 0.09,
+      "median": 0.165,
+      "p25": 0.0,
       "p75": 0.24,
       "n": 64,
-      "share_zero": 0.094
+      "share_zero": 0.344
     },
     "unearned": {
-      "median": 0.3,
-      "p25": 0.056,
-      "p75": 0.331,
-      "n": 64,
-      "share_zero": 0.125
-    },
-    "shelter": {
-      "median": 0.138,
+      "median": 0.06,
       "p25": 0.0,
       "p75": 0.3,
       "n": 64,
-      "share_zero": 0.453
+      "share_zero": 0.469
+    },
+    "shelter": {
+      "median": 0.0,
+      "p25": 0.0,
+      "p75": 0.0,
+      "n": 64,
+      "share_zero": 0.844
     }
   },
   "shelter_split": {
     "nonelderly_capped": {
       "median": 0.0,
       "p25": 0.0,
-      "p75": 0.1,
+      "p75": 0.0,
       "n": 32,
-      "share_zero": 0.719
+      "share_zero": 1.0
     },
     "elderly_disabled_uncapped": {
-      "median": 0.3,
-      "p25": 0.3,
-      "p75": 0.3,
+      "median": 0.0,
+      "p25": 0.0,
+      "p75": 0.295,
       "n": 32,
-      "share_zero": 0.188
+      "share_zero": 0.688
     }
   },
   "notes": [
