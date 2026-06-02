@@ -208,9 +208,46 @@ FY25_SUA_TABLE = SUATable(
 )
 
 
-_POVERTY_TABLES: list[PovertyGuidelineTable] = [FY25_POVERTY_48]
-_MAX_ALLOTMENT_TABLES: list[MaxAllotmentTable] = [FY25_MAX_ALLOTMENT_48]
-_SUA_TABLES: list[SUATable] = [FY25_SUA_TABLE]
+# FY2026 (effective 2025-10-01 → 2026-09-30). Retrieved + corroborated by research
+# agents 2026-06-01. ✓ = FNS/HHS/CRS primary-confirmed; ◦ = ≥2 agreeing secondary
+# sources (FNS primary table PDF not machine-readable — reconfirm ◦ cells against
+# fns.usda.gov/snap/allotment/cola/fy26 before production determinations).
+FY26_POVERTY_48 = PovertyGuidelineTable(
+    fiscal_year=2026,
+    effective_start=date(2025, 10, 1),
+    effective_end=date(2026, 9, 30),
+    annual_first_person=Decimal("15650"),           # ✓ HHS 2025 guidelines (90 FR 5917)
+    annual_each_additional_person=Decimal("5500"),  # ✓ HHS 2025
+)
+
+FY26_MAX_ALLOTMENT_48 = MaxAllotmentTable(
+    fiscal_year=2026,
+    effective_start=date(2025, 10, 1),
+    effective_end=date(2026, 9, 30),
+    by_household_size={
+        1: Decimal("298"), 2: Decimal("546"), 3: Decimal("785"),   # HH4 ✓ FNS; others ◦
+        4: Decimal("994"), 5: Decimal("1183"), 6: Decimal("1421"),
+        7: Decimal("1571"), 8: Decimal("1789"),
+    },
+    each_additional_person=Decimal("218"),  # ◦
+)
+
+# State SUAs, FY2026. CA = CDSS ACIN I-46-25 (◦ via LSNC); MA = mass.gov DTA (✓).
+_SUA_TABLES_FY26: dict[str, dict[str, Decimal]] = {
+    "CA": {"heating_cooling": Decimal("663"), "non_heating": Decimal("170"), "phone_only": Decimal("20")},
+    "MA": {"heating_cooling": Decimal("890"), "non_heating": Decimal("542"), "phone_only": Decimal("62")},
+}
+FY26_SUA_TABLE = SUATable(
+    fiscal_year=2026,
+    effective_start=date(2025, 10, 1),
+    effective_end=date(2026, 9, 30),
+    by_state_and_tier=_SUA_TABLES_FY26,
+)
+
+
+_POVERTY_TABLES: list[PovertyGuidelineTable] = [FY25_POVERTY_48, FY26_POVERTY_48]
+_MAX_ALLOTMENT_TABLES: list[MaxAllotmentTable] = [FY25_MAX_ALLOTMENT_48, FY26_MAX_ALLOTMENT_48]
+_SUA_TABLES: list[SUATable] = [FY25_SUA_TABLE, FY26_SUA_TABLE]
 
 
 class NoTableForStateError(LookupError):

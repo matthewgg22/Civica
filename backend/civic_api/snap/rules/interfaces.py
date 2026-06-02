@@ -80,6 +80,51 @@ class SUATier(str, Enum):
     PHONE_ONLY = "phone_only"
 
 
+class ExclusionReason(str, Enum):
+    """Why a member is excluded from the eligible unit — selects the §16 proration
+    regime (see rules/proration.py). In all cases the member's needs leave household size.
+
+    Regime A — full income count, deductions retained (7 CFR 273.11(c)(2)).
+    Regime B — income + billed shelter/dependent-care prorated by the eligible
+               fraction f = n_eligible / n_total (7 CFR 273.11(c)(1)).
+    """
+    # Regime A
+    IPV = "ipv"
+    WORK_REQUIREMENT = "work_requirement"
+    SSN_NONCOMPLIANCE = "ssn_noncompliance"
+    FLEEING_FELON = "fleeing_felon"
+    DRUG_FELONY = "drug_felony"
+    # Regime B
+    INELIGIBLE_NONCITIZEN = "ineligible_noncitizen"
+    SSN_REFUSER = "ssn_refuser"
+
+
+class ImmigrationStatus(str, Enum):
+    """Granular immigration status for §10108 (post-OBBBA) resolution.
+
+    Resolved to eligible / ineligible / contested / pending as-of the determination
+    date by rules/immigration.py — the §10108 noncitizen removals are effective
+    2025-07-04 (enactment), NOT 2025-11-01, a point-in-time boundary.
+    """
+    US_CITIZEN = "us_citizen"
+    US_NATIONAL = "us_national"
+    LPR = "lpr"                                    # qualified LPR (5-yr-bar = v1 simplification)
+    CUBAN_HAITIAN = "cuban_haitian"
+    COFA = "cofa"
+    REFUGEE = "refugee"                            # removed by §10108
+    ASYLEE = "asylee"                              # removed by §10108
+    WITHHOLDING = "withholding"                    # removed by §10108
+    PAROLEE = "parolee"                            # removed by §10108 (incl. Afghan/Ukrainian)
+    VAWA_SELF_PETITIONER = "vawa_self_petitioner"  # removed by §10108
+    UNDOCUMENTED = "undocumented"                  # always ineligible
+    DACA = "daca"                                  # always ineligible (the misconception trap)
+    TEMP_VISA = "temp_visa"                        # always ineligible
+    TPS = "tps"                                    # always ineligible
+    H2A = "h2a"                                    # always ineligible
+    T_VISA = "t_visa"                              # ⚠ CONTESTED (under litigation)
+    UNKNOWN = "unknown"
+
+
 class HouseholdMember(BaseModel):
     """One member of the food household.
 
@@ -118,6 +163,25 @@ class HouseholdMember(BaseModel):
         description="Able-bodied adult without dependents — triggers the 3-month time limit unless work-program participation is met.",
     )
     is_work_registered: bool = True
+    eligibility_exclusion: ExclusionReason | None = Field(
+        default=None,
+        description="If set, the member is excluded from the eligible unit; the reason "
+        "selects the §16 proration regime. None = counted as a normal member.",
+    )
+    immigration_status: ImmigrationStatus | None = Field(
+        default=None,
+        description="Granular immigration status; resolved as-of the determination date "
+        "by rules/immigration.py (§10108). When set it drives eligibility/exclusion and "
+        "overrides the coarse `citizenship` for the determination.",
+    )
+    # §10102 work-requirement inputs. work_class is DERIVED (rules/work_requirement.py),
+    # never accepted as input — these are the facts the derivation reads.
+    monthly_work_hours: Decimal = Field(default=Decimal("0"), ge=0)
+    abawd_countable_months_used: int = Field(default=0, ge=0)
+    is_veteran: bool = False
+    is_former_foster_youth: bool = False   # ≤24; OBBBA-removed ABAWD exemption
+    is_tribal_member: bool = False         # OBBBA-added ABAWD exemption
+    in_abawd_waived_area: bool = False
 
 
 class IncomeSource(BaseModel):
