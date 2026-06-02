@@ -1,0 +1,119 @@
+{
+  "$schema_version": 1,
+  "title": "Civica SNAP test-profile requires[] taxonomy",
+  "description": "Authoritative enumeration of engine-surface tags emitted by civica_test_profiles_generator.py's requires_for(). Every tag a profile declares MUST appear in this file; conversely, every surface listed here MUST be implementable by the engine to pass profiles that declare it. The JSON Schema enforces requires.items.enum against the keys of this object.",
+  "owner": "civica/snap-rules",
+  "tags": {
+    "test.gross_net_fpl": {
+      "description": "The gross/net income tests at federal FPL multiples (130%, 100% net, or BBCE-200%). Every profile declares this.",
+      "engine_module": "eligibility.income_test",
+      "citation": "7 CFR 273.9(a),(b)"
+    },
+    "test.net_only": {
+      "description": "Net-income-only test (E/D households skip gross). Triggered when household has elderly or disabled member.",
+      "engine_module": "eligibility.income_test",
+      "citation": "7 CFR 273.9(a)(2)"
+    },
+
+    "eligibility.student": {
+      "description": "Higher-education student eligibility (he_* status enum + exemptions: work20, single_parent_child_under12, work_study, et_placement, age50plus, dependent_under6, tanf).",
+      "engine_module": "eligibility.student",
+      "citation": "7 CFR 273.5"
+    },
+    "eligibility.immigration": {
+      "description": "Immigration-status eligibility incl. citizen/LPR/refugee/asylee/COFA/undocumented, five-year-bar, 40-quarters exemption, refugee_adjusted, removed_status (post-OBBBA).",
+      "engine_module": "eligibility.immigration",
+      "citation": "7 CFR 273.4; FNA 6(f)"
+    },
+    "eligibility.disqualification": {
+      "description": "Member-level disqualifications: lottery winnings, IPV, fleeing felon, drug felony (state option).",
+      "engine_module": "eligibility.disqualification",
+      "citation": "7 CFR 273.11(m),(n); 273.16; 272.17"
+    },
+    "eligibility.categorical": {
+      "description": "Categorical eligibility via pure_SSI, pure_PA, or BBCE conferral. Skips asset test; may skip gross test.",
+      "engine_module": "eligibility.categorical",
+      "citation": "7 CFR 273.2(j)"
+    },
+
+    "household.composition": {
+      "description": "Household-composition edges: roomer (separate HH), boarder (combine), sponsored alien, must-combine-with-parent under 22, treatment-center resident as one-person HH, migrant.",
+      "engine_module": "eligibility.household",
+      "citation": "7 CFR 273.1"
+    },
+
+    "workreq.abawd": {
+      "description": "ABAWD work requirement: 3-in-36 month clock, exemptions (caregiver_incapacitated, disabled, veteran_homeless pre-OBBBA, Tribal post-OBBBA), area waivers, jury duty good cause.",
+      "engine_module": "workreq.abawd",
+      "citation": "7 CFR 273.24"
+    },
+
+    "income.wages": {
+      "description": "Earned wage income (excluding self-employment). Triggers 20% earned-income deduction.",
+      "engine_module": "income.wages",
+      "citation": "7 CFR 273.9(b)(1),(d)(2)"
+    },
+    "income.unearned": {
+      "description": "Unearned income: RSDI, SSI, TANF, UI, gift_cash, contract_seasonal. Does NOT get EID.",
+      "engine_module": "income.unearned",
+      "citation": "7 CFR 273.9(b)(2)"
+    },
+    "income.self_employment": {
+      "description": "Self-employment + farm self-employment (with loss-offset rules). State-option calc method.",
+      "engine_module": "income.self_employment",
+      "citation": "7 CFR 273.11(a),(b)"
+    },
+    "income.exclusion": {
+      "description": "Income exclusions: AmeriCorps state/national (always excluded), AmeriCorps VISTA (conditional on prior SNAP), tax refund/EITC, vendor payments to landlord.",
+      "engine_module": "income.exclusion",
+      "citation": "7 CFR 273.9(c); NCSA 12637(d)"
+    },
+
+    "shelter.sua.HCSUA": {
+      "description": "Heating/cooling SUA tier. Per-state production value via PARAMS.sua_by_state.",
+      "engine_module": "shelter.sua",
+      "citation": "7 CFR 273.9(d)(6)(iii)"
+    },
+    "shelter.sua.LUA": {
+      "description": "Limited utility allowance tier (non-heating).",
+      "engine_module": "shelter.sua",
+      "citation": "7 CFR 273.9(d)(6)(iii)"
+    },
+    "shelter.sua.phone": {
+      "description": "Phone-only SUA tier.",
+      "engine_module": "shelter.sua",
+      "citation": "7 CFR 273.9(d)(6)(iii)"
+    },
+    "shelter.uncapped": {
+      "description": "Excess-shelter deduction uncapped for households with elderly or disabled member.",
+      "engine_module": "shelter.excess_shelter",
+      "citation": "7 CFR 273.9(d)(6)"
+    },
+    "shelter.internet": {
+      "description": "Internet-as-shelter inclusion (pre-OBBBA §10104). Post-2025-11-01 = excluded.",
+      "engine_module": "shelter.internet",
+      "citation": "OBBBA §10104"
+    },
+    "shelter.homeless": {
+      "description": "Homeless-household shelter deduction substitute ($198.99 FY26) in lieu of excess-shelter calc.",
+      "engine_module": "shelter.homeless_deduction",
+      "citation": "7 CFR 273.9(d)(6)(i)"
+    },
+
+    "deductions.medical": {
+      "description": "Elderly/disabled medical-expense deduction above the $35 floor.",
+      "engine_module": "deductions.medical",
+      "citation": "7 CFR 273.9(d)(3)"
+    },
+    "deductions.dependent_care": {
+      "description": "Dependent-care deduction.",
+      "engine_module": "deductions.dependent_care",
+      "citation": "7 CFR 273.9(d)(4)"
+    },
+    "deductions.child_support": {
+      "description": "Legally obligated child-support-paid deduction.",
+      "engine_module": "deductions.child_support",
+      "citation": "7 CFR 273.9(d)(5)"
+    }
+  }
+}

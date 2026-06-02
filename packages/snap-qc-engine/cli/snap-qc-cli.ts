@@ -187,6 +187,118 @@ function cmdSnapshot(stateArg?: string, countsPath?: string) {
   }
 }
 
+// ─── batch runner ───────────────────────────────────────────────────────────
+
+interface ProbabilityScenario {
+  id: string;
+  state: SupportedState;
+  kind: "score-packet" | "population-per";
+  description?: string;
+  input: any;
+  expected: any;
+}
+
+interface ScenarioFile {
+  $schema_version?: number;
+  probability?: ProbabilityScenario[];
+  eligibility?: unknown[];
+}
+
+interface ScenarioResult {
+  id: string;
+  status: "pass" | "fail";
+  detail: string;
+}
+
+function fmtBool(ok: boolean): string {
+  return ok ? "  ✓ " : "  ✗ ";
+}
+
+function approxEqual(actual: number, expected: number, tolerance = 0): boolean {
+  if (!Number.isFinite(actual) || !Number.isFinite(expected)) return false;
+  return Math.abs(actual - expected) <= tolerance;
+}
+
+function runProbabilityScenario(s: ProbabilityScenario): ScenarioResult {
+  try {
+    if (s.kind === "score-packet") {
+      const flows = s.input.packet as Array<{ flow: any; defensibility_score: any }>;
+      const result = scoreErrorRisk(flows);
+      const e = s.expected as { tier: string; score: number; factors_count?: number };
+
+      const tierOK = result.tier === e.tier;
+      const scoreOK = result.score === e.score;
+      const factorsOK = e.factors_count == null || result.factors.length === e.factors_count;
+
+      if (tierOK && scoreOK && factorsOK) {
+        return {
+          id: s.id,
+          status: "pass",
+          detail: `tier=${result.tier} score=${result.score} factors=${result.factors.length}`,
+        };
+      }
+      const parts: string[] = [];
+      if (!tierOK) parts.push(`tier expected=${e.tier} got=${result.tier}`);
+      if (!scoreOK) parts.push(`score expected=${e.score} got=${result.score}`);
+      if (!factorsOK) parts.push(`factors expected=${e.factors_count} got=${result.factors.length}`);
+      return { id: s.id, status: "fail", detail: parts.join("; ") };
+    }
+
+    if (s.kind === "population-per") {
+      const coverage = s.input.coverage as PillarCoverage;
+      const projected = computeProjectedPERForState(coverage, s.state);
+      const e = s.expected as { projected_per: number; tolerance?: number };
+      const tol = e.tolerance ?? 0.05;
+      const ok = approxEqual(projected, e.projected_per, tol);
+      return {
+        id: s.id,
+        status: ok ? "pass" : "fail",
+        detail: ok
+          ? `projected=${projected.toFixed(2)}% (expected ${e.projected_per}±${tol})`
+          : `projected=${projected.toFixed(4)}% expected=${e.projected_per}% tol=${tol}`,
+      };
+    }
+
+    return { id: s.id, status: "fail", detail: `unknown kind "${(s as any).kind}"` };
+  } catch (err) {
+    return { id: s.id, status: "fail", detail: `threw: ${(err as Error).message}` };
+  }
+}
+
+function cmdBatch(scenariosPath?: string) {
+  if (!scenariosPath) {
+    console.error("Error: cli batch <scenarios.json>");
+    console.error("Hint: data-ops/test-scenarios/snap-engines-2026-06.json");
+    process.exit(2);
+  }
+
+  const raw = readFileSync(scenariosPath, "utf-8");
+  const file = JSON.parse(raw) as ScenarioFile;
+  const scenarios = file.probability ?? [];
+
+  header(`Batch runner — ${scenarios.length} probability scenarios`);
+  console.log(`  File: ${scenariosPath}`);
+  console.log(`  Schema version: ${file.$schema_version ?? "(unset)"}`);
+  console.log(`  Eligibility scenarios in file: ${file.eligibility?.length ?? 0} (Swift runner consumes these)`);
+  console.log(LIGHT);
+
+  const results = scenarios.map(runProbabilityScenario);
+
+  // Pretty table: id (40w) | status | detail
+  for (const r of results) {
+    const id = r.id.padEnd(36);
+    console.log(`${fmtBool(r.status === "pass")} ${id} ${r.detail}`);
+  }
+
+  const passed = results.filter((r) => r.status === "pass").length;
+  const failed = results.length - passed;
+  console.log(LIGHT);
+  console.log(`  ${passed} passed, ${failed} failed of ${results.length}`);
+  console.log(`  engine_version: ${ENGINE_VERSION}`);
+
+  if (failed > 0) process.exit(1);
+}
+
 function cmdDemo() {
   header(`SNAP QC engine demo — v${ENGINE_VERSION}`);
   console.log(`  CA baseline PER (FY24): ${CA_BASELINE_PER}%`);
@@ -209,6 +321,7 @@ SNAP QC engine — fixture harness CLI (engine version ${ENGINE_VERSION})
 
 Usage:
   cli demo                              Run all entry points with built-in fixtures
+  cli batch <scenarios.json>            Run every probability scenario in file (assertion mode)
   cli score [packet.json]               Score one packet (per-flow defensibility)
   cli population <CA|MA> [coverage.json]   Project population PER for a state
   cli snapshot   <CA|MA> [counts.json]     Build canonical error-rate-snapshot rows
@@ -244,6 +357,9 @@ switch (subcmd) {
     break;
   case "snapshot":
     cmdSnapshot(rest[0], rest[1]);
+    break;
+  case "batch":
+    cmdBatch(rest[0]);
     break;
   case "-h":
   case "--help":

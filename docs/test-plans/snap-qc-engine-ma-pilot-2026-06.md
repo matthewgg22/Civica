@@ -41,6 +41,23 @@ pnpm --filter @civica/snap-qc-engine test          # expect 316/316 green
 pnpm --filter @civica/snap-qc-engine cli demo      # expect rich output, no errors
 ```
 
+## Primary entry point: batch runner
+
+The 7 scenarios below are also encoded declaratively in
+`data-ops/test-scenarios/snap-engines-2026-06.json` (top-level `probability`
+section). Run them all as assertions in one shot:
+
+```sh
+pnpm --filter @civica/snap-qc-engine cli batch \
+  "$PWD/data-ops/test-scenarios/snap-engines-2026-06.json"
+```
+
+Expected output: every scenario marked `✓`, exit code 0. To pin a new
+invariant, add a scenario to the file — no code change required.
+
+The hand-walk scenarios below remain useful for understanding what each
+assertion means and for ad-hoc exploration via `cli score` / `cli population`.
+
 ## Test scenarios
 
 ### Scenario 1 — score floor invariant

@@ -56,6 +56,28 @@ xcodebuild test -project Civica.xcodeproj -scheme Civica \
 
 Expect: `Test run with 84 tests in 4 suites passed`.
 
+## Primary entry point: batch runner
+
+The eligibility scenarios in this plan are also encoded declaratively in
+`data-ops/test-scenarios/snap-engines-2026-06.json` (top-level `eligibility`
+section, 12 scenarios). The `SNAPEngineBatchScenariosTests` Swift Testing
+suite loads that file and runs every scenario as a parameterized test:
+
+```sh
+xcodebuild test -project Civica.xcodeproj -scheme Civica \
+  -destination 'platform=iOS Simulator,name=iPhone 16 Pro,OS=26.5' \
+  -only-testing:CivicaTests/SNAPEngineBatchScenariosTests \
+  CODE_SIGNING_ALLOWED=NO ENABLE_USER_SCRIPT_SANDBOXING=NO
+```
+
+Each failure names the scenario id, so a regression is greppable.
+To pin a new invariant, add a scenario to the file — no Swift change
+required unless the scenario uses a new `kind`.
+
+The hand-walk scenarios below remain useful for exercising the rule
+engine through the iOS surface (agency copy, simulator UI) where the
+batch runner can't reach.
+
 ## Test scenarios
 
 ### Scenario 1 — default CA launch
