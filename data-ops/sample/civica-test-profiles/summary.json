@@ -1,0 +1,68 @@
+{
+  "ab_variant_profiles": 18,
+  "by_cat_elig": {
+    "NPA": 107,
+    "pure_PA": 2,
+    "pure_SSI": 1
+  },
+  "by_error_surface_element": {
+    "150_unit": 8,
+    "311_wages": 27,
+    "312_se": 3,
+    "346_unearned": 4,
+    "363_shelter": 28,
+    "364_sua": 1,
+    "365_medical": 2,
+    "abawd": 8,
+    "cat_elig": 1,
+    "drug_felony": 1,
+    "excluded": 1,
+    "fleeing_felon": 1,
+    "immigration": 4,
+    "ipv": 1,
+    "lottery": 1,
+    "proration": 1,
+    "resource": 4,
+    "student": 14
+  },
+  "by_immigration": {
+    "citizen": 229,
+    "cofa": 2,
+    "lpr": 4,
+    "removed_status:refugee": 1,
+    "undocumented": 2
+  },
+  "by_requires_tag": {
+    "deductions.child_support": 1,
+    "deductions.medical": 17,
+    "eligibility.categorical": 3,
+    "eligibility.disqualification": 3,
+    "eligibility.immigration": 7,
+    "eligibility.student": 11,
+    "income.exclusion": 2,
+    "income.self_employment": 4,
+    "income.unearned": 23,
+    "income.wages": 63,
+    "shelter.homeless": 1,
+    "shelter.sua.HCSUA": 74,
+    "shelter.sua.LUA": 2,
+    "shelter.uncapped": 18,
+    "test.gross_net_fpl": 110,
+    "test.net_only": 16,
+    "workreq.abawd": 5
+  },
+  "by_work_class": {
+    "abawd_exempt:disabled": 1,
+    "abawd_subject": 4,
+    "exempt": 57,
+    "exempt:caregiver_incapacitated": 1,
+    "gen_work_subject": 175
+  },
+  "integrity_profiles": 10,
+  "negative_or_must_reject": {
+    "must_reject": 5
+  },
+  "paired_profiles": 11,
+  "profiles_with_state_verdict_divergence": 11,
+  "total_profiles": 110
+}

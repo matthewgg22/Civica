@@ -1,0 +1,23 @@
+{
+  "name": "@civica/profile-harness",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Regression harness: runs the Civica SNAP test-profile fixture through the rules engine and reports engine-vs-oracle agreement. NOT a payment-error-rate calculator — it grades engine correctness on a synthetic, policy-sourced fixture.",
+  "main": "./src/index.ts",
+  "scripts": {
+    "run": "tsx src/cli.ts",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@civica/snap-rules": "workspace:*",
+    "ajv": "^8.17.1",
+    "ajv-formats": "^3.0.1"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.2",
+    "typescript": "^5.5.3",
+    "vitest": "^2.1.9"
+  }
+}

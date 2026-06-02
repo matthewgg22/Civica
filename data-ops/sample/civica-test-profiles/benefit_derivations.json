@@ -1,0 +1,4232 @@
+{
+  "A01": {
+    "AK": {
+      "benefit": null,
+      "size": 3,
+      "state": "AK",
+      "unavailable": "SUA not authored for AK"
+    },
+    "CA": {
+      "EID": 260,
+      "SD": 209,
+      "adj_income": 831,
+      "benefit": 759,
+      "earned": 1300,
+      "ed": false,
+      "excess_shelter": 744,
+      "homeless_substitute": false,
+      "max_allot": 785,
+      "net_income": 87,
+      "other_ded": 0,
+      "shelter": 1613,
+      "size": 3,
+      "state": "CA",
+      "unearned": 0
+    },
+    "KS": {
+      "benefit": null,
+      "size": 3,
+      "state": "KS",
+      "unavailable": "SUA not authored for KS"
+    },
+    "MA": {
+      "EID": 260,
+      "SD": 209,
+      "adj_income": 831,
+      "benefit": 759,
+      "earned": 1300,
+      "ed": false,
+      "excess_shelter": 744,
+      "homeless_substitute": false,
+      "max_allot": 785,
+      "net_income": 87,
+      "other_ded": 0,
+      "shelter": 1864,
+      "size": 3,
+      "state": "MA",
+      "unearned": 0
+    },
+    "TX": {
+      "benefit": null,
+      "size": 3,
+      "state": "TX",
+      "unavailable": "SUA not authored for TX"
+    }
+  },
+  "A02": {
+    "AK": {
+      "benefit": null,
+      "size": 1,
+      "state": "AK",
+      "unavailable": "SUA not authored for AK"
+    },
+    "CA": {
+      "EID": 0,
+      "SD": 209,
+      "adj_income": 751,
+      "benefit": 221,
+      "earned": 0,
+      "ed": true,
+      "excess_shelter": 494,
+      "homeless_substitute": false,
+      "max_allot": 298,
+      "net_income": 256,
+      "other_ded": 0,
+      "shelter": 870,
+      "size": 1,
+      "state": "CA",
+      "unearned": 960
+    },
+    "KS": {
+      "benefit": null,
+      "size": 1,
+      "state": "KS",
+      "unavailable": "SUA not authored for KS"
+    },
+    "MA": {
+      "EID": 0,
+      "SD": 209,
+      "adj_income": 751,
+      "benefit": 298,
+      "earned": 0,
+      "ed": true,
+      "excess_shelter": 880,
+      "homeless_substitute": false,
+      "max_allot": 298,
+      "net_income": 0,
+      "other_ded": 0,
+      "shelter": 1256,
+      "size": 1,
+      "state": "MA",
+      "unearned": 960
+    },
+    "TX": {
+      "benefit": null,
+      "size": 1,
+      "state": "TX",
+      "unavailable": "SUA not authored for TX"
+    }
+  },
+  "A03": {
+    "AK": {
+      "benefit": null,
+      "size": 1,
+      "state": "AK",
+      "unavailable": "SUA not authored for AK"
+    },
+    "CA": {
+      "EID": 0,
+      "SD": 209,
+      "adj_income": 626,
+      "benefit": 298,
+      "earned": 0,
+      "ed": true,
+      "excess_shelter": 1200,
+      "homeless_substitute": false,
+      "max_allot": 298,
+      "net_income": 0,
+      "other_ded": 265,
+      "shelter": 1513,
+      "size": 1,
+      "state": "CA",
+      "unearned": 1100
+    },
+    "KS": {
+      "benefit": null,
+      "size": 1,
+      "state": "KS",
+      "unavailable": "SUA not authored for KS"
+    },
+    "MA": {
+      "EID": 0,
+      "SD": 209,
+      "adj_income": 626,
+      "benefit": 298,
+      "earned": 0,
+      "ed": true,
+      "excess_shelter": 1451,
+      "homeless_substitute": false,
+      "max_allot": 298,
+      "net_income": 0,
+      "other_ded": 265,
+      "shelter": 1764,
+      "size": 1,
+      "state": "MA",
+      "unearned": 1100
+    },
+    "TX": {
+      "benefit": null,
+      "size": 1,
+      "state": "TX",
+      "unavailable": "SUA not authored for TX"
+    }
+  },
+  "A04": {
+    "AK": {
+      "benefit": null,
+      "size": 4,
+      "state": "AK",
+      "unavailable": "SUA not authored for AK"
+    },
+    "CA": {
+      "EID": 400,
+      "SD": 223,
+      "adj_income": 1377,
+      "benefit": 804,
+      "earned": 2000,
+      "ed": false,
+      "excess_shelter": 744,
+      "homeless_substitute": false,
+      "max_allot": 994,
+      "net_income": 633,
+      "other_ded": 0,
+      "shelter": 1863,
+      "size": 4,
+      "state": "CA",
+      "unearned": 0
+    },
+    "KS": {
+      "benefit": null,
+      "size": 4,
+      "state": "KS",
+      "unavailable": "SUA not authored for KS"
+    },
+    "MA": {
+      "EID": 400,
+      "SD": 223,
+      "adj_income": 1377,
+      "benefit": 804,
+      "earned": 2000,
+      "ed": false,
+      "excess_shelter": 744,
+      "homeless_substitute": false,
+      "max_allot": 994,
+      "net_income": 633,
+      "other_ded": 0,
+      "shelter": 2114,
+      "size": 4,
+      "state": "MA",
+      "unearned": 0
+    },
+    "TX": {
+      "benefit": null,
+      "size": 4,
+      "state": "TX",
+      "unavailable": "SUA not authored for TX"
+    }
+  },
+  "A05": {
+    "AK": {
+      "benefit": null,
+      "size": 1,
+      "state": "AK",
+      "unavailable": "SUA not authored for AK"
+    },
+    "CA": {
+      "EID": 0,
+      "SD": 209,
+      "adj_income": -209,
+      "benefit": 298,
+      "earned": 0,
+      "ed": false,
+      "excess_shelter": 199,
+      "homeless_substitute": true,
+      "max_allot": 298,
+      "net_income": 0,
+      "other_ded": 0,
+      "shelter": 0,
+      "size": 1,
+      "state": "CA",
+      "unearned": 0
+    },
+    "KS": {
+      "benefit": null,
+      "size": 1,
+      "state": "KS",
+      "unavailable": "SUA not authored for KS"
+    },
+    "MA": {
+      "EID": 0,
+      "SD": 209,
+      "adj_income": -209,
+      "benefit": 298,
+      "earned": 0,
+      "ed": false,
+      "excess_shelter": 199,
+      "homeless_substitute": true,
+      "max_allot": 298,
+      "net_income": 0,
+      "other_ded": 0,
+      "shelter": 0,
+      "size": 1,
+      "state": "MA",
+      "unearned": 0
+    },
+    "TX": {
+      "benefit": null,
+      "size": 1,
+      "state": "TX",
+      "unavailable": "SUA not authored for TX"
+    }
+  },
+  "A06": {
+    "AK": {
+      "benefit": null,
+      "size": 3,
+      "state": "AK",
+      "unavailable": "SUA not authored for AK"
+    },
+    "CA": {
+      "EID": 0,
+      "SD": 209,
+      "adj_income": 491,
+      "benefit": 785,
+      "earned": 0,
+      "ed": false,
+      "excess_shelter": 744,
+      "homeless_substitute": false,
+      "max_allot": 785,
+      "net_income": 0,
+      "other_ded": 0,
+      "shelter": 1563,
+      "size": 3,
+      "state": "CA",
+      "unearned": 700
+    },
+    "KS": {
+      "benefit": null,
+      "size": 3,
+      "state": "KS",
+      "unavailable": "SUA not authored for KS"
+    },
+    "MA": {
+      "EID": 0,
+      "SD": 209,
+      "adj_income": 491,
+      "benefit": 785,
+      "earned": 0,
+      "ed": false,
+      "excess_shelter": 744,
+      "homeless_substitute": false,
+      "max_allot": 785,
+      "net_income": 0,
+      "other_ded": 0,
+      "shelter": 1814,
+      "size": 3,
+      "state": "MA",
+      "unearned": 700
+    },
+    "TX": {
+      "benefit": null,
+      "size": 3,
+      "state": "TX",
+      "unavailable": "SUA not authored for TX"
+    }
+  },
+  "A07": {
+    "AK": {
+      "benefit": null,
+      "size": 2,
+      "state": "AK",
+      "unavailable": "SUA not authored for AK"
+    },
+    "CA": {
+      "EID": 0,
+      "SD": 209,
+      "adj_income": 1246,
+      "benefit": 546,
+      "earned": 0,
+      "ed": true,
+      "excess_shelter": 1340,
+      "homeless_substitute": false,
+      "max_allot": 546,
+      "net_income": 0,
+      "other_ded": 45,
+      "shelter": 1963,
+      "size": 2,
+      "state": "CA",
+      "unearned": 1500
+    },
+    "KS": {
+      "benefit": null,
+      "size": 2,
+      "state": "KS",
+      "unavailable": "SUA not authored for KS"
+    },
+    "MA": {
+      "EID": 0,
+      "SD": 209,
+      "adj_income": 1246,
+      "benefit": 546,
+      "earned": 0,
+      "ed": true,
+      "excess_shelter": 1591,
+      "homeless_substitute": false,
+      "max_allot": 546,
+      "net_income": 0,
+      "other_ded": 45,
+      "shelter": 2214,
+      "size": 2,
+      "state": "MA",
+      "unearned": 1500
+    },
+    "TX": {
+      "benefit": null,
+      "size": 2,
+      "state": "TX",
+      "unavailable": "SUA not authored for TX"
+    }
+  },
+  "A08": {
+    "AK": {
+      "benefit": null,
+      "size": 2,
+      "state": "AK",
+      "unavailable": "SUA not authored for AK"
+    },
+    "CA": {
+      "EID": 280,
+      "SD": 209,
+      "adj_income": 611,
+      "benefit": 546,
+      "earned": 1400,
+      "ed": false,
+      "excess_shelter": 744,
+      "homeless_substitute": false,
+      "max_allot": 546,
+      "net_income": 0,
+      "other_ded": 300,
+      "shelter": 1613,
+      "size": 2,
+      "state": "CA",
+      "unearned": 0
+    },
+    "KS": {
+      "benefit": null,
+      "size": 2,
+      "state": "KS",
+      "unavailable": "SUA not authored for KS"
+    },
+    "MA": {
+      "EID": 280,
+      "SD": 209,
+      "adj_income": 611,
+      "benefit": 546,
+      "earned": 1400,
+      "ed": false,
+      "excess_shelter": 744,
+      "homeless_substitute": false,
+      "max_allot": 546,
+      "net_income": 0,
+      "other_ded": 300,
+      "shelter": 1864,
+      "size": 2,
+      "state": "MA",
+      "unearned": 0
+    },
+    "TX": {
+      "benefit": null,
+      "size": 2,
+      "state": "TX",
+      "unavailable": "SUA not authored for TX"
+    }
+  },
+  "A09": {
+    "AK": {
+      "benefit": null,
+      "size": 2,
+      "state": "AK",
+      "unavailable": "SUA not authored for AK"
+    },
+    "CA": {
+      "EID": 300,
+      "SD": 209,
+      "adj_income": 991,
+      "benefit": 451,
+      "earned": 1500,
+      "ed": false,
+      "excess_shelter": 674,
+      "homeless_substitute": false,
+      "max_allot": 546,
+      "net_income": 316,
+      "other_ded": 0,
+      "shelter": 1170,
+      "size": 2,
+      "state": "CA",
+      "unearned": 0
+    },
+    "KS": {
+      "benefit": null,
+      "size": 2,
+      "state": "KS",
+      "unavailable": "SUA not authored for KS"
+    },
+    "MA": {
+      "EID": 300,
+      "SD": 209,
+      "adj_income": 991,
+      "benefit": 472,
+      "earned": 1500,
+      "ed": false,
+      "excess_shelter": 744,
+      "homeless_substitute": false,
+      "max_allot": 546,
+      "net_income": 247,
+      "other_ded": 0,
+      "shelter": 1556,
+      "size": 2,
+      "state": "MA",
+      "unearned": 0
+    },
+    "TX": {
+      "benefit": null,
+      "size": 2,
+      "state": "TX",
+      "unavailable": "SUA not authored for TX"
+    }
+  },
+  "A10": {
+    "AK": {
+      "benefit": null,
+      "size": 3,
+      "state": "AK",
+      "unavailable": "SUA not authored for AK"
+    },
+    "CA": {
+      "EID": 240,
+      "SD": 209,
+      "adj_income": 751,
+      "benefit": 783,
+      "earned": 1200,
+      "ed": false,
+      "excess_shelter": 744,
+      "homeless_substitute": false,
+      "max_allot": 785,
+      "net_income": 7,
+      "other_ded": 0,
+      "shelter": 1713,
+      "size": 3,
+      "state": "CA",
+      "unearned": 0
+    },
+    "KS": {
+      "benefit": null,
+      "size": 3,
+      "state": "KS",
+      "unavailable": "SUA not authored for KS"
+    },
+    "MA": {
+      "EID": 240,
+      "SD": 209,
+      "adj_income": 751,
+      "benefit": 783,
+      "earned": 1200,
+      "ed": false,
+      "excess_shelter": 744,
+      "homeless_substitute": false,
+      "max_allot": 785,
+      "net_income": 7,
+      "other_ded": 0,
+      "shelter": 1964,
+      "size": 3,
+      "state": "MA",
+      "unearned": 0
+    },
+    "TX": {
+      "benefit": null,
+      "size": 3,
+      "state": "TX",
+      "unavailable": "SUA not authored for TX"
+    }
+  },
+  "D01": {
+    "CA": {
+      "EID": 440,
+      "SD": 209,
+      "adj_income": 1551,
+      "benefit": 24,
+      "earned": 2200,
+      "ed": false,
+      "excess_shelter": 488,
+      "homeless_substitute": false,
+      "max_allot": 298,
+      "net_income": 1064,
+      "other_ded": 0,
+      "shelter": 1263,
+      "size": 1,
+      "state": "CA",
+      "unearned": 0
+    },
+    "MA": {
+      "EID": 440,
+      "SD": 209,
+      "adj_income": 1551,
+      "benefit": 54,
+      "earned": 2200,
+      "ed": false,
+      "excess_shelter": 738,
+      "homeless_substitute": false,
+      "max_allot": 298,
+      "net_income": 812,
+      "other_ded": 0,
+      "shelter": 1514,
+      "size": 1,
+      "state": "MA",
+      "unearned": 0
+    }
+  },
+  "D02": {
+    "CA": {
+      "EID": 200,
+      "SD": 209,
+      "adj_income": 591,
+      "benefit": 298,
+      "earned": 1000,
+      "ed": false,
+      "excess_shelter": 744,
+      "homeless_substitute": false,
+      "max_allot": 298,
+      "net_income": 0,
+      "other_ded": 0,
+      "shelter": 1263,
+      "size": 1,
+      "state": "CA",
+      "unearned": 0
+    },
+    "MA": {
+      "EID": 200,
+      "SD": 209,
+      "adj_income": 591,
+      "benefit": 298,
+      "earned": 1000,
+      "ed": false,
+      "excess_shelter": 744,
+      "homeless_substitute": false,
+      "max_allot": 298,
+      "net_income": 0,
+      "other_ded": 0,
+      "shelter": 1514,
+      "size": 1,
+      "state": "MA",
+      "unearned": 0
+    },
+    "TX": {
+      "benefit": null,
+      "size": 1,
+      "state": "TX",
+      "unavailable": "SUA not authored for TX"
+    }
+  },
+  "G01": {
+    "AK": {
+      "benefit": null,
+      "size": 3,
+      "state": "AK",
+      "unavailable": "SUA not authored for AK"
+    },
+    "CA": {
+      "EID": 0,
+      "SD": 209,
+      "adj_income": -209,
+      "benefit": 785,
+      "earned": 0,
+      "ed": false,
+      "excess_shelter": 744,
+      "homeless_substitute": false,
+      "max_allot": 785,
+      "net_income": 0,
+      "other_ded": 0,
+      "shelter": 1000,
+      "size": 3,
+      "state": "CA",
+      "unearned": 0
+    },
+    "KS": {
+      "benefit": null,
+      "size": 3,
+      "state": "KS",
+      "unavailable": "SUA not authored for KS"
+    },
+    "MA": {
+      "EID": 0,
+      "SD": 209,
+      "adj_income": -209,
+      "benefit": 785,
+      "earned": 0,
+      "ed": false,
+      "excess_shelter": 744,
+      "homeless_substitute": false,
+      "max_allot": 785,
+      "net_income": 0,
+      "other_ded": 0,
+      "shelter": 1000,
+      "size": 3,
+      "state": "MA",
+      "unearned": 0
+    },
+    "TX": {
+      "benefit": null,
+      "size": 3,
+      "state": "TX",
+      "unavailable": "SUA not authored for TX"
+    }
+  },
+  "G02": {
+    "AK": {
+      "benefit": null,
+      "size": 3,
+      "state": "AK",
+      "unavailable": "SUA not authored for AK"
+    },
+    "CA": {
+      "EID": 200,
+      "SD": 209,
+      "adj_income": 591,
+      "benefit": 785,
+      "earned": 1000,
+      "ed": false,
+      "excess_shelter": 704,
+      "homeless_substitute": false,
+      "max_allot": 785,
+      "net_income": 0,
+      "other_ded": 0,
+      "shelter": 1000,
+      "size": 3,
+      "state": "CA",
+      "unearned": 0
+    },
+    "KS": {
+      "benefit": null,
+      "size": 3,
+      "state": "KS",
+      "unavailable": "SUA not authored for KS"
+    },
+    "MA": {
+      "EID": 200,
+      "SD": 209,
+      "adj_income": 591,
+      "benefit": 785,
+      "earned": 1000,
+      "ed": false,
+      "excess_shelter": 704,
+      "homeless_substitute": false,
+      "max_allot": 785,
+      "net_income": 0,
+      "other_ded": 0,
+      "shelter": 1000,
+      "size": 3,
+      "state": "MA",
+      "unearned": 0
+    },
+    "TX": {
+      "benefit": null,
+      "size": 3,
+      "state": "TX",
+      "unavailable": "SUA not authored for TX"
+    }
+  },
+  "G03": {
+    "AK": {
+      "benefit": null,
+      "size": 3,
+      "state": "AK",
+      "unavailable": "SUA not authored for AK"
+    },
+    "CA": {
+      "EID": 300,
+      "SD": 209,
+      "adj_income": 991,
+      "benefit": 639,
+      "earned": 1500,
+      "ed": false,
+      "excess_shelter": 504,
+      "homeless_substitute": false,
+      "max_allot": 785,
+      "net_income": 486,
+      "other_ded": 0,
+      "shelter": 1000,
+      "size": 3,
+      "state": "CA",
+      "unearned": 0
+    },
+    "KS": {
+      "benefit": null,
+      "size": 3,
+      "state": "KS",
+      "unavailable": "SUA not authored for KS"
+    },
+    "MA": {
+      "EID": 300,
+      "SD": 209,
+      "adj_income": 991,
+      "benefit": 639,
+      "earned": 1500,
+      "ed": false,
+      "excess_shelter": 504,
+      "homeless_substitute": false,
+      "max_allot": 785,
+      "net_income": 486,
+      "other_ded": 0,
+      "shelter": 1000,
+      "size": 3,
+      "state": "MA",
+      "unearned": 0
+    },
+    "TX": {
+      "benefit": null,
+      "size": 3,
+      "state": "TX",
+      "unavailable": "SUA not authored for TX"
+    }
+  },
+  "G04": {
+    "AK": {
+      "benefit": null,
+      "size": 3,
+      "state": "AK",
+      "unavailable": "SUA not authored for AK"
+    },
+    "CA": {
+      "EID": 400,
+      "SD": 209,
+      "adj_income": 1391,
+      "benefit": 459,
+      "earned": 2000,
+      "ed": false,
+      "excess_shelter": 304,
+      "homeless_substitute": false,
+      "max_allot": 785,
+      "net_income": 1086,
+      "other_ded": 0,
+      "shelter": 1000,
+      "size": 3,
+      "state": "CA",
+      "unearned": 0
+    },
+    "KS": {
+      "benefit": null,
+      "size": 3,
+      "state": "KS",
+      "unavailable": "SUA not authored for KS"
+    },
+    "MA": {
+      "EID": 400,
+      "SD": 209,
+      "adj_income": 1391,
+      "benefit": 459,
+      "earned": 2000,
+      "ed": false,
+      "excess_shelter": 304,
+      "homeless_substitute": false,
+      "max_allot": 785,
+      "net_income": 1086,
+      "other_ded": 0,
+      "shelter": 1000,
+      "size": 3,
+      "state": "MA",
+      "unearned": 0
+    },
+    "TX": {
+      "benefit": null,
+      "size": 3,
+      "state": "TX",
+      "unavailable": "SUA not authored for TX"
+    }
+  },
+  "G05": {
+    "AK": {
+      "benefit": null,
+      "size": 3,
+      "state": "AK",
+      "unavailable": "SUA not authored for AK"
+    },
+    "CA": {
+      "EID": 500,
+      "SD": 209,
+      "adj_income": 1791,
+      "benefit": 279,
+      "earned": 2500,
+      "ed": false,
+      "excess_shelter": 104,
+      "homeless_substitute": false,
+      "max_allot": 785,
+      "net_income": 1686,
+      "other_ded": 0,
+      "shelter": 1000,
+      "size": 3,
+      "state": "CA",
+      "unearned": 0
+    },
+    "KS": {
+      "benefit": null,
+      "size": 3,
+      "state": "KS",
+      "unavailable": "SUA not authored for KS"
+    },
+    "MA": {
+      "EID": 500,
+      "SD": 209,
+      "adj_income": 1791,
+      "benefit": 279,
+      "earned": 2500,
+      "ed": false,
+      "excess_shelter": 104,
+      "homeless_substitute": false,
+      "max_allot": 785,
+      "net_income": 1686,
+      "other_ded": 0,
+      "shelter": 1000,
+      "size": 3,
+      "state": "MA",
+      "unearned": 0
+    },
+    "TX": {
+      "benefit": null,
+      "size": 3,
+      "state": "TX",
+      "unavailable": "SUA not authored for TX"
+    }
+  },
+  "G06": {
+    "AK": {
+      "benefit": null,
+      "size": 3,
+      "state": "AK",
+      "unavailable": "SUA not authored for AK"
+    },
+    "CA": {
+      "EID": 578,
+      "SD": 209,
+      "adj_income": 2101,
+      "benefit": 155,
+      "earned": 2888,
+      "ed": false,
+      "excess_shelter": 0,
+      "homeless_substitute": false,
+      "max_allot": 785,
+      "net_income": 2101,
+      "other_ded": 0,
+      "shelter": 1000,
+      "size": 3,
+      "state": "CA",
+      "unearned": 0
+    },
+    "KS": {
+      "benefit": null,
+      "size": 3,
+      "state": "KS",
+      "unavailable": "SUA not authored for KS"
+    },
+    "MA": {
+      "EID": 578,
+      "SD": 209,
+      "adj_income": 2101,
+      "benefit": 155,
+      "earned": 2888,
+      "ed": false,
+      "excess_shelter": 0,
+      "homeless_substitute": false,
+      "max_allot": 785,
+      "net_income": 2101,
+      "other_ded": 0,
+      "shelter": 1000,
+      "size": 3,
+      "state": "MA",
+      "unearned": 0
+    },
+    "TX": {
+      "benefit": null,
+      "size": 3,
+      "state": "TX",
+      "unavailable": "SUA not authored for TX"
+    }
+  },
+  "G07": {
+    "AK": {
+      "benefit": null,
+      "size": 1,
+      "state": "AK",
+      "unavailable": "SUA not authored for AK"
+    },
+    "CA": {
+      "EID": 0,
+      "SD": 209,
+      "adj_income": -209,
+      "benefit": 298,
+      "earned": 0,
+      "ed": false,
+      "excess_shelter": 704,
+      "homeless_substitute": false,
+      "max_allot": 298,
+      "net_income": 0,
+      "other_ded": 0,
+      "shelter": 600,
+      "size": 1,
+      "state": "CA",
+      "unearned": 0
+    },
+    "KS": {
+      "benefit": null,
+      "size": 1,
+      "state": "KS",
+      "unavailable": "SUA not authored for KS"
+    },
+    "MA": {
+      "EID": 0,
+      "SD": 209,
+      "adj_income": -209,
+      "benefit": 298,
+      "earned": 0,
+      "ed": false,
+      "excess_shelter": 704,
+      "homeless_substitute": false,
+      "max_allot": 298,
+      "net_income": 0,
+      "other_ded": 0,
+      "shelter": 600,
+      "size": 1,
+      "state": "MA",
+      "unearned": 0
+    },
+    "TX": {
+      "benefit": null,
+      "size": 1,
+      "state": "TX",
+      "unavailable": "SUA not authored for TX"
+    }
+  },
+  "G08": {
+    "AK": {
+      "benefit": null,
+      "size": 1,
+      "state": "AK",
+      "unavailable": "SUA not authored for AK"
+    },
+    "CA": {
+      "EID": 200,
+      "SD": 209,
+      "adj_income": 591,
+      "benefit": 212,
+      "earned": 1000,
+      "ed": false,
+      "excess_shelter": 304,
+      "homeless_substitute": false,
+      "max_allot": 298,
+      "net_income": 286,
+      "other_ded": 0,
+      "shelter": 600,
+      "size": 1,
+      "state": "CA",
+      "unearned": 0
+    },
+    "KS": {
+      "benefit": null,
+      "size": 1,
+      "state": "KS",
+      "unavailable": "SUA not authored for KS"
+    },
+    "MA": {
+      "EID": 200,
+      "SD": 209,
+      "adj_income": 591,
+      "benefit": 212,
+      "earned": 1000,
+      "ed": false,
+      "excess_shelter": 304,
+      "homeless_substitute": false,
+      "max_allot": 298,
+      "net_income": 286,
+      "other_ded": 0,
+      "shelter": 600,
+      "size": 1,
+      "state": "MA",
+      "unearned": 0
+    },
+    "TX": {
+      "benefit": null,
+      "size": 1,
+      "state": "TX",
+      "unavailable": "SUA not authored for TX"
+    }
+  },
+  "G09": {
+    "AK": {
+      "benefit": null,
+      "size": 1,
+      "state": "AK",
+      "unavailable": "SUA not authored for AK"
+    },
+    "CA": {
+      "EID": 260,
+      "SD": 209,
+      "adj_income": 831,
+      "benefit": 104,
+      "earned": 1300,
+      "ed": false,
+      "excess_shelter": 184,
+      "homeless_substitute": false,
+      "max_allot": 298,
+      "net_income": 646,
+      "other_ded": 0,
+      "shelter": 600,
+      "size": 1,
+      "state": "CA",
+      "unearned": 0
+    },
+    "KS": {
+      "benefit": null,
+      "size": 1,
+      "state": "KS",
+      "unavailable": "SUA not authored for KS"
+    },
+    "MA": {
+      "EID": 260,
+      "SD": 209,
+      "adj_income": 831,
+      "benefit": 104,
+      "earned": 1300,
+      "ed": false,
+      "excess_shelter": 184,
+      "homeless_substitute": false,
+      "max_allot": 298,
+      "net_income": 646,
+      "other_ded": 0,
+      "shelter": 600,
+      "size": 1,
+      "state": "MA",
+      "unearned": 0
+    },
+    "TX": {
+      "benefit": null,
+      "size": 1,
+      "state": "TX",
+      "unavailable": "SUA not authored for TX"
+    }
+  },
+  "G10": {
+    "AK": {
+      "benefit": null,
+      "size": 1,
+      "state": "AK",
+      "unavailable": "SUA not authored for AK"
+    },
+    "CA": {
+      "EID": 300,
+      "SD": 209,
+      "adj_income": 991,
+      "benefit": 32,
+      "earned": 1500,
+      "ed": false,
+      "excess_shelter": 104,
+      "homeless_substitute": false,
+      "max_allot": 298,
+      "net_income": 886,
+      "other_ded": 0,
+      "shelter": 600,
+      "size": 1,
+      "state": "CA",
+      "unearned": 0
+    },
+    "KS": {
+      "benefit": null,
+      "size": 1,
+      "state": "KS",
+      "unavailable": "SUA not authored for KS"
+    },
+    "MA": {
+      "EID": 300,
+      "SD": 209,
+      "adj_income": 991,
+      "benefit": 32,
+      "earned": 1500,
+      "ed": false,
+      "excess_shelter": 104,
+      "homeless_substitute": false,
+      "max_allot": 298,
+      "net_income": 886,
+      "other_ded": 0,
+      "shelter": 600,
+      "size": 1,
+      "state": "MA",
+      "unearned": 0
+    },
+    "TX": {
+      "benefit": null,
+      "size": 1,
+      "state": "TX",
+      "unavailable": "SUA not authored for TX"
+    }
+  },
+  "G11": {
+    "AK": {
+      "benefit": null,
+      "size": 1,
+      "state": "AK",
+      "unavailable": "SUA not authored for AK"
+    },
+    "CA": {
+      "EID": 330,
+      "SD": 209,
+      "adj_income": 1111,
+      "benefit": 24,
+      "earned": 1650,
+      "ed": false,
+      "excess_shelter": 44,
+      "homeless_substitute": false,
+      "max_allot": 298,
+      "net_income": 1066,
+      "other_ded": 0,
+      "shelter": 600,
+      "size": 1,
+      "state": "CA",
+      "unearned": 0
+    },
+    "KS": {
+      "benefit": null,
+      "size": 1,
+      "state": "KS",
+      "unavailable": "SUA not authored for KS"
+    },
+    "MA": {
+      "EID": 330,
+      "SD": 209,
+      "adj_income": 1111,
+      "benefit": 24,
+      "earned": 1650,
+      "ed": false,
+      "excess_shelter": 44,
+      "homeless_substitute": false,
+      "max_allot": 298,
+      "net_income": 1066,
+      "other_ded": 0,
+      "shelter": 600,
+      "size": 1,
+      "state": "MA",
+      "unearned": 0
+    },
+    "TX": {
+      "benefit": null,
+      "size": 1,
+      "state": "TX",
+      "unavailable": "SUA not authored for TX"
+    }
+  },
+  "G12": {
+    "AK": {
+      "benefit": null,
+      "size": 3,
+      "state": "AK",
+      "unavailable": "SUA not authored for AK"
+    },
+    "CA": {
+      "EID": 400,
+      "SD": 209,
+      "adj_income": 1391,
+      "benefit": 459,
+      "earned": 2000,
+      "ed": false,
+      "excess_shelter": 304,
+      "homeless_substitute": false,
+      "max_allot": 785,
+      "net_income": 1086,
+      "other_ded": 0,
+      "shelter": 1000,
+      "size": 3,
+      "state": "CA",
+      "unearned": 0
+    },
+    "KS": {
+      "benefit": null,
+      "size": 3,
+      "state": "KS",
+      "unavailable": "SUA not authored for KS"
+    },
+    "MA": {
+      "EID": 400,
+      "SD": 209,
+      "adj_income": 1391,
+      "benefit": 459,
+      "earned": 2000,
+      "ed": false,
+      "excess_shelter": 304,
+      "homeless_substitute": false,
+      "max_allot": 785,
+      "net_income": 1086,
+      "other_ded": 0,
+      "shelter": 1000,
+      "size": 3,
+      "state": "MA",
+      "unearned": 0
+    },
+    "TX": {
+      "benefit": null,
+      "size": 3,
+      "state": "TX",
+      "unavailable": "SUA not authored for TX"
+    }
+  },
+  "G13": {
+    "AK": {
+      "benefit": null,
+      "size": 3,
+      "state": "AK",
+      "unavailable": "SUA not authored for AK"
+    },
+    "CA": {
+      "EID": 400,
+      "SD": 209,
+      "adj_income": 1391,
+      "benefit": 591,
+      "earned": 2000,
+      "ed": false,
+      "excess_shelter": 744,
+      "homeless_substitute": false,
+      "max_allot": 785,
+      "net_income": 647,
+      "other_ded": 0,
+      "shelter": 1600,
+      "size": 3,
+      "state": "CA",
+      "unearned": 0
+    },
+    "KS": {
+      "benefit": null,
+      "size": 3,
+      "state": "KS",
+      "unavailable": "SUA not authored for KS"
+    },
+    "MA": {
+      "EID": 400,
+      "SD": 209,
+      "adj_income": 1391,
+      "benefit": 591,
+      "earned": 2000,
+      "ed": false,
+      "excess_shelter": 744,
+      "homeless_substitute": false,
+      "max_allot": 785,
+      "net_income": 647,
+      "other_ded": 0,
+      "shelter": 1600,
+      "size": 3,
+      "state": "MA",
+      "unearned": 0
+    },
+    "TX": {
+      "benefit": null,
+      "size": 3,
+      "state": "TX",
+      "unavailable": "SUA not authored for TX"
+    }
+  },
+  "G14": {
+    "AK": {
+      "benefit": null,
+      "size": 3,
+      "state": "AK",
+      "unavailable": "SUA not authored for AK"
+    },
+    "CA": {
+      "EID": 0,
+      "SD": 209,
+      "adj_income": 1791,
+      "benefit": 459,
+      "earned": 0,
+      "ed": true,
+      "excess_shelter": 704,
+      "homeless_substitute": false,
+      "max_allot": 785,
+      "net_income": 1086,
+      "other_ded": 0,
+      "shelter": 1600,
+      "size": 3,
+      "state": "CA",
+      "unearned": 2000
+    },
+    "KS": {
+      "benefit": null,
+      "size": 3,
+      "state": "KS",
+      "unavailable": "SUA not authored for KS"
+    },
+    "MA": {
+      "EID": 0,
+      "SD": 209,
+      "adj_income": 1791,
+      "benefit": 459,
+      "earned": 0,
+      "ed": true,
+      "excess_shelter": 704,
+      "homeless_substitute": false,
+      "max_allot": 785,
+      "net_income": 1086,
+      "other_ded": 0,
+      "shelter": 1600,
+      "size": 3,
+      "state": "MA",
+      "unearned": 2000
+    },
+    "TX": {
+      "benefit": null,
+      "size": 3,
+      "state": "TX",
+      "unavailable": "SUA not authored for TX"
+    }
+  },
+  "H01": {
+    "AK": {
+      "benefit": null,
+      "size": 3,
+      "state": "AK",
+      "unavailable": "SUA not authored for AK"
+    },
+    "CA": {
+      "EID": 360,
+      "SD": 209,
+      "adj_income": 1231,
+      "benefit": 416,
+      "earned": 1800,
+      "ed": false,
+      "excess_shelter": 0,
+      "homeless_substitute": false,
+      "max_allot": 785,
+      "net_income": 1231,
+      "other_ded": 0,
+      "shelter": 400,
+      "size": 3,
+      "state": "CA",
+      "unearned": 0
+    },
+    "KS": {
+      "benefit": null,
+      "size": 3,
+      "state": "KS",
+      "unavailable": "SUA not authored for KS"
+    },
+    "MA": {
+      "EID": 360,
+      "SD": 209,
+      "adj_income": 1231,
+      "benefit": 416,
+      "earned": 1800,
+      "ed": false,
+      "excess_shelter": 0,
+      "homeless_substitute": false,
+      "max_allot": 785,
+      "net_income": 1231,
+      "other_ded": 0,
+      "shelter": 400,
+      "size": 3,
+      "state": "MA",
+      "unearned": 0
+    },
+    "TX": {
+      "benefit": null,
+      "size": 3,
+      "state": "TX",
+      "unavailable": "SUA not authored for TX"
+    }
+  },
+  "H02": {
+    "AK": {
+      "benefit": null,
+      "size": 3,
+      "state": "AK",
+      "unavailable": "SUA not authored for AK"
+    },
+    "CA": {
+      "EID": 360,
+      "SD": 209,
+      "adj_income": 1231,
+      "benefit": 471,
+      "earned": 1800,
+      "ed": false,
+      "excess_shelter": 184,
+      "homeless_substitute": false,
+      "max_allot": 785,
+      "net_income": 1046,
+      "other_ded": 0,
+      "shelter": 800,
+      "size": 3,
+      "state": "CA",
+      "unearned": 0
+    },
+    "KS": {
+      "benefit": null,
+      "size": 3,
+      "state": "KS",
+      "unavailable": "SUA not authored for KS"
+    },
+    "MA": {
+      "EID": 360,
+      "SD": 209,
+      "adj_income": 1231,
+      "benefit": 471,
+      "earned": 1800,
+      "ed": false,
+      "excess_shelter": 184,
+      "homeless_substitute": false,
+      "max_allot": 785,
+      "net_income": 1046,
+      "other_ded": 0,
+      "shelter": 800,
+      "size": 3,
+      "state": "MA",
+      "unearned": 0
+    },
+    "TX": {
+      "benefit": null,
+      "size": 3,
+      "state": "TX",
+      "unavailable": "SUA not authored for TX"
+    }
+  },
+  "H03": {
+    "AK": {
+      "benefit": null,
+      "size": 3,
+      "state": "AK",
+      "unavailable": "SUA not authored for AK"
+    },
+    "CA": {
+      "EID": 360,
+      "SD": 209,
+      "adj_income": 1231,
+      "benefit": 591,
+      "earned": 1800,
+      "ed": false,
+      "excess_shelter": 584,
+      "homeless_substitute": false,
+      "max_allot": 785,
+      "net_income": 646,
+      "other_ded": 0,
+      "shelter": 1200,
+      "size": 3,
+      "state": "CA",
+      "unearned": 0
+    },
+    "KS": {
+      "benefit": null,
+      "size": 3,
+      "state": "KS",
+      "unavailable": "SUA not authored for KS"
+    },
+    "MA": {
+      "EID": 360,
+      "SD": 209,
+      "adj_income": 1231,
+      "benefit": 591,
+      "earned": 1800,
+      "ed": false,
+      "excess_shelter": 584,
+      "homeless_substitute": false,
+      "max_allot": 785,
+      "net_income": 646,
+      "other_ded": 0,
+      "shelter": 1200,
+      "size": 3,
+      "state": "MA",
+      "unearned": 0
+    },
+    "TX": {
+      "benefit": null,
+      "size": 3,
+      "state": "TX",
+      "unavailable": "SUA not authored for TX"
+    }
+  },
+  "H04": {
+    "AK": {
+      "benefit": null,
+      "size": 3,
+      "state": "AK",
+      "unavailable": "SUA not authored for AK"
+    },
+    "CA": {
+      "EID": 360,
+      "SD": 209,
+      "adj_income": 1231,
+      "benefit": 639,
+      "earned": 1800,
+      "ed": false,
+      "excess_shelter": 744,
+      "homeless_substitute": false,
+      "max_allot": 785,
+      "net_income": 487,
+      "other_ded": 0,
+      "shelter": 1360,
+      "size": 3,
+      "state": "CA",
+      "unearned": 0
+    },
+    "KS": {
+      "benefit": null,
+      "size": 3,
+      "state": "KS",
+      "unavailable": "SUA not authored for KS"
+    },
+    "MA": {
+      "EID": 360,
+      "SD": 209,
+      "adj_income": 1231,
+      "benefit": 639,
+      "earned": 1800,
+      "ed": false,
+      "excess_shelter": 744,
+      "homeless_substitute": false,
+      "max_allot": 785,
+      "net_income": 487,
+      "other_ded": 0,
+      "shelter": 1360,
+      "size": 3,
+      "state": "MA",
+      "unearned": 0
+    },
+    "TX": {
+      "benefit": null,
+      "size": 3,
+      "state": "TX",
+      "unavailable": "SUA not authored for TX"
+    }
+  },
+  "H05": {
+    "AK": {
+      "benefit": null,
+      "size": 3,
+      "state": "AK",
+      "unavailable": "SUA not authored for AK"
+    },
+    "CA": {
+      "EID": 360,
+      "SD": 209,
+      "adj_income": 1231,
+      "benefit": 639,
+      "earned": 1800,
+      "ed": false,
+      "excess_shelter": 744,
+      "homeless_substitute": false,
+      "max_allot": 785,
+      "net_income": 487,
+      "other_ded": 0,
+      "shelter": 2000,
+      "size": 3,
+      "state": "CA",
+      "unearned": 0
+    },
+    "KS": {
+      "benefit": null,
+      "size": 3,
+      "state": "KS",
+      "unavailable": "SUA not authored for KS"
+    },
+    "MA": {
+      "EID": 360,
+      "SD": 209,
+      "adj_income": 1231,
+      "benefit": 639,
+      "earned": 1800,
+      "ed": false,
+      "excess_shelter": 744,
+      "homeless_substitute": false,
+      "max_allot": 785,
+      "net_income": 487,
+      "other_ded": 0,
+      "shelter": 2000,
+      "size": 3,
+      "state": "MA",
+      "unearned": 0
+    },
+    "TX": {
+      "benefit": null,
+      "size": 3,
+      "state": "TX",
+      "unavailable": "SUA not authored for TX"
+    }
+  },
+  "H06": {
+    "AK": {
+      "benefit": null,
+      "size": 3,
+      "state": "AK",
+      "unavailable": "SUA not authored for AK"
+    },
+    "CA": {
+      "EID": 360,
+      "SD": 209,
+      "adj_income": 1231,
+      "benefit": 639,
+      "earned": 1800,
+      "ed": false,
+      "excess_shelter": 744,
+      "homeless_substitute": false,
+      "max_allot": 785,
+      "net_income": 487,
+      "other_ded": 0,
+      "shelter": 3000,
+      "size": 3,
+      "state": "CA",
+      "unearned": 0
+    },
+    "KS": {
+      "benefit": null,
+      "size": 3,
+      "state": "KS",
+      "unavailable": "SUA not authored for KS"
+    },
+    "MA": {
+      "EID": 360,
+      "SD": 209,
+      "adj_income": 1231,
+      "benefit": 639,
+      "earned": 1800,
+      "ed": false,
+      "excess_shelter": 744,
+      "homeless_substitute": false,
+      "max_allot": 785,
+      "net_income": 487,
+      "other_ded": 0,
+      "shelter": 3000,
+      "size": 3,
+      "state": "MA",
+      "unearned": 0
+    },
+    "TX": {
+      "benefit": null,
+      "size": 3,
+      "state": "TX",
+      "unavailable": "SUA not authored for TX"
+    }
+  },
+  "H07": {
+    "AK": {
+      "benefit": null,
+      "size": 3,
+      "state": "AK",
+      "unavailable": "SUA not authored for AK"
+    },
+    "CA": {
+      "EID": 0,
+      "SD": 209,
+      "adj_income": 1591,
+      "benefit": 308,
+      "earned": 0,
+      "ed": true,
+      "excess_shelter": 0,
+      "homeless_substitute": false,
+      "max_allot": 785,
+      "net_income": 1591,
+      "other_ded": 0,
+      "shelter": 400,
+      "size": 3,
+      "state": "CA",
+      "unearned": 1800
+    },
+    "KS": {
+      "benefit": null,
+      "size": 3,
+      "state": "KS",
+      "unavailable": "SUA not authored for KS"
+    },
+    "MA": {
+      "EID": 0,
+      "SD": 209,
+      "adj_income": 1591,
+      "benefit": 308,
+      "earned": 0,
+      "ed": true,
+      "excess_shelter": 0,
+      "homeless_substitute": false,
+      "max_allot": 785,
+      "net_income": 1591,
+      "other_ded": 0,
+      "shelter": 400,
+      "size": 3,
+      "state": "MA",
+      "unearned": 1800
+    },
+    "TX": {
+      "benefit": null,
+      "size": 3,
+      "state": "TX",
+      "unavailable": "SUA not authored for TX"
+    }
+  },
+  "H08": {
+    "AK": {
+      "benefit": null,
+      "size": 3,
+      "state": "AK",
+      "unavailable": "SUA not authored for AK"
+    },
+    "CA": {
+      "EID": 0,
+      "SD": 209,
+      "adj_income": 1591,
+      "benefit": 429,
+      "earned": 0,
+      "ed": true,
+      "excess_shelter": 404,
+      "homeless_substitute": false,
+      "max_allot": 785,
+      "net_income": 1186,
+      "other_ded": 0,
+      "shelter": 1200,
+      "size": 3,
+      "state": "CA",
+      "unearned": 1800
+    },
+    "KS": {
+      "benefit": null,
+      "size": 3,
+      "state": "KS",
+      "unavailable": "SUA not authored for KS"
+    },
+    "MA": {
+      "EID": 0,
+      "SD": 209,
+      "adj_income": 1591,
+      "benefit": 429,
+      "earned": 0,
+      "ed": true,
+      "excess_shelter": 404,
+      "homeless_substitute": false,
+      "max_allot": 785,
+      "net_income": 1186,
+      "other_ded": 0,
+      "shelter": 1200,
+      "size": 3,
+      "state": "MA",
+      "unearned": 1800
+    },
+    "TX": {
+      "benefit": null,
+      "size": 3,
+      "state": "TX",
+      "unavailable": "SUA not authored for TX"
+    }
+  },
+  "H09": {
+    "AK": {
+      "benefit": null,
+      "size": 3,
+      "state": "AK",
+      "unavailable": "SUA not authored for AK"
+    },
+    "CA": {
+      "EID": 0,
+      "SD": 209,
+      "adj_income": 1591,
+      "benefit": 477,
+      "earned": 0,
+      "ed": true,
+      "excess_shelter": 564,
+      "homeless_substitute": false,
+      "max_allot": 785,
+      "net_income": 1026,
+      "other_ded": 0,
+      "shelter": 1360,
+      "size": 3,
+      "state": "CA",
+      "unearned": 1800
+    },
+    "KS": {
+      "benefit": null,
+      "size": 3,
+      "state": "KS",
+      "unavailable": "SUA not authored for KS"
+    },
+    "MA": {
+      "EID": 0,
+      "SD": 209,
+      "adj_income": 1591,
+      "benefit": 477,
+      "earned": 0,
+      "ed": true,
+      "excess_shelter": 564,
+      "homeless_substitute": false,
+      "max_allot": 785,
+      "net_income": 1026,
+      "other_ded": 0,
+      "shelter": 1360,
+      "size": 3,
+      "state": "MA",
+      "unearned": 1800
+    },
+    "TX": {
+      "benefit": null,
+      "size": 3,
+      "state": "TX",
+      "unavailable": "SUA not authored for TX"
+    }
+  },
+  "H10": {
+    "AK": {
+      "benefit": null,
+      "size": 3,
+      "state": "AK",
+      "unavailable": "SUA not authored for AK"
+    },
+    "CA": {
+      "EID": 0,
+      "SD": 209,
+      "adj_income": 1591,
+      "benefit": 669,
+      "earned": 0,
+      "ed": true,
+      "excess_shelter": 1204,
+      "homeless_substitute": false,
+      "max_allot": 785,
+      "net_income": 386,
+      "other_ded": 0,
+      "shelter": 2000,
+      "size": 3,
+      "state": "CA",
+      "unearned": 1800
+    },
+    "KS": {
+      "benefit": null,
+      "size": 3,
+      "state": "KS",
+      "unavailable": "SUA not authored for KS"
+    },
+    "MA": {
+      "EID": 0,
+      "SD": 209,
+      "adj_income": 1591,
+      "benefit": 669,
+      "earned": 0,
+      "ed": true,
+      "excess_shelter": 1204,
+      "homeless_substitute": false,
+      "max_allot": 785,
+      "net_income": 386,
+      "other_ded": 0,
+      "shelter": 2000,
+      "size": 3,
+      "state": "MA",
+      "unearned": 1800
+    },
+    "TX": {
+      "benefit": null,
+      "size": 3,
+      "state": "TX",
+      "unavailable": "SUA not authored for TX"
+    }
+  },
+  "H11": {
+    "AK": {
+      "benefit": null,
+      "size": 3,
+      "state": "AK",
+      "unavailable": "SUA not authored for AK"
+    },
+    "CA": {
+      "EID": 0,
+      "SD": 209,
+      "adj_income": 1591,
+      "benefit": 785,
+      "earned": 0,
+      "ed": true,
+      "excess_shelter": 1804,
+      "homeless_substitute": false,
+      "max_allot": 785,
+      "net_income": 0,
+      "other_ded": 0,
+      "shelter": 2600,
+      "size": 3,
+      "state": "CA",
+      "unearned": 1800
+    },
+    "KS": {
+      "benefit": null,
+      "size": 3,
+      "state": "KS",
+      "unavailable": "SUA not authored for KS"
+    },
+    "MA": {
+      "EID": 0,
+      "SD": 209,
+      "adj_income": 1591,
+      "benefit": 785,
+      "earned": 0,
+      "ed": true,
+      "excess_shelter": 1804,
+      "homeless_substitute": false,
+      "max_allot": 785,
+      "net_income": 0,
+      "other_ded": 0,
+      "shelter": 2600,
+      "size": 3,
+      "state": "MA",
+      "unearned": 1800
+    },
+    "TX": {
+      "benefit": null,
+      "size": 3,
+      "state": "TX",
+      "unavailable": "SUA not authored for TX"
+    }
+  },
+  "H12": {
+    "AK": {
+      "benefit": null,
+      "size": 3,
+      "state": "AK",
+      "unavailable": "SUA not authored for AK"
+    },
+    "CA": {
+      "EID": 0,
+      "SD": 209,
+      "adj_income": 1591,
+      "benefit": 785,
+      "earned": 0,
+      "ed": true,
+      "excess_shelter": 2204,
+      "homeless_substitute": false,
+      "max_allot": 785,
+      "net_income": 0,
+      "other_ded": 0,
+      "shelter": 3000,
+      "size": 3,
+      "state": "CA",
+      "unearned": 1800
+    },
+    "KS": {
+      "benefit": null,
+      "size": 3,
+      "state": "KS",
+      "unavailable": "SUA not authored for KS"
+    },
+    "MA": {
+      "EID": 0,
+      "SD": 209,
+      "adj_income": 1591,
+      "benefit": 785,
+      "earned": 0,
+      "ed": true,
+      "excess_shelter": 2204,
+      "homeless_substitute": false,
+      "max_allot": 785,
+      "net_income": 0,
+      "other_ded": 0,
+      "shelter": 3000,
+      "size": 3,
+      "state": "MA",
+      "unearned": 1800
+    },
+    "TX": {
+      "benefit": null,
+      "size": 3,
+      "state": "TX",
+      "unavailable": "SUA not authored for TX"
+    }
+  },
+  "M01": {
+    "CA": {
+      "EID": 733,
+      "SD": 209,
+      "adj_income": 2723,
+      "benefit": 119,
+      "earned": 3665,
+      "ed": false,
+      "excess_shelter": 502,
+      "homeless_substitute": false,
+      "max_allot": 785,
+      "net_income": 2222,
+      "other_ded": 0,
+      "shelter": 1863,
+      "size": 3,
+      "state": "CA",
+      "unearned": 0
+    },
+    "MA": {
+      "EID": 733,
+      "SD": 209,
+      "adj_income": 2723,
+      "benefit": 191,
+      "earned": 3665,
+      "ed": false,
+      "excess_shelter": 744,
+      "homeless_substitute": false,
+      "max_allot": 785,
+      "net_income": 1979,
+      "other_ded": 0,
+      "shelter": 2114,
+      "size": 3,
+      "state": "MA",
+      "unearned": 0
+    },
+    "TX": {
+      "benefit": null,
+      "size": 3,
+      "state": "TX",
+      "unavailable": "SUA not authored for TX"
+    }
+  },
+  "M02": {
+    "CA": {
+      "EID": 280,
+      "SD": 209,
+      "adj_income": 911,
+      "benefit": 496,
+      "earned": 1400,
+      "ed": false,
+      "excess_shelter": 744,
+      "homeless_substitute": false,
+      "max_allot": 546,
+      "net_income": 167,
+      "other_ded": 0,
+      "shelter": 1563,
+      "size": 2,
+      "state": "CA",
+      "unearned": 0
+    },
+    "MA": {
+      "EID": 280,
+      "SD": 209,
+      "adj_income": 911,
+      "benefit": 496,
+      "earned": 1400,
+      "ed": false,
+      "excess_shelter": 744,
+      "homeless_substitute": false,
+      "max_allot": 546,
+      "net_income": 167,
+      "other_ded": 0,
+      "shelter": 1814,
+      "size": 2,
+      "state": "MA",
+      "unearned": 0
+    },
+    "TX": {
+      "benefit": null,
+      "size": 2,
+      "state": "TX",
+      "unavailable": "SUA not authored for TX"
+    }
+  },
+  "M03": {
+    "AK": {
+      "benefit": null,
+      "size": 3,
+      "state": "AK",
+      "unavailable": "SUA not authored for AK"
+    },
+    "CA": {
+      "EID": 560,
+      "SD": 209,
+      "adj_income": 2031,
+      "benefit": 176,
+      "earned": 2800,
+      "ed": false,
+      "excess_shelter": 0,
+      "homeless_substitute": false,
+      "max_allot": 785,
+      "net_income": 2031,
+      "other_ded": 0,
+      "shelter": 700,
+      "size": 3,
+      "state": "CA",
+      "unearned": 0
+    },
+    "KS": {
+      "benefit": null,
+      "size": 3,
+      "state": "KS",
+      "unavailable": "SUA not authored for KS"
+    },
+    "MA": {
+      "EID": 560,
+      "SD": 209,
+      "adj_income": 2031,
+      "benefit": 176,
+      "earned": 2800,
+      "ed": false,
+      "excess_shelter": 0,
+      "homeless_substitute": false,
+      "max_allot": 785,
+      "net_income": 2031,
+      "other_ded": 0,
+      "shelter": 700,
+      "size": 3,
+      "state": "MA",
+      "unearned": 0
+    },
+    "TX": {
+      "benefit": null,
+      "size": 3,
+      "state": "TX",
+      "unavailable": "SUA not authored for TX"
+    }
+  },
+  "M04": {
+    "CA": {
+      "EID": 480,
+      "SD": 209,
+      "adj_income": 1711,
+      "benefit": 256,
+      "earned": 2400,
+      "ed": false,
+      "excess_shelter": 744,
+      "homeless_substitute": false,
+      "max_allot": 546,
+      "net_income": 967,
+      "other_ded": 0,
+      "shelter": 1763,
+      "size": 2,
+      "state": "CA",
+      "unearned": 0
+    },
+    "MA": {
+      "EID": 480,
+      "SD": 209,
+      "adj_income": 1711,
+      "benefit": 256,
+      "earned": 2400,
+      "ed": false,
+      "excess_shelter": 744,
+      "homeless_substitute": false,
+      "max_allot": 546,
+      "net_income": 967,
+      "other_ded": 0,
+      "shelter": 2014,
+      "size": 2,
+      "state": "MA",
+      "unearned": 0
+    },
+    "TX": {
+      "benefit": null,
+      "size": 2,
+      "state": "TX",
+      "unavailable": "SUA not authored for TX"
+    }
+  },
+  "M05": {
+    "AK": {
+      "benefit": null,
+      "size": 1,
+      "state": "AK",
+      "unavailable": "SUA not authored for AK"
+    },
+    "CA": {
+      "EID": 0,
+      "SD": 209,
+      "adj_income": 791,
+      "benefit": 298,
+      "earned": 0,
+      "ed": true,
+      "excess_shelter": 968,
+      "homeless_substitute": false,
+      "max_allot": 298,
+      "net_income": 0,
+      "other_ded": 0,
+      "shelter": 1363,
+      "size": 1,
+      "state": "CA",
+      "unearned": 1000
+    },
+    "KS": {
+      "benefit": null,
+      "size": 1,
+      "state": "KS",
+      "unavailable": "SUA not authored for KS"
+    },
+    "MA": {
+      "EID": 0,
+      "SD": 209,
+      "adj_income": 791,
+      "benefit": 298,
+      "earned": 0,
+      "ed": true,
+      "excess_shelter": 1218,
+      "homeless_substitute": false,
+      "max_allot": 298,
+      "net_income": 0,
+      "other_ded": 0,
+      "shelter": 1614,
+      "size": 1,
+      "state": "MA",
+      "unearned": 1000
+    },
+    "TX": {
+      "benefit": null,
+      "size": 1,
+      "state": "TX",
+      "unavailable": "SUA not authored for TX"
+    }
+  },
+  "M06": {
+    "CA": {
+      "EID": 620,
+      "SD": 209,
+      "adj_income": 2271,
+      "benefit": 327,
+      "earned": 3100,
+      "ed": false,
+      "excess_shelter": 744,
+      "homeless_substitute": false,
+      "max_allot": 785,
+      "net_income": 1527,
+      "other_ded": 0,
+      "shelter": 2063,
+      "size": 3,
+      "state": "CA",
+      "unearned": 0
+    },
+    "MA": {
+      "EID": 620,
+      "SD": 209,
+      "adj_income": 2271,
+      "benefit": 327,
+      "earned": 3100,
+      "ed": false,
+      "excess_shelter": 744,
+      "homeless_substitute": false,
+      "max_allot": 785,
+      "net_income": 1527,
+      "other_ded": 0,
+      "shelter": 2314,
+      "size": 3,
+      "state": "MA",
+      "unearned": 0
+    },
+    "TX": {
+      "benefit": null,
+      "size": 3,
+      "state": "TX",
+      "unavailable": "SUA not authored for TX"
+    }
+  },
+  "M07": {
+    "AK": {
+      "benefit": null,
+      "size": 3,
+      "state": "AK",
+      "unavailable": "SUA not authored for AK"
+    },
+    "CA": {
+      "EID": 540,
+      "SD": 209,
+      "adj_income": 1951,
+      "benefit": 423,
+      "earned": 2700,
+      "ed": false,
+      "excess_shelter": 744,
+      "homeless_substitute": false,
+      "max_allot": 785,
+      "net_income": 1207,
+      "other_ded": 0,
+      "shelter": 1763,
+      "size": 3,
+      "state": "CA",
+      "unearned": 0
+    },
+    "KS": {
+      "benefit": null,
+      "size": 3,
+      "state": "KS",
+      "unavailable": "SUA not authored for KS"
+    },
+    "MA": {
+      "EID": 540,
+      "SD": 209,
+      "adj_income": 1951,
+      "benefit": 423,
+      "earned": 2700,
+      "ed": false,
+      "excess_shelter": 744,
+      "homeless_substitute": false,
+      "max_allot": 785,
+      "net_income": 1207,
+      "other_ded": 0,
+      "shelter": 2014,
+      "size": 3,
+      "state": "MA",
+      "unearned": 0
+    },
+    "TX": {
+      "benefit": null,
+      "size": 3,
+      "state": "TX",
+      "unavailable": "SUA not authored for TX"
+    }
+  },
+  "M08": {
+    "AK": {
+      "benefit": null,
+      "size": 2,
+      "state": "AK",
+      "unavailable": "SUA not authored for AK"
+    },
+    "CA": {
+      "EID": 340,
+      "SD": 209,
+      "adj_income": 1151,
+      "benefit": 424,
+      "earned": 1700,
+      "ed": false,
+      "excess_shelter": 744,
+      "homeless_substitute": false,
+      "max_allot": 546,
+      "net_income": 407,
+      "other_ded": 0,
+      "shelter": 1563,
+      "size": 2,
+      "state": "CA",
+      "unearned": 0
+    },
+    "KS": {
+      "benefit": null,
+      "size": 2,
+      "state": "KS",
+      "unavailable": "SUA not authored for KS"
+    },
+    "MA": {
+      "EID": 340,
+      "SD": 209,
+      "adj_income": 1151,
+      "benefit": 424,
+      "earned": 1700,
+      "ed": false,
+      "excess_shelter": 744,
+      "homeless_substitute": false,
+      "max_allot": 546,
+      "net_income": 407,
+      "other_ded": 0,
+      "shelter": 1814,
+      "size": 2,
+      "state": "MA",
+      "unearned": 0
+    },
+    "TX": {
+      "benefit": null,
+      "size": 2,
+      "state": "TX",
+      "unavailable": "SUA not authored for TX"
+    }
+  },
+  "M09": {
+    "AK": {
+      "benefit": null,
+      "size": 3,
+      "state": "AK",
+      "unavailable": "SUA not authored for AK"
+    },
+    "CA": {
+      "EID": 320,
+      "SD": 209,
+      "adj_income": 1071,
+      "benefit": 687,
+      "earned": 1600,
+      "ed": false,
+      "excess_shelter": 744,
+      "homeless_substitute": false,
+      "max_allot": 785,
+      "net_income": 327,
+      "other_ded": 0,
+      "shelter": 2163,
+      "size": 3,
+      "state": "CA",
+      "unearned": 0
+    },
+    "KS": {
+      "benefit": null,
+      "size": 3,
+      "state": "KS",
+      "unavailable": "SUA not authored for KS"
+    },
+    "MA": {
+      "EID": 320,
+      "SD": 209,
+      "adj_income": 1071,
+      "benefit": 687,
+      "earned": 1600,
+      "ed": false,
+      "excess_shelter": 744,
+      "homeless_substitute": false,
+      "max_allot": 785,
+      "net_income": 327,
+      "other_ded": 0,
+      "shelter": 2414,
+      "size": 3,
+      "state": "MA",
+      "unearned": 0
+    },
+    "TX": {
+      "benefit": null,
+      "size": 3,
+      "state": "TX",
+      "unavailable": "SUA not authored for TX"
+    }
+  },
+  "M10": {
+    "AK": {
+      "benefit": null,
+      "size": 3,
+      "state": "AK",
+      "unavailable": "SUA not authored for AK"
+    },
+    "CA": {
+      "EID": 320,
+      "SD": 209,
+      "adj_income": 1071,
+      "benefit": 785,
+      "earned": 1600,
+      "ed": true,
+      "excess_shelter": 1628,
+      "homeless_substitute": false,
+      "max_allot": 785,
+      "net_income": 0,
+      "other_ded": 0,
+      "shelter": 2163,
+      "size": 3,
+      "state": "CA",
+      "unearned": 0
+    },
+    "KS": {
+      "benefit": null,
+      "size": 3,
+      "state": "KS",
+      "unavailable": "SUA not authored for KS"
+    },
+    "MA": {
+      "EID": 320,
+      "SD": 209,
+      "adj_income": 1071,
+      "benefit": 785,
+      "earned": 1600,
+      "ed": true,
+      "excess_shelter": 1878,
+      "homeless_substitute": false,
+      "max_allot": 785,
+      "net_income": 0,
+      "other_ded": 0,
+      "shelter": 2414,
+      "size": 3,
+      "state": "MA",
+      "unearned": 0
+    },
+    "TX": {
+      "benefit": null,
+      "size": 3,
+      "state": "TX",
+      "unavailable": "SUA not authored for TX"
+    }
+  },
+  "M11": {
+    "AK": {
+      "benefit": null,
+      "size": 2,
+      "state": "AK",
+      "unavailable": "SUA not authored for AK"
+    },
+    "CA": {
+      "EID": 360,
+      "SD": 209,
+      "adj_income": 1231,
+      "benefit": 177,
+      "earned": 1800,
+      "ed": false,
+      "excess_shelter": 0,
+      "homeless_substitute": false,
+      "max_allot": 546,
+      "net_income": 1231,
+      "other_ded": 0,
+      "shelter": 0,
+      "size": 2,
+      "state": "CA",
+      "unearned": 0
+    },
+    "KS": {
+      "benefit": null,
+      "size": 2,
+      "state": "KS",
+      "unavailable": "SUA not authored for KS"
+    },
+    "MA": {
+      "EID": 360,
+      "SD": 209,
+      "adj_income": 1231,
+      "benefit": 177,
+      "earned": 1800,
+      "ed": false,
+      "excess_shelter": 0,
+      "homeless_substitute": false,
+      "max_allot": 546,
+      "net_income": 1231,
+      "other_ded": 0,
+      "shelter": 0,
+      "size": 2,
+      "state": "MA",
+      "unearned": 0
+    },
+    "TX": {
+      "benefit": null,
+      "size": 2,
+      "state": "TX",
+      "unavailable": "SUA not authored for TX"
+    }
+  },
+  "M12": {
+    "AK": {
+      "benefit": null,
+      "size": 1,
+      "state": "AK",
+      "unavailable": "SUA not authored for AK"
+    },
+    "CA": {
+      "EID": 0,
+      "SD": 209,
+      "adj_income": -209,
+      "benefit": 298,
+      "earned": 0,
+      "ed": false,
+      "excess_shelter": 744,
+      "homeless_substitute": false,
+      "max_allot": 298,
+      "net_income": 0,
+      "other_ded": 0,
+      "shelter": 1463,
+      "size": 1,
+      "state": "CA",
+      "unearned": 0
+    },
+    "MA": {
+      "EID": 0,
+      "SD": 209,
+      "adj_income": -209,
+      "benefit": 298,
+      "earned": 0,
+      "ed": false,
+      "excess_shelter": 744,
+      "homeless_substitute": false,
+      "max_allot": 298,
+      "net_income": 0,
+      "other_ded": 0,
+      "shelter": 1714,
+      "size": 1,
+      "state": "MA",
+      "unearned": 0
+    }
+  },
+  "M13": {
+    "AK": {
+      "benefit": null,
+      "size": 1,
+      "state": "AK",
+      "unavailable": "SUA not authored for AK"
+    },
+    "CA": {
+      "EID": 0,
+      "SD": 209,
+      "adj_income": 491,
+      "benefit": 298,
+      "earned": 0,
+      "ed": true,
+      "excess_shelter": 1118,
+      "homeless_substitute": false,
+      "max_allot": 298,
+      "net_income": 0,
+      "other_ded": 0,
+      "shelter": 1363,
+      "size": 1,
+      "state": "CA",
+      "unearned": 700
+    },
+    "KS": {
+      "benefit": null,
+      "size": 1,
+      "state": "KS",
+      "unavailable": "SUA not authored for KS"
+    },
+    "MA": {
+      "EID": 0,
+      "SD": 209,
+      "adj_income": 491,
+      "benefit": 298,
+      "earned": 0,
+      "ed": true,
+      "excess_shelter": 1368,
+      "homeless_substitute": false,
+      "max_allot": 298,
+      "net_income": 0,
+      "other_ded": 0,
+      "shelter": 1614,
+      "size": 1,
+      "state": "MA",
+      "unearned": 700
+    },
+    "TX": {
+      "benefit": null,
+      "size": 1,
+      "state": "TX",
+      "unavailable": "SUA not authored for TX"
+    }
+  },
+  "M15": {
+    "AK": {
+      "benefit": null,
+      "size": 1,
+      "state": "AK",
+      "unavailable": "SUA not authored for AK"
+    },
+    "CA": {
+      "EID": 0,
+      "SD": 209,
+      "adj_income": -209,
+      "benefit": 298,
+      "earned": 0,
+      "ed": false,
+      "excess_shelter": 744,
+      "homeless_substitute": false,
+      "max_allot": 298,
+      "net_income": 0,
+      "other_ded": 0,
+      "shelter": 1463,
+      "size": 1,
+      "state": "CA",
+      "unearned": 0
+    },
+    "KS": {
+      "benefit": null,
+      "size": 1,
+      "state": "KS",
+      "unavailable": "SUA not authored for KS"
+    },
+    "MA": {
+      "EID": 0,
+      "SD": 209,
+      "adj_income": -209,
+      "benefit": 298,
+      "earned": 0,
+      "ed": false,
+      "excess_shelter": 744,
+      "homeless_substitute": false,
+      "max_allot": 298,
+      "net_income": 0,
+      "other_ded": 0,
+      "shelter": 1714,
+      "size": 1,
+      "state": "MA",
+      "unearned": 0
+    },
+    "TX": {
+      "benefit": null,
+      "size": 1,
+      "state": "TX",
+      "unavailable": "SUA not authored for TX"
+    }
+  },
+  "M18": {
+    "AK": {
+      "benefit": null,
+      "size": 3,
+      "state": "AK",
+      "unavailable": "SUA not authored for AK"
+    },
+    "CA": {
+      "EID": 400,
+      "SD": 209,
+      "adj_income": 1391,
+      "benefit": 591,
+      "earned": 2000,
+      "ed": false,
+      "excess_shelter": 744,
+      "homeless_substitute": false,
+      "max_allot": 785,
+      "net_income": 647,
+      "other_ded": 0,
+      "shelter": 1663,
+      "size": 3,
+      "state": "CA",
+      "unearned": 0
+    },
+    "KS": {
+      "benefit": null,
+      "size": 3,
+      "state": "KS",
+      "unavailable": "SUA not authored for KS"
+    },
+    "MA": {
+      "EID": 400,
+      "SD": 209,
+      "adj_income": 1391,
+      "benefit": 591,
+      "earned": 2000,
+      "ed": false,
+      "excess_shelter": 744,
+      "homeless_substitute": false,
+      "max_allot": 785,
+      "net_income": 647,
+      "other_ded": 0,
+      "shelter": 1914,
+      "size": 3,
+      "state": "MA",
+      "unearned": 0
+    },
+    "TX": {
+      "benefit": null,
+      "size": 3,
+      "state": "TX",
+      "unavailable": "SUA not authored for TX"
+    }
+  },
+  "M20": {
+    "AK": {
+      "benefit": null,
+      "size": 2,
+      "state": "AK",
+      "unavailable": "SUA not authored for AK"
+    },
+    "CA": {
+      "EID": 260,
+      "SD": 209,
+      "adj_income": 831,
+      "benefit": 520,
+      "earned": 1300,
+      "ed": false,
+      "excess_shelter": 744,
+      "homeless_substitute": false,
+      "max_allot": 546,
+      "net_income": 87,
+      "other_ded": 0,
+      "shelter": 1663,
+      "size": 2,
+      "state": "CA",
+      "unearned": 0
+    },
+    "KS": {
+      "benefit": null,
+      "size": 2,
+      "state": "KS",
+      "unavailable": "SUA not authored for KS"
+    },
+    "MA": {
+      "EID": 260,
+      "SD": 209,
+      "adj_income": 831,
+      "benefit": 520,
+      "earned": 1300,
+      "ed": false,
+      "excess_shelter": 744,
+      "homeless_substitute": false,
+      "max_allot": 546,
+      "net_income": 87,
+      "other_ded": 0,
+      "shelter": 1914,
+      "size": 2,
+      "state": "MA",
+      "unearned": 0
+    },
+    "TX": {
+      "benefit": null,
+      "size": 2,
+      "state": "TX",
+      "unavailable": "SUA not authored for TX"
+    }
+  },
+  "M24": {
+    "AK": {
+      "benefit": null,
+      "size": 3,
+      "state": "AK",
+      "unavailable": "SUA not authored for AK"
+    },
+    "CA": {
+      "EID": 0,
+      "SD": 209,
+      "adj_income": -209,
+      "benefit": 785,
+      "earned": 0,
+      "ed": false,
+      "excess_shelter": 744,
+      "homeless_substitute": false,
+      "max_allot": 785,
+      "net_income": 0,
+      "other_ded": 0,
+      "shelter": 1663,
+      "size": 3,
+      "state": "CA",
+      "unearned": 0
+    },
+    "KS": {
+      "benefit": null,
+      "size": 3,
+      "state": "KS",
+      "unavailable": "SUA not authored for KS"
+    },
+    "MA": {
+      "EID": 0,
+      "SD": 209,
+      "adj_income": -209,
+      "benefit": 785,
+      "earned": 0,
+      "ed": false,
+      "excess_shelter": 744,
+      "homeless_substitute": false,
+      "max_allot": 785,
+      "net_income": 0,
+      "other_ded": 0,
+      "shelter": 1914,
+      "size": 3,
+      "state": "MA",
+      "unearned": 0
+    },
+    "TX": {
+      "benefit": null,
+      "size": 3,
+      "state": "TX",
+      "unavailable": "SUA not authored for TX"
+    }
+  },
+  "M25": {
+    "AK": {
+      "benefit": null,
+      "size": 1,
+      "state": "AK",
+      "unavailable": "SUA not authored for AK"
+    },
+    "CA": {
+      "EID": 0,
+      "SD": 209,
+      "adj_income": -209,
+      "benefit": 298,
+      "earned": 0,
+      "ed": false,
+      "excess_shelter": 104,
+      "homeless_substitute": false,
+      "max_allot": 298,
+      "net_income": 0,
+      "other_ded": 0,
+      "shelter": 0,
+      "size": 1,
+      "state": "CA",
+      "unearned": 0
+    },
+    "KS": {
+      "benefit": null,
+      "size": 1,
+      "state": "KS",
+      "unavailable": "SUA not authored for KS"
+    },
+    "MA": {
+      "EID": 0,
+      "SD": 209,
+      "adj_income": -209,
+      "benefit": 298,
+      "earned": 0,
+      "ed": false,
+      "excess_shelter": 104,
+      "homeless_substitute": false,
+      "max_allot": 298,
+      "net_income": 0,
+      "other_ded": 0,
+      "shelter": 0,
+      "size": 1,
+      "state": "MA",
+      "unearned": 0
+    },
+    "TX": {
+      "benefit": null,
+      "size": 1,
+      "state": "TX",
+      "unavailable": "SUA not authored for TX"
+    }
+  },
+  "M26": {
+    "AK": {
+      "benefit": null,
+      "size": 2,
+      "state": "AK",
+      "unavailable": "SUA not authored for AK"
+    },
+    "CA": {
+      "EID": 80,
+      "SD": 209,
+      "adj_income": 111,
+      "benefit": 546,
+      "earned": 400,
+      "ed": false,
+      "excess_shelter": 744,
+      "homeless_substitute": false,
+      "max_allot": 546,
+      "net_income": 0,
+      "other_ded": 0,
+      "shelter": 1263,
+      "size": 2,
+      "state": "CA",
+      "unearned": 0
+    },
+    "KS": {
+      "benefit": null,
+      "size": 2,
+      "state": "KS",
+      "unavailable": "SUA not authored for KS"
+    },
+    "MA": {
+      "EID": 80,
+      "SD": 209,
+      "adj_income": 111,
+      "benefit": 546,
+      "earned": 400,
+      "ed": false,
+      "excess_shelter": 744,
+      "homeless_substitute": false,
+      "max_allot": 546,
+      "net_income": 0,
+      "other_ded": 0,
+      "shelter": 1514,
+      "size": 2,
+      "state": "MA",
+      "unearned": 0
+    },
+    "TX": {
+      "benefit": null,
+      "size": 2,
+      "state": "TX",
+      "unavailable": "SUA not authored for TX"
+    }
+  },
+  "M29": {
+    "AK": {
+      "benefit": null,
+      "size": 2,
+      "state": "AK",
+      "unavailable": "SUA not authored for AK"
+    },
+    "CA": {
+      "EID": 240,
+      "SD": 209,
+      "adj_income": 751,
+      "benefit": 544,
+      "earned": 1200,
+      "ed": false,
+      "excess_shelter": 744,
+      "homeless_substitute": false,
+      "max_allot": 546,
+      "net_income": 7,
+      "other_ded": 0,
+      "shelter": 1563,
+      "size": 2,
+      "state": "CA",
+      "unearned": 0
+    },
+    "KS": {
+      "benefit": null,
+      "size": 2,
+      "state": "KS",
+      "unavailable": "SUA not authored for KS"
+    },
+    "MA": {
+      "EID": 240,
+      "SD": 209,
+      "adj_income": 751,
+      "benefit": 544,
+      "earned": 1200,
+      "ed": false,
+      "excess_shelter": 744,
+      "homeless_substitute": false,
+      "max_allot": 546,
+      "net_income": 7,
+      "other_ded": 0,
+      "shelter": 1814,
+      "size": 2,
+      "state": "MA",
+      "unearned": 0
+    }
+  },
+  "MX1": {
+    "AK": {
+      "benefit": null,
+      "size": 2,
+      "state": "AK",
+      "unavailable": "SUA not authored for AK"
+    },
+    "CA": {
+      "EID": 0,
+      "SD": 209,
+      "adj_income": 1926,
+      "benefit": 546,
+      "earned": 0,
+      "ed": true,
+      "excess_shelter": 2037,
+      "homeless_substitute": false,
+      "max_allot": 546,
+      "net_income": 0,
+      "other_ded": 865,
+      "shelter": 3000,
+      "size": 2,
+      "state": "CA",
+      "unearned": 3000
+    },
+    "KS": {
+      "benefit": null,
+      "size": 2,
+      "state": "KS",
+      "unavailable": "SUA not authored for KS"
+    },
+    "MA": {
+      "EID": 0,
+      "SD": 209,
+      "adj_income": 1926,
+      "benefit": 546,
+      "earned": 0,
+      "ed": true,
+      "excess_shelter": 2037,
+      "homeless_substitute": false,
+      "max_allot": 546,
+      "net_income": 0,
+      "other_ded": 865,
+      "shelter": 3000,
+      "size": 2,
+      "state": "MA",
+      "unearned": 3000
+    },
+    "TX": {
+      "benefit": null,
+      "size": 2,
+      "state": "TX",
+      "unavailable": "SUA not authored for TX"
+    }
+  },
+  "MX2": {
+    "AK": {
+      "benefit": null,
+      "size": 8,
+      "state": "AK",
+      "unavailable": "SUA not authored for AK"
+    },
+    "CA": {
+      "EID": 0,
+      "SD": 299,
+      "adj_income": -299,
+      "benefit": 1789,
+      "earned": 0,
+      "ed": false,
+      "excess_shelter": 744,
+      "homeless_substitute": false,
+      "max_allot": 1789,
+      "net_income": 0,
+      "other_ded": 0,
+      "shelter": 1863,
+      "size": 8,
+      "state": "CA",
+      "unearned": 0
+    },
+    "KS": {
+      "benefit": null,
+      "size": 8,
+      "state": "KS",
+      "unavailable": "SUA not authored for KS"
+    },
+    "MA": {
+      "EID": 0,
+      "SD": 299,
+      "adj_income": -299,
+      "benefit": 1789,
+      "earned": 0,
+      "ed": false,
+      "excess_shelter": 744,
+      "homeless_substitute": false,
+      "max_allot": 1789,
+      "net_income": 0,
+      "other_ded": 0,
+      "shelter": 2114,
+      "size": 8,
+      "state": "MA",
+      "unearned": 0
+    },
+    "TX": {
+      "benefit": null,
+      "size": 8,
+      "state": "TX",
+      "unavailable": "SUA not authored for TX"
+    }
+  },
+  "MX3": {
+    "CA": {
+      "EID": 600,
+      "SD": 209,
+      "adj_income": 2191,
+      "benefit": 112,
+      "earned": 3000,
+      "ed": false,
+      "excess_shelter": 744,
+      "homeless_substitute": false,
+      "max_allot": 546,
+      "net_income": 1447,
+      "other_ded": 0,
+      "shelter": 3000,
+      "size": 2,
+      "state": "CA",
+      "unearned": 0
+    },
+    "MA": {
+      "EID": 600,
+      "SD": 209,
+      "adj_income": 2191,
+      "benefit": 112,
+      "earned": 3000,
+      "ed": false,
+      "excess_shelter": 744,
+      "homeless_substitute": false,
+      "max_allot": 546,
+      "net_income": 1447,
+      "other_ded": 0,
+      "shelter": 3000,
+      "size": 2,
+      "state": "MA",
+      "unearned": 0
+    }
+  },
+  "MX4": {
+    "CA": {
+      "EID": 888,
+      "SD": 209,
+      "adj_income": 3343,
+      "benefit": 0,
+      "earned": 4440,
+      "ed": false,
+      "excess_shelter": 0,
+      "homeless_substitute": false,
+      "max_allot": 785,
+      "net_income": 3343,
+      "other_ded": 0,
+      "shelter": 1463,
+      "size": 3,
+      "state": "CA",
+      "unearned": 0
+    },
+    "MA": {
+      "EID": 888,
+      "SD": 209,
+      "adj_income": 3343,
+      "benefit": 0,
+      "earned": 4440,
+      "ed": false,
+      "excess_shelter": 42,
+      "homeless_substitute": false,
+      "max_allot": 785,
+      "net_income": 3300,
+      "other_ded": 0,
+      "shelter": 1714,
+      "size": 3,
+      "state": "MA",
+      "unearned": 0
+    }
+  },
+  "P57": {
+    "AK": {
+      "benefit": null,
+      "size": 1,
+      "state": "AK",
+      "unavailable": "SUA not authored for AK"
+    },
+    "CA": {
+      "EID": 180,
+      "SD": 209,
+      "adj_income": 511,
+      "benefit": 203,
+      "earned": 900,
+      "ed": false,
+      "excess_shelter": 194,
+      "homeless_substitute": false,
+      "max_allot": 298,
+      "net_income": 316,
+      "other_ded": 0,
+      "shelter": 450,
+      "size": 1,
+      "state": "CA",
+      "unearned": 0
+    },
+    "KS": {
+      "benefit": null,
+      "size": 1,
+      "state": "KS",
+      "unavailable": "SUA not authored for KS"
+    },
+    "MA": {
+      "EID": 180,
+      "SD": 209,
+      "adj_income": 511,
+      "benefit": 203,
+      "earned": 900,
+      "ed": false,
+      "excess_shelter": 194,
+      "homeless_substitute": false,
+      "max_allot": 298,
+      "net_income": 316,
+      "other_ded": 0,
+      "shelter": 450,
+      "size": 1,
+      "state": "MA",
+      "unearned": 0
+    },
+    "TX": {
+      "benefit": null,
+      "size": 1,
+      "state": "TX",
+      "unavailable": "SUA not authored for TX"
+    }
+  },
+  "P59": {
+    "CA": {
+      "EID": 422,
+      "SD": 209,
+      "adj_income": 1479,
+      "benefit": 24,
+      "earned": 2110,
+      "ed": false,
+      "excess_shelter": 524,
+      "homeless_substitute": false,
+      "max_allot": 298,
+      "net_income": 956,
+      "other_ded": 0,
+      "shelter": 1263,
+      "size": 1,
+      "state": "CA",
+      "unearned": 0
+    },
+    "MA": {
+      "EID": 422,
+      "SD": 209,
+      "adj_income": 1479,
+      "benefit": 78,
+      "earned": 2110,
+      "ed": false,
+      "excess_shelter": 744,
+      "homeless_substitute": false,
+      "max_allot": 298,
+      "net_income": 735,
+      "other_ded": 0,
+      "shelter": 1514,
+      "size": 1,
+      "state": "MA",
+      "unearned": 0
+    },
+    "TX": {
+      "benefit": null,
+      "size": 1,
+      "state": "TX",
+      "unavailable": "SUA not authored for TX"
+    }
+  },
+  "P60": {
+    "AK": {
+      "benefit": null,
+      "size": 7,
+      "state": "AK",
+      "unavailable": "SUA not authored for AK"
+    },
+    "CA": {
+      "EID": 500,
+      "SD": 299,
+      "adj_income": 1701,
+      "benefit": 1284,
+      "earned": 2500,
+      "ed": false,
+      "excess_shelter": 744,
+      "homeless_substitute": false,
+      "max_allot": 1571,
+      "net_income": 957,
+      "other_ded": 0,
+      "shelter": 2263,
+      "size": 7,
+      "state": "CA",
+      "unearned": 0
+    },
+    "KS": {
+      "benefit": null,
+      "size": 7,
+      "state": "KS",
+      "unavailable": "SUA not authored for KS"
+    },
+    "MA": {
+      "EID": 500,
+      "SD": 299,
+      "adj_income": 1701,
+      "benefit": 1284,
+      "earned": 2500,
+      "ed": false,
+      "excess_shelter": 744,
+      "homeless_substitute": false,
+      "max_allot": 1571,
+      "net_income": 957,
+      "other_ded": 0,
+      "shelter": 2514,
+      "size": 7,
+      "state": "MA",
+      "unearned": 0
+    },
+    "TX": {
+      "benefit": null,
+      "size": 7,
+      "state": "TX",
+      "unavailable": "SUA not authored for TX"
+    }
+  },
+  "P61": {
+    "AK": {
+      "benefit": null,
+      "size": 3,
+      "state": "AK",
+      "unavailable": "SUA not authored for AK"
+    },
+    "CA": {
+      "EID": 0,
+      "SD": 209,
+      "adj_income": -209,
+      "benefit": 785,
+      "earned": 0,
+      "ed": false,
+      "excess_shelter": 744,
+      "homeless_substitute": false,
+      "max_allot": 785,
+      "net_income": 0,
+      "other_ded": 0,
+      "shelter": 1463,
+      "size": 3,
+      "state": "CA",
+      "unearned": 0
+    },
+    "KS": {
+      "benefit": null,
+      "size": 3,
+      "state": "KS",
+      "unavailable": "SUA not authored for KS"
+    },
+    "MA": {
+      "EID": 0,
+      "SD": 209,
+      "adj_income": -209,
+      "benefit": 785,
+      "earned": 0,
+      "ed": false,
+      "excess_shelter": 744,
+      "homeless_substitute": false,
+      "max_allot": 785,
+      "net_income": 0,
+      "other_ded": 0,
+      "shelter": 1714,
+      "size": 3,
+      "state": "MA",
+      "unearned": 0
+    },
+    "TX": {
+      "benefit": null,
+      "size": 3,
+      "state": "TX",
+      "unavailable": "SUA not authored for TX"
+    }
+  },
+  "P62": {
+    "AK": {
+      "benefit": null,
+      "size": 2,
+      "state": "AK",
+      "unavailable": "SUA not authored for AK"
+    },
+    "CA": {
+      "EID": 0,
+      "SD": 209,
+      "adj_income": -209,
+      "benefit": 546,
+      "earned": 0,
+      "ed": false,
+      "excess_shelter": 744,
+      "homeless_substitute": false,
+      "max_allot": 546,
+      "net_income": 0,
+      "other_ded": 0,
+      "shelter": 1463,
+      "size": 2,
+      "state": "CA",
+      "unearned": 0
+    },
+    "KS": {
+      "benefit": null,
+      "size": 2,
+      "state": "KS",
+      "unavailable": "SUA not authored for KS"
+    },
+    "MA": {
+      "EID": 0,
+      "SD": 209,
+      "adj_income": -209,
+      "benefit": 546,
+      "earned": 0,
+      "ed": false,
+      "excess_shelter": 744,
+      "homeless_substitute": false,
+      "max_allot": 546,
+      "net_income": 0,
+      "other_ded": 0,
+      "shelter": 1714,
+      "size": 2,
+      "state": "MA",
+      "unearned": 0
+    },
+    "TX": {
+      "benefit": null,
+      "size": 2,
+      "state": "TX",
+      "unavailable": "SUA not authored for TX"
+    }
+  },
+  "P64": {
+    "AK": {
+      "benefit": null,
+      "size": 5,
+      "state": "AK",
+      "unavailable": "SUA not authored for AK"
+    },
+    "CA": {
+      "EID": 640,
+      "SD": 261,
+      "adj_income": 2299,
+      "benefit": 677,
+      "earned": 3200,
+      "ed": false,
+      "excess_shelter": 614,
+      "homeless_substitute": false,
+      "max_allot": 1183,
+      "net_income": 1686,
+      "other_ded": 0,
+      "shelter": 1763,
+      "size": 5,
+      "state": "CA",
+      "unearned": 0
+    },
+    "KS": {
+      "benefit": null,
+      "size": 5,
+      "state": "KS",
+      "unavailable": "SUA not authored for KS"
+    },
+    "MA": {
+      "EID": 640,
+      "SD": 261,
+      "adj_income": 2299,
+      "benefit": 716,
+      "earned": 3200,
+      "ed": false,
+      "excess_shelter": 744,
+      "homeless_substitute": false,
+      "max_allot": 1183,
+      "net_income": 1555,
+      "other_ded": 0,
+      "shelter": 2014,
+      "size": 5,
+      "state": "MA",
+      "unearned": 0
+    },
+    "TX": {
+      "benefit": null,
+      "size": 5,
+      "state": "TX",
+      "unavailable": "SUA not authored for TX"
+    }
+  },
+  "P65": {
+    "AK": {
+      "benefit": null,
+      "size": 5,
+      "state": "AK",
+      "unavailable": "SUA not authored for AK"
+    },
+    "CA": {
+      "EID": 440,
+      "SD": 261,
+      "adj_income": 1499,
+      "benefit": 956,
+      "earned": 2200,
+      "ed": false,
+      "excess_shelter": 744,
+      "homeless_substitute": false,
+      "max_allot": 1183,
+      "net_income": 755,
+      "other_ded": 0,
+      "shelter": 1963,
+      "size": 5,
+      "state": "CA",
+      "unearned": 0
+    },
+    "KS": {
+      "benefit": null,
+      "size": 5,
+      "state": "KS",
+      "unavailable": "SUA not authored for KS"
+    },
+    "MA": {
+      "EID": 440,
+      "SD": 261,
+      "adj_income": 1499,
+      "benefit": 956,
+      "earned": 2200,
+      "ed": false,
+      "excess_shelter": 744,
+      "homeless_substitute": false,
+      "max_allot": 1183,
+      "net_income": 755,
+      "other_ded": 0,
+      "shelter": 2214,
+      "size": 5,
+      "state": "MA",
+      "unearned": 0
+    },
+    "TX": {
+      "benefit": null,
+      "size": 5,
+      "state": "TX",
+      "unavailable": "SUA not authored for TX"
+    }
+  },
+  "P66": {
+    "AK": {
+      "benefit": null,
+      "size": 2,
+      "state": "AK",
+      "unavailable": "SUA not authored for AK"
+    },
+    "CA": {
+      "EID": 0,
+      "SD": 209,
+      "adj_income": 658,
+      "benefit": 546,
+      "earned": 0,
+      "ed": false,
+      "excess_shelter": 744,
+      "homeless_substitute": false,
+      "max_allot": 546,
+      "net_income": 0,
+      "other_ded": 0,
+      "shelter": 1663,
+      "size": 2,
+      "state": "CA",
+      "unearned": 867
+    },
+    "KS": {
+      "benefit": null,
+      "size": 2,
+      "state": "KS",
+      "unavailable": "SUA not authored for KS"
+    },
+    "MA": {
+      "EID": 0,
+      "SD": 209,
+      "adj_income": 658,
+      "benefit": 546,
+      "earned": 0,
+      "ed": false,
+      "excess_shelter": 744,
+      "homeless_substitute": false,
+      "max_allot": 546,
+      "net_income": 0,
+      "other_ded": 0,
+      "shelter": 1914,
+      "size": 2,
+      "state": "MA",
+      "unearned": 867
+    },
+    "TX": {
+      "benefit": null,
+      "size": 2,
+      "state": "TX",
+      "unavailable": "SUA not authored for TX"
+    }
+  },
+  "P67": {
+    "AK": {
+      "benefit": null,
+      "size": 1,
+      "state": "AK",
+      "unavailable": "SUA not authored for AK"
+    },
+    "CA": {
+      "EID": 0,
+      "SD": 209,
+      "adj_income": -209,
+      "benefit": 298,
+      "earned": 0,
+      "ed": false,
+      "excess_shelter": 744,
+      "homeless_substitute": false,
+      "max_allot": 298,
+      "net_income": 0,
+      "other_ded": 0,
+      "shelter": 1463,
+      "size": 1,
+      "state": "CA",
+      "unearned": 0
+    },
+    "KS": {
+      "benefit": null,
+      "size": 1,
+      "state": "KS",
+      "unavailable": "SUA not authored for KS"
+    },
+    "MA": {
+      "EID": 0,
+      "SD": 209,
+      "adj_income": -209,
+      "benefit": 298,
+      "earned": 0,
+      "ed": false,
+      "excess_shelter": 744,
+      "homeless_substitute": false,
+      "max_allot": 298,
+      "net_income": 0,
+      "other_ded": 0,
+      "shelter": 1714,
+      "size": 1,
+      "state": "MA",
+      "unearned": 0
+    },
+    "TX": {
+      "benefit": null,
+      "size": 1,
+      "state": "TX",
+      "unavailable": "SUA not authored for TX"
+    }
+  },
+  "P68": {
+    "AK": {
+      "benefit": null,
+      "size": 1,
+      "state": "AK",
+      "unavailable": "SUA not authored for AK"
+    },
+    "CA": {
+      "EID": 180,
+      "SD": 209,
+      "adj_income": 511,
+      "benefit": 203,
+      "earned": 900,
+      "ed": false,
+      "excess_shelter": 194,
+      "homeless_substitute": false,
+      "max_allot": 298,
+      "net_income": 316,
+      "other_ded": 0,
+      "shelter": 450,
+      "size": 1,
+      "state": "CA",
+      "unearned": 0
+    },
+    "KS": {
+      "benefit": null,
+      "size": 1,
+      "state": "KS",
+      "unavailable": "SUA not authored for KS"
+    },
+    "MA": {
+      "EID": 180,
+      "SD": 209,
+      "adj_income": 511,
+      "benefit": 203,
+      "earned": 900,
+      "ed": false,
+      "excess_shelter": 194,
+      "homeless_substitute": false,
+      "max_allot": 298,
+      "net_income": 316,
+      "other_ded": 0,
+      "shelter": 450,
+      "size": 1,
+      "state": "MA",
+      "unearned": 0
+    },
+    "TX": {
+      "benefit": null,
+      "size": 1,
+      "state": "TX",
+      "unavailable": "SUA not authored for TX"
+    }
+  },
+  "P69": {
+    "AK": {
+      "benefit": null,
+      "size": 1,
+      "state": "AK",
+      "unavailable": "SUA not authored for AK"
+    },
+    "CA": {
+      "EID": 0,
+      "SD": 209,
+      "adj_income": 791,
+      "benefit": 298,
+      "earned": 0,
+      "ed": true,
+      "excess_shelter": 1068,
+      "homeless_substitute": false,
+      "max_allot": 298,
+      "net_income": 0,
+      "other_ded": 0,
+      "shelter": 1463,
+      "size": 1,
+      "state": "CA",
+      "unearned": 1000
+    },
+    "KS": {
+      "benefit": null,
+      "size": 1,
+      "state": "KS",
+      "unavailable": "SUA not authored for KS"
+    },
+    "MA": {
+      "EID": 0,
+      "SD": 209,
+      "adj_income": 791,
+      "benefit": 298,
+      "earned": 0,
+      "ed": true,
+      "excess_shelter": 1318,
+      "homeless_substitute": false,
+      "max_allot": 298,
+      "net_income": 0,
+      "other_ded": 0,
+      "shelter": 1714,
+      "size": 1,
+      "state": "MA",
+      "unearned": 1000
+    },
+    "TX": {
+      "benefit": null,
+      "size": 1,
+      "state": "TX",
+      "unavailable": "SUA not authored for TX"
+    }
+  },
+  "P71": {
+    "AK": {
+      "benefit": null,
+      "size": 1,
+      "state": "AK",
+      "unavailable": "SUA not authored for AK"
+    },
+    "CA": {
+      "EID": 0,
+      "SD": 209,
+      "adj_income": -209,
+      "benefit": 298,
+      "earned": 0,
+      "ed": false,
+      "excess_shelter": 744,
+      "homeless_substitute": false,
+      "max_allot": 298,
+      "net_income": 0,
+      "other_ded": 0,
+      "shelter": 1263,
+      "size": 1,
+      "state": "CA",
+      "unearned": 0
+    },
+    "KS": {
+      "benefit": null,
+      "size": 1,
+      "state": "KS",
+      "unavailable": "SUA not authored for KS"
+    },
+    "MA": {
+      "EID": 0,
+      "SD": 209,
+      "adj_income": -209,
+      "benefit": 298,
+      "earned": 0,
+      "ed": false,
+      "excess_shelter": 744,
+      "homeless_substitute": false,
+      "max_allot": 298,
+      "net_income": 0,
+      "other_ded": 0,
+      "shelter": 1514,
+      "size": 1,
+      "state": "MA",
+      "unearned": 0
+    },
+    "TX": {
+      "benefit": null,
+      "size": 1,
+      "state": "TX",
+      "unavailable": "SUA not authored for TX"
+    }
+  },
+  "S02": {
+    "AK": {
+      "benefit": null,
+      "size": 1,
+      "state": "AK",
+      "unavailable": "SUA not authored for AK"
+    },
+    "CA": {
+      "EID": 60,
+      "SD": 209,
+      "adj_income": 31,
+      "benefit": 298,
+      "earned": 300,
+      "ed": false,
+      "excess_shelter": 744,
+      "homeless_substitute": false,
+      "max_allot": 298,
+      "net_income": 0,
+      "other_ded": 0,
+      "shelter": 1263,
+      "size": 1,
+      "state": "CA",
+      "unearned": 0
+    },
+    "KS": {
+      "benefit": null,
+      "size": 1,
+      "state": "KS",
+      "unavailable": "SUA not authored for KS"
+    },
+    "MA": {
+      "EID": 60,
+      "SD": 209,
+      "adj_income": 31,
+      "benefit": 298,
+      "earned": 300,
+      "ed": false,
+      "excess_shelter": 744,
+      "homeless_substitute": false,
+      "max_allot": 298,
+      "net_income": 0,
+      "other_ded": 0,
+      "shelter": 1514,
+      "size": 1,
+      "state": "MA",
+      "unearned": 0
+    },
+    "TX": {
+      "benefit": null,
+      "size": 1,
+      "state": "TX",
+      "unavailable": "SUA not authored for TX"
+    }
+  },
+  "S03": {
+    "AK": {
+      "benefit": null,
+      "size": 1,
+      "state": "AK",
+      "unavailable": "SUA not authored for AK"
+    },
+    "CA": {
+      "EID": 200,
+      "SD": 209,
+      "adj_income": 591,
+      "benefit": 298,
+      "earned": 1000,
+      "ed": false,
+      "excess_shelter": 744,
+      "homeless_substitute": false,
+      "max_allot": 298,
+      "net_income": 0,
+      "other_ded": 0,
+      "shelter": 1263,
+      "size": 1,
+      "state": "CA",
+      "unearned": 0
+    },
+    "KS": {
+      "benefit": null,
+      "size": 1,
+      "state": "KS",
+      "unavailable": "SUA not authored for KS"
+    },
+    "MA": {
+      "EID": 200,
+      "SD": 209,
+      "adj_income": 591,
+      "benefit": 298,
+      "earned": 1000,
+      "ed": false,
+      "excess_shelter": 744,
+      "homeless_substitute": false,
+      "max_allot": 298,
+      "net_income": 0,
+      "other_ded": 0,
+      "shelter": 1514,
+      "size": 1,
+      "state": "MA",
+      "unearned": 0
+    },
+    "TX": {
+      "benefit": null,
+      "size": 1,
+      "state": "TX",
+      "unavailable": "SUA not authored for TX"
+    }
+  },
+  "S05": {
+    "AK": {
+      "benefit": null,
+      "size": 3,
+      "state": "AK",
+      "unavailable": "SUA not authored for AK"
+    },
+    "CA": {
+      "EID": 0,
+      "SD": 209,
+      "adj_income": -209,
+      "benefit": 785,
+      "earned": 0,
+      "ed": false,
+      "excess_shelter": 744,
+      "homeless_substitute": false,
+      "max_allot": 785,
+      "net_income": 0,
+      "other_ded": 0,
+      "shelter": 1663,
+      "size": 3,
+      "state": "CA",
+      "unearned": 0
+    },
+    "KS": {
+      "benefit": null,
+      "size": 3,
+      "state": "KS",
+      "unavailable": "SUA not authored for KS"
+    },
+    "MA": {
+      "EID": 0,
+      "SD": 209,
+      "adj_income": -209,
+      "benefit": 785,
+      "earned": 0,
+      "ed": false,
+      "excess_shelter": 744,
+      "homeless_substitute": false,
+      "max_allot": 785,
+      "net_income": 0,
+      "other_ded": 0,
+      "shelter": 1914,
+      "size": 3,
+      "state": "MA",
+      "unearned": 0
+    },
+    "TX": {
+      "benefit": null,
+      "size": 3,
+      "state": "TX",
+      "unavailable": "SUA not authored for TX"
+    }
+  },
+  "S06": {
+    "AK": {
+      "benefit": null,
+      "size": 2,
+      "state": "AK",
+      "unavailable": "SUA not authored for AK"
+    },
+    "CA": {
+      "EID": 240,
+      "SD": 209,
+      "adj_income": 751,
+      "benefit": 544,
+      "earned": 1200,
+      "ed": false,
+      "excess_shelter": 744,
+      "homeless_substitute": false,
+      "max_allot": 546,
+      "net_income": 7,
+      "other_ded": 0,
+      "shelter": 1563,
+      "size": 2,
+      "state": "CA",
+      "unearned": 0
+    },
+    "KS": {
+      "benefit": null,
+      "size": 2,
+      "state": "KS",
+      "unavailable": "SUA not authored for KS"
+    },
+    "MA": {
+      "EID": 240,
+      "SD": 209,
+      "adj_income": 751,
+      "benefit": 544,
+      "earned": 1200,
+      "ed": false,
+      "excess_shelter": 744,
+      "homeless_substitute": false,
+      "max_allot": 546,
+      "net_income": 7,
+      "other_ded": 0,
+      "shelter": 1814,
+      "size": 2,
+      "state": "MA",
+      "unearned": 0
+    },
+    "TX": {
+      "benefit": null,
+      "size": 2,
+      "state": "TX",
+      "unavailable": "SUA not authored for TX"
+    }
+  },
+  "S07": {
+    "AK": {
+      "benefit": null,
+      "size": 2,
+      "state": "AK",
+      "unavailable": "SUA not authored for AK"
+    },
+    "CA": {
+      "EID": 0,
+      "SD": 209,
+      "adj_income": 391,
+      "benefit": 546,
+      "earned": 0,
+      "ed": false,
+      "excess_shelter": 744,
+      "homeless_substitute": false,
+      "max_allot": 546,
+      "net_income": 0,
+      "other_ded": 0,
+      "shelter": 1463,
+      "size": 2,
+      "state": "CA",
+      "unearned": 600
+    },
+    "KS": {
+      "benefit": null,
+      "size": 2,
+      "state": "KS",
+      "unavailable": "SUA not authored for KS"
+    },
+    "MA": {
+      "EID": 0,
+      "SD": 209,
+      "adj_income": 391,
+      "benefit": 546,
+      "earned": 0,
+      "ed": false,
+      "excess_shelter": 744,
+      "homeless_substitute": false,
+      "max_allot": 546,
+      "net_income": 0,
+      "other_ded": 0,
+      "shelter": 1714,
+      "size": 2,
+      "state": "MA",
+      "unearned": 600
+    },
+    "TX": {
+      "benefit": null,
+      "size": 2,
+      "state": "TX",
+      "unavailable": "SUA not authored for TX"
+    }
+  },
+  "S08": {
+    "AK": {
+      "benefit": null,
+      "size": 1,
+      "state": "AK",
+      "unavailable": "SUA not authored for AK"
+    },
+    "CA": {
+      "EID": 180,
+      "SD": 209,
+      "adj_income": 511,
+      "benefit": 298,
+      "earned": 900,
+      "ed": false,
+      "excess_shelter": 744,
+      "homeless_substitute": false,
+      "max_allot": 298,
+      "net_income": 0,
+      "other_ded": 0,
+      "shelter": 1363,
+      "size": 1,
+      "state": "CA",
+      "unearned": 0
+    },
+    "KS": {
+      "benefit": null,
+      "size": 1,
+      "state": "KS",
+      "unavailable": "SUA not authored for KS"
+    },
+    "MA": {
+      "EID": 180,
+      "SD": 209,
+      "adj_income": 511,
+      "benefit": 298,
+      "earned": 900,
+      "ed": false,
+      "excess_shelter": 744,
+      "homeless_substitute": false,
+      "max_allot": 298,
+      "net_income": 0,
+      "other_ded": 0,
+      "shelter": 1614,
+      "size": 1,
+      "state": "MA",
+      "unearned": 0
+    },
+    "TX": {
+      "benefit": null,
+      "size": 1,
+      "state": "TX",
+      "unavailable": "SUA not authored for TX"
+    }
+  },
+  "S09": {
+    "AK": {
+      "benefit": null,
+      "size": 1,
+      "state": "AK",
+      "unavailable": "SUA not authored for AK"
+    },
+    "CA": {
+      "EID": 0,
+      "SD": 209,
+      "adj_income": -209,
+      "benefit": 298,
+      "earned": 0,
+      "ed": false,
+      "excess_shelter": 744,
+      "homeless_substitute": false,
+      "max_allot": 298,
+      "net_income": 0,
+      "other_ded": 0,
+      "shelter": 1263,
+      "size": 1,
+      "state": "CA",
+      "unearned": 0
+    },
+    "KS": {
+      "benefit": null,
+      "size": 1,
+      "state": "KS",
+      "unavailable": "SUA not authored for KS"
+    },
+    "MA": {
+      "EID": 0,
+      "SD": 209,
+      "adj_income": -209,
+      "benefit": 298,
+      "earned": 0,
+      "ed": false,
+      "excess_shelter": 744,
+      "homeless_substitute": false,
+      "max_allot": 298,
+      "net_income": 0,
+      "other_ded": 0,
+      "shelter": 1514,
+      "size": 1,
+      "state": "MA",
+      "unearned": 0
+    },
+    "TX": {
+      "benefit": null,
+      "size": 1,
+      "state": "TX",
+      "unavailable": "SUA not authored for TX"
+    }
+  }
+}
