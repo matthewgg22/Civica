@@ -3,9 +3,45 @@
 // RMP operation, drug-felony state option, ABAWD waiver availability,
 // max-allotment tier (48 contiguous vs AK).
 //
-// Sources:
-//   CA — CDSS ACIN I-46-25; snap_eligibility_ca.json (production iOS profile)
-//   MA — DTA 106 CMR 364.976; snap_eligibility_ma.json
+// Sources (per-state, by policy axis — kept distinct because BBCE and SUA
+// are issued in separate documents):
+//
+//   CA:
+//     BBCE  — CDSS ACIN I-46-25 (FFY 2026 income limits); Santa Clara
+//             County DEBS chart book.
+//     SUA   — CDSS ACL 25-68 (FY26 SUA chart). NOTE: ACINs are
+//             informational; ACLs are policy-binding. SUA values MUST
+//             cite the ACL, not the ACIN.
+//     RMP   — county-elected, not statewide. Currently operates in LA,
+//             San Diego, Riverside, San Mateo, Santa Clara, San Francisco,
+//             Orange, Sacramento (et al.). `rmp_operated: true` here is
+//             coarse; per-county gating is a TODO.
+//     ABAWD — FNS-approved area waiver list pending load. Verdicts in
+//             ABAWD-affected counties are unsafe until loaded.
+//     Mirror: Civica/Features/SNAP/SNAPRules/snap_eligibility_ca.json
+//             (production iOS profile; source_citations block).
+//
+//   MA:
+//     BBCE  — DTA 106 CMR 364.976 (calendar-2026 HHS FPL basis,
+//             effective 2026-02-01).
+//     SUA   — DTA 106 CMR 364.945 (FY26 SUA chart). Bay State CAP
+//             recipients use the heating_cooling tier (handled by
+//             upstream fixture authoring; not yet enforced here).
+//     RMP   — Massachusetts does not operate a Restaurant Meals Program.
+//     ABAWD — FNS-approved area waiver list pending load (TODO before MA
+//             pilot ships ABAWD-affected verdicts).
+//     Mirror: Civica/Features/SNAP/SNAPRules/snap_eligibility_ma.json
+//             (production iOS profile; source_citations block).
+//
+//   Federal (referenced by both states, defined in federal-tables.ts):
+//     FY26 COLA values — USDA FNS COLA, Aug 2025 publication.
+//     FPL tables       — HHS Federal Register, Jan 2025.
+//     OBBBA            — P.L. 119-21 (§10102, §10103, §10104, §10108).
+//
+// Signoff status: docs/SNAP-source-citation-signoff.md is the canonical
+// engineering deliverable. CA rows 13-18 + MA rows 1-4 are pending
+// reviewer signoff. Engine ships with citations engineering picked;
+// they are NOT yet legal-policy-reviewed.
 //
 // Other states (TX/KS/AK) are policy archetypes used by the fixture; their
 // SUA values are illustrative until the FNS-published values are loaded.
