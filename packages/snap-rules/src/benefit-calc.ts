@@ -21,8 +21,19 @@
 //     if not E/D: excess_shelter = min(excess_shelter, shelter_cap)
 //   net        = max(0, adj_income - excess_shelter)
 //   max_allot  = maxAllotmentFor(size, asOf)
-//   benefit    = round(max_allot - 0.30 * net)                   [273.10(e)]
-//   if size ≤ 2 and 0 < benefit < min_benefit: benefit = min_benefit
+//   benefit    = round(max_allot - 0.30 * net)            [273.10(e)(2)(ii)(A)]
+//   if size ≤ 2 and 0 < benefit < min_benefit:
+//     benefit = min_benefit                                [273.10(e)(2)(ii)(C)]
+//
+// Citation precision note (verified against live eCFR, 2026-06-02): the
+// final-benefit formula + its rounding live at 273.10(e)(2)(ii)(A); the
+// HH1-2 minimum-benefit rule (8% of HH1 max allotment) lives at
+// 273.10(e)(2)(ii)(C). The OTHER rounding rule at 273.10(e)(1)(ii) covers
+// cents-handling INSIDE the net-income computation — a different subsection
+// for a different purpose. For lottery / substantial gambling-winnings
+// disqualification, see disqualifications.ts which correctly cites
+// 7 CFR 272.17 per the final codified rule (the 2016 proposed rule that
+// would have moved this to 273.11(r) was never codified there).
 
 import type { Facts } from "./facts.ts";
 import {
