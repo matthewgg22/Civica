@@ -18,6 +18,7 @@
 
 import type { Facts } from "./facts.ts";
 import { hasElderlyOrDisabled, householdSize } from "./facts.ts";
+import { validateFacts } from "./facts-schema.ts";
 import { evaluateCategorical } from "./gates/categorical.ts";
 import { evaluateStudentGate } from "./gates/student.ts";
 import { evaluateAbawd } from "./gates/abawd.ts";
@@ -53,6 +54,21 @@ export interface VerdictResult {
  * result so the harness can classify as SKIP.
  */
 export function composeVerdict(facts: Facts, state: string, asOf: Date): VerdictResult {
+  // ── Input contract (Zod) ─────────────────────────────────────────────
+  // Reject malformed Facts at the door so the engine never sees a shape
+  // it didn't agree to accept. The 2026-06-02 audit showed throws inside
+  // the composer were being silently classified as SKIPs by the harness;
+  // returning a structured `__invalid-input-shape__` keeps the harness
+  // classifier honest while also rejecting bad submissions at API
+  // boundaries.
+  const errs = validateFacts(facts);
+  if (errs !== null) {
+    return {
+      not_implemented_surfaces: ["__invalid-input-shape__"],
+      reason: `Facts failed schema validation: ${errs.slice(0, 5).join("; ")}${errs.length > 5 ? ` (+${errs.length - 5} more)` : ""}`,
+    };
+  }
+
   // ── State policy ─────────────────────────────────────────────────────
   let policy;
   try {
