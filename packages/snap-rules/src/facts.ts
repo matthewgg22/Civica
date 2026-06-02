@@ -72,8 +72,17 @@ const EARNED_TYPES = new Set<string>([
   "wages_contract",
 ]);
 
-/** Income types excluded from SNAP per 7 CFR 273.9(c). */
-export function isExcludedIncome(type: string): boolean {
+/** Income types excluded from SNAP per 7 CFR 273.9(c).
+ *
+ * Defensive against missing/undefined type. v0.6 variant patches can add
+ * a new income line with only some fields populated (e.g. M23 patches
+ * `income.0.amount` against a base with empty income[], leaving `type`
+ * unset). Treating unknown-type as "not excluded" (countable) is
+ * conservative — the row falls through to the unearned bucket below and
+ * the gross test runs on the full amount; no EID is granted.
+ */
+export function isExcludedIncome(type: string | undefined | null): boolean {
+  if (!type) return false;
   if (type.startsWith("excluded")) return true;
   if (type.startsWith("americorps_sn_excluded")) return true;
   if (type.startsWith("americorps_vista_excluded")) return true;

@@ -25,8 +25,8 @@ struct Member: Codable {
 }
 
 struct IncomeLine: Codable {
-    let member: String
-    let type: String
+    let member: String?
+    let type: String?
     let amount: Double
     let freq: String?
     let anticipation: String?
@@ -94,7 +94,10 @@ struct Facts: Codable {
 // Earned-income classification mirrors the TS port.
 let EARNED_TYPES: Set<String> = ["wages", "self_employment", "farm_se", "wages_contract"]
 
-func isExcludedIncome(_ type: String) -> Bool {
+// Defensive against missing type (variant patches may not populate it on
+// rows added against an empty base — see TS comment).
+func isExcludedIncome(_ type: String?) -> Bool {
+    guard let type else { return false }
     if type.hasPrefix("excluded") { return true }
     if type.hasPrefix("americorps_sn_excluded") { return true }
     if type.hasPrefix("americorps_vista_excluded") { return true }
@@ -112,7 +115,7 @@ func aggregateIncome(_ facts: Facts) -> IncomeAggregate {
     var earned = 0.0, unearned = 0.0
     for line in facts.income {
         if isExcludedIncome(line.type) { continue }
-        if EARNED_TYPES.contains(line.type) { earned += line.amount }
+        if let t = line.type, EARNED_TYPES.contains(t) { earned += line.amount }
         else { unearned += line.amount }
     }
     if earned < 0 {
