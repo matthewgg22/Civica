@@ -51,6 +51,15 @@ export function runHarness(
       continue;
     }
 
+    // Stamp legacy_id onto facts so the iOS adapter (which keys
+    // by legacy_id, not by facts content) can look up its results.
+    // The TS + Swift composers ignore this field.
+    const stampLegacy = (f: Facts, suffix?: string): Facts => {
+      const cloned = structuredClone(f) as Facts & Record<string, unknown>;
+      cloned.__legacy_id__ = profile.legacy_id + (suffix ?? "");
+      return cloned as Facts;
+    };
+
     if (profile.expected_by_state) {
       const exp = profile.expected_by_state[state];
       if (!exp) {
@@ -58,13 +67,18 @@ export function runHarness(
         results.push(buildSkipResult(profile, state, ["no-expectation-for-state"]));
         continue;
       }
-      results.push(runStatefulProfile(profile, exp, state, engine, benefitsAllowed));
+      const stamped: Profile = { ...profile, facts: stampLegacy(profile.facts) };
+      results.push(runStatefulProfile(stamped, exp, state, engine, benefitsAllowed));
     } else if (profile.expected?.variants) {
       // A/B variant rows — one result per variant. Each variant applies
       // its facts_patch to a deep-cloned base, then runs the composer.
       for (const [variantKey, variant] of Object.entries(profile.expected.variants)) {
+        const stampedProfile: Profile = {
+          ...profile,
+          facts: stampLegacy(profile.facts, `[${variantKey}]`),
+        };
         results.push(
-          runVariantProfile(profile, variantKey, variant, state, engine, benefitsAllowed),
+          runVariantProfile(stampedProfile, variantKey, variant, state, engine, benefitsAllowed),
         );
       }
     } else {

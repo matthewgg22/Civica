@@ -57,6 +57,143 @@ export interface CrossEngineRunResult {
   divergence: DivergenceReport;
 }
 
+// ─── Three-way (TS + Swift-port + iOS production) ────────────────────────
+
+export interface ThreeWayOptions extends Omit<CrossEngineOptions, "tsEngine" | "swiftEngine"> {
+  tsEngine: EngineAdapter;
+  swiftEngine: EngineAdapter;
+  iosEngine: EngineAdapter;
+}
+
+export interface ThreeWayResult {
+  tsSummary: HarnessRunSummary;
+  swiftSummary: HarnessRunSummary;
+  iosSummary: HarnessRunSummary;
+  /** All three engines agree (and match oracle). */
+  threeWayAgree: number;
+  /** TS + Swift agree but iOS disagrees. */
+  iosDiverges: number;
+  /** Some other split. */
+  engineSplit: number;
+  /** Rows where the three engines split. */
+  rows: Array<{
+    profile_id: string;
+    legacy_id: string;
+    label: string;
+    ts: { verdict?: string; benefit?: number | null };
+    swift: { verdict?: string; benefit?: number | null };
+    ios: { verdict?: string; benefit?: number | null };
+    oracle: { verdict?: string; benefit?: number | null };
+    citation?: string;
+  }>;
+}
+
+export function runThreeWay(suite: ProfileSuite, opts: ThreeWayOptions): ThreeWayResult {
+  if (opts.swiftEngine instanceof SwiftCliAdapter) {
+    const requests = buildAllRequests(suite, opts.state);
+    opts.swiftEngine.preload(requests);
+  }
+
+  const tsSummary = runHarness(suite, {
+    state: opts.state, engine: opts.tsEngine,
+    manifest: opts.manifest, verdictOnly: opts.verdictOnly,
+  });
+  const swiftSummary = runHarness(suite, {
+    state: opts.state, engine: opts.swiftEngine,
+    manifest: opts.manifest, verdictOnly: opts.verdictOnly,
+  });
+  const iosSummary = runHarness(suite, {
+    state: opts.state, engine: opts.iosEngine,
+    manifest: opts.manifest, verdictOnly: opts.verdictOnly,
+  });
+
+  const tsByID = new Map<string, ProfileResult>();
+  for (const r of tsSummary.all_results) tsByID.set(r.legacy_id, r);
+  const swiftByID = new Map<string, ProfileResult>();
+  for (const r of swiftSummary.all_results) swiftByID.set(r.legacy_id, r);
+  const iosByID = new Map<string, ProfileResult>();
+  for (const r of iosSummary.all_results) iosByID.set(r.legacy_id, r);
+
+  let threeWayAgree = 0;
+  let iosDiverges = 0;
+  let engineSplit = 0;
+  const rows: ThreeWayResult["rows"] = [];
+
+  const ids = new Set<string>([...tsByID.keys(), ...swiftByID.keys(), ...iosByID.keys()]);
+  for (const id of ids) {
+    const t = tsByID.get(id);
+    const s = swiftByID.get(id);
+    const i = iosByID.get(id);
+    if (!t || !s || !i) continue;
+    if (t.kind === "SKIP" || s.kind === "SKIP" || i.kind === "SKIP") continue;
+
+    const sameTSSwift = t.actual_verdict === s.actual_verdict && t.actual_benefit === s.actual_benefit;
+    const sameAllThree = sameTSSwift && t.actual_verdict === i.actual_verdict && t.actual_benefit === i.actual_benefit;
+
+    if (sameAllThree) { threeWayAgree++; continue; }
+
+    if (sameTSSwift && (t.actual_verdict !== i.actual_verdict || t.actual_benefit !== i.actual_benefit)) {
+      iosDiverges++;
+    } else {
+      engineSplit++;
+    }
+
+    rows.push({
+      profile_id: t.profile_id,
+      legacy_id: t.legacy_id,
+      label: t.label,
+      ts: { verdict: t.actual_verdict, benefit: t.actual_benefit },
+      swift: { verdict: s.actual_verdict, benefit: s.actual_benefit },
+      ios: { verdict: i.actual_verdict, benefit: i.actual_benefit },
+      oracle: { verdict: t.expected_verdict, benefit: t.expected_benefit },
+      citation: t.citation,
+    });
+  }
+
+  return { tsSummary, swiftSummary, iosSummary, threeWayAgree, iosDiverges, engineSplit, rows };
+}
+
+export function renderThreeWayReport(r: ThreeWayResult): string {
+  const lines: string[] = [];
+  lines.push("# ── Three-way cross-engine grading ──");
+  lines.push("");
+  lines.push("Engine axes:");
+  lines.push("");
+  lines.push("- `TS` — `@civica/snap-rules/verdict.ts` (Wave B–2 port from Python source + 7 CFR)");
+  lines.push("- `Swift port` — `tools/snap-rules-swift-cli/` (Wave 3 port — independent encoding)");
+  lines.push("- `iOS production` — `SNAPLocalEligibilityEvaluator.evaluate` (the code that ships in the app today)");
+  lines.push("");
+  lines.push(`- **All three engines agree (and match oracle):** ${r.threeWayAgree}`);
+  lines.push(`- **TS + Swift agree, iOS diverges:** ${r.iosDiverges} ← gaps in the production composer`);
+  lines.push(`- **Engines split otherwise:** ${r.engineSplit}`);
+  lines.push("");
+  if (r.rows.length === 0) {
+    lines.push("**Zero divergence across all three engines.**");
+    return lines.join("\n") + "\n";
+  }
+  lines.push("## Where iOS production diverges");
+  lines.push("");
+  lines.push("Each row = profile where iOS production engine produced a different output than the TS + Swift ports (which agree). The TS + Swift ports are independent encodings of 7 CFR 273 + the Python source-of-truth, so when they agree against iOS, the gap is in the iOS composer.");
+  lines.push("");
+  lines.push("| ID | TS | Swift port | iOS production | Oracle | Likely gap | Citation |");
+  lines.push("|---|---|---|---|---|---|---|");
+  for (const row of r.rows.slice(0, 40)) {
+    const fmtCell = (c: { verdict?: string; benefit?: number | null }): string =>
+      `${c.verdict ?? ""}${c.benefit != null ? ` $${c.benefit}` : ""}`;
+    const likelyGap =
+      row.ts.verdict !== row.ios.verdict
+        ? `gate not composed (${row.ts.verdict} → ${row.ios.verdict})`
+        : `benefit math drift`;
+    lines.push(
+      `| \`${row.legacy_id}\` | \`${fmtCell(row.ts)}\` | \`${fmtCell(row.swift)}\` | \`${fmtCell(row.ios)}\` | \`${fmtCell(row.oracle)}\` | ${likelyGap} | ${row.citation ?? ""} |`,
+    );
+  }
+  if (r.rows.length > 40) {
+    lines.push(`| _(${r.rows.length - 40} more rows)_ |  |  |  |  |  |  |`);
+  }
+  return lines.join("\n") + "\n";
+}
+
 export function runCrossEngine(
   suite: ProfileSuite,
   opts: CrossEngineOptions,

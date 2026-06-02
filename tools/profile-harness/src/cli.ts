@@ -21,13 +21,14 @@ import { renderMarkdownReport } from "./report.ts";
 import { SentinelAdapter } from "./adapters/sentinel.ts";
 import { TsSnapRulesAdapter } from "./adapters/ts-snap-rules.ts";
 import { SwiftCliAdapter } from "./adapters/swift-cli.ts";
+import { SwiftIosAdapter } from "./adapters/swift-ios.ts";
 import { TS_MANIFEST_WAVE_A, TS_MANIFEST_WAVE_B } from "./capability-manifest.ts";
-import { renderDivergenceReport, runCrossEngine } from "./cross-engine.ts";
+import { renderDivergenceReport, runCrossEngine, runThreeWay, renderThreeWayReport } from "./cross-engine.ts";
 import type { CapabilityManifest, EngineAdapter } from "./types.ts";
 
 interface ParsedArgs {
   state: string;
-  engine: "ts" | "sentinel" | "swift" | "both";
+  engine: "ts" | "sentinel" | "swift" | "swift-ios" | "both" | "all-three";
   verdictOnly: boolean;
   fixturePath?: string;
   out?: string;
@@ -46,8 +47,11 @@ function parseArgs(argv: string[]): ParsedArgs {
     if (a === "--state") out.state = argv[++i];
     else if (a === "--engine") {
       const v = argv[++i];
-      if (v !== "ts" && v !== "sentinel" && v !== "swift" && v !== "both") {
-        throw new Error(`Unknown engine: ${v}. Use ts | sentinel | swift | both`);
+      if (
+        v !== "ts" && v !== "sentinel" && v !== "swift" &&
+        v !== "swift-ios" && v !== "both" && v !== "all-three"
+      ) {
+        throw new Error(`Unknown engine: ${v}. Use ts | sentinel | swift | swift-ios | both | all-three`);
       }
       out.engine = v;
     }
@@ -120,6 +124,42 @@ async function main(): Promise<void> {
     process.exit(tsSummary.totals.fail > 0 || swiftSummary.totals.fail > 0 ? 1 : 0);
   }
 
+  // ── --engine all-three: TS + Swift port + iOS production ────────────
+  if (args.engine === "all-three") {
+    const ts = new TsSnapRulesAdapter();
+    const swift = new SwiftCliAdapter();
+    const ios = new SwiftIosAdapter();
+    const r = runThreeWay(suite, {
+      state: args.state,
+      tsEngine: ts,
+      swiftEngine: swift,
+      iosEngine: ios,
+      manifest: TS_MANIFEST_WAVE_B,
+      verdictOnly: args.verdictOnly,
+    });
+    const triReport =
+      renderMarkdownReport(r.tsSummary) +
+      "\n\n# ── Swift port engine run ──\n\n" +
+      renderMarkdownReport(r.swiftSummary) +
+      "\n\n# ── iOS production engine run ──\n\n" +
+      renderMarkdownReport(r.iosSummary) +
+      "\n\n" +
+      renderThreeWayReport(r);
+    if (args.out) {
+      writeFileSync(args.out, triReport, "utf-8");
+      process.stderr.write(
+        `Report written to ${args.out}\n` +
+        `TS:      ${r.tsSummary.totals.pass}/${r.tsSummary.totals.fail}/${r.tsSummary.totals.skip}\n` +
+        `Swift:   ${r.swiftSummary.totals.pass}/${r.swiftSummary.totals.fail}/${r.swiftSummary.totals.skip}\n` +
+        `iOS:     ${r.iosSummary.totals.pass}/${r.iosSummary.totals.fail}/${r.iosSummary.totals.skip}\n` +
+        `Three-way agreements: ${r.threeWayAgree}; engines split: ${r.engineSplit}\n`,
+      );
+    } else {
+      process.stdout.write(triReport);
+    }
+    process.exit(r.tsSummary.totals.fail > 0 || r.swiftSummary.totals.fail > 0 ? 1 : 0);
+  }
+
   let engine: EngineAdapter;
   let manifest: CapabilityManifest;
   if (args.engine === "sentinel") {
@@ -127,6 +167,9 @@ async function main(): Promise<void> {
     manifest = TS_MANIFEST_WAVE_A;
   } else if (args.engine === "swift") {
     engine = new SwiftCliAdapter();
+    manifest = TS_MANIFEST_WAVE_B;
+  } else if (args.engine === "swift-ios") {
+    engine = new SwiftIosAdapter();
     manifest = TS_MANIFEST_WAVE_B;
   } else {
     engine = new TsSnapRulesAdapter();
