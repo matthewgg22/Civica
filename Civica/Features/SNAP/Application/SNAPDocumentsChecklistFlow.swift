@@ -347,52 +347,69 @@ enum SNAPDocumentsChecklistStrings {
 
     static let title = CivicaText(
         "Which of these do you already have?",
-        es: "¿Cuáles de estos ya tienes?"
+        es: "¿Cuáles de estos ya tienes?",
+        zh: "下面这些你已经有哪些?"
     )
     static let helper = CivicaText(
         "Mark anything you already have, or tap \"Take a photo\" to scan a document with your camera. Civica keeps the photo on this device only — nothing uploaded.",
-        es: "Marca lo que ya tengas, o toca \"Tomar una foto\" para escanear un documento con tu cámara. Civica guarda la foto solo en este dispositivo — nada se sube."
+        es: "Marca lo que ya tengas, o toca \"Tomar una foto\" para escanear un documento con tu cámara. Civica guarda la foto solo en este dispositivo — nada se sube.",
+        zh: "勾选你已经有的任何材料,或者点击「拍一张照」用相机扫描文件。Civica 只把照片保存在这台设备上 — 不会上传任何东西。"
     )
 
     static let scannerUnavailableTitle = CivicaText(
         "Camera scanning not available",
-        es: "Escaneo con cámara no disponible"
+        es: "Escaneo con cámara no disponible",
+        zh: "相机扫描功能不可用"
     )
     static let scannerUnavailableBody = CivicaText(
         "Document scanning isn't supported on this device. You can still mark which documents you have and bring them to your appointment.",
-        es: "El escaneo de documentos no es compatible con este dispositivo. Puedes marcar qué documentos tienes y llevarlos a tu cita."
+        es: "El escaneo de documentos no es compatible con este dispositivo. Puedes marcar qué documentos tienes y llevarlos a tu cita.",
+        zh: "这台设备不支持文件扫描。你仍然可以勾选你有哪些材料,然后带去预约时使用。"
     )
 
     static let takePhoto = CivicaText(
         "Take a photo",
-        es: "Tomar una foto"
+        es: "Tomar una foto",
+        zh: "拍一张照"
     )
     static let photoSaved = CivicaText(
         "Photo saved · Tap to retake",
-        es: "Foto guardada · Toca para volver a tomarla"
+        es: "Foto guardada · Toca para volver a tomarla",
+        zh: "照片已保存 · 点击重新拍摄"
     )
     static func label(for document: SNAPDocumentType, language: CivicaLanguage) -> String {
         switch (document, language) {
-        case (.photoID, .english), (.photoID, .mandarin), (.photoID, .vietnamese), (.photoID, .tagalog):                       return "Photo ID"
+        case (.photoID, .english), (.photoID, .vietnamese), (.photoID, .tagalog):                       return "Photo ID"
+        case (.photoID, .mandarin):                       return "带照片的身份证件"
         case (.photoID, .spanish):                       return "Identificación con foto"
-        case (.proofOfAddress, .english), (.proofOfAddress, .mandarin), (.proofOfAddress, .vietnamese), (.proofOfAddress, .tagalog):                return "Proof of where you live"
+        case (.proofOfAddress, .english), (.proofOfAddress, .vietnamese), (.proofOfAddress, .tagalog):                return "Proof of where you live"
+        case (.proofOfAddress, .mandarin):                return "你居住地址的证明"
         case (.proofOfAddress, .spanish):                return "Prueba de donde vives"
-        case (.proofOfIncome, .english), (.proofOfIncome, .mandarin), (.proofOfIncome, .vietnamese), (.proofOfIncome, .tagalog):                 return "Recent paystubs or proof of income"
+        case (.proofOfIncome, .english), (.proofOfIncome, .vietnamese), (.proofOfIncome, .tagalog):                 return "Recent paystubs or proof of income"
+        case (.proofOfIncome, .mandarin):                 return "近期工资单或收入证明"
         case (.proofOfIncome, .spanish):                 return "Talones de pago recientes o prueba de ingresos"
-        case (.rentOrHousingCostProof, .english), (.rentOrHousingCostProof, .mandarin), (.rentOrHousingCostProof, .vietnamese), (.rentOrHousingCostProof, .tagalog):        return "Rent or housing cost"
+        case (.rentOrHousingCostProof, .english), (.rentOrHousingCostProof, .vietnamese), (.rentOrHousingCostProof, .tagalog):        return "Rent or housing cost"
+        case (.rentOrHousingCostProof, .mandarin):        return "房租或住房费用"
         case (.rentOrHousingCostProof, .spanish):        return "Renta o costo de vivienda"
-        case (.utilityBill, .english), (.utilityBill, .mandarin), (.utilityBill, .vietnamese), (.utilityBill, .tagalog):                   return "A recent utility bill"
+        case (.utilityBill, .english), (.utilityBill, .vietnamese), (.utilityBill, .tagalog):                   return "A recent utility bill"
+        case (.utilityBill, .mandarin):                   return "近期的水电气账单"
         case (.utilityBill, .spanish):                   return "Un recibo reciente de servicios"
-        case (.bankStatement, .english), (.bankStatement, .mandarin), (.bankStatement, .vietnamese), (.bankStatement, .tagalog):                 return "Recent bank statement"
+        case (.bankStatement, .english), (.bankStatement, .vietnamese), (.bankStatement, .tagalog):                 return "Recent bank statement"
+        case (.bankStatement, .mandarin):                 return "近期的银行对账单"
         case (.bankStatement, .spanish):                 return "Estado de cuenta bancario reciente"
-        case (.studentStatusDocuments, .english), (.studentStatusDocuments, .mandarin), (.studentStatusDocuments, .vietnamese), (.studentStatusDocuments, .tagalog):        return "Student enrollment paper"
+        case (.studentStatusDocuments, .english), (.studentStatusDocuments, .vietnamese), (.studentStatusDocuments, .tagalog):        return "Student enrollment paper"
+        case (.studentStatusDocuments, .mandarin):        return "学生注册证明"
         case (.studentStatusDocuments, .spanish):        return "Comprobante de inscripción estudiantil"
-        case (.workStatusOrExemptions, .english), (.workStatusOrExemptions, .mandarin), (.workStatusOrExemptions, .vietnamese), (.workStatusOrExemptions, .tagalog):        return "Letter about work status or work exemption"
+        case (.workStatusOrExemptions, .english), (.workStatusOrExemptions, .vietnamese), (.workStatusOrExemptions, .tagalog):        return "Letter about work status or work exemption"
+        case (.workStatusOrExemptions, .mandarin):        return "关于工作状况或工作豁免的证明信"
         case (.workStatusOrExemptions, .spanish):        return "Carta sobre estado laboral o exención de trabajo"
-        case (.childcareCostProof, .english), (.childcareCostProof, .mandarin), (.childcareCostProof, .vietnamese), (.childcareCostProof, .tagalog):            return "Childcare receipt or invoice"
+        case (.childcareCostProof, .english), (.childcareCostProof, .vietnamese), (.childcareCostProof, .tagalog):            return "Childcare receipt or invoice"
+        case (.childcareCostProof, .mandarin):            return "托儿收据或发票"
         case (.childcareCostProof, .spanish):            return "Recibo o factura de cuidado infantil"
-        case (.immigrationDocumentsIfRelevant, .english), (.immigrationDocumentsIfRelevant, .mandarin), (.immigrationDocumentsIfRelevant, .vietnamese), (.immigrationDocumentsIfRelevant, .tagalog):
+        case (.immigrationDocumentsIfRelevant, .english), (.immigrationDocumentsIfRelevant, .vietnamese), (.immigrationDocumentsIfRelevant, .tagalog):
             return "Immigration documents (only if the state asks)"
+        case (.immigrationDocumentsIfRelevant, .mandarin):
+            return "移民相关文件(仅在州政府要求时)"
         case (.immigrationDocumentsIfRelevant, .spanish):
             return "Documentos de inmigración (solo si el estado los pide)"
         }
@@ -402,26 +419,37 @@ enum SNAPDocumentsChecklistStrings {
     /// Returns nil when the label already says it all.
     static func example(for document: SNAPDocumentType, language: CivicaLanguage) -> String? {
         switch (document, language) {
-        case (.photoID, .english), (.photoID, .mandarin), (.photoID, .vietnamese), (.photoID, .tagalog):                       return "Driver's license, state ID, passport"
+        case (.photoID, .english), (.photoID, .vietnamese), (.photoID, .tagalog):                       return "Driver's license, state ID, passport"
+        case (.photoID, .mandarin):                       return "驾照、州身份证、护照"
         case (.photoID, .spanish):                       return "Licencia de conducir, identificación estatal, pasaporte"
-        case (.proofOfAddress, .english), (.proofOfAddress, .mandarin), (.proofOfAddress, .vietnamese), (.proofOfAddress, .tagalog):                return "Lease, mail, bill with your name and address"
+        case (.proofOfAddress, .english), (.proofOfAddress, .vietnamese), (.proofOfAddress, .tagalog):                return "Lease, mail, bill with your name and address"
+        case (.proofOfAddress, .mandarin):                return "租约、邮件,或印有你的姓名和地址的账单"
         case (.proofOfAddress, .spanish):                return "Contrato de renta, correo o recibo con tu nombre y dirección"
-        case (.proofOfIncome, .english), (.proofOfIncome, .mandarin), (.proofOfIncome, .vietnamese), (.proofOfIncome, .tagalog):                 return "Last 4 weeks of paystubs, or a letter from your employer"
+        case (.proofOfIncome, .english), (.proofOfIncome, .vietnamese), (.proofOfIncome, .tagalog):                 return "Last 4 weeks of paystubs, or a letter from your employer"
+        case (.proofOfIncome, .mandarin):                 return "过去 4 周的工资单,或你雇主出具的证明信"
         case (.proofOfIncome, .spanish):                 return "Talones de pago de las últimas 4 semanas, o una carta de tu empleador"
-        case (.rentOrHousingCostProof, .english), (.rentOrHousingCostProof, .mandarin), (.rentOrHousingCostProof, .vietnamese), (.rentOrHousingCostProof, .tagalog):        return "Lease, mortgage statement, or shelter receipt"
+        case (.rentOrHousingCostProof, .english), (.rentOrHousingCostProof, .vietnamese), (.rentOrHousingCostProof, .tagalog):        return "Lease, mortgage statement, or shelter receipt"
+        case (.rentOrHousingCostProof, .mandarin):        return "租约、房贷月结单或庇护所收据"
         case (.rentOrHousingCostProof, .spanish):        return "Contrato, estado de cuenta de hipoteca o recibo de refugio"
-        case (.utilityBill, .english), (.utilityBill, .mandarin), (.utilityBill, .vietnamese), (.utilityBill, .tagalog):                   return "Electricity, gas, heat, water, or phone"
+        case (.utilityBill, .english), (.utilityBill, .vietnamese), (.utilityBill, .tagalog):                   return "Electricity, gas, heat, water, or phone"
+        case (.utilityBill, .mandarin):                   return "电费、燃气费、暖气费、水费或电话费"
         case (.utilityBill, .spanish):                   return "Electricidad, gas, calefacción, agua o teléfono"
-        case (.bankStatement, .english), (.bankStatement, .mandarin), (.bankStatement, .vietnamese), (.bankStatement, .tagalog):                 return "Most recent statement showing your ending balance"
+        case (.bankStatement, .english), (.bankStatement, .vietnamese), (.bankStatement, .tagalog):                 return "Most recent statement showing your ending balance"
+        case (.bankStatement, .mandarin):                 return "最近一期显示你期末余额的对账单"
         case (.bankStatement, .spanish):                 return "Estado de cuenta más reciente que muestre tu saldo final"
-        case (.studentStatusDocuments, .english), (.studentStatusDocuments, .mandarin), (.studentStatusDocuments, .vietnamese), (.studentStatusDocuments, .tagalog):        return "A letter from the school or financial aid office"
+        case (.studentStatusDocuments, .english), (.studentStatusDocuments, .vietnamese), (.studentStatusDocuments, .tagalog):        return "A letter from the school or financial aid office"
+        case (.studentStatusDocuments, .mandarin):        return "学校或助学金办公室出具的证明信"
         case (.studentStatusDocuments, .spanish):        return "Una carta de la escuela o la oficina de ayuda financiera"
-        case (.workStatusOrExemptions, .english), (.workStatusOrExemptions, .mandarin), (.workStatusOrExemptions, .vietnamese), (.workStatusOrExemptions, .tagalog):        return nil
+        case (.workStatusOrExemptions, .english), (.workStatusOrExemptions, .vietnamese), (.workStatusOrExemptions, .tagalog):        return nil
+        case (.workStatusOrExemptions, .mandarin):        return nil
         case (.workStatusOrExemptions, .spanish):        return nil
-        case (.childcareCostProof, .english), (.childcareCostProof, .mandarin), (.childcareCostProof, .vietnamese), (.childcareCostProof, .tagalog):            return nil
+        case (.childcareCostProof, .english), (.childcareCostProof, .vietnamese), (.childcareCostProof, .tagalog):            return nil
+        case (.childcareCostProof, .mandarin):            return nil
         case (.childcareCostProof, .spanish):            return nil
-        case (.immigrationDocumentsIfRelevant, .english), (.immigrationDocumentsIfRelevant, .mandarin), (.immigrationDocumentsIfRelevant, .vietnamese), (.immigrationDocumentsIfRelevant, .tagalog):
+        case (.immigrationDocumentsIfRelevant, .english), (.immigrationDocumentsIfRelevant, .vietnamese), (.immigrationDocumentsIfRelevant, .tagalog):
             return "Only some applicants need this. SNAP does not require status info from every household member."
+        case (.immigrationDocumentsIfRelevant, .mandarin):
+            return "只有部分申请人需要这一项。SNAP 不要求家庭中每个成员都提供身份信息。"
         case (.immigrationDocumentsIfRelevant, .spanish):
             return "Solo algunos solicitantes necesitan esto. SNAP no requiere información migratoria de cada miembro del hogar."
         }
