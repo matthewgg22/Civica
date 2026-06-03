@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import * as Sentry from "@sentry/nextjs";
 import { strings, STORAGE_KEY, type Locale } from "./i18n";
 
 // Root 404. Civica web is a single-route marketing surface today; most
@@ -17,6 +18,15 @@ export default function NotFound() {
     } catch {
       // localStorage disabled — keep default.
     }
+  }, []);
+
+  // Track 404 frequency as a wayfinding-gap signal. Pathname is the only
+  // tag we need to debug which dead link a user followed; no user data.
+  useEffect(() => {
+    Sentry.captureMessage("web.not_found_viewed", {
+      level: "info",
+      extra: { pathname: typeof window !== "undefined" ? window.location.pathname : "" },
+    });
   }, []);
 
   const copy = strings[locale];

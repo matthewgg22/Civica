@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import * as Sentry from "@sentry/nextjs";
 import { strings, STORAGE_KEY, type Locale } from "./i18n";
 
 // Root error boundary for the marketing site. Catches errors thrown inside
@@ -28,6 +29,17 @@ export default function Error({
       // localStorage disabled — keep default.
     }
   }, []);
+
+  // Custom event so we can track USER-VISIBLE error frequency, not just
+  // exception rate. The underlying error is already captured by Sentry's
+  // auto-instrumentation via withSentryConfig.
+  useEffect(() => {
+    Sentry.captureMessage("web.error_page_viewed", {
+      level: "warning",
+      tags: { digest: error.digest ?? "none" },
+      extra: { pathname: typeof window !== "undefined" ? window.location.pathname : "" },
+    });
+  }, [error.digest]);
 
   const copy = strings[locale];
   const errorId = error.digest ?? "—";
