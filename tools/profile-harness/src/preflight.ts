@@ -9,7 +9,7 @@
 import { execSync } from "node:child_process";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { lintRegistry } from "@civica/snap-rules";
+import { lintRegistry } from "@civica/snap-rules/server";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = resolve(__dirname, "..", "..", "..");

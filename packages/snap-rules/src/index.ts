@@ -304,8 +304,9 @@ export type { BenefitCalcDetail } from "./benefit-calc";
 export type { Facts, Member, IncomeLine, Shelter, Deductions } from "./facts";
 export { getEngineParams } from "./constants/index";
 
-// Verification-hyperdrive Layer 3 — registry + linter exposed for
-// downstream consumers (the harness CLI's preflight check, CI runners).
-export { lintRegistry } from "./registry/lint";
-export { loadRegistry, registryEntry, constantValue, citationValue } from "./registry/load";
-export type { RegistryEntry } from "./registry/load";
+// Verification-hyperdrive Layer 3 — registry + linter live behind the
+// `@civica/snap-rules/server` subpath, NOT the root barrel. They use
+// node:fs / node:path / node:url to parse the YAML registry at runtime,
+// which webpack rejects from browser bundles with UnhandledSchemeError
+// (verified on Vercel against PR #437 + earlier). The harness CLI and
+// CI runners that need them import the /server subpath directly.
