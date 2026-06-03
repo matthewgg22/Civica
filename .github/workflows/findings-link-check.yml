@@ -1,0 +1,88 @@
+name: Findings link check
+
+# The findings ledger (docs/findings/) cites ~120 primary sources -- gov
+# URLs, academic papers, GitHub refs, dataset homepages. Civica's
+# evidence-backed posture depends on those URLs resolving. URLs rot on
+# their own schedule (gov reorgs, paper venue moves, retired endpoints),
+# so we check on PR touch + weekly to catch rot in already-merged files.
+#
+# Lychee config is intentionally tolerant: 403 is accepted (gov + USDA
+# sites block bots; a 403 on a known-good URL is not rot), retries are
+# generous, and known-flaky hosts can be allowlisted in lychee.toml when
+# the noise gets high enough.
+
+on:
+  pull_request:
+    branches:
+      - codex/rebuild-feb18
+    paths:
+      - 'docs/findings/**/*.md'
+      - '.github/workflows/findings-link-check.yml'
+  schedule:
+    # Mondays 13:00 UTC = 06:00 PT — Civica is California-default.
+    # A new red badge first thing Monday tees up the week's ledger
+    # hygiene without distracting an active PR session.
+    - cron: '0 13 * * 1'
+  workflow_dispatch:
+
+jobs:
+  check-findings-links:
+    name: Lychee — docs/findings/
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write   # weekly run opens an issue on failure; PR runs do not
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Restore lychee cache
+        uses: actions/cache@v4
+        with:
+          path: .lycheecache
+          key: lychee-${{ runner.os }}-${{ github.run_id }}
+          restore-keys: |
+            lychee-${{ runner.os }}-
+
+      - name: Run lychee
+        id: lychee
+        uses: lycheeverse/lychee-action@v2
+        with:
+          # Only docs/findings/ markdown — engine/runtime URLs in code are
+          # smoke-tested by the apps' own CI, not by link-check.
+          args: >
+            --no-progress
+            --cache
+            --max-cache-age 7d
+            --max-redirects 5
+            --timeout 20
+            --retry-wait-time 5
+            --max-retries 3
+            --accept 200,206,403,429
+            --exclude-mail
+            --exclude-loopback
+            docs/findings/**/*.md
+          fail: true
+          format: markdown
+          output: lychee-report.md
+
+      - name: Upload report artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lychee-report
+          path: lychee-report.md
+          retention-days: 30
+
+      - name: Open issue on scheduled-run failure
+        # Weekly runs that find rot file an issue so the next engineer in
+        # the ledger sees it. PR-run failures already block the PR, so
+        # they do not also file an issue.
+        if: failure() && github.event_name == 'schedule'
+        uses: peter-evans/create-issue-from-file@v5
+        with:
+          title: 'Findings link check: dead URLs detected (weekly run)'
+          content-filepath: lychee-report.md
+          labels: |
+            findings
+            link-rot
