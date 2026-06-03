@@ -287,43 +287,53 @@ private struct DataPrivacyShareSheet: UIViewControllerRepresentable {
 
 enum SNAPDataPrivacyStrings {
 
-    static let eyebrow = CivicaText("Your data", es: "Tus datos")
+    static let eyebrow = CivicaText("Your data", es: "Tus datos", zh: "你的数据")
     static let title = CivicaText(
         "What we have. Who's seen it.",
-        es: "Lo que tenemos. Quién lo ha visto."
+        es: "Lo que tenemos. Quién lo ha visto.",
+        zh: "我们有什么。谁看过。"
     )
     static let subtitle = CivicaText(
         "Plain English, on this screen, every time you ask. No emails, no support tickets.",
-        es: "En lenguaje claro, en esta pantalla, cada vez que preguntes. Sin correos electrónicos, sin tickets de soporte."
+        es: "En lenguaje claro, en esta pantalla, cada vez que preguntes. Sin correos electrónicos, sin tickets de soporte.",
+        zh: "用大白话,就在这个屏幕上,每次你问都看得到。不用发邮件,不用提工单。"
     )
 
     // What we have card
     static let whatWeHaveHeading = CivicaText(
         "What we have on you",
-        es: "Lo que tenemos de ti"
+        es: "Lo que tenemos de ti",
+        zh: "我们记录了你的哪些信息"
     )
     static let rowApplicationAnswers = CivicaText(
         "Application answers",
-        es: "Respuestas de la solicitud"
+        es: "Respuestas de la solicitud",
+        zh: "申请回答"
     )
     static let rowDocuments = CivicaText(
         "Documents",
-        es: "Documentos"
+        es: "Documentos",
+        zh: "文件"
     )
     static let rowLanguage = CivicaText(
         "Language preference",
-        es: "Idioma preferido"
+        es: "Idioma preferido",
+        zh: "语言偏好"
     )
     static let rowStatus = CivicaText(
         "Application status",
-        es: "Estado de la solicitud"
+        es: "Estado de la solicitud",
+        zh: "申请状态"
     )
 
     static func sectionsCompleted(completed: Int, total: Int, language: CivicaLanguage) -> String {
         switch language {
-        case .english, .mandarin, .vietnamese, .tagalog: return completed == 0
+        case .english, .vietnamese, .tagalog: return completed == 0
             ? "Nothing yet"
             : "\(completed) of \(total) sections"
+        case .mandarin: return completed == 0
+            ? "暂无内容"
+            : "已完成 \(completed) / \(total) 个部分"
         case .spanish: return completed == 0
             ? "Nada todavía"
             : "\(completed) de \(total) secciones"
@@ -332,9 +342,12 @@ enum SNAPDataPrivacyStrings {
 
     static func photosOnDevice(count: Int, language: CivicaLanguage) -> String {
         switch language {
-        case .english, .mandarin, .vietnamese, .tagalog: return count == 0
+        case .english, .vietnamese, .tagalog: return count == 0
             ? "None on device"
             : (count == 1 ? "1 photo on device" : "\(count) photos on device")
+        case .mandarin: return count == 0
+            ? "设备上没有"
+            : "设备上有 \(count) 张照片"
         case .spanish: return count == 0
             ? "Ninguno en el dispositivo"
             : (count == 1 ? "1 foto en el dispositivo" : "\(count) fotos en el dispositivo")
@@ -344,27 +357,38 @@ enum SNAPDataPrivacyStrings {
     static func statusLabel(status: SNAPApplicationStatus, language: CivicaLanguage, stateCode: String? = nil) -> String {
         let agency = SNAPAgencyDirectory.agencyShortName(for: stateCode, language: language)
         switch (status, language) {
-        case (.notStarted, .english), (.notStarted, .mandarin), (.notStarted, .vietnamese), (.notStarted, .tagalog):              return "Not started"
+        case (.notStarted, .english), (.notStarted, .vietnamese), (.notStarted, .tagalog):              return "Not started"
+        case (.notStarted, .mandarin):             return "尚未开始"
         case (.notStarted, .spanish):              return "No iniciado"
-        case (.screenerInProgress, .english), (.screenerInProgress, .mandarin), (.screenerInProgress, .vietnamese), (.screenerInProgress, .tagalog):      return "Screener in progress"
+        case (.screenerInProgress, .english), (.screenerInProgress, .vietnamese), (.screenerInProgress, .tagalog):      return "Screener in progress"
+        case (.screenerInProgress, .mandarin):     return "资格初筛进行中"
         case (.screenerInProgress, .spanish):      return "Evaluación en curso"
-        case (.screenerComplete, .english), (.screenerComplete, .mandarin), (.screenerComplete, .vietnamese), (.screenerComplete, .tagalog):        return "Screener complete"
+        case (.screenerComplete, .english), (.screenerComplete, .vietnamese), (.screenerComplete, .tagalog):        return "Screener complete"
+        case (.screenerComplete, .mandarin):       return "资格初筛已完成"
         case (.screenerComplete, .spanish):        return "Evaluación completada"
-        case (.packetGenerated, .english), (.packetGenerated, .mandarin), (.packetGenerated, .vietnamese), (.packetGenerated, .tagalog):         return "Packet generated"
+        case (.packetGenerated, .english), (.packetGenerated, .vietnamese), (.packetGenerated, .tagalog):         return "Packet generated"
+        case (.packetGenerated, .mandarin):        return "申请材料已生成"
         case (.packetGenerated, .spanish):         return "Paquete generado"
-        case (.submittedToState, .english), (.submittedToState, .mandarin), (.submittedToState, .vietnamese), (.submittedToState, .tagalog):        return "Submitted to \(agency)"
+        case (.submittedToState, .english), (.submittedToState, .vietnamese), (.submittedToState, .tagalog):        return "Submitted to \(agency)"
+        case (.submittedToState, .mandarin):       return "已提交至 \(agency)"
         case (.submittedToState, .spanish):        return "Enviado a \(agency)"
-        case (.documentsRequested, .english), (.documentsRequested, .mandarin), (.documentsRequested, .vietnamese), (.documentsRequested, .tagalog):      return "Documents requested by \(agency)"
+        case (.documentsRequested, .english), (.documentsRequested, .vietnamese), (.documentsRequested, .tagalog):      return "Documents requested by \(agency)"
+        case (.documentsRequested, .mandarin):     return "\(agency) 要求补交文件"
         case (.documentsRequested, .spanish):      return "Documentos solicitados por \(agency)"
-        case (.interviewScheduled, .english), (.interviewScheduled, .mandarin), (.interviewScheduled, .vietnamese), (.interviewScheduled, .tagalog):      return "Interview scheduled"
+        case (.interviewScheduled, .english), (.interviewScheduled, .vietnamese), (.interviewScheduled, .tagalog):      return "Interview scheduled"
+        case (.interviewScheduled, .mandarin):     return "面谈已安排"
         case (.interviewScheduled, .spanish):      return "Entrevista programada"
-        case (.interviewCompleted, .english), (.interviewCompleted, .mandarin), (.interviewCompleted, .vietnamese), (.interviewCompleted, .tagalog):      return "Interview completed"
+        case (.interviewCompleted, .english), (.interviewCompleted, .vietnamese), (.interviewCompleted, .tagalog):      return "Interview completed"
+        case (.interviewCompleted, .mandarin):     return "面谈已完成"
         case (.interviewCompleted, .spanish):      return "Entrevista completada"
-        case (.decisionApproved, .english), (.decisionApproved, .mandarin), (.decisionApproved, .vietnamese), (.decisionApproved, .tagalog):        return "Approved"
+        case (.decisionApproved, .english), (.decisionApproved, .vietnamese), (.decisionApproved, .tagalog):        return "Approved"
+        case (.decisionApproved, .mandarin):       return "已批准"
         case (.decisionApproved, .spanish):        return "Aprobado"
-        case (.decisionDenied, .english), (.decisionDenied, .mandarin), (.decisionDenied, .vietnamese), (.decisionDenied, .tagalog):          return "Denied"
+        case (.decisionDenied, .english), (.decisionDenied, .vietnamese), (.decisionDenied, .tagalog):          return "Denied"
+        case (.decisionDenied, .mandarin):         return "已拒绝"
         case (.decisionDenied, .spanish):          return "Denegado"
-        case (.recertDue, .english), (.recertDue, .mandarin), (.recertDue, .vietnamese), (.recertDue, .tagalog):               return "Recertification due"
+        case (.recertDue, .english), (.recertDue, .vietnamese), (.recertDue, .tagalog):               return "Recertification due"
+        case (.recertDue, .mandarin):              return "需要重新认证"
         case (.recertDue, .spanish):               return "Recertificación pendiente"
         }
     }
@@ -372,20 +396,24 @@ enum SNAPDataPrivacyStrings {
     // Who's seen it card
     static let whosSeenItHeading = CivicaText(
         "Who's seen it",
-        es: "Quién lo ha visto"
+        es: "Quién lo ha visto",
+        zh: "谁看过"
     )
     static let nothingSharedTitle = CivicaText(
         "Your draft is local",
-        es: "Tu borrador está en este dispositivo"
+        es: "Tu borrador está en este dispositivo",
+        zh: "你的草稿只在本机上"
     )
     static let nothingSharedBody = CivicaText(
         "Your SNAP draft and captured documents are saved on this device unless you choose to submit them to an official agency. Optional tools, such as finding nearby help or Interview Coach, may send only the information needed for that tool — never your full application draft.",
-        es: "El borrador de tu solicitud de SNAP y los documentos capturados se guardan en este dispositivo a menos que decidas enviarlos a una agencia oficial. Las herramientas opcionales, como buscar ayuda cercana o el Coach de entrevistas, pueden enviar solo la información necesaria para esa herramienta — nunca tu borrador completo."
+        es: "El borrador de tu solicitud de SNAP y los documentos capturados se guardan en este dispositivo a menos que decidas enviarlos a una agencia oficial. Las herramientas opcionales, como buscar ayuda cercana o el Coach de entrevistas, pueden enviar solo la información necesaria para esa herramienta — nunca tu borrador completo.",
+        zh: "你的 SNAP 申请草稿和拍摄的文件都保存在这台设备上,除非你选择提交给官方机构。可选工具,例如查找附近的帮助点或面谈辅导,只会发送该工具需要的那部分信息 — 绝不会发送你完整的申请草稿。"
     )
     static func sharedWithStateTitle(stateCode: String?, language: CivicaLanguage) -> String {
         let agency = SNAPAgencyDirectory.agencyFullName(for: stateCode, language: language)
         switch language {
-        case .english, .mandarin, .vietnamese, .tagalog: return "\(agency) has your application"
+        case .english, .vietnamese, .tagalog: return "\(agency) has your application"
+        case .mandarin: return "\(agency) 已收到你的申请"
         case .spanish: return "\(agency) tiene tu solicitud"
         }
     }
@@ -395,8 +423,10 @@ enum SNAPDataPrivacyStrings {
         let agency = SNAPAgencyDirectory.agencyShortName(for: stateCode, language: language)
         let portalRef = portal.isEmpty ? (language == .english ? "the state portal" : "el portal estatal") : portal
         switch language {
-        case .english, .mandarin, .vietnamese, .tagalog:
+        case .english, .vietnamese, .tagalog:
             return "Once an application is submitted to \(portalRef), it becomes the state's record. Civica can't pull that back — only \(agency) can change or close it."
+        case .mandarin:
+            return "申请一旦提交到 \(portalRef),它就成为州政府的档案。Civica 无法撤回 — 只有 \(agency) 才能修改或关闭它。"
         case .spanish:
             return "Una vez que la solicitud se envía a \(portalRef), se convierte en el registro del estado. Civica no puede recuperarla — solo \(agency) puede cambiarla o cerrarla."
         }
@@ -405,20 +435,24 @@ enum SNAPDataPrivacyStrings {
     // Action rows
     static let notificationsYoullReceive = CivicaText(
         "Notifications you'll receive",
-        es: "Notificaciones que recibirás"
+        es: "Notificaciones que recibirás",
+        zh: "你会收到的通知"
     )
     static let downloadCopy = CivicaText(
         "Download a copy",
-        es: "Descargar una copia"
+        es: "Descargar una copia",
+        zh: "下载一份副本"
     )
     static let deleteEverything = CivicaText(
         "Delete everything",
-        es: "Eliminar todo"
+        es: "Eliminar todo",
+        zh: "删除全部内容"
     )
 
     static let downloadError = CivicaText(
         "We couldn't prepare the download. Try again in a moment.",
-        es: "No pudimos preparar la descarga. Inténtalo de nuevo en un momento."
+        es: "No pudimos preparar la descarga. Inténtalo de nuevo en un momento.",
+        zh: "我们没能准备好下载文件。请稍后再试一次。"
     )
 
     /// Shown when the applicant hits Download a copy before any
@@ -427,7 +461,8 @@ enum SNAPDataPrivacyStrings {
     /// which read as "the button is broken."
     static let downloadNothingYet = CivicaText(
         "There's nothing to download yet — start your SNAP application first and the export will fill in.",
-        es: "Aún no hay nada que descargar — primero comienza tu solicitud de SNAP y la exportación se rellenará."
+        es: "Aún no hay nada que descargar — primero comienza tu solicitud de SNAP y la exportación se rellenará.",
+        zh: "目前还没有可以下载的内容 — 先开始你的 SNAP 申请,导出文件就会自动生成。"
     )
 }
 
