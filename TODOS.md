@@ -654,3 +654,51 @@ Helper: `pillarReductionAtFullEngagement()` returns the per-pillar pp breakdown 
 **Priority:** P1 — without it the iOS self-report prompt is decorative; it is the last hop of the outcome-ingestion loop.
 **Depends on:** The route merged + deployed to the gateway the iOS build points at (staging base URL).
 
+
+## TODO-48 — Per-packet PolicyEngine pairing cron (engine triangulation v2)
+
+**What:** Build a nightly cron job in `apps/enrollment-api/src/cron/` that runs PolicyEngine US (offline, AGPL boundary preserved) against every active packet's facts, stores per-packet agreement in `snap_enrollment.packet_pe_pairing`, and surfaces the badge on the packet panel. Replaces the static "73%" aggregate badge with per-case ±$10 agreement.
+**Why:** Static aggregate is a v1 trust signal but the per-packet pairing is the v2 — caseworker sees "PE agrees: $546 vs engine $546 (Δ=0)" for the specific household in front of them.
+**Effort:** L (human ~1 day / CC ~45 min)
+**Priority:** P3
+**Depends on:** D7 static badge shipped (PR for engine-dashboard-integration); `tools/policyengine-ground/src/pair.py` already supports `ALL_BY_STATE`. Need `--include-variants` (TODO-50 below) for full coverage.
+
+---
+
+## TODO-49 — iOS consumes `/me/packets/:id/engine-verdict`
+
+**What:** Add an `EngineVerdictClient` in `Civica/Features/SNAP/Verdict/` that fetches the same endpoint the dashboard uses (D8), parses the gate trace + citations, surfaces a "Your SNAP estimate" screen in the applicant view.
+**Why:** Applicants currently see no engine estimate; the dashboard endpoint is reusable. Shipping iOS reuse closes the "single source of truth across web + iOS" loop.
+**Effort:** M (human ~1 day / CC ~1 hr, gated on Xcode CI)
+**Priority:** P3
+**Depends on:** Endpoint shipped (T3), iOS Strings parity (`EBT{Concern}Strings.swift` pattern), bilingual citation chip strings.
+
+---
+
+## TODO-50 — `--include-variants` for PolicyEngine pair.py
+
+**What:** Add a `--include-variants` flag to `tools/policyengine-ground/src/pair.py` that expands the 18 v0.6 profiles using `expected.variants` into their patched fact sets and runs PE against each variant. Lifts triangulation coverage from 81 actionable per state to ~110+.
+**Why:** The 2026-06-03 PE triangulation finding explicitly flagged this as the one remaining coverage gap. Closing it makes the triangulation finding apply to the variant subset of the harness too.
+**Effort:** S (human ~1 hr / CC ~15 min)
+**Priority:** P3
+**Depends on:** nothing — pair.py is already in shape; just extend the profile expansion.
+
+---
+
+## TODO-51 — Build-time check: citation chip → finding ID linkage
+
+**What:** Add `pnpm --filter @civica/dashboard run lint:findings-links` that scans `apps/dashboard/components/CitationChip.tsx` (and any usage in `EngineVerdictPanel.tsx`) for hard-coded finding-ID references, and confirms each exists in `docs/findings/INDEX.md`. Wire into CI as a build-time check.
+**Why:** The plan-eng-review surfaced this as the one critical silent-failure mode — a renamed/moved finding doc would break a chip link with no test catching it. Build-time check makes the failure loud at the right time.
+**Effort:** S (human ~1 hr / CC ~10 min)
+**Priority:** P3
+**Depends on:** EngineVerdictPanel.tsx + CitationChip.tsx shipped (T4).
+
+---
+
+## TODO-52 — Expand `/tools/deductions` to full hypothetical evaluator
+
+**What:** Add inputs to `apps/dashboard/app/tools/deductions/page.tsx` for the full Facts shape (immigration, student, ABAWD, disqualifications, sponsor income). Wires `composeVerdict` directly so caseworkers can model hypothetical cases not tied to a specific packet.
+**Why:** D6 deprecated the page as caseworkers' primary surface (packet panel does that now), but a "what if?" hypothetical evaluator is still useful for case-prep conversations + partner training. Cheaper to revive than build from scratch later.
+**Effort:** L (human ~2-3 days / CC ~1.5 hrs)
+**Priority:** P3
+**Depends on:** EngineVerdictPanel shipped (T4) — the rendering primitives are reusable.
