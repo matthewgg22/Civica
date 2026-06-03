@@ -273,8 +273,8 @@ def main(argv=None):
 
     repo_root = Path(__file__).resolve().parents[3]
     fixture_path = (
-        Path(a.fixture) if a.fixture
-        else repo_root / "data-ops" / "test-scenarios" / "civica" / "civica_test_profiles.json"
+        Path(a.fixture).resolve() if a.fixture
+        else repo_root / "data-ops" / "sample" / "civica-test-profiles" / "v0.6.json"
     )
     out_path = (
         Path(a.out) if a.out
@@ -287,8 +287,13 @@ def main(argv=None):
     if isinstance(all_profiles, dict):
         all_profiles = list(all_profiles.values())
 
-    selected_ids = a.profiles.split(",") if a.profiles else SELECTED_PROFILES
     by_legacy = {p["legacy_id"]: p for p in all_profiles}
+    if a.profiles == "ALL_BY_STATE":
+        selected_ids = [p["legacy_id"] for p in all_profiles if "expected_by_state" in p]
+    elif a.profiles:
+        selected_ids = a.profiles.split(",")
+    else:
+        selected_ids = SELECTED_PROFILES
     targets = [by_legacy[lid] for lid in selected_ids if lid in by_legacy]
     missing = [lid for lid in selected_ids if lid not in by_legacy]
     if missing:
@@ -337,11 +342,16 @@ def main(argv=None):
         "pe_version": a.pe_version,
         "param_year": a.year,
         "state": a.state,
-        "fixture_path": str(fixture_path.relative_to(repo_root)),
+        "fixture_path": str(fixture_path),
         "tolerance_per_month_usd": a.tolerance,
         "summary": summary,
         "results": results,
     }
+    try:
+        rel = str(fixture_path.relative_to(repo_root))
+    except ValueError:
+        rel = str(fixture_path)
+    report["fixture_path"] = rel
     out_path.write_text(json.dumps(report, indent=2))
 
     print(f"\n[pair] === SUMMARY ===", file=sys.stderr)
