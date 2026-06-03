@@ -1,0 +1,20 @@
+# Template for .sentryclirc — copy to .sentryclirc at repo root, fill in
+# the auth token, and DO NOT commit the result. .sentryclirc is in
+# .gitignore.
+#
+# Generate the token at:
+#   sentry.io → Settings → Account → Auth Tokens → Create New Token
+#
+# Required scopes for dSYM upload + release management:
+#   project:read, project:write, project:releases
+#
+# Once filled in, `scripts/upload-sentry-dsyms.sh` (invoked by the Civica
+# target's "Upload Sentry dSYMs" build phase) will pick this up
+# automatically for any Release-configuration build.
+
+[auth]
+token = sntrys_REPLACE_ME
+
+[defaults]
+org = civica-gl
+project = apple-ios
