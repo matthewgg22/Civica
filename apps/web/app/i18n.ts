@@ -38,6 +38,21 @@ export const strings = {
     formCampusRequired: "Please choose your campus.",
 
     languageToggleAria: "Switch language",
+
+    errorStatus: "SOMETHING WENT WRONG",
+    errorTitle: "We hit an unexpected error.",
+    errorBody:
+      "Our team has been notified. You can try again, or head back to the home page.",
+    errorReferenceLabel: "Reference",
+    errorRetryCta: "Try again",
+    errorHomeCta: "Back to Civica",
+
+    notFoundStatus: "PAGE NOT FOUND",
+    notFoundTitle: "That page does not exist.",
+    notFoundBody:
+      "The link may be outdated. Civica helps half-time California Community College, CSU, and UC students apply for CalFresh.",
+    notFoundHomeCta: "Go to Civica",
+    notFoundQualifyCta: "See if you qualify",
   },
   es: {
     eyebrow: "AHORA EN CALIFORNIA",
@@ -69,6 +84,21 @@ export const strings = {
     formCampusRequired: "Por favor elige tu campus.",
 
     languageToggleAria: "Cambiar idioma",
+
+    errorStatus: "ALGO SALIÓ MAL",
+    errorTitle: "Encontramos un error inesperado.",
+    errorBody:
+      "Nuestro equipo ha sido notificado. Puedes intentar de nuevo o volver al inicio.",
+    errorReferenceLabel: "Referencia",
+    errorRetryCta: "Intentar de nuevo",
+    errorHomeCta: "Volver a Civica",
+
+    notFoundStatus: "PÁGINA NO ENCONTRADA",
+    notFoundTitle: "Esa página no existe.",
+    notFoundBody:
+      "El enlace puede estar desactualizado. Civica ayuda a estudiantes de medio tiempo en Community Colleges, CSU y UC de California a solicitar CalFresh.",
+    notFoundHomeCta: "Ir a Civica",
+    notFoundQualifyCta: "Ver si calificas",
   },
 } satisfies Record<Locale, Record<string, string>>;
 
