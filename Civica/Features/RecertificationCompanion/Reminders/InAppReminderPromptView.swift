@@ -105,11 +105,13 @@ struct InAppReminderPromptView: View {
 enum InAppReminderStrings {
     static let uploadCTA = CivicaText(
         "Upload now",
-        es: "Subir ahora"
+        es: "Subir ahora",
+        zh: "立即上传"
     )
     static let dismissCTA = CivicaText(
         "Later",
-        es: "Más tarde"
+        es: "Más tarde",
+        zh: "稍后"
     )
 }
 
