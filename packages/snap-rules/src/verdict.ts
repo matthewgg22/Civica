@@ -9,12 +9,15 @@
 //   6. Benefit calc                                          [7 CFR 273.10]
 //
 // Gates not yet implemented (return not_implemented_surfaces):
-//   - Citizenship / immigration                  Wave 2
-//   - HH-level disqualifications (IPV, lottery)  Wave 2
-//   - ABAWD work req                             Wave 2 (evaluateWorkRequirement exists; not wired)
 //   - Self-employment income method              Wave 2
-//   - Mixed-status proration                     Wave 2
-//   - Sponsor deeming                            Wave 2
+//
+// Citizenship / immigration, HH-level disqualifications (IPV, lottery,
+// fleeing felon, drug felony), ABAWD work req, and sponsor deeming are
+// all wired below. Mixed-status "proration" is intentionally a no-op:
+// the engine counts the ineligible alien's income in full (CA's elected
+// option under 7 CFR 273.11(c)(3)(i)) and keeps HH size at the full
+// `facts.household.length`. See gates/immigration.ts comment block for
+// the citation chain.
 
 import type { Facts } from "./facts";
 import { hasElderlyOrDisabled, householdSize } from "./facts";

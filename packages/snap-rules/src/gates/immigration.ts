@@ -11,7 +11,17 @@
 //   undocumented                    → ineligible
 //
 // HH-level: if NO member is eligible → DENY. If SOME (mixed-status, e.g. M18)
-// → APPROVE; benefit may be prorated (proration math deferred to Wave 2.5).
+// → APPROVE; the ineligible member's income is counted in full per 7 CFR
+// 273.11(c)(3)(i) — "the State agency must count all... of the ineligible
+// alien's income." That section permits a count-all-but-pro-rata-share
+// alternative at state discretion; CA's CalFresh handbook §63-503.481
+// elects count-all (verified via the v0.6 fixture M18: oracle $591 only
+// matches a count-all + full-HH-size benefit calc). HH size for max
+// allotment and standard deduction is `facts.household.length` — the
+// ineligible alien remains a household member for shelter/SUA/HH-size
+// purposes; only their *participant* status is removed. If a state-option
+// pro-rata election is added later, branch in benefit-calc on
+// `policy.alien_income_treatment`.
 //
 // Sponsor deeming: if `member.sponsored === true` AND `facts.sponsor_income`
 // is set, the sponsor income is deemed to the household — implemented in
