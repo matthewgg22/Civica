@@ -539,8 +539,8 @@ public struct CivicaEBTBalanceHeroCard: View {
             Image("civica-wheat-logo")
                 .resizable()
                 .aspectRatio(contentMode: .fit)
-                .frame(width: 84, height: 84)
-                .padding(10)
+                .frame(width: 64, height: 64)
+                .padding(4)
                 .accessibilityHidden(true)
         }
         .accessibilityElement(children: .combine)
