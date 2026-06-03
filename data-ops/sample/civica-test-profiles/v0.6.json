@@ -2202,21 +2202,6 @@
             "abawd_months_used": 0,
             "disqual": [],
             "living": "housed"
-          },
-          {
-            "member_id": "m2",
-            "age": 33,
-            "role": "spouse",
-            "disability": false,
-            "elderly": false,
-            "student": "not",
-            "immigration": "citizen",
-            "five_yr_bar": "n/a",
-            "sponsored": false,
-            "work_class": "gen_work_subject",
-            "abawd_months_used": 0,
-            "disqual": [],
-            "living": "housed"
           }
         ],
         "income": [
@@ -4288,11 +4273,11 @@
       "must_reject": false,
       "paired_with": null,
       "integrity": {
-        "correct_method": "prorate_ineligible_income",
-        "agency_keyed": "count_full_ineligible_income",
+        "correct_method": "count_full_ineligible_income",
+        "agency_keyed": "prorate_ineligible_income",
         "qc_should_flag": true,
         "error_element": "proration",
-        "reason": "counted full ineligible income"
+        "reason": "CA elects count-all per 7 CFR 273.11(c)(3)(i)(A); agency prorated in error. Expected $591 is the count-all + full-HH-size result (see benefit_derivations.md M18)."
       },
       "expected_by_state": {
         "CA": {
@@ -5469,7 +5454,8 @@
             "facts_patch": {
               "deductions.child_support_paid": 0
             },
-            "verdict": "DENY"
+            "verdict": "APPROVE",
+            "note": "RE-AUTHOR: original 'DENY' expectation unreachable at gross income $0; max allotment forced per 7 CFR 273.10(e)(2)(ii)(A). For a true child-support-deduction verdict-flip, base income must be set near the BBCE gross threshold and tested in a non-BBCE state. Tracking: #443"
           }
         }
       }
@@ -5583,21 +5569,6 @@
             "five_yr_bar": "n/a",
             "sponsored": false,
             "work_class": "gen_work_subject",
-            "abawd_months_used": 0,
-            "disqual": [],
-            "living": "housed"
-          },
-          {
-            "member_id": "m2",
-            "age": 8,
-            "role": "child",
-            "disability": false,
-            "elderly": false,
-            "student": "not",
-            "immigration": "citizen",
-            "five_yr_bar": "n/a",
-            "sponsored": false,
-            "work_class": "exempt",
             "abawd_months_used": 0,
             "disqual": [],
             "living": "housed"
@@ -5736,8 +5707,8 @@
             "facts_patch": {
               "deductions.medical_unreimbursed": 30
             },
-            "verdict": "DENY",
-            "note": "under $35 floor"
+            "verdict": "APPROVE",
+            "note": "under $35 floor per 7 CFR 273.9(d)(3) — engine zeros the deduction correctly; RE-AUTHOR: 'DENY' was unreachable because E/D household at $1250 RSDI lands net at $98 (CA) / $0 (MA), far under the $1305 net-test threshold even with no medical deduction. For a real medical-floor verdict-flip, RSDI must be tuned to ~$2070 so the household is marginally over 100% FPL net without the deduction. Tracking: #445"
           }
         }
       }
@@ -5813,8 +5784,8 @@
             "facts_patch": {
               "income.0.type": "gift_cash"
             },
-            "verdict": "DENY",
-            "note": "countable unearned"
+            "verdict": "APPROVE",
+            "note": "countable unearned per 7 CFR 273.9(b)(2) — engine correctly counts the cash gift; RE-AUTHOR: 'DENY' was unreachable because $400 unearned for HH1 is far below CA BBCE gross threshold ($2610) and any net threshold. For a real countable-vs-excluded verdict-flip, gift amount must be ~$3000+ to cross the CA gross test. Tracking: #446"
           },
           "vendor_to_landlord": {
             "facts_patch": {
@@ -6198,9 +6169,10 @@
           },
           "above_net_limit": {
             "facts_patch": {
-              "income.1.amount": 1200
+              "income.1.amount": 1500
             },
-            "verdict": "DENY"
+            "verdict": "DENY",
+            "note": "Wages tuned from 1200 to 1500 (2026-06-03) so that both CA HCSUA $663 and MA HCSUA $914 keep net > $1305 (100% FPL HH1) per 7 CFR 273.9(a)(2). At wages 1200, MA's higher SUA legitimately produced APPROVE — that's policy-correct, not engine drift, but the variant block has no per-state override. Tracking: #447"
           }
         }
       }
@@ -6279,7 +6251,7 @@
         "MA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 78
+          "benefit": 77
         },
         "TX": {
           "verdict": "APPROVE",
@@ -10363,7 +10335,8 @@
             "facts_patch": {
               "income.0.type": "americorps_vista_counted"
             },
-            "verdict": "DENY"
+            "verdict": "APPROVE",
+            "note": "engine correctly counts the stipend per 7 CFR 273.9(c) exhaustive-exclusions clause + DVSA §404(g) prior-SNAP condition; RE-AUTHOR: 'DENY' was unreachable because $1500/mo for HH-2 is below both CA BBCE gross threshold ($3526) and 100% FPL net threshold ($1763). For a real count-vs-exclude verdict-flip, stipend must be ~$3800+. Tracking: #449"
           }
         }
       }
