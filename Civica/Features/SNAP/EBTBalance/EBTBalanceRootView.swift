@@ -88,7 +88,7 @@ struct EBTBalanceRootView: View {
         }
         .navigationTitle(EBTBalanceStrings.screenTitle.value(in: language))
         .navigationBarTitleDisplayMode(.inline)
-        .civicaWheatBadge()
+        // Nav wheat badge removed — CivicaEBTBalanceHeroCard carries it instead.
         .civicaAnimation(.easeInOut(duration: 0.28), value: store.linkState)
     }
 }

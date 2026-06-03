@@ -65,7 +65,7 @@ struct FindHelpRootView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbarBackground(CivicaColors.surfaceSecondary, for: .navigationBar)
             .toolbarBackground(.visible, for: .navigationBar)
-            .civicaWheatBadge()
+            // Nav wheat badge removed — hero-sticker pattern only.
             .onAppear {
                 if !hasTrackedEntry {
                     hasTrackedEntry = true

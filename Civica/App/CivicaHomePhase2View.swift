@@ -324,7 +324,7 @@ struct CivicaHomePhase2View: View {
         .background(CivicaColors.paper.ignoresSafeArea())
         .navigationTitle("Civica")
         .navigationBarTitleDisplayMode(.inline)
-        .civicaNavWordmark()
+        // Nav wheat removed — brand lives on hero cards now, not in chrome.
         .sheet(isPresented: $presentingWhatHappensNext) {
             SNAPWhatHappensNextSheet(
                 statusStore: statusStore,

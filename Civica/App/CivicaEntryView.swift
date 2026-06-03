@@ -237,9 +237,8 @@ struct CivicaEntryView: View {
                 Image("civica-wheat-logo")
                     .resizable()
                     .aspectRatio(contentMode: .fit)
-                    .frame(width: 48, height: 48)
-                    .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
-                    .padding(CivicaSpacing.md)
+                    .frame(width: 60, height: 60)
+                    .padding(10)
                     .accessibilityHidden(true)
             }
         }

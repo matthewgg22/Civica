@@ -535,6 +535,14 @@ public struct CivicaEBTBalanceHeroCard: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(CivicaColors.pinePrimary)
         .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
+        .overlay(alignment: .topTrailing) {
+            Image("civica-wheat-logo")
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(width: 60, height: 60)
+                .padding(10)
+                .accessibilityHidden(true)
+        }
         .accessibilityElement(children: .combine)
         .accessibilityLabel(
             "Food balance \(balanceDollars) dollars and \(balanceCents) cents. Updated \(updatedTimestamp). Next deposit \(nextDepositAmount) on \(nextDepositDate), projected to last \(projectedThrough)."
