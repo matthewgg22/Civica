@@ -508,10 +508,18 @@ struct CivicaHomePhase3View: View {
     private func shortDate(_ date: Date) -> String {
         let calendar = Calendar.current
         if calendar.isDateInToday(date) {
-            return language == .spanish ? "Hoy" : "Today"
+            switch language {
+            case .spanish: return "Hoy"
+            case .mandarin: return "今天"
+            case .english, .vietnamese, .tagalog: return "Today"
+            }
         }
         if calendar.isDateInYesterday(date) {
-            return language == .spanish ? "Ayer" : "Yesterday"
+            switch language {
+            case .spanish: return "Ayer"
+            case .mandarin: return "昨天"
+            case .english, .vietnamese, .tagalog: return "Yesterday"
+            }
         }
         let f = DateFormatter()
         f.dateFormat = "MMM d"
@@ -754,68 +762,82 @@ enum CivicaPhase3Strings {
     // Unlinked card placeholder
     static let unlinkedEyebrow = CivicaText(
         "CalFresh",
-        es: "CalFresh"
+        es: "CalFresh",
+        zh: "CalFresh"
     )
     static let unlinkedHeadline = CivicaText(
         "Your EBT card is on the way",
-        es: "Tu tarjeta EBT está en camino"
+        es: "Tu tarjeta EBT está en camino",
+        zh: "你的 EBT 卡正在寄送途中"
     )
     static let unlinkedBody = CivicaText(
         "Cards usually arrive within 3-7 days. Once it does, link it here to see your balance and recent activity.",
-        es: "Las tarjetas usualmente llegan en 3-7 días. Cuando llegue, enlázala aquí para ver tu saldo y actividad reciente."
+        es: "Las tarjetas usualmente llegan en 3-7 días. Cuando llegue, enlázala aquí para ver tu saldo y actividad reciente.",
+        zh: "卡片通常会在 3-7 天内寄到。收到后,在这里关联卡片,就能查看余额和最近的交易记录。"
     )
     static let unlinkedCTA = CivicaText(
         "Link your EBT card",
-        es: "Enlaza tu tarjeta EBT"
+        es: "Enlaza tu tarjeta EBT",
+        zh: "关联你的 EBT 卡"
     )
 
     // Updated timestamp prefix
     static func updatedPrefix(time: String, language: CivicaLanguage) -> String {
         switch language {
-        case .english, .mandarin, .vietnamese, .tagalog: return "Updated \(time)"
+        case .english, .vietnamese, .tagalog: return "Updated \(time)"
+        case .mandarin: return "更新于 \(time)"
         case .spanish: return "Actualizado \(time)"
         }
     }
 
     static let projectedThroughPlaceholder = CivicaText(
         "this cycle",
-        es: "este ciclo"
+        es: "este ciclo",
+        zh: "本周期"
     )
 
     // Recert banner
     static let recertEyebrow = CivicaText(
         "Recertification",
-        es: "Recertificación"
+        es: "Recertificación",
+        zh: "重新认证"
     )
     /// JR-5 (audit 2026-05-29): continuity-led headline. Recert is renewal
     /// for an already-approved user; lead with the lighter lift, not the
     /// deadline. The deadline countdown still renders below as metadata.
     static let recertHeadline = CivicaText(
         "Renew your CalFresh — we'll pre-fill what we have",
-        es: "Renueva tu CalFresh — usaremos los datos que ya tenemos"
+        es: "Renueva tu CalFresh — usaremos los datos que ya tenemos",
+        zh: "续办你的 CalFresh — 我们会自动填好已有的资料"
     )
     static func recertDueIn(date: Date, days: Int, language: CivicaLanguage) -> String {
         let formatter = DateFormatter()
         formatter.dateFormat = "MMM d"
         let dateStr = formatter.string(from: date)
         switch language {
-        case .english, .mandarin, .vietnamese, .tagalog:
+        case .english, .vietnamese, .tagalog:
             return days == 1
                 ? "Due \(dateStr) · 1 day"
                 : "Due \(dateStr) · \(days) days"
+        case .mandarin:
+            return days == 1
+                ? "截止 \(dateStr) · 还有 1 天"
+                : "截止 \(dateStr) · 还有 \(days) 天"
         case .spanish:
             return days == 1
                 ? "Vence \(dateStr) · 1 día"
                 : "Vence \(dateStr) · \(days) días"
         }
     }
-    static let recertStartCTA = CivicaText("Start", es: "Empezar")
+    static let recertStartCTA = CivicaText("Start", es: "Empezar", zh: "开始")
 
     // Action row
     static func unreadMessagesHeadline(count: Int, language: CivicaLanguage) -> String {
         switch language {
-        case .english, .mandarin, .vietnamese, .tagalog:
+        case .english, .vietnamese, .tagalog:
             return count == 1 ? "1 new message" : "\(count) new messages"
+        case .mandarin:
+            return count == 1 ? "1 条新消息" : "\(count) 条新消息"
         case .spanish:
             return count == 1 ? "1 mensaje nuevo" : "\(count) mensajes nuevos"
         }
@@ -828,36 +850,41 @@ enum CivicaPhase3Strings {
     // row routing to EBTCardLockView — the link string reuses
     // EBTBalanceStrings.lockScreenTitle so the two surfaces stay in
     // sync if the lock screen's name changes.
-    static let cardServicesEyebrow = CivicaText("EBT card", es: "Tarjeta EBT")
-    static let accountServicesEyebrow = CivicaText("EBT account", es: "Cuenta EBT")
-    static let accountServicesLink    = CivicaText("Account services", es: "Servicios de cuenta")
-    static let findHelpEyebrow = CivicaText("In your neighborhood", es: "En tu vecindario")
-    static let findHelpLink    = CivicaText("Find help nearby", es: "Encuentra ayuda cerca")
+    static let cardServicesEyebrow = CivicaText("EBT card", es: "Tarjeta EBT", zh: "EBT 卡")
+    static let accountServicesEyebrow = CivicaText("EBT account", es: "Cuenta EBT", zh: "EBT 账户")
+    static let accountServicesLink    = CivicaText("Account services", es: "Servicios de cuenta", zh: "账户服务")
+    static let findHelpEyebrow = CivicaText("In your neighborhood", es: "En tu vecindario", zh: "你附近")
+    static let findHelpLink    = CivicaText("Find help nearby", es: "Encuentra ayuda cerca", zh: "查找附近的帮助")
 
     // See-all CTA at the bottom of the recent-activity preview card.
     static let seeAllActivity = CivicaText(
         "See all activity",
-        es: "Ver toda la actividad"
+        es: "Ver toda la actividad",
+        zh: "查看全部交易"
     )
 
     // Recertify-on-time reminder card.
     static let recertifyHeadline = CivicaText(
         "Keep your benefits — recertify on time",
-        es: "Mantén tus beneficios — recertifica a tiempo"
+        es: "Mantén tus beneficios — recertifica a tiempo",
+        zh: "保住你的福利 — 按时重新认证"
     )
     static let recertifyBody = CivicaText(
         "CalFresh has to be renewed periodically. Civica will remind you before your deadline so your benefits don't pause.",
-        es: "CalFresh debe renovarse periódicamente. Civica te recordará antes de tu fecha límite para que tus beneficios no se pausen."
+        es: "CalFresh debe renovarse periódicamente. Civica te recordará antes de tu fecha límite para que tus beneficios no se pausen.",
+        zh: "CalFresh 需要定期续办。Civica 会在截止日期前提醒你,这样你的福利就不会中断。"
     )
 
     // Use-it-or-lose-it dormancy nudge.
     static let dormancyHeadline = CivicaText(
         "Use it or lose it",
-        es: "Úsalo o piérdelo"
+        es: "Úsalo o piérdelo",
+        zh: "不用就会失效"
     )
     static let dormancyBody = CivicaText(
         "CalFresh removes benefits left completely unused for 9 months. Use your card to keep your balance.",
-        es: "CalFresh elimina los beneficios sin usar durante 9 meses. Usa tu tarjeta para conservar tu saldo."
+        es: "CalFresh elimina los beneficios sin usar durante 9 meses. Usa tu tarjeta para conservar tu saldo.",
+        zh: "如果 9 个月完全没有使用,CalFresh 会取消这些福利。刷一下卡,就能保住你的余额。"
     )
 }
 
