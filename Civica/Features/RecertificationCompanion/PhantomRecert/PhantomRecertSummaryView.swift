@@ -261,53 +261,61 @@ struct PhantomRecertSummaryView: View {
 enum PhantomSummaryStrings {
     static let estimateHeader = CivicaText(
         "Fresh estimate",
-        es: "Estimación nueva"
+        es: "Estimación nueva",
+        zh: "新估算"
     )
     static let estimateUnavailable = CivicaText(
         "We couldn't calculate a benefit amount with these answers.",
-        es: "No pudimos calcular un monto con estas respuestas."
+        es: "No pudimos calcular un monto con estas respuestas.",
+        zh: "根据这些答案，我们无法计算出福利金额。"
     )
 
     static func estimateAmountTemplate(amount: String) -> CivicaText {
         CivicaText(
             "About \(amount) / month",
-            es: "Aproximadamente \(amount) / mes"
+            es: "Aproximadamente \(amount) / mes",
+            zh: "每月大约 \(amount)"
         )
     }
 
     static let changeModified = CivicaText(
         "Changed since last recert",
-        es: "Cambió desde la última recertificación"
+        es: "Cambió desde la última recertificación",
+        zh: "自上次重新认证以来有变动"
     )
     static let changeFilled = CivicaText(
         "Newly filled in",
-        es: "Recién completado"
+        es: "Recién completado",
+        zh: "新填写的内容"
     )
     static let changeCleared = CivicaText(
         "Cleared",
-        es: "Borrado"
+        es: "Borrado",
+        zh: "已清空"
     )
 
-    static let sectionWhereApplying = CivicaText("Where you're applying", es: "Dónde solicitas")
-    static let sectionApplicantAge = CivicaText("Applicant age", es: "Edad del solicitante")
-    static let sectionHousehold = CivicaText("Household", es: "Hogar")
-    static let sectionContact = CivicaText("Contact info", es: "Información de contacto")
-    static let sectionIncome = CivicaText("Income", es: "Ingresos")
-    static let sectionStudentStatus = CivicaText("Student status", es: "Estado de estudiante")
-    static let sectionExpenses = CivicaText("Expenses", es: "Gastos")
-    static let sectionDocumentsChecklist = CivicaText("Documents", es: "Documentos")
+    static let sectionWhereApplying = CivicaText("Where you're applying", es: "Dónde solicitas", zh: "你申请的地点")
+    static let sectionApplicantAge = CivicaText("Applicant age", es: "Edad del solicitante", zh: "申请人年龄")
+    static let sectionHousehold = CivicaText("Household", es: "Hogar", zh: "家庭")
+    static let sectionContact = CivicaText("Contact info", es: "Información de contacto", zh: "联系方式")
+    static let sectionIncome = CivicaText("Income", es: "Ingresos", zh: "收入")
+    static let sectionStudentStatus = CivicaText("Student status", es: "Estado de estudiante", zh: "学生身份")
+    static let sectionExpenses = CivicaText("Expenses", es: "Gastos", zh: "支出")
+    static let sectionDocumentsChecklist = CivicaText("Documents", es: "Documentos", zh: "文件")
 
     static func checklistUpload(label: String) -> CivicaText {
         CivicaText(
             "Upload a fresh \(label.lowercased())",
-            es: "Sube un/a nuevo/a \(label.lowercased())"
+            es: "Sube un/a nuevo/a \(label.lowercased())",
+            zh: "上传一份新的 \(label.lowercased())"
         )
     }
 
     static func checklistAnswerReview(sectionLabel: String, changeLabel: String) -> CivicaText {
         CivicaText(
             "Confirm \(sectionLabel) (\(changeLabel))",
-            es: "Confirma \(sectionLabel) (\(changeLabel))"
+            es: "Confirma \(sectionLabel) (\(changeLabel))",
+            zh: "确认 \(sectionLabel)（\(changeLabel)）"
         )
     }
 }
