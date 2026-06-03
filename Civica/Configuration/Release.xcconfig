@@ -9,4 +9,11 @@
 
 ADMIN_PIN = 000000
 CIVICA_SENTRY_DSN =
+
+// Sentry org + project slugs for dSYM upload. Release builds invoke
+// scripts/upload-sentry-dsyms.sh post-archive; if these are blank or
+// sentry-cli is missing, the upload is skipped (build still succeeds).
+SENTRY_ORG_SLUG = civica-gl
+SENTRY_PROJECT_SLUG = apple-ios
+
 #include? "Secrets.xcconfig"
