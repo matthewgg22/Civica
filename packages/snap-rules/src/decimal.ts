@@ -70,6 +70,19 @@ export class Decimal {
     const sign = this.v < 0 ? -1 : 1;
     return new Decimal(sign * Math.round(Math.abs(this.v)));
   }
+
+  /**
+   * Floor to whole dollars (truncate fractional cents toward zero for
+   * positive values). Used for FPL monthly derivation to match FNS /
+   * CalFresh published-table convention: `floor((annual_FPL) / 12)`
+   * before applying BBCE/130%/100% multipliers. The half-up `roundDollar`
+   * produces +$1 drift at HH2/3/5/6/8 vs CDSS ACIN I-46-25 (FFY 2026)
+   * Attachment I — reconciled via floorDollar. See fplMonthly comment in
+   * federal-tables.ts.
+   */
+  floorDollar(): Decimal {
+    return new Decimal(Math.floor(this.v));
+  }
 }
 
 export function dec(value: number | string): Decimal {

@@ -159,7 +159,25 @@ export function fplMonthly(size: number, asOf: Date): Decimal {
   const annual = s.fpl_annual_first_person.add(
     s.fpl_annual_each_additional.mul(size - 1),
   );
-  return annual.div(12);
+  // FNS / CalFresh convention: FLOOR the monthly value before applying
+  // BBCE / 130% / 100% multipliers. Verified against CDSS ACIN I-46-25
+  // (FFY 2026) Attachment I via the 2026-06-02 audit reconciliation:
+  //
+  //   Annual FPL HH1 = $15,660; each add'l = $5,500.
+  //   HH2 monthly raw = $21,160/12 = $1,763.33 → floor = $1,763
+  //     × 2.0 (BBCE-200) = $3,526 ✓ matches ACIN
+  //   HH3 monthly raw = $26,660/12 = $2,221.67 → floor = $2,221
+  //     × 2.0 = $4,442 ✓ matches ACIN
+  //   HH4 monthly raw = $32,160/12 = $2,680.00 (exact, no fractional)
+  //     × 2.0 = $5,360 ✓ matches ACIN
+  //   HH5/6/8 similar — all floor reconciles to published table.
+  //
+  // Prior implementation used `roundDollar()` (Math.round, HALF_UP) which
+  // produced +$1 drift at HH2/3/5/6/8 vs the published BBCE-200, 130%
+  // gross, and 100% net thresholds — flipping borderline cases. The fix:
+  // floor at the monthly step so all derived thresholds match the FNS-
+  // published rounding convention.
+  return annual.div(12).floorDollar();
 }
 
 export function standardDeductionFor(size: number, asOf: Date): Decimal {

@@ -38,12 +38,34 @@
 //             2026-01-15 (FR Doc 2026-00755) — engine must adopt
 //             CY2026 values before MA pilot reads BBCE thresholds
 //             after 2026-02-01.
-//     SUA   — DTA 106 CMR 364.945 (FY26 SUA chart). !!! Bay State CAP
-//             recipients use a CAP-SPECIFIC SUA per 106 CMR 366.910,
-//             NOT the standard HCSUA $914. Current engine silently
-//             substitutes HCSUA for CAP recipients — miscompute for
-//             ~70K MA elderly+SSI cases. Either add a CAP detection
-//             branch or route CAP cases to a not-implemented surface.
+//     SUA   — !!! PENDING DTA PRIMARY-SOURCE VERIFICATION !!!
+//             Engine currently encodes HCSUA $914, LUA $556, phone $64
+//             with citation DTA 106 CMR 364.945. These were confirmed
+//             via Mass Legal Help cross-reference + Justia/LII regulation
+//             mirrors in the 2026-06-02 triple-check (mass.gov returned
+//             HTTP 403 to direct WebFetch), but the 2026-06-02 audit
+//             pass flagged two open questions:
+//               1. MA LUA $556 — could not independently confirm vs
+//                  DTA's own FY26 SUA/LUA chart. (Note: MA HCSUA $914
+//                  is plausible for heating; LUA at $556 means ~60% of
+//                  HCSUA, higher than other states' ratios.)
+//               2. CMR section: the audit suggests SUA may live at
+//                  106 CMR 366.910 (Bay State CAP SUA, which CAP
+//                  recipients use) with the broader shelter/utility
+//                  framework at 106 CMR 364.400-series. 364.945 may be
+//                  the wrong subsection.
+//             ACTION: any A02-style MA elderly+SSI benefit math is
+//             illustrative until the operator verifies (a) values
+//             against DTA's published FY26 chart, and (b) the correct
+//             CMR citation against live 106 CMR text. The qualitative
+//             lesson "MA utility allowances ≫ CA" is sound; exact $
+//             and CMR section are not yet primary-sourced.
+//             Bay State CAP recipients use a CAP-SPECIFIC SUA per
+//             106 CMR 366.910 (separate from the per-state SUA above);
+//             engine silently substitutes HCSUA for CAP recipients —
+//             miscompute for ~70K MA elderly+SSI cases. Either add a
+//             CAP detection branch or route CAP cases to a not-
+//             implemented surface.
 //     RMP   — Massachusetts does not operate a Restaurant Meals Program.
 //     ABAWD — !!! STALE/INCORRECT as a state-level flag !!!
 //             MA statewide waiver EXPIRED 2025-06-30 per DTA

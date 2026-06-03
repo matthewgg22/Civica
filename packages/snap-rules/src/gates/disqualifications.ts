@@ -37,6 +37,13 @@ export function evaluateDisqualifications(
     for (const tag of disquals) {
       // HH-level disqualifications (one member triggers whole-HH DENY).
       if (tag === "lottery") {
+        // 7 CFR 272.17 "Substantial lottery or gambling winnings" is the
+        // CORRECT, CURRENTLY-CODIFIED location. Do NOT "fix" this to
+        // 273.11(r): the 2016 proposed rule (81 FR 89018) suggested
+        // moving the rule to 273.11(r), but the 2018 final rule (83 FR
+        // 64308) codified it at 272.17. The audit pass on 2026-06-02
+        // verified against live eCFR. Future agents reading this code:
+        // do not re-introduce the error.
         return {
           passes: false,
           reason: `household_lottery_disqualification [7 CFR 272.17]: ${m.member_id}`,
