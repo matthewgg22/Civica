@@ -1,5 +1,8 @@
 "use client";
 
+import { useEffect } from "react";
+import * as Sentry from "@sentry/nextjs";
+
 // Layout-level error boundary — catches errors thrown by the root layout
 // itself (next/font load failure, top-level import crash). Must own its own
 // <html> and <body> because the root layout has failed.
@@ -9,12 +12,19 @@
 // literal. English only (i18n.ts may not have loaded either).
 
 export default function GlobalError({
-  error: _error,
+  error,
   reset,
 }: {
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  useEffect(() => {
+    Sentry.captureMessage("web.global_error_page_viewed", {
+      level: "fatal",
+      tags: { digest: error.digest ?? "none" },
+    });
+  }, [error.digest]);
+
   return (
     <html lang="en">
       <body
