@@ -225,49 +225,60 @@ enum SNAPApplicationPacketStrings {
 
     static let eyebrow = CivicaText(
         "Application packet",
-        es: "Paquete de solicitud"
+        es: "Paquete de solicitud",
+        zh: "申请材料包"
     )
     static let title = CivicaText(
         "Your SNAP application summary is ready to save or share",
-        es: "Tu resumen de solicitud de SNAP está listo para guardar o compartir"
+        es: "Tu resumen de solicitud de SNAP está listo para guardar o compartir",
+        zh: "你的 SNAP 申请摘要已准备好,可以保存或分享"
     )
     static let body = CivicaText(
         "We turned your answers into a PDF you can save to Files, email to a SNAP navigator, or print and bring to a DTA office.",
-        es: "Convertimos tus respuestas en un PDF que puedes guardar en Archivos, enviar por correo a un asesor de SNAP o imprimir y llevar a una oficina del DTA."
+        es: "Convertimos tus respuestas en un PDF que puedes guardar en Archivos, enviar por correo a un asesor de SNAP o imprimir y llevar a una oficina del DTA.",
+        zh: "我们把你的回答整理成一份 PDF。你可以保存到「文件」、用邮件发给 SNAP 协助员,或者打印出来带到 DTA 办公室。"
     )
 
     static let generating = CivicaText(
         "Putting your packet together…",
-        es: "Preparando tu paquete…"
+        es: "Preparando tu paquete…",
+        zh: "正在整理你的材料包……"
     )
     static let ready = CivicaText(
         "Your packet is ready.",
-        es: "Tu paquete está listo."
+        es: "Tu paquete está listo.",
+        zh: "你的材料包已就绪。"
     )
     static let errorGeneric = CivicaText(
         "We couldn't generate the PDF. Try again in a moment.",
-        es: "No pudimos generar el PDF. Inténtalo de nuevo en un momento."
+        es: "No pudimos generar el PDF. Inténtalo de nuevo en un momento.",
+        zh: "我们无法生成 PDF。请稍后再试一次。"
     )
     static let retry = CivicaText(
         "Try again",
-        es: "Inténtalo de nuevo"
+        es: "Inténtalo de nuevo",
+        zh: "再试一次"
     )
 
     static let walkthroughHeading = CivicaText(
         "What to do with this",
-        es: "Qué hacer con esto"
+        es: "Qué hacer con esto",
+        zh: "接下来怎么用"
     )
     static let walkthroughBody = CivicaText(
         "This PDF is a reference document — it's not the official application. To file, open DTA Connect and use this PDF as your guide, or hand it to a navigator who can help.",
-        es: "Este PDF es un documento de referencia — no es la solicitud oficial. Para presentarla, abre DTA Connect y usa este PDF como guía, o entrégaselo a un asesor que pueda ayudarte."
+        es: "Este PDF es un documento de referencia — no es la solicitud oficial. Para presentarla, abre DTA Connect y usa este PDF como guía, o entrégaselo a un asesor que pueda ayudarte.",
+        zh: "这份 PDF 是一份参考文件 — 不是正式申请。要正式提交,请打开 DTA Connect 并把这份 PDF 当作你的指引,或者交给可以帮你的协助员。"
     )
 
     static let share = CivicaText(
         "Save or share my packet",
-        es: "Guardar o compartir mi paquete"
+        es: "Guardar o compartir mi paquete",
+        zh: "保存或分享我的材料包"
     )
     static let done = CivicaText(
         "Done for now",
-        es: "Listo por ahora"
+        es: "Listo por ahora",
+        zh: "暂时完成"
     )
 }
