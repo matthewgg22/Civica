@@ -10,9 +10,9 @@
 // Variant flags processed here too:
 //   active_warrant === true         → fleeing_felon disqualification fires (P52 axis)
 
-import type { Facts } from "../facts.ts";
-import { memberImmigrationEligible } from "./immigration.ts";
-import { statePolicyFor } from "../constants/states.ts";
+import type { Facts } from "../facts";
+import { memberImmigrationEligible } from "./immigration";
+import { statePolicyFor } from "../constants/states";
 
 export interface DisqualResult {
   passes: boolean;

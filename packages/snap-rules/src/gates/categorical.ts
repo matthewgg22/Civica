@@ -8,7 +8,7 @@
 // BBCE (broad-based categorical eligibility) is a separate, state-keyed
 // path (handled in the verdict composer via state policy + bbce_threshold).
 
-import type { Facts } from "../facts.ts";
+import type { Facts } from "../facts";
 
 export type CategoricalPath = "pure_cash" | "bbce" | "none";
 

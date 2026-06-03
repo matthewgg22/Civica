@@ -17,7 +17,7 @@
 // any at-risk member has no exemption, fail. Mixed-student HHs still
 // run for the non-student members.
 
-import type { Facts } from "../facts.ts";
+import type { Facts } from "../facts";
 
 export interface StudentGateResult {
   passes: boolean;

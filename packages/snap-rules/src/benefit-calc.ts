@@ -35,13 +35,13 @@
 // 7 CFR 272.17 per the final codified rule (the 2016 proposed rule that
 // would have moved this to 273.11(r) was never codified there).
 
-import type { Facts } from "./facts.ts";
+import type { Facts } from "./facts";
 import {
   aggregateIncome,
   hasElderlyOrDisabled,
   householdSize,
-} from "./facts.ts";
-import { Decimal, ZERO, dec } from "./decimal.ts";
+} from "./facts";
+import { Decimal, ZERO, dec } from "./decimal";
 import {
   earnedIncomeDeductionRateFor,
   standardDeductionFor,
@@ -50,8 +50,8 @@ import {
   minimumBenefitFor,
   homelessDeductionFor,
   medicalFloorFor,
-} from "./constants/federal-tables.ts";
-import { statePolicyFor } from "./constants/states.ts";
+} from "./constants/federal-tables";
+import { statePolicyFor } from "./constants/states";
 
 export interface BenefitCalcDetail {
   gross_monthly_income: number;

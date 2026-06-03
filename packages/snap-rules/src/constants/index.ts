@@ -1,18 +1,18 @@
 // Re-exports of all federal + state constants used by the verdict
 // composer. One import surface for downstream consumers.
 
-export * from "./federal-tables.ts";
-export * from "./states.ts";
-export type { Decimal } from "../decimal.ts";
-export { dec, ZERO } from "../decimal.ts";
+export * from "./federal-tables";
+export * from "./states";
+export type { Decimal } from "../decimal";
+export { dec, ZERO } from "../decimal";
 
 /**
  * EngineParams snapshot for the profile-harness PARAMS_MISMATCH check.
  * Returns the engine's view of the constants for one (state, asOf).
  * Compared field-by-field against `suite.meta.params` in the harness.
  */
-import { snapshotFor } from "./federal-tables.ts";
-import { statePolicyFor } from "./states.ts";
+import { snapshotFor } from "./federal-tables";
+import { statePolicyFor } from "./states";
 
 export interface EngineParams {
   // Each field is `?: T | undefined` so this struct can be populated
@@ -73,7 +73,7 @@ export function getEngineParams(state: string, asOf: Date): EngineParams {
 }
 
 // Internal: standardDeductionFor wrapped to suppress unused-import warning.
-import { standardDeductionFor } from "./federal-tables.ts";
+import { standardDeductionFor } from "./federal-tables";
 function standardDeductionForKey(size: number, asOf: Date) {
   return standardDeductionFor(size, asOf);
 }

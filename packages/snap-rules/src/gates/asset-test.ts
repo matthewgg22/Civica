@@ -4,10 +4,10 @@
 // States with BBCE or an explicit asset-waiver skip this test entirely.
 // Cat-elig (pure_cash) households also skip per CategoricalResult.
 
-import type { Facts } from "../facts.ts";
-import { hasElderlyOrDisabled, countableAssets } from "../facts.ts";
-import { assetLimitFor } from "../constants/federal-tables.ts";
-import { statePolicyFor } from "../constants/states.ts";
+import type { Facts } from "../facts";
+import { hasElderlyOrDisabled, countableAssets } from "../facts";
+import { assetLimitFor } from "../constants/federal-tables";
+import { statePolicyFor } from "../constants/states";
 
 export interface AssetTestResult {
   passes: boolean;

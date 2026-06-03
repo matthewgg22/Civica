@@ -16,24 +16,24 @@
 //   - Mixed-status proration                     Wave 2
 //   - Sponsor deeming                            Wave 2
 
-import type { Facts } from "./facts.ts";
-import { hasElderlyOrDisabled, householdSize } from "./facts.ts";
-import { validateFacts } from "./facts-schema.ts";
-import { evaluateCategorical } from "./gates/categorical.ts";
-import { evaluateStudentGate } from "./gates/student.ts";
-import { evaluateAbawd } from "./gates/abawd.ts";
-import { evaluateImmigration, anySponsored } from "./gates/immigration.ts";
-import { evaluateDisqualifications } from "./gates/disqualifications.ts";
-import { evaluateComposition } from "./gates/composition.ts";
+import type { Facts } from "./facts";
+import { hasElderlyOrDisabled, householdSize } from "./facts";
+import { validateFacts } from "./facts-schema";
+import { evaluateCategorical } from "./gates/categorical";
+import { evaluateStudentGate } from "./gates/student";
+import { evaluateAbawd } from "./gates/abawd";
+import { evaluateImmigration, anySponsored } from "./gates/immigration";
+import { evaluateDisqualifications } from "./gates/disqualifications";
+import { evaluateComposition } from "./gates/composition";
 import {
   grossIncomeTest,
   netIncomeTest,
   grossTestApplies,
-} from "./gates/income-tests.ts";
-import { assetTest } from "./gates/asset-test.ts";
-import { computeBenefit } from "./benefit-calc.ts";
-import { Decimal } from "./decimal.ts";
-import { statePolicyFor, UnknownStateError } from "./constants/states.ts";
+} from "./gates/income-tests";
+import { assetTest } from "./gates/asset-test";
+import { computeBenefit } from "./benefit-calc";
+import { Decimal } from "./decimal";
+import { statePolicyFor, UnknownStateError } from "./constants/states";
 
 export type Verdict = "APPROVE" | "DENY";
 

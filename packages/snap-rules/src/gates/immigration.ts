@@ -17,7 +17,7 @@
 // is set, the sponsor income is deemed to the household — implemented in
 // aggregateIncome via composer hook (verdict.ts).
 
-import type { Facts, Member } from "../facts.ts";
+import type { Facts, Member } from "../facts";
 
 export interface ImmigrationResult {
   passes: boolean;

@@ -113,7 +113,7 @@
 // Other states (TX/KS/AK) are policy archetypes used by the fixture; their
 // SUA values are illustrative until the FNS-published values are loaded.
 
-import { Decimal } from "../decimal.ts";
+import { Decimal } from "../decimal";
 
 export type BBCEFPLBasis = "federal_fiscal_year" | "calendar_year" | null;
 export type AllotmentTier = "48" | "AK";

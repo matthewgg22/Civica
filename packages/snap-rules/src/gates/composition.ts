@@ -26,7 +26,7 @@
 // detection from base facts) is deferred until the harness or downstream
 // API needs it.
 
-import type { Facts } from "../facts.ts";
+import type { Facts } from "../facts";
 
 export interface CompositionResult {
   passes: boolean;

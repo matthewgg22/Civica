@@ -18,7 +18,7 @@
 //   - age cap raised 54→64 (handled in age check below)
 //   - Tribal exemption introduced (handled via work_class:abawd_exempt:tribal)
 
-import type { Facts } from "../facts.ts";
+import type { Facts } from "../facts";
 
 export interface AbawdResult {
   passes: boolean;

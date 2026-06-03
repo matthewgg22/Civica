@@ -10,15 +10,15 @@
 //   - Computed after the deduction stack (see benefit-calc.ts)
 //   - net > 100% FPL => DENY (federal floor for all non-cat-elig HHs)
 
-import type { Facts } from "../facts.ts";
-import { householdSize, aggregateIncome, hasElderlyOrDisabled } from "../facts.ts";
-import { Decimal } from "../decimal.ts";
+import type { Facts } from "../facts";
+import { householdSize, aggregateIncome, hasElderlyOrDisabled } from "../facts";
+import { Decimal } from "../decimal";
 import {
   fplMonthly,
   GROSS_INCOME_TEST_RATIO,
   NET_INCOME_TEST_RATIO,
-} from "../constants/federal-tables.ts";
-import { statePolicyFor } from "../constants/states.ts";
+} from "../constants/federal-tables";
+import { statePolicyFor } from "../constants/states";
 
 export interface IncomeTestResult {
   passes: boolean;

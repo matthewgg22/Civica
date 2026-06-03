@@ -12,7 +12,7 @@
 // surface engine params (e.g. PARAMS_MISMATCH detection in the harness)
 // reads from here. No constant lives in two places.
 
-import { Decimal } from "../decimal.ts";
+import { Decimal } from "../decimal";
 
 // ─── Effective-date table ─────────────────────────────────────────────────
 
