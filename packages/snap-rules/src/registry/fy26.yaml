@@ -1,0 +1,126 @@
+# Verification-hyperdrive Layer 3 registry — FY26 seed.
+#
+# Every time-sensitive constant, boolean, AND citation gets an owner,
+# source URL, effective date, and expiry. Engine reads from here (or
+# tables are generated from here) so a primary-source correction
+# propagates through every consumer.
+#
+# Schema validated by registry/load.ts. Linted by registry/lint.ts
+# (staleness + citation-URL resolves).
+#
+# DO NOT add a value without a primary-source URL. DO NOT add a
+# citation without a live fetch of its URL.
+
+entries:
+  - id: ca_lua_fy26
+    type: constant
+    value: 170
+    unit: usd_per_month
+    state: CA
+    label: "California Limited Utility Allowance (LUA), FY26"
+    source_doc: "CDSS ACIN I-46-25 Attachment I"
+    source_url: "https://www.cdss.ca.gov/Portals/9/Additional-Resources/Letters-and-Notices/ACINs/2025/I-46_25.pdf"
+    effective_date: "2025-10-01"
+    valid_through: "2026-09-30"
+    owner: policy-data
+
+  - id: ca_hcsua_fy26
+    type: constant
+    value: 663
+    unit: usd_per_month
+    state: CA
+    label: "California Standard Utility Allowance (SUA / HCSUA), FY26"
+    source_doc: "CDSS ACL 25-68 (FY26 SUA chart)"
+    source_url: "https://www.cdss.ca.gov/Portals/9/Additional-Resources/Letters-and-Notices/ACLs/2025/25-68.pdf"
+    effective_date: "2025-10-01"
+    valid_through: "2026-09-30"
+    owner: policy-data
+
+  - id: ca_phone_sua_fy26
+    type: constant
+    value: 20
+    unit: usd_per_month
+    state: CA
+    label: "California Telephone Utility Allowance (TUA), FY26"
+    source_doc: "CDSS ACL 25-68"
+    source_url: "https://www.cdss.ca.gov/Portals/9/Additional-Resources/Letters-and-Notices/ACLs/2025/25-68.pdf"
+    effective_date: "2025-10-01"
+    valid_through: "2026-09-30"
+    owner: policy-data
+
+  - id: federal_fpl_hh1_annual_for_snap_fy26
+    type: constant
+    value: 15660
+    unit: usd_per_year
+    state: federal
+    label: "HHS Poverty Guideline annual for HH1, 48 contiguous + DC, applied to SNAP FY26"
+    source_doc: "HHS Federal Register Notice, 2025 Poverty Guidelines"
+    source_url: "https://aspe.hhs.gov/topics/poverty-economic-mobility/poverty-guidelines"
+    effective_date: "2025-10-01"
+    valid_through: "2026-09-30"
+    owner: policy-data
+    notes: "SOURCE DOCUMENT is CY2025 HHS FPL ($15,660 annual). SNAP applies this throughout FY26 (Oct 1 2025 – Sep 30 2026), then switches to CY2026 HHS FPL at FY27 rollover. HHS published CY2026 FPL on 2026-01-15 (FR Doc 2026-00755); engine continues using CY2025 per the SNAP COLA convention. Linter staleness aligned to SNAP FY26 operational end."
+
+  - id: federal_max_allotment_hh1_fy26
+    type: constant
+    value: 298
+    unit: usd_per_month
+    state: federal
+    label: "FNS SNAP max allotment HH1, 48 contiguous + DC, FY26"
+    source_doc: "FNS COLA Memo, August 2025"
+    source_url: "https://www.fns.usda.gov/snap/allotment/cola"
+    effective_date: "2025-10-01"
+    valid_through: "2026-09-30"
+    owner: policy-data
+
+  - id: federal_min_benefit_fy26
+    type: constant
+    value: 24
+    unit: usd_per_month
+    state: federal
+    label: "FNS SNAP minimum benefit HH1-2, 48 contiguous + DC, FY26"
+    source_doc: "FNS COLA Memo, August 2025"
+    source_url: "https://www.fns.usda.gov/snap/allotment/cola"
+    effective_date: "2025-10-01"
+    valid_through: "2026-09-30"
+    owner: policy-data
+    notes: "AK/HI have different values. 8% of HH1 max allotment per 7 CFR 273.10(e)(2)(ii)(C)."
+
+  - id: cite_lottery_dq
+    type: citation
+    value: "7 CFR 273.11(r)"
+    label: "Substantial lottery/gambling winnings — DQ + definition"
+    source_url: "https://www.law.cornell.edu/cfr/text/7/273.11"
+    effective_date: "2019-04-12"
+    valid_through: null
+    owner: policy-cite
+    notes: "84 FR 15093 (2019 final rule). 272.17 (state procedure) cross-references this as 'as defined in § 273.11(r)'. Verified 2026-06-03 via Cornell LII fetch."
+
+  - id: cite_lottery_state_proc
+    type: citation
+    value: "7 CFR 272.17"
+    label: "Substantial lottery/gambling winnings — state data-match procedure"
+    source_url: "https://www.law.cornell.edu/cfr/text/7/272.17"
+    effective_date: "2019-04-12"
+    valid_through: null
+    owner: policy-cite
+    notes: "State agency cooperative-agreement framework. Cross-references 273.11(r) for the substantive DQ + definition. Verified 2026-06-03 via Cornell LII fetch."
+
+  - id: cite_benefit_rounding
+    type: citation
+    value: "7 CFR 273.10(e)(2)(ii)(A)"
+    label: "Final-benefit formula + rounding"
+    source_url: "https://www.law.cornell.edu/cfr/text/7/273.10"
+    effective_date: null
+    valid_through: null
+    owner: policy-cite
+    notes: "Verified 2026-06-02 via eCFR; (e)(1)(ii) is cents-handling INSIDE net-income, not the same rule. (e)(2)(ii)(C) is the HH1-2 min benefit."
+
+  - id: cite_min_benefit_hh12
+    type: citation
+    value: "7 CFR 273.10(e)(2)(ii)(C)"
+    label: "Minimum benefit HH1-2 (8% of HH1 max allotment)"
+    source_url: "https://www.law.cornell.edu/cfr/text/7/273.10"
+    effective_date: null
+    valid_through: null
+    owner: policy-cite
