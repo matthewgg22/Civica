@@ -119,28 +119,32 @@ enum DocumentReminderStrings {
     static func titleMissing(documentLabel: String) -> CivicaText {
         CivicaText(
             "\(documentLabel): not yet uploaded",
-            es: "\(documentLabel): aún no subido"
+            es: "\(documentLabel): aún no subido",
+            zh: "\(documentLabel)：尚未上传"
         )
     }
 
     static func titleStale(documentLabel: String) -> CivicaText {
         CivicaText(
             "\(documentLabel): time for a fresh copy",
-            es: "\(documentLabel): hora de una nueva copia"
+            es: "\(documentLabel): hora de una nueva copia",
+            zh: "\(documentLabel)：该换一份新的了"
         )
     }
 
     static func titleCadence(documentLabel: String) -> CivicaText {
         CivicaText(
             "\(documentLabel): due for a fresh copy",
-            es: "\(documentLabel): necesita una nueva copia"
+            es: "\(documentLabel): necesita una nueva copia",
+            zh: "\(documentLabel)：需要一份新的"
         )
     }
 
     static func body(documentLabel: String, recertMonth: String) -> CivicaText {
         CivicaText(
             "Your \(documentLabel.lowercased()) is about to age out for your \(recertMonth) recert. Take 30 seconds to upload a fresh one.",
-            es: "Tu \(documentLabel.lowercased()) está por vencer para tu recertificación de \(recertMonth). Toma 30 segundos para subir una nueva."
+            es: "Tu \(documentLabel.lowercased()) está por vencer para tu recertificación de \(recertMonth). Toma 30 segundos para subir una nueva.",
+            zh: "你的 \(documentLabel.lowercased()) 即将过期，赶不上 \(recertMonth) 的复审。花 30 秒上传一份新的。"
         )
     }
 }
