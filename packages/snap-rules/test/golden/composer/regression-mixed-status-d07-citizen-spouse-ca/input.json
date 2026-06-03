@@ -1,0 +1,19 @@
+{
+  "state": "CA",
+  "asOf": "2026-06-01",
+  "facts": {
+    "household": [
+      {"member_id": "m1", "age": 35, "role": "head", "disability": false, "elderly": false, "student": "not", "immigration": "removed_status:refugee", "five_yr_bar": "n/a", "sponsored": false, "work_class": "gen_work_subject", "abawd_months_used": 0, "disqual": [], "living": "housed"},
+      {"member_id": "m2", "age": 33, "role": "spouse", "disability": false, "elderly": false, "student": "not", "immigration": "citizen", "five_yr_bar": "n/a", "sponsored": false, "work_class": "gen_work_subject", "abawd_months_used": 0, "disqual": [], "living": "housed"}
+    ],
+    "income": [
+      {"member": "m1", "type": "wages", "amount": 900, "freq": "monthly", "anticipation": "averaged", "source_status": "ongoing"}
+    ],
+    "shelter": {"rent": 900, "sua_tier": "HCSUA", "sua_amount": 663, "internet": 0, "homeless_deduction": false},
+    "deductions": {"dependent_care": 0, "medical_unreimbursed": 0, "child_support_paid": 0},
+    "assets": "n/a:not_authored",
+    "cat_elig": "NPA",
+    "expedited": false,
+    "sponsor_income": null
+  }
+}
