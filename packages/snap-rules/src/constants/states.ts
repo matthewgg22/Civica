@@ -60,6 +60,16 @@
 //             CMR citation against live 106 CMR text. The qualitative
 //             lesson "MA utility allowances ≫ CA" is sound; exact $
 //             and CMR section are not yet primary-sourced.
+//             VERIFICATION ATTEMPTS LOGGED:
+//               - 2026-06-02 triple-check: mass.gov 403, Mass Legal
+//                 Help cross-reference accepted (value $914/$556/$64)
+//               - 2026-06-03 integrity audit Fix #6: re-attempted
+//                 mass.gov (403), masslegalhelp.org (403), Cornell
+//                 LII 106 CMR (directory only, no section text). All
+//                 three primary fetches blocked. PENDING continues.
+//             This needs an operator pull from a logged-in DTA
+//             portal session or via a browser that defeats the bot
+//             detection. Agent fetches will not unblock it.
 //             Bay State CAP recipients use a CAP-SPECIFIC SUA per
 //             106 CMR 366.910 (separate from the per-state SUA above);
 //             engine silently substitutes HCSUA for CAP recipients —
