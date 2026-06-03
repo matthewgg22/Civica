@@ -348,6 +348,12 @@ button {
   color: var(--civica-destructive);
 }
 
+.lead-form__status--info {
+  background: rgba(0, 0, 0, 0.04);
+  color: var(--civica-graphite);
+  font-size: 0.875rem;
+}
+
 /* ---- Footer ---- */
 
 .site-footer {
