@@ -1,6 +1,11 @@
 // Debug build settings for the Civica target.
-// Secret values (ADMIN_PIN, etc.) come from Secrets.xcconfig which is gitignored.
-// Copy Secrets.xcconfig.template to Secrets.xcconfig and fill in values before building.
+// Secret values (ADMIN_PIN, CIVICA_SENTRY_DSN, etc.) come from Secrets.xcconfig
+// which is gitignored. Copy Secrets.xcconfig.template to Secrets.xcconfig and
+// fill in values before building.
+//
+// CIVICA_SENTRY_DSN: when empty, the iOS Sentry init is skipped — see
+// Civica/App/Observability/CivicaSentry.swift.
 
 ADMIN_PIN = 000000
+CIVICA_SENTRY_DSN =
 #include? "Secrets.xcconfig"

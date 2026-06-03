@@ -10,6 +10,11 @@ import SwiftUI
 @main
 struct CivicaApp: App {
     init() {
+        // Start Sentry first so any subsequent migration / flag-refresh failure
+        // is captured. No-op when CIVICA_SENTRY_DSN is empty (local dev / CI
+        // without injection). PII scrubbing is enforced in beforeSend.
+        CivicaSentry.startIfConfigured()
+
         // Ensure Hanken Grotesk + Atkinson Hyperlegible are registered before
         // any view tries to render text. Same pattern as the existing app.
         CivicaFonts.register()
