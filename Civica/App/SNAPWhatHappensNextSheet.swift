@@ -387,159 +387,190 @@ struct SNAPWhatHappensNextSheet: View {
 // MARK: - Strings
 
 enum SNAPWhatHappensNextStrings {
-    static let sheetTitle = CivicaText("What happens next", es: "Lo que sigue")
-    static let doneButton = CivicaText("Done", es: "Listo")
-    static let fallbackCounty = CivicaText("your county", es: "tu condado")
+    static let sheetTitle = CivicaText("What happens next", es: "Lo que sigue", zh: "接下来会发生什么")
+    static let doneButton = CivicaText("Done", es: "Listo", zh: "完成")
+    static let fallbackCounty = CivicaText("your county", es: "tu condado", zh: "你所在的县")
 
     // Status-aware eyebrows
     static let eyebrowSubmitted = CivicaText(
         "SNAP application · Submitted",
-        es: "Solicitud SNAP · Enviada"
+        es: "Solicitud SNAP · Enviada",
+        zh: "SNAP 申请 · 已提交"
     )
     static let eyebrowDocumentsRequested = CivicaText(
         "SNAP application · Documents requested",
-        es: "Solicitud SNAP · Documentos solicitados"
+        es: "Solicitud SNAP · Documentos solicitados",
+        zh: "SNAP 申请 · 需要补充材料"
     )
     static let eyebrowInterviewScheduled = CivicaText(
         "SNAP application · Interview scheduled",
-        es: "Solicitud SNAP · Entrevista programada"
+        es: "Solicitud SNAP · Entrevista programada",
+        zh: "SNAP 申请 · 面谈已安排"
     )
     static let eyebrowInterviewCompleted = CivicaText(
         "SNAP application · Interview complete",
-        es: "Solicitud SNAP · Entrevista completa"
+        es: "Solicitud SNAP · Entrevista completa",
+        zh: "SNAP 申请 · 面谈已完成"
     )
 
     // Status-aware headlines
     static func headlineSubmitted(county: String, language: CivicaLanguage) -> String {
         switch language {
-        case .english, .mandarin, .vietnamese, .tagalog: return "We sent your application to \(county)."
+        case .english, .vietnamese, .tagalog: return "We sent your application to \(county)."
+        case .mandarin: return "我们已经把你的申请发送给 \(county)。"
         case .spanish: return "Enviamos tu solicitud a \(county)."
         }
     }
     static func headlineDocumentsRequested(county: String, language: CivicaLanguage) -> String {
         switch language {
-        case .english, .mandarin, .vietnamese, .tagalog: return "\(county) needs a few more documents."
+        case .english, .vietnamese, .tagalog: return "\(county) needs a few more documents."
+        case .mandarin: return "\(county) 需要再补充几份材料。"
         case .spanish: return "\(county) necesita algunos documentos más."
         }
     }
     static func headlineInterviewScheduled(county: String, language: CivicaLanguage) -> String {
         switch language {
-        case .english, .mandarin, .vietnamese, .tagalog: return "\(county) scheduled your interview."
+        case .english, .vietnamese, .tagalog: return "\(county) scheduled your interview."
+        case .mandarin: return "\(county) 已经为你安排了面谈。"
         case .spanish: return "\(county) programó tu entrevista."
         }
     }
     static let headlineInterviewCompleted = CivicaText(
         "The interview is complete.",
-        es: "La entrevista está completa."
+        es: "La entrevista está completa.",
+        zh: "面谈已经完成。"
     )
 
     // Milestone labels
-    static let milestoneSubmitted    = CivicaText("Submitted",    es: "Enviada")
-    static let milestoneCountyReview = CivicaText("County review", es: "Revisión del condado")
-    static let milestoneInterview    = CivicaText("Interview call", es: "Llamada de entrevista")
-    static let milestoneDecision     = CivicaText("Decision",     es: "Decisión")
+    static let milestoneSubmitted    = CivicaText("Submitted",    es: "Enviada", zh: "已提交")
+    static let milestoneCountyReview = CivicaText("County review", es: "Revisión del condado", zh: "县里审核")
+    static let milestoneInterview    = CivicaText("Interview call", es: "Llamada de entrevista", zh: "面谈电话")
+    static let milestoneDecision     = CivicaText("Decision",     es: "Decisión", zh: "决定")
 
     // Current-phase expanded card content
     static let currentEyebrowInReview = CivicaText(
         "In progress · typical 7-10 days",
-        es: "En progreso · típicamente 7-10 días"
+        es: "En progreso · típicamente 7-10 días",
+        zh: "进行中 · 通常 7-10 天"
     )
     static let currentEyebrowInterview = CivicaText(
         "Scheduled by the county",
-        es: "Programada por el condado"
+        es: "Programada por el condado",
+        zh: "由县里安排"
     )
     static let currentEyebrowDecision = CivicaText(
         "Within 30 days by law",
-        es: "Dentro de 30 días por ley"
+        es: "Dentro de 30 días por ley",
+        zh: "依法在 30 天内完成"
     )
 
     static func currentBodyInReview(county: String, language: CivicaLanguage) -> String {
         switch language {
-        case .english, .mandarin, .vietnamese, .tagalog:
+        case .english, .vietnamese, .tagalog:
             return "A caseworker at \(county) is reading your packet. If anything is unclear, they'll send a message here — you don't need to call."
+        case .mandarin:
+            return "\(county) 的一位个案工作员正在查看你的资料。如果有不清楚的地方,他们会在这里给你发消息 —— 你不用打电话。"
         case .spanish:
             return "Un trabajador social en \(county) está leyendo tu paquete. Si algo no está claro, te enviarán un mensaje aquí — no tienes que llamar."
         }
     }
     static let currentBodyInterview = CivicaText(
         "Most interviews are a 15-minute phone call. The caseworker will confirm what you wrote — no surprise questions.",
-        es: "La mayoría de las entrevistas son una llamada de 15 minutos. El trabajador social confirmará lo que escribiste — sin preguntas sorpresa."
+        es: "La mayoría de las entrevistas son una llamada de 15 minutos. El trabajador social confirmará lo que escribiste — sin preguntas sorpresa.",
+        zh: "大多数面谈是 15 分钟的电话。个案工作员会和你确认你填写的内容 —— 不会有意外的问题。"
     )
     static let currentBodyDecision = CivicaText(
         "You'll get a written notice. If approved, your EBT card arrives 5-7 days after.",
-        es: "Recibirás una notificación escrita. Si te aprueban, tu tarjeta EBT llega 5-7 días después."
+        es: "Recibirás una notificación escrita. Si te aprueban, tu tarjeta EBT llega 5-7 días después.",
+        zh: "你会收到一份书面通知。如果获批,你的 EBT 卡会在之后 5-7 天内寄到。"
     )
 
     static let whatCountyDoing = CivicaText(
         "What the county is doing right now",
-        es: "Lo que el condado está haciendo ahora"
+        es: "Lo que el condado está haciendo ahora",
+        zh: "县里现在正在做什么"
     )
     static let whatYouCanDo = CivicaText(
         "What you can do",
-        es: "Lo que puedes hacer"
+        es: "Lo que puedes hacer",
+        zh: "你可以做什么"
     )
 
     static func countyDoingReview(county: String, language: CivicaLanguage) -> String {
         switch language {
-        case .english, .mandarin, .vietnamese, .tagalog:
+        case .english, .vietnamese, .tagalog:
             return "Verifying your ID, address, and income against state records. Flagging anything they can't match for a quick follow-up."
+        case .mandarin:
+            return "正在核对你的身份、地址和收入与州里的记录。对不上的地方会标记出来,然后快速跟进。"
         case .spanish:
             return "Verificando tu identificación, dirección e ingresos con los registros del estado. Marcando cualquier cosa que no coincida para un seguimiento rápido."
         }
     }
     static let countyDoingInterview = CivicaText(
         "Preparing the interview script. The caseworker has already reviewed your packet — the call is to confirm details, not re-ask from scratch.",
-        es: "Preparando el guión de la entrevista. El trabajador social ya revisó tu paquete — la llamada es para confirmar detalles, no para volver a preguntar desde cero."
+        es: "Preparando el guión de la entrevista. El trabajador social ya revisó tu paquete — la llamada es para confirmar detalles, no para volver a preguntar desde cero.",
+        zh: "正在准备面谈的提纲。个案工作员已经看过你的资料 —— 这通电话是为了确认细节,不会从头重新问。"
     )
     static let countyDoingDecision = CivicaText(
         "Issuing the final decision and the written notice. If approved, your case is being set up in the state EBT system.",
-        es: "Emitiendo la decisión final y la notificación escrita. Si te aprueban, tu caso se está configurando en el sistema EBT del estado."
+        es: "Emitiendo la decisión final y la notificación escrita. Si te aprueban, tu caso se está configurando en el sistema EBT del estado.",
+        zh: "正在出具最终决定和书面通知。如果获批,你的案子正在州 EBT 系统里建档。"
     )
 
     static let youCanDoReview1 = CivicaText(
         "Keep your phone on — the interview call may come from a 510 or unknown number.",
-        es: "Mantén tu teléfono encendido — la llamada de entrevista puede venir de un número 510 o desconocido."
+        es: "Mantén tu teléfono encendido — la llamada de entrevista puede venir de un número 510 o desconocido.",
+        zh: "保持手机开机 —— 面谈电话可能来自 510 区号或陌生号码。"
     )
     static let youCanDoReview2 = CivicaText(
         "Have last month's pay stubs and a photo ID nearby.",
-        es: "Ten cerca los recibos de pago del mes pasado y una identificación con foto."
+        es: "Ten cerca los recibos de pago del mes pasado y una identificación con foto.",
+        zh: "把上个月的工资单和带照片的身份证件放在手边。"
     )
     static let youCanDoReview3 = CivicaText(
         "Check this app every couple of days for messages from the county.",
-        es: "Revisa esta app cada par de días por mensajes del condado."
+        es: "Revisa esta app cada par de días por mensajes del condado.",
+        zh: "每隔几天打开这个 app 看看县里有没有发消息。"
     )
     static let youCanDoInterview1 = CivicaText(
         "Be in a quiet place at the scheduled time.",
-        es: "Estar en un lugar tranquilo a la hora programada."
+        es: "Estar en un lugar tranquilo a la hora programada.",
+        zh: "在约定的时间待在安静的地方。"
     )
     static let youCanDoInterview2 = CivicaText(
         "Have your application open so you can answer consistently.",
-        es: "Ten tu solicitud abierta para que puedas responder de manera consistente."
+        es: "Ten tu solicitud abierta para que puedas responder de manera consistente.",
+        zh: "把你的申请打开放在旁边,这样回答可以前后一致。"
     )
     static let youCanDoInterview3 = CivicaText(
         "Bring questions — the caseworker can clarify anything you weren't sure about.",
-        es: "Trae preguntas — el trabajador social puede aclarar cualquier cosa que no tenías clara."
+        es: "Trae preguntas — el trabajador social puede aclarar cualquier cosa que no tenías clara.",
+        zh: "带上你的问题 —— 不清楚的地方,个案工作员都可以帮你解释。"
     )
     static let youCanDoDecision1 = CivicaText(
         "Watch the app and your mail for the written decision.",
-        es: "Estar atento a la app y al correo para la decisión escrita."
+        es: "Estar atento a la app y al correo para la decisión escrita.",
+        zh: "留意 app 和邮件,等着收书面决定。"
     )
     static let youCanDoDecision2 = CivicaText(
         "If approved, the EBT card arrives 5-7 days after the decision.",
-        es: "Si te aprueban, la tarjeta EBT llega 5-7 días después de la decisión."
+        es: "Si te aprueban, la tarjeta EBT llega 5-7 días después de la decisión.",
+        zh: "如果获批,EBT 卡会在决定之后 5-7 天寄到。"
     )
 
-    static let futureCountyReview = CivicaText("Typical 7-10 days", es: "Típicamente 7-10 días")
-    static let futureInterview    = CivicaText("Scheduled by county", es: "Programada por condado")
-    static let futureDecision     = CivicaText("Within 30 days",     es: "Dentro de 30 días")
+    static let futureCountyReview = CivicaText("Typical 7-10 days", es: "Típicamente 7-10 días", zh: "通常 7-10 天")
+    static let futureInterview    = CivicaText("Scheduled by county", es: "Programada por condado", zh: "由县里安排")
+    static let futureDecision     = CivicaText("Within 30 days",     es: "Dentro de 30 días", zh: "30 天内")
 
     static let messageNavigatorTitle = CivicaText(
         "Message a navigator",
-        es: "Mensajea un asesor"
+        es: "Mensajea un asesor",
+        zh: "给协助员发消息"
     )
     static let messageNavigatorBody = CivicaText(
         "A real person, M-F · usually replies in a few hours",
-        es: "Una persona real, L-V · usualmente responde en pocas horas"
+        es: "Una persona real, L-V · usualmente responde en pocas horas",
+        zh: "真人回复,周一至周五 · 通常几小时内回复"
     )
 }
 
