@@ -194,6 +194,7 @@ function runVariantProfile(
     error_element: profile.error_surface.element ?? undefined,
     negative_control: profile.negative_control,
     must_reject: profile.must_reject,
+    trace: result.trace,
   };
 }
 
@@ -256,6 +257,11 @@ function runStatefulProfile(
     error_element: profile.error_surface.element ?? undefined,
     negative_control: profile.negative_control,
     must_reject: profile.must_reject,
+    // Worksheet — intermediate values per gate. Critical for QC-defensible
+    // verdicts and for adjudicating NEEDS_FACTS audit rows without
+    // hand-computing the math. See integrity-fixes-v1 / docs/findings/
+    // 2026-06-03-ma-audit-clean.md (Fix #1).
+    trace: result.trace,
   };
 }
 
