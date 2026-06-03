@@ -99,9 +99,18 @@ struct SNAPSettingsSheet: View {
                     languageRaw = lang.rawValue
                 } label: {
                     HStack(spacing: CivicaSpacing.md) {
-                        Text(lang.displayName)
-                            .font(CivicaTypography.body)
-                            .foregroundStyle(CivicaColors.ink)
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(lang.displayName)
+                                .font(CivicaTypography.body)
+                                .foregroundStyle(CivicaColors.ink)
+                            // Honest coverage note — matches the
+                            // onboarding picker; never hides the option.
+                            if !lang.isFullyTranslated {
+                                Text(SNAPSettingsStrings.languageInProgress.value(in: language))
+                                    .font(CivicaTypography.caption)
+                                    .foregroundStyle(CivicaColors.muted)
+                            }
+                        }
                         Spacer(minLength: 0)
                         if lang == language {
                             Image(systemName: "checkmark")
@@ -223,11 +232,11 @@ struct SNAPSettingsSheet: View {
 
     private func label(for phase: CivicaPhase) -> String {
         switch (phase, language) {
-        case (.enroll,   .english): return "Enroll"
+        case (.enroll, .english), (.enroll, .mandarin), (.enroll, .vietnamese), (.enroll, .tagalog): return "Enroll"
         case (.enroll,   .spanish): return "Solicitar"
-        case (.pending,  .english): return "Pending"
+        case (.pending, .english), (.pending, .mandarin), (.pending, .vietnamese), (.pending, .tagalog): return "Pending"
         case (.pending,  .spanish): return "En espera"
-        case (.enrolled, .english): return "Enrolled"
+        case (.enrolled, .english), (.enrolled, .mandarin), (.enrolled, .vietnamese), (.enrolled, .tagalog): return "Enrolled"
         case (.enrolled, .spanish): return "Inscrito"
         }
     }
@@ -352,6 +361,16 @@ enum SNAPSettingsStrings {
     static let cancel = CivicaText("Cancel", es: "Cancelar")
 
     static let languageHeading = CivicaText("Language", es: "Idioma")
+    /// Shown under languages without full string coverage. Native
+    /// translations supplied so a speaker of that language can read the
+    /// caveat; English fallback for the others.
+    static let languageInProgress = CivicaText(
+        "Some text is in English for now",
+        es: "Parte del texto está en inglés por ahora",
+        zh: "部分内容暂时以英文显示",
+        vi: "Một số nội dung tạm thời bằng tiếng Anh",
+        tl: "May ilang teksto muna sa Ingles"
+    )
 
     static let transparencyHeading = CivicaText("Transparency", es: "Transparencia")
     static let transparencyRow = CivicaText("What Civica uses AI for", es: "Para qué Civica usa IA")

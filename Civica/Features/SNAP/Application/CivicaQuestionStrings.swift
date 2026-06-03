@@ -32,7 +32,7 @@ enum CivicaQuestionStrings {
     /// — same pattern as SNAPDecisionMathStrings interpolated helpers.
     static func progressLabel(current: Int, total: Int, language: CivicaLanguage) -> String {
         switch language {
-        case .english: return "\(current) of \(total)"
+        case .english, .mandarin, .vietnamese, .tagalog: return "\(current) of \(total)"
         case .spanish: return "\(current) de \(total)"
         }
     }
@@ -41,7 +41,7 @@ enum CivicaQuestionStrings {
     /// than two unrelated digits separated by silence.
     static func progressAccessibilityLabel(current: Int, total: Int, language: CivicaLanguage) -> String {
         switch language {
-        case .english: return "Question \(current) of \(total)"
+        case .english, .mandarin, .vietnamese, .tagalog: return "Question \(current) of \(total)"
         case .spanish: return "Pregunta \(current) de \(total)"
         }
     }
@@ -52,7 +52,7 @@ enum CivicaQuestionStrings {
     static func sectionLabel(index: Int, count: Int, title: String?, language: CivicaLanguage) -> String {
         let prefix: String
         switch language {
-        case .english: prefix = "Section \(index) of \(count)"
+        case .english, .mandarin, .vietnamese, .tagalog: prefix = "Section \(index) of \(count)"
         case .spanish: prefix = "Sección \(index) de \(count)"
         }
         if let title, !title.isEmpty {
@@ -81,7 +81,7 @@ enum CivicaQuestionStrings {
     ) -> String {
         let pct = Int((fraction * 100).rounded())
         switch language {
-        case .english:
+        case .english, .mandarin, .vietnamese, .tagalog:
             return "Application progress: about \(pct) percent. Section \(sectionIndex) of \(sectionCount)."
         case .spanish:
             return "Progreso de la solicitud: aproximadamente \(pct) por ciento. Sección \(sectionIndex) de \(sectionCount)."

@@ -208,7 +208,7 @@ enum SNAPApplicantAgeStrings {
     /// "You're 34" / "Tienes 34 años". Caller passes the derived age.
     static func ageReadout(age: Int, language: CivicaLanguage) -> String {
         switch language {
-        case .english: return "You're \(age)"
+        case .english, .mandarin, .vietnamese, .tagalog: return "You're \(age)"
         case .spanish: return "Tienes \(age) años"
         }
     }

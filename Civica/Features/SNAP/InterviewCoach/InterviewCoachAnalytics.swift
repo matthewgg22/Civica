@@ -92,9 +92,9 @@ enum InterviewCoachAnalytics {
     }
 
     static func languageCode(_ language: CivicaLanguage) -> String {
-        switch language {
-        case .english: return "en"
-        case .spanish: return "es"
-        }
+        // The rawValue IS the ISO code (en/es/zh/vi/tl), so analytics
+        // record the real language the user chose — not an English
+        // fallback — even for languages still pending full translation.
+        language.rawValue
     }
 }

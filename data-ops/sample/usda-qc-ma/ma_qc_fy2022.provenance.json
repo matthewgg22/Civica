@@ -1,0 +1,21 @@
+{
+  "source": "USDA SNAP QC Public-Use File (snapqcdata.net)",
+  "fiscal_year": 2022,
+  "input_file": "/Users/matthewgreer-gentis/Downloads/qcfy2022/qc_pub_fy2022.csv",
+  "input_mtime": 1712019698.0,
+  "generated_at": "2026-06-01T16:49:33Z",
+  "state_label": "MA",
+  "state_fips_filter": [
+    "25"
+  ],
+  "columns_used": {
+    "state": "STATE",
+    "weight": "FYWGT",
+    "error": "AMTERR",
+    "benefit": "FSBEN",
+    "earned": "FSEARN",
+    "unearned": "FSUNEARN",
+    "element": null
+  },
+  "codebook": "FY2023 Tech Doc, Chapter V (~p.55) — verify column names here"
+}

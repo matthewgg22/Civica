@@ -372,7 +372,7 @@ enum SNAPNotificationPreviewStrings {
 
     static func rules(language: CivicaLanguage) -> [String] {
         switch language {
-        case .english:
+        case .english, .mandarin, .vietnamese, .tagalog:
             return [
                 "Every message names the next action and the time horizon.",
                 "Email subjects are headlines — they render complete in your inbox.",

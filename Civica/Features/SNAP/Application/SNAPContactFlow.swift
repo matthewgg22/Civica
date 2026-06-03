@@ -425,13 +425,13 @@ enum SNAPContactStrings {
 
     static func methodLabel(for method: PreferredContactMethod, language: CivicaLanguage) -> String {
         switch (method, language) {
-        case (.phone, .english): return "Phone call"
+        case (.phone, .english), (.phone, .mandarin), (.phone, .vietnamese), (.phone, .tagalog): return "Phone call"
         case (.phone, .spanish): return "Llamada telefónica"
-        case (.text, .english):  return "Text message"
+        case (.text, .english), (.text, .mandarin), (.text, .vietnamese), (.text, .tagalog):  return "Text message"
         case (.text, .spanish):  return "Mensaje de texto"
-        case (.email, .english): return "Email"
+        case (.email, .english), (.email, .mandarin), (.email, .vietnamese), (.email, .tagalog): return "Email"
         case (.email, .spanish): return "Correo electrónico"
-        case (.mail, .english):  return "Mail"
+        case (.mail, .english), (.mail, .mandarin), (.mail, .vietnamese), (.mail, .tagalog):  return "Mail"
         case (.mail, .spanish):  return "Correo postal"
         }
     }

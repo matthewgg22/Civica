@@ -537,7 +537,7 @@ enum SNAPHouseholdQuestionStrings {
     )
     static func sizeStepperAccessibility(count: Int, language: CivicaLanguage) -> String {
         switch language {
-        case .english: return "\(count) people in your household"
+        case .english, .mandarin, .vietnamese, .tagalog: return "\(count) people in your household"
         case .spanish: return "\(count) personas en tu hogar"
         }
     }
@@ -592,19 +592,19 @@ enum SNAPHouseholdQuestionStrings {
 
     static func maritalStatusLabel(for value: SNAPMaritalStatus, language: CivicaLanguage) -> String {
         switch (value, language) {
-        case (.single,              .english): return "Single"
+        case (.single, .english), (.single, .mandarin), (.single, .vietnamese), (.single, .tagalog): return "Single"
         case (.single,              .spanish): return "Soltero/a"
-        case (.married,             .english): return "Married"
+        case (.married, .english), (.married, .mandarin), (.married, .vietnamese), (.married, .tagalog): return "Married"
         case (.married,             .spanish): return "Casado/a"
-        case (.domesticPartnership, .english): return "Domestic partnership"
+        case (.domesticPartnership, .english), (.domesticPartnership, .mandarin), (.domesticPartnership, .vietnamese), (.domesticPartnership, .tagalog): return "Domestic partnership"
         case (.domesticPartnership, .spanish): return "Unión doméstica"
-        case (.separated,           .english): return "Separated"
+        case (.separated, .english), (.separated, .mandarin), (.separated, .vietnamese), (.separated, .tagalog): return "Separated"
         case (.separated,           .spanish): return "Separado/a"
-        case (.divorced,            .english): return "Divorced"
+        case (.divorced, .english), (.divorced, .mandarin), (.divorced, .vietnamese), (.divorced, .tagalog): return "Divorced"
         case (.divorced,            .spanish): return "Divorciado/a"
-        case (.widowed,             .english): return "Widowed"
+        case (.widowed, .english), (.widowed, .mandarin), (.widowed, .vietnamese), (.widowed, .tagalog): return "Widowed"
         case (.widowed,             .spanish): return "Viudo/a"
-        case (.preferNotToSay,      .english): return "Prefer not to say"
+        case (.preferNotToSay, .english), (.preferNotToSay, .mandarin), (.preferNotToSay, .vietnamese), (.preferNotToSay, .tagalog): return "Prefer not to say"
         case (.preferNotToSay,      .spanish): return "Prefiero no decir"
         }
     }
@@ -620,11 +620,11 @@ enum SNAPHouseholdQuestionStrings {
 
     static func migrantTriLabel(for value: SNAPTri, language: CivicaLanguage) -> String {
         switch (value, language) {
-        case (.yes, .english):     return "Yes"
+        case (.yes, .english), (.yes, .mandarin), (.yes, .vietnamese), (.yes, .tagalog):     return "Yes"
         case (.yes, .spanish):     return "Sí"
-        case (.no, .english):      return "No"
+        case (.no, .english), (.no, .mandarin), (.no, .vietnamese), (.no, .tagalog):      return "No"
         case (.no, .spanish):      return "No"
-        case (.notSure, .english): return "I'm not sure"
+        case (.notSure, .english), (.notSure, .mandarin), (.notSure, .vietnamese), (.notSure, .tagalog): return "I'm not sure"
         case (.notSure, .spanish): return "No estoy seguro"
         }
     }

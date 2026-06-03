@@ -1,0 +1,174 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://civica/snap/test-profiles.schema.json",
+  "title": "Civica SNAP Test Profile Suite",
+  "description": "Schema for civica_test_profiles.json v0.6+. The requires[] enum is enforced against requires_taxonomy.json — both files must change together when adding a new engine surface.",
+  "type": "object",
+  "required": ["meta", "profiles"],
+  "properties": {
+    "meta": {
+      "type": "object",
+      "required": ["version", "fy", "default_state", "states", "params", "tolerances"],
+      "properties": {
+        "version": {"type": "string"},
+        "fy": {"type": "string"},
+        "default_state": {"type": "string"},
+        "states": {"type": "object", "additionalProperties": {"type": "object"}},
+        "params": {"type": "object"},
+        "tolerances": {"type": "object", "required": ["verdict", "benefit"]}
+      }
+    },
+    "profiles": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "legacy_id", "label", "facts", "requires", "oracle_basis", "citation", "error_surface"],
+        "properties": {
+          "id": {"type": "string", "description": "Semantic, grep-friendly id; concat of legacy_id + label slug."},
+          "legacy_id": {"type": "string", "pattern": "^[A-Z]+[0-9]+$|^MX[0-9]+$"},
+          "label": {"type": "string"},
+          "as_of_date": {"type": "string", "format": "date"},
+          "facts": {
+            "type": "object",
+            "required": ["household", "income", "shelter", "deductions", "assets", "cat_elig"],
+            "properties": {
+              "household": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": ["member_id", "age", "role"],
+                  "properties": {
+                    "member_id": {"type": "string"},
+                    "age": {"type": "integer"},
+                    "role": {"type": "string"},
+                    "disability": {"type": "boolean"},
+                    "elderly": {"type": "boolean"},
+                    "student": {"type": "string"},
+                    "immigration": {"type": "string"},
+                    "five_yr_bar": {"type": "string"},
+                    "sponsored": {"type": "boolean"},
+                    "work_class": {"type": "string"},
+                    "abawd_months_used": {"type": "integer"},
+                    "disqual": {"type": "array", "items": {"type": "string"}},
+                    "living": {"type": "string"}
+                  }
+                }
+              },
+              "income": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": ["member", "type", "amount"],
+                  "properties": {
+                    "member": {"type": "string"},
+                    "type": {"type": "string"},
+                    "amount": {"type": "number"},
+                    "freq": {"type": "string"},
+                    "anticipation": {"type": "string"},
+                    "source_status": {"type": "string"}
+                  }
+                }
+              },
+              "shelter": {
+                "type": "object",
+                "required": ["rent", "sua_tier", "sua_amount"],
+                "properties": {
+                  "rent": {"type": "number"},
+                  "sua_tier": {"enum": ["HCSUA", "LUA", "phone", "none"]},
+                  "sua_amount": {"type": "number"},
+                  "internet": {"type": "number"},
+                  "homeless_deduction": {"type": "boolean"}
+                }
+              },
+              "deductions": {
+                "type": "object",
+                "properties": {
+                  "dependent_care": {"type": "number"},
+                  "medical_unreimbursed": {"type": "number"},
+                  "child_support_paid": {"type": "number"}
+                }
+              },
+              "assets": {"type": ["number", "string"]},
+              "cat_elig": {"type": "string"}
+            }
+          },
+          "requires": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "deductions.child_support",
+                "deductions.dependent_care",
+                "deductions.medical",
+                "eligibility.categorical",
+                "eligibility.disqualification",
+                "eligibility.immigration",
+                "eligibility.student",
+                "household.composition",
+                "income.exclusion",
+                "income.self_employment",
+                "income.unearned",
+                "income.wages",
+                "shelter.homeless",
+                "shelter.internet",
+                "shelter.sua.HCSUA",
+                "shelter.sua.LUA",
+                "shelter.sua.phone",
+                "shelter.uncapped",
+                "test.gross_net_fpl",
+                "test.net_only",
+                "workreq.abawd"
+              ]
+            }
+          },
+          "expected_by_state": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "required": ["verdict"],
+              "properties": {
+                "verdict": {"enum": ["APPROVE", "DENY"]},
+                "eligible": {"type": "boolean"},
+                "benefit": {"type": ["number", "null"]}
+              }
+            }
+          },
+          "expected": {
+            "type": "object",
+            "properties": {
+              "variants": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "object",
+                  "required": ["facts_patch", "verdict"],
+                  "properties": {
+                    "facts_patch": {"type": "object"},
+                    "verdict": {"enum": ["APPROVE", "DENY"]},
+                    "benefit": {"type": ["number", "null"]},
+                    "note": {"type": "string"}
+                  }
+                }
+              }
+            }
+          },
+          "oracle_basis": {"type": "string"},
+          "citation": {"type": "string"},
+          "error_surface": {
+            "type": "object",
+            "properties": {
+              "mode": {"enum": ["flip", "amount"]},
+              "element": {"type": ["string", "null"]}
+            }
+          },
+          "negative_control": {"type": "boolean"},
+          "must_reject": {"type": "boolean"},
+          "paired_with": {"type": ["string", "null"]},
+          "integrity": {"type": ["object", "null"]}
+        },
+        "oneOf": [
+          {"required": ["expected_by_state"]},
+          {"required": ["expected"]}
+        ]
+      }
+    }
+  }
+}

@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
-"""Refresh CA slice of USDA FNS SNAP Retailer Locator.
+"""Refresh a state slice of USDA FNS SNAP Retailer Locator.
 
-Pulls all rows where State='CA' from the canonical USDA ArcGIS FeatureServer
-and writes data-ops/sample/usda-snap-retailers-ca/{retailers.csv,retailers.geojson,manifest.json}.
+Pulls all rows where State=<arg> from the canonical USDA ArcGIS FeatureServer
+and writes data-ops/sample/usda-snap-retailers-<state>/{retailers.csv,retailers.geojson,manifest.json}.
+
+Usage: refresh.py [STATE]   (default: CA)
 
 No auth required. Public-domain federal dataset. Service is rate-limit-friendly
-for sequential paged queries (~31 pages * 1000 records).
+for sequential paged queries (~1 page per ~1000 records).
 """
 from __future__ import annotations
 
@@ -22,9 +24,9 @@ SERVICE = (
     "https://services1.arcgis.com/RLQu0rK7h4kbsBq5/arcgis/rest/services/"
     "snap_retailer_location_data/FeatureServer/0"
 )
-STATE = "CA"
+STATE = (sys.argv[1] if len(sys.argv) > 1 else "CA").upper()
 PAGE_SIZE = 1000
-OUT_DIR = Path(__file__).resolve().parents[2] / "data-ops" / "sample" / "usda-snap-retailers-ca"
+OUT_DIR = Path(__file__).resolve().parents[2] / "data-ops" / "sample" / f"usda-snap-retailers-{STATE.lower()}"
 
 FIELDS = [
     "Record_ID", "Store_Name", "Store_Street_Address", "Additonal_Address",
@@ -59,7 +61,7 @@ def fetch_count() -> int:
 def main() -> int:
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     total = fetch_count()
-    print(f"CA records: {total}", file=sys.stderr)
+    print(f"{STATE} records: {total}", file=sys.stderr)
 
     features: list[dict] = []
     offset = 0

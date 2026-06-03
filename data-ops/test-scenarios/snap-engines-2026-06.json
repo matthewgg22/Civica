@@ -1,0 +1,202 @@
+{
+  "$schema_version": 1,
+  "title": "SNAP engines — internal test scenarios (MA pilot 2026-06)",
+  "description": "Declarative scenarios consumed by both runners: TS (probability) via `pnpm --filter @civica/snap-qc-engine cli batch`, and Swift (eligibility) via the SNAPEngineBatchScenariosTests suite. Update this file to add or pin a new invariant; both runners adapt automatically.",
+  "as_of_date": "2026-03-15",
+
+  "probability": [
+    {
+      "id": "qc-ca-strong-packet",
+      "state": "CA",
+      "kind": "score-packet",
+      "description": "Score floor — all-strong packet must hit tier=low, score=5",
+      "input": {
+        "packet": [
+          { "flow": "utility-sua", "defensibility_score": "strong" },
+          { "flow": "gig-income", "defensibility_score": "strong" },
+          { "flow": "shared-lease", "defensibility_score": "strong" },
+          { "flow": "assets", "defensibility_score": "strong" },
+          { "flow": "benefit-impact-projection", "defensibility_score": "strong" }
+        ]
+      },
+      "expected": {
+        "tier": "low",
+        "score": 5,
+        "factors_count": 0
+      }
+    },
+    {
+      "id": "qc-ca-weak-packet",
+      "state": "CA",
+      "kind": "score-packet",
+      "description": "Score ceiling — all-weak packet must hit tier=high, score=80",
+      "input": {
+        "packet": [
+          { "flow": "utility-sua", "defensibility_score": "weak" },
+          { "flow": "gig-income", "defensibility_score": "weak" },
+          { "flow": "shared-lease", "defensibility_score": "weak" }
+        ]
+      },
+      "expected": {
+        "tier": "high",
+        "score": 80,
+        "factors_count": 3
+      }
+    },
+    {
+      "id": "qc-ca-mixed-packet",
+      "state": "CA",
+      "kind": "score-packet",
+      "description": "Mixed packet — moderate-tier with 1 weak surfaced as factor",
+      "input": {
+        "packet": [
+          { "flow": "utility-sua", "defensibility_score": "moderate" },
+          { "flow": "gig-income", "defensibility_score": "weak" },
+          { "flow": "shared-lease", "defensibility_score": "strong" }
+        ]
+      },
+      "expected": {
+        "tier": "medium",
+        "score": 49,
+        "factors_count": 1
+      }
+    },
+    {
+      "id": "qc-ca-full-engagement",
+      "state": "CA",
+      "kind": "population-per",
+      "description": "CA at 100% engagement reaches thesis target 5.5% projected PER",
+      "input": {
+        "coverage": {
+          "utility_sua": 1.0,
+          "gig_income": 1.0,
+          "shared_lease": 1.0,
+          "assets": 1.0,
+          "benefit_impact": 1.0
+        }
+      },
+      "expected": {
+        "projected_per": 5.50,
+        "tolerance": 0.05
+      }
+    },
+    {
+      "id": "qc-ma-full-engagement",
+      "state": "MA",
+      "kind": "population-per",
+      "description": "MA at 100% engagement scales proportionally: 14.10 × (5.5/10.98) ≈ 7.06%",
+      "input": {
+        "coverage": {
+          "utility_sua": 1.0,
+          "gig_income": 1.0,
+          "shared_lease": 1.0,
+          "assets": 1.0,
+          "benefit_impact": 1.0
+        }
+      },
+      "expected": {
+        "projected_per": 7.06,
+        "tolerance": 0.05
+      }
+    }
+  ],
+
+  "eligibility": [
+    {
+      "id": "elig-ca-gross-income-hh1",
+      "state": "CA",
+      "kind": "gross-income-limit",
+      "description": "CA BBCE 200% FPL — HH=1 monthly gross income limit",
+      "input": { "household_size": 1 },
+      "expected": { "value": 2610 }
+    },
+    {
+      "id": "elig-ca-gross-income-hh4",
+      "state": "CA",
+      "kind": "gross-income-limit",
+      "description": "CA BBCE 200% FPL — HH=4 monthly gross income limit",
+      "input": { "household_size": 4 },
+      "expected": { "value": 5360 }
+    },
+    {
+      "id": "elig-ma-gross-income-hh1",
+      "state": "MA",
+      "kind": "gross-income-limit",
+      "description": "MA BBCE 200% FPL (calendar year basis) — HH=1 monthly gross income limit",
+      "input": { "household_size": 1 },
+      "expected": { "value": 2660 }
+    },
+    {
+      "id": "elig-ma-gross-income-hh4",
+      "state": "MA",
+      "kind": "gross-income-limit",
+      "description": "MA BBCE 200% FPL (calendar year basis) — HH=4 monthly gross income limit",
+      "input": { "household_size": 4 },
+      "expected": { "value": 5500 }
+    },
+    {
+      "id": "elig-ca-sua-heating",
+      "state": "CA",
+      "kind": "sua-value",
+      "description": "CA SUA heating/cooling tier = $663",
+      "input": { "tier": "heatingCooling" },
+      "expected": { "value": 663 }
+    },
+    {
+      "id": "elig-ca-sua-non-heating",
+      "state": "CA",
+      "kind": "sua-value",
+      "description": "CA SUA non-heating tier = $170",
+      "input": { "tier": "nonHeating" },
+      "expected": { "value": 170 }
+    },
+    {
+      "id": "elig-ma-sua-heating",
+      "state": "MA",
+      "kind": "sua-value",
+      "description": "MA SUA heating/cooling tier = $914 (DTA 106 CMR 364.976)",
+      "input": { "tier": "heatingCooling" },
+      "expected": { "value": 914 }
+    },
+    {
+      "id": "elig-ma-sua-non-heating",
+      "state": "MA",
+      "kind": "sua-value",
+      "description": "MA SUA non-heating tier = $556",
+      "input": { "tier": "nonHeating" },
+      "expected": { "value": 556 }
+    },
+    {
+      "id": "elig-ca-rmp-unhoused",
+      "state": "CA",
+      "kind": "rmp",
+      "description": "CA operates RMP — unhoused applicant returns eligible",
+      "input": { "housing_status": "unhoused" },
+      "expected": { "verdict": "eligible" }
+    },
+    {
+      "id": "elig-ma-rmp-unhoused",
+      "state": "MA",
+      "kind": "rmp",
+      "description": "MA does NOT operate RMP — every input collapses to notOperated",
+      "input": { "housing_status": "unhoused" },
+      "expected": { "verdict": "notOperated" }
+    },
+    {
+      "id": "elig-ma-rmp-elderly-or-disabled",
+      "state": "MA",
+      "kind": "rmp",
+      "description": "MA RMP not operated regardless of elderly/disabled flag",
+      "input": { "housing_status": "stableHome", "has_elderly_or_disabled": true },
+      "expected": { "verdict": "notOperated" }
+    },
+    {
+      "id": "elig-ca-rmp-empty-draft",
+      "state": "CA",
+      "kind": "rmp",
+      "description": "CA with empty draft — engine returns unknown (not eligible) until data flows in",
+      "input": { "housing_status": null, "has_elderly_or_disabled": null },
+      "expected": { "verdict": "unknown" }
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "model_version": "ma-snap-gap-v0.1.0",
+  "model_kind": "weighted_counts_no_ml",
+  "scope": "Massachusetts \u2014 per-PUMA SNAP-eligible non-enrollee counts.",
+  "methodology": "Fact-base counts only. Eligible-by-gross-income filter uses 2023 HHS FPL \u00d7 1.30 (federal SNAP gross-income test, 7 CFR \u00a7273.9(a)(1)) and \u00d7 2.00 (BBCE basis used by MA + CA). FS column flags self-reported SNAP receipt. Weighted by WGTP. No predictive model \u2014 the CA equivalent (ca-snap-gap-v0.1.0) adds a 45-feature HistGradientBoosting layer on top; that ML layer is deferred for MA.",
+  "data_source": "ACS 2023 1-Year PUMS, Massachusetts (FIPS 25).",
+  "acs_release": "Census Bureau, September 2024.",
+  "n_total_hh_rows": 35600,
+  "n_occupied_hh_rows": 30460,
+  "n_eligible_130_sample_hh": 3293,
+  "n_eligible_200_sample_hh": 5302,
+  "fpl_table_annual_2023": {
+    "1": 14580,
+    "2": 19720,
+    "3": 24860,
+    "4": 30000,
+    "5": 35140,
+    "6": 40280,
+    "7": 45420,
+    "8": 50560
+  },
+  "fpl_per_additional_2023": 5140,
+  "caveats": [
+    "Gross-income filter ignores SNAP asset test (7 CFR \u00a7273.8) \u2014 most asset-tested HHs in scope; PUMS lacks asset measurement.",
+    "BBCE 200% filter is the realistic Civica-served denominator but does NOT capture the categorical-eligibility nuance (TANF-informational-brochure trigger). MA + CA both effectively offer BBCE to every applicant.",
+    "Non-enrollment rate uses self-reported FS column \u2014 known under-counts SNAP receipt versus admin records.",
+    "PUMA-to-county mapping uses dominant-county assignment; some PUMAs span counties.",
+    "Single-year vintage. 2024 ACS PUMS releases Sep 2025; rerun then for the post-OBBBA snapshot."
+  ]
+}

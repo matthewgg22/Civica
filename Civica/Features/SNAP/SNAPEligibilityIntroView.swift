@@ -262,7 +262,7 @@ private enum SNAPIntroCopy {
     static func approvalHeading(stateCode: String?, language: CivicaLanguage) -> String {
         let agency = SNAPAgencyDirectory.agencyShortName(for: stateCode, language: language)
         switch language {
-        case .english: return "If \(agency) approves your application..."
+        case .english, .mandarin, .vietnamese, .tagalog: return "If \(agency) approves your application..."
         case .spanish: return "Si \(agency) aprueba tu solicitud..."
         }
     }

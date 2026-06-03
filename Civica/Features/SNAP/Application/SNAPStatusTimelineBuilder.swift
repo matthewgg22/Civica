@@ -112,7 +112,7 @@ enum SNAPStatusTimelineBuilder {
         let host = SNAPAgencyDirectory.portalShortURL(for: stateCode)
         let target = host.isEmpty ? nil : host
         switch language {
-        case .english:
+        case .english, .mandarin, .vietnamese, .tagalog:
             return target.map { "Open \($0) to file." } ?? "Open your state SNAP portal to file."
         case .spanish:
             return target.map { "Abre \($0) para presentar." } ?? "Abre el portal de SNAP de tu estado para presentar."

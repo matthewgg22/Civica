@@ -40,7 +40,7 @@ enum EBTBalanceStrings {
     /// Velocity bar sub-label: "X spent" below the spend progress bar.
     static func velocitySpent(amount: String, language: CivicaLanguage) -> String {
         switch language {
-        case .english: return "\(amount) spent"
+        case .english, .mandarin, .vietnamese, .tagalog: return "\(amount) spent"
         case .spanish: return "\(amount) gastados"
         }
     }
@@ -55,11 +55,11 @@ enum EBTBalanceStrings {
     /// de 4 días". The view interpolates the formatted day count.
     static func nextDepositTiming(days: Int, language: CivicaLanguage) -> String {
         switch (days, language) {
-        case (0, .english): return "today"
+        case (0, .english), (0, .mandarin), (0, .vietnamese), (0, .tagalog): return "today"
         case (0, .spanish): return "hoy"
-        case (1, .english): return "tomorrow"
+        case (1, .english), (1, .mandarin), (1, .vietnamese), (1, .tagalog): return "tomorrow"
         case (1, .spanish): return "mañana"
-        case (_, .english): return "in \(days) days"
+        case (_, .english), (_, .mandarin), (_, .vietnamese), (_, .tagalog): return "in \(days) days"
         case (_, .spanish): return "dentro de \(days) días"
         }
     }
@@ -195,15 +195,15 @@ enum EBTBalanceStrings {
 
     static func categoryLabel(_ category: EBTTransactionCategory, language: CivicaLanguage) -> String {
         switch (category, language) {
-        case (.groceries, .english):     return "Groceries"
+        case (.groceries, .english), (.groceries, .mandarin), (.groceries, .vietnamese), (.groceries, .tagalog):     return "Groceries"
         case (.groceries, .spanish):     return "Supermercado"
-        case (.restaurant, .english):    return "Restaurant"
+        case (.restaurant, .english), (.restaurant, .mandarin), (.restaurant, .vietnamese), (.restaurant, .tagalog):    return "Restaurant"
         case (.restaurant, .spanish):    return "Restaurante"
-        case (.farmersMarket, .english): return "Farmers market"
+        case (.farmersMarket, .english), (.farmersMarket, .mandarin), (.farmersMarket, .vietnamese), (.farmersMarket, .tagalog): return "Farmers market"
         case (.farmersMarket, .spanish): return "Mercado de agricultores"
-        case (.other, .english):         return "Other"
+        case (.other, .english), (.other, .mandarin), (.other, .vietnamese), (.other, .tagalog):         return "Other"
         case (.other, .spanish):         return "Otro"
-        case (.deposit, .english):       return "Deposit"
+        case (.deposit, .english), (.deposit, .mandarin), (.deposit, .vietnamese), (.deposit, .tagalog):       return "Deposit"
         case (.deposit, .spanish):       return "Depósito"
         }
     }
@@ -246,7 +246,7 @@ enum EBTBalanceStrings {
         language: CivicaLanguage
     ) -> String {
         switch language {
-        case .english:
+        case .english, .mandarin, .vietnamese, .tagalog:
             return "At this pace, your balance lasts through \(date). Next deposit \(depositTiming)."
         case .spanish:
             return "A este ritmo, tu saldo dura hasta el \(date). Próximo depósito \(depositTiming)."
@@ -263,11 +263,11 @@ enum EBTBalanceStrings {
         language: CivicaLanguage
     ) -> String {
         switch (gapDays, language) {
-        case (1, .english):
+        case (1, .english), (1, .mandarin), (1, .vietnamese), (1, .tagalog):
             return "At this pace, your balance lasts through \(date) — about 1 day before your next deposit."
         case (1, .spanish):
             return "A este ritmo, tu saldo dura hasta el \(date) — aproximadamente 1 día antes de tu próximo depósito."
-        case (_, .english):
+        case (_, .english), (_, .mandarin), (_, .vietnamese), (_, .tagalog):
             return "At this pace, your balance lasts through \(date) — about \(gapDays) days before your next deposit."
         case (_, .spanish):
             return "A este ritmo, tu saldo dura hasta el \(date) — aproximadamente \(gapDays) días antes de tu próximo depósito."
@@ -282,7 +282,7 @@ enum EBTBalanceStrings {
         language: CivicaLanguage
     ) -> String {
         switch language {
-        case .english: return "At this pace, your balance lasts through \(date)."
+        case .english, .mandarin, .vietnamese, .tagalog: return "At this pace, your balance lasts through \(date)."
         case .spanish: return "A este ritmo, tu saldo dura hasta el \(date)."
         }
     }
@@ -403,11 +403,11 @@ enum EBTBalanceStrings {
     )
     static func refreshErrorAccessibilityLabel(asOf: String?, language: CivicaLanguage) -> String {
         switch (asOf, language) {
-        case (let when?, .english):
+        case (let when?, .english), (let when?, .mandarin), (let when?, .vietnamese), (let when?, .tagalog):
             return "Could not update balance. Last update at \(when)."
         case (let when?, .spanish):
             return "No se pudo actualizar el saldo. Última actualización a las \(when)."
-        case (nil, .english):
+        case (nil, .english), (nil, .mandarin), (nil, .vietnamese), (nil, .tagalog):
             return "Could not update balance."
         case (nil, .spanish):
             return "No se pudo actualizar el saldo."

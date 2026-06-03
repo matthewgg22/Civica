@@ -286,7 +286,7 @@ enum InterviewCoachStrings {
 
     static func turnLabel(_ index: Int, language: CivicaLanguage) -> String {
         switch language {
-        case .english: return "Turn \(index)"
+        case .english, .mandarin, .vietnamese, .tagalog: return "Turn \(index)"
         case .spanish: return "Turno \(index)"
         }
     }

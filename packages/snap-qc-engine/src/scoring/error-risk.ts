@@ -446,3 +446,192 @@ export const CA_ELEMENT_ATTRIBUTION_FY23: Record<string, { label: string; share_
   "342": { label: "Contributions", share_pct: 1.30 },
   "323": { label: "Dependent care deduction", share_pct: 0.87 },
 };
+
+// ---------------------------------------------------------------------------
+// MA-state constants (added 2026-06-01 for MA pilot — Project Bread track).
+// CA constants above remain the default for all unparameterized callers; MA
+// constants are accessed via STATE_CONSTANTS below or by passing a state arg
+// to the state-aware functions (computeProjectedPERForState, etc.).
+// ---------------------------------------------------------------------------
+
+/**
+ * MA FY2024 baseline payment-error rate.
+ * Source: USDA FNS-380 FY2024 Massachusetts row,
+ *   data-ops/sample/snap-per-by-state/per_by_state_fy24.csv (13.03 over + 1.07 under = 14.10).
+ *
+ * IMPORTANT: MA FY2024 published PER (14.10%) is HIGHER than CA (10.98%) —
+ * which reverses the direction implied by the FY2023 QC microdata raw rates
+ * (MA derived 7.76% raw < CA derived 10.45% raw). The published rate applies
+ * the QC dollar-tolerance methodology; the gap between raw-derived and
+ * published is larger for MA than for CA. Use this constant — not the raw
+ * QC derivation — for engine math; use the QC microdata for analytical
+ * element-attribution work. See docs/findings/2026-06-01-ma-state-baseline.md.
+ */
+export const MA_BASELINE_PER = 14.10;
+
+/** Fiscal year of the MA baseline PER above (USDA FNS-380 FY2024). */
+export const MA_BASELINE_FISCAL_YEAR = 2024;
+
+/**
+ * MA FY2023 payment error rate by income-source group.
+ * Source: USDA SNAP QC Public-Use File FY2023, MA subset (STATE=25), n=950 cases.
+ * Built with `tools/usda-qc-ingest/src/ingest_qc.py --state MA --multi-element`.
+ * Raw QC rates (no $-tolerance) — see data-ops/sample/usda-qc-ma/ma_qc_fy2023.json.
+ *
+ * MA's earned-any cohort (15.24%) is close to CA's wage_only (16.79%); the
+ * no-earned cohort is materially lower (5.38% vs 8.44%) — but caveat that
+ * these are RAW rates, not the published-rate methodology.
+ */
+export const MA_INCOME_GROUP_PER_FY23 = {
+  earned_any: 15.24, // n=229 MA cases
+  no_earned: 5.38, // n=721 MA cases
+  total: 7.76, // n=950 total MA cases (raw QC, no $-tolerance)
+} as const;
+
+/**
+ * MA FY2023 error attribution by USDA element code.
+ * Source: USDA SNAP QC Public-Use File FY2023, MA subset, n=367 attributable
+ * errored cases. Same methodology as CA above; validated to reproduce CA
+ * reference within 0.25pp per element (`docs/findings/2026-06-01-ma-state-baseline.md`).
+ *
+ * The MA-vs-CA element-mix delta is the meat of the MA-pilot pitch — MA
+ * over-indexes on medical (9.46 vs 3.88), dep-care (5.41 vs 0.87 in CA's table,
+ * but note CA labels 350 differently), unemployment (3.51 vs 2.23); under-indexes
+ * on self-employment (2.29 vs 5.16). Top elements still shelter + wages.
+ */
+export const MA_ELEMENT_ATTRIBUTION_FY23: Record<string, { label: string; share_pct: number }> = {
+  "363": { label: "Shelter deduction", share_pct: 37.82 },
+  "311": { label: "Wages", share_pct: 24.30 },
+  "331": { label: "RSDI", share_pct: 11.07 },
+  "365": { label: "Medical expense deduction", share_pct: 9.46 },
+  "333": { label: "SSI", share_pct: 6.24 },
+  "350": { label: "Dependent care deduction", share_pct: 5.41 },
+  "364": { label: "Standard utility allowance", share_pct: 4.87 },
+  "323": { label: "Unemployment compensation", share_pct: 3.51 },
+  "150": { label: "Household composition", share_pct: 2.80 },
+  "312": { label: "Self-employment", share_pct: 2.29 },
+  "130": { label: "Resources", share_pct: 2.20 },
+  "346": { label: "Other unearned income", share_pct: 2.17 },
+  "334": { label: "Other earned income", share_pct: 1.58 },
+  "366": { label: "Child support deduction", share_pct: 0.93 },
+  "332": { label: "Veterans benefits", share_pct: 0.68 },
+};
+
+/**
+ * State-keyed registry for parameterizing engine math by pilot state.
+ * Default state for any unparameterized caller remains `CA` (legacy CA_*
+ * constants stay exported as the load-bearing API).
+ */
+export interface StateConstants {
+  /** Two-letter state code. */
+  stateCode: string;
+  /** USDA FNS-380 published PER baseline (the engine's CA_BASELINE_PER analog). */
+  baselinePer: number;
+  /** Fiscal year of `baselinePer`. */
+  baselineFiscalYear: number;
+  /** Per-income-group PER from FY2023 QC microdata. Shape varies by state (CA splits SE separately, MA pools earned_any). */
+  incomeGroupPerFy23: Record<string, number>;
+  /** Per-element attribution % from FY2023 QC microdata. */
+  elementAttributionFy23: Record<string, { label: string; share_pct: number }>;
+}
+
+export const STATE_CONSTANTS: Record<"CA" | "MA", StateConstants> = {
+  CA: {
+    stateCode: "CA",
+    baselinePer: CA_BASELINE_PER,
+    baselineFiscalYear: CA_BASELINE_FISCAL_YEAR,
+    incomeGroupPerFy23: CA_INCOME_GROUP_PER_FY23 as unknown as Record<string, number>,
+    elementAttributionFy23: CA_ELEMENT_ATTRIBUTION_FY23,
+  },
+  MA: {
+    stateCode: "MA",
+    baselinePer: MA_BASELINE_PER,
+    baselineFiscalYear: MA_BASELINE_FISCAL_YEAR,
+    incomeGroupPerFy23: MA_INCOME_GROUP_PER_FY23 as unknown as Record<string, number>,
+    elementAttributionFy23: MA_ELEMENT_ATTRIBUTION_FY23,
+  },
+};
+
+export type SupportedState = keyof typeof STATE_CONSTANTS;
+
+/**
+ * State-aware variant of `pillarContribution`. The CA-default `pillarContribution`
+ * stays as the load-bearing API; this variant accepts a state code and substitutes
+ * the state-specific baseline PER.
+ *
+ * The thesis-calibration factor is **state-independent** — by construction, the
+ * pillar-share × max-shift product cancels with the (baseline × fractional-
+ * reduction) target so the factor depends only on the shape of the pillar
+ * matrix, not on which state's baseline we plug in. We therefore reuse
+ * THESIS_CALIBRATION_FACTOR for any supported state. The implied projected
+ * PER at full engagement scales with baseline: MA at full engagement projects
+ * to MA_BASELINE_PER × (PROJECTED_PER_AT_FULL_ENGAGEMENT / CA_BASELINE_PER)
+ * = 14.10 × (5.5 / 10.98) ≈ 7.06.
+ *
+ * Working-assumption: the pillar SHARES are CA-derived (CA FY2023 microdata).
+ * For MA the actual shares differ (medical+dep-care over-index, shelter under-
+ * indexes) — see MA_ELEMENT_ATTRIBUTION_FY23. Until per-state pillar shares
+ * are derived, this function projects using CA shares applied to MA's baseline.
+ * See docs/findings/2026-06-01-ma-state-baseline.md ("What changes" §2).
+ */
+export function pillarContributionForState(
+  pillar: keyof PillarCoverage,
+  engagement: number,
+  state: SupportedState = "CA",
+): number {
+  const e = clamp01(engagement);
+  const baseline = STATE_CONSTANTS[state].baselinePer;
+  return (
+    baseline *
+    PILLAR_SHARES_UNNORMALIZED[pillar] *
+    PILLAR_MAX_DEFENSIBILITY_SHIFT[pillar] *
+    e *
+    THESIS_CALIBRATION_FACTOR
+  );
+}
+
+/**
+ * State-aware variant of `computeProjectedPER`. Like the CA-default function
+ * but with the state baseline + per-state calibration factor.
+ */
+export function computeProjectedPERForState(
+  coverage: PillarCoverage,
+  state: SupportedState = "CA",
+): number {
+  const baseline = STATE_CONSTANTS[state].baselinePer;
+  let totalReduction = 0;
+  for (const key of PILLAR_KEYS) {
+    totalReduction += pillarContributionForState(key, coverage[key], state);
+  }
+  return baseline - totalReduction;
+}
+
+/** State-aware variant of `computeEngagementImpliedPER`. */
+export function computeEngagementImpliedPERForState(
+  coverage: PillarCoverage,
+  state: SupportedState = "CA",
+): number {
+  return computeProjectedPERForState(coverage, state);
+}
+
+/**
+ * State-aware variant of `perPacketGapContribution`. Uses the state baseline
+ * to compute the gap ceiling at score=80. Scales linearly with baseline (MA's
+ * baseline is ~1.28× CA's, so MA's GAP_AT_CEIL is correspondingly larger).
+ */
+export function perPacketGapContributionForState(
+  score: number | null,
+  state: SupportedState = "CA",
+): number | null {
+  if (score == null) return null;
+  const SCORE_FLOOR = 5;
+  const SCORE_CEIL = 80;
+  const baseline = STATE_CONSTANTS[state].baselinePer;
+  // Same fractional reduction at full engagement as CA (~50%); scales by baseline.
+  const fractionalReduction =
+    (CA_BASELINE_PER - PROJECTED_PER_AT_FULL_ENGAGEMENT) / CA_BASELINE_PER;
+  const GAP_AT_CEIL = baseline * fractionalReduction;
+  const normalized = (score - SCORE_FLOOR) / (SCORE_CEIL - SCORE_FLOOR);
+  const clamped = Math.max(0, Math.min(1, normalized));
+  return clamped * GAP_AT_CEIL;
+}

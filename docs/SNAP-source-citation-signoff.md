@@ -44,3 +44,50 @@ The TODO comments at [SNAPStateResources.swift:16](../Civica/Features/SNAP/SNAPS
 - **Row 2** (helpline) currently displays the label `"DTA Assistance Line (placeholder)"`. The "placeholder" word makes it obvious the value is unverified. Engineering will keep that suffix until row 2 is signed off.
 - **Row 12** is broad: it covers every state-agency string that appears in the unsupported-state gate. Reviewer can spot-check 5–10 states against the FNS directory and the linked state pages; engineering does not need every state individually signed off if reviewer is satisfied with the source authority.
 - **Rows 13–18** are the California launch batch (2026-05-13). All six need to clear before the production beta cuts. Rows 13, 14, 17, 18 are display strings on user-facing surfaces (apply portal link, helpline label, appeal-letter hearing-office address, agency name) — same review depth MA's rows 1, 2, 12 received. Rows 15, 16 are policy-math rows analogous to MA's rows 3, 4: row 15 is engineering's safest derivation (200% FPL = same dollars as MA), but should be confirmed against the current CDSS All-County Letter rather than assumed; row 16 is intentionally stubbed (returns nil) until CDSS values are signed.
+
+---
+
+## 2026-06-02 verification refresh
+
+Engineering ran a triple-check of the citation block against live federal and state agency sites on 2026-06-02. Five parallel agents fetched authoritative URLs (USDA FNS, HHS ASPE, Congress.gov, eCFR, CDSS, DTA, MLRI) and cross-referenced against the engine's claimed values. Full finding: `docs/findings/2026-06-02-snap-source-citation-triple-check.md`.
+
+### Confirmed (no row change needed)
+
+- **Row 5 (FY26 max allotments)** — values match [FNS FY26 COLA memo](https://www.usda.gov/sites/default/files/guidance-documents/fns.snap-cola-fy26memo.pdf), effective 2025-10-01 through 2026-09-30.
+- **Row 6 (Standard deduction)**, **Row 7 (excess shelter cap $744)**, **Row 8 (min benefit $24)**, **Row 9 (gross income limits)**, **Row 10 (net income limits)**, **Row 11 (asset limits)** — all confirmed against same FY26 COLA memo.
+- **Row 9/10 footnote**: pinning these to the FNS COLA memo (not derived from FPL) is correct — the memo provides exact tables.
+- **Row 3 (MA BBCE)** — 106 CMR 364.976 confirmed as the BBCE Categorical Eligibility Income Standards section via [Justia](https://regulations.justia.com/states/massachusetts/100-199-cmr/106/106-cmr-364/364-976/). Engine cites FY26 values match [DTA Helpful Charts and Figures](https://eohhs.ehs.state.ma.us/DTA/PolicyOnline/olg%20docs/guides/Helpful%20Charts%20and%20Figures.pdf) — tables stamped 2/1/2026 + 10/1/2025.
+- **Row 4 (MA SUA)** — CONFIRMED as 106 CMR 364.945 (the dedicated SUA section). FY26 values $914 HCSUA / $556 LUA confirmed via Mass Legal Help; phone-only $64 not independently corroborated in WebSearch — verify via direct download of `mass.gov/doc/standard-utility-allowance-sua-as-referenced-at-106-cmr-364945/download`.
+- **Row 15 (CA BBCE)** — Now sourced. Cite [CDSS ACIN I-46-25](https://www.cdss.ca.gov/Portals/9/Additional-Resources/Letters-and-Notices/ACINs/2025/I-46_25.pdf) (FFY 2026). Remove "_(reviewer to confirm)_" hedge.
+- **Row 16 (CA SUA)** — Now sourced. Cite [CDSS ACL 25-68](https://www.cdss.ca.gov/Portals/9/Additional-Resources/Letters-and-Notices/ACLs/2025/25-68.pdf) (FY26 SUA chart). Values: $663 HCSUA / $170 LUA / $20 phone-only.
+- **Row 17 (CA State Hearings)** — PO Box 944243 confirmed; MS code drifts across sources (also seen MS 9-17-37). Verify exact MS with CDSS before printing on forms.
+
+### Corrections / new rows for the next revision
+
+- **NEW row — CA RMP scope.** Engine currently codes `rmp_operated: true` for CA. The previous engineering header listed 8 counties; per [CDSS RMP page](https://www.cdss.ca.gov/rmp), **AB 942 made RMP a statewide mandate effective 2019-10-12** — every CA county must operate it. The boolean is correct; retire the 8-county list.
+- **NEW row — MA Bay State CAP SUA.** Engine assumes CAP recipients use HCSUA $914. **Wrong** — Bay State CAP has its own USDA-approved SUA per [106 CMR 366.910](https://www.law.cornell.edu/regulations/massachusetts/106-CMR-366-910). Silent miscompute for ~70K MA elderly+SSI cases. Either branch on CAP or document as known-not-modeled.
+- **NEW row — OBBBA P.L. 119-21 (enacted 2025-07-04, 139 Stat. 72).** Cite [Congress.gov](https://www.congress.gov/119/plaws/publ21/PLAW-119publ21.pdf). The Act has no short title (stripped in Senate); use "Pub. L. No. 119-21" format.
+- **NEW row — FNS OBBBA umbrella memo (2025-09-04).** [fns.usda.gov/snap/obbb-implementation](https://www.fns.usda.gov/snap/obbb-implementation).
+- **NEW row — FNS OBBBA ABAWD Exceptions Implementation Memo (2025-10-03).** [fns.usda.gov/snap/obbb-ABAWD-exemptions-implementation-memo](https://www.fns.usda.gov/snap/obbb-ABAWD-exemptions-implementation-memo). Corrects: exemption category is "Indian, Urban Indian, or California Indian per Indian Health Care Improvement Act" — **broader than ANCSA**. Age band 18–64 effective 2025-07-04. Removed: homeless, veterans, foster-youth-≤24, parents of children >13.
+- **NEW row — FNS OBBBA Alien Eligibility Memo (2025-10-31).** [fns.usda.gov/snap/obbb-alien-eligibility](https://www.fns.usda.gov/snap/obbb-alien-eligibility). Post-OBBBA eligible: U.S. nationals, LPRs, Cuban/Haitian entrants, COFA. Refugees/asylees/TPS removed.
+- **NEW row — §10104 effective date.** Engine has 2025-11-01 (`benefit-calc.ts:112`). Per OBBBA umbrella memo, statutory enactment was **2025-07-04** with SUA implementation aligned to FY26 (2025-10-01). Counsel decision needed: which date applies operationally to "internet excluded from shelter deduction"?
+- **NEW row — HHS CY2026 FPL** ([FR Doc 2026-00755](https://www.federalregister.gov/documents/2026/01/15/2026-00755/annual-update-of-the-hhs-poverty-guidelines), published 2026-01-15, effective 2026-01-13). **MA BBCE switches basis CY2026 effective 2026-02-01** per 106 CMR 364.976 calendar-year cycle — engine likely still on CY2025. Switch before MA pilot.
+- **NEW row — FNS State Options Report 17th edition (August 2025).** [fns.usda.gov/snap/waivers/state-options-report](https://www.fns.usda.gov/snap/waivers/state-options-report). Pins each state's BBCE/asset-waiver/RMP elections. Engine should reference the 17th ed., not the pre-OBBBA 16th.
+
+### Urgent operational stale-data condition (date-critical)
+
+The engine's `abawd_waiver_avail: true` boolean for both CA and MA is wrong as of this week:
+
+- **CA: statewide ABAWD time limits resume 2026-06-01** per [CDSS ACL 25-93](https://cdss.ca.gov/Portals/9/Additional-Resources/Letters-and-Notices/ACLs/2025/25-41.pdf). Only **7 of 58 counties waived** through 2026-10-31: Colusa, Imperial, Tulare, Alpine, Merced, Monterey, Plumas. The other 51 (LA, SD, Alameda, Fresno, etc.) are time-limited.
+- **MA: statewide waiver expired 2025-06-30** per [MLRI 2025 Guide](https://www.masslegalservices.org/system/files/blog/2025-06/ABAWD%20Work%20Rules%20in%20Massachusetts_%202025%20MLRI%20Guide%20for%20Community%20Organizations%20(3).pdf) + DTA OLGTM-2025-31. No active waivers as of FY26.
+- The boolean is the wrong shape — real shape is **per-county, per-month effective-dated list**. Engine cannot answer "is this county waived today?" until the FY25-29 waiver bundle loader ships.
+
+Until the loader ships, ABAWD verdicts in non-waived areas are functionally a coin flip; the harness validates "if not waived, what's the verdict" — not "is THIS user's county waived."
+
+### Source citations in code — current state
+
+Engine package-level header `packages/snap-rules/src/constants/states.ts` was updated 2026-06-02 (commit `36e330d5`) to fix the two prior factual citation errors (CA SUA ACIN→ACL; MA SUA 364.976→364.945). Dollar values unchanged. RMP statewide note + OBBBA implementing memo URLs + the urgent stale ABAWD condition still need a second pass to land in the header.
+
+### Reviewer signoff status
+
+**Of 19 original rows + 8 new rows surfaced 2026-06-02 = 27 rows total, 0 reviewer signatures.** This document remains engineering's best-guess pending legal-policy review. The triple-check tightens the engineering side; it does not substitute for reviewer signoff.

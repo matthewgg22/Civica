@@ -1,0 +1,18 @@
+{
+  "state": "MA",
+  "asOf": "2026-06-01",
+  "facts": {
+    "household": [
+      {"member_id": "m1", "age": 29, "role": "head", "immigration": "citizen", "work_class": "gen_work_subject"},
+      {"member_id": "m2", "age": 5, "role": "child", "immigration": "citizen"},
+      {"member_id": "m3", "age": 7, "role": "child", "immigration": "citizen"}
+    ],
+    "income": [
+      {"member": "m1", "type": "wages", "amount": 1300, "freq": "monthly"}
+    ],
+    "shelter": {"rent": 950, "sua_tier": "HCSUA", "sua_amount": 914, "internet": 0, "homeless_deduction": false},
+    "deductions": {"dependent_care": 0, "medical_unreimbursed": 0, "child_support_paid": 0},
+    "assets": 200,
+    "cat_elig": "NPA"
+  }
+}

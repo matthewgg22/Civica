@@ -1,0 +1,7 @@
+[
+  { "flow": "utility-sua", "defensibility_score": "moderate" },
+  { "flow": "gig-income", "defensibility_score": "weak" },
+  { "flow": "shared-lease", "defensibility_score": "strong" },
+  { "flow": "assets", "defensibility_score": "strong" },
+  { "flow": "benefit-impact-projection", "defensibility_score": "moderate" }
+]

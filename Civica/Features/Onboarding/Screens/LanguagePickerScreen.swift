@@ -38,6 +38,9 @@ struct LanguagePickerScreen: View {
             VStack(spacing: CivicaSpacing.md) {
                 languageRow(.english, sample: "Continue in English")
                 languageRow(.spanish, sample: "Continuar en español")
+                languageRow(.mandarin, sample: "继续使用中文")
+                languageRow(.vietnamese, sample: "Tiếp tục bằng tiếng Việt")
+                languageRow(.tagalog, sample: "Magpatuloy sa Tagalog")
             }
 
             // JR-7 (audit 2026-05-29): bilingual users hesitate to switch
@@ -78,6 +81,16 @@ struct LanguagePickerScreen: View {
                     Text(sample)
                         .font(CivicaTypography.footnote)
                         .foregroundStyle(CivicaColors.graphite)
+                    // Honest expectation-setting: languages without full
+                    // string coverage fall back to English until their
+                    // translations land. Shown native + English so the
+                    // picker never silently overstates coverage.
+                    if !language.isFullyTranslated, let note = inProgressNote(for: language) {
+                        Text(note)
+                            .font(CivicaTypography.caption)
+                            .foregroundStyle(CivicaColors.muted)
+                            .padding(.top, 2)
+                    }
                 }
                 Spacer()
                 Image(systemName: "chevron.right")
@@ -96,6 +109,18 @@ struct LanguagePickerScreen: View {
         }
         .accessibilityLabel("\(language.displayName). \(sample)")
         .accessibilityAddTraits(.isButton)
+    }
+
+    /// Short, honest note for languages that aren't fully translated
+    /// yet — native phrase + English so it's legible to the speaker and
+    /// to staff. Returns nil for fully-translated languages.
+    private func inProgressNote(for language: CivicaLanguage) -> String? {
+        switch language {
+        case .mandarin:   return "部分内容暂时以英文显示 · Some text is in English for now"
+        case .vietnamese: return "Một số nội dung tạm thời bằng tiếng Anh · Some text is in English for now"
+        case .tagalog:    return "May ilang teksto muna sa Ingles · Some text is in English for now"
+        case .english, .spanish: return nil
+        }
     }
 }
 

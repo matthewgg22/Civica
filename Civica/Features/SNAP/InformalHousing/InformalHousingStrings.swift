@@ -47,7 +47,7 @@ enum InformalHousingStrings {
     /// "Step 2 of 7"
     static func stepOf(_ current: Int, of total: Int, language: CivicaLanguage) -> String {
         switch language {
-        case .english: return "Step \(current) of \(total)"
+        case .english, .mandarin, .vietnamese, .tagalog: return "Step \(current) of \(total)"
         case .spanish: return "Paso \(current) de \(total)"
         }
     }

@@ -343,7 +343,7 @@ enum SNAPDocumentRetryStrings {
 
     static func tips(language: CivicaLanguage) -> [String] {
         switch language {
-        case .english:
+        case .english, .mandarin, .vietnamese, .tagalog:
             return [
                 "Place the document on a dark surface — a kitchen table works.",
                 "Tap the screen to focus before snapping.",

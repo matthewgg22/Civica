@@ -1,0 +1,101 @@
+{
+  "state": "MA",
+  "acs_vintage": "2023 1-Year PUMS",
+  "fpl_vintage": "2023 HHS Poverty Guidelines (48 contig)",
+  "generated_at_utc": "2026-06-01T18:42:34.523020+00:00",
+  "state_totals": {
+    "n_pumas": 54,
+    "n_sample_hh": 30460,
+    "weighted_hh": 3045867,
+    "eligible_130_weighted": 374453,
+    "eligible_130_without_snap_weighted": 174358,
+    "eligible_200_weighted": 586918,
+    "eligible_200_without_snap_weighted": 308680,
+    "non_enrollment_rate_130": 0.4656,
+    "non_enrollment_rate_200": 0.5259
+  },
+  "project_bread_catchment": {
+    "counties": [
+      "Suffolk",
+      "Middlesex",
+      "Norfolk",
+      "Essex",
+      "Worcester",
+      "Hampden"
+    ],
+    "totals": {
+      "n_pumas": 41,
+      "weighted_hh": 2210861,
+      "eligible_130_weighted": 275588,
+      "eligible_130_without_snap_weighted": 125386,
+      "eligible_200_weighted": 426566,
+      "eligible_200_without_snap_weighted": 219160,
+      "non_enrollment_rate_130": 0.455,
+      "non_enrollment_rate_200": 0.5138,
+      "catchment_share_of_state_gap_130": 0.7191,
+      "catchment_share_of_state_gap_200": 0.71
+    },
+    "per_county": [
+      {
+        "county_label": "Essex",
+        "n_pumas": 6,
+        "eligible_130_weighted": 45079,
+        "eligible_130_without_snap_weighted": 19398,
+        "eligible_200_weighted": 70968,
+        "eligible_200_without_snap_weighted": 35919,
+        "non_enrollment_rate_130": 0.4303,
+        "non_enrollment_rate_200": 0.5061
+      },
+      {
+        "county_label": "Hampden",
+        "n_pumas": 3,
+        "eligible_130_weighted": 38421,
+        "eligible_130_without_snap_weighted": 11601,
+        "eligible_200_weighted": 58496,
+        "eligible_200_without_snap_weighted": 22327,
+        "non_enrollment_rate_130": 0.3019,
+        "non_enrollment_rate_200": 0.3817
+      },
+      {
+        "county_label": "Middlesex",
+        "n_pumas": 13,
+        "eligible_130_weighted": 60850,
+        "eligible_130_without_snap_weighted": 37517,
+        "eligible_200_weighted": 93797,
+        "eligible_200_without_snap_weighted": 59514,
+        "non_enrollment_rate_130": 0.6165,
+        "non_enrollment_rate_200": 0.6345
+      },
+      {
+        "county_label": "Norfolk",
+        "n_pumas": 6,
+        "eligible_130_weighted": 30176,
+        "eligible_130_without_snap_weighted": 16078,
+        "eligible_200_weighted": 47315,
+        "eligible_200_without_snap_weighted": 27556,
+        "non_enrollment_rate_130": 0.5328,
+        "non_enrollment_rate_200": 0.5824
+      },
+      {
+        "county_label": "Suffolk",
+        "n_pumas": 6,
+        "eligible_130_weighted": 57123,
+        "eligible_130_without_snap_weighted": 23660,
+        "eligible_200_weighted": 87695,
+        "eligible_200_without_snap_weighted": 41411,
+        "non_enrollment_rate_130": 0.4142,
+        "non_enrollment_rate_200": 0.4722
+      },
+      {
+        "county_label": "Worcester",
+        "n_pumas": 7,
+        "eligible_130_weighted": 43939,
+        "eligible_130_without_snap_weighted": 17132,
+        "eligible_200_weighted": 68295,
+        "eligible_200_without_snap_weighted": 32433,
+        "non_enrollment_rate_130": 0.3899,
+        "non_enrollment_rate_200": 0.4749
+      }
+    ]
+  }
+}

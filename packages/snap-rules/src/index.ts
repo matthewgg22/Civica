@@ -288,3 +288,18 @@ export {
   loadAppealabilityRules,
   evaluateAppealability,
 } from './appealability';
+
+// ---------------------------------------------------------------------------
+// Verdict composer (Wave B 2026-06) — produces APPROVE/DENY + benefit dollars
+// from v0.6-shape facts. Consumed by the profile-harness adapter; will be
+// consumed by enrollment-api + dashboard once stable.
+// ---------------------------------------------------------------------------
+
+export { composeVerdict } from "./verdict";
+export type { Verdict, VerdictResult } from "./verdict";
+export { computeBenefit } from "./benefit-calc";
+export type { BenefitCalcDetail } from "./benefit-calc";
+// SUATier already re-exported from "./sua" above; the facts.ts variant
+// uses the same name + members so consumers don't notice the difference.
+export type { Facts, Member, IncomeLine, Shelter, Deductions } from "./facts";
+export { getEngineParams } from "./constants/index";

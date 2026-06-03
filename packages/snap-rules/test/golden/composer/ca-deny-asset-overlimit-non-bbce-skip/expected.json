@@ -1,0 +1,5 @@
+{
+  "verdict": "DENY",
+  "benefit": null,
+  "reason_substring": "gross_income_over_200pct_fpl"
+}

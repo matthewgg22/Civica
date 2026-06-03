@@ -154,7 +154,7 @@ enum EBTReceiptStrings {
 
     static func linkedTransaction(id: String, language: CivicaLanguage) -> String {
         switch language {
-        case .english: return "Linked to transaction \(id)…"
+        case .english, .mandarin, .vietnamese, .tagalog: return "Linked to transaction \(id)…"
         case .spanish: return "Vinculado a transacción \(id)…"
         }
     }

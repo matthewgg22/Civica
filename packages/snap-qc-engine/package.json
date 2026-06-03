@@ -13,6 +13,7 @@
     "test:watch": "vitest",
     "test:golden": "vitest run test/golden.test.ts",
     "regenerate:goldens": "tsx scripts/regenerate-goldens.ts",
+    "cli": "tsx cli/snap-qc-cli.ts",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

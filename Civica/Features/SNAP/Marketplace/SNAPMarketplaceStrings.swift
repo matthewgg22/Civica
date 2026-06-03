@@ -273,7 +273,7 @@ enum SNAPMarketplaceStrings {
 
     static func applyingTo(employerName: String, language: CivicaLanguage) -> String {
         switch language {
-        case .english: return "Applying to \(employerName)"
+        case .english, .mandarin, .vietnamese, .tagalog: return "Applying to \(employerName)"
         case .spanish: return "Solicitando en \(employerName)"
         }
     }
@@ -283,7 +283,7 @@ enum SNAPMarketplaceStrings {
     )
     static func wellShareWith(employerName: String, language: CivicaLanguage) -> String {
         switch language {
-        case .english: return "We'll share the following with \(employerName)"
+        case .english, .mandarin, .vietnamese, .tagalog: return "We'll share the following with \(employerName)"
         case .spanish: return "Compartiremos lo siguiente con \(employerName)"
         }
     }
@@ -304,7 +304,7 @@ enum SNAPMarketplaceStrings {
 
     static func gigVariabilityNote(employerName: String, language: CivicaLanguage) -> String {
         switch language {
-        case .english: return "\(employerName) income changes monthly. We'll recalculate when each paycheck lands."
+        case .english, .mandarin, .vietnamese, .tagalog: return "\(employerName) income changes monthly. We'll recalculate when each paycheck lands."
         case .spanish: return "Los ingresos de \(employerName) cambian cada mes. Recalcularemos cuando llegue cada cheque."
         }
     }

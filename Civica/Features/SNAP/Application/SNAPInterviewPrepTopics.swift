@@ -29,7 +29,7 @@ enum SNAPInterviewPrepTopics {
     static func list(language: CivicaLanguage, stateCode: String? = nil) -> [Topic] {
         let topics: [Topic]
         switch language {
-        case .english: topics = englishTopics
+        case .english, .mandarin, .vietnamese, .tagalog: topics = englishTopics
         case .spanish: topics = spanishTopics
         }
         // Patch the day-of-call topic's permission line with the
@@ -56,7 +56,7 @@ enum SNAPInterviewPrepTopics {
             ? " or a \(codes) area code"
             : " o un código \(codes)")
         switch language {
-        case .english:
+        case .english, .mandarin, .vietnamese, .tagalog:
             return "Caller ID will say \"\(agency)\"\(codePhrase). They will never text you a code or ask for money."
         case .spanish:
             return "El identificador de llamadas dirá \"\(agency)\"\(codePhrase). Nunca te enviarán un código de verificación ni pedirán dinero."

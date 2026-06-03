@@ -189,6 +189,70 @@ struct MAStateRulesTests {
         )
     }
 
+    /// Each scenario CA returns `.eligible` for must collapse to
+    /// `.notOperated` in MA. Mirrors the per-scenario CA RMP tests so a
+    /// future PR that flips MA's profile `rmp.operated` flag won't
+    /// silently start returning eligibility for MA applicants.
+    @Test func maRMPUnhousedAloneIsNotOperated() {
+        var draft = SNAPApplicationDraft()
+        draft.whereApplying.housingStatus = .unhoused
+        #expect(
+            rules.restaurantMealsProgramEligibility(for: draft, asOf: fy26Date)
+                == .notOperated
+        )
+    }
+
+    @Test func maRMPElderlyOrDisabledAloneIsNotOperated() {
+        var draft = SNAPApplicationDraft()
+        draft.whereApplying.housingStatus = .stableHome
+        draft.household.hasElderlyOrDisabled = true
+        #expect(
+            rules.restaurantMealsProgramEligibility(for: draft, asOf: fy26Date)
+                == .notOperated
+        )
+    }
+
+    @Test func maRMPExplicitNegativesIsNotOperated() {
+        var draft = SNAPApplicationDraft()
+        draft.whereApplying.housingStatus = .stableHome
+        draft.household.hasElderlyOrDisabled = false
+        #expect(
+            rules.restaurantMealsProgramEligibility(for: draft, asOf: fy26Date)
+                == .notOperated
+        )
+    }
+
+    @Test func maRMPIncompleteDraftIsNotOperated() {
+        let draft = SNAPApplicationDraft()
+        #expect(
+            rules.restaurantMealsProgramEligibility(for: draft, asOf: fy26Date)
+                == .notOperated
+        )
+    }
+
+    // MARK: - BBCE date-window edge cases
+    //
+    // MA's BBCE snapshot is effective 2026-02-01 (DTA 106 CMR 364.976)
+    // — but the engine's snapshot lookup falls back to the latest known
+    // snapshot when asOf is outside the window. These tests pin that
+    // behaviour so date-window correctness doesn't drift silently.
+
+    @Test func grossIncomeLimitBeforeEffectiveDateFallsBackToLatestSnapshot() {
+        // 2026-01-15 is before MA BBCE effective date (2026-02-01).
+        // Snapshot lookup returns latest known snapshot value as a
+        // safe-fallback; same dollar value as inside-window.
+        let preEffective = Self.iso("2026-01-15")
+        #expect(rules.grossIncomeLimit(householdSize: 1, asOf: preEffective) == 2_660)
+        #expect(rules.grossIncomeLimit(householdSize: 4, asOf: preEffective) == 5_500)
+    }
+
+    @Test func rulesVersionBeforeEffectiveDateFallsBackToFY26() {
+        // Pre-effective-date callers should still get a usable version
+        // stamp (the most recent snapshot's), not crash.
+        let preEffective = Self.iso("2026-01-15")
+        #expect(rules.rulesVersion(asOf: preEffective) == "MA-bbce-200pct-FY26")
+    }
+
     // MARK: - Rules-version stamp
 
     @Test func rulesVersionStampForFY26() {

@@ -76,10 +76,11 @@ enum SNAPRecoveryStrings {
     /// passes the masked contact in for display.
     static func codeHelper(contact: String, isPhone: Bool, language: CivicaLanguage) -> String {
         switch (language, isPhone) {
-        case (.english, true):   return "We texted \(contact) a code. It should arrive in a minute."
-        case (.english, false):  return "We emailed \(contact). The code should arrive in a minute."
         case (.spanish, true):   return "Enviamos un código por mensaje a \(contact). Debería llegar en un minuto."
         case (.spanish, false):  return "Enviamos un código por correo a \(contact). Debería llegar en un minuto."
+        // English + not-yet-translated languages fall back to English.
+        case (_, true):   return "We texted \(contact) a code. It should arrive in a minute."
+        case (_, false):  return "We emailed \(contact). The code should arrive in a minute."
         }
     }
     static let codePlaceholder = CivicaText("000000", es: "000000")

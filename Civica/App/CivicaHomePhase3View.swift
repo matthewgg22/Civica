@@ -772,7 +772,7 @@ enum CivicaPhase3Strings {
     // Updated timestamp prefix
     static func updatedPrefix(time: String, language: CivicaLanguage) -> String {
         switch language {
-        case .english: return "Updated \(time)"
+        case .english, .mandarin, .vietnamese, .tagalog: return "Updated \(time)"
         case .spanish: return "Actualizado \(time)"
         }
     }
@@ -799,7 +799,7 @@ enum CivicaPhase3Strings {
         formatter.dateFormat = "MMM d"
         let dateStr = formatter.string(from: date)
         switch language {
-        case .english:
+        case .english, .mandarin, .vietnamese, .tagalog:
             return days == 1
                 ? "Due \(dateStr) · 1 day"
                 : "Due \(dateStr) · \(days) days"
@@ -814,7 +814,7 @@ enum CivicaPhase3Strings {
     // Action row
     static func unreadMessagesHeadline(count: Int, language: CivicaLanguage) -> String {
         switch language {
-        case .english:
+        case .english, .mandarin, .vietnamese, .tagalog:
             return count == 1 ? "1 new message" : "\(count) new messages"
         case .spanish:
             return count == 1 ? "1 mensaje nuevo" : "\(count) mensajes nuevos"

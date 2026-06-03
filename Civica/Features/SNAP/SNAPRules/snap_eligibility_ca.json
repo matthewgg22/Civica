@@ -1,0 +1,56 @@
+{
+  "state_code": "CA",
+  "display_name": "California",
+  "version": "1.0",
+  "as_of_date": "2026-06-01",
+  "source_citations": {
+    "bbce": "CDSS ACIN I-46-25 (FFY 2026); Santa Clara County DEBS chart book",
+    "sua": "CDSS ACL 25-68 (FY26 SUA chart)",
+    "abawd": "FNS-approved area waiver list — pending load",
+    "rmp": "CalFresh Restaurant Meals Program — operates in LA, SD, Riverside, San Mateo, Santa Clara, SF, OC, Sacramento, etc.; county participation tracked separately via FindHelp"
+  },
+  "bbce": {
+    "enabled": true,
+    "threshold_fpl_pct": 200,
+    "fpl_basis": "FFY",
+    "snapshots": [
+      {
+        "effective_from": "2025-10-01",
+        "expires_on": "2026-09-30",
+        "version_suffix": "FY26",
+        "per_size": [0, 2610, 3526, 4442, 5360, 6276, 7192, 8110, 9026],
+        "per_additional": 918
+      }
+    ]
+  },
+  "sua": {
+    "snapshots": [
+      {
+        "effective_from": "2025-10-01",
+        "expires_on": "2026-09-30",
+        "version_suffix": "FY26",
+        "heating_cooling": 663,
+        "non_heating": 170,
+        "phone_only": 20
+      }
+    ]
+  },
+  "abawd": {
+    "waivers_loaded": false,
+    "waivers": [],
+    "last_known_status": {
+      "fiscal_quarter": "FY2025-Q3",
+      "as_of_date": "2025-04-01",
+      "waiver_scope": "statewide",
+      "note": "CA had a STATEWIDE ABAWD waiver as of FY2025 Q3 (FNS quarterly status report, April 2025) — one of 6 statewide approvals. OBBBA 2025 (signed July 2025) changed ABAWD waiver criteria; FNS has not yet published OBBBA-era guidance for FY2026 (see https://www.fns.usda.gov/snap/abawd/waivers). Engine returns nil to surface stale-rules notice rather than asserting a waiver that may no longer apply under OBBBA. When FY26 guidance publishes, if CA retains statewide coverage, set waivers_loaded: true and add one waiver entry covering all CA county FIPS codes.",
+      "source_url": "https://www.fns.usda.gov/sites/default/files/resource-files/snap-FY25Q33-ABAWD-WaiverStatus-040125.pdf"
+    }
+  },
+  "rmp": {
+    "operated": true,
+    "participating_counties_fips": []
+  },
+  "categorical_eligibility": {
+    "bbce_path_enabled": true
+  }
+}

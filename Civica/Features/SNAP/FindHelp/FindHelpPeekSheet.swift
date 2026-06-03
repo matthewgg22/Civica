@@ -108,11 +108,11 @@ struct FindHelpPeekSheet: View {
         switch location.resolvedRecordKind {
         case .helpDirectory:
             switch (location.primaryServiceType, language) {
-            case (.snapApplicationHelp, .english): return "SNAP HELP"
+            case (.snapApplicationHelp, .english), (.snapApplicationHelp, .mandarin), (.snapApplicationHelp, .vietnamese), (.snapApplicationHelp, .tagalog): return "SNAP HELP"
             case (.snapApplicationHelp, .spanish): return "AYUDA CON SNAP"
-            case (.foodAssistance,      .english): return "FOOD"
+            case (.foodAssistance, .english), (.foodAssistance, .mandarin), (.foodAssistance, .vietnamese), (.foodAssistance, .tagalog): return "FOOD"
             case (.foodAssistance,      .spanish): return "COMIDA"
-            case (.both,                .english): return "SNAP + FOOD"
+            case (.both, .english), (.both, .mandarin), (.both, .vietnamese), (.both, .tagalog): return "SNAP + FOOD"
             case (.both,                .spanish): return "SNAP + COMIDA"
             }
         case .ebtRetailer:

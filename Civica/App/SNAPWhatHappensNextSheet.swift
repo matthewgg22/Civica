@@ -412,19 +412,19 @@ enum SNAPWhatHappensNextStrings {
     // Status-aware headlines
     static func headlineSubmitted(county: String, language: CivicaLanguage) -> String {
         switch language {
-        case .english: return "We sent your application to \(county)."
+        case .english, .mandarin, .vietnamese, .tagalog: return "We sent your application to \(county)."
         case .spanish: return "Enviamos tu solicitud a \(county)."
         }
     }
     static func headlineDocumentsRequested(county: String, language: CivicaLanguage) -> String {
         switch language {
-        case .english: return "\(county) needs a few more documents."
+        case .english, .mandarin, .vietnamese, .tagalog: return "\(county) needs a few more documents."
         case .spanish: return "\(county) necesita algunos documentos más."
         }
     }
     static func headlineInterviewScheduled(county: String, language: CivicaLanguage) -> String {
         switch language {
-        case .english: return "\(county) scheduled your interview."
+        case .english, .mandarin, .vietnamese, .tagalog: return "\(county) scheduled your interview."
         case .spanish: return "\(county) programó tu entrevista."
         }
     }
@@ -455,7 +455,7 @@ enum SNAPWhatHappensNextStrings {
 
     static func currentBodyInReview(county: String, language: CivicaLanguage) -> String {
         switch language {
-        case .english:
+        case .english, .mandarin, .vietnamese, .tagalog:
             return "A caseworker at \(county) is reading your packet. If anything is unclear, they'll send a message here — you don't need to call."
         case .spanish:
             return "Un trabajador social en \(county) está leyendo tu paquete. Si algo no está claro, te enviarán un mensaje aquí — no tienes que llamar."
@@ -481,7 +481,7 @@ enum SNAPWhatHappensNextStrings {
 
     static func countyDoingReview(county: String, language: CivicaLanguage) -> String {
         switch language {
-        case .english:
+        case .english, .mandarin, .vietnamese, .tagalog:
             return "Verifying your ID, address, and income against state records. Flagging anything they can't match for a quick follow-up."
         case .spanish:
             return "Verificando tu identificación, dirección e ingresos con los registros del estado. Marcando cualquier cosa que no coincida para un seguimiento rápido."

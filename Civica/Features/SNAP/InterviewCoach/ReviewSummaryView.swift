@@ -19,7 +19,7 @@ struct ReviewSummaryView: View {
 
     private var localizedSummary: String {
         switch language {
-        case .english: return score.summaryEn
+        case .english, .mandarin, .vietnamese, .tagalog: return score.summaryEn
         case .spanish: return score.summaryEs
         }
     }

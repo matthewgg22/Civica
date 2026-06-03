@@ -59,7 +59,7 @@ enum UtilityType: String, Codable, CaseIterable, Identifiable, Hashable {
 
     func displayName(in language: CivicaLanguage) -> String {
         switch language {
-        case .english: return displayNameEnglish
+        case .english, .mandarin, .vietnamese, .tagalog: return displayNameEnglish
         case .spanish: return displayNameSpanish
         }
     }

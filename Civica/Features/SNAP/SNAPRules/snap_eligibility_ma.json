@@ -1,0 +1,56 @@
+{
+  "state_code": "MA",
+  "display_name": "Massachusetts",
+  "version": "1.0",
+  "as_of_date": "2026-06-01",
+  "source_citations": {
+    "bbce": "DTA 106 CMR 364.976 (calendar-2026 HHS FPL basis, effective 2026-02-01)",
+    "sua": "DTA 106 CMR 364.945 (FY26 SUA chart). Bay State CAP recipients use heating_cooling tier.",
+    "abawd": "FNS-approved area waiver list — pending load (TODO before MA pilot ships ABAWD-affected verdicts)",
+    "rmp": "Massachusetts does not operate a Restaurant Meals Program. EBT cannot be used for hot prepared meals in MA regardless of household status."
+  },
+  "bbce": {
+    "enabled": true,
+    "threshold_fpl_pct": 200,
+    "fpl_basis": "calendar",
+    "snapshots": [
+      {
+        "effective_from": "2026-02-01",
+        "expires_on": "2026-09-30",
+        "version_suffix": "FY26",
+        "per_size": [0, 2660, 3607, 4553, 5500, 6447, 7393, 8340, 9287],
+        "per_additional": 947
+      }
+    ]
+  },
+  "sua": {
+    "snapshots": [
+      {
+        "effective_from": "2025-10-01",
+        "expires_on": "2026-09-30",
+        "version_suffix": "FY26",
+        "heating_cooling": 914,
+        "non_heating": 556,
+        "phone_only": 64
+      }
+    ]
+  },
+  "abawd": {
+    "waivers_loaded": false,
+    "waivers": [],
+    "last_known_status": {
+      "fiscal_quarter": "FY2025-Q3",
+      "as_of_date": "2025-04-01",
+      "waiver_scope": "partial",
+      "note": "MA had partial-area ABAWD waivers as of FY2025 Q3 (FNS quarterly status report, April 2025). Specific area list not included in summary report. OBBBA 2025 (signed July 2025) changed ABAWD waiver criteria; FNS has not yet published OBBBA-era guidance for FY2026 (see https://www.fns.usda.gov/snap/abawd/waivers — 'in the process of providing guidance'). Engine returns nil to surface stale-rules notice rather than risk incorrect ABAWD-affected verdicts. Operator must load specific MA area waivers per FNS approval letters before MA pilot ships ABAWD verdicts.",
+      "source_url": "https://www.fns.usda.gov/sites/default/files/resource-files/snap-FY25Q33-ABAWD-WaiverStatus-040125.pdf"
+    }
+  },
+  "rmp": {
+    "operated": false,
+    "participating_counties_fips": []
+  },
+  "categorical_eligibility": {
+    "bbce_path_enabled": true
+  }
+}
