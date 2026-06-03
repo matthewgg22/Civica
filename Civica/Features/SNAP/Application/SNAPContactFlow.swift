@@ -382,24 +382,29 @@ enum SNAPContactStrings {
 
     static let emailTitle = CivicaText(
         "What's the best email to reach you?",
-        es: "¿Cuál es el mejor correo para contactarte?"
+        es: "¿Cuál es el mejor correo para contactarte?",
+        zh: "用哪个邮箱联系你最方便?"
     )
     static let emailHelper = CivicaText(
         "Recommended — California's SNAP portal (BenefitsCal) requires a valid email to submit. Leaving it blank means your assister will ask you for it later. Civica only uses it to follow up about your application.",
-        es: "Recomendado — el portal de SNAP de California (BenefitsCal) requiere un correo válido para enviar. Si lo dejas en blanco, tu asistente te lo pedirá después. Civica solo lo usa para hacer seguimiento a tu solicitud."
+        es: "Recomendado — el portal de SNAP de California (BenefitsCal) requiere un correo válido para enviar. Si lo dejas en blanco, tu asistente te lo pedirá después. Civica solo lo usa para hacer seguimiento a tu solicitud.",
+        zh: "建议填写 — 加州的 SNAP 申请门户 (BenefitsCal) 提交时需要一个有效邮箱。留空的话,协助你的人之后还会再问你要。Civica 只会用它来跟进你的申请。"
     )
     static let emailPlaceholder = CivicaText(
         "you@example.com",
-        es: "tu@ejemplo.com"
+        es: "tu@ejemplo.com",
+        zh: "you@example.com"
     )
 
     static let phoneTitle = CivicaText(
         "What's your phone number?",
-        es: "¿Cuál es tu número de teléfono?"
+        es: "¿Cuál es tu número de teléfono?",
+        zh: "你的电话号码是多少?"
     )
     static let phoneHelper = CivicaText(
         "Optional. The state may need to reach you about your application — having a number on file makes that faster.",
-        es: "Opcional. El estado puede necesitar contactarte sobre tu solicitud — tener un número a mano lo agiliza."
+        es: "Opcional. El estado puede necesitar contactarte sobre tu solicitud — tener un número a mano lo agiliza.",
+        zh: "可选。州政府可能需要就你的申请联系你 — 留个号码会让流程更快。"
     )
     static let phonePlaceholder = CivicaText(
         "(555) 123-4567",
@@ -408,11 +413,13 @@ enum SNAPContactStrings {
 
     static let preferredTitle = CivicaText(
         "How would you like Civica to reach you?",
-        es: "¿Cómo prefieres que Civica te contacte?"
+        es: "¿Cómo prefieres que Civica te contacte?",
+        zh: "你希望 Civica 用哪种方式联系你?"
     )
     static let preferredHelper = CivicaText(
         "Pick whichever feels easiest. You can change this later.",
-        es: "Elige la que te resulte más fácil. Puedes cambiarlo después."
+        es: "Elige la que te resulte más fácil. Puedes cambiarlo después.",
+        zh: "选你觉得最方便的一种。之后随时可以改。"
     )
 
     // TCPA consent copy. PENDING LEGAL REVIEW before any outbound
@@ -420,18 +427,23 @@ enum SNAPContactStrings {
     // a one-pager TCPA review by counsel is the gating step.
     static let tcpaConsentBody = CivicaText(
         "I agree to receive phone calls and text messages from Civica about my benefits application, including automated reminders. Standard message and data rates may apply. I can opt out at any time.",
-        es: "Acepto recibir llamadas telefónicas y mensajes de texto de Civica sobre mi solicitud de beneficios, incluyendo recordatorios automáticos. Pueden aplicar tarifas estándar de mensajes y datos. Puedo cancelar en cualquier momento."
+        es: "Acepto recibir llamadas telefónicas y mensajes de texto de Civica sobre mi solicitud de beneficios, incluyendo recordatorios automáticos. Pueden aplicar tarifas estándar de mensajes y datos. Puedo cancelar en cualquier momento.",
+        zh: "我同意接收 Civica 关于我福利申请的电话和短信,包括自动提醒。可能产生标准的短信和数据费用。我可以随时取消。"
     )
 
     static func methodLabel(for method: PreferredContactMethod, language: CivicaLanguage) -> String {
         switch (method, language) {
-        case (.phone, .english), (.phone, .mandarin), (.phone, .vietnamese), (.phone, .tagalog): return "Phone call"
+        case (.phone, .english), (.phone, .vietnamese), (.phone, .tagalog): return "Phone call"
+        case (.phone, .mandarin): return "电话"
         case (.phone, .spanish): return "Llamada telefónica"
-        case (.text, .english), (.text, .mandarin), (.text, .vietnamese), (.text, .tagalog):  return "Text message"
+        case (.text, .english), (.text, .vietnamese), (.text, .tagalog):  return "Text message"
+        case (.text, .mandarin): return "短信"
         case (.text, .spanish):  return "Mensaje de texto"
-        case (.email, .english), (.email, .mandarin), (.email, .vietnamese), (.email, .tagalog): return "Email"
+        case (.email, .english), (.email, .vietnamese), (.email, .tagalog): return "Email"
+        case (.email, .mandarin): return "电子邮件"
         case (.email, .spanish): return "Correo electrónico"
-        case (.mail, .english), (.mail, .mandarin), (.mail, .vietnamese), (.mail, .tagalog):  return "Mail"
+        case (.mail, .english), (.mail, .vietnamese), (.mail, .tagalog):  return "Mail"
+        case (.mail, .mandarin): return "邮寄"
         case (.mail, .spanish):  return "Correo postal"
         }
     }
