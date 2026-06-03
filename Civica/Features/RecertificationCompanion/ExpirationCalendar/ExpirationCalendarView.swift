@@ -188,23 +188,28 @@ struct ExpirationCalendarView: View {
 enum ExpirationCalendarStrings {
     static let unconfiguredStateTitle = CivicaText(
         "We don't have rules for your state yet",
-        es: "Aún no tenemos reglas para tu estado"
+        es: "Aún no tenemos reglas para tu estado",
+        zh: "我们还没有你所在州的规则"
     )
     static let unconfiguredStateBody = CivicaText(
         "We'll add document refresh dates for your state soon. In the meantime, ask your caseworker which documents your state will need fresh at recert.",
-        es: "Pronto agregaremos fechas de renovación para tu estado. Mientras tanto, pregunta a tu trabajador social qué documentos necesitará tu estado en la recertificación."
+        es: "Pronto agregaremos fechas de renovación para tu estado. Mientras tanto, pregunta a tu trabajador social qué documentos necesitará tu estado en la recertificación.",
+        zh: "我们很快会为你所在州补上文件更新日期。在此之前,问问你的社工:复审时你所在州需要哪些最新文件。"
     )
     static let reasonMissing = CivicaText(
         "Not yet uploaded",
-        es: "Aún no subido"
+        es: "Aún no subido",
+        zh: "尚未上传"
     )
     static let reasonStale = CivicaText(
         "Too old for recert",
-        es: "Demasiado antiguo para recertificación"
+        es: "Demasiado antiguo para recertificación",
+        zh: "对复审来说太旧了"
     )
     static let reasonCadence = CivicaText(
         "Due for a fresh copy",
-        es: "Necesita una copia nueva"
+        es: "Necesita una copia nueva",
+        zh: "该换一份新的了"
     )
 }
 
