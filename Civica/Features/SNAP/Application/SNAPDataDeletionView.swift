@@ -170,19 +170,23 @@ enum SNAPDataDeletionStrings {
 
     static let eyebrow = CivicaText(
         "Deleting your Civica data",
-        es: "Eliminando tus datos de Civica"
+        es: "Eliminando tus datos de Civica",
+        zh: "正在删除你的 Civica 数据"
     )
     static let title = CivicaText(
         "Here's what will happen, in order.",
-        es: "Esto es lo que va a pasar, en orden."
+        es: "Esto es lo que va a pasar, en orden.",
+        zh: "接下来会按顺序发生这些事。"
     )
     static let confirm = CivicaText(
         "Yes, delete everything",
-        es: "Sí, eliminar todo"
+        es: "Sí, eliminar todo",
+        zh: "是的，删除所有内容"
     )
     static let cancel = CivicaText(
         "Keep my account",
-        es: "Mantener mi cuenta"
+        es: "Mantener mi cuenta",
+        zh: "保留我的账户"
     )
 
     static func steps(language: CivicaLanguage, stateCode: String? = nil) -> [Step] {
@@ -190,8 +194,9 @@ enum SNAPDataDeletionStrings {
         let agency = SNAPAgencyDirectory.agencyFullName(for: stateCode, language: language)
         let portalEN = portal.isEmpty ? "your state portal" : portal
         let portalES = portal.isEmpty ? "el portal estatal" : portal
+        let portalZH = portal.isEmpty ? "你所在州的门户网站" : portal
         switch language {
-        case .english, .mandarin, .vietnamese, .tagalog:
+        case .english, .vietnamese, .tagalog:
             return [
                 Step(
                     title: "Right now",
@@ -208,6 +213,25 @@ enum SNAPDataDeletionStrings {
                 Step(
                     title: "Reapplying later",
                     body: "You can come back any time. You'll start fresh — Civica won't recognize you, by design."
+                ),
+            ]
+        case .mandarin:
+            return [
+                Step(
+                    title: "现在",
+                    body: "你的答案、拍下的文件、状态和语言偏好都会从这台设备上抹除。应用会返回到语言选择页面。"
+                ),
+                Step(
+                    title: "已经提交给州政府的部分",
+                    body: "如果你已经向\(portalZH)提交过申请，那份申请会保留在州政府那里。Civica 没办法把它撤回——只有\(agency)能修改或关闭它。你的福利不会因为在这里删除而改变。"
+                ),
+                Step(
+                    title: "Civica 的服务器",
+                    body: "在这里删除会清除这台设备上的本地 SNAP 草稿、拍下的文件、状态和偏好。如果你用过可选的网络功能——查找附近的帮助或面谈教练——任何服务器日志或备份的删除会按照 Civica 的保留流程进行。你已经提交的任何申请仍然保留在州政府机构那里。"
+                ),
+                Step(
+                    title: "以后重新申请",
+                    body: "你随时可以回来。你会从头开始——按照设计，Civica 不会认出你。"
                 ),
             ]
         case .spanish:
