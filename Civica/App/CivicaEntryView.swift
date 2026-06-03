@@ -74,6 +74,7 @@ struct CivicaEntryView: View {
         .background(CivicaColors.paper.ignoresSafeArea())
         .navigationTitle("Civica")
         .navigationBarTitleDisplayMode(.inline)
+        .civicaNavWordmark()
         .sheet(isPresented: $presentingDebugMenu) {
             DebugMenuView()
         }

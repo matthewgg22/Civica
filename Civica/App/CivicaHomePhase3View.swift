@@ -139,6 +139,7 @@ struct CivicaHomePhase3View: View {
         .background(CivicaColors.paper.ignoresSafeArea())
         .navigationTitle("Civica")
         .navigationBarTitleDisplayMode(.inline)
+        .civicaNavWordmark()
         .navigationDestination(isPresented: $navigateToFindHelp) {
             FindHelpRootView()
         }

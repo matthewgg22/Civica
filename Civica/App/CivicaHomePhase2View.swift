@@ -324,6 +324,7 @@ struct CivicaHomePhase2View: View {
         .background(CivicaColors.paper.ignoresSafeArea())
         .navigationTitle("Civica")
         .navigationBarTitleDisplayMode(.inline)
+        .civicaNavWordmark()
         .sheet(isPresented: $presentingWhatHappensNext) {
             SNAPWhatHappensNextSheet(
                 statusStore: statusStore,

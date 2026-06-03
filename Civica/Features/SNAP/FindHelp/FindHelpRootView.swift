@@ -65,6 +65,7 @@ struct FindHelpRootView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbarBackground(CivicaColors.surfaceSecondary, for: .navigationBar)
             .toolbarBackground(.visible, for: .navigationBar)
+            .civicaWheatBadge()
             .onAppear {
                 if !hasTrackedEntry {
                     hasTrackedEntry = true
