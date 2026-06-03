@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		1F7AC58FF918596F6758DD22 /* SnapshotTesting in Frameworks */ = {isa = PBXBuildFile; productRef = A32847FBB3163049FEC210E7 /* SnapshotTesting */; };
+		BB1100001100110011000006 /* Sentry in Frameworks */ = {isa = PBXBuildFile; productRef = BB1100001100110011000002 /* Sentry */; };
+		C380C51F2FD0A40F00E93491 /* Sentry in Frameworks */ = {isa = PBXBuildFile; productRef = BB1100001100110011000002 /* Sentry */; };
 		CCAA000000000000000000B1 /* CivicaDesignSystem in Frameworks */ = {isa = PBXBuildFile; productRef = CCAA000000000000000000B0 /* CivicaDesignSystem */; };
 /* End PBXBuildFile section */
 
@@ -99,6 +101,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C380C51F2FD0A40F00E93491 /* Sentry in Frameworks */,
 				CCAA000000000000000000B1 /* CivicaDesignSystem in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -108,6 +111,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				1F7AC58FF918596F6758DD22 /* SnapshotTesting in Frameworks */,
+				BB1100001100110011000006 /* Sentry in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -190,6 +194,7 @@
 			name = Civica;
 			packageProductDependencies = (
 				CCAA000000000000000000B0 /* CivicaDesignSystem */,
+				BB1100001100110011000002 /* Sentry */,
 			);
 			productName = Civica;
 			productReference = CCAA000000000000000000A2 /* Civica.app */;
@@ -214,6 +219,7 @@
 			name = CivicaTests;
 			packageProductDependencies = (
 				A32847FBB3163049FEC210E7 /* SnapshotTesting */,
+				BB1100001100110011000002 /* Sentry */,
 			);
 			productName = CivicaTests;
 			productReference = CCBB000000000000000000A2 /* CivicaTests.xctest */;
@@ -257,6 +263,7 @@
 				C36C759F2F42719F007CB83D /* XCRemoteSwiftPackageReference "supabase-swift" */,
 				C343D0BA2FAFDCE300D0F262 /* XCLocalSwiftPackageReference "CivicaDesignSystem" */,
 				A86ACAC0C752FDB93AD84FEF /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */,
+				BB1100001100110011000001 /* XCRemoteSwiftPackageReference "sentry-cocoa" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = C3B862E92D9A42E00092C1CB /* Products */;
@@ -601,6 +608,14 @@
 				minimumVersion = 1.17.0;
 			};
 		};
+		BB1100001100110011000001 /* XCRemoteSwiftPackageReference "sentry-cocoa" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/getsentry/sentry-cocoa";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 8.44.0;
+			};
+		};
 		C36C759F2F42719F007CB83D /* XCRemoteSwiftPackageReference "supabase-swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/supabase/supabase-swift";
@@ -632,6 +647,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = A86ACAC0C752FDB93AD84FEF /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */;
 			productName = SnapshotTesting;
+		};
+		BB1100001100110011000002 /* Sentry */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = BB1100001100110011000001 /* XCRemoteSwiftPackageReference "sentry-cocoa" */;
+			productName = Sentry;
 		};
 		CCAA000000000000000000B0 /* CivicaDesignSystem */ = {
 			isa = XCSwiftPackageProductDependency;

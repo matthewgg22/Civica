@@ -4,6 +4,8 @@
 <dict>
 	<key>ADMIN_PIN</key>
 	<string>$(ADMIN_PIN)</string>
+	<key>CIVICA_SENTRY_DSN</key>
+	<string>$(CIVICA_SENTRY_DSN)</string>
 	<key>GOVHELP_FUNCTION_SLUG</key>
 	<string>govhelp</string>
 	<key>CFBundleURLTypes</key>

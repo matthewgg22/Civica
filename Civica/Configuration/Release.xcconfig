@@ -1,6 +1,12 @@
 // Release build settings for the Civica target.
-// Secret values (ADMIN_PIN, etc.) come from Secrets.xcconfig which is gitignored.
-// CI must supply these via environment or xcconfig injection before archiving.
+// Secret values (ADMIN_PIN, CIVICA_SENTRY_DSN, etc.) come from Secrets.xcconfig
+// which is gitignored. CI must supply these via environment or xcconfig
+// injection before archiving.
+//
+// CIVICA_SENTRY_DSN: when empty, the iOS Sentry init is skipped — release
+// builds without a DSN are valid (no events captured) but operators should
+// inject the project DSN in CI.
 
 ADMIN_PIN = 000000
+CIVICA_SENTRY_DSN =
 #include? "Secrets.xcconfig"
