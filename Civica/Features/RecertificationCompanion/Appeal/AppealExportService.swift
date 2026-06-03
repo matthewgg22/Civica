@@ -187,16 +187,30 @@ struct AppealExportSheetView: View {
 enum AppealExportStrings {
     static let title = CivicaText(
         "Send your appeal",
-        es: "Envía tu apelación"
+        es: "Envía tu apelación",
+        zh: "发送你的申诉"
     )
-    static let shareCTA = CivicaText("Save as PDF or send", es: "Guardar PDF o enviar")
-    static let copyCTA = CivicaText("Copy text", es: "Copiar texto")
+    static let shareCTA = CivicaText(
+        "Save as PDF or send",
+        es: "Guardar PDF o enviar",
+        zh: "保存为 PDF 或发送"
+    )
+    static let copyCTA = CivicaText(
+        "Copy text",
+        es: "Copiar texto",
+        zh: "复制文本"
+    )
 
     static func portalCTA(state: String) -> CivicaText {
         CivicaText(
             "Open the \(state) benefits portal",
-            es: "Abrir el portal de beneficios de \(state)"
+            es: "Abrir el portal de beneficios de \(state)",
+            zh: "打开 \(state) 福利门户"
         )
     }
-    static let cancel = CivicaText("Cancel", es: "Cancelar")
+    static let cancel = CivicaText(
+        "Cancel",
+        es: "Cancelar",
+        zh: "取消"
+    )
 }
