@@ -11,7 +11,7 @@
 // CI wires this as `pnpm --filter @civica/snap-rules run lint:registry`.
 // Failures block merge per the spec acceptance criterion.
 
-import { loadRegistry } from "./load.ts";
+import { loadRegistry } from "./load";
 
 const WARN_WINDOW_DAYS = 30;
 const NULL_VALID_THROUGH_WARN_DAYS = 365;
