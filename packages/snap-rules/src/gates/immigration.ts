@@ -43,11 +43,27 @@ export function memberImmigrationEligible(m: Member, asOf: Date): boolean {
     return true;
   }
   if (imm === "refugee") {
-    // Pre-OBBBA classification retained eligibility; OBBBA removed
-    // the standalone refugee category (members must adjust to LPR).
-    // The fixture uses `removed_status:refugee` to encode post-cutoff
-    // ineligibility, so a bare "refugee" status here predates the cutoff.
-    const obbbaCutoff = new Date(Date.UTC(2025, 10, 1));
+    // OBBBA P.L. 119-21 §10108: refugees in refugee status (pre-LPR
+    // adjustment) are no longer eligible for SNAP. Effective date is
+    // ENACTMENT (2025-07-04), per FNS implementing memo dated
+    // 2025-10-31. Verbatim from the memo's Attachment 1:
+    //   "Refugees | Post-OBBB Eligibility: Not eligible."
+    // Source URL: https://www.fns.usda.gov/snap/obbb-alien-eligibility
+    // Verified 2026-06-03 via outside reviewer fetch.
+    //
+    // PRIOR BUG: cutoff was set to 2025-11-01 (the 120-day FNS
+    // hold-harmless window deadline). That date is when state agencies
+    // were required to fully implement, not when the rule took effect.
+    // The statutory effective date is 2025-07-04.
+    //
+    // NUANCE: a member who entered as a refugee but ADJUSTED to LPR
+    // status is still eligible with no 5-year wait, per the PRWORA
+    // 5-year-bar exemptions preserved by OBBBA (FNS clarification
+    // dated 2025-12-09). Such members are encoded as `lpr` with
+    // `five_yr_bar = "exempt:humanitarian"` or similar (see profile
+    // A10 "Refugee adjusted to LPR" — verified APPROVE post-fix);
+    // they hit the `imm === "lpr"` branch above, not this one.
+    const obbbaCutoff = new Date(Date.UTC(2025, 6, 4));
     return asOf < obbbaCutoff;
   }
   if (imm.startsWith("removed_status:")) return false;

@@ -55,15 +55,18 @@ The 8 Massachusetts failures from `/profile-simulation MA` adjudicated against v
 
 ### D07 — Refugee in refugee status, post-OBBBA
 
-**Disposition: ENGINE_BUG · Evidence: VERIFIED**
+**Disposition: ENGINE_BUG (two parts) · Evidence: VERIFIED**
 
-- **Controlling citation:** OBBBA §10108 (P.L. 119-21, enacted 2025-07-04) as implemented by FNS memo 2025-10-31. Note: 7 CFR 273.4 has not been re-codified post-OBBBA; the regulation text lags the statute.
-- **Verbatim from FNS memo Attachment 1:** *"Refugees | Post-OBBB Eligibility: Not eligible."* Eligible non-citizens are now only: U.S. citizens, U.S. nationals, lawful permanent residents (LPRs), Cuban and Haitian entrants, COFA citizens.
-- **Engine behavior:** treats `refugee` status as eligible per pre-OBBBA §273.4(a)(6)(ii)(B).
-- **Correct behavior:** DENY a member in refugee status (status code = `refugee`) if `as_of` ≥ 2025-07-04. APPROVE a member who entered as a refugee and adjusted to LPR (status code = `lpr_humanitarian` or equivalent) — the PRWORA 5-year-bar exemption for former refugees is preserved per FNS clarification 2025-12-09.
-- **Fix location:** `packages/snap-rules/src/gates/immigration.ts`. Must distinguish refugee-in-refugee-status (DENY) from refugee-who-adjusted-to-LPR (APPROVE with no 5-year wait).
-- **A10 guard:** profile A10 ("Refugee adjusted to LPR") must remain APPROVE after the fix — confirms the LPR-pathway preservation.
-- **Real-world impact:** state offices following the FNS memo are denying refugees today; the engine still approves them. Mismatch causes both wrongful approval and applicant confusion.
+The audit identified two distinct bugs in the same path. The first is fixed (commit follows). The second is a larger refactor and stays open.
+
+**Part 1 (FIXED) — OBBBA effective date:** engine had `obbbaCutoff = 2025-11-01`. That was the FNS 120-day hold-harmless deadline, not the statutory effective date. Per FNS memo Attachment 1 (2025-10-31), eligibility changes are "effective July 4, 2025." Engine updated to `2025-07-04`. No verdict change in the current test set (no profile has `as_of_date` in the contested July-November 2025 window), but correctness against primary source. A10 guard confirmed: refugee-who-adjusted-to-LPR continues APPROVE (uses `lpr + exempt:refugee_adjusted` branch, not the refugee branch).
+
+**Part 2 (OPEN — bigger refactor) — ineligible-alien household-size recomputation:** D07 fixture encodes m1 with `immigration: "removed_status:refugee"` (correctly ineligible per engine) and m2 as citizen child. Per 7 CFR 273.11(c), an ineligible alien's income should be deemed in proportion, but they do NOT count toward household size for benefit calculation. Engine currently computes benefit for the full household (HH2 max allotment $546 in CA, similar in MA). Correct behavior: compute as HH1 ($298 max allotment) with m1's income deemed in. D07 fixture's expected DENY is also questionable — with zero income, a HH1 citizen-only household should APPROVE at $298. The fixture may need re-authoring, OR the fixture is implicitly testing a single-member refugee household that the schema doesn't support.
+
+- **Verbatim from FNS memo Attachment 1:** *"Refugees | Post-OBBB Eligibility: Not eligible."*
+- **Verbatim from §273.11(c)(1):** ineligible aliens' income is treated "as if" prorated; benefit allotment computed for remaining eligible members only.
+- **Fix location for Part 2:** `packages/snap-rules/src/verdict.ts` or new `gates/composition.ts` logic to recompute effective HH size from immigration eligibility before calling `computeBenefit`.
+- **Action:** Part 1 shipped. Part 2 deferred to a follow-up PR with the proration math + a re-authored D07 fixture. Until then, D07 remains a known harness failure attributed to the proration gap, not to immigration eligibility logic.
 
 ### P58 — Elderly E/D HH1 over net limit (state-specific)
 
