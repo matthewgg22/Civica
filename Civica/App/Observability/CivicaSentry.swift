@@ -38,9 +38,15 @@ enum CivicaSentry {
     @discardableResult
     static func scrub(_ event: Event) -> Event {
         if let request = event.request {
-            request.bodyString = nil
+            // Sentry-Cocoa 8.x SentryRequest carries `bodySize` (NSNumber) but
+            // no `bodyString` / `data` — the body is metadata-only, never the
+            // actual payload. Privacy-positive by default; nothing to scrub
+            // here for body content. We still clear cookies, queryString, and
+            // non-content-type headers since they routinely carry tokens /
+            // user-IDs / session cookies.
             request.cookies = nil
             request.queryString = nil
+            request.fragment = nil
             if let contentType = request.headers?["content-type"] {
                 request.headers = ["content-type": contentType]
             } else {
