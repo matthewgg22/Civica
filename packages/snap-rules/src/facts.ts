@@ -70,6 +70,16 @@ const EARNED_TYPES = new Set<string>([
   "self_employment",
   "farm_se",
   "wages_contract",
+  // VISTA payments are EARNED income per 7 CFR 273.9(b)(1)(iv) for households
+  // that were NOT receiving SNAP/PA at the time the member joined VISTA.
+  // (For households receiving SNAP/PA at joining, the payment is excluded
+  // per 7 CFR 273.9(c)(10)(iii) and the fixture uses the `_excluded` suffix.)
+  // Verified verbatim from §273.9(c)(10)(iii):
+  //   "New applicants who were not receiving public assistance or SNAPs
+  //    at the time they joined VISTA shall have these volunteer payments
+  //    included as earned income."
+  // Cornell LII fetch 2026-06-03. Audit: docs/findings/2026-06-03-ma-audit-clean.md
+  "americorps_vista_counted",
 ]);
 
 /** Income types excluded from SNAP per 7 CFR 273.9(c).
