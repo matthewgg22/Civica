@@ -15,23 +15,17 @@ import Testing
 struct CivicaSentryPIIScrubberTests {
 
     // MARK: - Request scrubbing
-
-    @Test("request bodyString is nil'd")
-    func requestBodyIsScrubbed() {
-        let event = Event()
-        let request = Request()
-        request.bodyString = #"{"ssn":"123-45-6789","household":[{"name":"Jane"}]}"#
-        event.request = request
-
-        _ = CivicaSentry.scrub(event)
-
-        #expect(event.request?.bodyString == nil)
-    }
+    //
+    // Sentry-Cocoa's `SentryRequest` is metadata-only — it carries `bodySize`
+    // (NSNumber), `cookies`, `headers`, `fragment`, `method`, `queryString`,
+    // `url`. There is no `bodyString` / `data` property for body content, so
+    // the actual request payload never reaches Sentry in the first place. We
+    // still scrub the carriers that routinely hold tokens / IDs.
 
     @Test("request cookies are nil'd")
     func requestCookiesAreScrubbed() {
         let event = Event()
-        let request = Request()
+        let request = SentryRequest()
         request.cookies = "session=abcdef; ga=GA1.2.123.456"
         event.request = request
 
@@ -43,7 +37,7 @@ struct CivicaSentryPIIScrubberTests {
     @Test("request queryString is nil'd (may contain user IDs / tokens)")
     func requestQueryStringIsScrubbed() {
         let event = Event()
-        let request = Request()
+        let request = SentryRequest()
         request.queryString = "token=eyJhbGciOiJIUzI1NiJ9&packetId=pkt_123"
         event.request = request
 
@@ -52,10 +46,22 @@ struct CivicaSentryPIIScrubberTests {
         #expect(event.request?.queryString == nil)
     }
 
+    @Test("request fragment is nil'd (URL anchor can carry session state)")
+    func requestFragmentIsScrubbed() {
+        let event = Event()
+        let request = SentryRequest()
+        request.fragment = "access_token=eyJhbGciOiJIUzI1NiJ9"
+        event.request = request
+
+        _ = CivicaSentry.scrub(event)
+
+        #expect(event.request?.fragment == nil)
+    }
+
     @Test("request headers retain only content-type")
     func requestHeadersOnlyContentType() {
         let event = Event()
-        let request = Request()
+        let request = SentryRequest()
         request.headers = [
             "content-type": "application/json",
             "authorization": "Bearer eyJhbGciOiJIUzI1NiJ9",
@@ -72,7 +78,7 @@ struct CivicaSentryPIIScrubberTests {
     @Test("request headers become nil when content-type is absent")
     func requestHeadersNilWithoutContentType() {
         let event = Event()
-        let request = Request()
+        let request = SentryRequest()
         request.headers = ["authorization": "Bearer …", "x-trace-id": "abc"]
         event.request = request
 
