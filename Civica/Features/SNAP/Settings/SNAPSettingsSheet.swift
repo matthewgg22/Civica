@@ -356,11 +356,11 @@ struct SNAPSettingsSheet: View {
 // MARK: - Strings
 
 enum SNAPSettingsStrings {
-    static let title = CivicaText("Settings", es: "Ajustes")
-    static let done = CivicaText("Done", es: "Listo")
-    static let cancel = CivicaText("Cancel", es: "Cancelar")
+    static let title = CivicaText("Settings", es: "Ajustes", zh: "设置")
+    static let done = CivicaText("Done", es: "Listo", zh: "完成")
+    static let cancel = CivicaText("Cancel", es: "Cancelar", zh: "取消")
 
-    static let languageHeading = CivicaText("Language", es: "Idioma")
+    static let languageHeading = CivicaText("Language", es: "Idioma", zh: "语言")
     /// Shown under languages without full string coverage. Native
     /// translations supplied so a speaker of that language can read the
     /// caveat; English fallback for the others.
@@ -372,27 +372,30 @@ enum SNAPSettingsStrings {
         tl: "May ilang teksto muna sa Ingles"
     )
 
-    static let transparencyHeading = CivicaText("Transparency", es: "Transparencia")
-    static let transparencyRow = CivicaText("What Civica uses AI for", es: "Para qué Civica usa IA")
+    static let transparencyHeading = CivicaText("Transparency", es: "Transparencia", zh: "透明度")
+    static let transparencyRow = CivicaText("What Civica uses AI for", es: "Para qué Civica usa IA", zh: "Civica 在哪些方面使用 AI")
 
-    static let demoModeHeading = CivicaText("Demo mode", es: "Modo demo")
-    static let demoModeRow = CivicaText("Unlock all phases", es: "Desbloquear todas las fases")
+    static let demoModeHeading = CivicaText("Demo mode", es: "Modo demo", zh: "演示模式")
+    static let demoModeRow = CivicaText("Unlock all phases", es: "Desbloquear todas las fases", zh: "解锁所有阶段")
     static let demoModeCaption = CivicaText(
         "When on, pick Enroll, Pending, or Enrolled below to jump straight to that home. Selection resets local application status to that phase — leave off for normal use.",
-        es: "Cuando está activado, elige Solicitar, En espera o Inscrito debajo para ir directamente a ese inicio. La selección restablece el estado local de la solicitud a esa fase — déjalo desactivado para uso normal."
+        es: "Cuando está activado, elige Solicitar, En espera o Inscrito debajo para ir directamente a ese inicio. La selección restablece el estado local de la solicitud a esa fase — déjalo desactivado para uso normal.",
+        zh: "开启后,在下方选择「申请」、「待处理」或「已加入」,即可直接跳转到对应的首页。选择会把本地的申请状态重置为该阶段 — 日常使用请保持关闭。"
     )
 
-    static let signOut = CivicaText("Sign out", es: "Cerrar sesión")
+    static let signOut = CivicaText("Sign out", es: "Cerrar sesión", zh: "退出登录")
     static let signOutConfirm = CivicaText(
         "Sign out of Civica? Your saved progress stays on this device.",
-        es: "¿Cerrar sesión en Civica? Tu progreso guardado permanece en este dispositivo."
+        es: "¿Cerrar sesión en Civica? Tu progreso guardado permanece en este dispositivo.",
+        zh: "要退出 Civica 吗?你保存的进度会保留在这台设备上。"
     )
 
-    static let aboutHeading = CivicaText("About", es: "Acerca de")
-    static let versionLabel = CivicaText("Version", es: "Versión")
+    static let aboutHeading = CivicaText("About", es: "Acerca de", zh: "关于")
+    static let versionLabel = CivicaText("Version", es: "Versión", zh: "版本")
     static let openSourceNotice = CivicaText(
         "Civica is built with open-source software. Civica does not make benefit decisions — your state agency does.",
-        es: "Civica está construido con software de código abierto. Civica no toma decisiones de beneficios — tu agencia estatal lo hace."
+        es: "Civica está construido con software de código abierto. Civica no toma decisiones de beneficios — tu agencia estatal lo hace.",
+        zh: "Civica 由开源软件构建。Civica 不做福利决定 — 决定由你所在州的机构作出。"
     )
 }
 
