@@ -6,6 +6,17 @@ Run the SNAP profile simulation against the v0.6 fixture and surface the
 markdown report. This grades **engine-vs-oracle agreement** — it is NOT a
 payment-error-rate calculator. Per-element pass rate is the headline.
 
+The report now also includes a **verification-context preflight** at the
+top, showing the Layer 3 registry lint (constants hygiene) and Layer 1a
+metamorphic relations (engine self-consistency) status alongside the
+harness totals. Each layer proves something distinct; the preflight
+surfaces all three without conflating them. See
+`docs/findings/2026-06-03-verification-hyperdrive-v0.md`.
+
+Preflight adds ~1.3s latency (vitest spawn). Pass `--skip-metamorphic`
+to keep lint but skip the vitest run (faster, lint is <100ms). Pass
+`--no-preflight` to skip the whole thing.
+
 > **Naming note:** the slash command surface is `/profile-simulation`. The
 > underlying tool keeps its package name `@civica/profile-harness` at
 > `tools/profile-harness/` (renaming the package would churn imports +

@@ -14,9 +14,12 @@
     "build": "tsc",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "lint:registry": "tsx src/registry/lint.ts",
+    "test:metamorphic": "vitest run test/metamorphic.test.ts"
   },
   "dependencies": {
+    "yaml": "^2.9.0",
     "zod": "^3.24.0"
   },
   "devDependencies": {

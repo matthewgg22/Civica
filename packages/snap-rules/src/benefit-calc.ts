@@ -31,9 +31,11 @@
 // 273.10(e)(2)(ii)(C). The OTHER rounding rule at 273.10(e)(1)(ii) covers
 // cents-handling INSIDE the net-income computation — a different subsection
 // for a different purpose. For lottery / substantial gambling-winnings
-// disqualification, see disqualifications.ts which correctly cites
-// 7 CFR 272.17 per the final codified rule (the 2016 proposed rule that
-// would have moved this to 273.11(r) was never codified there).
+// disqualification, see disqualifications.ts: the DQ + definition live at
+// 7 CFR 273.11(r); the state-agency data-match procedure lives at 7 CFR
+// 272.17 (which cross-references 273.11(r) verbatim). Re-verified
+// 2026-06-03 against Cornell LII primary source; the earlier comment in
+// this file claiming 273.11(r) was "proposed-only" was wrong.
 
 import type { Facts } from "./facts";
 import {

@@ -24,6 +24,7 @@ import { SwiftCliAdapter } from "./adapters/swift-cli.ts";
 import { SwiftIosAdapter } from "./adapters/swift-ios.ts";
 import { TS_MANIFEST_WAVE_A, TS_MANIFEST_WAVE_B } from "./capability-manifest.ts";
 import { renderDivergenceReport, runCrossEngine, runThreeWay, renderThreeWayReport } from "./cross-engine.ts";
+import { runPreflight, renderPreflightMarkdown } from "./preflight.ts";
 import type { CapabilityManifest, EngineAdapter } from "./types.ts";
 
 interface ParsedArgs {
@@ -35,6 +36,10 @@ interface ParsedArgs {
   skipSchema: boolean;
   /** Emit machine-readable JSON instead of markdown (single-engine modes only). */
   json: boolean;
+  /** Skip the verification preflight (Layer 3 lint + Layer 1a metamorphic). */
+  noPreflight: boolean;
+  /** Skip just the metamorphic subprocess (lint still runs; faster). */
+  skipMetamorphic: boolean;
 }
 
 function parseArgs(argv: string[]): ParsedArgs {
@@ -44,6 +49,8 @@ function parseArgs(argv: string[]): ParsedArgs {
     verdictOnly: false,
     skipSchema: false,
     json: false,
+    noPreflight: false,
+    skipMetamorphic: false,
   };
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
@@ -63,6 +70,8 @@ function parseArgs(argv: string[]): ParsedArgs {
     else if (a === "--out") out.out = argv[++i];
     else if (a === "--skip-schema") out.skipSchema = true;
     else if (a === "--json") out.json = true;
+    else if (a === "--no-preflight") out.noPreflight = true;
+    else if (a === "--skip-metamorphic") out.skipMetamorphic = true;
     else if (a === "-h" || a === "--help") {
       console.log(HELP);
       process.exit(0);
@@ -84,6 +93,10 @@ Options:
   --fixture <path>            Override fixture JSON (default: vendored v0.6)
   --out <path>                Write report to file (default: stdout)
   --skip-schema               Skip schema validation (debug only)
+  --json                      Emit JSON instead of markdown
+  --no-preflight              Skip the verification preflight entirely
+  --skip-metamorphic          Run lint preflight but skip metamorphic
+                              (faster; lint is <100ms, metamorphic ~1.2s)
   -h, --help                  This message
 
 Examples:
@@ -187,14 +200,22 @@ async function main(): Promise<void> {
     verdictOnly: args.verdictOnly,
   });
 
+  // Verification-hyperdrive preflight: surfaces Layer 3 + Layer 1a status
+  // in the harness output so the operator sees all three verification
+  // layers in one view. Each layer proves something distinct; the
+  // preflight does NOT conflate them.
+  const preflight = args.noPreflight
+    ? null
+    : runPreflight({ skipMetamorphic: args.skipMetamorphic });
+
   if (args.json) {
-    // Machine-readable mode: emit full HarnessRunSummary JSON. Used by
-    // tools/profile-harness/src/mutation-score/ to compare baseline vs
-    // mutated engine output per profile. Set Maps to arrays so JSON
-    // serializes cleanly.
+    // Machine-readable mode: emit full HarnessRunSummary JSON + preflight.
+    // Used by tools/profile-harness/src/mutation-score/. Set Maps to arrays
+    // so JSON serializes cleanly.
     const jsonSafe = {
       ...summary,
       skip_surfaces: Array.from(summary.skip_surfaces.entries()),
+      ...(preflight ? { verification_preflight: preflight } : {}),
     };
     const out = JSON.stringify(jsonSafe, null, 2);
     if (args.out) writeFileSync(args.out, out, "utf-8");
@@ -202,7 +223,8 @@ async function main(): Promise<void> {
     process.exit(0);
   }
 
-  const report = renderMarkdownReport(summary);
+  const preflightMd = preflight ? renderPreflightMarkdown(preflight) : "";
+  const report = preflightMd + renderMarkdownReport(summary);
   if (args.out) {
     writeFileSync(args.out, report, "utf-8");
     // Brief stderr line so the user knows where it went without piping

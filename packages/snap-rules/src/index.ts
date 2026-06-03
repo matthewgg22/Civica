@@ -303,3 +303,9 @@ export type { BenefitCalcDetail } from "./benefit-calc";
 // uses the same name + members so consumers don't notice the difference.
 export type { Facts, Member, IncomeLine, Shelter, Deductions } from "./facts";
 export { getEngineParams } from "./constants/index";
+
+// Verification-hyperdrive Layer 3 — registry + linter exposed for
+// downstream consumers (the harness CLI's preflight check, CI runners).
+export { lintRegistry } from "./registry/lint";
+export { loadRegistry, registryEntry, constantValue, citationValue } from "./registry/load";
+export type { RegistryEntry } from "./registry/load";

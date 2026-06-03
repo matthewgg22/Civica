@@ -2,7 +2,9 @@
 // tags that bar the household per regulation.
 //
 // Tag handling:
-//   "lottery"                       → whole HH ineligible until requalifies [7 CFR 272.17]
+//   "lottery"                       → whole HH ineligible until requalifies
+//                                     [DQ + definition: 7 CFR 273.11(r);
+//                                      state data-match procedure: 7 CFR 272.17]
 //   "ipv:tier1" / "ipv:tier2"       → member excluded; whole HH ineligible if no others remain [7 CFR 273.16]
 //   "fleeing_felon"                 → member ineligible; whole HH ineligible if no others remain [7 CFR 273.11(n)]
 //   "drug_felony"                   → STATE OPTION: ineligible only when policy.drug_felony_ban === true [7 CFR 273.11(m)]
@@ -37,16 +39,24 @@ export function evaluateDisqualifications(
     for (const tag of disquals) {
       // HH-level disqualifications (one member triggers whole-HH DENY).
       if (tag === "lottery") {
-        // 7 CFR 272.17 "Substantial lottery or gambling winnings" is the
-        // CORRECT, CURRENTLY-CODIFIED location. Do NOT "fix" this to
-        // 273.11(r): the 2016 proposed rule (81 FR 89018) suggested
-        // moving the rule to 273.11(r), but the 2018 final rule (83 FR
-        // 64308) codified it at 272.17. The audit pass on 2026-06-02
-        // verified against live eCFR. Future agents reading this code:
-        // do not re-introduce the error.
+        // CORRECTED 2026-06-03 against primary source (Cornell LII fetch
+        // of both sections live):
+        //   - 7 CFR 273.11(r) — DEFINES "substantial lottery or gambling
+        //     winnings" AND imposes the household disqualification.
+        //   - 7 CFR 272.17 — state-agency data-match COOPERATIVE-
+        //     AGREEMENT procedure; this section's TITLE is "Substantial
+        //     lottery or gambling winnings" but its body cross-references
+        //     "§ 273.11(r)" multiple times as the source of the
+        //     definition + DQ ("as defined in § 273.11(r)").
+        // The prior protective comment in commit b093ed6e reversed this
+        // (incorrectly told future agents to stay at 272.17). That
+        // comment was based on a fresh-eyes audit that itself had not
+        // verified against live CFR text. Verified 2026-06-03 via Cornell
+        // LII; the spec's claim that "DQ lives at 273.11(r), 272.17 is
+        // state procedure" is correct.
         return {
           passes: false,
-          reason: `household_lottery_disqualification [7 CFR 272.17]: ${m.member_id}`,
+          reason: `household_lottery_disqualification [7 CFR 273.11(r); state proc. 272.17]: ${m.member_id}`,
         };
       }
       if (tag === "drug_felony") {
