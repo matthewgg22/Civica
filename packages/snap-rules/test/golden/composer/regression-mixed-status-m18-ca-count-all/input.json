@@ -1,0 +1,20 @@
+{
+  "state": "CA",
+  "asOf": "2026-06-01",
+  "facts": {
+    "household": [
+      {"member_id": "m1", "age": 38, "role": "head", "disability": false, "elderly": false, "student": "not", "immigration": "undocumented", "five_yr_bar": "n/a", "sponsored": false, "work_class": "gen_work_subject", "abawd_months_used": 0, "disqual": [], "living": "housed"},
+      {"member_id": "m2", "age": 8, "role": "child", "disability": false, "elderly": false, "student": "not", "immigration": "citizen", "five_yr_bar": "n/a", "sponsored": false, "work_class": "gen_work_subject", "abawd_months_used": 0, "disqual": [], "living": "housed"},
+      {"member_id": "m3", "age": 10, "role": "child", "disability": false, "elderly": false, "student": "not", "immigration": "citizen", "five_yr_bar": "n/a", "sponsored": false, "work_class": "gen_work_subject", "abawd_months_used": 0, "disqual": [], "living": "housed"}
+    ],
+    "income": [
+      {"member": "m1", "type": "wages", "amount": 2000, "freq": "monthly", "anticipation": "averaged", "source_status": "ongoing"}
+    ],
+    "shelter": {"rent": 1000, "sua_tier": "HCSUA", "sua_amount": 663, "internet": 0, "homeless_deduction": false},
+    "deductions": {"dependent_care": 0, "medical_unreimbursed": 0, "child_support_paid": 0},
+    "assets": "n/a:not_authored",
+    "cat_elig": "NPA",
+    "expedited": false,
+    "sponsor_income": null
+  }
+}
