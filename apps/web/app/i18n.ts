@@ -37,6 +37,10 @@ export const strings = {
     formValidationErrorPhone: "Please enter a valid phone number (at least 7 digits).",
     formCampusRequired: "Please choose your campus.",
 
+    formDraftRestored:
+      "We saved what you started — feel free to keep going where you left off.",
+    formDraftClear: "Clear draft",
+
     languageToggleAria: "Switch language",
 
     errorStatus: "SOMETHING WENT WRONG",
@@ -82,6 +86,10 @@ export const strings = {
     formValidationError: "Por favor ingresa un correo válido.",
     formValidationErrorPhone: "Por favor ingresa un número de teléfono válido (mínimo 7 dígitos).",
     formCampusRequired: "Por favor elige tu campus.",
+
+    formDraftRestored:
+      "Guardamos lo que empezaste — continúa donde lo dejaste.",
+    formDraftClear: "Borrar borrador",
 
     languageToggleAria: "Cambiar idioma",
 
