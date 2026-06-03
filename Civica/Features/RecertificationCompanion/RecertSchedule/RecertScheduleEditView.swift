@@ -110,22 +110,26 @@ struct RecertScheduleEditView: View {
 enum RecertScheduleEditStrings {
     static let title = CivicaText(
         "When is your next recertification?",
-        es: "¿Cuándo es tu próxima recertificación?"
+        es: "¿Cuándo es tu próxima recertificación?",
+        zh: "你下次复审是什么时候?"
     )
     static let subtitle = CivicaText(
         "We start preparing you 60 days out. If your state sets a different date, edit it here.",
-        es: "Empezamos a prepararte 60 días antes. Si tu estado fija otra fecha, edítala aquí."
+        es: "Empezamos a prepararte 60 días antes. Si tu estado fija otra fecha, edítala aquí.",
+        zh: "我们会在 60 天前开始帮你准备。如果你所在的州定了不同的日期,就在这里改一下。"
     )
     static let pickerLabel = CivicaText(
         "Recert date",
-        es: "Fecha de recertificación"
+        es: "Fecha de recertificación",
+        zh: "复审日期"
     )
     static let useDefault = CivicaText(
         "Use 12-month default",
-        es: "Usar predeterminado de 12 meses"
+        es: "Usar predeterminado de 12 meses",
+        zh: "使用 12 个月默认值"
     )
-    static let save = CivicaText("Save", es: "Guardar")
-    static let cancel = CivicaText("Cancel", es: "Cancelar")
+    static let save = CivicaText("Save", es: "Guardar", zh: "保存")
+    static let cancel = CivicaText("Cancel", es: "Cancelar", zh: "取消")
 }
 
 #if DEBUG
