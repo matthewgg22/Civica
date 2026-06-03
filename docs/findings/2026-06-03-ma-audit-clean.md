@@ -25,6 +25,34 @@ evidence:
 
 We checked 8 cases where the software (the engine) and the test (the answer key) disagreed for Massachusetts. **The software was wrong on 2 of them** — one about VISTA volunteers, one about refugees after the 2025 law change — and both are now fixed. **The answer key was wrong on 3** — fleeing-felon, the $35 medical-expense floor, and an elderly retiree where Massachusetts's higher utility allowance changed the math — and those go back to the test author. **The remaining 3 are still pending** more information about the actual cases or fact patterns before we can adjudicate.
 
+## Update 2026-06-03 — integrity audit results
+
+Four-angle audit completed (citations, coverage, drift, wrong-outcome). Headline:
+
+- **Drift: zero detected.** All 19 federal + CA registry constants verified-current against FY26 sources.
+- **Coverage problem surfaced:** ~45% of gate paths are unexercised in CA/MA runs because `asset_waiver: true` + BBCE-200 conferral short-circuit most logic.
+- **Citation problem surfaced:** P62 and P65 negative-control citations point at the wrong CFR section. **Fixed in this session** (commit `f0efc240`).
+- **Worksheet problem surfaced:** harness was emitting verdict + benefit only, blocking 3 NEEDS_FACTS adjudications. **Fixed in this session** (commit `4061023f`). Every FAIL row now shows the full per-gate trace with intermediate dollar values and CFR citations.
+
+### Six-fix integrity status (after this session)
+
+| Fix | Description | Status |
+|---|---|---|
+| **#1** | Worksheet surfacing | ✅ Shipped `4061023f`. Unblocks M30/P54/P59 adjudication. |
+| **#2** | KS/TX activation | 🟡 Started; full activation deferred. KS run produces 2 PASS / 32 FAIL / 95 SKIP; the 32 FAILs need per-profile triage to separate engine bugs from oracle-authoring drift (expected_by_state values were authored against BBCE-200 mental model, fail against non-BBCE KS reality). |
+| **#3** | P62/P65 citation correction | ✅ Shipped `f0efc240`. P62 → 273.9(c)(8); P65 → 273.9(c)(14) + 273.8(e)(12). |
+| **#4** | D07 Part 2 — ineligible-alien proration | ⏸ Deferred. Requires composer-level HH-size recomputation + fixture re-author. 1-2 day PR. |
+| **#5** | Compute-don't-read on ABAWD / student / lottery / IPV gates | ⏸ Deferred. 1 day per gate × 4 gates. Recommend sequencing ABAWD first (post-OBBBA work-rule complexity makes this the highest-risk path). |
+| **#6** | MA SUA verification against DTA | ❌ Blocked. Three primary sources (mass.gov, masslegalhelp, Cornell LII CMR mirror) all return 403 or have no section text. Requires operator pull from a logged-in DTA portal session or browser that defeats bot detection. Agent fetches will not unblock. |
+
+### Recommendation order for the v0.2 PR queue
+
+1. **D07 Part 2 (Fix #4)** — closes the last refugee-case gap. 1-2 days.
+2. **ABAWD compute-don't-read (Fix #5 part 1)** — post-OBBBA work rules are politically high-stakes; getting this wrong has real applicant impact. 1 day.
+3. **KS/TX/AK activation triage (Fix #2 full)** — go through the 32 KS FAILs and 32 TX FAILs, separating engine bugs from oracle drift. Use the new worksheets (Fix #1) to do this fast. 1 day.
+4. **Student / lottery / IPV compute-don't-read (Fix #5 parts 2-4)** — 1 day each, can be parallelized.
+5. **MA SUA verification (Fix #6)** — 10 min when the operator can defeat mass.gov bot detection.
+
 ## What this is
 
 The 8 Massachusetts failures from `/profile-simulation MA` adjudicated against verbatim primary source by three independent reviewers (caseworker reviewer Marlene, fresh-eyes reviewer, outside reviewer). Format follows the verification vocab at `docs/snap/VERIFICATION-VOCAB.md`.
