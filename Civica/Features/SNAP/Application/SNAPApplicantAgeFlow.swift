@@ -191,24 +191,28 @@ enum SNAPApplicantAgeStrings {
 
     static let title = CivicaText(
         "When were you born?",
-        es: "¿Cuándo naciste?"
+        es: "¿Cuándo naciste?",
+        zh: "你的出生日期是？"
     )
     // Wave C — ID-scan affordance for DOB only (name dropped per
     // privacy firewall).
     static let scanIDCTA = CivicaText(
         "Scan your ID to fill DOB",
-        es: "Escanea tu identificación para llenar la fecha"
+        es: "Escanea tu identificación para llenar la fecha",
+        zh: "扫描你的身份证件来填写出生日期"
     )
 
     static let helper = CivicaText(
         "Your exact age changes which SNAP deductions you can get. We don't share your birth date with anyone.",
-        es: "Tu edad exacta cambia qué deducciones de SNAP puedes recibir. No compartimos tu fecha de nacimiento con nadie."
+        es: "Tu edad exacta cambia qué deducciones de SNAP puedes recibir. No compartimos tu fecha de nacimiento con nadie.",
+        zh: "你的准确年龄会影响你能获得哪些 SNAP 扣减项目。我们不会把你的出生日期分享给任何人。"
     )
 
     /// "You're 34" / "Tienes 34 años". Caller passes the derived age.
     static func ageReadout(age: Int, language: CivicaLanguage) -> String {
         switch language {
-        case .english, .mandarin, .vietnamese, .tagalog: return "You're \(age)"
+        case .english, .vietnamese, .tagalog: return "You're \(age)"
+        case .mandarin: return "你 \(age) 岁"
         case .spanish: return "Tienes \(age) años"
         }
     }
