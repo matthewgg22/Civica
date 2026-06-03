@@ -23,10 +23,6 @@ __pycache__/
 # Xcode secrets — real values live here, never committed
 Civica/Configuration/Secrets.xcconfig
 
-# Sentry CLI auth token — real value lives here, never committed.
-# Copy .sentryclirc.template to .sentryclirc and fill in the token.
-.sentryclirc
-
 # Swift package build output
 **/.*build/
 CivicaDesignSystem/.build/

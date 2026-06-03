@@ -183,7 +183,6 @@
 				CCAA000000000000000000A3 /* Sources */,
 				CCAA000000000000000000A4 /* Frameworks */,
 				CCAA000000000000000000A5 /* Resources */,
-				BB1100001100110011000010 /* Upload Sentry dSYMs */,
 			);
 			buildRules = (
 			);
@@ -320,25 +319,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "# Copies canonical SNAP rules JSON from packages/snap-rules/ into\n# the iOS resource tree so Civica/Features/SNAP/SNAPRules/*.json\n# never drift from the H-web authored source.\n#\n# - data/*.json    → snap_rules_{state}.json   (document checklist + flags)\n# - rules/appealability/*.json → appealability_{state}.json (IA-5 / CQ-4)\n#\n# No-op for any input set that doesn't exist yet (stub mode).\nset -euo pipefail\nRULES_DST=\"${SRCROOT}/Civica/Features/SNAP/SNAPRules\"\n\nDATA_SRC=\"${SRCROOT}/packages/snap-rules/data\"\nif [ -d \"${DATA_SRC}\" ]; then\n  cp \"${DATA_SRC}/ca.json\" \"${RULES_DST}/snap_rules_ca.json\"\n  cp \"${DATA_SRC}/ma.json\" \"${RULES_DST}/snap_rules_ma.json\"\n  echo \"Sync SNAP Rules JSON: copied ca.json + ma.json\"\nelse\n  echo \"Sync SNAP Rules JSON: packages/snap-rules/data not found — using stubs\"\nfi\n\nAPPEAL_SRC=\"${SRCROOT}/packages/snap-rules/rules/appealability\"\nif [ -d \"${APPEAL_SRC}\" ]; then\n  cp \"${APPEAL_SRC}/CA.json\" \"${RULES_DST}/appealability_ca.json\"\n  cp \"${APPEAL_SRC}/MA.json\" \"${RULES_DST}/appealability_ma.json\"\n  echo \"Sync SNAP Rules JSON: copied appealability CA + MA\"\nelse\n  echo \"Sync SNAP Rules JSON: appealability rules not found — using stubs\"\nfi\n";
-		};
-		BB1100001100110011000010 /* Upload Sentry dSYMs */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "Upload Sentry dSYMs";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/scripts/upload-sentry-dsyms.sh\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

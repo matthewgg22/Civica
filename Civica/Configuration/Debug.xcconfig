@@ -8,12 +8,4 @@
 
 ADMIN_PIN = 000000
 CIVICA_SENTRY_DSN =
-
-// Sentry org + project slugs for dSYM upload (see
-// scripts/upload-sentry-dsyms.sh). Debug builds skip the upload phase
-// entirely, but the vars must be declared so xcconfig resolution does
-// not warn. Real values live in Secrets.xcconfig (operator-controlled).
-SENTRY_ORG_SLUG = civica-gl
-SENTRY_PROJECT_SLUG = apple-ios
-
 #include? "Secrets.xcconfig"
