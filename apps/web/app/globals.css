@@ -357,3 +357,106 @@ button {
   font-size: 0.8125rem;
   color: var(--civica-muted);
 }
+
+/* ---- Error pages (error.tsx, not-found.tsx) ---- */
+
+.error-page {
+  min-height: 70vh;
+  display: flex;
+  align-items: center;
+  padding: var(--civica-space-xxl) 0;
+}
+
+.error-card {
+  max-width: 32rem;
+  margin: 0 auto;
+  padding: var(--civica-space-xxl);
+  background: var(--civica-paper);
+  border: 1px solid var(--civica-hairline);
+  border-radius: var(--civica-radius-card);
+}
+
+.error-card__status {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--civica-brick);
+  margin: 0 0 var(--civica-space-lg);
+}
+
+.error-card__status--muted {
+  color: var(--civica-graphite);
+}
+
+.error-card__title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+  margin: 0 0 var(--civica-space-lg);
+  color: var(--civica-ink);
+}
+
+.error-card__body {
+  font-size: 1rem;
+  color: var(--civica-graphite);
+  line-height: 1.6;
+  margin: 0 0 var(--civica-space-lg);
+}
+
+.error-card__reference {
+  font-size: 0.8125rem;
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  color: var(--civica-muted);
+  margin: 0 0 var(--civica-space-lg);
+}
+
+.error-card__reference-value {
+  color: var(--civica-ink);
+}
+
+.error-card__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--civica-space-md);
+  flex-wrap: wrap;
+  margin-top: var(--civica-space-md);
+}
+
+.error-card__primary-cta {
+  background: var(--civica-pine);
+  color: var(--civica-paper);
+  border: 0;
+  padding: 0.5rem 1.25rem;
+  border-radius: var(--civica-radius-control);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.error-card__primary-cta:hover {
+  background: var(--civica-pine-pressed);
+}
+
+.error-card__primary-cta--link {
+  text-decoration: none;
+}
+
+.error-card__primary-cta--link:hover {
+  color: var(--civica-paper);
+}
+
+.error-card__secondary-cta {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--civica-pine);
+  text-decoration: none;
+}
+
+.error-card__secondary-cta:hover {
+  color: var(--civica-pine-pressed);
+  text-decoration: underline;
+}
