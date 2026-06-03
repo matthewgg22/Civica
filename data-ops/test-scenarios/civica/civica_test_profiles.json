@@ -2143,8 +2143,8 @@
         "shelter.sua.HCSUA",
         "test.gross_net_fpl"
       ],
-      "oracle_basis": "HH ineligible until requalify  [DQ + definition: 7 CFR 273.11(r); state data-match procedure: 7 CFR 272.17]",
-      "citation": "7 CFR 273.11(r); state proc. 272.17",
+      "oracle_basis": "HH ineligible until requalify  [7 CFR 272.17]",
+      "citation": "7 CFR 272.17",
       "error_surface": {
         "mode": "amount",
         "element": "lottery"
@@ -6654,8 +6654,8 @@
         "shelter.sua.HCSUA",
         "test.gross_net_fpl"
       ],
-      "oracle_basis": "resale of personal goods != income  [7 CFR 273.11(a),(b)]",
-      "citation": "7 CFR 273.11(a),(b)",
+      "oracle_basis": "resale of personal goods != income  [7 CFR 273.9(c)(8); resource conversion 273.8(c)]",
+      "citation": "7 CFR 273.9(c)(8); resource conversion 273.8(c)",
       "error_surface": {
         "mode": "amount",
         "element": "312_se"
@@ -10655,8 +10655,8 @@
         "shelter.sua.HCSUA",
         "test.gross_net_fpl"
       ],
-      "oracle_basis": "refund/EITC excluded income & resource 12mo  [7 CFR 273.8]",
-      "citation": "7 CFR 273.8",
+      "oracle_basis": "refund/EITC excluded income & resource 12mo  [7 CFR 273.9(c)(14); resource exclusion 273.8(e)(12)]",
+      "citation": "7 CFR 273.9(c)(14); resource exclusion 273.8(e)(12)",
       "error_surface": {
         "mode": "amount",
         "element": "resource"

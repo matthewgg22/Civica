@@ -458,7 +458,25 @@ INTEG={
  "M30":{"correct_input":{"child_support_paid":250},"agency_keyed":{"child_support_paid":0},"qc_should_flag":True,"error_element":"363_shelter","reason":"child-support deduction omitted"},
  "M04":{"correct_input":{"wages":2400},"agency_keyed":{"wages":2100},"qc_should_flag":True,"error_element":"311_wages","reason":"wage anticipation under-converted"},
 }
-def cite_for(p): return CIT.get(p.get("es"),"7 CFR 273")
+# Per-profile citation overrides. Negative-controls and other profiles whose
+# regulatory grounding differs from their es-tag's default citation. Each
+# override below was verified verbatim against Cornell LII (fetched 2026-06-03)
+# per the source-citation audit in docs/findings/2026-06-03-ma-audit-clean.md.
+CIT_PROFILE_OVERRIDES = {
+    # P62 — personal-property resale (nonrecurring lump-sum) is excluded
+    # at 7 CFR 273.9(c)(8), not at 273.11(a),(b) which is self-employment
+    # income. Original es="312_se" tag mapped to the wrong section.
+    "P62": "7 CFR 273.9(c)(8); resource conversion 273.8(c)",
+    # P65 — EITC + tax refunds are excluded from income at 7 CFR 273.9(c)(14)
+    # AND from countable resources at 273.8(e)(12). Original es="resource"
+    # tag mapped to bare 273.8 which is the entire resource section.
+    "P65": "7 CFR 273.9(c)(14); resource exclusion 273.8(e)(12)",
+}
+def cite_for(p):
+    pid = p.get("id")
+    if pid in CIT_PROFILE_OVERRIDES:
+        return CIT_PROFILE_OVERRIDES[pid]
+    return CIT.get(p.get("es"),"7 CFR 273")
 def basis_for(p):
     c=cite_for(p); n=p.get("note","")
     return (n+"  ["+c+"]") if n else ("tests "+(p.get("es") or "eligibility")+" determination ["+c+"]")
