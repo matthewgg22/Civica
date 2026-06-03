@@ -78,15 +78,11 @@ struct SNAPDecisionApprovedView: View {
             )
         } label: {
             VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
-                Text(language == .english
-                     ? "Track Your Work Hours"
-                     : "Registra tus horas laborales")
+                Text(workHoursTitle)
                     .font(CivicaTypography.subheadStrong)
                     .foregroundStyle(CivicaColors.pinePrimary)
                     .fixedSize(horizontal: false, vertical: true)
-                Text(language == .english
-                     ? "If you're subject to CalFresh work requirements, log your monthly hours and attach pay stubs here."
-                     : "Si estás sujeto a los requisitos laborales de CalFresh, registra tus horas mensuales y adjunta tus talones de pago aquí.")
+                Text(workHoursBody)
                     .font(CivicaTypography.footnote)
                     .foregroundStyle(CivicaColors.graphite)
                     .fixedSize(horizontal: false, vertical: true)
@@ -101,9 +97,40 @@ struct SNAPDecisionApprovedView: View {
             )
         }
         .buttonStyle(.plain)
-        .accessibilityLabel(language == .english
-            ? "Track Your Work Hours. Tap to open work hours log."
-            : "Registra tus horas laborales. Toca para abrir el registro.")
+        .accessibilityLabel(workHoursAccessibilityLabel)
+    }
+
+    private var workHoursTitle: String {
+        switch language {
+        case .english, .vietnamese, .tagalog:
+            return "Track Your Work Hours"
+        case .spanish:
+            return "Registra tus horas laborales"
+        case .mandarin:
+            return "记录你的工作时长"
+        }
+    }
+
+    private var workHoursBody: String {
+        switch language {
+        case .english, .vietnamese, .tagalog:
+            return "If you're subject to CalFresh work requirements, log your monthly hours and attach pay stubs here."
+        case .spanish:
+            return "Si estás sujeto a los requisitos laborales de CalFresh, registra tus horas mensuales y adjunta tus talones de pago aquí."
+        case .mandarin:
+            return "如果你需要满足 CalFresh 工作时长要求,请在这里记录每月的工作时长并附上工资单。"
+        }
+    }
+
+    private var workHoursAccessibilityLabel: String {
+        switch language {
+        case .english, .vietnamese, .tagalog:
+            return "Track Your Work Hours. Tap to open work hours log."
+        case .spanish:
+            return "Registra tus horas laborales. Toca para abrir el registro."
+        case .mandarin:
+            return "记录你的工作时长。点击打开工作时长记录。"
+        }
     }
 
     private func resolveActivePacket() async {
@@ -132,7 +159,7 @@ struct SNAPDecisionApprovedView: View {
             .rules(for: draft.whereApplying.stateCode)
             .restaurantMealsProgramEligibility(for: draft, asOf: Date()) {
             VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
-                Text(language == .english ? "Restaurant Meals Program" : "Programa de Comidas en Restaurantes")
+                Text(restaurantMealsTitle)
                     .font(CivicaTypography.subheadStrong)
                     .foregroundStyle(CivicaColors.ink)
                 Text(restaurantMealsBody(reasons: reasons, language: language))
@@ -150,16 +177,29 @@ struct SNAPDecisionApprovedView: View {
         }
     }
 
+    private var restaurantMealsTitle: String {
+        switch language {
+        case .english, .vietnamese, .tagalog:
+            return "Restaurant Meals Program"
+        case .spanish:
+            return "Programa de Comidas en Restaurantes"
+        case .mandarin:
+            return "餐馆膳食计划"
+        }
+    }
+
     private func restaurantMealsBody(
         reasons: [RestaurantMealsEligibility.Reason],
         language: CivicaLanguage
     ) -> String {
         let reasonPhrase = restaurantMealsReasonPhrase(reasons: reasons, language: language)
         switch language {
-        case .english, .mandarin, .vietnamese, .tagalog:
+        case .english, .vietnamese, .tagalog:
             return "Because \(reasonPhrase), your EBT card can also be used at participating restaurants for hot prepared meals. Look for the Restaurant Meals Program decal at the door — the FindHelp map will list participating spots when it's tuned for your county."
         case .spanish:
             return "Porque \(reasonPhrase), tu tarjeta EBT también puede usarse en restaurantes participantes para comidas calientes preparadas. Busca la calcomanía del Programa de Comidas en Restaurantes en la puerta — el mapa de Buscar Ayuda mostrará los lugares participantes cuando esté ajustado para tu condado."
+        case .mandarin:
+            return "因为\(reasonPhrase),你的 EBT 卡也可以在参与餐馆使用,购买热的现做餐食。请在门口寻找 Restaurant Meals Program 标贴 — 当 FindHelp 地图针对你所在的县调整完成后,会列出参与的餐厅。"
         }
     }
 
@@ -168,18 +208,33 @@ struct SNAPDecisionApprovedView: View {
         language: CivicaLanguage
     ) -> String {
         if reasons.contains(.unhoused) {
-            return language == .english
-                ? "your household reports unhoused status"
-                : "tu hogar reporta estar sin vivienda"
+            switch language {
+            case .english, .vietnamese, .tagalog:
+                return "your household reports unhoused status"
+            case .spanish:
+                return "tu hogar reporta estar sin vivienda"
+            case .mandarin:
+                return "你的家庭报告无固定住所"
+            }
         }
         if reasons.contains(.disabled) {
-            return language == .english
-                ? "someone in your household is elderly or disabled"
-                : "alguien en tu hogar es de edad avanzada o tiene una discapacidad"
+            switch language {
+            case .english, .vietnamese, .tagalog:
+                return "someone in your household is elderly or disabled"
+            case .spanish:
+                return "alguien en tu hogar es de edad avanzada o tiene una discapacidad"
+            case .mandarin:
+                return "你家中有年长者或残障人士"
+            }
         }
-        return language == .english
-            ? "your household qualifies"
-            : "tu hogar califica"
+        switch language {
+        case .english, .vietnamese, .tagalog:
+            return "your household qualifies"
+        case .spanish:
+            return "tu hogar califica"
+        case .mandarin:
+            return "你的家庭符合资格"
+        }
     }
 
     // MARK: - Produce-match callout (CA: Market Match; MA: HIP)
@@ -263,7 +318,7 @@ struct SNAPDecisionApprovedView: View {
             if let amount = statusStore.eligibilityResult?.monthlyBenefit {
                 CivicaMoney(
                     amount: amount,
-                    denominator: language == .spanish ? "mes" : "mo",
+                    denominator: monthlyDenominator,
                     font: CivicaTypography.cardHero
                 )
                 .foregroundStyle(CivicaColors.ink)
@@ -290,6 +345,17 @@ struct SNAPDecisionApprovedView: View {
             RoundedRectangle(cornerRadius: CivicaRadius.card)
                 .strokeBorder(CivicaColors.hairline, lineWidth: 1)
         )
+    }
+
+    private var monthlyDenominator: String {
+        switch language {
+        case .english, .vietnamese, .tagalog:
+            return "mo"
+        case .spanish:
+            return "mes"
+        case .mandarin:
+            return "月"
+        }
     }
 
     private var recertReminderCard: some View {
@@ -379,8 +445,17 @@ struct SNAPDecisionApprovedView: View {
             return nil
         }
         let formatter = DateFormatter()
-        formatter.locale = language == .spanish ? Locale(identifier: "es") : Locale(identifier: "en_US")
-        formatter.dateFormat = language == .spanish ? "d 'de' MMM" : "MMM d"
+        switch language {
+        case .spanish:
+            formatter.locale = Locale(identifier: "es")
+            formatter.dateFormat = "d 'de' MMM"
+        case .mandarin:
+            formatter.locale = Locale(identifier: "zh_Hans")
+            formatter.dateFormat = "M月d日"
+        case .english, .vietnamese, .tagalog:
+            formatter.locale = Locale(identifier: "en_US")
+            formatter.dateFormat = "MMM d"
+        }
         let prefix = SNAPDecisionApprovedStrings.decidedOn.value(in: language)
         return "\(prefix) · \(formatter.string(from: decidedAt))"
     }
@@ -395,8 +470,17 @@ struct SNAPDecisionApprovedView: View {
         let latestArrival = calendar.date(byAdding: .day, value: 8, to: decidedAt) ?? decidedAt
 
         let formatter = DateFormatter()
-        formatter.locale = language == .spanish ? Locale(identifier: "es") : Locale(identifier: "en_US")
-        formatter.dateFormat = language == .spanish ? "d 'de' MMM" : "MMM d"
+        switch language {
+        case .spanish:
+            formatter.locale = Locale(identifier: "es")
+            formatter.dateFormat = "d 'de' MMM"
+        case .mandarin:
+            formatter.locale = Locale(identifier: "zh_Hans")
+            formatter.dateFormat = "M月d日"
+        case .english, .vietnamese, .tagalog:
+            formatter.locale = Locale(identifier: "en_US")
+            formatter.dateFormat = "MMM d"
+        }
 
         let template = SNAPDecisionApprovedStrings.ebtTimingTemplate.value(in: language)
         return template
@@ -414,7 +498,14 @@ struct SNAPDecisionApprovedView: View {
         let formatter = DateFormatter()
         formatter.dateStyle = .long
         formatter.timeStyle = .none
-        formatter.locale = language == .spanish ? Locale(identifier: "es") : Locale(identifier: "en_US")
+        switch language {
+        case .spanish:
+            formatter.locale = Locale(identifier: "es")
+        case .mandarin:
+            formatter.locale = Locale(identifier: "zh_Hans")
+        case .english, .vietnamese, .tagalog:
+            formatter.locale = Locale(identifier: "en_US")
+        }
         let template = SNAPDecisionApprovedStrings.recertBodyTemplate.value(in: language)
         return template.replacingOccurrences(of: "{date}", with: formatter.string(from: recertDate))
     }
@@ -426,18 +517,21 @@ enum SNAPDecisionApprovedStrings {
 
     static let approvedBadge = CivicaText(
         "Approved",
-        es: "Aprobado"
+        es: "Aprobado",
+        zh: "已批准"
     )
     static let decidedOn = CivicaText(
         "Decided",
-        es: "Decidido"
+        es: "Decidido",
+        zh: "决定日期"
     )
     // Compliance Q3: registry id "decision_approved_headline" — counsel-prep
     // approved (2026-05-19). State-keyed: CalFresh (CA) vs SNAP (MA).
     // Pre-sign fallback retained for tests / surfaces that don't have a state.
     static let headline = CivicaText(
         SNAPComplianceCopyRegistry.approvedEnglish(for: "decision_approved_headline") ?? "You're approved.",
-        es: SNAPComplianceCopyRegistry.approvedSpanish(for: "decision_approved_headline") ?? "Estás aprobada."
+        es: SNAPComplianceCopyRegistry.approvedSpanish(for: "decision_approved_headline") ?? "Estás aprobada.",
+        zh: "你已获批准。"
     )
 
     /// State-aware headline. Production view should call this so CA users
@@ -445,7 +539,7 @@ enum SNAPDecisionApprovedStrings {
     /// `headline` CivicaText (the state-agnostic default) when no state.
     static func headline(stateCode: String?, language: CivicaLanguage) -> String {
         switch language {
-        case .english, .mandarin, .vietnamese, .tagalog:
+        case .english, .vietnamese, .tagalog:
             return SNAPComplianceCopyRegistry.approvedEnglish(
                 for: "decision_approved_headline",
                 stateCode: stateCode
@@ -455,23 +549,29 @@ enum SNAPDecisionApprovedStrings {
                 for: "decision_approved_headline",
                 stateCode: stateCode
             ) ?? headline.value(in: .spanish)
+        case .mandarin:
+            return headline.value(in: .mandarin)
         }
     }
 
     static let monthlyAwardLabel = CivicaText(
         "Monthly award",
-        es: "Beneficio mensual"
+        es: "Beneficio mensual",
+        zh: "每月福利金额"
     )
     static func amountFallback(stateCode: String?, language: CivicaLanguage) -> String {
         let agency = SNAPAgencyDirectory.agencyFullName(for: stateCode, language: language)
         let portal = SNAPAgencyDirectory.portalName(for: stateCode)
         let portalEN = portal.isEmpty ? "your state portal" : portal
         let portalES = portal.isEmpty ? "el portal estatal" : portal
+        let portalZH = portal.isEmpty ? "你所在州的网站" : portal
         switch language {
-        case .english, .mandarin, .vietnamese, .tagalog:
+        case .english, .vietnamese, .tagalog:
             return "\(agency)'s official letter has your monthly amount. Open \(portalEN) to see it."
         case .spanish:
             return "La carta oficial de \(agency) tiene tu cantidad mensual. Abre \(portalES) para verla."
+        case .mandarin:
+            return "\(agency) 的官方信件上列有你的每月金额。打开 \(portalZH) 即可查看。"
         }
     }
     /// {mailed} / {earliest} / {latest} substituted with localized date
@@ -479,43 +579,52 @@ enum SNAPDecisionApprovedStrings {
     /// decision and arrives 3–7 business days later (MA standard).
     static let ebtTimingTemplate = CivicaText(
         "EBT card mailed {mailed} · expect {earliest}–{latest}.",
-        es: "Tarjeta EBT enviada el {mailed} · llega entre {earliest}–{latest}."
+        es: "Tarjeta EBT enviada el {mailed} · llega entre {earliest}–{latest}.",
+        zh: "EBT 卡于 {mailed} 寄出 · 预计 {earliest}–{latest} 送达。"
     )
     static let ebtTimingFallback = CivicaText(
         "Your EBT card is mailed within a few days of approval. Most arrive within a week.",
-        es: "Tu tarjeta EBT se envía pocos días después de la aprobación. La mayoría llegan en una semana."
+        es: "Tu tarjeta EBT se envía pocos días después de la aprobación. La mayoría llegan en una semana.",
+        zh: "批准后几天内,你的 EBT 卡就会寄出。大多数会在一周内送达。"
     )
 
     static let recertLabel = CivicaText(
         "Mark your calendar",
-        es: "Marca tu calendario"
+        es: "Marca tu calendario",
+        zh: "请在日历上做好标记"
     )
     /// {date} substituted with a long-form localized date.
     static let recertBodyTemplate = CivicaText(
         "Recertification due {date}. We'll remind you 60 and 14 days before.",
-        es: "Recertificación el {date}. Te recordaremos 60 y 14 días antes."
+        es: "Recertificación el {date}. Te recordaremos 60 y 14 días antes.",
+        zh: "重新认证截止日期为 {date}。我们会在到期前 60 天和 14 天提醒你。"
     )
     static let recertBodyFallback = CivicaText(
         "Recertification happens once a year. We'll remind you 60 and 14 days before yours is due.",
-        es: "La recertificación ocurre una vez al año. Te recordaremos 60 y 14 días antes de la tuya."
+        es: "La recertificación ocurre una vez al año. Te recordaremos 60 y 14 días antes de la tuya.",
+        zh: "重新认证每年进行一次。我们会在你的到期日前 60 天和 14 天提醒你。"
     )
 
     static let wicTitle = CivicaText(
         "Now check WIC and school meals.",
-        es: "Ahora revisa WIC y comidas escolares."
+        es: "Ahora revisa WIC y comidas escolares.",
+        zh: "现在看看 WIC 和学校餐食。"
     )
     static let wicBody = CivicaText(
         "Your household likely qualifies for both. Vouchers for kids under 5 plus free breakfast and lunch at school.",
-        es: "Tu hogar probablemente califica para ambos. Vales para niños menores de 5 más desayuno y almuerzo gratis en la escuela."
+        es: "Tu hogar probablemente califica para ambos. Vales para niños menores de 5 más desayuno y almuerzo gratis en la escuela.",
+        zh: "你的家庭很可能两项都符合资格。5 岁以下孩子可获得代用券,学校还提供免费的早餐和午餐。"
     )
 
     static let openDTAConnect = CivicaText(
         "Open DTA Connect",
-        es: "Abrir DTA Connect"
+        es: "Abrir DTA Connect",
+        zh: "打开 DTA Connect"
     )
     static let startOver = CivicaText(
         "Reset Civica and start fresh",
-        es: "Reiniciar Civica y empezar de nuevo"
+        es: "Reiniciar Civica y empezar de nuevo",
+        zh: "重置 Civica,重新开始"
     )
 }
 
