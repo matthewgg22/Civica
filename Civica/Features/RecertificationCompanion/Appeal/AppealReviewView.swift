@@ -221,47 +221,52 @@ private struct AppealFixSlotsView: View {
 
     private func label(for slot: String) -> CivicaText {
         switch slot {
-        case "caseNumber": return CivicaText("Case number", es: "Número de caso")
-        case "claimantName": return CivicaText("Full legal name", es: "Nombre legal completo")
-        case "denialDate": return CivicaText("Date of denial (YYYY-MM-DD)", es: "Fecha de denegación (AAAA-MM-DD)")
-        case "todayDate": return CivicaText("Today's date (YYYY-MM-DD)", es: "Fecha de hoy (AAAA-MM-DD)")
-        case "claimantAddress": return CivicaText("Mailing address", es: "Dirección postal")
-        case "claimantPhone": return CivicaText("Phone", es: "Teléfono")
-        case "claimantEmail": return CivicaText("Email", es: "Correo electrónico")
+        case "caseNumber": return CivicaText("Case number", es: "Número de caso", zh: "案件编号")
+        case "claimantName": return CivicaText("Full legal name", es: "Nombre legal completo", zh: "法定全名")
+        case "denialDate": return CivicaText("Date of denial (YYYY-MM-DD)", es: "Fecha de denegación (AAAA-MM-DD)", zh: "拒绝日期（YYYY-MM-DD）")
+        case "todayDate": return CivicaText("Today's date (YYYY-MM-DD)", es: "Fecha de hoy (AAAA-MM-DD)", zh: "今天的日期（YYYY-MM-DD）")
+        case "claimantAddress": return CivicaText("Mailing address", es: "Dirección postal", zh: "邮寄地址")
+        case "claimantPhone": return CivicaText("Phone", es: "Teléfono", zh: "电话")
+        case "claimantEmail": return CivicaText("Email", es: "Correo electrónico", zh: "电子邮箱")
         default: return CivicaText(slot, es: slot)
         }
     }
 }
 
 enum AppealReviewStrings {
-    static let draftHeader = CivicaText("Your appeal text", es: "Tu texto de apelación")
+    static let draftHeader = CivicaText("Your appeal text", es: "Tu texto de apelación", zh: "你的申诉文本")
 
     static let missingSlotsTitle = CivicaText(
         "Some details are missing",
-        es: "Faltan algunos datos"
+        es: "Faltan algunos datos",
+        zh: "还缺少一些信息"
     )
 
     static func missingSlotsBody(count: Int) -> CivicaText {
         CivicaText(
             "You'll need to fill in \(count) more field\(count == 1 ? "" : "s") before sending. We've highlighted them in the text below.",
-            es: "Necesitas completar \(count) campo\(count == 1 ? "" : "s") más antes de enviar. Los hemos marcado en el texto."
+            es: "Necesitas completar \(count) campo\(count == 1 ? "" : "s") más antes de enviar. Los hemos marcado en el texto.",
+            zh: "在发送之前，你还需要填写 \(count) 个字段。我们已在下面的文本中标出了它们。"
         )
     }
 
     static let fixMissingCTA = CivicaText(
         "Fix missing fields",
-        es: "Completar los campos faltantes"
+        es: "Completar los campos faltantes",
+        zh: "补全缺失字段"
     )
     static let fixMissingTitle = CivicaText(
         "Fill in your details",
-        es: "Completa tus datos"
+        es: "Completa tus datos",
+        zh: "填写你的信息"
     )
-    static let doneCTA = CivicaText("Done", es: "Listo")
+    static let doneCTA = CivicaText("Done", es: "Listo", zh: "完成")
 
     static func citationsLabel(federal: String, state: String) -> CivicaText {
         CivicaText(
             "Citing \(federal) · \(state)",
-            es: "Citando \(federal) · \(state)"
+            es: "Citando \(federal) · \(state)",
+            zh: "引用 \(federal) · \(state)"
         )
     }
 }
