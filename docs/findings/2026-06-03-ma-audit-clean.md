@@ -21,6 +21,10 @@ evidence:
     note: "Verified §273.10(e)(2)(ii)(C) minimum benefit applies to ELIGIBLE 1-2 person households only"
 ---
 
+## The audit, in three sentences
+
+We checked 8 cases where the software (the engine) and the test (the answer key) disagreed for Massachusetts. **The software was wrong on 2 of them** — one about VISTA volunteers, one about refugees after the 2025 law change — and both are now fixed. **The answer key was wrong on 3** — fleeing-felon, the $35 medical-expense floor, and an elderly retiree where Massachusetts's higher utility allowance changed the math — and those go back to the test author. **The remaining 3 are still pending** more information about the actual cases or fact patterns before we can adjudicate.
+
 ## What this is
 
 The 8 Massachusetts failures from `/profile-simulation MA` adjudicated against verbatim primary source by three independent reviewers (caseworker reviewer Marlene, fresh-eyes reviewer, outside reviewer). Format follows the verification vocab at `docs/snap/VERIFICATION-VOCAB.md`.
@@ -42,95 +46,177 @@ The 8 Massachusetts failures from `/profile-simulation MA` adjudicated against v
 
 ## Per-failure detail
 
-### P63 — VISTA stipend, no prior SNAP at joining
+### P63 — The VISTA volunteer case
 
-**Disposition: ENGINE_BUG · Evidence: VERIFIED**
+**What happened:** The software approved $382/month for an AmeriCorps VISTA volunteer who had no prior SNAP at the time of joining. The answer key said this person should have been denied.
 
-- **Controlling citation:** 7 CFR 273.9(b)(1)(iv) (VISTA payments are earned income) + 7 CFR 273.9(c)(10)(iii) (exclusion only for those receiving SNAP/PA at time of joining).
-- **Verbatim from §273.9(c)(10)(iii):** *"New applicants who were not receiving public assistance or SNAPs at the time they joined VISTA shall have these volunteer payments included as earned income."*
-- **Engine behavior:** treats `americorps_sn` as universally excluded.
-- **Correct behavior:** count as earned income (with 20% EID per §273.9(d)(2)) unless household was on SNAP/PA at the time member joined VISTA.
-- **Fix location:** `packages/snap-rules/src/facts.ts` (the `EXCLUDED` income type set, plus the conditional logic).
-- **Real-world impact:** new applicants who joined VISTA without prior SNAP are getting wrongly approved with stipend ignored. Federal QC would catch this.
+**Who got it wrong:** The software (ENGINE_BUG). The VISTA stipend should have been treated as earned income, not excluded.
 
-### D07 — Refugee in refugee status, post-OBBBA
+**How sure are we:** Certain (VERIFIED). I read the federal regulation directly today.
 
-**Disposition: ENGINE_BUG (two parts) · Evidence: VERIFIED**
+**What the rule actually says (verbatim from 7 CFR 273.9(c)(10)(iii)):**
+> "New applicants who were not receiving public assistance or SNAPs at the time they joined VISTA shall have these volunteer payments included as earned income."
 
-The audit identified two distinct bugs in the same path. The first is fixed (commit follows). The second is a larger refactor and stays open.
+Plus §273.9(b)(1)(iv): VISTA payments are earned income (subject to the (c)(10)(iii) exclusion only for households already receiving SNAP/PA at joining time).
 
-**Part 1 (FIXED) — OBBBA effective date:** engine had `obbbaCutoff = 2025-11-01`. That was the FNS 120-day hold-harmless deadline, not the statutory effective date. Per FNS memo Attachment 1 (2025-10-31), eligibility changes are "effective July 4, 2025." Engine updated to `2025-07-04`. No verdict change in the current test set (no profile has `as_of_date` in the contested July-November 2025 window), but correctness against primary source. A10 guard confirmed: refugee-who-adjusted-to-LPR continues APPROVE (uses `lpr + exempt:refugee_adjusted` branch, not the refugee branch).
+**What needs to happen:** Count the stipend as earned income (with the 20% earned-income deduction).
 
-**Part 2 (OPEN — bigger refactor) — ineligible-alien household-size recomputation:** D07 fixture encodes m1 with `immigration: "removed_status:refugee"` (correctly ineligible per engine) and m2 as citizen child. Per 7 CFR 273.11(c), an ineligible alien's income should be deemed in proportion, but they do NOT count toward household size for benefit calculation. Engine currently computes benefit for the full household (HH2 max allotment $546 in CA, similar in MA). Correct behavior: compute as HH1 ($298 max allotment) with m1's income deemed in. D07 fixture's expected DENY is also questionable — with zero income, a HH1 citizen-only household should APPROVE at $298. The fixture may need re-authoring, OR the fixture is implicitly testing a single-member refugee household that the schema doesn't support.
+**Status:** ✅ Fixed in commit `fe9ae177`. After the fix, the engine produces APPROVE $472 instead of APPROVE $382 — the $90 difference is the 20% earned-income deduction flowing through. The verdict-level disagreement with the answer key still exists, but it's now the answer key that's wrong; the math behind it (HH2 with $1,500/mo single earner doesn't exceed the 200%-FPL gross limit or 100%-FPL net limit either way) doesn't support DENY.
 
-- **Verbatim from FNS memo Attachment 1:** *"Refugees | Post-OBBB Eligibility: Not eligible."*
-- **Verbatim from §273.11(c)(1):** ineligible aliens' income is treated "as if" prorated; benefit allotment computed for remaining eligible members only.
-- **Fix location for Part 2:** `packages/snap-rules/src/verdict.ts` or new `gates/composition.ts` logic to recompute effective HH size from immigration eligibility before calling `computeBenefit`.
-- **Action:** Part 1 shipped. Part 2 deferred to a follow-up PR with the proration math + a re-authored D07 fixture. Until then, D07 remains a known harness failure attributed to the proration gap, not to immigration eligibility logic.
+**Why this matters in real life:** New VISTA volunteers walking into a state office would be approved for the wrong amount. Federal quality-control reviewers would catch the discrepancy in a sampled case.
 
-### P58 — Elderly E/D HH1 over net limit (state-specific)
+### D07 — The refugee case, post-OBBBA
 
-**Disposition: ORACLE_BUG (state-specific) · Evidence: VERIFIED**
+**What happened:** The software approved $546/month for a household where the head of household is a refugee in refugee status (not yet a permanent resident) and the other member is a citizen child. The answer key said this should be denied.
 
-- **Reversed from earlier hypothesis** that this was an engine min-benefit-floor bug. After computing the math against the actual fixture facts:
-- **Variant facts (`above_net_limit`):** HH1, age 67, E/D, $1,100/mo SSDI + $1,200/mo wages = $2,300 gross, rent $700, HCSUA tier, no medical/depcare/CS.
-- **MA math:** EID $240, SD $209, adjusted $1,851, shelter $1,614 ($700 + $914 MA-HCSUA), half-adj $925.50, excess shelter $688.50 (uncapped E/D), **net = $1,162.50 ≤ $1,305 (100% FPL HH1) → net test PASSES → household IS eligible**.
-- **Computed benefit:** $298 - 0.30 × $1,162.50 = -$50.75 → floored to $0 → min-benefit floor: $0 < $24 → benefit = $24.
-- **Engine is correct.** The min-benefit floor applies because the household is eligible per the net test.
-- **CA math (for comparison):** same facts, CA HCSUA $663 → shelter $1,363, excess shelter $437.50, net = $1,413.50 → exceeds $1,305 → net test FAILS → DENY. CA harness confirms P58 passes in CA (not in the 6-failure list).
-- **Why oracle is wrong:** the variant's expected DENY was authored against CA-shaped math. In MA the higher SUA flips the household to eligible. The variant either needs a state-specific expected verdict, or needs different income values that force net > limit in both states.
-- **Fix location:** v0.6 oracle fixture. Either (a) add MA-specific `expected_by_state` entry that flips this variant to APPROVE $24, or (b) re-author the variant with income values that exceed net limit in both states.
-- **Lesson:** the fresh-eyes hypothesis (engine wrongly floors ineligible households) was wrong because the agent reasoned about the rule without computing the actual MA math. **Worksheets prevent this.**
+**Who got it wrong:** The software (ENGINE_BUG) — but in TWO different ways that need separate fixes.
 
-### P52 — Fleeing felon, active_warrant only
+**How sure are we:** Certain (VERIFIED). The outside reviewer fetched the FNS implementing memo directly today.
 
-**Disposition: ORACLE_BUG · Evidence: VERIFIED**
+**What the rule actually says (verbatim from FNS memo Attachment 1, dated 2025-10-31):**
+> "Refugees | Post-OBBB Eligibility: Not eligible."
 
-- **Controlling citation:** 7 CFR 273.11(n)(1) — titled "Four-part test to establish fleeing felon status" per 2024 final rule.
-- **Verbatim:** disqualification requires (i) outstanding warrant + (ii) person is aware/should expect it + (iii) evasive action + (iv) law enforcement actively seeking (20/30-day response window per (n)(3)).
-- **Oracle expected:** DENY based on `active_warrant=true` alone.
-- **Why oracle is wrong:** §273.11(n)(1) requires all four prongs. A bare warrant flag fails the test. Even when the test is met, §273.11(n) routes the disqualified member's income through (c)(1) — this is a **member-level disqualification**, not a household-level denial.
-- **Fix location:** v0.6 oracle fixture. Update P52 to either (a) encode all four prongs as separate fact fields and re-author the expected verdict, or (b) re-author as a member-disqualification scenario (household stays eligible, member excluded with income prorated).
-- **Engine behavior is currently right** (treats it as a member-level rather than household-level disqualification).
+Effective July 4, 2025. Eligible non-citizens are now only: U.S. citizens, U.S. nationals, lawful permanent residents (LPRs), Cuban/Haitian entrants, and COFA citizens. Refugees, asylees, parolees, conditional entrants, TPS, and deportation-withheld status are all removed from eligibility.
 
-### P53 — Medical $30 (under $35 floor)
+**Important nuance:** a refugee who later adjusted to LPR status is STILL eligible with no 5-year wait (PRWORA exemption preserved by OBBBA). The engine must distinguish "still in refugee status" (deny) from "former refugee, now LPR" (approve).
 
-**Disposition: ORACLE_BUG · Evidence: VERIFIED**
+**What needs to happen (two-part fix):**
 
-- **Controlling citation:** 7 CFR 273.9(d)(3) (medical-deduction $35 floor) + 7 CFR 273.10(e)(2)(i)(C) (E/D households exempt from gross-income test).
-- **Verbatim from §273.9(d)(3):** *"That portion of medical expenses in excess of $35 per month..."*
-- **Oracle expected:** DENY because medical < $35.
-- **Why oracle is wrong:** the $35 floor means "no medical deduction this month" — not "denial." The household is still tested on its other math. For an E/D HH1, the household is exempt from the gross test anyway and only fails if net > 100% FPL.
-- **Fix location:** v0.6 oracle fixture. Update P53 expected verdict from DENY to APPROVE with the derived benefit amount, or reposition the variant as a "medical deduction does not apply" scenario rather than a denial scenario.
-- **Engine behavior is currently right.**
+1. **Part 1 — Fix the effective date.** Engine had the cutoff at 2025-11-01 (the state-implementation deadline). The correct date is 2025-07-04 (statutory enactment). ✅ Fixed in commit `ce874bf0`.
+2. **Part 2 — Fix the household-size math.** When a household has both an ineligible refugee parent AND an eligible citizen child, the engine currently computes the benefit as if the household had 2 people. The actual rule (7 CFR 273.11(c)) says the ineligible alien doesn't count toward household size — so the benefit should be computed for HH1 (the citizen child) with the refugee's income deemed in proportionally. This requires a bigger composer-level refactor. ⏸ Deferred to a follow-up PR.
 
-### P59 — HH1 BBCE boundary, $77 vs $78
+**Status:** ✅ Part 1 shipped. ⏸ Part 2 deferred. D07 still shows as a harness failure until Part 2 lands, but the residual failure now belongs cleanly to the household-size math gap, not to the eligibility logic.
 
-**Disposition: NEEDS_FACTS · Evidence: VERIFIED on rule**
+**A10 guard:** profile A10 ("Refugee adjusted to LPR") was checked after the Part 1 fix and still produces APPROVE — confirms the engine correctly distinguishes the two pathways.
 
-- **Controlling citation:** 7 CFR 273.10(e)(2)(ii)(A) (benefit formula + rounding state-option).
-- **Verbatim:** states may "round the 30 percent of net income up to the nearest higher dollar" OR "round the allotment down to the nearest lower dollar" but never neither.
-- **The $1 delta:** engine produces $77, oracle expects $78. Classic state-option rounding-direction mismatch.
-- **What's needed:** the MA-elected rounding rule from the DTA Online Guide. The MA value should be added to the registry as a state-option constant.
-- **Not actionable until:** the MA rounding rule is fetched from primary source (DTA Online Guide section, currently behind mass.gov access barriers).
+**Why this matters in real life:** State agencies following the FNS memo are denying refugees today. The engine would still approve them. This produces both wrongful approval (which a federal QC review would catch) and applicant confusion (the agency says no, the app said yes).
 
-### M30 — Child-support deduction at net margin
+### P58 — The elderly retiree case (the one that's state-specific)
 
-**Disposition: NEEDS_FACTS · Evidence: VERIFIED on rule (cite is mislabeled in fixture)**
+**What happened:** The software approved $24/month (the federal minimum benefit) for an elderly disabled retiree in Massachusetts with $1,100/mo Social Security and $1,200/mo wages, paying $700 rent. The answer key said this should be denied because the household's income is over the net-income limit.
 
-- **Controlling citation:** 7 CFR 273.9(d)(5) (state-option child-support deduction).
-- **Fixture cites:** 7 CFR 273.9(d)(6) (excess shelter). Wrong subsection.
-- **Verdict cannot be adjudicated without:** the gross/net/threshold math from the worksheet for both `with` and `without` variants. Currently the engine output doesn't surface intermediate values, so we can't see whether the net actually crosses the 100% FPL threshold in the "without" arm.
-- **Blocks on:** the worksheet-surfacing engine change (see "Bigger pattern" below).
+**Who got it wrong:** The answer key (ORACLE_BUG). And the bug is specifically because Massachusetts has different math than California.
 
-### P54 — Cash gift to household
+**How sure are we:** Certain (VERIFIED). I computed the math by hand against the actual fixture facts.
 
-**Disposition: NEEDS_FACTS · Evidence: VERIFIED on classification**
+**The interesting part — why the answer key got it wrong:**
 
-- **Controlling citation:** 7 CFR 273.9(b)(2)(v) (cash gifts are countable unearned income) unless 7 CFR 273.9(c)(12) applies (nonprofit gifts ≤ $300/quarter are excluded).
-- **Engine behavior:** ambiguous — APPROVE $298 means it counted something, but doesn't show what.
-- **What's needed:** gift amount, gift frequency, gift source (nonprofit-charitable?). Without these from the facts_patch, can't say which classification applied.
-- **Blocks on:** the worksheet-surfacing engine change.
+The variant was authored thinking about California's math. In California, the engine computes:
+- $2,300 gross income → $1,851 adjusted income → $1,413.50 net income
+- $1,413.50 > $1,305 (the 100%-FPL limit) → DENY
+
+But Massachusetts has a higher utility allowance ($914 instead of California's $663):
+- $2,300 gross → $1,851 adjusted → **$1,162.50 net income**
+- $1,162.50 < $1,305 → ELIGIBLE
+- Benefit math: $298 - (0.30 × $1,162.50) = -$50.75 → floored to $0 → minimum-benefit floor applies → $24
+
+So the household IS eligible in Massachusetts. The $24 minimum benefit correctly applies. The software is doing the right thing.
+
+**What needs to happen:** Fix the answer key. Either give P58 a state-specific expected verdict (DENY in CA, APPROVE $24 in MA), or re-author the variant with income values that exceed the net-income limit in BOTH states.
+
+**Status:** Going back to the test author.
+
+**Lesson learned (the meta-point):** Earlier in the audit, a fresh-eyes reviewer hypothesized this was a software bug — that the engine was wrongly applying the $24 floor to an ineligible household. The hypothesis was reasoning from the rule without computing the actual Massachusetts math. **This is exactly why showing-your-work (the worksheet) matters.** Without seeing net=$1,162.50 vs limit=$1,305, you can't tell whether the $24 floor is rescuing an eligible household (correct) or rescuing an ineligible one (a bug). Same outcome, completely different stories.
+
+### P52 — The fleeing-felon case
+
+**What happened:** The software approved $546/month for a household where one member has an active arrest warrant. The answer key said denial.
+
+**Who got it wrong:** The answer key (ORACLE_BUG).
+
+**How sure are we:** Certain (VERIFIED). The fresh-eyes reviewer fetched the 2024 final rule text directly.
+
+**What the rule actually says (verbatim from 7 CFR 273.11(n)(1), the "Four-part test to establish fleeing felon status"):**
+Disqualification requires ALL FOUR of:
+1. Outstanding warrant
+2. The person is aware (or should expect) law enforcement is looking for them
+3. They've taken evasive action
+4. Law enforcement is actively seeking them (with a 20-30 day response window per (n)(3))
+
+**Why the answer key is wrong:** Having an active warrant alone fails the four-part test. The 2024 final rule was specifically designed to prevent disqualification on warrants that haven't been actively pursued. Even when all four prongs ARE met, §273.11(n) routes the disqualified member's income through proration — it's a member-level exclusion, not a household-level denial.
+
+**What needs to happen:** The test author needs to either (a) encode all four prongs as separate fact fields and re-author the variant to truly meet the four-part test, OR (b) re-frame this as a member-disqualification scenario (household stays eligible, that one member is excluded with their income prorated).
+
+**Status:** Going back to the test author.
+
+**Why this matters in real life:** Real caseworkers don't deny on a bare warrant. They check the response from law enforcement and wait 20-30 days. A caseworker who denied solely on "warrant exists" would be reversed on appeal.
+
+### P53 — The medical-expense $35-floor case
+
+**What happened:** The software approved $268/month for an elderly disabled person with $30/month in medical expenses (below the $35 deduction floor). The answer key said denial.
+
+**Who got it wrong:** The answer key (ORACLE_BUG).
+
+**How sure are we:** Certain (VERIFIED). The fresh-eyes reviewer fetched the regulation text directly.
+
+**What the rule actually says (verbatim from 7 CFR 273.9(d)(3)):**
+> "That portion of medical expenses in excess of $35 per month..." [is the allowable deduction]
+
+Plus 7 CFR 273.10(e)(2)(i)(C): elderly/disabled households are exempt from the gross-income test entirely.
+
+**Why the answer key is wrong:** The $35 floor means "if you have less than $35 in medical expenses, you don't get a medical deduction this month." It does NOT mean "you're denied." The household still gets tested on its other math. For an elderly/disabled single-person household, that's just the net-income test — which this household passes.
+
+**What needs to happen:** Change the expected verdict from DENY to APPROVE. Or re-frame the variant as a "medical deduction doesn't apply this month" scenario rather than a denial scenario.
+
+**Status:** Going back to the test author.
+
+**Why this matters in real life:** Confusing "no deduction" with "denial" is one of the most common new-caseworker mistakes. A real worker who denied here would be reversed in supervisory review.
+
+### P59 — The $1-rounding-difference case
+
+**What happened:** The software produced $77/month, the answer key expected $78/month. Both agree on APPROVE; they just differ by $1.
+
+**Who got it wrong:** We need to see the case details first (NEEDS_FACTS).
+
+**How sure are we:** Certain about the rule (VERIFIED). The question is which state-option Massachusetts elected.
+
+**What the rule actually says (verbatim from 7 CFR 273.10(e)(2)(ii)(A)):**
+States may either "round the 30 percent of net income UP to the nearest higher dollar" OR "round the allotment DOWN to the nearest lower dollar." Never both, never neither.
+
+**Why this is the rounding-direction story:** A $1 difference at the household-size-1 boundary case is the classic signature of two state-option rounding rules colliding. The software uses one direction; the answer key uses the other. Which Massachusetts actually elected determines who's right.
+
+**What needs to happen:** Fetch Massachusetts's DTA Online Guide to confirm the elected rounding direction. Add it to the rulebook as a state-option constant. Then adjudicate.
+
+**Status:** Waiting. Can't fetch the DTA Online Guide today; mass.gov has been blocked.
+
+**Why this matters in real life:** A $1 rounding error on every benefit calculation, applied to thousands of cases, becomes a measurable payment-error rate. Worth the day to confirm.
+
+### M30 — The child-support-deduction case
+
+**What happened:** The software approved $546/month for a household with child-support payments at the net-income margin. The answer key said denial. The variant comes in two flavors ("with" the deduction and "without" it); the "without" flavor is the one in disagreement.
+
+**Who got it wrong:** We need to see the case details first (NEEDS_FACTS).
+
+**How sure are we:** Certain about the rule (VERIFIED). The fixture's citation is mislabeled — it cites (d)(6) (excess shelter) but the actual controlling section is (d)(5) (state-option child-support deduction).
+
+**What the rule actually says (verbatim from 7 CFR 273.9(d)(5)):**
+States may allow a deduction for legally obligated child support payments paid by a household member to or for a nonhousehold member.
+
+**Why we can't adjudicate yet:** This is fundamentally a math question — does the household's net income cross the 100%-FPL threshold or not? The current software output doesn't show the worksheet (gross, deductions, adjusted income, net), so we can't see which side of the threshold the household lands on.
+
+**What needs to happen:** The worksheet-surfacing engine change has to land first. Once we can see the engine's net-income computation for both variants, we can adjudicate this in 5 minutes.
+
+**Status:** Waiting on the worksheet-surfacing PR.
+
+### P54 — The cash-gift-to-household case
+
+**What happened:** The software approved $298/month for a household receiving cash gifts. The answer key said denial.
+
+**Who got it wrong:** We need to see the case details first (NEEDS_FACTS).
+
+**How sure are we:** Certain about the rule (VERIFIED). The classification logic is two-part.
+
+**What the rule actually says:**
+- **7 CFR 273.9(b)(2)(v):** cash gifts directly to the household are countable unearned income.
+- **7 CFR 273.9(c)(12):** nonprofit cash gifts up to $300/quarter are EXCLUDED.
+
+**Why we can't adjudicate yet:** We need to see the gift amount, the frequency, and the source. A $100/quarter gift from a nonprofit church food pantry → excluded → APPROVE is correct. A $400/month gift from grandma → countable → may exceed the income limit → DENY may be correct. The software's APPROVE means it counted something, but the output doesn't show whether the gift was treated as countable or excluded, or what the resulting income calculation looked like.
+
+**What needs to happen:** The worksheet-surfacing engine change. Once we can see the income line-item classification ("gift: $X/mo classified as countable under (b)(2)(v)" vs "gift: $X/mo excluded under (c)(12)"), this becomes a 2-minute adjudication.
+
+**Status:** Waiting on the worksheet-surfacing PR.
+
+**Why this matters in real life:** "Does grandma's $200 count as income?" is one of the most common questions caseworkers face. Getting this classification wrong is what generates appeals.
 
 ## The bigger pattern
 
