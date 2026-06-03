@@ -2143,8 +2143,8 @@
         "shelter.sua.HCSUA",
         "test.gross_net_fpl"
       ],
-      "oracle_basis": "HH ineligible until requalify  [7 CFR 272.17]",
-      "citation": "7 CFR 272.17",
+      "oracle_basis": "HH ineligible until requalify  [DQ + definition: 7 CFR 273.11(r); state data-match procedure: 7 CFR 272.17]",
+      "citation": "7 CFR 273.11(r); state proc. 272.17",
       "error_surface": {
         "mode": "amount",
         "element": "lottery"
