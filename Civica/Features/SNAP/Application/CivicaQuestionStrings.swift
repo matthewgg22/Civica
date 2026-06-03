@@ -10,13 +10,13 @@ import Foundation
 
 enum CivicaQuestionStrings {
 
-    static let continueLabel = CivicaText("Continue", es: "Continuar")
-    static let closeLabel = CivicaText("Close", es: "Cerrar")
-    static let backLabel = CivicaText("Back", es: "Atrás")
-    static let skipLabel = CivicaText("Skip for now", es: "Omitir por ahora")
-    static let notSureLabel = CivicaText("I'm not sure", es: "No estoy seguro")
-    static let yesLabel = CivicaText("Yes", es: "Sí")
-    static let noLabel = CivicaText("No", es: "No")
+    static let continueLabel = CivicaText("Continue", es: "Continuar", zh: "继续")
+    static let closeLabel = CivicaText("Close", es: "Cerrar", zh: "关闭")
+    static let backLabel = CivicaText("Back", es: "Atrás", zh: "返回")
+    static let skipLabel = CivicaText("Skip for now", es: "Omitir por ahora", zh: "暂时跳过")
+    static let notSureLabel = CivicaText("I'm not sure", es: "No estoy seguro", zh: "我不确定")
+    static let yesLabel = CivicaText("Yes", es: "Sí", zh: "是")
+    static let noLabel = CivicaText("No", es: "No", zh: "否")
 
     /// Placeholder for dollar-amount inputs. A word rather than a
     /// digit so users can tell the field is empty — the previous "0"
@@ -25,14 +25,15 @@ enum CivicaQuestionStrings {
     /// (especially since "0" is also a valid answer for an unhoused
     /// applicant's rent, a non-disabled household's medical costs,
     /// etc.).
-    static let amountPlaceholder = CivicaText("Amount", es: "Cantidad")
+    static let amountPlaceholder = CivicaText("Amount", es: "Cantidad", zh: "金额")
 
     /// "3 of 8" / "3 de 8". The Spanish form mirrors the canvas mockup
     /// (lowercase "de"). Caller passes the active language explicitly
     /// — same pattern as SNAPDecisionMathStrings interpolated helpers.
     static func progressLabel(current: Int, total: Int, language: CivicaLanguage) -> String {
         switch language {
-        case .english, .mandarin, .vietnamese, .tagalog: return "\(current) of \(total)"
+        case .english, .vietnamese, .tagalog: return "\(current) of \(total)"
+        case .mandarin: return "第 \(current) / \(total) 题"
         case .spanish: return "\(current) de \(total)"
         }
     }
@@ -41,7 +42,8 @@ enum CivicaQuestionStrings {
     /// than two unrelated digits separated by silence.
     static func progressAccessibilityLabel(current: Int, total: Int, language: CivicaLanguage) -> String {
         switch language {
-        case .english, .mandarin, .vietnamese, .tagalog: return "Question \(current) of \(total)"
+        case .english, .vietnamese, .tagalog: return "Question \(current) of \(total)"
+        case .mandarin: return "第 \(current) 题,共 \(total) 题"
         case .spanish: return "Pregunta \(current) de \(total)"
         }
     }
@@ -52,7 +54,8 @@ enum CivicaQuestionStrings {
     static func sectionLabel(index: Int, count: Int, title: String?, language: CivicaLanguage) -> String {
         let prefix: String
         switch language {
-        case .english, .mandarin, .vietnamese, .tagalog: prefix = "Section \(index) of \(count)"
+        case .english, .vietnamese, .tagalog: prefix = "Section \(index) of \(count)"
+        case .mandarin: prefix = "第 \(index) / \(count) 部分"
         case .spanish: prefix = "Sección \(index) de \(count)"
         }
         if let title, !title.isEmpty {
@@ -81,8 +84,10 @@ enum CivicaQuestionStrings {
     ) -> String {
         let pct = Int((fraction * 100).rounded())
         switch language {
-        case .english, .mandarin, .vietnamese, .tagalog:
+        case .english, .vietnamese, .tagalog:
             return "Application progress: about \(pct) percent. Section \(sectionIndex) of \(sectionCount)."
+        case .mandarin:
+            return "申请进度:约 \(pct)%。第 \(sectionIndex) / \(sectionCount) 部分。"
         case .spanish:
             return "Progreso de la solicitud: aproximadamente \(pct) por ciento. Sección \(sectionIndex) de \(sectionCount)."
         }
