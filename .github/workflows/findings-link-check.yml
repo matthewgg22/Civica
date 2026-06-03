@@ -59,8 +59,6 @@ jobs:
             --retry-wait-time 5
             --max-retries 3
             --accept 200,206,403,429
-            --exclude-mail
-            --exclude-loopback
             docs/findings/**/*.md
           fail: true
           format: markdown
