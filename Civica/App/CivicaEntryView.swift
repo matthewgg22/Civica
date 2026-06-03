@@ -74,6 +74,10 @@ struct CivicaEntryView: View {
         .background(CivicaColors.paper.ignoresSafeArea())
         .navigationTitle("Civica")
         .navigationBarTitleDisplayMode(.inline)
+        // Phase 1 (start-here) intentionally omits .civicaNavWordmark() —
+        // the hero card already carries the wheat sticker; the nav-bar mark
+        // would double up on the same surface. Phase 2/3 keep their nav
+        // wordmark because they don't have a hero-card sticker equivalent.
         .sheet(isPresented: $presentingDebugMenu) {
             DebugMenuView()
         }
@@ -229,6 +233,14 @@ struct CivicaEntryView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(CivicaColors.pinePrimary)
             .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
+            .overlay(alignment: .topTrailing) {
+                Image("civica-wheat-logo")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: 64, height: 64)
+                    .padding(4)
+                    .accessibilityHidden(true)
+            }
         }
         .buttonStyle(.plain)
         .accessibilityLabel(

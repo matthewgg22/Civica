@@ -139,6 +139,7 @@ struct CivicaHomePhase3View: View {
         .background(CivicaColors.paper.ignoresSafeArea())
         .navigationTitle("Civica")
         .navigationBarTitleDisplayMode(.inline)
+        // Nav wheat removed — CivicaEBTBalanceHeroCard carries the wheat sticker now.
         .navigationDestination(isPresented: $navigateToFindHelp) {
             FindHelpRootView()
         }
