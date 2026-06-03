@@ -230,6 +230,15 @@ struct CivicaEntryView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(CivicaColors.pinePrimary)
             .clipShape(RoundedRectangle(cornerRadius: CivicaRadius.card))
+            .overlay(alignment: .topTrailing) {
+                Image("civica-wheat-logo")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: 48, height: 48)
+                    .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                    .padding(CivicaSpacing.md)
+                    .accessibilityHidden(true)
+            }
         }
         .buttonStyle(.plain)
         .accessibilityLabel(

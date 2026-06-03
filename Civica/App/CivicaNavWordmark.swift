@@ -12,8 +12,8 @@ struct CivicaNavWordmark: View {
             Image("civica-wheat-logo")
                 .resizable()
                 .aspectRatio(contentMode: .fit)
-                .frame(width: 26, height: 26)
-                .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
+                .frame(width: 34, height: 34)
+                .clipShape(RoundedRectangle(cornerRadius: 7, style: .continuous))
                 .accessibilityHidden(true)
             Text("Civica")
                 .font(CivicaTypography.subheadStrong)
@@ -46,8 +46,8 @@ extension View {
                 Image("civica-wheat-logo")
                     .resizable()
                     .aspectRatio(contentMode: .fit)
-                    .frame(width: 24, height: 24)
-                    .clipShape(RoundedRectangle(cornerRadius: 5, style: .continuous))
+                    .frame(width: 32, height: 32)
+                    .clipShape(RoundedRectangle(cornerRadius: 7, style: .continuous))
                     .accessibilityLabel("Civica")
             }
         }
