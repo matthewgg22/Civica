@@ -305,7 +305,8 @@ struct CivicaHomePhase3View: View {
         VStack(alignment: .leading, spacing: CivicaSpacing.sm) {
             Text(CivicaPhase3Strings.unlinkedEyebrow.value(in: language))
                 .font(CivicaTypography.captionStrong)
-                .foregroundStyle(CivicaColors.pinePrimary)
+                // §2.2: uppercase-kerned eyebrow labels use graphite, not pine.
+                .foregroundStyle(CivicaColors.graphite)
                 .textCase(.uppercase)
                 .kerning(1.2)
             Text(CivicaPhase3Strings.unlinkedHeadline.value(in: language))
@@ -546,7 +547,8 @@ struct CivicaHomePhase3View: View {
                 Image(systemName: "calendar.badge.clock")
                     .imageScale(.large)
                     .font(.body)
-                    .foregroundStyle(CivicaColors.pinePrimary)
+                    // §2.2: decorative leading info glyph uses accentTeal, not pine.
+                    .foregroundStyle(CivicaColors.accentTeal)
                     .frame(width: 28, alignment: .leading)
                     .accessibilityHidden(true)
                 VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
@@ -670,7 +672,8 @@ struct CivicaHomePhase3View: View {
                         Image(systemName: "mappin.circle")
                             .imageScale(.large)
                             .font(.body)
-                            .foregroundStyle(CivicaColors.pinePrimary)
+                            // §2.2: decorative trailing glyph uses graphite, not pine.
+                            .foregroundStyle(CivicaColors.graphite)
                             .accessibilityHidden(true)
                     )
                 )

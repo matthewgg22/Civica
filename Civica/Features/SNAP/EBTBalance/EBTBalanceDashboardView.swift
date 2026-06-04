@@ -743,7 +743,9 @@ struct EBTBalanceDashboardView: View {
                 Image(systemName: store.isCardLocked ? "lock.fill" : "lock.open")
                     .imageScale(.large)
                     .font(.body)
-                    .foregroundStyle(store.isCardLocked ? CivicaColors.pinePrimary : CivicaColors.graphite)
+                    // §2.2: card-lock is a STATUS indicator, not a CTA;
+                    // ink (locked = strong) / graphite (unlocked = quiet).
+                    .foregroundStyle(store.isCardLocked ? CivicaColors.ink : CivicaColors.graphite)
                     .frame(width: 28, alignment: .leading)
                     .accessibilityHidden(true)
                 Text(EBTBalanceStrings.securityRowTitle.value(in: language))
@@ -754,7 +756,8 @@ struct EBTBalanceDashboardView: View {
                      ? EBTBalanceStrings.securityStatusLocked.value(in: language)
                      : EBTBalanceStrings.securityStatusUnlocked.value(in: language))
                     .font(CivicaTypography.footnoteStrong)
-                    .foregroundStyle(store.isCardLocked ? CivicaColors.pinePrimary : CivicaColors.graphite)
+                    // §2.2: status text mirrors the icon — ink/graphite, not pine.
+                    .foregroundStyle(store.isCardLocked ? CivicaColors.ink : CivicaColors.graphite)
                 Image(systemName: "chevron.right")
                     .foregroundStyle(CivicaColors.graphite)
                     .accessibilityHidden(true)
@@ -786,7 +789,8 @@ struct EBTBalanceDashboardView: View {
                 Image(systemName: "phone.bubble.fill")
                     .imageScale(.large)
                     .font(.body)
-                    .foregroundStyle(CivicaColors.pinePrimary)
+                    // §2.2: decorative leading icon in tappable row uses graphite.
+                    .foregroundStyle(CivicaColors.graphite)
                     .frame(width: 28, alignment: .leading)
                     .accessibilityHidden(true)
                 Text(EBTAccountServicesStrings.screenTitle.value(in: language))
@@ -882,7 +886,8 @@ struct EBTBalanceDashboardView: View {
             Image(systemName: "tag.fill")
                 .imageScale(.large)
                 .font(.body)
-                .foregroundStyle(CivicaColors.pinePrimary)
+                // §2.2: decorative row leading icon uses graphite, not pine (CTA-only).
+                .foregroundStyle(CivicaColors.graphite)
                 .frame(width: 24)
                 .accessibilityHidden(true)
             VStack(alignment: .leading, spacing: 2) {
@@ -967,7 +972,8 @@ struct EBTBalanceDashboardView: View {
             Image(systemName: icon)
                 .imageScale(.large)
                 .font(.body)
-                .foregroundStyle(CivicaColors.pinePrimary)
+                // §2.2: decorative row leading icon uses graphite, not pine (CTA-only).
+                .foregroundStyle(CivicaColors.graphite)
                 .frame(width: 28, height: 28, alignment: .center)
                 .accessibilityHidden(true)
             VStack(alignment: .leading, spacing: CivicaSpacing.xs) {

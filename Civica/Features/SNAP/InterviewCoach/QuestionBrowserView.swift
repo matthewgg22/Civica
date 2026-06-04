@@ -97,19 +97,22 @@ struct QuestionBrowserView: View {
         } label: {
             Text(state.code)
                 .font(CivicaTypography.subheadStrong)
+                // §2.2: selection text uses ink (matches CivicaQuestionChoices); pine reserved for CTAs.
                 .foregroundStyle(isSelected
-                                 ? CivicaColors.pinePrimary
+                                 ? CivicaColors.ink
                                  : (isSupported ? CivicaColors.ink : CivicaColors.muted))
                 .frame(width: 44, height: 30)
                 .background(
                     RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
+                        // §2.2: selection fill uses surfaceSecondary, not a pine tint.
                         .fill(isSelected
-                              ? CivicaColors.pinePrimary.opacity(0.12)
+                              ? CivicaColors.surfaceSecondary
                               : CivicaColors.surfacePrimary)
                 )
                 .overlay(
                     RoundedRectangle(cornerRadius: CivicaRadius.control, style: .continuous)
-                        .stroke(isSelected ? CivicaColors.pinePrimary : CivicaColors.hairline,
+                        // §2.2: selection stroke uses ink, not pine.
+                        .stroke(isSelected ? CivicaColors.ink : CivicaColors.hairline,
                                 lineWidth: 1)
                 )
                 .opacity(isSupported ? 1.0 : 0.55)
@@ -160,12 +163,15 @@ struct QuestionBrowserView: View {
         Button(action: action) {
             Text(label)
                 .font(CivicaTypography.captionStrong)
-                .foregroundStyle(isSelected ? CivicaColors.onPrimaryText : CivicaColors.pinePrimary)
+                // §2.2: filter-chip text — selected stays white on ink fill;
+                // unselected uses ink (was pine, which violated pine = CTAs only).
+                .foregroundStyle(isSelected ? CivicaColors.onPrimaryText : CivicaColors.ink)
                 .padding(.horizontal, CivicaSpacing.sm)
                 .padding(.vertical, CivicaSpacing.xs)
                 .background(
                     Capsule()
-                        .fill(isSelected ? CivicaColors.pinePrimary : CivicaColors.pinePrimary.opacity(0.10))
+                        // §2.2: selected chip = ink fill; unselected = surfaceSecondary.
+                        .fill(isSelected ? CivicaColors.ink : CivicaColors.surfaceSecondary)
                 )
         }
         .buttonStyle(.plain)
