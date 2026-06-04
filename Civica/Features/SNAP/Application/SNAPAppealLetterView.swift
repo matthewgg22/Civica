@@ -256,79 +256,94 @@ enum SNAPAppealLetterScreenStrings {
     static let eyebrow = CivicaText(
         "Appeal a SNAP denial",
         es: "Apela una denegación de SNAP",
-        zh: "申诉 SNAP 拒绝决定"
+        zh: "申诉 SNAP 拒绝决定",
+        vi: "Khiếu nại quyết định từ chối SNAP"
     )
     static let title = CivicaText(
         "Your fair-hearing request is ready to print",
         es: "Tu solicitud de audiencia justa está lista para imprimir",
-        zh: "你的公平听证申请已准备好打印"
+        zh: "你的公平听证申请已准备好打印",
+        vi: "Đơn xin điều trần công bằng của bạn đã sẵn sàng để in"
     )
     static func bodyText(language: CivicaLanguage, stateCode: String?) -> String {
         let office: String
         switch (stateCode ?? SNAPAgencyDirectory.launchStateCode).uppercased() {
         case "CA":
             switch language {
-            case .english, .vietnamese, .tagalog:
+            case .english, .tagalog:
                 office = "the State Hearings Division"
             case .spanish:
                 office = "la División de Audiencias del Estado"
             case .mandarin:
                 office = "州听证部门"
+            case .vietnamese:
+                office = "Phòng Điều trần Tiểu bang"
             }
         case "MA":
             switch language {
-            case .english, .vietnamese, .tagalog:
+            case .english, .tagalog:
                 office = "the DTA Hearing Office"
             case .spanish:
                 office = "la Oficina de Audiencias del DTA"
             case .mandarin:
                 office = "DTA 听证办公室"
+            case .vietnamese:
+                office = "Văn phòng Điều trần DTA"
             }
         default:
             switch language {
-            case .english, .vietnamese, .tagalog:
+            case .english, .tagalog:
                 office = "your state SNAP hearing office"
             case .spanish:
                 office = "tu oficina estatal de audiencias de SNAP"
             case .mandarin:
                 office = "你所在州的 SNAP 听证办公室"
+            case .vietnamese:
+                office = "văn phòng điều trần SNAP của tiểu bang bạn"
             }
         }
         switch language {
-        case .english, .vietnamese, .tagalog:
+        case .english, .tagalog:
             return "We prepared a letter requesting a fair hearing under federal SNAP rules (7 CFR 273.15). Sign and date it, fill in your information, and mail or hand-deliver it to \(office)."
         case .spanish:
             return "Preparamos una carta que solicita una audiencia justa bajo las reglas federales de SNAP (7 CFR 273.15). Fírmala y féchala, completa tu información, y envíala por correo o entrégala en persona a \(office)."
         case .mandarin:
             return "我们根据联邦 SNAP 规定(7 CFR 273.15)为你准备了一封申请公平听证的信。请签名并填写日期,补充你的信息,然后邮寄或亲自送交至\(office)。"
+        case .vietnamese:
+            return "Chúng tôi đã chuẩn bị một lá thư yêu cầu điều trần công bằng theo quy định SNAP liên bang (7 CFR 273.15). Hãy ký tên và ghi ngày, điền thông tin của bạn, rồi gửi qua bưu điện hoặc trực tiếp đến \(office)."
         }
     }
 
     static let generating = CivicaText(
         "Drafting your letter…",
         es: "Preparando tu carta…",
-        zh: "正在为你起草信件……"
+        zh: "正在为你起草信件……",
+        vi: "Đang soạn thư của bạn…"
     )
     static let ready = CivicaText(
         "Your letter is ready.",
         es: "Tu carta está lista.",
-        zh: "你的信件已准备好。"
+        zh: "你的信件已准备好。",
+        vi: "Thư của bạn đã sẵn sàng."
     )
     static let errorGeneric = CivicaText(
         "We couldn't generate the letter. Try again in a moment.",
         es: "No pudimos generar la carta. Inténtalo de nuevo en un momento.",
-        zh: "我们无法生成这封信。请稍后再试。"
+        zh: "我们无法生成这封信。请稍后再试。",
+        vi: "Chúng tôi không thể tạo thư. Hãy thử lại sau giây lát."
     )
     static let retry = CivicaText(
         "Try again",
         es: "Inténtalo de nuevo",
-        zh: "再试一次"
+        zh: "再试一次",
+        vi: "Thử lại"
     )
 
     static let nextStepsHeading = CivicaText(
         "What to do next",
         es: "Qué hacer ahora",
-        zh: "接下来怎么做"
+        zh: "接下来怎么做",
+        vi: "Bước tiếp theo cần làm"
     )
     static func nextStepsBodyText(language: CivicaLanguage, stateCode: String?) -> String {
         let address = SNAPAgencyDirectory.hearingOfficeInlineAddress(for: stateCode, language: language)
@@ -336,23 +351,27 @@ enum SNAPAppealLetterScreenStrings {
         let portalSentence: String
         if !portal.isEmpty {
             switch language {
-            case .english, .vietnamese, .tagalog:
+            case .english, .tagalog:
                 portalSentence = " You can also submit a hearing request through \(portal)."
             case .spanish:
                 portalSentence = " También puedes solicitar una audiencia a través de \(portal)."
             case .mandarin:
                 portalSentence = "你也可以通过 \(portal) 提交听证申请。"
+            case .vietnamese:
+                portalSentence = " Bạn cũng có thể gửi yêu cầu điều trần qua \(portal)."
             }
         } else {
             portalSentence = ""
         }
         switch language {
-        case .english, .vietnamese, .tagalog:
+        case .english, .tagalog:
             return "Save the PDF, print it, sign it, fill in your name and address by hand, then mail or hand-deliver to \(address).\(portalSentence)"
         case .spanish:
             return "Guarda el PDF, imprímelo, fírmalo, completa tu nombre y dirección a mano, y luego envíalo por correo o entrégalo en persona en \(address).\(portalSentence)"
         case .mandarin:
             return "保存 PDF、打印出来、签名,手写填上你的姓名和地址,然后邮寄或亲自送交至\(address)。\(portalSentence)"
+        case .vietnamese:
+            return "Lưu tệp PDF, in ra, ký tên, viết tay tên và địa chỉ của bạn, rồi gửi qua bưu điện hoặc trực tiếp đến \(address).\(portalSentence)"
         }
     }
 
@@ -361,50 +380,60 @@ enum SNAPAppealLetterScreenStrings {
         switch (stateCode ?? SNAPAgencyDirectory.launchStateCode).uppercased() {
         case "CA":
             switch language {
-            case .english, .vietnamese, .tagalog:
+            case .english, .tagalog:
                 stateLabel = "CDSS"
             case .spanish:
                 stateLabel = "del CDSS"
             case .mandarin:
                 stateLabel = "CDSS"
+            case .vietnamese:
+                stateLabel = "CDSS"
             }
         case "MA":
             switch language {
-            case .english, .vietnamese, .tagalog:
+            case .english, .tagalog:
                 stateLabel = "DTA"
             case .spanish:
                 stateLabel = "del DTA"
             case .mandarin:
                 stateLabel = "DTA"
+            case .vietnamese:
+                stateLabel = "DTA"
             }
         default:
             switch language {
-            case .english, .vietnamese, .tagalog:
+            case .english, .tagalog:
                 stateLabel = "state SNAP"
             case .spanish:
                 stateLabel = "estatal de SNAP"
             case .mandarin:
                 stateLabel = "州 SNAP"
+            case .vietnamese:
+                stateLabel = "SNAP tiểu bang"
             }
         }
         switch language {
-        case .english, .vietnamese, .tagalog:
+        case .english, .tagalog:
             return "Open the \(stateLabel) fair-hearing page online"
         case .spanish:
             return "Abrir la página de audiencia justa \(stateLabel) en línea"
         case .mandarin:
             return "在线打开 \(stateLabel) 公平听证页面"
+        case .vietnamese:
+            return "Mở trang điều trần công bằng \(stateLabel) trực tuyến"
         }
     }
 
     static let share = CivicaText(
         "Save or share my letter",
         es: "Guardar o compartir mi carta",
-        zh: "保存或分享我的信件"
+        zh: "保存或分享我的信件",
+        vi: "Lưu hoặc chia sẻ thư của tôi"
     )
     static let done = CivicaText(
         "Done for now",
         es: "Listo por ahora",
-        zh: "暂时完成"
+        zh: "暂时完成",
+        vi: "Tạm xong"
     )
 }
