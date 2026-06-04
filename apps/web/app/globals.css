@@ -2057,26 +2057,21 @@ html {
 
 .app-island__header {
   display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  margin-bottom: 12px;
+  align-items: center;
+  gap: 11px;
+  margin-bottom: 11px;
   /* leave room for the 44px dismiss tap area top-right */
-  padding-right: 20px;
+  padding-right: 18px;
 }
 
 .app-island__icon {
   flex-shrink: 0;
-  width: 34px;
-  height: 34px;
-  border-radius: 7px;
-  overflow: hidden;
-  background: rgba(255, 255, 255, 0.15);
-}
-
-.app-island__icon-img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
+  width: 42px;
+  height: 42px;
+  /* iOS App Store icon look — rounded square, ~22% radius */
+  border-radius: 9px;
+  object-fit: cover;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12);
 }
 
 .app-island__text {
@@ -2087,14 +2082,15 @@ html {
 .app-island__headline {
   font-size: 0.8125rem;
   font-weight: 700;
-  line-height: 1.3;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
   color: #ffffff;
-  margin: 0 0 2px;
+  margin: 0 0 1px;
 }
 
 .app-island__sub {
   font-size: 0.6875rem;
-  line-height: 1.4;
+  line-height: 1.35;
   color: rgba(255, 255, 255, 0.7);
   margin: 0;
 }

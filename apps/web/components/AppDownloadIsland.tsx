@@ -46,15 +46,13 @@ export function AppDownloadIsland({
       </button>
 
       <div className="app-island__header">
-        <div className="app-island__icon">
-          <Image
-            src="/civica-wheat-mark.png"
-            alt="Civica"
-            width={28}
-            height={28}
-            className="app-island__icon-img"
-          />
-        </div>
+        <Image
+          src="/civica-app-icon.png"
+          alt="Civica"
+          width={44}
+          height={44}
+          className="app-island__icon"
+        />
         <div className="app-island__text">
           <p className="app-island__headline">{label}</p>
           <p className="app-island__sub">{sub}</p>

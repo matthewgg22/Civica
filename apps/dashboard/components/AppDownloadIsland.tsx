@@ -15,7 +15,7 @@ interface Props {
 
 export function AppDownloadIsland({
   label = "View on iPhone or iPad",
-  sub = "Track and manage applications on the go",
+  sub = "Manage cases on the go",
   cta = "Download the app →",
   dismissLabel = "Close app download prompt",
 }: Props) {
@@ -57,19 +57,17 @@ export function AppDownloadIsland({
       </button>
 
       {/* icon + text row */}
-      <div className="flex items-start gap-2.5 mb-3 pr-5 max-[479px]:flex-1 max-[479px]:mb-0 max-[479px]:pr-0 max-[479px]:min-w-0">
-        <div className="shrink-0 w-[34px] h-[34px] rounded-[7px] overflow-hidden bg-white/15">
-          <Image
-            src="/civica-wheat-mark.png"
-            alt="Civica"
-            width={34}
-            height={34}
-            className="w-full h-full object-contain"
-          />
-        </div>
+      <div className="flex items-center gap-[11px] mb-[11px] pr-[18px] max-[479px]:flex-1 max-[479px]:mb-0 max-[479px]:pr-0 max-[479px]:min-w-0">
+        <Image
+          src="/civica-app-icon.png"
+          alt="Civica"
+          width={42}
+          height={42}
+          className="shrink-0 w-[42px] h-[42px] rounded-[9px] object-cover [box-shadow:inset_0_0_0_1px_rgba(255,255,255,0.12)]"
+        />
         <div className="flex-1 min-w-0">
-          <p className="text-[13px] font-bold leading-snug text-white m-0">{label}</p>
-          <p className="text-[11px] leading-snug text-white/70 m-0 max-[479px]:hidden">{sub}</p>
+          <p className="text-[13px] font-bold leading-[1.25] tracking-[-0.01em] text-white m-0">{label}</p>
+          <p className="text-[11px] leading-[1.35] text-white/70 m-0 max-[479px]:hidden">{sub}</p>
         </div>
       </div>
 

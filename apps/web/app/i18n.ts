@@ -18,7 +18,7 @@ export const strings = {
     ctaStartApplication: "Start your application",
     ctaQualify: "See if you qualify",
     ctaIslandLabel: "Apply on your iPhone",
-    ctaIslandSub: "CalFresh benefits in your pocket",
+    ctaIslandSub: "CalFresh in your pocket",
     ctaIslandBtn: "Get the app →",
     ctaIslandDismiss: "Close app download prompt",
 
