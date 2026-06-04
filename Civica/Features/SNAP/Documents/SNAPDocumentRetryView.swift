@@ -256,99 +256,125 @@ enum SNAPDocumentRetryStrings {
 
     static let eyebrow = CivicaText(
         "Photo · what we got",
-        es: "Foto · lo que recibimos"
+        es: "Foto · lo que recibimos",
+        zh: "照片 · 我们收到的"
     )
     static let title = CivicaText(
         "We couldn't read it clearly.",
-        es: "No la pudimos leer claramente."
+        es: "No la pudimos leer claramente.",
+        zh: "我们没办法看清楚。"
     )
 
     static let whatWeGotLabel = CivicaText(
         "Your photo",
-        es: "Tu foto"
+        es: "Tu foto",
+        zh: "你的照片"
     )
     static let previewBadge = CivicaText(
         "Hard to read",
-        es: "Difícil de leer"
+        es: "Difícil de leer",
+        zh: "难以辨认"
     )
     static let previewAccessibility = CivicaText(
         "The photo you just took. Marked as hard to read by Civica's on-device check.",
-        es: "La foto que acabas de tomar. Marcada como difícil de leer por la verificación local de Civica."
+        es: "La foto que acabas de tomar. Marcada como difícil de leer por la verificación local de Civica.",
+        zh: "你刚刚拍的照片。Civica 本地检查标记为难以辨认。"
     )
 
     static let tipsLabel = CivicaText(
         "What usually helps",
-        es: "Lo que suele ayudar"
+        es: "Lo que suele ayudar",
+        zh: "通常有帮助的做法"
     )
     static let retakeCTA = CivicaText(
         "Take another photo",
-        es: "Tomar otra foto"
+        es: "Tomar otra foto",
+        zh: "再拍一张"
     )
     static let keepAnywayCTA = CivicaText(
         "Keep this photo anyway",
-        es: "Quedarme con esta foto"
+        es: "Quedarme con esta foto",
+        zh: "仍然保留这张照片"
     )
     static let differentDocumentCTA = CivicaText(
         "Skip and use a different document →",
-        es: "Saltar y usar otro documento →"
+        es: "Saltar y usar otro documento →",
+        zh: "跳过并使用其他文件 →"
     )
 
     // MARK: - Reason headlines (one per rejection mode)
 
     static let reasonBoundary = CivicaText(
         "We couldn't find the edges of the document",
-        es: "No encontramos los bordes del documento"
+        es: "No encontramos los bordes del documento",
+        zh: "我们找不到文件的边缘"
     )
     static let reasonBlurry = CivicaText(
         "The photo came out too blurry",
-        es: "La foto salió muy borrosa"
+        es: "La foto salió muy borrosa",
+        zh: "照片拍得太模糊了"
     )
     static let reasonDark = CivicaText(
         "The photo is too dark",
-        es: "La foto está muy oscura"
+        es: "La foto está muy oscura",
+        zh: "照片太暗了"
     )
     static let reasonBright = CivicaText(
         "There's too much glare on the photo",
-        es: "Hay demasiado reflejo en la foto"
+        es: "Hay demasiado reflejo en la foto",
+        zh: "照片上反光太多了"
     )
     static let reasonGeneric = CivicaText(
         "Something looked off about this photo",
-        es: "Algo no se ve bien en esta foto"
+        es: "Algo no se ve bien en esta foto",
+        zh: "这张照片看起来有点不对劲"
     )
 
     // MARK: - Reason details
 
     static let detailBoundary = CivicaText(
         "All four corners of the document need to be in frame. Try placing it on a dark surface so the edges stand out.",
-        es: "Las cuatro esquinas del documento deben estar en el cuadro. Intenta ponerlo sobre una superficie oscura para que se vean los bordes."
+        es: "Las cuatro esquinas del documento deben estar en el cuadro. Intenta ponerlo sobre una superficie oscura para que se vean los bordes.",
+        zh: "文件的四个角都要在画面里。试着把它放在深色的桌面上,这样边缘会更清楚。"
     )
     static let detailBlurry = CivicaText(
         "The text and numbers came back too unclear to verify. Hold the phone steady and tap the screen to focus before snapping.",
-        es: "El texto y los números se ven muy poco claros. Sujeta el teléfono firme y toca la pantalla para enfocar antes de tomar la foto."
+        es: "El texto y los números se ven muy poco claros. Sujeta el teléfono firme y toca la pantalla para enfocar antes de tomar la foto.",
+        zh: "文字和数字太模糊,没办法核对。把手机拿稳,拍之前点一下屏幕对焦。"
     )
     static let detailDark = CivicaText(
         "Move to brighter light, or turn on your phone's flashlight before retaking.",
-        es: "Muévete a un lugar con más luz, o enciende la linterna de tu teléfono antes de tomarla de nuevo."
+        es: "Muévete a un lugar con más luz, o enciende la linterna de tu teléfono antes de tomarla de nuevo.",
+        zh: "换到光线更亮的地方,或者重拍前打开手机的手电筒。"
     )
     static let detailBright = CivicaText(
         "Sunlight or a lamp shining directly on the document washes out the text. Try a softer angle or step into the shade.",
-        es: "La luz directa del sol o una lámpara apaga el texto. Intenta un ángulo más suave o muévete a la sombra."
+        es: "La luz directa del sol o una lámpara apaga el texto. Intenta un ángulo más suave o muévete a la sombra.",
+        zh: "阳光或台灯直射文件会让文字看不清。换个柔和一点的角度,或者挪到阴影里。"
     )
     static let detailGeneric = CivicaText(
         "Civica's on-device check flagged the photo. Retake or keep it and the caseworker will let us know if it's good enough.",
-        es: "La verificación local de Civica marcó la foto. Vuelve a tomarla o quédate con ella y el asesor nos dirá si es suficiente."
+        es: "La verificación local de Civica marcó la foto. Vuelve a tomarla o quédate con ella y el asesor nos dirá si es suficiente.",
+        zh: "Civica 的本地检查标记了这张照片。你可以重拍,或者保留它 —— 案件管理员会告诉我们是否够用。"
     )
 
     // MARK: - Tips (always shown)
 
     static func tips(language: CivicaLanguage) -> [String] {
         switch language {
-        case .english, .mandarin, .vietnamese, .tagalog:
+        case .english, .vietnamese, .tagalog:
             return [
                 "Place the document on a dark surface — a kitchen table works.",
                 "Tap the screen to focus before snapping.",
                 "Make sure all four corners are in frame.",
                 "Daylight or a phone flashlight is better than a lamp.",
+            ]
+        case .mandarin:
+            return [
+                "把文件放在深色的桌面上 —— 厨房桌子就可以。",
+                "拍之前点一下屏幕对焦。",
+                "确认四个角都在画面里。",
+                "自然光或手机手电筒比台灯效果更好。",
             ]
         case .spanish:
             return [
