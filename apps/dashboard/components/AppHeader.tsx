@@ -44,14 +44,14 @@ const ALL_NAV_ITEMS = [...NAV_ITEMS, ...SHARE_NAV_ITEMS];
 export default function AppHeader({ email, active }: { email?: string; active: NavKey }) {
   return (
     <>
-    <header className="bg-ink px-4 sm:px-8 py-3.5 flex items-center justify-between gap-3">
+    <header className="bg-surface border-b border-hairline px-4 sm:px-8 py-3.5 flex items-center justify-between gap-3">
       <div className="flex items-center gap-4 sm:gap-8 min-w-0">
         <Link href="/dashboard" className="flex items-center gap-3 group shrink-0">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/civica-wheat-mark.png" alt="Civica" width={50} height={50} className="w-[50px] h-[50px] object-contain shrink-0 group-hover:opacity-90 transition-opacity" />
           <div>
-            <p className="text-[15px] font-semibold tracking-tight text-white leading-none">Civica</p>
-            <p className="text-[10px] text-white/45 mt-0.5 uppercase tracking-wider font-semibold">Navigator</p>
+            <p className="text-[15px] font-semibold tracking-tight text-ink leading-none">Civica</p>
+            <p className="text-[10px] text-muted mt-0.5 uppercase tracking-wider font-semibold">Navigator</p>
           </div>
         </Link>
         {/* Desktop nav — hidden on <md, replaced by MobileNavMenu hamburger */}
@@ -68,15 +68,15 @@ export default function AppHeader({ email, active }: { email?: string; active: N
           <ShareDropdown active={active} />
         </div>
         <kbd
-          className="hidden sm:inline-flex items-center gap-1 text-[11px] font-mono text-white/45 hover:text-white/80 transition-colors border border-white/15 hover:border-white/30 rounded px-1.5 py-0.5"
+          className="hidden sm:inline-flex items-center gap-1 text-[11px] font-mono text-graphite hover:text-ink transition-colors border border-hairline hover:border-graphite rounded px-1.5 py-0.5"
           aria-label="Open command palette, Command K"
           title="Open command palette (⌘K)"
         >
           ⌘K
         </kbd>
-        {email && <span className="hidden md:inline text-[13px] text-white/50">{email}</span>}
+        {email && <span className="hidden md:inline text-[13px] text-muted">{email}</span>}
         <form action="/auth/signout" method="post">
-          <button className="inline-flex items-center min-h-[44px] px-1.5 rounded text-[13px] font-medium text-white/80 hover:text-white focus:outline-none focus:ring-2 focus:ring-white/30 transition-colors">Sign out</button>
+          <button className="inline-flex items-center min-h-[44px] px-1.5 rounded text-[13px] font-medium text-graphite hover:text-ink focus:outline-none focus:ring-2 focus:ring-pine/30 transition-colors">Sign out</button>
         </form>
         {/* Mobile hamburger — md:hidden internally. Shows ALL nav items
             (including the Share ones) since the mobile dropdown has plenty
@@ -93,10 +93,10 @@ function NavTab({ href, label, active }: { href: string; label: string; active: 
   return (
     <Link
       href={href}
-      className={`px-3 py-1.5 rounded-[4px] text-[13px] font-semibold transition-colors whitespace-nowrap min-h-[44px] flex items-center focus:outline-none focus:ring-2 focus:ring-white/30 ${
+      className={`px-3 py-1.5 rounded-[4px] text-[13px] font-semibold transition-colors whitespace-nowrap min-h-[44px] flex items-center focus:outline-none focus:ring-2 focus:ring-pine/30 ${
         active
-          ? "bg-white/15 text-white"
-          : "text-white/55 hover:text-white hover:bg-white/10"
+          ? "bg-ink/8 text-ink"
+          : "text-graphite hover:text-ink hover:bg-ink/5"
       }`}
     >
       {label}
