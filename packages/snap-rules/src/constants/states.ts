@@ -105,9 +105,11 @@
 //                        exemption changes — age band 18-64, IHCIA
 //                        exemption added, homeless/vet/foster removed),
 //                        §10103 (LIHEAP→SUA), §10104 (internet
-//                        exclusion — engine cutoff 2025-11-01 may
-//                        differ from statutory 2025-07-04; counsel
-//                        decision pending), §10105 (PER state match,
+//                        exclusion — engine cutoff 2025-10-01 per
+//                        FY26 effective date; confirmed via
+//                        govinfo.gov PLAW-119publ21 + FNS umbrella
+//                        memo 2025-09-04; fixed PR #468),
+//                        §10105 (PER state match,
 //                        used by error-rate engine), §10108 (alien
 //                        eligibility).
 //     OBBBA memos      — Umbrella memo (2025-09-04); ABAWD exceptions
