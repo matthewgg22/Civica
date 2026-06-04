@@ -91,15 +91,15 @@ struct T16ShelterAccuracyTests {
     /// CA HH 1, gross $1,200, rent $800, selects heatFuel (heatingCooling tier).
     /// No reported utility amount → SUA substitution applies → effectiveUtility = $663.
     ///   earned_deduction = 1200 * 0.20               = 240
-    ///   standard (HH 1)                              = 219
-    ///   adjusted = 1200 - 240 - 219                  = 741
-    ///   half_adjusted = 370.5
+    ///   standard (HH 1, FY26)                        = 209
+    ///   adjusted = 1200 - 240 - 209                  = 751
+    ///   half_adjusted = 375.5
     ///   shelterCosts = 800 + 663                     = 1463
-    ///   excessShelter = min(1463 - 370.5, cap=744)   = 744 (capped)
-    ///   net = 1200 - 240 - 219 - 744                 = -3 → clamped to 0
-    ///   30% of net = 0
-    ///   maxAllotment (HH 1)                          = 292
-    ///   benefit = 292 - 0                            = 292 (minimum kick-in: $23)
+    ///   excessShelter = min(1463 - 375.5, cap=744)   = 744 (capped)
+    ///   net = 1200 - 240 - 209 - 744                 = 7
+    ///   30% of net = round(7 * 0.30) = round(2.1)    = 2
+    ///   maxAllotment (HH 1, FY26)                    = 298
+    ///   benefit = 298 - 2                            = 296
     @Test("CA heatingCooling tier: SUA $663 applied even with nil utility amount (Gap #2)")
     func calculator_caHeatingCooling_suaAppliedWithNilUtilityAmount() {
         var draft = SNAPApplicationDraft()
@@ -120,10 +120,10 @@ struct T16ShelterAccuracyTests {
 
         // excessShelter should be capped at 744 (SUA applied)
         #expect(result.excessShelterDeduction == 744)
-        // Net should be 0 (floored)
-        #expect(result.netMonthlyIncome == 0)
-        // Benefit = max allotment - 0 = 292 (HH 1 FY2026)
-        #expect(result.monthlyBenefit == 292)
+        // Net = $7 (FY26 SD=$209, not $219 as in the pre-#375 docstring)
+        #expect(result.netMonthlyIncome == 7)
+        // Benefit = max allotment 298 - 2 = 296 (FY26 maxAllot HH1=$298, not $292)
+        #expect(result.monthlyBenefit == 296)
     }
 
     /// CA HH 1, gross $1,200, rent $800, selects heatFuel, reports $40 utilities.
@@ -278,19 +278,19 @@ struct T16ShelterAccuracyTests {
             today: Self.fy26Date
         )
 
-        // shelterCost = $179 (homeless standard)
+        // shelterCost = $179 (homeless standard, FY26)
         // earned_deduction = 900 * 0.20 = 180
-        // standard (HH 1) = 219
-        // adjusted = 900 - 180 - 219 = 501
-        // half_adjusted = 250.5
-        // excessShelter = min(179 - 250.5, cap) → negative → 0
-        // Net = 501
-        // 30% of net = round(501 * 0.30) = 150 (rounds to 150)
-        // maxAllotment (HH 1 FY26) = 292
-        // benefit = 292 - 150 = 142
+        // standard (HH 1, FY26) = 209
+        // adjusted = 900 - 180 - 209 = 511
+        // half_adjusted = 255.5
+        // excessShelter = min(179 - 255.5, cap) → negative → 0
+        // Net = 511
+        // 30% of net = round(511 * 0.30) = round(153.3) = 153
+        // maxAllotment (HH 1, FY26) = 298
+        // benefit = 298 - 153 = 145
         #expect(result.excessShelterDeduction == 0)  // shelter < half_adjusted
-        #expect(result.netMonthlyIncome == 501)
-        #expect(result.monthlyBenefit == 142)
+        #expect(result.netMonthlyIncome == 511)
+        #expect(result.monthlyBenefit == 145)
     }
 
     @Test("Unhoused with high income: $179 applied (not rent override)")
