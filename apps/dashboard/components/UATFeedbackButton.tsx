@@ -5,6 +5,31 @@ import { useState, useRef } from "react";
 
 type State = "idle" | "open" | "sending" | "sent" | "error";
 
+const PAGE_LABELS: Record<string, string> = {
+  "/login":       "Sign In",
+  "/dashboard":   "Dashboard",
+  "/packets":     "Applications",
+  "/outreach":    "Outreach",
+  "/enrollments": "Renewals",
+  "/qc":          "Quality Control",
+  "/ops":         "Performance",
+  "/compliance":  "Why Civica",
+  "/findings":    "Findings",
+  "/county":      "County",
+  "/cbo-preview": "CBO Preview",
+  "/sign-up":     "Request Access",
+};
+
+function pageLabel(pathname: string): string {
+  if (PAGE_LABELS[pathname]) return PAGE_LABELS[pathname];
+  // Dynamic segments: /packets/[id] → "Application Detail"
+  if (/^\/packets\//.test(pathname)) return "Application Detail";
+  if (/^\/compliance\//.test(pathname)) return "Compliance Detail";
+  // Fallback: title-case the last segment
+  const last = pathname.split("/").filter(Boolean).pop() ?? pathname;
+  return last.charAt(0).toUpperCase() + last.slice(1).replace(/-/g, " ");
+}
+
 export default function UATFeedbackButton() {
   const pathname = usePathname();
   const [state, setState] = useState<State>("idle");
@@ -73,7 +98,7 @@ export default function UATFeedbackButton() {
             </div>
 
             <p className="text-[12px] text-graphite">
-              Page: <span className="font-mono text-ink">{pathname}</span>
+              Page: <span className="font-medium text-ink">{pageLabel(pathname)}</span>
             </p>
 
             {state === "sent" ? (
