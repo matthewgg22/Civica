@@ -64,6 +64,33 @@ extension CivicaColors {
     public static let paperBright = Color.dynamic(light: "#FCFAF6", dark: "#161A1F")
 }
 
+// MARK: - Semantic icon tokens (T11 — issue #424 color-discipline sweep)
+//
+// Two tokens for decorative icons that were previously borrowing
+// `pinePrimary`, diluting the "pine = CTA only" signal (DESIGN.md §2.2).
+//
+// `cardLeadingIcon` — default for decorative leading icons inside
+//   cards and banners (checkmarks, calendar glyphs, bolt icons, etc.).
+//   Aliased to `graphite` so icons stay visually quiet alongside ink text.
+//
+// `cardInfoIcon` — for help/info glyphs ONLY (questionmark.circle
+//   pattern already moved to accentTeal in pre-demo fixes; this token
+//   makes that choice discoverable and enforceable).
+//   Aliased to `accentTeal`.
+//
+// Neither token introduces new color values — they are semantic aliases
+// over existing palette tokens, which keeps the palette stable while
+// making intent explicit in call sites and the SwiftLint rule below.
+extension CivicaColors {
+    /// Decorative leading icons in cards/banners. Default: graphite.
+    /// Use `cardInfoIcon` instead for help / questionmark.circle glyphs.
+    public static let cardLeadingIcon = graphite
+
+    /// Help / info glyphs (questionmark.circle, info.circle pattern).
+    /// Aliased to accentTeal per DESIGN.md §2.2 discipline.
+    public static let cardInfoIcon    = accentTeal
+}
+
 // MARK: - Color forwarding aliases
 // Enables .foregroundStyle(.civicaPinePrimary) without importing CivicaColors directly.
 

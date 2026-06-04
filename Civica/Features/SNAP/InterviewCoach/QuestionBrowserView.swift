@@ -213,7 +213,8 @@ struct QuestionBrowserView: View {
                         .foregroundStyle(CivicaColors.graphite)
                     Text(question.category.localizedLabel(in: language))
                         .font(CivicaTypography.captionStrong)
-                        .foregroundStyle(CivicaColors.pinePrimary)
+                        // §2.2: category metadata label is not a CTA — graphite (bucket 4).
+                        .foregroundStyle(CivicaColors.graphite)
                 }
             }
 

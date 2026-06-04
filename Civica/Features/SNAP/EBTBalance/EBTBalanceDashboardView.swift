@@ -68,10 +68,12 @@ struct EBTBalanceDashboardView: View {
                         )
                     }
                     if store.isCardLocked {
-                        banner(icon: "lock.fill", text: EBTBalanceStrings.lockedBannerText.value(in: language))
+                        // §2.2: card-lock is a status indicator, not a CTA — ink for the icon.
+                        banner(icon: "lock.fill", text: EBTBalanceStrings.lockedBannerText.value(in: language), tint: CivicaColors.ink)
                     }
                     if insights.isLowBalance {
-                        banner(icon: "exclamationmark.circle.fill", text: EBTBalanceStrings.lowBalanceBanner.value(in: language))
+                        // §2.2: low-balance is a warning, not a CTA — warningAmber for the icon.
+                        banner(icon: "exclamationmark.circle.fill", text: EBTBalanceStrings.lowBalanceBanner.value(in: language), tint: CivicaColors.warningAmber)
                     }
                     heroCard(account, insights: insights)
                     projectionCard(account, insights: insights)
@@ -398,7 +400,11 @@ struct EBTBalanceDashboardView: View {
         }
     }
 
-    private func banner(icon: String, text: String, tint: Color = CivicaColors.pinePrimary) -> some View {
+    // §2.2: banner icons are decorative status indicators, not CTAs.
+    // Default tint is cardLeadingIcon (graphite). Call sites that need
+    // semantic tints (amber deposit, ink lock, warningAmber low-balance)
+    // pass an explicit value.
+    private func banner(icon: String, text: String, tint: Color = CivicaColors.cardLeadingIcon) -> some View {
         HStack(spacing: CivicaSpacing.sm) {
             Image(systemName: icon)
                 .foregroundStyle(tint)
@@ -447,7 +453,9 @@ struct EBTBalanceDashboardView: View {
     private func projectionCard(_ account: EBTAccount, insights: EBTBalanceInsights) -> some View {
         if let projection = insights.projection {
             let isTight = projection.isTightUntilDeposit
-            let accent: Color = isTight ? CivicaColors.warningAmber : CivicaColors.pinePrimary
+            // §2.2: projection icon is decorative (not a CTA).
+            // Tight = warningAmber (process caution); not-tight = cardLeadingIcon (graphite — info, quiet).
+            let accent: Color = isTight ? CivicaColors.warningAmber : CivicaColors.cardLeadingIcon
             let iconName = isTight ? "exclamationmark.circle.fill" : "calendar.badge.checkmark"
             HStack(alignment: .top, spacing: CivicaSpacing.md) {
                 Image(systemName: iconName)

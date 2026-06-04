@@ -1,0 +1,54 @@
+# Civica SwiftLint configuration
+# See DESIGN.md §2.2 for the color-discipline rules this file enforces.
+
+# ── Included paths ──────────────────────────────────────────────────────────
+included:
+  - Civica
+  - CivicaDesignSystem
+
+# ── Excluded paths ──────────────────────────────────────────────────────────
+excluded:
+  - Civica Tests
+  - Voting UI Island Card
+  - WeVote Information Page
+  - .build
+  - .swiftpm
+
+# ── Built-in rules ──────────────────────────────────────────────────────────
+# Only the minimum set — add more in a dedicated linting PR.
+disabled_rules:
+  - trailing_whitespace           # handled by editor
+
+opt_in_rules:
+  - empty_count
+  - explicit_init
+
+# ── Custom rules ─────────────────────────────────────────────────────────────
+#
+# D5 (closeout sprint 2026-06-04): pattern-based warn rule to catch new
+# decorative Image() callsites that accidentally reach for pinePrimary.
+#
+# SEVERITY: warning (not error) — upgrade to error after 1 quarter of
+# clean PRs per D5 design decision. Track in the monthly retro.
+#
+# FALSE POSITIVES: The regex will flag Image() inside Button/NavigationLink
+# labels that legitimately use pinePrimary as a CTA signal. This is
+# intentional — the rule surfaces the site for a human to verify. The
+# rate of false positives is acceptable at warn level; the rule is not
+# a hard gate.
+#
+# EXEMPT SITES (manually confirmed as sanctioned):
+#   - CivicaEntryView.swift: Phase 1 hero card NavigationLink (§2.2)
+#   - EBTBalanceDashboardView.swift: camera icon inside camera-scan Button
+#   - All buddy views (CivicaSNAPFlowView) — hidden behind buddyFeatureEnabled
+#
+custom_rules:
+  pine_on_decorative_icon:
+    name: "Decorative Image with pinePrimary"
+    regex: 'Image\([^)]*systemName:[^)]*\)\s*(\n\s*\.[^\n]+)*\s*\.foregroundStyle\(\s*CivicaColors\.pinePrimary\s*\)'
+    message: >
+      Decorative Image should use .cardLeadingIcon (graphite) or .cardInfoIcon (accentTeal),
+      not .pinePrimary. See DESIGN.md §2.2. If this Image is inside a Button or NavigationLink
+      label (i.e., the whole control is the tap target), pinePrimary is acceptable — add a
+      §2.2 comment to suppress this warning.
+    severity: warning
