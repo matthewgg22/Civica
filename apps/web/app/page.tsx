@@ -37,11 +37,16 @@ export default function Page() {
           <a className="brand" href="/">
             Civica
           </a>
-          <LanguagePicker
-            locale={locale}
-            onChange={setLocale}
-            ariaLabel={copy.languageToggleAria}
-          />
+          <div className="site-header__actions">
+            <LanguagePicker
+              locale={locale}
+              onChange={setLocale}
+              ariaLabel={copy.languageToggleAria}
+            />
+            <a className="site-header__signin" href="/sign-in">
+              {copy.navSignIn}
+            </a>
+          </div>
         </div>
       </header>
 
