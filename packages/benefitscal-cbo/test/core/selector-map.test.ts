@@ -225,9 +225,24 @@ describe("PORTAL_PAGES — urlPattern correctness", () => {
     }
   });
 
-  it("no two pages share the same urlPattern source", () => {
-    const sources = PORTAL_PAGES.map((p) => p.urlPattern.source);
+  it("no two pages share the same urlPattern source (except the documented ABNMI reuse)", () => {
+    // BenefitsCal reuses /ApplyForBenefits/ABNMI for BOTH the primary applicant
+    // name page (step 1, pageCode "ABNMI") AND each household member's name page
+    // (step 2, pageCode "ABNMI_MEMBER"). This URL collision is intentional and
+    // by design: findPageForUrl() returns the step-1 match, and content.ts
+    // disambiguates via the inPeopleSection() session flag (V1-5 PR4, #314).
+    // Every OTHER urlPattern must still be unique — catch accidental dupes.
+    const memberReusePages = new Set(["ABNMI_MEMBER"]);
+    const sources = PORTAL_PAGES
+      .filter((p) => !memberReusePages.has(p.pageCode))
+      .map((p) => p.urlPattern.source);
     expect(new Set(sources).size).toBe(sources.length);
+
+    // And assert the reuse is exactly the documented one: ABNMI_MEMBER shares
+    // ABNMI's pattern and nothing else does.
+    const abnmi = PORTAL_PAGES.find((p) => p.pageCode === "ABNMI");
+    const abnmiMember = PORTAL_PAGES.find((p) => p.pageCode === "ABNMI_MEMBER");
+    expect(abnmi?.urlPattern.source).toBe(abnmiMember?.urlPattern.source);
   });
 
   it("each /ApplyForBenefits/XXXXX page urlPattern matches its documented path", () => {

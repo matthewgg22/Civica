@@ -21,6 +21,7 @@ import type { BenefitsCalPayload } from "../../src/core/schemas";
 import { PORTAL_PAGES_BY_CODE } from "../../src/core/selector-map";
 import type { FieldSelector, PortalPage } from "../../src/core/selector-map";
 import { resolveField } from "../../src/core/locate";
+import { scopePayloadForMember } from "../../src/core/member-scope";
 import {
   fillElement,
   fillRadio,
@@ -347,6 +348,32 @@ export interface RunSectionFillTestOpts {
   expectedFilled?: Record<string, FieldOutcome>;
   /** Minimum number of fields that must be "filled". Defaults to 0. */
   minFilled?: number;
+  /**
+   * Household-member index for repeating step-2 pages. When set, the payload is
+   * wrapped via scopePayloadForMember (the core proxy) before the fill loop, so
+   * `household_members[0].X` source paths resolve to member N. Mirrors what
+   * content.ts does on each ABNMI_MEMBER repetition.
+   */
+  scopeMemberIndex?: number;
+  /**
+   * Explicit DOM HTML for the page root, replacing the auto-built DOM. Use for
+   * pages whose option lists the walk did not capture (e.g. the ABHHR
+   * relationship <select>), where the auto-builder cannot synthesize realistic
+   * option values. The HTML must contain the field elements resolveField will
+   * locate (by label or fallbackSelector).
+   */
+  domHtml?: string;
+  /**
+   * Post-fill value assertions, keyed by logical field name. Proves the RIGHT
+   * value landed (e.g. member[1] → "Bob", not member[0] → "Alice") — the core
+   * correctness property the outcome map alone can't verify.
+   *
+   *   - plain text / select field → assert element.value === expected
+   *   - checkbox field            → expected "checked" / "unchecked"
+   *   - option group              → expected is the option KEY (e.g. "present"),
+   *                                 asserts that option's element is checked
+   */
+  expectedValues?: Record<string, string>;
 }
 
 /**
@@ -362,8 +389,22 @@ export function runSectionFillTest(
   opts: RunSectionFillTestOpts = {},
 ): void {
   const page = getFrozenPage(pageCode);
-  const payload = makePacket(opts.payloadOverrides ?? {});
-  const root = buildDomForPage(page);
+  const basePayload = makePacket(opts.payloadOverrides ?? {});
+  // Scope to a household member for repeating step-2 pages (mirrors content.ts).
+  const payload =
+    opts.scopeMemberIndex !== undefined
+      ? scopePayloadForMember(basePayload, opts.scopeMemberIndex)
+      : basePayload;
+
+  // Use explicit DOM when provided (pages with uncaptured option lists);
+  // otherwise auto-build from the page's fields.
+  let root: HTMLElement;
+  if (opts.domHtml !== undefined) {
+    root = document.createElement("div");
+    root.innerHTML = opts.domHtml;
+  } else {
+    root = buildDomForPage(page);
+  }
 
   // Append root to document so label[for] resolution widens correctly.
   document.body.appendChild(root);
@@ -375,6 +416,40 @@ export function runSectionFillTest(
     const outcome = fillFieldInline(field, payload, root);
     outcomes[fieldName] = outcome;
     if (outcome === "filled") filledCount++;
+  }
+
+  // Value readback (BEFORE cleanup — elements must still be in the DOM).
+  // Proves the correct value landed, keyed by logical field name.
+  if (opts.expectedValues) {
+    for (const [fieldName, expected] of Object.entries(opts.expectedValues)) {
+      const field = page.fields[fieldName];
+      expect(field, `field "${fieldName}" exists in page.fields`).toBeTruthy();
+      if (!field) continue;
+
+      if (isOptionGroupField(field) && field.options) {
+        // expected is the option KEY; assert that option's element is checked.
+        const optSel = field.options[expected];
+        expect(optSel, `option "${expected}" exists on "${fieldName}"`).toBeTruthy();
+        if (!optSel) continue;
+        const el = resolveField(optSel, root) as HTMLInputElement | null;
+        expect(el, `option "${expected}" element resolved`).toBeTruthy();
+        expect(el?.checked, `option "${expected}" checked`).toBe(true);
+      } else {
+        const el = resolveField(field, root) as
+          | HTMLInputElement
+          | HTMLSelectElement
+          | null;
+        expect(el, `field "${fieldName}" element resolved`).toBeTruthy();
+        if (!el) continue;
+        if (el instanceof HTMLInputElement && el.type === "checkbox") {
+          expect(el.checked, `field "${fieldName}" checked state`).toBe(
+            expected === "checked",
+          );
+        } else {
+          expect(el.value, `field "${fieldName}" value`).toBe(expected);
+        }
+      }
+    }
   }
 
   // Clean up.
