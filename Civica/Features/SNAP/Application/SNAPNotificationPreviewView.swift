@@ -332,47 +332,56 @@ enum SNAPNotificationPreviewStrings {
 
     static let eyebrow = CivicaText(
         "Notifications",
-        es: "Notificaciones"
+        es: "Notificaciones",
+        zh: "通知"
     )
     static let title = CivicaText(
         "What you'll hear from us.",
-        es: "Lo que recibirás de nosotros."
+        es: "Lo que recibirás de nosotros.",
+        zh: "你会收到我们的哪些消息。"
     )
     static let subtitle = CivicaText(
         "Every email and text Civica will send you, in the actual voice we'll use. No marketing, no surprises.",
-        es: "Cada correo y mensaje que Civica te enviará, en la voz exacta que usaremos. Sin marketing, sin sorpresas."
+        es: "Cada correo y mensaje que Civica te enviará, en la voz exacta que usaremos. Sin marketing, sin sorpresas.",
+        zh: "Civica 会发给你的每一封邮件和短信,用的就是我们真正会用的语气。没有营销,没有意外。"
     )
 
     static let previewOnlyNotice = CivicaText(
         "These are examples only. Notifications will be sent once Civica's messaging system is live.",
-        es: "Estos son solo ejemplos. Las notificaciones se enviarán una vez que el sistema de mensajería de Civica esté activo."
+        es: "Estos son solo ejemplos. Las notificaciones se enviarán una vez que el sistema de mensajería de Civica esté activo.",
+        zh: "这些只是示例。等 Civica 的消息系统上线后,我们才会真正发送通知。"
     )
 
     static let emailHeading = CivicaText(
         "Emails — the record",
-        es: "Correos — el registro"
+        es: "Correos — el registro",
+        zh: "邮件 — 留底记录"
     )
     static let smsHeading = CivicaText(
         "Texts — the moment",
-        es: "Mensajes — el momento"
+        es: "Mensajes — el momento",
+        zh: "短信 — 即时提醒"
     )
     static let smsSenderLabel = CivicaText(
         "Civica · short code, US only",
-        es: "Civica · código corto, solo EE. UU."
+        es: "Civica · código corto, solo EE. UU.",
+        zh: "Civica · 短代码,仅限美国"
     )
     static let emailFooter = CivicaText(
         "Civica · Reply to reach a person · Unsubscribe anywhere",
-        es: "Civica · Responde para hablar con una persona · Cancelar la suscripción en cualquier momento"
+        es: "Civica · Responde para hablar con una persona · Cancelar la suscripción en cualquier momento",
+        zh: "Civica · 回复即可联系到真人 · 随时可退订"
     )
 
     static let rulesHeading = CivicaText(
         "How Civica writes notifications",
-        es: "Cómo escribe Civica las notificaciones"
+        es: "Cómo escribe Civica las notificaciones",
+        zh: "Civica 如何撰写通知"
     )
 
     static func rules(language: CivicaLanguage) -> [String] {
         switch language {
-        case .english, .mandarin, .vietnamese, .tagalog:
+        case .english, .vietnamese, .tagalog:
             return [
                 "Every message names the next action and the time horizon.",
                 "Email subjects are headlines — they render complete in your inbox.",
@@ -380,6 +389,15 @@ enum SNAPNotificationPreviewStrings {
                 "Reply-to reaches a human. We never send from noreply@.",
                 "STOP is honored in the first text — never buried.",
                 "\"Not now\" is a first-class reply. We back off when you say so.",
+            ]
+        case .mandarin:
+            return [
+                "每条消息都会写明下一步要做什么,以及时间期限。",
+                "邮件主题就是标题 — 在你的收件箱里能完整显示。",
+                "每条消息只放一个按钮,或者一个都不放。绝不堆一堆行动按钮。",
+                "回复邮件能联系到真人。我们绝不用 noreply@ 发送。",
+                "在第一条短信里就尊重 STOP 退订 — 绝不藏起来。",
+                "「现在不行」也是一种正式回复。你这样说,我们就退一步。",
             ]
         case .spanish:
             return [
