@@ -45,8 +45,10 @@ import {
   isOptionGroupField,
   constantValue,
   TRANSFORMS,
+  sectionSequence,
   type PortalPage,
   type FieldSelector,
+  type FlowType,
 } from "@civica/benefitscal-cbo/core";
 import { resolvePath } from "./payload-path";
 import {
@@ -70,6 +72,129 @@ interface PayloadFetchResponse {
   status?: number;
   data?: unknown;
   error?: string;
+}
+
+// ---------------------------------------------------------------------------
+// Staff election prompt (D12 — per-tab session, not a packet field).
+//
+// When the extension first activates on a BenefitsCal tab, show a one-time
+// dropdown asking which programs the applicant is filing for. The selection is
+// stored only in the tab's session (a module-level variable); it resets fresh
+// on every new tab. Staff has applicant context when running Mode A submission.
+//
+// Design guarantees:
+//   - "Skip" (or dismissing via Escape) → undefined → defaults to multi-program (D8).
+//   - The dropdown is inside the extension's shadow root (civica-election-host),
+//     fully isolated from BenefitsCal's styles/forms.
+//   - Resolves on staff action (select + confirm) or immediate fallback.
+//   - Never auto-advances the portal page; staff must click the portal's own Next.
+// ---------------------------------------------------------------------------
+
+/** Tab-session flow type — set once per tab when the prompt resolves. */
+let _tabFlowType: FlowType = undefined;
+/** True after the prompt has been shown once on this tab (prevents re-prompt). */
+let _electionShown = false;
+
+/**
+ * Show the staff election dropdown and resolve with the chosen FlowType.
+ * If already shown on this tab, returns the cached value immediately.
+ * Returns a Promise that resolves when the staff confirms or dismisses.
+ */
+export async function promptFlowType(): Promise<FlowType> {
+  if (_electionShown) return _tabFlowType;
+  _electionShown = true;
+
+  return new Promise<FlowType>((resolve) => {
+    const HOST_ID = "civica-election-host";
+    // Remove any leftover host from a prior injection attempt.
+    document.getElementById(HOST_ID)?.remove();
+
+    const host = document.createElement("div");
+    host.id = HOST_ID;
+    host.style.cssText =
+      "position:fixed;top:16px;left:50%;transform:translateX(-50%);z-index:2147483647;";
+    const shadow = host.attachShadow({ mode: "open" });
+
+    const style = document.createElement("style");
+    style.textContent = `
+      :host { all: initial; }
+      .card {
+        font: 13px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+        background: #f4f1eb; color: #1f2722; border: 1px solid #cbc6bc;
+        border-radius: 8px; padding: 14px 16px; box-shadow: 0 4px 16px rgba(0,0,0,0.14);
+        min-width: 320px; max-width: 420px;
+      }
+      .title { font-weight: 700; margin-bottom: 8px; font-size: 14px; }
+      .subtitle { font-size: 12px; opacity: 0.7; margin-bottom: 10px; }
+      select {
+        width: 100%; padding: 6px 8px; border: 1px solid #cbc6bc;
+        border-radius: 4px; font-size: 13px; background: #fff; margin-bottom: 10px;
+      }
+      .actions { display: flex; gap: 8px; justify-content: flex-end; }
+      button {
+        font: 600 12px/1 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+        cursor: pointer; padding: 6px 12px; border-radius: 4px; border: 1px solid #cbc6bc;
+        background: rgba(255,255,255,0.7); color: #1f2722;
+      }
+      button.primary { background: #1f4d3b; color: #fff; border-color: #163a2c; }
+      button:hover { opacity: 0.85; }
+    `;
+
+    const card = document.createElement("div");
+    card.className = "card";
+
+    const title = document.createElement("div");
+    title.className = "title";
+    title.textContent = "Which programs is this applicant filing for?";
+
+    const subtitle = document.createElement("div");
+    subtitle.className = "subtitle";
+    subtitle.textContent =
+      "Civica uses this to include the right sections. Choose before walking the form.";
+
+    const sel = document.createElement("select");
+    const opts: Array<{ label: string; value: string }> = [
+      { label: "SNAP only (CalFresh)", value: "snap-only" },
+      { label: "SNAP + Medi-Cal", value: "multi-program" },
+      { label: "SNAP + Cash Aid (TANF)", value: "multi-program" },
+      { label: "SNAP + Medi-Cal + Cash Aid", value: "multi-program" },
+      { label: "Skip (use multi-program default)", value: "multi-program" },
+    ];
+    for (const opt of opts) {
+      const el = document.createElement("option");
+      el.value = opt.value;
+      el.textContent = opt.label;
+      sel.append(el);
+    }
+
+    const actions = document.createElement("div");
+    actions.className = "actions";
+
+    const skipBtn = document.createElement("button");
+    skipBtn.type = "button";
+    skipBtn.textContent = "Skip";
+    skipBtn.addEventListener("click", () => {
+      host.remove();
+      _tabFlowType = undefined; // D8: skip → undefined → multi-program
+      resolve(undefined);
+    });
+
+    const confirmBtn = document.createElement("button");
+    confirmBtn.type = "button";
+    confirmBtn.className = "primary";
+    confirmBtn.textContent = "Confirm";
+    confirmBtn.addEventListener("click", () => {
+      host.remove();
+      const chosen = sel.value as "snap-only" | "multi-program";
+      _tabFlowType = chosen;
+      resolve(chosen);
+    });
+
+    actions.append(skipBtn, confirmBtn);
+    card.append(title, subtitle, sel, actions);
+    shadow.append(style, card);
+    document.body.appendChild(host);
+  });
 }
 
 /**
@@ -172,20 +297,40 @@ async function main(): Promise<void> {
   }
   const payload = resp.data;
 
-  // 3. Match the current URL against a known form page.
+  // 3. Staff election prompt (D12 — per-tab session, not a packet field).
+  //    Show the activation dropdown on the first page load for this tab so
+  //    staff can indicate which programs the applicant is filing for before
+  //    the walk begins. sectionSequence() uses the result to gate which steps
+  //    the extension expects (SNAP-only omits Assets; multi-program includes it).
+  //    The prompt is a no-op if already answered on this tab.
+  //    We pass the result to sectionSequence but don't block the fill on it —
+  //    the section sequence is informational at PR1; the per-page fill logic is
+  //    unchanged (it always fills whatever page it lands on).
+  const flowType = await promptFlowType();
+  // Compute the expected page sequence for this flow. At PR1, steps 2-9 stubs
+  // are empty so this is primarily step-0 + step-1; when T7 walk lands the
+  // stubs are populated and this sequence becomes the full walk order.
+  const _expectedSequence = sectionSequence(
+    payload as Parameters<typeof sectionSequence>[0],
+    flowType,
+  );
+  // Log the sequence so the assister + devs can verify in the extension console.
+  console.debug(LOG_PREFIX, "section sequence for flow", flowType ?? "multi-program (default)", _expectedSequence);
+
+  // 4. Match the current URL against a known form page.
   const page = findPageForUrl(window.location.pathname);
   if (page) {
     await runPageFill(page, payload, activePacketId);
     return;
   }
 
-  // 4. Confirmation page handling.
+  // 5. Confirmation page handling.
   if (CONFIRMATION_PAGE.urlPattern.test(window.location.pathname)) {
     await handleConfirmation(activePacketId);
     return;
   }
 
-  // 5. Neither a known form page nor the confirmation page — quiet info state.
+  // 6. Neither a known form page nor the confirmation page — quiet info state.
   renderOverlay({
     status: "empty",
     title: "Civica Submitter active",
