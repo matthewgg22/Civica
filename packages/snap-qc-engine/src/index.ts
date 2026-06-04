@@ -127,6 +127,22 @@ export type {
   EarningsTrajectory,
 } from "./scoring/retention-risk";
 
+// Flag sensitivity (#496) — CBO triage layer. Decides which QC flags interrupt
+// a navigator, given a CBO's sensitivity preference. Pure filter applied AFTER
+// scoring; never alters score/tier/measured-PER. No API/persistence wiring yet.
+export {
+  flagSeverity,
+  resolveFlagInterrupts,
+  countInterrupts,
+  DEFAULT_SENSITIVITY,
+} from "./scoring/flag-sensitivity";
+export type {
+  SensitivityLevel,
+  FlagSeverity,
+  FlagSensitivityConfig,
+  FlagInterruptDecision,
+} from "./scoring/flag-sensitivity";
+
 // Failure-to-elect detector (item 2): finds deductions/elections the
 // household qualifies for but hasn't claimed — the underpayment iceberg.
 export { detectMissedElections, totalMissedMonthlyValue } from "./scoring/failure-to-elect";
