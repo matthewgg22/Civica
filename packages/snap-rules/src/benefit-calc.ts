@@ -132,8 +132,14 @@ export function computeBenefit(facts: Facts, state: string, asOf: Date): Benefit
       suaVal = policy.sua_by_tier[facts.shelter.sua_tier];
     }
     stateSuaVal = suaVal.toNumber();
-    // OBBBA §10104: pre-2025-11-01 internet counts; post-cutoff it doesn't.
-    const obbbaCutoff = new Date(Date.UTC(2025, 10, 1));
+    // OBBBA §10104: internet excluded from shelter deduction effective 2025-10-01
+    // (start of FY26). Pub. L. No. 119-21 enacted 2025-07-04; FNS umbrella memo
+    // 2025-09-04 set October 1 as the state-compliance effective date per FY26
+    // fiscal-year alignment. Verified against govinfo.gov PLAW-119publ21 +
+    // FNS guidance index fns.usda.gov/snap/obbba-implementation.
+    // Prior cutoff was 2025-11-01 (the FNS 120-day hold-harmless deadline for
+    // other OBBBA provisions) — incorrect for §10104 specifically.
+    const obbbaCutoff = new Date(Date.UTC(2025, 9, 1)); // 2025-10-01
     const internetCounts = asOf < obbbaCutoff;
     const internet = internetCounts ? dec(facts.shelter.internet ?? 0) : ZERO;
 
