@@ -37,6 +37,7 @@ import { PACKET_STATUS_TRANSITIONS } from "@civica/snap-enums";
 import type { RiskFlow, RiskAction } from "../../../components/packet-risk/types";
 import { getWrStatus } from "../../../lib/packet-fetchers";
 import { isDemoFallbackEnabled, getDemoPacketDetail } from "../../../lib/demo-data";
+import CountyOutcomeRoadmapCard from "../../../components/CountyOutcomeRoadmapCard";
 
 // Statuses where the expedited-review gate is relevant
 const EXPEDITED_GATE_STATUSES = new Set(["Submitted for Review", "In Navigator Review"]);
@@ -810,6 +811,12 @@ export default async function PacketDetailPage({
       </header>
 
       <main className="max-w-5xl mx-auto px-8 py-8 space-y-5">
+
+        {/* Payment Integrity Engine readiness affordance — dismissible, SSR-safe.
+            Surfaces the "built but dormant, awaiting county handshake" state to
+            caseworkers and demo audiences. Copy locked from CEO review addendum
+            2026-06-04. Design decisions D2+D3+D5 applied. */}
+        <CountyOutcomeRoadmapCard />
 
         {/* Hero */}
         <div className="bg-surface border border-hairline rounded-[4px] overflow-hidden">
