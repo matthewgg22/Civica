@@ -1170,7 +1170,8 @@ button {
 }
 
 .lang-picker__globe {
-  font-size: 0.875rem;
+  flex-shrink: 0;
+  opacity: 0.7;
 }
 
 .lang-picker__chevron {
@@ -1318,19 +1319,27 @@ html {
 
 .home-fact,
 .home-trust__item {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--civica-space-md);
+  position: relative;
+  padding-left: 28px;
   font-size: 1rem;
   line-height: 1.5;
   color: var(--civica-ink);
 }
 
-.home-fact__mark,
-.home-trust__icon {
-  font-size: 1.25rem;
-  line-height: 1.4;
-  flex-shrink: 0;
+/* Clean pine check marker instead of emoji (avoids the AI-template look). */
+.home-fact::before,
+.home-trust__item::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 3px;
+  width: 16px;
+  height: 16px;
+  border-radius: 999px;
+  background:
+    var(--civica-pine)
+    url("data:image/svg+xml,%3Csvg width='10' height='10' viewBox='0 0 10 10' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1.5 5L4 7.5L8.5 2.5' stroke='white' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")
+    center / 10px no-repeat;
 }
 
 .home-steps {

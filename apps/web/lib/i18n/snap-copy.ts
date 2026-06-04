@@ -453,23 +453,28 @@ export const welcomeStrings = {
     welcome_signin_link: "Sign in to continue",
 
     // ─── Home nav tabs ───
-    home_nav_what: "What is CalFresh",
+    home_nav_what: "What is SNAP",
     home_nav_how: "How it works",
     home_nav_apply: "Apply now",
     home_nav_status: "Check status",
 
     // ─── Hero ───
-    home_hero_eyebrow: "CalFresh · California SNAP",
+    home_hero_eyebrow: "SNAP · Food assistance in California",
     home_hero_title: "You may qualify for help buying groceries.",
-    home_hero_body: "CalFresh gives you up to $292 a month on an EBT card to spend on food. Civica guides you through the application in about 10 minutes — and saves your progress so you can stop and come back anytime.",
+    home_hero_body: "SNAP gives you up to $292 a month on an EBT card to spend on food. Civica guides you through the application in about 10 minutes — and saves your progress so you can stop and come back anytime.",
     home_hero_secondary: "Sign in to continue",
 
-    // ─── What is CalFresh ───
-    home_what_title: "What is CalFresh?",
-    home_what_body: "CalFresh is California's name for SNAP, the federal food-assistance program. If you're approved, money is added to an EBT card each month that you use like a debit card at grocery stores, farmers markets, and many online retailers.",
+    // ─── What is SNAP ───
+    home_what_title: "What is SNAP?",
+    home_what_body: "SNAP is the federal program that helps people buy groceries — in California it's also called CalFresh. If you're approved, money is added to an EBT card each month that you use like a debit card at grocery stores, farmers markets, and many online retailers.",
     home_what_fact1: "Up to $292/month for a household of one — more for larger households.",
     home_what_fact2: "Students, workers, seniors, and families can all qualify. The rules changed recently.",
     home_what_fact3: "Applying does not affect your immigration status or your taxes.",
+
+    // ─── App island ───
+    home_app_label: "Get the Civica app",
+    home_app_sub: "Apply and track your SNAP case on your phone.",
+    home_app_cta: "Get the app →",
 
     // ─── How it works ───
     home_how_title: "How it works",
@@ -494,23 +499,28 @@ export const welcomeStrings = {
     welcome_signin_link: "Inicia sesión para continuar",
 
     // ─── Pestañas de navegación ───
-    home_nav_what: "Qué es CalFresh",
+    home_nav_what: "Qué es SNAP",
     home_nav_how: "Cómo funciona",
     home_nav_apply: "Solicitar ahora",
     home_nav_status: "Ver estado",
 
     // ─── Hero ───
-    home_hero_eyebrow: "CalFresh · SNAP de California",
+    home_hero_eyebrow: "SNAP · Asistencia alimentaria en California",
     home_hero_title: "Es posible que califiques para ayuda con los comestibles.",
-    home_hero_body: "CalFresh te da hasta $292 al mes en una tarjeta EBT para comprar alimentos. Civica te guía por la solicitud en unos 10 minutos — y guarda tu progreso para que puedas continuar cuando quieras.",
+    home_hero_body: "SNAP te da hasta $292 al mes en una tarjeta EBT para comprar alimentos. Civica te guía por la solicitud en unos 10 minutos — y guarda tu progreso para que puedas continuar cuando quieras.",
     home_hero_secondary: "Inicia sesión para continuar",
 
-    // ─── Qué es CalFresh ───
-    home_what_title: "¿Qué es CalFresh?",
-    home_what_body: "CalFresh es el nombre que se le da en California a SNAP, el programa federal de asistencia alimentaria. Si te aprueban, cada mes se agrega dinero a una tarjeta EBT que usas como tarjeta de débito en supermercados, mercados de agricultores y muchas tiendas en línea.",
+    // ─── Qué es SNAP ───
+    home_what_title: "¿Qué es SNAP?",
+    home_what_body: "SNAP es el programa federal que ayuda a las personas a comprar alimentos — en California también se llama CalFresh. Si te aprueban, cada mes se agrega dinero a una tarjeta EBT que usas como tarjeta de débito en supermercados, mercados de agricultores y muchas tiendas en línea.",
     home_what_fact1: "Hasta $292/mes para un hogar de una persona — más para hogares más grandes.",
     home_what_fact2: "Estudiantes, trabajadores, personas mayores y familias pueden calificar. Las reglas cambiaron recientemente.",
     home_what_fact3: "Solicitar no afecta tu estatus migratorio ni tus impuestos.",
+
+    // ─── App island ───
+    home_app_label: "Obtén la app de Civica",
+    home_app_sub: "Solicita y sigue tu caso de SNAP desde tu teléfono.",
+    home_app_cta: "Obtén la app →",
 
     // ─── Cómo funciona ───
     home_how_title: "Cómo funciona",
@@ -534,21 +544,25 @@ export const welcomeStrings = {
     welcome_returning: "已经开始了?",
     welcome_signin_link: "登录以继续",
 
-    home_nav_what: "什么是 CalFresh",
+    home_nav_what: "什么是 SNAP",
     home_nav_how: "运作方式",
     home_nav_apply: "立即申请",
     home_nav_status: "查看状态",
 
-    home_hero_eyebrow: "CalFresh · 加州 SNAP",
+    home_hero_eyebrow: "SNAP · 加州食品援助",
     home_hero_title: "你可能有资格获得购买食品的帮助。",
-    home_hero_body: "CalFresh 每月最高为你的 EBT 卡提供 $292 用于购买食物。Civica 在约 10 分钟内引导你完成申请,并保存进度,让你随时可以停下并稍后继续。",
+    home_hero_body: "SNAP 每月最高为你的 EBT 卡提供 $292 用于购买食物。Civica 在约 10 分钟内引导你完成申请,并保存进度,让你随时可以停下并稍后继续。",
     home_hero_secondary: "登录以继续",
 
-    home_what_title: "什么是 CalFresh?",
-    home_what_body: "CalFresh 是加州对 SNAP(联邦食品援助计划)的称呼。如果获批,每月会将钱存入一张 EBT 卡,你可以像借记卡一样在杂货店、农贸市场和许多在线零售商使用。",
+    home_what_title: "什么是 SNAP?",
+    home_what_body: "SNAP 是帮助人们购买食品的联邦计划 — 在加州也称为 CalFresh。如果获批,每月会将钱存入一张 EBT 卡,你可以像借记卡一样在杂货店、农贸市场和许多在线零售商使用。",
     home_what_fact1: "单人家庭每月最高 $292 — 家庭人数越多,金额越高。",
     home_what_fact2: "学生、上班族、长者和家庭都可能符合资格。规则最近有所变化。",
     home_what_fact3: "申请不会影响你的移民身份或税务。",
+
+    home_app_label: "获取 Civica 应用",
+    home_app_sub: "在手机上申请并跟踪你的 SNAP 案件。",
+    home_app_cta: "获取应用 →",
 
     home_how_title: "运作方式",
     home_how_1_title: "回答几个问题",
@@ -571,21 +585,25 @@ export const welcomeStrings = {
     welcome_returning: "Đã bắt đầu rồi?",
     welcome_signin_link: "Đăng nhập để tiếp tục",
 
-    home_nav_what: "CalFresh là gì",
+    home_nav_what: "SNAP là gì",
     home_nav_how: "Cách hoạt động",
     home_nav_apply: "Đăng ký ngay",
     home_nav_status: "Xem trạng thái",
 
-    home_hero_eyebrow: "CalFresh · SNAP California",
+    home_hero_eyebrow: "SNAP · Hỗ trợ thực phẩm ở California",
     home_hero_title: "Bạn có thể đủ điều kiện nhận trợ giúp mua thực phẩm.",
-    home_hero_body: "CalFresh cấp cho bạn đến $292 mỗi tháng trên thẻ EBT để mua thực phẩm. Civica hướng dẫn bạn qua đơn đăng ký trong khoảng 10 phút và lưu tiến trình để bạn có thể dừng lại và quay lại bất cứ lúc nào.",
+    home_hero_body: "SNAP cấp cho bạn đến $292 mỗi tháng trên thẻ EBT để mua thực phẩm. Civica hướng dẫn bạn qua đơn đăng ký trong khoảng 10 phút và lưu tiến trình để bạn có thể dừng lại và quay lại bất cứ lúc nào.",
     home_hero_secondary: "Đăng nhập để tiếp tục",
 
-    home_what_title: "CalFresh là gì?",
-    home_what_body: "CalFresh là tên gọi của California cho SNAP, chương trình hỗ trợ thực phẩm liên bang. Nếu được chấp thuận, mỗi tháng tiền sẽ được nạp vào thẻ EBT mà bạn dùng như thẻ ghi nợ tại cửa hàng tạp hóa, chợ nông sản và nhiều cửa hàng trực tuyến.",
+    home_what_title: "SNAP là gì?",
+    home_what_body: "SNAP là chương trình liên bang giúp mọi người mua thực phẩm — ở California còn được gọi là CalFresh. Nếu được chấp thuận, mỗi tháng tiền sẽ được nạp vào thẻ EBT mà bạn dùng như thẻ ghi nợ tại cửa hàng tạp hóa, chợ nông sản và nhiều cửa hàng trực tuyến.",
     home_what_fact1: "Lên đến $292/tháng cho hộ một người — nhiều hơn cho hộ đông người.",
     home_what_fact2: "Sinh viên, người lao động, người cao tuổi và gia đình đều có thể đủ điều kiện. Quy định vừa thay đổi gần đây.",
     home_what_fact3: "Việc đăng ký không ảnh hưởng đến tình trạng di trú hay thuế của bạn.",
+
+    home_app_label: "Tải ứng dụng Civica",
+    home_app_sub: "Đăng ký và theo dõi hồ sơ SNAP của bạn trên điện thoại.",
+    home_app_cta: "Tải ứng dụng →",
 
     home_how_title: "Cách hoạt động",
     home_how_1_title: "Trả lời vài câu hỏi",
@@ -608,21 +626,25 @@ export const welcomeStrings = {
     welcome_returning: "Nagsimula na?",
     welcome_signin_link: "Mag-sign in para magpatuloy",
 
-    home_nav_what: "Ano ang CalFresh",
+    home_nav_what: "Ano ang SNAP",
     home_nav_how: "Paano ito gumagana",
     home_nav_apply: "Mag-apply na",
     home_nav_status: "Tingnan ang status",
 
-    home_hero_eyebrow: "CalFresh · SNAP ng California",
+    home_hero_eyebrow: "SNAP · Tulong sa pagkain sa California",
     home_hero_title: "Maaari kang maging kwalipikado para sa tulong sa pagbili ng pagkain.",
-    home_hero_body: "Nagbibigay ang CalFresh ng hanggang $292 kada buwan sa isang EBT card para sa pagkain. Ginagabayan ka ng Civica sa aplikasyon sa loob ng mga 10 minuto at sini-save ang iyong progreso para makapagpatuloy ka anumang oras.",
+    home_hero_body: "Nagbibigay ang SNAP ng hanggang $292 kada buwan sa isang EBT card para sa pagkain. Ginagabayan ka ng Civica sa aplikasyon sa loob ng mga 10 minuto at sini-save ang iyong progreso para makapagpatuloy ka anumang oras.",
     home_hero_secondary: "Mag-sign in para magpatuloy",
 
-    home_what_title: "Ano ang CalFresh?",
-    home_what_body: "Ang CalFresh ay ang tawag ng California sa SNAP, ang pederal na programa ng tulong sa pagkain. Kung maaprubahan, may perang idinadagdag sa isang EBT card kada buwan na ginagamit mo na parang debit card sa mga grocery, palengke ng magsasaka, at maraming online na tindahan.",
+    home_what_title: "Ano ang SNAP?",
+    home_what_body: "Ang SNAP ay ang pederal na programa na tumutulong sa mga tao na bumili ng pagkain — sa California, tinatawag din itong CalFresh. Kung maaprubahan, may perang idinadagdag sa isang EBT card kada buwan na ginagamit mo na parang debit card sa mga grocery, palengke ng magsasaka, at maraming online na tindahan.",
     home_what_fact1: "Hanggang $292/buwan para sa isang tao — mas malaki para sa mas malaking sambahayan.",
     home_what_fact2: "Mga estudyante, manggagawa, nakatatanda, at pamilya ay maaaring maging kwalipikado. Kamakailan lang nagbago ang mga patakaran.",
     home_what_fact3: "Ang pag-apply ay hindi nakakaapekto sa iyong katayuan sa imigrasyon o sa iyong buwis.",
+
+    home_app_label: "Kunin ang Civica app",
+    home_app_sub: "Mag-apply at subaybayan ang iyong SNAP case sa iyong telepono.",
+    home_app_cta: "Kunin ang app →",
 
     home_how_title: "Paano ito gumagana",
     home_how_1_title: "Sagutin ang ilang tanong",

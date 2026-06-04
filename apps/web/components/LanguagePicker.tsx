@@ -36,7 +36,10 @@ export function LanguagePicker({
         aria-label={ariaLabel}
         onClick={() => setOpen((v) => !v)}
       >
-        <span aria-hidden className="lang-picker__globe">🌐</span>
+        <svg className="lang-picker__globe" width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.3" aria-hidden>
+          <circle cx="8" cy="8" r="6.5" />
+          <path d="M1.5 8h13M8 1.5c1.8 1.7 2.8 4 2.8 6.5S9.8 12.8 8 14.5C6.2 12.8 5.2 10.5 5.2 8S6.2 3.2 8 1.5z" />
+        </svg>
         {LANGUAGE_LABELS[locale]}
         <svg className={`lang-picker__chevron ${open ? "lang-picker__chevron--open" : ""}`} width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
           <path d="M2 4l4 4 4-4" strokeLinecap="round" strokeLinejoin="round" />

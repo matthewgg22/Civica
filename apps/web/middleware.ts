@@ -5,7 +5,11 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { ACCESS_TOKEN_COOKIE, REFRESH_TOKEN_COOKIE } from "./lib/cookie-keys";
 
-const PROTECTED_PREFIXES = ["/apply", "/documents", "/status"];
+// /apply is NOT gated: the wizard persists to localStorage only (no server
+// PII until submit), mirroring iOS "save anytime, no commitment to submit."
+// Sign-in is required at submit time (createPacket), not to start. /documents
+// and /status need a real session (post-submit data), so they stay gated.
+const PROTECTED_PREFIXES = ["/documents", "/status"];
 
 export function middleware(request: NextRequest) {
   const { pathname, searchParams } = request.nextUrl;
@@ -31,5 +35,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/apply/:path*", "/documents/:path*", "/status/:path*"],
+  matcher: ["/documents/:path*", "/status/:path*"],
 };
