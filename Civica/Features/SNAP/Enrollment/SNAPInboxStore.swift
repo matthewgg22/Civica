@@ -113,13 +113,20 @@ enum SNAPInboxPhase2Strings {
     static func relativeLabel(for date: Date, language: CivicaLanguage) -> String {
         let days = Calendar.current.dateComponents([.day], from: date, to: Date()).day ?? 0
         switch language {
-        case .english, .mandarin, .vietnamese, .tagalog:
+        case .english, .vietnamese, .tagalog:
             if days <= 0 { return "Sent today" }
             if days == 1 { return "Sent yesterday" }
             if days <= 14 { return "Sent \(days) days ago" }
             let f = DateFormatter()
             f.dateFormat = "MMM d"
             return "Sent \(f.string(from: date))"
+        case .mandarin:
+            if days <= 0 { return "今天发送" }
+            if days == 1 { return "昨天发送" }
+            if days <= 14 { return "\(days) 天前发送" }
+            let f = DateFormatter()
+            f.dateFormat = "M月d日"
+            return "\(f.string(from: date)) 发送"
         case .spanish:
             if days <= 0 { return "Enviado hoy" }
             if days == 1 { return "Enviado ayer" }
