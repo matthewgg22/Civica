@@ -33,9 +33,9 @@ enum CivicaNotificationChannel: String, Codable, Sendable, CaseIterable {
 
     var displayLabel: CivicaText {
         switch self {
-        case .email: return CivicaText("Email", es: "Correo electrónico", zh: "电子邮件")
-        case .sms:   return CivicaText("Text message", es: "Mensaje de texto", zh: "短信")
-        case .push:  return CivicaText("Push notification", es: "Notificación push", zh: "推送通知")
+        case .email: return CivicaText("Email", es: "Correo electrónico", zh: "电子邮件", vi: "Email")
+        case .sms:   return CivicaText("Text message", es: "Mensaje de texto", zh: "短信", vi: "Tin nhắn")
+        case .push:  return CivicaText("Push notification", es: "Notificación push", zh: "推送通知", vi: "Thông báo đẩy")
         }
     }
 }
@@ -168,9 +168,11 @@ enum CivicaNotificationTemplates {
     ) -> String {
         let fallback = language == .english ? fallbackEN : fallbackES
         switch language {
-        case .english, .vietnamese, .tagalog:
+        case .english, .tagalog:
             return SNAPComplianceCopyRegistry.approvedEnglish(for: id, stateCode: stateCode) ?? fallback
         case .mandarin:
+            return SNAPComplianceCopyRegistry.approvedEnglish(for: id, stateCode: stateCode) ?? fallback
+        case .vietnamese:
             return SNAPComplianceCopyRegistry.approvedEnglish(for: id, stateCode: stateCode) ?? fallback
         case .spanish:
             return SNAPComplianceCopyRegistry.approvedSpanish(for: id, stateCode: stateCode) ?? fallback
@@ -203,50 +205,57 @@ enum CivicaNotificationTemplates {
         subject: CivicaText(
             "Application sent. Decision usually in about 7 days.",
             es: "Solicitud enviada. Decisión generalmente en unos 7 días.",
-            zh: "申请已发送。通常约 7 天内会有决定。"
+            zh: "申请已发送。通常约 7 天内会有决定。",
+            vi: "Đã gửi đơn. Thường có quyết định trong khoảng 7 ngày."
         ),
         preheader: CivicaText(
             "What happens next, in plain English.",
             es: "Lo que sigue, en lenguaje sencillo.",
-            zh: "接下来会发生什么，用大白话告诉你。"
+            zh: "接下来会发生什么，用大白话告诉你。",
+            vi: "Việc tiếp theo sẽ ra sao, nói cho dễ hiểu."
         ),
         body: [
             CivicaText(
                 "Your SNAP application is with {agencyFull}.",
                 es: "Tu solicitud de SNAP está con {agencyFull}.",
-                zh: "你的 SNAP 申请已经交到 {agencyFull}。"
+                zh: "你的 SNAP 申请已经交到 {agencyFull}。",
+                vi: "Đơn SNAP của bạn đã được gửi đến {agencyFull}."
             ),
             CivicaText(
                 "What's next:\n  • {agency} may text or call to verify something. We'll forward it to you.\n  • Decision usually in about 7 days. State target is 30.\n  • If approved, your EBT card arrives 7–10 days after that.",
                 es: "Lo que sigue:\n  • {agency} puede llamar o enviar mensajes para verificar algo. Te lo reenviaremos.\n  • Decisión generalmente en unos 7 días. El objetivo del estado es 30.\n  • Si te aprueban, tu tarjeta EBT llega 7–10 días después.",
-                zh: "接下来：\n  • {agency} 可能会发短信或打电话来核实信息。我们会转发给你。\n  • 通常约 7 天内会有决定。州的目标是 30 天。\n  • 如果获批，你的 EBT 卡会在那之后 7–10 天寄到。"
+                zh: "接下来：\n  • {agency} 可能会发短信或打电话来核实信息。我们会转发给你。\n  • 通常约 7 天内会有决定。州的目标是 30 天。\n  • 如果获批，你的 EBT 卡会在那之后 7–10 天寄到。",
+                vi: "Việc tiếp theo:\n  • {agency} có thể nhắn tin hoặc gọi để xác minh thông tin. Chúng tôi sẽ chuyển đến bạn.\n  • Thường có quyết định trong khoảng 7 ngày. Mục tiêu của bang là 30 ngày.\n  • Nếu được duyệt, thẻ EBT sẽ đến trong 7–10 ngày sau đó."
             ),
             CivicaText(
                 "You don't need to do anything right now. We'll text and email when there's news.",
                 es: "No tienes que hacer nada ahora. Te enviaremos un mensaje y un correo cuando haya noticias.",
-                zh: "你现在不用做任何事。有消息时我们会发短信和邮件给你。"
+                zh: "你现在不用做任何事。有消息时我们会发短信和邮件给你。",
+                vi: "Bạn không cần làm gì lúc này. Chúng tôi sẽ nhắn tin và gửi email khi có tin."
             ),
         ],
-        buttonLabel: CivicaText("See your status", es: "Ver tu estado", zh: "查看你的状态"),
+        buttonLabel: CivicaText("See your status", es: "Ver tu estado", zh: "查看你的状态", vi: "Xem trạng thái của bạn"),
         buttonURLHint: "civica://status/{session}"
     )
 
     private static let applicationSubmittedSMS = CivicaNotificationTemplate(
         kind: .applicationSubmittedSMS,
-        subject: CivicaText("Submitted", es: "Enviada", zh: "已提交"),
+        subject: CivicaText("Submitted", es: "Enviada", zh: "已提交", vi: "Đã gửi"),
         preheader: CivicaText(
             "Civica · application submitted",
             es: "Civica · solicitud enviada",
-            zh: "Civica · 申请已提交"
+            zh: "Civica · 申请已提交",
+            vi: "Civica · đã gửi đơn"
         ),
         body: [
             CivicaText(
                 "Your SNAP application is with {agencyFull}. Decision usually in about 7 days; the state target is 30. We'll text you when there's news.",
                 es: "Tu solicitud de SNAP está con {agencyFull}. Decisión generalmente en unos 7 días; el objetivo del estado es 30. Te enviaremos un mensaje cuando haya noticias.",
-                zh: "你的 SNAP 申请已经交到 {agencyFull}。通常约 7 天内会有决定；州的目标是 30 天。有消息时我们会发短信给你。"
+                zh: "你的 SNAP 申请已经交到 {agencyFull}。通常约 7 天内会有决定；州的目标是 30 天。有消息时我们会发短信给你。",
+                vi: "Đơn SNAP của bạn đã được gửi đến {agencyFull}. Thường có quyết định trong khoảng 7 ngày; mục tiêu của bang là 30 ngày. Chúng tôi sẽ nhắn tin khi có tin."
             ),
         ],
-        buttonLabel: CivicaText("See your status", es: "Ver tu estado", zh: "查看你的状态"),
+        buttonLabel: CivicaText("See your status", es: "Ver tu estado", zh: "查看你的状态", vi: "Xem trạng thái của bạn"),
         buttonURLHint: "civica.us/m/{session}"
     )
 
@@ -254,11 +263,12 @@ enum CivicaNotificationTemplates {
 
     private static let documentRequestedSMS = CivicaNotificationTemplate(
         kind: .documentRequestedSMS,
-        subject: CivicaText("Doc needed", es: "Documento necesario", zh: "需要文件"),
+        subject: CivicaText("Doc needed", es: "Documento necesario", zh: "需要文件", vi: "Cần giấy tờ"),
         preheader: CivicaText(
             "{agency} needs one more thing",
             es: "{agency} necesita una cosa más",
-            zh: "{agency} 还需要一样东西"
+            zh: "{agency} 还需要一样东西",
+            vi: "{agency} cần thêm một thứ nữa"
         ),
         body: [
             // Compliance Q3: registry id "doc_requested_sms_body" — flip to .approved to activate.
@@ -268,7 +278,7 @@ enum CivicaNotificationTemplates {
                 fallbackES: "{agency} necesita una cosa más: un talón de pago reciente. Envía una foto aquí o súbela en la app. Antes del {deadline} para que tu solicitud siga su curso."
             ),
         ],
-        buttonLabel: CivicaText("Upload now", es: "Subir ahora", zh: "立即上传"),
+        buttonLabel: CivicaText("Upload now", es: "Subir ahora", zh: "立即上传", vi: "Tải lên ngay"),
         buttonURLHint: "civica.us/upload/{session}"
     )
 
@@ -285,48 +295,54 @@ enum CivicaNotificationTemplates {
         preheader: CivicaText(
             "EBT card is on its way. Set the PIN before it arrives.",
             es: "Tu tarjeta EBT está en camino. Configura el PIN antes de que llegue.",
-            zh: "EBT 卡正在寄出。请在它到达前设置 PIN 码。"
+            zh: "EBT 卡正在寄出。请在它到达前设置 PIN 码。",
+            vi: "Thẻ EBT đang trên đường tới. Hãy đặt mã PIN trước khi thẻ đến."
         ),
         body: [
             CivicaText(
                 "You're approved for ${monthlyBenefit}/month. {householdSize}-person household, {annualBenefit}/year total.",
                 es: "Estás aprobado para ${monthlyBenefit}/mes. Hogar de {householdSize} persona(s), {annualBenefit}/año en total.",
-                zh: "你已获批每月 ${monthlyBenefit}。{householdSize} 人家庭，全年共 {annualBenefit}。"
+                zh: "你已获批每月 ${monthlyBenefit}。{householdSize} 人家庭，全年共 {annualBenefit}。",
+                vi: "Bạn được duyệt ${monthlyBenefit}/tháng. Hộ {householdSize} người, tổng cộng {annualBenefit}/năm."
             ),
             CivicaText(
                 "EBT card expected {ebtArrivalWindow}. Plain white envelope from the state EBT office. Set the PIN by phone before you use it.",
                 es: "Tarjeta EBT esperada para {ebtArrivalWindow}. Sobre blanco de la oficina estatal de EBT. Configura el PIN por teléfono antes de usarla.",
-                zh: "EBT 卡预计于 {ebtArrivalWindow} 寄到。州 EBT 办公室寄出的素白色信封。使用前请用电话设置 PIN 码。"
+                zh: "EBT 卡预计于 {ebtArrivalWindow} 寄到。州 EBT 办公室寄出的素白色信封。使用前请用电话设置 PIN 码。",
+                vi: "Thẻ EBT dự kiến đến {ebtArrivalWindow}. Phong bì trắng trơn từ văn phòng EBT của bang. Hãy gọi điện đặt mã PIN trước khi dùng."
             ),
             CivicaText(
                 "Recert is {recertDate}. We'll text you 60 and 14 days ahead.",
                 es: "Recertificación el {recertDate}. Te enviaremos un mensaje 60 y 14 días antes.",
-                zh: "重新认证日期是 {recertDate}。我们会在 60 天和 14 天前发短信提醒你。"
+                zh: "重新认证日期是 {recertDate}。我们会在 60 天和 14 天前发短信提醒你。",
+                vi: "Ngày tái xác nhận là {recertDate}. Chúng tôi sẽ nhắn tin nhắc bạn trước 60 ngày và 14 ngày."
             ),
         ],
         // Compliance Q3: registry id "ebt_pin_cta" — state-parameterized.
         // When counsel signs, replace this buttonLabel with ebtPinCTALabel(stateCode:language:)
         // at the render call site (stateCode must flow in from the user's session).
-        buttonLabel: CivicaText("Set the EBT PIN", es: "Configurar el PIN de EBT", zh: "设置 EBT PIN 码"),
+        buttonLabel: CivicaText("Set the EBT PIN", es: "Configurar el PIN de EBT", zh: "设置 EBT PIN 码", vi: "Đặt mã PIN cho thẻ EBT"),
         buttonURLHint: "civica.us/ebt-pin"
     )
 
     private static let approvedSMS = CivicaNotificationTemplate(
         kind: .approvedSMS,
-        subject: CivicaText("Approved", es: "Aprobado", zh: "已获批"),
+        subject: CivicaText("Approved", es: "Aprobado", zh: "已获批", vi: "Đã duyệt"),
         preheader: CivicaText(
             "Approved · ${monthlyBenefit}/mo",
             es: "Aprobado · ${monthlyBenefit}/mes",
-            zh: "已获批 · 每月 ${monthlyBenefit}"
+            zh: "已获批 · 每月 ${monthlyBenefit}",
+            vi: "Đã duyệt · ${monthlyBenefit}/tháng"
         ),
         body: [
             CivicaText(
                 "Approved. ${monthlyBenefit}/mo, starting this month. EBT card expected {ebtArrivalWindow}. Set the PIN by phone before you use it.",
                 es: "Aprobado. ${monthlyBenefit}/mes, a partir de este mes. Tarjeta EBT esperada para {ebtArrivalWindow}. Configura el PIN por teléfono antes de usarla.",
-                zh: "已获批。本月开始每月 ${monthlyBenefit}。EBT 卡预计于 {ebtArrivalWindow} 寄到。使用前请用电话设置 PIN 码。"
+                zh: "已获批。本月开始每月 ${monthlyBenefit}。EBT 卡预计于 {ebtArrivalWindow} 寄到。使用前请用电话设置 PIN 码。",
+                vi: "Đã duyệt. ${monthlyBenefit}/tháng, bắt đầu từ tháng này. Thẻ EBT dự kiến đến {ebtArrivalWindow}. Hãy gọi điện đặt mã PIN trước khi dùng."
             ),
         ],
-        buttonLabel: CivicaText("Set the EBT PIN", es: "Configurar PIN de EBT", zh: "设置 EBT PIN 码"),
+        buttonLabel: CivicaText("Set the EBT PIN", es: "Configurar PIN de EBT", zh: "设置 EBT PIN 码", vi: "Đặt mã PIN cho thẻ EBT"),
         buttonURLHint: "civica.us/ebt-pin"
     )
 
@@ -343,50 +359,57 @@ enum CivicaNotificationTemplates {
         preheader: CivicaText(
             "Quick check, not the whole form again.",
             es: "Una verificación rápida, no la solicitud completa otra vez.",
-            zh: "只是快速确认，不用再填整张表。"
+            zh: "只是快速确认，不用再填整张表。",
+            vi: "Chỉ là kiểm tra nhanh, không phải điền lại cả đơn."
         ),
         body: [
             CivicaText(
                 "Your SNAP has to be renewed by {recertDate} to keep going. {agency} calls this recertification.",
                 es: "Tu SNAP tiene que renovarse antes del {recertDate} para continuar. {agency} llama a esto recertificación.",
-                zh: "你的 SNAP 必须在 {recertDate} 前续办才能继续。{agency} 把这叫做重新认证。"
+                zh: "你的 SNAP 必须在 {recertDate} 前续办才能继续。{agency} 把这叫做重新认证。",
+                vi: "SNAP của bạn phải được gia hạn trước {recertDate} để tiếp tục. {agency} gọi việc này là tái xác nhận."
             ),
             CivicaText(
                 "What's on the form:\n  • Anyone new in your household?\n  • Income changes?\n  • Rent or address changes?\n  • One recent pay stub.",
                 es: "Lo que está en la solicitud:\n  • ¿Alguien nuevo en tu hogar?\n  • ¿Cambios en tus ingresos?\n  • ¿Cambios de renta o dirección?\n  • Un talón de pago reciente.",
-                zh: "表格上的内容：\n  • 家里有新成员吗？\n  • 收入有变化吗？\n  • 房租或地址有变化吗？\n  • 一张最近的工资单。"
+                zh: "表格上的内容：\n  • 家里有新成员吗？\n  • 收入有变化吗？\n  • 房租或地址有变化吗？\n  • 一张最近的工资单。",
+                vi: "Trên đơn có:\n  • Có ai mới trong hộ của bạn không?\n  • Thu nhập có thay đổi không?\n  • Tiền thuê nhà hoặc địa chỉ có thay đổi không?\n  • Một phiếu lương gần đây."
             ),
             CivicaText(
                 "We pre-filled everything from last time. You're mostly confirming \"yes, still right\" or telling us what changed.",
                 es: "Pre-llenamos todo desde la última vez. Mayormente estás confirmando \"sí, sigue siendo correcto\" o diciéndonos qué cambió.",
-                zh: "我们已经用上次的信息预先填好了。你主要是确认「是的，还正确」，或告诉我们有什么变化。"
+                zh: "我们已经用上次的信息预先填好了。你主要是确认「是的，还正确」，或告诉我们有什么变化。",
+                vi: "Chúng tôi đã điền sẵn mọi thứ từ lần trước. Bạn chỉ cần xác nhận \u{201C}đúng, vẫn vậy\u{201D} hoặc cho chúng tôi biết có gì thay đổi."
             ),
             CivicaText(
                 "We'll remind you again 14 days before, and again 1 day before. If you miss the deadline, your benefits may pause — contact {agencyFull} at {hotline} to request reinstatement.",
                 es: "Te recordaremos otra vez 14 días antes, y otra vez 1 día antes. Si pierdes la fecha límite, tus beneficios pueden pausarse — comunícate con {agencyFull} al {hotline} para solicitar la reactivación.",
-                zh: "我们会在 14 天前再提醒一次，1 天前再提醒一次。如果你错过截止日期，你的福利可能会暂停 — 请拨打 {hotline} 联系 {agencyFull} 申请恢复。"
+                zh: "我们会在 14 天前再提醒一次，1 天前再提醒一次。如果你错过截止日期，你的福利可能会暂停 — 请拨打 {hotline} 联系 {agencyFull} 申请恢复。",
+                vi: "Chúng tôi sẽ nhắc bạn lại trước 14 ngày, và một lần nữa trước 1 ngày. Nếu bạn lỡ hạn, trợ cấp của bạn có thể bị tạm ngưng — hãy liên hệ {agencyFull} qua số {hotline} để xin khôi phục."
             ),
         ],
-        buttonLabel: CivicaText("Start recertification", es: "Comenzar recertificación", zh: "开始重新认证"),
+        buttonLabel: CivicaText("Start recertification", es: "Comenzar recertificación", zh: "开始重新认证", vi: "Bắt đầu tái xác nhận"),
         buttonURLHint: "civica://recert/{session}"
     )
 
     private static let recertHeadsUpSMS = CivicaNotificationTemplate(
         kind: .recertHeadsUpSMS,
-        subject: CivicaText("Recert in 60 days", es: "Recertificación en 60 días", zh: "60 天后重新认证"),
+        subject: CivicaText("Recert in 60 days", es: "Recertificación en 60 días", zh: "60 天后重新认证", vi: "Tái xác nhận sau 60 ngày"),
         preheader: CivicaText(
             "Quick check, not the whole form again",
             es: "Verificación rápida, no la solicitud completa",
-            zh: "只是快速确认，不用再填整张表"
+            zh: "只是快速确认，不用再填整张表",
+            vi: "Chỉ là kiểm tra nhanh, không phải điền lại cả đơn"
         ),
         body: [
             CivicaText(
                 "Heads up — your SNAP has to be renewed by {recertDate} to keep going. Usually 4 minutes. We'll remind you again 14 days and 1 day before.",
                 es: "Aviso — tu SNAP tiene que renovarse antes del {recertDate} para continuar. Usualmente 4 minutos. Te recordaremos 14 días y 1 día antes.",
-                zh: "提醒一下 — 你的 SNAP 必须在 {recertDate} 前续办才能继续。通常 4 分钟搞定。我们会在 14 天和 1 天前再提醒你。"
+                zh: "提醒一下 — 你的 SNAP 必须在 {recertDate} 前续办才能继续。通常 4 分钟搞定。我们会在 14 天和 1 天前再提醒你。",
+                vi: "Nhắc bạn — SNAP của bạn phải được gia hạn trước {recertDate} để tiếp tục. Thường mất 4 phút. Chúng tôi sẽ nhắc lại trước 14 ngày và 1 ngày."
             ),
         ],
-        buttonLabel: CivicaText("Start recert", es: "Iniciar recertificación", zh: "开始重新认证"),
+        buttonLabel: CivicaText("Start recert", es: "Iniciar recertificación", zh: "开始重新认证", vi: "Bắt đầu tái xác nhận"),
         buttonURLHint: "civica.us/recert/{session}"
     )
 
@@ -394,11 +417,12 @@ enum CivicaNotificationTemplates {
 
     private static let recertOneDayBeforeSMS = CivicaNotificationTemplate(
         kind: .recertOneDayBeforeSMS,
-        subject: CivicaText("Recert tomorrow", es: "Recertificación mañana", zh: "明天重新认证"),
+        subject: CivicaText("Recert tomorrow", es: "Recertificación mañana", zh: "明天重新认证", vi: "Mai là hạn tái xác nhận"),
         preheader: CivicaText(
             "Last reminder before benefits pause",
             es: "Último aviso antes de que se pausen los beneficios",
-            zh: "福利暂停前的最后一次提醒"
+            zh: "福利暂停前的最后一次提醒",
+            vi: "Lời nhắc cuối trước khi trợ cấp tạm ngưng"
         ),
         body: [
             // Compliance Q3: registry id "recert_one_day_sms" — counsel-prep
@@ -413,7 +437,7 @@ enum CivicaNotificationTemplates {
                 fallbackES: "Mañana vence tu recertificación ({recertDate}). 4 minutos si empiezas ahora. Si lo olvidas, los beneficios se pausan hasta que envíes."
             ),
         ],
-        buttonLabel: CivicaText("Start now", es: "Empezar ahora", zh: "现在开始"),
+        buttonLabel: CivicaText("Start now", es: "Empezar ahora", zh: "现在开始", vi: "Bắt đầu ngay"),
         buttonURLHint: "civica.us/recert/{session}"
     )
 }
