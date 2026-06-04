@@ -25,7 +25,7 @@ export default function AppNav({ demo = false }: { demo?: boolean }) {
         </nav>
       </div>
       <div className="app-nav__right">
-        {demo && <span className="app-nav__demo">Demo</span>}
+        {demo && <span className="app-nav__demo">Demo data</span>}
       </div>
     </header>
   );

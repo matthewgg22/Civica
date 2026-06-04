@@ -29,6 +29,8 @@
   --civica-teal-surface: #BCE0DA;
   --civica-hairline: rgba(0, 0, 0, 0.12);
   --civica-destructive: #C84637;
+  --civica-warning: #B5511E;
+  --civica-surface: #FFFFFF;
 
   /* Spacing — mirrors CivicaSpacing.swift */
   --civica-space-xs: 4px;
@@ -1143,9 +1145,9 @@ button {
 /* ---- App nav (unified bar, mirrors staff AppHeader) ---- */
 
 .app-nav {
-  background: var(--civica-paper);
+  background: var(--civica-surface);
   border-bottom: 1px solid var(--civica-hairline);
-  padding: 10px var(--civica-space-xl);
+  padding: 14px var(--civica-space-xl);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -1166,8 +1168,8 @@ button {
 }
 
 .app-nav__logo img {
-  width: 44px;
-  height: 44px;
+  width: 50px;
+  height: 50px;
   object-fit: contain;
 }
 
@@ -1178,7 +1180,7 @@ button {
 }
 
 .app-nav__brand {
-  font-size: 1rem;
+  font-size: 1.0625rem;
   font-weight: 600;
   letter-spacing: -0.01em;
   color: var(--civica-ink);
@@ -1221,14 +1223,26 @@ button {
 }
 
 .app-nav__demo {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   font-size: 0.6875rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
+  font-weight: 600;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: var(--civica-brick);
-  border: 1px solid var(--civica-brick);
+  color: var(--civica-warning);
+  border: 1px solid var(--civica-warning);
+  background: color-mix(in srgb, var(--civica-warning) 8%, transparent);
   border-radius: 999px;
-  padding: 2px 10px;
+  padding: 4px 10px;
+}
+
+.app-nav__demo::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--civica-warning);
 }
 
 @media (max-width: 560px) {
@@ -1352,10 +1366,10 @@ button {
 }
 
 .status-dash__title {
-  font-size: 1.5rem;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-  margin: 4px 0 0;
+  font-size: 1.625rem;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  margin: 0;
   color: var(--civica-ink);
 }
 

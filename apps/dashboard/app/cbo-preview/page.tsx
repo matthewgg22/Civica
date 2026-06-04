@@ -143,15 +143,15 @@ export default async function CBOPreviewPage({
   return (
     <main className="min-h-screen bg-paper flex flex-col">
       {/* Unified nav bar — matches the staff AppHeader design */}
-      <header className="bg-surface border-b border-hairline px-4 sm:px-8 py-3 flex items-center justify-between gap-3">
+      <header className="bg-surface border-b border-hairline px-4 sm:px-8 py-3.5 flex items-center justify-between gap-3">
         <div className="flex items-center gap-4 sm:gap-8 min-w-0">
           <div className="flex items-center gap-3 shrink-0">
             <Link href="/cbo-preview" className="shrink-0 hover:opacity-90 transition-opacity">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/civica-wheat-mark.png" alt="Civica" width={44} height={44} className="w-[44px] h-[44px] object-contain" />
+              <img src="/civica-wheat-mark.png" alt="Civica" width={50} height={50} className="w-[50px] h-[50px] object-contain" />
             </Link>
             <div>
-              <Link href="/cbo-preview" className="block text-[16px] font-semibold tracking-tight text-ink leading-none hover:opacity-80 transition-opacity">
+              <Link href="/cbo-preview" className="block text-[17px] font-semibold tracking-tight text-ink leading-none hover:opacity-80 transition-opacity">
                 Civica
               </Link>
               <div className="mt-0.5">
