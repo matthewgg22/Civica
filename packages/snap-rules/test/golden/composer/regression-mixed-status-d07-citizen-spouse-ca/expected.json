@@ -1,5 +1,6 @@
 {
   "verdict": "APPROVE",
-  "benefit": 546,
-  "reason_substring": "approved"
+  "benefit": 298,
+  "reason_substring": "approved",
+  "_note": "Refugee head (ineligible post-OBBBA) + citizen spouse. Per 7 CFR 273.11(c)(1)(i), eligible HH size = 1 (spouse only); per 7 CFR 273.11(c)(3)(i)(A) count-all election (CA), head's $900 wages count in full. Issue #434 prediction: APPROVE ~$298. Engine returns exactly $298."
 }

@@ -1,5 +1,6 @@
 {
   "verdict": "APPROVE",
-  "benefit": 591,
-  "reason_substring": "approved"
+  "benefit": 352,
+  "reason_substring": "approved",
+  "_note": "Undoc parent + 2 citizen kids. Per 7 CFR 273.11(c)(1)(i), eligible HH size = 2 (kids only) for max allotment / SD / FPL / cap. Per 7 CFR 273.11(c)(3)(i)(A) count-all election (CA), parent's $2000 wages count in full. Prior oracle ($591) was authored to match the pre-#434 engine that used full HH size = 3 for max allotment — that was the bug. New oracle reflects the corrected size-2 + count-all math."
 }

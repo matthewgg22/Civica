@@ -164,6 +164,66 @@ describe("M2 — Earned vs unearned signature (equal gross)", () => {
   }
 });
 
+// ─── M4 — Mixed-status proration monotonicity (7 CFR 273.11(c)) ──────────
+//
+// Issue #434: adding an immigration-ineligible alien to an eligible-only
+// household must NOT raise the benefit. Pre-fix, the engine used
+// `facts.household.length` for max-allotment / SD lookups, so adding an
+// extra body to the HH bumped both — sometimes raising benefit even
+// though regulatorily the eligible-size is unchanged. Post-fix, max
+// allotment + SD are pinned to the eligible-only count.
+//
+// Two flavors:
+//   M4a — Add an ineligible alien with NO income. Benefit should be
+//         equal (or, edge case, lower if the new structural HH triggers
+//         a different deduction branch). Strict assertion: benefit_after
+//         <= benefit_before.
+//   M4b — Add an ineligible alien WITH income. The count-all election
+//         (Read A, 273.11(c)(3)(i)(A)) means their income flows in
+//         full; benefit must drop (or stay equal if at min-benefit floor).
+
+describe("M4 — Mixed-status proration monotonicity (#434)", () => {
+  for (const base of SEED_BASES) {
+    it(`M4a — adding ineligible alien (no income) does not raise benefit (${base.label})`, () => {
+      const before = benefit(base.state, base.asOf, base.facts);
+      const factsAfter = JSON.parse(JSON.stringify(base.facts)) as Facts;
+      factsAfter.household.push({
+        member_id: "m_alien",
+        age: 35,
+        role: "spouse",
+        immigration: "undocumented",
+        work_class: "gen_work_subject",
+      });
+      const after = benefit(base.state, base.asOf, factsAfter);
+      expect(before).not.toBeNull();
+      expect(after).not.toBeNull();
+      expect(after!).toBeLessThanOrEqual(before!);
+    });
+
+    it(`M4b — adding ineligible alien WITH income lowers (or pins) benefit (${base.label})`, () => {
+      const before = benefit(base.state, base.asOf, base.facts);
+      const factsAfter = JSON.parse(JSON.stringify(base.facts)) as Facts;
+      factsAfter.household.push({
+        member_id: "m_alien",
+        age: 35,
+        role: "spouse",
+        immigration: "undocumented",
+        work_class: "gen_work_subject",
+      });
+      factsAfter.income.push({
+        member: "m_alien",
+        type: "wages",
+        amount: 800,
+        freq: "monthly",
+      });
+      const after = benefit(base.state, base.asOf, factsAfter);
+      expect(before).not.toBeNull();
+      expect(after).not.toBeNull();
+      expect(after!).toBeLessThanOrEqual(before!);
+    });
+  }
+});
+
 // ─── M3 — Determinism / idempotence ───────────────────────────────────────
 
 describe("M3 — Determinism", () => {
