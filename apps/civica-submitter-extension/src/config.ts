@@ -119,3 +119,35 @@ export async function clearPageFillState(
 ): Promise<void> {
   await chrome.storage.local.remove(pageFillKey(packetId, pageCode));
 }
+
+/**
+ * Read every persisted PageFillState for one packet (V1-6a, #316). Used by
+ * the pre-submit trust panel to render "everything Civica filled across the
+ * walk" on the Review & Submit step. Returns most-recently-filled first.
+ *
+ * Implementation: scans `chrome.storage.local.get(null)` for keys prefixed
+ * with `civica.fill.<packetId>.`. The per-page write API uses this same
+ * prefix shape (see `pageFillKey`); changing one without the other will
+ * silently break aggregate reads.
+ */
+export async function readAllPageFillStatesForPacket(
+  packetId: string,
+): Promise<PageFillState[]> {
+  const prefix = `civica.fill.${packetId}.`;
+  const all = await chrome.storage.local.get(null);
+  const out: PageFillState[] = [];
+  for (const [k, v] of Object.entries(all)) {
+    if (!k.startsWith(prefix)) continue;
+    if (
+      v &&
+      typeof v === "object" &&
+      Array.isArray((v as PageFillState).fingerprints)
+    ) {
+      out.push(v as PageFillState);
+    }
+  }
+  // Most-recently-filled first so the trust panel shows the page the user
+  // most likely just completed at the top.
+  out.sort((a, b) => b.filledAt - a.filledAt);
+  return out;
+}

@@ -53,6 +53,14 @@ export interface FillFingerprint {
   value?: string;
   /** Whether Civica set this control checked (radio/checkbox). */
   checked?: boolean;
+  /**
+   * Human-readable label captured at fill time (V1-6a, #316). Carried on the
+   * fingerprint so the pre-submit trust panel can show "Civica filled X for
+   * field Y" without re-walking the portal page selectors. Optional — clearing
+   * does not depend on it, and older persisted fingerprints (pre-#316) won't
+   * have it; the panel falls back to the key when absent.
+   */
+  label?: string;
 }
 
 // ---------------------------------------------------------------------------
@@ -133,19 +141,33 @@ function cssEscape(s: string): string {
   return s.replace(/[^a-zA-Z0-9_-]/g, (c) => `\\${c}`);
 }
 
-/** Build the fingerprint of what Civica just wrote into `el`. */
-export function fingerprintOf(el: Element, type: FieldType): FillFingerprint {
+/**
+ * Build the fingerprint of what Civica just wrote into `el`. Optional `label`
+ * is the field's human-readable name (e.g. "First Name"); stored on the
+ * fingerprint so the V1-6a trust panel can render rows without re-resolving
+ * the selector map. Pass null/omit when no label is available — back-compat.
+ */
+export function fingerprintOf(
+  el: Element,
+  type: FieldType,
+  label?: string,
+): FillFingerprint {
   const key = elementKey(el);
-  if (type === "radio" || type === "checkbox") {
-    return { key, type, checked: true };
-  }
-  const value =
-    el instanceof HTMLInputElement ||
-    el instanceof HTMLTextAreaElement ||
-    el instanceof HTMLSelectElement
-      ? el.value
-      : undefined;
-  return { key, type, value };
+  const base: FillFingerprint =
+    type === "radio" || type === "checkbox"
+      ? { key, type, checked: true }
+      : {
+          key,
+          type,
+          value:
+            el instanceof HTMLInputElement ||
+            el instanceof HTMLTextAreaElement ||
+            el instanceof HTMLSelectElement
+              ? el.value
+              : undefined,
+        };
+  if (label != null && label !== "") base.label = label;
+  return base;
 }
 
 // ---------------------------------------------------------------------------
