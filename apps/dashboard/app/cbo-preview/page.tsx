@@ -6,7 +6,7 @@ import DemoModeBadge from "../../components/DemoModeBadge";
 import CBOContactButton from "../../components/CBOContactButton";
 import StatusPill from "../../components/StatusPill";
 import StatusBadge from "../../components/StatusBadge";
-import KpiCard from "../../components/KpiCard";
+import ProductSwitcher from "../../components/ProductSwitcher";
 
 export const dynamic = "force-dynamic";
 
@@ -142,14 +142,42 @@ export default async function CBOPreviewPage({
 
   return (
     <main className="min-h-screen bg-paper flex flex-col">
-      {/* Header */}
-      <header className="px-6 md:px-8 py-5 border-b border-hairline flex items-start justify-between gap-4 flex-wrap bg-surface">
-        <div>
-          <p className="eyebrow">Civica · CBO Preview</p>
-          <h1 className="text-[22px] font-semibold text-ink mt-1 tracking-tight">Navigator Platform</h1>
-          <p className="text-[13px] text-graphite mt-0.5">Read-only demo for prospective licensee CBOs</p>
+      {/* Unified nav bar — matches the staff AppHeader design */}
+      <header className="bg-surface border-b border-hairline px-4 sm:px-8 py-3 flex items-center justify-between gap-3">
+        <div className="flex items-center gap-4 sm:gap-8 min-w-0">
+          <div className="flex items-center gap-3 shrink-0">
+            <Link href="/cbo-preview" className="shrink-0 hover:opacity-90 transition-opacity">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/civica-wheat-mark.png" alt="Civica" width={44} height={44} className="w-[44px] h-[44px] object-contain" />
+            </Link>
+            <div>
+              <Link href="/cbo-preview" className="block text-[16px] font-semibold tracking-tight text-ink leading-none hover:opacity-80 transition-opacity">
+                Civica
+              </Link>
+              <div className="mt-0.5">
+                <ProductSwitcher currentHref="/cbo-preview" />
+              </div>
+            </div>
+          </div>
+          {/* Section tabs */}
+          <nav className="hidden md:flex items-center gap-0.5" aria-label="Preview sections">
+            {TABS.map((tab) => {
+              const isActive = active === tab.key;
+              return (
+                <Link
+                  key={tab.key}
+                  href={`/cbo-preview${tab.key === "overview" ? "" : `?section=${tab.key}`}`}
+                  className={`px-3 py-1.5 rounded-[4px] text-[14px] font-semibold whitespace-nowrap min-h-[44px] flex items-center transition-colors ${
+                    isActive ? "bg-ink/8 text-ink" : "text-graphite hover:text-ink hover:bg-ink/5"
+                  }`}
+                >
+                  {tab.label}
+                </Link>
+              );
+            })}
+          </nav>
         </div>
-        <div className="flex items-center gap-4 shrink-0">
+        <div className="flex items-center gap-3 shrink-0">
           <DemoModeBadge />
           {user && (
             <form action="/auth/signout" method="post">
@@ -159,19 +187,17 @@ export default async function CBOPreviewPage({
         </div>
       </header>
 
-      {/* Tab navigation */}
-      <nav className="bg-surface border-b border-hairline px-6 md:px-8" aria-label="Preview sections">
-        <div className="flex items-center gap-0.5 overflow-x-auto scrollbar-none">
+      {/* Mobile section tabs — horizontal scroll below the bar */}
+      <nav className="md:hidden bg-surface border-b border-hairline px-4 overflow-x-auto scrollbar-none" aria-label="Preview sections">
+        <div className="flex items-center gap-0.5">
           {TABS.map((tab) => {
             const isActive = active === tab.key;
             return (
               <Link
                 key={tab.key}
                 href={`/cbo-preview${tab.key === "overview" ? "" : `?section=${tab.key}`}`}
-                className={`px-4 py-3.5 text-[13px] font-semibold whitespace-nowrap border-b-2 transition-colors ${
-                  isActive
-                    ? "border-pine text-ink"
-                    : "border-transparent text-graphite hover:text-ink hover:border-hairline"
+                className={`px-3 py-3 text-[13px] font-semibold whitespace-nowrap border-b-2 transition-colors ${
+                  isActive ? "border-pine text-ink" : "border-transparent text-graphite"
                 }`}
               >
                 {tab.label}
@@ -181,8 +207,14 @@ export default async function CBOPreviewPage({
         </div>
       </nav>
 
-      {/* Section content */}
-      <div className="flex-1">
+      {/* Page title + section content — centered max-width (fix A) */}
+      <div className="flex-1 w-full max-w-6xl mx-auto px-6 md:px-8 py-8">
+        <div className="mb-6">
+          <p className="eyebrow">Read-only demo for prospective licensee CBOs</p>
+          <h1 className="text-[26px] font-bold tracking-tight leading-none text-ink mt-1">
+            {TABS.find((t) => t.key === active)?.label ?? "Overview"}
+          </h1>
+        </div>
         {active === "overview"     && <OverviewSection />}
         {active === "applications" && <ApplicationsSection />}
         {active === "outreach"     && <OutreachSection />}
@@ -190,14 +222,16 @@ export default async function CBOPreviewPage({
         {active === "qc"           && <QCSection />}
       </div>
 
-      {/* Contact CTA — always visible */}
-      <div className="px-6 md:px-8 py-6 border-t border-hairline">
-        <div className="border border-hairline rounded-[4px] bg-surface p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div>
-            <p className="text-[15px] font-semibold text-ink">Interested in licensing Civica for your CBO?</p>
-            <p className="text-[13px] text-graphite mt-1">We partner with community-based organizations serving SNAP-eligible households.</p>
+      {/* Contact CTA — always visible, centered */}
+      <div className="border-t border-hairline">
+        <div className="w-full max-w-6xl mx-auto px-6 md:px-8 py-6">
+          <div className="border border-hairline rounded-[4px] bg-surface p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+              <p className="text-[15px] font-semibold text-ink">Interested in licensing Civica for your CBO?</p>
+              <p className="text-[13px] text-graphite mt-1">We partner with community-based organizations serving SNAP-eligible households.</p>
+            </div>
+            <CBOContactButton />
           </div>
-          <CBOContactButton />
         </div>
       </div>
     </main>
@@ -207,27 +241,50 @@ export default async function CBOPreviewPage({
 // ─── Overview ─────────────────────────────────────────────────────────────────
 
 function OverviewSection() {
+  const funnelMax = FUNNEL_STEPS[0].count;
   return (
-    <div className="px-6 md:px-8 py-6 space-y-8">
-      {/* KPIs */}
+    <div className="space-y-8">
+      {/* KPIs — compact (fix C) */}
       <section aria-label="Impact at a glance">
-        <p className="eyebrow mb-4">Impact at a glance</p>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <KpiCard label="Avg applications / navigator / mo" value="23" subtext="Without Civica: 7 (manual process)" variant="neutral" />
-          <KpiCard label="Error rate (Civica cohort)"        value="4.2%" subtext="Without Civica: ~10.8%"           variant="neutral" />
-          <KpiCard label="Avg time to handoff"               value="6 days" subtext="Without Civica: ~22 days"       variant="neutral" />
+        <p className="eyebrow mb-3">Impact at a glance</p>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          {[
+            { label: "Avg applications / navigator / mo", value: "23",     sub: "vs 7 manual" },
+            { label: "Error rate (Civica cohort)",        value: "4.2%",   sub: "vs ~10.8% manual" },
+            { label: "Avg time to handoff",               value: "6 days", sub: "vs ~22 days manual" },
+          ].map((kpi) => (
+            <div key={kpi.label} className="bg-surface border border-hairline rounded-[4px] px-5 py-4">
+              <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite leading-tight">{kpi.label}</p>
+              <p className="text-[28px] font-semibold tabular-nums text-ink leading-none mt-2">{kpi.value}</p>
+              <p className="text-[12px] text-pine font-medium mt-1.5">{kpi.sub}</p>
+            </div>
+          ))}
         </div>
       </section>
 
-      {/* Funnel */}
+      {/* Funnel — full-width proportional bars (fix B) */}
       <section aria-label="Enrollment funnel">
-        <p className="eyebrow mb-4">Enrollment funnel (demo cohort, 30 days)</p>
-        <div className="flex flex-wrap items-stretch gap-2">
+        <p className="eyebrow mb-3">Enrollment funnel (demo cohort, 30 days)</p>
+        <div className="bg-surface border border-hairline rounded-[4px] p-5 space-y-3">
           {FUNNEL_STEPS.map((step, i) => (
-            <FunnelStep key={step.name} name={step.name} count={step.count} pct={step.pct ?? null} isFirst={i === 0} isLast={i === FUNNEL_STEPS.length - 1} />
+            <div key={step.name}>
+              <div className="flex items-baseline justify-between gap-3 mb-1.5">
+                <span className="text-[13px] font-semibold text-ink">{step.name}</span>
+                <span className="flex items-baseline gap-2">
+                  <span className="text-[13px] font-semibold tabular-nums text-ink">{step.count.toLocaleString()}</span>
+                  {step.pct && <span className="text-[12px] text-graphite tabular-nums w-12 text-right">{step.pct}</span>}
+                </span>
+              </div>
+              <div className="h-2.5 bg-paper rounded-full overflow-hidden">
+                <div
+                  className={`h-full rounded-full ${i === FUNNEL_STEPS.length - 1 ? "bg-pine" : "bg-pine/55"}`}
+                  style={{ width: `${(step.count / funnelMax) * 100}%` }}
+                />
+              </div>
+            </div>
           ))}
         </div>
-        <p className="text-[11px] text-graphite mt-3">Conversion % relative to intake (1,240 applicants).</p>
+        <p className="text-[11px] text-graphite mt-2">Conversion % relative to intake (1,240 applicants).</p>
       </section>
 
       {/* Sample queue preview */}
@@ -276,7 +333,7 @@ function OverviewSection() {
 function ApplicationsSection() {
   const total = DEMO_QUEUE.reduce((s, b) => s + (b.rows.length || b.count), 0);
   return (
-    <div className="px-6 md:px-8 py-6 space-y-5">
+    <div className="space-y-5">
       {/* Stat chips */}
       <div className="flex items-center gap-3 flex-wrap">
         {DEMO_QUEUE.map((bucket) => {
@@ -327,7 +384,7 @@ function ApplicationsSection() {
 
 function OutreachSection() {
   return (
-    <div className="px-6 md:px-8 py-6 space-y-6">
+    <div className="space-y-6">
       {/* Applications bucket */}
       <section aria-label="Stalled applications">
         <div className="flex items-center justify-between mb-3">
@@ -409,7 +466,7 @@ function OutreachSection() {
 function RenewalsSection() {
   const maxCount = Math.max(...DEMO_RENEWALS.cadenceRows.map((r) => r.count));
   return (
-    <div className="px-6 md:px-8 py-6 space-y-6">
+    <div className="space-y-6">
       {/* Summary stat strip */}
       <div className="grid grid-cols-3 gap-4">
         <div className="bg-surface border border-hairline rounded-[4px] px-5 py-4">
@@ -480,7 +537,7 @@ function RenewalsSection() {
 
 function QCSection() {
   return (
-    <div className="px-6 md:px-8 py-6 space-y-6">
+    <div className="space-y-6">
       {/* Top metrics */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="bg-surface border border-hairline rounded-[4px] px-5 py-4">
@@ -586,22 +643,5 @@ function QueueRow({
         <p className="text-[11px] text-graphite uppercase tracking-wider mt-0.5">updated</p>
       </div>
     </Link>
-  );
-}
-
-function FunnelStep({ name, count, pct, isFirst, isLast }: {
-  name: string; count: number; pct: string | null; isFirst: boolean; isLast: boolean;
-}) {
-  return (
-    <div className="flex items-center gap-2">
-      <div className={`bg-surface border border-hairline rounded-[4px] px-4 py-3 min-w-[120px]`}
-        style={isLast ? { borderColor: "color-mix(in srgb, var(--color-brick) 30%, transparent)" } : {}}>
-        <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite">{name}</p>
-        <p className="text-xl font-semibold tabular-nums text-ink mt-1">{count.toLocaleString()}</p>
-        {pct && <p className="text-[11px] text-graphite mt-0.5">{pct}</p>}
-        {isFirst && <p className="text-[11px] text-graphite mt-0.5">applicants</p>}
-      </div>
-      {!isLast && <span className="text-xl font-light flex-shrink-0 text-graphite" aria-hidden>›</span>}
-    </div>
   );
 }

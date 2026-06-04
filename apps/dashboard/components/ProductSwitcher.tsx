@@ -9,14 +9,14 @@ const SURFACES = [
     href: "/dashboard",
   },
   {
-    label: "Applicant Portal",
-    description: "civica-applicant.vercel.app",
-    href: "https://civica-applicant.vercel.app",
-  },
-  {
     label: "CBO Preview",
     description: "Prospective partner demo",
     href: "/cbo-preview",
+  },
+  {
+    label: "Applicant Portal",
+    description: "What the applicant sees",
+    href: "https://civica-applicant.vercel.app/status?demo=1",
   },
 ] as const;
 

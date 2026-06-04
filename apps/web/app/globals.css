@@ -1140,6 +1140,188 @@ button {
   justify-content: flex-end;
 }
 
+/* ---- App nav (unified bar, mirrors staff AppHeader) ---- */
+
+.app-nav {
+  background: var(--civica-paper);
+  border-bottom: 1px solid var(--civica-hairline);
+  padding: 10px var(--civica-space-xl);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--civica-space-md);
+}
+
+.app-nav__left {
+  display: flex;
+  align-items: center;
+  gap: var(--civica-space-xl);
+  min-width: 0;
+}
+
+.app-nav__logo {
+  flex-shrink: 0;
+  display: inline-flex;
+  text-decoration: none;
+}
+
+.app-nav__logo img {
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+}
+
+.app-nav__brand-block {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.app-nav__brand {
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--civica-ink);
+  text-decoration: none;
+  line-height: 1;
+}
+
+.app-nav__tabs {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.app-nav__tab {
+  padding: 8px 12px;
+  border-radius: var(--civica-radius-card);
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--civica-graphite);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background 120ms ease, color 120ms ease;
+}
+
+.app-nav__tab:hover {
+  background: rgba(0, 0, 0, 0.04);
+  color: var(--civica-ink);
+}
+
+.app-nav__tab--active {
+  background: rgba(0, 0, 0, 0.07);
+  color: var(--civica-ink);
+}
+
+.app-nav__right {
+  display: flex;
+  align-items: center;
+  gap: var(--civica-space-md);
+  flex-shrink: 0;
+}
+
+.app-nav__demo {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--civica-brick);
+  border: 1px solid var(--civica-brick);
+  border-radius: 999px;
+  padding: 2px 10px;
+}
+
+@media (max-width: 560px) {
+  .app-nav__tabs { display: none; }
+}
+
+/* ---- Product switcher (swap between Civica surfaces) ---- */
+
+.product-switcher {
+  position: relative;
+}
+
+.product-switcher__trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--civica-muted);
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.product-switcher__trigger:hover {
+  color: var(--civica-ink);
+}
+
+.product-switcher__chevron {
+  transition: transform 120ms ease;
+}
+
+.product-switcher__chevron--open {
+  transform: rotate(180deg);
+}
+
+.product-switcher__menu {
+  position: absolute;
+  left: 0;
+  top: calc(100% + 8px);
+  width: 220px;
+  background: var(--civica-paper);
+  border: 1px solid var(--civica-hairline);
+  border-radius: var(--civica-radius-card);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  z-index: 50;
+  padding: 4px;
+}
+
+.product-switcher__option {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px 10px;
+  border-radius: var(--civica-radius-control);
+  text-decoration: none;
+  transition: background 120ms ease;
+}
+
+.product-switcher__option:hover {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.product-switcher__option--current {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.product-switcher__option-label {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--civica-ink);
+  display: flex;
+  align-items: center;
+  gap: var(--civica-space-sm);
+}
+
+.product-switcher__option-current {
+  font-size: 0.625rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--civica-muted);
+}
+
+.product-switcher__option-desc {
+  font-size: 0.6875rem;
+  color: var(--civica-muted);
+}
+
 /* ---- Status dashboard (applicant's view of their own journey) ---- */
 
 .status-dash {

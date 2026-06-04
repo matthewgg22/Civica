@@ -11,6 +11,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import AppNav from "../../components/AppNav";
 import { STORAGE_KEY, type Locale } from "../i18n";
 import { snapT, type SnapStringKey } from "../../lib/i18n/snap-copy";
 import type {
@@ -170,16 +171,12 @@ export default function StatusPage() {
   const primary = packets && packets.length > 0 ? packets[0] : null;
 
   return (
+    <>
+    <AppNav demo={demo} />
     <div className="status-dash">
       <header className="status-dash__head">
-        <div>
-          <Link href="/" className="status-dash__brand">Civica</Link>
-          <h1 className="status-dash__title">{t("status_title")}</h1>
-        </div>
-        <div className="status-dash__head-actions">
-          {demo && <span className="status-dash__demo-badge">Demo</span>}
-          <Link href="/apply" className="status-dash__new">{t("status_start_new")} →</Link>
-        </div>
+        <h1 className="status-dash__title">{t("status_title")}</h1>
+        <Link href="/apply" className="status-dash__new">{t("status_start_new")} →</Link>
       </header>
 
       {error && <p className="status-dash__error" role="alert">{error}</p>}
@@ -267,6 +264,7 @@ export default function StatusPage() {
         )}
       </footer>
     </div>
+    </>
   );
 }
 
