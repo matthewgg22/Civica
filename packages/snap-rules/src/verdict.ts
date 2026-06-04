@@ -20,7 +20,7 @@
 // the citation chain.
 
 import type { Facts } from "./facts";
-import { hasElderlyOrDisabled, householdSize } from "./facts";
+import { eligibleHouseholdSize, hasElderlyOrDisabled } from "./facts";
 import { validateFacts } from "./facts-schema";
 import { evaluateCategorical } from "./gates/categorical";
 import { evaluateStudentGate } from "./gates/student";
@@ -198,7 +198,7 @@ export function composeVerdict(facts: Facts, state: string, asOf: Date): Verdict
     benefit: detail.monthly_benefit,
     reason: cat.path === "pure_cash"
       ? `approved via ${cat.path} categorical path`
-      : `approved (size=${householdSize(facts)}, E/D=${hasElderlyOrDisabled(facts)})`,
+      : `approved (size=${eligibleHouseholdSize(facts, asOf)}, E/D=${hasElderlyOrDisabled(facts)})`,
     trace,
   };
 }

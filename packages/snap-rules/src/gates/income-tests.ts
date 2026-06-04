@@ -11,7 +11,11 @@
 //   - net > 100% FPL => DENY (federal floor for all non-cat-elig HHs)
 
 import type { Facts } from "../facts";
-import { householdSize, aggregateIncome, hasElderlyOrDisabled } from "../facts";
+import {
+  aggregateIncomeForCalc,
+  eligibleHouseholdSize,
+  hasElderlyOrDisabled,
+} from "../facts";
 import { Decimal } from "../decimal";
 import {
   fplMonthly,
@@ -32,7 +36,10 @@ export interface IncomeTestResult {
 }
 
 export function grossIncomeTest(facts: Facts, state: string, asOf: Date): IncomeTestResult {
-  const size = householdSize(facts);
+  // 7 CFR 273.11(c)(1)(i)(B): FPL income-eligibility comparison uses
+  // ELIGIBLE-only HH size; ineligible-alien income counts in full
+  // (Read A — see facts.aggregateIncomeForCalc).
+  const size = eligibleHouseholdSize(facts, asOf);
   const fpl = fplMonthly(size, asOf);
   const policy = statePolicyFor(state);
 
@@ -42,7 +49,7 @@ export function grossIncomeTest(facts: Facts, state: string, asOf: Date): Income
     ratio = new Decimal(policy.bbce_threshold_pct).div(100);
   }
   const threshold = fpl.mul(ratio).roundDollar();
-  const gross = new Decimal(aggregateIncome(facts).gross_total).roundDollar();
+  const gross = new Decimal(aggregateIncomeForCalc(facts, asOf).gross_total).roundDollar();
   const passes = gross.lte(threshold);
   return {
     passes,
@@ -59,7 +66,8 @@ export function netIncomeTest(
   netMonthly: Decimal,
   asOf: Date,
 ): IncomeTestResult {
-  const size = householdSize(facts);
+  // 7 CFR 273.11(c)(1)(i)(B): net-test FPL also uses eligible-only size.
+  const size = eligibleHouseholdSize(facts, asOf);
   const fpl = fplMonthly(size, asOf);
   const threshold = fpl.mul(NET_INCOME_TEST_RATIO).roundDollar();
   const actual = netMonthly.roundDollar();

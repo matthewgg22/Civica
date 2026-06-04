@@ -4273,22 +4273,22 @@
       "must_reject": false,
       "paired_with": null,
       "integrity": {
-        "correct_method": "count_full_ineligible_income",
+        "correct_method": "eligible_size_plus_count_full_ineligible_income",
         "agency_keyed": "prorate_ineligible_income",
         "qc_should_flag": true,
         "error_element": "proration",
-        "reason": "CA elects count-all per 7 CFR 273.11(c)(3)(i)(A); agency prorated in error. Expected $591 is the count-all + full-HH-size result (see benefit_derivations.md M18)."
+        "reason": "Per 7 CFR 273.11(c)(1)(i), max-allotment / SD / FPL use ELIGIBLE-only HH size (size=2, kids only) for the undoc parent + 2 citizen kids case. Per 7 CFR 273.11(c)(3)(i)(A) count-all (CA election), the parent's $2000 wages count in full. Correct: $352. Prior expected $591 was authored against the pre-#434 engine that incorrectly used full HH size=3 for max allotment — the engine bug, not a policy choice. Both CA and MA pin to FY26 shelter cap $744 → both compute to $352."
       },
       "expected_by_state": {
         "CA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 591
+          "benefit": 352
         },
         "MA": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": 591
+          "benefit": 352
         },
         "TX": {
           "verdict": "APPROVE",

@@ -2720,7 +2720,7 @@
   "M18": {
     "AK": {
       "benefit": null,
-      "size": 3,
+      "size": 2,
       "state": "AK",
       "unavailable": "SUA not authored for AK"
     },
@@ -2728,22 +2728,23 @@
       "EID": 400,
       "SD": 209,
       "adj_income": 1391,
-      "benefit": 591,
+      "benefit": 352,
       "earned": 2000,
       "ed": false,
       "excess_shelter": 744,
       "homeless_substitute": false,
-      "max_allot": 785,
+      "max_allot": 546,
       "net_income": 647,
       "other_ded": 0,
       "shelter": 1663,
-      "size": 3,
+      "size": 2,
+      "size_note": "eligible-only per 7 CFR 273.11(c)(1)(i); undoc parent excluded from size lookup but income counted in full per 273.11(c)(3)(i)(A)",
       "state": "CA",
       "unearned": 0
     },
     "KS": {
       "benefit": null,
-      "size": 3,
+      "size": 2,
       "state": "KS",
       "unavailable": "SUA not authored for KS"
     },
@@ -2751,22 +2752,23 @@
       "EID": 400,
       "SD": 209,
       "adj_income": 1391,
-      "benefit": 591,
+      "benefit": 352,
       "earned": 2000,
       "ed": false,
       "excess_shelter": 744,
       "homeless_substitute": false,
-      "max_allot": 785,
+      "max_allot": 546,
       "net_income": 647,
       "other_ded": 0,
       "shelter": 1914,
-      "size": 3,
+      "size": 2,
+      "size_note": "eligible-only per 7 CFR 273.11(c)(1)(i)",
       "state": "MA",
       "unearned": 0
     },
     "TX": {
       "benefit": null,
-      "size": 3,
+      "size": 2,
       "state": "TX",
       "unavailable": "SUA not authored for TX"
     }
