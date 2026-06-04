@@ -302,6 +302,8 @@ export type { BenefitCalcDetail } from "./benefit-calc";
 // SUATier already re-exported from "./sua" above; the facts.ts variant
 // uses the same name + members so consumers don't notice the difference.
 export type { Facts, Member, IncomeLine, Shelter, Deductions } from "./facts";
+export { aggregateIncome, hasElderlyOrDisabled } from "./facts";
+export { validateFacts } from "./facts-schema";
 export { getEngineParams } from "./constants/index";
 
 // Verification-hyperdrive Layer 3 — registry + linter live behind the

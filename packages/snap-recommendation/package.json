@@ -1,0 +1,25 @@
+{
+  "name": "@civica/snap-recommendation",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Component R: SNAP recommendation / elicitation layer. Pure deterministic functions — no I/O, no LLM. Consumes @civica/snap-rules and @civica/snap-qc-engine only.",
+  "type": "module",
+  "main": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@civica/snap-rules": "workspace:*",
+    "@civica/snap-qc-engine": "workspace:*"
+  },
+  "devDependencies": {
+    "@civica/config": "workspace:*",
+    "typescript": "^5.5.3",
+    "vitest": "^2.1.9"
+  }
+}

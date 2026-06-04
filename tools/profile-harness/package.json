@@ -14,7 +14,9 @@
   "dependencies": {
     "@civica/snap-rules": "workspace:*",
     "ajv": "^8.17.1",
-    "ajv-formats": "^3.0.1"
+    "ajv-formats": "^3.0.1",
+    "@civica/snap-recommendation": "workspace:*",
+    "@civica/snap-qc-engine": "workspace:*"
   },
   "devDependencies": {
     "tsx": "^4.19.2",
