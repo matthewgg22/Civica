@@ -172,13 +172,14 @@ enum DenialLetterManualEntryStrings {
     static let title = CivicaText(
         "Tell us about the denial",
         es: "Cuéntanos sobre la denegación",
-        zh: "告诉我们关于这次拒绝的情况"
+        zh: "告诉我们关于这次拒绝的情况",
+        vi: "Cho chúng tôi biết về việc từ chối"
     )
-    static let caseNumberLabel = CivicaText("Case number", es: "Número de caso", zh: "案件编号")
-    static let applicantNameLabel = CivicaText("Your full name", es: "Tu nombre completo", zh: "你的全名")
-    static let denialDateLabel = CivicaText("Date of the denial letter", es: "Fecha de la carta de denegación", zh: "拒绝信的日期")
-    static let reasonLabel = CivicaText("Reason for denial", es: "Motivo de la denegación", zh: "拒绝的原因")
-    static let continueCTA = CivicaText("Continue", es: "Continuar", zh: "继续")
+    static let caseNumberLabel = CivicaText("Case number", es: "Número de caso", zh: "案件编号", vi: "Số hồ sơ")
+    static let applicantNameLabel = CivicaText("Your full name", es: "Tu nombre completo", zh: "你的全名", vi: "Họ và tên đầy đủ của bạn")
+    static let denialDateLabel = CivicaText("Date of the denial letter", es: "Fecha de la carta de denegación", zh: "拒绝信的日期", vi: "Ngày trên thư từ chối")
+    static let reasonLabel = CivicaText("Reason for denial", es: "Motivo de la denegación", zh: "拒绝的原因", vi: "Lý do bị từ chối")
+    static let continueCTA = CivicaText("Continue", es: "Continuar", zh: "继续", vi: "Tiếp tục")
 }
 
 extension ISO8601DateFormatter {
