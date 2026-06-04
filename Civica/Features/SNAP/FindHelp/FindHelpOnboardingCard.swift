@@ -61,7 +61,7 @@ enum FindHelpOnboardingStrings {
         "Welcome",
         es: "Bienvenido",
         zh: "欢迎",
-        vi: "Chào mừng"
+        vi: "Chào mừng bạn"
     )
     static let title = CivicaText(
         "SNAP works at more places than you think.",
