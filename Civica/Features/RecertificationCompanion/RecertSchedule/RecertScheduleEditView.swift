@@ -111,25 +111,29 @@ enum RecertScheduleEditStrings {
     static let title = CivicaText(
         "When is your next recertification?",
         es: "¿Cuándo es tu próxima recertificación?",
-        zh: "你下次复审是什么时候?"
+        zh: "你下次复审是什么时候?",
+        vi: "Lần tái xét duyệt kế tiếp của bạn là khi nào?"
     )
     static let subtitle = CivicaText(
         "We start preparing you 60 days out. If your state sets a different date, edit it here.",
         es: "Empezamos a prepararte 60 días antes. Si tu estado fija otra fecha, edítala aquí.",
-        zh: "我们会在 60 天前开始帮你准备。如果你所在的州定了不同的日期,就在这里改一下。"
+        zh: "我们会在 60 天前开始帮你准备。如果你所在的州定了不同的日期,就在这里改一下。",
+        vi: "Chúng tôi bắt đầu giúp bạn chuẩn bị trước 60 ngày. Nếu tiểu bang của bạn ấn định ngày khác, hãy sửa tại đây."
     )
     static let pickerLabel = CivicaText(
         "Recert date",
         es: "Fecha de recertificación",
-        zh: "复审日期"
+        zh: "复审日期",
+        vi: "Ngày tái xét duyệt"
     )
     static let useDefault = CivicaText(
         "Use 12-month default",
         es: "Usar predeterminado de 12 meses",
-        zh: "使用 12 个月默认值"
+        zh: "使用 12 个月默认值",
+        vi: "Dùng mặc định 12 tháng"
     )
-    static let save = CivicaText("Save", es: "Guardar", zh: "保存")
-    static let cancel = CivicaText("Cancel", es: "Cancelar", zh: "取消")
+    static let save = CivicaText("Save", es: "Guardar", zh: "保存", vi: "Lưu")
+    static let cancel = CivicaText("Cancel", es: "Cancelar", zh: "取消", vi: "Hủy")
 }
 
 #if DEBUG
