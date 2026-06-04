@@ -118,11 +118,19 @@ export function computeBenefit(facts: Facts, state: string, asOf: Date): Benefit
     // 7 CFR 273.9(d)(6)(i): homeless HH substitute in lieu of excess shelter.
     excessShelter = homelessDeductionFor(asOf);
   } else {
-    // Per-state SUA. Composer SKIPs (above) when state SUA isn't authored.
+    // Per-state SUA. Composer SKIPs (above) when state SUA isn't authored
+    // AND the household claims a non-"none" SUA tier. When the tier is
+    // "none" (no SUA contribution), the math works with $0 even if the
+    // state's tier table is unauthored — gate the throw accordingly.
+    let suaVal: Decimal;
     if (!policy.sua_by_tier) {
-      throw new Error(`SUA not authored for state ${state} — composer should not call computeBenefit here`);
+      if (facts.shelter.sua_tier !== "none") {
+        throw new Error(`SUA not authored for state ${state} — composer should not call computeBenefit here`);
+      }
+      suaVal = ZERO;
+    } else {
+      suaVal = policy.sua_by_tier[facts.shelter.sua_tier];
     }
-    const suaVal = policy.sua_by_tier[facts.shelter.sua_tier];
     stateSuaVal = suaVal.toNumber();
     // OBBBA §10104: pre-2025-11-01 internet counts; post-cutoff it doesn't.
     const obbbaCutoff = new Date(Date.UTC(2025, 10, 1));
