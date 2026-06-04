@@ -10,8 +10,8 @@ const SURFACES = [
   },
   {
     label: "Applicant Portal",
-    description: "civica-web.vercel.app",
-    href: "https://civica-web.vercel.app",
+    description: "civica-applicant.vercel.app",
+    href: "https://civica-applicant.vercel.app",
   },
   {
     label: "CBO Preview",
