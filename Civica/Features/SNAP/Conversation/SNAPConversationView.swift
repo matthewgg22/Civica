@@ -156,7 +156,7 @@ struct SNAPConversationView: View {
     /// here instead of duplicating the active-language string.
     private func ineligibilityVerdictReason(from result: SNAPEligibilityResult) -> CivicaText {
         let reason = result.ineligibilityReason ?? verdictHeadline(result)
-        return CivicaText(reason, es: reason, zh: reason, vi: reason)
+        return CivicaText(reason, es: reason)
     }
 
     private func eligibleVerdictCard(_ result: SNAPEligibilityResult) -> some View {
