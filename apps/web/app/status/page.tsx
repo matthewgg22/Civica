@@ -172,7 +172,14 @@ export default function StatusPage() {
 
   return (
     <>
-    <AppNav demo={demo} />
+    <AppNav
+      demo={demo}
+      logoHref={demo ? "/welcome" : "/status"}
+      tabs={[
+        { label: "My Application", href: demo ? "/status?demo=1" : "/status", active: true },
+        { label: "Start New", href: "/apply" },
+      ]}
+    />
     <div className="status-dash">
       <header className="status-dash__head">
         <h1 className="status-dash__title">{t("status_title")}</h1>

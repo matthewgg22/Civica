@@ -1,10 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import ProductSwitcher from "../../components/ProductSwitcher";
+import AppNav from "../../components/AppNav";
 import { STORAGE_KEY, type Locale } from "../i18n";
 import { welcomeStrings } from "../../lib/i18n/snap-copy";
 
+// Applicant portal home — the welcoming first page. Mirrors the iOS entry
+// (hero "Apply for SNAP" + explainer + how-it-works) rather than the old
+// bare card. Nav tabs anchor-scroll to sections or route to apply/status.
 export default function WelcomePage() {
   const [locale, setLocale] = useState<Locale>("en");
 
@@ -12,9 +15,7 @@ export default function WelcomePage() {
     try {
       const saved = window.localStorage.getItem(STORAGE_KEY);
       if (saved === "en" || saved === "es") setLocale(saved as Locale);
-    } catch {
-      // localStorage disabled
-    }
+    } catch { /* localStorage disabled */ }
   }, []);
 
   function toggleLocale() {
@@ -25,65 +26,98 @@ export default function WelcomePage() {
 
   const t = welcomeStrings[locale];
 
+  const localeToggle = (
+    <button
+      type="button"
+      className="locale-toggle"
+      onClick={toggleLocale}
+      aria-label={locale === "en" ? "Cambiar a español" : "Switch to English"}
+    >
+      {locale === "en" ? "Español" : "English"}
+    </button>
+  );
+
+  const steps = [
+    { n: 1, title: t.home_how_1_title, body: t.home_how_1_body },
+    { n: 2, title: t.home_how_2_title, body: t.home_how_2_body },
+    { n: 3, title: t.home_how_3_title, body: t.home_how_3_body },
+    { n: 4, title: t.home_how_4_title, body: t.home_how_4_body },
+  ];
+
   return (
-    <div className="signin-page">
-      <header className="app-nav">
-        <div className="app-nav__left">
-          <a href="/welcome" className="app-nav__logo" aria-label="Civica home">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/civica-wheat-mark.png" alt="Civica" width={50} height={50} />
-          </a>
-          <div className="app-nav__brand-block">
-            <a href="/welcome" className="app-nav__brand">Civica</a>
-            <ProductSwitcher current="Applicant Portal" />
+    <div className="home">
+      <AppNav
+        rightSlot={localeToggle}
+        tabs={[
+          { label: t.home_nav_what, href: "#what-is-calfresh" },
+          { label: t.home_nav_how, href: "#how-it-works" },
+          { label: t.home_nav_status, href: "/status" },
+          { label: t.home_nav_apply, href: "/sign-in?next=%2Fapply" },
+        ]}
+      />
+
+      {/* Hero */}
+      <section className="home-hero">
+        <div className="home-hero__inner">
+          <p className="home-hero__eyebrow">{t.home_hero_eyebrow}</p>
+          <h1 className="home-hero__title">{t.home_hero_title}</h1>
+          <p className="home-hero__body">{t.home_hero_body}</p>
+          <div className="home-hero__ctas">
+            <a href="/sign-in?next=%2Fapply" className="btn btn--primary">{t.welcome_cta}</a>
+            <a href="/sign-in" className="btn btn--secondary">{t.home_hero_secondary}</a>
           </div>
         </div>
-        <div className="app-nav__right">
-          <button
-            type="button"
-            className="locale-toggle"
-            onClick={toggleLocale}
-            aria-label={locale === "en" ? "Cambiar a español" : "Switch to English"}
-          >
-            {locale === "en" ? "Español" : "English"}
-          </button>
-        </div>
-      </header>
+      </section>
 
-      <main className="signin-main">
-        <div className="signin-card welcome-card">
-          <h1 className="signin-title">{t.welcome_title}</h1>
-          <p className="signin-subtitle">{t.welcome_subtitle}</p>
-
-          <ul className="welcome-trust-list" aria-label={t.welcome_trust_label}>
-            <li className="welcome-trust-item">
-              <span className="welcome-trust-icon" aria-hidden="true">🌾</span>
-              <span>{t.welcome_trust_1}</span>
-            </li>
-            <li className="welcome-trust-item">
-              <span className="welcome-trust-icon" aria-hidden="true">🔒</span>
-              <span>{t.welcome_trust_2}</span>
-            </li>
-            <li className="welcome-trust-item">
-              <span className="welcome-trust-icon" aria-hidden="true">📋</span>
-              <span>{t.welcome_trust_3}</span>
-            </li>
+      {/* What is CalFresh */}
+      <section className="home-section" id="what-is-calfresh">
+        <div className="home-section__inner">
+          <h2 className="home-section__title">{t.home_what_title}</h2>
+          <p className="home-section__body">{t.home_what_body}</p>
+          <ul className="home-facts">
+            <li className="home-fact"><span className="home-fact__mark" aria-hidden>🌾</span><span>{t.home_what_fact1}</span></li>
+            <li className="home-fact"><span className="home-fact__mark" aria-hidden>👥</span><span>{t.home_what_fact2}</span></li>
+            <li className="home-fact"><span className="home-fact__mark" aria-hidden>🔒</span><span>{t.home_what_fact3}</span></li>
           </ul>
-
-          <a
-            href="/sign-in?next=%2Fapply"
-            className="signin-cta"
-            style={{ display: "block", textAlign: "center", textDecoration: "none" }}
-          >
-            {t.welcome_cta}
-          </a>
-
-          <p className="welcome-signin-link">
-            {t.welcome_returning}{" "}
-            <a href="/sign-in" className="welcome-link">{t.welcome_signin_link}</a>
-          </p>
         </div>
-      </main>
+      </section>
+
+      {/* How it works */}
+      <section className="home-section home-section--alt" id="how-it-works">
+        <div className="home-section__inner">
+          <h2 className="home-section__title">{t.home_how_title}</h2>
+          <ol className="home-steps">
+            {steps.map((s) => (
+              <li key={s.n} className="home-step">
+                <span className="home-step__num">{s.n}</span>
+                <div>
+                  <p className="home-step__title">{s.title}</p>
+                  <p className="home-step__body">{s.body}</p>
+                </div>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </section>
+
+      {/* Why Civica + final CTA */}
+      <section className="home-section">
+        <div className="home-section__inner">
+          <h2 className="home-section__title">{t.welcome_trust_label}</h2>
+          <ul className="home-trust">
+            <li className="home-trust__item"><span className="home-trust__icon" aria-hidden>🌾</span><span>{t.welcome_trust_1}</span></li>
+            <li className="home-trust__item"><span className="home-trust__icon" aria-hidden>🔒</span><span>{t.welcome_trust_2}</span></li>
+            <li className="home-trust__item"><span className="home-trust__icon" aria-hidden>📋</span><span>{t.welcome_trust_3}</span></li>
+          </ul>
+          <div className="home-final-cta">
+            <a href="/sign-in?next=%2Fapply" className="btn btn--primary">{t.welcome_cta}</a>
+          </div>
+        </div>
+      </section>
+
+      <footer className="home-footer">
+        <div className="home-section__inner">© 2026 Civica</div>
+      </footer>
     </div>
   );
 }

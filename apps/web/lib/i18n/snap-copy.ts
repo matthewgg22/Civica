@@ -446,6 +446,36 @@ export const welcomeStrings = {
     welcome_cta: "Start my application →",
     welcome_returning: "Already started?",
     welcome_signin_link: "Sign in to continue",
+
+    // ─── Home nav tabs ───
+    home_nav_what: "What is CalFresh",
+    home_nav_how: "How it works",
+    home_nav_apply: "Apply now",
+    home_nav_status: "Check status",
+
+    // ─── Hero ───
+    home_hero_eyebrow: "CalFresh · California SNAP",
+    home_hero_title: "You may qualify for help buying groceries.",
+    home_hero_body: "CalFresh gives you up to $292 a month on an EBT card to spend on food. Civica guides you through the application in about 10 minutes — and saves your progress so you can stop and come back anytime.",
+    home_hero_secondary: "Sign in to continue",
+
+    // ─── What is CalFresh ───
+    home_what_title: "What is CalFresh?",
+    home_what_body: "CalFresh is California's name for SNAP, the federal food-assistance program. If you're approved, money is added to an EBT card each month that you use like a debit card at grocery stores, farmers markets, and many online retailers.",
+    home_what_fact1: "Up to $292/month for a household of one — more for larger households.",
+    home_what_fact2: "Students, workers, seniors, and families can all qualify. The rules changed recently.",
+    home_what_fact3: "Applying does not affect your immigration status or your taxes.",
+
+    // ─── How it works ───
+    home_how_title: "How it works",
+    home_how_1_title: "Answer a few questions",
+    home_how_1_body: "Civica asks plain-language questions about your household and income. About 10 minutes.",
+    home_how_2_title: "Add your documents",
+    home_how_2_body: "Snap a photo of your ID and a recent pay stub. We tell you exactly what's needed.",
+    home_how_3_title: "A navigator reviews it",
+    home_how_3_body: "A trained navigator checks your application for errors before it goes to the county.",
+    home_how_4_title: "The county decides",
+    home_how_4_body: "Your application is sent to the state. You'll get updates on your status right here.",
   },
   es: {
     welcome_title: "Solicita CalFresh en unos 10 minutos",
@@ -457,6 +487,36 @@ export const welcomeStrings = {
     welcome_cta: "Comenzar mi solicitud →",
     welcome_returning: "¿Ya empezaste?",
     welcome_signin_link: "Inicia sesión para continuar",
+
+    // ─── Pestañas de navegación ───
+    home_nav_what: "Qué es CalFresh",
+    home_nav_how: "Cómo funciona",
+    home_nav_apply: "Solicitar ahora",
+    home_nav_status: "Ver estado",
+
+    // ─── Hero ───
+    home_hero_eyebrow: "CalFresh · SNAP de California",
+    home_hero_title: "Es posible que califiques para ayuda con los comestibles.",
+    home_hero_body: "CalFresh te da hasta $292 al mes en una tarjeta EBT para comprar alimentos. Civica te guía por la solicitud en unos 10 minutos — y guarda tu progreso para que puedas continuar cuando quieras.",
+    home_hero_secondary: "Inicia sesión para continuar",
+
+    // ─── Qué es CalFresh ───
+    home_what_title: "¿Qué es CalFresh?",
+    home_what_body: "CalFresh es el nombre que se le da en California a SNAP, el programa federal de asistencia alimentaria. Si te aprueban, cada mes se agrega dinero a una tarjeta EBT que usas como tarjeta de débito en supermercados, mercados de agricultores y muchas tiendas en línea.",
+    home_what_fact1: "Hasta $292/mes para un hogar de una persona — más para hogares más grandes.",
+    home_what_fact2: "Estudiantes, trabajadores, personas mayores y familias pueden calificar. Las reglas cambiaron recientemente.",
+    home_what_fact3: "Solicitar no afecta tu estatus migratorio ni tus impuestos.",
+
+    // ─── Cómo funciona ───
+    home_how_title: "Cómo funciona",
+    home_how_1_title: "Responde unas preguntas",
+    home_how_1_body: "Civica hace preguntas en lenguaje sencillo sobre tu hogar y tus ingresos. Unos 10 minutos.",
+    home_how_2_title: "Agrega tus documentos",
+    home_how_2_body: "Toma una foto de tu identificación y un recibo de pago reciente. Te decimos exactamente qué se necesita.",
+    home_how_3_title: "Un navigator lo revisa",
+    home_how_3_body: "Un navigator capacitado revisa tu solicitud en busca de errores antes de enviarla al condado.",
+    home_how_4_title: "El condado decide",
+    home_how_4_body: "Tu solicitud se envía al estado. Recibirás actualizaciones sobre tu estado aquí mismo.",
   },
 } as const satisfies Record<Locale, Record<string, string>>;
 
