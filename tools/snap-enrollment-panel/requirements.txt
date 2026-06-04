@@ -1,0 +1,3 @@
+# Offline ingest of ICPSR 39331 (Pukelis) SNAP enrollment + COVID-policy delimited
+# files into compact CA artifacts. Public-use data; one-time manual ICPSR download.
+pandas

@@ -1,0 +1,93 @@
+{
+  "manifest": "ICPSR 39331 (Pukelis) — SNAP COVID-19 Policy & Enrollment data: structure, provenance, and the public download path",
+  "status": "GATED",
+  "status_reason": "The assembled panel is redistributed only via ICPSR (free account + click-through terms) and Dropbox (raw). Neither is fetchable non-interactively, and the ICPSR download is a gated public-use file we do not bypass. This manifest vendors the public structure + provenance + the exact manual download path; tools/snap-enrollment-panel/ turns the downloaded delimited files into CA artifacts with one command.",
+  "study": {
+    "icpsr_id": 39331,
+    "title": "Supplemental Nutrition Assistance Program COVID-19 Policy and Enrollment Data, United States, 1987-2024",
+    "author": "Pukelis, Kelsey",
+    "distributor": "ICPSR (SBE Coronavirus Collection / sbeccc)",
+    "distributed": "2025-05-29",
+    "landing_page": "https://www.icpsr.umich.edu/web/sbeccc/studies/39331",
+    "companion_paper": "Pukelis, K. — 'SNAP Policies and Enrollment following the COVID-19 Pandemic' (http://kelseypukelis.com/files/Pukelis_SNAPcovid.pdf)",
+    "access": "Public-use, no restriction type. FREE ICPSR account required to download (Create Account -> agree to terms -> Download -> Delimited). NOT embargoed, NOT restricted-use. We do not bypass the login.",
+    "license_note": "Public-use research data via ICPSR terms of use; underlying enrollment numbers are public state-agency records and the COVID-policy facts are public USDA FNS records."
+  },
+  "build_code": {
+    "repo": "https://github.com/kpukelis/snap_data",
+    "login_required": false,
+    "what_it_holds": "Code to import, clean, and combine the SNAP state- and county-level enrollment files; plus snap_data_availability.csv listing the ORIGINAL public state-agency source URLs for each state's raw enrollment files.",
+    "availability_csv": "snap_data_availability.csv — per-state source links to the original public agency files (the raw inputs the build code assembles).",
+    "raw_data_mirror": "Dropbox (linked from the repo) holds the raw downloaded inputs; the final combined+documented data is the ICPSR deposit."
+  },
+  "datasets": [
+    {
+      "id": "DS1",
+      "name": "SNAP COVID Policy Data",
+      "unit": "state-month",
+      "geography": "all 50 states + DC (+ territories Guam, USVI)",
+      "month_range": ["2019-01", "2023-06"],
+      "policy_window": ["2020-03", "2023-06"],
+      "role": "INSTRUMENTS (IVs) — the COVID natural experiments",
+      "key_fields": [
+        "state name + FIPS",
+        "year, month",
+        "policy / waiver name + description",
+        "implementation indicator",
+        "number of months certification periods were extended",
+        "waiver information source",
+        "implementation notes"
+      ],
+      "instruments": {
+        "emergency_allotment": "Supplemental benefits raising every household to (initially) the max allotment, then (post-Apr-2021) a +$95 floor. Families First Coronavirus Response Act (PL 116-127, 2020-03-18); ENDED nationally after Feb 2023 benefits (Consolidated Appropriations Act 2023).",
+        "recert_waiver": "Temporary waiver / extension of recertification and periodic-report (interview) requirements; cert periods extended by N months.",
+        "simplified_application": "Waived or adjusted application / interview steps to simplify enrollment during the PHE."
+      },
+      "primary_public_source": "USDA FNS COVID-19 waivers pages (https://www.fns.usda.gov/snap/waivers, .../disaster/pandemic/covid-19, .../snap/expiration-program-flexibilities-covid-19), backfilled via the Internet Archive Wayback Machine."
+    },
+    {
+      "id": "DS2",
+      "name": "SNAP County Enrollment Data",
+      "unit": "county-month",
+      "geography": "counties with state + county FIPS (territories excluded); a LIMITED subset of states (not all 50) for the demographic breakdowns",
+      "month_range": ["1993-01", "2024-06"],
+      "role": "DEPENDENT VARIABLE (DV) — county-month enrollment level + month-over-month change (the churn/retention signal)",
+      "key_fields": [
+        "county name, state name + abbr, state FIPS, county FIPS",
+        "year, month",
+        "households, individuals, adults, children, infants, elderly, disabled enrolled in SNAP",
+        "(for some states) total benefits issued, applications, recertifications, plus a few TANF + Medicaid measures"
+      ],
+      "primary_public_source": "Individual state-agency SNAP websites (per snap_data_availability.csv). For California the equivalent public series is CDSS DFA256 'Food Stamp Program Participation and Benefit Issuance Report' on data.chhs.ca.gov.",
+      "ca_caveat": "California's inclusion/completeness in DS2 is NOT guaranteed — DS2 covers a limited set of states. Confirm CA presence after download; if absent, the CDSS DFA256 county series is the public CA fallback (see README)."
+    },
+    {
+      "id": "DS3",
+      "name": "SNAP State Enrollment Detail Data",
+      "unit": "state-month",
+      "geography": "states",
+      "month_range": ["1987-07", "2024-06"],
+      "role": "context — long state-month enrollment series (+ for some states gender/race/ethnicity breakdowns)",
+      "primary_public_source": "USDA FNS SNAP Data Tables / State Activity Reports + state agencies."
+    }
+  ],
+  "civica_use": {
+    "regression_role": "DS2 = the churn/retention dependent variable at county-month (enrollment level + ΔMoM); DS1 = clean COVID-waiver instruments (EA on/off, recert-waiver on/off, simplified-application on/off, cert-extension-months). The recert-waiver and EA on/off transitions (esp. the Mar-2023 EA cliff) are the strongest exogenous shocks for identifying how renewal/recert friction moves enrollment — directly Civica's retention pillar.",
+    "complements": [
+      "cdss-cf18 (CA procedural churn at the recert/SAR-7 moment — mechanism)",
+      "ca-snap-gap (eligible non-enrollees — the gap level)",
+      "usda-qc-ca + caper (error on the application/denial side)"
+    ],
+    "why_highest_value": "It is the only true LONGITUDINAL county-month enrollment PANEL in the stack (1993-2024) and the only one with built-in policy IVs — everything else here is cross-sectional or a single state series. It is the missing panel a difference-in-differences / event-study retention model needs."
+  },
+  "download_path_manual": [
+    "1. Create a FREE ICPSR account: https://www.icpsr.umich.edu (Create Account; Google/ORCID/institutional email all work).",
+    "2. Open study 39331: https://www.icpsr.umich.edu/web/sbeccc/studies/39331",
+    "3. Download tab -> agree to the Terms of Use -> choose 'Delimited' format. You get a zip per dataset (DS0001 = COVID policy, DS0002 = county enrollment, DS0003 = state detail) with a .tsv/.txt data file + codebook.",
+    "4. Run tools/snap-enrollment-panel/src/ingest_snap_panel.py --ds2 DS0002...tsv --ds1 DS0001...tsv --state CA to emit the CA county-month panel + CA COVID-policy state-month table into this directory.",
+    "(Alternative, fully no-login but more work: clone https://github.com/kpukelis/snap_data, read snap_data_availability.csv, and re-pull the per-state-agency raw files it links — then run the repo's build code.)"
+  ],
+  "what_is_vendored_here": "Only this manifest (public structure + provenance + IV/DV definitions + the exact download path) and PROVENANCE.md. The bulk county-month rows are NOT vendored because they are only redistributed through the gated ICPSR/Dropbox deposit; they materialize locally once the operator runs the one-time download + the ingest script above.",
+  "generated_at": "2026-05-29",
+  "generated_by": "tools/snap-enrollment-panel (recon: ICPSR study 39331 metadata + kpukelis/snap_data repo description + USDA FNS COVID-waiver pages, via WebSearch — network file fetch was unavailable in the build sandbox)"
+}
