@@ -36,8 +36,10 @@
 // extension test contexts).
 import {
   PORTAL_PAGES,
+  PORTAL_PAGES_BY_CODE,
   CONFIRMATION_PAGE,
   resolveField,
+  scopePayloadForMember,
   fillElement,
   fillRadio,
   fillCheckbox,
@@ -97,6 +99,56 @@ interface PayloadFetchResponse {
 let _tabFlowType: FlowType = undefined;
 /** True after the prompt has been shown once on this tab (prevents re-prompt). */
 let _electionShown = false;
+
+// ---------------------------------------------------------------------------
+// People-section member-index tracker (V1-5 PR4, #314).
+//
+// BenefitsCal reuses the same URL (/ApplyForBenefits/ABNMI) for the primary
+// applicant name page (step 1) AND for each additional household member (step
+// 2). We disambiguate with a sessionStorage flag set when ABHSD is detected,
+// and track the current member index so repeating pages fill the correct
+// household_members[N] element.
+//
+// State lives in sessionStorage (per-tab, survives soft SPA navigations,
+// cleared when the tab is closed) rather than module-level vars so the
+// Re-fill button (which calls runPageFill directly) picks up the current index
+// without needing to re-run the main() detection path.
+//
+// Keys:
+//   civica.inPeopleSection  "true" | absent — set when ABHSD is detected
+//   civica.memberIndex      "0" | "1" | …  — index of the member being filled
+// ---------------------------------------------------------------------------
+
+const SS_IN_PEOPLE  = "civica.inPeopleSection";
+const SS_MEMBER_IDX = "civica.memberIndex";
+
+/** True when the extension has entered the step-2 People sub-flow. */
+export function inPeopleSection(): boolean {
+  return sessionStorage.getItem(SS_IN_PEOPLE) === "true";
+}
+
+/** Current member index (-1 = before the first member). */
+export function getMemberIndex(): number {
+  return parseInt(sessionStorage.getItem(SS_MEMBER_IDX) ?? "-1", 10);
+}
+
+/** Called when ABHSD fires — resets state for a fresh member sub-flow. */
+export function enterPeopleSection(): void {
+  sessionStorage.setItem(SS_IN_PEOPLE, "true");
+  sessionStorage.setItem(SS_MEMBER_IDX, "-1");
+}
+
+/**
+ * Increments the member index and returns the new value.
+ * Called at the START of each ABNMI_MEMBER page fill so the index is
+ * correct for all subsequent pages in that member's sub-flow (ABHHR,
+ * ABPSM, ABBPF, ABLNA, ABHAD).
+ */
+export function startNextMember(): number {
+  const next = getMemberIndex() + 1;
+  sessionStorage.setItem(SS_MEMBER_IDX, String(next));
+  return next;
+}
 
 /**
  * Show the staff election dropdown and resolve with the chosen FlowType.
@@ -321,7 +373,36 @@ async function main(): Promise<void> {
   console.debug(LOG_PREFIX, "section sequence for flow", flowType ?? "multi-program (default)", _expectedSequence);
 
   // 4. Match the current URL against a known form page.
-  const page = findPageForUrl(window.location.pathname);
+  //    Special handling for step-2 People section:
+  //    (a) ABHSD — household-members gate. Resets member-index state so
+  //        a fresh sub-flow starts for this tab activation.
+  //    (b) ABNMI in People context — same URL as step-1 ABNMI. When
+  //        inPeopleSection() is true we look up ABNMI_MEMBER instead,
+  //        increment the member index, and pass it to runPageFill.
+  //    (c) Other repeating pages — fill with the current member index.
+  const pathname = window.location.pathname;
+  const page = findPageForUrl(pathname);
+
+  if (page?.pageCode === "ABHSD") {
+    enterPeopleSection();
+    await runPageFill(page, payload, activePacketId);
+    return;
+  }
+
+  if (page?.pageCode === "ABNMI" && inPeopleSection()) {
+    const memberPage = PORTAL_PAGES_BY_CODE["ABNMI_MEMBER"];
+    if (memberPage) {
+      const memberIndex = startNextMember();
+      await runPageFill(memberPage, payload, activePacketId, document, {}, memberIndex);
+      return;
+    }
+  }
+
+  if (page?.repeating) {
+    await runPageFill(page, payload, activePacketId, document, {}, getMemberIndex());
+    return;
+  }
+
   if (page) {
     await runPageFill(page, payload, activePacketId);
     return;
@@ -358,7 +439,18 @@ export async function runPageFill(
   packetId: string,
   root: ParentNode = document,
   opts: { readinessTimeoutMs?: number } = {},
+  /**
+   * Household member index for repeating step-2 pages. When provided, source
+   * paths containing "[]" (e.g. "household_members[].first_name") are rewritten
+   * to "household_members[N].first_name" before resolving against the payload.
+   * Undefined for all non-repeating pages (steps 0, 1, and solo-applicant step 2).
+   */
+  memberIndex?: number,
 ): Promise<void> {
+  // Scope the payload for repeating pages: rewrite [] → [N] in source paths.
+  const scopedPayload = memberIndex !== undefined
+    ? scopePayloadForMember(payload, memberIndex)
+    : payload;
   const readinessTimeoutMs = opts.readinessTimeoutMs ?? 5000;
   // (a) Readiness gate. The portal is a React SPA that can soft-update; filling
   // before the fields hydrate would no-op every field. Wait (≤5s) for the
@@ -380,7 +472,7 @@ export async function runPageFill(
           {
             id: "refill",
             label: "Re-fill this page",
-            onClick: () => runPageFill(page, payload, packetId, root, opts),
+            onClick: () => runPageFill(page, payload, packetId, root, opts, memberIndex),
           },
         ],
       });
@@ -396,7 +488,7 @@ export async function runPageFill(
   // (c) Fill, collecting per-field events so we can mark elements + fingerprint
   // what we wrote (for safe clearing later).
   const fingerprints: FillFingerprint[] = [];
-  const result = fillPage(page, payload, root, (ev) => {
+  const result = fillPage(page, scopedPayload, root, (ev) => {
     if (!ev.element) return;
     if (ev.outcome === "filled") {
       markElement(ev.element, "filled", ev.field.label);
@@ -490,6 +582,7 @@ function findPageForUrl(pathname: string): PortalPage | null {
   }
   return null;
 }
+
 
 // ---------------------------------------------------------------------------
 // Field fill
