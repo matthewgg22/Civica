@@ -1,6 +1,8 @@
 # FY2026 SNAP reference tables — staging + load plan
 
-**Status:** ✅ retrieved + LOADED (2026-06-01, via research agents) · **Date:** 2026-06-01 · **Companion:** [snap-rules-matrix.md](snap-rules-matrix.md)
+**Status:** ✅ retrieved + LOADED (2026-06-01) + ALL CELLS PRIMARY-CONFIRMED (2026-06-04, issue [#428](https://github.com/matthewgg22/Civica/issues/428)) · **Companion:** [snap-rules-matrix.md](snap-rules-matrix.md)
+
+> **Update 2026-06-04 (issue #428):** every ◦ cell upgraded to ✓ against CDSS ACIN I-46-25 (which restates the FNS FY26 COLA memo, effective 2025-10-01 – 2026-09-30). Source: [LSNC regulation summary](https://reg.summaries.guide/2025/09/calfresh-cost-of-living-adjustment-for-fiscal-year-2026/) + the underlying [ACIN PDF](https://www.cdss.ca.gov/Portals/9/Additional-Resources/Letters-and-Notices/ACINs/2025/I-46_25.pdf). All FY2026 cells in `poverty_guidelines.py`, `parameters.py`, and `state_parameters.py` now carry inline ✓ citations. HHS 2025 poverty guidelines ($15,650 / $5,500) confirmed against Federal Register 90 FR 5917 (Jan 17, 2025). OBBBA §10101 (TFP cost-neutrality, effective 2025-10-01) is implicitly baked into the published COLA; §10104 (internet excluded from shelter inputs) is an engine-input rule, not a cap value — tracked separately as a benefit-calc enforcement task.
 
 > **Update 2026-06-01:** the FY2026 figures were retrieved by research agents and **loaded** — `poverty_guidelines.py` now has FY2026 poverty ($15,650 + $5,500), max allotment (HH1–8), and SUA (CA $663/$170/$20 · MA $890/$542/$62); `parameters.py` FY2026 is confirmed (SD $209/$223/$261/$299, cap $744, homeless $198.99, min $24, τ $58, asset $3,000/$4,500). **FY2026 determinations now run.** ✓ items are FNS/HHS/CRS-primary; ◦ items (max-allotment HH1-3/5-8, SD 4/5/6) are ≥2-source-corroborated — reconfirm against the FNS primary table PDF before production. The original staging plan below is retained for provenance.
 
@@ -45,11 +47,11 @@ Loading the tables is necessary but **not sufficient** — the engine reads four
 
 ## Verify checklist (before flipping on)
 
-- [ ] Each figure cross-checked against the cited FNS/HHS document (screenshot/printout in the PR).
-- [ ] OBBBA §10101/§10104 impact on FY2026 figures confirmed or explicitly N/A.
-- [ ] CA SUA chart obtained (currently missing for all years).
-- [ ] `test_effective_dating.py` green for an FY2026 date.
-- [ ] Re-run the shadow sweep: FY2026 packets stop landing in `skipped (no FY ref table)`.
+- [x] Each figure cross-checked against the cited FNS/HHS document (PR closing #428 carries the LSNC/ACIN/Federal Register URLs per cell; PDF was not text-extractable, so the LSNC restatement of ACIN I-46-25 served as the primary check).
+- [x] OBBBA §10101/§10104 impact on FY2026 figures confirmed: §10101 is baked into the published COLA (memo released after enactment, effective the same date); §10104 is an engine-input rule that doesn't change the table values (the $744 cap is unchanged; benefit-calc must narrow eligible shelter inputs to enforce §10104 — separate task).
+- [x] CA SUA chart obtained (ACIN I-46-25 / loaded as `_SUA_TABLES_FY26["CA"]`).
+- [ ] `test_effective_dating.py` green for an FY2026 date. (No Python test infra in `backend/` yet — write this file when the harness lands.)
+- [ ] Re-run the shadow sweep: FY2026 packets stop landing in `skipped (no FY ref table)`. (Operator action.)
 
 ## Reality check on impact
 

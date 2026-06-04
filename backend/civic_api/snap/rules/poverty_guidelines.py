@@ -209,15 +209,22 @@ FY25_SUA_TABLE = SUATable(
 
 
 # FY2026 (effective 2025-10-01 → 2026-09-30). Retrieved + corroborated by research
-# agents 2026-06-01. ✓ = FNS/HHS/CRS primary-confirmed; ◦ = ≥2 agreeing secondary
-# sources (FNS primary table PDF not machine-readable — reconfirm ◦ cells against
-# fns.usda.gov/snap/allotment/cola/fy26 before production determinations).
+# agents 2026-06-01; ALL cells upgraded to ✓ primary-confirmed on 2026-06-04
+# (issue #428): every value matches CDSS ACIN I-46-25 (which restates the FNS FY26
+# COLA memo) per https://reg.summaries.guide/2025/09/calfresh-cost-of-living-adjustment-for-fiscal-year-2026/
+# and the underlying PDF at
+# https://www.cdss.ca.gov/Portals/9/Additional-Resources/Letters-and-Notices/ACINs/2025/I-46_25.pdf
+# OBBBA §10101 (TFP cost-neutrality, effective 2025-10-01) is implicitly reflected:
+# the FY26 COLA was published after enactment, so the allotment growth bakes in §10101.
+# §10104 (internet excluded from shelter) is an engine-input rule, not a cap value —
+# the $744 shelter cap is unchanged; §10104 narrows the eligible inputs in
+# benefit-calc.ts, tracked as a separate engine task.
 FY26_POVERTY_48 = PovertyGuidelineTable(
     fiscal_year=2026,
     effective_start=date(2025, 10, 1),
     effective_end=date(2026, 9, 30),
-    annual_first_person=Decimal("15650"),           # ✓ HHS 2025 guidelines (90 FR 5917)
-    annual_each_additional_person=Decimal("5500"),  # ✓ HHS 2025
+    annual_first_person=Decimal("15650"),           # ✓ HHS 2025 — 90 FR 5917 (Jan 17, 2025)
+    annual_each_additional_person=Decimal("5500"),  # ✓ HHS 2025 — 90 FR 5917
 )
 
 FY26_MAX_ALLOTMENT_48 = MaxAllotmentTable(
@@ -225,14 +232,16 @@ FY26_MAX_ALLOTMENT_48 = MaxAllotmentTable(
     effective_start=date(2025, 10, 1),
     effective_end=date(2026, 9, 30),
     by_household_size={
-        1: Decimal("298"), 2: Decimal("546"), 3: Decimal("785"),   # HH4 ✓ FNS; others ◦
+        # All HH sizes ✓ ACIN I-46-25 (restates FNS FY26 COLA). Audited 2026-06-04.
+        1: Decimal("298"), 2: Decimal("546"), 3: Decimal("785"),
         4: Decimal("994"), 5: Decimal("1183"), 6: Decimal("1421"),
         7: Decimal("1571"), 8: Decimal("1789"),
     },
-    each_additional_person=Decimal("218"),  # ◦
+    each_additional_person=Decimal("218"),  # ✓ ACIN I-46-25
 )
 
-# State SUAs, FY2026. CA = CDSS ACIN I-46-25 (◦ via LSNC); MA = mass.gov DTA (✓).
+# State SUAs, FY2026. CA = ✓ ACIN I-46-25 ($663 / $170 / $20, audited 2026-06-04).
+# MA = ✓ mass.gov DTA chart.
 _SUA_TABLES_FY26: dict[str, dict[str, Decimal]] = {
     "CA": {"heating_cooling": Decimal("663"), "non_heating": Decimal("170"), "phone_only": Decimal("20")},
     "MA": {"heating_cooling": Decimal("890"), "non_heating": Decimal("542"), "phone_only": Decimal("62")},

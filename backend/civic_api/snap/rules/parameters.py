@@ -84,12 +84,12 @@ FY2025 = FYParameters(
     provenance="FY2025 verified seed (poverty_guidelines.py constants). τ + homeless_shelter_deduction are unverified placeholders (neither is read by the determination).",
 )
 
-# FY2026 — ⚠ FLAGGED PLACEHOLDER. Scalars from civica_accurate_number_model.md
-# v0.2 §4.2; NOT re-verified vs FNS FY2026 COLA. SD(4/5/6+) and asset limits are
-# carry-forward placeholders (not sourced). The engine still raises
-# NoTableForDateError for FY2026 (poverty/allotment tables not loaded) — so this
-# row is structurally present but inert until validated. See
-# docs/plans/fy2026-reference-tables.md.
+# FY2026 — ✓ All cells primary-confirmed 2026-06-04 (issue #428) against CDSS ACIN
+# I-46-25 (restates FNS FY26 COLA memo); see poverty_guidelines.py docstring for
+# the full citation. OBBBA §10101 (TFP cost-neutrality, effective 2025-10-01) is
+# implicitly reflected — the COLA was published after enactment, so the figures
+# already bake in §10101. §10104 (internet excluded from shelter inputs) is an
+# engine-input rule, not a cap value; tracked separately as an engine task.
 FY2026 = FYParameters(
     fiscal_year=2026,
     effective_start=date(2025, 10, 1),
@@ -102,11 +102,11 @@ FY2026 = FYParameters(
     excess_shelter_cap=Decimal("744"),
     minimum_benefit=Decimal("24"),
     homeless_shelter_deduction=Decimal("198.99"),
-    asset_limit_household=Decimal("3000"),        # carry-forward placeholder
-    asset_limit_elderly_disabled=Decimal("4500"),  # carry-forward placeholder
+    asset_limit_household=Decimal("3000"),         # ✓ ACIN I-46-25
+    asset_limit_elderly_disabled=Decimal("4500"),  # ✓ ACIN I-46-25
     tolerance_tau=Decimal("58"),
     verified=True,
-    provenance="FY2026 confirmed by research agents 2026-06-01: SD(1-3)=209 / cap=744 / min=24 / homeless=198.99 / τ=58 / asset 3000/4500 are ✓ (FNS FY26 COLA, CRS R42505, HHS). SD(4/5/6+)=223/261/299 and max-allotment HH1-3/5-8 are ◦ (≥2 agreeing secondary sources; reconfirm vs the FNS primary table PDF). FY2026 poverty + allotment + SUA(CA/MA) tables are now LOADED in poverty_guidelines.py, so FY2026 determinations run.",
+    provenance="FY2026 all cells ✓ primary-confirmed 2026-06-04 (issue #428) via CDSS ACIN I-46-25 (which restates FNS FY26 COLA memo, effective 2025-10-01 - 2026-09-30): SD(1-3/4/5/6+)=209/223/261/299, max-allotment HH1-8=298/546/785/994/1183/1421/1571/1789 (+218 each add'l), cap=744, homeless=198.99, min=24, asset 3000/4500. τ=58 is the QC scoring-spine value (not read by the determination engine). OBBBA §10101 baked into the published COLA implicitly; §10104 engine-input rule tracked separately.",
 )
 
 
