@@ -63,7 +63,7 @@ export function AppDownloadIsland({
           alt="Civica"
           width={42}
           height={42}
-          className="shrink-0 w-[42px] h-[42px] rounded-[9px] object-cover [box-shadow:inset_0_0_0_1px_rgba(255,255,255,0.12)]"
+          className="shrink-0 w-[42px] h-[42px] rounded-[9px] object-cover [box-shadow:0_2px_6px_rgba(0,0,0,0.32),inset_0_1px_0_rgba(255,255,255,0.35),inset_0_0_0_1px_rgba(255,255,255,0.16)]"
         />
         <div className="flex-1 min-w-0">
           <p className="text-[13px] font-bold leading-[1.25] tracking-[-0.01em] text-white m-0">{label}</p>

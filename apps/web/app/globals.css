@@ -1142,6 +1142,84 @@ button {
   justify-content: flex-end;
 }
 
+/* ---- Language picker (5 languages) ---- */
+
+.lang-picker {
+  position: relative;
+}
+
+.lang-picker__trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: 1px solid var(--civica-hairline);
+  border-radius: var(--civica-radius-control);
+  padding: 7px 12px;
+  font-family: inherit;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--civica-graphite);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.lang-picker__trigger:hover {
+  color: var(--civica-ink);
+  border-color: var(--civica-graphite);
+}
+
+.lang-picker__globe {
+  font-size: 0.875rem;
+}
+
+.lang-picker__chevron {
+  transition: transform 120ms ease;
+}
+
+.lang-picker__chevron--open {
+  transform: rotate(180deg);
+}
+
+.lang-picker__menu {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 6px);
+  min-width: 160px;
+  list-style: none;
+  margin: 0;
+  padding: 4px;
+  background: var(--civica-surface);
+  border: 1px solid var(--civica-hairline);
+  border-radius: var(--civica-radius-card);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  z-index: 60;
+}
+
+.lang-picker__option {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: 0;
+  border-radius: var(--civica-radius-control);
+  padding: 8px 10px;
+  font-family: inherit;
+  font-size: 0.875rem;
+  color: var(--civica-ink);
+  cursor: pointer;
+}
+
+.lang-picker__option:hover {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.lang-picker__option--current {
+  background: var(--civica-pine-surface);
+  font-weight: 600;
+  color: var(--civica-pine);
+}
+
 /* ---- Applicant portal home (welcoming, mirrors iOS entry) ---- */
 
 html {
@@ -2071,7 +2149,11 @@ html {
   /* iOS App Store icon look — rounded square, ~22% radius */
   border-radius: 9px;
   object-fit: cover;
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+  /* lift the tile off the pine: drop shadow + crisp top-highlight edge */
+  box-shadow:
+    0 2px 6px rgba(0, 0, 0, 0.32),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.16);
 }
 
 .app-island__text {
