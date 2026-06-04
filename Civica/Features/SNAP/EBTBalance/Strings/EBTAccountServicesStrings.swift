@@ -26,7 +26,7 @@ enum EBTAccountServicesStrings {
         "Direct lines to the agencies that handle your EBT card. Tap to call or open the right site — no menu trees, no hold music guesswork.",
         es: "Líneas directas a las agencias que manejan tu tarjeta EBT. Toca para llamar o abrir el sitio correcto — sin menús de teléfono, sin esperas adivinando.",
         zh: "直接联系处理你 EBT 卡的机构。点击拨打电话或打开正确的网站 — 没有菜单层级,不用猜测等待。",
-        vi: "Đường dây trực tiếp đến các cơ quan xử lý thẻ EBT của bạn. Nhấn để gọi hoặc mở đúng trang web — không cây menu, không đoán mò khi chờ máy."
+        vi: "Đường dây trực tiếp đến các cơ quan xử lý thẻ EBT của bạn. Nhấn để gọi hoặc mở đúng trang web — không có menu nhiều tầng, không phải đoán mò khi chờ máy."
     )
 
     // MARK: - Section headers
@@ -41,7 +41,7 @@ enum EBTAccountServicesStrings {
         "Benefits & application",
         es: "Beneficios y solicitud",
         zh: "福利与申请",
-        vi: "Phúc lợi và đơn xin"
+        vi: "Trợ cấp và đơn xin"
     )
     static let reportingSectionTitle = CivicaText(
         "Report a problem",
@@ -62,33 +62,33 @@ enum EBTAccountServicesStrings {
         "Call California EBT customer service. They lock your card immediately and mail a replacement.",
         es: "Llama al servicio al cliente de EBT de California. Bloquean tu tarjeta de inmediato y envían un reemplazo por correo.",
         zh: "拨打 California EBT 客服。他们会立即锁定你的卡,并邮寄一张替换卡。",
-        vi: "Gọi dịch vụ khách hàng EBT California. Họ sẽ khóa thẻ của bạn ngay lập tức và gửi thẻ thay thế qua đường bưu điện."
+        vi: "Gọi dịch vụ khách hàng EBT của California. Họ sẽ khóa thẻ của bạn ngay lập tức và gửi thẻ thay thế qua đường bưu điện."
     )
 
     static let applyForSNAPTitle = CivicaText(
         "Apply for SNAP via BenefitsCal",
         es: "Solicitar SNAP en BenefitsCal",
         zh: "通过 BenefitsCal 申请 SNAP",
-        vi: "Nộp đơn SNAP qua BenefitsCal"
+        vi: "Xin SNAP qua BenefitsCal"
     )
     static let applyForSNAPHelp = CivicaText(
         "California's official benefits portal — start a new CalFresh application or check an existing one.",
         es: "El portal oficial de beneficios de California — comienza una nueva solicitud de CalFresh o revisa una existente.",
         zh: "California 官方福利门户 — 开始新的 CalFresh 申请或查看现有的申请。",
-        vi: "Cổng phúc lợi chính thức của California — bắt đầu đơn CalFresh mới hoặc kiểm tra đơn hiện có."
+        vi: "Cổng trợ cấp chính thức của California — bắt đầu đơn xin CalFresh mới hoặc kiểm tra đơn hiện có."
     )
 
     static let countyOfficeFinderTitle = CivicaText(
         "Local SNAP office finder",
         es: "Buscador de oficinas locales de SNAP",
         zh: "本地 SNAP 办公室查找",
-        vi: "Tìm văn phòng SNAP địa phương"
+        vi: "Tìm văn phòng SNAP tại địa phương"
     )
     static let countyOfficeFinderHelp = CivicaText(
         "Find the CalFresh office in your county for in-person help, interviews, or document drop-off.",
         es: "Encuentra la oficina de CalFresh en tu condado para ayuda en persona, entrevistas o entrega de documentos.",
         zh: "找到你所在县的 CalFresh 办公室,获取面对面帮助、面试或递交文件。",
-        vi: "Tìm văn phòng CalFresh trong quận của bạn để được giúp trực tiếp, phỏng vấn, hoặc nộp giấy tờ."
+        vi: "Tìm văn phòng CalFresh trong county của bạn để được giúp đỡ trực tiếp, phỏng vấn hoặc nộp giấy tờ."
     )
 
     static let reportFraudTitle = CivicaText(
@@ -101,7 +101,7 @@ enum EBTAccountServicesStrings {
         "Suspect someone is using your EBT card or your benefits were stolen? Report it to USDA.",
         es: "¿Sospechas que alguien está usando tu tarjeta EBT o que robaron tus beneficios? Repórtalo al USDA.",
         zh: "怀疑有人在使用你的 EBT 卡,或者你的福利被盗?向 USDA 举报。",
-        vi: "Nghi ngờ có người đang dùng thẻ EBT của bạn hoặc phúc lợi bị đánh cắp? Hãy báo cáo cho USDA."
+        vi: "Nghi ngờ có người đang dùng thẻ EBT của bạn hoặc trợ cấp của bạn bị đánh cắp? Hãy báo cáo cho USDA."
     )
 
     // MARK: - Accessibility labels
