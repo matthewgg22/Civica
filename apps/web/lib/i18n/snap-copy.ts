@@ -433,3 +433,31 @@ export type SnapStringKey = keyof (typeof snapStrings)["en"];
 export function snapT(locale: Locale, key: SnapStringKey): string {
   return snapStrings[locale][key];
 }
+
+// Welcome page copy (pre-sign-in trust page).
+export const welcomeStrings = {
+  en: {
+    welcome_title: "Apply for CalFresh in about 10 minutes",
+    welcome_subtitle: "Civica guides you through the application step by step and keeps your progress saved.",
+    welcome_trust_label: "Why Civica",
+    welcome_trust_1: "Up to $292/month in grocery benefits — loaded onto an EBT card.",
+    welcome_trust_2: "Your information is encrypted and only shared with the state to process your application.",
+    welcome_trust_3: "A trained navigator reviews your application before it's submitted.",
+    welcome_cta: "Start my application →",
+    welcome_returning: "Already started?",
+    welcome_signin_link: "Sign in to continue",
+  },
+  es: {
+    welcome_title: "Solicita CalFresh en unos 10 minutos",
+    welcome_subtitle: "Civica te guía paso a paso y guarda tu progreso automáticamente.",
+    welcome_trust_label: "Por qué Civica",
+    welcome_trust_1: "Hasta $292/mes en beneficios de comestibles — cargados en una tarjeta EBT.",
+    welcome_trust_2: "Tu información está cifrada y solo se comparte con el estado para procesar tu solicitud.",
+    welcome_trust_3: "Un navigator capacitado revisa tu solicitud antes de enviarla.",
+    welcome_cta: "Comenzar mi solicitud →",
+    welcome_returning: "¿Ya empezaste?",
+    welcome_signin_link: "Inicia sesión para continuar",
+  },
+} as const satisfies Record<Locale, Record<string, string>>;
+
+export type WelcomeStringKey = keyof (typeof welcomeStrings)["en"];

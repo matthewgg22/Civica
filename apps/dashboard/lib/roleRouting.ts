@@ -91,7 +91,7 @@ export function isOpsRouteAllowed(role: string): boolean {
 // Always allowed regardless of role. Auth/sign-out and API routes must
 // remain reachable so users can recover from a stuck session and so the
 // app's internal API calls aren't blocked.
-const PUBLIC_PREFIXES = ["/auth/", "/api/", "/login", "/qc"];
+const PUBLIC_PREFIXES = ["/auth/", "/api/", "/login", "/sign-up", "/qc"];
 
 // Routes that bypass auth entirely — no Supabase session required.
 // Reserved for shareable public artifacts and outbound sales surfaces.

@@ -1348,3 +1348,45 @@ button {
   justify-content: center;
   margin-top: var(--civica-space-xl);
 }
+
+/* ---- Welcome (pre-sign-in trust page) ---- */
+
+.welcome-card {
+  padding: var(--civica-space-xxl);
+}
+
+.welcome-trust-list {
+  list-style: none;
+  margin: 0 0 var(--civica-space-xxl);
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--civica-space-lg);
+}
+
+.welcome-trust-item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--civica-space-md);
+  font-size: 0.9375rem;
+  color: var(--civica-graphite);
+  line-height: 1.5;
+}
+
+.welcome-trust-icon {
+  font-size: 1.125rem;
+  line-height: 1.5;
+  flex-shrink: 0;
+}
+
+.welcome-signin-link {
+  margin-top: var(--civica-space-lg);
+  text-align: center;
+  font-size: 0.875rem;
+  color: var(--civica-muted);
+}
+
+.welcome-link {
+  color: var(--civica-pine);
+  font-weight: 500;
+}

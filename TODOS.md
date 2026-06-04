@@ -702,3 +702,23 @@ Helper: `pillarReductionAtFullEngagement()` returns the per-pillar pp breakdown 
 **Effort:** L (human ~2-3 days / CC ~1.5 hrs)
 **Priority:** P3
 **Depends on:** EngineVerdictPanel shipped (T4) — the rendering primitives are reusable.
+
+---
+
+## TODO-53 — Rate-limit `/api/request-access` before public promotion
+
+**What:** Add Vercel Edge rate limiting (or upstash/ratelimit middleware) to `apps/dashboard/app/api/request-access/route.ts`, matching the pattern in `apps/web/app/api/lead-capture/rate-limit.ts`.
+**Why:** The `/sign-up` URL will be shared in outreach materials. Without rate limiting, the `access_requests` Supabase table is open to spam inserts via service client. Same risk was already mitigated on the web lead-capture route.
+**Effort:** S (human ~30min / CC ~10min)
+**Priority:** P2
+**Depends on:** TODO-53 is a follow-up to the auth-streamline PR (T3).
+
+---
+
+## TODO-54 — Email notification when access_requests row is inserted
+
+**What:** Wire a Supabase Database Webhook (or Edge Function trigger) on the `access_requests` table that emails matthewgreergentis@gmail.com when a new row is inserted.
+**Why:** Without this, access requests sit silently in the Supabase dashboard. Easy to miss while volume is low; harder to retrofit if this becomes a real onboarding gate for CBOs.
+**Effort:** S (human ~1hr / CC ~15min)
+**Priority:** P3
+**Depends on:** access_requests table created (T3 in auth-streamline PR).

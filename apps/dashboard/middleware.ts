@@ -36,10 +36,15 @@ export async function middleware(request: NextRequest) {
 
   const { data: { user } } = await supabase.auth.getUser();
 
-  const isLogin = path.startsWith("/login");
+  // Routes accessible without an account: sign-in, account creation, and auth
+  // callbacks (password reset email links land on /auth/reset-password with ?code=).
+  const isUnauthenticatedAllowed =
+    path.startsWith("/login") ||
+    path.startsWith("/sign-up") ||
+    path.startsWith("/auth/");
 
   if (!user) {
-    if (isLogin) return supabaseResponse;
+    if (isUnauthenticatedAllowed) return supabaseResponse;
     const url = request.nextUrl.clone();
     url.pathname = "/login";
     return NextResponse.redirect(url);
@@ -50,7 +55,7 @@ export async function middleware(request: NextRequest) {
   // Mirrors apps/api/src/auth/staff.ts.
   const role = (user.app_metadata as { role?: unknown } | null)?.role;
   if (!isStaff(role)) {
-    if (isLogin) return supabaseResponse;
+    if (isUnauthenticatedAllowed) return supabaseResponse;
     const url = request.nextUrl.clone();
     url.pathname = "/login";
     url.searchParams.set("error", "staff_only");

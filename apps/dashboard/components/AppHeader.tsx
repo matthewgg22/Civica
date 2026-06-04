@@ -51,7 +51,7 @@ export default function AppHeader({ email, active }: { email?: string; active: N
           <img src="/civica-wheat-mark.png" alt="Civica" width={50} height={50} className="w-[50px] h-[50px] object-contain shrink-0 group-hover:opacity-90 transition-opacity" />
           <div>
             <p className="text-[15px] font-semibold tracking-tight text-ink leading-none">Civica</p>
-            <p className="text-[10px] text-muted mt-0.5 uppercase tracking-wider font-semibold">Navigator</p>
+            <p className="text-[10px] text-graphite mt-0.5 uppercase tracking-wider font-semibold">Navigator</p>
           </div>
         </Link>
         {/* Desktop nav — hidden on <md, replaced by MobileNavMenu hamburger */}

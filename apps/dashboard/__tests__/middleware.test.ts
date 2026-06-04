@@ -58,6 +58,20 @@ describe("middleware", () => {
       expect(res.status).toBe(307);
       expect(res.headers.get("location")).toContain("/login");
     });
+
+    it("passes through /sign-up without auth", async () => {
+      // Request-access form must be reachable by unauthenticated visitors —
+      // they haven't signed in yet and are trying to get an account.
+      const res = await middleware(makeRequest("/sign-up"));
+      expect(res.status).toBe(200);
+    });
+
+    it("passes through /auth/reset-password without auth", async () => {
+      // Supabase password reset email links land here with ?code=. The visitor
+      // is unauthenticated by definition when resetting their password.
+      const res = await middleware(makeRequest("/auth/reset-password"));
+      expect(res.status).toBe(200);
+    });
   });
 
   describe("authenticated applicant (no staff role)", () => {
