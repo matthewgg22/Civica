@@ -188,23 +188,33 @@ struct ExpirationCalendarView: View {
 enum ExpirationCalendarStrings {
     static let unconfiguredStateTitle = CivicaText(
         "We don't have rules for your state yet",
-        es: "Aún no tenemos reglas para tu estado"
+        es: "Aún no tenemos reglas para tu estado",
+        vi: "Chúng tôi chưa có quy tắc cho tiểu bang của bạn",
+        tl: "Wala pa kaming mga patakaran para sa iyong estado"
     )
     static let unconfiguredStateBody = CivicaText(
         "We'll add document refresh dates for your state soon. In the meantime, ask your caseworker which documents your state will need fresh at recert.",
-        es: "Pronto agregaremos fechas de renovación para tu estado. Mientras tanto, pregunta a tu trabajador social qué documentos necesitará tu estado en la recertificación."
+        es: "Pronto agregaremos fechas de renovación para tu estado. Mientras tanto, pregunta a tu trabajador social qué documentos necesitará tu estado en la recertificación.",
+        vi: "Chúng tôi sẽ sớm thêm ngày làm mới giấy tờ cho tiểu bang của bạn. Trong lúc đó, hãy hỏi nhân viên phụ trách hồ sơ của bạn về những giấy tờ nào tiểu bang sẽ cần làm mới khi tái xét.",
+        tl: "Idaragdag namin agad ang mga petsa ng pag-renew ng dokumento para sa iyong estado. Pansamantala, tanungin mo ang iyong caseworker kung anong mga dokumento ang kakailanganing bago ng iyong estado sa recert."
     )
     static let reasonMissing = CivicaText(
         "Not yet uploaded",
-        es: "Aún no subido"
+        es: "Aún no subido",
+        vi: "Chưa tải lên",
+        tl: "Hindi pa na-upload"
     )
     static let reasonStale = CivicaText(
         "Too old for recert",
-        es: "Demasiado antiguo para recertificación"
+        es: "Demasiado antiguo para recertificación",
+        vi: "Quá cũ cho tái xét",
+        tl: "Masyadong luma para sa recert"
     )
     static let reasonCadence = CivicaText(
         "Due for a fresh copy",
-        es: "Necesita una copia nueva"
+        es: "Necesita una copia nueva",
+        vi: "Cần một bản sao mới",
+        tl: "Kailangan na ng bagong kopya"
     )
 }
 

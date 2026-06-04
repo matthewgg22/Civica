@@ -111,11 +111,17 @@ enum SNAPInterviewNotification {
 
     static let twentyFourHourTitle = CivicaText(
         "Your SNAP interview is tomorrow",
-        es: "Su entrevista de SNAP es mañana"
+        es: "Su entrevista de SNAP es mañana",
+        zh: "你的 SNAP 面谈在明天",
+        vi: "Buổi phỏng vấn SNAP của bạn là ngày mai",
+        tl: "Bukas na ang iyong SNAP interview"
     )
 
     static let twentyFourHourBody = CivicaText(
         "Open Civica to review what they'll ask and what to have nearby.",
-        es: "Abre Civica para repasar lo que te preguntarán y lo que debes tener cerca."
+        es: "Abre Civica para repasar lo que te preguntarán y lo que debes tener cerca.",
+        zh: "打开 Civica,看看他们会问什么,以及你需要准备好哪些东西。",
+        vi: "Mở Civica để xem họ sẽ hỏi gì và bạn cần chuẩn bị sẵn những gì.",
+        tl: "Buksan ang Civica para makita kung ano ang itatanong nila at ano ang dapat nakahanda malapit sa iyo."
     )
 }

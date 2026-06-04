@@ -10,46 +10,76 @@ enum SNAPDecisionMathStrings {
 
     static let pageTitle = CivicaText(
         "Your eligibility result",
-        es: "Tu resultado de elegibilidad"
+        es: "Tu resultado de elegibilidad",
+        zh: "你的资格结果",
+        vi: "Kết quả đủ điều kiện của bạn",
+        tl: "Resulta ng iyong eligibility"
     )
     static let pageSubtitle = CivicaText(
         "Here's how we got to this number.",
-        es: "Así llegamos a este número."
+        es: "Así llegamos a este número.",
+        zh: "我们是这样算出这个数字的。",
+        vi: "Đây là cách chúng tôi tính ra con số này.",
+        tl: "Ganito namin nakuha ang numerong ito."
     )
     static let sectionHowWeCalc = CivicaText(
         "How we calculated it",
-        es: "Cómo lo calculamos"
+        es: "Cómo lo calculamos",
+        zh: "我们是怎么算的",
+        vi: "Cách chúng tôi tính toán",
+        tl: "Kung paano namin kinompute"
     )
     static let sectionSources = CivicaText(
         "Sources",
-        es: "Fuentes"
+        es: "Fuentes",
+        zh: "来源",
+        vi: "Nguồn",
+        tl: "Mga pinagmulan"
     )
 
     // MARK: - Line items (gross income → deductions → net → benefit)
 
     static let grossMonthlyIncome = CivicaText(
         "Gross monthly income",
-        es: "Ingreso bruto mensual"
+        es: "Ingreso bruto mensual",
+        zh: "每月总收入",
+        vi: "Tổng thu nhập hàng tháng",
+        tl: "Gross na buwanang kita"
     )
     static let earnedIncomeDeduction = CivicaText(
         "Earned income deduction (20%)",
-        es: "Deducción por ingresos del trabajo (20%)"
+        es: "Deducción por ingresos del trabajo (20%)",
+        zh: "工作收入扣除额(20%)",
+        vi: "Khấu trừ thu nhập từ việc làm (20%)",
+        tl: "Deduction sa kita mula sa trabaho (20%)"
     )
     static let standardDeduction = CivicaText(
         "Standard deduction",
-        es: "Deducción estándar"
+        es: "Deducción estándar",
+        zh: "标准扣除额",
+        vi: "Khấu trừ tiêu chuẩn",
+        tl: "Standard na deduction"
     )
     static let dependentCareDeduction = CivicaText(
         "Dependent care",
-        es: "Cuidado de dependientes"
+        es: "Cuidado de dependientes",
+        zh: "受抚养人照护",
+        vi: "Chăm sóc người phụ thuộc",
+        tl: "Pag-aalaga sa dependent"
     )
     static let medicalDeduction = CivicaText(
         "Medical (elderly/disabled)",
-        es: "Médico (mayores/discapacidad)"
+        es: "Médico (mayores/discapacidad)",
+        zh: "医疗(老年人/残障人士)",
+        vi: "Y tế (người cao tuổi/khuyết tật)",
+        tl: "Medikal (matatanda/may kapansanan)"
     )
     static let childSupportDeduction = CivicaText(
         "Child support paid",
-        es: "Manutención pagada"
+        es: "Manutención pagada",
+        zh: "已支付的子女抚养费",
+        vi: "Tiền cấp dưỡng con đã trả",
+        tl: "Child support na nabayaran"
     )
     /// Thin inline section header that visually separates the
     /// income-adjustment deductions (earned income, standard,
@@ -57,76 +87,124 @@ enum SNAPDecisionMathStrings {
     /// computed differently and applied after the half-net test.
     static let shelterSectionLabel = CivicaText(
         "Shelter deduction",
-        es: "Deducción por vivienda"
+        es: "Deducción por vivienda",
+        zh: "住房扣除额",
+        vi: "Khấu trừ chi phí nhà ở",
+        tl: "Deduction sa tirahan"
     )
     static let excessShelterDeduction = CivicaText(
         "Excess shelter deduction",
-        es: "Deducción por exceso de vivienda"
+        es: "Deducción por exceso de vivienda",
+        zh: "超额住房扣除额",
+        vi: "Khấu trừ chi phí nhà ở vượt mức",
+        tl: "Deduction sa labis na gastos sa tirahan"
     )
     static let netMonthlyIncome = CivicaText(
         "Net monthly income",
-        es: "Ingreso neto mensual"
+        es: "Ingreso neto mensual",
+        zh: "每月净收入",
+        vi: "Thu nhập ròng hàng tháng",
+        tl: "Net na buwanang kita"
     )
     static let thirtyPercentOfNet = CivicaText(
         "30% of net income",
-        es: "30% del ingreso neto"
+        es: "30% del ingreso neto",
+        zh: "净收入的 30%",
+        vi: "30% thu nhập ròng",
+        tl: "30% ng net na kita"
     )
     static let maxAllotment = CivicaText(
         "Maximum allotment for your household",
-        es: "Asignación máxima para tu hogar"
+        es: "Asignación máxima para tu hogar",
+        zh: "你家庭的最高发放额",
+        vi: "Mức trợ cấp tối đa cho hộ gia đình của bạn",
+        tl: "Pinakamataas na allotment para sa iyong household"
     )
     static let monthlyBenefit = CivicaText(
         "Your monthly benefit",
-        es: "Tu beneficio mensual"
+        es: "Tu beneficio mensual",
+        zh: "你的每月福利金额",
+        vi: "Trợ cấp hàng tháng của bạn",
+        tl: "Ang iyong buwanang benepisyo"
     )
 
     // MARK: - Verdict headlines
 
     static let headlineEligible = CivicaText(
         "Likely eligible",
-        es: "Probablemente elegible"
+        es: "Probablemente elegible",
+        zh: "很可能符合资格",
+        vi: "Có khả năng đủ điều kiện",
+        tl: "Malamang na eligible"
     )
     static let headlineIneligible = CivicaText(
         "Likely not eligible",
-        es: "Probablemente no elegible"
+        es: "Probablemente no elegible",
+        zh: "很可能不符合资格",
+        vi: "Có khả năng không đủ điều kiện",
+        tl: "Malamang na hindi eligible"
     )
     static let headlineInsufficient = CivicaText(
         "Need more information",
-        es: "Necesitamos más información"
+        es: "Necesitamos más información",
+        zh: "需要更多信息",
+        vi: "Cần thêm thông tin",
+        tl: "Kailangan ng karagdagang impormasyon"
     )
     static let estimateDisclaimer = CivicaText(
         "This is Civica's estimate. Your state agency makes the final decision.",
-        es: "Esta es la estimación de Civica. Tu agencia estatal toma la decisión final."
+        es: "Esta es la estimación de Civica. Tu agencia estatal toma la decisión final.",
+        zh: "这是 Civica 的估算。最终决定由你所在的州机构作出。",
+        vi: "Đây là ước tính của Civica. Cơ quan tiểu bang của bạn đưa ra quyết định cuối cùng.",
+        tl: "Tantiya lang ito ng Civica. Ang state agency mo ang gumagawa ng pinal na desisyon."
     )
 
     // MARK: - Footnote / sources
 
     static let rulesVersion = CivicaText(
         "Rules version",
-        es: "Versión de reglas"
+        es: "Versión de reglas",
+        zh: "规则版本",
+        vi: "Phiên bản quy tắc",
+        tl: "Bersyon ng mga tuntunin"
     )
     static let rulesVersionHintReveal = CivicaText(
         "Double-tap to show the technical version code.",
-        es: "Toca dos veces para ver el código técnico de la versión."
+        es: "Toca dos veces para ver el código técnico de la versión.",
+        zh: "双击可显示技术版本代码。",
+        vi: "Nhấn đúp để hiển thị mã phiên bản kỹ thuật.",
+        tl: "I-double tap para makita ang technical na version code."
     )
     static let rulesVersionHintHumanize = CivicaText(
         "Double-tap to show the human-readable label.",
-        es: "Toca dos veces para ver la etiqueta legible."
+        es: "Toca dos veces para ver la etiqueta legible.",
+        zh: "双击可显示易读的标签。",
+        vi: "Nhấn đúp để hiển thị nhãn dễ đọc.",
+        tl: "I-double tap para makita ang madaling basahing label."
     )
     static let effectiveAsOf = CivicaText(
         "Effective as of",
-        es: "Efectivo a partir de"
+        es: "Efectivo a partir de",
+        zh: "生效日期",
+        vi: "Có hiệu lực từ",
+        tl: "May bisa simula"
     )
 
     // MARK: - CTAs
 
     static let continueToPacket = CivicaText(
         "Get my application packet",
-        es: "Obtener mi paquete de solicitud"
+        es: "Obtener mi paquete de solicitud",
+        zh: "获取我的申请材料包",
+        vi: "Nhận bộ hồ sơ đăng ký của tôi",
+        tl: "Kunin ang aking application packet"
     )
     static let backToSummary = CivicaText(
         "Back to summary",
-        es: "Volver al resumen"
+        es: "Volver al resumen",
+        zh: "返回摘要",
+        vi: "Quay lại bản tóm tắt",
+        tl: "Bumalik sa buod"
     )
 
     // MARK: - Expedited service callout

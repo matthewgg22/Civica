@@ -37,7 +37,7 @@ struct FindHelpPeekSheet: View {
                 // Primary: open Apple Maps for directions
                 Button(action: openInMaps) {
                     Label(
-                        language == .spanish ? "Cómo llegar" : "Get directions",
+                        directionsLabel,
                         systemImage: "arrow.triangle.turn.up.right.circle.fill"
                     )
                     .font(CivicaTypography.subheadStrong)
@@ -51,7 +51,7 @@ struct FindHelpPeekSheet: View {
 
                 // Secondary: full detail sheet
                 Button(action: onViewDetails) {
-                    Text(language == .spanish ? "Más info" : "More info")
+                    Text(moreInfoLabel)
                         .font(CivicaTypography.subheadStrong)
                         .foregroundStyle(CivicaColors.ink)
                         .frame(minWidth: 90, minHeight: 48)
@@ -72,6 +72,26 @@ struct FindHelpPeekSheet: View {
         .presentationDetents([.height(290)])
         .presentationDragIndicator(.visible)
         .presentationCornerRadius(CivicaRadius.card)
+    }
+
+    private var directionsLabel: String {
+        switch language {
+        case .spanish: return "Cómo llegar"
+        case .mandarin: return "获取路线"
+        case .vietnamese: return "Xem chỉ đường"
+        case .tagalog: return "Kunin ang direksyon"
+        default: return "Get directions"
+        }
+    }
+
+    private var moreInfoLabel: String {
+        switch language {
+        case .spanish: return "Más info"
+        case .mandarin: return "更多信息"
+        case .vietnamese: return "Thêm thông tin"
+        case .tagalog: return "Higit pang detalye"
+        default: return "More info"
+        }
     }
 
     /// Brand-colored service-type pill — Brick / Teal / Graphite per
@@ -108,12 +128,21 @@ struct FindHelpPeekSheet: View {
         switch location.resolvedRecordKind {
         case .helpDirectory:
             switch (location.primaryServiceType, language) {
-            case (.snapApplicationHelp, .english), (.snapApplicationHelp, .mandarin), (.snapApplicationHelp, .vietnamese), (.snapApplicationHelp, .tagalog): return "SNAP HELP"
+            case (.snapApplicationHelp, .english): return "SNAP HELP"
+            case (.snapApplicationHelp, .mandarin): return "SNAP 帮助"
             case (.snapApplicationHelp, .spanish): return "AYUDA CON SNAP"
-            case (.foodAssistance, .english), (.foodAssistance, .mandarin), (.foodAssistance, .vietnamese), (.foodAssistance, .tagalog): return "FOOD"
+            case (.snapApplicationHelp, .vietnamese): return "HỖ TRỢ SNAP"
+            case (.snapApplicationHelp, .tagalog): return "TULONG SA SNAP"
+            case (.foodAssistance, .english): return "FOOD"
+            case (.foodAssistance, .mandarin): return "食物"
             case (.foodAssistance,      .spanish): return "COMIDA"
-            case (.both, .english), (.both, .mandarin), (.both, .vietnamese), (.both, .tagalog): return "SNAP + FOOD"
+            case (.foodAssistance, .vietnamese): return "THỰC PHẨM"
+            case (.foodAssistance, .tagalog): return "PAGKAIN"
+            case (.both, .english): return "SNAP + FOOD"
+            case (.both, .mandarin): return "SNAP + 食物"
             case (.both,                .spanish): return "SNAP + COMIDA"
+            case (.both, .vietnamese): return "SNAP + THỰC PHẨM"
+            case (.both, .tagalog): return "SNAP + PAGKAIN"
             }
         case .ebtRetailer:
             switch location.retailerCategory ?? .supermarket {
@@ -172,7 +201,12 @@ struct FindHelpPeekSheet: View {
         var line = parts.joined(separator: " · ")
         if let km = location.distanceKm {
             let miles = (km * 0.6213712 * 10).rounded() / 10  // 1 decimal place
-            let unit = language == .english ? "mi" : "millas"
+            let unit: String
+            switch language {
+            case .spanish: unit = "millas"
+            case .vietnamese: unit = "dặm"
+            default: unit = "mi"
+            }
             line.append(" · \(miles) \(unit)")
         }
         return line.isEmpty ? nil : line
@@ -182,6 +216,9 @@ struct FindHelpPeekSheet: View {
 enum FindHelpPeekStrings {
     static let viewDetails = CivicaText(
         "View details",
-        es: "Ver detalles"
+        es: "Ver detalles",
+        zh: "查看详情",
+        vi: "Xem chi tiết",
+        tl: "Tingnan ang detalye"
     )
 }

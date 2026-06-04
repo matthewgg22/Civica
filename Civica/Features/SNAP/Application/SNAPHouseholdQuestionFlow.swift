@@ -690,111 +690,189 @@ enum SNAPHouseholdQuestionStrings {
 
     static let sizeTitle = CivicaText(
         "How many people live in your household?",
-        es: "¿Cuántas personas viven en tu hogar?"
+        es: "¿Cuántas personas viven en tu hogar?",
+        zh: "你家里有多少人?",
+        vi: "Có bao nhiêu người sống trong gia đình bạn?",
+        tl: "Ilan ang nakatira sa iyong sambahayan?"
     )
     static let sizeHelper = CivicaText(
         "Include anyone who shares groceries with you — partners, kids, roommates who eat together.",
-        es: "Incluye a cualquiera que comparta comestibles contigo — pareja, hijos o compañeros de casa que comen juntos."
+        es: "Incluye a cualquiera que comparta comestibles contigo — pareja, hijos o compañeros de casa que comen juntos.",
+        zh: "把所有和你一起买菜的人都算进去 — 伴侣、孩子、一起吃饭的室友。",
+        vi: "Tính cả những người cùng chia sẻ thực phẩm với bạn — bạn đời, con cái, bạn cùng nhà ăn chung.",
+        tl: "Isama ang sinumang kasama mong bumibili ng pagkain — partner, mga anak, o mga kasama sa bahay na sabay kayong kumakain."
     )
-    static let sizeOptionJustMe = CivicaText("Just me", es: "Solo yo")
-    static let sizeOptionTwo = CivicaText("2 people", es: "2 personas")
-    static let sizeOptionThree = CivicaText("3 people", es: "3 personas")
-    static let sizeOptionFourPlus = CivicaText("4 or more", es: "4 o más")
+    static let sizeOptionJustMe = CivicaText("Just me", es: "Solo yo", zh: "只有我", vi: "Chỉ mình tôi", tl: "Ako lang")
+    static let sizeOptionTwo = CivicaText("2 people", es: "2 personas", zh: "2 人", vi: "2 người", tl: "2 tao")
+    static let sizeOptionThree = CivicaText("3 people", es: "3 personas", zh: "3 人", vi: "3 người", tl: "3 tao")
+    static let sizeOptionFourPlus = CivicaText("4 or more", es: "4 o más", zh: "4 人或更多", vi: "4 người trở lên", tl: "4 o higit pa")
     static let sizeStepperLabel = CivicaText(
         "How many people total?",
-        es: "¿Cuántas personas en total?"
+        es: "¿Cuántas personas en total?",
+        zh: "总共多少人?",
+        vi: "Tổng cộng bao nhiêu người?",
+        tl: "Ilang tao lahat?"
     )
     static func sizeStepperAccessibility(count: Int, language: CivicaLanguage) -> String {
         switch language {
-        case .english, .mandarin, .vietnamese, .tagalog: return "\(count) people in your household"
+        case .english: return "\(count) people in your household"
+        case .mandarin: return "你家里有 \(count) 人"
         case .spanish: return "\(count) personas en tu hogar"
+        case .vietnamese: return "\(count) người trong gia đình bạn"
+        case .tagalog: return "\(count) tao sa iyong sambahayan"
         }
     }
 
     static let minorsTitle = CivicaText(
         "Is anyone in your household 18 or under?",
-        es: "¿Hay alguien en tu hogar de 18 años o menos?"
+        es: "¿Hay alguien en tu hogar de 18 años o menos?",
+        zh: "你家里有人 18 岁或以下吗?",
+        vi: "Trong gia đình bạn có ai từ 18 tuổi trở xuống không?",
+        tl: "May 18 anyos o mas bata ba sa iyong sambahayan?"
     )
     static let minorsHelper = CivicaText(
         "Children in the household can unlock extra SNAP deductions and may make you eligible for expedited service.",
-        es: "Los menores en el hogar pueden desbloquear deducciones adicionales de SNAP y pueden hacer que califiques para servicio expedito."
+        es: "Los menores en el hogar pueden desbloquear deducciones adicionales de SNAP y pueden hacer que califiques para servicio expedito.",
+        zh: "家里有孩子可以解锁额外的 SNAP 扣除额,还可能让你符合加急办理的条件。",
+        vi: "Trẻ em trong gia đình có thể mở thêm các khoản khấu trừ SNAP và có thể giúp bạn đủ điều kiện được xử lý nhanh.",
+        tl: "Ang mga bata sa sambahayan ay maaaring magbukas ng dagdag na SNAP deductions at maaaring gawin kang kuwalipikado para sa mabilis na proseso."
     )
 
     // OBBBA §10102(a): shown only when hasMinorInHousehold == true
     static let childrenUnder14Title = CivicaText(
         "Are any of those children under 14?",
-        es: "¿Alguno de esos niños tiene menos de 14 años?"
+        es: "¿Alguno de esos niños tiene menos de 14 años?",
+        zh: "这些孩子里有人不满 14 岁吗?",
+        vi: "Trong số những trẻ đó có em nào dưới 14 tuổi không?",
+        tl: "May wala pang 14 anyos ba sa mga batang iyon?"
     )
     static let childrenUnder14Helper = CivicaText(
         "This determines who in your household needs to meet SNAP's work requirement for able-bodied adults.",
-        es: "Esto determina quién en tu hogar necesita cumplir con el requisito de trabajo de SNAP para adultos capaces."
+        es: "Esto determina quién en tu hogar necesita cumplir con el requisito de trabajo de SNAP para adultos capaces.",
+        zh: "这决定了你家里哪些人需要满足 SNAP 对健全成年人的工作要求。",
+        vi: "Điều này xác định ai trong gia đình bạn cần đáp ứng yêu cầu làm việc của SNAP dành cho người lớn có đủ sức khỏe lao động.",
+        tl: "Ito ang nagtatakda kung sino sa iyong sambahayan ang kailangang tumupad sa work requirement ng SNAP para sa mga adultong may kakayahang magtrabaho."
     )
 
     static let elderlyOrDisabledTitle = CivicaText(
         "Is anyone 60 or older, or living with a disability?",
-        es: "¿Hay alguien de 60 años o más, o que vive con una discapacidad?"
+        es: "¿Hay alguien de 60 años o más, o que vive con una discapacidad?",
+        zh: "家里有人 60 岁或以上,或者有残疾吗?",
+        vi: "Trong gia đình có ai từ 60 tuổi trở lên, hoặc đang sống với khuyết tật không?",
+        tl: "May 60 anyos pataas ba, o may kapansanan, sa sambahayan?"
     )
     static let elderlyOrDisabledHelper = CivicaText(
         "This matters for SNAP — older adults and people with disabilities get extra deductions and don't face an asset test in Massachusetts.",
-        es: "Esto importa para SNAP — los adultos mayores y las personas con discapacidad reciben deducciones adicionales y no enfrentan una prueba de bienes en Massachusetts."
+        es: "Esto importa para SNAP — los adultos mayores y las personas con discapacidad reciben deducciones adicionales y no enfrentan una prueba de bienes en Massachusetts.",
+        zh: "这对 SNAP 很重要 — 老年人和残障人士可以获得额外的扣除额,在 Massachusetts 也不需要做资产审查。",
+        vi: "Điều này quan trọng với SNAP — người lớn tuổi và người khuyết tật được khấu trừ thêm và không phải làm kiểm tra tài sản ở Massachusetts.",
+        tl: "Mahalaga ito para sa SNAP — ang mga nakatatanda at mga taong may kapansanan ay nakakakuha ng dagdag na deductions at hindi dumaranas ng asset test sa Massachusetts."
     )
 
     // Wave 5 — aggregate buy-prepare-food (BenefitsCal ABBPF, household-level)
     static let buyPrepareFoodTitle = CivicaText(
         "Does everyone in your household buy and prepare food together?",
-        es: "¿Todos en tu hogar compran y preparan la comida juntos?"
+        es: "¿Todos en tu hogar compran y preparan la comida juntos?",
+        zh: "你家里所有人都一起买菜、做饭吗?",
+        vi: "Mọi người trong gia đình bạn có cùng mua và nấu ăn chung không?",
+        tl: "Sabay-sabay ba kayong bumibili at naghahanda ng pagkain sa iyong sambahayan?"
     )
     static let buyPrepareFoodHelper = CivicaText(
         "SNAP counts people who share food costs as one household — even if they're not related. Roommates who buy and cook separately may be separate SNAP cases.",
-        es: "SNAP cuenta a las personas que comparten los costos de comida como un solo hogar — aunque no estén emparentadas. Compañeros de cuarto que compran y cocinan por separado pueden ser casos de SNAP separados."
+        es: "SNAP cuenta a las personas que comparten los costos de comida como un solo hogar — aunque no estén emparentadas. Compañeros de cuarto que compran y cocinan por separado pueden ser casos de SNAP separados.",
+        zh: "SNAP 把分摊伙食开销的人算作同一个家庭 — 就算没有亲属关系也一样。分开买菜、分开做饭的室友可能是各自独立的 SNAP 案件。",
+        vi: "SNAP tính những người cùng chia sẻ chi phí thực phẩm là một gia đình — ngay cả khi họ không có quan hệ họ hàng. Bạn cùng nhà mua và nấu ăn riêng có thể là các hồ sơ SNAP riêng biệt.",
+        tl: "Itinuturing ng SNAP na isang sambahayan ang mga taong naghahatian sa gastos sa pagkain — kahit hindi sila magkamag-anak. Ang mga kasama sa bahay na hiwalay bumibili at nagluluto ay maaaring magkahiwalay na SNAP cases."
     )
 
     // Wave 4 — marital status (BenefitsCal ABMRS)
     static let maritalStatusTitle = CivicaText(
         "What's your marital status?",
-        es: "¿Cuál es tu estado civil?"
+        es: "¿Cuál es tu estado civil?",
+        zh: "你的婚姻状况是什么?",
+        vi: "Tình trạng hôn nhân của bạn là gì?",
+        tl: "Ano ang iyong marital status?"
     )
     static let maritalStatusHelper = CivicaText(
         "California asks this on the SNAP application. Pick what fits — \"Prefer not to say\" is a valid answer and your benefits aren't affected by your choice.",
-        es: "California pregunta esto en la solicitud de SNAP. Elige lo que aplica — \"Prefiero no decir\" es una respuesta válida y tus beneficios no se ven afectados por tu elección."
+        es: "California pregunta esto en la solicitud de SNAP. Elige lo que aplica — \"Prefiero no decir\" es una respuesta válida y tus beneficios no se ven afectados por tu elección.",
+        zh: "California 在 SNAP 申请表上会问这个问题。选一个适合你的 — 「不想说」也是有效答案,你的选择不会影响福利。",
+        vi: "California hỏi điều này trên đơn xin SNAP. Chọn câu phù hợp — \u{201C}Không muốn nói\u{201D} là câu trả lời hợp lệ và lựa chọn của bạn không ảnh hưởng đến quyền lợi của bạn.",
+        tl: "Itinatanong ito ng California sa SNAP application. Piliin ang akma sa iyo — \u{201C}Ayaw kong sabihin\u{201D} ay tanggap na sagot at hindi naaapektuhan ng pinili mo ang iyong mga benepisyo."
     )
 
     static func maritalStatusLabel(for value: SNAPMaritalStatus, language: CivicaLanguage) -> String {
         switch (value, language) {
-        case (.single, .english), (.single, .mandarin), (.single, .vietnamese), (.single, .tagalog): return "Single"
+        case (.single, .english): return "Single"
+        case (.single, .mandarin): return "单身"
         case (.single,              .spanish): return "Soltero/a"
-        case (.married, .english), (.married, .mandarin), (.married, .vietnamese), (.married, .tagalog): return "Married"
+        case (.single, .vietnamese): return "Độc thân"
+        case (.single, .tagalog): return "Walang asawa"
+        case (.married, .english): return "Married"
+        case (.married, .mandarin): return "已婚"
         case (.married,             .spanish): return "Casado/a"
-        case (.domesticPartnership, .english), (.domesticPartnership, .mandarin), (.domesticPartnership, .vietnamese), (.domesticPartnership, .tagalog): return "Domestic partnership"
+        case (.married, .vietnamese): return "Đã kết hôn"
+        case (.married, .tagalog): return "May asawa"
+        case (.domesticPartnership, .english): return "Domestic partnership"
+        case (.domesticPartnership, .mandarin): return "同居伴侣关系"
         case (.domesticPartnership, .spanish): return "Unión doméstica"
-        case (.separated, .english), (.separated, .mandarin), (.separated, .vietnamese), (.separated, .tagalog): return "Separated"
+        case (.domesticPartnership, .vietnamese): return "Quan hệ chung sống"
+        case (.domesticPartnership, .tagalog): return "Domestic partnership"
+        case (.separated, .english): return "Separated"
+        case (.separated, .mandarin): return "分居"
         case (.separated,           .spanish): return "Separado/a"
-        case (.divorced, .english), (.divorced, .mandarin), (.divorced, .vietnamese), (.divorced, .tagalog): return "Divorced"
+        case (.separated, .vietnamese): return "Ly thân"
+        case (.separated, .tagalog): return "Hiwalay"
+        case (.divorced, .english): return "Divorced"
+        case (.divorced, .mandarin): return "离异"
         case (.divorced,            .spanish): return "Divorciado/a"
-        case (.widowed, .english), (.widowed, .mandarin), (.widowed, .vietnamese), (.widowed, .tagalog): return "Widowed"
+        case (.divorced, .vietnamese): return "Đã ly hôn"
+        case (.divorced, .tagalog): return "Diborsiyado"
+        case (.widowed, .english): return "Widowed"
+        case (.widowed, .mandarin): return "丧偶"
         case (.widowed,             .spanish): return "Viudo/a"
-        case (.preferNotToSay, .english), (.preferNotToSay, .mandarin), (.preferNotToSay, .vietnamese), (.preferNotToSay, .tagalog): return "Prefer not to say"
+        case (.widowed, .vietnamese): return "Góa"
+        case (.widowed, .tagalog): return "Balo"
+        case (.preferNotToSay, .english): return "Prefer not to say"
+        case (.preferNotToSay, .mandarin): return "不想说"
         case (.preferNotToSay,      .spanish): return "Prefiero no decir"
+        case (.preferNotToSay, .vietnamese): return "Không muốn nói"
+        case (.preferNotToSay, .tagalog): return "Ayaw kong sabihin"
         }
     }
 
     static let migrantFarmworkerTitle = CivicaText(
         "Is anyone in your household a migrant or seasonal farmworker?",
-        es: "¿Alguien en tu hogar es trabajador agrícola migrante o de temporada?"
+        es: "¿Alguien en tu hogar es trabajador agrícola migrante o de temporada?",
+        zh: "你家里有人是流动农工或季节性农工吗?",
+        vi: "Trong gia đình bạn có ai là lao động nông nghiệp di trú hoặc theo mùa không?",
+        tl: "May migrant o seasonal farmworker ba sa iyong sambahayan?"
     )
     static let migrantFarmworkerHelper = CivicaText(
         "Yes if someone works in crops, livestock, or food processing on a seasonal or traveling basis. SNAP has a separate expedited path for farmworker households.",
-        es: "Sí si alguien trabaja en cultivos, ganadería o procesamiento de alimentos de manera estacional o viajando. SNAP tiene una vía expedita aparte para hogares de trabajadores agrícolas."
+        es: "Sí si alguien trabaja en cultivos, ganadería o procesamiento de alimentos de manera estacional o viajando. SNAP tiene una vía expedita aparte para hogares de trabajadores agrícolas.",
+        zh: "如果有人按季节或随处迁移地从事种植、养殖或食品加工,就选「是」。SNAP 为农工家庭设有单独的加急通道。",
+        vi: "Chọn Có nếu ai đó làm việc về trồng trọt, chăn nuôi hoặc chế biến thực phẩm theo mùa hoặc phải di chuyển nhiều nơi. SNAP có một lối xử lý nhanh riêng cho các gia đình lao động nông nghiệp.",
+        tl: "Oo kung may nagtatrabaho sa pananim, hayupan, o food processing nang pana-panahon o naglalakbay. May hiwalay na mabilis na proseso ang SNAP para sa mga sambahayan ng farmworker."
     )
 
     static func migrantTriLabel(for value: SNAPTri, language: CivicaLanguage) -> String {
         switch (value, language) {
-        case (.yes, .english), (.yes, .mandarin), (.yes, .vietnamese), (.yes, .tagalog):     return "Yes"
+        case (.yes, .english):     return "Yes"
+        case (.yes, .mandarin):    return "是"
         case (.yes, .spanish):     return "Sí"
-        case (.no, .english), (.no, .mandarin), (.no, .vietnamese), (.no, .tagalog):      return "No"
+        case (.yes, .vietnamese):  return "Có"
+        case (.yes, .tagalog):     return "Oo"
+        case (.no, .english):      return "No"
+        case (.no, .mandarin):     return "否"
         case (.no, .spanish):      return "No"
-        case (.notSure, .english), (.notSure, .mandarin), (.notSure, .vietnamese), (.notSure, .tagalog): return "I'm not sure"
+        case (.no, .vietnamese):   return "Không"
+        case (.no, .tagalog):      return "Hindi"
+        case (.notSure, .english): return "I'm not sure"
+        case (.notSure, .mandarin): return "我不确定"
         case (.notSure, .spanish): return "No estoy seguro"
+        case (.notSure, .vietnamese): return "Tôi không chắc"
+        case (.notSure, .tagalog): return "Hindi ako sigurado"
         }
     }
 

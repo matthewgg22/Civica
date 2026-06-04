@@ -113,13 +113,20 @@ enum SNAPInboxPhase2Strings {
     static func relativeLabel(for date: Date, language: CivicaLanguage) -> String {
         let days = Calendar.current.dateComponents([.day], from: date, to: Date()).day ?? 0
         switch language {
-        case .english, .mandarin, .vietnamese, .tagalog:
+        case .english:
             if days <= 0 { return "Sent today" }
             if days == 1 { return "Sent yesterday" }
             if days <= 14 { return "Sent \(days) days ago" }
             let f = DateFormatter()
             f.dateFormat = "MMM d"
             return "Sent \(f.string(from: date))"
+        case .mandarin:
+            if days <= 0 { return "今天发送" }
+            if days == 1 { return "昨天发送" }
+            if days <= 14 { return "\(days) 天前发送" }
+            let f = DateFormatter()
+            f.dateFormat = "M月d日"
+            return "\(f.string(from: date)) 发送"
         case .spanish:
             if days <= 0 { return "Enviado hoy" }
             if days == 1 { return "Enviado ayer" }
@@ -127,6 +134,20 @@ enum SNAPInboxPhase2Strings {
             let f = DateFormatter()
             f.dateFormat = "d 'de' MMM"
             return "Enviado el \(f.string(from: date))"
+        case .vietnamese:
+            if days <= 0 { return "Đã gửi hôm nay" }
+            if days == 1 { return "Đã gửi hôm qua" }
+            if days <= 14 { return "Đã gửi \(days) ngày trước" }
+            let f = DateFormatter()
+            f.dateFormat = "d MMM"
+            return "Đã gửi ngày \(f.string(from: date))"
+        case .tagalog:
+            if days <= 0 { return "Ipinadala ngayong araw" }
+            if days == 1 { return "Ipinadala kahapon" }
+            if days <= 14 { return "Ipinadala \(days) araw na ang nakalipas" }
+            let f = DateFormatter()
+            f.dateFormat = "MMM d"
+            return "Ipinadala noong \(f.string(from: date))"
         }
     }
 }

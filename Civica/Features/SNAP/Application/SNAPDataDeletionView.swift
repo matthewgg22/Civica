@@ -170,19 +170,31 @@ enum SNAPDataDeletionStrings {
 
     static let eyebrow = CivicaText(
         "Deleting your Civica data",
-        es: "Eliminando tus datos de Civica"
+        es: "Eliminando tus datos de Civica",
+        zh: "正在删除你的 Civica 数据",
+        vi: "Đang xoá dữ liệu Civica của bạn",
+        tl: "Binubura ang iyong Civica data"
     )
     static let title = CivicaText(
         "Here's what will happen, in order.",
-        es: "Esto es lo que va a pasar, en orden."
+        es: "Esto es lo que va a pasar, en orden.",
+        zh: "接下来会按顺序发生这些事。",
+        vi: "Đây là những gì sẽ xảy ra, theo thứ tự.",
+        tl: "Ito ang mangyayari, sunod-sunod."
     )
     static let confirm = CivicaText(
         "Yes, delete everything",
-        es: "Sí, eliminar todo"
+        es: "Sí, eliminar todo",
+        zh: "是的，删除所有内容",
+        vi: "Có, xoá tất cả",
+        tl: "Oo, burahin lahat"
     )
     static let cancel = CivicaText(
         "Keep my account",
-        es: "Mantener mi cuenta"
+        es: "Mantener mi cuenta",
+        zh: "保留我的账户",
+        vi: "Giữ lại tài khoản của tôi",
+        tl: "Panatilihin ang aking account"
     )
 
     static func steps(language: CivicaLanguage, stateCode: String? = nil) -> [Step] {
@@ -190,8 +202,11 @@ enum SNAPDataDeletionStrings {
         let agency = SNAPAgencyDirectory.agencyFullName(for: stateCode, language: language)
         let portalEN = portal.isEmpty ? "your state portal" : portal
         let portalES = portal.isEmpty ? "el portal estatal" : portal
+        let portalZH = portal.isEmpty ? "你所在州的门户网站" : portal
+        let portalVI = portal.isEmpty ? "cổng thông tin của tiểu bang bạn" : portal
+        let portalTL = portal.isEmpty ? "ang portal ng iyong estado" : portal
         switch language {
-        case .english, .mandarin, .vietnamese, .tagalog:
+        case .english:
             return [
                 Step(
                     title: "Right now",
@@ -208,6 +223,25 @@ enum SNAPDataDeletionStrings {
                 Step(
                     title: "Reapplying later",
                     body: "You can come back any time. You'll start fresh — Civica won't recognize you, by design."
+                ),
+            ]
+        case .mandarin:
+            return [
+                Step(
+                    title: "现在",
+                    body: "你的答案、拍下的文件、状态和语言偏好都会从这台设备上抹除。应用会返回到语言选择页面。"
+                ),
+                Step(
+                    title: "已经提交给州政府的部分",
+                    body: "如果你已经向\(portalZH)提交过申请，那份申请会保留在州政府那里。Civica 没办法把它撤回——只有\(agency)能修改或关闭它。你的福利不会因为在这里删除而改变。"
+                ),
+                Step(
+                    title: "Civica 的服务器",
+                    body: "在这里删除会清除这台设备上的本地 SNAP 草稿、拍下的文件、状态和偏好。如果你用过可选的网络功能——查找附近的帮助或面谈教练——任何服务器日志或备份的删除会按照 Civica 的保留流程进行。你已经提交的任何申请仍然保留在州政府机构那里。"
+                ),
+                Step(
+                    title: "以后重新申请",
+                    body: "你随时可以回来。你会从头开始——按照设计，Civica 不会认出你。"
                 ),
             ]
         case .spanish:
@@ -227,6 +261,44 @@ enum SNAPDataDeletionStrings {
                 Step(
                     title: "Volver a solicitar más tarde",
                     body: "Puedes regresar en cualquier momento. Empezarás de cero — Civica no te reconocerá, por diseño."
+                ),
+            ]
+        case .vietnamese:
+            return [
+                Step(
+                    title: "Ngay bây giờ",
+                    body: "Câu trả lời, tài liệu đã chụp, trạng thái và ngôn ngữ ưu tiên của bạn sẽ bị xoá khỏi thiết bị này. Ứng dụng quay lại trang chọn ngôn ngữ."
+                ),
+                Step(
+                    title: "Phần đã nộp cho tiểu bang",
+                    body: "Nếu bạn đã nộp qua \(portalVI), hồ sơ đó vẫn nằm với tiểu bang. Civica không thể rút lại — chỉ có \(agency) mới có thể thay đổi hoặc đóng nó. Quyền lợi của bạn sẽ không thay đổi chỉ vì bạn xoá ở đây."
+                ),
+                Step(
+                    title: "Máy chủ của Civica",
+                    body: "Xoá ở đây sẽ xoá bản nháp SNAP cục bộ, tài liệu đã chụp, trạng thái và tuỳ chọn khỏi thiết bị này. Nếu bạn đã dùng các tính năng mạng tuỳ chọn — tìm trợ giúp gần đây hoặc Huấn luyện phỏng vấn — việc xoá bất kỳ nhật ký hay bản sao lưu nào trên máy chủ sẽ tuân theo quy trình lưu giữ của Civica. Mọi đơn bạn đã nộp vẫn nằm với cơ quan tiểu bang."
+                ),
+                Step(
+                    title: "Nộp lại sau này",
+                    body: "Bạn có thể quay lại bất kỳ lúc nào. Bạn sẽ bắt đầu lại từ đầu — theo thiết kế, Civica sẽ không nhận ra bạn."
+                ),
+            ]
+        case .tagalog:
+            return [
+                Step(
+                    title: "Ngayon mismo",
+                    body: "Ang iyong mga sagot, mga kinunang dokumento, status, at piniling wika ay buburahin sa device na ito. Babalik ang app sa pagpili ng wika."
+                ),
+                Step(
+                    title: "Nasa estado na",
+                    body: "Kung naipasa mo na sa \(portalTL), ang submission na iyon ay nasa estado na. Hindi ito mababawi ng Civica — tanging ang \(agency) lang ang puwedeng magbago o magsara nito. Hindi magbabago ang iyong mga benepisyo dahil lang nagbura ka rito."
+                ),
+                Step(
+                    title: "Mga server ng Civica",
+                    body: "Ang pagbura rito ay magtatanggal ng iyong lokal na SNAP draft, mga kinunang dokumento, status, at mga setting mula sa device na ito. Kung gumamit ka ng mga opsyonal na network feature — paghahanap ng tulong na malapit o Interview Coach — ang pagbura ng anumang server log o backup ay susunod sa retention process ng Civica. Anumang aplikasyong naipasa mo na ay mananatili sa ahensya ng estado."
+                ),
+                Step(
+                    title: "Muling pag-apply mamaya",
+                    body: "Puwede kang bumalik anumang oras. Magsisimula ka mula sa simula — hindi ka makikilala ng Civica, gusto namin itong ganito."
                 ),
             ]
         }

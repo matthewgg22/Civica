@@ -361,13 +361,19 @@ private struct RenderCursor {
 enum SNAPPacketPDFStrings {
     static let title = CivicaText(
         "Civica SNAP Application Summary",
-        es: "Resumen de tu solicitud de SNAP — Civica"
+        es: "Resumen de tu solicitud de SNAP — Civica",
+        zh: "Civica SNAP 申请摘要",
+        vi: "Tóm tắt đơn xin SNAP — Civica",
+        tl: "Buod ng iyong SNAP application — Civica"
     )
 
     static func subtitle(formattedDate: String, language: CivicaLanguage) -> String {
         switch language {
-        case .english, .mandarin, .vietnamese, .tagalog: return "Prepared on \(formattedDate)"
+        case .english: return "Prepared on \(formattedDate)"
+        case .mandarin: return "制作于 \(formattedDate)"
         case .spanish: return "Preparado el \(formattedDate)"
+        case .vietnamese: return "Lập ngày \(formattedDate)"
+        case .tagalog: return "Inihanda noong \(formattedDate)"
         }
     }
 
@@ -379,14 +385,29 @@ enum SNAPPacketPDFStrings {
         let portal = SNAPAgencyDirectory.portalName(for: stateCode)
         let host = SNAPAgencyDirectory.portalShortURL(for: stateCode)
         let agency = SNAPAgencyDirectory.agencyShortName(for: stateCode, language: language)
-        let portalRef = portal.isEmpty
-            ? (language == .english ? "your state SNAP portal" : "el portal de SNAP de tu estado")
-            : (host.isEmpty ? portal : "\(portal) (\(host))")
+        let portalRef: String
+        if portal.isEmpty {
+            switch language {
+            case .english: portalRef = "your state SNAP portal"
+            case .mandarin: portalRef = "你所在州的 SNAP 网站"
+            case .spanish: portalRef = "el portal de SNAP de tu estado"
+            case .vietnamese: portalRef = "cổng SNAP của tiểu bang bạn"
+            case .tagalog: portalRef = "ang SNAP portal ng iyong estado"
+            }
+        } else {
+            portalRef = host.isEmpty ? portal : "\(portal) (\(host))"
+        }
         switch language {
-        case .english, .mandarin, .vietnamese, .tagalog:
+        case .english:
             return "This is a personal reference document prepared from your answers in Civica. It is NOT an official application. Submit your real application via \(portalRef) or in person at a \(agency) office."
+        case .mandarin:
+            return "这是根据你在 Civica 中填写的回答整理的个人参考文件。这不是正式申请。请通过 \(portalRef) 或亲自前往 \(agency) 办公室提交你的正式申请。"
         case .spanish:
             return "Este es un documento personal de referencia preparado a partir de tus respuestas en Civica. NO es una solicitud oficial. Envía tu solicitud real a través de \(portalRef) o en persona en una oficina de \(agency)."
+        case .vietnamese:
+            return "Đây là tài liệu tham khảo cá nhân được lập từ câu trả lời của bạn trong Civica. Đây KHÔNG phải là đơn xin chính thức. Hãy nộp đơn xin chính thức qua \(portalRef) hoặc trực tiếp tại văn phòng \(agency)."
+        case .tagalog:
+            return "Ito ay personal na reference na dokumento na inihanda mula sa iyong mga sagot sa Civica. HINDI ito opisyal na application. I-submit ang iyong tunay na application sa pamamagitan ng \(portalRef) o personal sa isang opisina ng \(agency)."
         }
     }
 
@@ -397,8 +418,11 @@ enum SNAPPacketPDFStrings {
         let normalized = (stateCode ?? "").trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
         let state = normalized.isEmpty ? SNAPAgencyDirectory.launchStateCode : normalized
         switch language {
-        case .english, .mandarin, .vietnamese, .tagalog: return "Civica · local v1 · FY26 federal poverty guidelines · \(state) BBCE 200%"
+        case .english: return "Civica · local v1 · FY26 federal poverty guidelines · \(state) BBCE 200%"
+        case .mandarin: return "Civica · 本地 v1 · FY26 联邦贫困线 · \(state) BBCE 200%"
         case .spanish: return "Civica · v1 local · pautas federales de pobreza AF26 · \(state) BBCE 200%"
+        case .vietnamese: return "Civica · v1 nội bộ · hướng dẫn mức nghèo liên bang FY26 · \(state) BBCE 200%"
+        case .tagalog: return "Civica · local v1 · FY26 federal poverty guidelines · \(state) BBCE 200%"
         }
     }
 }

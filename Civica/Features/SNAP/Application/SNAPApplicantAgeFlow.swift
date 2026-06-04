@@ -204,25 +204,37 @@ enum SNAPApplicantAgeStrings {
 
     static let title = CivicaText(
         "When were you born?",
-        es: "¿Cuándo naciste?"
+        es: "¿Cuándo naciste?",
+        zh: "你的出生日期是？",
+        vi: "Bạn sinh ngày nào?",
+        tl: "Kailan ka ipinanganak?"
     )
     // Wave C — ID-scan affordance for DOB only (name dropped per
     // privacy firewall).
     static let scanIDCTA = CivicaText(
         "Scan your ID to fill DOB",
-        es: "Escanea tu identificación para llenar la fecha"
+        es: "Escanea tu identificación para llenar la fecha",
+        zh: "扫描你的身份证件来填写出生日期",
+        vi: "Quét giấy tờ tùy thân để điền ngày sinh",
+        tl: "I-scan ang iyong ID para mapunan ang petsa ng kapanganakan"
     )
 
     static let helper = CivicaText(
         "Your exact age changes which SNAP deductions you can get. We don't share your birth date with anyone.",
-        es: "Tu edad exacta cambia qué deducciones de SNAP puedes recibir. No compartimos tu fecha de nacimiento con nadie."
+        es: "Tu edad exacta cambia qué deducciones de SNAP puedes recibir. No compartimos tu fecha de nacimiento con nadie.",
+        zh: "你的准确年龄会影响你能获得哪些 SNAP 扣减项目。我们不会把你的出生日期分享给任何人。",
+        vi: "Tuổi chính xác của bạn quyết định bạn được hưởng những khoản khấu trừ SNAP nào. Chúng tôi không chia sẻ ngày sinh của bạn với bất kỳ ai.",
+        tl: "Ang eksaktong edad mo ang magtatakda kung anong mga SNAP deduction ang puwede mong makuha. Hindi namin ibinabahagi ang petsa ng kapanganakan mo kahit kanino."
     )
 
     /// "You're 34" / "Tienes 34 años". Caller passes the derived age.
     static func ageReadout(age: Int, language: CivicaLanguage) -> String {
         switch language {
-        case .english, .mandarin, .vietnamese, .tagalog: return "You're \(age)"
+        case .english: return "You're \(age)"
+        case .mandarin: return "你 \(age) 岁"
         case .spanish: return "Tienes \(age) años"
+        case .vietnamese: return "Bạn \(age) tuổi"
+        case .tagalog: return "\(age) ka"
         }
     }
 }

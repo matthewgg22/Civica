@@ -256,99 +256,170 @@ enum SNAPDocumentRetryStrings {
 
     static let eyebrow = CivicaText(
         "Photo · what we got",
-        es: "Foto · lo que recibimos"
+        es: "Foto · lo que recibimos",
+        zh: "照片 · 我们收到的",
+        vi: "Ảnh · những gì chúng tôi nhận được",
+        tl: "Larawan · ang natanggap namin"
     )
     static let title = CivicaText(
         "We couldn't read it clearly.",
-        es: "No la pudimos leer claramente."
+        es: "No la pudimos leer claramente.",
+        zh: "我们没办法看清楚。",
+        vi: "Chúng tôi không đọc rõ được.",
+        tl: "Hindi namin ito mabasa nang malinaw."
     )
 
     static let whatWeGotLabel = CivicaText(
         "Your photo",
-        es: "Tu foto"
+        es: "Tu foto",
+        zh: "你的照片",
+        vi: "Ảnh của bạn",
+        tl: "Ang larawan mo"
     )
     static let previewBadge = CivicaText(
         "Hard to read",
-        es: "Difícil de leer"
+        es: "Difícil de leer",
+        zh: "难以辨认",
+        vi: "Khó đọc",
+        tl: "Mahirap basahin"
     )
     static let previewAccessibility = CivicaText(
         "The photo you just took. Marked as hard to read by Civica's on-device check.",
-        es: "La foto que acabas de tomar. Marcada como difícil de leer por la verificación local de Civica."
+        es: "La foto que acabas de tomar. Marcada como difícil de leer por la verificación local de Civica.",
+        zh: "你刚刚拍的照片。Civica 本地检查标记为难以辨认。",
+        vi: "Ảnh bạn vừa chụp. Được kiểm tra ngay trên máy của Civica đánh dấu là khó đọc.",
+        tl: "Ang larawang katatapos mo lang kunan. Minarkahan bilang mahirap basahin ng on-device na pagsusuri ng Civica."
     )
 
     static let tipsLabel = CivicaText(
         "What usually helps",
-        es: "Lo que suele ayudar"
+        es: "Lo que suele ayudar",
+        zh: "通常有帮助的做法",
+        vi: "Những cách thường có ích",
+        tl: "Ang madalas na nakakatulong"
     )
     static let retakeCTA = CivicaText(
         "Take another photo",
-        es: "Tomar otra foto"
+        es: "Tomar otra foto",
+        zh: "再拍一张",
+        vi: "Chụp lại ảnh khác",
+        tl: "Kumuha ng bagong larawan"
     )
     static let keepAnywayCTA = CivicaText(
         "Keep this photo anyway",
-        es: "Quedarme con esta foto"
+        es: "Quedarme con esta foto",
+        zh: "仍然保留这张照片",
+        vi: "Vẫn giữ ảnh này",
+        tl: "Panatilihin pa rin ang larawang ito"
     )
     static let differentDocumentCTA = CivicaText(
         "Skip and use a different document →",
-        es: "Saltar y usar otro documento →"
+        es: "Saltar y usar otro documento →",
+        zh: "跳过并使用其他文件 →",
+        vi: "Bỏ qua và dùng giấy tờ khác →",
+        tl: "Laktawan at gumamit ng ibang dokumento →"
     )
 
     // MARK: - Reason headlines (one per rejection mode)
 
     static let reasonBoundary = CivicaText(
         "We couldn't find the edges of the document",
-        es: "No encontramos los bordes del documento"
+        es: "No encontramos los bordes del documento",
+        zh: "我们找不到文件的边缘",
+        vi: "Chúng tôi không tìm thấy các mép của giấy tờ",
+        tl: "Hindi namin makita ang mga gilid ng dokumento"
     )
     static let reasonBlurry = CivicaText(
         "The photo came out too blurry",
-        es: "La foto salió muy borrosa"
+        es: "La foto salió muy borrosa",
+        zh: "照片拍得太模糊了",
+        vi: "Ảnh chụp ra quá mờ",
+        tl: "Masyadong malabo ang lumabas na larawan"
     )
     static let reasonDark = CivicaText(
         "The photo is too dark",
-        es: "La foto está muy oscura"
+        es: "La foto está muy oscura",
+        zh: "照片太暗了",
+        vi: "Ảnh quá tối",
+        tl: "Masyadong madilim ang larawan"
     )
     static let reasonBright = CivicaText(
         "There's too much glare on the photo",
-        es: "Hay demasiado reflejo en la foto"
+        es: "Hay demasiado reflejo en la foto",
+        zh: "照片上反光太多了",
+        vi: "Ảnh bị chói sáng quá nhiều",
+        tl: "Masyadong maraming silaw sa larawan"
     )
     static let reasonGeneric = CivicaText(
         "Something looked off about this photo",
-        es: "Algo no se ve bien en esta foto"
+        es: "Algo no se ve bien en esta foto",
+        zh: "这张照片看起来有点不对劲",
+        vi: "Có gì đó không ổn với ảnh này",
+        tl: "May mukhang hindi tama sa larawang ito"
     )
 
     // MARK: - Reason details
 
     static let detailBoundary = CivicaText(
         "All four corners of the document need to be in frame. Try placing it on a dark surface so the edges stand out.",
-        es: "Las cuatro esquinas del documento deben estar en el cuadro. Intenta ponerlo sobre una superficie oscura para que se vean los bordes."
+        es: "Las cuatro esquinas del documento deben estar en el cuadro. Intenta ponerlo sobre una superficie oscura para que se vean los bordes.",
+        zh: "文件的四个角都要在画面里。试着把它放在深色的桌面上,这样边缘会更清楚。",
+        vi: "Cả bốn góc của giấy tờ phải nằm trong khung hình. Thử đặt nó lên bề mặt tối để các mép nổi rõ.",
+        tl: "Kailangang nasa frame lahat ng apat na sulok ng dokumento. Subukan itong ilagay sa madilim na ibabaw para lumitaw ang mga gilid."
     )
     static let detailBlurry = CivicaText(
         "The text and numbers came back too unclear to verify. Hold the phone steady and tap the screen to focus before snapping.",
-        es: "El texto y los números se ven muy poco claros. Sujeta el teléfono firme y toca la pantalla para enfocar antes de tomar la foto."
+        es: "El texto y los números se ven muy poco claros. Sujeta el teléfono firme y toca la pantalla para enfocar antes de tomar la foto.",
+        zh: "文字和数字太模糊,没办法核对。把手机拿稳,拍之前点一下屏幕对焦。",
+        vi: "Chữ và số chụp ra quá mờ nên không kiểm tra được. Giữ điện thoại thật chắc và chạm vào màn hình để lấy nét trước khi chụp.",
+        tl: "Masyadong malabo ang mga teksto at numero para ma-verify. Hawakan nang matatag ang telepono at i-tap ang screen para mag-focus bago kumuha."
     )
     static let detailDark = CivicaText(
         "Move to brighter light, or turn on your phone's flashlight before retaking.",
-        es: "Muévete a un lugar con más luz, o enciende la linterna de tu teléfono antes de tomarla de nuevo."
+        es: "Muévete a un lugar con más luz, o enciende la linterna de tu teléfono antes de tomarla de nuevo.",
+        zh: "换到光线更亮的地方,或者重拍前打开手机的手电筒。",
+        vi: "Hãy chuyển đến chỗ sáng hơn, hoặc bật đèn pin điện thoại trước khi chụp lại.",
+        tl: "Lumipat sa mas maliwanag na ilaw, o buksan ang flashlight ng telepono mo bago kumuha ulit."
     )
     static let detailBright = CivicaText(
         "Sunlight or a lamp shining directly on the document washes out the text. Try a softer angle or step into the shade.",
-        es: "La luz directa del sol o una lámpara apaga el texto. Intenta un ángulo más suave o muévete a la sombra."
+        es: "La luz directa del sol o una lámpara apaga el texto. Intenta un ángulo más suave o muévete a la sombra.",
+        zh: "阳光或台灯直射文件会让文字看不清。换个柔和一点的角度,或者挪到阴影里。",
+        vi: "Ánh nắng hoặc đèn chiếu thẳng vào giấy tờ sẽ làm mờ chữ. Thử một góc dịu hơn hoặc bước vào chỗ râm.",
+        tl: "Ang sikat ng araw o lampara na tumatama nang direkta sa dokumento ay nagpaparusot ng teksto. Subukan ang mas malambot na anggulo o pumunta sa lilim."
     )
     static let detailGeneric = CivicaText(
         "Civica's on-device check flagged the photo. Retake or keep it and the caseworker will let us know if it's good enough.",
-        es: "La verificación local de Civica marcó la foto. Vuelve a tomarla o quédate con ella y el asesor nos dirá si es suficiente."
+        es: "La verificación local de Civica marcó la foto. Vuelve a tomarla o quédate con ella y el asesor nos dirá si es suficiente.",
+        zh: "Civica 的本地检查标记了这张照片。你可以重拍,或者保留它 —— 案件管理员会告诉我们是否够用。",
+        vi: "Phần kiểm tra ngay trên máy của Civica đã đánh dấu ảnh này. Bạn có thể chụp lại hoặc giữ nó — nhân viên phụ trách hồ sơ sẽ cho chúng tôi biết nếu ảnh đủ rõ.",
+        tl: "Minarkahan ng on-device na pagsusuri ng Civica ang larawan. Kumuha ulit o panatilihin ito at sasabihin sa amin ng caseworker kung sapat na ito."
     )
 
     // MARK: - Tips (always shown)
 
     static func tips(language: CivicaLanguage) -> [String] {
         switch language {
-        case .english, .mandarin, .vietnamese, .tagalog:
+        case .english:
             return [
                 "Place the document on a dark surface — a kitchen table works.",
                 "Tap the screen to focus before snapping.",
                 "Make sure all four corners are in frame.",
                 "Daylight or a phone flashlight is better than a lamp.",
+            ]
+        case .tagalog:
+            return [
+                "Ilagay ang dokumento sa madilim na ibabaw — pwede na ang mesa sa kusina.",
+                "I-tap ang screen para mag-focus bago kumuha.",
+                "Siguraduhing nasa frame lahat ng apat na sulok.",
+                "Mas maganda ang liwanag ng araw o flashlight ng telepono kaysa lampara.",
+            ]
+        case .mandarin:
+            return [
+                "把文件放在深色的桌面上 —— 厨房桌子就可以。",
+                "拍之前点一下屏幕对焦。",
+                "确认四个角都在画面里。",
+                "自然光或手机手电筒比台灯效果更好。",
             ]
         case .spanish:
             return [
@@ -356,6 +427,13 @@ enum SNAPDocumentRetryStrings {
                 "Toca la pantalla para enfocar antes de tomar la foto.",
                 "Asegúrate de que las cuatro esquinas estén en el cuadro.",
                 "La luz del día o la linterna del teléfono funcionan mejor que una lámpara.",
+            ]
+        case .vietnamese:
+            return [
+                "Đặt giấy tờ lên bề mặt tối — bàn bếp là được.",
+                "Chạm vào màn hình để lấy nét trước khi chụp.",
+                "Đảm bảo cả bốn góc đều nằm trong khung hình.",
+                "Ánh sáng ban ngày hoặc đèn pin điện thoại tốt hơn đèn bàn.",
             ]
         }
     }

@@ -691,11 +691,17 @@ private struct CivicaPhase2MilestoneDetailSheet: View {
 
     private var content: Content {
         switch (milestone, language) {
-        case (.submitted, .english), (.submitted, .mandarin), (.submitted, .vietnamese), (.submitted, .tagalog):
+        case (.submitted, .english), (.submitted, .mandarin):
             return Content(
                 title: "Submitted",
                 body: "Your application has been received by the county. A caseworker will be assigned within one business day.",
                 timeframe: "Usually completes within 1 business day"
+            )
+        case (.submitted, .tagalog):
+            return Content(
+                title: "Naipasa na",
+                body: "Natanggap na ng county ang iyong aplikasyon. May caseworker na itatalaga sa loob ng isang araw ng trabaho.",
+                timeframe: "Karaniwang tapos sa loob ng 1 araw ng trabaho"
             )
         case (.submitted, .spanish):
             return Content(
@@ -703,11 +709,23 @@ private struct CivicaPhase2MilestoneDetailSheet: View {
                 body: "Tu solicitud fue recibida por el condado. Te asignarán un trabajador del caso dentro de un día hábil.",
                 timeframe: "Suele completarse en 1 día hábil"
             )
-        case (.inReview, .english), (.inReview, .mandarin), (.inReview, .vietnamese), (.inReview, .tagalog):
+        case (.submitted, .vietnamese):
+            return Content(
+                title: "Đã nộp",
+                body: "Quận đã nhận đơn của bạn. Một nhân viên xử lý hồ sơ sẽ được phân công trong vòng một ngày làm việc.",
+                timeframe: "Thường hoàn tất trong 1 ngày làm việc"
+            )
+        case (.inReview, .english), (.inReview, .mandarin):
             return Content(
                 title: "In review",
                 body: "A caseworker is checking your documents and looking for anything missing. If something is missing they'll send a Documents Requested notice through this app.",
                 timeframe: "Usually 7–14 days"
+            )
+        case (.inReview, .tagalog):
+            return Content(
+                title: "Sinusuri",
+                body: "May caseworker na nagre-review ng iyong mga dokumento at naghahanap kung may kulang. Kung may kulang, magpapadala sila ng Documents Requested na abiso sa app na ito.",
+                timeframe: "Karaniwang 7–14 na araw"
             )
         case (.inReview, .spanish):
             return Content(
@@ -715,11 +733,23 @@ private struct CivicaPhase2MilestoneDetailSheet: View {
                 body: "Un trabajador del caso está revisando tus documentos y notando lo que falta. Si falta algo te enviará un aviso de Documentos Solicitados por esta app.",
                 timeframe: "Suele tomar de 7 a 14 días"
             )
-        case (.interview, .english), (.interview, .mandarin), (.interview, .vietnamese), (.interview, .tagalog):
+        case (.inReview, .vietnamese):
+            return Content(
+                title: "Đang xét duyệt",
+                body: "Một nhân viên xử lý hồ sơ đang kiểm tra giấy tờ của bạn và tìm xem có thiếu gì không. Nếu thiếu, họ sẽ gửi thông báo Yêu cầu Giấy tờ qua ứng dụng này.",
+                timeframe: "Thường mất 7–14 ngày"
+            )
+        case (.interview, .english), (.interview, .mandarin):
             return Content(
                 title: "Interview",
                 body: "The county calls you for a 15-minute eligibility interview. They'll verify your application and ask about anything that wasn't clear. Missing this call is the most common reason cases get closed — set an alarm 15 minutes before.",
                 timeframe: "Usually within 2 weeks of submission"
+            )
+        case (.interview, .tagalog):
+            return Content(
+                title: "Interbyu",
+                body: "Tatawagan ka ng county para sa 15-minutong interbyu sa eligibility. Vi-verify nila ang iyong aplikasyon at magtatanong tungkol sa anumang hindi malinaw. Ang hindi pagsagot sa tawag na ito ang pinakakaraniwang dahilan kung bakit nasasara ang mga kaso — mag-set ng alarm 15 minuto bago iyon.",
+                timeframe: "Karaniwang sa loob ng 2 linggo mula nang ipasa"
             )
         case (.interview, .spanish):
             return Content(
@@ -727,17 +757,35 @@ private struct CivicaPhase2MilestoneDetailSheet: View {
                 body: "El condado te llama para una entrevista de elegibilidad de 15 minutos. Verificará tu solicitud y preguntará por lo que no haya quedado claro. Perder esta llamada es la razón más común por la que se cierran los casos — pon una alarma 15 minutos antes.",
                 timeframe: "Usualmente dentro de 2 semanas tras enviar"
             )
-        case (.decision, .english), (.decision, .mandarin), (.decision, .vietnamese), (.decision, .tagalog):
+        case (.interview, .vietnamese):
+            return Content(
+                title: "Phỏng vấn",
+                body: "Quận sẽ gọi cho bạn để phỏng vấn xét điều kiện trong 15 phút. Họ sẽ xác minh đơn của bạn và hỏi về những điều chưa rõ. Bỏ lỡ cuộc gọi này là lý do phổ biến nhất khiến hồ sơ bị đóng — hãy đặt báo thức trước 15 phút.",
+                timeframe: "Thường trong vòng 2 tuần kể từ khi nộp"
+            )
+        case (.decision, .english), (.decision, .mandarin):
             return Content(
                 title: "Decision",
                 body: "By federal rule, the county has 30 days from submission to issue a decision. Expedited (emergency) cases are 7 days. You'll see the result here and get a separate letter from the county.",
                 timeframe: "Federal rule: 30 days (7 days for expedited)"
+            )
+        case (.decision, .tagalog):
+            return Content(
+                title: "Desisyon",
+                body: "Ayon sa federal na patakaran, may 30 araw ang county mula sa pagpapasa para maglabas ng desisyon. Ang mga expedited (emergency) na kaso ay 7 araw. Makikita mo ang resulta dito at makakatanggap ng hiwalay na sulat mula sa county.",
+                timeframe: "Federal na patakaran: 30 araw (7 araw para sa expedited)"
             )
         case (.decision, .spanish):
             return Content(
                 title: "Decisión",
                 body: "Por regla federal, el condado tiene 30 días tras enviar para emitir una decisión. Los casos urgentes son 7 días. Verás el resultado aquí y recibirás una carta aparte del condado.",
                 timeframe: "Regla federal: 30 días (7 días en casos urgentes)"
+            )
+        case (.decision, .vietnamese):
+            return Content(
+                title: "Quyết định",
+                body: "Theo quy định liên bang, quận có 30 ngày kể từ khi nộp để ra quyết định. Hồ sơ khẩn cấp là 7 ngày. Bạn sẽ thấy kết quả ở đây và nhận một lá thư riêng từ quận.",
+                timeframe: "Quy định liên bang: 30 ngày (7 ngày cho hồ sơ khẩn cấp)"
             )
         }
     }
@@ -781,7 +829,7 @@ private struct CivicaPhase2MilestoneDetailSheet: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button(language == .spanish ? "Listo" : "Done") { dismiss() }
+                    Button(SNAPSettingsStrings.done.value(in: language)) { dismiss() }
                         .foregroundStyle(CivicaColors.pinePrimary)
                 }
             }
@@ -792,72 +840,90 @@ private struct CivicaPhase2MilestoneDetailSheet: View {
 // MARK: - Strings
 
 enum CivicaPhase2Strings {
-    static let fallbackCounty = CivicaText("your county", es: "tu condado")
+    static let fallbackCounty = CivicaText("your county", es: "tu condado", vi: "quận của bạn", tl: "iyong county")
 
     // Status pills
-    static let pillSubmitted = CivicaText("Submitted", es: "Enviada")
-    static let pillDocumentsRequested = CivicaText("Documents requested", es: "Documentos solicitados")
-    static let pillInterviewScheduled = CivicaText("Interview scheduled", es: "Entrevista programada")
-    static let pillInterviewCompleted = CivicaText("Interview complete", es: "Entrevista completa")
+    static let pillSubmitted = CivicaText("Submitted", es: "Enviada", vi: "Đã nộp", tl: "Naipasa na")
+    static let pillDocumentsRequested = CivicaText("Documents requested", es: "Documentos solicitados", vi: "Đã yêu cầu giấy tờ", tl: "Humihingi ng dokumento")
+    static let pillInterviewScheduled = CivicaText("Interview scheduled", es: "Entrevista programada", vi: "Đã lên lịch phỏng vấn", tl: "Naka-schedule ang interbyu")
+    static let pillInterviewCompleted = CivicaText("Interview complete", es: "Entrevista completa", vi: "Phỏng vấn hoàn tất", tl: "Tapos na ang interbyu")
 
     static func dayN(count: Int, language: CivicaLanguage) -> String {
         switch language {
-        case .english, .mandarin, .vietnamese, .tagalog: return "Day \(count) of ~10"
+        case .english, .mandarin: return "Day \(count) of ~10"
         case .spanish: return "Día \(count) de ~10"
+        case .vietnamese: return "Ngày \(count) trên ~10"
+        case .tagalog: return "Araw \(count) ng ~10"
         }
     }
 
     // Timeline labels
-    static let timelineSubmitted = CivicaText("Submitted", es: "Enviada")
-    static let timelineInReview  = CivicaText("In review", es: "En revisión")
-    static let timelineInterview = CivicaText("Interview", es: "Entrevista")
-    static let timelineDecision  = CivicaText("Decision", es: "Decisión")
+    static let timelineSubmitted = CivicaText("Submitted", es: "Enviada", vi: "Đã nộp", tl: "Naipasa na")
+    static let timelineInReview  = CivicaText("In review", es: "En revisión", vi: "Đang xét duyệt", tl: "Sinusuri")
+    static let timelineInterview = CivicaText("Interview", es: "Entrevista", vi: "Phỏng vấn", tl: "Interbyu")
+    static let timelineDecision  = CivicaText("Decision", es: "Decisión", vi: "Quyết định", tl: "Desisyon")
 
     // Interview appointment card (IA-1). Label reuses timelineInterview
     // ("Interview" / "Entrevista"). Relative-time phrases below:
-    static let appointmentToday    = CivicaText("Today", es: "Hoy")
-    static let appointmentTomorrow = CivicaText("Tomorrow", es: "Mañana")
+    static let appointmentToday    = CivicaText("Today", es: "Hoy", vi: "Hôm nay", tl: "Ngayon")
+    static let appointmentTomorrow = CivicaText("Tomorrow", es: "Mañana", vi: "Ngày mai", tl: "Bukas")
     static func appointmentInDays(days: Int, language: CivicaLanguage) -> String {
         switch language {
-        case .english, .mandarin, .vietnamese, .tagalog: return "In \(days) days"
+        case .english, .mandarin: return "In \(days) days"
         case .spanish: return "En \(days) días"
+        case .vietnamese: return "Còn \(days) ngày"
+        case .tagalog: return "Sa \(days) araw"
         }
     }
 
     // Headline
     static func headline(county: String, language: CivicaLanguage) -> String {
         switch language {
-        case .english, .mandarin, .vietnamese, .tagalog: return "Your application is with \(county)."
+        case .english, .mandarin: return "Your application is with \(county)."
         case .spanish: return "Tu solicitud está con \(county)."
+        case .vietnamese: return "Đơn của bạn đang ở \(county)."
+        case .tagalog: return "Nasa \(county) na ang iyong aplikasyon."
         }
     }
 
     // What the county is doing now
     static let bodySubmitted = CivicaText(
         "A caseworker is reviewing your documents. If everything's clear, they'll call to schedule a 15-minute interview within the next few days.",
-        es: "Un trabajador social está revisando tus documentos. Si todo está claro, te llamarán para programar una entrevista de 15 minutos en los próximos días."
+        es: "Un trabajador social está revisando tus documentos. Si todo está claro, te llamarán para programar una entrevista de 15 minutos en los próximos días.",
+        vi: "Một nhân viên xử lý hồ sơ đang xem giấy tờ của bạn. Nếu mọi thứ rõ ràng, họ sẽ gọi để hẹn phỏng vấn 15 phút trong vài ngày tới.",
+        tl: "May caseworker na nagre-review ng iyong mga dokumento. Kung malinaw ang lahat, tatawag sila para mag-schedule ng 15-minutong interbyu sa loob ng susunod na ilang araw."
     )
     static let bodyDocumentsRequested = CivicaText(
         "The county needs more documents before they can continue. Upload them so a caseworker can pick the review back up.",
-        es: "El condado necesita más documentos antes de continuar. Súbelos para que un trabajador social pueda continuar con la revisión."
+        es: "El condado necesita más documentos antes de continuar. Súbelos para que un trabajador social pueda continuar con la revisión.",
+        vi: "Quận cần thêm giấy tờ trước khi có thể tiếp tục. Hãy tải lên để nhân viên xử lý hồ sơ tiếp tục xét duyệt.",
+        tl: "Kailangan ng county ng karagdagang dokumento bago sila makatuloy. I-upload mo ang mga ito para maituloy ng caseworker ang review."
     )
     static let bodyInterviewScheduled = CivicaText(
         "Your eligibility interview is on the calendar. A caseworker will call at the scheduled time to verify your application.",
-        es: "Tu entrevista de elegibilidad está agendada. Un trabajador social te llamará a la hora programada para verificar tu solicitud."
+        es: "Tu entrevista de elegibilidad está agendada. Un trabajador social te llamará a la hora programada para verificar tu solicitud.",
+        vi: "Buổi phỏng vấn xét điều kiện của bạn đã có trên lịch. Một nhân viên xử lý hồ sơ sẽ gọi đúng giờ đã hẹn để xác minh đơn của bạn.",
+        tl: "Nasa kalendaryo na ang iyong interbyu sa eligibility. Tatawag ang caseworker sa nakatakdang oras para i-verify ang iyong aplikasyon."
     )
     static let bodyInterviewCompleted = CivicaText(
         "The interview is done. The county will mail a written decision — usually within 30 days of when you applied.",
-        es: "La entrevista está completa. El condado enviará por correo una decisión escrita — usualmente dentro de los 30 días desde que aplicaste."
+        es: "La entrevista está completa. El condado enviará por correo una decisión escrita — usualmente dentro de los 30 días desde que aplicaste.",
+        vi: "Phỏng vấn đã xong. Quận sẽ gửi quyết định bằng văn bản qua thư — thường trong vòng 30 ngày kể từ khi bạn nộp đơn.",
+        tl: "Tapos na ang interbyu. Magpapadala ang county ng nakasulat na desisyon sa koreo — karaniwang sa loob ng 30 araw mula nang ikaw ay nag-apply."
     )
 
     // CTA
     static let primaryCTAWhatNext = CivicaText(
         "How to prepare for what's next",
-        es: "Cómo prepararte para lo que sigue"
+        es: "Cómo prepararte para lo que sigue",
+        vi: "Cách chuẩn bị cho bước tiếp theo",
+        tl: "Paano maghanda para sa susunod"
     )
     static let primaryCTAPrepareInterview = CivicaText(
         "Prepare for your interview",
-        es: "Prepárate para tu entrevista"
+        es: "Prepárate para tu entrevista",
+        vi: "Chuẩn bị cho buổi phỏng vấn",
+        tl: "Maghanda para sa iyong interbyu"
     )
 
     // Action rows
@@ -876,7 +942,7 @@ enum CivicaPhase2Strings {
     // and carries no second-person pronoun, sidestepping tú/usted.
     static func documentsRequestedHeadline(count: Int, language: CivicaLanguage) -> String {
         switch language {
-        case .english, .mandarin, .vietnamese, .tagalog:
+        case .english, .mandarin:
             return count == 1
                 ? "A routine step — 1 document to upload"
                 : "A routine step — \(count) documents to upload"
@@ -884,27 +950,39 @@ enum CivicaPhase2Strings {
             return count == 1
                 ? "Un paso de rutina — 1 documento por subir"
                 : "Un paso de rutina — \(count) documentos por subir"
+        case .vietnamese:
+            return count == 1
+                ? "Một bước thường lệ — 1 giấy tờ cần tải lên"
+                : "Một bước thường lệ — \(count) giấy tờ cần tải lên"
+        case .tagalog:
+            return count == 1
+                ? "Karaniwang hakbang — 1 dokumento ang i-upload"
+                : "Karaniwang hakbang — \(count) dokumento ang i-upload"
         }
     }
     static func unreadMessagesHeadline(count: Int, language: CivicaLanguage) -> String {
         switch language {
-        case .english, .mandarin, .vietnamese, .tagalog:
+        case .english, .mandarin:
             return count == 1 ? "1 new message" : "\(count) new messages"
         case .spanish:
             return count == 1 ? "1 mensaje nuevo" : "\(count) mensajes nuevos"
+        case .vietnamese:
+            return count == 1 ? "1 tin nhắn mới" : "\(count) tin nhắn mới"
+        case .tagalog:
+            return count == 1 ? "1 bagong mensahe" : "\(count) bagong mensahe"
         }
     }
 
     // Secondary rows
-    static let findHelpEyebrow = CivicaText("Need food while you wait?", es: "¿Necesitas comida mientras esperas?")
-    static let findHelpLink    = CivicaText("Find help nearby", es: "Encuentra ayuda cerca")
+    static let findHelpEyebrow = CivicaText("Need food while you wait?", es: "¿Necesitas comida mientras esperas?", vi: "Cần thức ăn trong khi chờ?", tl: "Kailangan ng pagkain habang naghihintay?")
+    static let findHelpLink    = CivicaText("Find help nearby", es: "Encuentra ayuda cerca", vi: "Tìm hỗ trợ gần bạn", tl: "Maghanap ng tulong malapit sa iyo")
     // UD-6 (audit 2026-05-29): row link renamed from "Message a navigator"
     // → "Open the state portal". Civica does not yet have a real human-
     // navigator channel wired (per docs/plans/real-navigator-handoff-2026-Q3.md
     // when that plan lands); honest copy describes the actual destination
     // and avoids the trust break that fires the moment the user taps.
-    static let navigatorEyebrow = CivicaText("Have a question?", es: "¿Tienes una pregunta?")
-    static let navigatorLink    = CivicaText("Open the state portal", es: "Abrir el portal estatal")
+    static let navigatorEyebrow = CivicaText("Have a question?", es: "¿Tienes una pregunta?", vi: "Có câu hỏi?", tl: "May tanong ka ba?")
+    static let navigatorLink    = CivicaText("Open the state portal", es: "Abrir el portal estatal", vi: "Mở cổng tiểu bang", tl: "Buksan ang state portal")
 }
 
 #if DEBUG

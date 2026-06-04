@@ -26,7 +26,10 @@ enum IntakeHelpStrings {
     /// users get the full label.
     static let helpButtonAccessibilityLabel = CivicaText(
         "Ask Mae about this question",
-        es: "Pregúntale a Mae sobre esta pregunta"
+        es: "Pregúntale a Mae sobre esta pregunta",
+        zh: "向 Mae 询问这个问题",
+        vi: "Hỏi Mae về câu hỏi này",
+        tl: "Itanong kay Mae ang tungkol sa tanong na ito"
     )
 
     // MARK: - Sheet chrome
@@ -34,13 +37,19 @@ enum IntakeHelpStrings {
     /// Navigation title on the contextual-help sheet.
     static let sheetTitle = CivicaText(
         "Ask Mae",
-        es: "Pregúntale a Mae"
+        es: "Pregúntale a Mae",
+        zh: "询问 Mae",
+        vi: "Hỏi Mae",
+        tl: "Itanong kay Mae"
     )
 
     /// Dismiss control on the sheet.
     static let sheetDoneButton = CivicaText(
         "Done",
-        es: "Listo"
+        es: "Listo",
+        zh: "完成",
+        vi: "Xong",
+        tl: "Tapos na"
     )
 
     // MARK: - Loading states
@@ -55,14 +64,20 @@ enum IntakeHelpStrings {
     /// human voice — no "thinking"/"searching" robot-speak.
     static let loadingText = CivicaText(
         "Reading your question…",
-        es: "Leyendo tu pregunta…"
+        es: "Leyendo tu pregunta…",
+        zh: "正在阅读你的问题……",
+        vi: "Đang đọc câu hỏi của bạn…",
+        tl: "Binabasa ang iyong tanong…"
     )
 
     /// Swap-in after ~1.5s elapsed without a response. Universal
     /// calm-wait phrase, no anthropomorphizing.
     static let stillThinkingText = CivicaText(
         "One moment…",
-        es: "Un momento…"
+        es: "Un momento…",
+        zh: "请稍等……",
+        vi: "Chờ một chút…",
+        tl: "Sandali lang…"
     )
 
     // MARK: - Error fallback (per D6 — load-bearing)
@@ -78,7 +93,10 @@ enum IntakeHelpStrings {
     /// substitutes the {title} placeholder with the actual question.
     static let errorFallbackTemplate = CivicaText(
         "{title}. We could not reach our assistant just now. Your county navigator can clarify what this question is asking.",
-        es: "{title}. No pudimos conectar con nuestro asistente en este momento. Tu orientador del condado puede aclarar lo que pregunta esta pregunta."
+        es: "{title}. No pudimos conectar con nuestro asistente en este momento. Tu orientador del condado puede aclarar lo que pregunta esta pregunta.",
+        zh: "{title}。我们暂时无法连接到助手。你所在县的导航员可以为你解释这个问题在问什么。",
+        vi: "{title}. Chúng tôi không thể kết nối với trợ lý ngay lúc này. Nhân viên hướng dẫn của county có thể giải thích câu hỏi này đang hỏi gì.",
+        tl: "{title}. Hindi namin maabot ang aming assistant ngayon. Maipapaliwanag ng iyong county navigator kung ano ang itinatanong dito."
     )
 
     /// Standalone navigator nudge — used when the title is too long to
@@ -86,7 +104,10 @@ enum IntakeHelpStrings {
     /// closing reassurance.
     static let navigatorNudge = CivicaText(
         "Your county navigator can clarify what this question is asking.",
-        es: "Tu orientador del condado puede aclarar lo que pregunta esta pregunta."
+        es: "Tu orientador del condado puede aclarar lo que pregunta esta pregunta.",
+        zh: "你所在县的导航员可以为你解释这个问题在问什么。",
+        vi: "Nhân viên hướng dẫn của county có thể giải thích câu hỏi này đang hỏi gì.",
+        tl: "Maipapaliwanag ng iyong county navigator kung ano ang itinatanong dito."
     )
 
     // MARK: - Chat input
@@ -96,13 +117,19 @@ enum IntakeHelpStrings {
     /// obvious without needing a label above it.
     static let chatInputPlaceholder = CivicaText(
         "Ask a follow-up…",
-        es: "Haz una pregunta…"
+        es: "Haz una pregunta…",
+        zh: "继续提问……",
+        vi: "Hỏi thêm câu nữa…",
+        tl: "Magtanong pa…"
     )
 
     /// Accessibility label on the send button next to the TextField.
     static let chatSendButtonLabel = CivicaText(
         "Send",
-        es: "Enviar"
+        es: "Enviar",
+        zh: "发送",
+        vi: "Gửi",
+        tl: "Ipadala"
     )
 
     /// Tiny header label above the chat scroll area introducing Mae as
@@ -111,7 +138,10 @@ enum IntakeHelpStrings {
     /// consistent.
     static let chatIntroLabel = CivicaText(
         "Mae · SNAP assistant",
-        es: "Mae · asistente de SNAP"
+        es: "Mae · asistente de SNAP",
+        zh: "Mae · SNAP 助手",
+        vi: "Mae · trợ lý SNAP",
+        tl: "Mae · katulong sa SNAP"
     )
 
     /// AI-transparency line shown just above the chat input. Keeps the
@@ -119,7 +149,10 @@ enum IntakeHelpStrings {
     /// settings.
     static let aiDisclaimer = CivicaText(
         "Mae is an AI assistant. Double-check anything important with your county navigator.",
-        es: "Mae es un asistente de IA. Confirma cualquier cosa importante con tu orientador del condado."
+        es: "Mae es un asistente de IA. Confirma cualquier cosa importante con tu orientador del condado.",
+        zh: "Mae 是一个 AI 助手。重要的事情请向你所在县的导航员再确认一遍。",
+        vi: "Mae là trợ lý AI. Hãy kiểm tra lại bất cứ điều gì quan trọng với nhân viên hướng dẫn của county.",
+        tl: "Si Mae ay AI assistant. I-double check ang anumang mahalaga sa iyong county navigator."
     )
 
     // MARK: - View helpers

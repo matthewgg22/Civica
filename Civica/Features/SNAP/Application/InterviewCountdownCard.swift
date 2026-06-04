@@ -69,10 +69,22 @@ struct InterviewCountdownCard: View {
 
     private var headlineLine: String {
         switch language {
-        case .english, .mandarin, .vietnamese, .tagalog:
+        case .english:
             if daysUntil == 0 { return "Your interview is today." }
             if daysUntil == 1 { return "Your interview is tomorrow." }
             return "Your interview is in \(daysUntil) days."
+        case .tagalog:
+            if daysUntil == 0 { return "Ang interbyu mo ay ngayon." }
+            if daysUntil == 1 { return "Ang interbyu mo ay bukas." }
+            return "Ang interbyu mo ay sa \(daysUntil) araw."
+        case .mandarin:
+            if daysUntil == 0 { return "你的面谈就在今天。" }
+            if daysUntil == 1 { return "你的面谈就在明天。" }
+            return "你的面谈还有 \(daysUntil) 天。"
+        case .vietnamese:
+            if daysUntil == 0 { return "Buổi phỏng vấn của bạn là hôm nay." }
+            if daysUntil == 1 { return "Buổi phỏng vấn của bạn là ngày mai." }
+            return "Buổi phỏng vấn của bạn còn \(daysUntil) ngày nữa."
         case .spanish:
             if daysUntil == 0 { return "Tu entrevista es hoy." }
             if daysUntil == 1 { return "Tu entrevista es mañana." }
@@ -83,8 +95,14 @@ struct InterviewCountdownCard: View {
     private var deltaLine: String {
         let amount = NSDecimalNumber(decimal: dailyValue).intValue
         switch language {
-        case .english, .mandarin, .vietnamese, .tagalog:
+        case .english:
             return "Once approved, you'd receive about $\(amount)/day."
+        case .tagalog:
+            return "Kapag naaprubahan, makakatanggap ka ng mga $\(amount)/araw."
+        case .mandarin:
+            return "一旦获批，你每天大约能收到 $\(amount)。"
+        case .vietnamese:
+            return "Sau khi được duyệt, bạn sẽ nhận khoảng $\(amount)/ngày."
         case .spanish:
             return "Una vez aprobado, recibirías cerca de $\(amount)/día."
         }
@@ -158,12 +176,18 @@ struct InterviewDateCaptureCard: View {
 enum InterviewCountdownStrings {
     static let eyebrow = CivicaText(
         "Your interview",
-        es: "Tu entrevista"
+        es: "Tu entrevista",
+        zh: "你的面谈",
+        vi: "Buổi phỏng vấn của bạn",
+        tl: "Ang interbyu mo"
     )
 
     static let dateCaptureTitle = CivicaText(
         "When is your interview?",
-        es: "¿Cuándo es tu entrevista?"
+        es: "¿Cuándo es tu entrevista?",
+        zh: "你的面谈是什么时候？",
+        vi: "Buổi phỏng vấn của bạn là khi nào?",
+        tl: "Kailan ang interbyu mo?"
     )
 
     /// "Enter the date and time from your <agency> confirmation letter."
@@ -173,8 +197,14 @@ enum InterviewCountdownStrings {
     static func dateCaptureBody(stateCode: String?, language: CivicaLanguage) -> String {
         let agency = SNAPAgencyDirectory.agencyShortName(for: stateCode, language: language)
         switch language {
-        case .english, .mandarin, .vietnamese, .tagalog:
+        case .english:
             return "Enter the date and time from your \(agency) confirmation letter. We'll remind you the day before."
+        case .tagalog:
+            return "Ilagay ang petsa at oras mula sa confirmation letter ng \(agency) mo. Paaalalahanan ka namin isang araw bago nito."
+        case .mandarin:
+            return "请填写你 \(agency) 确认信上的日期和时间。我们会在前一天提醒你。"
+        case .vietnamese:
+            return "Nhập ngày và giờ từ thư xác nhận \(agency) của bạn. Chúng tôi sẽ nhắc bạn vào ngày hôm trước."
         case .spanish:
             return "Ingresa la fecha y hora de tu carta de confirmación de \(agency). Te recordaremos el día anterior."
         }
@@ -182,7 +212,10 @@ enum InterviewCountdownStrings {
 
     static let dateCaptureSave = CivicaText(
         "Save interview date",
-        es: "Guardar fecha"
+        es: "Guardar fecha",
+        zh: "保存面谈日期",
+        vi: "Lưu ngày phỏng vấn",
+        tl: "I-save ang petsa ng interbyu"
     )
 }
 

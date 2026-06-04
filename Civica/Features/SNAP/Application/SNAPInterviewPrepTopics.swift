@@ -29,8 +29,11 @@ enum SNAPInterviewPrepTopics {
     static func list(language: CivicaLanguage, stateCode: String? = nil) -> [Topic] {
         let topics: [Topic]
         switch language {
-        case .english, .mandarin, .vietnamese, .tagalog: topics = englishTopics
+        case .english: topics = englishTopics
+        case .mandarin: topics = mandarinTopics
         case .spanish: topics = spanishTopics
+        case .vietnamese: topics = vietnameseTopics
+        case .tagalog: topics = tagalogTopics
         }
         // Patch the day-of-call topic's permission line with the
         // active state's caller-ID text so the prep doesn't mention
@@ -52,14 +55,34 @@ enum SNAPInterviewPrepTopics {
             .map { $0.replacingOccurrences(of: "(", with: "")
                      .replacingOccurrences(of: ")", with: "") }
             .joined(separator: " / ")
-        let codePhrase = codes.isEmpty ? "" : (language == .english
-            ? " or a \(codes) area code"
-            : " o un código \(codes)")
+        let codePhrase: String
+        if codes.isEmpty {
+            codePhrase = ""
+        } else {
+            switch language {
+            case .spanish:
+                codePhrase = " o un código \(codes)"
+            case .mandarin:
+                codePhrase = "，或来自 \(codes) 区号"
+            case .vietnamese:
+                codePhrase = " hoặc mã vùng \(codes)"
+            case .english:
+                codePhrase = " or a \(codes) area code"
+            case .tagalog:
+                codePhrase = " o isang \(codes) area code"
+            }
+        }
         switch language {
-        case .english, .mandarin, .vietnamese, .tagalog:
+        case .english:
             return "Caller ID will say \"\(agency)\"\(codePhrase). They will never text you a code or ask for money."
+        case .mandarin:
+            return "来电显示会显示「\(agency)」\(codePhrase)。他们绝不会给你发短信验证码,也不会向你要钱。"
+        case .vietnamese:
+            return "Màn hình hiện số sẽ hiển thị \u{201C}\(agency)\u{201D}\(codePhrase). Họ sẽ không bao giờ nhắn tin mã cho bạn hoặc đòi tiền."
         case .spanish:
             return "El identificador de llamadas dirá \"\(agency)\"\(codePhrase). Nunca te enviarán un código de verificación ni pedirán dinero."
+        case .tagalog:
+            return "Sa Caller ID lalabas ang \u{201C}\(agency)\u{201D}\(codePhrase). Hinding-hindi ka nila tetext-an ng code o hihingian ng pera."
         }
     }
 
@@ -110,6 +133,53 @@ enum SNAPInterviewPrepTopics {
         )
     ]
 
+    private static let mandarinTopics: [Topic] = [
+        Topic(
+            id: "household",
+            title: "和你一起生活的人",
+            prompts: [
+                "所有和你一起买菜或做饭的人",
+                "他们和你的关系",
+                "他们的年龄,特别是 18 岁以下或 60 岁以上的人",
+                "任何有残疾的家庭成员"
+            ],
+            permission: "如果家庭成员经常进出,就描述你通常的情况即可。"
+        ),
+        Topic(
+            id: "income",
+            title: "你的收入",
+            prompts: [
+                "你每月税前的收入",
+                "你多久领一次工资 — 每周、每两周或每月",
+                "你在哪里工作,工作了多久",
+                "任何非劳动收入 — 社会保障、失业金、子女抚养费、退休金"
+            ],
+            permission: "如果你的收入每周不同,或者你有不止一份工作,没关系 — 照实描述就好。「会变」就是一个真实的答案。"
+        ),
+        Topic(
+            id: "home",
+            title: "你住在哪里",
+            prompts: [
+                "你目前的邮寄地址",
+                "你每月的房租或房贷",
+                "你自己支付哪些公用事业费 — 燃气、电、水、暖气",
+                "你是否为了能工作而支付托儿费用"
+            ],
+            permission: nil
+        ),
+        Topic(
+            id: "day-of-call",
+            title: "通话当天",
+            prompts: [
+                "你的带照片身份证件 — 驾照、州 ID 或护照",
+                "最近的工资单或收入证明",
+                "上个月的房租收据或租约",
+                "一支笔和一张纸 — 他们会给你一个确认编号"
+            ],
+            permission: "来电显示会显示「Massachusetts DTA」或 617 / 508 / 413 / 978 区号。他们绝不会给你发短信验证码,也不会向你要钱。"
+        )
+    ]
+
     private static let spanishTopics: [Topic] = [
         Topic(
             id: "household",
@@ -156,6 +226,100 @@ enum SNAPInterviewPrepTopics {
             permission: "El identificador de llamadas dirá \"Massachusetts DTA\" o un código 617 / 508 / 413 / 978. Nunca te enviarán un código de verificación ni pedirán dinero."
         )
     ]
+
+    private static let vietnameseTopics: [Topic] = [
+        Topic(
+            id: "household",
+            title: "Những người sống cùng bạn",
+            prompts: [
+                "Tất cả những người mua hoặc nấu ăn cùng bạn",
+                "Mối quan hệ của họ với bạn",
+                "Tuổi của họ, đặc biệt là ai dưới 18 hoặc trên 60",
+                "Bất kỳ ai sống chung đang bị khuyết tật"
+            ],
+            permission: "Nếu các thành viên trong nhà ra vào thất thường, cứ mô tả tình huống thường ngày của bạn."
+        ),
+        Topic(
+            id: "income",
+            title: "Thu nhập của bạn",
+            prompts: [
+                "Bạn kiếm được bao nhiêu mỗi tháng trước thuế",
+                "Bạn được trả lương bao lâu một lần — hàng tuần, hai tuần một lần, hàng tháng",
+                "Bạn làm việc ở đâu, và đã làm ở đó bao lâu",
+                "Bất kỳ thu nhập không do lao động nào — An Sinh Xã Hội, trợ cấp thất nghiệp, tiền cấp dưỡng con, lương hưu"
+            ],
+            permission: "Nếu thu nhập của bạn thay đổi từng tuần, hoặc bạn có nhiều hơn một công việc, không sao cả — cứ mô tả đúng như thực tế. \u{201C}Nó thay đổi\u{201D} là một câu trả lời hợp lệ."
+        ),
+        Topic(
+            id: "home",
+            title: "Nơi bạn sống",
+            prompts: [
+                "Địa chỉ nhận thư hiện tại của bạn",
+                "Tiền thuê nhà hoặc trả góp nhà hàng tháng của bạn",
+                "Những tiện ích nào bạn tự trả — gas, điện, nước, sưởi",
+                "Bạn có trả tiền giữ trẻ để có thể đi làm hay không"
+            ],
+            permission: nil
+        ),
+        Topic(
+            id: "day-of-call",
+            title: "Ngày họ gọi",
+            prompts: [
+                "Giấy tờ tùy thân có ảnh của bạn — bằng lái, ID tiểu bang, hoặc hộ chiếu",
+                "Cuống lương gần đây hoặc bằng chứng thu nhập",
+                "Biên nhận tiền thuê nhà tháng trước hoặc hợp đồng thuê của bạn",
+                "Một cây bút và tờ giấy — họ sẽ cho bạn một mã xác nhận"
+            ],
+            permission: "Màn hình hiện số sẽ hiển thị \u{201C}Massachusetts DTA\u{201D} hoặc mã vùng 617 / 508 / 413 / 978. Họ sẽ không bao giờ nhắn tin mã cho bạn hoặc đòi tiền."
+        )
+    ]
+
+    private static let tagalogTopics: [Topic] = [
+        Topic(
+            id: "household",
+            title: "Sino ang kasama mong nakatira",
+            prompts: [
+                "Lahat ng bumibili o nagluluto ng pagkain kasama mo",
+                "Ang relasyon nila sa iyo",
+                "Ang edad nila, lalo na ang sinumang wala pang 18 o lampas 60",
+                "Sinumang may kapansanan"
+            ],
+            permission: "Kung pabalik-balik ang mga miyembro ng sambahayan, ilarawan mo na lang ang karaniwan mong sitwasyon."
+        ),
+        Topic(
+            id: "income",
+            title: "Ang kita mo",
+            prompts: [
+                "Magkano ang kita mo kada buwan bago ang buwis",
+                "Gaano ka kadalas sinusuwelduhan — lingguhan, kada dalawang linggo, buwanan",
+                "Saan ka nagtatrabaho, at gaano ka na katagal doon",
+                "Anumang kita na hindi galing sa trabaho — Social Security, unemployment, child support, pension"
+            ],
+            permission: "Kung nagbabago ang kita mo linggu-linggo, o mayroon kang higit sa isang trabaho, okay lang iyon — ilarawan mo lang kung paano talaga. Tunay na sagot ang \u{201C}Nagbabago ito\u{201D}."
+        ),
+        Topic(
+            id: "home",
+            title: "Kung saan ka nakatira",
+            prompts: [
+                "Ang kasalukuyan mong mailing address",
+                "Ang buwanan mong upa o mortgage",
+                "Aling mga utility ang ikaw mismo ang nagbabayad — gas, kuryente, tubig, init",
+                "Kung nagbabayad ka ng childcare para makapagtrabaho"
+            ],
+            permission: nil
+        ),
+        Topic(
+            id: "day-of-call",
+            title: "Sa araw ng tawag",
+            prompts: [
+                "Ang photo ID mo — driver's license, state ID, o pasaporte",
+                "Isang kamakailang paystub o patunay ng kita",
+                "Resibo ng upa noong nakaraang buwan o ang lease mo",
+                "Isang lapis at papel — bibigyan ka nila ng confirmation number"
+            ],
+            permission: "Sa Caller ID lalabas ang \u{201C}Massachusetts DTA\u{201D} o isang 617 / 508 / 413 / 978 area code. Hinding-hindi ka nila tetext-an ng code o hihingian ng pera."
+        )
+    ]
 }
 
 // MARK: - Prep view copy
@@ -163,22 +327,34 @@ enum SNAPInterviewPrepTopics {
 enum SNAPInterviewPrepStrings {
     static let eyebrow = CivicaText(
         "Day-before prep",
-        es: "Preparación del día anterior"
+        es: "Preparación del día anterior",
+        zh: "前一天的准备",
+        vi: "Chuẩn bị ngày hôm trước",
+        tl: "Paghahanda bago ang araw"
     )
 
     static let title = CivicaText(
         "Four things to think through",
-        es: "Cuatro cosas en las que pensar"
+        es: "Cuatro cosas en las que pensar",
+        zh: "四件需要先想清楚的事",
+        vi: "Bốn điều cần nghĩ qua",
+        tl: "Apat na bagay na dapat pag-isipan"
     )
 
     static let subtitle = CivicaText(
         "These aren't answers to memorize — just what to have in mind when they call. Most interviews last 15 to 20 minutes.",
-        es: "Estas no son respuestas que memorizar — solo lo que tener en mente cuando llamen. La mayoría de las entrevistas duran de 15 a 20 minutos."
+        es: "Estas no son respuestas que memorizar — solo lo que tener en mente cuando llamen. La mayoría de las entrevistas duran de 15 a 20 minutos.",
+        zh: "这些不是要背的答案 — 只是接到电话时心里要有数的内容。大多数面谈持续 15 到 20 分钟。",
+        vi: "Đây không phải là câu trả lời để học thuộc — chỉ là điều cần ghi nhớ khi họ gọi. Phần lớn buổi phỏng vấn kéo dài 15 đến 20 phút.",
+        tl: "Hindi ito mga sagot na dapat kabisaduhin — kung ano lang ang dapat nasa isip mo kapag tumawag sila. Karamihan ng interbyu ay tumatagal ng 15 hanggang 20 minuto."
     )
 
     static let permissionLabel = CivicaText(
         "It's okay if:",
-        es: "Está bien si:"
+        es: "Está bien si:",
+        zh: "以下情况都没关系:",
+        vi: "Không sao cả nếu:",
+        tl: "Okay lang kung:"
     )
 
     // JR-3 (audit 2026-05-29): leading reassurance card above the
@@ -186,7 +362,10 @@ enum SNAPInterviewPrepStrings {
     // (short call, notes allowed, you will see the questions).
     static let reassuranceLead = CivicaText(
         "Interviews usually take 15\u{2013}20 minutes. You\u{2019}re allowed to have notes. Here\u{2019}s exactly what they\u{2019}ll ask.",
-        es: "Las entrevistas usualmente duran de 15 a 20 minutos. Puedes tener notas. Aqu\u{00ED} est\u{00E1} exactamente lo que te van a preguntar."
+        es: "Las entrevistas usualmente duran de 15 a 20 minutos. Puedes tener notas. Aqu\u{00ED} est\u{00E1} exactamente lo que te van a preguntar.",
+        zh: "面谈通常需要 15\u{2013}20 分钟。你可以带笔记。下面就是他们会问的内容。",
+        vi: "Buổi phỏng vấn thường mất 15\u{2013}20 phút. Bạn được phép mang theo ghi chú. Đây chính xác là những gì họ sẽ hỏi.",
+        tl: "Karaniwang tumatagal ng 15\u{2013}20 minuto ang interbyu. Pinapayagan kang magdala ng notes. Ito mismo ang itatanong nila sa iyo."
     )
 
     // Footnote: the second-most-cited worry before a SNAP interview
@@ -195,6 +374,9 @@ enum SNAPInterviewPrepStrings {
     // showing up at all, without misrepresenting the interview's role.
     static let reassuranceFollowupsFootnote = CivicaText(
         "Don\u{2019}t worry if you don\u{2019}t have every doc \u{2014} caseworkers can ask follow-ups.",
-        es: "No te preocupes si no tienes todos los documentos \u{2014} los trabajadores sociales pueden hacer preguntas de seguimiento."
+        es: "No te preocupes si no tienes todos los documentos \u{2014} los trabajadores sociales pueden hacer preguntas de seguimiento.",
+        zh: "如果你没有备齐所有文件,也别担心 \u{2014} 工作人员可以再追问。",
+        vi: "Đừng lo nếu bạn chưa có đủ mọi giấy tờ \u{2014} nhân viên phụ trách có thể hỏi thêm sau.",
+        tl: "Huwag mag-alala kung wala ka pa ng lahat ng dokumento \u{2014} puwedeng magtanong pa nang dagdag ang caseworker."
     )
 }

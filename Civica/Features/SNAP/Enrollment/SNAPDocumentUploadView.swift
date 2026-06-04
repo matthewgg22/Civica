@@ -407,27 +407,30 @@ struct SNAPDocumentUploadView: View {
     // MARK: - Strings
 
     private enum Strings {
-        static let navTitle        = CivicaText("Upload Documents", es: "Subir documentos")
-        static let done            = CivicaText("Done", es: "Listo")
-        static let kindLabel       = CivicaText("Document type", es: "Tipo de documento")
-        static let kindPickerA11y  = CivicaText("Select document type", es: "Seleccionar tipo de documento")
-        static let addLabel        = CivicaText("Add a document", es: "Agregar un documento")
-        static let fromPhotos      = CivicaText("From Photos", es: "De Fotos")
-        static let addFile         = CivicaText("File", es: "Archivo")
-        static let uploading       = CivicaText("Uploading…", es: "Subiendo…")
-        static let uploadedHeader  = CivicaText("Uploaded documents", es: "Documentos subidos")
-        static let noDocumentsYet  = CivicaText("No documents uploaded yet.", es: "Aún no se han subido documentos.")
-        static let unknownKind     = CivicaText("Document", es: "Documento")
-        static let statusPending   = CivicaText("Received", es: "Recibido")
-        static let statusProcessing = CivicaText("Processing", es: "Procesando")
-        static let statusAwaitingReview = CivicaText("Awaiting review", es: "Pendiente de revisión")
-        static let statusComplete  = CivicaText("Accepted", es: "Aceptado")
-        static let statusFailed    = CivicaText("Review needed", es: "Requiere revisión")
-        static let loadError       = CivicaText("Could not load the selected image.", es: "No se pudo cargar la imagen seleccionada.")
-        static let fileAccessError = CivicaText("Could not access the file.", es: "No se pudo acceder al archivo.")
+        static let navTitle        = CivicaText("Upload Documents", es: "Subir documentos", zh: "上传文件", vi: "Tải tài liệu lên", tl: "Mag-upload ng Dokumento")
+        static let done            = CivicaText("Done", es: "Listo", zh: "完成", vi: "Xong", tl: "Tapos na")
+        static let kindLabel       = CivicaText("Document type", es: "Tipo de documento", zh: "文件类型", vi: "Loại tài liệu", tl: "Uri ng dokumento")
+        static let kindPickerA11y  = CivicaText("Select document type", es: "Seleccionar tipo de documento", zh: "选择文件类型", vi: "Chọn loại tài liệu", tl: "Piliin ang uri ng dokumento")
+        static let addLabel        = CivicaText("Add a document", es: "Agregar un documento", zh: "添加一份文件", vi: "Thêm một tài liệu", tl: "Magdagdag ng dokumento")
+        static let fromPhotos      = CivicaText("From Photos", es: "De Fotos", zh: "从照片选择", vi: "Từ Ảnh", tl: "Mula sa Photos")
+        static let addFile         = CivicaText("File", es: "Archivo", zh: "文件", vi: "Tệp", tl: "File")
+        static let uploading       = CivicaText("Uploading…", es: "Subiendo…", zh: "上传中…", vi: "Đang tải lên…", tl: "Nag-a-upload…")
+        static let uploadedHeader  = CivicaText("Uploaded documents", es: "Documentos subidos", zh: "已上传的文件", vi: "Tài liệu đã tải lên", tl: "Mga na-upload na dokumento")
+        static let noDocumentsYet  = CivicaText("No documents uploaded yet.", es: "Aún no se han subido documentos.", zh: "还没有上传任何文件。", vi: "Chưa tải lên tài liệu nào.", tl: "Wala pang na-upload na dokumento.")
+        static let unknownKind     = CivicaText("Document", es: "Documento", zh: "文件", vi: "Tài liệu", tl: "Dokumento")
+        static let statusPending   = CivicaText("Received", es: "Recibido", zh: "已收到", vi: "Đã nhận", tl: "Natanggap")
+        static let statusProcessing = CivicaText("Processing", es: "Procesando", zh: "处理中", vi: "Đang xử lý", tl: "Pinoproseso")
+        static let statusAwaitingReview = CivicaText("Awaiting review", es: "Pendiente de revisión", zh: "等待审核", vi: "Đang chờ duyệt", tl: "Hinihintay na masuri")
+        static let statusComplete  = CivicaText("Accepted", es: "Aceptado", zh: "已接受", vi: "Đã chấp nhận", tl: "Tinanggap")
+        static let statusFailed    = CivicaText("Review needed", es: "Requiere revisión", zh: "需要复核", vi: "Cần xem lại", tl: "Kailangang suriin")
+        static let loadError       = CivicaText("Could not load the selected image.", es: "No se pudo cargar la imagen seleccionada.", zh: "无法载入选定的图片。", vi: "Không thể tải ảnh đã chọn.", tl: "Hindi ma-load ang napiling larawan.")
+        static let fileAccessError = CivicaText("Could not access the file.", es: "No se pudo acceder al archivo.", zh: "无法读取该文件。", vi: "Không thể truy cập tệp.", tl: "Hindi ma-access ang file.")
         static let noActivePacket  = CivicaText(
             "No active application found.\nComplete and submit your application first.",
-            es: "No se encontró una solicitud activa.\nCompleta y envía tu solicitud primero."
+            es: "No se encontró una solicitud activa.\nCompleta y envía tu solicitud primero.",
+            zh: "没有找到进行中的申请。\n请先完成并提交你的申请。",
+            vi: "Không tìm thấy đơn đang hoạt động.\nHãy hoàn tất và gửi đơn của bạn trước.",
+            tl: "Walang nakitang aktibong aplikasyon.\nKumpletuhin at i-submit muna ang iyong aplikasyon."
         )
     }
 }
