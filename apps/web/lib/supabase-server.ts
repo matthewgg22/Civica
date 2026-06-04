@@ -2,13 +2,8 @@ import { createClient } from "@supabase/supabase-js";
 import { cookies } from "next/headers";
 import { publicEnv } from "./env";
 
-// Session cookies. We split access + refresh so that route handlers can
-// refresh without exposing the refresh token to anything that reads
-// `access_token`. Names match nothing public; if Supabase later ships a
-// recommended convention we can rename.
-export const ACCESS_TOKEN_COOKIE = "civica.access_token";
-export const REFRESH_TOKEN_COOKIE = "civica.refresh_token";
-export const USER_ID_COOKIE = "civica.user_id";
+export { ACCESS_TOKEN_COOKIE, REFRESH_TOKEN_COOKIE, USER_ID_COOKIE } from "./cookie-keys";
+import { ACCESS_TOKEN_COOKIE, REFRESH_TOKEN_COOKIE, USER_ID_COOKIE } from "./cookie-keys";
 
 const SECURE_COOKIE_BASE = {
   httpOnly: true,

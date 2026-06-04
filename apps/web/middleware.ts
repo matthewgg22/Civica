@@ -3,7 +3,7 @@
 // The /api/auth/* routes are intentionally NOT gated — sign-in itself.
 
 import { NextResponse, type NextRequest } from "next/server";
-import { ACCESS_TOKEN_COOKIE, REFRESH_TOKEN_COOKIE } from "./lib/supabase-server";
+import { ACCESS_TOKEN_COOKIE, REFRESH_TOKEN_COOKIE } from "./lib/cookie-keys";
 
 const PROTECTED_PREFIXES = ["/apply", "/documents", "/status"];
 
