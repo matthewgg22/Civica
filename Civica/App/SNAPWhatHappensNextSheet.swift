@@ -387,190 +387,197 @@ struct SNAPWhatHappensNextSheet: View {
 // MARK: - Strings
 
 enum SNAPWhatHappensNextStrings {
-    static let sheetTitle = CivicaText("What happens next", es: "Lo que sigue", zh: "接下来会发生什么")
-    static let doneButton = CivicaText("Done", es: "Listo", zh: "完成")
-    static let fallbackCounty = CivicaText("your county", es: "tu condado", zh: "你所在的县")
+    static let sheetTitle = CivicaText("What happens next", es: "Lo que sigue", vi: "Tiếp theo sẽ thế nào")
+    static let doneButton = CivicaText("Done", es: "Listo", vi: "Xong")
+    static let fallbackCounty = CivicaText("your county", es: "tu condado", vi: "quận của bạn")
 
     // Status-aware eyebrows
     static let eyebrowSubmitted = CivicaText(
         "SNAP application · Submitted",
         es: "Solicitud SNAP · Enviada",
-        zh: "SNAP 申请 · 已提交"
+        vi: "Đơn SNAP · Đã gửi"
     )
     static let eyebrowDocumentsRequested = CivicaText(
         "SNAP application · Documents requested",
         es: "Solicitud SNAP · Documentos solicitados",
-        zh: "SNAP 申请 · 需要补充材料"
+        vi: "Đơn SNAP · Cần thêm giấy tờ"
     )
     static let eyebrowInterviewScheduled = CivicaText(
         "SNAP application · Interview scheduled",
         es: "Solicitud SNAP · Entrevista programada",
-        zh: "SNAP 申请 · 面谈已安排"
+        vi: "Đơn SNAP · Đã hẹn phỏng vấn"
     )
     static let eyebrowInterviewCompleted = CivicaText(
         "SNAP application · Interview complete",
         es: "Solicitud SNAP · Entrevista completa",
-        zh: "SNAP 申请 · 面谈已完成"
+        vi: "Đơn SNAP · Đã phỏng vấn xong"
     )
 
     // Status-aware headlines
     static func headlineSubmitted(county: String, language: CivicaLanguage) -> String {
         switch language {
-        case .english, .vietnamese, .tagalog: return "We sent your application to \(county)."
-        case .mandarin: return "我们已经把你的申请发送给 \(county)。"
+        case .english, .tagalog: return "We sent your application to \(county)."
         case .spanish: return "Enviamos tu solicitud a \(county)."
+        case .mandarin: return "We sent your application to \(county)."
+        case .vietnamese: return "Chúng tôi đã gửi đơn của bạn đến \(county)."
         }
     }
     static func headlineDocumentsRequested(county: String, language: CivicaLanguage) -> String {
         switch language {
-        case .english, .vietnamese, .tagalog: return "\(county) needs a few more documents."
-        case .mandarin: return "\(county) 需要再补充几份材料。"
+        case .english, .tagalog: return "\(county) needs a few more documents."
         case .spanish: return "\(county) necesita algunos documentos más."
+        case .mandarin: return "\(county) needs a few more documents."
+        case .vietnamese: return "\(county) cần thêm một vài giấy tờ."
         }
     }
     static func headlineInterviewScheduled(county: String, language: CivicaLanguage) -> String {
         switch language {
-        case .english, .vietnamese, .tagalog: return "\(county) scheduled your interview."
-        case .mandarin: return "\(county) 已经为你安排了面谈。"
+        case .english, .tagalog: return "\(county) scheduled your interview."
         case .spanish: return "\(county) programó tu entrevista."
+        case .mandarin: return "\(county) scheduled your interview."
+        case .vietnamese: return "\(county) đã sắp xếp buổi phỏng vấn cho bạn."
         }
     }
     static let headlineInterviewCompleted = CivicaText(
         "The interview is complete.",
         es: "La entrevista está completa.",
-        zh: "面谈已经完成。"
+        vi: "Buổi phỏng vấn đã hoàn tất."
     )
 
     // Milestone labels
-    static let milestoneSubmitted    = CivicaText("Submitted",    es: "Enviada", zh: "已提交")
-    static let milestoneCountyReview = CivicaText("County review", es: "Revisión del condado", zh: "县里审核")
-    static let milestoneInterview    = CivicaText("Interview call", es: "Llamada de entrevista", zh: "面谈电话")
-    static let milestoneDecision     = CivicaText("Decision",     es: "Decisión", zh: "决定")
+    static let milestoneSubmitted    = CivicaText("Submitted",    es: "Enviada", vi: "Đã gửi")
+    static let milestoneCountyReview = CivicaText("County review", es: "Revisión del condado", vi: "Quận xem xét")
+    static let milestoneInterview    = CivicaText("Interview call", es: "Llamada de entrevista", vi: "Cuộc gọi phỏng vấn")
+    static let milestoneDecision     = CivicaText("Decision",     es: "Decisión", vi: "Quyết định")
 
     // Current-phase expanded card content
     static let currentEyebrowInReview = CivicaText(
         "In progress · typical 7-10 days",
         es: "En progreso · típicamente 7-10 días",
-        zh: "进行中 · 通常 7-10 天"
+        vi: "Đang xử lý · thường 7-10 ngày"
     )
     static let currentEyebrowInterview = CivicaText(
         "Scheduled by the county",
         es: "Programada por el condado",
-        zh: "由县里安排"
+        vi: "Do quận sắp xếp"
     )
     static let currentEyebrowDecision = CivicaText(
         "Within 30 days by law",
         es: "Dentro de 30 días por ley",
-        zh: "依法在 30 天内完成"
+        vi: "Trong vòng 30 ngày theo luật"
     )
 
     static func currentBodyInReview(county: String, language: CivicaLanguage) -> String {
         switch language {
-        case .english, .vietnamese, .tagalog:
+        case .english, .tagalog:
             return "A caseworker at \(county) is reading your packet. If anything is unclear, they'll send a message here — you don't need to call."
-        case .mandarin:
-            return "\(county) 的一位个案工作员正在查看你的资料。如果有不清楚的地方,他们会在这里给你发消息 —— 你不用打电话。"
         case .spanish:
             return "Un trabajador social en \(county) está leyendo tu paquete. Si algo no está claro, te enviarán un mensaje aquí — no tienes que llamar."
+        case .mandarin:
+            return "A caseworker at \(county) is reading your packet. If anything is unclear, they'll send a message here — you don't need to call."
+        case .vietnamese:
+            return "Một nhân viên xét hồ sơ tại \(county) đang đọc hồ sơ của bạn. Nếu có điều gì chưa rõ, họ sẽ gửi tin nhắn ở đây — bạn không cần phải gọi."
         }
     }
     static let currentBodyInterview = CivicaText(
         "Most interviews are a 15-minute phone call. The caseworker will confirm what you wrote — no surprise questions.",
         es: "La mayoría de las entrevistas son una llamada de 15 minutos. El trabajador social confirmará lo que escribiste — sin preguntas sorpresa.",
-        zh: "大多数面谈是 15 分钟的电话。个案工作员会和你确认你填写的内容 —— 不会有意外的问题。"
+        vi: "Hầu hết các buổi phỏng vấn là một cuộc gọi 15 phút. Nhân viên xét hồ sơ sẽ xác nhận lại những gì bạn đã viết — không có câu hỏi bất ngờ."
     )
     static let currentBodyDecision = CivicaText(
         "You'll get a written notice. If approved, your EBT card arrives 5-7 days after.",
         es: "Recibirás una notificación escrita. Si te aprueban, tu tarjeta EBT llega 5-7 días después.",
-        zh: "你会收到一份书面通知。如果获批,你的 EBT 卡会在之后 5-7 天内寄到。"
+        vi: "Bạn sẽ nhận được thông báo bằng văn bản. Nếu được chấp thuận, thẻ EBT sẽ đến trong 5-7 ngày sau đó."
     )
 
     static let whatCountyDoing = CivicaText(
         "What the county is doing right now",
         es: "Lo que el condado está haciendo ahora",
-        zh: "县里现在正在做什么"
+        vi: "Quận đang làm gì lúc này"
     )
     static let whatYouCanDo = CivicaText(
         "What you can do",
         es: "Lo que puedes hacer",
-        zh: "你可以做什么"
+        vi: "Bạn có thể làm gì"
     )
 
     static func countyDoingReview(county: String, language: CivicaLanguage) -> String {
         switch language {
-        case .english, .vietnamese, .tagalog:
+        case .english, .tagalog:
             return "Verifying your ID, address, and income against state records. Flagging anything they can't match for a quick follow-up."
-        case .mandarin:
-            return "正在核对你的身份、地址和收入与州里的记录。对不上的地方会标记出来,然后快速跟进。"
         case .spanish:
             return "Verificando tu identificación, dirección e ingresos con los registros del estado. Marcando cualquier cosa que no coincida para un seguimiento rápido."
+        case .mandarin:
+            return "Verifying your ID, address, and income against state records. Flagging anything they can't match for a quick follow-up."
+        case .vietnamese:
+            return "Đang xác minh giấy tờ tùy thân, địa chỉ và thu nhập của bạn dựa trên hồ sơ của tiểu bang. Đánh dấu mọi thứ không khớp để liên hệ lại nhanh chóng."
         }
     }
     static let countyDoingInterview = CivicaText(
         "Preparing the interview script. The caseworker has already reviewed your packet — the call is to confirm details, not re-ask from scratch.",
         es: "Preparando el guión de la entrevista. El trabajador social ya revisó tu paquete — la llamada es para confirmar detalles, no para volver a preguntar desde cero.",
-        zh: "正在准备面谈的提纲。个案工作员已经看过你的资料 —— 这通电话是为了确认细节,不会从头重新问。"
+        vi: "Đang chuẩn bị nội dung phỏng vấn. Nhân viên xét hồ sơ đã xem hồ sơ của bạn — cuộc gọi chỉ để xác nhận chi tiết, không phải hỏi lại từ đầu."
     )
     static let countyDoingDecision = CivicaText(
         "Issuing the final decision and the written notice. If approved, your case is being set up in the state EBT system.",
         es: "Emitiendo la decisión final y la notificación escrita. Si te aprueban, tu caso se está configurando en el sistema EBT del estado.",
-        zh: "正在出具最终决定和书面通知。如果获批,你的案子正在州 EBT 系统里建档。"
+        vi: "Đang ra quyết định cuối cùng và thông báo bằng văn bản. Nếu được chấp thuận, hồ sơ của bạn đang được thiết lập trong hệ thống EBT của tiểu bang."
     )
 
     static let youCanDoReview1 = CivicaText(
         "Keep your phone on — the interview call may come from a 510 or unknown number.",
         es: "Mantén tu teléfono encendido — la llamada de entrevista puede venir de un número 510 o desconocido.",
-        zh: "保持手机开机 —— 面谈电话可能来自 510 区号或陌生号码。"
+        vi: "Hãy để điện thoại luôn bật — cuộc gọi phỏng vấn có thể đến từ số 510 hoặc số lạ."
     )
     static let youCanDoReview2 = CivicaText(
         "Have last month's pay stubs and a photo ID nearby.",
         es: "Ten cerca los recibos de pago del mes pasado y una identificación con foto.",
-        zh: "把上个月的工资单和带照片的身份证件放在手边。"
+        vi: "Để sẵn cuống lương tháng trước và một giấy tờ tùy thân có ảnh trong tầm tay."
     )
     static let youCanDoReview3 = CivicaText(
         "Check this app every couple of days for messages from the county.",
         es: "Revisa esta app cada par de días por mensajes del condado.",
-        zh: "每隔几天打开这个 app 看看县里有没有发消息。"
+        vi: "Kiểm tra ứng dụng này vài ngày một lần để xem tin nhắn từ quận."
     )
     static let youCanDoInterview1 = CivicaText(
         "Be in a quiet place at the scheduled time.",
         es: "Estar en un lugar tranquilo a la hora programada.",
-        zh: "在约定的时间待在安静的地方。"
+        vi: "Ở nơi yên tĩnh vào giờ đã hẹn."
     )
     static let youCanDoInterview2 = CivicaText(
         "Have your application open so you can answer consistently.",
         es: "Ten tu solicitud abierta para que puedas responder de manera consistente.",
-        zh: "把你的申请打开放在旁边,这样回答可以前后一致。"
+        vi: "Mở sẵn đơn của bạn để có thể trả lời nhất quán."
     )
     static let youCanDoInterview3 = CivicaText(
         "Bring questions — the caseworker can clarify anything you weren't sure about.",
         es: "Trae preguntas — el trabajador social puede aclarar cualquier cosa que no tenías clara.",
-        zh: "带上你的问题 —— 不清楚的地方,个案工作员都可以帮你解释。"
+        vi: "Mang theo câu hỏi — nhân viên xét hồ sơ có thể làm rõ bất cứ điều gì bạn chưa chắc chắn."
     )
     static let youCanDoDecision1 = CivicaText(
         "Watch the app and your mail for the written decision.",
         es: "Estar atento a la app y al correo para la decisión escrita.",
-        zh: "留意 app 和邮件,等着收书面决定。"
+        vi: "Theo dõi ứng dụng và thư của bạn để nhận quyết định bằng văn bản."
     )
     static let youCanDoDecision2 = CivicaText(
         "If approved, the EBT card arrives 5-7 days after the decision.",
         es: "Si te aprueban, la tarjeta EBT llega 5-7 días después de la decisión.",
-        zh: "如果获批,EBT 卡会在决定之后 5-7 天寄到。"
+        vi: "Nếu được chấp thuận, thẻ EBT sẽ đến trong 5-7 ngày sau khi có quyết định."
     )
 
-    static let futureCountyReview = CivicaText("Typical 7-10 days", es: "Típicamente 7-10 días", zh: "通常 7-10 天")
-    static let futureInterview    = CivicaText("Scheduled by county", es: "Programada por condado", zh: "由县里安排")
-    static let futureDecision     = CivicaText("Within 30 days",     es: "Dentro de 30 días", zh: "30 天内")
+    static let futureCountyReview = CivicaText("Typical 7-10 days", es: "Típicamente 7-10 días", vi: "Thường 7-10 ngày")
+    static let futureInterview    = CivicaText("Scheduled by county", es: "Programada por condado", vi: "Do quận sắp xếp")
+    static let futureDecision     = CivicaText("Within 30 days",     es: "Dentro de 30 días", vi: "Trong vòng 30 ngày")
 
     static let messageNavigatorTitle = CivicaText(
         "Message a navigator",
         es: "Mensajea un asesor",
-        zh: "给协助员发消息"
+        vi: "Nhắn tin cho người hướng dẫn"
     )
     static let messageNavigatorBody = CivicaText(
         "A real person, M-F · usually replies in a few hours",
         es: "Una persona real, L-V · usualmente responde en pocas horas",
-        zh: "真人回复,周一至周五 · 通常几小时内回复"
+        vi: "Một người thật, Thứ Hai-Thứ Sáu · thường trả lời trong vài giờ"
     )
 }
 
