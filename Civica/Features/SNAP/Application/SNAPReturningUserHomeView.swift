@@ -302,22 +302,22 @@ enum SNAPReturningHomeStrings {
     static let verdictCardEyebrow = CivicaText(
         "Your previous result",
         es: "Tu resultado anterior",
-        zh: "你上次的结果"
+        vi: "Kết quả trước đó của bạn"
     )
     static let verdictCardEligible = CivicaText(
         "You looked likely eligible. See the math.",
         es: "Parecías probablemente elegible. Ver el cálculo.",
-        zh: "你看起来很可能符合资格。查看计算过程。"
+        vi: "Bạn có vẻ đủ điều kiện. Xem cách tính."
     )
     static let verdictCardIneligible = CivicaText(
         "Last time you appeared not to qualify. See why.",
         es: "La última vez parecía que no calificabas. Ver por qué.",
-        zh: "上次你看起来不符合资格。查看原因。"
+        vi: "Lần trước bạn có vẻ không đủ điều kiện. Xem lý do."
     )
     static let verdictCardNeedMore = CivicaText(
         "We needed more info last time. See what's missing.",
         es: "Necesitábamos más información la última vez. Ver qué falta.",
-        zh: "上次我们需要更多信息。查看还缺什么。"
+        vi: "Lần trước chúng tôi cần thêm thông tin. Xem còn thiếu gì."
     )
 
     /// JR-6 (iOS audit 2026-05-29): destination-preview line under the
@@ -356,9 +356,9 @@ enum SNAPReturningHomeStrings {
         let total = SNAPApplicationSection.count
         let name = section.title(in: language)
         switch language {
-        case .english, .vietnamese, .tagalog: return "Step \(step) of \(total) \u{00B7} \(name)"
-        case .mandarin: return "第 \(step) 步,共 \(total) 步 \u{00B7} \(name)"
+        case .english, .mandarin, .tagalog: return "Step \(step) of \(total) \u{00B7} \(name)"
         case .spanish: return "Paso \(step) de \(total) \u{00B7} \(name)"
+        case .vietnamese: return "Bước \(step) / \(total) \u{00B7} \(name)"
         }
     }
 
@@ -366,17 +366,17 @@ enum SNAPReturningHomeStrings {
     static let fallbackHeadline = CivicaText(
         "We couldn't pull up your screener result.",
         es: "No pudimos encontrar tu resultado de la evaluación.",
-        zh: "我们没找到你的资格筛查结果。"
+        vi: "Chúng tôi không tìm được kết quả sàng lọc của bạn."
     )
     static let fallbackReRunAction = CivicaText(
         "Re-run the screener (2 min)",
         es: "Repetir la evaluación (2 min)",
-        zh: "重新做一次筛查(2 分钟)"
+        vi: "Làm lại sàng lọc (2 phút)"
     )
     static let fallbackSkipAction = CivicaText(
         "Skip and continue",
         es: "Omitir y continuar",
-        zh: "跳过并继续"
+        vi: "Bỏ qua và tiếp tục"
     )
 }
 
