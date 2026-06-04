@@ -185,11 +185,13 @@ enum AppealEntryStrings {
     static let manualSubtitle = CivicaText(
         "Five fields. About a minute.",
         es: "Cinco campos. Aproximadamente un minuto.",
-        zh: "五个字段。大约一分钟。"
+        zh: "五个字段。大约一分钟。",
+        vi: "Năm trường. Khoảng một phút."
     )
     static let scanSubtitle = CivicaText(
         "Use your camera to capture the denial letter. We'll pull the fields off it for you.",
         es: "Usa tu cámara para capturar la carta de denegación. Sacaremos los datos por ti.",
-        zh: "用你的相机拍下拒绝信。我们会帮你把内容提取出来。"
+        zh: "用你的相机拍下拒绝信。我们会帮你把内容提取出来。",
+        vi: "Dùng camera để chụp thư từ chối. Chúng tôi sẽ lấy các thông tin từ đó cho bạn."
     )
 }
