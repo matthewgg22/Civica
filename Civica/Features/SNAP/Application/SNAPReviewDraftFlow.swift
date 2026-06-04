@@ -93,30 +93,38 @@ enum SNAPApplicationSection: String, CaseIterable, Identifiable, Codable {
     /// Kept concise (one or two words) so the chip stays scannable.
     func title(in language: CivicaLanguage) -> String {
         switch (self, language) {
-        case (.whereApplying, .english), (.whereApplying, .vietnamese), (.whereApplying, .tagalog):       return "Where you're applying"
+        case (.whereApplying, .english), (.whereApplying, .tagalog):       return "Where you're applying"
         case (.whereApplying, .mandarin):      return "你在哪里申请"
         case (.whereApplying, .spanish):       return "Dónde solicitas"
-        case (.applicantAge, .english), (.applicantAge, .vietnamese), (.applicantAge, .tagalog):        return "About you"
+        case (.whereApplying, .vietnamese):    return "Nơi bạn nộp đơn"
+        case (.applicantAge, .english), (.applicantAge, .tagalog):        return "About you"
         case (.applicantAge, .mandarin):       return "关于你"
         case (.applicantAge, .spanish):        return "Sobre ti"
-        case (.household, .english), (.household, .vietnamese), (.household, .tagalog):           return "Your household"
+        case (.applicantAge, .vietnamese):     return "Về bạn"
+        case (.household, .english), (.household, .tagalog):           return "Your household"
         case (.household, .mandarin):          return "你的家庭"
         case (.household, .spanish):           return "Tu hogar"
-        case (.contact, .english), (.contact, .vietnamese), (.contact, .tagalog):             return "Staying in touch"
+        case (.household, .vietnamese):        return "Hộ gia đình của bạn"
+        case (.contact, .english), (.contact, .tagalog):             return "Staying in touch"
         case (.contact, .mandarin):            return "保持联系"
         case (.contact, .spanish):             return "Mantenerse en contacto"
-        case (.income, .english), (.income, .vietnamese), (.income, .tagalog):              return "Income"
+        case (.contact, .vietnamese):          return "Giữ liên lạc"
+        case (.income, .english), (.income, .tagalog):              return "Income"
         case (.income, .mandarin):             return "收入"
         case (.income, .spanish):              return "Ingresos"
-        case (.studentStatus, .english), (.studentStatus, .vietnamese), (.studentStatus, .tagalog):       return "Student status"
+        case (.income, .vietnamese):           return "Thu nhập"
+        case (.studentStatus, .english), (.studentStatus, .tagalog):       return "Student status"
         case (.studentStatus, .mandarin):      return "学生身份"
         case (.studentStatus, .spanish):       return "Estatus estudiantil"
-        case (.expenses, .english), (.expenses, .vietnamese), (.expenses, .tagalog):            return "Expenses"
+        case (.studentStatus, .vietnamese):    return "Tình trạng sinh viên"
+        case (.expenses, .english), (.expenses, .tagalog):            return "Expenses"
         case (.expenses, .mandarin):           return "支出"
         case (.expenses, .spanish):            return "Gastos"
-        case (.documentsChecklist, .english), (.documentsChecklist, .vietnamese), (.documentsChecklist, .tagalog):  return "Documents"
+        case (.expenses, .vietnamese):         return "Chi phí"
+        case (.documentsChecklist, .english), (.documentsChecklist, .tagalog):  return "Documents"
         case (.documentsChecklist, .mandarin): return "证件材料"
         case (.documentsChecklist, .spanish):  return "Documentos"
+        case (.documentsChecklist, .vietnamese): return "Giấy tờ"
         }
     }
 }
@@ -659,127 +667,147 @@ enum SNAPReviewDraftStrings {
     static let title = CivicaText(
         "Review your application",
         es: "Revisa tu solicitud",
-        zh: "检查你的申请"
+        zh: "检查你的申请",
+        vi: "Xem lại đơn của bạn"
     )
     static let primaryAction = CivicaText(
         "Generate my application packet",
         es: "Generar mi paquete de solicitud",
-        zh: "生成我的申请材料包"
+        zh: "生成我的申请材料包",
+        vi: "Tạo bộ hồ sơ đơn của tôi"
     )
-    static let editLabel = CivicaText("Edit", es: "Editar", zh: "编辑")
+    static let editLabel = CivicaText("Edit", es: "Editar", zh: "编辑", vi: "Sửa")
 
     // Scanned-ID confirmation card
     static let scannedIDTitle = CivicaText(
         "From your ID",
         es: "De tu identificación",
-        zh: "来自你的证件"
+        zh: "来自你的证件",
+        vi: "Từ giấy tờ tùy thân của bạn"
     )
     static let scannedIDHelper = CivicaText(
         "We read these off the ID you scanned. Check them and fix anything that's wrong before you submit.",
         es: "Leímos esto de la identificación que escaneaste. Revísalo y corrige lo que esté mal antes de enviar.",
-        zh: "我们从你扫描的证件上读取了这些信息。请在提交前核对一遍,有错就改。"
+        zh: "我们从你扫描的证件上读取了这些信息。请在提交前核对一遍,有错就改。",
+        vi: "Chúng tôi đọc các thông tin này từ giấy tờ bạn đã quét. Hãy kiểm tra và sửa chỗ nào sai trước khi nộp."
     )
-    static let scannedNameLabel = CivicaText("Full name", es: "Nombre completo", zh: "全名")
-    static let scannedAddressLabel = CivicaText("Address", es: "Dirección", zh: "地址")
-    static let scannedZIPLabel = CivicaText("ZIP", es: "Código postal", zh: "邮编")
+    static let scannedNameLabel = CivicaText("Full name", es: "Nombre completo", zh: "全名", vi: "Họ và tên")
+    static let scannedAddressLabel = CivicaText("Address", es: "Dirección", zh: "地址", vi: "Địa chỉ")
+    static let scannedZIPLabel = CivicaText("ZIP", es: "Código postal", zh: "邮编", vi: "Mã ZIP")
     static let nothingYet = CivicaText(
         "Nothing here yet — tap Edit to add.",
         es: "Nada aquí todavía — toca Editar para añadir.",
-        zh: "这里还没有内容 — 点「编辑」添加。"
+        zh: "这里还没有内容 — 点「编辑」添加。",
+        vi: "Chưa có gì ở đây — nhấn Sửa để thêm."
     )
-    static let statusNotStarted = CivicaText("Not started", es: "No iniciado", zh: "未开始")
+    static let statusNotStarted = CivicaText("Not started", es: "No iniciado", zh: "未开始", vi: "Chưa bắt đầu")
     static let startOverLabel = CivicaText(
         "Clear my answers and start over",
         es: "Borrar mis respuestas y empezar de nuevo",
-        zh: "清除我的答案,重新开始"
+        zh: "清除我的答案,重新开始",
+        vi: "Xóa câu trả lời và bắt đầu lại"
     )
 
     // Destructive-confirm dialog guarding the clear-everything action.
     static let startOverConfirmTitle = CivicaText(
         "Clear all your answers?",
         es: "¿Borrar todas tus respuestas?",
-        zh: "清除你的全部答案?"
+        zh: "清除你的全部答案?",
+        vi: "Xóa hết câu trả lời của bạn?"
     )
 
     static let startOverConfirmMessage = CivicaText(
         "This deletes everything you've entered and can't be undone.",
         es: "Esto elimina todo lo que ingresaste y no se puede deshacer.",
-        zh: "这会删掉你填的所有内容,无法撤销。"
+        zh: "这会删掉你填的所有内容,无法撤销。",
+        vi: "Việc này xóa mọi thứ bạn đã nhập và không thể hoàn tác."
     )
 
     static let startOverConfirmAction = CivicaText(
         "Clear everything",
         es: "Borrar todo",
-        zh: "全部清除"
+        zh: "全部清除",
+        vi: "Xóa tất cả"
     )
 
     static let startOverConfirmCancel = CivicaText(
         "Keep my answers",
         es: "Conservar mis respuestas",
-        zh: "保留我的答案"
+        zh: "保留我的答案",
+        vi: "Giữ lại câu trả lời"
     )
 
     static func progressLine(completed: Int, total: Int, language: CivicaLanguage) -> String {
         switch language {
-        case .english, .vietnamese, .tagalog:
+        case .english, .tagalog:
             return "\(completed) of \(total) sections done. Tap Edit on any section to update it."
         case .mandarin:
             return "已完成 \(completed) / \(total) 个部分。点任意部分上的「编辑」来更新。"
         case .spanish:
             return "\(completed) de \(total) secciones completas. Toca Editar en cualquier sección para actualizarla."
+        case .vietnamese:
+            return "Đã xong \(completed) / \(total) phần. Nhấn Sửa ở bất kỳ phần nào để cập nhật."
         }
     }
 
     static func sectionTitle(_ section: SNAPApplicationSection, language: CivicaLanguage) -> String {
         switch (section, language) {
-        case (.whereApplying, .english), (.whereApplying, .vietnamese), (.whereApplying, .tagalog):     return "Where applying"
+        case (.whereApplying, .english), (.whereApplying, .tagalog):     return "Where applying"
         case (.whereApplying, .mandarin):    return "申请地点"
         case (.whereApplying, .spanish):     return "Dónde solicitas"
-        case (.applicantAge, .english), (.applicantAge, .vietnamese), (.applicantAge, .tagalog):      return "Applicant age"
+        case (.whereApplying, .vietnamese):  return "Nơi nộp đơn"
+        case (.applicantAge, .english), (.applicantAge, .tagalog):      return "Applicant age"
         case (.applicantAge, .mandarin):     return "申请人年龄"
         case (.applicantAge, .spanish):      return "Edad del solicitante"
-        case (.household, .english), (.household, .vietnamese), (.household, .tagalog):         return "Household"
+        case (.applicantAge, .vietnamese):   return "Tuổi người nộp đơn"
+        case (.household, .english), (.household, .tagalog):         return "Household"
         case (.household, .mandarin):        return "家庭"
         case (.household, .spanish):         return "Hogar"
-        case (.contact, .english), (.contact, .vietnamese), (.contact, .tagalog):           return "Contact info"
+        case (.household, .vietnamese):      return "Hộ gia đình"
+        case (.contact, .english), (.contact, .tagalog):           return "Contact info"
         case (.contact, .mandarin):          return "联系方式"
         case (.contact, .spanish):           return "Información de contacto"
-        case (.income, .english), (.income, .vietnamese), (.income, .tagalog):            return "Income"
+        case (.contact, .vietnamese):        return "Thông tin liên hệ"
+        case (.income, .english), (.income, .tagalog):            return "Income"
         case (.income, .mandarin):           return "收入"
         case (.income, .spanish):            return "Ingresos"
-        case (.studentStatus, .english), (.studentStatus, .vietnamese), (.studentStatus, .tagalog):     return "Student status"
+        case (.income, .vietnamese):         return "Thu nhập"
+        case (.studentStatus, .english), (.studentStatus, .tagalog):     return "Student status"
         case (.studentStatus, .mandarin):    return "学生身份"
         case (.studentStatus, .spanish):     return "Estado estudiantil"
-        case (.expenses, .english), (.expenses, .vietnamese), (.expenses, .tagalog):          return "Monthly expenses"
+        case (.studentStatus, .vietnamese):  return "Tình trạng sinh viên"
+        case (.expenses, .english), (.expenses, .tagalog):          return "Monthly expenses"
         case (.expenses, .mandarin):         return "每月支出"
         case (.expenses, .spanish):          return "Gastos mensuales"
-        case (.documentsChecklist, .english), (.documentsChecklist, .vietnamese), (.documentsChecklist, .tagalog): return "Documents on hand"
+        case (.expenses, .vietnamese):       return "Chi phí hằng tháng"
+        case (.documentsChecklist, .english), (.documentsChecklist, .tagalog): return "Documents on hand"
         case (.documentsChecklist, .mandarin): return "手边的材料"
         case (.documentsChecklist, .spanish): return "Documentos a la mano"
+        case (.documentsChecklist, .vietnamese): return "Giấy tờ sẵn có"
         }
     }
 
     // Row labels — one per draft field surfaced in summary
-    static let rowState = CivicaText("State", es: "Estado", zh: "州")
-    static let rowHousing = CivicaText("Housing", es: "Vivienda", zh: "住房")
-    static let rowAge = CivicaText("Age", es: "Edad", zh: "年龄")
-    static let rowHouseholdSize = CivicaText("Household size", es: "Tamaño del hogar", zh: "家庭人数")
-    static let rowMinors = CivicaText("Anyone 18 or under", es: "Alguien de 18 años o menos", zh: "有 18 岁或以下的人")
-    static let rowElderlyOrDisabled = CivicaText("60+ or disabled in household", es: "60+ o discapacidad en el hogar", zh: "家中有 60 岁以上或残障人士")
-    static let rowEmail = CivicaText("Email", es: "Correo electrónico", zh: "电子邮箱")
-    static let rowPhone = CivicaText("Phone", es: "Teléfono", zh: "电话")
-    static let rowPreferred = CivicaText("Preferred contact", es: "Contacto preferido", zh: "首选联系方式")
-    static let rowEarning = CivicaText("Anyone earning", es: "Alguien gana", zh: "有人在挣钱")
-    static let rowGrossIncome = CivicaText("Gross monthly income", es: "Ingreso mensual bruto", zh: "每月总收入")
-    static let rowVariability = CivicaText("Changes month-to-month", es: "Cambia mes a mes", zh: "每月有变化")
-    static let rowUnearned = CivicaText("Has unearned income", es: "Tiene ingresos no laborales", zh: "有非劳动收入")
-    static let rowEnrolled = CivicaText("Enrolled in higher ed", es: "Inscrito en educación superior", zh: "在读高等院校")
-    static let rowStudentExceptions = CivicaText("SNAP student exception", es: "Excepción estudiantil de SNAP", zh: "SNAP 学生例外情形")
-    static let rowRent = CivicaText("Rent or housing", es: "Renta o vivienda", zh: "房租或住房")
-    static let rowUtilities = CivicaText("Utilities", es: "Servicios", zh: "水电煤")
-    static let rowChildcare = CivicaText("Childcare", es: "Cuidado infantil", zh: "托儿")
-    static let rowMedical = CivicaText("Medical", es: "Médico", zh: "医疗")
-    static let rowDocumentsCount = CivicaText("Documents marked", es: "Documentos marcados", zh: "已勾选材料数")
+    static let rowState = CivicaText("State", es: "Estado", zh: "州", vi: "Tiểu bang")
+    static let rowHousing = CivicaText("Housing", es: "Vivienda", zh: "住房", vi: "Nhà ở")
+    static let rowAge = CivicaText("Age", es: "Edad", zh: "年龄", vi: "Tuổi")
+    static let rowHouseholdSize = CivicaText("Household size", es: "Tamaño del hogar", zh: "家庭人数", vi: "Số người trong hộ")
+    static let rowMinors = CivicaText("Anyone 18 or under", es: "Alguien de 18 años o menos", zh: "有 18 岁或以下的人", vi: "Có ai 18 tuổi trở xuống")
+    static let rowElderlyOrDisabled = CivicaText("60+ or disabled in household", es: "60+ o discapacidad en el hogar", zh: "家中有 60 岁以上或残障人士", vi: "Có người 60+ hoặc khuyết tật trong hộ")
+    static let rowEmail = CivicaText("Email", es: "Correo electrónico", zh: "电子邮箱", vi: "Email")
+    static let rowPhone = CivicaText("Phone", es: "Teléfono", zh: "电话", vi: "Điện thoại")
+    static let rowPreferred = CivicaText("Preferred contact", es: "Contacto preferido", zh: "首选联系方式", vi: "Cách liên hệ ưu tiên")
+    static let rowEarning = CivicaText("Anyone earning", es: "Alguien gana", zh: "有人在挣钱", vi: "Có ai đang đi làm có thu nhập")
+    static let rowGrossIncome = CivicaText("Gross monthly income", es: "Ingreso mensual bruto", zh: "每月总收入", vi: "Tổng thu nhập hằng tháng")
+    static let rowVariability = CivicaText("Changes month-to-month", es: "Cambia mes a mes", zh: "每月有变化", vi: "Thay đổi theo từng tháng")
+    static let rowUnearned = CivicaText("Has unearned income", es: "Tiene ingresos no laborales", zh: "有非劳动收入", vi: "Có thu nhập không từ lao động")
+    static let rowEnrolled = CivicaText("Enrolled in higher ed", es: "Inscrito en educación superior", zh: "在读高等院校", vi: "Đang học đại học, cao đẳng")
+    static let rowStudentExceptions = CivicaText("SNAP student exception", es: "Excepción estudiantil de SNAP", zh: "SNAP 学生例外情形", vi: "Trường hợp ngoại lệ cho sinh viên SNAP")
+    static let rowRent = CivicaText("Rent or housing", es: "Renta o vivienda", zh: "房租或住房", vi: "Tiền thuê hoặc nhà ở")
+    static let rowUtilities = CivicaText("Utilities", es: "Servicios", zh: "水电煤", vi: "Tiện ích điện nước")
+    static let rowChildcare = CivicaText("Childcare", es: "Cuidado infantil", zh: "托儿", vi: "Giữ trẻ")
+    static let rowMedical = CivicaText("Medical", es: "Médico", zh: "医疗", vi: "Y tế")
+    static let rowDocumentsCount = CivicaText("Documents marked", es: "Documentos marcados", zh: "已勾选材料数", vi: "Số giấy tờ đã đánh dấu")
 }
 
 #if DEBUG
