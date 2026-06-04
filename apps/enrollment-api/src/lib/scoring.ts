@@ -12,6 +12,7 @@
 // ---------------------------------------------------------------------------
 
 import { scoreErrorRisk } from "@civica/snap-qc-engine";
+import type { PillarCoverage } from "@civica/snap-qc-engine";
 import { determineSUATier, checkHEAPCompliance } from "@civica/snap-rules";
 import { makeAnonClient, makeServiceClient } from "./supabase.js";
 import { compareIncome } from "./income-verification.js";
@@ -324,6 +325,38 @@ export async function emitQcEvaluation(
     console.warn(`qc_evaluation emit threw: ${err instanceof Error ? err.message : String(err)}`);
     return null;
   }
+}
+
+/**
+ * Maps gateway FlowSignal[] into the engine's PillarCoverage shape for use
+ * with snap-qc-engine projection functions (computeProjectedPER, etc.).
+ *
+ * Binary today: a non-weak signal = 1.0 coverage, absent/weak = 0.0.
+ * Widens to fractional once Argyle / SUA / shared-lease classifiers expose
+ * partial scores (the PillarCoverage type already accepts any number in [0,1]).
+ *
+ * Ported from the orphaned Lane C / T9 attempt; kept here rather than in
+ * snap-qc-engine because the FlowSignal type lives gateway-side. Issue #473.
+ */
+export function deriveEngagementVector({
+  flowSignals,
+  argyleConnected = false,
+}: {
+  flowSignals: FlowSignal[];
+  argyleConnected?: boolean;
+}): PillarCoverage {
+  const covered = (flow: FlowSignal["flow"]) =>
+    flowSignals.some(
+      (s) => s.flow === flow && s.defensibility_score !== "weak",
+    );
+
+  return {
+    utility_sua:    covered("utility-sua") ? 1 : 0,
+    gig_income:     covered("gig-income") || argyleConnected ? 1 : 0,
+    shared_lease:   covered("shared-lease") ? 1 : 0,
+    assets:         0,  // no gateway flow signal yet
+    benefit_impact: 0,  // no gateway flow signal yet
+  };
 }
 
 /**
