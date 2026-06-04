@@ -141,43 +141,51 @@ enum SNAPErrorRiskPhase2Strings {
     /// High-risk: county is very likely to follow up.
     static let headlineHigh = CivicaText(
         "We noticed something the county may flag",
-        es: "Notamos algo que el condado podría marcar"
+        es: "Notamos algo que el condado podría marcar",
+        zh: "我们发现了一项县里可能会标记的内容"
     )
     /// Medium-risk: some items are unverified; the county may follow
     /// up but it's less certain.
     static let headlineMedium = CivicaText(
         "A few items the county may ask about",
-        es: "Algunos puntos que el condado podría preguntar"
+        es: "Algunos puntos que el condado podría preguntar",
+        zh: "县里可能会问到几项内容"
     )
 
     /// Earned income — encourages Argyle connection or pay-stub upload.
     static let bodyEarnedIncome = CivicaText(
         "Your earned income isn't verified yet. Connect your pay stubs via Argyle or upload your last 3 paychecks.",
-        es: "Tus ingresos del trabajo aún no están verificados. Conecta tus recibos de pago vía Argyle o sube tus últimos 3 cheques."
+        es: "Tus ingresos del trabajo aún no están verificados. Conecta tus recibos de pago vía Argyle o sube tus últimos 3 cheques.",
+        zh: "你的工作收入还没有核实。通过 Argyle 连接你的工资单,或上传最近 3 张工资单。"
     )
     /// Shelter / utility — encourages housing-cost documentation.
     static let bodyShelterUtility = CivicaText(
         "Your housing or utility costs aren't verified yet. Upload your most recent lease or utility statement.",
-        es: "Tus gastos de vivienda o servicios aún no están verificados. Sube tu contrato de alquiler o factura de servicios más reciente."
+        es: "Tus gastos de vivienda o servicios aún no están verificados. Sube tu contrato de alquiler o factura de servicios más reciente.",
+        zh: "你的住房或水电费还没有核实。上传你最近的租约或水电费账单。"
     )
     /// Shared-lease — needs clarification on the housing arrangement.
     static let bodySharedLease = CivicaText(
         "The county may want details about your shared-living situation. Message a navigator if you have questions.",
-        es: "El condado puede querer detalles sobre tu situación de vivienda compartida. Mensajea a un asesor si tienes preguntas."
+        es: "El condado puede querer detalles sobre tu situación de vivienda compartida. Mensajea a un asesor si tienes preguntas.",
+        zh: "县里可能想了解你合租生活情况的详情。如有疑问,可以给协助员发消息。"
     )
     /// Assets — needs proof of bank balances etc.
     static let bodyAssets = CivicaText(
         "Your asset amounts aren't verified yet. Upload a recent bank statement if you have one.",
-        es: "Los montos de tus activos aún no están verificados. Sube un estado de cuenta bancario reciente si tienes uno."
+        es: "Los montos de tus activos aún no están verificados. Sube un estado de cuenta bancario reciente si tienes uno.",
+        zh: "你的资产金额还没有核实。如果有,请上传一份最近的银行对账单。"
     )
     /// Benefit impact — the calc is unverified.
     static let bodyBenefitImpact = CivicaText(
         "We couldn't verify how SNAP would affect your other benefits. The county will work this out during review.",
-        es: "No pudimos verificar cómo SNAP afectaría tus otros beneficios. El condado lo resolverá durante la revisión."
+        es: "No pudimos verificar cómo SNAP afectaría tus otros beneficios. El condado lo resolverá durante la revisión.",
+        zh: "我们无法核实 SNAP 会如何影响你的其他福利。县里会在审核期间处理这一点。"
     )
     /// Catch-all when no factor in our known set matches.
     static let bodyFallback = CivicaText(
         "The county may ask for additional documents. Tap to see what's flagged.",
-        es: "El condado puede pedir documentos adicionales. Toca para ver lo marcado."
+        es: "El condado puede pedir documentos adicionales. Toca para ver lo marcado.",
+        zh: "县里可能会要求补充材料。点击查看被标记的内容。"
     )
 }
