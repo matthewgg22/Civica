@@ -72,8 +72,8 @@ describe("AppHeader", () => {
   it("marks the active tab with the active-state classes", () => {
     render(<AppHeader active="queue" />);
     const queueTab = screen.getByRole("link", { name: "Applications" });
-    expect(queueTab.className).toMatch(/bg-white\/15/);
-    expect(queueTab.className).toMatch(/text-white(?!\/)/); // text-white, not text-white/65
+    expect(queueTab.className).toMatch(/bg-ink\/8/);
+    expect(queueTab.className).toMatch(/text-ink/);
   });
 
   it("does NOT mark non-active tabs with the active-state classes", () => {
