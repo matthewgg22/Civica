@@ -232,12 +232,15 @@ struct SNAPSettingsSheet: View {
 
     private func label(for phase: CivicaPhase) -> String {
         switch (phase, language) {
-        case (.enroll, .english), (.enroll, .mandarin), (.enroll, .vietnamese), (.enroll, .tagalog): return "Enroll"
+        case (.enroll, .english), (.enroll, .mandarin), (.enroll, .vietnamese): return "Enroll"
         case (.enroll,   .spanish): return "Solicitar"
-        case (.pending, .english), (.pending, .mandarin), (.pending, .vietnamese), (.pending, .tagalog): return "Pending"
+        case (.enroll,   .tagalog): return "Mag-apply"
+        case (.pending, .english), (.pending, .mandarin), (.pending, .vietnamese): return "Pending"
         case (.pending,  .spanish): return "En espera"
-        case (.enrolled, .english), (.enrolled, .mandarin), (.enrolled, .vietnamese), (.enrolled, .tagalog): return "Enrolled"
+        case (.pending,  .tagalog): return "Naghihintay"
+        case (.enrolled, .english), (.enrolled, .mandarin), (.enrolled, .vietnamese): return "Enrolled"
         case (.enrolled, .spanish): return "Inscrito"
+        case (.enrolled, .tagalog): return "Naka-enroll"
         }
     }
 
@@ -356,11 +359,11 @@ struct SNAPSettingsSheet: View {
 // MARK: - Strings
 
 enum SNAPSettingsStrings {
-    static let title = CivicaText("Settings", es: "Ajustes", zh: "设置")
-    static let done = CivicaText("Done", es: "Listo", zh: "完成")
-    static let cancel = CivicaText("Cancel", es: "Cancelar", zh: "取消")
+    static let title = CivicaText("Settings", es: "Ajustes", zh: "设置", tl: "Mga Setting")
+    static let done = CivicaText("Done", es: "Listo", zh: "完成", tl: "Tapos na")
+    static let cancel = CivicaText("Cancel", es: "Cancelar", zh: "取消", tl: "Kanselahin")
 
-    static let languageHeading = CivicaText("Language", es: "Idioma", zh: "语言")
+    static let languageHeading = CivicaText("Language", es: "Idioma", zh: "语言", tl: "Wika")
     /// Shown under languages without full string coverage. Native
     /// translations supplied so a speaker of that language can read the
     /// caveat; English fallback for the others.
@@ -372,30 +375,33 @@ enum SNAPSettingsStrings {
         tl: "May ilang teksto muna sa Ingles"
     )
 
-    static let transparencyHeading = CivicaText("Transparency", es: "Transparencia", zh: "透明度")
-    static let transparencyRow = CivicaText("What Civica uses AI for", es: "Para qué Civica usa IA", zh: "Civica 在哪些方面使用 AI")
+    static let transparencyHeading = CivicaText("Transparency", es: "Transparencia", zh: "透明度", tl: "Transparency")
+    static let transparencyRow = CivicaText("What Civica uses AI for", es: "Para qué Civica usa IA", zh: "Civica 在哪些方面使用 AI", tl: "Para saan ginagamit ng Civica ang AI")
 
-    static let demoModeHeading = CivicaText("Demo mode", es: "Modo demo", zh: "演示模式")
-    static let demoModeRow = CivicaText("Unlock all phases", es: "Desbloquear todas las fases", zh: "解锁所有阶段")
+    static let demoModeHeading = CivicaText("Demo mode", es: "Modo demo", zh: "演示模式", tl: "Demo mode")
+    static let demoModeRow = CivicaText("Unlock all phases", es: "Desbloquear todas las fases", zh: "解锁所有阶段", tl: "I-unlock ang lahat ng phase")
     static let demoModeCaption = CivicaText(
         "When on, pick Enroll, Pending, or Enrolled below to jump straight to that home. Selection resets local application status to that phase — leave off for normal use.",
         es: "Cuando está activado, elige Solicitar, En espera o Inscrito debajo para ir directamente a ese inicio. La selección restablece el estado local de la solicitud a esa fase — déjalo desactivado para uso normal.",
-        zh: "开启后,在下方选择「申请」、「待处理」或「已加入」,即可直接跳转到对应的首页。选择会把本地的申请状态重置为该阶段 — 日常使用请保持关闭。"
+        zh: "开启后,在下方选择「申请」、「待处理」或「已加入」,即可直接跳转到对应的首页。选择会把本地的申请状态重置为该阶段 — 日常使用请保持关闭。",
+        tl: "Kapag naka-on, piliin sa ibaba ang Mag-apply, Naghihintay, o Naka-enroll para diretsong pumunta sa home na iyon. Ire-reset ng pagpili ang lokal na status ng aplikasyon sa phase na iyon — iwang naka-off para sa normal na paggamit."
     )
 
-    static let signOut = CivicaText("Sign out", es: "Cerrar sesión", zh: "退出登录")
+    static let signOut = CivicaText("Sign out", es: "Cerrar sesión", zh: "退出登录", tl: "Mag-sign out")
     static let signOutConfirm = CivicaText(
         "Sign out of Civica? Your saved progress stays on this device.",
         es: "¿Cerrar sesión en Civica? Tu progreso guardado permanece en este dispositivo.",
-        zh: "要退出 Civica 吗?你保存的进度会保留在这台设备上。"
+        zh: "要退出 Civica 吗?你保存的进度会保留在这台设备上。",
+        tl: "Mag-sign out sa Civica? Mananatili sa device na ito ang naka-save mong progreso."
     )
 
-    static let aboutHeading = CivicaText("About", es: "Acerca de", zh: "关于")
-    static let versionLabel = CivicaText("Version", es: "Versión", zh: "版本")
+    static let aboutHeading = CivicaText("About", es: "Acerca de", zh: "关于", tl: "Tungkol")
+    static let versionLabel = CivicaText("Version", es: "Versión", zh: "版本", tl: "Bersyon")
     static let openSourceNotice = CivicaText(
         "Civica is built with open-source software. Civica does not make benefit decisions — your state agency does.",
         es: "Civica está construido con software de código abierto. Civica no toma decisiones de beneficios — tu agencia estatal lo hace.",
-        zh: "Civica 由开源软件构建。Civica 不做福利决定 — 决定由你所在州的机构作出。"
+        zh: "Civica 由开源软件构建。Civica 不做福利决定 — 决定由你所在州的机构作出。",
+        tl: "Gawa ang Civica gamit ang open-source na software. Hindi nagdedesisyon ang Civica tungkol sa benepisyo — ang ahensya ng iyong estado ang gumagawa nito."
     )
 }
 

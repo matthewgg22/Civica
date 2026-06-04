@@ -104,6 +104,9 @@ struct SNAPDecisionApprovedView: View {
         if language == .vietnamese {
             return "Theo dõi giờ làm việc của bạn"
         }
+        if language == .tagalog {
+            return "I-track ang Iyong Oras ng Trabaho"
+        }
         return language == .english
             ? "Track Your Work Hours"
             : "Registra tus horas laborales"
@@ -113,6 +116,9 @@ struct SNAPDecisionApprovedView: View {
         if language == .vietnamese {
             return "Nếu bạn thuộc diện phải đáp ứng yêu cầu làm việc của CalFresh, hãy ghi lại số giờ hàng tháng và đính kèm phiếu lương tại đây."
         }
+        if language == .tagalog {
+            return "Kung saklaw ka ng work requirements ng CalFresh, i-log ang iyong buwanang oras at ilakip ang mga pay stub dito."
+        }
         return language == .english
             ? "If you're subject to CalFresh work requirements, log your monthly hours and attach pay stubs here."
             : "Si estás sujeto a los requisitos laborales de CalFresh, registra tus horas mensuales y adjunta tus talones de pago aquí."
@@ -121,6 +127,9 @@ struct SNAPDecisionApprovedView: View {
     private func workHoursCardAccessibilityLabel(language: CivicaLanguage) -> String {
         if language == .vietnamese {
             return "Theo dõi giờ làm việc của bạn. Nhấn để mở nhật ký giờ làm việc."
+        }
+        if language == .tagalog {
+            return "I-track ang Iyong Oras ng Trabaho. I-tap para buksan ang work hours log."
         }
         return language == .english
             ? "Track Your Work Hours. Tap to open work hours log."
@@ -175,6 +184,9 @@ struct SNAPDecisionApprovedView: View {
         if language == .vietnamese {
             return "Chương trình Bữa ăn tại Nhà hàng"
         }
+        if language == .tagalog {
+            return "Restaurant Meals Program"
+        }
         return language == .english
             ? "Restaurant Meals Program"
             : "Programa de Comidas en Restaurantes"
@@ -186,12 +198,14 @@ struct SNAPDecisionApprovedView: View {
     ) -> String {
         let reasonPhrase = restaurantMealsReasonPhrase(reasons: reasons, language: language)
         switch language {
-        case .english, .mandarin, .tagalog:
+        case .english, .mandarin:
             return "Because \(reasonPhrase), your EBT card can also be used at participating restaurants for hot prepared meals. Look for the Restaurant Meals Program decal at the door — the FindHelp map will list participating spots when it's tuned for your county."
         case .spanish:
             return "Porque \(reasonPhrase), tu tarjeta EBT también puede usarse en restaurantes participantes para comidas calientes preparadas. Busca la calcomanía del Programa de Comidas en Restaurantes en la puerta — el mapa de Buscar Ayuda mostrará los lugares participantes cuando esté ajustado para tu condado."
         case .vietnamese:
             return "Vì \(reasonPhrase), thẻ EBT của bạn cũng có thể được dùng tại các nhà hàng tham gia để mua bữa ăn nóng chế biến sẵn. Hãy tìm nhãn dán Chương trình Bữa ăn tại Nhà hàng ở cửa — bản đồ FindHelp sẽ liệt kê các địa điểm tham gia khi được điều chỉnh cho quận của bạn."
+        case .tagalog:
+            return "Dahil \(reasonPhrase), magagamit din ang iyong EBT card sa mga kalahok na restawran para sa mainit na handang pagkain. Hanapin ang decal ng Restaurant Meals Program sa pinto — ililista ng FindHelp map ang mga kalahok na lugar kapag na-tune na ito para sa iyong county."
         }
     }
 
@@ -203,6 +217,9 @@ struct SNAPDecisionApprovedView: View {
             if language == .vietnamese {
                 return "hộ gia đình của bạn cho biết đang không có nhà ở"
             }
+            if language == .tagalog {
+                return "iniulat ng iyong sambahayan na walang tirahan"
+            }
             return language == .english
                 ? "your household reports unhoused status"
                 : "tu hogar reporta estar sin vivienda"
@@ -211,12 +228,18 @@ struct SNAPDecisionApprovedView: View {
             if language == .vietnamese {
                 return "một người trong hộ gia đình của bạn là người cao tuổi hoặc khuyết tật"
             }
+            if language == .tagalog {
+                return "may miyembro ng iyong sambahayan na matatanda o may kapansanan"
+            }
             return language == .english
                 ? "someone in your household is elderly or disabled"
                 : "alguien en tu hogar es de edad avanzada o tiene una discapacidad"
         }
         if language == .vietnamese {
             return "hộ gia đình của bạn đủ điều kiện"
+        }
+        if language == .tagalog {
+            return "kwalipikado ang iyong sambahayan"
         }
         return language == .english
             ? "your household qualifies"
@@ -300,8 +323,10 @@ struct SNAPDecisionApprovedView: View {
             return "mes"
         case .vietnamese:
             return "tháng"
-        case .english, .mandarin, .tagalog:
+        case .english, .mandarin:
             return "mo"
+        case .tagalog:
+            return "buwan"
         }
     }
 
@@ -479,12 +504,14 @@ enum SNAPDecisionApprovedStrings {
     static let approvedBadge = CivicaText(
         "Approved",
         es: "Aprobado",
-        vi: "Đã được duyệt"
+        vi: "Đã được duyệt",
+        tl: "Aprubado"
     )
     static let decidedOn = CivicaText(
         "Decided",
         es: "Decidido",
-        vi: "Đã quyết định"
+        vi: "Đã quyết định",
+        tl: "Napagdesisyunan"
     )
     // Compliance Q3: registry id "decision_approved_headline" — counsel-prep
     // approved (2026-05-19). State-keyed: CalFresh (CA) vs SNAP (MA).
@@ -492,7 +519,8 @@ enum SNAPDecisionApprovedStrings {
     static let headline = CivicaText(
         SNAPComplianceCopyRegistry.approvedEnglish(for: "decision_approved_headline") ?? "You're approved.",
         es: SNAPComplianceCopyRegistry.approvedSpanish(for: "decision_approved_headline") ?? "Estás aprobada.",
-        vi: "Bạn đã được duyệt."
+        vi: "Bạn đã được duyệt.",
+        tl: "Aprubado ka na."
     )
 
     /// State-aware headline. Production view should call this so CA users
@@ -500,7 +528,7 @@ enum SNAPDecisionApprovedStrings {
     /// `headline` CivicaText (the state-agnostic default) when no state.
     static func headline(stateCode: String?, language: CivicaLanguage) -> String {
         switch language {
-        case .english, .mandarin, .tagalog:
+        case .english, .mandarin:
             return SNAPComplianceCopyRegistry.approvedEnglish(
                 for: "decision_approved_headline",
                 stateCode: stateCode
@@ -512,13 +540,16 @@ enum SNAPDecisionApprovedStrings {
             ) ?? headline.value(in: .spanish)
         case .vietnamese:
             return headline.value(in: .vietnamese)
+        case .tagalog:
+            return headline.value(in: .tagalog)
         }
     }
 
     static let monthlyAwardLabel = CivicaText(
         "Monthly award",
         es: "Beneficio mensual",
-        vi: "Trợ cấp hàng tháng"
+        vi: "Trợ cấp hàng tháng",
+        tl: "Buwanang benepisyo"
     )
     static func amountFallback(stateCode: String?, language: CivicaLanguage) -> String {
         let agency = SNAPAgencyDirectory.agencyFullName(for: stateCode, language: language)
@@ -526,13 +557,16 @@ enum SNAPDecisionApprovedStrings {
         let portalEN = portal.isEmpty ? "your state portal" : portal
         let portalES = portal.isEmpty ? "el portal estatal" : portal
         let portalVI = portal.isEmpty ? "cổng thông tin tiểu bang của bạn" : portal
+        let portalTL = portal.isEmpty ? "ang portal ng iyong estado" : portal
         switch language {
-        case .english, .mandarin, .tagalog:
+        case .english, .mandarin:
             return "\(agency)'s official letter has your monthly amount. Open \(portalEN) to see it."
         case .spanish:
             return "La carta oficial de \(agency) tiene tu cantidad mensual. Abre \(portalES) para verla."
         case .vietnamese:
             return "Thư chính thức của \(agency) ghi số tiền hàng tháng của bạn. Mở \(portalVI) để xem."
+        case .tagalog:
+            return "Nasa opisyal na sulat ng \(agency) ang iyong buwanang halaga. Buksan ang \(portalTL) para makita ito."
         }
     }
     /// {mailed} / {earliest} / {latest} substituted with localized date
@@ -541,51 +575,60 @@ enum SNAPDecisionApprovedStrings {
     static let ebtTimingTemplate = CivicaText(
         "EBT card mailed {mailed} · expect {earliest}–{latest}.",
         es: "Tarjeta EBT enviada el {mailed} · llega entre {earliest}–{latest}.",
-        vi: "Thẻ EBT gửi qua bưu điện ngày {mailed} · dự kiến đến {earliest}–{latest}."
+        vi: "Thẻ EBT gửi qua bưu điện ngày {mailed} · dự kiến đến {earliest}–{latest}.",
+        tl: "Ipapakoreo ang EBT card {mailed} · asahan {earliest}–{latest}."
     )
     static let ebtTimingFallback = CivicaText(
         "Your EBT card is mailed within a few days of approval. Most arrive within a week.",
         es: "Tu tarjeta EBT se envía pocos días después de la aprobación. La mayoría llegan en una semana.",
-        vi: "Thẻ EBT của bạn được gửi qua bưu điện trong vài ngày sau khi được duyệt. Hầu hết đến trong vòng một tuần."
+        vi: "Thẻ EBT của bạn được gửi qua bưu điện trong vài ngày sau khi được duyệt. Hầu hết đến trong vòng một tuần.",
+        tl: "Ipapakoreo ang iyong EBT card ilang araw matapos ka aprubahan. Karamihan ay dumarating sa loob ng isang linggo."
     )
 
     static let recertLabel = CivicaText(
         "Mark your calendar",
         es: "Marca tu calendario",
-        vi: "Ghi vào lịch của bạn"
+        vi: "Ghi vào lịch của bạn",
+        tl: "Markahan ang iyong kalendaryo"
     )
     /// {date} substituted with a long-form localized date.
     static let recertBodyTemplate = CivicaText(
         "Recertification due {date}. We'll remind you 60 and 14 days before.",
         es: "Recertificación el {date}. Te recordaremos 60 y 14 días antes.",
-        vi: "Tái chứng nhận đến hạn ngày {date}. Chúng tôi sẽ nhắc bạn trước 60 và 14 ngày."
+        vi: "Tái chứng nhận đến hạn ngày {date}. Chúng tôi sẽ nhắc bạn trước 60 và 14 ngày.",
+        tl: "Recertification due {date}. Paaalalahanan ka namin 60 at 14 na araw bago iyon."
     )
     static let recertBodyFallback = CivicaText(
         "Recertification happens once a year. We'll remind you 60 and 14 days before yours is due.",
         es: "La recertificación ocurre una vez al año. Te recordaremos 60 y 14 días antes de la tuya.",
-        vi: "Tái chứng nhận diễn ra mỗi năm một lần. Chúng tôi sẽ nhắc bạn trước 60 và 14 ngày trước khi đến hạn."
+        vi: "Tái chứng nhận diễn ra mỗi năm một lần. Chúng tôi sẽ nhắc bạn trước 60 và 14 ngày trước khi đến hạn.",
+        tl: "Nangyayari ang recertification isang beses sa isang taon. Paaalalahanan ka namin 60 at 14 na araw bago ang takdang petsa mo."
     )
 
     static let wicTitle = CivicaText(
         "Now check WIC and school meals.",
         es: "Ahora revisa WIC y comidas escolares.",
-        vi: "Bây giờ hãy kiểm tra WIC và bữa ăn ở trường."
+        vi: "Bây giờ hãy kiểm tra WIC và bữa ăn ở trường.",
+        tl: "Ngayon i-check ang WIC at school meals."
     )
     static let wicBody = CivicaText(
         "Your household likely qualifies for both. Vouchers for kids under 5 plus free breakfast and lunch at school.",
         es: "Tu hogar probablemente califica para ambos. Vales para niños menores de 5 más desayuno y almuerzo gratis en la escuela.",
-        vi: "Hộ gia đình của bạn có thể đủ điều kiện cho cả hai. Phiếu trợ cấp cho trẻ dưới 5 tuổi cùng bữa sáng và bữa trưa miễn phí ở trường."
+        vi: "Hộ gia đình của bạn có thể đủ điều kiện cho cả hai. Phiếu trợ cấp cho trẻ dưới 5 tuổi cùng bữa sáng và bữa trưa miễn phí ở trường.",
+        tl: "Malamang kwalipikado ang iyong sambahayan sa pareho. May voucher para sa mga batang wala pang 5 taon, kasama ang libreng almusal at tanghalian sa paaralan."
     )
 
     static let openDTAConnect = CivicaText(
         "Open DTA Connect",
         es: "Abrir DTA Connect",
-        vi: "Mở DTA Connect"
+        vi: "Mở DTA Connect",
+        tl: "Buksan ang DTA Connect"
     )
     static let startOver = CivicaText(
         "Reset Civica and start fresh",
         es: "Reiniciar Civica y empezar de nuevo",
-        vi: "Đặt lại Civica và bắt đầu mới"
+        vi: "Đặt lại Civica và bắt đầu mới",
+        tl: "I-reset ang Civica at magsimula muli"
     )
 }
 

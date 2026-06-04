@@ -28,7 +28,8 @@ enum IntakeHelpStrings {
         "Ask Mae about this question",
         es: "Pregúntale a Mae sobre esta pregunta",
         zh: "向 Mae 询问这个问题",
-        vi: "Hỏi Mae về câu hỏi này"
+        vi: "Hỏi Mae về câu hỏi này",
+        tl: "Itanong kay Mae ang tungkol sa tanong na ito"
     )
 
     // MARK: - Sheet chrome
@@ -38,7 +39,8 @@ enum IntakeHelpStrings {
         "Ask Mae",
         es: "Pregúntale a Mae",
         zh: "询问 Mae",
-        vi: "Hỏi Mae"
+        vi: "Hỏi Mae",
+        tl: "Itanong kay Mae"
     )
 
     /// Dismiss control on the sheet.
@@ -46,7 +48,8 @@ enum IntakeHelpStrings {
         "Done",
         es: "Listo",
         zh: "完成",
-        vi: "Xong"
+        vi: "Xong",
+        tl: "Tapos na"
     )
 
     // MARK: - Loading states
@@ -63,7 +66,8 @@ enum IntakeHelpStrings {
         "Reading your question…",
         es: "Leyendo tu pregunta…",
         zh: "正在阅读你的问题……",
-        vi: "Đang đọc câu hỏi của bạn…"
+        vi: "Đang đọc câu hỏi của bạn…",
+        tl: "Binabasa ang iyong tanong…"
     )
 
     /// Swap-in after ~1.5s elapsed without a response. Universal
@@ -72,7 +76,8 @@ enum IntakeHelpStrings {
         "One moment…",
         es: "Un momento…",
         zh: "请稍等……",
-        vi: "Chờ một chút…"
+        vi: "Chờ một chút…",
+        tl: "Sandali lang…"
     )
 
     // MARK: - Error fallback (per D6 — load-bearing)
@@ -90,7 +95,8 @@ enum IntakeHelpStrings {
         "{title}. We could not reach our assistant just now. Your county navigator can clarify what this question is asking.",
         es: "{title}. No pudimos conectar con nuestro asistente en este momento. Tu orientador del condado puede aclarar lo que pregunta esta pregunta.",
         zh: "{title}。我们暂时无法连接到助手。你所在县的导航员可以为你解释这个问题在问什么。",
-        vi: "{title}. Chúng tôi không thể kết nối với trợ lý ngay lúc này. Nhân viên hướng dẫn của county có thể giải thích câu hỏi này đang hỏi gì."
+        vi: "{title}. Chúng tôi không thể kết nối với trợ lý ngay lúc này. Nhân viên hướng dẫn của county có thể giải thích câu hỏi này đang hỏi gì.",
+        tl: "{title}. Hindi namin maabot ang aming assistant ngayon. Maipapaliwanag ng iyong county navigator kung ano ang itinatanong dito."
     )
 
     /// Standalone navigator nudge — used when the title is too long to
@@ -100,7 +106,8 @@ enum IntakeHelpStrings {
         "Your county navigator can clarify what this question is asking.",
         es: "Tu orientador del condado puede aclarar lo que pregunta esta pregunta.",
         zh: "你所在县的导航员可以为你解释这个问题在问什么。",
-        vi: "Nhân viên hướng dẫn của county có thể giải thích câu hỏi này đang hỏi gì."
+        vi: "Nhân viên hướng dẫn của county có thể giải thích câu hỏi này đang hỏi gì.",
+        tl: "Maipapaliwanag ng iyong county navigator kung ano ang itinatanong dito."
     )
 
     // MARK: - Chat input
@@ -112,7 +119,8 @@ enum IntakeHelpStrings {
         "Ask a follow-up…",
         es: "Haz una pregunta…",
         zh: "继续提问……",
-        vi: "Hỏi thêm câu nữa…"
+        vi: "Hỏi thêm câu nữa…",
+        tl: "Magtanong pa…"
     )
 
     /// Accessibility label on the send button next to the TextField.
@@ -120,7 +128,8 @@ enum IntakeHelpStrings {
         "Send",
         es: "Enviar",
         zh: "发送",
-        vi: "Gửi"
+        vi: "Gửi",
+        tl: "Ipadala"
     )
 
     /// Tiny header label above the chat scroll area introducing Mae as
@@ -131,7 +140,8 @@ enum IntakeHelpStrings {
         "Mae · SNAP assistant",
         es: "Mae · asistente de SNAP",
         zh: "Mae · SNAP 助手",
-        vi: "Mae · trợ lý SNAP"
+        vi: "Mae · trợ lý SNAP",
+        tl: "Mae · katulong sa SNAP"
     )
 
     /// AI-transparency line shown just above the chat input. Keeps the
@@ -141,7 +151,8 @@ enum IntakeHelpStrings {
         "Mae is an AI assistant. Double-check anything important with your county navigator.",
         es: "Mae es un asistente de IA. Confirma cualquier cosa importante con tu orientador del condado.",
         zh: "Mae 是一个 AI 助手。重要的事情请向你所在县的导航员再确认一遍。",
-        vi: "Mae là trợ lý AI. Hãy kiểm tra lại bất cứ điều gì quan trọng với nhân viên hướng dẫn của county."
+        vi: "Mae là trợ lý AI. Hãy kiểm tra lại bất cứ điều gì quan trọng với nhân viên hướng dẫn của county.",
+        tl: "Si Mae ay AI assistant. I-double check ang anumang mahalaga sa iyong county navigator."
     )
 
     // MARK: - View helpers

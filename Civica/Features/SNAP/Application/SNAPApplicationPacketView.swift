@@ -227,69 +227,80 @@ enum SNAPApplicationPacketStrings {
         "Application packet",
         es: "Paquete de solicitud",
         zh: "申请材料包",
-        vi: "Hồ sơ đăng ký"
+        vi: "Hồ sơ đăng ký",
+        tl: "Packet ng aplikasyon"
     )
     static let title = CivicaText(
         "Your SNAP application summary is ready to save or share",
         es: "Tu resumen de solicitud de SNAP está listo para guardar o compartir",
         zh: "你的 SNAP 申请摘要已准备好,可以保存或分享",
-        vi: "Bản tóm tắt đơn đăng ký SNAP của bạn đã sẵn sàng để lưu hoặc chia sẻ"
+        vi: "Bản tóm tắt đơn đăng ký SNAP của bạn đã sẵn sàng để lưu hoặc chia sẻ",
+        tl: "Handa nang i-save o i-share ang buod ng iyong aplikasyon sa SNAP"
     )
     static let body = CivicaText(
         "We turned your answers into a PDF you can save to Files, email to a SNAP navigator, or print and bring to a DTA office.",
         es: "Convertimos tus respuestas en un PDF que puedes guardar en Archivos, enviar por correo a un asesor de SNAP o imprimir y llevar a una oficina del DTA.",
         zh: "我们把你的回答整理成一份 PDF。你可以保存到「文件」、用邮件发给 SNAP 协助员,或者打印出来带到 DTA 办公室。",
-        vi: "Chúng tôi đã chuyển câu trả lời của bạn thành một file PDF. Bạn có thể lưu vào Files, gửi email cho người hỗ trợ SNAP, hoặc in ra và mang đến văn phòng DTA."
+        vi: "Chúng tôi đã chuyển câu trả lời của bạn thành một file PDF. Bạn có thể lưu vào Files, gửi email cho người hỗ trợ SNAP, hoặc in ra và mang đến văn phòng DTA.",
+        tl: "Ginawa naming PDF ang iyong mga sagot. Pwede mo itong i-save sa Files, i-email sa isang SNAP navigator, o i-print at dalhin sa opisina ng DTA."
     )
 
     static let generating = CivicaText(
         "Putting your packet together…",
         es: "Preparando tu paquete…",
         zh: "正在整理你的材料包……",
-        vi: "Đang chuẩn bị hồ sơ của bạn…"
+        vi: "Đang chuẩn bị hồ sơ của bạn…",
+        tl: "Inaayos namin ang iyong packet…"
     )
     static let ready = CivicaText(
         "Your packet is ready.",
         es: "Tu paquete está listo.",
         zh: "你的材料包已就绪。",
-        vi: "Hồ sơ của bạn đã sẵn sàng."
+        vi: "Hồ sơ của bạn đã sẵn sàng.",
+        tl: "Handa na ang iyong packet."
     )
     static let errorGeneric = CivicaText(
         "We couldn't generate the PDF. Try again in a moment.",
         es: "No pudimos generar el PDF. Inténtalo de nuevo en un momento.",
         zh: "我们无法生成 PDF。请稍后再试一次。",
-        vi: "Chúng tôi không tạo được file PDF. Hãy thử lại sau giây lát."
+        vi: "Chúng tôi không tạo được file PDF. Hãy thử lại sau giây lát.",
+        tl: "Hindi namin nagawa ang PDF. Subukan ulit mamaya."
     )
     static let retry = CivicaText(
         "Try again",
         es: "Inténtalo de nuevo",
         zh: "再试一次",
-        vi: "Thử lại"
+        vi: "Thử lại",
+        tl: "Subukan ulit"
     )
 
     static let walkthroughHeading = CivicaText(
         "What to do with this",
         es: "Qué hacer con esto",
         zh: "接下来怎么用",
-        vi: "Cách dùng hồ sơ này"
+        vi: "Cách dùng hồ sơ này",
+        tl: "Ano ang gagawin dito"
     )
     static let walkthroughBody = CivicaText(
         "This PDF is a reference document — it's not the official application. To file, open DTA Connect and use this PDF as your guide, or hand it to a navigator who can help.",
         es: "Este PDF es un documento de referencia — no es la solicitud oficial. Para presentarla, abre DTA Connect y usa este PDF como guía, o entrégaselo a un asesor que pueda ayudarte.",
         zh: "这份 PDF 是一份参考文件 — 不是正式申请。要正式提交,请打开 DTA Connect 并把这份 PDF 当作你的指引,或者交给可以帮你的协助员。",
-        vi: "File PDF này là tài liệu tham khảo — không phải đơn đăng ký chính thức. Để nộp đơn, hãy mở DTA Connect và dùng PDF này làm hướng dẫn, hoặc đưa cho người hỗ trợ có thể giúp bạn."
+        vi: "File PDF này là tài liệu tham khảo — không phải đơn đăng ký chính thức. Để nộp đơn, hãy mở DTA Connect và dùng PDF này làm hướng dẫn, hoặc đưa cho người hỗ trợ có thể giúp bạn.",
+        tl: "Ang PDF na ito ay isang reference na dokumento — hindi ito ang opisyal na aplikasyon. Para mag-file, buksan ang DTA Connect at gamitin ang PDF na ito bilang gabay, o ibigay ito sa isang navigator na pwedeng tumulong sa iyo."
     )
 
     static let share = CivicaText(
         "Save or share my packet",
         es: "Guardar o compartir mi paquete",
         zh: "保存或分享我的材料包",
-        vi: "Lưu hoặc chia sẻ hồ sơ của tôi"
+        vi: "Lưu hoặc chia sẻ hồ sơ của tôi",
+        tl: "I-save o i-share ang aking packet"
     )
     static let done = CivicaText(
         "Done for now",
         es: "Listo por ahora",
         zh: "暂时完成",
-        vi: "Tạm xong"
+        vi: "Tạm xong",
+        tl: "Tapos na sa ngayon"
     )
 }

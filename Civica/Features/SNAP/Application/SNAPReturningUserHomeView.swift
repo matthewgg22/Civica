@@ -302,22 +302,26 @@ enum SNAPReturningHomeStrings {
     static let verdictCardEyebrow = CivicaText(
         "Your previous result",
         es: "Tu resultado anterior",
-        vi: "Kết quả trước đó của bạn"
+        vi: "Kết quả trước đó của bạn",
+        tl: "Ang iyong nakaraang resulta"
     )
     static let verdictCardEligible = CivicaText(
         "You looked likely eligible. See the math.",
         es: "Parecías probablemente elegible. Ver el cálculo.",
-        vi: "Bạn có vẻ đủ điều kiện. Xem cách tính."
+        vi: "Bạn có vẻ đủ điều kiện. Xem cách tính.",
+        tl: "Mukhang malamang na kuwalipikado ka. Tingnan ang kuwenta."
     )
     static let verdictCardIneligible = CivicaText(
         "Last time you appeared not to qualify. See why.",
         es: "La última vez parecía que no calificabas. Ver por qué.",
-        vi: "Lần trước bạn có vẻ không đủ điều kiện. Xem lý do."
+        vi: "Lần trước bạn có vẻ không đủ điều kiện. Xem lý do.",
+        tl: "Noong huli, mukhang hindi ka kuwalipikado. Tingnan kung bakit."
     )
     static let verdictCardNeedMore = CivicaText(
         "We needed more info last time. See what's missing.",
         es: "Necesitábamos más información la última vez. Ver qué falta.",
-        vi: "Lần trước chúng tôi cần thêm thông tin. Xem còn thiếu gì."
+        vi: "Lần trước chúng tôi cần thêm thông tin. Xem còn thiếu gì.",
+        tl: "Kailangan namin ng karagdagang impormasyon noong huli. Tingnan kung ano ang kulang."
     )
 
     /// JR-6 (iOS audit 2026-05-29): destination-preview line under the
@@ -356,9 +360,10 @@ enum SNAPReturningHomeStrings {
         let total = SNAPApplicationSection.count
         let name = section.title(in: language)
         switch language {
-        case .english, .mandarin, .tagalog: return "Step \(step) of \(total) \u{00B7} \(name)"
+        case .english, .mandarin: return "Step \(step) of \(total) \u{00B7} \(name)"
         case .spanish: return "Paso \(step) de \(total) \u{00B7} \(name)"
         case .vietnamese: return "Bước \(step) / \(total) \u{00B7} \(name)"
+        case .tagalog: return "Hakbang \(step) ng \(total) \u{00B7} \(name)"
         }
     }
 
@@ -366,17 +371,20 @@ enum SNAPReturningHomeStrings {
     static let fallbackHeadline = CivicaText(
         "We couldn't pull up your screener result.",
         es: "No pudimos encontrar tu resultado de la evaluación.",
-        vi: "Chúng tôi không tìm được kết quả sàng lọc của bạn."
+        vi: "Chúng tôi không tìm được kết quả sàng lọc của bạn.",
+        tl: "Hindi namin makita ang resulta ng iyong screener."
     )
     static let fallbackReRunAction = CivicaText(
         "Re-run the screener (2 min)",
         es: "Repetir la evaluación (2 min)",
-        vi: "Làm lại sàng lọc (2 phút)"
+        vi: "Làm lại sàng lọc (2 phút)",
+        tl: "Ulitin ang screener (2 minuto)"
     )
     static let fallbackSkipAction = CivicaText(
         "Skip and continue",
         es: "Omitir y continuar",
-        vi: "Bỏ qua và tiếp tục"
+        vi: "Bỏ qua và tiếp tục",
+        tl: "Laktawan at magpatuloy"
     )
 }
 

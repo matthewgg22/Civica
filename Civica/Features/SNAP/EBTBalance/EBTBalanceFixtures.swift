@@ -103,41 +103,45 @@ enum EBTBalanceFixtures {
         EBTPerk(
             id: UUID(),
             iconName: "building.columns.fill",
-            title: CivicaText("Museums for All", es: "Museos para todos", vi: "Museums for All"),
+            title: CivicaText("Museums for All", es: "Museos para todos", vi: "Museums for All", tl: "Museums for All"),
             detail: CivicaText(
                 "Free or $3 admission at 1,200+ museums, zoos, and science centers when you show your EBT card.",
                 es: "Entrada gratis o de $3 en más de 1,200 museos, zoológicos y centros de ciencia mostrando tu tarjeta EBT.",
-                vi: "Vào cửa miễn phí hoặc $3 tại hơn 1,200 bảo tàng, vườn thú và trung tâm khoa học khi bạn xuất trình thẻ EBT."
+                vi: "Vào cửa miễn phí hoặc $3 tại hơn 1,200 bảo tàng, vườn thú và trung tâm khoa học khi bạn xuất trình thẻ EBT.",
+                tl: "Libre o $3 lang ang pasok sa mahigit 1,200 museo, zoo, at science center kapag ipinakita mo ang iyong EBT card."
             )
         ),
         EBTPerk(
             id: UUID(),
             iconName: "wifi",
-            title: CivicaText("Low-cost internet & phone", es: "Internet y teléfono de bajo costo", vi: "Internet và điện thoại giá rẻ"),
+            title: CivicaText("Low-cost internet & phone", es: "Internet y teléfono de bajo costo", vi: "Internet và điện thoại giá rẻ", tl: "Murang internet at telepono"),
             detail: CivicaText(
                 "The federal Lifeline program lowers your monthly internet or phone bill if you receive CalFresh.",
                 es: "El programa federal Lifeline reduce tu factura mensual de internet o teléfono si recibes CalFresh.",
-                vi: "Chương trình liên bang Lifeline giảm hóa đơn internet hoặc điện thoại hằng tháng của bạn nếu bạn nhận CalFresh."
+                vi: "Chương trình liên bang Lifeline giảm hóa đơn internet hoặc điện thoại hằng tháng của bạn nếu bạn nhận CalFresh.",
+                tl: "Binababa ng pederal na Lifeline program ang buwanang bill mo sa internet o telepono kung tumatanggap ka ng CalFresh."
             )
         ),
         EBTPerk(
             id: UUID(),
             iconName: "leaf.fill",
-            title: CivicaText("Market Match", es: "Market Match", vi: "Market Match"),
+            title: CivicaText("Market Match", es: "Market Match", vi: "Market Match", tl: "Market Match"),
             detail: CivicaText(
                 "Doubles your CalFresh dollars on fresh fruits and vegetables at participating California farmers markets.",
                 es: "Duplica tus dólares de CalFresh en frutas y verduras frescas en los mercados de agricultores participantes de California.",
-                vi: "Nhân đôi số tiền CalFresh của bạn cho trái cây và rau tươi tại các chợ nông sản tham gia ở California."
+                vi: "Nhân đôi số tiền CalFresh của bạn cho trái cây và rau tươi tại các chợ nông sản tham gia ở California.",
+                tl: "Dinodoble nito ang iyong CalFresh dollars para sa sariwang prutas at gulay sa mga sumasaling farmers market sa California."
             )
         ),
         EBTPerk(
             id: UUID(),
             iconName: "cart.fill",
-            title: CivicaText("Discounted grocery delivery", es: "Entrega de comida con descuento", vi: "Giao hàng tạp hóa giảm giá"),
+            title: CivicaText("Discounted grocery delivery", es: "Entrega de comida con descuento", vi: "Giao hàng tạp hóa giảm giá", tl: "Discounted na grocery delivery"),
             detail: CivicaText(
                 "EBT cardholders qualify for a discounted Amazon and Walmart+ membership and can pay for groceries online with EBT.",
                 es: "Los titulares de EBT califican para una membresía con descuento de Amazon y Walmart+, y pueden pagar comida en línea con EBT.",
-                vi: "Người có thẻ EBT đủ điều kiện nhận tư cách thành viên Amazon và Walmart+ giảm giá, và có thể thanh toán hàng tạp hóa trực tuyến bằng EBT."
+                vi: "Người có thẻ EBT đủ điều kiện nhận tư cách thành viên Amazon và Walmart+ giảm giá, và có thể thanh toán hàng tạp hóa trực tuyến bằng EBT.",
+                tl: "Kwalipikado ang mga may EBT card sa discounted na Amazon at Walmart+ membership, at puwedeng magbayad ng grocery online gamit ang EBT."
             )
         ),
     ]
@@ -148,21 +152,23 @@ enum EBTBalanceFixtures {
         EBTNewsItem(
             id: UUID(),
             iconName: "calendar.badge.clock",
-            title: CivicaText("Keep your benefits — recertify on time", es: "Mantén tus beneficios — recertifica a tiempo", vi: "Giữ trợ cấp của bạn — tái xác nhận đúng hạn"),
+            title: CivicaText("Keep your benefits — recertify on time", es: "Mantén tus beneficios — recertifica a tiempo", vi: "Giữ trợ cấp của bạn — tái xác nhận đúng hạn", tl: "Panatilihin ang iyong benepisyo — mag-recertify nang nasa oras"),
             detail: CivicaText(
                 "CalFresh has to be renewed periodically. Civica will remind you before your deadline so your benefits don't pause.",
                 es: "CalFresh debe renovarse periódicamente. Civica te recordará antes de tu fecha límite para que tus beneficios no se detengan.",
-                vi: "CalFresh phải được gia hạn định kỳ. Civica sẽ nhắc bạn trước hạn chót để trợ cấp của bạn không bị tạm dừng."
+                vi: "CalFresh phải được gia hạn định kỳ. Civica sẽ nhắc bạn trước hạn chót để trợ cấp của bạn không bị tạm dừng.",
+                tl: "Kailangang i-renew ang CalFresh paminsan-minsan. Paaalalahanan ka ng Civica bago ang iyong deadline para hindi mahinto ang iyong benepisyo."
             )
         ),
         EBTNewsItem(
             id: UUID(),
             iconName: "exclamationmark.shield.fill",
-            title: CivicaText("Protect your card from theft", es: "Protege tu tarjeta del robo", vi: "Bảo vệ thẻ của bạn khỏi bị trộm"),
+            title: CivicaText("Protect your card from theft", es: "Protege tu tarjeta del robo", vi: "Bảo vệ thẻ của bạn khỏi bị trộm", tl: "Protektahan ang iyong card sa pagnanakaw"),
             detail: CivicaText(
                 "EBT card skimming is on the rise. Keep your card locked when you're not shopping — California can replace stolen benefits in limited cases.",
                 es: "El robo de datos de tarjetas EBT está aumentando. Mantén tu tarjeta bloqueada cuando no estés comprando — California puede reemplazar beneficios robados en casos limitados.",
-                vi: "Hành vi sao trộm dữ liệu thẻ EBT đang gia tăng. Hãy khóa thẻ khi bạn không mua sắm — California có thể thay thế trợ cấp bị đánh cắp trong một số trường hợp giới hạn."
+                vi: "Hành vi sao trộm dữ liệu thẻ EBT đang gia tăng. Hãy khóa thẻ khi bạn không mua sắm — California có thể thay thế trợ cấp bị đánh cắp trong một số trường hợp giới hạn.",
+                tl: "Dumarami ang skimming ng EBT card. Panatilihing naka-lock ang iyong card kapag hindi ka namimili — kaya ng California na palitan ang ninakaw na benepisyo sa ilang limitadong kaso."
             )
         ),
     ]

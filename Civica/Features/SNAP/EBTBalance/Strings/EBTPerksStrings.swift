@@ -10,44 +10,50 @@ enum EBTPerksStrings {
         "PERKS FOR YOU",
         es: "BENEFICIOS PARA TI",
         zh: "为你准备的优惠",
-        vi: "ƯU ĐÃI CHO BẠN"
+        vi: "ƯU ĐÃI CHO BẠN",
+        tl: "MGA PERKS PARA SA IYO"
     )
     static let freeResourcesEyebrow = CivicaText(
         "FREE RESOURCES NEAR YOU",
         es: "RECURSOS GRATUITOS CERCA",
         zh: "你附近的免费资源",
-        vi: "TÀI NGUYÊN MIỄN PHÍ GẦN BẠN"
+        vi: "TÀI NGUYÊN MIỄN PHÍ GẦN BẠN",
+        tl: "MGA LIBRENG RESOURCE MALAPIT SA IYO"
     )
     static let savingsLabel = CivicaText(
         "est. savings",
         es: "ahorro estimado",
         zh: "预计省下",
-        vi: "tiết kiệm ước tính"
+        vi: "tiết kiệm ước tính",
+        tl: "tantyang naitipid"
     )
     static let redeemButton = CivicaText(
         "I used this",
         es: "Lo usé",
         zh: "我用过了",
-        vi: "Tôi đã dùng cái này"
+        vi: "Tôi đã dùng cái này",
+        tl: "Ginamit ko ito"
     )
     static let redeemConfirmTitle = CivicaText(
         "How much did you save?",
         es: "¿Cuánto ahorraste?",
         zh: "你省了多少?",
-        vi: "Bạn đã tiết kiệm được bao nhiêu?"
+        vi: "Bạn đã tiết kiệm được bao nhiêu?",
+        tl: "Magkano ang naitipid mo?"
     )
     static let redeemConfirmBody = CivicaText(
         "We'll add it to your Saved by Civica total.",
         es: "Lo añadiremos a tu total Ahorrado con Civica.",
         zh: "我们会把它加到你的 Civica 累计省钱总额里。",
-        vi: "Chúng tôi sẽ cộng vào tổng số tiền bạn đã Tiết kiệm với Civica."
+        vi: "Chúng tôi sẽ cộng vào tổng số tiền bạn đã Tiết kiệm với Civica.",
+        tl: "Idaragdag namin ito sa iyong kabuuang Naitipid sa Civica."
     )
 
     /// Confirm-sheet primary button. Custom-dollars path.
-    static let redeemConfirmSaveButton = CivicaText("Save", es: "Guardar", zh: "保存", vi: "Lưu")
+    static let redeemConfirmSaveButton = CivicaText("Save", es: "Guardar", zh: "保存", vi: "Lưu", tl: "I-save")
 
     /// Confirm-sheet cancel toolbar item.
-    static let redeemConfirmCancelButton = CivicaText("Cancel", es: "Cancelar", zh: "取消", vi: "Hủy")
+    static let redeemConfirmCancelButton = CivicaText("Cancel", es: "Cancelar", zh: "取消", vi: "Hủy", tl: "Kanselahin")
 
     /// "~$X est. savings" callout rendered on each offer row. Routed
     /// through a function so the parity guard sees a CivicaText-backed

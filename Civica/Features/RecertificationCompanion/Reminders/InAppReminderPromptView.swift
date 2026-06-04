@@ -107,13 +107,15 @@ enum InAppReminderStrings {
         "Upload now",
         es: "Subir ahora",
         zh: "立即上传",
-        vi: "Tải lên ngay"
+        vi: "Tải lên ngay",
+        tl: "I-upload na"
     )
     static let dismissCTA = CivicaText(
         "Later",
         es: "Más tarde",
         zh: "稍后",
-        vi: "Để sau"
+        vi: "Để sau",
+        tl: "Mamaya na lang"
     )
 }
 

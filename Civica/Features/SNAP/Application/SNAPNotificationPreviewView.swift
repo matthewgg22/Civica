@@ -334,63 +334,72 @@ enum SNAPNotificationPreviewStrings {
         "Notifications",
         es: "Notificaciones",
         zh: "通知",
-        vi: "Thông báo"
+        vi: "Thông báo",
+        tl: "Mga Notipikasyon"
     )
     static let title = CivicaText(
         "What you'll hear from us.",
         es: "Lo que recibirás de nosotros.",
         zh: "你会收到我们的哪些消息。",
-        vi: "Những gì bạn sẽ nhận được từ chúng tôi."
+        vi: "Những gì bạn sẽ nhận được từ chúng tôi.",
+        tl: "Kung ano ang maririnig mo mula sa amin."
     )
     static let subtitle = CivicaText(
         "Every email and text Civica will send you, in the actual voice we'll use. No marketing, no surprises.",
         es: "Cada correo y mensaje que Civica te enviará, en la voz exacta que usaremos. Sin marketing, sin sorpresas.",
         zh: "Civica 会发给你的每一封邮件和短信,用的就是我们真正会用的语气。没有营销,没有意外。",
-        vi: "Mọi email và tin nhắn mà Civica sẽ gửi cho bạn, đúng với giọng điệu chúng tôi thực sự dùng. Không tiếp thị, không bất ngờ."
+        vi: "Mọi email và tin nhắn mà Civica sẽ gửi cho bạn, đúng với giọng điệu chúng tôi thực sự dùng. Không tiếp thị, không bất ngờ.",
+        tl: "Bawat email at text na ipapadala sa iyo ng Civica, sa totoong tono na gagamitin namin. Walang marketing, walang sorpresa."
     )
 
     static let previewOnlyNotice = CivicaText(
         "These are examples only. Notifications will be sent once Civica's messaging system is live.",
         es: "Estos son solo ejemplos. Las notificaciones se enviarán una vez que el sistema de mensajería de Civica esté activo.",
         zh: "这些只是示例。等 Civica 的消息系统上线后,我们才会真正发送通知。",
-        vi: "Đây chỉ là ví dụ. Thông báo sẽ được gửi khi hệ thống nhắn tin của Civica hoạt động."
+        vi: "Đây chỉ là ví dụ. Thông báo sẽ được gửi khi hệ thống nhắn tin của Civica hoạt động.",
+        tl: "Mga halimbawa lang ito. Ipapadala ang mga notipikasyon kapag live na ang messaging system ng Civica."
     )
 
     static let emailHeading = CivicaText(
         "Emails — the record",
         es: "Correos — el registro",
         zh: "邮件 — 留底记录",
-        vi: "Email — bản lưu"
+        vi: "Email — bản lưu",
+        tl: "Mga Email — ang talaan"
     )
     static let smsHeading = CivicaText(
         "Texts — the moment",
         es: "Mensajes — el momento",
         zh: "短信 — 即时提醒",
-        vi: "Tin nhắn — nhắc đúng lúc"
+        vi: "Tin nhắn — nhắc đúng lúc",
+        tl: "Mga Text — ang sandali"
     )
     static let smsSenderLabel = CivicaText(
         "Civica · short code, US only",
         es: "Civica · código corto, solo EE. UU.",
         zh: "Civica · 短代码,仅限美国",
-        vi: "Civica · mã ngắn, chỉ ở Mỹ"
+        vi: "Civica · mã ngắn, chỉ ở Mỹ",
+        tl: "Civica · short code, US lang"
     )
     static let emailFooter = CivicaText(
         "Civica · Reply to reach a person · Unsubscribe anywhere",
         es: "Civica · Responde para hablar con una persona · Cancelar la suscripción en cualquier momento",
         zh: "Civica · 回复即可联系到真人 · 随时可退订",
-        vi: "Civica · Trả lời để gặp người thật · Hủy đăng ký ở bất cứ đâu"
+        vi: "Civica · Trả lời để gặp người thật · Hủy đăng ký ở bất cứ đâu",
+        tl: "Civica · Mag-reply para makausap ang tao · Mag-unsubscribe kahit saan"
     )
 
     static let rulesHeading = CivicaText(
         "How Civica writes notifications",
         es: "Cómo escribe Civica las notificaciones",
         zh: "Civica 如何撰写通知",
-        vi: "Cách Civica viết thông báo"
+        vi: "Cách Civica viết thông báo",
+        tl: "Paano nagsusulat ng mga notipikasyon ang Civica"
     )
 
     static func rules(language: CivicaLanguage) -> [String] {
         switch language {
-        case .english, .tagalog:
+        case .english:
             return [
                 "Every message names the next action and the time horizon.",
                 "Email subjects are headlines — they render complete in your inbox.",
@@ -398,6 +407,15 @@ enum SNAPNotificationPreviewStrings {
                 "Reply-to reaches a human. We never send from noreply@.",
                 "STOP is honored in the first text — never buried.",
                 "\"Not now\" is a first-class reply. We back off when you say so.",
+            ]
+        case .tagalog:
+            return [
+                "Bawat mensahe ay binabanggit ang susunod na hakbang at ang takdang panahon.",
+                "Ang mga subject ng email ay mga headline — kumpletong nababasa sa iyong inbox.",
+                "Isang button bawat mensahe, o wala. Hindi kailanman puro CTA.",
+                "Ang reply-to ay umaabot sa tunay na tao. Hindi kami nagpapadala mula sa noreply@.",
+                "Iginagalang ang STOP sa unang text — hindi kailanman itinatago.",
+                "Ang “Hindi muna” ay tanggap na sagot. Umuurong kami kapag sinabi mo iyon.",
             ]
         case .mandarin:
             return [

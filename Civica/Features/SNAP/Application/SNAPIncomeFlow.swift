@@ -784,18 +784,21 @@ enum SNAPIncomeStrings {
     // 3-way option labels — shared across all four screens.
     static func triLabel(for value: SNAPIncomeAnswers.Tri, language: CivicaLanguage) -> String {
         switch (value, language) {
-        case (.yes, .english), (.yes, .tagalog): return "Yes"
+        case (.yes, .english): return "Yes"
         case (.yes, .vietnamese): return "Có"
         case (.yes, .mandarin): return "是"
         case (.yes, .spanish): return "Sí"
-        case (.no, .english), (.no, .tagalog):  return "No"
+        case (.yes, .tagalog): return "Oo"
+        case (.no, .english):  return "No"
         case (.no, .vietnamese):  return "Không"
         case (.no, .mandarin):  return "否"
         case (.no, .spanish):  return "No"
-        case (.notSure, .english), (.notSure, .tagalog): return "I'm not sure"
+        case (.no, .tagalog):  return "Hindi"
+        case (.notSure, .english): return "I'm not sure"
         case (.notSure, .vietnamese): return "Tôi không chắc"
         case (.notSure, .mandarin): return "我不确定"
         case (.notSure, .spanish): return "No estoy seguro"
+        case (.notSure, .tagalog): return "Hindi ako sigurado"
         }
     }
 
@@ -804,13 +807,15 @@ enum SNAPIncomeStrings {
         "Is anyone in your household earning money right now?",
         es: "¿Alguien en tu hogar está ganando dinero ahora mismo?",
         zh: "你家里现在有人在挣钱吗?",
-        vi: "Hiện có ai trong gia đình bạn đang kiếm tiền không?"
+        vi: "Hiện có ai trong gia đình bạn đang kiếm tiền không?",
+        tl: "May kumikita ba ng pera sa iyong sambahayan ngayon?"
     )
     static let earningHelper = CivicaText(
         "Count any job — full-time, part-time, gig work, side jobs, self-employment. We'll ask for amounts next.",
         es: "Cuenta cualquier trabajo — tiempo completo, medio tiempo, trabajo por encargo, trabajos secundarios, por cuenta propia. Preguntaremos los montos después.",
         zh: "任何工作都算——全职、兼职、零工、副业、自雇。我们接下来会问金额。",
-        vi: "Tính mọi công việc — toàn thời gian, bán thời gian, việc làm thời vụ, việc phụ, tự kinh doanh. Chúng tôi sẽ hỏi số tiền ở bước sau."
+        vi: "Tính mọi công việc — toàn thời gian, bán thời gian, việc làm thời vụ, việc phụ, tự kinh doanh. Chúng tôi sẽ hỏi số tiền ở bước sau.",
+        tl: "Bilangin ang anumang trabaho — full-time, part-time, gig work, side jobs, self-employment. Itatanong namin ang halaga sa susunod."
     )
 
     // Screen 2
@@ -818,13 +823,15 @@ enum SNAPIncomeStrings {
         "About how much does the whole household bring in each month, before taxes?",
         es: "¿Cuánto trae el hogar entero cada mes, antes de impuestos?",
         zh: "整个家庭每月税前大约挣多少?",
-        vi: "Cả gia đình kiếm được khoảng bao nhiêu mỗi tháng, trước thuế?"
+        vi: "Cả gia đình kiếm được khoảng bao nhiêu mỗi tháng, trước thuế?",
+        tl: "Halos magkano ang kinikita ng buong sambahayan kada buwan, bago ang buwis?"
     )
     static let grossHelper = CivicaText(
         "An estimate is fine. SNAP looks at gross income — what you make before taxes and deductions.",
         es: "Una estimación está bien. SNAP mira los ingresos brutos — lo que ganas antes de impuestos y deducciones.",
         zh: "估算一下就行。SNAP 看的是总收入——也就是扣税和扣款之前你挣的钱。",
-        vi: "Ước tính cũng được. SNAP xét tổng thu nhập — số tiền bạn kiếm được trước thuế và các khoản khấu trừ."
+        vi: "Ước tính cũng được. SNAP xét tổng thu nhập — số tiền bạn kiếm được trước thuế và các khoản khấu trừ.",
+        tl: "Okay lang ang tantya. Tinitingnan ng SNAP ang gross income — ang kinikita mo bago ang buwis at mga kaltas."
     )
     /// Word placeholder ("Amount" / "Cantidad") rather than "0" so the
     /// empty state is unambiguous — see CivicaQuestionStrings for the
@@ -836,19 +843,22 @@ enum SNAPIncomeStrings {
         "Tell us about your employer",
         es: "Cuéntanos sobre tu empleador",
         zh: "告诉我们你雇主的信息",
-        vi: "Cho chúng tôi biết về nơi bạn làm việc"
+        vi: "Cho chúng tôi biết về nơi bạn làm việc",
+        tl: "Sabihin mo sa amin ang tungkol sa iyong employer"
     )
     static let employerHelper = CivicaText(
         "These details speed up the county's verification step. Skip anything you don't know — the assister can fill it in later.",
         es: "Estos datos aceleran la verificación del condado. Omite lo que no sepas — el asistente puede completarlo después.",
         zh: "这些信息可以加快县里的核实流程。不知道的项可以跳过——协助员之后可以补上。",
-        vi: "Những chi tiết này giúp đẩy nhanh bước xác minh của county. Bỏ qua phần bạn không biết — người hỗ trợ có thể điền sau."
+        vi: "Những chi tiết này giúp đẩy nhanh bước xác minh của county. Bỏ qua phần bạn không biết — người hỗ trợ có thể điền sau.",
+        tl: "Pinabibilis ng mga detalyeng ito ang verification ng county. Laktawan ang hindi mo alam — puwedeng punan ng assister mamaya."
     )
     static let employerNameLabel = CivicaText(
         "Employer name",
         es: "Nombre del empleador",
         zh: "雇主名称",
-        vi: "Tên nơi làm việc"
+        vi: "Tên nơi làm việc",
+        tl: "Pangalan ng employer"
     )
     static let employerNamePlaceholder = CivicaText(
         "Acme Corp",
@@ -859,7 +869,8 @@ enum SNAPIncomeStrings {
         "Employer address",
         es: "Dirección del empleador",
         zh: "雇主地址",
-        vi: "Địa chỉ nơi làm việc"
+        vi: "Địa chỉ nơi làm việc",
+        tl: "Address ng employer"
     )
     static let employerStreetPlaceholder = CivicaText(
         "123 Main St",
@@ -870,7 +881,8 @@ enum SNAPIncomeStrings {
         "City",
         es: "Ciudad",
         zh: "城市",
-        vi: "Thành phố"
+        vi: "Thành phố",
+        tl: "Lungsod"
     )
     static let employerCityPlaceholder = CivicaText(
         "San Francisco",
@@ -881,25 +893,29 @@ enum SNAPIncomeStrings {
         "State",
         es: "Estado",
         zh: "州",
-        vi: "Tiểu bang"
+        vi: "Tiểu bang",
+        tl: "Estado"
     )
     static let employerZIPLabel = CivicaText(
         "ZIP",
         es: "Código postal",
         zh: "邮编",
-        vi: "Mã ZIP"
+        vi: "Mã ZIP",
+        tl: "ZIP"
     )
     static let employerPhoneLabel = CivicaText(
         "Employer phone",
         es: "Teléfono del empleador",
         zh: "雇主电话",
-        vi: "Số điện thoại nơi làm việc"
+        vi: "Số điện thoại nơi làm việc",
+        tl: "Telepono ng employer"
     )
     static let employerOptionalNote = CivicaText(
         "All fields here are optional. Blanks become \"human must fill\" hints to the assister.",
         es: "Todos los campos aquí son opcionales. Los espacios en blanco se convierten en notas de \"completar manualmente\" para el asistente.",
         zh: "这里所有的字段都是可选的。留空的会变成提示「需人工填写」交给协助员。",
-        vi: "Mọi ô ở đây đều không bắt buộc. Ô để trống sẽ trở thành gợi ý “cần người điền” cho người hỗ trợ."
+        vi: "Mọi ô ở đây đều không bắt buộc. Ô để trống sẽ trở thành gợi ý “cần người điền” cho người hỗ trợ.",
+        tl: "Lahat ng field dito ay opsyonal. Ang mga blangko ay magiging “kailangang punan ng tao” na hint para sa assister."
     )
 
     // Wave D — bank-statement-scan affordance strings
@@ -907,20 +923,23 @@ enum SNAPIncomeStrings {
         "Scan a bank statement to autofill",
         es: "Escanea un estado bancario para autollenar",
         zh: "扫描银行对账单自动填写",
-        vi: "Quét sao kê ngân hàng để tự động điền"
+        vi: "Quét sao kê ngân hàng để tự động điền",
+        tl: "I-scan ang bank statement para awtomatikong mapunan"
     )
     static let scanBankPrefilledNote = CivicaText(
         "Pre-filled from your statement — change above if needed.",
         es: "Pre-llenado desde tu estado bancario — cámbialo arriba si es necesario.",
         zh: "已根据你的对账单预填——如有需要请在上方修改。",
-        vi: "Đã điền sẵn từ sao kê của bạn — sửa ở trên nếu cần."
+        vi: "Đã điền sẵn từ sao kê của bạn — sửa ở trên nếu cần.",
+        tl: "Awtomatikong napunan mula sa iyong statement — baguhin sa itaas kung kailangan."
     )
 
     static let grossSuffix = CivicaText(
         "Total monthly, before taxes",
         es: "Total mensual, antes de impuestos",
         zh: "每月总额,税前",
-        vi: "Tổng mỗi tháng, trước thuế"
+        vi: "Tổng mỗi tháng, trước thuế",
+        tl: "Kabuuan kada buwan, bago ang buwis"
     )
 
     // Screen 3
@@ -928,13 +947,15 @@ enum SNAPIncomeStrings {
         "Does that amount change month to month?",
         es: "¿Esa cantidad cambia mes a mes?",
         zh: "这个金额每月会变化吗?",
-        vi: "Số tiền đó có thay đổi theo từng tháng không?"
+        vi: "Số tiền đó có thay đổi theo từng tháng không?",
+        tl: "Nagbabago ba ang halagang iyon bawat buwan?"
     )
     static let variabilityHelper = CivicaText(
         "Yes if hours, tips, or seasonal work make it different each month. SNAP averages variable income across recent months.",
         es: "Sí si las horas, propinas o trabajo de temporada lo hacen diferente cada mes. SNAP promedia los ingresos variables en los últimos meses.",
         zh: "如果工时、小费或季节性工作让每月不同,就选「是」。SNAP 会按最近几个月平均计算波动的收入。",
-        vi: "Chọn Có nếu giờ làm, tiền tip hoặc công việc thời vụ khiến số tiền khác nhau mỗi tháng. SNAP tính trung bình thu nhập thay đổi qua vài tháng gần đây."
+        vi: "Chọn Có nếu giờ làm, tiền tip hoặc công việc thời vụ khiến số tiền khác nhau mỗi tháng. SNAP tính trung bình thu nhập thay đổi qua vài tháng gần đây.",
+        tl: "Oo kung iba-iba kada buwan dahil sa oras, tips, o seasonal na trabaho. Inaaverage ng SNAP ang nagbabagong kita sa nakaraang ilang buwan."
     )
 
     // Screen 4
@@ -942,13 +963,15 @@ enum SNAPIncomeStrings {
         "Does anyone get income that's not from a job?",
         es: "¿Alguien recibe ingresos que no son de un trabajo?",
         zh: "有没有人有不是来自工作的收入?",
-        vi: "Có ai nhận thu nhập không phải từ công việc không?"
+        vi: "Có ai nhận thu nhập không phải từ công việc không?",
+        tl: "May tumatanggap ba ng kita na hindi galing sa trabaho?"
     )
     static let unearnedHelper = CivicaText(
         "Things like SSI, Social Security, unemployment, child support, pension, or veterans benefits. These count for SNAP too.",
         es: "Cosas como SSI, Seguro Social, desempleo, manutención de hijos, pensión o beneficios para veteranos. Estos también cuentan para SNAP.",
         zh: "比如 SSI、Social Security、失业金、子女抚养费、退休金或退伍军人福利。这些对 SNAP 也算收入。",
-        vi: "Những thứ như SSI, Social Security, trợ cấp thất nghiệp, tiền cấp dưỡng con, lương hưu, hay phúc lợi cựu chiến binh. Những khoản này cũng được tính cho SNAP."
+        vi: "Những thứ như SSI, Social Security, trợ cấp thất nghiệp, tiền cấp dưỡng con, lương hưu, hay phúc lợi cựu chiến binh. Những khoản này cũng được tính cho SNAP.",
+        tl: "Tulad ng SSI, Social Security, unemployment, child support, pension, o veterans benefits. Bilang din ang mga ito para sa SNAP."
     )
 
     // Screen 5 — liquid resources (cash on hand + bank balances).
@@ -959,20 +982,23 @@ enum SNAPIncomeStrings {
         "How much cash do you have on hand and in checking or savings, total?",
         es: "¿Cuánto efectivo tienes a mano y en cuentas de cheques o ahorros, en total?",
         zh: "你手头的现金加上支票或储蓄账户里的钱,一共有多少?",
-        vi: "Bạn có tổng cộng bao nhiêu tiền mặt và trong tài khoản chi tiêu hoặc tiết kiệm?"
+        vi: "Bạn có tổng cộng bao nhiêu tiền mặt và trong tài khoản chi tiêu hoặc tiết kiệm?",
+        tl: "Magkano lahat ang cash na hawak mo at nasa checking o savings?"
     )
     static let liquidResourcesHelper = CivicaText(
         "Add up cash, checking, and savings across the household. Leave it at 0 if you don't have any. Retirement accounts and your home don't count.",
         es: "Suma el efectivo, las cuentas de cheques y ahorros del hogar. Déjalo en 0 si no tienes nada. Las cuentas de jubilación y tu casa no cuentan.",
         zh: "把全家的现金、支票和储蓄加起来。没有就填 0。退休账户和你的房子不计入。",
-        vi: "Cộng tiền mặt, tài khoản chi tiêu và tiết kiệm của cả gia đình. Để 0 nếu bạn không có. Tài khoản hưu trí và nhà của bạn không được tính."
+        vi: "Cộng tiền mặt, tài khoản chi tiêu và tiết kiệm của cả gia đình. Để 0 nếu bạn không có. Tài khoản hưu trí và nhà của bạn không được tính.",
+        tl: "Idagdag ang cash, checking, at savings ng buong sambahayan. Iwanang 0 kung wala ka. Hindi kasama ang retirement accounts at ang iyong bahay."
     )
     static let liquidResourcesPlaceholder = CivicaText("0", es: "0", zh: "0")
     static let liquidResourcesSuffix = CivicaText(
         "Cash + checking + savings",
         es: "Efectivo + cheques + ahorros",
         zh: "现金 + 支票 + 储蓄",
-        vi: "Tiền mặt + chi tiêu + tiết kiệm"
+        vi: "Tiền mặt + chi tiêu + tiết kiệm",
+        tl: "Cash + checking + savings"
     )
 
     // Screen 2 — paystub-derived prefill variant. Shown only when the
@@ -982,27 +1008,31 @@ enum SNAPIncomeStrings {
         "We found this on your paystub.",
         es: "Encontramos esto en tu recibo de pago.",
         zh: "我们在你的工资单上找到了这些。",
-        vi: "Chúng tôi tìm thấy thông tin này trên phiếu lương của bạn."
+        vi: "Chúng tôi tìm thấy thông tin này trên phiếu lương của bạn.",
+        tl: "Nakita namin ito sa iyong paystub."
     )
     static let paystubSuggestionHelper = CivicaText(
         "Tap Use this if it looks right. SNAP looks at gross income — what you make before taxes and deductions.",
         es: "Toca Usar esto si se ve bien. SNAP mira los ingresos brutos — lo que ganas antes de impuestos y deducciones.",
         zh: "如果看起来没问题,点「使用这个」。SNAP 看的是总收入——也就是扣税和扣款之前你挣的钱。",
-        vi: "Nhấn Dùng số này nếu thấy đúng. SNAP xét tổng thu nhập — số tiền bạn kiếm được trước thuế và các khoản khấu trừ."
+        vi: "Nhấn Dùng số này nếu thấy đúng. SNAP xét tổng thu nhập — số tiền bạn kiếm được trước thuế và các khoản khấu trừ.",
+        tl: "Pindutin ang Gamitin ito kung tama ang hitsura. Tinitingnan ng SNAP ang gross income — ang kinikita mo bago ang buwis at mga kaltas."
     )
-    static let paystubReadLabel = CivicaText("From your paystub", es: "De tu recibo", zh: "来自你的工资单", vi: "Từ phiếu lương của bạn")
+    static let paystubReadLabel = CivicaText("From your paystub", es: "De tu recibo", zh: "来自你的工资单", vi: "Từ phiếu lương của bạn", tl: "Mula sa iyong paystub")
     static let paystubMonthlyLabel = CivicaText(
         "Estimated gross monthly",
         es: "Estimación mensual bruta",
         zh: "估算的每月总收入",
-        vi: "Ước tính tổng thu nhập mỗi tháng"
+        vi: "Ước tính tổng thu nhập mỗi tháng",
+        tl: "Tinatayang gross kada buwan"
     )
-    static let paystubUseThis = CivicaText("Use this", es: "Usar esto", zh: "使用这个", vi: "Dùng số này")
+    static let paystubUseThis = CivicaText("Use this", es: "Usar esto", zh: "使用这个", vi: "Dùng số này", tl: "Gamitin ito")
     static let paystubEnterDifferent = CivicaText(
         "Enter a different amount",
         es: "Ingresar una cantidad diferente",
         zh: "输入其他金额",
-        vi: "Nhập số tiền khác"
+        vi: "Nhập số tiền khác",
+        tl: "Maglagay ng ibang halaga"
     )
 
     /// "$1,800 every 2 weeks" — combines the per-period gross with a
@@ -1023,10 +1053,11 @@ enum SNAPIncomeStrings {
     ) -> String {
         let amount = formatCurrency(derivation.monthlyEarnedIncome)
         switch language {
-        case .english, .tagalog: return "≈ \(amount)/month"
+        case .english: return "≈ \(amount)/month"
         case .vietnamese: return "≈ \(amount)/tháng"
         case .mandarin: return "≈ \(amount)/月"
         case .spanish: return "≈ \(amount)/mes"
+        case .tagalog: return "≈ \(amount)/buwan"
         }
     }
 
@@ -1035,22 +1066,26 @@ enum SNAPIncomeStrings {
         language: CivicaLanguage
     ) -> String {
         switch (frequency, language) {
-        case (.weekly, .english), (.weekly, .tagalog):       return "every week"
+        case (.weekly, .english):       return "every week"
         case (.weekly, .vietnamese):       return "mỗi tuần"
         case (.weekly, .mandarin):       return "每周"
         case (.weekly, .spanish):       return "cada semana"
-        case (.biweekly, .english), (.biweekly, .tagalog):     return "every 2 weeks"
+        case (.weekly, .tagalog):       return "kada linggo"
+        case (.biweekly, .english):     return "every 2 weeks"
         case (.biweekly, .vietnamese):     return "mỗi 2 tuần"
         case (.biweekly, .mandarin):     return "每 2 周"
         case (.biweekly, .spanish):     return "cada 2 semanas"
-        case (.semimonthly, .english), (.semimonthly, .tagalog):  return "twice a month"
+        case (.biweekly, .tagalog):     return "kada 2 linggo"
+        case (.semimonthly, .english):  return "twice a month"
         case (.semimonthly, .vietnamese):  return "hai lần một tháng"
         case (.semimonthly, .mandarin):  return "每月两次"
         case (.semimonthly, .spanish):  return "dos veces al mes"
-        case (.monthly, .english), (.monthly, .tagalog):      return "every month"
+        case (.semimonthly, .tagalog):  return "dalawang beses sa isang buwan"
+        case (.monthly, .english):      return "every month"
         case (.monthly, .vietnamese):      return "mỗi tháng"
         case (.monthly, .mandarin):      return "每月"
         case (.monthly, .spanish):      return "cada mes"
+        case (.monthly, .tagalog):      return "kada buwan"
         }
     }
 
@@ -1073,13 +1108,15 @@ enum SNAPIncomeStrings {
         "Has anyone in the household lost a job in the last 30 days?",
         es: "¿Alguien en el hogar perdió un trabajo en los últimos 30 días?",
         zh: "过去 30 天里,家里有人失去工作吗?",
-        vi: "Trong 30 ngày qua, có ai trong gia đình mất việc không?"
+        vi: "Trong 30 ngày qua, có ai trong gia đình mất việc không?",
+        tl: "May nawalan ba ng trabaho sa sambahayan sa nakaraang 30 araw?"
     )
     static let recentJobLossHelper = CivicaText(
         "Yes if a job ended, was laid off, or hours were cut to zero — even if you're getting unemployment.",
         es: "Sí si un trabajo terminó, hubo despidos o las horas se redujeron a cero — incluso si está recibiendo desempleo.",
         zh: "如果工作结束了、被裁员了、或工时被砍到零,就选「是」——就算你在领失业金也算。",
-        vi: "Chọn Có nếu một công việc đã kết thúc, bị cho nghỉ việc, hoặc giờ làm bị cắt xuống còn 0 — kể cả khi bạn đang nhận trợ cấp thất nghiệp."
+        vi: "Chọn Có nếu một công việc đã kết thúc, bị cho nghỉ việc, hoặc giờ làm bị cắt xuống còn 0 — kể cả khi bạn đang nhận trợ cấp thất nghiệp.",
+        tl: "Oo kung natapos ang trabaho, na-lay off, o naputol sa zero ang oras — kahit na tumatanggap ka ng unemployment."
     )
 }
 

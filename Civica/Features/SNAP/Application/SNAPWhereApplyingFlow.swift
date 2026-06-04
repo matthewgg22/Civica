@@ -294,7 +294,8 @@ enum SNAPWhereApplyingStrings {
         "Which state are you applying in?",
         es: "¿En qué estado estás solicitando?",
         zh: "你在哪个州申请?",
-        vi: "Bạn đang nộp đơn ở tiểu bang nào?"
+        vi: "Bạn đang nộp đơn ở tiểu bang nào?",
+        tl: "Saang estado ka nag-a-apply?"
     )
     // State-neutral helper. Earlier copy named Massachusetts
     // specifically, which became wrong once California and New York
@@ -304,17 +305,19 @@ enum SNAPWhereApplyingStrings {
         "SNAP rules and timelines vary by state. Pick the state where you're applying so the rest of the application fits your situation.",
         es: "Las reglas y plazos de SNAP varían según el estado. Elige el estado donde estás solicitando para que el resto de la solicitud se ajuste a tu situación.",
         zh: "SNAP 的规则和时间安排因州而异。选择你申请所在的州,这样后面的申请内容才能贴合你的情况。",
-        vi: "Quy định và thời hạn của SNAP khác nhau tùy tiểu bang. Hãy chọn tiểu bang nơi bạn đang nộp đơn để phần còn lại của đơn phù hợp với hoàn cảnh của bạn."
+        vi: "Quy định và thời hạn của SNAP khác nhau tùy tiểu bang. Hãy chọn tiểu bang nơi bạn đang nộp đơn để phần còn lại của đơn phù hợp với hoàn cảnh của bạn.",
+        tl: "Iba-iba ang mga panuntunan at timeline ng SNAP depende sa estado. Piliin ang estado kung saan ka nag-a-apply para tumugma sa sitwasyon mo ang natitirang bahagi ng aplikasyon."
     )
 
     /// Geo-suggestion token copy. The state name is interpolated at the
     /// call site; the surrounding sentence respects EN+ES parity.
     static func suggestionTokenLooksLike(stateName: String, language: CivicaLanguage) -> String {
         switch language {
-        case .english, .tagalog: return "Looks like you're in \(stateName)"
+        case .english: return "Looks like you're in \(stateName)"
         case .mandarin: return "看起来你在 \(stateName)"
         case .spanish: return "Parece que estás en \(stateName)"
         case .vietnamese: return "Có vẻ như bạn đang ở \(stateName)"
+        case .tagalog: return "Mukhang nasa \(stateName) ka"
         }
     }
 
@@ -323,10 +326,11 @@ enum SNAPWhereApplyingStrings {
     /// "yes, we got you" affirmation rather than disappearing.
     static func suggestionTokenSelected(stateName: String, language: CivicaLanguage) -> String {
         switch language {
-        case .english, .tagalog: return "Pre-filled \(stateName) — change above if needed"
+        case .english: return "Pre-filled \(stateName) — change above if needed"
         case .mandarin: return "已预填 \(stateName) — 如需更改,请在上方修改"
         case .spanish: return "\(stateName) pre-seleccionado — cámbialo arriba si es necesario"
         case .vietnamese: return "Đã điền sẵn \(stateName) — thay đổi ở trên nếu cần"
+        case .tagalog: return "Naka-pre-fill na ang \(stateName) — palitan sa itaas kung kailangan"
         }
     }
 
@@ -334,7 +338,8 @@ enum SNAPWhereApplyingStrings {
         "Use this",
         es: "Usar esto",
         zh: "使用这个",
-        vi: "Dùng cái này"
+        vi: "Dùng cái này",
+        tl: "Gamitin ito"
     )
 
     struct StateOption: Equatable {
@@ -347,12 +352,19 @@ enum SNAPWhereApplyingStrings {
     /// once we add per-state rules engines.
     static func stateOptionsOrdered(language: CivicaLanguage) -> [StateOption] {
         switch language {
-        case .english, .tagalog:
+        case .english:
             return [
                 .init(code: "MA", label: "Massachusetts"),
                 .init(code: "NY", label: "New York"),
                 .init(code: "CA", label: "California"),
                 .init(code: "OTHER", label: "Another US state")
+            ]
+        case .tagalog:
+            return [
+                .init(code: "MA", label: "Massachusetts"),
+                .init(code: "NY", label: "New York"),
+                .init(code: "CA", label: "California"),
+                .init(code: "OTHER", label: "Ibang estado sa US")
             ]
         case .vietnamese:
             return [
@@ -382,33 +394,39 @@ enum SNAPWhereApplyingStrings {
         "How would you describe your housing right now?",
         es: "¿Cómo describirías tu vivienda en este momento?",
         zh: "你现在的住房情况怎么描述?",
-        vi: "Bạn mô tả tình trạng nhà ở của mình ngay lúc này như thế nào?"
+        vi: "Bạn mô tả tình trạng nhà ở của mình ngay lúc này như thế nào?",
+        tl: "Paano mo ilalarawan ang tirahan mo ngayon?"
     )
     static let housingHelper = CivicaText(
         "This shapes which SNAP deductions can apply. It doesn't disqualify anyone.",
         es: "Esto afecta qué deducciones de SNAP pueden aplicarse. No descalifica a nadie.",
         zh: "这会影响哪些 SNAP 扣除项可以适用。不会让任何人失去资格。",
-        vi: "Điều này quyết định những khoản khấu trừ SNAP nào có thể áp dụng. Nó không loại ai khỏi điều kiện cả."
+        vi: "Điều này quyết định những khoản khấu trừ SNAP nào có thể áp dụng. Nó không loại ai khỏi điều kiện cả.",
+        tl: "Nakakaapekto ito sa kung aling mga SNAP deduction ang puwedeng mag-apply. Hindi nito tinatanggalan ng kuwalipikasyon ang sinuman."
     )
 
     static func housingLabel(for status: HousingStatus, language: CivicaLanguage) -> String {
         switch (status, language) {
-        case (.stableHome, .english), (.stableHome, .tagalog):         return "Stable home"
+        case (.stableHome, .english):         return "Stable home"
         case (.stableHome, .mandarin):         return "稳定的住所"
         case (.stableHome, .spanish):         return "Hogar estable"
         case (.stableHome, .vietnamese):         return "Nhà ở ổn định"
-        case (.temporaryHousing, .english), (.temporaryHousing, .tagalog):   return "Temporary housing"
+        case (.stableHome, .tagalog):         return "May matatag na tirahan"
+        case (.temporaryHousing, .english):   return "Temporary housing"
         case (.temporaryHousing, .mandarin):   return "临时住房"
         case (.temporaryHousing, .spanish):   return "Vivienda temporal"
         case (.temporaryHousing, .vietnamese):   return "Nhà ở tạm thời"
-        case (.stayingWithOthers, .english), (.stayingWithOthers, .tagalog):  return "Staying with someone else"
+        case (.temporaryHousing, .tagalog):   return "Pansamantalang tirahan"
+        case (.stayingWithOthers, .english):  return "Staying with someone else"
         case (.stayingWithOthers, .mandarin):  return "和别人住在一起"
         case (.stayingWithOthers, .spanish):  return "Quedándome con alguien"
         case (.stayingWithOthers, .vietnamese):  return "Đang ở nhờ người khác"
-        case (.unhoused, .english), (.unhoused, .tagalog):           return "Unhoused right now"
+        case (.stayingWithOthers, .tagalog):  return "Nakikitira sa iba"
+        case (.unhoused, .english):           return "Unhoused right now"
         case (.unhoused, .mandarin):           return "目前没有住所"
         case (.unhoused, .spanish):           return "Sin hogar en este momento"
         case (.unhoused, .vietnamese):           return "Hiện không có nhà ở"
+        case (.unhoused, .tagalog):           return "Walang tirahan sa ngayon"
         }
     }
 }

@@ -69,10 +69,14 @@ struct InterviewCountdownCard: View {
 
     private var headlineLine: String {
         switch language {
-        case .english, .tagalog:
+        case .english:
             if daysUntil == 0 { return "Your interview is today." }
             if daysUntil == 1 { return "Your interview is tomorrow." }
             return "Your interview is in \(daysUntil) days."
+        case .tagalog:
+            if daysUntil == 0 { return "Ang interbyu mo ay ngayon." }
+            if daysUntil == 1 { return "Ang interbyu mo ay bukas." }
+            return "Ang interbyu mo ay sa \(daysUntil) araw."
         case .mandarin:
             if daysUntil == 0 { return "你的面谈就在今天。" }
             if daysUntil == 1 { return "你的面谈就在明天。" }
@@ -91,8 +95,10 @@ struct InterviewCountdownCard: View {
     private var deltaLine: String {
         let amount = NSDecimalNumber(decimal: dailyValue).intValue
         switch language {
-        case .english, .tagalog:
+        case .english:
             return "Once approved, you'd receive about $\(amount)/day."
+        case .tagalog:
+            return "Kapag naaprubahan, makakatanggap ka ng mga $\(amount)/araw."
         case .mandarin:
             return "一旦获批，你每天大约能收到 $\(amount)。"
         case .vietnamese:
@@ -172,14 +178,16 @@ enum InterviewCountdownStrings {
         "Your interview",
         es: "Tu entrevista",
         zh: "你的面谈",
-        vi: "Buổi phỏng vấn của bạn"
+        vi: "Buổi phỏng vấn của bạn",
+        tl: "Ang interbyu mo"
     )
 
     static let dateCaptureTitle = CivicaText(
         "When is your interview?",
         es: "¿Cuándo es tu entrevista?",
         zh: "你的面谈是什么时候？",
-        vi: "Buổi phỏng vấn của bạn là khi nào?"
+        vi: "Buổi phỏng vấn của bạn là khi nào?",
+        tl: "Kailan ang interbyu mo?"
     )
 
     /// "Enter the date and time from your <agency> confirmation letter."
@@ -189,8 +197,10 @@ enum InterviewCountdownStrings {
     static func dateCaptureBody(stateCode: String?, language: CivicaLanguage) -> String {
         let agency = SNAPAgencyDirectory.agencyShortName(for: stateCode, language: language)
         switch language {
-        case .english, .tagalog:
+        case .english:
             return "Enter the date and time from your \(agency) confirmation letter. We'll remind you the day before."
+        case .tagalog:
+            return "Ilagay ang petsa at oras mula sa confirmation letter ng \(agency) mo. Paaalalahanan ka namin isang araw bago nito."
         case .mandarin:
             return "请填写你 \(agency) 确认信上的日期和时间。我们会在前一天提醒你。"
         case .vietnamese:
@@ -204,7 +214,8 @@ enum InterviewCountdownStrings {
         "Save interview date",
         es: "Guardar fecha",
         zh: "保存面谈日期",
-        vi: "Lưu ngày phỏng vấn"
+        vi: "Lưu ngày phỏng vấn",
+        tl: "I-save ang petsa ng interbyu"
     )
 }
 

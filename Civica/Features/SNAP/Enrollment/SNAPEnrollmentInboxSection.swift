@@ -133,10 +133,10 @@ extension SNAPEnrollmentInboxSection {
 // MARK: - Strings
 
 private enum Strings {
-    static let sectionTitle = CivicaText("From your navigator", es: "De tu navigator", zh: "来自你的 navigator", vi: "Từ navigator của bạn")
-    static let loading      = CivicaText("Checking for messages…", es: "Buscando mensajes…", zh: "正在查看消息…", vi: "Đang kiểm tra tin nhắn…")
-    static let resolvedA11y = CivicaText("Resolved", es: "Resuelto", zh: "已解决", vi: "Đã xử lý")
-    static let pendingA11y  = CivicaText("Action needed", es: "Acción requerida", zh: "需要处理", vi: "Cần xử lý")
+    static let sectionTitle = CivicaText("From your navigator", es: "De tu navigator", zh: "来自你的 navigator", vi: "Từ navigator của bạn", tl: "Mula sa iyong navigator")
+    static let loading      = CivicaText("Checking for messages…", es: "Buscando mensajes…", zh: "正在查看消息…", vi: "Đang kiểm tra tin nhắn…", tl: "Tinitingnan ang mga mensahe…")
+    static let resolvedA11y = CivicaText("Resolved", es: "Resuelto", zh: "已解决", vi: "Đã xử lý", tl: "Naayos na")
+    static let pendingA11y  = CivicaText("Action needed", es: "Acción requerida", zh: "需要处理", vi: "Cần xử lý", tl: "May kailangang gawin")
 }
 
 #if DEBUG

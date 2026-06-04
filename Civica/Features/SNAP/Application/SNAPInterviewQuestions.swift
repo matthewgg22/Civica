@@ -24,7 +24,7 @@ enum SNAPInterviewQuestions {
 
     static func list(language: CivicaLanguage) -> [Question] {
         switch language {
-        case .english, .tagalog:
+        case .english:
             return englishQuestions
         case .mandarin:
             return mandarinQuestions
@@ -32,6 +32,8 @@ enum SNAPInterviewQuestions {
             return spanishQuestions
         case .vietnamese:
             return vietnameseQuestions
+        case .tagalog:
+            return tagalogQuestions
         }
     }
 
@@ -238,6 +240,57 @@ enum SNAPInterviewQuestions {
             suggestion: "Có hoặc không. Nếu có, họ sẽ hỏi thêm về số giờ làm việc và người phụ thuộc."
         ),
     ]
+
+    private static let tagalogQuestions: [Question] = [
+        .init(
+            questionText: "「Pwede mo bang kumpirmahin ang buo mong pangalan at petsa ng kapanganakan?」",
+            suggestion: "Ang legal mong pangalan at kaarawan gaya ng nakasulat sa iyong ID."
+        ),
+        .init(
+            questionText: "「Ilan kayo sa bahay na sama-samang bumibili o nagluluto ng pagkain?」",
+            suggestion: "「Ako lang」 / 「Ako at ang partner ko」 / 「Tatlo kami — ako, ang partner ko, at ang anak naming babae」"
+        ),
+        .init(
+            questionText: "「Ano ang kasalukuyan mong mailing address?」",
+            suggestion: "Kalye, numero ng apartment, lungsod, zip — pareho sa iyong ID."
+        ),
+        .init(
+            questionText: "「Magkano ang kita mo sa karaniwang buwan, bago ang buwis?」",
+            suggestion: "「Mga $1,820 bago ang buwis.」 Gumamit ng buwanang numero, hindi lingguhan."
+        ),
+        .init(
+            questionText: "「Saan ka nagtatrabaho, at gaano ka kadalas suwelduhan?」",
+            suggestion: "Pangalan ng employer, lingguhan / kada dalawang linggo / buwanan."
+        ),
+        .init(
+            questionText: "「May kahit sino ba sa bahay na may kita na hindi galing sa trabaho — Social Security, unemployment, child support, pension, VA?」",
+            suggestion: "「Oo, ang nanay ko ay tumatanggap ng $1,100/buwan mula sa Social Security」 o 「Wala.」 Tapat na oo o hindi."
+        ),
+        .init(
+            questionText: "「Magkano ang buwanan mong upa o mortgage?」",
+            suggestion: "「$1,650 plus gas at kuryente.」 Isama ang mga utility na ikaw mismo ang nagbabayad."
+        ),
+        .init(
+            questionText: "「May kahit sino ba sa bahay na 60 anyos pataas, o may kapansanan?」",
+            suggestion: "Tapat na oo o hindi. Ang 「Wala」 ay kumpletong sagot."
+        ),
+        .init(
+            questionText: "「Nagbabayad ka ba ng childcare para makapagtrabaho?」",
+            suggestion: "「Oo, $300/buwan para sa after-school care」 o 「Hindi.」 Tunay na deduction ito — sabihing oo kung totoo sa iyo."
+        ),
+        .init(
+            questionText: "「May out-of-pocket na gastos sa medikal ba na higit sa $35/buwan?」",
+            suggestion: "Para lang ito kung may 60+ o may kapansanan. 「Oo, mga $60/buwan sa gamot」 o 「Wala.」"
+        ),
+        .init(
+            questionText: "「Balanse ng bank account o iba pang resources?」",
+            suggestion: "Okay lang ang pangkalahatang tantya. Walang asset test ang Massachusetts para sa karamihan ng mga sambahayan — para lang makumpleto ang form."
+        ),
+        .init(
+            questionText: "「May kahit sino ba sa bahay mo na estudyante sa kolehiyo?」",
+            suggestion: "Oo o hindi. Kung oo, magtatanong sila ng follow-up tungkol sa oras ng trabaho at mga dependent."
+        ),
+    ]
 }
 
 // MARK: - Interview view copy
@@ -254,26 +307,30 @@ enum SNAPInterviewStrings {
         "Want a dry run?",
         es: "¿Quieres practicar antes?",
         zh: "想先练习一下吗?",
-        vi: "Muốn tập dượt trước không?"
+        vi: "Muốn tập dượt trước không?",
+        tl: "Gusto mo bang mag-ensayo muna?"
     )
     static let rehearseBody = CivicaText(
         "Practice answering caseworker-style questions with a simulated interviewer before the real call.",
         es: "Practica responder a preguntas estilo trabajador social con un entrevistador simulado antes de la llamada real.",
         zh: "在真正打电话之前,和模拟面试官练习回答工作人员风格的问题。",
-        vi: "Tập trả lời những câu hỏi kiểu nhân viên xã hội với một người phỏng vấn mô phỏng trước cuộc gọi thật."
+        vi: "Tập trả lời những câu hỏi kiểu nhân viên xã hội với một người phỏng vấn mô phỏng trước cuộc gọi thật.",
+        tl: "Mag-praktis sumagot ng mga tanong na parang sa caseworker kasama ang isang simulated na interviewer bago ang tunay na tawag."
     )
     static let rehearseAction = CivicaText(
         "Start a practice session",
         es: "Iniciar sesión de práctica",
         zh: "开始练习",
-        vi: "Bắt đầu buổi luyện tập"
+        vi: "Bắt đầu buổi luyện tập",
+        tl: "Magsimula ng practice session"
     )
 
     static let prepPrimary = CivicaText(
         "See what they'll ask",
         es: "Ver qué te preguntarán",
         zh: "看看他们会问什么",
-        vi: "Xem họ sẽ hỏi gì"
+        vi: "Xem họ sẽ hỏi gì",
+        tl: "Tingnan kung ano ang itatanong nila"
     )
 
     // MARK: Questions
@@ -282,31 +339,36 @@ enum SNAPInterviewStrings {
         "What they'll ask",
         es: "Lo que te preguntarán",
         zh: "他们会问什么",
-        vi: "Họ sẽ hỏi gì"
+        vi: "Họ sẽ hỏi gì",
+        tl: "Ang itatanong nila"
     )
     static let questionsTitle = CivicaText(
         "Twelve questions. You can read these during the call.",
         es: "Doce preguntas. Puedes leerlas durante la llamada.",
         zh: "12 个问题。打电话的时候你可以照着念。",
-        vi: "Mười hai câu hỏi. Bạn có thể đọc những câu này trong lúc gọi."
+        vi: "Mười hai câu hỏi. Bạn có thể đọc những câu này trong lúc gọi.",
+        tl: "Labindalawang tanong. Pwede mong basahin ang mga ito habang nasa tawag."
     )
     static let youCanSayLabel = CivicaText(
         "You can say:",
         es: "Puedes decir:",
         zh: "你可以这样说:",
-        vi: "Bạn có thể nói:"
+        vi: "Bạn có thể nói:",
+        tl: "Pwede mong sabihin:"
     )
     static let dontKnowHeading = CivicaText(
         "Don't know an answer?",
         es: "¿No sabes una respuesta?",
         zh: "不知道怎么答?",
-        vi: "Không biết câu trả lời?"
+        vi: "Không biết câu trả lời?",
+        tl: "Hindi alam ang sagot?"
     )
     static let dontKnowBody = CivicaText(
         "\"I'm not sure\" is a real answer. The interviewer writes down \"self-attested\" and moves on. You don't have to know everything off the top of your head.",
         es: "\"No estoy seguro/a\" es una respuesta real. El entrevistador anota \"self-attested\" (auto-declarado) y continúa. No tienes que saberlo todo de memoria.",
         zh: "「我不太确定」也是一个真实的回答。面试官会记下「self-attested」(自我声明)然后继续问下一题。你不需要把所有事情都记在脑子里。",
-        vi: "「Tôi không chắc」 là một câu trả lời thật sự. Người phỏng vấn ghi xuống 「self-attested」 (tự khai báo) rồi đi tiếp. Bạn không cần phải nhớ hết mọi thứ trong đầu."
+        vi: "「Tôi không chắc」 là một câu trả lời thật sự. Người phỏng vấn ghi xuống 「self-attested」 (tự khai báo) rồi đi tiếp. Bạn không cần phải nhớ hết mọi thứ trong đầu.",
+        tl: "Ang 「Hindi ako sigurado」 ay tunay na sagot. Isusulat ng interviewer ang 「self-attested」 (sariling pahayag) at magpapatuloy. Hindi mo kailangang malaman lahat sa isang iglap."
     )
 
     // MARK: Live (during call)
@@ -315,51 +377,59 @@ enum SNAPInterviewStrings {
         "On the call",
         es: "En la llamada",
         zh: "通话中",
-        vi: "Trong cuộc gọi"
+        vi: "Trong cuộc gọi",
+        tl: "Nasa tawag"
     )
     static let nextUpLabel = CivicaText(
         "What's coming next",
         es: "Qué sigue",
         zh: "接下来是什么",
-        vi: "Tiếp theo là gì"
+        vi: "Tiếp theo là gì",
+        tl: "Ano ang susunod"
     )
     static let stuckHeading = CivicaText(
         "Stuck?",
         es: "¿Atascado?",
         zh: "卡住了?",
-        vi: "Bị kẹt?"
+        vi: "Bị kẹt?",
+        tl: "Naipit?"
     )
     static let stuckBody = CivicaText(
         "\"Can I have a moment to check?\" is completely normal. They'll wait. Take the breath.",
         es: "\"¿Me das un momento para verificar?\" es completamente normal. Te esperarán. Toma el respiro.",
         zh: "「我能先查一下吗?」这样问完全正常。他们会等。深呼吸一下。",
-        vi: "「Cho tôi một chút để kiểm tra được không?」 là hoàn toàn bình thường. Họ sẽ đợi. Hít một hơi thật sâu."
+        vi: "「Cho tôi một chút để kiểm tra được không?」 là hoàn toàn bình thường. Họ sẽ đợi. Hít một hơi thật sâu.",
+        tl: "Ang 「Pwede ba akong magpa-sandali para tingnan?」 ay normal lang talaga. Maghihintay sila. Huminga ka muna."
     )
     static let liveAdvance = CivicaText(
         "Done with this one",
         es: "Listo con esta",
         zh: "这题答完了",
-        vi: "Xong câu này rồi"
+        vi: "Xong câu này rồi",
+        tl: "Tapos na ito"
     )
     static let liveFinished = CivicaText(
         "Interview finished",
         es: "Entrevista terminada",
         zh: "面试结束",
-        vi: "Phỏng vấn xong"
+        vi: "Phỏng vấn xong",
+        tl: "Tapos na ang interbiyu"
     )
     static let livePause = CivicaText(
         "End / pause",
         es: "Terminar / pausar",
         zh: "结束 / 暂停",
-        vi: "Kết thúc / tạm dừng"
+        vi: "Kết thúc / tạm dừng",
+        tl: "Tapusin / i-pause"
     )
 
     static func questionOfLabel(current: Int, total: Int, language: CivicaLanguage) -> String {
         switch language {
-        case .english, .tagalog: return "Question \(current) of \(total)"
+        case .english: return "Question \(current) of \(total)"
         case .mandarin: return "第 \(current) 题,共 \(total) 题"
         case .spanish: return "Pregunta \(current) de \(total)"
         case .vietnamese: return "Câu hỏi \(current) trên \(total)"
+        case .tagalog: return "Tanong \(current) sa \(total)"
         }
     }
 
@@ -369,25 +439,29 @@ enum SNAPInterviewStrings {
         "After the call",
         es: "Después de la llamada",
         zh: "通话之后",
-        vi: "Sau cuộc gọi"
+        vi: "Sau cuộc gọi",
+        tl: "Pagkatapos ng tawag"
     )
     static let wrapupTitle = CivicaText(
         "How did that go?",
         es: "¿Cómo te fue?",
         zh: "刚才怎么样?",
-        vi: "Vừa rồi thế nào?"
+        vi: "Vừa rồi thế nào?",
+        tl: "Kumusta ang naganap?"
     )
     static let wrapupNoteHeading = CivicaText(
         "What happens next",
         es: "Qué pasa ahora",
         zh: "接下来会发生什么",
-        vi: "Tiếp theo sẽ ra sao"
+        vi: "Tiếp theo sẽ ra sao",
+        tl: "Ano ang mangyayari sunod"
     )
     static let wrapupNoteBody = CivicaText(
         "Decision usually within 7 days. We'll text the moment we hear from DTA.",
         es: "La decisión usualmente llega en 7 días. Te enviaremos un mensaje en cuanto sepamos del DTA.",
         zh: "通常 7 天内会有决定。一收到 DTA 的消息,我们就给你发短信。",
-        vi: "Quyết định thường có trong vòng 7 ngày. Chúng tôi sẽ nhắn tin ngay khi nghe tin từ DTA."
+        vi: "Quyết định thường có trong vòng 7 ngày. Chúng tôi sẽ nhắn tin ngay khi nghe tin từ DTA.",
+        tl: "Karaniwang may desisyon sa loob ng 7 araw. Tetext ka namin pagkarinig namin mula sa DTA."
     )
 
     struct WrapupOptionCopy {
@@ -397,10 +471,15 @@ enum SNAPInterviewStrings {
 
     static func wrapupOption(_ option: SNAPInterviewCoachView.WrapupOption, language: CivicaLanguage) -> WrapupOptionCopy {
         switch (option, language) {
-        case (.smooth, .english), (.smooth, .tagalog):
+        case (.smooth, .english):
             return .init(
                 title: "Smooth — got through everything",
                 body: "We mark you done and watch for the decision."
+            )
+        case (.smooth, .tagalog):
+            return .init(
+                title: "Maayos — natapos lahat",
+                body: "Mamarkahan ka naming tapos na at babantayan ang desisyon."
             )
         case (.smooth, .mandarin):
             return .init(
@@ -417,10 +496,15 @@ enum SNAPInterviewStrings {
                 title: "Suôn sẻ — đã trả lời hết mọi câu",
                 body: "Chúng tôi đánh dấu bạn đã xong và theo dõi quyết định."
             )
-        case (.stuck, .english), (.stuck, .tagalog):
+        case (.stuck, .english):
             return .init(
                 title: "They asked something I couldn't answer",
                 body: "We'll coach you on what to send next — and what \"self-attested\" really means."
+            )
+        case (.stuck, .tagalog):
+            return .init(
+                title: "May tinanong silang hindi ko nasagot",
+                body: "Tuturuan ka namin kung ano ang ipapadala sunod — at kung ano talaga ang ibig sabihin ng 「self-attested」."
             )
         case (.stuck, .mandarin):
             return .init(
@@ -437,10 +521,15 @@ enum SNAPInterviewStrings {
                 title: "Họ hỏi điều mà tôi không trả lời được",
                 body: "Chúng tôi sẽ hướng dẫn bạn gửi gì tiếp theo — và 「self-attested」 thật sự nghĩa là gì."
             )
-        case (.rude, .english), (.rude, .tagalog):
+        case (.rude, .english):
             return .init(
                 title: "It felt off / they were rude",
                 body: "A real person reads this. We can flag the case if you'd like us to."
+            )
+        case (.rude, .tagalog):
+            return .init(
+                title: "Parang may mali / bastos sila",
+                body: "May totoong tao na magbabasa nito. Pwede naming i-flag ang kaso kung gusto mo."
             )
         case (.rude, .mandarin):
             return .init(
@@ -457,10 +546,15 @@ enum SNAPInterviewStrings {
                 title: "Cảm thấy không ổn / họ thô lỗ",
                 body: "Một người thật sẽ đọc phản hồi này. Chúng tôi có thể đánh dấu hồ sơ nếu bạn muốn."
             )
-        case (.noCall, .english), (.noCall, .tagalog):
+        case (.noCall, .english):
             return .init(
                 title: "They never called",
                 body: "Missed-interview is the #2 reason applications get denied. We'll help you reach the supervisor today."
+            )
+        case (.noCall, .tagalog):
+            return .init(
+                title: "Hindi sila tumawag",
+                body: "Ang naliban na interbiyu ang pangalawang pinakamadalas na dahilan ng pagtanggi sa aplikasyon. Tutulungan ka naming maabot ang supervisor ngayon."
             )
         case (.noCall, .mandarin):
             return .init(
@@ -484,7 +578,8 @@ enum SNAPInterviewStrings {
         "Send this to Civica",
         es: "Enviar esto a Civica",
         zh: "把这条发给 Civica",
-        vi: "Gửi cái này cho Civica"
+        vi: "Gửi cái này cho Civica",
+        tl: "Ipadala ito sa Civica"
     )
 
     // MARK: Misc
@@ -493,12 +588,14 @@ enum SNAPInterviewStrings {
         "I'm on the call now",
         es: "Estoy en la llamada ahora",
         zh: "我现在在通话中",
-        vi: "Tôi đang trong cuộc gọi"
+        vi: "Tôi đang trong cuộc gọi",
+        tl: "Nasa tawag na ako ngayon"
     )
     static let backToPrep = CivicaText(
         "Back to prep",
         es: "Volver a la preparación",
         zh: "返回准备",
-        vi: "Quay lại chuẩn bị"
+        vi: "Quay lại chuẩn bị",
+        tl: "Bumalik sa paghahanda"
     )
 }

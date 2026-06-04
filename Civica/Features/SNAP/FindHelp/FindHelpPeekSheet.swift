@@ -79,6 +79,7 @@ struct FindHelpPeekSheet: View {
         case .spanish: return "Cómo llegar"
         case .mandarin: return "获取路线"
         case .vietnamese: return "Xem chỉ đường"
+        case .tagalog: return "Kunin ang direksyon"
         default: return "Get directions"
         }
     }
@@ -88,6 +89,7 @@ struct FindHelpPeekSheet: View {
         case .spanish: return "Más info"
         case .mandarin: return "更多信息"
         case .vietnamese: return "Thêm thông tin"
+        case .tagalog: return "Higit pang detalye"
         default: return "More info"
         }
     }
@@ -126,18 +128,21 @@ struct FindHelpPeekSheet: View {
         switch location.resolvedRecordKind {
         case .helpDirectory:
             switch (location.primaryServiceType, language) {
-            case (.snapApplicationHelp, .english), (.snapApplicationHelp, .tagalog): return "SNAP HELP"
+            case (.snapApplicationHelp, .english): return "SNAP HELP"
             case (.snapApplicationHelp, .mandarin): return "SNAP 帮助"
             case (.snapApplicationHelp, .spanish): return "AYUDA CON SNAP"
             case (.snapApplicationHelp, .vietnamese): return "HỖ TRỢ SNAP"
-            case (.foodAssistance, .english), (.foodAssistance, .tagalog): return "FOOD"
+            case (.snapApplicationHelp, .tagalog): return "TULONG SA SNAP"
+            case (.foodAssistance, .english): return "FOOD"
             case (.foodAssistance, .mandarin): return "食物"
             case (.foodAssistance,      .spanish): return "COMIDA"
             case (.foodAssistance, .vietnamese): return "THỰC PHẨM"
-            case (.both, .english), (.both, .tagalog): return "SNAP + FOOD"
+            case (.foodAssistance, .tagalog): return "PAGKAIN"
+            case (.both, .english): return "SNAP + FOOD"
             case (.both, .mandarin): return "SNAP + 食物"
             case (.both,                .spanish): return "SNAP + COMIDA"
             case (.both, .vietnamese): return "SNAP + THỰC PHẨM"
+            case (.both, .tagalog): return "SNAP + PAGKAIN"
             }
         case .ebtRetailer:
             switch location.retailerCategory ?? .supermarket {
@@ -213,6 +218,7 @@ enum FindHelpPeekStrings {
         "View details",
         es: "Ver detalles",
         zh: "查看详情",
-        vi: "Xem chi tiết"
+        vi: "Xem chi tiết",
+        tl: "Tingnan ang detalye"
     )
 }

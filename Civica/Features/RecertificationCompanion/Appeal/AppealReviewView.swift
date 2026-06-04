@@ -221,26 +221,27 @@ private struct AppealFixSlotsView: View {
 
     private func label(for slot: String) -> CivicaText {
         switch slot {
-        case "caseNumber": return CivicaText("Case number", es: "Número de caso", zh: "案件编号", vi: "Số hồ sơ")
-        case "claimantName": return CivicaText("Full legal name", es: "Nombre legal completo", zh: "法定全名", vi: "Họ và tên đầy đủ theo pháp lý")
-        case "denialDate": return CivicaText("Date of denial (YYYY-MM-DD)", es: "Fecha de denegación (AAAA-MM-DD)", zh: "拒绝日期（YYYY-MM-DD）", vi: "Ngày bị từ chối (YYYY-MM-DD)")
-        case "todayDate": return CivicaText("Today's date (YYYY-MM-DD)", es: "Fecha de hoy (AAAA-MM-DD)", zh: "今天的日期（YYYY-MM-DD）", vi: "Ngày hôm nay (YYYY-MM-DD)")
-        case "claimantAddress": return CivicaText("Mailing address", es: "Dirección postal", zh: "邮寄地址", vi: "Địa chỉ nhận thư")
-        case "claimantPhone": return CivicaText("Phone", es: "Teléfono", zh: "电话", vi: "Điện thoại")
-        case "claimantEmail": return CivicaText("Email", es: "Correo electrónico", zh: "电子邮箱", vi: "Email")
+        case "caseNumber": return CivicaText("Case number", es: "Número de caso", zh: "案件编号", vi: "Số hồ sơ", tl: "Numero ng kaso")
+        case "claimantName": return CivicaText("Full legal name", es: "Nombre legal completo", zh: "法定全名", vi: "Họ và tên đầy đủ theo pháp lý", tl: "Buong legal na pangalan")
+        case "denialDate": return CivicaText("Date of denial (YYYY-MM-DD)", es: "Fecha de denegación (AAAA-MM-DD)", zh: "拒绝日期（YYYY-MM-DD）", vi: "Ngày bị từ chối (YYYY-MM-DD)", tl: "Petsa ng pagtanggi (YYYY-MM-DD)")
+        case "todayDate": return CivicaText("Today's date (YYYY-MM-DD)", es: "Fecha de hoy (AAAA-MM-DD)", zh: "今天的日期（YYYY-MM-DD）", vi: "Ngày hôm nay (YYYY-MM-DD)", tl: "Petsa ngayon (YYYY-MM-DD)")
+        case "claimantAddress": return CivicaText("Mailing address", es: "Dirección postal", zh: "邮寄地址", vi: "Địa chỉ nhận thư", tl: "Mailing address")
+        case "claimantPhone": return CivicaText("Phone", es: "Teléfono", zh: "电话", vi: "Điện thoại", tl: "Telepono")
+        case "claimantEmail": return CivicaText("Email", es: "Correo electrónico", zh: "电子邮箱", vi: "Email", tl: "Email")
         default: return CivicaText(slot, es: slot)
         }
     }
 }
 
 enum AppealReviewStrings {
-    static let draftHeader = CivicaText("Your appeal text", es: "Tu texto de apelación", zh: "你的申诉文本", vi: "Nội dung kháng cáo của bạn")
+    static let draftHeader = CivicaText("Your appeal text", es: "Tu texto de apelación", zh: "你的申诉文本", vi: "Nội dung kháng cáo của bạn", tl: "Ang teksto ng iyong apela")
 
     static let missingSlotsTitle = CivicaText(
         "Some details are missing",
         es: "Faltan algunos datos",
         zh: "还缺少一些信息",
-        vi: "Còn thiếu một vài thông tin"
+        vi: "Còn thiếu một vài thông tin",
+        tl: "May kulang pang ilang detalye"
     )
 
     static func missingSlotsBody(count: Int) -> CivicaText {
@@ -248,7 +249,8 @@ enum AppealReviewStrings {
             "You'll need to fill in \(count) more field\(count == 1 ? "" : "s") before sending. We've highlighted them in the text below.",
             es: "Necesitas completar \(count) campo\(count == 1 ? "" : "s") más antes de enviar. Los hemos marcado en el texto.",
             zh: "在发送之前，你还需要填写 \(count) 个字段。我们已在下面的文本中标出了它们。",
-            vi: "Bạn cần điền thêm \(count) trường nữa trước khi gửi. Chúng tôi đã đánh dấu chúng trong nội dung bên dưới."
+            vi: "Bạn cần điền thêm \(count) trường nữa trước khi gửi. Chúng tôi đã đánh dấu chúng trong nội dung bên dưới.",
+            tl: "Kailangan mo pang punan ang \(count) field bago magpadala. Tinandaan namin ang mga ito sa teksto sa ibaba."
         )
     }
 
@@ -256,22 +258,25 @@ enum AppealReviewStrings {
         "Fix missing fields",
         es: "Completar los campos faltantes",
         zh: "补全缺失字段",
-        vi: "Điền các trường còn thiếu"
+        vi: "Điền các trường còn thiếu",
+        tl: "Punan ang mga kulang na field"
     )
     static let fixMissingTitle = CivicaText(
         "Fill in your details",
         es: "Completa tus datos",
         zh: "填写你的信息",
-        vi: "Điền thông tin của bạn"
+        vi: "Điền thông tin của bạn",
+        tl: "Punan ang iyong mga detalye"
     )
-    static let doneCTA = CivicaText("Done", es: "Listo", zh: "完成", vi: "Xong")
+    static let doneCTA = CivicaText("Done", es: "Listo", zh: "完成", vi: "Xong", tl: "Tapos na")
 
     static func citationsLabel(federal: String, state: String) -> CivicaText {
         CivicaText(
             "Citing \(federal) · \(state)",
             es: "Citando \(federal) · \(state)",
             zh: "引用 \(federal) · \(state)",
-            vi: "Trích dẫn \(federal) · \(state)"
+            vi: "Trích dẫn \(federal) · \(state)",
+            tl: "Sinisipi ang \(federal) · \(state)"
         )
     }
 }

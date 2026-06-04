@@ -98,24 +98,28 @@ enum SNAPCrossProgramTeaserStrings {
         "You may also qualify for",
         es: "También podrías calificar para",
         zh: "你可能还符合以下资格",
-        vi: "Bạn cũng có thể đủ điều kiện cho"
+        vi: "Bạn cũng có thể đủ điều kiện cho",
+        tl: "Maaari ka ring maging kuwalipikado para sa"
     )
     static let wicTitle = CivicaText(
         "WIC — for pregnant or postpartum people and children under 5",
         es: "WIC — para personas embarazadas o posparto y niños menores de 5",
         zh: "WIC — 面向怀孕或产后人士以及 5 岁以下儿童",
-        vi: "WIC — dành cho người mang thai hoặc sau sinh và trẻ em dưới 5 tuổi"
+        vi: "WIC — dành cho người mang thai hoặc sau sinh và trẻ em dưới 5 tuổi",
+        tl: "WIC — para sa mga buntis o bagong panganak at mga batang wala pang 5 taon"
     )
     static let wicBody = CivicaText(
         "WIC may provide healthy foods, nutrition education, breastfeeding support, and referrals. Benefits vary. Check with your local WIC agency.",
         es: "WIC puede ofrecer alimentos saludables, educación sobre nutrición, apoyo para la lactancia y referencias. Los beneficios varían. Consulta con tu agencia local de WIC.",
         zh: "WIC 可能提供健康食品、营养教育、母乳喂养支持和转介服务。具体福利各有不同。请咨询你当地的 WIC 机构。",
-        vi: "WIC có thể cung cấp thực phẩm lành mạnh, hướng dẫn dinh dưỡng, hỗ trợ nuôi con bằng sữa mẹ và giới thiệu dịch vụ. Quyền lợi khác nhau tùy trường hợp. Hãy liên hệ cơ quan WIC địa phương của bạn."
+        vi: "WIC có thể cung cấp thực phẩm lành mạnh, hướng dẫn dinh dưỡng, hỗ trợ nuôi con bằng sữa mẹ và giới thiệu dịch vụ. Quyền lợi khác nhau tùy trường hợp. Hãy liên hệ cơ quan WIC địa phương của bạn.",
+        tl: "Maaaring magbigay ang WIC ng masusustansyang pagkain, edukasyon sa nutrisyon, suporta sa pagpapasuso, at referral. Nag-iiba-iba ang benepisyo. Magtanong sa iyong lokal na ahensya ng WIC."
     )
     static let wicSeparateBenefit = CivicaText(
         "WIC and SNAP are separate — getting WIC does not change your SNAP.",
         es: "WIC y SNAP son separados — recibir WIC no cambia tu SNAP.",
         zh: "WIC 和 SNAP 是分开的 — 领取 WIC 不会影响你的 SNAP。",
-        vi: "WIC và SNAP là hai chương trình riêng — nhận WIC không làm thay đổi SNAP của bạn."
+        vi: "WIC và SNAP là hai chương trình riêng — nhận WIC không làm thay đổi SNAP của bạn.",
+        tl: "Magkahiwalay ang WIC at SNAP — hindi nababago ng pagkuha ng WIC ang iyong SNAP."
     )
 }

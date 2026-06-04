@@ -80,7 +80,8 @@ enum SNAPDailyChecklist {
                     title: CivicaText(
                         "Gather a backup pay stub (PDF or photo)",
                         es: "Reúne un comprobante de pago de respaldo (PDF o foto)",
-                        vi: "Chuẩn bị một bảng lương dự phòng (PDF hoặc ảnh)"
+                        vi: "Chuẩn bị một bảng lương dự phòng (PDF hoặc ảnh)",
+                        tl: "Maghanda ng backup na pay stub (PDF o litrato)"
                     )
                 ),
                 SNAPDailyChecklistItem(
@@ -88,7 +89,8 @@ enum SNAPDailyChecklist {
                     title: CivicaText(
                         "Save your county number to your phone",
                         es: "Guarda el número de tu condado en tu teléfono",
-                        vi: "Lưu số điện thoại của county vào điện thoại của bạn"
+                        vi: "Lưu số điện thoại của county vào điện thoại của bạn",
+                        tl: "I-save ang numero ng county sa iyong telepono"
                     )
                 ),
                 SNAPDailyChecklistItem(
@@ -96,7 +98,8 @@ enum SNAPDailyChecklist {
                     title: CivicaText(
                         "Look up your case's expected timeline",
                         es: "Consulta el plazo esperado para tu caso",
-                        vi: "Tra cứu thời gian dự kiến cho hồ sơ của bạn"
+                        vi: "Tra cứu thời gian dự kiến cho hồ sơ của bạn",
+                        tl: "Tingnan ang inaasahang timeline ng iyong kaso"
                     )
                 ),
                 SNAPDailyChecklistItem(
@@ -104,7 +107,8 @@ enum SNAPDailyChecklist {
                     title: CivicaText(
                         "Set a reminder for day 30 to follow up",
                         es: "Pon un recordatorio para el día 30 para dar seguimiento",
-                        vi: "Đặt lời nhắc vào ngày 30 để theo dõi"
+                        vi: "Đặt lời nhắc vào ngày 30 để theo dõi",
+                        tl: "Maglagay ng reminder sa ika-30 araw para mag-follow up"
                     )
                 ),
             ]
@@ -115,7 +119,8 @@ enum SNAPDailyChecklist {
                     title: CivicaText(
                         "Open your inbox and read the request",
                         es: "Abre tu bandeja y lee la solicitud",
-                        vi: "Mở hộp thư của bạn và đọc yêu cầu"
+                        vi: "Mở hộp thư của bạn và đọc yêu cầu",
+                        tl: "Buksan ang iyong inbox at basahin ang request"
                     )
                 ),
                 SNAPDailyChecklistItem(
@@ -123,7 +128,8 @@ enum SNAPDailyChecklist {
                     title: CivicaText(
                         "Gather the documents the county asked for",
                         es: "Reúne los documentos que el condado pidió",
-                        vi: "Chuẩn bị các giấy tờ mà county đã yêu cầu"
+                        vi: "Chuẩn bị các giấy tờ mà county đã yêu cầu",
+                        tl: "Tipunin ang mga dokumentong hiniling ng county"
                     )
                 ),
                 SNAPDailyChecklistItem(
@@ -131,7 +137,8 @@ enum SNAPDailyChecklist {
                     title: CivicaText(
                         "Upload them through the state portal",
                         es: "Súbelos a través del portal estatal",
-                        vi: "Tải chúng lên qua cổng thông tin của tiểu bang"
+                        vi: "Tải chúng lên qua cổng thông tin của tiểu bang",
+                        tl: "I-upload ang mga ito sa portal ng estado"
                     )
                 ),
                 SNAPDailyChecklistItem(
@@ -139,7 +146,8 @@ enum SNAPDailyChecklist {
                     title: CivicaText(
                         "Save the county's confirmation for your records",
                         es: "Guarda la confirmación del condado para tu registro",
-                        vi: "Lưu lại xác nhận của county để làm hồ sơ của bạn"
+                        vi: "Lưu lại xác nhận của county để làm hồ sơ của bạn",
+                        tl: "I-save ang kumpirmasyon ng county para sa iyong record"
                     )
                 ),
             ]
@@ -150,7 +158,8 @@ enum SNAPDailyChecklist {
                     title: CivicaText(
                         "Test your phone's audio in a quiet spot",
                         es: "Prueba el audio de tu teléfono en un lugar tranquilo",
-                        vi: "Kiểm tra âm thanh điện thoại của bạn ở nơi yên tĩnh"
+                        vi: "Kiểm tra âm thanh điện thoại của bạn ở nơi yên tĩnh",
+                        tl: "Subukan ang audio ng iyong telepono sa tahimik na lugar"
                     )
                 ),
                 SNAPDailyChecklistItem(
@@ -158,7 +167,8 @@ enum SNAPDailyChecklist {
                     title: CivicaText(
                         "Gather your documents within arm's reach",
                         es: "Ten tus documentos a la mano",
-                        vi: "Để các giấy tờ của bạn trong tầm tay"
+                        vi: "Để các giấy tờ của bạn trong tầm tay",
+                        tl: "Ihanda ang iyong mga dokumento sa abot-kamay"
                     )
                 ),
                 SNAPDailyChecklistItem(
@@ -166,7 +176,8 @@ enum SNAPDailyChecklist {
                     title: CivicaText(
                         "Charge your phone the night before",
                         es: "Carga tu teléfono la noche anterior",
-                        vi: "Sạc điện thoại của bạn vào tối hôm trước"
+                        vi: "Sạc điện thoại của bạn vào tối hôm trước",
+                        tl: "I-charge ang iyong telepono sa gabi bago ang interbyu"
                     )
                 ),
                 SNAPDailyChecklistItem(
@@ -174,7 +185,8 @@ enum SNAPDailyChecklist {
                     title: CivicaText(
                         "Set an alarm 15 minutes before the call",
                         es: "Pon una alarma 15 minutos antes de la llamada",
-                        vi: "Đặt báo thức 15 phút trước cuộc gọi"
+                        vi: "Đặt báo thức 15 phút trước cuộc gọi",
+                        tl: "Maglagay ng alarm 15 minuto bago ang tawag"
                     )
                 ),
             ]
@@ -185,7 +197,8 @@ enum SNAPDailyChecklist {
                     title: CivicaText(
                         "Save your case number somewhere you'll find it",
                         es: "Guarda tu número de caso donde lo puedas encontrar",
-                        vi: "Lưu số hồ sơ của bạn ở nơi bạn sẽ tìm thấy nó"
+                        vi: "Lưu số hồ sơ của bạn ở nơi bạn sẽ tìm thấy nó",
+                        tl: "I-save ang iyong case number sa lugar na madali mong mahahanap"
                     )
                 ),
                 SNAPDailyChecklistItem(
@@ -193,7 +206,8 @@ enum SNAPDailyChecklist {
                     title: CivicaText(
                         "Set a reminder for day 30 to follow up",
                         es: "Pon un recordatorio para el día 30 para dar seguimiento",
-                        vi: "Đặt lời nhắc vào ngày 30 để theo dõi"
+                        vi: "Đặt lời nhắc vào ngày 30 để theo dõi",
+                        tl: "Maglagay ng reminder sa ika-30 araw para mag-follow up"
                     )
                 ),
                 SNAPDailyChecklistItem(
@@ -201,7 +215,8 @@ enum SNAPDailyChecklist {
                     title: CivicaText(
                         "Look up your appeal window — just in case",
                         es: "Consulta tu plazo de apelación — por si acaso",
-                        vi: "Tra cứu thời hạn kháng cáo của bạn — để phòng khi cần"
+                        vi: "Tra cứu thời hạn kháng cáo của bạn — để phòng khi cần",
+                        tl: "Tingnan ang iyong appeal window — para nakahanda"
                     )
                 ),
                 SNAPDailyChecklistItem(
@@ -209,7 +224,8 @@ enum SNAPDailyChecklist {
                     title: CivicaText(
                         "Save your county number to your phone",
                         es: "Guarda el número de tu condado en tu teléfono",
-                        vi: "Lưu số điện thoại của county vào điện thoại của bạn"
+                        vi: "Lưu số điện thoại của county vào điện thoại của bạn",
+                        tl: "I-save ang numero ng county sa iyong telepono"
                     )
                 ),
             ]
@@ -385,18 +401,22 @@ private struct SNAPDailyChecklistRow: View {
 
     private func actionCTA(for action: SNAPDailyChecklistAction, language: CivicaLanguage) -> String {
         switch (action, language) {
-        case (.pickDocument, .english), (.pickDocument, .mandarin), (.pickDocument, .tagalog):                 return "Attach a file"
+        case (.pickDocument, .english), (.pickDocument, .mandarin):                 return "Attach a file"
         case (.pickDocument, .spanish):                 return "Adjuntar un archivo"
         case (.pickDocument, .vietnamese):              return "Đính kèm một tệp"
-        case (.saveContact, .english), (.saveContact, .mandarin), (.saveContact, .tagalog):                  return "Add to Contacts"
+        case (.pickDocument, .tagalog):                 return "Mag-attach ng file"
+        case (.saveContact, .english), (.saveContact, .mandarin):                  return "Add to Contacts"
         case (.saveContact, .spanish):                  return "Añadir a Contactos"
         case (.saveContact, .vietnamese):               return "Thêm vào Danh bạ"
-        case (.openTimelineSheet, .english), (.openTimelineSheet, .mandarin), (.openTimelineSheet, .tagalog):            return "Open the timeline"
+        case (.saveContact, .tagalog):                  return "Idagdag sa Contacts"
+        case (.openTimelineSheet, .english), (.openTimelineSheet, .mandarin):            return "Open the timeline"
         case (.openTimelineSheet, .spanish):            return "Abrir el cronograma"
         case (.openTimelineSheet, .vietnamese):         return "Mở dòng thời gian"
-        case (.addCalendarReminderDaysOut, .english), (.addCalendarReminderDaysOut, .mandarin), (.addCalendarReminderDaysOut, .tagalog):   return "Add to Calendar"
+        case (.openTimelineSheet, .tagalog):            return "Buksan ang timeline"
+        case (.addCalendarReminderDaysOut, .english), (.addCalendarReminderDaysOut, .mandarin):   return "Add to Calendar"
         case (.addCalendarReminderDaysOut, .spanish):   return "Añadir al Calendario"
         case (.addCalendarReminderDaysOut, .vietnamese): return "Thêm vào Lịch"
+        case (.addCalendarReminderDaysOut, .tagalog):   return "Idagdag sa Calendar"
         }
     }
 }
@@ -442,7 +462,9 @@ private struct SNAPDailyChecklistActionPresenter: View {
                     ? "Seguimiento del SNAP con el condado"
                     : language == .vietnamese
                         ? "Theo dõi SNAP với county"
-                        : "Follow up with the county on SNAP",
+                        : language == .tagalog
+                            ? "Mag-follow up sa county tungkol sa SNAP"
+                            : "Follow up with the county on SNAP",
                 daysOut: days,
                 onComplete: onComplete
             )
@@ -470,7 +492,7 @@ private struct SNAPDailyChecklistTimelineSheet: View {
 
     private var steps: [Step] {
         switch language {
-        case .english, .mandarin, .tagalog:
+        case .english, .mandarin:
             return [
                 .init(title: "Submitted",
                       body: "Your application is with the county. Most files are picked up within 1 business day."),
@@ -480,6 +502,17 @@ private struct SNAPDailyChecklistTimelineSheet: View {
                       body: "The county calls for a 15-minute eligibility interview, usually within 2 weeks of submission."),
                 .init(title: "Decision",
                       body: "By federal rule a decision lands within 30 days of submission (7 days for expedited / emergency cases)."),
+            ]
+        case .tagalog:
+            return [
+                .init(title: "Naipasa na",
+                      body: "Nasa county na ang iyong aplikasyon. Karamihan sa mga file ay natatanggap sa loob ng 1 araw ng trabaho."),
+                .init(title: "Sinusuri",
+                      body: "Sinusuri ng caseworker ang iyong mga dokumento at tinatandaan kung may kulang. Karaniwang tumatagal ito ng 7 hanggang 14 na araw."),
+                .init(title: "Interbyu",
+                      body: "Tatawag ang county para sa 15-minutong interbyu sa pagiging kwalipikado, kadalasan sa loob ng 2 linggo mula nang maipasa."),
+                .init(title: "Desisyon",
+                      body: "Ayon sa batas pederal, may desisyon sa loob ng 30 araw mula nang maipasa (7 araw para sa mga expedited / emergency na kaso)."),
             ]
         case .spanish:
             return [
@@ -508,9 +541,10 @@ private struct SNAPDailyChecklistTimelineSheet: View {
 
     private var title: String {
         switch language {
-        case .english, .mandarin, .tagalog: return "What to expect from the county"
+        case .english, .mandarin: return "What to expect from the county"
         case .spanish: return "Lo que puedes esperar del condado"
         case .vietnamese: return "Những gì bạn có thể mong đợi từ county"
+        case .tagalog: return "Ano ang aasahan mula sa county"
         }
     }
 
@@ -538,7 +572,7 @@ private struct SNAPDailyChecklistTimelineSheet: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button(language == .spanish ? "Listo" : language == .vietnamese ? "Xong" : "Done") {
+                    Button(language == .spanish ? "Listo" : language == .vietnamese ? "Xong" : language == .tagalog ? "Tapos na" : "Done") {
                         onClose()
                         dismiss()
                     }
@@ -660,7 +694,8 @@ enum SNAPDailyChecklistStrings {
     static let cardTitle = CivicaText(
         "While the county reviews — things you can do today",
         es: "Mientras el condado revisa — cosas que puedes hacer hoy",
-        vi: "Trong khi county xem xét — những việc bạn có thể làm hôm nay"
+        vi: "Trong khi county xem xét — những việc bạn có thể làm hôm nay",
+        tl: "Habang sinusuri ng county — mga magagawa mo ngayon"
     )
 }
 

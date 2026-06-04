@@ -214,22 +214,26 @@ enum SNAPApprovalBannerStrings {
         headline: CivicaText(
             "You're approved for CalFresh",
             es: "Tu solicitud de CalFresh fue aprobada",
-            vi: "Bạn đã được duyệt CalFresh"
+            vi: "Bạn đã được duyệt CalFresh",
+            tl: "Approved ka na para sa CalFresh"
         ),
         bodyLine1: CivicaText(
             "Your EBT card will arrive in 3-7 days.",
             es: "Tu tarjeta EBT llegará en 3-7 días.",
-            vi: "Thẻ EBT của bạn sẽ đến trong 3-7 ngày."
+            vi: "Thẻ EBT của bạn sẽ đến trong 3-7 ngày.",
+            tl: "Darating ang iyong EBT card sa loob ng 3-7 araw."
         ),
         bodyLine2: CivicaText(
             "When it does, link it here to see your balance.",
             es: "Cuando llegue, enlázala aquí para ver tu saldo.",
-            vi: "Khi thẻ đến, hãy liên kết tại đây để xem số dư của bạn."
+            vi: "Khi thẻ đến, hãy liên kết tại đây để xem số dư của bạn.",
+            tl: "Pagdating nito, i-link mo dito para makita ang iyong balanse."
         ),
         findHelpLink: CivicaText(
             "Find help while you wait",
             es: "Encuentra ayuda mientras esperas",
-            vi: "Tìm hỗ trợ trong khi bạn chờ"
+            vi: "Tìm hỗ trợ trong khi bạn chờ",
+            tl: "Maghanap ng tulong habang naghihintay ka"
         )
     )
 
@@ -237,31 +241,36 @@ enum SNAPApprovalBannerStrings {
         headline: CivicaText(
             "You're renewed for another year",
             es: "Renovaste por un año más",
-            vi: "Bạn đã được gia hạn thêm một năm"
+            vi: "Bạn đã được gia hạn thêm một năm",
+            tl: "Na-renew ka na para sa isa pang taon"
         ),
         bodyLine1: CivicaText(
             "Your benefits will continue without interruption.",
             es: "Tus beneficios seguirán sin interrupción.",
-            vi: "Trợ cấp của bạn sẽ tiếp tục không bị gián đoạn."
+            vi: "Trợ cấp của bạn sẽ tiếp tục không bị gián đoạn.",
+            tl: "Magpapatuloy ang iyong benepisyo nang walang putol."
         ),
         bodyLine2: nil,
         findHelpLink: CivicaText(
             "Find help if you need it",
             es: "Encuentra ayuda si la necesitas",
-            vi: "Tìm hỗ trợ nếu bạn cần"
+            vi: "Tìm hỗ trợ nếu bạn cần",
+            tl: "Maghanap ng tulong kung kailangan mo"
         )
     )
 
     static let whatThisMeans = CivicaText(
         "What this means for you",
         es: "Lo que esto significa para ti",
-        vi: "Điều này có ý nghĩa gì với bạn"
+        vi: "Điều này có ý nghĩa gì với bạn",
+        tl: "Ano ang ibig sabihin nito para sa iyo"
     )
 
     static let dismissA11y = CivicaText(
         "Dismiss approval banner",
         es: "Descartar aviso de aprobación",
-        vi: "Đóng thông báo được duyệt"
+        vi: "Đóng thông báo được duyệt",
+        tl: "Isara ang banner ng pag-apruba"
     )
 }
 

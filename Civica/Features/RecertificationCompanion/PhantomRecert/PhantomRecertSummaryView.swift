@@ -263,13 +263,15 @@ enum PhantomSummaryStrings {
         "Fresh estimate",
         es: "Estimación nueva",
         zh: "新估算",
-        vi: "Ước tính mới"
+        vi: "Ước tính mới",
+        tl: "Bagong estima"
     )
     static let estimateUnavailable = CivicaText(
         "We couldn't calculate a benefit amount with these answers.",
         es: "No pudimos calcular un monto con estas respuestas.",
         zh: "根据这些答案，我们无法计算出福利金额。",
-        vi: "Chúng tôi không thể tính ra số tiền trợ cấp với những câu trả lời này."
+        vi: "Chúng tôi không thể tính ra số tiền trợ cấp với những câu trả lời này.",
+        tl: "Hindi namin makuwenta ang halaga ng benepisyo sa mga sagot na ito."
     )
 
     static func estimateAmountTemplate(amount: String) -> CivicaText {
@@ -277,7 +279,8 @@ enum PhantomSummaryStrings {
             "About \(amount) / month",
             es: "Aproximadamente \(amount) / mes",
             zh: "每月大约 \(amount)",
-            vi: "Khoảng \(amount) / tháng"
+            vi: "Khoảng \(amount) / tháng",
+            tl: "Mga \(amount) / buwan"
         )
     }
 
@@ -285,36 +288,40 @@ enum PhantomSummaryStrings {
         "Changed since last recert",
         es: "Cambió desde la última recertificación",
         zh: "自上次重新认证以来有变动",
-        vi: "Đã thay đổi từ lần tái xác nhận trước"
+        vi: "Đã thay đổi từ lần tái xác nhận trước",
+        tl: "Nabago mula noong huling recert"
     )
     static let changeFilled = CivicaText(
         "Newly filled in",
         es: "Recién completado",
         zh: "新填写的内容",
-        vi: "Mới được điền vào"
+        vi: "Mới được điền vào",
+        tl: "Bagong nasagutan"
     )
     static let changeCleared = CivicaText(
         "Cleared",
         es: "Borrado",
         zh: "已清空",
-        vi: "Đã xóa"
+        vi: "Đã xóa",
+        tl: "Na-clear"
     )
 
-    static let sectionWhereApplying = CivicaText("Where you're applying", es: "Dónde solicitas", zh: "你申请的地点", vi: "Nơi bạn đang nộp đơn")
-    static let sectionApplicantAge = CivicaText("Applicant age", es: "Edad del solicitante", zh: "申请人年龄", vi: "Tuổi của người nộp đơn")
-    static let sectionHousehold = CivicaText("Household", es: "Hogar", zh: "家庭", vi: "Hộ gia đình")
-    static let sectionContact = CivicaText("Contact info", es: "Información de contacto", zh: "联系方式", vi: "Thông tin liên lạc")
-    static let sectionIncome = CivicaText("Income", es: "Ingresos", zh: "收入", vi: "Thu nhập")
-    static let sectionStudentStatus = CivicaText("Student status", es: "Estado de estudiante", zh: "学生身份", vi: "Tình trạng sinh viên")
-    static let sectionExpenses = CivicaText("Expenses", es: "Gastos", zh: "支出", vi: "Chi phí")
-    static let sectionDocumentsChecklist = CivicaText("Documents", es: "Documentos", zh: "文件", vi: "Giấy tờ")
+    static let sectionWhereApplying = CivicaText("Where you're applying", es: "Dónde solicitas", zh: "你申请的地点", vi: "Nơi bạn đang nộp đơn", tl: "Kung saan ka nag-a-apply")
+    static let sectionApplicantAge = CivicaText("Applicant age", es: "Edad del solicitante", zh: "申请人年龄", vi: "Tuổi của người nộp đơn", tl: "Edad ng aplikante")
+    static let sectionHousehold = CivicaText("Household", es: "Hogar", zh: "家庭", vi: "Hộ gia đình", tl: "Sambahayan")
+    static let sectionContact = CivicaText("Contact info", es: "Información de contacto", zh: "联系方式", vi: "Thông tin liên lạc", tl: "Impormasyon sa pakikipag-ugnayan")
+    static let sectionIncome = CivicaText("Income", es: "Ingresos", zh: "收入", vi: "Thu nhập", tl: "Kita")
+    static let sectionStudentStatus = CivicaText("Student status", es: "Estado de estudiante", zh: "学生身份", vi: "Tình trạng sinh viên", tl: "Katayuan bilang estudyante")
+    static let sectionExpenses = CivicaText("Expenses", es: "Gastos", zh: "支出", vi: "Chi phí", tl: "Mga gastos")
+    static let sectionDocumentsChecklist = CivicaText("Documents", es: "Documentos", zh: "文件", vi: "Giấy tờ", tl: "Mga dokumento")
 
     static func checklistUpload(label: String) -> CivicaText {
         CivicaText(
             "Upload a fresh \(label.lowercased())",
             es: "Sube un/a nuevo/a \(label.lowercased())",
             zh: "上传一份新的 \(label.lowercased())",
-            vi: "Tải lên \(label.lowercased()) mới"
+            vi: "Tải lên \(label.lowercased()) mới",
+            tl: "Mag-upload ng bagong \(label.lowercased())"
         )
     }
 
@@ -323,7 +330,8 @@ enum PhantomSummaryStrings {
             "Confirm \(sectionLabel) (\(changeLabel))",
             es: "Confirma \(sectionLabel) (\(changeLabel))",
             zh: "确认 \(sectionLabel)（\(changeLabel)）",
-            vi: "Xác nhận \(sectionLabel) (\(changeLabel))"
+            vi: "Xác nhận \(sectionLabel) (\(changeLabel))",
+            tl: "Kumpirmahin ang \(sectionLabel) (\(changeLabel))"
         )
     }
 }

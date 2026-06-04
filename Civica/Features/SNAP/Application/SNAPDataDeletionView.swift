@@ -172,25 +172,29 @@ enum SNAPDataDeletionStrings {
         "Deleting your Civica data",
         es: "Eliminando tus datos de Civica",
         zh: "正在删除你的 Civica 数据",
-        vi: "Đang xoá dữ liệu Civica của bạn"
+        vi: "Đang xoá dữ liệu Civica của bạn",
+        tl: "Binubura ang iyong Civica data"
     )
     static let title = CivicaText(
         "Here's what will happen, in order.",
         es: "Esto es lo que va a pasar, en orden.",
         zh: "接下来会按顺序发生这些事。",
-        vi: "Đây là những gì sẽ xảy ra, theo thứ tự."
+        vi: "Đây là những gì sẽ xảy ra, theo thứ tự.",
+        tl: "Ito ang mangyayari, sunod-sunod."
     )
     static let confirm = CivicaText(
         "Yes, delete everything",
         es: "Sí, eliminar todo",
         zh: "是的，删除所有内容",
-        vi: "Có, xoá tất cả"
+        vi: "Có, xoá tất cả",
+        tl: "Oo, burahin lahat"
     )
     static let cancel = CivicaText(
         "Keep my account",
         es: "Mantener mi cuenta",
         zh: "保留我的账户",
-        vi: "Giữ lại tài khoản của tôi"
+        vi: "Giữ lại tài khoản của tôi",
+        tl: "Panatilihin ang aking account"
     )
 
     static func steps(language: CivicaLanguage, stateCode: String? = nil) -> [Step] {
@@ -200,8 +204,9 @@ enum SNAPDataDeletionStrings {
         let portalES = portal.isEmpty ? "el portal estatal" : portal
         let portalZH = portal.isEmpty ? "你所在州的门户网站" : portal
         let portalVI = portal.isEmpty ? "cổng thông tin của tiểu bang bạn" : portal
+        let portalTL = portal.isEmpty ? "ang portal ng iyong estado" : portal
         switch language {
-        case .english, .tagalog:
+        case .english:
             return [
                 Step(
                     title: "Right now",
@@ -275,6 +280,25 @@ enum SNAPDataDeletionStrings {
                 Step(
                     title: "Nộp lại sau này",
                     body: "Bạn có thể quay lại bất kỳ lúc nào. Bạn sẽ bắt đầu lại từ đầu — theo thiết kế, Civica sẽ không nhận ra bạn."
+                ),
+            ]
+        case .tagalog:
+            return [
+                Step(
+                    title: "Ngayon mismo",
+                    body: "Ang iyong mga sagot, mga kinunang dokumento, status, at piniling wika ay buburahin sa device na ito. Babalik ang app sa pagpili ng wika."
+                ),
+                Step(
+                    title: "Nasa estado na",
+                    body: "Kung naipasa mo na sa \(portalTL), ang submission na iyon ay nasa estado na. Hindi ito mababawi ng Civica — tanging ang \(agency) lang ang puwedeng magbago o magsara nito. Hindi magbabago ang iyong mga benepisyo dahil lang nagbura ka rito."
+                ),
+                Step(
+                    title: "Mga server ng Civica",
+                    body: "Ang pagbura rito ay magtatanggal ng iyong lokal na SNAP draft, mga kinunang dokumento, status, at mga setting mula sa device na ito. Kung gumamit ka ng mga opsyonal na network feature — paghahanap ng tulong na malapit o Interview Coach — ang pagbura ng anumang server log o backup ay susunod sa retention process ng Civica. Anumang aplikasyong naipasa mo na ay mananatili sa ahensya ng estado."
+                ),
+                Step(
+                    title: "Muling pag-apply mamaya",
+                    body: "Puwede kang bumalik anumang oras. Magsisimula ka mula sa simula — hindi ka makikilala ng Civica, gusto namin itong ganito."
                 ),
             ]
         }

@@ -29,10 +29,11 @@ enum SNAPInterviewPrepTopics {
     static func list(language: CivicaLanguage, stateCode: String? = nil) -> [Topic] {
         let topics: [Topic]
         switch language {
-        case .english, .tagalog: topics = englishTopics
+        case .english: topics = englishTopics
         case .mandarin: topics = mandarinTopics
         case .spanish: topics = spanishTopics
         case .vietnamese: topics = vietnameseTopics
+        case .tagalog: topics = tagalogTopics
         }
         // Patch the day-of-call topic's permission line with the
         // active state's caller-ID text so the prep doesn't mention
@@ -65,12 +66,14 @@ enum SNAPInterviewPrepTopics {
                 codePhrase = "，或来自 \(codes) 区号"
             case .vietnamese:
                 codePhrase = " hoặc mã vùng \(codes)"
-            case .english, .tagalog:
+            case .english:
                 codePhrase = " or a \(codes) area code"
+            case .tagalog:
+                codePhrase = " o isang \(codes) area code"
             }
         }
         switch language {
-        case .english, .tagalog:
+        case .english:
             return "Caller ID will say \"\(agency)\"\(codePhrase). They will never text you a code or ask for money."
         case .mandarin:
             return "来电显示会显示「\(agency)」\(codePhrase)。他们绝不会给你发短信验证码,也不会向你要钱。"
@@ -78,6 +81,8 @@ enum SNAPInterviewPrepTopics {
             return "Màn hình hiện số sẽ hiển thị \u{201C}\(agency)\u{201D}\(codePhrase). Họ sẽ không bao giờ nhắn tin mã cho bạn hoặc đòi tiền."
         case .spanish:
             return "El identificador de llamadas dirá \"\(agency)\"\(codePhrase). Nunca te enviarán un código de verificación ni pedirán dinero."
+        case .tagalog:
+            return "Sa Caller ID lalabas ang \u{201C}\(agency)\u{201D}\(codePhrase). Hinding-hindi ka nila tetext-an ng code o hihingian ng pera."
         }
     }
 
@@ -268,6 +273,53 @@ enum SNAPInterviewPrepTopics {
             permission: "Màn hình hiện số sẽ hiển thị \u{201C}Massachusetts DTA\u{201D} hoặc mã vùng 617 / 508 / 413 / 978. Họ sẽ không bao giờ nhắn tin mã cho bạn hoặc đòi tiền."
         )
     ]
+
+    private static let tagalogTopics: [Topic] = [
+        Topic(
+            id: "household",
+            title: "Sino ang kasama mong nakatira",
+            prompts: [
+                "Lahat ng bumibili o nagluluto ng pagkain kasama mo",
+                "Ang relasyon nila sa iyo",
+                "Ang edad nila, lalo na ang sinumang wala pang 18 o lampas 60",
+                "Sinumang may kapansanan"
+            ],
+            permission: "Kung pabalik-balik ang mga miyembro ng sambahayan, ilarawan mo na lang ang karaniwan mong sitwasyon."
+        ),
+        Topic(
+            id: "income",
+            title: "Ang kita mo",
+            prompts: [
+                "Magkano ang kita mo kada buwan bago ang buwis",
+                "Gaano ka kadalas sinusuwelduhan — lingguhan, kada dalawang linggo, buwanan",
+                "Saan ka nagtatrabaho, at gaano ka na katagal doon",
+                "Anumang kita na hindi galing sa trabaho — Social Security, unemployment, child support, pension"
+            ],
+            permission: "Kung nagbabago ang kita mo linggu-linggo, o mayroon kang higit sa isang trabaho, okay lang iyon — ilarawan mo lang kung paano talaga. Tunay na sagot ang \u{201C}Nagbabago ito\u{201D}."
+        ),
+        Topic(
+            id: "home",
+            title: "Kung saan ka nakatira",
+            prompts: [
+                "Ang kasalukuyan mong mailing address",
+                "Ang buwanan mong upa o mortgage",
+                "Aling mga utility ang ikaw mismo ang nagbabayad — gas, kuryente, tubig, init",
+                "Kung nagbabayad ka ng childcare para makapagtrabaho"
+            ],
+            permission: nil
+        ),
+        Topic(
+            id: "day-of-call",
+            title: "Sa araw ng tawag",
+            prompts: [
+                "Ang photo ID mo — driver's license, state ID, o pasaporte",
+                "Isang kamakailang paystub o patunay ng kita",
+                "Resibo ng upa noong nakaraang buwan o ang lease mo",
+                "Isang lapis at papel — bibigyan ka nila ng confirmation number"
+            ],
+            permission: "Sa Caller ID lalabas ang \u{201C}Massachusetts DTA\u{201D} o isang 617 / 508 / 413 / 978 area code. Hinding-hindi ka nila tetext-an ng code o hihingian ng pera."
+        )
+    ]
 }
 
 // MARK: - Prep view copy
@@ -277,28 +329,32 @@ enum SNAPInterviewPrepStrings {
         "Day-before prep",
         es: "Preparación del día anterior",
         zh: "前一天的准备",
-        vi: "Chuẩn bị ngày hôm trước"
+        vi: "Chuẩn bị ngày hôm trước",
+        tl: "Paghahanda bago ang araw"
     )
 
     static let title = CivicaText(
         "Four things to think through",
         es: "Cuatro cosas en las que pensar",
         zh: "四件需要先想清楚的事",
-        vi: "Bốn điều cần nghĩ qua"
+        vi: "Bốn điều cần nghĩ qua",
+        tl: "Apat na bagay na dapat pag-isipan"
     )
 
     static let subtitle = CivicaText(
         "These aren't answers to memorize — just what to have in mind when they call. Most interviews last 15 to 20 minutes.",
         es: "Estas no son respuestas que memorizar — solo lo que tener en mente cuando llamen. La mayoría de las entrevistas duran de 15 a 20 minutos.",
         zh: "这些不是要背的答案 — 只是接到电话时心里要有数的内容。大多数面谈持续 15 到 20 分钟。",
-        vi: "Đây không phải là câu trả lời để học thuộc — chỉ là điều cần ghi nhớ khi họ gọi. Phần lớn buổi phỏng vấn kéo dài 15 đến 20 phút."
+        vi: "Đây không phải là câu trả lời để học thuộc — chỉ là điều cần ghi nhớ khi họ gọi. Phần lớn buổi phỏng vấn kéo dài 15 đến 20 phút.",
+        tl: "Hindi ito mga sagot na dapat kabisaduhin — kung ano lang ang dapat nasa isip mo kapag tumawag sila. Karamihan ng interbyu ay tumatagal ng 15 hanggang 20 minuto."
     )
 
     static let permissionLabel = CivicaText(
         "It's okay if:",
         es: "Está bien si:",
         zh: "以下情况都没关系:",
-        vi: "Không sao cả nếu:"
+        vi: "Không sao cả nếu:",
+        tl: "Okay lang kung:"
     )
 
     // JR-3 (audit 2026-05-29): leading reassurance card above the
@@ -308,7 +364,8 @@ enum SNAPInterviewPrepStrings {
         "Interviews usually take 15\u{2013}20 minutes. You\u{2019}re allowed to have notes. Here\u{2019}s exactly what they\u{2019}ll ask.",
         es: "Las entrevistas usualmente duran de 15 a 20 minutos. Puedes tener notas. Aqu\u{00ED} est\u{00E1} exactamente lo que te van a preguntar.",
         zh: "面谈通常需要 15\u{2013}20 分钟。你可以带笔记。下面就是他们会问的内容。",
-        vi: "Buổi phỏng vấn thường mất 15\u{2013}20 phút. Bạn được phép mang theo ghi chú. Đây chính xác là những gì họ sẽ hỏi."
+        vi: "Buổi phỏng vấn thường mất 15\u{2013}20 phút. Bạn được phép mang theo ghi chú. Đây chính xác là những gì họ sẽ hỏi.",
+        tl: "Karaniwang tumatagal ng 15\u{2013}20 minuto ang interbyu. Pinapayagan kang magdala ng notes. Ito mismo ang itatanong nila sa iyo."
     )
 
     // Footnote: the second-most-cited worry before a SNAP interview
@@ -319,6 +376,7 @@ enum SNAPInterviewPrepStrings {
         "Don\u{2019}t worry if you don\u{2019}t have every doc \u{2014} caseworkers can ask follow-ups.",
         es: "No te preocupes si no tienes todos los documentos \u{2014} los trabajadores sociales pueden hacer preguntas de seguimiento.",
         zh: "如果你没有备齐所有文件,也别担心 \u{2014} 工作人员可以再追问。",
-        vi: "Đừng lo nếu bạn chưa có đủ mọi giấy tờ \u{2014} nhân viên phụ trách có thể hỏi thêm sau."
+        vi: "Đừng lo nếu bạn chưa có đủ mọi giấy tờ \u{2014} nhân viên phụ trách có thể hỏi thêm sau.",
+        tl: "Huwag mag-alala kung wala ka pa ng lahat ng dokumento \u{2014} puwedeng magtanong pa nang dagdag ang caseworker."
     )
 }

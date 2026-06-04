@@ -61,24 +61,28 @@ enum FindHelpOnboardingStrings {
         "Welcome",
         es: "Bienvenido",
         zh: "欢迎",
-        vi: "Chào mừng bạn"
+        vi: "Chào mừng bạn",
+        tl: "Maligayang pagdating"
     )
     static let title = CivicaText(
         "SNAP works at more places than you think.",
         es: "SNAP funciona en más lugares de los que imaginas.",
         zh: "SNAP 可以用的地方比你想的多。",
-        vi: "SNAP dùng được ở nhiều nơi hơn bạn nghĩ."
+        vi: "SNAP dùng được ở nhiều nơi hơn bạn nghĩ.",
+        tl: "Mas marami pang lugar ang tumatanggap ng SNAP kaysa sa akala mo."
     )
     static let body = CivicaText(
         "Tap a pin to see what you can buy with EBT, WIC, or HIP — and how to get there.",
         es: "Toca un punto para ver qué puedes comprar con EBT, WIC o HIP, y cómo llegar.",
         zh: "点一下地图上的标记,看看你可以用 EBT、WIC 或 HIP 买什么 —— 以及怎么过去。",
-        vi: "Chạm vào một điểm để xem bạn mua được gì bằng EBT, WIC hoặc HIP — và cách đến đó."
+        vi: "Chạm vào một điểm để xem bạn mua được gì bằng EBT, WIC hoặc HIP — và cách đến đó.",
+        tl: "I-tap ang isang pin para makita kung ano ang mabibili mo gamit ang EBT, WIC, o HIP — at kung paano makakarating doon."
     )
     static let dismissCTA = CivicaText(
         "Got it",
         es: "Entendido",
         zh: "知道了",
-        vi: "Đã hiểu"
+        vi: "Đã hiểu",
+        tl: "Sige, gets ko"
     )
 }

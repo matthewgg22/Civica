@@ -112,28 +112,32 @@ enum RecertScheduleEditStrings {
         "When is your next recertification?",
         es: "¿Cuándo es tu próxima recertificación?",
         zh: "你下次复审是什么时候?",
-        vi: "Lần tái xét duyệt kế tiếp của bạn là khi nào?"
+        vi: "Lần tái xét duyệt kế tiếp của bạn là khi nào?",
+        tl: "Kailan ang susunod mong recertification?"
     )
     static let subtitle = CivicaText(
         "We start preparing you 60 days out. If your state sets a different date, edit it here.",
         es: "Empezamos a prepararte 60 días antes. Si tu estado fija otra fecha, edítala aquí.",
         zh: "我们会在 60 天前开始帮你准备。如果你所在的州定了不同的日期,就在这里改一下。",
-        vi: "Chúng tôi bắt đầu giúp bạn chuẩn bị trước 60 ngày. Nếu tiểu bang của bạn ấn định ngày khác, hãy sửa tại đây."
+        vi: "Chúng tôi bắt đầu giúp bạn chuẩn bị trước 60 ngày. Nếu tiểu bang của bạn ấn định ngày khác, hãy sửa tại đây.",
+        tl: "Sinisimulan ka naming ihanda 60 araw bago pa. Kung ibang petsa ang itinakda ng estado mo, i-edit mo dito."
     )
     static let pickerLabel = CivicaText(
         "Recert date",
         es: "Fecha de recertificación",
         zh: "复审日期",
-        vi: "Ngày tái xét duyệt"
+        vi: "Ngày tái xét duyệt",
+        tl: "Petsa ng recert"
     )
     static let useDefault = CivicaText(
         "Use 12-month default",
         es: "Usar predeterminado de 12 meses",
         zh: "使用 12 个月默认值",
-        vi: "Dùng mặc định 12 tháng"
+        vi: "Dùng mặc định 12 tháng",
+        tl: "Gamitin ang 12-buwan na default"
     )
-    static let save = CivicaText("Save", es: "Guardar", zh: "保存", vi: "Lưu")
-    static let cancel = CivicaText("Cancel", es: "Cancelar", zh: "取消", vi: "Hủy")
+    static let save = CivicaText("Save", es: "Guardar", zh: "保存", vi: "Lưu", tl: "I-save")
+    static let cancel = CivicaText("Cancel", es: "Cancelar", zh: "取消", vi: "Hủy", tl: "Kanselahin")
 }
 
 #if DEBUG
