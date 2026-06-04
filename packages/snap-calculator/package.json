@@ -12,6 +12,9 @@
     "test:watch": "vitest",
     "typecheck": "tsc --noEmit"
   },
+  "dependencies": {
+    "@civica/snap-rules": "workspace:*"
+  },
   "devDependencies": {
     "typescript": "^5.5.3",
     "vitest": "^2.1.9"
