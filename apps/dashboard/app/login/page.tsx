@@ -39,10 +39,8 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center px-4">
       <div className="bg-surface p-10 rounded-[4px] border border-hairline w-full max-w-md">
         <div className="flex items-center gap-3 mb-8">
-          <div className="w-10 h-10 rounded-full overflow-hidden ring-1 ring-black/5">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/civica-wheat-mark.png" alt="Civica" width={40} height={40} className="w-full h-full object-contain" />
-          </div>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/civica-wheat-mark.png" alt="Civica" width={48} height={48} className="w-12 h-12 object-contain shrink-0" />
           <div>
             <h1 className="text-[20px] font-semibold tracking-tight text-ink leading-tight">Civica Navigator</h1>
             <p className="text-[12px] text-muted mt-0.5">SNAP Enrollment</p>
