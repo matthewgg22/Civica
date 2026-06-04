@@ -2,6 +2,7 @@ import Link from "next/link";
 import MobileNavMenu from "./MobileNavMenu";
 import ShareDropdown from "./ShareDropdown";
 import FirstVisitHints from "./FirstVisitHints";
+import ProductSwitcher from "./ProductSwitcher";
 
 type NavKey =
   | "dashboard"
@@ -46,14 +47,20 @@ export default function AppHeader({ email, active }: { email?: string; active: N
     <>
     <header className="bg-surface border-b border-hairline px-4 sm:px-8 py-3.5 flex items-center justify-between gap-3">
       <div className="flex items-center gap-4 sm:gap-8 min-w-0">
-        <Link href="/dashboard" className="flex items-center gap-3 group shrink-0">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/civica-wheat-mark.png" alt="Civica" width={50} height={50} className="w-[50px] h-[50px] object-contain shrink-0 group-hover:opacity-90 transition-opacity" />
+        <div className="flex items-center gap-3 shrink-0">
+          <Link href="/dashboard" className="shrink-0 hover:opacity-90 transition-opacity">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/civica-wheat-mark.png" alt="Civica" width={50} height={50} className="w-[50px] h-[50px] object-contain" />
+          </Link>
           <div>
-            <p className="text-[15px] font-semibold tracking-tight text-ink leading-none">Civica</p>
-            <p className="text-[10px] text-graphite mt-0.5 uppercase tracking-wider font-semibold">Navigator</p>
+            <Link href="/dashboard" className="block text-[17px] font-semibold tracking-tight text-ink leading-none hover:opacity-80 transition-opacity">
+              Civica
+            </Link>
+            <div className="mt-0.5">
+              <ProductSwitcher currentHref="/dashboard" />
+            </div>
           </div>
-        </Link>
+        </div>
         {/* Desktop nav — hidden on <md, replaced by MobileNavMenu hamburger */}
         <nav className="hidden md:flex items-center gap-0.5">
           {NAV_ITEMS.map((item) => (
@@ -93,7 +100,7 @@ function NavTab({ href, label, active }: { href: string; label: string; active: 
   return (
     <Link
       href={href}
-      className={`px-3 py-1.5 rounded-[4px] text-[13px] font-semibold transition-colors whitespace-nowrap min-h-[44px] flex items-center focus:outline-none focus:ring-2 focus:ring-pine/30 ${
+      className={`px-3 py-1.5 rounded-[4px] text-[14px] font-semibold transition-colors whitespace-nowrap min-h-[44px] flex items-center focus:outline-none focus:ring-2 focus:ring-pine/30 ${
         active
           ? "bg-ink/8 text-ink"
           : "text-graphite hover:text-ink hover:bg-ink/5"
