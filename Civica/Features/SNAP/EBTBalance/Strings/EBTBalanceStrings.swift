@@ -80,7 +80,7 @@ enum EBTBalanceStrings {
         case (_, .english), (_, .tagalog): return "in \(days) days"
         case (_, .mandarin): return "\(days) 天后"
         case (_, .spanish): return "dentro de \(days) días"
-        case (_, .vietnamese): return "trong \(days) ngày"
+        case (_, .vietnamese): return "trong \(days) ngày nữa"
         }
     }
 
@@ -102,7 +102,7 @@ enum EBTBalanceStrings {
         "Link your EBT card and Civica will show your balance, recent activity, and next deposit — like connecting a bank account to a budgeting app.",
         es: "Conecta tu tarjeta EBT y Civica mostrará tu saldo, actividad reciente y próximo depósito — como conectar una cuenta bancaria a una app de presupuesto.",
         zh: "连接你的 EBT 卡,Civica 会显示你的余额、最近活动和下次存入 —— 就像把银行账户连接到记账应用一样。",
-        vi: "Kết nối thẻ EBT và Civica sẽ hiển thị số dư, hoạt động gần đây và lần nạp tiền tới của bạn — giống như kết nối tài khoản ngân hàng với một ứng dụng quản lý chi tiêu."
+        vi: "Kết nối thẻ EBT của bạn và Civica sẽ hiển thị số dư, hoạt động gần đây và lần nạp tiền tới — giống như kết nối tài khoản ngân hàng với một ứng dụng lập ngân sách."
     )
     static let linkSecurityEyebrow = CivicaText(
         "What Civica never stores",
@@ -114,7 +114,7 @@ enum EBTBalanceStrings {
         "Your PIN, your full card number, or your Social Security number. You can unlink your card anytime.",
         es: "Tu PIN, el número completo de tu tarjeta, ni tu número de Seguro Social. Puedes desconectar tu tarjeta cuando quieras.",
         zh: "你的 PIN、完整的卡号或社会安全号码。你可以随时断开卡的连接。",
-        vi: "Mã PIN, số thẻ đầy đủ hay số An sinh Xã hội của bạn. Bạn có thể ngắt kết nối thẻ bất cứ lúc nào."
+        vi: "Mã PIN, số thẻ đầy đủ hoặc số An sinh Xã hội của bạn. Bạn có thể ngắt kết nối thẻ bất cứ lúc nào."
     )
     static let linkCardFieldLabel = CivicaText(
         "EBT card number",
@@ -210,7 +210,7 @@ enum EBTBalanceStrings {
         "This is a preview of card-lock in Civica. To actually lock a lost or stolen CalFresh card, call California EBT Customer Service at 1-877-328-9677 (free, 24/7).",
         es: "Esta es una vista previa del bloqueo de tarjeta en Civica. Para bloquear de verdad una tarjeta CalFresh perdida o robada, llama a Servicio al Cliente de EBT de California al 1-877-328-9677 (gratis, 24/7).",
         zh: "这是 Civica 中卡片锁定功能的预览。要真正锁定丢失或被盗的 CalFresh 卡,请拨打 California EBT 客户服务电话 1-877-328-9677(免费,全天 24 小时)。",
-        vi: "Đây là bản xem trước tính năng khóa thẻ trong Civica. Để thực sự khóa thẻ CalFresh bị mất hoặc bị đánh cắp, hãy gọi Dịch vụ Khách hàng California EBT theo số 1-877-328-9677 (miễn phí, 24/7)."
+        vi: "Đây là bản xem trước tính năng khóa thẻ trong Civica. Để thực sự khóa thẻ CalFresh bị mất hoặc bị đánh cắp, hãy gọi Dịch vụ Khách hàng EBT California theo số 1-877-328-9677 (miễn phí, 24/7)."
     )
     static let lockToggleTitle = CivicaText(
         "Lock my card",
@@ -222,19 +222,19 @@ enum EBTBalanceStrings {
         "Keep your card locked when you're not shopping, then unlock it right before you check out. A locked card can't be used — this is the strongest protection against EBT theft.",
         es: "Mantén tu tarjeta bloqueada cuando no estés comprando, y desbloquéala justo antes de pagar. Una tarjeta bloqueada no se puede usar — es la mejor protección contra el robo de EBT.",
         zh: "不购物时让卡保持锁定状态,结账前再解锁。锁定的卡无法使用 —— 这是防止 EBT 被盗最有力的保护。",
-        vi: "Hãy khóa thẻ khi bạn không mua sắm, rồi mở khóa ngay trước khi thanh toán. Thẻ đã khóa không thể dùng được — đây là cách bảo vệ mạnh nhất chống trộm cắp EBT."
+        vi: "Hãy giữ thẻ ở trạng thái khóa khi bạn không mua sắm, rồi mở khóa ngay trước khi thanh toán. Thẻ đang khóa thì không thể dùng được — đây là cách bảo vệ mạnh nhất chống lại việc EBT bị đánh cắp."
     )
     static let lockStatusOnLine = CivicaText(
         "Your card is locked. No purchases will go through.",
         es: "Tu tarjeta está bloqueada. No se procesarán compras.",
         zh: "你的卡已锁定。无法进行任何购物。",
-        vi: "Thẻ của bạn đã khóa. Không giao dịch nào được thực hiện."
+        vi: "Thẻ của bạn đã khóa. Sẽ không có giao dịch mua nào được thực hiện."
     )
     static let lockStatusOffLine = CivicaText(
         "Your card is unlocked and ready to use.",
         es: "Tu tarjeta está desbloqueada y lista para usar.",
         zh: "你的卡已解锁,可以使用。",
-        vi: "Thẻ của bạn đã mở khóa và sẵn sàng sử dụng."
+        vi: "Thẻ của bạn đã mở khóa và sẵn sàng để dùng."
     )
     static let lockExtrasEyebrow = CivicaText(
         "Extra protection",
@@ -252,7 +252,7 @@ enum EBTBalanceStrings {
         "Only allow purchases in California.",
         es: "Permitir compras solo en California.",
         zh: "仅允许在 California 消费。",
-        vi: "Chỉ cho phép giao dịch tại California."
+        vi: "Chỉ cho phép giao dịch ở California."
     )
     static let blockOnlineTitle = CivicaText(
         "Block online purchases",
@@ -352,7 +352,7 @@ enum EBTBalanceStrings {
         case .spanish:
             return "A este ritmo, tu saldo dura hasta el \(date). Próximo depósito \(depositTiming)."
         case .vietnamese:
-            return "Với mức chi này, số dư của bạn dùng được đến \(date). Lần nạp tiền tới \(depositTiming)."
+            return "Với mức chi này, số dư của bạn dùng được đến hết \(date). Lần nạp tiền tới \(depositTiming)."
         }
     }
 
@@ -373,7 +373,7 @@ enum EBTBalanceStrings {
         case (1, .spanish):
             return "A este ritmo, tu saldo dura hasta el \(date) — aproximadamente 1 día antes de tu próximo depósito."
         case (1, .vietnamese):
-            return "Với mức chi này, số dư của bạn dùng được đến \(date) — sớm khoảng 1 ngày trước lần nạp tiền tới."
+            return "Với mức chi này, số dư của bạn dùng được đến hết \(date) — sớm hơn lần nạp tiền tới khoảng 1 ngày."
         case (_, .english), (_, .tagalog):
             return "At this pace, your balance lasts through \(date) — about \(gapDays) days before your next deposit."
         case (_, .mandarin):
@@ -381,7 +381,7 @@ enum EBTBalanceStrings {
         case (_, .spanish):
             return "A este ritmo, tu saldo dura hasta el \(date) — aproximadamente \(gapDays) días antes de tu próximo depósito."
         case (_, .vietnamese):
-            return "Với mức chi này, số dư của bạn dùng được đến \(date) — sớm khoảng \(gapDays) ngày trước lần nạp tiền tới."
+            return "Với mức chi này, số dư của bạn dùng được đến hết \(date) — sớm hơn lần nạp tiền tới khoảng \(gapDays) ngày."
         }
     }
 
@@ -396,7 +396,7 @@ enum EBTBalanceStrings {
         case .english, .tagalog: return "At this pace, your balance lasts through \(date)."
         case .mandarin: return "按当前花费速度,你的余额可以用到 \(date)。"
         case .spanish: return "A este ritmo, tu saldo dura hasta el \(date)."
-        case .vietnamese: return "Với mức chi này, số dư của bạn dùng được đến \(date)."
+        case .vietnamese: return "Với mức chi này, số dư của bạn dùng được đến hết \(date)."
         }
     }
 
@@ -406,7 +406,7 @@ enum EBTBalanceStrings {
         "Low balance — check your next deposit date below.",
         es: "Saldo bajo — revisa la fecha de tu próximo depósito abajo.",
         zh: "余额不足 —— 请在下方查看你下次存入的日期。",
-        vi: "Số dư thấp — hãy xem ngày nạp tiền tới ở bên dưới."
+        vi: "Số dư thấp — hãy xem ngày nạp tiền tới của bạn ở bên dưới."
     )
 
     // MARK: - Transaction detail sheet
@@ -421,7 +421,7 @@ enum EBTBalanceStrings {
         "Category",
         es: "Categoría",
         zh: "类别",
-        vi: "Loại"
+        vi: "Danh mục"
     )
     static let detailDateLabel = CivicaText(
         "Date",
@@ -439,7 +439,7 @@ enum EBTBalanceStrings {
         "Balance after",
         es: "Saldo después",
         zh: "之后余额",
-        vi: "Số dư sau giao dịch"
+        vi: "Số dư sau đó"
     )
     static let detailDoneButton = CivicaText(
         "Done",
@@ -468,7 +468,7 @@ enum EBTBalanceStrings {
         case .spanish:
             return "CalFresh carga tu tarjeta el \(dayOrdinal) de cada mes. California escalona el día según el número de caso."
         case .vietnamese:
-            return "CalFresh nạp tiền vào thẻ của bạn vào \(dayOrdinal) hằng tháng. California sắp xếp ngày so le theo số hồ sơ."
+            return "CalFresh nạp tiền vào thẻ của bạn vào ngày \(dayOrdinal) mỗi tháng. California xếp ngày khác nhau theo số hồ sơ."
         }
     }
 
@@ -484,7 +484,7 @@ enum EBTBalanceStrings {
         "Benefit updates",
         es: "Novedades de beneficios",
         zh: "福利更新",
-        vi: "Cập nhật trợ cấp"
+        vi: "Cập nhật về trợ cấp"
     )
 
     // MARK: - Unlink (demo reset)
@@ -508,7 +508,7 @@ enum EBTBalanceStrings {
         "Simulate a purchase",
         es: "Simular una compra",
         zh: "模拟一次消费",
-        vi: "Mô phỏng một giao dịch"
+        vi: "Mô phỏng một giao dịch mua"
     )
     static let simulateDepositButton = CivicaText(
         "Simulate this month's deposit",
@@ -528,7 +528,7 @@ enum EBTBalanceStrings {
         case .spanish:
             return "Tu depósito de CalFresh de \(amount) llegó."
         case .vietnamese:
-            return "Khoản nạp CalFresh \(amount) của bạn đã vào tài khoản."
+            return "Khoản nạp CalFresh \(amount) của bạn đã đến."
         }
     }
 
@@ -546,7 +546,7 @@ enum EBTBalanceStrings {
         case .spanish:
             return "No se pudo actualizar. Mostrando el saldo a las \(asOf)."
         case .vietnamese:
-            return "Không cập nhật được. Đang hiển thị số dư tính đến \(asOf)."
+            return "Không thể cập nhật. Đang hiển thị số dư tính đến \(asOf)."
         }
     }
     /// Fallback when no prior successful refresh exists (first launch
@@ -555,7 +555,7 @@ enum EBTBalanceStrings {
         "Couldn't update right now.",
         es: "No se pudo actualizar ahora.",
         zh: "现在无法更新。",
-        vi: "Hiện chưa cập nhật được."
+        vi: "Không thể cập nhật ngay bây giờ."
     )
     static let refreshErrorRetry = CivicaText(
         "Retry",
@@ -578,7 +578,7 @@ enum EBTBalanceStrings {
         case (let when?, .spanish):
             return "No se pudo actualizar el saldo. Última actualización a las \(when)."
         case (let when?, .vietnamese):
-            return "Không cập nhật được số dư. Cập nhật lần cuối lúc \(when)."
+            return "Không thể cập nhật số dư. Lần cập nhật gần nhất lúc \(when)."
         case (nil, .english), (nil, .tagalog):
             return "Could not update balance."
         case (nil, .mandarin):
@@ -586,7 +586,7 @@ enum EBTBalanceStrings {
         case (nil, .spanish):
             return "No se pudo actualizar el saldo."
         case (nil, .vietnamese):
-            return "Không cập nhật được số dư."
+            return "Không thể cập nhật số dư."
         }
     }
 
@@ -610,7 +610,7 @@ enum EBTBalanceStrings {
         case .spanish:
             return "CalFresh elimina los beneficios que no se usan durante 9 meses. Sigue usando tu tarjeta — tu saldo es válido hasta \(goodThrough)."
         case .vietnamese:
-            return "CalFresh thu hồi trợ cấp nếu hoàn toàn không dùng trong 9 tháng. Hãy tiếp tục dùng thẻ — số dư của bạn còn hiệu lực đến \(goodThrough)."
+            return "CalFresh sẽ thu hồi trợ cấp nếu hoàn toàn không được dùng trong 9 tháng. Hãy tiếp tục dùng thẻ — số dư của bạn còn hiệu lực đến hết \(goodThrough)."
         }
     }
 
@@ -634,13 +634,13 @@ enum EBTBalanceStrings {
         "We can't lock your CalFresh card directly yet.",
         es: "Aún no podemos bloquear tu tarjeta CalFresh directamente.",
         zh: "我们目前还不能直接锁定你的 CalFresh 卡。",
-        vi: "Chúng tôi chưa thể khóa trực tiếp thẻ CalFresh của bạn."
+        vi: "Chúng tôi chưa thể khóa thẻ CalFresh của bạn trực tiếp."
     )
     static let lockComingSoonBody = CivicaText(
         "If your card is lost or stolen, use the steps below immediately.",
         es: "Si perdiste tu tarjeta o te la robaron, sigue los pasos de abajo de inmediato.",
         zh: "如果你的卡丢失或被盗,请立即按下面的步骤操作。",
-        vi: "Nếu thẻ của bạn bị mất hoặc bị đánh cắp, hãy làm theo các bước dưới đây ngay lập tức."
+        vi: "Nếu thẻ của bạn bị mất hoặc bị đánh cắp, hãy làm theo các bước bên dưới ngay lập tức."
     )
     static let lockEmergencyStepCall = CivicaText(
         "Call EBT Customer Service: 1-877-328-9677",
@@ -658,7 +658,7 @@ enum EBTBalanceStrings {
         "Report to local police if stolen",
         es: "Repórtalo a la policía local si fue robada",
         zh: "如果被盗,请向当地警方报案",
-        vi: "Báo cảnh sát địa phương nếu bị đánh cắp"
+        vi: "Báo cho cảnh sát địa phương nếu bị đánh cắp"
     )
     static let lockAppOnlyTitle = CivicaText(
         "Hide card in this app",
@@ -670,7 +670,7 @@ enum EBTBalanceStrings {
         "This does NOT prevent transactions. Use the steps above to actually freeze your card.",
         es: "Esto NO evita transacciones. Usa los pasos de arriba para bloquear tu tarjeta de verdad.",
         zh: "这不会阻止交易。请按上面的步骤真正冻结你的卡。",
-        vi: "Việc này KHÔNG ngăn được giao dịch. Hãy làm theo các bước trên để thực sự đóng băng thẻ."
+        vi: "Việc này KHÔNG ngăn được các giao dịch. Hãy làm theo các bước ở trên để thực sự đóng băng thẻ của bạn."
     )
     static let lockWhyTitle = CivicaText(
         "Why can't I lock here?",
@@ -682,13 +682,13 @@ enum EBTBalanceStrings {
         "CalFresh card locks require the California processor (Conduent/FIS) to expose an API to third-party apps. They haven't done this yet.",
         es: "Los bloqueos de tarjeta CalFresh requieren que el procesador de California (Conduent/FIS) exponga una API a aplicaciones de terceros. Aún no lo han hecho.",
         zh: "锁定 CalFresh 卡需要 California 的处理方(Conduent/FIS)向第三方应用开放 API。他们目前还没有这么做。",
-        vi: "Việc khóa thẻ CalFresh đòi hỏi bên xử lý của California (Conduent/FIS) mở API cho các ứng dụng bên thứ ba. Họ vẫn chưa làm điều này."
+        vi: "Việc khóa thẻ CalFresh đòi hỏi đơn vị xử lý của California (Conduent/FIS) mở một API cho các ứng dụng bên thứ ba. Họ vẫn chưa làm điều này."
     )
     static let lockWhyParagraph2 = CivicaText(
         "Civica is working with CDSS on a 2026 partnership that would enable this. We'll notify you when it's available.",
         es: "Civica está trabajando con el CDSS en una asociación para 2026 que permitiría esto. Te avisaremos cuando esté disponible.",
         zh: "Civica 正在与 CDSS 合作,推动一项 2026 年的合作来实现这一功能。功能上线后我们会通知你。",
-        vi: "Civica đang hợp tác với CDSS về một quan hệ đối tác năm 2026 để thực hiện điều này. Chúng tôi sẽ thông báo cho bạn khi tính năng có sẵn."
+        vi: "Civica đang hợp tác với CDSS trong một quan hệ đối tác năm 2026 để mở ra tính năng này. Chúng tôi sẽ báo cho bạn khi nó sẵn sàng."
     )
 
     // MARK: - EBTScrapeError banners + CTAs (per plan §16.2 / D10)
@@ -707,7 +707,7 @@ enum EBTBalanceStrings {
         "We couldn't reach California EBT just now. Try again in a moment.",
         es: "No pudimos conectar con EBT de California en este momento. Inténtalo de nuevo en un momento.",
         zh: "我们现在无法连接到 California EBT。请稍后再试。",
-        vi: "Hiện chúng tôi không kết nối được với California EBT. Hãy thử lại sau giây lát."
+        vi: "Chúng tôi vừa không kết nối được với California EBT. Hãy thử lại sau giây lát."
     )
     static let networkTimeoutCTA = CivicaText(
         "Try again",
@@ -720,7 +720,7 @@ enum EBTBalanceStrings {
         "California EBT is temporarily unavailable. We'll keep trying — check back soon.",
         es: "EBT de California no está disponible temporalmente. Seguiremos intentando — vuelve pronto.",
         zh: "California EBT 暂时无法使用。我们会继续尝试 —— 请稍后再来查看。",
-        vi: "California EBT tạm thời không khả dụng. Chúng tôi sẽ tiếp tục thử — hãy quay lại sau."
+        vi: "California EBT tạm thời không khả dụng. Chúng tôi sẽ tiếp tục thử — hãy quay lại sau ít phút."
     )
     static let portalDownCTA = CivicaText(
         "Try again",
@@ -733,7 +733,7 @@ enum EBTBalanceStrings {
         "Your EBT card link expired. Re-link your card to see your balance.",
         es: "El enlace de tu tarjeta EBT venció. Vuelve a conectar tu tarjeta para ver tu saldo.",
         zh: "你的 EBT 卡连接已过期。请重新连接卡片以查看余额。",
-        vi: "Liên kết thẻ EBT của bạn đã hết hạn. Hãy kết nối lại thẻ để xem số dư."
+        vi: "Kết nối thẻ EBT của bạn đã hết hạn. Hãy kết nối lại thẻ để xem số dư."
     )
     static let sessionExpiredCTA = CivicaText(
         "Re-link card",
@@ -759,7 +759,7 @@ enum EBTBalanceStrings {
         "Your EBT card is locked after too many PIN attempts. Call California EBT to unlock it.",
         es: "Tu tarjeta EBT está bloqueada después de demasiados intentos de PIN. Llama a EBT de California para desbloquearla.",
         zh: "PIN 尝试次数过多,你的 EBT 卡已被锁定。请致电 California EBT 解锁。",
-        vi: "Thẻ EBT của bạn đã bị khóa do nhập PIN sai quá nhiều lần. Hãy gọi California EBT để mở khóa."
+        vi: "Thẻ EBT của bạn đã bị khóa do nhập sai mã PIN quá nhiều lần. Hãy gọi California EBT để mở khóa."
     )
     static let pinLockedCTA = CivicaText(
         "Call 1-877-328-9677",
@@ -785,7 +785,7 @@ enum EBTBalanceStrings {
         "We're having trouble reading your EBT balance. Civica's team has been notified.",
         es: "Tenemos problemas para leer tu saldo de EBT. Notificamos al equipo de Civica.",
         zh: "我们读取你的 EBT 余额时遇到问题。Civica 团队已收到通知。",
-        vi: "Chúng tôi đang gặp khó khăn khi đọc số dư EBT của bạn. Đội ngũ Civica đã được thông báo."
+        vi: "Chúng tôi đang gặp trục trặc khi đọc số dư EBT của bạn. Nhóm Civica đã được thông báo."
     )
     static let parseErrorCTA = CivicaText(
         "Try again",
