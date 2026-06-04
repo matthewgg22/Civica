@@ -657,6 +657,25 @@ importers:
         specifier: ^2.1.9
         version: 2.1.9(@types/node@22.19.19)(jsdom@26.1.0)(lightningcss@1.32.0)(terser@5.47.1)
 
+  packages/snap-recommendation:
+    dependencies:
+      '@civica/snap-qc-engine':
+        specifier: workspace:*
+        version: link:../snap-qc-engine
+      '@civica/snap-rules':
+        specifier: workspace:*
+        version: link:../snap-rules
+    devDependencies:
+      '@civica/config':
+        specifier: workspace:*
+        version: link:../config
+      typescript:
+        specifier: ^5.5.3
+        version: 5.9.3
+      vitest:
+        specifier: ^2.1.9
+        version: 2.1.9(@types/node@22.19.19)(jsdom@26.1.0)(lightningcss@1.32.0)(terser@5.47.1)
+
   packages/snap-rules:
     dependencies:
       yaml:
@@ -746,6 +765,12 @@ importers:
 
   tools/profile-harness:
     dependencies:
+      '@civica/snap-qc-engine':
+        specifier: workspace:*
+        version: link:../../packages/snap-qc-engine
+      '@civica/snap-recommendation':
+        specifier: workspace:*
+        version: link:../../packages/snap-recommendation
       '@civica/snap-rules':
         specifier: workspace:*
         version: link:../../packages/snap-rules

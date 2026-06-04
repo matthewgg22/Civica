@@ -1,172 +1,478 @@
-// KPI steering-tree panel — presentational (server component).
+// KPI steering-tree — presentational server component.
 //
-// Renders the LIVE KPI truth point (lib/analytics/kpi-snapshot getKpiTruthPoint)
-// as the three-pillar tree. Phase 1 holds Pillar 1 (Get In); Pillars 2/3 are
-// scaffolded as "not yet instrumented" (TODO-42). The self-upgrading hybrid is
-// visible here: each KPI shows a "leading" (in-app proxy) or "measured" (real
-// lagging outcome) badge, and measured_per stays "pending" until authoritative
-// outcomes exist — it never borrows the self-reported figure (premise P2).
+// Renders the live KPI truth point as three pillars. Pillar 1 (Get In) is live;
+// Pillars 2 and 3 are planned and shown as structured scaffolds so the shape of
+// the full tree is visible even before data sources are wired (TODO-42).
+//
+// Self-upgrading: each KPI carries a "leading" (in-app proxy) or "measured"
+// (real lagging outcome) badge. measured_per stays pending until n ≥ 30
+// authoritative county outcomes arrive — self-reported figures never fill that slot.
 
 import type { KpiTruthPoint, KpiView } from "../../lib/analytics/kpi-snapshot";
 
-const MIN_N = 30;
+const N_GATE = 30;
 
-function pct(x: number | null | undefined): string {
-  return x == null ? "—" : `${x.toFixed(1)}%`;
+// ─── Utility ─────────────────────────────────────────────────────────────────
+
+function pct(x: number | null | undefined, decimals = 1): string {
+  return x == null ? "—" : `${x.toFixed(decimals)}%`;
 }
 
-function Badge({ kind }: { kind: string }) {
-  const measured = kind === "measured";
+function clamp(x: number, lo: number, hi: number) {
+  return Math.max(lo, Math.min(hi, x));
+}
+
+function measuredStatus(v: KpiView | null): "measured" | "pending" | "empty" {
+  if (!v) return "empty";
+  return typeof v.meta?.status === "string" && v.meta.status === "measured"
+    ? "measured"
+    : "pending";
+}
+
+// ─── Source badge ─────────────────────────────────────────────────────────────
+
+function SourceBadge({ kind }: { kind: "leading" | "measured" | "not-collecting" }) {
+  const styles: Record<typeof kind, string> = {
+    leading: "bg-indigo/10 text-indigo",
+    measured: "bg-pine/10 text-pine",
+    "not-collecting": "bg-graphite/10 text-graphite",
+  };
+  const labels: Record<typeof kind, string> = {
+    leading: "leading",
+    measured: "measured",
+    "not-collecting": "not yet collecting",
+  };
   return (
     <span
-      className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider ${
-        measured ? "bg-pine/10 text-pine" : "bg-indigo/10 text-indigo"
-      }`}
+      className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider ${styles[kind]}`}
     >
-      {measured ? "measured" : "leading"}
+      {labels[kind]}
     </span>
   );
 }
 
-function Stat({
-  label,
-  value,
-  sub,
-  badge,
+// ─── Fill bar ─────────────────────────────────────────────────────────────────
+// fillPct:      0–100 display fill
+// baselinePct:  optional tick mark position (0–100)
+// color:        Tailwind bg class for the fill
+
+function FillBar({
+  fillPct,
+  baselinePct,
+  color = "bg-graphite/40",
+  baselineLabel,
 }: {
-  label: string;
-  value: string;
-  sub?: string;
-  badge?: string;
+  fillPct: number;
+  baselinePct?: number;
+  color?: string;
+  baselineLabel?: string;
 }) {
   return (
-    <div className="rounded-lg border border-graphite/15 bg-surface-secondary p-4">
-      <div className="flex items-center justify-between gap-2">
-        <p className="text-xs font-semibold uppercase tracking-wider text-graphite">{label}</p>
-        {badge ? <Badge kind={badge} /> : null}
+    <div className="mt-4 space-y-1">
+      <div className="relative h-[5px] w-full overflow-hidden rounded-full bg-surface-secondary">
+        {baselinePct != null && (
+          <div
+            className="absolute top-0 h-full w-px bg-graphite/50"
+            style={{ left: `${clamp(baselinePct, 0, 99)}%` }}
+            aria-hidden="true"
+          />
+        )}
+        <div
+          className={`h-full rounded-full transition-all duration-500 ${color}`}
+          style={{ width: `${clamp(fillPct, 0, 100)}%` }}
+        />
       </div>
-      <p className="mt-2 text-2xl font-bold tabular-nums text-ink">{value}</p>
-      {sub ? <p className="mt-1 text-xs text-graphite">{sub}</p> : null}
+      {baselineLabel && (
+        <p className="text-[10px] text-graphite">{baselineLabel}</p>
+      )}
     </div>
   );
 }
 
-/** A measured KPI: value + Wilson band at/above the n-gate, else honest "pending". */
-function measuredView(v: KpiView | null, pendingNote: string): { value: string; sub: string } {
-  if (!v) return { value: "—", sub: "no data" };
-  const status = typeof v.meta?.status === "string" ? v.meta.status : "";
-  if (status === "measured" && v.valuePct != null) {
-    const ci =
-      v.ciLow != null && v.ciHigh != null
-        ? ` · 95% CI ${v.ciLow.toFixed(1)}–${v.ciHigh.toFixed(1)}`
-        : "";
-    return { value: pct(v.valuePct), sub: `n=${v.n ?? 0}${ci}` };
-  }
-  return { value: "pending", sub: `n=${v.n ?? 0} of ${MIN_N}${pendingNote}` };
+// ─── Hero card ────────────────────────────────────────────────────────────────
+
+function HeroCard({
+  label,
+  value,
+  sub,
+  badge,
+  bar,
+  faded,
+}: {
+  label: string;
+  value: string;
+  sub?: string;
+  badge: "leading" | "measured" | "not-collecting";
+  bar?: React.ComponentProps<typeof FillBar>;
+  faded?: boolean;
+}) {
+  return (
+    <div
+      className={`rounded-[4px] border border-hairline bg-surface p-5 transition-opacity ${faded ? "opacity-50" : ""}`}
+    >
+      <div className="flex items-start justify-between gap-2">
+        <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite">
+          {label}
+        </p>
+        <SourceBadge kind={badge} />
+      </div>
+      <p className="mt-3 text-[32px] font-semibold leading-none tabular-nums text-ink">
+        {value}
+      </p>
+      {sub && <p className="mt-1.5 text-xs text-graphite">{sub}</p>}
+      {bar && <FillBar {...bar} />}
+    </div>
+  );
 }
+
+// ─── Planned KPI card (Pillars 2 & 3) ────────────────────────────────────────
+
+function PlannedCard({
+  label,
+  description,
+  unlock,
+}: {
+  label: string;
+  description: string;
+  unlock: string;
+}) {
+  return (
+    <div className="rounded-[4px] border border-dashed border-graphite/25 bg-surface p-5">
+      <div className="flex items-start justify-between gap-2">
+        <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite">
+          {label}
+        </p>
+        <SourceBadge kind="not-collecting" />
+      </div>
+      <p className="mt-3 text-sm leading-relaxed text-graphite">{description}</p>
+      <p className="mt-3 text-[10px] text-muted">
+        <span className="font-semibold uppercase tracking-wider">Unlocks when:</span>{" "}
+        {unlock}
+      </p>
+    </div>
+  );
+}
+
+// ─── Status banner ────────────────────────────────────────────────────────────
+
+function StatusBanner({
+  perMeasured,
+  n,
+  measuredN,
+}: {
+  perMeasured: boolean;
+  n: number;
+  measuredN?: number | null;
+}) {
+  if (perMeasured) {
+    return (
+      <div className="rounded-[4px] border border-pine/30 bg-pine/[0.06] px-5 py-4">
+        <p className="text-sm font-semibold text-pine">
+          Live reading — measured outcome rate
+        </p>
+        <p className="mt-1 text-sm leading-relaxed text-graphite">
+          The error rate below is measured on{" "}
+          <span className="font-semibold text-ink">{measuredN}</span> authoritative
+          outcomes — real Civica-served results, not a proxy.
+        </p>
+      </div>
+    );
+  }
+
+  const progress = clamp((n / N_GATE) * 100, 0, 100);
+
+  return (
+    <div className="rounded-[4px] border border-warning/30 bg-warning/[0.06] px-5 py-4">
+      <p className="text-sm font-semibold text-warning">
+        Leading indicators — measured error rate pending
+      </p>
+      <p className="mt-1.5 text-sm leading-relaxed text-graphite">
+        We show the <span className="font-semibold text-ink">Clean-Packet Rate</span>{" "}
+        computed at submission as a leading proxy. The{" "}
+        <span className="font-semibold text-ink">measured</span> error rate stays{" "}
+        <span className="font-semibold text-ink">pending</span> until authoritative
+        county or QC outcomes arrive — self-reported outcomes never fill that slot.
+      </p>
+      <div className="mt-4 space-y-1.5">
+        <div className="flex items-center justify-between text-xs">
+          <span className="text-graphite">QC reviews collected toward measurement</span>
+          <span className="tabular-nums font-semibold text-ink">
+            {n} / {N_GATE}
+          </span>
+        </div>
+        <div className="h-1.5 w-full overflow-hidden rounded-full bg-paper">
+          <div
+            className="h-full rounded-full bg-warning/60 transition-all duration-500"
+            style={{ width: `${progress}%` }}
+            role="progressbar"
+            aria-valuenow={n}
+            aria-valuemin={0}
+            aria-valuemax={N_GATE}
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Pillar header ────────────────────────────────────────────────────────────
+
+function PillarHeader({
+  eyebrow,
+  title,
+  description,
+  live,
+}: {
+  eyebrow: string;
+  title: string;
+  description: string;
+  live: boolean;
+}) {
+  return (
+    <div className="mb-5">
+      <div className="flex items-center gap-2">
+        <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite">
+          {eyebrow}
+        </p>
+        <span
+          className={`inline-flex h-1.5 w-1.5 rounded-full ${live ? "bg-pine" : "bg-graphite/30"}`}
+          aria-hidden="true"
+        />
+        <span className={`text-[10px] font-semibold ${live ? "text-pine" : "text-graphite/60"}`}>
+          {live ? "live" : "planned"}
+        </span>
+      </div>
+      <h2 className="mt-1 text-lg font-semibold tracking-tight text-ink">{title}</h2>
+      <p className="mt-1 text-sm leading-relaxed text-graphite">{description}</p>
+    </div>
+  );
+}
+
+// ─── Element-clean bar rows ───────────────────────────────────────────────────
+
+function ElementBar({ label, valuePct }: { label: string; valuePct: number | null }) {
+  const v = valuePct ?? 0;
+  const color =
+    v >= 80 ? "bg-pine/40" : v >= 60 ? "bg-warning/50" : "bg-brick/50";
+  return (
+    <li className="grid grid-cols-[1fr_auto] items-center gap-3">
+      <div className="min-w-0">
+        <p className="truncate text-xs text-graphite">{label}</p>
+        <div className="mt-1 h-[5px] w-full overflow-hidden rounded-full bg-surface-secondary">
+          <div
+            className={`h-full rounded-full ${color}`}
+            style={{ width: `${clamp(v, 0, 100)}%` }}
+          />
+        </div>
+      </div>
+      <span className="text-sm tabular-nums text-ink">{pct(valuePct)}</span>
+    </li>
+  );
+}
+
+// ─── Root ─────────────────────────────────────────────────────────────────────
 
 export default function KpiPillarTree({ truthPoint }: { truthPoint: KpiTruthPoint }) {
   const tp = truthPoint;
 
   if (!tp.available) {
     return (
-      <div className="rounded-lg border border-graphite/20 bg-surface-secondary p-8 text-center">
-        <p className="text-graphite">
-          The KPI snapshot is not populated yet. Once the daily refresh runs (and
-          the first packets are scored), the live pillar tree appears here.
+      <div className="rounded-[4px] border border-graphite/20 bg-surface-secondary p-8 text-center">
+        <p className="text-sm text-graphite">
+          The KPI snapshot is not populated yet. Once the daily refresh runs and
+          the first packets are scored, the live pillar tree appears here.
         </p>
       </div>
     );
   }
 
   const cpr = tp.cleanPacketRate;
-  const perMeasured = tp.measuredPer?.meta?.status === "measured";
-  const denial = measuredView(tp.denialRate, "");
-  const per = measuredView(tp.measuredPer, " authoritative");
-  const elements = [...tp.elementClean].sort((a, b) => (a.valuePct ?? 0) - (b.valuePct ?? 0));
+  const perStatus = measuredStatus(tp.measuredPer);
+  const perMeasured = perStatus === "measured";
+  const n = tp.measuredPer?.n ?? 0;
+  const elements = [...tp.elementClean].sort(
+    (a, b) => (a.valuePct ?? 0) - (b.valuePct ?? 0),
+  );
+
+  // CPR bar: 0-100%, color by threshold
+  const cprVal = cpr?.valuePct ?? 0;
+  const cprColor =
+    cprVal >= 80 ? "bg-pine/60" : cprVal >= 60 ? "bg-warning/60" : "bg-brick/60";
+
+  // Denial bar: 0-40% scale; lower = better; brick if high
+  const denialVal = tp.denialRate?.valuePct ?? 0;
+  const denialBarFill = clamp((denialVal / 40) * 100, 0, 100);
+  const denialColor =
+    denialVal >= 20 ? "bg-brick/60" : denialVal >= 10 ? "bg-warning/60" : "bg-pine/40";
+
+  // PER bar: 0-15% scale; CA baseline tick at 10.98 / 15 * 100 ≈ 73.2%
+  const CA_PER = 10.98;
+  const PER_SCALE = 15;
+  const perVal = tp.measuredPer?.valuePct ?? 0;
+  const perBarFill = clamp((perVal / PER_SCALE) * 100, 0, 100);
+  const perBaselineTick = clamp((CA_PER / PER_SCALE) * 100, 0, 100);
+  const perColor =
+    perVal < CA_PER ? "bg-pine/60" : perVal < CA_PER + 2 ? "bg-warning/60" : "bg-brick/60";
+
+  // Denial view
+  const denialStatus = measuredStatus(tp.denialRate);
+  const denialValue =
+    denialStatus === "measured" ? pct(tp.denialRate?.valuePct) : "pending";
+  const denialSub =
+    denialStatus === "measured"
+      ? `n=${tp.denialRate?.n ?? 0}${
+          tp.denialRate?.ciLow != null
+            ? ` · 95% CI ${tp.denialRate.ciLow.toFixed(1)}–${tp.denialRate.ciHigh?.toFixed(1)}`
+            : ""
+        }`
+      : `n=${tp.denialRate?.n ?? 0} of ${N_GATE}`;
+
+  // PER view
+  const perValue = perMeasured ? pct(tp.measuredPer?.valuePct) : "pending";
+  const perSub = perMeasured
+    ? `n=${tp.measuredPer?.n ?? 0}${
+        tp.measuredPer?.ciLow != null
+          ? ` · 95% CI ${tp.measuredPer.ciLow.toFixed(1)}–${tp.measuredPer.ciHigh?.toFixed(1)}`
+          : ""
+      }`
+    : `n=${n} of ${N_GATE} authoritative`;
 
   return (
-    <div className="space-y-10">
-      {/* ── Status banner (flips when measured PER clears the gate) ───────── */}
-      {perMeasured ? (
-        <div className="rounded-lg border border-pine/30 bg-pine/[0.06] p-4">
-          <p className="text-sm font-semibold text-pine">Live reading — measured outcome rate</p>
-          <p className="mt-1 text-sm leading-relaxed text-graphite">
-            The error rate below is measured on {tp.measuredPer?.n} authoritative
-            outcomes — real Civica-served results, not a proxy.
-          </p>
-        </div>
-      ) : (
-        <div className="rounded-lg border border-warning/30 bg-warning/[0.06] p-4">
-          <p className="text-sm font-semibold text-warning">
-            Leading indicators — measured error rate pending
-          </p>
-          <p className="mt-1 text-sm leading-relaxed text-graphite">
-            We show the <span className="text-ink">Clean-Packet Rate</span> we can
-            compute today (how clean applications look at submission). The{" "}
-            <span className="text-ink">measured</span> error rate stays{" "}
-            <span className="text-ink">pending</span> until authoritative county /
-            QC outcomes arrive — self-reported outcomes feed denial &amp; churn, but
-            never the measured PER.
-          </p>
-        </div>
-      )}
+    <div className="space-y-12">
+      {/* ── Status banner ─────────────────────────────────────────────────── */}
+      <StatusBanner perMeasured={perMeasured} n={n} measuredN={tp.measuredPer?.n} />
 
-      {/* ── Pillar 1 — Get In ──────────────────────────────────────────────── */}
+      {/* ── Pillar 1 — Get In ─────────────────────────────────────────────── */}
       <section>
-        <h2 className="mb-1 text-sm font-semibold text-ink">Pillar 1 · Get In</h2>
-        <p className="mb-3 text-xs text-graphite">
-          A clean application in, approved at the right amount. The leading proxy is
-          the Clean-Packet Rate; the lagging outcomes are denial and measured PER.
-        </p>
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-          <Stat
+        <PillarHeader
+          eyebrow="Pillar 1"
+          title="Get In"
+          description="A clean application in, approved at the right amount. Leading proxy: Clean-Packet Rate. Lagging outcomes: denial rate and measured payment error rate."
+          live
+        />
+
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+          <HeroCard
             label="Clean-Packet Rate"
+            badge="leading"
             value={pct(cpr?.valuePct)}
             sub={
               cpr?.valuePct == null
                 ? "no packets scored yet"
-                : `n=${cpr.n ?? 0}${cpr.baselineRef != null ? ` · vs ${cpr.baselineRef.toFixed(2)}% CA baseline` : ""}`
+                : `n=${cpr.n ?? 0}${
+                    cpr.baselineRef != null
+                      ? ` · vs ${cpr.baselineRef.toFixed(1)}% CA baseline`
+                      : ""
+                  }`
             }
-            badge="leading"
+            bar={
+              cpr?.valuePct != null
+                ? { fillPct: cprVal, color: cprColor }
+                : undefined
+            }
           />
-          <Stat label="Denial rate" value={denial.value} sub={denial.sub} badge="measured" />
-          <Stat label="Measured PER" value={per.value} sub={per.sub} badge="measured" />
-          <Stat
-            label="Engine"
-            value={tp.engineVersion ?? "—"}
-            sub={tp.computedAt ? `as of ${new Date(tp.computedAt).toISOString().slice(0, 10)}` : "—"}
+          <HeroCard
+            label="Denial rate"
+            badge="measured"
+            value={denialValue}
+            sub={denialSub}
+            bar={
+              denialStatus === "measured"
+                ? { fillPct: denialBarFill, color: denialColor }
+                : { fillPct: clamp(((tp.denialRate?.n ?? 0) / N_GATE) * 100, 0, 100), color: "bg-graphite/30" }
+            }
+          />
+          <HeroCard
+            label="Measured PER"
+            badge="measured"
+            value={perValue}
+            sub={perSub}
+            bar={
+              perMeasured
+                ? {
+                    fillPct: perBarFill,
+                    baselinePct: perBaselineTick,
+                    color: perColor,
+                    baselineLabel: `CA bar ${pct(CA_PER, 2)}`,
+                  }
+                : { fillPct: clamp((n / N_GATE) * 100, 0, 100), color: "bg-graphite/30" }
+            }
           />
         </div>
 
-        {elements.length > 0 ? (
-          <div className="mt-4 rounded-lg border border-graphite/15 bg-surface-secondary p-4">
-            <p className="text-xs font-semibold uppercase tracking-wider text-graphite">
-              Element-clean rate (lowest first)
+        {/* Engine metadata — footer line, not a card slot */}
+        <p className="mt-3 text-[11px] text-muted">
+          Engine {tp.engineVersion ?? "—"} ·{" "}
+          {tp.computedAt
+            ? `snapshot ${new Date(tp.computedAt).toISOString().slice(0, 10)}`
+            : "snapshot date unknown"}
+        </p>
+
+        {/* Element-clean bar chart */}
+        {elements.length > 0 && (
+          <div className="mt-5 rounded-[4px] border border-hairline bg-surface p-5">
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite">
+              Element-clean rate — highest-risk first
             </p>
-            <ul className="mt-2 space-y-1.5">
+            <p className="mt-1 text-xs text-graphite">
+              % of scored packets where this QC element was clean. Lower = more
+              frequent QC flag.
+            </p>
+            <ul className="mt-4 space-y-3">
               {elements.map((e) => (
-                <li key={e.element} className="flex items-center justify-between text-sm">
-                  <span className="text-graphite">{e.element}</span>
-                  <span className="tabular-nums text-ink">{pct(e.valuePct)}</span>
-                </li>
+                <ElementBar
+                  key={e.element}
+                  label={e.element ?? "unknown"}
+                  valuePct={e.valuePct}
+                />
               ))}
             </ul>
           </div>
-        ) : null}
+        )}
       </section>
 
-      {/* ── Pillars 2 & 3 — scaffolded (TODO-42) ───────────────────────────── */}
-      <section className="rounded-lg border border-graphite/15 bg-surface-secondary p-4">
-        <h2 className="text-sm font-semibold text-ink">Pillars 2 &amp; 3 — coming next</h2>
-        <p className="mt-1.5 text-sm leading-relaxed text-graphite">
-          <span className="font-semibold text-ink">Stay Engaged</span>{" "}
-          (Active-Relationship Rate) and{" "}
-          <span className="font-semibold text-ink">Stay On</span> (Reporting-Moment
-          Coverage + churn) are scaffolded in the schema but not yet instrumented.
-          The table already supports them — only the builder + data sources remain
-          (TODO-42).
-        </p>
+      {/* ── Pillar 2 — Stay Engaged ───────────────────────────────────────── */}
+      <section>
+        <PillarHeader
+          eyebrow="Pillar 2"
+          title="Stay Engaged"
+          description="Keep approved households actively connected through their certification period so issues surface before a denial, not after."
+          live={false}
+        />
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <PlannedCard
+            label="Active-Relationship Rate"
+            description="What share of approved households had a navigator touchpoint in the last 30 days of their certification window."
+            unlock="Navigator inbox engagement events are wired to the analytics pipeline."
+          />
+          <PlannedCard
+            label="Reporting-Moment Coverage"
+            description="What share of upcoming interim-reporting deadlines have prep activity started at least 14 days ahead."
+            unlock="Reporting deadline tracking lands in the navigator dashboard."
+          />
+        </div>
+      </section>
+
+      {/* ── Pillar 3 — Stay On ────────────────────────────────────────────── */}
+      <section>
+        <PillarHeader
+          eyebrow="Pillar 3"
+          title="Stay On"
+          description="Ensure eligible households don't fall off benefits at recertification — the retention pillar that closes the Type-1 error gap."
+          live={false}
+        />
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <PlannedCard
+            label="Churn Rate"
+            description="What share of households with an active Civica relationship exit SNAP within 30 days of their recertification deadline despite remaining eligible."
+            unlock="County outcome webhooks (TODO-44) feed authoritative recertification results."
+          />
+          <PlannedCard
+            label="Retention Risk Coverage"
+            description="What share of households approaching recertification have a retention-risk score above the medium threshold (≥ 15)."
+            unlock="scoreRetentionRisk is wired to the packet lifecycle and the navigator dashboard surfaces the score."
+          />
+        </div>
       </section>
     </div>
   );
