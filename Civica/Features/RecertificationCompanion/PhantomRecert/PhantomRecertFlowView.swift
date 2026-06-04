@@ -166,16 +166,19 @@ enum PhantomRecertFlowStrings {
     static let title = CivicaText(
         "Dry run",
         es: "Práctica",
-        zh: "演练"
+        zh: "演练",
+        vi: "Chạy thử"
     )
     static let bannerTitle = CivicaText(
         "This is a dry run",
         es: "Esto es una práctica",
-        zh: "这是一次演练"
+        zh: "这是一次演练",
+        vi: "Đây là một lần chạy thử"
     )
     static let bannerBody = CivicaText(
         "Nothing is sent to your state. Walk through your answers and we'll show you what's changed and what to gather.",
         es: "No se envía nada a tu estado. Revisa tus respuestas y te mostraremos qué cambió y qué reunir.",
-        zh: "不会向你所在的州提交任何内容。过一遍你的答案,我们会告诉你哪些有变化、需要准备什么材料。"
+        zh: "不会向你所在的州提交任何内容。过一遍你的答案,我们会告诉你哪些有变化、需要准备什么材料。",
+        vi: "Không có gì được gửi đến tiểu bang của bạn. Hãy xem lại các câu trả lời của bạn và chúng tôi sẽ chỉ cho bạn biết những gì đã thay đổi và cần chuẩn bị những gì."
     )
 }
