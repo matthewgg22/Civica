@@ -92,7 +92,7 @@ enum SNAPApprovalExplainerStrings {
         "A short overview of how CalFresh works day-to-day so you know what to expect.",
         es: "Un resumen breve de cómo funciona CalFresh día a día para que sepas qué esperar.",
         zh: "简单介绍 CalFresh 的日常运作方式,让你知道接下来会怎样。",
-        vi: "Tóm tắt ngắn gọn về cách CalFresh hoạt động hằng ngày để bạn biết những gì sẽ xảy ra."
+        vi: "Tóm tắt ngắn gọn cách CalFresh hoạt động hằng ngày để bạn biết những gì sẽ xảy ra."
     )
 
     static let budgetTitle = CivicaText(
@@ -105,20 +105,20 @@ enum SNAPApprovalExplainerStrings {
         "Your CalFresh benefit is loaded onto your EBT card every month on the same date. It's calculated from your household size, income, and certain expenses.",
         es: "Tu beneficio de CalFresh se carga en tu tarjeta EBT cada mes en la misma fecha. Se calcula según el tamaño de tu hogar, ingresos y ciertos gastos.",
         zh: "你的 CalFresh 福利每个月在同一天打入你的 EBT 卡。金额根据你的家庭人数、收入和部分支出计算。",
-        vi: "Trợ cấp CalFresh được nạp vào thẻ EBT của bạn mỗi tháng vào cùng một ngày. Số tiền được tính dựa trên số người trong hộ, thu nhập và một số khoản chi của bạn."
+        vi: "Trợ cấp CalFresh của bạn được nạp vào thẻ EBT mỗi tháng vào cùng một ngày. Số tiền được tính dựa trên số người trong hộ gia đình, thu nhập và một số chi phí của bạn."
     )
 
     static let ebtTitle = CivicaText(
         "Using your EBT card",
         es: "Cómo usar tu tarjeta EBT",
         zh: "使用你的 EBT 卡",
-        vi: "Cách dùng thẻ EBT của bạn"
+        vi: "Sử dụng thẻ EBT của bạn"
     )
     static let ebtBody = CivicaText(
         "Use it like a debit card at most grocery stores and many farmers' markets. It covers groceries and seeds — not hot prepared food, alcohol, or non-food items.",
         es: "Úsala como una tarjeta de débito en la mayoría de las tiendas y muchos mercados de agricultores. Cubre alimentos y semillas — no comida caliente preparada, alcohol ni artículos no alimentarios.",
         zh: "在大多数超市和许多农夫市场,可以像借记卡一样使用。可以买食品和种子 — 不能买热食、酒类或非食品商品。",
-        vi: "Dùng như thẻ ghi nợ ở hầu hết các cửa hàng tạp hóa và nhiều chợ nông sản. Thẻ chi trả cho thực phẩm và hạt giống — không dùng cho đồ ăn nóng chế biến sẵn, rượu bia hay hàng không phải thực phẩm."
+        vi: "Dùng nó như một thẻ ghi nợ tại hầu hết các cửa hàng tạp hóa và nhiều chợ nông sản. Thẻ chi trả cho thực phẩm và hạt giống — không dùng cho thức ăn nóng đã chế biến, rượu bia hay các mặt hàng phi thực phẩm."
     )
 
     static let workTitle = CivicaText(
@@ -131,7 +131,7 @@ enum SNAPApprovalExplainerStrings {
         "If your income or household size changes, report it to your county. Some adults have work requirements — your approval notice will say if that applies to you.",
         es: "Si tus ingresos o el tamaño de tu hogar cambian, repórtalo a tu condado. Algunos adultos tienen requisitos de trabajo — tu aviso de aprobación indicará si te aplica.",
         zh: "如果你的收入或家庭人数发生变化,请向你所在的 county 上报。部分成年人有工作要求 — 你的批准通知会说明是否适用于你。",
-        vi: "Nếu thu nhập hoặc số người trong hộ của bạn thay đổi, hãy báo cho county của bạn. Một số người lớn có yêu cầu làm việc — thông báo phê duyệt sẽ cho biết điều này có áp dụng cho bạn không."
+        vi: "Nếu thu nhập hoặc số người trong hộ gia đình của bạn thay đổi, hãy báo cáo cho county của bạn. Một số người trưởng thành có yêu cầu về việc làm — thông báo phê duyệt của bạn sẽ cho biết điều đó có áp dụng cho bạn hay không."
     )
 
     static let renewalTitle = CivicaText(
@@ -144,7 +144,7 @@ enum SNAPApprovalExplainerStrings {
         "Your benefits last about a year before you renew. We'll remind you when it's time and pre-fill what we already have.",
         es: "Tus beneficios duran aproximadamente un año antes de la renovación. Te recordaremos cuando sea el momento y pre-llenaremos lo que ya tenemos.",
         zh: "你的福利大约持续一年,之后需要续办。到时候我们会提醒你,并预先填好已有的信息。",
-        vi: "Trợ cấp của bạn kéo dài khoảng một năm trước khi gia hạn. Chúng tôi sẽ nhắc bạn khi đến lúc và điền sẵn những gì chúng tôi đã có."
+        vi: "Trợ cấp của bạn kéo dài khoảng một năm trước khi bạn cần gia hạn. Chúng tôi sẽ nhắc bạn khi đến hạn và điền sẵn những thông tin chúng tôi đã có."
     )
 }
 
