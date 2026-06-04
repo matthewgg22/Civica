@@ -64,7 +64,7 @@ enum InformalHousingStrings {
         case .english, .tagalog: return "Step \(current) of \(total)"
         case .mandarin: return "第 \(current) 步,共 \(total) 步"
         case .spanish: return "Paso \(current) de \(total)"
-        case .vietnamese: return "Bước \(current) trên \(total)"
+        case .vietnamese: return "Bước \(current) trong \(total)"
         }
     }
 
@@ -74,14 +74,14 @@ enum InformalHousingStrings {
         "Tell us about your housing",
         es: "Cuéntanos sobre tu vivienda",
         zh: "告诉我们你的住房情况",
-        vi: "Hãy cho chúng tôi biết về chỗ ở của bạn"
+        vi: "Cho chúng tôi biết về nhà ở của bạn"
     )
 
     static let introBody = CivicaText(
         "You don't have a written lease — that's OK. We'll ask a few short questions to make sure your shelter costs are counted correctly for CalFresh.",
         es: "No tienes un contrato de arrendamiento escrito — está bien. Te haremos algunas preguntas cortas para asegurarnos de que tus costos de vivienda se contabilicen correctamente para CalFresh.",
         zh: "你没有书面租约 — 没关系。我们会问几个简短的问题,确保你的住房费用在 CalFresh 中被正确计算。",
-        vi: "Bạn không có hợp đồng thuê nhà bằng văn bản — không sao cả. Chúng tôi sẽ hỏi vài câu ngắn để bảo đảm chi phí chỗ ở của bạn được tính đúng cho CalFresh."
+        vi: "Bạn không có hợp đồng thuê nhà bằng văn bản — không sao cả. Chúng tôi sẽ hỏi vài câu hỏi ngắn để bảo đảm chi phí nhà ở của bạn được tính đúng cho CalFresh."
     )
 
     // MARK: - DV shelter safety banner
@@ -97,7 +97,7 @@ enum InformalHousingStrings {
         "We will never ask for your shelter's address or location. You are not required to provide any information that could put you at risk.",
         es: "Nunca te pediremos la dirección o ubicación de tu refugio. No estás obligada a proporcionar ninguna información que pueda ponerte en riesgo.",
         zh: "我们绝不会询问你庇护所的地址或位置。你无需提供任何可能让你处于危险中的信息。",
-        vi: "Chúng tôi sẽ không bao giờ hỏi địa chỉ hay vị trí nơi trú ẩn của bạn. Bạn không bắt buộc phải cung cấp bất kỳ thông tin nào có thể khiến bạn gặp nguy hiểm."
+        vi: "Chúng tôi sẽ không bao giờ hỏi địa chỉ hay vị trí nơi tạm trú của bạn. Bạn không bắt buộc phải cung cấp bất kỳ thông tin nào có thể khiến bạn gặp nguy hiểm."
     )
 
     // MARK: - Currency field
@@ -105,7 +105,8 @@ enum InformalHousingStrings {
     static let dollarPlaceholder = CivicaText(
         "0.00",
         es: "0.00",
-        zh: "0.00"
+        zh: "0.00",
+        vi: "0.00"
     )
 
     // MARK: - Completion screen
@@ -121,7 +122,7 @@ enum InformalHousingStrings {
         "Here's what we'll use for your shelter deduction:",
         es: "Esto es lo que usaremos para tu deducción de vivienda:",
         zh: "以下是我们将用于计算你住房扣除额的信息:",
-        vi: "Đây là những gì chúng tôi sẽ dùng cho khoản khấu trừ chỗ ở của bạn:"
+        vi: "Đây là những thông tin chúng tôi sẽ dùng để khấu trừ chi phí nhà ở của bạn:"
     )
 
     static let arrangementLabel = CivicaText(
@@ -135,14 +136,14 @@ enum InformalHousingStrings {
         "Homeless shelter deduction",
         es: "Deducción por refugio para personas sin hogar",
         zh: "无家可归者庇护所扣除额",
-        vi: "Khấu trừ chỗ trú ẩn cho người vô gia cư"
+        vi: "Khấu trừ nơi tạm trú cho người vô gia cư"
     )
 
     static let homelessDeductionEligible = CivicaText(
         "Eligible ($198.99/mo standard)",
         es: "Elegible ($198.99/mes estándar)",
         zh: "符合资格(每月 $198.99 标准)",
-        vi: "Đủ điều kiện (mức chuẩn 198,99 $/tháng)"
+        vi: "Đủ điều kiện (mức chuẩn $198.99/tháng)"
     )
 
     static let homelessDeductionNotEligible = CivicaText(
@@ -156,7 +157,7 @@ enum InformalHousingStrings {
         "Shelter costs",
         es: "Costos de vivienda",
         zh: "住房费用",
-        vi: "Chi phí chỗ ở"
+        vi: "Chi phí nhà ở"
     )
 
     static let hasShelterCostYes = CivicaText(
@@ -198,7 +199,7 @@ enum InformalHousingStrings {
         "Navigator note",
         es: "Nota para el navegador",
         zh: "导航员备注",
-        vi: "Ghi chú của điều phối viên"
+        vi: "Ghi chú của người hướng dẫn"
     )
 
     static let doneButton = CivicaText(
