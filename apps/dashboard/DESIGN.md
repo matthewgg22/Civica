@@ -148,6 +148,17 @@ These are the established dashboard primitives. Reuse them; do not reinvent.
 - Pattern for first-visit explanatory banners; persists dismissal in localStorage
 - SSR-safe: renders null pre-hydration so server/client HTML match
 
+### CountyOutcomeRoadmapCard (`components/CountyOutcomeRoadmapCard.tsx`)
+- Dismissible banner that surfaces the Payment Integrity Engine's "built but dormant, awaiting county handshake" state.
+- **Placement:** TOP of `apps/dashboard/app/packets/[packetId]/page.tsx`, above all `<Section>` and `<EvidenceSection>` blocks (immediately inside `<main>`).
+- **Dismiss key:** `civica.county-outcome-roadmap-acknowledged` in localStorage. Set to `"1"` on dismiss; card renders null once set.
+- **a11y contract:** `<aside role="region" aria-label="County outcomes will land here">`. Dismiss button has `aria-label="Dismiss county outcome roadmap"`.
+- **SSR-safe:** `useState<boolean | null>(null)` + `useEffect` reads localStorage post-hydration; renders null when `dismissed !== false` — identical to FirstVisitCallout pattern. No hydration mismatch.
+- **Shell tokens:** `bg-surface border border-hairline rounded-[4px] p-6` (standard Card shell per §4).
+- **Typography:** heading uses `.section-title`; body uses `.section-sub`.
+- **Copy status: LOCKED** — set in CEO review addendum 2026-06-04. Headline: "County outcomes will land here". Do not modify copy without a new CEO/design sign-off.
+- No icons, no emoji decoration (§7), no data fetching (purely presentational).
+
 ### EvidenceSection (`components/packet-detail/EvidenceSection.tsx`)
 - Collapsible card for reference + computed-advisory content on packet detail. Decide-zone sign-off gates stay as `<Section>`; evidence rows wrap in `<EvidenceSection>`.
 - Built on native `<details>` / `<summary>` for free keyboard a11y (Enter/Space toggle), screen-reader semantics, and `prefers-reduced-motion` compliance.
