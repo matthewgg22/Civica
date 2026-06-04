@@ -1,0 +1,4 @@
+# Ingest deps for the USDA ERS SNAP Policy Database tidy panel.
+# The repo's shared venv (/tmp/pe-venv) already satisfies these.
+pandas>=2.0
+openpyxl>=3.1
