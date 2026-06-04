@@ -18,7 +18,7 @@ const SURFACES = [
   {
     label: "Applicant Portal",
     description: "What the applicant sees",
-    href: "/status?demo=1",
+    href: "/welcome",
   },
 ] as const;
 

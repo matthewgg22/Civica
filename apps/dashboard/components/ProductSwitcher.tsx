@@ -16,7 +16,7 @@ const SURFACES = [
   {
     label: "Applicant Portal",
     description: "What the applicant sees",
-    href: "https://civica-applicant.vercel.app/status?demo=1",
+    href: "https://civica-applicant.vercel.app/welcome",
   },
 ] as const;
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import ProductSwitcher from "../../components/ProductSwitcher";
 import { STORAGE_KEY, type Locale } from "../i18n";
 import { welcomeStrings } from "../../lib/i18n/snap-copy";
 
@@ -26,16 +27,27 @@ export default function WelcomePage() {
 
   return (
     <div className="signin-page">
-      <header className="signin-header">
-        <a className="brand" href="/">Civica</a>
-        <button
-          type="button"
-          className="locale-toggle"
-          onClick={toggleLocale}
-          aria-label={locale === "en" ? "Cambiar a español" : "Switch to English"}
-        >
-          {locale === "en" ? "Español" : "English"}
-        </button>
+      <header className="app-nav">
+        <div className="app-nav__left">
+          <a href="/welcome" className="app-nav__logo" aria-label="Civica home">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/civica-wheat-mark.png" alt="Civica" width={50} height={50} />
+          </a>
+          <div className="app-nav__brand-block">
+            <a href="/welcome" className="app-nav__brand">Civica</a>
+            <ProductSwitcher current="Applicant Portal" />
+          </div>
+        </div>
+        <div className="app-nav__right">
+          <button
+            type="button"
+            className="locale-toggle"
+            onClick={toggleLocale}
+            aria-label={locale === "en" ? "Cambiar a español" : "Switch to English"}
+          >
+            {locale === "en" ? "Español" : "English"}
+          </button>
+        </div>
       </header>
 
       <main className="signin-main">
