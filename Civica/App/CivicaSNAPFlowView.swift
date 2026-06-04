@@ -292,12 +292,14 @@ enum CivicaSNAPFlowStrings {
     static let recertBannerTitle = CivicaText(
         "You're recertifying",
         es: "Estás recertificando",
-        zh: "你正在重新认证"
+        zh: "你正在重新认证",
+        vi: "Bạn đang tái chứng nhận"
     )
     static let recertBannerBody = CivicaText(
         "Your previous answers are pre-filled — change only what's different since last time.",
         es: "Tus respuestas anteriores están pre-llenadas — cambia solo lo que sea diferente desde la última vez.",
-        zh: "你之前的回答已预先填好 — 只需修改自上次以来有变化的部分。"
+        zh: "你之前的回答已预先填好 — 只需修改自上次以来有变化的部分。",
+        vi: "Câu trả lời trước đây của bạn đã được điền sẵn — chỉ sửa những gì đã thay đổi kể từ lần trước."
     )
 
     // MARK: Buddy banner + first-entry modal
@@ -305,124 +307,147 @@ enum CivicaSNAPFlowStrings {
     static let buddyBannerTitle = CivicaText(
         "Loop in a buddy",
         es: "Incluye a un compañero",
-        zh: "邀请一位伙伴"
+        zh: "邀请一位伙伴",
+        vi: "Rủ một người bạn đồng hành"
     )
     static let buddyBannerBody = CivicaText(
         "Share progress with someone you trust — they'll see deadlines and what's left to do.",
         es: "Comparte tu progreso con alguien de confianza — verá las fechas límite y lo que falta.",
-        zh: "和你信任的人分享进度 — 他们能看到截止日期和还需要做什么。"
+        zh: "和你信任的人分享进度 — 他们能看到截止日期和还需要做什么。",
+        vi: "Chia sẻ tiến trình với người bạn tin tưởng — họ sẽ thấy các hạn chót và những việc còn lại cần làm."
     )
 
     static let buddyModalEyebrow = CivicaText(
         "BETTER WITH HELP",
         es: "MEJOR CON AYUDA",
-        zh: "有人帮忙更顺利"
+        zh: "有人帮忙更顺利",
+        vi: "DỄ HƠN KHI CÓ NGƯỜI GIÚP"
     )
     static let buddyModalTitle = CivicaText(
         "Don't go through this alone",
         es: "No pases por esto solo",
-        zh: "别一个人扛"
+        zh: "别一个人扛",
+        vi: "Đừng tự mình vượt qua chuyện này"
     )
     static let buddyModalSubtitle = CivicaText(
         "Add a family member, friend, or navigator so someone else knows what's next.",
         es: "Agrega a un familiar, amigo o asesor para que alguien más sepa qué sigue.",
-        zh: "添加一位家人、朋友或协助员,让别人也知道下一步该做什么。"
+        zh: "添加一位家人、朋友或协助员,让别人也知道下一步该做什么。",
+        vi: "Thêm một người thân, bạn bè hoặc người hướng dẫn để người khác cũng biết bước tiếp theo là gì."
     )
     static let buddyStep1Title = CivicaText(
         "You start the application",
         es: "Tú comienzas la solicitud",
-        zh: "你开始申请"
+        zh: "你开始申请",
+        vi: "Bạn bắt đầu đơn xin"
     )
     static let buddyStep1Body = CivicaText(
         "Walk through SNAP at your own pace. Your buddy never sees your private documents.",
         es: "Avanza por SNAP a tu ritmo. Tu compañero nunca verá tus documentos privados.",
-        zh: "按你自己的节奏走完 SNAP 申请。你的伙伴永远看不到你的私人文件。"
+        zh: "按你自己的节奏走完 SNAP 申请。你的伙伴永远看不到你的私人文件。",
+        vi: "Làm SNAP theo nhịp của bạn. Người bạn đồng hành không bao giờ thấy giấy tờ riêng tư của bạn."
     )
     static let buddyStep2Title = CivicaText(
         "They get a private link",
         es: "Reciben un enlace privado",
-        zh: "他们会收到一个私人链接"
+        zh: "他们会收到一个私人链接",
+        vi: "Họ nhận một đường liên kết riêng"
     )
     static let buddyStep2Body = CivicaText(
         "We send a one-time invite by text or email. They tap it to follow along — no app install required.",
         es: "Enviamos una invitación única por mensaje o correo. La tocan para seguir el proceso — sin instalar una app.",
-        zh: "我们通过短信或邮件发送一次性邀请。他们点击就能跟进 — 不需要安装应用。"
+        zh: "我们通过短信或邮件发送一次性邀请。他们点击就能跟进 — 不需要安装应用。",
+        vi: "Chúng tôi gửi một lời mời dùng một lần qua tin nhắn hoặc email. Họ chạm vào để theo dõi — không cần cài ứng dụng."
     )
     static let buddyStep3Title = CivicaText(
         "They see what's due, when",
         es: "Ven qué falta y cuándo",
-        zh: "他们能看到什么时候要交什么"
+        zh: "他们能看到什么时候要交什么",
+        vi: "Họ thấy việc gì cần làm và khi nào"
     )
     static let buddyStep3Body = CivicaText(
         "Status, upcoming deadlines, and what documents are still needed — so they can nudge you or help you gather things.",
         es: "Estado, próximas fechas límite y qué documentos faltan — para que te recuerden o te ayuden a reunir cosas.",
-        zh: "状态、即将到来的截止日期、以及还缺哪些文件 — 这样他们可以提醒你或帮你收集材料。"
+        zh: "状态、即将到来的截止日期、以及还缺哪些文件 — 这样他们可以提醒你或帮你收集材料。",
+        vi: "Trạng thái, các hạn chót sắp tới, và những giấy tờ còn thiếu — để họ có thể nhắc bạn hoặc giúp bạn gom đồ."
     )
     static let buddyModalPrimaryCTA = CivicaText(
         "Add a buddy now",
         es: "Agregar un compañero ahora",
-        zh: "现在添加伙伴"
+        zh: "现在添加伙伴",
+        vi: "Thêm người bạn đồng hành ngay"
     )
     static let buddyModalSecondaryCTA = CivicaText(
         "Maybe later",
         es: "Quizás después",
-        zh: "以后再说"
+        zh: "以后再说",
+        vi: "Để sau"
     )
     static let buddyModalComingSoon = CivicaText(
         "Demo build — invites are simulated. Backend wire-up ships next.",
         es: "Versión de demostración — las invitaciones son simuladas. La conexión al servidor llega pronto.",
-        zh: "演示版本 — 邀请是模拟的。后台对接即将上线。"
+        zh: "演示版本 — 邀请是模拟的。后台对接即将上线。",
+        vi: "Bản trình diễn — lời mời chỉ là mô phỏng. Phần kết nối máy chủ sẽ ra mắt sau."
     )
 
     // Banner — invited state
     static func buddyBannerInvitedTitle(name: String, language: CivicaLanguage) -> String {
         switch language {
-        case .english, .vietnamese, .tagalog: return "\(name) is following along"
+        case .english, .tagalog: return "\(name) is following along"
         case .mandarin: return "\(name) 正在跟进"
         case .spanish: return "\(name) está siguiendo el proceso"
+        case .vietnamese: return "\(name) đang theo dõi cùng bạn"
         }
     }
     static let buddyBannerInvitedBody = CivicaText(
         "Tap to re-share the invite link or manage your buddy.",
         es: "Toca para volver a compartir el enlace o administrar tu compañero.",
-        zh: "点击可重新分享邀请链接或管理你的伙伴。"
+        zh: "点击可重新分享邀请链接或管理你的伙伴。",
+        vi: "Chạm để chia sẻ lại đường liên kết mời hoặc quản lý người bạn đồng hành."
     )
 
     // Invite form
     static let buddyFormTitle = CivicaText(
         "Add a buddy",
         es: "Agregar un compañero",
-        zh: "添加伙伴"
+        zh: "添加伙伴",
+        vi: "Thêm người bạn đồng hành"
     )
     static let buddyFormSubtitle = CivicaText(
         "We'll send them a one-time private link. They can open it on any phone — no Civica account needed.",
         es: "Les enviaremos un enlace privado de un solo uso. Pueden abrirlo desde cualquier teléfono — sin cuenta de Civica.",
-        zh: "我们会给他们发送一个一次性的私人链接。他们可以在任何手机上打开 — 不需要 Civica 账户。"
+        zh: "我们会给他们发送一个一次性的私人链接。他们可以在任何手机上打开 — 不需要 Civica 账户。",
+        vi: "Chúng tôi sẽ gửi cho họ một đường liên kết riêng dùng một lần. Họ có thể mở trên bất kỳ điện thoại nào — không cần tài khoản Civica."
     )
     static let buddyFormNameLabel = CivicaText(
         "Their name",
         es: "Su nombre",
-        zh: "他们的名字"
+        zh: "他们的名字",
+        vi: "Tên của họ"
     )
     static let buddyFormNamePlaceholder = CivicaText(
         "e.g. Maria",
         es: "p. ej. María",
-        zh: "例如:Maria"
+        zh: "例如:Maria",
+        vi: "ví dụ: Maria"
     )
     static let buddyFormChannelLabel = CivicaText(
         "How should we reach them?",
         es: "¿Cómo los contactamos?",
-        zh: "我们怎么联系他们?"
+        zh: "我们怎么联系他们?",
+        vi: "Chúng tôi liên lạc với họ bằng cách nào?"
     )
     static let buddyFormChannelSMS = CivicaText(
         "Text",
         es: "Mensaje",
-        zh: "短信"
+        zh: "短信",
+        vi: "Tin nhắn"
     )
     static let buddyFormChannelEmail = CivicaText(
         "Email",
         es: "Correo",
-        zh: "邮件"
+        zh: "邮件",
+        vi: "Email"
     )
     static let buddyFormContactPlaceholderSMS = CivicaText(
         "(555) 555-0123",
@@ -435,36 +460,42 @@ enum CivicaSNAPFlowStrings {
     static let buddyFormSendCTA = CivicaText(
         "Send invite",
         es: "Enviar invitación",
-        zh: "发送邀请"
+        zh: "发送邀请",
+        vi: "Gửi lời mời"
     )
     static let buddyFormPrivacyNote = CivicaText(
         "They'll only see your application status, deadlines, and what's left to do — never your documents, income details, or address.",
         es: "Solo verán el estado de tu solicitud, las fechas límite y lo que falta — nunca tus documentos, ingresos ni dirección.",
-        zh: "他们只能看到你的申请状态、截止日期和还要做什么 — 永远看不到你的文件、收入详情或地址。"
+        zh: "他们只能看到你的申请状态、截止日期和还要做什么 — 永远看不到你的文件、收入详情或地址。",
+        vi: "Họ chỉ thấy trạng thái đơn của bạn, các hạn chót và việc còn lại cần làm — không bao giờ thấy giấy tờ, chi tiết thu nhập hay địa chỉ của bạn."
     )
 
     // Invite sent
     static func buddyInviteSentTitle(name: String, language: CivicaLanguage) -> String {
         switch language {
-        case .english, .vietnamese, .tagalog: return "Invite sent to \(name)"
+        case .english, .tagalog: return "Invite sent to \(name)"
         case .mandarin: return "邀请已发送给 \(name)"
         case .spanish: return "Invitación enviada a \(name)"
+        case .vietnamese: return "Đã gửi lời mời cho \(name)"
         }
     }
     static let buddyInviteSentBody = CivicaText(
         "They'll get a one-time link to follow along. You can re-send it any time from this screen.",
         es: "Recibirán un enlace único para seguir el proceso. Puedes reenviarlo en cualquier momento desde esta pantalla.",
-        zh: "他们会收到一个一次性的链接来跟进。你随时可以在这个页面重新发送。"
+        zh: "他们会收到一个一次性的链接来跟进。你随时可以在这个页面重新发送。",
+        vi: "Họ sẽ nhận một đường liên kết dùng một lần để theo dõi. Bạn có thể gửi lại bất cứ lúc nào từ màn hình này."
     )
     static let buddyInviteSentLinkLabel = CivicaText(
         "Their private invite link",
         es: "Su enlace privado de invitación",
-        zh: "他们的私人邀请链接"
+        zh: "他们的私人邀请链接",
+        vi: "Đường liên kết mời riêng của họ"
     )
     static let buddyInviteSentShareCTA = CivicaText(
         "Share invite link",
         es: "Compartir enlace de invitación",
-        zh: "分享邀请链接"
+        zh: "分享邀请链接",
+        vi: "Chia sẻ đường liên kết mời"
     )
     /// `subject:` for the ShareLink (email subject when the share is
     /// routed to Mail). Recipient may be a different locale than the
@@ -473,17 +504,20 @@ enum CivicaSNAPFlowStrings {
     static let buddyInviteShareSubject = CivicaText(
         "Civica buddy invite",
         es: "Invitación de compañero de Civica",
-        zh: "Civica 伙伴邀请"
+        zh: "Civica 伙伴邀请",
+        vi: "Lời mời bạn đồng hành Civica"
     )
     static let buddyInviteSentDoneCTA = CivicaText(
         "Back to my application",
         es: "Volver a mi solicitud",
-        zh: "返回我的申请"
+        zh: "返回我的申请",
+        vi: "Quay lại đơn của tôi"
     )
     static let buddyInviteSentRemoveCTA = CivicaText(
         "Remove buddy",
         es: "Quitar compañero",
-        zh: "移除伙伴"
+        zh: "移除伙伴",
+        vi: "Xóa bạn đồng hành"
     )
 }
 
@@ -903,12 +937,14 @@ private struct BuddyInviteSentView: View {
 
     private var shareMessage: String {
         switch language {
-        case .english, .vietnamese, .tagalog:
+        case .english, .tagalog:
             return "Hey \(buddyName) — I'm applying for SNAP through Civica and could use a buddy to help me stay on top of deadlines. Tap this private link to follow along: \(inviteLink.absoluteString)"
         case .mandarin:
             return "嗨 \(buddyName) — 我正在通过 Civica 申请 SNAP,想请你做我的伙伴,帮我盯紧各项截止日期。点击这个私人链接来跟进:\(inviteLink.absoluteString)"
         case .spanish:
             return "Hola \(buddyName) — Estoy solicitando SNAP a través de Civica y me ayudaría tener un compañero pendiente de las fechas. Toca este enlace privado para seguir el proceso: \(inviteLink.absoluteString)"
+        case .vietnamese:
+            return "Chào \(buddyName) — mình đang nộp đơn SNAP qua Civica và muốn nhờ bạn làm người đồng hành để giúp mình theo dõi các hạn chót. Chạm vào đường liên kết riêng này để theo dõi cùng mình: \(inviteLink.absoluteString)"
         }
     }
 
