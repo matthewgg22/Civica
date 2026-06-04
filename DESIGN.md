@@ -84,6 +84,8 @@ Residents arrive with different levels of SNAP knowledge. Never front-load compl
 | `brickSurface` | `#F1D4C8` | `#3D2B24` | Recovery surfaces |
 | `warningAmber` | `#9E4218` | `#9E4218` | Warnings (expiry, missing doc) — NOT errors |
 | `destructive` | `#C84637` | `#E87060` | Error states, data-loss actions |
+| `cardLeadingIcon` | `#5A544D` (graphite alias) | `#9B9289` | Decorative leading icons in cards/banners (default icon treatment) |
+| `cardInfoIcon` | `#2A6F66` (accentTeal alias) | `#5FA89E` | Help / info glyphs only (questionmark.circle, info.circle pattern) |
 
 ### 2.2 Color use rules
 
@@ -109,6 +111,9 @@ Amber (#9E4218) means "pay attention / something will expire." Red (#C84637) mea
 
 **Teal surfaces = benefit context only.**  
 `tealSurface` and `tealSurface` are result-positive surfaces. Using them on the SNAP intro screen (before any eligibility is known) would imply a positive outcome before the user has earned one. Intro/onboarding screens use `paper`. Confirmed-eligible screens use `tealSurface`.
+
+**Decorative leading icons in cards MUST use `cardLeadingIcon`, NEVER `pinePrimary`.**  
+Any `Image(systemName:)` that is decorative (i.e., `accessibilityHidden(true)` or purely visual) inside a card, banner, or non-Button container must use `cardLeadingIcon` (graphite alias). Help / info glyphs (questionmark.circle, info.circle) must use `cardInfoIcon` (accentTeal alias). Reserve `pinePrimary` for: CTA button labels, text links, and NavigationLink-wrapped hero card backgrounds (Phase 1 sanctioned exception per §2.2 above). The SwiftLint `pine_on_decorative_icon` rule (warn level) catches drift at PR time.
 
 ### 2.3 Contrast quick-reference
 
@@ -392,6 +397,7 @@ Listed by severity.
 | L4 | Returning user "Waiting…" primary CTA has no affordance when status = interviewScheduled | `SNAPReturningUserHomeView.swift` | Show status-specific text and a "What to expect" link per interview stage |
 | L5 | captionStrong with `.kerning(1.2)` + `.textCase(.uppercase)` is repeated in 5+ views with no view modifier helper | Multiple SNAP views | Extract `func civicaOverline() -> some View` modifier into design system |
 | L6 | Dark mode values exist in all tokens but app forces light mode (`UIUserInterfaceStyle = Light`) | `CivicaColors.swift`, `Colors+v2.swift`, Info.plist | When dark mode ships, audit accentTeal dark (5FA89E on 1B1F24 = 4.6:1 — just passes AA) and wheat dark (F4D670 — still fails as text) |
+| L7 | **RESOLVED (T11, 2026-06-04):** ~180 `pinePrimary` §2.2 violations (decorative icons, eyebrows, status indicators, selection borders) across 4 buckets. | Issue #424 — bucket file lists in issue body. | Buckets 1–4 closed. Bucket 5 (buddy views, hidden behind `buddyFeatureEnabled = false`) deferred per closeout D6. Two semantic tokens added (`cardLeadingIcon` → graphite, `cardInfoIcon` → accentTeal). SwiftLint `pine_on_decorative_icon` warn rule added per D5. |
 
 ---
 
@@ -407,6 +413,17 @@ Sanctioned use: the Phase 3 recert banner clock-arrow icon ([CivicaHomePhase3Vie
 Unsanctioned use: any tile-grid or 3-column "feature highlights" pattern.
 
 Cross-ref: same posture as the cold-start tile-grid rule from the May 2026 review (CivicaEntryView.swift design comment).
+
+### 12.2 `pinePrimary` on decorative `Image(systemName:)` inside non-Button views
+
+Using `CivicaColors.pinePrimary` (or `.foregroundStyle(.pinePrimary)`) on an `Image(systemName:)` that is decorative (not a tap target) is **banned**. It dilutes the "pine = CTA / tappable" signal and was the root cause of the "too green / kitschy" finding in the May 2026 design review.
+
+**Correct replacement:**
+- Decorative leading icon in a card or banner → `.foregroundStyle(CivicaColors.cardLeadingIcon)` (graphite)
+- Help / info glyph (questionmark.circle, info.circle) → `.foregroundStyle(CivicaColors.cardInfoIcon)` (accentTeal)
+- Decorative icon inside a `Button` or `NavigationLink` label → `pinePrimary` is acceptable because the whole control is the tap target
+
+The SwiftLint `pine_on_decorative_icon` custom rule (warn level) catches this pattern at PR time. It will flag some Button-wrapped Images as false positives — this is acceptable; the rule exists to surface new occurrences, not as a hard gate. The plan is to ratchet to `error` level after one quarter of clean PRs.
 
 ---
 
