@@ -116,7 +116,9 @@ struct SNAPSettingsSheet: View {
                             Image(systemName: "checkmark")
                                 .imageScale(.large)
                                 .font(.body)
-                                .foregroundStyle(CivicaColors.pinePrimary)
+                                // §2.2: selection-state checkmark is a status indicator,
+                                // not a CTA — ink (bucket 4, matches CivicaQuestionChoices).
+                                .foregroundStyle(CivicaColors.ink)
                                 .accessibilityHidden(true)
                         }
                     }
