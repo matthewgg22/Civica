@@ -1,4 +1,5 @@
 import CivicaDesignSystem
+import Combine
 import SwiftUI
 
 // Migrates the legacy "studentStatusStep" card. SNAP student rules
@@ -66,8 +67,20 @@ final class SNAPStudentStatusFlowViewModel: ObservableObject {
     @Published var answers: SNAPStudentStatusAnswers
     @Published var lpieExemptionFired: Bool = false
 
-    init(answers: SNAPStudentStatusAnswers = .init()) {
+    /// Per-change write-back closure (issue #425). See
+    /// SNAPHouseholdQuestionFlowViewModel for the canonical comment.
+    var onAnswersChange: ((SNAPStudentStatusAnswers) -> Void)?
+    private var answersWatch: AnyCancellable?
+
+    init(
+        answers: SNAPStudentStatusAnswers = .init(),
+        onAnswersChange: ((SNAPStudentStatusAnswers) -> Void)? = nil
+    ) {
         self.answers = answers
+        self.onAnswersChange = onAnswersChange
+        self.answersWatch = $answers.dropFirst().sink { [weak self] new in
+            self?.onAnswersChange?(new)
+        }
     }
 
     func advance() {

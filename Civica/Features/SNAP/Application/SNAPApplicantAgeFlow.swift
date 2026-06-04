@@ -1,4 +1,5 @@
 import CivicaDesignSystem
+import Combine
 import SwiftUI
 
 // Migrates the legacy "applicantAgeStep" multi-field card from
@@ -40,7 +41,15 @@ final class SNAPApplicantAgeFlowViewModel: ObservableObject {
     /// date" — the former blocks Continue, the latter doesn't.
     @Published var hasInteracted: Bool
 
-    init(answers: SNAPApplicantAgeAnswers = .init()) {
+    /// Per-change write-back closure (issue #425). See
+    /// SNAPHouseholdQuestionFlowViewModel for the canonical comment.
+    var onAnswersChange: ((SNAPApplicantAgeAnswers) -> Void)?
+    private var answersWatch: AnyCancellable?
+
+    init(
+        answers: SNAPApplicantAgeAnswers = .init(),
+        onAnswersChange: ((SNAPApplicantAgeAnswers) -> Void)? = nil
+    ) {
         self.answers = answers
         // Seed the picker + interacted flag from prior answers so a
         // returning user sees their previous DOB on the wheel rather
@@ -51,6 +60,10 @@ final class SNAPApplicantAgeFlowViewModel: ObservableObject {
         } else {
             self.pickerDate = Calendar.current.date(byAdding: .year, value: -30, to: Date()) ?? Date()
             self.hasInteracted = false
+        }
+        self.onAnswersChange = onAnswersChange
+        self.answersWatch = $answers.dropFirst().sink { [weak self] new in
+            self?.onAnswersChange?(new)
         }
     }
 

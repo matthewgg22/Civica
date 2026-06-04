@@ -434,10 +434,27 @@ struct SNAPApplicationFlowOrchestratorView: View {
     @ViewBuilder
     private func flow(for section: SNAPApplicationSection) -> some View {
         switch section {
+        // Issue #425: each sub-flow now gets a per-change write-back
+        // closure that mirrors its `answers` slice into the orchestrator
+        // draft on every mutation — not only on section-complete. The
+        // explicit copy in onComplete is kept as a safety net (no-op
+        // extra write of the same value) so the flow's existing
+        // semantics stay legible. The orchestrator's existing
+        // .onChange(of: viewModel.draft) → viewModel.autosave() then
+        // persists the mid-flow edits to UserDefaults via the existing
+        // SNAPApplicationDraftStore (device-local only — see the
+        // privacy firewall block in SNAPHouseholdQuestionFlow.swift;
+        // the same UserDefaults-only posture holds, no new server-
+        // side surfaces).
         case .whereApplying:
             voiceWrap(.whereApplyingFrom) {
                 SNAPWhereApplyingFlowView(
-                    viewModel: SNAPWhereApplyingFlowViewModel(answers: viewModel.draft.whereApplying),
+                    viewModel: SNAPWhereApplyingFlowViewModel(
+                        answers: viewModel.draft.whereApplying,
+                        onAnswersChange: { [weak viewModel] new in
+                            viewModel?.draft.whereApplying = new
+                        }
+                    ),
                     language: language,
                     onComplete: { answers in
                         viewModel.draft.whereApplying = answers
@@ -449,7 +466,12 @@ struct SNAPApplicationFlowOrchestratorView: View {
         case .applicantAge:
             voiceWrap(.applicantAge) {
                 SNAPApplicantAgeFlowView(
-                    viewModel: SNAPApplicantAgeFlowViewModel(answers: viewModel.draft.applicantAge),
+                    viewModel: SNAPApplicantAgeFlowViewModel(
+                        answers: viewModel.draft.applicantAge,
+                        onAnswersChange: { [weak viewModel] new in
+                            viewModel?.draft.applicantAge = new
+                        }
+                    ),
                     language: language,
                     onComplete: { answers in
                         viewModel.draft.applicantAge = answers
@@ -461,7 +483,12 @@ struct SNAPApplicationFlowOrchestratorView: View {
         case .household:
             voiceWrap(.householdBasics) {
                 SNAPHouseholdQuestionFlowView(
-                    viewModel: SNAPHouseholdQuestionFlowViewModel(answers: viewModel.draft.household),
+                    viewModel: SNAPHouseholdQuestionFlowViewModel(
+                        answers: viewModel.draft.household,
+                        onAnswersChange: { [weak viewModel] new in
+                            viewModel?.draft.household = new
+                        }
+                    ),
                     language: language,
                     onComplete: { answers in
                         viewModel.draft.household = answers
@@ -473,7 +500,12 @@ struct SNAPApplicationFlowOrchestratorView: View {
         case .contact:
             voiceWrap(.addressContact) {
                 SNAPContactFlowView(
-                    viewModel: SNAPContactFlowViewModel(answers: viewModel.draft.contact),
+                    viewModel: SNAPContactFlowViewModel(
+                        answers: viewModel.draft.contact,
+                        onAnswersChange: { [weak viewModel] new in
+                            viewModel?.draft.contact = new
+                        }
+                    ),
                     language: language,
                     onComplete: { answers in
                         viewModel.draft.contact = answers
@@ -487,7 +519,10 @@ struct SNAPApplicationFlowOrchestratorView: View {
                 SNAPIncomeFlowView(
                     viewModel: SNAPIncomeFlowViewModel(
                         answers: viewModel.draft.income,
-                        paystubPrefill: viewModel.confirmedPaystub
+                        paystubPrefill: viewModel.confirmedPaystub,
+                        onAnswersChange: { [weak viewModel] new in
+                            viewModel?.draft.income = new
+                        }
                     ),
                     language: language,
                     onComplete: { answers in
@@ -500,7 +535,12 @@ struct SNAPApplicationFlowOrchestratorView: View {
         case .studentStatus:
             voiceWrap(.studentStatus) {
                 SNAPStudentStatusFlowView(
-                    viewModel: SNAPStudentStatusFlowViewModel(answers: viewModel.draft.studentStatus),
+                    viewModel: SNAPStudentStatusFlowViewModel(
+                        answers: viewModel.draft.studentStatus,
+                        onAnswersChange: { [weak viewModel] new in
+                            viewModel?.draft.studentStatus = new
+                        }
+                    ),
                     language: language,
                     onComplete: { answers in
                         viewModel.draft.studentStatus = answers
@@ -515,7 +555,10 @@ struct SNAPApplicationFlowOrchestratorView: View {
                     viewModel: SNAPExpensesFlowViewModel(
                         answers: viewModel.draft.expenses,
                         hasMinorInHousehold: viewModel.draft.household.hasMinorInHousehold ?? true,
-                        hasElderlyOrDisabled: viewModel.draft.household.hasElderlyOrDisabled ?? true
+                        hasElderlyOrDisabled: viewModel.draft.household.hasElderlyOrDisabled ?? true,
+                        onAnswersChange: { [weak viewModel] new in
+                            viewModel?.draft.expenses = new
+                        }
                     ),
                     language: language,
                     onComplete: { answers in
@@ -530,7 +573,10 @@ struct SNAPApplicationFlowOrchestratorView: View {
                 SNAPDocumentsChecklistFlowView(
                     viewModel: SNAPDocumentsChecklistFlowViewModel(
                         answers: viewModel.draft.documentsChecklist,
-                        draft: viewModel.draft
+                        draft: viewModel.draft,
+                        onAnswersChange: { [weak viewModel] new in
+                            viewModel?.draft.documentsChecklist = new
+                        }
                     ),
                     language: language,
                     onComplete: { answers in

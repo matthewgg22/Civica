@@ -1,4 +1,5 @@
 import CivicaDesignSystem
+import Combine
 import SwiftUI
 
 // Migrates the legacy "expensesStep" multi-field card. Captures the
@@ -149,11 +150,17 @@ final class SNAPExpensesFlowViewModel: ObservableObject {
         return steps
     }
 
+    /// Per-change write-back closure (issue #425). See
+    /// SNAPHouseholdQuestionFlowViewModel for the canonical comment.
+    var onAnswersChange: ((SNAPExpensesAnswers) -> Void)?
+    private var answersWatch: AnyCancellable?
+
     init(
         answers: SNAPExpensesAnswers = .init(),
         hasMinorInHousehold: Bool = false,
         hasElderlyOrDisabled: Bool = false,
-        housingStatus: HousingStatus? = nil
+        housingStatus: HousingStatus? = nil,
+        onAnswersChange: ((SNAPExpensesAnswers) -> Void)? = nil
     ) {
         self.answers = answers
         self.hasMinorInHousehold = hasMinorInHousehold
@@ -170,6 +177,11 @@ final class SNAPExpensesFlowViewModel: ObservableObject {
         self.medicalField = render(answers.monthlyMedical)
         self.childSupportField = render(answers.monthlyChildSupportPaid)
         self.spousalSupportField = render(answers.monthlySpousalSupportPaid)
+
+        self.onAnswersChange = onAnswersChange
+        self.answersWatch = $answers.dropFirst().sink { [weak self] new in
+            self?.onAnswersChange?(new)
+        }
     }
 
     func recordCurrentField() {

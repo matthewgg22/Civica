@@ -1,4 +1,5 @@
 import CivicaDesignSystem
+import Combine
 import SwiftUI
 
 // Proof of the one-question-per-screen cadence using
@@ -150,9 +151,27 @@ final class SNAPHouseholdQuestionFlowViewModel: ObservableObject {
     @Published var step: Step = .size
     @Published var answers: SNAPHouseholdAnswers
 
+    /// Per-change write-back closure (issue #425). When provided, fires
+    /// on every mutation of `answers` so the orchestrator can mirror
+    /// the slice into its draft as the user types — not only on
+    /// section-complete. Nil-default keeps unit tests and previews
+    /// (which construct the VM directly) working unchanged.
+    var onAnswersChange: ((SNAPHouseholdAnswers) -> Void)?
+    private var answersWatch: AnyCancellable?
+
     /// Seed prior answers so resume / edit round-trips preserve state.
-    init(answers: SNAPHouseholdAnswers = .init()) {
+    init(
+        answers: SNAPHouseholdAnswers = .init(),
+        onAnswersChange: ((SNAPHouseholdAnswers) -> Void)? = nil
+    ) {
         self.answers = answers
+        self.onAnswersChange = onAnswersChange
+        // dropFirst() skips the initial @Published emission so the
+        // orchestrator isn't told about the seeded value — only true
+        // mid-flow edits flow back.
+        self.answersWatch = $answers.dropFirst().sink { [weak self] new in
+            self?.onAnswersChange?(new)
+        }
     }
 
     func advance() {

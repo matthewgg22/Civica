@@ -1,4 +1,5 @@
 import CivicaDesignSystem
+import Combine
 import SwiftUI
 
 // Migrates the legacy "whereApplyingFromStep" multi-field card from
@@ -45,8 +46,20 @@ final class SNAPWhereApplyingFlowViewModel: ObservableObject {
     @Published var step: Step = .state
     @Published var answers: SNAPWhereApplyingAnswers
 
-    init(answers: SNAPWhereApplyingAnswers = .init()) {
+    /// Per-change write-back closure (issue #425). See
+    /// SNAPHouseholdQuestionFlowViewModel for the canonical comment.
+    var onAnswersChange: ((SNAPWhereApplyingAnswers) -> Void)?
+    private var answersWatch: AnyCancellable?
+
+    init(
+        answers: SNAPWhereApplyingAnswers = .init(),
+        onAnswersChange: ((SNAPWhereApplyingAnswers) -> Void)? = nil
+    ) {
         self.answers = answers
+        self.onAnswersChange = onAnswersChange
+        self.answersWatch = $answers.dropFirst().sink { [weak self] new in
+            self?.onAnswersChange?(new)
+        }
     }
 
     func advance() {
