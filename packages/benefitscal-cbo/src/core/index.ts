@@ -119,3 +119,10 @@ export {
   coerceBoolean,
 } from "./fill";
 
+// Dynamic section sequence (V1-5 PR1, #314). Returns the ordered pageCodes
+// the extension walks for a given payload + staff-elected flow type.
+// D8: undefined flowType → multi-program (safe superset).
+// D12: flowType collected from staff activation dropdown, not from the packet.
+export { sectionSequence } from "./section-sequence";
+export type { FlowType } from "./section-sequence";
+
