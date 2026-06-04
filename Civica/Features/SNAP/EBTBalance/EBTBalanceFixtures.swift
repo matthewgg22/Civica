@@ -103,37 +103,41 @@ enum EBTBalanceFixtures {
         EBTPerk(
             id: UUID(),
             iconName: "building.columns.fill",
-            title: CivicaText("Museums for All", es: "Museos para todos"),
+            title: CivicaText("Museums for All", es: "Museos para todos", zh: "全民博物馆"),
             detail: CivicaText(
                 "Free or $3 admission at 1,200+ museums, zoos, and science centers when you show your EBT card.",
-                es: "Entrada gratis o de $3 en más de 1,200 museos, zoológicos y centros de ciencia mostrando tu tarjeta EBT."
+                es: "Entrada gratis o de $3 en más de 1,200 museos, zoológicos y centros de ciencia mostrando tu tarjeta EBT.",
+                zh: "出示你的 EBT 卡,即可在 1,200 多家博物馆、动物园和科学中心免费入场或仅需 $3。"
             )
         ),
         EBTPerk(
             id: UUID(),
             iconName: "wifi",
-            title: CivicaText("Low-cost internet & phone", es: "Internet y teléfono de bajo costo"),
+            title: CivicaText("Low-cost internet & phone", es: "Internet y teléfono de bajo costo", zh: "低价网络和电话"),
             detail: CivicaText(
                 "The federal Lifeline program lowers your monthly internet or phone bill if you receive CalFresh.",
-                es: "El programa federal Lifeline reduce tu factura mensual de internet o teléfono si recibes CalFresh."
+                es: "El programa federal Lifeline reduce tu factura mensual de internet o teléfono si recibes CalFresh.",
+                zh: "如果你领取 CalFresh,联邦 Lifeline 项目可以降低你每月的网络或电话费。"
             )
         ),
         EBTPerk(
             id: UUID(),
             iconName: "leaf.fill",
-            title: CivicaText("Market Match", es: "Market Match"),
+            title: CivicaText("Market Match", es: "Market Match", zh: "Market Match"),
             detail: CivicaText(
                 "Doubles your CalFresh dollars on fresh fruits and vegetables at participating California farmers markets.",
-                es: "Duplica tus dólares de CalFresh en frutas y verduras frescas en los mercados de agricultores participantes de California."
+                es: "Duplica tus dólares de CalFresh en frutas y verduras frescas en los mercados de agricultores participantes de California.",
+                zh: "在加州参与的农夫市场买新鲜水果和蔬菜,你的 CalFresh 金额可以翻倍。"
             )
         ),
         EBTPerk(
             id: UUID(),
             iconName: "cart.fill",
-            title: CivicaText("Discounted grocery delivery", es: "Entrega de comida con descuento"),
+            title: CivicaText("Discounted grocery delivery", es: "Entrega de comida con descuento", zh: "折扣食品配送"),
             detail: CivicaText(
                 "EBT cardholders qualify for a discounted Amazon and Walmart+ membership and can pay for groceries online with EBT.",
-                es: "Los titulares de EBT califican para una membresía con descuento de Amazon y Walmart+, y pueden pagar comida en línea con EBT."
+                es: "Los titulares de EBT califican para una membresía con descuento de Amazon y Walmart+, y pueden pagar comida en línea con EBT.",
+                zh: "EBT 持卡人可享受 Amazon 和 Walmart+ 会员折扣,并能用 EBT 在线支付食品费用。"
             )
         ),
     ]
@@ -144,19 +148,21 @@ enum EBTBalanceFixtures {
         EBTNewsItem(
             id: UUID(),
             iconName: "calendar.badge.clock",
-            title: CivicaText("Keep your benefits — recertify on time", es: "Mantén tus beneficios — recertifica a tiempo"),
+            title: CivicaText("Keep your benefits — recertify on time", es: "Mantén tus beneficios — recertifica a tiempo", zh: "保住你的福利 — 按时重新认证"),
             detail: CivicaText(
                 "CalFresh has to be renewed periodically. Civica will remind you before your deadline so your benefits don't pause.",
-                es: "CalFresh debe renovarse periódicamente. Civica te recordará antes de tu fecha límite para que tus beneficios no se detengan."
+                es: "CalFresh debe renovarse periódicamente. Civica te recordará antes de tu fecha límite para que tus beneficios no se detengan.",
+                zh: "CalFresh 需要定期续期。Civica 会在截止日期前提醒你,这样你的福利不会中断。"
             )
         ),
         EBTNewsItem(
             id: UUID(),
             iconName: "exclamationmark.shield.fill",
-            title: CivicaText("Protect your card from theft", es: "Protege tu tarjeta del robo"),
+            title: CivicaText("Protect your card from theft", es: "Protege tu tarjeta del robo", zh: "保护你的卡不被盗刷"),
             detail: CivicaText(
                 "EBT card skimming is on the rise. Keep your card locked when you're not shopping — California can replace stolen benefits in limited cases.",
-                es: "El robo de datos de tarjetas EBT está aumentando. Mantén tu tarjeta bloqueada cuando no estés comprando — California puede reemplazar beneficios robados en casos limitados."
+                es: "El robo de datos de tarjetas EBT está aumentando. Mantén tu tarjeta bloqueada cuando no estés comprando — California puede reemplazar beneficios robados en casos limitados.",
+                zh: "EBT 卡盗刷事件正在增多。不购物时把卡锁起来 — 加州在有限情况下可以补发被盗的福利。"
             )
         ),
     ]
