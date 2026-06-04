@@ -5,10 +5,10 @@ MEDICAL DEDUCTION (a frequently-missed elderly/disabled underpayment source — 
 §15). `se_cost_method` is recorded for the self-employment fork (§20) but the SE cost
 computation is NOT yet wired (MA "actual" needs a per-source cost field).
 
-⚠ Values: CA standard medical $150 / itemize-above ~$185 (CDSS demo waiver, ◦ via LSNC);
-MA standard medical $155 / itemize-above $190 (106 CMR 364.400(C), ✓). SE: CA = 40%-flat
-OR actual (client choice; default 40%); MA = actual only (no 40% option). Reconfirm CA ◦
-values against the CDSS source before production.
+Values: CA standard medical $150 / itemize-above $185 ✓ (CDSS federal waiver
+extended through 2029-09-30 per LSNC reg summary 2026-02, confirmed 2026-06-04
+issue #428); MA standard medical $155 / itemize-above $190 (106 CMR 364.400(C), ✓).
+SE: CA = 40%-flat OR actual (client choice; default 40%); MA = actual only.
 """
 from __future__ import annotations
 
