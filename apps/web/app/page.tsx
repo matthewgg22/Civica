@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { strings, STORAGE_KEY, type Locale } from "./i18n";
+import { strings, STORAGE_KEY, LOCALES, type Locale } from "./i18n";
 import { HeroLPIE } from "../components/HeroLPIE";
 import { LeadCaptureForm } from "../components/LeadCaptureForm";
-import { LanguageToggle } from "../components/LanguageToggle";
+import { LanguagePicker } from "../components/LanguagePicker";
 import { AppDownloadIsland } from "../components/AppDownloadIsland";
 
 export default function Page() {
@@ -13,7 +13,7 @@ export default function Page() {
   useEffect(() => {
     try {
       const saved = window.localStorage.getItem(STORAGE_KEY);
-      if (saved === "en" || saved === "es") setLocale(saved);
+      if (saved && (LOCALES as string[]).includes(saved)) setLocale(saved as Locale);
     } catch {
       // localStorage disabled — fall back to default.
     }
@@ -37,7 +37,7 @@ export default function Page() {
           <a className="brand" href="/">
             Civica
           </a>
-          <LanguageToggle
+          <LanguagePicker
             locale={locale}
             onChange={setLocale}
             ariaLabel={copy.languageToggleAria}

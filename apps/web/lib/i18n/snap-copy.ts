@@ -457,6 +457,7 @@ export const welcomeStrings = {
     home_nav_how: "How it works",
     home_nav_apply: "Apply now",
     home_nav_status: "Check status",
+    home_nav_signin: "Sign in",
 
     // ─── Hero ───
     home_hero_eyebrow: "SNAP · Food assistance in California",
@@ -503,6 +504,7 @@ export const welcomeStrings = {
     home_nav_how: "Cómo funciona",
     home_nav_apply: "Solicitar ahora",
     home_nav_status: "Ver estado",
+    home_nav_signin: "Iniciar sesión",
 
     // ─── Hero ───
     home_hero_eyebrow: "SNAP · Asistencia alimentaria en California",
@@ -548,6 +550,7 @@ export const welcomeStrings = {
     home_nav_how: "运作方式",
     home_nav_apply: "立即申请",
     home_nav_status: "查看状态",
+    home_nav_signin: "登录",
 
     home_hero_eyebrow: "SNAP · 加州食品援助",
     home_hero_title: "你可能有资格获得购买食品的帮助。",
@@ -589,6 +592,7 @@ export const welcomeStrings = {
     home_nav_how: "Cách hoạt động",
     home_nav_apply: "Đăng ký ngay",
     home_nav_status: "Xem trạng thái",
+    home_nav_signin: "Đăng nhập",
 
     home_hero_eyebrow: "SNAP · Hỗ trợ thực phẩm ở California",
     home_hero_title: "Bạn có thể đủ điều kiện nhận trợ giúp mua thực phẩm.",
@@ -630,6 +634,7 @@ export const welcomeStrings = {
     home_nav_how: "Paano ito gumagana",
     home_nav_apply: "Mag-apply na",
     home_nav_status: "Tingnan ang status",
+    home_nav_signin: "Mag-sign in",
 
     home_hero_eyebrow: "SNAP · Tulong sa pagkain sa California",
     home_hero_title: "Maaari kang maging kwalipikado para sa tulong sa pagbili ng pagkain.",

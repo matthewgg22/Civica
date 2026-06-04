@@ -16,11 +16,15 @@ export default function AppNav({
   demo = false,
   rightSlot,
   logoHref = "/welcome",
+  signIn,
 }: {
   tabs?: NavTab[];
   demo?: boolean;
   rightSlot?: ReactNode;
   logoHref?: string;
+  // Optional "Sign in" link in the nav bar. Omit on already-authed pages
+  // (e.g. status) where a sign-out control is shown instead.
+  signIn?: { label: string; href: string };
 }) {
   return (
     <header className="app-nav">
@@ -49,6 +53,11 @@ export default function AppNav({
       </div>
       <div className="app-nav__right">
         {rightSlot}
+        {signIn && (
+          <a href={signIn.href} className="app-nav__signin">
+            {signIn.label}
+          </a>
+        )}
         {demo && <span className="app-nav__demo">Demo data</span>}
       </div>
     </header>
