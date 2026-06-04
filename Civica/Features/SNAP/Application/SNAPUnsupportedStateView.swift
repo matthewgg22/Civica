@@ -118,35 +118,42 @@ struct SNAPUnsupportedStateView: View {
 enum SNAPUnsupportedStateStrings {
     static let eyebrow = CivicaText(
         "Not yet available",
-        es: "Aún no disponible"
+        es: "Aún no disponible",
+        zh: "尚未支持"
     )
 
     static func title(stateName: String, language: CivicaLanguage) -> String {
         switch language {
-        case .english, .mandarin, .vietnamese, .tagalog: return "Civica doesn't cover \(stateName) yet."
+        case .english, .vietnamese, .tagalog: return "Civica doesn't cover \(stateName) yet."
+        case .mandarin: return "Civica 目前还不支持 \(stateName)。"
         case .spanish: return "Civica aún no cubre \(stateName)."
         }
     }
 
     static let body = CivicaText(
         "Your state runs its own SNAP application process. Use the USDA directory to find your state's official application site.",
-        es: "Tu estado tiene su propio proceso de solicitud de SNAP. Usa el directorio de USDA para encontrar el sitio oficial de solicitud de tu estado."
+        es: "Tu estado tiene su propio proceso de solicitud de SNAP. Usa el directorio de USDA para encontrar el sitio oficial de solicitud de tu estado.",
+        zh: "你所在的州有自己的 SNAP 申请流程。用 USDA 目录找到你所在州的官方申请网站。"
     )
     static let agencyHeader = CivicaText(
         "Your state's SNAP agency",
-        es: "Agencia de SNAP de tu estado"
+        es: "Agencia de SNAP de tu estado",
+        zh: "你所在州的 SNAP 机构"
     )
     static let openDirectoryCTA = CivicaText(
         "USDA state directory ↗",
-        es: "Directorio estatal de USDA ↗"
+        es: "Directorio estatal de USDA ↗",
+        zh: "USDA 州目录 ↗"
     )
     static let changeStateCTA = CivicaText(
         "Change my state",
-        es: "Cambiar mi estado"
+        es: "Cambiar mi estado",
+        zh: "更改我所在的州"
     )
     static let backToHomeCTA = CivicaText(
         "Back to home",
-        es: "Volver al inicio"
+        es: "Volver al inicio",
+        zh: "返回首页"
     )
 }
 
