@@ -18,6 +18,7 @@ export type {
   DocumentItem,
   PacketHouseholdMember,
   PacketIncomeSource,
+  PacketExpense,
   ApplicantInfo,
 } from "./normalize";
 export type {
@@ -25,6 +26,9 @@ export type {
   SubmissionResult,
   HouseholdMember,
   IncomeSource,
+  PayFrequency,
+  Expense,
+  ExpenseType,
   DocumentItem as BenefitsCalDocumentItem,
   PostalAddress,
   E164,
@@ -40,6 +44,9 @@ export {
   SubmissionResultSchema,
   HouseholdMemberSchema,
   IncomeSourceSchema,
+  PayFrequencySchema,
+  ExpenseSchema,
+  ExpenseTypeSchema,
   PostalAddressSchema,
   E164Schema,
   UtilityAllowanceTypeSchema,
