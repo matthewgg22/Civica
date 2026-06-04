@@ -180,54 +180,64 @@ enum SNAPSoftIneligibilityStrings {
 
     static let headline = CivicaText(
         "You may not qualify today — but situations change, and there are a few things worth trying.",
-        es: "Es posible que hoy no califiques — pero las situaciones cambian, y hay algunas cosas que vale la pena intentar."
+        es: "Es posible que hoy no califiques — pero las situaciones cambian, y hay algunas cosas que vale la pena intentar.",
+        zh: "你今天可能不符合资格 —— 但情况会变,有几件事值得试一试。"
     )
 
     static let confidenceLine = CivicaText(
         "Based on what you told us. The county makes the final decision.",
-        es: "Según lo que nos dijiste. El condado toma la decisión final."
+        es: "Según lo que nos dijiste. El condado toma la decisión final.",
+        zh: "根据你告诉我们的信息。最终决定由县里做出。"
     )
 
     static let applyAnywayAction = CivicaText(
         "Apply anyway — the county may approve",
-        es: "Aplica de todos modos — el condado podría aprobar"
+        es: "Aplica de todos modos — el condado podría aprobar",
+        zh: "无论如何先申请 —— 县里可能会批准"
     )
 
     static let findHelpAction = CivicaText(
         "Find food while you sort this out",
-        es: "Encuentra comida mientras resuelves esto"
+        es: "Encuentra comida mientras resuelves esto",
+        zh: "在你处理这件事的同时先找到食物"
     )
 
     static let openStatePortalAction = CivicaText(
         "Open the state portal for help",
-        es: "Abre el portal estatal para obtener ayuda"
+        es: "Abre el portal estatal para obtener ayuda",
+        zh: "打开州政府网站寻求帮助"
     )
 
     // Accessibility hints — supplemental context for VoiceOver users
     // beyond the row label. Kept short per Apple HIG.
     static let applyAnywayHint = CivicaText(
         "Starts the SNAP application — the county makes the final decision.",
-        es: "Inicia la solicitud de SNAP — el condado toma la decisión final."
+        es: "Inicia la solicitud de SNAP — el condado toma la decisión final.",
+        zh: "开始 SNAP 申请 —— 最终决定由县里做出。"
     )
 
     static let findHelpHint = CivicaText(
         "Opens the food-help map filtered to nearby pantries.",
-        es: "Abre el mapa de ayuda alimentaria filtrado a despensas cercanas."
+        es: "Abre el mapa de ayuda alimentaria filtrado a despensas cercanas.",
+        zh: "打开食物援助地图,筛选附近的食物银行。"
     )
 
     static let openStatePortalHint = CivicaText(
         "Opens the state benefits portal in a Safari sheet.",
-        es: "Abre el portal estatal de beneficios en una hoja de Safari."
+        es: "Abre el portal estatal de beneficios en una hoja de Safari.",
+        zh: "在 Safari 窗口中打开州福利网站。"
     )
 
     static let seeMore = CivicaText(
         "See more",
-        es: "Ver más"
+        es: "Ver más",
+        zh: "查看更多"
     )
 
     static let seeLess = CivicaText(
         "See less",
-        es: "Ver menos"
+        es: "Ver menos",
+        zh: "收起"
     )
 
     /// Registered for the EN/ES parity test. Add new entries here when
@@ -254,7 +264,8 @@ struct SNAPSoftIneligibilityCard_Previews: PreviewProvider {
                 SNAPSoftIneligibilityCard(
                     verdictReason: CivicaText(
                         "Your income looks higher than the federal SNAP cutoff for your household size.",
-                        es: "Tus ingresos parecen más altos que el límite federal de SNAP para el tamaño de tu hogar."
+                        es: "Tus ingresos parecen más altos que el límite federal de SNAP para el tamaño de tu hogar.",
+                        zh: "按你家庭人数算,你的收入看起来高于联邦 SNAP 的上限。"
                     ),
                     language: .english,
                     onApplyAnyway: {},
@@ -265,7 +276,8 @@ struct SNAPSoftIneligibilityCard_Previews: PreviewProvider {
                 SNAPSoftIneligibilityCard(
                     verdictReason: CivicaText(
                         "Basándonos en lo que nos contaste sobre tus ingresos, el tamaño de tu hogar, y los gastos que reportaste, la fórmula federal no produce un beneficio mensual estimado. Esto no significa que no califiques — el condado puede considerar factores adicionales que esta calculadora no ve.",
-                        es: "Basándonos en lo que nos contaste sobre tus ingresos, el tamaño de tu hogar, y los gastos que reportaste, la fórmula federal no produce un beneficio mensual estimado. Esto no significa que no califiques — el condado puede considerar factores adicionales que esta calculadora no ve."
+                        es: "Basándonos en lo que nos contaste sobre tus ingresos, el tamaño de tu hogar, y los gastos que reportaste, la fórmula federal no produce un beneficio mensual estimado. Esto no significa que no califiques — el condado puede considerar factores adicionales que esta calculadora no ve.",
+                        zh: "根据你告诉我们的收入、家庭人数和报告的支出,联邦公式算不出每月预估福利。这并不代表你不符合资格 —— 县里可能会考虑这个计算器看不到的其他因素。"
                     ),
                     language: .spanish,
                     onApplyAnyway: {},
