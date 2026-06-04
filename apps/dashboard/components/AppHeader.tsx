@@ -44,7 +44,7 @@ const ALL_NAV_ITEMS = [...NAV_ITEMS, ...SHARE_NAV_ITEMS];
 export default function AppHeader({ email, active }: { email?: string; active: NavKey }) {
   return (
     <>
-    <header className="bg-pine px-4 sm:px-8 py-3.5 flex items-center justify-between gap-3">
+    <header className="bg-ink px-4 sm:px-8 py-3.5 flex items-center justify-between gap-3">
       <div className="flex items-center gap-4 sm:gap-8 min-w-0">
         <Link href="/dashboard" className="flex items-center gap-3 group shrink-0">
           {/* eslint-disable-next-line @next/next/no-img-element */}
