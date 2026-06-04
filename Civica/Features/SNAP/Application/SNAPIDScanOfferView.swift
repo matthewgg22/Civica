@@ -225,42 +225,50 @@ enum SNAPIDScanStrings {
     static let eyebrow = CivicaText(
         "Optional · 30 seconds",
         es: "Opcional · 30 segundos",
-        zh: "可选 · 30 秒"
+        zh: "可选 · 30 秒",
+        vi: "Tùy chọn · 30 giây"
     )
     static let title = CivicaText(
         "Scan your ID to get started faster.",
         es: "Escanea tu ID para empezar más rápido.",
-        zh: "扫描你的身份证件,更快开始申请。"
+        zh: "扫描你的身份证件,更快开始申请。",
+        vi: "Quét giấy tờ tùy thân để bắt đầu nhanh hơn."
     )
     static let body = CivicaText(
         "A driver's license or state ID lets Civica pre-fill your name, date of birth, and address — you'll confirm each one as you go. The photo is also saved for your documents checklist.",
         es: "Una licencia de conducir o ID estatal permite que Civica pre-llene tu nombre, fecha de nacimiento y dirección — confirmarás cada uno mientras avanzas. La foto también se guarda para tu lista de documentos.",
-        zh: "驾驶执照或州身份证可以让 Civica 预填你的姓名、出生日期和地址 —— 你会在过程中逐项确认。照片也会保存到你的文件清单里。"
+        zh: "驾驶执照或州身份证可以让 Civica 预填你的姓名、出生日期和地址 —— 你会在过程中逐项确认。照片也会保存到你的文件清单里。",
+        vi: "Bằng lái xe hoặc giấy tờ tùy thân của bang giúp Civica điền sẵn tên, ngày sinh và địa chỉ của bạn — bạn sẽ xác nhận từng mục khi tiếp tục. Ảnh chụp cũng được lưu vào danh sách giấy tờ của bạn."
     )
     static let benefit1 = CivicaText(
         "Pre-fills your name, date of birth, and address",
         es: "Pre-llena tu nombre, fecha de nacimiento y dirección",
-        zh: "预填你的姓名、出生日期和地址"
+        zh: "预填你的姓名、出生日期和地址",
+        vi: "Điền sẵn tên, ngày sinh và địa chỉ của bạn"
     )
     static let benefit2 = CivicaText(
         "Checks off your photo ID on the documents list",
         es: "Marca tu foto de ID en la lista de documentos",
-        zh: "在文件清单上勾选你的身份证件照片"
+        zh: "在文件清单上勾选你的身份证件照片",
+        vi: "Đánh dấu ảnh giấy tờ tùy thân của bạn trong danh sách giấy tờ"
     )
     static let benefit3 = CivicaText(
         "Stays on this device only — nothing is uploaded",
         es: "Se queda solo en este dispositivo — nada se sube",
-        zh: "只保留在这台设备上 —— 不会上传任何内容"
+        zh: "只保留在这台设备上 —— 不会上传任何内容",
+        vi: "Chỉ lưu trên thiết bị này — không tải lên bất cứ thứ gì"
     )
     static let scanCTA = CivicaText(
         "Scan my ID",
         es: "Escanear mi ID",
-        zh: "扫描我的身份证件"
+        zh: "扫描我的身份证件",
+        vi: "Quét giấy tờ tùy thân của tôi"
     )
     static let skipCTA = CivicaText(
         "Skip for now",
         es: "Omitir por ahora",
-        zh: "暂时跳过"
+        zh: "暂时跳过",
+        vi: "Bỏ qua bây giờ"
     )
 }
 
