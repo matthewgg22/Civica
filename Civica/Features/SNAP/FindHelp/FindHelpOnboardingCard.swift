@@ -60,21 +60,25 @@ enum FindHelpOnboardingStrings {
     static let eyebrow = CivicaText(
         "Welcome",
         es: "Bienvenido",
-        zh: "欢迎"
+        zh: "欢迎",
+        vi: "Chào mừng"
     )
     static let title = CivicaText(
         "SNAP works at more places than you think.",
         es: "SNAP funciona en más lugares de los que imaginas.",
-        zh: "SNAP 可以用的地方比你想的多。"
+        zh: "SNAP 可以用的地方比你想的多。",
+        vi: "SNAP dùng được ở nhiều nơi hơn bạn nghĩ."
     )
     static let body = CivicaText(
         "Tap a pin to see what you can buy with EBT, WIC, or HIP — and how to get there.",
         es: "Toca un punto para ver qué puedes comprar con EBT, WIC o HIP, y cómo llegar.",
-        zh: "点一下地图上的标记,看看你可以用 EBT、WIC 或 HIP 买什么 —— 以及怎么过去。"
+        zh: "点一下地图上的标记,看看你可以用 EBT、WIC 或 HIP 买什么 —— 以及怎么过去。",
+        vi: "Chạm vào một điểm để xem bạn mua được gì bằng EBT, WIC hoặc HIP — và cách đến đó."
     )
     static let dismissCTA = CivicaText(
         "Got it",
         es: "Entendido",
-        zh: "知道了"
+        zh: "知道了",
+        vi: "Đã hiểu"
     )
 }
