@@ -29,7 +29,7 @@ export default function NotFound() {
     });
   }, []);
 
-  const copy = strings[locale];
+  const copy = strings[locale as keyof typeof strings] ?? strings.en;
 
   return (
     <main className="error-page">

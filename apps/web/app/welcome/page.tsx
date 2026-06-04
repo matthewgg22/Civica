@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react";
 import AppNav from "../../components/AppNav";
-import { STORAGE_KEY, type Locale } from "../i18n";
+import { LanguagePicker } from "../../components/LanguagePicker";
+import { STORAGE_KEY, LOCALES, type Locale } from "../i18n";
 import { welcomeStrings } from "../../lib/i18n/snap-copy";
 
 // Applicant portal home — the welcoming first page. Mirrors the iOS entry
@@ -14,12 +15,11 @@ export default function WelcomePage() {
   useEffect(() => {
     try {
       const saved = window.localStorage.getItem(STORAGE_KEY);
-      if (saved === "en" || saved === "es") setLocale(saved as Locale);
+      if (saved && (LOCALES as string[]).includes(saved)) setLocale(saved as Locale);
     } catch { /* localStorage disabled */ }
   }, []);
 
-  function toggleLocale() {
-    const next: Locale = locale === "en" ? "es" : "en";
+  function changeLocale(next: Locale) {
     setLocale(next);
     try { window.localStorage.setItem(STORAGE_KEY, next); } catch {}
   }
@@ -27,14 +27,7 @@ export default function WelcomePage() {
   const t = welcomeStrings[locale];
 
   const localeToggle = (
-    <button
-      type="button"
-      className="locale-toggle"
-      onClick={toggleLocale}
-      aria-label={locale === "en" ? "Cambiar a español" : "Switch to English"}
-    >
-      {locale === "en" ? "Español" : "English"}
-    </button>
+    <LanguagePicker locale={locale} onChange={changeLocale} ariaLabel="Choose language" />
   );
 
   const steps = [

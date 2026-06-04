@@ -12,7 +12,8 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import AppNav from "../../components/AppNav";
-import { STORAGE_KEY, type Locale } from "../i18n";
+import { LanguagePicker } from "../../components/LanguagePicker";
+import { STORAGE_KEY, LOCALES, type Locale } from "../i18n";
 import { snapT, type SnapStringKey } from "../../lib/i18n/snap-copy";
 import type {
   EnrollmentPacket,
@@ -120,7 +121,7 @@ export default function StatusPage() {
     let savedLocale: Locale = "en";
     try {
       const saved = window.localStorage.getItem(STORAGE_KEY);
-      if (saved === "en" || saved === "es") savedLocale = saved;
+      if (saved && (LOCALES as string[]).includes(saved)) savedLocale = saved as Locale;
     } catch { /* ignore */ }
     setLocale(savedLocale);
 
@@ -167,6 +168,11 @@ export default function StatusPage() {
 
   const t = (k: SnapStringKey) => snapT(locale, k);
 
+  function changeLocale(next: Locale) {
+    setLocale(next);
+    try { window.localStorage.setItem(STORAGE_KEY, next); } catch { /* ignore */ }
+  }
+
   // Primary packet = most recent. The hero + timeline track this one.
   const primary = packets && packets.length > 0 ? packets[0] : null;
 
@@ -175,6 +181,7 @@ export default function StatusPage() {
     <AppNav
       demo={demo}
       logoHref={demo ? "/welcome" : "/status"}
+      rightSlot={<LanguagePicker locale={locale} onChange={changeLocale} ariaLabel="Choose language" />}
       tabs={[
         { label: "My Application", href: demo ? "/status?demo=1" : "/status", active: true },
         { label: "Start New", href: "/apply" },

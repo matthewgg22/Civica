@@ -2,9 +2,23 @@
 // @civica/snap-compliance-copy (which is scoped to SNAP-specific notices) into
 // a marketing page. Keep strings concise, journalistic, on-brand.
 
-export type Locale = "en" | "es";
+// The applicant portal serves California's largest LEP communities. Mirrors
+// the iOS CivicaText catalog (en + es + zh + vi + tl).
+export type Locale = "en" | "es" | "zh" | "vi" | "tl";
 
-export const LOCALES: Locale[] = ["en", "es"];
+export const LOCALES: Locale[] = ["en", "es", "zh", "vi", "tl"];
+
+// Native-name labels for the language picker.
+export const LANGUAGE_LABELS: Record<Locale, string> = {
+  en: "English",
+  es: "Español",
+  zh: "中文",
+  vi: "Tiếng Việt",
+  tl: "Tagalog",
+};
+
+// The landing marketing page only ships en/es copy; its toggle stays binary.
+export type LandingLocale = "en" | "es";
 
 export const STORAGE_KEY = "civica-web.locale";
 
@@ -116,7 +130,7 @@ export const strings = {
     notFoundHomeCta: "Ir a Civica",
     notFoundQualifyCta: "Ver si calificas",
   },
-} satisfies Record<Locale, Record<string, string>>;
+} satisfies Record<LandingLocale, Record<string, string>>;
 
 export type StringKey = keyof (typeof strings)["en"];
-export type Copy = (typeof strings)[Locale];
+export type Copy = (typeof strings)["en"];

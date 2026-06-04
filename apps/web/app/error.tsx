@@ -41,7 +41,7 @@ export default function Error({
     });
   }, [error.digest]);
 
-  const copy = strings[locale];
+  const copy = strings[locale as keyof typeof strings] ?? strings.en;
   const errorId = error.digest ?? "—";
 
   return (

@@ -426,12 +426,17 @@ export const snapStrings = {
     hint_utilities: "costo de servicios",
     hint_applicant_age: "edad del solicitante",
   },
-} as const satisfies Record<Locale, Record<string, string>>;
+} as const satisfies Record<"en" | "es", Record<string, string>>;
 
 export type SnapStringKey = keyof (typeof snapStrings)["en"];
 
+// The deep SNAP-wizard catalog is reviewed en/es only. zh/vi/tl fall back to
+// English until a reviewed translation pass (matching how iOS shipped its
+// zh/vi/tl parity — machine-translating eligibility copy unreviewed is unsafe
+// for a benefits app). The home/welcome surface IS fully translated below.
 export function snapT(locale: Locale, key: SnapStringKey): string {
-  return snapStrings[locale][key];
+  const table = (snapStrings as Record<string, Record<string, string>>)[locale] ?? snapStrings.en;
+  return table[key] ?? snapStrings.en[key];
 }
 
 // Welcome page copy (pre-sign-in trust page).
@@ -517,6 +522,117 @@ export const welcomeStrings = {
     home_how_3_body: "Un navigator capacitado revisa tu solicitud en busca de errores antes de enviarla al condado.",
     home_how_4_title: "El condado decide",
     home_how_4_body: "Tu solicitud se envía al estado. Recibirás actualizaciones sobre tu estado aquí mismo.",
+  },
+  zh: {
+    welcome_title: "约 10 分钟即可申请 CalFresh",
+    welcome_subtitle: "Civica 一步步引导你完成申请,并自动保存进度。",
+    welcome_trust_label: "为什么选择 Civica",
+    welcome_trust_1: "每月最高 $292 的食品补助 — 存入 EBT 卡。",
+    welcome_trust_2: "你的信息已加密,仅与州政府共享以处理你的申请。",
+    welcome_trust_3: "经过培训的导航员会在提交前审核你的申请。",
+    welcome_cta: "开始我的申请 →",
+    welcome_returning: "已经开始了?",
+    welcome_signin_link: "登录以继续",
+
+    home_nav_what: "什么是 CalFresh",
+    home_nav_how: "运作方式",
+    home_nav_apply: "立即申请",
+    home_nav_status: "查看状态",
+
+    home_hero_eyebrow: "CalFresh · 加州 SNAP",
+    home_hero_title: "你可能有资格获得购买食品的帮助。",
+    home_hero_body: "CalFresh 每月最高为你的 EBT 卡提供 $292 用于购买食物。Civica 在约 10 分钟内引导你完成申请,并保存进度,让你随时可以停下并稍后继续。",
+    home_hero_secondary: "登录以继续",
+
+    home_what_title: "什么是 CalFresh?",
+    home_what_body: "CalFresh 是加州对 SNAP(联邦食品援助计划)的称呼。如果获批,每月会将钱存入一张 EBT 卡,你可以像借记卡一样在杂货店、农贸市场和许多在线零售商使用。",
+    home_what_fact1: "单人家庭每月最高 $292 — 家庭人数越多,金额越高。",
+    home_what_fact2: "学生、上班族、长者和家庭都可能符合资格。规则最近有所变化。",
+    home_what_fact3: "申请不会影响你的移民身份或税务。",
+
+    home_how_title: "运作方式",
+    home_how_1_title: "回答几个问题",
+    home_how_1_body: "Civica 用通俗的语言询问你的家庭和收入情况。约需 10 分钟。",
+    home_how_2_title: "添加你的文件",
+    home_how_2_body: "拍下你的身份证件和最近的工资单。我们会明确告诉你需要什么。",
+    home_how_3_title: "导航员审核",
+    home_how_3_body: "经过培训的导航员会在申请送交县政府前检查是否有错误。",
+    home_how_4_title: "县政府做出决定",
+    home_how_4_body: "你的申请会送交州政府。你将在这里收到状态更新。",
+  },
+  vi: {
+    welcome_title: "Đăng ký CalFresh trong khoảng 10 phút",
+    welcome_subtitle: "Civica hướng dẫn bạn từng bước và tự động lưu tiến trình của bạn.",
+    welcome_trust_label: "Vì sao chọn Civica",
+    welcome_trust_1: "Lên đến $292/tháng tiền trợ cấp thực phẩm — nạp vào thẻ EBT.",
+    welcome_trust_2: "Thông tin của bạn được mã hóa và chỉ chia sẻ với tiểu bang để xử lý đơn của bạn.",
+    welcome_trust_3: "Một nhân viên hỗ trợ được đào tạo sẽ xem xét đơn của bạn trước khi nộp.",
+    welcome_cta: "Bắt đầu đơn của tôi →",
+    welcome_returning: "Đã bắt đầu rồi?",
+    welcome_signin_link: "Đăng nhập để tiếp tục",
+
+    home_nav_what: "CalFresh là gì",
+    home_nav_how: "Cách hoạt động",
+    home_nav_apply: "Đăng ký ngay",
+    home_nav_status: "Xem trạng thái",
+
+    home_hero_eyebrow: "CalFresh · SNAP California",
+    home_hero_title: "Bạn có thể đủ điều kiện nhận trợ giúp mua thực phẩm.",
+    home_hero_body: "CalFresh cấp cho bạn đến $292 mỗi tháng trên thẻ EBT để mua thực phẩm. Civica hướng dẫn bạn qua đơn đăng ký trong khoảng 10 phút và lưu tiến trình để bạn có thể dừng lại và quay lại bất cứ lúc nào.",
+    home_hero_secondary: "Đăng nhập để tiếp tục",
+
+    home_what_title: "CalFresh là gì?",
+    home_what_body: "CalFresh là tên gọi của California cho SNAP, chương trình hỗ trợ thực phẩm liên bang. Nếu được chấp thuận, mỗi tháng tiền sẽ được nạp vào thẻ EBT mà bạn dùng như thẻ ghi nợ tại cửa hàng tạp hóa, chợ nông sản và nhiều cửa hàng trực tuyến.",
+    home_what_fact1: "Lên đến $292/tháng cho hộ một người — nhiều hơn cho hộ đông người.",
+    home_what_fact2: "Sinh viên, người lao động, người cao tuổi và gia đình đều có thể đủ điều kiện. Quy định vừa thay đổi gần đây.",
+    home_what_fact3: "Việc đăng ký không ảnh hưởng đến tình trạng di trú hay thuế của bạn.",
+
+    home_how_title: "Cách hoạt động",
+    home_how_1_title: "Trả lời vài câu hỏi",
+    home_how_1_body: "Civica hỏi bằng ngôn ngữ dễ hiểu về hộ gia đình và thu nhập của bạn. Khoảng 10 phút.",
+    home_how_2_title: "Thêm giấy tờ của bạn",
+    home_how_2_body: "Chụp ảnh giấy tờ tùy thân và cuống lương gần đây. Chúng tôi cho bạn biết chính xác cần những gì.",
+    home_how_3_title: "Nhân viên hỗ trợ xem xét",
+    home_how_3_body: "Một nhân viên hỗ trợ được đào tạo kiểm tra lỗi trong đơn của bạn trước khi gửi đến quận.",
+    home_how_4_title: "Quận quyết định",
+    home_how_4_body: "Đơn của bạn được gửi đến tiểu bang. Bạn sẽ nhận cập nhật trạng thái ngay tại đây.",
+  },
+  tl: {
+    welcome_title: "Mag-apply para sa CalFresh sa mga 10 minuto",
+    welcome_subtitle: "Ginagabayan ka ng Civica nang hakbang-hakbang at sini-save ang iyong progreso.",
+    welcome_trust_label: "Bakit Civica",
+    welcome_trust_1: "Hanggang $292/buwan na tulong sa pagkain — nilalagay sa EBT card.",
+    welcome_trust_2: "Naka-encrypt ang iyong impormasyon at ibinabahagi lamang sa estado para iproseso ang iyong aplikasyon.",
+    welcome_trust_3: "May sanay na navigator na sumusuri sa iyong aplikasyon bago ito isumite.",
+    welcome_cta: "Simulan ang aking aplikasyon →",
+    welcome_returning: "Nagsimula na?",
+    welcome_signin_link: "Mag-sign in para magpatuloy",
+
+    home_nav_what: "Ano ang CalFresh",
+    home_nav_how: "Paano ito gumagana",
+    home_nav_apply: "Mag-apply na",
+    home_nav_status: "Tingnan ang status",
+
+    home_hero_eyebrow: "CalFresh · SNAP ng California",
+    home_hero_title: "Maaari kang maging kwalipikado para sa tulong sa pagbili ng pagkain.",
+    home_hero_body: "Nagbibigay ang CalFresh ng hanggang $292 kada buwan sa isang EBT card para sa pagkain. Ginagabayan ka ng Civica sa aplikasyon sa loob ng mga 10 minuto at sini-save ang iyong progreso para makapagpatuloy ka anumang oras.",
+    home_hero_secondary: "Mag-sign in para magpatuloy",
+
+    home_what_title: "Ano ang CalFresh?",
+    home_what_body: "Ang CalFresh ay ang tawag ng California sa SNAP, ang pederal na programa ng tulong sa pagkain. Kung maaprubahan, may perang idinadagdag sa isang EBT card kada buwan na ginagamit mo na parang debit card sa mga grocery, palengke ng magsasaka, at maraming online na tindahan.",
+    home_what_fact1: "Hanggang $292/buwan para sa isang tao — mas malaki para sa mas malaking sambahayan.",
+    home_what_fact2: "Mga estudyante, manggagawa, nakatatanda, at pamilya ay maaaring maging kwalipikado. Kamakailan lang nagbago ang mga patakaran.",
+    home_what_fact3: "Ang pag-apply ay hindi nakakaapekto sa iyong katayuan sa imigrasyon o sa iyong buwis.",
+
+    home_how_title: "Paano ito gumagana",
+    home_how_1_title: "Sagutin ang ilang tanong",
+    home_how_1_body: "Nagtatanong ang Civica sa simpleng wika tungkol sa iyong sambahayan at kita. Mga 10 minuto.",
+    home_how_2_title: "Idagdag ang iyong mga dokumento",
+    home_how_2_body: "Kunan ng litrato ang iyong ID at kamakailang pay stub. Sasabihin namin sa iyo nang eksakto kung ano ang kailangan.",
+    home_how_3_title: "Sinusuri ito ng navigator",
+    home_how_3_body: "May sanay na navigator na sumusuri sa iyong aplikasyon para sa mga mali bago ito mapunta sa county.",
+    home_how_4_title: "Magdedesisyon ang county",
+    home_how_4_body: "Ipinapadala ang iyong aplikasyon sa estado. Makakakuha ka ng mga update sa status dito mismo.",
   },
 } as const satisfies Record<Locale, Record<string, string>>;
 

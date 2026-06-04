@@ -28,7 +28,7 @@ export default function Page() {
     }
   }, [locale]);
 
-  const copy = strings[locale];
+  const copy = strings[locale as keyof typeof strings] ?? strings.en;
 
   return (
     <div className="page">
