@@ -9,8 +9,11 @@ export function HeroLPIE({ copy }: { copy: Copy }) {
         <h1 className="hero__headline">{copy.heroHeadline}</h1>
         <p className="hero__sub">{copy.heroSub}</p>
         <div className="cta-row">
-          <a className="btn btn--primary" href="#lead-capture">
-            {copy.ctaQualify} →
+          <a className="btn btn--primary" href="/sign-in?next=%2Fapply">
+            {copy.ctaStartApplication} →
+          </a>
+          <a className="btn btn--secondary" href="#lead-capture">
+            {copy.ctaQualify}
           </a>
           <TestFlightCTA label={copy.ctaTestFlight} />
         </div>

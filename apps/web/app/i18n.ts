@@ -15,6 +15,7 @@ export const strings = {
       "If you're a half-time student at a Community College, CSU, or UC, you likely qualify for CalFresh now.",
     heroSub:
       "Takes about 10 minutes to apply. No minimum income required.",
+    ctaStartApplication: "Start your application",
     ctaQualify: "See if you qualify",
     ctaTestFlight: "Get the app (TestFlight)",
 
@@ -64,6 +65,7 @@ export const strings = {
       "Si eres estudiante de medio tiempo en un Community College, CSU o UC, probablemente calificas para CalFresh ahora.",
     heroSub:
       "Toma unos 10 minutos aplicar. No se requiere ingreso mínimo.",
+    ctaStartApplication: "Comienza tu solicitud",
     ctaQualify: "Ver si calificas",
     ctaTestFlight: "Obtén la app (TestFlight)",
 
