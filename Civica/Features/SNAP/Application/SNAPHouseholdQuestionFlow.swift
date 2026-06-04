@@ -28,6 +28,51 @@ enum SNAPMaritalStatus: String, Codable, CaseIterable, Equatable {
     case preferNotToSay
 }
 
+/// BenefitsCal ABNSN reasons for not having an SSN. Tier A only —
+/// captured as a CHOICE, never as digits. See the privacy-firewall
+/// note above `SNAPHouseholdAnswers.hasSSN` and issue #423 Phase 1.
+///
+/// Mirrors the BenefitsCal "Why don't you have a Social Security
+/// Number?" options. Optional throughout — an applicant who has an
+/// SSN never sees this question (the flow skips `.noSSNReason`).
+enum SNAPNoSSNReason: String, Codable, CaseIterable, Equatable {
+    case usCitizenNeverApplied
+    case nonCitizenExempt
+    case religiousObjection
+    case other
+    case preferNotToSay
+}
+
+// ─── PRIVACY FIREWALL — read this before adding ANY field below ──────────
+//
+// Civica holds the minimum PII required to fill the BenefitsCal form.
+// SSN policy (issue #423, decided 2026-05-31):
+//
+//   Tier A: capture only the BenefitsCal METADATA — "Do you have an
+//           SSN?" (Y/N/Applied for one) and, if "No", the no-SSN
+//           reason. NEVER the digits. Lives in `hasSSN` +
+//           `noSSNReason` below. This is what Phase 1 ships.
+//
+//   Tier B: SSN digits live in iOS Keychain only, Face-ID-gated,
+//           NEVER synced to Civica servers. Phase 2; gated on legal
+//           review and OWNED by Settings → Privacy, not by this
+//           intake draft. The `SNAPApplicationDraft` packet payload
+//           explicitly EXCLUDES any SSN digit field.
+//
+//   Tier 3: server-side SSN storage of any kind — INDEFINITELY
+//           DEFERRED. Default of "no" stands.
+//
+// ENFORCEMENT: adding any property to `SNAPHouseholdAnswers` (or to
+// any other SNAP*Answers / SNAPApplicationDraft type) that stores
+// SSN DIGITS — even encrypted, even hashed — REQUIRES the commit
+// message to include the marker `[privacy-review:ssn]` AND an
+// explicit sign-off from legal. This comment is the canonical
+// guardrail; the marker is the audit hook. If you find yourself
+// considering such a field without that marker, stop and re-read
+// the issue.
+//
+// ────────────────────────────────────────────────────────────────────────
+
 struct SNAPHouseholdAnswers: Equatable, Codable {
     var householdSize: String?              // choice from buckets
     var hasMinorInHousehold: Bool?
@@ -36,6 +81,15 @@ struct SNAPHouseholdAnswers: Equatable, Codable {
     // == true; nil when no minors are present (question is skipped).
     var hasChildUnder14InHousehold: Bool?
     var hasElderlyOrDisabled: Bool? = false
+    /// Tier A SSN metadata (issue #423 Phase 1). Mirrors the
+    /// BenefitsCal ABSSN choice — "Yes / No / Applied for one".
+    /// Captured as METADATA ONLY — NEVER the digits. Optional so
+    /// an applicant who prefers not to answer can pass through.
+    /// See the PRIVACY FIREWALL block above for the full policy.
+    var hasSSN: SNAPTri?
+    /// Tier A no-SSN reason (BenefitsCal ABNSN). Asked only when
+    /// `hasSSN == .no`; nil otherwise (the flow skips the screen).
+    var noSSNReason: SNAPNoSSNReason?
     /// Migrant or seasonal farmworker status. With low liquid resources,
     /// satisfies 7 CFR 273.2(i)(1)(ii) (migrant/seasonal destitute) and
     /// the household qualifies for expedited service regardless of
@@ -64,6 +118,10 @@ struct SNAPHouseholdAnswers: Equatable, Codable {
     var receivesGeneralAssistance: Bool?
 
     var isComplete: Bool {
+        // hasSSN + noSSNReason are intentionally NOT required for
+        // completeness — Tier A is optional metadata that improves
+        // the BenefitsCal autofill but does not gate packet
+        // generation. Same posture as maritalStatus / buyPrepareFood.
         householdSize != nil
             && hasMinorInHousehold != nil
             && (hasMinorInHousehold != true || hasChildUnder14InHousehold != nil)
@@ -79,6 +137,8 @@ final class SNAPHouseholdQuestionFlowViewModel: ObservableObject {
         case minors
         case childrenUnder14    // shown only when hasMinorInHousehold == true
         case elderlyOrDisabled
+        case ssnIntent          // Phase 1 (#423) — Tier A: hasSSN tri
+        case noSSNReason        // Phase 1 (#423) — shown only when hasSSN == .no
         case migrantFarmworker
         case maritalStatus      // Wave 4 — always asked, optional
         case buyPrepareFood     // Wave 5 — shown only when householdSize > 1
@@ -100,6 +160,11 @@ final class SNAPHouseholdQuestionFlowViewModel: ObservableObject {
         case .minors:
             // Skip childrenUnder14 when no minors in the household.
             step = answers.hasMinorInHousehold == true ? .childrenUnder14 : .elderlyOrDisabled
+        case .ssnIntent:
+            // Phase 1 #423: only ask the no-SSN reason when the
+            // applicant said "No". "Applied for one" + "Yes" both
+            // skip directly to migrant farmworker.
+            step = answers.hasSSN == .no ? .noSSNReason : .migrantFarmworker
         case .maritalStatus:
             // Wave 5 — skip buyPrepareFood for single-person
             // households (trivially Yes). Household size buckets
@@ -120,6 +185,10 @@ final class SNAPHouseholdQuestionFlowViewModel: ObservableObject {
         switch step {
         case .elderlyOrDisabled:
             step = answers.hasMinorInHousehold == true ? .childrenUnder14 : .minors
+        case .migrantFarmworker:
+            // If we skipped noSSNReason on the way forward (hasSSN != .no),
+            // skip it on the way back too.
+            step = answers.hasSSN == .no ? .noSSNReason : .ssnIntent
         default:
             if let prev = Step(rawValue: step.rawValue - 1) { step = prev }
         }
@@ -131,6 +200,8 @@ final class SNAPHouseholdQuestionFlowViewModel: ObservableObject {
         case .minors: return answers.hasMinorInHousehold != nil
         case .childrenUnder14: return answers.hasChildUnder14InHousehold != nil
         case .elderlyOrDisabled: return answers.hasElderlyOrDisabled != nil
+        case .ssnIntent: return answers.hasSSN != nil
+        case .noSSNReason: return answers.noSSNReason != nil
         case .migrantFarmworker: return answers.migrantSeasonalFarmworker != nil
         case .maritalStatus: return answers.maritalStatus != nil
         case .buyPrepareFood: return answers.everyoneBuysPreparesFoodTogether != nil
@@ -193,6 +264,8 @@ struct SNAPHouseholdQuestionFlowView: View {
         case .minors: minorsScreen
         case .childrenUnder14: childrenUnder14Screen
         case .elderlyOrDisabled: elderlyOrDisabledScreen
+        case .ssnIntent: ssnIntentScreen
+        case .noSSNReason: noSSNReasonScreen
         case .migrantFarmworker: migrantFarmworkerScreen
         case .maritalStatus: maritalStatusScreen
         case .buyPrepareFood: buyPrepareFoodScreen
@@ -470,6 +543,83 @@ struct SNAPHouseholdQuestionFlowView: View {
         }
     }
 
+    // MARK: - Screen: SSN intent (Phase 1 #423, Tier A metadata only)
+
+    /// Tier A "Do you have an SSN?" — Yes / No / Applied for one.
+    /// CAPTURES METADATA ONLY. The applicant never types digits;
+    /// digits never leave the device (Phase 2 / Keychain only).
+    /// See the privacy-firewall block above `SNAPHouseholdAnswers`.
+    private var ssnIntentScreen: some View {
+        let options: [SNAPTri] = [.yes, .no, .notSure]
+        return CivicaQuestionScreen(
+            progress: progress(for: .ssnIntent),
+            title: SNAPHouseholdQuestionStrings.ssnIntentTitle.value(in: language),
+            helper: SNAPHouseholdQuestionStrings.ssnIntentHelper.value(in: language),
+            primaryActionTitle: CivicaQuestionStrings.continueLabel.value(in: language),
+            primaryActionEnabled: viewModel.canAdvanceFromCurrentStep,
+            onPrimary: advanceOrComplete,
+            language: language
+        ) {
+            CivicaQuestionChoices(
+                options: options.map {
+                    SNAPHouseholdQuestionStrings.ssnIntentLabel(for: $0, language: language)
+                },
+                selection: Binding(
+                    get: {
+                        viewModel.answers.hasSSN.map {
+                            SNAPHouseholdQuestionStrings.ssnIntentLabel(for: $0, language: language)
+                        }
+                    },
+                    set: { label in
+                        viewModel.answers.hasSSN = options.first { tri in
+                            SNAPHouseholdQuestionStrings.ssnIntentLabel(for: tri, language: language) == label
+                        }
+                        // Clear noSSNReason if the applicant changes
+                        // their answer away from "No" — keeps the
+                        // draft model consistent with the flow's
+                        // conditional skip in `advance()`.
+                        if viewModel.answers.hasSSN != .no {
+                            viewModel.answers.noSSNReason = nil
+                        }
+                    }
+                )
+            )
+        }
+    }
+
+    /// Tier A no-SSN reason (BenefitsCal ABNSN). Shown only when
+    /// hasSSN == .no. Never asks for digits.
+    private var noSSNReasonScreen: some View {
+        let options = SNAPNoSSNReason.allCases
+        return CivicaQuestionScreen(
+            progress: progress(for: .noSSNReason),
+            title: SNAPHouseholdQuestionStrings.noSSNReasonTitle.value(in: language),
+            helper: SNAPHouseholdQuestionStrings.noSSNReasonHelper.value(in: language),
+            primaryActionTitle: CivicaQuestionStrings.continueLabel.value(in: language),
+            primaryActionEnabled: viewModel.canAdvanceFromCurrentStep,
+            onPrimary: advanceOrComplete,
+            language: language
+        ) {
+            CivicaQuestionChoices(
+                options: options.map {
+                    SNAPHouseholdQuestionStrings.noSSNReasonLabel(for: $0, language: language)
+                },
+                selection: Binding(
+                    get: {
+                        viewModel.answers.noSSNReason.map {
+                            SNAPHouseholdQuestionStrings.noSSNReasonLabel(for: $0, language: language)
+                        }
+                    },
+                    set: { label in
+                        viewModel.answers.noSSNReason = options.first { reason in
+                            SNAPHouseholdQuestionStrings.noSSNReasonLabel(for: reason, language: language) == label
+                        }
+                    }
+                )
+            )
+        }
+    }
+
     // MARK: - Screen 3: elderly / disabled in household?
 
     private var elderlyOrDisabledScreen: some View {
@@ -626,6 +776,68 @@ enum SNAPHouseholdQuestionStrings {
         case (.no, .spanish):      return "No"
         case (.notSure, .english), (.notSure, .mandarin), (.notSure, .vietnamese), (.notSure, .tagalog): return "I'm not sure"
         case (.notSure, .spanish): return "No estoy seguro"
+        }
+    }
+
+    // MARK: - SSN intent + reason (Tier A only — never digits)
+    // Phase 1 of issue #423. See the PRIVACY FIREWALL comment block
+    // in this file above `SNAPHouseholdAnswers` for the policy.
+
+    static let ssnIntentTitle = CivicaText(
+        "Do you have a Social Security Number?",
+        es: "¿Tienes un número de Seguro Social?"
+    )
+    static let ssnIntentHelper = CivicaText(
+        "We never ask for or store the digits. We only ask whether you have one so the SNAP application can be filled out correctly.",
+        es: "Nunca pedimos ni guardamos los dígitos. Solo preguntamos si tienes uno para que la solicitud de SNAP pueda completarse correctamente."
+    )
+
+    static func ssnIntentLabel(for value: SNAPTri, language: CivicaLanguage) -> String {
+        switch (value, language) {
+        case (.yes, .english), (.yes, .mandarin), (.yes, .vietnamese), (.yes, .tagalog):     return "Yes"
+        case (.yes, .spanish):     return "Sí"
+        case (.no, .english), (.no, .mandarin), (.no, .vietnamese), (.no, .tagalog):      return "No"
+        case (.no, .spanish):      return "No"
+        // The third option ("Applied for one") reuses the .notSure
+        // case from SNAPTri to avoid a parallel enum that doesn't
+        // carry any extra meaning. Label text is the BenefitsCal-
+        // accurate phrasing.
+        case (.notSure, .english), (.notSure, .mandarin), (.notSure, .vietnamese), (.notSure, .tagalog): return "I've applied for one"
+        case (.notSure, .spanish): return "He solicitado uno"
+        }
+    }
+
+    static let noSSNReasonTitle = CivicaText(
+        "Why don't you have a Social Security Number?",
+        es: "¿Por qué no tienes un número de Seguro Social?"
+    )
+    static let noSSNReasonHelper = CivicaText(
+        "California asks this to know which path the SNAP application should follow. You can pick \"Prefer not to say\" — your benefits aren't affected by which option you choose.",
+        es: "California pregunta esto para saber qué vía debe seguir la solicitud de SNAP. Puedes elegir \"Prefiero no decir\" — tus beneficios no se ven afectados por la opción que elijas."
+    )
+
+    static func noSSNReasonLabel(for value: SNAPNoSSNReason, language: CivicaLanguage) -> String {
+        switch (value, language) {
+        case (.usCitizenNeverApplied, .english), (.usCitizenNeverApplied, .mandarin), (.usCitizenNeverApplied, .vietnamese), (.usCitizenNeverApplied, .tagalog):
+            return "U.S. citizen who has never applied"
+        case (.usCitizenNeverApplied, .spanish):
+            return "Ciudadano/a estadounidense que nunca ha solicitado uno"
+        case (.nonCitizenExempt, .english), (.nonCitizenExempt, .mandarin), (.nonCitizenExempt, .vietnamese), (.nonCitizenExempt, .tagalog):
+            return "Non-citizen who isn't required to have one"
+        case (.nonCitizenExempt, .spanish):
+            return "No ciudadano/a que no está obligado/a a tener uno"
+        case (.religiousObjection, .english), (.religiousObjection, .mandarin), (.religiousObjection, .vietnamese), (.religiousObjection, .tagalog):
+            return "Religious objection"
+        case (.religiousObjection, .spanish):
+            return "Objeción religiosa"
+        case (.other, .english), (.other, .mandarin), (.other, .vietnamese), (.other, .tagalog):
+            return "Another reason"
+        case (.other, .spanish):
+            return "Otra razón"
+        case (.preferNotToSay, .english), (.preferNotToSay, .mandarin), (.preferNotToSay, .vietnamese), (.preferNotToSay, .tagalog):
+            return "Prefer not to say"
+        case (.preferNotToSay, .spanish):
+            return "Prefiero no decir"
         }
     }
 }
