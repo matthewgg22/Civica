@@ -10,13 +10,13 @@ enum EBTPerksStrings {
         "PERKS FOR YOU",
         es: "BENEFICIOS PARA TI",
         zh: "为你准备的优惠",
-        vi: "ƯU ĐÃI DÀNH CHO BẠN"
+        vi: "ƯU ĐÃI CHO BẠN"
     )
     static let freeResourcesEyebrow = CivicaText(
         "FREE RESOURCES NEAR YOU",
         es: "RECURSOS GRATUITOS CERCA",
         zh: "你附近的免费资源",
-        vi: "NGUỒN HỖ TRỢ MIỄN PHÍ GẦN BẠN"
+        vi: "TÀI NGUYÊN MIỄN PHÍ GẦN BẠN"
     )
     static let savingsLabel = CivicaText(
         "est. savings",
@@ -34,13 +34,13 @@ enum EBTPerksStrings {
         "How much did you save?",
         es: "¿Cuánto ahorraste?",
         zh: "你省了多少?",
-        vi: "Bạn đã tiết kiệm bao nhiêu?"
+        vi: "Bạn đã tiết kiệm được bao nhiêu?"
     )
     static let redeemConfirmBody = CivicaText(
         "We'll add it to your Saved by Civica total.",
         es: "Lo añadiremos a tu total Ahorrado con Civica.",
         zh: "我们会把它加到你的 Civica 累计省钱总额里。",
-        vi: "Chúng tôi sẽ cộng vào tổng số tiền bạn Tiết kiệm cùng Civica."
+        vi: "Chúng tôi sẽ cộng vào tổng số tiền bạn đã Tiết kiệm với Civica."
     )
 
     /// Confirm-sheet primary button. Custom-dollars path.
