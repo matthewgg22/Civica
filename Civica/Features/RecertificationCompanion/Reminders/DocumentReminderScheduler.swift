@@ -120,7 +120,8 @@ enum DocumentReminderStrings {
         CivicaText(
             "\(documentLabel): not yet uploaded",
             es: "\(documentLabel): aún no subido",
-            zh: "\(documentLabel)：尚未上传"
+            zh: "\(documentLabel)：尚未上传",
+            vi: "\(documentLabel): chưa tải lên"
         )
     }
 
@@ -128,7 +129,8 @@ enum DocumentReminderStrings {
         CivicaText(
             "\(documentLabel): time for a fresh copy",
             es: "\(documentLabel): hora de una nueva copia",
-            zh: "\(documentLabel)：该换一份新的了"
+            zh: "\(documentLabel)：该换一份新的了",
+            vi: "\(documentLabel): đã đến lúc tải bản mới"
         )
     }
 
@@ -136,7 +138,8 @@ enum DocumentReminderStrings {
         CivicaText(
             "\(documentLabel): due for a fresh copy",
             es: "\(documentLabel): necesita una nueva copia",
-            zh: "\(documentLabel)：需要一份新的"
+            zh: "\(documentLabel)：需要一份新的",
+            vi: "\(documentLabel): cần một bản mới"
         )
     }
 
@@ -144,7 +147,8 @@ enum DocumentReminderStrings {
         CivicaText(
             "Your \(documentLabel.lowercased()) is about to age out for your \(recertMonth) recert. Take 30 seconds to upload a fresh one.",
             es: "Tu \(documentLabel.lowercased()) está por vencer para tu recertificación de \(recertMonth). Toma 30 segundos para subir una nueva.",
-            zh: "你的 \(documentLabel.lowercased()) 即将过期，赶不上 \(recertMonth) 的复审。花 30 秒上传一份新的。"
+            zh: "你的 \(documentLabel.lowercased()) 即将过期，赶不上 \(recertMonth) 的复审。花 30 秒上传一份新的。",
+            vi: "\(documentLabel.lowercased()) của bạn sắp hết hạn cho kỳ tái chứng nhận tháng \(recertMonth). Dành 30 giây để tải lên bản mới."
         )
     }
 }
