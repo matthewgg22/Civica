@@ -18,7 +18,7 @@ enum EBTAnomalyStrings {
         "Unusual spending detected — large purchases in the last 2 minutes.",
         es: "Se detectó un gasto inusual: compras grandes en los últimos 2 minutos.",
         zh: "检测到异常消费 — 最近 2 分钟内有大额购买。",
-        vi: "Phát hiện chi tiêu bất thường — có giao dịch mua lớn trong 2 phút qua."
+        vi: "Phát hiện chi tiêu bất thường — có giao dịch mua lớn trong 2 phút vừa qua."
     )
 
     /// Transaction flood alert: more than 5 transactions in 10 minutes.
@@ -26,7 +26,7 @@ enum EBTAnomalyStrings {
         "Multiple charges in a short time — please review your recent activity.",
         es: "Varios cargos en poco tiempo. Por favor, revisa tu actividad reciente.",
         zh: "短时间内出现多笔扣款 — 请查看你最近的交易记录。",
-        vi: "Nhiều khoản trừ tiền trong thời gian ngắn — vui lòng xem lại hoạt động gần đây của bạn."
+        vi: "Có nhiều khoản trừ tiền trong thời gian ngắn — vui lòng xem lại hoạt động gần đây của bạn."
     )
 
     /// Cross-state use alert: merchant appears to be outside California.
@@ -34,7 +34,7 @@ enum EBTAnomalyStrings {
         "Out-of-state purchase detected. If you're not traveling, your card may be compromised.",
         es: "Se detectó una compra fuera de California. Si no estás viajando, es posible que tu tarjeta esté comprometida.",
         zh: "检测到加州以外的消费。如果你没有外出旅行,你的卡可能已被盗用。",
-        vi: "Phát hiện giao dịch mua ngoài California. Nếu bạn không đi xa, thẻ của bạn có thể đã bị xâm phạm."
+        vi: "Phát hiện giao dịch mua ngoài tiểu bang. Nếu bạn không đi du lịch, thẻ của bạn có thể đã bị xâm phạm."
     )
 
     // MARK: - Payday note
@@ -53,21 +53,21 @@ enum EBTAnomalyStrings {
         "I'm traveling — mute alerts for 30 days",
         es: "Estoy viajando: silenciar alertas por 30 días",
         zh: "我在旅行中 — 静音提醒 30 天",
-        vi: "Tôi đang đi xa — tắt cảnh báo trong 30 ngày"
+        vi: "Tôi đang đi du lịch — tắt thông báo trong 30 ngày"
     )
 
     static let travelMuteConfirm = CivicaText(
         "Out-of-state alerts muted for 30 days.",
         es: "Las alertas fuera del estado están silenciadas por 30 días.",
         zh: "州外消费提醒已静音 30 天。",
-        vi: "Cảnh báo ngoài tiểu bang đã được tắt trong 30 ngày."
+        vi: "Đã tắt thông báo ngoài tiểu bang trong 30 ngày."
     )
 
     static let travelMuteActive = CivicaText(
         "Travel mode active — out-of-state alerts muted.",
         es: "Modo de viaje activo: alertas fuera del estado silenciadas.",
         zh: "旅行模式已开启 — 州外消费提醒已静音。",
-        vi: "Chế độ đi xa đang bật — cảnh báo ngoài tiểu bang đã được tắt."
+        vi: "Chế độ du lịch đang bật — đã tắt thông báo ngoài tiểu bang."
     )
 
     // MARK: - Detail view
@@ -76,14 +76,14 @@ enum EBTAnomalyStrings {
         "Alert Details",
         es: "Detalles de la alerta",
         zh: "提醒详情",
-        vi: "Chi tiết cảnh báo"
+        vi: "Chi tiết thông báo"
     )
 
     static let detailTransactionsHeader = CivicaText(
         "Flagged transactions",
         es: "Transacciones marcadas",
         zh: "被标记的交易",
-        vi: "Giao dịch bị gắn cờ"
+        vi: "Các giao dịch bị đánh dấu"
     )
 
     static let detailActionsHeader = CivicaText(
