@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { STORAGE_KEY, type Locale } from "../i18n";
 import { snapT } from "../../lib/i18n/snap-copy";
@@ -8,6 +8,14 @@ import { snapT } from "../../lib/i18n/snap-copy";
 type Mode = { kind: "phone" } | { kind: "otp"; phone: string };
 
 export default function SignInPage() {
+  return (
+    <Suspense fallback={<div className="signin-page" />}>
+      <SignInForm />
+    </Suspense>
+  );
+}
+
+function SignInForm() {
   const router = useRouter();
   const search = useSearchParams();
   const next = search.get("next") ?? "/apply";

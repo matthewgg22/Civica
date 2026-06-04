@@ -1,8 +1,5 @@
 // TypeScript mirror of HTTPEnrollmentAPIClient.swift. Every method here
-// targets the same path on the Hono gateway that iOS targets. Two flavors:
-//
-//   enrollmentClient()       — server-side, reads JWT from HttpOnly cookies
-//   enrollmentClientBearer() — call with an explicit bearer, used by tests
+// targets the same path on the Hono gateway that iOS targets.
 //
 // We do NOT expose a browser-side client because the access token is
 // HttpOnly. Browser code hits Next.js Route Handlers under /api/enrollment/*
@@ -14,7 +11,6 @@ import type {
   EnrollmentPacket,
   EnrollmentDocument,
   EnrollmentInboxItem,
-  ErrorRiskResult,
   DocumentKind,
 } from "./types";
 
@@ -152,19 +148,9 @@ function makeClient(getToken: () => Promise<string | null>) {
     async fetchInbox(): Promise<EnrollmentInboxItem[]> {
       return getJSON<EnrollmentInboxItem[]>("/me/inbox");
     },
-
-    // Error risk (navigator route; surfaced to applicant on submission preview)
-
-    async fetchErrorRisk(packetId: string): Promise<ErrorRiskResult> {
-      return postJSON<ErrorRiskResult>(`/navigator/packets/${packetId}/error-risk`);
-    },
   };
 }
 
 export function enrollmentClient() {
   return makeClient(currentAccessToken);
-}
-
-export function enrollmentClientBearer(bearerToken: string) {
-  return makeClient(async () => bearerToken);
 }

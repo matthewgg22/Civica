@@ -1,12 +1,24 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { STORAGE_KEY, type Locale } from "../../i18n";
 import { snapT } from "../../../lib/i18n/snap-copy";
 
+// useSearchParams() bails out of static rendering — without a Suspense
+// boundary, Next 16 fails the static-page generation pass. Wrapping the
+// inner component lets the shell pre-render while the search-param read
+// happens client-side after hydration.
 export default function NextStepsPage() {
+  return (
+    <Suspense fallback={<div className="next-steps">…</div>}>
+      <NextStepsContent />
+    </Suspense>
+  );
+}
+
+function NextStepsContent() {
   const search = useSearchParams();
   const packetId = search.get("packet") ?? "";
   const [locale, setLocale] = useState<Locale>("en");
