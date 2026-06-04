@@ -259,12 +259,14 @@ enum SNAPAppealLetterStrings {
     static let documentTitle = CivicaText(
         "SNAP Fair-Hearing Appeal Letter",
         es: "Carta de apelación para audiencia justa de SNAP",
-        zh: "SNAP 公平听证申诉信"
+        zh: "SNAP 公平听证申诉信",
+        vi: "Thư kháng nghị điều trần công bằng SNAP"
     )
     static let documentSubject = CivicaText(
         "Civica-generated SNAP fair-hearing request template",
         es: "Plantilla de solicitud de audiencia justa de SNAP generada por Civica",
-        zh: "由 Civica 生成的 SNAP 公平听证申请模板"
+        zh: "由 Civica 生成的 SNAP 公平听证申请模板",
+        vi: "Mẫu yêu cầu điều trần công bằng SNAP do Civica tạo"
     )
 
     static func recipientLines(language: CivicaLanguage, stateCode: String) -> [String] {
@@ -274,7 +276,8 @@ enum SNAPAppealLetterStrings {
     static let subjectLine = CivicaText(
         "Re: Request for Fair Hearing — SNAP Application Denial",
         es: "Asunto: Solicitud de audiencia justa — Denegación de solicitud de SNAP",
-        zh: "事由:申请公平听证 — SNAP 申请被拒"
+        zh: "事由:申请公平听证 — SNAP 申请被拒",
+        vi: "V/v: Yêu cầu điều trần công bằng — Đơn xin SNAP bị từ chối"
     )
 
     static func salutation(language: CivicaLanguage, stateCode: String) -> String {
@@ -282,30 +285,36 @@ enum SNAPAppealLetterStrings {
         switch stateCode.uppercased() {
         case "CA":
             switch language {
-            case .english, .vietnamese, .tagalog:
+            case .english, .tagalog:
                 officeName = "Dear State Hearings Division,"
             case .spanish:
                 officeName = "Estimada División de Audiencias del Estado,"
             case .mandarin:
                 officeName = "州听证处 您好:"
+            case .vietnamese:
+                officeName = "Kính gửi Phòng Điều trần Tiểu bang,"
             }
         case "MA":
             switch language {
-            case .english, .vietnamese, .tagalog:
+            case .english, .tagalog:
                 officeName = "Dear DTA Hearing Office,"
             case .spanish:
                 officeName = "Estimada Oficina de Audiencias del DTA,"
             case .mandarin:
                 officeName = "DTA 听证办公室 您好:"
+            case .vietnamese:
+                officeName = "Kính gửi Văn phòng Điều trần DTA,"
             }
         default:
             switch language {
-            case .english, .vietnamese, .tagalog:
+            case .english, .tagalog:
                 officeName = "Dear State SNAP Hearing Office,"
             case .spanish:
                 officeName = "Estimada Oficina Estatal de Audiencias de SNAP,"
             case .mandarin:
                 officeName = "州 SNAP 听证办公室 您好:"
+            case .vietnamese:
+                officeName = "Kính gửi Văn phòng Điều trần SNAP Tiểu bang,"
             }
         }
         return officeName
@@ -313,7 +322,7 @@ enum SNAPAppealLetterStrings {
 
     static func bodyParagraphs(language: CivicaLanguage) -> [String] {
         switch language {
-        case .english, .vietnamese, .tagalog:
+        case .english, .tagalog:
             return [
                 "I am requesting a fair hearing to appeal the denial of my SNAP (Supplemental Nutrition Assistance Program) application. I am submitting this request within the 90-day window allowed under 7 CFR 273.15.",
                 "I believe the denial decision should be reconsidered. I would like the opportunity to present my case and any supporting information at the hearing."
@@ -328,12 +337,17 @@ enum SNAPAppealLetterStrings {
                 "我申请公平听证,就我的 SNAP(补充营养援助计划)申请被拒一事提出申诉。我在 7 CFR 273.15 允许的 90 天期限内提交此申请。",
                 "我认为该拒绝决定应被重新审议。我希望有机会在听证会上陈述我的情况并提交相关证明材料。"
             ]
+        case .vietnamese:
+            return [
+                "Tôi yêu cầu một buổi điều trần công bằng để kháng nghị việc từ chối đơn xin SNAP (Chương trình Hỗ trợ Dinh dưỡng Bổ sung) của tôi. Tôi gửi yêu cầu này trong thời hạn 90 ngày được cho phép theo 7 CFR 273.15.",
+                "Tôi tin rằng quyết định từ chối cần được xem xét lại. Tôi mong có cơ hội trình bày trường hợp của mình và cung cấp các thông tin chứng minh tại buổi điều trần."
+            ]
         }
     }
 
     static func fillInLines(language: CivicaLanguage) -> [String] {
         switch language {
-        case .english, .vietnamese, .tagalog:
+        case .english, .tagalog:
             return [
                 "My information:",
                 "    Name:             ________________________________",
@@ -363,12 +377,22 @@ enum SNAPAppealLetterStrings {
                 "    案件编号:         ________________________________",
                 "    拒绝日期:         ________________________________"
             ]
+        case .vietnamese:
+            return [
+                "Thông tin của tôi:",
+                "    Họ và tên:        ________________________________",
+                "    Địa chỉ:          ________________________________",
+                "                      ________________________________",
+                "    Điện thoại:       ________________________________",
+                "    Số hồ sơ:         ________________________________",
+                "    Ngày từ chối:     ________________________________"
+            ]
         }
     }
 
     static func hearingPreferenceLines(language: CivicaLanguage) -> [String] {
         switch language {
-        case .english, .vietnamese, .tagalog:
+        case .english, .tagalog:
             return [
                 "I am requesting:",
                 "    [ ]  An in-person hearing",
@@ -386,18 +410,25 @@ enum SNAPAppealLetterStrings {
                 "    [ ]  当面听证",
                 "    [ ]  电话听证"
             ]
+        case .vietnamese:
+            return [
+                "Tôi yêu cầu:",
+                "    [ ]  Điều trần trực tiếp",
+                "    [ ]  Điều trần qua điện thoại"
+            ]
         }
     }
 
     static let continuedBenefitsParagraph = CivicaText(
         "If applicable, I am also requesting that my SNAP benefits continue pending the hearing decision.",
         es: "Si aplica, también solicito que mis beneficios de SNAP continúen mientras se decide la audiencia.",
-        zh: "如适用,我也申请在听证决定作出之前继续发放我的 SNAP 福利。"
+        zh: "如适用,我也申请在听证决定作出之前继续发放我的 SNAP 福利。",
+        vi: "Nếu phù hợp, tôi cũng yêu cầu tiếp tục nhận trợ cấp SNAP trong khi chờ quyết định điều trần."
     )
 
-    static let closing = CivicaText("Sincerely,", es: "Atentamente,", zh: "此致")
-    static let signatureLabel = CivicaText("Signature", es: "Firma", zh: "签名")
-    static let dateLabel = CivicaText("Date", es: "Fecha", zh: "日期")
+    static let closing = CivicaText("Sincerely,", es: "Atentamente,", zh: "此致", vi: "Trân trọng,")
+    static let signatureLabel = CivicaText("Signature", es: "Firma", zh: "签名", vi: "Chữ ký")
+    static let dateLabel = CivicaText("Date", es: "Fecha", zh: "日期", vi: "Ngày")
 
     static func footerDisclosure(language: CivicaLanguage, stateCode: String, today: String) -> String {
         let portal = SNAPAgencyDirectory.portalName(for: stateCode)
@@ -405,23 +436,27 @@ enum SNAPAppealLetterStrings {
         let portalSuffix: String
         if !portal.isEmpty {
             switch language {
-            case .english, .vietnamese, .tagalog:
+            case .english, .tagalog:
                 portalSuffix = ", or submit through \(portal) (\(portalURL))"
             case .spanish:
                 portalSuffix = ", o envíalo a través de \(portal) (\(portalURL))"
             case .mandarin:
                 portalSuffix = ",或通过 \(portal)(\(portalURL))提交"
+            case .vietnamese:
+                portalSuffix = ", hoặc nộp qua \(portal) (\(portalURL))"
             }
         } else {
             portalSuffix = ""
         }
         switch language {
-        case .english, .vietnamese, .tagalog:
+        case .english, .tagalog:
             return "Prepared with Civica on \(today). This is a personal reference document — sign and date by hand before mailing to the hearing office above\(portalSuffix)."
         case .spanish:
             return "Preparado con Civica el \(today). Este es un documento personal de referencia — firma y fecha a mano antes de enviar por correo a la oficina de audiencias arriba\(portalSuffix)."
         case .mandarin:
             return "由 Civica 于 \(today) 准备。这是一份个人参考文件 — 请手写签名和日期,然后邮寄至上方的听证办公室\(portalSuffix)。"
+        case .vietnamese:
+            return "Soạn bằng Civica vào ngày \(today). Đây là tài liệu tham khảo cá nhân — hãy ký tên và ghi ngày bằng tay trước khi gửi qua bưu điện đến văn phòng điều trần ở trên\(portalSuffix)."
         }
     }
 }
