@@ -8,7 +8,14 @@ import { ACCESS_TOKEN_COOKIE, REFRESH_TOKEN_COOKIE } from "./lib/cookie-keys";
 const PROTECTED_PREFIXES = ["/apply", "/documents", "/status"];
 
 export function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+  const { pathname, searchParams } = request.nextUrl;
+
+  // Demo mode (?demo=1) is public on /status — lets the applicant dashboard
+  // be product-demo-able without a phone-OTP login. The page renders sample
+  // data and never touches the gateway in this mode.
+  if (pathname === "/status" && searchParams.get("demo") === "1") {
+    return NextResponse.next();
+  }
 
   const needsAuth = PROTECTED_PREFIXES.some((p) => pathname === p || pathname.startsWith(`${p}/`));
   if (!needsAuth) return NextResponse.next();
