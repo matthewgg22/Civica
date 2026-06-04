@@ -188,29 +188,34 @@ enum AppealExportStrings {
     static let title = CivicaText(
         "Send your appeal",
         es: "Envía tu apelación",
-        zh: "发送你的申诉"
+        zh: "发送你的申诉",
+        vi: "Gửi đơn kháng nghị của bạn"
     )
     static let shareCTA = CivicaText(
         "Save as PDF or send",
         es: "Guardar PDF o enviar",
-        zh: "保存为 PDF 或发送"
+        zh: "保存为 PDF 或发送",
+        vi: "Lưu dưới dạng PDF hoặc gửi"
     )
     static let copyCTA = CivicaText(
         "Copy text",
         es: "Copiar texto",
-        zh: "复制文本"
+        zh: "复制文本",
+        vi: "Sao chép văn bản"
     )
 
     static func portalCTA(state: String) -> CivicaText {
         CivicaText(
             "Open the \(state) benefits portal",
             es: "Abrir el portal de beneficios de \(state)",
-            zh: "打开 \(state) 福利门户"
+            zh: "打开 \(state) 福利门户",
+            vi: "Mở cổng phúc lợi \(state)"
         )
     }
     static let cancel = CivicaText(
         "Cancel",
         es: "Cancelar",
-        zh: "取消"
+        zh: "取消",
+        vi: "Hủy"
     )
 }
