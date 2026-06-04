@@ -103,7 +103,7 @@ export default async function CountyCompliancePage({
           <Link href="/compliance" className="flex items-center gap-2.5 group" prefetch={false}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src="/civica-mark.svg"
+              src="/civica-wheat-mark.png"
               alt="Civica"
               width={28}
               height={28}
