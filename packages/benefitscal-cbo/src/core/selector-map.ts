@@ -179,6 +179,15 @@ export interface PortalPage {
   advanceButton?: FieldSelector;
   /** True for pages with no fields (info screens / pure navigation). */
   infoOnly?: boolean;
+  /**
+   * True for pages that repeat once per household member (step 2 People
+   * sub-flow). The extension uses a sessionStorage member-index counter so
+   * each repetition fills the correct household_members[N] element.
+   * Source paths on repeating pages use [] as an index placeholder
+   * (e.g. "household_members[].first_name"); content.ts rewrites them to
+   * "household_members[N].first_name" before resolving.
+   */
+  repeating?: boolean;
 }
 
 // ---------------------------------------------------------------------------
@@ -1016,6 +1025,166 @@ export const PORTAL_PAGES: PortalPage[] = [
         type: "radio",
         note: "name=gender; 7 options (indexed 0-6) not enumerated in walk",
       },
+    },
+    advanceButton: NEXT_BUTTON,
+  },
+
+  // ---------------------------------------------------------------------------
+  // Step 2 — People (household members sub-flow)
+  //
+  // Walk source: form-tree.json §sections[1], captured 2026-05-29 (partial).
+  // All 7 pages confirmed present in the production CBO walk under VoteNow.
+  //
+  // Repeating pages (ABNMI_MEMBER … ABHAD) use [] source-path placeholders.
+  // content.ts rewrites [] → [memberIndex] before resolving each field so
+  // household_members[0] fills on the first member pass, [1] on the second,
+  // etc. The member index increments each time ABNMI_MEMBER is detected.
+  //
+  // ABNMI_MEMBER shares its urlPattern with step-1 ABNMI (same portal page
+  // code, same URL — the portal reuses the name form for every household
+  // member). Content.ts disambiguates via the civica.inPeopleSection session
+  // flag set when ABHSD is detected.
+  // ---------------------------------------------------------------------------
+
+  {
+    // Gate: "Do you have other people living in your household?"
+    // presenceOf: "household_members[0]" → Yes if array is non-empty, else No.
+    pageCode: "ABHSD",
+    title: "Household members gate (do you have other people?)",
+    urlPattern: /\/ApplyForBenefits\/ABHSD/,
+    step: 2,
+    fields: {
+      otherHouseholdMembers: {
+        label: "Do you have other people living in your household?",
+        fallbackSelector: "[name=hshld_radiogrp]",
+        type: "radio",
+        presenceOf: "household_members[0]",
+        options: {
+          present: {
+            label: "Yes",
+            fallbackSelector: "#hshld_radiogrp_0",
+            type: "radio",
+          },
+          absent: {
+            label: "No",
+            fallbackSelector: "#hshld_radiogrp_1",
+            type: "radio",
+          },
+        },
+      },
+    },
+    advanceButton: NEXT_BUTTON,
+  },
+
+  {
+    // Per-member name page. Same URL as step-1 ABNMI — content.ts resolves
+    // the collision via civica.inPeopleSection session flag.
+    // Uses [] source paths; content.ts rewrites to [memberIndex] at fill time.
+    pageCode: "ABNMI_MEMBER",
+    title: "Household member name (step 2, repeating)",
+    urlPattern: /\/ApplyForBenefits\/ABNMI/,
+    step: 2,
+    repeating: true,
+    fields: {
+      firstName: {
+        label: "First Name (required)",
+        fallbackSelector: "#text1",
+        type: "text",
+        required: true,
+        source: "household_members[0].first_name",
+      },
+      lastName: {
+        label: "Last Name (required)",
+        fallbackSelector: "#text3",
+        type: "text",
+        required: true,
+        source: "household_members[0].last_name",
+      },
+      // Middle name, suffix, other names have no schema source → needs-review.
+    },
+    advanceButton: NEXT_BUTTON,
+  },
+
+  {
+    // Relationship to primary applicant. select#optiongroup (UUID id — resolve
+    // by label). Option list not captured in walk; label-based resolveOption
+    // handles common values (Spouse, Child/Stepchild, Parent, Sibling…).
+    pageCode: "ABHHR",
+    title: "Relationship to applicant (step 2, repeating)",
+    urlPattern: /\/ApplyForBenefits\/ABHHR/,
+    step: 2,
+    repeating: true,
+    fields: {
+      relationship: {
+        label: "How is",
+        fallbackSelector: "select#optiongroup",
+        type: "select",
+        source: "household_members[0].relationship",
+        note: "Label contains member name interpolation; fallback selector is stable.",
+      },
+    },
+    advanceButton: NEXT_BUTTON,
+  },
+
+  {
+    // Program inclusion — always check CalFresh (#snap) for each member.
+    // constant: "true" on the checkbox (same pattern as ABPRI CalFresh).
+    pageCode: "ABPSM",
+    title: "Member program inclusion — CalFresh (step 2, repeating)",
+    urlPattern: /\/ApplyForBenefits\/ABPSM/,
+    step: 2,
+    repeating: true,
+    fields: {
+      includedInSnap: {
+        label: "Food (CalFresh)",
+        fallbackSelector: "input[type=checkbox]#snap",
+        type: "checkbox",
+        required: true,
+        constant: "true",
+        note: "Civica always checks CalFresh for each member (constant, not packet data).",
+      },
+      // doesNotApply checkbox: never checked by Civica (no source, no constant).
+    },
+    advanceButton: NEXT_BUTTON,
+  },
+
+  {
+    // "Do you buy and prepare food together?" — not in BenefitsCalPayload schema.
+    // Left as info-only/needs-review for v1; the assister answers manually.
+    pageCode: "ABBPF",
+    title: "Buy and prepare food together? (step 2, repeating)",
+    urlPattern: /\/ApplyForBenefits\/ABBPF/,
+    step: 2,
+    repeating: true,
+    fields: {
+      // buys_food_together not in schema → needs-review
+    },
+    advanceButton: NEXT_BUTTON,
+  },
+
+  {
+    // "Does <name> live with you?" — not in schema; assister answers manually.
+    pageCode: "ABLNA",
+    title: "Member lives with applicant? (step 2, repeating)",
+    urlPattern: /\/ApplyForBenefits\/ABLNA/,
+    step: 2,
+    repeating: true,
+    fields: {
+      // lives_with_applicant not in schema → needs-review
+    },
+    advanceButton: NEXT_BUTTON,
+  },
+
+  {
+    // Member's address — only appears when ABLNA = No (member lives elsewhere).
+    // HouseholdMember schema has no address fields in v1 → needs-review.
+    pageCode: "ABHAD",
+    title: "Member address (only if not living with applicant, step 2)",
+    urlPattern: /\/ApplyForBenefits\/ABHAD/,
+    step: 2,
+    repeating: true,
+    fields: {
+      // address fields not in HouseholdMember schema → needs-review
     },
     advanceButton: NEXT_BUTTON,
   },

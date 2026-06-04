@@ -75,8 +75,31 @@ const STEP_1_CODES: readonly string[] = PORTAL_PAGES.filter(
 // Multi-program flows include step 6.
 // ---------------------------------------------------------------------------
 
-/** Step 2 — People in household (both flows). */
-const STEP_2_CODES: readonly string[] = [];
+/**
+ * Step 2 — People in household (both flows, PR4 #314).
+ *
+ * ABHSD  — gate ("do you have other members?")
+ * ABNMI_MEMBER — per-member name (repeating; same URL as step-1 ABNMI)
+ * ABHHR  — relationship to applicant (repeating)
+ * ABPSM  — program inclusion / CalFresh checkbox (repeating)
+ * ABBPF  — buy and prepare food together (repeating, no source → needs-review)
+ * ABLNA  — does member live with applicant? (repeating, no source → needs-review)
+ * ABHAD  — member address only when ABLNA = No (repeating, conditional)
+ *
+ * All repeating pages use [0] source paths; content.ts wraps the payload
+ * in a proxy (scopePayloadForMember) that places household_members[N] at
+ * index [0] for each member fill. ABHSD gates the sub-flow so solo
+ * applicants (household_members = []) skip the member loop.
+ */
+const STEP_2_CODES: readonly string[] = [
+  "ABHSD",
+  "ABNMI_MEMBER",
+  "ABHHR",
+  "ABPSM",
+  "ABBPF",
+  "ABLNA",
+  "ABHAD",
+];
 
 /** Step 3 — Household details (both flows). */
 const STEP_3_CODES: readonly string[] = [];
@@ -110,11 +133,11 @@ const STEP_9_CODES: readonly string[] = [];
  * Returns the ordered list of pageCodes the extension should expect to walk
  * for the given payload and staff-selected flow type.
  *
- * @param _payload  - The prepared BenefitsCalPayload for this applicant. Not
- *                    used at PR1 time (steps 2-9 stubs are empty), but included
- *                    in the signature so PR4/PR5 can gate on payload data (e.g.
- *                    `payload.household_members.length > 0` to include People)
- *                    without a signature change.
+ * @param _payload  - The prepared BenefitsCalPayload for this applicant.
+ *                    Currently unused (step-2 codes are always included; the
+ *                    ABHSD gate in the portal handles the solo-applicant fast
+ *                    path). Steps 3-9 may gate on payload data when their walk
+ *                    data lands.
  * @param flowType  - Staff-elected flow type. `undefined` → multi-program (D8).
  *
  * @returns Ordered array of pageCode strings.

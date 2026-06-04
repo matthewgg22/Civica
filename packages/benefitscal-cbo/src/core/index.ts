@@ -87,6 +87,11 @@ export type { TransformName } from "./transforms";
 // element it points at. Pure DOM; consumed by the browser extension.
 export { resolveField } from "./locate";
 
+// Household-member payload scoping (V1-5 PR4, #314). Wraps the payload so a
+// repeating step-2 page's `household_members[0].X` source paths resolve to the
+// Nth member. Pure compute; consumed by content.ts and the step-2 tests.
+export { scopePayloadForMember } from "./member-scope";
+
 // Radio/checkbox option-selection resolver (V1-6, #314). Turns a schema value
 // (or a constant / a presence test) into the specific option of a radio/checkbox
 // group to click — or a typed "needs-review" reason, never a default. Pure
