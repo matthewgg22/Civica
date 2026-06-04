@@ -1,0 +1,127 @@
+name: BenefitsCal canary (coarse, pre-walk)
+
+# Daily reachability + branding canary for the BenefitsCal CBO login page.
+#
+# WHAT THIS CATCHES: domain outage / non-200, a total rebrand (the
+# "BenefitsCal" branding disappears), or an SPA→non-SPA migration (the
+# `id="root"` mount point disappears). One unauthenticated GET/day to a
+# public gov page — well below any bot-detection threshold.
+#
+# WHAT THIS DOES *NOT* CATCH: field-level drift. The login page is a
+# client-rendered SPA — the server returns a ~5KB shell and the actual
+# form (inputs, county select, password field) is injected by JavaScript
+# after load. A curl-based canary cannot see those fields. Detecting
+# field-level drift needs (a) verified selectors from the V1-4 walk
+# (docs/runbooks/benefitscal-v1-4-walk-2026-06.md) and (b) a headless
+# browser. That is the post-walk upgrade — tracked in the eng review as
+# the "real" canary (eng D13). This coarse version ships now (closeout
+# T16) as an early-warning tripwire only.
+#
+# Alarm model: on drift, open (or comment on) a tracking issue. Does not
+# block any other CI. This is its own scheduled workflow.
+#
+# Cron: 0 13 * * *  = 13:00 UTC daily.
+
+on:
+  schedule:
+    - cron: "0 13 * * *"
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  canary:
+    name: Probe BenefitsCal login shell
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fetch login page + assert coarse signals
+        id: probe
+        run: |
+          set -uo pipefail
+          URL="https://benefitscal.com/cbo/login"
+          UA="Mozilla/5.0 (compatible; CivicaCanary/1.0; +https://github.com/matthewgg22/Civica)"
+
+          # One GET, follow redirects, capture status + body.
+          HTTP=$(curl -sS -L -A "$UA" --max-time 30 -o /tmp/bcal.html -w "%{http_code}" "$URL" || echo "000")
+          echo "http_status=$HTTP" >> "$GITHUB_OUTPUT"
+          BODY=$(cat /tmp/bcal.html 2>/dev/null || echo "")
+
+          FAILED=""
+          # Signal 1: HTTP 200.
+          if [ "$HTTP" != "200" ]; then
+            FAILED="${FAILED}- HTTP status was ${HTTP}, expected 200.\n"
+          fi
+          # Signal 2: BenefitsCal branding present (title is the stable anchor).
+          if ! printf '%s' "$BODY" | grep -qi "BenefitsCal"; then
+            FAILED="${FAILED}- 'BenefitsCal' branding not found in page body.\n"
+          fi
+          # Signal 3: SPA shell mount point present.
+          if ! printf '%s' "$BODY" | grep -qi 'id="root"'; then
+            FAILED="${FAILED}- SPA shell mount '<div id=\"root\">' not found — possible SPA→non-SPA migration.\n"
+          fi
+
+          if [ -n "$FAILED" ]; then
+            {
+              echo "drift=true"
+              echo "report<<EOF"
+              printf '%b' "$FAILED"
+              echo "EOF"
+            } >> "$GITHUB_OUTPUT"
+            echo "::warning::BenefitsCal coarse canary detected drift (see job output)."
+            printf '%b' "$FAILED"
+          else
+            echo "drift=false" >> "$GITHUB_OUTPUT"
+            echo "BenefitsCal coarse canary OK: HTTP 200 + branding + SPA shell present."
+          fi
+
+      - name: Open or update drift tracking issue
+        if: steps.probe.outputs.drift == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const report = `${{ steps.probe.outputs.report }}`;
+            const status = `${{ steps.probe.outputs.http_status }}`;
+            const title = "BenefitsCal canary: login-page drift detected";
+            const body = [
+              "The coarse BenefitsCal canary detected drift on the CBO login page.",
+              "",
+              "**Failed signals:**",
+              report,
+              "",
+              `Run: ${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
+              "",
+              "**What this means:** the login page changed in a way the coarse canary",
+              "noticed (non-200, lost branding, or SPA shell gone). Field-level drift",
+              "is NOT covered by this canary — see the workflow header. If the V1-4",
+              "walk fixtures are live, re-walk per `docs/runbooks/benefitscal-v1-4-walk-2026-06.md`.",
+              "",
+              "_Auto-filed by `.github/workflows/benefitscal-canary.yml`._",
+            ].join("\n");
+
+            // Reuse an existing open canary issue if one exists; else open one.
+            const existing = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: "open",
+              labels: "bug",
+              per_page: 100,
+            });
+            const match = existing.data.find(i => i.title === title);
+            if (match) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: match.number,
+                body,
+              });
+            } else {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title,
+                body,
+                labels: ["bug"],
+              });
+            }
