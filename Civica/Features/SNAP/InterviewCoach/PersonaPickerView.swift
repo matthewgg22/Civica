@@ -180,7 +180,8 @@ struct PersonaPickerView: View {
             HStack(alignment: .top, spacing: CivicaSpacing.xs) {
                 Image(systemName: icon)
                     .font(.title2)
-                    .foregroundStyle(isSelected ? CivicaColors.pinePrimary : CivicaColors.ink)
+                    // §2.2: selection glyph uses ink (matches CivicaQuestionChoices); pine reserved for CTAs.
+                    .foregroundStyle(CivicaColors.ink)
                     .accessibilityHidden(true)
                 Spacer(minLength: 0)
                 if showPreviewBadge {
@@ -209,13 +210,16 @@ struct PersonaPickerView: View {
         .frame(maxWidth: .infinity, minHeight: 132, alignment: .topLeading)
         .background(
             RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
+                // §2.2: selection fill uses surfaceSecondary, not a pine tint
+                // (pine = CTAs only; matches CivicaQuestionChoices).
                 .fill(isSelected
-                      ? CivicaColors.pinePrimary.opacity(0.10)
+                      ? CivicaColors.surfaceSecondary
                       : CivicaColors.surfacePrimary)
         )
         .overlay(
             RoundedRectangle(cornerRadius: CivicaRadius.card, style: .continuous)
-                .stroke(isSelected ? CivicaColors.pinePrimary : CivicaColors.hairline,
+                // §2.2: selection border uses ink, not pine.
+                .stroke(isSelected ? CivicaColors.ink : CivicaColors.hairline,
                         lineWidth: isSelected ? 2 : 1)
         )
         .contentShape(Rectangle())

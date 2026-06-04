@@ -52,7 +52,8 @@ struct SNAPExpeditedBanner: View {
                 Image(systemName: "bolt.fill")
                     .imageScale(.large)
                     .font(.body)
-                    .foregroundStyle(CivicaColors.pinePrimary)
+                    // §2.2: decorative leading glyph uses accentTeal, not pine (CTA-only).
+                    .foregroundStyle(CivicaColors.accentTeal)
                     .frame(width: 24, alignment: .leading)
                     .accessibilityHidden(true)
                 VStack(alignment: .leading, spacing: CivicaSpacing.xs) {

@@ -33,7 +33,8 @@ private struct LoadingWaveDots: View {
         HStack(spacing: 10) {
             ForEach(0..<3, id: \.self) { index in
                 Circle()
-                    .fill(CivicaColors.pinePrimary)
+                    // §2.2: loading dots are decorative, not a CTA — graphite.
+                    .fill(CivicaColors.graphite)
                     .frame(width: 11, height: 11)
                     .offset(y: animating ? -10 : 0)
                     .civicaAnimation(

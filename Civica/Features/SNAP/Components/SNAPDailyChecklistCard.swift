@@ -312,7 +312,12 @@ private struct SNAPDailyChecklistRow: View {
                         // the column hard to scan. Title3 puts the
                         // glyph at ~26pt visual width.
                         .font(.title3)
-                        .foregroundStyle(checked ? CivicaColors.pinePrimary : CivicaColors.graphite.opacity(0.6))
+                        // §2.2: "done" status uses accentTeal (still reads as
+                        // green/positive without claiming the CTA-only pine).
+                        // Issue #424 called this a judgment call between pine
+                        // and accentTeal; chose accentTeal to keep the
+                        // pine = CTA discipline.
+                        .foregroundStyle(checked ? CivicaColors.accentTeal : CivicaColors.graphite.opacity(0.6))
                         .frame(width: 28, alignment: .leading)
                         .accessibilityHidden(true)
                     Text(item.title.value(in: language))

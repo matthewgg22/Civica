@@ -108,7 +108,8 @@ struct SNAPApprovalBannerCard: View {
             Image(systemName: "checkmark.circle.fill")
                 .imageScale(.large)
                 .font(.body)
-                .foregroundStyle(CivicaColors.pinePrimary)
+                // §2.2: positive-outcome glyph uses amber, not pine (CTA-only).
+                .foregroundStyle(CivicaColors.amberPrimary)
                 .accessibilityHidden(true)
             VStack(alignment: .leading, spacing: CivicaSpacing.xs) {
                 Text(strings.headline.value(in: language))
@@ -143,7 +144,8 @@ struct SNAPApprovalBannerCard: View {
 
     private var divider: some View {
         Rectangle()
-            .fill(CivicaColors.pinePrimary.opacity(0.18))
+            // §2.2: decorative dividers use the dedicated hairline token.
+            .fill(CivicaColors.hairline)
             .frame(height: 1)
     }
 

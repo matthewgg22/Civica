@@ -216,11 +216,13 @@ struct SNAPSettingsSheet: View {
                         .padding(.vertical, CivicaSpacing.sm)
                         .background(
                             RoundedRectangle(cornerRadius: 999, style: .continuous)
-                                .fill(isCurrent ? CivicaColors.pinePrimary : CivicaColors.surfacePrimary)
+                                // §2.2: segment-control selection uses ink, not pine (CTA-only).
+                                .fill(isCurrent ? CivicaColors.ink : CivicaColors.surfacePrimary)
                         )
                         .overlay(
                             RoundedRectangle(cornerRadius: 999, style: .continuous)
-                                .strokeBorder(CivicaColors.pinePrimary.opacity(isCurrent ? 0 : 0.25), lineWidth: 1)
+                                // §2.2: unselected stroke uses hairline; selected hides the stroke.
+                                .strokeBorder(isCurrent ? Color.clear : CivicaColors.hairline, lineWidth: 1)
                         )
                 }
                 .buttonStyle(.plain)
