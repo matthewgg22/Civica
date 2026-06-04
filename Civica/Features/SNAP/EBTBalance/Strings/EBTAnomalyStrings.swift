@@ -17,21 +17,24 @@ enum EBTAnomalyStrings {
     static let velocityBannerCopy = CivicaText(
         "Unusual spending detected — large purchases in the last 2 minutes.",
         es: "Se detectó un gasto inusual: compras grandes en los últimos 2 minutos.",
-        zh: "检测到异常消费 — 最近 2 分钟内有大额购买。"
+        zh: "检测到异常消费 — 最近 2 分钟内有大额购买。",
+        vi: "Phát hiện chi tiêu bất thường — có giao dịch mua lớn trong 2 phút qua."
     )
 
     /// Transaction flood alert: more than 5 transactions in 10 minutes.
     static let floodBannerCopy = CivicaText(
         "Multiple charges in a short time — please review your recent activity.",
         es: "Varios cargos en poco tiempo. Por favor, revisa tu actividad reciente.",
-        zh: "短时间内出现多笔扣款 — 请查看你最近的交易记录。"
+        zh: "短时间内出现多笔扣款 — 请查看你最近的交易记录。",
+        vi: "Nhiều khoản trừ tiền trong thời gian ngắn — vui lòng xem lại hoạt động gần đây của bạn."
     )
 
     /// Cross-state use alert: merchant appears to be outside California.
     static let crossStateBannerCopy = CivicaText(
         "Out-of-state purchase detected. If you're not traveling, your card may be compromised.",
         es: "Se detectó una compra fuera de California. Si no estás viajando, es posible que tu tarjeta esté comprometida.",
-        zh: "检测到加州以外的消费。如果你没有外出旅行,你的卡可能已被盗用。"
+        zh: "检测到加州以外的消费。如果你没有外出旅行,你的卡可能已被盗用。",
+        vi: "Phát hiện giao dịch mua ngoài California. Nếu bạn không đi xa, thẻ của bạn có thể đã bị xâm phạm."
     )
 
     // MARK: - Payday note
@@ -40,7 +43,8 @@ enum EBTAnomalyStrings {
     static let paydayNote = CivicaText(
         "Heads up: spending is often higher on benefit issuance days.",
         es: "Ten en cuenta: el gasto suele ser mayor en los días de depósito de beneficios.",
-        zh: "提示:福利发放当天的消费通常会更高。"
+        zh: "提示:福利发放当天的消费通常会更高。",
+        vi: "Lưu ý: chi tiêu thường cao hơn vào những ngày nhận trợ cấp."
     )
 
     // MARK: - Travel mute
@@ -48,19 +52,22 @@ enum EBTAnomalyStrings {
     static let travelMuteCTA = CivicaText(
         "I'm traveling — mute alerts for 30 days",
         es: "Estoy viajando: silenciar alertas por 30 días",
-        zh: "我在旅行中 — 静音提醒 30 天"
+        zh: "我在旅行中 — 静音提醒 30 天",
+        vi: "Tôi đang đi xa — tắt cảnh báo trong 30 ngày"
     )
 
     static let travelMuteConfirm = CivicaText(
         "Out-of-state alerts muted for 30 days.",
         es: "Las alertas fuera del estado están silenciadas por 30 días.",
-        zh: "州外消费提醒已静音 30 天。"
+        zh: "州外消费提醒已静音 30 天。",
+        vi: "Cảnh báo ngoài tiểu bang đã được tắt trong 30 ngày."
     )
 
     static let travelMuteActive = CivicaText(
         "Travel mode active — out-of-state alerts muted.",
         es: "Modo de viaje activo: alertas fuera del estado silenciadas.",
-        zh: "旅行模式已开启 — 州外消费提醒已静音。"
+        zh: "旅行模式已开启 — 州外消费提醒已静音。",
+        vi: "Chế độ đi xa đang bật — cảnh báo ngoài tiểu bang đã được tắt."
     )
 
     // MARK: - Detail view
@@ -68,19 +75,22 @@ enum EBTAnomalyStrings {
     static let detailNavTitle = CivicaText(
         "Alert Details",
         es: "Detalles de la alerta",
-        zh: "提醒详情"
+        zh: "提醒详情",
+        vi: "Chi tiết cảnh báo"
     )
 
     static let detailTransactionsHeader = CivicaText(
         "Flagged transactions",
         es: "Transacciones marcadas",
-        zh: "被标记的交易"
+        zh: "被标记的交易",
+        vi: "Giao dịch bị gắn cờ"
     )
 
     static let detailActionsHeader = CivicaText(
         "What would you like to do?",
         es: "¿Qué deseas hacer?",
-        zh: "你想怎么做?"
+        zh: "你想怎么做?",
+        vi: "Bạn muốn làm gì?"
     )
 
     // MARK: - CTAs
@@ -88,25 +98,29 @@ enum EBTAnomalyStrings {
     static let lockCardCTA = CivicaText(
         "Lock my card",
         es: "Bloquear mi tarjeta",
-        zh: "锁定我的卡"
+        zh: "锁定我的卡",
+        vi: "Khóa thẻ của tôi"
     )
 
     static let lockCardPlaceholder = CivicaText(
         "Card lock settings will appear here.",
         es: "Aquí aparecerán las opciones para bloquear la tarjeta.",
-        zh: "卡片锁定设置将显示在这里。"
+        zh: "卡片锁定设置将显示在这里。",
+        vi: "Cài đặt khóa thẻ sẽ hiển thị ở đây."
     )
 
     static let reportFraudCTA = CivicaText(
         "Report fraud (1-877-328-9677)",
         es: "Reportar fraude (1-877-328-9677)",
-        zh: "举报欺诈 (1-877-328-9677)"
+        zh: "举报欺诈 (1-877-328-9677)",
+        vi: "Báo cáo gian lận (1-877-328-9677)"
     )
 
     static let dismissCTA = CivicaText(
         "Dismiss",
         es: "Descartar",
-        zh: "忽略"
+        zh: "忽略",
+        vi: "Bỏ qua"
     )
 
     // MARK: - Parity guard
