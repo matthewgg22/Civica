@@ -57,10 +57,12 @@ import {
   type FillFingerprint,
 } from "./fill-markers";
 import { waitFor } from "./readiness";
+import { buildReviewPanel, type ReviewPanel } from "./review-panel";
 import {
   readPageFillState,
   writePageFillState,
   clearPageFillState,
+  readAllPageFillStatesForPacket,
 } from "./config";
 
 interface PayloadFetchResponse {
@@ -98,6 +100,12 @@ export interface OverlayState {
   message: string;
   /** Optional per-step controls (Re-fill / Clear). */
   actions?: OverlayAction[];
+  /**
+   * Optional pre-submit trust panel (V1-6a, #316). When present, renders as a
+   * scrollable table BELOW the body + actions: each row is `field label →
+   * what Civica wrote → what's on the page now → status pill`. Read-only.
+   */
+  panel?: ReviewPanel;
 }
 
 const OVERLAY_ID = "civica-submitter-overlay";
@@ -244,7 +252,9 @@ export async function runPageFill(
     if (!ev.element) return;
     if (ev.outcome === "filled") {
       markElement(ev.element, "filled", ev.field.label);
-      fingerprints.push(fingerprintOf(ev.element, ev.field.type));
+      // V1-6a (#316): carry the field's human-readable label on the
+      // fingerprint so the pre-submit trust panel can render rows.
+      fingerprints.push(fingerprintOf(ev.element, ev.field.type, ev.field.label));
     } else if (ev.outcome === "needs-review" || ev.outcome === "not-found") {
       // A located element we deliberately did NOT write (unmapped eligibility
       // value) — flag it for the human. `not-found` rarely has an element.
@@ -612,6 +622,18 @@ export function describeFill(
     label: "Clear Civica fills on this page",
     onClick: () => clearPage(packetId, page.pageCode, root),
   };
+  // V1-6a (#316): the pre-submit trust panel — opens a tabular review of
+  // every field Civica filled across every page for this packet so the
+  // assister can verify before clicking the portal's Submit. Always
+  // surfaced (post-#316 the assister has an explicit "what did Civica do?"
+  // affordance regardless of page); on the Review & Submit step (once V1-4
+  // walks it) this is the panel that satisfies the "human reviews before
+  // submitting" compliance posture.
+  const reviewPanel: OverlayAction = {
+    id: "review-panel",
+    label: "Review what Civica filled",
+    onClick: () => showTrustPanel(packetId, root),
+  };
 
   // Page-structure failure: we had fields to fill but located NONE of them.
   if (r.fillable > 0 && r.filled === 0 && r.notFound === r.fillable) {
@@ -643,7 +665,7 @@ export function describeFill(
       title: `Filled all ${r.filled} field${r.filled === 1 ? "" : "s"}`,
       message:
         "Every field Civica can fill on this page is done. Review the form, then click Next/Continue yourself.",
-      actions: [refill, clear],
+      actions: [refill, clear, reviewPanel],
     };
   }
 
@@ -656,8 +678,47 @@ export function describeFill(
     status: "partial",
     title: "Review needed",
     message: `${lead} Check the highlighted fields, then click Next/Continue yourself.`,
-    actions: r.filled > 0 ? [refill, clear] : [refill],
+    actions: r.filled > 0 ? [refill, clear, reviewPanel] : [refill, reviewPanel],
   };
+}
+
+/**
+ * "Review what Civica filled" handler (V1-6a, #316). Reads every persisted
+ * fill state for this packet, builds the source-vs-on-page diff table, and
+ * re-renders the existing overlay with the panel attached. Read-only: never
+ * mutates the portal DOM, never submits — the assister still clicks the
+ * portal's own Submit control.
+ */
+export async function showTrustPanel(
+  packetId: string,
+  root: ParentNode = document,
+): Promise<void> {
+  const states = await readAllPageFillStatesForPacket(packetId);
+  const panel = buildReviewPanel(states, root);
+  const pageCount = states.length;
+  const title =
+    panel.summary.totalFilled === 0
+      ? "Nothing filled yet for this packet"
+      : `${panel.summary.totalFilled} field${panel.summary.totalFilled === 1 ? "" : "s"} filled across ${pageCount} page${pageCount === 1 ? "" : "s"}`;
+  const flags: string[] = [];
+  if (panel.summary.humanEdited > 0) {
+    flags.push(`${panel.summary.humanEdited} edited since fill`);
+  }
+  if (panel.summary.notOnPage > 0) {
+    flags.push(`${panel.summary.notOnPage} not on this page`);
+  }
+  const message =
+    panel.summary.totalFilled === 0
+      ? "Re-fill any prior page first; the panel populates as Civica writes fields."
+      : `Source vs on-page values for every field Civica wrote. ${
+          flags.length > 0 ? flags.join("; ") + "." : "All values still match."
+        } Civica never submits — that's still your click on the portal's Submit control.`;
+  renderOverlay({
+    status: panel.summary.humanEdited > 0 ? "partial" : "success",
+    title,
+    message,
+    panel,
+  });
 }
 
 /**
@@ -843,6 +904,32 @@ export function renderOverlay(state: OverlayState): void {
     }
     button:hover { background: rgba(255,255,255,0.9); }
     button:disabled { opacity: 0.5; cursor: default; }
+    /* V1-6a (#316) trust panel table */
+    .panel {
+      margin-top: 10px; max-height: 280px; overflow-y: auto;
+      border: 1px solid ${s.border}; border-radius: 4px;
+      background: rgba(255,255,255,0.5);
+    }
+    .panel table { width: 100%; border-collapse: collapse; font-size: 11px; }
+    .panel th, .panel td {
+      text-align: left; padding: 4px 6px; vertical-align: top;
+      border-bottom: 1px solid rgba(0,0,0,0.08);
+    }
+    .panel th { font-weight: 600; background: rgba(0,0,0,0.04); position: sticky; top: 0; }
+    .panel tr:last-child td { border-bottom: none; }
+    .panel .label { font-weight: 600; }
+    .panel .value { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; word-break: break-all; }
+    .panel .status {
+      display: inline-block; font-size: 9px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.04em;
+      padding: 1px 5px; border-radius: 8px; color: #fff;
+    }
+    .panel .status[data-s="match"]        { background: #1f4d3b; }
+    .panel .status[data-s="human-edited"] { background: #B5511E; }
+    .panel .status[data-s="not-on-page"]  { background: #6b6b6b; }
+    .panel .empty {
+      padding: 14px 10px; text-align: center; font-style: italic; opacity: 0.7;
+    }
   `;
 
   const root = document.createElement("div");
@@ -892,6 +979,56 @@ export function renderOverlay(state: OverlayState): void {
       actions.append(btn);
     }
     root.append(actions);
+  }
+
+  // V1-6a (#316): the pre-submit trust panel. Tabular, scrollable, sticky
+  // header, status pill per row. Pure DOM — never wires a Submit control.
+  if (state.panel) {
+    const panel = document.createElement("div");
+    panel.className = "panel";
+    panel.setAttribute("data-civica-panel", "review");
+    if (state.panel.rows.length === 0) {
+      const empty = document.createElement("div");
+      empty.className = "empty";
+      empty.textContent = "No fills recorded for this packet yet.";
+      panel.append(empty);
+    } else {
+      const table = document.createElement("table");
+      const thead = document.createElement("thead");
+      thead.innerHTML =
+        "<tr><th>Field</th><th>Civica wrote</th><th>On page now</th><th>Status</th></tr>";
+      const tbody = document.createElement("tbody");
+      for (const row of state.panel.rows) {
+        const tr = document.createElement("tr");
+        tr.setAttribute("data-status", row.status);
+        tr.setAttribute("data-page-code", row.pageCode);
+        const labelTd = document.createElement("td");
+        labelTd.className = "label";
+        labelTd.textContent = row.fieldLabel;
+        const civicaTd = document.createElement("td");
+        civicaTd.className = "value";
+        civicaTd.textContent = row.civicaWrote;
+        const currentTd = document.createElement("td");
+        currentTd.className = "value";
+        currentTd.textContent = row.currentlyOnPage ?? "(not on this page)";
+        const statusTd = document.createElement("td");
+        const pill = document.createElement("span");
+        pill.className = "status";
+        pill.setAttribute("data-s", row.status);
+        pill.textContent =
+          row.status === "match"
+            ? "match"
+            : row.status === "human-edited"
+              ? "edited"
+              : "n/a";
+        statusTd.append(pill);
+        tr.append(labelTd, civicaTd, currentTd, statusTd);
+        tbody.append(tr);
+      }
+      table.append(thead, tbody);
+      panel.append(table);
+    }
+    root.append(panel);
   }
 
   shadow.append(style, root);
