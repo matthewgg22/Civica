@@ -155,7 +155,7 @@ describe("parity — gig-income", () => {
     );
     if (result.evidence_package.flow === "gig-income") {
       expect(result.evidence_package.snap_bbce_applies).toBe(true);
-      expect(result.evidence_package.snap_gross_income_limit_1person).toBe(1632);
+      expect(result.evidence_package.snap_gross_income_limit_1person).toBe(1697);
       expect(result.evidence_package.total_monthly_declared).toBe(4700);
       expect(result.evidence_package.reconciliation_flag).toBe(false);
     }
