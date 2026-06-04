@@ -312,7 +312,7 @@ export default function LandscapePanel() {
         <div className="flex items-center justify-between gap-3 px-4 pt-3.5 pb-2">
           <div className="flex items-center gap-2">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/civica-mark.svg" alt="" width={13} height={13} className="opacity-60" />
+            <img src="/civica-wheat-mark.png" alt="" width={13} height={13} className="opacity-60" />
             <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-white/90">
               Civica
             </p>

@@ -257,7 +257,7 @@ function Brand() {
       <div className="w-10 h-10 rounded-[8px] overflow-hidden ring-1 ring-black/5 shrink-0">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src="/civica-mark.svg"
+          src="/civica-wheat-mark.png"
           alt="Civica"
           width={40}
           height={40}

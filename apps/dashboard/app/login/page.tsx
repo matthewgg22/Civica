@@ -39,9 +39,9 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center px-4">
       <div className="bg-surface p-10 rounded-[4px] border border-hairline w-full max-w-md">
         <div className="flex items-center gap-3 mb-8">
-          <div className="w-10 h-10 rounded-[8px] overflow-hidden ring-1 ring-black/5">
+          <div className="w-10 h-10 rounded-full overflow-hidden ring-1 ring-black/5">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/civica-mark.svg" alt="Civica" width={40} height={40} className="w-full h-full object-cover" />
+            <img src="/civica-wheat-mark.png" alt="Civica" width={40} height={40} className="w-full h-full object-contain" />
           </div>
           <div>
             <h1 className="text-[20px] font-semibold tracking-tight text-ink leading-tight">Civica Navigator</h1>

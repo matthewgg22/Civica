@@ -47,9 +47,9 @@ export default function AppHeader({ email, active }: { email?: string; active: N
     <header className="bg-pine px-4 sm:px-8 py-3.5 flex items-center justify-between gap-3">
       <div className="flex items-center gap-4 sm:gap-8 min-w-0">
         <Link href="/dashboard" className="flex items-center gap-3 group shrink-0">
-          <div className="w-8 h-8 rounded-[6px] overflow-hidden shrink-0 ring-1 ring-white/15 group-hover:ring-white/30 transition-all">
+          <div className="w-8 h-8 rounded-full overflow-hidden shrink-0 ring-1 ring-white/15 group-hover:ring-white/30 transition-all">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/civica-mark.svg" alt="Civica" width={32} height={32} className="w-full h-full object-cover" />
+            <img src="/civica-wheat-mark.png" alt="Civica" width={32} height={32} className="w-full h-full object-contain" />
           </div>
           <div>
             <p className="text-[15px] font-semibold tracking-tight text-white leading-none">Civica</p>
