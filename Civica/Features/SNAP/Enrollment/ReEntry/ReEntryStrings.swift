@@ -32,7 +32,7 @@ enum ReEntryStrings {
         "Your case closed %d days ago. We saved your answers — you can re-enroll without redoing the full application.",
         es: "Tu caso se cerró hace %d días. Guardamos tus respuestas — puedes reinscribirte sin volver a hacer toda la solicitud.",
         zh: "你的案件已关闭 %d 天。我们保存了你的回答——你可以重新申请,无需重新填写整份申请。",
-        vi: "Hồ sơ của bạn đã đóng %d ngày trước. Chúng tôi đã lưu câu trả lời của bạn — bạn có thể đăng ký lại mà không cần làm lại toàn bộ đơn."
+        vi: "Hồ sơ của bạn đã đóng %d ngày trước. Chúng tôi đã lưu các câu trả lời của bạn — bạn có thể đăng ký lại mà không cần làm lại toàn bộ đơn."
     )
 
     static let cardPrimaryCTA = CivicaText(
@@ -62,7 +62,7 @@ enum ReEntryStrings {
         "We'll pre-fill your answers from before. You can review and update anything that's changed, then submit. Documents will need to be re-uploaded — they may have expired.",
         es: "Pre-llenaremos tus respuestas de antes. Puedes revisar y actualizar lo que haya cambiado, y luego enviar. Tendrás que subir los documentos de nuevo — pueden haber caducado.",
         zh: "我们会用你之前的回答预先填好。你可以查看并更新有变化的地方,然后提交。文件需要重新上传——之前的可能已经过期。",
-        vi: "Chúng tôi sẽ điền sẵn câu trả lời trước đây của bạn. Bạn có thể xem lại và cập nhật những gì đã thay đổi, rồi gửi đi. Bạn cần tải lên lại các giấy tờ — chúng có thể đã hết hạn."
+        vi: "Chúng tôi sẽ điền sẵn các câu trả lời trước đây của bạn. Bạn có thể xem lại và cập nhật bất kỳ điều gì đã thay đổi, rồi nộp. Bạn sẽ cần tải lên lại các giấy tờ — chúng có thể đã hết hạn."
     )
 
     static let confirmContinue = CivicaText(
