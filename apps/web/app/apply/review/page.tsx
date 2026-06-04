@@ -47,14 +47,17 @@ export default function ReviewPage() {
         body: JSON.stringify({ draft, stateCode: draft.whereApplying.state }),
       });
       if (!res.ok) {
-        setSubmitError(t("error_gateway_unreachable"));
+        // Not signed in / gateway not live: the application is complete but
+        // can't be sent yet. Route to a clear next step (sign in to send),
+        // not a dead error. Keep the draft so nothing is lost.
+        router.replace("/apply/next-steps?ready=1");
         return;
       }
       const body = (await res.json()) as { packetId: string };
       clearDraftStorage();
       router.replace(`/apply/next-steps?packet=${encodeURIComponent(body.packetId)}`);
     } catch {
-      setSubmitError(t("error_gateway_unreachable"));
+      router.replace("/apply/next-steps?ready=1");
     } finally {
       setSubmitting(false);
     }

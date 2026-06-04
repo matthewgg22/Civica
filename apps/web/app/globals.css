@@ -2294,3 +2294,233 @@ html {
     order: 3;
   }
 }
+
+/* ---- Apply shell chrome (header, card, buddy referral, Mae helper) ---- */
+
+.apply-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--civica-space-md);
+  padding: 12px var(--civica-space-xl);
+  background: var(--civica-surface);
+  border-bottom: 1px solid var(--civica-hairline);
+  flex-wrap: wrap;
+}
+
+.apply-header__brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+}
+
+.apply-header__logo {
+  width: 38px;
+  height: 38px;
+  object-fit: contain;
+}
+
+.apply-header__name {
+  font-size: 1.0625rem;
+  font-weight: 600;
+  color: var(--civica-ink);
+  letter-spacing: -0.01em;
+}
+
+.apply-header__right {
+  display: flex;
+  align-items: center;
+  gap: var(--civica-space-lg);
+}
+
+.apply-header__save {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.8125rem;
+  color: var(--civica-graphite);
+}
+
+.apply-header__save-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: var(--civica-pine);
+  flex-shrink: 0;
+}
+
+.apply-header__save strong {
+  color: var(--civica-ink);
+  font-weight: 600;
+}
+
+.apply-header__save-link,
+.apply-header__help {
+  color: var(--civica-pine);
+  font-weight: 600;
+  text-decoration: none;
+  font-size: 0.8125rem;
+}
+
+.apply-header__help {
+  border: 1px solid var(--civica-hairline);
+  padding: 6px 12px;
+  border-radius: var(--civica-radius-control);
+  white-space: nowrap;
+}
+
+.apply-header__help:hover {
+  border-color: var(--civica-pine);
+}
+
+/* Lift the form off the flat paper background onto a white card. */
+.apply-shell__card {
+  background: var(--civica-surface);
+  border: 1px solid var(--civica-hairline);
+  border-radius: var(--civica-radius-card);
+  padding: var(--civica-space-xl);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+/* Buddy-system referral banner */
+.buddy-banner {
+  display: flex;
+  align-items: center;
+  gap: var(--civica-space-md);
+  background: var(--civica-pine-surface);
+  border: 1px solid color-mix(in srgb, var(--civica-pine) 22%, transparent);
+  border-radius: var(--civica-radius-card);
+  padding: 12px var(--civica-space-lg);
+  margin-bottom: var(--civica-space-lg);
+  flex-wrap: wrap;
+}
+
+.buddy-banner__icon {
+  color: var(--civica-pine);
+  flex-shrink: 0;
+  display: inline-flex;
+}
+
+.buddy-banner__text {
+  flex: 1;
+  min-width: 200px;
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--civica-ink);
+  line-height: 1.45;
+}
+
+.buddy-banner__cta {
+  color: var(--civica-pine);
+  font-weight: 600;
+  text-decoration: none;
+  font-size: 0.875rem;
+  white-space: nowrap;
+}
+
+.buddy-banner__cta:hover {
+  text-decoration: underline;
+}
+
+/* Mae — floating AI-helper entry point */
+.mae-fab {
+  position: fixed;
+  right: var(--civica-space-lg);
+  bottom: var(--civica-space-lg);
+  z-index: 40;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--civica-pine);
+  color: #fff;
+  border: 0;
+  border-radius: 999px;
+  padding: 9px 16px 9px 9px;
+  font-family: inherit;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+}
+
+.mae-fab:hover {
+  background: var(--civica-pine-pressed);
+}
+
+.mae-fab__avatar,
+.mae-panel__avatar {
+  width: 26px;
+  height: 26px;
+  border-radius: 999px;
+  background: var(--civica-wheat);
+  color: var(--civica-ink);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.8125rem;
+  flex-shrink: 0;
+}
+
+.mae-panel {
+  position: fixed;
+  right: var(--civica-space-lg);
+  bottom: 72px;
+  z-index: 41;
+  width: min(320px, calc(100vw - 32px));
+  background: var(--civica-surface);
+  border: 1px solid var(--civica-hairline);
+  border-radius: var(--civica-radius-card);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18);
+  padding: var(--civica-space-lg);
+}
+
+.mae-panel__head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: var(--civica-space-md);
+}
+
+.mae-panel__title {
+  flex: 1;
+  margin: 0;
+  font-weight: 600;
+  color: var(--civica-ink);
+}
+
+.mae-panel__close {
+  background: transparent;
+  border: 0;
+  color: var(--civica-graphite);
+  cursor: pointer;
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.mae-panel__intro {
+  margin: 0 0 var(--civica-space-sm);
+  font-size: 0.875rem;
+  color: var(--civica-ink);
+  line-height: 1.5;
+}
+
+.mae-panel__soon {
+  margin: 0 0 var(--civica-space-md);
+  font-size: 0.8125rem;
+  color: var(--civica-muted);
+  line-height: 1.5;
+}
+
+.mae-panel__human {
+  display: inline-block;
+  color: var(--civica-pine);
+  font-weight: 600;
+  text-decoration: none;
+  font-size: 0.875rem;
+}
+
+@media (max-width: 560px) {
+  .apply-header__save { display: none; }
+}

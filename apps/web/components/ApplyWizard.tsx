@@ -71,8 +71,10 @@ export function ApplyWizard({ section, locale }: Props) {
 
   const onBack = () => {
     const prev = previousSection(section);
+    // First section: exit to the home instead of looping through /apply
+    // (which would redirect right back to the first incomplete section).
     if (prev) router.push(`/apply/${prev}`);
-    else router.push("/apply");
+    else router.push("/welcome");
   };
 
   return (
