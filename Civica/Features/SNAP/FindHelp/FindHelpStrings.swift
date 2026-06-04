@@ -22,19 +22,19 @@ enum FindHelpStrings {
         "Find help nearby",
         es: "Encuentra ayuda cerca de ti",
         zh: "查找附近的帮助",
-        vi: "Tìm trợ giúp gần bạn"
+        vi: "Tìm hỗ trợ gần bạn"
     )
     static let permissionTitle = CivicaText(
         "Show me places within walking distance.",
         es: "Muéstrame lugares a distancia caminable.",
         zh: "显示步行可达的地点。",
-        vi: "Cho tôi xem những nơi trong khoảng cách đi bộ."
+        vi: "Cho tôi xem những địa điểm trong khoảng cách đi bộ."
     )
     static let permissionBody = CivicaText(
         "Civica will ask iOS for your location next. Before that, here's exactly what we do and don't do with it.",
         es: "Civica le pedirá tu ubicación a iOS a continuación. Antes de eso, aquí está exactamente qué hacemos y qué no hacemos con ella.",
         zh: "Civica 接下来会向 iOS 请求你的位置。在此之前,我们先告诉你我们会用它做什么、不会做什么。",
-        vi: "Civica sẽ hỏi iOS vị trí của bạn tiếp theo. Trước đó, đây là chính xác những gì chúng tôi làm và không làm với nó."
+        vi: "Tiếp theo Civica sẽ hỏi iOS để lấy vị trí của bạn. Trước đó, đây là chính xác những gì chúng tôi làm và không làm với nó."
     )
 
     static let permissionDoEyebrow = CivicaText(
@@ -47,7 +47,7 @@ enum FindHelpStrings {
         "Pull a list of nearby places, show them on a map, and sort by distance.",
         es: "Buscamos lugares cercanos, los mostramos en un mapa y los ordenamos por distancia.",
         zh: "查询附近地点的列表,在地图上显示,并按距离排序。",
-        vi: "Lấy danh sách các nơi gần đây, hiển thị trên bản đồ và sắp xếp theo khoảng cách."
+        vi: "Lấy danh sách các địa điểm gần bạn, hiển thị trên bản đồ và sắp xếp theo khoảng cách."
     )
 
     static let permissionDontEyebrow = CivicaText(
@@ -67,7 +67,7 @@ enum FindHelpStrings {
         "You can use the map without sharing — type a zip code instead.",
         es: "Puedes usar el mapa sin compartir tu ubicación — ingresa un código postal en su lugar.",
         zh: "你可以不分享位置也能使用地图 — 输入邮政编码即可。",
-        vi: "Bạn có thể dùng bản đồ mà không cần chia sẻ — hãy nhập mã zip thay thế."
+        vi: "Bạn có thể dùng bản đồ mà không cần chia sẻ — hãy nhập mã zip thay vào đó."
     )
 
     static let permissionShareCTA = CivicaText(
@@ -80,7 +80,7 @@ enum FindHelpStrings {
         "Use a zip code instead",
         es: "Usar un código postal",
         zh: "改用邮政编码",
-        vi: "Dùng mã zip thay thế"
+        vi: "Dùng mã zip thay vào đó"
     )
 
     // MARK: - Detail sheet polish (board C)
@@ -122,7 +122,7 @@ enum FindHelpStrings {
         "Hours",
         es: "Horario",
         zh: "营业时间",
-        vi: "Giờ làm việc"
+        vi: "Giờ mở cửa"
     )
     static let detailLabelLanguagesServed = CivicaText(
         "Languages served",
@@ -214,13 +214,13 @@ enum FindHelpStrings {
         "Nothing within %@ miles.",
         es: "Nada dentro de %@ millas.",
         zh: "%@ 英里内没有结果。",
-        vi: "Không có gì trong %@ dặm."
+        vi: "Không có gì trong vòng %@ dặm."
     )
     static let emptyBody = CivicaText(
         "Rural areas often need a wider radius. We can also help you over the phone — that works anywhere.",
         es: "Las áreas rurales suelen necesitar un radio más amplio. También podemos ayudarte por teléfono — eso funciona en cualquier lugar.",
         zh: "乡村地区通常需要更大的搜索范围。我们也可以通过电话帮你 — 哪里都能用。",
-        vi: "Vùng nông thôn thường cần bán kính rộng hơn. Chúng tôi cũng có thể giúp bạn qua điện thoại — cách đó dùng được ở mọi nơi."
+        vi: "Các khu vực nông thôn thường cần bán kính rộng hơn. Chúng tôi cũng có thể giúp bạn qua điện thoại — cách đó dùng được ở bất cứ đâu."
     )
     static let emptyExpandCTA = CivicaText(
         "Search 75 miles",
@@ -257,13 +257,13 @@ enum FindHelpStrings {
         "We can't reach the directory right now.",
         es: "Ahora mismo no podemos consultar el directorio.",
         zh: "我们现在无法连接到目录。",
-        vi: "Hiện tại chúng tôi không kết nối được với danh bạ."
+        vi: "Chúng tôi không thể kết nối tới danh bạ ngay bây giờ."
     )
     static let transportErrorBody = CivicaText(
         "Check your connection and try again, or use a zip code instead. The phone line below works without internet.",
         es: "Revisa tu conexión e inténtalo de nuevo, o usa un código postal. La línea telefónica funciona sin internet.",
         zh: "检查你的网络连接后重试,或改用邮政编码。下面的电话不需要联网也能用。",
-        vi: "Kiểm tra kết nối và thử lại, hoặc dùng mã zip thay thế. Đường dây điện thoại bên dưới hoạt động không cần internet."
+        vi: "Hãy kiểm tra kết nối và thử lại, hoặc dùng mã zip thay vào đó. Đường dây điện thoại bên dưới hoạt động mà không cần internet."
     )
     static let transportErrorRetryCTA = CivicaText(
         "Try again",
@@ -299,7 +299,7 @@ enum FindHelpStrings {
         "HIP matched",
         es: "Bonificación HIP",
         zh: "HIP 配套补贴",
-        vi: "Được HIP đối ứng"
+        vi: "Được HIP hỗ trợ thêm"
     )
 
     // MARK: - Retailer pill labels (peek sheet)
@@ -351,7 +351,7 @@ enum FindHelpStrings {
         "Find help",
         es: "Buscar ayuda",
         zh: "查找帮助",
-        vi: "Tìm trợ giúp"
+        vi: "Tìm hỗ trợ"
     )
     static let layerSpend = CivicaText(
         "Spend EBT",
@@ -372,7 +372,7 @@ enum FindHelpStrings {
         "SNAP offices, food pantries & application help",
         es: "Oficinas SNAP, despensas y ayuda para solicitar",
         zh: "SNAP 办公室、食物领取点和申请帮助",
-        vi: "Văn phòng SNAP, nơi phát thực phẩm và trợ giúp nộp đơn"
+        vi: "Văn phòng SNAP, kho thực phẩm và hỗ trợ nộp đơn"
     )
     static let layerSpendSubtitle = CivicaText(
         "Stores & markets that accept your EBT card",
@@ -384,6 +384,6 @@ enum FindHelpStrings {
         "Apply for benefits and find places to use them",
         es: "Solicita beneficios y encuentra dónde usarlos",
         zh: "申请福利,并找到可以使用福利的地方",
-        vi: "Nộp đơn xin trợ cấp và tìm nơi để sử dụng"
+        vi: "Nộp đơn xin trợ cấp và tìm nơi để sử dụng chúng"
     )
 }
