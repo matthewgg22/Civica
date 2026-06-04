@@ -171,22 +171,26 @@ enum SNAPDataDeletionStrings {
     static let eyebrow = CivicaText(
         "Deleting your Civica data",
         es: "Eliminando tus datos de Civica",
-        zh: "正在删除你的 Civica 数据"
+        zh: "正在删除你的 Civica 数据",
+        vi: "Đang xoá dữ liệu Civica của bạn"
     )
     static let title = CivicaText(
         "Here's what will happen, in order.",
         es: "Esto es lo que va a pasar, en orden.",
-        zh: "接下来会按顺序发生这些事。"
+        zh: "接下来会按顺序发生这些事。",
+        vi: "Đây là những gì sẽ xảy ra, theo thứ tự."
     )
     static let confirm = CivicaText(
         "Yes, delete everything",
         es: "Sí, eliminar todo",
-        zh: "是的，删除所有内容"
+        zh: "是的，删除所有内容",
+        vi: "Có, xoá tất cả"
     )
     static let cancel = CivicaText(
         "Keep my account",
         es: "Mantener mi cuenta",
-        zh: "保留我的账户"
+        zh: "保留我的账户",
+        vi: "Giữ lại tài khoản của tôi"
     )
 
     static func steps(language: CivicaLanguage, stateCode: String? = nil) -> [Step] {
@@ -195,8 +199,9 @@ enum SNAPDataDeletionStrings {
         let portalEN = portal.isEmpty ? "your state portal" : portal
         let portalES = portal.isEmpty ? "el portal estatal" : portal
         let portalZH = portal.isEmpty ? "你所在州的门户网站" : portal
+        let portalVI = portal.isEmpty ? "cổng thông tin của tiểu bang bạn" : portal
         switch language {
-        case .english, .vietnamese, .tagalog:
+        case .english, .tagalog:
             return [
                 Step(
                     title: "Right now",
@@ -251,6 +256,25 @@ enum SNAPDataDeletionStrings {
                 Step(
                     title: "Volver a solicitar más tarde",
                     body: "Puedes regresar en cualquier momento. Empezarás de cero — Civica no te reconocerá, por diseño."
+                ),
+            ]
+        case .vietnamese:
+            return [
+                Step(
+                    title: "Ngay bây giờ",
+                    body: "Câu trả lời, tài liệu đã chụp, trạng thái và ngôn ngữ ưu tiên của bạn sẽ bị xoá khỏi thiết bị này. Ứng dụng quay lại trang chọn ngôn ngữ."
+                ),
+                Step(
+                    title: "Phần đã nộp cho tiểu bang",
+                    body: "Nếu bạn đã nộp qua \(portalVI), hồ sơ đó vẫn nằm với tiểu bang. Civica không thể rút lại — chỉ có \(agency) mới có thể thay đổi hoặc đóng nó. Quyền lợi của bạn sẽ không thay đổi chỉ vì bạn xoá ở đây."
+                ),
+                Step(
+                    title: "Máy chủ của Civica",
+                    body: "Xoá ở đây sẽ xoá bản nháp SNAP cục bộ, tài liệu đã chụp, trạng thái và tuỳ chọn khỏi thiết bị này. Nếu bạn đã dùng các tính năng mạng tuỳ chọn — tìm trợ giúp gần đây hoặc Huấn luyện phỏng vấn — việc xoá bất kỳ nhật ký hay bản sao lưu nào trên máy chủ sẽ tuân theo quy trình lưu giữ của Civica. Mọi đơn bạn đã nộp vẫn nằm với cơ quan tiểu bang."
+                ),
+                Step(
+                    title: "Nộp lại sau này",
+                    body: "Bạn có thể quay lại bất kỳ lúc nào. Bạn sẽ bắt đầu lại từ đầu — theo thiết kế, Civica sẽ không nhận ra bạn."
                 ),
             ]
         }
