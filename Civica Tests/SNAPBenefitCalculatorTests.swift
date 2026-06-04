@@ -85,21 +85,27 @@ struct SNAPBenefitCalculatorTests {
 
     // MARK: - MA with rent + utilities (SUA kicks in)
 
-    /// Rent $800, utilities $100 → SUA heatingCooling ($799) applies
-    /// because it's larger than $100.
-    ///   shelter      = 800 + max(100, 799)         = 1599
+    /// Rent $800, utilities $100, selects heat/fuel → MA SUA heatingCooling
+    /// ($914 per DTA 106 CMR 364.945, FY26) substitutes the $100 actuals.
+    ///   shelter      = 800 + max(100, 914)         = 1714
     ///   half_adj     = 495.5
-    ///   raw excess   = 1599 - 495.5                = 1103.5
-    ///   excess (cap) = min(1103.5, 744)            = 744
+    ///   raw excess   = 1714 - 495.5                = 1218.5
+    ///   excess (cap) = min(1218.5, 744)            = 744
     ///   net          = 991 - 744                   = 247
     ///   30% of net   = round(247 * 0.30)           = round(74.1) = 74
     ///   benefit      = 546 - 74                    = 472
+    ///
+    /// NOTE on `selectedUtilities`: as of T16 Gap #2, the SUA only
+    /// substitutes when a utility tier is actually selected (no tier
+    /// means utilities are included in rent → effectiveUtility = 0).
+    /// The test must opt into a tier explicitly.
     @Test func maWithRentAndUtilitiesSubstitutesSUA() {
         var draft = SNAPApplicationDraft()
         draft.whereApplying.stateCode = "MA"
         draft.household.householdSize = "2 people"
         draft.income.grossMonthlyIncome = 1_500
         draft.expenses.monthlyRentOrHousing = 800
+        draft.expenses.selectedUtilities = [.heatFuel]
         draft.expenses.monthlyUtilities = 100
 
         let calc = SNAPBenefitCalculator.calculate(
@@ -130,6 +136,7 @@ struct SNAPBenefitCalculatorTests {
         draft.income.grossMonthlyIncome = 1_500
         draft.household.hasElderlyOrDisabled = true
         draft.expenses.monthlyRentOrHousing = 800
+        draft.expenses.selectedUtilities = [.heatFuel]
         draft.expenses.monthlyUtilities = 100
 
         let calc = SNAPBenefitCalculator.calculate(
@@ -146,9 +153,10 @@ struct SNAPBenefitCalculatorTests {
 
     // MARK: - Federal default has no SUA
 
-    /// Same inputs as maWithRentAndUtilities but stateCode "CA"
-    /// (federal default rules). FederalDefaultRules.suaValue
-    /// always returns nil, so effective utility = actual = $100.
+    /// Same inputs as maWithRentAndUtilities but FederalDefaultRules
+    /// (no SUA chart). With a tier selected, the calculator falls
+    /// through to actuals ($100) per the third branch of the SUA-
+    /// resolution stack.
     ///   shelter    = 800 + 100                     = 900
     ///   half_adj   = 495.5
     ///   raw excess = 900 - 495.5                   = 404.5
@@ -162,6 +170,7 @@ struct SNAPBenefitCalculatorTests {
         draft.household.householdSize = "2 people"
         draft.income.grossMonthlyIncome = 1_500
         draft.expenses.monthlyRentOrHousing = 800
+        draft.expenses.selectedUtilities = [.heatFuel]
         draft.expenses.monthlyUtilities = 100
 
         let calc = SNAPBenefitCalculator.calculate(
