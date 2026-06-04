@@ -133,17 +133,28 @@ Priority: P0 blocks everything; P1 is the build; P2 is polish.
 ### Selector map + fill logic
 - [ ] **V1-4 (P1, human ~varies / CC n/a)** — Finish the selector walk for
   portal steps 2-9 (People, Household Details, Income, Expenses, Other
-  Situations, Document Upload, Review & Submit). Currently only step 1 (22
-  sub-pages) captured. Done as a production walk in the GStack browser, recorded
-  into `portal-map/SELECTORS.md` + HTML fixtures (feeds V1-9).
+  Situations, Document Upload, Review & Submit). Currently only step 0 + step 1
+  (~29 page entries) captured. **Runbook ready:** [`docs/runbooks/benefitscal-v1-4-walk-2026-06.md`](../runbooks/benefitscal-v1-4-walk-2026-06.md)
+  (PR #485) — sandbox-first per eng D3, PII scrub-on-capture per eng D4, abort-
+  before-submit. The one human-gated task left in the closeout submission rail.
   - Verify: every step's fields documented with label + fallback selector.
 
-- [ ] **V1-5 (P1, human ~4d / CC ~1d)** — Implement DOM fill logic per section
-  in `/core` as map-driven functions the content script calls. Human handles
-  edge cases (address-validation modal, county select, missing fields) by acting
-  on the page — fill logic does NOT need to automate modals in v1 (simpler than
-  the headless version would require).
-  - Verify: unit tests with jsdom fixtures per section.
+- **V1-5 (P1, human ~4d / CC ~1d)** — DOM fill logic per section in `/core` as
+  map-driven functions the content script calls. **PRs 1-3 of 5 LANDED
+  (2026-06-04):**
+  - [x] **PR1 #477** — `section-sequence.ts` (SNAP-only vs multi-program ordered
+    pageCodes) + staff program-election prompt at extension activation (eng D12).
+  - [x] **PR2 #480** — `address-validation.ts`: USPS modal on ABNHA surfaced to
+    the human reviewer (`civica:address-validation-required` event, no auto-
+    accept), per-member sequential, 5-min timeout → manual-entry fallback.
+  - [x] **PR3 #482** — 19 step-1 per-section tests + `makePacket` fixture with
+    PortalPage snapshot-freeze (so V1-4 walk-refresh doesn't cascade test churn).
+  - [ ] **PR4/PR5** — steps 2-9 fill modules + snapshot replay. **Gated on V1-4
+    walk** (need PortalPage entries first). Map-literal dispatch (eng D7); walker
+    falls through to `fillPage` for unknown codes (eng D2).
+  - Human handles edge cases (address-validation modal, county select, missing
+    fields) by acting on the page; fill logic does NOT automate modals in v1.
+  - Verify: unit tests with jsdom fixtures per section (PR3 convention).
 
 ### The extension (the product)
 - [ ] **V1-6 (P1, human ~2w / CC ~3d)** — Build `packages/civica-extension/`
