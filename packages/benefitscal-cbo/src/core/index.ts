@@ -126,3 +126,20 @@ export {
 export { sectionSequence } from "./section-sequence";
 export type { FlowType } from "./section-sequence";
 
+// Address validation modal flow (V1-5 PR2, #314). Surfaces the ABNHA 2-modal
+// address-validation flow to the human reviewer; NO auto-accept. The extension
+// fires civica:address-validation-required and awaits civica:address-validation-resolved.
+export {
+  scrapeAddressOptions,
+  dispatchAddressValidationRequired,
+  awaitAddressResolution,
+  handleAddressValidationModal,
+  ADDRESS_VALIDATION_REQUIRED_EVENT,
+  ADDRESS_VALIDATION_RESOLVED_EVENT,
+} from "./address-validation";
+export type {
+  AddressOption,
+  AddressValidationRequiredDetail,
+  AddressValidationResolvedDetail,
+} from "./address-validation";
+

@@ -46,6 +46,9 @@ import {
   constantValue,
   TRANSFORMS,
   sectionSequence,
+  ADDRESS_VALIDATION_REQUIRED_EVENT,
+  ADDRESS_VALIDATION_RESOLVED_EVENT,
+  handleAddressValidationModal,
   type PortalPage,
   type FieldSelector,
   type FlowType,
@@ -416,9 +419,47 @@ export async function runPageFill(
     fingerprints,
   });
 
-  // (e) Render the resulting state with Re-fill / Clear controls.
+  // (e) Address-validation modal dispatch (V1-5 PR2, #314). When the current
+  //     page is ABNHA (home-address), the portal may trigger its 2-modal USPS
+  //     validation flow after we write the address fields. We surface the modal
+  //     to the reviewer via civica:address-validation-required and WAIT for them
+  //     to resolve it (civica:address-validation-resolved). NO auto-accept.
+  //     AC #3: the human selects the validated address; extension only notifies.
+  //
+  //     This runs AFTER fill so the address fields are already written when the
+  //     portal triggers its validation on blur/submit — the reviewer sees both
+  //     the pre-filled fields and the modal options at the same time.
+  //
+  //     Member index 0 = primary applicant. When T7 walk lands steps 2-9, the
+  //     per-member address pages will pass a memberIndex > 0 here.
+  if (page.pageCode === "ABNHA") {
+    console.debug(
+      LOG_PREFIX,
+      "ABNHA: address-validation modal may appear — dispatching civica:address-validation-required",
+    );
+    // Note: we don't await here at page-fill time — the modal is only triggered
+    // by the portal after the user would click Next. We dispatch the required
+    // event so the trust panel wires its listener, and the assister can watch
+    // for the portal's modal to appear. The actual resolution handshake happens
+    // when the modal appears and the reviewer responds.
+    // Fire-and-inform pattern: the event carries empty addressOptions at this
+    // point (the portal modal hasn't appeared yet); the trust panel shows a
+    // "watch for the address-validation modal" notice.
+    void handleAddressValidationModal(page.pageCode, 0, root, document, 0).catch(
+      () => {
+        // Timeout (0ms) → resolves immediately with null. This is the fire-
+        // and-inform pattern: the event dispatch is what matters, not waiting.
+      },
+    );
+  }
+
+  // (f) Render the resulting state with Re-fill / Clear controls.
   renderOverlay(describeFill(result, page, payload, packetId, root));
 }
+
+// Expose event name constants at module level so tests can reference them
+// without re-importing from @civica/benefitscal-cbo/core.
+export { ADDRESS_VALIDATION_REQUIRED_EVENT, ADDRESS_VALIDATION_RESOLVED_EVENT };
 
 /**
  * The first auto-fillable field on a page, used as the readiness probe. We wait
