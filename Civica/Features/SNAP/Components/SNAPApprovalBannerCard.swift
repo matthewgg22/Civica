@@ -213,46 +213,55 @@ enum SNAPApprovalBannerStrings {
     static let firstApproval = FlavorCopy(
         headline: CivicaText(
             "You're approved for CalFresh",
-            es: "Tu solicitud de CalFresh fue aprobada"
+            es: "Tu solicitud de CalFresh fue aprobada",
+            zh: "你的 CalFresh 申请已获批准"
         ),
         bodyLine1: CivicaText(
             "Your EBT card will arrive in 3-7 days.",
-            es: "Tu tarjeta EBT llegará en 3-7 días."
+            es: "Tu tarjeta EBT llegará en 3-7 días.",
+            zh: "你的 EBT 卡将在 3-7 天内寄到。"
         ),
         bodyLine2: CivicaText(
             "When it does, link it here to see your balance.",
-            es: "Cuando llegue, enlázala aquí para ver tu saldo."
+            es: "Cuando llegue, enlázala aquí para ver tu saldo.",
+            zh: "卡到了之后,在这里绑定就能查看余额。"
         ),
         findHelpLink: CivicaText(
             "Find help while you wait",
-            es: "Encuentra ayuda mientras esperas"
+            es: "Encuentra ayuda mientras esperas",
+            zh: "等待期间寻找帮助"
         )
     )
 
     static let renewal = FlavorCopy(
         headline: CivicaText(
             "You're renewed for another year",
-            es: "Renovaste por un año más"
+            es: "Renovaste por un año más",
+            zh: "你已续期一年"
         ),
         bodyLine1: CivicaText(
             "Your benefits will continue without interruption.",
-            es: "Tus beneficios seguirán sin interrupción."
+            es: "Tus beneficios seguirán sin interrupción.",
+            zh: "你的福利将不间断地继续发放。"
         ),
         bodyLine2: nil,
         findHelpLink: CivicaText(
             "Find help if you need it",
-            es: "Encuentra ayuda si la necesitas"
+            es: "Encuentra ayuda si la necesitas",
+            zh: "如果你需要帮助,可以在这里找"
         )
     )
 
     static let whatThisMeans = CivicaText(
         "What this means for you",
-        es: "Lo que esto significa para ti"
+        es: "Lo que esto significa para ti",
+        zh: "这对你意味着什么"
     )
 
     static let dismissA11y = CivicaText(
         "Dismiss approval banner",
-        es: "Descartar aviso de aprobación"
+        es: "Descartar aviso de aprobación",
+        zh: "关闭批准提示"
     )
 }
 
