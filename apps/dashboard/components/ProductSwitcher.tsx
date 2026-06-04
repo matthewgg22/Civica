@@ -7,19 +7,16 @@ const SURFACES = [
     label: "Staff Dashboard",
     description: "Navigator & caseworker view",
     href: "/dashboard",
-    current: true,
+  },
+  {
+    label: "Applicant Portal",
+    description: "civica-web.vercel.app",
+    href: "https://civica-web.vercel.app",
   },
   {
     label: "CBO Preview",
     description: "Prospective partner demo",
     href: "/cbo-preview",
-    current: false,
-  },
-  {
-    label: "Applicant Portal",
-    description: "B2C web app — deploy needed",
-    href: null,
-    current: false,
   },
 ] as const;
 
@@ -63,18 +60,7 @@ export default function ProductSwitcher({ currentHref }: { currentHref: string }
           className="absolute left-0 top-full mt-2 w-52 bg-surface border border-hairline rounded-[4px] shadow-lg z-50 py-1"
         >
           {SURFACES.map((s) => {
-            const isCurrent = s.href === currentHref;
-            if (!s.href) {
-              return (
-                <div
-                  key={s.label}
-                  className="px-3 py-2.5 opacity-40 cursor-not-allowed"
-                >
-                  <p className="text-[13px] font-medium text-ink">{s.label}</p>
-                  <p className="text-[11px] text-muted mt-0.5">{s.description}</p>
-                </div>
-              );
-            }
+            const isCurrent = s.href === currentHref || (s.href === "/dashboard" && currentHref === "/dashboard");
             return (
               <a
                 key={s.label}
