@@ -17,28 +17,28 @@ enum SNAPWorkRequirementsStrings {
         "Household Members",
         es: "Miembros del hogar",
         zh: "家庭成员",
-        vi: "Thành viên hộ gia đình"
+        vi: "Thành viên trong hộ gia đình"
     )
 
     static let tribalMemberLabel = CivicaText(
         "Enrolled tribal member",
         es: "Miembro tribal inscrito",
         zh: "已注册的部落成员",
-        vi: "Thành viên bộ lạc đã đăng ký"
+        vi: "Thành viên bộ lạc đã ghi danh"
     )
 
     static let qualifyingProgramLabel = CivicaText(
         "Enrolled in qualifying program",
         es: "Inscrito en programa calificado",
         zh: "已参加符合条件的项目",
-        vi: "Đã ghi danh chương trình đủ điều kiện"
+        vi: "Đã ghi danh vào chương trình đủ điều kiện"
     )
 
     static let qualifyingProgramSubtitle = CivicaText(
         "SNAP E&T, drug/alcohol treatment, or community mental health",
         es: "SNAP E&T, tratamiento por drogas/alcohol, o salud mental comunitaria",
         zh: "SNAP E&T、戒毒/戒酒治疗,或社区心理健康项目",
-        vi: "SNAP E&T, điều trị nghiện ma túy/rượu, hoặc sức khỏe tâm thần cộng đồng"
+        vi: "SNAP E&T, điều trị cai nghiện ma túy/rượu, hoặc sức khỏe tâm thần cộng đồng"
     )
 
     static let evaluateButton = CivicaText(
@@ -68,7 +68,7 @@ enum SNAPWorkRequirementsStrings {
         "Compliance",
         es: "Cumplimiento",
         zh: "合规情况",
-        vi: "Sự tuân thủ"
+        vi: "Tuân thủ"
     )
 
     static let resultCitations = CivicaText(
