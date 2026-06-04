@@ -408,56 +408,66 @@ enum SNAPStudentStatusStrings {
     static let enrollmentTitle = CivicaText(
         "Are you currently in college or another higher-ed program?",
         es: "¿Estás actualmente en la universidad o en otro programa de educación superior?",
-        zh: "你目前在上大学或其他高等教育项目吗?"
+        zh: "你目前在上大学或其他高等教育项目吗?",
+        vi: "Bạn hiện đang học đại học hoặc một chương trình giáo dục bậc cao khác không?"
     )
     static let enrollmentHelper = CivicaText(
         "This includes college, grad school, trade school, certificate programs, GED, or adult basic education. SNAP has special rules for students.",
         es: "Esto incluye universidad, posgrado, escuela técnica, programas de certificado, GED o educación básica para adultos. SNAP tiene reglas especiales para estudiantes.",
-        zh: "这包括大学、研究生院、技术学校、证书项目、GED 或成人基础教育。SNAP 对学生有特殊规定。"
+        zh: "这包括大学、研究生院、技术学校、证书项目、GED 或成人基础教育。SNAP 对学生有特殊规定。",
+        vi: "Điều này bao gồm đại học, cao học, trường dạy nghề, chương trình cấp chứng chỉ, GED, hoặc giáo dục cơ bản cho người lớn. SNAP có quy định riêng cho sinh viên."
     )
 
     static let halfTimeTitle = CivicaText(
         "Are you enrolled at least half-time?",
         es: "¿Estás inscrito al menos a medio tiempo?",
-        zh: "你至少是半日制注册吗?"
+        zh: "你至少是半日制注册吗?",
+        vi: "Bạn có ghi danh ít nhất bán thời gian không?"
     )
     static let halfTimeHelper = CivicaText(
         "Use your school's definition. If you're not sure, pick the closer answer — you can confirm later.",
         es: "Usa la definición de tu escuela. Si no estás seguro, elige la respuesta más cercana — puedes confirmar después.",
-        zh: "以你学校的定义为准。如果不确定,选择最接近的答案 —— 之后可以再确认。"
+        zh: "以你学校的定义为准。如果不确定,选择最接近的答案 —— 之后可以再确认。",
+        vi: "Dùng định nghĩa của trường bạn. Nếu không chắc, hãy chọn câu trả lời gần đúng nhất — bạn có thể xác nhận lại sau."
     )
 
     static let twentyHoursTitle = CivicaText(
         "Do you work at least 20 hours a week?",
         es: "¿Trabajas al menos 20 horas a la semana?",
-        zh: "你每周工作至少 20 小时吗?"
+        zh: "你每周工作至少 20 小时吗?",
+        vi: "Bạn có làm việc ít nhất 20 giờ một tuần không?"
     )
     static let twentyHoursHelper = CivicaText(
         "Use your usual weekly hours across all jobs. Working 20+ hours is one of the main SNAP student exceptions.",
         es: "Usa tus horas semanales habituales en todos tus trabajos. Trabajar más de 20 horas es una de las principales excepciones estudiantiles de SNAP.",
-        zh: "把你所有工作的常规每周工时加起来。每周工作 20 小时以上是 SNAP 学生例外的主要情形之一。"
+        zh: "把你所有工作的常规每周工时加起来。每周工作 20 小时以上是 SNAP 学生例外的主要情形之一。",
+        vi: "Tính tổng số giờ làm việc hàng tuần thông thường của bạn ở tất cả công việc. Làm việc từ 20 giờ trở lên là một trong những trường hợp ngoại lệ chính cho sinh viên của SNAP."
     )
 
     static let workStudyTitle = CivicaText(
         "Are you in a work-study program?",
         es: "¿Estás en un programa de estudio y trabajo?",
-        zh: "你参加勤工俭学(work-study)项目吗?"
+        zh: "你参加勤工俭学(work-study)项目吗?",
+        vi: "Bạn có tham gia chương trình vừa học vừa làm (work-study) không?"
     )
     static let workStudyHelper = CivicaText(
         "A federal or state work-study placement counts as a SNAP student exception even if it's part-time.",
         es: "Una colocación de estudio y trabajo federal o estatal cuenta como excepción estudiantil de SNAP, aunque sea de medio tiempo.",
-        zh: "联邦或州的勤工俭学(work-study)安排算作 SNAP 学生例外,即使是兼职也算。"
+        zh: "联邦或州的勤工俭学(work-study)安排算作 SNAP 学生例外,即使是兼职也算。",
+        vi: "Một vị trí vừa học vừa làm (work-study) của liên bang hoặc tiểu bang được tính là trường hợp ngoại lệ cho sinh viên của SNAP, ngay cả khi là bán thời gian."
     )
 
     static let dependentChildTitle = CivicaText(
         "Are you the parent or guardian of a child?",
         es: "¿Eres padre, madre o tutor de un menor?",
-        zh: "你是孩子的父母或监护人吗?"
+        zh: "你是孩子的父母或监护人吗?",
+        vi: "Bạn có phải là cha mẹ hoặc người giám hộ của một đứa trẻ không?"
     )
     static let dependentChildHelper = CivicaText(
         "Caring for a child under 6 is a SNAP student exception. Caring for a child under 12 may also qualify if you can't find adequate childcare.",
         es: "Cuidar a un menor de 6 años es una excepción estudiantil de SNAP. Cuidar a un menor de 12 años también puede calificar si no encuentras cuidado infantil adecuado.",
-        zh: "照顾 6 岁以下的孩子属于 SNAP 学生例外。如果找不到合适的托儿服务,照顾 12 岁以下的孩子也可能符合条件。"
+        zh: "照顾 6 岁以下的孩子属于 SNAP 学生例外。如果找不到合适的托儿服务,照顾 12 岁以下的孩子也可能符合条件。",
+        vi: "Chăm sóc trẻ dưới 6 tuổi là một trường hợp ngoại lệ cho sinh viên của SNAP. Chăm sóc trẻ dưới 12 tuổi cũng có thể đủ điều kiện nếu bạn không tìm được dịch vụ giữ trẻ phù hợp."
     )
 
     // Employment & training / student-support program exemption
@@ -468,12 +478,14 @@ enum SNAPStudentStatusStrings {
     static let jobProgramTitle = CivicaText(
         "Are you in a job-training or college support program?",
         es: "¿Estás en un programa de capacitación laboral o de apoyo estudiantil?",
-        zh: "你参加职业培训或学生支持项目吗?"
+        zh: "你参加职业培训或学生支持项目吗?",
+        vi: "Bạn có tham gia chương trình đào tạo nghề hoặc hỗ trợ sinh viên không?"
     )
     static let jobProgramHelper = CivicaText(
         "This includes SNAP Employment & Training (E&T), WIOA, on-the-job training, EOPS or CARE, CalWORKs welfare-to-work, or a Cal Grant work component. Any of these counts as a SNAP student exception, even part-time.",
         es: "Esto incluye Empleo y Capacitación de SNAP (E&T), WIOA, capacitación en el trabajo, EOPS o CARE, el programa welfare-to-work de CalWORKs, o un componente laboral de Cal Grant. Cualquiera de estos cuenta como excepción estudiantil de SNAP, incluso de medio tiempo.",
-        zh: "这包括 SNAP 就业与培训(E&T)、WIOA、在职培训、EOPS 或 CARE、CalWORKs 的 welfare-to-work,或 Cal Grant 的工作部分。任何一项都算作 SNAP 学生例外,即使是兼职也算。"
+        zh: "这包括 SNAP 就业与培训(E&T)、WIOA、在职培训、EOPS 或 CARE、CalWORKs 的 welfare-to-work,或 Cal Grant 的工作部分。任何一项都算作 SNAP 学生例外,即使是兼职也算。",
+        vi: "Điều này bao gồm chương trình Việc làm & Đào tạo của SNAP (E&T), WIOA, đào tạo tại nơi làm việc, EOPS hoặc CARE, chương trình welfare-to-work của CalWORKs, hoặc phần việc làm của Cal Grant. Bất kỳ chương trình nào trong số này đều được tính là trường hợp ngoại lệ cho sinh viên của SNAP, ngay cả khi là bán thời gian."
     )
 
     // MARK: - CA LPIE strings (Session A)
@@ -485,23 +497,27 @@ enum SNAPStudentStatusStrings {
     static let degreeProgramTitle = CivicaText(
         "Is your program at a California Community College, CSU, or UC?",
         es: "¿Tu programa es en un Colegio Comunitario de California, la CSU o la UC?",
-        zh: "你的项目是在加州社区学院、CSU 或 UC 吗?"
+        zh: "你的项目是在加州社区学院、CSU 或 UC 吗?",
+        vi: "Chương trình của bạn có ở một trường California Community College, CSU, hoặc UC không?"
     )
     static let degreeProgramHelper = CivicaText(
         "Community colleges (City College, Santa Monica College, etc.), Cal State campuses, and UC campuses all qualify. Private colleges, trade schools, and out-of-state schools do not.",
         es: "Los colegios comunitarios (City College, Santa Monica College, etc.), los campus de Cal State y los campus de la UC califican. Los colegios privados, las escuelas técnicas y las escuelas fuera del estado no califican.",
-        zh: "社区学院(City College、Santa Monica College 等)、Cal State 各分校和 UC 各分校都符合条件。私立大学、技术学校和加州以外的学校不符合条件。"
+        zh: "社区学院(City College、Santa Monica College 等)、Cal State 各分校和 UC 各分校都符合条件。私立大学、技术学校和加州以外的学校不符合条件。",
+        vi: "Các trường community college (City College, Santa Monica College, v.v.), các phân hiệu Cal State, và các phân hiệu UC đều đủ điều kiện. Các trường đại học tư, trường dạy nghề, và trường ngoài tiểu bang thì không."
     )
 
     static let lpieCalloutTitle = CivicaText(
         "Great news — you may automatically qualify",
         es: "Buenas noticias — es posible que califiques automáticamente",
-        zh: "好消息 —— 你可能自动符合条件"
+        zh: "好消息 —— 你可能自动符合条件",
+        vi: "Tin vui — bạn có thể tự động đủ điều kiện"
     )
     static let lpieCalloutBody = CivicaText(
         "California's LPIE expansion lets half-time CCC, CSU, and UC students skip the usual work and income checks. Tap Continue to confirm.",
         es: "La expansión LPIE de California permite a los estudiantes de medio tiempo de CCC, CSU y UC omitir las verificaciones habituales de trabajo e ingresos. Toca Continuar para confirmar.",
-        zh: "加州的 LPIE 扩展让半日制的 CCC、CSU 和 UC 学生免去常规的工作和收入审查。点击「继续」确认。"
+        zh: "加州的 LPIE 扩展让半日制的 CCC、CSU 和 UC 学生免去常规的工作和收入审查。点击「继续」确认。",
+        vi: "Chương trình mở rộng LPIE của California cho phép sinh viên bán thời gian tại CCC, CSU, và UC bỏ qua các bước kiểm tra việc làm và thu nhập thông thường. Nhấn Tiếp tục để xác nhận."
     )
 }
 
