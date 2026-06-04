@@ -24,12 +24,14 @@ enum SNAPInterviewQuestions {
 
     static func list(language: CivicaLanguage) -> [Question] {
         switch language {
-        case .english, .vietnamese, .tagalog:
+        case .english, .tagalog:
             return englishQuestions
         case .mandarin:
             return mandarinQuestions
         case .spanish:
             return spanishQuestions
+        case .vietnamese:
+            return vietnameseQuestions
         }
     }
 
@@ -185,6 +187,57 @@ enum SNAPInterviewQuestions {
             suggestion: "Sí o no. Si sí, harán preguntas adicionales sobre horas trabajadas y dependientes."
         ),
     ]
+
+    private static let vietnameseQuestions: [Question] = [
+        .init(
+            questionText: "「Bạn có thể xác nhận họ tên đầy đủ và ngày sinh của mình không?」",
+            suggestion: "Tên hợp pháp và ngày sinh của bạn đúng như ghi trên giấy tờ tùy thân."
+        ),
+        .init(
+            questionText: "「Có bao nhiêu người sống trong gia đình bạn và cùng nhau mua hoặc nấu ăn?」",
+            suggestion: "「Chỉ mình tôi」/「Tôi và bạn đời của tôi」/「Ba người — tôi, bạn đời của tôi và con gái chúng tôi」"
+        ),
+        .init(
+            questionText: "「Địa chỉ nhận thư hiện tại của bạn là gì?」",
+            suggestion: "Tên đường, số căn hộ, thành phố, mã ZIP — giống như trên giấy tờ tùy thân của bạn."
+        ),
+        .init(
+            questionText: "「Một tháng bình thường bạn kiếm được bao nhiêu, trước thuế?」",
+            suggestion: "「Khoảng $1,820 trước thuế.」 Dùng con số theo tháng, không phải theo tuần."
+        ),
+        .init(
+            questionText: "「Bạn làm việc ở đâu, và bao lâu được trả lương một lần?」",
+            suggestion: "Tên chủ lao động, hàng tuần / hai tuần một lần / hàng tháng."
+        ),
+        .init(
+            questionText: "「Có ai trong gia đình nhận thu nhập không do lao động không — An Sinh Xã Hội, trợ cấp thất nghiệp, tiền cấp dưỡng con, lương hưu, VA?」",
+            suggestion: "「Có, mẹ tôi nhận $1,100/tháng từ An Sinh Xã Hội」 hoặc 「Không.」 Trả lời có hoặc không một cách trung thực."
+        ),
+        .init(
+            questionText: "「Tiền thuê nhà hoặc tiền trả góp nhà hàng tháng của bạn là bao nhiêu?」",
+            suggestion: "「$1,650 cộng thêm gas và điện.」 Tính cả các tiện ích bạn tự trả."
+        ),
+        .init(
+            questionText: "「Có ai trong gia đình từ 60 tuổi trở lên, hoặc đang sống chung với khuyết tật không?」",
+            suggestion: "Trả lời có hoặc không một cách trung thực. 「Không」 là một câu trả lời đầy đủ."
+        ),
+        .init(
+            questionText: "「Bạn có trả tiền giữ trẻ để có thể đi làm không?」",
+            suggestion: "「Có, $300/tháng cho dịch vụ trông trẻ sau giờ học」 hoặc 「Không.」 Đây là một khoản khấu trừ thật sự — hãy nói có nếu áp dụng cho bạn."
+        ),
+        .init(
+            questionText: "「Có khoản chi phí y tế tự trả nào trên $35/tháng không?」",
+            suggestion: "Chỉ áp dụng nếu có người từ 60 tuổi trở lên hoặc bị khuyết tật. 「Có, khoảng $60/tháng tiền thuốc theo toa」 hoặc 「Không.」"
+        ),
+        .init(
+            questionText: "「Số dư tài khoản ngân hàng hoặc các tài sản khác?」",
+            suggestion: "Ước lượng đại khái là được. Massachusetts không xét tài sản đối với hầu hết các gia đình — họ hỏi cho đầy đủ thôi."
+        ),
+        .init(
+            questionText: "「Có ai trong gia đình bạn đang là sinh viên đại học không?」",
+            suggestion: "Có hoặc không. Nếu có, họ sẽ hỏi thêm về số giờ làm việc và người phụ thuộc."
+        ),
+    ]
 }
 
 // MARK: - Interview view copy
@@ -200,23 +253,27 @@ enum SNAPInterviewStrings {
     static let rehearseHeading = CivicaText(
         "Want a dry run?",
         es: "¿Quieres practicar antes?",
-        zh: "想先练习一下吗?"
+        zh: "想先练习一下吗?",
+        vi: "Muốn tập dượt trước không?"
     )
     static let rehearseBody = CivicaText(
         "Practice answering caseworker-style questions with a simulated interviewer before the real call.",
         es: "Practica responder a preguntas estilo trabajador social con un entrevistador simulado antes de la llamada real.",
-        zh: "在真正打电话之前,和模拟面试官练习回答工作人员风格的问题。"
+        zh: "在真正打电话之前,和模拟面试官练习回答工作人员风格的问题。",
+        vi: "Tập trả lời những câu hỏi kiểu nhân viên xã hội với một người phỏng vấn mô phỏng trước cuộc gọi thật."
     )
     static let rehearseAction = CivicaText(
         "Start a practice session",
         es: "Iniciar sesión de práctica",
-        zh: "开始练习"
+        zh: "开始练习",
+        vi: "Bắt đầu buổi luyện tập"
     )
 
     static let prepPrimary = CivicaText(
         "See what they'll ask",
         es: "Ver qué te preguntarán",
-        zh: "看看他们会问什么"
+        zh: "看看他们会问什么",
+        vi: "Xem họ sẽ hỏi gì"
     )
 
     // MARK: Questions
@@ -224,27 +281,32 @@ enum SNAPInterviewStrings {
     static let questionsEyebrow = CivicaText(
         "What they'll ask",
         es: "Lo que te preguntarán",
-        zh: "他们会问什么"
+        zh: "他们会问什么",
+        vi: "Họ sẽ hỏi gì"
     )
     static let questionsTitle = CivicaText(
         "Twelve questions. You can read these during the call.",
         es: "Doce preguntas. Puedes leerlas durante la llamada.",
-        zh: "12 个问题。打电话的时候你可以照着念。"
+        zh: "12 个问题。打电话的时候你可以照着念。",
+        vi: "Mười hai câu hỏi. Bạn có thể đọc những câu này trong lúc gọi."
     )
     static let youCanSayLabel = CivicaText(
         "You can say:",
         es: "Puedes decir:",
-        zh: "你可以这样说:"
+        zh: "你可以这样说:",
+        vi: "Bạn có thể nói:"
     )
     static let dontKnowHeading = CivicaText(
         "Don't know an answer?",
         es: "¿No sabes una respuesta?",
-        zh: "不知道怎么答?"
+        zh: "不知道怎么答?",
+        vi: "Không biết câu trả lời?"
     )
     static let dontKnowBody = CivicaText(
         "\"I'm not sure\" is a real answer. The interviewer writes down \"self-attested\" and moves on. You don't have to know everything off the top of your head.",
         es: "\"No estoy seguro/a\" es una respuesta real. El entrevistador anota \"self-attested\" (auto-declarado) y continúa. No tienes que saberlo todo de memoria.",
-        zh: "「我不太确定」也是一个真实的回答。面试官会记下「self-attested」(自我声明)然后继续问下一题。你不需要把所有事情都记在脑子里。"
+        zh: "「我不太确定」也是一个真实的回答。面试官会记下「self-attested」(自我声明)然后继续问下一题。你不需要把所有事情都记在脑子里。",
+        vi: "「Tôi không chắc」 là một câu trả lời thật sự. Người phỏng vấn ghi xuống 「self-attested」 (tự khai báo) rồi đi tiếp. Bạn không cần phải nhớ hết mọi thứ trong đầu."
     )
 
     // MARK: Live (during call)
@@ -252,44 +314,52 @@ enum SNAPInterviewStrings {
     static let liveEyebrow = CivicaText(
         "On the call",
         es: "En la llamada",
-        zh: "通话中"
+        zh: "通话中",
+        vi: "Trong cuộc gọi"
     )
     static let nextUpLabel = CivicaText(
         "What's coming next",
         es: "Qué sigue",
-        zh: "接下来是什么"
+        zh: "接下来是什么",
+        vi: "Tiếp theo là gì"
     )
     static let stuckHeading = CivicaText(
         "Stuck?",
         es: "¿Atascado?",
-        zh: "卡住了?"
+        zh: "卡住了?",
+        vi: "Bị kẹt?"
     )
     static let stuckBody = CivicaText(
         "\"Can I have a moment to check?\" is completely normal. They'll wait. Take the breath.",
         es: "\"¿Me das un momento para verificar?\" es completamente normal. Te esperarán. Toma el respiro.",
-        zh: "「我能先查一下吗?」这样问完全正常。他们会等。深呼吸一下。"
+        zh: "「我能先查一下吗?」这样问完全正常。他们会等。深呼吸一下。",
+        vi: "「Cho tôi một chút để kiểm tra được không?」 là hoàn toàn bình thường. Họ sẽ đợi. Hít một hơi thật sâu."
     )
     static let liveAdvance = CivicaText(
         "Done with this one",
         es: "Listo con esta",
-        zh: "这题答完了"
+        zh: "这题答完了",
+        vi: "Xong câu này rồi"
     )
     static let liveFinished = CivicaText(
         "Interview finished",
         es: "Entrevista terminada",
-        zh: "面试结束"
+        zh: "面试结束",
+        vi: "Phỏng vấn xong"
     )
     static let livePause = CivicaText(
         "End / pause",
         es: "Terminar / pausar",
-        zh: "结束 / 暂停"
+        zh: "结束 / 暂停",
+        vi: "Kết thúc / tạm dừng"
     )
 
     static func questionOfLabel(current: Int, total: Int, language: CivicaLanguage) -> String {
         switch language {
-        case .english, .vietnamese, .tagalog: return "Question \(current) of \(total)"
+        case .english, .tagalog: return "Question \(current) of \(total)"
         case .mandarin: return "第 \(current) 题,共 \(total) 题"
         case .spanish: return "Pregunta \(current) de \(total)"
+        case .vietnamese: return "Câu hỏi \(current) trên \(total)"
         }
     }
 
@@ -298,22 +368,26 @@ enum SNAPInterviewStrings {
     static let wrapupEyebrow = CivicaText(
         "After the call",
         es: "Después de la llamada",
-        zh: "通话之后"
+        zh: "通话之后",
+        vi: "Sau cuộc gọi"
     )
     static let wrapupTitle = CivicaText(
         "How did that go?",
         es: "¿Cómo te fue?",
-        zh: "刚才怎么样?"
+        zh: "刚才怎么样?",
+        vi: "Vừa rồi thế nào?"
     )
     static let wrapupNoteHeading = CivicaText(
         "What happens next",
         es: "Qué pasa ahora",
-        zh: "接下来会发生什么"
+        zh: "接下来会发生什么",
+        vi: "Tiếp theo sẽ ra sao"
     )
     static let wrapupNoteBody = CivicaText(
         "Decision usually within 7 days. We'll text the moment we hear from DTA.",
         es: "La decisión usualmente llega en 7 días. Te enviaremos un mensaje en cuanto sepamos del DTA.",
-        zh: "通常 7 天内会有决定。一收到 DTA 的消息,我们就给你发短信。"
+        zh: "通常 7 天内会有决定。一收到 DTA 的消息,我们就给你发短信。",
+        vi: "Quyết định thường có trong vòng 7 ngày. Chúng tôi sẽ nhắn tin ngay khi nghe tin từ DTA."
     )
 
     struct WrapupOptionCopy {
@@ -323,7 +397,7 @@ enum SNAPInterviewStrings {
 
     static func wrapupOption(_ option: SNAPInterviewCoachView.WrapupOption, language: CivicaLanguage) -> WrapupOptionCopy {
         switch (option, language) {
-        case (.smooth, .english), (.smooth, .vietnamese), (.smooth, .tagalog):
+        case (.smooth, .english), (.smooth, .tagalog):
             return .init(
                 title: "Smooth — got through everything",
                 body: "We mark you done and watch for the decision."
@@ -338,7 +412,12 @@ enum SNAPInterviewStrings {
                 title: "Sin problemas — pasé por todo",
                 body: "Te marcamos como completado y esperamos la decisión."
             )
-        case (.stuck, .english), (.stuck, .vietnamese), (.stuck, .tagalog):
+        case (.smooth, .vietnamese):
+            return .init(
+                title: "Suôn sẻ — đã trả lời hết mọi câu",
+                body: "Chúng tôi đánh dấu bạn đã xong và theo dõi quyết định."
+            )
+        case (.stuck, .english), (.stuck, .tagalog):
             return .init(
                 title: "They asked something I couldn't answer",
                 body: "We'll coach you on what to send next — and what \"self-attested\" really means."
@@ -353,7 +432,12 @@ enum SNAPInterviewStrings {
                 title: "Me preguntaron algo que no pude responder",
                 body: "Te ayudaremos con qué enviar a continuación — y qué significa \"self-attested\"."
             )
-        case (.rude, .english), (.rude, .vietnamese), (.rude, .tagalog):
+        case (.stuck, .vietnamese):
+            return .init(
+                title: "Họ hỏi điều mà tôi không trả lời được",
+                body: "Chúng tôi sẽ hướng dẫn bạn gửi gì tiếp theo — và 「self-attested」 thật sự nghĩa là gì."
+            )
+        case (.rude, .english), (.rude, .tagalog):
             return .init(
                 title: "It felt off / they were rude",
                 body: "A real person reads this. We can flag the case if you'd like us to."
@@ -368,7 +452,12 @@ enum SNAPInterviewStrings {
                 title: "Se sintió raro / fueron groseros",
                 body: "Una persona real lee esto. Podemos marcar el caso si quieres."
             )
-        case (.noCall, .english), (.noCall, .vietnamese), (.noCall, .tagalog):
+        case (.rude, .vietnamese):
+            return .init(
+                title: "Cảm thấy không ổn / họ thô lỗ",
+                body: "Một người thật sẽ đọc phản hồi này. Chúng tôi có thể đánh dấu hồ sơ nếu bạn muốn."
+            )
+        case (.noCall, .english), (.noCall, .tagalog):
             return .init(
                 title: "They never called",
                 body: "Missed-interview is the #2 reason applications get denied. We'll help you reach the supervisor today."
@@ -383,13 +472,19 @@ enum SNAPInterviewStrings {
                 title: "Nunca llamaron",
                 body: "Entrevista perdida es la razón #2 por la que se deniegan solicitudes. Te ayudaremos a contactar al supervisor hoy."
             )
+        case (.noCall, .vietnamese):
+            return .init(
+                title: "Họ chẳng bao giờ gọi",
+                body: "Lỡ buổi phỏng vấn là lý do số 2 khiến đơn bị từ chối. Hôm nay chúng tôi sẽ giúp bạn liên lạc với người giám sát."
+            )
         }
     }
 
     static let wrapupPrimary = CivicaText(
         "Send this to Civica",
         es: "Enviar esto a Civica",
-        zh: "把这条发给 Civica"
+        zh: "把这条发给 Civica",
+        vi: "Gửi cái này cho Civica"
     )
 
     // MARK: Misc
@@ -397,11 +492,13 @@ enum SNAPInterviewStrings {
     static let imOnTheCall = CivicaText(
         "I'm on the call now",
         es: "Estoy en la llamada ahora",
-        zh: "我现在在通话中"
+        zh: "我现在在通话中",
+        vi: "Tôi đang trong cuộc gọi"
     )
     static let backToPrep = CivicaText(
         "Back to prep",
         es: "Volver a la preparación",
-        zh: "返回准备"
+        zh: "返回准备",
+        vi: "Quay lại chuẩn bị"
     )
 }
