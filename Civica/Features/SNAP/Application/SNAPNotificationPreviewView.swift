@@ -333,55 +333,64 @@ enum SNAPNotificationPreviewStrings {
     static let eyebrow = CivicaText(
         "Notifications",
         es: "Notificaciones",
-        zh: "通知"
+        zh: "通知",
+        vi: "Thông báo"
     )
     static let title = CivicaText(
         "What you'll hear from us.",
         es: "Lo que recibirás de nosotros.",
-        zh: "你会收到我们的哪些消息。"
+        zh: "你会收到我们的哪些消息。",
+        vi: "Những gì bạn sẽ nhận được từ chúng tôi."
     )
     static let subtitle = CivicaText(
         "Every email and text Civica will send you, in the actual voice we'll use. No marketing, no surprises.",
         es: "Cada correo y mensaje que Civica te enviará, en la voz exacta que usaremos. Sin marketing, sin sorpresas.",
-        zh: "Civica 会发给你的每一封邮件和短信,用的就是我们真正会用的语气。没有营销,没有意外。"
+        zh: "Civica 会发给你的每一封邮件和短信,用的就是我们真正会用的语气。没有营销,没有意外。",
+        vi: "Mọi email và tin nhắn mà Civica sẽ gửi cho bạn, đúng với giọng điệu chúng tôi thực sự dùng. Không tiếp thị, không bất ngờ."
     )
 
     static let previewOnlyNotice = CivicaText(
         "These are examples only. Notifications will be sent once Civica's messaging system is live.",
         es: "Estos son solo ejemplos. Las notificaciones se enviarán una vez que el sistema de mensajería de Civica esté activo.",
-        zh: "这些只是示例。等 Civica 的消息系统上线后,我们才会真正发送通知。"
+        zh: "这些只是示例。等 Civica 的消息系统上线后,我们才会真正发送通知。",
+        vi: "Đây chỉ là ví dụ. Thông báo sẽ được gửi khi hệ thống nhắn tin của Civica hoạt động."
     )
 
     static let emailHeading = CivicaText(
         "Emails — the record",
         es: "Correos — el registro",
-        zh: "邮件 — 留底记录"
+        zh: "邮件 — 留底记录",
+        vi: "Email — bản lưu"
     )
     static let smsHeading = CivicaText(
         "Texts — the moment",
         es: "Mensajes — el momento",
-        zh: "短信 — 即时提醒"
+        zh: "短信 — 即时提醒",
+        vi: "Tin nhắn — nhắc đúng lúc"
     )
     static let smsSenderLabel = CivicaText(
         "Civica · short code, US only",
         es: "Civica · código corto, solo EE. UU.",
-        zh: "Civica · 短代码,仅限美国"
+        zh: "Civica · 短代码,仅限美国",
+        vi: "Civica · mã ngắn, chỉ ở Mỹ"
     )
     static let emailFooter = CivicaText(
         "Civica · Reply to reach a person · Unsubscribe anywhere",
         es: "Civica · Responde para hablar con una persona · Cancelar la suscripción en cualquier momento",
-        zh: "Civica · 回复即可联系到真人 · 随时可退订"
+        zh: "Civica · 回复即可联系到真人 · 随时可退订",
+        vi: "Civica · Trả lời để gặp người thật · Hủy đăng ký ở bất cứ đâu"
     )
 
     static let rulesHeading = CivicaText(
         "How Civica writes notifications",
         es: "Cómo escribe Civica las notificaciones",
-        zh: "Civica 如何撰写通知"
+        zh: "Civica 如何撰写通知",
+        vi: "Cách Civica viết thông báo"
     )
 
     static func rules(language: CivicaLanguage) -> [String] {
         switch language {
-        case .english, .vietnamese, .tagalog:
+        case .english, .tagalog:
             return [
                 "Every message names the next action and the time horizon.",
                 "Email subjects are headlines — they render complete in your inbox.",
@@ -407,6 +416,15 @@ enum SNAPNotificationPreviewStrings {
                 "Responder llega a una persona. Nunca enviamos desde noreply@.",
                 "STOP se respeta en el primer mensaje — nunca escondido.",
                 "\"Ahora no\" es una respuesta de primera clase. Retrocedemos cuando lo dices.",
+            ]
+        case .vietnamese:
+            return [
+                "Mỗi tin nhắn đều nêu rõ bước tiếp theo và thời hạn.",
+                "Tiêu đề email chính là dòng tóm tắt — hiển thị đầy đủ trong hộp thư của bạn.",
+                "Mỗi tin nhắn chỉ một nút, hoặc không có nút nào. Không bao giờ là một rừng nút hành động.",
+                "Trả lời email sẽ gặp được người thật. Chúng tôi không bao giờ gửi từ noreply@.",
+                "STOP được tôn trọng ngay trong tin nhắn đầu tiên — không bao giờ giấu đi.",
+                "“Chưa phải lúc” cũng là một câu trả lời đầy đủ. Bạn nói vậy là chúng tôi lùi lại.",
             ]
         }
     }
