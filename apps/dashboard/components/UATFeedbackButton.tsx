@@ -62,7 +62,7 @@ export default function UATFeedbackButton() {
 
           <div className="relative w-full max-w-md bg-surface border border-hairline rounded-[4px] shadow-lg p-6 space-y-4">
             <div className="flex items-center justify-between">
-              <h2 className="text-[15px] font-bold text-ink">UAT Feedback</h2>
+              <h2 className="text-[17px] font-semibold text-ink">UAT Feedback</h2>
               <button
                 onClick={close}
                 className="text-graphite hover:text-ink text-[18px] leading-none focus:outline-none"
@@ -113,7 +113,7 @@ export default function UATFeedbackButton() {
                   <button
                     onClick={submit}
                     disabled={state === "sending" || !message.trim()}
-                    className="px-4 py-2 bg-pine text-surface text-[13px] font-semibold rounded-[3px] hover:bg-pine/90 disabled:opacity-40 transition-colors"
+                    className="px-4 py-2 bg-pine text-white text-[13px] font-semibold rounded-[3px] hover:opacity-90 disabled:bg-pine-surface disabled:text-muted disabled:cursor-not-allowed transition-colors"
                   >
                     {state === "sending" ? "Sending…" : "Send"}
                   </button>
