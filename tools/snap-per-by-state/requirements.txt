@@ -1,0 +1,4 @@
+pandas>=2.1
+requests>=2.31
+# pdftotext binary (poppler) is invoked via subprocess for FNS/FRAC PDF parsing;
+# install with `brew install poppler` on macOS. No Python PDF lib is required.
