@@ -12,7 +12,7 @@ enum SNAPVoiceStrings {
         "We noticed something in what you shared",
         es: "Notamos algo en lo que compartiste",
         zh: "我们注意到你分享的内容里有些情况",
-        vi: "Chúng tôi nhận thấy một điều trong những gì bạn chia sẻ"
+        vi: "Chúng tôi nhận thấy điều gì đó trong những gì bạn chia sẻ"
     )
     static let distressSheetBody = CivicaText(
         "It sounds like you may be going through a difficult time. You don't have to be alone.",
@@ -24,13 +24,13 @@ enum SNAPVoiceStrings {
         "988 Suicide & Crisis Lifeline",
         es: "Línea de Crisis y Suicidio 988",
         zh: "988 自杀与危机生命专线",
-        vi: "988 Đường dây Cứu trợ Khủng hoảng & Tự tử"
+        vi: "Đường dây nóng Tự tử & Khủng hoảng 988"
     )
     static let distressHotline988Sub = CivicaText(
         "Call or text 988, available 24/7",
         es: "Llama o envía un mensaje al 988, disponible las 24 horas",
         zh: "拨打或发短信至 988,全天 24 小时服务",
-        vi: "Gọi hoặc nhắn tin 988, phục vụ 24/7"
+        vi: "Gọi điện hoặc nhắn tin đến 988, phục vụ suốt ngày đêm"
     )
     static let distressHotline211 = CivicaText(
         "211 — Social services",
@@ -42,7 +42,7 @@ enum SNAPVoiceStrings {
         "Call or text 211 for food, shelter, and support",
         es: "Llama o envía un mensaje al 211 para comida, refugio y apoyo",
         zh: "拨打或发短信至 211,获取食物、住所和支持",
-        vi: "Gọi hoặc nhắn tin 211 để được hỗ trợ thực phẩm, chỗ ở và trợ giúp"
+        vi: "Gọi điện hoặc nhắn tin đến 211 để nhận thức ăn, chỗ ở và hỗ trợ"
     )
     static let distressContinue = CivicaText(
         "Continue with my application",
