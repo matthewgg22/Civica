@@ -8,6 +8,8 @@ import StatusPill from "../../components/StatusPill";
 import StatusBadge from "../../components/StatusBadge";
 import ProductSwitcher from "../../components/ProductSwitcher";
 import { AppDownloadIsland } from "../../components/AppDownloadIsland";
+import InfoTip from "../../components/InfoTip";
+import FlagSensitivityControl from "../../components/cbo/FlagSensitivityControl";
 
 export const dynamic = "force-dynamic";
 
@@ -95,10 +97,22 @@ const DEMO_QC = {
   perBenchmark: 10.8,
   obbbaReady: 94,
   pillars: [
-    { label: "Income verification",     pass: 96, fail: 4,  note: "§10104 threshold" },
-    { label: "Household composition",   pass: 98, fail: 2,  note: "Citizenship + residency" },
-    { label: "Work requirements",       pass: 91, fail: 9,  note: "ABAWD + §10108 exemptions" },
-    { label: "Deduction calculation",   pass: 89, fail: 11, note: "SUA + shelter" },
+    {
+      label: "Income verification", pass: 96, fail: 4, note: "§10104 threshold",
+      tip: "Wages, self-employment, and unearned income checked against the §10104 reporting threshold. The most common QC error category nationally.",
+    },
+    {
+      label: "Household composition", pass: 98, fail: 2, note: "Citizenship + residency",
+      tip: "Who counts in the household — citizenship, residency, and members added or removed mid-period. Drives household size and the benefit amount.",
+    },
+    {
+      label: "Work requirements", pass: 91, fail: 9, note: "ABAWD + §10108 exemptions",
+      tip: "ABAWD time limits and §10108 exemptions under the 2025 rules. Wrongly applied exemptions are a frequent audit finding.",
+    },
+    {
+      label: "Deduction calculation", pass: 89, fail: 11, note: "SUA + shelter",
+      tip: "Standard Utility Allowance tier and shelter costs. The highest-error pillar — a small SUA tier mistake moves the benefit a lot.",
+    },
   ],
   recentFlags: [
     { id: "QC-0041", field: "Gross income",   issue: "Self-employment income missing quarterly average",  status: "Open"     },
@@ -544,19 +558,37 @@ function QCSection() {
       {/* Top metrics */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="bg-surface border border-hairline rounded-[4px] px-5 py-4">
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite">Payment Error Rate (PER)</p>
+          <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite">
+            Payment Error Rate (PER)
+            <InfoTip
+              align="left"
+              label="The share of benefit dollars issued in error — over- or under-payment. USDA's official Quality Control measure. §10105 penalizes states that exceed 105% of the national average error rate."
+            />
+          </p>
           <p className="text-[36px] font-semibold tabular-nums text-ink leading-none mt-1">{DEMO_QC.per}%</p>
           <p className="text-[12px] text-pine font-medium mt-1">↓ vs {DEMO_QC.perBenchmark}% without Civica</p>
           <p className="text-[11px] text-muted mt-0.5">Below §10105 federal trigger</p>
         </div>
         <div className="bg-surface border border-hairline rounded-[4px] px-5 py-4">
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite">OBBBA Readiness</p>
+          <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite">
+            OBBBA Readiness
+            <InfoTip
+              align="left"
+              label="Share of work-requirement determinations the FY2026 rules engine handles automatically under the 2025 OBBBA changes — the ABAWD age band and §10108 exemptions. Higher means less manual rule-tracking for your team."
+            />
+          </p>
           <p className="text-[36px] font-semibold tabular-nums text-ink leading-none mt-1">{DEMO_QC.obbbaReady}%</p>
           <p className="text-[12px] text-pine font-medium mt-1">Work-requirement compliance</p>
           <p className="text-[11px] text-muted mt-0.5">FY2026 rules engine active</p>
         </div>
         <div className="bg-surface border border-hairline rounded-[4px] px-5 py-4">
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite">Open QC flags</p>
+          <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite">
+            Open QC flags
+            <InfoTip
+              align="left"
+              label="Issues the engine auto-flagged this week for a navigator to resolve before handoff. This is flagging, not a determination — the household's eligibility is unchanged until a navigator acts."
+            />
+          </p>
           <p className="text-[36px] font-semibold tabular-nums text-ink leading-none mt-1">{DEMO_QC.recentFlags.filter((f) => f.status === "Open").length}</p>
           <p className="text-[12px] text-graphite mt-1">of {DEMO_QC.recentFlags.length} total this week</p>
           <p className="text-[11px] text-muted mt-0.5">Auto-flagged by engine</p>
@@ -565,7 +597,12 @@ function QCSection() {
 
       {/* Pillar breakdown */}
       <section aria-label="QC pillars">
-        <h2 className="text-[14px] font-bold text-ink mb-3">Error by pillar</h2>
+        <h2 className="text-[14px] font-bold text-ink mb-3">
+          Error by pillar
+          <InfoTip
+            label="Each pillar is a category USDA scores during Quality Control. Error rate = share of reviewed packets with an issue in that category. Pass rate is the complement."
+          />
+        </h2>
         <div className="bg-surface border border-hairline rounded-[4px] overflow-hidden">
           {DEMO_QC.pillars.map((p, i) => (
             <div key={p.label} className={`px-5 py-4 ${i > 0 ? "border-t border-hairline" : ""}`}>
@@ -573,6 +610,7 @@ function QCSection() {
                 <div>
                   <span className="text-[14px] font-semibold text-ink">{p.label}</span>
                   <span className="text-[12px] text-muted ml-2">{p.note}</span>
+                  <InfoTip label={p.tip} />
                 </div>
                 <span className={`text-[12px] font-semibold tabular-nums ${p.fail > 8 ? "text-warning" : "text-pine"}`}>{p.fail}% error rate</span>
               </div>
@@ -586,6 +624,9 @@ function QCSection() {
           ))}
         </div>
       </section>
+
+      {/* CBO flag-sensitivity control (scaffold) */}
+      <FlagSensitivityControl />
 
       {/* Recent flags */}
       <section aria-label="Recent QC flags">
