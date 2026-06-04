@@ -32,6 +32,7 @@ export default function WelcomePage() {
     <div className="home">
       <AppNav
         rightSlot={<LanguagePicker locale={locale} onChange={changeLocale} ariaLabel="Choose language" />}
+        signIn={{ label: t.home_nav_signin, href: "/sign-in" }}
         tabs={[
           { label: t.home_nav_what, href: "#what-is-snap" },
           { label: t.home_nav_status, href: "/status" },
