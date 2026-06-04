@@ -177,7 +177,7 @@ enum CivicaSyncBannerStrings {
         "We're having trouble syncing right now.",
         es: "Estamos teniendo problemas para sincronizar ahora.",
         zh: "我们现在同步遇到问题。",
-        vi: "Chúng tôi đang gặp sự cố đồng bộ ngay bây giờ."
+        vi: "Hiện chúng tôi đang gặp sự cố khi đồng bộ."
     )
     static let body = CivicaText(
         "Check your connection.",
@@ -189,7 +189,7 @@ enum CivicaSyncBannerStrings {
         "Sync degraded. Some data may be stale.",
         es: "Sincronización degradada. Algunos datos pueden estar desactualizados.",
         zh: "同步状态不佳。部分数据可能不是最新的。",
-        vi: "Đồng bộ bị gián đoạn. Một số dữ liệu có thể đã cũ."
+        vi: "Đồng bộ bị gián đoạn. Một số dữ liệu có thể chưa được cập nhật."
     )
     static let dismissA11y = CivicaText(
         "Dismiss sync banner",
