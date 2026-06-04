@@ -60,6 +60,9 @@ packages/db/src/generated/
 .env.development
 .env.production
 .env.staging
+# Vercel CLI env pulls (`vercel env pull`) — real prod/preview secrets
+# (SUPABASE_SERVICE_ROLE_KEY, SENTRY_AUTH_TOKEN, …). Never commit.
+.env.vercel.*
 
 # Logs
 *.log
