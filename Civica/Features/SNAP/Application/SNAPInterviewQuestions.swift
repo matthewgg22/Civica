@@ -24,8 +24,10 @@ enum SNAPInterviewQuestions {
 
     static func list(language: CivicaLanguage) -> [Question] {
         switch language {
-        case .english, .mandarin, .vietnamese, .tagalog:
+        case .english, .vietnamese, .tagalog:
             return englishQuestions
+        case .mandarin:
+            return mandarinQuestions
         case .spanish:
             return spanishQuestions
         }
@@ -79,6 +81,57 @@ enum SNAPInterviewQuestions {
         .init(
             questionText: "\"Anyone in your household a student in college?\"",
             suggestion: "Yes/no. If yes, they'll ask follow-ups about hours worked and dependents."
+        ),
+    ]
+
+    private static let mandarinQuestions: [Question] = [
+        .init(
+            questionText: "「请确认你的全名和出生日期。」",
+            suggestion: "你证件上写的法定姓名和生日。"
+        ),
+        .init(
+            questionText: "「你家里有几个人,一起买菜或做饭?」",
+            suggestion: "「只有我」/「我和我的伴侣」/「三个人 —— 我、我的伴侣和我们的女儿」"
+        ),
+        .init(
+            questionText: "「你目前的邮寄地址是什么?」",
+            suggestion: "街道、公寓号、城市、邮编 —— 和你证件上一样。"
+        ),
+        .init(
+            questionText: "「你一个月一般赚多少钱,税前?」",
+            suggestion: "「税前大约 1,820 美元。」用每月数字,不要用每周。"
+        ),
+        .init(
+            questionText: "「你在哪里工作?多久领一次工资?」",
+            suggestion: "雇主名字,每周 / 每两周 / 每月。"
+        ),
+        .init(
+            questionText: "「家里有人拿非劳动收入吗 —— 社安、失业金、子女抚养费、退休金、退伍军人福利?」",
+            suggestion: "「有,我妈妈每月从社安拿 1,100 美元」或「没有。」诚实回答有或没有。"
+        ),
+        .init(
+            questionText: "「你每月的房租或房贷是多少?」",
+            suggestion: "「1,650 美元,另外还要付煤气和电费。」算上你自己付的水电煤。"
+        ),
+        .init(
+            questionText: "「家里有人 60 岁或以上,或者有残疾吗?」",
+            suggestion: "诚实回答有或没有。「没有」就是一个完整的回答。"
+        ),
+        .init(
+            questionText: "「你为了工作付儿童照顾费吗?」",
+            suggestion: "「有,每月 300 美元课后托管」或「没有。」这是真实的扣除项 —— 如果适用就说有。"
+        ),
+        .init(
+            questionText: "「每月有超过 35 美元的自付医疗费吗?」",
+            suggestion: "只有家里有人 60 岁或以上、或有残疾才适用。「有,每月大约 60 美元的处方药」或「没有。」"
+        ),
+        .init(
+            questionText: "「银行账户余额或其他资源?」",
+            suggestion: "大概估一下就行。Massachusetts 对大多数家庭没有资产审查 —— 他们只是为了把表填全。"
+        ),
+        .init(
+            questionText: "「家里有人在上大学吗?」",
+            suggestion: "有或没有。如果有,他们会追问工作小时数和有没有受抚养人。"
         ),
     ]
 
@@ -146,79 +199,96 @@ enum SNAPInterviewStrings {
     // rehearsing is no longer the action they need.
     static let rehearseHeading = CivicaText(
         "Want a dry run?",
-        es: "¿Quieres practicar antes?"
+        es: "¿Quieres practicar antes?",
+        zh: "想先练习一下吗?"
     )
     static let rehearseBody = CivicaText(
         "Practice answering caseworker-style questions with a simulated interviewer before the real call.",
-        es: "Practica responder a preguntas estilo trabajador social con un entrevistador simulado antes de la llamada real."
+        es: "Practica responder a preguntas estilo trabajador social con un entrevistador simulado antes de la llamada real.",
+        zh: "在真正打电话之前,和模拟面试官练习回答工作人员风格的问题。"
     )
     static let rehearseAction = CivicaText(
         "Start a practice session",
-        es: "Iniciar sesión de práctica"
+        es: "Iniciar sesión de práctica",
+        zh: "开始练习"
     )
 
     static let prepPrimary = CivicaText(
         "See what they'll ask",
-        es: "Ver qué te preguntarán"
+        es: "Ver qué te preguntarán",
+        zh: "看看他们会问什么"
     )
 
     // MARK: Questions
 
     static let questionsEyebrow = CivicaText(
         "What they'll ask",
-        es: "Lo que te preguntarán"
+        es: "Lo que te preguntarán",
+        zh: "他们会问什么"
     )
     static let questionsTitle = CivicaText(
         "Twelve questions. You can read these during the call.",
-        es: "Doce preguntas. Puedes leerlas durante la llamada."
+        es: "Doce preguntas. Puedes leerlas durante la llamada.",
+        zh: "12 个问题。打电话的时候你可以照着念。"
     )
     static let youCanSayLabel = CivicaText(
         "You can say:",
-        es: "Puedes decir:"
+        es: "Puedes decir:",
+        zh: "你可以这样说:"
     )
     static let dontKnowHeading = CivicaText(
         "Don't know an answer?",
-        es: "¿No sabes una respuesta?"
+        es: "¿No sabes una respuesta?",
+        zh: "不知道怎么答?"
     )
     static let dontKnowBody = CivicaText(
         "\"I'm not sure\" is a real answer. The interviewer writes down \"self-attested\" and moves on. You don't have to know everything off the top of your head.",
-        es: "\"No estoy seguro/a\" es una respuesta real. El entrevistador anota \"self-attested\" (auto-declarado) y continúa. No tienes que saberlo todo de memoria."
+        es: "\"No estoy seguro/a\" es una respuesta real. El entrevistador anota \"self-attested\" (auto-declarado) y continúa. No tienes que saberlo todo de memoria.",
+        zh: "「我不太确定」也是一个真实的回答。面试官会记下「self-attested」(自我声明)然后继续问下一题。你不需要把所有事情都记在脑子里。"
     )
 
     // MARK: Live (during call)
 
     static let liveEyebrow = CivicaText(
         "On the call",
-        es: "En la llamada"
+        es: "En la llamada",
+        zh: "通话中"
     )
     static let nextUpLabel = CivicaText(
         "What's coming next",
-        es: "Qué sigue"
+        es: "Qué sigue",
+        zh: "接下来是什么"
     )
     static let stuckHeading = CivicaText(
         "Stuck?",
-        es: "¿Atascado?"
+        es: "¿Atascado?",
+        zh: "卡住了?"
     )
     static let stuckBody = CivicaText(
         "\"Can I have a moment to check?\" is completely normal. They'll wait. Take the breath.",
-        es: "\"¿Me das un momento para verificar?\" es completamente normal. Te esperarán. Toma el respiro."
+        es: "\"¿Me das un momento para verificar?\" es completamente normal. Te esperarán. Toma el respiro.",
+        zh: "「我能先查一下吗?」这样问完全正常。他们会等。深呼吸一下。"
     )
     static let liveAdvance = CivicaText(
         "Done with this one",
-        es: "Listo con esta"
+        es: "Listo con esta",
+        zh: "这题答完了"
     )
     static let liveFinished = CivicaText(
         "Interview finished",
-        es: "Entrevista terminada"
+        es: "Entrevista terminada",
+        zh: "面试结束"
     )
     static let livePause = CivicaText(
         "End / pause",
-        es: "Terminar / pausar"
+        es: "Terminar / pausar",
+        zh: "结束 / 暂停"
     )
 
     static func questionOfLabel(current: Int, total: Int, language: CivicaLanguage) -> String {
         switch language {
-        case .english, .mandarin, .vietnamese, .tagalog: return "Question \(current) of \(total)"
+        case .english, .vietnamese, .tagalog: return "Question \(current) of \(total)"
+        case .mandarin: return "第 \(current) 题,共 \(total) 题"
         case .spanish: return "Pregunta \(current) de \(total)"
         }
     }
@@ -227,19 +297,23 @@ enum SNAPInterviewStrings {
 
     static let wrapupEyebrow = CivicaText(
         "After the call",
-        es: "Después de la llamada"
+        es: "Después de la llamada",
+        zh: "通话之后"
     )
     static let wrapupTitle = CivicaText(
         "How did that go?",
-        es: "¿Cómo te fue?"
+        es: "¿Cómo te fue?",
+        zh: "刚才怎么样?"
     )
     static let wrapupNoteHeading = CivicaText(
         "What happens next",
-        es: "Qué pasa ahora"
+        es: "Qué pasa ahora",
+        zh: "接下来会发生什么"
     )
     static let wrapupNoteBody = CivicaText(
         "Decision usually within 7 days. We'll text the moment we hear from DTA.",
-        es: "La decisión usualmente llega en 7 días. Te enviaremos un mensaje en cuanto sepamos del DTA."
+        es: "La decisión usualmente llega en 7 días. Te enviaremos un mensaje en cuanto sepamos del DTA.",
+        zh: "通常 7 天内会有决定。一收到 DTA 的消息,我们就给你发短信。"
     )
 
     struct WrapupOptionCopy {
@@ -249,40 +323,60 @@ enum SNAPInterviewStrings {
 
     static func wrapupOption(_ option: SNAPInterviewCoachView.WrapupOption, language: CivicaLanguage) -> WrapupOptionCopy {
         switch (option, language) {
-        case (.smooth, .english), (.smooth, .mandarin), (.smooth, .vietnamese), (.smooth, .tagalog):
+        case (.smooth, .english), (.smooth, .vietnamese), (.smooth, .tagalog):
             return .init(
                 title: "Smooth — got through everything",
                 body: "We mark you done and watch for the decision."
+            )
+        case (.smooth, .mandarin):
+            return .init(
+                title: "顺利 —— 全部答完了",
+                body: "我们把你标记为完成,然后等决定。"
             )
         case (.smooth, .spanish):
             return .init(
                 title: "Sin problemas — pasé por todo",
                 body: "Te marcamos como completado y esperamos la decisión."
             )
-        case (.stuck, .english), (.stuck, .mandarin), (.stuck, .vietnamese), (.stuck, .tagalog):
+        case (.stuck, .english), (.stuck, .vietnamese), (.stuck, .tagalog):
             return .init(
                 title: "They asked something I couldn't answer",
                 body: "We'll coach you on what to send next — and what \"self-attested\" really means."
+            )
+        case (.stuck, .mandarin):
+            return .init(
+                title: "他们问了一个我答不上来的问题",
+                body: "我们会帮你想接下来要寄什么 —— 以及「self-attested」到底是什么意思。"
             )
         case (.stuck, .spanish):
             return .init(
                 title: "Me preguntaron algo que no pude responder",
                 body: "Te ayudaremos con qué enviar a continuación — y qué significa \"self-attested\"."
             )
-        case (.rude, .english), (.rude, .mandarin), (.rude, .vietnamese), (.rude, .tagalog):
+        case (.rude, .english), (.rude, .vietnamese), (.rude, .tagalog):
             return .init(
                 title: "It felt off / they were rude",
                 body: "A real person reads this. We can flag the case if you'd like us to."
+            )
+        case (.rude, .mandarin):
+            return .init(
+                title: "感觉不对劲 / 他们态度很差",
+                body: "有真人会看这条反馈。如果你愿意,我们可以把这个案子标记出来。"
             )
         case (.rude, .spanish):
             return .init(
                 title: "Se sintió raro / fueron groseros",
                 body: "Una persona real lee esto. Podemos marcar el caso si quieres."
             )
-        case (.noCall, .english), (.noCall, .mandarin), (.noCall, .vietnamese), (.noCall, .tagalog):
+        case (.noCall, .english), (.noCall, .vietnamese), (.noCall, .tagalog):
             return .init(
                 title: "They never called",
                 body: "Missed-interview is the #2 reason applications get denied. We'll help you reach the supervisor today."
+            )
+        case (.noCall, .mandarin):
+            return .init(
+                title: "他们一直没打来",
+                body: "错过面试是申请被拒的第二大原因。我们今天就帮你联系主管。"
             )
         case (.noCall, .spanish):
             return .init(
@@ -294,17 +388,20 @@ enum SNAPInterviewStrings {
 
     static let wrapupPrimary = CivicaText(
         "Send this to Civica",
-        es: "Enviar esto a Civica"
+        es: "Enviar esto a Civica",
+        zh: "把这条发给 Civica"
     )
 
     // MARK: Misc
 
     static let imOnTheCall = CivicaText(
         "I'm on the call now",
-        es: "Estoy en la llamada ahora"
+        es: "Estoy en la llamada ahora",
+        zh: "我现在在通话中"
     )
     static let backToPrep = CivicaText(
         "Back to prep",
-        es: "Volver a la preparación"
+        es: "Volver a la preparación",
+        zh: "返回准备"
     )
 }
