@@ -7,6 +7,7 @@ import CBOContactButton from "../../components/CBOContactButton";
 import StatusPill from "../../components/StatusPill";
 import StatusBadge from "../../components/StatusBadge";
 import ProductSwitcher from "../../components/ProductSwitcher";
+import { AppDownloadIsland } from "../../components/AppDownloadIsland";
 
 export const dynamic = "force-dynamic";
 
@@ -234,6 +235,8 @@ export default async function CBOPreviewPage({
           </div>
         </div>
       </div>
+
+      <AppDownloadIsland />
     </main>
   );
 }

@@ -5,6 +5,7 @@ import { strings, STORAGE_KEY, type Locale } from "./i18n";
 import { HeroLPIE } from "../components/HeroLPIE";
 import { LeadCaptureForm } from "../components/LeadCaptureForm";
 import { LanguageToggle } from "../components/LanguageToggle";
+import { AppDownloadIsland } from "../components/AppDownloadIsland";
 
 export default function Page() {
   const [locale, setLocale] = useState<Locale>("en");
@@ -66,6 +67,13 @@ export default function Page() {
       <footer className="site-footer">
         <div className="container">© 2026 Civica</div>
       </footer>
+
+      <AppDownloadIsland
+        label={copy.ctaIslandLabel}
+        sub={copy.ctaIslandSub}
+        cta={copy.ctaIslandBtn}
+        dismissLabel={copy.ctaIslandDismiss}
+      />
     </div>
   );
 }

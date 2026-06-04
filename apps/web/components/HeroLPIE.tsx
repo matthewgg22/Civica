@@ -1,5 +1,4 @@
 import type { Copy } from "../app/i18n";
-import { TestFlightCTA } from "./TestFlightCTA";
 
 export function HeroLPIE({ copy }: { copy: Copy }) {
   return (
@@ -15,7 +14,6 @@ export function HeroLPIE({ copy }: { copy: Copy }) {
           <a className="btn btn--secondary" href="#lead-capture">
             {copy.ctaQualify}
           </a>
-          <TestFlightCTA label={copy.ctaTestFlight} />
         </div>
       </div>
     </section>

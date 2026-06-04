@@ -17,7 +17,10 @@ export const strings = {
       "Takes about 10 minutes to apply. No minimum income required.",
     ctaStartApplication: "Start your application",
     ctaQualify: "See if you qualify",
-    ctaTestFlight: "Get the app (TestFlight)",
+    ctaIslandLabel: "Apply on your iPhone",
+    ctaIslandSub: "CalFresh benefits in your pocket",
+    ctaIslandBtn: "Get the app →",
+    ctaIslandDismiss: "Close app download prompt",
 
     whatTitle: "Up to $292/month for groceries",
     whatBody:
@@ -67,7 +70,10 @@ export const strings = {
       "Toma unos 10 minutos aplicar. No se requiere ingreso mínimo.",
     ctaStartApplication: "Comienza tu solicitud",
     ctaQualify: "Ver si calificas",
-    ctaTestFlight: "Obtén la app (TestFlight)",
+    ctaIslandLabel: "Solicita en tu iPhone",
+    ctaIslandSub: "CalFresh en tu bolsillo",
+    ctaIslandBtn: "Obtén la app →",
+    ctaIslandDismiss: "Cerrar aviso de descarga",
 
     whatTitle: "Hasta $292/mes para comestibles",
     whatBody:

@@ -118,6 +118,18 @@ html, body {
   color: #6B655C;
 }
 
+/* ---- App download island animation ---- */
+
+@keyframes island-in {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Expose as a Tailwind v4 animate-* utility */
+@theme {
+  --animate-island-in: island-in 200ms cubic-bezier(0, 0, 0.2, 1) both;
+}
+
 /* Honor prefers-reduced-motion globally per DESIGN.md §7.3.
    Collapses animation / transition durations to ~0 across the whole app,
    so users who request reduced motion don't see card expands, fade-ins,
