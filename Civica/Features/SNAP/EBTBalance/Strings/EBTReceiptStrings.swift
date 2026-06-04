@@ -54,7 +54,7 @@ enum EBTReceiptStrings {
         "We weren't sure we read this correctly. Please review and correct the details below.",
         es: "No estamos seguros de haber leído esto correctamente. Revise y corrija los detalles a continuación.",
         zh: "我们不太确定是否读取正确。请检查并更正下面的详细信息。",
-        vi: "Chúng tôi không chắc đã đọc đúng. Vui lòng xem lại và sửa các chi tiết bên dưới."
+        vi: "Chúng tôi không chắc đã đọc đúng. Vui lòng kiểm tra và sửa các chi tiết bên dưới."
     )
 
     // MARK: - Form field labels + placeholders
@@ -63,7 +63,7 @@ enum EBTReceiptStrings {
         "Store / Merchant",
         es: "Tienda / Comercio",
         zh: "商店 / 商家",
-        vi: "Cửa hàng / Người bán"
+        vi: "Cửa hàng / Nơi bán"
     )
     static let merchantPlaceholder = CivicaText(
         "e.g. Walmart",
@@ -90,7 +90,7 @@ enum EBTReceiptStrings {
         "Confirm & upload",
         es: "Confirmar y subir",
         zh: "确认并上传",
-        vi: "Xác nhận & tải lên"
+        vi: "Xác nhận và tải lên"
     )
     static let cancelButton = CivicaText(
         "Cancel",
@@ -117,13 +117,13 @@ enum EBTReceiptStrings {
         "Review needed",
         es: "Revisión necesaria",
         zh: "需要核对",
-        vi: "Cần xem lại"
+        vi: "Cần kiểm tra"
     )
     static let statusStandalone = CivicaText(
         "No match",
         es: "Sin coincidencia",
         zh: "无匹配",
-        vi: "Không có kết quả khớp"
+        vi: "Không khớp"
     )
 
     // MARK: - Push copy for ambiguous match
@@ -147,13 +147,13 @@ enum EBTReceiptStrings {
         "Unknown merchant",
         es: "Comercio desconocido",
         zh: "未知商家",
-        vi: "Người bán không xác định"
+        vi: "Nơi bán không xác định"
     )
     static let emptyListMessage = CivicaText(
         "No receipts yet. Scan one to attach it to a transaction.",
         es: "Sin recibos aún. Escanea uno para adjuntarlo a una transacción.",
         zh: "还没有收据。扫描一张以附加到某笔交易。",
-        vi: "Chưa có biên lai nào. Quét một biên lai để đính kèm vào giao dịch."
+        vi: "Chưa có biên lai nào. Quét một biên lai để đính kèm vào một giao dịch."
     )
 
     // MARK: - Detail view
@@ -186,7 +186,7 @@ enum EBTReceiptStrings {
         "Unlink",
         es: "Desvincular",
         zh: "取消关联",
-        vi: "Hủy liên kết"
+        vi: "Bỏ liên kết"
     )
 
     // MARK: - Settings labels
