@@ -9,39 +9,45 @@ enum EBTPerksStrings {
     static let eyebrow = CivicaText(
         "PERKS FOR YOU",
         es: "BENEFICIOS PARA TI",
-        zh: "为你准备的优惠"
+        zh: "为你准备的优惠",
+        vi: "ƯU ĐÃI DÀNH CHO BẠN"
     )
     static let freeResourcesEyebrow = CivicaText(
         "FREE RESOURCES NEAR YOU",
         es: "RECURSOS GRATUITOS CERCA",
-        zh: "你附近的免费资源"
+        zh: "你附近的免费资源",
+        vi: "NGUỒN HỖ TRỢ MIỄN PHÍ GẦN BẠN"
     )
     static let savingsLabel = CivicaText(
         "est. savings",
         es: "ahorro estimado",
-        zh: "预计省下"
+        zh: "预计省下",
+        vi: "tiết kiệm ước tính"
     )
     static let redeemButton = CivicaText(
         "I used this",
         es: "Lo usé",
-        zh: "我用过了"
+        zh: "我用过了",
+        vi: "Tôi đã dùng cái này"
     )
     static let redeemConfirmTitle = CivicaText(
         "How much did you save?",
         es: "¿Cuánto ahorraste?",
-        zh: "你省了多少?"
+        zh: "你省了多少?",
+        vi: "Bạn đã tiết kiệm bao nhiêu?"
     )
     static let redeemConfirmBody = CivicaText(
         "We'll add it to your Saved by Civica total.",
         es: "Lo añadiremos a tu total Ahorrado con Civica.",
-        zh: "我们会把它加到你的 Civica 累计省钱总额里。"
+        zh: "我们会把它加到你的 Civica 累计省钱总额里。",
+        vi: "Chúng tôi sẽ cộng vào tổng số tiền bạn Tiết kiệm cùng Civica."
     )
 
     /// Confirm-sheet primary button. Custom-dollars path.
-    static let redeemConfirmSaveButton = CivicaText("Save", es: "Guardar", zh: "保存")
+    static let redeemConfirmSaveButton = CivicaText("Save", es: "Guardar", zh: "保存", vi: "Lưu")
 
     /// Confirm-sheet cancel toolbar item.
-    static let redeemConfirmCancelButton = CivicaText("Cancel", es: "Cancelar", zh: "取消")
+    static let redeemConfirmCancelButton = CivicaText("Cancel", es: "Cancelar", zh: "取消", vi: "Hủy")
 
     /// "~$X est. savings" callout rendered on each offer row. Routed
     /// through a function so the parity guard sees a CivicaText-backed
