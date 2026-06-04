@@ -174,29 +174,33 @@ struct SNAPPhoneSignInView: View {
     // MARK: - Strings
 
     private enum Strings {
-        static let navTitle = CivicaText("Verify identity", es: "Verificar identidad")
-        static let cancel = CivicaText("Cancel", es: "Cancelar")
-        static let title = CivicaText("Save your application", es: "Guarda tu solicitud")
+        static let navTitle = CivicaText("Verify identity", es: "Verificar identidad", zh: "验证身份")
+        static let cancel = CivicaText("Cancel", es: "Cancelar", zh: "取消")
+        static let title = CivicaText("Save your application", es: "Guarda tu solicitud", zh: "保存你的申请")
         static let subtitle = CivicaText(
             "Enter your phone number to receive a code. Your application will be securely saved for your navigator.",
-            es: "Ingresa tu número de teléfono para recibir un código. Tu solicitud se guardará de forma segura para tu navigator."
+            es: "Ingresa tu número de teléfono para recibir un código. Tu solicitud se guardará de forma segura para tu navigator.",
+            zh: "输入你的手机号码以接收验证码。你的申请将安全保存,供你的 navigator 使用。"
         )
-        static let phoneLabel = CivicaText("Phone number", es: "Número de teléfono")
-        static let phonePlaceholder = CivicaText("+1 (555) 000-0000", es: "+1 (555) 000-0000")
-        static let sendCode = CivicaText("Send code", es: "Enviar código")
+        static let phoneLabel = CivicaText("Phone number", es: "Número de teléfono", zh: "手机号码")
+        static let phonePlaceholder = CivicaText("+1 (555) 000-0000", es: "+1 (555) 000-0000", zh: "+1 (555) 000-0000")
+        static let sendCode = CivicaText("Send code", es: "Enviar código", zh: "发送验证码")
         static let phoneDisclosure = CivicaText(
             "Standard messaging rates may apply. Your number is only used for verification.",
-            es: "Pueden aplicar tarifas de mensajería estándar. Tu número se usa solo para verificación."
+            es: "Pueden aplicar tarifas de mensajería estándar. Tu número se usa solo para verificación.",
+            zh: "可能产生标准短信费用。你的号码仅用于验证。"
         )
-        static let otpLabel = CivicaText("Verification code", es: "Código de verificación")
-        static let otpPlaceholder = CivicaText("6-digit code", es: "Código de 6 dígitos")
-        static let verify = CivicaText("Verify", es: "Verificar")
-        static let resend = CivicaText("Send again", es: "Enviar de nuevo")
+        static let otpLabel = CivicaText("Verification code", es: "Código de verificación", zh: "验证码")
+        static let otpPlaceholder = CivicaText("6-digit code", es: "Código de 6 dígitos", zh: "6 位验证码")
+        static let verify = CivicaText("Verify", es: "Verificar", zh: "验证")
+        static let resend = CivicaText("Send again", es: "Enviar de nuevo", zh: "重新发送")
 
         static func otpSentTo(_ phone: String, language: CivicaLanguage) -> String {
             switch language {
             case .spanish:
                 return "Enviamos un código de 6 dígitos a \(phone)"
+            case .mandarin:
+                return "我们已将 6 位验证码发送至 \(phone)"
             default:
                 return "We sent a 6-digit code to \(phone)"
             }
