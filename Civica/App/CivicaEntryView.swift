@@ -418,12 +418,14 @@ enum CivicaEntryStrings {
     static let heroEyebrow = CivicaText(
         "Start here",
         es: "Empieza aquí",
-        zh: "从这里开始"
+        zh: "从这里开始",
+        vi: "Bắt đầu tại đây"
     )
     static let heroTitle = CivicaText(
         "Apply for SNAP",
         es: "Solicita SNAP",
-        zh: "申请 SNAP"
+        zh: "申请 SNAP",
+        vi: "Đăng ký SNAP"
     )
     // Entry runs before the user picks a state, so the body stays
     // state-neutral here ("SNAP food assistance"). The state-conditioned
@@ -433,17 +435,20 @@ enum CivicaEntryStrings {
     static let heroBody = CivicaText(
         "SNAP food assistance. About 15 minutes. Save anytime, no commitment to submit.",
         es: "Asistencia alimentaria de SNAP. Unos 15 minutos. Guarda en cualquier momento; no hay compromiso de enviar.",
-        zh: "SNAP 食品援助。大约 15 分钟。随时可以保存,无需承诺提交。"
+        zh: "SNAP 食品援助。大约 15 分钟。随时可以保存,无需承诺提交。",
+        vi: "Hỗ trợ thực phẩm SNAP. Khoảng 15 phút. Lưu bất cứ lúc nào, không bắt buộc phải nộp."
     )
     static let heroStartCTA = CivicaText(
         "Start your application",
         es: "Empieza tu solicitud",
-        zh: "开始申请"
+        zh: "开始申请",
+        vi: "Bắt đầu đơn của bạn"
     )
     static let heroResumeCTA = CivicaText(
         "Resume your application",
         es: "Continúa tu solicitud",
-        zh: "继续申请"
+        zh: "继续申请",
+        vi: "Tiếp tục đơn của bạn"
     )
 
     // ─── Estimator off-ramp ────────────────────────────────────────
@@ -451,12 +456,14 @@ enum CivicaEntryStrings {
     static let estimatorOffRampPrompt = CivicaText(
         "Not sure if you qualify?",
         es: "¿No estás seguro de si calificas?",
-        zh: "不确定你是否符合资格?"
+        zh: "不确定你是否符合资格?",
+        vi: "Không chắc bạn có đủ điều kiện?"
     )
     static let estimatorOffRampLink = CivicaText(
         "Estimate your benefit →",
         es: "Calcula tu beneficio →",
-        zh: "估算你的福利 →"
+        zh: "估算你的福利 →",
+        vi: "Ước tính trợ cấp của bạn →"
     )
 
     // ─── Secondary rows ────────────────────────────────────────────
@@ -464,24 +471,28 @@ enum CivicaEntryStrings {
     static let findHelpRowEyebrow = CivicaText(
         "Need food today?",
         es: "¿Necesitas comida hoy?",
-        zh: "今天需要食物吗?"
+        zh: "今天需要食物吗?",
+        vi: "Cần thực phẩm hôm nay?"
     )
     static let findHelpRowLink = CivicaText(
         "Find help nearby",
         es: "Encuentra ayuda cerca",
-        zh: "查找附近的援助"
+        zh: "查找附近的援助",
+        vi: "Tìm hỗ trợ gần bạn"
     )
     // State-neutral on the entry surface; the "CalFresh" / "DTA SNAP"
     // wording is applied downstream once the state is known.
     static let ebtBalanceRowEyebrow = CivicaText(
         "Already have SNAP?",
         es: "¿Ya tienes SNAP?",
-        zh: "已经有 SNAP 了?"
+        zh: "已经有 SNAP 了?",
+        vi: "Đã có SNAP?"
     )
     static let ebtBalanceRowLink = CivicaText(
         "Check your EBT balance",
         es: "Consulta tu saldo de EBT",
-        zh: "查看你的 EBT 余额"
+        zh: "查看你的 EBT 余额",
+        vi: "Xem số dư EBT của bạn"
     )
 
     // ─── Draft fallback card (IS-9) ────────────────────────────────
@@ -489,32 +500,38 @@ enum CivicaEntryStrings {
     static let draftFallbackTitle = CivicaText(
         "We couldn't read your saved progress.",
         es: "No pudimos leer tu progreso guardado.",
-        zh: "我们无法读取你保存的进度。"
+        zh: "我们无法读取你保存的进度。",
+        vi: "Chúng tôi không đọc được tiến trình đã lưu của bạn."
     )
     static let draftFallbackBodySchemaMismatch = CivicaText(
         "Your data is from an older version of the app. Re-run the screener (2 min) or start fresh.",
         es: "Tus datos son de una versión anterior de la aplicación. Vuelve a hacer el cuestionario (2 min) o empieza de nuevo.",
-        zh: "你的数据来自较早版本的应用。请重新完成筛查(约 2 分钟)或从头开始。"
+        zh: "你的数据来自较早版本的应用。请重新完成筛查(约 2 分钟)或从头开始。",
+        vi: "Dữ liệu của bạn từ phiên bản cũ của ứng dụng. Làm lại bộ câu hỏi sàng lọc (2 phút) hoặc bắt đầu lại."
     )
     static let draftFallbackBodyIOError = CivicaText(
         "Couldn't read your saved progress — try restarting the app. Or start fresh below.",
         es: "No se pudo leer tu progreso guardado — intenta reiniciar la app. O empieza de nuevo.",
-        zh: "无法读取你保存的进度 — 请尝试重新启动应用,或在下方从头开始。"
+        zh: "无法读取你保存的进度 — 请尝试重新启动应用,或在下方从头开始。",
+        vi: "Không đọc được tiến trình đã lưu — hãy thử khởi động lại ứng dụng. Hoặc bắt đầu lại bên dưới."
     )
     static let draftFallbackBodyDecoding = CivicaText(
         "Your saved data appears corrupted. Re-run the screener (2 min) or start fresh.",
         es: "Tus datos guardados parecen dañados. Vuelve a hacer el cuestionario (2 min) o empieza de nuevo.",
-        zh: "你保存的数据看起来已损坏。请重新完成筛查(约 2 分钟)或从头开始。"
+        zh: "你保存的数据看起来已损坏。请重新完成筛查(约 2 分钟)或从头开始。",
+        vi: "Dữ liệu đã lưu của bạn có vẻ bị hỏng. Làm lại bộ câu hỏi sàng lọc (2 phút) hoặc bắt đầu lại."
     )
     static let draftFallbackRerunCTA = CivicaText(
         "Re-run the screener (2 min)",
         es: "Volver a hacer el cuestionario (2 min)",
-        zh: "重新完成筛查(约 2 分钟)"
+        zh: "重新完成筛查(约 2 分钟)",
+        vi: "Làm lại bộ câu hỏi sàng lọc (2 phút)"
     )
     static let draftFallbackStartFreshCTA = CivicaText(
         "Start fresh",
         es: "Empezar de nuevo",
-        zh: "从头开始"
+        zh: "从头开始",
+        vi: "Bắt đầu lại"
     )
 
     // ─── Footer ────────────────────────────────────────────────────
@@ -522,12 +539,14 @@ enum CivicaEntryStrings {
     static let privacyLink = CivicaText(
         "Your data + privacy",
         es: "Tus datos y privacidad",
-        zh: "你的数据与隐私"
+        zh: "你的数据与隐私",
+        vi: "Dữ liệu và quyền riêng tư của bạn"
     )
     static let publicBenefitTag = CivicaText(
         "· Civica · public-benefit project",
         es: "· Civica · proyecto de beneficio público",
-        zh: "· Civica · 公益项目"
+        zh: "· Civica · 公益项目",
+        vi: "· Civica · dự án vì lợi ích công cộng"
     )
 }
 
