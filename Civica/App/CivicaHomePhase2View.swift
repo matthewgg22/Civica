@@ -324,6 +324,7 @@ struct CivicaHomePhase2View: View {
         .background(CivicaColors.paper.ignoresSafeArea())
         .navigationTitle("Civica")
         .navigationBarTitleDisplayMode(.inline)
+        // Nav wheat removed — brand lives on hero cards now, not in chrome.
         .sheet(isPresented: $presentingWhatHappensNext) {
             SNAPWhatHappensNextSheet(
                 statusStore: statusStore,
@@ -690,7 +691,7 @@ private struct CivicaPhase2MilestoneDetailSheet: View {
 
     private var content: Content {
         switch (milestone, language) {
-        case (.submitted, .english), (.submitted, .vietnamese), (.submitted, .tagalog):
+        case (.submitted, .english), (.submitted, .mandarin), (.submitted, .tagalog):
             return Content(
                 title: "Submitted",
                 body: "Your application has been received by the county. A caseworker will be assigned within one business day.",
@@ -702,13 +703,13 @@ private struct CivicaPhase2MilestoneDetailSheet: View {
                 body: "Tu solicitud fue recibida por el condado. Te asignarán un trabajador del caso dentro de un día hábil.",
                 timeframe: "Suele completarse en 1 día hábil"
             )
-        case (.submitted, .mandarin):
+        case (.submitted, .vietnamese):
             return Content(
-                title: "已提交",
-                body: "县里已收到你的申请。将在一个工作日内为你指派一名工作人员。",
-                timeframe: "通常在 1 个工作日内完成"
+                title: "Đã nộp",
+                body: "Quận đã nhận đơn của bạn. Một nhân viên xử lý hồ sơ sẽ được phân công trong vòng một ngày làm việc.",
+                timeframe: "Thường hoàn tất trong 1 ngày làm việc"
             )
-        case (.inReview, .english), (.inReview, .vietnamese), (.inReview, .tagalog):
+        case (.inReview, .english), (.inReview, .mandarin), (.inReview, .tagalog):
             return Content(
                 title: "In review",
                 body: "A caseworker is checking your documents and looking for anything missing. If something is missing they'll send a Documents Requested notice through this app.",
@@ -720,13 +721,13 @@ private struct CivicaPhase2MilestoneDetailSheet: View {
                 body: "Un trabajador del caso está revisando tus documentos y notando lo que falta. Si falta algo te enviará un aviso de Documentos Solicitados por esta app.",
                 timeframe: "Suele tomar de 7 a 14 días"
             )
-        case (.inReview, .mandarin):
+        case (.inReview, .vietnamese):
             return Content(
-                title: "审核中",
-                body: "工作人员正在检查你的文件,查看是否有遗漏。如果缺少内容,他们会通过本应用发出「需要补交文件」的通知。",
-                timeframe: "通常需要 7–14 天"
+                title: "Đang xét duyệt",
+                body: "Một nhân viên xử lý hồ sơ đang kiểm tra giấy tờ của bạn và tìm xem có thiếu gì không. Nếu thiếu, họ sẽ gửi thông báo Yêu cầu Giấy tờ qua ứng dụng này.",
+                timeframe: "Thường mất 7–14 ngày"
             )
-        case (.interview, .english), (.interview, .vietnamese), (.interview, .tagalog):
+        case (.interview, .english), (.interview, .mandarin), (.interview, .tagalog):
             return Content(
                 title: "Interview",
                 body: "The county calls you for a 15-minute eligibility interview. They'll verify your application and ask about anything that wasn't clear. Missing this call is the most common reason cases get closed — set an alarm 15 minutes before.",
@@ -738,13 +739,13 @@ private struct CivicaPhase2MilestoneDetailSheet: View {
                 body: "El condado te llama para una entrevista de elegibilidad de 15 minutos. Verificará tu solicitud y preguntará por lo que no haya quedado claro. Perder esta llamada es la razón más común por la que se cierran los casos — pon una alarma 15 minutos antes.",
                 timeframe: "Usualmente dentro de 2 semanas tras enviar"
             )
-        case (.interview, .mandarin):
+        case (.interview, .vietnamese):
             return Content(
-                title: "面谈",
-                body: "县里会打电话进行一次 15 分钟的资格面谈。他们会核实你的申请,并询问任何不清楚的地方。错过这通电话是案件被关闭的最常见原因 — 请在通话前 15 分钟设好闹钟。",
-                timeframe: "通常在提交申请后的 2 周内"
+                title: "Phỏng vấn",
+                body: "Quận sẽ gọi cho bạn để phỏng vấn xét điều kiện trong 15 phút. Họ sẽ xác minh đơn của bạn và hỏi về những điều chưa rõ. Bỏ lỡ cuộc gọi này là lý do phổ biến nhất khiến hồ sơ bị đóng — hãy đặt báo thức trước 15 phút.",
+                timeframe: "Thường trong vòng 2 tuần kể từ khi nộp"
             )
-        case (.decision, .english), (.decision, .vietnamese), (.decision, .tagalog):
+        case (.decision, .english), (.decision, .mandarin), (.decision, .tagalog):
             return Content(
                 title: "Decision",
                 body: "By federal rule, the county has 30 days from submission to issue a decision. Expedited (emergency) cases are 7 days. You'll see the result here and get a separate letter from the county.",
@@ -756,11 +757,11 @@ private struct CivicaPhase2MilestoneDetailSheet: View {
                 body: "Por regla federal, el condado tiene 30 días tras enviar para emitir una decisión. Los casos urgentes son 7 días. Verás el resultado aquí y recibirás una carta aparte del condado.",
                 timeframe: "Regla federal: 30 días (7 días en casos urgentes)"
             )
-        case (.decision, .mandarin):
+        case (.decision, .vietnamese):
             return Content(
-                title: "决定",
-                body: "按联邦规定,县里必须在你提交申请后的 30 天内作出决定。紧急(加快处理)案件为 7 天。结果会在这里显示,你也会另外收到县里寄来的信。",
-                timeframe: "联邦规定:30 天(加快处理为 7 天)"
+                title: "Quyết định",
+                body: "Theo quy định liên bang, quận có 30 ngày kể từ khi nộp để ra quyết định. Hồ sơ khẩn cấp là 7 ngày. Bạn sẽ thấy kết quả ở đây và nhận một lá thư riêng từ quận.",
+                timeframe: "Quy định liên bang: 30 ngày (7 ngày cho hồ sơ khẩn cấp)"
             )
         }
     }
@@ -815,46 +816,46 @@ private struct CivicaPhase2MilestoneDetailSheet: View {
 // MARK: - Strings
 
 enum CivicaPhase2Strings {
-    static let fallbackCounty = CivicaText("your county", es: "tu condado", zh: "你所在的县")
+    static let fallbackCounty = CivicaText("your county", es: "tu condado", vi: "quận của bạn")
 
     // Status pills
-    static let pillSubmitted = CivicaText("Submitted", es: "Enviada", zh: "已提交")
-    static let pillDocumentsRequested = CivicaText("Documents requested", es: "Documentos solicitados", zh: "需要补交文件")
-    static let pillInterviewScheduled = CivicaText("Interview scheduled", es: "Entrevista programada", zh: "面谈已安排")
-    static let pillInterviewCompleted = CivicaText("Interview complete", es: "Entrevista completa", zh: "面谈已完成")
+    static let pillSubmitted = CivicaText("Submitted", es: "Enviada", vi: "Đã nộp")
+    static let pillDocumentsRequested = CivicaText("Documents requested", es: "Documentos solicitados", vi: "Đã yêu cầu giấy tờ")
+    static let pillInterviewScheduled = CivicaText("Interview scheduled", es: "Entrevista programada", vi: "Đã lên lịch phỏng vấn")
+    static let pillInterviewCompleted = CivicaText("Interview complete", es: "Entrevista completa", vi: "Phỏng vấn hoàn tất")
 
     static func dayN(count: Int, language: CivicaLanguage) -> String {
         switch language {
-        case .english, .vietnamese, .tagalog: return "Day \(count) of ~10"
+        case .english, .mandarin, .tagalog: return "Day \(count) of ~10"
         case .spanish: return "Día \(count) de ~10"
-        case .mandarin: return "第 \(count) 天,共约 10 天"
+        case .vietnamese: return "Ngày \(count) trên ~10"
         }
     }
 
     // Timeline labels
-    static let timelineSubmitted = CivicaText("Submitted", es: "Enviada", zh: "已提交")
-    static let timelineInReview  = CivicaText("In review", es: "En revisión", zh: "审核中")
-    static let timelineInterview = CivicaText("Interview", es: "Entrevista", zh: "面谈")
-    static let timelineDecision  = CivicaText("Decision", es: "Decisión", zh: "决定")
+    static let timelineSubmitted = CivicaText("Submitted", es: "Enviada", vi: "Đã nộp")
+    static let timelineInReview  = CivicaText("In review", es: "En revisión", vi: "Đang xét duyệt")
+    static let timelineInterview = CivicaText("Interview", es: "Entrevista", vi: "Phỏng vấn")
+    static let timelineDecision  = CivicaText("Decision", es: "Decisión", vi: "Quyết định")
 
     // Interview appointment card (IA-1). Label reuses timelineInterview
     // ("Interview" / "Entrevista"). Relative-time phrases below:
-    static let appointmentToday    = CivicaText("Today", es: "Hoy", zh: "今天")
-    static let appointmentTomorrow = CivicaText("Tomorrow", es: "Mañana", zh: "明天")
+    static let appointmentToday    = CivicaText("Today", es: "Hoy", vi: "Hôm nay")
+    static let appointmentTomorrow = CivicaText("Tomorrow", es: "Mañana", vi: "Ngày mai")
     static func appointmentInDays(days: Int, language: CivicaLanguage) -> String {
         switch language {
-        case .english, .vietnamese, .tagalog: return "In \(days) days"
+        case .english, .mandarin, .tagalog: return "In \(days) days"
         case .spanish: return "En \(days) días"
-        case .mandarin: return "\(days) 天后"
+        case .vietnamese: return "Còn \(days) ngày"
         }
     }
 
     // Headline
     static func headline(county: String, language: CivicaLanguage) -> String {
         switch language {
-        case .english, .vietnamese, .tagalog: return "Your application is with \(county)."
+        case .english, .mandarin, .tagalog: return "Your application is with \(county)."
         case .spanish: return "Tu solicitud está con \(county)."
-        case .mandarin: return "你的申请正在 \(county) 处理。"
+        case .vietnamese: return "Đơn của bạn đang ở \(county)."
         }
     }
 
@@ -862,34 +863,34 @@ enum CivicaPhase2Strings {
     static let bodySubmitted = CivicaText(
         "A caseworker is reviewing your documents. If everything's clear, they'll call to schedule a 15-minute interview within the next few days.",
         es: "Un trabajador social está revisando tus documentos. Si todo está claro, te llamarán para programar una entrevista de 15 minutos en los próximos días.",
-        zh: "工作人员正在审核你的文件。如果一切清楚,他们会在接下来几天内打电话来安排一次 15 分钟的面谈。"
+        vi: "Một nhân viên xử lý hồ sơ đang xem giấy tờ của bạn. Nếu mọi thứ rõ ràng, họ sẽ gọi để hẹn phỏng vấn 15 phút trong vài ngày tới."
     )
     static let bodyDocumentsRequested = CivicaText(
         "The county needs more documents before they can continue. Upload them so a caseworker can pick the review back up.",
         es: "El condado necesita más documentos antes de continuar. Súbelos para que un trabajador social pueda continuar con la revisión.",
-        zh: "县里需要更多文件才能继续。请上传文件,以便工作人员继续审核。"
+        vi: "Quận cần thêm giấy tờ trước khi có thể tiếp tục. Hãy tải lên để nhân viên xử lý hồ sơ tiếp tục xét duyệt."
     )
     static let bodyInterviewScheduled = CivicaText(
         "Your eligibility interview is on the calendar. A caseworker will call at the scheduled time to verify your application.",
         es: "Tu entrevista de elegibilidad está agendada. Un trabajador social te llamará a la hora programada para verificar tu solicitud.",
-        zh: "你的资格面谈已安排好。工作人员会在约定的时间打电话来核实你的申请。"
+        vi: "Buổi phỏng vấn xét điều kiện của bạn đã có trên lịch. Một nhân viên xử lý hồ sơ sẽ gọi đúng giờ đã hẹn để xác minh đơn của bạn."
     )
     static let bodyInterviewCompleted = CivicaText(
         "The interview is done. The county will mail a written decision — usually within 30 days of when you applied.",
         es: "La entrevista está completa. El condado enviará por correo una decisión escrita — usualmente dentro de los 30 días desde que aplicaste.",
-        zh: "面谈已经完成。县里会邮寄书面决定 — 通常在你提交申请后的 30 天内寄出。"
+        vi: "Phỏng vấn đã xong. Quận sẽ gửi quyết định bằng văn bản qua thư — thường trong vòng 30 ngày kể từ khi bạn nộp đơn."
     )
 
     // CTA
     static let primaryCTAWhatNext = CivicaText(
         "How to prepare for what's next",
         es: "Cómo prepararte para lo que sigue",
-        zh: "如何为接下来的步骤做准备"
+        vi: "Cách chuẩn bị cho bước tiếp theo"
     )
     static let primaryCTAPrepareInterview = CivicaText(
         "Prepare for your interview",
         es: "Prepárate para tu entrevista",
-        zh: "为你的面谈做准备"
+        vi: "Chuẩn bị cho buổi phỏng vấn"
     )
 
     // Action rows
@@ -908,7 +909,7 @@ enum CivicaPhase2Strings {
     // and carries no second-person pronoun, sidestepping tú/usted.
     static func documentsRequestedHeadline(count: Int, language: CivicaLanguage) -> String {
         switch language {
-        case .english, .vietnamese, .tagalog:
+        case .english, .mandarin, .tagalog:
             return count == 1
                 ? "A routine step — 1 document to upload"
                 : "A routine step — \(count) documents to upload"
@@ -916,33 +917,33 @@ enum CivicaPhase2Strings {
             return count == 1
                 ? "Un paso de rutina — 1 documento por subir"
                 : "Un paso de rutina — \(count) documentos por subir"
-        case .mandarin:
+        case .vietnamese:
             return count == 1
-                ? "一个常规步骤 — 还需上传 1 份文件"
-                : "一个常规步骤 — 还需上传 \(count) 份文件"
+                ? "Một bước thường lệ — 1 giấy tờ cần tải lên"
+                : "Một bước thường lệ — \(count) giấy tờ cần tải lên"
         }
     }
     static func unreadMessagesHeadline(count: Int, language: CivicaLanguage) -> String {
         switch language {
-        case .english, .vietnamese, .tagalog:
+        case .english, .mandarin, .tagalog:
             return count == 1 ? "1 new message" : "\(count) new messages"
         case .spanish:
             return count == 1 ? "1 mensaje nuevo" : "\(count) mensajes nuevos"
-        case .mandarin:
-            return count == 1 ? "1 条新消息" : "\(count) 条新消息"
+        case .vietnamese:
+            return count == 1 ? "1 tin nhắn mới" : "\(count) tin nhắn mới"
         }
     }
 
     // Secondary rows
-    static let findHelpEyebrow = CivicaText("Need food while you wait?", es: "¿Necesitas comida mientras esperas?", zh: "等待期间需要食物吗?")
-    static let findHelpLink    = CivicaText("Find help nearby", es: "Encuentra ayuda cerca", zh: "查找附近的援助")
+    static let findHelpEyebrow = CivicaText("Need food while you wait?", es: "¿Necesitas comida mientras esperas?", vi: "Cần thức ăn trong khi chờ?")
+    static let findHelpLink    = CivicaText("Find help nearby", es: "Encuentra ayuda cerca", vi: "Tìm hỗ trợ gần bạn")
     // UD-6 (audit 2026-05-29): row link renamed from "Message a navigator"
     // → "Open the state portal". Civica does not yet have a real human-
     // navigator channel wired (per docs/plans/real-navigator-handoff-2026-Q3.md
     // when that plan lands); honest copy describes the actual destination
     // and avoids the trust break that fires the moment the user taps.
-    static let navigatorEyebrow = CivicaText("Have a question?", es: "¿Tienes una pregunta?", zh: "有问题吗?")
-    static let navigatorLink    = CivicaText("Open the state portal", es: "Abrir el portal estatal", zh: "打开州政府网站")
+    static let navigatorEyebrow = CivicaText("Have a question?", es: "¿Tienes una pregunta?", vi: "Có câu hỏi?")
+    static let navigatorLink    = CivicaText("Open the state portal", es: "Abrir el portal estatal", vi: "Mở cổng tiểu bang")
 }
 
 #if DEBUG
