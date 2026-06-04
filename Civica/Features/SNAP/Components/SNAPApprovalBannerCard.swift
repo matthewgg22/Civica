@@ -214,22 +214,26 @@ enum SNAPApprovalBannerStrings {
         headline: CivicaText(
             "You're approved for CalFresh",
             es: "Tu solicitud de CalFresh fue aprobada",
-            zh: "你的 CalFresh 申请已获批准"
+            zh: "你的 CalFresh 申请已获批准",
+            vi: "Bạn đã được duyệt CalFresh"
         ),
         bodyLine1: CivicaText(
             "Your EBT card will arrive in 3-7 days.",
             es: "Tu tarjeta EBT llegará en 3-7 días.",
-            zh: "你的 EBT 卡将在 3-7 天内寄到。"
+            zh: "你的 EBT 卡将在 3-7 天内寄到。",
+            vi: "Thẻ EBT của bạn sẽ đến trong 3-7 ngày."
         ),
         bodyLine2: CivicaText(
             "When it does, link it here to see your balance.",
             es: "Cuando llegue, enlázala aquí para ver tu saldo.",
-            zh: "卡到了之后,在这里绑定就能查看余额。"
+            zh: "卡到了之后,在这里绑定就能查看余额。",
+            vi: "Khi thẻ đến, hãy liên kết tại đây để xem số dư."
         ),
         findHelpLink: CivicaText(
             "Find help while you wait",
             es: "Encuentra ayuda mientras esperas",
-            zh: "等待期间寻找帮助"
+            zh: "等待期间寻找帮助",
+            vi: "Tìm hỗ trợ trong khi bạn chờ"
         )
     )
 
@@ -237,31 +241,36 @@ enum SNAPApprovalBannerStrings {
         headline: CivicaText(
             "You're renewed for another year",
             es: "Renovaste por un año más",
-            zh: "你已续期一年"
+            zh: "你已续期一年",
+            vi: "Bạn đã được gia hạn thêm một năm"
         ),
         bodyLine1: CivicaText(
             "Your benefits will continue without interruption.",
             es: "Tus beneficios seguirán sin interrupción.",
-            zh: "你的福利将不间断地继续发放。"
+            zh: "你的福利将不间断地继续发放。",
+            vi: "Trợ cấp của bạn sẽ tiếp tục mà không bị gián đoạn."
         ),
         bodyLine2: nil,
         findHelpLink: CivicaText(
             "Find help if you need it",
             es: "Encuentra ayuda si la necesitas",
-            zh: "如果你需要帮助,可以在这里找"
+            zh: "如果你需要帮助,可以在这里找",
+            vi: "Tìm hỗ trợ nếu bạn cần"
         )
     )
 
     static let whatThisMeans = CivicaText(
         "What this means for you",
         es: "Lo que esto significa para ti",
-        zh: "这对你意味着什么"
+        zh: "这对你意味着什么",
+        vi: "Điều này có ý nghĩa gì với bạn"
     )
 
     static let dismissA11y = CivicaText(
         "Dismiss approval banner",
         es: "Descartar aviso de aprobación",
-        zh: "关闭批准提示"
+        zh: "关闭批准提示",
+        vi: "Đóng thông báo duyệt"
     )
 }
 
