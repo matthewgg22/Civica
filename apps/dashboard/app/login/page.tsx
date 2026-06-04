@@ -58,9 +58,9 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4">
-      <div className="bg-surface p-10 rounded-[4px] border border-hairline shadow-md w-full max-w-md">
+      <div className="bg-surface p-8 rounded-[4px] border border-hairline shadow-md w-full max-w-md">
         {/* Lockup: disc + wordmark, vertically centered against each other */}
-        <div className="flex items-center gap-4 mb-5">
+        <div className="flex items-center gap-4 mb-4">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/civica-wheat-mark.png" alt="Civica" width={68} height={68} className="w-[68px] h-[68px] object-contain shrink-0" />
           <div className="flex flex-col justify-center">
@@ -70,7 +70,7 @@ export default function LoginPage() {
         </div>
 
         <p className="eyebrow mb-2">Sign In</p>
-        <h2 className="text-[24px] font-semibold tracking-tight text-ink mb-6">Welcome back</h2>
+        <h2 className="text-[24px] font-semibold tracking-tight text-ink mb-4">Welcome back</h2>
 
         {resetSent ? (
           <div className="py-4 text-center">
