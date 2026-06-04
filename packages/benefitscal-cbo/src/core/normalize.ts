@@ -25,6 +25,9 @@ import type {
   BenefitsCalPayload,
   HouseholdMember,
   IncomeSource,
+  Expense,
+  ExpenseType,
+  PayFrequency,
   MaritalStatus,
   CitizenshipStatus,
   SexAssignedAtBirth,
@@ -68,7 +71,19 @@ export interface PacketHouseholdMember {
 export interface PacketIncomeSource {
   income_type: string;
   income_amount: number;
-  income_frequency: "monthly" | "weekly" | "biweekly" | "annual" | "irregular";
+  /** Widened to the full portal frequency superset (#497). */
+  income_frequency: PayFrequency;
+}
+
+/**
+ * A structured expense as produced by the QC engine or intake answers (#498).
+ * Mirrors PacketIncomeSource. `expense_type`/`frequency` arrive as the schema
+ * enum values; rows with an unrecognized type or negative amount are dropped.
+ */
+export interface PacketExpense {
+  expense_type: ExpenseType;
+  amount: number;
+  frequency: PayFrequency;
 }
 
 /** Decrypted applicant personal info (PII decrypted by route before calling here). */
@@ -106,6 +121,12 @@ export interface NormalizeInput {
   household_members: PacketHouseholdMember[];
   /** Income sources — may come from QC engine evidence or intake answers. */
   income_sources: PacketIncomeSource[];
+  /**
+   * Structured expenses — shelter, utilities, dependent care, court-ordered
+   * support (#498). Optional: when intake collected no expense data the field
+   * is omitted from the payload entirely (surfaced as needs-review, never $0).
+   */
+  expenses?: PacketExpense[];
   /** Uploaded documents with signed URLs from Supabase Storage. */
   documents: DocumentItem[];
   /**
@@ -270,6 +291,7 @@ export function normalizeForPortal(input: NormalizeInput): BenefitsCalPayload {
     answers,
     household_members,
     income_sources,
+    expenses,
     documents,
     utility_allowance_type,
     client_signature_type,
@@ -302,6 +324,18 @@ export function normalizeForPortal(input: NormalizeInput): BenefitsCalPayload {
     mappedIncome.length > 0
       ? mappedIncome
       : buildIncomeFromAnswers(answers);
+
+  // Map expenses (#498) — drop rows with a non-positive amount. A missing
+  // `expenses` input stays undefined so the payload key is omitted (the
+  // extension surfaces an absent expense section as needs-review rather than
+  // assuming $0, which would wrongly suppress the excess-shelter deduction).
+  const mappedExpenses: Expense[] | undefined = expenses
+    ?.filter((e) => e.expense_type && e.amount >= 0)
+    .map((e) => ({
+      expense_type: e.expense_type,
+      amount: e.amount,
+      frequency: e.frequency,
+    }));
 
   // Map documents — pass through all with URLs
   const documentUrls = documents
@@ -365,6 +399,13 @@ export function normalizeForPortal(input: NormalizeInput): BenefitsCalPayload {
 
     // Income
     income_sources: effectiveIncome,
+
+    // Expenses (#498) — only include the key when intake supplied expense rows,
+    // so an absent expense section stays truly absent (needs-review) rather than
+    // an empty array that reads as "confirmed no expenses".
+    ...(mappedExpenses && mappedExpenses.length > 0
+      ? { expenses: mappedExpenses }
+      : {}),
 
     // Utility
     utility_allowance_type: utilityType,

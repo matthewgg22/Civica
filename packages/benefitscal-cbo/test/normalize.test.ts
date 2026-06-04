@@ -1,6 +1,10 @@
 import { describe, it, expect } from "vitest";
 import { normalizeForPortal } from "../src/core/normalize";
-import { BenefitsCalPayloadSchema } from "../src/core/schemas";
+import {
+  BenefitsCalPayloadSchema,
+  PayFrequencySchema,
+  ExpenseSchema,
+} from "../src/core/schemas";
 import type { NormalizeInput } from "../src/core/normalize";
 
 // ---------------------------------------------------------------------------
@@ -622,5 +626,114 @@ describe("BenefitsCalPayloadSchema — V1-2 field validation", () => {
   it("rejects an empty-string gender (min length 1)", () => {
     const bad = { ...valid, gender: "" };
     expect(BenefitsCalPayloadSchema.safeParse(bad).success).toBe(false);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Income frequency widening (#497) + Expenses schema (#498) — live-walk findings
+// ---------------------------------------------------------------------------
+
+describe("PayFrequencySchema — widened to the live-walk portal superset (#497)", () => {
+  it("accepts all 11 frequency values incl. the 6 added portal options", () => {
+    const all = [
+      "weekly",
+      "biweekly",
+      "semimonthly", // new
+      "monthly",
+      "daily", // new
+      "quarterly", // new
+      "semiannual", // new
+      "annual",
+      "onetime", // new
+      "hourly", // new
+      "irregular", // legacy back-compat
+    ];
+    for (const f of all) {
+      expect(PayFrequencySchema.safeParse(f).success, `frequency "${f}"`).toBe(true);
+    }
+  });
+
+  it("rejects an unknown frequency", () => {
+    expect(PayFrequencySchema.safeParse("fortnightly").success).toBe(false);
+  });
+
+  it("an income source with a new portal frequency round-trips through the payload", () => {
+    const input: NormalizeInput = {
+      packet_id: "a1b2c3d4-0000-0000-0000-0000000000aa",
+      applicant: baseApplicant(),
+      answers: noAnswers(),
+      household_members: [],
+      income_sources: [
+        { income_type: "wages", income_amount: 800, income_frequency: "semimonthly" },
+      ],
+      documents: [],
+      utility_allowance_type: "none",
+      client_signature_type: "async_portal",
+    };
+    const payload = normalizeForPortal(input);
+    expect(BenefitsCalPayloadSchema.safeParse(payload).success).toBe(true);
+    expect(payload.income_sources[0]?.income_frequency).toBe("semimonthly");
+  });
+});
+
+describe("ExpenseSchema + payload.expenses (#498)", () => {
+  it("validates a well-formed expense", () => {
+    expect(
+      ExpenseSchema.safeParse({
+        expense_type: "rent_or_mortgage",
+        amount: 1500,
+        frequency: "monthly",
+      }).success,
+    ).toBe(true);
+  });
+
+  it("rejects an unknown expense_type and a negative amount", () => {
+    expect(
+      ExpenseSchema.safeParse({ expense_type: "yacht", amount: 10, frequency: "monthly" }).success,
+    ).toBe(false);
+    expect(
+      ExpenseSchema.safeParse({ expense_type: "medical", amount: -5, frequency: "monthly" }).success,
+    ).toBe(false);
+  });
+
+  it("normalizeForPortal maps expenses and drops negative-amount rows", () => {
+    const input: NormalizeInput = {
+      packet_id: "a1b2c3d4-0000-0000-0000-0000000000bb",
+      applicant: baseApplicant(),
+      answers: noAnswers(),
+      household_members: [],
+      income_sources: [],
+      expenses: [
+        { expense_type: "rent_or_mortgage", amount: 1500, frequency: "monthly" },
+        { expense_type: "dependent_care", amount: 400, frequency: "monthly" },
+        { expense_type: "medical", amount: -1, frequency: "monthly" }, // dropped
+      ],
+      documents: [],
+      utility_allowance_type: "none",
+      client_signature_type: "async_portal",
+    };
+    const payload = normalizeForPortal(input);
+    expect(BenefitsCalPayloadSchema.safeParse(payload).success).toBe(true);
+    expect(payload.expenses).toHaveLength(2);
+    expect(payload.expenses?.map((e) => e.expense_type)).toEqual([
+      "rent_or_mortgage",
+      "dependent_care",
+    ]);
+  });
+
+  it("omits the expenses key entirely when intake supplied no expense data (needs-review, not $0)", () => {
+    const input: NormalizeInput = {
+      packet_id: "a1b2c3d4-0000-0000-0000-0000000000cc",
+      applicant: baseApplicant(),
+      answers: noAnswers(),
+      household_members: [],
+      income_sources: [],
+      documents: [],
+      utility_allowance_type: "none",
+      client_signature_type: "async_portal",
+    };
+    const payload = normalizeForPortal(input);
+    expect("expenses" in payload).toBe(false);
+    expect(BenefitsCalPayloadSchema.safeParse(payload).success).toBe(true);
   });
 });

@@ -45,12 +45,79 @@ export const HouseholdMemberSchema = z.object({
 });
 export type HouseholdMember = z.infer<typeof HouseholdMemberSchema>;
 
+/**
+ * Pay/expense frequency — the canonical superset captured from the live
+ * BenefitsCal walk (2026-06, #497). The income page (`ABEIC #oftenPaid`) and
+ * the expense detail pages (`ABAPH #dropdownoptiongroup`) use these portal
+ * options:
+ *   Weekly, Bi-Weekly, Semi-Monthly, Monthly, Daily, Quarterly,
+ *   Semi Annually, Annually, One-Time Only, Hourly
+ * (expense pages omit Daily/Hourly; this superset covers both surfaces).
+ *
+ * `irregular` is retained from the original 5-value income enum for backward
+ * compatibility with packets/QC results emitted before this widening — it has
+ * no portal option and falls to needs-review at fill time.
+ *
+ * Engine note: the eligibility math needs a MONTHLY figure. The portal→monthly
+ * conversion (e.g. semimonthly ×2.167, weekly ×4.333, hourly needs hours,
+ * onetime excluded from the monthly average) is a transform/engine concern,
+ * tracked in #497 — NOT encoded here. This enum is the data contract only.
+ */
+export const PayFrequencySchema = z.enum([
+  "weekly",
+  "biweekly",
+  "semimonthly",
+  "monthly",
+  "daily",
+  "quarterly",
+  "semiannual",
+  "annual",
+  "onetime",
+  "hourly",
+  "irregular",
+]);
+export type PayFrequency = z.infer<typeof PayFrequencySchema>;
+
 export const IncomeSourceSchema = z.object({
   income_type: z.string().min(1),
   income_amount: z.number().nonnegative(),
-  income_frequency: z.enum(["monthly", "weekly", "biweekly", "annual", "irregular"]),
+  income_frequency: PayFrequencySchema,
 });
 export type IncomeSource = z.infer<typeof IncomeSourceSchema>;
+
+/**
+ * Expense type — the structured expense categories the BenefitsCal Expenses
+ * section (step 5) collects, captured in the 2026-06 live walk (#498). Each
+ * maps to a portal expense gateway/detail page (ABHEG → ABAPH et al.).
+ *
+ * Eligibility note: `rent_or_mortgage` + `property_tax_or_insurance` +
+ * utilities feed the SNAP **excess shelter deduction**; `dependent_care` feeds
+ * the **dependent care deduction**; `child_support_paid` is an income
+ * exclusion; `medical` feeds the elderly/disabled medical deduction. Wiring
+ * these into the deduction math is the snap-rules engine task in #498 — this
+ * schema is the data contract only (file-issue-first per CLAUDE.md).
+ */
+export const ExpenseTypeSchema = z.enum([
+  "rent_or_mortgage", // ABAPH
+  "property_tax_or_insurance",
+  "utilities", // gas/electric/heating fuel
+  "telephone",
+  "water_sewage_garbage",
+  "homeless_shelter",
+  "dependent_care", // ABCST — adult/child care for work/school
+  "child_support_paid", // ABCOC — court-ordered, income exclusion
+  "spousal_support_paid", // ABSSQ — court-ordered alimony
+  "medical", // elderly/disabled medical deduction
+  "other",
+]);
+export type ExpenseType = z.infer<typeof ExpenseTypeSchema>;
+
+export const ExpenseSchema = z.object({
+  expense_type: ExpenseTypeSchema,
+  amount: z.number().nonnegative(),
+  frequency: PayFrequencySchema,
+});
+export type Expense = z.infer<typeof ExpenseSchema>;
 
 export const DocumentItemSchema = z.object({
   type: z.string().min(1),
@@ -174,6 +241,18 @@ export const BenefitsCalPayloadSchema = z.object({
 
   // Income sources across all household members
   income_sources: z.array(IncomeSourceSchema),
+
+  /**
+   * Structured expenses — shelter, utilities, dependent care, court-ordered
+   * support (#498, captured in the 2026-06 live walk). OPTIONAL and omitted
+   * when intake has no expense data: like the eligibility fields above, a
+   * missing expense is surfaced to the reviewer as needs-review rather than
+   * silently assumed zero (an unentered shelter cost that LOOKS like $0 would
+   * wrongly suppress the excess-shelter deduction). `utility_allowance_type`
+   * below remains the SUA selector; the utility *expense* rows here are the
+   * itemized inputs the SUA can derive from.
+   */
+  expenses: z.array(ExpenseSchema).optional(),
 
   // Utility / SUA — maps to BenefitsCal's utility allowance section
   utility_allowance_type: UtilityAllowanceTypeSchema,
