@@ -208,19 +208,22 @@ enum SNAPDecisionLeversStrings {
     static let heading = CivicaText(
         "Three things that could change this",
         es: "Tres cosas que podrían cambiar esto",
-        zh: "可能改变这个结果的三件事"
+        zh: "可能改变这个结果的三件事",
+        vi: "Ba điều có thể thay đổi kết quả này"
     )
 
     // Personalized levers — childcare
     static let childcareTitle = CivicaText(
         "Childcare costs",
         es: "Costos de cuidado infantil",
-        zh: "托儿费用"
+        zh: "托儿费用",
+        vi: "Chi phí chăm sóc trẻ"
     )
     static let childcareBody = CivicaText(
         "You have a child in the household but didn't report childcare costs. Daycare, after-school programs, or anything you pay out of pocket for child care is deductible — add a receipt next time and your benefit goes up.",
         es: "Tienes un menor en el hogar pero no reportaste costos de cuidado infantil. La guardería, programas extraescolares, o cualquier cosa que pagues de tu bolsillo por cuidado infantil es deducible — añade un recibo la próxima vez y tu beneficio aumenta.",
-        zh: "你家里有未成年人,但没有申报托儿费用。日托、课后班,或任何你自掏腰包支付的儿童照护费用都可以抵扣 — 下次附上一张收据,你的福利金额会提高。"
+        zh: "你家里有未成年人,但没有申报托儿费用。日托、课后班,或任何你自掏腰包支付的儿童照护费用都可以抵扣 — 下次附上一张收据,你的福利金额会提高。",
+        vi: "Bạn có trẻ em trong hộ gia đình nhưng chưa khai chi phí chăm sóc trẻ. Tiền giữ trẻ ban ngày, chương trình sau giờ học, hoặc bất cứ khoản nào bạn tự trả cho việc chăm sóc trẻ đều được khấu trừ — lần sau hãy thêm biên lai và mức trợ cấp của bạn sẽ tăng."
     )
     // The actual childcare-deduction impact depends on household size
     // and net income — a hardcoded "$44/mo" was not computed from the
@@ -229,53 +232,62 @@ enum SNAPDecisionLeversStrings {
     static let childcareEstimate = CivicaText(
         "+ variable",
         es: "+ variable",
-        zh: "+ 视情况而定"
+        zh: "+ 视情况而定",
+        vi: "+ tùy trường hợp"
     )
 
     // Personalized levers — medical (for elderly / disabled)
     static let medicalTitle = CivicaText(
         "Out-of-pocket medical costs",
         es: "Gastos médicos de tu bolsillo",
-        zh: "自付的医疗费用"
+        zh: "自付的医疗费用",
+        vi: "Chi phí y tế tự trả"
     )
     static let medicalBody = CivicaText(
         "Someone in your household is 60+ or has a disability. Co-pays, prescriptions, dental, and insurance premiums over $35/mo are deductible. Many people miss this — keep receipts and add them next time.",
         es: "Alguien en tu hogar tiene 60 años o más o vive con una discapacidad. Los copagos, recetas, dentista y primas de seguro mayores a $35/mes son deducibles. Muchas personas omiten esto — guarda los recibos y añádelos la próxima vez.",
-        zh: "你家里有 60 岁以上或有残障的成员。挂号自付额、处方药、牙科,以及每月超过 $35 的保险费都可以抵扣。很多人漏掉了这一项 — 留好收据,下次一起附上。"
+        zh: "你家里有 60 岁以上或有残障的成员。挂号自付额、处方药、牙科,以及每月超过 $35 的保险费都可以抵扣。很多人漏掉了这一项 — 留好收据,下次一起附上。",
+        vi: "Có người trong hộ gia đình bạn từ 60 tuổi trở lên hoặc bị khuyết tật. Khoản đồng chi trả, thuốc theo toa, nha khoa, và phí bảo hiểm trên $35 mỗi tháng đều được khấu trừ. Nhiều người bỏ sót khoản này — hãy giữ biên lai và thêm vào lần sau."
     )
     static let medicalEstimate = CivicaText(
         "+ variable",
         es: "+ variable",
-        zh: "+ 视情况而定"
+        zh: "+ 视情况而定",
+        vi: "+ tùy trường hợp"
     )
 
     // Universal levers — rent
     static let rentTitle = CivicaText(
         "Higher rent or utilities",
         es: "Renta o servicios más altos",
-        zh: "房租或水电费上涨"
+        zh: "房租或水电费上涨",
+        vi: "Tiền thuê nhà hoặc tiện ích tăng"
     )
     static let rentBody = CivicaText(
         "If your rent or utility bill goes up, report it to your benefits agency within 10 days. Your monthly award is recalculated.",
         es: "Si tu renta o factura de servicios aumenta, repórtalo a tu agencia de beneficios en 10 días. Tu beneficio mensual se recalcula.",
-        zh: "如果你的房租或水电费账单上涨,请在 10 天内向你的福利机构申报。你的每月福利会重新计算。"
+        zh: "如果你的房租或水电费账单上涨,请在 10 天内向你的福利机构申报。你的每月福利会重新计算。",
+        vi: "Nếu tiền thuê nhà hoặc hóa đơn tiện ích của bạn tăng, hãy báo cho cơ quan trợ cấp trong vòng 10 ngày. Mức trợ cấp hằng tháng của bạn sẽ được tính lại."
     )
 
     // Universal levers — income
     static let incomeTitle = CivicaText(
         "Income drops",
         es: "Tus ingresos bajan",
-        zh: "收入下降"
+        zh: "收入下降",
+        vi: "Thu nhập giảm"
     )
     static let incomeBody = CivicaText(
         "Hours got cut, lost a job, or moved to a lower-paying role? Report it. Your award is recalculated within 30 days.",
         es: "¿Te redujeron las horas, perdiste un trabajo o tomaste un trabajo de menor sueldo? Repórtalo. Tu beneficio se recalcula en 30 días.",
-        zh: "工时被削减、丢了工作,或换到收入更低的岗位?请申报。你的福利会在 30 天内重新计算。"
+        zh: "工时被削减、丢了工作,或换到收入更低的岗位?请申报。你的福利会在 30 天内重新计算。",
+        vi: "Bị cắt giờ làm, mất việc, hoặc chuyển sang công việc lương thấp hơn? Hãy báo lại. Mức trợ cấp của bạn sẽ được tính lại trong vòng 30 ngày."
     )
 
     static let thriftyFootnote = CivicaText(
         "SNAP benefit amounts are calibrated to the USDA Thrifty Food Plan — they're sized to cover a household's grocery costs for a low-cost, nutritionally adequate diet.",
         es: "Los montos de SNAP están calibrados al Plan de Alimentos Económicos del USDA — están dimensionados para cubrir los costos de comestibles de un hogar para una dieta de bajo costo y nutricionalmente adecuada.",
-        zh: "SNAP 的福利金额是按 USDA 节俭饮食计划(Thrifty Food Plan)校准的 — 金额设计用于支付一个家庭低成本、营养充足饮食的食品杂货开销。"
+        zh: "SNAP 的福利金额是按 USDA 节俭饮食计划(Thrifty Food Plan)校准的 — 金额设计用于支付一个家庭低成本、营养充足饮食的食品杂货开销。",
+        vi: "Mức trợ cấp SNAP được tính theo Kế hoạch Thực phẩm Tiết kiệm (Thrifty Food Plan) của USDA — được định mức để chi trả chi phí thực phẩm của một hộ gia đình cho chế độ ăn chi phí thấp và đủ dinh dưỡng."
     )
 }
