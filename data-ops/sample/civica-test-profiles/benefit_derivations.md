@@ -28,7 +28,7 @@ B = maxAllot - 0.30*Net ; Net = (earned + unearned - 20%EID - SD - other_ded) - 
 - **M12**: sz 1 | earned 0 + unearned 0 - EID 0 - SD 209 - other 0 = adj -209 | shelter 1463, excess 744 -> net 0 | maxAllot 298 -> **$298**
 - **M13**: sz 1 E/D | earned 0 + unearned 700 - EID 0 - SD 209 - other 0 = adj 491 | shelter 1363, excess 1118 -> net 0 | maxAllot 298 -> **$298**
 - **M15**: sz 1 | earned 0 + unearned 0 - EID 0 - SD 209 - other 0 = adj -209 | shelter 1463, excess 744 -> net 0 | maxAllot 298 -> **$298**
-- **M18**: sz 3 | earned 2000 + unearned 0 - EID 400 - SD 209 - other 0 = adj 1391 | shelter 1663, excess 744 -> net 647 | maxAllot 785 -> **$591**
+- **M18**: sz 2 (eligible-only per 7 CFR 273.11(c)(1)(i); undoc parent excluded) | earned 2000 + unearned 0 - EID 400 - SD 209 - other 0 = adj 1391 | shelter 1663 (CA HCSUA 663) / 1914 (MA HCSUA 914), excess 744 (cap dominates both states) -> net 647 | maxAllot 546 -> **$352** (CA + MA) — see issue #434 for the pre-#434 expected $591 (incorrectly used full HH size=3 in max-allotment lookup)
 - **M20**: sz 2 | earned 1300 + unearned 0 - EID 260 - SD 209 - other 0 = adj 831 | shelter 1663, excess 744 -> net 87 | maxAllot 546 -> **$520**
 - **M24**: sz 3 | earned 0 + unearned 0 - EID 0 - SD 209 - other 0 = adj -209 | shelter 1663, excess 744 -> net 0 | maxAllot 785 -> **$785**
 - **M25**: sz 1 | earned 0 + unearned 0 - EID 0 - SD 209 - other 0 = adj -209 | shelter 0, excess 104 -> net 0 | maxAllot 298 -> **$298**

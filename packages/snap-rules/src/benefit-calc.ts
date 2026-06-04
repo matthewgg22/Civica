@@ -39,9 +39,9 @@
 
 import type { Facts } from "./facts";
 import {
-  aggregateIncome,
+  aggregateIncomeForCalc,
+  eligibleHouseholdSize,
   hasElderlyOrDisabled,
-  householdSize,
 } from "./facts";
 import { Decimal, ZERO, dec } from "./decimal";
 import {
@@ -75,8 +75,11 @@ export interface BenefitCalcDetail {
 }
 
 export function computeBenefit(facts: Facts, state: string, asOf: Date): BenefitCalcDetail {
-  const incAgg = aggregateIncome(facts);
-  const size = householdSize(facts);
+  // 7 CFR 273.11(c)(1): mixed-status households use ELIGIBLE-only HH size
+  // for max allotment / SD / cap / floor lookups, but count the ineligible
+  // alien's income in full per CA's count-all election. See facts.ts.
+  const incAgg = aggregateIncomeForCalc(facts, asOf);
+  const size = eligibleHouseholdSize(facts, asOf);
   const isED = hasElderlyOrDisabled(facts);
   const policy = statePolicyFor(state);
 

@@ -144,6 +144,89 @@ export function householdSize(facts: Facts): number {
   return facts.household.length;
 }
 
+// ─── Immigration-aware aggregation (7 CFR 273.11(c)) ─────────────────────
+//
+// Per-member immigration eligibility. Mirrors the dispatch documented in
+// gates/immigration.ts:
+//   citizen / cofa                          → eligible (always)
+//   lpr + five_yr_bar "n/a" or "exempt:*"   → eligible (no bar, or
+//                                              40-quarter / humanitarian)
+//   lpr + numeric five_yr_bar               → ineligible during the bar
+//   refugee (pre-OBBBA cutoff 2025-07-04)   → eligible
+//   refugee (post-OBBBA cutoff)             → ineligible
+//   removed_status:* / undocumented / unk   → ineligible
+//
+// Lives here (not in gates/immigration.ts) so the benefit-calc and
+// income-test helpers below can use it without a circular import. The
+// gate evaluator re-exports it.
+export function memberImmigrationEligible(m: Member, asOf: Date): boolean {
+  const imm = m.immigration ?? "citizen";
+  if (imm === "citizen") return true;
+  if (imm === "cofa") return true;
+  if (imm === "lpr") {
+    const bar = m.five_yr_bar ?? "n/a";
+    if (bar === "n/a") return true;
+    if (bar.startsWith("exempt:")) return true;
+    if (/^\d+(\.\d+)?$/.test(bar)) return false;
+    return true;
+  }
+  if (imm === "refugee") {
+    // OBBBA P.L. 119-21 §10108 (eff. 2025-07-04 per FNS memo 2025-10-31).
+    const obbbaCutoff = new Date(Date.UTC(2025, 6, 4));
+    return asOf < obbbaCutoff;
+  }
+  if (imm.startsWith("removed_status:")) return false;
+  if (imm === "undocumented") return false;
+  return false;
+}
+
+// 7 CFR 273.11(c)(1)(i): for benefit-level + income-test math, the
+// household size EXCLUDES immigration-ineligible aliens. They remain
+// "household members" structurally (shelter accrues to them, they live
+// at the same address) but they are not counted in HH size for:
+//   - max allotment lookup (273.10(e))
+//   - standard deduction lookup (273.9(d)(1))
+//   - FPL gross/net thresholds (273.9(a))
+//   - shelter cap (273.9(d)(6)(ii)) / min-benefit floor (273.10(e)(2)(ii)(C))
+//
+// Use this — NOT `householdSize` — anywhere benefit math reads "size".
+export function eligibleHouseholdSize(facts: Facts, asOf: Date): number {
+  const n = facts.household.filter((m) => memberImmigrationEligible(m, asOf)).length;
+  // Floor of 1: if no eligible member exists, the composer denies at the
+  // immigration gate well before any caller reaches here. Returning 0
+  // would break maxAllotmentFor / standardDeductionFor lookups; instead,
+  // returning 1 keeps the calc functions safe under unit-test misuse.
+  return n > 0 ? n : 1;
+}
+
+// 7 CFR 273.11(c)(1)(iii) governs how the ineligible alien's income
+// flows to the remaining eligible household. Two reads of the
+// regulation persist in state practice:
+//
+//   Read A (count-all): "the State agency must count all of the income
+//          of the ineligible alien" — the count-all literalism, also
+//          documented in FNS handbook 6004.9. CA's CalFresh handbook
+//          §63-503.481 elects this option per 273.11(c)(3)(i)(A).
+//   Read B (prorate):   pro-rata-share — only the eligible members'
+//          proportional share of the ineligible alien's income counts.
+//
+// Civica engine picks Read A. It is the conservative-for-applicant
+// choice (counts more income, lowers benefit) and matches CA's elected
+// option, the only piloted state today. If a state encodes a different
+// election later, branch here on `policy.alien_income_treatment`.
+//
+// Today this is a pass-through to aggregateIncome — every income line
+// counts regardless of which member it's tagged to. The wrapper exists
+// so the "Read A is intentional" choice lives in one named place, and
+// so the wiring (benefit-calc, income-tests) already passes asOf when
+// a future Read B branch needs per-member eligibility filtering.
+export function aggregateIncomeForCalc(
+  facts: Facts,
+  _asOf: Date,
+): IncomeAggregate {
+  return aggregateIncome(facts);
+}
+
 export function hasElderlyOrDisabled(facts: Facts): boolean {
   return facts.household.some((m) => m.disability === true || m.elderly === true || m.age >= 60);
 }
