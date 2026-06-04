@@ -40,7 +40,7 @@ export default function LoginPage() {
       <div className="bg-surface p-10 rounded-[4px] border border-hairline w-full max-w-md">
         <div className="flex items-center gap-3 mb-8">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/civica-wheat-mark.png" alt="Civica" width={48} height={48} className="w-12 h-12 object-contain shrink-0" />
+          <img src="/civica-wheat-mark.png" alt="Civica" width={68} height={68} className="w-[68px] h-[68px] object-contain shrink-0" />
           <div>
             <h1 className="text-[20px] font-semibold tracking-tight text-ink leading-tight">Civica Navigator</h1>
             <p className="text-[12px] text-muted mt-0.5">SNAP Enrollment</p>

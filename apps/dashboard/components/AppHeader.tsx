@@ -48,7 +48,7 @@ export default function AppHeader({ email, active }: { email?: string; active: N
       <div className="flex items-center gap-4 sm:gap-8 min-w-0">
         <Link href="/dashboard" className="flex items-center gap-3 group shrink-0">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/civica-wheat-mark.png" alt="Civica" width={36} height={36} className="w-9 h-9 object-contain shrink-0 group-hover:opacity-90 transition-opacity" />
+          <img src="/civica-wheat-mark.png" alt="Civica" width={50} height={50} className="w-[50px] h-[50px] object-contain shrink-0 group-hover:opacity-90 transition-opacity" />
           <div>
             <p className="text-[15px] font-semibold tracking-tight text-white leading-none">Civica</p>
             <p className="text-[10px] text-white/45 mt-0.5 uppercase tracking-wider font-semibold">Navigator</p>
