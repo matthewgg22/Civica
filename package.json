@@ -1,6 +1,6 @@
 {
   "name": "civica",
-  "version": "0.0.0",
+  "version": "0.2.0.0",
   "private": true,
   "description": "Civica monorepo: iOS (Civica + VoteNow Xcode targets), web-b2c, navigator dashboard, Hono API, shared packages.",
   "packageManager": "pnpm@9.12.0",

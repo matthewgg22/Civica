@@ -8,6 +8,22 @@ lives in `git log`.
 Categories used:
 - **Added** — new capability
 - **Changed** — visible behavior change
+
+## [0.2.0.0] - 2026-06-04
+
+### Added
+- **Request access form** — `/sign-up` page lets navigators and CBOs submit their name, org, and email to request a Civica Navigator account; submissions stored in `access_requests` Supabase table.
+- **Password reset callback** — `/auth/reset-password` handles Supabase PKCE reset links, exchanges the `?code=` token, and lets users set a new password. Previously this page was a 404.
+- **SNAP applicant welcome page** — `/welcome` on `apps/web` introduces Civica with trust copy (what it does, data privacy, navigator review) and a bilingual en/es CTA before asking for a phone number.
+
+### Fixed
+- **Forgot password redirect loop** — clicking "Forgot password?" without entering an email no longer shows a red error; it now opens an inline reset section with its own email field (`mode: "signin" | "forgot" | "sent"` state machine).
+- **"Request access" 404** — the link on the login page previously led to a missing route; it now resolves to the new `/sign-up` form.
+- **Unauthenticated `/auth/*` and `/sign-up` redirect loop** — middleware now permits `/auth/` and `/sign-up` without a session; previously these routes bounced unauthenticated visitors back to `/login` in a loop.
+- **WCAG AA contrast regression** — `AppHeader` "Navigator" label changed from `text-muted` to `text-graphite` at 10px per DESIGN.md §6.6.
+
+### Changed
+- **Landing page CTA** — `apps/web` hero "Start your application" now routes to `/welcome` (trust page) instead of directly to `/sign-in`.
 - **Deprecated** — still works, will be removed
 - **Removed** — gone
 - **Fixed** — bug fix
