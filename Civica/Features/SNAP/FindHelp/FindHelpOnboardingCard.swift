@@ -59,18 +59,22 @@ struct FindHelpOnboardingCard: View {
 enum FindHelpOnboardingStrings {
     static let eyebrow = CivicaText(
         "Welcome",
-        es: "Bienvenido"
+        es: "Bienvenido",
+        zh: "欢迎"
     )
     static let title = CivicaText(
         "SNAP works at more places than you think.",
-        es: "SNAP funciona en más lugares de los que imaginas."
+        es: "SNAP funciona en más lugares de los que imaginas.",
+        zh: "SNAP 可以用的地方比你想的多。"
     )
     static let body = CivicaText(
         "Tap a pin to see what you can buy with EBT, WIC, or HIP — and how to get there.",
-        es: "Toca un punto para ver qué puedes comprar con EBT, WIC o HIP, y cómo llegar."
+        es: "Toca un punto para ver qué puedes comprar con EBT, WIC o HIP, y cómo llegar.",
+        zh: "点一下地图上的标记,看看你可以用 EBT、WIC 或 HIP 买什么 —— 以及怎么过去。"
     )
     static let dismissCTA = CivicaText(
         "Got it",
-        es: "Entendido"
+        es: "Entendido",
+        zh: "知道了"
     )
 }
