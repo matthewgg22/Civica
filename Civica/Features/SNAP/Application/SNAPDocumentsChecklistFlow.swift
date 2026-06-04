@@ -1,4 +1,5 @@
 import CivicaDesignSystem
+import Combine
 import SwiftUI
 import UIKit
 import VisionKit
@@ -43,9 +44,22 @@ final class SNAPDocumentsChecklistFlowViewModel: ObservableObject {
         let result: SNAPExtractionResult
     }
 
-    init(answers: SNAPDocumentsChecklistAnswers = .init(), draft: SNAPApplicationDraft = .init()) {
+    /// Per-change write-back closure (issue #425). See
+    /// SNAPHouseholdQuestionFlowViewModel for the canonical comment.
+    var onAnswersChange: ((SNAPDocumentsChecklistAnswers) -> Void)?
+    private var answersWatch: AnyCancellable?
+
+    init(
+        answers: SNAPDocumentsChecklistAnswers = .init(),
+        draft: SNAPApplicationDraft = .init(),
+        onAnswersChange: ((SNAPDocumentsChecklistAnswers) -> Void)? = nil
+    ) {
         self.answers = answers
         self.relevantDocuments = SNAPDocumentType.relevant(for: draft)
+        self.onAnswersChange = onAnswersChange
+        self.answersWatch = $answers.dropFirst().sink { [weak self] new in
+            self?.onAnswersChange?(new)
+        }
     }
 
     func toggle(_ document: SNAPDocumentType) {

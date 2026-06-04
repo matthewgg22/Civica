@@ -1,4 +1,5 @@
 import CivicaDesignSystem
+import Combine
 import SwiftUI
 
 // Migrates the legacy "incomeStep" multi-field card from
@@ -103,9 +104,15 @@ final class SNAPIncomeFlowViewModel: ObservableObject {
     /// derived value so they can nudge it instead of retyping.
     private var pendingDerivation: SNAPPaystubDerivation?
 
+    /// Per-change write-back closure (issue #425). See
+    /// SNAPHouseholdQuestionFlowViewModel for the canonical comment.
+    var onAnswersChange: ((SNAPIncomeAnswers) -> Void)?
+    private var answersWatch: AnyCancellable?
+
     init(
         answers: SNAPIncomeAnswers = .init(),
-        paystubPrefill: SNAPPaystub? = nil
+        paystubPrefill: SNAPPaystub? = nil,
+        onAnswersChange: ((SNAPIncomeAnswers) -> Void)? = nil
     ) {
         self.answers = answers
         // Seed the gross-income text field from the stored Decimal so
@@ -130,6 +137,10 @@ final class SNAPIncomeFlowViewModel: ObservableObject {
            derivation.confidence != .low {
             self.pendingDerivation = derivation
             self.grossIncomeEntryMode = .paystubSuggestion(derivation)
+        }
+        self.onAnswersChange = onAnswersChange
+        self.answersWatch = $answers.dropFirst().sink { [weak self] new in
+            self?.onAnswersChange?(new)
         }
     }
 

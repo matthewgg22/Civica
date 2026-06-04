@@ -1,4 +1,5 @@
 import CivicaDesignSystem
+import Combine
 import SwiftUI
 
 // Migrates the legacy "addressContactStep" multi-field card from
@@ -45,12 +46,24 @@ final class SNAPContactFlowViewModel: ObservableObject {
     @Published var phoneField: String
     @Published var answers: SNAPContactAnswers
 
-    init(answers: SNAPContactAnswers = .init()) {
+    /// Per-change write-back closure (issue #425). See
+    /// SNAPHouseholdQuestionFlowViewModel for the canonical comment.
+    var onAnswersChange: ((SNAPContactAnswers) -> Void)?
+    private var answersWatch: AnyCancellable?
+
+    init(
+        answers: SNAPContactAnswers = .init(),
+        onAnswersChange: ((SNAPContactAnswers) -> Void)? = nil
+    ) {
         self.answers = answers
         // Seed transient text fields from prior answers so the user
         // sees their saved email / phone on resume + edit.
         self.emailField = answers.email ?? ""
         self.phoneField = answers.phone ?? ""
+        self.onAnswersChange = onAnswersChange
+        self.answersWatch = $answers.dropFirst().sink { [weak self] new in
+            self?.onAnswersChange?(new)
+        }
     }
 
     func recordCurrentField() {
