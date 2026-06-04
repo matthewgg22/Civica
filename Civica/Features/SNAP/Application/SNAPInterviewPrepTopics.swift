@@ -29,9 +29,10 @@ enum SNAPInterviewPrepTopics {
     static func list(language: CivicaLanguage, stateCode: String? = nil) -> [Topic] {
         let topics: [Topic]
         switch language {
-        case .english, .vietnamese, .tagalog: topics = englishTopics
+        case .english, .tagalog: topics = englishTopics
         case .mandarin: topics = mandarinTopics
         case .spanish: topics = spanishTopics
+        case .vietnamese: topics = vietnameseTopics
         }
         // Patch the day-of-call topic's permission line with the
         // active state's caller-ID text so the prep doesn't mention
@@ -62,15 +63,19 @@ enum SNAPInterviewPrepTopics {
                 codePhrase = " o un código \(codes)"
             case .mandarin:
                 codePhrase = "，或来自 \(codes) 区号"
-            case .english, .vietnamese, .tagalog:
+            case .vietnamese:
+                codePhrase = " hoặc mã vùng \(codes)"
+            case .english, .tagalog:
                 codePhrase = " or a \(codes) area code"
             }
         }
         switch language {
-        case .english, .vietnamese, .tagalog:
+        case .english, .tagalog:
             return "Caller ID will say \"\(agency)\"\(codePhrase). They will never text you a code or ask for money."
         case .mandarin:
             return "来电显示会显示「\(agency)」\(codePhrase)。他们绝不会给你发短信验证码,也不会向你要钱。"
+        case .vietnamese:
+            return "Màn hình hiện số sẽ hiển thị \u{201C}\(agency)\u{201D}\(codePhrase). Họ sẽ không bao giờ nhắn tin mã cho bạn hoặc đòi tiền."
         case .spanish:
             return "El identificador de llamadas dirá \"\(agency)\"\(codePhrase). Nunca te enviarán un código de verificación ni pedirán dinero."
         }
@@ -216,6 +221,53 @@ enum SNAPInterviewPrepTopics {
             permission: "El identificador de llamadas dirá \"Massachusetts DTA\" o un código 617 / 508 / 413 / 978. Nunca te enviarán un código de verificación ni pedirán dinero."
         )
     ]
+
+    private static let vietnameseTopics: [Topic] = [
+        Topic(
+            id: "household",
+            title: "Những người sống cùng bạn",
+            prompts: [
+                "Tất cả những người mua hoặc nấu ăn cùng bạn",
+                "Mối quan hệ của họ với bạn",
+                "Tuổi của họ, đặc biệt là ai dưới 18 hoặc trên 60",
+                "Bất kỳ ai sống chung đang bị khuyết tật"
+            ],
+            permission: "Nếu các thành viên trong nhà ra vào thất thường, cứ mô tả tình huống thường ngày của bạn."
+        ),
+        Topic(
+            id: "income",
+            title: "Thu nhập của bạn",
+            prompts: [
+                "Bạn kiếm được bao nhiêu mỗi tháng trước thuế",
+                "Bạn được trả lương bao lâu một lần — hàng tuần, hai tuần một lần, hàng tháng",
+                "Bạn làm việc ở đâu, và đã làm ở đó bao lâu",
+                "Bất kỳ thu nhập không do lao động nào — An Sinh Xã Hội, trợ cấp thất nghiệp, tiền cấp dưỡng con, lương hưu"
+            ],
+            permission: "Nếu thu nhập của bạn thay đổi từng tuần, hoặc bạn có nhiều hơn một công việc, không sao cả — cứ mô tả đúng như thực tế. \u{201C}Nó thay đổi\u{201D} là một câu trả lời hợp lệ."
+        ),
+        Topic(
+            id: "home",
+            title: "Nơi bạn sống",
+            prompts: [
+                "Địa chỉ nhận thư hiện tại của bạn",
+                "Tiền thuê nhà hoặc trả góp nhà hàng tháng của bạn",
+                "Những tiện ích nào bạn tự trả — gas, điện, nước, sưởi",
+                "Bạn có trả tiền giữ trẻ để có thể đi làm hay không"
+            ],
+            permission: nil
+        ),
+        Topic(
+            id: "day-of-call",
+            title: "Ngày họ gọi",
+            prompts: [
+                "Giấy tờ tùy thân có ảnh của bạn — bằng lái, ID tiểu bang, hoặc hộ chiếu",
+                "Cuống lương gần đây hoặc bằng chứng thu nhập",
+                "Biên nhận tiền thuê nhà tháng trước hoặc hợp đồng thuê của bạn",
+                "Một cây bút và tờ giấy — họ sẽ cho bạn một mã xác nhận"
+            ],
+            permission: "Màn hình hiện số sẽ hiển thị \u{201C}Massachusetts DTA\u{201D} hoặc mã vùng 617 / 508 / 413 / 978. Họ sẽ không bao giờ nhắn tin mã cho bạn hoặc đòi tiền."
+        )
+    ]
 }
 
 // MARK: - Prep view copy
@@ -224,25 +276,29 @@ enum SNAPInterviewPrepStrings {
     static let eyebrow = CivicaText(
         "Day-before prep",
         es: "Preparación del día anterior",
-        zh: "前一天的准备"
+        zh: "前一天的准备",
+        vi: "Chuẩn bị ngày hôm trước"
     )
 
     static let title = CivicaText(
         "Four things to think through",
         es: "Cuatro cosas en las que pensar",
-        zh: "四件需要先想清楚的事"
+        zh: "四件需要先想清楚的事",
+        vi: "Bốn điều cần nghĩ qua"
     )
 
     static let subtitle = CivicaText(
         "These aren't answers to memorize — just what to have in mind when they call. Most interviews last 15 to 20 minutes.",
         es: "Estas no son respuestas que memorizar — solo lo que tener en mente cuando llamen. La mayoría de las entrevistas duran de 15 a 20 minutos.",
-        zh: "这些不是要背的答案 — 只是接到电话时心里要有数的内容。大多数面谈持续 15 到 20 分钟。"
+        zh: "这些不是要背的答案 — 只是接到电话时心里要有数的内容。大多数面谈持续 15 到 20 分钟。",
+        vi: "Đây không phải là câu trả lời để học thuộc — chỉ là điều cần ghi nhớ khi họ gọi. Phần lớn buổi phỏng vấn kéo dài 15 đến 20 phút."
     )
 
     static let permissionLabel = CivicaText(
         "It's okay if:",
         es: "Está bien si:",
-        zh: "以下情况都没关系:"
+        zh: "以下情况都没关系:",
+        vi: "Không sao cả nếu:"
     )
 
     // JR-3 (audit 2026-05-29): leading reassurance card above the
@@ -251,7 +307,8 @@ enum SNAPInterviewPrepStrings {
     static let reassuranceLead = CivicaText(
         "Interviews usually take 15\u{2013}20 minutes. You\u{2019}re allowed to have notes. Here\u{2019}s exactly what they\u{2019}ll ask.",
         es: "Las entrevistas usualmente duran de 15 a 20 minutos. Puedes tener notas. Aqu\u{00ED} est\u{00E1} exactamente lo que te van a preguntar.",
-        zh: "面谈通常需要 15\u{2013}20 分钟。你可以带笔记。下面就是他们会问的内容。"
+        zh: "面谈通常需要 15\u{2013}20 分钟。你可以带笔记。下面就是他们会问的内容。",
+        vi: "Buổi phỏng vấn thường mất 15\u{2013}20 phút. Bạn được phép mang theo ghi chú. Đây chính xác là những gì họ sẽ hỏi."
     )
 
     // Footnote: the second-most-cited worry before a SNAP interview
@@ -261,6 +318,7 @@ enum SNAPInterviewPrepStrings {
     static let reassuranceFollowupsFootnote = CivicaText(
         "Don\u{2019}t worry if you don\u{2019}t have every doc \u{2014} caseworkers can ask follow-ups.",
         es: "No te preocupes si no tienes todos los documentos \u{2014} los trabajadores sociales pueden hacer preguntas de seguimiento.",
-        zh: "如果你没有备齐所有文件,也别担心 \u{2014} 工作人员可以再追问。"
+        zh: "如果你没有备齐所有文件,也别担心 \u{2014} 工作人员可以再追问。",
+        vi: "Đừng lo nếu bạn chưa có đủ mọi giấy tờ \u{2014} nhân viên phụ trách có thể hỏi thêm sau."
     )
 }
