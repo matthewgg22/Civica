@@ -40,16 +40,22 @@ export default function WelcomePage() {
         ]}
       />
 
-      {/* Hero */}
+      {/* Hero — two columns: message + eligibility card */}
       <section className="home-hero">
         <div className="home-hero__inner">
-          <p className="home-hero__eyebrow">{t.home_hero_eyebrow}</p>
-          <h1 className="home-hero__title">{t.home_hero_title}</h1>
-          <p className="home-hero__body">{t.home_hero_body}</p>
-          <div className="home-hero__ctas">
-            <a href="/apply" className="btn btn--primary">{t.welcome_cta}</a>
-            <a href="/sign-in" className="btn btn--secondary">{t.home_hero_secondary}</a>
+          <div className="home-hero__text">
+            <p className="home-hero__eyebrow">{t.home_hero_eyebrow}</p>
+            <h1 className="home-hero__title">{t.home_hero_title}</h1>
+            <p className="home-hero__body">{t.home_hero_body}</p>
+            <div className="home-hero__ctas">
+              <a href="/apply" className="btn btn--primary">{t.welcome_cta}</a>
+              <a href="/sign-in" className="btn btn--secondary">{t.home_hero_secondary}</a>
+            </div>
           </div>
+          <aside className="home-hero__card">
+            <p className="home-hero__card-body">{t.home_what_qualify}</p>
+            <a href="/apply" className="home-hero__card-link">{t.home_nav_apply} →</a>
+          </aside>
         </div>
       </section>
 
@@ -68,10 +74,6 @@ export default function WelcomePage() {
               );
             })}
           </ul>
-          <a href="/apply" className="home-qualify">
-            <span>{t.home_what_qualify}</span>
-            <span className="home-qualify__arrow" aria-hidden>→</span>
-          </a>
         </div>
       </section>
 
