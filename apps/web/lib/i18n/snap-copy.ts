@@ -461,6 +461,7 @@ export const welcomeStrings = {
     home_nav_how: "How it works",
     home_nav_apply: "Apply now",
     home_nav_status: "Check status",
+    home_nav_why: "Why Civica",
     home_nav_signin: "Sign in",
 
     // ─── Hero ───
@@ -536,6 +537,7 @@ export const welcomeStrings = {
     home_nav_how: "Cómo funciona",
     home_nav_apply: "Solicitar ahora",
     home_nav_status: "Ver estado",
+    home_nav_why: "Por qué Civica",
     home_nav_signin: "Iniciar sesión",
 
     // ─── Hero ───
@@ -610,6 +612,7 @@ export const welcomeStrings = {
     home_nav_how: "运作方式",
     home_nav_apply: "立即申请",
     home_nav_status: "查看状态",
+    home_nav_why: "为什么选择 Civica",
     home_nav_signin: "登录",
 
     home_hero_eyebrow: "加州 CalFresh",
@@ -677,6 +680,7 @@ export const welcomeStrings = {
     home_nav_how: "Cách hoạt động",
     home_nav_apply: "Đăng ký ngay",
     home_nav_status: "Xem trạng thái",
+    home_nav_why: "Vì sao chọn Civica",
     home_nav_signin: "Đăng nhập",
 
     home_hero_eyebrow: "CalFresh cho California",
@@ -744,6 +748,7 @@ export const welcomeStrings = {
     home_nav_how: "Paano ito gumagana",
     home_nav_apply: "Mag-apply na",
     home_nav_status: "Tingnan ang status",
+    home_nav_why: "Bakit Civica",
     home_nav_signin: "Mag-sign in",
 
     home_hero_eyebrow: "CalFresh para sa California",

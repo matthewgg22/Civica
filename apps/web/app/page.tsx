@@ -38,6 +38,11 @@ export default function Page() {
           <a className="brand" href="/">
             Civica
           </a>
+          <nav className="site-nav" aria-label="Main">
+            <a className="site-nav__link" href="/why-civica">
+              Why Civica
+            </a>
+          </nav>
           <div className="site-header__actions">
             <LanguagePicker
               locale={locale}
