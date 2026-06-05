@@ -464,9 +464,9 @@ export const welcomeStrings = {
     home_nav_signin: "Sign in",
 
     // ─── Hero ───
-    home_hero_eyebrow: "SNAP · Help buying groceries",
-    home_hero_title: "You may qualify for help buying groceries.",
-    home_hero_body: "SNAP puts money on a card each month to help you buy groceries. Civica walks you through the application in about 10 minutes — and saves your progress, so you can stop and pick up anytime.",
+    home_hero_eyebrow: "CalFresh for California",
+    home_hero_title: "Do you qualify for free groceries?",
+    home_hero_body: "Civica reads California's CalFresh rules and walks you through the application in 10 minutes. No minimum income required.",
     home_hero_secondary: "Sign in to continue",
 
     // ─── What is SNAP ───
@@ -539,9 +539,9 @@ export const welcomeStrings = {
     home_nav_signin: "Iniciar sesión",
 
     // ─── Hero ───
-    home_hero_eyebrow: "SNAP · Ayuda para comprar comida",
-    home_hero_title: "Es posible que califiques para ayuda con los comestibles.",
-    home_hero_body: "SNAP pone dinero en una tarjeta cada mes para ayudarte a comprar comida. Civica te guía por la solicitud en unos 10 minutos — y guarda tu progreso para que puedas detenerte y continuar cuando quieras.",
+    home_hero_eyebrow: "CalFresh para California",
+    home_hero_title: "¿Calificas para comestibles gratis?",
+    home_hero_body: "Civica lee las reglas de CalFresh de California y te guía por la solicitud en 10 minutos. No se requiere ingreso mínimo.",
     home_hero_secondary: "Inicia sesión para continuar",
 
     // ─── Qué es SNAP ───
@@ -612,9 +612,9 @@ export const welcomeStrings = {
     home_nav_status: "查看状态",
     home_nav_signin: "登录",
 
-    home_hero_eyebrow: "SNAP · 购买食品的帮助",
-    home_hero_title: "你可能有资格获得购买食品的帮助。",
-    home_hero_body: "SNAP 每月把钱存入一张卡,帮助你购买食品。Civica 在约 10 分钟内引导你完成申请,并保存进度,让你随时可以停下并稍后继续。",
+    home_hero_eyebrow: "加州 CalFresh",
+    home_hero_title: "你有资格获得免费食品吗？",
+    home_hero_body: "Civica 为您解读加州 CalFresh 规则,并在 10 分钟内引导您完成申请。不需要最低收入。",
     home_hero_secondary: "登录以继续",
 
     home_what_title: "什么是 SNAP?",
@@ -679,9 +679,9 @@ export const welcomeStrings = {
     home_nav_status: "Xem trạng thái",
     home_nav_signin: "Đăng nhập",
 
-    home_hero_eyebrow: "SNAP · Trợ giúp mua thực phẩm",
-    home_hero_title: "Bạn có thể đủ điều kiện nhận trợ giúp mua thực phẩm.",
-    home_hero_body: "SNAP nạp tiền vào một thẻ mỗi tháng để giúp bạn mua thực phẩm. Civica hướng dẫn bạn qua đơn đăng ký trong khoảng 10 phút và lưu tiến trình để bạn có thể dừng lại và quay lại bất cứ lúc nào.",
+    home_hero_eyebrow: "CalFresh cho California",
+    home_hero_title: "Bạn có đủ điều kiện nhận thực phẩm miễn phí không?",
+    home_hero_body: "Civica đọc các quy tắc CalFresh của California và hướng dẫn bạn qua đơn đăng ký trong 10 phút. Không yêu cầu thu nhập tối thiểu.",
     home_hero_secondary: "Đăng nhập để tiếp tục",
 
     home_what_title: "SNAP là gì?",
@@ -746,9 +746,9 @@ export const welcomeStrings = {
     home_nav_status: "Tingnan ang status",
     home_nav_signin: "Mag-sign in",
 
-    home_hero_eyebrow: "SNAP · Tulong sa pagbili ng pagkain",
-    home_hero_title: "Maaari kang maging kwalipikado para sa tulong sa pagbili ng pagkain.",
-    home_hero_body: "Naglalagay ang SNAP ng pera sa isang card kada buwan para matulungan kang bumili ng pagkain. Ginagabayan ka ng Civica sa aplikasyon sa loob ng mga 10 minuto at sini-save ang iyong progreso para makapagpatuloy ka anumang oras.",
+    home_hero_eyebrow: "CalFresh para sa California",
+    home_hero_title: "Kwalipikado ka ba para sa libreng pagkain?",
+    home_hero_body: "Binabasa ng Civica ang mga patakaran ng CalFresh sa California at ginagabayan ka sa aplikasyon sa loob ng 10 minuto. Hindi kailangan ng minimum na kita.",
     home_hero_secondary: "Mag-sign in para magpatuloy",
 
     home_what_title: "Ano ang SNAP?",

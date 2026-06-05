@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import { strings, STORAGE_KEY, LOCALES, type Locale } from "./i18n";
 import { HeroLPIE } from "../components/HeroLPIE";
+import { ProcessSteps } from "../components/ProcessSteps";
+import { EcosystemSection } from "../components/EcosystemSection";
 import { LeadCaptureForm } from "../components/LeadCaptureForm";
 import { LanguagePicker } from "../components/LanguagePicker";
 
@@ -51,13 +53,8 @@ export default function Page() {
 
       <main>
         <HeroLPIE copy={copy} />
-
-        <section className="section">
-          <div className="container">
-            <h2 className="section__title">{copy.whatTitle}</h2>
-            <p className="section__body">{copy.whatBody}</p>
-          </div>
-        </section>
+        <ProcessSteps copy={copy} />
+        <EcosystemSection copy={copy} />
 
         <section className="section" id="lead-capture">
           <div className="container">

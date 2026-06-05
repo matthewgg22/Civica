@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import AppNav from "../../components/AppNav";
 import { LanguagePicker } from "../../components/LanguagePicker";
-// iOS app lives in the nav CTA dropdown now (the floating island was retired).
 const TESTFLIGHT_URL =
   process.env.NEXT_PUBLIC_TESTFLIGHT_URL ?? "https://testflight.apple.com/";
 import { STORAGE_KEY, LOCALES, type Locale } from "../i18n";
@@ -14,17 +13,6 @@ import {
   MAX_BENEFIT_ONE_PERSON,
 } from "../../lib/eligibility-guide";
 
-// Applicant portal home — the welcoming first page. Mirrors the iOS entry
-// ("Apply for SNAP" hero + a short explainer). The apply CTA goes straight
-// to the wizard (localStorage draft, no sign-in needed to start), matching
-// iOS "save anytime, no commitment to submit."
-//
-// The "What is SNAP" section is the explainer, structured around the
-// questions real applicants ask: what can I buy, do I earn too much, and
-// why does this feel different everywhere? Income limits and program names
-// vary by state, so the copy stays state-agnostic and frames Civica as the
-// thing that reads YOUR state's rules for you. Figures derive from
-// lib/eligibility-guide.ts (mirrors the engine's federal constants).
 export default function WelcomePage() {
   const [locale, setLocale] = useState<Locale>("en");
 
@@ -68,27 +56,94 @@ export default function WelcomePage() {
         }}
       />
 
-      {/* Hero — two columns: message + eligibility card */}
+      {/* Hero — 2-column grid with phone mockup */}
       <section className="home-hero">
-        <div className="home-hero__inner">
-          <div className="home-hero__text">
+        <div className="home-hero__inner hero__grid">
+          <div className="hero__col hero__col--copy">
             <p className="home-hero__eyebrow">{t.home_hero_eyebrow}</p>
             <h1 className="home-hero__title">{t.home_hero_title}</h1>
             <p className="home-hero__body">{t.home_hero_body}</p>
+            <div className="trust-chips" role="list">
+              <span className="trust-chip" role="listitem">✓ USDA-verified rules</span>
+              <span className="trust-chip" role="listitem">✓ 38+ CBO partners</span>
+              <span className="trust-chip" role="listitem">✓ No minimum income</span>
+            </div>
             <div className="home-hero__ctas">
               <a href="/apply" className="btn btn--primary">{t.welcome_cta}</a>
-              <a href="/sign-in" className="btn btn--secondary">{t.home_hero_secondary}</a>
+              <a href="/sign-in" className="btn btn--ghost">{t.home_hero_secondary}</a>
             </div>
           </div>
-          <aside className="home-hero__card">
-            <p className="home-hero__card-body">{t.home_what_qualify}</p>
-            <ul className="home-hero__card-list">
-              <li className="home-hero__card-item">{t.welcome_trust_1}</li>
-              <li className="home-hero__card-item">{t.welcome_trust_2}</li>
-              <li className="home-hero__card-item">{t.welcome_trust_3}</li>
-            </ul>
-            <a href="/apply" className="home-hero__card-link">{t.welcome_cta}</a>
-          </aside>
+
+          <div className="hero__col hero__col--visual" aria-hidden="true">
+            <div className="hero__watermark">$292</div>
+            <div className="phone-mockup">
+              <div className="phone-mockup__notch" />
+              <div className="phone-mockup__screen">
+                <div className="phone-card">
+                  <div className="phone-card__header">
+                    <span className="phone-card__label">MY APPLICATION</span>
+                  </div>
+                  <div className="phone-card__body">
+                    <div className="phone-card__title">CalFresh Status</div>
+                    <div className="phone-card__badge">
+                      <span className="phone-card__dot" />
+                      In Review
+                    </div>
+                    <div className="phone-card__progress-row">
+                      <div className="phone-card__progress-bar">
+                        <div className="phone-card__progress-fill" style={{ width: "62%" }} />
+                      </div>
+                      <span className="phone-card__progress-pct">62%</span>
+                    </div>
+                    <div className="phone-card__timeline">
+                      <div className="phone-card__event phone-card__event--done">
+                        <span className="phone-card__check">✓</span>
+                        <div><div className="phone-card__event-title">Submitted Oct 14</div></div>
+                      </div>
+                      <div className="phone-card__event phone-card__event--active">
+                        <span className="phone-card__dot-sm" />
+                        <div>
+                          <div className="phone-card__event-title">Interview scheduled</div>
+                          <div className="phone-card__event-sub">Oct 20 at 10:00 AM</div>
+                        </div>
+                      </div>
+                      <div className="phone-card__event">
+                        <span className="phone-card__check phone-card__check--muted">✓</span>
+                        <div><div className="phone-card__event-title">Documents received</div></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Ecosystem — one connected system */}
+      <section className="welcome-ecosystem">
+        <div className="home-section__inner">
+          <h2 className="welcome-ecosystem__title">One connected system</h2>
+          <p className="welcome-ecosystem__sub">Start on web, continue on iOS, get support from a CBO partner — your progress syncs everywhere.</p>
+          <div className="ecosystem-grid">
+            <div className="ecosystem-card ecosystem-card--tinted">
+              <div className="ecosystem-card__icon" aria-hidden="true">📱</div>
+              <h3 className="ecosystem-card__title">iOS App</h3>
+              <p className="ecosystem-card__body">Apply and track from your iPhone. Biometric login, push notifications for status updates.</p>
+            </div>
+            <div className="ecosystem-arrow" aria-hidden="true">↔</div>
+            <div className="ecosystem-card">
+              <div className="ecosystem-card__icon" aria-hidden="true">🌐</div>
+              <h3 className="ecosystem-card__title">Web</h3>
+              <p className="ecosystem-card__body">Full application in any browser. No app download needed.</p>
+            </div>
+            <div className="ecosystem-arrow" aria-hidden="true">↔</div>
+            <div className="ecosystem-card ecosystem-card--tinted">
+              <div className="ecosystem-card__icon" aria-hidden="true">🏢</div>
+              <h3 className="ecosystem-card__title">CBO Dashboard</h3>
+              <p className="ecosystem-card__body">38+ partner organizations guide applicants through every step.</p>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -98,7 +153,6 @@ export default function WelcomePage() {
           <h2 className="home-section__title">{t.home_what_title}</h2>
           <p className="home-section__body">{t.home_what_body}</p>
 
-          {/* What you can / can't buy */}
           <h3 className="home-sub-title">{t.home_buy_title}</h3>
           <div className="home-buy">
             <div className="home-buy__col home-buy__col--can">
@@ -119,7 +173,6 @@ export default function WelcomePage() {
             </div>
           </div>
 
-          {/* Income guide — grouped into one "Could I qualify?" panel */}
           <h3 className="home-sub-title">{t.home_income_title}</h3>
           <p className="home-income__intro">{t.home_income_intro}</p>
           <div className="home-income-panel">
@@ -143,15 +196,11 @@ export default function WelcomePage() {
               </tbody>
             </table>
             <p className="home-income__benefit">
-              {t.home_income_benefit.replace(
-                "{max}",
-                formatGuideUsd(MAX_BENEFIT_ONE_PERSON),
-              )}
+              {t.home_income_benefit.replace("{max}", formatGuideUsd(MAX_BENEFIT_ONE_PERSON))}
             </p>
             <p className="home-income__note">{t.home_income_note}</p>
           </div>
 
-          {/* FAQ — state-rules framing as the spine */}
           <h3 className="home-sub-title">{t.home_faq_title}</h3>
           <div className="home-faq">
             {faqs.map(([q, a], i) => (
@@ -167,7 +216,9 @@ export default function WelcomePage() {
       {/* Closing CTA */}
       <section className="home-section home-section--alt">
         <div className="home-section__inner home-closing">
+          <p className="home-closing__label">Ready to check your eligibility?</p>
           <a href="/apply" className="btn btn--primary">{t.welcome_cta}</a>
+          <p className="home-closing__sub">Takes about 10 minutes · No income minimum · 5 languages</p>
         </div>
       </section>
 
