@@ -1188,6 +1188,153 @@ export const PORTAL_PAGES: PortalPage[] = [
     },
     advanceButton: NEXT_BUTTON,
   },
+
+  // ---------------------------------------------------------------------------
+  // Step 4 — Income (V1-5 PR5, #499). Captured in the 2026-06 live CBO walk
+  // (portal-map/live-walk-2026-06-capture.md). The genuinely auto-fillable page
+  // is ABEIC (employment detail); the gates/gateways/summaries are recognized
+  // so the extension renders its overlay on them instead of falling through to
+  // "unknown page", but carry no source → needs-review (the applicant picks
+  // which income applies; employer name/address aren't stored by Civica).
+  //
+  // v1 fills the FIRST income source only (income_sources[0]); multi-job repeat
+  // is a follow-up (mirror the household member-index pattern). The frequency
+  // select resolves via the `snap-pay-frequency` transform + fillSelect's
+  // text fallback (option values weren't captured).
+  // ---------------------------------------------------------------------------
+
+  {
+    pageCode: "ABEIQ",
+    title: "Employment income gate (step 4)",
+    urlPattern: /\/ApplyForBenefits\/ABEIQ/,
+    step: 4,
+    fields: {
+      // "Let's start with employment." Yes/No — whether the applicant has a job.
+      // Presence-derivable in principle, but the gate also branches the walk;
+      // left needs-review so the assister confirms.
+    },
+    advanceButton: NEXT_BUTTON,
+  },
+
+  {
+    pageCode: "ABEQH",
+    title: "Self-employed gate (step 4)",
+    urlPattern: /\/ApplyForBenefits\/ABEQH/,
+    step: 4,
+    fields: {
+      // "Are you self-employed?" Yes/No → needs-review.
+    },
+    advanceButton: NEXT_BUTTON,
+  },
+
+  {
+    pageCode: "ABEIC",
+    title: "Employment income detail — wage amount + frequency (step 4)",
+    urlPattern: /\/ApplyForBenefits\/ABEIC/,
+    step: 4,
+    fields: {
+      // Amount before taxes → income_sources[0].income_amount. v1: first job.
+      payAmount: {
+        label: "Amount",
+        fallbackSelector: "#payAmount",
+        type: "text",
+        required: true,
+        source: "income_sources[0].income_amount",
+      },
+      // Pay frequency → income_sources[0].income_frequency, mapped to the
+      // portal option text by the snap-pay-frequency transform; fillSelect
+      // matches by text (option values not captured). `irregular` → null →
+      // needs-review.
+      oftenPaid: {
+        label: "How often are you paid?",
+        fallbackSelector: "#oftenPaid",
+        type: "select",
+        source: "income_sources[0].income_frequency",
+        transform: "snap-pay-frequency",
+      },
+      // Employer name/address/phone, average hours: no Civica packet source.
+      // Left needs-review (the assister fills from the applicant's paystub).
+    },
+    advanceButton: NEXT_BUTTON,
+  },
+
+  {
+    pageCode: "ABEIS",
+    title: "Jobs summary (step 4)",
+    urlPattern: /\/ApplyForBenefits\/ABEIS/,
+    step: 4,
+    infoOnly: true,
+    fields: {},
+    advanceButton: NEXT_BUTTON,
+  },
+
+  {
+    pageCode: "ABUIN",
+    title: "Unearned income gate — money not from work (step 4)",
+    urlPattern: /\/ApplyForBenefits\/ABUIN/,
+    step: 4,
+    fields: {
+      // "Do you get money that doesn't come from work?" Yes/No → needs-review.
+    },
+    advanceButton: NEXT_BUTTON,
+  },
+
+  {
+    pageCode: "ABUIA",
+    title: "Government unearned-income types (step 4)",
+    urlPattern: /\/ApplyForBenefits\/ABUIA/,
+    step: 4,
+    fields: {
+      // 14 checkboxes (SSDI, SSI/SSP, SS Retirement, Public Assistance, UI, SDI,
+      // Financial Aid, Work Study, Foster Care, VA, Govt/Railroad, Tribal,
+      // Other, None). The applicant picks which apply → needs-review.
+    },
+    advanceButton: NEXT_BUTTON,
+  },
+
+  {
+    pageCode: "ABUIB",
+    title: "Other unearned-income types (step 4)",
+    urlPattern: /\/ApplyForBenefits\/ABUIB/,
+    step: 4,
+    fields: {
+      // 16 checkboxes (child/spousal support, worker's comp, pension, rental/
+      // royalties, dividends/interest, room & board, …) → needs-review.
+    },
+    advanceButton: NEXT_BUTTON,
+  },
+
+  {
+    pageCode: "ABCIA",
+    title: "Change in income — on strike? (step 4)",
+    urlPattern: /\/ApplyForBenefits\/ABCIA/,
+    step: 4,
+    fields: {
+      // "Are you on strike?" Yes/No → needs-review.
+    },
+    advanceButton: NEXT_BUTTON,
+  },
+
+  {
+    pageCode: "ABCIB",
+    title: "Change in income — employment change in last two months? (step 4)",
+    urlPattern: /\/ApplyForBenefits\/ABCIB/,
+    step: 4,
+    fields: {
+      // Yes/No → needs-review.
+    },
+    advanceButton: NEXT_BUTTON,
+  },
+
+  {
+    pageCode: "ABJIS",
+    title: "Income summary (step 4)",
+    urlPattern: /\/ApplyForBenefits\/ABJIS/,
+    step: 4,
+    infoOnly: true,
+    fields: {},
+    advanceButton: NEXT_BUTTON,
+  },
 ];
 
 /**

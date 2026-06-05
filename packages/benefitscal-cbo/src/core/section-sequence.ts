@@ -104,8 +104,25 @@ const STEP_2_CODES: readonly string[] = [
 /** Step 3 — Household details (both flows). */
 const STEP_3_CODES: readonly string[] = [];
 
-/** Step 4 — Income (both flows). */
-const STEP_4_CODES: readonly string[] = [];
+/**
+ * Step 4 — Income (both flows, V1-5 PR5 #499). Walk order from the 2026-06
+ * live capture. ABEIC (employment detail) is the auto-fill page
+ * (income_sources[0]); the rest are gates/gateways/summaries (needs-review).
+ * Self-employment + per-unearned-type detail pages are conditional (appear on
+ * "Yes") and not yet mapped — same follow-up pattern.
+ */
+const STEP_4_CODES: readonly string[] = [
+  "ABEIQ",
+  "ABEQH",
+  "ABEIC",
+  "ABEIS",
+  "ABUIN",
+  "ABUIA",
+  "ABUIB",
+  "ABCIA",
+  "ABCIB",
+  "ABJIS",
+];
 
 /** Step 5 — Expenses (both flows). */
 const STEP_5_CODES: readonly string[] = [];
