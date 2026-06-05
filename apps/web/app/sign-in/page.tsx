@@ -47,7 +47,9 @@ function SignInForm() {
       });
       if (!res.ok) {
         const body = (await res.json().catch(() => ({}))) as { error?: string };
-        if (body.error === "invalid_phone") {
+        if (body.error === "non_us_phone") {
+          setError(snapT(locale, "signin_error_non_us_phone"));
+        } else if (body.error === "invalid_phone") {
           setError(snapT(locale, "signin_error_invalid_phone"));
         } else {
           setError(snapT(locale, "signin_error_generic"));
