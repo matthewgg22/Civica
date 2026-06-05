@@ -1335,6 +1335,136 @@ export const PORTAL_PAGES: PortalPage[] = [
     fields: {},
     advanceButton: NEXT_BUTTON,
   },
+
+  // ---------------------------------------------------------------------------
+  // Step 5 — Expenses (V1-5 PR5, #499). Captured in the 2026-06 live walk.
+  // ABAPH (rent/mortgage detail) is the auto-fill page; its amount + frequency
+  // come from the rent expense, located via scopePayloadForExpenseType (content.ts
+  // scopes `expenses` to the "rent_or_mortgage" row, placed at expenses[0]).
+  // The gateway/gates/summaries are recognized → needs-review (the applicant
+  // picks which expenses apply; the detail amounts the assister enters).
+  //
+  // Other expense detail pages (dependent care, child/spousal support) follow
+  // the same scope pattern in a later slice — recognized here as needs-review.
+  // ---------------------------------------------------------------------------
+
+  {
+    pageCode: "ABHEG",
+    title: "Housing & utilities expense gateway (step 5)",
+    urlPattern: /\/ApplyForBenefits\/ABHEG/,
+    step: 5,
+    fields: {
+      // 7 checkboxes: Rent/Mortgage, Property Taxes/Insurance, Gas/Electric/
+      // Heating fuel, Telephone, Water/Sewage/Garbage, Homeless Shelter, None.
+      // The applicant picks which apply → needs-review.
+    },
+    advanceButton: NEXT_BUTTON,
+  },
+
+  {
+    pageCode: "ABAPH",
+    title: "Rent or Mortgage detail — amount + frequency (step 5)",
+    urlPattern: /\/ApplyForBenefits\/ABAPH/,
+    step: 5,
+    fields: {
+      // Amount → the rent expense's amount (scoped to expenses[0] by
+      // scopePayloadForExpenseType("rent_or_mortgage")).
+      amount: {
+        label: "Amount",
+        fallbackSelector: "#text1",
+        type: "text",
+        required: true,
+        source: "expenses[0].amount",
+      },
+      // Frequency → expenses[0].frequency, mapped to the portal option text by
+      // snap-pay-frequency (fillSelect text fallback; option values not captured).
+      // The expense select omits Daily/Hourly vs income's oftenPaid — the
+      // transform still produces correct text for the values that ARE present.
+      frequency: {
+        label: "How often do you pay this?",
+        fallbackSelector: "#dropdownoptiongroup",
+        type: "select",
+        source: "expenses[0].frequency",
+        transform: "snap-pay-frequency",
+      },
+    },
+    advanceButton: NEXT_BUTTON,
+  },
+
+  {
+    pageCode: "ABHEX",
+    title: "Rent/Mortgage expense summary (step 5)",
+    urlPattern: /\/ApplyForBenefits\/ABHEX/,
+    step: 5,
+    infoOnly: true,
+    fields: {},
+    advanceButton: NEXT_BUTTON,
+  },
+
+  {
+    pageCode: "ABCST",
+    title: "Dependent care expense gate (step 5)",
+    urlPattern: /\/ApplyForBenefits\/ABCST/,
+    step: 5,
+    fields: {
+      // "Do you pay for adult care or childcare so you can work/school/job-search?"
+      // Yes/No → needs-review (the detail amount page is a follow-up slice).
+    },
+    advanceButton: NEXT_BUTTON,
+  },
+
+  {
+    pageCode: "ABCOD",
+    title: "Court-ordered costs divider (step 5)",
+    urlPattern: /\/ApplyForBenefits\/ABCOD/,
+    step: 5,
+    infoOnly: true,
+    fields: {},
+    advanceButton: NEXT_BUTTON,
+  },
+
+  {
+    pageCode: "ABCOC",
+    title: "Court-ordered child support paid gate (step 5)",
+    urlPattern: /\/ApplyForBenefits\/ABCOC/,
+    step: 5,
+    fields: {
+      // "Do you pay court-ordered child support?" Yes/No → needs-review.
+    },
+    advanceButton: NEXT_BUTTON,
+  },
+
+  {
+    pageCode: "ABSSQ",
+    title: "Court-ordered spousal support / alimony gate (step 5)",
+    urlPattern: /\/ApplyForBenefits\/ABSSQ/,
+    step: 5,
+    fields: {
+      // "Do you have court-ordered spousal support or alimony expenses?" Yes/No.
+      // Not a federal SNAP deduction (see #498) → needs-review.
+    },
+    advanceButton: NEXT_BUTTON,
+  },
+
+  {
+    pageCode: "ABEVC",
+    title: "Expenses verification (step 5)",
+    urlPattern: /\/ApplyForBenefits\/ABEVC/,
+    step: 5,
+    infoOnly: true,
+    fields: {},
+    advanceButton: NEXT_BUTTON,
+  },
+
+  {
+    pageCode: "ABESU",
+    title: "Expenses summary (step 5)",
+    urlPattern: /\/ApplyForBenefits\/ABESU/,
+    step: 5,
+    infoOnly: true,
+    fields: {},
+    advanceButton: NEXT_BUTTON,
+  },
 ];
 
 /**

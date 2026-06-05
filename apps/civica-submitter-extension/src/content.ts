@@ -40,6 +40,7 @@ import {
   CONFIRMATION_PAGE,
   resolveField,
   scopePayloadForMember,
+  scopePayloadForExpenseType,
   fillElement,
   fillRadio,
   fillCheckbox,
@@ -400,6 +401,19 @@ async function main(): Promise<void> {
 
   if (page?.repeating) {
     await runPageFill(page, payload, activePacketId, document, {}, getMemberIndex());
+    return;
+  }
+
+  // (d) Expense detail pages (step 5, #499) — each asks about ONE expense type.
+  //     Scope the payload to the matching expense (placed at expenses[0]) so
+  //     the page's `expenses[0].*` sources resolve to the right row. ABAPH =
+  //     rent/mortgage; other per-type detail pages join this map in a later slice.
+  const EXPENSE_DETAIL_TYPE: Record<string, string> = {
+    ABAPH: "rent_or_mortgage",
+  };
+  if (page && EXPENSE_DETAIL_TYPE[page.pageCode]) {
+    const scoped = scopePayloadForExpenseType(payload, EXPENSE_DETAIL_TYPE[page.pageCode]!);
+    await runPageFill(page, scoped, activePacketId);
     return;
   }
 
