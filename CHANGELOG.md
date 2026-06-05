@@ -9,6 +9,11 @@ Categories used:
 - **Added** — new capability
 - **Changed** — visible behavior change
 
+## [0.2.5.0] - 2026-06-05
+
+### Changed
+- **Applicant home navigation** — "Apply" is now a dominant button pinned to the top-right of the nav, with a chevron dropdown holding Sign in and the iPhone-app download (Anthropic-style split button, in Civica pine). The floating app-download card that popped up over the page has been retired; the app lives in the dropdown now. The dropdown is a native control, so it works with the keyboard and without JavaScript.
+
 ## [0.2.3.0] - 2026-06-05
 
 ### Added

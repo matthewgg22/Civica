@@ -1875,7 +1875,15 @@ html {
   flex-shrink: 0;
 }
 
-.app-nav__signin {
+/* Primary CTA ("Apply now") + its dropdown of secondary actions, far right.
+   Adopts the Anthropic split-button pattern; styling stays Civica pine. */
+.app-nav__cta-group {
+  display: inline-flex;
+  align-items: stretch;
+  position: relative;
+}
+
+.app-nav__cta {
   display: inline-flex;
   align-items: center;
   min-height: 40px;
@@ -1891,9 +1899,90 @@ html {
   transition: background 120ms ease;
 }
 
-.app-nav__signin:hover {
+.app-nav__cta:hover {
   background: var(--civica-pine-pressed);
   color: #ffffff;
+}
+
+/* Chevron toggle attached to the CTA. When a menu is present the CTA's right
+   edge is squared off so the two read as one split control. */
+.app-nav__cta-group:has(.app-nav__menu) .app-nav__cta {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.app-nav__menu {
+  position: relative;
+}
+
+.app-nav__menu-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 0 var(--civica-space-sm);
+  background: var(--civica-pine);
+  color: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-left: 1px solid rgba(255, 255, 255, 0.25);
+  border-top-right-radius: var(--civica-radius-control);
+  border-bottom-right-radius: var(--civica-radius-control);
+  cursor: pointer;
+  list-style: none;
+  transition: background 120ms ease;
+}
+
+.app-nav__menu-trigger::-webkit-details-marker { display: none; }
+
+.app-nav__menu-trigger:hover {
+  background: var(--civica-pine-pressed);
+}
+
+.app-nav__chevron {
+  font-size: 0.75rem;
+  line-height: 1;
+  transition: transform 120ms ease;
+}
+
+.app-nav__menu[open] .app-nav__chevron {
+  transform: rotate(180deg);
+}
+
+.app-nav__menu-panel {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  min-width: 200px;
+  display: flex;
+  flex-direction: column;
+  padding: 4px;
+  background: var(--civica-surface);
+  border: 1px solid var(--civica-hairline);
+  border-radius: var(--civica-radius-control);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  z-index: 60;
+}
+
+.app-nav__menu-item {
+  display: flex;
+  align-items: center;
+  gap: var(--civica-space-sm);
+  padding: 10px 12px;
+  border-radius: 6px;
+  color: var(--civica-ink);
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.app-nav__menu-item:hover {
+  background: var(--civica-paper);
+}
+
+.app-nav__menu-icon {
+  border-radius: 5px;
+  flex-shrink: 0;
 }
 
 .app-nav__demo {
@@ -2504,212 +2593,6 @@ html {
 .welcome-link {
   color: var(--civica-pine);
   font-weight: 500;
-}
-
-/* ---- App download island (fixed bottom-right CTA) ---- */
-
-/* App download island + its collapsed bookmark tab share the bottom-right
-   corner. Both stay mounted; data-attributes drive CSS transitions so the
-   swap is one continuous slide (card out to the edge ⇄ tab in from the edge)
-   instead of a mount/unmount jump. */
-.app-island {
-  position: fixed;
-  bottom: 24px;
-  right: 24px;
-  z-index: 50;
-  width: 240px;
-  background: var(--civica-pine);
-  border-radius: var(--civica-radius-card);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.22), 0 1px 4px rgba(0, 0, 0, 0.08);
-  padding: 14px;
-  opacity: 0;
-  transform: translateY(12px);
-  pointer-events: none;
-  transition: opacity 220ms ease, transform 240ms cubic-bezier(0, 0, 0.2, 1);
-}
-
-.app-island[data-visible="true"] {
-  opacity: 1;
-  transform: translateY(0);
-  pointer-events: auto;
-}
-
-/* Dismissed: slide the whole card off the right edge as the tab takes over. */
-.app-island[data-collapsed="true"] {
-  opacity: 0;
-  transform: translateX(120%);
-  pointer-events: none;
-}
-
-.app-island-tab {
-  position: fixed;
-  right: 0;
-  bottom: 88px;
-  z-index: 50;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 9px 14px 9px 11px;
-  background: var(--civica-pine);
-  color: #fff;
-  border: none;
-  border-radius: var(--civica-radius-card) 0 0 var(--civica-radius-card);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
-  cursor: pointer;
-  font-family: inherit;
-  font-size: 0.8125rem;
-  font-weight: 600;
-  /* Fully tucked off the right edge until dismissed. */
-  transform: translateX(120%);
-  pointer-events: none;
-  transition: transform 240ms cubic-bezier(0, 0, 0.2, 1);
-}
-
-/* Dismissed → tab peeks (icon visible); hover/focus → slides fully out. */
-.app-island-tab[data-shown="true"] {
-  transform: translateX(calc(100% - 46px));
-  pointer-events: auto;
-}
-
-.app-island-tab[data-shown="true"]:hover,
-.app-island-tab[data-shown="true"]:focus-visible {
-  transform: translateX(0);
-  outline: none;
-}
-
-.app-island-tab__icon {
-  border-radius: 6px;
-  flex-shrink: 0;
-}
-
-.app-island-tab__label { white-space: nowrap; }
-
-@media (prefers-reduced-motion: reduce) {
-  .app-island,
-  .app-island-tab { transition: none; }
-}
-
-.app-island__dismiss {
-  position: absolute;
-  top: 0;
-  right: 0;
-  /* 44px touch target via padding; visual ✕ stays small */
-  padding: 13px;
-  background: transparent;
-  border: 0;
-  color: rgba(255, 255, 255, 0.6);
-  font-size: 11px;
-  cursor: pointer;
-  line-height: 1;
-}
-
-.app-island__dismiss:hover {
-  color: #ffffff;
-}
-
-.app-island__header {
-  display: flex;
-  align-items: center;
-  gap: 11px;
-  margin-bottom: 11px;
-  /* leave room for the 44px dismiss tap area top-right */
-  padding-right: 18px;
-}
-
-.app-island__icon {
-  flex-shrink: 0;
-  width: 42px;
-  height: 42px;
-  /* iOS App Store icon look — rounded square, ~22% radius */
-  border-radius: 9px;
-  object-fit: cover;
-  /* lift the tile off the pine: drop shadow + crisp top-highlight edge */
-  box-shadow:
-    0 2px 6px rgba(0, 0, 0, 0.32),
-    inset 0 1px 0 rgba(255, 255, 255, 0.35),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.16);
-}
-
-.app-island__text {
-  flex: 1;
-  min-width: 0;
-}
-
-.app-island__headline {
-  font-size: 0.8125rem;
-  font-weight: 700;
-  line-height: 1.25;
-  letter-spacing: -0.01em;
-  color: #ffffff;
-  margin: 0 0 1px;
-}
-
-.app-island__sub {
-  font-size: 0.6875rem;
-  line-height: 1.35;
-  color: rgba(255, 255, 255, 0.7);
-  margin: 0;
-}
-
-.app-island__btn {
-  display: block;
-  width: 100%;
-  padding: 8px 0;
-  border-radius: var(--civica-radius-control);
-  background: transparent;
-  border: 1.5px solid rgba(255, 255, 255, 0.6);
-  color: #ffffff;
-  font-family: inherit;
-  font-size: 0.75rem;
-  font-weight: 600;
-  text-align: center;
-  text-decoration: none;
-  cursor: pointer;
-  transition: border-color 120ms ease, background 120ms ease;
-}
-
-.app-island__btn:hover {
-  border-color: #ffffff;
-  background: rgba(255, 255, 255, 0.08);
-  color: #ffffff;
-}
-
-/* Mobile: full-width strip, horizontal layout, subtitle hidden */
-@media (max-width: 479px) {
-  .app-island {
-    left: 16px;
-    right: 16px;
-    bottom: 16px;
-    width: auto;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 10px 14px;
-  }
-
-  .app-island__header {
-    flex: 1;
-    margin-bottom: 0;
-    padding-right: 0;
-    min-width: 0;
-  }
-
-  .app-island__sub {
-    display: none;
-  }
-
-  .app-island__btn {
-    width: auto;
-    white-space: nowrap;
-    padding: 8px 12px;
-    flex-shrink: 0;
-  }
-
-  .app-island__dismiss {
-    position: static;
-    padding: 8px 4px 8px 0;
-    order: 3;
-  }
 }
 
 /* ---- Apply shell chrome (header, card, buddy referral, Mae helper) ---- */
