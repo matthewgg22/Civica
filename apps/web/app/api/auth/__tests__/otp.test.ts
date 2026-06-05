@@ -37,6 +37,49 @@ describe("POST /api/auth/otp", () => {
     expect(JSON.parse((init as RequestInit).body as string)).toEqual({ phone: "+14155550199" });
   });
 
+  it("rejects ambiguous non-US digit string with non_us_phone", async () => {
+    // 8-digit number with no + prefix — can't safely guess country code.
+    // Regression: old code would prepend +1 and silently call a wrong US number.
+    const { POST } = await import("../otp/route");
+    const res = await POST(new Request("https://w/api/auth/otp", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ phone: "52355512" }),
+    }));
+    expect(res.status).toBe(400);
+    const body = await res.json();
+    expect(body.error).toBe("non_us_phone");
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it("accepts explicit E.164 international number (+52...)", async () => {
+    fetchMock.mockResolvedValueOnce(new Response("{}", { status: 200 }));
+    const { POST } = await import("../otp/route");
+    const res = await POST(new Request("https://w/api/auth/otp", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ phone: "+525512345678" }),
+    }));
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(body.phone).toBe("+525512345678");
+    const [, init] = fetchMock.mock.calls[0];
+    expect(JSON.parse((init as RequestInit).body as string)).toEqual({ phone: "+525512345678" });
+  });
+
+  it("accepts 11-digit US number starting with 1", async () => {
+    fetchMock.mockResolvedValueOnce(new Response("{}", { status: 200 }));
+    const { POST } = await import("../otp/route");
+    const res = await POST(new Request("https://w/api/auth/otp", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ phone: "14155550199" }),
+    }));
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(body.phone).toBe("+14155550199");
+  });
+
   it("returns 502 when Supabase rejects", async () => {
     fetchMock.mockResolvedValueOnce(new Response("nope", { status: 500 }));
     const { POST } = await import("../otp/route");
