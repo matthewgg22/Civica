@@ -46,7 +46,7 @@ export default function WelcomePage() {
         rightSlot={<LanguagePicker locale={locale} onChange={changeLocale} ariaLabel="Choose language" />}
         tabs={[
           { label: t.home_nav_what, href: "#what-is-snap" },
-          { label: t.home_nav_status, href: "/status" },
+          { label: t.home_nav_why, href: "/why-civica" },
         ]}
         primaryCta={{
           label: t.home_nav_apply,
@@ -69,7 +69,7 @@ export default function WelcomePage() {
               <span className="trust-chip" role="listitem">✓ USDA-verified rules</span>
               <span className="trust-chip" role="listitem">✓ 38+ CBO partners</span>
               <span className="trust-chip" role="listitem">✓ No minimum income</span>
-              <span className="trust-chip trust-chip--free" role="listitem">✦ Always free</span>
+              <span className="trust-chip trust-chip--free" role="listitem">✓ 100% free</span>
             </div>
             <div className="home-hero__ctas">
               <a href="/apply" className="btn btn--primary">{t.welcome_cta}</a>

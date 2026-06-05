@@ -2940,15 +2940,12 @@ html {
   white-space: nowrap;
 }
 
-/* "Always free" chip — wheat-tinted to stand out from pine chips */
+/* "Always free" chip — solid pine fill for emphasis, stays in palette */
 .trust-chip--free {
-  border-color: color-mix(in srgb, var(--civica-wheat) 60%, transparent);
-  background: color-mix(in srgb, var(--civica-wheat) 14%, transparent);
-  color: #7a5c00;
-}
-
-@media (prefers-color-scheme: dark) {
-  .trust-chip--free { color: var(--civica-wheat); }
+  border-color: var(--civica-pine);
+  background: var(--civica-pine);
+  color: #fff;
+  font-weight: 600;
 }
 
 /* Ghost secondary link below CTA */
@@ -3201,9 +3198,9 @@ html {
   display: block;
   width: 100%;
   height: auto;
-  /* Screenshot includes iOS status bar — pull up to meet the bezel edge */
-  margin-top: 0;
-  border-radius: 0 0 34px 34px;
+  /* No own radius — the bezel's overflow:hidden + border-radius clips all
+     four corners uniformly, so no black triangles peek at the top corners. */
+  border-radius: 0;
 }
 
 /* Home indicator */
@@ -4072,7 +4069,7 @@ html {
 /* ---- Why Civica page ---- */
 
 .why-gemini-scroll {
-  height: 400vh;
+  height: 200vh;
   position: relative;
 }
 
