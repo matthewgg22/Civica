@@ -9,6 +9,11 @@ Categories used:
 - **Added** — new capability
 - **Changed** — visible behavior change
 
+## [0.2.3.0] - 2026-06-05
+
+### Added
+- **Microsoft / Entra ID sign-in for staff** — a "Sign in with Microsoft" button on the navigator login page, alongside Google. Lets caseworkers at counties and CBOs that run Microsoft 365 sign in with their work account. Requires operator activation (register an Entra app + enable the Azure provider in Supabase).
+
 ## [0.2.2.0] - 2026-06-05
 
 ### Added
