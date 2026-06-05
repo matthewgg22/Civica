@@ -3,6 +3,7 @@ import {
   packetAnswersToFacts,
   estimatePacketBenefit,
   rowsToAnswers,
+  assessPacket,
 } from "../facts-adapter";
 
 describe("packetAnswersToFacts", () => {
@@ -71,5 +72,18 @@ describe("rowsToAnswers", () => {
     ]);
     expect(answers.monthly_income).toBe("1500");
     expect(answers.monthly_rent).toBe("900");
+  });
+});
+
+describe("assessPacket", () => {
+  it("returns estimate + recommendations array (recs may be empty on sparse data)", () => {
+    const r = assessPacket(
+      { household_size: "1", monthly_income: "1200", monthly_rent: "900" },
+      "CA",
+      new Date("2026-06-01"),
+    );
+    expect(typeof r.estimatedMonthlyBenefitUsd).toBe("number");
+    expect(Array.isArray(r.recommendations)).toBe(true);
+    expect(r.confirmForVerdict.length).toBeGreaterThan(0);
   });
 });

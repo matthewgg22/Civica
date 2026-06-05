@@ -1,5 +1,5 @@
 import { getPacketAnswers } from "../../lib/packet-fetchers";
-import { rowsToAnswers, estimatePacketBenefit } from "../../lib/engines/facts-adapter";
+import { rowsToAnswers, assessPacket } from "../../lib/engines/facts-adapter";
 
 /**
  * EligibilityEstimateSection — Suspense'd packet-detail card showing a live
@@ -41,7 +41,7 @@ export default async function EligibilityEstimateSection({ packetId }: { packetI
 
   let est;
   try {
-    est = estimatePacketBenefit(answers, "CA", new Date());
+    est = assessPacket(answers, "CA", new Date());
   } catch {
     return (
       <div className="rounded-[4px] border border-hairline bg-surface p-5">
@@ -61,6 +61,26 @@ export default async function EligibilityEstimateSection({ packetId }: { packetI
       <p className="mt-1.5 text-[12px] text-muted">
         Estimate from the CA rules engine, assuming eligibility — not a determination. The county sets the final amount.
       </p>
+
+      {est.recommendations.length > 0 && (
+        <div className="mt-4">
+          <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite">Ways to raise it</p>
+          <ul className="mt-2 space-y-2">
+            {est.recommendations.slice(0, 3).map((r) => (
+              <li key={r.rank} className="rounded-[4px] border border-hairline bg-surface-secondary p-3">
+                <div className="flex items-start justify-between gap-3">
+                  <p className="text-[13px] leading-relaxed text-ink">{r.action}</p>
+                  {r.delta_monthly_usd > 0 && (
+                    <span className="shrink-0 text-[12px] font-semibold tabular-nums text-pine">
+                      +${Math.round(r.delta_monthly_usd)}/mo
+                    </span>
+                  )}
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       <div className="mt-4 rounded-[4px] border border-warning/30 bg-warning/[0.06] p-3">
         <p className="text-[12px] font-semibold text-warning">Confirm to finalize the verdict</p>
