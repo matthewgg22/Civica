@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import AppNav from "../../components/AppNav";
 import { LanguagePicker } from "../../components/LanguagePicker";
 import { PhoneMockup } from "../../components/PhoneMockup";
+import { BenefitEstimator } from "../../components/BenefitEstimator";
 const TESTFLIGHT_URL =
   process.env.NEXT_PUBLIC_TESTFLIGHT_URL ?? "https://testflight.apple.com/";
 import { STORAGE_KEY, LOCALES, type Locale } from "../i18n";
@@ -73,6 +74,7 @@ export default function WelcomePage() {
               <a href="/apply" className="btn btn--primary">{t.welcome_cta}</a>
               <a href="/sign-in" className="btn btn--ghost">{t.home_hero_secondary}</a>
             </div>
+            <BenefitEstimator />
           </div>
 
           <div className="hero__col hero__col--visual" aria-hidden="true">

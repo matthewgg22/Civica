@@ -2961,55 +2961,46 @@ html {
 .iphone {
   position: relative;
   z-index: 1;
-  width: 252px;
+  width: 220px;
   flex-shrink: 0;
-  /* Titanium-like dark frame */
-  background: linear-gradient(160deg, #2c2c2e 0%, #1c1c1e 40%, #2a2a2c 100%);
-  border-radius: 50px;
-  padding: 14px 8px 10px;
-  /* Subtle marketing tilt — keep conservative so it stays in column */
-  transform: rotate(2deg) perspective(1200px) rotateY(-3deg);
-  transform-origin: center center;
+  background: #1c1c1e;
+  border-radius: 46px;
+  padding: 12px 7px 8px;
   box-shadow:
-    0 0 0 1px rgba(255,255,255,0.12),
-    inset 0 0 0 1px rgba(255,255,255,0.05),
-    0 48px 96px rgba(0,0,0,0.55),
-    0 16px 40px rgba(0,0,0,0.35),
-    0 4px 12px rgba(0,0,0,0.25);
+    0 0 0 1px rgba(255,255,255,0.10),
+    inset 0 0 0 1px rgba(255,255,255,0.04),
+    0 32px 64px rgba(0,0,0,0.50),
+    0 8px 24px rgba(0,0,0,0.28);
 }
 
-/* Side buttons */
+/* Side buttons — flush with frame, no blur-causing effects */
 .iphone__btn {
   position: absolute;
-  background: linear-gradient(to right, #3a3a3c, #2c2c2e);
+  background: #2e2e30;
   border-radius: 2px;
-  box-shadow: -1px 0 2px rgba(0,0,0,0.5), inset 1px 0 1px rgba(255,255,255,0.1);
 }
 
-/* Volume up */
 .iphone__btn--vol-up {
-  left: -3px;
-  top: 90px;
-  width: 3px;
-  height: 32px;
+  left: -4px;
+  top: 76px;
+  width: 4px;
+  height: 26px;
   border-radius: 2px 0 0 2px;
 }
 
-/* Volume down */
 .iphone__btn--vol-dn {
-  left: -3px;
-  top: 132px;
-  width: 3px;
-  height: 32px;
+  left: -4px;
+  top: 110px;
+  width: 4px;
+  height: 26px;
   border-radius: 2px 0 0 2px;
 }
 
-/* Power button */
 .iphone__btn--power {
-  right: -3px;
-  top: 110px;
-  width: 3px;
-  height: 56px;
+  right: -4px;
+  top: 92px;
+  width: 4px;
+  height: 44px;
   border-radius: 0 2px 2px 0;
   box-shadow: 1px 0 2px rgba(0,0,0,0.5), inset -1px 0 1px rgba(255,255,255,0.1);
 }
@@ -3238,6 +3229,73 @@ html {
   background: rgba(0,0,0,0.2);
   border-radius: 2px;
   margin: 10px auto 8px;
+}
+
+/* ---- Benefit estimator widget ---- */
+
+.benefit-est {
+  margin-top: var(--civica-space-lg);
+  padding-top: var(--civica-space-lg);
+  border-top: 1px solid var(--civica-hairline);
+}
+
+.benefit-est__row {
+  display: flex;
+  align-items: center;
+  gap: var(--civica-space-md);
+  flex-wrap: wrap;
+}
+
+.benefit-est__label {
+  font-size: 0.8125rem;
+  color: var(--civica-graphite);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.benefit-est__sizes {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.benefit-est__size {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--civica-radius-control);
+  border: 1px solid var(--civica-hairline);
+  background: transparent;
+  color: var(--civica-graphite);
+  font-family: inherit;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 100ms ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.benefit-est__size:hover {
+  border-color: var(--civica-pine);
+  color: var(--civica-pine);
+}
+
+.benefit-est__size--active {
+  background: var(--civica-pine);
+  border-color: var(--civica-pine);
+  color: #fff;
+}
+
+.benefit-est__result {
+  margin-top: var(--civica-space-sm);
+  font-size: 0.875rem;
+  color: var(--civica-graphite);
+}
+
+.benefit-est__amount {
+  color: var(--civica-pine);
+  font-weight: 700;
 }
 
 /* ---- pm: redesigned phone mockup (all values px for readability at 260px) ---- */
