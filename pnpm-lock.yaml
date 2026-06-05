@@ -164,6 +164,9 @@ importers:
       '@civica/snap-qc-engine':
         specifier: workspace:*
         version: link:../../packages/snap-qc-engine
+      '@civica/snap-recommendation':
+        specifier: workspace:*
+        version: link:../../packages/snap-recommendation
       '@civica/snap-rules':
         specifier: workspace:*
         version: link:../../packages/snap-rules
