@@ -27,13 +27,63 @@ export function AppDownloadIsland({
     return () => clearTimeout(t);
   }, []);
 
-  // Dismissing doesn't remove the prompt entirely — it collapses to a small
-  // bookmark tab hanging off the right edge so it can be reopened.
-  if (dismissed) {
-    return (
+  // Both the full island and the collapsed bookmark tab stay mounted; we just
+  // toggle data-attributes so CSS transitions animate the swap. On dismiss the
+  // card slides out to the right edge as the tab slides in from the same edge
+  // (one continuous motion), and the reverse on reopen — no mount/unmount jump.
+  const islandOpen = visible && !dismissed;
+
+  return (
+    <>
+      <aside
+        className="app-island"
+        role="complementary"
+        aria-label="Download the Civica app"
+        aria-hidden={!islandOpen}
+        data-visible={islandOpen}
+        data-collapsed={dismissed}
+      >
+        <button
+          className="app-island__dismiss"
+          aria-label={dismissLabel}
+          tabIndex={islandOpen ? 0 : -1}
+          onClick={() => setDismissed(true)}
+        >
+          ✕
+        </button>
+
+        <div className="app-island__header">
+          <Image
+            src="/civica-app-icon.png"
+            alt="Civica"
+            width={44}
+            height={44}
+            className="app-island__icon"
+          />
+          <div className="app-island__text">
+            <p className="app-island__headline">{label}</p>
+            <p className="app-island__sub">{sub}</p>
+          </div>
+        </div>
+
+        <a
+          className="app-island__btn"
+          href={TESTFLIGHT_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          tabIndex={islandOpen ? 0 : -1}
+          aria-label={`${cta} — opens TestFlight`}
+        >
+          {cta}
+        </a>
+      </aside>
+
       <button
         className="app-island-tab"
         aria-label="Reopen the Civica app download prompt"
+        aria-hidden={!dismissed}
+        data-shown={dismissed}
+        tabIndex={dismissed ? 0 : -1}
         onClick={() => setDismissed(false)}
       >
         <Image
@@ -45,48 +95,6 @@ export function AppDownloadIsland({
         />
         <span className="app-island-tab__label">{cta}</span>
       </button>
-    );
-  }
-
-  return (
-    <aside
-      className="app-island"
-      role="complementary"
-      aria-label="Download the Civica app"
-      aria-hidden={!visible}
-      data-visible={visible}
-    >
-      <button
-        className="app-island__dismiss"
-        aria-label={dismissLabel}
-        onClick={() => setDismissed(true)}
-      >
-        ✕
-      </button>
-
-      <div className="app-island__header">
-        <Image
-          src="/civica-app-icon.png"
-          alt="Civica"
-          width={44}
-          height={44}
-          className="app-island__icon"
-        />
-        <div className="app-island__text">
-          <p className="app-island__headline">{label}</p>
-          <p className="app-island__sub">{sub}</p>
-        </div>
-      </div>
-
-      <a
-        className="app-island__btn"
-        href={TESTFLIGHT_URL}
-        target="_blank"
-        rel="noopener noreferrer"
-        aria-label={`${cta} — opens TestFlight`}
-      >
-        {cta}
-      </a>
-    </aside>
+    </>
   );
 }

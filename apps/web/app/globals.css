@@ -2434,17 +2434,43 @@ html {
 
 /* ---- App download island (fixed bottom-right CTA) ---- */
 
-@keyframes island-in {
-  from { opacity: 0; transform: translateY(12px); }
-  to   { opacity: 1; transform: translateY(0); }
+/* App download island + its collapsed bookmark tab share the bottom-right
+   corner. Both stay mounted; data-attributes drive CSS transitions so the
+   swap is one continuous slide (card out to the edge ⇄ tab in from the edge)
+   instead of a mount/unmount jump. */
+.app-island {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 50;
+  width: 240px;
+  background: var(--civica-pine);
+  border-radius: var(--civica-radius-card);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.22), 0 1px 4px rgba(0, 0, 0, 0.08);
+  padding: 14px;
+  opacity: 0;
+  transform: translateY(12px);
+  pointer-events: none;
+  transition: opacity 220ms ease, transform 240ms cubic-bezier(0, 0, 0.2, 1);
 }
 
-/* Collapsed bookmark tab — peeks off the right edge, slides out on hover,
-   reopens the full island on click. */
+.app-island[data-visible="true"] {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+/* Dismissed: slide the whole card off the right edge as the tab takes over. */
+.app-island[data-collapsed="true"] {
+  opacity: 0;
+  transform: translateX(120%);
+  pointer-events: none;
+}
+
 .app-island-tab {
   position: fixed;
   right: 0;
-  bottom: 104px;
+  bottom: 88px;
   z-index: 50;
   display: inline-flex;
   align-items: center;
@@ -2459,12 +2485,20 @@ html {
   font-family: inherit;
   font-size: 0.8125rem;
   font-weight: 600;
-  transform: translateX(calc(100% - 46px));
-  transition: transform 160ms cubic-bezier(0, 0, 0.2, 1);
+  /* Fully tucked off the right edge until dismissed. */
+  transform: translateX(120%);
+  pointer-events: none;
+  transition: transform 240ms cubic-bezier(0, 0, 0.2, 1);
 }
 
-.app-island-tab:hover,
-.app-island-tab:focus-visible {
+/* Dismissed → tab peeks (icon visible); hover/focus → slides fully out. */
+.app-island-tab[data-shown="true"] {
+  transform: translateX(calc(100% - 46px));
+  pointer-events: auto;
+}
+
+.app-island-tab[data-shown="true"]:hover,
+.app-island-tab[data-shown="true"]:focus-visible {
   transform: translateX(0);
   outline: none;
 }
@@ -2477,33 +2511,8 @@ html {
 .app-island-tab__label { white-space: nowrap; }
 
 @media (prefers-reduced-motion: reduce) {
-  .app-island-tab { transition: none; transform: translateX(0); }
-}
-
-.app-island {
-  position: fixed;
-  bottom: 24px;
-  right: 24px;
-  z-index: 50;
-  width: 240px;
-  background: var(--civica-pine);
-  border-radius: var(--civica-radius-card);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.22), 0 1px 4px rgba(0, 0, 0, 0.08);
-  padding: 14px;
-  opacity: 0;
-  pointer-events: none;
-}
-
-.app-island[data-visible="true"] {
-  opacity: 1;
-  pointer-events: auto;
-  animation: island-in 200ms cubic-bezier(0, 0, 0.2, 1) both;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .app-island[data-visible="true"] {
-    animation: none;
-  }
+  .app-island,
+  .app-island-tab { transition: none; }
 }
 
 .app-island__dismiss {
