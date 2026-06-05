@@ -105,3 +105,17 @@ export const getWrStatus = cache(async (packetId: string) => {
     .maybeSingle();
   return data;
 });
+
+// Collected applicant answers (EAV) for the eligibility estimate (#504).
+// Feeds estimatePacketBenefit via lib/engines/facts-adapter.
+export const getPacketAnswers = cache(async (packetId: string) => {
+  if (isDemoPacket(packetId)) return [];
+  const cookieStore = await cookies();
+  const supabase = createServerClientFromCookies(cookieStore);
+  const { data } = await supabase
+    .schema("snap_enrollment")
+    .from("packet_answers")
+    .select("question_key, applicant_answer, navigator_confirmed_value")
+    .eq("packet_id", packetId);
+  return data ?? [];
+});

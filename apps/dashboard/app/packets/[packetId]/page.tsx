@@ -5,6 +5,7 @@ import Link from "next/link";
 import Breadcrumbs from "../../../components/Breadcrumbs";
 import { createServerClientFromCookies } from "../../../lib/supabase";
 import WorkRequirementsSection, { WorkRequirementsSkeleton } from "../../../components/packet-detail/WorkRequirementsSection";
+import EligibilityEstimateSection, { EligibilityEstimateSkeleton } from "../../../components/packet-detail/EligibilityEstimateSection";
 import NotesSection, { NotesSkeleton } from "../../../components/packet-detail/NotesSection";
 import TimelineSection, { TimelineSkeleton } from "../../../components/packet-detail/TimelineSection";
 import DocumentsSection, { DocumentsSkeleton } from "../../../components/packet-detail/DocumentsSection";
@@ -936,6 +937,11 @@ export default async function PacketDetailPage({
           argyleLinked={argyleLinked}
           packetId={packetId}
         />
+
+        {/* Estimated benefit (#504 — from collected answers, pending confirmation) */}
+        <Suspense fallback={<EligibilityEstimateSkeleton />}>
+          <EligibilityEstimateSection packetId={packetId} />
+        </Suspense>
 
         {/* Work-Hours Rule (HR 1 §10102 / OBBBA) */}
         <Suspense fallback={<WorkRequirementsSkeleton />}>
