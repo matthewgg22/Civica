@@ -9,12 +9,16 @@
 // Demo data is synthetic (labelled at the foot of the tab).
 
 import { Fragment, useState } from "react";
+import { CA_BASELINE_PER } from "@civica/snap-qc-engine";
 import InfoTip from "../InfoTip";
 import FlagSensitivityControl from "./FlagSensitivityControl";
 
+// CA baseline is the engine's published constant (USDA FNS-380), not a hand-typed
+// number — so the demo can never contradict the engine (#507).
+const CA_BASELINE = CA_BASELINE_PER;
+
 const DEMO_QC = {
   per: 4.2,
-  perBenchmark: 10.8,
   obbbaReady: 94,
   pillars: [
     {
@@ -167,7 +171,7 @@ export default function QcTab() {
             />
           </p>
           <p className="text-[36px] font-semibold tabular-nums text-ink leading-none mt-1">{DEMO_QC.per}%</p>
-          <p className="text-[12px] text-pine font-medium mt-1">↓ vs {DEMO_QC.perBenchmark}% without Civica</p>
+          <p className="text-[12px] text-pine font-medium mt-1">↓ vs {CA_BASELINE}% CA baseline without Civica</p>
           <p className="text-[11px] text-muted mt-0.5">{t("Below §10105 federal trigger", "Under the federal penalty line")}</p>
         </div>
         <div className="bg-surface border border-hairline rounded-[4px] px-5 py-4">
