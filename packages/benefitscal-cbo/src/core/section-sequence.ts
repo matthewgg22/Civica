@@ -124,8 +124,24 @@ const STEP_4_CODES: readonly string[] = [
   "ABJIS",
 ];
 
-/** Step 5 — Expenses (both flows). */
-const STEP_5_CODES: readonly string[] = [];
+/**
+ * Step 5 — Expenses (both flows, V1-5 PR5 #499). Walk order from the 2026-06
+ * live capture. ABAPH (rent/mortgage detail) is the auto-fill page (scoped to
+ * the rent expense); the gates/dividers/summaries are needs-review. Dependent
+ * care + court-ordered support detail amount pages are conditional "Yes"
+ * branches not yet mapped — follow-up slice.
+ */
+const STEP_5_CODES: readonly string[] = [
+  "ABHEG",
+  "ABAPH",
+  "ABHEX",
+  "ABCST",
+  "ABCOD",
+  "ABCOC",
+  "ABSSQ",
+  "ABEVC",
+  "ABESU",
+];
 
 /**
  * Step 6 — Assets (OMITTED for snap-only per CA BBCE bypass; INCLUDED for

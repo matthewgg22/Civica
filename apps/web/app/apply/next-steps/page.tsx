@@ -48,7 +48,7 @@ function NextStepsContent() {
         <h1 className="next-steps__title">{r.title}</h1>
         <p className="next-steps__body">{r.body}</p>
         <div className="next-steps__ctas">
-          <a href="/sign-in?next=%2Fstatus" className="wizard__continue">{r.cta}</a>
+          <a href="/sign-in?next=%2Fapply%2Freview" className="wizard__continue">{r.cta}</a>
           <Link href="/apply/review" className="wizard__back">{r.back}</Link>
         </div>
       </div>

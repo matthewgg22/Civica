@@ -1,20 +1,13 @@
-// POST /api/auth/verify — verify the OTP, persist Supabase session as
-// HttpOnly cookies, and return the user id. Mirrors iOS verifyOTPRequest.
+// POST /api/auth/verify — verify the phone OTP and establish a session.
+// Uses the @supabase/ssr server client so cookies are written by the SDK
+// rather than manually, matching the dashboard auth pattern.
 
 import { NextResponse } from "next/server";
-import { publicEnv } from "../../../../lib/env";
-import { persistSession } from "../../../../lib/supabase-server";
+import { createSupabaseServerClient } from "../../../../lib/supabase-server";
 
 type VerifyBody = {
   phone?: string;
   token?: string;
-};
-
-type SupabaseVerifyResponse = {
-  access_token: string;
-  refresh_token: string;
-  expires_in: number;
-  user: { id: string };
 };
 
 export async function POST(request: Request) {
@@ -32,34 +25,21 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "missing_fields" }, { status: 400 });
   }
 
-  const { supabaseUrl, supabaseAnonKey } = publicEnv();
-  const res = await fetch(`${supabaseUrl}/auth/v1/verify`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      apikey: supabaseAnonKey,
-    },
-    body: JSON.stringify({ phone, token, type: "sms" }),
-    cache: "no-store",
+  const supabase = await createSupabaseServerClient();
+  const { data, error } = await supabase.auth.verifyOtp({
+    phone,
+    token,
+    type: "sms",
   });
 
-  if (!res.ok) {
-    const text = await res.text();
-    const lowered = text.toLowerCase();
-    const code = lowered.includes("invalid") || lowered.includes("expired")
-      ? "invalid_code"
-      : "upstream_failed";
+  if (error) {
+    const msg = error.message.toLowerCase();
+    const code =
+      msg.includes("invalid") || msg.includes("expired")
+        ? "invalid_code"
+        : "upstream_failed";
     return NextResponse.json({ error: code }, { status: 400 });
   }
 
-  const session = (await res.json()) as SupabaseVerifyResponse;
-
-  await persistSession({
-    accessToken: session.access_token,
-    refreshToken: session.refresh_token,
-    userId: session.user.id,
-    expiresInSeconds: session.expires_in,
-  });
-
-  return NextResponse.json({ userId: session.user.id });
+  return NextResponse.json({ userId: data.user?.id ?? null });
 }

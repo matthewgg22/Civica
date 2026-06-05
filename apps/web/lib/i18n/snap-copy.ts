@@ -33,6 +33,8 @@ export const snapStrings = {
     signin_verify: "Verify",
     signin_resend: "Send again",
     signin_error_invalid_phone: "Please enter a valid phone number.",
+    signin_error_non_us_phone: "For numbers outside the US, include your country code (e.g. +52 for Mexico).",
+    signin_error_rate_limited: "Too many attempts. Please wait 10 minutes and try again.",
     signin_error_invalid_code: "That code didn't match. Try again or send a new one.",
     signin_error_generic: "Something went wrong. Please try again.",
 
@@ -250,6 +252,8 @@ export const snapStrings = {
     signin_verify: "Verificar",
     signin_resend: "Enviar de nuevo",
     signin_error_invalid_phone: "Por favor ingresa un número de teléfono válido.",
+    signin_error_non_us_phone: "Para números fuera de EE. UU., incluye el código de país (p. ej. +52 para México).",
+    signin_error_rate_limited: "Demasiados intentos. Por favor espera 10 minutos e intenta de nuevo.",
     signin_error_invalid_code: "Ese código no coincide. Intenta de nuevo o envía uno nuevo.",
     signin_error_generic: "Algo salió mal. Por favor intenta de nuevo.",
 
