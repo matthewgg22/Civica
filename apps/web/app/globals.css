@@ -1269,7 +1269,7 @@ html {
 .home-hero__inner,
 .home-section__inner {
   width: 100%;
-  max-width: 1280px;
+  max-width: 1080px;
   margin: 0 auto;
 }
 
@@ -1662,32 +1662,70 @@ html {
   max-width: 68ch;
 }
 
-/* Income guide + FAQ sit side by side on desktop so the section uses the
-   full width instead of a lone left column. Stacks below 880px. */
-.home-snap-cols {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  gap: clamp(32px, 5vw, 72px);
-  align-items: start;
+/* ---- Centered explainer composition ----
+   The "What is SNAP" body reads as one calm, centered column with symmetric
+   margins: headings + short intros are centred, content blocks (food list,
+   income panel, FAQ) are a consistent width and centred on the page. */
+.home-section__inner.home-explainer {
+  max-width: 840px;
 }
 
-@media (max-width: 880px) {
-  .home-snap-cols { grid-template-columns: 1fr; }
+.home-explainer .home-section__title,
+.home-explainer .home-sub-title {
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 100%;
 }
 
-/* Inside the two columns, the text blocks fill their column (drop the
-   standalone max-widths that made them look stranded); the data table keeps
-   a compact width so its two columns don't spread apart. */
-.home-snap-cols .home-income { max-width: 460px; }
-.home-snap-cols .home-income__intro,
-.home-snap-cols .home-income__note,
-.home-snap-cols .home-faq,
-.home-snap-cols .home-faq__a { max-width: 100%; }
+/* Centred sub-headings drop the left divider rule. */
+.home-explainer .home-sub-title {
+  border-top: none;
+  padding-top: 0;
+  margin-top: var(--civica-space-xxl);
+}
 
-/* Both column headers align at the top of the row with a single light rule. */
-.home-snap-cols__income > .home-sub-title:first-child,
-.home-snap-cols__faq > .home-sub-title:first-child {
-  margin-top: 0;
+.home-explainer .home-section__body,
+.home-explainer .home-income__intro {
+  max-width: 58ch;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+
+/* Blocks centre as a unit; their internal content stays left-aligned. */
+.home-explainer .home-buy {
+  max-width: 720px;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: left;
+}
+
+.home-income-panel {
+  max-width: 520px;
+  margin: 0 auto;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: var(--civica-space-lg);
+}
+
+.home-explainer .home-income {
+  max-width: 100%;
+  margin: 0;
+}
+
+.home-explainer .home-income__benefit,
+.home-explainer .home-income__note {
+  max-width: 100%;
+  margin: 0;
+}
+
+.home-explainer .home-faq {
+  max-width: 720px;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: left;
 }
 
 .home-steps {

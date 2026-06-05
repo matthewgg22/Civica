@@ -86,7 +86,7 @@ export default function WelcomePage() {
 
       {/* What is SNAP — the explainer */}
       <section className="home-section" id="what-is-snap">
-        <div className="home-section__inner">
+        <div className="home-section__inner home-explainer">
           <h2 className="home-section__title">{t.home_what_title}</h2>
           <p className="home-section__body">{t.home_what_body}</p>
 
@@ -111,50 +111,47 @@ export default function WelcomePage() {
             </div>
           </div>
 
-          {/* Income guide + FAQ side by side so the section fills the width */}
-          <div className="home-snap-cols">
-            <div className="home-snap-cols__income">
-              <h3 className="home-sub-title">{t.home_income_title}</h3>
-              <p className="home-income__intro">{t.home_income_intro}</p>
-              <table className="home-income">
-                <thead>
-                  <tr>
-                    <th scope="col">{t.home_income_col_size}</th>
-                    <th scope="col">{t.home_income_col_amount}</th>
+          {/* Income guide — grouped into one "Could I qualify?" panel */}
+          <h3 className="home-sub-title">{t.home_income_title}</h3>
+          <p className="home-income__intro">{t.home_income_intro}</p>
+          <div className="home-income-panel">
+            <table className="home-income">
+              <thead>
+                <tr>
+                  <th scope="col">{t.home_income_col_size}</th>
+                  <th scope="col">{t.home_income_col_amount}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {incomeGuide(8).map((row) => (
+                  <tr key={row.size}>
+                    <td>
+                      {row.size}{" "}
+                      {row.size === 1 ? t.home_income_person : t.home_income_people}
+                    </td>
+                    <td>{formatGuideUsd(row.monthly)}</td>
                   </tr>
-                </thead>
-                <tbody>
-                  {incomeGuide(8).map((row) => (
-                    <tr key={row.size}>
-                      <td>
-                        {row.size}{" "}
-                        {row.size === 1 ? t.home_income_person : t.home_income_people}
-                      </td>
-                      <td>{formatGuideUsd(row.monthly)}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-              <p className="home-income__benefit">
-                {t.home_income_benefit.replace(
-                  "{max}",
-                  formatGuideUsd(MAX_BENEFIT_ONE_PERSON),
-                )}
-              </p>
-              <p className="home-income__note">{t.home_income_note}</p>
-            </div>
-
-            <div className="home-snap-cols__faq">
-              <h3 className="home-sub-title">{t.home_faq_title}</h3>
-              <div className="home-faq">
-                {faqs.map(([q, a], i) => (
-                  <details key={i} className="home-faq__item">
-                    <summary className="home-faq__q">{q}</summary>
-                    <p className="home-faq__a">{a}</p>
-                  </details>
                 ))}
-              </div>
-            </div>
+              </tbody>
+            </table>
+            <p className="home-income__benefit">
+              {t.home_income_benefit.replace(
+                "{max}",
+                formatGuideUsd(MAX_BENEFIT_ONE_PERSON),
+              )}
+            </p>
+            <p className="home-income__note">{t.home_income_note}</p>
+          </div>
+
+          {/* FAQ — state-rules framing as the spine */}
+          <h3 className="home-sub-title">{t.home_faq_title}</h3>
+          <div className="home-faq">
+            {faqs.map(([q, a], i) => (
+              <details key={i} className="home-faq__item">
+                <summary className="home-faq__q">{q}</summary>
+                <p className="home-faq__a">{a}</p>
+              </details>
+            ))}
           </div>
         </div>
       </section>
