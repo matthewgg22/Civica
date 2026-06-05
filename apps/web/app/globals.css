@@ -2956,6 +2956,290 @@ html {
 }
 
 /* Phone mockup — pure CSS illustration */
+/* ---- iphone: iPhone 15 Pro-style phone mockup ---- */
+
+.iphone {
+  position: relative;
+  z-index: 1;
+  width: 252px;
+  flex-shrink: 0;
+  /* Titanium-like dark frame */
+  background: linear-gradient(160deg, #2c2c2e 0%, #1c1c1e 40%, #2a2a2c 100%);
+  border-radius: 50px;
+  padding: 14px 8px 10px;
+  box-shadow:
+    /* outer edge highlight */
+    0 0 0 1px rgba(255,255,255,0.12),
+    /* inner shadow for depth */
+    inset 0 0 0 1px rgba(255,255,255,0.05),
+    /* ambient shadow */
+    0 40px 80px rgba(0,0,0,0.55),
+    0 12px 32px rgba(0,0,0,0.35),
+    0 2px 8px rgba(0,0,0,0.25);
+}
+
+/* Side buttons */
+.iphone__btn {
+  position: absolute;
+  background: linear-gradient(to right, #3a3a3c, #2c2c2e);
+  border-radius: 2px;
+  box-shadow: -1px 0 2px rgba(0,0,0,0.5), inset 1px 0 1px rgba(255,255,255,0.1);
+}
+
+/* Volume up */
+.iphone__btn--vol-up {
+  left: -3px;
+  top: 90px;
+  width: 3px;
+  height: 32px;
+  border-radius: 2px 0 0 2px;
+}
+
+/* Volume down */
+.iphone__btn--vol-dn {
+  left: -3px;
+  top: 132px;
+  width: 3px;
+  height: 32px;
+  border-radius: 2px 0 0 2px;
+}
+
+/* Power button */
+.iphone__btn--power {
+  right: -3px;
+  top: 110px;
+  width: 3px;
+  height: 56px;
+  border-radius: 0 2px 2px 0;
+  box-shadow: 1px 0 2px rgba(0,0,0,0.5), inset -1px 0 1px rgba(255,255,255,0.1);
+}
+
+/* Screen bezel */
+.iphone__bezel {
+  background: #f7f5ef;
+  border-radius: 40px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Dynamic island */
+.iphone__island {
+  width: 100px;
+  height: 30px;
+  background: #000;
+  border-radius: 20px;
+  margin: 8px auto 0;
+  flex-shrink: 0;
+  /* subtle glow to make it feel embedded */
+  box-shadow: 0 0 0 2px #1c1c1e;
+}
+
+/* Status bar */
+.iphone__statusbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 20px 2px;
+  color: #1a1714;
+  flex-shrink: 0;
+}
+
+.iphone__time {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+}
+
+.iphone__status-icons {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #1a1714;
+}
+
+/* Navigation bar */
+.iphone__nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 14px 8px;
+  border-bottom: 1px solid rgba(0,0,0,0.09);
+  flex-shrink: 0;
+}
+
+.iphone__nav-back {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 14px;
+  color: #2d5a45;
+  font-weight: 400;
+}
+
+.iphone__nav-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1a1714;
+  letter-spacing: -0.3px;
+}
+
+/* App content area */
+.iphone__content {
+  padding: 14px 16px 0;
+  flex: 1;
+}
+
+/* Page header — mirrors SNAPReturningUserHomeView `header` VStack */
+.iphone__page-header {
+  margin-bottom: 10px;
+}
+
+.iphone__page-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: #1a1714;
+  letter-spacing: -0.5px;
+  line-height: 1.15;
+}
+
+.iphone__page-sub {
+  font-size: 13px;
+  color: #5a544d;
+  margin-top: 2px;
+}
+
+/* Status banner — pine accent, 13% opacity */
+.iphone__banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 9px 11px;
+  background: rgba(45, 90, 69, 0.13);
+  border-radius: 10px;
+  margin-bottom: 12px;
+}
+
+.iphone__banner-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1a1714;
+  line-height: 1.3;
+}
+
+.iphone__banner-sub {
+  font-size: 11px;
+  color: #5a544d;
+  margin-top: 1px;
+}
+
+/* Timeline */
+.iphone__timeline {
+  display: flex;
+  flex-direction: column;
+}
+
+.iphone__step {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.iphone__step-rail {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 24px;
+  flex-shrink: 0;
+}
+
+.iphone__marker {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* amberPrimary — completed */
+.iphone__marker--done   { background: #C9922A; }
+/* wheatPop — current */
+.iphone__marker--active { background: #E8C547; }
+/* ghost — future */
+.iphone__marker--future {
+  background: #fff;
+  border: 1.5px solid rgba(0,0,0,0.15);
+  color: #5a544d;
+}
+
+.iphone__connector {
+  width: 2px;
+  min-height: 10px;
+  flex: 1;
+  background: rgba(0,0,0,0.1);
+  margin: 3px 0;
+}
+
+.iphone__connector--done { background: #C9922A; }
+
+.iphone__step-body {
+  flex: 1;
+  padding-bottom: 10px;
+}
+
+.iphone__step-body--last { padding-bottom: 0; }
+
+.iphone__step-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.iphone__step-name {
+  font-size: 13px;
+  color: #1a1714;
+  line-height: 1.35;
+}
+
+.iphone__step-ts {
+  font-size: 11px;
+  color: #5a544d;
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.iphone__step-detail {
+  font-size: 11px;
+  color: #5a544d;
+  margin-top: 1px;
+  line-height: 1.3;
+}
+
+/* Primary CTA */
+.iphone__cta {
+  background: #2d5a45;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+  padding: 11px 0;
+  border-radius: 12px;
+  margin: 12px 0 0;
+  letter-spacing: -0.1px;
+}
+
+/* Home indicator */
+.iphone__home-indicator {
+  width: 100px;
+  height: 4px;
+  background: rgba(0,0,0,0.2);
+  border-radius: 2px;
+  margin: 10px auto 8px;
+}
+
 /* ---- pm: redesigned phone mockup (all values px for readability at 260px) ---- */
 
 .pm {
