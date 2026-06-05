@@ -9,6 +9,20 @@ Categories used:
 - **Added** — new capability
 - **Changed** — visible behavior change
 
+## [0.2.1.0] - 2026-06-05
+
+### Added
+- **Google OAuth for staff dashboard** — navigators can now sign in with a Google account via the "Sign in with Google" button on the Civica Navigator login page. Requires operator activation (Google provider in Supabase console + redirect URI in Google Cloud). Staff role gate (`app_metadata.role`) still enforced — unapproved Google accounts are rejected.
+- **OTP rate limiting** — `/api/auth/otp` now blocks more than 5 OTP requests per IP per 10-minute window with a 429 response. Mirrors the enrollment-api rate limiting pattern (PR #248).
+- **BenefitsCal Expenses wiring** — Expenses section (ABAPH rent, utilities, dependent care, medical) fully wired to the selector-map; `scopePayloadForExpenseType` scopes payload per expense type (issue #499, #314).
+
+### Changed
+- **Web auth migrated to `@supabase/ssr`** — replaced the custom cookie-based session stack (`persistSession`/`clearSession`/`refreshWithToken`) with the standard `@supabase/ssr` SDK. Fixes a concurrent token-refresh race condition that could silently drop sessions under load. Existing sessions will require a one-time re-login.
+- **"Sign in to send" redirect fixed** — after completing the SNAP application wizard unauthenticated, the "Sign in to send" CTA now returns to `/apply/review` (not `/status`), so the draft is actually submitted after login.
+
+### Fixed
+- **International phone numbers** — the OTP route no longer silently maps ambiguous 10-digit non-US numbers to a wrong `+1` number. Numbers without an explicit `+` country-code prefix that aren't 10-digit US format now return a `non_us_phone` error with actionable copy in English and Spanish.
+
 ## [0.2.0.0] - 2026-06-04
 
 ### Added
