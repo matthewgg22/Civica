@@ -153,6 +153,67 @@ function PlannedCard({
   );
 }
 
+// ─── Self-upgrading Pillar 2/3 KPI card ──────────────────────────────────────
+// Renders a real KpiView when the snapshot has the row (leading or measured,
+// self-upgrading exactly like Pillar 1). Falls back to the PlannedCard scaffold
+// when the key is absent — i.e. the cron hasn't yet written this KPI. So the
+// moment the engine emits the row, the card flips from "planned" to live.
+
+function Pillar23Card({
+  view,
+  label,
+  planned,
+}: {
+  view: KpiView | null | undefined;
+  label: string;
+  planned: { description: string; unlock: string };
+}) {
+  // No row yet → the honest "not yet collecting" scaffold.
+  if (!view) {
+    return <PlannedCard label={label} description={planned.description} unlock={planned.unlock} />;
+  }
+
+  const measured = view.sourceKind === "measured";
+  const status = typeof view.meta?.status === "string" ? view.meta.status : "";
+  const hasValue = view.valuePct != null;
+
+  // Measured rows below the n-gate, or leading rows with no population yet,
+  // read "pending" with their sample size — never a fabricated number.
+  let value: string;
+  let sub: string | undefined;
+  if (hasValue) {
+    value = pct(view.valuePct);
+    sub = measured
+      ? `n=${view.n ?? 0}${
+          view.ciLow != null ? ` · 95% CI ${view.ciLow.toFixed(1)}–${view.ciHigh?.toFixed(1)}` : ""
+        }`
+      : `n=${view.n ?? 0}`;
+  } else {
+    value = measured ? "pending" : "—";
+    const EMPTY_NOTE: Record<string, string> = {
+      no_active_packets: "no active packets yet",
+      no_upcoming_recerts: "no upcoming recertifications yet",
+    };
+    sub = measured
+      ? `n=${view.n ?? 0} of ${N_GATE}`
+      : EMPTY_NOTE[status] ?? planned.description;
+  }
+
+  return (
+    <HeroCard
+      label={label}
+      badge={measured ? "measured" : "leading"}
+      value={value}
+      sub={sub}
+      bar={
+        hasValue
+          ? { fillPct: view.valuePct ?? 0, color: measured ? "bg-graphite/40" : "bg-pine/50" }
+          : undefined
+      }
+    />
+  );
+}
+
 // ─── Status banner ────────────────────────────────────────────────────────────
 
 function StatusBanner({
@@ -293,6 +354,11 @@ export default function KpiPillarTree({ truthPoint }: { truthPoint: KpiTruthPoin
   const elements = [...tp.elementClean].sort(
     (a, b) => (a.valuePct ?? 0) - (b.valuePct ?? 0),
   );
+
+  // Pillar 2/3 KPIs — present once the cron writes them; null → planned scaffold.
+  const arr = tp.byKey?.active_relationship_rate ?? null;
+  const rmc = tp.byKey?.reporting_moment_coverage ?? null;
+  const churn = tp.byKey?.churn_rate ?? null;
 
   // CPR bar: 0-100%, color by threshold
   const cprVal = cpr?.valuePct ?? 0;
@@ -437,18 +503,17 @@ export default function KpiPillarTree({ truthPoint }: { truthPoint: KpiTruthPoin
           eyebrow="Pillar 2"
           title="Stay Engaged"
           description="Keep approved households actively connected through their certification period so issues surface before a denial, not after."
-          live={false}
+          live={arr != null}
         />
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <PlannedCard
+          <Pillar23Card
+            view={arr}
             label="Active-Relationship Rate"
-            description="What share of approved households had a navigator touchpoint in the last 30 days of their certification window."
-            unlock="Navigator inbox engagement events are wired to the analytics pipeline."
-          />
-          <PlannedCard
-            label="Reporting-Moment Coverage"
-            description="What share of upcoming interim-reporting deadlines have prep activity started at least 14 days ahead."
-            unlock="Reporting deadline tracking lands in the navigator dashboard."
+            planned={{
+              description:
+                "What share of active households had a navigator touchpoint in the last 30 days.",
+              unlock: "The daily KPI cron ships the Pillar-2 read (navigator_outreach_queue).",
+            }}
           />
         </div>
       </section>
@@ -459,18 +524,26 @@ export default function KpiPillarTree({ truthPoint }: { truthPoint: KpiTruthPoin
           eyebrow="Pillar 3"
           title="Stay On"
           description="Ensure eligible households don't fall off benefits at recertification — the retention pillar that closes the Type-1 error gap."
-          live={false}
+          live={rmc != null || churn != null}
         />
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <PlannedCard
-            label="Churn Rate"
-            description="What share of households with an active Civica relationship exit SNAP within 30 days of their recertification deadline despite remaining eligible."
-            unlock="County outcome webhooks (TODO-44) feed authoritative recertification results."
+          <Pillar23Card
+            view={rmc}
+            label="Reporting-Moment Coverage"
+            planned={{
+              description:
+                "What share of upcoming recertifications have prep activity started at least 14 days before the deadline.",
+              unlock: "The first recertifications enter the window (recertifications table).",
+            }}
           />
-          <PlannedCard
-            label="Retention Risk Coverage"
-            description="What share of households approaching recertification have a retention-risk score above the medium threshold (≥ 15)."
-            unlock="scoreRetentionRisk is wired to the packet lifecycle and the navigator dashboard surfaces the score."
+          <Pillar23Card
+            view={churn}
+            label="Churn Rate"
+            planned={{
+              description:
+                "What share of resolved recertifications lapsed or opted out — the procedural Type-1 fall-off.",
+              unlock: "≥30 recertifications reach a terminal outcome (n-gated, measured).",
+            }}
           />
         </div>
       </section>
