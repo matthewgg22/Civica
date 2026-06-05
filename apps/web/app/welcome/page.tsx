@@ -6,11 +6,23 @@ import { LanguagePicker } from "../../components/LanguagePicker";
 import { AppDownloadIsland } from "../../components/AppDownloadIsland";
 import { STORAGE_KEY, LOCALES, type Locale } from "../i18n";
 import { welcomeStrings } from "../../lib/i18n/snap-copy";
+import {
+  incomeGuide,
+  formatGuideUsd,
+  MAX_BENEFIT_ONE_PERSON,
+} from "../../lib/eligibility-guide";
 
 // Applicant portal home — the welcoming first page. Mirrors the iOS entry
 // ("Apply for SNAP" hero + a short explainer). The apply CTA goes straight
 // to the wizard (localStorage draft, no sign-in needed to start), matching
 // iOS "save anytime, no commitment to submit."
+//
+// The "What is SNAP" section is the explainer, structured around the
+// questions real applicants ask: what can I buy, do I earn too much, and
+// why does this feel different everywhere? Income limits and program names
+// vary by state, so the copy stays state-agnostic and frames Civica as the
+// thing that reads YOUR state's rules for you. Figures derive from
+// lib/eligibility-guide.ts (mirrors the engine's federal constants).
 export default function WelcomePage() {
   const [locale, setLocale] = useState<Locale>("en");
 
@@ -27,6 +39,14 @@ export default function WelcomePage() {
   }
 
   const t = welcomeStrings[locale];
+
+  const faqs: [string, string][] = [
+    [t.home_faq_q1, t.home_faq_a1],
+    [t.home_faq_q2, t.home_faq_a2],
+    [t.home_faq_q3, t.home_faq_a3],
+    [t.home_faq_q4, t.home_faq_a4],
+    [t.home_faq_q5, t.home_faq_a5],
+  ];
 
   return (
     <div className="home">
@@ -59,21 +79,73 @@ export default function WelcomePage() {
         </div>
       </section>
 
-      {/* What is SNAP */}
+      {/* What is SNAP — the explainer */}
       <section className="home-section" id="what-is-snap">
         <div className="home-section__inner">
           <h2 className="home-section__title">{t.home_what_title}</h2>
           <p className="home-section__body">{t.home_what_body}</p>
-          <ul className="home-facts">
-            {[t.home_what_fact1, t.home_what_fact2, t.home_what_fact3].map((fact, i) => {
-              const [lead, sub] = fact.split("|");
-              return (
-                <li key={i} className="home-fact">
-                  <strong>{lead}</strong>{sub ? ` ${sub}` : ""}
-                </li>
-              );
-            })}
-          </ul>
+
+          {/* What you can / can't buy */}
+          <h3 className="home-sub-title">{t.home_buy_title}</h3>
+          <div className="home-buy">
+            <div className="home-buy__col home-buy__col--can">
+              <p className="home-buy__label home-buy__label--can">{t.home_buy_can_label}</p>
+              <ul className="home-buy__list">
+                {t.home_buy_can.split("|").map((item, i) => (
+                  <li key={i} className="home-buy__item home-buy__item--can">{item}</li>
+                ))}
+              </ul>
+            </div>
+            <div className="home-buy__col home-buy__col--cant">
+              <p className="home-buy__label home-buy__label--cant">{t.home_buy_cant_label}</p>
+              <ul className="home-buy__list">
+                {t.home_buy_cant.split("|").map((item, i) => (
+                  <li key={i} className="home-buy__item home-buy__item--cant">{item}</li>
+                ))}
+              </ul>
+            </div>
+          </div>
+
+          {/* Income guide — state-agnostic, figures from the engine constants */}
+          <h3 className="home-sub-title">{t.home_income_title}</h3>
+          <p className="home-income__intro">{t.home_income_intro}</p>
+          <table className="home-income">
+            <thead>
+              <tr>
+                <th scope="col">{t.home_income_col_size}</th>
+                <th scope="col">{t.home_income_col_amount}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {incomeGuide(8).map((row) => (
+                <tr key={row.size}>
+                  <td>
+                    {row.size}{" "}
+                    {row.size === 1 ? t.home_income_person : t.home_income_people}
+                  </td>
+                  <td>{formatGuideUsd(row.monthly)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <p className="home-income__benefit">
+            {t.home_income_benefit.replace(
+              "{max}",
+              formatGuideUsd(MAX_BENEFIT_ONE_PERSON),
+            )}
+          </p>
+          <p className="home-income__note">{t.home_income_note}</p>
+
+          {/* FAQ — state-rules framing as the spine */}
+          <h3 className="home-sub-title">{t.home_faq_title}</h3>
+          <div className="home-faq">
+            {faqs.map(([q, a], i) => (
+              <details key={i} className="home-faq__item">
+                <summary className="home-faq__q">{q}</summary>
+                <p className="home-faq__a">{a}</p>
+              </details>
+            ))}
+          </div>
         </div>
       </section>
 

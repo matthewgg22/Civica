@@ -1421,6 +1421,207 @@ html {
     center / 10px no-repeat;
 }
 
+/* ---- What-is-SNAP subsections (buy / income / FAQ) ---- */
+
+.home-sub-title {
+  font-size: 1.25rem;
+  line-height: 1.3;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--civica-ink);
+  margin: var(--civica-space-xxl) 0 var(--civica-space-lg);
+  padding-top: var(--civica-space-xl);
+  border-top: 1px solid var(--civica-hairline);
+  max-width: 64ch;
+}
+
+/* What you can / can't buy — two parallel columns */
+.home-buy {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--civica-space-lg);
+  max-width: 760px;
+}
+
+@media (max-width: 560px) {
+  .home-buy { grid-template-columns: 1fr; }
+}
+
+.home-buy__col {
+  background: var(--civica-surface);
+  border: 1px solid var(--civica-hairline);
+  border-radius: var(--civica-radius-card);
+  padding: var(--civica-space-lg) var(--civica-space-xl);
+}
+
+.home-buy__col--can { border-top: 3px solid var(--civica-pine); }
+.home-buy__col--cant { border-top: 3px solid var(--civica-muted); }
+
+.home-buy__label {
+  margin: 0 0 var(--civica-space-md);
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: var(--civica-ink);
+}
+
+.home-buy__label--can { color: var(--civica-pine); }
+.home-buy__label--cant { color: var(--civica-muted); }
+
+.home-buy__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--civica-space-sm);
+}
+
+.home-buy__item {
+  position: relative;
+  padding-left: 24px;
+  font-size: 0.9375rem;
+  line-height: 1.45;
+  color: var(--civica-ink);
+}
+
+/* Pine check for "can", muted dash for "can't" — never red/punitive. */
+.home-buy__item--can::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 2px;
+  width: 15px;
+  height: 15px;
+  border-radius: 999px;
+  background:
+    var(--civica-pine)
+    url("data:image/svg+xml,%3Csvg width='10' height='10' viewBox='0 0 10 10' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1.5 5L4 7.5L8.5 2.5' stroke='white' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")
+    center / 9px no-repeat;
+}
+
+.home-buy__item--cant::before {
+  content: "";
+  position: absolute;
+  left: 2px;
+  top: 9px;
+  width: 11px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--civica-muted);
+}
+
+/* Income guide table */
+.home-income__intro {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--civica-graphite);
+  margin: 0 0 var(--civica-space-lg);
+  max-width: 62ch;
+}
+
+.home-income {
+  border-collapse: collapse;
+  width: 100%;
+  max-width: 460px;
+  margin: 0 0 var(--civica-space-lg);
+  font-size: 0.9375rem;
+}
+
+.home-income th {
+  text-align: left;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--civica-muted);
+  padding: 0 var(--civica-space-md) var(--civica-space-sm);
+  border-bottom: 1.5px solid var(--civica-hairline);
+}
+
+.home-income td {
+  padding: var(--civica-space-sm) var(--civica-space-md);
+  border-bottom: 1px solid var(--civica-hairline);
+  color: var(--civica-ink);
+}
+
+.home-income td:last-child {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+
+.home-income__benefit {
+  font-size: 1rem;
+  line-height: 1.55;
+  color: var(--civica-ink);
+  font-weight: 500;
+  margin: 0 0 var(--civica-space-lg);
+  max-width: 62ch;
+}
+
+/* The "guide, not a cutoff" message — calm pine callout, the line that
+   keeps eligible people from self-rejecting. */
+.home-income__note {
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: var(--civica-ink);
+  background: var(--civica-pine-surface);
+  border-left: 3px solid var(--civica-pine);
+  border-radius: var(--civica-radius-control);
+  padding: var(--civica-space-md) var(--civica-space-lg);
+  margin: 0;
+  max-width: 64ch;
+}
+
+/* FAQ accordion */
+.home-faq {
+  max-width: 70ch;
+  border-top: 1px solid var(--civica-hairline);
+}
+
+.home-faq__item {
+  border-bottom: 1px solid var(--civica-hairline);
+}
+
+.home-faq__q {
+  list-style: none;
+  cursor: pointer;
+  position: relative;
+  padding: var(--civica-space-lg) 32px var(--civica-space-lg) 0;
+  font-size: 1.0625rem;
+  font-weight: 600;
+  color: var(--civica-ink);
+}
+
+.home-faq__q::-webkit-details-marker { display: none; }
+
+/* Custom +/− chevron that flips when the item is open. */
+.home-faq__q::after {
+  content: "";
+  position: absolute;
+  right: 4px;
+  top: 50%;
+  width: 10px;
+  height: 10px;
+  margin-top: -7px;
+  border-right: 2px solid var(--civica-pine);
+  border-bottom: 2px solid var(--civica-pine);
+  transform: rotate(45deg);
+  transition: transform 0.18s ease;
+}
+
+.home-faq__item[open] .home-faq__q::after {
+  transform: rotate(-135deg);
+}
+
+.home-faq__a {
+  margin: 0;
+  padding: 0 0 var(--civica-space-lg);
+  font-size: 1rem;
+  line-height: 1.65;
+  color: var(--civica-graphite);
+  max-width: 68ch;
+}
+
 .home-steps {
   list-style: none;
   margin: 0;
