@@ -5,10 +5,17 @@ import { NextRequest } from "next/server";
 
 // Must be hoisted so vi.mock factory can reference them.
 const mockGetUser = vi.hoisted(() => vi.fn());
+// MFA gate: default to aal1/aal1 (no MFA enrolled) so existing tests are unaffected.
+const mockGetAAL = vi.hoisted(() =>
+  vi.fn().mockResolvedValue({ data: { currentLevel: "aal1", nextLevel: "aal1" } })
+);
 
 vi.mock("@supabase/ssr", () => ({
   createServerClient: vi.fn(() => ({
-    auth: { getUser: mockGetUser },
+    auth: {
+      getUser: mockGetUser,
+      mfa: { getAuthenticatorAssuranceLevel: mockGetAAL },
+    },
   })),
 }));
 

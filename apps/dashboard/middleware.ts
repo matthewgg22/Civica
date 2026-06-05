@@ -62,6 +62,16 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
+  // MFA gate: if the user has TOTP enrolled (nextLevel=aal2) but hasn't
+  // verified this session (currentLevel=aal1), redirect to the verify page.
+  // /auth/ paths are already allowed above so the verify page itself is reachable.
+  const { data: aal } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+  if (aal && aal.nextLevel === "aal2" && aal.currentLevel !== "aal2") {
+    const url = request.nextUrl.clone();
+    url.pathname = "/auth/mfa/verify";
+    return NextResponse.redirect(url);
+  }
+
   // T5: audience-role routing. Restricted roles (state_deputy /
   // county_director / cbo_preview) can only access their assigned route;
   // root requests redirect to that role's home. Operational roles
