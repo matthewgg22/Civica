@@ -68,8 +68,9 @@ export default function MFAVerifyPage() {
         </p>
         <form onSubmit={handleVerify} className="space-y-5">
           <div>
-            <label className="block text-[13px] font-medium text-graphite mb-1.5">6-digit code</label>
+            <label htmlFor="mfa-code" className="block text-[13px] font-medium text-graphite mb-1.5">6-digit code</label>
             <input
+              id="mfa-code"
               type="text"
               inputMode="numeric"
               autoComplete="one-time-code"

@@ -143,8 +143,9 @@ export default function MFASetupPage() {
 
         <form onSubmit={handleVerify} className="space-y-4">
           <div>
-            <label className="block text-[13px] font-medium text-graphite mb-1.5">Enter the 6-digit code</label>
+            <label htmlFor="mfa-setup-code" className="block text-[13px] font-medium text-graphite mb-1.5">Enter the 6-digit code</label>
             <input
+              id="mfa-setup-code"
               type="text"
               inputMode="numeric"
               autoComplete="one-time-code"
