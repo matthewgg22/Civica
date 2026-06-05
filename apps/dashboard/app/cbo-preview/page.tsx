@@ -8,8 +8,7 @@ import StatusPill from "../../components/StatusPill";
 import StatusBadge from "../../components/StatusBadge";
 import ProductSwitcher from "../../components/ProductSwitcher";
 import { AppDownloadIsland } from "../../components/AppDownloadIsland";
-import InfoTip from "../../components/InfoTip";
-import FlagSensitivityControl from "../../components/cbo/FlagSensitivityControl";
+import QcTab from "../../components/cbo/QcTab";
 
 export const dynamic = "force-dynamic";
 
@@ -89,35 +88,6 @@ const DEMO_RENEWALS = {
     { name: "Samuel R.",   county: "Fresno",       certEnd: "2026-06-16",  stage: "7-day cadence",  daysLeft: 12  },
     { name: "Yolanda B.",  county: "Sacramento",   certEnd: "2026-06-29",  stage: "30-day cadence", daysLeft: 25  },
     { name: "Omar A.",     county: "Oakland",      certEnd: "2026-08-03",  stage: "60-day cadence", daysLeft: 59  },
-  ],
-};
-
-const DEMO_QC = {
-  per: 4.2,
-  perBenchmark: 10.8,
-  obbbaReady: 94,
-  pillars: [
-    {
-      label: "Income verification", pass: 96, fail: 4, note: "§10104 threshold",
-      tip: "Wages, self-employment, and unearned income checked against the §10104 reporting threshold. The most common QC error category nationally.",
-    },
-    {
-      label: "Household composition", pass: 98, fail: 2, note: "Citizenship + residency",
-      tip: "Who counts in the household — citizenship, residency, and members added or removed mid-period. Drives household size and the benefit amount.",
-    },
-    {
-      label: "Work requirements", pass: 91, fail: 9, note: "ABAWD + §10108 exemptions",
-      tip: "ABAWD time limits and §10108 exemptions under the 2025 rules. Wrongly applied exemptions are a frequent audit finding.",
-    },
-    {
-      label: "Deduction calculation", pass: 89, fail: 11, note: "SUA + shelter",
-      tip: "Standard Utility Allowance tier and shelter costs. The highest-error pillar — a small SUA tier mistake moves the benefit a lot.",
-    },
-  ],
-  recentFlags: [
-    { id: "QC-0041", field: "Gross income",   issue: "Self-employment income missing quarterly average",  status: "Open"     },
-    { id: "QC-0040", field: "Shelter deduction", issue: "Rent amount exceeds SUA cap without documentation", status: "Resolved" },
-    { id: "QC-0039", field: "Household size",  issue: "Household member added mid-period, proration needed", status: "Open"     },
   ],
 };
 
@@ -234,7 +204,7 @@ export default async function CBOPreviewPage({
         {active === "applications" && <ApplicationsSection />}
         {active === "outreach"     && <OutreachSection />}
         {active === "renewals"     && <RenewalsSection />}
-        {active === "qc"           && <QCSection />}
+        {active === "qc"           && <QcTab />}
       </div>
 
       {/* Contact CTA — always visible, centered */}
@@ -551,145 +521,6 @@ function RenewalsSection() {
 }
 
 // ─── Quality Control ───────────────────────────────────────────────────────────
-
-function QCSection() {
-  return (
-    <div className="space-y-6">
-      {/* How the engine works — plain-language framing before the metrics.
-          Answers the three questions a prospective CBO actually has: how it
-          operates, how it reaches people, how it adapts to their org. */}
-      <section aria-label="How the engine works" className="bg-surface border border-hairline rounded-[4px] p-5">
-        <p className="eyebrow mb-2">How the engine works</p>
-        <p className="text-[15px] leading-relaxed text-ink max-w-3xl">
-          Civica checks every SNAP application against California&rsquo;s current rules
-          before it reaches the county — catching the errors that drive denials and
-          overpayments while a navigator can still fix them.
-        </p>
-        <div className="mt-5 grid grid-cols-1 sm:grid-cols-3 gap-5">
-          <div>
-            <p className="text-[13px] font-semibold text-ink">1 · Checks every packet</p>
-            <p className="mt-1 text-[13px] leading-relaxed text-graphite">
-              Runs each application through the same rule checks a county reviewer uses —
-              income, household, work rules, deductions — the moment it&rsquo;s entered.
-            </p>
-          </div>
-          <div>
-            <p className="text-[13px] font-semibold text-ink">2 · Reaches people where they are</p>
-            <p className="mt-1 text-[13px] leading-relaxed text-graphite">
-              Households apply on their phone or the web, or a navigator enters it with
-              them. Likely errors land in the navigator&rsquo;s queue as flags — not in a
-              denial letter weeks later.
-            </p>
-          </div>
-          <div>
-            <p className="text-[13px] font-semibold text-ink">3 · Adapts to your org</p>
-            <p className="mt-1 text-[13px] leading-relaxed text-graphite">
-              California and Massachusetts rules are built in. Each CBO sets how
-              aggressively flags surface and which categories to focus on — without
-              changing the eligibility decision or the measured error rate.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* Top metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-surface border border-hairline rounded-[4px] px-5 py-4">
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite">
-            Payment Error Rate (PER)
-            <InfoTip
-              align="left"
-              label="The share of benefit dollars issued in error — over- or under-payment. USDA's official Quality Control measure. §10105 penalizes states that exceed 105% of the national average error rate."
-            />
-          </p>
-          <p className="text-[36px] font-semibold tabular-nums text-ink leading-none mt-1">{DEMO_QC.per}%</p>
-          <p className="text-[12px] text-pine font-medium mt-1">↓ vs {DEMO_QC.perBenchmark}% without Civica</p>
-          <p className="text-[11px] text-muted mt-0.5">Below §10105 federal trigger</p>
-        </div>
-        <div className="bg-surface border border-hairline rounded-[4px] px-5 py-4">
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite">
-            OBBBA Readiness
-            <InfoTip
-              align="left"
-              label="Share of work-requirement determinations the FY2026 rules engine handles automatically under the 2025 OBBBA changes — the ABAWD age band and §10108 exemptions. Higher means less manual rule-tracking for your team."
-            />
-          </p>
-          <p className="text-[36px] font-semibold tabular-nums text-ink leading-none mt-1">{DEMO_QC.obbbaReady}%</p>
-          <p className="text-[12px] text-pine font-medium mt-1">Work-requirement compliance</p>
-          <p className="text-[11px] text-muted mt-0.5">FY2026 rules engine active</p>
-        </div>
-        <div className="bg-surface border border-hairline rounded-[4px] px-5 py-4">
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite">
-            Open QC flags
-            <InfoTip
-              align="left"
-              label="Issues the engine auto-flagged this week for a navigator to resolve before handoff. This is flagging, not a determination — the household's eligibility is unchanged until a navigator acts."
-            />
-          </p>
-          <p className="text-[36px] font-semibold tabular-nums text-ink leading-none mt-1">{DEMO_QC.recentFlags.filter((f) => f.status === "Open").length}</p>
-          <p className="text-[12px] text-graphite mt-1">of {DEMO_QC.recentFlags.length} total this week</p>
-          <p className="text-[11px] text-muted mt-0.5">Auto-flagged by engine</p>
-        </div>
-      </div>
-
-      {/* Pillar breakdown */}
-      <section aria-label="QC pillars">
-        <h2 className="text-[14px] font-bold text-ink mb-3">
-          Error by pillar
-          <InfoTip
-            label="Each pillar is a category USDA scores during Quality Control. Error rate = share of reviewed packets with an issue in that category. Pass rate is the complement."
-          />
-        </h2>
-        <div className="bg-surface border border-hairline rounded-[4px] overflow-hidden">
-          {DEMO_QC.pillars.map((p, i) => (
-            <div key={p.label} className={`px-5 py-4 ${i > 0 ? "border-t border-hairline" : ""}`}>
-              <div className="flex items-center justify-between mb-2">
-                <div>
-                  <span className="text-[14px] font-semibold text-ink">{p.label}</span>
-                  <span className="text-[12px] text-muted ml-2">{p.note}</span>
-                  <InfoTip label={p.tip} />
-                </div>
-                <span className={`text-[12px] font-semibold tabular-nums ${p.fail > 8 ? "text-warning" : "text-pine"}`}>{p.fail}% error rate</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="flex-1 h-2 bg-paper rounded-full overflow-hidden">
-                  <div className={`h-full rounded-full ${p.fail > 8 ? "bg-warning" : "bg-pine/60"}`} style={{ width: `${p.fail}%` }} />
-                </div>
-                <span className="text-[11px] text-muted tabular-nums w-10 text-right">{p.pass}% pass</span>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* CBO flag-sensitivity control (scaffold) */}
-      <FlagSensitivityControl />
-
-      {/* Recent flags */}
-      <section aria-label="Recent QC flags">
-        <h2 className="text-[14px] font-bold text-ink mb-3">Recent flags</h2>
-        <div className="bg-surface border border-hairline rounded-[4px] overflow-hidden">
-          {DEMO_QC.recentFlags.map((flag, i) => (
-            <div key={flag.id} className={`flex items-start gap-4 px-5 py-3.5 ${i > 0 ? "border-t border-hairline" : ""}`}>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <span className="text-[11px] font-mono text-graphite">{flag.id}</span>
-                  <span className="text-[13px] font-semibold text-ink">{flag.field}</span>
-                </div>
-                <p className="text-[12px] text-muted mt-0.5">{flag.issue}</p>
-              </div>
-              <span className={`text-[11px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-sm shrink-0 ${flag.status === "Open" ? "bg-warning/10 text-warning" : "bg-pine/10 text-pine"}`}>
-                {flag.status}
-              </span>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <p className="text-[11px] text-graphite">Demo data — representative QC metrics from a synthetic cohort. Engine version FY2026.</p>
-    </div>
-  );
-}
 
 // ─── Shared sub-components ────────────────────────────────────────────────────
 
