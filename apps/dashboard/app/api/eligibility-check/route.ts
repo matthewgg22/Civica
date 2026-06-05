@@ -11,10 +11,13 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { evaluateComponentR, type ComponentRInput } from "@civica/snap-recommendation";
 import type { Facts } from "@civica/snap-rules";
+import { estimatePacketBenefit, type PacketAnswers } from "../../../lib/engines/facts-adapter";
 
 type Body = {
   facts?: Facts;
   answeredAxes?: ComponentRInput["answeredAxes"];
+  /** Alternate input (#504): a real packet's collected answers (question_key → value). */
+  answers?: PacketAnswers;
   state?: "CA" | "MA";
   asOf?: string;
 };
@@ -27,12 +30,32 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
   }
 
-  if (!body.facts || typeof body.facts !== "object") {
-    return NextResponse.json({ error: "Missing facts" }, { status: 400 });
-  }
-
   const state = body.state === "MA" ? "MA" : "CA";
   const asOf = body.asOf ? new Date(body.asOf) : new Date();
+
+  // Mode B (#504): estimate straight from a stored packet's answers. Returns a
+  // provisional benefit estimate + the confirm-list a verdict still needs.
+  if (body.answers && !body.facts) {
+    try {
+      const est = estimatePacketBenefit(body.answers, state, asOf);
+      return NextResponse.json({
+        mode: "estimate_from_answers",
+        estimated_monthly_benefit_usd: est.estimatedMonthlyBenefitUsd,
+        verdict: null, // not a determination — see confirm_for_verdict
+        assumptions: est.assumptions,
+        confirm_for_verdict: est.confirmForVerdict,
+      });
+    } catch (err) {
+      return NextResponse.json(
+        { error: err instanceof Error ? err.message : "Estimate error" },
+        { status: 500 },
+      );
+    }
+  }
+
+  if (!body.facts || typeof body.facts !== "object") {
+    return NextResponse.json({ error: "Missing facts or answers" }, { status: 400 });
+  }
 
   try {
     const result = evaluateComponentR({
