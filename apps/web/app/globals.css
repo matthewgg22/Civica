@@ -2940,6 +2940,17 @@ html {
   white-space: nowrap;
 }
 
+/* "Always free" chip — wheat-tinted to stand out from pine chips */
+.trust-chip--free {
+  border-color: color-mix(in srgb, var(--civica-wheat) 60%, transparent);
+  background: color-mix(in srgb, var(--civica-wheat) 14%, transparent);
+  color: #7a5c00;
+}
+
+@media (prefers-color-scheme: dark) {
+  .trust-chip--free { color: var(--civica-wheat); }
+}
+
 /* Ghost secondary link below CTA */
 .hero__secondary {
   display: inline-block;
@@ -2964,22 +2975,24 @@ html {
   width: 220px;
   flex-shrink: 0;
   background: #1c1c1e;
-  border-radius: 46px;
-  padding: 12px 7px 8px;
+  /* Proportional to iPhone 16 Pro: outer ~50pt → scaled to 220px width = 28px */
+  border-radius: 36px;
+  /* Equal top/bottom padding to keep frame visually symmetric */
+  padding: 10px 6px 10px;
   box-shadow:
     0 0 0 1px rgba(255,255,255,0.10),
     inset 0 0 0 1px rgba(255,255,255,0.04),
-    0 32px 64px rgba(0,0,0,0.50),
-    0 8px 24px rgba(0,0,0,0.28);
+    0 28px 56px rgba(0,0,0,0.48),
+    0 6px 18px rgba(0,0,0,0.26);
 }
 
 /* Side buttons hidden — 4px buttons at this scale only cause visual noise */
 .iphone__btn { display: none; }
 
-/* Screen bezel — height crops the empty bottom of the screenshot */
+/* Screen bezel — radius proportional to outer frame */
 .iphone__bezel {
   background: #000;
-  border-radius: 40px;
+  border-radius: 30px;
   overflow: hidden;
   position: relative;
   /* At 252px wide, full 3x screenshot is ~548px tall.
@@ -3267,6 +3280,31 @@ html {
 .benefit-est__amount {
   color: var(--civica-pine);
   font-weight: 700;
+  display: inline-block;
+  animation-duration: 320ms;
+  animation-fill-mode: both;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.benefit-est__amount--up   { animation-name: slideInUp; }
+.benefit-est__amount--down { animation-name: slideInDown; }
+
+@keyframes slideInUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes slideInDown {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.benefit-est__free {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: var(--civica-space-xs);
+  font-size: 0.75rem;
+  color: var(--civica-muted);
 }
 
 /* ---- pm: redesigned phone mockup (all values px for readability at 260px) ---- */
@@ -4042,7 +4080,8 @@ html {
   position: sticky;
   top: 0;
   height: 100vh;
-  background: var(--civica-ink);
+  background: var(--civica-paper);
+  border-bottom: 1px solid var(--civica-hairline);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -4055,7 +4094,7 @@ html {
 }
 
 .why-gemini-copy .eyebrow {
-  color: var(--civica-wheat);
+  color: var(--civica-pine);
 }
 
 .why-gemini-headline {
@@ -4063,14 +4102,14 @@ html {
   line-height: 1.1;
   letter-spacing: -0.025em;
   font-weight: 600;
-  color: #ffffff;
+  color: var(--civica-ink);
   margin: 0 0 var(--civica-space-xl);
 }
 
 .why-gemini-sub {
   font-size: clamp(0.9375rem, 1.4vw, 1.0625rem);
   line-height: 1.65;
-  color: rgba(255, 255, 255, 0.58);
+  color: var(--civica-graphite);
   margin: 0 auto;
   max-width: 52ch;
 }
@@ -4098,7 +4137,7 @@ html {
   font-weight: 500;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.25);
+  color: var(--civica-muted);
   padding-bottom: var(--civica-space-xl);
 }
 
@@ -4193,15 +4232,7 @@ html {
 }
 
 @media (prefers-color-scheme: dark) {
-  .why-gemini-sticky {
-    /* ink bg already matches dark mode */
-  }
-
   .why-feature-card {
     background: color-mix(in srgb, var(--civica-paper) 80%, transparent);
-  }
-
-  .why-cta-section {
-    background: var(--civica-pine-surface);
   }
 }

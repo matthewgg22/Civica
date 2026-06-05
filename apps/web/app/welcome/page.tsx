@@ -69,6 +69,7 @@ export default function WelcomePage() {
               <span className="trust-chip" role="listitem">✓ USDA-verified rules</span>
               <span className="trust-chip" role="listitem">✓ 38+ CBO partners</span>
               <span className="trust-chip" role="listitem">✓ No minimum income</span>
+              <span className="trust-chip trust-chip--free" role="listitem">✦ Always free</span>
             </div>
             <div className="home-hero__ctas">
               <a href="/apply" className="btn btn--primary">{t.welcome_cta}</a>
