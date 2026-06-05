@@ -27,7 +27,26 @@ export function AppDownloadIsland({
     return () => clearTimeout(t);
   }, []);
 
-  if (dismissed) return null;
+  // Dismissing doesn't remove the prompt entirely — it collapses to a small
+  // bookmark tab hanging off the right edge so it can be reopened.
+  if (dismissed) {
+    return (
+      <button
+        className="app-island-tab"
+        aria-label="Reopen the Civica app download prompt"
+        onClick={() => setDismissed(false)}
+      >
+        <Image
+          src="/civica-app-icon.png"
+          alt=""
+          width={26}
+          height={26}
+          className="app-island-tab__icon"
+        />
+        <span className="app-island-tab__label">{cta}</span>
+      </button>
+    );
+  }
 
   return (
     <aside
