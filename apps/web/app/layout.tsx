@@ -10,13 +10,13 @@ const hanken = Hanken_Grotesk({
 });
 
 export const metadata: Metadata = {
-  title: "Civica — CalFresh for California students",
+  title: "Civica — Apply for SNAP food benefits",
   description:
-    "If you're a half-time student at a California Community College, CSU, or UC, you likely qualify for CalFresh now. The rules changed.",
+    "SNAP — also called CalFresh, EBT, or food stamps — is monthly money for groceries. Civica reads your state's rules and walks you through the application in about 10 minutes.",
   openGraph: {
-    title: "Civica — CalFresh for California students",
+    title: "Civica — Apply for SNAP food benefits",
     description:
-      "The rules changed. Many students who were told no before are eligible today.",
+      "See if you qualify for SNAP food benefits. Civica figures out your state's rules and guides you through the application step by step.",
     type: "website",
   },
 };

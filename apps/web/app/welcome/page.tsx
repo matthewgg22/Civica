@@ -74,7 +74,12 @@ export default function WelcomePage() {
           </div>
           <aside className="home-hero__card">
             <p className="home-hero__card-body">{t.home_what_qualify}</p>
-            <a href="/apply" className="home-hero__card-link">{t.home_nav_apply} →</a>
+            <ul className="home-hero__card-list">
+              <li className="home-hero__card-item">{t.welcome_trust_1}</li>
+              <li className="home-hero__card-item">{t.welcome_trust_2}</li>
+              <li className="home-hero__card-item">{t.welcome_trust_3}</li>
+            </ul>
+            <a href="/apply" className="home-hero__card-link">{t.welcome_cta}</a>
           </aside>
         </div>
       </section>
@@ -149,18 +154,10 @@ export default function WelcomePage() {
         </div>
       </section>
 
-      {/* Why Civica + final CTA */}
+      {/* Closing CTA */}
       <section className="home-section home-section--alt">
-        <div className="home-section__inner">
-          <h2 className="home-section__title">{t.welcome_trust_label}</h2>
-          <ul className="home-trust">
-            <li className="home-trust__item">{t.welcome_trust_1}</li>
-            <li className="home-trust__item">{t.welcome_trust_2}</li>
-            <li className="home-trust__item">{t.welcome_trust_3}</li>
-          </ul>
-          <div className="home-final-cta">
-            <a href="/apply" className="btn btn--primary">{t.welcome_cta}</a>
-          </div>
+        <div className="home-section__inner home-closing">
+          <a href="/apply" className="btn btn--primary">{t.welcome_cta}</a>
         </div>
       </section>
 
