@@ -1479,23 +1479,33 @@ html {
 .home-buy {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: var(--civica-space-lg);
+  gap: clamp(28px, 5vw, 52px);
   max-width: 1040px;
 }
 
 @media (max-width: 560px) {
   .home-buy { grid-template-columns: 1fr; }
+  .home-buy__col--cant {
+    border-left: none;
+    border-top: 1px solid var(--civica-hairline);
+    padding-left: 0;
+    padding-top: var(--civica-space-lg);
+  }
 }
 
+/* Calm & authoritative: no cards, no colored bars — two clean lists with a
+   single hairline between them. */
 .home-buy__col {
-  background: var(--civica-surface);
-  border: 1px solid var(--civica-hairline);
-  border-radius: var(--civica-radius-card);
-  padding: var(--civica-space-lg) var(--civica-space-xl);
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 0;
 }
 
-.home-buy__col--can { border-top: 3px solid var(--civica-pine); }
-.home-buy__col--cant { border-top: 3px solid var(--civica-muted); }
+.home-buy__col--cant {
+  border-left: 1px solid var(--civica-hairline);
+  padding-left: clamp(28px, 4vw, 48px);
+}
 
 .home-buy__label {
   margin: 0 0 var(--civica-space-md);
@@ -1598,16 +1608,14 @@ html {
   max-width: 62ch;
 }
 
-/* The "guide, not a cutoff" message — calm pine callout, the line that
-   keeps eligible people from self-rejecting. */
+/* The "guide, not a cutoff" message — the line that keeps eligible people
+   from self-rejecting. No fill: a thin pine rule, quiet and authoritative. */
 .home-income__note {
   font-size: 0.9375rem;
   line-height: 1.6;
-  color: var(--civica-ink);
-  background: var(--civica-pine-surface);
-  border-left: 3px solid var(--civica-pine);
-  border-radius: var(--civica-radius-control);
-  padding: var(--civica-space-md) var(--civica-space-lg);
+  color: var(--civica-graphite);
+  border-left: 2px solid var(--civica-pine);
+  padding: 2px 0 2px var(--civica-space-lg);
   margin: 0;
   max-width: 64ch;
 }

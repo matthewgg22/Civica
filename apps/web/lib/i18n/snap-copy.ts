@@ -483,7 +483,7 @@ export const welcomeStrings = {
 
     // ─── Income guide ───
     home_income_title: "How much can I earn and still qualify?",
-    home_income_intro: "There's no single national income limit — every state sets its own. The amounts below are the higher end that many states (including California) use. They're a guide, not a hard cutoff.",
+    home_income_intro: "These are rough guideposts — many states, including California, use the higher end shown here.",
     home_income_col_size: "Household size",
     home_income_col_amount: "Monthly income (about)",
     home_income_person: "person",
@@ -558,7 +558,7 @@ export const welcomeStrings = {
 
     // ─── Guía de ingresos ───
     home_income_title: "¿Cuánto puedo ganar y aún calificar?",
-    home_income_intro: "No hay un solo límite de ingresos nacional — cada estado fija el suyo. Las cantidades de abajo son el extremo más alto que usan muchos estados (incluido California). Son una guía, no un límite estricto.",
+    home_income_intro: "Estas cifras son orientativas — muchos estados, incluido California, usan el extremo más alto que se muestra aquí.",
     home_income_col_size: "Tamaño del hogar",
     home_income_col_amount: "Ingreso mensual (aprox.)",
     home_income_person: "persona",
@@ -628,7 +628,7 @@ export const welcomeStrings = {
     home_buy_cant: "热食或熟食|酒类和烟草|维生素和药品|肥皂、尿布和家居用品|宠物食品",
 
     home_income_title: "我能挣多少还能符合资格?",
-    home_income_intro: "没有统一的全国收入限额——每个州都自己规定。下面的金额是许多州(包括加州)采用的较高标准。它们只是参考,不是硬性的上限。",
+    home_income_intro: "以下数字仅供参考——许多州(包括加州)采用这里显示的较高标准。",
     home_income_col_size: "家庭人数",
     home_income_col_amount: "每月收入(约)",
     home_income_person: "人",
@@ -695,7 +695,7 @@ export const welcomeStrings = {
     home_buy_cant: "Đồ ăn nóng hoặc chế biến sẵn|Rượu bia và thuốc lá|Vitamin và thuốc men|Xà phòng, tã và đồ gia dụng|Thức ăn cho thú cưng",
 
     home_income_title: "Tôi kiếm được bao nhiêu mà vẫn đủ điều kiện?",
-    home_income_intro: "Không có một mức thu nhập giới hạn chung cho cả nước — mỗi tiểu bang tự đặt ra. Các con số dưới đây là mức cao hơn mà nhiều tiểu bang (gồm California) áp dụng. Đây là hướng dẫn tham khảo, không phải giới hạn cứng.",
+    home_income_intro: "Đây là các mốc tham khảo — nhiều tiểu bang, gồm California, dùng mức cao hơn hiển thị bên dưới.",
     home_income_col_size: "Số người trong hộ",
     home_income_col_amount: "Thu nhập hằng tháng (khoảng)",
     home_income_person: "người",
@@ -762,7 +762,7 @@ export const welcomeStrings = {
     home_buy_cant: "Mainit o nakahandang pagkain|Alak at tabako|Bitamina at gamot|Sabon, diaper at gamit sa bahay|Pagkain ng alagang hayop",
 
     home_income_title: "Magkano ang pwede kong kitain at kwalipikado pa rin?",
-    home_income_intro: "Walang iisang pambansang limitasyon sa kita — bawat estado ang nagtatakda ng sarili nito. Ang mga halaga sa ibaba ay ang mas mataas na antas na ginagamit ng maraming estado (kasama ang California). Gabay lang ito, hindi mahigpit na hangganan.",
+    home_income_intro: "Mga panimulang gabay lang ito — maraming estado, kasama ang California, ang gumagamit ng mas mataas na antas na ipinapakita rito.",
     home_income_col_size: "Laki ng sambahayan",
     home_income_col_amount: "Buwanang kita (humigit-kumulang)",
     home_income_person: "tao",
