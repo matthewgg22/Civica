@@ -555,6 +555,43 @@ function RenewalsSection() {
 function QCSection() {
   return (
     <div className="space-y-6">
+      {/* How the engine works — plain-language framing before the metrics.
+          Answers the three questions a prospective CBO actually has: how it
+          operates, how it reaches people, how it adapts to their org. */}
+      <section aria-label="How the engine works" className="bg-surface border border-hairline rounded-[4px] p-5">
+        <p className="eyebrow mb-2">How the engine works</p>
+        <p className="text-[15px] leading-relaxed text-ink max-w-3xl">
+          Civica checks every SNAP application against California&rsquo;s current rules
+          before it reaches the county — catching the errors that drive denials and
+          overpayments while a navigator can still fix them.
+        </p>
+        <div className="mt-5 grid grid-cols-1 sm:grid-cols-3 gap-5">
+          <div>
+            <p className="text-[13px] font-semibold text-ink">1 · Checks every packet</p>
+            <p className="mt-1 text-[13px] leading-relaxed text-graphite">
+              Runs each application through the same rule checks a county reviewer uses —
+              income, household, work rules, deductions — the moment it&rsquo;s entered.
+            </p>
+          </div>
+          <div>
+            <p className="text-[13px] font-semibold text-ink">2 · Reaches people where they are</p>
+            <p className="mt-1 text-[13px] leading-relaxed text-graphite">
+              Households apply on their phone or the web, or a navigator enters it with
+              them. Likely errors land in the navigator&rsquo;s queue as flags — not in a
+              denial letter weeks later.
+            </p>
+          </div>
+          <div>
+            <p className="text-[13px] font-semibold text-ink">3 · Adapts to your org</p>
+            <p className="mt-1 text-[13px] leading-relaxed text-graphite">
+              California and Massachusetts rules are built in. Each CBO sets how
+              aggressively flags surface and which categories to focus on — without
+              changing the eligibility decision or the measured error rate.
+            </p>
+          </div>
+        </div>
+      </section>
+
       {/* Top metrics */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="bg-surface border border-hairline rounded-[4px] px-5 py-4">
