@@ -148,6 +148,12 @@ function makeClient(getToken: () => Promise<string | null>) {
     async fetchInbox(): Promise<EnrollmentInboxItem[]> {
       return getJSON<EnrollmentInboxItem[]>("/me/inbox");
     },
+
+    // Buddy invite
+
+    async createBuddyInvite(): Promise<{ token: string; invite_url: string; expires_at: string }> {
+      return postJSON<{ token: string; invite_url: string; expires_at: string }>("/buddy/invite", {});
+    },
   };
 }
 
