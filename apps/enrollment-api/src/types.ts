@@ -105,6 +105,10 @@ export interface Env {
   // route returns 503 (trigger dark). Runs the same refresh as the 04:00 cron.
   // Set via: wrangler secret put ERROR_RATE_REFRESH_SECRET
   ERROR_RATE_REFRESH_SECRET?: string;
+  // On-demand KPI snapshot refresh (POST /internal/kpi-snapshot/refresh).
+  // Bearer secret; when unset the route returns 503 (trigger dark). Runs the
+  // same refresh as the 04:00 cron. Set via: wrangler secret put KPI_REFRESH_SECRET
+  KPI_REFRESH_SECRET?: string;
 }
 
 export interface Variables {

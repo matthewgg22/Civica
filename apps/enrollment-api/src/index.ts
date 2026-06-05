@@ -33,6 +33,7 @@ import featureFlagsRouter from "./routes/feature-flags.js";
 import buddyRouter from "./routes/buddy.js";
 import shelterAllocationRouter from "./routes/shelter-allocation.js";
 import { errorRateRefreshRouter } from "./routes/error-rate-refresh.js";
+import { kpiRefreshRouter } from "./routes/kpi-refresh.js";
 import { mountEbt, mountEbtWebhooks } from "./routes/ebt/index.js";
 import { mountOps } from "./routes/ops/index.js";
 import { requestLogger } from "./lib/logger.js";
@@ -196,6 +197,11 @@ mountEbtWebhooks(app);
 // (ERROR_RATE_REFRESH_SECRET), mounted outside the user-auth `api` group. Lets
 // ops or the /insight loop populate the truth point without the 04:00 cron.
 app.route("/internal/error-rate-snapshot/refresh", errorRateRefreshRouter);
+
+// Internal ops trigger — on-demand KPI snapshot refresh. Secret-guarded
+// (KPI_REFRESH_SECRET), same pattern as error-rate above. Populates the
+// three-pillar truth point without waiting for the 04:00 cron.
+app.route("/internal/kpi-snapshot/refresh", kpiRefreshRouter);
 
 app.onError((err, c) => {
   if (err instanceof HTTPException) {
