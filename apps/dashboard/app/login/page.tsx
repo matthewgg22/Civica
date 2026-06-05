@@ -41,6 +41,25 @@ export default function LoginPage() {
     // On success the browser navigates away — no need to reset loading.
   }
 
+  async function handleMicrosoftSignIn() {
+    setLoading(true);
+    setError(null);
+    const supabase = createClient();
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "azure",
+      options: {
+        // Azure/Entra doesn't return the email claim without the email scope.
+        scopes: "email",
+        redirectTo: `${window.location.origin}/auth/callback`,
+      },
+    });
+    if (error) {
+      setError(error.message);
+      setLoading(false);
+    }
+    // On success the browser navigates away — no need to reset loading.
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
@@ -223,6 +242,21 @@ export default function LoginPage() {
             <path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.962L3.964 6.294C4.672 4.167 6.656 3.58 9 3.58Z"/>
           </svg>
           Sign in with Google
+        </button>
+
+        <button
+          type="button"
+          onClick={() => void handleMicrosoftSignIn()}
+          disabled={loading}
+          className="mt-3 w-full flex items-center justify-center gap-2.5 border border-input rounded-[3px] px-3 py-2.5 text-[14px] font-medium text-ink bg-paper hover:bg-surface disabled:opacity-50 transition-colors"
+        >
+          <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true">
+            <path fill="#F25022" d="M0 0h8.5v8.5H0z"/>
+            <path fill="#7FBA00" d="M9.5 0H18v8.5H9.5z"/>
+            <path fill="#00A4EF" d="M0 9.5h8.5V18H0z"/>
+            <path fill="#FFB900" d="M9.5 9.5H18V18H9.5z"/>
+          </svg>
+          Sign in with Microsoft
         </button>
       </div>
     </div>
