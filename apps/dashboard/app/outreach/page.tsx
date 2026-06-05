@@ -431,13 +431,6 @@ export default async function OutreachPage() {
                             key={row.key}
                             className={`flex items-start gap-4 px-5 py-4 ${i > 0 ? "border-t border-hairline" : ""}`}
                           >
-                            <div className="pt-1 shrink-0">
-                              <span
-                                className={`block w-2.5 h-2.5 rounded-full ${urgencyStyle.dot}`}
-                                title={urgencyStyle.label}
-                              />
-                            </div>
-
                             <div className="flex-1 min-w-0">
                               <div className="flex items-baseline gap-2 flex-wrap">
                                 <p className="text-[15px] font-semibold text-ink">
@@ -451,7 +444,7 @@ export default async function OutreachPage() {
                               </div>
 
                               <div className="flex items-center gap-3 flex-wrap mt-1.5">
-                                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-teal/10 text-teal">
+                                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-surface-secondary text-graphite border border-hairline">
                                   {row.reasonLabel}
                                 </span>
                                 {incomeStr && (
