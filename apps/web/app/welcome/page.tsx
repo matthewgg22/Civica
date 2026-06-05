@@ -3,7 +3,9 @@
 import { useEffect, useState } from "react";
 import AppNav from "../../components/AppNav";
 import { LanguagePicker } from "../../components/LanguagePicker";
-import { AppDownloadIsland } from "../../components/AppDownloadIsland";
+// iOS app lives in the nav CTA dropdown now (the floating island was retired).
+const TESTFLIGHT_URL =
+  process.env.NEXT_PUBLIC_TESTFLIGHT_URL ?? "https://testflight.apple.com/";
 import { STORAGE_KEY, LOCALES, type Locale } from "../i18n";
 import { welcomeStrings } from "../../lib/i18n/snap-copy";
 import {
@@ -52,12 +54,18 @@ export default function WelcomePage() {
     <div className="home">
       <AppNav
         rightSlot={<LanguagePicker locale={locale} onChange={changeLocale} ariaLabel="Choose language" />}
-        signIn={{ label: t.home_nav_signin, href: "/sign-in" }}
         tabs={[
           { label: t.home_nav_what, href: "#what-is-snap" },
           { label: t.home_nav_status, href: "/status" },
-          { label: t.home_nav_apply, href: "/apply" },
         ]}
+        primaryCta={{
+          label: t.home_nav_apply,
+          href: "/apply",
+          menu: [
+            { label: t.home_nav_signin, href: "/sign-in" },
+            { label: t.home_app_cta, href: TESTFLIGHT_URL, iconSrc: "/civica-app-icon.png", external: true },
+          ],
+        }}
       />
 
       {/* Hero — two columns: message + eligibility card */}
@@ -166,8 +174,6 @@ export default function WelcomePage() {
       <footer className="home-footer">
         <div className="home-section__inner">© 2026 Civica</div>
       </footer>
-
-      <AppDownloadIsland label={t.home_app_label} sub={t.home_app_sub} cta={t.home_app_cta} />
     </div>
   );
 }
