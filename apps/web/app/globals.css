@@ -2524,3 +2524,33 @@ html {
 @media (max-width: 560px) {
   .apply-header__save { display: none; }
 }
+
+/* "Could I qualify?" eligibility callout on the What-is-SNAP section */
+.home-qualify {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--civica-space-md);
+  margin-top: var(--civica-space-xl);
+  padding: 14px var(--civica-space-lg);
+  background: var(--civica-pine-surface);
+  border: 1px solid color-mix(in srgb, var(--civica-pine) 25%, transparent);
+  border-radius: var(--civica-radius-card);
+  text-decoration: none;
+  color: var(--civica-ink);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  line-height: 1.45;
+  transition: background 120ms ease;
+}
+
+.home-qualify:hover {
+  background: color-mix(in srgb, var(--civica-pine) 18%, var(--civica-pine-surface));
+  color: var(--civica-ink);
+}
+
+.home-qualify__arrow {
+  color: var(--civica-pine);
+  font-weight: 700;
+  flex-shrink: 0;
+}

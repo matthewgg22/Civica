@@ -59,10 +59,19 @@ export default function WelcomePage() {
           <h2 className="home-section__title">{t.home_what_title}</h2>
           <p className="home-section__body">{t.home_what_body}</p>
           <ul className="home-facts">
-            <li className="home-fact">{t.home_what_fact1}</li>
-            <li className="home-fact">{t.home_what_fact2}</li>
-            <li className="home-fact">{t.home_what_fact3}</li>
+            {[t.home_what_fact1, t.home_what_fact2, t.home_what_fact3].map((fact, i) => {
+              const [lead, sub] = fact.split("|");
+              return (
+                <li key={i} className="home-fact">
+                  <strong>{lead}</strong>{sub ? ` ${sub}` : ""}
+                </li>
+              );
+            })}
           </ul>
+          <a href="/apply" className="home-qualify">
+            <span>{t.home_what_qualify}</span>
+            <span className="home-qualify__arrow" aria-hidden>→</span>
+          </a>
         </div>
       </section>
 

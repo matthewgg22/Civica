@@ -467,10 +467,11 @@ export const welcomeStrings = {
 
     // ─── What is SNAP ───
     home_what_title: "What is SNAP?",
-    home_what_body: "SNAP is the federal program that helps people buy groceries — in California it's also called CalFresh. If you're approved, money is added to an EBT card each month that you use like a debit card at grocery stores, farmers markets, and many online retailers.",
-    home_what_fact1: "Up to $292/month for a household of one — more for larger households.",
-    home_what_fact2: "Students, workers, seniors, and families can all qualify. The rules changed recently.",
-    home_what_fact3: "Applying does not affect your immigration status or your taxes.",
+    home_what_body: "SNAP — called CalFresh in California — is monthly money for groceries, loaded on a card you use like a debit card. It's not a loan and never has to be paid back.",
+    home_what_fact1: "You can qualify even if you work.|Eligibility is based on income and household size — many working people, seniors, and families qualify.",
+    home_what_fact2: "Spend it on food.|Fruit, vegetables, meat, dairy, bread, even seeds — but not hot prepared food, alcohol, or household items.",
+    home_what_fact3: "It's safe to use.|For most families it won't affect your immigration status or your taxes.",
+    home_what_qualify: "Could I qualify? A family of four in California can earn up to about $5,300 a month and still get CalFresh.",
 
     // ─── App island ───
     home_app_label: "Get the Civica app",
@@ -514,10 +515,11 @@ export const welcomeStrings = {
 
     // ─── Qué es SNAP ───
     home_what_title: "¿Qué es SNAP?",
-    home_what_body: "SNAP es el programa federal que ayuda a las personas a comprar alimentos — en California también se llama CalFresh. Si te aprueban, cada mes se agrega dinero a una tarjeta EBT que usas como tarjeta de débito en supermercados, mercados de agricultores y muchas tiendas en línea.",
-    home_what_fact1: "Hasta $292/mes para un hogar de una persona — más para hogares más grandes.",
-    home_what_fact2: "Estudiantes, trabajadores, personas mayores y familias pueden calificar. Las reglas cambiaron recientemente.",
-    home_what_fact3: "Solicitar no afecta tu estatus migratorio ni tus impuestos.",
+    home_what_body: "SNAP — llamado CalFresh en California — es dinero mensual para comprar comida, en una tarjeta que usas como débito. No es un préstamo y nunca tienes que devolverlo.",
+    home_what_fact1: "Puedes calificar aunque trabajes.|La elegibilidad depende de tus ingresos y el tamaño de tu hogar — muchas personas que trabajan, personas mayores y familias califican.",
+    home_what_fact2: "Úsalo para comprar comida.|Frutas, verduras, carne, lácteos, pan, hasta semillas — pero no comida caliente preparada, alcohol ni artículos del hogar.",
+    home_what_fact3: "Es seguro usarlo.|Para la mayoría de las familias no afecta tu estatus migratorio ni tus impuestos.",
+    home_what_qualify: "¿Podría calificar? Una familia de cuatro en California puede ganar hasta cerca de $5,300 al mes y aún recibir CalFresh.",
 
     // ─── App island ───
     home_app_label: "Obtén la app de Civica",
@@ -558,10 +560,11 @@ export const welcomeStrings = {
     home_hero_secondary: "登录以继续",
 
     home_what_title: "什么是 SNAP?",
-    home_what_body: "SNAP 是帮助人们购买食品的联邦计划 — 在加州也称为 CalFresh。如果获批,每月会将钱存入一张 EBT 卡,你可以像借记卡一样在杂货店、农贸市场和许多在线零售商使用。",
-    home_what_fact1: "单人家庭每月最高 $292 — 家庭人数越多,金额越高。",
-    home_what_fact2: "学生、上班族、长者和家庭都可能符合资格。规则最近有所变化。",
-    home_what_fact3: "申请不会影响你的移民身份或税务。",
+    home_what_body: "SNAP(在加州称为 CalFresh)是每月用于购买食品的钱,存入一张像借记卡一样使用的卡。它不是贷款,永远不用偿还。",
+    home_what_fact1: "即使你有工作也可能符合资格。|资格取决于你的收入和家庭人数 — 许多在职人士、长者和家庭都符合资格。",
+    home_what_fact2: "用它来购买食物。|水果、蔬菜、肉类、乳制品、面包,甚至种子 — 但不能购买热的熟食、酒类或家居用品。",
+    home_what_fact3: "使用它是安全的。|对大多数家庭来说,它不会影响你的移民身份或税务。",
+    home_what_qualify: "我能符合资格吗?在加州,一个四口之家每月收入最高约 $5,300 仍可获得 CalFresh。",
 
     home_app_label: "获取 Civica 应用",
     home_app_sub: "在手机上申请并跟踪你的 SNAP 案件。",
@@ -600,10 +603,11 @@ export const welcomeStrings = {
     home_hero_secondary: "Đăng nhập để tiếp tục",
 
     home_what_title: "SNAP là gì?",
-    home_what_body: "SNAP là chương trình liên bang giúp mọi người mua thực phẩm — ở California còn được gọi là CalFresh. Nếu được chấp thuận, mỗi tháng tiền sẽ được nạp vào thẻ EBT mà bạn dùng như thẻ ghi nợ tại cửa hàng tạp hóa, chợ nông sản và nhiều cửa hàng trực tuyến.",
-    home_what_fact1: "Lên đến $292/tháng cho hộ một người — nhiều hơn cho hộ đông người.",
-    home_what_fact2: "Sinh viên, người lao động, người cao tuổi và gia đình đều có thể đủ điều kiện. Quy định vừa thay đổi gần đây.",
-    home_what_fact3: "Việc đăng ký không ảnh hưởng đến tình trạng di trú hay thuế của bạn.",
+    home_what_body: "SNAP — ở California gọi là CalFresh — là tiền hằng tháng để mua thực phẩm, nạp vào một thẻ bạn dùng như thẻ ghi nợ. Đây không phải khoản vay và không bao giờ phải trả lại.",
+    home_what_fact1: "Bạn có thể đủ điều kiện ngay cả khi đi làm.|Điều kiện dựa trên thu nhập và số người trong hộ — nhiều người đi làm, người cao tuổi và gia đình đều đủ điều kiện.",
+    home_what_fact2: "Dùng để mua thực phẩm.|Trái cây, rau, thịt, sữa, bánh mì, cả hạt giống — nhưng không mua đồ ăn nóng chế biến sẵn, rượu bia hay đồ gia dụng.",
+    home_what_fact3: "Sử dụng an toàn.|Với hầu hết gia đình, nó không ảnh hưởng đến tình trạng di trú hay thuế của bạn.",
+    home_what_qualify: "Tôi có đủ điều kiện không? Một gia đình bốn người ở California có thể kiếm tới khoảng $5,300 mỗi tháng và vẫn nhận được CalFresh.",
 
     home_app_label: "Tải ứng dụng Civica",
     home_app_sub: "Đăng ký và theo dõi hồ sơ SNAP của bạn trên điện thoại.",
@@ -642,10 +646,11 @@ export const welcomeStrings = {
     home_hero_secondary: "Mag-sign in para magpatuloy",
 
     home_what_title: "Ano ang SNAP?",
-    home_what_body: "Ang SNAP ay ang pederal na programa na tumutulong sa mga tao na bumili ng pagkain — sa California, tinatawag din itong CalFresh. Kung maaprubahan, may perang idinadagdag sa isang EBT card kada buwan na ginagamit mo na parang debit card sa mga grocery, palengke ng magsasaka, at maraming online na tindahan.",
-    home_what_fact1: "Hanggang $292/buwan para sa isang tao — mas malaki para sa mas malaking sambahayan.",
-    home_what_fact2: "Mga estudyante, manggagawa, nakatatanda, at pamilya ay maaaring maging kwalipikado. Kamakailan lang nagbago ang mga patakaran.",
-    home_what_fact3: "Ang pag-apply ay hindi nakakaapekto sa iyong katayuan sa imigrasyon o sa iyong buwis.",
+    home_what_body: "Ang SNAP — tinatawag na CalFresh sa California — ay buwanang pera para sa pagkain, nasa isang card na ginagamit mo na parang debit card. Hindi ito utang at hindi kailangang bayaran kailanman.",
+    home_what_fact1: "Pwede kang maging kwalipikado kahit may trabaho ka.|Nakabatay ito sa iyong kita at laki ng sambahayan — maraming nagtatrabaho, nakatatanda, at pamilya ang kwalipikado.",
+    home_what_fact2: "Gamitin ito para sa pagkain.|Prutas, gulay, karne, gatas, tinapay, kahit buto — pero hindi para sa mainit na nakahandang pagkain, alak, o gamit sa bahay.",
+    home_what_fact3: "Ligtas itong gamitin.|Para sa karamihan ng pamilya, hindi nito naaapektuhan ang iyong katayuan sa imigrasyon o buwis.",
+    home_what_qualify: "Pwede ba akong maging kwalipikado? Ang pamilyang apat sa California ay pwedeng kumita ng hanggang mga $5,300 kada buwan at makatanggap pa rin ng CalFresh.",
 
     home_app_label: "Kunin ang Civica app",
     home_app_sub: "Mag-apply at subaybayan ang iyong SNAP case sa iyong telepono.",
