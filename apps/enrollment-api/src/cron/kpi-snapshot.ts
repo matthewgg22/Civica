@@ -151,6 +151,116 @@ export async function refreshKpiSnapshot(env: Env, log: LogFn): Promise<KpiSnaps
   const qcN = qcNResp.count ?? 0;
   const countyN = countyNResp.count ?? 0;
 
+  // 3. Pillar-2 LEADING · Active-Relationship Rate.
+  //    Active packet = a live navigator relationship (status not Draft/Closed,
+  //    not deleted). Numerator = active packets with a navigator touchpoint in
+  //    the trailing 30 days (navigator_outreach_queue.contacted_at). Plain
+  //    two-query intersection in JS (volume is small) — avoids fragile embeds.
+  const DAY_MS = 24 * 60 * 60 * 1000;
+  const cutoff30 = new Date(Date.now() - 30 * DAY_MS).toISOString();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const packets = () => db.schema("snap_enrollment").from("snap_packets" as any) as any;
+  const activeResp = await packets()
+    .select("packet_id")
+    .not("status", "in", "(Draft,Closed)")
+    .is("deleted_at", null);
+  if (activeResp.error) {
+    throw new Error(`snap_packets active read failed: ${activeResp.error.message}`);
+  }
+  const activeIds = new Set<string>((activeResp.data ?? []).map((r: { packet_id: string }) => r.packet_id));
+  const activeTotal = activeIds.size;
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const navQueue = () => db.schema("snap_enrollment").from("navigator_outreach_queue" as any) as any;
+  const contactedResp = await navQueue()
+    .select("packet_id, contacted_at")
+    .not("contacted_at", "is", null)
+    .gte("contacted_at", cutoff30);
+  if (contactedResp.error) {
+    throw new Error(`navigator_outreach_queue read failed: ${contactedResp.error.message}`);
+  }
+  const contactedActive = new Set<string>(
+    (contactedResp.data ?? [])
+      .map((r: { packet_id: string }) => r.packet_id)
+      .filter((id: string) => activeIds.has(id)),
+  );
+  const contactedRecently = contactedActive.size;
+
+  // 4. Pillar-3 · recertification lifecycle (reporting-moment coverage + churn).
+  //    recertifications carries the cert_period_end (the reporting moment) and a
+  //    terminal status/outcome. Empty until the recert lifecycle begins → honest
+  //    "no upcoming recerts" / insufficient_sample.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const recerts = () => db.schema("snap_enrollment").from("recertifications" as any) as any;
+  const todayISO = new Date().toISOString().slice(0, 10);
+  const in60ISO = new Date(Date.now() + 60 * DAY_MS).toISOString().slice(0, 10);
+
+  // RMC denominator: recerts whose deadline falls in the next 60 days.
+  const upcomingResp = await recerts()
+    .select("recert_id, cert_period_end")
+    .gte("cert_period_end", todayISO)
+    .lte("cert_period_end", in60ISO);
+  if (upcomingResp.error) {
+    throw new Error(`recertifications upcoming read failed: ${upcomingResp.error.message}`);
+  }
+  const upcoming = (upcomingResp.data ?? []) as { recert_id: string; cert_period_end: string }[];
+  const upcomingTotal = upcoming.length;
+
+  // RMC numerator: of those, the ones with prep activity (recert outreach OR a
+  // practice session) started ≥14 days before the deadline. Only queried when
+  // there are upcoming recerts (skips two reads in the common empty case).
+  let prepStartedAhead = 0;
+  if (upcomingTotal > 0) {
+    const upcomingIds = upcoming.map((r) => r.recert_id);
+    const deadlineById = new Map(upcoming.map((r) => [r.recert_id, r.cert_period_end]));
+    const aheadOfDeadline = (recertId: string, ts: string | null): boolean => {
+      if (!ts) return false;
+      const end = deadlineById.get(recertId);
+      if (!end) return false;
+      return new Date(ts).getTime() <= new Date(end).getTime() - 14 * DAY_MS;
+    };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const outreachLog = () => db.schema("snap_enrollment").from("recert_outreach_log" as any) as any;
+    const logResp = await outreachLog()
+      .select("recert_id, sent_at")
+      .in("recert_id", upcomingIds)
+      .not("sent_at", "is", null);
+    if (logResp.error) {
+      throw new Error(`recert_outreach_log read failed: ${logResp.error.message}`);
+    }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const practice = () => db.schema("snap_enrollment").from("recert_practice_sessions" as any) as any;
+    const practiceResp = await practice()
+      .select("recert_id, started_at")
+      .in("recert_id", upcomingIds);
+    if (practiceResp.error) {
+      throw new Error(`recert_practice_sessions read failed: ${practiceResp.error.message}`);
+    }
+    const prepared = new Set<string>();
+    for (const r of (logResp.data ?? []) as { recert_id: string; sent_at: string | null }[]) {
+      if (aheadOfDeadline(r.recert_id, r.sent_at)) prepared.add(r.recert_id);
+    }
+    for (const r of (practiceResp.data ?? []) as { recert_id: string; started_at: string | null }[]) {
+      if (aheadOfDeadline(r.recert_id, r.started_at)) prepared.add(r.recert_id);
+    }
+    prepStartedAhead = prepared.size;
+  }
+
+  // Churn denominator: terminal recerts (resolved one way or another).
+  const terminalResp = await recerts()
+    .select("*", { count: "exact", head: true })
+    .in("status", ["approved", "denied", "opted_out", "lapsed"]);
+  if (terminalResp.error) {
+    throw new Error(`recertifications terminal read failed: ${terminalResp.error.message}`);
+  }
+  // Churn numerator: procedural fall-off (lapsed / opted out) — the Type-1 signal.
+  const churnedResp = await recerts()
+    .select("*", { count: "exact", head: true })
+    .in("status", ["opted_out", "lapsed"]);
+  if (churnedResp.error) {
+    throw new Error(`recertifications churned read failed: ${churnedResp.error.message}`);
+  }
+
   const inputs: KpiSnapshotInputs = {
     cpr: { cleanPackets, totalScored },
     elementTriggers,
@@ -163,13 +273,20 @@ export async function refreshKpiSnapshot(env: Env, log: LogFn): Promise<KpiSnaps
         bySource: { qc_sample: qcN, county_authoritative: countyN },
       },
     },
+    stayEngaged: {
+      activeRelationship: { contactedRecently, activeTotal },
+    },
+    stayOn: {
+      reportingMoment: { prepStartedAhead, upcomingTotal },
+      recert: { churned: churnedResp.count ?? 0, terminal: terminalResp.count ?? 0 },
+    },
   };
 
-  // 3. Engine owns the math.
+  // 5. Engine owns the math.
   const computedAt = new Date().toISOString();
   const rows = buildKpiSnapshot(inputs);
 
-  // 4. Persist one run — all rows share computed_at (the run key).
+  // 6. Persist one run — all rows share computed_at (the run key).
   const insertRows = rows.map((r) => ({
     computed_at: computedAt,
     engine_version: r.engine_version,

@@ -88,6 +88,37 @@ export interface KpiSnapshotInputs {
     /** measured_per source, fidelity-excluded to authoritative outcomes. */
     authoritative: AuthoritativeCounts;
   };
+  /**
+   * Pillar-2 (Stay Engaged) LEADING. Optional — omit until the cron supplies it.
+   * Active-Relationship Rate: of active packets (a live navigator relationship),
+   * the share with a navigator touchpoint in the trailing window.
+   */
+  stayEngaged?: {
+    activeRelationship: {
+      /** Active packets with a navigator touchpoint in the trailing window. */
+      contactedRecently: number;
+      /** Active packets (status not Draft/Closed) — the denominator. */
+      activeTotal: number;
+    };
+  };
+  /**
+   * Pillar-3 (Stay On) inputs. Optional — omit until the cron supplies it.
+   * reportingMoment is LEADING (coverage proxy); recert is MEASURED (churn).
+   */
+  stayOn?: {
+    reportingMoment: {
+      /** Upcoming recerts with prep activity started ≥14 days before the deadline. */
+      prepStartedAhead: number;
+      /** Upcoming recerts (reporting moments approaching) — the denominator. */
+      upcomingTotal: number;
+    };
+    recert: {
+      /** Recerts that lapsed or were denied (churned off). */
+      churned: number;
+      /** Recerts that reached a terminal outcome — the denominator. */
+      terminal: number;
+    };
+  };
   /** External benchmark for the get_in pillar (defaults to published CA PER). */
   baselineRef?: number;
   /** Min sample before a measured rate is reported (defaults to MEASURED_MIN_N = 30). */
@@ -184,7 +215,93 @@ export function buildKpiSnapshot(inputs: KpiSnapshotInputs): KpiSnapshotRow[] {
     }),
   );
 
+  // ── Pillar 2 · LEADING · Active-Relationship Rate ─────────────────────────
+  // Emitted only when the cron supplies the inputs (keeps Phase-1 callers and
+  // their golden tests unchanged). Honest empty state when no active packets.
+  if (inputs.stayEngaged) {
+    const { contactedRecently, activeTotal } = inputs.stayEngaged.activeRelationship;
+    rows.push(
+      leadingRate({
+        pillar: "stay_engaged",
+        kpi_key: "active_relationship_rate",
+        numerator: contactedRecently,
+        denominator: activeTotal,
+        emptyStatus: "no_active_packets",
+        meta: {
+          contacted_recently: contactedRecently,
+          definition:
+            "share of active packets with a navigator touchpoint in the trailing 30 days",
+        },
+      }),
+    );
+  }
+
+  // ── Pillar 3 · LEADING · Reporting-Moment Coverage ────────────────────────
+  // ── Pillar 3 · MEASURED · Churn Rate (n-gated) ────────────────────────────
+  if (inputs.stayOn) {
+    const { prepStartedAhead, upcomingTotal } = inputs.stayOn.reportingMoment;
+    rows.push(
+      leadingRate({
+        pillar: "stay_on",
+        kpi_key: "reporting_moment_coverage",
+        numerator: prepStartedAhead,
+        denominator: upcomingTotal,
+        emptyStatus: "no_upcoming_recerts",
+        meta: {
+          prep_started_ahead: prepStartedAhead,
+          definition:
+            "share of upcoming recerts with prep activity started ≥14 days before the deadline",
+        },
+      }),
+    );
+
+    rows.push(
+      measuredRate({
+        pillar: "stay_on",
+        kpi_key: "churn_rate",
+        numerator: inputs.stayOn.recert.churned,
+        denominator: inputs.stayOn.recert.terminal,
+        minN,
+        baselineRef: null,
+        meta: {
+          definition:
+            "share of terminal recerts that lapsed or opted out (procedural churn — the Type-1 retention signal)",
+        },
+      }),
+    );
+  }
+
   return rows;
+}
+
+/**
+ * A leading-rate row: a census of today's population (not a sample), so it
+ * carries no CI. value_pct is null with an honest status when the denominator
+ * is zero (nothing to measure yet); otherwise the straight share. n is always
+ * the denominator so the KPI "appears" with its sample size even at zero.
+ */
+function leadingRate(p: {
+  pillar: KpiPillar;
+  kpi_key: KpiKey;
+  numerator: number;
+  denominator: number;
+  emptyStatus: string;
+  meta: Record<string, unknown>;
+}): KpiSnapshotRow {
+  const hasData = p.denominator > 0;
+  return {
+    pillar: p.pillar,
+    kpi_key: p.kpi_key,
+    element: null,
+    value_pct: hasData ? round3((p.numerator / p.denominator) * 100) : null,
+    ci_low: null,
+    ci_high: null,
+    n: p.denominator,
+    baseline_ref: null,
+    source_kind: "leading",
+    meta: hasData ? { ...p.meta } : { ...p.meta, status: p.emptyStatus },
+    engine_version: ENGINE_VERSION,
+  };
 }
 
 /**
