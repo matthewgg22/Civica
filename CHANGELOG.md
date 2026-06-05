@@ -9,6 +9,11 @@ Categories used:
 - **Added** — new capability
 - **Changed** — visible behavior change
 
+## [0.2.2.0] - 2026-06-05
+
+### Added
+- **Two-factor authentication for staff** — navigators can enable TOTP 2FA from `/auth/mfa/setup` (scan a QR code with Google Authenticator, Authy, or 1Password). Once enrolled, a 6-digit code from the authenticator app is required on every sign-in. Optional to enroll, mandatory once enrolled. Requires the Supabase TOTP factor to be enabled in the project's auth settings.
+
 ## [0.2.1.0] - 2026-06-05
 
 ### Added
