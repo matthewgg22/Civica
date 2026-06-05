@@ -21,7 +21,10 @@ import type { BenefitsCalPayload } from "../../src/core/schemas";
 import { PORTAL_PAGES_BY_CODE } from "../../src/core/selector-map";
 import type { FieldSelector, PortalPage } from "../../src/core/selector-map";
 import { resolveField } from "../../src/core/locate";
-import { scopePayloadForMember } from "../../src/core/member-scope";
+import {
+  scopePayloadForMember,
+  scopePayloadForExpenseType,
+} from "../../src/core/member-scope";
 import {
   fillElement,
   fillRadio,
@@ -356,6 +359,13 @@ export interface RunSectionFillTestOpts {
    */
   scopeMemberIndex?: number;
   /**
+   * Expense type for step-5 per-type detail pages (#499). When set, the payload
+   * is wrapped via scopePayloadForExpenseType before the fill loop, so a detail
+   * page's `expenses[0].X` source paths resolve to the matching expense row.
+   * Mirrors what content.ts does on ABAPH (rent/mortgage).
+   */
+  scopeExpenseType?: string;
+  /**
    * Explicit DOM HTML for the page root, replacing the auto-built DOM. Use for
    * pages whose option lists the walk did not capture (e.g. the ABHHR
    * relationship <select>), where the auto-builder cannot synthesize realistic
@@ -390,11 +400,14 @@ export function runSectionFillTest(
 ): void {
   const page = getFrozenPage(pageCode);
   const basePayload = makePacket(opts.payloadOverrides ?? {});
-  // Scope to a household member for repeating step-2 pages (mirrors content.ts).
-  const payload =
-    opts.scopeMemberIndex !== undefined
-      ? scopePayloadForMember(basePayload, opts.scopeMemberIndex)
-      : basePayload;
+  // Scope to a household member (step-2) or an expense type (step-5) when
+  // requested — mirrors content.ts's per-page payload scoping.
+  let payload: unknown = basePayload;
+  if (opts.scopeMemberIndex !== undefined) {
+    payload = scopePayloadForMember(basePayload, opts.scopeMemberIndex);
+  } else if (opts.scopeExpenseType !== undefined) {
+    payload = scopePayloadForExpenseType(basePayload, opts.scopeExpenseType);
+  }
 
   // Use explicit DOM when provided (pages with uncaptured option lists);
   // otherwise auto-build from the page's fields.
