@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import AppNav from "../../components/AppNav";
 import { LanguagePicker } from "../../components/LanguagePicker";
+import { PhoneMockup } from "../../components/PhoneMockup";
 const TESTFLIGHT_URL =
   process.env.NEXT_PUBLIC_TESTFLIGHT_URL ?? "https://testflight.apple.com/";
 import { STORAGE_KEY, LOCALES, type Locale } from "../i18n";
@@ -76,46 +77,7 @@ export default function WelcomePage() {
 
           <div className="hero__col hero__col--visual" aria-hidden="true">
             <div className="hero__watermark">$292</div>
-            <div className="phone-mockup">
-              <div className="phone-mockup__notch" />
-              <div className="phone-mockup__screen">
-                <div className="phone-card">
-                  <div className="phone-card__header">
-                    <span className="phone-card__label">MY APPLICATION</span>
-                  </div>
-                  <div className="phone-card__body">
-                    <div className="phone-card__title">CalFresh Status</div>
-                    <div className="phone-card__badge">
-                      <span className="phone-card__dot" />
-                      In Review
-                    </div>
-                    <div className="phone-card__progress-row">
-                      <div className="phone-card__progress-bar">
-                        <div className="phone-card__progress-fill" style={{ width: "62%" }} />
-                      </div>
-                      <span className="phone-card__progress-pct">62%</span>
-                    </div>
-                    <div className="phone-card__timeline">
-                      <div className="phone-card__event phone-card__event--done">
-                        <span className="phone-card__check">✓</span>
-                        <div><div className="phone-card__event-title">Submitted Oct 14</div></div>
-                      </div>
-                      <div className="phone-card__event phone-card__event--active">
-                        <span className="phone-card__dot-sm" />
-                        <div>
-                          <div className="phone-card__event-title">Interview scheduled</div>
-                          <div className="phone-card__event-sub">Oct 20 at 10:00 AM</div>
-                        </div>
-                      </div>
-                      <div className="phone-card__event">
-                        <span className="phone-card__check phone-card__check--muted">✓</span>
-                        <div><div className="phone-card__event-title">Documents received</div></div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <PhoneMockup />
           </div>
         </div>
       </section>
