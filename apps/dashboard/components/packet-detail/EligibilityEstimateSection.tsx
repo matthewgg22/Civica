@@ -91,7 +91,7 @@ export default async function EligibilityEstimateSection({ packetId }: { packetI
         </ul>
       </div>
 
-      <p className="mt-3 text-[10px] leading-relaxed text-muted">
+      <p className="mt-3 text-[10px] leading-relaxed text-graphite">
         Assumptions used for the estimate: {est.assumptions.join("; ")}.
       </p>
     </section>

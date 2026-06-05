@@ -133,7 +133,7 @@ export default function FlagSensitivityControl() {
 
         {/* Stub save row */}
         <div className="mt-5 flex items-center justify-between border-t border-hairline pt-4">
-          <p className="text-[11px] text-muted">
+          <p className="text-[11px] text-graphite">
             Preview only — saving preferences isn’t wired up yet.
           </p>
           <button

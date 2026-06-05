@@ -172,7 +172,7 @@ export default function QcTab() {
           </p>
           <p className="text-[36px] font-semibold tabular-nums text-ink leading-none mt-1">{DEMO_QC.per}%</p>
           <p className="text-[12px] text-pine font-medium mt-1">↓ vs {CA_BASELINE}% CA baseline without Civica</p>
-          <p className="text-[11px] text-muted mt-0.5">{t("Below §10105 federal trigger", "Under the federal penalty line")}</p>
+          <p className="text-[11px] text-graphite mt-0.5">{t("Below §10105 federal trigger", "Under the federal penalty line")}</p>
         </div>
         <div className="bg-surface border border-hairline rounded-[4px] px-5 py-4">
           <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite">
@@ -184,7 +184,7 @@ export default function QcTab() {
           </p>
           <p className="text-[36px] font-semibold tabular-nums text-ink leading-none mt-1">{DEMO_QC.obbbaReady}%</p>
           <p className="text-[12px] text-pine font-medium mt-1">Work-requirement compliance</p>
-          <p className="text-[11px] text-muted mt-0.5">{t("FY2026 rules engine active", "2026 rules active")}</p>
+          <p className="text-[11px] text-graphite mt-0.5">{t("FY2026 rules engine active", "2026 rules active")}</p>
         </div>
         <div className="bg-surface border border-hairline rounded-[4px] px-5 py-4">
           <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite">
@@ -196,7 +196,7 @@ export default function QcTab() {
           </p>
           <p className="text-[36px] font-semibold tabular-nums text-ink leading-none mt-1">{openCount}</p>
           <p className="text-[12px] text-graphite mt-1">of {DEMO_QC.recentFlags.length} total this week</p>
-          <p className="text-[11px] text-muted mt-0.5">Auto-flagged by engine</p>
+          <p className="text-[11px] text-graphite mt-0.5">Auto-flagged by engine</p>
         </div>
       </div>
 
@@ -223,7 +223,7 @@ export default function QcTab() {
                 <div className="flex-1 h-2 bg-paper rounded-full overflow-hidden">
                   <div className={`h-full rounded-full ${p.fail > 8 ? "bg-warning" : "bg-pine/60"}`} style={{ width: `${p.fail}%` }} />
                 </div>
-                <span className="text-[11px] text-muted tabular-nums w-16 text-right">{t(`${p.pass}% pass`, `${p.pass}% correct`)}</span>
+                <span className="text-[11px] text-graphite tabular-nums w-16 text-right">{t(`${p.pass}% pass`, `${p.pass}% correct`)}</span>
               </div>
             </div>
           ))}

@@ -38,7 +38,7 @@ export default function ProductSwitcher({ currentHref }: { currentHref: string }
     <div ref={ref} className="relative">
       <button
         onClick={() => setOpen((v) => !v)}
-        className="flex items-center gap-1 text-[11px] font-semibold uppercase tracking-wider text-muted hover:text-ink transition-colors focus:outline-none"
+        className="flex items-center gap-1 text-[11px] font-semibold uppercase tracking-wider text-graphite hover:text-ink transition-colors focus:outline-none"
         aria-haspopup="listbox"
         aria-expanded={open}
       >
@@ -77,10 +77,10 @@ export default function ProductSwitcher({ currentHref }: { currentHref: string }
                 <p className="text-[13px] font-medium leading-none">
                   {s.label}
                   {isCurrent && (
-                    <span className="ml-2 text-[10px] text-muted font-normal uppercase tracking-wider">current</span>
+                    <span className="ml-2 text-[10px] text-graphite font-normal uppercase tracking-wider">current</span>
                   )}
                 </p>
-                <p className="text-[11px] text-muted mt-1">{s.description}</p>
+                <p className="text-[11px] text-graphite mt-1">{s.description}</p>
               </a>
             );
           })}

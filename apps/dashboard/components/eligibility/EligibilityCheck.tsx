@@ -169,7 +169,7 @@ export default function EligibilityCheck({ state }: { state: "CA" | "MA" }) {
                       ${result.estimated_monthly_benefit_usd ?? 0}<span className="text-[14px] font-normal text-graphite">/mo</span>
                     </p>
                   )}
-                  <p className="mt-1.5 text-[11px] text-muted">Estimate from the {state} rules engine. Final amount set by the county.</p>
+                  <p className="mt-1.5 text-[11px] text-graphite">Estimate from the {state} rules engine. Final amount set by the county.</p>
                 </div>
 
                 {result.recommendations.length > 0 && (
