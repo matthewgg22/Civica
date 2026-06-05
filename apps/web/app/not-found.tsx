@@ -41,7 +41,7 @@ export default function NotFound() {
           <h1 className="error-card__title">{copy.notFoundTitle}</h1>
           <p className="error-card__body">{copy.notFoundBody}</p>
           <div className="error-card__actions">
-            <a href="/" className="error-card__primary-cta error-card__primary-cta--link">
+            <a href="/welcome" className="error-card__primary-cta error-card__primary-cta--link">
               {copy.notFoundHomeCta}
             </a>
             <a href="/#lead-capture" className="error-card__secondary-cta">

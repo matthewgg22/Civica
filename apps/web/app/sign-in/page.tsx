@@ -94,7 +94,7 @@ function SignInForm() {
   return (
     <div className="signin-page">
       <header className="signin-header">
-        <a className="brand" href="/">Civica</a>
+        <a className="brand" href="/welcome">Civica</a>
         <button
           type="button"
           className="locale-toggle"

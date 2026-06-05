@@ -63,7 +63,7 @@ export default function Error({
             >
               {copy.errorRetryCta}
             </button>
-            <a href="/" className="error-card__secondary-cta">
+            <a href="/welcome" className="error-card__secondary-cta">
               {copy.errorHomeCta} →
             </a>
           </div>

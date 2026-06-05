@@ -106,7 +106,7 @@ export default function GlobalError({
               Try again
             </button>
             <a
-              href="/"
+              href="/welcome"
               style={{
                 fontSize: "0.875rem",
                 fontWeight: 600,
