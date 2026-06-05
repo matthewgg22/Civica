@@ -327,7 +327,6 @@ function ApplicationsSection() {
           const count = bucket.rows.length || bucket.count;
           return (
             <div key={bucket.bucket} className="bg-surface border border-hairline rounded-[4px] px-4 py-2.5 flex items-center gap-2">
-              <span className={`w-2 h-2 rounded-full ${bucket.accent}`} />
               <span className="text-[13px] font-semibold text-ink tabular-nums">{count}</span>
               <span className="text-[12px] text-graphite">{bucket.bucketLabel}</span>
             </div>
@@ -346,7 +345,7 @@ function ApplicationsSection() {
         return (
           <section key={bucket.bucket} aria-label={bucket.bucketLabel}>
             <div className="flex items-center gap-2 mb-3">
-              <span className={`w-2.5 h-5 rounded-sm ${bucket.accent}`} />
+              <span className="w-2.5 h-5 rounded-sm bg-hairline" />
               <h2 className="text-[14px] font-bold text-ink">{bucket.bucketLabel}</h2>
               <span className="text-[13px] text-muted tabular-nums">{count}</span>
             </div>
@@ -544,10 +543,11 @@ function QueueRow({
         </div>
         <div className="flex items-center gap-2 mt-1.5">
           <StatusPill status={status} />
-          <span className="inline-flex items-center gap-1 text-[11px] font-semibold uppercase tracking-wider">
-            <span className={`w-2 h-2 rounded-full shrink-0 ${riskBg}`} />
-            <span className="text-muted">{risk}</span>
-          </span>
+          {(risk === "Medium risk" || risk === "High risk") && (
+            <span className={`text-[11px] font-semibold uppercase tracking-wider ${risk === "High risk" ? "text-brick" : "text-warning"}`}>
+              {risk}
+            </span>
+          )}
         </div>
       </div>
       <div className="text-right shrink-0">
