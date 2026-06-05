@@ -372,7 +372,7 @@ export default async function EnrollmentsPage({ searchParams }: { searchParams: 
                 <Link
                   key={b}
                   href={href}
-                  className={`block ${meta.bg} border-l-4 ${meta.border} border-y border-r border-hairline rounded-[4px] px-5 py-4 transition-all hover:shadow-sm ${isActive ? "ring-2 ring-ink/20" : ""}`}
+                  className={`block bg-surface border border-hairline rounded-[4px] px-5 py-4 transition-all hover:shadow-sm ${isActive ? "ring-2 ring-ink/20" : ""}`}
                 >
                   <p className={`text-[36px] font-bold tabular-nums leading-none ${meta.accent}`}>{counts[b]}</p>
                   <p className="text-[15px] font-bold text-ink mt-2.5">{meta.label}</p>
@@ -410,8 +410,7 @@ export default async function EnrollmentsPage({ searchParams }: { searchParams: 
                       key={s}
                       href={href}
                       aria-disabled={isEmpty}
-                      className={`block ${meta.chipBg} border-l-4 border-y border-r border-hairline rounded-[4px] px-4 py-3 transition-all hover:shadow-sm ${isActive ? "ring-2 ring-ink/20" : ""} ${isEmpty ? "opacity-50 pointer-events-none" : ""}`}
-                      style={{ borderLeftColor: `var(--color-${meta.actionUrgency})` }}
+                      className={`block bg-surface border border-hairline rounded-[4px] px-4 py-3 transition-all hover:shadow-sm ${isActive ? "ring-2 ring-ink/20" : ""} ${isEmpty ? "opacity-50 pointer-events-none" : ""}`}
                     >
                       <p className={`text-[28px] font-bold tabular-nums leading-none ${meta.numColor}`}>{count}</p>
                       <p className="text-[13px] font-bold text-ink mt-1.5">{meta.label}</p>
@@ -443,7 +442,7 @@ export default async function EnrollmentsPage({ searchParams }: { searchParams: 
                 <Link
                   key={b}
                   href={href}
-                  className={`block ${meta.bg} border-l-4 ${meta.border} border-y border-r border-hairline rounded-[4px] px-5 py-4 transition-all hover:shadow-sm ${isActive ? "ring-2 ring-ink/20" : ""}`}
+                  className={`block bg-surface border border-hairline rounded-[4px] px-5 py-4 transition-all hover:shadow-sm ${isActive ? "ring-2 ring-ink/20" : ""}`}
                 >
                   <p className={`text-[36px] font-bold tabular-nums leading-none ${meta.accent}`}>{counts[b]}</p>
                   <p className="text-[15px] font-bold text-ink mt-2.5">{meta.label}</p>

@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { createClient } from "../lib/supabase";
 import { api } from "../lib/api";
 import { formatDateTime } from "../lib/format";
+import { Button as StatefulButton } from "@/components/ui/stateful-button";
 
 interface RequestRow {
   request_id: string;
@@ -41,7 +42,6 @@ export default function MissingItemRequestPanel({ packetId, unresolvedItems }: P
   const [requests, setRequests] = useState<RequestRow[] | null>(null);
   const [selectedItemId, setSelectedItemId] = useState<string>("");
   const [note, setNote] = useState("");
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -65,7 +65,6 @@ export default function MissingItemRequestPanel({ packetId, unresolvedItems }: P
       setError("Pick a checklist item or enter a custom note.");
       return;
     }
-    setLoading(true);
     setError(null);
     try {
       const supabase = createClient();
@@ -86,8 +85,6 @@ export default function MissingItemRequestPanel({ packetId, unresolvedItems }: P
       const msg = e instanceof Error ? e.message : "Failed to send request";
       setError(msg);
       toast.error(msg);
-    } finally {
-      setLoading(false);
     }
   }
 
@@ -153,14 +150,12 @@ export default function MissingItemRequestPanel({ packetId, unresolvedItems }: P
             Do not use threatening language. Do not imply the applicant will lose benefits.
           </p>
         </div>
-        <button
-          type="button"
+        <StatefulButton
           onClick={sendRequest}
-          disabled={loading}
           className="px-4 py-2 text-[13px] font-semibold rounded-[3px] bg-pine text-white hover:bg-pine/90 disabled:bg-graphite/20 disabled:cursor-not-allowed"
         >
-          {loading ? "Sending…" : "Send request"}
-        </button>
+          Send request
+        </StatefulButton>
       </div>
       {error && <p className="text-[13px] text-error">{error}</p>}
 
