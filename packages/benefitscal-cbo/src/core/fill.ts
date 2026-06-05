@@ -103,16 +103,35 @@ export function fillDatePassword(el: Element, value: string): boolean {
 
 /**
  * Select an option in a `<select>` (FieldType "select"). React-safe. Returns
- * false when no `<option>` carries the requested value (so the caller can
- * surface "option not found" rather than silently leaving the prior value),
- * mirroring `content.ts`'s `writeSelect`.
+ * false when no `<option>` matches (so the caller can surface "option not
+ * found" rather than silently leaving the prior value), mirroring
+ * `content.ts`'s `writeSelect`.
+ *
+ * Matching is two-tier:
+ *   1. by option `value` — for selects whose internal codes a transform
+ *      produces (county ordinal "34", state "CA").
+ *   2. fallback by visible option TEXT (case-insensitive, trimmed) — for
+ *      selects whose option values the portal walk did not capture but whose
+ *      labels are known (pay/expense frequency dropdowns, relationship). The
+ *      matched option's `value` is still written, so React's controlled
+ *      <select> adopts it. (#499)
  */
 export function fillSelect(el: Element, value: string): boolean {
   if (!(el instanceof HTMLSelectElement)) return false;
-  const hasOption = Array.from(el.options).some((opt) => opt.value === value);
-  if (!hasOption) return false;
-  reactSetValue(el, value);
-  return true;
+  const byValue = Array.from(el.options).find((opt) => opt.value === value);
+  if (byValue) {
+    reactSetValue(el, value);
+    return true;
+  }
+  const target = value.trim().toLowerCase();
+  const byText = Array.from(el.options).find(
+    (opt) => opt.text.trim().toLowerCase() === target,
+  );
+  if (byText) {
+    reactSetValue(el, byText.value);
+    return true;
+  }
+  return false;
 }
 
 /**

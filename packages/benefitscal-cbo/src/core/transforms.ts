@@ -115,10 +115,36 @@ export function formatPhone10Digit(e164: string): string {
  *   3. if the transform returned `null`, SKIP (count as needs-review)
  *   4. otherwise `fillElement(el, field.type, value)`
  */
+/**
+ * Map a `PayFrequencySchema` value to the portal's visible frequency option
+ * TEXT (resolved by `fillSelect`'s text fallback — the option values weren't
+ * captured in the walk). Used by income (`ABEIC #oftenPaid`) and expense
+ * (`ABAPH #dropdownoptiongroup`) frequency selects. `irregular` has no portal
+ * option → returns null (needs-review). (#499)
+ */
+const PAY_FREQUENCY_PORTAL_TEXT: Record<string, string> = {
+  weekly: "Weekly",
+  biweekly: "Bi-Weekly",
+  semimonthly: "Semi-Monthly",
+  monthly: "Monthly",
+  daily: "Daily",
+  quarterly: "Quarterly",
+  semiannual: "Semi Annually",
+  annual: "Annually",
+  onetime: "One-Time Only",
+  hourly: "Hourly",
+  // `irregular` intentionally absent → null (no portal option).
+};
+
+export function snapPayFrequency(v: string): string | null {
+  return PAY_FREQUENCY_PORTAL_TEXT[v.trim().toLowerCase()] ?? null;
+}
+
 export const TRANSFORMS: Record<string, (v: string) => string | null> = {
   "ca-county-ordinal": resolveCountyOrdinal,
   // formatPhone10Digit never returns null; the registry signature allows it.
   "phone-10digit": (v) => formatPhone10Digit(v),
+  "snap-pay-frequency": snapPayFrequency,
 };
 
 /** The set of valid transform names (for selector-map contract tests). */
