@@ -2973,37 +2973,8 @@ html {
     0 8px 24px rgba(0,0,0,0.28);
 }
 
-/* Side buttons — flush with frame, no blur-causing effects */
-.iphone__btn {
-  position: absolute;
-  background: #2e2e30;
-  border-radius: 2px;
-}
-
-.iphone__btn--vol-up {
-  left: -4px;
-  top: 76px;
-  width: 4px;
-  height: 26px;
-  border-radius: 2px 0 0 2px;
-}
-
-.iphone__btn--vol-dn {
-  left: -4px;
-  top: 110px;
-  width: 4px;
-  height: 26px;
-  border-radius: 2px 0 0 2px;
-}
-
-.iphone__btn--power {
-  right: -4px;
-  top: 92px;
-  width: 4px;
-  height: 44px;
-  border-radius: 0 2px 2px 0;
-  box-shadow: 1px 0 2px rgba(0,0,0,0.5), inset -1px 0 1px rgba(255,255,255,0.1);
-}
+/* Side buttons hidden — 4px buttons at this scale only cause visual noise */
+.iphone__btn { display: none; }
 
 /* Screen bezel — height crops the empty bottom of the screenshot */
 .iphone__bezel {
@@ -4024,5 +3995,213 @@ html {
 
   .ecosystem-arrow {
     display: none;
+  }
+}
+
+/* ---- Site nav (shared header nav links) ---- */
+
+.site-nav {
+  display: flex;
+  gap: var(--civica-space-xl);
+}
+
+.site-nav__link {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--civica-graphite);
+  text-decoration: none;
+  padding: 4px 0;
+  border-bottom: 2px solid transparent;
+  transition: color 120ms ease, border-color 120ms ease;
+}
+
+.site-nav__link:hover {
+  color: var(--civica-ink);
+  border-bottom-color: var(--civica-pine);
+}
+
+.site-nav__link--active {
+  color: var(--civica-ink);
+  border-bottom-color: var(--civica-pine);
+}
+
+@media (max-width: 560px) {
+  .site-nav {
+    display: none;
+  }
+}
+
+/* ---- Why Civica page ---- */
+
+.why-gemini-scroll {
+  height: 400vh;
+  position: relative;
+}
+
+.why-gemini-sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  background: var(--civica-ink);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding-top: 80px;
+}
+
+.why-gemini-copy {
+  text-align: center;
+  padding-bottom: var(--civica-space-xl);
+}
+
+.why-gemini-copy .eyebrow {
+  color: var(--civica-wheat);
+}
+
+.why-gemini-headline {
+  font-size: clamp(1.875rem, 4.5vw, 3rem);
+  line-height: 1.1;
+  letter-spacing: -0.025em;
+  font-weight: 600;
+  color: #ffffff;
+  margin: 0 0 var(--civica-space-xl);
+}
+
+.why-gemini-sub {
+  font-size: clamp(0.9375rem, 1.4vw, 1.0625rem);
+  line-height: 1.65;
+  color: rgba(255, 255, 255, 0.58);
+  margin: 0 auto;
+  max-width: 52ch;
+}
+
+.gemini-effect {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.gemini-effect svg {
+  width: 100%;
+  height: 100%;
+  max-height: 360px;
+}
+
+.why-gemini-scroll-hint {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--civica-space-sm);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.25);
+  padding-bottom: var(--civica-space-xl);
+}
+
+/* Why Civica feature cards */
+
+.why-features {
+  padding-top: clamp(48px, 8vw, 80px);
+  padding-bottom: clamp(48px, 8vw, 80px);
+  border-top: none;
+}
+
+.why-feature-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--civica-space-xl);
+  margin-top: clamp(28px, 4vw, 40px);
+}
+
+.why-feature-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--civica-space-lg);
+  padding: var(--civica-space-xxl);
+  border: 1px solid var(--civica-hairline);
+  border-radius: var(--civica-radius-card);
+  background: var(--civica-surface);
+  transition: box-shadow 200ms ease, transform 200ms ease;
+}
+
+.why-feature-card:hover {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.07);
+  transform: translateY(-2px);
+}
+
+.why-feature-card__icon {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--civica-pine-surface);
+  border-radius: var(--civica-radius-card);
+  color: var(--civica-pine);
+  flex-shrink: 0;
+}
+
+.why-feature-card__title {
+  font-size: 1.0625rem;
+  font-weight: 600;
+  color: var(--civica-ink);
+  margin: 0 0 var(--civica-space-sm);
+  letter-spacing: -0.01em;
+}
+
+.why-feature-card__text {
+  font-size: 0.9375rem;
+  line-height: 1.65;
+  color: var(--civica-graphite);
+  margin: 0;
+}
+
+/* Why Civica CTA */
+
+.why-cta-section {
+  background: var(--civica-pine-surface);
+  border-top: 1px solid color-mix(in srgb, var(--civica-pine) 20%, transparent);
+}
+
+.why-cta-inner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--civica-space-md);
+}
+
+.why-cta-section .section__title {
+  margin-bottom: 0;
+}
+
+@media (max-width: 768px) {
+  .why-feature-cards {
+    grid-template-columns: 1fr;
+  }
+
+  .why-gemini-headline {
+    font-size: clamp(1.5rem, 6vw, 1.875rem);
+  }
+
+  .why-gemini-copy {
+    padding-left: var(--civica-space-xl);
+    padding-right: var(--civica-space-xl);
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .why-gemini-sticky {
+    /* ink bg already matches dark mode */
+  }
+
+  .why-feature-card {
+    background: color-mix(in srgb, var(--civica-paper) 80%, transparent);
+  }
+
+  .why-cta-section {
+    background: var(--civica-pine-surface);
   }
 }
