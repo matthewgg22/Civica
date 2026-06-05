@@ -32,6 +32,10 @@ function makeRequest(path: string): NextRequest {
 describe("middleware", () => {
   beforeEach(() => {
     mockGetUser.mockReset();
+    // Default: no MFA enrolled (aal1/aal1) so the gate never fires unless a
+    // test opts in. Prevents the MFA-gate block's overrides from leaking.
+    mockGetAAL.mockReset();
+    mockGetAAL.mockResolvedValue({ data: { currentLevel: "aal1", nextLevel: "aal1" } });
   });
 
   describe("unauthenticated", () => {
@@ -123,6 +127,45 @@ describe("middleware", () => {
 
     it("passes through /dashboard", async () => {
       const res = await middleware(makeRequest("/dashboard"));
+      expect(res.status).toBe(200);
+    });
+  });
+
+  describe("MFA gate (TOTP-enrolled staff)", () => {
+    beforeEach(() => {
+      mockGetUser.mockResolvedValue({
+        data: { user: { app_metadata: { role: "navigator" }, email: "nav@civica.co" } },
+      });
+      // Enrolled (nextLevel aal2) but session not yet elevated (currentLevel aal1).
+      mockGetAAL.mockResolvedValue({ data: { currentLevel: "aal1", nextLevel: "aal2" } });
+    });
+
+    it("redirects a protected route to /auth/mfa/verify when enrolled but unverified", async () => {
+      const res = await middleware(makeRequest("/packets"));
+      expect(res.status).toBe(307);
+      expect(res.headers.get("location")).toContain("/auth/mfa/verify");
+    });
+
+    it("does NOT redirect /auth/mfa/verify back to itself (no redirect loop)", async () => {
+      // Regression: the gate must skip /auth/* or an enrolled user lands in an
+      // infinite /auth/mfa/verify → /auth/mfa/verify loop and can never sign in.
+      const res = await middleware(makeRequest("/auth/mfa/verify"));
+      expect(res.status).toBe(200);
+    });
+
+    it("does NOT redirect /auth/mfa/setup (reachable while unverified)", async () => {
+      const res = await middleware(makeRequest("/auth/mfa/setup"));
+      expect(res.status).toBe(200);
+    });
+
+    it("does NOT MFA-redirect /api/* calls (would break res.json())", async () => {
+      const res = await middleware(makeRequest("/api/packets/something"));
+      expect(res.headers.get("location") ?? "").not.toContain("/auth/mfa/verify");
+    });
+
+    it("passes through once the session is elevated to aal2", async () => {
+      mockGetAAL.mockResolvedValue({ data: { currentLevel: "aal2", nextLevel: "aal2" } });
+      const res = await middleware(makeRequest("/packets"));
       expect(res.status).toBe(200);
     });
   });
