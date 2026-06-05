@@ -244,20 +244,26 @@ export default function LoginPage() {
           Sign in with Google
         </button>
 
-        <button
-          type="button"
-          onClick={() => void handleMicrosoftSignIn()}
-          disabled={loading}
-          className="mt-3 w-full flex items-center justify-center gap-2.5 border border-input rounded-[3px] px-3 py-2.5 text-[14px] font-medium text-ink bg-paper hover:bg-surface disabled:opacity-50 transition-colors"
-        >
-          <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true">
-            <path fill="#F25022" d="M0 0h8.5v8.5H0z"/>
-            <path fill="#7FBA00" d="M9.5 0H18v8.5H9.5z"/>
-            <path fill="#00A4EF" d="M0 9.5h8.5V18H0z"/>
-            <path fill="#FFB900" d="M9.5 9.5H18V18H9.5z"/>
-          </svg>
-          Sign in with Microsoft
-        </button>
+        {/* Microsoft button is hidden until the Azure/Entra provider is
+            configured in Supabase. Flip NEXT_PUBLIC_ENABLE_MICROSOFT_OAUTH=true
+            in Vercel once an Entra app is registered — no code change needed.
+            Until then, showing it would dead-end on "provider not enabled". */}
+        {process.env.NEXT_PUBLIC_ENABLE_MICROSOFT_OAUTH === "true" && (
+          <button
+            type="button"
+            onClick={() => void handleMicrosoftSignIn()}
+            disabled={loading}
+            className="mt-3 w-full flex items-center justify-center gap-2.5 border border-input rounded-[3px] px-3 py-2.5 text-[14px] font-medium text-ink bg-paper hover:bg-surface disabled:opacity-50 transition-colors"
+          >
+            <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true">
+              <path fill="#F25022" d="M0 0h8.5v8.5H0z"/>
+              <path fill="#7FBA00" d="M9.5 0H18v8.5H9.5z"/>
+              <path fill="#00A4EF" d="M0 9.5h8.5V18H0z"/>
+              <path fill="#FFB900" d="M9.5 9.5H18V18H9.5z"/>
+            </svg>
+            Sign in with Microsoft
+          </button>
+        )}
       </div>
     </div>
   );
