@@ -9,6 +9,11 @@ Categories used:
 - **Added** — new capability
 - **Changed** — visible behavior change
 
+## [0.2.4.0] - 2026-06-05
+
+### Changed
+- **Microsoft sign-in button hidden until configured** — the "Sign in with Microsoft" button now appears only when `NEXT_PUBLIC_ENABLE_MICROSOFT_OAUTH=true`. It shipped before the Entra provider was set up, so it would have dead-ended on "provider not enabled." Flip the env var once Entra is registered to reveal it. Google sign-in is unaffected.
+
 ## [0.2.3.0] - 2026-06-05
 
 ### Added
