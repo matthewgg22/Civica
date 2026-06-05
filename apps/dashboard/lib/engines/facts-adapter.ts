@@ -20,6 +20,7 @@
 
 import { computeBenefit } from "@civica/snap-rules";
 import type { Facts } from "@civica/snap-rules";
+import { evaluateComponentR, type Recommendation } from "@civica/snap-recommendation";
 
 /** Flat answer map for one packet: question_key → confirmed-or-applicant value. */
 export type PacketAnswers = Record<string, string | null | undefined>;
@@ -131,4 +132,35 @@ export function rowsToAnswers(
   const out: PacketAnswers = {};
   for (const r of rows) out[r.question_key] = r.navigator_confirmed_value ?? r.applicant_answer ?? undefined;
   return out;
+}
+
+export interface PacketAssessment extends PacketEstimate {
+  /** Component R recommendations (ways to strengthen / raise the outcome). */
+  recommendations: Recommendation[];
+}
+
+/**
+ * Full per-packet assessment: the benefit estimate PLUS Component R's ranked
+ * recommendations, from the same mapped Facts. The estimate is always the
+ * benefit math (shows even when assumed-eligibility is borderline); the recs
+ * are "actions that could raise the benefit or strengthen the case" — valid to
+ * surface regardless of the provisional verdict. The verdict itself stays
+ * pending confirmForVerdict and is NOT exposed here (it would rest on assumed
+ * citizenship/age/assets). Pure.
+ */
+export function assessPacket(
+  answers: PacketAnswers,
+  state: "CA" | "MA" = "CA",
+  asOf: Date = new Date(),
+): PacketAssessment {
+  const mapped = packetAnswersToFacts(answers);
+  const estimatedMonthlyBenefitUsd = computeBenefit(mapped.facts, state, asOf).monthly_benefit;
+  let recommendations: Recommendation[] = [];
+  try {
+    const cr = evaluateComponentR({ facts: mapped.facts, answeredAxes: {}, state, asOf });
+    recommendations = cr.stage3?.recommendations ?? [];
+  } catch {
+    recommendations = [];
+  }
+  return { ...mapped, estimatedMonthlyBenefitUsd, recommendations };
 }
