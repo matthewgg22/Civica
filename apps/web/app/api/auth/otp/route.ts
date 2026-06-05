@@ -6,6 +6,7 @@
 
 import { NextResponse } from "next/server";
 import { publicEnv } from "../../../../lib/env";
+import { otpRateLimit } from "../rate-limit";
 
 // Returns E.164 for unambiguous inputs; empty string for ambiguous ones.
 // Explicit + prefix (e.g. +52...) always passes through — the caller
@@ -20,7 +21,17 @@ function normalizePhone(raw: string): string {
   return "";
 }
 
+function clientIp(req: Request): string {
+  const fwd = req.headers.get("x-forwarded-for");
+  if (fwd) return fwd.split(",")[0]!.trim();
+  return req.headers.get("x-real-ip") ?? "unknown";
+}
+
 export async function POST(request: Request) {
+  if (!otpRateLimit(clientIp(request))) {
+    return NextResponse.json({ error: "rate_limited" }, { status: 429 });
+  }
+
   let body: { phone?: string };
   try {
     body = (await request.json()) as { phone?: string };
