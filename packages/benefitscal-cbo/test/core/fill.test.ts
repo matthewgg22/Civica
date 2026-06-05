@@ -382,6 +382,52 @@ describe("fillSelect", () => {
     expect(fillSelect(el, "CA")).toBe(true);
     expect(el.value).toBe("CA");
   });
+
+  it("falls back to matching by option TEXT and writes that option's value (#499)", () => {
+    // Frequency dropdown — option values are opaque portal codes; we know only
+    // the visible text. Matching "Monthly" → selects option whose text is
+    // "Monthly", writing its value "05".
+    const root = mount(`
+      <select id="oftenPaid">
+        <option value="">-Select One-</option>
+        <option value="01">Weekly</option>
+        <option value="05">Monthly</option>
+      </select>
+    `);
+    const el = root.querySelector<HTMLSelectElement>("#oftenPaid")!;
+    expect(fillSelect(el, "Monthly")).toBe(true);
+    expect(el.value).toBe("05");
+  });
+
+  it("text fallback is case-insensitive and trimmed", () => {
+    const root = mount(`
+      <select id="f"><option value="">--</option><option value="03">Semi-Monthly</option></select>
+    `);
+    const el = root.querySelector<HTMLSelectElement>("#f")!;
+    expect(fillSelect(el, "  semi-monthly  ")).toBe(true);
+    expect(el.value).toBe("03");
+  });
+
+  it("returns false when neither value nor text matches", () => {
+    const root = mount(`
+      <select id="f"><option value="01">Weekly</option><option value="05">Monthly</option></select>
+    `);
+    const el = root.querySelector<HTMLSelectElement>("#f")!;
+    expect(fillSelect(el, "Hourly")).toBe(false);
+  });
+
+  it("prefers a value match over a text match when both are possible", () => {
+    // value "05" matches an option directly; must not be re-interpreted as text.
+    const root = mount(`
+      <select id="f">
+        <option value="05">Monthly</option>
+        <option value="Monthly">decoy-text-equals-other-value</option>
+      </select>
+    `);
+    const el = root.querySelector<HTMLSelectElement>("#f")!;
+    expect(fillSelect(el, "05")).toBe(true);
+    expect(el.value).toBe("05");
+  });
 });
 
 // ===========================================================================

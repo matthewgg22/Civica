@@ -141,10 +141,22 @@ describe("TRANSFORMS registry", () => {
     expect(TRANSFORMS["phone-10digit"]?.("+15551234567")).toBe("5551234567");
   });
 
+  it("snap-pay-frequency maps schema frequency → portal option text (#499)", () => {
+    expect(TRANSFORMS["snap-pay-frequency"]?.("monthly")).toBe("Monthly");
+    expect(TRANSFORMS["snap-pay-frequency"]?.("biweekly")).toBe("Bi-Weekly");
+    expect(TRANSFORMS["snap-pay-frequency"]?.("semimonthly")).toBe("Semi-Monthly");
+    expect(TRANSFORMS["snap-pay-frequency"]?.("semiannual")).toBe("Semi Annually");
+    expect(TRANSFORMS["snap-pay-frequency"]?.("onetime")).toBe("One-Time Only");
+    // irregular has no portal option → null (needs-review)
+    expect(TRANSFORMS["snap-pay-frequency"]?.("irregular")).toBeNull();
+    expect(TRANSFORMS["snap-pay-frequency"]?.("fortnightly")).toBeNull();
+  });
+
   it("has no other transform names (guards selector-map references)", () => {
     expect(Object.keys(TRANSFORMS).sort()).toEqual([
       "ca-county-ordinal",
       "phone-10digit",
+      "snap-pay-frequency",
     ]);
   });
 });
