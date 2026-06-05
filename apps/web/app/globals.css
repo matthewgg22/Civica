@@ -1283,7 +1283,7 @@ html {
 .home-hero {
   background: var(--civica-pine-surface);
   border-bottom: 1px solid var(--civica-hairline);
-  padding: clamp(40px, 7vw, 80px) var(--civica-space-xl);
+  padding: clamp(28px, 4.5vw, 56px) var(--civica-space-xl);
 }
 
 .home-hero__inner,
@@ -2971,16 +2971,19 @@ html {
   z-index: 1;
   width: 220px;
   flex-shrink: 0;
-  background: #1c1c1e;
-  /* Proportional to iPhone 16 Pro: outer ~50pt → scaled to 220px width = 28px */
-  border-radius: 36px;
-  /* Equal top/bottom padding to keep frame visually symmetric */
-  padding: 10px 6px 10px;
+  /* Titanium sheen — subtle vertical gradient reads as brushed metal */
+  background: linear-gradient(155deg, #2b2b2d 0%, #161617 48%, #242426 100%);
+  border-radius: 38px;
+  padding: 9px 7px;
   box-shadow:
-    0 0 0 1px rgba(255,255,255,0.10),
-    inset 0 0 0 1px rgba(255,255,255,0.04),
-    0 28px 56px rgba(0,0,0,0.48),
-    0 6px 18px rgba(0,0,0,0.26);
+    /* top edge catch-light + bottom edge shade for a machined rim */
+    inset 0 1px 1px rgba(255,255,255,0.14),
+    inset 0 -1px 2px rgba(0,0,0,0.5),
+    /* contact shadow */
+    0 2px 4px rgba(0,0,0,0.28),
+    /* layered ambient — soft and directional, not a flat blur */
+    0 18px 36px -10px rgba(40,55,48,0.30),
+    0 40px 72px -24px rgba(0,0,0,0.40);
 }
 
 /* Side buttons hidden — 4px buttons at this scale only cause visual noise */
@@ -2989,12 +2992,24 @@ html {
 /* Screen bezel — radius proportional to outer frame */
 .iphone__bezel {
   background: #000;
-  border-radius: 30px;
+  border-radius: 31px;
   overflow: hidden;
   position: relative;
-  /* At 252px wide, full 3x screenshot is ~548px tall.
-     Content fills ~73% of that — cap here to hide empty space */
-  max-height: 490px;
+}
+
+/* Soft diagonal screen gloss — sells the glass without obscuring content */
+.iphone__bezel::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    118deg,
+    rgba(255,255,255,0.10) 0%,
+    rgba(255,255,255,0.03) 14%,
+    rgba(255,255,255,0) 32%
+  );
+  z-index: 3;
 }
 
 /* Status bar */
@@ -3873,9 +3888,9 @@ html {
 
 .ecosystem-grid {
   display: grid;
-  grid-template-columns: 1fr auto 1fr auto 1fr;
-  gap: var(--civica-space-md);
-  align-items: center;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--civica-space-lg);
+  align-items: stretch;
 }
 
 .ecosystem-card {
@@ -3883,23 +3898,30 @@ html {
   border: 1px solid var(--civica-hairline);
   border-radius: var(--civica-radius-card);
   padding: var(--civica-space-xl);
-  text-align: center;
-}
-
-.ecosystem-card--tinted {
-  background: var(--civica-pine-surface);
-  border-color: color-mix(in srgb, var(--civica-pine) 20%, transparent);
+  text-align: left;
 }
 
 .ecosystem-card__icon {
-  font-size: 1.5rem;
-  margin-bottom: var(--civica-space-sm);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--civica-radius-card);
+  background: var(--civica-pine-surface);
+  color: var(--civica-pine);
+  margin-bottom: var(--civica-space-md);
+}
+
+.ecosystem-card__icon svg {
+  width: 20px;
+  height: 20px;
 }
 
 .ecosystem-card__title {
   font-size: 0.9375rem;
   font-weight: 600;
-  color: var(--civica-pine);
+  color: var(--civica-ink);
   margin: 0 0 var(--civica-space-xs);
 }
 
@@ -3910,12 +3932,7 @@ html {
   margin: 0;
 }
 
-.ecosystem-arrow {
-  color: var(--civica-graphite);
-  font-size: 1.25rem;
-  text-align: center;
-  user-select: none;
-}
+.ecosystem-arrow { display: none; }
 
 .ecosystem-section__footnote {
   font-size: 0.8125rem;
@@ -3949,11 +3966,7 @@ html {
 
   .ecosystem-grid {
     grid-template-columns: 1fr;
-    gap: var(--civica-space-xs);
-  }
-
-  .ecosystem-arrow {
-    transform: rotate(90deg);
+    gap: var(--civica-space-md);
   }
 }
 

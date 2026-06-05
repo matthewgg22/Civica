@@ -66,10 +66,9 @@ export default function WelcomePage() {
             <h1 className="home-hero__title">{t.home_hero_title}</h1>
             <p className="home-hero__body">{t.home_hero_body}</p>
             <div className="trust-chips" role="list">
-              <span className="trust-chip" role="listitem">✓ USDA-verified rules</span>
-              <span className="trust-chip" role="listitem">✓ 38+ CBO partners</span>
-              <span className="trust-chip" role="listitem">✓ No minimum income</span>
               <span className="trust-chip trust-chip--free" role="listitem">✓ 100% free</span>
+              <span className="trust-chip" role="listitem">✓ No minimum income</span>
+              <span className="trust-chip" role="listitem">✓ USDA-verified</span>
             </div>
             <div className="home-hero__ctas">
               <a href="/apply" className="btn btn--primary">{t.welcome_cta}</a>
@@ -91,22 +90,35 @@ export default function WelcomePage() {
           <h2 className="welcome-ecosystem__title">One connected system</h2>
           <p className="welcome-ecosystem__sub">Start on web, continue on iOS, get support from a CBO partner — your progress syncs everywhere.</p>
           <div className="ecosystem-grid">
-            <div className="ecosystem-card ecosystem-card--tinted">
-              <div className="ecosystem-card__icon" aria-hidden="true">📱</div>
-              <h3 className="ecosystem-card__title">iOS App</h3>
-              <p className="ecosystem-card__body">Apply and track from your iPhone. Biometric login, push notifications for status updates.</p>
-            </div>
-            <div className="ecosystem-arrow" aria-hidden="true">↔</div>
             <div className="ecosystem-card">
-              <div className="ecosystem-card__icon" aria-hidden="true">🌐</div>
-              <h3 className="ecosystem-card__title">Web</h3>
-              <p className="ecosystem-card__body">Full application in any browser. No app download needed.</p>
+              <span className="ecosystem-card__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="6.5" y="2.5" width="11" height="19" rx="2.5" />
+                  <path d="M10.5 18.5h3" />
+                </svg>
+              </span>
+              <h3 className="ecosystem-card__title">iOS app</h3>
+              <p className="ecosystem-card__body">Apply and track from your iPhone. Face ID sign-in, status notifications.</p>
             </div>
-            <div className="ecosystem-arrow" aria-hidden="true">↔</div>
-            <div className="ecosystem-card ecosystem-card--tinted">
-              <div className="ecosystem-card__icon" aria-hidden="true">🏢</div>
-              <h3 className="ecosystem-card__title">CBO Dashboard</h3>
-              <p className="ecosystem-card__body">38+ partner organizations guide applicants through every step.</p>
+            <div className="ecosystem-card">
+              <span className="ecosystem-card__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="9.5" />
+                  <path d="M2.5 12h19M12 2.5c2.6 2.5 4 6 4 9.5s-1.4 7-4 9.5c-2.6-2.5-4-6-4-9.5s1.4-7 4-9.5Z" />
+                </svg>
+              </span>
+              <h3 className="ecosystem-card__title">Web</h3>
+              <p className="ecosystem-card__body">The full application in any browser. Nothing to download.</p>
+            </div>
+            <div className="ecosystem-card">
+              <span className="ecosystem-card__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M4 21.5h16M5.5 21.5V5.5a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v16" />
+                  <path d="M9 8h2M13 8h2M9 12h2M13 12h2M9 16h2M13 16h2" />
+                </svg>
+              </span>
+              <h3 className="ecosystem-card__title">Navigator support</h3>
+              <p className="ecosystem-card__body">A trained navigator at a partner org reviews your application before it's filed.</p>
             </div>
           </div>
         </div>
