@@ -4287,35 +4287,39 @@ html {
 .why-feature-cards {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: var(--civica-space-xl);
-  margin-top: clamp(28px, 4vw, 40px);
+  gap: clamp(var(--civica-space-lg), 3vw, var(--civica-space-xxl));
+  margin-top: clamp(32px, 4vw, 48px);
 }
 
+/* Numbered editorial cards — pine top rule + wheat numeral anchor, no box.
+   The number carries the identity; the small icon aids comprehension. */
 .why-feature-card {
   display: flex;
   flex-direction: column;
-  gap: var(--civica-space-lg);
-  padding: var(--civica-space-xxl);
-  border: 1px solid var(--civica-hairline);
-  border-radius: var(--civica-radius-card);
-  background: var(--civica-surface);
-  transition: box-shadow 200ms ease, transform 200ms ease;
+  gap: var(--civica-space-sm);
+  padding-top: var(--civica-space-lg);
+  border-top: 2px solid var(--civica-pine);
 }
 
-.why-feature-card:hover {
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.07);
-  transform: translateY(-2px);
+.why-feature-card__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--civica-space-xs);
+}
+
+.why-feature-card__num {
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: #c9922a;
+  font-variant-numeric: tabular-nums lining-nums;
 }
 
 .why-feature-card__icon {
-  width: 48px;
-  height: 48px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--civica-pine-surface);
-  border-radius: var(--civica-radius-card);
   color: var(--civica-pine);
+  opacity: 0.7;
   flex-shrink: 0;
 }
 
@@ -4323,7 +4327,7 @@ html {
   font-size: 1.0625rem;
   font-weight: 600;
   color: var(--civica-ink);
-  margin: 0 0 var(--civica-space-sm);
+  margin: 0;
   letter-spacing: -0.01em;
 }
 
