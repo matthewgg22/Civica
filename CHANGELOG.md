@@ -9,6 +9,11 @@ Categories used:
 - **Added** — new capability
 - **Changed** — visible behavior change
 
+## [0.2.7.1] - 2026-06-06
+
+### Removed
+- **Dead applicant welcome copy** — removed 15 unused i18n keys (75 lines across all 5 locales) left over from prior `/welcome` versions: the old "how it works" steps (`home_how_*`), the retired app-island promo (`home_app_label`/`home_app_sub`), the standalone "Could I qualify?" block (`home_what_qualify`), the orphaned `home_buy_cant_label`, and the unused `home_nav_how`/`home_nav_status` tabs. No rendered change — these strings were defined but never referenced by the current page.
+
 ## [0.2.7.0] - 2026-06-05
 
 ### Changed
