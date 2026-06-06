@@ -12,6 +12,7 @@ import { Fragment, useState } from "react";
 import { CA_BASELINE_PER, PROJECTED_PER_AT_FULL_ENGAGEMENT } from "@civica/snap-qc-engine";
 import InfoTip from "../InfoTip";
 import FlagSensitivityControl from "./FlagSensitivityControl";
+import TableExport from "./TableExport";
 
 // CA baseline + projected PER are the engine's published constants (USDA FNS-380
 // baseline; modeled projection at full engagement), not hand-typed numbers — so
@@ -201,10 +202,19 @@ export default function QcTab() {
 
       {/* ── Pillar breakdown — table with thin monochrome bars ──────────────── */}
       <section aria-label="QC pillars">
-        <p className="eyebrow mb-2">
-          {t("Error by pillar", "Mistakes by category")}
-          <InfoTip label="Each pillar is a category USDA scores during Quality Control. Error rate = share of reviewed packets with an issue in that category. Pass rate is the complement." />
-        </p>
+        <div className="flex items-end justify-between gap-3 mb-2">
+          <p className="eyebrow">
+            {t("Error by pillar", "Mistakes by category")}
+            <InfoTip label="Each pillar is a category USDA scores during Quality Control. Error rate = share of reviewed packets with an issue in that category. Pass rate is the complement." />
+          </p>
+          <TableExport
+            filename="cbo-qc-pillars"
+            title="Quality control — error by pillar"
+            columns={["Pillar", "Category", "Error %", "Pass %"]}
+            rows={DEMO_QC.pillars.map((p) => [p.label, t(p.note, p.notePlain), `${p.fail}%`, `${p.pass}%`])}
+            note="Demo data — representative QC metrics from a synthetic cohort. Engine version FY2026."
+          />
+        </div>
         <div className="border border-hairline rounded-[2px] bg-surface overflow-hidden">
           <table className="w-full border-collapse">
             <thead>
@@ -242,7 +252,16 @@ export default function QcTab() {
 
       {/* ── Recent flags — institutional table ──────────────────────────────── */}
       <section aria-label="Recent QC flags">
-        <p className="eyebrow mb-2">{t("Recent flags", "Recent issues")}</p>
+        <div className="flex items-end justify-between gap-3 mb-2">
+          <p className="eyebrow">{t("Recent flags", "Recent issues")}</p>
+          <TableExport
+            filename="cbo-qc-flags"
+            title="Quality control — recent flags"
+            columns={["Flag", "Field", "Issue", "Status"]}
+            rows={DEMO_QC.recentFlags.map((f) => [f.id, f.field, f.issue, t(f.status, f.status === "Open" ? "Open" : "Fixed")])}
+            note="Demo data — representative QC metrics from a synthetic cohort. Engine version FY2026."
+          />
+        </div>
         <div className="border border-hairline rounded-[2px] bg-surface overflow-hidden">
           <table className="w-full border-collapse">
             <thead>

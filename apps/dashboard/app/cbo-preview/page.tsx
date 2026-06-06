@@ -9,6 +9,7 @@ import ProductSwitcher from "../../components/ProductSwitcher";
 import { AppDownloadIsland } from "../../components/AppDownloadIsland";
 import QcTab from "../../components/cbo/QcTab";
 import EngineHouseholdsPanel from "../../components/cbo/EngineHouseholdsPanel";
+import TableExport, { type TableExportProps } from "../../components/cbo/TableExport";
 import { CA_BASELINE_PER, PROJECTED_PER_AT_FULL_ENGAGEMENT } from "@civica/snap-qc-engine";
 
 export const dynamic = "force-dynamic";
@@ -352,7 +353,25 @@ function ApplicationsSection() {
       <EngineHouseholdsPanel />
 
       <div className="border-t border-hairline pt-6 space-y-3">
-        <p className="eyebrow">Navigator pipeline · sample workflow</p>
+        <div className="flex items-start justify-between gap-4">
+          <p className="eyebrow">Navigator pipeline · sample workflow</p>
+          <TableExport
+            filename="cbo-navigator-pipeline"
+            title="Navigator pipeline — sample workflow"
+            columns={["Bucket", "Applicant", "County", "Status", "Risk", "Updated"]}
+            rows={DEMO_QUEUE.flatMap((b) =>
+              b.rows.map((r) => [
+                b.bucketLabel,
+                r.name,
+                `${r.county}, CA`,
+                r.status,
+                r.risk === "High risk" ? "HIGH" : r.risk === "Medium risk" ? "MED" : "LOW",
+                r.time,
+              ]),
+            )}
+            note="Sample pipeline — synthetic packets illustrating the navigator workflow. No real applicant information is shown."
+          />
+        </div>
 
         {/* Summary strip — counts as text, divided by rules, no card chrome */}
         <div className="flex items-center flex-wrap gap-x-5 gap-y-1 text-[12px]">
@@ -440,12 +459,19 @@ function QueueTableRow({
 
 // ─── Outreach ──────────────────────────────────────────────────────────────────
 
-function OutreachTableShell({ label, count, children }: { label: string; count: string; children: React.ReactNode }) {
+function OutreachTableShell({
+  label, count, exportProps, children,
+}: {
+  label: string; count: string; exportProps?: TableExportProps; children: React.ReactNode;
+}) {
   return (
     <section aria-label={label}>
-      <div className="flex items-baseline gap-2 mb-2">
-        <p className="eyebrow">{label}</p>
-        <span className="text-[12px] text-muted tabular-nums">{count}</span>
+      <div className="flex items-end justify-between gap-3 mb-2">
+        <div className="flex items-baseline gap-2">
+          <p className="eyebrow">{label}</p>
+          <span className="text-[12px] text-muted tabular-nums">{count}</span>
+        </div>
+        {exportProps && <TableExport {...exportProps} />}
       </div>
       <div className="border border-hairline rounded-[2px] bg-surface overflow-hidden">
         <table className="w-full border-collapse">{children}</table>
@@ -460,7 +486,17 @@ function OutreachSection() {
   return (
     <div className="space-y-6">
       {/* Stalled applications */}
-      <OutreachTableShell label="Applications · needing follow-up" count={`${DEMO_OUTREACH.applications.length}`}>
+      <OutreachTableShell
+        label="Applications · needing follow-up"
+        count={`${DEMO_OUTREACH.applications.length}`}
+        exportProps={{
+          filename: "cbo-outreach-applications",
+          title: "Outreach — applications needing follow-up",
+          columns: ["Applicant", "County", "Reason", "Priority"],
+          rows: DEMO_OUTREACH.applications.map((r) => [r.name, `${r.county}, CA`, r.reason, r.urgency === "high" ? "HIGH" : "MED"]),
+          note: "Sample data — synthetic outreach queue. No real applicant information is shown.",
+        }}
+      >
         <thead>
           <tr className="border-b border-hairline bg-surface-secondary">
             <th className={`${OUTREACH_TH} pl-4`}>Applicant</th>
@@ -484,7 +520,17 @@ function OutreachSection() {
       </OutreachTableShell>
 
       {/* Interview lifecycle */}
-      <OutreachTableShell label="Interview · active" count={`${DEMO_OUTREACH.interview.length}`}>
+      <OutreachTableShell
+        label="Interview · active"
+        count={`${DEMO_OUTREACH.interview.length}`}
+        exportProps={{
+          filename: "cbo-outreach-interview",
+          title: "Outreach — interview lifecycle",
+          columns: ["Applicant", "County", "Status", "Priority"],
+          rows: DEMO_OUTREACH.interview.map((r) => [r.name, `${r.county}, CA`, r.status, r.urgency === "high" ? "HIGH" : r.urgency === "medium" ? "MED" : "LOW"]),
+          note: "Sample data — synthetic outreach queue. No real applicant information is shown.",
+        }}
+      >
         <thead>
           <tr className="border-b border-hairline bg-surface-secondary">
             <th className={`${OUTREACH_TH} pl-4`}>Applicant</th>
@@ -508,7 +554,17 @@ function OutreachSection() {
       </OutreachTableShell>
 
       {/* Recertification */}
-      <OutreachTableShell label="Recertification · in window" count={`${DEMO_OUTREACH.recertification.length}`}>
+      <OutreachTableShell
+        label="Recertification · in window"
+        count={`${DEMO_OUTREACH.recertification.length}`}
+        exportProps={{
+          filename: "cbo-outreach-recertification",
+          title: "Outreach — recertification window",
+          columns: ["Household", "County", "Stage", "Due"],
+          rows: DEMO_OUTREACH.recertification.map((r) => [r.name, `${r.county}, CA`, r.stage, r.daysLeft < 0 ? `${Math.abs(r.daysLeft)}d overdue` : `${r.daysLeft}d`]),
+          note: "Sample data — synthetic outreach queue. No real applicant information is shown.",
+        }}
+      >
         <thead>
           <tr className="border-b border-hairline bg-surface-secondary">
             <th className={`${OUTREACH_TH} pl-4`}>Household</th>
@@ -566,7 +622,16 @@ function RenewalsSection() {
 
       {/* Cadence breakdown — table with thin sharp monochrome bars */}
       <section aria-label="Recertification cadence">
-        <p className="eyebrow mb-2">Renewal cadence</p>
+        <div className="flex items-end justify-between gap-3 mb-2">
+          <p className="eyebrow">Renewal cadence</p>
+          <TableExport
+            filename="cbo-renewal-cadence"
+            title="Renewal cadence"
+            columns={["Stage", "Action", "Count"]}
+            rows={DEMO_RENEWALS.cadenceRows.map((r) => [r.stage, r.label, String(r.count)])}
+            note="Sample data — synthetic recertification queue."
+          />
+        </div>
         <div className="border border-hairline rounded-[2px] bg-surface overflow-hidden">
           <table className="w-full border-collapse">
             <thead>
@@ -596,7 +661,16 @@ function RenewalsSection() {
 
       {/* Sample households — institutional table */}
       <section aria-label="Sample renewal queue">
-        <p className="eyebrow mb-2">Sample households</p>
+        <div className="flex items-end justify-between gap-3 mb-2">
+          <p className="eyebrow">Sample households</p>
+          <TableExport
+            filename="cbo-renewal-households"
+            title="Renewal — sample households"
+            columns={["Household", "County", "Cert end", "Stage", "Due"]}
+            rows={DEMO_RENEWALS.sampleRows.map((r) => [r.name, `${r.county}, CA`, r.certEnd, r.stage, r.daysLeft < 0 ? `${Math.abs(r.daysLeft)}d overdue` : `${r.daysLeft}d`])}
+            note="Sample data — synthetic recertification queue."
+          />
+        </div>
         <div className="border border-hairline rounded-[2px] bg-surface overflow-hidden">
           <table className="w-full border-collapse">
             <thead>

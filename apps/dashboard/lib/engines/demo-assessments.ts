@@ -24,6 +24,12 @@ export interface DemoAssessment {
   matchesOracle: boolean;
   /** Live monthly benefit if eligible (computeBenefit), else null. */
   monthlyBenefitUsd: number | null;
+  /** Household member count (from facts). */
+  householdSize: number;
+  /** Gross monthly income (computeBenefit), 0 if the calc threw. */
+  grossMonthlyUsd: number;
+  /** Net monthly income after deductions (computeBenefit), 0 if the calc threw. */
+  netMonthlyUsd: number;
   /** One-line plain-English explanation of the verdict (from the deduction trace). */
   why: string;
 }
@@ -88,6 +94,9 @@ export function assessDemoHousehold(h: DemoHousehold, asOf: Date): DemoAssessmen
     verdict,
     matchesOracle: verdict === h.oracleCA.verdict,
     monthlyBenefitUsd,
+    householdSize: h.facts.household?.length ?? 0,
+    grossMonthlyUsd: Math.round(gross),
+    netMonthlyUsd: Math.round(net),
     why: explain(verdict, monthlyBenefitUsd, gross, net, reason),
   };
 }

@@ -11,6 +11,10 @@ Categories used:
 
 ## [0.2.7.7] - 2026-06-06
 
+### Added
+- **CSV / PDF export on every cbo-preview data table** — an Export control (CSV that opens in Excel/Sheets + a clean table-only PDF via the browser's print, zero new dependencies) on the eligibility determinations + navigator pipeline (Applications), the 3 Outreach queues, the Renewals cadence + sample, and the QC pillars + flags.
+- **Enriched determinations table** — the live-engine determinations table now also shows household `Size` and `Gross income /mo` columns (pulled from the engine), with zebra striping and tighter rows, so it reads like a real analyst table instead of leaving dead space.
+
 ### Changed
 - **CBO preview redesigned to a utility-first, institutional register** — all 5 `/cbo-preview` tabs (Overview, Applications, Outreach, Renewals, Quality Control) re-skinned from a colorful card/badge/pill layout to dense, research-desk tables: hairline row rules, right-aligned tabular numerics, sharp 2px corners, and a strict 2-signal color rule (pine = positive, brick = attention) applied as **text only** — no decorative fills, pills, dots, or accent bars. Warm Civica neutrals + Hanken Grotesk retained for brand coherence. New convention documented as DESIGN.md §10 (institutional mode); scoped to cbo-preview, staff surfaces unchanged.
 
