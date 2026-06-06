@@ -223,7 +223,10 @@ export default function WhyCivicaPage() {
       </main>
 
       <footer className="site-footer">
-        <div className="container">© 2026 Civica</div>
+        <div className="container home-footer__inner">
+          <span>© 2026 Civica</span>
+          <a className="home-footer__link" href="/privacy">Privacy Policy</a>
+        </div>
       </footer>
     </div>
   );

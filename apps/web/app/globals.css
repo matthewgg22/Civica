@@ -2093,6 +2093,37 @@ html {
   color: var(--civica-muted);
 }
 
+/* Footer row — copyright left, links right */
+.home-footer__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--civica-space-lg);
+  flex-wrap: wrap;
+}
+.home-footer__link {
+  color: var(--civica-graphite);
+  text-decoration: none;
+  font-weight: 500;
+}
+.home-footer__link:hover {
+  color: var(--civica-pine);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* Legal / placeholder pages (Privacy Policy, etc.) */
+.legal-page {
+  max-width: 720px;
+}
+.legal-page__note {
+  font-size: 1rem;
+  line-height: 1.65;
+  color: var(--civica-graphite);
+  margin-top: var(--civica-space-lg);
+  max-width: 60ch;
+}
+
 /* ---- App nav (unified bar, mirrors staff AppHeader) ---- */
 
 .app-nav {

@@ -220,7 +220,10 @@ export default function WelcomePage() {
       </section>
 
       <footer className="home-footer">
-        <div className="home-section__inner">© 2026 Civica</div>
+        <div className="home-section__inner home-footer__inner">
+          <span>© 2026 Civica</span>
+          <a className="home-footer__link" href="/privacy">Privacy Policy</a>
+        </div>
       </footer>
 
       {/* Mae floating help button — visible on all sections */}
