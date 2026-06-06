@@ -1309,7 +1309,7 @@ html {
   position: absolute;
   inset: -8%; /* overscan so blur/scale never reveal edges */
   background: url("/hero-painting.jpg") 50% 50% / cover no-repeat;
-  filter: blur(var(--bs-blur, 16px)) saturate(0.92);
+  filter: blur(var(--bs-blur, 8px)) saturate(0.96);
 }
 .bs-tint {
   position: absolute;
@@ -1320,15 +1320,15 @@ html {
 .bs-scrim {
   position: absolute;
   inset: 0;
-  opacity: var(--bs-scrim, 0.7);
+  opacity: var(--bs-scrim, 0.58);
   background:
     linear-gradient(100deg,
       var(--civica-pine-surface) 0%,
-      color-mix(in srgb, var(--civica-pine-surface) 80%, transparent) 24%,
-      transparent 58%),
+      color-mix(in srgb, var(--civica-pine-surface) 70%, transparent) 22%,
+      transparent 52%),
     linear-gradient(to bottom,
       transparent 60%,
-      color-mix(in srgb, var(--civica-pine-surface) 55%, transparent) 100%);
+      color-mix(in srgb, var(--civica-pine-surface) 45%, transparent) 100%);
 }
 @keyframes bsDrift {
   from { transform: scale(1.06) translate(0, 0); }
@@ -1449,6 +1449,7 @@ html {
   text-transform: uppercase;
   color: var(--civica-pine);
   margin: 0 0 var(--civica-space-md);
+  text-shadow: 0 0 12px rgba(255, 255, 255, 0.9), 0 1px 3px rgba(255, 255, 255, 0.7);
 }
 
 .home-hero__title {
@@ -1458,9 +1459,8 @@ html {
   font-weight: 700;
   color: var(--civica-ink);
   margin: 0 0 var(--civica-space-lg);
-  /* No width cap — let the headline use the full (widened) text column so
-     "Do you qualify for free groceries?" fits on one line at desktop. */
   max-width: none;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
 
 .home-hero__body {
@@ -1469,6 +1469,7 @@ html {
   color: var(--civica-ink);
   margin: 0 0 var(--civica-space-xl);
   max-width: 52ch;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
 }
 
 .home-hero__ctas {
@@ -3095,13 +3096,14 @@ html {
   display: inline-flex;
   align-items: center;
   padding: 5px 12px;
-  border: 1px solid color-mix(in srgb, var(--civica-pine) 35%, transparent);
+  border: 1px solid rgba(0, 0, 0, 0.1);
   border-radius: var(--civica-radius-pill);
   font-size: 0.8125rem;
   font-weight: 500;
   color: var(--civica-pine);
-  background: color-mix(in srgb, var(--civica-pine) 6%, transparent);
+  background: #ffffff;
   white-space: nowrap;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
 }
 
 /* "Always free" chip — solid pine fill for emphasis, stays in palette */
@@ -3396,7 +3398,7 @@ html {
 .benefit-est {
   margin-top: var(--civica-space-lg);
   padding-top: var(--civica-space-lg);
-  border-top: 1px solid var(--civica-hairline);
+  /* No border-top — the hero painting is behind this; a hard line reads as a slash */
 }
 
 .benefit-est__row {
@@ -3408,9 +3410,10 @@ html {
 
 .benefit-est__label {
   font-size: 0.8125rem;
-  color: var(--civica-graphite);
+  color: var(--civica-ink);
   font-weight: 500;
   white-space: nowrap;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.6);
 }
 
 .benefit-est__sizes {
@@ -3423,9 +3426,9 @@ html {
   width: 32px;
   height: 32px;
   border-radius: var(--civica-radius-control);
-  border: 1px solid var(--civica-hairline);
-  background: transparent;
-  color: var(--civica-graphite);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  background: #ffffff;
+  color: var(--civica-ink);
   font-family: inherit;
   font-size: 0.8125rem;
   font-weight: 500;
@@ -3434,6 +3437,7 @@ html {
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
 }
 
 .benefit-est__size:hover {
@@ -3445,12 +3449,14 @@ html {
   background: var(--civica-pine);
   border-color: var(--civica-pine);
   color: #fff;
+  box-shadow: none;
 }
 
 .benefit-est__result {
   margin-top: var(--civica-space-sm);
   font-size: 0.875rem;
-  color: var(--civica-graphite);
+  color: var(--civica-ink);
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5);
 }
 
 .benefit-est__amount {
@@ -4266,7 +4272,7 @@ html {
 }
 
 .why-static-hero .gemini-effect svg {
-  max-height: 360px;
+  max-height: 480px;
 }
 
 .why-gemini-sticky {
@@ -4318,7 +4324,7 @@ html {
 .gemini-effect svg {
   width: 100%;
   height: 100%;
-  max-height: 360px;
+  max-height: 480px;
 }
 
 .why-gemini-scroll-hint {
