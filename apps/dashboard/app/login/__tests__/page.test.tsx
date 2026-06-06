@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 
 const mockSignInWithOAuth = vi.hoisted(() => vi.fn());
@@ -37,6 +37,10 @@ describe("LoginPage OAuth buttons", () => {
     });
   });
 
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
   it("Google button calls signInWithOAuth with provider google + callback redirect", async () => {
     render(<LoginPage />);
     fireEvent.click(screen.getByRole("button", { name: /sign in with google/i }));
@@ -50,7 +54,19 @@ describe("LoginPage OAuth buttons", () => {
     });
   });
 
-  it("Microsoft button calls signInWithOAuth with provider azure + email scope + callback redirect", async () => {
+  it("hides the Microsoft button by default (flag unset)", () => {
+    render(<LoginPage />);
+    expect(screen.queryByRole("button", { name: /sign in with microsoft/i })).toBeNull();
+  });
+
+  it("shows the Microsoft button when NEXT_PUBLIC_ENABLE_MICROSOFT_OAUTH=true", () => {
+    vi.stubEnv("NEXT_PUBLIC_ENABLE_MICROSOFT_OAUTH", "true");
+    render(<LoginPage />);
+    expect(screen.getByRole("button", { name: /sign in with microsoft/i })).toBeDefined();
+  });
+
+  it("Microsoft button (when enabled) calls signInWithOAuth with provider azure + email scope + callback redirect", async () => {
+    vi.stubEnv("NEXT_PUBLIC_ENABLE_MICROSOFT_OAUTH", "true");
     render(<LoginPage />);
     fireEvent.click(screen.getByRole("button", { name: /sign in with microsoft/i }));
     await waitFor(() => {
@@ -69,7 +85,7 @@ describe("LoginPage OAuth buttons", () => {
   it("surfaces the provider error message when OAuth fails", async () => {
     mockSignInWithOAuth.mockResolvedValue({ error: { message: "provider disabled" } });
     render(<LoginPage />);
-    fireEvent.click(screen.getByRole("button", { name: /sign in with microsoft/i }));
+    fireEvent.click(screen.getByRole("button", { name: /sign in with google/i }));
     await waitFor(() => {
       expect(screen.getByText(/provider disabled/i)).toBeDefined();
     });

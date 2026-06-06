@@ -39,10 +39,8 @@ describe("welcome page copy", () => {
       "welcome_trust_3",
     ] as const;
     for (const key of contentKeys) {
-      expect(welcomeStrings.en[key]).not.toEqual(
-        welcomeStrings.es[key],
-        `${key}: en and es are identical — Spanish may not be translated`,
-      );
+      // Each key must differ between en and es (if identical, Spanish may not be translated)
+      expect(welcomeStrings.en[key]).not.toEqual(welcomeStrings.es[key]);
     }
   });
 });

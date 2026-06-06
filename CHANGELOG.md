@@ -23,6 +23,11 @@ Categories used:
 ### Changed
 - **Applicant home navigation** — "Apply" is now a dominant button pinned to the top-right of the nav, with a chevron dropdown holding Sign in and the iPhone-app download (Anthropic-style split button, in Civica pine). The floating app-download card that popped up over the page has been retired; the app lives in the dropdown now. The dropdown is a native control, so it works with the keyboard and without JavaScript.
 
+## [0.2.4.0] - 2026-06-05
+
+### Changed
+- **Microsoft sign-in button hidden until configured** — the "Sign in with Microsoft" button now appears only when `NEXT_PUBLIC_ENABLE_MICROSOFT_OAUTH=true`. It shipped before the Entra provider was set up, so it would have dead-ended on "provider not enabled." Flip the env var once Entra is registered to reveal it. Google sign-in is unaffected.
+
 ## [0.2.3.0] - 2026-06-05
 
 ### Added
