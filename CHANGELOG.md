@@ -9,6 +9,11 @@ Categories used:
 - **Added** — new capability
 - **Changed** — visible behavior change
 
+## [0.2.10.2] - 2026-06-06
+
+### Changed
+- **Navigator answer review — full edit lifecycle** — a navigator / CBO officer can now **correct an already-confirmed answer** on the authenticated packet detail page, not just review it once. Previously the edit affordance vanished after the first review (`reviewed_at` set), leaving no way to fix a mistake from the UI; now reviewed answers show an **Edit** button pre-filled with the current confirmed value. Saving re-persists to `packet_answers.navigator_confirmed_value` via the existing `PATCH /answers/:id/review` (RLS + audit unchanged), then `router.refresh()` reflects server state, with a transient "Saved ✓" confirmation and an inline error on failure.
+
 ## [0.2.10.1] - 2026-06-06
 
 ### Changed
