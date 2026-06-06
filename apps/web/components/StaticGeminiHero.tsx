@@ -1,7 +1,9 @@
 // Motion-free hero used as (a) the lazy-load fallback before the animated
 // hero chunk arrives and (b) the render for users with prefers-reduced-motion.
-// Same story as the animation, fully drawn: USDA → state flags → Civica app →
-// Draft application / Complete interview / Receive feedback. No tangle, no rAF.
+// Same story as the animation, fully drawn: state flags (origins) → Civica app
+// → Draft application / Complete interview / Receive feedback.
+
+import { GEMINI_FIELD } from "../lib/gemini-field";
 
 const STATES = [
   { abbr: "CA", flagColor: "#003DA5", y: 110 },
@@ -42,19 +44,37 @@ export function StaticGeminiHero() {
           xmlns="http://www.w3.org/2000/svg"
           preserveAspectRatio="xMidYMid meet"
           role="img"
-          aria-label="Federal SNAP rules and many state rulebooks flow into the Civica app, which guides you to draft your application, complete your interview, and receive feedback."
+          aria-label="Many state SNAP rulebooks flow into the Civica app, which guides you to draft your application, complete your interview, and receive feedback."
         >
           <defs>
+            <filter id="flagShadowStatic" x="-40%" y="-40%" width="180%" height="180%">
+              <feDropShadow dx="0" dy="1.5" stdDeviation="2" floodColor="#000000" floodOpacity="0.18" />
+            </filter>
             <clipPath id="civicaPhoneScreenStatic">
               <rect x="823" y="196" width="74" height="170" rx="9" />
             </clipPath>
           </defs>
 
-          {/* Converging lines — drawn solid, all ending at the final milestone */}
+          {/* Turbulent "mess" field — complexity of the rules resolving to the app */}
+          <g className="gemini-field">
+            {GEMINI_FIELD.map((line, i) => (
+              <path
+                key={`field-${i}`}
+                d={line.d}
+                stroke={line.color}
+                strokeWidth={line.width}
+                strokeLinecap="round"
+                fill="none"
+                opacity={line.opacity}
+              />
+            ))}
+          </g>
+
+          {/* Lines — drawn solid, emanating from each flag, all ending at the final milestone */}
           {STATES.map((s, i) => (
             <path
               key={`line-${i}`}
-              d={`M170 280 C300 280 340 ${s.y} 394 ${s.y} C580 ${s.y} 720 280 860 280 C1080 280 1180 280 1360 280`}
+              d={`M170 ${s.y} C360 ${s.y} 520 280 860 280 C1080 280 1180 280 1360 280`}
               stroke={s.flagColor}
               strokeWidth="2.5"
               fill="none"
@@ -63,18 +83,22 @@ export function StaticGeminiHero() {
             />
           ))}
 
-          {/* USDA source badge */}
-          <rect x="70" y="252" width="100" height="56" rx="7" fill="white" stroke="#2D5A45" strokeWidth="1.75" />
-          <text x="120" y="278" textAnchor="middle" fontSize="15" fill="#2D5A45" fontWeight="700" fontFamily="sans-serif" letterSpacing="0.06em">USDA</text>
-          <text x="120" y="296" textAnchor="middle" fontSize="11" fill="#2A6F66" fontFamily="sans-serif" letterSpacing="0.04em">SNAP</text>
-
-          {/* State flag chips */}
-          {STATES.map((s, i) => (
-            <g key={`chip-${i}`}>
-              <rect x="290" y={s.y - 21} width="104" height="42" rx="6" fill="white" stroke="rgba(0,0,0,0.1)" strokeWidth="1.25" />
-              <image href={`/flags/${s.abbr.toLowerCase()}.png`} x="299" y={s.y - 13} width="40" height="26" preserveAspectRatio="xMidYMid slice" />
-              <rect x="299" y={s.y - 13} width="40" height="26" fill="none" stroke="rgba(0,0,0,0.18)" strokeWidth="0.9" />
-              <text x="370" y={s.y + 6} textAnchor="middle" fontSize="16" fill="rgba(0,0,0,0.74)" fontWeight="700" fontFamily="sans-serif" letterSpacing="0.03em">{s.abbr}</text>
+          {/* State flags — clean swatches that ORIGIN each line on the left */}
+          {STATES.map((s) => (
+            <g key={`flag-${s.abbr}`}>
+              <image
+                href={`/flags/${s.abbr.toLowerCase()}.png`}
+                x="58"
+                y={s.y - 18}
+                width="54"
+                height="36"
+                preserveAspectRatio="xMidYMid slice"
+                filter="url(#flagShadowStatic)"
+              />
+              <rect x="58" y={s.y - 18} width="54" height="36" fill="none" stroke="rgba(0,0,0,0.22)" strokeWidth="1" />
+              <text x="126" y={s.y + 6} fontSize="18" fill="#1A1714" fontWeight="700" fontFamily="sans-serif" letterSpacing="0.02em">
+                {s.abbr}
+              </text>
             </g>
           ))}
 

@@ -33,8 +33,6 @@ export default function WhyCivicaHero() {
   const p4 = useTransform(progress, [0.09, 0.69], [0, 1]);
   const p5 = useTransform(progress, [0.12, 0.72], [0, 1]);
 
-  // USDA source reveals just after the lines begin (so the flags read first).
-  const usdaOpacity = useTransform(progress, [0.06, 0.16], [0, 1]);
   const phoneOpacity = useTransform(progress, [0.32, 0.44], [0, 1]);
   // Reveal each milestone as the streamlined lines reach it, finishing by the
   // time the lines finish drawing (~0.75) so all three are visible together.
@@ -66,7 +64,6 @@ export default function WhyCivicaHero() {
 
         <GoogleGeminiEffect
           pathLengths={[p1, p2, p3, p4, p5]}
-          usdaOpacity={usdaOpacity}
           phoneOpacity={phoneOpacity}
           milestoneOpacities={[mSubmit, mInterview, mBenefits]}
         />

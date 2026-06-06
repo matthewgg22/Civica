@@ -1,17 +1,17 @@
 "use client";
 import { motion } from "motion/react";
 import type { MotionValue } from "motion/react";
+import { GEMINI_FIELD } from "../../lib/gemini-field";
 
 interface GoogleGeminiEffectProps {
   pathLengths: MotionValue<number>[];
   phoneOpacity?: MotionValue<number>;
   milestoneOpacities?: MotionValue<number>[];
-  usdaOpacity?: MotionValue<number>;
 }
 
-// Five representative SNAP states. Line color matches the chip so each path is
-// traceable from its flag to the phone. Coordinates mirror StaticGeminiHero so
-// the animated and reduced-motion versions stay consistent.
+// Five representative SNAP states. Each flag is the ORIGIN of its line on the
+// left — lines emanate from the flag (nothing crosses over it). Line color
+// matches the flag. Coordinates mirror StaticGeminiHero.
 const STATES = [
   { abbr: "CA", color: "#003DA5", y: 110, crossY: 350, exitY: 258 },
   { abbr: "TX", color: "#BF0A30", y: 195, crossY: 315, exitY: 270 },
@@ -20,14 +20,13 @@ const STATES = [
   { abbr: "WA", color: "#005C28", y: 450, crossY: 210, exitY: 302 },
 ];
 
-// USDA → fan out to each state flag → ONE gentle crossover (the "mess") →
-// converge at the phone → exit as a streamlined bundle that ALL ends at the
-// final milestone (Receive feedback, x=1360).
+// Each line starts at its flag → ONE gentle crossover (the "mess") → converge
+// at the phone → exit as a streamlined bundle that ALL ends at the final
+// milestone (Receive feedback, x=1360).
 const PATHS = STATES.map(
   (s) =>
-    `M170 280 C280 280 320 ${s.y} 394 ${s.y} ` +
-    `C560 ${s.y} 600 ${s.crossY} 720 ${s.crossY} ` +
-    `C840 ${s.crossY} 850 281 860 280 ` +
+    `M170 ${s.y} C340 ${s.y} 420 ${s.crossY} 560 ${s.crossY} ` +
+    `C720 ${s.crossY} 800 281 860 280 ` +
     `C1010 280 1210 ${s.exitY} 1360 280`,
 );
 
@@ -42,7 +41,6 @@ export function GoogleGeminiEffect({
   pathLengths,
   phoneOpacity,
   milestoneOpacities,
-  usdaOpacity,
 }: GoogleGeminiEffectProps) {
   return (
     <div className="gemini-effect">
@@ -55,10 +53,6 @@ export function GoogleGeminiEffect({
         aria-hidden="true"
       >
         <defs>
-          <radialGradient id="civicaCenterGlow" cx="50%" cy="50%" r="30%">
-            <stop offset="0%" stopColor="rgba(45,90,69,0.10)" />
-            <stop offset="100%" stopColor="rgba(247,245,239,0)" />
-          </radialGradient>
           <filter id="civicaGlow" x="-20%" y="-20%" width="140%" height="140%">
             <feGaussianBlur stdDeviation="1.4" result="blur" />
             <feMerge>
@@ -66,22 +60,31 @@ export function GoogleGeminiEffect({
               <feMergeNode in="SourceGraphic" />
             </feMerge>
           </filter>
+          <filter id="flagShadow" x="-40%" y="-40%" width="180%" height="180%">
+            <feDropShadow dx="0" dy="1.5" stdDeviation="2" floodColor="#000000" floodOpacity="0.18" />
+          </filter>
           <clipPath id="civicaPhoneScreen">
             <rect x="823" y="196" width="74" height="170" rx="9" />
           </clipPath>
         </defs>
 
-        {/* Soft glow at the phone convergence point */}
-        <ellipse cx="860" cy="280" rx="230" ry="170" fill="url(#civicaCenterGlow)" />
+        {/* Turbulent "mess" field — the complexity of the rules, resolving to
+            clarity at the app. Static (drawn once); only the flag lines animate. */}
+        <g className="gemini-field">
+          {GEMINI_FIELD.map((line, i) => (
+            <path
+              key={`field-${i}`}
+              d={line.d}
+              stroke={line.color}
+              strokeWidth={line.width}
+              strokeLinecap="round"
+              fill="none"
+              opacity={line.opacity}
+            />
+          ))}
+        </g>
 
-        {/* USDA single-source badge — fades in just after the lines start */}
-        <motion.g style={usdaOpacity ? { opacity: usdaOpacity } : undefined}>
-          <rect x="70" y="252" width="100" height="56" rx="7" fill="white" stroke="#2D5A45" strokeWidth="1.75" />
-          <text x="120" y="278" textAnchor="middle" fontSize="15" fill="#2D5A45" fontWeight="700" fontFamily="sans-serif" letterSpacing="0.06em">USDA</text>
-          <text x="120" y="296" textAnchor="middle" fontSize="11" fill="#2A6F66" fontFamily="sans-serif" letterSpacing="0.04em">SNAP</text>
-        </motion.g>
-
-        {/* Animated paths — draw from USDA, cross once, converge, end at the last milestone */}
+        {/* Animated paths — emanate from each flag, cross once, converge, end at the last milestone */}
         {PATHS.map((d, i) => (
           <motion.path
             key={i}
@@ -96,13 +99,22 @@ export function GoogleGeminiEffect({
           />
         ))}
 
-        {/* State flag chips */}
-        {STATES.map((s, i) => (
-          <g key={`chip-${i}`}>
-            <rect x="290" y={s.y - 21} width="104" height="42" rx="6" fill="white" stroke="rgba(0,0,0,0.1)" strokeWidth="1.25" />
-            <image href={`/flags/${s.abbr.toLowerCase()}.png`} x="299" y={s.y - 13} width="40" height="26" preserveAspectRatio="xMidYMid slice" />
-            <rect x="299" y={s.y - 13} width="40" height="26" fill="none" stroke="rgba(0,0,0,0.18)" strokeWidth="0.9" />
-            <text x="370" y={s.y + 6} textAnchor="middle" fontSize="16" fill="rgba(0,0,0,0.74)" fontWeight="700" fontFamily="sans-serif" letterSpacing="0.03em">{s.abbr}</text>
+        {/* State flags — clean swatches that ORIGIN each line on the left */}
+        {STATES.map((s) => (
+          <g key={`flag-${s.abbr}`}>
+            <image
+              href={`/flags/${s.abbr.toLowerCase()}.png`}
+              x="58"
+              y={s.y - 18}
+              width="54"
+              height="36"
+              preserveAspectRatio="xMidYMid slice"
+              filter="url(#flagShadow)"
+            />
+            <rect x="58" y={s.y - 18} width="54" height="36" fill="none" stroke="rgba(0,0,0,0.22)" strokeWidth="1" />
+            <text x="126" y={s.y + 6} fontSize="18" fill="#1A1714" fontWeight="700" fontFamily="sans-serif" letterSpacing="0.02em">
+              {s.abbr}
+            </text>
           </g>
         ))}
 
