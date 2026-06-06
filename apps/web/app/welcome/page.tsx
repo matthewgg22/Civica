@@ -33,6 +33,8 @@ export default function WelcomePage() {
   const t = welcomeStrings[locale];
 
   const faqs: [string, string][] = [
+    // "What you can't buy" — moved out of the buy section into the FAQ.
+    [t.home_cant_q, t.home_buy_cant.split("|").join(" · ")],
     [t.home_faq_q1, t.home_faq_a1],
     [t.home_faq_q2, t.home_faq_a2],
     [t.home_faq_q3, t.home_faq_a3],
@@ -140,13 +142,17 @@ export default function WelcomePage() {
                 ))}
               </ul>
             </div>
-            <div className="home-buy__col home-buy__col--cant">
-              <p className="home-buy__label home-buy__label--cant">{t.home_buy_cant_label}</p>
-              <ul className="home-buy__list">
-                {t.home_buy_cant.split("|").map((item, i) => (
-                  <li key={i} className="home-buy__item home-buy__item--cant">{item}</li>
-                ))}
-              </ul>
+            <div className="home-buy__col home-buy__col--find">
+              <div className="home-find">
+                <span className="home-find__icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M12 21s7-5.5 7-11a7 7 0 1 0-14 0c0 5.5 7 11 7 11Z" />
+                    <circle cx="12" cy="10" r="2.5" />
+                  </svg>
+                </span>
+                <p className="home-find__title">{t.home_findfood_title}</p>
+                <p className="home-find__body">{t.home_findfood_body}</p>
+              </div>
             </div>
           </div>
 

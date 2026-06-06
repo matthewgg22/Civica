@@ -481,6 +481,9 @@ export const welcomeStrings = {
     home_buy_cant_label: "No — not these",
     home_buy_can: "Fruits & vegetables|Meat, fish & eggs|Milk, cheese & yogurt|Bread, rice & cereal|Snacks & non-alcoholic drinks|Seeds & plants that grow food",
     home_buy_cant: "Hot or prepared deli food|Alcohol & tobacco|Vitamins & medicine|Soap, diapers & household items|Pet food",
+    home_cant_q: "What can't I buy with SNAP?",
+    home_findfood_title: "Find food & EBT stores near you",
+    home_findfood_body: "The Civica app maps nearby food banks, free meals, and stores that accept your EBT card.",
 
     // ─── Income guide ───
     home_income_title: "How much can I earn and still qualify?",
@@ -557,6 +560,9 @@ export const welcomeStrings = {
     home_buy_cant_label: "No — esto no",
     home_buy_can: "Frutas y verduras|Carne, pescado y huevos|Leche, queso y yogur|Pan, arroz y cereal|Bocadillos y bebidas sin alcohol|Semillas y plantas que dan alimento",
     home_buy_cant: "Comida caliente o preparada|Alcohol y tabaco|Vitaminas y medicinas|Jabón, pañales y artículos del hogar|Comida para mascotas",
+    home_cant_q: "¿Qué no puedo comprar con SNAP?",
+    home_findfood_title: "Encuentra comida y tiendas EBT cerca de ti",
+    home_findfood_body: "La app de Civica ubica bancos de alimentos, comidas gratis y tiendas que aceptan tu tarjeta EBT cerca de ti.",
 
     // ─── Guía de ingresos ───
     home_income_title: "¿Cuánto puedo ganar y aún calificar?",
@@ -629,6 +635,9 @@ export const welcomeStrings = {
     home_buy_cant_label: "不可以——这些不行",
     home_buy_can: "水果和蔬菜|肉、鱼和蛋|牛奶、奶酪和酸奶|面包、米和谷物|零食和无酒精饮料|可种植食物的种子和植物",
     home_buy_cant: "热食或熟食|酒类和烟草|维生素和药品|肥皂、尿布和家居用品|宠物食品",
+    home_cant_q: "SNAP 不能买什么?",
+    home_findfood_title: "查找附近的食品和 EBT 商店",
+    home_findfood_body: "Civica 应用会在地图上显示附近的食物银行、免费餐点,以及接受 EBT 卡的商店。",
 
     home_income_title: "我能挣多少还能符合资格?",
     home_income_intro: "以下数字仅供参考——许多州(包括加州)采用这里显示的较高标准。",
@@ -697,6 +706,9 @@ export const welcomeStrings = {
     home_buy_cant_label: "Không — những thứ này thì không",
     home_buy_can: "Trái cây và rau|Thịt, cá và trứng|Sữa, phô mai và sữa chua|Bánh mì, gạo và ngũ cốc|Đồ ăn vặt và đồ uống không cồn|Hạt giống và cây trồng ra thực phẩm",
     home_buy_cant: "Đồ ăn nóng hoặc chế biến sẵn|Rượu bia và thuốc lá|Vitamin và thuốc men|Xà phòng, tã và đồ gia dụng|Thức ăn cho thú cưng",
+    home_cant_q: "Tôi không thể mua gì bằng SNAP?",
+    home_findfood_title: "Tìm thực phẩm và cửa hàng EBT gần bạn",
+    home_findfood_body: "Ứng dụng Civica hiển thị bản đồ các ngân hàng thực phẩm, bữa ăn miễn phí và cửa hàng chấp nhận thẻ EBT gần bạn.",
 
     home_income_title: "Tôi kiếm được bao nhiêu mà vẫn đủ điều kiện?",
     home_income_intro: "Đây là các mốc tham khảo — nhiều tiểu bang, gồm California, dùng mức cao hơn hiển thị bên dưới.",
@@ -765,6 +777,9 @@ export const welcomeStrings = {
     home_buy_cant_label: "Hindi — hindi ang mga ito",
     home_buy_can: "Prutas at gulay|Karne, isda at itlog|Gatas, keso at yogurt|Tinapay, bigas at cereal|Meryenda at inuming walang alak|Buto at halamang nagbubunga ng pagkain",
     home_buy_cant: "Mainit o nakahandang pagkain|Alak at tabako|Bitamina at gamot|Sabon, diaper at gamit sa bahay|Pagkain ng alagang hayop",
+    home_cant_q: "Ano ang hindi ko mabibili gamit ang SNAP?",
+    home_findfood_title: "Maghanap ng pagkain at EBT store malapit sa iyo",
+    home_findfood_body: "Ipinapakita ng Civica app ang mga food bank, libreng pagkain, at tindahang tumatanggap ng EBT card na malapit sa iyo.",
 
     home_income_title: "Magkano ang pwede kong kitain at kwalipikado pa rin?",
     home_income_intro: "Mga panimulang gabay lang ito — maraming estado, kasama ang California, ang gumagamit ng mas mataas na antas na ipinapakita rito.",
