@@ -1,7 +1,9 @@
 // Motion-free hero used as (a) the lazy-load fallback before the animated
 // hero chunk arrives and (b) the render for users with prefers-reduced-motion.
 // Same story as the animation, fully drawn: USDA → state flags → Civica app →
-// Draft application / Complete interview / Receive feedback. No tangle, no rAF.
+// Draft application / Complete interview / Receive feedback.
+
+import { GEMINI_FIELD } from "../lib/gemini-field";
 
 const STATES = [
   { abbr: "CA", flagColor: "#003DA5", y: 110 },
@@ -49,6 +51,21 @@ export function StaticGeminiHero() {
               <rect x="823" y="196" width="74" height="170" rx="9" />
             </clipPath>
           </defs>
+
+          {/* Turbulent "mess" field — complexity of the rules resolving to the app */}
+          <g className="gemini-field">
+            {GEMINI_FIELD.map((line, i) => (
+              <path
+                key={`field-${i}`}
+                d={line.d}
+                stroke={line.color}
+                strokeWidth={line.width}
+                strokeLinecap="round"
+                fill="none"
+                opacity={line.opacity}
+              />
+            ))}
+          </g>
 
           {/* Converging lines — drawn solid, all ending at the final milestone */}
           {STATES.map((s, i) => (

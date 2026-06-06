@@ -1,6 +1,7 @@
 "use client";
 import { motion } from "motion/react";
 import type { MotionValue } from "motion/react";
+import { GEMINI_FIELD } from "../../lib/gemini-field";
 
 interface GoogleGeminiEffectProps {
   pathLengths: MotionValue<number>[];
@@ -73,6 +74,22 @@ export function GoogleGeminiEffect({
 
         {/* Soft glow at the phone convergence point */}
         <ellipse cx="860" cy="280" rx="230" ry="170" fill="url(#civicaCenterGlow)" />
+
+        {/* Turbulent "mess" field — the complexity of the rules, resolving to
+            clarity at the app. Static (drawn once); only the flag lines animate. */}
+        <g className="gemini-field">
+          {GEMINI_FIELD.map((line, i) => (
+            <path
+              key={`field-${i}`}
+              d={line.d}
+              stroke={line.color}
+              strokeWidth={line.width}
+              strokeLinecap="round"
+              fill="none"
+              opacity={line.opacity}
+            />
+          ))}
+        </g>
 
         {/* USDA single-source badge — fades in just after the lines start */}
         <motion.g style={usdaOpacity ? { opacity: usdaOpacity } : undefined}>
