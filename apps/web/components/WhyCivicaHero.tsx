@@ -33,10 +33,12 @@ export default function WhyCivicaHero() {
   const p4 = useTransform(progress, [0.09, 0.69], [0, 1]);
   const p5 = useTransform(progress, [0.12, 0.72], [0, 1]);
 
-  const phoneOpacity = useTransform(progress, [0.34, 0.46], [0, 1]);
-  const mSubmit = useTransform(progress, [0.6, 0.7], [0, 1]);
-  const mInterview = useTransform(progress, [0.74, 0.84], [0, 1]);
-  const mBenefits = useTransform(progress, [0.88, 0.97], [0, 1]);
+  const phoneOpacity = useTransform(progress, [0.32, 0.44], [0, 1]);
+  // Reveal each milestone as the streamlined lines reach it, finishing by the
+  // time the lines finish drawing (~0.75) so all three are visible together.
+  const mSubmit = useTransform(progress, [0.5, 0.57], [0, 1]);
+  const mInterview = useTransform(progress, [0.59, 0.66], [0, 1]);
+  const mBenefits = useTransform(progress, [0.68, 0.75], [0, 1]);
 
   // Respect the OS reduced-motion setting: clean static diagram, no rAF.
   if (reduceMotion) {

@@ -81,8 +81,8 @@ export function StaticGeminiHero() {
             </g>
           ))}
 
-          {/* Civica phone — real iOS app screenshot */}
-          <rect x="820" y="208" width="70" height="148" rx="12" fill="#1A1714" />
+          {/* Civica phone — real iOS app screenshot, thin (~3px) bezel */}
+          <rect x="823" y="211" width="64" height="142" rx="10" fill="#1A1714" />
           <image
             href="/civica-ios-screenshot.png"
             x="826"

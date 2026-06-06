@@ -103,8 +103,8 @@ export function GoogleGeminiEffect({
 
         {/* Phone at convergence — real Civica app screenshot. Fades in as lines arrive. */}
         <motion.g style={phoneOpacity ? { opacity: phoneOpacity } : undefined}>
-          {/* Dark bezel */}
-          <rect x="820" y="208" width="70" height="148" rx="12" fill="#1A1714" />
+          {/* Dark bezel — thin (~3px) */}
+          <rect x="823" y="211" width="64" height="142" rx="10" fill="#1A1714" />
           {/* Real iOS screenshot, clipped to the screen */}
           <image
             href="/civica-ios-screenshot.png"
