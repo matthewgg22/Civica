@@ -9,6 +9,15 @@ Categories used:
 - **Added** — new capability
 - **Changed** — visible behavior change
 
+## [0.2.7.6] - 2026-06-06
+
+### Changed
+- **CBO preview now shows live engine output, not mockups** — the `/cbo-preview` Applications tab leads with a "Live eligibility engine" panel: 7 synthetic households whose eligibility verdict and monthly benefit are computed at page load by the real SNAP rules engine (`@civica/snap-rules`), not hand-typed. The households are pure fiction (zero PII on the public page); the math is the same code path a real application runs, and a regression test asserts every verdict against the engine's verified oracle.
+
+### Fixed
+- **Retired the fabricated "4.2% Civica cohort" error-rate claim** — the CBO preview overview and QC tab previously showed a "4.2% PER" figure as a measured Civica outcome, which no cohort backs. Both surfaces now show California's real FY2024 baseline (10.98%, USDA FNS-380) and the engine's modeled projection (5.5%), labeled "projected at full engagement, not a measured cohort." The numbers are sourced from engine constants so they cannot silently drift.
+- **Demo denial reasons are no longer hardcoded** — a denied household's explanation is now derived from the engine's actual reason (income vs immigration vs disqualification vs ABAWD), instead of always claiming "income exceeds the limit." Prevents a false statement on a non-income denial.
+
 ## [0.2.7.5] - 2026-06-06
 
 ### Fixed
