@@ -1,11 +1,10 @@
+import { Fragment } from "react";
 import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { createServerClientFromCookies } from "../../lib/supabase";
 import DemoModeBadge from "../../components/DemoModeBadge";
 import CBOContactButton from "../../components/CBOContactButton";
-import StatusPill from "../../components/StatusPill";
-import StatusBadge from "../../components/StatusBadge";
 import ProductSwitcher from "../../components/ProductSwitcher";
 import { AppDownloadIsland } from "../../components/AppDownloadIsland";
 import QcTab from "../../components/cbo/QcTab";
@@ -231,21 +230,26 @@ export default async function CBOPreviewPage({
 
 function OverviewSection() {
   const funnelMax = FUNNEL_STEPS[0].count;
+  const SAMPLE_QUEUE = [
+    { id: "demo-pkt-003-jasmine", shortId: "JASMINE", name: "Jasmine T.", county: "Los Angeles", status: "Needs Documents",      risk: "Medium risk", time: "2h ago" },
+    { id: "demo-pkt-002-carlos",  shortId: "CARLOS",  name: "Carlos R.", county: "Fresno",       status: "In Navigator Review", risk: "Medium risk", time: "5h ago" },
+    { id: "demo-pkt-001-maria",   shortId: "MARIA",   name: "Maria G.",  county: "Alameda",      status: "Ready for Handoff",   risk: "Low risk",    time: "1d ago" },
+  ];
   return (
     <div className="space-y-8">
-      {/* KPIs — compact (fix C) */}
+      {/* KPIs — divided metric row, no per-card chrome */}
       <section aria-label="Projected impact">
-        <p className="eyebrow mb-3">Projected impact at full engagement</p>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <p className="eyebrow mb-2">Projected impact at full engagement</p>
+        <div className="border border-hairline rounded-[2px] bg-surface grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-hairline">
           {[
             { label: "Applications / navigator / mo", value: "23",     sub: "target vs 7 on manual forms" },
             { label: "Projected payment-error rate",  value: `${PROJECTED_PER_AT_FULL_ENGAGEMENT}%`, sub: `modeled, vs ${CA_BASELINE_PER}% CA baseline` },
             { label: "Time to handoff",               value: "6 days", sub: "target vs ~22 days on manual forms" },
           ].map((kpi) => (
-            <div key={kpi.label} className="bg-surface border border-hairline rounded-[4px] px-5 py-4">
-              <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite leading-tight">{kpi.label}</p>
-              <p className="text-[28px] font-semibold tabular-nums text-ink leading-none mt-2">{kpi.value}</p>
-              <p className="text-[12px] text-pine font-medium mt-1.5">{kpi.sub}</p>
+            <div key={kpi.label} className="px-5 py-4">
+              <p className="text-[10px] font-semibold uppercase tracking-wider text-graphite leading-tight">{kpi.label}</p>
+              <p className="text-[26px] font-semibold tabular-nums text-ink leading-none mt-2">{kpi.value}</p>
+              <p className="text-[11px] text-graphite mt-1.5">{kpi.sub}</p>
             </div>
           ))}
         </div>
@@ -255,64 +259,80 @@ function OverviewSection() {
         </p>
       </section>
 
-      {/* Funnel — full-width proportional bars (fix B) */}
+      {/* Funnel — table with thin sharp monochrome bars */}
       <section aria-label="Enrollment funnel">
-        <p className="eyebrow mb-3">Enrollment funnel (demo cohort, 30 days)</p>
-        <div className="bg-surface border border-hairline rounded-[4px] p-5 space-y-3">
-          {FUNNEL_STEPS.map((step, i) => (
-            <div key={step.name}>
-              <div className="flex items-baseline justify-between gap-3 mb-1.5">
-                <span className="text-[13px] font-semibold text-ink">{step.name}</span>
-                <span className="flex items-baseline gap-2">
-                  <span className="text-[13px] font-semibold tabular-nums text-ink">{step.count.toLocaleString()}</span>
-                  {step.pct && <span className="text-[12px] text-graphite tabular-nums w-12 text-right">{step.pct}</span>}
-                </span>
-              </div>
-              <div className="h-2.5 bg-paper rounded-full overflow-hidden">
-                <div
-                  className={`h-full rounded-full ${i === FUNNEL_STEPS.length - 1 ? "bg-pine" : "bg-pine/55"}`}
-                  style={{ width: `${(step.count / funnelMax) * 100}%` }}
-                />
-              </div>
-            </div>
-          ))}
+        <p className="eyebrow mb-2">Enrollment funnel (demo cohort, 30 days)</p>
+        <div className="border border-hairline rounded-[2px] bg-surface overflow-hidden">
+          <table className="w-full border-collapse">
+            <thead>
+              <tr className="border-b border-hairline bg-surface-secondary">
+                <th className="py-2 pl-4 pr-4 text-left text-[10px] font-semibold uppercase tracking-wider text-graphite">Stage</th>
+                <th className="py-2 px-4 text-right text-[10px] font-semibold uppercase tracking-wider text-graphite">Count</th>
+                <th className="py-2 pr-4 pl-4 text-right text-[10px] font-semibold uppercase tracking-wider text-graphite">Conversion</th>
+              </tr>
+            </thead>
+            <tbody>
+              {FUNNEL_STEPS.map((step, i) => (
+                <tr key={step.name} className="border-b border-hairline last:border-b-0">
+                  <td className="py-2 pl-4 pr-4">
+                    <span className="text-[13px] text-ink">{step.name}</span>
+                    <div className="mt-1 h-[3px] w-full bg-paper">
+                      <div
+                        className={i === FUNNEL_STEPS.length - 1 ? "h-full bg-ink" : "h-full bg-graphite"}
+                        style={{ width: `${(step.count / funnelMax) * 100}%` }}
+                      />
+                    </div>
+                  </td>
+                  <td className="py-2 px-4 text-right text-[13px] font-semibold tabular-nums text-ink align-top whitespace-nowrap">{step.count.toLocaleString()}</td>
+                  <td className="py-2 pr-4 pl-4 text-right text-[12px] tabular-nums text-muted align-top whitespace-nowrap">{step.pct ?? "—"}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
         <p className="text-[11px] text-graphite mt-2">Conversion % relative to intake (1,240 applicants).</p>
       </section>
 
-      {/* Sample queue preview */}
+      {/* Sample queue preview — institutional table */}
       <section aria-label="Sample navigator queue">
-        <div className="flex items-baseline justify-between gap-3 mb-4 flex-wrap">
+        <div className="flex items-baseline justify-between gap-3 mb-2 flex-wrap">
           <p className="eyebrow">What navigators see · sample queue</p>
           <Link href="/cbo-preview?section=applications" className="text-[12px] text-pine hover:underline">
             See full applications view →
           </Link>
         </div>
-        <div className="bg-surface border border-hairline rounded-[4px] overflow-hidden">
-          {[
-            { id: "demo-pkt-003-jasmine", shortId: "JASMINE", name: "Jasmine T.", county: "Los Angeles", status: "Needs Documents",      risk: "Medium risk", riskBg: "bg-warning", time: "2h ago" },
-            { id: "demo-pkt-002-carlos",  shortId: "CARLOS",  name: "Carlos R.", county: "Fresno",       status: "In Navigator Review", risk: "Medium risk", riskBg: "bg-warning", time: "5h ago" },
-            { id: "demo-pkt-001-maria",   shortId: "MARIA",   name: "Maria G.",  county: "Alameda",      status: "Ready for Handoff",   risk: "Low risk",    riskBg: "bg-pine",    time: "1d ago" },
-          ].map((p, i) => (
-            <QueueRow key={p.id} {...p} border={i > 0} />
-          ))}
+        <div className="border border-hairline rounded-[2px] bg-surface overflow-hidden">
+          <table className="w-full border-collapse">
+            <thead>
+              <tr className="border-b border-hairline bg-surface-secondary">
+                <th className="py-2 pl-4 pr-4 text-left text-[10px] font-semibold uppercase tracking-wider text-graphite">Applicant</th>
+                <th className="py-2 px-4 text-left text-[10px] font-semibold uppercase tracking-wider text-graphite">County</th>
+                <th className="py-2 px-4 text-left text-[10px] font-semibold uppercase tracking-wider text-graphite">Status</th>
+                <th className="py-2 px-4 text-left text-[10px] font-semibold uppercase tracking-wider text-graphite">Risk</th>
+                <th className="py-2 pr-4 pl-4 text-right text-[10px] font-semibold uppercase tracking-wider text-graphite">Updated</th>
+              </tr>
+            </thead>
+            <tbody>
+              {SAMPLE_QUEUE.map((p) => <QueueTableRow key={p.id} {...p} />)}
+            </tbody>
+          </table>
         </div>
-        <p className="text-[11px] text-graphite mt-3">Sample data — synthetic packets. No real applicant information is shown.</p>
+        <p className="text-[11px] text-graphite mt-2">Sample data — synthetic packets. No real applicant information is shown.</p>
       </section>
 
-      {/* Value props */}
+      {/* Value props — divided typographic grid, no card chrome */}
       <section aria-label="Value propositions">
-        <p className="eyebrow mb-4">Why CBOs license Civica</p>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <p className="eyebrow mb-2">Why CBOs license Civica</p>
+        <div className="border border-hairline rounded-[2px] bg-surface grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-hairline">
           {[
             { eyebrow: "Penalty avoidance",  headline: "Built to stay under the §10105 line",   body: `California's SNAP payment-error rate is ${CA_BASELINE_PER}% (USDA FNS-380, FY2024). Civica's structured intake catches eligibility errors before submission; the error model projects ${PROJECTED_PER_AT_FULL_ENGAGEMENT}% at full engagement. A projection from the engine, not yet a measured cohort.` },
             { eyebrow: "Productivity",        headline: "3× more households per navigator",      body: "AI-assisted Q&A drops intake from ~45 min to ~12 min per applicant. One navigator supports 23 enrollments/month with Civica vs 7 with manual forms." },
             { eyebrow: "Audit-ready",          headline: "CCPA + OBBBA guardrails out of the box", body: "Consent logging, data retention windows, encryption at rest, role-based access. Configured for California; OBBBA work-requirement updates auto-applied." },
           ].map((vp) => (
-            <div key={vp.headline} className="bg-surface border border-hairline rounded-[4px] p-6 flex flex-col">
-              <p className="eyebrow mb-2">{vp.eyebrow}</p>
-              <p className="text-[17px] font-semibold text-ink leading-snug tracking-tight">{vp.headline}</p>
-              <p className="text-[13px] text-graphite mt-3 leading-relaxed">{vp.body}</p>
+            <div key={vp.headline} className="px-5 py-5 flex flex-col">
+              <p className="text-[10px] font-semibold uppercase tracking-wider text-graphite mb-2">{vp.eyebrow}</p>
+              <p className="text-[15px] font-semibold text-ink leading-snug">{vp.headline}</p>
+              <p className="text-[12px] text-graphite mt-2 leading-relaxed">{vp.body}</p>
             </div>
           ))}
         </div>
@@ -325,134 +345,194 @@ function OverviewSection() {
 
 function ApplicationsSection() {
   const total = DEMO_QUEUE.reduce((s, b) => s + (b.rows.length || b.count), 0);
+  const summary = DEMO_QUEUE.map((b) => ({ label: b.bucketLabel, count: b.rows.length || b.count }));
   return (
     <div className="space-y-8">
       {/* Real engine output — the proof this isn't a mockup */}
       <EngineHouseholdsPanel />
 
-      <div className="border-t border-hairline pt-6 space-y-5">
-      <p className="eyebrow">Navigator pipeline · sample workflow</p>
-      {/* Stat chips */}
-      <div className="flex items-center gap-3 flex-wrap">
-        {DEMO_QUEUE.map((bucket) => {
-          const count = bucket.rows.length || bucket.count;
-          return (
-            <div key={bucket.bucket} className="bg-surface border border-hairline rounded-[4px] px-4 py-2.5 flex items-center gap-2">
-              <span className="text-[13px] font-semibold text-ink tabular-nums">{count}</span>
-              <span className="text-[12px] text-graphite">{bucket.bucketLabel}</span>
-            </div>
-          );
-        })}
-        <div className="bg-surface border border-hairline rounded-[4px] px-4 py-2.5">
-          <span className="text-[12px] text-graphite">Active total: </span>
-          <span className="text-[13px] font-semibold text-ink tabular-nums">{total}</span>
-        </div>
-      </div>
+      <div className="border-t border-hairline pt-6 space-y-3">
+        <p className="eyebrow">Navigator pipeline · sample workflow</p>
 
-      {/* Buckets */}
-      {DEMO_QUEUE.map((bucket) => {
-        const count = bucket.rows.length || (bucket as { count?: number }).count || 0;
-        if (count === 0) return null;
-        return (
-          <section key={bucket.bucket} aria-label={bucket.bucketLabel}>
-            <div className="flex items-center gap-2 mb-3">
-              <span className="w-2.5 h-5 rounded-sm bg-hairline" />
-              <h2 className="text-[14px] font-bold text-ink">{bucket.bucketLabel}</h2>
-              <span className="text-[13px] text-muted tabular-nums">{count}</span>
-            </div>
-            <div className="bg-surface border border-hairline rounded-[4px] overflow-hidden">
-              {bucket.rows.length > 0 ? (
-                bucket.rows.map((p, i) => <QueueRow key={p.id} {...p} border={i > 0} />)
-              ) : (
-                <div className="px-5 py-4 text-[13px] text-muted italic">
-                  {bucket.count} completed applications in the last 90 days.
-                </div>
-              )}
-            </div>
-          </section>
-        );
-      })}
-      <p className="text-[11px] text-graphite">Sample pipeline — synthetic packets illustrating the navigator workflow. No real applicant information is shown.</p>
+        {/* Summary strip — counts as text, divided by rules, no card chrome */}
+        <div className="flex items-center flex-wrap gap-x-5 gap-y-1 text-[12px]">
+          {summary.map((s) => (
+            <span key={s.label} className="text-graphite">
+              {s.label} <span className="font-semibold text-ink tabular-nums">{s.count}</span>
+            </span>
+          ))}
+          <span className="text-muted">·</span>
+          <span className="text-graphite">
+            Active total <span className="font-semibold text-ink tabular-nums">{total}</span>
+          </span>
+        </div>
+
+        {/* One dense table, grouped by status. Hairline rules, text-only risk, no pills. */}
+        <div className="border border-hairline rounded-[2px] bg-surface overflow-hidden">
+          <table className="w-full border-collapse">
+            <thead>
+              <tr className="border-b border-hairline bg-surface-secondary">
+                <th className="py-2 pl-4 pr-4 text-left text-[10px] font-semibold uppercase tracking-wider text-graphite">Applicant</th>
+                <th className="py-2 px-4 text-left text-[10px] font-semibold uppercase tracking-wider text-graphite">County</th>
+                <th className="py-2 px-4 text-left text-[10px] font-semibold uppercase tracking-wider text-graphite">Status</th>
+                <th className="py-2 px-4 text-left text-[10px] font-semibold uppercase tracking-wider text-graphite">Risk</th>
+                <th className="py-2 pr-4 pl-4 text-right text-[10px] font-semibold uppercase tracking-wider text-graphite">Updated</th>
+              </tr>
+            </thead>
+            <tbody>
+              {DEMO_QUEUE.map((bucket) => {
+                const count = bucket.rows.length || bucket.count;
+                if (count === 0) return null;
+                return (
+                  <Fragment key={bucket.bucket}>
+                    <tr className="border-b border-hairline bg-paper">
+                      <td colSpan={5} className="py-1.5 px-4">
+                        <span className="text-[11px] font-semibold uppercase tracking-wider text-graphite">{bucket.bucketLabel}</span>
+                        <span className="ml-2 text-[11px] text-graphite tabular-nums">{count}</span>
+                      </td>
+                    </tr>
+                    {bucket.rows.length > 0 ? (
+                      bucket.rows.map((p) => <QueueTableRow key={p.id} {...p} />)
+                    ) : (
+                      <tr className="border-b border-hairline">
+                        <td colSpan={5} className="py-2.5 px-4 text-[12px] text-muted italic">
+                          {bucket.count} completed applications in the last 90 days.
+                        </td>
+                      </tr>
+                    )}
+                  </Fragment>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+        <p className="text-[11px] text-graphite">Sample pipeline — synthetic packets illustrating the navigator workflow. No real applicant information is shown.</p>
       </div>
     </div>
   );
 }
 
+/** Institutional pipeline row: plain text, text-only risk (HIGH=brick), no badge/pill. */
+function QueueTableRow({
+  id, shortId, name, county, status, risk, time,
+}: {
+  id: string; shortId: string; name: string; county: string;
+  status: string; risk: string; riskBg?: string; time: string;
+}) {
+  const riskClass =
+    risk === "High risk" ? "text-brick font-semibold" : risk === "Medium risk" ? "text-ink" : "text-muted";
+  const riskLabel = risk === "High risk" ? "HIGH" : risk === "Medium risk" ? "MED" : "LOW";
+  return (
+    <tr className="border-b border-hairline last:border-b-0 hover:bg-paper transition-colors">
+      <td className="py-2 pl-4 pr-4">
+        <Link href={`/packets/${id}`} className="text-[13px] font-semibold text-ink hover:text-pine">
+          {name}
+        </Link>
+        <span className="ml-2 text-[11px] text-graphite font-mono tabular-nums">{shortId}</span>
+      </td>
+      <td className="py-2 px-4 text-[12px] text-graphite whitespace-nowrap">{county}, CA</td>
+      <td className="py-2 px-4 text-[12px] text-ink whitespace-nowrap">{status}</td>
+      <td className={`py-2 px-4 text-[11px] uppercase tracking-wider tabular-nums whitespace-nowrap ${riskClass}`}>{riskLabel}</td>
+      <td className="py-2 pr-4 pl-4 text-right text-[12px] text-muted tabular-nums whitespace-nowrap">{time}</td>
+    </tr>
+  );
+}
+
 // ─── Outreach ──────────────────────────────────────────────────────────────────
+
+function OutreachTableShell({ label, count, children }: { label: string; count: string; children: React.ReactNode }) {
+  return (
+    <section aria-label={label}>
+      <div className="flex items-baseline gap-2 mb-2">
+        <p className="eyebrow">{label}</p>
+        <span className="text-[12px] text-muted tabular-nums">{count}</span>
+      </div>
+      <div className="border border-hairline rounded-[2px] bg-surface overflow-hidden">
+        <table className="w-full border-collapse">{children}</table>
+      </div>
+    </section>
+  );
+}
+
+const OUTREACH_TH = "py-2 px-4 text-left text-[10px] font-semibold uppercase tracking-wider text-graphite";
 
 function OutreachSection() {
   return (
     <div className="space-y-6">
-      {/* Applications bucket */}
-      <section aria-label="Stalled applications">
-        <div className="flex items-center justify-between mb-3">
-          <h2 className="text-[14px] font-bold text-ink flex items-center gap-2">
-            <span className="w-2.5 h-5 rounded-sm bg-warning" />
-            Applications
-            <span className="text-[13px] text-muted font-normal">{DEMO_OUTREACH.applications.length} needing follow-up</span>
-          </h2>
-        </div>
-        <div className="bg-surface border border-hairline rounded-[4px] overflow-hidden">
-          {DEMO_OUTREACH.applications.map((row, i) => (
-            <div key={row.name} className={`flex items-center gap-4 px-5 py-3.5 ${i > 0 ? "border-t border-hairline" : ""}`}>
-              <div className={`w-2 h-2 rounded-full shrink-0 ${row.urgency === "high" ? "bg-brick" : "bg-warning"}`} />
-              <div className="flex-1 min-w-0">
-                <p className="text-[14px] font-semibold text-ink">{row.name} <span className="text-[13px] font-normal text-graphite">· {row.county}, CA</span></p>
-                <p className="text-[12px] text-muted mt-0.5">{row.reason}</p>
-              </div>
-              <span className={`text-[11px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-sm ${row.urgency === "high" ? "bg-brick/10 text-brick" : "bg-warning/10 text-warning"}`}>
-                {row.urgency === "high" ? "High" : "Medium"}
-              </span>
-            </div>
+      {/* Stalled applications */}
+      <OutreachTableShell label="Applications · needing follow-up" count={`${DEMO_OUTREACH.applications.length}`}>
+        <thead>
+          <tr className="border-b border-hairline bg-surface-secondary">
+            <th className={`${OUTREACH_TH} pl-4`}>Applicant</th>
+            <th className={OUTREACH_TH}>County</th>
+            <th className={OUTREACH_TH}>Reason</th>
+            <th className={`${OUTREACH_TH} text-right pr-4`}>Priority</th>
+          </tr>
+        </thead>
+        <tbody>
+          {DEMO_OUTREACH.applications.map((row) => (
+            <tr key={row.name} className="border-b border-hairline last:border-b-0">
+              <td className="py-2 pl-4 pr-4 text-[13px] font-semibold text-ink whitespace-nowrap">{row.name}</td>
+              <td className="py-2 px-4 text-[12px] text-graphite whitespace-nowrap">{row.county}, CA</td>
+              <td className="py-2 px-4 text-[12px] text-graphite">{row.reason}</td>
+              <td className={`py-2 px-4 pr-4 text-right text-[11px] uppercase tracking-wider whitespace-nowrap ${row.urgency === "high" ? "text-brick font-semibold" : "text-ink"}`}>
+                {row.urgency === "high" ? "HIGH" : "MED"}
+              </td>
+            </tr>
           ))}
-        </div>
-      </section>
+        </tbody>
+      </OutreachTableShell>
 
-      {/* Interview bucket */}
-      <section aria-label="Interview lifecycle">
-        <div className="flex items-center gap-2 mb-3">
-          <span className="w-2.5 h-5 rounded-sm bg-indigo" />
-          <h2 className="text-[14px] font-bold text-ink">Interview</h2>
-          <span className="text-[13px] text-muted">{DEMO_OUTREACH.interview.length} active</span>
-        </div>
-        <div className="bg-surface border border-hairline rounded-[4px] overflow-hidden">
-          {DEMO_OUTREACH.interview.map((row, i) => (
-            <div key={row.name} className={`flex items-center gap-4 px-5 py-3.5 ${i > 0 ? "border-t border-hairline" : ""}`}>
-              <div className={`w-2 h-2 rounded-full shrink-0 ${row.urgency === "high" ? "bg-brick" : row.urgency === "medium" ? "bg-warning" : "bg-pine"}`} />
-              <div className="flex-1 min-w-0">
-                <p className="text-[14px] font-semibold text-ink">{row.name} <span className="text-[13px] font-normal text-graphite">· {row.county}, CA</span></p>
-                <p className="text-[12px] text-muted mt-0.5">{row.status}</p>
-              </div>
-            </div>
+      {/* Interview lifecycle */}
+      <OutreachTableShell label="Interview · active" count={`${DEMO_OUTREACH.interview.length}`}>
+        <thead>
+          <tr className="border-b border-hairline bg-surface-secondary">
+            <th className={`${OUTREACH_TH} pl-4`}>Applicant</th>
+            <th className={OUTREACH_TH}>County</th>
+            <th className={OUTREACH_TH}>Status</th>
+            <th className={`${OUTREACH_TH} text-right pr-4`}>Priority</th>
+          </tr>
+        </thead>
+        <tbody>
+          {DEMO_OUTREACH.interview.map((row) => (
+            <tr key={row.name} className="border-b border-hairline last:border-b-0">
+              <td className="py-2 pl-4 pr-4 text-[13px] font-semibold text-ink whitespace-nowrap">{row.name}</td>
+              <td className="py-2 px-4 text-[12px] text-graphite whitespace-nowrap">{row.county}, CA</td>
+              <td className="py-2 px-4 text-[12px] text-graphite">{row.status}</td>
+              <td className={`py-2 px-4 pr-4 text-right text-[11px] uppercase tracking-wider whitespace-nowrap ${row.urgency === "high" ? "text-brick font-semibold" : row.urgency === "medium" ? "text-ink" : "text-graphite"}`}>
+                {row.urgency === "high" ? "HIGH" : row.urgency === "medium" ? "MED" : "LOW"}
+              </td>
+            </tr>
           ))}
-        </div>
-      </section>
+        </tbody>
+      </OutreachTableShell>
 
-      {/* Recertification bucket */}
-      <section aria-label="Recertification">
-        <div className="flex items-center gap-2 mb-3">
-          <span className="w-2.5 h-5 rounded-sm bg-amber" />
-          <h2 className="text-[14px] font-bold text-ink">Recertification</h2>
-          <span className="text-[13px] text-muted">{DEMO_OUTREACH.recertification.length} households in window</span>
-        </div>
-        <div className="bg-surface border border-hairline rounded-[4px] overflow-hidden">
-          {DEMO_OUTREACH.recertification.map((row, i) => {
+      {/* Recertification */}
+      <OutreachTableShell label="Recertification · in window" count={`${DEMO_OUTREACH.recertification.length}`}>
+        <thead>
+          <tr className="border-b border-hairline bg-surface-secondary">
+            <th className={`${OUTREACH_TH} pl-4`}>Household</th>
+            <th className={OUTREACH_TH}>County</th>
+            <th className={OUTREACH_TH}>Stage</th>
+            <th className={`${OUTREACH_TH} text-right pr-4`}>Due</th>
+          </tr>
+        </thead>
+        <tbody>
+          {DEMO_OUTREACH.recertification.map((row) => {
             const overdue = row.daysLeft < 0;
             return (
-              <div key={row.name} className={`flex items-center gap-4 px-5 py-3.5 ${i > 0 ? "border-t border-hairline" : ""}`}>
-                <div className={`w-2 h-2 rounded-full shrink-0 ${overdue ? "bg-brick" : row.daysLeft <= 14 ? "bg-warning" : "bg-amber"}`} />
-                <div className="flex-1 min-w-0">
-                  <p className="text-[14px] font-semibold text-ink">{row.name} <span className="text-[13px] font-normal text-graphite">· {row.county}, CA</span></p>
-                  <p className="text-[12px] text-muted mt-0.5">{row.stage}</p>
-                </div>
-                <span className={`text-[12px] tabular-nums font-semibold ${overdue ? "text-brick" : row.daysLeft <= 14 ? "text-warning" : "text-amber"}`}>
-                  {overdue ? `${Math.abs(row.daysLeft)}d overdue` : `${row.daysLeft}d left`}
-                </span>
-              </div>
+              <tr key={row.name} className="border-b border-hairline last:border-b-0">
+                <td className="py-2 pl-4 pr-4 text-[13px] font-semibold text-ink whitespace-nowrap">{row.name}</td>
+                <td className="py-2 px-4 text-[12px] text-graphite whitespace-nowrap">{row.county}, CA</td>
+                <td className="py-2 px-4 text-[12px] text-graphite whitespace-nowrap">{row.stage}</td>
+                <td className={`py-2 px-4 pr-4 text-right text-[12px] tabular-nums whitespace-nowrap ${overdue ? "text-brick font-semibold" : "text-muted"}`}>
+                  {overdue ? `${Math.abs(row.daysLeft)}d overdue` : `${row.daysLeft}d`}
+                </td>
+              </tr>
             );
           })}
-        </div>
-      </section>
+        </tbody>
+      </OutreachTableShell>
 
       <p className="text-[11px] text-graphite">Sample data — synthetic outreach queue. No real applicant information is shown.</p>
     </div>
@@ -465,64 +545,86 @@ function RenewalsSection() {
   const maxCount = Math.max(...DEMO_RENEWALS.cadenceRows.map((r) => r.count));
   return (
     <div className="space-y-6">
-      {/* Summary stat strip */}
-      <div className="grid grid-cols-3 gap-4">
-        <div className="bg-surface border border-hairline rounded-[4px] px-5 py-4">
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-brick">Overdue</p>
-          <p className="text-[32px] font-semibold tabular-nums text-brick leading-none mt-1">{DEMO_RENEWALS.overdue}</p>
-          <p className="text-[12px] text-muted mt-1">past cert end date</p>
+      {/* Summary — divided metric row; only Overdue carries the attention signal */}
+      <div className="border border-hairline rounded-[2px] bg-surface grid grid-cols-3 divide-x divide-hairline">
+        <div className="px-5 py-4">
+          <p className="text-[10px] font-semibold uppercase tracking-wider text-graphite">Overdue</p>
+          <p className="text-[28px] font-semibold tabular-nums text-brick leading-none mt-1">{DEMO_RENEWALS.overdue}</p>
+          <p className="text-[11px] text-graphite mt-1">past cert end date</p>
         </div>
-        <div className="bg-surface border border-hairline rounded-[4px] px-5 py-4">
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-warning">Expiring in 30d</p>
-          <p className="text-[32px] font-semibold tabular-nums text-warning leading-none mt-1">{DEMO_RENEWALS.expiring30}</p>
-          <p className="text-[12px] text-muted mt-1">need priority outreach</p>
+        <div className="px-5 py-4">
+          <p className="text-[10px] font-semibold uppercase tracking-wider text-graphite">Expiring in 30d</p>
+          <p className="text-[28px] font-semibold tabular-nums text-ink leading-none mt-1">{DEMO_RENEWALS.expiring30}</p>
+          <p className="text-[11px] text-graphite mt-1">need priority outreach</p>
         </div>
-        <div className="bg-surface border border-hairline rounded-[4px] px-5 py-4">
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-amber">Expiring in 60d</p>
-          <p className="text-[32px] font-semibold tabular-nums text-amber leading-none mt-1">{DEMO_RENEWALS.expiring60}</p>
-          <p className="text-[12px] text-muted mt-1">first notice cadence</p>
+        <div className="px-5 py-4">
+          <p className="text-[10px] font-semibold uppercase tracking-wider text-graphite">Expiring in 60d</p>
+          <p className="text-[28px] font-semibold tabular-nums text-ink leading-none mt-1">{DEMO_RENEWALS.expiring60}</p>
+          <p className="text-[11px] text-graphite mt-1">first notice cadence</p>
         </div>
       </div>
 
-      {/* Cadence breakdown */}
+      {/* Cadence breakdown — table with thin sharp monochrome bars */}
       <section aria-label="Recertification cadence">
-        <h2 className="text-[14px] font-bold text-ink mb-4">Renewal cadence</h2>
-        <div className="bg-surface border border-hairline rounded-[4px] overflow-hidden">
-          {DEMO_RENEWALS.cadenceRows.map((row, i) => (
-            <div key={row.stage} className={`px-5 py-4 ${i > 0 ? "border-t border-hairline" : ""}`}>
-              <div className="flex items-center justify-between mb-2">
-                <div>
-                  <span className="text-[14px] font-semibold text-ink">{row.stage}</span>
-                  <span className="text-[12px] text-muted ml-2">{row.label}</span>
-                </div>
-                <span className="text-[14px] font-semibold tabular-nums text-ink">{row.count}</span>
-              </div>
-              <div className="h-2 bg-paper rounded-full overflow-hidden">
-                <div className={`h-full rounded-full ${row.color}`} style={{ width: `${(row.count / maxCount) * 100}%` }} />
-              </div>
-            </div>
-          ))}
+        <p className="eyebrow mb-2">Renewal cadence</p>
+        <div className="border border-hairline rounded-[2px] bg-surface overflow-hidden">
+          <table className="w-full border-collapse">
+            <thead>
+              <tr className="border-b border-hairline bg-surface-secondary">
+                <th className="py-2 pl-4 pr-4 text-left text-[10px] font-semibold uppercase tracking-wider text-graphite">Stage</th>
+                <th className="py-2 px-4 text-left text-[10px] font-semibold uppercase tracking-wider text-graphite">Action</th>
+                <th className="py-2 pr-4 pl-4 text-right text-[10px] font-semibold uppercase tracking-wider text-graphite">Count</th>
+              </tr>
+            </thead>
+            <tbody>
+              {DEMO_RENEWALS.cadenceRows.map((row) => (
+                <tr key={row.stage} className="border-b border-hairline last:border-b-0">
+                  <td className="py-2 pl-4 pr-4 align-top w-[28%]">
+                    <span className="text-[13px] text-ink whitespace-nowrap">{row.stage}</span>
+                    <div className="mt-1 h-[3px] w-full bg-paper">
+                      <div className={row.stage === "Overdue" ? "h-full bg-brick" : "h-full bg-graphite"} style={{ width: `${(row.count / maxCount) * 100}%` }} />
+                    </div>
+                  </td>
+                  <td className="py-2 px-4 text-[12px] text-graphite align-top">{row.label}</td>
+                  <td className="py-2 pr-4 pl-4 text-right text-[13px] font-semibold tabular-nums text-ink align-top whitespace-nowrap">{row.count}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </section>
 
-      {/* Sample rows */}
+      {/* Sample households — institutional table */}
       <section aria-label="Sample renewal queue">
-        <h2 className="text-[14px] font-bold text-ink mb-3">Sample households</h2>
-        <div className="bg-surface border border-hairline rounded-[4px] overflow-hidden">
-          {DEMO_RENEWALS.sampleRows.map((row, i) => {
-            const overdue = row.daysLeft < 0;
-            return (
-              <div key={row.name} className={`flex items-center gap-5 px-5 py-3.5 ${i > 0 ? "border-t border-hairline" : ""}`}>
-                <div className="flex-1 min-w-0">
-                  <p className="text-[14px] font-semibold text-ink">{row.name} <span className="text-[13px] font-normal text-graphite">· {row.county}, CA</span></p>
-                  <p className="text-[12px] text-muted mt-0.5">Cert end: {row.certEnd} · {row.stage}</p>
-                </div>
-                <span className={`text-[12px] tabular-nums font-semibold ${overdue ? "text-brick" : row.daysLeft <= 14 ? "text-warning" : row.daysLeft <= 30 ? "text-amber" : "text-graphite"}`}>
-                  {overdue ? `${Math.abs(row.daysLeft)}d overdue` : `${row.daysLeft}d remaining`}
-                </span>
-              </div>
-            );
-          })}
+        <p className="eyebrow mb-2">Sample households</p>
+        <div className="border border-hairline rounded-[2px] bg-surface overflow-hidden">
+          <table className="w-full border-collapse">
+            <thead>
+              <tr className="border-b border-hairline bg-surface-secondary">
+                <th className="py-2 pl-4 pr-4 text-left text-[10px] font-semibold uppercase tracking-wider text-graphite">Household</th>
+                <th className="py-2 px-4 text-left text-[10px] font-semibold uppercase tracking-wider text-graphite">County</th>
+                <th className="py-2 px-4 text-left text-[10px] font-semibold uppercase tracking-wider text-graphite">Cert end</th>
+                <th className="py-2 px-4 text-left text-[10px] font-semibold uppercase tracking-wider text-graphite">Stage</th>
+                <th className="py-2 pr-4 pl-4 text-right text-[10px] font-semibold uppercase tracking-wider text-graphite">Due</th>
+              </tr>
+            </thead>
+            <tbody>
+              {DEMO_RENEWALS.sampleRows.map((row) => {
+                const overdue = row.daysLeft < 0;
+                return (
+                  <tr key={row.name} className="border-b border-hairline last:border-b-0">
+                    <td className="py-2 pl-4 pr-4 text-[13px] font-semibold text-ink whitespace-nowrap">{row.name}</td>
+                    <td className="py-2 px-4 text-[12px] text-graphite whitespace-nowrap">{row.county}, CA</td>
+                    <td className="py-2 px-4 text-[12px] text-muted tabular-nums whitespace-nowrap">{row.certEnd}</td>
+                    <td className="py-2 px-4 text-[12px] text-graphite whitespace-nowrap">{row.stage}</td>
+                    <td className={`py-2 pr-4 pl-4 text-right text-[12px] tabular-nums whitespace-nowrap ${overdue ? "text-brick font-semibold" : "text-muted"}`}>
+                      {overdue ? `${Math.abs(row.daysLeft)}d overdue` : `${row.daysLeft}d`}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
         </div>
       </section>
 
@@ -531,41 +633,3 @@ function RenewalsSection() {
   );
 }
 
-// ─── Quality Control ───────────────────────────────────────────────────────────
-
-// ─── Shared sub-components ────────────────────────────────────────────────────
-
-function QueueRow({
-  id, shortId, name, county, status, risk, riskBg, time, border,
-}: {
-  id: string; shortId: string; name: string; county: string;
-  status: string; risk: string; riskBg: string; time: string; border?: boolean;
-}) {
-  return (
-    <Link
-      href={`/packets/${id}`}
-      className={`flex items-center gap-4 px-5 py-4 hover:bg-paper transition-colors ${border ? "border-t border-hairline" : ""}`}
-    >
-      <StatusBadge status={status} />
-      <div className="flex-1 min-w-0">
-        <div className="flex items-baseline gap-2 flex-wrap">
-          <p className="text-[15px] font-semibold text-ink">{name}</p>
-          <p className="text-[13px] text-graphite">{county}, CA</p>
-          <span className="text-[11px] text-graphite font-mono tabular-nums">{shortId}</span>
-        </div>
-        <div className="flex items-center gap-2 mt-1.5">
-          <StatusPill status={status} />
-          {(risk === "Medium risk" || risk === "High risk") && (
-            <span className={`text-[11px] font-semibold uppercase tracking-wider ${risk === "High risk" ? "text-brick" : "text-warning"}`}>
-              {risk}
-            </span>
-          )}
-        </div>
-      </div>
-      <div className="text-right shrink-0">
-        <p className="text-[13px] tabular-nums font-medium text-graphite">{time}</p>
-        <p className="text-[11px] text-graphite uppercase tracking-wider mt-0.5">updated</p>
-      </div>
-    </Link>
-  );
-}

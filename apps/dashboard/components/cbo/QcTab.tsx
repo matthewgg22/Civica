@@ -162,97 +162,110 @@ export default function QcTab() {
         )}
       </section>
 
-      {/* ── Top metrics ─────────────────────────────────────────────────────── */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-surface border border-hairline rounded-[4px] px-5 py-4">
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite">
+      {/* ── Top metrics — divided metric row, no per-card chrome ────────────── */}
+      <div className="border border-hairline rounded-[2px] bg-surface grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-hairline">
+        <div className="px-5 py-4">
+          <p className="text-[10px] font-semibold uppercase tracking-wider text-graphite">
             {t("Payment Error Rate — projected", "Benefit-dollar mistakes — projected")}
             <InfoTip
               align="left"
               label="The share of benefit dollars issued in error — over- or under-payment. USDA's official Quality Control measure. §10105 penalizes states that exceed 105% of the national average error rate. The figure shown is Civica's modeled projection at full engagement, not a measured cohort."
             />
           </p>
-          <p className="text-[36px] font-semibold tabular-nums text-ink leading-none mt-1">{DEMO_QC.per}%</p>
-          <p className="text-[12px] text-pine font-medium mt-1">projected at full engagement vs {CA_BASELINE}% CA baseline (USDA FNS-380)</p>
-          <p className="text-[11px] text-graphite mt-0.5">{t("Targets the §10105 penalty line", "Aims under the federal penalty line")}</p>
+          <p className="text-[28px] font-semibold tabular-nums text-ink leading-none mt-2">{DEMO_QC.per}%</p>
+          <p className="text-[11px] text-graphite mt-1.5">projected at full engagement vs {CA_BASELINE}% CA baseline (USDA FNS-380)</p>
         </div>
-        <div className="bg-surface border border-hairline rounded-[4px] px-5 py-4">
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite">
+        <div className="px-5 py-4">
+          <p className="text-[10px] font-semibold uppercase tracking-wider text-graphite">
             {t("OBBBA Readiness", "New-rules readiness")}
             <InfoTip
               align="left"
               label="Share of work-requirement determinations the FY2026 rules engine handles automatically under the 2025 OBBBA changes — the ABAWD age band and §10108 exemptions. Higher means less manual rule-tracking for your team."
             />
           </p>
-          <p className="text-[36px] font-semibold tabular-nums text-ink leading-none mt-1">{DEMO_QC.obbbaReady}%</p>
-          <p className="text-[12px] text-pine font-medium mt-1">Work-requirement compliance</p>
-          <p className="text-[11px] text-graphite mt-0.5">{t("FY2026 rules engine active", "2026 rules active")}</p>
+          <p className="text-[28px] font-semibold tabular-nums text-ink leading-none mt-2">{DEMO_QC.obbbaReady}%</p>
+          <p className="text-[11px] text-graphite mt-1.5">{t("Work-requirement compliance · FY2026 rules active", "Work rules · 2026 rules active")}</p>
         </div>
-        <div className="bg-surface border border-hairline rounded-[4px] px-5 py-4">
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite">
+        <div className="px-5 py-4">
+          <p className="text-[10px] font-semibold uppercase tracking-wider text-graphite">
             {t("Open QC flags", "Open issues to review")}
             <InfoTip
               align="left"
               label="Issues the engine auto-flagged this week for a navigator to resolve before handoff. This is flagging, not a determination — the household's eligibility is unchanged until a navigator acts."
             />
           </p>
-          <p className="text-[36px] font-semibold tabular-nums text-ink leading-none mt-1">{openCount}</p>
-          <p className="text-[12px] text-graphite mt-1">of {DEMO_QC.recentFlags.length} total this week</p>
-          <p className="text-[11px] text-graphite mt-0.5">Auto-flagged by engine</p>
+          <p className="text-[28px] font-semibold tabular-nums text-ink leading-none mt-2">{openCount}</p>
+          <p className="text-[11px] text-graphite mt-1.5">of {DEMO_QC.recentFlags.length} auto-flagged this week</p>
         </div>
       </div>
 
-      {/* ── Pillar breakdown ────────────────────────────────────────────────── */}
+      {/* ── Pillar breakdown — table with thin monochrome bars ──────────────── */}
       <section aria-label="QC pillars">
-        <h2 className="text-[14px] font-bold text-ink mb-3">
+        <p className="eyebrow mb-2">
           {t("Error by pillar", "Mistakes by category")}
           <InfoTip label="Each pillar is a category USDA scores during Quality Control. Error rate = share of reviewed packets with an issue in that category. Pass rate is the complement." />
-        </h2>
-        <div className="bg-surface border border-hairline rounded-[4px] overflow-hidden">
-          {DEMO_QC.pillars.map((p, i) => (
-            <div key={p.label} className={`px-5 py-4 ${i > 0 ? "border-t border-hairline" : ""}`}>
-              <div className="flex items-center justify-between mb-2">
-                <div>
-                  <span className="text-[14px] font-semibold text-ink">{p.label}</span>
-                  <span className="text-[12px] text-muted ml-2">{t(p.note, p.notePlain)}</span>
-                  <InfoTip label={p.tip} />
-                </div>
-                <span className={`text-[12px] font-semibold tabular-nums ${p.fail > 8 ? "text-warning" : "text-pine"}`}>
-                  {t(`${p.fail}% error rate`, `${p.fail}% had a mistake`)}
-                </span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="flex-1 h-2 bg-paper rounded-full overflow-hidden">
-                  <div className={`h-full rounded-full ${p.fail > 8 ? "bg-warning" : "bg-pine/60"}`} style={{ width: `${p.fail}%` }} />
-                </div>
-                <span className="text-[11px] text-graphite tabular-nums w-16 text-right">{t(`${p.pass}% pass`, `${p.pass}% correct`)}</span>
-              </div>
-            </div>
-          ))}
+        </p>
+        <div className="border border-hairline rounded-[2px] bg-surface overflow-hidden">
+          <table className="w-full border-collapse">
+            <thead>
+              <tr className="border-b border-hairline bg-surface-secondary">
+                <th className="py-2 pl-4 pr-4 text-left text-[10px] font-semibold uppercase tracking-wider text-graphite">Pillar</th>
+                <th className="py-2 px-4 text-right text-[10px] font-semibold uppercase tracking-wider text-graphite">{t("Error", "Mistakes")}</th>
+                <th className="py-2 pr-4 pl-4 text-right text-[10px] font-semibold uppercase tracking-wider text-graphite">{t("Pass", "Correct")}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {DEMO_QC.pillars.map((p) => {
+                const high = p.fail > 8;
+                return (
+                  <tr key={p.label} className="border-b border-hairline last:border-b-0">
+                    <td className="py-2 pl-4 pr-4 align-top w-[55%]">
+                      <span className="text-[13px] font-semibold text-ink">{p.label}</span>
+                      <span className="text-[12px] text-muted ml-2">{t(p.note, p.notePlain)}</span>
+                      <InfoTip label={p.tip} />
+                      <div className="mt-1 h-[3px] w-full bg-paper">
+                        <div className={high ? "h-full bg-brick" : "h-full bg-graphite"} style={{ width: `${p.fail}%` }} />
+                      </div>
+                    </td>
+                    <td className={`py-2 px-4 text-right text-[13px] font-semibold tabular-nums align-top whitespace-nowrap ${high ? "text-brick" : "text-ink"}`}>{p.fail}%</td>
+                    <td className="py-2 pr-4 pl-4 text-right text-[12px] tabular-nums text-muted align-top whitespace-nowrap">{p.pass}%</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
         </div>
       </section>
 
       {/* ── CBO flag-sensitivity control (scaffold) ─────────────────────────── */}
       <FlagSensitivityControl />
 
-      {/* ── Recent flags ────────────────────────────────────────────────────── */}
+      {/* ── Recent flags — institutional table ──────────────────────────────── */}
       <section aria-label="Recent QC flags">
-        <h2 className="text-[14px] font-bold text-ink mb-3">{t("Recent flags", "Recent issues")}</h2>
-        <div className="bg-surface border border-hairline rounded-[4px] overflow-hidden">
-          {DEMO_QC.recentFlags.map((flag, i) => (
-            <div key={flag.id} className={`flex items-start gap-4 px-5 py-3.5 ${i > 0 ? "border-t border-hairline" : ""}`}>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <span className="text-[11px] font-mono text-graphite">{flag.id}</span>
-                  <span className="text-[13px] font-semibold text-ink">{flag.field}</span>
-                </div>
-                <p className="text-[12px] text-muted mt-0.5">{flag.issue}</p>
-              </div>
-              <span className={`text-[11px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-sm shrink-0 ${flag.status === "Open" ? "bg-warning/10 text-warning" : "bg-pine/10 text-pine"}`}>
-                {t(flag.status, flag.status === "Open" ? "Open" : "Fixed")}
-              </span>
-            </div>
-          ))}
+        <p className="eyebrow mb-2">{t("Recent flags", "Recent issues")}</p>
+        <div className="border border-hairline rounded-[2px] bg-surface overflow-hidden">
+          <table className="w-full border-collapse">
+            <thead>
+              <tr className="border-b border-hairline bg-surface-secondary">
+                <th className="py-2 pl-4 pr-4 text-left text-[10px] font-semibold uppercase tracking-wider text-graphite">Flag</th>
+                <th className="py-2 px-4 text-left text-[10px] font-semibold uppercase tracking-wider text-graphite">Field</th>
+                <th className="py-2 px-4 text-left text-[10px] font-semibold uppercase tracking-wider text-graphite">Issue</th>
+                <th className="py-2 pr-4 pl-4 text-right text-[10px] font-semibold uppercase tracking-wider text-graphite">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {DEMO_QC.recentFlags.map((flag) => (
+                <tr key={flag.id} className="border-b border-hairline last:border-b-0">
+                  <td className="py-2 pl-4 pr-4 text-[11px] font-mono text-graphite tabular-nums align-top whitespace-nowrap">{flag.id}</td>
+                  <td className="py-2 px-4 text-[13px] font-semibold text-ink align-top whitespace-nowrap">{flag.field}</td>
+                  <td className="py-2 px-4 text-[12px] text-graphite align-top">{flag.issue}</td>
+                  <td className={`py-2 pr-4 pl-4 text-right text-[11px] font-semibold uppercase tracking-wider align-top whitespace-nowrap ${flag.status === "Open" ? "text-brick" : "text-pine"}`}>
+                    {t(flag.status, flag.status === "Open" ? "Open" : "Fixed")}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </section>
 
