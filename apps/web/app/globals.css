@@ -1281,9 +1281,61 @@ html {
 }
 
 .home-hero {
+  position: relative;
+  overflow: hidden;
   background: var(--civica-pine-surface);
   border-bottom: 1px solid var(--civica-hairline);
   padding: clamp(28px, 4.5vw, 56px) var(--civica-space-xl);
+}
+
+/* ── Hero painting background — treated Van Gogh "Wheatfield with Cypresses".
+   Blurred, gently drifting right-to-left, behind the Civica pine surface.
+   Tunables: --bs-blur, --bs-tint (pine wash), --bs-scrim (left text wash),
+   --bs-drift-dur. Frozen under prefers-reduced-motion. ──────────────────── */
+.hero-art {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+.bs-drift {
+  position: absolute;
+  inset: 0;
+  will-change: transform;
+  animation: bsDrift var(--bs-drift-dur, 44s) ease-in-out infinite alternate;
+}
+.bs-img {
+  position: absolute;
+  inset: -8%; /* overscan so blur/scale never reveal edges */
+  background: url("/hero-painting.jpg") 50% 50% / cover no-repeat;
+  filter: blur(var(--bs-blur, 16px)) saturate(0.92);
+}
+.bs-tint {
+  position: absolute;
+  inset: 0;
+  opacity: var(--bs-tint, 0.34);
+  background: var(--civica-pine-surface);
+}
+.bs-scrim {
+  position: absolute;
+  inset: 0;
+  opacity: var(--bs-scrim, 0.7);
+  background:
+    linear-gradient(100deg,
+      var(--civica-pine-surface) 0%,
+      color-mix(in srgb, var(--civica-pine-surface) 80%, transparent) 24%,
+      transparent 58%),
+    linear-gradient(to bottom,
+      transparent 60%,
+      color-mix(in srgb, var(--civica-pine-surface) 55%, transparent) 100%);
+}
+@keyframes bsDrift {
+  from { transform: scale(1.06) translate(0, 0); }
+  to   { transform: scale(1.12) translate(-5%, -1%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .bs-drift { animation: none; transform: scale(1.06); }
 }
 
 .home-hero__inner,
@@ -1291,6 +1343,12 @@ html {
   width: 100%;
   max-width: 1080px;
   margin: 0 auto;
+}
+
+/* Keep hero content above the painting layer */
+.home-hero__inner {
+  position: relative;
+  z-index: 1;
 }
 
 /* Hero is a two-column composition (text + eligibility card) so it fills the

@@ -62,6 +62,12 @@ export default function WelcomePage() {
 
       {/* Hero — 2-column grid with phone mockup */}
       <section className="home-hero">
+        {/* Treated Van Gogh wheatfield background — blurred, gently drifting */}
+        <div className="hero-art" aria-hidden="true">
+          <div className="bs-drift"><div className="bs-img" /></div>
+          <div className="bs-tint" />
+          <div className="bs-scrim" />
+        </div>
         <div className="home-hero__inner hero__grid">
           <div className="hero__col hero__col--copy">
             <p className="home-hero__eyebrow">{t.home_hero_eyebrow}</p>
