@@ -21,8 +21,13 @@ const WhyCivicaHero = dynamic(() => import("../../components/WhyCivicaHero"), {
 
 export default function WhyCivicaPage() {
   const [locale, setLocale] = useState<Locale>("en");
+  // Render the motion-free StaticGeminiHero on the server and on first paint so
+  // the lines are visible immediately (no blank flash), then upgrade to the
+  // animated scroll hero once mounted on the client.
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     try {
       const saved = window.localStorage.getItem(STORAGE_KEY);
       if (saved && (LOCALES as string[]).includes(saved)) setLocale(saved as Locale);
@@ -68,7 +73,7 @@ export default function WhyCivicaPage() {
       />
 
       <main>
-        <WhyCivicaHero />
+        {mounted ? <WhyCivicaHero /> : <StaticGeminiHero />}
 
         {/* Feature cards */}
         <section className="why-features section">

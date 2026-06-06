@@ -49,8 +49,7 @@ export interface FieldLine {
 
 const COUNT = 26;
 const X_START = 185;
-const X_CONVERGE = 840; // lines funnel to the app here
-const X_TAIL = 980; // then run flat toward the timeline
+const X_CONVERGE = 836; // lines funnel into the app (covered by the phone bezel)
 
 export const GEMINI_FIELD: FieldLine[] = Array.from({ length: COUNT }, (_, i) => {
   const t = i / (COUNT - 1);
@@ -61,14 +60,20 @@ export const GEMINI_FIELD: FieldLine[] = Array.from({ length: COUNT }, (_, i) =>
   const amp = 70 + r2 * 55; // turbulence amplitude 70..125
   const freq = 2 + (i % 4) * 0.6; // a few different wave frequencies
 
-  const xs = [X_START, 320, 455, 590, 720, X_CONVERGE, X_TAIL];
+  // Funnel straight into the app. No flat tail past the convergence (that
+  // overlapping flat segment read as a weird razor-pinch); the phone bezel is
+  // drawn on top, so the bundle visually flows *into* the app.
+  const xs = [X_START, 320, 455, 590, 720, X_CONVERGE];
   const pts = xs.map((x) => {
     const prog = (x - X_START) / (X_CONVERGE - X_START);
     const clamped = Math.max(0, Math.min(1, prog));
     const env = Math.sin(clamped * Math.PI); // 0 at the ends, 1 in the middle
     const baseY = startY + (280 - startY) * clamped;
     const turb = amp * env * Math.sin(prog * Math.PI * freq + phase);
-    return [x, baseY + turb];
+    // Soft bundle at the convergence (±~14px) instead of every line collapsing
+    // onto one exact point, which produced an unnatural sharp pinch.
+    const conv = (r1 - 0.5) * 28 * clamped;
+    return [x, baseY + turb + conv];
   });
 
   return {
