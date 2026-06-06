@@ -187,7 +187,7 @@ function ApplicationRow({ app, border }: { app: QueueApplication; border: boolea
   return (
     <div className={border ? "border-t border-hairline" : ""}>
       <button type="button" onClick={() => setOpen((v) => !v)} aria-expanded={open}
-        className="w-full flex items-center gap-4 px-4 py-2.5 text-left hover:bg-paper transition-colors">
+        className="w-full flex items-center gap-4 px-4 py-1.5 text-left hover:bg-paper transition-colors">
         <span className="text-[11px] text-graphite font-mono tabular-nums tracking-tight shrink-0 w-[92px]">{app.caseId}</span>
         <span className="text-[13px] font-semibold text-ink shrink-0 w-[88px] truncate">{app.name}</span>
         <span className="text-[12px] text-graphite shrink-0 w-[120px] truncate hidden sm:block">{app.county} County</span>
@@ -212,7 +212,7 @@ function ApplicationRow({ app, border }: { app: QueueApplication; border: boolea
       </button>
 
       {open && (
-        <div className="px-4 pb-4 pt-1 bg-paper/60 space-y-5">
+        <div className="px-4 pb-4 pt-2 border-l-2 border-pine/30 ml-4 space-y-3">
           {/* Application responses — editable (ephemeral demo) */}
           <div>
             <div className="flex items-baseline justify-between mb-2">
@@ -227,7 +227,7 @@ function ApplicationRow({ app, border }: { app: QueueApplication; border: boolea
           </div>
 
           {/* Engine determination — REAL output */}
-          <div className="border-t border-hairline pt-4">
+          <div className="border-t border-hairline pt-3">
             <p className="text-[10px] font-semibold uppercase tracking-wider text-graphite mb-1.5">
               Engine determination <span className="text-pine">· live</span>
             </p>
@@ -246,7 +246,7 @@ function ApplicationRow({ app, border }: { app: QueueApplication; border: boolea
           </div>
 
           {/* Verification checklist (engine confirmForVerdict) + workflow flags */}
-          <div className="grid gap-5 md:grid-cols-2 border-t border-hairline pt-4">
+          <div className="grid gap-4 md:grid-cols-2 border-t border-hairline pt-3">
             <div>
               <p className="text-[10px] font-semibold uppercase tracking-wider text-graphite mb-2">
                 Verification needed <span className="text-pine">· engine</span>
@@ -282,7 +282,7 @@ function ApplicationRow({ app, border }: { app: QueueApplication; border: boolea
           </div>
 
           {/* Pipeline + history */}
-          <div className="grid gap-5 md:grid-cols-2 border-t border-hairline pt-4">
+          <div className="grid gap-4 md:grid-cols-2 border-t border-hairline pt-3">
             <div>
               <div className="flex items-baseline justify-between mb-2">
                 <p className="text-[10px] font-semibold uppercase tracking-wider text-graphite">Pipeline</p>
@@ -339,7 +339,7 @@ export default function ApplicationsQueue({ buckets }: { buckets: QueueBucket[] 
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search case ID, name, county, status, answer, or flag…"
           aria-label="Search applications"
-          className="w-full pl-9 pr-3 py-2 text-[13px] bg-surface border border-hairline rounded-[3px] text-ink placeholder:text-muted focus:outline-none focus:border-pine"
+          className="w-full pl-9 pr-3 py-1.5 text-[13px] bg-surface border border-hairline rounded-[2px] text-ink placeholder:text-muted focus:outline-none focus:border-pine"
         />
       </div>
       {q && (
@@ -349,7 +349,7 @@ export default function ApplicationsQueue({ buckets }: { buckets: QueueBucket[] 
       )}
 
       <div className="border border-hairline rounded-[2px] bg-surface overflow-hidden">
-        <div className="flex items-center gap-4 px-4 py-2 bg-surface-secondary border-b border-hairline text-[10px] font-semibold uppercase tracking-wider text-graphite">
+        <div className="flex items-center gap-4 px-4 py-1.5 bg-surface-secondary border-b border-hairline text-[10px] font-semibold uppercase tracking-wider text-graphite">
           <span className="shrink-0 w-[92px]">Case ID</span>
           <span className="shrink-0 w-[88px]">Applicant</span>
           <span className="shrink-0 w-[120px] hidden sm:block">County</span>
@@ -365,7 +365,7 @@ export default function ApplicationsQueue({ buckets }: { buckets: QueueBucket[] 
           if (!hasRows && !bucket.completedCount) return null;
           return (
             <div key={bucket.key}>
-              <div className="flex items-center gap-2 px-4 py-1.5 bg-paper border-b border-hairline">
+              <div className="flex items-center gap-2 px-4 py-1 bg-paper border-b border-hairline">
                 <span className={`w-2 h-2 rounded-sm ${bucket.accent}`} aria-hidden="true" />
                 <span className="text-[11px] font-semibold uppercase tracking-wider text-graphite">{bucket.label}</span>
                 <span className="text-[11px] text-graphite tabular-nums">{hasRows ? bucket.applications.length : bucket.completedCount}</span>

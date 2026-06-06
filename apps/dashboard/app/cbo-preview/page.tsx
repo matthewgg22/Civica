@@ -294,21 +294,21 @@ function ApplicationsSection() {
   const buckets = buildQueueBuckets("CA", new Date());
   const active = buckets.reduce((s, b) => s + b.applications.length, 0);
   return (
-    <div className="space-y-5">
-      {/* Stat chips — bucket counts + active total */}
-      <div className="flex items-center gap-3 flex-wrap">
+    <div className="space-y-4">
+      {/* Metric strip — hairline-divided, label over number (no floating chips) */}
+      <div className="flex items-stretch border border-hairline rounded-[2px] bg-surface divide-x divide-hairline overflow-x-auto">
         {buckets.map((bucket) => {
           const count = bucket.applications.length || bucket.completedCount || 0;
           return (
-            <div key={bucket.key} className="bg-surface border border-hairline rounded-[4px] px-4 py-2.5 flex items-center gap-2">
-              <span className="text-[13px] font-semibold text-ink tabular-nums">{count}</span>
-              <span className="text-[12px] text-graphite">{bucket.label}</span>
+            <div key={bucket.key} className="px-4 py-2 min-w-[108px]">
+              <div className="text-[10px] font-semibold uppercase tracking-wider text-graphite whitespace-nowrap">{bucket.label}</div>
+              <div className="text-[16px] font-semibold tabular-nums text-ink leading-tight mt-0.5">{count}</div>
             </div>
           );
         })}
-        <div className="bg-surface border border-hairline rounded-[4px] px-4 py-2.5">
-          <span className="text-[12px] text-graphite">Active total: </span>
-          <span className="text-[13px] font-semibold text-ink tabular-nums">{active}</span>
+        <div className="px-4 py-2 min-w-[108px]">
+          <div className="text-[10px] font-semibold uppercase tracking-wider text-graphite whitespace-nowrap">Active total</div>
+          <div className="text-[16px] font-semibold tabular-nums text-ink leading-tight mt-0.5">{active}</div>
         </div>
       </div>
 
