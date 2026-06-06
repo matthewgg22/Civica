@@ -9,6 +9,11 @@ Categories used:
 - **Added** — new capability
 - **Changed** — visible behavior change
 
+## [0.2.10.1] - 2026-06-06
+
+### Changed
+- **CBO preview Applications — utility-density pass** — replaced the floating rounded stat-chips with a single hairline-divided metric strip (label over number, tabular), tightened row + section padding, dropped the soft tinted fill on the expanded record in favor of a thin pine accent rail, squared the radius, and compacted the dropdown into a denser field:value record. Palette unchanged — this is an operations-density treatment within the existing design system, so the staff/CBO tool reads like a case-management panel rather than a marketing surface.
+
 ## [0.2.10.0] - 2026-06-06
 
 ### Changed
