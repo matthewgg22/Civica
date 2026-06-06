@@ -9,6 +9,11 @@ Categories used:
 - **Added** — new capability
 - **Changed** — visible behavior change
 
+## [0.2.7.3] - 2026-06-06
+
+### Changed
+- **Root URL redirects to /welcome** — the applicant portal's `/` now 307-redirects to the polished `/welcome` page, so there's one canonical applicant landing instead of an older, separately-maintained marketing page at the root. Temporary redirect — reversible if a distinct marketing page is built later.
+
 ## [0.2.7.2] - 2026-06-06
 
 ### Changed
