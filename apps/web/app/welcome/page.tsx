@@ -144,12 +144,18 @@ export default function WelcomePage() {
             </div>
             <div className="home-buy__col home-buy__col--find">
               <div className="home-find">
-                <span className="home-find__icon" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M12 21s7-5.5 7-11a7 7 0 1 0-14 0c0 5.5 7 11 7 11Z" />
-                    <circle cx="12" cy="10" r="2.5" />
-                  </svg>
-                </span>
+                <div className="home-find__map" aria-hidden="true">
+                  <span className="home-find__pin home-find__pin--food">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a7 7 0 0 0-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 0 0-7-7Z" /><circle cx="12" cy="9" r="2.6" fill="#fff" /></svg>
+                  </span>
+                  <span className="home-find__pin home-find__pin--ebt">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a7 7 0 0 0-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 0 0-7-7Z" /><circle cx="12" cy="9" r="2.6" fill="#fff" /></svg>
+                  </span>
+                  <span className="home-find__pin home-find__pin--meal">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a7 7 0 0 0-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 0 0-7-7Z" /><circle cx="12" cy="9" r="2.6" fill="#fff" /></svg>
+                  </span>
+                  <span className="home-find__you" />
+                </div>
                 <p className="home-find__title">{t.home_findfood_title}</p>
                 <p className="home-find__body">{t.home_findfood_body}</p>
               </div>
