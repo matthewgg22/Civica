@@ -458,9 +458,7 @@ export const welcomeStrings = {
 
     // ─── Home nav tabs ───
     home_nav_what: "What is SNAP",
-    home_nav_how: "How it works",
     home_nav_apply: "Apply now",
-    home_nav_status: "Check status",
     home_nav_why: "Why Civica",
     home_nav_signin: "Sign in",
 
@@ -473,12 +471,10 @@ export const welcomeStrings = {
     // ─── What is SNAP ───
     home_what_title: "What is SNAP?",
     home_what_body: "SNAP is monthly money for groceries, loaded onto a card you use just like a debit card. You might know it by another name — CalFresh in California, EBT, or food stamps — but it's all the same federal program. It's not a loan, and it never has to be paid back.",
-    home_what_qualify: "Could I qualify? Most working households can — a family of four often qualifies up to around $5,360 a month. Your state sets the exact limit, and we check it for you.",
 
     // ─── What you can buy ───
     home_buy_title: "What you can buy with it",
     home_buy_can_label: "Yes — food to bring home",
-    home_buy_cant_label: "No — not these",
     home_buy_can: "Fruits & vegetables|Meat, fish & eggs|Milk, cheese & yogurt|Bread, rice & cereal|Snacks & non-alcoholic drinks|Seeds & plants that grow food",
     home_buy_cant: "Hot or prepared deli food|Alcohol & tobacco|Vitamins & medicine|Soap, diapers & household items|Pet food",
     home_cant_q: "What can't I buy with SNAP?",
@@ -509,20 +505,9 @@ export const welcomeStrings = {
     home_faq_a5: "For most families, no. SNAP isn't counted as a \"public charge,\" and applying for your eligible children doesn't put you at risk. These rules can be specific, so if you're unsure, we'll point you to free, confidential help before you file.",
 
     // ─── App island ───
-    home_app_label: "Get the Civica app",
-    home_app_sub: "Apply and track your SNAP case on your phone.",
     home_app_cta: "Get the app →",
 
     // ─── How it works ───
-    home_how_title: "How it works",
-    home_how_1_title: "Answer a few questions",
-    home_how_1_body: "Civica asks plain-language questions about your household and income. About 10 minutes.",
-    home_how_2_title: "Add your documents",
-    home_how_2_body: "Snap a photo of your ID and a recent pay stub. We tell you exactly what's needed.",
-    home_how_3_title: "A navigator reviews it",
-    home_how_3_body: "A trained navigator checks your application for errors before it goes to the county.",
-    home_how_4_title: "The county decides",
-    home_how_4_body: "Your application is sent to the state. You'll get updates on your status right here.",
   },
   es: {
     welcome_title: "Solicita CalFresh en unos 10 minutos",
@@ -537,9 +522,7 @@ export const welcomeStrings = {
 
     // ─── Pestañas de navegación ───
     home_nav_what: "Qué es SNAP",
-    home_nav_how: "Cómo funciona",
     home_nav_apply: "Solicitar ahora",
-    home_nav_status: "Ver estado",
     home_nav_why: "Por qué Civica",
     home_nav_signin: "Iniciar sesión",
 
@@ -552,12 +535,10 @@ export const welcomeStrings = {
     // ─── Qué es SNAP ───
     home_what_title: "¿Qué es SNAP?",
     home_what_body: "SNAP es dinero mensual para comprar comida, cargado en una tarjeta que usas igual que una de débito. Quizás lo conozcas con otro nombre — CalFresh en California, EBT o estampillas de comida — pero es el mismo programa federal. No es un préstamo y nunca tienes que devolverlo.",
-    home_what_qualify: "¿Podría calificar? La mayoría de los hogares que trabajan sí — una familia de cuatro suele calificar con hasta cerca de $5,360 al mes. Tu estado fija el límite exacto, y nosotros lo revisamos por ti.",
 
     // ─── Qué puedes comprar ───
     home_buy_title: "Qué puedes comprar con SNAP",
     home_buy_can_label: "Sí — comida para llevar a casa",
-    home_buy_cant_label: "No — esto no",
     home_buy_can: "Frutas y verduras|Carne, pescado y huevos|Leche, queso y yogur|Pan, arroz y cereal|Bocadillos y bebidas sin alcohol|Semillas y plantas que dan alimento",
     home_buy_cant: "Comida caliente o preparada|Alcohol y tabaco|Vitaminas y medicinas|Jabón, pañales y artículos del hogar|Comida para mascotas",
     home_cant_q: "¿Qué no puedo comprar con SNAP?",
@@ -588,20 +569,9 @@ export const welcomeStrings = {
     home_faq_a5: "Para la mayoría de las familias, no. SNAP no se cuenta como \"carga pública\", y solicitar para tus hijos elegibles no te pone en riesgo. Estas reglas pueden ser específicas, así que si tienes dudas, te conectamos con ayuda gratuita y confidencial antes de presentar la solicitud.",
 
     // ─── App island ───
-    home_app_label: "Obtén la app de Civica",
-    home_app_sub: "Solicita y sigue tu caso de SNAP desde tu teléfono.",
     home_app_cta: "Obtén la app →",
 
     // ─── Cómo funciona ───
-    home_how_title: "Cómo funciona",
-    home_how_1_title: "Responde unas preguntas",
-    home_how_1_body: "Civica hace preguntas en lenguaje sencillo sobre tu hogar y tus ingresos. Unos 10 minutos.",
-    home_how_2_title: "Agrega tus documentos",
-    home_how_2_body: "Toma una foto de tu identificación y un recibo de pago reciente. Te decimos exactamente qué se necesita.",
-    home_how_3_title: "Un navigator lo revisa",
-    home_how_3_body: "Un navigator capacitado revisa tu solicitud en busca de errores antes de enviarla al condado.",
-    home_how_4_title: "El condado decide",
-    home_how_4_body: "Tu solicitud se envía al estado. Recibirás actualizaciones sobre tu estado aquí mismo.",
   },
   zh: {
     welcome_title: "约 10 分钟即可申请 CalFresh",
@@ -615,9 +585,7 @@ export const welcomeStrings = {
     welcome_signin_link: "登录以继续",
 
     home_nav_what: "什么是 SNAP",
-    home_nav_how: "运作方式",
     home_nav_apply: "立即申请",
-    home_nav_status: "查看状态",
     home_nav_why: "为什么选择 Civica",
     home_nav_signin: "登录",
 
@@ -628,11 +596,9 @@ export const welcomeStrings = {
 
     home_what_title: "什么是 SNAP?",
     home_what_body: "SNAP 是每月用于购买食品的钱,存入一张像借记卡一样使用的卡。它可能有别的名字——在加州叫 CalFresh,也有人叫 EBT 或食品券——但都是同一个联邦项目。它不是贷款,永远不用偿还。",
-    home_what_qualify: "我能符合资格吗?大多数有工作的家庭都可以——一个四口之家通常月收入最高约 $5,360 仍可符合资格。具体限额由你所在的州决定,我们会替你查清楚。",
 
     home_buy_title: "可以用它买什么",
     home_buy_can_label: "可以——带回家的食物",
-    home_buy_cant_label: "不可以——这些不行",
     home_buy_can: "水果和蔬菜|肉、鱼和蛋|牛奶、奶酪和酸奶|面包、米和谷物|零食和无酒精饮料|可种植食物的种子和植物",
     home_buy_cant: "热食或熟食|酒类和烟草|维生素和药品|肥皂、尿布和家居用品|宠物食品",
     home_cant_q: "SNAP 不能买什么?",
@@ -660,19 +626,8 @@ export const welcomeStrings = {
     home_faq_q5: "它会影响我的移民身份吗?",
     home_faq_a5: "对大多数家庭来说,不会。SNAP 不算作“公共负担”,为符合资格的孩子申请也不会让你面临风险。这些规定可能很具体,如果你不确定,我们会在你提交前为你介绍免费、保密的帮助。",
 
-    home_app_label: "获取 Civica 应用",
-    home_app_sub: "在手机上申请并跟踪你的 SNAP 案件。",
     home_app_cta: "获取应用 →",
 
-    home_how_title: "运作方式",
-    home_how_1_title: "回答几个问题",
-    home_how_1_body: "Civica 用通俗的语言询问你的家庭和收入情况。约需 10 分钟。",
-    home_how_2_title: "添加你的文件",
-    home_how_2_body: "拍下你的身份证件和最近的工资单。我们会明确告诉你需要什么。",
-    home_how_3_title: "导航员审核",
-    home_how_3_body: "经过培训的导航员会在申请送交县政府前检查是否有错误。",
-    home_how_4_title: "县政府做出决定",
-    home_how_4_body: "你的申请会送交州政府。你将在这里收到状态更新。",
   },
   vi: {
     welcome_title: "Đăng ký CalFresh trong khoảng 10 phút",
@@ -686,9 +641,7 @@ export const welcomeStrings = {
     welcome_signin_link: "Đăng nhập để tiếp tục",
 
     home_nav_what: "SNAP là gì",
-    home_nav_how: "Cách hoạt động",
     home_nav_apply: "Đăng ký ngay",
-    home_nav_status: "Xem trạng thái",
     home_nav_why: "Vì sao chọn Civica",
     home_nav_signin: "Đăng nhập",
 
@@ -699,11 +652,9 @@ export const welcomeStrings = {
 
     home_what_title: "SNAP là gì?",
     home_what_body: "SNAP là tiền hằng tháng để mua thực phẩm, nạp vào một thẻ bạn dùng như thẻ ghi nợ. Bạn có thể biết nó với tên khác — CalFresh ở California, EBT, hay tem phiếu thực phẩm — nhưng đều là cùng một chương trình liên bang. Đây không phải khoản vay và không bao giờ phải trả lại.",
-    home_what_qualify: "Tôi có đủ điều kiện không? Hầu hết các hộ đi làm đều có thể — một gia đình bốn người thường đủ điều kiện với thu nhập tới khoảng $5,360 mỗi tháng. Tiểu bang của bạn đặt ra hạn mức chính xác, và chúng tôi kiểm tra giúp bạn.",
 
     home_buy_title: "Bạn có thể mua gì bằng SNAP",
     home_buy_can_label: "Được — thực phẩm mang về nhà",
-    home_buy_cant_label: "Không — những thứ này thì không",
     home_buy_can: "Trái cây và rau|Thịt, cá và trứng|Sữa, phô mai và sữa chua|Bánh mì, gạo và ngũ cốc|Đồ ăn vặt và đồ uống không cồn|Hạt giống và cây trồng ra thực phẩm",
     home_buy_cant: "Đồ ăn nóng hoặc chế biến sẵn|Rượu bia và thuốc lá|Vitamin và thuốc men|Xà phòng, tã và đồ gia dụng|Thức ăn cho thú cưng",
     home_cant_q: "Tôi không thể mua gì bằng SNAP?",
@@ -731,19 +682,8 @@ export const welcomeStrings = {
     home_faq_q5: "Nó có ảnh hưởng đến tình trạng di trú của tôi không?",
     home_faq_a5: "Với hầu hết các gia đình, không. SNAP không bị tính là “gánh nặng xã hội” (public charge), và nộp đơn cho con đủ điều kiện không khiến bạn gặp rủi ro. Các quy định này có thể rất cụ thể, nên nếu bạn không chắc, chúng tôi sẽ giới thiệu bạn đến sự trợ giúp miễn phí, bảo mật trước khi bạn nộp.",
 
-    home_app_label: "Tải ứng dụng Civica",
-    home_app_sub: "Đăng ký và theo dõi hồ sơ SNAP của bạn trên điện thoại.",
     home_app_cta: "Tải ứng dụng →",
 
-    home_how_title: "Cách hoạt động",
-    home_how_1_title: "Trả lời vài câu hỏi",
-    home_how_1_body: "Civica hỏi bằng ngôn ngữ dễ hiểu về hộ gia đình và thu nhập của bạn. Khoảng 10 phút.",
-    home_how_2_title: "Thêm giấy tờ của bạn",
-    home_how_2_body: "Chụp ảnh giấy tờ tùy thân và cuống lương gần đây. Chúng tôi cho bạn biết chính xác cần những gì.",
-    home_how_3_title: "Nhân viên hỗ trợ xem xét",
-    home_how_3_body: "Một nhân viên hỗ trợ được đào tạo kiểm tra lỗi trong đơn của bạn trước khi gửi đến quận.",
-    home_how_4_title: "Quận quyết định",
-    home_how_4_body: "Đơn của bạn được gửi đến tiểu bang. Bạn sẽ nhận cập nhật trạng thái ngay tại đây.",
   },
   tl: {
     welcome_title: "Mag-apply para sa CalFresh sa mga 10 minuto",
@@ -757,9 +697,7 @@ export const welcomeStrings = {
     welcome_signin_link: "Mag-sign in para magpatuloy",
 
     home_nav_what: "Ano ang SNAP",
-    home_nav_how: "Paano ito gumagana",
     home_nav_apply: "Mag-apply na",
-    home_nav_status: "Tingnan ang status",
     home_nav_why: "Bakit Civica",
     home_nav_signin: "Mag-sign in",
 
@@ -770,11 +708,9 @@ export const welcomeStrings = {
 
     home_what_title: "Ano ang SNAP?",
     home_what_body: "Ang SNAP ay buwanang pera para sa pagkain, nasa isang card na ginagamit mo na parang debit card. Maaaring kilala mo ito sa ibang pangalan — CalFresh sa California, EBT, o food stamps — pero iisang pederal na programa lang ito. Hindi ito utang at hindi kailangang bayaran kailanman.",
-    home_what_qualify: "Pwede ba akong maging kwalipikado? Karamihan ng mga sambahayang may trabaho ay pwede — ang pamilyang apat ay madalas na kwalipikado hanggang mga $5,360 kada buwan. Ang iyong estado ang nagtatakda ng eksaktong limitasyon, at sinusuri namin ito para sa iyo.",
 
     home_buy_title: "Ano ang pwede mong bilhin gamit ito",
     home_buy_can_label: "Oo — pagkaing iuuwi",
-    home_buy_cant_label: "Hindi — hindi ang mga ito",
     home_buy_can: "Prutas at gulay|Karne, isda at itlog|Gatas, keso at yogurt|Tinapay, bigas at cereal|Meryenda at inuming walang alak|Buto at halamang nagbubunga ng pagkain",
     home_buy_cant: "Mainit o nakahandang pagkain|Alak at tabako|Bitamina at gamot|Sabon, diaper at gamit sa bahay|Pagkain ng alagang hayop",
     home_cant_q: "Ano ang hindi ko mabibili gamit ang SNAP?",
@@ -802,19 +738,8 @@ export const welcomeStrings = {
     home_faq_q5: "Maaapektuhan ba nito ang aking katayuan sa imigrasyon?",
     home_faq_a5: "Para sa karamihan ng pamilya, hindi. Ang SNAP ay hindi itinuturing na “public charge,” at ang pag-apply para sa iyong kwalipikadong mga anak ay hindi naglalagay sa iyo sa panganib. Ang mga patakarang ito ay maaaring tiyak, kaya kung hindi ka sigurado, ituturo namin sa iyo ang libre at kumpidensyal na tulong bago ka mag-file.",
 
-    home_app_label: "Kunin ang Civica app",
-    home_app_sub: "Mag-apply at subaybayan ang iyong SNAP case sa iyong telepono.",
     home_app_cta: "Kunin ang app →",
 
-    home_how_title: "Paano ito gumagana",
-    home_how_1_title: "Sagutin ang ilang tanong",
-    home_how_1_body: "Nagtatanong ang Civica sa simpleng wika tungkol sa iyong sambahayan at kita. Mga 10 minuto.",
-    home_how_2_title: "Idagdag ang iyong mga dokumento",
-    home_how_2_body: "Kunan ng litrato ang iyong ID at kamakailang pay stub. Sasabihin namin sa iyo nang eksakto kung ano ang kailangan.",
-    home_how_3_title: "Sinusuri ito ng navigator",
-    home_how_3_body: "May sanay na navigator na sumusuri sa iyong aplikasyon para sa mga mali bago ito mapunta sa county.",
-    home_how_4_title: "Magdedesisyon ang county",
-    home_how_4_body: "Ipinapadala ang iyong aplikasyon sa estado. Makakakuha ka ng mga update sa status dito mismo.",
   },
 } as const satisfies Record<Locale, Record<string, string>>;
 
