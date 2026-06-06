@@ -9,6 +9,11 @@ Categories used:
 - **Added** — new capability
 - **Changed** — visible behavior change
 
+## [0.2.7.2] - 2026-06-06
+
+### Changed
+- **Wider applicant layout** — the "What is SNAP" explainer (`/welcome`) and the Why Civica feature grid now use the full page width (`min(1280px, 92vw)`) instead of the narrow 720–840px reading column. The "what you can buy" can-list + map row, the income table panel, and the FAQ all widen accordingly; the 3-up Why Civica feature cards go from ~220px to ~390px each. Body paragraphs keep a readable measure.
+
 ## [0.2.7.1] - 2026-06-06
 
 ### Removed
