@@ -9,6 +9,11 @@ Categories used:
 - **Added** — new capability
 - **Changed** — visible behavior change
 
+## [0.2.8.0] - 2026-06-06
+
+### Added
+- **CBO preview — searchable, expandable applications queue** — the navigator pipeline on `/cbo-preview` is now a searchable list (filter by case ID, name, county, status, or flag) with a column header (Case ID · Applicant · County · Status · Completion · Flags · Risk). Each application expands to a dropdown showing the full engine pipeline (8 steps from Eligibility screener → Submitted to county, each marked done / in-progress / pending), a derived completion rate with a progress bar, and the specific flags the engine raised (e.g. "Income verification documents missing", "SSN does not match SSA records"). New client component `ApplicationsQueue.tsx`; synthetic demo data, no real applicant information.
+
 ## [0.2.7.6] - 2026-06-06
 
 ### Changed

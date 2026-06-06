@@ -9,6 +9,7 @@ import StatusBadge from "../../components/StatusBadge";
 import ProductSwitcher from "../../components/ProductSwitcher";
 import { AppDownloadIsland } from "../../components/AppDownloadIsland";
 import QcTab from "../../components/cbo/QcTab";
+import ApplicationsQueue, { type QueueBucket } from "../../components/cbo/ApplicationsQueue";
 
 export const dynamic = "force-dynamic";
 
@@ -18,37 +19,6 @@ function cboPreviewEnabled(): boolean {
 }
 
 // ─── Demo data ────────────────────────────────────────────────────────────────
-
-const DEMO_QUEUE: {
-  bucket: string; bucketLabel: string; accent: string; count: number;
-  rows: { id: string; shortId: string; name: string; county: string; status: string; risk: string; riskBg: string; time: string }[];
-}[] = [
-  {
-    bucket: "needs-attention", bucketLabel: "Needs Attention", accent: "bg-warning", count: 0,
-    rows: [
-      { id: "demo-pkt-003-jasmine", shortId: "CF-2026-0188", name: "Jasmine T.", county: "Los Angeles",   status: "Needs Documents",               risk: "Medium risk", riskBg: "bg-warning", time: "1d ago" },
-      { id: "demo-pkt-elena",       shortId: "CF-2026-0184", name: "Elena V.",   county: "San Francisco", status: "Needs Applicant Clarification", risk: "High risk",   riskBg: "bg-brick",   time: "2d ago" },
-    ],
-  },
-  {
-    bucket: "in-progress", bucketLabel: "In Progress", accent: "bg-indigo", count: 0,
-    rows: [
-      { id: "demo-pkt-002-carlos", shortId: "CF-2026-0203", name: "Carlos R.", county: "Fresno",     status: "In Navigator Review",  risk: "Medium risk", riskBg: "bg-warning", time: "5h ago" },
-      { id: "demo-pkt-sofia",      shortId: "CF-2026-0201", name: "Sofia M.",  county: "Sacramento", status: "Submitted for Review", risk: "Low risk",    riskBg: "bg-pine",    time: "1d ago" },
-      { id: "demo-pkt-marcus",     shortId: "CF-2026-0195", name: "Marcus W.", county: "Oakland",    status: "In Navigator Review",  risk: "Medium risk", riskBg: "bg-warning", time: "3d ago" },
-    ],
-  },
-  {
-    bucket: "ready", bucketLabel: "Ready for Handoff", accent: "bg-teal", count: 0,
-    rows: [
-      { id: "demo-pkt-001-maria", shortId: "CF-2026-0179", name: "Maria G.", county: "Alameda", status: "Ready for Handoff", risk: "Low risk", riskBg: "bg-pine", time: "1d ago" },
-    ],
-  },
-  {
-    bucket: "complete", bucketLabel: "Complete", accent: "bg-pine", count: 36,
-    rows: [],
-  },
-];
 
 const DEMO_OUTREACH = {
   applications: [
@@ -317,51 +287,85 @@ function OverviewSection() {
 
 // ─── Applications ──────────────────────────────────────────────────────────────
 
+// Enriched navigator pipeline: each case carries how far it's progressed through
+// the engine pipeline (completedSteps, of 8) and the flags the engine raised.
+// Synthetic — mirrors the QueueRow demo packets so case IDs stay consistent.
+const APP_QUEUE: QueueBucket[] = [
+  {
+    key: "needs-attention", label: "Needs Attention", accent: "bg-warning",
+    applications: [
+      {
+        id: "demo-pkt-003-jasmine", caseId: "CF-2026-0188", name: "Jasmine T.", county: "Los Angeles",
+        status: "Needs Documents", risk: "Medium risk", updated: "1d ago", completedSteps: 4,
+        flags: ["Income verification documents missing", "Most recent pay stub is older than 30 days"],
+      },
+      {
+        id: "demo-pkt-elena", caseId: "CF-2026-0184", name: "Elena V.", county: "San Francisco",
+        status: "Needs Applicant Clarification", risk: "High risk", updated: "2d ago", completedSteps: 2,
+        flags: ["SSN does not match SSA records", "Reported rent exceeds area norm — verify shelter cost"],
+      },
+    ],
+  },
+  {
+    key: "in-progress", label: "In Progress", accent: "bg-indigo",
+    applications: [
+      {
+        id: "demo-pkt-002-carlos", caseId: "CF-2026-0203", name: "Carlos R.", county: "Fresno",
+        status: "In Navigator Review", risk: "Medium risk", updated: "5h ago", completedSteps: 6,
+        flags: ["Self-employment income — manual review recommended"],
+      },
+      {
+        id: "demo-pkt-sofia", caseId: "CF-2026-0201", name: "Sofia M.", county: "Sacramento",
+        status: "Submitted for Review", risk: "Low risk", updated: "1d ago", completedSteps: 7,
+        flags: [],
+      },
+      {
+        id: "demo-pkt-marcus", caseId: "CF-2026-0195", name: "Marcus W.", county: "Oakland",
+        status: "In Navigator Review", risk: "Medium risk", updated: "3d ago", completedSteps: 6,
+        flags: ["Student exemption applied — verify school enrollment"],
+      },
+    ],
+  },
+  {
+    key: "ready", label: "Ready for Handoff", accent: "bg-teal",
+    applications: [
+      {
+        id: "demo-pkt-001-maria", caseId: "CF-2026-0179", name: "Maria G.", county: "Alameda",
+        status: "Ready for Handoff", risk: "Low risk", updated: "1d ago", completedSteps: 8,
+        flags: [],
+      },
+    ],
+  },
+  {
+    key: "complete", label: "Complete", accent: "bg-pine",
+    applications: [],
+    completedCount: 36,
+  },
+];
+
 function ApplicationsSection() {
-  const total = DEMO_QUEUE.reduce((s, b) => s + (b.rows.length || b.count), 0);
+  const active = APP_QUEUE.reduce((s, b) => s + b.applications.length, 0);
   return (
     <div className="space-y-5">
-      {/* Stat chips */}
+      {/* Stat chips — bucket counts + active total */}
       <div className="flex items-center gap-3 flex-wrap">
-        {DEMO_QUEUE.map((bucket) => {
-          const count = bucket.rows.length || bucket.count;
+        {APP_QUEUE.map((bucket) => {
+          const count = bucket.applications.length || bucket.completedCount || 0;
           return (
-            <div key={bucket.bucket} className="bg-surface border border-hairline rounded-[4px] px-4 py-2.5 flex items-center gap-2">
+            <div key={bucket.key} className="bg-surface border border-hairline rounded-[4px] px-4 py-2.5 flex items-center gap-2">
               <span className="text-[13px] font-semibold text-ink tabular-nums">{count}</span>
-              <span className="text-[12px] text-graphite">{bucket.bucketLabel}</span>
+              <span className="text-[12px] text-graphite">{bucket.label}</span>
             </div>
           );
         })}
         <div className="bg-surface border border-hairline rounded-[4px] px-4 py-2.5">
           <span className="text-[12px] text-graphite">Active total: </span>
-          <span className="text-[13px] font-semibold text-ink tabular-nums">{total}</span>
+          <span className="text-[13px] font-semibold text-ink tabular-nums">{active}</span>
         </div>
       </div>
 
-      {/* Buckets */}
-      {DEMO_QUEUE.map((bucket) => {
-        const count = bucket.rows.length || (bucket as { count?: number }).count || 0;
-        if (count === 0) return null;
-        return (
-          <section key={bucket.bucket} aria-label={bucket.bucketLabel}>
-            <div className="flex items-center gap-2 mb-3">
-              <span className="w-2.5 h-5 rounded-sm bg-hairline" />
-              <h2 className="text-[14px] font-bold text-ink">{bucket.bucketLabel}</h2>
-              <span className="text-[13px] text-muted tabular-nums">{count}</span>
-            </div>
-            <div className="bg-surface border border-hairline rounded-[4px] overflow-hidden">
-              {bucket.rows.length > 0 ? (
-                bucket.rows.map((p, i) => <QueueRow key={p.id} {...p} border={i > 0} />)
-              ) : (
-                <div className="px-5 py-4 text-[13px] text-muted italic">
-                  {bucket.count} completed applications in the last 90 days.
-                </div>
-              )}
-            </div>
-          </section>
-        );
-      })}
-      <p className="text-[11px] text-graphite">Sample data — synthetic packets. No real applicant information is shown.</p>
+      {/* Searchable, expandable pipeline — engine steps, completion %, flags */}
+      <ApplicationsQueue buckets={APP_QUEUE} />
     </div>
   );
 }
