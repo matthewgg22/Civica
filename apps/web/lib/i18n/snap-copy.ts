@@ -461,12 +461,13 @@ export const welcomeStrings = {
     home_nav_how: "How it works",
     home_nav_apply: "Apply now",
     home_nav_status: "Check status",
+    home_nav_why: "Why Civica",
     home_nav_signin: "Sign in",
 
     // ─── Hero ───
-    home_hero_eyebrow: "SNAP · Help buying groceries",
-    home_hero_title: "You may qualify for help buying groceries.",
-    home_hero_body: "SNAP puts money on a card each month to help you buy groceries. Civica walks you through the application in about 10 minutes — and saves your progress, so you can stop and pick up anytime.",
+    home_hero_eyebrow: "CalFresh for California",
+    home_hero_title: "Do you qualify for free groceries?",
+    home_hero_body: "Civica reads California's CalFresh rules and walks you through the application in 10 minutes. No minimum income required.",
     home_hero_secondary: "Sign in to continue",
 
     // ─── What is SNAP ───
@@ -480,6 +481,9 @@ export const welcomeStrings = {
     home_buy_cant_label: "No — not these",
     home_buy_can: "Fruits & vegetables|Meat, fish & eggs|Milk, cheese & yogurt|Bread, rice & cereal|Snacks & non-alcoholic drinks|Seeds & plants that grow food",
     home_buy_cant: "Hot or prepared deli food|Alcohol & tobacco|Vitamins & medicine|Soap, diapers & household items|Pet food",
+    home_cant_q: "What can't I buy with SNAP?",
+    home_findfood_title: "Find food & EBT stores near you",
+    home_findfood_body: "The Civica app maps nearby food banks, free meals, and stores that accept your EBT card.",
 
     // ─── Income guide ───
     home_income_title: "How much can I earn and still qualify?",
@@ -536,12 +540,13 @@ export const welcomeStrings = {
     home_nav_how: "Cómo funciona",
     home_nav_apply: "Solicitar ahora",
     home_nav_status: "Ver estado",
+    home_nav_why: "Por qué Civica",
     home_nav_signin: "Iniciar sesión",
 
     // ─── Hero ───
-    home_hero_eyebrow: "SNAP · Ayuda para comprar comida",
-    home_hero_title: "Es posible que califiques para ayuda con los comestibles.",
-    home_hero_body: "SNAP pone dinero en una tarjeta cada mes para ayudarte a comprar comida. Civica te guía por la solicitud en unos 10 minutos — y guarda tu progreso para que puedas detenerte y continuar cuando quieras.",
+    home_hero_eyebrow: "CalFresh para California",
+    home_hero_title: "¿Calificas para comestibles gratis?",
+    home_hero_body: "Civica lee las reglas de CalFresh de California y te guía por la solicitud en 10 minutos. No se requiere ingreso mínimo.",
     home_hero_secondary: "Inicia sesión para continuar",
 
     // ─── Qué es SNAP ───
@@ -555,6 +560,9 @@ export const welcomeStrings = {
     home_buy_cant_label: "No — esto no",
     home_buy_can: "Frutas y verduras|Carne, pescado y huevos|Leche, queso y yogur|Pan, arroz y cereal|Bocadillos y bebidas sin alcohol|Semillas y plantas que dan alimento",
     home_buy_cant: "Comida caliente o preparada|Alcohol y tabaco|Vitaminas y medicinas|Jabón, pañales y artículos del hogar|Comida para mascotas",
+    home_cant_q: "¿Qué no puedo comprar con SNAP?",
+    home_findfood_title: "Encuentra comida y tiendas EBT cerca de ti",
+    home_findfood_body: "La app de Civica ubica bancos de alimentos, comidas gratis y tiendas que aceptan tu tarjeta EBT cerca de ti.",
 
     // ─── Guía de ingresos ───
     home_income_title: "¿Cuánto puedo ganar y aún calificar?",
@@ -610,11 +618,12 @@ export const welcomeStrings = {
     home_nav_how: "运作方式",
     home_nav_apply: "立即申请",
     home_nav_status: "查看状态",
+    home_nav_why: "为什么选择 Civica",
     home_nav_signin: "登录",
 
-    home_hero_eyebrow: "SNAP · 购买食品的帮助",
-    home_hero_title: "你可能有资格获得购买食品的帮助。",
-    home_hero_body: "SNAP 每月把钱存入一张卡,帮助你购买食品。Civica 在约 10 分钟内引导你完成申请,并保存进度,让你随时可以停下并稍后继续。",
+    home_hero_eyebrow: "加州 CalFresh",
+    home_hero_title: "你有资格获得免费食品吗？",
+    home_hero_body: "Civica 为您解读加州 CalFresh 规则,并在 10 分钟内引导您完成申请。不需要最低收入。",
     home_hero_secondary: "登录以继续",
 
     home_what_title: "什么是 SNAP?",
@@ -626,6 +635,9 @@ export const welcomeStrings = {
     home_buy_cant_label: "不可以——这些不行",
     home_buy_can: "水果和蔬菜|肉、鱼和蛋|牛奶、奶酪和酸奶|面包、米和谷物|零食和无酒精饮料|可种植食物的种子和植物",
     home_buy_cant: "热食或熟食|酒类和烟草|维生素和药品|肥皂、尿布和家居用品|宠物食品",
+    home_cant_q: "SNAP 不能买什么?",
+    home_findfood_title: "查找附近的食品和 EBT 商店",
+    home_findfood_body: "Civica 应用会在地图上显示附近的食物银行、免费餐点,以及接受 EBT 卡的商店。",
 
     home_income_title: "我能挣多少还能符合资格?",
     home_income_intro: "以下数字仅供参考——许多州(包括加州)采用这里显示的较高标准。",
@@ -677,11 +689,12 @@ export const welcomeStrings = {
     home_nav_how: "Cách hoạt động",
     home_nav_apply: "Đăng ký ngay",
     home_nav_status: "Xem trạng thái",
+    home_nav_why: "Vì sao chọn Civica",
     home_nav_signin: "Đăng nhập",
 
-    home_hero_eyebrow: "SNAP · Trợ giúp mua thực phẩm",
-    home_hero_title: "Bạn có thể đủ điều kiện nhận trợ giúp mua thực phẩm.",
-    home_hero_body: "SNAP nạp tiền vào một thẻ mỗi tháng để giúp bạn mua thực phẩm. Civica hướng dẫn bạn qua đơn đăng ký trong khoảng 10 phút và lưu tiến trình để bạn có thể dừng lại và quay lại bất cứ lúc nào.",
+    home_hero_eyebrow: "CalFresh cho California",
+    home_hero_title: "Bạn có đủ điều kiện nhận thực phẩm miễn phí không?",
+    home_hero_body: "Civica đọc các quy tắc CalFresh của California và hướng dẫn bạn qua đơn đăng ký trong 10 phút. Không yêu cầu thu nhập tối thiểu.",
     home_hero_secondary: "Đăng nhập để tiếp tục",
 
     home_what_title: "SNAP là gì?",
@@ -693,6 +706,9 @@ export const welcomeStrings = {
     home_buy_cant_label: "Không — những thứ này thì không",
     home_buy_can: "Trái cây và rau|Thịt, cá và trứng|Sữa, phô mai và sữa chua|Bánh mì, gạo và ngũ cốc|Đồ ăn vặt và đồ uống không cồn|Hạt giống và cây trồng ra thực phẩm",
     home_buy_cant: "Đồ ăn nóng hoặc chế biến sẵn|Rượu bia và thuốc lá|Vitamin và thuốc men|Xà phòng, tã và đồ gia dụng|Thức ăn cho thú cưng",
+    home_cant_q: "Tôi không thể mua gì bằng SNAP?",
+    home_findfood_title: "Tìm thực phẩm và cửa hàng EBT gần bạn",
+    home_findfood_body: "Ứng dụng Civica hiển thị bản đồ các ngân hàng thực phẩm, bữa ăn miễn phí và cửa hàng chấp nhận thẻ EBT gần bạn.",
 
     home_income_title: "Tôi kiếm được bao nhiêu mà vẫn đủ điều kiện?",
     home_income_intro: "Đây là các mốc tham khảo — nhiều tiểu bang, gồm California, dùng mức cao hơn hiển thị bên dưới.",
@@ -744,11 +760,12 @@ export const welcomeStrings = {
     home_nav_how: "Paano ito gumagana",
     home_nav_apply: "Mag-apply na",
     home_nav_status: "Tingnan ang status",
+    home_nav_why: "Bakit Civica",
     home_nav_signin: "Mag-sign in",
 
-    home_hero_eyebrow: "SNAP · Tulong sa pagbili ng pagkain",
-    home_hero_title: "Maaari kang maging kwalipikado para sa tulong sa pagbili ng pagkain.",
-    home_hero_body: "Naglalagay ang SNAP ng pera sa isang card kada buwan para matulungan kang bumili ng pagkain. Ginagabayan ka ng Civica sa aplikasyon sa loob ng mga 10 minuto at sini-save ang iyong progreso para makapagpatuloy ka anumang oras.",
+    home_hero_eyebrow: "CalFresh para sa California",
+    home_hero_title: "Kwalipikado ka ba para sa libreng pagkain?",
+    home_hero_body: "Binabasa ng Civica ang mga patakaran ng CalFresh sa California at ginagabayan ka sa aplikasyon sa loob ng 10 minuto. Hindi kailangan ng minimum na kita.",
     home_hero_secondary: "Mag-sign in para magpatuloy",
 
     home_what_title: "Ano ang SNAP?",
@@ -760,6 +777,9 @@ export const welcomeStrings = {
     home_buy_cant_label: "Hindi — hindi ang mga ito",
     home_buy_can: "Prutas at gulay|Karne, isda at itlog|Gatas, keso at yogurt|Tinapay, bigas at cereal|Meryenda at inuming walang alak|Buto at halamang nagbubunga ng pagkain",
     home_buy_cant: "Mainit o nakahandang pagkain|Alak at tabako|Bitamina at gamot|Sabon, diaper at gamit sa bahay|Pagkain ng alagang hayop",
+    home_cant_q: "Ano ang hindi ko mabibili gamit ang SNAP?",
+    home_findfood_title: "Maghanap ng pagkain at EBT store malapit sa iyo",
+    home_findfood_body: "Ipinapakita ng Civica app ang mga food bank, libreng pagkain, at tindahang tumatanggap ng EBT card na malapit sa iyo.",
 
     home_income_title: "Magkano ang pwede kong kitain at kwalipikado pa rin?",
     home_income_intro: "Mga panimulang gabay lang ito — maraming estado, kasama ang California, ang gumagamit ng mas mataas na antas na ipinapakita rito.",
