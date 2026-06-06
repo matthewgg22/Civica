@@ -9,6 +9,14 @@ Categories used:
 - **Added** — new capability
 - **Changed** — visible behavior change
 
+## [0.2.7.7] - 2026-06-06
+
+### Changed
+- **CBO preview redesigned to a utility-first, institutional register** — all 5 `/cbo-preview` tabs (Overview, Applications, Outreach, Renewals, Quality Control) re-skinned from a colorful card/badge/pill layout to dense, research-desk tables: hairline row rules, right-aligned tabular numerics, sharp 2px corners, and a strict 2-signal color rule (pine = positive, brick = attention) applied as **text only** — no decorative fills, pills, dots, or accent bars. Warm Civica neutrals + Hanken Grotesk retained for brand coherence. New convention documented as DESIGN.md §10 (institutional mode); scoped to cbo-preview, staff surfaces unchanged.
+
+### Removed
+- **VoteNow-era one-off scripts and prompt files removed from repo root** — `clean_ballotpedia_calendar.py`, `issue_brief_system.txt`, `issue_brief_user.txt`, `test_issue_brief_service.py`, and a stray migration `.sql`. The backend `issue_brief_service.py` reads its prompts via `_read_prompt(file, fallback)` and degrades to inline defaults, so removing the root copies is safe (no runtime break).
+
 ## [0.2.7.6] - 2026-06-06
 
 ### Changed
