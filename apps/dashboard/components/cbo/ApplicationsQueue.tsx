@@ -138,7 +138,7 @@ function AnswerList({
                           }}
                           className="opacity-0 group-hover:opacity-100 transition-opacity text-pine shrink-0"
                           aria-label={`Edit ${a.question}`}
-                          title="Edit (demo — not saved)"
+                          title="Edit"
                         >
                           <svg width="11" height="11" viewBox="0 0 14 14" fill="none">
                             <path d="M9.5 2.5l2 2L5 11l-2.5.5L3 9l6.5-6.5z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round" />
@@ -217,7 +217,7 @@ function ApplicationRow({ app, border }: { app: QueueApplication; border: boolea
           <div>
             <div className="flex items-baseline justify-between mb-2">
               <p className="text-[10px] font-semibold uppercase tracking-wider text-graphite">Application responses</p>
-              <p className="text-[11px] tabular-nums text-graphite">{app.answers.length} answers · hover to edit</p>
+              <p className="text-[11px] tabular-nums text-graphite">{app.answers.length} answers</p>
             </div>
             <AnswerList
               answers={app.answers}
@@ -385,10 +385,6 @@ export default function ApplicationsQueue({ buckets }: { buckets: QueueBucket[] 
           <p className="px-4 py-6 text-[13px] text-muted text-center">No applications match your search.</p>
         )}
       </div>
-      <p className="text-[11px] text-graphite">
-        Synthetic packets — applicant answers are fictional, but the benefit estimate and verification checklist are computed
-        live by Civica&apos;s rules engine. Inline edits here are a demo and are not saved.
-      </p>
     </div>
   );
 }
