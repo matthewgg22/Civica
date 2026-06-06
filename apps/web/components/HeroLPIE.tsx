@@ -25,7 +25,6 @@ export function HeroLPIE({ copy }: { copy: Copy }) {
         </div>
 
         <div className="hero__col hero__col--visual" aria-hidden="true">
-          <div className="hero__watermark">$292</div>
           <PhoneMockup />
         </div>
       </div>

@@ -5,6 +5,7 @@ import AppNav from "../../components/AppNav";
 import { LanguagePicker } from "../../components/LanguagePicker";
 import { PhoneMockup } from "../../components/PhoneMockup";
 import { BenefitEstimator } from "../../components/BenefitEstimator";
+import { MaeHelpButton } from "../../components/MaeHelpButton";
 const TESTFLIGHT_URL =
   process.env.NEXT_PUBLIC_TESTFLIGHT_URL ?? "https://testflight.apple.com/";
 import { STORAGE_KEY, LOCALES, type Locale } from "../i18n";
@@ -70,7 +71,21 @@ export default function WelcomePage() {
         </div>
         <div className="home-hero__inner hero__grid">
           <div className="hero__col hero__col--copy">
+            {/* USDA SNAP trust badge */}
+            <a
+              className="usda-badge"
+              href="https://www.fns.usda.gov/snap/supplemental-nutrition-assistance-program"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <svg className="usda-badge__shield" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M12 2L4 6v6c0 5.25 3.5 10.15 8 11.35C16.5 22.15 20 17.25 20 12V6L12 2Z" fill="currentColor" opacity="0.15" stroke="currentColor" strokeWidth="1.5"/>
+                <path d="M9 12l2 2 4-4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+              USDA SNAP — Federal Program
+            </a>
             <p className="home-hero__eyebrow">{t.home_hero_eyebrow}</p>
+            <p className="home-hero__snap-note">Supplemental Nutrition Assistance Program · formerly known as Food Stamps</p>
             <h1 className="home-hero__title">{t.home_hero_title}</h1>
             <p className="home-hero__body">{t.home_hero_body}</p>
             <div className="trust-chips" role="list">
@@ -86,7 +101,6 @@ export default function WelcomePage() {
           </div>
 
           <div className="hero__col hero__col--visual" aria-hidden="true">
-            <div className="hero__watermark">$292</div>
             <PhoneMockup />
           </div>
         </div>
@@ -111,13 +125,13 @@ export default function WelcomePage() {
             <div className="home-buy__col home-buy__col--find">
               <div className="home-find">
                 <div className="home-find__map" aria-hidden="true">
-                  <span className="home-find__pin home-find__pin--food">
+                  <span className="home-find__pin home-find__pin--food" data-label="Grocery store">
                     <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a7 7 0 0 0-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 0 0-7-7Z" /><circle cx="12" cy="9" r="2.6" fill="#fff" /></svg>
                   </span>
-                  <span className="home-find__pin home-find__pin--ebt">
+                  <span className="home-find__pin home-find__pin--ebt" data-label="EBT accepted">
                     <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a7 7 0 0 0-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 0 0-7-7Z" /><circle cx="12" cy="9" r="2.6" fill="#fff" /></svg>
                   </span>
-                  <span className="home-find__pin home-find__pin--meal">
+                  <span className="home-find__pin home-find__pin--meal" data-label="Free meals">
                     <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a7 7 0 0 0-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 0 0-7-7Z" /><circle cx="12" cy="9" r="2.6" fill="#fff" /></svg>
                   </span>
                   <span className="home-find__you" />
@@ -165,6 +179,34 @@ export default function WelcomePage() {
               </details>
             ))}
           </div>
+
+        </div>
+      </section>
+
+      {/* Mae — own section, clearly separated from FAQ */}
+      <section className="home-section home-section--mae">
+        <div className="home-section__inner">
+          <div className="faq-mae-cta">
+            <p className="faq-mae-cta__heading">Any other questions?</p>
+            <p className="faq-mae-cta__body">
+              Ask Mae — Civica&rsquo;s AI guide trained on federal SNAP regulations, real application experiences, and caseworker review.
+            </p>
+            <button
+              type="button"
+              className="faq-mae-cta__btn"
+              onClick={() => (document.querySelector('.mae-fab') as HTMLButtonElement)?.click()}
+            >
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+                <circle cx="7" cy="7" r="6" stroke="currentColor" strokeWidth="1.5"/>
+                <path d="M5 5.5c0-1.1.9-2 2-2s2 .9 2 2c0 .9-.6 1.6-1.5 1.9V8.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                <circle cx="7" cy="10.5" r=".75" fill="currentColor"/>
+              </svg>
+              Ask Mae
+            </button>
+            <p className="faq-mae-cta__disclaimer">
+              Mae&rsquo;s answers are based on federal SNAP citations (7 CFR 273), real application experiences, and caseworker review — but may occasionally be incorrect. Always confirm eligibility with your county office. We flag uncertainty and cite sources where possible.
+            </p>
+          </div>
         </div>
       </section>
 
@@ -180,6 +222,9 @@ export default function WelcomePage() {
       <footer className="home-footer">
         <div className="home-section__inner">© 2026 Civica</div>
       </footer>
+
+      {/* Mae floating help button — visible on all sections */}
+      <MaeHelpButton />
     </div>
   );
 }
