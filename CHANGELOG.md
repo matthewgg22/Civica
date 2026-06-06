@@ -9,6 +9,11 @@ Categories used:
 - **Added** — new capability
 - **Changed** — visible behavior change
 
+## [0.2.7.4] - 2026-06-06
+
+### Added
+- **Privacy Policy footer link + placeholder page** — applicant footers (`/welcome`, `/why-civica`) now show a "Privacy Policy" link alongside the copyright, pointing to a new `/privacy` placeholder page (real policy copy TBD with counsel).
+
 ## [0.2.7.3] - 2026-06-06
 
 ### Changed
