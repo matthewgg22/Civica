@@ -9,7 +9,8 @@ import StatusBadge from "../../components/StatusBadge";
 import ProductSwitcher from "../../components/ProductSwitcher";
 import { AppDownloadIsland } from "../../components/AppDownloadIsland";
 import QcTab from "../../components/cbo/QcTab";
-import ApplicationsQueue, { type QueueBucket } from "../../components/cbo/ApplicationsQueue";
+import ApplicationsQueue from "../../components/cbo/ApplicationsQueue";
+import { buildQueueBuckets } from "../../lib/cbo/demo-pipeline";
 
 export const dynamic = "force-dynamic";
 
@@ -287,166 +288,16 @@ function OverviewSection() {
 
 // ─── Applications ──────────────────────────────────────────────────────────────
 
-// Enriched navigator pipeline: each case carries how far it's progressed through
-// the engine pipeline (completedSteps, of 8) and the flags the engine raised.
-// Synthetic — mirrors the QueueRow demo packets so case IDs stay consistent.
-const APP_QUEUE: QueueBucket[] = [
-  {
-    key: "needs-attention", label: "Needs Attention", accent: "bg-warning",
-    applications: [
-      {
-        id: "demo-pkt-003-jasmine", caseId: "CF-2026-0188", name: "Jasmine T.", county: "Los Angeles",
-        status: "Needs Documents", risk: "Medium risk", updated: "1d ago", completedSteps: 4,
-        flags: ["Income verification documents missing", "Most recent pay stub is older than 30 days"],
-        answers: [
-          { section: "Where you're applying", question: "State", answer: "California" },
-          { section: "Where you're applying", question: "Housing situation", answer: "Stable home" },
-          { section: "Your household", question: "Household size", answer: "4 people" },
-          { section: "Your household", question: "Anyone 18 or under?", answer: "Yes" },
-          { section: "Your household", question: "Children under 14?", answer: "Yes" },
-          { section: "Your household", question: "Anyone 60+ or disabled?", answer: "No" },
-          { section: "Your household", question: "Has a Social Security Number?", answer: "Yes" },
-          { section: "Income", question: "Anyone earning income?", answer: "Yes" },
-          { section: "Income", question: "Gross monthly income", answer: "$3,100" },
-          { section: "Income", question: "Income varies month to month?", answer: "No" },
-          { section: "Monthly expenses", question: "Monthly rent", answer: "$2,050" },
-          { section: "Monthly expenses", question: "Utilities paid separately", answer: "Heat, Electricity, Phone" },
-          { section: "Monthly expenses", question: "Monthly utilities", answer: "$240" },
-          { section: "Monthly expenses", question: "Monthly childcare", answer: "$620" },
-          { section: "Documents", question: "Photo ID", answer: "On hand" },
-          { section: "Documents", question: "Proof of income", answer: "Not provided", flagged: true },
-        ],
-      },
-      {
-        id: "demo-pkt-elena", caseId: "CF-2026-0184", name: "Elena V.", county: "San Francisco",
-        status: "Needs Applicant Clarification", risk: "High risk", updated: "2d ago", completedSteps: 2,
-        flags: ["SSN does not match SSA records", "Reported rent exceeds area norm — verify shelter cost"],
-        answers: [
-          { section: "Where you're applying", question: "State", answer: "California" },
-          { section: "Where you're applying", question: "Housing situation", answer: "Stable home" },
-          { section: "Your household", question: "Household size", answer: "1 person" },
-          { section: "Your household", question: "Anyone 18 or under?", answer: "No" },
-          { section: "Your household", question: "Anyone 60+ or disabled?", answer: "No" },
-          { section: "Your household", question: "Has a Social Security Number?", answer: "Yes — does not match SSA records", flagged: true },
-          { section: "Income", question: "Anyone earning income?", answer: "Yes" },
-          { section: "Income", question: "Gross monthly income", answer: "$1,640" },
-          { section: "Monthly expenses", question: "Monthly rent", answer: "$2,400 — exceeds area norm", flagged: true },
-        ],
-      },
-    ],
-  },
-  {
-    key: "in-progress", label: "In Progress", accent: "bg-indigo",
-    applications: [
-      {
-        id: "demo-pkt-002-carlos", caseId: "CF-2026-0203", name: "Carlos R.", county: "Fresno",
-        status: "In Navigator Review", risk: "Medium risk", updated: "5h ago", completedSteps: 6,
-        flags: ["Self-employment income — manual review recommended"],
-        answers: [
-          { section: "Where you're applying", question: "State", answer: "California" },
-          { section: "Where you're applying", question: "Housing situation", answer: "Stable home" },
-          { section: "Your household", question: "Household size", answer: "2 people" },
-          { section: "Your household", question: "Anyone 18 or under?", answer: "No" },
-          { section: "Your household", question: "Anyone 60+ or disabled?", answer: "No" },
-          { section: "Your household", question: "Has a Social Security Number?", answer: "Yes" },
-          { section: "Income", question: "Anyone earning income?", answer: "Yes" },
-          { section: "Income", question: "Income type", answer: "Self-employment", flagged: true },
-          { section: "Income", question: "Gross monthly income", answer: "$1,980" },
-          { section: "Income", question: "Income varies month to month?", answer: "Yes" },
-          { section: "Monthly expenses", question: "Monthly rent", answer: "$1,320" },
-          { section: "Monthly expenses", question: "Utilities paid separately", answer: "Heat, Electricity" },
-          { section: "Monthly expenses", question: "Monthly utilities", answer: "$160" },
-          { section: "Documents", question: "Photo ID", answer: "On hand" },
-          { section: "Documents", question: "Self-employment ledger", answer: "On hand" },
-        ],
-      },
-      {
-        id: "demo-pkt-sofia", caseId: "CF-2026-0201", name: "Sofia M.", county: "Sacramento",
-        status: "Submitted for Review", risk: "Low risk", updated: "1d ago", completedSteps: 7,
-        flags: [],
-        answers: [
-          { section: "Where you're applying", question: "State", answer: "California" },
-          { section: "Where you're applying", question: "Housing situation", answer: "Stable home" },
-          { section: "Your household", question: "Household size", answer: "2 people" },
-          { section: "Your household", question: "Anyone 60+ or disabled?", answer: "No" },
-          { section: "Your household", question: "Has a Social Security Number?", answer: "Yes" },
-          { section: "Income", question: "Anyone earning income?", answer: "Yes" },
-          { section: "Income", question: "Gross monthly income", answer: "$1,980" },
-          { section: "Monthly expenses", question: "Monthly rent", answer: "$1,320" },
-          { section: "Monthly expenses", question: "Utilities paid separately", answer: "Heat, Electricity" },
-          { section: "Documents", question: "Photo ID", answer: "On hand" },
-          { section: "Documents", question: "Proof of income", answer: "On hand" },
-          { section: "Documents", question: "Lease", answer: "On hand" },
-        ],
-      },
-      {
-        id: "demo-pkt-marcus", caseId: "CF-2026-0195", name: "Marcus W.", county: "Oakland",
-        status: "In Navigator Review", risk: "Medium risk", updated: "3d ago", completedSteps: 6,
-        flags: ["Student exemption applied — verify school enrollment"],
-        answers: [
-          { section: "Where you're applying", question: "State", answer: "California" },
-          { section: "Where you're applying", question: "Housing situation", answer: "Stable home" },
-          { section: "Your household", question: "Household size", answer: "1 person" },
-          { section: "Your household", question: "Anyone 60+ or disabled?", answer: "No" },
-          { section: "Your household", question: "Has a Social Security Number?", answer: "Yes" },
-          { section: "Income", question: "Anyone earning income?", answer: "Yes (part-time)" },
-          { section: "Income", question: "Gross monthly income", answer: "$1,200" },
-          { section: "Student status", question: "Enrolled in higher education?", answer: "Yes" },
-          { section: "Student status", question: "Enrolled at least half-time?", answer: "Yes" },
-          { section: "Student status", question: "Works 20+ hours/week?", answer: "No" },
-          { section: "Student status", question: "In federal/state work-study?", answer: "Yes — verify enrollment", flagged: true },
-          { section: "Monthly expenses", question: "Monthly rent", answer: "$1,100" },
-          { section: "Monthly expenses", question: "Utilities paid separately", answer: "Electricity" },
-          { section: "Documents", question: "Photo ID", answer: "On hand" },
-          { section: "Documents", question: "Student enrollment letter", answer: "Requested" },
-        ],
-      },
-    ],
-  },
-  {
-    key: "ready", label: "Ready for Handoff", accent: "bg-teal",
-    applications: [
-      {
-        id: "demo-pkt-001-maria", caseId: "CF-2026-0179", name: "Maria G.", county: "Alameda",
-        status: "Ready for Handoff", risk: "Low risk", updated: "1d ago", completedSteps: 8,
-        flags: [],
-        answers: [
-          { section: "Where you're applying", question: "State", answer: "California" },
-          { section: "Where you're applying", question: "Housing situation", answer: "Stable home" },
-          { section: "Your household", question: "Household size", answer: "3 people" },
-          { section: "Your household", question: "Anyone 18 or under?", answer: "Yes" },
-          { section: "Your household", question: "Children under 14?", answer: "Yes (ages 6, 9)" },
-          { section: "Your household", question: "Anyone 60+ or disabled?", answer: "No" },
-          { section: "Your household", question: "Has a Social Security Number?", answer: "Yes" },
-          { section: "Income", question: "Anyone earning income?", answer: "Yes" },
-          { section: "Income", question: "Gross monthly income", answer: "$2,840" },
-          { section: "Income", question: "Income varies month to month?", answer: "No" },
-          { section: "Monthly expenses", question: "Monthly rent", answer: "$1,850" },
-          { section: "Monthly expenses", question: "Utilities paid separately", answer: "Heat, Electricity, Phone" },
-          { section: "Monthly expenses", question: "Monthly utilities", answer: "$210" },
-          { section: "Monthly expenses", question: "Monthly childcare", answer: "$480" },
-          { section: "Documents", question: "Photo ID", answer: "On hand" },
-          { section: "Documents", question: "Proof of income", answer: "On hand" },
-          { section: "Documents", question: "Lease", answer: "On hand" },
-          { section: "Documents", question: "Utility bill", answer: "On hand" },
-        ],
-      },
-    ],
-  },
-  {
-    key: "complete", label: "Complete", accent: "bg-pine",
-    applications: [],
-    completedCount: 36,
-  },
-];
 
 function ApplicationsSection() {
-  const active = APP_QUEUE.reduce((s, b) => s + b.applications.length, 0);
+  // Server-side: run each synthetic applicant through the REAL engine.
+  const buckets = buildQueueBuckets("CA", new Date());
+  const active = buckets.reduce((s, b) => s + b.applications.length, 0);
   return (
     <div className="space-y-5">
       {/* Stat chips — bucket counts + active total */}
       <div className="flex items-center gap-3 flex-wrap">
-        {APP_QUEUE.map((bucket) => {
+        {buckets.map((bucket) => {
           const count = bucket.applications.length || bucket.completedCount || 0;
           return (
             <div key={bucket.key} className="bg-surface border border-hairline rounded-[4px] px-4 py-2.5 flex items-center gap-2">
@@ -461,8 +312,8 @@ function ApplicationsSection() {
         </div>
       </div>
 
-      {/* Searchable, expandable pipeline — engine steps, completion %, flags */}
-      <ApplicationsQueue buckets={APP_QUEUE} />
+      {/* Searchable, expandable pipeline — real engine determination, Q&A, history */}
+      <ApplicationsQueue buckets={buckets} />
     </div>
   );
 }
