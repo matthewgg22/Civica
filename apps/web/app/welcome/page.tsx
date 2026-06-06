@@ -3,7 +3,10 @@
 import { useEffect, useState } from "react";
 import AppNav from "../../components/AppNav";
 import { LanguagePicker } from "../../components/LanguagePicker";
-import { AppDownloadIsland } from "../../components/AppDownloadIsland";
+import { PhoneMockup } from "../../components/PhoneMockup";
+import { BenefitEstimator } from "../../components/BenefitEstimator";
+const TESTFLIGHT_URL =
+  process.env.NEXT_PUBLIC_TESTFLIGHT_URL ?? "https://testflight.apple.com/";
 import { STORAGE_KEY, LOCALES, type Locale } from "../i18n";
 import { welcomeStrings } from "../../lib/i18n/snap-copy";
 import {
@@ -12,17 +15,6 @@ import {
   MAX_BENEFIT_ONE_PERSON,
 } from "../../lib/eligibility-guide";
 
-// Applicant portal home — the welcoming first page. Mirrors the iOS entry
-// ("Apply for SNAP" hero + a short explainer). The apply CTA goes straight
-// to the wizard (localStorage draft, no sign-in needed to start), matching
-// iOS "save anytime, no commitment to submit."
-//
-// The "What is SNAP" section is the explainer, structured around the
-// questions real applicants ask: what can I buy, do I earn too much, and
-// why does this feel different everywhere? Income limits and program names
-// vary by state, so the copy stays state-agnostic and frames Civica as the
-// thing that reads YOUR state's rules for you. Figures derive from
-// lib/eligibility-guide.ts (mirrors the engine's federal constants).
 export default function WelcomePage() {
   const [locale, setLocale] = useState<Locale>("en");
 
@@ -41,6 +33,8 @@ export default function WelcomePage() {
   const t = welcomeStrings[locale];
 
   const faqs: [string, string][] = [
+    // "What you can't buy" — moved out of the buy section into the FAQ.
+    [t.home_cant_q, t.home_buy_cant.split("|").join(" · ")],
     [t.home_faq_q1, t.home_faq_a1],
     [t.home_faq_q2, t.home_faq_a2],
     [t.home_faq_q3, t.home_faq_a3],
@@ -52,35 +46,49 @@ export default function WelcomePage() {
     <div className="home">
       <AppNav
         rightSlot={<LanguagePicker locale={locale} onChange={changeLocale} ariaLabel="Choose language" />}
-        signIn={{ label: t.home_nav_signin, href: "/sign-in" }}
         tabs={[
           { label: t.home_nav_what, href: "#what-is-snap" },
-          { label: t.home_nav_status, href: "/status" },
-          { label: t.home_nav_apply, href: "/apply" },
+          { label: t.home_nav_why, href: "/why-civica" },
         ]}
+        primaryCta={{
+          label: t.home_nav_apply,
+          href: "/apply",
+          menu: [
+            { label: t.home_nav_signin, href: "/sign-in" },
+            { label: t.home_app_cta, href: TESTFLIGHT_URL, iconSrc: "/civica-app-icon.png", external: true },
+          ],
+        }}
       />
 
-      {/* Hero — two columns: message + eligibility card */}
+      {/* Hero — 2-column grid with phone mockup */}
       <section className="home-hero">
-        <div className="home-hero__inner">
-          <div className="home-hero__text">
+        {/* Treated Van Gogh wheatfield background — blurred, gently drifting */}
+        <div className="hero-art" aria-hidden="true">
+          <div className="bs-drift"><div className="bs-img" /></div>
+          <div className="bs-tint" />
+          <div className="bs-scrim" />
+        </div>
+        <div className="home-hero__inner hero__grid">
+          <div className="hero__col hero__col--copy">
             <p className="home-hero__eyebrow">{t.home_hero_eyebrow}</p>
             <h1 className="home-hero__title">{t.home_hero_title}</h1>
             <p className="home-hero__body">{t.home_hero_body}</p>
+            <div className="trust-chips" role="list">
+              <span className="trust-chip trust-chip--free" role="listitem">✓ 100% free</span>
+              <span className="trust-chip" role="listitem">✓ No minimum income</span>
+              <span className="trust-chip" role="listitem">✓ USDA-verified</span>
+            </div>
             <div className="home-hero__ctas">
               <a href="/apply" className="btn btn--primary">{t.welcome_cta}</a>
-              <a href="/sign-in" className="btn btn--secondary">{t.home_hero_secondary}</a>
+              <a href="/sign-in" className="btn btn--ghost">{t.home_hero_secondary}</a>
             </div>
+            <BenefitEstimator />
           </div>
-          <aside className="home-hero__card">
-            <p className="home-hero__card-body">{t.home_what_qualify}</p>
-            <ul className="home-hero__card-list">
-              <li className="home-hero__card-item">{t.welcome_trust_1}</li>
-              <li className="home-hero__card-item">{t.welcome_trust_2}</li>
-              <li className="home-hero__card-item">{t.welcome_trust_3}</li>
-            </ul>
-            <a href="/apply" className="home-hero__card-link">{t.welcome_cta}</a>
-          </aside>
+
+          <div className="hero__col hero__col--visual" aria-hidden="true">
+            <div className="hero__watermark">$292</div>
+            <PhoneMockup />
+          </div>
         </div>
       </section>
 
@@ -90,7 +98,6 @@ export default function WelcomePage() {
           <h2 className="home-section__title">{t.home_what_title}</h2>
           <p className="home-section__body">{t.home_what_body}</p>
 
-          {/* What you can / can't buy */}
           <h3 className="home-sub-title">{t.home_buy_title}</h3>
           <div className="home-buy">
             <div className="home-buy__col home-buy__col--can">
@@ -101,17 +108,26 @@ export default function WelcomePage() {
                 ))}
               </ul>
             </div>
-            <div className="home-buy__col home-buy__col--cant">
-              <p className="home-buy__label home-buy__label--cant">{t.home_buy_cant_label}</p>
-              <ul className="home-buy__list">
-                {t.home_buy_cant.split("|").map((item, i) => (
-                  <li key={i} className="home-buy__item home-buy__item--cant">{item}</li>
-                ))}
-              </ul>
+            <div className="home-buy__col home-buy__col--find">
+              <div className="home-find">
+                <div className="home-find__map" aria-hidden="true">
+                  <span className="home-find__pin home-find__pin--food">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a7 7 0 0 0-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 0 0-7-7Z" /><circle cx="12" cy="9" r="2.6" fill="#fff" /></svg>
+                  </span>
+                  <span className="home-find__pin home-find__pin--ebt">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a7 7 0 0 0-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 0 0-7-7Z" /><circle cx="12" cy="9" r="2.6" fill="#fff" /></svg>
+                  </span>
+                  <span className="home-find__pin home-find__pin--meal">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a7 7 0 0 0-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 0 0-7-7Z" /><circle cx="12" cy="9" r="2.6" fill="#fff" /></svg>
+                  </span>
+                  <span className="home-find__you" />
+                </div>
+                <p className="home-find__title">{t.home_findfood_title}</p>
+                <p className="home-find__body">{t.home_findfood_body}</p>
+              </div>
             </div>
           </div>
 
-          {/* Income guide — grouped into one "Could I qualify?" panel */}
           <h3 className="home-sub-title">{t.home_income_title}</h3>
           <p className="home-income__intro">{t.home_income_intro}</p>
           <div className="home-income-panel">
@@ -135,15 +151,11 @@ export default function WelcomePage() {
               </tbody>
             </table>
             <p className="home-income__benefit">
-              {t.home_income_benefit.replace(
-                "{max}",
-                formatGuideUsd(MAX_BENEFIT_ONE_PERSON),
-              )}
+              {t.home_income_benefit.replace("{max}", formatGuideUsd(MAX_BENEFIT_ONE_PERSON))}
             </p>
             <p className="home-income__note">{t.home_income_note}</p>
           </div>
 
-          {/* FAQ — state-rules framing as the spine */}
           <h3 className="home-sub-title">{t.home_faq_title}</h3>
           <div className="home-faq">
             {faqs.map(([q, a], i) => (
@@ -159,15 +171,15 @@ export default function WelcomePage() {
       {/* Closing CTA */}
       <section className="home-section home-section--alt">
         <div className="home-section__inner home-closing">
+          <p className="home-closing__label">Ready to check your eligibility?</p>
           <a href="/apply" className="btn btn--primary">{t.welcome_cta}</a>
+          <p className="home-closing__sub">Takes about 10 minutes · No income minimum · 5 languages</p>
         </div>
       </section>
 
       <footer className="home-footer">
         <div className="home-section__inner">© 2026 Civica</div>
       </footer>
-
-      <AppDownloadIsland label={t.home_app_label} sub={t.home_app_sub} cta={t.home_app_cta} />
     </div>
   );
 }

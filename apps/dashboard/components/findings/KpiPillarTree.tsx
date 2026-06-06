@@ -145,7 +145,7 @@ function PlannedCard({
         <SourceBadge kind="not-collecting" />
       </div>
       <p className="mt-3 text-sm leading-relaxed text-graphite">{description}</p>
-      <p className="mt-3 text-[10px] text-muted">
+      <p className="mt-3 text-[10px] text-graphite">
         <span className="font-semibold uppercase tracking-wider">Unlocks when:</span>{" "}
         {unlock}
       </p>
@@ -467,7 +467,7 @@ export default function KpiPillarTree({ truthPoint }: { truthPoint: KpiTruthPoin
         </div>
 
         {/* Engine metadata — footer line, not a card slot */}
-        <p className="mt-3 text-[11px] text-muted">
+        <p className="mt-3 text-[11px] text-graphite">
           Engine {tp.engineVersion ?? "—"} ·{" "}
           {tp.computedAt
             ? `snapshot ${new Date(tp.computedAt).toISOString().slice(0, 10)}`

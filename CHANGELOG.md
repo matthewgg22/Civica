@@ -9,6 +9,20 @@ Categories used:
 - **Added** — new capability
 - **Changed** — visible behavior change
 
+## [0.2.6.0] - 2026-06-05
+
+### Changed
+- **Staff dashboard utility redesign** — Applications, Outreach, Renewals, and CBO Preview pages now follow a single-color-per-signal rule. Stat cards use one warning accent (Needs Attention only); all others are neutral. Status badge circles are now neutral gray — status information lives in the text pill, not the avatar placeholder. Section header bars, engine KPI banner dots, and risk tier dots are all removed. Risk is text-only (medium/high only; low is silent). Renewals bucket cards no longer use colored left-borders or colored backgrounds. Outreach urgency dots removed; urgency badge text is the only signal per row.
+- **Buddy invite flow** — the "Get help from a navigator" banner in the applicant web app now generates a shareable invite link. Click the button to create a link; copy it to share with a navigator or CBO partner who can then access the application packet with you. Includes multilingual copy (EN/ES/ZH/VI/TL) and a graceful limit-reached state (max 3 active helpers).
+
+### Added
+- **StatefulButton component** — shared loading/confirmed button with inline spinner and double-click guard. Used by the buddy invite flow and the Missing Item Request panel.
+
+## [0.2.5.0] - 2026-06-05
+
+### Changed
+- **Applicant home navigation** — "Apply" is now a dominant button pinned to the top-right of the nav, with a chevron dropdown holding Sign in and the iPhone-app download (Anthropic-style split button, in Civica pine). The floating app-download card that popped up over the page has been retired; the app lives in the dropdown now. The dropdown is a native control, so it works with the keyboard and without JavaScript.
+
 ## [0.2.4.0] - 2026-06-05
 
 ### Changed

@@ -138,8 +138,14 @@ button {
 /* ---- Header ---- */
 
 .site-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
   border-bottom: 1px solid var(--civica-hairline);
   padding: var(--civica-space-lg) 0;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 
 .site-header__inner {
@@ -279,6 +285,20 @@ button {
 .btn--secondary:hover {
   background: rgba(0, 0, 0, 0.03);
   color: var(--civica-ink);
+}
+
+.btn--ghost {
+  background: transparent;
+  color: var(--civica-pine);
+  border-color: transparent;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.btn--ghost:hover {
+  color: var(--civica-pine-pressed);
+  text-decoration: underline;
+  text-underline-offset: 2px;
 }
 
 .btn:disabled {
@@ -1261,9 +1281,61 @@ html {
 }
 
 .home-hero {
+  position: relative;
+  overflow: hidden;
   background: var(--civica-pine-surface);
   border-bottom: 1px solid var(--civica-hairline);
-  padding: clamp(40px, 7vw, 80px) var(--civica-space-xl);
+  padding: clamp(28px, 4.5vw, 56px) var(--civica-space-xl);
+}
+
+/* ── Hero painting background — treated Van Gogh "Wheatfield with Cypresses".
+   Blurred, gently drifting right-to-left, behind the Civica pine surface.
+   Tunables: --bs-blur, --bs-tint (pine wash), --bs-scrim (left text wash),
+   --bs-drift-dur. Frozen under prefers-reduced-motion. ──────────────────── */
+.hero-art {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+.bs-drift {
+  position: absolute;
+  inset: 0;
+  will-change: transform;
+  animation: bsDrift var(--bs-drift-dur, 44s) ease-in-out infinite alternate;
+}
+.bs-img {
+  position: absolute;
+  inset: -8%; /* overscan so blur/scale never reveal edges */
+  background: url("/hero-painting.jpg") 50% 50% / cover no-repeat;
+  filter: blur(var(--bs-blur, 8px)) saturate(0.96);
+}
+.bs-tint {
+  position: absolute;
+  inset: 0;
+  opacity: var(--bs-tint, 0.34);
+  background: var(--civica-pine-surface);
+}
+.bs-scrim {
+  position: absolute;
+  inset: 0;
+  opacity: var(--bs-scrim, 0.58);
+  background:
+    linear-gradient(100deg,
+      var(--civica-pine-surface) 0%,
+      color-mix(in srgb, var(--civica-pine-surface) 70%, transparent) 22%,
+      transparent 52%),
+    linear-gradient(to bottom,
+      transparent 60%,
+      color-mix(in srgb, var(--civica-pine-surface) 45%, transparent) 100%);
+}
+@keyframes bsDrift {
+  from { transform: scale(1.06) translate(0, 0); }
+  to   { transform: scale(1.12) translate(-5%, -1%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .bs-drift { animation: none; transform: scale(1.06); }
 }
 
 .home-hero__inner,
@@ -1271,6 +1343,12 @@ html {
   width: 100%;
   max-width: 1080px;
   margin: 0 auto;
+}
+
+/* Keep hero content above the painting layer */
+.home-hero__inner {
+  position: relative;
+  z-index: 1;
 }
 
 /* Hero is a two-column composition (text + eligibility card) so it fills the
@@ -1371,16 +1449,18 @@ html {
   text-transform: uppercase;
   color: var(--civica-pine);
   margin: 0 0 var(--civica-space-md);
+  text-shadow: 0 0 12px rgba(255, 255, 255, 0.9), 0 1px 3px rgba(255, 255, 255, 0.7);
 }
 
 .home-hero__title {
-  font-size: clamp(1.875rem, 4vw, 2.75rem);
+  font-size: clamp(1.875rem, 3.6vw, 2.5rem);
   line-height: 1.1;
   letter-spacing: -0.02em;
   font-weight: 700;
   color: var(--civica-ink);
   margin: 0 0 var(--civica-space-lg);
-  max-width: 18ch;
+  max-width: none;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
 
 .home-hero__body {
@@ -1389,6 +1469,7 @@ html {
   color: var(--civica-ink);
   margin: 0 0 var(--civica-space-xl);
   max-width: 52ch;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
 }
 
 .home-hero__ctas {
@@ -1505,6 +1586,110 @@ html {
 .home-buy__col--cant {
   border-left: 1px solid var(--civica-hairline);
   padding-left: clamp(28px, 4vw, 48px);
+}
+
+/* Find food & EBT nearby — feature callout in the buy section's right slot */
+.home-buy__col--find {
+  display: flex;
+}
+
+/* Polished feature card — a mini map preview that mirrors the app's FindHelp.
+   A real product moment instead of a flat tinted box. */
+.home-find {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  align-self: center;
+  background: var(--civica-surface);
+  border: 1px solid var(--civica-hairline);
+  border-radius: var(--civica-radius-card);
+  padding: 12px;
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.04),
+    0 10px 28px -14px rgba(40, 55, 48, 0.30);
+}
+
+/* Mini-map surface: soft pine wash + faint grid + a couple of "roads" */
+.home-find__map {
+  position: relative;
+  height: 138px;
+  margin-bottom: 14px;
+  border-radius: calc(var(--civica-radius-card) - 1px);
+  overflow: hidden;
+  background:
+    linear-gradient(color-mix(in srgb, var(--civica-pine) 7%, transparent) 1px, transparent 1px) 0 0 / 100% 26px,
+    linear-gradient(90deg, color-mix(in srgb, var(--civica-pine) 7%, transparent) 1px, transparent 1px) 0 0 / 26px 100%,
+    radial-gradient(140px 90px at 50% 66%, color-mix(in srgb, var(--civica-pine) 12%, var(--civica-pine-surface)), var(--civica-pine-surface));
+}
+
+/* faint diagonal roads */
+.home-find__map::before,
+.home-find__map::after {
+  content: "";
+  position: absolute;
+  background: color-mix(in srgb, var(--civica-pine) 9%, transparent);
+}
+.home-find__map::before { left: -10%; right: -10%; top: 44%; height: 7px; transform: rotate(-5deg); }
+.home-find__map::after { top: -10%; bottom: -10%; left: 36%; width: 7px; transform: rotate(7deg); }
+
+/* location pins — pine (food bank), gold (EBT store), teal (free meal) */
+.home-find__pin {
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  transform: translate(-50%, -100%);
+  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.20));
+  z-index: 1;
+}
+.home-find__pin svg { width: 100%; height: 100%; display: block; }
+.home-find__pin--food { left: 24%; top: 40%; color: var(--civica-pine); }
+.home-find__pin--ebt  { left: 70%; top: 32%; color: #C9922A; }
+.home-find__pin--meal { left: 56%; top: 60%; color: var(--civica-teal); }
+
+/* "you are here" dot with a soft pulse */
+.home-find__you {
+  position: absolute;
+  left: 50%;
+  top: 70%;
+  width: 12px;
+  height: 12px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: var(--civica-pine);
+  box-shadow:
+    0 0 0 3px var(--civica-surface),
+    0 0 0 4px color-mix(in srgb, var(--civica-pine) 30%, transparent);
+  z-index: 2;
+}
+.home-find__you::after {
+  content: "";
+  position: absolute;
+  inset: -3px;
+  border-radius: 50%;
+  border: 1.5px solid color-mix(in srgb, var(--civica-pine) 35%, transparent);
+  animation: findPulse 2.6s ease-out infinite;
+}
+@keyframes findPulse {
+  0% { transform: scale(0.7); opacity: 0.85; }
+  100% { transform: scale(2.6); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .home-find__you::after { animation: none; }
+}
+
+.home-find__title {
+  margin: 0 4px var(--civica-space-xs);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--civica-ink);
+  line-height: 1.3;
+}
+
+.home-find__body {
+  margin: 0 4px;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  color: var(--civica-graphite);
 }
 
 .home-buy__label {
@@ -1798,7 +1983,12 @@ html {
 /* ---- App nav (unified bar, mirrors staff AppHeader) ---- */
 
 .app-nav {
-  background: var(--civica-surface);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--civica-hairline);
   padding: 14px var(--civica-space-xl);
   display: flex;
@@ -1875,7 +2065,15 @@ html {
   flex-shrink: 0;
 }
 
-.app-nav__signin {
+/* Primary CTA ("Apply now") + its dropdown of secondary actions, far right.
+   Adopts the Anthropic split-button pattern; styling stays Civica pine. */
+.app-nav__cta-group {
+  display: inline-flex;
+  align-items: stretch;
+  position: relative;
+}
+
+.app-nav__cta {
   display: inline-flex;
   align-items: center;
   min-height: 40px;
@@ -1891,9 +2089,90 @@ html {
   transition: background 120ms ease;
 }
 
-.app-nav__signin:hover {
+.app-nav__cta:hover {
   background: var(--civica-pine-pressed);
   color: #ffffff;
+}
+
+/* Chevron toggle attached to the CTA. When a menu is present the CTA's right
+   edge is squared off so the two read as one split control. */
+.app-nav__cta-group:has(.app-nav__menu) .app-nav__cta {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.app-nav__menu {
+  position: relative;
+}
+
+.app-nav__menu-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 0 var(--civica-space-sm);
+  background: var(--civica-pine);
+  color: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-left: 1px solid rgba(255, 255, 255, 0.25);
+  border-top-right-radius: var(--civica-radius-control);
+  border-bottom-right-radius: var(--civica-radius-control);
+  cursor: pointer;
+  list-style: none;
+  transition: background 120ms ease;
+}
+
+.app-nav__menu-trigger::-webkit-details-marker { display: none; }
+
+.app-nav__menu-trigger:hover {
+  background: var(--civica-pine-pressed);
+}
+
+.app-nav__chevron {
+  font-size: 0.75rem;
+  line-height: 1;
+  transition: transform 120ms ease;
+}
+
+.app-nav__menu[open] .app-nav__chevron {
+  transform: rotate(180deg);
+}
+
+.app-nav__menu-panel {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  min-width: 200px;
+  display: flex;
+  flex-direction: column;
+  padding: 4px;
+  background: var(--civica-surface);
+  border: 1px solid var(--civica-hairline);
+  border-radius: var(--civica-radius-control);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  z-index: 60;
+}
+
+.app-nav__menu-item {
+  display: flex;
+  align-items: center;
+  gap: var(--civica-space-sm);
+  padding: 10px 12px;
+  border-radius: 6px;
+  color: var(--civica-ink);
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.app-nav__menu-item:hover {
+  background: var(--civica-paper);
+}
+
+.app-nav__menu-icon {
+  border-radius: 5px;
+  flex-shrink: 0;
 }
 
 .app-nav__demo {
@@ -2506,212 +2785,6 @@ html {
   font-weight: 500;
 }
 
-/* ---- App download island (fixed bottom-right CTA) ---- */
-
-/* App download island + its collapsed bookmark tab share the bottom-right
-   corner. Both stay mounted; data-attributes drive CSS transitions so the
-   swap is one continuous slide (card out to the edge ⇄ tab in from the edge)
-   instead of a mount/unmount jump. */
-.app-island {
-  position: fixed;
-  bottom: 24px;
-  right: 24px;
-  z-index: 50;
-  width: 240px;
-  background: var(--civica-pine);
-  border-radius: var(--civica-radius-card);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.22), 0 1px 4px rgba(0, 0, 0, 0.08);
-  padding: 14px;
-  opacity: 0;
-  transform: translateY(12px);
-  pointer-events: none;
-  transition: opacity 220ms ease, transform 240ms cubic-bezier(0, 0, 0.2, 1);
-}
-
-.app-island[data-visible="true"] {
-  opacity: 1;
-  transform: translateY(0);
-  pointer-events: auto;
-}
-
-/* Dismissed: slide the whole card off the right edge as the tab takes over. */
-.app-island[data-collapsed="true"] {
-  opacity: 0;
-  transform: translateX(120%);
-  pointer-events: none;
-}
-
-.app-island-tab {
-  position: fixed;
-  right: 0;
-  bottom: 88px;
-  z-index: 50;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 9px 14px 9px 11px;
-  background: var(--civica-pine);
-  color: #fff;
-  border: none;
-  border-radius: var(--civica-radius-card) 0 0 var(--civica-radius-card);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
-  cursor: pointer;
-  font-family: inherit;
-  font-size: 0.8125rem;
-  font-weight: 600;
-  /* Fully tucked off the right edge until dismissed. */
-  transform: translateX(120%);
-  pointer-events: none;
-  transition: transform 240ms cubic-bezier(0, 0, 0.2, 1);
-}
-
-/* Dismissed → tab peeks (icon visible); hover/focus → slides fully out. */
-.app-island-tab[data-shown="true"] {
-  transform: translateX(calc(100% - 46px));
-  pointer-events: auto;
-}
-
-.app-island-tab[data-shown="true"]:hover,
-.app-island-tab[data-shown="true"]:focus-visible {
-  transform: translateX(0);
-  outline: none;
-}
-
-.app-island-tab__icon {
-  border-radius: 6px;
-  flex-shrink: 0;
-}
-
-.app-island-tab__label { white-space: nowrap; }
-
-@media (prefers-reduced-motion: reduce) {
-  .app-island,
-  .app-island-tab { transition: none; }
-}
-
-.app-island__dismiss {
-  position: absolute;
-  top: 0;
-  right: 0;
-  /* 44px touch target via padding; visual ✕ stays small */
-  padding: 13px;
-  background: transparent;
-  border: 0;
-  color: rgba(255, 255, 255, 0.6);
-  font-size: 11px;
-  cursor: pointer;
-  line-height: 1;
-}
-
-.app-island__dismiss:hover {
-  color: #ffffff;
-}
-
-.app-island__header {
-  display: flex;
-  align-items: center;
-  gap: 11px;
-  margin-bottom: 11px;
-  /* leave room for the 44px dismiss tap area top-right */
-  padding-right: 18px;
-}
-
-.app-island__icon {
-  flex-shrink: 0;
-  width: 42px;
-  height: 42px;
-  /* iOS App Store icon look — rounded square, ~22% radius */
-  border-radius: 9px;
-  object-fit: cover;
-  /* lift the tile off the pine: drop shadow + crisp top-highlight edge */
-  box-shadow:
-    0 2px 6px rgba(0, 0, 0, 0.32),
-    inset 0 1px 0 rgba(255, 255, 255, 0.35),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.16);
-}
-
-.app-island__text {
-  flex: 1;
-  min-width: 0;
-}
-
-.app-island__headline {
-  font-size: 0.8125rem;
-  font-weight: 700;
-  line-height: 1.25;
-  letter-spacing: -0.01em;
-  color: #ffffff;
-  margin: 0 0 1px;
-}
-
-.app-island__sub {
-  font-size: 0.6875rem;
-  line-height: 1.35;
-  color: rgba(255, 255, 255, 0.7);
-  margin: 0;
-}
-
-.app-island__btn {
-  display: block;
-  width: 100%;
-  padding: 8px 0;
-  border-radius: var(--civica-radius-control);
-  background: transparent;
-  border: 1.5px solid rgba(255, 255, 255, 0.6);
-  color: #ffffff;
-  font-family: inherit;
-  font-size: 0.75rem;
-  font-weight: 600;
-  text-align: center;
-  text-decoration: none;
-  cursor: pointer;
-  transition: border-color 120ms ease, background 120ms ease;
-}
-
-.app-island__btn:hover {
-  border-color: #ffffff;
-  background: rgba(255, 255, 255, 0.08);
-  color: #ffffff;
-}
-
-/* Mobile: full-width strip, horizontal layout, subtitle hidden */
-@media (max-width: 479px) {
-  .app-island {
-    left: 16px;
-    right: 16px;
-    bottom: 16px;
-    width: auto;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 10px 14px;
-  }
-
-  .app-island__header {
-    flex: 1;
-    margin-bottom: 0;
-    padding-right: 0;
-    min-width: 0;
-  }
-
-  .app-island__sub {
-    display: none;
-  }
-
-  .app-island__btn {
-    width: auto;
-    white-space: nowrap;
-    padding: 8px 12px;
-    flex-shrink: 0;
-  }
-
-  .app-island__dismiss {
-    position: static;
-    padding: 8px 4px 8px 0;
-    order: 3;
-  }
-}
-
 /* ---- Apply shell chrome (header, card, buddy referral, Mae helper) ---- */
 
 .apply-header {
@@ -2970,4 +3043,1399 @@ html {
   color: var(--civica-pine);
   font-weight: 700;
   flex-shrink: 0;
+}
+
+/* ---- Hero redesign: 2-column grid ---- */
+
+.hero__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--civica-space-xxl);
+  align-items: center;
+}
+
+.hero__col--copy {
+  position: relative;
+  z-index: 1;
+}
+
+.hero__col--visual {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  min-height: 380px;
+}
+
+/* $292 watermark — decorative typographic anchor behind the phone */
+.hero__watermark {
+  position: absolute;
+  top: 50%;
+  right: -24px;
+  transform: translateY(-50%);
+  font-size: clamp(80px, 12vw, 160px);
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  color: var(--civica-wheat);
+  opacity: 0.32;
+  pointer-events: none;
+  user-select: none;
+  line-height: 1;
+  z-index: 0;
+}
+
+/* Trust chips row */
+.trust-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--civica-space-sm);
+  margin: var(--civica-space-xl) 0 var(--civica-space-xxl);
+}
+
+.trust-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 12px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: var(--civica-radius-pill);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--civica-pine);
+  background: #ffffff;
+  white-space: nowrap;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+/* "Always free" chip — solid pine fill for emphasis, stays in palette */
+.trust-chip--free {
+  border-color: var(--civica-pine);
+  background: var(--civica-pine);
+  color: #fff;
+  font-weight: 600;
+}
+
+/* Ghost secondary link below CTA */
+.hero__secondary {
+  display: inline-block;
+  margin-top: var(--civica-space-md);
+  font-size: 0.875rem;
+  color: var(--civica-pine);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.hero__secondary:hover {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* Phone mockup — pure CSS illustration */
+/* ---- iphone: iPhone 15 Pro-style phone mockup ---- */
+
+.iphone {
+  position: relative;
+  z-index: 1;
+  width: 220px;
+  flex-shrink: 0;
+  /* Titanium sheen — subtle vertical gradient reads as brushed metal */
+  background: linear-gradient(155deg, #2b2b2d 0%, #161617 48%, #242426 100%);
+  border-radius: 38px;
+  padding: 9px 7px;
+  box-shadow:
+    /* top edge catch-light + bottom edge shade for a machined rim */
+    inset 0 1px 1px rgba(255,255,255,0.14),
+    inset 0 -1px 2px rgba(0,0,0,0.5),
+    /* contact shadow */
+    0 2px 4px rgba(0,0,0,0.28),
+    /* layered ambient — soft and directional, not a flat blur */
+    0 18px 36px -10px rgba(40,55,48,0.30),
+    0 40px 72px -24px rgba(0,0,0,0.40);
+}
+
+/* Side buttons hidden — 4px buttons at this scale only cause visual noise */
+.iphone__btn { display: none; }
+
+/* Screen bezel — radius proportional to outer frame */
+.iphone__bezel {
+  background: #000;
+  border-radius: 31px;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Soft diagonal screen gloss — sells the glass without obscuring content */
+.iphone__bezel::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    118deg,
+    rgba(255,255,255,0.10) 0%,
+    rgba(255,255,255,0.03) 14%,
+    rgba(255,255,255,0) 32%
+  );
+  z-index: 3;
+}
+
+/* Status bar */
+.iphone__statusbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 20px 2px;
+  color: #1a1714;
+  flex-shrink: 0;
+}
+
+.iphone__time {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+}
+
+.iphone__status-icons {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #1a1714;
+}
+
+/* Navigation bar */
+.iphone__nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 14px 8px;
+  border-bottom: 1px solid rgba(0,0,0,0.09);
+  flex-shrink: 0;
+}
+
+.iphone__nav-back {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 14px;
+  color: #2d5a45;
+  font-weight: 400;
+}
+
+.iphone__nav-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1a1714;
+  letter-spacing: -0.3px;
+}
+
+/* App content area */
+.iphone__content {
+  padding: 14px 16px 0;
+  flex: 1;
+}
+
+/* Page header — mirrors SNAPReturningUserHomeView `header` VStack */
+.iphone__page-header {
+  margin-bottom: 10px;
+}
+
+.iphone__page-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: #1a1714;
+  letter-spacing: -0.5px;
+  line-height: 1.15;
+}
+
+.iphone__page-sub {
+  font-size: 13px;
+  color: #5a544d;
+  margin-top: 2px;
+}
+
+/* Status banner — pine accent, 13% opacity */
+.iphone__banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 9px 11px;
+  background: rgba(45, 90, 69, 0.13);
+  border-radius: 10px;
+  margin-bottom: 12px;
+}
+
+.iphone__banner-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1a1714;
+  line-height: 1.3;
+}
+
+.iphone__banner-sub {
+  font-size: 11px;
+  color: #5a544d;
+  margin-top: 1px;
+}
+
+/* Timeline */
+.iphone__timeline {
+  display: flex;
+  flex-direction: column;
+}
+
+.iphone__step {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.iphone__step-rail {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 24px;
+  flex-shrink: 0;
+}
+
+.iphone__marker {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* amberPrimary — completed */
+.iphone__marker--done   { background: #C9922A; }
+/* wheatPop — current */
+.iphone__marker--active { background: #E8C547; }
+/* ghost — future */
+.iphone__marker--future {
+  background: #fff;
+  border: 1.5px solid rgba(0,0,0,0.15);
+  color: #5a544d;
+}
+
+.iphone__connector {
+  width: 2px;
+  min-height: 10px;
+  flex: 1;
+  background: rgba(0,0,0,0.1);
+  margin: 3px 0;
+}
+
+.iphone__connector--done { background: #C9922A; }
+
+.iphone__step-body {
+  flex: 1;
+  padding-bottom: 10px;
+}
+
+.iphone__step-body--last { padding-bottom: 0; }
+
+.iphone__step-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.iphone__step-name {
+  font-size: 13px;
+  color: #1a1714;
+  line-height: 1.35;
+}
+
+.iphone__step-ts {
+  font-size: 11px;
+  color: #5a544d;
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.iphone__step-detail {
+  font-size: 11px;
+  color: #5a544d;
+  margin-top: 1px;
+  line-height: 1.3;
+}
+
+/* Primary CTA */
+.iphone__cta {
+  background: #2d5a45;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+  padding: 11px 0;
+  border-radius: 12px;
+  margin: 12px 0 0;
+  letter-spacing: -0.1px;
+}
+
+/* Real app screenshot filling the screen area */
+.iphone__screenshot {
+  display: block;
+  width: 100%;
+  height: auto;
+  /* No own radius — the bezel's overflow:hidden + border-radius clips all
+     four corners uniformly, so no black triangles peek at the top corners. */
+  border-radius: 0;
+}
+
+/* Home indicator */
+.iphone__home-indicator {
+  width: 100px;
+  height: 4px;
+  background: rgba(0,0,0,0.2);
+  border-radius: 2px;
+  margin: 10px auto 8px;
+}
+
+/* ---- Benefit estimator widget ---- */
+
+.benefit-est {
+  margin-top: var(--civica-space-lg);
+  padding-top: var(--civica-space-lg);
+  /* No border-top — the hero painting is behind this; a hard line reads as a slash */
+}
+
+.benefit-est__row {
+  display: flex;
+  align-items: center;
+  gap: var(--civica-space-md);
+  flex-wrap: wrap;
+}
+
+.benefit-est__label {
+  font-size: 0.8125rem;
+  color: var(--civica-ink);
+  font-weight: 500;
+  white-space: nowrap;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.6);
+}
+
+.benefit-est__sizes {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.benefit-est__size {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--civica-radius-control);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  background: #ffffff;
+  color: var(--civica-ink);
+  font-family: inherit;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 100ms ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+.benefit-est__size:hover {
+  border-color: var(--civica-pine);
+  color: var(--civica-pine);
+}
+
+.benefit-est__size--active {
+  background: var(--civica-pine);
+  border-color: var(--civica-pine);
+  color: #fff;
+  box-shadow: none;
+}
+
+.benefit-est__result {
+  margin-top: var(--civica-space-sm);
+  font-size: 0.875rem;
+  color: var(--civica-ink);
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5);
+}
+
+.benefit-est__amount {
+  color: var(--civica-pine);
+  font-weight: 700;
+  display: inline-block;
+  animation-duration: 320ms;
+  animation-fill-mode: both;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.benefit-est__amount--up   { animation-name: slideInUp; }
+.benefit-est__amount--down { animation-name: slideInDown; }
+
+@keyframes slideInUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes slideInDown {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.benefit-est__free {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: var(--civica-space-xs);
+  font-size: 0.75rem;
+  color: var(--civica-muted);
+}
+
+/* ---- pm: redesigned phone mockup (all values px for readability at 260px) ---- */
+
+.pm {
+  position: relative;
+  z-index: 1;
+  width: 260px;
+  flex-shrink: 0;
+  background: #1a1714;
+  border-radius: 44px;
+  padding: 12px 8px 20px;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.06),
+    inset 0 0 0 1px rgba(255,255,255,0.04),
+    0 32px 64px rgba(0,0,0,0.40),
+    0 8px 24px rgba(0,0,0,0.24);
+}
+
+.pm__island {
+  width: 96px;
+  height: 28px;
+  background: #000;
+  border-radius: 20px;
+  margin: 0 auto 10px;
+}
+
+.pm__screen {
+  background: #f7f5ef;
+  border-radius: 34px;
+  overflow: hidden;
+}
+
+/* Status bar */
+.pm__statusbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 20px 4px;
+  color: #1a1714;
+}
+
+.pm__time {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+  color: #1a1714;
+}
+
+.pm__icons {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #1a1714;
+}
+
+/* Navigation bar */
+.pm__nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 16px 8px;
+  border-bottom: 1px solid rgba(0,0,0,0.08);
+}
+
+.pm__nav-back {
+  font-size: 14px;
+  color: #2d5a45;
+  font-weight: 400;
+}
+
+.pm__nav-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1a1714;
+  letter-spacing: -0.2px;
+}
+
+.pm__nav-spacer {
+  width: 40px;
+}
+
+/* Page header */
+.pm__header {
+  padding: 14px 16px 8px;
+}
+
+.pm__header-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: #1a1714;
+  letter-spacing: -0.5px;
+  line-height: 1.15;
+  margin-bottom: 2px;
+}
+
+.pm__header-sub {
+  font-size: 13px;
+  color: #5a544d;
+}
+
+/* Status banner */
+.pm__banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  margin: 0 12px 4px;
+  padding: 10px 12px;
+  background: rgba(45, 90, 69, 0.13);
+  border-radius: 10px;
+}
+
+.pm__banner-icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  color: #2d5a45;
+  margin-top: 1px;
+}
+
+.pm__banner-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1a1714;
+  line-height: 1.3;
+}
+
+.pm__banner-sub {
+  font-size: 11px;
+  color: #5a544d;
+  margin-top: 1px;
+}
+
+/* Timeline */
+.pm__timeline {
+  padding: 12px 14px 8px;
+}
+
+.pm__step {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.pm__rail {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+  width: 24px;
+}
+
+.pm__dot {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.pm__dot svg {
+  width: 13px;
+  height: 13px;
+}
+
+/* complete → amberPrimary */
+.pm__dot--done   { background: #C9922A; }
+/* current → wheatPop */
+.pm__dot--active { background: #E8C547; }
+/* future → ghost */
+.pm__dot--future {
+  background: #fff;
+  border: 1.5px solid rgba(0,0,0,0.15);
+  color: #5a544d;
+}
+
+.pm__line {
+  width: 2px;
+  min-height: 12px;
+  flex: 1;
+  background: rgba(0,0,0,0.1);
+  margin: 3px 0;
+}
+
+.pm__line--done { background: #C9922A; }
+
+.pm__body {
+  flex: 1;
+  padding-bottom: 12px;
+}
+
+.pm__body--last { padding-bottom: 0; }
+
+.pm__row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 4px;
+}
+
+.pm__name {
+  font-size: 13px;
+  color: #1a1714;
+  line-height: 1.35;
+}
+
+.pm__name--bold  { font-weight: 700; }
+.pm__name--muted { color: #5a544d; }
+
+.pm__ts {
+  font-size: 11px;
+  color: #5a544d;
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.pm__ts--muted { opacity: 0.6; }
+
+.pm__detail {
+  font-size: 11px;
+  color: #5a544d;
+  margin-top: 1px;
+  line-height: 1.3;
+}
+
+/* Primary CTA */
+.pm__cta {
+  padding: 4px 14px 14px;
+}
+
+.pm__cta-btn {
+  background: #2d5a45;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+  padding: 11px 0;
+  border-radius: 10px;
+  letter-spacing: -0.1px;
+}
+
+/* ---- Legacy phone-mockup classes (kept for fallback) ---- */
+.phone-mockup {
+  position: relative;
+  z-index: 1;
+  width: 220px;
+  background: var(--civica-ink);
+  border-radius: 28px;
+  padding: 14px 10px 18px;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.07),
+    0 24px 48px rgba(0,0,0,0.32),
+    0 4px 12px rgba(0,0,0,0.18);
+}
+
+.phone-mockup__island {
+  width: 52px;
+  height: 12px;
+  background: #000;
+  border-radius: 8px;
+  margin: 0 auto 8px;
+}
+
+.phone-mockup__screen {
+  background: var(--civica-surface);
+  border-radius: 18px;
+  overflow: hidden;
+}
+
+/* ---- Phone screen internals — mirrors iOS CivicaStatusTimeline ---- */
+.phone-card {
+  font-family: var(--civica-font-body);
+  background: var(--civica-paper);
+}
+
+/* iOS status bar */
+.phone-statusbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 14px 2px;
+}
+.phone-statusbar__time {
+  font-size: 0.5625rem;
+  font-weight: 700;
+  color: var(--civica-ink);
+  letter-spacing: 0.01em;
+}
+.phone-statusbar__signals {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+.phone-signal {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--civica-ink);
+  opacity: 0.7;
+}
+.phone-signal--wifi {
+  width: 6px;
+  height: 5px;
+  border-radius: 0 0 3px 3px;
+  clip-path: polygon(50% 100%, 0% 0%, 100% 0%);
+  background: var(--civica-ink);
+}
+.phone-battery {
+  width: 9px;
+  height: 5px;
+  border: 1px solid var(--civica-ink);
+  border-radius: 1px;
+  opacity: 0.7;
+  position: relative;
+}
+.phone-battery::after {
+  content: '';
+  position: absolute;
+  inset: 1px 1px 1px 1px;
+  width: 60%;
+  background: var(--civica-ink);
+  border-radius: 0.5px;
+}
+
+/* App title bar */
+.phone-appbar {
+  padding: 4px 14px 8px;
+  border-bottom: 1px solid var(--civica-hairline);
+}
+.phone-appbar__title {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--civica-ink);
+  letter-spacing: -0.01em;
+}
+
+/* Header — mirrors the `header` VStack in SNAPReturningUserHomeView */
+.phone-header {
+  padding: 10px 12px 6px;
+}
+.phone-header__title {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  color: var(--civica-ink);
+  letter-spacing: -0.01em;
+  margin: 0 0 1px;
+}
+.phone-header__sub {
+  font-size: 0.5rem;
+  color: var(--civica-graphite);
+}
+
+/* Status banner — mirrors statusBanner in SNAPReturningUserHomeView */
+/* accent.opacity(0.13) with pine accent for interviewScheduled state */
+.phone-banner {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin: 0 10px 0;
+  padding: 7px 9px;
+  background: rgba(45, 90, 69, 0.13);
+  border-radius: 8px;
+}
+.phone-banner__icon {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  color: var(--civica-pine);
+}
+.phone-banner__copy {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.phone-banner__title {
+  font-size: 0.625rem;
+  font-weight: 600;
+  color: var(--civica-ink);
+}
+.phone-banner__sub {
+  font-size: 0.5rem;
+  color: var(--civica-graphite);
+}
+
+/* Timeline — mirrors CivicaStatusTimeline */
+.phone-timeline {
+  padding: 12px 10px 12px;
+}
+.phone-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+.phone-step__rail {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+  width: 18px;
+}
+.phone-step__dot {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.phone-step__dot svg {
+  width: 10px;
+  height: 10px;
+}
+/* complete → amberPrimary (#C9922A) per CivicaColors.amberPrimary */
+.phone-step__dot--done {
+  background: #C9922A;
+}
+/* current → wheatPop (#E8C547) per CivicaColors.wheatPop */
+.phone-step__dot--active {
+  background: var(--civica-wheat);
+}
+/* future → ghost with hairline border */
+.phone-step__dot--future {
+  background: var(--civica-surface);
+  border: 1.5px solid var(--civica-hairline);
+  color: var(--civica-graphite);
+}
+/* connector rail lines */
+.phone-step__line {
+  width: 2px;
+  min-height: 14px;
+  flex: 1;
+  background: var(--civica-hairline);
+  margin: 2px 0;
+}
+/* done connector matches amberPrimary — "carries completion forward" */
+.phone-step__line--done {
+  background: #C9922A;
+}
+/* step body */
+.phone-step__body {
+  flex: 1;
+  padding-bottom: 10px;
+}
+.phone-step__body--last {
+  padding-bottom: 0;
+}
+.phone-step__row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 4px;
+}
+.phone-step__name {
+  font-size: 0.5625rem;
+  color: var(--civica-ink);
+  line-height: 1.3;
+}
+.phone-step__name--bold {
+  font-weight: 700;
+}
+.phone-step__name--muted {
+  color: var(--civica-graphite);
+}
+.phone-step__sub {
+  font-size: 0.5rem;
+  color: var(--civica-graphite);
+  margin-top: 2px;
+  line-height: 1.3;
+}
+.phone-step__ts {
+  font-size: 0.4375rem;
+  color: var(--civica-graphite);
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+  padding-top: 1px;
+}
+.phone-step__ts--muted {
+  opacity: 0.6;
+}
+
+/* ---- Process Steps section ---- */
+
+.process-section {
+  padding: clamp(40px, 6vw, 72px) 0;
+  background: var(--civica-surface);
+  border-top: 1px solid var(--civica-hairline);
+  border-bottom: 1px solid var(--civica-hairline);
+}
+
+.process-section__eyebrow {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--civica-graphite);
+  text-align: center;
+  margin: 0 0 var(--civica-space-xxl);
+}
+
+.process-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--civica-space-lg);
+}
+
+.process-card {
+  background: var(--civica-surface);
+  border: 1px solid var(--civica-hairline);
+  border-radius: var(--civica-radius-card);
+  padding: var(--civica-space-xl);
+}
+
+.process-number {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--civica-wheat);
+  color: var(--civica-ink);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: var(--civica-space-md);
+  flex-shrink: 0;
+}
+
+.process-card__title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--civica-ink);
+  margin: 0 0 var(--civica-space-sm);
+}
+
+.process-card__body {
+  font-size: 0.9375rem;
+  line-height: 1.55;
+  color: var(--civica-graphite);
+  margin: 0;
+}
+
+/* ---- Ecosystem Section ---- */
+
+.ecosystem-section {
+  padding: clamp(48px, 7vw, 80px) 0;
+  background: var(--civica-paper);
+}
+
+.ecosystem-section__title {
+  font-size: clamp(1.5rem, 2.4vw, 1.875rem);
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  color: var(--civica-ink);
+  text-align: center;
+  margin: 0 0 var(--civica-space-md);
+}
+
+.ecosystem-section__sub {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--civica-graphite);
+  text-align: center;
+  max-width: 52ch;
+  margin: 0 auto var(--civica-space-xxl);
+}
+
+.ecosystem-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--civica-space-lg);
+  align-items: stretch;
+}
+
+.ecosystem-card {
+  background: var(--civica-surface);
+  border: 1px solid var(--civica-hairline);
+  border-radius: var(--civica-radius-card);
+  padding: var(--civica-space-xl);
+  text-align: left;
+}
+
+.ecosystem-card__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--civica-radius-card);
+  background: var(--civica-pine-surface);
+  color: var(--civica-pine);
+  margin-bottom: var(--civica-space-md);
+}
+
+.ecosystem-card__icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.ecosystem-card__title {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--civica-ink);
+  margin: 0 0 var(--civica-space-xs);
+}
+
+.ecosystem-card__body {
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--civica-graphite);
+  margin: 0;
+}
+
+.ecosystem-arrow { display: none; }
+
+.ecosystem-section__footnote {
+  font-size: 0.8125rem;
+  color: var(--civica-muted);
+  text-align: center;
+  margin: var(--civica-space-xl) 0 0;
+}
+
+/* ---- Responsive: collapse 2-col layouts on mobile ---- */
+
+@media (max-width: 768px) {
+  .hero__grid {
+    grid-template-columns: 1fr;
+    gap: var(--civica-space-xl);
+  }
+
+  .hero__col--visual {
+    justify-content: flex-start;
+    min-height: auto;
+  }
+
+  .hero__watermark {
+    right: -12px;
+    opacity: 0.2;
+    font-size: clamp(64px, 22vw, 100px);
+  }
+
+  .process-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ecosystem-grid {
+    grid-template-columns: 1fr;
+    gap: var(--civica-space-md);
+  }
+}
+
+/* ---- Welcome page: ecosystem section ---- */
+
+.welcome-ecosystem {
+  padding: clamp(40px, 6vw, 64px) 0;
+  background: var(--civica-surface);
+  border-top: 1px solid var(--civica-hairline);
+  border-bottom: 1px solid var(--civica-hairline);
+}
+
+.welcome-ecosystem__title {
+  font-size: clamp(1.375rem, 2.2vw, 1.75rem);
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  color: var(--civica-ink);
+  text-align: center;
+  margin: 0 0 var(--civica-space-sm);
+}
+
+.welcome-ecosystem__sub {
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: var(--civica-graphite);
+  text-align: center;
+  max-width: 52ch;
+  margin: 0 auto var(--civica-space-xxl);
+}
+
+/* ---- Welcome page: closing CTA ---- */
+
+.home-closing {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--civica-space-md);
+  text-align: center;
+}
+
+.home-closing__label {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--civica-ink);
+  margin: 0;
+}
+
+.home-closing__sub {
+  font-size: 0.8125rem;
+  color: var(--civica-muted);
+  margin: 0;
+}
+
+/* ---- home-hero with grid layout ---- */
+
+.home-hero__inner.hero__grid {
+  display: grid;
+  /* Text column gets the lion's share so the headline fits one line;
+     the phone column is narrower and right-aligned to sit further right. */
+  grid-template-columns: 1.55fr 0.8fr;
+  gap: var(--civica-space-xxl);
+  align-items: center;
+  max-width: 1140px;
+}
+
+@media (max-width: 768px) {
+  .home-hero__inner.hero__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 960px) and (min-width: 769px) {
+  .ecosystem-grid {
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: auto auto;
+  }
+
+  .ecosystem-arrow {
+    display: none;
+  }
+}
+
+/* ---- Site nav (shared header nav links) ---- */
+
+.site-nav {
+  display: flex;
+  gap: var(--civica-space-xl);
+}
+
+.site-nav__link {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--civica-graphite);
+  text-decoration: none;
+  padding: 4px 0;
+  border-bottom: 2px solid transparent;
+  transition: color 120ms ease, border-color 120ms ease;
+}
+
+.site-nav__link:hover {
+  color: var(--civica-ink);
+  border-bottom-color: var(--civica-pine);
+}
+
+.site-nav__link--active {
+  color: var(--civica-ink);
+  border-bottom-color: var(--civica-pine);
+}
+
+@media (max-width: 560px) {
+  .site-nav {
+    display: none;
+  }
+}
+
+/* ---- Why Civica page ---- */
+
+.why-gemini-scroll {
+  height: 200vh;
+  position: relative;
+}
+
+/* Static / reduced-motion hero — single viewport, no scroll wiring */
+.why-static-hero {
+  min-height: calc(100vh - 80px);
+  background: var(--civica-paper);
+  border-bottom: 1px solid var(--civica-hairline);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  overflow: hidden;
+  padding: clamp(48px, 9vw, 96px) 0 clamp(32px, 6vw, 56px);
+}
+
+.why-static-hero .gemini-effect svg {
+  max-height: 480px;
+}
+
+.why-gemini-sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  background: var(--civica-paper);
+  border-bottom: 1px solid var(--civica-hairline);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding-top: 80px;
+}
+
+.why-gemini-copy {
+  text-align: center;
+  padding-bottom: var(--civica-space-xl);
+}
+
+.why-gemini-copy .eyebrow {
+  color: var(--civica-pine);
+}
+
+.why-gemini-headline {
+  font-size: clamp(1.875rem, 4.5vw, 3rem);
+  line-height: 1.1;
+  letter-spacing: -0.025em;
+  font-weight: 600;
+  color: var(--civica-ink);
+  margin: 0 0 var(--civica-space-xl);
+}
+
+.why-gemini-sub {
+  font-size: clamp(0.9375rem, 1.4vw, 1.0625rem);
+  line-height: 1.65;
+  color: var(--civica-graphite);
+  margin: 0 auto;
+  max-width: 52ch;
+}
+
+.gemini-effect {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.gemini-effect svg {
+  width: 100%;
+  height: 100%;
+  max-height: 480px;
+}
+
+.why-gemini-scroll-hint {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--civica-space-sm);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--civica-muted);
+  padding-bottom: var(--civica-space-xl);
+}
+
+/* Why Civica feature cards */
+
+.why-features {
+  padding-top: clamp(48px, 8vw, 80px);
+  padding-bottom: clamp(48px, 8vw, 80px);
+  border-top: none;
+}
+
+.why-feature-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(var(--civica-space-lg), 3vw, var(--civica-space-xxl));
+  margin-top: clamp(32px, 4vw, 48px);
+}
+
+/* Numbered editorial cards — pine top rule + wheat numeral anchor, no box.
+   The number carries the identity; the small icon aids comprehension. */
+.why-feature-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--civica-space-sm);
+  padding-top: var(--civica-space-lg);
+  border-top: 2px solid var(--civica-pine);
+}
+
+.why-feature-card__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--civica-space-xs);
+}
+
+.why-feature-card__num {
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: #c9922a;
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+.why-feature-card__icon {
+  color: var(--civica-pine);
+  opacity: 0.7;
+  flex-shrink: 0;
+}
+
+.why-feature-card__title {
+  font-size: 1.0625rem;
+  font-weight: 600;
+  color: var(--civica-ink);
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.why-feature-card__text {
+  font-size: 0.9375rem;
+  line-height: 1.65;
+  color: var(--civica-graphite);
+  margin: 0;
+}
+
+/* Why Civica CTA */
+
+.why-cta-section {
+  background: var(--civica-pine-surface);
+  border-top: 1px solid color-mix(in srgb, var(--civica-pine) 20%, transparent);
+}
+
+.why-cta-inner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--civica-space-md);
+}
+
+.why-cta-section .section__title {
+  margin-bottom: 0;
+}
+
+@media (max-width: 768px) {
+  .why-feature-cards {
+    grid-template-columns: 1fr;
+  }
+
+  .why-gemini-headline {
+    font-size: clamp(1.5rem, 6vw, 1.875rem);
+  }
+
+  .why-gemini-copy {
+    padding-left: var(--civica-space-xl);
+    padding-right: var(--civica-space-xl);
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .why-feature-card {
+    background: color-mix(in srgb, var(--civica-paper) 80%, transparent);
+  }
 }

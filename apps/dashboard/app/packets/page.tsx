@@ -21,11 +21,11 @@ const FILTER_STATUSES: Record<Filter, string[]> = {
 };
 
 const BUCKETS: { key: Filter; label: string; statuses: string[]; defaultOpen: boolean; accent: string }[] = [
-  { key: "needs-attention", label: "Needs Attention",   statuses: ["Needs Documents", "Needs Applicant Clarification"], defaultOpen: true,  accent: "bg-warning"    },
-  { key: "in-progress",     label: "In Progress",       statuses: ["Submitted for Review", "In Navigator Review"],      defaultOpen: true,  accent: "bg-indigo"   },
-  { key: "ready",           label: "Ready for Handoff", statuses: ["Ready for Handoff"],                                 defaultOpen: true,  accent: "bg-teal"     },
-  { key: "draft",           label: "Draft",             statuses: ["Draft"],                                             defaultOpen: false, accent: "bg-graphite" },
-  { key: "complete",        label: "Complete",          statuses: ["Handed Off", "Closed"],                              defaultOpen: false, accent: "bg-pine"     },
+  { key: "needs-attention", label: "Needs Attention",   statuses: ["Needs Documents", "Needs Applicant Clarification"], defaultOpen: true,  accent: "bg-hairline" },
+  { key: "in-progress",     label: "In Progress",       statuses: ["Submitted for Review", "In Navigator Review"],      defaultOpen: true,  accent: "bg-hairline" },
+  { key: "ready",           label: "Ready for Handoff", statuses: ["Ready for Handoff"],                                 defaultOpen: true,  accent: "bg-hairline" },
+  { key: "draft",           label: "Draft",             statuses: ["Draft"],                                             defaultOpen: false, accent: "bg-hairline" },
+  { key: "complete",        label: "Complete",          statuses: ["Handed Off", "Closed"],                              defaultOpen: false, accent: "bg-hairline" },
 ];
 
 type Packet = {
@@ -193,9 +193,9 @@ export default async function PacketsPage({ searchParams }: { searchParams: Prom
             not one per card. */}
         <div className="grid grid-cols-4 gap-4 mb-8">
           <StatCard label="Needs Attention" value={needsAttentionCount} accent="text-warning" bg="bg-surface" />
-          <StatCard label="In Progress" value={inProgressCount} accent="text-indigo" bg="bg-surface" />
-          <StatCard label="Ready for Handoff" value={readyCount} accent="text-teal" bg="bg-surface" />
-          <StatCard label="Active Total" value={activeCount} accent="text-ink" bg="bg-surface" />
+          <StatCard label="In Progress" value={inProgressCount} accent="text-graphite" bg="bg-surface" />
+          <StatCard label="Ready for Handoff" value={readyCount} accent="text-graphite" bg="bg-surface" />
+          <StatCard label="Active Total" value={activeCount} accent="text-graphite" bg="bg-surface" />
         </div>
 
         <div className="mb-4">
@@ -273,10 +273,7 @@ function EngineKpiBanner({
   // Single-line flex (no flex-wrap, no ml-auto) so layout never orphans.
   return (
     <section className="mb-4 bg-pine/5 border border-pine/15 rounded-[4px] px-4 py-2 flex items-center gap-x-5 gap-y-1 flex-wrap text-[12px] text-graphite">
-      <span className="inline-flex items-center gap-1.5 shrink-0">
-        <span className="w-1.5 h-1.5 rounded-full bg-teal" aria-hidden />
-        <span className="text-[10px] font-bold uppercase tracking-[0.12em] text-pine">Automated review</span>
-      </span>
+      <span className="text-[10px] font-bold uppercase tracking-[0.12em] text-pine shrink-0">Automated review</span>
       <span>
         <span className="font-semibold text-ink tabular-nums">{reviewedToday}</span> packet{reviewedToday === 1 ? "" : "s"} reviewed · last 24h
       </span>
@@ -287,18 +284,9 @@ function EngineKpiBanner({
         </span>
       )}
       <span className="inline-flex items-center gap-2.5">
-        <span className="inline-flex items-center gap-1">
-          <span className="w-1.5 h-1.5 rounded-full bg-teal" />
-          <span className="tabular-nums">{lowPct}% low</span>
-        </span>
-        <span className="inline-flex items-center gap-1">
-          <span className="w-1.5 h-1.5 rounded-full bg-warning" />
-          <span className="tabular-nums">{medPct}% med</span>
-        </span>
-        <span className="inline-flex items-center gap-1">
-          <span className="w-1.5 h-1.5 rounded-full bg-brick" />
-          <span className="tabular-nums">{highPct}% high</span>
-        </span>
+        <span className="tabular-nums text-muted">{lowPct}% low</span>
+        <span className="tabular-nums text-muted">{medPct}% med</span>
+        <span className="tabular-nums text-muted">{highPct}% high</span>
       </span>
     </section>
   );
@@ -330,10 +318,9 @@ function Bucket({ label, count, defaultOpen, packets, accent, riskTiers, riskSco
 const STALE_DAYS = 7;
 const INACTIVE_STATUSES = new Set(["Handed Off", "Closed"]);
 
-const RISK_DOT: Record<RiskTier, { bg: string; label: string }> = {
-  low: { bg: "bg-teal", label: "Low risk" },
-  medium: { bg: "bg-warning", label: "Medium risk" },
-  high: { bg: "bg-brick", label: "High risk" },
+const RISK_LABEL: Partial<Record<RiskTier, { label: string; color: string }>> = {
+  medium: { label: "Medium risk", color: "text-warning" },
+  high:   { label: "High risk",   color: "text-brick" },
 };
 
 const SCORE_STALE_DAYS = 3;
@@ -349,7 +336,7 @@ function PacketList({ packets, riskTiers, riskScoredAt }: { packets: Packet[]; r
         const daysOld = (now - new Date(packet.updated_at).getTime()) / 86_400_000;
         const isStale = daysOld > STALE_DAYS && !INACTIVE_STATUSES.has(packet.status);
         const riskTier = riskTiers.get(packet.packet_id) ?? null;
-        const riskDot = riskTier ? RISK_DOT[riskTier] : null;
+        const riskInfo = riskTier ? RISK_LABEL[riskTier] : null;
         const scoredAt = riskScoredAt.get(packet.packet_id);
         const isScoreStale = scoredAt
           ? new Date(packet.updated_at).getTime() > new Date(scoredAt).getTime()
@@ -381,16 +368,12 @@ function PacketList({ packets, riskTiers, riskScoredAt }: { packets: Packet[]; r
               </div>
               <div className="flex items-center gap-2 mt-1.5">
                 <StatusPill status={packet.status} />
-                {riskDot && (
+                {riskInfo && (
                   <span
-                    className={`inline-flex items-center gap-1 text-[11px] font-semibold uppercase tracking-wider`}
-                    title={isScoreStale
-                      ? `${riskDot.label} — score may be stale (packet updated after last scoring)`
-                      : riskDot.label}
+                    className={`text-[11px] font-semibold uppercase tracking-wider ${riskInfo.color}`}
+                    title={isScoreStale ? `${riskInfo.label} — score may be stale` : riskInfo.label}
                   >
-                    <span className={`w-2 h-2 rounded-full shrink-0 ${isScoreStale ? "ring-1 ring-warning ring-offset-1" : ""} ${riskDot.bg}`} />
-                    <span className="text-muted">{riskDot.label}</span>
-                    {isScoreStale && <span className="text-warning">·</span>}
+                    {riskInfo.label}{isScoreStale ? " ·" : ""}
                   </span>
                 )}
               </div>

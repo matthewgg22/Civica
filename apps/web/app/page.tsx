@@ -3,9 +3,10 @@
 import { useEffect, useState } from "react";
 import { strings, STORAGE_KEY, LOCALES, type Locale } from "./i18n";
 import { HeroLPIE } from "../components/HeroLPIE";
+import { ProcessSteps } from "../components/ProcessSteps";
+import { EcosystemSection } from "../components/EcosystemSection";
 import { LeadCaptureForm } from "../components/LeadCaptureForm";
 import { LanguagePicker } from "../components/LanguagePicker";
-import { AppDownloadIsland } from "../components/AppDownloadIsland";
 
 export default function Page() {
   const [locale, setLocale] = useState<Locale>("en");
@@ -37,6 +38,11 @@ export default function Page() {
           <a className="brand" href="/">
             Civica
           </a>
+          <nav className="site-nav" aria-label="Main">
+            <a className="site-nav__link" href="/why-civica">
+              Why Civica
+            </a>
+          </nav>
           <div className="site-header__actions">
             <LanguagePicker
               locale={locale}
@@ -52,13 +58,8 @@ export default function Page() {
 
       <main>
         <HeroLPIE copy={copy} />
-
-        <section className="section">
-          <div className="container">
-            <h2 className="section__title">{copy.whatTitle}</h2>
-            <p className="section__body">{copy.whatBody}</p>
-          </div>
-        </section>
+        <ProcessSteps copy={copy} />
+        <EcosystemSection copy={copy} />
 
         <section className="section" id="lead-capture">
           <div className="container">
@@ -72,13 +73,6 @@ export default function Page() {
       <footer className="site-footer">
         <div className="container">© 2026 Civica</div>
       </footer>
-
-      <AppDownloadIsland
-        label={copy.ctaIslandLabel}
-        sub={copy.ctaIslandSub}
-        cta={copy.ctaIslandBtn}
-        dismissLabel={copy.ctaIslandDismiss}
-      />
     </div>
   );
 }

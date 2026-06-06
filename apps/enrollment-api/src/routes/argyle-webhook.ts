@@ -14,6 +14,7 @@ import { Hono } from 'hono';
 import { z } from 'zod';
 import { HTTPException } from 'hono/http-exception';
 import { makeServiceClient } from '../lib/supabase.js';
+import { emitNotification, type NotificationsDb } from '../lib/notifications.js';
 import { grossIncomeLimitMonthly } from '@civica/snap-calculator';
 import type { Env, Variables } from '../types.js';
 
@@ -207,6 +208,20 @@ app.post('/', async (c) => {
         status: 'pending',
         created_by: 'system:argyle-webhook',
       } as never);
+
+    // Notifications event spine (#514): record the same cliff as a typed
+    // notification so any channel (inbox/push/email) can consume it. Best
+    // effort — emitNotification never throws, and stays inert until the
+    // 20260605 notifications migration is applied (42P01 is swallowed).
+    await emitNotification(db as unknown as NotificationsDb, {
+      type: 'cliff_event',
+      orgId: packet?.org_id ?? '',
+      packetId: conn.packet_id,
+      applicantId: conn.applicant_id,
+      source: 'system:argyle-webhook',
+      monthlyIncomeUsd: monthlyUsd,
+      payDate: paycheck.pay_date,
+    });
   }
 
   return c.json({
