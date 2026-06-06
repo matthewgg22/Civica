@@ -91,13 +91,13 @@ export function GoogleGeminiEffect({
           />
         ))}
 
-        {/* State chips — larger and legible */}
+        {/* State chips — real state flag + abbreviation */}
         {STATES.map((s, i) => (
           <g key={`chip-${i}`}>
-            <rect x="250" y={s.y - 14} width="60" height="28" rx="4" fill="white" stroke="rgba(0,0,0,0.08)" strokeWidth="1" />
-            <rect x="250" y={s.y - 14} width="13" height="28" rx="4" fill={s.color} />
-            <rect x="259" y={s.y - 14} width="4" height="28" fill={s.color} />
-            <text x="288" y={s.y + 5} textAnchor="middle" fontSize="12" fill="rgba(0,0,0,0.72)" fontWeight="700" fontFamily="sans-serif" letterSpacing="0.03em">{s.abbr}</text>
+            <rect x="244" y={s.y - 15} width="76" height="30" rx="5" fill="white" stroke="rgba(0,0,0,0.1)" strokeWidth="1" />
+            <image href={`/flags/${s.abbr.toLowerCase()}.png`} x="251" y={s.y - 9} width="28" height="18" preserveAspectRatio="xMidYMid slice" />
+            <rect x="251" y={s.y - 9} width="28" height="18" fill="none" stroke="rgba(0,0,0,0.18)" strokeWidth="0.75" />
+            <text x="300" y={s.y + 5} textAnchor="middle" fontSize="11" fill="rgba(0,0,0,0.72)" fontWeight="700" fontFamily="sans-serif" letterSpacing="0.03em">{s.abbr}</text>
           </g>
         ))}
 
