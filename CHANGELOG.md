@@ -9,6 +9,11 @@ Categories used:
 - **Added** — new capability
 - **Changed** — visible behavior change
 
+## [0.2.9.0] - 2026-06-06
+
+### Added
+- **CBO preview — application responses in the queue dropdown** — expanding an application in the navigator pipeline now shows the applicant's **questions and answers**, grouped by survey section (Where you're applying · Your household · Income · Monthly expenses · Student status · Documents), mirroring the `snap_enrollment.packet_answers` shape (question_label → applicant_answer). Engine-flagged answers (e.g. SSN mismatch, rent over area norm, missing proof of income) render in brick with a ⚑. Search now also matches answer text. The engine pipeline + flags panels move below the responses. Synthetic data — no real applicant information.
+
 ## [0.2.8.0] - 2026-06-06
 
 ### Added

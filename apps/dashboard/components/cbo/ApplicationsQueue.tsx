@@ -25,6 +25,16 @@ const TOTAL_STEPS = PIPELINE_STEPS.length;
 
 type Risk = "Low risk" | "Medium risk" | "High risk";
 
+// One applicant response, mirroring snap_enrollment.packet_answers
+// (question_label + applicant_answer), grouped by the iOS survey section it
+// came from. `flagged` marks an answer the engine raised a concern on.
+export interface SurveyAnswer {
+  section: string;
+  question: string;
+  answer: string;
+  flagged?: boolean;
+}
+
 export interface QueueApplication {
   id: string;
   caseId: string;
@@ -37,6 +47,8 @@ export interface QueueApplication {
   completedSteps: number;
   /** Engine / navigator flags raised on this case. Empty = clean. */
   flags: string[];
+  /** Application responses (questions + answers), grouped by survey section. */
+  answers: SurveyAnswer[];
 }
 
 export interface QueueBucket {
@@ -121,6 +133,39 @@ function StepList({ completedSteps }: { completedSteps: number }) {
   );
 }
 
+// Application responses, grouped by the survey section they came from —
+// mirrors snap_enrollment.packet_answers (question_label → applicant_answer).
+function AnswerList({ answers }: { answers: SurveyAnswer[] }) {
+  const sections: { section: string; items: SurveyAnswer[] }[] = [];
+  for (const a of answers) {
+    const last = sections[sections.length - 1];
+    if (last && last.section === a.section) last.items.push(a);
+    else sections.push({ section: a.section, items: [a] });
+  }
+  return (
+    <div className="space-y-3">
+      {sections.map((group) => (
+        <div key={group.section}>
+          <p className="text-[10px] font-semibold uppercase tracking-wider text-graphite mb-1.5">{group.section}</p>
+          <dl className="space-y-1">
+            {group.items.map((a) => (
+              <div key={a.question} className="flex items-baseline justify-between gap-4 text-[12px]">
+                <dt className="text-graphite shrink-0 max-w-[60%]">{a.question}</dt>
+                <dd
+                  className={`text-right tabular-nums ${a.flagged ? "text-brick font-semibold" : "text-ink font-medium"}`}
+                >
+                  {a.answer}
+                  {a.flagged && <span className="ml-1 text-[10px] uppercase tracking-wider">⚑</span>}
+                </dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 function ApplicationRow({ app, border }: { app: QueueApplication; border: boolean }) {
   const [open, setOpen] = useState(false);
   const pct = completionPct(app.completedSteps);
@@ -167,40 +212,50 @@ function ApplicationRow({ app, border }: { app: QueueApplication; border: boolea
       </button>
 
       {open && (
-        <div className="px-4 pb-4 pt-1 bg-paper/60 grid gap-5 md:grid-cols-2">
-          {/* Engine pipeline */}
+        <div className="px-4 pb-4 pt-1 bg-paper/60 space-y-5">
+          {/* Application responses — questions + answers from the survey */}
           <div>
             <div className="flex items-baseline justify-between mb-2">
-              <p className="text-[10px] font-semibold uppercase tracking-wider text-graphite">Engine pipeline</p>
-              <p className="text-[11px] tabular-nums text-graphite">
-                {app.completedSteps}/{TOTAL_STEPS} steps · {pct}%
+              <p className="text-[10px] font-semibold uppercase tracking-wider text-graphite">
+                Application responses
               </p>
+              <p className="text-[11px] tabular-nums text-graphite">{app.answers.length} answers</p>
             </div>
-            <StepList completedSteps={app.completedSteps} />
+            <AnswerList answers={app.answers} />
           </div>
-          {/* Flags + actions */}
-          <div>
-            <p className="text-[10px] font-semibold uppercase tracking-wider text-graphite mb-2">
-              Flags raised
-            </p>
-            {app.flags.length > 0 ? (
-              <ul className="space-y-1.5">
-                {app.flags.map((f) => (
-                  <li key={f} className="flex items-start gap-2 text-[12px] text-ink">
-                    <span className="shrink-0 mt-[5px] w-1.5 h-1.5 rounded-full bg-brick" aria-hidden="true" />
-                    {f}
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p className="text-[12px] text-muted">No flags — clear to advance.</p>
-            )}
-            <Link
-              href={`/packets/${app.id}`}
-              className="inline-block mt-3 text-[12px] font-semibold text-pine hover:underline"
-            >
-              Open full case →
-            </Link>
+
+          {/* Engine pipeline + flags */}
+          <div className="grid gap-5 md:grid-cols-2 border-t border-hairline pt-4">
+            <div>
+              <div className="flex items-baseline justify-between mb-2">
+                <p className="text-[10px] font-semibold uppercase tracking-wider text-graphite">Engine pipeline</p>
+                <p className="text-[11px] tabular-nums text-graphite">
+                  {app.completedSteps}/{TOTAL_STEPS} steps · {pct}%
+                </p>
+              </div>
+              <StepList completedSteps={app.completedSteps} />
+            </div>
+            <div>
+              <p className="text-[10px] font-semibold uppercase tracking-wider text-graphite mb-2">Flags raised</p>
+              {app.flags.length > 0 ? (
+                <ul className="space-y-1.5">
+                  {app.flags.map((f) => (
+                    <li key={f} className="flex items-start gap-2 text-[12px] text-ink">
+                      <span className="shrink-0 mt-[5px] w-1.5 h-1.5 rounded-full bg-brick" aria-hidden="true" />
+                      {f}
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="text-[12px] text-muted">No flags — clear to advance.</p>
+              )}
+              <Link
+                href={`/packets/${app.id}`}
+                className="inline-block mt-3 text-[12px] font-semibold text-pine hover:underline"
+              >
+                Open full case →
+              </Link>
+            </div>
           </div>
         </div>
       )}
@@ -218,7 +273,10 @@ export default function ApplicationsQueue({ buckets }: { buckets: QueueBucket[] 
       .map((b) => ({
         ...b,
         applications: b.applications.filter((a) =>
-          [a.caseId, a.name, a.county, a.status, ...a.flags].join(" ").toLowerCase().includes(q),
+          [a.caseId, a.name, a.county, a.status, ...a.flags, ...a.answers.flatMap((x) => [x.question, x.answer])]
+            .join(" ")
+            .toLowerCase()
+            .includes(q),
         ),
       }))
       .filter((b) => b.applications.length > 0 || (!q && b.completedCount));
