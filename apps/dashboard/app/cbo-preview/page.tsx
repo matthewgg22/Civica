@@ -9,6 +9,8 @@ import StatusBadge from "../../components/StatusBadge";
 import ProductSwitcher from "../../components/ProductSwitcher";
 import { AppDownloadIsland } from "../../components/AppDownloadIsland";
 import QcTab from "../../components/cbo/QcTab";
+import EngineHouseholdsPanel from "../../components/cbo/EngineHouseholdsPanel";
+import { CA_BASELINE_PER, PROJECTED_PER_AT_FULL_ENGAGEMENT } from "@civica/snap-qc-engine";
 
 export const dynamic = "force-dynamic";
 
@@ -232,13 +234,13 @@ function OverviewSection() {
   return (
     <div className="space-y-8">
       {/* KPIs — compact (fix C) */}
-      <section aria-label="Impact at a glance">
-        <p className="eyebrow mb-3">Impact at a glance</p>
+      <section aria-label="Projected impact">
+        <p className="eyebrow mb-3">Projected impact at full engagement</p>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {[
-            { label: "Avg applications / navigator / mo", value: "23",     sub: "vs 7 manual" },
-            { label: "Error rate (Civica cohort)",        value: "4.2%",   sub: "vs ~10.8% manual" },
-            { label: "Avg time to handoff",               value: "6 days", sub: "vs ~22 days manual" },
+            { label: "Applications / navigator / mo", value: "23",     sub: "target vs 7 on manual forms" },
+            { label: "Projected payment-error rate",  value: `${PROJECTED_PER_AT_FULL_ENGAGEMENT}%`, sub: `modeled, vs ${CA_BASELINE_PER}% CA baseline` },
+            { label: "Time to handoff",               value: "6 days", sub: "target vs ~22 days on manual forms" },
           ].map((kpi) => (
             <div key={kpi.label} className="bg-surface border border-hairline rounded-[4px] px-5 py-4">
               <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite leading-tight">{kpi.label}</p>
@@ -247,6 +249,10 @@ function OverviewSection() {
             </div>
           ))}
         </div>
+        <p className="text-[11px] text-graphite mt-2">
+          Projected from Civica&apos;s error-rate model, not a measured cohort. CA baseline{" "}
+          {CA_BASELINE_PER}% is California&apos;s FY2024 payment-error rate (USDA FNS-380).
+        </p>
       </section>
 
       {/* Funnel — full-width proportional bars (fix B) */}
@@ -299,7 +305,7 @@ function OverviewSection() {
         <p className="eyebrow mb-4">Why CBOs license Civica</p>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {[
-            { eyebrow: "Penalty avoidance",  headline: "PER below the §10105 threshold",        body: "Structured intake catches eligibility errors before submission. Civica cohort runs 4.2% PER vs ~10.8% with manual forms — under the federal payment-error trigger." },
+            { eyebrow: "Penalty avoidance",  headline: "Built to stay under the §10105 line",   body: `California's SNAP payment-error rate is ${CA_BASELINE_PER}% (USDA FNS-380, FY2024). Civica's structured intake catches eligibility errors before submission; the error model projects ${PROJECTED_PER_AT_FULL_ENGAGEMENT}% at full engagement. A projection from the engine, not yet a measured cohort.` },
             { eyebrow: "Productivity",        headline: "3× more households per navigator",      body: "AI-assisted Q&A drops intake from ~45 min to ~12 min per applicant. One navigator supports 23 enrollments/month with Civica vs 7 with manual forms." },
             { eyebrow: "Audit-ready",          headline: "CCPA + OBBBA guardrails out of the box", body: "Consent logging, data retention windows, encryption at rest, role-based access. Configured for California; OBBBA work-requirement updates auto-applied." },
           ].map((vp) => (
@@ -320,7 +326,12 @@ function OverviewSection() {
 function ApplicationsSection() {
   const total = DEMO_QUEUE.reduce((s, b) => s + (b.rows.length || b.count), 0);
   return (
-    <div className="space-y-5">
+    <div className="space-y-8">
+      {/* Real engine output — the proof this isn't a mockup */}
+      <EngineHouseholdsPanel />
+
+      <div className="border-t border-hairline pt-6 space-y-5">
+      <p className="eyebrow">Navigator pipeline · sample workflow</p>
       {/* Stat chips */}
       <div className="flex items-center gap-3 flex-wrap">
         {DEMO_QUEUE.map((bucket) => {
@@ -361,7 +372,8 @@ function ApplicationsSection() {
           </section>
         );
       })}
-      <p className="text-[11px] text-graphite">Sample data — synthetic packets. No real applicant information is shown.</p>
+      <p className="text-[11px] text-graphite">Sample pipeline — synthetic packets illustrating the navigator workflow. No real applicant information is shown.</p>
+      </div>
     </div>
   );
 }

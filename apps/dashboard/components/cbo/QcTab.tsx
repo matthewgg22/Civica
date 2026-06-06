@@ -9,16 +9,18 @@
 // Demo data is synthetic (labelled at the foot of the tab).
 
 import { Fragment, useState } from "react";
-import { CA_BASELINE_PER } from "@civica/snap-qc-engine";
+import { CA_BASELINE_PER, PROJECTED_PER_AT_FULL_ENGAGEMENT } from "@civica/snap-qc-engine";
 import InfoTip from "../InfoTip";
 import FlagSensitivityControl from "./FlagSensitivityControl";
 
-// CA baseline is the engine's published constant (USDA FNS-380), not a hand-typed
-// number — so the demo can never contradict the engine (#507).
+// CA baseline + projected PER are the engine's published constants (USDA FNS-380
+// baseline; modeled projection at full engagement), not hand-typed numbers — so
+// the demo can never contradict the engine (#507) and never implies a measured
+// cohort PER that doesn't exist yet.
 const CA_BASELINE = CA_BASELINE_PER;
 
 const DEMO_QC = {
-  per: 4.2,
+  per: PROJECTED_PER_AT_FULL_ENGAGEMENT,
   obbbaReady: 94,
   pillars: [
     {
@@ -164,15 +166,15 @@ export default function QcTab() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="bg-surface border border-hairline rounded-[4px] px-5 py-4">
           <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite">
-            {t("Payment Error Rate (PER)", "Benefit-dollar mistakes")}
+            {t("Payment Error Rate — projected", "Benefit-dollar mistakes — projected")}
             <InfoTip
               align="left"
-              label="The share of benefit dollars issued in error — over- or under-payment. USDA's official Quality Control measure. §10105 penalizes states that exceed 105% of the national average error rate."
+              label="The share of benefit dollars issued in error — over- or under-payment. USDA's official Quality Control measure. §10105 penalizes states that exceed 105% of the national average error rate. The figure shown is Civica's modeled projection at full engagement, not a measured cohort."
             />
           </p>
           <p className="text-[36px] font-semibold tabular-nums text-ink leading-none mt-1">{DEMO_QC.per}%</p>
-          <p className="text-[12px] text-pine font-medium mt-1">↓ vs {CA_BASELINE}% CA baseline without Civica</p>
-          <p className="text-[11px] text-graphite mt-0.5">{t("Below §10105 federal trigger", "Under the federal penalty line")}</p>
+          <p className="text-[12px] text-pine font-medium mt-1">projected at full engagement vs {CA_BASELINE}% CA baseline (USDA FNS-380)</p>
+          <p className="text-[11px] text-graphite mt-0.5">{t("Targets the §10105 penalty line", "Aims under the federal penalty line")}</p>
         </div>
         <div className="bg-surface border border-hairline rounded-[4px] px-5 py-4">
           <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite">
