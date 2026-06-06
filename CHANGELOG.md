@@ -9,6 +9,11 @@ Categories used:
 - **Added** — new capability
 - **Changed** — visible behavior change
 
+## [0.2.10.3] - 2026-06-06
+
+### Changed
+- **CBO preview — launch-grade cleanup** — removed the demo cruft and buzzwords that made the page read as unfinished: the loud "DEMO DATA" badge, the "View on iPhone / Download the app" island, the "Read-only demo for prospective licensee CBOs" eyebrow, the seven scattered "synthetic / no real applicant" disclaimers, and the jargon ("synthetic cohort", "engine test deck FY2026", "hover to edit · demo / not saved", "demo cohort"). Consolidated to a single understated footer — "Sample data shown for demonstration." — which stays because the public preview shows fabricated records and cannot honestly omit that it's sample data.
+
 ## [0.2.10.2] - 2026-06-06
 
 ### Changed
