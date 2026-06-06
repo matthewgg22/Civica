@@ -26,22 +26,22 @@ const DEMO_QUEUE: {
   {
     bucket: "needs-attention", bucketLabel: "Needs Attention", accent: "bg-warning", count: 0,
     rows: [
-      { id: "demo-pkt-003-jasmine", shortId: "JASMINE", name: "Jasmine T.", county: "Los Angeles",   status: "Needs Documents",               risk: "Medium risk", riskBg: "bg-warning", time: "1d ago" },
-      { id: "demo-pkt-elena",       shortId: "9ELENA",  name: "Elena V.",   county: "San Francisco", status: "Needs Applicant Clarification", risk: "High risk",   riskBg: "bg-brick",   time: "2d ago" },
+      { id: "demo-pkt-003-jasmine", shortId: "CF-2026-0188", name: "Jasmine T.", county: "Los Angeles",   status: "Needs Documents",               risk: "Medium risk", riskBg: "bg-warning", time: "1d ago" },
+      { id: "demo-pkt-elena",       shortId: "CF-2026-0184", name: "Elena V.",   county: "San Francisco", status: "Needs Applicant Clarification", risk: "High risk",   riskBg: "bg-brick",   time: "2d ago" },
     ],
   },
   {
     bucket: "in-progress", bucketLabel: "In Progress", accent: "bg-indigo", count: 0,
     rows: [
-      { id: "demo-pkt-002-carlos", shortId: "CARLOS", name: "Carlos R.", county: "Fresno",     status: "In Navigator Review",  risk: "Medium risk", riskBg: "bg-warning", time: "5h ago" },
-      { id: "demo-pkt-sofia",      shortId: "SOFIA",  name: "Sofia M.",  county: "Sacramento", status: "Submitted for Review", risk: "Low risk",    riskBg: "bg-pine",    time: "1d ago" },
-      { id: "demo-pkt-marcus",     shortId: "MARCUS", name: "Marcus W.", county: "Oakland",    status: "In Navigator Review",  risk: "Medium risk", riskBg: "bg-warning", time: "3d ago" },
+      { id: "demo-pkt-002-carlos", shortId: "CF-2026-0203", name: "Carlos R.", county: "Fresno",     status: "In Navigator Review",  risk: "Medium risk", riskBg: "bg-warning", time: "5h ago" },
+      { id: "demo-pkt-sofia",      shortId: "CF-2026-0201", name: "Sofia M.",  county: "Sacramento", status: "Submitted for Review", risk: "Low risk",    riskBg: "bg-pine",    time: "1d ago" },
+      { id: "demo-pkt-marcus",     shortId: "CF-2026-0195", name: "Marcus W.", county: "Oakland",    status: "In Navigator Review",  risk: "Medium risk", riskBg: "bg-warning", time: "3d ago" },
     ],
   },
   {
     bucket: "ready", bucketLabel: "Ready for Handoff", accent: "bg-teal", count: 0,
     rows: [
-      { id: "demo-pkt-001-maria", shortId: "MARIA", name: "Maria G.", county: "Alameda", status: "Ready for Handoff", risk: "Low risk", riskBg: "bg-pine", time: "1d ago" },
+      { id: "demo-pkt-001-maria", shortId: "CF-2026-0179", name: "Maria G.", county: "Alameda", status: "Ready for Handoff", risk: "Low risk", riskBg: "bg-pine", time: "1d ago" },
     ],
   },
   {
@@ -284,9 +284,9 @@ function OverviewSection() {
         </div>
         <div className="bg-surface border border-hairline rounded-[4px] overflow-hidden">
           {[
-            { id: "demo-pkt-003-jasmine", shortId: "JASMINE", name: "Jasmine T.", county: "Los Angeles", status: "Needs Documents",      risk: "Medium risk", riskBg: "bg-warning", time: "2h ago" },
-            { id: "demo-pkt-002-carlos",  shortId: "CARLOS",  name: "Carlos R.", county: "Fresno",       status: "In Navigator Review", risk: "Medium risk", riskBg: "bg-warning", time: "5h ago" },
-            { id: "demo-pkt-001-maria",   shortId: "MARIA",   name: "Maria G.",  county: "Alameda",      status: "Ready for Handoff",   risk: "Low risk",    riskBg: "bg-pine",    time: "1d ago" },
+            { id: "demo-pkt-003-jasmine", shortId: "CF-2026-0188", name: "Jasmine T.", county: "Los Angeles", status: "Needs Documents",      risk: "Medium risk", riskBg: "bg-warning", time: "2h ago" },
+            { id: "demo-pkt-002-carlos",  shortId: "CF-2026-0203", name: "Carlos R.", county: "Fresno",       status: "In Navigator Review", risk: "Medium risk", riskBg: "bg-warning", time: "5h ago" },
+            { id: "demo-pkt-001-maria",   shortId: "CF-2026-0179", name: "Maria G.",  county: "Alameda",      status: "Ready for Handoff",   risk: "Low risk",    riskBg: "bg-pine",    time: "1d ago" },
           ].map((p, i) => (
             <QueueRow key={p.id} {...p} border={i > 0} />
           ))}
@@ -537,9 +537,9 @@ function QueueRow({
       <StatusBadge status={status} />
       <div className="flex-1 min-w-0">
         <div className="flex items-baseline gap-2 flex-wrap">
+          <span className="text-[11px] text-graphite font-mono tabular-nums tracking-tight">{shortId}</span>
           <p className="text-[15px] font-semibold text-ink">{name}</p>
-          <p className="text-[13px] text-graphite">{county}, CA</p>
-          <span className="text-[11px] text-graphite font-mono tabular-nums">{shortId}</span>
+          <p className="text-[13px] text-graphite">· {county} County, CA</p>
         </div>
         <div className="flex items-center gap-2 mt-1.5">
           <StatusPill status={status} />

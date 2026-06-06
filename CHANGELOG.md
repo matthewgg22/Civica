@@ -9,6 +9,11 @@ Categories used:
 - **Added** — new capability
 - **Changed** — visible behavior change
 
+## [0.2.7.6] - 2026-06-06
+
+### Changed
+- **CBO preview applications — professional case IDs + structured rows** — replaced the name-derived pseudo-identifiers (`JASMINE`, `9ELENA`, `CARLOS`…) in the navigator queue with structured CalFresh case IDs (`CF-2026-####`), consistent across the Overview preview and the full Applications view. Each queue row now leads with the case ID (mono) as the canonical reference, then applicant name and "{County} County, CA", so the pipeline reads like a real case-management system.
+
 ## [0.2.7.5] - 2026-06-06
 
 ### Fixed
