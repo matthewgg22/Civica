@@ -1394,13 +1394,15 @@ html {
 }
 
 .home-hero__title {
-  font-size: clamp(1.875rem, 4vw, 2.75rem);
+  font-size: clamp(1.875rem, 3.6vw, 2.5rem);
   line-height: 1.1;
   letter-spacing: -0.02em;
   font-weight: 700;
   color: var(--civica-ink);
   margin: 0 0 var(--civica-space-lg);
-  max-width: 18ch;
+  /* No width cap — let the headline use the full (widened) text column so
+     "Do you qualify for free groceries?" fits on one line at desktop. */
+  max-width: none;
 }
 
 .home-hero__body {
@@ -2898,7 +2900,7 @@ html {
   position: relative;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-end;
   min-height: 380px;
 }
 
@@ -4024,9 +4026,12 @@ html {
 
 .home-hero__inner.hero__grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  /* Text column gets the lion's share so the headline fits one line;
+     the phone column is narrower and right-aligned to sit further right. */
+  grid-template-columns: 1.55fr 0.8fr;
   gap: var(--civica-space-xxl);
   align-items: center;
+  max-width: 1140px;
 }
 
 @media (max-width: 768px) {
@@ -4084,6 +4089,22 @@ html {
 .why-gemini-scroll {
   height: 200vh;
   position: relative;
+}
+
+/* Static / reduced-motion hero — single viewport, no scroll wiring */
+.why-static-hero {
+  min-height: calc(100vh - 80px);
+  background: var(--civica-paper);
+  border-bottom: 1px solid var(--civica-hairline);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  overflow: hidden;
+  padding: clamp(48px, 9vw, 96px) 0 clamp(32px, 6vw, 56px);
+}
+
+.why-static-hero .gemini-effect svg {
+  max-height: 360px;
 }
 
 .why-gemini-sticky {
