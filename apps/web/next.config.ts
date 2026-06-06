@@ -7,6 +7,13 @@ const nextConfig: NextConfig = {
   // running from a Conductor worktree (two `pnpm-workspace.yaml` files visible
   // from the build dir would otherwise trigger an inferred-root warning).
   outputFileTracingRoot: path.join(__dirname, "../.."),
+  // The root URL is the applicant portal's front door — send it to the polished
+  // /welcome page so there's one canonical applicant landing to maintain.
+  // Temporary (307) so it's trivially reversible if a distinct marketing page
+  // is ever built for /.
+  async redirects() {
+    return [{ source: "/", destination: "/welcome", permanent: false }];
+  },
   webpack(config) {
     // Workspace packages use .js extensions for TypeScript ESM imports (node16).
     // Webpack needs this alias to resolve ./foo.js → ./foo.ts at build time.
