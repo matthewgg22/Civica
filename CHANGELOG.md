@@ -9,6 +9,11 @@ Categories used:
 - **Added** — new capability
 - **Changed** — visible behavior change
 
+## [0.2.7.5] - 2026-06-06
+
+### Fixed
+- **Why Civica hero load + convergence** — the scroll hero now renders the static line field on the server (immediately visible) instead of flashing blank before the animation chunk loads. The turbulent "mess" field no longer collapses all lines onto one exact point with a flat overlapping tail; lines now resolve into a soft bundle that flows into the app, removing the unnatural razor-pinch at the end.
+
 ## [0.2.7.4] - 2026-06-06
 
 ### Added
