@@ -9,6 +9,16 @@ Categories used:
 - **Added** — new capability
 - **Changed** — visible behavior change
 
+## [0.2.7.0] - 2026-06-05
+
+### Changed
+- **Applicant welcome hero polish** — sticky frosted nav on `/welcome` and `/`; the hero phone mockup now shows an iOS-faithful status screen (Dynamic Island, status bar, "Your CalFresh" timeline with amber/pine/ghost step markers mirroring `CivicaStatusTimeline`). Copy and the household-size estimator sit in two content-sized frosted cards over the (de-blurred) Van Gogh wheatfield background. Removed the decorative `$292` watermark behind the phone. Language picker height now matches the "Apply now" button (40px).
+
+### Added
+- **USDA SNAP credibility markers** — hero shows a "USDA SNAP — Federal Program" badge (links to fns.usda.gov) plus the full "Supplemental Nutrition Assistance Program · formerly known as Food Stamps" subtitle.
+- **"Find food near you" map hover** — the three sample pins (Grocery store / EBT accepted / Free meals) now scale, lift, and show a label tooltip on hover; repositioned so none clip the map edge.
+- **Mae CTA after FAQ** — an "Any other questions?" section routes to the Mae AI guide, with a disclaimer citing 7 CFR 273, real application experiences, and caseworker review (and noting answers may be wrong). Mae floating help button now appears on the welcome page.
+
 ## [0.2.6.0] - 2026-06-05
 
 ### Changed
