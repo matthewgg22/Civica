@@ -9,6 +9,11 @@ Categories used:
 - **Added** — new capability
 - **Changed** — visible behavior change
 
+## [0.2.10.0] - 2026-06-06
+
+### Changed
+- **CBO preview queue — de-faked + history + editable** — the navigator queue dropdown now runs each synthetic applicant's answers through the **real rules engine** (`packetAnswersToFacts` → `computeBenefit`/`confirmForVerdict` in `lib/cbo/demo-pipeline.ts`): the **Engine determination** (estimated benefit) and **Verification needed** checklist are genuinely computed, not hand-set (synthetic input, real engine output). Adds an **application-history timeline** per case and an **inline edit** affordance on each answer (ephemeral demo — local only, not saved; real persisted editing is the next step on the authenticated `/packets/[id]` dashboard). Search now also matches answer text. Replaces the hand-authored `APP_QUEUE` data.
+
 ## [0.2.9.0] - 2026-06-06
 
 ### Added
