@@ -56,10 +56,6 @@ export function GoogleGeminiEffect({
         aria-hidden="true"
       >
         <defs>
-          <radialGradient id="civicaCenterGlow" cx="50%" cy="50%" r="30%">
-            <stop offset="0%" stopColor="rgba(45,90,69,0.10)" />
-            <stop offset="100%" stopColor="rgba(247,245,239,0)" />
-          </radialGradient>
           <filter id="civicaGlow" x="-20%" y="-20%" width="140%" height="140%">
             <feGaussianBlur stdDeviation="1.4" result="blur" />
             <feMerge>
@@ -71,9 +67,6 @@ export function GoogleGeminiEffect({
             <rect x="823" y="196" width="74" height="170" rx="9" />
           </clipPath>
         </defs>
-
-        {/* Soft glow at the phone convergence point */}
-        <ellipse cx="860" cy="280" rx="230" ry="170" fill="url(#civicaCenterGlow)" />
 
         {/* Turbulent "mess" field — the complexity of the rules, resolving to
             clarity at the app. Static (drawn once); only the flag lines animate. */}
