@@ -15,6 +15,7 @@ Categories used:
 - **CSV / PDF export on the CBO preview tables** — an Export control (CSV that opens in Excel / Numbers / Sheets, plus a clean table-only PDF via the browser's print, zero new dependencies) on the navigator Pipeline case list and the Quality Control pillar + flags tables. The pipeline export carries the full caseload (not the search-filtered view) with the engine-computed benefit estimate and verification-need count per case. New reusable client component `TableExport.tsx`.
 
 ### Fixed
+- **Retired the fabricated "4.2%" PER on the QC tab** — the Quality Control tab showed a hard-coded `4.2%` payment-error rate labelled "↓ vs baseline without Civica", implying a measured Civica cohort that doesn't exist. Now shows the engine's modeled projection (`PROJECTED_PER_AT_FULL_ENGAGEMENT`) against California's real FY2024 baseline (`CA_BASELINE_PER`, USDA FNS-380), labelled "projected at full engagement, not a measured cohort." Both numbers come from engine constants so they can't silently drift.
 - **WCAG AA contrast in the CBO pipeline** — two `text-[11px] text-muted` captions in `ApplicationsQueue` (the timeline `by` line and the "clean" flag label) failed DESIGN.md §6.6 (muted below 12px); switched to `text-graphite`.
 
 ## [0.2.12.0] - 2026-06-06
