@@ -7,7 +7,9 @@
 // the same facts-adapter a real packet uses. Synthetic input, REAL engine
 // output. The phase + stage + history are the navigator-workflow overlay.
 
-import { estimatePacketBenefit, type PacketAnswers } from "../engines/facts-adapter";
+import { assessPacket, type PacketAnswers } from "../engines/facts-adapter";
+import { computeBenefit, type BenefitCalcDetail } from "@civica/snap-rules";
+import type { EngineRecommendation } from "./engine-view";
 
 export const PIPELINE_STEPS = [
   "Eligibility screener",
@@ -79,6 +81,10 @@ export interface QueueApplication {
   estimatedBenefitUsd: number | null;
   verificationNeeds: string[];
   assumptions: string[];
+  /** Benefit math detail for the "show the math" trace (null if not computable). */
+  deduction: BenefitCalcDetail | null;
+  /** Component R ranked "good next" actions. */
+  recommendations: EngineRecommendation[];
 }
 
 export interface PhaseGroup {
@@ -281,11 +287,22 @@ export function buildPipeline(state: "CA" | "MA" = "CA", asOf: Date, synthetic =
     let estimatedBenefitUsd: number | null = null;
     let verificationNeeds: string[] = [];
     let assumptions: string[] = [];
+    let deduction: BenefitCalcDetail | null = null;
+    let recommendations: EngineRecommendation[] = [];
     try {
-      const est = estimatePacketBenefit(a.engineInputs, state, asOf);
-      estimatedBenefitUsd = est.estimatedMonthlyBenefitUsd;
-      verificationNeeds = est.confirmForVerdict;
-      assumptions = est.assumptions;
+      // assessPacket = the benefit estimate + Component R recommendations from
+      // the same mapped Facts. computeBenefit gives the deduction trace.
+      const assessed = assessPacket(a.engineInputs, state, asOf);
+      estimatedBenefitUsd = assessed.estimatedMonthlyBenefitUsd;
+      verificationNeeds = assessed.confirmForVerdict;
+      assumptions = assessed.assumptions;
+      recommendations = assessed.recommendations.map((r) => ({
+        rank: r.rank,
+        action: r.action,
+        deltaUsd: r.delta_monthly_usd,
+        citation: r.citable_to?.[0] ?? null,
+      }));
+      deduction = computeBenefit(assessed.facts, state, asOf);
     } catch {
       estimatedBenefitUsd = null;
     }
@@ -293,7 +310,7 @@ export function buildPipeline(state: "CA" | "MA" = "CA", asOf: Date, synthetic =
       id: a.id, caseId: a.caseId, name: a.name, county: a.county, phase: a.phase, stage: a.stage,
       risk: a.risk, updated: a.updated, completedSteps: a.completedSteps,
       answers: a.answers, docFlags: a.docFlags, history: a.history,
-      estimatedBenefitUsd, verificationNeeds, assumptions,
+      estimatedBenefitUsd, verificationNeeds, assumptions, deduction, recommendations,
     };
   });
   return PHASES.map((p) => ({ ...p, cases: enriched.filter((c) => c.phase === p.key) }));

@@ -13,6 +13,7 @@ import {
   type Risk,
 } from "../../lib/cbo/demo-pipeline";
 import TableExport from "./TableExport";
+import { EVALUATION_GATES, deductionRows, deductionOneLine } from "../../lib/cbo/engine-view";
 
 // Lifecycle pipeline for /cbo-preview: a funnel (Requesting → Live → Enrolled →
 // Recertification) over a searchable, expandable case list grouped by phase.
@@ -195,10 +196,33 @@ function Timeline({ events }: { events: TimelineEvent[] }) {
   );
 }
 
+// One of the three engine panels in the expanded case view: a titled, tagged
+// card with a consistent grammar (result → trace → provenance tag).
+function EngineBlock({ title, tag, children }: { title: string; tag: string; children: React.ReactNode }) {
+  return (
+    <div className="bg-paper border border-hairline rounded-[2px] p-2.5">
+      <div className="flex items-baseline justify-between gap-1 mb-1.5">
+        <p className="text-[10px] font-semibold uppercase tracking-wider text-ink">{title}</p>
+        <span className="text-[9px] uppercase tracking-wider text-graphite shrink-0">{tag}</span>
+      </div>
+      {children}
+    </div>
+  );
+}
+
 function CaseRow({ app, border }: { app: QueueApplication; border: boolean }) {
   const [open, setOpen] = useState(false);
   const [edited, setEdited] = useState<Record<string, string>>({});
+  const [showMath, setShowMath] = useState(false);
   const pct = completionPct(app.completedSteps);
+
+  // Open Mae prefilled with the case context (no applicant PII — stage + the
+  // engine's top suggested action). MaeChat listens for this event.
+  const askMae = () => {
+    const top = app.recommendations[0]?.action ?? app.verificationNeeds[0];
+    const text = `I'm reviewing a CalFresh case at the "${app.stage}" stage.${top ? ` The engine's next step is: "${top}".` : ""} What does the governing rule require here?`;
+    window.dispatchEvent(new CustomEvent("mae:prefill", { detail: { text } }));
+  };
   const flagCount = app.docFlags.length;
   const enrolled = app.phase === "enrolled";
 
@@ -246,57 +270,137 @@ function CaseRow({ app, border }: { app: QueueApplication; border: boolean }) {
             <AnswerList answers={app.answers} edited={edited} onEdit={(q, v) => setEdited((p) => ({ ...p, [q]: v }))} />
           </div>
 
+          {/* The three engines, made explicit */}
           <div className="border-t border-hairline pt-3">
-            <p className="text-[10px] font-semibold uppercase tracking-wider text-graphite mb-1.5">
-              Engine determination <span className="text-pine">· live</span>
+            <p className="text-[10px] font-semibold uppercase tracking-wider text-graphite mb-2">Civica engine</p>
+            <div className="grid gap-3 md:grid-cols-3">
+              {/* 1 — Eligibility (provisional: the gates it evaluates, in order) */}
+              <EngineBlock title="Eligibility" tag="provisional">
+                <p className="text-[12px] text-ink">
+                  Determination pending{" "}
+                  <span className="font-semibold tabular-nums">{app.verificationNeeds.length}</span> item(s).
+                </p>
+                <ol className="mt-1.5 space-y-1">
+                  {EVALUATION_GATES.map((g, i) => (
+                    <li key={g.citation} className="flex items-baseline gap-1.5 text-[11px] leading-tight">
+                      <span className="tabular-nums text-muted w-3 shrink-0">{i + 1}</span>
+                      <span className="text-ink">{g.label}</span>
+                      <span className="text-muted">{g.citation}</span>
+                    </li>
+                  ))}
+                </ol>
+                {app.assumptions.length > 0 && (
+                  <p className="text-[10px] text-muted mt-1.5 leading-snug">Assumed: {app.assumptions.join("; ")}.</p>
+                )}
+              </EngineBlock>
+
+              {/* 2 — Benefit amount (the number + the math). Always the engine
+                  estimate — never the county's actual award, even when enrolled. */}
+              <EngineBlock title="Benefit amount" tag="estimate">
+                {app.estimatedBenefitUsd !== null ? (
+                  <>
+                    <p className="text-[16px] font-semibold tabular-nums text-ink leading-none">
+                      {formatUsd(app.estimatedBenefitUsd)}
+                      <span className="text-[11px] font-normal text-graphite">/mo</span>
+                    </p>
+                    {app.deduction && (
+                      <>
+                        <p className="text-[11px] text-graphite mt-1.5 leading-snug">{deductionOneLine(app.deduction)}</p>
+                        <button
+                          type="button"
+                          onClick={() => setShowMath((v) => !v)}
+                          className="text-[11px] text-pine hover:underline mt-1"
+                        >
+                          {showMath ? "Hide the math" : "Show the math"}
+                        </button>
+                        {showMath && (
+                          <table className="mt-1.5 w-full text-[11px]">
+                            <tbody>
+                              {deductionRows(app.deduction).map((r) => (
+                                <tr key={r.label} className={r.total ? "border-t border-hairline font-semibold text-ink" : "text-graphite"}>
+                                  <td className="py-0.5 pr-2 align-top">
+                                    {r.label}
+                                    {r.citation && <span className="block text-[9px] text-muted">{r.citation}</span>}
+                                  </td>
+                                  <td className="py-0.5 text-right tabular-nums align-top">
+                                    {r.amount < 0 ? `−${formatUsd(-r.amount)}` : formatUsd(r.amount)}
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        )}
+                      </>
+                    )}
+                  </>
+                ) : (
+                  <p className="text-[12px] text-muted">No estimate for this household.</p>
+                )}
+              </EngineBlock>
+
+              {/* 3 — Recommendations: Component R benefit-raising actions when it
+                  finds any; otherwise the verification steps that move the case
+                  to a determination (the genuine "good next" for a provisional
+                  case, per the 273.2(f) hierarchy). */}
+              <EngineBlock
+                title="Recommended next steps"
+                tag={app.recommendations.length > 0 ? "Component R" : "verification · 273.2(f)"}
+              >
+                {app.recommendations.length > 0 ? (
+                  <ol className="space-y-1.5">
+                    {app.recommendations.slice(0, 4).map((r) => (
+                      <li key={r.rank} className="text-[12px] text-ink leading-snug">
+                        <span className="font-semibold text-pine">Good next:</span> {r.action}
+                        {r.deltaUsd > 0 && (
+                          <span className="text-pine tabular-nums"> (+{formatUsd(r.deltaUsd)}/mo)</span>
+                        )}
+                        {r.citation && <span className="block text-[9px] text-muted">{r.citation}</span>}
+                      </li>
+                    ))}
+                  </ol>
+                ) : app.verificationNeeds.length > 0 ? (
+                  <ol className="space-y-1.5">
+                    {app.verificationNeeds.slice(0, 5).map((v) => (
+                      <li key={v} className="text-[12px] text-ink leading-snug">
+                        <span className="font-semibold text-pine">Good next:</span> confirm{" "}
+                        {v.charAt(0).toLowerCase() + v.slice(1)}
+                      </li>
+                    ))}
+                  </ol>
+                ) : (
+                  <p className="text-[12px] text-muted">No actions outstanding.</p>
+                )}
+                <button
+                  type="button"
+                  onClick={askMae}
+                  className="mt-2 text-[11px] font-medium text-pine hover:underline"
+                >
+                  Ask Mae about this case →
+                </button>
+              </EngineBlock>
+            </div>
+            <p className="text-[10px] text-muted mt-2 leading-snug">
+              Estimate + recommendations are live engine output on these answers; eligibility is provisional until the
+              verification items are confirmed — an estimate, not a determination.
             </p>
-            {app.estimatedBenefitUsd !== null ? (
-              <p className="text-[13px] text-ink">
-                {enrolled ? "Benefit" : "Estimated benefit"}{" "}
-                <span className="font-semibold tabular-nums">{formatUsd(app.estimatedBenefitUsd)}/mo</span>
-                <span className="text-[11px] text-graphite">{enrolled ? " · approved" : " · estimate pending verification"}</span>
-              </p>
-            ) : (
-              <p className="text-[12px] text-muted">Engine could not produce an estimate for this household.</p>
-            )}
-            {app.assumptions.length > 0 && (
-              <p className="text-[11px] text-graphite mt-1">Assumptions: {app.assumptions.join("; ")}.</p>
-            )}
           </div>
 
-          <div className="grid gap-4 md:grid-cols-2 border-t border-hairline pt-3">
-            <div>
-              <p className="text-[10px] font-semibold uppercase tracking-wider text-graphite mb-2">
-                Verification needed <span className="text-pine">· engine</span>
-              </p>
-              {app.verificationNeeds.length > 0 ? (
-                <ul className="space-y-1.5">
-                  {app.verificationNeeds.map((v) => (
-                    <li key={v} className="flex items-start gap-2 text-[12px] text-ink">
-                      <span className="shrink-0 mt-[5px] w-1.5 h-1.5 rounded-full bg-warning" aria-hidden="true" />
-                      {v}
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p className="text-[12px] text-muted">Nothing outstanding from the engine.</p>
-              )}
-            </div>
-            <div>
-              <p className="text-[10px] font-semibold uppercase tracking-wider text-graphite mb-2">Navigator flags</p>
-              {app.docFlags.length > 0 ? (
-                <ul className="space-y-1.5">
-                  {app.docFlags.map((f) => (
-                    <li key={f} className="flex items-start gap-2 text-[12px] text-ink">
-                      <span className="shrink-0 mt-[5px] w-1.5 h-1.5 rounded-full bg-brick" aria-hidden="true" />
-                      {f}
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p className="text-[12px] text-muted">No flags.</p>
-              )}
-            </div>
+          {/* Navigator flags (the still-needed items now live in the
+              Recommended-next-steps engine block above). */}
+          <div className="border-t border-hairline pt-3">
+            <p className="text-[10px] font-semibold uppercase tracking-wider text-graphite mb-2">Navigator flags</p>
+            {app.docFlags.length > 0 ? (
+              <ul className="space-y-1.5">
+                {app.docFlags.map((f) => (
+                  <li key={f} className="flex items-start gap-2 text-[12px] text-ink">
+                    <span className="shrink-0 mt-[5px] w-1.5 h-1.5 rounded-full bg-brick" aria-hidden="true" />
+                    {f}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-[12px] text-muted">No flags.</p>
+            )}
           </div>
 
           <div className="grid gap-4 md:grid-cols-2 border-t border-hairline pt-3">
