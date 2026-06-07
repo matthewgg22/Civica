@@ -26,7 +26,12 @@ vi.mock("../../../../lib/mae/retrieval", () => ({
   retrieve: (q: string) => [{ citation: "7 CFR 273.9(d)(6)", heading: "Income and deductions.", text: "(6) Excess shelter…", source_url: "https://ecfr.gov/x", effective_date: "2026-06-02", id: "273.9-d-6", section: "273.9", subsection: "d6" }],
   formatRetrievedSources: (chunks: { citation: string }[]) =>
     chunks.length ? `## Verbatim regulatory source text (authoritative)\n${chunks[0].citation}` : "",
+  CORPUS_EFFECTIVE_DATE: "2026-06-02",
 }));
+
+// Mock the audit sink so the route test doesn't touch Supabase.
+const mockLogMaeQuery = vi.hoisted(() => vi.fn());
+vi.mock("../../../../lib/mae/audit", () => ({ logMaeQuery: mockLogMaeQuery }));
 
 // Mock the engine so the route's live-params grounding is hermetic.
 vi.mock("@civica/snap-rules", () => ({
@@ -168,6 +173,25 @@ describe("POST /api/mae", () => {
     expect(text).toContain("7 CFR 273.9(d)(6)"); // verified against retrieved sources
     expect(text).toContain("7 CFR 273.99(z)"); // invented cite is named...
     expect(text).toContain("⚠️"); // ...and flagged as not recognized
+  });
+
+  it("redacts applicant PII before sending to the model and audits the query", async () => {
+    mockGetUser.mockResolvedValue(staffUser);
+    mockStream.mockReturnValue(fakeStream({ chunks: ["Use net income (7 CFR 273.9(a))."] }));
+    const res = await POST(
+      makeReq({ messages: [{ role: "user", content: "Client SSN 123-45-6789 makes $1800 — over income?" }] }),
+    );
+    await res.text();
+
+    const sent = mockStream.mock.calls.at(-1)![0].messages.at(-1).content as string;
+    expect(sent).toContain("[SSN]"); // redacted placeholder reached the model
+    expect(sent).not.toContain("123-45-6789"); // raw SSN did not
+
+    expect(mockLogMaeQuery).toHaveBeenCalled();
+    const rec = mockLogMaeQuery.mock.calls.at(-1)![0];
+    expect(rec.questionRedacted).toContain("[SSN]");
+    expect(rec.questionRedacted).not.toContain("123-45-6789");
+    expect(rec.piiRedactions).toBeGreaterThanOrEqual(1);
   });
 
   it("adds no trailer when the answer contains no citations", async () => {
