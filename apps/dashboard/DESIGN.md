@@ -16,13 +16,22 @@ All tokens live in [`app/globals.css`](app/globals.css) inside the `@theme` bloc
 
 | Token | Hex | Use | Maps to iOS |
 |---|---|---|---|
-| `--color-ink` | `#1A1714` | Body text, primary text on light surfaces | `ink` |
-| `--color-graphite` | `#443F38` | Secondary text, metadata | `graphite` |
-| `--color-muted` | `#57524A` | Tertiary text, captions ≥12px | `muted` |
-| `--color-paper` | `#F7F5EF` | Screen background | `paper` |
+| `--color-ink` | `#15181C` | Body text, primary text on light surfaces | `ink` (cooled for web) |
+| `--color-graphite` | `#3C424B` | Secondary text, metadata | `graphite` (cooled for web) |
+| `--color-muted` | `#565E68` | Tertiary text, captions ≥12px | `muted` (cooled for web) |
+| `--color-paper` | `#F3F4F6` | Screen background — **cool** neutral (staff portal) | `paper` (cooled for web) |
 | `--color-surface` | `#FFFFFF` | Card / row background | `surfacePrimary` |
-| `--color-surface-secondary` | `#F0EEE6` | Nested card / aggregate stats | `surfaceSecondary` |
-| `--color-hairline` | `rgba(0,0,0,0.12)` | Dividers, card borders | `hairline` |
+| `--color-surface-secondary` | `#E9EBEF` | Nested card / aggregate stats | `surfaceSecondary` (cooled for web) |
+| `--color-hairline` | `rgba(15,23,42,0.14)` | Dividers, card borders | `hairline` (cool-tinted) |
+
+> **Staff portal runs cool neutrals.** The dashboard's `paper`/`surface-secondary`/text-gray
+> tokens are a **cool** gray family (above), not the warm cream (`#F7F5EF`) of the
+> applicant-facing iOS app and `apps/web`. This is deliberate: a navigator console
+> wants a denser, utility/terminal register, while the consumer surfaces keep the
+> warm Civica brand. Semantic accents (pine, brick, amber, warning, indigo) are
+> **unchanged** — they carry meaning and stay consistent across surfaces. When
+> mirroring an iOS screen to the dashboard, expect the background tone to differ;
+> do not "fix" it back to warm paper.
 | `--color-pine` | `#2D5A45` | **CTAs only** — primary buttons + text links | `pinePrimary` |
 | `--color-pine-pressed` | `#224636` | Pine pressed state | `pinePrimaryPressed` |
 | `--color-pine-surface` | `#D8E6DE` | Success-adjacent fill (enrolled, submitted) | `pineSurface` |
@@ -103,9 +112,9 @@ iOS DESIGN.md sets a 17pt body minimum because applicants read it on phones unde
 Three layers, mirrors iOS DESIGN.md §8 exactly:
 
 ```
-Screen   →   bg-paper             (#F7F5EF)
+Screen   →   bg-paper             (#F3F4F6 cool gray)
 Card     →   bg-surface           (#FFFFFF) with border-hairline
-Nested   →   bg-surface-secondary (#F0EEE6)
+Nested   →   bg-surface-secondary (#E9EBEF cool gray)
 ```
 
 Accent surfaces (pine, brick, warning, wheat) communicate state — they don't substitute for the base three layers. A screen with a warning card still uses `bg-paper` as its background.
@@ -198,7 +207,7 @@ Mirrors iOS DESIGN.md §9; web specifics below.
 
 5. **Honor `prefers-reduced-motion`.** Already enforced globally via CSS media query in `globals.css`. JS-driven motion must also check `matchMedia('(prefers-reduced-motion: reduce)')`.
 
-6. **`text-muted` (`#57524A`) on `paper` is 4.5:1.** At AA threshold for body, fails for footnote sizes (<12px). Avoid `text-muted` on captions; use `text-graphite` (5.4:1) instead.
+6. **`text-muted` (`#565E68`) on cool `paper` (`#F3F4F6`) is ~6:1.** Comfortably AA for body; still prefer `text-graphite` (~9:1) for sub-12px captions. (Both improved when the neutrals were cooled — the warm originals were `#57524A`/`#443F38` at ~4.5:1 / ~5.4:1.)
 
 ---
 
@@ -229,4 +238,5 @@ Mirrors iOS DESIGN.md §9; web specifics below.
 |------|----------|-----------|
 | 2026-05-25 | `/enrollments` lifecycle audit — 10 token-rule violations fixed | Page introduced post-handoff lifecycle buckets + Stage 3 monetization band; new code did not honor DESIGN.md §1 (pine for CTAs only) and §2 (teal deprecated). Specifics: (a) bucket meta — `interview_pending` migrated teal → indigo (info, scheduled-but-unconfirmed); `active` migrated teal → pine-surface/60 + text-ink (the canonical "enrolled, submitted" success-adjacent fill, FG neutral); `recertified` migrated indigo → amber (positive lifecycle outcome). (b) Stage3Chips — `text-pine` on hours-compliant + workforce-placement chips violated §1; FG changed to `text-ink` while keeping `bg-pine-surface` (fill is allowed). (c) PilotCohort + NavigatorThroughput — goal-reached/target-met used `bg-pine` + `text-pine` (CTA color on a status indicator); migrated to amber. (d) Stage3YieldBand — `text-pine` on WOTC "$200-500/hire" projection migrated to amber (positive projected outcome). (e) LifecycleStage — `text-teal`/`bg-teal` on interview countdown migrated to indigo; default countdown bar migrated to amber. (f) RECERT_STAGE_META — `stage_60` cadence chip migrated teal → amber (gradient amber → warning → warning-deep → brick now uses canonical tokens). |
 | 2026-05-25 | Lifecycle bucket semantics codified | The 7 post-handoff buckets each map to a canonical DESIGN.md token: urgent group → brick (expired, interview_at_risk) + warning (expiring, verification_outstanding); progress group → indigo (interview_pending, info), pine-surface (active, success-adjacent fill), amber (recertified, positive outcome). Each token is semantically motivated, not chosen for visual variety. |
+| 2026-06-07 | Staff portal neutrals retuned warm → cool | The warm paper brand (`#F7F5EF`) read "med-spa"/informal across the navigator console; a staff portal wants a denser utility/terminal register. Cooled the dashboard-only neutrals: `paper #F7F5EF→#F3F4F6`, `surface-secondary #F0EEE6→#E9EBEF`, `ink #1A1714→#15181C`, `graphite #443F38→#3C424B`, `muted #57524A→#565E68`, `hairline rgba(0,0,0,.12)→rgba(15,23,42,.14)`. `surface` stays white; **semantic accents (pine/brick/amber/warning/indigo) unchanged**. Scoped to `apps/dashboard/app/globals.css` only — iOS + `apps/web` keep warm paper for the consumer brand. Also de-tinted the CBO responses grid (white ruled tables, no beige label-column/header fills) so structure comes from rules, not fills. Contrast improved (muted ~4.5:1→~6:1). |
 | 2026-05-28 | Packet detail overview tab split into Decide + Evidence zones | The overview tab stacked 14–18 same-weight `<Section>` cards; `ReviewStatusCard` was meant to be the at-a-glance answer but was undermined by 13+ equally-shouting cards below it. Decide zone (ReviewStatus, Work-Hours, Consent, Shared Lease, Expedited Gate, Advance Status, BenefitsCal, Handoff) keeps `<Section>` chrome and stays open. Evidence zone (Documents, Application Answers, Extracted Fields, API Cross-Verification, Missed Elections, Notes, Activity Timeline, Packet metadata) collapses into `<EvidenceSection>` rows with auto-open-when-flagged behavior. Missed Elections moved from Decide → Evidence (advisory output, not a sign-off gate). NotesSection/VerificationSection/DocumentsSection/TimelineSection refactored to chromeless bodies so EvidenceSection owns the outer card. See [docs/plans/packet-detail-decide-evidence-layout.md](../../docs/plans/packet-detail-decide-evidence-layout.md). |
