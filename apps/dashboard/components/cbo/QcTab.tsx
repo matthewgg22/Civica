@@ -254,7 +254,7 @@ export default function QcTab() {
         </div>
       </section>
 
-      <p className="text-[11px] text-graphite">Demo data — representative QC metrics from a synthetic cohort. Engine version FY2026.</p>
+      <p className="text-[11px] text-graphite">Sample data shown for demonstration.</p>
     </div>
   );
 }

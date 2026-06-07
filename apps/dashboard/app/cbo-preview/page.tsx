@@ -2,12 +2,10 @@ import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { createServerClientFromCookies } from "../../lib/supabase";
-import DemoModeBadge from "../../components/DemoModeBadge";
 import CBOContactButton from "../../components/CBOContactButton";
 import StatusPill from "../../components/StatusPill";
 import StatusBadge from "../../components/StatusBadge";
 import ProductSwitcher from "../../components/ProductSwitcher";
-import { AppDownloadIsland } from "../../components/AppDownloadIsland";
 import QcTab from "../../components/cbo/QcTab";
 import ApplicationsQueue from "../../components/cbo/ApplicationsQueue";
 import { buildQueueBuckets } from "../../lib/cbo/demo-pipeline";
@@ -134,7 +132,6 @@ export default async function CBOPreviewPage({
           </nav>
         </div>
         <div className="flex items-center gap-3 shrink-0">
-          <DemoModeBadge />
           {user && (
             <form action="/auth/signout" method="post">
               <button className="text-[13px] font-medium text-pine hover:underline">Sign out</button>
@@ -166,7 +163,6 @@ export default async function CBOPreviewPage({
       {/* Page title + section content — centered max-width (fix A) */}
       <div className="flex-1 w-full max-w-6xl mx-auto px-6 md:px-8 py-8">
         <div className="mb-6">
-          <p className="eyebrow">Read-only demo for prospective licensee CBOs</p>
           <h1 className="text-[26px] font-bold tracking-tight leading-none text-ink mt-1">
             {TABS.find((t) => t.key === active)?.label ?? "Overview"}
           </h1>
@@ -176,6 +172,7 @@ export default async function CBOPreviewPage({
         {active === "outreach"     && <OutreachSection />}
         {active === "renewals"     && <RenewalsSection />}
         {active === "qc"           && <QcTab />}
+        <p className="text-[11px] text-graphite mt-10">Sample data shown for demonstration.</p>
       </div>
 
       {/* Contact CTA — always visible, centered */}
@@ -191,7 +188,6 @@ export default async function CBOPreviewPage({
         </div>
       </div>
 
-      <AppDownloadIsland />
     </main>
   );
 }
@@ -222,7 +218,7 @@ function OverviewSection() {
 
       {/* Funnel — full-width proportional bars (fix B) */}
       <section aria-label="Enrollment funnel">
-        <p className="eyebrow mb-3">Enrollment funnel (demo cohort, 30 days)</p>
+        <p className="eyebrow mb-3">Enrollment funnel (last 30 days)</p>
         <div className="bg-surface border border-hairline rounded-[4px] p-5 space-y-3">
           {FUNNEL_STEPS.map((step, i) => (
             <div key={step.name}>
@@ -248,7 +244,7 @@ function OverviewSection() {
       {/* Sample queue preview */}
       <section aria-label="Sample navigator queue">
         <div className="flex items-baseline justify-between gap-3 mb-4 flex-wrap">
-          <p className="eyebrow">What navigators see · sample queue</p>
+          <p className="eyebrow">What navigators see</p>
           <Link href="/cbo-preview?section=applications" className="text-[12px] text-pine hover:underline">
             See full applications view →
           </Link>
@@ -262,7 +258,6 @@ function OverviewSection() {
             <QueueRow key={p.id} {...p} border={i > 0} />
           ))}
         </div>
-        <p className="text-[11px] text-graphite mt-3">Sample data — synthetic packets. No real applicant information is shown.</p>
       </section>
 
       {/* Value props */}
@@ -394,7 +389,6 @@ function OutreachSection() {
         </div>
       </section>
 
-      <p className="text-[11px] text-graphite">Sample data — synthetic outreach queue. No real applicant information is shown.</p>
     </div>
   );
 }
@@ -447,7 +441,7 @@ function RenewalsSection() {
 
       {/* Sample rows */}
       <section aria-label="Sample renewal queue">
-        <h2 className="text-[14px] font-bold text-ink mb-3">Sample households</h2>
+        <h2 className="text-[14px] font-bold text-ink mb-3">Households</h2>
         <div className="bg-surface border border-hairline rounded-[4px] overflow-hidden">
           {DEMO_RENEWALS.sampleRows.map((row, i) => {
             const overdue = row.daysLeft < 0;
@@ -466,7 +460,6 @@ function RenewalsSection() {
         </div>
       </section>
 
-      <p className="text-[11px] text-graphite">Sample data — synthetic recertification queue.</p>
     </div>
   );
 }
