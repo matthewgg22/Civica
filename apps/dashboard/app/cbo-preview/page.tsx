@@ -81,7 +81,7 @@ export default async function CBOPreviewPage({
                 <Link
                   key={tab.key}
                   href={`/cbo-preview${tab.key === "overview" ? "" : `?section=${tab.key}`}`}
-                  className={`px-3 py-1.5 rounded-[4px] text-[14px] font-semibold whitespace-nowrap min-h-[44px] flex items-center transition-colors ${
+                  className={`px-3 py-1.5 rounded-[2px] text-[14px] font-semibold whitespace-nowrap min-h-[44px] flex items-center transition-colors ${
                     isActive ? "bg-ink/8 text-ink" : "text-graphite hover:text-ink hover:bg-ink/5"
                   }`}
                 >
@@ -136,7 +136,7 @@ export default async function CBOPreviewPage({
       {/* Contact CTA — always visible, centered */}
       <div className="border-t border-hairline">
         <div className="w-full max-w-6xl mx-auto px-6 md:px-8 py-6">
-          <div className="border border-hairline rounded-[4px] bg-surface p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div className="border border-hairline rounded-[2px] bg-surface p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
               <p className="text-[15px] font-semibold text-ink">Interested in licensing Civica for your CBO?</p>
               <p className="text-[13px] text-graphite mt-1">We partner with community-based organizations serving SNAP-eligible households.</p>
@@ -165,7 +165,7 @@ function OverviewSection() {
             { label: "Error rate (Civica cohort)",        value: "4.2%",   sub: "vs ~10.8% manual" },
             { label: "Avg time to handoff",               value: "6 days", sub: "vs ~22 days manual" },
           ].map((kpi) => (
-            <div key={kpi.label} className="bg-surface border border-hairline rounded-[4px] px-5 py-4">
+            <div key={kpi.label} className="bg-surface border border-hairline rounded-[2px] px-4 py-3">
               <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite leading-tight">{kpi.label}</p>
               <p className="text-[28px] font-semibold tabular-nums text-ink leading-none mt-2">{kpi.value}</p>
               <p className="text-[12px] text-pine font-medium mt-1.5">{kpi.sub}</p>
@@ -177,7 +177,7 @@ function OverviewSection() {
       {/* Funnel — full-width proportional bars (fix B) */}
       <section aria-label="Enrollment funnel">
         <p className="eyebrow mb-3">Enrollment funnel (last 30 days)</p>
-        <div className="bg-surface border border-hairline rounded-[4px] p-5 space-y-3">
+        <div className="bg-surface border border-hairline rounded-[2px] p-4 space-y-3">
           {FUNNEL_STEPS.map((step, i) => (
             <div key={step.name}>
               <div className="flex items-baseline justify-between gap-3 mb-1.5">
@@ -203,11 +203,11 @@ function OverviewSection() {
       <section aria-label="Sample navigator queue">
         <div className="flex items-baseline justify-between gap-3 mb-4 flex-wrap">
           <p className="eyebrow">What navigators see</p>
-          <Link href="/cbo-preview?section=applications" className="text-[12px] text-pine hover:underline">
+          <Link href="/cbo-preview?section=pipeline" className="text-[12px] text-pine hover:underline">
             See full applications view →
           </Link>
         </div>
-        <div className="bg-surface border border-hairline rounded-[4px] overflow-hidden">
+        <div className="bg-surface border border-hairline rounded-[2px] overflow-hidden">
           {[
             { id: "demo-pkt-003-jasmine", shortId: "CF-2026-0188", name: "Jasmine T.", county: "Los Angeles", status: "Needs Documents",      risk: "Medium risk", riskBg: "bg-warning", time: "2h ago" },
             { id: "demo-pkt-002-carlos",  shortId: "CF-2026-0203", name: "Carlos R.", county: "Fresno",       status: "In Navigator Review", risk: "Medium risk", riskBg: "bg-warning", time: "5h ago" },
@@ -227,7 +227,7 @@ function OverviewSection() {
             { eyebrow: "Productivity",        headline: "3× more households per navigator",      body: "AI-assisted Q&A drops intake from ~45 min to ~12 min per applicant. One navigator supports 23 enrollments/month with Civica vs 7 with manual forms." },
             { eyebrow: "Audit-ready",          headline: "CCPA + OBBBA guardrails out of the box", body: "Consent logging, data retention windows, encryption at rest, role-based access. Configured for California; OBBBA work-requirement updates auto-applied." },
           ].map((vp) => (
-            <div key={vp.headline} className="bg-surface border border-hairline rounded-[4px] p-6 flex flex-col">
+            <div key={vp.headline} className="bg-surface border border-hairline rounded-[2px] p-5 flex flex-col">
               <p className="eyebrow mb-2">{vp.eyebrow}</p>
               <p className="text-[17px] font-semibold text-ink leading-snug tracking-tight">{vp.headline}</p>
               <p className="text-[13px] text-graphite mt-3 leading-relaxed">{vp.body}</p>

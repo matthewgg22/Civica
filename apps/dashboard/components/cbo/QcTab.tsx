@@ -104,7 +104,7 @@ export default function QcTab() {
       </div>
 
       {/* ── Collapsible "How the engine works" (flow diagram + steps) ────────── */}
-      <section aria-label="How the engine works" className="bg-surface border border-hairline rounded-[4px]">
+      <section aria-label="How the engine works" className="bg-surface border border-hairline rounded-[2px]">
         <button
           type="button"
           aria-expanded={howOpen}
@@ -134,7 +134,7 @@ export default function QcTab() {
             <div className="flex flex-col gap-2 sm:flex-row sm:items-stretch">
               {FLOW.map((node, i) => (
                 <Fragment key={node.label}>
-                  <div className="flex-1 rounded-[4px] border border-hairline bg-surface-secondary px-4 py-3 text-center">
+                  <div className="flex-1 rounded-[2px] border border-hairline bg-surface-secondary px-4 py-3 text-center">
                     <p className="text-[13px] font-semibold text-ink">{node.label}</p>
                     <p className="mt-0.5 text-[11px] text-graphite">{node.caption}</p>
                   </div>
@@ -162,7 +162,7 @@ export default function QcTab() {
 
       {/* ── Top metrics ─────────────────────────────────────────────────────── */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-surface border border-hairline rounded-[4px] px-5 py-4">
+        <div className="bg-surface border border-hairline rounded-[2px] px-4 py-3">
           <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite">
             {t("Payment Error Rate (PER)", "Benefit-dollar mistakes")}
             <InfoTip
@@ -174,7 +174,7 @@ export default function QcTab() {
           <p className="text-[12px] text-pine font-medium mt-1">↓ vs {CA_BASELINE}% CA baseline without Civica</p>
           <p className="text-[11px] text-graphite mt-0.5">{t("Below §10105 federal trigger", "Under the federal penalty line")}</p>
         </div>
-        <div className="bg-surface border border-hairline rounded-[4px] px-5 py-4">
+        <div className="bg-surface border border-hairline rounded-[2px] px-4 py-3">
           <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite">
             {t("OBBBA Readiness", "New-rules readiness")}
             <InfoTip
@@ -186,7 +186,7 @@ export default function QcTab() {
           <p className="text-[12px] text-pine font-medium mt-1">Work-requirement compliance</p>
           <p className="text-[11px] text-graphite mt-0.5">{t("FY2026 rules engine active", "2026 rules active")}</p>
         </div>
-        <div className="bg-surface border border-hairline rounded-[4px] px-5 py-4">
+        <div className="bg-surface border border-hairline rounded-[2px] px-4 py-3">
           <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite">
             {t("Open QC flags", "Open issues to review")}
             <InfoTip
@@ -206,7 +206,7 @@ export default function QcTab() {
           {t("Error by pillar", "Mistakes by category")}
           <InfoTip label="Each pillar is a category USDA scores during Quality Control. Error rate = share of reviewed packets with an issue in that category. Pass rate is the complement." />
         </h2>
-        <div className="bg-surface border border-hairline rounded-[4px] overflow-hidden">
+        <div className="bg-surface border border-hairline rounded-[2px] overflow-hidden">
           {DEMO_QC.pillars.map((p, i) => (
             <div key={p.label} className={`px-5 py-4 ${i > 0 ? "border-t border-hairline" : ""}`}>
               <div className="flex items-center justify-between mb-2">
@@ -236,7 +236,7 @@ export default function QcTab() {
       {/* ── Recent flags ────────────────────────────────────────────────────── */}
       <section aria-label="Recent QC flags">
         <h2 className="text-[14px] font-bold text-ink mb-3">{t("Recent flags", "Recent issues")}</h2>
-        <div className="bg-surface border border-hairline rounded-[4px] overflow-hidden">
+        <div className="bg-surface border border-hairline rounded-[2px] overflow-hidden">
           {DEMO_QC.recentFlags.map((flag, i) => (
             <div key={flag.id} className={`flex items-start gap-4 px-5 py-3.5 ${i > 0 ? "border-t border-hairline" : ""}`}>
               <div className="flex-1 min-w-0">
