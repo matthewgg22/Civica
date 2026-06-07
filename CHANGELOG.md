@@ -9,6 +9,14 @@ Categories used:
 - **Added** — new capability
 - **Changed** — visible behavior change
 
+## [0.2.12.0] - 2026-06-06
+
+### Added
+- **Synthetic-data trigger** — `CBO_PREVIEW_SYNTHETIC` env flag (default on) controls the preview's demo caseload. On: the pipeline, Overview funnel/queue, and QC metrics populate for visual build, debugging, and controlled walkthroughs. Off: no fabricated records are shown anywhere — clean empty states ("No active cases in the pipeline yet"), ready for a real-data source.
+
+### Changed
+- **No demo wording** — removed the "Sample data shown for demonstration." line. When synthetic data is on, the only marker is a single neutral footnote, "Illustrative caseload" (no "demo" / "sample" / "demonstration" language). When the trigger is off, there's no marker because there's no fabricated data.
+
 ## [0.2.11.1] - 2026-06-06
 
 ### Fixed
