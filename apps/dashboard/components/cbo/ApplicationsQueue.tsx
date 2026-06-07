@@ -11,6 +11,7 @@ import {
   type SurveyAnswer,
   type TimelineEvent,
   type Risk,
+  type Phase,
 } from "../../lib/cbo/demo-pipeline";
 import TableExport from "./TableExport";
 import { EVALUATION_GATES, deductionRows, deductionOneLine } from "../../lib/cbo/engine-view";
@@ -122,6 +123,40 @@ function optionsFor(question: string, current: string): string[] | null {
   if (!opts) return null;
   return opts.includes(current) ? opts : [current, ...opts];
 }
+
+// ── Case actions (ephemeral demo) ─────────────────────────────────────────────
+// Comments, transfer, and manual advance are client-only state — they reset on
+// reload and never hit a backend (the caseload is synthetic). Mirrors the
+// existing "inline edits are an ephemeral demo" honesty.
+type CaseComment = { author: string; text: string; when: string };
+type CaseRecord = QueueApplication & { assignedTo: string; comments: CaseComment[] };
+
+// Peer navigators a case can be transferred to (demo set, drawn from history).
+const PEERS = ["J. Ruiz", "A. Cole", "M. Diaz", "R. Okafor", "L. Park"];
+
+const PHASE_ORDER: Phase[] = ["requesting", "live", "enrolled", "recert"];
+const nextPhase = (p: Phase): Phase | null => {
+  const i = PHASE_ORDER.indexOf(p);
+  return i >= 0 && i < PHASE_ORDER.length - 1 ? PHASE_ORDER[i + 1] : null;
+};
+const phaseLabel = (p: Phase) => PHASES.find((x) => x.key === p)?.label ?? p;
+
+// Default stage copy when a case is manually advanced into a phase.
+const ADVANCE_STAGE: Record<Phase, string> = {
+  requesting: "Reached out",
+  live: "Submitted for review",
+  enrolled: "Approved",
+  recert: "Recertification due",
+};
+
+// Seed the assignee from the most recent navigator in the case history.
+function initialAssignee(c: QueueApplication): string {
+  const nav = [...c.history].reverse().find((e) => e.by?.startsWith("Navigator "));
+  return nav?.by ? nav.by.replace("Navigator ", "") : "Unassigned";
+}
+
+const nowLabel = () =>
+  new Date().toLocaleDateString(undefined, { month: "short", day: "numeric" });
 
 // Full application responses for the expanded case. Renders the complete intake
 // as a per-section ruled table (Field | Response). Editing is a single batch
@@ -308,11 +343,21 @@ function EngineBlock({ title, tag, children }: { title: string; tag: string; chi
   );
 }
 
-function CaseRow({ app, border }: { app: QueueApplication; border: boolean }) {
+function CaseRow({
+  app, border, onAdvance, onTransfer, onComment,
+}: {
+  app: CaseRecord;
+  border: boolean;
+  onAdvance: () => void;
+  onTransfer: (to: string) => void;
+  onComment: (text: string) => void;
+}) {
   const [open, setOpen] = useState(false);
   const [edited, setEdited] = useState<Record<string, string>>({});
   const [showMath, setShowMath] = useState(false);
+  const [comment, setComment] = useState("");
   const pct = completionPct(app.completedSteps);
+  const next = nextPhase(app.phase);
 
   // Open Mae prefilled with the case context (no applicant PII — stage + the
   // engine's top suggested action). MaeChat listens for this event.
@@ -341,7 +386,7 @@ function CaseRow({ app, border }: { app: QueueApplication; border: boolean }) {
           ) : (
             <span className="flex items-center gap-2 w-full">
               <span className="h-1.5 flex-1 rounded-[1px] bg-surface-secondary overflow-hidden">
-                <span className="block h-full rounded-[1px] bg-graphite" style={{ width: `${pct}%` }} />
+                <span className="block h-full rounded-[1px] bg-muted" style={{ width: `${pct}%` }} />
               </span>
               <span className="text-[11px] tabular-nums text-graphite w-[34px] text-right">{pct}%</span>
             </span>
@@ -362,6 +407,33 @@ function CaseRow({ app, border }: { app: QueueApplication; border: boolean }) {
 
       {open && (
         <div className="bg-[var(--color-row-hover)] border-t border-hairline px-4 py-4 space-y-4">
+          {/* Case actions (demo) — transfer to a peer, manually advance phase. */}
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <label className="flex items-center gap-1.5 text-[11px] text-graphite">
+              <span className="font-semibold uppercase tracking-wider">Assigned to</span>
+              <select
+                value={app.assignedTo}
+                onChange={(e) => onTransfer(e.target.value)}
+                className="px-1.5 py-0.5 text-[12px] bg-surface border border-hairline rounded-[2px] text-ink focus:border-pine focus:outline-none"
+                aria-label="Transfer case to caseworker"
+              >
+                {!PEERS.includes(app.assignedTo) && <option value={app.assignedTo}>{app.assignedTo}</option>}
+                {PEERS.map((p) => (
+                  <option key={p} value={p}>{p}</option>
+                ))}
+              </select>
+            </label>
+            {next && (
+              <button
+                type="button"
+                onClick={onAdvance}
+                className="rounded-[2px] border border-pine px-2.5 py-1 text-[11px] font-medium text-pine hover:bg-surface"
+              >
+                Advance to {phaseLabel(next)} →
+              </button>
+            )}
+          </div>
+
           <AnswerList answers={app.answers} edited={edited} onEdit={(q, v) => setEdited((p) => ({ ...p, [q]: v }))} />
 
           {/* The three engines, made explicit */}
@@ -497,10 +569,49 @@ function CaseRow({ app, border }: { app: QueueApplication; border: boolean }) {
             )}
           </div>
 
+          {/* Comments (demo) — caseworker notes, newest first. */}
+          <div className="border-t border-hairline pt-3">
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite mb-2">Comments</p>
+            {app.comments.length > 0 ? (
+              <ul className="space-y-2 mb-2">
+                {app.comments.map((c, i) => (
+                  <li key={i} className="text-[12px]">
+                    <span className="text-graphite">{c.author} · {c.when}</span>
+                    <p className="text-ink leading-snug">{c.text}</p>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-[12px] text-muted mb-2">No comments yet.</p>
+            )}
+            <div className="flex items-start gap-2">
+              <textarea
+                value={comment}
+                onChange={(e) => setComment(e.target.value)}
+                rows={2}
+                placeholder="Add a comment…"
+                aria-label="Add a comment"
+                className="flex-1 resize-none rounded-[2px] border border-hairline bg-surface px-2 py-1 text-[12px] text-ink placeholder:text-muted focus:border-pine focus:outline-none"
+              />
+              <button
+                type="button"
+                onClick={() => {
+                  const t = comment.trim();
+                  if (t) { onComment(t); setComment(""); }
+                }}
+                disabled={comment.trim().length === 0}
+                className="rounded-[2px] bg-pine px-2.5 py-1.5 text-[11px] font-medium text-white hover:bg-pine-pressed disabled:bg-pine-disabled"
+              >
+                Add
+              </button>
+            </div>
+            <p className="text-[11px] text-graphite mt-1.5">Transfer, advance, and comments are a local demo — not saved.</p>
+          </div>
+
           <div className="grid gap-4 md:grid-cols-2 border-t border-hairline pt-3">
             <div>
               <div className="flex items-baseline justify-between mb-2">
-                <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite">Pipeline</p>
+                <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite">Processing steps</p>
                 <p className="text-[11px] tabular-nums text-graphite">{app.completedSteps}/{TOTAL_STEPS} · {pct}%</p>
               </div>
               <StepList completedSteps={app.completedSteps} />
@@ -524,30 +635,58 @@ export default function ApplicationsQueue({ phases }: { phases: PhaseGroup[] }) 
   const [query, setQuery] = useState("");
   const q = query.trim().toLowerCase();
 
+  // Flat client-side caseload (seeded from the server-built groups) so manual
+  // advance / transfer / comment actions can mutate it. Ephemeral demo state.
+  const [cases, setCases] = useState<CaseRecord[]>(() =>
+    phases.flatMap((p) => p.cases).map((c) => ({ ...c, assignedTo: initialAssignee(c), comments: [] })),
+  );
+
+  const advance = (id: string) =>
+    setCases((cs) =>
+      cs.map((c) => {
+        if (c.id !== id) return c;
+        const np = nextPhase(c.phase);
+        if (!np) return c;
+        return { ...c, phase: np, stage: ADVANCE_STAGE[np], completedSteps: np === "live" ? Math.max(c.completedSteps, 4) : TOTAL_STEPS };
+      }),
+    );
+  const transfer = (id: string, to: string) =>
+    setCases((cs) => cs.map((c) => (c.id === id ? { ...c, assignedTo: to } : c)));
+  const addComment = (id: string, text: string) =>
+    setCases((cs) =>
+      cs.map((c) => (c.id === id ? { ...c, comments: [{ author: "You", text, when: nowLabel() }, ...c.comments] } : c)),
+    );
+
+  // Regroup the live caseload by phase for rendering + funnel counts.
+  const grouped = useMemo<PhaseGroup[]>(
+    () => PHASES.map((p) => ({ ...p, cases: cases.filter((c) => c.phase === p.key) })),
+    [cases],
+  );
+
   const filtered = useMemo(() => {
-    if (!q) return phases;
-    return phases
-      .map((p) => ({
-        ...p,
-        cases: p.cases.filter((a) =>
-          [a.caseId, a.name, a.county, a.stage, ...a.docFlags, ...a.verificationNeeds, ...a.answers.flatMap((x) => [x.question, x.answer])]
-            .join(" ").toLowerCase().includes(q),
-        ),
-      }));
-  }, [phases, q]);
+    if (!q) return grouped;
+    return grouped.map((p) => ({
+      ...p,
+      cases: p.cases.filter((a) =>
+        [a.caseId, a.name, a.county, a.stage, (a as CaseRecord).assignedTo, ...a.docFlags, ...(a as CaseRecord).comments.map((c) => c.text), ...a.verificationNeeds, ...a.answers.flatMap((x) => [x.question, x.answer])]
+          .join(" ").toLowerCase().includes(q),
+      ),
+    }));
+  }, [grouped, q]);
 
   const matchCount = filtered.reduce((s, p) => s + p.cases.length, 0);
-  const totalCases = phases.reduce((s, p) => s + p.cases.length, 0);
+  const totalCases = cases.length;
 
   // Export the FULL caseload (not the search-filtered view), flattened across
   // phases. Engine-computed benefit + verification-need counts travel with it.
-  const exportRows = phases.flatMap((p) =>
+  const exportRows = grouped.flatMap((p) =>
     p.cases.map((a) => [
       p.label,
       a.caseId,
       a.name,
       `${a.county} County, CA`,
       a.stage,
+      (a as CaseRecord).assignedTo,
       `${completionPct(a.completedSteps)}%`,
       a.estimatedBenefitUsd != null ? formatUsd(a.estimatedBenefitUsd) : "—",
       String(a.docFlags.length),
@@ -558,7 +697,7 @@ export default function ApplicationsQueue({ phases }: { phases: PhaseGroup[] }) 
   return (
     <div className="space-y-4">
       {/* Lifecycle funnel */}
-      <Funnel phases={phases} />
+      <Funnel phases={grouped} />
 
       {/* Search + export */}
       <div className="flex items-center justify-between gap-3">
@@ -577,9 +716,9 @@ export default function ApplicationsQueue({ phases }: { phases: PhaseGroup[] }) 
           />
         </div>
         <TableExport
-          filename="cbo-pipeline"
-          title="Navigator pipeline — cases"
-          columns={["Phase", "Case ID", "Applicant", "County", "Stage", "Completion", "Est. benefit", "Flags", "Risk"]}
+          filename="cbo-caseload"
+          title="Navigator caseload — cases"
+          columns={["Phase", "Case ID", "Applicant", "County", "Stage", "Assigned", "Completion", "Est. benefit", "Flags", "Risk"]}
           rows={exportRows}
           note="Illustrative caseload. Benefit estimate + verification needs are computed by Civica's rules engine; applicant records are synthetic."
         />
@@ -612,7 +751,16 @@ export default function ApplicationsQueue({ phases }: { phases: PhaseGroup[] }) 
                 <span className="text-[11px] font-semibold uppercase tracking-wider text-graphite">{phase.label}</span>
                 <span className="text-[11px] text-graphite tabular-nums">{phase.cases.length}</span>
               </div>
-              {phase.cases.map((a, i) => <CaseRow key={a.id} app={a} border={i > 0} />)}
+              {phase.cases.map((a, i) => (
+                <CaseRow
+                  key={a.id}
+                  app={a as CaseRecord}
+                  border={i > 0}
+                  onAdvance={() => advance(a.id)}
+                  onTransfer={(to) => transfer(a.id, to)}
+                  onComment={(text) => addComment(a.id, text)}
+                />
+              ))}
             </div>
           );
         })}
@@ -621,7 +769,7 @@ export default function ApplicationsQueue({ phases }: { phases: PhaseGroup[] }) 
           <p className="px-4 py-6 text-[13px] text-muted text-center">No cases match your search.</p>
         )}
         {!q && totalCases === 0 && (
-          <p className="px-4 py-8 text-[13px] text-muted text-center">No active cases in the pipeline yet.</p>
+          <p className="px-4 py-8 text-[13px] text-muted text-center">No active cases in the caseload yet.</p>
         )}
       </div>
     </div>

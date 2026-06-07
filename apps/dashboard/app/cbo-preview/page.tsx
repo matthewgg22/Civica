@@ -37,7 +37,7 @@ const FUNNEL_STEPS = [
 
 const TABS = [
   { key: "overview", label: "Overview"        },
-  { key: "pipeline", label: "Pipeline"        },
+  { key: "pipeline", label: "Caseload"        },
   { key: "qc",       label: "Quality Control" },
 ] as const;
 
