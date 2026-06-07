@@ -29,10 +29,7 @@ function riskLabel(risk: Risk): string {
   return risk === "High risk" ? "HIGH" : risk === "Medium risk" ? "MED" : "LOW";
 }
 function riskClass(risk: Risk): string {
-  return risk === "High risk" ? "text-brick font-semibold" : risk === "Medium risk" ? "text-warning" : "text-muted";
-}
-function barClass(risk: Risk): string {
-  return risk === "High risk" ? "bg-brick" : risk === "Medium risk" ? "bg-warning" : "bg-pine";
+  return risk === "High risk" ? "text-brick font-semibold" : risk === "Medium risk" ? "text-warning" : "text-graphite";
 }
 
 function Chevron({ open }: { open: boolean }) {
@@ -87,7 +84,7 @@ function StepList({ completedSteps }: { completedSteps: number }) {
               {step}
             </span>
             {state === "current" && (
-              <span className="text-[10px] uppercase tracking-wider text-warning font-semibold">in progress</span>
+              <span className="text-[11px] uppercase tracking-wider text-warning font-semibold">in progress</span>
             )}
           </li>
         );
@@ -118,19 +115,19 @@ function AnswerList({
   }
 
   return (
-    <div className="space-y-3">
+    <div className="grid gap-x-10 gap-y-3 md:grid-cols-2 items-start">
       {sections.map((group) => (
         <div key={group.section}>
-          <p className="text-[10px] font-semibold uppercase tracking-wider text-graphite mb-1.5">{group.section}</p>
+          <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite mb-1.5">{group.section}</p>
           <dl className="space-y-1">
             {group.items.map((a) => {
               const value = edited[a.question] ?? a.answer;
               const wasEdited = a.question in edited;
               const isEditing = editingQ === a.question;
               return (
-                <div key={a.question} className="flex items-baseline justify-between gap-3 text-[12px] group">
-                  <dt className="text-graphite shrink-0 max-w-[50%]">{a.question}</dt>
-                  <dd className="flex items-baseline gap-2 text-right min-w-0">
+                <div key={a.question} className="grid grid-cols-[minmax(0,13rem)_1fr] items-baseline gap-x-4 text-[12px] group">
+                  <dt className="text-graphite">{a.question}</dt>
+                  <dd className="flex items-baseline gap-2 min-w-0">
                     {isEditing ? (
                       <input
                         autoFocus
@@ -141,7 +138,7 @@ function AnswerList({
                           if (e.key === "Enter") commit(a.question);
                           if (e.key === "Escape") setEditingQ(null);
                         }}
-                        className="w-40 px-1.5 py-0.5 text-[12px] text-right bg-surface border border-pine rounded-[2px] focus:outline-none"
+                        className="w-full px-1.5 py-0.5 text-[12px] bg-surface border border-pine rounded-[2px] focus:outline-none"
                         aria-label={`Edit ${a.question}`}
                       />
                     ) : (
@@ -149,7 +146,7 @@ function AnswerList({
                         <span className={`tabular-nums ${a.flagged && !wasEdited ? "text-brick font-semibold" : "text-ink font-medium"}`}>
                           {value}
                           {a.flagged && !wasEdited && <span className="ml-1 text-[10px] uppercase tracking-wider">⚑</span>}
-                          {wasEdited && <span className="ml-1 text-[9px] uppercase tracking-wider text-pine">· edited</span>}
+                          {wasEdited && <span className="ml-1 text-[10px] uppercase tracking-wider text-graphite">· edited</span>}
                         </span>
                         <button
                           type="button"
@@ -200,10 +197,10 @@ function Timeline({ events }: { events: TimelineEvent[] }) {
 // card with a consistent grammar (result → trace → provenance tag).
 function EngineBlock({ title, tag, children }: { title: string; tag: string; children: React.ReactNode }) {
   return (
-    <div className="bg-paper border border-hairline rounded-[2px] p-2.5">
-      <div className="flex items-baseline justify-between gap-1 mb-1.5">
-        <p className="text-[10px] font-semibold uppercase tracking-wider text-ink">{title}</p>
-        <span className="text-[9px] uppercase tracking-wider text-graphite shrink-0">{tag}</span>
+    <div className="bg-surface border border-hairline rounded-[2px] p-3">
+      <div className="flex items-baseline justify-between gap-2 mb-2 pb-1.5 border-b border-hairline">
+        <p className="text-[11px] font-semibold uppercase tracking-wider text-ink">{title}</p>
+        <span className="text-[11px] uppercase tracking-wider text-graphite shrink-0">{tag}</span>
       </div>
       {children}
     </div>
@@ -240,10 +237,10 @@ function CaseRow({ app, border }: { app: QueueApplication; border: boolean }) {
             <span className="text-[12px] tabular-nums text-ink font-medium">{formatUsd(app.estimatedBenefitUsd)}/mo</span>
           ) : (
             <span className="flex items-center gap-2 w-full">
-              <span className="h-1.5 flex-1 rounded-full bg-paper overflow-hidden">
-                <span className={`block h-full rounded-full ${barClass(app.risk)}`} style={{ width: `${pct}%` }} />
+              <span className="h-1.5 flex-1 rounded-[1px] bg-surface-secondary overflow-hidden">
+                <span className="block h-full rounded-[1px] bg-graphite" style={{ width: `${pct}%` }} />
               </span>
-              <span className="text-[11px] tabular-nums text-graphite w-[30px] text-right">{pct}%</span>
+              <span className="text-[11px] tabular-nums text-graphite w-[34px] text-right">{pct}%</span>
             </span>
           )}
         </span>
@@ -261,10 +258,10 @@ function CaseRow({ app, border }: { app: QueueApplication; border: boolean }) {
       </button>
 
       {open && (
-        <div className="px-4 pb-4 pt-2 border-l-2 border-pine/30 ml-4 space-y-3">
+        <div className="bg-paper border-t border-hairline px-4 py-4 space-y-4">
           <div>
             <div className="flex items-baseline justify-between mb-2">
-              <p className="text-[10px] font-semibold uppercase tracking-wider text-graphite">Application responses</p>
+              <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite">Application responses</p>
               <p className="text-[11px] tabular-nums text-graphite">{app.answers.length} answers</p>
             </div>
             <AnswerList answers={app.answers} edited={edited} onEdit={(q, v) => setEdited((p) => ({ ...p, [q]: v }))} />
@@ -272,7 +269,7 @@ function CaseRow({ app, border }: { app: QueueApplication; border: boolean }) {
 
           {/* The three engines, made explicit */}
           <div className="border-t border-hairline pt-3">
-            <p className="text-[10px] font-semibold uppercase tracking-wider text-graphite mb-2">Civica engine</p>
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite mb-2">Civica engine</p>
             <div className="grid gap-3 md:grid-cols-3">
               {/* 1 — Eligibility (provisional: the gates it evaluates, in order) */}
               <EngineBlock title="Eligibility" tag="provisional">
@@ -282,15 +279,15 @@ function CaseRow({ app, border }: { app: QueueApplication; border: boolean }) {
                 </p>
                 <ol className="mt-1.5 space-y-1">
                   {EVALUATION_GATES.map((g, i) => (
-                    <li key={g.citation} className="flex items-baseline gap-1.5 text-[11px] leading-tight">
-                      <span className="tabular-nums text-muted w-3 shrink-0">{i + 1}</span>
+                    <li key={g.citation} className="flex items-baseline gap-1.5 text-[12px] leading-snug">
+                      <span className="tabular-nums text-graphite w-3 shrink-0">{i + 1}</span>
                       <span className="text-ink">{g.label}</span>
-                      <span className="text-muted">{g.citation}</span>
+                      <span className="text-[11px] text-graphite">{g.citation}</span>
                     </li>
                   ))}
                 </ol>
                 {app.assumptions.length > 0 && (
-                  <p className="text-[10px] text-muted mt-1.5 leading-snug">Assumed: {app.assumptions.join("; ")}.</p>
+                  <p className="text-[11px] text-graphite mt-2 leading-snug">Assumed: {app.assumptions.join("; ")}.</p>
                 )}
               </EngineBlock>
 
@@ -320,7 +317,7 @@ function CaseRow({ app, border }: { app: QueueApplication; border: boolean }) {
                                 <tr key={r.label} className={r.total ? "border-t border-hairline font-semibold text-ink" : "text-graphite"}>
                                   <td className="py-0.5 pr-2 align-top">
                                     {r.label}
-                                    {r.citation && <span className="block text-[9px] text-muted">{r.citation}</span>}
+                                    {r.citation && <span className="block text-[11px] text-graphite">{r.citation}</span>}
                                   </td>
                                   <td className="py-0.5 text-right tabular-nums align-top">
                                     {r.amount < 0 ? `−${formatUsd(-r.amount)}` : formatUsd(r.amount)}
@@ -350,11 +347,11 @@ function CaseRow({ app, border }: { app: QueueApplication; border: boolean }) {
                   <ol className="space-y-1.5">
                     {app.recommendations.slice(0, 4).map((r) => (
                       <li key={r.rank} className="text-[12px] text-ink leading-snug">
-                        <span className="font-semibold text-pine">Good next:</span> {r.action}
+                        <span className="font-semibold text-ink">Good next:</span> {r.action}
                         {r.deltaUsd > 0 && (
-                          <span className="text-pine tabular-nums"> (+{formatUsd(r.deltaUsd)}/mo)</span>
+                          <span className="text-ink font-semibold tabular-nums"> (+{formatUsd(r.deltaUsd)}/mo)</span>
                         )}
-                        {r.citation && <span className="block text-[9px] text-muted">{r.citation}</span>}
+                        {r.citation && <span className="block text-[11px] text-graphite">{r.citation}</span>}
                       </li>
                     ))}
                   </ol>
@@ -362,7 +359,7 @@ function CaseRow({ app, border }: { app: QueueApplication; border: boolean }) {
                   <ol className="space-y-1.5">
                     {app.verificationNeeds.slice(0, 5).map((v) => (
                       <li key={v} className="text-[12px] text-ink leading-snug">
-                        <span className="font-semibold text-pine">Good next:</span> confirm{" "}
+                        <span className="font-semibold text-ink">Good next:</span> confirm{" "}
                         {v.charAt(0).toLowerCase() + v.slice(1)}
                       </li>
                     ))}
@@ -379,7 +376,7 @@ function CaseRow({ app, border }: { app: QueueApplication; border: boolean }) {
                 </button>
               </EngineBlock>
             </div>
-            <p className="text-[10px] text-muted mt-2 leading-snug">
+            <p className="text-[12px] text-graphite mt-3 leading-snug">
               Estimate + recommendations are live engine output on these answers; eligibility is provisional until the
               verification items are confirmed — an estimate, not a determination.
             </p>
@@ -388,7 +385,7 @@ function CaseRow({ app, border }: { app: QueueApplication; border: boolean }) {
           {/* Navigator flags (the still-needed items now live in the
               Recommended-next-steps engine block above). */}
           <div className="border-t border-hairline pt-3">
-            <p className="text-[10px] font-semibold uppercase tracking-wider text-graphite mb-2">Navigator flags</p>
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite mb-2">Navigator flags</p>
             {app.docFlags.length > 0 ? (
               <ul className="space-y-1.5">
                 {app.docFlags.map((f) => (
@@ -406,13 +403,13 @@ function CaseRow({ app, border }: { app: QueueApplication; border: boolean }) {
           <div className="grid gap-4 md:grid-cols-2 border-t border-hairline pt-3">
             <div>
               <div className="flex items-baseline justify-between mb-2">
-                <p className="text-[10px] font-semibold uppercase tracking-wider text-graphite">Pipeline</p>
+                <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite">Pipeline</p>
                 <p className="text-[11px] tabular-nums text-graphite">{app.completedSteps}/{TOTAL_STEPS} · {pct}%</p>
               </div>
               <StepList completedSteps={app.completedSteps} />
             </div>
             <div>
-              <p className="text-[10px] font-semibold uppercase tracking-wider text-graphite mb-2">History</p>
+              <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite mb-2">History</p>
               <Timeline events={app.history} />
             </div>
           </div>
@@ -498,7 +495,7 @@ export default function ApplicationsQueue({ phases }: { phases: PhaseGroup[] }) 
 
       {/* Case list grouped by lifecycle phase */}
       <div className="border border-hairline rounded-[2px] bg-surface overflow-hidden">
-        <div className="flex items-center gap-4 px-4 py-1.5 bg-surface-secondary border-b border-hairline text-[10px] font-semibold uppercase tracking-wider text-graphite">
+        <div className="flex items-center gap-4 px-4 py-1.5 bg-surface-secondary border-b border-hairline text-[11px] font-semibold uppercase tracking-wider text-graphite">
           <span className="shrink-0 w-[92px]">Case ID</span>
           <span className="shrink-0 w-[88px]">Applicant</span>
           <span className="shrink-0 w-[110px] hidden sm:block">County</span>
