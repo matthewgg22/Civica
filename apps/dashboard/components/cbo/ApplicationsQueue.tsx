@@ -219,8 +219,8 @@ function CaseRow({ app, border }: { app: QueueApplication; border: boolean }) {
   // Open Mae prefilled with the case context (no applicant PII — stage + the
   // engine's top suggested action). MaeChat listens for this event.
   const askMae = () => {
-    const top = app.recommendations[0]?.action;
-    const text = `I'm reviewing a CalFresh case at the "${app.stage}" stage.${top ? ` The engine suggests: "${top}".` : ""} What does the governing rule require here?`;
+    const top = app.recommendations[0]?.action ?? app.verificationNeeds[0];
+    const text = `I'm reviewing a CalFresh case at the "${app.stage}" stage.${top ? ` The engine's next step is: "${top}".` : ""} What does the governing rule require here?`;
     window.dispatchEvent(new CustomEvent("mae:prefill", { detail: { text } }));
   };
   const flagCount = app.docFlags.length;
@@ -289,6 +289,9 @@ function CaseRow({ app, border }: { app: QueueApplication; border: boolean }) {
                     </li>
                   ))}
                 </ol>
+                {app.assumptions.length > 0 && (
+                  <p className="text-[10px] text-muted mt-1.5 leading-snug">Assumed: {app.assumptions.join("; ")}.</p>
+                )}
               </EngineBlock>
 
               {/* 2 — Benefit amount (the number + the math). Always the engine
@@ -335,8 +338,14 @@ function CaseRow({ app, border }: { app: QueueApplication; border: boolean }) {
                 )}
               </EngineBlock>
 
-              {/* 3 — Recommendations (Component R "good next") */}
-              <EngineBlock title="Recommended next steps" tag="Component R">
+              {/* 3 — Recommendations: Component R benefit-raising actions when it
+                  finds any; otherwise the verification steps that move the case
+                  to a determination (the genuine "good next" for a provisional
+                  case, per the 273.2(f) hierarchy). */}
+              <EngineBlock
+                title="Recommended next steps"
+                tag={app.recommendations.length > 0 ? "Component R" : "verification · 273.2(f)"}
+              >
                 {app.recommendations.length > 0 ? (
                   <ol className="space-y-1.5">
                     {app.recommendations.slice(0, 4).map((r) => (
@@ -349,8 +358,17 @@ function CaseRow({ app, border }: { app: QueueApplication; border: boolean }) {
                       </li>
                     ))}
                   </ol>
+                ) : app.verificationNeeds.length > 0 ? (
+                  <ol className="space-y-1.5">
+                    {app.verificationNeeds.slice(0, 5).map((v) => (
+                      <li key={v} className="text-[12px] text-ink leading-snug">
+                        <span className="font-semibold text-pine">Good next:</span> confirm{" "}
+                        {v.charAt(0).toLowerCase() + v.slice(1)}
+                      </li>
+                    ))}
+                  </ol>
                 ) : (
-                  <p className="text-[12px] text-muted">No actions surfaced — estimate is stable.</p>
+                  <p className="text-[12px] text-muted">No actions outstanding.</p>
                 )}
                 <button
                   type="button"
@@ -363,47 +381,26 @@ function CaseRow({ app, border }: { app: QueueApplication; border: boolean }) {
             </div>
             <p className="text-[10px] text-muted mt-2 leading-snug">
               Estimate + recommendations are live engine output on these answers; eligibility is provisional until the
-              items below are confirmed — an estimate, not a determination.
+              verification items are confirmed — an estimate, not a determination.
             </p>
           </div>
 
-          {/* Still-needed + navigator flags */}
-          <div className="grid gap-4 md:grid-cols-2 border-t border-hairline pt-3">
-            <div>
-              <p className="text-[10px] font-semibold uppercase tracking-wider text-graphite mb-2">
-                Still needed to determine <span className="text-pine">· engine</span>
-              </p>
-              {app.verificationNeeds.length > 0 ? (
-                <ul className="space-y-1.5">
-                  {app.verificationNeeds.map((v) => (
-                    <li key={v} className="flex items-start gap-2 text-[12px] text-ink">
-                      <span className="shrink-0 mt-[5px] w-1.5 h-1.5 rounded-full bg-warning" aria-hidden="true" />
-                      {v}
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p className="text-[12px] text-muted">Nothing outstanding from the engine.</p>
-              )}
-              {app.assumptions.length > 0 && (
-                <p className="text-[11px] text-graphite mt-2">Assumed: {app.assumptions.join("; ")}.</p>
-              )}
-            </div>
-            <div>
-              <p className="text-[10px] font-semibold uppercase tracking-wider text-graphite mb-2">Navigator flags</p>
-              {app.docFlags.length > 0 ? (
-                <ul className="space-y-1.5">
-                  {app.docFlags.map((f) => (
-                    <li key={f} className="flex items-start gap-2 text-[12px] text-ink">
-                      <span className="shrink-0 mt-[5px] w-1.5 h-1.5 rounded-full bg-brick" aria-hidden="true" />
-                      {f}
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p className="text-[12px] text-muted">No flags.</p>
-              )}
-            </div>
+          {/* Navigator flags (the still-needed items now live in the
+              Recommended-next-steps engine block above). */}
+          <div className="border-t border-hairline pt-3">
+            <p className="text-[10px] font-semibold uppercase tracking-wider text-graphite mb-2">Navigator flags</p>
+            {app.docFlags.length > 0 ? (
+              <ul className="space-y-1.5">
+                {app.docFlags.map((f) => (
+                  <li key={f} className="flex items-start gap-2 text-[12px] text-ink">
+                    <span className="shrink-0 mt-[5px] w-1.5 h-1.5 rounded-full bg-brick" aria-hidden="true" />
+                    {f}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-[12px] text-muted">No flags.</p>
+            )}
           </div>
 
           <div className="grid gap-4 md:grid-cols-2 border-t border-hairline pt-3">
