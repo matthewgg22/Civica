@@ -9,6 +9,14 @@ Categories used:
 - **Added** — new capability
 - **Changed** — visible behavior change
 
+## [0.2.12.1] - 2026-06-06
+
+### Added
+- **CSV / PDF export on the CBO preview tables** — an Export control (CSV that opens in Excel / Numbers / Sheets, plus a clean table-only PDF via the browser's print, zero new dependencies) on the navigator Pipeline case list and the Quality Control pillar + flags tables. The pipeline export carries the full caseload (not the search-filtered view) with the engine-computed benefit estimate and verification-need count per case. New reusable client component `TableExport.tsx`.
+
+### Fixed
+- **WCAG AA contrast in the CBO pipeline** — two `text-[11px] text-muted` captions in `ApplicationsQueue` (the timeline `by` line and the "clean" flag label) failed DESIGN.md §6.6 (muted below 12px); switched to `text-graphite`.
+
 ## [0.2.12.0] - 2026-06-06
 
 ### Added
