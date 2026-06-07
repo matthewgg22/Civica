@@ -54,6 +54,10 @@
   --color-paper: #F8F9FB;
   --color-surface: #FFFFFF;
   --color-surface-secondary: #ECEEF2;
+  /* Interactive row hover/selection — a faint cool-blue tint so it reads as a
+     highlight (Excel-style selection), distinct in HUE from the neutral grays
+     (surface-secondary) used for subhead bands, table headers, and troughs. */
+  --color-row-hover: #EAF0FA;
   --color-ink: #15181C;
   --color-graphite: #3C424B;
   --color-muted: #565E68;

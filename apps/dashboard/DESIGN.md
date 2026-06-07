@@ -22,6 +22,7 @@ All tokens live in [`app/globals.css`](app/globals.css) inside the `@theme` bloc
 | `--color-paper` | `#F8F9FB` | Screen background — light cool off-white (staff portal) | `paper` (cooled for web) |
 | `--color-surface` | `#FFFFFF` | Card / row background | `surfacePrimary` |
 | `--color-surface-secondary` | `#ECEEF2` | Recessed / nested: dropdown trough, table headers, phase bands | `surfaceSecondary` (cooled for web) |
+| `--color-row-hover` | `#EAF0FA` | Interactive row hover/selection — faint cool-blue, distinct in **hue** from the neutral grays so a hovered row never reads as a subhead band | (web-only) |
 | `--color-hairline` | `rgba(15,23,42,0.14)` | Dividers, card borders | `hairline` (cool-tinted) |
 
 > **Staff portal runs cool neutrals.** The dashboard's `paper`/`surface-secondary`/text-gray
