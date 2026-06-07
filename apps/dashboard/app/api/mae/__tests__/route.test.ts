@@ -157,6 +157,26 @@ describe("POST /api/mae", () => {
     expect(body.system[1].cache_control).toBeUndefined();
   });
 
+  it("appends a citation-check trailer flagging unrecognized citations", async () => {
+    mockGetUser.mockResolvedValue(staffUser);
+    mockStream.mockReturnValue(
+      fakeStream({ chunks: ["Shelter is 7 CFR 273.9(d)(6); cap is per 7 CFR 273.99(z)."] }),
+    );
+    const res = await POST(makeReq(oneTurn));
+    const text = await res.text();
+    expect(text).toContain("Citation check"); // trailer present
+    expect(text).toContain("7 CFR 273.9(d)(6)"); // verified against retrieved sources
+    expect(text).toContain("7 CFR 273.99(z)"); // invented cite is named...
+    expect(text).toContain("⚠️"); // ...and flagged as not recognized
+  });
+
+  it("adds no trailer when the answer contains no citations", async () => {
+    mockGetUser.mockResolvedValue(staffUser);
+    mockStream.mockReturnValue(fakeStream({ chunks: ["Net income is what matters here."] }));
+    const res = await POST(makeReq(oneTurn));
+    expect(await res.text()).toBe("Net income is what matters here.");
+  });
+
   it("emits a scoped fallback when the model refuses with no text", async () => {
     mockGetUser.mockResolvedValue(staffUser);
     mockStream.mockReturnValue(fakeStream({ chunks: [], stop_reason: "refusal" }));
