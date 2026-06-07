@@ -12,6 +12,7 @@ import { Fragment, useState } from "react";
 import { CA_BASELINE_PER } from "@civica/snap-qc-engine";
 import InfoTip from "../InfoTip";
 import FlagSensitivityControl from "./FlagSensitivityControl";
+import TableExport from "./TableExport";
 
 // CA baseline is the engine's published constant (USDA FNS-380), not a hand-typed
 // number — so the demo can never contradict the engine (#507).
@@ -211,10 +212,19 @@ export default function QcTab({ synthetic = true }: { synthetic?: boolean }) {
 
       {/* ── Pillar breakdown ────────────────────────────────────────────────── */}
       <section aria-label="QC pillars">
-        <h2 className="text-[14px] font-bold text-ink mb-3">
-          {t("Error by pillar", "Mistakes by category")}
-          <InfoTip label="Each pillar is a category USDA scores during Quality Control. Error rate = share of reviewed packets with an issue in that category. Pass rate is the complement." />
-        </h2>
+        <div className="flex items-center justify-between gap-3 mb-3">
+          <h2 className="text-[14px] font-bold text-ink">
+            {t("Error by pillar", "Mistakes by category")}
+            <InfoTip label="Each pillar is a category USDA scores during Quality Control. Error rate = share of reviewed packets with an issue in that category. Pass rate is the complement." />
+          </h2>
+          <TableExport
+            filename="cbo-qc-pillars"
+            title="Quality control — error by pillar"
+            columns={["Pillar", "Category", "Error %", "Pass %"]}
+            rows={DEMO_QC.pillars.map((p) => [p.label, t(p.note, p.notePlain), `${p.fail}%`, `${p.pass}%`])}
+            note="Illustrative QC metrics."
+          />
+        </div>
         <div className="bg-surface border border-hairline rounded-[2px] overflow-hidden">
           {DEMO_QC.pillars.map((p, i) => (
             <div key={p.label} className={`px-5 py-4 ${i > 0 ? "border-t border-hairline" : ""}`}>
@@ -244,7 +254,16 @@ export default function QcTab({ synthetic = true }: { synthetic?: boolean }) {
 
       {/* ── Recent flags ────────────────────────────────────────────────────── */}
       <section aria-label="Recent QC flags">
-        <h2 className="text-[14px] font-bold text-ink mb-3">{t("Recent flags", "Recent issues")}</h2>
+        <div className="flex items-center justify-between gap-3 mb-3">
+          <h2 className="text-[14px] font-bold text-ink">{t("Recent flags", "Recent issues")}</h2>
+          <TableExport
+            filename="cbo-qc-flags"
+            title="Quality control — recent flags"
+            columns={["Flag", "Field", "Issue", "Status"]}
+            rows={DEMO_QC.recentFlags.map((f) => [f.id, f.field, f.issue, t(f.status, f.status === "Open" ? "Open" : "Fixed")])}
+            note="Illustrative QC metrics."
+          />
+        </div>
         <div className="bg-surface border border-hairline rounded-[2px] overflow-hidden">
           {DEMO_QC.recentFlags.map((flag, i) => (
             <div key={flag.id} className={`flex items-start gap-4 px-5 py-3.5 ${i > 0 ? "border-t border-hairline" : ""}`}>
