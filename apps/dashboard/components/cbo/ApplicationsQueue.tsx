@@ -180,8 +180,8 @@ function AnswerList({
       <div className="grid md:grid-cols-2 gap-3 items-start">
         {sections.map((group) => (
           <div key={group.section} className="border border-hairline rounded-[2px] overflow-hidden bg-surface">
-            <div className="bg-surface-secondary px-3 py-1.5 border-b border-hairline">
-              <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite">{group.section}</p>
+            <div className="px-3 py-2 border-b border-hairline">
+              <p className="text-[11px] font-semibold uppercase tracking-wider text-ink">{group.section}</p>
             </div>
             <table className="w-full border-collapse text-[12px]">
               <tbody>
@@ -191,7 +191,7 @@ function AnswerList({
                     <tr key={a.question} className="border-b border-hairline last:border-b-0">
                       <th
                         scope="row"
-                        className="w-[42%] align-top text-left font-normal text-graphite leading-snug px-3 py-1.5 border-r border-hairline bg-paper"
+                        className="w-[42%] align-top text-left font-normal text-graphite leading-snug px-3 py-1.5 border-r border-hairline"
                       >
                         {a.question}
                       </th>
