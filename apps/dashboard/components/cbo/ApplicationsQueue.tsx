@@ -173,38 +173,53 @@ function AnswerList({
         )}
       </div>
 
-      <div className="space-y-3">
+      {/* Each section is a ruled mini-table: a tinted label column + a value
+          column, horizontal rule per row + vertical rule between columns — a
+          spreadsheet grid so the eye tracks rows/columns without floating.
+          Laid out two-up to keep label adjacent to its value. */}
+      <div className="grid md:grid-cols-2 gap-3 items-start">
         {sections.map((group) => (
-          <div key={group.section}>
-            <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite mb-1.5">{group.section}</p>
-            <dl className="grid grid-cols-2 sm:grid-cols-3 gap-x-6 gap-y-2.5">
-              {group.items.map((a) => {
-                const wasEdited = a.question in edited;
-                return (
-                  <div key={a.question} className="min-w-0">
-                    <dt className="text-[11px] text-graphite leading-tight">{a.question}</dt>
-                    {editing ? (
-                      <input
-                        value={drafts[a.question] ?? ""}
-                        onChange={(e) => setDrafts((p) => ({ ...p, [a.question]: e.target.value }))}
-                        className="mt-1 w-full px-1.5 py-1 text-[13px] bg-surface border border-hairline rounded-[2px] text-ink focus:border-pine focus:outline-none"
-                        aria-label={a.question}
-                      />
-                    ) : (
-                      <dd
-                        className={`mt-0.5 text-[13px] font-medium leading-snug break-words ${
-                          a.flagged && !wasEdited ? "text-brick" : "text-ink"
-                        }`}
+          <div key={group.section} className="border border-hairline rounded-[2px] overflow-hidden bg-surface">
+            <div className="bg-surface-secondary px-3 py-1.5 border-b border-hairline">
+              <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite">{group.section}</p>
+            </div>
+            <table className="w-full border-collapse text-[12px]">
+              <tbody>
+                {group.items.map((a) => {
+                  const wasEdited = a.question in edited;
+                  return (
+                    <tr key={a.question} className="border-b border-hairline last:border-b-0">
+                      <th
+                        scope="row"
+                        className="w-[42%] align-top text-left font-normal text-graphite leading-snug px-3 py-1.5 border-r border-hairline bg-paper"
                       >
-                        {current(a)}
-                        {a.flagged && !wasEdited && <span className="ml-1 text-[11px]" aria-label="flagged">⚑</span>}
-                        {wasEdited && <span className="ml-1 text-[10px] uppercase tracking-wider text-graphite">· edited</span>}
-                      </dd>
-                    )}
-                  </div>
-                );
-              })}
-            </dl>
+                        {a.question}
+                      </th>
+                      <td className="align-top px-3 py-1.5">
+                        {editing ? (
+                          <input
+                            value={drafts[a.question] ?? ""}
+                            onChange={(e) => setDrafts((p) => ({ ...p, [a.question]: e.target.value }))}
+                            className="w-full px-1.5 py-0.5 text-[12px] bg-surface border border-hairline rounded-[2px] text-ink focus:border-pine focus:outline-none"
+                            aria-label={a.question}
+                          />
+                        ) : (
+                          <span
+                            className={`font-medium leading-snug break-words ${
+                              a.flagged && !wasEdited ? "text-brick" : "text-ink"
+                            }`}
+                          >
+                            {current(a)}
+                            {a.flagged && !wasEdited && <span className="ml-1 text-[11px]" aria-label="flagged">⚑</span>}
+                            {wasEdited && <span className="ml-1 text-[10px] uppercase tracking-wider text-graphite">· edited</span>}
+                          </span>
+                        )}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
           </div>
         ))}
       </div>
