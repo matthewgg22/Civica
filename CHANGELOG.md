@@ -9,6 +9,14 @@ Categories used:
 - **Added** — new capability
 - **Changed** — visible behavior change
 
+## [0.2.11.1] - 2026-06-06
+
+### Fixed
+- **CBO preview Overview link** — the "See full applications view →" link pointed at the retired `?section=applications` and dead-ended to Overview after the Pipeline rename; now links to `?section=pipeline`.
+
+### Changed
+- **Overview + Quality Control density** — squared the card radius (4px → 2px) and tightened KPI / funnel / value-prop / stat-card padding to match the Pipeline tab, so all three preview tabs read at the same launch-grade density. (Shared dashboard components keep their existing radius — out of scope for this targeted pass.)
+
 ## [0.2.11.0] - 2026-06-06
 
 ### Changed
