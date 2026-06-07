@@ -93,6 +93,10 @@ function StepList({ completedSteps }: { completedSteps: number }) {
   );
 }
 
+// Full application responses for the expanded case. Renders the complete intake
+// as stacked label-over-value fields (no horizontal label→value gap) in a dense
+// multi-column grid, grouped by intake section. Editing is a single batch mode:
+// "Edit responses" unlocks every field at once; "Save changes" commits the diff.
 function AnswerList({
   answers, edited, onEdit,
 }: {
@@ -100,8 +104,29 @@ function AnswerList({
   edited: Record<string, string>;
   onEdit: (question: string, value: string) => void;
 }) {
-  const [editingQ, setEditingQ] = useState<string | null>(null);
-  const [draft, setDraft] = useState("");
+  const [editing, setEditing] = useState(false);
+  const [drafts, setDrafts] = useState<Record<string, string>>({});
+
+  const current = (a: SurveyAnswer) => edited[a.question] ?? a.answer;
+
+  const startEdit = () => {
+    const seed: Record<string, string> = {};
+    for (const a of answers) seed[a.question] = current(a);
+    setDrafts(seed);
+    setEditing(true);
+  };
+  const cancel = () => {
+    setEditing(false);
+    setDrafts({});
+  };
+  const save = () => {
+    for (const a of answers) {
+      const next = drafts[a.question];
+      if (next !== undefined && next !== current(a)) onEdit(a.question, next);
+    }
+    setEditing(false);
+    setDrafts({});
+  };
 
   const sections: { section: string; items: SurveyAnswer[] }[] = [];
   for (const a of answers) {
@@ -109,65 +134,80 @@ function AnswerList({
     if (last && last.section === a.section) last.items.push(a);
     else sections.push({ section: a.section, items: [a] });
   }
-  function commit(q: string) {
-    onEdit(q, draft);
-    setEditingQ(null);
-  }
 
   return (
-    <div className="grid gap-x-10 gap-y-3 md:grid-cols-2 items-start">
-      {sections.map((group) => (
-        <div key={group.section}>
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite mb-1.5">{group.section}</p>
-          <dl className="space-y-1">
-            {group.items.map((a) => {
-              const value = edited[a.question] ?? a.answer;
-              const wasEdited = a.question in edited;
-              const isEditing = editingQ === a.question;
-              return (
-                <div key={a.question} className="grid grid-cols-[minmax(0,13rem)_1fr] items-baseline gap-x-4 text-[12px] group">
-                  <dt className="text-graphite">{a.question}</dt>
-                  <dd className="flex items-baseline gap-2 min-w-0">
-                    {isEditing ? (
+    <div>
+      <div className="flex items-baseline justify-between gap-3 mb-3">
+        <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite">Application responses</p>
+        {editing ? (
+          <div className="flex items-center gap-2 shrink-0">
+            <button
+              type="button"
+              onClick={cancel}
+              className="rounded-[2px] border border-hairline px-2.5 py-1 text-[11px] font-medium text-graphite hover:bg-surface-secondary"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              onClick={save}
+              className="rounded-[2px] bg-pine px-2.5 py-1 text-[11px] font-medium text-white hover:bg-pine-pressed"
+            >
+              Save changes
+            </button>
+          </div>
+        ) : (
+          <div className="flex items-center gap-3 shrink-0">
+            <span className="text-[11px] tabular-nums text-graphite">{answers.length} answers</span>
+            <button
+              type="button"
+              onClick={startEdit}
+              className="inline-flex items-center gap-1.5 rounded-[2px] border border-hairline px-2.5 py-1 text-[11px] font-medium text-pine hover:bg-surface-secondary"
+            >
+              <svg width="11" height="11" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+                <path d="M9.5 2.5l2 2L5 11l-2.5.5L3 9l6.5-6.5z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round" />
+              </svg>
+              Edit responses
+            </button>
+          </div>
+        )}
+      </div>
+
+      <div className="space-y-3">
+        {sections.map((group) => (
+          <div key={group.section}>
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite mb-1.5">{group.section}</p>
+            <dl className="grid grid-cols-2 sm:grid-cols-3 gap-x-6 gap-y-2.5">
+              {group.items.map((a) => {
+                const wasEdited = a.question in edited;
+                return (
+                  <div key={a.question} className="min-w-0">
+                    <dt className="text-[11px] text-graphite leading-tight">{a.question}</dt>
+                    {editing ? (
                       <input
-                        autoFocus
-                        value={draft}
-                        onChange={(e) => setDraft(e.target.value)}
-                        onBlur={() => commit(a.question)}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter") commit(a.question);
-                          if (e.key === "Escape") setEditingQ(null);
-                        }}
-                        className="w-full px-1.5 py-0.5 text-[12px] bg-surface border border-pine rounded-[2px] focus:outline-none"
-                        aria-label={`Edit ${a.question}`}
+                        value={drafts[a.question] ?? ""}
+                        onChange={(e) => setDrafts((p) => ({ ...p, [a.question]: e.target.value }))}
+                        className="mt-1 w-full px-1.5 py-1 text-[13px] bg-surface border border-hairline rounded-[2px] text-ink focus:border-pine focus:outline-none"
+                        aria-label={a.question}
                       />
                     ) : (
-                      <>
-                        <span className={`tabular-nums ${a.flagged && !wasEdited ? "text-brick font-semibold" : "text-ink font-medium"}`}>
-                          {value}
-                          {a.flagged && !wasEdited && <span className="ml-1 text-[10px] uppercase tracking-wider">⚑</span>}
-                          {wasEdited && <span className="ml-1 text-[10px] uppercase tracking-wider text-graphite">· edited</span>}
-                        </span>
-                        <button
-                          type="button"
-                          onClick={() => { setEditingQ(a.question); setDraft(value); }}
-                          className="opacity-0 group-hover:opacity-100 transition-opacity text-pine shrink-0"
-                          aria-label={`Edit ${a.question}`}
-                          title="Edit"
-                        >
-                          <svg width="11" height="11" viewBox="0 0 14 14" fill="none">
-                            <path d="M9.5 2.5l2 2L5 11l-2.5.5L3 9l6.5-6.5z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round" />
-                          </svg>
-                        </button>
-                      </>
+                      <dd
+                        className={`mt-0.5 text-[13px] font-medium leading-snug break-words ${
+                          a.flagged && !wasEdited ? "text-brick" : "text-ink"
+                        }`}
+                      >
+                        {current(a)}
+                        {a.flagged && !wasEdited && <span className="ml-1 text-[11px]" aria-label="flagged">⚑</span>}
+                        {wasEdited && <span className="ml-1 text-[10px] uppercase tracking-wider text-graphite">· edited</span>}
+                      </dd>
                     )}
-                  </dd>
-                </div>
-              );
-            })}
-          </dl>
-        </div>
-      ))}
+                  </div>
+                );
+              })}
+            </dl>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
@@ -259,13 +299,7 @@ function CaseRow({ app, border }: { app: QueueApplication; border: boolean }) {
 
       {open && (
         <div className="bg-paper border-t border-hairline px-4 py-4 space-y-4">
-          <div>
-            <div className="flex items-baseline justify-between mb-2">
-              <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite">Application responses</p>
-              <p className="text-[11px] tabular-nums text-graphite">{app.answers.length} answers</p>
-            </div>
-            <AnswerList answers={app.answers} edited={edited} onEdit={(q, v) => setEdited((p) => ({ ...p, [q]: v }))} />
-          </div>
+          <AnswerList answers={app.answers} edited={edited} onEdit={(q, v) => setEdited((p) => ({ ...p, [q]: v }))} />
 
           {/* The three engines, made explicit */}
           <div className="border-t border-hairline pt-3">

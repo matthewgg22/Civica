@@ -290,7 +290,7 @@ const SECTION_ORDER = [
   "Recertification",
 ] as const;
 
-const moneyOrNone = (v?: string) =>
+const moneyOrNone = (v?: string | null) =>
   v && v !== "0" ? `$${Number(v).toLocaleString("en-US")}` : "Not reported";
 
 /**
