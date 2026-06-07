@@ -11,6 +11,22 @@ const hasKey = !!process.env.ANTHROPIC_API_KEY;
 describe.skipIf(!hasKey)("Mae live answer faithfulness", { timeout: 180_000 }, () => {
   it("every gold answer passes the deterministic faithfulness checks", async () => {
     const results = await runLiveAnswerEval();
+
+    // Print a readable report so an ad-hoc run (pnpm mae:eval) shows results,
+    // not just a green/red bar.
+    const passed = results.filter((r) => r.pass).length;
+    const report = results
+      .map((r) => {
+        const failed = Object.entries(r.checks)
+          .filter(([, ok]) => !ok)
+          .map(([k]) => k);
+        const flag = r.pass ? "✓" : `✗ ${failed.join(",")}`;
+        return `  ${flag}  ${r.id}: ${r.answer.replace(/\s+/g, " ").slice(0, 120)}…`;
+      })
+      .join("\n");
+    // eslint-disable-next-line no-console
+    console.log(`\nMAE LIVE ANSWER EVAL — ${passed}/${results.length} passed\n${report}`);
+
     for (const r of results) {
       expect(r.pass, `${r.id}: ${JSON.stringify(r.checks)}\n${r.answer}`).toBe(true);
     }
