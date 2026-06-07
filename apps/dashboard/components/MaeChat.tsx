@@ -113,6 +113,21 @@ export default function MaeChat() {
     };
   }, []);
 
+  // Open prefilled when another surface fires "mae:prefill" (e.g. the CBO
+  // pipeline's "Ask Mae about this case" button). Decoupled via a window event
+  // so callers don't import Mae.
+  useEffect(() => {
+    const onPrefill = (e: Event) => {
+      const text = (e as CustomEvent<{ text?: string }>).detail?.text;
+      if (typeof text === "string" && text) {
+        setInput(text);
+        setOpen(true);
+      }
+    };
+    window.addEventListener("mae:prefill", onPrefill);
+    return () => window.removeEventListener("mae:prefill", onPrefill);
+  }, []);
+
   // Keep the transcript pinned to the latest message. Guard scrollTo — not all
   // environments (jsdom, some older browsers) implement it.
   useEffect(() => {
