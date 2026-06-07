@@ -158,6 +158,34 @@ function initialAssignee(c: QueueApplication): string {
 const nowLabel = () =>
   new Date().toLocaleDateString(undefined, { month: "short", day: "numeric" });
 
+// Automated cross-check of the application response components — what the engine
+// could confirm from the answers vs. what still needs a human check. Grounded in
+// real signals (flagged answers, document status, engine assumptions); NOT an
+// eligibility determination (the adapter never emits a verdict).
+type VCheck = { label: string; ok: boolean; note: string };
+function buildVerification(app: QueueApplication): VCheck[] {
+  const ans = (q: string) => app.answers.find((a) => a.question === q)?.answer ?? "";
+  const flaggedIn = (section: string) => app.answers.some((a) => a.section === section && a.flagged);
+  const docsOut = app.answers
+    .filter((a) => a.section === "Documents" && /not (yet uploaded|provided)/i.test(a.answer))
+    .map((a) => a.question);
+  const proofOk = !/^not /i.test(ans("Proof of income"));
+  const ssn = ans("Social Security Number");
+  const income = ans("Gross monthly income");
+  return [
+    { label: "Income & employment", ok: !!income && proofOk && !flaggedIn("Income & employment"),
+      note: income ? `${income}${proofOk ? " · proof on hand" : " · awaiting pay stub"}` : "not captured" },
+    { label: "Household composition", ok: !flaggedIn("Your household"), note: `${ans("Household size") || "?"} captured` },
+    { label: "Shelter & expenses", ok: !flaggedIn("Expenses & deductions"),
+      note: flaggedIn("Expenses & deductions") ? "shelter cost needs review" : `rent ${ans("Monthly rent") || "?"}` },
+    { label: "Identity / SSN", ok: !/not|does not match/i.test(ssn),
+      note: /does not match/i.test(ssn) ? "does not match SSA records" : "SSN provided" },
+    { label: "Documents", ok: docsOut.length === 0, note: docsOut.length ? `${docsOut.join(", ")} outstanding` : "all on hand" },
+    { label: "Eligibility factors", ok: false,
+      note: app.assumptions.length ? `assumed, pending: ${app.assumptions.join("; ")}` : (app.verificationNeeds[0] ?? "pending human confirmation") },
+  ];
+}
+
 // Full application responses for the expanded case. Renders the complete intake
 // as a per-section ruled table (Field | Response). Editing is a single batch
 // mode: "Edit responses" unlocks every field at once (fixed-option fields as a
@@ -171,6 +199,7 @@ function AnswerList({
 }) {
   const [editing, setEditing] = useState(false);
   const [drafts, setDrafts] = useState<Record<string, string>>({});
+  const [viewDoc, setViewDoc] = useState<string | null>(null);
 
   const current = (a: SurveyAnswer) => edited[a.question] ?? a.answer;
 
@@ -293,6 +322,15 @@ function AnswerList({
                             {current(a)}
                             {a.flagged && !wasEdited && <span className="ml-1 text-[11px]" aria-label="flagged">⚑</span>}
                             {wasEdited && <span className="ml-1 text-[10px] uppercase tracking-wider text-graphite">· edited</span>}
+                            {a.section === "Documents" && !/not (yet uploaded|provided)/i.test(current(a)) && (
+                              <button
+                                type="button"
+                                onClick={() => setViewDoc(a.question)}
+                                className="ml-2 text-[11px] font-medium text-pine hover:underline"
+                              >
+                                View
+                              </button>
+                            )}
                           </span>
                         )}
                       </td>
@@ -304,6 +342,43 @@ function AnswerList({
           </div>
         ))}
       </div>
+
+      {viewDoc && (
+        <div
+          role="dialog"
+          aria-label={`Document — ${viewDoc}`}
+          className="fixed inset-0 z-50 flex items-center justify-center bg-ink/40 p-4"
+          onClick={() => setViewDoc(null)}
+        >
+          <div
+            className="w-full max-w-md rounded-[3px] border border-hairline bg-surface shadow-xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between border-b border-hairline px-3 py-2">
+              <p className="text-[12px] font-semibold text-ink">{viewDoc}</p>
+              <button
+                type="button"
+                aria-label="Close document"
+                onClick={() => setViewDoc(null)}
+                className="px-1 text-muted hover:text-ink"
+              >
+                ✕
+              </button>
+            </div>
+            <div className="p-4">
+              <div className="flex aspect-[4/3] w-full items-center justify-center rounded-[2px] border border-dashed border-hairline bg-surface-secondary px-4 text-center">
+                <span className="text-[12px] leading-relaxed text-graphite">
+                  Synthetic demo document
+                  <br />
+                  <span className="text-ink font-medium">{viewDoc}</span>
+                  <br />
+                  No real applicant file in the preview.
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -356,8 +431,11 @@ function CaseRow({
   const [edited, setEdited] = useState<Record<string, string>>({});
   const [showMath, setShowMath] = useState(false);
   const [comment, setComment] = useState("");
+  const [confirmAdvance, setConfirmAdvance] = useState(false);
   const pct = completionPct(app.completedSteps);
   const next = nextPhase(app.phase);
+  const checks = buildVerification(app);
+  const checksClear = checks.filter((c) => c.ok).length;
 
   // Open Mae prefilled with the case context (no applicant PII — stage + the
   // engine's top suggested action). MaeChat listens for this event.
@@ -378,7 +456,14 @@ function CaseRow({
         <span className="text-[11px] text-graphite font-mono tabular-nums tracking-tight shrink-0 w-[92px]">{app.caseId}</span>
         <span className="text-[13px] font-semibold text-ink shrink-0 w-[88px] truncate">{app.name}</span>
         <span className="text-[12px] text-graphite shrink-0 w-[110px] truncate hidden sm:block">{app.county} County</span>
-        <span className="text-[12px] text-ink flex-1 min-w-0 truncate">{app.stage}</span>
+        <span className="text-[12px] text-ink flex-1 min-w-0 flex items-center gap-2">
+          <span className="truncate">{app.stage}</span>
+          {app.expedited && (
+            <span className="shrink-0 rounded-[2px] border border-warning px-1.5 text-[11px] font-semibold uppercase tracking-wider text-warning">
+              Expedited
+            </span>
+          )}
+        </span>
         {/* Enrolled shows benefit; others show pipeline completion */}
         <span className="hidden md:flex items-center justify-end shrink-0 w-[130px]">
           {enrolled && app.estimatedBenefitUsd !== null ? (
@@ -407,34 +492,41 @@ function CaseRow({
 
       {open && (
         <div className="bg-[var(--color-row-hover)] border-t border-hairline px-4 py-4 space-y-4">
-          {/* Case actions (demo) — transfer to a peer, manually advance phase. */}
-          <div className="flex flex-wrap items-center justify-between gap-2">
-            <label className="flex items-center gap-1.5 text-[11px] text-graphite">
-              <span className="font-semibold uppercase tracking-wider">Assigned to</span>
-              <select
-                value={app.assignedTo}
-                onChange={(e) => onTransfer(e.target.value)}
-                className="px-1.5 py-0.5 text-[12px] bg-surface border border-hairline rounded-[2px] text-ink focus:border-pine focus:outline-none"
-                aria-label="Transfer case to caseworker"
-              >
-                {!PEERS.includes(app.assignedTo) && <option value={app.assignedTo}>{app.assignedTo}</option>}
-                {PEERS.map((p) => (
-                  <option key={p} value={p}>{p}</option>
-                ))}
-              </select>
-            </label>
-            {next && (
-              <button
-                type="button"
-                onClick={onAdvance}
-                className="rounded-[2px] border border-pine px-2.5 py-1 text-[11px] font-medium text-pine hover:bg-surface"
-              >
-                Advance to {phaseLabel(next)} →
-              </button>
-            )}
-          </div>
+          {/* Expedited-service screen (7 CFR 273.2(i)) — time-sensitive, surfaced first. */}
+          {app.expedited && (
+            <div className="flex items-start gap-2 rounded-[2px] border border-warning/40 bg-surface px-3 py-2">
+              <span className="text-warning text-[13px] leading-none mt-[1px]" aria-hidden="true">⚡</span>
+              <p className="text-[12px] text-ink leading-snug">
+                <span className="font-semibold text-warning">Screen for expedited service</span> — 7 CFR 273.2(i):{" "}
+                {app.expeditedReason.toLowerCase()}. Target 7-day processing.{" "}
+                <span className="text-graphite">Provisional — confirm liquid resources.</span>
+              </p>
+            </div>
+          )}
 
           <AnswerList answers={app.answers} edited={edited} onEdit={(q, v) => setEdited((p) => ({ ...p, [q]: v }))} />
+
+          {/* Automated verification — cross-check of the response components. */}
+          <div className="border-t border-hairline pt-3">
+            <div className="flex items-baseline justify-between mb-2">
+              <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite">Automated verification</p>
+              <span className="text-[11px] tabular-nums text-graphite">{checksClear}/{checks.length} components clear</span>
+            </div>
+            <ul className="grid sm:grid-cols-2 gap-x-8 gap-y-1.5">
+              {checks.map((c) => (
+                <li key={c.label} className="flex items-baseline gap-2 text-[12px]">
+                  <span className={`shrink-0 ${c.ok ? "text-pine" : "text-warning"}`} aria-hidden="true">{c.ok ? "✓" : "⚠"}</span>
+                  <span>
+                    <span className="font-medium text-ink">{c.label}</span>
+                    <span className="text-graphite"> — {c.note}{c.ok ? "" : " (needs check)"}</span>
+                  </span>
+                </li>
+              ))}
+            </ul>
+            <p className="text-[11px] text-graphite mt-2 leading-snug">
+              Automated cross-check of the responses — what the engine could confirm vs. what needs a human check. Not an eligibility determination.
+            </p>
+          </div>
 
           {/* The three engines, made explicit */}
           <div className="border-t border-hairline pt-3">
@@ -622,9 +714,56 @@ function CaseRow({
             </div>
           </div>
 
-          <Link href={`/packets/${app.id}`} className="inline-block text-[12px] font-semibold text-pine hover:underline">
-            Open full case →
-          </Link>
+          {/* Case actions footer (demo): transfer, manual advance (confirm), full case. */}
+          <div className="flex flex-wrap items-center justify-between gap-3 border-t border-hairline pt-3">
+            <label className="flex items-center gap-1.5 text-[11px] text-graphite">
+              <span className="font-semibold uppercase tracking-wider">Assigned to</span>
+              <select
+                value={app.assignedTo}
+                onChange={(e) => onTransfer(e.target.value)}
+                className="px-1.5 py-0.5 text-[12px] bg-surface border border-hairline rounded-[2px] text-ink focus:border-pine focus:outline-none"
+                aria-label="Transfer case to caseworker"
+              >
+                {!PEERS.includes(app.assignedTo) && <option value={app.assignedTo}>{app.assignedTo}</option>}
+                {PEERS.map((p) => (
+                  <option key={p} value={p}>{p}</option>
+                ))}
+              </select>
+            </label>
+
+            <div className="flex items-center gap-3">
+              {next && (confirmAdvance ? (
+                <span className="flex items-center gap-2 text-[11px]">
+                  <span className="text-graphite">Advance to {phaseLabel(next)}?</span>
+                  <button
+                    type="button"
+                    onClick={() => { onAdvance(); setConfirmAdvance(false); }}
+                    className="rounded-[2px] bg-pine px-2.5 py-1 font-medium text-white hover:bg-pine-pressed"
+                  >
+                    Confirm
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setConfirmAdvance(false)}
+                    className="rounded-[2px] border border-hairline px-2.5 py-1 font-medium text-graphite hover:bg-surface"
+                  >
+                    Cancel
+                  </button>
+                </span>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setConfirmAdvance(true)}
+                  className="rounded-[2px] border border-hairline px-2.5 py-1 text-[11px] font-medium text-ink hover:bg-surface"
+                >
+                  Advance to {phaseLabel(next)} →
+                </button>
+              ))}
+              <Link href={`/packets/${app.id}`} className="text-[12px] font-semibold text-pine hover:underline">
+                Open full case →
+              </Link>
+            </div>
+          </div>
         </div>
       )}
     </div>

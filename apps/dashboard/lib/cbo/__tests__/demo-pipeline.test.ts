@@ -63,4 +63,17 @@ describe("buildPipeline", () => {
     expect(ssn).toHaveLength(1);
     expect(ssn[0].flagged).toBe(true);
   });
+
+  it("flags expedited-service cases where shelter exceeds income (273.2(i))", () => {
+    const cases = buildPipeline("CA", new Date(), true).flatMap((g) => g.cases);
+    // Elena: income 1640 < rent 2400 → expedited. Theresa: 1500 < 1600+180.
+    const elena = cases.find((c) => c.caseId === "CF-2026-0184")!;
+    const theresa = cases.find((c) => c.caseId === "CF-2026-0162")!;
+    expect(elena.expedited).toBe(true);
+    expect(elena.expeditedReason).toMatch(/shelter/i);
+    expect(theresa.expedited).toBe(true);
+    // Aisha: income 1800 > shelter 1520 → not expedited.
+    const aisha = cases.find((c) => c.caseId === "CF-2026-0211")!;
+    expect(aisha.expedited).toBe(false);
+  });
 });

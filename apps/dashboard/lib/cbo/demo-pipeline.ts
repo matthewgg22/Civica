@@ -85,6 +85,10 @@ export interface QueueApplication {
   deduction: BenefitCalcDetail | null;
   /** Component R ranked "good next" actions. */
   recommendations: EngineRecommendation[];
+  /** Expedited-service screen per 7 CFR 273.2(i) — provisional (resources not
+   *  yet verified). reason is "" when not flagged. */
+  expedited: boolean;
+  expeditedReason: string;
 }
 
 export interface PhaseGroup {
@@ -277,6 +281,18 @@ const APPLICANTS: DemoApplicant[] = [
 const usd = (n: number) =>
   `$${n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
+// Expedited-service screen, 7 CFR 273.2(i)(1). Provisional: liquid resources
+// aren't precisely captured, so we screen on the income-vs-shelter criterion
+// (and the <$150 gross floor). A "true" here means "screen for expedited", not a
+// final determination.
+function expeditedScreen(e: PacketAnswers): { expedited: boolean; reason: string } {
+  const income = Number(e.monthly_income ?? 0);
+  const shelter = Number(e.monthly_rent ?? 0) + Number(e.monthly_utilities ?? 0);
+  if (income < 150) return { expedited: true, reason: "Gross monthly income under $150" };
+  if (shelter > income) return { expedited: true, reason: "Shelter cost exceeds income + liquid resources" };
+  return { expedited: false, reason: "" };
+}
+
 // Fixed section order so the full application reads top-to-bottom like the real
 // intake wizard, regardless of the order answers were authored/merged in.
 const SECTION_ORDER = [
@@ -407,6 +423,10 @@ export function buildPipeline(state: "CA" | "MA" = "CA", asOf: Date, synthetic =
       risk: a.risk, updated: a.updated, completedSteps: a.completedSteps,
       answers: expandAnswers(a), docFlags: a.docFlags, history: a.history,
       estimatedBenefitUsd, verificationNeeds, assumptions, deduction, recommendations,
+      ...(() => {
+        const x = expeditedScreen(a.engineInputs);
+        return { expedited: x.expedited, expeditedReason: x.reason };
+      })(),
     };
   });
   return PHASES.map((p) => ({ ...p, cases: enriched.filter((c) => c.phase === p.key) }));
