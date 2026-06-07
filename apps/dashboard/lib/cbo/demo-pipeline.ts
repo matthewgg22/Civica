@@ -274,7 +274,8 @@ const APPLICANTS: DemoApplicant[] = [
   },
 ];
 
-const usd = (n: number) => `$${Math.round(n).toLocaleString("en-US")}`;
+const usd = (n: number) =>
+  `$${n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
 // Fixed section order so the full application reads top-to-bottom like the real
 // intake wizard, regardless of the order answers were authored/merged in.
@@ -291,7 +292,15 @@ const SECTION_ORDER = [
 ] as const;
 
 const moneyOrNone = (v?: string | null) =>
-  v && v !== "0" ? `$${Number(v).toLocaleString("en-US")}` : "Not reported";
+  v && v !== "0"
+    ? `$${Number(v).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+    : "Not reported";
+
+// Normalize any "$1,234" lacking cents → "$1,234.00" (leaves values that already
+// carry decimals, and any non-$ text, untouched). Applied to every rendered
+// answer so hand-authored + derived dollar figures read consistently with cents.
+const normalizeMoney = (s: string) =>
+  s.replace(/\$(\d{1,3}(?:,\d{3})*|\d+)(?!\.\d)/g, (_m, num) => `$${num}.00`);
 
 /**
  * Expand a case's sparse hand-authored `answers` into a COMPLETE CalFresh
@@ -328,10 +337,10 @@ function expandAnswers(a: DemoApplicant): SurveyAnswer[] {
     { section: "Income & employment", question: "Pay frequency", answer: "Twice monthly" },
     { section: "Expenses & deductions", question: "Monthly rent", answer: moneyOrNone(e.monthly_rent) },
     { section: "Expenses & deductions", question: "Monthly utilities", answer: moneyOrNone(e.monthly_utilities) },
-    { section: "Expenses & deductions", question: "Dependent-care costs", answer: "$0" },
-    { section: "Expenses & deductions", question: "Out-of-pocket medical (60+/disabled)", answer: elderlyOrDisabled ? "$0" : "Not applicable" },
-    { section: "Expenses & deductions", question: "Child support paid", answer: "$0" },
-    { section: "Resources", question: "Countable assets (cash + bank)", answer: "Under $2,750" },
+    { section: "Expenses & deductions", question: "Dependent-care costs", answer: "$0.00" },
+    { section: "Expenses & deductions", question: "Out-of-pocket medical (60+/disabled)", answer: elderlyOrDisabled ? "$0.00" : "Not applicable" },
+    { section: "Expenses & deductions", question: "Child support paid", answer: "$0.00" },
+    { section: "Resources", question: "Countable assets (cash + bank)", answer: "Under $2,750.00" },
     { section: "Documents", question: "Photo ID", answer: "On hand" },
     { section: "Documents", question: "Proof of income", answer: "On hand" },
     { section: "Documents", question: "Proof of residence", answer: "On hand" },
@@ -360,7 +369,7 @@ function expandAnswers(a: DemoApplicant): SurveyAnswer[] {
   return merged
     .map((x, i) => [x, i] as const)
     .sort(([x, i], [y, j]) => rank(x.section) - rank(y.section) || i - j)
-    .map(([x]) => x);
+    .map(([x]) => ({ ...x, answer: normalizeMoney(x.answer) }));
 }
 
 /**

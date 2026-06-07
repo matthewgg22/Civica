@@ -43,9 +43,9 @@ describe("buildPipeline", () => {
     // Sections render in intake order (Documents after Income).
     const idx = (s: string) => daniel.answers.findIndex((a) => a.section === s);
     expect(idx("Income & employment")).toBeLessThan(idx("Documents"));
-    // Derived value tracks engineInputs (income 1450 → "$1,450").
+    // Money reads with cents (authored "$1,450" normalized → "$1,450.00").
     const income = daniel.answers.find((a) => a.question === "Gross monthly income");
-    expect(income?.answer).toBe("$1,450");
+    expect(income?.answer).toBe("$1,450.00");
   });
 
   it("preserves hand-authored navigator flags when overlaying the full application", () => {

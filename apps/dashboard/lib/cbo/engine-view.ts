@@ -52,12 +52,14 @@ export function deductionRows(d: BenefitCalcDetail): DeductionRow[] {
   return rows;
 }
 
-const usd = (n: number) => `$${Math.round(n).toLocaleString()}`;
+const usd = (n: number) =>
+  `$${n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
-/** One-line summary of the benefit math, for the collapsed Amount block. */
+/** One-line summary of the benefit math, for the collapsed Amount block. The
+ *  final figure is an estimate, so it's prefixed with ≈ (approx.). */
 export function deductionOneLine(d: BenefitCalcDetail): string {
   const totalDed = Math.max(0, d.gross_monthly_income - d.net_monthly_income);
-  return `${usd(d.gross_monthly_income)} gross − ${usd(totalDed)} deductions → ${usd(d.net_monthly_income)} net; ${usd(d.max_allotment_for_household_size)} max allotment − 30% of net (${usd(d.thirty_percent_of_net)}) = ${usd(d.monthly_benefit)}/mo`;
+  return `${usd(d.gross_monthly_income)} gross − ${usd(totalDed)} deductions → ${usd(d.net_monthly_income)} net; ${usd(d.max_allotment_for_household_size)} max allotment − 30% of net (${usd(d.thirty_percent_of_net)}) ≈ ${usd(d.monthly_benefit)}/mo`;
 }
 
 /** A Component R recommendation, flattened for the UI. */

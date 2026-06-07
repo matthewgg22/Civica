@@ -93,10 +93,40 @@ function StepList({ completedSteps }: { completedSteps: number }) {
   );
 }
 
+// Edit-mode option sets: fields with a fixed answer space render as a <select>
+// instead of free text. Money / number / name / date fields are omitted and fall
+// through to a text input. The current value is always included in the list so an
+// off-list value (e.g. a flagged "Provided — does not match SSA records") renders.
+const FIELD_OPTIONS: Record<string, string[]> = {
+  State: ["California"],
+  "Preferred language": ["English", "Spanish", "Chinese", "Vietnamese", "Tagalog", "Korean", "Other"],
+  "Contact phone on file": ["Yes", "No"],
+  "Children under 14?": ["Yes", "No"],
+  "Anyone 60+ or disabled?": ["Yes", "No"],
+  "Everyone applying is a citizen or eligible noncitizen?": ["Yes", "No"],
+  "Employment status": ["Employed", "Self-employed", "Not employed"],
+  "Income type": ["Wages / salary", "Self-employment", "Fixed income", "No income"],
+  "Pay frequency": ["Weekly", "Every two weeks", "Twice monthly", "Monthly"],
+  "Out-of-pocket medical (60+/disabled)": ["Not applicable", "$0.00"],
+  "Countable assets (cash + bank)": ["Under $2,750.00", "$2,750.00 or more"],
+  "Photo ID": ["On hand", "Provided", "Requested", "Not yet uploaded"],
+  "Proof of income": ["On hand", "Provided", "Requested", "Not provided"],
+  "Proof of residence": ["On hand", "Provided", "Requested", "Not provided"],
+  "Social Security Number": ["Provided", "Not provided"],
+  "Expedited-service screen": ["Completed", "Not started"],
+  "Signed under penalty of perjury": ["Yes", "No"],
+};
+
+function optionsFor(question: string, current: string): string[] | null {
+  const opts = FIELD_OPTIONS[question];
+  if (!opts) return null;
+  return opts.includes(current) ? opts : [current, ...opts];
+}
+
 // Full application responses for the expanded case. Renders the complete intake
-// as stacked label-over-value fields (no horizontal label→value gap) in a dense
-// multi-column grid, grouped by intake section. Editing is a single batch mode:
-// "Edit responses" unlocks every field at once; "Save changes" commits the diff.
+// as a per-section ruled table (Field | Response). Editing is a single batch
+// mode: "Edit responses" unlocks every field at once (fixed-option fields as a
+// dropdown, others as text); "Save changes" commits the diff.
 function AnswerList({
   answers, edited, onEdit,
 }: {
@@ -197,12 +227,28 @@ function AnswerList({
                       </th>
                       <td className="align-top px-3 py-1.5">
                         {editing ? (
-                          <input
-                            value={drafts[a.question] ?? ""}
-                            onChange={(e) => setDrafts((p) => ({ ...p, [a.question]: e.target.value }))}
-                            className="w-full px-1.5 py-0.5 text-[12px] bg-surface border border-hairline rounded-[2px] text-ink focus:border-pine focus:outline-none"
-                            aria-label={a.question}
-                          />
+                          (() => {
+                            const opts = optionsFor(a.question, drafts[a.question] ?? "");
+                            return opts ? (
+                              <select
+                                value={drafts[a.question] ?? ""}
+                                onChange={(e) => setDrafts((p) => ({ ...p, [a.question]: e.target.value }))}
+                                className="w-full px-1.5 py-1 text-[12px] bg-surface border border-hairline rounded-[2px] text-ink focus:border-pine focus:outline-none"
+                                aria-label={a.question}
+                              >
+                                {opts.map((o) => (
+                                  <option key={o} value={o}>{o}</option>
+                                ))}
+                              </select>
+                            ) : (
+                              <input
+                                value={drafts[a.question] ?? ""}
+                                onChange={(e) => setDrafts((p) => ({ ...p, [a.question]: e.target.value }))}
+                                className="w-full px-1.5 py-0.5 text-[12px] bg-surface border border-hairline rounded-[2px] text-ink focus:border-pine focus:outline-none"
+                                aria-label={a.question}
+                              />
+                            );
+                          })()
                         ) : (
                           <span
                             className={`font-medium leading-snug break-words ${
@@ -289,7 +335,7 @@ function CaseRow({ app, border }: { app: QueueApplication; border: boolean }) {
         {/* Enrolled shows benefit; others show pipeline completion */}
         <span className="hidden md:flex items-center justify-end shrink-0 w-[130px]">
           {enrolled && app.estimatedBenefitUsd !== null ? (
-            <span className="text-[12px] tabular-nums text-ink font-medium">{formatUsd(app.estimatedBenefitUsd)}/mo</span>
+            <span className="text-[12px] tabular-nums text-ink font-medium">~{formatUsd(app.estimatedBenefitUsd)}/mo</span>
           ) : (
             <span className="flex items-center gap-2 w-full">
               <span className="h-1.5 flex-1 rounded-[1px] bg-surface-secondary overflow-hidden">
@@ -346,7 +392,7 @@ function CaseRow({ app, border }: { app: QueueApplication; border: boolean }) {
                 {app.estimatedBenefitUsd !== null ? (
                   <>
                     <p className="text-[16px] font-semibold tabular-nums text-ink leading-none">
-                      {formatUsd(app.estimatedBenefitUsd)}
+                      <span className="text-[11px] font-normal text-graphite">approx.</span> ~{formatUsd(app.estimatedBenefitUsd)}
                       <span className="text-[11px] font-normal text-graphite">/mo</span>
                     </p>
                     {app.deduction && (

@@ -42,8 +42,8 @@ describe("CBO engine-view", () => {
 
   it("summarizes the math in one line", () => {
     const line = deductionOneLine(detail);
-    expect(line).toContain("$2,000 gross");
-    expect(line).toContain("$1,091 net");
-    expect(line).toContain("$458/mo");
+    expect(line).toContain("$2,000.00 gross");
+    expect(line).toContain("$1,091.00 net");
+    expect(line).toContain("≈ $458.00/mo");
   });
 });
