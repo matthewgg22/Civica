@@ -327,7 +327,9 @@ function CaseRow({ app, border }: { app: QueueApplication; border: boolean }) {
   return (
     <div className={border ? "border-t border-hairline" : ""}>
       <button type="button" onClick={() => setOpen((v) => !v)} aria-expanded={open}
-        className="w-full flex items-center gap-4 px-4 py-1.5 text-left hover:bg-[var(--color-row-hover)] transition-colors">
+        className={`w-full flex items-center gap-4 px-4 py-1.5 text-left transition-colors ${
+          open ? "bg-[var(--color-row-hover)]" : "hover:bg-[var(--color-row-hover)]"
+        }`}>
         <span className="text-[11px] text-graphite font-mono tabular-nums tracking-tight shrink-0 w-[92px]">{app.caseId}</span>
         <span className="text-[13px] font-semibold text-ink shrink-0 w-[88px] truncate">{app.name}</span>
         <span className="text-[12px] text-graphite shrink-0 w-[110px] truncate hidden sm:block">{app.county} County</span>
@@ -359,7 +361,7 @@ function CaseRow({ app, border }: { app: QueueApplication; border: boolean }) {
       </button>
 
       {open && (
-        <div className="bg-surface-secondary border-t border-hairline px-4 py-4 space-y-4">
+        <div className="bg-[var(--color-row-hover)] border-t border-hairline px-4 py-4 space-y-4">
           <AnswerList answers={app.answers} edited={edited} onEdit={(q, v) => setEdited((p) => ({ ...p, [q]: v }))} />
 
           {/* The three engines, made explicit */}
