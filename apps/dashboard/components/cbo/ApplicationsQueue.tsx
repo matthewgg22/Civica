@@ -281,7 +281,7 @@ function CaseRow({ app, border }: { app: QueueApplication; border: boolean }) {
   return (
     <div className={border ? "border-t border-hairline" : ""}>
       <button type="button" onClick={() => setOpen((v) => !v)} aria-expanded={open}
-        className="w-full flex items-center gap-4 px-4 py-1.5 text-left hover:bg-paper transition-colors">
+        className="w-full flex items-center gap-4 px-4 py-1.5 text-left hover:bg-surface-secondary transition-colors">
         <span className="text-[11px] text-graphite font-mono tabular-nums tracking-tight shrink-0 w-[92px]">{app.caseId}</span>
         <span className="text-[13px] font-semibold text-ink shrink-0 w-[88px] truncate">{app.name}</span>
         <span className="text-[12px] text-graphite shrink-0 w-[110px] truncate hidden sm:block">{app.county} County</span>
@@ -313,7 +313,7 @@ function CaseRow({ app, border }: { app: QueueApplication; border: boolean }) {
       </button>
 
       {open && (
-        <div className="bg-paper border-t border-hairline px-4 py-4 space-y-4">
+        <div className="bg-surface-secondary border-t border-hairline px-4 py-4 space-y-4">
           <AnswerList answers={app.answers} edited={edited} onEdit={(q, v) => setEdited((p) => ({ ...p, [q]: v }))} />
 
           {/* The three engines, made explicit */}
@@ -559,7 +559,7 @@ export default function ApplicationsQueue({ phases }: { phases: PhaseGroup[] }) 
           if (phase.cases.length === 0) return null;
           return (
             <div key={phase.key}>
-              <div className="flex items-center gap-2 px-4 py-1 bg-paper border-b border-hairline">
+              <div className="flex items-center gap-2 px-4 py-1 bg-surface-secondary border-b border-hairline">
                 <span className={`w-2 h-2 rounded-sm ${phase.accent}`} aria-hidden="true" />
                 <span className="text-[11px] font-semibold uppercase tracking-wider text-graphite">{phase.label}</span>
                 <span className="text-[11px] text-graphite tabular-nums">{phase.cases.length}</span>
