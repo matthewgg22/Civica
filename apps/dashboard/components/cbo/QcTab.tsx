@@ -72,13 +72,22 @@ const HOW_STEPS = [
   },
 ] as const;
 
-export default function QcTab() {
+export default function QcTab({ synthetic = true }: { synthetic?: boolean }) {
   const [plain, setPlain] = useState(false);
   const [howOpen, setHowOpen] = useState(false);
 
   // expert vs plain string picker
   const t = (expert: string, plainText: string) => (plain ? plainText : expert);
   const openCount = DEMO_QC.recentFlags.filter((f) => f.status === "Open").length;
+
+  // Synthetic trigger off → no fabricated QC metrics.
+  if (!synthetic) {
+    return (
+      <div className="border border-hairline rounded-[2px] bg-surface px-4 py-8 text-center">
+        <p className="text-[13px] text-muted">Quality-control metrics will populate once cases flow through the pipeline.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">

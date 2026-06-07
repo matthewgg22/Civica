@@ -17,6 +17,14 @@ function cboPreviewEnabled(): boolean {
   return v === "true" || v === "1";
 }
 
+// Trigger for the synthetic demo caseload. On = populated for visual build,
+// debugging, and controlled walkthroughs; off = empty (no fabricated records
+// shown), ready for a real-data wiring. Default on. Set CBO_PREVIEW_SYNTHETIC=false
+// to turn it off.
+function cboSyntheticEnabled(): boolean {
+  return process.env.CBO_PREVIEW_SYNTHETIC !== "false";
+}
+
 // ─── Demo data ────────────────────────────────────────────────────────────────
 
 const FUNNEL_STEPS = [
@@ -49,6 +57,7 @@ export default async function CBOPreviewPage({
   // to Overview rather than rendering an empty body.
   const requested = params.section as TabKey | undefined;
   const active: TabKey = TABS.some((t) => t.key === requested) ? (requested as TabKey) : "overview";
+  const synthetic = cboSyntheticEnabled();
 
   const cookieStore = await cookies();
   const supabase = createServerClientFromCookies(cookieStore);
@@ -127,10 +136,10 @@ export default async function CBOPreviewPage({
             {TABS.find((t) => t.key === active)?.label ?? "Overview"}
           </h1>
         </div>
-        {active === "overview"     && <OverviewSection />}
-        {active === "pipeline" && <ApplicationsSection />}
-        {active === "qc"           && <QcTab />}
-        <p className="text-[11px] text-graphite mt-10">Sample data shown for demonstration.</p>
+        {active === "overview"     && <OverviewSection synthetic={synthetic} />}
+        {active === "pipeline" && <ApplicationsSection synthetic={synthetic} />}
+        {active === "qc"           && <QcTab synthetic={synthetic} />}
+        {synthetic && <p className="text-[11px] text-graphite mt-10">Illustrative caseload</p>}
       </div>
 
       {/* Contact CTA — always visible, centered */}
@@ -152,7 +161,7 @@ export default async function CBOPreviewPage({
 
 // ─── Overview ─────────────────────────────────────────────────────────────────
 
-function OverviewSection() {
+function OverviewSection({ synthetic }: { synthetic: boolean }) {
   const funnelMax = FUNNEL_STEPS[0].count;
   return (
     <div className="space-y-8">
@@ -174,7 +183,8 @@ function OverviewSection() {
         </div>
       </section>
 
-      {/* Funnel — full-width proportional bars (fix B) */}
+      {/* Funnel — full-width proportional bars (synthetic only) */}
+      {synthetic && (
       <section aria-label="Enrollment funnel">
         <p className="eyebrow mb-3">Enrollment funnel (last 30 days)</p>
         <div className="bg-surface border border-hairline rounded-[2px] p-4 space-y-3">
@@ -198,8 +208,10 @@ function OverviewSection() {
         </div>
         <p className="text-[11px] text-graphite mt-2">Conversion % relative to intake (1,240 applicants).</p>
       </section>
+      )}
 
-      {/* Sample queue preview */}
+      {/* Sample queue preview (synthetic only) */}
+      {synthetic && (
       <section aria-label="Sample navigator queue">
         <div className="flex items-baseline justify-between gap-3 mb-4 flex-wrap">
           <p className="eyebrow">What navigators see</p>
@@ -217,6 +229,7 @@ function OverviewSection() {
           ))}
         </div>
       </section>
+      )}
 
       {/* Value props */}
       <section aria-label="Value propositions">
@@ -241,10 +254,12 @@ function OverviewSection() {
 
 // ─── Applications ──────────────────────────────────────────────────────────────
 
-function ApplicationsSection() {
+function ApplicationsSection({ synthetic }: { synthetic: boolean }) {
   // Server-side: run each synthetic applicant through the REAL engine, grouped
   // by lifecycle phase (Requesting → Live → Enrolled → Recertification).
-  const phases = buildPipeline("CA", new Date());
+  // When the synthetic trigger is off, the pipeline is empty (no fabricated
+  // records) — ready for a real-data source.
+  const phases = buildPipeline("CA", new Date(), synthetic);
   return <ApplicationsQueue phases={phases} />;
 }
 

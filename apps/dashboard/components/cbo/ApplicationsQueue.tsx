@@ -338,6 +338,7 @@ export default function ApplicationsQueue({ phases }: { phases: PhaseGroup[] }) 
   }, [phases, q]);
 
   const matchCount = filtered.reduce((s, p) => s + p.cases.length, 0);
+  const totalCases = phases.reduce((s, p) => s + p.cases.length, 0);
 
   return (
     <div className="space-y-4">
@@ -394,6 +395,9 @@ export default function ApplicationsQueue({ phases }: { phases: PhaseGroup[] }) 
 
         {q && matchCount === 0 && (
           <p className="px-4 py-6 text-[13px] text-muted text-center">No cases match your search.</p>
+        )}
+        {!q && totalCases === 0 && (
+          <p className="px-4 py-8 text-[13px] text-muted text-center">No active cases in the pipeline yet.</p>
         )}
       </div>
     </div>

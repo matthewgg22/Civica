@@ -270,8 +270,13 @@ const APPLICANTS: DemoApplicant[] = [
 
 const usd = (n: number) => `$${Math.round(n).toLocaleString("en-US")}`;
 
-/** Run each synthetic applicant through the REAL engine, grouped by lifecycle phase. */
-export function buildPipeline(state: "CA" | "MA" = "CA", asOf: Date): PhaseGroup[] {
+/**
+ * Run each synthetic applicant through the REAL engine, grouped by lifecycle
+ * phase. When `synthetic` is false, every phase is empty (no fabricated records
+ * surfaced) — the trigger for a clean real-data state.
+ */
+export function buildPipeline(state: "CA" | "MA" = "CA", asOf: Date, synthetic = true): PhaseGroup[] {
+  if (!synthetic) return PHASES.map((p) => ({ ...p, cases: [] }));
   const enriched: QueueApplication[] = APPLICANTS.map((a) => {
     let estimatedBenefitUsd: number | null = null;
     let verificationNeeds: string[] = [];
