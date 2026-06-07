@@ -9,6 +9,11 @@ Categories used:
 - **Added** — new capability
 - **Changed** — visible behavior change
 
+## [0.2.10.4] - 2026-06-06
+
+### Removed
+- **CBO preview Outreach tab** — removed (5 tabs → 4). Its content duplicated other surfaces: "Stalled applications" overlapped the Applications → Needs Attention bucket, and "Recertification" duplicated the Renewals tab. Dropped the tab, its `OutreachSection`, and the `DEMO_OUTREACH` data. Unknown/retired `?section=` values now fall back to Overview instead of rendering an empty body.
+
 ## [0.2.10.3] - 2026-06-06
 
 ### Changed
