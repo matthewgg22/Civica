@@ -25,6 +25,7 @@ import { verifyCitations, formatCitationTrailer } from "../../../lib/mae/citatio
 import { redactPii } from "../../../lib/mae/pii";
 import { logMaeQuery } from "../../../lib/mae/audit";
 import { CORPUS_EFFECTIVE_DATE } from "../../../lib/mae/retrieval";
+import { formatFreshnessFooter } from "../../../lib/mae/freshness";
 
 // The Anthropic SDK requires the Node runtime (not edge). Auth + LLM call are
 // inherently dynamic.
@@ -188,6 +189,9 @@ export async function POST(req: NextRequest) {
         const checks = verifyCitations(answerText, retrievedCitations);
         const trailer = formatCitationTrailer(checks);
         if (trailer) safeEnqueue(trailer);
+        // Freshness: an explicit "sources as of …" line (+ staleness warnings)
+        // on every substantive answer, so no one relies on expired rules.
+        if (emittedAny) safeEnqueue(formatFreshnessFooter(new Date(), CORPUS_EFFECTIVE_DATE));
         safeClose();
 
         // Audit (best-effort, never blocks the answer): a PII-scrubbed record of
