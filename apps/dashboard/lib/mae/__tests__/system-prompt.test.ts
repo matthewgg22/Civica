@@ -1,0 +1,36 @@
+import { describe, it, expect } from "vitest";
+import { MAE_SYSTEM_PROMPT, MAE_MODEL, MAE_DISCLAIMER } from "../system-prompt";
+
+// These guardrails are the contract of the caseworker assistant. If someone
+// edits the prompt and drops one, this test fails — the behavior the user
+// asked for (cite regs, refuse non-SNAP + PII, disclaim) must survive edits.
+describe("Mae system prompt", () => {
+  it("uses Opus 4.8", () => {
+    expect(MAE_MODEL).toBe("claude-opus-4-8");
+  });
+
+  it("instructs citing 7 CFR 273", () => {
+    expect(MAE_SYSTEM_PROMPT).toContain("7 CFR 273");
+  });
+
+  it("scopes to SNAP / CalFresh and refuses off-topic", () => {
+    expect(MAE_SYSTEM_PROMPT).toMatch(/SNAP/);
+    expect(MAE_SYSTEM_PROMPT).toMatch(/CalFresh/);
+    expect(MAE_SYSTEM_PROMPT.toLowerCase()).toMatch(/decline|outside|scope/);
+  });
+
+  it("forbids handling applicant PII", () => {
+    expect(MAE_SYSTEM_PROMPT).toMatch(/PII|personally identifiable/);
+    expect(MAE_SYSTEM_PROMPT.toLowerCase()).toMatch(/ssn|date of birth|case number/);
+  });
+
+  it("forbids issuing a determination and frames answers as guidance", () => {
+    expect(MAE_SYSTEM_PROMPT.toLowerCase()).toContain("determination");
+    expect(MAE_SYSTEM_PROMPT.toLowerCase()).toMatch(/verify|county/);
+  });
+
+  it("ships a non-empty UI disclaimer", () => {
+    expect(MAE_DISCLAIMER.length).toBeGreaterThan(40);
+    expect(MAE_DISCLAIMER.toLowerCase()).toContain("verify");
+  });
+});
