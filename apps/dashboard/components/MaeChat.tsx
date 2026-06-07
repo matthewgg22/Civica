@@ -23,6 +23,68 @@ const MAE_DISCLAIMER =
 
 type ChatMessage = { role: "user" | "assistant"; content: string };
 
+// Per-answer feedback — the human-in-the-loop signal. 👍/👎; a 👎 expands a
+// reason (esp. "citation wrong") + optional note. Posts to /api/mae/feedback,
+// which PII-scrubs and stores it for the answer-eval triage queue. Best-effort.
+function MaeFeedback({ question, answer }: { question: string; answer: string }) {
+  const [stage, setStage] = useState<"idle" | "reason" | "sent">("idle");
+  const [note, setNote] = useState("");
+
+  const submit = (rating: "up" | "down", reason?: string) => {
+    setStage("sent");
+    void fetch("/api/mae/feedback", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ rating, reason, note: note.trim() || undefined, question, answer }),
+    }).catch(() => {
+      /* best-effort — don't disrupt the caseworker */
+    });
+  };
+
+  if (stage === "sent") {
+    return <p className="mt-1 text-[11px] text-muted">Thanks — feedback recorded.</p>;
+  }
+  if (stage === "reason") {
+    return (
+      <div className="mt-1 space-y-1">
+        <div className="flex flex-wrap gap-1">
+          {[
+            ["citation_wrong", "Citation wrong"],
+            ["incorrect", "Incorrect"],
+            ["unclear", "Unclear"],
+          ].map(([r, label]) => (
+            <button
+              key={r}
+              type="button"
+              onClick={() => submit("down", r)}
+              className="rounded-[2px] border border-hairline px-1.5 py-0.5 text-[11px] text-ink hover:bg-surface-secondary"
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+        <input
+          value={note}
+          onChange={(e) => setNote(e.target.value)}
+          placeholder="What was wrong? (optional)"
+          className="w-full rounded-[2px] border border-hairline bg-input px-1.5 py-1 text-[11px] text-ink outline-none placeholder:text-muted focus:border-pine"
+        />
+      </div>
+    );
+  }
+  return (
+    <div className="mt-1 flex items-center gap-2 text-[11px] text-muted">
+      <span>Was this helpful?</span>
+      <button type="button" aria-label="Helpful" onClick={() => submit("up")} className="hover:text-ink">
+        👍
+      </button>
+      <button type="button" aria-label="Not helpful" onClick={() => setStage("reason")} className="hover:text-ink">
+        👎
+      </button>
+    </div>
+  );
+}
+
 export default function MaeChat() {
   const [allowed, setAllowed] = useState(false);
   const [open, setOpen] = useState(false);
@@ -185,32 +247,39 @@ export default function MaeChat() {
               </div>
             )}
 
-            {messages.map((m, i) => (
-              <div
-                key={i}
-                className={m.role === "user" ? "flex justify-end" : "flex justify-start"}
-              >
+            {messages.map((m, i) => {
+              const isAssistant = m.role === "assistant";
+              const showFeedback = isAssistant && !!m.content && !(busy && i === messages.length - 1);
+              return (
                 <div
-                  className={
-                    m.role === "user"
-                      ? "max-w-[85%] rounded-[3px] bg-pine-surface px-3 py-2 text-sm text-ink"
-                      : "max-w-[92%] rounded-[3px] bg-surface px-3 py-2 text-sm text-ink"
-                  }
+                  key={i}
+                  className={isAssistant ? "flex flex-col items-start" : "flex justify-end"}
                 >
-                  {m.role === "assistant" ? (
-                    m.content ? (
-                      <div className="mae-prose space-y-2 [&_a]:text-pine [&_a]:underline [&_code]:rounded [&_code]:bg-surface-secondary [&_code]:px-1 [&_li]:ml-4 [&_li]:list-disc [&_strong]:font-semibold">
-                        <ReactMarkdown remarkPlugins={[remarkGfm]}>{m.content}</ReactMarkdown>
-                      </div>
+                  <div
+                    className={
+                      isAssistant
+                        ? "max-w-[92%] rounded-[3px] bg-surface px-3 py-2 text-sm text-ink"
+                        : "max-w-[85%] rounded-[3px] bg-pine-surface px-3 py-2 text-sm text-ink"
+                    }
+                  >
+                    {isAssistant ? (
+                      m.content ? (
+                        <div className="mae-prose space-y-2 [&_a]:text-pine [&_a]:underline [&_code]:rounded [&_code]:bg-surface-secondary [&_code]:px-1 [&_li]:ml-4 [&_li]:list-disc [&_strong]:font-semibold">
+                          <ReactMarkdown remarkPlugins={[remarkGfm]}>{m.content}</ReactMarkdown>
+                        </div>
+                      ) : (
+                        <span className="text-muted">Mae is thinking…</span>
+                      )
                     ) : (
-                      <span className="text-muted">Mae is thinking…</span>
-                    )
-                  ) : (
-                    <span className="whitespace-pre-wrap">{m.content}</span>
+                      <span className="whitespace-pre-wrap">{m.content}</span>
+                    )}
+                  </div>
+                  {showFeedback && (
+                    <MaeFeedback question={messages[i - 1]?.content ?? ""} answer={m.content} />
                   )}
                 </div>
-              </div>
-            ))}
+              );
+            })}
 
             {error && <p className="text-sm text-brick">{error}</p>}
           </div>

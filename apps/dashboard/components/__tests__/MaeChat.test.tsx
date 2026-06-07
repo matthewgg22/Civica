@@ -86,6 +86,31 @@ describe("MaeChat", () => {
     });
   });
 
+  it("shows per-answer feedback and posts a thumbs-up to /api/mae/feedback", async () => {
+    mocks.getUser.mockResolvedValue({ data: { user: { app_metadata: { role: "navigator" } } } });
+    const fetchSpy = vi
+      .spyOn(globalThis, "fetch")
+      .mockResolvedValue(streamingResponse(["Shelter costs count."]) as unknown as Response);
+
+    render(<MaeChat />);
+    fireEvent.click(await screen.findByRole("button", { name: /ask mae/i }));
+    const textarea = screen.getByPlaceholderText(/ask a snap policy question/i);
+    fireEvent.change(textarea, { target: { value: "What is a shelter deduction?" } });
+    fireEvent.keyDown(textarea, { key: "Enter" });
+    await screen.findByText(/Shelter costs count\./i);
+
+    // Feedback affordance appears under the completed answer.
+    fireEvent.click(await screen.findByRole("button", { name: /^helpful$/i }));
+    await screen.findByText(/feedback recorded/i);
+
+    const fb = fetchSpy.mock.calls.find((c) => c[0] === "/api/mae/feedback");
+    expect(fb).toBeTruthy();
+    const body = JSON.parse((fb![1] as RequestInit).body as string);
+    expect(body.rating).toBe("up");
+    expect(body.question).toBe("What is a shelter deduction?");
+    expect(body.answer).toContain("Shelter costs count.");
+  });
+
   it("surfaces a friendly message when the endpoint is unconfigured (503)", async () => {
     mocks.getUser.mockResolvedValue({
       data: { user: { app_metadata: { role: "admin" } } },

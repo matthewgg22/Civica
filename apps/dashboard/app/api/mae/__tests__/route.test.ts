@@ -26,7 +26,12 @@ vi.mock("../../../../lib/mae/retrieval", () => ({
   retrieve: (q: string) => [{ citation: "7 CFR 273.9(d)(6)", heading: "Income and deductions.", text: "(6) Excess shelter…", source_url: "https://ecfr.gov/x", effective_date: "2026-06-02", id: "273.9-d-6", section: "273.9", subsection: "d6" }],
   formatRetrievedSources: (chunks: { citation: string }[]) =>
     chunks.length ? `## Verbatim regulatory source text (authoritative)\n${chunks[0].citation}` : "",
+  CORPUS_EFFECTIVE_DATE: "2026-06-02",
 }));
+
+// Mock the audit sink so the route test doesn't touch Supabase.
+const mockLogMaeQuery = vi.hoisted(() => vi.fn());
+vi.mock("../../../../lib/mae/audit", () => ({ logMaeQuery: mockLogMaeQuery }));
 
 // Mock the engine so the route's live-params grounding is hermetic.
 vi.mock("@civica/snap-rules", () => ({
@@ -138,7 +143,9 @@ describe("POST /api/mae", () => {
 
     const res = await POST(makeReq(oneTurn));
     expect(res.status).toBe(200);
-    expect(await res.text()).toBe("Shelter costs are deductible.");
+    const text = await res.text();
+    expect(text).toContain("Shelter costs are deductible.");
+    expect(text).toContain("Sources as of"); // freshness footer appended
 
     const body = mockStream.mock.calls[0][0];
     expect(body.model).toBe("claude-opus-4-8");
@@ -155,6 +162,47 @@ describe("POST /api/mae", () => {
     expect(body.system[1].text).toContain("Verbatim regulatory source text");
     expect(body.system[1].text).toContain("7 CFR 273.9(d)(6)");
     expect(body.system[1].cache_control).toBeUndefined();
+  });
+
+  it("appends a citation-check trailer flagging unrecognized citations", async () => {
+    mockGetUser.mockResolvedValue(staffUser);
+    mockStream.mockReturnValue(
+      fakeStream({ chunks: ["Shelter is 7 CFR 273.9(d)(6); cap is per 7 CFR 273.99(z)."] }),
+    );
+    const res = await POST(makeReq(oneTurn));
+    const text = await res.text();
+    expect(text).toContain("Citation check"); // trailer present
+    expect(text).toContain("7 CFR 273.9(d)(6)"); // verified against retrieved sources
+    expect(text).toContain("7 CFR 273.99(z)"); // invented cite is named...
+    expect(text).toContain("⚠️"); // ...and flagged as not recognized
+  });
+
+  it("redacts applicant PII before sending to the model and audits the query", async () => {
+    mockGetUser.mockResolvedValue(staffUser);
+    mockStream.mockReturnValue(fakeStream({ chunks: ["Use net income (7 CFR 273.9(a))."] }));
+    const res = await POST(
+      makeReq({ messages: [{ role: "user", content: "Client SSN 123-45-6789 makes $1800 — over income?" }] }),
+    );
+    await res.text();
+
+    const sent = mockStream.mock.calls.at(-1)![0].messages.at(-1).content as string;
+    expect(sent).toContain("[SSN]"); // redacted placeholder reached the model
+    expect(sent).not.toContain("123-45-6789"); // raw SSN did not
+
+    expect(mockLogMaeQuery).toHaveBeenCalled();
+    const rec = mockLogMaeQuery.mock.calls.at(-1)![0];
+    expect(rec.questionRedacted).toContain("[SSN]");
+    expect(rec.questionRedacted).not.toContain("123-45-6789");
+    expect(rec.piiRedactions).toBeGreaterThanOrEqual(1);
+  });
+
+  it("adds no citation-check block when the answer contains no citations", async () => {
+    mockGetUser.mockResolvedValue(staffUser);
+    mockStream.mockReturnValue(fakeStream({ chunks: ["Net income is what matters here."] }));
+    const text = await (await POST(makeReq(oneTurn))).text();
+    expect(text).toContain("Net income is what matters here.");
+    expect(text).not.toContain("Citation check"); // no citations → no check block
+    expect(text).toContain("Sources as of"); // but the freshness footer still shows
   });
 
   it("emits a scoped fallback when the model refuses with no text", async () => {

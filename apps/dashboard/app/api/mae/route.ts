@@ -20,13 +20,12 @@ import { cookies } from "next/headers";
 import Anthropic from "@anthropic-ai/sdk";
 import { createServerClientFromCookies } from "../../../lib/supabase";
 import { isStaff } from "../../../lib/roleRouting";
-import { MAE_MODEL, MAE_SYSTEM_PROMPT } from "../../../lib/mae/system-prompt";
-import {
-  MAE_ENGINE_CITATIONS,
-  MAE_CITATIONS_PROVENANCE,
-  formatEngineParams,
-} from "../../../lib/mae/engine-citations";
-import { retrieve, formatRetrievedSources } from "../../../lib/mae/retrieval";
+import { buildMaeSystem, MAE_GENERATION } from "../../../lib/mae/answer";
+import { verifyCitations, formatCitationTrailer } from "../../../lib/mae/citation-verifier";
+import { redactPii } from "../../../lib/mae/pii";
+import { logMaeQuery } from "../../../lib/mae/audit";
+import { CORPUS_EFFECTIVE_DATE } from "../../../lib/mae/retrieval";
+import { formatFreshnessFooter } from "../../../lib/mae/freshness";
 
 // The Anthropic SDK requires the Node runtime (not edge). Auth + LLM call are
 // inherently dynamic.
@@ -116,42 +115,20 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: parsed.error }, { status: 400 });
   }
 
-  // --- Assemble the grounded system prompt ----------------------------------
-  // One cached block: frozen instructions + the engine's authority map + the
-  // engine's LIVE fiscal-year figures (so Mae's numbers match the determination
-  // and track COLA updates). Byte-stable within a fiscal year → caches.
-  let liveParams = "";
-  try {
-    liveParams = formatEngineParams("CA", new Date());
-  } catch (err) {
-    console.error("[mae] engine params unavailable:", err);
-  }
-  const systemText = [
-    MAE_SYSTEM_PROMPT,
-    MAE_CITATIONS_PROVENANCE,
-    MAE_ENGINE_CITATIONS,
-    liveParams,
-  ]
-    .filter(Boolean)
-    .join("\n\n");
+  // --- Redact applicant PII before anything leaves the server ---------------
+  // Scrub structured identifiers (SSN/phone/email/DOB/account numbers) from
+  // every message BEFORE retrieval, the API call, and the audit log. Mae answers
+  // policy questions; a specific person's identifiers add nothing to them.
+  let piiRedactions = 0;
+  const messages = parsed.messages.map((m) => {
+    const { redacted, found } = redactPii(m.content);
+    piiRedactions += found;
+    return { role: m.role, content: redacted };
+  });
 
-  // Retrieve verbatim eCFR text for THIS question. Rendered as a second,
-  // un-cached system block AFTER the cached prefix, so per-question source text
-  // doesn't invalidate the cached instructions/citations/params prefix.
-  const lastUser = parsed.messages[parsed.messages.length - 1].content;
-  let retrievedBlock = "";
-  try {
-    retrievedBlock = formatRetrievedSources(await retrieve(lastUser));
-  } catch (err) {
-    console.error("[mae] retrieval failed:", err);
-  }
-
-  const systemBlocks: Anthropic.TextBlockParam[] = [
-    { type: "text", text: systemText, cache_control: { type: "ephemeral" } },
-  ];
-  if (retrievedBlock) {
-    systemBlocks.push({ type: "text", text: retrievedBlock });
-  }
+  // --- Assemble the grounded system prompt (shared with the eval) -----------
+  const lastUser = messages[messages.length - 1].content;
+  const { systemBlocks, retrievedCitations } = await buildMaeSystem(lastUser);
 
   // --- Stream the answer ----------------------------------------------------
   const client = new Anthropic({ apiKey });
@@ -174,20 +151,15 @@ export async function POST(req: NextRequest) {
         closed = true;
         try { controller.close(); } catch { /* already closed */ }
       };
+      let answerText = "";
       try {
         const mae = client.messages.stream(
           {
-            model: MAE_MODEL,
+            ...MAE_GENERATION,
             max_tokens: MAX_OUTPUT_TOKENS,
-            // Adaptive thinking: Mae reasons more on complex eligibility
-            // scenarios, less on definitional lookups. We forward only text
-            // deltas to the client (thinking stays server-side).
-            thinking: { type: "adaptive" },
-            // Frozen system prompt as a single cached block. Prefix reuse pays
-            // off once the prompt clears the model's min cacheable size; the
-            // breakpoint is correct regardless.
+            // Frozen system prompt as a cached block + per-question source text.
             system: systemBlocks,
-            messages: parsed.messages,
+            messages, // PII already redacted
           },
           // Stop generating (and stop billing) if the caseworker closes the panel.
           { signal: req.signal },
@@ -195,6 +167,7 @@ export async function POST(req: NextRequest) {
 
         mae.on("text", (delta) => {
           emittedAny = true;
+          answerText += delta;
           safeEnqueue(delta);
         });
 
@@ -208,7 +181,31 @@ export async function POST(req: NextRequest) {
               : "Mae couldn't generate a response. Please try rephrasing.",
           );
         }
+
+        // Citation check: classify every citation Mae wrote against the text we
+        // actually retrieved for this question, and append the result so the
+        // caseworker sees which cites are source-backed vs. unrecognized. We
+        // surface, never silently strip — honesty over a tidy-looking answer.
+        const checks = verifyCitations(answerText, retrievedCitations);
+        const trailer = formatCitationTrailer(checks);
+        if (trailer) safeEnqueue(trailer);
+        // Freshness: an explicit "sources as of …" line (+ staleness warnings)
+        // on every substantive answer, so no one relies on expired rules.
+        if (emittedAny) safeEnqueue(formatFreshnessFooter(new Date(), CORPUS_EFFECTIVE_DATE));
         safeClose();
+
+        // Audit (best-effort, never blocks the answer): a PII-scrubbed record of
+        // the query, citations + their verifier status, and versions.
+        void logMaeQuery({
+          staffUserId: user.id,
+          questionRedacted: lastUser,
+          answer: answerText,
+          citations: checks,
+          unrecognizedCount: checks.filter((c) => c.status === "unrecognized").length,
+          piiRedactions,
+          model: MAE_GENERATION.model,
+          corpusDate: CORPUS_EFFECTIVE_DATE,
+        });
       } catch (err) {
         // Client aborted — not an error worth surfacing.
         if (err instanceof Error && err.name === "AbortError") {
