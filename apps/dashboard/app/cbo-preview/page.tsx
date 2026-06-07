@@ -19,28 +19,6 @@ function cboPreviewEnabled(): boolean {
 
 // ─── Demo data ────────────────────────────────────────────────────────────────
 
-const DEMO_OUTREACH = {
-  applications: [
-    { name: "David L.",    county: "Sacramento",    reason: "Stalled 6 days — income docs missing",    urgency: "high"   as const },
-    { name: "Priya S.",    county: "San Diego",     reason: "Stalled 4 days — SSN clarification needed", urgency: "medium" as const },
-    { name: "Robert M.",   county: "Riverside",     reason: "Started 3 days ago, no progress",         urgency: "medium" as const },
-    { name: "Carmen F.",   county: "Fresno",        reason: "Stalled 8 days — household size conflict", urgency: "high"   as const },
-  ],
-  interview: [
-    { name: "James K.",    county: "San Jose",  status: "Interview scheduled 2d ago — no completion logged", urgency: "high"   as const },
-    { name: "Amara N.",    county: "Stockton",  status: "Interview scheduled tomorrow",                      urgency: "low"    as const },
-    { name: "Luis G.",     county: "Modesto",   status: "Passed interview — awaiting final review",          urgency: "medium" as const },
-  ],
-  recertification: [
-    { name: "Patricia W.", county: "Los Angeles",  daysLeft: -3,  stage: "Overdue"        },
-    { name: "Henry O.",    county: "Bakersfield",  daysLeft: -7,  stage: "Overdue"        },
-    { name: "Mei L.",      county: "San Jose",     daysLeft: 8,   stage: "7-day cadence"  },
-    { name: "Samuel R.",   county: "Fresno",       daysLeft: 12,  stage: "14-day cadence" },
-    { name: "Yolanda B.",  county: "Sacramento",   daysLeft: 25,  stage: "30-day cadence" },
-    { name: "Omar A.",     county: "Oakland",      daysLeft: 48,  stage: "60-day cadence" },
-  ],
-};
-
 const DEMO_RENEWALS = {
   overdue: 12,
   expiring30: 24,
@@ -71,7 +49,6 @@ const FUNNEL_STEPS = [
 const TABS = [
   { key: "overview",     label: "Overview"        },
   { key: "applications", label: "Applications"    },
-  { key: "outreach",     label: "Outreach"        },
   { key: "renewals",     label: "Renewals"        },
   { key: "qc",           label: "Quality Control" },
 ] as const;
@@ -88,7 +65,10 @@ export default async function CBOPreviewPage({
   if (!cboPreviewEnabled()) notFound();
 
   const params = await searchParams;
-  const active = (params.section as TabKey) ?? "overview";
+  // Unknown / retired sections (e.g. a stale ?section=outreach link) fall back
+  // to Overview rather than rendering an empty body.
+  const requested = params.section as TabKey | undefined;
+  const active: TabKey = TABS.some((t) => t.key === requested) ? (requested as TabKey) : "overview";
 
   const cookieStore = await cookies();
   const supabase = createServerClientFromCookies(cookieStore);
@@ -169,7 +149,6 @@ export default async function CBOPreviewPage({
         </div>
         {active === "overview"     && <OverviewSection />}
         {active === "applications" && <ApplicationsSection />}
-        {active === "outreach"     && <OutreachSection />}
         {active === "renewals"     && <RenewalsSection />}
         {active === "qc"           && <QcTab />}
         <p className="text-[11px] text-graphite mt-10">Sample data shown for demonstration.</p>
@@ -283,7 +262,6 @@ function OverviewSection() {
 
 // ─── Applications ──────────────────────────────────────────────────────────────
 
-
 function ApplicationsSection() {
   // Server-side: run each synthetic applicant through the REAL engine.
   const buckets = buildQueueBuckets("CA", new Date());
@@ -309,86 +287,6 @@ function ApplicationsSection() {
 
       {/* Searchable, expandable pipeline — real engine determination, Q&A, history */}
       <ApplicationsQueue buckets={buckets} />
-    </div>
-  );
-}
-
-// ─── Outreach ──────────────────────────────────────────────────────────────────
-
-function OutreachSection() {
-  return (
-    <div className="space-y-6">
-      {/* Applications bucket */}
-      <section aria-label="Stalled applications">
-        <div className="flex items-center justify-between mb-3">
-          <h2 className="text-[14px] font-bold text-ink flex items-center gap-2">
-            <span className="w-2.5 h-5 rounded-sm bg-warning" />
-            Applications
-            <span className="text-[13px] text-muted font-normal">{DEMO_OUTREACH.applications.length} needing follow-up</span>
-          </h2>
-        </div>
-        <div className="bg-surface border border-hairline rounded-[4px] overflow-hidden">
-          {DEMO_OUTREACH.applications.map((row, i) => (
-            <div key={row.name} className={`flex items-center gap-4 px-5 py-3.5 ${i > 0 ? "border-t border-hairline" : ""}`}>
-              <div className={`w-2 h-2 rounded-full shrink-0 ${row.urgency === "high" ? "bg-brick" : "bg-warning"}`} />
-              <div className="flex-1 min-w-0">
-                <p className="text-[14px] font-semibold text-ink">{row.name} <span className="text-[13px] font-normal text-graphite">· {row.county}, CA</span></p>
-                <p className="text-[12px] text-muted mt-0.5">{row.reason}</p>
-              </div>
-              <span className={`text-[11px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-sm ${row.urgency === "high" ? "bg-brick/10 text-brick" : "bg-warning/10 text-warning"}`}>
-                {row.urgency === "high" ? "High" : "Medium"}
-              </span>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Interview bucket */}
-      <section aria-label="Interview lifecycle">
-        <div className="flex items-center gap-2 mb-3">
-          <span className="w-2.5 h-5 rounded-sm bg-indigo" />
-          <h2 className="text-[14px] font-bold text-ink">Interview</h2>
-          <span className="text-[13px] text-muted">{DEMO_OUTREACH.interview.length} active</span>
-        </div>
-        <div className="bg-surface border border-hairline rounded-[4px] overflow-hidden">
-          {DEMO_OUTREACH.interview.map((row, i) => (
-            <div key={row.name} className={`flex items-center gap-4 px-5 py-3.5 ${i > 0 ? "border-t border-hairline" : ""}`}>
-              <div className={`w-2 h-2 rounded-full shrink-0 ${row.urgency === "high" ? "bg-brick" : row.urgency === "medium" ? "bg-warning" : "bg-pine"}`} />
-              <div className="flex-1 min-w-0">
-                <p className="text-[14px] font-semibold text-ink">{row.name} <span className="text-[13px] font-normal text-graphite">· {row.county}, CA</span></p>
-                <p className="text-[12px] text-muted mt-0.5">{row.status}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Recertification bucket */}
-      <section aria-label="Recertification">
-        <div className="flex items-center gap-2 mb-3">
-          <span className="w-2.5 h-5 rounded-sm bg-amber" />
-          <h2 className="text-[14px] font-bold text-ink">Recertification</h2>
-          <span className="text-[13px] text-muted">{DEMO_OUTREACH.recertification.length} households in window</span>
-        </div>
-        <div className="bg-surface border border-hairline rounded-[4px] overflow-hidden">
-          {DEMO_OUTREACH.recertification.map((row, i) => {
-            const overdue = row.daysLeft < 0;
-            return (
-              <div key={row.name} className={`flex items-center gap-4 px-5 py-3.5 ${i > 0 ? "border-t border-hairline" : ""}`}>
-                <div className={`w-2 h-2 rounded-full shrink-0 ${overdue ? "bg-brick" : row.daysLeft <= 14 ? "bg-warning" : "bg-amber"}`} />
-                <div className="flex-1 min-w-0">
-                  <p className="text-[14px] font-semibold text-ink">{row.name} <span className="text-[13px] font-normal text-graphite">· {row.county}, CA</span></p>
-                  <p className="text-[12px] text-muted mt-0.5">{row.stage}</p>
-                </div>
-                <span className={`text-[12px] tabular-nums font-semibold ${overdue ? "text-brick" : row.daysLeft <= 14 ? "text-warning" : "text-amber"}`}>
-                  {overdue ? `${Math.abs(row.daysLeft)}d overdue` : `${row.daysLeft}d left`}
-                </span>
-              </div>
-            );
-          })}
-        </div>
-      </section>
-
     </div>
   );
 }
