@@ -143,7 +143,9 @@ describe("POST /api/mae", () => {
 
     const res = await POST(makeReq(oneTurn));
     expect(res.status).toBe(200);
-    expect(await res.text()).toBe("Shelter costs are deductible.");
+    const text = await res.text();
+    expect(text).toContain("Shelter costs are deductible.");
+    expect(text).toContain("Sources as of"); // freshness footer appended
 
     const body = mockStream.mock.calls[0][0];
     expect(body.model).toBe("claude-opus-4-8");
@@ -194,11 +196,13 @@ describe("POST /api/mae", () => {
     expect(rec.piiRedactions).toBeGreaterThanOrEqual(1);
   });
 
-  it("adds no trailer when the answer contains no citations", async () => {
+  it("adds no citation-check block when the answer contains no citations", async () => {
     mockGetUser.mockResolvedValue(staffUser);
     mockStream.mockReturnValue(fakeStream({ chunks: ["Net income is what matters here."] }));
-    const res = await POST(makeReq(oneTurn));
-    expect(await res.text()).toBe("Net income is what matters here.");
+    const text = await (await POST(makeReq(oneTurn))).text();
+    expect(text).toContain("Net income is what matters here.");
+    expect(text).not.toContain("Citation check"); // no citations → no check block
+    expect(text).toContain("Sources as of"); // but the freshness footer still shows
   });
 
   it("emits a scoped fallback when the model refuses with no text", async () => {
