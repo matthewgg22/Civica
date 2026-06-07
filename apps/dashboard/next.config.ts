@@ -10,8 +10,9 @@ const nextConfig: NextConfig = {
     "@civica/snap-compliance-copy",
     "@civica/analytics-engine",
   ],
-  // @duckdb/node-api ships native bindings; keep it out of Next's bundler.
-  serverExternalPackages: ["@duckdb/node-api"],
+  // Native-binding packages must stay out of Next's bundler. @xenova/transformers
+  // (Mae's local embedding model) pulls onnxruntime-node + sharp.
+  serverExternalPackages: ["@duckdb/node-api", "@xenova/transformers", "onnxruntime-node", "sharp"],
   webpack(config) {
     // Workspace packages use .js extensions for TypeScript ESM imports (node16).
     // Webpack needs this alias to resolve ./foo.js → ./foo.ts at build time.

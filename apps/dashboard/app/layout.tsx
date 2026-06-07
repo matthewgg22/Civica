@@ -4,6 +4,7 @@ import "./globals.css";
 import UATFeedbackButton from "../components/UATFeedbackButton";
 import SampleDataBanner from "../components/SampleDataBanner";
 import CommandPalette from "../components/CommandPalette";
+import MaeChat from "../components/MaeChat";
 
 export const metadata: Metadata = {
   title: "Civica Navigator Dashboard",
@@ -31,6 +32,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           }}
         />
         <CommandPalette />
+        <MaeChat />
       </body>
     </html>
   );
