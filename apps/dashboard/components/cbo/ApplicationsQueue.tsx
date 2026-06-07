@@ -291,8 +291,9 @@ function CaseRow({ app, border }: { app: QueueApplication; border: boolean }) {
                 </ol>
               </EngineBlock>
 
-              {/* 2 — Benefit amount (the number + the math) */}
-              <EngineBlock title="Benefit amount" tag={enrolled ? "approved" : "live engine"}>
+              {/* 2 — Benefit amount (the number + the math). Always the engine
+                  estimate — never the county's actual award, even when enrolled. */}
+              <EngineBlock title="Benefit amount" tag="estimate">
                 {app.estimatedBenefitUsd !== null ? (
                   <>
                     <p className="text-[16px] font-semibold tabular-nums text-ink leading-none">
