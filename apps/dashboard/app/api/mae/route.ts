@@ -20,13 +20,8 @@ import { cookies } from "next/headers";
 import Anthropic from "@anthropic-ai/sdk";
 import { createServerClientFromCookies } from "../../../lib/supabase";
 import { isStaff } from "../../../lib/roleRouting";
-import { MAE_MODEL, MAE_SYSTEM_PROMPT } from "../../../lib/mae/system-prompt";
-import {
-  MAE_ENGINE_CITATIONS,
-  MAE_CITATIONS_PROVENANCE,
-  formatEngineParams,
-} from "../../../lib/mae/engine-citations";
-import { retrieve, formatRetrievedSources } from "../../../lib/mae/retrieval";
+import { buildMaeSystem, MAE_GENERATION } from "../../../lib/mae/answer";
+import { verifyCitations, formatCitationTrailer } from "../../../lib/mae/citation-verifier";
 
 // The Anthropic SDK requires the Node runtime (not edge). Auth + LLM call are
 // inherently dynamic.
@@ -116,42 +111,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: parsed.error }, { status: 400 });
   }
 
-  // --- Assemble the grounded system prompt ----------------------------------
-  // One cached block: frozen instructions + the engine's authority map + the
-  // engine's LIVE fiscal-year figures (so Mae's numbers match the determination
-  // and track COLA updates). Byte-stable within a fiscal year → caches.
-  let liveParams = "";
-  try {
-    liveParams = formatEngineParams("CA", new Date());
-  } catch (err) {
-    console.error("[mae] engine params unavailable:", err);
-  }
-  const systemText = [
-    MAE_SYSTEM_PROMPT,
-    MAE_CITATIONS_PROVENANCE,
-    MAE_ENGINE_CITATIONS,
-    liveParams,
-  ]
-    .filter(Boolean)
-    .join("\n\n");
-
-  // Retrieve verbatim eCFR text for THIS question. Rendered as a second,
-  // un-cached system block AFTER the cached prefix, so per-question source text
-  // doesn't invalidate the cached instructions/citations/params prefix.
+  // --- Assemble the grounded system prompt (shared with the eval) -----------
   const lastUser = parsed.messages[parsed.messages.length - 1].content;
-  let retrievedBlock = "";
-  try {
-    retrievedBlock = formatRetrievedSources(await retrieve(lastUser));
-  } catch (err) {
-    console.error("[mae] retrieval failed:", err);
-  }
-
-  const systemBlocks: Anthropic.TextBlockParam[] = [
-    { type: "text", text: systemText, cache_control: { type: "ephemeral" } },
-  ];
-  if (retrievedBlock) {
-    systemBlocks.push({ type: "text", text: retrievedBlock });
-  }
+  const { systemBlocks, retrievedCitations } = await buildMaeSystem(lastUser);
 
   // --- Stream the answer ----------------------------------------------------
   const client = new Anthropic({ apiKey });
@@ -174,18 +136,13 @@ export async function POST(req: NextRequest) {
         closed = true;
         try { controller.close(); } catch { /* already closed */ }
       };
+      let answerText = "";
       try {
         const mae = client.messages.stream(
           {
-            model: MAE_MODEL,
+            ...MAE_GENERATION,
             max_tokens: MAX_OUTPUT_TOKENS,
-            // Adaptive thinking: Mae reasons more on complex eligibility
-            // scenarios, less on definitional lookups. We forward only text
-            // deltas to the client (thinking stays server-side).
-            thinking: { type: "adaptive" },
-            // Frozen system prompt as a single cached block. Prefix reuse pays
-            // off once the prompt clears the model's min cacheable size; the
-            // breakpoint is correct regardless.
+            // Frozen system prompt as a cached block + per-question source text.
             system: systemBlocks,
             messages: parsed.messages,
           },
@@ -195,6 +152,7 @@ export async function POST(req: NextRequest) {
 
         mae.on("text", (delta) => {
           emittedAny = true;
+          answerText += delta;
           safeEnqueue(delta);
         });
 
@@ -208,6 +166,13 @@ export async function POST(req: NextRequest) {
               : "Mae couldn't generate a response. Please try rephrasing.",
           );
         }
+
+        // Citation check: classify every citation Mae wrote against the text we
+        // actually retrieved for this question, and append the result so the
+        // caseworker sees which cites are source-backed vs. unrecognized. We
+        // surface, never silently strip — honesty over a tidy-looking answer.
+        const trailer = formatCitationTrailer(verifyCitations(answerText, retrievedCitations));
+        if (trailer) safeEnqueue(trailer);
         safeClose();
       } catch (err) {
         // Client aborted — not an error worth surfacing.
