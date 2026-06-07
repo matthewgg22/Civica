@@ -9,16 +9,17 @@
 // Demo data is synthetic (labelled at the foot of the tab).
 
 import { Fragment, useState } from "react";
-import { CA_BASELINE_PER } from "@civica/snap-qc-engine";
+import { CA_BASELINE_PER, PROJECTED_PER_AT_FULL_ENGAGEMENT } from "@civica/snap-qc-engine";
 import InfoTip from "../InfoTip";
 import FlagSensitivityControl from "./FlagSensitivityControl";
+import TableExport from "./TableExport";
 
 // CA baseline is the engine's published constant (USDA FNS-380), not a hand-typed
 // number — so the demo can never contradict the engine (#507).
 const CA_BASELINE = CA_BASELINE_PER;
 
 const DEMO_QC = {
-  per: 4.2,
+  per: PROJECTED_PER_AT_FULL_ENGAGEMENT,
   obbbaReady: 94,
   pillars: [
     {
@@ -173,15 +174,15 @@ export default function QcTab({ synthetic = true }: { synthetic?: boolean }) {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="bg-surface border border-hairline rounded-[2px] px-4 py-3">
           <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite">
-            {t("Payment Error Rate (PER)", "Benefit-dollar mistakes")}
+            {t("Payment Error Rate — projected", "Benefit-dollar mistakes — projected")}
             <InfoTip
               align="left"
-              label="The share of benefit dollars issued in error — over- or under-payment. USDA's official Quality Control measure. §10105 penalizes states that exceed 105% of the national average error rate."
+              label="The share of benefit dollars issued in error — over- or under-payment. USDA's official Quality Control measure. §10105 penalizes states that exceed 105% of the national average error rate. The figure shown is Civica's modeled projection at full engagement, not a measured cohort."
             />
           </p>
           <p className="text-[36px] font-semibold tabular-nums text-ink leading-none mt-1">{DEMO_QC.per}%</p>
-          <p className="text-[12px] text-pine font-medium mt-1">↓ vs {CA_BASELINE}% CA baseline without Civica</p>
-          <p className="text-[11px] text-graphite mt-0.5">{t("Below §10105 federal trigger", "Under the federal penalty line")}</p>
+          <p className="text-[12px] text-pine font-medium mt-1">projected at full engagement vs {CA_BASELINE}% CA baseline (USDA FNS-380)</p>
+          <p className="text-[11px] text-graphite mt-0.5">{t("Targets the §10105 penalty line", "Aims under the federal penalty line")}</p>
         </div>
         <div className="bg-surface border border-hairline rounded-[2px] px-4 py-3">
           <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite">
@@ -211,10 +212,19 @@ export default function QcTab({ synthetic = true }: { synthetic?: boolean }) {
 
       {/* ── Pillar breakdown ────────────────────────────────────────────────── */}
       <section aria-label="QC pillars">
-        <h2 className="text-[14px] font-bold text-ink mb-3">
-          {t("Error by pillar", "Mistakes by category")}
-          <InfoTip label="Each pillar is a category USDA scores during Quality Control. Error rate = share of reviewed packets with an issue in that category. Pass rate is the complement." />
-        </h2>
+        <div className="flex items-center justify-between gap-3 mb-3">
+          <h2 className="text-[14px] font-bold text-ink">
+            {t("Error by pillar", "Mistakes by category")}
+            <InfoTip label="Each pillar is a category USDA scores during Quality Control. Error rate = share of reviewed packets with an issue in that category. Pass rate is the complement." />
+          </h2>
+          <TableExport
+            filename="cbo-qc-pillars"
+            title="Quality control — error by pillar"
+            columns={["Pillar", "Category", "Error %", "Pass %"]}
+            rows={DEMO_QC.pillars.map((p) => [p.label, t(p.note, p.notePlain), `${p.fail}%`, `${p.pass}%`])}
+            note="Illustrative QC metrics."
+          />
+        </div>
         <div className="bg-surface border border-hairline rounded-[2px] overflow-hidden">
           {DEMO_QC.pillars.map((p, i) => (
             <div key={p.label} className={`px-5 py-4 ${i > 0 ? "border-t border-hairline" : ""}`}>
@@ -244,7 +254,16 @@ export default function QcTab({ synthetic = true }: { synthetic?: boolean }) {
 
       {/* ── Recent flags ────────────────────────────────────────────────────── */}
       <section aria-label="Recent QC flags">
-        <h2 className="text-[14px] font-bold text-ink mb-3">{t("Recent flags", "Recent issues")}</h2>
+        <div className="flex items-center justify-between gap-3 mb-3">
+          <h2 className="text-[14px] font-bold text-ink">{t("Recent flags", "Recent issues")}</h2>
+          <TableExport
+            filename="cbo-qc-flags"
+            title="Quality control — recent flags"
+            columns={["Flag", "Field", "Issue", "Status"]}
+            rows={DEMO_QC.recentFlags.map((f) => [f.id, f.field, f.issue, t(f.status, f.status === "Open" ? "Open" : "Fixed")])}
+            note="Illustrative QC metrics."
+          />
+        </div>
         <div className="bg-surface border border-hairline rounded-[2px] overflow-hidden">
           {DEMO_QC.recentFlags.map((flag, i) => (
             <div key={flag.id} className={`flex items-start gap-4 px-5 py-3.5 ${i > 0 ? "border-t border-hairline" : ""}`}>

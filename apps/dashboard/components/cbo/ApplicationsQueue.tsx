@@ -12,6 +12,7 @@ import {
   type TimelineEvent,
   type Risk,
 } from "../../lib/cbo/demo-pipeline";
+import TableExport from "./TableExport";
 
 // Lifecycle pipeline for /cbo-preview: a funnel (Requesting → Live → Enrolled →
 // Recertification) over a searchable, expandable case list grouped by phase.
@@ -187,7 +188,7 @@ function Timeline({ events }: { events: TimelineEvent[] }) {
             <span className="text-ink">{e.label}</span>
             <span className="text-graphite tabular-nums shrink-0">{e.when}</span>
           </div>
-          {e.by && <p className="text-[11px] text-muted">{e.by}</p>}
+          {e.by && <p className="text-[11px] text-graphite">{e.by}</p>}
         </li>
       ))}
     </ol>
@@ -226,7 +227,7 @@ function CaseRow({ app, border }: { app: QueueApplication; border: boolean }) {
           {flagCount > 0 ? (
             <span className="text-[11px] font-semibold text-brick tabular-nums">{flagCount} flag{flagCount > 1 ? "s" : ""}</span>
           ) : (
-            <span className="text-[11px] text-muted">clean</span>
+            <span className="text-[11px] text-graphite">clean</span>
           )}
         </span>
         <span className={`text-[11px] uppercase tracking-wider tabular-nums shrink-0 w-[40px] text-right ${riskClass(app.risk)}`}>
@@ -340,24 +341,49 @@ export default function ApplicationsQueue({ phases }: { phases: PhaseGroup[] }) 
   const matchCount = filtered.reduce((s, p) => s + p.cases.length, 0);
   const totalCases = phases.reduce((s, p) => s + p.cases.length, 0);
 
+  // Export the FULL caseload (not the search-filtered view), flattened across
+  // phases. Engine-computed benefit + verification-need counts travel with it.
+  const exportRows = phases.flatMap((p) =>
+    p.cases.map((a) => [
+      p.label,
+      a.caseId,
+      a.name,
+      `${a.county} County, CA`,
+      a.stage,
+      `${completionPct(a.completedSteps)}%`,
+      a.estimatedBenefitUsd != null ? formatUsd(a.estimatedBenefitUsd) : "—",
+      String(a.docFlags.length),
+      riskLabel(a.risk),
+    ]),
+  );
+
   return (
     <div className="space-y-4">
       {/* Lifecycle funnel */}
       <Funnel phases={phases} />
 
-      {/* Search */}
-      <div className="relative max-w-sm">
-        <svg className="absolute left-3 top-1/2 -translate-y-1/2 text-muted pointer-events-none" width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-          <circle cx="7" cy="7" r="5" stroke="currentColor" strokeWidth="1.4" />
-          <path d="M11 11l3 3" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
-        </svg>
-        <input
-          type="search"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search case ID, name, county, stage, answer, or flag…"
-          aria-label="Search cases"
-          className="w-full pl-9 pr-3 py-1.5 text-[13px] bg-surface border border-hairline rounded-[2px] text-ink placeholder:text-muted focus:outline-none focus:border-pine"
+      {/* Search + export */}
+      <div className="flex items-center justify-between gap-3">
+        <div className="relative max-w-sm w-full">
+          <svg className="absolute left-3 top-1/2 -translate-y-1/2 text-muted pointer-events-none" width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <circle cx="7" cy="7" r="5" stroke="currentColor" strokeWidth="1.4" />
+            <path d="M11 11l3 3" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+          </svg>
+          <input
+            type="search"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search case ID, name, county, stage, answer, or flag…"
+            aria-label="Search cases"
+            className="w-full pl-9 pr-3 py-1.5 text-[13px] bg-surface border border-hairline rounded-[2px] text-ink placeholder:text-muted focus:outline-none focus:border-pine"
+          />
+        </div>
+        <TableExport
+          filename="cbo-pipeline"
+          title="Navigator pipeline — cases"
+          columns={["Phase", "Case ID", "Applicant", "County", "Stage", "Completion", "Est. benefit", "Flags", "Risk"]}
+          rows={exportRows}
+          note="Illustrative caseload. Benefit estimate + verification needs are computed by Civica's rules engine; applicant records are synthetic."
         />
       </div>
       {q && (
