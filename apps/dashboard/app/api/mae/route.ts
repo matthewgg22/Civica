@@ -22,6 +22,9 @@ import { createServerClientFromCookies } from "../../../lib/supabase";
 import { isStaff } from "../../../lib/roleRouting";
 import { buildMaeSystem, MAE_GENERATION } from "../../../lib/mae/answer";
 import { verifyCitations, formatCitationTrailer } from "../../../lib/mae/citation-verifier";
+import { redactPii } from "../../../lib/mae/pii";
+import { logMaeQuery } from "../../../lib/mae/audit";
+import { CORPUS_EFFECTIVE_DATE } from "../../../lib/mae/retrieval";
 
 // The Anthropic SDK requires the Node runtime (not edge). Auth + LLM call are
 // inherently dynamic.
@@ -111,8 +114,19 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: parsed.error }, { status: 400 });
   }
 
+  // --- Redact applicant PII before anything leaves the server ---------------
+  // Scrub structured identifiers (SSN/phone/email/DOB/account numbers) from
+  // every message BEFORE retrieval, the API call, and the audit log. Mae answers
+  // policy questions; a specific person's identifiers add nothing to them.
+  let piiRedactions = 0;
+  const messages = parsed.messages.map((m) => {
+    const { redacted, found } = redactPii(m.content);
+    piiRedactions += found;
+    return { role: m.role, content: redacted };
+  });
+
   // --- Assemble the grounded system prompt (shared with the eval) -----------
-  const lastUser = parsed.messages[parsed.messages.length - 1].content;
+  const lastUser = messages[messages.length - 1].content;
   const { systemBlocks, retrievedCitations } = await buildMaeSystem(lastUser);
 
   // --- Stream the answer ----------------------------------------------------
@@ -144,7 +158,7 @@ export async function POST(req: NextRequest) {
             max_tokens: MAX_OUTPUT_TOKENS,
             // Frozen system prompt as a cached block + per-question source text.
             system: systemBlocks,
-            messages: parsed.messages,
+            messages, // PII already redacted
           },
           // Stop generating (and stop billing) if the caseworker closes the panel.
           { signal: req.signal },
@@ -171,9 +185,23 @@ export async function POST(req: NextRequest) {
         // actually retrieved for this question, and append the result so the
         // caseworker sees which cites are source-backed vs. unrecognized. We
         // surface, never silently strip — honesty over a tidy-looking answer.
-        const trailer = formatCitationTrailer(verifyCitations(answerText, retrievedCitations));
+        const checks = verifyCitations(answerText, retrievedCitations);
+        const trailer = formatCitationTrailer(checks);
         if (trailer) safeEnqueue(trailer);
         safeClose();
+
+        // Audit (best-effort, never blocks the answer): a PII-scrubbed record of
+        // the query, citations + their verifier status, and versions.
+        void logMaeQuery({
+          staffUserId: user.id,
+          questionRedacted: lastUser,
+          answer: answerText,
+          citations: checks,
+          unrecognizedCount: checks.filter((c) => c.status === "unrecognized").length,
+          piiRedactions,
+          model: MAE_GENERATION.model,
+          corpusDate: CORPUS_EFFECTIVE_DATE,
+        });
       } catch (err) {
         // Client aborted — not an error worth surfacing.
         if (err instanceof Error && err.name === "AbortError") {
