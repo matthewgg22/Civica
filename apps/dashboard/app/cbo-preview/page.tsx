@@ -8,7 +8,7 @@ import StatusBadge from "../../components/StatusBadge";
 import ProductSwitcher from "../../components/ProductSwitcher";
 import QcTab from "../../components/cbo/QcTab";
 import ApplicationsQueue from "../../components/cbo/ApplicationsQueue";
-import { buildQueueBuckets } from "../../lib/cbo/demo-pipeline";
+import { buildPipeline } from "../../lib/cbo/demo-pipeline";
 
 export const dynamic = "force-dynamic";
 
@@ -19,25 +19,6 @@ function cboPreviewEnabled(): boolean {
 
 // ─── Demo data ────────────────────────────────────────────────────────────────
 
-const DEMO_RENEWALS = {
-  overdue: 12,
-  expiring30: 24,
-  expiring60: 31,
-  cadenceRows: [
-    { stage: "Overdue",        count: 12, color: "bg-brick",    label: "Past cert end date — immediate action" },
-    { stage: "7-day cadence",  count: 8,  color: "bg-warning",  label: "Final window — in-person or warm transfer" },
-    { stage: "14-day cadence", count: 11, color: "bg-warning",  label: "Confirm by phone, walk through portal" },
-    { stage: "30-day cadence", count: 24, color: "bg-amber",    label: "Reminder + schedule check-in" },
-    { stage: "60-day cadence", count: 31, color: "bg-pine/60",  label: "First notice sent" },
-  ],
-  sampleRows: [
-    { name: "Patricia W.", county: "Los Angeles",  certEnd: "2026-06-01",  stage: "Overdue",        daysLeft: -3  },
-    { name: "Samuel R.",   county: "Fresno",       certEnd: "2026-06-16",  stage: "7-day cadence",  daysLeft: 12  },
-    { name: "Yolanda B.",  county: "Sacramento",   certEnd: "2026-06-29",  stage: "30-day cadence", daysLeft: 25  },
-    { name: "Omar A.",     county: "Oakland",      certEnd: "2026-08-03",  stage: "60-day cadence", daysLeft: 59  },
-  ],
-};
-
 const FUNNEL_STEPS = [
   { name: "Intake",            count: 1_240, pct: null },
   { name: "Screened",          count: 1_087, pct: "87.7%" },
@@ -47,10 +28,9 @@ const FUNNEL_STEPS = [
 ] as const;
 
 const TABS = [
-  { key: "overview",     label: "Overview"        },
-  { key: "applications", label: "Applications"    },
-  { key: "renewals",     label: "Renewals"        },
-  { key: "qc",           label: "Quality Control" },
+  { key: "overview", label: "Overview"        },
+  { key: "pipeline", label: "Pipeline"        },
+  { key: "qc",       label: "Quality Control" },
 ] as const;
 
 type TabKey = typeof TABS[number]["key"];
@@ -148,8 +128,7 @@ export default async function CBOPreviewPage({
           </h1>
         </div>
         {active === "overview"     && <OverviewSection />}
-        {active === "applications" && <ApplicationsSection />}
-        {active === "renewals"     && <RenewalsSection />}
+        {active === "pipeline" && <ApplicationsSection />}
         {active === "qc"           && <QcTab />}
         <p className="text-[11px] text-graphite mt-10">Sample data shown for demonstration.</p>
       </div>
@@ -263,103 +242,10 @@ function OverviewSection() {
 // ─── Applications ──────────────────────────────────────────────────────────────
 
 function ApplicationsSection() {
-  // Server-side: run each synthetic applicant through the REAL engine.
-  const buckets = buildQueueBuckets("CA", new Date());
-  const active = buckets.reduce((s, b) => s + b.applications.length, 0);
-  return (
-    <div className="space-y-4">
-      {/* Metric strip — hairline-divided, label over number (no floating chips) */}
-      <div className="flex items-stretch border border-hairline rounded-[2px] bg-surface divide-x divide-hairline overflow-x-auto">
-        {buckets.map((bucket) => {
-          const count = bucket.applications.length || bucket.completedCount || 0;
-          return (
-            <div key={bucket.key} className="px-4 py-2 min-w-[108px]">
-              <div className="text-[10px] font-semibold uppercase tracking-wider text-graphite whitespace-nowrap">{bucket.label}</div>
-              <div className="text-[16px] font-semibold tabular-nums text-ink leading-tight mt-0.5">{count}</div>
-            </div>
-          );
-        })}
-        <div className="px-4 py-2 min-w-[108px]">
-          <div className="text-[10px] font-semibold uppercase tracking-wider text-graphite whitespace-nowrap">Active total</div>
-          <div className="text-[16px] font-semibold tabular-nums text-ink leading-tight mt-0.5">{active}</div>
-        </div>
-      </div>
-
-      {/* Searchable, expandable pipeline — real engine determination, Q&A, history */}
-      <ApplicationsQueue buckets={buckets} />
-    </div>
-  );
-}
-
-// ─── Renewals ──────────────────────────────────────────────────────────────────
-
-function RenewalsSection() {
-  const maxCount = Math.max(...DEMO_RENEWALS.cadenceRows.map((r) => r.count));
-  return (
-    <div className="space-y-6">
-      {/* Summary stat strip */}
-      <div className="grid grid-cols-3 gap-4">
-        <div className="bg-surface border border-hairline rounded-[4px] px-5 py-4">
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-brick">Overdue</p>
-          <p className="text-[32px] font-semibold tabular-nums text-brick leading-none mt-1">{DEMO_RENEWALS.overdue}</p>
-          <p className="text-[12px] text-muted mt-1">past cert end date</p>
-        </div>
-        <div className="bg-surface border border-hairline rounded-[4px] px-5 py-4">
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-warning">Expiring in 30d</p>
-          <p className="text-[32px] font-semibold tabular-nums text-warning leading-none mt-1">{DEMO_RENEWALS.expiring30}</p>
-          <p className="text-[12px] text-muted mt-1">need priority outreach</p>
-        </div>
-        <div className="bg-surface border border-hairline rounded-[4px] px-5 py-4">
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-amber">Expiring in 60d</p>
-          <p className="text-[32px] font-semibold tabular-nums text-amber leading-none mt-1">{DEMO_RENEWALS.expiring60}</p>
-          <p className="text-[12px] text-muted mt-1">first notice cadence</p>
-        </div>
-      </div>
-
-      {/* Cadence breakdown */}
-      <section aria-label="Recertification cadence">
-        <h2 className="text-[14px] font-bold text-ink mb-4">Renewal cadence</h2>
-        <div className="bg-surface border border-hairline rounded-[4px] overflow-hidden">
-          {DEMO_RENEWALS.cadenceRows.map((row, i) => (
-            <div key={row.stage} className={`px-5 py-4 ${i > 0 ? "border-t border-hairline" : ""}`}>
-              <div className="flex items-center justify-between mb-2">
-                <div>
-                  <span className="text-[14px] font-semibold text-ink">{row.stage}</span>
-                  <span className="text-[12px] text-muted ml-2">{row.label}</span>
-                </div>
-                <span className="text-[14px] font-semibold tabular-nums text-ink">{row.count}</span>
-              </div>
-              <div className="h-2 bg-paper rounded-full overflow-hidden">
-                <div className={`h-full rounded-full ${row.color}`} style={{ width: `${(row.count / maxCount) * 100}%` }} />
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Sample rows */}
-      <section aria-label="Sample renewal queue">
-        <h2 className="text-[14px] font-bold text-ink mb-3">Households</h2>
-        <div className="bg-surface border border-hairline rounded-[4px] overflow-hidden">
-          {DEMO_RENEWALS.sampleRows.map((row, i) => {
-            const overdue = row.daysLeft < 0;
-            return (
-              <div key={row.name} className={`flex items-center gap-5 px-5 py-3.5 ${i > 0 ? "border-t border-hairline" : ""}`}>
-                <div className="flex-1 min-w-0">
-                  <p className="text-[14px] font-semibold text-ink">{row.name} <span className="text-[13px] font-normal text-graphite">· {row.county}, CA</span></p>
-                  <p className="text-[12px] text-muted mt-0.5">Cert end: {row.certEnd} · {row.stage}</p>
-                </div>
-                <span className={`text-[12px] tabular-nums font-semibold ${overdue ? "text-brick" : row.daysLeft <= 14 ? "text-warning" : row.daysLeft <= 30 ? "text-amber" : "text-graphite"}`}>
-                  {overdue ? `${Math.abs(row.daysLeft)}d overdue` : `${row.daysLeft}d remaining`}
-                </span>
-              </div>
-            );
-          })}
-        </div>
-      </section>
-
-    </div>
-  );
+  // Server-side: run each synthetic applicant through the REAL engine, grouped
+  // by lifecycle phase (Requesting → Live → Enrolled → Recertification).
+  const phases = buildPipeline("CA", new Date());
+  return <ApplicationsQueue phases={phases} />;
 }
 
 // ─── Quality Control ───────────────────────────────────────────────────────────

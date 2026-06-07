@@ -9,6 +9,11 @@ Categories used:
 - **Added** — new capability
 - **Changed** — visible behavior change
 
+## [0.2.11.0] - 2026-06-06
+
+### Changed
+- **CBO preview — lifecycle pipeline framework** — replaced the workflow-bucket Applications view and the separate Renewals tab with one **Pipeline** tab built around the real application lifecycle: a funnel header (**Requesting assistance → Live application → Enrolled → Recertification**, with live counts) over a case list grouped by those four phases, each case showing its specific stage (screener complete, documents requested, interview scheduled, approved, recert due, …). Maps to the canonical SNAPApplicationStatus model; Recertification absorbs the former Renewals tab. Enrolled cases show their benefit; others show pipeline progress. Engine determination + verification remain live (computed by @civica/snap-rules). Tabs: Overview · Pipeline · Quality Control.
+
 ## [0.2.10.4] - 2026-06-06
 
 ### Removed
