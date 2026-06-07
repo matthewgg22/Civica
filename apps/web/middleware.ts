@@ -2,13 +2,16 @@
 // middleware can refresh a stale access token before checking auth,
 // eliminating the race condition in the former cookie-sniff approach.
 //
-// /apply is intentionally NOT gated: the wizard stores only to localStorage
-// until submit. /documents and /status need a real session (post-submit data).
+// Login-first: /apply requires a session, so an applicant signs in (phone-OTP,
+// which creates the account on first verify) BEFORE starting the wizard. An
+// unauthenticated visitor is redirected to /sign-in?next=/apply and lands back
+// on the wizard after creating their account. /documents and /status likewise
+// need a real session (post-submit data).
 
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
-const PROTECTED_PREFIXES = ["/documents", "/status"];
+const PROTECTED_PREFIXES = ["/apply", "/documents", "/status"];
 
 export async function middleware(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request });
@@ -60,5 +63,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/documents/:path*", "/status/:path*"],
+  matcher: ["/apply/:path*", "/apply", "/documents/:path*", "/status/:path*"],
 };
