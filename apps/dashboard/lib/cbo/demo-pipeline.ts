@@ -153,7 +153,7 @@ const APPLICANTS: DemoApplicant[] = [
     answers: [
       { section: "Where you're applying", question: "State", answer: "California" },
       { section: "Your household", question: "Household size", answer: "1 person" },
-      { section: "Your household", question: "Has a Social Security Number?", answer: "Yes — does not match SSA records", flagged: true },
+      { section: "Documents", question: "Social Security Number", answer: "Provided — does not match SSA records", flagged: true },
       { section: "Income", question: "Gross monthly income", answer: "$1,640" },
       { section: "Monthly expenses", question: "Monthly rent", answer: "$2,400 — exceeds area norm", flagged: true },
     ],
@@ -276,6 +276,93 @@ const APPLICANTS: DemoApplicant[] = [
 
 const usd = (n: number) => `$${Math.round(n).toLocaleString("en-US")}`;
 
+// Fixed section order so the full application reads top-to-bottom like the real
+// intake wizard, regardless of the order answers were authored/merged in.
+const SECTION_ORDER = [
+  "Where you're applying",
+  "About you",
+  "Your household",
+  "Income & employment",
+  "Expenses & deductions",
+  "Resources",
+  "Documents",
+  "Certification",
+  "Recertification",
+] as const;
+
+const moneyOrNone = (v?: string) =>
+  v && v !== "0" ? `$${Number(v).toLocaleString("en-US")}` : "Not reported";
+
+/**
+ * Expand a case's sparse hand-authored `answers` into a COMPLETE CalFresh
+ * application (the eight intake sections), derived from the same `engineInputs`
+ * the rules engine consumes — so the displayed application stays consistent with
+ * the benefit math. Hand-authored answers override the derived base by question
+ * (preserving navigator flags + case-specific copy); any extra hand-authored
+ * questions are folded into their section. Result is sorted by SECTION_ORDER.
+ */
+function expandAnswers(a: DemoApplicant): SurveyAnswer[] {
+  const e = a.engineInputs;
+  const size = Number(e.household_size ?? "1");
+  const selfEmployed = e.employment_status === "self_employed";
+  const employment = selfEmployed
+    ? "Self-employed"
+    : e.employment_status === "employed"
+      ? "Employed"
+      : "Not employed";
+  const elderlyOrDisabled = e.has_disability === "true";
+
+  const base: SurveyAnswer[] = [
+    { section: "Where you're applying", question: "State", answer: "California" },
+    { section: "Where you're applying", question: "County", answer: `${a.county} County` },
+    { section: "About you", question: "Applicant", answer: a.name },
+    { section: "About you", question: "Preferred language", answer: "English" },
+    { section: "About you", question: "Contact phone on file", answer: "Yes" },
+    { section: "Your household", question: "Household size", answer: `${size} ${size === 1 ? "person" : "people"}` },
+    { section: "Your household", question: "Children under 14?", answer: size >= 3 ? "Yes" : "No" },
+    { section: "Your household", question: "Anyone 60+ or disabled?", answer: elderlyOrDisabled ? "Yes" : "No" },
+    { section: "Your household", question: "Everyone applying is a citizen or eligible noncitizen?", answer: "Yes" },
+    { section: "Income & employment", question: "Employment status", answer: employment },
+    { section: "Income & employment", question: "Income type", answer: selfEmployed ? "Self-employment" : "Wages / salary" },
+    { section: "Income & employment", question: "Gross monthly income", answer: moneyOrNone(e.monthly_income) },
+    { section: "Income & employment", question: "Pay frequency", answer: "Twice monthly" },
+    { section: "Expenses & deductions", question: "Monthly rent", answer: moneyOrNone(e.monthly_rent) },
+    { section: "Expenses & deductions", question: "Monthly utilities", answer: moneyOrNone(e.monthly_utilities) },
+    { section: "Expenses & deductions", question: "Dependent-care costs", answer: "$0" },
+    { section: "Expenses & deductions", question: "Out-of-pocket medical (60+/disabled)", answer: elderlyOrDisabled ? "$0" : "Not applicable" },
+    { section: "Expenses & deductions", question: "Child support paid", answer: "$0" },
+    { section: "Resources", question: "Countable assets (cash + bank)", answer: "Under $2,750" },
+    { section: "Documents", question: "Photo ID", answer: "On hand" },
+    { section: "Documents", question: "Proof of income", answer: "On hand" },
+    { section: "Documents", question: "Proof of residence", answer: "On hand" },
+    { section: "Documents", question: "Social Security Number", answer: "Provided" },
+    { section: "Certification", question: "Expedited-service screen", answer: "Completed" },
+    { section: "Certification", question: "Signed under penalty of perjury", answer: "Yes" },
+  ];
+
+  // Overlay hand-authored answers by question (keep base section + question,
+  // take the authored answer + flag). Track which questions were consumed.
+  const authored = new Map(a.answers.map((x) => [x.question, x]));
+  const merged: SurveyAnswer[] = base.map((b) => {
+    const o = authored.get(b.question);
+    if (!o) return b;
+    authored.delete(b.question);
+    return { section: b.section, question: b.question, answer: o.answer, flagged: o.flagged };
+  });
+  // Any remaining authored answers are case-specific extras (e.g. recert dates,
+  // self-employment ledger) — append; the sort below files them in section.
+  for (const o of authored.values()) merged.push(o);
+
+  const rank = (s: string) => {
+    const i = SECTION_ORDER.indexOf(s as (typeof SECTION_ORDER)[number]);
+    return i === -1 ? SECTION_ORDER.length : i;
+  };
+  return merged
+    .map((x, i) => [x, i] as const)
+    .sort(([x, i], [y, j]) => rank(x.section) - rank(y.section) || i - j)
+    .map(([x]) => x);
+}
+
 /**
  * Run each synthetic applicant through the REAL engine, grouped by lifecycle
  * phase. When `synthetic` is false, every phase is empty (no fabricated records
@@ -309,7 +396,7 @@ export function buildPipeline(state: "CA" | "MA" = "CA", asOf: Date, synthetic =
     return {
       id: a.id, caseId: a.caseId, name: a.name, county: a.county, phase: a.phase, stage: a.stage,
       risk: a.risk, updated: a.updated, completedSteps: a.completedSteps,
-      answers: a.answers, docFlags: a.docFlags, history: a.history,
+      answers: expandAnswers(a), docFlags: a.docFlags, history: a.history,
       estimatedBenefitUsd, verificationNeeds, assumptions, deduction, recommendations,
     };
   });
