@@ -344,10 +344,10 @@ export default function MaeChat() {
                 SNAP / CalFresh rules and never sees applicant PII.
               </p>
               <Link
-                href="/"
+                href="/login"
                 className="inline-block rounded-[2px] bg-pine px-3 py-2 text-sm font-medium text-white hover:bg-pine-pressed"
               >
-                Open the navigator dashboard →
+                Sign in to chat with Mae →
               </Link>
             </div>
           )}

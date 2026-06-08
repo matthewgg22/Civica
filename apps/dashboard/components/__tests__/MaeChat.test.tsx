@@ -56,7 +56,8 @@ describe("MaeChat", () => {
     await screen.findByText(/staff assistant for navigators/i);
     expect(screen.getByText(/What does the work rule require\?/)).toBeTruthy();
     expect(screen.queryByRole("button", { name: /send/i })).toBeNull();
-    expect(screen.getByRole("link", { name: /navigator dashboard/i })).toBeTruthy();
+    const signIn = screen.getByRole("link", { name: /sign in to chat/i });
+    expect(signIn.getAttribute("href")).toBe("/login");
   });
 
   it("shows the launcher for a staff user", async () => {
