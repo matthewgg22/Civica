@@ -23,6 +23,12 @@ export interface MaeAuditRecord {
   piiRedactions: number;
   model: string;
   corpusDate: string;
+  /** Surface that asked: "general" (generalist) vs "case" (a specific app). */
+  mode?: string;
+  /** State the query was scoped to (e.g. "CA"); null for generalist. */
+  scopeState?: string | null;
+  /** Internal packet ref for case-scoped queries; null otherwise (not the case #). */
+  scopeRef?: string | null;
 }
 
 /** Persist one audit record. Best-effort; swallows all errors. */
@@ -41,6 +47,9 @@ export async function logMaeQuery(rec: MaeAuditRecord): Promise<void> {
         pii_redactions: rec.piiRedactions,
         model: rec.model,
         corpus_date: rec.corpusDate,
+        mode: rec.mode ?? null,
+        scope_state: rec.scopeState ?? null,
+        scope_ref: rec.scopeRef ?? null,
       });
     if (error) throw error;
   } catch (err) {

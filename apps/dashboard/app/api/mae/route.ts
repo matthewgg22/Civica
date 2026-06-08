@@ -122,6 +122,17 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: parsed.error }, { status: 400 });
   }
 
+  // --- Scope metadata (for the audit log) -----------------------------------
+  // Which surface asked: "general" (generalist Ask Mae) vs "case" (a specific
+  // application), the state it was scoped to, and an internal packet ref (never
+  // the PII case number). Optional + defensively parsed.
+  const rawMeta =
+    body && typeof body === "object" ? (body as Record<string, unknown>).meta : null;
+  const meta = rawMeta && typeof rawMeta === "object" ? (rawMeta as Record<string, unknown>) : {};
+  const mode = meta.mode === "case" ? "case" : "general";
+  const scopeState = typeof meta.state === "string" ? meta.state.slice(0, 8) : null;
+  const scopeRef = typeof meta.ref === "string" ? meta.ref.slice(0, 64) : null;
+
   // --- Redact applicant PII before anything leaves the server ---------------
   // Scrub structured identifiers (SSN/phone/email/DOB/account numbers) from
   // every message BEFORE retrieval, the API call, and the audit log. Mae answers
@@ -212,6 +223,9 @@ export async function POST(req: NextRequest) {
           piiRedactions,
           model: MAE_GENERATION.model,
           corpusDate: CORPUS_EFFECTIVE_DATE,
+          mode,
+          scopeState,
+          scopeRef,
         });
       } catch (err) {
         // Client aborted — not an error worth surfacing.

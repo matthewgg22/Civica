@@ -113,6 +113,11 @@ export default function MaeChat() {
   // context is injected into the API payload, not shown as a chat bubble.
   const [caseContext, setCaseContext] = useState<string | null>(null);
   const [caseLabel, setCaseLabel] = useState<string | null>(null);
+  // Scope metadata logged with each query so the audit shows the surface used:
+  // general (generalist) vs case (a specific application), the state it was
+  // locked to, and an internal packet ref (not the PII case number).
+  const [caseState, setCaseState] = useState<string | null>(null);
+  const [caseRef, setCaseRef] = useState<string | null>(null);
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const abortRef = useRef<AbortController | null>(null);
@@ -139,11 +144,13 @@ export default function MaeChat() {
   // so callers don't import Mae.
   useEffect(() => {
     const onPrefill = (e: Event) => {
-      const detail = (e as CustomEvent<{ text?: string; caseContext?: string; caseLabel?: string }>).detail ?? {};
+      const detail = (e as CustomEvent<{ text?: string; caseContext?: string; caseLabel?: string; caseState?: string; caseRef?: string }>).detail ?? {};
       // Loading a (new) case resets the thread, so Mae's answers are scoped to it.
       if (typeof detail.caseContext === "string" && detail.caseContext) {
         setCaseContext(detail.caseContext);
         setCaseLabel(detail.caseLabel ?? null);
+        setCaseState(detail.caseState ?? null);
+        setCaseRef(detail.caseRef ?? null);
         setMessages([]);
         setError(null);
       }
@@ -196,10 +203,14 @@ export default function MaeChat() {
         : next;
 
     try {
+      // Scope metadata for the audit log: which surface this query came from.
+      const meta = caseContext
+        ? { mode: "case", state: caseState, ref: caseRef }
+        : { mode: "general", state: null, ref: null };
       const res = await fetch("/api/mae", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: apiMessages }),
+        body: JSON.stringify({ messages: apiMessages, meta }),
         signal: controller.signal,
       });
 
@@ -256,7 +267,7 @@ export default function MaeChat() {
       setBusy(false);
       abortRef.current = null;
     }
-  }, [input, busy, messages, caseContext]);
+  }, [input, busy, messages, caseContext, caseState, caseRef]);
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -299,7 +310,7 @@ export default function MaeChat() {
                   <button
                     type="button"
                     aria-label="Clear case context"
-                    onClick={() => { setCaseContext(null); setCaseLabel(null); }}
+                    onClick={() => { setCaseContext(null); setCaseLabel(null); setCaseState(null); setCaseRef(null); }}
                     className="text-graphite hover:text-ink"
                   >
                     ✕
