@@ -55,7 +55,7 @@ function SummaryCell({ label, children }: { label: string; children: React.React
 
 function SectionTitle({ children }: { children: React.ReactNode }) {
   return (
-    <h2 className="text-[11px] font-semibold uppercase tracking-wider text-graphite border-b border-hairline pb-1.5 mb-3">
+    <h2 className="text-[11px] font-semibold uppercase tracking-wider text-graphite border-b border-hairline pb-1 mb-2">
       {children}
     </h2>
   );
@@ -93,27 +93,33 @@ export default async function ApplicationDraftPage({
         </div>
       </div>
 
+      {/* Print page setup: Letter, half-inch margins, keep colors */}
+      <style>{`@media print { @page { size: letter; margin: 0.5in; } html, body { background: #fff; -webkit-print-color-adjust: exact; print-color-adjust: exact; } }`}</style>
+
       {/* Document sheet */}
       <div className="max-w-3xl mx-auto px-6 py-8 print:py-0 print:px-0">
-        <article className="bg-surface border border-hairline rounded-[4px] shadow-[0_1px_3px_rgba(0,0,0,0.06)] px-8 sm:px-10 py-10 print:border-0 print:shadow-none print:rounded-none">
+        <article className="bg-surface border border-hairline rounded-[4px] shadow-[0_1px_3px_rgba(0,0,0,0.06)] px-8 sm:px-10 py-8 print:border-0 print:shadow-none print:rounded-none print:px-0 print:py-0">
 
           {/* Letterhead */}
-          <header className="flex items-start justify-between gap-4 pb-6 border-b border-ink/15">
+          <header className="flex items-start justify-between gap-4 pb-4 border-b border-ink/15">
             <div className="flex items-center gap-3">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/civica-wheat-mark.png" alt="Civica" width={40} height={40} className="w-10 h-10 object-contain" />
+              <img src="/civica-wheat-mark.png" alt="Civica" width={36} height={36} className="w-9 h-9 object-contain" />
               <div className="leading-tight">
                 <p className="text-[15px] font-semibold text-ink">SNAP / CalFresh Application</p>
                 <p className="text-[12px] text-graphite">{CBO_NAME} · prepared with Civica</p>
               </div>
             </div>
-            <span className="shrink-0 text-[10px] font-semibold uppercase tracking-wider text-warning border border-warning/40 rounded-[2px] px-2 py-1">
-              Working draft
-            </span>
+            <div className="shrink-0 text-right">
+              <span className="inline-block text-[10px] font-semibold uppercase tracking-wider text-warning border border-warning/40 rounded-[2px] px-2 py-1">
+                Working draft
+              </span>
+              <p className="text-[11px] text-graphite mt-1.5 tabular-nums">{generated}</p>
+            </div>
           </header>
 
           {/* Applicant + status summary */}
-          <section className="grid grid-cols-2 sm:grid-cols-3 gap-x-6 gap-y-4 py-6 border-b border-hairline">
+          <section className="grid grid-cols-3 gap-x-6 gap-y-3 py-4 border-b border-hairline">
             <SummaryCell label="Applicant"><span className="font-semibold">{app.name}</span></SummaryCell>
             <SummaryCell label="Case ID"><span className="font-mono tabular-nums">{app.caseId}</span></SummaryCell>
             <SummaryCell label="County">{app.county} County, CA</SummaryCell>
@@ -131,20 +137,20 @@ export default async function ApplicationDraftPage({
             </SummaryCell>
           </section>
 
-          {/* Application responses */}
-          <section className="py-6 border-b border-hairline">
+          {/* Application responses — two columns to keep the draft compact */}
+          <section className="py-4 border-b border-hairline">
             <SectionTitle>Application responses</SectionTitle>
-            <div className="space-y-5">
+            <div className="columns-2 gap-x-8 [&>div]:break-inside-avoid">
               {sections.map((group) => (
-                <div key={group.section}>
-                  <p className="text-[12px] font-semibold text-ink mb-2">{group.section}</p>
+                <div key={group.section} className="mb-3">
+                  <p className="text-[11px] font-semibold text-ink mb-0.5">{group.section}</p>
                   <dl className="divide-y divide-hairline">
                     {group.items.map((a) => (
-                      <div key={a.question} className="flex items-baseline justify-between gap-4 py-1.5">
-                        <dt className="text-[13px] text-graphite">{a.question}</dt>
-                        <dd className={`text-[13px] text-right ${a.flagged ? "text-brick font-semibold" : "text-ink font-medium"}`}>
+                      <div key={a.question} className="flex items-baseline justify-between gap-3 py-1">
+                        <dt className="text-[12px] text-graphite">{a.question}</dt>
+                        <dd className={`text-[12px] text-right ${a.flagged ? "text-brick font-semibold" : "text-ink font-medium"}`}>
                           {a.answer}
-                          {a.flagged && <span className="ml-1 text-[10px] uppercase tracking-wider">⚑ verify</span>}
+                          {a.flagged && <span className="ml-1 text-[9px] uppercase tracking-wider">⚑ verify</span>}
                         </dd>
                       </div>
                     ))}
@@ -154,31 +160,33 @@ export default async function ApplicationDraftPage({
             </div>
           </section>
 
-          {/* Engine determination */}
-          <section className="py-6 border-b border-hairline">
-            <SectionTitle>Engine determination · live</SectionTitle>
-            {app.estimatedBenefitUsd !== null ? (
-              <p className="text-[14px] text-ink">
-                {app.phase === "enrolled" ? "Benefit" : "Estimated monthly benefit"}{" "}
-                <span className="font-semibold tabular-nums text-[16px]">{formatUsd(app.estimatedBenefitUsd)}/mo</span>
-                <span className="text-[12px] text-graphite">
-                  {app.phase === "enrolled" ? " · approved" : " · pending verification"}
-                </span>
-              </p>
-            ) : (
-              <p className="text-[13px] text-muted">Engine could not produce an estimate for this household.</p>
-            )}
-            {app.assumptions.length > 0 && (
-              <p className="text-[12px] text-graphite mt-2">
-                <span className="font-medium text-ink">Assumptions:</span> {app.assumptions.join("; ")}.
-              </p>
-            )}
+          {/* Engine determination + verification — side by side */}
+          <section className="grid sm:grid-cols-2 gap-x-8 gap-y-4 py-4 border-b border-hairline">
+            <div>
+              <SectionTitle>Engine determination · live</SectionTitle>
+              {app.estimatedBenefitUsd !== null ? (
+                <p className="text-[13px] text-ink">
+                  {app.phase === "enrolled" ? "Benefit" : "Estimated monthly benefit"}{" "}
+                  <span className="font-semibold tabular-nums text-[15px]">{formatUsd(app.estimatedBenefitUsd)}/mo</span>
+                  <span className="text-[12px] text-graphite">
+                    {app.phase === "enrolled" ? " · approved" : " · pending verification"}
+                  </span>
+                </p>
+              ) : (
+                <p className="text-[12px] text-muted">Engine could not produce an estimate for this household.</p>
+              )}
+              {app.assumptions.length > 0 && (
+                <p className="text-[11px] text-graphite mt-2 leading-relaxed">
+                  <span className="font-medium text-ink">Assumptions:</span> {app.assumptions.join("; ")}.
+                </p>
+              )}
+            </div>
             {app.verificationNeeds.length > 0 && (
-              <div className="mt-4">
-                <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite mb-2">Verification still needed</p>
-                <ul className="space-y-1.5">
+              <div>
+                <SectionTitle>Verification still needed</SectionTitle>
+                <ul className="space-y-1">
                   {app.verificationNeeds.map((v) => (
-                    <li key={v} className="flex items-start gap-2 text-[13px] text-ink">
+                    <li key={v} className="flex items-start gap-2 text-[12px] text-ink">
                       <span className="shrink-0 mt-[6px] w-1.5 h-1.5 rounded-full bg-warning" aria-hidden="true" />
                       {v}
                     </li>
@@ -188,72 +196,69 @@ export default async function ApplicationDraftPage({
             )}
           </section>
 
-          {/* Navigator flags */}
-          {app.docFlags.length > 0 && (
-            <section className="py-6 border-b border-hairline">
+          {/* Navigator flags + pipeline — side by side */}
+          <section className="grid sm:grid-cols-2 gap-x-8 gap-y-4 py-4 border-b border-hairline">
+            <div>
               <SectionTitle>Navigator flags</SectionTitle>
-              <ul className="space-y-1.5">
-                {app.docFlags.map((f) => (
-                  <li key={f} className="flex items-start gap-2 text-[13px] text-ink">
-                    <span className="shrink-0 mt-[6px] w-1.5 h-1.5 rounded-full bg-brick" aria-hidden="true" />
-                    {f}
+              {app.docFlags.length > 0 ? (
+                <ul className="space-y-1">
+                  {app.docFlags.map((f) => (
+                    <li key={f} className="flex items-start gap-2 text-[12px] text-ink">
+                      <span className="shrink-0 mt-[6px] w-1.5 h-1.5 rounded-full bg-brick" aria-hidden="true" />
+                      {f}
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="text-[12px] text-muted">No flags.</p>
+              )}
+            </div>
+            <div>
+              <SectionTitle>Pipeline · {app.completedSteps}/{totalSteps} steps</SectionTitle>
+              <ol className="grid grid-cols-2 gap-x-4 gap-y-1">
+                {PIPELINE_STEPS.map((step, i) => {
+                  const state = i < app.completedSteps ? "done" : i === app.completedSteps ? "current" : "pending";
+                  return (
+                    <li key={step} className="flex items-center gap-2 text-[12px]">
+                      <span
+                        className={`shrink-0 inline-flex items-center justify-center w-3.5 h-3.5 rounded-full text-[8px] font-bold ${
+                          state === "done" ? "bg-pine text-white" : state === "current" ? "bg-warning text-white" : "border border-hairline text-muted"
+                        }`}
+                        aria-hidden="true"
+                      >
+                        {state === "done" ? "✓" : state === "current" ? "●" : i + 1}
+                      </span>
+                      <span className={`truncate ${state === "pending" ? "text-muted" : state === "current" ? "text-ink font-semibold" : "text-graphite"}`}>
+                        {step}
+                      </span>
+                    </li>
+                  );
+                })}
+              </ol>
+            </div>
+          </section>
+
+          {/* Processing history — compact two-column */}
+          {app.history.length > 0 && (
+            <section className="py-4">
+              <SectionTitle>Processing history</SectionTitle>
+              <ul className="grid sm:grid-cols-2 gap-x-8 gap-y-1">
+                {app.history.map((e, i) => (
+                  <li key={`${e.label}-${i}`} className="flex items-baseline justify-between gap-3 text-[12px]">
+                    <span className="text-ink">
+                      {e.label}
+                      {e.by && <span className="text-graphite"> · {e.by}</span>}
+                    </span>
+                    <span className="text-graphite tabular-nums shrink-0">{e.when}</span>
                   </li>
                 ))}
               </ul>
             </section>
           )}
 
-          {/* Pipeline progress */}
-          <section className="py-6 border-b border-hairline">
-            <SectionTitle>Pipeline · {app.completedSteps}/{totalSteps} steps</SectionTitle>
-            <ol className="space-y-1.5">
-              {PIPELINE_STEPS.map((step, i) => {
-                const state = i < app.completedSteps ? "done" : i === app.completedSteps ? "current" : "pending";
-                return (
-                  <li key={step} className="flex items-center gap-2.5 text-[13px]">
-                    <span
-                      className={`shrink-0 inline-flex items-center justify-center w-4 h-4 rounded-full text-[9px] font-bold ${
-                        state === "done" ? "bg-pine text-white" : state === "current" ? "bg-warning text-white" : "border border-hairline text-muted"
-                      }`}
-                      aria-hidden="true"
-                    >
-                      {state === "done" ? "✓" : state === "current" ? "●" : i + 1}
-                    </span>
-                    <span className={state === "pending" ? "text-muted" : state === "current" ? "text-ink font-semibold" : "text-graphite"}>
-                      {step}
-                    </span>
-                  </li>
-                );
-              })}
-            </ol>
-          </section>
-
-          {/* Processing history */}
-          {app.history.length > 0 && (
-            <section className="py-6">
-              <SectionTitle>Processing history</SectionTitle>
-              <ol className="relative space-y-3 pl-4">
-                <span className="absolute left-[3px] top-1 bottom-1 w-px bg-hairline" aria-hidden="true" />
-                {app.history.map((e, i) => (
-                  <li key={`${e.label}-${i}`} className="relative text-[13px]">
-                    <span
-                      className={`absolute -left-4 top-[5px] w-[7px] h-[7px] rounded-full ${i === app.history.length - 1 ? "bg-pine" : "bg-graphite/40"}`}
-                      aria-hidden="true"
-                    />
-                    <div className="flex items-baseline justify-between gap-3">
-                      <span className="text-ink">{e.label}</span>
-                      <span className="text-graphite tabular-nums shrink-0">{e.when}</span>
-                    </div>
-                    {e.by && <p className="text-[11px] text-graphite">{e.by}</p>}
-                  </li>
-                ))}
-              </ol>
-            </section>
-          )}
-
           {/* Footer */}
-          <footer className="pt-6 mt-2 border-t border-ink/15 flex items-baseline justify-between gap-3 flex-wrap">
-            <p className="text-[10px] text-muted leading-relaxed max-w-md">
+          <footer className="pt-4 mt-2 border-t border-ink/15 flex items-baseline justify-between gap-3 flex-wrap">
+            <p className="text-[10px] text-muted leading-relaxed max-w-lg">
               Working draft generated {generated}. Illustrative — applicant responses are synthetic;
               the benefit estimate and verification needs are computed by Civica&rsquo;s rules engine.
               Not a filed application.
