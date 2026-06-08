@@ -15,6 +15,12 @@ import {
 } from "../../lib/cbo/demo-pipeline";
 import TableExport from "./TableExport";
 import { EVALUATION_GATES, deductionRows, deductionOneLine } from "../../lib/cbo/engine-view";
+import {
+  buildDeficiencyItems,
+  deficiencyDocument,
+  cureDateLabel,
+  isoDate as isoDateForNotice,
+} from "../../lib/cbo/deficiency-notice";
 
 // Lifecycle pipeline for /cbo-preview: a funnel (Requesting → Live → Enrolled →
 // Recertification) over a searchable, expandable case list grouped by phase.
@@ -536,6 +542,46 @@ function openFullApplication(app: CaseRecord): void {
   w.document.close();
 }
 
+// Assemble the deficiency-notice payload from a case (the same gaps the
+// on-screen verification cross-check shows), stamping today + the ~10-day cure.
+function deficiencyDocFor(app: CaseRecord) {
+  const now = new Date();
+  return {
+    applicant: app.name,
+    caseId: app.caseId,
+    county: app.county,
+    generatedAt: isoDateForNotice(now),
+    cureBy: cureDateLabel(now),
+    items: buildDeficiencyItems(app),
+  };
+}
+
+// Open the client-ready document request as a print-friendly tab (PDF via the
+// browser's Save-as-PDF), reusing the established window.write pattern.
+function openDeficiencyNotice(app: CaseRecord): void {
+  const w = window.open("", "_blank", "width=820,height=1000");
+  if (!w) {
+    alert("Couldn't open the document request — allow pop-ups for this site, then try again.");
+    return;
+  }
+  w.document.write(deficiencyDocument(deficiencyDocFor(app), { forWord: false }));
+  w.document.close();
+}
+
+// Download the same document request as a Word (.doc) file.
+function downloadDeficiencyWord(app: CaseRecord): void {
+  const html = deficiencyDocument(deficiencyDocFor(app), { forWord: true });
+  const blob = new Blob(["﻿", html], { type: "application/msword" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `document-request-${app.caseId}.doc`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
 // Full application responses for the expanded case. Renders the complete intake
 // as a per-section ruled table (Field | Response). Editing is a single batch
 // mode: "Edit responses" unlocks every field at once (fixed-option fields as a
@@ -961,6 +1007,7 @@ function CaseRow({
   const checks = buildVerification(app);
   const checksClear = checks.filter((c) => c.ok).length;
   const clock = processingClock(app);
+  const deficiencies = buildDeficiencyItems(app);
 
   // Open Mae with an empty composer — the caseworker types their own question.
   // (No auto-generated prefill; MaeChat listens for this event to open.)
@@ -1086,6 +1133,41 @@ function CaseRow({
             <p className="text-[11px] text-graphite mt-2 leading-snug">
               Automated cross-check of the responses — what the engine could confirm vs. what needs a human check. Not an eligibility determination.
             </p>
+
+            {/* Deficiency notice — emit a client-ready document request from the
+                gaps above (each item + the §273 rule + the ~10-day cure). A cure
+                only applies to a case that isn't decided yet — an enrolled
+                household has nothing outstanding to file. */}
+            <div className="mt-3 flex flex-wrap items-center gap-2 rounded-[2px] bg-[var(--color-surface-secondary)] px-3 py-2">
+              {enrolled ? (
+                <span className="text-[12px] font-medium text-pine">✓ Enrolled — no document request needed</span>
+              ) : deficiencies.length > 0 ? (
+                <>
+                  <span className="text-[12px] text-ink">
+                    <span className="font-semibold text-warning">{deficiencies.length} item{deficiencies.length !== 1 ? "s" : ""}</span> to cure before this is clean
+                    <span className="text-graphite"> · client gets ~10 days once filed (7 CFR 273.2(h))</span>
+                  </span>
+                  <div className="ml-auto flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => openDeficiencyNotice(app)}
+                      className="rounded-[2px] bg-pine px-2.5 py-1 text-[11px] font-semibold text-white hover:bg-pine-pressed"
+                    >
+                      Document request (PDF)
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => downloadDeficiencyWord(app)}
+                      className="rounded-[2px] border border-hairline bg-surface px-2.5 py-1 text-[11px] font-semibold text-ink hover:bg-paper"
+                    >
+                      Word
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <span className="text-[12px] font-medium text-pine">✓ No outstanding verification — ready to file</span>
+              )}
+            </div>
           </div>
 
           {/* The three engines, made explicit */}
