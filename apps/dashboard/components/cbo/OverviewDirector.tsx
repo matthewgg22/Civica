@@ -4,6 +4,17 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import type { PhaseGroup, QueueApplication } from "../../lib/cbo/demo-pipeline";
 import { PIPELINE_STEPS, formatUsd } from "../../lib/cbo/demo-pipeline";
+import {
+  PERIODS,
+  PERIOD_LABEL,
+  snapshotFor,
+  rangeForPeriod,
+  fmtRange,
+  isoDate,
+  reportDocument,
+  type Period,
+  type ReportData,
+} from "../../lib/cbo/progress-report";
 import TableExport from "./TableExport";
 
 type Risk = "Low risk" | "Medium risk" | "High risk";
@@ -553,6 +564,68 @@ function CaseCategory({
   );
 }
 
+// ── Animated count-up for the Snapshot numbers ───────────────────────────────
+// Tween toward `target` with an ease-out curve; resumes smoothly if the target
+// changes mid-flight, honors prefers-reduced-motion, and is SSR-safe (initial
+// state == target, so the server renders the final figure).
+function useCountUp(target: number, duration = 650): number {
+  const [val, setVal] = useState(target);
+  const fromRef = useRef(target);
+  useEffect(() => {
+    const reduce =
+      typeof window !== "undefined" &&
+      window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+    const from = fromRef.current;
+    const to = target;
+    if (reduce || from === to) {
+      fromRef.current = to;
+      setVal(to);
+      return;
+    }
+    let raf = 0;
+    let start: number | null = null;
+    const ease = (t: number) => 1 - Math.pow(1 - t, 3);
+    const tick = (ts: number) => {
+      if (start === null) start = ts;
+      const p = Math.min((ts - start) / duration, 1);
+      const cur = from + (to - from) * ease(p);
+      fromRef.current = cur;
+      setVal(cur);
+      if (p < 1) raf = requestAnimationFrame(tick);
+      else {
+        fromRef.current = to;
+        setVal(to);
+      }
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [target, duration]);
+  return val;
+}
+
+// Animate a pre-formatted KPI string ("187", "4.6%", "7d", "$1,234"): parse the
+// numeric token, animate it, and re-emit with the same prefix / suffix / decimals
+// + thousands grouping. Non-numeric values render verbatim.
+function CountUpText({ value, className }: { value: string; className?: string }) {
+  const match = value.match(/^(\D*)([\d,]+(?:\.\d+)?)(\D*)$/);
+  const numStr = match ? match[2] : "";
+  const decimals = numStr.includes(".") ? numStr.split(".")[1].length : 0;
+  const target = match ? parseFloat(numStr.replace(/,/g, "")) : 0;
+  const v = useCountUp(target);
+  if (!match) return <span className={className}>{value}</span>;
+  const formatted = v.toLocaleString("en-US", {
+    minimumFractionDigits: decimals,
+    maximumFractionDigits: decimals,
+  });
+  return (
+    <span className={`tabular-nums ${className ?? ""}`}>
+      {match[1]}
+      {formatted}
+      {match[3]}
+    </span>
+  );
+}
+
 // ── Main component ────────────────────────────────────────────────────────────
 
 export default function OverviewDirector({
@@ -690,6 +763,81 @@ export default function OverviewDirector({
     riskLabel(c.risk),
   ]);
 
+  // ── Progress report (period or custom range → PDF / Word .doc) ──
+  const [reportPeriod, setReportPeriod] = useState<Period | "custom">("month");
+  const [customFrom, setCustomFrom] = useState("");
+  const [customTo, setCustomTo] = useState("");
+
+  const buildReportData = (): ReportData => {
+    const now = new Date();
+    let periodLabel: string;
+    let rangeLabel: string;
+    let snapData;
+    if (reportPeriod === "custom") {
+      const from = customFrom ? new Date(`${customFrom}T00:00:00`) : now;
+      const to = customTo ? new Date(`${customTo}T00:00:00`) : now;
+      periodLabel = "Custom range";
+      rangeLabel = fmtRange(from, to);
+      snapData = snapshotFor("month", totalBenefitUsd);
+    } else {
+      const { from, to } = rangeForPeriod(reportPeriod, now);
+      periodLabel = PERIOD_LABEL[reportPeriod];
+      rangeLabel = fmtRange(from, to);
+      snapData = snapshotFor(reportPeriod, totalBenefitUsd);
+    }
+    const topRiskOf = (cases: QueueApplication[]): Risk =>
+      cases.some((c) => c.risk === "High risk")
+        ? "High risk"
+        : cases.some((c) => c.risk === "Medium risk")
+          ? "Medium risk"
+          : "Low risk";
+    return {
+      periodLabel,
+      rangeLabel,
+      generatedAt: isoDate(now),
+      snapshot: snapData,
+      phases: phases.map((p) => ({ label: p.label, count: p.cases.length })),
+      navigators: sortedWorkers.map((cw) => {
+        const cs = casesByWorker.get(cw.name) ?? [];
+        return {
+          name: cw.name,
+          cases: cs.length,
+          flags: cs.reduce((s, c) => s + c.docFlags.length, 0),
+          risk: cs.length ? riskLabel(topRiskOf(cs)) : "—",
+          avgDays: cw.avgDays,
+        };
+      }),
+      totals: {
+        cases: effectiveCases.length,
+        flags: effectiveCases.reduce((s, c) => s + c.docFlags.length, 0),
+        benefitsUsd: totalBenefitUsd,
+      },
+    };
+  };
+
+  const downloadWordReport = () => {
+    const html = reportDocument(buildReportData(), { forWord: true });
+    const blob = new Blob(["﻿", html], { type: "application/msword" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `civica-progress-report-${reportPeriod}.doc`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  };
+
+  const openPdfReport = () => {
+    const w = window.open("", "_blank", "width=880,height=1000");
+    if (!w) {
+      alert("Couldn't open the report — allow pop-ups for this site, then try again.");
+      return;
+    }
+    w.document.write(reportDocument(buildReportData(), { forWord: false }));
+    w.document.close();
+  };
+
   return (
     <div className="space-y-8">
 
@@ -721,19 +869,19 @@ export default function OverviewDirector({
           {/* Apps per navigator */}
           <div className="flex-1 px-6 py-5 flex flex-col">
             <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite">Apps / navigator</p>
-            <span className="text-[34px] font-semibold tabular-nums text-ink leading-none mt-2">{snap.apps.value}</span>
+            <CountUpText value={snap.apps.value} className="text-[34px] font-semibold text-ink leading-none mt-2 block" />
             <TrendDelta pct={snap.apps.trendPct} goodWhenUp={GOOD_WHEN_UP.apps} caption={caption} />
           </div>
           {/* Error rate */}
           <div className="flex-1 px-6 py-5 border-l border-hairline flex flex-col">
             <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite">Error rate</p>
-            <span className="text-[34px] font-semibold tabular-nums text-ink leading-none mt-2">{snap.errorRate.value}</span>
+            <CountUpText value={snap.errorRate.value} className="text-[34px] font-semibold text-ink leading-none mt-2 block" />
             <TrendDelta pct={snap.errorRate.trendPct} goodWhenUp={GOOD_WHEN_UP.errorRate} caption={caption} />
           </div>
           {/* Avg handoff */}
           <div className="flex-1 px-6 py-5 border-l border-hairline flex flex-col">
             <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite">Time to handoff</p>
-            <span className="text-[34px] font-semibold tabular-nums text-ink leading-none mt-2">{snap.handoff.value}</span>
+            <CountUpText value={snap.handoff.value} className="text-[34px] font-semibold text-ink leading-none mt-2 block" />
             <TrendDelta pct={snap.handoff.trendPct} goodWhenUp={GOOD_WHEN_UP.handoff} caption={caption} />
           </div>
           {/* Benefits enrolled — Month is live from engine; other ranges illustrative */}
@@ -741,9 +889,7 @@ export default function OverviewDirector({
             <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite">Benefits enrolled</p>
             {benefits.usd > 0 ? (
               <>
-                <span className="text-[34px] font-semibold tabular-nums text-ink leading-none mt-2">
-                  {formatUsd(benefits.usd)}
-                </span>
+                <CountUpText value={formatUsd(benefits.usd)} className="text-[34px] font-semibold text-ink leading-none mt-2 block" />
                 <span className="mt-1.5 text-[11px] text-muted">
                   /mo · {benefits.households} household{benefits.households !== 1 ? "s" : ""}
                 </span>
@@ -752,6 +898,81 @@ export default function OverviewDirector({
               <span className="text-[20px] font-semibold text-muted mt-2">—</span>
             )}
           </div>
+        </div>
+
+        {/* ── Generate progress report (period or custom range → PDF / Word) ── */}
+        <div className="mt-3 rounded-[2px] border border-hairline bg-surface px-4 py-3">
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2.5">
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite">Generate progress report</p>
+            <div role="tablist" aria-label="Report range" className="inline-flex items-center rounded-[2px] border border-hairline p-0.5">
+              {PERIODS.map((p) => {
+                const active = reportPeriod === p.key;
+                return (
+                  <button
+                    key={p.key}
+                    type="button"
+                    role="tab"
+                    aria-selected={active}
+                    onClick={() => setReportPeriod(p.key)}
+                    className={`rounded-[2px] px-2.5 py-1 text-[12px] font-semibold transition-colors ${active ? "bg-ink text-white" : "text-graphite hover:bg-surface-secondary"}`}
+                  >
+                    {p.label}
+                  </button>
+                );
+              })}
+              <button
+                type="button"
+                role="tab"
+                aria-selected={reportPeriod === "custom"}
+                onClick={() => setReportPeriod("custom")}
+                className={`rounded-[2px] px-2.5 py-1 text-[12px] font-semibold transition-colors ${reportPeriod === "custom" ? "bg-ink text-white" : "text-graphite hover:bg-surface-secondary"}`}
+              >
+                Custom
+              </button>
+            </div>
+
+            {reportPeriod === "custom" && (
+              <div className="flex items-center gap-2 text-[12px] text-graphite">
+                <input
+                  type="date"
+                  value={customFrom}
+                  max={customTo || undefined}
+                  onChange={(e) => setCustomFrom(e.target.value)}
+                  aria-label="Report start date"
+                  className="rounded-[2px] border border-hairline bg-surface px-2 py-1 text-ink focus:border-pine focus:outline-none"
+                />
+                <span aria-hidden="true">–</span>
+                <input
+                  type="date"
+                  value={customTo}
+                  min={customFrom || undefined}
+                  onChange={(e) => setCustomTo(e.target.value)}
+                  aria-label="Report end date"
+                  className="rounded-[2px] border border-hairline bg-surface px-2 py-1 text-ink focus:border-pine focus:outline-none"
+                />
+              </div>
+            )}
+
+            <div className="flex items-center gap-2 ml-auto">
+              <button
+                type="button"
+                onClick={openPdfReport}
+                className="inline-flex items-center gap-1.5 rounded-[2px] bg-pine px-3 py-1.5 text-[12px] font-semibold text-white hover:bg-pine-pressed"
+              >
+                Download PDF
+              </button>
+              <button
+                type="button"
+                onClick={downloadWordReport}
+                className="inline-flex items-center gap-1.5 rounded-[2px] border border-hairline bg-surface px-3 py-1.5 text-[12px] font-semibold text-ink hover:bg-paper"
+              >
+                Download Word
+              </button>
+            </div>
+          </div>
+          <p className="mt-2 text-[11px] text-muted">
+            Exports the snapshot, caseload-by-phase, and caseworker roster for the selected range. Benefit + error-rate figures are engine-computed.
+          </p>
         </div>
       </section>
 
