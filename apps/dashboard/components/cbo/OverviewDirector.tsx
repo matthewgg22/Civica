@@ -276,6 +276,72 @@ function CaseRow({ app, border }: { app: QueueApplication; border: boolean }) {
   );
 }
 
+// ── Collapsible caseload category ─────────────────────────────────────────────
+// A broad bucket (Active / Enrolled & closed) the director opens on demand.
+// Collapsed, the header still carries the at-a-glance summary (count, flags,
+// high-risk) so it's informative without expanding.
+
+function CaseCategory({
+  label, blurb, cases, defaultOpen,
+}: {
+  label: string;
+  blurb: string;
+  cases: QueueApplication[];
+  defaultOpen: boolean;
+}) {
+  const [open, setOpen] = useState(defaultOpen);
+  const flags = cases.reduce((s, c) => s + c.docFlags.length, 0);
+  const high = cases.filter((c) => c.risk === "High risk").length;
+
+  return (
+    <div className="border border-hairline rounded-[3px] bg-surface overflow-hidden">
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        aria-expanded={open}
+        className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-paper transition-colors"
+      >
+        <Chevron open={open} />
+        <span className="text-[14px] font-semibold text-ink shrink-0">{label}</span>
+        <span className="text-[12px] text-graphite truncate hidden sm:block">{blurb}</span>
+        <span className="flex-1" />
+        <span className="text-[13px] tabular-nums text-ink shrink-0">{cases.length} case{cases.length !== 1 ? "s" : ""}</span>
+        {flags > 0 && (
+          <span className="text-[12px] text-brick font-medium tabular-nums shrink-0">{flags} flag{flags !== 1 ? "s" : ""}</span>
+        )}
+        {high > 0 && (
+          <span className="text-[11px] uppercase tracking-wider text-brick font-semibold shrink-0">{high} high</span>
+        )}
+      </button>
+
+      {open && (
+        <div className="border-t border-hairline">
+          {cases.length > 0 ? (
+            <>
+              {/* Column headers */}
+              <div className="flex items-center gap-3 px-4 py-1.5 bg-surface-secondary border-b border-hairline text-[10px] font-semibold uppercase tracking-wider text-graphite">
+                <span className="shrink-0 w-[88px]">Case ID</span>
+                <span className="shrink-0 w-[84px]">Applicant</span>
+                <span className="shrink-0 w-[80px] hidden md:block">Navigator</span>
+                <span className="shrink-0 w-[96px] hidden sm:block">County</span>
+                <span className="flex-1 min-w-0">Stage</span>
+                <span className="shrink-0 w-[112px] hidden lg:block text-right">Progress / Benefit</span>
+                <span className="shrink-0 w-[52px] text-right">Flags</span>
+                <span className="shrink-0 w-[32px] text-right">Risk</span>
+              </div>
+              {cases.map((app, i) => (
+                <CaseRow key={app.id} app={app} border={i > 0} />
+              ))}
+            </>
+          ) : (
+            <p className="px-4 py-6 text-[13px] text-muted text-center">No cases in this category.</p>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ── Main component ────────────────────────────────────────────────────────────
 
 export default function OverviewDirector({
@@ -285,7 +351,6 @@ export default function OverviewDirector({
   phases: PhaseGroup[];
   synthetic: boolean;
 }) {
-  const [navFilter, setNavFilter] = useState<string | null>(null);
   const [snapshotRange, setSnapshotRange] = useState<SnapshotRange>("Month");
 
   const allCases = useMemo(() => phases.flatMap((p) => p.cases), [phases]);
@@ -362,23 +427,22 @@ export default function OverviewDirector({
 
   const navigatorList = [...navigatorMap.entries()];
 
-  // Cases for the active caseload table, optionally filtered by navigator.
-  const tableGroups = useMemo(() => {
+  // Caseload split into two broad, collapsible categories the director opens on
+  // demand — "active" (still being worked) vs "enrolled & closed" (outcome
+  // reached). Within each, cases sort high-risk first.
+  const caseCategories = useMemo(() => {
     const byRisk = (a: QueueApplication, b: QueueApplication) => {
       const order: Record<Risk, number> = { "High risk": 0, "Medium risk": 1, "Low risk": 2 };
       return order[a.risk] - order[b.risk];
     };
-    if (navFilter) {
-      const cases = (navigatorMap.get(navFilter) ?? []).slice().sort(byRisk);
-      return [{ navigator: navFilter, cases }];
-    }
-    return navigatorList.map(([nav, cases]) => ({
-      navigator: nav,
-      cases: [...cases].sort(byRisk),
-    }));
-  }, [navigatorMap, navigatorList, navFilter]);
+    const active = allCases.filter((c) => c.phase === "requesting" || c.phase === "live").sort(byRisk);
+    const closed = allCases.filter((c) => c.phase === "enrolled" || c.phase === "recert").sort(byRisk);
+    return [
+      { key: "active", label: "Active cases",      blurb: "In progress — needs navigator action", cases: active, defaultOpen: true },
+      { key: "closed", label: "Enrolled & closed", blurb: "Receiving benefits, recertifying, or closed", cases: closed, defaultOpen: false },
+    ];
+  }, [allCases]);
 
-  const displayCount = tableGroups.reduce((s, g) => s + g.cases.length, 0);
   const totalFlags = allCases.reduce((s, c) => s + c.docFlags.length, 0);
   const highRiskCount = allCases.filter((c) => c.risk === "High risk").length;
 
@@ -556,24 +620,12 @@ export default function OverviewDirector({
       {synthetic && (
         <section id="active-caseload" aria-label="Active caseload">
           <div className="flex items-center justify-between gap-3 mb-3 flex-wrap">
+            <p className="eyebrow">Caseload</p>
             <div className="flex items-center gap-3">
-              <p className="eyebrow">Active caseload</p>
-              {navFilter && (
-                <button
-                  type="button"
-                  onClick={() => setNavFilter(null)}
-                  className="inline-flex items-center gap-1 text-[11px] font-semibold text-pine border border-pine/30 bg-pine/5 rounded-[2px] px-2 py-0.5 hover:bg-pine/10 transition-colors"
-                >
-                  {navFilter}
-                  <span aria-hidden="true">×</span>
-                </button>
-              )}
-            </div>
-            <div className="flex items-center gap-3">
-              <span className="text-[12px] text-graphite">{displayCount} case{displayCount !== 1 ? "s" : ""}</span>
+              <span className="text-[12px] text-graphite">{allCases.length} cases</span>
               <TableExport
                 filename="cbo-caseload-all"
-                title="CBO caseload — all active applications"
+                title="CBO caseload — all applications"
                 columns={["Navigator", "Case ID", "Applicant", "County", "Stage", "Completion", "Est. benefit", "Flags", "Risk"]}
                 rows={allExportRows}
                 note="Illustrative caseload. Benefit estimates are computed by Civica's rules engine; applicant records are synthetic."
@@ -581,42 +633,10 @@ export default function OverviewDirector({
             </div>
           </div>
 
-          <div className="border border-hairline rounded-[2px] bg-surface overflow-hidden">
-            {/* Column headers */}
-            <div className="flex items-center gap-3 px-4 py-1.5 bg-surface-secondary border-b border-hairline text-[10px] font-semibold uppercase tracking-wider text-graphite">
-              <span className="shrink-0 w-[88px]">Case ID</span>
-              <span className="shrink-0 w-[84px]">Applicant</span>
-              <span className="shrink-0 w-[80px] hidden md:block">Navigator</span>
-              <span className="shrink-0 w-[96px] hidden sm:block">County</span>
-              <span className="flex-1 min-w-0">Stage</span>
-              <span className="shrink-0 w-[112px] hidden lg:block text-right">Progress / Benefit</span>
-              <span className="shrink-0 w-[52px] text-right">Flags</span>
-              <span className="shrink-0 w-[32px] text-right">Risk</span>
-            </div>
-
-            {tableGroups.map((group) => (
-              <div key={group.navigator}>
-                {/* Phase-group header row — click to toggle filter */}
-                <button
-                  type="button"
-                  onClick={() => setNavFilter((prev) => (prev === group.navigator ? null : group.navigator))}
-                  className={`flex items-center gap-2 w-full px-4 py-1 border-b border-hairline text-left transition-colors ${
-                    navFilter === group.navigator ? "bg-pine/5" : "bg-paper hover:bg-surface-secondary"
-                  }`}
-                >
-                  <span className="w-2 h-2 rounded-full bg-pine/40 shrink-0" aria-hidden="true" />
-                  <span className="text-[11px] font-semibold uppercase tracking-wider text-graphite">{group.navigator}</span>
-                  <span className="text-[11px] text-graphite tabular-nums">{group.cases.length}</span>
-                </button>
-                {group.cases.map((app, i) => (
-                  <CaseRow key={app.id} app={app} border={i > 0} />
-                ))}
-              </div>
+          <div className="space-y-3">
+            {caseCategories.map((cat) => (
+              <CaseCategory key={cat.key} label={cat.label} blurb={cat.blurb} cases={cat.cases} defaultOpen={cat.defaultOpen} />
             ))}
-
-            {displayCount === 0 && (
-              <p className="px-4 py-8 text-[13px] text-muted text-center">No active cases.</p>
-            )}
           </div>
         </section>
       )}
