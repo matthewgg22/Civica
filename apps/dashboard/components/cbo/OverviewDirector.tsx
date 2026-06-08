@@ -280,23 +280,11 @@ export default function OverviewDirector({
     ...staleCases.map((c) => ({
       key: c.id, href: `/packets/${c.id}`, label: `${c.name} stalled ${c.updated}`, tone: "muted" as Tone,
     })),
-    ...(unassignedCases.length > 0
-      ? [{
-          key: "unassigned", href: "#active-caseload",
-          label: `${unassignedCases.length} unassigned`, tone: "muted" as Tone,
-        }]
-      : []),
+    // Unassigned cases are NOT here — they get their own dedicated "Needs
+    // dispatch" section so the director has a clear place to act, not a chip.
   ];
   const toneText = (t: Tone) =>
     t === "brick" ? "text-brick" : t === "warning" ? "text-warning" : "text-graphite";
-
-  // #5 caseload by phase — counts vary across the 4 lifecycle phases, so a
-  // single proportional bar reads as a real distribution (not a flat per-stage
-  // list where every stage holds one case).
-  const phaseDistribution = phases.map((p) => ({
-    key: p.key, label: p.label, accent: p.accent, count: p.cases.length,
-  }));
-  const totalPhaseCases = phaseDistribution.reduce((s, p) => s + p.count, 0);
 
   // Build navigator → cases map, sorted: named navigators alphabetical, Unassigned last.
   const navigatorMap = useMemo(() => {
@@ -372,83 +360,86 @@ export default function OverviewDirector({
         </div>
       )}
 
-      {/* ── KPI strip — 4 stats + sparklines ── #1 #3 */}
-      <section aria-label="Impact at a glance">
-        <div className="flex items-stretch border border-hairline rounded-[2px] bg-surface overflow-hidden">
+      {/* ── KPI hero — this month's live numbers, de-saled ── #1 #3
+          The hero block: larger numbers, more breathing room, the heaviest
+          thing on the page. No "vs manual" pitch framing — a director running
+          the program doesn't need re-selling daily. Direction comes from the
+          4-week trend, which is the comparison that actually matters to them. */}
+      <section aria-label="This month at a glance">
+        <p className="eyebrow mb-3">This month</p>
+        <div className="flex items-stretch border border-hairline rounded-[3px] bg-surface overflow-hidden shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
           {/* Apps per navigator */}
-          <div className="flex-1 px-5 py-3.5 flex flex-col">
-            <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite">Avg apps / navigator / mo</p>
-            <div className="flex items-baseline gap-2 mt-1.5">
-              <span className="text-[24px] font-semibold tabular-nums text-ink leading-none">23</span>
-              <span className="text-[12px] text-pine font-medium">vs 7 manual</span>
-            </div>
+          <div className="flex-1 px-6 py-5 flex flex-col">
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite">Apps / navigator</p>
+            <span className="text-[34px] font-semibold tabular-nums text-ink leading-none mt-2">23</span>
             <TrendDelta {...TRENDS.appsPerNav} />
           </div>
           {/* Error rate */}
-          <div className="flex-1 px-5 py-3.5 border-l border-hairline flex flex-col">
-            <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite">Error rate (Civica cohort)</p>
-            <div className="flex items-baseline gap-2 mt-1.5">
-              <span className="text-[24px] font-semibold tabular-nums text-ink leading-none">4.2%</span>
-              <span className="text-[12px] text-pine font-medium">vs ~10.8% manual</span>
-            </div>
+          <div className="flex-1 px-6 py-5 border-l border-hairline flex flex-col">
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite">Error rate</p>
+            <span className="text-[34px] font-semibold tabular-nums text-ink leading-none mt-2">4.2%</span>
             <TrendDelta {...TRENDS.errorRate} />
           </div>
           {/* Avg handoff */}
-          <div className="flex-1 px-5 py-3.5 border-l border-hairline flex flex-col">
-            <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite">Avg time to handoff</p>
-            <div className="flex items-baseline gap-2 mt-1.5">
-              <span className="text-[24px] font-semibold tabular-nums text-ink leading-none">6 days</span>
-              <span className="text-[12px] text-pine font-medium">vs ~22 days manual</span>
-            </div>
+          <div className="flex-1 px-6 py-5 border-l border-hairline flex flex-col">
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite">Time to handoff</p>
+            <span className="text-[34px] font-semibold tabular-nums text-ink leading-none mt-2">6d</span>
             <TrendDelta {...TRENDS.daysHandoff} />
           </div>
           {/* Benefits enrolled — live from engine */}
-          <div className="flex-1 px-5 py-3.5 border-l border-hairline flex flex-col">
-            <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite">Benefits enrolled this month</p>
-            <div className="flex items-baseline gap-2 mt-1.5">
-              {totalBenefitUsd > 0 ? (
-                <span className="text-[24px] font-semibold tabular-nums text-ink leading-none">
-                  {formatUsd(totalBenefitUsd)}/mo
+          <div className="flex-1 px-6 py-5 border-l border-hairline flex flex-col">
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite">Benefits enrolled</p>
+            {totalBenefitUsd > 0 ? (
+              <>
+                <span className="text-[34px] font-semibold tabular-nums text-ink leading-none mt-2">
+                  {formatUsd(totalBenefitUsd)}
                 </span>
-              ) : (
-                <span className="text-[18px] font-semibold text-muted">—</span>
-              )}
-            </div>
-            {totalBenefitUsd > 0 && (
-              <span className="mt-1 text-[11px] text-muted">
-                {enrolledWithBenefit} household{enrolledWithBenefit !== 1 ? "s" : ""} enrolled
-              </span>
+                <span className="mt-1.5 text-[11px] text-muted">
+                  /mo · {enrolledWithBenefit} household{enrolledWithBenefit !== 1 ? "s" : ""}
+                </span>
+              </>
+            ) : (
+              <span className="text-[20px] font-semibold text-muted mt-2">—</span>
             )}
           </div>
         </div>
       </section>
 
-      {/* ── Caseload by phase — single proportional bar ── #5 */}
-      {synthetic && totalPhaseCases > 0 && (
-        <section aria-label="Caseload by phase">
-          <p className="eyebrow mb-3">Caseload by phase</p>
-          <div className="border border-hairline rounded-[2px] bg-surface p-4">
-            <div className="flex h-2.5 rounded-full overflow-hidden bg-surface-secondary">
-              {phaseDistribution
-                .filter((p) => p.count > 0)
-                .map((p) => (
-                  <span
-                    key={p.key}
-                    className={p.accent}
-                    style={{ width: `${(p.count / totalPhaseCases) * 100}%` }}
-                    title={`${p.label}: ${p.count}`}
-                  />
-                ))}
-            </div>
-            <div className="flex flex-wrap gap-x-6 gap-y-1.5 mt-3">
-              {phaseDistribution.map((p) => (
-                <div key={p.key} className="flex items-center gap-1.5">
-                  <span className={`w-2 h-2 rounded-sm ${p.accent}`} aria-hidden="true" />
-                  <span className="text-[12px] text-ink">{p.label}</span>
-                  <span className="text-[12px] tabular-nums text-graphite font-medium">{p.count}</span>
+      {/* ── Needs dispatch — dedicated unassigned-applications queue ──
+          The director's most actionable daily task: assign a caseworker to
+          applications that have none. Surfaced as its own section (not a chip)
+          so it's impossible to miss. Hidden when everything is assigned. */}
+      {synthetic && unassignedCases.length > 0 && (
+        <section aria-label="Needs dispatch">
+          <div className="flex items-baseline justify-between mb-3">
+            <p className="eyebrow">Needs dispatch</p>
+            <span className="text-[12px] text-warning font-medium">
+              {unassignedCases.length} application{unassignedCases.length !== 1 ? "s" : ""} without a caseworker
+            </span>
+          </div>
+          <div className="border border-warning/30 rounded-[3px] bg-warning/[0.04] overflow-hidden">
+            {unassignedCases.map((c, i) => (
+              <div
+                key={c.id}
+                className={`flex items-center gap-3 px-4 py-3 ${i > 0 ? "border-t border-warning/15" : ""}`}
+              >
+                <span className="shrink-0 inline-flex items-center justify-center w-7 h-7 rounded-full border border-dashed border-warning/40 text-[11px] text-warning" aria-hidden="true">?</span>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-baseline gap-2 flex-wrap">
+                    <span className="text-[14px] font-semibold text-ink">{c.name}</span>
+                    <span className="text-[11px] text-graphite font-mono tabular-nums">{c.caseId}</span>
+                    <span className="text-[12px] text-graphite">· {c.county} County</span>
+                  </div>
+                  <p className="text-[12px] text-graphite mt-0.5">{c.stage} · waiting {c.updated}</p>
                 </div>
-              ))}
-            </div>
+                <Link
+                  href={`/cbo-preview?section=pipeline`}
+                  className="shrink-0 inline-flex items-center gap-1 rounded-[2px] bg-pine px-3 py-1.5 text-[12px] font-semibold text-white hover:bg-pine-pressed transition-colors"
+                >
+                  Assign →
+                </Link>
+              </div>
+            ))}
           </div>
         </section>
       )}
