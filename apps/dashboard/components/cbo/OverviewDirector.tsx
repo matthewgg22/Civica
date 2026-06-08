@@ -17,8 +17,22 @@ function pct(n: number) { return Math.round((n / TOTAL_STEPS) * 100); }
 function riskLabel(r: Risk) { return r === "High risk" ? "HIGH" : r === "Medium risk" ? "MED" : "LOW"; }
 function riskText(r: Risk) { return r === "High risk" ? "text-brick font-semibold" : r === "Medium risk" ? "text-warning" : "text-muted"; }
 
-// #4 — navigator capacity ceiling (cases a navigator can carry at once)
+// Which lifecycle bucket a case sits in — by stage, not just phase, so the
+// interview (the single biggest denial cause) gets its own visible queue.
+type CaseBucket = "pre" | "interview" | "submitted" | "closed";
+function caseBucket(c: QueueApplication): CaseBucket {
+  if (c.phase === "enrolled" || c.phase === "recert") return "closed";
+  const s = c.stage.toLowerCase();
+  if (s.includes("interview")) return "interview";
+  if (s.includes("submitted")) return "submitted";
+  return "pre"; // requesting + live, not yet filed
+}
+
+// #4 — navigator capacity ceiling (cases a caseworker can carry at once)
 const CAPACITY = 20;
+
+// Civica licenses by seat — the roster can hold up to this many caseworkers.
+const LICENSED_SEATS = 8;
 
 // #9 — synthetic avg days to handoff per navigator (illustrative)
 const NAV_AVG_DAYS: Record<string, number> = {
@@ -171,17 +185,25 @@ function AssignMenu({ workers, onAssign }: { workers: string[]; onAssign: (name:
   );
 }
 
-// Inline "add caseworker" form — shown in the roster when the gear is on.
-function AddCaseworkerRow({ onAdd }: { onAdd: (cw: Caseworker) => void }) {
+// Inline "add caseworker" form — shown in the roster when managing. Gated by
+// the CBO's remaining licensed seats; when full it shows a buy-more prompt.
+function AddCaseworkerRow({ onAdd, seatsLeft }: { onAdd: (cw: Caseworker) => void; seatsLeft: number }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const cls = "px-2 py-1 text-[13px] bg-surface border border-hairline rounded-[2px] text-ink placeholder:text-muted focus:outline-none focus:border-pine";
   function submit() {
     const n = name.trim();
-    if (!n) return;
+    if (!n || seatsLeft <= 0) return;
     onAdd({ name: n, email: email.trim(), phone: phone.trim(), avgDays: null });
     setName(""); setEmail(""); setPhone("");
+  }
+  if (seatsLeft <= 0) {
+    return (
+      <div className="flex items-center justify-between gap-2 px-4 py-3 border-t border-hairline bg-paper/60">
+        <span className="text-[12px] text-graphite">All licensed seats are filled. Remove a caseworker to free a seat, or contact Civica to add seats.</span>
+      </div>
+    );
   }
   return (
     <div className="flex flex-wrap items-center gap-2 px-4 py-2.5 border-t border-hairline bg-paper/60">
@@ -196,6 +218,7 @@ function AddCaseworkerRow({ onAdd }: { onAdd: (cw: Caseworker) => void }) {
         className="ml-auto inline-flex items-center rounded-[2px] bg-pine px-3 py-1.5 text-[12px] font-semibold text-white hover:bg-pine-pressed disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
       >
         Add caseworker
+        <span className="ml-1.5 text-[11px] font-normal text-white/80">{seatsLeft} seat{seatsLeft !== 1 ? "s" : ""} left</span>
       </button>
     </div>
   );
@@ -204,12 +227,13 @@ function AddCaseworkerRow({ onAdd }: { onAdd: (cw: Caseworker) => void }) {
 // Inline-editable contact field (ephemeral demo — edits reset on reload, never
 // persisted). Click the pencil to edit; Enter or blur saves, Escape cancels.
 function EditableField({
-  label, value, type, onSave,
+  label, value, type, onSave, alwaysEdit = false,
 }: {
   label: string;
   value: string;
   type: "email" | "tel" | "text";
   onSave: (v: string) => void;
+  alwaysEdit?: boolean;
 }) {
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState(value);
@@ -242,7 +266,7 @@ function EditableField({
             onClick={() => { setDraft(value); setEditing(true); }}
             aria-label={`Edit ${label.toLowerCase()}`}
             title="Edit"
-            className="shrink-0 opacity-0 group-hover:opacity-100 transition-opacity text-graphite hover:text-pine"
+            className={`shrink-0 transition-opacity text-graphite hover:text-pine ${alwaysEdit ? "opacity-100" : "opacity-0 group-hover:opacity-100"}`}
           >
             <svg width="12" height="12" viewBox="0 0 14 14" fill="none" aria-hidden="true">
               <path d="M9.5 2.5l2 2L5 11l-2.5.5L3 9l6.5-6.5z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round" />
@@ -267,9 +291,9 @@ function NavigatorRow({
   const [open, setOpen] = useState(false);
   const name = worker.name;
   // Case-level work signals (NOT a judgment on the caseworker): how many of
-  // their cases are waiting on documents, and how many are priority right now.
+  // their cases are waiting on documents, and how many have an interview to prep.
   const awaitingDocs = cases.filter((c) => c.docFlags.length > 0).length;
-  const priority = cases.filter((c) => c.risk === "High risk").length;
+  const awaitingInterview = cases.filter((c) => caseBucket(c) === "interview").length;
   const avgDays = worker.avgDays;
 
   // #4 capacity bar — share of the caseworker's case ceiling
@@ -312,14 +336,14 @@ function NavigatorRow({
           </span>
         </span>
 
-        {/* Awaiting docs — cases that need a document follow-up (work to do, not a ding) */}
+        {/* Needs docs — cases waiting on a document follow-up (work to do, not a ding) */}
         <span className={`shrink-0 w-20 text-right text-[13px] tabular-nums ${awaitingDocs > 0 ? "text-warning font-medium" : "text-muted"}`}>
           {awaitingDocs > 0 ? awaitingDocs : "—"}
         </span>
 
-        {/* Priority — how many of their cases are high-priority right now (a count, not a label on them) */}
-        <span className={`shrink-0 w-16 text-right text-[13px] tabular-nums ${priority > 0 ? "text-ink font-medium" : "text-muted"}`}>
-          {priority > 0 ? priority : "—"}
+        {/* Interview — cases with an interview to prep the client for (#1 denial cause) */}
+        <span className={`shrink-0 w-20 text-right text-[13px] tabular-nums ${awaitingInterview > 0 ? "text-warning font-medium" : "text-muted"}`}>
+          {awaitingInterview > 0 ? awaitingInterview : "—"}
         </span>
 
         {/* #9 avg days to handoff */}
@@ -355,18 +379,21 @@ function NavigatorRow({
               type="text"
               value={worker.name}
               onSave={(v) => onUpdate({ name: v })}
+              alwaysEdit={managing}
             />
             <EditableField
               label="Email"
               type="email"
               value={worker.email}
               onSave={(v) => onUpdate({ email: v })}
+              alwaysEdit={managing}
             />
             <EditableField
               label="Phone"
               type="tel"
               value={worker.phone}
               onSave={(v) => onUpdate({ phone: v })}
+              alwaysEdit={managing}
             />
             {avgDays != null && (
               <div>
@@ -569,7 +596,9 @@ export default function OverviewDirector({
     setAssignments((a) => ({ ...a, [caseId]: name }));
 
   const addCaseworker = (cw: Caseworker) =>
-    setCaseworkers((prev) => (prev.some((p) => p.name === cw.name) ? prev : [...prev, cw]));
+    setCaseworkers((prev) =>
+      prev.length >= LICENSED_SEATS || prev.some((p) => p.name === cw.name) ? prev : [...prev, cw],
+    );
 
   const updateCaseworker = (name: string, patch: Partial<Caseworker>) => {
     // Renaming a caseworker must follow their cases — remap any assignment
@@ -627,26 +656,27 @@ export default function OverviewDirector({
     return m;
   }, [caseworkers, effectiveCases]);
 
-  // Caseload split into two broad, collapsible categories the director opens on
-  // demand — "active" (still being worked) vs "enrolled & closed" (outcome
-  // reached). Within each, cases sort high-risk first.
+  // Caseload sorted by lifecycle bucket the director opens on demand. The two
+  // pre-county stages — pre-submission and awaiting-interview — lead and open by
+  // default, because that's where a CBO can still change the outcome.
   const caseCategories = useMemo(() => {
     const byRisk = (a: QueueApplication, b: QueueApplication) => {
       const order: Record<Risk, number> = { "High risk": 0, "Medium risk": 1, "Low risk": 2 };
       return order[a.risk] - order[b.risk];
     };
-    const active = effectiveCases.filter((c) => c.phase === "requesting" || c.phase === "live").sort(byRisk);
-    const closed = effectiveCases.filter((c) => c.phase === "enrolled" || c.phase === "recert").sort(byRisk);
+    const inBucket = (b: CaseBucket) => effectiveCases.filter((c) => caseBucket(c) === b).sort(byRisk);
     return [
-      { key: "active", label: "Active cases",      blurb: "In progress — needs navigator action", cases: active, defaultOpen: true },
-      { key: "closed", label: "Enrolled & closed", blurb: "Receiving benefits, recertifying, or closed", cases: closed, defaultOpen: false },
+      { key: "pre",       label: "Pre-submission",      blurb: "Not yet filed — needs documents or review", cases: inBucket("pre"),       defaultOpen: true  },
+      { key: "interview", label: "Awaiting interview",  blurb: "Interview scheduled — prep the client",       cases: inBucket("interview"), defaultOpen: true  },
+      { key: "submitted", label: "Submitted to county", blurb: "Filed — awaiting the county decision",        cases: inBucket("submitted"), defaultOpen: false },
+      { key: "closed",    label: "Enrolled & closed",   blurb: "Receiving benefits, recertifying, or closed", cases: inBucket("closed"),    defaultOpen: false },
     ];
   }, [effectiveCases]);
 
   // Caseload-level signals for the roster summary — framed as cases, not as a
   // tally against the caseworkers.
   const casesAwaitingDocs = effectiveCases.filter((c) => c.docFlags.length > 0).length;
-  const priorityCases = effectiveCases.filter((c) => c.risk === "High risk").length;
+  const casesAwaitingInterview = effectiveCases.filter((c) => caseBucket(c) === "interview").length;
 
   const allExportRows = effectiveCases.map((c) => [
     c.navigator ?? "Unassigned",
@@ -766,15 +796,17 @@ export default function OverviewDirector({
       {synthetic && (
         <section aria-label="Navigator roster">
           <div className="flex items-center justify-between mb-3 gap-3">
-            <p className="eyebrow">Navigator roster</p>
+            <p className="eyebrow">Caseworker roster</p>
             <div className="flex items-center gap-3">
               <span className="text-[12px] text-graphite">
-                {caseworkers.length} caseworker{caseworkers.length !== 1 ? "s" : ""} · {effectiveCases.length} case{effectiveCases.length !== 1 ? "s" : ""}
+                <span className={caseworkers.length >= LICENSED_SEATS ? "text-warning font-medium" : ""}>
+                  {caseworkers.length} of {LICENSED_SEATS} seats
+                </span>
                 {casesAwaitingDocs > 0 && (
                   <> · <span className="text-warning font-medium">{casesAwaitingDocs} awaiting docs</span></>
                 )}
-                {priorityCases > 0 && (
-                  <> · <span className="text-ink font-medium">{priorityCases} priority</span></>
+                {casesAwaitingInterview > 0 && (
+                  <> · <span className="text-warning font-medium">{casesAwaitingInterview} interview{casesAwaitingInterview !== 1 ? "s" : ""}</span></>
                 )}
               </span>
               <button
@@ -788,16 +820,22 @@ export default function OverviewDirector({
                 }`}
               >
                 <GearIcon />
-                {managing ? "Done" : "Manage"}
+                {managing ? "Done" : "Manage seats"}
               </button>
             </div>
           </div>
+          {managing && (
+            <p className="text-[12px] text-graphite mb-2">
+              Click a caseworker to edit their name, email, or phone. Remove one to free a seat, or add one while seats remain.
+              <span className="text-muted"> Civica licenses {LICENSED_SEATS} seats for this CBO.</span>
+            </p>
+          )}
           <div className="border border-hairline rounded-[2px] bg-surface overflow-hidden">
             <div className="flex items-center gap-3 px-4 py-1.5 bg-surface-secondary border-b border-hairline text-[10px] font-semibold uppercase tracking-wider text-graphite">
               <span className="flex-1">Caseworker</span>
               <span className="w-28 text-right">Workload</span>
-              <span className="w-20 text-right">Awaiting docs</span>
-              <span className="w-16 text-right">Priority</span>
+              <span className="w-20 text-right">Needs docs</span>
+              <span className="w-20 text-right">Interview</span>
               <span className="w-16 text-right">Avg days</span>
               <span className="w-28 text-right">Progress report</span>
             </div>
@@ -812,7 +850,7 @@ export default function OverviewDirector({
                 onRemove={() => removeCaseworker(cw.name)}
               />
             ))}
-            {managing && <AddCaseworkerRow onAdd={addCaseworker} />}
+            {managing && <AddCaseworkerRow onAdd={addCaseworker} seatsLeft={LICENSED_SEATS - caseworkers.length} />}
           </div>
         </section>
       )}
