@@ -19,6 +19,38 @@ function topRisk(cases: QueueApplication[]): Risk {
   return "Low risk";
 }
 
+// Synthetic 4-week trend data (most recent = last element).
+// Up is good for apps and benefits; down is good for error rate and handoff days.
+const TRENDS = {
+  appsPerNav:  { values: [18, 19, 21, 23], goodWhenUp: true  },
+  errorRate:   { values: [6.1, 5.2, 4.8, 4.2], goodWhenUp: false },
+  daysHandoff: { values: [9, 8, 7, 6],     goodWhenUp: false },
+};
+
+function Sparkline({ values, goodWhenUp }: { values: number[]; goodWhenUp: boolean }) {
+  const min = Math.min(...values);
+  const max = Math.max(...values);
+  const span = max - min || 1;
+  const W = 44, H = 16;
+  const pts = values
+    .map((v, i) => `${(i / (values.length - 1)) * W},${H - 2 - ((v - min) / span) * (H - 4)}`)
+    .join(" ");
+  const isUp = values[values.length - 1] > values[0];
+  const isGood = goodWhenUp ? isUp : !isUp;
+  return (
+    <svg width={W} height={H} aria-hidden="true" className="shrink-0">
+      <polyline
+        points={pts}
+        fill="none"
+        stroke={isGood ? "#2D5A45" : "#B5511E"}
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
 // ── Navigator initials avatar ─────────────────────────────────────────────────
 
 function NavAvatar({ name }: { name: string }) {
@@ -167,6 +199,28 @@ export default function OverviewDirector({
 
   const allCases = useMemo(() => phases.flatMap((p) => p.cases), [phases]);
 
+  // #8 unassigned dispatch
+  const unassignedCases = useMemo(
+    () => allCases.filter((c) => c.navigator === "Unassigned"),
+    [allCases],
+  );
+
+  // #2 recert countdown
+  const recertCases = useMemo(
+    () => phases.find((p) => p.key === "recert")?.cases ?? [],
+    [phases],
+  );
+  const overdueRecerts  = recertCases.filter((c) => c.stage.toLowerCase().includes("overdue"));
+  const upcomingRecerts = recertCases.filter((c) => !c.stage.toLowerCase().includes("overdue"));
+
+  // #3 benefits enrolled this month
+  const enrolledCases = useMemo(
+    () => phases.find((p) => p.key === "enrolled")?.cases ?? [],
+    [phases],
+  );
+  const totalBenefitUsd = enrolledCases.reduce((s, c) => s + (c.estimatedBenefitUsd ?? 0), 0);
+  const enrolledWithBenefit = enrolledCases.filter((c) => c.estimatedBenefitUsd != null).length;
+
   // Build navigator → cases map, sorted: named navigators alphabetical, Unassigned last.
   const navigatorMap = useMemo(() => {
     const map = new Map<string, QueueApplication[]>();
@@ -221,22 +275,98 @@ export default function OverviewDirector({
   return (
     <div className="space-y-8">
 
-      {/* ── KPI strip ── */}
+      {/* ── Urgent alerts ── #2 #8 */}
+      {synthetic && (overdueRecerts.length > 0 || unassignedCases.length > 0) && (
+        <div className="flex flex-wrap items-center gap-2" role="alert">
+          {overdueRecerts.map((c) => (
+            <Link
+              key={c.id}
+              href={`/packets/${c.id}`}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[2px] bg-brick/8 border border-brick/20 text-[12px] font-semibold text-brick hover:bg-brick/12 transition-colors"
+            >
+              <span aria-hidden="true">⚠</span>
+              {c.name} — recert overdue
+            </Link>
+          ))}
+          {upcomingRecerts.map((c) => {
+            const days = c.stage.match(/(\d+)\s*day/)?.[1];
+            return (
+              <Link
+                key={c.id}
+                href={`/packets/${c.id}`}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[2px] bg-warning/8 border border-warning/20 text-[12px] font-semibold text-warning hover:bg-warning/12 transition-colors"
+              >
+                <span aria-hidden="true">⏱</span>
+                {c.name} — recert due{days ? ` in ${days} days` : ""}
+              </Link>
+            );
+          })}
+          {unassignedCases.length > 0 && (
+            <Link
+              href="#active-caseload"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[2px] bg-ink/5 border border-hairline text-[12px] font-semibold text-graphite hover:bg-ink/8 transition-colors"
+            >
+              <span aria-hidden="true">·</span>
+              {unassignedCases.length} unassigned case{unassignedCases.length !== 1 ? "s" : ""} — needs dispatch
+            </Link>
+          )}
+        </div>
+      )}
+
+      {/* ── KPI strip — 4 stats + sparklines ── #1 #3 */}
       <section aria-label="Impact at a glance">
         <div className="flex items-stretch border border-hairline rounded-[2px] bg-surface overflow-hidden">
-          {[
-            { label: "Avg apps / navigator / mo", value: "23",     sub: "vs 7 manual"     },
-            { label: "Error rate (Civica cohort)", value: "4.2%",   sub: "vs ~10.8% manual" },
-            { label: "Avg time to handoff",        value: "6 days", sub: "vs ~22 days manual" },
-          ].map((kpi, i) => (
-            <div key={kpi.label} className={`flex-1 px-5 py-3.5 ${i > 0 ? "border-l border-hairline" : ""}`}>
-              <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite">{kpi.label}</p>
-              <div className="flex items-baseline gap-2 mt-1.5">
-                <span className="text-[24px] font-semibold tabular-nums text-ink leading-none">{kpi.value}</span>
-                <span className="text-[12px] text-pine font-medium">{kpi.sub}</span>
+          {/* Apps per navigator */}
+          <div className="flex-1 px-5 py-3.5">
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite">Avg apps / navigator / mo</p>
+            <div className="flex items-end justify-between gap-2 mt-1.5">
+              <div className="flex items-baseline gap-2">
+                <span className="text-[24px] font-semibold tabular-nums text-ink leading-none">23</span>
+                <span className="text-[12px] text-pine font-medium">vs 7 manual</span>
               </div>
+              <Sparkline {...TRENDS.appsPerNav} />
             </div>
-          ))}
+          </div>
+          {/* Error rate */}
+          <div className="flex-1 px-5 py-3.5 border-l border-hairline">
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite">Error rate (Civica cohort)</p>
+            <div className="flex items-end justify-between gap-2 mt-1.5">
+              <div className="flex items-baseline gap-2">
+                <span className="text-[24px] font-semibold tabular-nums text-ink leading-none">4.2%</span>
+                <span className="text-[12px] text-pine font-medium">vs ~10.8% manual</span>
+              </div>
+              <Sparkline {...TRENDS.errorRate} />
+            </div>
+          </div>
+          {/* Avg handoff */}
+          <div className="flex-1 px-5 py-3.5 border-l border-hairline">
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite">Avg time to handoff</p>
+            <div className="flex items-end justify-between gap-2 mt-1.5">
+              <div className="flex items-baseline gap-2">
+                <span className="text-[24px] font-semibold tabular-nums text-ink leading-none">6 days</span>
+                <span className="text-[12px] text-pine font-medium">vs ~22 days manual</span>
+              </div>
+              <Sparkline {...TRENDS.daysHandoff} />
+            </div>
+          </div>
+          {/* Benefits enrolled — live from engine */}
+          <div className="flex-1 px-5 py-3.5 border-l border-hairline">
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite">Benefits enrolled this month</p>
+            <div className="flex items-baseline gap-2 mt-1.5">
+              {totalBenefitUsd > 0 ? (
+                <>
+                  <span className="text-[24px] font-semibold tabular-nums text-ink leading-none">
+                    {formatUsd(totalBenefitUsd)}/mo
+                  </span>
+                  <span className="text-[12px] text-graphite font-medium">
+                    {enrolledWithBenefit} household{enrolledWithBenefit !== 1 ? "s" : ""}
+                  </span>
+                </>
+              ) : (
+                <span className="text-[18px] font-semibold text-muted">—</span>
+              )}
+            </div>
+          </div>
         </div>
       </section>
 
@@ -278,7 +408,7 @@ export default function OverviewDirector({
 
       {/* ── Active caseload ── */}
       {synthetic && (
-        <section aria-label="Active caseload">
+        <section id="active-caseload" aria-label="Active caseload">
           <div className="flex items-center justify-between gap-3 mb-3 flex-wrap">
             <div className="flex items-center gap-3">
               <p className="eyebrow">Active caseload</p>
