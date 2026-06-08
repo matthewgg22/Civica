@@ -1,9 +1,20 @@
 "use client";
 
-import { Fragment, useMemo, useState } from "react";
+import { Fragment, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import type { PhaseGroup, QueueApplication } from "../../lib/cbo/demo-pipeline";
 import { PIPELINE_STEPS, formatUsd } from "../../lib/cbo/demo-pipeline";
+import {
+  PERIODS,
+  PERIOD_LABEL,
+  snapshotFor,
+  rangeForPeriod,
+  fmtRange,
+  isoDate,
+  reportDocument,
+  type Period,
+  type ReportData,
+} from "../../lib/cbo/progress-report";
 import TableExport from "./TableExport";
 
 type Risk = "Low risk" | "Medium risk" | "High risk";
@@ -220,6 +231,103 @@ function CaseRow({ app, border }: { app: QueueApplication; border: boolean }) {
   );
 }
 
+// ── Snapshot: animated numbers + period toggle ───────────────────────────────
+
+// Tween a number toward `target` with an ease-out curve. Resumes smoothly from
+// the currently-displayed value if the target changes mid-flight, and respects
+// prefers-reduced-motion (jumps instantly). SSR-safe: initial state == target,
+// so the server renders the final figure (no hydration mismatch).
+function useCountUp(target: number, duration = 650): number {
+  const [val, setVal] = useState(target);
+  const fromRef = useRef(target);
+
+  useEffect(() => {
+    const reduce =
+      typeof window !== "undefined" &&
+      window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+    const from = fromRef.current;
+    const to = target;
+    if (reduce || from === to) {
+      fromRef.current = to;
+      setVal(to);
+      return;
+    }
+    let raf = 0;
+    let start: number | null = null;
+    const ease = (t: number) => 1 - Math.pow(1 - t, 3); // easeOutCubic
+    const tick = (ts: number) => {
+      if (start === null) start = ts;
+      const p = Math.min((ts - start) / duration, 1);
+      const cur = from + (to - from) * ease(p);
+      fromRef.current = cur;
+      setVal(cur);
+      if (p < 1) raf = requestAnimationFrame(tick);
+      else {
+        fromRef.current = to;
+        setVal(to);
+      }
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [target, duration]);
+
+  return val;
+}
+
+function AnimatedNumber({
+  value,
+  format,
+  className,
+}: {
+  value: number;
+  format: (n: number) => string;
+  className?: string;
+}) {
+  const v = useCountUp(value);
+  return <span className={`tabular-nums ${className ?? ""}`}>{format(v)}</span>;
+}
+
+const fmtInt = (n: number) => Math.round(n).toLocaleString("en-US");
+const fmtPct = (n: number) => `${n.toFixed(1)}%`;
+const fmtMoney = (n: number) => `$${Math.round(n).toLocaleString("en-US")}`;
+
+function PeriodToggle({
+  value,
+  onChange,
+  idPrefix,
+}: {
+  value: Period;
+  onChange: (p: Period) => void;
+  idPrefix: string;
+}) {
+  return (
+    <div
+      role="tablist"
+      aria-label="Snapshot period"
+      className="inline-flex items-center rounded-[2px] border border-hairline bg-surface p-0.5"
+    >
+      {PERIODS.map((p) => {
+        const active = p.key === value;
+        return (
+          <button
+            key={p.key}
+            id={`${idPrefix}-${p.key}`}
+            role="tab"
+            aria-selected={active}
+            type="button"
+            onClick={() => onChange(p.key)}
+            className={`rounded-[2px] px-2.5 py-1 text-[12px] font-semibold transition-colors ${
+              active ? "bg-ink text-white" : "text-graphite hover:bg-surface-secondary"
+            }`}
+          >
+            {p.label}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
 // ── Main component ────────────────────────────────────────────────────────────
 
 export default function OverviewDirector({
@@ -337,6 +445,74 @@ export default function OverviewDirector({
   const totalFlags = allCases.reduce((s, c) => s + c.docFlags.length, 0);
   const highRiskCount = allCases.filter((c) => c.risk === "High risk").length;
 
+  // ── Snapshot: period-scoped KPIs (Month anchored to the live engine total) ──
+  const [period, setPeriod] = useState<Period>("month");
+  const snapshot = useMemo(() => snapshotFor(period, totalBenefitUsd), [period, totalBenefitUsd]);
+  const { from: periodFrom, to: periodTo } = rangeForPeriod(period, new Date());
+  const periodRangeLabel = fmtRange(periodFrom, periodTo);
+
+  // ── Progress report (period or custom range → PDF / Word .doc) ──
+  const [reportPeriod, setReportPeriod] = useState<Period | "custom">("month");
+  const [customFrom, setCustomFrom] = useState("");
+  const [customTo, setCustomTo] = useState("");
+
+  const buildReportData = (): ReportData => {
+    const now = new Date();
+    let periodLabel: string;
+    let rangeLabel: string;
+    let snap;
+    if (reportPeriod === "custom") {
+      const from = customFrom ? new Date(`${customFrom}T00:00:00`) : now;
+      const to = customTo ? new Date(`${customTo}T00:00:00`) : now;
+      periodLabel = "Custom range";
+      rangeLabel = fmtRange(from, to);
+      snap = snapshotFor("month", totalBenefitUsd);
+    } else {
+      const { from, to } = rangeForPeriod(reportPeriod, now);
+      periodLabel = PERIOD_LABEL[reportPeriod];
+      rangeLabel = fmtRange(from, to);
+      snap = snapshotFor(reportPeriod, totalBenefitUsd);
+    }
+    return {
+      periodLabel,
+      rangeLabel,
+      generatedAt: isoDate(now),
+      snapshot: snap,
+      phases: phaseDistribution.map((p) => ({ label: p.label, count: p.count })),
+      navigators: navigatorList.map(([name, cases]) => ({
+        name,
+        cases: cases.length,
+        flags: cases.reduce((s, c) => s + c.docFlags.length, 0),
+        risk: riskLabel(topRisk(cases)),
+        avgDays: NAV_AVG_DAYS[name] ?? null,
+      })),
+      totals: { cases: allCases.length, flags: totalFlags, benefitsUsd: totalBenefitUsd },
+    };
+  };
+
+  const downloadWordReport = () => {
+    const html = reportDocument(buildReportData(), { forWord: true });
+    const blob = new Blob(["﻿", html], { type: "application/msword" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `civica-progress-report-${reportPeriod}.doc`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  };
+
+  const openPdfReport = () => {
+    const w = window.open("", "_blank", "width=880,height=1000");
+    if (!w) {
+      alert("Couldn't open the report — allow pop-ups for this site, then try again.");
+      return;
+    }
+    w.document.write(reportDocument(buildReportData(), { forWord: false }));
+    w.document.close();
+  };
+
   const allExportRows = allCases.map((c) => [
     c.navigator ?? "Unassigned",
     c.caseId,
@@ -372,54 +548,146 @@ export default function OverviewDirector({
         </div>
       )}
 
-      {/* ── KPI strip — 4 stats + sparklines ── #1 #3 */}
-      <section aria-label="Impact at a glance">
+      {/* ── Snapshot — period-scoped KPIs with animated transitions ── #1 #3 */}
+      <section aria-label="Snapshot">
+        <div className="flex items-baseline justify-between gap-3 mb-3 flex-wrap">
+          <div className="flex items-baseline gap-2.5">
+            <p className="eyebrow">Snapshot</p>
+            <span className="text-[12px] text-graphite tabular-nums">{periodRangeLabel}</span>
+          </div>
+          <PeriodToggle value={period} onChange={setPeriod} idPrefix="snapshot" />
+        </div>
         <div className="flex items-stretch border border-hairline rounded-[2px] bg-surface overflow-hidden">
-          {/* Apps per navigator */}
+          {/* Applications */}
           <div className="flex-1 px-5 py-3.5 flex flex-col">
-            <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite">Avg apps / navigator / mo</p>
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite">Applications</p>
             <div className="flex items-baseline gap-2 mt-1.5">
-              <span className="text-[24px] font-semibold tabular-nums text-ink leading-none">23</span>
-              <span className="text-[12px] text-pine font-medium">vs 7 manual</span>
+              <AnimatedNumber value={snapshot.apps} format={fmtInt} className="text-[24px] font-semibold text-ink leading-none" />
+              <span className="text-[12px] text-graphite font-medium">submitted</span>
             </div>
             <TrendDelta {...TRENDS.appsPerNav} />
           </div>
-          {/* Error rate */}
+          {/* Households enrolled */}
           <div className="flex-1 px-5 py-3.5 border-l border-hairline flex flex-col">
-            <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite">Error rate (Civica cohort)</p>
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite">Households enrolled</p>
             <div className="flex items-baseline gap-2 mt-1.5">
-              <span className="text-[24px] font-semibold tabular-nums text-ink leading-none">4.2%</span>
-              <span className="text-[12px] text-pine font-medium">vs ~10.8% manual</span>
+              <AnimatedNumber value={snapshot.enrolled} format={fmtInt} className="text-[24px] font-semibold text-ink leading-none" />
+              <span className="text-[12px] text-graphite font-medium">approved</span>
             </div>
-            <TrendDelta {...TRENDS.errorRate} />
+            <span className="mt-1 text-[11px] text-muted">{PERIOD_LABEL[period]}</span>
           </div>
-          {/* Avg handoff */}
+          {/* Benefits secured — anchored to the live engine total on Month */}
           <div className="flex-1 px-5 py-3.5 border-l border-hairline flex flex-col">
-            <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite">Avg time to handoff</p>
-            <div className="flex items-baseline gap-2 mt-1.5">
-              <span className="text-[24px] font-semibold tabular-nums text-ink leading-none">6 days</span>
-              <span className="text-[12px] text-pine font-medium">vs ~22 days manual</span>
-            </div>
-            <TrendDelta {...TRENDS.daysHandoff} />
-          </div>
-          {/* Benefits enrolled — live from engine */}
-          <div className="flex-1 px-5 py-3.5 border-l border-hairline flex flex-col">
-            <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite">Benefits enrolled this month</p>
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite">Benefits secured</p>
             <div className="flex items-baseline gap-2 mt-1.5">
               {totalBenefitUsd > 0 ? (
-                <span className="text-[24px] font-semibold tabular-nums text-ink leading-none">
-                  {formatUsd(totalBenefitUsd)}/mo
-                </span>
+                <AnimatedNumber value={snapshot.benefitsUsd} format={fmtMoney} className="text-[24px] font-semibold text-ink leading-none" />
               ) : (
                 <span className="text-[18px] font-semibold text-muted">—</span>
               )}
             </div>
             {totalBenefitUsd > 0 && (
               <span className="mt-1 text-[11px] text-muted">
-                {enrolledWithBenefit} household{enrolledWithBenefit !== 1 ? "s" : ""} enrolled
+                {enrolledWithBenefit} household{enrolledWithBenefit !== 1 ? "s" : ""} · {PERIOD_LABEL[period].toLowerCase()}
               </span>
             )}
           </div>
+          {/* Error rate — period-scoped cohort figure */}
+          <div className="flex-1 px-5 py-3.5 border-l border-hairline flex flex-col">
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite">Error rate (Civica cohort)</p>
+            <div className="flex items-baseline gap-2 mt-1.5">
+              <AnimatedNumber value={snapshot.errorRate} format={fmtPct} className="text-[24px] font-semibold text-ink leading-none" />
+              <span className="text-[12px] text-pine font-medium">vs ~10.8% manual</span>
+            </div>
+            <TrendDelta {...TRENDS.errorRate} />
+          </div>
+          {/* Avg time to handoff */}
+          <div className="flex-1 px-5 py-3.5 border-l border-hairline flex flex-col">
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite">Avg time to handoff</p>
+            <div className="flex items-baseline gap-2 mt-1.5">
+              <AnimatedNumber value={snapshot.handoff} format={(n) => `${Math.round(n)} days`} className="text-[24px] font-semibold text-ink leading-none" />
+              <span className="text-[12px] text-pine font-medium">vs ~22 manual</span>
+            </div>
+            <TrendDelta {...TRENDS.daysHandoff} />
+          </div>
+        </div>
+
+        {/* ── Generate progress report (period or custom range → PDF / Word) ── */}
+        <div className="mt-3 rounded-[2px] border border-hairline bg-surface px-4 py-3">
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2.5">
+            <div className="flex items-baseline gap-2">
+              <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite">Generate progress report</p>
+            </div>
+            {/* Range selector: the five periods + Custom */}
+            <div role="tablist" aria-label="Report range" className="inline-flex items-center rounded-[2px] border border-hairline p-0.5">
+              {PERIODS.map((p) => {
+                const active = reportPeriod === p.key;
+                return (
+                  <button
+                    key={p.key}
+                    type="button"
+                    role="tab"
+                    aria-selected={active}
+                    onClick={() => setReportPeriod(p.key)}
+                    className={`rounded-[2px] px-2.5 py-1 text-[12px] font-semibold transition-colors ${active ? "bg-ink text-white" : "text-graphite hover:bg-surface-secondary"}`}
+                  >
+                    {p.label}
+                  </button>
+                );
+              })}
+              <button
+                type="button"
+                role="tab"
+                aria-selected={reportPeriod === "custom"}
+                onClick={() => setReportPeriod("custom")}
+                className={`rounded-[2px] px-2.5 py-1 text-[12px] font-semibold transition-colors ${reportPeriod === "custom" ? "bg-ink text-white" : "text-graphite hover:bg-surface-secondary"}`}
+              >
+                Custom
+              </button>
+            </div>
+
+            {reportPeriod === "custom" && (
+              <div className="flex items-center gap-2 text-[12px] text-graphite">
+                <input
+                  type="date"
+                  value={customFrom}
+                  max={customTo || undefined}
+                  onChange={(e) => setCustomFrom(e.target.value)}
+                  aria-label="Report start date"
+                  className="rounded-[2px] border border-hairline bg-surface px-2 py-1 text-ink focus:border-pine focus:outline-none"
+                />
+                <span aria-hidden="true">–</span>
+                <input
+                  type="date"
+                  value={customTo}
+                  min={customFrom || undefined}
+                  onChange={(e) => setCustomTo(e.target.value)}
+                  aria-label="Report end date"
+                  className="rounded-[2px] border border-hairline bg-surface px-2 py-1 text-ink focus:border-pine focus:outline-none"
+                />
+              </div>
+            )}
+
+            <div className="flex items-center gap-2 ml-auto">
+              <button
+                type="button"
+                onClick={openPdfReport}
+                className="inline-flex items-center gap-1.5 rounded-[2px] bg-pine px-3 py-1.5 text-[12px] font-semibold text-white hover:bg-pine-pressed"
+              >
+                Download PDF
+              </button>
+              <button
+                type="button"
+                onClick={downloadWordReport}
+                className="inline-flex items-center gap-1.5 rounded-[2px] border border-hairline bg-surface px-3 py-1.5 text-[12px] font-semibold text-ink hover:bg-paper"
+              >
+                Download Word
+              </button>
+            </div>
+          </div>
+          <p className="mt-2 text-[11px] text-muted">
+            Exports the snapshot, caseload-by-phase, and navigator roster for the selected range. Benefit + error-rate figures are engine-computed; volume counts in this preview are synthetic.
+          </p>
         </div>
       </section>
 
