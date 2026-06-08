@@ -869,16 +869,11 @@ function CaseRow({
                   const scan = eligibilityScan(app);
                   return (
                     <>
-                      <div className="flex items-center gap-2">
-                        <span className={`inline-block rounded-[2px] px-2 py-0.5 text-[12px] font-semibold uppercase tracking-wider ${ELIG_CHIP[scan.tone]}`}>
-                          {scan.label}
-                        </span>
-                        <span className="text-[11px] uppercase tracking-wider text-graphite">provisional</span>
-                      </div>
+                      <span className={`inline-block rounded-[2px] px-2 py-0.5 text-[12px] font-semibold uppercase tracking-wider ${ELIG_CHIP[scan.tone]}`}>
+                        {scan.label}
+                      </span>
                       <p className="text-[12px] text-ink mt-1.5 leading-snug">{scan.note}</p>
-                      <p className="text-[11px] text-graphite mt-1">
-                        Pending <span className="font-semibold tabular-nums">{app.verificationNeeds.length}</span> verification item(s). Not a determination.
-                      </p>
+                      <p className="text-[11px] text-graphite mt-1">Not a determination.</p>
                     </>
                   );
                 })()}
@@ -901,7 +896,7 @@ function CaseRow({
 
               {/* 2 — Benefit amount (the number + the math). Always the engine
                   estimate — never the county's actual award, even when enrolled. */}
-              <EngineBlock title="Benefit amount" tag="estimate">
+              <EngineBlock title="Benefit amount" tag="provisional">
                 {app.estimatedBenefitUsd !== null ? (
                   <>
                     <p className="text-[11px] uppercase tracking-wider text-graphite">Estimated monthly benefit</p>
@@ -948,46 +943,46 @@ function CaseRow({
                   finds any; otherwise the verification steps that move the case
                   to a determination (the genuine "good next" for a provisional
                   case, per the 273.2(f) hierarchy). */}
-              <EngineBlock
-                title="Recommended next steps"
-                tag={app.recommendations.length > 0 ? "Component R" : "verification · 273.2(f)"}
-              >
-                {app.recommendations.length > 0 ? (
-                  <ul className="space-y-1.5">
-                    {app.recommendations.slice(0, 4).map((r) => (
-                      <li key={r.rank} className="text-[12px] leading-snug">
-                        <button
-                          type="button"
-                          onClick={() => scrollToCaseSection(app.id, needToSection(r.action))}
-                          className="text-left text-pine hover:underline"
-                        >
-                          ↳ {r.action}
-                          {r.deltaUsd > 0 && <span className="font-semibold tabular-nums"> (+{formatUsd(r.deltaUsd)}/mo)</span>}
-                        </button>
-                        {r.citation && <span className="block text-[11px] text-graphite">{r.citation}</span>}
-                      </li>
-                    ))}
-                  </ul>
-                ) : app.verificationNeeds.length > 0 ? (
-                  <ul className="space-y-1.5">
-                    {app.verificationNeeds.slice(0, 6).map((v) => (
-                      <li key={v} className="text-[12px] leading-snug">
-                        <button
-                          type="button"
-                          onClick={() => scrollToCaseSection(app.id, needToSection(v))}
-                          className="text-left text-pine hover:underline"
-                        >
-                          ↳ Confirm {v.charAt(0).toLowerCase() + v.slice(1)}
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p className="text-[12px] text-muted">Nothing outstanding to confirm.</p>
-                )}
-                {(app.recommendations.length > 0 || app.verificationNeeds.length > 0) && (
-                  <p className="text-[11px] text-graphite mt-1.5 leading-snug">Click an item to jump to it in the application above.</p>
-                )}
+              <EngineBlock title="Recommended next steps" tag="provisional">
+                {(() => {
+                  const hasRecs = app.recommendations.length > 0;
+                  const count = hasRecs ? app.recommendations.length : app.verificationNeeds.length;
+                  if (count === 0) return <p className="text-[12px] text-muted">Nothing outstanding to confirm.</p>;
+                  return (
+                    <>
+                      <p className="text-[20px] font-semibold tabular-nums text-ink leading-tight">
+                        {count}
+                        <span className="text-[12px] font-normal text-graphite"> {hasRecs ? (count === 1 ? "way to raise the benefit" : "ways to raise the benefit") : "to confirm"}</span>
+                      </p>
+                      <ul className="mt-1.5 space-y-1">
+                        {hasRecs
+                          ? app.recommendations.slice(0, 4).map((r) => (
+                              <li key={r.rank} className="text-[12px] leading-snug">
+                                <button
+                                  type="button"
+                                  onClick={() => scrollToCaseSection(app.id, needToSection(r.action))}
+                                  className="text-left text-pine hover:underline"
+                                >
+                                  {r.action}
+                                  {r.deltaUsd > 0 && <span className="font-semibold tabular-nums"> (+{formatUsd(r.deltaUsd)}/mo)</span>}
+                                </button>
+                              </li>
+                            ))
+                          : app.verificationNeeds.slice(0, 6).map((v) => (
+                              <li key={v} className="text-[12px] leading-snug">
+                                <button
+                                  type="button"
+                                  onClick={() => scrollToCaseSection(app.id, needToSection(v))}
+                                  className="text-left text-pine hover:underline"
+                                >
+                                  Confirm {v.charAt(0).toLowerCase() + v.slice(1)}
+                                </button>
+                              </li>
+                            ))}
+                      </ul>
+                    </>
+                  );
+                })()}
                 <button
                   type="button"
                   onClick={askMae}
