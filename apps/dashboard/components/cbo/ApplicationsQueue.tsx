@@ -11,6 +11,7 @@ import {
   type SurveyAnswer,
   type Risk,
   type Phase,
+  type InterviewStatus,
 } from "../../lib/cbo/demo-pipeline";
 import TableExport from "./TableExport";
 import { EVALUATION_GATES, deductionRows, deductionOneLine } from "../../lib/cbo/engine-view";
@@ -61,6 +62,51 @@ function Funnel({ phases }: { phases: PhaseGroup[] }) {
           )}
         </div>
       ))}
+    </div>
+  );
+}
+
+// Caseload-level timeliness summary — the director's at-a-glance read across the
+// whole queue: how many interviews are booked vs. missed, and how many cases are
+// up against (or past) the §273.2 processing wire. Procedural risk, not score.
+function SummaryStat({ n, label, tone }: { n: number; label: string; tone: "ink" | "warn" | "brick" }) {
+  return (
+    <span className="inline-flex items-baseline gap-1.5">
+      <span className={`text-[15px] font-semibold tabular-nums leading-none ${tone === "brick" ? "text-brick" : tone === "warn" ? "text-warning" : "text-ink"}`}>{n}</span>
+      <span className="text-[11px] text-graphite">{label}</span>
+    </span>
+  );
+}
+
+function TimelinessSummary({ cases }: { cases: QueueApplication[] }) {
+  let scheduled = 0;
+  let missed = 0;
+  let completed = 0;
+  let overdue = 0;
+  let dueSoon = 0;
+  let curing = 0;
+  for (const c of cases) {
+    if (c.interview.status === "scheduled") scheduled++;
+    else if (c.interview.status === "missed") missed++;
+    else if (c.interview.status === "completed") completed++;
+    const clk = processingClock(c);
+    if (clk) {
+      if (clk.left < 0) overdue++;
+      else if (clk.left <= 3) dueSoon++;
+    }
+    if (c.cureDaysLeft != null) curing++;
+  }
+
+  return (
+    <div className="flex flex-wrap items-center gap-x-5 gap-y-2 rounded-[2px] border border-hairline bg-surface px-4 py-2.5">
+      <span className="text-[11px] font-semibold uppercase tracking-wider text-graphite">This week</span>
+      <SummaryStat n={scheduled} label="interviews scheduled" tone="ink" />
+      <SummaryStat n={missed} label="missed" tone={missed > 0 ? "brick" : "ink"} />
+      <SummaryStat n={completed} label="completed" tone="ink" />
+      <span className="h-3 w-px bg-hairline" aria-hidden="true" />
+      <SummaryStat n={overdue} label="past the 273.2 wire" tone={overdue > 0 ? "brick" : "ink"} />
+      <SummaryStat n={dueSoon} label="due ≤3 days" tone={dueSoon > 0 ? "warn" : "ink"} />
+      <SummaryStat n={curing} label="curing verification" tone={curing > 0 ? "warn" : "ink"} />
     </div>
   );
 }
@@ -121,6 +167,107 @@ function optionsFor(question: string, current: string): string[] | null {
   const opts = FIELD_OPTIONS[question];
   if (!opts) return null;
   return opts.includes(current) ? opts : [current, ...opts];
+}
+
+// Which application response fields each document corroborates. Drives the
+// per-document "verifies …" disclosure + the green "supported" cue in the
+// Documents section.
+const DOC_VERIFIES: Record<string, string[]> = {
+  "Photo ID": ["Applicant name", "Date of birth", "Identity"],
+  "Proof of income": ["Gross monthly income", "Employment status", "Pay frequency"],
+  "Proof of residence": ["County", "Monthly rent", "Residency"],
+  "Social Security Number": ["SSN", "Identity match (SSA)"],
+};
+const docIsPresent = (answer: string) => !/not (yet uploaded|provided)/i.test(answer);
+
+// At-a-glance eligibility triage for outreach — derived from the engine's
+// computed estimate, NOT a determination. >$0 → likely eligible (passes the
+// income/calc tests under the stated assumptions); $0 → likely ineligible;
+// null → can't compute yet (incomplete).
+type EligScan = { label: string; tone: "eligible" | "ineligible" | "incomplete"; note: string };
+function eligibilityScan(app: QueueApplication): EligScan {
+  if (app.estimatedBenefitUsd == null)
+    return { label: "Incomplete", tone: "incomplete", note: "Not enough confirmed to estimate — complete the items below." };
+  if (app.estimatedBenefitUsd > 0)
+    return {
+      label: "Likely eligible",
+      tone: "eligible",
+      note: `Passes the income + benefit tests under the stated assumptions (~${formatUsd(app.estimatedBenefitUsd)}/mo). Provisional — confirm the items at right.`,
+    };
+  return { label: "Likely ineligible", tone: "ineligible", note: "Computes to $0 under the stated assumptions — likely over the income limit. Provisional." };
+}
+const ELIG_CHIP: Record<EligScan["tone"], string> = {
+  eligible: "bg-pine-surface text-ink",
+  ineligible: "bg-brick/10 text-brick",
+  incomplete: "bg-surface-secondary text-graphite",
+};
+
+// ── Regulatory clocks (§273.2) ────────────────────────────────────────────────
+// The three statutory timers a navigator actually triages on: the 30-day (7 for
+// expedited) processing clock, the eligibility-interview gate, and the ~10-day
+// verification "cure" window. These dominate triage order more than risk score —
+// ~2/3 of CA denials are procedural (missed interview / un-cured verification),
+// not substantive ineligibility.
+
+type ClockTone = "ok" | "warn" | "overdue";
+const CLOCK_TONE_BOX: Record<ClockTone, string> = {
+  ok: "bg-pine-surface text-ink",
+  warn: "bg-warning/12 text-warning",
+  overdue: "bg-brick/10 text-brick",
+};
+// The §273.2 processing clock for an in-flight application. Null once decided
+// (enrolled / recert) — the clock only runs while the county owes a decision.
+type ProcessingClock = { day: number; limit: number; left: number; tone: ClockTone; label: string; sub: string };
+function processingClock(app: QueueApplication): ProcessingClock | null {
+  if (app.processingDay == null) return null;
+  const day = app.processingDay;
+  const limit = app.processingLimit;
+  const left = limit - day;
+  const tone: ClockTone = left < 0 ? "overdue" : left <= 3 ? "warn" : "ok";
+  return {
+    day,
+    limit,
+    left,
+    tone,
+    label: left < 0 ? `Day ${day} of ${limit} · overdue` : `Day ${day} of ${limit}`,
+    sub:
+      limit === 7
+        ? "Expedited service · 7 CFR 273.2(i)"
+        : "Application processing · 7 CFR 273.2(g)",
+  };
+}
+
+// Eligibility-interview gate (7 CFR 273.2(e)). A missed interview is the single
+// biggest procedural-denial driver, so it surfaces as its own actionable state.
+const INTERVIEW_META: Record<InterviewStatus, { label: string; tone: ClockTone; box: string }> = {
+  none: { label: "Not yet scheduled", tone: "warn", box: "bg-surface-secondary text-graphite" },
+  scheduled: { label: "Scheduled", tone: "ok", box: "bg-pine-surface text-ink" },
+  missed: { label: "Missed — reschedule", tone: "overdue", box: "bg-brick/10 text-brick" },
+  completed: { label: "Completed", tone: "ok", box: "bg-pine-surface text-ink" },
+};
+
+// Map an engine verification item / recommendation to the application section it
+// concerns, so a click can jump the reviewer to it.
+const sectionDomId = (caseId: string, section: string) =>
+  `cbo-sec-${caseId}-${section.replace(/[^a-z0-9]+/gi, "-").toLowerCase()}`;
+function needToSection(text: string): string {
+  const t = text.toLowerCase();
+  if (/asset|resource|liquid/.test(t)) return "Resources";
+  if (/document|proof|photo|ssn|social security/.test(t)) return "Documents";
+  if (/shelter|rent|utilit|expense|medical|dependent|child support/.test(t)) return "Expenses & deductions";
+  if (/income|employ|pay|cash.?aid|tanf|ssi|wage/.test(t)) return "Income & employment";
+  if (/citizen|immigration|age|household|child|member/.test(t)) return "Your household";
+  return "About you";
+}
+function scrollToCaseSection(caseId: string, section: string): void {
+  if (typeof document === "undefined") return;
+  const el = document.getElementById(sectionDomId(caseId, section));
+  if (!el) return;
+  el.scrollIntoView({ behavior: "smooth", block: "center" });
+  el.style.outline = "2px solid var(--color-pine)";
+  el.style.outlineOffset = "2px";
+  el.style.transition = "outline-color 250ms";
+  window.setTimeout(() => { el.style.outline = "2px solid transparent"; }, 1400);
 }
 
 // ── Case actions (ephemeral demo) ─────────────────────────────────────────────
@@ -283,13 +430,120 @@ function buildVerification(app: QueueApplication): VCheck[] {
   ];
 }
 
+// Open ONE case as a clean, print-friendly page in a new tab — the full
+// application + engine summary + verification + activity, formatted as a
+// document with a "Print / Save as PDF" button (no auto-print). Client-side
+// window.write so it works on the synthetic preview with no real packet route.
+function openFullApplication(app: CaseRecord): void {
+  const w = window.open("", "_blank", "width=820,height=1000");
+  if (!w) {
+    alert("Couldn't open the application — allow pop-ups for this site, then try again.");
+    return;
+  }
+  const esc = (s: unknown) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+  // Group answers by section (consecutive), like the in-app table.
+  const sections: { section: string; items: SurveyAnswer[] }[] = [];
+  for (const a of app.answers) {
+    const last = sections[sections.length - 1];
+    if (last && last.section === a.section) last.items.push(a);
+    else sections.push({ section: a.section, items: [a] });
+  }
+  const responsesHtml = sections
+    .map(
+      (g) => `<h2>${esc(g.section)}</h2><table class="kv"><tbody>${g.items
+        .map(
+          (a) =>
+            `<tr><th>${esc(a.question)}</th><td class="${a.flagged ? "flag" : ""}">${esc(a.answer)}${a.flagged ? " &#9873;" : ""}</td></tr>`,
+        )
+        .join("")}</tbody></table>`,
+    )
+    .join("");
+
+  const gatesHtml = EVALUATION_GATES.map(
+    (gt, i) => `<li><span class="n">${i + 1}</span> ${esc(gt.label)} <span class="cite">${esc(gt.citation)}</span></li>`,
+  ).join("");
+
+  const nextSteps = app.recommendations.length
+    ? app.recommendations.slice(0, 5).map((r) => `<li>${esc(r.action)}</li>`).join("")
+    : app.verificationNeeds.slice(0, 6).map((v) => `<li>Confirm ${esc(v.charAt(0).toLowerCase() + v.slice(1))}</li>`).join("");
+
+  const checksHtml = buildVerification(app)
+    .map((c) => `<li>${c.ok ? "&#10003;" : "&#9888;"} <b>${esc(c.label)}</b> — ${esc(c.note)}${c.ok ? "" : " (needs check)"}</li>`)
+    .join("");
+
+  const activityHtml = app.activity
+    .map(
+      (e, i) =>
+        `<tr><td>${i + 1}</td><td class="ts">${esc(e.ts)}</td><td>${esc(e.actor)}</td><td>${esc(e.action)}</td></tr>`,
+    )
+    .join("");
+
+  const benefit = app.estimatedBenefitUsd != null ? `approx. ~${formatUsd(app.estimatedBenefitUsd)}/mo` : "no estimate";
+  const mathLine = app.deduction ? `<p class="math">${esc(deductionOneLine(app.deduction))}</p>` : "";
+
+  w.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>${esc(app.caseId)} — ${esc(app.name)}</title>
+<style>
+  * { box-sizing: border-box; }
+  body { font: 13px -apple-system, system-ui, sans-serif; color: #15181C; margin: 40px; max-width: 720px; }
+  h1 { font-size: 18px; margin: 0 0 2px; }
+  .meta { font-size: 12px; color: #565E68; margin: 0 0 6px; }
+  .pill { display:inline-block; font:600 10px sans-serif; text-transform:uppercase; letter-spacing:.06em; color:#B5511E; border:1px solid #B5511E; border-radius:2px; padding:1px 6px; }
+  h2 { font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: #565E68; margin: 20px 0 6px; border-bottom: 1px solid rgba(15,23,42,.14); padding-bottom: 4px; }
+  table.kv { width: 100%; border-collapse: collapse; margin-bottom: 4px; }
+  table.kv th { text-align: left; font-weight: 400; color: #3C424B; width: 42%; padding: 4px 8px; vertical-align: top; border-bottom: 1px solid rgba(15,23,42,.08); }
+  table.kv td { padding: 4px 8px; font-weight: 500; vertical-align: top; border-bottom: 1px solid rgba(15,23,42,.08); }
+  td.flag { color: #9C3A24; font-weight: 600; }
+  .est { font-size: 16px; font-weight: 700; }
+  .math { font-size: 12px; color: #3C424B; margin: 4px 0 0; }
+  ol.gates { list-style: none; padding: 0; margin: 4px 0; font-size: 12px; }
+  ol.gates li { padding: 2px 0; } ol.gates .n { color: #565E68; display:inline-block; width: 16px; } ol.gates .cite { color: #565E68; font-size: 11px; }
+  ul.plain { margin: 4px 0; padding-left: 18px; font-size: 12px; } ul.plain li { padding: 1px 0; }
+  ul.checks { list-style: none; padding: 0; margin: 4px 0; font-size: 12px; } ul.checks li { padding: 2px 0; }
+  table.log { width: 100%; border-collapse: collapse; font-size: 11px; margin-top: 4px; }
+  table.log td { padding: 4px 8px; border-bottom: 1px solid rgba(15,23,42,.10); vertical-align: top; } table.log td.ts { white-space: nowrap; color: #565E68; }
+  .disc { font-size: 11px; color: #565E68; margin-top: 22px; line-height: 1.5; border-top: 1px solid rgba(15,23,42,.14); padding-top: 10px; }
+  .bar { display: flex; justify-content: flex-end; margin: 0 0 18px; }
+  .bar button { font: 600 12px -apple-system, system-ui, sans-serif; color: #fff; background: #2D5A45; border: 0; border-radius: 3px; padding: 7px 14px; cursor: pointer; }
+  @media print { body { margin: 0; } .bar { display: none; } @page { margin: 16mm; } }
+</style></head><body>
+  <div class="bar"><button onclick="window.print()">Print / Save as PDF</button></div>
+  <h1>${esc(app.name)} — ${esc(app.caseId)}</h1>
+  <p class="meta">${esc(app.county)} County, CA · ${esc(app.stage)} · assigned to ${esc(app.assignedTo)}${app.expedited ? ' · <span class="pill">Expedited</span>' : ""}</p>
+  <p class="meta">Generated ${esc(new Date().toISOString().slice(0, 10))} · Civica CBO preview</p>
+
+  <h2>Application responses</h2>
+  ${responsesHtml}
+
+  <h2>Civica engine — benefit estimate</h2>
+  <p class="est">${esc(benefit)}</p>
+  ${mathLine}
+
+  <h2>Eligibility gates (provisional · pending ${app.verificationNeeds.length} item(s))</h2>
+  <ol class="gates">${gatesHtml}</ol>
+
+  <h2>Recommended next steps</h2>
+  <ul class="plain">${nextSteps || "<li>No outstanding actions.</li>"}</ul>
+
+  <h2>Automated verification</h2>
+  <ul class="checks">${checksHtml}</ul>
+
+  <h2>Activity log (${app.activity.length})</h2>
+  <table class="log"><tbody>${activityHtml}</tbody></table>
+
+  <p class="disc">Estimate + recommendations are live engine output on these answers; eligibility is provisional until the verification items are confirmed — an estimate, not a determination. Verify against current CalFresh / CDSS rules and the county system of record.</p>
+<\/body><\/html>`);
+  w.document.close();
+}
+
 // Full application responses for the expanded case. Renders the complete intake
 // as a per-section ruled table (Field | Response). Editing is a single batch
 // mode: "Edit responses" unlocks every field at once (fixed-option fields as a
 // dropdown, others as text); "Save changes" commits the diff.
 function AnswerList({
-  answers, edited, onEdit, onSave,
+  caseId, answers, edited, onEdit, onSave,
 }: {
+  caseId: string;
   answers: SurveyAnswer[];
   edited: Record<string, string>;
   onEdit: (question: string, value: string) => void;
@@ -298,6 +552,14 @@ function AnswerList({
   const [editing, setEditing] = useState(false);
   const [drafts, setDrafts] = useState<Record<string, string>>({});
   const [viewDoc, setViewDoc] = useState<string | null>(null);
+  const [openDocs, setOpenDocs] = useState<Set<string>>(new Set());
+  const toggleDoc = (q: string) =>
+    setOpenDocs((s) => {
+      const n = new Set(s);
+      if (n.has(q)) n.delete(q);
+      else n.add(q);
+      return n;
+    });
 
   const current = (a: SurveyAnswer) => edited[a.question] ?? a.answer;
 
@@ -376,7 +638,12 @@ function AnswerList({
           Laid out two-up to keep label adjacent to its value. */}
       <div className="grid md:grid-cols-2 gap-3 items-start">
         {sections.map((group) => (
-          <div key={group.section} className="border border-hairline rounded-[2px] overflow-hidden bg-surface">
+          <div
+            key={group.section}
+            id={sectionDomId(caseId, group.section)}
+            className="border border-hairline rounded-[2px] overflow-hidden bg-surface"
+            style={{ outline: "2px solid transparent", outlineOffset: 2 }}
+          >
             <div className="px-3 py-2 border-b border-hairline">
               <p className="text-[11px] font-semibold uppercase tracking-wider text-ink">{group.section}</p>
             </div>
@@ -417,24 +684,70 @@ function AnswerList({
                             );
                           })()
                         ) : (
-                          <span
-                            className={`font-medium leading-snug break-words ${
-                              a.flagged && !wasEdited ? "text-brick" : "text-ink"
-                            }`}
-                          >
-                            {current(a)}
-                            {a.flagged && !wasEdited && <span className="ml-1 text-[11px]" aria-label="flagged">⚑</span>}
-                            {wasEdited && <span className="ml-1 text-[10px] uppercase tracking-wider text-graphite">· edited</span>}
-                            {a.section === "Documents" && !/not (yet uploaded|provided)/i.test(current(a)) && (
-                              <button
-                                type="button"
-                                onClick={() => setViewDoc(a.question)}
-                                className="ml-2 text-[11px] font-medium text-pine hover:underline"
-                              >
-                                View
-                              </button>
+                          <>
+                            <span
+                              className={`font-medium leading-snug break-words ${
+                                a.flagged && !wasEdited ? "text-brick" : "text-ink"
+                              }`}
+                            >
+                              {current(a)}
+                              {a.flagged && !wasEdited && <span className="ml-1 text-[11px]" aria-label="flagged">⚑</span>}
+                              {wasEdited && <span className="ml-1 text-[10px] uppercase tracking-wider text-graphite">· edited</span>}
+                              {a.section === "Documents" && docIsPresent(current(a)) && (
+                                <button
+                                  type="button"
+                                  onClick={() => setViewDoc(a.question)}
+                                  className="ml-2 text-[11px] font-medium text-pine hover:underline"
+                                >
+                                  View
+                                </button>
+                              )}
+                            </span>
+
+                            {/* Stronger gate for SSN — explicit SSA-match status (7 CFR 273.6). */}
+                            {a.question === "Social Security Number" && (
+                              /does not match|mismatch|not provided/i.test(current(a)) ? (
+                                <p className="mt-1 flex items-start gap-1 text-[11px] font-semibold text-brick leading-snug">
+                                  <span aria-hidden="true">⛔</span> SSA match failed — must clear before submission (7 CFR 273.6)
+                                </p>
+                              ) : (
+                                <p className="mt-1 flex items-center gap-1 text-[11px] text-pine">
+                                  <span aria-hidden="true">✓</span> Verified against SSA records
+                                </p>
+                              )
                             )}
-                          </span>
+
+                            {/* Per-document disclosure: which response fields it corroborates. */}
+                            {a.section === "Documents" && DOC_VERIFIES[a.question] && (() => {
+                              const present = docIsPresent(current(a));
+                              const fields = DOC_VERIFIES[a.question];
+                              const isOpen = openDocs.has(a.question);
+                              return (
+                                <div className="mt-1">
+                                  <button
+                                    type="button"
+                                    onClick={() => toggleDoc(a.question)}
+                                    aria-expanded={isOpen}
+                                    className={`inline-flex items-center gap-1 text-[11px] ${present ? "text-pine" : "text-graphite hover:text-ink"}`}
+                                  >
+                                    <span aria-hidden="true">{present ? "✓" : "○"}</span>
+                                    {present ? "Verifies" : "Would verify"} {fields.length} field{fields.length > 1 ? "s" : ""}
+                                    <span aria-hidden="true" className="text-graphite">{isOpen ? "▴" : "▾"}</span>
+                                  </button>
+                                  {isOpen && (
+                                    <ul className="mt-1 ml-1 space-y-0.5">
+                                      {fields.map((f) => (
+                                        <li key={f} className="flex items-baseline gap-1.5 text-[11px]">
+                                          <span aria-hidden="true" className={present ? "text-pine" : "text-graphite/40"}>{present ? "✓" : "○"}</span>
+                                          <span className={present ? "text-ink" : "text-graphite"}>{f}</span>
+                                        </li>
+                                      ))}
+                                    </ul>
+                                  )}
+                                </div>
+                              );
+                            })()}
+                          </>
                         )}
                       </td>
                     </tr>
@@ -471,11 +784,11 @@ function AnswerList({
             <div className="p-4">
               <div className="flex aspect-[4/3] w-full items-center justify-center rounded-[2px] border border-dashed border-hairline bg-surface-secondary px-4 text-center">
                 <span className="text-[12px] leading-relaxed text-graphite">
-                  Synthetic demo document
+                  Document preview
                   <br />
                   <span className="text-ink font-medium">{viewDoc}</span>
                   <br />
-                  No real applicant file in the preview.
+                  Open the full application to view the file.
                 </span>
               </div>
             </div>
@@ -488,6 +801,32 @@ function AnswerList({
 
 // One of the three engine panels in the expanded case view: a titled, tagged
 // card with a consistent grammar (result → trace → provenance tag).
+// Consistent colored "result box" that leads each of the three engine cards, so
+// a layperson reads verdict / dollars / action items with the same grammar:
+// pine = likely eligible, amber = the benefit (a positive outcome), blue = the
+// call-to-action count. (Amber is reserved for positive outcomes per DESIGN.md.)
+function ResultLede({
+  box,
+  kicker,
+  value,
+  unit,
+}: {
+  box: string;
+  kicker: string;
+  value: React.ReactNode;
+  unit?: string;
+}) {
+  return (
+    <div className={`rounded-[3px] px-2.5 py-1.5 ${box}`}>
+      <p className="text-[10px] uppercase tracking-wider opacity-80">{kicker}</p>
+      <p className="text-[18px] font-semibold tabular-nums leading-tight mt-0.5">
+        {value}
+        {unit && <span className="text-[12px] font-normal opacity-80">{unit}</span>}
+      </p>
+    </div>
+  );
+}
+
 function EngineBlock({ title, tag, children }: { title: string; tag: string; children: React.ReactNode }) {
   return (
     <div className="bg-surface border border-hairline rounded-[2px] p-3">
@@ -500,8 +839,105 @@ function EngineBlock({ title, tag, children }: { title: string; tag: string; chi
   );
 }
 
+// Per-case timeliness rail — the three §273.2 clocks side by side, surfaced at
+// the top of the expanded case (above the responses) because they set triage
+// priority. Interview offers inline actions (reminder / call / practice flag),
+// each logged to the chain of custody.
+function TimelinessBanner({
+  app,
+  onAction,
+}: {
+  app: CaseRecord;
+  onAction: (action: string) => void;
+}) {
+  const clock = processingClock(app);
+  const iv = INTERVIEW_META[app.interview.status];
+  const cure = app.cureDaysLeft;
+  const cureTone: ClockTone = cure == null ? "ok" : cure <= 1 ? "overdue" : cure <= 3 ? "warn" : "warn";
+  // Only render for cases where at least one clock is live.
+  if (!clock && app.interview.status === "none" && cure == null) return null;
+
+  const showInterviewActions = app.interview.status === "missed" || app.interview.status === "scheduled" || app.interview.status === "none";
+
+  return (
+    <div className="rounded-[2px] border border-hairline bg-surface px-3 py-2.5">
+      <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite mb-2">Timeliness · 7 CFR 273.2</p>
+      <div className="grid gap-2.5 sm:grid-cols-3">
+        {/* Processing clock — the day-of-N statutory wire. */}
+        <div className={`rounded-[2px] px-2.5 py-1.5 ${clock ? CLOCK_TONE_BOX[clock.tone] : "bg-surface-secondary text-graphite"}`}>
+          <p className="text-[10px] uppercase tracking-wider opacity-80">Processing clock</p>
+          {clock ? (
+            <>
+              <p className="text-[15px] font-semibold tabular-nums leading-tight mt-0.5">{clock.label}</p>
+              <p className="text-[10px] opacity-80 leading-snug mt-0.5">
+                {clock.tone === "overdue"
+                  ? `${-clock.left}d past the limit · ${clock.sub}`
+                  : `${clock.left}d left · ${clock.sub}`}
+              </p>
+            </>
+          ) : (
+            <p className="text-[13px] font-medium leading-tight mt-0.5">No clock running</p>
+          )}
+        </div>
+
+        {/* Interview gate. */}
+        <div className={`rounded-[2px] px-2.5 py-1.5 ${iv.box}`}>
+          <p className="text-[10px] uppercase tracking-wider opacity-80">Interview · 273.2(e)</p>
+          <p className="text-[13px] font-semibold leading-tight mt-0.5">{iv.label}</p>
+          <p className="text-[10px] opacity-80 leading-snug mt-0.5">
+            {app.interview.date ? `${app.interview.status === "completed" ? "Held" : app.interview.status === "missed" ? "Was set for" : "Set for"} ${app.interview.date}` : "CF-296 not yet booked"}
+          </p>
+        </div>
+
+        {/* Verification cure clock. */}
+        <div className={`rounded-[2px] px-2.5 py-1.5 ${cure == null ? "bg-surface-secondary text-graphite" : CLOCK_TONE_BOX[cureTone]}`}>
+          <p className="text-[10px] uppercase tracking-wider opacity-80">Cure clock · 273.2(h)</p>
+          {cure == null ? (
+            <p className="text-[13px] font-medium leading-tight mt-0.5">Nothing pending</p>
+          ) : (
+            <>
+              <p className="text-[15px] font-semibold tabular-nums leading-tight mt-0.5">{cure}d to cure</p>
+              <p className="text-[10px] opacity-80 leading-snug mt-0.5">Chasing: {app.assignedTo}</p>
+            </>
+          )}
+        </div>
+      </div>
+
+      {/* Interview actions — only where an interview still needs work. */}
+      {showInterviewActions && (
+        <div className="flex flex-wrap items-center gap-2 mt-2.5">
+          {app.interview.status === "missed" && (
+            <span className="text-[11px] font-semibold text-brick mr-1">Missed interview — recover before the county denies (273.2(e)):</span>
+          )}
+          <button
+            type="button"
+            onClick={() => onAction(`Sent interview reminder to applicant${app.interview.date ? ` (CF-296 set for ${app.interview.date})` : ""}`)}
+            className="rounded-[2px] border border-hairline bg-surface px-2.5 py-1 text-[11px] font-medium text-ink hover:bg-paper"
+          >
+            Send reminder
+          </button>
+          <button
+            type="button"
+            onClick={() => onAction("Placed outreach call to applicant about the eligibility interview")}
+            className="rounded-[2px] border border-hairline bg-surface px-2.5 py-1 text-[11px] font-medium text-ink hover:bg-paper"
+          >
+            Call applicant
+          </button>
+          <button
+            type="button"
+            onClick={() => onAction("Flagged applicant for the interview-practice tool (mock CalFresh interview)")}
+            className="rounded-[2px] border border-hairline bg-surface px-2.5 py-1 text-[11px] font-medium text-ink hover:bg-paper"
+          >
+            Flag for interview practice
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
 function CaseRow({
-  app, border, onAdvance, onTransfer, onComment, onEditLog, onTogglePin,
+  app, border, onAdvance, onTransfer, onComment, onEditLog, onTogglePin, onLogAction,
 }: {
   app: CaseRecord;
   border: boolean;
@@ -510,6 +946,7 @@ function CaseRow({
   onComment: (text: string) => void;
   onEditLog: (changes: { question: string; from: string; to: string }[]) => void;
   onTogglePin: () => void;
+  onLogAction: (action: string) => void;
 }) {
   const [open, setOpen] = useState(false);
   const [edited, setEdited] = useState<Record<string, string>>({});
@@ -523,6 +960,7 @@ function CaseRow({
   const next = nextPhase(app.phase);
   const checks = buildVerification(app);
   const checksClear = checks.filter((c) => c.ok).length;
+  const clock = processingClock(app);
 
   // Open Mae with an empty composer — the caseworker types their own question.
   // (No auto-generated prefill; MaeChat listens for this event to open.)
@@ -549,11 +987,11 @@ function CaseRow({
             if (e.key === "Enter" || e.key === " ") { e.preventDefault(); e.stopPropagation(); onTogglePin(); }
           }}
           className={`shrink-0 w-4 flex items-center justify-center cursor-pointer ${
-            app.pinned ? "text-ink" : "text-graphite/40 hover:text-graphite"
+            app.pinned ? "text-amber" : "text-graphite/25 hover:text-graphite/60"
           }`}
         >
-          <svg width="12" height="12" viewBox="0 0 24 24" fill={app.pinned ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2" strokeLinejoin="round">
-            <path d="M12 2.5l2.9 6.1 6.6.6-5 4.4 1.5 6.5L12 17.9 5.5 20.6 7 14.1l-5-4.4 6.6-.6z" />
+          <svg width="12" height="12" viewBox="0 0 24 24" fill={app.pinned ? "currentColor" : "none"} stroke="currentColor" strokeWidth={app.pinned ? 0 : 1.5} strokeLinejoin="round">
+            <path d="M12 3.2l2.7 5.6 6.1.6-4.6 4.1 1.3 6L12 16.9 6.5 19.5l1.3-6L3.2 9.4l6.1-.6z" />
           </svg>
         </span>
         <span className="text-[11px] text-graphite font-mono tabular-nums tracking-tight shrink-0 w-[92px]">{app.caseId}</span>
@@ -566,11 +1004,21 @@ function CaseRow({
               Expedited
             </span>
           )}
+          {app.interview.status === "missed" && (
+            <span className="shrink-0 rounded-[2px] border border-brick px-1.5 text-[11px] font-semibold uppercase tracking-wider text-brick">
+              Interview missed
+            </span>
+          )}
         </span>
-        {/* Enrolled shows benefit; others show pipeline completion */}
+        {/* Enrolled → benefit; active w/ a running clock → "Day X of N"
+            (drives triage); otherwise pipeline completion. */}
         <span className="hidden md:flex items-center justify-end shrink-0 w-[130px]">
           {enrolled && app.estimatedBenefitUsd !== null ? (
             <span className="text-[12px] tabular-nums text-ink font-medium">~{formatUsd(app.estimatedBenefitUsd)}/mo</span>
+          ) : clock ? (
+            <span className={`rounded-[2px] px-1.5 py-0.5 text-[11px] font-semibold tabular-nums ${CLOCK_TONE_BOX[clock.tone]}`}>
+              Day {clock.day} of {clock.limit}
+            </span>
           ) : (
             <span className="flex items-center gap-2 w-full">
               <span className="h-1.5 flex-1 rounded-[1px] bg-surface-secondary overflow-hidden">
@@ -607,7 +1055,11 @@ function CaseRow({
             </div>
           )}
 
+          {/* §273.2 clocks — processing / interview / cure (sets triage priority). */}
+          <TimelinessBanner app={app} onAction={onLogAction} />
+
           <AnswerList
+            caseId={app.id}
             answers={app.answers}
             edited={edited}
             onEdit={(q, v) => setEdited((p) => ({ ...p, [q]: v }))}
@@ -640,35 +1092,50 @@ function CaseRow({
           <div className="border-t border-hairline pt-3">
             <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite mb-2">Civica engine</p>
             <div className="grid gap-3 md:grid-cols-3">
-              {/* 1 — Eligibility (provisional: the gates it evaluates, in order) */}
+              {/* 1 — Eligibility: at-a-glance verdict for outreach + the gate chain. */}
               <EngineBlock title="Eligibility" tag="provisional">
-                <p className="text-[12px] text-ink">
-                  Determination pending{" "}
-                  <span className="font-semibold tabular-nums">{app.verificationNeeds.length}</span> item(s).
-                </p>
-                <ol className="mt-1.5 space-y-1">
-                  {EVALUATION_GATES.map((g, i) => (
-                    <li key={g.citation} className="flex items-baseline gap-1.5 text-[12px] leading-snug">
-                      <span className="tabular-nums text-graphite w-3 shrink-0">{i + 1}</span>
-                      <span className="text-ink">{g.label}</span>
-                      <span className="text-[11px] text-graphite">{g.citation}</span>
-                    </li>
-                  ))}
-                </ol>
-                {app.assumptions.length > 0 && (
-                  <p className="text-[11px] text-graphite mt-2 leading-snug">Assumed: {app.assumptions.join("; ")}.</p>
-                )}
+                {(() => {
+                  const scan = eligibilityScan(app);
+                  return (
+                    <>
+                      <ResultLede
+                        box={ELIG_CHIP[scan.tone]}
+                        kicker="Verdict"
+                        value={<span className="text-[15px] uppercase tracking-wide">{scan.label}</span>}
+                      />
+                      <p className="text-[12px] text-ink mt-1.5 leading-snug">{scan.note}</p>
+                      <p className="text-[11px] text-graphite mt-1">Not a determination.</p>
+                    </>
+                  );
+                })()}
+                <details className="mt-2">
+                  <summary className="text-[11px] text-pine hover:underline cursor-pointer">Gates evaluated (8)</summary>
+                  <ol className="mt-1.5 space-y-1">
+                    {EVALUATION_GATES.map((g, i) => (
+                      <li key={g.citation} className="flex items-baseline gap-1.5 text-[12px] leading-snug">
+                        <span className="tabular-nums text-graphite w-3 shrink-0">{i + 1}</span>
+                        <span className="text-ink">{g.label}</span>
+                        <span className="text-[11px] text-graphite">{g.citation}</span>
+                      </li>
+                    ))}
+                  </ol>
+                  {app.assumptions.length > 0 && (
+                    <p className="text-[11px] text-graphite mt-2 leading-snug">Assumed: {app.assumptions.join("; ")}.</p>
+                  )}
+                </details>
               </EngineBlock>
 
               {/* 2 — Benefit amount (the number + the math). Always the engine
                   estimate — never the county's actual award, even when enrolled. */}
-              <EngineBlock title="Benefit amount" tag="estimate">
+              <EngineBlock title="Benefit amount" tag="provisional">
                 {app.estimatedBenefitUsd !== null ? (
                   <>
-                    <p className="text-[16px] font-semibold tabular-nums text-ink leading-none">
-                      <span className="text-[11px] font-normal text-graphite">approx.</span> ~{formatUsd(app.estimatedBenefitUsd)}
-                      <span className="text-[11px] font-normal text-graphite">/mo</span>
-                    </p>
+                    <ResultLede
+                      box="bg-amber-surface text-ink"
+                      kicker="Est. monthly benefit"
+                      value={`~${formatUsd(app.estimatedBenefitUsd)}`}
+                      unit="/mo"
+                    />
                     {app.deduction && (
                       <>
                         <p className="text-[11px] text-graphite mt-1.5 leading-snug">{deductionOneLine(app.deduction)}</p>
@@ -708,34 +1175,48 @@ function CaseRow({
                   finds any; otherwise the verification steps that move the case
                   to a determination (the genuine "good next" for a provisional
                   case, per the 273.2(f) hierarchy). */}
-              <EngineBlock
-                title="Recommended next steps"
-                tag={app.recommendations.length > 0 ? "Component R" : "verification · 273.2(f)"}
-              >
-                {app.recommendations.length > 0 ? (
-                  <ol className="space-y-1.5">
-                    {app.recommendations.slice(0, 4).map((r) => (
-                      <li key={r.rank} className="text-[12px] text-ink leading-snug">
-                        <span className="font-semibold text-ink">Good next:</span> {r.action}
-                        {r.deltaUsd > 0 && (
-                          <span className="text-ink font-semibold tabular-nums"> (+{formatUsd(r.deltaUsd)}/mo)</span>
-                        )}
-                        {r.citation && <span className="block text-[11px] text-graphite">{r.citation}</span>}
-                      </li>
-                    ))}
-                  </ol>
-                ) : app.verificationNeeds.length > 0 ? (
-                  <ol className="space-y-1.5">
-                    {app.verificationNeeds.slice(0, 5).map((v) => (
-                      <li key={v} className="text-[12px] text-ink leading-snug">
-                        <span className="font-semibold text-ink">Good next:</span> confirm{" "}
-                        {v.charAt(0).toLowerCase() + v.slice(1)}
-                      </li>
-                    ))}
-                  </ol>
-                ) : (
-                  <p className="text-[12px] text-muted">No actions outstanding.</p>
-                )}
+              <EngineBlock title="Recommended next steps" tag="provisional">
+                {(() => {
+                  const hasRecs = app.recommendations.length > 0;
+                  const count = hasRecs ? app.recommendations.length : app.verificationNeeds.length;
+                  if (count === 0) return <p className="text-[12px] text-muted">Nothing outstanding to confirm.</p>;
+                  return (
+                    <>
+                      <ResultLede
+                        box="bg-[var(--color-row-hover)] text-ink"
+                        kicker={hasRecs ? "Ways to raise the benefit" : "Action items to complete"}
+                        value={count}
+                        unit={` ${hasRecs ? (count === 1 ? "way" : "ways") : "to confirm"}`}
+                      />
+                      <ul className="mt-1.5 space-y-1">
+                        {hasRecs
+                          ? app.recommendations.slice(0, 4).map((r) => (
+                              <li key={r.rank} className="text-[12px] leading-snug">
+                                <button
+                                  type="button"
+                                  onClick={() => scrollToCaseSection(app.id, needToSection(r.action))}
+                                  className="text-left text-pine hover:underline"
+                                >
+                                  {r.action}
+                                  {r.deltaUsd > 0 && <span className="font-semibold tabular-nums"> (+{formatUsd(r.deltaUsd)}/mo)</span>}
+                                </button>
+                              </li>
+                            ))
+                          : app.verificationNeeds.slice(0, 6).map((v) => (
+                              <li key={v} className="text-[12px] leading-snug">
+                                <button
+                                  type="button"
+                                  onClick={() => scrollToCaseSection(app.id, needToSection(v))}
+                                  className="text-left text-pine hover:underline"
+                                >
+                                  Confirm {v.charAt(0).toLowerCase() + v.slice(1)}
+                                </button>
+                              </li>
+                            ))}
+                      </ul>
+                    </>
+                  );
+                })()}
                 <button
                   type="button"
                   onClick={askMae}
@@ -868,8 +1349,15 @@ function CaseRow({
               >
                 Activity log ({app.activity.length})
               </button>
-              <Link href={`/cbo-preview/application/${app.id}`} className="text-[12px] font-semibold text-pine hover:underline">
-                Open full case →
+              <button
+                type="button"
+                onClick={() => openFullApplication(app)}
+                className="text-[12px] font-semibold text-pine hover:underline"
+              >
+                Open full application →
+              </button>
+              <Link href={`/cbo-preview/application/${app.id}`} className="text-[12px] font-semibold text-graphite hover:text-ink hover:underline">
+                Printable draft →
               </Link>
             </div>
           </div>
@@ -992,6 +1480,8 @@ export default function ApplicationsQueue({ phases }: { phases: PhaseGroup[] }) 
         c.id === id ? { ...c, activity: log(c, ...changes.map((ch) => `Changed "${ch.question}" from "${ch.from}" to "${ch.to}"`)) } : c,
       ),
     );
+  const logAction = (id: string, action: string) =>
+    setCases((cs) => cs.map((c) => (c.id === id ? { ...c, activity: log(c, action) } : c)));
 
   // Regroup the live caseload by phase for rendering + funnel counts. Pinned
   // cases float to the top of their phase (stable sort preserves order otherwise).
@@ -1041,6 +1531,9 @@ export default function ApplicationsQueue({ phases }: { phases: PhaseGroup[] }) 
     <div className="space-y-4">
       {/* Lifecycle funnel */}
       <Funnel phases={grouped} />
+
+      {/* Caseload-level §273.2 timeliness — interviews + processing-clock pressure. */}
+      <TimelinessSummary cases={cases} />
 
       {/* Search + export */}
       <div className="flex items-center justify-between gap-3">
@@ -1105,6 +1598,7 @@ export default function ApplicationsQueue({ phases }: { phases: PhaseGroup[] }) 
                   onComment={(text) => addComment(a.id, text)}
                   onEditLog={(questions) => logEdit(a.id, questions)}
                   onTogglePin={() => togglePin(a.id)}
+                  onLogAction={(action) => logAction(a.id, action)}
                 />
               ))}
             </div>

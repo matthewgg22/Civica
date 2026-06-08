@@ -91,4 +91,22 @@ describe("buildPipeline", () => {
     const aisha = cases.find((c) => c.caseId === "CF-2026-0211")!;
     expect(aisha.expedited).toBe(false);
   });
+
+  it("carries regulatory clocks — interview, 30/7-day processing, cure", () => {
+    const cases = buildPipeline("CA", new Date(), true).flatMap((g) => g.cases);
+    const elena = cases.find((c) => c.caseId === "CF-2026-0184")!;
+    // Expedited → 7-day limit; she's at day 9 → overdue. Interview missed. Cure clock 1 day.
+    expect(elena.processingLimit).toBe(7);
+    expect(elena.processingDay).toBe(9);
+    expect(elena.interview.status).toBe("missed");
+    expect(elena.cureDaysLeft).toBe(1);
+    // Sofia: non-expedited, near the 30-day wire.
+    const sofia = cases.find((c) => c.caseId === "CF-2026-0201")!;
+    expect(sofia.processingLimit).toBe(30);
+    expect(sofia.processingDay).toBe(28);
+    // Enrolled Maria: clock done (null), interview completed.
+    const maria = cases.find((c) => c.caseId === "CF-2026-0179")!;
+    expect(maria.processingDay).toBeNull();
+    expect(maria.interview.status).toBe("completed");
+  });
 });

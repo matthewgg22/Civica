@@ -222,7 +222,6 @@ export default function QcTab({ synthetic = true }: { synthetic?: boolean }) {
             title="Quality control — error by pillar"
             columns={["Pillar", "Category", "Error %", "Pass %"]}
             rows={DEMO_QC.pillars.map((p) => [p.label, t(p.note, p.notePlain), `${p.fail}%`, `${p.pass}%`])}
-            note="QC metrics computed by Civica's rules engine."
           />
         </div>
         <div className="bg-surface border border-hairline rounded-[2px] overflow-hidden">
@@ -261,7 +260,6 @@ export default function QcTab({ synthetic = true }: { synthetic?: boolean }) {
             title="Quality control — recent flags"
             columns={["Flag", "Field", "Issue", "Status"]}
             rows={DEMO_QC.recentFlags.map((f) => [f.id, f.field, f.issue, t(f.status, f.status === "Open" ? "Open" : "Fixed")])}
-            note="QC metrics computed by Civica's rules engine."
           />
         </div>
         <div className="bg-surface border border-hairline rounded-[2px] overflow-hidden">
