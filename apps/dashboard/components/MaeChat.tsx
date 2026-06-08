@@ -235,7 +235,7 @@ export default function MaeChat() {
             </span>
             <div className="flex-1 leading-tight">
               <p className="text-sm font-semibold text-ink">Ask Mae</p>
-              <p className="text-[11px] text-muted">SNAP / CalFresh policy assistant</p>
+              <p className="text-[11px] text-muted">Calibrated to California · CalFresh rules</p>
             </div>
             <button
               type="button"
@@ -332,7 +332,7 @@ export default function MaeChat() {
             </>
           ) : (
             <div className="flex-1 space-y-3 overflow-y-auto px-4 py-6 text-sm">
-              <p className="font-medium text-ink">Mae is a staff assistant for navigators.</p>
+              <p className="font-medium text-ink">You&rsquo;re previewing a navigator tool.</p>
               {input.trim() && (
                 <div className="rounded-[3px] border border-hairline bg-surface px-3 py-2 text-ink">
                   <p className="mb-1 text-[11px] uppercase tracking-wider text-muted">The question for this case</p>
@@ -340,14 +340,14 @@ export default function MaeChat() {
                 </div>
               )}
               <p className="text-muted">
-                Sign in with a navigator (staff) account to chat with Mae — she cites the governing
-                SNAP / CalFresh rules and never sees applicant PII.
+                Inside the navigator portal, Mae answers this in place &mdash; citing the governing
+                CalFresh rules, never applicant PII.
               </p>
               <Link
                 href="/login"
                 className="inline-block rounded-[2px] bg-pine px-3 py-2 text-sm font-medium text-white hover:bg-pine-pressed"
               >
-                Sign in to chat with Mae →
+                Open the navigator portal &rarr;
               </Link>
             </div>
           )}

@@ -53,11 +53,11 @@ describe("MaeChat", () => {
     fireEvent(window, new CustomEvent("mae:prefill", { detail: { text: "What does the work rule require?" } }));
     // Panel opens with the question + a staff sign-in state — but no composer/Send
     // (the LLM endpoint stays staff-gated).
-    await screen.findByText(/staff assistant for navigators/i);
+    await screen.findByText(/previewing a navigator tool/i);
     expect(screen.getByText(/What does the work rule require\?/)).toBeTruthy();
     expect(screen.queryByRole("button", { name: /send/i })).toBeNull();
-    const signIn = screen.getByRole("link", { name: /sign in to chat/i });
-    expect(signIn.getAttribute("href")).toBe("/login");
+    const portalLink = screen.getByRole("link", { name: /navigator portal/i });
+    expect(portalLink.getAttribute("href")).toBe("/login");
   });
 
   it("shows the launcher for a staff user", async () => {
