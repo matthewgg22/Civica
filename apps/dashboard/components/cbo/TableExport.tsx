@@ -69,15 +69,19 @@ function printPdf({ title, columns, rows, note }: TableExportProps) {
   td { font-size: 12px; padding: 6px 10px; border-bottom: 1px solid rgba(0,0,0,.12); vertical-align: top; }
   th:not(:first-child), td:not(:first-child) { text-align: right; }
   .note { font-size: 10px; color: #57524A; margin-top: 14px; line-height: 1.5; }
-  @media print { body { margin: 0; } @page { margin: 18mm; } }
+  .bar { display: flex; justify-content: flex-end; margin: 0 0 16px; }
+  .bar button { font: 600 12px -apple-system, system-ui, sans-serif; color: #fff; background: #2D5A45; border: 0; border-radius: 3px; padding: 7px 14px; cursor: pointer; }
+  @media print { body { margin: 0; } .bar { display: none; } @page { margin: 18mm; } }
 </style></head><body>
+  <div class="bar"><button onclick="window.print()">Print / Save as PDF</button></div>
   <h1>${esc(title)}</h1>
   <p class="sub">Civica · CBO preview · generated ${esc(new Date().toISOString().slice(0, 10))}</p>
   <table><thead>${thead}</thead><tbody>${tbody}</tbody></table>
   ${note ? `<p class="note">${esc(note)}</p>` : ""}
 <\/body><\/html>`);
   w.document.close();
-  w.setTimeout(() => w.print(), 250);
+  // No auto-print — the user prints via the button (less jarring than the OS
+  // dialog popping immediately).
 }
 
 export default function TableExport(props: TableExportProps) {

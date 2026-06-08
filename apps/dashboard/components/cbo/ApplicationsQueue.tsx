@@ -282,6 +282,112 @@ function buildVerification(app: QueueApplication): VCheck[] {
   ];
 }
 
+// Open ONE case as a clean, print-friendly page in a new tab — the full
+// application + engine summary + verification + activity, formatted as a
+// document with a "Print / Save as PDF" button (no auto-print). Client-side
+// window.write so it works on the synthetic preview with no real packet route.
+function openFullApplication(app: CaseRecord): void {
+  const w = window.open("", "_blank", "width=820,height=1000");
+  if (!w) {
+    alert("Couldn't open the application — allow pop-ups for this site, then try again.");
+    return;
+  }
+  const esc = (s: unknown) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+  // Group answers by section (consecutive), like the in-app table.
+  const sections: { section: string; items: SurveyAnswer[] }[] = [];
+  for (const a of app.answers) {
+    const last = sections[sections.length - 1];
+    if (last && last.section === a.section) last.items.push(a);
+    else sections.push({ section: a.section, items: [a] });
+  }
+  const responsesHtml = sections
+    .map(
+      (g) => `<h2>${esc(g.section)}</h2><table class="kv"><tbody>${g.items
+        .map(
+          (a) =>
+            `<tr><th>${esc(a.question)}</th><td class="${a.flagged ? "flag" : ""}">${esc(a.answer)}${a.flagged ? " &#9873;" : ""}</td></tr>`,
+        )
+        .join("")}</tbody></table>`,
+    )
+    .join("");
+
+  const gatesHtml = EVALUATION_GATES.map(
+    (gt, i) => `<li><span class="n">${i + 1}</span> ${esc(gt.label)} <span class="cite">${esc(gt.citation)}</span></li>`,
+  ).join("");
+
+  const nextSteps = app.recommendations.length
+    ? app.recommendations.slice(0, 5).map((r) => `<li>${esc(r.action)}</li>`).join("")
+    : app.verificationNeeds.slice(0, 6).map((v) => `<li>Confirm ${esc(v.charAt(0).toLowerCase() + v.slice(1))}</li>`).join("");
+
+  const checksHtml = buildVerification(app)
+    .map((c) => `<li>${c.ok ? "&#10003;" : "&#9888;"} <b>${esc(c.label)}</b> — ${esc(c.note)}${c.ok ? "" : " (needs check)"}</li>`)
+    .join("");
+
+  const activityHtml = app.activity
+    .map(
+      (e, i) =>
+        `<tr><td>${i + 1}</td><td class="ts">${esc(e.ts)}</td><td>${esc(e.actor)}</td><td>${esc(e.action)}</td></tr>`,
+    )
+    .join("");
+
+  const benefit = app.estimatedBenefitUsd != null ? `approx. ~${formatUsd(app.estimatedBenefitUsd)}/mo` : "no estimate";
+  const mathLine = app.deduction ? `<p class="math">${esc(deductionOneLine(app.deduction))}</p>` : "";
+
+  w.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>${esc(app.caseId)} — ${esc(app.name)}</title>
+<style>
+  * { box-sizing: border-box; }
+  body { font: 13px -apple-system, system-ui, sans-serif; color: #15181C; margin: 40px; max-width: 720px; }
+  h1 { font-size: 18px; margin: 0 0 2px; }
+  .meta { font-size: 12px; color: #565E68; margin: 0 0 6px; }
+  .pill { display:inline-block; font:600 10px sans-serif; text-transform:uppercase; letter-spacing:.06em; color:#B5511E; border:1px solid #B5511E; border-radius:2px; padding:1px 6px; }
+  h2 { font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: #565E68; margin: 20px 0 6px; border-bottom: 1px solid rgba(15,23,42,.14); padding-bottom: 4px; }
+  table.kv { width: 100%; border-collapse: collapse; margin-bottom: 4px; }
+  table.kv th { text-align: left; font-weight: 400; color: #3C424B; width: 42%; padding: 4px 8px; vertical-align: top; border-bottom: 1px solid rgba(15,23,42,.08); }
+  table.kv td { padding: 4px 8px; font-weight: 500; vertical-align: top; border-bottom: 1px solid rgba(15,23,42,.08); }
+  td.flag { color: #9C3A24; font-weight: 600; }
+  .est { font-size: 16px; font-weight: 700; }
+  .math { font-size: 12px; color: #3C424B; margin: 4px 0 0; }
+  ol.gates { list-style: none; padding: 0; margin: 4px 0; font-size: 12px; }
+  ol.gates li { padding: 2px 0; } ol.gates .n { color: #565E68; display:inline-block; width: 16px; } ol.gates .cite { color: #565E68; font-size: 11px; }
+  ul.plain { margin: 4px 0; padding-left: 18px; font-size: 12px; } ul.plain li { padding: 1px 0; }
+  ul.checks { list-style: none; padding: 0; margin: 4px 0; font-size: 12px; } ul.checks li { padding: 2px 0; }
+  table.log { width: 100%; border-collapse: collapse; font-size: 11px; margin-top: 4px; }
+  table.log td { padding: 4px 8px; border-bottom: 1px solid rgba(15,23,42,.10); vertical-align: top; } table.log td.ts { white-space: nowrap; color: #565E68; }
+  .disc { font-size: 11px; color: #565E68; margin-top: 22px; line-height: 1.5; border-top: 1px solid rgba(15,23,42,.14); padding-top: 10px; }
+  .bar { display: flex; justify-content: flex-end; margin: 0 0 18px; }
+  .bar button { font: 600 12px -apple-system, system-ui, sans-serif; color: #fff; background: #2D5A45; border: 0; border-radius: 3px; padding: 7px 14px; cursor: pointer; }
+  @media print { body { margin: 0; } .bar { display: none; } @page { margin: 16mm; } }
+</style></head><body>
+  <div class="bar"><button onclick="window.print()">Print / Save as PDF</button></div>
+  <h1>${esc(app.name)} — ${esc(app.caseId)}</h1>
+  <p class="meta">${esc(app.county)} County, CA · ${esc(app.stage)} · assigned to ${esc(app.assignedTo)}${app.expedited ? ' · <span class="pill">Expedited</span>' : ""}</p>
+  <p class="meta">Generated ${esc(new Date().toISOString().slice(0, 10))} · Civica CBO preview · synthetic applicant record</p>
+
+  <h2>Application responses</h2>
+  ${responsesHtml}
+
+  <h2>Civica engine — benefit estimate</h2>
+  <p class="est">${esc(benefit)}</p>
+  ${mathLine}
+
+  <h2>Eligibility gates (provisional · pending ${app.verificationNeeds.length} item(s))</h2>
+  <ol class="gates">${gatesHtml}</ol>
+
+  <h2>Recommended next steps</h2>
+  <ul class="plain">${nextSteps || "<li>No outstanding actions.</li>"}</ul>
+
+  <h2>Automated verification</h2>
+  <ul class="checks">${checksHtml}</ul>
+
+  <h2>Activity log (${app.activity.length})</h2>
+  <table class="log"><tbody>${activityHtml}</tbody></table>
+
+  <p class="disc">Estimate + recommendations are live engine output on these answers; eligibility is provisional until the verification items are confirmed — an estimate, not a determination. Verify against current CalFresh / CDSS rules and the county system of record.</p>
+<\/body><\/html>`);
+  w.document.close();
+}
+
 // Full application responses for the expanded case. Renders the complete intake
 // as a per-section ruled table (Field | Response). Editing is a single batch
 // mode: "Edit responses" unlocks every field at once (fixed-option fields as a
@@ -548,11 +654,11 @@ function CaseRow({
             if (e.key === "Enter" || e.key === " ") { e.preventDefault(); e.stopPropagation(); onTogglePin(); }
           }}
           className={`shrink-0 w-4 flex items-center justify-center cursor-pointer ${
-            app.pinned ? "text-ink" : "text-graphite/40 hover:text-graphite"
+            app.pinned ? "text-amber" : "text-graphite/25 hover:text-graphite/60"
           }`}
         >
-          <svg width="12" height="12" viewBox="0 0 24 24" fill={app.pinned ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2" strokeLinejoin="round">
-            <path d="M12 2.5l2.9 6.1 6.6.6-5 4.4 1.5 6.5L12 17.9 5.5 20.6 7 14.1l-5-4.4 6.6-.6z" />
+          <svg width="12" height="12" viewBox="0 0 24 24" fill={app.pinned ? "currentColor" : "none"} stroke="currentColor" strokeWidth={app.pinned ? 0 : 1.5} strokeLinejoin="round">
+            <path d="M12 3.2l2.7 5.6 6.1.6-4.6 4.1 1.3 6L12 16.9 6.5 19.5l1.3-6L3.2 9.4l6.1-.6z" />
           </svg>
         </span>
         <span className="text-[11px] text-graphite font-mono tabular-nums tracking-tight shrink-0 w-[92px]">{app.caseId}</span>
@@ -867,10 +973,13 @@ function CaseRow({
               >
                 Activity log ({app.activity.length})
               </button>
-              {/* "Open full case" removed for the synthetic preview — there's no
-                  real packet behind a demo case, so /packets/<demo-id> just
-                  redirected to /login and errored. Re-add when wired to real
-                  packets. */}
+              <button
+                type="button"
+                onClick={() => openFullApplication(app)}
+                className="text-[12px] font-semibold text-pine hover:underline"
+              >
+                Open full application →
+              </button>
             </div>
           </div>
         </div>
