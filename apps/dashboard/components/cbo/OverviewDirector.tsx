@@ -19,6 +19,30 @@ function topRisk(cases: QueueApplication[]): Risk {
   return "Low risk";
 }
 
+// #6 — parse relative "updated" strings to days elapsed
+function daysAgo(updated: string): number {
+  if (updated === "today") return 0;
+  const h = updated.match(/(\d+)h ago/);
+  if (h) return 0;
+  const d = updated.match(/(\d+)d ago/);
+  if (d) return parseInt(d[1]);
+  const w = updated.match(/(\d+)w ago/);
+  if (w) return parseInt(w[1]) * 7;
+  return 0;
+}
+
+// #4 — navigator capacity ceiling (cases per navigator)
+const CAPACITY = 5;
+
+// #9 — synthetic avg days to handoff per navigator (illustrative)
+const NAV_AVG_DAYS: Record<string, number> = {
+  "A. Cole":   7,
+  "J. Ruiz":   5,
+  "L. Park":   9,
+  "M. Diaz":   4,
+  "R. Okafor": 6,
+};
+
 // Synthetic 4-week trend data (most recent = last element).
 // Up is good for apps and benefits; down is good for error rate and handoff days.
 const TRENDS = {
@@ -81,6 +105,11 @@ function NavigatorRow({
   const flags = cases.reduce((s, c) => s + c.docFlags.length, 0);
   const risk = topRisk(cases);
   const isUnassigned = name === "Unassigned";
+  const avgDays = NAV_AVG_DAYS[name] ?? null;
+
+  // #4 capacity bar
+  const utilPct = Math.min((cases.length / CAPACITY) * 100, 100);
+  const utilColor = utilPct >= 80 ? "bg-brick" : utilPct >= 60 ? "bg-warning" : "bg-pine/50";
 
   const exportRows = cases.map((c) => [
     name,
@@ -108,9 +137,14 @@ function NavigatorRow({
         </span>
       </button>
 
-      <span className="shrink-0 w-16 text-right">
-        <span className="text-[13px] tabular-nums text-ink">{cases.length}</span>
-        <span className="text-[12px] text-graphite"> case{cases.length !== 1 ? "s" : ""}</span>
+      {/* #4 cases + capacity bar */}
+      <span className="shrink-0 w-28 flex items-center justify-end gap-2">
+        <span className="text-[13px] tabular-nums text-ink">
+          {cases.length}<span className="text-graphite text-[12px]">/{CAPACITY}</span>
+        </span>
+        <span className="w-14 h-1.5 rounded-full bg-surface-secondary overflow-hidden">
+          <span className={`block h-full rounded-full transition-all ${utilColor}`} style={{ width: `${utilPct}%` }} />
+        </span>
       </span>
 
       <span className={`shrink-0 w-16 text-right text-[13px] tabular-nums ${flags > 0 ? "text-brick font-semibold" : "text-muted"}`}>
@@ -119,6 +153,15 @@ function NavigatorRow({
 
       <span className={`shrink-0 w-14 text-right text-[11px] uppercase tracking-wider ${riskText(risk)}`}>
         {riskLabel(risk)}
+      </span>
+
+      {/* #9 avg days to handoff */}
+      <span className="shrink-0 w-16 text-right">
+        {avgDays != null ? (
+          <span className="text-[13px] tabular-nums text-graphite">{avgDays}d</span>
+        ) : (
+          <span className="text-[12px] text-muted">—</span>
+        )}
       </span>
 
       <div className="shrink-0 w-28 flex justify-end">
@@ -221,6 +264,32 @@ export default function OverviewDirector({
   const totalBenefitUsd = enrolledCases.reduce((s, c) => s + (c.estimatedBenefitUsd ?? 0), 0);
   const enrolledWithBenefit = enrolledCases.filter((c) => c.estimatedBenefitUsd != null).length;
 
+  // #6 stale cases — not enrolled, no update in ≥2 days
+  const staleCases = useMemo(
+    () => allCases.filter((c) => c.phase !== "enrolled" && daysAgo(c.updated) >= 2),
+    [allCases],
+  );
+
+  // #5 stage bottleneck — frequency of each stage across non-enrolled cases
+  const stageFrequency = useMemo(() => {
+    const active = allCases.filter((c) => c.phase !== "enrolled");
+    const map = new Map<string, { count: number; worstRisk: Risk }>();
+    for (const c of active) {
+      const entry = map.get(c.stage);
+      if (!entry) {
+        map.set(c.stage, { count: 1, worstRisk: c.risk });
+      } else {
+        entry.count++;
+        if (c.risk === "High risk" || (c.risk === "Medium risk" && entry.worstRisk === "Low risk")) {
+          entry.worstRisk = c.risk;
+        }
+      }
+    }
+    return [...map.entries()]
+      .sort((a, b) => b[1].count - a[1].count || (b[1].worstRisk === "High risk" ? 1 : -1));
+  }, [allCases]);
+  const stageMax = stageFrequency[0]?.[1]?.count ?? 1;
+
   // Build navigator → cases map, sorted: named navigators alphabetical, Unassigned last.
   const navigatorMap = useMemo(() => {
     const map = new Map<string, QueueApplication[]>();
@@ -275,8 +344,8 @@ export default function OverviewDirector({
   return (
     <div className="space-y-8">
 
-      {/* ── Urgent alerts ── #2 #8 */}
-      {synthetic && (overdueRecerts.length > 0 || unassignedCases.length > 0) && (
+      {/* ── Urgent alerts ── #2 #6 #8 */}
+      {synthetic && (overdueRecerts.length > 0 || staleCases.length > 0 || unassignedCases.length > 0) && (
         <div className="flex flex-wrap items-center gap-2" role="alert">
           {overdueRecerts.map((c) => (
             <Link
@@ -301,6 +370,17 @@ export default function OverviewDirector({
               </Link>
             );
           })}
+          {/* #6 stale — no activity in ≥2 days, not enrolled */}
+          {staleCases.filter((c) => c.phase !== "recert").map((c) => (
+            <Link
+              key={c.id}
+              href={`/packets/${c.id}`}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[2px] bg-ink/5 border border-hairline text-[12px] font-medium text-graphite hover:bg-ink/8 transition-colors"
+            >
+              <span aria-hidden="true">○</span>
+              {c.name} — no activity {c.updated}
+            </Link>
+          ))}
           {unassignedCases.length > 0 && (
             <Link
               href="#active-caseload"
@@ -370,6 +450,38 @@ export default function OverviewDirector({
         </div>
       </section>
 
+      {/* ── Stage bottleneck ── #5 */}
+      {synthetic && stageFrequency.length > 0 && (
+        <section aria-label="Pipeline stage distribution">
+          <p className="eyebrow mb-3">Active pipeline — stage distribution</p>
+          <div className="border border-hairline rounded-[2px] bg-surface overflow-hidden">
+            <div className="flex items-center gap-3 px-4 py-1.5 bg-surface-secondary border-b border-hairline text-[10px] font-semibold uppercase tracking-wider text-graphite">
+              <span className="flex-1">Stage</span>
+              <span className="w-8 text-right">Cases</span>
+              <span className="w-24" />
+              <span className="w-10 text-right">Risk</span>
+            </div>
+            {stageFrequency.map(([stage, { count, worstRisk }]) => (
+              <div key={stage} className="flex items-center gap-3 px-4 py-2 border-t border-hairline first:border-t-0">
+                <span className="flex-1 text-[13px] text-ink truncate">{stage}</span>
+                <span className="shrink-0 w-8 text-right text-[13px] tabular-nums text-graphite">{count}</span>
+                <span className="shrink-0 w-24">
+                  <span className="h-1.5 block rounded-full bg-surface-secondary overflow-hidden">
+                    <span
+                      className={`block h-full rounded-full ${barColor(worstRisk)}`}
+                      style={{ width: `${(count / stageMax) * 100}%` }}
+                    />
+                  </span>
+                </span>
+                <span className={`shrink-0 w-10 text-right text-[11px] uppercase tracking-wider ${riskText(worstRisk)}`}>
+                  {riskLabel(worstRisk)}
+                </span>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
       {/* ── Navigator roster ── */}
       {synthetic && (
         <section aria-label="Navigator roster">
@@ -389,9 +501,10 @@ export default function OverviewDirector({
           <div className="border border-hairline rounded-[2px] bg-surface overflow-hidden">
             <div className="flex items-center gap-3 px-4 py-1.5 bg-surface-secondary border-b border-hairline text-[10px] font-semibold uppercase tracking-wider text-graphite">
               <span className="flex-1">Navigator</span>
-              <span className="w-16 text-right">Cases</span>
+              <span className="w-28 text-right">Workload</span>
               <span className="w-16 text-right">Flags</span>
               <span className="w-14 text-right">Risk</span>
+              <span className="w-16 text-right">Avg days</span>
               <span className="w-28 text-right">Progress report</span>
             </div>
             {navigatorList.map(([nav, cases]) => (
