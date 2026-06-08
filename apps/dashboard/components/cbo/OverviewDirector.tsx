@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { Fragment, useMemo, useState } from "react";
 import Link from "next/link";
 import type { PhaseGroup, QueueApplication } from "../../lib/cbo/demo-pipeline";
 import { PIPELINE_STEPS, formatUsd } from "../../lib/cbo/demo-pipeline";
@@ -43,35 +43,26 @@ const NAV_AVG_DAYS: Record<string, number> = {
   "R. Okafor": 6,
 };
 
-// Synthetic 4-week trend data (most recent = last element).
-// Up is good for apps and benefits; down is good for error rate and handoff days.
+// 4-week trend deltas (start → now). Up is good for apps; down is good for
+// error rate and handoff days. Shown as a single percent change, not a chart —
+// a director wants "how much better, which direction," not a 4-point line.
 const TRENDS = {
-  appsPerNav:  { values: [18, 19, 21, 23], goodWhenUp: true  },
-  errorRate:   { values: [6.1, 5.2, 4.8, 4.2], goodWhenUp: false },
-  daysHandoff: { values: [9, 8, 7, 6],     goodWhenUp: false },
+  appsPerNav:  { from: 18,  to: 23,  goodWhenUp: true  },
+  errorRate:   { from: 6.1, to: 4.2, goodWhenUp: false },
+  daysHandoff: { from: 9,   to: 6,   goodWhenUp: false },
 };
 
-function Sparkline({ values, goodWhenUp }: { values: number[]; goodWhenUp: boolean }) {
-  const min = Math.min(...values);
-  const max = Math.max(...values);
-  const span = max - min || 1;
-  const W = 44, H = 16;
-  const pts = values
-    .map((v, i) => `${(i / (values.length - 1)) * W},${H - 2 - ((v - min) / span) * (H - 4)}`)
-    .join(" ");
-  const isUp = values[values.length - 1] > values[0];
+function TrendDelta({ from, to, goodWhenUp }: { from: number; to: number; goodWhenUp: boolean }) {
+  const changePct = Math.round(((to - from) / from) * 100);
+  const isUp = to > from;
   const isGood = goodWhenUp ? isUp : !isUp;
   return (
-    <svg width={W} height={H} aria-hidden="true" className="shrink-0">
-      <polyline
-        points={pts}
-        fill="none"
-        stroke={isGood ? "#2D5A45" : "#B5511E"}
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
+    <span className="mt-1 inline-flex items-center gap-1 text-[11px]">
+      <span className={`font-semibold tabular-nums ${isGood ? "text-pine" : "text-warning"}`}>
+        {isUp ? "↑" : "↓"} {Math.abs(changePct)}%
+      </span>
+      <span className="text-muted">4-wk trend</span>
+    </span>
   );
 }
 
@@ -264,31 +255,48 @@ export default function OverviewDirector({
   const totalBenefitUsd = enrolledCases.reduce((s, c) => s + (c.estimatedBenefitUsd ?? 0), 0);
   const enrolledWithBenefit = enrolledCases.filter((c) => c.estimatedBenefitUsd != null).length;
 
-  // #6 stale cases — not enrolled, no update in ≥2 days
+  // #6 stale cases — in progress, no activity in ≥5 days (5 is a real stall;
+  // 2 days is normal turnaround). Recerts are surfaced separately.
   const staleCases = useMemo(
-    () => allCases.filter((c) => c.phase !== "enrolled" && daysAgo(c.updated) >= 2),
+    () => allCases.filter(
+      (c) => c.phase !== "enrolled" && c.phase !== "recert" && daysAgo(c.updated) >= 5,
+    ),
     [allCases],
   );
 
-  // #5 stage bottleneck — frequency of each stage across non-enrolled cases
-  const stageFrequency = useMemo(() => {
-    const active = allCases.filter((c) => c.phase !== "enrolled");
-    const map = new Map<string, { count: number; worstRisk: Risk }>();
-    for (const c of active) {
-      const entry = map.get(c.stage);
-      if (!entry) {
-        map.set(c.stage, { count: 1, worstRisk: c.risk });
-      } else {
-        entry.count++;
-        if (c.risk === "High risk" || (c.risk === "Medium risk" && entry.worstRisk === "Low risk")) {
-          entry.worstRisk = c.risk;
-        }
-      }
-    }
-    return [...map.entries()]
-      .sort((a, b) => b[1].count - a[1].count || (b[1].worstRisk === "High risk" ? 1 : -1));
-  }, [allCases]);
-  const stageMax = stageFrequency[0]?.[1]?.count ?? 1;
+  // #2 #6 #8 — single consolidated "needs attention" list, ranked by urgency.
+  type Tone = "brick" | "warning" | "muted";
+  const attentionItems: { key: string; href: string; label: string; tone: Tone }[] = [
+    ...overdueRecerts.map((c) => ({
+      key: c.id, href: `/packets/${c.id}`, label: `${c.name} recert overdue`, tone: "brick" as Tone,
+    })),
+    ...upcomingRecerts.map((c) => {
+      const days = c.stage.match(/(\d+)\s*day/)?.[1];
+      return {
+        key: c.id, href: `/packets/${c.id}`,
+        label: `${c.name} recert due${days ? ` in ${days}d` : ""}`, tone: "warning" as Tone,
+      };
+    }),
+    ...staleCases.map((c) => ({
+      key: c.id, href: `/packets/${c.id}`, label: `${c.name} stalled ${c.updated}`, tone: "muted" as Tone,
+    })),
+    ...(unassignedCases.length > 0
+      ? [{
+          key: "unassigned", href: "#active-caseload",
+          label: `${unassignedCases.length} unassigned`, tone: "muted" as Tone,
+        }]
+      : []),
+  ];
+  const toneText = (t: Tone) =>
+    t === "brick" ? "text-brick" : t === "warning" ? "text-warning" : "text-graphite";
+
+  // #5 caseload by phase — counts vary across the 4 lifecycle phases, so a
+  // single proportional bar reads as a real distribution (not a flat per-stage
+  // list where every stage holds one case).
+  const phaseDistribution = phases.map((p) => ({
+    key: p.key, label: p.label, accent: p.accent, count: p.cases.length,
+  }));
+  const totalPhaseCases = phaseDistribution.reduce((s, p) => s + p.count, 0);
 
   // Build navigator → cases map, sorted: named navigators alphabetical, Unassigned last.
   const navigatorMap = useMemo(() => {
@@ -344,52 +352,23 @@ export default function OverviewDirector({
   return (
     <div className="space-y-8">
 
-      {/* ── Urgent alerts ── #2 #6 #8 */}
-      {synthetic && (overdueRecerts.length > 0 || staleCases.length > 0 || unassignedCases.length > 0) && (
-        <div className="flex flex-wrap items-center gap-2" role="alert">
-          {overdueRecerts.map((c) => (
-            <Link
-              key={c.id}
-              href={`/packets/${c.id}`}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[2px] bg-brick/8 border border-brick/20 text-[12px] font-semibold text-brick hover:bg-brick/12 transition-colors"
-            >
-              <span aria-hidden="true">⚠</span>
-              {c.name} — recert overdue
-            </Link>
-          ))}
-          {upcomingRecerts.map((c) => {
-            const days = c.stage.match(/(\d+)\s*day/)?.[1];
-            return (
-              <Link
-                key={c.id}
-                href={`/packets/${c.id}`}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[2px] bg-warning/8 border border-warning/20 text-[12px] font-semibold text-warning hover:bg-warning/12 transition-colors"
-              >
-                <span aria-hidden="true">⏱</span>
-                {c.name} — recert due{days ? ` in ${days} days` : ""}
+      {/* ── Needs attention — single consolidated strip ── #2 #6 #8 */}
+      {synthetic && attentionItems.length > 0 && (
+        <div
+          className="flex items-center gap-x-2.5 gap-y-1 flex-wrap rounded-[2px] border border-hairline bg-surface px-4 py-2"
+          role="alert"
+        >
+          <span className="text-[10px] font-semibold uppercase tracking-wider text-graphite shrink-0 mr-1">
+            Needs attention
+          </span>
+          {attentionItems.map((it, i) => (
+            <Fragment key={it.key}>
+              {i > 0 && <span className="text-graphite/40 text-[12px]" aria-hidden="true">·</span>}
+              <Link href={it.href} className={`text-[12px] font-medium hover:underline ${toneText(it.tone)}`}>
+                {it.label}
               </Link>
-            );
-          })}
-          {/* #6 stale — no activity in ≥2 days, not enrolled */}
-          {staleCases.filter((c) => c.phase !== "recert").map((c) => (
-            <Link
-              key={c.id}
-              href={`/packets/${c.id}`}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[2px] bg-ink/5 border border-hairline text-[12px] font-medium text-graphite hover:bg-ink/8 transition-colors"
-            >
-              <span aria-hidden="true">○</span>
-              {c.name} — no activity {c.updated}
-            </Link>
+            </Fragment>
           ))}
-          {unassignedCases.length > 0 && (
-            <Link
-              href="#active-caseload"
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[2px] bg-ink/5 border border-hairline text-[12px] font-semibold text-graphite hover:bg-ink/8 transition-colors"
-            >
-              <span aria-hidden="true">·</span>
-              {unassignedCases.length} unassigned case{unassignedCases.length !== 1 ? "s" : ""} — needs dispatch
-            </Link>
-          )}
         </div>
       )}
 
@@ -397,87 +376,79 @@ export default function OverviewDirector({
       <section aria-label="Impact at a glance">
         <div className="flex items-stretch border border-hairline rounded-[2px] bg-surface overflow-hidden">
           {/* Apps per navigator */}
-          <div className="flex-1 px-5 py-3.5">
+          <div className="flex-1 px-5 py-3.5 flex flex-col">
             <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite">Avg apps / navigator / mo</p>
-            <div className="flex items-end justify-between gap-2 mt-1.5">
-              <div className="flex items-baseline gap-2">
-                <span className="text-[24px] font-semibold tabular-nums text-ink leading-none">23</span>
-                <span className="text-[12px] text-pine font-medium">vs 7 manual</span>
-              </div>
-              <Sparkline {...TRENDS.appsPerNav} />
+            <div className="flex items-baseline gap-2 mt-1.5">
+              <span className="text-[24px] font-semibold tabular-nums text-ink leading-none">23</span>
+              <span className="text-[12px] text-pine font-medium">vs 7 manual</span>
             </div>
+            <TrendDelta {...TRENDS.appsPerNav} />
           </div>
           {/* Error rate */}
-          <div className="flex-1 px-5 py-3.5 border-l border-hairline">
+          <div className="flex-1 px-5 py-3.5 border-l border-hairline flex flex-col">
             <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite">Error rate (Civica cohort)</p>
-            <div className="flex items-end justify-between gap-2 mt-1.5">
-              <div className="flex items-baseline gap-2">
-                <span className="text-[24px] font-semibold tabular-nums text-ink leading-none">4.2%</span>
-                <span className="text-[12px] text-pine font-medium">vs ~10.8% manual</span>
-              </div>
-              <Sparkline {...TRENDS.errorRate} />
+            <div className="flex items-baseline gap-2 mt-1.5">
+              <span className="text-[24px] font-semibold tabular-nums text-ink leading-none">4.2%</span>
+              <span className="text-[12px] text-pine font-medium">vs ~10.8% manual</span>
             </div>
+            <TrendDelta {...TRENDS.errorRate} />
           </div>
           {/* Avg handoff */}
-          <div className="flex-1 px-5 py-3.5 border-l border-hairline">
+          <div className="flex-1 px-5 py-3.5 border-l border-hairline flex flex-col">
             <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite">Avg time to handoff</p>
-            <div className="flex items-end justify-between gap-2 mt-1.5">
-              <div className="flex items-baseline gap-2">
-                <span className="text-[24px] font-semibold tabular-nums text-ink leading-none">6 days</span>
-                <span className="text-[12px] text-pine font-medium">vs ~22 days manual</span>
-              </div>
-              <Sparkline {...TRENDS.daysHandoff} />
+            <div className="flex items-baseline gap-2 mt-1.5">
+              <span className="text-[24px] font-semibold tabular-nums text-ink leading-none">6 days</span>
+              <span className="text-[12px] text-pine font-medium">vs ~22 days manual</span>
             </div>
+            <TrendDelta {...TRENDS.daysHandoff} />
           </div>
           {/* Benefits enrolled — live from engine */}
-          <div className="flex-1 px-5 py-3.5 border-l border-hairline">
+          <div className="flex-1 px-5 py-3.5 border-l border-hairline flex flex-col">
             <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite">Benefits enrolled this month</p>
             <div className="flex items-baseline gap-2 mt-1.5">
               {totalBenefitUsd > 0 ? (
-                <>
-                  <span className="text-[24px] font-semibold tabular-nums text-ink leading-none">
-                    {formatUsd(totalBenefitUsd)}/mo
-                  </span>
-                  <span className="text-[12px] text-graphite font-medium">
-                    {enrolledWithBenefit} household{enrolledWithBenefit !== 1 ? "s" : ""}
-                  </span>
-                </>
+                <span className="text-[24px] font-semibold tabular-nums text-ink leading-none">
+                  {formatUsd(totalBenefitUsd)}/mo
+                </span>
               ) : (
                 <span className="text-[18px] font-semibold text-muted">—</span>
               )}
             </div>
+            {totalBenefitUsd > 0 && (
+              <span className="mt-1 text-[11px] text-muted">
+                {enrolledWithBenefit} household{enrolledWithBenefit !== 1 ? "s" : ""} enrolled
+              </span>
+            )}
           </div>
         </div>
       </section>
 
-      {/* ── Stage bottleneck ── #5 */}
-      {synthetic && stageFrequency.length > 0 && (
-        <section aria-label="Pipeline stage distribution">
-          <p className="eyebrow mb-3">Active pipeline — stage distribution</p>
-          <div className="border border-hairline rounded-[2px] bg-surface overflow-hidden">
-            <div className="flex items-center gap-3 px-4 py-1.5 bg-surface-secondary border-b border-hairline text-[10px] font-semibold uppercase tracking-wider text-graphite">
-              <span className="flex-1">Stage</span>
-              <span className="w-8 text-right">Cases</span>
-              <span className="w-24" />
-              <span className="w-10 text-right">Risk</span>
+      {/* ── Caseload by phase — single proportional bar ── #5 */}
+      {synthetic && totalPhaseCases > 0 && (
+        <section aria-label="Caseload by phase">
+          <p className="eyebrow mb-3">Caseload by phase</p>
+          <div className="border border-hairline rounded-[2px] bg-surface p-4">
+            <div className="flex h-2.5 rounded-full overflow-hidden bg-surface-secondary">
+              {phaseDistribution
+                .filter((p) => p.count > 0)
+                .map((p) => (
+                  <span
+                    key={p.key}
+                    className={p.accent}
+                    style={{ width: `${(p.count / totalPhaseCases) * 100}%` }}
+                    title={`${p.label}: ${p.count}`}
+                  />
+                ))}
             </div>
-            {stageFrequency.map(([stage, { count, worstRisk }]) => (
-              <div key={stage} className="flex items-center gap-3 px-4 py-2 border-t border-hairline first:border-t-0">
-                <span className="flex-1 text-[13px] text-ink truncate">{stage}</span>
-                <span className="shrink-0 w-8 text-right text-[13px] tabular-nums text-graphite">{count}</span>
-                <span className="shrink-0 w-24">
-                  <span className="h-1.5 block rounded-full bg-surface-secondary overflow-hidden">
-                    <span
-                      className={`block h-full rounded-full ${barColor(worstRisk)}`}
-                      style={{ width: `${(count / stageMax) * 100}%` }}
-                    />
-                  </span>
-                </span>
-                <span className={`shrink-0 w-10 text-right text-[11px] uppercase tracking-wider ${riskText(worstRisk)}`}>
-                  {riskLabel(worstRisk)}
-                </span>
-              </div>
-            ))}
+            <div className="flex flex-wrap gap-x-6 gap-y-1.5 mt-3">
+              {phaseDistribution.map((p) => (
+                <div key={p.key} className="flex items-center gap-1.5">
+                  <span className={`w-2 h-2 rounded-sm ${p.accent}`} aria-hidden="true" />
+                  <span className="text-[12px] text-ink">{p.label}</span>
+                  <span className="text-[12px] tabular-nums text-graphite font-medium">{p.count}</span>
+                </div>
+              ))}
+            </div>
           </div>
         </section>
       )}
