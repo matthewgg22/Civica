@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import Link from "next/link";
 import {
   PIPELINE_STEPS,
   PHASES,
@@ -1355,6 +1356,9 @@ function CaseRow({
               >
                 Open full application →
               </button>
+              <Link href={`/cbo-preview/application/${app.id}`} className="text-[12px] font-semibold text-graphite hover:text-ink hover:underline">
+                Printable draft →
+              </Link>
             </div>
           </div>
         </div>

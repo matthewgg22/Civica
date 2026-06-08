@@ -64,6 +64,21 @@ describe("buildPipeline", () => {
     expect(ssn[0].flagged).toBe(true);
   });
 
+  it("renders dollar figures without the normalizeMoney mangling (regression)", () => {
+    // Bug: the cents-normalizer matched only "$2" inside "$2,750.00" and produced
+    // "$2.00,750.00". Guard: no answer carries cents immediately before a comma,
+    // and the known asset figure reads correctly.
+    const cases = buildPipeline("CA", new Date(), true).flatMap((g) => g.cases);
+    for (const c of cases) {
+      for (const a of c.answers) {
+        expect(a.answer, `malformed money in ${c.caseId}: ${a.answer}`).not.toMatch(/\$\d[\d,]*\.\d{2},/);
+      }
+    }
+    const daniel = cases.find((c) => c.caseId === "CF-2026-0209")!;
+    const assets = daniel.answers.find((a) => a.question === "Countable assets (cash + bank)")!;
+    expect(assets.answer).toBe("Under $2,750.00");
+  });
+
   it("flags expedited-service cases where shelter exceeds income (273.2(i))", () => {
     const cases = buildPipeline("CA", new Date(), true).flatMap((g) => g.cases);
     // Elena: income 1640 < rent 2400 → expedited. Theresa: 1500 < 1600+180.
