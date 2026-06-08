@@ -180,7 +180,7 @@ export function reportDocument(d: ReportData, opts: { forWord: boolean }): strin
     <tr><th>Benefits secured (monthly run-rate, enrolled)</th><td class="num">${esc(usd(d.totals.benefitsUsd))}/mo</td></tr>
   </tbody></table>
 
-  <p class="disc">Benefit estimates and the error-rate cohort figure are computed by Civica's rules engine on the household answers; applicant records and the period volume counts in this preview are synthetic and illustrative. Not an eligibility determination — verify against current CalFresh / CDSS rules and the county system of record.</p>
+  <p class="disc">Benefit estimates and the error-rate cohort figure are computed by Civica's rules engine on the household answers. Not an eligibility determination — verify against current CalFresh / CDSS rules and the county system of record.</p>
 </body></html>`;
 
   return head + style + body;

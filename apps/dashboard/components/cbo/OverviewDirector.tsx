@@ -180,7 +180,7 @@ function NavigatorRow({
             title={`Progress report — ${name}`}
             columns={["Navigator", "Case ID", "Applicant", "County", "Stage", "Completion", "Est. benefit", "Flags", "Risk"]}
             rows={exportRows}
-            note={`Progress report for navigator ${name}. Benefit estimate and verification needs are computed by Civica's rules engine; applicant records are synthetic.`}
+            note={`Progress report for navigator ${name}. Benefit estimate and verification needs are computed by Civica's rules engine.`}
           />
         )}
       </div>
@@ -686,7 +686,7 @@ export default function OverviewDirector({
             </div>
           </div>
           <p className="mt-2 text-[11px] text-muted">
-            Exports the snapshot, caseload-by-phase, and navigator roster for the selected range. Benefit + error-rate figures are engine-computed; volume counts in this preview are synthetic.
+            Exports the snapshot, caseload-by-phase, and navigator roster for the selected range. Benefit + error-rate figures are engine-computed.
           </p>
         </div>
       </section>
@@ -782,7 +782,7 @@ export default function OverviewDirector({
                 title="CBO caseload — all active applications"
                 columns={["Navigator", "Case ID", "Applicant", "County", "Stage", "Completion", "Est. benefit", "Flags", "Risk"]}
                 rows={allExportRows}
-                note="Illustrative caseload. Benefit estimates are computed by Civica's rules engine; applicant records are synthetic."
+                note="Benefit estimates are computed by Civica's rules engine."
               />
             </div>
           </div>

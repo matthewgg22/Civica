@@ -130,7 +130,6 @@ export default async function CBOPreviewPage({
         {active === "overview"  && <OverviewDirector phases={phases} synthetic={synthetic} />}
         {active === "pipeline"  && <ApplicationsQueue phases={phases} />}
         {active === "qc"        && <QcTab synthetic={synthetic} />}
-        {synthetic && <p className="text-[11px] text-graphite mt-10">Illustrative caseload</p>}
       </div>
 
       {/* Contact CTA — always visible, centered */}

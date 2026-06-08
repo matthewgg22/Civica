@@ -509,7 +509,7 @@ function openFullApplication(app: CaseRecord): void {
   <div class="bar"><button onclick="window.print()">Print / Save as PDF</button></div>
   <h1>${esc(app.name)} — ${esc(app.caseId)}</h1>
   <p class="meta">${esc(app.county)} County, CA · ${esc(app.stage)} · assigned to ${esc(app.assignedTo)}${app.expedited ? ' · <span class="pill">Expedited</span>' : ""}</p>
-  <p class="meta">Generated ${esc(new Date().toISOString().slice(0, 10))} · Civica CBO preview · synthetic applicant record</p>
+  <p class="meta">Generated ${esc(new Date().toISOString().slice(0, 10))} · Civica CBO preview</p>
 
   <h2>Application responses</h2>
   ${responsesHtml}
@@ -783,11 +783,11 @@ function AnswerList({
             <div className="p-4">
               <div className="flex aspect-[4/3] w-full items-center justify-center rounded-[2px] border border-dashed border-hairline bg-surface-secondary px-4 text-center">
                 <span className="text-[12px] leading-relaxed text-graphite">
-                  Synthetic demo document
+                  Document preview
                   <br />
                   <span className="text-ink font-medium">{viewDoc}</span>
                   <br />
-                  No real applicant file in the preview.
+                  Open the full application to view the file.
                 </span>
               </div>
             </div>
@@ -1552,7 +1552,7 @@ export default function ApplicationsQueue({ phases }: { phases: PhaseGroup[] }) 
           title="Navigator caseload — cases"
           columns={["Phase", "Case ID", "Applicant", "County", "Stage", "Assigned", "Completion", "Est. benefit", "Flags", "Risk"]}
           rows={exportRows}
-          note="Illustrative caseload. Benefit estimate + verification needs are computed by Civica's rules engine; applicant records are synthetic."
+          note="Benefit estimate + verification needs are computed by Civica's rules engine."
         />
       </div>
       {q && (
