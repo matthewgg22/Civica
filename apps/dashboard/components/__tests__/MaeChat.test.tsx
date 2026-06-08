@@ -121,8 +121,8 @@ describe("MaeChat", () => {
       }),
     );
 
-    // The header shows the analyzing chip; the composer is case-scoped.
-    await screen.findByText(/Analyzing CF-2026-0184 · Elena V\./);
+    // The header shows the case-calibration chip; the composer is case-scoped.
+    await screen.findByText(/Calibrated to CF-2026-0184 · Elena V\./);
     const textarea = await screen.findByPlaceholderText(/ask what to do on this case/i);
     fireEvent.change(textarea, { target: { value: "What needs to be done?" } });
     fireEvent.keyDown(textarea, { key: "Enter" });

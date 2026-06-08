@@ -292,20 +292,19 @@ export default function MaeChat() {
             </span>
             <div className="flex-1 leading-tight">
               <p className="text-sm font-semibold text-ink">Ask Mae</p>
-              {caseLabel ? (
+              <p className="text-[11px] text-muted">Calibrated to California · CalFresh rules</p>
+              {caseLabel && (
                 <span className="mt-0.5 inline-flex items-center gap-1 rounded-[2px] bg-pine-surface px-1.5 py-0.5 text-[10px] font-medium text-ink">
-                  Analyzing {caseLabel}
+                  Calibrated to {caseLabel}
                   <button
                     type="button"
-                    aria-label="Stop analyzing this case"
+                    aria-label="Clear case context"
                     onClick={() => { setCaseContext(null); setCaseLabel(null); }}
                     className="text-graphite hover:text-ink"
                   >
                     ✕
                   </button>
                 </span>
-              ) : (
-                <p className="text-[11px] text-muted">Calibrated to California · CalFresh rules</p>
               )}
             </div>
             <button
