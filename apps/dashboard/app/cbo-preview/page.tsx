@@ -148,6 +148,7 @@ export default async function CBOPreviewPage({
           <h1 className="text-[26px] font-bold tracking-tight leading-none text-ink mt-1">
             {TABS.find((t) => t.key === active)?.label ?? "Overview"}
           </h1>
+          <p className="text-[14px] font-medium text-graphite mt-1.5">{CBO_ORG.name}</p>
         </div>
         {active === "overview"  && <OverviewDirector phases={phases} synthetic={synthetic} />}
         {active === "pipeline"  && <ApplicationsQueue phases={phases} />}
