@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
 import type { PhaseGroup, QueueApplication } from "../../lib/cbo/demo-pipeline";
 import { PIPELINE_STEPS, formatUsd } from "../../lib/cbo/demo-pipeline";
@@ -16,18 +16,6 @@ function topRisk(cases: QueueApplication[]): Risk {
   if (cases.some((c) => c.risk === "High risk")) return "High risk";
   if (cases.some((c) => c.risk === "Medium risk")) return "Medium risk";
   return "Low risk";
-}
-
-// #6 — parse relative "updated" strings to days elapsed
-function daysAgo(updated: string): number {
-  if (updated === "today") return 0;
-  const h = updated.match(/(\d+)h ago/);
-  if (h) return 0;
-  const d = updated.match(/(\d+)d ago/);
-  if (d) return parseInt(d[1]);
-  const w = updated.match(/(\d+)w ago/);
-  if (w) return parseInt(w[1]) * 7;
-  return 0;
 }
 
 // #4 — navigator capacity ceiling (cases a navigator can carry at once)
@@ -361,14 +349,6 @@ export default function OverviewDirector({
     [allCases],
   );
 
-  // #2 recert countdown
-  const recertCases = useMemo(
-    () => phases.find((p) => p.key === "recert")?.cases ?? [],
-    [phases],
-  );
-  const overdueRecerts  = recertCases.filter((c) => c.stage.toLowerCase().includes("overdue"));
-  const upcomingRecerts = recertCases.filter((c) => !c.stage.toLowerCase().includes("overdue"));
-
   // #3 benefits enrolled this month
   const enrolledCases = useMemo(
     () => phases.find((p) => p.key === "enrolled")?.cases ?? [],
@@ -376,37 +356,6 @@ export default function OverviewDirector({
   );
   const totalBenefitUsd = enrolledCases.reduce((s, c) => s + (c.estimatedBenefitUsd ?? 0), 0);
   const enrolledWithBenefit = enrolledCases.filter((c) => c.estimatedBenefitUsd != null).length;
-
-  // #6 stale cases — in progress, no activity in ≥5 days (5 is a real stall;
-  // 2 days is normal turnaround). Recerts are surfaced separately.
-  const staleCases = useMemo(
-    () => allCases.filter(
-      (c) => c.phase !== "enrolled" && c.phase !== "recert" && daysAgo(c.updated) >= 5,
-    ),
-    [allCases],
-  );
-
-  // #2 #6 #8 — single consolidated "needs attention" list, ranked by urgency.
-  type Tone = "brick" | "warning" | "muted";
-  const attentionItems: { key: string; href: string; label: string; tone: Tone }[] = [
-    ...overdueRecerts.map((c) => ({
-      key: c.id, href: `/packets/${c.id}`, label: `${c.name} recert overdue`, tone: "brick" as Tone,
-    })),
-    ...upcomingRecerts.map((c) => {
-      const days = c.stage.match(/(\d+)\s*day/)?.[1];
-      return {
-        key: c.id, href: `/packets/${c.id}`,
-        label: `${c.name} recert due${days ? ` in ${days}d` : ""}`, tone: "warning" as Tone,
-      };
-    }),
-    ...staleCases.map((c) => ({
-      key: c.id, href: `/packets/${c.id}`, label: `${c.name} stalled ${c.updated}`, tone: "muted" as Tone,
-    })),
-    // Unassigned cases are NOT here — they get their own dedicated "Needs
-    // dispatch" section so the director has a clear place to act, not a chip.
-  ];
-  const toneText = (t: Tone) =>
-    t === "brick" ? "text-brick" : t === "warning" ? "text-warning" : "text-graphite";
 
   // Build navigator → cases map, sorted: named navigators alphabetical, Unassigned last.
   const navigatorMap = useMemo(() => {
@@ -460,26 +409,6 @@ export default function OverviewDirector({
 
   return (
     <div className="space-y-8">
-
-      {/* ── Needs attention — single consolidated strip ── #2 #6 #8 */}
-      {synthetic && attentionItems.length > 0 && (
-        <div
-          className="flex items-center gap-x-2.5 gap-y-1 flex-wrap rounded-[2px] border border-hairline bg-surface px-4 py-2"
-          role="alert"
-        >
-          <span className="text-[10px] font-semibold uppercase tracking-wider text-graphite shrink-0 mr-1">
-            Needs attention
-          </span>
-          {attentionItems.map((it, i) => (
-            <Fragment key={it.key}>
-              {i > 0 && <span className="text-graphite/40 text-[12px]" aria-hidden="true">·</span>}
-              <Link href={it.href} className={`text-[12px] font-medium hover:underline ${toneText(it.tone)}`}>
-                {it.label}
-              </Link>
-            </Fragment>
-          ))}
-        </div>
-      )}
 
       {/* ── KPI hero — the Snapshot ── #1 #3
           The hero block: larger numbers, more breathing room, the heaviest
