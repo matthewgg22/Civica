@@ -16,11 +16,6 @@ const TOTAL_STEPS = PIPELINE_STEPS.length;
 function pct(n: number) { return Math.round((n / TOTAL_STEPS) * 100); }
 function riskLabel(r: Risk) { return r === "High risk" ? "HIGH" : r === "Medium risk" ? "MED" : "LOW"; }
 function riskText(r: Risk) { return r === "High risk" ? "text-brick font-semibold" : r === "Medium risk" ? "text-warning" : "text-muted"; }
-function topRisk(cases: QueueApplication[]): Risk {
-  if (cases.some((c) => c.risk === "High risk")) return "High risk";
-  if (cases.some((c) => c.risk === "Medium risk")) return "Medium risk";
-  return "Low risk";
-}
 
 // #4 — navigator capacity ceiling (cases a navigator can carry at once)
 const CAPACITY = 20;
@@ -271,8 +266,10 @@ function NavigatorRow({
 }) {
   const [open, setOpen] = useState(false);
   const name = worker.name;
-  const flags = cases.reduce((s, c) => s + c.docFlags.length, 0);
-  const risk = cases.length > 0 ? topRisk(cases) : null;
+  // Case-level work signals (NOT a judgment on the caseworker): how many of
+  // their cases are waiting on documents, and how many are priority right now.
+  const awaitingDocs = cases.filter((c) => c.docFlags.length > 0).length;
+  const priority = cases.filter((c) => c.risk === "High risk").length;
   const avgDays = worker.avgDays;
 
   // #4 capacity bar — share of the caseworker's case ceiling
@@ -315,12 +312,14 @@ function NavigatorRow({
           </span>
         </span>
 
-        <span className={`shrink-0 w-16 text-right text-[13px] tabular-nums ${flags > 0 ? "text-brick font-semibold" : "text-muted"}`}>
-          {flags > 0 ? `${flags} flag${flags !== 1 ? "s" : ""}` : "clean"}
+        {/* Awaiting docs — cases that need a document follow-up (work to do, not a ding) */}
+        <span className={`shrink-0 w-20 text-right text-[13px] tabular-nums ${awaitingDocs > 0 ? "text-warning font-medium" : "text-muted"}`}>
+          {awaitingDocs > 0 ? awaitingDocs : "—"}
         </span>
 
-        <span className={`shrink-0 w-14 text-right text-[11px] uppercase tracking-wider ${risk ? riskText(risk) : "text-muted"}`}>
-          {risk ? riskLabel(risk) : "—"}
+        {/* Priority — how many of their cases are high-priority right now (a count, not a label on them) */}
+        <span className={`shrink-0 w-16 text-right text-[13px] tabular-nums ${priority > 0 ? "text-ink font-medium" : "text-muted"}`}>
+          {priority > 0 ? priority : "—"}
         </span>
 
         {/* #9 avg days to handoff */}
@@ -644,8 +643,10 @@ export default function OverviewDirector({
     ];
   }, [effectiveCases]);
 
-  const totalFlags = effectiveCases.reduce((s, c) => s + c.docFlags.length, 0);
-  const highRiskCount = effectiveCases.filter((c) => c.risk === "High risk").length;
+  // Caseload-level signals for the roster summary — framed as cases, not as a
+  // tally against the caseworkers.
+  const casesAwaitingDocs = effectiveCases.filter((c) => c.docFlags.length > 0).length;
+  const priorityCases = effectiveCases.filter((c) => c.risk === "High risk").length;
 
   const allExportRows = effectiveCases.map((c) => [
     c.navigator ?? "Unassigned",
@@ -736,7 +737,7 @@ export default function OverviewDirector({
               {unassignedCases.length} application{unassignedCases.length !== 1 ? "s" : ""} without a caseworker
             </span>
           </div>
-          <div className="border border-warning/30 rounded-[3px] bg-warning/[0.04] overflow-hidden">
+          <div className="border border-warning/30 rounded-[3px] bg-warning/[0.04]">
             {unassignedCases.map((c, i) => (
               <div
                 key={c.id}
@@ -768,12 +769,12 @@ export default function OverviewDirector({
             <p className="eyebrow">Navigator roster</p>
             <div className="flex items-center gap-3">
               <span className="text-[12px] text-graphite">
-                {caseworkers.length} caseworker{caseworkers.length !== 1 ? "s" : ""}
-                {totalFlags > 0 && (
-                  <> · <span className="text-brick font-medium">{totalFlags} flag{totalFlags !== 1 ? "s" : ""}</span></>
+                {caseworkers.length} caseworker{caseworkers.length !== 1 ? "s" : ""} · {effectiveCases.length} case{effectiveCases.length !== 1 ? "s" : ""}
+                {casesAwaitingDocs > 0 && (
+                  <> · <span className="text-warning font-medium">{casesAwaitingDocs} awaiting docs</span></>
                 )}
-                {highRiskCount > 0 && (
-                  <> · <span className="text-brick font-semibold">{highRiskCount} high risk</span></>
+                {priorityCases > 0 && (
+                  <> · <span className="text-ink font-medium">{priorityCases} priority</span></>
                 )}
               </span>
               <button
@@ -793,10 +794,10 @@ export default function OverviewDirector({
           </div>
           <div className="border border-hairline rounded-[2px] bg-surface overflow-hidden">
             <div className="flex items-center gap-3 px-4 py-1.5 bg-surface-secondary border-b border-hairline text-[10px] font-semibold uppercase tracking-wider text-graphite">
-              <span className="flex-1">Navigator</span>
+              <span className="flex-1">Caseworker</span>
               <span className="w-28 text-right">Workload</span>
-              <span className="w-16 text-right">Flags</span>
-              <span className="w-14 text-right">Risk</span>
+              <span className="w-20 text-right">Awaiting docs</span>
+              <span className="w-16 text-right">Priority</span>
               <span className="w-16 text-right">Avg days</span>
               <span className="w-28 text-right">Progress report</span>
             </div>
