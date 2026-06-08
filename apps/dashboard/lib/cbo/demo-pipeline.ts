@@ -318,7 +318,10 @@ const moneyOrNone = (v?: string | null) =>
 // carry decimals, and any non-$ text, untouched). Applied to every rendered
 // answer so hand-authored + derived dollar figures read consistently with cents.
 const normalizeMoney = (s: string) =>
-  s.replace(/\$(\d{1,3}(?:,\d{3})*|\d+)(?!\.\d)/g, (_m, num) => `$${num}.00`);
+  // Lookahead rejects a following digit, dot, OR comma so we only append cents
+  // to a COMPLETE figure — without it, "$2,750.00" matched just "$2" and became
+  // "$2.00,750.00".
+  s.replace(/\$(\d{1,3}(?:,\d{3})*|\d+)(?![\d.,])/g, (_m, num) => `$${num}.00`);
 
 /**
  * Expand a case's sparse hand-authored `answers` into a COMPLETE CalFresh
