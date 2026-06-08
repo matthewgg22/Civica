@@ -30,7 +30,7 @@ export type Risk = "Low risk" | "Medium risk" | "High risk";
 export type Phase = "requesting" | "live" | "enrolled" | "recert";
 export const PHASES: { key: Phase; label: string; blurb: string; accent: string }[] = [
   { key: "requesting", label: "Requesting assistance", blurb: "Reached out — not yet submitted", accent: "bg-indigo" },
-  { key: "live", label: "Live application", blurb: "In review with the county", accent: "bg-warning" },
+  { key: "live", label: "Live application", blurb: "In review with the state agency", accent: "bg-warning" },
   { key: "enrolled", label: "Enrolled", blurb: "Approved — receiving benefits", accent: "bg-pine" },
   { key: "recert", label: "Recertification", blurb: "Renewal due", accent: "bg-amber" },
 ];

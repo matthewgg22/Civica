@@ -46,8 +46,14 @@ function esc(s: string): string {
 }
 
 function printPdf({ title, columns, rows, note }: TableExportProps) {
-  const w = window.open("", "_blank", "noopener,noreferrer,width=900,height=700");
-  if (!w) return;
+  // NB: do NOT pass noopener/noreferrer — those make window.open() return null,
+  // so we'd never get a handle to write the printable doc into (the bug that
+  // made "Export → PDF" do nothing).
+  const w = window.open("", "_blank", "width=900,height=700");
+  if (!w) {
+    alert("Couldn't open the print window — allow pop-ups for this site, then try Export → PDF again.");
+    return;
+  }
   const thead = `<tr>${columns.map((c) => `<th>${esc(c)}</th>`).join("")}</tr>`;
   const tbody = rows
     .map((r) => `<tr>${r.map((c) => `<td>${esc(c)}</td>`).join("")}</tr>`)
