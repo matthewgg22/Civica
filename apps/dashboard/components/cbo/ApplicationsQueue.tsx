@@ -1063,7 +1063,7 @@ export default function ApplicationsQueue({ phases }: { phases: PhaseGroup[] }) 
           title="Navigator caseload — cases"
           columns={["Phase", "Case ID", "Applicant", "County", "Stage", "Assigned", "Completion", "Est. benefit", "Flags", "Risk"]}
           rows={exportRows}
-          note="Illustrative caseload. Benefit estimate + verification needs are computed by Civica's rules engine; applicant records are synthetic."
+          note="Benefit estimate + verification needs are computed by Civica's rules engine."
         />
       </div>
       {q && (
