@@ -122,6 +122,17 @@ function optionsFor(question: string, current: string): string[] | null {
   return opts.includes(current) ? opts : [current, ...opts];
 }
 
+// Which application response fields each document corroborates. Drives the
+// per-document "verifies …" disclosure + the green "supported" cue in the
+// Documents section.
+const DOC_VERIFIES: Record<string, string[]> = {
+  "Photo ID": ["Applicant name", "Date of birth", "Identity"],
+  "Proof of income": ["Gross monthly income", "Employment status", "Pay frequency"],
+  "Proof of residence": ["County", "Monthly rent", "Residency"],
+  "Social Security Number": ["SSN", "Identity match (SSA)"],
+};
+const docIsPresent = (answer: string) => !/not (yet uploaded|provided)/i.test(answer);
+
 // ── Case actions (ephemeral demo) ─────────────────────────────────────────────
 // Comments, transfer, and manual advance are client-only state — they reset on
 // reload and never hit a backend (the caseload is synthetic). Mirrors the
@@ -403,6 +414,14 @@ function AnswerList({
   const [editing, setEditing] = useState(false);
   const [drafts, setDrafts] = useState<Record<string, string>>({});
   const [viewDoc, setViewDoc] = useState<string | null>(null);
+  const [openDocs, setOpenDocs] = useState<Set<string>>(new Set());
+  const toggleDoc = (q: string) =>
+    setOpenDocs((s) => {
+      const n = new Set(s);
+      if (n.has(q)) n.delete(q);
+      else n.add(q);
+      return n;
+    });
 
   const current = (a: SurveyAnswer) => edited[a.question] ?? a.answer;
 
@@ -522,24 +541,70 @@ function AnswerList({
                             );
                           })()
                         ) : (
-                          <span
-                            className={`font-medium leading-snug break-words ${
-                              a.flagged && !wasEdited ? "text-brick" : "text-ink"
-                            }`}
-                          >
-                            {current(a)}
-                            {a.flagged && !wasEdited && <span className="ml-1 text-[11px]" aria-label="flagged">⚑</span>}
-                            {wasEdited && <span className="ml-1 text-[10px] uppercase tracking-wider text-graphite">· edited</span>}
-                            {a.section === "Documents" && !/not (yet uploaded|provided)/i.test(current(a)) && (
-                              <button
-                                type="button"
-                                onClick={() => setViewDoc(a.question)}
-                                className="ml-2 text-[11px] font-medium text-pine hover:underline"
-                              >
-                                View
-                              </button>
+                          <>
+                            <span
+                              className={`font-medium leading-snug break-words ${
+                                a.flagged && !wasEdited ? "text-brick" : "text-ink"
+                              }`}
+                            >
+                              {current(a)}
+                              {a.flagged && !wasEdited && <span className="ml-1 text-[11px]" aria-label="flagged">⚑</span>}
+                              {wasEdited && <span className="ml-1 text-[10px] uppercase tracking-wider text-graphite">· edited</span>}
+                              {a.section === "Documents" && docIsPresent(current(a)) && (
+                                <button
+                                  type="button"
+                                  onClick={() => setViewDoc(a.question)}
+                                  className="ml-2 text-[11px] font-medium text-pine hover:underline"
+                                >
+                                  View
+                                </button>
+                              )}
+                            </span>
+
+                            {/* Stronger gate for SSN — explicit SSA-match status (7 CFR 273.6). */}
+                            {a.question === "Social Security Number" && (
+                              /does not match|mismatch|not provided/i.test(current(a)) ? (
+                                <p className="mt-1 flex items-start gap-1 text-[11px] font-semibold text-brick leading-snug">
+                                  <span aria-hidden="true">⛔</span> SSA match failed — must clear before submission (7 CFR 273.6)
+                                </p>
+                              ) : (
+                                <p className="mt-1 flex items-center gap-1 text-[11px] text-pine">
+                                  <span aria-hidden="true">✓</span> Verified against SSA records
+                                </p>
+                              )
                             )}
-                          </span>
+
+                            {/* Per-document disclosure: which response fields it corroborates. */}
+                            {a.section === "Documents" && DOC_VERIFIES[a.question] && (() => {
+                              const present = docIsPresent(current(a));
+                              const fields = DOC_VERIFIES[a.question];
+                              const isOpen = openDocs.has(a.question);
+                              return (
+                                <div className="mt-1">
+                                  <button
+                                    type="button"
+                                    onClick={() => toggleDoc(a.question)}
+                                    aria-expanded={isOpen}
+                                    className={`inline-flex items-center gap-1 text-[11px] ${present ? "text-pine" : "text-graphite hover:text-ink"}`}
+                                  >
+                                    <span aria-hidden="true">{present ? "✓" : "○"}</span>
+                                    {present ? "Verifies" : "Would verify"} {fields.length} field{fields.length > 1 ? "s" : ""}
+                                    <span aria-hidden="true" className="text-graphite">{isOpen ? "▴" : "▾"}</span>
+                                  </button>
+                                  {isOpen && (
+                                    <ul className="mt-1 ml-1 space-y-0.5">
+                                      {fields.map((f) => (
+                                        <li key={f} className="flex items-baseline gap-1.5 text-[11px]">
+                                          <span aria-hidden="true" className={present ? "text-pine" : "text-graphite/40"}>{present ? "✓" : "○"}</span>
+                                          <span className={present ? "text-ink" : "text-graphite"}>{f}</span>
+                                        </li>
+                                      ))}
+                                    </ul>
+                                  )}
+                                </div>
+                              );
+                            })()}
+                          </>
                         )}
                       </td>
                     </tr>
