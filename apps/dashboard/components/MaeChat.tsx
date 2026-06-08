@@ -20,7 +20,7 @@ import { isStaff } from "../lib/roleRouting";
 // answer's content. Mirrors lib/mae/system-prompt.ts MAE_DISCLAIMER (kept inline
 // here so the server-only system prompt never ships to the browser bundle).
 const MAE_DISCLAIMER =
-  "Mae can be wrong. General SNAP policy guidance, not an eligibility determination — verify against current CalFresh/CDSS rules and the county system of record.";
+  "Mae can be wrong. General SNAP policy guidance, not an eligibility determination — verify against current CalFresh/CDSS rules and the county system of record. Don't paste the applicant's PII (name, case number, etc.) — keep questions hypothetical.";
 
 type ChatMessage = { role: "user" | "assistant"; content: string };
 

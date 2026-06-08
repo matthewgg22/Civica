@@ -33,7 +33,7 @@ describe("Mae citation verifier", () => {
       { citation: "ACL 25-68", status: "known" },
       { citation: "7 CFR 273.99", status: "unrecognized" },
     ]);
-    expect(trailer).toContain("Citation check");
+    expect(trailer).toContain("Citation:");
     expect(trailer).toContain("⚠️");
     expect(trailer).toContain("7 CFR 273.99"); // the bad one is named
     expect(trailer).toContain("✓");
