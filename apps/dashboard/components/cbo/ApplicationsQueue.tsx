@@ -192,22 +192,66 @@ function formatStamp(d: Date): string {
 // Timestamp for a live activity-log entry (now, full format).
 const nowStamp = () => formatStamp(new Date());
 
-// Synthesize a full timestamp for a seeded (historical) entry from its short
-// "Oct 13" label + a deterministic time (no Date.now → SSR-safe, no hydration
-// drift). Falls back to the raw label if it doesn't parse.
-function seedStamp(when: string, i: number): string {
-  const d = new Date(/\d{4}/.test(when) ? when : `${when} 2025`);
-  if (Number.isNaN(d.getTime())) return when;
-  d.setHours(9 + (i % 8), (i * 17) % 60, 0, 0);
-  return formatStamp(d);
-}
+// Named county eligibility officials (per launch county) — "County office" was
+// too vague; an audit trail records the specific official who acted.
+const COUNTY_OFFICIALS: Record<string, string> = {
+  "Los Angeles": "Renee Foster · LA County DPSS",
+  "San Diego": "Carl Nguyen · SD County HHSA",
+  "San Francisco": "Dana Whitfield · SF HSA",
+  Fresno: "Hector Salas · Fresno County DSS",
+  Sacramento: "Joan Pierce · Sacramento County DHA",
+  Alameda: "Terrence Hall · Alameda County SSA",
+  "San Jose": "Maria Lopez · Santa Clara County SSA",
+};
+const countyOfficial = (county: string) => COUNTY_OFFICIALS[county] ?? `${county} County eligibility worker`;
 
-// Seed the activity log from the case history (oldest→newest); the log renders
-// newest-first, so reverse it here. Actors are mapped to full names.
+// Build a detailed chain-of-custody log from the case's structured state: intake
+// consent (account, CBO-of-record, data-sharing, buddy auth), per-step packet
+// completion with %, engine determination, navigator review, outreach on each
+// flag, expedited screen, and named county actions. Synthetic but specific —
+// enough to actually follow up on. Newest-first; deterministic timestamps.
 function seedActivity(c: QueueApplication): ActivityEntry[] {
-  return [...c.history]
-    .reverse()
-    .map((e, i) => ({ ts: seedStamp(e.when, c.history.length - i), actor: fullName(e.by), action: e.label }));
+  const A = "Applicant (self-service)";
+  const nav = initialAssignee(c);
+  const county = countyOfficial(c.county);
+  const engine = "Civica engine (automated)";
+  const pct = (n: number) => `${Math.round((n / TOTAL_STEPS) * 100)}%`;
+  const seedNum = Number(c.caseId.match(/\d+$/)?.[0] ?? "0");
+  const built: { actor: string; action: string }[] = [];
+
+  built.push({ actor: A, action: "Created account and started a CalFresh application online" });
+  built.push({ actor: A, action: "Agreed to CBO assistance — VoteNow Advocacy Foundation recorded as CBO of record" });
+  built.push({ actor: A, action: "Signed consent to share application data with the county" });
+  if (seedNum % 2 === 0) built.push({ actor: A, action: `Authorized a buddy / representative (${PEERS[seedNum % PEERS.length]}) to assist with the case` });
+  if (c.expedited) built.push({ actor: engine, action: `Auto-screened for expedited service (7 CFR 273.2(i)) — ${c.expeditedReason.toLowerCase()}` });
+
+  for (let i = 0; i < Math.min(c.completedSteps, PIPELINE_STEPS.length); i++) {
+    const step = PIPELINE_STEPS[i];
+    if (step === "Document verification") built.push({ actor: nav, action: `Verified uploaded documents — packet ${pct(i + 1)} complete` });
+    else if (step === "Engine determination") built.push({ actor: engine, action: c.estimatedBenefitUsd != null ? `Eligibility gates + benefit estimate computed — approx. ~${formatUsd(c.estimatedBenefitUsd)}/mo` : "Eligibility screen computed (estimate pending)" });
+    else if (step === "Navigator review") built.push({ actor: nav, action: `Opened navigator review — packet ${pct(i + 1)} complete` });
+    else if (step === "Submitted to county") built.push({ actor: nav, action: "Submitted the application packet to the county" });
+    else built.push({ actor: A, action: `Completed "${step}" — packet ${pct(i + 1)} complete` });
+  }
+  for (const f of c.docFlags) built.push({ actor: nav, action: `Outreach — contacted applicant to resolve: ${f}` });
+  if (c.phase === "enrolled") {
+    built.push({ actor: county, action: "Conducted eligibility interview" });
+    built.push({ actor: county, action: `Approved — Notice of Action issued${c.estimatedBenefitUsd != null ? ` (~${formatUsd(c.estimatedBenefitUsd)}/mo)` : ""}` });
+  }
+  if (c.phase === "recert") {
+    built.push({ actor: engine, action: "Recertification notice generated and sent to the applicant" });
+    if (/overdue/i.test(c.stage)) built.push({ actor: nav, action: "Outreach — recertification overdue, reminder call placed" });
+  }
+
+  // Walk a per-case cursor forward (deterministic, SSR-safe); reverse so the log
+  // reads newest-first.
+  const base = new Date(2025, 8, 6 + (seedNum % 18), 9, 5, 0, 0).getTime();
+  const stamped = built.map((e, i) => ({
+    ts: formatStamp(new Date(base + (i * 11 + (i % 3) * 5) * 3600 * 1000)),
+    actor: e.actor,
+    action: e.action,
+  }));
+  return stamped.reverse();
 }
 
 // Automated cross-check of the application response components — what the engine
@@ -471,6 +515,8 @@ function CaseRow({
   const [comment, setComment] = useState("");
   const [confirmAdvance, setConfirmAdvance] = useState(false);
   const [showActivity, setShowActivity] = useState(false);
+  const [refreshedAt, setRefreshedAt] = useState("");
+  const openActivity = () => { setRefreshedAt(nowStamp()); setShowActivity(true); };
   const pct = completionPct(app.completedSteps);
   const next = nextPhase(app.phase);
   const checks = buildVerification(app);
@@ -799,7 +845,7 @@ function CaseRow({
               ))}
               <button
                 type="button"
-                onClick={() => setShowActivity(true)}
+                onClick={openActivity}
                 className="rounded-[2px] border border-hairline px-2.5 py-1 text-[11px] font-medium text-ink hover:bg-surface"
               >
                 Activity log ({app.activity.length})
@@ -809,58 +855,66 @@ function CaseRow({
               </Link>
             </div>
           </div>
+        </div>
+      )}
 
-          {/* Activity log — opens in its own panel (chain of custody, not always-on). */}
-          {showActivity && (
-            <div
-              role="dialog"
-              aria-label={`Activity log — ${app.caseId}`}
-              className="fixed inset-0 z-50 flex items-center justify-center bg-ink/40 p-4"
-              onClick={() => setShowActivity(false)}
-            >
-              <div
-                className="flex max-h-[80vh] w-full max-w-2xl flex-col rounded-[3px] border border-hairline bg-surface shadow-xl"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <div className="flex items-start justify-between border-b border-hairline px-4 py-2.5">
-                  <div>
-                    <p className="text-[13px] font-semibold text-ink">Activity log — {app.caseId} · {app.name}</p>
-                    <p className="text-[11px] text-graphite">{app.activity.length} entries · chain of custody (newest first)</p>
-                  </div>
-                  <button
-                    type="button"
-                    aria-label="Close activity log"
-                    onClick={() => setShowActivity(false)}
-                    className="px-1 text-muted hover:text-ink"
-                  >
-                    ✕
-                  </button>
-                </div>
-                <div className="overflow-auto">
-                  <table className="w-full border-collapse text-[12px]">
-                    <thead className="sticky top-0 bg-surface-secondary">
-                      <tr className="border-b border-hairline text-[11px] uppercase tracking-wider text-graphite">
-                        <th className="w-8 px-3 py-1.5 text-left font-semibold">#</th>
-                        <th className="w-[170px] px-3 py-1.5 text-left font-semibold">When</th>
-                        <th className="w-[150px] px-3 py-1.5 text-left font-semibold">Who</th>
-                        <th className="px-3 py-1.5 text-left font-semibold">Action taken</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {app.activity.map((e, i) => (
-                        <tr key={`${e.ts}-${i}`} className="border-b border-hairline last:border-b-0 align-top">
-                          <td className="px-3 py-1.5 tabular-nums text-graphite">{i + 1}</td>
-                          <td className="px-3 py-1.5 tabular-nums text-graphite whitespace-nowrap">{e.ts}</td>
-                          <td className="px-3 py-1.5 text-ink whitespace-nowrap">{e.actor}</td>
-                          <td className="px-3 py-1.5 text-ink leading-snug">{e.action}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+      {/* Activity log — full-page takeover (chain of custody), with refresh. */}
+      {showActivity && (
+        <div role="dialog" aria-label={`Activity log — ${app.caseId}`} className="fixed inset-0 z-50 overflow-auto bg-paper">
+          <div className="mx-auto max-w-4xl px-6 py-6">
+            <div className="flex flex-wrap items-start justify-between gap-3 mb-4">
+              <div>
+                <button type="button" onClick={() => setShowActivity(false)} className="text-[12px] font-medium text-pine hover:underline">
+                  ← Back to caseload
+                </button>
+                <h2 className="text-[20px] font-bold tracking-tight text-ink mt-1">Activity log</h2>
+                <p className="text-[12px] text-graphite">
+                  {app.caseId} · {app.name} · {app.county} County · {app.activity.length} entries (newest first)
+                </p>
+              </div>
+              <div className="flex items-center gap-3">
+                {refreshedAt && <span className="text-[11px] tabular-nums text-graphite">Refreshed {refreshedAt}</span>}
+                <button
+                  type="button"
+                  onClick={() => setRefreshedAt(nowStamp())}
+                  className="inline-flex items-center gap-1.5 rounded-[2px] border border-hairline px-2.5 py-1 text-[11px] font-medium text-ink hover:bg-surface"
+                >
+                  <span aria-hidden="true">↻</span> Refresh
+                </button>
+                <button
+                  type="button"
+                  aria-label="Close activity log"
+                  onClick={() => setShowActivity(false)}
+                  className="rounded-[2px] border border-hairline px-2.5 py-1 text-[11px] font-medium text-graphite hover:bg-surface"
+                >
+                  Close ✕
+                </button>
               </div>
             </div>
-          )}
+
+            <div className="border border-hairline rounded-[2px] bg-surface overflow-hidden">
+              <table className="w-full border-collapse text-[12px]">
+                <thead className="bg-surface-secondary">
+                  <tr className="border-b border-hairline text-[11px] uppercase tracking-wider text-graphite">
+                    <th className="w-10 px-3 py-2 text-left font-semibold">#</th>
+                    <th className="w-[190px] px-3 py-2 text-left font-semibold">When</th>
+                    <th className="w-[200px] px-3 py-2 text-left font-semibold">Who</th>
+                    <th className="px-3 py-2 text-left font-semibold">Action taken</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {app.activity.map((e, i) => (
+                    <tr key={`${e.ts}-${i}`} className="border-b border-hairline last:border-b-0 align-top">
+                      <td className="px-3 py-2 tabular-nums text-graphite">{i + 1}</td>
+                      <td className="px-3 py-2 tabular-nums text-graphite whitespace-nowrap">{e.ts}</td>
+                      <td className="px-3 py-2 text-ink whitespace-nowrap">{e.actor}</td>
+                      <td className="px-3 py-2 text-ink leading-snug">{e.action}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
       )}
     </div>
