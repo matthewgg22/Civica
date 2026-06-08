@@ -286,7 +286,7 @@ function NavigatorRow({
             {cases.map((c, i) => (
               <Link
                 key={c.id}
-                href={`/packets/${c.id}`}
+                href={`/cbo-preview/application/${c.id}`}
                 className={`flex items-center gap-3 px-3 py-2 text-[12px] hover:bg-paper transition-colors ${i > 0 ? "border-t border-hairline" : ""}`}
               >
                 <span className="font-mono tabular-nums text-graphite w-[96px] shrink-0 whitespace-nowrap">{c.caseId}</span>
@@ -314,7 +314,7 @@ function CaseRow({ app, border }: { app: QueueApplication; border: boolean }) {
 
   return (
     <Link
-      href={`/packets/${app.id}`}
+      href={`/cbo-preview/application/${app.id}`}
       className={`flex items-center gap-3 px-4 py-2 hover:bg-paper transition-colors ${border ? "border-t border-hairline" : ""}`}
     >
       <span className="text-[11px] text-graphite font-mono tabular-nums tracking-tight shrink-0 w-[88px]">{app.caseId}</span>

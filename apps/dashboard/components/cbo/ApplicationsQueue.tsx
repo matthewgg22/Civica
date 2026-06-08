@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import Link from "next/link";
 import {
   PIPELINE_STEPS,
   PHASES,
@@ -867,10 +868,9 @@ function CaseRow({
               >
                 Activity log ({app.activity.length})
               </button>
-              {/* "Open full case" removed for the synthetic preview — there's no
-                  real packet behind a demo case, so /packets/<demo-id> just
-                  redirected to /login and errored. Re-add when wired to real
-                  packets. */}
+              <Link href={`/cbo-preview/application/${app.id}`} className="text-[12px] font-semibold text-pine hover:underline">
+                Open full case →
+              </Link>
             </div>
           </div>
         </div>
