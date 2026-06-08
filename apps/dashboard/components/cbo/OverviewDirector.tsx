@@ -39,23 +39,16 @@ const NAV_CONTACT: Record<string, { email: string; phone: string }> = {
   "R. Okafor": { email: "rokafor@civica.org", phone: "(510) 555-0164" },
 };
 
-// 4-week trend deltas (start → now). Up is good for apps; down is good for
-// error rate and handoff days. Shown as a single percent change, not a chart —
-// a director wants "how much better, which direction," not a 4-point line.
-const TRENDS = {
-  appsPerNav:  { from: 18,  to: 23,  goodWhenUp: true  },
-  errorRate:   { from: 6.1, to: 4.2, goodWhenUp: false },
-  daysHandoff: { from: 9,   to: 6,   goodWhenUp: false },
-};
-
-function TrendDelta({ from, to, goodWhenUp, caption }: { from: number; to: number; goodWhenUp: boolean; caption: string }) {
-  const changePct = Math.round(((to - from) / from) * 100);
-  const isUp = to > from;
+// Trend delta — a single signed percent change. Up is good for apps; down is
+// good for error rate and handoff days. A director wants "how much better,
+// which direction," not a chart.
+function TrendDelta({ pct, goodWhenUp, caption }: { pct: number; goodWhenUp: boolean; caption: string }) {
+  const isUp = pct > 0;
   const isGood = goodWhenUp ? isUp : !isUp;
   return (
     <span className="mt-1 inline-flex items-center gap-1 text-[11px]">
       <span className={`font-semibold tabular-nums ${isGood ? "text-pine" : "text-warning"}`}>
-        {isUp ? "↑" : "↓"} {Math.abs(changePct)}%
+        {isUp ? "↑" : "↓"} {Math.abs(pct)}%
       </span>
       <span className="text-muted">{caption}</span>
     </span>
@@ -67,10 +60,30 @@ const SNAPSHOT_RANGES = ["Day", "Week", "Month", "YTD", "Year"] as const;
 type SnapshotRange = typeof SNAPSHOT_RANGES[number];
 const RANGE_CAPTION: Record<SnapshotRange, string> = {
   Day:   "vs yesterday",
-  Week:  "1-wk trend",
-  Month: "4-wk trend",
-  YTD:   "year to date",
-  Year:  "1-yr trend",
+  Week:  "vs last week",
+  Month: "vs last month",
+  YTD:   "vs last year",
+  Year:  "vs prior year",
+};
+
+// Which direction is "good" for each metric (drives the green/orange color).
+const GOOD_WHEN_UP = { apps: true, errorRate: false, handoff: false } as const;
+
+// Per-range KPI figures (illustrative — synthetic caseload). Switching the
+// range selector swaps all four numbers and their trend deltas. trendPct is
+// signed: positive = up vs the prior comparable period. Benefits has no delta
+// (just the total + household count). Month is the live-engine anchor; the
+// component overrides Month's benefits with the real enrolled-case sum.
+type KpiMetric = { value: string; trendPct: number };
+const SNAPSHOT_DATA: Record<
+  SnapshotRange,
+  { apps: KpiMetric; errorRate: KpiMetric; handoff: KpiMetric; benefits: { usd: number; households: number } }
+> = {
+  Day:   { apps: { value: "1",   trendPct:  4 }, errorRate: { value: "4.5%", trendPct: -2  }, handoff: { value: "6d", trendPct: -3  }, benefits: { usd:   389, households:  1 } },
+  Week:  { apps: { value: "6",   trendPct: 11 }, errorRate: { value: "4.3%", trendPct: -6  }, handoff: { value: "6d", trendPct: -8  }, benefits: { usd:   935, households:  2 } },
+  Month: { apps: { value: "23",  trendPct: 28 }, errorRate: { value: "4.2%", trendPct: -31 }, handoff: { value: "6d", trendPct: -33 }, benefits: { usd:   935, households:  2 } },
+  YTD:   { apps: { value: "187", trendPct: 35 }, errorRate: { value: "4.6%", trendPct: -22 }, handoff: { value: "7d", trendPct: -25 }, benefits: { usd: 11240, households: 24 } },
+  Year:  { apps: { value: "271", trendPct: 52 }, errorRate: { value: "5.1%", trendPct: -38 }, handoff: { value: "8d", trendPct: -40 }, benefits: { usd: 14580, households: 31 } },
 };
 
 // ── Navigator initials avatar ─────────────────────────────────────────────────
@@ -357,6 +370,15 @@ export default function OverviewDirector({
   const totalBenefitUsd = enrolledCases.reduce((s, c) => s + (c.estimatedBenefitUsd ?? 0), 0);
   const enrolledWithBenefit = enrolledCases.filter((c) => c.estimatedBenefitUsd != null).length;
 
+  // Snapshot KPIs for the selected range. Month is anchored to the live engine
+  // sum of enrolled benefits; other ranges are illustrative synthetic figures.
+  const snap = SNAPSHOT_DATA[snapshotRange];
+  const caption = RANGE_CAPTION[snapshotRange];
+  const benefits =
+    snapshotRange === "Month"
+      ? { usd: totalBenefitUsd, households: enrolledWithBenefit }
+      : snap.benefits;
+
   // Build navigator → cases map, sorted: named navigators alphabetical, Unassigned last.
   const navigatorMap = useMemo(() => {
     const map = new Map<string, QueueApplication[]>();
@@ -438,31 +460,31 @@ export default function OverviewDirector({
           {/* Apps per navigator */}
           <div className="flex-1 px-6 py-5 flex flex-col">
             <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite">Apps / navigator</p>
-            <span className="text-[34px] font-semibold tabular-nums text-ink leading-none mt-2">23</span>
-            <TrendDelta {...TRENDS.appsPerNav} caption={RANGE_CAPTION[snapshotRange]} />
+            <span className="text-[34px] font-semibold tabular-nums text-ink leading-none mt-2">{snap.apps.value}</span>
+            <TrendDelta pct={snap.apps.trendPct} goodWhenUp={GOOD_WHEN_UP.apps} caption={caption} />
           </div>
           {/* Error rate */}
           <div className="flex-1 px-6 py-5 border-l border-hairline flex flex-col">
             <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite">Error rate</p>
-            <span className="text-[34px] font-semibold tabular-nums text-ink leading-none mt-2">4.2%</span>
-            <TrendDelta {...TRENDS.errorRate} caption={RANGE_CAPTION[snapshotRange]} />
+            <span className="text-[34px] font-semibold tabular-nums text-ink leading-none mt-2">{snap.errorRate.value}</span>
+            <TrendDelta pct={snap.errorRate.trendPct} goodWhenUp={GOOD_WHEN_UP.errorRate} caption={caption} />
           </div>
           {/* Avg handoff */}
           <div className="flex-1 px-6 py-5 border-l border-hairline flex flex-col">
             <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite">Time to handoff</p>
-            <span className="text-[34px] font-semibold tabular-nums text-ink leading-none mt-2">6d</span>
-            <TrendDelta {...TRENDS.daysHandoff} caption={RANGE_CAPTION[snapshotRange]} />
+            <span className="text-[34px] font-semibold tabular-nums text-ink leading-none mt-2">{snap.handoff.value}</span>
+            <TrendDelta pct={snap.handoff.trendPct} goodWhenUp={GOOD_WHEN_UP.handoff} caption={caption} />
           </div>
-          {/* Benefits enrolled — live from engine */}
+          {/* Benefits enrolled — Month is live from engine; other ranges illustrative */}
           <div className="flex-1 px-6 py-5 border-l border-hairline flex flex-col">
             <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite">Benefits enrolled</p>
-            {totalBenefitUsd > 0 ? (
+            {benefits.usd > 0 ? (
               <>
                 <span className="text-[34px] font-semibold tabular-nums text-ink leading-none mt-2">
-                  {formatUsd(totalBenefitUsd)}
+                  {formatUsd(benefits.usd)}
                 </span>
                 <span className="mt-1.5 text-[11px] text-muted">
-                  /mo · {enrolledWithBenefit} household{enrolledWithBenefit !== 1 ? "s" : ""}
+                  /mo · {benefits.households} household{benefits.households !== 1 ? "s" : ""}
                 </span>
               </>
             ) : (
