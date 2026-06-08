@@ -195,6 +195,15 @@ class IncomeSource(BaseModel):
     is_earned: bool = Field(
         description="True for wages and self-employment net earnings (gets the 20% earned income deduction). False for unearned (UI, SS, child support, etc.).",
     )
+    is_ongoing: bool = Field(
+        default=True,
+        description=(
+            "False when this income source has ended and will not pay again "
+            "this month or next. Drives forward-looking income projection for "
+            "expedited service and benefit calculations. Defaults True so "
+            "existing records are unaffected."
+        ),
+    )
 
 
 class IncomeFacts(BaseModel):
@@ -271,6 +280,19 @@ class Household(BaseModel):
     receives_general_assistance: bool = False
     is_homeless: bool = False
     is_seasonal_or_migrant_farmworker: bool = False
+    new_source_income_within_10_days: Decimal = Field(
+        default=Decimal("0"),
+        ge=0,
+        description=(
+            "For migrant/seasonal farmworker households only: amount of income "
+            "from a new employer the household expects to receive within 10 "
+            "calendar days of the application date. Used in the 7 CFR "
+            "273.10(e)(3) destitute test: if this value exceeds $25, the "
+            "household does not meet the new-source destitute condition. "
+            "Defaults 0 (no new income expected) so existing records are "
+            "unaffected."
+        ),
+    )
 
     @property
     def has_elderly_or_disabled(self) -> bool:

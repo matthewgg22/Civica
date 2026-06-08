@@ -152,12 +152,13 @@ class FederalSNAPRules:
 
         # 6. Compute benefit.
         benefit = self._compute_benefit(household, net_calc)
+        expedited = self._is_expedited_eligible(household)
         return EligibilityResult(
             status=EligibilityStatus.ELIGIBLE,
             monthly_benefit=benefit.monthly_benefit,
-            expedited_eligible=self._is_expedited_eligible(household),
+            expedited_eligible=expedited,
             contributing_factors=self._contributing_factors(household, benefit),
-            required_verifications=self._required_verifications(household),
+            required_verifications=self._required_verifications(household, expedited),
             test_outcomes=outcomes,
             benefit_calculation=benefit,
             effective_date=self.effective_date,
@@ -378,25 +379,59 @@ class FederalSNAPRules:
     # -------------------------------------------------------------------
 
     def _is_expedited_eligible(self, household: Household) -> bool:
-        gross = household.income.gross_monthly_total
+        # Use forward-looking gross: only income sources still paying.
+        # A household whose wages just ended has effective_gross = $0 —
+        # matching the regulatory intent that terminated income not count
+        # against the expedited threshold. is_ongoing defaults True so
+        # households that don't set the flag behave identically to before.
+        effective_gross = sum(
+            (s.monthly_gross for s in household.income.sources if s.is_ongoing),
+            Decimal("0"),
+        )
         liquid = household.assets.countable_resources
+        # 7 CFR 273.2(i)(1)(iii) and 58 Fed. Reg. 58448 require the SUA when
+        # the household is entitled to it — not actual utility costs. Delegating
+        # to _effective_utility_cost keeps this consistent with the net income
+        # calculation and lets state subclasses substitute their SUA tables.
         shelter = (
             household.expenses.rent_or_mortgage
-            + household.expenses.utilities_actual
+            + self._effective_utility_cost(household)
         )
-        if gross < Decimal("150") and liquid <= Decimal("100"):
+        # Path 1: 7 CFR 273.2(i)(1)(i)
+        if effective_gross < Decimal("150") and liquid <= Decimal("100"):
             return True
-        if (gross + liquid) < shelter:
+        # Path 2: 7 CFR 273.2(i)(1)(iii)
+        if (effective_gross + liquid) < shelter:
             return True
+        # Path 3: 7 CFR 273.2(i)(1)(ii) — destitute migrant/seasonal farmworker.
+        # "Destitute" per 7 CFR 273.10(e)(3) requires two conditions:
+        #   A. Liquid resources ≤ $100.
+        #   B. Income-source status: all sources are terminated (is_ongoing=False)
+        #      OR from a new employer where ≤ $25 will arrive within 10 days.
+        # Condition B is now fully implemented using IncomeSource.is_ongoing and
+        # Household.new_source_income_within_10_days.
         if household.is_seasonal_or_migrant_farmworker and liquid <= Decimal("100"):
-            return True
+            all_sources_terminated = all(
+                not s.is_ongoing for s in household.income.sources
+            ) if household.income.sources else True
+            new_source_is_negligible = (
+                household.new_source_income_within_10_days <= Decimal("25")
+            )
+            if all_sources_terminated and new_source_is_negligible:
+                return True
         return False
 
     # -------------------------------------------------------------------
     # Verification list (drives the iOS doc-upload UI)
     # -------------------------------------------------------------------
 
-    def _required_verifications(self, household: Household) -> list[RequiredVerification]:
+    def _required_verifications(
+        self, household: Household, expedited_eligible: bool = False
+    ) -> list[RequiredVerification]:
+        # For expedited households only identity must be verified upfront;
+        # all other verifications may be postponed until continuation
+        # (7 CFR 273.2(i)(4)). can_be_postponed_for_expedited signals this
+        # to the iOS doc-upload UI and the navigator checklist.
         verifications: list[RequiredVerification] = [
             RequiredVerification(
                 code="identity_photo_id",
@@ -404,6 +439,7 @@ class FederalSNAPRules:
                 label_es="Identificación con foto",
                 explanation_en="A driver's license, state ID, passport, or similar.",
                 explanation_es="Licencia de conducir, identificación estatal, pasaporte o similar.",
+                can_be_postponed_for_expedited=False,
             ),
         ]
         if household.income.earned_monthly_total > 0:
@@ -414,6 +450,7 @@ class FederalSNAPRules:
                     label_es="Recibo de pago reciente",
                     explanation_en="Most recent paystub covering the last 30 days.",
                     explanation_es="El recibo de pago más reciente que cubra los últimos 30 días.",
+                    can_be_postponed_for_expedited=expedited_eligible,
                 )
             )
         if household.expenses.rent_or_mortgage > 0:
@@ -424,6 +461,7 @@ class FederalSNAPRules:
                     label_es="Contrato de arrendamiento o estado de cuenta hipotecario",
                     explanation_en="Proof of monthly housing cost.",
                     explanation_es="Comprobante del costo mensual de vivienda.",
+                    can_be_postponed_for_expedited=expedited_eligible,
                 )
             )
         from .interfaces import SUATier as _SUATier
@@ -439,6 +477,7 @@ class FederalSNAPRules:
                     label_es="Factura de servicios públicos",
                     explanation_en="Most recent bill if you are not using the state's standard utility allowance.",
                     explanation_es="Factura más reciente si no está usando la asignación estándar estatal.",
+                    can_be_postponed_for_expedited=expedited_eligible,
                 )
             )
         return verifications

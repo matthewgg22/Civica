@@ -85,7 +85,9 @@ def _household(
     state: str = "MA",
     members: Iterable[HouseholdMember] | None = None,
     wages: Decimal | int | str | float = 0,
+    wages_ongoing: bool = True,
     unearned: Decimal | int | str | float = 0,
+    unearned_ongoing: bool = True,
     rent: Decimal | int | str | float = 0,
     utilities_actual: Decimal | int | str | float = 0,
     sua_tier: SUATier = SUATier.NONE,
@@ -98,6 +100,7 @@ def _household(
     receives_ga: bool = False,
     is_homeless: bool = False,
     is_seasonal_farmworker: bool = False,
+    new_source_income_within_10_days: Decimal | int | str | float = 0,
 ) -> Household:
     if members is None:
         members = [_member()]
@@ -109,6 +112,7 @@ def _household(
                 source_type="wages",
                 monthly_gross=Decimal(str(wages)),
                 is_earned=True,
+                is_ongoing=wages_ongoing,
             )
         )
     if Decimal(str(unearned)) > 0:
@@ -118,6 +122,7 @@ def _household(
                 source_type="other_unearned",
                 monthly_gross=Decimal(str(unearned)),
                 is_earned=False,
+                is_ongoing=unearned_ongoing,
             )
         )
     return Household(
@@ -138,6 +143,7 @@ def _household(
         receives_general_assistance=receives_ga,
         is_homeless=is_homeless,
         is_seasonal_or_migrant_farmworker=is_seasonal_farmworker,
+        new_source_income_within_10_days=Decimal(str(new_source_income_within_10_days)),
     )
 
 
