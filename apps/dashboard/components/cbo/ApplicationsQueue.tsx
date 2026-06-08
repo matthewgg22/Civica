@@ -10,6 +10,7 @@ import {
   type SurveyAnswer,
   type Risk,
   type Phase,
+  type InterviewStatus,
 } from "../../lib/cbo/demo-pipeline";
 import TableExport from "./TableExport";
 import { EVALUATION_GATES, deductionRows, deductionOneLine } from "../../lib/cbo/engine-view";
@@ -60,6 +61,51 @@ function Funnel({ phases }: { phases: PhaseGroup[] }) {
           )}
         </div>
       ))}
+    </div>
+  );
+}
+
+// Caseload-level timeliness summary — the director's at-a-glance read across the
+// whole queue: how many interviews are booked vs. missed, and how many cases are
+// up against (or past) the §273.2 processing wire. Procedural risk, not score.
+function SummaryStat({ n, label, tone }: { n: number; label: string; tone: "ink" | "warn" | "brick" }) {
+  return (
+    <span className="inline-flex items-baseline gap-1.5">
+      <span className={`text-[15px] font-semibold tabular-nums leading-none ${tone === "brick" ? "text-brick" : tone === "warn" ? "text-warning" : "text-ink"}`}>{n}</span>
+      <span className="text-[11px] text-graphite">{label}</span>
+    </span>
+  );
+}
+
+function TimelinessSummary({ cases }: { cases: QueueApplication[] }) {
+  let scheduled = 0;
+  let missed = 0;
+  let completed = 0;
+  let overdue = 0;
+  let dueSoon = 0;
+  let curing = 0;
+  for (const c of cases) {
+    if (c.interview.status === "scheduled") scheduled++;
+    else if (c.interview.status === "missed") missed++;
+    else if (c.interview.status === "completed") completed++;
+    const clk = processingClock(c);
+    if (clk) {
+      if (clk.left < 0) overdue++;
+      else if (clk.left <= 3) dueSoon++;
+    }
+    if (c.cureDaysLeft != null) curing++;
+  }
+
+  return (
+    <div className="flex flex-wrap items-center gap-x-5 gap-y-2 rounded-[2px] border border-hairline bg-surface px-4 py-2.5">
+      <span className="text-[11px] font-semibold uppercase tracking-wider text-graphite">This week</span>
+      <SummaryStat n={scheduled} label="interviews scheduled" tone="ink" />
+      <SummaryStat n={missed} label="missed" tone={missed > 0 ? "brick" : "ink"} />
+      <SummaryStat n={completed} label="completed" tone="ink" />
+      <span className="h-3 w-px bg-hairline" aria-hidden="true" />
+      <SummaryStat n={overdue} label="past the 273.2 wire" tone={overdue > 0 ? "brick" : "ink"} />
+      <SummaryStat n={dueSoon} label="due ≤3 days" tone={dueSoon > 0 ? "warn" : "ink"} />
+      <SummaryStat n={curing} label="curing verification" tone={curing > 0 ? "warn" : "ink"} />
     </div>
   );
 }
@@ -153,6 +199,50 @@ const ELIG_CHIP: Record<EligScan["tone"], string> = {
   eligible: "bg-pine-surface text-ink",
   ineligible: "bg-brick/10 text-brick",
   incomplete: "bg-surface-secondary text-graphite",
+};
+
+// ── Regulatory clocks (§273.2) ────────────────────────────────────────────────
+// The three statutory timers a navigator actually triages on: the 30-day (7 for
+// expedited) processing clock, the eligibility-interview gate, and the ~10-day
+// verification "cure" window. These dominate triage order more than risk score —
+// ~2/3 of CA denials are procedural (missed interview / un-cured verification),
+// not substantive ineligibility.
+
+type ClockTone = "ok" | "warn" | "overdue";
+const CLOCK_TONE_BOX: Record<ClockTone, string> = {
+  ok: "bg-pine-surface text-ink",
+  warn: "bg-warning/12 text-warning",
+  overdue: "bg-brick/10 text-brick",
+};
+// The §273.2 processing clock for an in-flight application. Null once decided
+// (enrolled / recert) — the clock only runs while the county owes a decision.
+type ProcessingClock = { day: number; limit: number; left: number; tone: ClockTone; label: string; sub: string };
+function processingClock(app: QueueApplication): ProcessingClock | null {
+  if (app.processingDay == null) return null;
+  const day = app.processingDay;
+  const limit = app.processingLimit;
+  const left = limit - day;
+  const tone: ClockTone = left < 0 ? "overdue" : left <= 3 ? "warn" : "ok";
+  return {
+    day,
+    limit,
+    left,
+    tone,
+    label: left < 0 ? `Day ${day} of ${limit} · overdue` : `Day ${day} of ${limit}`,
+    sub:
+      limit === 7
+        ? "Expedited service · 7 CFR 273.2(i)"
+        : "Application processing · 7 CFR 273.2(g)",
+  };
+}
+
+// Eligibility-interview gate (7 CFR 273.2(e)). A missed interview is the single
+// biggest procedural-denial driver, so it surfaces as its own actionable state.
+const INTERVIEW_META: Record<InterviewStatus, { label: string; tone: ClockTone; box: string }> = {
+  none: { label: "Not yet scheduled", tone: "warn", box: "bg-surface-secondary text-graphite" },
+  scheduled: { label: "Scheduled", tone: "ok", box: "bg-pine-surface text-ink" },
+  missed: { label: "Missed — reschedule", tone: "overdue", box: "bg-brick/10 text-brick" },
+  completed: { label: "Completed", tone: "ok", box: "bg-pine-surface text-ink" },
 };
 
 // Map an engine verification item / recommendation to the application section it
@@ -710,6 +800,32 @@ function AnswerList({
 
 // One of the three engine panels in the expanded case view: a titled, tagged
 // card with a consistent grammar (result → trace → provenance tag).
+// Consistent colored "result box" that leads each of the three engine cards, so
+// a layperson reads verdict / dollars / action items with the same grammar:
+// pine = likely eligible, amber = the benefit (a positive outcome), blue = the
+// call-to-action count. (Amber is reserved for positive outcomes per DESIGN.md.)
+function ResultLede({
+  box,
+  kicker,
+  value,
+  unit,
+}: {
+  box: string;
+  kicker: string;
+  value: React.ReactNode;
+  unit?: string;
+}) {
+  return (
+    <div className={`rounded-[3px] px-2.5 py-1.5 ${box}`}>
+      <p className="text-[10px] uppercase tracking-wider opacity-80">{kicker}</p>
+      <p className="text-[18px] font-semibold tabular-nums leading-tight mt-0.5">
+        {value}
+        {unit && <span className="text-[12px] font-normal opacity-80">{unit}</span>}
+      </p>
+    </div>
+  );
+}
+
 function EngineBlock({ title, tag, children }: { title: string; tag: string; children: React.ReactNode }) {
   return (
     <div className="bg-surface border border-hairline rounded-[2px] p-3">
@@ -722,8 +838,105 @@ function EngineBlock({ title, tag, children }: { title: string; tag: string; chi
   );
 }
 
+// Per-case timeliness rail — the three §273.2 clocks side by side, surfaced at
+// the top of the expanded case (above the responses) because they set triage
+// priority. Interview offers inline actions (reminder / call / practice flag),
+// each logged to the chain of custody.
+function TimelinessBanner({
+  app,
+  onAction,
+}: {
+  app: CaseRecord;
+  onAction: (action: string) => void;
+}) {
+  const clock = processingClock(app);
+  const iv = INTERVIEW_META[app.interview.status];
+  const cure = app.cureDaysLeft;
+  const cureTone: ClockTone = cure == null ? "ok" : cure <= 1 ? "overdue" : cure <= 3 ? "warn" : "warn";
+  // Only render for cases where at least one clock is live.
+  if (!clock && app.interview.status === "none" && cure == null) return null;
+
+  const showInterviewActions = app.interview.status === "missed" || app.interview.status === "scheduled" || app.interview.status === "none";
+
+  return (
+    <div className="rounded-[2px] border border-hairline bg-surface px-3 py-2.5">
+      <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite mb-2">Timeliness · 7 CFR 273.2</p>
+      <div className="grid gap-2.5 sm:grid-cols-3">
+        {/* Processing clock — the day-of-N statutory wire. */}
+        <div className={`rounded-[2px] px-2.5 py-1.5 ${clock ? CLOCK_TONE_BOX[clock.tone] : "bg-surface-secondary text-graphite"}`}>
+          <p className="text-[10px] uppercase tracking-wider opacity-80">Processing clock</p>
+          {clock ? (
+            <>
+              <p className="text-[15px] font-semibold tabular-nums leading-tight mt-0.5">{clock.label}</p>
+              <p className="text-[10px] opacity-80 leading-snug mt-0.5">
+                {clock.tone === "overdue"
+                  ? `${-clock.left}d past the limit · ${clock.sub}`
+                  : `${clock.left}d left · ${clock.sub}`}
+              </p>
+            </>
+          ) : (
+            <p className="text-[13px] font-medium leading-tight mt-0.5">No clock running</p>
+          )}
+        </div>
+
+        {/* Interview gate. */}
+        <div className={`rounded-[2px] px-2.5 py-1.5 ${iv.box}`}>
+          <p className="text-[10px] uppercase tracking-wider opacity-80">Interview · 273.2(e)</p>
+          <p className="text-[13px] font-semibold leading-tight mt-0.5">{iv.label}</p>
+          <p className="text-[10px] opacity-80 leading-snug mt-0.5">
+            {app.interview.date ? `${app.interview.status === "completed" ? "Held" : app.interview.status === "missed" ? "Was set for" : "Set for"} ${app.interview.date}` : "CF-296 not yet booked"}
+          </p>
+        </div>
+
+        {/* Verification cure clock. */}
+        <div className={`rounded-[2px] px-2.5 py-1.5 ${cure == null ? "bg-surface-secondary text-graphite" : CLOCK_TONE_BOX[cureTone]}`}>
+          <p className="text-[10px] uppercase tracking-wider opacity-80">Cure clock · 273.2(h)</p>
+          {cure == null ? (
+            <p className="text-[13px] font-medium leading-tight mt-0.5">Nothing pending</p>
+          ) : (
+            <>
+              <p className="text-[15px] font-semibold tabular-nums leading-tight mt-0.5">{cure}d to cure</p>
+              <p className="text-[10px] opacity-80 leading-snug mt-0.5">Chasing: {app.assignedTo}</p>
+            </>
+          )}
+        </div>
+      </div>
+
+      {/* Interview actions — only where an interview still needs work. */}
+      {showInterviewActions && (
+        <div className="flex flex-wrap items-center gap-2 mt-2.5">
+          {app.interview.status === "missed" && (
+            <span className="text-[11px] font-semibold text-brick mr-1">Missed interview — recover before the county denies (273.2(e)):</span>
+          )}
+          <button
+            type="button"
+            onClick={() => onAction(`Sent interview reminder to applicant${app.interview.date ? ` (CF-296 set for ${app.interview.date})` : ""}`)}
+            className="rounded-[2px] border border-hairline bg-surface px-2.5 py-1 text-[11px] font-medium text-ink hover:bg-paper"
+          >
+            Send reminder
+          </button>
+          <button
+            type="button"
+            onClick={() => onAction("Placed outreach call to applicant about the eligibility interview")}
+            className="rounded-[2px] border border-hairline bg-surface px-2.5 py-1 text-[11px] font-medium text-ink hover:bg-paper"
+          >
+            Call applicant
+          </button>
+          <button
+            type="button"
+            onClick={() => onAction("Flagged applicant for the interview-practice tool (mock CalFresh interview)")}
+            className="rounded-[2px] border border-hairline bg-surface px-2.5 py-1 text-[11px] font-medium text-ink hover:bg-paper"
+          >
+            Flag for interview practice
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
 function CaseRow({
-  app, border, onAdvance, onTransfer, onComment, onEditLog, onTogglePin,
+  app, border, onAdvance, onTransfer, onComment, onEditLog, onTogglePin, onLogAction,
 }: {
   app: CaseRecord;
   border: boolean;
@@ -732,6 +945,7 @@ function CaseRow({
   onComment: (text: string) => void;
   onEditLog: (changes: { question: string; from: string; to: string }[]) => void;
   onTogglePin: () => void;
+  onLogAction: (action: string) => void;
 }) {
   const [open, setOpen] = useState(false);
   const [edited, setEdited] = useState<Record<string, string>>({});
@@ -745,6 +959,7 @@ function CaseRow({
   const next = nextPhase(app.phase);
   const checks = buildVerification(app);
   const checksClear = checks.filter((c) => c.ok).length;
+  const clock = processingClock(app);
 
   // Open Mae with an empty composer — the caseworker types their own question.
   // (No auto-generated prefill; MaeChat listens for this event to open.)
@@ -788,11 +1003,21 @@ function CaseRow({
               Expedited
             </span>
           )}
+          {app.interview.status === "missed" && (
+            <span className="shrink-0 rounded-[2px] border border-brick px-1.5 text-[11px] font-semibold uppercase tracking-wider text-brick">
+              Interview missed
+            </span>
+          )}
         </span>
-        {/* Enrolled shows benefit; others show pipeline completion */}
+        {/* Enrolled → benefit; active w/ a running clock → "Day X of N"
+            (drives triage); otherwise pipeline completion. */}
         <span className="hidden md:flex items-center justify-end shrink-0 w-[130px]">
           {enrolled && app.estimatedBenefitUsd !== null ? (
             <span className="text-[12px] tabular-nums text-ink font-medium">~{formatUsd(app.estimatedBenefitUsd)}/mo</span>
+          ) : clock ? (
+            <span className={`rounded-[2px] px-1.5 py-0.5 text-[11px] font-semibold tabular-nums ${CLOCK_TONE_BOX[clock.tone]}`}>
+              Day {clock.day} of {clock.limit}
+            </span>
           ) : (
             <span className="flex items-center gap-2 w-full">
               <span className="h-1.5 flex-1 rounded-[1px] bg-surface-secondary overflow-hidden">
@@ -828,6 +1053,9 @@ function CaseRow({
               </p>
             </div>
           )}
+
+          {/* §273.2 clocks — processing / interview / cure (sets triage priority). */}
+          <TimelinessBanner app={app} onAction={onLogAction} />
 
           <AnswerList
             caseId={app.id}
@@ -869,9 +1097,11 @@ function CaseRow({
                   const scan = eligibilityScan(app);
                   return (
                     <>
-                      <span className={`inline-block rounded-[2px] px-2 py-0.5 text-[12px] font-semibold uppercase tracking-wider ${ELIG_CHIP[scan.tone]}`}>
-                        {scan.label}
-                      </span>
+                      <ResultLede
+                        box={ELIG_CHIP[scan.tone]}
+                        kicker="Verdict"
+                        value={<span className="text-[15px] uppercase tracking-wide">{scan.label}</span>}
+                      />
                       <p className="text-[12px] text-ink mt-1.5 leading-snug">{scan.note}</p>
                       <p className="text-[11px] text-graphite mt-1">Not a determination.</p>
                     </>
@@ -899,11 +1129,12 @@ function CaseRow({
               <EngineBlock title="Benefit amount" tag="provisional">
                 {app.estimatedBenefitUsd !== null ? (
                   <>
-                    <p className="text-[11px] uppercase tracking-wider text-graphite">Estimated monthly benefit</p>
-                    <p className="text-[20px] font-semibold tabular-nums text-ink leading-tight mt-0.5">
-                      ~{formatUsd(app.estimatedBenefitUsd)}
-                      <span className="text-[12px] font-normal text-graphite">/mo</span>
-                    </p>
+                    <ResultLede
+                      box="bg-amber-surface text-ink"
+                      kicker="Est. monthly benefit"
+                      value={`~${formatUsd(app.estimatedBenefitUsd)}`}
+                      unit="/mo"
+                    />
                     {app.deduction && (
                       <>
                         <p className="text-[11px] text-graphite mt-1.5 leading-snug">{deductionOneLine(app.deduction)}</p>
@@ -950,10 +1181,12 @@ function CaseRow({
                   if (count === 0) return <p className="text-[12px] text-muted">Nothing outstanding to confirm.</p>;
                   return (
                     <>
-                      <p className="text-[20px] font-semibold tabular-nums text-ink leading-tight">
-                        {count}
-                        <span className="text-[12px] font-normal text-graphite"> {hasRecs ? (count === 1 ? "way to raise the benefit" : "ways to raise the benefit") : "to confirm"}</span>
-                      </p>
+                      <ResultLede
+                        box="bg-[var(--color-row-hover)] text-ink"
+                        kicker={hasRecs ? "Ways to raise the benefit" : "Action items to complete"}
+                        value={count}
+                        unit={` ${hasRecs ? (count === 1 ? "way" : "ways") : "to confirm"}`}
+                      />
                       <ul className="mt-1.5 space-y-1">
                         {hasRecs
                           ? app.recommendations.slice(0, 4).map((r) => (
@@ -1243,6 +1476,8 @@ export default function ApplicationsQueue({ phases }: { phases: PhaseGroup[] }) 
         c.id === id ? { ...c, activity: log(c, ...changes.map((ch) => `Changed "${ch.question}" from "${ch.from}" to "${ch.to}"`)) } : c,
       ),
     );
+  const logAction = (id: string, action: string) =>
+    setCases((cs) => cs.map((c) => (c.id === id ? { ...c, activity: log(c, action) } : c)));
 
   // Regroup the live caseload by phase for rendering + funnel counts. Pinned
   // cases float to the top of their phase (stable sort preserves order otherwise).
@@ -1292,6 +1527,9 @@ export default function ApplicationsQueue({ phases }: { phases: PhaseGroup[] }) 
     <div className="space-y-4">
       {/* Lifecycle funnel */}
       <Funnel phases={grouped} />
+
+      {/* Caseload-level §273.2 timeliness — interviews + processing-clock pressure. */}
+      <TimelinessSummary cases={cases} />
 
       {/* Search + export */}
       <div className="flex items-center justify-between gap-3">
@@ -1356,6 +1594,7 @@ export default function ApplicationsQueue({ phases }: { phases: PhaseGroup[] }) 
                   onComment={(text) => addComment(a.id, text)}
                   onEditLog={(questions) => logEdit(a.id, questions)}
                   onTogglePin={() => togglePin(a.id)}
+                  onLogAction={(action) => logAction(a.id, action)}
                 />
               ))}
             </div>

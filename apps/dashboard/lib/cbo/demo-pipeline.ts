@@ -91,7 +91,18 @@ export interface QueueApplication {
    *  yet verified). reason is "" when not flagged. */
   expedited: boolean;
   expeditedReason: string;
+  /** Regulatory timeliness clocks (7 CFR 273.2). */
+  interview: { status: InterviewStatus; date: string | null };
+  /** Day in the application processing clock; limit 30 (or 7 if expedited),
+   *  §273.2. null when not yet submitted or already decided. */
+  processingDay: number | null;
+  processingLimit: number;
+  /** Days left for the client to cure a verification pend, §273.2(h) (~10 days).
+   *  null when nothing is pending. */
+  cureDaysLeft: number | null;
 }
+
+export type InterviewStatus = "none" | "scheduled" | "missed" | "completed";
 
 export interface PhaseGroup {
   key: Phase;
@@ -283,6 +294,26 @@ const APPLICANTS: DemoApplicant[] = [
 const usd = (n: number) =>
   `$${n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
+// Per-case regulatory clocks (demo). interview status, day in the §273.2
+// processing clock (null = not submitted / decided), and §273.2(h) cure days
+// left on a verification pend. Elena is expedited → her 7-day clock is overdue
+// (day 9); Sofia is near the 30-day wire (day 28); two interviews are MISSED.
+const TIMELINE: Record<
+  string,
+  { interview: InterviewStatus; interviewDate: string | null; processingDay: number | null; cureDaysLeft: number | null }
+> = {
+  "demo-pkt-aisha": { interview: "none", interviewDate: null, processingDay: null, cureDaysLeft: null },
+  "demo-pkt-daniel": { interview: "none", interviewDate: null, processingDay: null, cureDaysLeft: null },
+  "demo-pkt-003-jasmine": { interview: "scheduled", interviewDate: "Oct 16", processingDay: 18, cureDaysLeft: 4 },
+  "demo-pkt-elena": { interview: "missed", interviewDate: "Oct 14", processingDay: 9, cureDaysLeft: 1 },
+  "demo-pkt-002-carlos": { interview: "scheduled", interviewDate: "Oct 14", processingDay: 12, cureDaysLeft: 6 },
+  "demo-pkt-sofia": { interview: "scheduled", interviewDate: "Oct 18", processingDay: 28, cureDaysLeft: null },
+  "demo-pkt-001-maria": { interview: "completed", interviewDate: "Oct 4", processingDay: null, cureDaysLeft: null },
+  "demo-pkt-theresa": { interview: "completed", interviewDate: "Sep 22", processingDay: null, cureDaysLeft: null },
+  "demo-pkt-patricia": { interview: "missed", interviewDate: "Oct 9", processingDay: null, cureDaysLeft: null },
+  "demo-pkt-mei": { interview: "scheduled", interviewDate: "Oct 20", processingDay: null, cureDaysLeft: null },
+};
+
 // Expedited-service screen, 7 CFR 273.2(i)(1). Provisional: liquid resources
 // aren't precisely captured, so we screen on the income-vs-shelter criterion
 // (and the <$150 gross floor). A "true" here means "screen for expedited", not a
@@ -427,7 +458,15 @@ export function buildPipeline(state: "CA" | "MA" = "CA", asOf: Date, synthetic =
       estimatedBenefitUsd, verificationNeeds, assumptions, deduction, recommendations,
       ...(() => {
         const x = expeditedScreen(a.engineInputs);
-        return { expedited: x.expedited, expeditedReason: x.reason };
+        const t = TIMELINE[a.id] ?? { interview: "none" as InterviewStatus, interviewDate: null, processingDay: null, cureDaysLeft: null };
+        return {
+          expedited: x.expedited,
+          expeditedReason: x.reason,
+          interview: { status: t.interview, date: t.interviewDate },
+          processingDay: t.processingDay,
+          processingLimit: x.expedited ? 7 : 30,
+          cureDaysLeft: t.cureDaysLeft,
+        };
       })(),
     };
   });
