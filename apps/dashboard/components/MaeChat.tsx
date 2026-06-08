@@ -29,7 +29,7 @@ type ChatMessage = { role: "user" | "assistant"; content: string };
 // by default — the portal stays staff-gated.
 const PREVIEW_OPEN = process.env.NEXT_PUBLIC_MAE_PREVIEW === "true";
 
-// Per-answer feedback — the human-in-the-loop signal. 👍/👎; a 👎 expands a
+// Per-answer feedback — the human-in-the-loop signal. Yes / No; "No" expands a
 // reason (esp. "citation wrong") + optional note. Posts to /api/mae/feedback,
 // which PII-scrubs and stores it for the answer-eval triage queue. Best-effort.
 function MaeFeedback({ question, answer }: { question: string; answer: string }) {
@@ -79,13 +79,23 @@ function MaeFeedback({ question, answer }: { question: string; answer: string })
     );
   }
   return (
-    <div className="mt-1 flex items-center gap-2 text-[11px] text-muted">
+    <div className="mt-1 flex items-center gap-1.5 text-[11px] text-muted">
       <span>Was this helpful?</span>
-      <button type="button" aria-label="Helpful" onClick={() => submit("up")} className="hover:text-ink">
-        👍
+      <button
+        type="button"
+        aria-label="Helpful"
+        onClick={() => submit("up")}
+        className="rounded-[2px] border border-hairline px-1.5 py-0.5 text-graphite hover:bg-surface-secondary hover:text-ink"
+      >
+        Yes
       </button>
-      <button type="button" aria-label="Not helpful" onClick={() => setStage("reason")} className="hover:text-ink">
-        👎
+      <button
+        type="button"
+        aria-label="Not helpful"
+        onClick={() => setStage("reason")}
+        className="rounded-[2px] border border-hairline px-1.5 py-0.5 text-graphite hover:bg-surface-secondary hover:text-ink"
+      >
+        No
       </button>
     </div>
   );
