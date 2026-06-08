@@ -1,12 +1,16 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import type { PhaseGroup, QueueApplication } from "../../lib/cbo/demo-pipeline";
 import { PIPELINE_STEPS, formatUsd } from "../../lib/cbo/demo-pipeline";
 import TableExport from "./TableExport";
 
 type Risk = "Low risk" | "Medium risk" | "High risk";
+
+// A caseworker on the roster. Seeded from the constants below; editable +
+// extendable at runtime (ephemeral demo — resets on reload).
+type Caseworker = { name: string; email: string; phone: string; avgDays: number | null };
 
 const TOTAL_STEPS = PIPELINE_STEPS.length;
 function pct(n: number) { return Math.round((n / TOTAL_STEPS) * 100); }
@@ -115,6 +119,93 @@ function Chevron({ open }: { open: boolean }) {
   );
 }
 
+function GearIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+      <circle cx="8" cy="8" r="2.1" stroke="currentColor" strokeWidth="1.3" />
+      <path d="M8 1.5v2M8 12.5v2M14.5 8h-2M3.5 8h-2M12.6 3.4l-1.4 1.4M4.8 11.2l-1.4 1.4M12.6 12.6l-1.4-1.4M4.8 4.8L3.4 3.4"
+        stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+// Assign-to dropdown — pick an approved caseworker to take an unassigned case.
+function AssignMenu({ workers, onAssign }: { workers: string[]; onAssign: (name: string) => void }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!open) return;
+    const onDoc = (e: MouseEvent) => { if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false); };
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setOpen(false); };
+    document.addEventListener("mousedown", onDoc);
+    document.addEventListener("keydown", onKey);
+    return () => { document.removeEventListener("mousedown", onDoc); document.removeEventListener("keydown", onKey); };
+  }, [open]);
+  return (
+    <div ref={ref} className="relative shrink-0">
+      <button
+        type="button"
+        aria-haspopup="menu"
+        aria-expanded={open}
+        onClick={() => setOpen((o) => !o)}
+        className="inline-flex items-center gap-1 rounded-[2px] bg-pine px-3 py-1.5 text-[12px] font-semibold text-white hover:bg-pine-pressed transition-colors"
+      >
+        Assign <span aria-hidden="true" className="text-[9px]">▾</span>
+      </button>
+      {open && (
+        <div role="menu" className="absolute right-0 z-10 mt-1 w-48 rounded-[2px] border border-hairline bg-surface shadow-sm py-1 max-h-64 overflow-auto">
+          <p className="px-3 py-1 text-[10px] font-semibold uppercase tracking-wider text-graphite">Assign to caseworker</p>
+          {workers.length > 0 ? (
+            workers.map((w) => (
+              <button
+                key={w}
+                type="button"
+                role="menuitem"
+                onClick={() => { onAssign(w); setOpen(false); }}
+                className="block w-full px-3 py-1.5 text-left text-[13px] text-ink hover:bg-paper"
+              >
+                {w}
+              </button>
+            ))
+          ) : (
+            <p className="px-3 py-2 text-[12px] text-muted">No caseworkers yet — add one in the roster.</p>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// Inline "add caseworker" form — shown in the roster when the gear is on.
+function AddCaseworkerRow({ onAdd }: { onAdd: (cw: Caseworker) => void }) {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const cls = "px-2 py-1 text-[13px] bg-surface border border-hairline rounded-[2px] text-ink placeholder:text-muted focus:outline-none focus:border-pine";
+  function submit() {
+    const n = name.trim();
+    if (!n) return;
+    onAdd({ name: n, email: email.trim(), phone: phone.trim(), avgDays: null });
+    setName(""); setEmail(""); setPhone("");
+  }
+  return (
+    <div className="flex flex-wrap items-center gap-2 px-4 py-2.5 border-t border-hairline bg-paper/60">
+      <span className="inline-flex items-center justify-center w-7 h-7 rounded-full border border-dashed border-hairline text-[13px] text-muted shrink-0" aria-hidden="true">+</span>
+      <input value={name} onChange={(e) => setName(e.target.value)} onKeyDown={(e) => e.key === "Enter" && submit()} placeholder="Name (e.g. T. Nguyen)" aria-label="New caseworker name" className={`${cls} w-40`} />
+      <input value={email} onChange={(e) => setEmail(e.target.value)} onKeyDown={(e) => e.key === "Enter" && submit()} placeholder="email@civica.org" aria-label="New caseworker email" className={`${cls} w-48`} />
+      <input value={phone} onChange={(e) => setPhone(e.target.value)} onKeyDown={(e) => e.key === "Enter" && submit()} placeholder="(555) 555-0100" aria-label="New caseworker phone" className={`${cls} w-36`} />
+      <button
+        type="button"
+        onClick={submit}
+        disabled={!name.trim()}
+        className="ml-auto inline-flex items-center rounded-[2px] bg-pine px-3 py-1.5 text-[12px] font-semibold text-white hover:bg-pine-pressed disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+      >
+        Add caseworker
+      </button>
+    </div>
+  );
+}
+
 // Inline-editable contact field (ephemeral demo — edits reset on reload, never
 // persisted). Click the pencil to edit; Enter or blur saves, Escape cancels.
 function EditableField({
@@ -122,7 +213,7 @@ function EditableField({
 }: {
   label: string;
   value: string;
-  type: "email" | "tel";
+  type: "email" | "tel" | "text";
   onSave: (v: string) => void;
 }) {
   const [editing, setEditing] = useState(false);
@@ -169,23 +260,22 @@ function EditableField({
 }
 
 function NavigatorRow({
-  name, cases, border,
+  worker, cases, border, managing, onUpdate, onRemove,
 }: {
-  name: string;
+  worker: Caseworker;
   cases: QueueApplication[];
   border: boolean;
+  managing: boolean;
+  onUpdate: (patch: Partial<Caseworker>) => void;
+  onRemove: () => void;
 }) {
   const [open, setOpen] = useState(false);
+  const name = worker.name;
   const flags = cases.reduce((s, c) => s + c.docFlags.length, 0);
-  const risk = topRisk(cases);
-  const avgDays = NAV_AVG_DAYS[name] ?? null;
-  const contact = NAV_CONTACT[name];
-  // Editable contact (ephemeral) — seeded from the constant, edits live in state.
-  const [contactDraft, setContactDraft] = useState(() =>
-    contact ? { email: contact.email, phone: contact.phone } : { email: "", phone: "" },
-  );
+  const risk = cases.length > 0 ? topRisk(cases) : null;
+  const avgDays = worker.avgDays;
 
-  // #4 capacity bar — share of the navigator's case ceiling
+  // #4 capacity bar — share of the caseworker's case ceiling
   const utilPct = Math.min((cases.length / CAPACITY) * 100, 100);
   const utilColor = utilPct >= 80 ? "bg-brick" : utilPct >= 60 ? "bg-warning" : "bg-pine/50";
 
@@ -229,8 +319,8 @@ function NavigatorRow({
           {flags > 0 ? `${flags} flag${flags !== 1 ? "s" : ""}` : "clean"}
         </span>
 
-        <span className={`shrink-0 w-14 text-right text-[11px] uppercase tracking-wider ${riskText(risk)}`}>
-          {riskLabel(risk)}
+        <span className={`shrink-0 w-14 text-right text-[11px] uppercase tracking-wider ${risk ? riskText(risk) : "text-muted"}`}>
+          {risk ? riskLabel(risk) : "—"}
         </span>
 
         {/* #9 avg days to handoff */}
@@ -243,61 +333,82 @@ function NavigatorRow({
         </span>
 
         <div className="shrink-0 w-28 flex justify-end">
-          <TableExport
-            filename={`progress-${name.toLowerCase().replace(/[\s.]/g, "-")}`}
-            title={`Progress report — ${name}`}
-            columns={["Navigator", "Case ID", "Applicant", "County", "Stage", "Completion", "Est. benefit", "Flags", "Risk"]}
-            rows={exportRows}
-            note={`Progress report for navigator ${name}. Benefit estimate and verification needs are computed by Civica's rules engine; applicant records are synthetic.`}
-          />
+          {cases.length > 0 ? (
+            <TableExport
+              filename={`progress-${name.toLowerCase().replace(/[\s.]/g, "-")}`}
+              title={`Progress report — ${name}`}
+              columns={["Navigator", "Case ID", "Applicant", "County", "Stage", "Completion", "Est. benefit", "Flags", "Risk"]}
+              rows={exportRows}
+              note={`Progress report for navigator ${name}. Benefit estimate and verification needs are computed by Civica's rules engine; applicant records are synthetic.`}
+            />
+          ) : (
+            <span className="text-[11px] text-muted">no cases</span>
+          )}
         </div>
       </div>
 
       {/* Expanded: caseworker contact (editable) + cases they're handling */}
       {open && (
         <div className="px-4 pb-4 pt-3 bg-paper/60 border-t border-hairline">
-          {contact && (
-            <div className="rounded-[3px] border border-hairline bg-surface px-4 py-3 mb-3 flex flex-wrap items-start gap-x-10 gap-y-3">
-              <EditableField
-                label="Email"
-                type="email"
-                value={contactDraft.email}
-                onSave={(v) => setContactDraft((d) => ({ ...d, email: v }))}
-              />
-              <EditableField
-                label="Phone"
-                type="tel"
-                value={contactDraft.phone}
-                onSave={(v) => setContactDraft((d) => ({ ...d, phone: v }))}
-              />
-              {avgDays != null && (
-                <div>
-                  <p className="text-[10px] font-semibold uppercase tracking-wider text-graphite mb-1">Avg to handoff</p>
-                  <p className="text-[13px] text-ink tabular-nums">{avgDays} days</p>
-                </div>
-              )}
-            </div>
-          )}
+          <div className="rounded-[3px] border border-hairline bg-surface px-4 py-3 mb-3 flex flex-wrap items-start gap-x-10 gap-y-3">
+            <EditableField
+              label="Name"
+              type="text"
+              value={worker.name}
+              onSave={(v) => onUpdate({ name: v })}
+            />
+            <EditableField
+              label="Email"
+              type="email"
+              value={worker.email}
+              onSave={(v) => onUpdate({ email: v })}
+            />
+            <EditableField
+              label="Phone"
+              type="tel"
+              value={worker.phone}
+              onSave={(v) => onUpdate({ phone: v })}
+            />
+            {avgDays != null && (
+              <div>
+                <p className="text-[10px] font-semibold uppercase tracking-wider text-graphite mb-1">Avg to handoff</p>
+                <p className="text-[13px] text-ink tabular-nums">{avgDays} days</p>
+              </div>
+            )}
+            {managing && (
+              <button
+                type="button"
+                onClick={onRemove}
+                className="ml-auto self-center text-[12px] font-medium text-brick hover:underline"
+              >
+                Remove caseworker
+              </button>
+            )}
+          </div>
 
           <p className="text-[10px] font-semibold uppercase tracking-wider text-graphite mb-1.5">
             Handling {cases.length} case{cases.length !== 1 ? "s" : ""}
           </p>
           <div className="rounded-[3px] border border-hairline bg-surface overflow-hidden">
-            {cases.map((c, i) => (
-              <Link
-                key={c.id}
-                href={`/cbo-preview/application/${c.id}`}
-                className={`flex items-center gap-3 px-3 py-2 text-[12px] hover:bg-paper transition-colors ${i > 0 ? "border-t border-hairline" : ""}`}
-              >
-                <span className="font-mono tabular-nums text-graphite w-[96px] shrink-0 whitespace-nowrap">{c.caseId}</span>
-                <span className="font-semibold text-ink w-[88px] shrink-0 truncate">{c.name}</span>
-                <span className="text-graphite flex-1 min-w-0 truncate">{c.stage}</span>
-                {c.docFlags.length > 0 && (
-                  <span className="text-[11px] text-brick font-semibold tabular-nums shrink-0">{c.docFlags.length} flag{c.docFlags.length > 1 ? "s" : ""}</span>
-                )}
-                <span className={`text-[10px] uppercase tracking-wider shrink-0 w-[34px] text-right ${riskText(c.risk)}`}>{riskLabel(c.risk)}</span>
-              </Link>
-            ))}
+            {cases.length > 0 ? (
+              cases.map((c, i) => (
+                <Link
+                  key={c.id}
+                  href={`/cbo-preview/application/${c.id}`}
+                  className={`flex items-center gap-3 px-3 py-2 text-[12px] hover:bg-paper transition-colors ${i > 0 ? "border-t border-hairline" : ""}`}
+                >
+                  <span className="font-mono tabular-nums text-graphite w-[96px] shrink-0 whitespace-nowrap">{c.caseId}</span>
+                  <span className="font-semibold text-ink w-[88px] shrink-0 truncate">{c.name}</span>
+                  <span className="text-graphite flex-1 min-w-0 truncate">{c.stage}</span>
+                  {c.docFlags.length > 0 && (
+                    <span className="text-[11px] text-brick font-semibold tabular-nums shrink-0">{c.docFlags.length} flag{c.docFlags.length > 1 ? "s" : ""}</span>
+                  )}
+                  <span className={`text-[10px] uppercase tracking-wider shrink-0 w-[34px] text-right ${riskText(c.risk)}`}>{riskLabel(c.risk)}</span>
+                </Link>
+              ))
+            ) : (
+              <p className="px-3 py-3 text-[12px] text-muted">No cases assigned yet.</p>
+            )}
           </div>
         </div>
       )}
@@ -426,14 +537,64 @@ export default function OverviewDirector({
   synthetic: boolean;
 }) {
   const [snapshotRange, setSnapshotRange] = useState<SnapshotRange>("Month");
+  const [managing, setManaging] = useState(false);
+
+  // Roster of approved caseworkers — seeded from the constants, editable +
+  // extendable at runtime (ephemeral). Assignments override a case's navigator.
+  const [caseworkers, setCaseworkers] = useState<Caseworker[]>(() =>
+    Object.keys(NAV_CONTACT).map((name) => ({
+      name,
+      email: NAV_CONTACT[name].email,
+      phone: NAV_CONTACT[name].phone,
+      avgDays: NAV_AVG_DAYS[name] ?? null,
+    })),
+  );
+  const [assignments, setAssignments] = useState<Record<string, string>>({});
 
   const allCases = useMemo(() => phases.flatMap((p) => p.cases), [phases]);
 
+  // Apply ephemeral dispatch assignments on top of the seeded navigator.
+  const effectiveCases = useMemo(
+    () => allCases.map((c) => (assignments[c.id] ? { ...c, navigator: assignments[c.id] } : c)),
+    [allCases, assignments],
+  );
+
   // #8 unassigned dispatch
   const unassignedCases = useMemo(
-    () => allCases.filter((c) => c.navigator === "Unassigned"),
-    [allCases],
+    () => effectiveCases.filter((c) => c.navigator === "Unassigned"),
+    [effectiveCases],
   );
+
+  // ── Caseworker management handlers (all ephemeral) ──
+  const assignCase = (caseId: string, name: string) =>
+    setAssignments((a) => ({ ...a, [caseId]: name }));
+
+  const addCaseworker = (cw: Caseworker) =>
+    setCaseworkers((prev) => (prev.some((p) => p.name === cw.name) ? prev : [...prev, cw]));
+
+  const updateCaseworker = (name: string, patch: Partial<Caseworker>) => {
+    // Renaming a caseworker must follow their cases — remap any assignment
+    // pointing at the old name so their caseload doesn't vanish.
+    if (patch.name && patch.name !== name) {
+      const newName = patch.name;
+      setAssignments((a) => {
+        const out = { ...a };
+        for (const c of effectiveCases) if (c.navigator === name) out[c.id] = newName;
+        return out;
+      });
+    }
+    setCaseworkers((prev) => prev.map((cw) => (cw.name === name ? { ...cw, ...patch } : cw)));
+  };
+
+  const removeCaseworker = (name: string) => {
+    // Their cases fall back to unassigned (reappear in Needs dispatch).
+    setAssignments((a) => {
+      const out = { ...a };
+      for (const c of effectiveCases) if (c.navigator === name) out[c.id] = "Unassigned";
+      return out;
+    });
+    setCaseworkers((prev) => prev.filter((cw) => cw.name !== name));
+  };
 
   // #3 benefits enrolled this month
   const enrolledCases = useMemo(
@@ -452,24 +613,20 @@ export default function OverviewDirector({
       ? { usd: totalBenefitUsd, households: enrolledWithBenefit }
       : snap.benefits;
 
-  // Build navigator → cases map, sorted: named navigators alphabetical, Unassigned last.
-  const navigatorMap = useMemo(() => {
-    const map = new Map<string, QueueApplication[]>();
-    for (const c of allCases) {
-      const nav = c.navigator ?? "Unassigned";
-      if (!map.has(nav)) map.set(nav, []);
-      map.get(nav)!.push(c);
+  // Caseworker → their (effective) cases. Sorted alphabetically; keeps zero-case
+  // caseworkers visible so the roster reflects the team, not just who has work.
+  const sortedWorkers = useMemo(
+    () => [...caseworkers].sort((a, b) => a.name.localeCompare(b.name)),
+    [caseworkers],
+  );
+  const casesByWorker = useMemo(() => {
+    const m = new Map<string, QueueApplication[]>();
+    for (const cw of caseworkers) m.set(cw.name, []);
+    for (const c of effectiveCases) {
+      if (c.navigator !== "Unassigned" && m.has(c.navigator)) m.get(c.navigator)!.push(c);
     }
-    return new Map(
-      [...map.entries()].sort(([a], [b]) => {
-        if (a === "Unassigned") return 1;
-        if (b === "Unassigned") return -1;
-        return a.localeCompare(b);
-      }),
-    );
-  }, [allCases]);
-
-  const navigatorList = [...navigatorMap.entries()];
+    return m;
+  }, [caseworkers, effectiveCases]);
 
   // Caseload split into two broad, collapsible categories the director opens on
   // demand — "active" (still being worked) vs "enrolled & closed" (outcome
@@ -479,18 +636,18 @@ export default function OverviewDirector({
       const order: Record<Risk, number> = { "High risk": 0, "Medium risk": 1, "Low risk": 2 };
       return order[a.risk] - order[b.risk];
     };
-    const active = allCases.filter((c) => c.phase === "requesting" || c.phase === "live").sort(byRisk);
-    const closed = allCases.filter((c) => c.phase === "enrolled" || c.phase === "recert").sort(byRisk);
+    const active = effectiveCases.filter((c) => c.phase === "requesting" || c.phase === "live").sort(byRisk);
+    const closed = effectiveCases.filter((c) => c.phase === "enrolled" || c.phase === "recert").sort(byRisk);
     return [
       { key: "active", label: "Active cases",      blurb: "In progress — needs navigator action", cases: active, defaultOpen: true },
       { key: "closed", label: "Enrolled & closed", blurb: "Receiving benefits, recertifying, or closed", cases: closed, defaultOpen: false },
     ];
-  }, [allCases]);
+  }, [effectiveCases]);
 
-  const totalFlags = allCases.reduce((s, c) => s + c.docFlags.length, 0);
-  const highRiskCount = allCases.filter((c) => c.risk === "High risk").length;
+  const totalFlags = effectiveCases.reduce((s, c) => s + c.docFlags.length, 0);
+  const highRiskCount = effectiveCases.filter((c) => c.risk === "High risk").length;
 
-  const allExportRows = allCases.map((c) => [
+  const allExportRows = effectiveCases.map((c) => [
     c.navigator ?? "Unassigned",
     c.caseId,
     c.name,
@@ -594,12 +751,10 @@ export default function OverviewDirector({
                   </div>
                   <p className="text-[12px] text-graphite mt-0.5">{c.stage} · waiting {c.updated}</p>
                 </div>
-                <Link
-                  href={`/cbo-preview?section=pipeline`}
-                  className="shrink-0 inline-flex items-center gap-1 rounded-[2px] bg-pine px-3 py-1.5 text-[12px] font-semibold text-white hover:bg-pine-pressed transition-colors"
-                >
-                  Assign →
-                </Link>
+                <AssignMenu
+                  workers={sortedWorkers.map((w) => w.name)}
+                  onAssign={(name) => assignCase(c.id, name)}
+                />
               </div>
             ))}
           </div>
@@ -609,18 +764,32 @@ export default function OverviewDirector({
       {/* ── Navigator roster ── */}
       {synthetic && (
         <section aria-label="Navigator roster">
-          <div className="flex items-baseline justify-between mb-3">
+          <div className="flex items-center justify-between mb-3 gap-3">
             <p className="eyebrow">Navigator roster</p>
-            <span className="text-[12px] text-graphite">
-              {allCases.length} active
-              {totalFlags > 0 && (
-                <> · <span className="text-brick font-medium">{totalFlags} flag{totalFlags !== 1 ? "s" : ""}</span></>
-              )}
-              {totalFlags === 0 && " · clean"}
-              {highRiskCount > 0 && (
-                <> · <span className="text-brick font-semibold">{highRiskCount} high risk</span></>
-              )}
-            </span>
+            <div className="flex items-center gap-3">
+              <span className="text-[12px] text-graphite">
+                {caseworkers.length} caseworker{caseworkers.length !== 1 ? "s" : ""}
+                {totalFlags > 0 && (
+                  <> · <span className="text-brick font-medium">{totalFlags} flag{totalFlags !== 1 ? "s" : ""}</span></>
+                )}
+                {highRiskCount > 0 && (
+                  <> · <span className="text-brick font-semibold">{highRiskCount} high risk</span></>
+                )}
+              </span>
+              <button
+                type="button"
+                onClick={() => setManaging((m) => !m)}
+                aria-pressed={managing}
+                aria-label="Manage caseworkers"
+                title="Manage caseworkers"
+                className={`inline-flex items-center gap-1.5 rounded-[2px] border px-2 py-1 text-[11px] font-medium transition-colors ${
+                  managing ? "border-pine/40 bg-pine/8 text-pine" : "border-hairline text-graphite hover:bg-ink/5"
+                }`}
+              >
+                <GearIcon />
+                {managing ? "Done" : "Manage"}
+              </button>
+            </div>
           </div>
           <div className="border border-hairline rounded-[2px] bg-surface overflow-hidden">
             <div className="flex items-center gap-3 px-4 py-1.5 bg-surface-secondary border-b border-hairline text-[10px] font-semibold uppercase tracking-wider text-graphite">
@@ -631,11 +800,18 @@ export default function OverviewDirector({
               <span className="w-16 text-right">Avg days</span>
               <span className="w-28 text-right">Progress report</span>
             </div>
-            {navigatorList
-              .filter(([nav]) => nav !== "Unassigned")
-              .map(([nav, cases], i) => (
-                <NavigatorRow key={nav} name={nav} cases={cases} border={i > 0} />
-              ))}
+            {sortedWorkers.map((cw, i) => (
+              <NavigatorRow
+                key={cw.name}
+                worker={cw}
+                cases={casesByWorker.get(cw.name) ?? []}
+                border={i > 0}
+                managing={managing}
+                onUpdate={(patch) => updateCaseworker(cw.name, patch)}
+                onRemove={() => removeCaseworker(cw.name)}
+              />
+            ))}
+            {managing && <AddCaseworkerRow onAdd={addCaseworker} />}
           </div>
         </section>
       )}
