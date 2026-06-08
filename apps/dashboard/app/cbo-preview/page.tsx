@@ -32,6 +32,15 @@ const TABS = [
 
 type TabKey = typeof TABS[number]["key"];
 
+// Partner CBO identity shown in the header (workspace context). Placeholder for
+// the preview — wire `name` / `monogram` to the authenticated org record once
+// CBO accounts exist. `demoUser` only shows when no real user is signed in.
+const CBO_ORG = {
+  name: "Bay Area Community Partners",
+  monogram: "BA",
+  demoUser: "a.davis@bacp.org",
+} as const;
+
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default async function CBOPreviewPage({
@@ -91,9 +100,22 @@ export default async function CBOPreviewPage({
             })}
           </nav>
         </div>
+        {/* Workspace context: CBO org identity + signed-in user */}
         <div className="flex items-center gap-3 shrink-0">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <span
+              className="inline-flex items-center justify-center w-8 h-8 rounded-[4px] bg-pine/10 text-pine text-[12px] font-bold shrink-0"
+              aria-hidden="true"
+            >
+              {CBO_ORG.monogram}
+            </span>
+            <div className="hidden sm:block leading-tight min-w-0">
+              <p className="text-[13px] font-semibold text-ink truncate">{CBO_ORG.name}</p>
+              <p className="text-[11px] text-graphite truncate">{user?.email ?? CBO_ORG.demoUser}</p>
+            </div>
+          </div>
           {user && (
-            <form action="/auth/signout" method="post">
+            <form action="/auth/signout" method="post" className="border-l border-hairline pl-3 shrink-0">
               <button className="text-[13px] font-medium text-pine hover:underline">Sign out</button>
             </form>
           )}
