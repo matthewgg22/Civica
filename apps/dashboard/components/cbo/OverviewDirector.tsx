@@ -345,24 +345,6 @@ export default function OverviewDirector({
         </section>
       )}
 
-      {/* ── Value props ── */}
-      <section aria-label="Value propositions">
-        <p className="eyebrow mb-4">Why CBOs license Civica</p>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {[
-            { eyebrow: "Penalty avoidance",  headline: "PER below the §10105 threshold",        body: "Structured intake catches eligibility errors before submission. Civica cohort runs 4.2% PER vs ~10.8% with manual forms — under the federal payment-error trigger." },
-            { eyebrow: "Productivity",        headline: "3× more households per navigator",      body: "AI-assisted Q&A drops intake from ~45 min to ~12 min per applicant. One navigator supports 23 enrollments/month with Civica vs 7 with manual forms." },
-            { eyebrow: "Audit-ready",          headline: "CCPA + OBBBA guardrails out of the box", body: "Consent logging, data retention windows, encryption at rest, role-based access. Configured for California; OBBBA work-requirement updates auto-applied." },
-          ].map((vp) => (
-            <div key={vp.headline} className="bg-surface border border-hairline rounded-[2px] p-5 flex flex-col">
-              <p className="eyebrow mb-2">{vp.eyebrow}</p>
-              <p className="text-[17px] font-semibold text-ink leading-snug tracking-tight">{vp.headline}</p>
-              <p className="text-[13px] text-graphite mt-3 leading-relaxed">{vp.body}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
     </div>
   );
 }
