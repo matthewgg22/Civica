@@ -115,6 +115,59 @@ function Chevron({ open }: { open: boolean }) {
   );
 }
 
+// Inline-editable contact field (ephemeral demo — edits reset on reload, never
+// persisted). Click the pencil to edit; Enter or blur saves, Escape cancels.
+function EditableField({
+  label, value, type, onSave,
+}: {
+  label: string;
+  value: string;
+  type: "email" | "tel";
+  onSave: (v: string) => void;
+}) {
+  const [editing, setEditing] = useState(false);
+  const [draft, setDraft] = useState(value);
+  function commit() {
+    onSave(draft.trim() || value);
+    setEditing(false);
+  }
+  return (
+    <div className="min-w-0">
+      <p className="text-[10px] font-semibold uppercase tracking-wider text-graphite mb-1">{label}</p>
+      {editing ? (
+        <input
+          autoFocus
+          type={type}
+          value={draft}
+          onChange={(e) => setDraft(e.target.value)}
+          onBlur={commit}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") commit();
+            if (e.key === "Escape") { setDraft(value); setEditing(false); }
+          }}
+          className="w-52 max-w-full px-2 py-1 text-[13px] bg-surface border border-pine rounded-[2px] text-ink focus:outline-none"
+          aria-label={`Edit ${label.toLowerCase()}`}
+        />
+      ) : (
+        <div className="group flex items-center gap-1.5">
+          <span className="text-[13px] text-ink truncate">{value}</span>
+          <button
+            type="button"
+            onClick={() => { setDraft(value); setEditing(true); }}
+            aria-label={`Edit ${label.toLowerCase()}`}
+            title="Edit"
+            className="shrink-0 opacity-0 group-hover:opacity-100 transition-opacity text-graphite hover:text-pine"
+          >
+            <svg width="12" height="12" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+              <path d="M9.5 2.5l2 2L5 11l-2.5.5L3 9l6.5-6.5z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round" />
+            </svg>
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
 function NavigatorRow({
   name, cases, border,
 }: {
@@ -127,6 +180,10 @@ function NavigatorRow({
   const risk = topRisk(cases);
   const avgDays = NAV_AVG_DAYS[name] ?? null;
   const contact = NAV_CONTACT[name];
+  // Editable contact (ephemeral) — seeded from the constant, edits live in state.
+  const [contactDraft, setContactDraft] = useState(() =>
+    contact ? { email: contact.email, phone: contact.phone } : { email: "", phone: "" },
+  );
 
   // #4 capacity bar — share of the navigator's case ceiling
   const utilPct = Math.min((cases.length / CAPACITY) * 100, 100);
@@ -196,33 +253,49 @@ function NavigatorRow({
         </div>
       </div>
 
-      {/* Expanded: caseworker contact + the cases they're handling */}
+      {/* Expanded: caseworker contact (editable) + cases they're handling */}
       {open && (
-        <div className="px-4 pb-4 pt-1 bg-paper/60 border-t border-hairline">
+        <div className="px-4 pb-4 pt-3 bg-paper/60 border-t border-hairline">
           {contact && (
-            <div className="flex flex-wrap items-center gap-x-5 gap-y-1 py-2.5 text-[12px]">
-              <a href={`mailto:${contact.email}`} className="text-pine hover:underline">{contact.email}</a>
-              <a href={`tel:${contact.phone.replace(/[^\d]/g, "")}`} className="text-graphite hover:text-ink">{contact.phone}</a>
-              {avgDays != null && <span className="text-muted">avg {avgDays}d to handoff</span>}
+            <div className="rounded-[3px] border border-hairline bg-surface px-4 py-3 mb-3 flex flex-wrap items-start gap-x-10 gap-y-3">
+              <EditableField
+                label="Email"
+                type="email"
+                value={contactDraft.email}
+                onSave={(v) => setContactDraft((d) => ({ ...d, email: v }))}
+              />
+              <EditableField
+                label="Phone"
+                type="tel"
+                value={contactDraft.phone}
+                onSave={(v) => setContactDraft((d) => ({ ...d, phone: v }))}
+              />
+              {avgDays != null && (
+                <div>
+                  <p className="text-[10px] font-semibold uppercase tracking-wider text-graphite mb-1">Avg to handoff</p>
+                  <p className="text-[13px] text-ink tabular-nums">{avgDays} days</p>
+                </div>
+              )}
             </div>
           )}
-          <p className="text-[10px] font-semibold uppercase tracking-wider text-graphite mb-1.5 mt-1">
+
+          <p className="text-[10px] font-semibold uppercase tracking-wider text-graphite mb-1.5">
             Handling {cases.length} case{cases.length !== 1 ? "s" : ""}
           </p>
-          <div className="space-y-px">
-            {cases.map((c) => (
+          <div className="rounded-[3px] border border-hairline bg-surface overflow-hidden">
+            {cases.map((c, i) => (
               <Link
                 key={c.id}
                 href={`/packets/${c.id}`}
-                className="flex items-center gap-3 px-1.5 py-1.5 rounded-[2px] text-[12px] hover:bg-surface transition-colors"
+                className={`flex items-center gap-3 px-3 py-2 text-[12px] hover:bg-paper transition-colors ${i > 0 ? "border-t border-hairline" : ""}`}
               >
-                <span className="font-mono tabular-nums text-graphite w-[88px] shrink-0">{c.caseId}</span>
-                <span className="font-semibold text-ink w-[84px] shrink-0 truncate">{c.name}</span>
+                <span className="font-mono tabular-nums text-graphite w-[96px] shrink-0 whitespace-nowrap">{c.caseId}</span>
+                <span className="font-semibold text-ink w-[88px] shrink-0 truncate">{c.name}</span>
                 <span className="text-graphite flex-1 min-w-0 truncate">{c.stage}</span>
                 {c.docFlags.length > 0 && (
                   <span className="text-[11px] text-brick font-semibold tabular-nums shrink-0">{c.docFlags.length} flag{c.docFlags.length > 1 ? "s" : ""}</span>
                 )}
-                <span className={`text-[10px] uppercase tracking-wider shrink-0 w-[32px] text-right ${riskText(c.risk)}`}>{riskLabel(c.risk)}</span>
+                <span className={`text-[10px] uppercase tracking-wider shrink-0 w-[34px] text-right ${riskText(c.risk)}`}>{riskLabel(c.risk)}</span>
               </Link>
             ))}
           </div>
