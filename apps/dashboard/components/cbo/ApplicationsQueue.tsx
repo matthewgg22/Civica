@@ -451,6 +451,9 @@ function caseContextSummary(app: CaseRecord): { caseContext: string; caseLabel: 
   L.push(
     "The navigator is asking about this specific application. Use these case facts to answer concretely about what to do next on THIS case. Do not repeat back any personal identifiers.",
   );
+  L.push(
+    "SCOPE: this is a California (CalFresh) application — stay scoped to California for procedure; if asked about another state, say that's outside this case's jurisdiction.",
+  );
   L.push("");
   L.push(`CASE: ${app.caseId} · ${app.name} — ${app.county} County, CA`);
   L.push(`Stage: ${app.stage}${app.expedited ? " · EXPEDITED (7 CFR 273.2(i))" : ""}`);
