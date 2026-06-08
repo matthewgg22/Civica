@@ -522,12 +522,10 @@ function CaseRow({
   const checks = buildVerification(app);
   const checksClear = checks.filter((c) => c.ok).length;
 
-  // Open Mae prefilled with the case context (no applicant PII — stage + the
-  // engine's top suggested action). MaeChat listens for this event.
+  // Open Mae with an empty composer — the caseworker types their own question.
+  // (No auto-generated prefill; MaeChat listens for this event to open.)
   const askMae = () => {
-    const top = app.recommendations[0]?.action ?? app.verificationNeeds[0];
-    const text = `I'm reviewing a CalFresh case at the "${app.stage}" stage.${top ? ` The engine's next step is: "${top}".` : ""} What does the governing rule require here?`;
-    window.dispatchEvent(new CustomEvent("mae:prefill", { detail: { text } }));
+    window.dispatchEvent(new CustomEvent("mae:prefill", { detail: {} }));
   };
   const flagCount = app.docFlags.length;
   const enrolled = app.phase === "enrolled";
