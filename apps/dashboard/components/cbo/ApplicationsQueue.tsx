@@ -137,8 +137,22 @@ type CaseRecord = QueueApplication & {
   activity: ActivityEntry[];
 };
 
-// Peer navigators a case can be transferred to (demo set, drawn from history).
-const PEERS = ["J. Ruiz", "A. Cole", "M. Diaz", "R. Okafor", "L. Park"];
+// The signed-in caseworker (demo) + peer navigators a case can be transferred to.
+const CURRENT_USER = "Ashley Davis";
+const PEERS = ["Jordan Ruiz", "Ashley Cole", "Marcus Diaz", "Robert Okafor", "Lena Park"];
+
+// Map the synthetic history actors to full names for the activity log.
+const NAME_MAP: Record<string, string> = {
+  "Navigator J. Ruiz": "Jordan Ruiz",
+  "Navigator A. Cole": "Ashley Cole",
+  "Navigator M. Diaz": "Marcus Diaz",
+  "Navigator R. Okafor": "Robert Okafor",
+  "Navigator L. Park": "Lena Park",
+  Applicant: "Applicant (self-service)",
+  County: "County office",
+  "Civica engine": "Civica engine (automated)",
+};
+const fullName = (who: string | undefined) => (who ? NAME_MAP[who] ?? who : "System");
 
 const PHASE_ORDER: Phase[] = ["requesting", "live", "enrolled", "recert"];
 const nextPhase = (p: Phase): Phase | null => {
@@ -158,20 +172,42 @@ const ADVANCE_STAGE: Record<Phase, string> = {
 // Seed the assignee from the most recent navigator in the case history.
 function initialAssignee(c: QueueApplication): string {
   const nav = [...c.history].reverse().find((e) => e.by?.startsWith("Navigator "));
-  return nav?.by ? nav.by.replace("Navigator ", "") : "Unassigned";
+  return nav ? fullName(nav.by) : "Unassigned";
 }
 
 const nowLabel = () =>
   new Date().toLocaleDateString(undefined, { month: "short", day: "numeric" });
 
-// Timestamp for a live activity-log entry (date + time, like a real audit trail).
-const nowStamp = () =>
-  new Date().toLocaleString(undefined, { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
+// Full audit timestamp: "06/20/2026 - 11:36pm".
+function formatStamp(d: Date): string {
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  const dd = String(d.getDate()).padStart(2, "0");
+  let h = d.getHours();
+  const ampm = h >= 12 ? "pm" : "am";
+  h = h % 12 || 12;
+  const min = String(d.getMinutes()).padStart(2, "0");
+  return `${mm}/${dd}/${d.getFullYear()} - ${h}:${min}${ampm}`;
+}
+
+// Timestamp for a live activity-log entry (now, full format).
+const nowStamp = () => formatStamp(new Date());
+
+// Synthesize a full timestamp for a seeded (historical) entry from its short
+// "Oct 13" label + a deterministic time (no Date.now → SSR-safe, no hydration
+// drift). Falls back to the raw label if it doesn't parse.
+function seedStamp(when: string, i: number): string {
+  const d = new Date(/\d{4}/.test(when) ? when : `${when} 2025`);
+  if (Number.isNaN(d.getTime())) return when;
+  d.setHours(9 + (i % 8), (i * 17) % 60, 0, 0);
+  return formatStamp(d);
+}
 
 // Seed the activity log from the case history (oldest→newest); the log renders
-// newest-first, so reverse it here.
+// newest-first, so reverse it here. Actors are mapped to full names.
 function seedActivity(c: QueueApplication): ActivityEntry[] {
-  return [...c.history].reverse().map((e) => ({ ts: e.when, actor: e.by ?? "System", action: e.label }));
+  return [...c.history]
+    .reverse()
+    .map((e, i) => ({ ts: seedStamp(e.when, c.history.length - i), actor: fullName(e.by), action: e.label }));
 }
 
 // Automated cross-check of the application response components — what the engine
@@ -212,7 +248,7 @@ function AnswerList({
   answers: SurveyAnswer[];
   edited: Record<string, string>;
   onEdit: (question: string, value: string) => void;
-  onSave?: (changedQuestions: string[]) => void;
+  onSave?: (changes: { question: string; from: string; to: string }[]) => void;
 }) {
   const [editing, setEditing] = useState(false);
   const [drafts, setDrafts] = useState<Record<string, string>>({});
@@ -231,15 +267,15 @@ function AnswerList({
     setDrafts({});
   };
   const save = () => {
-    const changed: string[] = [];
+    const changes: { question: string; from: string; to: string }[] = [];
     for (const a of answers) {
       const next = drafts[a.question];
       if (next !== undefined && next !== current(a)) {
+        changes.push({ question: a.question, from: current(a), to: next });
         onEdit(a.question, next);
-        changed.push(a.question);
       }
     }
-    if (changed.length) onSave?.(changed);
+    if (changes.length) onSave?.(changes);
     setEditing(false);
     setDrafts({});
   };
@@ -427,13 +463,14 @@ function CaseRow({
   onAdvance: () => void;
   onTransfer: (to: string) => void;
   onComment: (text: string) => void;
-  onEditLog: (changedQuestions: string[]) => void;
+  onEditLog: (changes: { question: string; from: string; to: string }[]) => void;
 }) {
   const [open, setOpen] = useState(false);
   const [edited, setEdited] = useState<Record<string, string>>({});
   const [showMath, setShowMath] = useState(false);
   const [comment, setComment] = useState("");
   const [confirmAdvance, setConfirmAdvance] = useState(false);
+  const [showActivity, setShowActivity] = useState(false);
   const pct = completionPct(app.completedSteps);
   const next = nextPhase(app.phase);
   const checks = buildVerification(app);
@@ -715,37 +752,6 @@ function CaseRow({
             <StepList completedSteps={app.completedSteps} />
           </div>
 
-          {/* Activity log — chain of custody: # · when · who · action. Seeded from
-              history; every demo action (advance, transfer, comment, edit) appends. */}
-          <div className="border-t border-hairline pt-3">
-            <div className="flex items-baseline justify-between mb-2">
-              <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite">Activity log</p>
-              <span className="text-[11px] tabular-nums text-graphite">{app.activity.length} entries</span>
-            </div>
-            <div className="border border-hairline rounded-[2px] overflow-hidden bg-surface">
-              <table className="w-full border-collapse text-[12px]">
-                <thead>
-                  <tr className="border-b border-hairline text-[11px] uppercase tracking-wider text-graphite">
-                    <th className="w-8 px-2 py-1 text-left font-semibold">#</th>
-                    <th className="w-[150px] px-2 py-1 text-left font-semibold">When</th>
-                    <th className="w-[130px] px-2 py-1 text-left font-semibold">Who</th>
-                    <th className="px-2 py-1 text-left font-semibold">Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {app.activity.map((e, i) => (
-                    <tr key={`${e.ts}-${i}`} className="border-b border-hairline last:border-b-0 align-top">
-                      <td className="px-2 py-1 tabular-nums text-graphite">{i + 1}</td>
-                      <td className="px-2 py-1 tabular-nums text-graphite whitespace-nowrap">{e.ts}</td>
-                      <td className="px-2 py-1 text-ink">{e.actor}</td>
-                      <td className="px-2 py-1 text-ink leading-snug">{e.action}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-
           {/* Case actions footer (demo): transfer, manual advance (confirm), full case. */}
           <div className="flex flex-wrap items-center justify-between gap-3 border-t border-hairline pt-3">
             <label className="flex items-center gap-1.5 text-[11px] text-graphite">
@@ -791,11 +797,70 @@ function CaseRow({
                   Advance to {phaseLabel(next)} →
                 </button>
               ))}
+              <button
+                type="button"
+                onClick={() => setShowActivity(true)}
+                className="rounded-[2px] border border-hairline px-2.5 py-1 text-[11px] font-medium text-ink hover:bg-surface"
+              >
+                Activity log ({app.activity.length})
+              </button>
               <Link href={`/packets/${app.id}`} className="text-[12px] font-semibold text-pine hover:underline">
                 Open full case →
               </Link>
             </div>
           </div>
+
+          {/* Activity log — opens in its own panel (chain of custody, not always-on). */}
+          {showActivity && (
+            <div
+              role="dialog"
+              aria-label={`Activity log — ${app.caseId}`}
+              className="fixed inset-0 z-50 flex items-center justify-center bg-ink/40 p-4"
+              onClick={() => setShowActivity(false)}
+            >
+              <div
+                className="flex max-h-[80vh] w-full max-w-2xl flex-col rounded-[3px] border border-hairline bg-surface shadow-xl"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className="flex items-start justify-between border-b border-hairline px-4 py-2.5">
+                  <div>
+                    <p className="text-[13px] font-semibold text-ink">Activity log — {app.caseId} · {app.name}</p>
+                    <p className="text-[11px] text-graphite">{app.activity.length} entries · chain of custody (newest first)</p>
+                  </div>
+                  <button
+                    type="button"
+                    aria-label="Close activity log"
+                    onClick={() => setShowActivity(false)}
+                    className="px-1 text-muted hover:text-ink"
+                  >
+                    ✕
+                  </button>
+                </div>
+                <div className="overflow-auto">
+                  <table className="w-full border-collapse text-[12px]">
+                    <thead className="sticky top-0 bg-surface-secondary">
+                      <tr className="border-b border-hairline text-[11px] uppercase tracking-wider text-graphite">
+                        <th className="w-8 px-3 py-1.5 text-left font-semibold">#</th>
+                        <th className="w-[170px] px-3 py-1.5 text-left font-semibold">When</th>
+                        <th className="w-[150px] px-3 py-1.5 text-left font-semibold">Who</th>
+                        <th className="px-3 py-1.5 text-left font-semibold">Action taken</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {app.activity.map((e, i) => (
+                        <tr key={`${e.ts}-${i}`} className="border-b border-hairline last:border-b-0 align-top">
+                          <td className="px-3 py-1.5 tabular-nums text-graphite">{i + 1}</td>
+                          <td className="px-3 py-1.5 tabular-nums text-graphite whitespace-nowrap">{e.ts}</td>
+                          <td className="px-3 py-1.5 text-ink whitespace-nowrap">{e.actor}</td>
+                          <td className="px-3 py-1.5 text-ink leading-snug">{e.action}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>
@@ -812,8 +877,12 @@ export default function ApplicationsQueue({ phases }: { phases: PhaseGroup[] }) 
     phases.flatMap((p) => p.cases).map((c) => ({ ...c, assignedTo: initialAssignee(c), comments: [], activity: seedActivity(c) })),
   );
 
-  // Prepend a chain-of-custody entry (newest-first), attributed to "You".
-  const log = (c: CaseRecord, action: string): ActivityEntry[] => [{ ts: nowStamp(), actor: "You", action }, ...c.activity];
+  // Prepend chain-of-custody entries (newest-first), attributed to the signed-in
+  // caseworker, with a full audit timestamp.
+  const log = (c: CaseRecord, ...actions: string[]): ActivityEntry[] => [
+    ...actions.map((action) => ({ ts: nowStamp(), actor: CURRENT_USER, action })),
+    ...c.activity,
+  ];
 
   const advance = (id: string) =>
     setCases((cs) =>
@@ -826,25 +895,27 @@ export default function ApplicationsQueue({ phases }: { phases: PhaseGroup[] }) 
           phase: np,
           stage: ADVANCE_STAGE[np],
           completedSteps: np === "live" ? Math.max(c.completedSteps, 4) : TOTAL_STEPS,
-          activity: log(c, `Advanced to ${phaseLabel(np)}`),
+          activity: log(c, `Changed phase from "${phaseLabel(c.phase)}" to "${phaseLabel(np)}"; set stage to "${ADVANCE_STAGE[np]}"`),
         };
       }),
     );
   const transfer = (id: string, to: string) =>
     setCases((cs) =>
-      cs.map((c) => (c.id === id && to !== c.assignedTo ? { ...c, assignedTo: to, activity: log(c, `Reassigned from ${c.assignedTo} to ${to}`) } : c)),
+      cs.map((c) => (c.id === id && to !== c.assignedTo ? { ...c, assignedTo: to, activity: log(c, `Reassigned case from ${c.assignedTo} to ${to}`) } : c)),
     );
   const addComment = (id: string, text: string) =>
     setCases((cs) =>
       cs.map((c) =>
         c.id === id
-          ? { ...c, comments: [{ author: "You", text, when: nowLabel() }, ...c.comments], activity: log(c, "Added a comment") }
+          ? { ...c, comments: [{ author: CURRENT_USER, text, when: nowLabel() }, ...c.comments], activity: log(c, `Added comment: "${text}"`) }
           : c,
       ),
     );
-  const logEdit = (id: string, questions: string[]) =>
+  const logEdit = (id: string, changes: { question: string; from: string; to: string }[]) =>
     setCases((cs) =>
-      cs.map((c) => (c.id === id ? { ...c, activity: log(c, `Edited responses: ${questions.join(", ")}`) } : c)),
+      cs.map((c) =>
+        c.id === id ? { ...c, activity: log(c, ...changes.map((ch) => `Changed "${ch.question}" from "${ch.from}" to "${ch.to}"`)) } : c,
+      ),
     );
 
   // Regroup the live caseload by phase for rendering + funnel counts.
