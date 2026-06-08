@@ -9,6 +9,7 @@
 // public (anonymous) /cbo-preview marketing page stays clean. The /api/mae
 // route enforces the same gate server-side regardless of what the client does.
 
+import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -211,7 +212,10 @@ export default function MaeChat() {
     setOpen(false);
   };
 
-  if (!allowed) return null;
+  // Render when staff (full chat) OR when another surface opened us via prefill
+  // (e.g. the public CBO preview's "Ask Mae about this case"). Non-staff get an
+  // open panel with a sign-in state — the LLM endpoint stays staff-gated.
+  if (!allowed && !open) return null;
 
   return (
     <>
@@ -243,6 +247,8 @@ export default function MaeChat() {
             </button>
           </div>
 
+          {allowed ? (
+            <>
           {/* Transcript */}
           <div ref={scrollRef} className="flex-1 space-y-3 overflow-y-auto px-3 py-3">
             {messages.length === 0 && (
@@ -323,25 +329,49 @@ export default function MaeChat() {
               {busy ? "…" : "Send"}
             </button>
           </div>
+            </>
+          ) : (
+            <div className="flex-1 space-y-3 overflow-y-auto px-4 py-6 text-sm">
+              <p className="font-medium text-ink">Mae is a staff assistant for navigators.</p>
+              {input.trim() && (
+                <div className="rounded-[3px] border border-hairline bg-surface px-3 py-2 text-ink">
+                  <p className="mb-1 text-[11px] uppercase tracking-wider text-muted">The question for this case</p>
+                  <p className="text-sm">{input}</p>
+                </div>
+              )}
+              <p className="text-muted">
+                Sign in with a navigator (staff) account to chat with Mae — she cites the governing
+                SNAP / CalFresh rules and never sees applicant PII.
+              </p>
+              <Link
+                href="/"
+                className="inline-block rounded-[2px] bg-pine px-3 py-2 text-sm font-medium text-white hover:bg-pine-pressed"
+              >
+                Open the navigator dashboard →
+              </Link>
+            </div>
+          )}
         </div>
       )}
 
-      {/* Floating launcher */}
-      <button
-        type="button"
-        aria-expanded={open}
-        aria-label="Ask Mae"
-        onClick={() => (open ? closePanel() : setOpen(true))}
-        className="fixed bottom-4 right-4 z-50 flex items-center gap-2 rounded-full bg-pine px-4 py-2.5 text-sm font-medium text-white shadow-lg hover:bg-pine-pressed"
-      >
-        <span
-          aria-hidden
-          className="flex h-5 w-5 items-center justify-center rounded-full bg-white/20 text-xs font-semibold"
+      {/* Floating launcher — staff only (kept off the public preview). */}
+      {allowed && (
+        <button
+          type="button"
+          aria-expanded={open}
+          aria-label="Ask Mae"
+          onClick={() => (open ? closePanel() : setOpen(true))}
+          className="fixed bottom-4 right-4 z-50 flex items-center gap-2 rounded-full bg-pine px-4 py-2.5 text-sm font-medium text-white shadow-lg hover:bg-pine-pressed"
         >
-          M
-        </span>
-        Ask Mae
-      </button>
+          <span
+            aria-hidden
+            className="flex h-5 w-5 items-center justify-center rounded-full bg-white/20 text-xs font-semibold"
+          >
+            M
+          </span>
+          Ask Mae
+        </button>
+      )}
     </>
   );
 }

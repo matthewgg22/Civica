@@ -45,6 +45,20 @@ describe("MaeChat", () => {
     expect(container.querySelector("button")).toBeNull();
   });
 
+  it("opens a sign-in panel (no chat) for a non-staff user when prefilled", async () => {
+    mocks.getUser.mockResolvedValue({ data: { user: null } });
+    render(<MaeChat />);
+    await waitFor(() => expect(mocks.getUser).toHaveBeenCalled());
+    // Another surface (e.g. the public CBO preview) opens Mae with a case question.
+    fireEvent(window, new CustomEvent("mae:prefill", { detail: { text: "What does the work rule require?" } }));
+    // Panel opens with the question + a staff sign-in state — but no composer/Send
+    // (the LLM endpoint stays staff-gated).
+    await screen.findByText(/staff assistant for navigators/i);
+    expect(screen.getByText(/What does the work rule require\?/)).toBeTruthy();
+    expect(screen.queryByRole("button", { name: /send/i })).toBeNull();
+    expect(screen.getByRole("link", { name: /navigator dashboard/i })).toBeTruthy();
+  });
+
   it("shows the launcher for a staff user", async () => {
     mocks.getUser.mockResolvedValue({
       data: { user: { app_metadata: { role: "navigator" } } },
