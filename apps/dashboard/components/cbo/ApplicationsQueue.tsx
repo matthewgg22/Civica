@@ -1,7 +1,6 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import Link from "next/link";
 import {
   PIPELINE_STEPS,
   PHASES,
@@ -135,6 +134,7 @@ type CaseRecord = QueueApplication & {
   assignedTo: string;
   comments: CaseComment[];
   activity: ActivityEntry[];
+  pinned: boolean;
 };
 
 // The signed-in caseworker (demo) + peer navigators a case can be transferred to.
@@ -500,7 +500,7 @@ function EngineBlock({ title, tag, children }: { title: string; tag: string; chi
 }
 
 function CaseRow({
-  app, border, onAdvance, onTransfer, onComment, onEditLog,
+  app, border, onAdvance, onTransfer, onComment, onEditLog, onTogglePin,
 }: {
   app: CaseRecord;
   border: boolean;
@@ -508,6 +508,7 @@ function CaseRow({
   onTransfer: (to: string) => void;
   onComment: (text: string) => void;
   onEditLog: (changes: { question: string; from: string; to: string }[]) => void;
+  onTogglePin: () => void;
 }) {
   const [open, setOpen] = useState(false);
   const [edited, setEdited] = useState<Record<string, string>>({});
@@ -536,6 +537,24 @@ function CaseRow({
         className={`w-full flex items-center gap-4 px-4 py-1.5 text-left transition-colors ${
           open ? "bg-[var(--color-row-hover)]" : "hover:bg-[var(--color-row-hover)]"
         }`}>
+        {/* Pin/star — toggles without expanding the row (stopPropagation). */}
+        <span
+          role="button"
+          tabIndex={0}
+          aria-label={app.pinned ? "Unpin case" : "Pin case"}
+          aria-pressed={app.pinned}
+          onClick={(e) => { e.stopPropagation(); onTogglePin(); }}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") { e.preventDefault(); e.stopPropagation(); onTogglePin(); }
+          }}
+          className={`shrink-0 w-4 flex items-center justify-center cursor-pointer ${
+            app.pinned ? "text-ink" : "text-graphite/40 hover:text-graphite"
+          }`}
+        >
+          <svg width="12" height="12" viewBox="0 0 24 24" fill={app.pinned ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2" strokeLinejoin="round">
+            <path d="M12 2.5l2.9 6.1 6.6.6-5 4.4 1.5 6.5L12 17.9 5.5 20.6 7 14.1l-5-4.4 6.6-.6z" />
+          </svg>
+        </span>
         <span className="text-[11px] text-graphite font-mono tabular-nums tracking-tight shrink-0 w-[92px]">{app.caseId}</span>
         <span className="text-[13px] font-semibold text-ink shrink-0 w-[88px] truncate">{app.name}</span>
         <span className="text-[12px] text-graphite shrink-0 w-[110px] truncate hidden sm:block">{app.county} County</span>
@@ -848,9 +867,10 @@ function CaseRow({
               >
                 Activity log ({app.activity.length})
               </button>
-              <Link href={`/packets/${app.id}`} className="text-[12px] font-semibold text-pine hover:underline">
-                Open full case →
-              </Link>
+              {/* "Open full case" removed for the synthetic preview — there's no
+                  real packet behind a demo case, so /packets/<demo-id> just
+                  redirected to /login and errored. Re-add when wired to real
+                  packets. */}
             </div>
           </div>
         </div>
@@ -926,8 +946,11 @@ export default function ApplicationsQueue({ phases }: { phases: PhaseGroup[] }) 
   // Flat client-side caseload (seeded from the server-built groups) so manual
   // advance / transfer / comment actions can mutate it. Ephemeral demo state.
   const [cases, setCases] = useState<CaseRecord[]>(() =>
-    phases.flatMap((p) => p.cases).map((c) => ({ ...c, assignedTo: initialAssignee(c), comments: [], activity: seedActivity(c) })),
+    phases.flatMap((p) => p.cases).map((c) => ({ ...c, assignedTo: initialAssignee(c), comments: [], activity: seedActivity(c), pinned: false })),
   );
+
+  const togglePin = (id: string) =>
+    setCases((cs) => cs.map((c) => (c.id === id ? { ...c, pinned: !c.pinned } : c)));
 
   // Prepend chain-of-custody entries (newest-first), attributed to the signed-in
   // caseworker, with a full audit timestamp.
@@ -970,9 +993,16 @@ export default function ApplicationsQueue({ phases }: { phases: PhaseGroup[] }) 
       ),
     );
 
-  // Regroup the live caseload by phase for rendering + funnel counts.
+  // Regroup the live caseload by phase for rendering + funnel counts. Pinned
+  // cases float to the top of their phase (stable sort preserves order otherwise).
   const grouped = useMemo<PhaseGroup[]>(
-    () => PHASES.map((p) => ({ ...p, cases: cases.filter((c) => c.phase === p.key) })),
+    () =>
+      PHASES.map((p) => ({
+        ...p,
+        cases: cases
+          .filter((c) => c.phase === p.key)
+          .sort((a, b) => Number((b as CaseRecord).pinned) - Number((a as CaseRecord).pinned)),
+      })),
     [cases],
   );
 
@@ -1045,6 +1075,7 @@ export default function ApplicationsQueue({ phases }: { phases: PhaseGroup[] }) 
       {/* Case list grouped by lifecycle phase */}
       <div className="border border-hairline rounded-[2px] bg-surface overflow-hidden">
         <div className="flex items-center gap-4 px-4 py-1.5 bg-surface-secondary border-b border-hairline text-[11px] font-semibold uppercase tracking-wider text-graphite">
+          <span className="shrink-0 w-4" aria-hidden="true" />
           <span className="shrink-0 w-[92px]">Case ID</span>
           <span className="shrink-0 w-[88px]">Applicant</span>
           <span className="shrink-0 w-[110px] hidden sm:block">County</span>
@@ -1073,6 +1104,7 @@ export default function ApplicationsQueue({ phases }: { phases: PhaseGroup[] }) 
                   onTransfer={(to) => transfer(a.id, to)}
                   onComment={(text) => addComment(a.id, text)}
                   onEditLog={(questions) => logEdit(a.id, questions)}
+                  onTogglePin={() => togglePin(a.id)}
                 />
               ))}
             </div>

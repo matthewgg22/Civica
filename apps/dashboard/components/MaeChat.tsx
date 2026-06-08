@@ -156,13 +156,21 @@ export default function MaeChat() {
     if (!question || busy) return;
 
     const next: ChatMessage[] = [...messages, { role: "user", content: question }];
-    setMessages(next);
+    // Add the user turn AND an empty assistant bubble up front, so the "thinking"
+    // indicator shows immediately — before the first byte arrives.
+    setMessages([...next, { role: "assistant", content: "" }]);
     setInput("");
     setError(null);
     setBusy(true);
 
     const controller = new AbortController();
     abortRef.current = controller;
+
+    // Remove the trailing empty assistant placeholder (on a pre-stream error).
+    const dropPlaceholder = () =>
+      setMessages((m) =>
+        m.length && m[m.length - 1].role === "assistant" && m[m.length - 1].content === "" ? m.slice(0, -1) : m,
+      );
 
     try {
       const res = await fetch("/api/mae", {
@@ -173,6 +181,7 @@ export default function MaeChat() {
       });
 
       if (!res.ok) {
+        dropPlaceholder();
         const msg =
           res.status === 401 || res.status === 403
             ? "Your session expired. Refresh and sign in again."
@@ -180,30 +189,43 @@ export default function MaeChat() {
               ? "Mae isn't available yet — ask an admin to finish setup."
               : "Mae hit an error. Please try again.";
         setError(msg);
-        setBusy(false);
         return;
       }
 
-      // Stream the plain-text answer into a growing assistant message.
-      setMessages((m) => [...m, { role: "assistant", content: "" }]);
+      // Stream into the placeholder. Buffer tokens and flush on animation frames
+      // so the markdown isn't re-parsed on every token (smooth, not jumpy).
       const reader = res.body?.getReader();
       const decoder = new TextDecoder();
       if (reader) {
-        for (;;) {
-          const { done, value } = await reader.read();
-          if (done) break;
-          const chunk = decoder.decode(value, { stream: true });
+        let buf = "";
+        let scheduled = false;
+        const raf =
+          typeof requestAnimationFrame === "function" ? requestAnimationFrame : (fn: () => void) => setTimeout(fn, 32);
+        const flush = () => {
+          scheduled = false;
+          if (!buf) return;
+          const add = buf;
+          buf = "";
           setMessages((m) => {
             const copy = m.slice();
             const last = copy[copy.length - 1];
-            if (last && last.role === "assistant") {
-              copy[copy.length - 1] = { ...last, content: last.content + chunk };
-            }
+            if (last && last.role === "assistant") copy[copy.length - 1] = { ...last, content: last.content + add };
             return copy;
           });
+        };
+        for (;;) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          buf += decoder.decode(value, { stream: true });
+          if (!scheduled) {
+            scheduled = true;
+            raf(flush);
+          }
         }
+        flush(); // final, synchronous — guarantees the complete answer lands
       }
     } catch (err) {
+      dropPlaceholder();
       if (!(err instanceof DOMException && err.name === "AbortError")) {
         setError("Mae hit a network error. Please try again.");
       }
@@ -235,7 +257,7 @@ export default function MaeChat() {
         <div
           role="dialog"
           aria-label="Ask Mae — SNAP policy assistant"
-          className="fixed bottom-20 right-4 z-50 flex h-[32rem] max-h-[calc(100vh-6rem)] w-[24rem] max-w-[calc(100vw-2rem)] flex-col overflow-hidden rounded-[3px] border border-hairline bg-paper shadow-xl"
+          className="fixed bottom-20 right-4 z-50 flex h-[40rem] max-h-[calc(100vh-5rem)] w-[32rem] max-w-[calc(100vw-2rem)] flex-col overflow-hidden rounded-[3px] border border-hairline bg-paper shadow-xl"
         >
           {/* Header */}
           <div className="flex items-center gap-2 border-b border-hairline bg-surface px-3 py-2">
@@ -301,7 +323,11 @@ export default function MaeChat() {
                           <ReactMarkdown remarkPlugins={[remarkGfm]}>{m.content}</ReactMarkdown>
                         </div>
                       ) : (
-                        <span className="text-muted">Mae is thinking…</span>
+                        <span className="inline-flex items-center gap-1" aria-label="Mae is thinking">
+                          <span className="h-1.5 w-1.5 rounded-full bg-graphite/50 animate-bounce [animation-delay:-200ms]" />
+                          <span className="h-1.5 w-1.5 rounded-full bg-graphite/50 animate-bounce [animation-delay:-100ms]" />
+                          <span className="h-1.5 w-1.5 rounded-full bg-graphite/50 animate-bounce" />
+                        </span>
                       )
                     ) : (
                       <span className="whitespace-pre-wrap">{m.content}</span>
