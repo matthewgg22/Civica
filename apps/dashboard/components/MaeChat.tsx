@@ -9,6 +9,7 @@
 // public (anonymous) /cbo-preview marketing page stays clean. The /api/mae
 // route enforces the same gate server-side regardless of what the client does.
 
+import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -22,6 +23,11 @@ const MAE_DISCLAIMER =
   "Mae can be wrong. General SNAP policy guidance, not an eligibility determination — verify against current CalFresh/CDSS rules and the county system of record.";
 
 type ChatMessage = { role: "user" | "assistant"; content: string };
+
+// Public-preview mode: when on, Mae's chat opens for anonymous visitors on the
+// /cbo-preview demo (the /api/mae route honors the same flag server-side). Off
+// by default — the portal stays staff-gated.
+const PREVIEW_OPEN = process.env.NEXT_PUBLIC_MAE_PREVIEW === "true";
 
 // Per-answer feedback — the human-in-the-loop signal. 👍/👎; a 👎 expands a
 // reason (esp. "citation wrong") + optional note. Posts to /api/mae/feedback,
@@ -211,7 +217,9 @@ export default function MaeChat() {
     setOpen(false);
   };
 
-  if (!allowed) return null;
+  // Render when staff, when public-preview mode is on, or when another surface
+  // opened us via prefill (the CBO preview's "Ask Mae about this case").
+  if (!allowed && !PREVIEW_OPEN && !open) return null;
 
   return (
     <>
@@ -231,7 +239,7 @@ export default function MaeChat() {
             </span>
             <div className="flex-1 leading-tight">
               <p className="text-sm font-semibold text-ink">Ask Mae</p>
-              <p className="text-[11px] text-muted">SNAP / CalFresh policy assistant</p>
+              <p className="text-[11px] text-muted">Calibrated to California · CalFresh rules</p>
             </div>
             <button
               type="button"
@@ -243,6 +251,8 @@ export default function MaeChat() {
             </button>
           </div>
 
+          {allowed || PREVIEW_OPEN ? (
+            <>
           {/* Transcript */}
           <div ref={scrollRef} className="flex-1 space-y-3 overflow-y-auto px-3 py-3">
             {messages.length === 0 && (
@@ -323,25 +333,49 @@ export default function MaeChat() {
               {busy ? "…" : "Send"}
             </button>
           </div>
+            </>
+          ) : (
+            <div className="flex-1 space-y-3 overflow-y-auto px-4 py-6 text-sm">
+              <p className="font-medium text-ink">You&rsquo;re previewing a navigator tool.</p>
+              {input.trim() && (
+                <div className="rounded-[3px] border border-hairline bg-surface px-3 py-2 text-ink">
+                  <p className="mb-1 text-[11px] uppercase tracking-wider text-muted">The question for this case</p>
+                  <p className="text-sm">{input}</p>
+                </div>
+              )}
+              <p className="text-muted">
+                Inside the navigator portal, Mae answers this in place &mdash; citing the governing
+                CalFresh rules, never applicant PII.
+              </p>
+              <Link
+                href="/login"
+                className="inline-block rounded-[2px] bg-pine px-3 py-2 text-sm font-medium text-white hover:bg-pine-pressed"
+              >
+                Open the navigator portal &rarr;
+              </Link>
+            </div>
+          )}
         </div>
       )}
 
-      {/* Floating launcher */}
-      <button
-        type="button"
-        aria-expanded={open}
-        aria-label="Ask Mae"
-        onClick={() => (open ? closePanel() : setOpen(true))}
-        className="fixed bottom-4 right-4 z-50 flex items-center gap-2 rounded-full bg-pine px-4 py-2.5 text-sm font-medium text-white shadow-lg hover:bg-pine-pressed"
-      >
-        <span
-          aria-hidden
-          className="flex h-5 w-5 items-center justify-center rounded-full bg-white/20 text-xs font-semibold"
+      {/* Floating launcher — staff, or anyone when public-preview mode is on. */}
+      {(allowed || PREVIEW_OPEN) && (
+        <button
+          type="button"
+          aria-expanded={open}
+          aria-label="Ask Mae"
+          onClick={() => (open ? closePanel() : setOpen(true))}
+          className="fixed bottom-4 right-4 z-50 flex items-center gap-2 rounded-full bg-pine px-4 py-2.5 text-sm font-medium text-white shadow-lg hover:bg-pine-pressed"
         >
-          M
-        </span>
-        Ask Mae
-      </button>
+          <span
+            aria-hidden
+            className="flex h-5 w-5 items-center justify-center rounded-full bg-white/20 text-xs font-semibold"
+          >
+            M
+          </span>
+          Ask Mae
+        </button>
+      )}
     </>
   );
 }

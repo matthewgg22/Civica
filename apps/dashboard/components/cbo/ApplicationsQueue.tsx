@@ -9,8 +9,8 @@ import {
   type PhaseGroup,
   type QueueApplication,
   type SurveyAnswer,
-  type TimelineEvent,
   type Risk,
+  type Phase,
 } from "../../lib/cbo/demo-pipeline";
 import TableExport from "./TableExport";
 import { EVALUATION_GATES, deductionRows, deductionOneLine } from "../../lib/cbo/engine-view";
@@ -29,10 +29,7 @@ function riskLabel(risk: Risk): string {
   return risk === "High risk" ? "HIGH" : risk === "Medium risk" ? "MED" : "LOW";
 }
 function riskClass(risk: Risk): string {
-  return risk === "High risk" ? "text-brick font-semibold" : risk === "Medium risk" ? "text-warning" : "text-muted";
-}
-function barClass(risk: Risk): string {
-  return risk === "High risk" ? "bg-brick" : risk === "Medium risk" ? "bg-warning" : "bg-pine";
+  return risk === "High risk" ? "text-brick font-semibold" : risk === "Medium risk" ? "text-warning" : "text-graphite";
 }
 
 function Chevron({ open }: { open: boolean }) {
@@ -87,7 +84,7 @@ function StepList({ completedSteps }: { completedSteps: number }) {
               {step}
             </span>
             {state === "current" && (
-              <span className="text-[10px] uppercase tracking-wider text-warning font-semibold">in progress</span>
+              <span className="text-[11px] uppercase tracking-wider text-warning font-semibold">in progress</span>
             )}
           </li>
         );
@@ -96,15 +93,236 @@ function StepList({ completedSteps }: { completedSteps: number }) {
   );
 }
 
+// Edit-mode option sets: fields with a fixed answer space render as a <select>
+// instead of free text. Money / number / name / date fields are omitted and fall
+// through to a text input. The current value is always included in the list so an
+// off-list value (e.g. a flagged "Provided — does not match SSA records") renders.
+const FIELD_OPTIONS: Record<string, string[]> = {
+  State: ["California"],
+  "Preferred language": ["English", "Spanish", "Chinese", "Vietnamese", "Tagalog", "Korean", "Other"],
+  "Contact phone on file": ["Yes", "No"],
+  "Children under 14?": ["Yes", "No"],
+  "Anyone 60+ or disabled?": ["Yes", "No"],
+  "Everyone applying is a citizen or eligible noncitizen?": ["Yes", "No"],
+  "Employment status": ["Employed", "Self-employed", "Not employed"],
+  "Income type": ["Wages / salary", "Self-employment", "Fixed income", "No income"],
+  "Pay frequency": ["Weekly", "Every two weeks", "Twice monthly", "Monthly"],
+  "Out-of-pocket medical (60+/disabled)": ["Not applicable", "$0.00"],
+  "Countable assets (cash + bank)": ["Under $2,750.00", "$2,750.00 or more"],
+  "Photo ID": ["On hand", "Provided", "Requested", "Not yet uploaded"],
+  "Proof of income": ["On hand", "Provided", "Requested", "Not provided"],
+  "Proof of residence": ["On hand", "Provided", "Requested", "Not provided"],
+  "Social Security Number": ["Provided", "Not provided"],
+  "Expedited-service screen": ["Completed", "Not started"],
+  "Signed under penalty of perjury": ["Yes", "No"],
+};
+
+function optionsFor(question: string, current: string): string[] | null {
+  const opts = FIELD_OPTIONS[question];
+  if (!opts) return null;
+  return opts.includes(current) ? opts : [current, ...opts];
+}
+
+// ── Case actions (ephemeral demo) ─────────────────────────────────────────────
+// Comments, transfer, and manual advance are client-only state — they reset on
+// reload and never hit a backend (the caseload is synthetic). Mirrors the
+// existing "inline edits are an ephemeral demo" honesty.
+type CaseComment = { author: string; text: string; when: string };
+// Chain-of-custody entry: who did what, when. Seeded from history, appended on
+// every demo action (advance, transfer, comment, response edit).
+type ActivityEntry = { ts: string; actor: string; action: string };
+type CaseRecord = QueueApplication & {
+  assignedTo: string;
+  comments: CaseComment[];
+  activity: ActivityEntry[];
+};
+
+// The signed-in caseworker (demo) + peer navigators a case can be transferred to.
+const CURRENT_USER = "Ashley Davis";
+const PEERS = ["Jordan Ruiz", "Ashley Cole", "Marcus Diaz", "Robert Okafor", "Lena Park"];
+
+// Map the synthetic history actors to full names for the activity log.
+const NAME_MAP: Record<string, string> = {
+  "Navigator J. Ruiz": "Jordan Ruiz",
+  "Navigator A. Cole": "Ashley Cole",
+  "Navigator M. Diaz": "Marcus Diaz",
+  "Navigator R. Okafor": "Robert Okafor",
+  "Navigator L. Park": "Lena Park",
+  Applicant: "Applicant (self-service)",
+  County: "County office",
+  "Civica engine": "Civica engine (automated)",
+};
+const fullName = (who: string | undefined) => (who ? NAME_MAP[who] ?? who : "System");
+
+const PHASE_ORDER: Phase[] = ["requesting", "live", "enrolled", "recert"];
+const nextPhase = (p: Phase): Phase | null => {
+  const i = PHASE_ORDER.indexOf(p);
+  return i >= 0 && i < PHASE_ORDER.length - 1 ? PHASE_ORDER[i + 1] : null;
+};
+const phaseLabel = (p: Phase) => PHASES.find((x) => x.key === p)?.label ?? p;
+
+// Default stage copy when a case is manually advanced into a phase.
+const ADVANCE_STAGE: Record<Phase, string> = {
+  requesting: "Reached out",
+  live: "Submitted for review",
+  enrolled: "Approved",
+  recert: "Recertification due",
+};
+
+// Seed the assignee from the most recent navigator in the case history.
+function initialAssignee(c: QueueApplication): string {
+  const nav = [...c.history].reverse().find((e) => e.by?.startsWith("Navigator "));
+  return nav ? fullName(nav.by) : "Unassigned";
+}
+
+const nowLabel = () =>
+  new Date().toLocaleDateString(undefined, { month: "short", day: "numeric" });
+
+// Full audit timestamp: "06/20/2026 - 11:36pm".
+function formatStamp(d: Date): string {
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  const dd = String(d.getDate()).padStart(2, "0");
+  let h = d.getHours();
+  const ampm = h >= 12 ? "pm" : "am";
+  h = h % 12 || 12;
+  const min = String(d.getMinutes()).padStart(2, "0");
+  return `${mm}/${dd}/${d.getFullYear()} - ${h}:${min}${ampm}`;
+}
+
+// Timestamp for a live activity-log entry (now, full format).
+const nowStamp = () => formatStamp(new Date());
+
+// Named county eligibility officials (per launch county) — "County office" was
+// too vague; an audit trail records the specific official who acted.
+const COUNTY_OFFICIALS: Record<string, string> = {
+  "Los Angeles": "Renee Foster · LA County DPSS",
+  "San Diego": "Carl Nguyen · SD County HHSA",
+  "San Francisco": "Dana Whitfield · SF HSA",
+  Fresno: "Hector Salas · Fresno County DSS",
+  Sacramento: "Joan Pierce · Sacramento County DHA",
+  Alameda: "Terrence Hall · Alameda County SSA",
+  "San Jose": "Maria Lopez · Santa Clara County SSA",
+};
+const countyOfficial = (county: string) => COUNTY_OFFICIALS[county] ?? `${county} County eligibility worker`;
+
+// Build a detailed chain-of-custody log from the case's structured state: intake
+// consent (account, CBO-of-record, data-sharing, buddy auth), per-step packet
+// completion with %, engine determination, navigator review, outreach on each
+// flag, expedited screen, and named county actions. Synthetic but specific —
+// enough to actually follow up on. Newest-first; deterministic timestamps.
+function seedActivity(c: QueueApplication): ActivityEntry[] {
+  const A = "Applicant (self-service)";
+  const nav = initialAssignee(c);
+  const county = countyOfficial(c.county);
+  const engine = "Civica engine (automated)";
+  const pct = (n: number) => `${Math.round((n / TOTAL_STEPS) * 100)}%`;
+  const seedNum = Number(c.caseId.match(/\d+$/)?.[0] ?? "0");
+  const built: { actor: string; action: string }[] = [];
+
+  built.push({ actor: A, action: "Created account and started a CalFresh application online" });
+  built.push({ actor: A, action: "Agreed to CBO assistance — VoteNow Advocacy Foundation recorded as CBO of record" });
+  built.push({ actor: A, action: "Signed consent to share application data with the county" });
+  if (seedNum % 2 === 0) built.push({ actor: A, action: `Authorized a buddy / representative (${PEERS[seedNum % PEERS.length]}) to assist with the case` });
+  if (c.expedited) built.push({ actor: engine, action: `Auto-screened for expedited service (7 CFR 273.2(i)) — ${c.expeditedReason.toLowerCase()}` });
+
+  for (let i = 0; i < Math.min(c.completedSteps, PIPELINE_STEPS.length); i++) {
+    const step = PIPELINE_STEPS[i];
+    if (step === "Document verification") built.push({ actor: nav, action: `Verified uploaded documents — packet ${pct(i + 1)} complete` });
+    else if (step === "Engine determination") built.push({ actor: engine, action: c.estimatedBenefitUsd != null ? `Eligibility gates + benefit estimate computed — approx. ~${formatUsd(c.estimatedBenefitUsd)}/mo` : "Eligibility screen computed (estimate pending)" });
+    else if (step === "Navigator review") built.push({ actor: nav, action: `Opened navigator review — packet ${pct(i + 1)} complete` });
+    else if (step === "Submitted to county") built.push({ actor: nav, action: "Submitted the application packet to the county" });
+    else built.push({ actor: A, action: `Completed "${step}" — packet ${pct(i + 1)} complete` });
+  }
+  for (const f of c.docFlags) built.push({ actor: nav, action: `Outreach — contacted applicant to resolve: ${f}` });
+  if (c.phase === "enrolled") {
+    built.push({ actor: county, action: "Conducted eligibility interview" });
+    built.push({ actor: county, action: `Approved — Notice of Action issued${c.estimatedBenefitUsd != null ? ` (~${formatUsd(c.estimatedBenefitUsd)}/mo)` : ""}` });
+  }
+  if (c.phase === "recert") {
+    built.push({ actor: engine, action: "Recertification notice generated and sent to the applicant" });
+    if (/overdue/i.test(c.stage)) built.push({ actor: nav, action: "Outreach — recertification overdue, reminder call placed" });
+  }
+
+  // Walk a per-case cursor forward (deterministic, SSR-safe); reverse so the log
+  // reads newest-first.
+  const base = new Date(2025, 8, 6 + (seedNum % 18), 9, 5, 0, 0).getTime();
+  const stamped = built.map((e, i) => ({
+    ts: formatStamp(new Date(base + (i * 11 + (i % 3) * 5) * 3600 * 1000)),
+    actor: e.actor,
+    action: e.action,
+  }));
+  return stamped.reverse();
+}
+
+// Automated cross-check of the application response components — what the engine
+// could confirm from the answers vs. what still needs a human check. Grounded in
+// real signals (flagged answers, document status, engine assumptions); NOT an
+// eligibility determination (the adapter never emits a verdict).
+type VCheck = { label: string; ok: boolean; note: string };
+function buildVerification(app: QueueApplication): VCheck[] {
+  const ans = (q: string) => app.answers.find((a) => a.question === q)?.answer ?? "";
+  const flaggedIn = (section: string) => app.answers.some((a) => a.section === section && a.flagged);
+  const docsOut = app.answers
+    .filter((a) => a.section === "Documents" && /not (yet uploaded|provided)/i.test(a.answer))
+    .map((a) => a.question);
+  const proofOk = !/^not /i.test(ans("Proof of income"));
+  const ssn = ans("Social Security Number");
+  const income = ans("Gross monthly income");
+  return [
+    { label: "Income & employment", ok: !!income && proofOk && !flaggedIn("Income & employment"),
+      note: income ? `${income}${proofOk ? " · proof on hand" : " · awaiting pay stub"}` : "not captured" },
+    { label: "Household composition", ok: !flaggedIn("Your household"), note: `${ans("Household size") || "?"} captured` },
+    { label: "Shelter & expenses", ok: !flaggedIn("Expenses & deductions"),
+      note: flaggedIn("Expenses & deductions") ? "shelter cost needs review" : `rent ${ans("Monthly rent") || "?"}` },
+    { label: "Identity / SSN", ok: !/not|does not match/i.test(ssn),
+      note: /does not match/i.test(ssn) ? "does not match SSA records" : "SSN provided" },
+    { label: "Documents", ok: docsOut.length === 0, note: docsOut.length ? `${docsOut.join(", ")} outstanding` : "all on hand" },
+    { label: "Eligibility factors", ok: false,
+      note: app.assumptions.length ? `assumed, pending: ${app.assumptions.join("; ")}` : (app.verificationNeeds[0] ?? "pending human confirmation") },
+  ];
+}
+
+// Full application responses for the expanded case. Renders the complete intake
+// as a per-section ruled table (Field | Response). Editing is a single batch
+// mode: "Edit responses" unlocks every field at once (fixed-option fields as a
+// dropdown, others as text); "Save changes" commits the diff.
 function AnswerList({
-  answers, edited, onEdit,
+  answers, edited, onEdit, onSave,
 }: {
   answers: SurveyAnswer[];
   edited: Record<string, string>;
   onEdit: (question: string, value: string) => void;
+  onSave?: (changes: { question: string; from: string; to: string }[]) => void;
 }) {
-  const [editingQ, setEditingQ] = useState<string | null>(null);
-  const [draft, setDraft] = useState("");
+  const [editing, setEditing] = useState(false);
+  const [drafts, setDrafts] = useState<Record<string, string>>({});
+  const [viewDoc, setViewDoc] = useState<string | null>(null);
+
+  const current = (a: SurveyAnswer) => edited[a.question] ?? a.answer;
+
+  const startEdit = () => {
+    const seed: Record<string, string> = {};
+    for (const a of answers) seed[a.question] = current(a);
+    setDrafts(seed);
+    setEditing(true);
+  };
+  const cancel = () => {
+    setEditing(false);
+    setDrafts({});
+  };
+  const save = () => {
+    const changes: { question: string; from: string; to: string }[] = [];
+    for (const a of answers) {
+      const next = drafts[a.question];
+      if (next !== undefined && next !== current(a)) {
+        changes.push({ question: a.question, from: current(a), to: next });
+        onEdit(a.question, next);
+      }
+    }
+    if (changes.length) onSave?.(changes);
+    setEditing(false);
+    setDrafts({});
+  };
 
   const sections: { section: string; items: SurveyAnswer[] }[] = [];
   for (const a of answers) {
@@ -112,87 +330,158 @@ function AnswerList({
     if (last && last.section === a.section) last.items.push(a);
     else sections.push({ section: a.section, items: [a] });
   }
-  function commit(q: string) {
-    onEdit(q, draft);
-    setEditingQ(null);
-  }
 
   return (
-    <div className="space-y-3">
-      {sections.map((group) => (
-        <div key={group.section}>
-          <p className="text-[10px] font-semibold uppercase tracking-wider text-graphite mb-1.5">{group.section}</p>
-          <dl className="space-y-1">
-            {group.items.map((a) => {
-              const value = edited[a.question] ?? a.answer;
-              const wasEdited = a.question in edited;
-              const isEditing = editingQ === a.question;
-              return (
-                <div key={a.question} className="flex items-baseline justify-between gap-3 text-[12px] group">
-                  <dt className="text-graphite shrink-0 max-w-[50%]">{a.question}</dt>
-                  <dd className="flex items-baseline gap-2 text-right min-w-0">
-                    {isEditing ? (
-                      <input
-                        autoFocus
-                        value={draft}
-                        onChange={(e) => setDraft(e.target.value)}
-                        onBlur={() => commit(a.question)}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter") commit(a.question);
-                          if (e.key === "Escape") setEditingQ(null);
-                        }}
-                        className="w-40 px-1.5 py-0.5 text-[12px] text-right bg-surface border border-pine rounded-[2px] focus:outline-none"
-                        aria-label={`Edit ${a.question}`}
-                      />
-                    ) : (
-                      <>
-                        <span className={`tabular-nums ${a.flagged && !wasEdited ? "text-brick font-semibold" : "text-ink font-medium"}`}>
-                          {value}
-                          {a.flagged && !wasEdited && <span className="ml-1 text-[10px] uppercase tracking-wider">⚑</span>}
-                          {wasEdited && <span className="ml-1 text-[9px] uppercase tracking-wider text-pine">· edited</span>}
-                        </span>
-                        <button
-                          type="button"
-                          onClick={() => { setEditingQ(a.question); setDraft(value); }}
-                          className="opacity-0 group-hover:opacity-100 transition-opacity text-pine shrink-0"
-                          aria-label={`Edit ${a.question}`}
-                          title="Edit"
-                        >
-                          <svg width="11" height="11" viewBox="0 0 14 14" fill="none">
-                            <path d="M9.5 2.5l2 2L5 11l-2.5.5L3 9l6.5-6.5z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round" />
-                          </svg>
-                        </button>
-                      </>
-                    )}
-                  </dd>
-                </div>
-              );
-            })}
-          </dl>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-function Timeline({ events }: { events: TimelineEvent[] }) {
-  return (
-    <ol className="relative space-y-3 pl-4">
-      <span className="absolute left-[3px] top-1 bottom-1 w-px bg-hairline" aria-hidden="true" />
-      {events.map((e, i) => (
-        <li key={`${e.label}-${i}`} className="relative text-[12px]">
-          <span
-            className={`absolute -left-4 top-[3px] w-[7px] h-[7px] rounded-full ${i === events.length - 1 ? "bg-pine" : "bg-graphite/40"}`}
-            aria-hidden="true"
-          />
-          <div className="flex items-baseline justify-between gap-3">
-            <span className="text-ink">{e.label}</span>
-            <span className="text-graphite tabular-nums shrink-0">{e.when}</span>
+    <div>
+      <div className="flex items-baseline justify-between gap-3 mb-3">
+        <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite">Application responses</p>
+        {editing ? (
+          <div className="flex items-center gap-2 shrink-0">
+            <button
+              type="button"
+              onClick={cancel}
+              className="rounded-[2px] border border-hairline px-2.5 py-1 text-[11px] font-medium text-graphite hover:bg-surface-secondary"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              onClick={save}
+              className="rounded-[2px] bg-pine px-2.5 py-1 text-[11px] font-medium text-white hover:bg-pine-pressed"
+            >
+              Save changes
+            </button>
           </div>
-          {e.by && <p className="text-[11px] text-graphite">{e.by}</p>}
-        </li>
-      ))}
-    </ol>
+        ) : (
+          <div className="flex items-center gap-3 shrink-0">
+            <span className="text-[11px] tabular-nums text-graphite">{answers.length} answers</span>
+            <button
+              type="button"
+              onClick={startEdit}
+              className="inline-flex items-center gap-1.5 rounded-[2px] border border-hairline px-2.5 py-1 text-[11px] font-medium text-pine hover:bg-surface-secondary"
+            >
+              <svg width="11" height="11" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+                <path d="M9.5 2.5l2 2L5 11l-2.5.5L3 9l6.5-6.5z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round" />
+              </svg>
+              Edit responses
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* Each section is a ruled mini-table: a tinted label column + a value
+          column, horizontal rule per row + vertical rule between columns — a
+          spreadsheet grid so the eye tracks rows/columns without floating.
+          Laid out two-up to keep label adjacent to its value. */}
+      <div className="grid md:grid-cols-2 gap-3 items-start">
+        {sections.map((group) => (
+          <div key={group.section} className="border border-hairline rounded-[2px] overflow-hidden bg-surface">
+            <div className="px-3 py-2 border-b border-hairline">
+              <p className="text-[11px] font-semibold uppercase tracking-wider text-ink">{group.section}</p>
+            </div>
+            <table className="w-full border-collapse text-[12px]">
+              <tbody>
+                {group.items.map((a) => {
+                  const wasEdited = a.question in edited;
+                  return (
+                    <tr key={a.question} className="border-b border-hairline last:border-b-0">
+                      <th
+                        scope="row"
+                        className="w-[42%] align-top text-left font-normal text-graphite leading-snug px-3 py-1.5 border-r border-hairline"
+                      >
+                        {a.question}
+                      </th>
+                      <td className="align-top px-3 py-1.5">
+                        {editing ? (
+                          (() => {
+                            const opts = optionsFor(a.question, drafts[a.question] ?? "");
+                            return opts ? (
+                              <select
+                                value={drafts[a.question] ?? ""}
+                                onChange={(e) => setDrafts((p) => ({ ...p, [a.question]: e.target.value }))}
+                                className="w-full px-1.5 py-1 text-[12px] bg-surface border border-hairline rounded-[2px] text-ink focus:border-pine focus:outline-none"
+                                aria-label={a.question}
+                              >
+                                {opts.map((o) => (
+                                  <option key={o} value={o}>{o}</option>
+                                ))}
+                              </select>
+                            ) : (
+                              <input
+                                value={drafts[a.question] ?? ""}
+                                onChange={(e) => setDrafts((p) => ({ ...p, [a.question]: e.target.value }))}
+                                className="w-full px-1.5 py-0.5 text-[12px] bg-surface border border-hairline rounded-[2px] text-ink focus:border-pine focus:outline-none"
+                                aria-label={a.question}
+                              />
+                            );
+                          })()
+                        ) : (
+                          <span
+                            className={`font-medium leading-snug break-words ${
+                              a.flagged && !wasEdited ? "text-brick" : "text-ink"
+                            }`}
+                          >
+                            {current(a)}
+                            {a.flagged && !wasEdited && <span className="ml-1 text-[11px]" aria-label="flagged">⚑</span>}
+                            {wasEdited && <span className="ml-1 text-[10px] uppercase tracking-wider text-graphite">· edited</span>}
+                            {a.section === "Documents" && !/not (yet uploaded|provided)/i.test(current(a)) && (
+                              <button
+                                type="button"
+                                onClick={() => setViewDoc(a.question)}
+                                className="ml-2 text-[11px] font-medium text-pine hover:underline"
+                              >
+                                View
+                              </button>
+                            )}
+                          </span>
+                        )}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        ))}
+      </div>
+
+      {viewDoc && (
+        <div
+          role="dialog"
+          aria-label={`Document — ${viewDoc}`}
+          className="fixed inset-0 z-50 flex items-center justify-center bg-ink/40 p-4"
+          onClick={() => setViewDoc(null)}
+        >
+          <div
+            className="w-full max-w-md rounded-[3px] border border-hairline bg-surface shadow-xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between border-b border-hairline px-3 py-2">
+              <p className="text-[12px] font-semibold text-ink">{viewDoc}</p>
+              <button
+                type="button"
+                aria-label="Close document"
+                onClick={() => setViewDoc(null)}
+                className="px-1 text-muted hover:text-ink"
+              >
+                ✕
+              </button>
+            </div>
+            <div className="p-4">
+              <div className="flex aspect-[4/3] w-full items-center justify-center rounded-[2px] border border-dashed border-hairline bg-surface-secondary px-4 text-center">
+                <span className="text-[12px] leading-relaxed text-graphite">
+                  Synthetic demo document
+                  <br />
+                  <span className="text-ink font-medium">{viewDoc}</span>
+                  <br />
+                  No real applicant file in the preview.
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -200,21 +489,38 @@ function Timeline({ events }: { events: TimelineEvent[] }) {
 // card with a consistent grammar (result → trace → provenance tag).
 function EngineBlock({ title, tag, children }: { title: string; tag: string; children: React.ReactNode }) {
   return (
-    <div className="bg-paper border border-hairline rounded-[2px] p-2.5">
-      <div className="flex items-baseline justify-between gap-1 mb-1.5">
-        <p className="text-[10px] font-semibold uppercase tracking-wider text-ink">{title}</p>
-        <span className="text-[9px] uppercase tracking-wider text-graphite shrink-0">{tag}</span>
+    <div className="bg-surface border border-hairline rounded-[2px] p-3">
+      <div className="flex items-baseline justify-between gap-2 mb-2 pb-1.5 border-b border-hairline">
+        <p className="text-[11px] font-semibold uppercase tracking-wider text-ink">{title}</p>
+        <span className="text-[11px] uppercase tracking-wider text-graphite shrink-0">{tag}</span>
       </div>
       {children}
     </div>
   );
 }
 
-function CaseRow({ app, border }: { app: QueueApplication; border: boolean }) {
+function CaseRow({
+  app, border, onAdvance, onTransfer, onComment, onEditLog,
+}: {
+  app: CaseRecord;
+  border: boolean;
+  onAdvance: () => void;
+  onTransfer: (to: string) => void;
+  onComment: (text: string) => void;
+  onEditLog: (changes: { question: string; from: string; to: string }[]) => void;
+}) {
   const [open, setOpen] = useState(false);
   const [edited, setEdited] = useState<Record<string, string>>({});
   const [showMath, setShowMath] = useState(false);
+  const [comment, setComment] = useState("");
+  const [confirmAdvance, setConfirmAdvance] = useState(false);
+  const [showActivity, setShowActivity] = useState(false);
+  const [refreshedAt, setRefreshedAt] = useState("");
+  const openActivity = () => { setRefreshedAt(nowStamp()); setShowActivity(true); };
   const pct = completionPct(app.completedSteps);
+  const next = nextPhase(app.phase);
+  const checks = buildVerification(app);
+  const checksClear = checks.filter((c) => c.ok).length;
 
   // Open Mae prefilled with the case context (no applicant PII — stage + the
   // engine's top suggested action). MaeChat listens for this event.
@@ -229,21 +535,30 @@ function CaseRow({ app, border }: { app: QueueApplication; border: boolean }) {
   return (
     <div className={border ? "border-t border-hairline" : ""}>
       <button type="button" onClick={() => setOpen((v) => !v)} aria-expanded={open}
-        className="w-full flex items-center gap-4 px-4 py-1.5 text-left hover:bg-paper transition-colors">
+        className={`w-full flex items-center gap-4 px-4 py-1.5 text-left transition-colors ${
+          open ? "bg-[var(--color-row-hover)]" : "hover:bg-[var(--color-row-hover)]"
+        }`}>
         <span className="text-[11px] text-graphite font-mono tabular-nums tracking-tight shrink-0 w-[92px]">{app.caseId}</span>
         <span className="text-[13px] font-semibold text-ink shrink-0 w-[88px] truncate">{app.name}</span>
         <span className="text-[12px] text-graphite shrink-0 w-[110px] truncate hidden sm:block">{app.county} County</span>
-        <span className="text-[12px] text-ink flex-1 min-w-0 truncate">{app.stage}</span>
+        <span className="text-[12px] text-ink flex-1 min-w-0 flex items-center gap-2">
+          <span className="truncate">{app.stage}</span>
+          {app.expedited && (
+            <span className="shrink-0 rounded-[2px] border border-warning px-1.5 text-[11px] font-semibold uppercase tracking-wider text-warning">
+              Expedited
+            </span>
+          )}
+        </span>
         {/* Enrolled shows benefit; others show pipeline completion */}
         <span className="hidden md:flex items-center justify-end shrink-0 w-[130px]">
           {enrolled && app.estimatedBenefitUsd !== null ? (
-            <span className="text-[12px] tabular-nums text-ink font-medium">{formatUsd(app.estimatedBenefitUsd)}/mo</span>
+            <span className="text-[12px] tabular-nums text-ink font-medium">~{formatUsd(app.estimatedBenefitUsd)}/mo</span>
           ) : (
             <span className="flex items-center gap-2 w-full">
-              <span className="h-1.5 flex-1 rounded-full bg-paper overflow-hidden">
-                <span className={`block h-full rounded-full ${barClass(app.risk)}`} style={{ width: `${pct}%` }} />
+              <span className="h-1.5 flex-1 rounded-[1px] bg-surface-secondary overflow-hidden">
+                <span className="block h-full rounded-[1px] bg-muted" style={{ width: `${pct}%` }} />
               </span>
-              <span className="text-[11px] tabular-nums text-graphite w-[30px] text-right">{pct}%</span>
+              <span className="text-[11px] tabular-nums text-graphite w-[34px] text-right">{pct}%</span>
             </span>
           )}
         </span>
@@ -261,18 +576,51 @@ function CaseRow({ app, border }: { app: QueueApplication; border: boolean }) {
       </button>
 
       {open && (
-        <div className="px-4 pb-4 pt-2 border-l-2 border-pine/30 ml-4 space-y-3">
-          <div>
-            <div className="flex items-baseline justify-between mb-2">
-              <p className="text-[10px] font-semibold uppercase tracking-wider text-graphite">Application responses</p>
-              <p className="text-[11px] tabular-nums text-graphite">{app.answers.length} answers</p>
+        <div className="bg-[var(--color-row-hover)] border-t border-hairline px-4 py-4 space-y-4">
+          {/* Expedited-service screen (7 CFR 273.2(i)) — time-sensitive, surfaced first. */}
+          {app.expedited && (
+            <div className="flex items-start gap-2 rounded-[2px] border border-warning/40 bg-surface px-3 py-2">
+              <span className="text-warning text-[13px] leading-none mt-[1px]" aria-hidden="true">⚡</span>
+              <p className="text-[12px] text-ink leading-snug">
+                <span className="font-semibold text-warning">Screen for expedited service</span> — 7 CFR 273.2(i):{" "}
+                {app.expeditedReason.toLowerCase()}. Target 7-day processing.{" "}
+                <span className="text-graphite">Provisional — confirm liquid resources.</span>
+              </p>
             </div>
-            <AnswerList answers={app.answers} edited={edited} onEdit={(q, v) => setEdited((p) => ({ ...p, [q]: v }))} />
+          )}
+
+          <AnswerList
+            answers={app.answers}
+            edited={edited}
+            onEdit={(q, v) => setEdited((p) => ({ ...p, [q]: v }))}
+            onSave={onEditLog}
+          />
+
+          {/* Automated verification — cross-check of the response components. */}
+          <div className="border-t border-hairline pt-3">
+            <div className="flex items-baseline justify-between mb-2">
+              <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite">Automated verification</p>
+              <span className="text-[11px] tabular-nums text-graphite">{checksClear}/{checks.length} components clear</span>
+            </div>
+            <ul className="grid sm:grid-cols-2 gap-x-8 gap-y-1.5">
+              {checks.map((c) => (
+                <li key={c.label} className="flex items-baseline gap-2 text-[12px]">
+                  <span className={`shrink-0 ${c.ok ? "text-pine" : "text-warning"}`} aria-hidden="true">{c.ok ? "✓" : "⚠"}</span>
+                  <span>
+                    <span className="font-medium text-ink">{c.label}</span>
+                    <span className="text-graphite"> — {c.note}{c.ok ? "" : " (needs check)"}</span>
+                  </span>
+                </li>
+              ))}
+            </ul>
+            <p className="text-[11px] text-graphite mt-2 leading-snug">
+              Automated cross-check of the responses — what the engine could confirm vs. what needs a human check. Not an eligibility determination.
+            </p>
           </div>
 
           {/* The three engines, made explicit */}
           <div className="border-t border-hairline pt-3">
-            <p className="text-[10px] font-semibold uppercase tracking-wider text-graphite mb-2">Civica engine</p>
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite mb-2">Civica engine</p>
             <div className="grid gap-3 md:grid-cols-3">
               {/* 1 — Eligibility (provisional: the gates it evaluates, in order) */}
               <EngineBlock title="Eligibility" tag="provisional">
@@ -282,15 +630,15 @@ function CaseRow({ app, border }: { app: QueueApplication; border: boolean }) {
                 </p>
                 <ol className="mt-1.5 space-y-1">
                   {EVALUATION_GATES.map((g, i) => (
-                    <li key={g.citation} className="flex items-baseline gap-1.5 text-[11px] leading-tight">
-                      <span className="tabular-nums text-muted w-3 shrink-0">{i + 1}</span>
+                    <li key={g.citation} className="flex items-baseline gap-1.5 text-[12px] leading-snug">
+                      <span className="tabular-nums text-graphite w-3 shrink-0">{i + 1}</span>
                       <span className="text-ink">{g.label}</span>
-                      <span className="text-muted">{g.citation}</span>
+                      <span className="text-[11px] text-graphite">{g.citation}</span>
                     </li>
                   ))}
                 </ol>
                 {app.assumptions.length > 0 && (
-                  <p className="text-[10px] text-muted mt-1.5 leading-snug">Assumed: {app.assumptions.join("; ")}.</p>
+                  <p className="text-[11px] text-graphite mt-2 leading-snug">Assumed: {app.assumptions.join("; ")}.</p>
                 )}
               </EngineBlock>
 
@@ -300,7 +648,7 @@ function CaseRow({ app, border }: { app: QueueApplication; border: boolean }) {
                 {app.estimatedBenefitUsd !== null ? (
                   <>
                     <p className="text-[16px] font-semibold tabular-nums text-ink leading-none">
-                      {formatUsd(app.estimatedBenefitUsd)}
+                      <span className="text-[11px] font-normal text-graphite">approx.</span> ~{formatUsd(app.estimatedBenefitUsd)}
                       <span className="text-[11px] font-normal text-graphite">/mo</span>
                     </p>
                     {app.deduction && (
@@ -320,7 +668,7 @@ function CaseRow({ app, border }: { app: QueueApplication; border: boolean }) {
                                 <tr key={r.label} className={r.total ? "border-t border-hairline font-semibold text-ink" : "text-graphite"}>
                                   <td className="py-0.5 pr-2 align-top">
                                     {r.label}
-                                    {r.citation && <span className="block text-[9px] text-muted">{r.citation}</span>}
+                                    {r.citation && <span className="block text-[11px] text-graphite">{r.citation}</span>}
                                   </td>
                                   <td className="py-0.5 text-right tabular-nums align-top">
                                     {r.amount < 0 ? `−${formatUsd(-r.amount)}` : formatUsd(r.amount)}
@@ -350,11 +698,11 @@ function CaseRow({ app, border }: { app: QueueApplication; border: boolean }) {
                   <ol className="space-y-1.5">
                     {app.recommendations.slice(0, 4).map((r) => (
                       <li key={r.rank} className="text-[12px] text-ink leading-snug">
-                        <span className="font-semibold text-pine">Good next:</span> {r.action}
+                        <span className="font-semibold text-ink">Good next:</span> {r.action}
                         {r.deltaUsd > 0 && (
-                          <span className="text-pine tabular-nums"> (+{formatUsd(r.deltaUsd)}/mo)</span>
+                          <span className="text-ink font-semibold tabular-nums"> (+{formatUsd(r.deltaUsd)}/mo)</span>
                         )}
-                        {r.citation && <span className="block text-[9px] text-muted">{r.citation}</span>}
+                        {r.citation && <span className="block text-[11px] text-graphite">{r.citation}</span>}
                       </li>
                     ))}
                   </ol>
@@ -362,7 +710,7 @@ function CaseRow({ app, border }: { app: QueueApplication; border: boolean }) {
                   <ol className="space-y-1.5">
                     {app.verificationNeeds.slice(0, 5).map((v) => (
                       <li key={v} className="text-[12px] text-ink leading-snug">
-                        <span className="font-semibold text-pine">Good next:</span> confirm{" "}
+                        <span className="font-semibold text-ink">Good next:</span> confirm{" "}
                         {v.charAt(0).toLowerCase() + v.slice(1)}
                       </li>
                     ))}
@@ -379,7 +727,7 @@ function CaseRow({ app, border }: { app: QueueApplication; border: boolean }) {
                 </button>
               </EngineBlock>
             </div>
-            <p className="text-[10px] text-muted mt-2 leading-snug">
+            <p className="text-[12px] text-graphite mt-3 leading-snug">
               Estimate + recommendations are live engine output on these answers; eligibility is provisional until the
               verification items are confirmed — an estimate, not a determination.
             </p>
@@ -388,7 +736,7 @@ function CaseRow({ app, border }: { app: QueueApplication; border: boolean }) {
           {/* Navigator flags (the still-needed items now live in the
               Recommended-next-steps engine block above). */}
           <div className="border-t border-hairline pt-3">
-            <p className="text-[10px] font-semibold uppercase tracking-wider text-graphite mb-2">Navigator flags</p>
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite mb-2">Navigator flags</p>
             {app.docFlags.length > 0 ? (
               <ul className="space-y-1.5">
                 {app.docFlags.map((f) => (
@@ -403,23 +751,170 @@ function CaseRow({ app, border }: { app: QueueApplication; border: boolean }) {
             )}
           </div>
 
-          <div className="grid gap-4 md:grid-cols-2 border-t border-hairline pt-3">
-            <div>
-              <div className="flex items-baseline justify-between mb-2">
-                <p className="text-[10px] font-semibold uppercase tracking-wider text-graphite">Pipeline</p>
-                <p className="text-[11px] tabular-nums text-graphite">{app.completedSteps}/{TOTAL_STEPS} · {pct}%</p>
-              </div>
-              <StepList completedSteps={app.completedSteps} />
+          {/* Comments (demo) — caseworker notes, newest first. */}
+          <div className="border-t border-hairline pt-3">
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite mb-2">Comments</p>
+            {app.comments.length > 0 ? (
+              <ul className="space-y-2 mb-2">
+                {app.comments.map((c, i) => (
+                  <li key={i} className="text-[12px]">
+                    <span className="text-graphite">{c.author} · {c.when}</span>
+                    <p className="text-ink leading-snug">{c.text}</p>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-[12px] text-muted mb-2">No comments yet.</p>
+            )}
+            <div className="flex items-start gap-2">
+              <textarea
+                value={comment}
+                onChange={(e) => setComment(e.target.value)}
+                rows={2}
+                placeholder="Add a comment…"
+                aria-label="Add a comment"
+                className="flex-1 resize-none rounded-[2px] border border-hairline bg-surface px-2 py-1 text-[12px] text-ink placeholder:text-muted focus:border-pine focus:outline-none"
+              />
+              <button
+                type="button"
+                onClick={() => {
+                  const t = comment.trim();
+                  if (t) { onComment(t); setComment(""); }
+                }}
+                disabled={comment.trim().length === 0}
+                className="rounded-[2px] bg-pine px-2.5 py-1.5 text-[11px] font-medium text-white hover:bg-pine-pressed disabled:bg-pine-disabled"
+              >
+                Add
+              </button>
             </div>
-            <div>
-              <p className="text-[10px] font-semibold uppercase tracking-wider text-graphite mb-2">History</p>
-              <Timeline events={app.history} />
-            </div>
+            <p className="text-[11px] text-graphite mt-1.5">Transfer, advance, and comments are a local demo — not saved.</p>
           </div>
 
-          <Link href={`/packets/${app.id}`} className="inline-block text-[12px] font-semibold text-pine hover:underline">
-            Open full case →
-          </Link>
+          <div className="border-t border-hairline pt-3">
+            <div className="flex items-baseline justify-between mb-2">
+              <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite">Processing steps</p>
+              <p className="text-[11px] tabular-nums text-graphite">{app.completedSteps}/{TOTAL_STEPS} · {pct}%</p>
+            </div>
+            <StepList completedSteps={app.completedSteps} />
+          </div>
+
+          {/* Case actions footer (demo): transfer, manual advance (confirm), full case. */}
+          <div className="flex flex-wrap items-center justify-between gap-3 border-t border-hairline pt-3">
+            <label className="flex items-center gap-1.5 text-[11px] text-graphite">
+              <span className="font-semibold uppercase tracking-wider">Assigned to</span>
+              <select
+                value={app.assignedTo}
+                onChange={(e) => onTransfer(e.target.value)}
+                className="px-1.5 py-0.5 text-[12px] bg-surface border border-hairline rounded-[2px] text-ink focus:border-pine focus:outline-none"
+                aria-label="Transfer case to caseworker"
+              >
+                {!PEERS.includes(app.assignedTo) && <option value={app.assignedTo}>{app.assignedTo}</option>}
+                {PEERS.map((p) => (
+                  <option key={p} value={p}>{p}</option>
+                ))}
+              </select>
+            </label>
+
+            <div className="flex items-center gap-3">
+              {next && (confirmAdvance ? (
+                <span className="flex items-center gap-2 text-[11px]">
+                  <span className="text-graphite">Advance to {phaseLabel(next)}?</span>
+                  <button
+                    type="button"
+                    onClick={() => { onAdvance(); setConfirmAdvance(false); }}
+                    className="rounded-[2px] bg-pine px-2.5 py-1 font-medium text-white hover:bg-pine-pressed"
+                  >
+                    Confirm
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setConfirmAdvance(false)}
+                    className="rounded-[2px] border border-hairline px-2.5 py-1 font-medium text-graphite hover:bg-surface"
+                  >
+                    Cancel
+                  </button>
+                </span>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setConfirmAdvance(true)}
+                  className="rounded-[2px] border border-hairline px-2.5 py-1 text-[11px] font-medium text-ink hover:bg-surface"
+                >
+                  Advance to {phaseLabel(next)} →
+                </button>
+              ))}
+              <button
+                type="button"
+                onClick={openActivity}
+                className="rounded-[2px] border border-hairline px-2.5 py-1 text-[11px] font-medium text-ink hover:bg-surface"
+              >
+                Activity log ({app.activity.length})
+              </button>
+              <Link href={`/packets/${app.id}`} className="text-[12px] font-semibold text-pine hover:underline">
+                Open full case →
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Activity log — full-page takeover (chain of custody), with refresh. */}
+      {showActivity && (
+        <div role="dialog" aria-label={`Activity log — ${app.caseId}`} className="fixed inset-0 z-50 overflow-auto bg-paper">
+          <div className="mx-auto max-w-4xl px-6 py-6">
+            <div className="flex flex-wrap items-start justify-between gap-3 mb-4">
+              <div>
+                <button type="button" onClick={() => setShowActivity(false)} className="text-[12px] font-medium text-pine hover:underline">
+                  ← Back to caseload
+                </button>
+                <h2 className="text-[20px] font-bold tracking-tight text-ink mt-1">Activity log</h2>
+                <p className="text-[12px] text-graphite">
+                  {app.caseId} · {app.name} · {app.county} County · {app.activity.length} entries (newest first)
+                </p>
+              </div>
+              <div className="flex items-center gap-3">
+                {refreshedAt && <span className="text-[11px] tabular-nums text-graphite">Refreshed {refreshedAt}</span>}
+                <button
+                  type="button"
+                  onClick={() => setRefreshedAt(nowStamp())}
+                  className="inline-flex items-center gap-1.5 rounded-[2px] border border-hairline px-2.5 py-1 text-[11px] font-medium text-ink hover:bg-surface"
+                >
+                  <span aria-hidden="true">↻</span> Refresh
+                </button>
+                <button
+                  type="button"
+                  aria-label="Close activity log"
+                  onClick={() => setShowActivity(false)}
+                  className="rounded-[2px] border border-hairline px-2.5 py-1 text-[11px] font-medium text-graphite hover:bg-surface"
+                >
+                  Close ✕
+                </button>
+              </div>
+            </div>
+
+            <div className="border border-hairline rounded-[2px] bg-surface overflow-hidden">
+              <table className="w-full border-collapse text-[12px]">
+                <thead className="bg-surface-secondary">
+                  <tr className="border-b border-hairline text-[11px] uppercase tracking-wider text-graphite">
+                    <th className="w-10 px-3 py-2 text-left font-semibold">#</th>
+                    <th className="w-[190px] px-3 py-2 text-left font-semibold">When</th>
+                    <th className="w-[200px] px-3 py-2 text-left font-semibold">Who</th>
+                    <th className="px-3 py-2 text-left font-semibold">Action taken</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {app.activity.map((e, i) => (
+                    <tr key={`${e.ts}-${i}`} className="border-b border-hairline last:border-b-0 align-top">
+                      <td className="px-3 py-2 tabular-nums text-graphite">{i + 1}</td>
+                      <td className="px-3 py-2 tabular-nums text-graphite whitespace-nowrap">{e.ts}</td>
+                      <td className="px-3 py-2 text-ink whitespace-nowrap">{e.actor}</td>
+                      <td className="px-3 py-2 text-ink leading-snug">{e.action}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
       )}
     </div>
@@ -430,30 +925,83 @@ export default function ApplicationsQueue({ phases }: { phases: PhaseGroup[] }) 
   const [query, setQuery] = useState("");
   const q = query.trim().toLowerCase();
 
+  // Flat client-side caseload (seeded from the server-built groups) so manual
+  // advance / transfer / comment actions can mutate it. Ephemeral demo state.
+  const [cases, setCases] = useState<CaseRecord[]>(() =>
+    phases.flatMap((p) => p.cases).map((c) => ({ ...c, assignedTo: initialAssignee(c), comments: [], activity: seedActivity(c) })),
+  );
+
+  // Prepend chain-of-custody entries (newest-first), attributed to the signed-in
+  // caseworker, with a full audit timestamp.
+  const log = (c: CaseRecord, ...actions: string[]): ActivityEntry[] => [
+    ...actions.map((action) => ({ ts: nowStamp(), actor: CURRENT_USER, action })),
+    ...c.activity,
+  ];
+
+  const advance = (id: string) =>
+    setCases((cs) =>
+      cs.map((c) => {
+        if (c.id !== id) return c;
+        const np = nextPhase(c.phase);
+        if (!np) return c;
+        return {
+          ...c,
+          phase: np,
+          stage: ADVANCE_STAGE[np],
+          completedSteps: np === "live" ? Math.max(c.completedSteps, 4) : TOTAL_STEPS,
+          activity: log(c, `Changed phase from "${phaseLabel(c.phase)}" to "${phaseLabel(np)}"; set stage to "${ADVANCE_STAGE[np]}"`),
+        };
+      }),
+    );
+  const transfer = (id: string, to: string) =>
+    setCases((cs) =>
+      cs.map((c) => (c.id === id && to !== c.assignedTo ? { ...c, assignedTo: to, activity: log(c, `Reassigned case from ${c.assignedTo} to ${to}`) } : c)),
+    );
+  const addComment = (id: string, text: string) =>
+    setCases((cs) =>
+      cs.map((c) =>
+        c.id === id
+          ? { ...c, comments: [{ author: CURRENT_USER, text, when: nowLabel() }, ...c.comments], activity: log(c, `Added comment: "${text}"`) }
+          : c,
+      ),
+    );
+  const logEdit = (id: string, changes: { question: string; from: string; to: string }[]) =>
+    setCases((cs) =>
+      cs.map((c) =>
+        c.id === id ? { ...c, activity: log(c, ...changes.map((ch) => `Changed "${ch.question}" from "${ch.from}" to "${ch.to}"`)) } : c,
+      ),
+    );
+
+  // Regroup the live caseload by phase for rendering + funnel counts.
+  const grouped = useMemo<PhaseGroup[]>(
+    () => PHASES.map((p) => ({ ...p, cases: cases.filter((c) => c.phase === p.key) })),
+    [cases],
+  );
+
   const filtered = useMemo(() => {
-    if (!q) return phases;
-    return phases
-      .map((p) => ({
-        ...p,
-        cases: p.cases.filter((a) =>
-          [a.caseId, a.name, a.county, a.stage, ...a.docFlags, ...a.verificationNeeds, ...a.answers.flatMap((x) => [x.question, x.answer])]
-            .join(" ").toLowerCase().includes(q),
-        ),
-      }));
-  }, [phases, q]);
+    if (!q) return grouped;
+    return grouped.map((p) => ({
+      ...p,
+      cases: p.cases.filter((a) =>
+        [a.caseId, a.name, a.county, a.stage, (a as CaseRecord).assignedTo, ...a.docFlags, ...(a as CaseRecord).comments.map((c) => c.text), ...a.verificationNeeds, ...a.answers.flatMap((x) => [x.question, x.answer])]
+          .join(" ").toLowerCase().includes(q),
+      ),
+    }));
+  }, [grouped, q]);
 
   const matchCount = filtered.reduce((s, p) => s + p.cases.length, 0);
-  const totalCases = phases.reduce((s, p) => s + p.cases.length, 0);
+  const totalCases = cases.length;
 
   // Export the FULL caseload (not the search-filtered view), flattened across
   // phases. Engine-computed benefit + verification-need counts travel with it.
-  const exportRows = phases.flatMap((p) =>
+  const exportRows = grouped.flatMap((p) =>
     p.cases.map((a) => [
       p.label,
       a.caseId,
       a.name,
       `${a.county} County, CA`,
       a.stage,
+      (a as CaseRecord).assignedTo,
       `${completionPct(a.completedSteps)}%`,
       a.estimatedBenefitUsd != null ? formatUsd(a.estimatedBenefitUsd) : "—",
       String(a.docFlags.length),
@@ -464,7 +1012,7 @@ export default function ApplicationsQueue({ phases }: { phases: PhaseGroup[] }) 
   return (
     <div className="space-y-4">
       {/* Lifecycle funnel */}
-      <Funnel phases={phases} />
+      <Funnel phases={grouped} />
 
       {/* Search + export */}
       <div className="flex items-center justify-between gap-3">
@@ -483,9 +1031,9 @@ export default function ApplicationsQueue({ phases }: { phases: PhaseGroup[] }) 
           />
         </div>
         <TableExport
-          filename="cbo-pipeline"
-          title="Navigator pipeline — cases"
-          columns={["Phase", "Case ID", "Applicant", "County", "Stage", "Completion", "Est. benefit", "Flags", "Risk"]}
+          filename="cbo-caseload"
+          title="Navigator caseload — cases"
+          columns={["Phase", "Case ID", "Applicant", "County", "Stage", "Assigned", "Completion", "Est. benefit", "Flags", "Risk"]}
           rows={exportRows}
           note="Illustrative caseload. Benefit estimate + verification needs are computed by Civica's rules engine; applicant records are synthetic."
         />
@@ -498,7 +1046,7 @@ export default function ApplicationsQueue({ phases }: { phases: PhaseGroup[] }) 
 
       {/* Case list grouped by lifecycle phase */}
       <div className="border border-hairline rounded-[2px] bg-surface overflow-hidden">
-        <div className="flex items-center gap-4 px-4 py-1.5 bg-surface-secondary border-b border-hairline text-[10px] font-semibold uppercase tracking-wider text-graphite">
+        <div className="flex items-center gap-4 px-4 py-1.5 bg-surface-secondary border-b border-hairline text-[11px] font-semibold uppercase tracking-wider text-graphite">
           <span className="shrink-0 w-[92px]">Case ID</span>
           <span className="shrink-0 w-[88px]">Applicant</span>
           <span className="shrink-0 w-[110px] hidden sm:block">County</span>
@@ -513,12 +1061,22 @@ export default function ApplicationsQueue({ phases }: { phases: PhaseGroup[] }) 
           if (phase.cases.length === 0) return null;
           return (
             <div key={phase.key}>
-              <div className="flex items-center gap-2 px-4 py-1 bg-paper border-b border-hairline">
+              <div className="flex items-center gap-2 px-4 py-1 bg-surface-secondary border-b border-hairline">
                 <span className={`w-2 h-2 rounded-sm ${phase.accent}`} aria-hidden="true" />
                 <span className="text-[11px] font-semibold uppercase tracking-wider text-graphite">{phase.label}</span>
                 <span className="text-[11px] text-graphite tabular-nums">{phase.cases.length}</span>
               </div>
-              {phase.cases.map((a, i) => <CaseRow key={a.id} app={a} border={i > 0} />)}
+              {phase.cases.map((a, i) => (
+                <CaseRow
+                  key={a.id}
+                  app={a as CaseRecord}
+                  border={i > 0}
+                  onAdvance={() => advance(a.id)}
+                  onTransfer={(to) => transfer(a.id, to)}
+                  onComment={(text) => addComment(a.id, text)}
+                  onEditLog={(questions) => logEdit(a.id, questions)}
+                />
+              ))}
             </div>
           );
         })}
@@ -527,7 +1085,7 @@ export default function ApplicationsQueue({ phases }: { phases: PhaseGroup[] }) 
           <p className="px-4 py-6 text-[13px] text-muted text-center">No cases match your search.</p>
         )}
         {!q && totalCases === 0 && (
-          <p className="px-4 py-8 text-[13px] text-muted text-center">No active cases in the pipeline yet.</p>
+          <p className="px-4 py-8 text-[13px] text-muted text-center">No active cases in the caseload yet.</p>
         )}
       </div>
     </div>

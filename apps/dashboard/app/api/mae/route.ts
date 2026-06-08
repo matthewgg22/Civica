@@ -82,16 +82,23 @@ function parseMessages(raw: unknown): { messages: ChatMessage[] } | { error: str
 }
 
 export async function POST(req: NextRequest) {
-  // --- Auth: staff only -----------------------------------------------------
+  // --- Auth: staff only, UNLESS public-preview mode is explicitly enabled ----
+  // NEXT_PUBLIC_MAE_PREVIEW=true opens Mae on the public /cbo-preview demo for
+  // anonymous visitors. Default OFF → prod stays staff-gated. Even when on, PII
+  // is redacted, per-request caps apply, and the system prompt scopes/refuses.
+  // (No per-IP rate limit on this route yet — add one before enabling in prod.)
+  const previewPublic = process.env.NEXT_PUBLIC_MAE_PREVIEW === "true";
   const cookieStore = await cookies();
   const supabase = createServerClientFromCookies(cookieStore);
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-  const role = (user.app_metadata as { role?: unknown } | null)?.role;
-  if (!isStaff(role)) {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  if (!previewPublic) {
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    const role = (user.app_metadata as { role?: unknown } | null)?.role;
+    if (!isStaff(role)) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
   }
 
   // --- Config gate ----------------------------------------------------------
@@ -197,7 +204,7 @@ export async function POST(req: NextRequest) {
         // Audit (best-effort, never blocks the answer): a PII-scrubbed record of
         // the query, citations + their verifier status, and versions.
         void logMaeQuery({
-          staffUserId: user.id,
+          staffUserId: user?.id ?? null,
           questionRedacted: lastUser,
           answer: answerText,
           citations: checks,
