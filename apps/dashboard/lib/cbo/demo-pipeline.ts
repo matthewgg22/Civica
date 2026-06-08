@@ -59,6 +59,7 @@ interface DemoApplicant {
   risk: Risk;
   updated: string;
   completedSteps: number;
+  navigator: string;
   engineInputs: PacketAnswers;
   answers: SurveyAnswer[];
   docFlags: string[];
@@ -75,6 +76,7 @@ export interface QueueApplication {
   risk: Risk;
   updated: string;
   completedSteps: number;
+  navigator: string;
   answers: SurveyAnswer[];
   docFlags: string[];
   history: TimelineEvent[];
@@ -103,7 +105,7 @@ const APPLICANTS: DemoApplicant[] = [
   // ── Requesting assistance ────────────────────────────────────────────────
   {
     id: "demo-pkt-aisha", caseId: "CF-2026-0211", name: "Aisha K.", county: "Los Angeles",
-    phase: "requesting", stage: "Screener complete", risk: "Low risk", updated: "3h ago", completedSteps: 2,
+    phase: "requesting", stage: "Screener complete", risk: "Low risk", updated: "3h ago", completedSteps: 2, navigator: "Unassigned",
     engineInputs: { household_size: "2", monthly_income: "1800", monthly_rent: "1400", monthly_utilities: "120", employment_status: "employed", has_disability: "false" },
     answers: [
       { section: "Where you're applying", question: "State", answer: "California" },
@@ -116,7 +118,7 @@ const APPLICANTS: DemoApplicant[] = [
   },
   {
     id: "demo-pkt-daniel", caseId: "CF-2026-0209", name: "Daniel P.", county: "San Diego",
-    phase: "requesting", stage: "Application drafted", risk: "Medium risk", updated: "1d ago", completedSteps: 3,
+    phase: "requesting", stage: "Application drafted", risk: "Medium risk", updated: "1d ago", completedSteps: 3, navigator: "J. Ruiz",
     engineInputs: { household_size: "1", monthly_income: "1450", monthly_rent: "1200", monthly_utilities: "0", employment_status: "employed", has_disability: "false" },
     answers: [
       { section: "Where you're applying", question: "State", answer: "California" },
@@ -131,7 +133,7 @@ const APPLICANTS: DemoApplicant[] = [
   // ── Live application ──────────────────────────────────────────────────────
   {
     id: "demo-pkt-003-jasmine", caseId: "CF-2026-0188", name: "Jasmine T.", county: "Los Angeles",
-    phase: "live", stage: "Documents requested", risk: "Medium risk", updated: "1d ago", completedSteps: 4,
+    phase: "live", stage: "Documents requested", risk: "Medium risk", updated: "1d ago", completedSteps: 4, navigator: "J. Ruiz",
     engineInputs: { household_size: "4", monthly_income: "3100", monthly_rent: "2050", monthly_utilities: "240", employment_status: "employed", has_disability: "false" },
     answers: [
       { section: "Where you're applying", question: "State", answer: "California" },
@@ -152,7 +154,7 @@ const APPLICANTS: DemoApplicant[] = [
   },
   {
     id: "demo-pkt-elena", caseId: "CF-2026-0184", name: "Elena V.", county: "San Francisco",
-    phase: "live", stage: "Needs clarification", risk: "High risk", updated: "2d ago", completedSteps: 2,
+    phase: "live", stage: "Needs clarification", risk: "High risk", updated: "2d ago", completedSteps: 2, navigator: "A. Cole",
     engineInputs: { household_size: "1", monthly_income: "1640", monthly_rent: "2400", monthly_utilities: "0", employment_status: "employed", has_disability: "false" },
     answers: [
       { section: "Where you're applying", question: "State", answer: "California" },
@@ -169,7 +171,7 @@ const APPLICANTS: DemoApplicant[] = [
   },
   {
     id: "demo-pkt-002-carlos", caseId: "CF-2026-0203", name: "Carlos R.", county: "Fresno",
-    phase: "live", stage: "Interview scheduled", risk: "Medium risk", updated: "5h ago", completedSteps: 6,
+    phase: "live", stage: "Interview scheduled", risk: "Medium risk", updated: "5h ago", completedSteps: 6, navigator: "M. Diaz",
     engineInputs: { household_size: "2", monthly_income: "1980", monthly_rent: "1320", monthly_utilities: "160", employment_status: "self_employed", has_disability: "false" },
     answers: [
       { section: "Where you're applying", question: "State", answer: "California" },
@@ -188,7 +190,7 @@ const APPLICANTS: DemoApplicant[] = [
   },
   {
     id: "demo-pkt-sofia", caseId: "CF-2026-0201", name: "Sofia M.", county: "Sacramento",
-    phase: "live", stage: "Submitted to county", risk: "Low risk", updated: "1d ago", completedSteps: 8,
+    phase: "live", stage: "Submitted to county", risk: "Low risk", updated: "1d ago", completedSteps: 8, navigator: "R. Okafor",
     engineInputs: { household_size: "2", monthly_income: "1980", monthly_rent: "1320", monthly_utilities: "150", employment_status: "employed", has_disability: "false" },
     answers: [
       { section: "Where you're applying", question: "State", answer: "California" },
@@ -206,7 +208,7 @@ const APPLICANTS: DemoApplicant[] = [
   // ── Enrolled ───────────────────────────────────────────────────────────────
   {
     id: "demo-pkt-001-maria", caseId: "CF-2026-0179", name: "Maria G.", county: "Alameda",
-    phase: "enrolled", stage: "Approved", risk: "Low risk", updated: "6d ago", completedSteps: 8,
+    phase: "enrolled", stage: "Approved", risk: "Low risk", updated: "6d ago", completedSteps: 8, navigator: "R. Okafor",
     engineInputs: { household_size: "3", monthly_income: "2840", monthly_rent: "1850", monthly_utilities: "210", employment_status: "employed", has_disability: "false" },
     answers: [
       { section: "Where you're applying", question: "State", answer: "California" },
@@ -225,7 +227,7 @@ const APPLICANTS: DemoApplicant[] = [
   },
   {
     id: "demo-pkt-theresa", caseId: "CF-2026-0162", name: "Theresa B.", county: "San Jose",
-    phase: "enrolled", stage: "Approved", risk: "Low risk", updated: "2w ago", completedSteps: 8,
+    phase: "enrolled", stage: "Approved", risk: "Low risk", updated: "2w ago", completedSteps: 8, navigator: "L. Park",
     engineInputs: { household_size: "2", monthly_income: "1500", monthly_rent: "1600", monthly_utilities: "180", employment_status: "employed", has_disability: "true" },
     answers: [
       { section: "Where you're applying", question: "State", answer: "California" },
@@ -243,7 +245,7 @@ const APPLICANTS: DemoApplicant[] = [
   // ── Recertification ──────────────────────────────────────────────────────
   {
     id: "demo-pkt-patricia", caseId: "CF-2026-0098", name: "Patricia W.", county: "Los Angeles",
-    phase: "recert", stage: "Recert overdue · 3 days", risk: "High risk", updated: "today", completedSteps: 8,
+    phase: "recert", stage: "Recert overdue · 3 days", risk: "High risk", updated: "today", completedSteps: 8, navigator: "R. Okafor",
     engineInputs: { household_size: "4", monthly_income: "3200", monthly_rent: "1950", monthly_utilities: "220", employment_status: "employed", has_disability: "false" },
     answers: [
       { section: "Where you're applying", question: "State", answer: "California" },
@@ -261,7 +263,7 @@ const APPLICANTS: DemoApplicant[] = [
   },
   {
     id: "demo-pkt-mei", caseId: "CF-2026-0104", name: "Mei L.", county: "San Jose",
-    phase: "recert", stage: "Recert due · 8 days", risk: "Medium risk", updated: "2d ago", completedSteps: 8,
+    phase: "recert", stage: "Recert due · 8 days", risk: "Medium risk", updated: "2d ago", completedSteps: 8, navigator: "L. Park",
     engineInputs: { household_size: "3", monthly_income: "2600", monthly_rent: "1700", monthly_utilities: "190", employment_status: "employed", has_disability: "false" },
     answers: [
       { section: "Where you're applying", question: "State", answer: "California" },
@@ -420,7 +422,7 @@ export function buildPipeline(state: "CA" | "MA" = "CA", asOf: Date, synthetic =
     }
     return {
       id: a.id, caseId: a.caseId, name: a.name, county: a.county, phase: a.phase, stage: a.stage,
-      risk: a.risk, updated: a.updated, completedSteps: a.completedSteps,
+      risk: a.risk, updated: a.updated, completedSteps: a.completedSteps, navigator: a.navigator,
       answers: expandAnswers(a), docFlags: a.docFlags, history: a.history,
       estimatedBenefitUsd, verificationNeeds, assumptions, deduction, recommendations,
       ...(() => {
