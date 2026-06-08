@@ -29,7 +29,7 @@ type ChatMessage = { role: "user" | "assistant"; content: string };
 // by default — the portal stays staff-gated.
 const PREVIEW_OPEN = process.env.NEXT_PUBLIC_MAE_PREVIEW === "true";
 
-// Per-answer feedback — the human-in-the-loop signal. 👍/👎; a 👎 expands a
+// Per-answer feedback — the human-in-the-loop signal. Yes / No; "No" expands a
 // reason (esp. "citation wrong") + optional note. Posts to /api/mae/feedback,
 // which PII-scrubs and stores it for the answer-eval triage queue. Best-effort.
 function MaeFeedback({ question, answer }: { question: string; answer: string }) {
@@ -73,19 +73,29 @@ function MaeFeedback({ question, answer }: { question: string; answer: string })
           value={note}
           onChange={(e) => setNote(e.target.value)}
           placeholder="What was wrong? (optional)"
-          className="w-full rounded-[2px] border border-hairline bg-input px-1.5 py-1 text-[11px] text-ink outline-none placeholder:text-muted focus:border-pine"
+          className="w-full rounded-[2px] border border-hairline bg-surface px-1.5 py-1 text-[11px] text-ink outline-none placeholder:text-muted focus:border-pine"
         />
       </div>
     );
   }
   return (
-    <div className="mt-1 flex items-center gap-2 text-[11px] text-muted">
+    <div className="mt-1 flex items-center gap-1.5 text-[11px] text-muted">
       <span>Was this helpful?</span>
-      <button type="button" aria-label="Helpful" onClick={() => submit("up")} className="hover:text-ink">
-        👍
+      <button
+        type="button"
+        aria-label="Helpful"
+        onClick={() => submit("up")}
+        className="rounded-[2px] border border-hairline px-1.5 py-0.5 text-graphite hover:bg-surface-secondary hover:text-ink"
+      >
+        Yes
       </button>
-      <button type="button" aria-label="Not helpful" onClick={() => setStage("reason")} className="hover:text-ink">
-        👎
+      <button
+        type="button"
+        aria-label="Not helpful"
+        onClick={() => setStage("reason")}
+        className="rounded-[2px] border border-hairline px-1.5 py-0.5 text-graphite hover:bg-surface-secondary hover:text-ink"
+      >
+        No
       </button>
     </div>
   );
@@ -125,10 +135,8 @@ export default function MaeChat() {
   useEffect(() => {
     const onPrefill = (e: Event) => {
       const text = (e as CustomEvent<{ text?: string }>).detail?.text;
-      if (typeof text === "string" && text) {
-        setInput(text);
-        setOpen(true);
-      }
+      if (typeof text === "string" && text) setInput(text);
+      setOpen(true);
     };
     window.addEventListener("mae:prefill", onPrefill);
     return () => window.removeEventListener("mae:prefill", onPrefill);
@@ -322,7 +330,7 @@ export default function MaeChat() {
               onKeyDown={onKeyDown}
               rows={2}
               placeholder="Ask a SNAP policy question…"
-              className="flex-1 resize-none rounded-[2px] border border-hairline bg-input px-2 py-1.5 text-sm text-ink outline-none placeholder:text-muted focus:border-pine"
+              className="flex-1 resize-none rounded-[2px] border border-hairline bg-surface px-2 py-1.5 text-sm text-ink outline-none placeholder:text-muted focus:border-pine"
             />
             <button
               type="button"
