@@ -24,6 +24,11 @@ const MAE_DISCLAIMER =
 
 type ChatMessage = { role: "user" | "assistant"; content: string };
 
+// Public-preview mode: when on, Mae's chat opens for anonymous visitors on the
+// /cbo-preview demo (the /api/mae route honors the same flag server-side). Off
+// by default — the portal stays staff-gated.
+const PREVIEW_OPEN = process.env.NEXT_PUBLIC_MAE_PREVIEW === "true";
+
 // Per-answer feedback — the human-in-the-loop signal. 👍/👎; a 👎 expands a
 // reason (esp. "citation wrong") + optional note. Posts to /api/mae/feedback,
 // which PII-scrubs and stores it for the answer-eval triage queue. Best-effort.
@@ -212,10 +217,9 @@ export default function MaeChat() {
     setOpen(false);
   };
 
-  // Render when staff (full chat) OR when another surface opened us via prefill
-  // (e.g. the public CBO preview's "Ask Mae about this case"). Non-staff get an
-  // open panel with a sign-in state — the LLM endpoint stays staff-gated.
-  if (!allowed && !open) return null;
+  // Render when staff, when public-preview mode is on, or when another surface
+  // opened us via prefill (the CBO preview's "Ask Mae about this case").
+  if (!allowed && !PREVIEW_OPEN && !open) return null;
 
   return (
     <>
@@ -247,7 +251,7 @@ export default function MaeChat() {
             </button>
           </div>
 
-          {allowed ? (
+          {allowed || PREVIEW_OPEN ? (
             <>
           {/* Transcript */}
           <div ref={scrollRef} className="flex-1 space-y-3 overflow-y-auto px-3 py-3">
@@ -354,8 +358,8 @@ export default function MaeChat() {
         </div>
       )}
 
-      {/* Floating launcher — staff only (kept off the public preview). */}
-      {allowed && (
+      {/* Floating launcher — staff, or anyone when public-preview mode is on. */}
+      {(allowed || PREVIEW_OPEN) && (
         <button
           type="button"
           aria-expanded={open}

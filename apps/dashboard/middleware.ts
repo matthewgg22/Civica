@@ -17,6 +17,13 @@ export async function middleware(request: NextRequest) {
     return supabaseResponse;
   }
 
+  // Mae public-preview mode: let /api/mae reach its own (preview-aware) gate
+  // instead of being redirected to /login, so the anonymous CBO-preview chat
+  // works. Off by default; the route still enforces staff/preview + PII rules.
+  if (process.env.NEXT_PUBLIC_MAE_PREVIEW === "true" && path.startsWith("/api/mae")) {
+    return supabaseResponse;
+  }
+
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
