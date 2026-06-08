@@ -133,6 +133,52 @@ const DOC_VERIFIES: Record<string, string[]> = {
 };
 const docIsPresent = (answer: string) => !/not (yet uploaded|provided)/i.test(answer);
 
+// At-a-glance eligibility triage for outreach — derived from the engine's
+// computed estimate, NOT a determination. >$0 → likely eligible (passes the
+// income/calc tests under the stated assumptions); $0 → likely ineligible;
+// null → can't compute yet (incomplete).
+type EligScan = { label: string; tone: "eligible" | "ineligible" | "incomplete"; note: string };
+function eligibilityScan(app: QueueApplication): EligScan {
+  if (app.estimatedBenefitUsd == null)
+    return { label: "Incomplete", tone: "incomplete", note: "Not enough confirmed to estimate — complete the items below." };
+  if (app.estimatedBenefitUsd > 0)
+    return {
+      label: "Likely eligible",
+      tone: "eligible",
+      note: `Passes the income + benefit tests under the stated assumptions (~${formatUsd(app.estimatedBenefitUsd)}/mo). Provisional — confirm the items at right.`,
+    };
+  return { label: "Likely ineligible", tone: "ineligible", note: "Computes to $0 under the stated assumptions — likely over the income limit. Provisional." };
+}
+const ELIG_CHIP: Record<EligScan["tone"], string> = {
+  eligible: "bg-pine-surface text-ink",
+  ineligible: "bg-brick/10 text-brick",
+  incomplete: "bg-surface-secondary text-graphite",
+};
+
+// Map an engine verification item / recommendation to the application section it
+// concerns, so a click can jump the reviewer to it.
+const sectionDomId = (caseId: string, section: string) =>
+  `cbo-sec-${caseId}-${section.replace(/[^a-z0-9]+/gi, "-").toLowerCase()}`;
+function needToSection(text: string): string {
+  const t = text.toLowerCase();
+  if (/asset|resource|liquid/.test(t)) return "Resources";
+  if (/document|proof|photo|ssn|social security/.test(t)) return "Documents";
+  if (/shelter|rent|utilit|expense|medical|dependent|child support/.test(t)) return "Expenses & deductions";
+  if (/income|employ|pay|cash.?aid|tanf|ssi|wage/.test(t)) return "Income & employment";
+  if (/citizen|immigration|age|household|child|member/.test(t)) return "Your household";
+  return "About you";
+}
+function scrollToCaseSection(caseId: string, section: string): void {
+  if (typeof document === "undefined") return;
+  const el = document.getElementById(sectionDomId(caseId, section));
+  if (!el) return;
+  el.scrollIntoView({ behavior: "smooth", block: "center" });
+  el.style.outline = "2px solid var(--color-pine)";
+  el.style.outlineOffset = "2px";
+  el.style.transition = "outline-color 250ms";
+  window.setTimeout(() => { el.style.outline = "2px solid transparent"; }, 1400);
+}
+
 // ── Case actions (ephemeral demo) ─────────────────────────────────────────────
 // Comments, transfer, and manual advance are client-only state — they reset on
 // reload and never hit a backend (the caseload is synthetic). Mirrors the
@@ -404,8 +450,9 @@ function openFullApplication(app: CaseRecord): void {
 // mode: "Edit responses" unlocks every field at once (fixed-option fields as a
 // dropdown, others as text); "Save changes" commits the diff.
 function AnswerList({
-  answers, edited, onEdit, onSave,
+  caseId, answers, edited, onEdit, onSave,
 }: {
+  caseId: string;
   answers: SurveyAnswer[];
   edited: Record<string, string>;
   onEdit: (question: string, value: string) => void;
@@ -500,7 +547,12 @@ function AnswerList({
           Laid out two-up to keep label adjacent to its value. */}
       <div className="grid md:grid-cols-2 gap-3 items-start">
         {sections.map((group) => (
-          <div key={group.section} className="border border-hairline rounded-[2px] overflow-hidden bg-surface">
+          <div
+            key={group.section}
+            id={sectionDomId(caseId, group.section)}
+            className="border border-hairline rounded-[2px] overflow-hidden bg-surface"
+            style={{ outline: "2px solid transparent", outlineOffset: 2 }}
+          >
             <div className="px-3 py-2 border-b border-hairline">
               <p className="text-[11px] font-semibold uppercase tracking-wider text-ink">{group.section}</p>
             </div>
@@ -778,6 +830,7 @@ function CaseRow({
           )}
 
           <AnswerList
+            caseId={app.id}
             answers={app.answers}
             edited={edited}
             onEdit={(q, v) => setEdited((p) => ({ ...p, [q]: v }))}
@@ -810,24 +863,40 @@ function CaseRow({
           <div className="border-t border-hairline pt-3">
             <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite mb-2">Civica engine</p>
             <div className="grid gap-3 md:grid-cols-3">
-              {/* 1 — Eligibility (provisional: the gates it evaluates, in order) */}
+              {/* 1 — Eligibility: at-a-glance verdict for outreach + the gate chain. */}
               <EngineBlock title="Eligibility" tag="provisional">
-                <p className="text-[12px] text-ink">
-                  Determination pending{" "}
-                  <span className="font-semibold tabular-nums">{app.verificationNeeds.length}</span> item(s).
-                </p>
-                <ol className="mt-1.5 space-y-1">
-                  {EVALUATION_GATES.map((g, i) => (
-                    <li key={g.citation} className="flex items-baseline gap-1.5 text-[12px] leading-snug">
-                      <span className="tabular-nums text-graphite w-3 shrink-0">{i + 1}</span>
-                      <span className="text-ink">{g.label}</span>
-                      <span className="text-[11px] text-graphite">{g.citation}</span>
-                    </li>
-                  ))}
-                </ol>
-                {app.assumptions.length > 0 && (
-                  <p className="text-[11px] text-graphite mt-2 leading-snug">Assumed: {app.assumptions.join("; ")}.</p>
-                )}
+                {(() => {
+                  const scan = eligibilityScan(app);
+                  return (
+                    <>
+                      <div className="flex items-center gap-2">
+                        <span className={`inline-block rounded-[2px] px-2 py-0.5 text-[12px] font-semibold uppercase tracking-wider ${ELIG_CHIP[scan.tone]}`}>
+                          {scan.label}
+                        </span>
+                        <span className="text-[11px] uppercase tracking-wider text-graphite">provisional</span>
+                      </div>
+                      <p className="text-[12px] text-ink mt-1.5 leading-snug">{scan.note}</p>
+                      <p className="text-[11px] text-graphite mt-1">
+                        Pending <span className="font-semibold tabular-nums">{app.verificationNeeds.length}</span> verification item(s). Not a determination.
+                      </p>
+                    </>
+                  );
+                })()}
+                <details className="mt-2">
+                  <summary className="text-[11px] text-pine hover:underline cursor-pointer">Gates evaluated (8)</summary>
+                  <ol className="mt-1.5 space-y-1">
+                    {EVALUATION_GATES.map((g, i) => (
+                      <li key={g.citation} className="flex items-baseline gap-1.5 text-[12px] leading-snug">
+                        <span className="tabular-nums text-graphite w-3 shrink-0">{i + 1}</span>
+                        <span className="text-ink">{g.label}</span>
+                        <span className="text-[11px] text-graphite">{g.citation}</span>
+                      </li>
+                    ))}
+                  </ol>
+                  {app.assumptions.length > 0 && (
+                    <p className="text-[11px] text-graphite mt-2 leading-snug">Assumed: {app.assumptions.join("; ")}.</p>
+                  )}
+                </details>
               </EngineBlock>
 
               {/* 2 — Benefit amount (the number + the math). Always the engine
@@ -835,9 +904,10 @@ function CaseRow({
               <EngineBlock title="Benefit amount" tag="estimate">
                 {app.estimatedBenefitUsd !== null ? (
                   <>
-                    <p className="text-[16px] font-semibold tabular-nums text-ink leading-none">
-                      <span className="text-[11px] font-normal text-graphite">approx.</span> ~{formatUsd(app.estimatedBenefitUsd)}
-                      <span className="text-[11px] font-normal text-graphite">/mo</span>
+                    <p className="text-[11px] uppercase tracking-wider text-graphite">Estimated monthly benefit</p>
+                    <p className="text-[20px] font-semibold tabular-nums text-ink leading-tight mt-0.5">
+                      ~{formatUsd(app.estimatedBenefitUsd)}
+                      <span className="text-[12px] font-normal text-graphite">/mo</span>
                     </p>
                     {app.deduction && (
                       <>
@@ -883,28 +953,40 @@ function CaseRow({
                 tag={app.recommendations.length > 0 ? "Component R" : "verification · 273.2(f)"}
               >
                 {app.recommendations.length > 0 ? (
-                  <ol className="space-y-1.5">
+                  <ul className="space-y-1.5">
                     {app.recommendations.slice(0, 4).map((r) => (
-                      <li key={r.rank} className="text-[12px] text-ink leading-snug">
-                        <span className="font-semibold text-ink">Good next:</span> {r.action}
-                        {r.deltaUsd > 0 && (
-                          <span className="text-ink font-semibold tabular-nums"> (+{formatUsd(r.deltaUsd)}/mo)</span>
-                        )}
+                      <li key={r.rank} className="text-[12px] leading-snug">
+                        <button
+                          type="button"
+                          onClick={() => scrollToCaseSection(app.id, needToSection(r.action))}
+                          className="text-left text-pine hover:underline"
+                        >
+                          ↳ {r.action}
+                          {r.deltaUsd > 0 && <span className="font-semibold tabular-nums"> (+{formatUsd(r.deltaUsd)}/mo)</span>}
+                        </button>
                         {r.citation && <span className="block text-[11px] text-graphite">{r.citation}</span>}
                       </li>
                     ))}
-                  </ol>
+                  </ul>
                 ) : app.verificationNeeds.length > 0 ? (
-                  <ol className="space-y-1.5">
-                    {app.verificationNeeds.slice(0, 5).map((v) => (
-                      <li key={v} className="text-[12px] text-ink leading-snug">
-                        <span className="font-semibold text-ink">Good next:</span> confirm{" "}
-                        {v.charAt(0).toLowerCase() + v.slice(1)}
+                  <ul className="space-y-1.5">
+                    {app.verificationNeeds.slice(0, 6).map((v) => (
+                      <li key={v} className="text-[12px] leading-snug">
+                        <button
+                          type="button"
+                          onClick={() => scrollToCaseSection(app.id, needToSection(v))}
+                          className="text-left text-pine hover:underline"
+                        >
+                          ↳ Confirm {v.charAt(0).toLowerCase() + v.slice(1)}
+                        </button>
                       </li>
                     ))}
-                  </ol>
+                  </ul>
                 ) : (
-                  <p className="text-[12px] text-muted">No actions outstanding.</p>
+                  <p className="text-[12px] text-muted">Nothing outstanding to confirm.</p>
+                )}
+                {(app.recommendations.length > 0 || app.verificationNeeds.length > 0) && (
+                  <p className="text-[11px] text-graphite mt-1.5 leading-snug">Click an item to jump to it in the application above.</p>
                 )}
                 <button
                   type="button"
