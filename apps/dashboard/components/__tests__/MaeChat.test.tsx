@@ -101,6 +101,42 @@ describe("MaeChat", () => {
     });
   });
 
+  it("injects case context into the payload (not the visible transcript) when opened from a case", async () => {
+    mocks.getUser.mockResolvedValue({ data: { user: { app_metadata: { role: "navigator" } } } });
+    const fetchSpy = vi
+      .spyOn(globalThis, "fetch")
+      .mockResolvedValue(streamingResponse(["File the docs."]) as unknown as Response);
+
+    render(<MaeChat />);
+    await screen.findByRole("button", { name: /ask mae/i });
+
+    // Another surface ("Ask Mae about this case") loads a case as context.
+    fireEvent(
+      window,
+      new CustomEvent("mae:prefill", {
+        detail: {
+          caseContext: "CASE: CF-2026-0184 · Elena V.\nOutstanding to cure before filing (2): ...",
+          caseLabel: "CF-2026-0184 · Elena V.",
+        },
+      }),
+    );
+
+    // The header shows the analyzing chip; the composer is case-scoped.
+    await screen.findByText(/Analyzing CF-2026-0184 · Elena V\./);
+    const textarea = await screen.findByPlaceholderText(/ask what to do on this case/i);
+    fireEvent.change(textarea, { target: { value: "What needs to be done?" } });
+    fireEvent.keyDown(textarea, { key: "Enter" });
+
+    await screen.findByText(/File the docs\./i);
+
+    // The API payload's first turn carries BOTH the case context and the question…
+    const body = JSON.parse((fetchSpy.mock.calls[0][1] as RequestInit).body as string);
+    expect(body.messages[0].content).toContain("CF-2026-0184");
+    expect(body.messages[0].content).toContain("What needs to be done?");
+    // …but the visible transcript shows only the question, not the context dump.
+    expect(screen.queryByText(/Outstanding to cure before filing/)).toBeNull();
+  });
+
   it("shows per-answer feedback and posts a thumbs-up to /api/mae/feedback", async () => {
     mocks.getUser.mockResolvedValue({ data: { user: { app_metadata: { role: "navigator" } } } });
     const fetchSpy = vi
