@@ -103,11 +103,11 @@ export function formatCitationTrailer(checks: CitationCheck[]): string {
   const known = checks.filter((c) => c.status === "known").map((c) => c.citation);
   const bad = checks.filter((c) => c.status === "unrecognized").map((c) => c.citation);
 
-  const lines: string[] = ["\n\n---", "**Citation check (automatic):**"];
+  const lines: string[] = ["\n\n---", "**Citation:**"];
   if (bad.length) {
     lines.push(`- ⚠️ **NOT recognized — likely an error, verify before relying:** ${bad.join(", ")}`);
   }
-  if (inSrc.length) lines.push(`- ✓ in the regulatory text retrieved for this question: ${inSrc.join(", ")}`);
+  if (inSrc.length) lines.push(`- ✓ regulatory text retrieved for this question: ${inSrc.join(", ")}`);
   if (known.length) {
     lines.push(`- ◑ recognized authority, but not in the retrieved text — confirm against source: ${known.join(", ")}`);
   }

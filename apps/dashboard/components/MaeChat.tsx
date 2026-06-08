@@ -20,7 +20,7 @@ import { isStaff } from "../lib/roleRouting";
 // answer's content. Mirrors lib/mae/system-prompt.ts MAE_DISCLAIMER (kept inline
 // here so the server-only system prompt never ships to the browser bundle).
 const MAE_DISCLAIMER =
-  "Mae can be wrong. General SNAP policy guidance, not an eligibility determination — verify against current CalFresh/CDSS rules and the county system of record.";
+  "Mae can be wrong. General SNAP policy guidance, not an eligibility determination — verify against current CalFresh/CDSS rules and the county system of record. Don't paste the applicant's PII (name, case number, etc.) — keep questions hypothetical.";
 
 type ChatMessage = { role: "user" | "assistant"; content: string };
 
@@ -108,6 +108,11 @@ export default function MaeChat() {
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // When opened from a specific case ("Ask Mae about this case"), Mae holds a
+  // PII-light summary of that application and reasons about it concretely. The
+  // context is injected into the API payload, not shown as a chat bubble.
+  const [caseContext, setCaseContext] = useState<string | null>(null);
+  const [caseLabel, setCaseLabel] = useState<string | null>(null);
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const abortRef = useRef<AbortController | null>(null);
@@ -134,8 +139,15 @@ export default function MaeChat() {
   // so callers don't import Mae.
   useEffect(() => {
     const onPrefill = (e: Event) => {
-      const text = (e as CustomEvent<{ text?: string }>).detail?.text;
-      if (typeof text === "string" && text) setInput(text);
+      const detail = (e as CustomEvent<{ text?: string; caseContext?: string; caseLabel?: string }>).detail ?? {};
+      // Loading a (new) case resets the thread, so Mae's answers are scoped to it.
+      if (typeof detail.caseContext === "string" && detail.caseContext) {
+        setCaseContext(detail.caseContext);
+        setCaseLabel(detail.caseLabel ?? null);
+        setMessages([]);
+        setError(null);
+      }
+      if (typeof detail.text === "string" && detail.text) setInput(detail.text);
       setOpen(true);
     };
     window.addEventListener("mae:prefill", onPrefill);
@@ -172,11 +184,22 @@ export default function MaeChat() {
         m.length && m[m.length - 1].role === "assistant" && m[m.length - 1].content === "" ? m.slice(0, -1) : m,
       );
 
+    // When a case is loaded, prepend its summary to the FIRST user turn so Mae
+    // sees it as conversation context (keeps the cached system prefix intact and
+    // the visible transcript clean). The route redacts PII and grounds retrieval
+    // on the LAST message (the actual question), so this is safe.
+    const apiMessages =
+      caseContext && next.length > 0 && next[0].role === "user"
+        ? next.map((m, i) =>
+            i === 0 ? { ...m, content: `${caseContext}\n\n----- QUESTION -----\n${m.content}` } : m,
+          )
+        : next;
+
     try {
       const res = await fetch("/api/mae", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: next }),
+        body: JSON.stringify({ messages: apiMessages }),
         signal: controller.signal,
       });
 
@@ -233,7 +256,7 @@ export default function MaeChat() {
       setBusy(false);
       abortRef.current = null;
     }
-  }, [input, busy, messages]);
+  }, [input, busy, messages, caseContext]);
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -270,6 +293,19 @@ export default function MaeChat() {
             <div className="flex-1 leading-tight">
               <p className="text-sm font-semibold text-ink">Ask Mae</p>
               <p className="text-[11px] text-muted">Calibrated to California · CalFresh rules</p>
+              {caseLabel && (
+                <span className="mt-0.5 inline-flex items-center gap-1 rounded-[2px] bg-pine-surface px-1.5 py-0.5 text-[10px] font-medium text-ink">
+                  Calibrated to {caseLabel}
+                  <button
+                    type="button"
+                    aria-label="Clear case context"
+                    onClick={() => { setCaseContext(null); setCaseLabel(null); }}
+                    className="text-graphite hover:text-ink"
+                  >
+                    ✕
+                  </button>
+                </span>
+              )}
             </div>
             <button
               type="button"
@@ -286,20 +322,36 @@ export default function MaeChat() {
           {/* Transcript */}
           <div ref={scrollRef} className="flex-1 space-y-3 overflow-y-auto px-3 py-3">
             {messages.length === 0 && (
-              <div className="space-y-2 text-sm text-muted">
-                <p className="text-ink">
-                  Ask about SNAP/CalFresh eligibility, deductions, verification, work
-                  requirements, or recertification.
-                </p>
-                <ul className="space-y-1 text-[13px]">
-                  <li>• &ldquo;What counts as a shelter deduction?&rdquo;</li>
-                  <li>• &ldquo;When does expedited service apply?&rdquo;</li>
-                  <li>• &ldquo;How do ABAWD time limits work in California?&rdquo;</li>
-                </ul>
-                <p className="text-[11px] text-warning">
-                  Don&rsquo;t paste an applicant&rsquo;s personal info — ask in general terms.
-                </p>
-              </div>
+              caseContext ? (
+                <div className="space-y-2 text-sm text-muted">
+                  <p className="text-ink">
+                    I have <span className="font-medium">{caseLabel}</span> loaded. Ask what to do on this case.
+                  </p>
+                  <ul className="space-y-1 text-[13px]">
+                    <li>• &ldquo;What needs to be done before we file?&rdquo;</li>
+                    <li>• &ldquo;Why is this expedited / overdue?&rdquo;</li>
+                    <li>• &ldquo;What should I tell the client about the interview?&rdquo;</li>
+                  </ul>
+                  <p className="text-[11px] text-muted">
+                    I&rsquo;m working from the case&rsquo;s engine read + verification gaps — no personal identifiers.
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-2 text-sm text-muted">
+                  <p className="text-ink">
+                    Ask about SNAP/CalFresh eligibility, deductions, verification, work
+                    requirements, or recertification.
+                  </p>
+                  <ul className="space-y-1 text-[13px]">
+                    <li>• &ldquo;What counts as a shelter deduction?&rdquo;</li>
+                    <li>• &ldquo;When does expedited service apply?&rdquo;</li>
+                    <li>• &ldquo;How do ABAWD time limits work in California?&rdquo;</li>
+                  </ul>
+                  <p className="text-[11px] text-warning">
+                    Don&rsquo;t paste an applicant&rsquo;s personal info — ask in general terms.
+                  </p>
+                </div>
+              )
             )}
 
             {messages.map((m, i) => {
@@ -355,7 +407,7 @@ export default function MaeChat() {
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={onKeyDown}
               rows={2}
-              placeholder="Ask a SNAP policy question…"
+              placeholder={caseContext ? "Ask what to do on this case…" : "Ask a SNAP policy question…"}
               className="flex-1 resize-none rounded-[2px] border border-hairline bg-surface px-2 py-1.5 text-sm text-ink outline-none placeholder:text-muted focus:border-pine"
             />
             <button

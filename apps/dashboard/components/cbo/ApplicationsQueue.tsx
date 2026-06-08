@@ -436,6 +436,46 @@ function buildVerification(app: QueueApplication): VCheck[] {
   ];
 }
 
+// Compact, PII-light snapshot of ONE case for Mae's context, so "Ask Mae about
+// this case" carries the application into the conversation — Mae can then answer
+// "what needs to be done?" concretely. Sends engine verdict, the §273.2 clocks,
+// interview state, and the outstanding cure items (categories + rule), NOT raw
+// identifiers (SSN/DOB/address/phone are never included; /api/mae also redacts).
+function caseContextSummary(app: CaseRecord): { caseContext: string; caseLabel: string } {
+  const scan = eligibilityScan(app);
+  const clock = processingClock(app);
+  const iv = INTERVIEW_META[app.interview.status];
+  const defs = buildDeficiencyItems(app);
+  const enrolled = app.phase === "enrolled";
+  const L: string[] = [];
+  L.push(
+    "The navigator is asking about this specific application. Use these case facts to answer concretely about what to do next on THIS case. Do not repeat back any personal identifiers.",
+  );
+  L.push(
+    "SCOPE: this is a California (CalFresh) application — stay scoped to California for procedure; if asked about another state, say that's outside this case's jurisdiction.",
+  );
+  L.push("");
+  L.push(`CASE: ${app.caseId} · ${app.name} — ${app.county} County, CA`);
+  L.push(`Stage: ${app.stage}${app.expedited ? " · EXPEDITED (7 CFR 273.2(i))" : ""}`);
+  L.push(
+    `Eligibility (engine, provisional): ${scan.label}${app.estimatedBenefitUsd != null ? ` · est. ~${formatUsd(app.estimatedBenefitUsd)}/mo` : ""}`,
+  );
+  if (clock) L.push(`Processing clock: Day ${clock.day} of ${clock.limit}${clock.left < 0 ? " — OVERDUE" : ` (${clock.left}d left)`} (7 CFR 273.2)`);
+  L.push(`Interview: ${iv.label}${app.interview.date ? ` (${app.interview.date})` : ""} (7 CFR 273.2(e))`);
+  if (app.cureDaysLeft != null) L.push(`Verification cure window: ~${app.cureDaysLeft} day(s) left (7 CFR 273.2(h))`);
+  if (enrolled) {
+    L.push("Outstanding verification: none — household is enrolled/approved.");
+  } else if (defs.length) {
+    L.push(`Outstanding to cure before filing (${defs.length}):`);
+    defs.forEach((d, i) => L.push(`  ${i + 1}. ${d.category} — ${d.action} [${d.citation}]`));
+  } else {
+    L.push("Outstanding verification: none — ready to file.");
+  }
+  if (app.docFlags.length) L.push(`Navigator flags: ${app.docFlags.join("; ")}`);
+  if (app.assumptions.length) L.push(`Engine assumptions (unconfirmed): ${app.assumptions.join("; ")}`);
+  return { caseContext: L.join("\n"), caseLabel: `${app.caseId} · ${app.name}` };
+}
+
 // Open ONE case as a clean, print-friendly page in a new tab — the full
 // application + engine summary + verification + activity, formatted as a
 // document with a "Print / Save as PDF" button (no auto-print). Client-side
@@ -1012,7 +1052,10 @@ function CaseRow({
   // Open Mae with an empty composer — the caseworker types their own question.
   // (No auto-generated prefill; MaeChat listens for this event to open.)
   const askMae = () => {
-    window.dispatchEvent(new CustomEvent("mae:prefill", { detail: {} }));
+    // Hand Mae this case as context (no auto-typed question — the navigator
+    // asks their own), so it can answer "what needs to be done?" about THIS one.
+    const { caseContext, caseLabel } = caseContextSummary(app);
+    window.dispatchEvent(new CustomEvent("mae:prefill", { detail: { caseContext, caseLabel } }));
   };
   const flagCount = app.docFlags.length;
   const enrolled = app.phase === "enrolled";

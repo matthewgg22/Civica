@@ -57,7 +57,7 @@ export function assessFreshness(now: Date, corpusDate: string): Freshness {
 /** Render the "sources as of" footer (always) plus any staleness warnings. */
 export function formatFreshnessFooter(now: Date, corpusDate: string): string {
   const { asOf, warnings } = assessFreshness(now, corpusDate);
-  const lines = [`\n\n*Sources as of: ${asOf}. Confirm against the current CalFresh/CDSS rules.*`];
+  const lines = [`\n\n*Sources as of: ${asOf}.*`];
   for (const w of warnings) lines.push(`\n> ⚠️ ${w}`);
   return lines.join("");
 }
