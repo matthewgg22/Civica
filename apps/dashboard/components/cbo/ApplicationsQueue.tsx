@@ -9,7 +9,6 @@ import {
   type PhaseGroup,
   type QueueApplication,
   type SurveyAnswer,
-  type TimelineEvent,
   type Risk,
   type Phase,
 } from "../../lib/cbo/demo-pipeline";
@@ -129,7 +128,14 @@ function optionsFor(question: string, current: string): string[] | null {
 // reload and never hit a backend (the caseload is synthetic). Mirrors the
 // existing "inline edits are an ephemeral demo" honesty.
 type CaseComment = { author: string; text: string; when: string };
-type CaseRecord = QueueApplication & { assignedTo: string; comments: CaseComment[] };
+// Chain-of-custody entry: who did what, when. Seeded from history, appended on
+// every demo action (advance, transfer, comment, response edit).
+type ActivityEntry = { ts: string; actor: string; action: string };
+type CaseRecord = QueueApplication & {
+  assignedTo: string;
+  comments: CaseComment[];
+  activity: ActivityEntry[];
+};
 
 // Peer navigators a case can be transferred to (demo set, drawn from history).
 const PEERS = ["J. Ruiz", "A. Cole", "M. Diaz", "R. Okafor", "L. Park"];
@@ -157,6 +163,16 @@ function initialAssignee(c: QueueApplication): string {
 
 const nowLabel = () =>
   new Date().toLocaleDateString(undefined, { month: "short", day: "numeric" });
+
+// Timestamp for a live activity-log entry (date + time, like a real audit trail).
+const nowStamp = () =>
+  new Date().toLocaleString(undefined, { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
+
+// Seed the activity log from the case history (oldest→newest); the log renders
+// newest-first, so reverse it here.
+function seedActivity(c: QueueApplication): ActivityEntry[] {
+  return [...c.history].reverse().map((e) => ({ ts: e.when, actor: e.by ?? "System", action: e.label }));
+}
 
 // Automated cross-check of the application response components — what the engine
 // could confirm from the answers vs. what still needs a human check. Grounded in
@@ -191,11 +207,12 @@ function buildVerification(app: QueueApplication): VCheck[] {
 // mode: "Edit responses" unlocks every field at once (fixed-option fields as a
 // dropdown, others as text); "Save changes" commits the diff.
 function AnswerList({
-  answers, edited, onEdit,
+  answers, edited, onEdit, onSave,
 }: {
   answers: SurveyAnswer[];
   edited: Record<string, string>;
   onEdit: (question: string, value: string) => void;
+  onSave?: (changedQuestions: string[]) => void;
 }) {
   const [editing, setEditing] = useState(false);
   const [drafts, setDrafts] = useState<Record<string, string>>({});
@@ -214,10 +231,15 @@ function AnswerList({
     setDrafts({});
   };
   const save = () => {
+    const changed: string[] = [];
     for (const a of answers) {
       const next = drafts[a.question];
-      if (next !== undefined && next !== current(a)) onEdit(a.question, next);
+      if (next !== undefined && next !== current(a)) {
+        onEdit(a.question, next);
+        changed.push(a.question);
+      }
     }
+    if (changed.length) onSave?.(changed);
     setEditing(false);
     setDrafts({});
   };
@@ -383,27 +405,6 @@ function AnswerList({
   );
 }
 
-function Timeline({ events }: { events: TimelineEvent[] }) {
-  return (
-    <ol className="relative space-y-3 pl-4">
-      <span className="absolute left-[3px] top-1 bottom-1 w-px bg-hairline" aria-hidden="true" />
-      {events.map((e, i) => (
-        <li key={`${e.label}-${i}`} className="relative text-[12px]">
-          <span
-            className={`absolute -left-4 top-[3px] w-[7px] h-[7px] rounded-full ${i === events.length - 1 ? "bg-pine" : "bg-graphite/40"}`}
-            aria-hidden="true"
-          />
-          <div className="flex items-baseline justify-between gap-3">
-            <span className="text-ink">{e.label}</span>
-            <span className="text-graphite tabular-nums shrink-0">{e.when}</span>
-          </div>
-          {e.by && <p className="text-[11px] text-graphite">{e.by}</p>}
-        </li>
-      ))}
-    </ol>
-  );
-}
-
 // One of the three engine panels in the expanded case view: a titled, tagged
 // card with a consistent grammar (result → trace → provenance tag).
 function EngineBlock({ title, tag, children }: { title: string; tag: string; children: React.ReactNode }) {
@@ -419,13 +420,14 @@ function EngineBlock({ title, tag, children }: { title: string; tag: string; chi
 }
 
 function CaseRow({
-  app, border, onAdvance, onTransfer, onComment,
+  app, border, onAdvance, onTransfer, onComment, onEditLog,
 }: {
   app: CaseRecord;
   border: boolean;
   onAdvance: () => void;
   onTransfer: (to: string) => void;
   onComment: (text: string) => void;
+  onEditLog: (changedQuestions: string[]) => void;
 }) {
   const [open, setOpen] = useState(false);
   const [edited, setEdited] = useState<Record<string, string>>({});
@@ -504,7 +506,12 @@ function CaseRow({
             </div>
           )}
 
-          <AnswerList answers={app.answers} edited={edited} onEdit={(q, v) => setEdited((p) => ({ ...p, [q]: v }))} />
+          <AnswerList
+            answers={app.answers}
+            edited={edited}
+            onEdit={(q, v) => setEdited((p) => ({ ...p, [q]: v }))}
+            onSave={onEditLog}
+          />
 
           {/* Automated verification — cross-check of the response components. */}
           <div className="border-t border-hairline pt-3">
@@ -700,17 +707,42 @@ function CaseRow({
             <p className="text-[11px] text-graphite mt-1.5">Transfer, advance, and comments are a local demo — not saved.</p>
           </div>
 
-          <div className="grid gap-4 md:grid-cols-2 border-t border-hairline pt-3">
-            <div>
-              <div className="flex items-baseline justify-between mb-2">
-                <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite">Processing steps</p>
-                <p className="text-[11px] tabular-nums text-graphite">{app.completedSteps}/{TOTAL_STEPS} · {pct}%</p>
-              </div>
-              <StepList completedSteps={app.completedSteps} />
+          <div className="border-t border-hairline pt-3">
+            <div className="flex items-baseline justify-between mb-2">
+              <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite">Processing steps</p>
+              <p className="text-[11px] tabular-nums text-graphite">{app.completedSteps}/{TOTAL_STEPS} · {pct}%</p>
             </div>
-            <div>
-              <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite mb-2">History</p>
-              <Timeline events={app.history} />
+            <StepList completedSteps={app.completedSteps} />
+          </div>
+
+          {/* Activity log — chain of custody: # · when · who · action. Seeded from
+              history; every demo action (advance, transfer, comment, edit) appends. */}
+          <div className="border-t border-hairline pt-3">
+            <div className="flex items-baseline justify-between mb-2">
+              <p className="text-[11px] font-semibold uppercase tracking-wider text-graphite">Activity log</p>
+              <span className="text-[11px] tabular-nums text-graphite">{app.activity.length} entries</span>
+            </div>
+            <div className="border border-hairline rounded-[2px] overflow-hidden bg-surface">
+              <table className="w-full border-collapse text-[12px]">
+                <thead>
+                  <tr className="border-b border-hairline text-[11px] uppercase tracking-wider text-graphite">
+                    <th className="w-8 px-2 py-1 text-left font-semibold">#</th>
+                    <th className="w-[150px] px-2 py-1 text-left font-semibold">When</th>
+                    <th className="w-[130px] px-2 py-1 text-left font-semibold">Who</th>
+                    <th className="px-2 py-1 text-left font-semibold">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {app.activity.map((e, i) => (
+                    <tr key={`${e.ts}-${i}`} className="border-b border-hairline last:border-b-0 align-top">
+                      <td className="px-2 py-1 tabular-nums text-graphite">{i + 1}</td>
+                      <td className="px-2 py-1 tabular-nums text-graphite whitespace-nowrap">{e.ts}</td>
+                      <td className="px-2 py-1 text-ink">{e.actor}</td>
+                      <td className="px-2 py-1 text-ink leading-snug">{e.action}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           </div>
 
@@ -777,8 +809,11 @@ export default function ApplicationsQueue({ phases }: { phases: PhaseGroup[] }) 
   // Flat client-side caseload (seeded from the server-built groups) so manual
   // advance / transfer / comment actions can mutate it. Ephemeral demo state.
   const [cases, setCases] = useState<CaseRecord[]>(() =>
-    phases.flatMap((p) => p.cases).map((c) => ({ ...c, assignedTo: initialAssignee(c), comments: [] })),
+    phases.flatMap((p) => p.cases).map((c) => ({ ...c, assignedTo: initialAssignee(c), comments: [], activity: seedActivity(c) })),
   );
+
+  // Prepend a chain-of-custody entry (newest-first), attributed to "You".
+  const log = (c: CaseRecord, action: string): ActivityEntry[] => [{ ts: nowStamp(), actor: "You", action }, ...c.activity];
 
   const advance = (id: string) =>
     setCases((cs) =>
@@ -786,14 +821,30 @@ export default function ApplicationsQueue({ phases }: { phases: PhaseGroup[] }) 
         if (c.id !== id) return c;
         const np = nextPhase(c.phase);
         if (!np) return c;
-        return { ...c, phase: np, stage: ADVANCE_STAGE[np], completedSteps: np === "live" ? Math.max(c.completedSteps, 4) : TOTAL_STEPS };
+        return {
+          ...c,
+          phase: np,
+          stage: ADVANCE_STAGE[np],
+          completedSteps: np === "live" ? Math.max(c.completedSteps, 4) : TOTAL_STEPS,
+          activity: log(c, `Advanced to ${phaseLabel(np)}`),
+        };
       }),
     );
   const transfer = (id: string, to: string) =>
-    setCases((cs) => cs.map((c) => (c.id === id ? { ...c, assignedTo: to } : c)));
+    setCases((cs) =>
+      cs.map((c) => (c.id === id && to !== c.assignedTo ? { ...c, assignedTo: to, activity: log(c, `Reassigned from ${c.assignedTo} to ${to}`) } : c)),
+    );
   const addComment = (id: string, text: string) =>
     setCases((cs) =>
-      cs.map((c) => (c.id === id ? { ...c, comments: [{ author: "You", text, when: nowLabel() }, ...c.comments] } : c)),
+      cs.map((c) =>
+        c.id === id
+          ? { ...c, comments: [{ author: "You", text, when: nowLabel() }, ...c.comments], activity: log(c, "Added a comment") }
+          : c,
+      ),
+    );
+  const logEdit = (id: string, questions: string[]) =>
+    setCases((cs) =>
+      cs.map((c) => (c.id === id ? { ...c, activity: log(c, `Edited responses: ${questions.join(", ")}`) } : c)),
     );
 
   // Regroup the live caseload by phase for rendering + funnel counts.
@@ -898,6 +949,7 @@ export default function ApplicationsQueue({ phases }: { phases: PhaseGroup[] }) 
                   onAdvance={() => advance(a.id)}
                   onTransfer={(to) => transfer(a.id, to)}
                   onComment={(text) => addComment(a.id, text)}
+                  onEditLog={(questions) => logEdit(a.id, questions)}
                 />
               ))}
             </div>
