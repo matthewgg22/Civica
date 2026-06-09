@@ -32,7 +32,15 @@ describe("ExtensionInstallCard", () => {
     expect(screen.getByText(/pilot build/i)).toBeInTheDocument();
   });
 
-  it("preview variant: explainer only — no functional/auth-gated links", () => {
+  it("pilot with a zip URL → 'Download the build (.zip)' (download attr)", () => {
+    render(<ExtensionInstallCard installUrl={null} zipUrl="/downloads/civica-submitter.zip" />);
+    const dl = screen.getByRole("link", { name: /download the build/i });
+    expect(dl).toHaveAttribute("href", "/downloads/civica-submitter.zip");
+    expect(dl).toHaveAttribute("download");
+    expect(screen.getByText(/pilot build/i)).toBeInTheDocument();
+  });
+
+  it("preview variant: explainer only — no auth-gated links", () => {
     render(<ExtensionInstallCard installUrl="https://chrome.google.com/webstore/detail/abc" variant="preview" />);
     // No CTAs or /cbo/setup links a public visitor can't use.
     expect(screen.queryByRole("link")).toBeNull();
@@ -40,6 +48,14 @@ describe("ExtensionInstallCard", () => {
     // Still explains what it is + how officers get it + the usage steps.
     expect(screen.getByText(/install this from their Civica workspace/i)).toBeInTheDocument();
     expect(screen.getByText(/pick the case you're working on/i)).toBeInTheDocument();
+  });
+
+  it("preview variant WITH a zip URL → exposes the (usable) download link", () => {
+    render(<ExtensionInstallCard installUrl={null} zipUrl="/downloads/civica-submitter.zip" variant="preview" />);
+    const dl = screen.getByRole("link", { name: /download the build/i });
+    expect(dl).toHaveAttribute("href", "/downloads/civica-submitter.zip");
+    // Still no auth-gated /cbo/setup link in preview.
+    expect(screen.queryByRole("link", { name: /set up the helper|step-by-step/i })).toBeNull();
   });
 
   it("always lists the post-install usage steps + a setup link", () => {
