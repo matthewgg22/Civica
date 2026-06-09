@@ -100,9 +100,54 @@ export interface QueueApplication {
   /** Days left for the client to cure a verification pend, §273.2(h) (~10 days).
    *  null when nothing is pending. */
   cureDaysLeft: number | null;
+  /** CBO caseworker who owns the case (navigator/assignment surface). */
+  assignment: CaseAssignment;
+  /** The applicant's personal helper (buddy system). */
+  buddy: BuddyLink;
+  /** Approved-answers → BenefitsCal autofill state (extension bridge). */
+  portal: PortalAutofill;
 }
 
 export type InterviewStatus = "none" | "scheduled" | "missed" | "completed";
+
+// ── Phase-1 demo view-models (synthetic). The Phase-2 real adapter will populate
+// these SAME shapes from the enrollment-api + Supabase. See
+// docs/plans/cbo-buddy-portal-integration.md.
+
+/** CBO caseworker assignment — "who at the CBO owns this case." */
+export interface CaseAssignment {
+  caseworker: string;
+  status: "unassigned" | "assigned" | "reviewing" | "approved";
+  assignedAt: string | null;
+}
+
+/** The applicant's personal helper (buddy system) — distinct from the caseworker. */
+export interface BuddyLink {
+  helperName: string;
+  relationship: "family" | "friend" | "navigator";
+  status: "active" | "pending" | "completed" | "none";
+  lastActive: string;
+}
+
+/** One approved answer mapped to the BenefitsCal field it autofills. */
+export interface PortalFieldMapRow {
+  answer: string; // human label, e.g. "Household size"
+  value: string; // the approved value, e.g. "3 people"
+  benefitsCalField: string; // portal field it fills, e.g. "Number in home"
+}
+
+/**
+ * Approved-answers → BenefitsCal autofill. The CBO officer (already logged into
+ * BenefitsCal) clicks Next/Accept; the extension bridge fills the highlighted
+ * fields. Gated on applicantApproved && cboApproved && consent.
+ */
+export interface PortalAutofill {
+  applicantApproved: boolean;
+  cboApproved: boolean;
+  consent: "in_person" | "telephonic" | "async_portal" | null;
+  fieldMap: PortalFieldMapRow[];
+  docCount: number;
+}
 
 export interface PhaseGroup {
   key: Phase;
@@ -424,6 +469,77 @@ function expandAnswers(a: DemoApplicant): SurveyAnswer[] {
     .map(([x]) => ({ ...x, answer: normalizeMoney(x.answer) }));
 }
 
+// ── Phase-1 demo derivations ──────────────────────────────────────────────
+// Derived from phase/navigator/answers so the three new cards stay consistent
+// with the rest of the synthetic case without hand-editing every fixture.
+
+function deriveAssignment(a: DemoApplicant): CaseAssignment {
+  if (a.navigator === "Unassigned") {
+    return { caseworker: "Unassigned", status: "unassigned", assignedAt: null };
+  }
+  const status: CaseAssignment["status"] =
+    a.phase === "requesting" ? "assigned" : a.phase === "live" ? "reviewing" : "approved";
+  return { caseworker: a.navigator, status, assignedAt: a.history[0]?.when ?? null };
+}
+
+const BUDDY_ROSTER: { helperName: string; relationship: BuddyLink["relationship"] }[] = [
+  { helperName: "Rosa", relationship: "family" },
+  { helperName: "James", relationship: "friend" },
+  { helperName: "Lupe", relationship: "family" },
+  { helperName: "Marcus", relationship: "friend" },
+];
+
+function deriveBuddy(a: DemoApplicant, idx: number): BuddyLink {
+  const status: BuddyLink["status"] =
+    a.phase === "requesting"
+      ? a.navigator === "Unassigned"
+        ? "none"
+        : "pending"
+      : a.phase === "enrolled"
+        ? "completed"
+        : "active"; // live, recert
+  if (status === "none") {
+    return { helperName: "", relationship: "family", status: "none", lastActive: "" };
+  }
+  const pick = BUDDY_ROSTER[idx % BUDDY_ROSTER.length];
+  return { ...pick, status, lastActive: a.updated };
+}
+
+// Approved Civica answer → the BenefitsCal questionnaire field it autofills.
+const PORTAL_FIELD_MAP: { key: keyof PacketAnswers; answer: string; field: string }[] = [
+  { key: "household_size", answer: "Household size", field: "Number in home" },
+  { key: "monthly_income", answer: "Gross monthly income", field: "Earned income (monthly)" },
+  { key: "monthly_rent", answer: "Monthly rent", field: "Shelter cost" },
+  { key: "monthly_utilities", answer: "Monthly utilities", field: "Utility cost" },
+];
+
+function derivePortal(a: DemoApplicant, answers: SurveyAnswer[]): PortalAutofill {
+  const e = a.engineInputs;
+  const size = Number(e.household_size ?? "1");
+  const rows: PortalFieldMapRow[] = [
+    { answer: "County", value: `${a.county} County`, benefitsCalField: "County" },
+  ];
+  for (const m of PORTAL_FIELD_MAP) {
+    const raw = e[m.key];
+    if (raw == null || raw === "" || (m.key === "monthly_utilities" && raw === "0")) continue;
+    const value =
+      m.key === "household_size"
+        ? `${size} ${size === 1 ? "person" : "people"}`
+        : `$${Number(raw).toLocaleString("en-US")}/mo`;
+    rows.push({ answer: m.answer, value, benefitsCalField: m.field });
+  }
+  const docCount = answers.filter(
+    (x) => x.section === "Documents" && /on hand|provided/i.test(x.answer),
+  ).length;
+  // Approval ramps with the lifecycle: requesting = nothing approved yet (locked);
+  // live = applicant approved, CBO still reviewing (partial); enrolled/recert =
+  // both approved + consent recorded → the hero "autofilled" state.
+  const applicantApproved = a.phase !== "requesting";
+  const cboApproved = a.phase === "enrolled" || a.phase === "recert";
+  const consent: PortalAutofill["consent"] = cboApproved ? "telephonic" : null;
+  return { applicantApproved, cboApproved, consent, fieldMap: rows, docCount };
+}
+
 /**
  * Run each synthetic applicant through the REAL engine, grouped by lifecycle
  * phase. When `synthetic` is false, every phase is empty (no fabricated records
@@ -431,7 +547,8 @@ function expandAnswers(a: DemoApplicant): SurveyAnswer[] {
  */
 export function buildPipeline(state: "CA" | "MA" = "CA", asOf: Date, synthetic = true): PhaseGroup[] {
   if (!synthetic) return PHASES.map((p) => ({ ...p, cases: [] }));
-  const enriched: QueueApplication[] = APPLICANTS.map((a) => {
+  const enriched: QueueApplication[] = APPLICANTS.map((a, idx) => {
+    const answers = expandAnswers(a);
     let estimatedBenefitUsd: number | null = null;
     let verificationNeeds: string[] = [];
     let assumptions: string[] = [];
@@ -457,7 +574,8 @@ export function buildPipeline(state: "CA" | "MA" = "CA", asOf: Date, synthetic =
     return {
       id: a.id, caseId: a.caseId, name: a.name, county: a.county, phase: a.phase, stage: a.stage,
       risk: a.risk, updated: a.updated, completedSteps: a.completedSteps, navigator: a.navigator,
-      answers: expandAnswers(a), docFlags: a.docFlags, history: a.history,
+      answers, docFlags: a.docFlags, history: a.history,
+      assignment: deriveAssignment(a), buddy: deriveBuddy(a, idx), portal: derivePortal(a, answers),
       estimatedBenefitUsd, verificationNeeds, assumptions, deduction, recommendations,
       ...(() => {
         const x = expeditedScreen(a.engineInputs);
