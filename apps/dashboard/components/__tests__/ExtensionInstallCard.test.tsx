@@ -32,6 +32,16 @@ describe("ExtensionInstallCard", () => {
     expect(screen.getByText(/pilot build/i)).toBeInTheDocument();
   });
 
+  it("preview variant: explainer only — no functional/auth-gated links", () => {
+    render(<ExtensionInstallCard installUrl="https://chrome.google.com/webstore/detail/abc" variant="preview" />);
+    // No CTAs or /cbo/setup links a public visitor can't use.
+    expect(screen.queryByRole("link")).toBeNull();
+    expect(screen.queryByText(/pilot build/i)).toBeNull();
+    // Still explains what it is + how officers get it + the usage steps.
+    expect(screen.getByText(/install this from their Civica workspace/i)).toBeInTheDocument();
+    expect(screen.getByText(/pick the case you're working on/i)).toBeInTheDocument();
+  });
+
   it("always lists the post-install usage steps + a setup link", () => {
     render(<ExtensionInstallCard installUrl={null} />);
     expect(screen.getByText(/pick the case you're working on/i)).toBeInTheDocument();
