@@ -5,6 +5,7 @@ import { HTTPException } from "hono/http-exception";
 import { makeAnonClient, makeServiceClient } from "../lib/supabase.js";
 import { getOrCreateApplicant } from "../lib/applicant.js";
 import { rateLimit } from "../lib/rate-limit.js";
+import { clearBuddyRoleIfBuddy } from "../lib/buddy-role.js";
 import type { Env } from "../types.js";
 
 const app = new Hono<{ Bindings: Env }>();
@@ -61,19 +62,25 @@ app.patch("/", zValidator("json", patchMeSchema), async (c) => {
   return c.json({ id: data.applicant_id, state_code: data.state_code, language: data.preferred_language });
 });
 
-// GET /me/buddies — list all active BuddyRelationships for this applicant
+// GET /me/buddies — list this applicant's BuddyRelationships.
+// Defaults to status='active' (backward compatible with iOS). Pass
+// ?status=pending to fetch caseworker self-referrals awaiting approval.
 app.get("/buddies", async (c) => {
   const actor = c.get("actor");
   if (actor.kind !== "applicant") {
     throw new HTTPException(403, { message: "Applicant role required" });
   }
 
+  const statusParam = c.req.query("status");
+  const status =
+    statusParam === "pending" || statusParam === "active" ? statusParam : "active";
+
   const db = makeServiceClient(c.env);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data, error } = await (db.schema("snap_enrollment").from("buddy_relationship" as any) as any)
-    .select("id, buddy_user_id, status, notifications_enabled, created_at, updated_at")
+    .select("id, buddy_user_id, status, org_id, notifications_enabled, created_at, updated_at")
     .eq("applicant_user_id", actor.id)
-    .eq("status", "active")
+    .eq("status", status)
     .order("created_at", { ascending: false }) as { data: unknown[] | null; error: { message: string } | null };
 
   if (error) throw new HTTPException(500, { message: error.message });
@@ -111,21 +118,71 @@ app.delete("/buddies/:id", async (c) => {
 
   if (updateErr) throw new HTTPException(500, { message: updateErr.message });
 
-  // Clear app_metadata.role via Admin API on manual revoke.
-  // Auto-revoke (trigger) cannot do this — tracked as TODO-18.
-  const row = rel;
-  const adminApiUrl = `${c.env.SUPABASE_URL}/auth/v1/admin/users/${row.buddy_user_id}`;
-  await fetch(adminApiUrl, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-      "apikey": c.env.SUPABASE_SERVICE_ROLE_KEY,
-      "Authorization": `Bearer ${c.env.SUPABASE_SERVICE_ROLE_KEY}`,
-    },
-    body: JSON.stringify({ app_metadata: { role: null } }),
-  }).catch(() => null); // non-fatal — worst case buddy retains role until JWT expiry (~1h)
+  // Clear app_metadata.role on manual revoke. Guarded: only an actual 'buddy'
+  // role is cleared — a caseworker linked via the dashboard self-referral keeps
+  // their navigator/admin role. Non-fatal: worst case a real buddy retains the
+  // role until JWT expiry (~1h) / the next cleanup sweep.
+  await clearBuddyRoleIfBuddy(c.env, rel.buddy_user_id).catch(() => null);
 
   return c.json({ revoked: true });
+});
+
+// POST /me/buddies/:id/approve — applicant approves a pending caseworker request
+// (the consent gate for the dashboard self-referral flow). pending → active.
+app.post("/buddies/:id/approve", async (c) => {
+  const actor = c.get("actor");
+  if (actor.kind !== "applicant") {
+    throw new HTTPException(403, { message: "Applicant role required" });
+  }
+
+  const relId = c.req.param("id");
+  const db = makeServiceClient(c.env);
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data, error } = await (db.schema("snap_enrollment").from("buddy_relationship" as any) as any)
+    .update({ status: "active", updated_at: new Date().toISOString() })
+    .eq("id", relId)
+    .eq("applicant_user_id", actor.id)
+    .eq("status", "pending") // only a pending request can be approved
+    .select("id, status")
+    .single() as { data: { id: string; status: string } | null; error: { code?: string; message: string } | null };
+
+  if (error?.code === "PGRST116" || !data) {
+    throw new HTTPException(404, { message: "Pending request not found" });
+  }
+  if (error) throw new HTTPException(500, { message: error.message });
+
+  return c.json(data);
+});
+
+// POST /me/buddies/:id/decline — applicant declines a pending caseworker request.
+// pending → revoked. Role-clear is guarded so a caseworker keeps their staff role.
+app.post("/buddies/:id/decline", async (c) => {
+  const actor = c.get("actor");
+  if (actor.kind !== "applicant") {
+    throw new HTTPException(403, { message: "Applicant role required" });
+  }
+
+  const relId = c.req.param("id");
+  const db = makeServiceClient(c.env);
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data, error } = await (db.schema("snap_enrollment").from("buddy_relationship" as any) as any)
+    .update({ status: "revoked", updated_at: new Date().toISOString() })
+    .eq("id", relId)
+    .eq("applicant_user_id", actor.id)
+    .eq("status", "pending")
+    .select("id, buddy_user_id, status")
+    .single() as { data: { id: string; buddy_user_id: string; status: string } | null; error: { code?: string; message: string } | null };
+
+  if (error?.code === "PGRST116" || !data) {
+    throw new HTTPException(404, { message: "Pending request not found" });
+  }
+  if (error) throw new HTTPException(500, { message: error.message });
+
+  await clearBuddyRoleIfBuddy(c.env, data.buddy_user_id).catch(() => null);
+
+  return c.json({ declined: true });
 });
 
 // PATCH /me/buddies/:id — toggle notifications_enabled

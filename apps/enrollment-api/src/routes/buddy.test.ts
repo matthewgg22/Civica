@@ -385,7 +385,12 @@ describe('DELETE /me/buddies/:id', () => {
     vi.mocked(makeServiceClient)
       .mockReturnValueOnce(makeDbClient({ data: relRow, error: null }))
       .mockReturnValueOnce(makeDbClient({ data: null, error: null }));
-    const mockFetch = vi.fn().mockResolvedValue({ ok: true });
+    // Revoke now guards the role clear: GET reads the role, PUT clears it only
+    // when it's 'buddy'. This buddy IS a real buddy, so the PUT must still fire.
+    const mockFetch = vi.fn().mockImplementation((_url: string, init?: { method?: string }) => {
+      if (init?.method === 'PUT') return Promise.resolve(new Response(null, { status: 200 }));
+      return Promise.resolve(new Response(JSON.stringify({ app_metadata: { role: 'buddy' } }), { status: 200 }));
+    });
     vi.stubGlobal('fetch', mockFetch);
 
     const res = await buildTestApp(meRouter, '/', APPLICANT).request(

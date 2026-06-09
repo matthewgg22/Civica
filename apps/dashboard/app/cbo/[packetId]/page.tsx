@@ -16,6 +16,7 @@ import { notFound } from "next/navigation";
 import { createServerClientFromCookies } from "../../../lib/supabase";
 import CaseAssignmentCard from "../../../components/cbo/CaseAssignmentCard";
 import BuddyLinkCard from "../../../components/cbo/BuddyLinkCard";
+import CaseworkerConnectButton from "../../../components/cbo/CaseworkerConnectButton";
 import PortalAutofillCard from "../../../components/cbo/PortalAutofillCard";
 import {
   adaptCboCase,
@@ -111,7 +112,12 @@ export default async function CboCaseDetailPage({
           {/* Case team — caseworker assignment + applicant's personal helper */}
           <section className="grid sm:grid-cols-2 gap-x-8 gap-y-4 py-4 border-b border-hairline">
             <CaseAssignmentCard assignment={vm.assignment} />
-            <BuddyLinkCard buddy={vm.buddy} />
+            <div className="flex flex-col gap-3">
+              <BuddyLinkCard buddy={vm.buddy} />
+              {/* Caseworker self-referral: request to assist this applicant via the
+                  buddy system. The applicant approves before it goes active. */}
+              <CaseworkerConnectButton packetId={packetId} />
+            </div>
           </section>
 
           {/* Approved answers → BenefitsCal (live autofill runs in the extension) */}
