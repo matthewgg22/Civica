@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { optionsFor } from "../../lib/cbo/field-options";
 import {
   PIPELINE_STEPS,
   PHASES,
@@ -143,45 +144,8 @@ function StepList({ completedSteps }: { completedSteps: number }) {
 // instead of free text. Money / number / name / date fields are omitted and fall
 // through to a text input. The current value is always included in the list so an
 // off-list value (e.g. a flagged "Provided — does not match SSA records") renders.
-const FIELD_OPTIONS: Record<string, string[]> = {
-  State: ["California"],
-  "Programs applying for": ["CalFresh (SNAP)", "CalFresh + Medi-Cal", "CalFresh + CalWORKs"],
-  "Received CalFresh before?": ["Yes", "No"],
-  "Preferred language": ["English", "Spanish", "Chinese", "Vietnamese", "Tagalog", "Korean", "Other"],
-  "Contact phone on file": ["Yes", "No"],
-  "Citizenship / immigration status": ["U.S. citizen", "Lawful permanent resident", "Other qualified noncitizen", "Prefer not to say"],
-  "Children under 14?": ["Yes", "No"],
-  "Anyone 60+ or disabled?": ["Yes", "No"],
-  "Anyone pregnant?": ["Yes", "No"],
-  "Everyone applying is a citizen or eligible noncitizen?": ["Yes", "No"],
-  "Housing situation": ["Renting", "Own my home", "Living with family or friends", "Transitional / temporary", "Shelter", "Unhoused / no fixed address"],
-  "Employment status": ["Employed", "Self-employed", "Not employed"],
-  "Income type": ["Wages / salary", "Self-employment", "Fixed income", "No income"],
-  "Pay frequency": ["Weekly", "Every two weeks", "Twice monthly", "Monthly"],
-  "Other income (SSI, unemployment, child support received)": ["None reported", "SSI", "Social Security", "Unemployment", "Child support received", "Pension"],
-  "Enrolled in higher education (half-time or more)?": ["Yes", "No"],
-  "Pays heating / cooling costs?": ["Yes", "No"],
-  "Pays electricity or gas (separate from heating)?": ["Yes", "No"],
-  "Pays for phone or internet?": ["Yes", "No"],
-  "Receives HEAP energy assistance?": ["Yes", "No"],
-  "Out-of-pocket medical (60+/disabled)": ["Not applicable", "$0.00"],
-  "Countable assets (cash + bank)": ["Under $2,750.00", "$2,750.00 or more"],
-  "Reduced hours or quit a job in the last 60 days?": ["Yes", "No"],
-  "Fleeing felon or probation / parole violation?": ["Yes", "No"],
-  "Drug-felony conviction?": ["Yes", "No"],
-  "Photo ID": ["On hand", "Provided", "Requested", "Not yet uploaded"],
-  "Proof of income": ["On hand", "Provided", "Requested", "Not provided"],
-  "Proof of residence": ["On hand", "Provided", "Requested", "Not provided"],
-  "Social Security Number": ["Provided", "Not provided"],
-  "Expedited-service screen": ["Completed", "Not started"],
-  "Signed under penalty of perjury": ["Yes", "No"],
-};
-
-function optionsFor(question: string, current: string): string[] | null {
-  const opts = FIELD_OPTIONS[question];
-  if (!opts) return null;
-  return opts.includes(current) ? opts : [current, ...opts];
-}
+// FIELD_OPTIONS + optionsFor moved to lib/cbo/field-options.ts so the
+// full-application page editor can share the exact same option sets.
 
 // Which application response fields each document corroborates. Drives the
 // per-document "verifies …" disclosure + the green "supported" cue in the
