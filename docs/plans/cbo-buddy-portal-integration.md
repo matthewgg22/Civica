@@ -152,20 +152,28 @@ BenefitsCal section selectors (sections 2-10, currently `PORTAL_STEP_TBD`).
 ## Implementation Tasks
 Synthesized from this review's findings. Checkbox as you ship.
 
-- [ ] **T1 (P1, human: ~3h / CC: ~25min)** — dashboard — extend `QueueApplication` with shared assignment/buddy/portal view-model types + synthetic seed (`lib/cbo/demo-pipeline.ts`)
-- [ ] **T2 (P1, human: ~4h / CC: ~30min)** — dashboard — build `CaseAssignmentCard` + `BuddyLinkCard` + `PortalAutofillCard` (prop-only, yellow autofill mapping)
-- [ ] **T3 (P1, human: ~1h / CC: ~10min)** — dashboard — render the 3 cards on the demo detail page (insert ~`page.tsx:239`)
-- [ ] **T4 (P1, human: ~3h / CC: ~20min)** — dashboard — unit tests for card branches (approval gate, consent, status, empty states)
-- [ ] **T5 (P2, human: ~4h / CC: ~30min)** — enrollment-api — new packet-scoped `GET /packets/:id/buddies` (navigator/admin auth) + test
-- [ ] **T6 (P1, human: ~2h / CC: ~15min)** — enrollment-api — auth tests: deny applicant/buddy/anon (403) + RLS pgTAP **[CRITICAL — PII]**
-- [ ] **T7 (P1, human: ~4h / CC: ~30min)** — dashboard — new role-gated `/cbo` route (NOT public prefix) + middleware auth tests **[CRITICAL — PII]**
-- [ ] **T8 (P2, human: ~4h / CC: ~30min)** — dashboard — real-adapter mapping API+Supabase → shared view-model + unit tests
-- [ ] **T9 (P2, human: ~5h / CC: ~40min)** — enrollment-api — dual-approval + consent state model (applicant+CBO gate) + RLS
-- [ ] **T10 (P2, human: ~1h / CC: ~10min)** — dashboard — avoid N+1: fetch buddy/assignment on detail only OR batch endpoint
+- [x] **T1** — dashboard — extend `QueueApplication` with shared assignment/buddy/portal view-model types + synthetic seed (`lib/cbo/demo-pipeline.ts`) ✅ Phase 1
+- [x] **T2** — dashboard — `CaseAssignmentCard` + `BuddyLinkCard` + `PortalAutofillCard` (prop-only, yellow autofill mapping) ✅ Phase 1
+- [x] **T3** — dashboard — render the 3 cards on the demo detail page ✅ Phase 1
+- [x] **T4** — dashboard — unit tests for card branches ✅ Phase 1 (13 tests)
+- [x] **T5** — enrollment-api — `GET /packets/:id/buddies` (navigator/admin auth) ✅ Phase 2 (`packets.ts`)
+- [x] **T6** — enrollment-api — auth tests: deny applicant/buddy/anon (403) + PII column-restriction ✅ Phase 2 (8 tests)
+- [x] **T7** — dashboard — authenticated `/cbo` route (staff-only for now; NOT public prefix) ✅ Phase 2
+- [x] **T8** — dashboard — `lib/cbo/real-adapter.ts` mapping + unit tests ✅ Phase 2 (12 tests)
+- [ ] **T9** — dual-approval + consent state model → filed as **[#559](https://github.com/matthewgg22/Civica/issues/559)** (needs a hand-applied migration; adapter uses documented proxies until then)
+- [x] **T10** — avoid N+1 ✅ Phase 2 — addressed by design: the `/cbo` list does one `snap_packets` query; buddy/status fetches happen only on the detail page, never per row.
+
+**Deferred to follow-up issues:**
+- **cbo_assister enablement** (partner-CBO access to `/cbo`) → **[#560](https://github.com/matthewgg22/Civica/issues/560)** — cross-cutting RLS + endpoint auth + operator seeding. `/cbo` ships staff-only (navigator/admin) until then; `roleRouting` already reserves `/cbo` for `cbo_assister`.
 
 Pre-existing deferred dependencies (tracked elsewhere, NOT created here): TODO-14
-(extension autofill content-script), BenefitsCal section selectors 2-10 (`PORTAL_STEP_TBD`),
-per-CBO extension device-token rollout (#317).
+(extension autofill content-script — now wired with a yellow highlight; see
+`apps/civica-submitter-extension/`), BenefitsCal section selectors 2-10
+(`PORTAL_STEP_TBD`), per-CBO extension device-token rollout (#317).
+
+**Verification note:** Phase 2 is verified by compile + unit tests + route-gating
+(both `/cbo` routes 307 → `/login` without a session). It is NOT browser-verified
+with real data — that needs a real staff session + seeded org packets, absent in dev.
 
 ---
 
