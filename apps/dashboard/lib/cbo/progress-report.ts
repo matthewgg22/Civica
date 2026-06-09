@@ -6,6 +6,8 @@
 // synthetic. The report builder emits a single HTML document reused for both
 // the PDF (print-window) and Word (.doc Blob) paths — zero dependencies.
 
+import { CA_BASELINE_PER } from "@civica/snap-qc-engine";
+
 export type Period = "day" | "week" | "month" | "ytd" | "year";
 
 export const PERIODS: { key: Period; label: string }[] = [
@@ -102,19 +104,25 @@ export type ReportData = {
   generatedAt: string;
   snapshot: Snapshot;
   phases: { label: string; count: number }[];
-  navigators: { name: string; cases: number; flags: number; risk: string; avgDays: number | null }[];
-  totals: { cases: number; flags: number; benefitsUsd: number };
+  // Roster is framed as case-level work signals (docs to chase, interviews to
+  // prep) — NOT a per-caseworker flag/risk scorecard. Mirrors the on-screen
+  // Overview roster so the export and the screen tell the same story.
+  navigators: { name: string; cases: number; needsDocs: number; interview: number; avgDays: number | null }[];
+  totals: { cases: number; awaitingDocs: number; benefitsUsd: number };
 };
 
 // A complete, self-contained HTML document. `forWord` adds the Office XML
 // namespaces (so Word opens it natively) and drops the on-screen Print button.
 export function reportDocument(d: ReportData, opts: { forWord: boolean }): string {
+  // Snapshot rows. The error-rate benchmark is the published CA state average
+  // (USDA FNS-380 FY2024), not a "vs manual" pitch number. Handoff has no
+  // sourced state benchmark, so it carries a plain descriptor.
   const kpis: [string, string, string][] = [
     ["Applications", String(d.snapshot.apps), "submitted"],
     ["Households enrolled", String(d.snapshot.enrolled), "approved"],
     ["Benefits secured", usd(d.snapshot.benefitsUsd), "to households"],
-    ["Error rate (Civica cohort)", `${d.snapshot.errorRate.toFixed(1)}%`, "vs ~10.8% manual baseline"],
-    ["Avg time to handoff", `${d.snapshot.handoff} days`, "vs ~22 days manual"],
+    ["Error rate (Civica cohort)", `${d.snapshot.errorRate.toFixed(1)}%`, `vs ${CA_BASELINE_PER}% CA state average`],
+    ["Avg time to handoff", `${d.snapshot.handoff} days`, "intake to county"],
   ];
   const kpiRows = kpis
     .map(([label, value, sub]) => `<tr><th>${esc(label)}</th><td class="num">${esc(value)}</td><td class="sub">${esc(sub)}</td></tr>`)
@@ -124,40 +132,60 @@ export function reportDocument(d: ReportData, opts: { forWord: boolean }): strin
     .map((p) => `<tr><th>${esc(p.label)}</th><td class="num">${esc(p.count)}</td></tr>`)
     .join("");
 
+  const dash = (n: number) => (n > 0 ? String(n) : "—");
   const navRows = d.navigators
     .map(
       (n) =>
-        `<tr><td>${esc(n.name)}</td><td class="num">${esc(n.cases)}</td><td class="num">${esc(n.flags)}</td><td>${esc(n.risk)}</td><td class="num">${n.avgDays != null ? `${esc(n.avgDays)}d` : "—"}</td></tr>`,
+        `<tr><td>${esc(n.name)}</td><td class="num">${esc(n.cases)}</td><td class="num">${esc(dash(n.needsDocs))}</td><td class="num">${esc(dash(n.interview))}</td><td class="num">${n.avgDays != null ? `${esc(n.avgDays)}d` : "—"}</td></tr>`,
     )
     .join("");
 
+  // Word page setup (mso) so the .doc opens with sane Letter margins instead of
+  // the browser-export default. PDF/print path uses @page below.
+  const wordPageSetup = opts.forWord
+    ? `<!--[if gte mso 9]><xml>
+      <o:OfficeDocumentSettings><o:AllowPNG/></o:OfficeDocumentSettings>
+      <w:WordDocument><w:View>Print</w:View><w:Zoom>100</w:Zoom><w:DoNotOptimizeForBrowser/></w:WordDocument>
+    </xml><![endif]-->`
+    : "";
+
   const head = opts.forWord
-    ? `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="utf-8"><title>Civica Progress Report</title>`
+    ? `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="utf-8"><title>Civica Progress Report</title>${wordPageSetup}`
     : `<!doctype html><html><head><meta charset="utf-8"><title>Civica Progress Report — ${esc(d.periodLabel)}</title>`;
 
+  // Solid hex borders (not rgba) and Calibri-first font so Word renders the
+  // tables cleanly; the same rules look right in the print/PDF window.
   const style = `<style>
+  @page WordSection1 { size: 8.5in 11.0in; margin: 0.9in 0.9in 0.9in 0.9in; }
+  div.WordSection1 { page: WordSection1; }
   * { box-sizing: border-box; }
-  body { font: 13px -apple-system, system-ui, "Segoe UI", sans-serif; color: #15181C; margin: 40px; max-width: 760px; }
-  h1 { font-size: 19px; margin: 0 0 2px; }
-  .meta { font-size: 12px; color: #565E68; margin: 0 0 4px; }
-  h2 { font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: #565E68; margin: 24px 0 8px; border-bottom: 1px solid rgba(15,23,42,.14); padding-bottom: 4px; }
-  table { width: 100%; border-collapse: collapse; margin-bottom: 4px; }
-  th { text-align: left; font-weight: 600; color: #3C424B; padding: 5px 8px; vertical-align: top; border-bottom: 1px solid rgba(15,23,42,.08); }
-  td { padding: 5px 8px; vertical-align: top; border-bottom: 1px solid rgba(15,23,42,.08); }
-  td.num { text-align: right; font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; }
-  td.sub { color: #565E68; font-size: 12px; }
-  thead th { text-transform: uppercase; font-size: 10px; letter-spacing: .06em; color: #565E68; }
-  thead td.num { text-align: right; }
-  .disc { font-size: 11px; color: #565E68; margin-top: 24px; line-height: 1.5; border-top: 1px solid rgba(15,23,42,.14); padding-top: 10px; }
-  .bar { display: flex; justify-content: flex-end; margin: 0 0 18px; }
-  .bar button { font: 600 12px -apple-system, system-ui, sans-serif; color: #fff; background: #2D5A45; border: 0; border-radius: 3px; padding: 7px 14px; cursor: pointer; }
-  @media print { body { margin: 0; } .bar { display: none; } @page { margin: 16mm; } }
+  body { font-family: Calibri, -apple-system, system-ui, "Segoe UI", sans-serif; font-size: 11pt; color: #1A1D21; margin: 40px; }
+  .doc { max-width: 720px; }
+  .brand { font-size: 9pt; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: #2D5A45; margin: 0 0 2px; }
+  h1 { font-size: 20pt; font-weight: 700; margin: 0 0 6px; padding-bottom: 8px; border-bottom: 2px solid #2D5A45; }
+  .meta { font-size: 9.5pt; color: #5B636D; margin: 2px 0 0; }
+  h2 { font-size: 9.5pt; text-transform: uppercase; letter-spacing: .09em; color: #5B636D; margin: 26px 0 6px; border-bottom: 1px solid #D5D9DE; padding-bottom: 5px; }
+  table { width: 100%; border-collapse: collapse; margin: 0 0 2px; }
+  th { text-align: left; font-weight: 600; color: #2C323A; padding: 6px 10px; vertical-align: top; border-bottom: 1px solid #E8EAED; }
+  td { padding: 6px 10px; vertical-align: top; border-bottom: 1px solid #E8EAED; color: #1A1D21; }
+  td.num { text-align: right; font-weight: 700; white-space: nowrap; }
+  td.sub { color: #5B636D; font-size: 9.5pt; font-weight: 400; }
+  thead th, thead td { text-transform: uppercase; font-size: 8.5pt; letter-spacing: .07em; color: #6B727B; font-weight: 700; border-bottom: 1.5px solid #C9CED4; }
+  tbody tr:last-child th, tbody tr:last-child td { border-bottom: none; }
+  .disc { font-size: 8.5pt; color: #5B636D; margin-top: 26px; line-height: 1.5; border-top: 1px solid #D5D9DE; padding-top: 10px; }
+  .bar { text-align: right; margin: 0 0 18px; }
+  .bar button { font-family: Calibri, -apple-system, system-ui, sans-serif; font-size: 11px; font-weight: 600; color: #fff; background: #2D5A45; border: 0; border-radius: 3px; padding: 8px 16px; cursor: pointer; }
+  @media print { body { margin: 0; } .bar { display: none; } @page { margin: 14mm; } }
 </style></head><body>`;
 
   const printBar = opts.forWord ? "" : `<div class="bar"><button onclick="window.print()">Print / Save as PDF</button></div>`;
 
-  const body = `${printBar}
-  <h1>Civica — Progress Report</h1>
+  const openWrap = opts.forWord ? `<div class="WordSection1"><div class="doc">` : `<div class="doc">`;
+  const closeWrap = opts.forWord ? `</div></div>` : `</div>`;
+
+  const body = `${printBar}${openWrap}
+  <p class="brand">Civica</p>
+  <h1>Progress Report</h1>
   <p class="meta">${esc(d.periodLabel)} · ${esc(d.rangeLabel)}</p>
   <p class="meta">Generated ${esc(d.generatedAt)} · Civica CBO preview</p>
 
@@ -167,21 +195,21 @@ export function reportDocument(d: ReportData, opts: { forWord: boolean }): strin
   <h2>Caseload by phase</h2>
   <table><tbody>${phaseRows}</tbody></table>
 
-  <h2>Navigator roster</h2>
+  <h2>Caseworker roster</h2>
   <table>
-    <thead><tr><th>Navigator</th><td class="num">Cases</td><td class="num">Flags</td><th>Top risk</th><td class="num">Avg days</td></tr></thead>
+    <thead><tr><th>Caseworker</th><td class="num">Cases</td><td class="num">Needs docs</td><td class="num">Interview</td><td class="num">Avg days</td></tr></thead>
     <tbody>${navRows}</tbody>
   </table>
 
   <h2>Totals</h2>
   <table><tbody>
     <tr><th>Active cases</th><td class="num">${esc(d.totals.cases)}</td></tr>
-    <tr><th>Open flags</th><td class="num">${esc(d.totals.flags)}</td></tr>
+    <tr><th>Cases awaiting documents</th><td class="num">${esc(d.totals.awaitingDocs)}</td></tr>
     <tr><th>Benefits secured (monthly run-rate, enrolled)</th><td class="num">${esc(usd(d.totals.benefitsUsd))}/mo</td></tr>
   </tbody></table>
 
   <p class="disc">Benefit estimates and the error-rate cohort figure are computed by Civica's rules engine on the household answers. Not an eligibility determination — verify against current CalFresh / CDSS rules and the county system of record.</p>
-</body></html>`;
+${closeWrap}</body></html>`;
 
   return head + style + body;
 }
