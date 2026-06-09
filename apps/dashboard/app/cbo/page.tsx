@@ -12,6 +12,8 @@
 import { cookies } from "next/headers";
 import Link from "next/link";
 import { createServerClientFromCookies } from "../../lib/supabase";
+import ExtensionInstallCard from "../../components/cbo/ExtensionInstallCard";
+import { submitterExtensionUrl } from "../../lib/cbo/extension";
 import { timeAgo, firstNameLastInitial, decryptDemoName, shortId } from "../../lib/format";
 
 export const dynamic = "force-dynamic";
@@ -58,6 +60,10 @@ export default async function CboWorkspacePage() {
             caseworker assignment, the applicant&rsquo;s helper, and the BenefitsCal handoff.
           </p>
         </header>
+
+        <div className="mb-6">
+          <ExtensionInstallCard installUrl={submitterExtensionUrl()} />
+        </div>
 
         {packets.length === 0 ? (
           <div className="bg-surface border border-hairline rounded-[4px] p-8 text-center">
