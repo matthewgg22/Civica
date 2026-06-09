@@ -203,10 +203,12 @@ export default function MaeChat() {
         : next;
 
     try {
-      // Scope metadata for the audit log: which surface this query came from.
+      // Scope metadata for the audit log: which surface this query came from,
+      // plus the CLEAN question (so the log stores the typed question, not the
+      // case-context block that's prepended to the first turn for the LLM).
       const meta = caseContext
-        ? { mode: "case", state: caseState, ref: caseRef }
-        : { mode: "general", state: null, ref: null };
+        ? { mode: "case", state: caseState, ref: caseRef, question }
+        : { mode: "general", state: null, ref: null, question };
       const res = await fetch("/api/mae", {
         method: "POST",
         headers: { "Content-Type": "application/json" },

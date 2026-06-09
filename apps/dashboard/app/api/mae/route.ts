@@ -148,6 +148,12 @@ export async function POST(req: NextRequest) {
   const lastUser = messages[messages.length - 1].content;
   const { systemBlocks, retrievedCitations } = await buildMaeSystem(lastUser);
 
+  // For the audit log, store the CLEAN navigator question (what they typed) — not
+  // the case-context block that rides on the first turn for case-scoped queries.
+  // The client sends it in meta.question; fall back to lastUser if absent.
+  const bareQuestion = typeof meta.question === "string" ? meta.question.slice(0, 4000) : "";
+  const questionForLog = bareQuestion ? redactPii(bareQuestion).redacted : lastUser;
+
   // --- Stream the answer ----------------------------------------------------
   const client = new Anthropic({ apiKey });
   const encoder = new TextEncoder();
@@ -216,7 +222,7 @@ export async function POST(req: NextRequest) {
         // the query, citations + their verifier status, and versions.
         void logMaeQuery({
           staffUserId: user?.id ?? null,
-          questionRedacted: lastUser,
+          questionRedacted: questionForLog,
           answer: answerText,
           citations: checks,
           unrecognizedCount: checks.filter((c) => c.status === "unrecognized").length,
