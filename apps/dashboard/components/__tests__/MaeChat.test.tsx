@@ -99,8 +99,8 @@ describe("MaeChat", () => {
       role: "user",
       content: "What is a shelter deduction?",
     });
-    // A plain (non-case) query is logged as a generalist surface.
-    expect(sentBody.meta).toEqual({ mode: "general", state: null, ref: null });
+    // A plain (non-case) query is logged as a generalist surface, with the clean question.
+    expect(sentBody.meta).toEqual({ mode: "general", state: null, ref: null, question: "What is a shelter deduction?" });
   });
 
   it("injects case context into the payload (not the visible transcript) when opened from a case", async () => {
@@ -139,8 +139,9 @@ describe("MaeChat", () => {
     expect(body.messages[0].content).toContain("What needs to be done?");
     // …but the visible transcript shows only the question, not the context dump.
     expect(screen.queryByText(/Outstanding to cure before filing/)).toBeNull();
-    // …and the scope metadata marks it as an application-specific, CA-scoped query.
-    expect(body.meta).toEqual({ mode: "case", state: "CA", ref: "demo-pkt-elena" });
+    // …and the scope metadata marks it as an application-specific, CA-scoped query,
+    // carrying the clean typed question (not the context block).
+    expect(body.meta).toEqual({ mode: "case", state: "CA", ref: "demo-pkt-elena", question: "What needs to be done?" });
   });
 
   it("shows per-answer feedback and posts a thumbs-up to /api/mae/feedback", async () => {
