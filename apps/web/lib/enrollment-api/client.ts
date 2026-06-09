@@ -154,8 +154,28 @@ function makeClient(getToken: () => Promise<string | null>) {
     async createBuddyInvite(): Promise<{ token: string; invite_url: string; expires_at: string }> {
       return postJSON<{ token: string; invite_url: string; expires_at: string }>("/buddy/invite", {});
     },
+    // Pending caseworker self-referrals awaiting this applicant's approval.
+    async fetchPendingBuddyRequests(): Promise<BuddyRequest[]> {
+      return getJSON<BuddyRequest[]>("/me/buddies?status=pending");
+    },
+    async approveBuddyRequest(id: string): Promise<{ id: string; status: string }> {
+      return postJSON<{ id: string; status: string }>(`/me/buddies/${id}/approve`);
+    },
+    async declineBuddyRequest(id: string): Promise<{ declined: boolean }> {
+      return postJSON<{ declined: boolean }>(`/me/buddies/${id}/decline`);
+    },
   };
 }
+
+export type BuddyRequest = {
+  id: string;
+  buddy_user_id: string;
+  status: string;
+  org_id: string | null;
+  notifications_enabled: boolean;
+  created_at: string;
+  updated_at: string;
+};
 
 export function enrollmentClient() {
   return makeClient(currentAccessToken);

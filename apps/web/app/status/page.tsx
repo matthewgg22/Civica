@@ -12,6 +12,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import AppNav from "../../components/AppNav";
+import BuddyRequests from "../../components/BuddyRequests";
 import { LanguagePicker } from "../../components/LanguagePicker";
 import { STORAGE_KEY, LOCALES, type Locale } from "../i18n";
 import { snapT, type SnapStringKey } from "../../lib/i18n/snap-copy";
@@ -194,6 +195,9 @@ export default function StatusPage() {
       </header>
 
       {error && <p className="status-dash__error" role="alert">{error}</p>}
+
+      {/* Caseworker self-referrals awaiting approval (renders nothing if none). */}
+      {!demo && <BuddyRequests locale={locale} />}
 
       {packets === null ? (
         <div className="status-dash__loading">…</div>
