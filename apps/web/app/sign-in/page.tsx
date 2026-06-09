@@ -1,11 +1,9 @@
 "use client";
 
 import { Suspense, useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { STORAGE_KEY, type Locale } from "../i18n";
 import { snapT } from "../../lib/i18n/snap-copy";
-
-type Mode = { kind: "phone" } | { kind: "otp"; phone: string };
 
 export default function SignInPage() {
   return (
@@ -16,16 +14,12 @@ export default function SignInPage() {
 }
 
 function SignInForm() {
-  const router = useRouter();
   const search = useSearchParams();
   const next = search.get("next") ?? "/apply";
+  // Surfaced by /api/auth/google + /auth/callback when OAuth fails.
+  const hasError = search.get("error") != null;
 
   const [locale, setLocale] = useState<Locale>("en");
-  const [mode, setMode] = useState<Mode>({ kind: "phone" });
-  const [phone, setPhone] = useState("");
-  const [code, setCode] = useState("");
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     try {
@@ -36,64 +30,9 @@ function SignInForm() {
     }
   }, []);
 
-  async function requestCode() {
-    setError(null);
-    setLoading(true);
-    try {
-      const res = await fetch("/api/auth/otp", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ phone }),
-      });
-      if (!res.ok) {
-        const body = (await res.json().catch(() => ({}))) as { error?: string };
-        if (body.error === "rate_limited") {
-          setError(snapT(locale, "signin_error_rate_limited"));
-        } else if (body.error === "non_us_phone") {
-          setError(snapT(locale, "signin_error_non_us_phone"));
-        } else if (body.error === "invalid_phone") {
-          setError(snapT(locale, "signin_error_invalid_phone"));
-        } else {
-          setError(snapT(locale, "signin_error_generic"));
-        }
-        return;
-      }
-      const body = (await res.json()) as { phone: string };
-      setMode({ kind: "otp", phone: body.phone });
-      setCode("");
-    } catch {
-      setError(snapT(locale, "signin_error_generic"));
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  async function verifyCode() {
-    if (mode.kind !== "otp") return;
-    setError(null);
-    setLoading(true);
-    try {
-      const res = await fetch("/api/auth/verify", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ phone: mode.phone, token: code }),
-      });
-      if (!res.ok) {
-        const body = (await res.json().catch(() => ({}))) as { error?: string };
-        setError(
-          body.error === "invalid_code"
-            ? snapT(locale, "signin_error_invalid_code")
-            : snapT(locale, "signin_error_generic"),
-        );
-        return;
-      }
-      router.replace(next);
-    } catch {
-      setError(snapT(locale, "signin_error_generic"));
-    } finally {
-      setLoading(false);
-    }
-  }
+  // Full-page navigation (not fetch): OAuth needs a top-level redirect so the
+  // PKCE verifier cookie set by the server route rides along to Google.
+  const googleHref = `/api/auth/google?next=${encodeURIComponent(next)}`;
 
   return (
     <div className="signin-page">
@@ -103,9 +42,9 @@ function SignInForm() {
           type="button"
           className="locale-toggle"
           onClick={() => {
-            const next: Locale = locale === "en" ? "es" : "en";
-            setLocale(next);
-            try { window.localStorage.setItem(STORAGE_KEY, next); } catch {}
+            const nextLocale: Locale = locale === "en" ? "es" : "en";
+            setLocale(nextLocale);
+            try { window.localStorage.setItem(STORAGE_KEY, nextLocale); } catch {}
           }}
           aria-label={locale === "en" ? "Cambiar a español" : "Switch to English"}
         >
@@ -118,86 +57,21 @@ function SignInForm() {
           <h1 className="signin-title">{snapT(locale, "signin_title")}</h1>
           <p className="signin-subtitle">{snapT(locale, "signin_subtitle")}</p>
 
-          {mode.kind === "phone" ? (
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                if (phone.trim()) void requestCode();
-              }}
-            >
-              <label className="signin-field">
-                <span className="signin-label">{snapT(locale, "signin_phone_label")}</span>
-                <input
-                  type="tel"
-                  inputMode="tel"
-                  autoComplete="tel"
-                  placeholder={snapT(locale, "signin_phone_placeholder")}
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  className="signin-input"
-                  required
-                  disabled={loading}
-                />
-              </label>
+          <a className="signin-google" href={googleHref}>
+            <svg className="signin-google-icon" width="18" height="18" viewBox="0 0 18 18" aria-hidden="true">
+              <path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844a4.14 4.14 0 0 1-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615Z" />
+              <path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18Z" />
+              <path fill="#FBBC05" d="M3.964 10.706A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.706V4.962H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.038l3.007-2.332Z" />
+              <path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.962L3.964 6.294C4.672 4.167 6.656 3.58 9 3.58Z" />
+            </svg>
+            {snapT(locale, "signin_continue_google")}
+          </a>
 
-              <button
-                type="submit"
-                className="signin-cta"
-                disabled={loading || !phone.trim()}
-              >
-                {snapT(locale, "signin_send_code")}
-              </button>
+          <p className="signin-disclosure">{snapT(locale, "signin_google_disclosure")}</p>
 
-              <p className="signin-disclosure">{snapT(locale, "signin_disclosure")}</p>
-            </form>
-          ) : (
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                if (code.length >= 6) void verifyCode();
-              }}
-            >
-              <p className="signin-otp-sent">
-                {snapT(locale, "signin_otp_sent_to")} <strong>{mode.phone}</strong>
-              </p>
-
-              <label className="signin-field">
-                <span className="signin-label">{snapT(locale, "signin_otp_label")}</span>
-                <input
-                  type="text"
-                  inputMode="numeric"
-                  autoComplete="one-time-code"
-                  placeholder={snapT(locale, "signin_otp_placeholder")}
-                  value={code}
-                  onChange={(e) => setCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
-                  className="signin-input"
-                  required
-                  disabled={loading}
-                />
-              </label>
-
-              <button
-                type="submit"
-                className="signin-cta"
-                disabled={loading || code.length < 6}
-              >
-                {snapT(locale, "signin_verify")}
-              </button>
-
-              <button
-                type="button"
-                className="signin-resend"
-                onClick={() => void requestCode()}
-                disabled={loading}
-              >
-                {snapT(locale, "signin_resend")}
-              </button>
-            </form>
-          )}
-
-          {error && (
+          {hasError && (
             <div className="signin-error" role="alert">
-              {error}
+              {snapT(locale, "signin_error_generic")}
             </div>
           )}
         </div>

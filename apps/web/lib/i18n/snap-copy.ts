@@ -22,7 +22,9 @@ export const snapStrings = {
 
     // Sign-in (mirrors SNAPPhoneSignInView.swift)
     signin_title: "Save your application",
-    signin_subtitle: "Enter your phone number to receive a code. Your application will be securely saved for your navigator.",
+    signin_subtitle: "Sign in to securely save your application for your navigator.",
+    signin_continue_google: "Continue with Google",
+    signin_google_disclosure: "We only use your Google account to sign you in and save your application.",
     signin_phone_label: "Phone number",
     signin_phone_placeholder: "+1 (555) 000-0000",
     signin_send_code: "Send code",
@@ -241,7 +243,9 @@ export const snapStrings = {
     common_not_provided: "No proporcionado",
 
     signin_title: "Guarda tu solicitud",
-    signin_subtitle: "Ingresa tu número de teléfono para recibir un código. Tu solicitud se guardará de forma segura para tu navigator.",
+    signin_subtitle: "Inicia sesión para guardar tu solicitud de forma segura para tu navigator.",
+    signin_continue_google: "Continúa con Google",
+    signin_google_disclosure: "Solo usamos tu cuenta de Google para iniciar sesión y guardar tu solicitud.",
     signin_phone_label: "Número de teléfono",
     signin_phone_placeholder: "+1 (555) 000-0000",
     signin_send_code: "Enviar código",

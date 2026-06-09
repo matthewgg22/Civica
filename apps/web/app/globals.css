@@ -627,6 +627,35 @@ button {
   cursor: not-allowed;
 }
 
+/* Google sign-in (an <a> styled as a button). White with a hairline border,
+   per Google's branding guidance — distinct from the pine primary CTA. */
+.signin-google {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.625rem;
+  width: 100%;
+  min-height: 48px;
+  background: #fff;
+  color: var(--civica-ink, #15181c);
+  border: 1px solid var(--civica-hairline, rgba(15, 23, 42, 0.18));
+  border-radius: var(--civica-radius-control);
+  font-weight: 600;
+  font-size: 1rem;
+  text-decoration: none;
+  cursor: pointer;
+  margin-bottom: var(--civica-space-md);
+  transition: background 120ms ease;
+}
+
+.signin-google:hover {
+  background: var(--civica-paper, #faf8f5);
+}
+
+.signin-google-icon {
+  flex-shrink: 0;
+}
+
 .signin-resend {
   background: transparent;
   border: 0;
