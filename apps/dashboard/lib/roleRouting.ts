@@ -134,6 +134,9 @@ const FULLY_PUBLIC_PREFIXES = [
   // No auth, no Supabase round-trip; all data comes from build-time
   // markdown reads via apps/dashboard/lib/findings.ts.
   "/findings",
+  // Public legal pages (e.g. the Civica Submitter extension privacy policy,
+  // required as a public URL for the Chrome Web Store listing).
+  "/legal/",
 ];
 
 /**

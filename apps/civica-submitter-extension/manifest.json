@@ -2,14 +2,26 @@
   "manifest_version": 3,
   "name": "Civica Submitter",
   "version": "0.0.1",
-  "description": "Autofill BenefitsCal CBO Manager forms from a Civica packet. Internal trial build.",
+  "description": "Pre-fills the California BenefitsCal CalFresh application from a Civica case so a CBO assister can review and submit it faster.",
+  "icons": {
+    "16": "icons/icon-16.png",
+    "32": "icons/icon-32.png",
+    "48": "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  },
   "background": {
     "service_worker": "background.js",
     "type": "module"
   },
   "action": {
     "default_popup": "popup.html",
-    "default_title": "Civica Submitter"
+    "default_title": "Civica Submitter",
+    "default_icon": {
+      "16": "icons/icon-16.png",
+      "32": "icons/icon-32.png",
+      "48": "icons/icon-48.png",
+      "128": "icons/icon-128.png"
+    }
   },
   "content_scripts": [
     {
