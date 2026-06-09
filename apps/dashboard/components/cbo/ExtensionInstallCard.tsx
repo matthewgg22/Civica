@@ -1,16 +1,26 @@
-// ExtensionInstallCard — "Install the BenefitsCal autofill helper" surface for
-// the authenticated /cbo workspace. Presentational, prop-only.
+// ExtensionInstallCard — "Install the BenefitsCal autofill helper" surface.
+// Presentational, prop-only.
 //
-// installUrl present  → published (unlisted Chrome Web Store): "Add to Chrome".
-// installUrl null     → pilot build: point officers at /cbo/setup for the
-//                       load-unpacked walkthrough.
+// variant="workspace" (default): the authenticated /cbo install CTA.
+//   installUrl present → published (unlisted Chrome Web Store): "Add to Chrome".
+//   installUrl null    → pilot build: point officers at /cbo/setup (load-unpacked).
+// variant="preview": public /cbo-preview explainer — value prop + steps only,
+//   NO functional/auth-gated links (a prospect can't use /cbo/setup or install
+//   as an officer). Reads as "here's the tool officers use."
 //
 // Gov-grade Card per DESIGN.md §4 (bg-surface + border-hairline, no shadow);
 // pine is the CTA color (§1).
 import Link from "next/link";
 import { SUBMITTER_USE_STEPS } from "../../lib/cbo/extension";
 
-export default function ExtensionInstallCard({ installUrl }: { installUrl: string | null }) {
+export default function ExtensionInstallCard({
+  installUrl,
+  variant = "workspace",
+}: {
+  installUrl: string | null;
+  variant?: "workspace" | "preview";
+}) {
+  const isPreview = variant === "preview";
   return (
     <section className="bg-surface border border-hairline rounded-[4px] p-6">
       <div className="mb-3">
@@ -22,6 +32,12 @@ export default function ExtensionInstallCard({ installUrl }: { installUrl: strin
         </p>
       </div>
 
+      {isPreview ? (
+        <p className="text-[12px] text-graphite italic">
+          CBO officers install this from their Civica workspace and run it on their own
+          BenefitsCal session.
+        </p>
+      ) : (
       <div className="flex flex-wrap items-center gap-3">
         {installUrl ? (
           <a
@@ -49,6 +65,7 @@ export default function ExtensionInstallCard({ installUrl }: { installUrl: strin
           </span>
         )}
       </div>
+      )}
 
       <ol className="mt-4 grid gap-1.5 sm:grid-cols-2">
         {SUBMITTER_USE_STEPS.map((step, i) => (
