@@ -7,6 +7,7 @@ import {
   type QueueApplication,
 } from "../../../../lib/cbo/demo-pipeline";
 import PrintButton from "./PrintButton";
+import AskMaeButton from "./AskMaeButton";
 import EditableApplicationResponses from "./EditableApplicationResponses";
 import CaseAssignmentCard from "../../../../components/cbo/CaseAssignmentCard";
 import BuddyLinkCard from "../../../../components/cbo/BuddyLinkCard";
@@ -80,7 +81,10 @@ export default async function ApplicationDraftPage({
           <Link href="/cbo-preview" className="text-[13px] font-medium text-pine hover:underline">
             ← Back to overview
           </Link>
-          <PrintButton />
+          <div className="flex items-center gap-2">
+            <AskMaeButton />
+            <PrintButton />
+          </div>
         </div>
       </div>
 
