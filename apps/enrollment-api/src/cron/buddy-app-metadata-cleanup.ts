@@ -127,19 +127,35 @@ export async function cleanupBuddyAppMetadata(env: Env): Promise<CleanupResult> 
 /**
  * Calls the Supabase Admin API to set app_metadata.role = null on the auth user.
  * Returns true on 2xx; false on any non-2xx so the caller can count failures.
+ *
+ * Guarded: this cron only manages the 'buddy' role. A caseworker (navigator/
+ * admin) can now hold a buddy_relationship row via the shared invite link
+ * ("extension of friend"); their role must NEVER be nulled here or it would
+ * destroy their staff access. So we GET the current role first and only clear
+ * when it is exactly 'buddy'. Any other role (or none) is left untouched and
+ * reported as success so the row's cleared_at is still stamped (no re-sweep).
  */
 async function clearAppMetadataRole(env: Env, userId: string): Promise<boolean> {
   const url = `${env.SUPABASE_URL}/auth/v1/admin/users/${userId}`;
+  const authHeaders = {
+    apikey: env.SUPABASE_SERVICE_ROLE_KEY,
+    Authorization: `Bearer ${env.SUPABASE_SERVICE_ROLE_KEY}`,
+  };
+
+  const getRes = await fetch(url, { headers: authHeaders });
+  if (!getRes.ok) return false;
+  const user = (await getRes.json()) as { app_metadata?: { role?: string | null } };
+  if (user.app_metadata?.role !== "buddy") {
+    // Not a cron-managed buddy role (staff, or already cleared) — leave it.
+    return true;
+  }
+
   const res = await fetch(url, {
     method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-      apikey: env.SUPABASE_SERVICE_ROLE_KEY,
-      Authorization: `Bearer ${env.SUPABASE_SERVICE_ROLE_KEY}`,
-    },
+    headers: { "Content-Type": "application/json", ...authHeaders },
     // Pass role: null explicitly. PUT replaces app_metadata, so any other
-    // keys present would be cleared — but the buddy accept flow only ever
-    // sets { role: "buddy" }, so this is the right shape for our use.
+    // keys present would be cleared — but a buddy only ever has { role: "buddy" }
+    // (verified by the GET above), so this is the right shape for our use.
     body: JSON.stringify({ app_metadata: { role: null } }),
   });
   return res.ok;
