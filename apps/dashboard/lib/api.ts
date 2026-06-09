@@ -54,6 +54,9 @@ export const api = {
     history: (jwt: string, id: string) => apiFetch(`/packets/${id}/history`, jwt),
     // Caseworker buddy read (Phase 2 T5). Column-restricted — no helper PII.
     buddies: (jwt: string, id: string) => apiFetch(`/packets/${id}/buddies`, jwt),
+    // Caseworker self-referral — creates a PENDING buddy link the applicant approves.
+    requestBuddy: (jwt: string, id: string) =>
+      apiFetch(`/packets/${id}/buddies/request`, jwt, { method: "POST" }),
   },
   answers: {
     list: (jwt: string, packetId: string) => apiFetch(`/packets/${packetId}/answers`, jwt),
