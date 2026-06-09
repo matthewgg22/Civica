@@ -15,6 +15,12 @@ import {
 } from "../../lib/cbo/demo-pipeline";
 import TableExport from "./TableExport";
 import { EVALUATION_GATES, deductionRows, deductionOneLine } from "../../lib/cbo/engine-view";
+import {
+  buildDeficiencyItems,
+  deficiencyDocument,
+  cureDateLabel,
+  isoDate as isoDateForNotice,
+} from "../../lib/cbo/deficiency-notice";
 
 // Lifecycle pipeline for /cbo-preview: a funnel (Requesting → Live → Enrolled →
 // Recertification) over a searchable, expandable case list grouped by phase.
@@ -430,6 +436,46 @@ function buildVerification(app: QueueApplication): VCheck[] {
   ];
 }
 
+// Compact, PII-light snapshot of ONE case for Mae's context, so "Ask Mae about
+// this case" carries the application into the conversation — Mae can then answer
+// "what needs to be done?" concretely. Sends engine verdict, the §273.2 clocks,
+// interview state, and the outstanding cure items (categories + rule), NOT raw
+// identifiers (SSN/DOB/address/phone are never included; /api/mae also redacts).
+function caseContextSummary(app: CaseRecord): { caseContext: string; caseLabel: string } {
+  const scan = eligibilityScan(app);
+  const clock = processingClock(app);
+  const iv = INTERVIEW_META[app.interview.status];
+  const defs = buildDeficiencyItems(app);
+  const enrolled = app.phase === "enrolled";
+  const L: string[] = [];
+  L.push(
+    "The navigator is asking about this specific application. Use these case facts to answer concretely about what to do next on THIS case. Do not repeat back any personal identifiers.",
+  );
+  L.push(
+    "SCOPE: this is a California (CalFresh) application — stay scoped to California for procedure; if asked about another state, say that's outside this case's jurisdiction.",
+  );
+  L.push("");
+  L.push(`CASE: ${app.caseId} · ${app.name} — ${app.county} County, CA`);
+  L.push(`Stage: ${app.stage}${app.expedited ? " · EXPEDITED (7 CFR 273.2(i))" : ""}`);
+  L.push(
+    `Eligibility (engine, provisional): ${scan.label}${app.estimatedBenefitUsd != null ? ` · est. ~${formatUsd(app.estimatedBenefitUsd)}/mo` : ""}`,
+  );
+  if (clock) L.push(`Processing clock: Day ${clock.day} of ${clock.limit}${clock.left < 0 ? " — OVERDUE" : ` (${clock.left}d left)`} (7 CFR 273.2)`);
+  L.push(`Interview: ${iv.label}${app.interview.date ? ` (${app.interview.date})` : ""} (7 CFR 273.2(e))`);
+  if (app.cureDaysLeft != null) L.push(`Verification cure window: ~${app.cureDaysLeft} day(s) left (7 CFR 273.2(h))`);
+  if (enrolled) {
+    L.push("Outstanding verification: none — household is enrolled/approved.");
+  } else if (defs.length) {
+    L.push(`Outstanding to cure before filing (${defs.length}):`);
+    defs.forEach((d, i) => L.push(`  ${i + 1}. ${d.category} — ${d.action} [${d.citation}]`));
+  } else {
+    L.push("Outstanding verification: none — ready to file.");
+  }
+  if (app.docFlags.length) L.push(`Navigator flags: ${app.docFlags.join("; ")}`);
+  if (app.assumptions.length) L.push(`Engine assumptions (unconfirmed): ${app.assumptions.join("; ")}`);
+  return { caseContext: L.join("\n"), caseLabel: `${app.caseId} · ${app.name}` };
+}
+
 // Open ONE case as a clean, print-friendly page in a new tab — the full
 // application + engine summary + verification + activity, formatted as a
 // document with a "Print / Save as PDF" button (no auto-print). Client-side
@@ -534,6 +580,46 @@ function openFullApplication(app: CaseRecord): void {
   <p class="disc">Estimate + recommendations are live engine output on these answers; eligibility is provisional until the verification items are confirmed — an estimate, not a determination. Verify against current CalFresh / CDSS rules and the county system of record.</p>
 <\/body><\/html>`);
   w.document.close();
+}
+
+// Assemble the deficiency-notice payload from a case (the same gaps the
+// on-screen verification cross-check shows), stamping today + the ~10-day cure.
+function deficiencyDocFor(app: CaseRecord) {
+  const now = new Date();
+  return {
+    applicant: app.name,
+    caseId: app.caseId,
+    county: app.county,
+    generatedAt: isoDateForNotice(now),
+    cureBy: cureDateLabel(now),
+    items: buildDeficiencyItems(app),
+  };
+}
+
+// Open the client-ready document request as a print-friendly tab (PDF via the
+// browser's Save-as-PDF), reusing the established window.write pattern.
+function openDeficiencyNotice(app: CaseRecord): void {
+  const w = window.open("", "_blank", "width=820,height=1000");
+  if (!w) {
+    alert("Couldn't open the document request — allow pop-ups for this site, then try again.");
+    return;
+  }
+  w.document.write(deficiencyDocument(deficiencyDocFor(app), { forWord: false }));
+  w.document.close();
+}
+
+// Download the same document request as a Word (.doc) file.
+function downloadDeficiencyWord(app: CaseRecord): void {
+  const html = deficiencyDocument(deficiencyDocFor(app), { forWord: true });
+  const blob = new Blob(["﻿", html], { type: "application/msword" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `document-request-${app.caseId}.doc`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
 }
 
 // Full application responses for the expanded case. Renders the complete intake
@@ -961,11 +1047,21 @@ function CaseRow({
   const checks = buildVerification(app);
   const checksClear = checks.filter((c) => c.ok).length;
   const clock = processingClock(app);
+  const deficiencies = buildDeficiencyItems(app);
 
   // Open Mae with an empty composer — the caseworker types their own question.
   // (No auto-generated prefill; MaeChat listens for this event to open.)
   const askMae = () => {
-    window.dispatchEvent(new CustomEvent("mae:prefill", { detail: {} }));
+    // Hand Mae this case as context (no auto-typed question — the navigator
+    // asks their own), so it can answer "what needs to be done?" about THIS one.
+    // caseState/caseRef are logged so the audit shows this was an application-
+    // specific, CA-scoped query (caseRef = internal packet id, not the PII case #).
+    const { caseContext, caseLabel } = caseContextSummary(app);
+    window.dispatchEvent(
+      new CustomEvent("mae:prefill", {
+        detail: { caseContext, caseLabel, caseState: "CA", caseRef: app.id },
+      }),
+    );
   };
   const flagCount = app.docFlags.length;
   const enrolled = app.phase === "enrolled";
@@ -1086,6 +1182,41 @@ function CaseRow({
             <p className="text-[11px] text-graphite mt-2 leading-snug">
               Automated cross-check of the responses — what the engine could confirm vs. what needs a human check. Not an eligibility determination.
             </p>
+
+            {/* Deficiency notice — emit a client-ready document request from the
+                gaps above (each item + the §273 rule + the ~10-day cure). A cure
+                only applies to a case that isn't decided yet — an enrolled
+                household has nothing outstanding to file. */}
+            <div className="mt-3 flex flex-wrap items-center gap-2 rounded-[2px] bg-[var(--color-surface-secondary)] px-3 py-2">
+              {enrolled ? (
+                <span className="text-[12px] font-medium text-pine">✓ Enrolled — no document request needed</span>
+              ) : deficiencies.length > 0 ? (
+                <>
+                  <span className="text-[12px] text-ink">
+                    <span className="font-semibold text-warning">{deficiencies.length} item{deficiencies.length !== 1 ? "s" : ""}</span> to cure before this is clean
+                    <span className="text-graphite"> · client gets ~10 days once filed (7 CFR 273.2(h))</span>
+                  </span>
+                  <div className="ml-auto flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => openDeficiencyNotice(app)}
+                      className="rounded-[2px] bg-pine px-2.5 py-1 text-[11px] font-semibold text-white hover:bg-pine-pressed"
+                    >
+                      Document request (PDF)
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => downloadDeficiencyWord(app)}
+                      className="rounded-[2px] border border-hairline bg-surface px-2.5 py-1 text-[11px] font-semibold text-ink hover:bg-paper"
+                    >
+                      Word
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <span className="text-[12px] font-medium text-pine">✓ No outstanding verification — ready to file</span>
+              )}
+            </div>
           </div>
 
           {/* The three engines, made explicit */}

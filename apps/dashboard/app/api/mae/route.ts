@@ -122,6 +122,17 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: parsed.error }, { status: 400 });
   }
 
+  // --- Scope metadata (for the audit log) -----------------------------------
+  // Which surface asked: "general" (generalist Ask Mae) vs "case" (a specific
+  // application), the state it was scoped to, and an internal packet ref (never
+  // the PII case number). Optional + defensively parsed.
+  const rawMeta =
+    body && typeof body === "object" ? (body as Record<string, unknown>).meta : null;
+  const meta = rawMeta && typeof rawMeta === "object" ? (rawMeta as Record<string, unknown>) : {};
+  const mode = meta.mode === "case" ? "case" : "general";
+  const scopeState = typeof meta.state === "string" ? meta.state.slice(0, 8) : null;
+  const scopeRef = typeof meta.ref === "string" ? meta.ref.slice(0, 64) : null;
+
   // --- Redact applicant PII before anything leaves the server ---------------
   // Scrub structured identifiers (SSN/phone/email/DOB/account numbers) from
   // every message BEFORE retrieval, the API call, and the audit log. Mae answers
@@ -136,6 +147,12 @@ export async function POST(req: NextRequest) {
   // --- Assemble the grounded system prompt (shared with the eval) -----------
   const lastUser = messages[messages.length - 1].content;
   const { systemBlocks, retrievedCitations } = await buildMaeSystem(lastUser);
+
+  // For the audit log, store the CLEAN navigator question (what they typed) — not
+  // the case-context block that rides on the first turn for case-scoped queries.
+  // The client sends it in meta.question; fall back to lastUser if absent.
+  const bareQuestion = typeof meta.question === "string" ? meta.question.slice(0, 4000) : "";
+  const questionForLog = bareQuestion ? redactPii(bareQuestion).redacted : lastUser;
 
   // --- Stream the answer ----------------------------------------------------
   const client = new Anthropic({ apiKey });
@@ -205,13 +222,16 @@ export async function POST(req: NextRequest) {
         // the query, citations + their verifier status, and versions.
         void logMaeQuery({
           staffUserId: user?.id ?? null,
-          questionRedacted: lastUser,
+          questionRedacted: questionForLog,
           answer: answerText,
           citations: checks,
           unrecognizedCount: checks.filter((c) => c.status === "unrecognized").length,
           piiRedactions,
           model: MAE_GENERATION.model,
           corpusDate: CORPUS_EFFECTIVE_DATE,
+          mode,
+          scopeState,
+          scopeRef,
         });
       } catch (err) {
         // Client aborted — not an error worth surfacing.
