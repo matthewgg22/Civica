@@ -340,4 +340,79 @@ app.get("/:packetId/buddies", async (c) => {
   return c.json(buddies);
 });
 
+// ---------------------------------------------------------------------------
+// POST /:packetId/buddies/request — caseworker refers THEMSELVES to the applicant
+// ---------------------------------------------------------------------------
+// The dashboard-initiated, consent-gated inverse of the applicant's invite link:
+// a caseworker on a case requests to assist. We create a PENDING relationship;
+// the applicant must approve it (POST /me/buddies/:id/approve) before it goes
+// active. No app_metadata.role is set — staff keep their navigator/admin role,
+// and the cleanup cron / revoke paths are guarded to never null a non-buddy role.
+app.post("/:packetId/buddies/request", async (c) => {
+  const actor = c.get("actor");
+  requireNavigator(actor.kind);
+
+  const packetId = c.req.param("packetId");
+  const jwt = c.get("jwt");
+
+  // RLS-scoped read authorizes the caseworker for this packet and resolves the
+  // applicant's auth uid (snap_packets.user_id). Mirrors GET /:packetId/buddies.
+  const anon = makeAnonClient(c.env, jwt);
+  const { data: packet, error: pErr } = (await anon
+    .schema("snap_enrollment")
+    .from("snap_packets")
+    .select("packet_id, user_id")
+    .eq("packet_id", packetId)
+    .is("deleted_at", null)
+    .single()) as {
+      data: { packet_id: string; user_id: string | null } | null;
+      error: { code?: string; message: string } | null;
+    };
+
+  if (pErr) {
+    if (pErr.code === "PGRST116") throw new HTTPException(404, { message: "Packet not found" });
+    throw new HTTPException(500, { message: pErr.message });
+  }
+  if (!packet) throw new HTTPException(404, { message: "Packet not found" });
+
+  const applicantUserId = packet.user_id;
+  if (!applicantUserId) {
+    throw new HTTPException(409, { message: "This application has no linked applicant account yet." });
+  }
+
+  const svc = makeServiceClient(c.env);
+
+  // Idempotent: if a row already exists for (applicant, this caseworker), return
+  // it as-is — don't duplicate, and never downgrade an active link to pending.
+  const { data: existing, error: exErr } = await (
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    svc.schema("snap_enrollment").from("buddy_relationship" as any) as any
+  )
+    .select("id, status")
+    .eq("applicant_user_id", applicantUserId)
+    .eq("buddy_user_id", actor.id)
+    .maybeSingle() as { data: { id: string; status: string } | null; error: { message: string } | null };
+
+  if (exErr) throw new HTTPException(500, { message: exErr.message });
+  if (existing) {
+    return c.json({ relationship_id: existing.id, status: existing.status, already_existed: true }, 200);
+  }
+
+  const { data: rel, error: relErr } = await (
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    svc.schema("snap_enrollment").from("buddy_relationship" as any) as any
+  )
+    .insert({
+      applicant_user_id: applicantUserId,
+      buddy_user_id: actor.id,
+      status: "pending",
+    })
+    .select("id, status")
+    .single() as { data: { id: string; status: string } | null; error: { message: string } | null };
+
+  if (relErr) throw new HTTPException(500, { message: relErr.message });
+
+  return c.json({ relationship_id: (rel as { id: string }).id, status: "pending" }, 201);
+});
+
 export default app;
