@@ -40,6 +40,7 @@ describe("roleRouting", () => {
       expect(homeForRole("state_deputy")).toBe("/cdss");
       expect(homeForRole("county_director")).toBe("/county");
       expect(homeForRole("cbo_preview")).toBe("/cbo-preview");
+      expect(homeForRole("cbo_assister")).toBe("/cbo");
     });
 
     it("falls back to /packets for unknown roles", () => {
@@ -57,6 +58,9 @@ describe("roleRouting", () => {
       expect(isPathAllowedForRole("/cdss", "navigator")).toBe(true);
       expect(isPathAllowedForRole("/county", "navigator")).toBe(true);
       expect(isPathAllowedForRole("/cbo-preview", "navigator")).toBe(true);
+      // Phase 2: the authenticated CBO route is reachable by Civica staff.
+      expect(isPathAllowedForRole("/cbo", "navigator")).toBe(true);
+      expect(isPathAllowedForRole("/cbo/abc", "navigator")).toBe(true);
     });
 
     it("admin has full access to all routes", () => {
@@ -64,6 +68,7 @@ describe("roleRouting", () => {
       expect(isPathAllowedForRole("/county", "admin")).toBe(true);
       expect(isPathAllowedForRole("/cbo-preview", "admin")).toBe(true);
       expect(isPathAllowedForRole("/packets", "admin")).toBe(true);
+      expect(isPathAllowedForRole("/cbo", "admin")).toBe(true);
     });
   });
 
@@ -91,6 +96,16 @@ describe("roleRouting", () => {
       expect(isPathAllowedForRole("/cdss", "cbo_preview")).toBe(false);
       expect(isPathAllowedForRole("/county", "cbo_preview")).toBe(false);
       expect(isPathAllowedForRole("/packets", "cbo_preview")).toBe(false);
+    });
+
+    it("cbo_assister can only access /cbo (real applicant PII surface)", () => {
+      expect(isPathAllowedForRole("/cbo", "cbo_assister")).toBe(true);
+      expect(isPathAllowedForRole("/cbo/abc123", "cbo_assister")).toBe(true);
+      // Must NOT reach the navigator queue, audience views, the public demo, or /ops.
+      expect(isPathAllowedForRole("/packets", "cbo_assister")).toBe(false);
+      expect(isPathAllowedForRole("/cbo-preview", "cbo_assister")).toBe(false);
+      expect(isPathAllowedForRole("/cdss", "cbo_assister")).toBe(false);
+      expect(isPathAllowedForRole("/ops", "cbo_assister")).toBe(false);
     });
   });
 
