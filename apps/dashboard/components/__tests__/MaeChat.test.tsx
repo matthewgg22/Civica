@@ -99,6 +99,8 @@ describe("MaeChat", () => {
       role: "user",
       content: "What is a shelter deduction?",
     });
+    // A plain (non-case) query is logged as a generalist surface.
+    expect(sentBody.meta).toEqual({ mode: "general", state: null, ref: null });
   });
 
   it("injects case context into the payload (not the visible transcript) when opened from a case", async () => {
@@ -117,6 +119,8 @@ describe("MaeChat", () => {
         detail: {
           caseContext: "CASE: CF-2026-0184 · Elena V.\nOutstanding to cure before filing (2): ...",
           caseLabel: "CF-2026-0184 · Elena V.",
+          caseState: "CA",
+          caseRef: "demo-pkt-elena",
         },
       }),
     );
@@ -135,6 +139,8 @@ describe("MaeChat", () => {
     expect(body.messages[0].content).toContain("What needs to be done?");
     // …but the visible transcript shows only the question, not the context dump.
     expect(screen.queryByText(/Outstanding to cure before filing/)).toBeNull();
+    // …and the scope metadata marks it as an application-specific, CA-scoped query.
+    expect(body.meta).toEqual({ mode: "case", state: "CA", ref: "demo-pkt-elena" });
   });
 
   it("shows per-answer feedback and posts a thumbs-up to /api/mae/feedback", async () => {

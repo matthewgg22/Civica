@@ -1054,8 +1054,14 @@ function CaseRow({
   const askMae = () => {
     // Hand Mae this case as context (no auto-typed question — the navigator
     // asks their own), so it can answer "what needs to be done?" about THIS one.
+    // caseState/caseRef are logged so the audit shows this was an application-
+    // specific, CA-scoped query (caseRef = internal packet id, not the PII case #).
     const { caseContext, caseLabel } = caseContextSummary(app);
-    window.dispatchEvent(new CustomEvent("mae:prefill", { detail: { caseContext, caseLabel } }));
+    window.dispatchEvent(
+      new CustomEvent("mae:prefill", {
+        detail: { caseContext, caseLabel, caseState: "CA", caseRef: app.id },
+      }),
+    );
   };
   const flagCount = app.docFlags.length;
   const enrolled = app.phase === "enrolled";

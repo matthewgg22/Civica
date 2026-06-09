@@ -23,7 +23,10 @@ CREATE TABLE IF NOT EXISTS snap_enrollment.mae_query_log (
   unrecognized_count  INTEGER     NOT NULL DEFAULT 0,           -- flagged (possibly hallucinated) cites
   pii_redactions      INTEGER     NOT NULL DEFAULT 0,           -- PII spans scrubbed from input
   model               TEXT,
-  corpus_date         TEXT                                       -- eCFR snapshot the answer was grounded on
+  corpus_date         TEXT,                                      -- eCFR snapshot the answer was grounded on
+  mode                TEXT,                 -- 'general' (generalist) | 'case' (specific application)
+  scope_state         TEXT,                 -- state the query was scoped to (e.g. 'CA'); null = generalist
+  scope_ref           TEXT                  -- internal packet ref for case-scoped queries (NOT the PII case number)
 );
 
 CREATE INDEX IF NOT EXISTS mae_query_log_created_at_idx

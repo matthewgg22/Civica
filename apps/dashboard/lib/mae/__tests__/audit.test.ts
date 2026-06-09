@@ -18,6 +18,9 @@ const rec: MaeAuditRecord = {
   piiRedactions: 2,
   model: "claude-opus-4-8",
   corpusDate: "2026-06-02",
+  mode: "case",
+  scopeState: "CA",
+  scopeRef: "demo-pkt-elena",
 };
 
 beforeEach(() => {
@@ -40,6 +43,9 @@ describe("Mae audit log", () => {
         pii_redactions: 2,
         model: "claude-opus-4-8",
         corpus_date: "2026-06-02",
+        mode: "case",
+        scope_state: "CA",
+        scope_ref: "demo-pkt-elena",
       }),
     );
   });
