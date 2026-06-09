@@ -123,6 +123,13 @@ describe("roleRouting", () => {
       expect(isPathAllowedForRole("/api/anything", "county_director")).toBe(true);
     });
 
+    it("public legal pages (extension privacy policy) are publicly accessible", () => {
+      // Required as a public URL for the Chrome Web Store listing.
+      expect(isPubliclyAccessible("/legal/submitter-privacy")).toBe(true);
+      // /legal itself (no trailing content) is not the prefix; nested pages are.
+      expect(isPubliclyAccessible("/packets")).toBe(false);
+    });
+
     it("demo packet detail pages are publicly accessible", () => {
       // /packets/demo-pkt-* opens the navigator review surface for prospective
       // CBOs via the public /cbo-preview queue. Real packet IDs are UUIDs and
