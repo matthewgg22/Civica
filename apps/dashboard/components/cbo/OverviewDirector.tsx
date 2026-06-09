@@ -785,31 +785,27 @@ export default function OverviewDirector({
       rangeLabel = fmtRange(from, to);
       snapData = snapshotFor(reportPeriod, totalBenefitUsd);
     }
-    const topRiskOf = (cases: QueueApplication[]): Risk =>
-      cases.some((c) => c.risk === "High risk")
-        ? "High risk"
-        : cases.some((c) => c.risk === "Medium risk")
-          ? "Medium risk"
-          : "Low risk";
     return {
       periodLabel,
       rangeLabel,
       generatedAt: isoDate(now),
       snapshot: snapData,
       phases: phases.map((p) => ({ label: p.label, count: p.cases.length })),
+      // Case-level work signals per caseworker — mirrors the on-screen roster
+      // (Needs docs / Interview), not a flag/risk scorecard on the caseworker.
       navigators: sortedWorkers.map((cw) => {
         const cs = casesByWorker.get(cw.name) ?? [];
         return {
           name: cw.name,
           cases: cs.length,
-          flags: cs.reduce((s, c) => s + c.docFlags.length, 0),
-          risk: cs.length ? riskLabel(topRiskOf(cs)) : "—",
+          needsDocs: cs.filter((c) => c.docFlags.length > 0).length,
+          interview: cs.filter((c) => caseBucket(c) === "interview").length,
           avgDays: cw.avgDays,
         };
       }),
       totals: {
         cases: effectiveCases.length,
-        flags: effectiveCases.reduce((s, c) => s + c.docFlags.length, 0),
+        awaitingDocs: effectiveCases.filter((c) => c.docFlags.length > 0).length,
         benefitsUsd: totalBenefitUsd,
       },
     };

@@ -37,6 +37,10 @@ yarn-error.log*
 # vercel
 .vercel
 
+# generated pilot download — the packaged extension .zip (run
+# `pnpm --filter civica-submitter-extension package` to (re)generate)
+/public/downloads/
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --webpack",
+    "prebuild": "pnpm --filter @civica/civica-submitter-extension package || echo 'submitter-extension package skipped (download will 404 until hosted or env-set)'",
     "build": "next build --webpack",
     "start": "next start",
     "lint": "eslint",

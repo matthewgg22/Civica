@@ -7,7 +7,9 @@ import ProductSwitcher from "../../components/ProductSwitcher";
 import QcTab from "../../components/cbo/QcTab";
 import ApplicationsQueue from "../../components/cbo/ApplicationsQueue";
 import OverviewDirector from "../../components/cbo/OverviewDirector";
+import ExtensionInstallCard from "../../components/cbo/ExtensionInstallCard";
 import { buildPipeline } from "../../lib/cbo/demo-pipeline";
+import { submitterExtensionUrl, submitterExtensionZipUrl } from "../../lib/cbo/extension";
 
 export const dynamic = "force-dynamic";
 
@@ -153,6 +155,12 @@ export default async function CBOPreviewPage({
         {active === "overview"  && <OverviewDirector phases={phases} synthetic={synthetic} />}
         {active === "pipeline"  && <ApplicationsQueue phases={phases} />}
         {active === "qc"        && <QcTab synthetic={synthetic} />}
+      </div>
+
+      {/* BenefitsCal autofill helper — explainer (preview variant: no functional
+          links; the real install surface lives on the authenticated /cbo). */}
+      <div className="w-full max-w-6xl mx-auto px-6 md:px-8 pb-2">
+        <ExtensionInstallCard installUrl={submitterExtensionUrl()} zipUrl={submitterExtensionZipUrl()} variant="preview" />
       </div>
 
       {/* Contact CTA — always visible, centered */}

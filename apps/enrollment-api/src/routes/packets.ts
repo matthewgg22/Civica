@@ -2,7 +2,8 @@ import { Hono } from "hono";
 import { zValidator } from "@hono/zod-validator";
 import { z } from "zod";
 import { HTTPException } from "hono/http-exception";
-import { makeAnonClient } from "../lib/supabase.js";
+import { makeAnonClient, makeServiceClient } from "../lib/supabase.js";
+import { requireNavigator } from "../lib/auth.js";
 import { withActorContext } from "../middleware/actorContext.js";
 import type { Env } from "../types.js";
 import type { Logger } from "../lib/logger.js";
@@ -248,6 +249,95 @@ app.get("/:packetId/history", async (c) => {
 
   if (error) throw new HTTPException(500, { message: error.message });
   return c.json(data);
+});
+
+// Buddies linked to a packet's applicant (navigator/admin only).
+//
+// The applicant's buddy system (apps/web BuddyBanner + routes/buddy.ts) is
+// applicant-scoped: a buddy reads their OWN applicants. There is no inverse
+// "who is the buddy on this case" read for staff — buddy_relationship RLS
+// (buddy_relationship_read_own) only covers the buddy/applicant, not navigators.
+// This endpoint adds that caseworker-side read with two-layer authorization:
+//
+//   1. requireNavigator(actor.kind) — role gate (rejects applicant/buddy/anon).
+//   2. RLS authorization: read the packet via the anon client (caller JWT). If
+//      the navigator's org can't see it, RLS returns no row → 404. This proves
+//      the navigator is authorized for THIS packet before any service-role read.
+//
+// Then a service-role read of buddy_relationship (navigators aren't covered by
+// its RLS). COLUMN-RESTRICTED: returns relationship status + timestamps + org
+// linkage only — NEVER the helper's name or auth id (PII), mirroring the
+// buddy_packet_summary_view PII posture.
+app.get("/:packetId/buddies", async (c) => {
+  const actor = c.get("actor");
+  requireNavigator(actor.kind);
+
+  const packetId = c.req.param("packetId");
+  const jwt = c.get("jwt");
+
+  // (1) RLS-scoped authorization + resolve the applicant's auth uid. snap_packets
+  // .user_id is the applicant's auth.uid() (= buddy_relationship.applicant_user_id).
+  const anon = makeAnonClient(c.env, jwt);
+  // Cast the result: `user_id` is a real snap_packets column (see migration
+  // 20260570 — buddy_packet_summary_rows reads p.user_id) but isn't in the
+  // generated types. Casting also gives pErr a concrete type so the split
+  // error-first check below doesn't narrow to `never` (supabase-ts-narrowing).
+  const { data: packet, error: pErr } = (await anon
+    .schema("snap_enrollment")
+    .from("snap_packets")
+    .select("packet_id, user_id")
+    .eq("packet_id", packetId)
+    .is("deleted_at", null)
+    .single()) as {
+      data: { packet_id: string; user_id: string | null } | null;
+      error: { code?: string; message: string } | null;
+    };
+
+  // Error-first, split (never combine the code check with !data — it narrows
+  // the discriminated union to `never`).
+  if (pErr) {
+    if (pErr.code === "PGRST116") throw new HTTPException(404, { message: "Packet not found" });
+    throw new HTTPException(500, { message: pErr.message });
+  }
+  if (!packet) throw new HTTPException(404, { message: "Packet not found" });
+
+  const applicantUserId = packet.user_id;
+  if (!applicantUserId) return c.json([]); // no linked auth user yet → no buddies
+
+  // (2) Service-role read (navigators aren't covered by buddy_relationship RLS).
+  const svc = makeServiceClient(c.env);
+  type RelRow = {
+    id: string;
+    status: string;
+    org_id: string | null;
+    notifications_enabled: boolean;
+    created_at: string;
+    updated_at: string;
+  };
+  const { data: rels, error: relErr } = await (
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    svc.schema("snap_enrollment").from("buddy_relationship" as any) as any
+  )
+    .select("id, status, org_id, notifications_enabled, created_at, updated_at")
+    .eq("applicant_user_id", applicantUserId)
+    .order("created_at", { ascending: true }) as {
+      data: RelRow[] | null;
+      error: { message: string } | null;
+    };
+
+  if (relErr) throw new HTTPException(500, { message: relErr.message });
+
+  // Column-restricted projection — no buddy name / auth id.
+  const buddies = (rels ?? []).map((r) => ({
+    relationship_id: r.id,
+    status: r.status,
+    org_linked: r.org_id !== null,
+    notifications_enabled: r.notifications_enabled,
+    linked_at: r.created_at,
+    last_active: r.updated_at,
+  }));
+
+  return c.json(buddies);
 });
 
 export default app;

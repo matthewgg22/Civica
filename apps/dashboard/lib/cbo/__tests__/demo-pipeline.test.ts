@@ -109,4 +109,49 @@ describe("buildPipeline", () => {
     expect(maria.processingDay).toBeNull();
     expect(maria.interview.status).toBe("completed");
   });
+
+  // Phase-1 demo view-models: assignment + buddy + portal autofill.
+  it("derives assignment/buddy/portal that ramp with the lifecycle phase", () => {
+    const cases = buildPipeline("CA", new Date(), true).flatMap((g) => g.cases);
+
+    for (const c of cases) {
+      expect(c.assignment).toBeTruthy();
+      expect(c.buddy).toBeTruthy();
+      expect(c.portal).toBeTruthy();
+    }
+
+    // Aisha: requesting + Unassigned → unassigned caseworker, no buddy, locked portal.
+    const aisha = cases.find((c) => c.caseId === "CF-2026-0211")!;
+    expect(aisha.assignment.status).toBe("unassigned");
+    expect(aisha.buddy.status).toBe("none");
+    expect(aisha.portal.applicantApproved).toBe(false);
+    expect(aisha.portal.cboApproved).toBe(false);
+
+    // Live Jasmine → reviewing assignment, active buddy, partial portal (applicant
+    // approved, CBO still reviewing → not the hero state).
+    const jasmine = cases.find((c) => c.caseId === "CF-2026-0188")!;
+    expect(jasmine.assignment.status).toBe("reviewing");
+    expect(jasmine.buddy.status).toBe("active");
+    expect(jasmine.portal.applicantApproved).toBe(true);
+    expect(jasmine.portal.cboApproved).toBe(false);
+
+    // Enrolled Maria → approved assignment, completed buddy, hero portal state
+    // (both approved + consent recorded).
+    const maria = cases.find((c) => c.caseId === "CF-2026-0179")!;
+    expect(maria.assignment.status).toBe("approved");
+    expect(maria.buddy.status).toBe("completed");
+    expect(maria.portal.applicantApproved && maria.portal.cboApproved).toBe(true);
+    expect(maria.portal.consent).not.toBeNull();
+  });
+
+  it("portal field map links approved answers to BenefitsCal fields", () => {
+    const maria = buildPipeline("CA", new Date(), true)
+      .flatMap((g) => g.cases)
+      .find((c) => c.caseId === "CF-2026-0179")!;
+    const fields = maria.portal.fieldMap.map((r) => r.benefitsCalField);
+    expect(fields).toContain("County");
+    expect(fields).toContain("Number in home");
+    const hh = maria.portal.fieldMap.find((r) => r.benefitsCalField === "Number in home")!;
+    expect(hh.value).toMatch(/\d+ (person|people)/);
+  });
 });

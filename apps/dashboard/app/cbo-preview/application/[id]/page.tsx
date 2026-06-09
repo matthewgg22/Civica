@@ -8,6 +8,9 @@ import {
   type QueueApplication,
 } from "../../../../lib/cbo/demo-pipeline";
 import PrintButton from "./PrintButton";
+import CaseAssignmentCard from "../../../../components/cbo/CaseAssignmentCard";
+import BuddyLinkCard from "../../../../components/cbo/BuddyLinkCard";
+import PortalAutofillCard from "../../../../components/cbo/PortalAutofillCard";
 
 export const dynamic = "force-dynamic";
 
@@ -137,6 +140,12 @@ export default async function ApplicationDraftPage({
             </SummaryCell>
           </section>
 
+          {/* Case team — caseworker assignment + applicant's personal helper */}
+          <section className="grid sm:grid-cols-2 gap-x-8 gap-y-4 py-4 border-b border-hairline">
+            <CaseAssignmentCard assignment={app.assignment} />
+            <BuddyLinkCard buddy={app.buddy} />
+          </section>
+
           {/* Application responses — two columns to keep the draft compact */}
           <section className="py-4 border-b border-hairline">
             <SectionTitle>Application responses</SectionTitle>
@@ -255,6 +264,9 @@ export default async function ApplicationDraftPage({
               </ul>
             </section>
           )}
+
+          {/* Enter into BenefitsCal — terminal autofill action */}
+          <PortalAutofillCard portal={app.portal} />
 
           {/* Footer */}
           <footer className="pt-4 mt-2 border-t border-ink/15 flex items-baseline justify-between gap-3 flex-wrap">

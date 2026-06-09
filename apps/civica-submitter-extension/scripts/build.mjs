@@ -11,7 +11,7 @@
 // Run from package root: `node scripts/build.mjs`.
 
 import { build } from "esbuild";
-import { copyFileSync, mkdirSync, rmSync, existsSync } from "node:fs";
+import { copyFileSync, mkdirSync, rmSync, existsSync, cpSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, resolve } from "node:path";
 
@@ -69,5 +69,8 @@ await build({
 copyFileSync(resolve(root, "manifest.json"), resolve(dist, "manifest.json"));
 copyFileSync(resolve(root, "src/options.html"), resolve(dist, "options.html"));
 copyFileSync(resolve(root, "src/popup.html"), resolve(dist, "popup.html"));
+// Toolbar + store icons (16/32/48/128), referenced by manifest.icons +
+// action.default_icon. Required for a Chrome Web Store listing.
+cpSync(resolve(root, "src/icons"), resolve(dist, "icons"), { recursive: true });
 
 console.log("✓ Built dist/ — load it as an unpacked extension via chrome://extensions");

@@ -33,6 +33,11 @@ export const STAFF_ROLES = new Set<string>([
   // controls URL-path access (/regops/*); a counsel user with the
   // role but no domain assignment sees an empty inbox, not a 403.
   "counsel",
+  // Partner-CBO assisters (Mode B). Restricted to /cbo; org-scoped to their
+  // own CBO's packets via RLS (is_navigator_in_org includes cbo_assister —
+  // see supabase/migrations/20260608_cbo_assister_rls.sql). Navigator/admin
+  // (Civica staff, Mode A) reach /cbo too via their full operational access.
+  "cbo_assister",
 ]);
 
 export const ROLE_HOMES: Record<string, string> = {
@@ -48,6 +53,7 @@ export const ROLE_HOMES: Record<string, string> = {
   cbo_preview: "/cbo-preview",
   operator: "/ops",
   counsel: "/regops/queue",
+  cbo_assister: "/cbo",
 };
 
 // Restricted roles can ONLY access these prefixes (plus PUBLIC_PREFIXES).
@@ -61,6 +67,10 @@ const RESTRICTED_ROLE_ALLOWED_PREFIXES: Record<string, string[]> = {
   // attorneys and must not see operational staff routes, audience
   // routes, or the corporate /ops dashboard.
   counsel: ["/regops"],
+  // Partner-CBO assisters see ONLY their authenticated CBO workspace. Real
+  // applicant PII lives here (org-scoped by RLS), so the path gate is tight —
+  // they must not reach the navigator queue, audience views, or /ops.
+  cbo_assister: ["/cbo"],
 };
 
 // /ops is operator-ONLY — even operational roles (navigator/supervisor/admin)
@@ -124,6 +134,9 @@ const FULLY_PUBLIC_PREFIXES = [
   // No auth, no Supabase round-trip; all data comes from build-time
   // markdown reads via apps/dashboard/lib/findings.ts.
   "/findings",
+  // Public legal pages (e.g. the Civica Submitter extension privacy policy,
+  // required as a public URL for the Chrome Web Store listing).
+  "/legal/",
 ];
 
 /**

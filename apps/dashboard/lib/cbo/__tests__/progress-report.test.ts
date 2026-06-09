@@ -48,8 +48,8 @@ describe("progress-report", () => {
     generatedAt: "2026-06-08",
     snapshot: { apps: 421, enrolled: 238, benefitsUsd: 66_000, errorRate: 4.6, handoff: 7 },
     phases: [{ label: "Enrolled", count: 3 }],
-    navigators: [{ name: "Ashley Cole", cases: 4, flags: 1, risk: "MED", avgDays: 7 }],
-    totals: { cases: 10, flags: 2, benefitsUsd: 5_500 },
+    navigators: [{ name: "Ashley Cole", cases: 4, needsDocs: 1, interview: 2, avgDays: 7 }],
+    totals: { cases: 10, awaitingDocs: 2, benefitsUsd: 5_500 },
   };
 
   it("renders a self-contained PDF document with a print button", () => {
@@ -67,5 +67,27 @@ describe("progress-report", () => {
     expect(html).toContain("urn:schemas-microsoft-com:office:word");
     expect(html).not.toContain("window.print()");
     expect(html).toContain("Year to date");
+    // Word page setup so the .doc opens with sane Letter margins.
+    expect(html).toContain("WordSection1");
+  });
+
+  it("benchmarks the error rate to the CA state average, not a 'vs manual' pitch", () => {
+    for (const forWord of [true, false]) {
+      const html = reportDocument(data, { forWord });
+      expect(html).not.toContain("manual baseline");
+      expect(html).not.toMatch(/vs ~\d+ days manual/);
+      // Sourced benchmark: USDA FNS-380 FY2024 CA payment error rate.
+      expect(html).toMatch(/vs 10\.98% CA state average/);
+    }
+  });
+
+  it("frames the roster as case-level work, not a per-caseworker flag/risk scorecard", () => {
+    const html = reportDocument(data, { forWord: false });
+    expect(html).toContain("Caseworker roster");
+    expect(html).toContain("Needs docs");
+    expect(html).toContain("Interview");
+    // No per-caseworker risk/flags column, no aggregate "Open flags" total.
+    expect(html).not.toContain("Top risk");
+    expect(html).not.toContain("Open flags");
   });
 });
