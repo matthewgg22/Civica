@@ -366,3 +366,75 @@ describe('GET /packets/:packetId/buddies', () => {
     expect(res.status).toBe(500);
   });
 });
+
+// ── POST /packets/:packetId/buddies/request (caseworker self-referral) ───────
+// Navigator-gated. RLS read resolves the applicant, then a PENDING
+// buddy_relationship is created (idempotent). No app_metadata.role is set.
+describe('POST /packets/:packetId/buddies/request', () => {
+  it('returns 403 for an applicant (role gate)', async () => {
+    const res = await buildTestApp(packetsRouter, '/packets', APPLICANT).request(
+      '/packets/p1/buddies/request',
+      { method: 'POST', headers: JSON_HEADERS },
+      TEST_ENV,
+    );
+    expect(res.status).toBe(403);
+  });
+
+  it('navigator: creates a PENDING request when none exists', async () => {
+    vi.mocked(makeAnonClient).mockReturnValue(
+      makeDbClient({ data: { packet_id: 'p1', user_id: 'user-001' }, error: null }),
+    );
+    // service client: 1) existing-check maybeSingle → null, 2) insert → row
+    let fromCalls = 0;
+    vi.mocked(makeServiceClient).mockReturnValue({
+      schema: vi.fn().mockReturnValue({
+        from: vi.fn().mockImplementation(() => {
+          fromCalls++;
+          if (fromCalls === 1) return makeQueryBuilder({ data: null, error: null });
+          return makeQueryBuilder({ data: { id: 'br-new', status: 'pending' }, error: null });
+        }),
+      }),
+    } as never);
+
+    const res = await buildTestApp(packetsRouter, '/packets', NAVIGATOR).request(
+      '/packets/p1/buddies/request',
+      { method: 'POST', headers: JSON_HEADERS },
+      TEST_ENV,
+    );
+    expect(res.status).toBe(201);
+    const body = (await res.json()) as { relationship_id: string; status: string };
+    expect(body.relationship_id).toBe('br-new');
+    expect(body.status).toBe('pending');
+  });
+
+  it('navigator: returns the existing link instead of duplicating', async () => {
+    vi.mocked(makeAnonClient).mockReturnValue(
+      makeDbClient({ data: { packet_id: 'p1', user_id: 'user-001' }, error: null }),
+    );
+    vi.mocked(makeServiceClient).mockReturnValue(
+      makeDbClient({ data: { id: 'br-existing', status: 'active' }, error: null }),
+    );
+
+    const res = await buildTestApp(packetsRouter, '/packets', NAVIGATOR).request(
+      '/packets/p1/buddies/request',
+      { method: 'POST', headers: JSON_HEADERS },
+      TEST_ENV,
+    );
+    expect(res.status).toBe(200);
+    const body = (await res.json()) as { relationship_id: string; already_existed: boolean };
+    expect(body.relationship_id).toBe('br-existing');
+    expect(body.already_existed).toBe(true);
+  });
+
+  it('409 when the packet has no linked applicant account', async () => {
+    vi.mocked(makeAnonClient).mockReturnValue(
+      makeDbClient({ data: { packet_id: 'p1', user_id: null }, error: null }),
+    );
+    const res = await buildTestApp(packetsRouter, '/packets', NAVIGATOR).request(
+      '/packets/p1/buddies/request',
+      { method: 'POST', headers: JSON_HEADERS },
+      TEST_ENV,
+    );
+    expect(res.status).toBe(409);
+  });
+});
