@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { optionsFor } from "../../lib/cbo/field-options";
+import { optionsFor, SUMMARY_QUESTIONS } from "../../lib/cbo/field-options";
 import {
   PIPELINE_STEPS,
   PHASES,
@@ -421,22 +421,6 @@ function buildVerification(app: QueueApplication): VCheck[] {
       note: app.assumptions.length ? `assumed, pending: ${app.assumptions.join("; ")}` : (app.verificationNeeds[0] ?? "pending human confirmation") },
   ];
 }
-
-// The at-a-glance subset shown by default — the fields a navigator actually
-// triages on. The full ~44-question intake stays one click away ("Show all" or
-// the "Open full application" page), so the expanded row isn't a wall of fields.
-const SUMMARY_QUESTIONS = [
-  "Household size",
-  "Anyone 60+ or disabled?",
-  "Citizenship / immigration status",
-  "Employment status",
-  "Gross monthly income",
-  "Monthly rent",
-  "Monthly utilities",
-  "Countable assets (cash + bank)",
-  "Work registration / ABAWD",
-  "Social Security Number",
-] as const;
 
 // Full application responses for the expanded case. Renders the complete intake
 // as a per-section ruled table (Field | Response). Editing is a single batch
