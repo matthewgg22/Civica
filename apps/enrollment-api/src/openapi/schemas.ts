@@ -167,8 +167,10 @@ export const BuddyAcceptBodySchema = z
 
 export const BuddyAcceptResponseSchema = z
   .union([
+    // Friend/helper accept: relationship created, buddy role assigned.
     z.object({ relationship_id: UuidSchema }),
-    z.object({ status: z.literal("navigator_access"), message: z.string() }),
+    // Caseworker accept (same link): relationship created, no buddy role set.
+    z.object({ relationship_id: UuidSchema, status: z.literal("navigator_linked") }),
   ])
   .openapi("BuddyAcceptResponse");
 

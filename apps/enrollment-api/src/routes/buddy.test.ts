@@ -188,20 +188,38 @@ describe('POST /buddy/accept', () => {
     expect(body.code).toBe('TOKEN_ALREADY_USED');
   });
 
-  it('returns 200 navigator_access when accepting user is a navigator', async () => {
+  it('connects a navigator via the same link WITHOUT assigning the buddy role', async () => {
     vi.mocked(verify).mockResolvedValue({ jti: 'nonce', exp: 9999999999 });
-    vi.mocked(makeServiceClient).mockReturnValue(
-      makeDbClient({ data: [{ id: 'inv-1', applicant_user_id: APPLICANT_ID }], error: null }),
-    );
+    // Staff must keep their navigator role: the Admin API (which sets role=buddy)
+    // must never be called on this path.
+    const adminFetch = vi.fn().mockResolvedValue({ ok: true });
+    vi.stubGlobal('fetch', adminFetch);
+
+    // Navigator path makes 3 from() calls: invite consume, events insert, upsert.
+    let fromCalls = 0;
+    vi.mocked(makeServiceClient).mockReturnValue({
+      schema: vi.fn().mockReturnValue({
+        from: vi.fn().mockImplementation(() => {
+          fromCalls++;
+          if (fromCalls === 1) return makeQueryBuilder({ data: [{ id: 'inv-1', applicant_user_id: APPLICANT_ID }], error: null });
+          if (fromCalls === 2) return makeQueryBuilder({ data: null, error: null }); // events insert (ignored)
+          return makeQueryBuilder({ data: { id: REL_ID }, error: null }); // relationship upsert
+        }),
+      }),
+      rpc: vi.fn().mockResolvedValue({ data: null, error: null }),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } as any);
 
     const res = await buildTestApp(buddyRouter, '/', NAVIGATOR).request(
       '/accept',
       { method: 'POST', headers: JSON_HEADERS, body: JSON.stringify({ token: validToken }) },
       BUDDY_ENV,
     );
-    expect(res.status).toBe(200);
-    const body = await res.json() as { status: string };
-    expect(body.status).toBe('navigator_access');
+    expect(res.status).toBe(201);
+    const body = await res.json() as { relationship_id: string; status: string };
+    expect(body.relationship_id).toBe(REL_ID);
+    expect(body.status).toBe('navigator_linked');
+    expect(adminFetch).not.toHaveBeenCalled();
   });
 
   it('returns 201 with relationship_id on happy path', async () => {

@@ -207,15 +207,39 @@ app.post("/accept", rateLimit("strict"), zValidator("json", acceptBodySchema), a
 
   const invite = inviteRows[0] as { id: string; applicant_user_id: string };
 
-  // Navigator/admin accepting: log event, return informational 200.
+  // Caseworker (navigator/admin) accepting the SAME invite link — "extension of
+  // friend": a CBO can connect through the applicant's buddy link just like a
+  // family member. Two differences from a friend:
+  //  1. We do NOT set app_metadata.role='buddy'. Staff keep their navigator/admin
+  //     role (their packet access already comes from it), so we skip the Admin API
+  //     role write entirely.
+  //  2. The cleanup cron is guarded to never null a non-'buddy' role, so this
+  //     relationship row can complete/revoke without wiping their staff access.
+  // The link is upserted (idempotent) so a caseworker re-scanning the code just
+  // re-confirms the existing connection instead of erroring on the unique index.
   if (actor.kind === "navigator" || actor.kind === "admin") {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     await (db.schema("snap_enrollment").from("buddy_invite_events" as any) as any)
-      .insert({ event_type: "buddy_invite_declined_existing_role", actor_id: actor.id, invite_id: invite.id })
+      .insert({ event_type: "buddy_invite_accepted_staff", actor_id: actor.id, invite_id: invite.id })
       .then(() => null)
       .catch(() => null); // table may not exist yet in early deploys — non-fatal
 
-    return c.json({ status: "navigator_access", message: "You already have access to this applicant through your navigator account." }, 200);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data: staffRel, error: staffRelErr } = await (db.schema("snap_enrollment").from("buddy_relationship" as any) as any)
+      .upsert(
+        {
+          applicant_user_id: invite.applicant_user_id,
+          buddy_user_id: actor.id,
+          status: "active",
+        },
+        { onConflict: "applicant_user_id,buddy_user_id" },
+      )
+      .select("id")
+      .single() as { data: { id: string } | null; error: { message: string } | null };
+
+    if (staffRelErr) throw new HTTPException(500, { message: staffRelErr.message });
+
+    return c.json({ relationship_id: (staffRel as { id: string }).id, status: "navigator_linked" }, 201);
   }
 
   // Set app_metadata.role = 'buddy' via Supabase Admin API.
