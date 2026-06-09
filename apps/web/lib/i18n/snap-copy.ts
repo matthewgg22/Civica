@@ -207,6 +207,11 @@ export const snapStrings = {
     status_empty: "You don't have any saved applications yet.",
     status_start_new: "Start a new application",
     status_inbox_title: "Action items from your navigator",
+    buddy_req_title: "Help requests",
+    buddy_req_lead: "A caseworker would like to help with your application. Approve to let them see your case and assist.",
+    buddy_req_who: "A caseworker requests to assist you",
+    buddy_req_approve: "Approve",
+    buddy_req_decline: "Decline",
     status_inbox_empty: "No outstanding items.",
     status_reentry_title: "Continue where you left off",
 
@@ -412,6 +417,11 @@ export const snapStrings = {
     status_empty: "Aún no tienes solicitudes guardadas.",
     status_start_new: "Iniciar una nueva solicitud",
     status_inbox_title: "Acciones de tu navigator",
+    buddy_req_title: "Solicitudes de ayuda",
+    buddy_req_lead: "Un caseworker desea ayudarte con tu solicitud. Aprueba para que pueda ver tu caso y asistirte.",
+    buddy_req_who: "Un caseworker solicita asistirte",
+    buddy_req_approve: "Aprobar",
+    buddy_req_decline: "Rechazar",
     status_inbox_empty: "No hay acciones pendientes.",
     status_reentry_title: "Continúa donde lo dejaste",
 
