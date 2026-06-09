@@ -47,3 +47,21 @@ export function optionsFor(question: string, current: string): string[] | null {
   if (!opts) return null;
   return opts.includes(current) ? opts : [current, ...opts];
 }
+
+// The at-a-glance subset the caseload dropdown shows by default — the fields a
+// navigator actually triages on. The full ~44-question intake stays one click
+// away ("Show all" or the full-application page). Every entry here MUST exist in
+// the expanded answer set or the summary would render a blank row (guarded in
+// demo-pipeline.test.ts).
+export const SUMMARY_QUESTIONS = [
+  "Household size",
+  "Anyone 60+ or disabled?",
+  "Citizenship / immigration status",
+  "Employment status",
+  "Gross monthly income",
+  "Monthly rent",
+  "Monthly utilities",
+  "Countable assets (cash + bank)",
+  "Work registration / ABAWD",
+  "Social Security Number",
+] as const;
