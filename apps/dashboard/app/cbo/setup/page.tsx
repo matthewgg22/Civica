@@ -3,7 +3,7 @@
 // to staff (and cbo_assister once that role is enabled). Server component; the
 // install path branches on whether the unlisted Chrome Web Store URL is set.
 import Link from "next/link";
-import { submitterExtensionUrl } from "../../../lib/cbo/extension";
+import { submitterExtensionUrl, submitterExtensionZipUrl } from "../../../lib/cbo/extension";
 
 export const dynamic = "force-dynamic";
 
@@ -26,6 +26,7 @@ function Step({ n, title, children }: { n: number; title: string; children: Reac
 
 export default function CboSetupPage() {
   const installUrl = submitterExtensionUrl();
+  const zipUrl = submitterExtensionZipUrl();
 
   return (
     <div className="min-h-screen bg-paper">
@@ -71,18 +72,20 @@ export default function CboSetupPage() {
                   <span className="text-[11px] uppercase tracking-wider text-warning border border-warning/40 rounded-[2px] px-1.5 py-0.5">
                     Pilot build
                   </span>{" "}
-                  The one-click store version is coming. For now, load the build your Civica
-                  contact sent you:
+                  The one-click store version is coming. For now, download the build and load it:
                 </p>
-                <ol className="list-decimal ml-5 space-y-0.5">
-                  <li>Unzip the build your Civica contact sent.</li>
+                <a href={zipUrl} download className="inline-block mt-1 px-4 py-2 text-[13px] font-semibold rounded-[3px] bg-pine text-white hover:bg-pine/90 transition-colors">
+                  Download the build (.zip)
+                </a>
+                <ol className="list-decimal ml-5 space-y-0.5 mt-1">
+                  <li>Unzip it — you&rsquo;ll get a <code className="font-mono text-ink">civica-submitter</code> folder.</li>
                   <li>
                     Open <code className="font-mono text-ink">chrome://extensions</code> and turn on{" "}
                     <span className="text-ink">Developer mode</span> (top-right).
                   </li>
                   <li>
-                    Click <span className="text-ink">Load unpacked</span> and select the unzipped{" "}
-                    <code className="font-mono text-ink">dist</code> folder.
+                    Click <span className="text-ink">Load unpacked</span> and select the{" "}
+                    <code className="font-mono text-ink">civica-submitter</code> folder.
                   </li>
                 </ol>
               </>

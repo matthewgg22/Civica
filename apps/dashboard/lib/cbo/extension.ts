@@ -11,6 +11,19 @@ export function submitterExtensionUrl(): string | null {
   return url && url.trim().length > 0 ? url.trim() : null;
 }
 
+/**
+ * Pilot download for the packaged extension (.zip) — the bridge before the
+ * Chrome Web Store listing exists. Defaults to the static asset the package
+ * script writes to apps/dashboard/public/downloads/civica-submitter.zip; set
+ * NEXT_PUBLIC_SUBMITTER_EXTENSION_ZIP_URL to a hosted asset (e.g. a GitHub
+ * Release) to override. Served ungated (see middleware matcher), so the public
+ * /cbo-preview can offer it too.
+ */
+export function submitterExtensionZipUrl(): string {
+  const url = process.env.NEXT_PUBLIC_SUBMITTER_EXTENSION_ZIP_URL;
+  return url && url.trim().length > 0 ? url.trim() : "/downloads/civica-submitter.zip";
+}
+
 /** What the officer does once the extension is installed + connected. */
 export const SUBMITTER_USE_STEPS: readonly string[] = [
   "Connect the extension to your Civica account (one time).",

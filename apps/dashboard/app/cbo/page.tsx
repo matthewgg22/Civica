@@ -13,7 +13,7 @@ import { cookies } from "next/headers";
 import Link from "next/link";
 import { createServerClientFromCookies } from "../../lib/supabase";
 import ExtensionInstallCard from "../../components/cbo/ExtensionInstallCard";
-import { submitterExtensionUrl } from "../../lib/cbo/extension";
+import { submitterExtensionUrl, submitterExtensionZipUrl } from "../../lib/cbo/extension";
 import { timeAgo, firstNameLastInitial, decryptDemoName, shortId } from "../../lib/format";
 
 export const dynamic = "force-dynamic";
@@ -62,7 +62,7 @@ export default async function CboWorkspacePage() {
         </header>
 
         <div className="mb-6">
-          <ExtensionInstallCard installUrl={submitterExtensionUrl()} />
+          <ExtensionInstallCard installUrl={submitterExtensionUrl()} zipUrl={submitterExtensionZipUrl()} />
         </div>
 
         {packets.length === 0 ? (

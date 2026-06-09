@@ -109,7 +109,9 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    // Skip Next internals, favicon, and any file in /public with an extension
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:png|jpg|jpeg|svg|gif|webp|ico|woff|woff2|ttf|otf)).*)",
+    // Skip Next internals, favicon, and any file in /public with an extension.
+    // `zip` is included so the pilot extension download (/downloads/*.zip) is
+    // served ungated as a static asset rather than redirected to /login.
+    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:png|jpg|jpeg|svg|gif|webp|ico|woff|woff2|ttf|otf|zip)).*)",
   ],
 };
