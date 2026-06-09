@@ -39,6 +39,20 @@ function mockDb(selectResult: { data: unknown; error: unknown }, updateOk = true
   } as never);
 }
 
+// fetch mock for clearAppMetadataRole: a GET reads the user's current role, a
+// PUT clears it. Branch on method (the GET has no method; the PUT sets "PUT").
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function roleFetchMock(role: string | null, putStatus = 200): any {
+  return vi.fn().mockImplementation((_url: string, init?: { method?: string }) => {
+    if (init?.method === "PUT") {
+      return Promise.resolve(new Response(null, { status: putStatus }));
+    }
+    return Promise.resolve(
+      new Response(JSON.stringify({ app_metadata: { role } }), { status: 200 }),
+    );
+  });
+}
+
 describe("cleanupBuddyAppMetadata", () => {
   it("returns zero counts when there are no candidates", async () => {
     mockDb({ data: [], error: null });
@@ -55,7 +69,7 @@ describe("cleanupBuddyAppMetadata", () => {
       error: null,
     });
 
-    const fetchMock = vi.fn().mockResolvedValue(new Response(null, { status: 200 }));
+    const fetchMock = roleFetchMock("buddy");
     globalThis.fetch = fetchMock as unknown as typeof globalThis.fetch;
 
     const result = await cleanupBuddyAppMetadata(TEST_ENV);
@@ -63,15 +77,17 @@ describe("cleanupBuddyAppMetadata", () => {
     expect(result.candidates).toBe(2);
     expect(result.cleared).toBe(2);
     expect(result.failed).toBe(0);
-    expect(fetchMock).toHaveBeenCalledTimes(2);
+    // Each cleared row is a GET (read role) + PUT (clear) = 4 calls for 2 rows.
+    expect(fetchMock).toHaveBeenCalledTimes(4);
 
-    // Verify the Admin API was called with role: null
-    const firstCall = fetchMock.mock.calls[0];
-    if (!firstCall) throw new Error("expected at least one fetch call");
-    const [, init] = firstCall;
-    const body = JSON.parse(init.body);
-    expect(body).toEqual({ app_metadata: { role: null } });
-    expect(init.method).toBe("PUT");
+    // The PUT must clear the role to null.
+    const putCall = fetchMock.mock.calls.find(
+      (c: unknown[]) => (c[1] as { method?: string } | undefined)?.method === "PUT",
+    );
+    if (!putCall) throw new Error("expected a PUT call clearing the role");
+    expect(JSON.parse((putCall[1] as { body: string }).body)).toEqual({
+      app_metadata: { role: null },
+    });
   });
 
   it("counts failed rows when Admin API returns non-2xx", async () => {
@@ -80,15 +96,36 @@ describe("cleanupBuddyAppMetadata", () => {
       error: null,
     });
 
-    globalThis.fetch = vi.fn().mockResolvedValue(
-      new Response(null, { status: 500 }),
-    ) as unknown as typeof globalThis.fetch;
+    globalThis.fetch = roleFetchMock("buddy", 500) as unknown as typeof globalThis.fetch;
 
     const result = await cleanupBuddyAppMetadata(TEST_ENV);
 
     expect(result.candidates).toBe(1);
     expect(result.cleared).toBe(0);
     expect(result.failed).toBe(1);
+  });
+
+  // A caseworker can hold a buddy_relationship row via the shared invite link
+  // ("extension of friend"). When that row completes/revokes, the cron must
+  // NEVER null their navigator role — that would destroy their staff access.
+  it("leaves a non-buddy (caseworker) role untouched", async () => {
+    mockDb({
+      data: [{ id: "rel-staff", buddy_user_id: "navigator-1" }],
+      error: null,
+    });
+
+    const fetchMock = roleFetchMock("navigator");
+    globalThis.fetch = fetchMock as unknown as typeof globalThis.fetch;
+
+    const result = await cleanupBuddyAppMetadata(TEST_ENV);
+
+    expect(result.candidates).toBe(1);
+    expect(result.failed).toBe(0);
+    // The role was read (GET) but never nulled (no PUT).
+    const putCall = fetchMock.mock.calls.find(
+      (c: unknown[]) => (c[1] as { method?: string } | undefined)?.method === "PUT",
+    );
+    expect(putCall).toBeUndefined();
   });
 
   it("throws when the candidate query itself fails", async () => {
@@ -147,9 +184,7 @@ describe("cleanupBuddyAppMetadata", () => {
       /* updateOk */ false,
     );
 
-    globalThis.fetch = vi.fn().mockResolvedValue(
-      new Response(null, { status: 200 }),
-    ) as unknown as typeof globalThis.fetch;
+    globalThis.fetch = roleFetchMock("buddy") as unknown as typeof globalThis.fetch;
 
     const result = await cleanupBuddyAppMetadata(TEST_ENV);
     expect(result.cleared).toBe(0);
