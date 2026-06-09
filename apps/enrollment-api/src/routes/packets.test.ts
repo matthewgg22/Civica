@@ -8,11 +8,14 @@ vi.mock('../middleware/actorContext.js', () => ({
   withActorContext: vi.fn(),
 }));
 
-import { makeAnonClient } from '../lib/supabase.js';
+import { makeAnonClient, makeServiceClient } from '../lib/supabase.js';
 import { withActorContext } from '../middleware/actorContext.js';
 import packetsRouter from './packets.js';
 import { app as fullApp } from '../index.js';
-import { TEST_ENV, NAVIGATOR, APPLICANT, makeDbClient, makeQueryBuilder, buildTestApp, JSON_HEADERS } from '../test/helpers.js';
+import { TEST_ENV, NAVIGATOR, APPLICANT, BUDDY, makeDbClient, makeQueryBuilder, buildTestApp, JSON_HEADERS } from '../test/helpers.js';
+import type { Actor } from '../types.js';
+
+const ADMIN: Actor = { kind: 'admin', id: 'admin-001' };
 
 afterEach(() => vi.resetAllMocks());
 
@@ -224,5 +227,142 @@ describe('applicant role access', () => {
 
     const res = await buildTestApp(packetsRouter, '/packets', APPLICANT).request('/packets', {}, TEST_ENV);
     expect(res.status).toBe(200);
+  });
+});
+
+// ── GET /packets/:packetId/buddies (Phase 2 — caseworker buddy read) ────────
+//
+// Two-layer auth: requireNavigator role gate, then RLS-scoped packet read
+// (anon client) proves the navigator owns the packet, then a service-role read
+// of buddy_relationship returns a COLUMN-RESTRICTED projection (no buddy
+// name/uid). See docs/plans/cbo-buddy-portal-integration.md §2.3.
+
+describe('GET /packets/:packetId/buddies', () => {
+  const REL = {
+    id: 'br-001',
+    status: 'active',
+    org_id: 'org-9',
+    notifications_enabled: true,
+    created_at: '2026-06-01T00:00:00Z',
+    updated_at: '2026-06-05T00:00:00Z',
+  };
+
+  it('returns 403 for an applicant (role gate)', async () => {
+    const res = await buildTestApp(packetsRouter, '/packets', APPLICANT).request(
+      '/packets/p1/buddies',
+      {},
+      TEST_ENV,
+    );
+    expect(res.status).toBe(403);
+  });
+
+  it('returns 403 for a buddy (role gate)', async () => {
+    const res = await buildTestApp(packetsRouter, '/packets', BUDDY).request(
+      '/packets/p1/buddies',
+      {},
+      TEST_ENV,
+    );
+    expect(res.status).toBe(403);
+  });
+
+  it('navigator: returns column-restricted buddies (no PII) on happy path', async () => {
+    vi.mocked(makeAnonClient).mockReturnValue(
+      makeDbClient({ data: { packet_id: 'p1', user_id: 'user-001' }, error: null }),
+    );
+    vi.mocked(makeServiceClient).mockReturnValue(makeDbClient({ data: [REL], error: null }));
+
+    const res = await buildTestApp(packetsRouter, '/packets', NAVIGATOR).request(
+      '/packets/p1/buddies',
+      {},
+      TEST_ENV,
+    );
+    expect(res.status).toBe(200);
+    const body = (await res.json()) as Array<Record<string, unknown>>;
+    expect(body).toHaveLength(1);
+    expect(body[0]).toEqual({
+      relationship_id: 'br-001',
+      status: 'active',
+      org_linked: true,
+      notifications_enabled: true,
+      linked_at: '2026-06-01T00:00:00Z',
+      last_active: '2026-06-05T00:00:00Z',
+    });
+    // PII guard: the helper's auth id / name must NOT leak through this endpoint.
+    expect(body[0]).not.toHaveProperty('buddy_user_id');
+    expect(body[0]).not.toHaveProperty('helper_name');
+    expect(JSON.stringify(body[0])).not.toContain('user-001'); // applicant uid not echoed either
+  });
+
+  it('admin is also allowed', async () => {
+    vi.mocked(makeAnonClient).mockReturnValue(
+      makeDbClient({ data: { packet_id: 'p1', user_id: 'user-001' }, error: null }),
+    );
+    vi.mocked(makeServiceClient).mockReturnValue(makeDbClient({ data: [], error: null }));
+
+    const res = await buildTestApp(packetsRouter, '/packets', ADMIN).request(
+      '/packets/p1/buddies',
+      {},
+      TEST_ENV,
+    );
+    expect(res.status).toBe(200);
+  });
+
+  it('navigator: 404 when the packet is not visible (RLS) / not found', async () => {
+    vi.mocked(makeAnonClient).mockReturnValue(
+      makeDbClient({ data: null, error: { code: 'PGRST116', message: 'no rows' } }),
+    );
+
+    const res = await buildTestApp(packetsRouter, '/packets', NAVIGATOR).request(
+      '/packets/nope/buddies',
+      {},
+      TEST_ENV,
+    );
+    expect(res.status).toBe(404);
+  });
+
+  it('navigator: empty array when the applicant has no buddies', async () => {
+    vi.mocked(makeAnonClient).mockReturnValue(
+      makeDbClient({ data: { packet_id: 'p1', user_id: 'user-001' }, error: null }),
+    );
+    vi.mocked(makeServiceClient).mockReturnValue(makeDbClient({ data: [], error: null }));
+
+    const res = await buildTestApp(packetsRouter, '/packets', NAVIGATOR).request(
+      '/packets/p1/buddies',
+      {},
+      TEST_ENV,
+    );
+    expect(res.status).toBe(200);
+    expect(await res.json()).toEqual([]);
+  });
+
+  it('navigator: empty array (no service read) when packet has no linked auth user', async () => {
+    vi.mocked(makeAnonClient).mockReturnValue(
+      makeDbClient({ data: { packet_id: 'p1', user_id: null }, error: null }),
+    );
+    // service client intentionally not mocked — must not be reached.
+    const res = await buildTestApp(packetsRouter, '/packets', NAVIGATOR).request(
+      '/packets/p1/buddies',
+      {},
+      TEST_ENV,
+    );
+    expect(res.status).toBe(200);
+    expect(await res.json()).toEqual([]);
+    expect(vi.mocked(makeServiceClient)).not.toHaveBeenCalled();
+  });
+
+  it('navigator: propagates a buddy_relationship DB error as 500', async () => {
+    vi.mocked(makeAnonClient).mockReturnValue(
+      makeDbClient({ data: { packet_id: 'p1', user_id: 'user-001' }, error: null }),
+    );
+    vi.mocked(makeServiceClient).mockReturnValue(
+      makeDbClient({ data: null, error: { message: 'db down' } }),
+    );
+
+    const res = await buildTestApp(packetsRouter, '/packets', NAVIGATOR).request(
+      '/packets/p1/buddies',
+      {},
+      TEST_ENV,
+    );
+    expect(res.status).toBe(500);
   });
 });
