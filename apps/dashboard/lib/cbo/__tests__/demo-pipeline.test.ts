@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { buildPipeline } from "../demo-pipeline";
+import { SUMMARY_QUESTIONS } from "../field-options";
 
 // Runs the REAL engine (assessPacket + computeBenefit) over the synthetic
 // caseload, so it guards the three-engine wiring end to end.
@@ -153,5 +154,105 @@ describe("buildPipeline", () => {
     expect(fields).toContain("Number in home");
     const hh = maria.portal.fieldMap.find((r) => r.benefitsCalField === "Number in home")!;
     expect(hh.value).toMatch(/\d+ (person|people)/);
+  });
+
+  // ── Full BenefitsCal questionnaire completeness (cbo-phase2) ────────────────
+  // The expansion went from 25 → ~44 fields across 11 sections, filling the
+  // gaps a CalFresh caseworker would pend on. Guard the new sections + questions
+  // so a future edit can't silently shrink the application back.
+  it("expands every case across all 11 intake sections", () => {
+    const cases = buildPipeline("CA", new Date(), true).flatMap((g) => g.cases);
+    const ALL_SECTIONS = [
+      "Where you're applying",
+      "About you",
+      "Your household",
+      "Residence",
+      "Income & employment",
+      "Student & work requirements",
+      "Expenses & deductions",
+      "Resources",
+      "Special situations",
+      "Documents",
+      "Certification",
+    ];
+    for (const c of cases) {
+      const sections = new Set(c.answers.map((a) => a.section));
+      for (const s of ALL_SECTIONS) {
+        expect(sections.has(s), `${c.caseId} missing section: ${s}`).toBe(true);
+      }
+    }
+  });
+
+  it("includes the gap-filling questions a CalFresh worker pends on", () => {
+    const daniel = buildPipeline("CA", new Date(), true)
+      .flatMap((g) => g.cases)
+      .find((c) => c.caseId === "CF-2026-0209")!;
+    const questions = new Set(daniel.answers.map((a) => a.question));
+    for (const q of [
+      "Programs applying for",
+      "Received CalFresh before?",
+      "Date of birth",
+      "Citizenship / immigration status",
+      "Authorized representative",
+      "Home address",
+      "Housing situation",
+      "Other income (SSI, unemployment, child support received)",
+      "Enrolled in higher education (half-time or more)?",
+      "Weekly work hours",
+      "Work registration / ABAWD",
+      "Pays heating / cooling costs?",
+      "Pays electricity or gas (separate from heating)?",
+      "Pays for phone or internet?",
+      "Receives HEAP energy assistance?",
+      "Reduced hours or quit a job in the last 60 days?",
+      "Fleeing felon or probation / parole violation?",
+      "Drug-felony conviction?",
+    ]) {
+      expect(questions.has(q), `missing question: ${q}`).toBe(true);
+    }
+  });
+
+  it("never leaves a summary (at-a-glance) field without an answer", () => {
+    // Every SUMMARY_QUESTIONS entry must resolve to a real answer in every case,
+    // or the collapsed dropdown view renders a blank row.
+    const cases = buildPipeline("CA", new Date(), true).flatMap((g) => g.cases);
+    for (const c of cases) {
+      const byQ = new Map(c.answers.map((a) => [a.question, a]));
+      for (const q of SUMMARY_QUESTIONS) {
+        expect(byQ.has(q), `${c.caseId} summary missing: ${q}`).toBe(true);
+      }
+    }
+  });
+
+  it("derives a deterministic, county-correct synthetic home address", () => {
+    const addrOf = (caseId: string) =>
+      buildPipeline("CA", new Date(), true)
+        .flatMap((g) => g.cases)
+        .find((c) => c.caseId === caseId)!
+        .answers.find((a) => a.question === "Home address")!.answer;
+
+    // Shape: "<number> <street>[, Apt N], <City>, CA <zip>".
+    for (const id of ["CF-2026-0184", "CF-2026-0179", "CF-2026-0203"]) {
+      expect(addrOf(id)).toMatch(/^\d+ .+, .+, CA \d{5}$/);
+    }
+    // County → city mapping (Alameda seats in Oakland, not "Alameda").
+    expect(addrOf("CF-2026-0184")).toContain("San Francisco, CA 94110"); // Elena
+    expect(addrOf("CF-2026-0179")).toContain("Oakland, CA 94601"); // Maria (Alameda)
+    expect(addrOf("CF-2026-0203")).toContain("Fresno, CA 93706"); // Carlos
+    // Deterministic across builds (no Math.random / Date in the hash).
+    expect(addrOf("CF-2026-0184")).toBe(addrOf("CF-2026-0184"));
+  });
+
+  it("derives ABAWD status from work + household composition (7 CFR 273.7)", () => {
+    const cases = buildPipeline("CA", new Date(), true).flatMap((g) => g.cases);
+    const abawd = (caseId: string) =>
+      cases.find((c) => c.caseId === caseId)!.answers.find((a) => a.question === "Work registration / ABAWD")!.answer;
+
+    // Elena: 1-person, employed, able-bodied → meets the work requirement.
+    expect(abawd("CF-2026-0184")).toMatch(/meets work requirement/i);
+    // Jasmine: household with children → exempt (dependent in home).
+    expect(abawd("CF-2026-0188")).toMatch(/exempt/i);
+    // Theresa: a 60+/disabled member → exempt.
+    expect(abawd("CF-2026-0162")).toMatch(/exempt/i);
   });
 });

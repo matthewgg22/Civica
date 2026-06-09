@@ -4,10 +4,11 @@ import {
   buildPipeline,
   formatUsd,
   PIPELINE_STEPS,
-  type SurveyAnswer,
   type QueueApplication,
 } from "../../../../lib/cbo/demo-pipeline";
 import PrintButton from "./PrintButton";
+import AskMaeButton from "./AskMaeButton";
+import EditableApplicationResponses from "./EditableApplicationResponses";
 import CaseAssignmentCard from "../../../../components/cbo/CaseAssignmentCard";
 import BuddyLinkCard from "../../../../components/cbo/BuddyLinkCard";
 import PortalAutofillCard from "../../../../components/cbo/PortalAutofillCard";
@@ -35,17 +36,6 @@ const RISK_CLASS: Record<string, string> = {
   "Medium risk": "text-warning",
   "Low risk": "text-muted",
 };
-
-// Group consecutive answers by their section, preserving order.
-function groupBySection(answers: SurveyAnswer[]): { section: string; items: SurveyAnswer[] }[] {
-  const out: { section: string; items: SurveyAnswer[] }[] = [];
-  for (const a of answers) {
-    const last = out[out.length - 1];
-    if (last && last.section === a.section) last.items.push(a);
-    else out.push({ section: a.section, items: [a] });
-  }
-  return out;
-}
 
 function SummaryCell({ label, children }: { label: string; children: React.ReactNode }) {
   return (
@@ -78,7 +68,6 @@ export default async function ApplicationDraftPage({
     .find((c) => c.id === id);
   if (!app) notFound();
 
-  const sections = groupBySection(app.answers);
   const totalSteps = PIPELINE_STEPS.length;
   const generated = new Date().toLocaleDateString("en-US", {
     year: "numeric", month: "long", day: "numeric",
@@ -92,7 +81,10 @@ export default async function ApplicationDraftPage({
           <Link href="/cbo-preview" className="text-[13px] font-medium text-pine hover:underline">
             ← Back to overview
           </Link>
-          <PrintButton />
+          <div className="flex items-center gap-2">
+            <AskMaeButton />
+            <PrintButton />
+          </div>
         </div>
       </div>
 
@@ -146,28 +138,8 @@ export default async function ApplicationDraftPage({
             <BuddyLinkCard buddy={app.buddy} />
           </section>
 
-          {/* Application responses — two columns to keep the draft compact */}
-          <section className="py-4 border-b border-hairline">
-            <SectionTitle>Application responses</SectionTitle>
-            <div className="columns-2 gap-x-8 [&>div]:break-inside-avoid">
-              {sections.map((group) => (
-                <div key={group.section} className="mb-3">
-                  <p className="text-[11px] font-semibold text-ink mb-0.5">{group.section}</p>
-                  <dl className="divide-y divide-hairline">
-                    {group.items.map((a) => (
-                      <div key={a.question} className="flex items-baseline justify-between gap-3 py-1">
-                        <dt className="text-[12px] text-graphite">{a.question}</dt>
-                        <dd className={`text-[12px] text-right ${a.flagged ? "text-brick font-semibold" : "text-ink font-medium"}`}>
-                          {a.answer}
-                          {a.flagged && <span className="ml-1 text-[9px] uppercase tracking-wider">⚑ verify</span>}
-                        </dd>
-                      </div>
-                    ))}
-                  </dl>
-                </div>
-              ))}
-            </div>
-          </section>
+          {/* Application responses — editable (ephemeral) on the page, two-column. */}
+          <EditableApplicationResponses answers={app.answers} />
 
           {/* Engine determination + verification — side by side */}
           <section className="grid sm:grid-cols-2 gap-x-8 gap-y-4 py-4 border-b border-hairline">

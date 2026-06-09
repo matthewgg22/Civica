@@ -377,9 +377,12 @@ const SECTION_ORDER = [
   "Where you're applying",
   "About you",
   "Your household",
+  "Residence",
   "Income & employment",
+  "Student & work requirements",
   "Expenses & deductions",
   "Resources",
+  "Special situations",
   "Documents",
   "Certification",
   "Recertification",
@@ -399,6 +402,32 @@ const normalizeMoney = (s: string) =>
   // "$2.00,750.00".
   s.replace(/\$(\d{1,3}(?:,\d{3})*|\d+)(?![\d.,])/g, (_m, num) => `$${num}.00`);
 
+// Synthetic street address for the demo. These applicants are fabricated (no real
+// PII), so the address is generated — deterministically per case id, so it's
+// stable across reloads — and placed in a plausible city/ZIP for the case county.
+const COUNTY_CITY: Record<string, { city: string; zip: string }> = {
+  "San Francisco": { city: "San Francisco", zip: "94110" },
+  "Los Angeles": { city: "Los Angeles", zip: "90011" },
+  "San Diego": { city: "San Diego", zip: "92101" },
+  Fresno: { city: "Fresno", zip: "93706" },
+  Sacramento: { city: "Sacramento", zip: "95814" },
+  Alameda: { city: "Oakland", zip: "94601" },
+  "San Jose": { city: "San Jose", zip: "95112" },
+};
+const STREETS = [
+  "Mission St", "Market St", "Cesar Chavez Ave", "Foothill Blvd", "Olive St",
+  "Maple Ave", "Bryant St", "Capp St", "E 14th St", "Florence Ave", "Alum Rock Ave", "Geary Blvd",
+];
+function synthAddress(id: string, county: string): string {
+  let h = 0;
+  for (let i = 0; i < id.length; i++) h = (h * 31 + id.charCodeAt(i)) >>> 0;
+  const num = 100 + (h % 4800);
+  const street = STREETS[h % STREETS.length];
+  const apt = h % 3 === 0 ? `, Apt ${1 + (h % 24)}` : "";
+  const loc = COUNTY_CITY[county] ?? { city: county, zip: "" };
+  return `${num} ${street}${apt}, ${loc.city}, CA ${loc.zip}`.trim();
+}
+
 /**
  * Expand a case's sparse hand-authored `answers` into a COMPLETE CalFresh
  * application (the eight intake sections), derived from the same `engineInputs`
@@ -417,27 +446,67 @@ function expandAnswers(a: DemoApplicant): SurveyAnswer[] {
       ? "Employed"
       : "Not employed";
   const elderlyOrDisabled = e.has_disability === "true";
+  const hasChildren = size >= 3; // mirrors the "Children under 14?" heuristic below
+  const receivesSsi = e.receives_ssi === "true";
+
+  // Work / ABAWD derivation (7 CFR 273.7 / CA §63-24). A dependent in the home or
+  // a 60+/disabled member exempts; an employed adult with hours meets the rule;
+  // an unemployed able-bodied adult without dependents is on the time-limit clock.
+  const weeklyHours = selfEmployed
+    ? "Varies (self-employed)"
+    : employment === "Employed"
+      ? "~30 hrs/week"
+      : "0 — not currently working";
+  const abawdStatus =
+    elderlyOrDisabled || hasChildren
+      ? "Exempt — dependent in home or 60+/disabled member"
+      : employment === "Not employed"
+        ? "Subject to ABAWD time limit · 7 CFR 273.24"
+        : "Meets work requirement (≥20 hrs/week)";
+  const unearned = receivesSsi ? "SSI" : "None reported";
+  // Whether the household reports a utility cost — drives the SUA-tier detail
+  // questions (heating/cooling, electric/gas) below.
+  const paysUtilities = e.monthly_utilities != null && e.monthly_utilities !== "" && e.monthly_utilities !== "0";
 
   const base: SurveyAnswer[] = [
     { section: "Where you're applying", question: "State", answer: "California" },
     { section: "Where you're applying", question: "County", answer: `${a.county} County` },
+    { section: "Where you're applying", question: "Programs applying for", answer: "CalFresh (SNAP)" },
+    { section: "Where you're applying", question: "Received CalFresh before?", answer: "No" },
     { section: "About you", question: "Applicant", answer: a.name },
+    { section: "About you", question: "Date of birth", answer: "On file" },
     { section: "About you", question: "Preferred language", answer: "English" },
     { section: "About you", question: "Contact phone on file", answer: "Yes" },
+    { section: "About you", question: "Citizenship / immigration status", answer: "U.S. citizen" },
+    { section: "About you", question: "Authorized representative", answer: "VoteNow Advocacy Foundation — CBO of record" },
     { section: "Your household", question: "Household size", answer: `${size} ${size === 1 ? "person" : "people"}` },
-    { section: "Your household", question: "Children under 14?", answer: size >= 3 ? "Yes" : "No" },
+    { section: "Your household", question: "Children under 14?", answer: hasChildren ? "Yes" : "No" },
     { section: "Your household", question: "Anyone 60+ or disabled?", answer: elderlyOrDisabled ? "Yes" : "No" },
+    { section: "Your household", question: "Anyone pregnant?", answer: "No" },
     { section: "Your household", question: "Everyone applying is a citizen or eligible noncitizen?", answer: "Yes" },
+    { section: "Residence", question: "Home address", answer: synthAddress(a.id, a.county) },
+    { section: "Residence", question: "Housing situation", answer: "Renting" },
     { section: "Income & employment", question: "Employment status", answer: employment },
     { section: "Income & employment", question: "Income type", answer: selfEmployed ? "Self-employment" : "Wages / salary" },
     { section: "Income & employment", question: "Gross monthly income", answer: moneyOrNone(e.monthly_income) },
     { section: "Income & employment", question: "Pay frequency", answer: "Twice monthly" },
+    { section: "Income & employment", question: "Other income (SSI, unemployment, child support received)", answer: unearned },
+    { section: "Student & work requirements", question: "Enrolled in higher education (half-time or more)?", answer: "No" },
+    { section: "Student & work requirements", question: "Weekly work hours", answer: weeklyHours },
+    { section: "Student & work requirements", question: "Work registration / ABAWD", answer: abawdStatus },
     { section: "Expenses & deductions", question: "Monthly rent", answer: moneyOrNone(e.monthly_rent) },
     { section: "Expenses & deductions", question: "Monthly utilities", answer: moneyOrNone(e.monthly_utilities) },
+    { section: "Expenses & deductions", question: "Pays heating / cooling costs?", answer: paysUtilities ? "Yes" : "No" },
+    { section: "Expenses & deductions", question: "Pays electricity or gas (separate from heating)?", answer: paysUtilities ? "Yes" : "No" },
+    { section: "Expenses & deductions", question: "Pays for phone or internet?", answer: "Yes" },
+    { section: "Expenses & deductions", question: "Receives HEAP energy assistance?", answer: "No" },
     { section: "Expenses & deductions", question: "Dependent-care costs", answer: "$0.00" },
     { section: "Expenses & deductions", question: "Out-of-pocket medical (60+/disabled)", answer: elderlyOrDisabled ? "$0.00" : "Not applicable" },
     { section: "Expenses & deductions", question: "Child support paid", answer: "$0.00" },
     { section: "Resources", question: "Countable assets (cash + bank)", answer: "Under $2,750.00" },
+    { section: "Special situations", question: "Reduced hours or quit a job in the last 60 days?", answer: "No" },
+    { section: "Special situations", question: "Fleeing felon or probation / parole violation?", answer: "No" },
+    { section: "Special situations", question: "Drug-felony conviction?", answer: "No" },
     { section: "Documents", question: "Photo ID", answer: "On hand" },
     { section: "Documents", question: "Proof of income", answer: "On hand" },
     { section: "Documents", question: "Proof of residence", answer: "On hand" },
