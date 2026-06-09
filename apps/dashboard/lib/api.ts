@@ -52,6 +52,8 @@ export const api = {
         headers: transitionReason ? { "X-Transition-Reason": transitionReason } : {},
       }),
     history: (jwt: string, id: string) => apiFetch(`/packets/${id}/history`, jwt),
+    // Caseworker buddy read (Phase 2 T5). Column-restricted — no helper PII.
+    buddies: (jwt: string, id: string) => apiFetch(`/packets/${id}/buddies`, jwt),
   },
   answers: {
     list: (jwt: string, packetId: string) => apiFetch(`/packets/${packetId}/answers`, jwt),
