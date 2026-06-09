@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import {
   PIPELINE_STEPS,
@@ -273,15 +273,29 @@ function needToSection(text: string): string {
   if (/citizen|immigration|age|household|child|member/.test(t)) return "Your household";
   return "About you";
 }
+// Custom event the responses list listens for, so a "jump to section" reveals
+// the full (collapsed-by-default) responses before scrolling to the target.
+const REVEAL_RESPONSES_EVENT = "cbo:reveal-responses";
+
 function scrollToCaseSection(caseId: string, section: string): void {
   if (typeof document === "undefined") return;
+  // The responses default to a collapsed summary, so the target card may not be
+  // mounted yet. Ask its AnswerList to expand, then scroll once it has rendered.
+  window.dispatchEvent(new CustomEvent(REVEAL_RESPONSES_EVENT, { detail: { caseId } }));
+  const highlight = (el: HTMLElement) => {
+    el.scrollIntoView({ behavior: "smooth", block: "center" });
+    el.style.outline = "2px solid var(--color-pine)";
+    el.style.outlineOffset = "2px";
+    el.style.transition = "outline-color 250ms";
+    window.setTimeout(() => { el.style.outline = "2px solid transparent"; }, 1400);
+  };
   const el = document.getElementById(sectionDomId(caseId, section));
-  if (!el) return;
-  el.scrollIntoView({ behavior: "smooth", block: "center" });
-  el.style.outline = "2px solid var(--color-pine)";
-  el.style.outlineOffset = "2px";
-  el.style.transition = "outline-color 250ms";
-  window.setTimeout(() => { el.style.outline = "2px solid transparent"; }, 1400);
+  if (el) { highlight(el); return; }
+  // Not in the DOM yet — wait a tick for the reveal to commit, then retry.
+  window.setTimeout(() => {
+    const revealed = document.getElementById(sectionDomId(caseId, section));
+    if (revealed) highlight(revealed);
+  }, 80);
 }
 
 // ── Case actions (ephemeral demo) ─────────────────────────────────────────────
@@ -660,6 +674,15 @@ function AnswerList({
 }) {
   const [editing, setEditing] = useState(false);
   const [showAll, setShowAll] = useState(false);
+  // A "jump to section" elsewhere in the case fires REVEAL_RESPONSES_EVENT for
+  // this caseId — reveal the full responses so the target section is mounted.
+  useEffect(() => {
+    const onReveal = (e: Event) => {
+      if ((e as CustomEvent<{ caseId: string }>).detail?.caseId === caseId) setShowAll(true);
+    };
+    window.addEventListener(REVEAL_RESPONSES_EVENT, onReveal);
+    return () => window.removeEventListener(REVEAL_RESPONSES_EVENT, onReveal);
+  }, [caseId]);
   const [drafts, setDrafts] = useState<Record<string, string>>({});
   const [viewDoc, setViewDoc] = useState<string | null>(null);
   const [openDocs, setOpenDocs] = useState<Set<string>>(new Set());
