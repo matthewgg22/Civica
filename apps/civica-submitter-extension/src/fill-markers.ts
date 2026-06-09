@@ -81,9 +81,14 @@ function ensureMarkerStyle(doc: Document): void {
   style.id = MARKER_STYLE_ID;
   style.textContent = `
     [${FILL_ATTR}="filled"] {
-      outline: 2px solid #1f4d3b !important;
+      /* Yellow "autofilled" highlight — mirrors the browser's native
+         autofill convention (users read yellow as "this was filled for you").
+         background-color is cosmetic (no layout impact); dark text stays
+         legible on the pale-yellow fill (AA-safe). */
+      outline: 2px solid #C9922A !important;
       outline-offset: 1px !important;
-      border-left: 3px solid #1f4d3b !important;
+      border-left: 3px solid #C9922A !important;
+      background-color: #FDF6D8 !important;
     }
     [${FILL_ATTR}="review"] {
       outline: 2px dashed #B5511E !important;
@@ -102,7 +107,7 @@ function ensureMarkerStyle(doc: Document): void {
       white-space: nowrap;
       box-shadow: 0 1px 3px rgba(0,0,0,0.25);
     }
-    .${BADGE_CLASS}[data-kind="filled"] { background: #1f4d3b; color: #fff; }
+    .${BADGE_CLASS}[data-kind="filled"] { background: #E8C547; color: #1f2722; }
     .${BADGE_CLASS}[data-kind="review"] { background: #B5511E; color: #fff; }
   `;
   (doc.head ?? doc.documentElement).appendChild(style);
