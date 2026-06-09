@@ -28,25 +28,42 @@ export async function middleware(request: NextRequest) {
   );
   if (!needsAuth) return supabaseResponse;
 
+  // Supabase config ships via NEXT_PUBLIC_* (build-inlined). If it's ever
+  // absent at runtime — e.g. the var was marked "Sensitive" in Vercel and so
+  // never got inlined into the build — createServerClient() throws and EVERY
+  // protected route returns 500, taking the whole applicant funnel down
+  // (/apply, /documents, /status). Fail closed instead: we can't verify a
+  // session without config, so route the visitor to /sign-in rather than
+  // crashing, and surface the misconfiguration to the server log / Sentry.
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  if (!supabaseUrl || !supabaseAnonKey) {
+    console.error(
+      "[middleware] Missing NEXT_PUBLIC_SUPABASE_URL / NEXT_PUBLIC_SUPABASE_ANON_KEY — " +
+        "cannot verify session; redirecting protected route to /sign-in. " +
+        "Check these are set as NON-sensitive env vars in Vercel.",
+    );
+    const url = request.nextUrl.clone();
+    url.pathname = "/sign-in";
+    url.searchParams.set("next", pathname);
+    return NextResponse.redirect(url);
+  }
+
   // Build an SSR client that can refresh the session and rewrite cookies.
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        getAll: () => request.cookies.getAll(),
-        setAll: (cookiesToSet) => {
-          cookiesToSet.forEach(({ name, value }) =>
-            request.cookies.set(name, value),
-          );
-          supabaseResponse = NextResponse.next({ request });
-          cookiesToSet.forEach(({ name, value, options }) =>
-            supabaseResponse.cookies.set(name, value, options),
-          );
-        },
+  const supabase = createServerClient(supabaseUrl, supabaseAnonKey, {
+    cookies: {
+      getAll: () => request.cookies.getAll(),
+      setAll: (cookiesToSet) => {
+        cookiesToSet.forEach(({ name, value }) =>
+          request.cookies.set(name, value),
+        );
+        supabaseResponse = NextResponse.next({ request });
+        cookiesToSet.forEach(({ name, value, options }) =>
+          supabaseResponse.cookies.set(name, value, options),
+        );
       },
     },
-  );
+  });
 
   // getSession() reuses the cached session; if the access token is stale the
   // SDK refreshes it automatically and rewrites the cookies via setAll above.
