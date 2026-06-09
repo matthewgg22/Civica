@@ -145,16 +145,30 @@ function StepList({ completedSteps }: { completedSteps: number }) {
 // off-list value (e.g. a flagged "Provided — does not match SSA records") renders.
 const FIELD_OPTIONS: Record<string, string[]> = {
   State: ["California"],
+  "Programs applying for": ["CalFresh (SNAP)", "CalFresh + Medi-Cal", "CalFresh + CalWORKs"],
+  "Received CalFresh before?": ["Yes", "No"],
   "Preferred language": ["English", "Spanish", "Chinese", "Vietnamese", "Tagalog", "Korean", "Other"],
   "Contact phone on file": ["Yes", "No"],
+  "Citizenship / immigration status": ["U.S. citizen", "Lawful permanent resident", "Other qualified noncitizen", "Prefer not to say"],
   "Children under 14?": ["Yes", "No"],
   "Anyone 60+ or disabled?": ["Yes", "No"],
+  "Anyone pregnant?": ["Yes", "No"],
   "Everyone applying is a citizen or eligible noncitizen?": ["Yes", "No"],
+  "Housing situation": ["Renting", "Own my home", "Living with family or friends", "Transitional / temporary", "Shelter", "Unhoused / no fixed address"],
   "Employment status": ["Employed", "Self-employed", "Not employed"],
   "Income type": ["Wages / salary", "Self-employment", "Fixed income", "No income"],
   "Pay frequency": ["Weekly", "Every two weeks", "Twice monthly", "Monthly"],
+  "Other income (SSI, unemployment, child support received)": ["None reported", "SSI", "Social Security", "Unemployment", "Child support received", "Pension"],
+  "Enrolled in higher education (half-time or more)?": ["Yes", "No"],
+  "Pays heating / cooling costs?": ["Yes", "No"],
+  "Pays electricity or gas (separate from heating)?": ["Yes", "No"],
+  "Pays for phone or internet?": ["Yes", "No"],
+  "Receives HEAP energy assistance?": ["Yes", "No"],
   "Out-of-pocket medical (60+/disabled)": ["Not applicable", "$0.00"],
   "Countable assets (cash + bank)": ["Under $2,750.00", "$2,750.00 or more"],
+  "Reduced hours or quit a job in the last 60 days?": ["Yes", "No"],
+  "Fleeing felon or probation / parole violation?": ["Yes", "No"],
+  "Drug-felony conviction?": ["Yes", "No"],
   "Photo ID": ["On hand", "Provided", "Requested", "Not yet uploaded"],
   "Proof of income": ["On hand", "Provided", "Requested", "Not provided"],
   "Proof of residence": ["On hand", "Provided", "Requested", "Not provided"],
@@ -482,6 +496,61 @@ function openFullApplication(app: CaseRecord): void {
   const benefit = app.estimatedBenefitUsd != null ? `approx. ~${formatUsd(app.estimatedBenefitUsd)}/mo` : "no estimate";
   const mathLine = app.deduction ? `<p class="math">${esc(deductionOneLine(app.deduction))}</p>` : "";
 
+  // Timeliness & regulatory clocks (7 CFR 273.2) — the three statutory timers
+  // plus the expedited-service screen, mirroring the in-app triage card.
+  const pc = processingClock(app);
+  const iv = INTERVIEW_META[app.interview.status];
+  const clockRows = [
+    pc
+      ? `<tr><th>Processing clock</th><td class="${pc.left < 0 ? "flag" : ""}">${esc(pc.label)} — ${esc(pc.sub)}</td></tr>`
+      : `<tr><th>Processing clock</th><td>Not running (decided or not yet submitted)</td></tr>`,
+    `<tr><th>Interview · 273.2(e)</th><td class="${app.interview.status === "missed" ? "flag" : ""}">${esc(iv.label)}${app.interview.date ? ` · ${esc(app.interview.date)}` : ""}</td></tr>`,
+    app.cureDaysLeft != null
+      ? `<tr><th>Cure clock · 273.2(h)</th><td class="${app.cureDaysLeft <= 1 ? "flag" : ""}">${app.cureDaysLeft} day${app.cureDaysLeft === 1 ? "" : "s"} to cure a verification pend</td></tr>`
+      : "",
+    app.expedited
+      ? `<tr><th>Expedited service · 273.2(i)</th><td class="flag">Screened in — ${esc(app.expeditedReason)}</td></tr>`
+      : `<tr><th>Expedited service · 273.2(i)</th><td>Not screened in</td></tr>`,
+  ].join("");
+
+  // Case assignment (CBO caseworker) + personal helper (buddy).
+  const buddyLine =
+    app.buddy.status !== "none" && app.buddy.helperName
+      ? `${app.buddy.helperName} (${app.buddy.relationship}) · ${app.buddy.status}`
+      : "No buddy linked";
+  const assignmentRows = [
+    `<tr><th>Assigned caseworker</th><td>${esc(app.assignment.caseworker)} · ${esc(app.assignment.status)}</td></tr>`,
+    `<tr><th>Personal helper (buddy)</th><td>${esc(buddyLine)}</td></tr>`,
+  ].join("");
+
+  // BenefitsCal autofill (extension bridge) — approved answers → portal fields.
+  const portalRows = app.portal.fieldMap
+    .map((r) => `<tr><th>${esc(r.answer)}</th><td>${esc(r.value)} &rarr; <b>${esc(r.benefitsCalField)}</b></td></tr>`)
+    .join("");
+  const portalState = app.portal.cboApproved
+    ? `Autofill ready — applicant + CBO approved${app.portal.consent ? ` · ${esc(app.portal.consent)} consent` : ""}`
+    : app.portal.applicantApproved
+      ? "Applicant approved — CBO review pending"
+      : "Locked — not yet approved";
+
+  // Navigator flags + caseworker comments.
+  const flagsHtml = app.docFlags.length
+    ? `<ul class="plain">${app.docFlags.map((f) => `<li class="flag">&#9873; ${esc(f)}</li>`).join("")}</ul>`
+    : `<p class="meta">No outstanding navigator flags.</p>`;
+  const commentsHtml = app.comments.length
+    ? `<ul class="plain">${app.comments
+        .map((c) => `<li><b>${esc(c.author)}</b> <span class="ts">${esc(c.when)}</span><br>${esc(c.text)}</li>`)
+        .join("")}</ul>`
+    : `<p class="meta">No comments yet.</p>`;
+
+  // Processing steps (intake pipeline progress).
+  const pct = Math.round((app.completedSteps / TOTAL_STEPS) * 100);
+  const stepsHtml = PIPELINE_STEPS.map((s, i) => {
+    const mark = i < app.completedSteps ? "&#10003;" : i === app.completedSteps ? "&rarr;" : "&middot;";
+    const cls = i < app.completedSteps ? "done" : i === app.completedSteps ? "cur" : "pend";
+    return `<li class="${cls}">${mark} ${esc(s)}</li>`;
+  }).join("");
+
   w.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>${esc(app.caseId)} — ${esc(app.name)}</title>
 <style>
   * { box-sizing: border-box; }
@@ -502,6 +571,11 @@ function openFullApplication(app: CaseRecord): void {
   ul.checks { list-style: none; padding: 0; margin: 4px 0; font-size: 12px; } ul.checks li { padding: 2px 0; }
   table.log { width: 100%; border-collapse: collapse; font-size: 11px; margin-top: 4px; }
   table.log td { padding: 4px 8px; border-bottom: 1px solid rgba(15,23,42,.10); vertical-align: top; } table.log td.ts { white-space: nowrap; color: #565E68; }
+  li.flag { color: #9C3A24; font-weight: 600; list-style: none; }
+  .ts { color: #565E68; font-weight: 400; font-size: 11px; }
+  ul.steps { list-style: none; padding: 0; margin: 4px 0; font-size: 12px; }
+  ul.steps li { padding: 2px 0; }
+  ul.steps li.done { color: #2D5A45; } ul.steps li.cur { color: #15181C; font-weight: 600; } ul.steps li.pend { color: #565E68; }
   .disc { font-size: 11px; color: #565E68; margin-top: 22px; line-height: 1.5; border-top: 1px solid rgba(15,23,42,.14); padding-top: 10px; }
   .bar { display: flex; justify-content: flex-end; margin: 0 0 18px; }
   .bar button { font: 600 12px -apple-system, system-ui, sans-serif; color: #fff; background: #2D5A45; border: 0; border-radius: 3px; padding: 7px 14px; cursor: pointer; }
@@ -528,6 +602,25 @@ function openFullApplication(app: CaseRecord): void {
   <h2>Automated verification</h2>
   <ul class="checks">${checksHtml}</ul>
 
+  <h2>Timeliness &amp; regulatory clocks (7 CFR 273.2)</h2>
+  <table class="kv"><tbody>${clockRows}</tbody></table>
+
+  <h2>Case assignment</h2>
+  <table class="kv"><tbody>${assignmentRows}</tbody></table>
+
+  <h2>BenefitsCal autofill (extension bridge)</h2>
+  <p class="meta">${portalState} · ${app.portal.docCount} document(s) ready</p>
+  <table class="kv"><tbody>${portalRows || '<tr><td>No fields mapped yet.</td></tr>'}</tbody></table>
+
+  <h2>Navigator flags</h2>
+  ${flagsHtml}
+
+  <h2>Comments (${app.comments.length})</h2>
+  ${commentsHtml}
+
+  <h2>Processing steps (${app.completedSteps}/${TOTAL_STEPS} · ${pct}%)</h2>
+  <ul class="steps">${stepsHtml}</ul>
+
   <h2>Activity log (${app.activity.length})</h2>
   <table class="log"><tbody>${activityHtml}</tbody></table>
 
@@ -535,6 +628,22 @@ function openFullApplication(app: CaseRecord): void {
 <\/body><\/html>`);
   w.document.close();
 }
+
+// The at-a-glance subset shown by default — the fields a navigator actually
+// triages on. The full ~44-question intake stays one click away ("Show all" or
+// the "Open full application" page), so the expanded row isn't a wall of fields.
+const SUMMARY_QUESTIONS = [
+  "Household size",
+  "Anyone 60+ or disabled?",
+  "Citizenship / immigration status",
+  "Employment status",
+  "Gross monthly income",
+  "Monthly rent",
+  "Monthly utilities",
+  "Countable assets (cash + bank)",
+  "Work registration / ABAWD",
+  "Social Security Number",
+] as const;
 
 // Full application responses for the expanded case. Renders the complete intake
 // as a per-section ruled table (Field | Response). Editing is a single batch
@@ -550,6 +659,7 @@ function AnswerList({
   onSave?: (changes: { question: string; from: string; to: string }[]) => void;
 }) {
   const [editing, setEditing] = useState(false);
+  const [showAll, setShowAll] = useState(false);
   const [drafts, setDrafts] = useState<Record<string, string>>({});
   const [viewDoc, setViewDoc] = useState<string | null>(null);
   const [openDocs, setOpenDocs] = useState<Set<string>>(new Set());
@@ -594,6 +704,12 @@ function AnswerList({
     else sections.push({ section: a.section, items: [a] });
   }
 
+  // Default (collapsed) view shows only the triage-relevant fields; "Show all" or
+  // edit mode reveals the full per-section grid.
+  const byQuestion = new Map(answers.map((a) => [a.question, a]));
+  const summary = SUMMARY_QUESTIONS.map((q) => byQuestion.get(q)).filter((a): a is SurveyAnswer => Boolean(a));
+  const full = editing || showAll;
+
   return (
     <div>
       <div className="flex items-baseline justify-between gap-3 mb-3">
@@ -617,7 +733,15 @@ function AnswerList({
           </div>
         ) : (
           <div className="flex items-center gap-3 shrink-0">
-            <span className="text-[11px] tabular-nums text-graphite">{answers.length} answers</span>
+            <button
+              type="button"
+              onClick={() => setShowAll((v) => !v)}
+              aria-expanded={showAll}
+              className="inline-flex items-center gap-1 text-[11px] font-medium text-pine hover:underline"
+            >
+              {showAll ? "Show key fields" : `Show all ${answers.length} responses`}
+              <span aria-hidden="true" className="text-graphite">{showAll ? "▴" : "▾"}</span>
+            </button>
             <button
               type="button"
               onClick={startEdit}
@@ -632,16 +756,45 @@ function AnswerList({
         )}
       </div>
 
-      {/* Each section is a ruled mini-table: a tinted label column + a value
-          column, horizontal rule per row + vertical rule between columns — a
-          spreadsheet grid so the eye tracks rows/columns without floating.
-          Laid out two-up to keep label adjacent to its value. */}
-      <div className="grid md:grid-cols-2 gap-3 items-start">
+      {/* Collapsed default — only the triage-relevant fields, one tidy table. */}
+      {!full && (
+        <div className="border border-hairline rounded-[2px] overflow-hidden bg-surface">
+          <table className="w-full border-collapse text-[12px]">
+            <tbody>
+              {summary.map((a) => (
+                <tr key={a.question} className="border-b border-hairline last:border-b-0">
+                  <th
+                    scope="row"
+                    className="w-[42%] align-top text-left font-normal text-graphite leading-snug px-3 py-1.5 border-r border-hairline"
+                  >
+                    {a.question}
+                  </th>
+                  <td className="align-top px-3 py-1.5">
+                    <span className={`font-medium leading-snug break-words ${a.flagged ? "text-brick" : "text-ink"}`}>
+                      {current(a)}
+                      {a.flagged && <span className="ml-1 text-[11px]" aria-label="flagged">⚑</span>}
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <p className="px-3 py-1.5 text-[11px] text-graphite border-t border-hairline">
+            Showing {summary.length} key fields of {answers.length}. Use “Show all” above or open the full application for the rest.
+          </p>
+        </div>
+      )}
+
+      {/* Full per-section grid. Masonry columns (not a row grid) so a short card
+          like Residence or Resources doesn't leave a tall gap beside a long one.
+          Each section is a ruled mini-table: label column + value column. */}
+      {full && (
+      <div className="gap-3 md:columns-2">
         {sections.map((group) => (
           <div
             key={group.section}
             id={sectionDomId(caseId, group.section)}
-            className="border border-hairline rounded-[2px] overflow-hidden bg-surface"
+            className="mb-3 break-inside-avoid border border-hairline rounded-[2px] overflow-hidden bg-surface"
             style={{ outline: "2px solid transparent", outlineOffset: 2 }}
           >
             <div className="px-3 py-2 border-b border-hairline">
@@ -758,6 +911,7 @@ function AnswerList({
           </div>
         ))}
       </div>
+      )}
 
       {viewDoc && (
         <div
