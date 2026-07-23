@@ -40,6 +40,7 @@ const KNOWN_EXTRA: Set<string> = new Set([
   "7 CFR 274",
   "ACL 25-68",
   "ACL 25-93",
+  "ACL 21-58", // verification "questionable" standard — cited by the retrieval.ts A2 supplement
   "ACIN I-46-25",
   "PUB L 119-21", // OBBBA / H.R.1
   "OBBBA",

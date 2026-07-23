@@ -1,0 +1,37 @@
+// @vitest-environment node
+// Regression guard (FOIA 2026-07-23, backlog task D2): Mae must NOT coach a
+// caseworker into over-verification — the single most common documented CalFresh
+// error (CDSS Management Evaluation reviews, 37/38 counties). We can't run the LLM
+// offline, so we pin the two things that make the wrong answer structurally hard:
+//   (1) the verification-limits supplement (7 CFR 273.2(f); ACL 21-58) is the TOP
+//       retrieved authority for the over-verification fact-patterns, and
+//   (2) the system prompt carries the "verify for correctness, not volume" guardrail.
+import { describe, it, expect } from "vitest";
+import { retrieve } from "../retrieval";
+import { MAE_SYSTEM_PROMPT } from "../system-prompt";
+
+// The fact-patterns from the ME denial narratives that tempt a "request more /
+// just to be safe" answer.
+const TRAP_QUESTIONS = [
+  "They already gave me pay stubs — should I request them again just to be safe?",
+  "Can I deny for failure to provide verification the household already provided?",
+  "Should I ask the household for income proof before I check The Work Number?",
+  "To be thorough, should I verify the rent even though nothing about it is questionable?",
+  "The document is already on file — can I require a fresh copy anyway?",
+];
+
+describe("Mae over-verification guardrail (D2 regression)", { timeout: 60_000 }, () => {
+  it("surfaces the verification-limits (ACL 21-58) supplement as the TOP authority for over-verification traps", async () => {
+    for (const q of TRAP_QUESTIONS) {
+      const top = (await retrieve(q, { k: 1 }))[0];
+      expect(top?.citation, `top authority for: ${q}`).toContain("273.2(f)");
+      expect(top?.citation, `over-verification cite for: ${q}`).toContain("ACL 21-58");
+    }
+  });
+
+  it("the system prompt tells Mae to verify for correctness, not volume", () => {
+    const p = MAE_SYSTEM_PROMPT.toLowerCase();
+    expect(p).toContain("over-verification");
+    expect(p).toContain("not for volume");
+  });
+});

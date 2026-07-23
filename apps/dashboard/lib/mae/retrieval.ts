@@ -137,6 +137,51 @@ const EXTERNAL_TOPICS: ExternalTopic[] = [
   },
 ];
 
+// Civica-curated CURRENT-RULE supplements. Unlike EXTERNAL_TOPICS (which redirect
+// AWAY from the USDA corpus), these SUPPLEMENT the eCFR text with post-OBBBA
+// current rules and California operational guidance the raw regulation lacks. They
+// lead the results (like the curated externals) so Mae sees the current rule
+// first, while the eCFR section — and any SUPERSEDED warning — still follows.
+// Sourced from the 2026-07-23 CDSS/LA County FOIA production (see repo
+// FOIA_DATA_AUDIT_2026-07-23.md + docs/plans/mae-foia-training-tasks.md, tasks A1/A2).
+const CURATED_SUPPLEMENTS: ExternalTopic[] = [
+  {
+    // A1 — ABAWD current rules (post H.R.1 / OBBBA §10102). The eCFR 273.24 text is
+    // stale (see OBBBA_SUPERSEDED); this injects the CURRENT spec. The citation keeps
+    // "273.24" so section routing + retrieval tests still resolve to the ABAWD section.
+    terms: [
+      "abawd", "able-bodied", "able bodied", "time limit", "three months", "three-month",
+      "3 months", "80 hours", "eighty hours", "work requirement", "work requirements",
+      "18 to 64", "55 to 64", "60 to 64", "aged out", "work-requirement exemption",
+      "abawd exemption", "lose snap after", "lose benefits after",
+    ],
+    curated: curatedAuthority(
+      "7 CFR 273.24 (ABAWD) — CURRENT rules per H.R.1 / OBBBA §10102 (Pub. L. 119-21); CDSS ACL 25-93",
+      "ABAWD time limit — CURRENT rules (post-OBBBA), California",
+      "The ABAWD time limit (3 countable months of SNAP in any 36-month period unless meeting the work rule) now applies to adults 18 through 64 — subject the month after turning 18, no longer subject the first of the month after turning 65. Work rule: 80 hours/month (~20/week) of work, approved E&T, community service/volunteering, or workfare (workfare hours = the household's monthly allotment ÷ the local minimum wage). CURRENT ABAWD time-limit exemptions and how to verify each: (1) exempt from work registration [MPP 63-407] — no separate proof; (2) under 18 or over 64 — date of birth; (3) medically certified physically/mentally unfit — receipt of or pending application for a disability benefit (SSI/SSDI/VA/workers' comp), or 'obviously unfit' documented by worker observation + case notes, or form CF 887; (4) responsible for a dependent CHILD UNDER 14 (narrowed by OBBBA from under 18); (5) pregnant — client statement is sufficient; (6) participating at least half-time in an Office of Refugee Resettlement (ORR) training program; (7) an Indian, Urban Indian, or California Indian eligible for Indian Health Service — NEW under OBBBA (verification pending final FNS guidance). ELIMINATED by OBBBA (no longer exemptions): veterans, people experiencing homelessness, and former foster youth. CALIFORNIA timing: statewide ABAWD screening BEGINS 2026-06-01 (per CDSS ACL 25-93) — this is the operative date, NOT the 2025-07-04 federal signing; the prior statewide waiver expired 2026-01-31 and only a few counties still hold a waiver, so confirm the specific county. Required forms: CF 886 (CalFresh Notice of Work Rules — a verbal explanation AND the written notice must be given before the time limit is applied) and CF 377.11E (ABAWD exemption screening). Some specifics (tribal-exemption and child-under-14 verification) remain pending FNS guidance — treat them as pending, not settled. Confirm the current FNS ABAWD memo, CDSS ACL, and the county waiver status for any individual case.",
+      "https://www.ecfr.gov/current/title-7/section-273.24",
+    ),
+  },
+  {
+    // A2 — verification limits / anti-over-verification. Triggers are narrow (the
+    // over-verification fact pattern) so generic "what documents do I need" questions
+    // still route to the plain 273.2(f) corpus chunk instead of this supplement.
+    terms: [
+      "already provided", "already sent", "already submitted", "already gave", "already on file",
+      "on file", "already have it", "request again", "request them again", "re-request", "rerequest",
+      "ask again", "over-verify", "over verify", "over-verification", "over verification",
+      "unnecessary verification", "redundant verification", "not questionable", "isn't questionable",
+      "questionable", "failure to provide", "the work number", "work number", "twn",
+    ],
+    curated: curatedAuthority(
+      "7 CFR 273.2(f)(1)-(2), (f)(4) — verification limits; CDSS ACL 21-58",
+      "Verification limits — do not over-verify",
+      "The single most common documented CalFresh error (CDSS Management Evaluation reviews, 2024-2025, present in 37 of 38 counties) is OVER-VERIFICATION: requesting verification the household already provided, or that is not required and not questionable. Rules: verify only what is REQUIRED (income, ineligible-noncitizen status, disability claimed for a deduction, and the other mandatory items) OR what is QUESTIONABLE — inconsistent with other statements or known facts — and when you treat something as questionable the case record must document WHY (7 CFR 273.2(f)(1)-(2); California MPP 63-300, ACL 21-58). Use data already available BEFORE asking the household — e.g. check The Work Number (TWN) for employer-reported wages before requesting pay stubs. Never re-request a document already in the case file, and never deny for 'failure to provide' verification the household in fact provided. Give the household a written request and at least 10 days to respond (7 CFR 273.2(f)(5)); do not hold up an expedited-service household for non-required verification (273.2(i)). Over-verification both inflates the payment/procedural error rate and wrongly denies eligible households — verify for correctness, not for volume.",
+      "https://www.ecfr.gov/current/title-7/section-273.2",
+    ),
+  },
+];
+
 const STOPWORDS = new Set([
   "the", "and", "for", "are", "what", "when", "how", "does", "can", "with", "that", "this",
   "from", "have", "has", "who", "whom", "which", "into", "about", "would", "should", "could",
@@ -239,7 +284,7 @@ export async function retrieve(query: string, opts: RetrieveOptions = {}): Promi
   // these return the correct cite — or nothing — instead of a wrong 7 CFR hit.
   const curated: RegChunk[] = [];
   const suppressed = new Set<string>();
-  for (const topic of EXTERNAL_TOPICS) {
+  for (const topic of [...EXTERNAL_TOPICS, ...CURATED_SUPPLEMENTS]) {
     if (topic.terms.some((t) => queryHasTerm(words, normalized, t))) {
       if (topic.curated) curated.push(topic.curated);
       for (const s of topic.suppressSections ?? []) suppressed.add(s);

@@ -33,4 +33,17 @@ describe("Mae system prompt", () => {
     expect(MAE_DISCLAIMER.length).toBeGreaterThan(40);
     expect(MAE_DISCLAIMER.toLowerCase()).toContain("verify");
   });
+
+  // FOIA-2026-07-23 training: the documented-error guardrail (B1) + CA ABAWD
+  // specifics (B2). If an edit drops these, the coaching behavior regresses.
+  it("carries the documented-error (over-verification) guardrail", () => {
+    expect(MAE_SYSTEM_PROMPT.toLowerCase()).toContain("over-verification");
+    expect(MAE_SYSTEM_PROMPT).toContain("ACL 21-58");
+  });
+
+  it("states the California ABAWD effective date and operative forms", () => {
+    expect(MAE_SYSTEM_PROMPT).toContain("2026-06-01");
+    expect(MAE_SYSTEM_PROMPT).toContain("CF 886");
+    expect(MAE_SYSTEM_PROMPT.toLowerCase()).toContain("pending fns guidance");
+  });
 });

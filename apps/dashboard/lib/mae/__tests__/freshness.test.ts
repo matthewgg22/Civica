@@ -36,4 +36,11 @@ describe("Mae freshness monitoring", () => {
     expect(stale).toContain("Sources as of");
     expect(stale).toContain("⚠️");
   });
+
+  it("warns before 2026-06-01 that CA ABAWD screening is not yet in effect, and is silent after", () => {
+    const before = assessFreshness(new Date("2026-05-15T00:00:00Z"), CORPUS);
+    expect(before.warnings.join(" ")).toMatch(/ABAWD time-limit screening does not begin/i);
+    const after = assessFreshness(new Date("2026-06-15T00:00:00Z"), CORPUS);
+    expect(after.warnings.join(" ")).not.toMatch(/does not begin/i);
+  });
 });
