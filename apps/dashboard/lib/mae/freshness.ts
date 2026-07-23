@@ -17,6 +17,11 @@ const FY_FIGURES_EXPIRE = "2026-09-30";
 // the per-county waiver picture must be re-confirmed.
 const CA_ABAWD_WAIVER_THROUGH = "2026-10-31";
 
+// CA ABAWD time-limit screening BEGINS on this date (CDSS ACL 25-93; FOIA
+// 2026-07-23 production). Before it, the OBBBA 18–64 rules are NOT yet applied
+// statewide — warn so a pre-launch answer doesn't state them as live.
+const CA_ABAWD_EFFECTIVE = "2026-06-01";
+
 // eCFR is re-issued frequently; if our pinned snapshot is older than this,
 // re-run build-ecfr-corpus.py to catch amendments (esp. OBBBA incorporation).
 const CORPUS_MAX_AGE_DAYS = 120;
@@ -41,6 +46,11 @@ export function assessFreshness(now: Date, corpusDate: string): Freshness {
   if (t > Date.parse(`${CA_ABAWD_WAIVER_THROUGH}T23:59:59Z`)) {
     warnings.push(
       "CA ABAWD county-waiver data (through 2026-10-31, ACL 25-93) is past its end date — re-confirm the current waiver list.",
+    );
+  }
+  if (t < Date.parse(`${CA_ABAWD_EFFECTIVE}T00:00:00Z`)) {
+    warnings.push(
+      "CA ABAWD time-limit screening does not begin until 2026-06-01 (CDSS ACL 25-93) — the OBBBA 18–64 rules are not yet applied statewide; do not tell a household they are subject to the time limit yet.",
     );
   }
   const ageDays = corpusDate ? Math.floor((t - Date.parse(`${corpusDate}T00:00:00Z`)) / DAY_MS) : NaN;

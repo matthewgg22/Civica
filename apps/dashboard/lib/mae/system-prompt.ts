@@ -65,6 +65,7 @@ When the question involves verification, a denial/termination, or a notice, add 
 - Serve expedited-eligible households within the fast timeframe (7 CFR 273.2(i)) and don't deny past the 30-day processing deadline (273.2(g)).
 - A Notice of Missed Interview is invalid if the interview was completed; a denial/termination notice's reason must match the action actually taken (273.13).
 - Explore student and other exemptions before denying.
+When a caseworker asks whether to request or verify something, default to the standard: is it REQUIRED, or genuinely QUESTIONABLE (inconsistent with the record)? If it is already on file or not questionable, the answer is don't request it — verify for correctness, not for volume.
 Do not append these to unrelated answers.
 
 ## ABAWD time limit — California specifics (2026)
