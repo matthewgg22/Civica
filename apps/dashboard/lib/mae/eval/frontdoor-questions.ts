@@ -72,4 +72,21 @@ export const FRONTDOOR_EVAL: FrontDoorCase[] = [
   { id: "keep-notice", category: "Keeping benefits", question: "I got a confusing notice and my benefits dropped — what happened?", expect: { kind: "grounded", section: "273.13" } },
   { id: "keep-recert", category: "Keeping benefits", question: "When do I have to recertify, and what happens if I miss it?", expect: { kind: "grounded", section: "273.14" } },
   { id: "keep-ebt", category: "Keeping benefits", question: "My EBT card or balance has a problem — who do I call?", expect: { kind: "external", citation: "EBT" } },
+
+  // ── Caseworker error-avoidance (from CDSS ME reports, FOIA 2026-07-23) ──────
+  // The most common documented CalFresh errors, turned into questions so we can
+  // measure that Mae surfaces the right authority (esp. the anti-over-verification
+  // supplement) instead of coaching the caseworker into the documented mistake.
+  { id: "err-oververify-onfile", category: "Error-avoidance", question: "The household already submitted pay stubs last week — do I need to request them again?", expect: { kind: "external", citation: "273.2(f)" } },
+  { id: "err-failure-to-provide", category: "Error-avoidance", question: "Can I deny for failure to provide verification the household already provided?", expect: { kind: "external", citation: "273.2(f)" } },
+  { id: "err-twn-first", category: "Error-avoidance", question: "Should I ask the household for income proof before I check The Work Number?", expect: { kind: "external", citation: "273.2(f)" } },
+  { id: "err-not-questionable", category: "Error-avoidance", question: "Do I have to verify something that isn't required and isn't questionable?", expect: { kind: "external", citation: "273.2(f)" } },
+  { id: "err-expedited-timeframe", category: "Error-avoidance", question: "The applicant qualifies for expedited service — what's my timeframe to act?", expect: { kind: "grounded", section: "273.2" } },
+  { id: "err-30day-deny", category: "Error-avoidance", question: "The application is past the 30-day mark — can I still deny it for a missing document?", expect: { kind: "grounded", section: "273.2" } },
+  { id: "err-nomi-valid", category: "Error-avoidance", question: "The client completed their interview but a Notice of Missed Interview still went out — is that valid?", expect: { kind: "grounded", section: "273.2" } },
+  { id: "err-student-exempt", category: "Error-avoidance", question: "The application was denied without exploring the student eligibility exemptions — is that an error?", expect: { kind: "grounded", section: "273.5" } },
+  { id: "err-noa-reason-mismatch", category: "Error-avoidance", question: "The client got a confusing adverse-action notice whose stated reason doesn't match what actually happened — what governs the notice?", expect: { kind: "grounded", section: "273.13" } },
+  { id: "err-address-report", category: "Error-avoidance", question: "The household reported a change of address — what changes must I act on and when?", expect: { kind: "grounded", section: "273.12" } },
+  { id: "err-denied-cooperate", category: "Error-avoidance", question: "My client was denied for failure to cooperate but sent everything — how do they challenge it?", expect: { kind: "grounded", section: "273.15" } },
+  { id: "err-restore-wrongful", category: "Error-avoidance", question: "A household was wrongly denied and lost a month of benefits — can those be restored?", expect: { kind: "grounded", section: "273.17" } },
 ];
