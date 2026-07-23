@@ -11,7 +11,9 @@
 >
 > ⚠️ **Not engine math** — Mae produces guidance text, never a determination (see the header of `system-prompt.ts`). These tasks do **not** touch `packages/snap-rules/` and are **not** subject to the engine-math "file an issue first" rule.
 
-**P0 tasks filed as GitHub issues (2026-07-23):** A1 → [#576](https://github.com/matthewgg22/Civica/issues/576) · A2 → [#577](https://github.com/matthewgg22/Civica/issues/577) · B1 → [#578](https://github.com/matthewgg22/Civica/issues/578) · B2 → [#579](https://github.com/matthewgg22/Civica/issues/579) · C1 → [#580](https://github.com/matthewgg22/Civica/issues/580). P1/P2 remain in this doc until scheduled.
+**P0 tasks filed as GitHub issues (2026-07-23):** A1 → [#576](https://github.com/matthewgg22/Civica/issues/576) · A2 → [#577](https://github.com/matthewgg22/Civica/issues/577) · B1 → [#578](https://github.com/matthewgg22/Civica/issues/578) · B2 → [#579](https://github.com/matthewgg22/Civica/issues/579) · C1 → [#580](https://github.com/matthewgg22/Civica/issues/580).
+
+**Status (2026-07-23):** ✅ **P0 + P1 shipped in [PR #581](https://github.com/matthewgg22/Civica/pull/581).** P1 = B3 (correctness-not-burden ethos), A4 (CA-ABAWD freshness) + D1 (ACL 21-58 recognized), C2 (ABAWD-2026 eval), C3 + D2 (adversarial over-verification eval + regression), E1 (finding `2026-07-23-procedural-over-verification-dominant`). **Remaining P2:** A3 (Texas multi-state ABAWD corpus), E2 (county-specific coaching, sample-size-gated).
 
 ---
 
