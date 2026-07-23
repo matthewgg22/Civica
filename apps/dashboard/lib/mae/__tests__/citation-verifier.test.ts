@@ -39,4 +39,11 @@ describe("Mae citation verifier", () => {
     expect(trailer).toContain("✓");
     expect(trailer).toContain("◑");
   });
+
+  it("recognizes ACL 21-58 (the verification-limits supplement's cite), not 'unrecognized'", () => {
+    const byCite = Object.fromEntries(
+      verifyCitations("Only verify what is required or questionable — CDSS ACL 21-58.", []).map((c) => [c.citation, c.status]),
+    );
+    expect(byCite["ACL 21-58"]).toBe("known");
+  });
 });

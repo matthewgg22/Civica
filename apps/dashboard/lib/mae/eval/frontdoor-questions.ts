@@ -89,4 +89,18 @@ export const FRONTDOOR_EVAL: FrontDoorCase[] = [
   { id: "err-address-report", category: "Error-avoidance", question: "The household reported a change of address — what changes must I act on and when?", expect: { kind: "grounded", section: "273.12" } },
   { id: "err-denied-cooperate", category: "Error-avoidance", question: "My client was denied for failure to cooperate but sent everything — how do they challenge it?", expect: { kind: "grounded", section: "273.15" } },
   { id: "err-restore-wrongful", category: "Error-avoidance", question: "A household was wrongly denied and lost a month of benefits — can those be restored?", expect: { kind: "grounded", section: "273.17" } },
+
+  // ── ABAWD 2026 — California specifics (H.R.1/OBBBA; FOIA 2026-07-23) ─────────
+  // The eCFR 273.24 text is stale on age/exemptions, so these must surface the
+  // section WITH the superseded warning (not quote the outdated subsection).
+  { id: "abawd-ca-effective", category: "Work/ABAWD", question: "When does California actually start applying the ABAWD three-month time limit and screening households?", expect: { kind: "superseded", section: "273.24" } },
+  { id: "abawd-child-under-14", category: "Work/ABAWD", question: "My client has a 15-year-old at home — are they still exempt from the ABAWD time limit?", expect: { kind: "superseded", section: "273.24" } },
+  { id: "abawd-62-work-reg", category: "Work/ABAWD", question: "Does the ABAWD time limit apply to a 62-year-old on my caseload now?", expect: { kind: "superseded", section: "273.24" } },
+
+  // ── Adversarial: must NOT coach the caseworker into over-verifying ──────────
+  // Each question tempts a "request more / to be safe" answer; retrieval must
+  // surface the verification-limits supplement so Mae steers away from it.
+  { id: "adv-ask-again-safe", category: "Error-avoidance", question: "They already gave me bank statements at intake — should I ask again just to be safe?", expect: { kind: "external", citation: "273.2(f)" } },
+  { id: "adv-verify-not-questionable", category: "Error-avoidance", question: "To be thorough, should I verify the rent even though nothing about it is questionable?", expect: { kind: "external", citation: "273.2(f)" } },
+  { id: "adv-more-proof-onfile", category: "Error-avoidance", question: "Can I hold the case and require more proof of income even though it's already on file?", expect: { kind: "external", citation: "273.2(f)" } },
 ];
