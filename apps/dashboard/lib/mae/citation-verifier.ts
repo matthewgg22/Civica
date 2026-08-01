@@ -40,15 +40,53 @@ const KNOWN_EXTRA: Set<string> = new Set([
   "7 CFR 274",
   "ACL 25-68",
   "ACL 25-93",
-  "ACL 21-58", // verification "questionable" standard — cited by the retrieval.ts A2 supplement
   "ACIN I-46-25",
+  // Verification-limits cluster — the authorities CDSS Management Evaluation reviewers
+  // actually cite when marking over-verification errors (FOIA 2026-07-23 ME corpus).
+  // NOTE: ACL 21-58 was previously listed here as "the" over-verification authority; the
+  // ME corpus shows it appearing once, on a STUDENT-EXEMPTION finding — it is kept below
+  // under its real subject, not as the verification cite.
+  "ACL 20-48", // verification limits; last-30-days income window
+  "ACL 21-24", // don't limit the household to one verification type
+  "ACIN I-45-11", // verification standards
+  "ACL 23-53", // The Work Number — confirm with household before use
+  "ACL 16-14", // expedited service
+  "ACL 14-20", // interview contact attempts
+  "ACL 17-80", // interview method preference
+  "ACL 20-135", // student exemptions / verification limits
+  "ACL 21-58", // student eligibility exemptions must be explored
+  "ACL 22-74", // consolidated work-rules notice (CF 886) + oral explanation
+  "ACIN I-33-21", // NOA reason accuracy
+  "ACIN I-14-11", // expedited service
   "PUB L 119-21", // OBBBA / H.R.1
   "OBBBA",
   "FNA", // Food and Nutrition Act
 ]);
 
+// California Manual of Policies and Procedures sections Mae may legitimately cite.
+// Matched at SECTION granularity (e.g. "MPP 63-300.5(j)" → "MPP 63-300").
+const KNOWN_MPP: Set<string> = new Set([
+  "MPP 63-300", // application / verification — the most-cited authority in the ME corpus
+  "MPP 63-301", // eligibility determinations
+  "MPP 63-402", // authorized representatives
+  "MPP 63-407", // work registration
+  "MPP 63-410", // ABAWD
+  "MPP 63-502", // issuance
+  "MPP 63-503", // issuance / BDA
+  "MPP 63-504", // notices of action / denial timing
+  "MPP 63-508", // SAR 7 / NA 960X
+  "MPP 63-201", // office access
+  "MPP 63-202", // language access
+  "MPP 20-006", // IEVS
+  "MPP 19-002", // identity / PII confirmation
+  "MPP 21-115", // written-language preference
+  "MPP 11-601", // drop boxes
+]);
+
 const CFR_RE = /\b(\d+)\s*CFR\s*(\d+\.\d+(?:\([a-z0-9]+\))*)/gi;
 const ACL_RE = /\bAC(L|IN)\s+([A-Z]?-?\d{1,3}-\d{2,3})/gi;
+// CDSS Manual of Policies and Procedures, e.g. "MPP 63-300", "MPP 63-300.5(j)".
+const MPP_RE = /\bMPP\s+(\d{2}-\d{3}(?:\.\d+)?(?:\([a-z0-9]+\))*)/gi;
 const STATUTE_RE = /\b(Pub\.?\s*L\.?\s*(?:No\.?\s*)?119-21|P\.?L\.?\s*119-21|OBBBA|Food and Nutrition Act|\bFNA\b)/gi;
 
 /** Two citations share a subsection lineage if one contains the other — Mae may
@@ -63,6 +101,7 @@ export function extractCitations(text: string): string[] {
   const out = new Set<string>();
   for (const m of text.matchAll(CFR_RE)) out.add(`${m[1]} CFR ${m[2]}`);
   for (const m of text.matchAll(ACL_RE)) out.add(`AC${m[1].toUpperCase()} ${m[2].toUpperCase()}`);
+  for (const m of text.matchAll(MPP_RE)) out.add(`MPP ${m[1]}`);
   for (const m of text.matchAll(STATUTE_RE)) {
     const t = m[0].toUpperCase();
     if (t.includes("119-21") || t.includes("OBBBA")) out.add("Pub. L. 119-21");
@@ -91,6 +130,11 @@ export function verifyCitations(answer: string, retrievedCitations: string[]): C
     }
     if (/^AC/i.test(citation)) {
       return { citation, status: KNOWN_EXTRA.has(citation) ? "known" : "unrecognized" };
+    }
+    if (/^MPP/i.test(citation)) {
+      // Match at section granularity so "MPP 63-300.5(j)" resolves to "MPP 63-300".
+      const section = `MPP ${citation.split(/\s+/)[1].split(/[.(]/)[0]}`;
+      return { citation, status: KNOWN_MPP.has(section) ? "known" : "unrecognized" };
     }
     // statute
     return { citation, status: KNOWN_EXTRA.has(statuteKey(citation)) ? "known" : "unrecognized" };
