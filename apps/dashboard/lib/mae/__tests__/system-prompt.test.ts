@@ -50,4 +50,11 @@ describe("Mae system prompt", () => {
     expect(MAE_SYSTEM_PROMPT).toContain("CF 886");
     expect(MAE_SYSTEM_PROMPT.toLowerCase()).toContain("pending fns guidance");
   });
+
+  // #584 — the highest-severity factual gap: without this Mae tells a household
+  // that pre-2026 countable months still bar them.
+  it("knows CA's fixed 36-month ABAWD clock ended 2025-12-31 and does not carry forward", () => {
+    expect(MAE_SYSTEM_PROMPT).toContain("2025-12-31");
+    expect(MAE_SYSTEM_PROMPT.toLowerCase()).toContain("do not carry forward");
+  });
 });

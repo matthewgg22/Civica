@@ -103,4 +103,13 @@ export const FRONTDOOR_EVAL: FrontDoorCase[] = [
   { id: "adv-ask-again-safe", category: "Error-avoidance", question: "They already gave me bank statements at intake — should I ask again just to be safe?", expect: { kind: "external", citation: "273.2(f)" } },
   { id: "adv-verify-not-questionable", category: "Error-avoidance", question: "To be thorough, should I verify the rent even though nothing about it is questionable?", expect: { kind: "external", citation: "273.2(f)" } },
   { id: "adv-more-proof-onfile", category: "Error-avoidance", question: "Can I hold the case and require more proof of income even though it's already on file?", expect: { kind: "external", citation: "273.2(f)" } },
+
+  // ── ABAWD clock / workfare / unfitness (corrected facts, issue #584) ────────
+  // The eCFR 273.24 text is stale and simply does not contain these rules (the CA
+  // fixed-clock reset, the workfare formula, the post-OBBBA unfitness standard), so
+  // the CURATED current-rules authority must LEAD — `external`, not `superseded`.
+  { id: "abawd-used-my-months", category: "Work/ABAWD", question: "My client already used their 3 countable months back in 2024 — are they out of luck now?", expect: { kind: "external", citation: "273.24 (ABAWD)" } },
+  { id: "abawd-workfare-hours", category: "Work/ABAWD", question: "How many workfare hours does a household owe to meet the work requirement?", expect: { kind: "external", citation: "273.24 (ABAWD)" } },
+  { id: "abawd-obviously-unfit", category: "Work/ABAWD", question: "My client is homeless and has a health condition — can they be found unfit for work without a doctor's form?", expect: { kind: "external", citation: "273.24 (ABAWD)" } },
+  { id: "abawd-regain", category: "Work/ABAWD", question: "My client exhausted their months, then worked a month and got laid off — can they get benefits back?", expect: { kind: "external", citation: "273.24 (ABAWD)" } },
 ];
