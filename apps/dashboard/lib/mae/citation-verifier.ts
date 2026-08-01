@@ -83,10 +83,18 @@ const KNOWN_MPP: Set<string> = new Set([
   "MPP 11-601", // drop boxes
 ]);
 
+// FNS handbooks Mae may legitimately cite. 310 = QC Review (the negative-action
+// validity standard + the FNS-380 element codes); 311 = QC Sampling.
+const KNOWN_HANDBOOKS: Set<string> = new Set(["310", "311"]);
+
 const CFR_RE = /\b(\d+)\s*CFR\s*(\d+\.\d+(?:\([a-z0-9]+\))*)/gi;
 const ACL_RE = /\bAC(L|IN)\s+([A-Z]?-?\d{1,3}-\d{2,3})/gi;
 // CDSS Manual of Policies and Procedures, e.g. "MPP 63-300", "MPP 63-300.5(j)".
 const MPP_RE = /\bMPP\s+(\d{2}-\d{3}(?:\.\d+)?(?:\([a-z0-9]+\))*)/gi;
+// FNS Handbook 310 (QC Review) / 311 (QC Sampling), optionally with a section:
+// "FNS Handbook 310", "FNS Handbook 310 §1350.2". Matched at HANDBOOK
+// granularity — the section is captured for display but not separately verified.
+const HANDBOOK_RE = /\bFNS\s+Handbook\s+(3\d{2})(?:\s*(?:§|section)\s*([\d.]+))?/gi;
 const STATUTE_RE = /\b(Pub\.?\s*L\.?\s*(?:No\.?\s*)?119-21|P\.?L\.?\s*119-21|OBBBA|Food and Nutrition Act|\bFNA\b)/gi;
 
 /** Two citations share a subsection lineage if one contains the other — Mae may
@@ -102,6 +110,9 @@ export function extractCitations(text: string): string[] {
   for (const m of text.matchAll(CFR_RE)) out.add(`${m[1]} CFR ${m[2]}`);
   for (const m of text.matchAll(ACL_RE)) out.add(`AC${m[1].toUpperCase()} ${m[2].toUpperCase()}`);
   for (const m of text.matchAll(MPP_RE)) out.add(`MPP ${m[1]}`);
+  for (const m of text.matchAll(HANDBOOK_RE)) {
+    out.add(m[2] ? `FNS Handbook ${m[1]} §${m[2]}` : `FNS Handbook ${m[1]}`);
+  }
   for (const m of text.matchAll(STATUTE_RE)) {
     const t = m[0].toUpperCase();
     if (t.includes("119-21") || t.includes("OBBBA")) out.add("Pub. L. 119-21");
@@ -130,6 +141,10 @@ export function verifyCitations(answer: string, retrievedCitations: string[]): C
     }
     if (/^AC/i.test(citation)) {
       return { citation, status: KNOWN_EXTRA.has(citation) ? "known" : "unrecognized" };
+    }
+    if (/^FNS Handbook/i.test(citation)) {
+      const num = citation.match(/(3\d{2})/)?.[1] ?? "";
+      return { citation, status: KNOWN_HANDBOOKS.has(num) ? "known" : "unrecognized" };
     }
     if (/^MPP/i.test(citation)) {
       // Match at section granularity so "MPP 63-300.5(j)" resolves to "MPP 63-300".

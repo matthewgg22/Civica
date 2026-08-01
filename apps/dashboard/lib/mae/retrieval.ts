@@ -184,6 +184,64 @@ const CURATED_SUPPLEMENTS: ExternalTopic[] = [
       "https://www.ecfr.gov/current/title-7/section-273.2",
     ),
   },
+  {
+    // A5 — CF 886 decoder. When a household says "I got this form", Mae should be
+    // able to read it back to them. The eCFR has nothing about a California
+    // county form, so this is the only place the content can come from.
+    // Source: R012680 CF 886 (rev 8/25) + the CDSS ABAWD policy deck.
+    terms: [
+      "cf 886", "cf886", "notice of work rules", "work rules notice", "work rules letter",
+      "got this form", "got this notice", "this form in the mail", "cf 377.11e", "377.11e",
+      "work rule sanction", "disqualified from work rules", "how long am i disqualified",
+      // Sanction-length questions: the CF 886 ladder (1/3/6 months) is the right
+      // answer, and 273.16 (intentional program violation — 12mo/24mo/permanent)
+      // is a materially WRONG one. Scoped to work-rules phrasing so genuine IPV
+      // questions still route to 273.16.
+      "general work rules", "failed the work rules", "work rule disqualification",
+    ],
+    curated: curatedAuthority(
+      "CF 886 (CalFresh Notice of Work Rules, rev. 8/25); CDSS ACL 22-74",
+      "CF 886 — what the work-rules notice actually says",
+      "The CF 886 is the CalFresh Notice of Work Rules. It is INFORMATIONAL, not a sanction: it opens 'This letter is to tell you about the CalFresh work rules. If you don't follow these rules, your household's CalFresh benefits may decrease or stop.' It is issued to ALL household members — including exempt ones — at application, at recertification, and whenever a work requirement is newly imposed, and the county must ALSO give a verbal explanation (ACL 22-74). Receiving it does not mean the person is out of compliance. HOW TO READ IT: it has TWO sections with fill-in-the-blank personalization. Section 1 = the general work rules (work registration, ages 16-59); Section 2 = the ABAWD time limit. Each section has its OWN excused line, and the section qualifier matters — being excused from one does not excuse the other. Section 1 reads '____, you are excused from the general work rules because you are ____'; Section 2 reads '____, you are excused from ABAWD work requirement because you are ____'. The person's own name may appear on an excused line, so read the blanks before assuming anything. Section 2 opens with a bold 'IMPORTANT:' paragraph on the county waiver: 'You are living in a county where the ABAWD work requirement is waived. This means you do not have to meet the ABAWD work requirement at this time. We will let you know when the waiver ends.' — followed by 'When the waiver ends, you must follow the rules below:'. NOTE: that paragraph is PRE-PRINTED template text on the blank form, not a county-checked box, so its presence on a notice does NOT by itself prove the household's county is waived — confirm waiver status against the operative CDSS ACL. CONSEQUENCES: for the general work rules the disqualification ladder is 1st failure = 1 month, 2nd = 3 months, 3rd = 6 months; someone excused because they work 30+ hours/week must not voluntarily quit or reduce hours. For Section 2, ABAWDs not working or excused can get CalFresh for only 3 months in the period the county fills in. REPORTING within 10 days: income over the IRT, substantial lottery/gambling winnings, and work hours dropping below 20/week or 80/month. GOOD REASON is invited on the form itself: 'Good reasons include things out of your control like illness, no childcare for a child younger than age 12, or work conditions that are unreasonable' — and 'If the county determines that you have a good reason, there will be no change to your CalFresh benefits.' The CF 886 is a Required Form, No Substitute Permitted, and the verbal plus written notice must be given BEFORE the time limit is applied — a CF 886 that was never issued is a real procedural defense. The companion screening form is the CF 377.11E.",
+      "https://www.cdss.ca.gov/cdssweb/entres/forms/English/CF886.pdf",
+    ),
+  },
+  {
+    // A6 — QC element glossary. Answers "why was my case flagged on element 363?"
+    // Numeric-only triggers are avoided: a bare "363" in a question is more often
+    // a dollar amount than an element code.
+    terms: [
+      "element code", "element codes", "qc element", "error element", "which element",
+      "flagged on element", "element 311", "element 363", "element 150", "element 161",
+      "fns 380", "quality control element",
+    ],
+    curated: curatedAuthority(
+      "FNS Handbook 310 (QC Review Handbook) — element codes; 7 CFR 275.12",
+      "QC error element codes — what the number means",
+      "Federal quality control codes each finding to an ELEMENT number (the FNS-380 taxonomy in FNS Handbook 310). Non-financial: 110 age, 111 student status, 130 citizenship/non-citizen status, 140 residency, 150 household composition, 151 recipient disqualification, 160 employment & training, 161 time-limited participation (the ABAWD clock), 162 work registration, 163 voluntary quit, 164 workfare, 165 employment status, 166 acceptance of employment, 170 SSN. Resources: the 200-299 band (222 vehicles, 225 combined resources). Earned income (FNS 310 ch. 10): 311 wages and salaries, 312 self-employment, 314 other earned income. Unearned income: 331 RSDI, 332 veterans benefits, 333 SSI, 334 unemployment compensation, 335 workers' compensation, 342-347 other unearned, 350 child support received. Deductions (ch. 11) — §1100 enumerates SIX allowable deductions: 321 earned-income deduction (§1120), 323 dependent care (§1130), 361 standard deduction, 363 shelter, 365 medical, and 366 legally-obligated child support; 364 is the standard utility allowance used within the shelter calculation. Note that 321 and 323 are DEDUCTION elements, not income elements — a 323 finding turns on dependent-care expense documentation (the amount billed by a provider who is not a household member, and the name of each dependent), not on earnings, even though the deduction requires a work, training, or education nexus. In California's FY2023 QC data the largest error elements were 363 shelter and 311 wages, together about 61% of errored cases — which is why those two are where a pre-submission check pays off most. Note the element identifies WHERE the error was found, not who caused it; the separate agency/client responsibility coding answers that.",
+      "https://www.fns.usda.gov/snap/quality-control",
+    ),
+  },
+  {
+    // A7 — negative-action validity. The federal backbone under the CalSAWS
+    // reason-code-mismatch guardrail already in the system prompt.
+    // NOTE on trigger scope: an earlier draft also matched "reason doesn't match"
+    // and "wrong reason on the notice". Those hijacked questions about what a
+    // notice must CONTAIN, which belong to 7 CFR 273.13 (notice of adverse
+    // action) — the corpus answers those better. These triggers are scoped to
+    // questions about whether an action is VALID, which 273.13 does not cover.
+    terms: [
+      "invalid denial", "invalid notice", "procedurally invalid", "is this denial valid",
+      "was this denial proper", "negative action", "two different reasons",
+      "conflicting reasons", "multiple reasons", "adequate notice", "notice not sent",
+    ],
+    curated: curatedAuthority(
+      "FNS Handbook 310 §1310, §1350.2, §1360 — negative-action validity",
+      "When a denial or termination is procedurally invalid",
+      "Federal QC reviews a SAMPLE of negative actions (denials, terminations, suspensions) — not every one. §1310 draws from a negative sample frame, and §1332 excludes whole categories from review entirely: withdrawn applications, households with a pending IPV, duplicate or administrative actions, disaster denials, later months of a multi-month suspension, and closures where the household simply never reapplied at the end of its certification period. A negative action that IS reviewed is coded valid only if it: rests on a correct reason; is documented in the case record — 'when the case record does not include documentation for the specific negative action under review, the action must be coded as invalid'; is communicated in easily understandable language, meaning the reasons 'clearly describe the situation so the household is able to clearly understand why the negative action has been taken'; is procedurally correct, with every prerequisite step actually taken; and is noticed timely. IMPORTANT SCOPE NOTE: FNS Handbook 310 does NOT impose a preferred-LANGUAGE-of-issuance requirement — 'easily understandable' is about the clarity of the content, not the language it is written in. The rule that a notice must go out in the household's preferred written language is CALIFORNIA law (MPP 21-115.2; MPP 63-202.21) — cite the MPP for that, never the federal handbook, and do not tell a household that an English-only notice is federally invalid. THE RULE THAT DECIDES MOST DISPUTES: if a notice lists MULTIPLE reasons, ALL of them must be accurate — a single wrong reason invalidates the whole action (§1350.2). So a denial notice that names a reason contradicted by the case record, or two notices for the same action giving different reasons, does not stand. Specific to missed interviews: a Notice of Missed Interview is REQUIRED before any negative action based on a missed interview (§1320), a NOMI issued AFTER the denial is invalid, and the county must have attempted contact at the number in the file and documented that attempt. For a caseworker: check the reason against the record before the notice goes out. For an applicant: these are the grounds a fair hearing turns on — and if a required notice was never sent at all, the appeal clock has not started.",
+      "https://www.fns.usda.gov/snap/quality-control",
+    ),
+  },
 ];
 
 const STOPWORDS = new Set([
