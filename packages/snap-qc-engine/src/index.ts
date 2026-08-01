@@ -24,6 +24,17 @@ export {
   evaluateBenefitImpact,
 } from "./flows/benefit-impact-projection/index";
 export { combineScores, rollupFactors } from "./scoring/defensibility";
+export { reviewNotice, recoveryWindow } from "./notices/notice-validity";
+export type {
+  NoticeKind,
+  NoticeFacts,
+  CaseFacts,
+  NoticeDefect,
+  NoticeReview,
+  DefectCode,
+  DefectSeverity,
+  RecoveryWindow,
+} from "./notices/notice-validity";
 export { wilsonInterval } from "./scoring/wilson";
 export type { WilsonInterval } from "./scoring/wilson";
 export {
