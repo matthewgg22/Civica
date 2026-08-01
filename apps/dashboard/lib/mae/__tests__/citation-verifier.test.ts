@@ -60,6 +60,29 @@ describe("Mae citation verifier", () => {
     expect(cites).toContain("MPP 20-006");
   });
 
+  it("extracts and recognizes FNS Handbook citations (#585 supplements cite them)", () => {
+    const cites = extractCitations(
+      "Per FNS Handbook 310 §1350.2 all listed reasons must be accurate; sampling is FNS Handbook 311.",
+    );
+    expect(cites).toContain("FNS Handbook 310 §1350.2");
+    expect(cites).toContain("FNS Handbook 311");
+    const byCite = Object.fromEntries(
+      verifyCitations("See FNS Handbook 310 §1320 and FNS Handbook 311.", []).map((c) => [
+        c.citation,
+        c.status,
+      ]),
+    );
+    expect(byCite["FNS Handbook 310 §1320"]).toBe("known");
+    expect(byCite["FNS Handbook 311"]).toBe("known");
+  });
+
+  it("flags an invented FNS Handbook number as unrecognized", () => {
+    const byCite = Object.fromEntries(
+      verifyCitations("See FNS Handbook 399.", []).map((c) => [c.citation, c.status]),
+    );
+    expect(byCite["FNS Handbook 399"]).toBe("unrecognized");
+  });
+
   it("flags an invented MPP section as unrecognized", () => {
     const byCite = Object.fromEntries(
       verifyCitations("See MPP 99-999.", []).map((c) => [c.citation, c.status]),

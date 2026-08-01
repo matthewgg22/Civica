@@ -112,4 +112,14 @@ export const FRONTDOOR_EVAL: FrontDoorCase[] = [
   { id: "abawd-workfare-hours", category: "Work/ABAWD", question: "How many workfare hours does a household owe to meet the work requirement?", expect: { kind: "external", citation: "273.24 (ABAWD)" } },
   { id: "abawd-obviously-unfit", category: "Work/ABAWD", question: "My client is homeless and has a health condition — can they be found unfit for work without a doctor's form?", expect: { kind: "external", citation: "273.24 (ABAWD)" } },
   { id: "abawd-regain", category: "Work/ABAWD", question: "My client exhausted their months, then worked a month and got laid off — can they get benefits back?", expect: { kind: "external", citation: "273.24 (ABAWD)" } },
+
+  // ── Notice decoding + QC vocabulary (#585) ──────────────────────────────────
+  // None of these are answerable from the 7 CFR corpus: the CF 886 is a
+  // California county form, and the element codes / negative-action standard
+  // live in the FNS QC handbook. The curated authority must lead.
+  { id: "notice-cf886-sanction", category: "Notices", question: "My client got a CF 886 in the mail — does that mean they're being sanctioned?", expect: { kind: "external", citation: "CF 886" } },
+  { id: "notice-cf886-ladder", category: "Notices", question: "Client failed the general work rules a second time — how long is the disqualification?", expect: { kind: "external", citation: "CF 886" } },
+  { id: "qc-element-363", category: "Notices", question: "QC flagged our case on element 363 — what is that?", expect: { kind: "external", citation: "FNS Handbook 310" } },
+  { id: "notice-two-reasons", category: "Notices", question: "The denial notice listed two different reasons and one of them is wrong — does the correct one save it?", expect: { kind: "external", citation: "FNS Handbook 310" } },
+  { id: "notice-invalid-denial", category: "Notices", question: "What makes a denial procedurally invalid on review?", expect: { kind: "external", citation: "FNS Handbook 310" } },
 ];
