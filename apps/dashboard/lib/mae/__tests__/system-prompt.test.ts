@@ -38,12 +38,23 @@ describe("Mae system prompt", () => {
   // specifics (B2). If an edit drops these, the coaching behavior regresses.
   it("carries the documented-error (over-verification) guardrail", () => {
     expect(MAE_SYSTEM_PROMPT.toLowerCase()).toContain("over-verification");
-    expect(MAE_SYSTEM_PROMPT).toContain("ACL 21-58");
+    // Anchored to the authorities CDSS ME reviewers actually cite for verification
+    // limits (NOT ACL 21-58, which the ME corpus shows is a student-exemption cite).
+    expect(MAE_SYSTEM_PROMPT).toContain("MPP 63-300");
+    expect(MAE_SYSTEM_PROMPT).toContain("ACL 20-48");
+    expect(MAE_SYSTEM_PROMPT).not.toContain("ACL 21-58");
   });
 
   it("states the California ABAWD effective date and operative forms", () => {
     expect(MAE_SYSTEM_PROMPT).toContain("2026-06-01");
     expect(MAE_SYSTEM_PROMPT).toContain("CF 886");
     expect(MAE_SYSTEM_PROMPT.toLowerCase()).toContain("pending fns guidance");
+  });
+
+  // #584 — the highest-severity factual gap: without this Mae tells a household
+  // that pre-2026 countable months still bar them.
+  it("knows CA's fixed 36-month ABAWD clock ended 2025-12-31 and does not carry forward", () => {
+    expect(MAE_SYSTEM_PROMPT).toContain("2025-12-31");
+    expect(MAE_SYSTEM_PROMPT.toLowerCase()).toContain("do not carry forward");
   });
 });
