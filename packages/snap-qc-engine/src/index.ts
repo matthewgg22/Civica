@@ -24,6 +24,25 @@ export {
   evaluateBenefitImpact,
 } from "./flows/benefit-impact-projection/index";
 export { combineScores, rollupFactors } from "./scoring/defensibility";
+export {
+  buildInterviewTimeline,
+  readinessChecklist,
+  buildDocumentChecklist,
+  documentsToGather,
+  documentsNotRequired,
+  INTERVIEW_PROBE_DOMAINS,
+} from "./interview/interview-prep";
+export type {
+  InterviewFacts,
+  TimelineMilestone,
+  MilestoneStatus,
+  ReadinessItem,
+  ReadinessInput,
+  ProbeDomain,
+  StagedDocument,
+  DocRequirement,
+  HouseholdProfile,
+} from "./interview/interview-prep";
 export { wilsonInterval } from "./scoring/wilson";
 export type { WilsonInterval } from "./scoring/wilson";
 export {
