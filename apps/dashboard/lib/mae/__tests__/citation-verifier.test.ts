@@ -40,10 +40,30 @@ describe("Mae citation verifier", () => {
     expect(trailer).toContain("◑");
   });
 
-  it("recognizes ACL 21-58 (the verification-limits supplement's cite), not 'unrecognized'", () => {
+  it("recognizes the verification-limits authority cluster the ME reviewers actually cite", () => {
     const byCite = Object.fromEntries(
-      verifyCitations("Only verify what is required or questionable — CDSS ACL 21-58.", []).map((c) => [c.citation, c.status]),
+      verifyCitations(
+        "Verify only what is required or questionable — MPP 63-300.5(j), ACL 20-48, ACL 21-24, ACIN I-45-11; confirm TWN per ACL 23-53.",
+        [],
+      ).map((c) => [c.citation, c.status]),
     );
-    expect(byCite["ACL 21-58"]).toBe("known");
+    expect(byCite["MPP 63-300.5(j)"]).toBe("known"); // resolves to section MPP 63-300
+    expect(byCite["ACL 20-48"]).toBe("known");
+    expect(byCite["ACL 21-24"]).toBe("known");
+    expect(byCite["ACIN I-45-11"]).toBe("known");
+    expect(byCite["ACL 23-53"]).toBe("known");
+  });
+
+  it("extracts MPP citations at all (they were previously invisible to the verifier)", () => {
+    const cites = extractCitations("Per MPP 63-504.23 the denial NOA is due by day 30; see also MPP 20-006.");
+    expect(cites).toContain("MPP 63-504.23");
+    expect(cites).toContain("MPP 20-006");
+  });
+
+  it("flags an invented MPP section as unrecognized", () => {
+    const byCite = Object.fromEntries(
+      verifyCitations("See MPP 99-999.", []).map((c) => [c.citation, c.status]),
+    );
+    expect(byCite["MPP 99-999"]).toBe("unrecognized");
   });
 });

@@ -21,11 +21,12 @@ const TRAP_QUESTIONS = [
 ];
 
 describe("Mae over-verification guardrail (D2 regression)", { timeout: 60_000 }, () => {
-  it("surfaces the verification-limits (ACL 21-58) supplement as the TOP authority for over-verification traps", async () => {
+  it("surfaces the verification-limits supplement as the TOP authority for over-verification traps", async () => {
     for (const q of TRAP_QUESTIONS) {
       const top = (await retrieve(q, { k: 1 }))[0];
       expect(top?.citation, `top authority for: ${q}`).toContain("273.2(f)");
-      expect(top?.citation, `over-verification cite for: ${q}`).toContain("ACL 21-58");
+      // Anchored to the real ME-corpus cluster, not ACL 21-58 (a student-exemption cite).
+      expect(top?.citation, `over-verification cite for: ${q}`).toContain("MPP 63-300");
     }
   });
 
