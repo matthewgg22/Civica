@@ -26,6 +26,27 @@ export {
 export { combineScores, rollupFactors } from "./scoring/defensibility";
 export { wilsonInterval } from "./scoring/wilson";
 export type { WilsonInterval } from "./scoring/wilson";
+export {
+  buildCohortReadout,
+  interviewCompletionRate,
+  attributionSplit,
+  onboardingDepthScore,
+  cohortSkew,
+  COHORT_EVENT_TYPES,
+  MISS_ATTRIBUTIONS,
+  LA_MISSED_INTERVIEW_BASELINE,
+  LA_CASELOAD_REFERENCE,
+} from "./scoring/cohort-readout";
+export type {
+  CohortReadout,
+  CohortCounts,
+  CohortEventType,
+  MissAttribution,
+  AttributionSplit,
+  InterviewCompletionRate,
+  OnboardingDepth,
+  CohortSkew,
+} from "./scoring/cohort-readout";
 export { scoreErrorRisk, ERROR_WEIGHT, perPacketGapContribution } from "./scoring/error-risk";
 export type { ErrorRiskResult, ErrorRiskTier } from "./scoring/error-risk";
 
