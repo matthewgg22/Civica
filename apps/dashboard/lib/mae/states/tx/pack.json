@@ -1,0 +1,14 @@
+{
+  "code": "TX",
+  "program": "SNAP Food Benefits",
+  "agency": "Texas Health and Human Services Commission (HHSC), Access and Eligibility Services",
+  "admin_model": "state",
+  "admin_note": "State-administered; eligibility determined by Texas Works Advisors in HHSC offices statewide. Policy lives in the Texas Works Handbook (TWH) with rules in 1 TAC Chapter 372; changes issue via policy bulletins and TIERS releases — and the ONLINE handbook can lag the bulletins (verified stale on ABAWD age bands in Aug 2026), so bulletins/TIERS control when they conflict.",
+  "system": "TIERS (Texas Integrated Eligibility Redesign System)",
+  "portal": { "name": "YourTexasBenefits.com (+ Your Texas Benefits mobile app)", "url": "https://www.yourtexasbenefits.com" },
+  "update_channels": [
+    { "name": "Texas Works Handbook revisions", "url": "https://www.hhs.texas.gov/handbooks/texas-works-handbook" },
+    { "name": "HHSC policy bulletins (MEPD & TW)", "url": "https://www.hhs.texas.gov/handbooks" },
+    { "name": "1 TAC Chapter 372 (Texas Administrative Code)", "url": "https://texas-sos.appianportalsgov.com/rules-and-meetings" }
+  ]
+}

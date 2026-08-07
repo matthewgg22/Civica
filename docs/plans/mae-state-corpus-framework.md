@@ -53,7 +53,7 @@ table 15 times and creating 15 chances to drift.
 
 1. **`bbce` is never a boolean.** Four roster states break it: **GA at 130%** (BBCE = asset relief
    only, zero income relief), **TX BBCE *with* a $5,000 asset limit + vehicle rule** (1 vehicle
-   ≤$22,000 excluded, excess counted), **NY runs TWO simultaneous pathways** (200% dependent-care
+   ≤$22,500 first / $8,700 additional, excess counted), **NY runs TWO simultaneous pathways** (200% dependent-care
    AND 150% earned-income), NJ-style odd tiers exist. Schema:
    `income_pathways: [{limit_pct, condition}]` + `asset_rule: {asked, limit, vehicle}` as
    independent objects.

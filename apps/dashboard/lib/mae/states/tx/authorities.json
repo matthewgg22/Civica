@@ -1,0 +1,62 @@
+{
+  "_provenance": {
+    "note": "Texas citation authorities. TWH = Texas Works Handbook (section cites like 'TWH A-1341'); 1 TAC Chapter 372 = the Texas Administrative Code SNAP rules. NOTE: the SOS TAC web viewer was decommissioned (redirects to an Appian portal), so TAC verification runs through the handbook's reproductions and the new portal; TAC mirrors snapshotted before Feb 12, 2026 serve PRE-AMENDMENT vehicle figures ($22,500/$8,700 landed in TAC that date). Forms (H1010, H1805, H0011, TF0001) are referenced in prose, not extracted as citations.",
+    "extracted": "2026-08-06"
+  },
+  "patterns": [
+    {
+      "key": "twh",
+      "regex": "\\bTWH\\s+([A-D]-\\d{3,4}(?:\\.\\d+)*)",
+      "flags": "gi",
+      "template": "TWH $1",
+      "normalize": "upper",
+      "match": "second-word-base",
+      "note": "Texas Works Handbook sections; 'TWH A-1429.3.1' verifies at base 'TWH A-1429'"
+    },
+    {
+      "key": "tac",
+      "regex": "\\b1\\s+TAC\\s+§?\\s*(\\d{3}\\.\\d{3,4})",
+      "flags": "gi",
+      "template": "1 TAC §$1",
+      "normalize": "none",
+      "match": "exact",
+      "note": "Texas Administrative Code, Title 1, Chapter 372 (SNAP)"
+    }
+  ],
+  "known": {
+    "twh": [
+      { "value": "TWH A-140", "note": "expedited screening — questions on Forms H0011/H0011-R and H1010/H1010-R" },
+      { "value": "TWH A-141", "note": "expedited service eligibility criteria" },
+      { "value": "TWH A-1210", "note": "resources overview" },
+      { "value": "TWH A-1212", "note": "transfer-of-resources penalty (A-1212.1 table keyed to amount OVER the resource limit)" },
+      { "value": "TWH A-1220", "note": "resource limits — SNAP $5,000" },
+      { "value": "TWH A-1230", "note": "vehicles chapter" },
+      { "value": "TWH A-1238", "note": "vehicle exemptions — $22,500 first / $8,700 each additional" },
+      { "value": "TWH A-1341", "note": "income limits table (130% / 100% / 165% columns, Oct cycle)" },
+      { "value": "TWH A-1420", "note": "deductions chapter" },
+      { "value": "TWH A-1427", "note": "homeless shelter standard — choosing it forfeits other shelter deductions/utility standards" },
+      { "value": "TWH A-1428", "note": "medical deduction / SME $170 (nets $135)" },
+      { "value": "TWH A-1429", "note": "utility standards SUA $445 / BUA $400 / phone $62" },
+      { "value": "TWH A-1800", "note": "employment services / E&T" },
+      { "value": "TWH A-1910", "note": "ABAWD time limit — ONLINE VERSION VERIFIED STALE on age bands Aug 2026" },
+      { "value": "TWH A-1940", "note": "ABAWD countable months / regaining — online version stale on ages" },
+      { "value": "TWH A-1960", "note": "ABAWD regaining — exempt-based regains unlimited; second 3-month period once per 36" },
+      { "value": "TWH A-2324", "note": "certification period assignment" },
+      { "value": "TWH B-431", "note": "definition of elderly" },
+      { "value": "TWH B-432", "note": "definition of disability" },
+      { "value": "TWH B-471", "note": "TANF-NC categorical eligibility (165% FPL)" },
+      { "value": "TWH B-475", "note": "SNAP-CAP (B-475.6: no change-reporting requirement)" },
+      { "value": "TWH B-476", "note": "joint SSI–SNAP applications (NOT TSAP — TSAP is B-477, SNAP-CAP is B-475)" },
+      { "value": "TWH B-477", "note": "TSAP (criteria at B-477.2: all members 60+/disability payments, no earned income, no SNAP-CAP member)" },
+      { "value": "TWH B-621", "note": "streamlined reporting — SR 1 trigger requires two consecutive months over 130% (Rev 26-1)" },
+      { "value": "TWH C-121", "note": "SNAP maximum income limits table (130%/100%/165%, Oct cycle) — the dollar figures live HERE, not in A-1341" },
+      { "value": "TWH C-331", "note": "ABAWD waiver counties table — currently 'None'" }
+    ],
+    "tac": [
+      { "value": "1 TAC §372.355", "note": "treatment of resources in SNAP (vehicles at (d)(6); amended eff. 2/12/2026)" },
+      { "value": "1 TAC §372.410", "note": "deductions — SUA/BUA/phone mandatory, (6) bars actual utility costs" },
+      { "value": "1 TAC §372.654", "note": "SNAP-CAP" },
+      { "value": "1 TAC §372.957", "note": "eligibility periods (b): 1–12 months except SNAP-CAP/TSAP" }
+    ]
+  }
+}

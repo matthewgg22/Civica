@@ -1,0 +1,189 @@
+{
+  "_provenance": {
+    "note": "Texas SNAP Food Benefits curated supplements — Wave 1, state two (docs/plans/mae-state-corpus-framework.md). Drafted from verbatim source text: Texas Works Handbook via browser-header fetch (hhs.texas.gov 403s plain clients), 1 TAC Chapter 372, and the LOCAL FOIA primary sources from HHSC ORR production A05292026.0450037 (Form H1805 rev 11/25, MEPD & TW Bulletins 25-16/26-08, TF0001 renders, the verbal informing script) — which beat the live handbook, whose ABAWD pages were verified stale. Fetch workflow wf_02815617-1ce; cross-checked and adversarially fact-checked before PR. See PROVENANCE.md.",
+    "extracted": "2026-08-06",
+    "source_fact_check": "cross-check re-verification + post-draft adversarial refute pass; corrections recorded in PROVENANCE.md"
+  },
+  "supplements": [
+    {
+      "key": "asset-rule",
+      "kind": "supplement",
+      "terms": [
+        "asset limit",
+        "asset test",
+        "resource limit",
+        "resource test",
+        "resources",
+        "savings",
+        "bank account",
+        "vehicle",
+        "car count",
+        "vehicles count",
+        "22500",
+        "$22,500",
+        "transfer resources"
+      ],
+      "citation": "TWH A-1238; TWH A-1220; 1 TAC §372.355; Tex. Hum. Res. Code §33.021 — SNAP resources (the BBCE asset limit)",
+      "heading": "Texas KEEPS an asset test under BBCE — $5,000, with the two-tier vehicle rule",
+      "text": "Texas is the standing counterexample to 'BBCE means no asset test': even categorically eligible (TANF-NC) households face a resource limit. 'A household is not eligible for benefits if the total value of countable resources (liquid resources and excess vehicle value) is over $5,000' (TWH A-1220). Vehicles use a TWO-TIER exclusion (TWH A-1238; 1 TAC §372.355(d)(6); Tex. Hum. Res. Code §33.021): 'Up to $22,500 of the FMV for the highest valued countable vehicle is exempt' — fair-market value over $22,500 counts toward the $5,000 limit — and for each additional licensed or unlicensed vehicle, FMV over $8,700 counts. (The commonly repeated '$22,000' figure is WRONG; the statute says $22,500 first vehicle / $8,700 each additional.) Also exempt (A-1238): any licensed vehicle with equity value $1,500 or less; ONE vehicle with FMV under $8,700 per adult household member regardless of use (extends to ineligible-alien and disqualified members); any licensed vehicle under $8,700 FMV that a person under 18 drives to work, training, school, or to seek employment; and the total value of licensed income-producing vehicles. And once a household is authorized for TANF-NC services on the initial resource test, 'all other nonliquid resources are exempt' (A-1210). Whose resources count: SNAP EDG members, a sponsor's (for sponsored non-citizens), and disqualified members'. Transfers (A-1212.1): knowingly transferring a countable resource for less than fair market value to qualify for assistance — within 3 months before application OR any time after certification — triggers a denial period keyed to the amount by which total countable resources (counting the transferred resource) EXCEED the resource limit, NOT to the transfer amount: 1 month ($0.01–$249.99 over the limit) up to 12 months ($5,000+ over). TIMING TRAP for verifiers: the TAC text was only amended to the $22,500/$8,700 figures effective Feb 12, 2026 (the handbook adopted them April 1, 2024, implementing HB 1287) — TAC mirrors snapshotted before Feb 2026 serve the OLD figures.",
+      "source_url": "https://fhb.hhs.texas.gov/handbooks/texas-works-handbook/a-1230-types-resources"
+    },
+    {
+      "key": "income-pathways",
+      "kind": "supplement",
+      "terms": [
+        "income limit",
+        "165 percent",
+        "165%",
+        "bbce",
+        "categorical eligibility",
+        "categorically eligible",
+        "tanf-nc",
+        "tanf nc",
+        "gross income limit",
+        "net income limit",
+        "make too much",
+        "over income",
+        "income standards",
+        "130 percent",
+        "poverty level"
+      ],
+      "citation": "TWH A-1341; TWH C-121; TWH B-471 — SNAP income pathways (165% TANF-NC categorical eligibility)",
+      "heading": "Texas income limits — 165% BBCE via TANF-NC, plus the 130%/100% default path",
+      "text": "Texas reaches broad-based categorical eligibility through TANF non-cash (TANF-NC): 'all household members must be approved for TANF or SSI, or a combination of TANF and SSI, or the household must meet resource criteria and have gross income below or equal to 165 percent Federal Poverty Level (FPL) for its size' (TWH A-1341; TANF-NC basis in A-1210). Households where all members are approved for TANF cash assistance or SSI are categorically eligible outright. CRITICAL TEXAS DIFFERENCE: categorical eligibility does NOT remove the asset test here — see the resources rule; never assume BBCE means no asset limit in Texas. Categorical eligibility is lost when a member has an IPV disqualification or the household fails other listed conditions (B-471). The default federal path also exists: gross at or below 130% FPL and net at or below 100% FPL (table effective 10/1/2025 — HH1 gross $1,696 / net $1,305 / 165% $2,152; HH4 gross $3,483 / net $2,680 / 165% $4,421). The gross test 'applies to all households except those: with a member who is elderly or has a disability; or that are categorically eligible' — and for an elderly/disabled household over 165% FPL that is not CE, the NET income test applies (A-1341). A household subject to the gross test is ineligible 'if unrounded gross income exceeds the limit by one cent or more.' The single three-column table (130% / 100% / 165%) lives in TWH C-121 ('SNAP Maximum Income Limits', October cycle) — A-1341 states the tests but points to C-121 for the dollar figures, so don't hunt for numbers in A-1341.",
+      "source_url": "https://fhb.hhs.texas.gov/handbooks/texas-works-handbook/a-1340-income-limits"
+    },
+    {
+      "key": "sua-values",
+      "kind": "supplement",
+      "terms": [
+        "utility allowance",
+        "standard utility",
+        "sua",
+        "bua",
+        "basic utility",
+        "telephone allowance",
+        "utility bills",
+        "actual utility",
+        "heat",
+        "liheap",
+        "shared meter",
+        "utility standard",
+        "utility standards"
+      ],
+      "citation": "TWH A-1429; 1 TAC §372.410 — SNAP utility standards (SUA/BUA/telephone)",
+      "heading": "Texas utility standards — mandatory, three tiers: $445 / $400 / $62",
+      "text": "Texas utility standards are MANDATORY — the rule 'does not allow a deduction for actual utility expenses' (1 TAC §372.410(6)); a household cannot elect its real bills. Current values: heating/cooling Standard Utility Allowance (SUA) $445; Basic Utility Allowance (BUA — utility expenses that don't qualify for the SUA) $400; telephone standard $62. A household qualifies for the SUA with a heating or cooling expense separate from rent, or by receiving more than $20 annually in LIHEAP or similar energy assistance in the previous 12 months. Shared meters: 'Each household is eligible for the SUA when they share heating or cooling costs and a meter' — and 'The utility and telephone standards for households with disqualified members or households sharing utility costs must not be prorated' — each household gets the full standard, and the shared-SUA rule applies whether or not the households live together.",
+      "source_url": "https://fhb.hhs.texas.gov/handbooks/texas-works-handbook/a-1420-deductions"
+    },
+    {
+      "key": "deductions-sme",
+      "kind": "supplement",
+      "terms": [
+        "medical deduction",
+        "standard medical",
+        "sme",
+        "medical expenses",
+        "standard deduction",
+        "homeless deduction",
+        "shelter deduction",
+        "excess shelter",
+        "deductions",
+        "135"
+      ],
+      "citation": "TWH A-1428; 1 TAC §372.410 — SNAP deductions incl. the Standard Medical Expense",
+      "heading": "Texas deductions — the $170 SME (nets $135) with an actual-expense option",
+      "text": "Texas runs a Standard Medical Expense (SME) for households with an elderly member (B-431) or a member with a disability (B-432) whose own medical expenses exceed $35/month: 'if the household has medical expenses over $35 and $170 or less a month, then verify the household has medical expenses over $35, and budget the SME.' The SME is $170, and 'TIERS automatically subtracts $35 from the SME or actual medical expenses' — so the SME yields a net $135 deduction. Households with expenses OVER $170/month may claim ACTUAL expenses instead (also minus $35), and 'households may switch between actual expenses and the SME at redetermination.' Practical consequence: in Texas, verifying that expenses merely exceed $35 unlocks $135 — but a household with high medical costs should itemize, or money is left on the table. Other current values (federal FY26, as Texas states them): standard deduction $209 (HH 1–3) / $223 (4) / $261 (5) / $299 (6+); homeless shelter standard $198.99 (household must be homeless, have any out-of-pocket shelter expense, and choose the standard — choosing it forfeits all other shelter deductions and utility standards, A-1427); excess-shelter cap $744 — shelter costs exceeding 50% of income remaining after other deductions are deductible up to the cap (uncapped for elderly/disabled households, though A-1429 denies the uncapped treatment to certain households, e.g. those with SSN/alien-status-disqualified members or in ABAWD time-limit status).",
+      "source_url": "https://fhb.hhs.texas.gov/handbooks/texas-works-handbook/a-1420-deductions"
+    },
+    {
+      "key": "abawd",
+      "kind": "supplement",
+      "terms": [
+        "abawd",
+        "time limit",
+        "able-bodied",
+        "able bodied",
+        "36 month",
+        "thirty-six month",
+        "countable months",
+        "three months",
+        "clock",
+        "regain",
+        "waiver",
+        "waived",
+        "80 hours",
+        "work requirement",
+        "work rules",
+        "tf0001",
+        "h1805",
+        "cutover"
+      ],
+      "citation": "TWH A-1910/A-1940; MEPD & TW Bulletins 25-16 & 26-08; Form H1805 (rev. 11/25) — Texas ABAWD rules",
+      "heading": "Texas ABAWD — a per-person ROLLING clock, no fixed statewide window",
+      "text": "Texas's 36-month ABAWD clock is PER-PERSON and ROLLING — 'the 36-month period begins the first month an ABAWD fails to meet the ABAWD work requirement' — there is NO fixed statewide window (unlike California's or Washington's fixed calendar periods; never transfer clock math from those states). An ABAWD gets three countable months (non-prorated months receiving SNAP while out of compliance) per 36-month period; regaining requires meeting the work rules for at least 30 calendar days; the second consecutive three-month eligibility period is available once per 36-month period, while regains by becoming exempt are unlimited (A-1960). Work requirement: 20 hours/week averaging 80 hours/month. POST-OBBBA AGES: applies the month after a person turns 18 and stops the month the person turns 65. CUTOVER NUANCE: Bulletin 25-16's policy was effective with its release, but 'for applications and redeterminations with a file date on or after Nov. 1, 2025... TIERS will apply the new ABAWD exception and age limit policies,' and until then 'HHSC will use a federal option to exempt ABAWDs' — so November 1, 2025 is the operative TIERS date, with a transitional exemption before it. Current exceptions include: pregnant; a household member under 14 on the SNAP EDG; 'Indian, Urban Indian, California Indian or Alaskan native' (an exception Bulletin 25-16 ADDED — the TF0001 notice prints it as 'Indian, Urban Indian, or California Indian'); living in a waiver area (currently NONE — TWH C-331 lists no waiver counties); living in a SNAP non-E&T county (per Bulletin 26-08, residents of non-E&T counties are 'not subject to SNAP FTLs'); physical/mental unfitness. Ages 60–64 are SUBJECT to the ABAWD time limit but remain exempt from E&T work requirements. The 1/3/6-month sanction ladder on notices is the E&T/basic-work-rules ladder — a DIFFERENT mechanism from the ABAWD time limit; don't conflate them. Notices: Form H1805 (rev. 11/25) and the TF0001 consolidated work notice carry the current rules ('Once we have counted three full months... you will...'), with the E&T exemption threshold printed as 'working at least 30 hours a week or earning at least $217.50 per week'; staff must VERBALLY explain the work rules at certification, recertification, and at change actions when a person becomes subject to SNAP work rules. WARNING: the ONLINE Texas Works Handbook was verified stale (A-1910 Rev 24-4 / A-1940 still printing '18 through 54' in Aug 2026) — when the handbook and the bulletins/TIERS conflict, the bulletins control; an old S1 TF0001 print also renders the pre-OBBBA bands.",
+      "source_url": "https://fhb.hhs.texas.gov/handbooks/texas-works-handbook/a-1900-federal-time-limits"
+    },
+    {
+      "key": "certs-reporting",
+      "kind": "supplement",
+      "terms": [
+        "certification period",
+        "recertify",
+        "streamlined reporting",
+        "sr 1",
+        "sr 2",
+        "report changes",
+        "reporting",
+        "irt",
+        "how long certified",
+        "renewal period"
+      ],
+      "citation": "TWH A-2324; TWH B-621; 1 TAC §372.957(b) — certification periods + streamlined reporting",
+      "heading": "Texas certification + reporting — streamlined reporting tiers, 6-month certs",
+      "text": "Texas assigns certification periods by household type (1 TAC §372.957(b): one to 12 months, except SNAP-CAP and TSAP at 36): streamlined-reporting (SR) households get SIX months (4 or 5 months only to align the end date with a Children's Medicaid certification); all-elderly/unemployable stable households, non-SR, get six to 12 months (12 is the max — not 12–24); non-SR households with unstable circumstances, including ABAWD households, get three to six months; households expected to become ineligible within two months get one or two. Reporting runs on Texas's streamlined-reporting vocabulary — there is no 'IRT' in the handbook: SR 1 households (income under 130% FPL) must report when 'ongoing gross monthly income exceeds 130 percent of the FPL for the household's size, for two consecutive months' (B-621, Rev 26-1) — one high month alone does not trigger it — and SR 1 must also report an ABAWD's work hours dropping below a 20-hour/week average and lottery or gambling winnings over $4,250; SR 2 covers households between 130% and 165% FPL. Changes are due within 10 days after the household knows about the change (client-facing Form H1805 still prints the older 'by the 10th day of the month after the month the change happens' formulation — the handbook controls, so expect client confusion).",
+      "source_url": "https://fhb.hhs.texas.gov/handbooks/texas-works-handbook/a-2320-eligibility-dates-benefit-amounts"
+    },
+    {
+      "key": "tsap-snapcap-expedited",
+      "kind": "supplement",
+      "terms": [
+        "tsap",
+        "snap-cap",
+        "snap cap",
+        "simplified application",
+        "ssi apply",
+        "elderly application",
+        "expedited",
+        "emergency food",
+        "same day",
+        "h0011",
+        "no interview"
+      ],
+      "citation": "TWH B-475/B-477; TWH A-140; 1 TAC §372.654 — TSAP, SNAP-CAP, and expedited screening",
+      "heading": "Texas simplified tracks — TSAP is automatic, SNAP-CAP for SSI 50+, expedited can be same-day",
+      "text": "Texas runs three burden-reduction tracks. TSAP (Texas Simplified Application Project): a simplified application and certification pathway for households where ALL members are 60 or older and/or receive disability payments, with NO earned income and no member already on SNAP-CAP (B-477.2) — certification runs 36 months, and selection is AUTOMATIC: 'Applicants cannot select TSAP on Form H1010' — HHSC tests every new SNAP application and active household for TSAP as part of the application and recertification process, regardless of application type, and certifies for TSAP if eligible (B-477.2). SNAP-CAP (TWH B-475; 1 TAC §372.654): SSI recipients age 50+ in single-person food units — 36-month certification, NO interview, no change-reporting requirement (B-475.6). Expedited service: EVERY application and redetermination is screened using the expedited screening questions on Forms H0011/H0011-R and H1010/H1010-R (A-140/A-141); criteria are liquid resources ≤ $100 AND gross monthly income under $150, OR liquid resources plus income below combined rent/mortgage plus utilities, OR a destitute migrant/seasonal farmworker. Texas's stated issuance target beats the federal 7-day rule: benefits 'the same day they apply, if possible, but no later than the next business day' for expedited-eligible households.",
+      "source_url": "https://fhb.hhs.texas.gov/handbooks/texas-works-handbook/b-470-categorically-eligible-households"
+    },
+    {
+      "key": "program-identity",
+      "kind": "supplement",
+      "terms": [
+        "what is snap called",
+        "snap called",
+        "yourtexasbenefits",
+        "your texas benefits",
+        "apply online",
+        "where do i apply",
+        "how do i apply",
+        "h1010",
+        "tiers",
+        "texas works advisor"
+      ],
+      "citation": "Texas SNAP Food Benefits — HHSC (Texas Works Handbook; 1 TAC 372)",
+      "heading": "Texas program identity — SNAP Food Benefits, HHSC, YourTexasBenefits",
+      "text": "Texas calls its program 'SNAP Food Benefits,' administered by the Texas Health and Human Services Commission (HHSC), Access and Eligibility Services — a STATE-administered system (no county agencies; eligibility staff are Texas Works Advisors in HHSC offices). Apply online at YourTexasBenefits.com or the Your Texas Benefits mobile app; the paper application is Form H1010 (full title: 'Texas Works Application for Assistance – Your Texas Benefits'). The eligibility system is TIERS (Texas Integrated Eligibility Redesign System) — policy effective dates are often keyed to TIERS releases and file dates, not just bulletin dates. Policy lives in the Texas Works Handbook (TWH, cited by section like A-1341 or B-471) with rules in 1 TAC Chapter 372; changes issue via MEPD & TW policy bulletins, and when the online handbook lags a bulletin, the bulletin controls.",
+      "source_url": "https://www.yourtexasbenefits.com"
+    }
+  ]
+}
