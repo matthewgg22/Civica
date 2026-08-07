@@ -1,26 +1,22 @@
 // Freshness / expiry monitoring.
 //
 // Mae's grounding is a dated snapshot: the eCFR corpus is pinned to one issue
-// date, the federal dollar figures are FY-bound (COLA renews Oct 1), and the CA
-// ABAWD county-waiver picture has an explicit end date. Those WILL go stale —
-// the stale-ABAWD-age catch from the review is the canonical example. This
-// surfaces an explicit "sources as of …" line on every answer and raises a
-// warning when a source has passed its renewal date, so a caseworker is never
-// silently relying on expired rules and the team has a signal to re-pull.
+// date, the federal dollar figures are FY-bound (COLA renews Oct 1), and each
+// state pack carries its own dated facts (e.g. CA's ABAWD waiver window). Those
+// WILL go stale — the stale-ABAWD-age catch from the review is the canonical
+// example. This surfaces an explicit "sources as of …" line on every answer and
+// raises a warning when a source has passed its renewal date, so a caseworker is
+// never silently relying on expired rules and the team has a signal to re-pull.
+//
+// Federal dates live here (one copy — framework §3 layering); state dates live
+// in states/<code>/freshness.json and are merged per request.
+
+import { getStatePack } from "./states";
 
 // Federal COLA figures (max allotment, deductions, income/asset limits, SUA)
 // are FY26 — effective 2025-10-01 through this date. After it, getEngineParams
 // must be on FY27 values or every dollar figure is wrong.
 const FY_FIGURES_EXPIRE = "2026-09-30";
-
-// CA ABAWD waiver coverage runs through this date per CDSS ACL 25-93; after it,
-// the per-county waiver picture must be re-confirmed.
-const CA_ABAWD_WAIVER_THROUGH = "2026-10-31";
-
-// CA ABAWD time-limit screening BEGINS on this date (CDSS ACL 25-93; FOIA
-// 2026-07-23 production). Before it, the OBBBA 18–64 rules are NOT yet applied
-// statewide — warn so a pre-launch answer doesn't state them as live.
-const CA_ABAWD_EFFECTIVE = "2026-06-01";
 
 // eCFR is re-issued frequently; if our pinned snapshot is older than this,
 // re-run build-ecfr-corpus.py to catch amendments (esp. OBBBA incorporation).
@@ -34,7 +30,7 @@ export interface Freshness {
 }
 
 /** Assess source freshness for a given "now". Pure (date injected for tests). */
-export function assessFreshness(now: Date, corpusDate: string): Freshness {
+export function assessFreshness(now: Date, corpusDate: string, state?: string | null): Freshness {
   const warnings: string[] = [];
   const t = now.getTime();
 
@@ -43,16 +39,18 @@ export function assessFreshness(now: Date, corpusDate: string): Freshness {
       "Federal FY26 figures expired Oct 1 — confirm the engine is on FY27 COLA values before quoting any dollar amount.",
     );
   }
-  if (t > Date.parse(`${CA_ABAWD_WAIVER_THROUGH}T23:59:59Z`)) {
-    warnings.push(
-      "CA ABAWD county-waiver data (through 2026-10-31, ACL 25-93) is past its end date — re-confirm the current waiver list.",
-    );
+
+  // State-pack dated facts. "expires" warns once now is PAST the date
+  // (end-of-day); "not-yet-effective" warns while now is BEFORE it (start-of-day)
+  // so a pre-launch answer doesn't state a future rule as live.
+  for (const e of getStatePack(state)?.freshness ?? []) {
+    if (e.kind === "expires" && t > Date.parse(`${e.date}T23:59:59Z`)) {
+      warnings.push(e.warning);
+    } else if (e.kind === "not-yet-effective" && t < Date.parse(`${e.date}T00:00:00Z`)) {
+      warnings.push(e.warning);
+    }
   }
-  if (t < Date.parse(`${CA_ABAWD_EFFECTIVE}T00:00:00Z`)) {
-    warnings.push(
-      "CA ABAWD time-limit screening does not begin until 2026-06-01 (CDSS ACL 25-93) — the OBBBA 18–64 rules are not yet applied statewide; do not tell a household they are subject to the time limit yet.",
-    );
-  }
+
   const ageDays = corpusDate ? Math.floor((t - Date.parse(`${corpusDate}T00:00:00Z`)) / DAY_MS) : NaN;
   if (Number.isFinite(ageDays) && ageDays > CORPUS_MAX_AGE_DAYS) {
     warnings.push(
@@ -65,8 +63,8 @@ export function assessFreshness(now: Date, corpusDate: string): Freshness {
 }
 
 /** Render the "sources as of" footer (always) plus any staleness warnings. */
-export function formatFreshnessFooter(now: Date, corpusDate: string): string {
-  const { asOf, warnings } = assessFreshness(now, corpusDate);
+export function formatFreshnessFooter(now: Date, corpusDate: string, state?: string | null): string {
+  const { asOf, warnings } = assessFreshness(now, corpusDate, state);
   const lines = [`\n\n*Sources as of: ${asOf}.*`];
   for (const w of warnings) lines.push(`\n> ⚠️ ${w}`);
   return lines.join("");

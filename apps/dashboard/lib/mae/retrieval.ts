@@ -9,6 +9,7 @@
 import corpusJson from "./corpus/ecfr-snap.json";
 import { embed, cosine } from "./embeddings";
 import { DESCRIPTORS } from "./section-descriptors";
+import { getStatePack, type StatePack, type PackTopic } from "./states";
 
 export interface RegChunk {
   id: string;
@@ -82,11 +83,23 @@ function curatedAuthority(citation: string, heading: string, text: string, url: 
   return { id: citation, citation, section: citation, heading, subsection: null, text, source_url: url, effective_date: "curated reference" };
 }
 
+// State-pack topics (states/<code>/supplements.json) in ExternalTopic shape.
+// This is where the formerly-hardcoded California supplements now come from —
+// the pack is DATA; this converter is the only code that touches its shape.
+function packTopics(pack: StatePack | null): ExternalTopic[] {
+  if (!pack) return [];
+  return pack.topics.map((t: PackTopic) => ({
+    terms: t.terms,
+    suppressSections: t.suppress_sections,
+    curated: curatedAuthority(t.citation, t.heading, t.text, t.source_url),
+  }));
+}
+
 // Topics the USDA 7 CFR corpus should NOT answer with a federal eligibility
 // section. Each either injects a curated correct authority and/or suppresses a
 // distractor section, so the result is the right cite — or nothing — not a
 // wrong 7 CFR hit.
-const EXTERNAL_TOPICS: ExternalTopic[] = [
+const FEDERAL_EXTERNAL_TOPICS: ExternalTopic[] = [
   {
     // Public charge is a DHS rule (8 CFR), not USDA — and SNAP is excluded.
     // (No "count against me" — too broad; it caught lump-sum income questions.)
@@ -97,17 +110,6 @@ const EXTERNAL_TOPICS: ExternalTopic[] = [
       "Public charge — SNAP is NOT counted",
       "SNAP (food stamps) is NOT considered in the public-charge inadmissibility determination. Public charge is a DHS/USCIS rule (8 CFR 212.21-212.22), not a USDA/SNAP rule. Only cash assistance for income maintenance (SSI, TANF, state general assistance) and long-term institutionalization at government expense count toward public charge; SNAP, Medicaid (other than long-term care), CHIP, and WIC are explicitly NOT counted. Applying for or receiving SNAP — for the applicant or for their U.S.-citizen/LPR children — does not by itself affect a green-card or public-charge case. This is a DHS matter; confirm current USCIS public-charge guidance for an individual situation.",
       "https://www.ecfr.gov/current/title-8/section-212.21",
-    ),
-  },
-  {
-    // EBT card mechanics are operational, not a policy citation.
-    terms: ["ebt card", "ebt balance", "ebt", "my card", "lost card", "stolen card", "card problem", "skimming", "skimmed", "who do i call"],
-    suppressSections: ["273.8"],
-    curated: curatedAuthority(
-      "Operational — EBT customer service (issuance: 7 CFR 274)",
-      "EBT card / balance problems — not a policy question",
-      "EBT card issues (lost or stolen card, PIN reset, balance, transaction disputes, skimming/stolen benefits) are handled by EBT Customer Service, not by a policy citation. California EBT Customer Service: 1-888-328-2656 (24/7) — advise the client to call immediately to freeze a lost/stolen card. The general benefit-issuance rules are at 7 CFR 274; stolen-EBT replacement policy has changed recently, so confirm current CDSS guidance.",
-      "https://www.ecfr.gov/current/title-7/part-274",
     ),
   },
   {
@@ -123,126 +125,8 @@ const EXTERNAL_TOPICS: ExternalTopic[] = [
     terms: ["ice or immigration", "immigration find out", "find out if i apply", "data sharing", "data-sharing", "report me", "reported to", "who sees my", "shared with"],
     suppressSections: ["273.4"],
   },
-  {
-    // Eligible foods (hot food / household goods) is 7 CFR 271.2, which isn't in
-    // the corpus — give the rule directly and suppress the asset distractor.
-    terms: ["hot food", "household goods", "use snap for", "use my benefits for", "buy with snap", "can i buy", "eligible food", "eligible items", "what can i buy"],
-    suppressSections: ["273.8"],
-    curated: curatedAuthority(
-      "7 CFR 271.2 (definition of eligible food)",
-      "What SNAP can / cannot buy",
-      "SNAP buys staple grocery food: fruits, vegetables, meat, dairy, bread, cereals, snacks, and seeds/plants that produce food. It CANNOT buy: hot foods or foods prepared for immediate consumption at the point of sale, alcohol, tobacco, vitamins/medicines/supplements, or any nonfood household goods (soap, paper products, pet food, hygiene items). The governing definition is 7 CFR 271.2 (\"eligible food\"). Exception: the Restaurant Meals Program (statewide in California per AB 942) lets certain elderly, disabled, or homeless recipients buy prepared meals at participating restaurants. Confirm current CDSS RMP details.",
-      "https://www.ecfr.gov/current/title-7/section-271.2",
-    ),
-  },
 ];
 
-// Civica-curated CURRENT-RULE supplements. Unlike EXTERNAL_TOPICS (which redirect
-// AWAY from the USDA corpus), these SUPPLEMENT the eCFR text with post-OBBBA
-// current rules and California operational guidance the raw regulation lacks. They
-// lead the results (like the curated externals) so Mae sees the current rule
-// first, while the eCFR section — and any SUPERSEDED warning — still follows.
-// Sourced from the 2026-07-23 CDSS/LA County FOIA production (see repo
-// FOIA_DATA_AUDIT_2026-07-23.md + docs/plans/mae-foia-training-tasks.md, tasks A1/A2).
-const CURATED_SUPPLEMENTS: ExternalTopic[] = [
-  {
-    // A1 — ABAWD current rules (post H.R.1 / OBBBA §10102). The eCFR 273.24 text is
-    // stale (see OBBBA_SUPERSEDED); this injects the CURRENT spec. The citation keeps
-    // "273.24" so section routing + retrieval tests still resolve to the ABAWD section.
-    terms: [
-      "abawd", "able-bodied", "able bodied", "time limit", "three months", "three-month",
-      "3 months", "80 hours", "eighty hours", "work requirement", "work requirements",
-      "18 to 64", "55 to 64", "60 to 64", "aged out", "work-requirement exemption",
-      "abawd exemption", "lose snap after", "lose benefits after",
-      // countable-month / clock / regaining / workfare fact patterns
-      "countable month", "countable months", "used my 3 months", "used my three months",
-      "already used", "ran out of months", "workfare", "regain", "regaining",
-      "get benefits back", "prorated month", "obviously unfit", "unfit for work",
-    ],
-    curated: curatedAuthority(
-      "7 CFR 273.24 (ABAWD) — CURRENT rules per H.R.1 / OBBBA §10102 (Pub. L. 119-21); CDSS ACL 25-93",
-      "ABAWD time limit — CURRENT rules (post-OBBBA), California",
-      "The ABAWD time limit (3 countable months of SNAP in a 36-month period unless meeting the work rule) now applies to adults 18 through 64. Age edges differ BY STATE: in California a person is no longer an ABAWD the first of the month after their 65th birthday; Texas ends it the month the person turns 65 — do not state one nationally. Work rule: 80 hours/month (~20/week) of work, approved E&T, community service/volunteering, or workfare. WORKFARE HOURS = the household's monthly allotment ÷ the HIGHEST applicable minimum wage (state, county, or city), rounded DOWN, and workfare is NOT combinable with other qualifying activities. Note stand-alone E&T job search / job club is a NON-qualifying activity (countable only up to 9 hours), so 'approved E&T' does not automatically satisfy the 80 hours. CURRENT ABAWD time-limit exemptions and how to verify each: (1) exempt from work registration [MPP 63-407] — no separate proof; (2) under 18 or over 64 — date of birth; (3) physically or mentally unfit — receipt of or pending application for a disability benefit (SSI/SSDI/VA/workers' comp); OR 'obviously unfit', which is determined by the worker at interview and needs only detailed case notes; OR, for non-obvious unfitness, form CF 887 or a WRITTEN OR VERBAL statement from a medical or mental-health professional (physicians, nurse practitioners, dentists, social workers). IMPORTANT: homelessness, drug/alcohol addiction, and domestic violence are now only INDICATORS of possible unfitness — they must be tied to physical/mental unfitness, they are not exemptions in themselves; (4) responsible for a dependent CHILD UNDER 14 (narrowed by OBBBA from under 18); (5) pregnant — client statement is sufficient; (6) participating at least half-time in an Office of Refugee Resettlement (ORR) training program; (7) an Indian, Urban Indian, or California Indian eligible for Indian Health Service — NEW under OBBBA (verification pending final FNS guidance). ELIMINATED by OBBBA (no longer exemptions): veterans, people experiencing homelessness, and former foster youth. COUNTABLE MONTHS: a month counts only if the person received a full month of benefits while not exempt, not meeting the work rule, and not in a waived area. NON-countable: a prorated/partial month, any month in which an exemption applied during ANY part of the month, good cause (illness, household emergency, lack of transportation, disaster, discrimination claim, unpredictable last-minute work hours), and discretionary exemptions. CALIFORNIA CLOCK — CRITICAL: California uses a FIXED statewide 36-month period, and the period that ran 2023-01-01 through 2025-12-31 HAS ENDED. Countable months from that period do NOT carry into the new one, so a person who 'used their 3 months' before 2026 starts fresh. Confirm the current period's exact dates against the operative CDSS ACL. REGAINING ELIGIBILITY: a person regains by working 30 consecutive days, becoming exempt, moving to a waived area, or the 36-month period ending; regaining is unlimited but requires a new application. CALIFORNIA timing: statewide ABAWD screening BEGINS 2026-06-01 (per CDSS ACL 25-93) — this is the operative date, NOT the 2025-07-04 federal signing; the prior statewide waiver expired 2026-01-31 and only a few counties still hold a waiver, so confirm the specific county. Required forms: CF 886 (CalFresh Notice of Work Rules — a verbal explanation AND the written notice must be given before the time limit is applied) and CF 377.11E (ABAWD exemption screening). Some specifics (tribal-exemption and child-under-14 verification) remain pending FNS guidance — treat them as pending, not settled. Confirm the current FNS ABAWD memo, CDSS ACL, and the county waiver status for any individual case.",
-      "https://www.ecfr.gov/current/title-7/section-273.24",
-    ),
-  },
-  {
-    // A2 — verification limits / anti-over-verification. Triggers are narrow (the
-    // over-verification fact pattern) so generic "what documents do I need" questions
-    // still route to the plain 273.2(f) corpus chunk instead of this supplement.
-    terms: [
-      "already provided", "already sent", "already submitted", "already gave", "already on file",
-      "on file", "already have it", "request again", "request them again", "re-request", "rerequest",
-      "ask again", "over-verify", "over verify", "over-verification", "over verification",
-      "unnecessary verification", "redundant verification", "not questionable", "isn't questionable",
-      "questionable", "failure to provide", "the work number", "work number", "twn",
-    ],
-    curated: curatedAuthority(
-      "7 CFR 273.2(f) — verification limits; CDSS MPP 63-300, ACL 20-48 / 20-135 / 21-24, ACIN I-45-11",
-      "Verification limits — do not over-verify",
-      "The single most common documented CalFresh error (CDSS Management Evaluation reviews, 2024-2025, present in 37 of 38 counties) is OVER-VERIFICATION: requesting verification the household already provided, or that is not required and not questionable. Rules: verify only what is REQUIRED (income, ineligible-noncitizen status, disability claimed for a deduction, and the other mandatory items) OR what is QUESTIONABLE — inconsistent with other statements or known facts — and when you treat something as questionable the case record must document WHY (7 CFR 273.2(f)(1)-(2) and 273.2(f)(6); California MPP 63-300.5(j), ACL 20-48, ACL 21-24, ACIN I-45-11). Do not limit the household to ONE type of verification when several would do (ACL 21-24; ACIN I-45-11), and request only the last 30 days of income (7 CFR 273.10(c)(1)(ii); ACL 20-48). Use data already available BEFORE asking the household — e.g. check The Work Number (TWN) for employer-reported wages before requesting pay stubs — but TWN data must be CONFIRMED WITH THE HOUSEHOLD before it is used to budget, and TWN should not be pulled when the household has supplied no income information at all (ACL 23-53). Never re-request a document already in the case file, and never deny for 'failure to provide' verification the household in fact provided. Give the household a written request (CW 2200) and a minimum of 10 calendar days to respond (7 CFR 273.2(f)(5)); do not hold up an expedited-service household for non-required verification (273.2(i); ACL 16-14). Over-verification both inflates the payment/procedural error rate and wrongly denies eligible households — verify for correctness, not for volume.",
-      "https://www.ecfr.gov/current/title-7/section-273.2",
-    ),
-  },
-  {
-    // A5 — CF 886 decoder. When a household says "I got this form", Mae should be
-    // able to read it back to them. The eCFR has nothing about a California
-    // county form, so this is the only place the content can come from.
-    // Source: R012680 CF 886 (rev 8/25) + the CDSS ABAWD policy deck.
-    terms: [
-      "cf 886", "cf886", "notice of work rules", "work rules notice", "work rules letter",
-      "got this form", "got this notice", "this form in the mail", "cf 377.11e", "377.11e",
-      "work rule sanction", "disqualified from work rules", "how long am i disqualified",
-      // Sanction-length questions: the CF 886 ladder (1/3/6 months) is the right
-      // answer, and 273.16 (intentional program violation — 12mo/24mo/permanent)
-      // is a materially WRONG one. Scoped to work-rules phrasing so genuine IPV
-      // questions still route to 273.16.
-      "general work rules", "failed the work rules", "work rule disqualification",
-    ],
-    curated: curatedAuthority(
-      "CF 886 (CalFresh Notice of Work Rules, rev. 8/25); CDSS ACL 22-74",
-      "CF 886 — what the work-rules notice actually says",
-      "The CF 886 is the CalFresh Notice of Work Rules. It is INFORMATIONAL, not a sanction: it opens 'This letter is to tell you about the CalFresh work rules. If you don't follow these rules, your household's CalFresh benefits may decrease or stop.' It is issued to ALL household members — including exempt ones — at application, at recertification, and whenever a work requirement is newly imposed, and the county must ALSO give a verbal explanation (ACL 22-74). Receiving it does not mean the person is out of compliance. HOW TO READ IT: it has TWO sections with fill-in-the-blank personalization. Section 1 = the general work rules (work registration, ages 16-59); Section 2 = the ABAWD time limit. Each section has its OWN excused line, and the section qualifier matters — being excused from one does not excuse the other. Section 1 reads '____, you are excused from the general work rules because you are ____'; Section 2 reads '____, you are excused from ABAWD work requirement because you are ____'. The person's own name may appear on an excused line, so read the blanks before assuming anything. Section 2 opens with a bold 'IMPORTANT:' paragraph on the county waiver: 'You are living in a county where the ABAWD work requirement is waived. This means you do not have to meet the ABAWD work requirement at this time. We will let you know when the waiver ends.' — followed by 'When the waiver ends, you must follow the rules below:'. NOTE: that paragraph is PRE-PRINTED template text on the blank form, not a county-checked box, so its presence on a notice does NOT by itself prove the household's county is waived — confirm waiver status against the operative CDSS ACL. CONSEQUENCES: for the general work rules the disqualification ladder is 1st failure = 1 month, 2nd = 3 months, 3rd = 6 months; someone excused because they work 30+ hours/week must not voluntarily quit or reduce hours. For Section 2, ABAWDs not working or excused can get CalFresh for only 3 months in the period the county fills in. REPORTING within 10 days: income over the IRT, substantial lottery/gambling winnings, and work hours dropping below 20/week or 80/month. GOOD REASON is invited on the form itself: 'Good reasons include things out of your control like illness, no childcare for a child younger than age 12, or work conditions that are unreasonable' — and 'If the county determines that you have a good reason, there will be no change to your CalFresh benefits.' The CF 886 is a Required Form, No Substitute Permitted, and the verbal plus written notice must be given BEFORE the time limit is applied — a CF 886 that was never issued is a real procedural defense. The companion screening form is the CF 377.11E.",
-      "https://www.cdss.ca.gov/cdssweb/entres/forms/English/CF886.pdf",
-    ),
-  },
-  {
-    // A6 — QC element glossary. Answers "why was my case flagged on element 363?"
-    // Numeric-only triggers are avoided: a bare "363" in a question is more often
-    // a dollar amount than an element code.
-    terms: [
-      "element code", "element codes", "qc element", "error element", "which element",
-      "flagged on element", "element 311", "element 363", "element 150", "element 161",
-      "fns 380", "quality control element",
-    ],
-    curated: curatedAuthority(
-      "FNS Handbook 310 (QC Review Handbook) — element codes; 7 CFR 275.12",
-      "QC error element codes — what the number means",
-      "Federal quality control codes each finding to an ELEMENT number (the FNS-380 taxonomy in FNS Handbook 310). Non-financial: 110 age, 111 student status, 130 citizenship/non-citizen status, 140 residency, 150 household composition, 151 recipient disqualification, 160 employment & training, 161 time-limited participation (the ABAWD clock), 162 work registration, 163 voluntary quit, 164 workfare, 165 employment status, 166 acceptance of employment, 170 SSN. Resources: the 200-299 band (222 vehicles, 225 combined resources). Earned income (FNS 310 ch. 10): 311 wages and salaries, 312 self-employment, 314 other earned income. Unearned income: 331 RSDI, 332 veterans benefits, 333 SSI, 334 unemployment compensation, 335 workers' compensation, 342-347 other unearned, 350 child support received. Deductions (ch. 11) — §1100 enumerates SIX allowable deductions: 321 earned-income deduction (§1120), 323 dependent care (§1130), 361 standard deduction, 363 shelter, 365 medical, and 366 legally-obligated child support; 364 is the standard utility allowance used within the shelter calculation. Note that 321 and 323 are DEDUCTION elements, not income elements — a 323 finding turns on dependent-care expense documentation (the amount billed by a provider who is not a household member, and the name of each dependent), not on earnings, even though the deduction requires a work, training, or education nexus. In California's FY2023 QC data the largest error elements were 363 shelter and 311 wages, together about 61% of errored cases — which is why those two are where a pre-submission check pays off most. Note the element identifies WHERE the error was found, not who caused it; the separate agency/client responsibility coding answers that.",
-      "https://www.fns.usda.gov/snap/quality-control",
-    ),
-  },
-  {
-    // A7 — negative-action validity. The federal backbone under the CalSAWS
-    // reason-code-mismatch guardrail already in the system prompt.
-    // NOTE on trigger scope: an earlier draft also matched "reason doesn't match"
-    // and "wrong reason on the notice". Those hijacked questions about what a
-    // notice must CONTAIN, which belong to 7 CFR 273.13 (notice of adverse
-    // action) — the corpus answers those better. These triggers are scoped to
-    // questions about whether an action is VALID, which 273.13 does not cover.
-    terms: [
-      "invalid denial", "invalid notice", "procedurally invalid", "is this denial valid",
-      "was this denial proper", "negative action", "two different reasons",
-      "conflicting reasons", "multiple reasons", "adequate notice", "notice not sent",
-    ],
-    curated: curatedAuthority(
-      "FNS Handbook 310 §1310, §1350.2, §1360 — negative-action validity",
-      "When a denial or termination is procedurally invalid",
-      "Federal QC reviews a SAMPLE of negative actions (denials, terminations, suspensions) — not every one. §1310 draws from a negative sample frame, and §1332 excludes whole categories from review entirely: withdrawn applications, households with a pending IPV, duplicate or administrative actions, disaster denials, later months of a multi-month suspension, and closures where the household simply never reapplied at the end of its certification period. A negative action that IS reviewed is coded valid only if it: rests on a correct reason; is documented in the case record — 'when the case record does not include documentation for the specific negative action under review, the action must be coded as invalid'; is communicated in easily understandable language, meaning the reasons 'clearly describe the situation so the household is able to clearly understand why the negative action has been taken'; is procedurally correct, with every prerequisite step actually taken; and is noticed timely. IMPORTANT SCOPE NOTE: FNS Handbook 310 does NOT impose a preferred-LANGUAGE-of-issuance requirement — 'easily understandable' is about the clarity of the content, not the language it is written in. The rule that a notice must go out in the household's preferred written language is CALIFORNIA law (MPP 21-115.2; MPP 63-202.21) — cite the MPP for that, never the federal handbook, and do not tell a household that an English-only notice is federally invalid. THE RULE THAT DECIDES MOST DISPUTES: if a notice lists MULTIPLE reasons, ALL of them must be accurate — a single wrong reason invalidates the whole action (§1350.2). So a denial notice that names a reason contradicted by the case record, or two notices for the same action giving different reasons, does not stand. Specific to missed interviews: a Notice of Missed Interview is REQUIRED before any negative action based on a missed interview (§1320), a NOMI issued AFTER the denial is invalid, and the county must have attempted contact at the number in the file and documented that attempt. For a caseworker: check the reason against the record before the notice goes out. For an applicant: these are the grounds a fair hearing turns on — and if a required notice was never sent at all, the appeal clock has not started.",
-      "https://www.fns.usda.gov/snap/quality-control",
-    ),
-  },
-];
 
 const STOPWORDS = new Set([
   "the", "and", "for", "are", "what", "when", "how", "does", "can", "with", "that", "this",
@@ -268,6 +152,10 @@ function truncate(text: string, max: number): string {
 }
 
 export interface RetrieveOptions {
+  /** State pack to merge with the federal corpus. Defaults to the launch state
+   *  (CA), preserving the pre-pack behavior; an unregistered code degrades to
+   *  federal-only. */
+  state?: string | null;
   k?: number; // max chunks (default 6)
   charBudget?: number; // total injected chars (default 10000)
   maxChunkChars?: number; // per-chunk cap (default 3500)
@@ -324,7 +212,7 @@ function queryHasTerm(words: Set<string>, normalized: string, term: string): boo
  * with deterministic lexical/keyword scoring for subsection precision. Semantic
  * is best-effort — if the model can't load, this is exactly the lexical path. */
 export async function retrieve(query: string, opts: RetrieveOptions = {}): Promise<RegChunk[]> {
-  const { k = 6, charBudget = 10_000, maxChunkChars = 3_500, minScore = DEFAULT_MIN_SCORE } = opts;
+  const { k = 6, charBudget = 10_000, maxChunkChars = 3_500, minScore = DEFAULT_MIN_SCORE, state } = opts;
   const normalized = query.toLowerCase();
   const words = new Set(normalized.match(/[a-z0-9]+/g) ?? []);
   const tokens = new Set(tokenize(query));
@@ -346,7 +234,7 @@ export async function retrieve(query: string, opts: RetrieveOptions = {}): Promi
   // these return the correct cite — or nothing — instead of a wrong 7 CFR hit.
   const curated: RegChunk[] = [];
   const suppressed = new Set<string>();
-  for (const topic of [...EXTERNAL_TOPICS, ...CURATED_SUPPLEMENTS]) {
+  for (const topic of [...FEDERAL_EXTERNAL_TOPICS, ...packTopics(getStatePack(state))]) {
     if (topic.terms.some((t) => queryHasTerm(words, normalized, t))) {
       if (topic.curated) curated.push(topic.curated);
       for (const s of topic.suppressSections ?? []) suppressed.add(s);
@@ -412,17 +300,26 @@ export async function retrieve(query: string, opts: RetrieveOptions = {}): Promi
 // repealed veteran/homeless/foster exemptions; 273.4 still lists refugees/asylees.
 const OBBBA_SUPERSEDED: Record<string, string> = {
   "273.24":
-    "⚠️ SUPERSEDED IN PART by H.R.1 / OBBBA (Pub. L. 119-21, eff. 2025-07-04). The eCFR text below PREDATES the statute and is outdated on age and exemptions: the ABAWD time-limit age ceiling is now 64 (exempt only if under 18 or 65+) — the \"55 years of age or older\" exemption below is NO LONGER CURRENT; and the exemptions for veterans, people experiencing homelessness, and former foster youth were ELIMINATED (an exemption for Indian / Urban Indian / California Indian individuals was added). The 80-hour work definition is unchanged. Cite the statute / current FNS ABAWD memo for age and exemptions — do NOT quote this subsection as current. (California: statewide time limits resumed 2026-06-01 per CDSS ACL 25-93; only a few counties hold a waiver — confirm the specific county.)",
+    "⚠️ SUPERSEDED IN PART by H.R.1 / OBBBA (Pub. L. 119-21, eff. 2025-07-04). The eCFR text below PREDATES the statute and is outdated on age and exemptions: the ABAWD time-limit age ceiling is now 64 (exempt only if under 18 or 65+) — the \"55 years of age or older\" exemption below is NO LONGER CURRENT; and the exemptions for veterans, people experiencing homelessness, and former foster youth were ELIMINATED (an exemption for Indian / Urban Indian / California Indian individuals was added). The 80-hour work definition is unchanged. Cite the statute / current FNS ABAWD memo for age and exemptions — do NOT quote this subsection as current.",
   "273.4":
     "⚠️ SUPERSEDED IN PART by H.R.1 / OBBBA (Pub. L. 119-21). The eligible non-citizen categories in the text below PREDATE the statute: eligibility was narrowed — refugees, asylees, and TPS holders were REMOVED. The current eligible set is U.S. nationals, LPRs, Cuban/Haitian entrants, and COFA migrants (FNS Alien Eligibility memo, 2025-10-31). Do not state refugee/asylee eligibility from this text as current.",
 };
 
-/** Format retrieved chunks as an authoritative source block for the prompt. */
-export function formatRetrievedSources(chunks: RegChunk[]): string {
+/** Format retrieved chunks as an authoritative source block for the prompt.
+ *
+ * The OBBBA supersession warnings are FEDERAL (Layer 1 — one copy, framework
+ * §3); a state pack may append a state-specific addendum per section (e.g.
+ * California's ABAWD resumption date), which renders after the federal note. */
+export function formatRetrievedSources(chunks: RegChunk[], state?: string | null): string {
   if (chunks.length === 0) return "";
+  const pack = getStatePack(state);
   const body = chunks
     .map((c) => {
-      const warn = OBBBA_SUPERSEDED[c.section];
+      const federalWarn = OBBBA_SUPERSEDED[c.section];
+      const stateNote = pack?.supersessions?.[c.section];
+      const warn = federalWarn
+        ? stateNote ? `${federalWarn} ${stateNote}` : federalWarn
+        : undefined;
       const head = `### ${c.citation} — ${c.heading}\n(eCFR, eff. ${c.effective_date}; ${c.source_url})`;
       return warn ? `${head}\n${warn}\n${c.text}` : `${head}\n${c.text}`;
     })
