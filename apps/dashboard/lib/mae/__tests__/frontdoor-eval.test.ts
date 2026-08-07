@@ -9,15 +9,17 @@ import { FRONTDOOR_EVAL } from "../eval/frontdoor-questions";
 // (the runnable proxy for "can Mae answer this") + verifies the OBBBA-superseded
 // warnings fire on stale sections. Prints a coverage table so regressions show.
 
-const topSection = async (q: string): Promise<string | null> => (await retrieve(q, { k: 1 }))[0]?.section ?? null;
-const topCitation = async (q: string): Promise<string | null> => (await retrieve(q, { k: 1 }))[0]?.citation ?? null;
+const topSection = async (q: string, state?: string): Promise<string | null> =>
+  (await retrieve(q, { k: 1, state }))[0]?.section ?? null;
+const topCitation = async (q: string, state?: string): Promise<string | null> =>
+  (await retrieve(q, { k: 1, state }))[0]?.citation ?? null;
 
 describe("Mae front-door eval — retrieval coverage + citation check", { timeout: 60_000 }, () => {
   it("prints a coverage report", async () => {
     const rows = await Promise.all(
       FRONTDOOR_EVAL.map(async (c) => {
         const ex = c.expect;
-        const cite = (await topCitation(c.question)) ?? "—";
+        const cite = (await topCitation(c.question, c.state)) ?? "—";
         if (ex.kind === "defer") {
           return `  [${c.category}] ${c.id}: defer → top ${cite} (gap — defer, OK)`;
         }
@@ -25,7 +27,7 @@ describe("Mae front-door eval — retrieval coverage + citation check", { timeou
           const ok = cite.includes(ex.citation) ? "✓" : `✗ got ${cite}`;
           return `  [${c.category}] ${c.id}: want ${ex.citation} → top ${cite} ${ok}`;
         }
-        const top = (await topSection(c.question)) ?? "—";
+        const top = (await topSection(c.question, c.state)) ?? "—";
         const ok = top === ex.section ? "✓" : `✗ got ${top}`;
         return `  [${c.category}] ${c.id}: want ${ex.section} → top ${cite} ${ok}`;
       }),
@@ -38,7 +40,7 @@ describe("Mae front-door eval — retrieval coverage + citation check", { timeou
   it("grounds federal eligibility/benefit/procedural questions on the right section", async () => {
     for (const c of FRONTDOOR_EVAL) {
       if (c.expect.kind !== "grounded") continue;
-      expect(await topSection(c.question), `${c.id} → ${c.expect.section}`).toBe(c.expect.section);
+      expect(await topSection(c.question, c.state), `${c.id} → ${c.expect.section}`).toBe(c.expect.section);
     }
   });
 
@@ -46,7 +48,7 @@ describe("Mae front-door eval — retrieval coverage + citation check", { timeou
     for (const c of FRONTDOOR_EVAL) {
       if (c.expect.kind !== "superseded") continue;
       const section = c.expect.section; // narrow before the closure below
-      const hits = await retrieve(c.question, { k: 4 });
+      const hits = await retrieve(c.question, { k: 4, state: c.state });
       const hitSection = hits.some((h) => h.section === section);
       expect(hitSection, `${c.id} should surface ${section}`).toBe(true);
       const block = formatRetrievedSources(hits);
@@ -57,7 +59,7 @@ describe("Mae front-door eval — retrieval coverage + citation check", { timeou
   it("answers external-authority questions with the correct curated cite (not a 7 CFR distractor)", async () => {
     for (const c of FRONTDOOR_EVAL) {
       if (c.expect.kind !== "external") continue;
-      const top = await topCitation(c.question);
+      const top = await topCitation(c.question, c.state);
       expect(top, `${c.id} → ${c.expect.citation}`).toContain(c.expect.citation);
     }
   });
