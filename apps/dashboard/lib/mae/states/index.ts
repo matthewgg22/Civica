@@ -27,9 +27,13 @@ import txPack from "./tx/pack.json";
 import txSupplements from "./tx/supplements.json";
 import txAuthorities from "./tx/authorities.json";
 import txFreshness from "./tx/freshness.json";
+import nyPack from "./ny/pack.json";
+import nySupplements from "./ny/supplements.json";
+import nyAuthorities from "./ny/authorities.json";
+import nyFreshness from "./ny/freshness.json";
 
 /** Registered pack codes. Widens as Wave 1+ states land (WA, TX, NY, …). */
-export type StateCode = "CA" | "WA" | "TX";
+export type StateCode = "CA" | "WA" | "TX" | "NY";
 
 /** Launch state; used when a caller does not specify. Preserves the pre-pack
  *  behavior in which the (then-hardcoded) CA content applied to every query. */
@@ -138,6 +142,12 @@ const REGISTRY: Record<StateCode, StatePack> = {
     txSupplements as { supplements: PackTopic[]; supersessions?: Record<string, string> },
     txAuthorities as unknown as RawAuthorities,
     txFreshness as { entries: PackFreshnessEntry[] },
+  ),
+  NY: buildPack(
+    nyPack as Omit<StatePack, "topics" | "authorities" | "freshness" | "supersessions">,
+    nySupplements as { supplements: PackTopic[]; supersessions?: Record<string, string> },
+    nyAuthorities as unknown as RawAuthorities,
+    nyFreshness as { entries: PackFreshnessEntry[] },
   ),
 };
 

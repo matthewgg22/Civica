@@ -1,0 +1,14 @@
+{
+  "code": "NY",
+  "program": "SNAP (no state-specific branding)",
+  "agency": "New York State Office of Temporary and Disability Assistance (OTDA)",
+  "admin_model": "county",
+  "admin_note": "State-SUPERVISED, county-ADMINISTERED: OTDA sets policy (18 NYCRR Part 387; SNAP Source Book; ADM/INF/LCM/GIS directives) and 58 local social services districts administer it — each county plus New York City, whose district is HRA (Human Resources Administration, part of NYC DSS). LAYER-3 RULE: state policy says what the rule is; office practice can vary by district — answer 'state policy says X; your district may differ' and point to the local district. NYC facts (ACCESS HRA portal, On Demand interviews, SNAP Centers) come from NYC HRA sources, never inferred from state text.",
+  "system": "WMS (Welfare Management System) with ABEL budgeting — separate NYC and Upstate variants; some SUA names differ between the two",
+  "portal": { "name": "myBenefits.ny.gov (statewide EXCEPT NYC; NYC uses ACCESS HRA)", "url": "https://mybenefits.ny.gov" },
+  "update_channels": [
+    { "name": "OTDA policy directives (ADM / INF / LCM) + GIS messages", "url": "https://otda.ny.gov/policy/directives/" },
+    { "name": "SNAP Source Book (OTDA)", "url": "https://otda.ny.gov/programs/snap/SNAPSB.pdf" },
+    { "name": "18 NYCRR Part 387", "url": "https://govt.westlaw.com/nycrr/" }
+  ]
+}
