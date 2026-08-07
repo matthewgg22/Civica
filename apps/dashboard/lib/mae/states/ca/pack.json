@@ -1,0 +1,26 @@
+{
+  "code": "CA",
+  "program": "CalFresh",
+  "agency": "California Department of Social Services (CDSS)",
+  "admin_model": "county",
+  "admin_note": "58 County Welfare Departments on CalSAWS; state policy issues via ACL/ACIN; operative practice can vary by county.",
+  "system": "CalSAWS",
+  "portal": {
+    "name": "BenefitsCal",
+    "url": "https://benefitscal.com"
+  },
+  "update_channels": [
+    {
+      "name": "All-County Letter (ACL)",
+      "url": "https://www.cdss.ca.gov/inforesources/letters-regulations/letters-and-notices/all-county-letters"
+    },
+    {
+      "name": "All-County Information Notice (ACIN)",
+      "url": "https://www.cdss.ca.gov/inforesources/letters-regulations/letters-and-notices/all-county-information-notices"
+    },
+    {
+      "name": "Manual of Policies and Procedures (MPP)",
+      "url": "https://www.cdss.ca.gov/inforesources/letters-regulations/legislation-and-regulations/food-stamps-regulations"
+    }
+  ]
+}

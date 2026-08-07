@@ -1,0 +1,152 @@
+{
+  "_provenance": {
+    "note": "Extracted from citation-verifier.ts KNOWN_EXTRA (ACL/ACIN entries) + KNOWN_MPP + the ACL/MPP regexes. CA policy instruments only; federal authorities remain in code.",
+    "extracted": "2026-08-04"
+  },
+  "patterns": [
+    {
+      "key": "acl",
+      "regex": "\\bAC(L|IN)\\s+([A-Z]?-?\\d{1,3}-\\d{2,3})",
+      "flags": "gi",
+      "template": "AC$1 $2",
+      "normalize": "upper",
+      "match": "exact",
+      "note": "CDSS All-County Letters / All-County Information Notices"
+    },
+    {
+      "key": "mpp",
+      "regex": "\\bMPP\\s+(\\d{2}-\\d{3}(?:\\.\\d+)?(?:\\([a-z0-9]+\\))*)",
+      "flags": "gi",
+      "template": "MPP $1",
+      "normalize": "none",
+      "match": "second-word-base",
+      "note": "CDSS Manual of Policies and Procedures; matched at section granularity"
+    }
+  ],
+  "known": {
+    "acl": [
+      {
+        "value": "ACL 25-68",
+        "note": null
+      },
+      {
+        "value": "ACL 25-93",
+        "note": null
+      },
+      {
+        "value": "ACIN I-46-25",
+        "note": null
+      },
+      {
+        "value": "ACL 20-48",
+        "note": "verification limits; last-30-days income window"
+      },
+      {
+        "value": "ACL 21-24",
+        "note": "don't limit the household to one verification type"
+      },
+      {
+        "value": "ACIN I-45-11",
+        "note": "verification standards"
+      },
+      {
+        "value": "ACL 23-53",
+        "note": "The Work Number — confirm with household before use"
+      },
+      {
+        "value": "ACL 16-14",
+        "note": "expedited service"
+      },
+      {
+        "value": "ACL 14-20",
+        "note": "interview contact attempts"
+      },
+      {
+        "value": "ACL 17-80",
+        "note": "interview method preference"
+      },
+      {
+        "value": "ACL 20-135",
+        "note": "student exemptions / verification limits"
+      },
+      {
+        "value": "ACL 21-58",
+        "note": "student eligibility exemptions must be explored"
+      },
+      {
+        "value": "ACL 22-74",
+        "note": "consolidated work-rules notice (CF 886) + oral explanation"
+      },
+      {
+        "value": "ACIN I-33-21",
+        "note": "NOA reason accuracy"
+      },
+      {
+        "value": "ACIN I-14-11",
+        "note": "expedited service"
+      }
+    ],
+    "mpp": [
+      {
+        "value": "MPP 63-300",
+        "note": "application / verification — the most-cited authority in the ME corpus"
+      },
+      {
+        "value": "MPP 63-301",
+        "note": "eligibility determinations"
+      },
+      {
+        "value": "MPP 63-402",
+        "note": "authorized representatives"
+      },
+      {
+        "value": "MPP 63-407",
+        "note": "work registration"
+      },
+      {
+        "value": "MPP 63-410",
+        "note": "ABAWD"
+      },
+      {
+        "value": "MPP 63-502",
+        "note": "issuance"
+      },
+      {
+        "value": "MPP 63-503",
+        "note": "issuance / BDA"
+      },
+      {
+        "value": "MPP 63-504",
+        "note": "notices of action / denial timing"
+      },
+      {
+        "value": "MPP 63-508",
+        "note": "SAR 7 / NA 960X"
+      },
+      {
+        "value": "MPP 63-201",
+        "note": "office access"
+      },
+      {
+        "value": "MPP 63-202",
+        "note": "language access"
+      },
+      {
+        "value": "MPP 20-006",
+        "note": "IEVS"
+      },
+      {
+        "value": "MPP 19-002",
+        "note": "identity / PII confirmation"
+      },
+      {
+        "value": "MPP 21-115",
+        "note": "written-language preference"
+      },
+      {
+        "value": "MPP 11-601",
+        "note": "drop boxes"
+      }
+    ]
+  }
+}

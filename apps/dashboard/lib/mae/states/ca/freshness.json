@@ -1,0 +1,20 @@
+{
+  "_provenance": {
+    "note": "Extracted from freshness.ts CA constants.",
+    "extracted": "2026-08-04"
+  },
+  "entries": [
+    {
+      "key": "ca-abawd-waiver-window",
+      "kind": "expires",
+      "date": "2026-10-31",
+      "warning": "CA ABAWD county-waiver data (through 2026-10-31, ACL 25-93) is past its end date — re-confirm the current waiver list."
+    },
+    {
+      "key": "ca-abawd-effective",
+      "kind": "not-yet-effective",
+      "date": "2026-06-01",
+      "warning": "CA ABAWD time-limit screening does not begin until 2026-06-01 (CDSS ACL 25-93) — the OBBBA 18–64 rules are not yet applied statewide; do not tell a household they are subject to the time limit yet."
+    }
+  ]
+}
