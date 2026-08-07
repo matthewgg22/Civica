@@ -1,0 +1,13 @@
+{
+  "code": "WA",
+  "program": "Basic Food",
+  "agency": "Washington State Department of Social and Health Services (DSHS), Economic Services Administration — Community Services Division",
+  "admin_model": "state",
+  "admin_note": "State-administered through DSHS Community Services Offices; no county eligibility agencies. 'Basic Food' covers federal SNAP plus the state-funded Food Assistance Program (FAP) for certain non-citizens.",
+  "system": "ACES (Automated Client Eligibility System)",
+  "portal": { "name": "Washington Connection", "url": "https://www.washingtonconnection.org" },
+  "update_channels": [
+    { "name": "Washington Administrative Code (WAC Title 388) via Washington State Register (WSR) amendments", "url": "https://app.leg.wa.gov/wac/default.aspx?cite=388" },
+    { "name": "DSHS EA-Z Manual revisions (per-page 'Revised' stamps)", "url": "https://www.dshs.wa.gov/esa/ea-z-manual" }
+  ]
+}
