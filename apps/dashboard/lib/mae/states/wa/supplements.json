@@ -1,0 +1,170 @@
+{
+  "_provenance": {
+    "note": "Washington Basic Food curated supplements — Wave 1, first NEW state pack (docs/plans/mae-state-corpus-framework.md). Every claim drafted from verbatim source text fetched from app.leg.wa.gov (WAC, state-of-record host) and dshs.wa.gov (EA-Z Manual) on 2026-08-04 by workflow wf_fac27f96-a29, then independently re-verified by a cross-check agent (36 confirmed / 0 contradicted / 1 unreachable). See PROVENANCE.md.",
+    "extracted": "2026-08-04",
+    "source_fact_check": "cross-check agent re-fetched every dollar value and load-bearing claim; adversarial refute pass run before PR"
+  },
+  "supplements": [
+    {
+      "key": "income-pathways",
+      "kind": "supplement",
+      "terms": [
+        "income limit",
+        "categorical eligibility",
+        "categorically eligible",
+        "200 percent",
+        "200%",
+        "bbce",
+        "gross income limit",
+        "net income limit",
+        "make too much",
+        "over income",
+        "income standards",
+        "130 percent",
+        "poverty level"
+      ],
+      "citation": "WAC 388-414-0001 + WAC 388-478-0060 — Basic Food income pathways",
+      "heading": "Washington income limits — the 200% CE path and the 130%/100% default path",
+      "text": "Washington has TWO income pathways, in different WACs with DIFFERENT update cycles — do not quote one date for both. (1) Broad-based categorical eligibility: an assistance unit (AU) is categorically eligible when its countable income 'is at or under 200% of the federal poverty guidelines' (WAC 388-414-0001(2)(a)); that 200% standard updates 'the first of April every year'. CE also flows from cash assistance, but ONLY when EVERYONE in the AU receives one of: TANF/SFA or tribal TANF, ABD cash, SSI, or Diversion Cash Assistance ('Everyone in your AU receives one of the following cash assistance programs' — WAC 388-414-0001(2)(b); one SSI member in a mixed household does NOT confer cash-path CE; DCA makes the AU CE for the DCA month plus the following three months). A CE AU 'automatically' meets the resource limit AND both income standards (WAC 388-414-0001(1)(b)) — but CE 'does not mean that your AU is guaranteed to get basic food benefits': income is still budgeted to set the amount, and a high-income CE household of 3+ can compute to $0, while an eligible 1–2 person AU receives at least the minimum allotment (WAC 388-414-0001(1)(d)). (2) The default path for non-CE AUs: gross income at or below 130% FPL and net at or below 100% FPL per the table in WAC 388-478-0060(1), which updates October 1 (current table effective 10/1/2025; e.g. 1-person gross $1,696 / net $1,305; 4-person gross $3,483 / net $2,680). An AU with a member 60+ or disabled needs only the NET test (WAC 388-478-0060(2)(b)). A zero-income AU gets the maximum allotment (WAC 388-478-0060(2)(d)). Do NOT quote per-size dollar figures for the 200% CE test — Washington publishes the rule as a percentage, not a dollar chart.",
+      "source_url": "https://app.leg.wa.gov/WAC/default.aspx?cite=388-414-0001"
+    },
+    {
+      "key": "asset-rule",
+      "kind": "supplement",
+      "terms": [
+        "asset limit",
+        "asset test",
+        "resource limit",
+        "resource test",
+        "savings",
+        "bank account",
+        "vehicle count",
+        "resources count",
+        "assets count"
+      ],
+      "citation": "WAC 388-470-0005; WAC 388-414-0001(1)(b) — Basic Food resource rules",
+      "heading": "Washington asset test — none for categorically eligible households",
+      "text": "Most Washington Basic Food households face NO resource test: a categorically eligible AU 'automatically' meets the countable resource limit (WAC 388-414-0001(1)(b); WAC 388-470-0005), and CE covers AUs with countable income up to 200% FPL plus all cash-assistance AUs. Do not ask a CE household about savings, bank balances, or vehicles — the resource branch simply does not apply. The resource test returns for ANY non-CE AU. The live case to watch: an AU with an elderly or disabled member whose income is over the 200% CE standard — it faces only the NET income test (WAC 388-478-0060(2)(b)) so it can still qualify, but it is NOT CE, so its resources ARE tested. The test also returns for AUs excluded from CE under WAC 388-414-0001(3)(c): substantial lottery/gambling winners, strikers, AUs that knowingly transferred resources to qualify, AUs that refused to cooperate with eligibility information, a head of household who failed Basic Food work requirements, or an AU with an IPV-disqualified member. For those non-CE AUs the limits are $4,500 if the AU has an elderly or disabled individual, $3,000 for all other AUs (WAC 388-470-0005(8)).",
+      "source_url": "https://app.leg.wa.gov/WAC/default.aspx?cite=388-470-0005"
+    },
+    {
+      "key": "sua-values",
+      "kind": "supplement",
+      "terms": [
+        "utility allowance",
+        "standard utility",
+        "sua",
+        "lua",
+        "tua",
+        "heating allowance",
+        "utility bills",
+        "actual utility",
+        "heat and eat",
+        "liheap"
+      ],
+      "citation": "WAC 388-450-0195 (eff. 2026-02-07) — Basic Food utility allowances",
+      "heading": "Washington utility allowances — mandatory standards, current values",
+      "text": "Washington's utility allowances are MANDATORY: 'The department uses utility allowances instead of the actual utility costs' the AU pays — a household cannot elect to claim actual utility bills, higher or lower. Current values (WAC 388-450-0195 as amended by WSR 26-02-071, effective 2/7/2026 — note Washington codified these in FEBRUARY 2026, not on the usual Oct 1 COLA date): Standard Utility Allowance (heating/cooling) $515; Limited Utility Allowance (any two qualifying non-heating utilities) $406; Telephone Utility Allowance (telephone only) $58. Heat and Eat: receiving more than $20 in LIHEAP benefits per year qualifies the AU for the full SUA. CAUTION for workers: the EA-Z Utility Chart's instruction to 'code ACES with the household's actual circumstances' is a system-coding instruction about which utilities the AU pays — it is NOT an actual-cost election; the allowance amounts above always apply.",
+      "source_url": "https://app.leg.wa.gov/WAC/default.aspx?cite=388-450-0195"
+    },
+    {
+      "key": "deductions-no-smd",
+      "kind": "supplement",
+      "terms": [
+        "medical deduction",
+        "standard medical",
+        "smd",
+        "medical expenses",
+        "standard deduction",
+        "homeless deduction",
+        "shelter deduction",
+        "excess shelter",
+        "deductions"
+      ],
+      "citation": "WAC 388-450-0185; WAC 388-450-0190; WAC 388-450-0200 — Basic Food deductions (no standard medical deduction)",
+      "heading": "Washington deductions — actual medical expenses, no SMD",
+      "text": "Washington has NO standard medical deduction — unlike California ($150 standard) or Oregon ($170). An elderly or disabled person deducts ACTUAL 'medical expenses over $35 a month owed or anticipated' (WAC 388-450-0185; mechanics in WAC 388-450-0200) — so itemizing and verifying real medical costs matters in Washington in a way it doesn't in SMD states, and skipping that step under-computes the benefit. The rest of the deduction stack follows the federal FY26 values as codified in WAC (WSR 26-02-071, eff. 2/7/2026): standard deduction $209 (AU of 1–3), $223 (4), $261 (5), $299 (6+); 20% earned income deduction; homeless shelter expense deduction stated as $198 in Washington's rule text ('A homeless AU with shelter costs is eligible for a homeless shelter expense deduction of $198.'); excess shelter deduction = total shelter costs minus one-half of countable income after other deductions, subject to the cap.",
+      "source_url": "https://app.leg.wa.gov/WAC/default.aspx?cite=388-450-0185"
+    },
+    {
+      "key": "abawd",
+      "kind": "supplement",
+      "terms": [
+        "abawd",
+        "time limit",
+        "able-bodied",
+        "able bodied",
+        "clock reset",
+        "countable months",
+        "three months",
+        "36 month",
+        "thirty-six month",
+        "regain",
+        "waived",
+        "waiver",
+        "80 hours",
+        "work requirement"
+      ],
+      "citation": "WAC 388-444-0030 / 388-444-0035 (eff. 2026-03-09); DSHS EA-Z ABAWD (rev. 2026-05-28)",
+      "heading": "Washington ABAWD — the 1/1/2024–12/31/2026 clock, no waived areas",
+      "text": "Washington's current fixed 36-month ABAWD period runs JANUARY 1, 2024 through DECEMBER 31, 2026, and DSHS states 'another 36-month period will begin January 1, 2027.' Under fixed-clock mechanics, countable months are counted within the state-set period (WAC 388-444-0030) — but no fetched Washington source EXPLICITLY states carry-over/reset treatment at the boundary, so confirm reset mechanics with DSHS before advising a household whose months would expire at the period change. This clock is DIFFERENT from other states' (California's runs 2026–2028); never transfer clock math across states. NO WAIVED AREAS: 'As of February 1, 2026, no areas in Washington are waived' — the time limit applies statewide, so an ABAWD gets 3 countable months in the period unless meeting the work requirement: 'an average of 80 hours per month' of work or qualifying activity. Post-OBBBA rules as codified (WSR 26-05-015, effective 3/9/2026): the time limit covers ages 18 through 64 beginning July 4, 2025; the dependent-child exemption requires a child UNDER 14 in the AU; the veteran, homelessness, and former-foster-youth exemptions are NOT in Washington's current exemption list. Individuals aged 60+ are exempt from GENERAL work requirements yet still subject to the ABAWD time limit through 64 unless otherwise exempt. Washington's Native American/Alaska Native exception is statewide and extends to first- and second-degree descendants, and per DSHS screening guidance the tribe need not be federally recognized. Regaining after time-out: 'working eighty hours or more during a thirty-day period' (or equivalent work-program participation, workfare, or becoming exempt). CITATION CAUTION: the published WAC 388-444-0035 text contains a codification error — two consecutive subsections are both numbered (3) — so quote the rule TEXT rather than deep subsection numbers.",
+      "source_url": "https://app.leg.wa.gov/WAC/default.aspx?cite=388-444-0035"
+    },
+    {
+      "key": "certs-reporting",
+      "kind": "supplement",
+      "terms": [
+        "certification period",
+        "certification review",
+        "recertify",
+        "mcr",
+        "review due",
+        "eligibility review",
+        "report changes",
+        "irt",
+        "esap",
+        "mandatory reports",
+        "reporting"
+      ],
+      "citation": "WAC 388-416-0005; WAC 388-418-0005 — certification periods + required reports",
+      "heading": "Washington certification + reporting — 12-month certs, month-5 MCR, three mandatory reports",
+      "text": "Standard Basic Food certification periods run up to 12 months, with a Mid-Certification Review (MCR): the review form is sent 'in the fifth month of your certification or review period' and must be completed 'by the 10th day of month six' (WAC 388-418-0011(3)(a)); if the review is not completed, benefits stop at the end of the month the review was due (WAC 388-418-0011(6)). No MCR is required when the certification period is six months or less, or when the AU consists only of elderly or disabled adults or is ESAP-qualified AND has no earned income (WAC 388-418-0011(2)(b)(ii)) — an elderly AU with earnings still owes an MCR. ESAP is codified in Washington rule — 'ESAP households are certified for 36 months' (WAC 388-416-0005(1)(b)) — so an eligible elderly/disabled household gets a 36-month certification, not 12. Between reviews Washington uses what the EA-Z manual calls simplified reporting, but the operative WAC (388-418-0005) does not use that label — it enumerates the mandatory mid-period reports, chiefly: total monthly income exceeding the maximum gross monthly income standard (the IRT, keyed to WAC 388-478-0060), substantial lottery/gambling winnings, and for ABAWDs work hours dropping below the requirement. Reports are due by the 10th of the month following the change. Quote the WAC's enumerated triggers, not the 'simplified reporting' label.",
+      "source_url": "https://app.leg.wa.gov/WAC/default.aspx?cite=388-418-0005"
+    },
+    {
+      "key": "washcap",
+      "kind": "supplement",
+      "terms": [
+        "washcap",
+        "ssi",
+        "combined application project",
+        "separate interview",
+        "food benefits interview"
+      ],
+      "citation": "WAC 388-492 — WASHCAP (Washington State Combined Application Project)",
+      "heading": "WASHCAP — the SSI recipient's simplified Basic Food pathway",
+      "text": "WASHCAP (Washington State Combined Application Project) is 'a simplified food benefits program' for most single SSI recipients. Eligibility: a federal SSI recipient, age 18 or older, with no earned income at application, who lives alone or otherwise qualifies as a single household for SSA purposes. The pathway's point is reduced burden: the person applies AT the Social Security Administration and the SSI interview doubles as the WASHCAP interview — no separate DSHS food interview — and eligibility 'must be reviewed at least every thirty-six months' (per the WAC; prefer the WAC over the EA-Z WASHCAP page, whose revision stamp is 2011 and lags later rule amendments). A recipient may OPT OUT into regular Basic Food only in three cases (WAC 388-492-0040): allowable out-of-pocket medical expenses over $35/month (regular Basic Food deducts actual medical costs — Washington has no standard medical deduction), a grandfathered election made before 4/25/2005, or when regular Basic Food would pay at least $40 more than WASHCAP — a smaller difference does not qualify. The portal named in the WASHCAP rule for online business is Washington Connection (WAC 388-492-0020(6)(b)).",
+      "source_url": "https://app.leg.wa.gov/WAC/default.aspx?cite=388-492"
+    },
+    {
+      "key": "program-identity",
+      "kind": "supplement",
+      "terms": [
+        "what is snap called",
+        "snap called",
+        "washington connection",
+        "food assistance program",
+        "apply online",
+        "where do i apply",
+        "how do i apply",
+        "community services office",
+        "cso",
+        "aces"
+      ],
+      "citation": "Washington Basic Food — DSHS ESA (WAC Title 388)",
+      "heading": "Washington program identity — Basic Food, not 'SNAP'",
+      "text": "Washington's SNAP program is the Washington Basic Food Program ('Basic Food'). It combines federal SNAP with the state-funded Food Assistance Program (FAP) for certain non-citizens who don't qualify for federal SNAP — so a household ineligible federally on immigration status may still get state FAP benefits under the same application. Administered by the Department of Social and Health Services (DSHS), Economic Services Administration, through Community Services Offices; the eligibility system is ACES. Apply online at Washington Connection (washingtonconnection.org — the portal named in rule text at WAC 388-492-0020(6)(b)), at a Community Services Office, or by phone. Policy lives in WAC Title 388 (state-of-record text at app.leg.wa.gov) with worker guidance in the DSHS EA-Z Manual — cite the WAC for operative rules; EA-Z pages carry per-page 'Revised' dates and can lag the WAC.",
+      "source_url": "https://www.dshs.wa.gov/esa/community-services-offices/basic-food"
+    }
+  ]
+}

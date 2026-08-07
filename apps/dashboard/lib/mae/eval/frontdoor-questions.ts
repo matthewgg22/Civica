@@ -27,6 +27,10 @@ export interface FrontDoorCase {
   category: string;
   question: string;
   expect: FrontDoorExpectation;
+  /** State pack the question routes through. Omitted = default (CA). Every
+   *  state pack must contribute cases here — the framework's per-state gate
+   *  requires ≥12, with ≥3 that must resolve to STATE authority. */
+  state?: string;
 }
 
 export const FRONTDOOR_EVAL: FrontDoorCase[] = [
@@ -122,4 +126,22 @@ export const FRONTDOOR_EVAL: FrontDoorCase[] = [
   { id: "qc-element-363", category: "Notices", question: "QC flagged our case on element 363 — what is that?", expect: { kind: "external", citation: "FNS Handbook 310" } },
   { id: "notice-two-reasons", category: "Notices", question: "The denial notice listed two different reasons and one of them is wrong — does the correct one save it?", expect: { kind: "external", citation: "FNS Handbook 310" } },
   { id: "notice-invalid-denial", category: "Notices", question: "What makes a denial procedurally invalid on review?", expect: { kind: "external", citation: "FNS Handbook 310" } },
+
+  // ── Washington pack (Wave 1 — first new state; framework gate: ≥12 cases) ──
+  // All routed with state:"WA". The federal-floor control (wa-federal-benefit)
+  // proves the pack does NOT hijack questions the federal corpus should answer.
+  { id: "wa-program-name", category: "WA", question: "What is SNAP called in Washington and where do you apply online?", expect: { kind: "external", citation: "Basic Food" }, state: "WA" },
+  { id: "wa-bbce-200", category: "WA", question: "What is the income limit for Basic Food categorical eligibility in Washington?", expect: { kind: "external", citation: "388-414-0001" }, state: "WA" },
+  { id: "wa-asset-test", category: "WA", question: "Does a Basic Food household in Washington have an asset limit on savings?", expect: { kind: "external", citation: "388-470-0005" }, state: "WA" },
+  { id: "wa-sua-values", category: "WA", question: "What are Washington's standard utility allowance amounts for Basic Food?", expect: { kind: "external", citation: "388-450-0195" }, state: "WA" },
+  { id: "wa-sua-actual", category: "WA", question: "Can a Washington household claim their actual utility bills instead of the standard utility allowance?", expect: { kind: "external", citation: "388-450-0195" }, state: "WA" },
+  { id: "wa-no-smd", category: "WA", question: "Does Washington have a standard medical deduction for elderly households?", expect: { kind: "external", citation: "388-450-0185" }, state: "WA" },
+  { id: "wa-abawd-clock", category: "WA", question: "My Washington client used their three ABAWD months in 2024 — when does their clock reset?", expect: { kind: "external", citation: "388-444" }, state: "WA" },
+  { id: "wa-abawd-waiver", category: "WA", question: "Is any part of Washington waived from the ABAWD time limit right now?", expect: { kind: "external", citation: "388-444" }, state: "WA" },
+  { id: "wa-abawd-regain", category: "WA", question: "How does a Washington ABAWD regain eligibility after timing out?", expect: { kind: "external", citation: "388-444" }, state: "WA" },
+  { id: "wa-mcr", category: "WA", question: "When is the mid-certification review due for a Washington Basic Food household?", expect: { kind: "external", citation: "388-418" }, state: "WA" },
+  { id: "wa-esap-cert", category: "WA", question: "How long is the certification period for an elderly household in Washington under ESAP?", expect: { kind: "external", citation: "388-416" }, state: "WA" },
+  { id: "wa-washcap", category: "WA", question: "My client gets SSI in Washington — do they need a separate food benefits interview?", expect: { kind: "external", citation: "388-492" }, state: "WA" },
+  { id: "wa-heat-and-eat", category: "WA", question: "Does receiving LIHEAP qualify a Washington household for the full utility allowance?", expect: { kind: "external", citation: "388-450-0195" }, state: "WA" },
+  { id: "wa-federal-benefit", category: "WA", question: "How is the monthly benefit amount calculated from net income?", expect: { kind: "grounded", section: "273.10" }, state: "WA" },
 ];
