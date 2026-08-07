@@ -20,7 +20,7 @@ describe("state-pack registry", () => {
 
   it("is case-insensitive and degrades unknown states to null (federal-only), never throwing", () => {
     expect(getStatePack("ca")?.code).toBe("CA");
-    expect(getStatePack("TX")).toBeNull();
+    expect(getStatePack("ZZ")).toBeNull();
     expect(getStatePack("not-a-state")).toBeNull();
   });
 

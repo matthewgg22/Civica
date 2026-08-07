@@ -144,4 +144,20 @@ export const FRONTDOOR_EVAL: FrontDoorCase[] = [
   { id: "wa-washcap", category: "WA", question: "My client gets SSI in Washington — do they need a separate food benefits interview?", expect: { kind: "external", citation: "388-492" }, state: "WA" },
   { id: "wa-heat-and-eat", category: "WA", question: "Does receiving LIHEAP qualify a Washington household for the full utility allowance?", expect: { kind: "external", citation: "388-450-0195" }, state: "WA" },
   { id: "wa-federal-benefit", category: "WA", question: "How is the monthly benefit amount calculated from net income?", expect: { kind: "grounded", section: "273.10" }, state: "WA" },
+
+  // ── Texas pack (Wave 1, state two — the BBCE-with-asset-test state) ─────────
+  { id: "tx-program-name", category: "TX", question: "What is SNAP called in Texas and where do you apply online?", expect: { kind: "external", citation: "SNAP Food Benefits" }, state: "TX" },
+  { id: "tx-bbce-165", category: "TX", question: "What is the categorical eligibility income limit for SNAP in Texas?", expect: { kind: "external", citation: "A-1341" }, state: "TX" },
+  { id: "tx-asset-under-bbce", category: "TX", question: "Does categorical eligibility remove the asset test for a Texas SNAP household?", expect: { kind: "external", citation: "A-1238" }, state: "TX" },
+  { id: "tx-vehicle-rule", category: "TX", question: "How does Texas count a household's vehicle toward the SNAP resource limit?", expect: { kind: "external", citation: "A-1238" }, state: "TX" },
+  { id: "tx-sua-values", category: "TX", question: "What are the Texas utility standard amounts for SNAP?", expect: { kind: "external", citation: "A-1429" }, state: "TX" },
+  { id: "tx-sua-actual", category: "TX", question: "Can a Texas household deduct their actual utility bills instead of the standard?", expect: { kind: "external", citation: "A-1429" }, state: "TX" },
+  { id: "tx-sme", category: "TX", question: "How does the standard medical deduction work for an elderly Texan on SNAP?", expect: { kind: "external", citation: "A-1428" }, state: "TX" },
+  { id: "tx-abawd-clock", category: "TX", question: "When does the 36-month ABAWD clock start for a Texas client?", expect: { kind: "external", citation: "A-1910" }, state: "TX" },
+  { id: "tx-abawd-cutover", category: "TX", question: "When did the new ABAWD age rules take effect in Texas?", expect: { kind: "external", citation: "A-1910" }, state: "TX" },
+  { id: "tx-abawd-60-64", category: "TX", question: "Is a 62-year-old in Texas subject to the SNAP time limit or exempt from work rules?", expect: { kind: "external", citation: "A-1910" }, state: "TX" },
+  { id: "tx-certs-sr", category: "TX", question: "How long is a streamlined reporting household certified for in Texas?", expect: { kind: "external", citation: "A-2324" }, state: "TX" },
+  { id: "tx-tsap", category: "TX", question: "How does an elderly Texan get on the simplified TSAP application track?", expect: { kind: "external", citation: "B-477" }, state: "TX" },
+  { id: "tx-expedited", category: "TX", question: "How fast can an expedited SNAP household in Texas get benefits?", expect: { kind: "external", citation: "A-140" }, state: "TX" },
+  { id: "tx-federal-benefit", category: "TX", question: "How is the monthly benefit amount calculated from net income?", expect: { kind: "grounded", section: "273.10" }, state: "TX" },
 ];

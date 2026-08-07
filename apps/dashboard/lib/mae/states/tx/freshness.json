@@ -1,0 +1,20 @@
+{
+  "_provenance": {
+    "note": "Texas dated facts. Dollar values ride the federal October COLA cycle (A-1341 table effective 10/1/2025). The waiver-counties table (C-331) is volatile. The online-handbook staleness is an advisory in the ABAWD supplement, not a dated cliff.",
+    "extracted": "2026-08-06"
+  },
+  "entries": [
+    {
+      "key": "tx-fy26-dollar-values",
+      "kind": "expires",
+      "date": "2026-09-30",
+      "warning": "Texas FY26 dollar values (income-limits table eff. 10/1/2025; SUA $445 / BUA $400 / phone $62; SME $170) are due for the October 2026 COLA — re-verify TWH C-121 (the income-limits table lives there, not in A-1341) and A-1429 before quoting any Texas dollar amount."
+    },
+    {
+      "key": "tx-abawd-no-waiver",
+      "kind": "expires",
+      "date": "2026-12-31",
+      "warning": "TWH C-331 listed NO ABAWD waiver counties when this pack was built (Aug 2026) — waiver status is volatile; re-verify C-331 and the current FNS quarterly waiver file."
+    }
+  ]
+}
