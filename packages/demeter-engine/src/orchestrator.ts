@@ -96,6 +96,10 @@ export interface AnswerEvents {
   audit?: MaeAuditSink;
   /** Fired once per answer with the final verifier verdict (the 97% metric). */
   onVerified?: (outcome: VerifierOutcome, checks: CitationCheck[]) => void;
+  /** Fired once with the KNOWN token usage (attempt 1 final + retry, summed).
+   *  Zero when attempt 1 was aborted mid-stream (no finalMessage) — callers
+   *  settling spend should estimate from emitted characters in that case. */
+  onUsage?: (inputTokens: number, outputTokens: number) => void;
 }
 
 export interface AnswerRequest {
@@ -163,6 +167,8 @@ export async function* answerQuestion(req: AnswerRequest): AsyncGenerator<Answer
   let outcome: VerifierOutcome = "clean";
   let answerText = "";
   let finalChecks: CitationCheck[] = [];
+  let usageIn = 0;
+  let usageOut = 0;
 
   // --- Attempt 1: stream with incremental verification ----------------------
   let aborted = false;
@@ -195,6 +201,8 @@ export async function* answerQuestion(req: AnswerRequest): AsyncGenerator<Answer
       }
       if (!aborted) {
         const final = await stream.finalMessage();
+        usageIn += final.usage.input_tokens;
+        usageOut += final.usage.output_tokens;
         finalChecks = verifyCitations(answerText, retrievedCitations, state);
         if (hasUnrecognized(finalChecks)) {
           aborted = true; // failed on the last unverified tail
@@ -240,6 +248,8 @@ export async function* answerQuestion(req: AnswerRequest): AsyncGenerator<Answer
         .filter((b): b is Anthropic.TextBlock => b.type === "text")
         .map((b) => b.text)
         .join("");
+      usageIn += retry.usage.input_tokens;
+      usageOut += retry.usage.output_tokens;
     } catch (err) {
       if (err instanceof Error && (err.name === "AbortError" || signal?.aborted)) return;
       retryText = "";
@@ -265,6 +275,7 @@ export async function* answerQuestion(req: AnswerRequest): AsyncGenerator<Answer
   if (trailerText) yield { type: "trailer", text: trailerText };
 
   events?.onVerified?.(outcome, finalChecks);
+  events?.onUsage?.(usageIn, usageOut);
 
   // --- Audit (best-effort; the sink must never throw) -----------------------
   const bareQuestion = meta?.question ? redactPii(meta.question.slice(0, 4000)).redacted : "";
