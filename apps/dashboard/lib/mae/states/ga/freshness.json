@@ -1,0 +1,26 @@
+{
+  "_provenance": {
+    "note": "Georgia dated facts. Dollar values ride the federal October COLA via the annual standards transmittal (currently MT-84, Oct 2025). The fixed ABAWD window is a hard cliff. Waiver status is volatile post-OBBBA.",
+    "extracted": "2026-08-07"
+  },
+  "entries": [
+    {
+      "key": "ga-ffy26-dollar-values",
+      "kind": "expires",
+      "date": "2026-09-30",
+      "warning": "Georgia FFY 2026 dollar values (Appendix A income limits, SUAs $405/$358/$47, standard deductions, $744 cap, $199 homeless — MT-84, eff. Oct 2025) are due for the October 2026 COLA — find the successor transmittal before quoting any Georgia dollar amount. (The SMD $161 rides its own approval, not the COLA — re-verify §3614 separately.)"
+    },
+    {
+      "key": "ga-abawd-window-reset",
+      "kind": "expires",
+      "date": "2026-11-30",
+      "warning": "Georgia's fixed statewide ABAWD 36-month window (Dec 1, 2023 – Nov 30, 2026) expires — a NEW window begins December 1, 2026 and no regaining is needed once it starts (SNAP Manual §3355). Do not describe the old window after that date."
+    },
+    {
+      "key": "ga-waiver-status",
+      "kind": "expires",
+      "date": "2026-12-31",
+      "warning": "Georgia had NO ABAWD waivers when this pack was built ('all counties... time-limited', §3355; FNS FY26-Q3) — waiver status is volatile post-OBBBA; re-verify §3355 and the current FNS quarterly file."
+    }
+  ]
+}

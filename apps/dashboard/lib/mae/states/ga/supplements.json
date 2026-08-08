@@ -1,0 +1,212 @@
+{
+  "_provenance": {
+    "note": "Georgia SNAP curated supplements — Wave 2, state one (docs/plans/mae-state-corpus-framework.md). Drafted from verbatim source text: the DFCS SNAP Policy Manual on PAMMS (pamms.dhs.ga.gov — static HTML, plain curl; the framework's 'ODIS JS-app' flag is outdated, odis.dhs.ga.gov redirects there), MT transmittal cover letters, form PDFs, dfcs.georgia.gov and gateway.ga.gov pages, with the FNS BBCE chart and waiver-status file as flagged federal corroboration. Fetch workflow wf_7d90136b-865; independently cross-checked (8/8 pivotal facts CONFIRMED) and adversarially fact-checked before PR. See PROVENANCE.md.",
+    "extracted": "2026-08-07",
+    "source_fact_check": "cross-check re-verification + post-draft adversarial refute pass; corrections recorded in PROVENANCE.md"
+  },
+  "supplements": [
+    {
+      "key": "asset-rule",
+      "kind": "supplement",
+      "terms": [
+        "asset limit",
+        "asset test",
+        "resource limit",
+        "resource test",
+        "resources",
+        "savings",
+        "savings limit",
+        "bank account",
+        "vehicle",
+        "car count",
+        "does my car count",
+        "transfer resources",
+        "lottery",
+        "winnings"
+      ],
+      "citation": "SNAP Manual §3405; SNAP Manual §3400; SNAP Manual §3210 — GA resource rules (liquid-only counting)",
+      "heading": "Georgia counts ONLY liquid resources — vehicles are NEVER counted — and most households face no resource test at all",
+      "text": "Two layers of relief. First, categorically eligible households (nearly everyone — see the income rule) face NO resource test: 'The resources of TANF/SSI and TCOS categorically eligible AUs are excluded when determining eligibility for benefits' (SNAP Manual §3210). Second, even for the households that ARE tested, Georgia counts only LIQUID resources: 'The SNAP resource policy is the same as the TANF Community Outreach Services policy, which excludes all non-liquid resources from the eligibility determination. The liquid resources are counted for AUs that are not categorically eligible for SNAP benefits' (§3400). The §3405 resource chart (June 2026, MT-87) marks vehicles excluded outright — 'Vehicles are not countable resources.' — along with real property, non-home property, and rental property. A car never counts against a Georgia SNAP household. Limits for the tested minority (federal values, §3400): $3,000, or '$4,500 for AUs that contain at least one AU member aged 60 or older or disabled per SNAP policy' — applied to liquid assets (bank accounts, cash, stocks) only, and third-party verification of liquid resources is required whenever countable resources exceed 75% of the applicable limit (§3405, a general rule). If the ONLY elderly/disabled member is ineligible or sanctioned, the limit reverts to $3,000 (§3400). Who gets tested: households with an IPV-disqualified member, a work-sanctioned head of household, a resource transfer to qualify, elderly/disabled households over 200% FPL, a regular household over 130% that contains an elderly/disabled member (tested at $4,500) — and the lottery carve-out: a household reapplying for the FIRST time after losing eligibility for substantial winnings over $4,500 is determined 'under regular SNAP rules, which considers resources'. Transfers: knowingly transferring a resource to qualify triggers disqualification periods from 1 month up to 12 months per the §3405 table — and the bands measure the 'Amount transferred in excess of the resource limit' ((transferred value + other countable resources) − limit), NOT the raw transfer amount: $0–$249.99 over = 1 month; $5,000+ over = 12 months. STALE-SECTION TRAP: §3415 (Nov 2019, MT-57) still describes counting non-home real property at equity value — the June 2026 §3405 chart controls: it is excluded. (§3405 itself retains one residual sentence about considering equity value for rental property not producing FMV-consistent income — the chart still marks the row Excluded.)",
+      "source_url": "https://pamms.dhs.ga.gov/dfcs/snap/3405/"
+    },
+    {
+      "key": "income-pathways",
+      "kind": "supplement",
+      "terms": [
+        "income limit",
+        "income limits",
+        "gross income limit",
+        "gross income ceiling",
+        "make too much",
+        "over income",
+        "bbce",
+        "categorical eligibility",
+        "categorically eligible",
+        "tcos",
+        "130 percent",
+        "130%",
+        "200 percent",
+        "200%",
+        "poverty level"
+      ],
+      "citation": "SNAP Manual §3210; SNAP Manual §3610; Appendix A — GA income pathways (TCOS categorical eligibility)",
+      "heading": "Georgia BBCE gives NO general income relief — 130% stays — but hides a 200% screen for all-adult elderly/disabled households",
+      "text": "Georgia is the 'BBCE = asset relief only' archetype, with one important refinement the FNS chart misses. Categorical eligibility is conferred through TANF Community Outreach Services (TCOS): 'TCOS provides information and referral services to households whose income falls at or below 130% of the federal poverty level (FPL) or to households whose income falls at or below 200% of the FPL if all adult AU members are elderly or disabled' (SNAP Manual §3210). So for regular households the gross screen stays at the federal 130% — 'The gross income ceiling (GIC) is 130% of the federal poverty level' (§3610) — but a household whose ADULT members are all elderly/disabled screens at 200%. (The June 2026 FNS BBCE chart prints only a single 130% row for Georgia — the manual controls.) Conferral is nearly automatic: a signature on the Application for Benefits (Form 297, 297A, or Renewal Form 508) plus a verbal explanation establishes TCOS, and 'the household's statement of gross income is accepted' initially — though 'TCOS SNAP categorical eligibility does not continue... if gross income, upon verification, is above the identified FPL.' Once categorically eligible, an AU is 'not subject to gross or net income limits' and skips the resource test; 1–2 person cat-el AUs get at least the $24 minimum even over the net limit, while 'Categorically eligible AUs of three or more individuals whose income is above the net income limit will not receive benefits' (Gateway auto-closes them). NOT categorically eligible (§3210): an AU with an IPV-disqualified member; a work-sanctioned head of household; a resource transfer to qualify; an elderly/disabled household over 200% FPL; 'a regular SNAP household whose gross income exceeds 130% of the FPL but it contains an elderly or disabled AU member' (that household falls back to the federal net-only path: 100% net test + $4,500 liquid-resource test); and the first reapplication after $4,500+ lottery/gambling winnings. FFY 2026 monthly values (Appendix A, eff. October 2025) for a household of 1: 130% = $1,696; 100% net = $1,305; max allotment $298. Household of 4: $3,483 / $2,680 / $994. The Appendix A '165%' column is NOT an eligibility tier — it serves the elderly-disabled separate-AU (purchase-and-prepare) rule: a disabled person and spouse may be a separate AU 'if the gross income of the others with whom the individual resides does not exceed 165% of the Federal Poverty Level' (§3205).",
+      "source_url": "https://pamms.dhs.ga.gov/dfcs/snap/3210/"
+    },
+    {
+      "key": "sua-values",
+      "kind": "supplement",
+      "terms": [
+        "utility allowance",
+        "standard utility",
+        "sua",
+        "lsua",
+        "heating allowance",
+        "utility standard",
+        "utility standards",
+        "liheap",
+        "heat and eat",
+        "telephone allowance",
+        "utility bills",
+        "shared meter",
+        "actual utilities"
+      ],
+      "citation": "SNAP Manual §3617 — GA utility standards (H/C SUA $405 / LSUA $358 / telephone $47)",
+      "heading": "Georgia utility standards — H/C SUA $405, LSUA $358, telephone $47; actuals only in one narrow case",
+      "text": "Georgia runs three utility standards (SNAP Manual §3617, June 2026): 'The H/C SUA is $405' (heating/cooling); 'The LSUA is $358' — the Limited SUA, for AUs with at least two non-heating/cooling utilities (or billed for excess non-heating/cooling utility costs in any housing), covering 'cooking fuel costs; electricity not used to heat or cool the residence; cost for one telephone; water/sewage, installation, and maintenance for a well or septic tank; garbage and trash collection'; and 'The telephone standard of $47' when a phone (cellular or installed) is the only utility expense. Actual utility costs are allowed ONLY 'when only one utility expense is incurred other than heating and/or cooling and the AU provides verification' — otherwise the standards apply. H/C SUA qualification: billed (or expecting to be billed within 12 months) for a heating or cooling cost separate from rent/mortgage, OR billed for an excess heating/cooling expense in any housing — OR, post-OBBBA, the LIHEAP route survives only for households that include 'an elderly or disabled member AND received a low-income energy assistance payment (LIHEAP) in the month of application or the previous 12 months' (payment must exceed $20/year). That elderly/disabled condition is Georgia's OBBBA heat-and-eat implementation (MT-85, effective November 2025). SUA verification is by client statement unless questionable. Sharing: households that share utilities each get the full standard — §3617 directs staff to 'allow the appropriate SUA for each AU separately,' and 'Only an actual utility expense may be divided among AUs that share the utility costs.' Property tax and other annualized shelter costs are prorated over 12 months.",
+      "source_url": "https://pamms.dhs.ga.gov/dfcs/snap/3617/"
+    },
+    {
+      "key": "deductions",
+      "kind": "supplement",
+      "terms": [
+        "deductions",
+        "standard deduction",
+        "medical deduction",
+        "standard medical",
+        "smd",
+        "medical expenses",
+        "dependent care",
+        "child care deduction",
+        "child support",
+        "shelter deduction",
+        "excess shelter",
+        "homeless deduction",
+        "earned income deduction",
+        "20 percent"
+      ],
+      "citation": "SNAP Manual §3614; SNAP Manual §3616; SNAP Manual §3613 — GA deductions (SMD $161; child support is a DEDUCTION)",
+      "heading": "Georgia runs a $161 Standard Medical Deduction — one bill over $35 unlocks it — and child support is a deduction, not an exclusion",
+      "text": "Two NY-contrast facts define Georgia deduction math. (1) GEORGIA HAS A STANDARD MEDICAL DEDUCTION: 'Georgia is approved to allow households to claim a standard medical deduction (SMD) if there is an elderly or disabled household member with recurring medical expenses of more than $35 per month' — 'Effective October 1, 2023, the approved SMD is $161 ($196 - $35 = $161) per month. Only one standard medical deduction can be given per AU' (SNAP Manual §3614). The unlock is cheap: 'The household may verify medical expenses using one medical bill that is more than $35 per month to qualify for the standard medical deduction' — and a ONE-TIME bill qualifies only if the bill divided by the months in the certification period exceeds $35 (§3614, Example 2). Households with recurring expenses over $196/month may instead claim ACTUAL expenses (all verified) — itemize when costs are high, take the SMD otherwise. (2) CHILD SUPPORT IS A DEDUCTION (not an income exclusion as in some states): 'A child support deduction is allowed when an AU member is legally obligated to pay support for children outside of the AU' (§3616) — the actual amount paid is deducted, verified past-due support may be deducted once, and alimony does not count. Because it is a deduction, paying child support does NOT reduce the income compared against the gross ceiling. The rest (federal values as GA states them): earned-income deduction 20% of gross earnings (§3612); standard deduction $209 (AU 1–3) / $223 (4) / $261 (5) / $299 (6+) (§3613, eff. Oct 2025); dependent care UNCAPPED — 'Deduct the full costs incurred or billed to the AU for children under 18 or incapacitated persons of any age,' transportation included, verified by client statement (§3615); excess-shelter cap $744 with the uncapped elderly/disabled rule (§3617); homeless shelter deduction $199 — note Georgia prints a rounded $199 where other states print the federal $198.99 (e.g., NY's GIS 25DC059) — and it cannot stack with the excess-shelter/SUA route: Gateway applies whichever is more beneficial (§3618).",
+      "source_url": "https://pamms.dhs.ga.gov/dfcs/snap/3614/"
+    },
+    {
+      "key": "abawd",
+      "kind": "supplement",
+      "terms": [
+        "abawd",
+        "aged abawd",
+        "time limit",
+        "able-bodied",
+        "able bodied",
+        "36 month",
+        "three months",
+        "countable months",
+        "clock",
+        "regain",
+        "waiver",
+        "waived",
+        "80 hours",
+        "work requirement",
+        "work rules",
+        "workfare",
+        "snap works"
+      ],
+      "citation": "SNAP Manual §3355; SNAP Manual §3350; SNAP Manual §3380 — GA ABAWD rules (fixed statewide clock since 1996)",
+      "heading": "Georgia ABAWD — fixed statewide window (Dec 1, 2023 – Nov 30, 2026), no waivers anywhere, and E&T is voluntary",
+      "text": "Georgia has run a FIXED statewide ABAWD clock since the beginning: 'The first fixed 36-month period began in December 1996 and ended in November 1999. A new period starts every 36 months thereafter. The current 36-month period is December 1, 2023, through November 30, 2026' (SNAP Manual §3355) — and when a window expires, 'the customer does not need to regain eligibility once the new 36-month period begins.' NO WAIVERS: 'Currently, all counties in Georgia are considered ABAWD time-limited counties' (corroborated by the FNS FY26-Q3 waiver file listing Georgia among states without waivers). POST-OBBBA DEFINITION: an ABAWD is a work registrant 'age 18 through 65 (until the month in which the 66th birthday falls, effective July 4, 2025),' not pregnant, not unfit for employment, and 'not responsible for the dependent care of a SNAP household member under age 14' (related or not). GEORGIA'S OWN SOFTENER: 'Effective July 4, 2025, an Aged ABAWD (AA) is an individual who meets all the ABAWD criteria above but is aged 60 – 65. Aged ABAWDs do not have to meet the time limit work requirements' — so in practice the Georgia time limit bites ages 18–59 (Aged ABAWDs remain work registrants and still get the ABAWD four-month certification period). The veteran, homeless, and foster-care exceptions were REMOVED by OBBBA (MT-85, Nov 2025); homelessness is not an automatic exemption from the general work rules either. Meeting the requirement: 80 hours/month of work (sub-minimum wage counts), participation in qualifying work-program components (education/training counts through WIOA or SNAP Works components — and 80 hours of a training or education activity counts explicitly for REGAINING), or COMPARABLE WORKFARE — hours = monthly allotment ÷ federal minimum wage ('$292 [allotment amount]/$7.25 [current minimum wage] = 40.27; the ABAWD must complete 40 hours... Only use whole numbers and do not round'; max 30 hours/week; Form 858 is the guide). CRITICAL STRUCTURE: SNAP Works (Georgia's E&T) is VOLUNTARY — 'SNAP Works participants are not subject to sanction' — and 'ABAWDs who need to regain eligibility are not eligible for enrollment in the SNAP Works Program'; comparable workfare is the regaining route. Regaining: 80 hours (work, education/training, workfare, or a combination) 'during any 30 consecutive day period,' unlimited times; a second CONSECUTIVE three-month period is available once per window after regaining then falling out ('bonus months... not guaranteed'). ABAWDs get a fixed FOUR-month certification period and must report when hours drop below 20/week (80/month average) within 10 days of the end of the month. Countable months are tracked on the ABAWD Time Clock in Gateway (or manual Form 507); months used in another state COUNT in Georgia. Protections: staff must screen for exceptions before assigning countable months, using information already available to the agency first; prorated months don't count. DISTINCT MECHANISM: failing the GENERAL work rules (e.g. voluntary quit of a 30+ hour job) triggers the §3380 sanction ladder — minimum 1 month / 3 months / 6 months, each 'or until compliance, whichever is later,' potentially indefinite — that is not the ABAWD time limit.",
+      "source_url": "https://pamms.dhs.ga.gov/dfcs/snap/3355/"
+    },
+    {
+      "key": "certs-reporting",
+      "kind": "supplement",
+      "terms": [
+        "certification period",
+        "recertify",
+        "recertification",
+        "renewal",
+        "renew benefits",
+        "periodic report",
+        "periodic reporting",
+        "srr",
+        "simplified reporting",
+        "report changes",
+        "reporting",
+        "how long certified",
+        "interview",
+        "missed interview",
+        "telephone interview",
+        "transitional benefits",
+        "tsnap"
+      ],
+      "citation": "SNAP Manual §3105; SNAP Manual §3710; SNAP Manual §3720; SNAP Manual §3730 — GA certs + reporting (periodic report phase-out)",
+      "heading": "Georgia certs + reporting — March 2, 2026 reset: 6-month certs, periodic reports phased out, no-interview alternate renewals",
+      "text": "March 2, 2026 rewired Georgia's certification machinery (post-OBBBA; the changes rode MT-87, with MT-86 of Jan 3, 2026 carrying the On-Demand interview and Senior SNAP updates): 'Effective March 2, 2026, households are not assigned 24-month certification periods' — the menu is now: ABAWD AUs four months (the ONLY period they can get); 'All other AUs authorized on or after March 2, 2026, are assigned six (6) month certification periods'; all-adult elderly/disabled AUs with no earned income twelve months; Senior SNAP thirty-six months (§3105/§3710). With extended certs gone, 'Periodic Reporting will be phased out for regular SNAP AUs' — active households keep filing Form 528 only until their next recertification (§3730). In exchange, ALTERNATE RENEWALS returned: six-month-cert households without an ABAWD 'can have their cases processed as an alternate renewal at every other recertification' — no interview, but a renewal form plus verification still required; a standard interview (telephone by default) still happens at least once every 12 months — the every-other-renewal cadence guarantees it — and every 4 months for ABAWD households (§3710). REPORTING: Simplified Reporting Requirements 'apply to all AUs' — Georgia has no change-reporting track (§3720, Form 339). Only three things must be reported, each within 10 days of the end of the month: gross income exceeding 130% FPL; an ABAWD's hours falling below 20/week (80/month average); and substantial lottery/gambling winnings of $4,500 or more. RENEWALS: timely = filed 'between the 1st and 15th day of the last month of the certification period' (uninterrupted benefits); 16th-to-end = untimely (that right is lost). INTERVIEWS: telephone or face-to-face at application — a hardship claim entitles the client to a telephone interview; Georgia runs ON-DEMAND interviews for eligible customers ('customers must call the agency to complete the interview by the application SOP date' — DFCS will not schedule an appointment), with a Notice of Missed Interview (NOMI) after a miss and the reschedule burden on the AU. Adverse actions carry 14-day timely notice (§3705). TSNAP (Georgia's transitional benefits, §3704): AUs leaving TANF (or Refugee Cash Assistance) 'because of changes related to earned income' get five months of frozen SNAP with no reporting and no E&T sanctions, then a normal recertification.",
+      "source_url": "https://pamms.dhs.ga.gov/dfcs/snap/3730/"
+    },
+    {
+      "key": "senior-snap-tsnap-expedited",
+      "kind": "supplement",
+      "terms": [
+        "senior snap",
+        "seniors",
+        "senior",
+        "esap",
+        "simplified application",
+        "elderly application",
+        "senior application",
+        "elderly simplified",
+        "expedited",
+        "emergency snap",
+        "emergency food stamps",
+        "form 298",
+        "no interview"
+      ],
+      "citation": "SNAP Manual §3725; SNAP Manual §3110 — Senior SNAP (GA's ESAP) + expedited processing",
+      "heading": "Georgia simplified tracks — Senior SNAP runs 36-month certs with a waived renewal interview; expedited pays by day 7",
+      "text": "SENIOR SNAP is Georgia's ESAP (federal waiver, WIMS case #13440): 'a simplified application project designed to reinvent the SNAP process for elderly assistance units (AU) that have traditionally proven to be stable households with fixed incomes...' (SNAP Manual §3725). Households authorized on or after February 1, 2023 get thirty-six (36) month certification periods. The initial-application interview is still required, but at renewal 'The household must self-declare all information on the Senior SNAP renewal form (Form 298 or Form 508)... An interview is not required except in the following situations: Prior to closing or denying a Senior SNAP recertification; If information... is questionable, incomplete, contradictory; or If the Senior SNAP household requests an interview.' Applications go to a centralized unit: Georgia Senior SNAP, P.O. Box 450149, Atlanta, GA 31145-0149 (fax 678-717-5585) — and the cascade protects applicants: 'When applying with Form 298 and the customer does not qualify for Senior SNAP, Gateway will automatically determine eligibility for the household as a regular SNAP AU' with no new application required. (The public dfcs.georgia.gov Senior SNAP page was verified STALE on the age criterion against §3725 — the manual controls.) EXPEDITED (§3110): an entitled AU 'must be able to participate by the 7th calendar day following the date of application' — with identity as 'the only verification required before benefits are issued and must be issued by the 6th day.' Criteria: monthly gross income under $150 AND liquid resources at or below $100; OR shelter + utility costs (using the SUA) exceeding gross income + liquid resources; OR a destitute migrant/seasonal farmworker with liquid resources ≤ $100. 'Applications received through Gateway are automatically screened for expedited services.' Expedited interviews can be On-Demand — the customer must call within the expedited timeframe, or the case processes as a normal 30-day application. There is no limit on repeat expedited certifications, provided the previously postponed verification was completed (or a normal certification happened in between).",
+      "source_url": "https://pamms.dhs.ga.gov/dfcs/snap/3725/"
+    },
+    {
+      "key": "program-identity",
+      "kind": "supplement",
+      "terms": [
+        "what is snap called",
+        "snap called",
+        "food stamps",
+        "gateway",
+        "georgia gateway",
+        "apply for food stamps",
+        "snap online",
+        "apply for snap",
+        "apply online",
+        "where do i apply",
+        "how do i apply",
+        "form 297",
+        "dfcs",
+        "connectebt",
+        "ebt card",
+        "fair hearing"
+      ],
+      "citation": "Georgia SNAP — DFCS/DHS (SNAP Policy Manual on PAMMS; Georgia Gateway portal)",
+      "heading": "Georgia program identity — DFCS runs it, Georgia Gateway is the front door, ConnectEBT holds the card",
+      "text": "Georgia uses the federal name — 'The Supplemental Nutrition Assistance Program (SNAP), formerly known as Food Stamps' (dfcs.georgia.gov) — and the old name persists everywhere in Georgia usage, including the manual's own residual 'Food Stamp' headings. Administration is STATE-run through county DFCS offices: 'The Department of Human Services (DHS), Division of Family and Children Services through the local County Department of Family and Children Services (DFCS) is responsible for administering the SNAP program' (SNAP Manual §3000). ONE PORTAL: Georgia Gateway (gateway.ga.gov) — apply, check, renew, report changes, view notices, upload documents — shared across DHS/DFCS, Community Health, Early Care and Learning, and Public Health programs; Gateway is also the eligibility system of record (it auto-screens for expedited service and runs the ABAWD Time Clock). Paper forms: Form 297 'Application for Benefits' (Rev. 11/2025 on PAMMS — the dfcs.georgia.gov download still serves the older Rev. 10/2024; the combined-program application), Form 297A (its companion), Renewal Form 508 (Rev. 11/2025), Periodic Report Form 528 (Rev. 10/24, being phased out), Senior SNAP Form 298, food-loss replacement Form 841. Applications can be filed online, by phone, by mail/fax, or in person at a county DFCS office. Customer contact center: 1-877-423-4746 (711 Georgia Relay; free interpreters). Policy lives in the DFCS SNAP Policy Manual on PAMMS (pamms.dhs.ga.gov — the former ODIS host redirects there), cited by section number (§3000–§3810 plus Appendices), amended by numbered Manual Transmittals ('MT-87' current at build) whose cover letters are public PDFs. EBT: cards work at QUEST retailers; account service via ConnectEBT (connectebt.com + the ConnectEBT app — Georgia's approved app for balance, PIN, alerts, and card-lock) or 1-888-421-3281; the back end is the EPPIC platform.",
+      "source_url": "https://dfcs.georgia.gov/services/snap"
+    }
+  ],
+  "supersessions": {
+    "273.24": "GEORGIA: fixed statewide 36-month clock since December 1996 — current window Dec 1, 2023 – Nov 30, 2026, next begins Dec 1, 2026 with no regaining needed (SNAP Manual §3355). All counties are time-limited; no waivers (FNS FY26-Q3). Post-OBBBA ages run 18 through 65 (until the 66th-birthday month), but Georgia's 'Aged ABAWD' rule exempts ages 60–65 from the time-limit work requirements (eff. 7/4/2025); veteran/homeless/foster-care exceptions removed (MT-85).",
+    "273.9": "GEORGIA: the OBBBA heat-and-eat restriction is implemented in SNAP Manual §3617 (MT-85, eff. Nov 2025) — a LIHEAP payment (>$20/year, received in the application month or prior 12 months) confers the $405 H/C SUA only for households with an elderly or disabled member; all others need a heating/cooling cost separate from rent (or an excess heating/cooling expense in any housing)."
+  }
+}
