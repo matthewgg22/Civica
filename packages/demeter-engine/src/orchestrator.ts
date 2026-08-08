@@ -179,7 +179,7 @@ export async function* answerQuestion(req: AnswerRequest): AsyncGenerator<Answer
   const lastUser = messages[messages.length - 1]!.content;
 
   // --- Grounded system prompt (state-threaded; shared with the eval) --------
-  const { systemBlocks, retrievedCitations } = await buildMaeSystem(lastUser, state);
+  const { systemBlocks, retrievedCitations } = await buildMaeSystem(lastUser, state, lang);
 
   // Distress gate (F2): crisis phrasing → the answer LEADS with immediate help.
   const distressed = detectDistress(lastUser);
@@ -198,9 +198,16 @@ export async function* answerQuestion(req: AnswerRequest): AsyncGenerator<Answer
         "copiarse exactamente de las fuentes provistas.",
     });
   }
-  const groundingText = systemBlocks.map((b) => b.text).join("\n");
+  // Numbers the answer may legitimately carry: the verified sources PLUS the
+  // user's own figures (an answer that echoes "with $1,500/month income…" is
+  // repeating the question, not inventing data — live eval caught the gate
+  // degrading exactly that).
+  const numericSource =
+    systemBlocks.map((b) => b.text).join("\n") +
+    "\n" +
+    messages.map((m) => m.content).join("\n");
   const numbersOk = (text: string): boolean =>
-    req.lang !== "es" || verifyNumericEquivalence(text, groundingText).pass;
+    req.lang !== "es" || verifyNumericEquivalence(text, numericSource).pass;
 
   const client = new Anthropic({ apiKey });
   const generation = {

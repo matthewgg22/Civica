@@ -42,6 +42,7 @@ const ENGINE_PARAM_STATES = new Set(["CA", "MA"]);
 export async function buildMaeSystem(
   lastUserText: string,
   state: string | null = "CA",
+  lang: "en" | "es" = "en",
 ): Promise<MaeSystem> {
   let liveParams = "";
   if (state && ENGINE_PARAM_STATES.has(state)) {
@@ -63,7 +64,7 @@ export async function buildMaeSystem(
   let retrievedBlock = "";
   let retrievedCitations: string[] = [];
   try {
-    const chunks = await retrieve(lastUserText, { state });
+    const chunks = await retrieve(lastUserText, { state, lang });
     retrievedCitations = chunks.map((c) => c.citation);
     retrievedBlock = formatRetrievedSources(chunks, state);
   } catch (err) {

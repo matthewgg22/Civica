@@ -122,8 +122,23 @@ export function formatEngineParams(state: "CA" | "MA", asOf: Date): string {
   if (p.asset_limit !== undefined) lines.push(`- Asset limit (standard): $${p.asset_limit}`);
   if (p.asset_limit_ed !== undefined) lines.push(`- Asset limit (elderly/disabled household): $${p.asset_limit_ed}`);
   if (p.fpl) {
+    // Same arithmetic as the engine's income gates (snap-rules
+    // gates/income-tests.ts): floored monthly FPL × ratio, rounded. Printed as
+    // dollars so answers QUOTE the operative thresholds instead of deriving
+    // them — a derived figure is invisible-wrong in EN and trips the ES
+    // numeric-equivalence gate into a degrade (live eval, es-pii-deflection).
+    const scaled = (pct: number): Record<string, number> =>
+      Object.fromEntries(
+        Object.entries(p.fpl as Record<string, number>).map(([k, v]) => [
+          k,
+          Math.round((v * pct) / 100),
+        ]),
+      );
     lines.push(`- 100% FPL, monthly (net-income test basis): ${row(p.fpl)}`);
-    lines.push("  · Gross-income test = 130% of these figures; CA BBCE categorical-eligibility test = 200% (ACIN I-46-25).");
+    lines.push(`- Gross-income limit, 130% FPL (federal test): ${row(scaled(130))}`);
+    lines.push(
+      `- BBCE categorical-eligibility gross screen, 200% FPL (the operative ${state} test${state === "CA" ? ", ACIN I-46-25" : ""}): ${row(scaled(200))}`,
+    );
   }
   if (p.sua) {
     lines.push(
