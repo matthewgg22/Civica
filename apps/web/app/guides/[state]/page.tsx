@@ -6,6 +6,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { QUESTIONS } from "../../../lib/guide-questions";
 import { VERIFIED_STATES } from "@civica/demeter-engine/packs";
 
 export const dynamicParams = false;
@@ -31,29 +32,6 @@ export async function generateMetadata({
     description: `How SNAP works in ${pack.code}: ${pack.program}, run by ${pack.agency}. Verified from primary sources ${pack.verification.verified_on} — ask Demeter anything about it.`,
   };
 }
-
-export const QUESTIONS: Record<string, string[]> = {
-  CA: [
-    "What income limit applies to my CalFresh household?",
-    "Do I have to do an interview for CalFresh?",
-    "How fast can I get emergency CalFresh?",
-  ],
-  WA: [
-    "What is the income limit for Basic Food?",
-    "Does Washington have an asset test for Basic Food?",
-    "What is WASHCAP and do I qualify?",
-  ],
-  TX: [
-    "What is the income limit for SNAP in Texas?",
-    "Does my car count against me for Texas SNAP?",
-    "How fast can I get emergency food benefits in Texas?",
-  ],
-  NY: [
-    "What income limit applies to my household in New York?",
-    "Do I use myBenefits or ACCESS HRA to apply?",
-    "Is there a simplified application for seniors in New York?",
-  ],
-};
 
 export default async function GuidePage({
   params,
