@@ -118,7 +118,7 @@ export function verifyCitations(
   return extractCitations(answer, state).map((citation) => {
     if (/CFR/i.test(citation)) {
       const title = citation.split(" ")[0];
-      const sectionWithTitle = `${title} CFR ${citation.split("CFR ")[1].split("(")[0]}`;
+      const sectionWithTitle = `${title} CFR ${(citation.split("CFR ")[1] ?? "").split("(")[0]}`;
       if (retrievedCitations.some((r) => lineage(citation, r))) {
         return { citation, status: "in_sources" as const };
       }

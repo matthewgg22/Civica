@@ -15,7 +15,9 @@ describe("state-pack registry", () => {
     expect(registeredStates()).toContain("CA");
     expect(DEFAULT_STATE).toBe("CA");
     expect(getStatePack(undefined)?.code).toBe("CA");
-    expect(getStatePack(null)?.code).toBe("CA");
+    // null = EXPLICIT federal floor (eng review T-C): an anonymous public user
+    // with no state selected must never inherit California supplements.
+    expect(getStatePack(null)).toBeNull();
   });
 
   it("is case-insensitive and degrades unknown states to null (federal-only), never throwing", () => {
@@ -104,9 +106,9 @@ describe("CA pack — Wave-0 extraction fidelity", () => {
 
   it("keeps both CA freshness dates with their original semantics", () => {
     const byKey = Object.fromEntries(ca.freshness.map((f) => [f.key, f]));
-    expect(byKey["ca-abawd-waiver-window"].kind).toBe("expires");
-    expect(byKey["ca-abawd-waiver-window"].date).toBe("2026-10-31");
-    expect(byKey["ca-abawd-effective"].kind).toBe("not-yet-effective");
-    expect(byKey["ca-abawd-effective"].date).toBe("2026-06-01");
+    expect(byKey["ca-abawd-waiver-window"]!.kind).toBe("expires");
+    expect(byKey["ca-abawd-waiver-window"]!.date).toBe("2026-10-31");
+    expect(byKey["ca-abawd-effective"]!.kind).toBe("not-yet-effective");
+    expect(byKey["ca-abawd-effective"]!.date).toBe("2026-06-01");
   });
 });

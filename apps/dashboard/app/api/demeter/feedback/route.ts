@@ -1,6 +1,6 @@
-// POST /api/mae/feedback — caseworker feedback on a Mae answer.
+// POST /api/demeter/feedback — caseworker feedback on a Mae answer.
 //
-// Staff-auth-gated (same gate as /api/mae). Captures thumbs up/down + an
+// Staff-auth-gated (same gate as /api/demeter). Captures thumbs up/down + an
 // optional reason + note, PII-scrubbed, into snap_enrollment.mae_feedback. This
 // is the human-in-the-loop signal: thumbs-down + "citation wrong" rows are the
 // triage queue for new answer-eval regression cases.
@@ -9,7 +9,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { cookies } from "next/headers";
 import { createServerClientFromCookies, createServiceClient } from "../../../../lib/supabase";
 import { isStaff } from "../../../../lib/roleRouting";
-import { redactPii } from "../../../../lib/mae/pii";
+import { redactPii } from "@civica/demeter-engine";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";

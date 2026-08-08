@@ -16,12 +16,12 @@ describe("Mae answer-faithfulness scorers", () => {
 
   for (const fx of ANSWER_FIXTURES) {
     it(`${fx.id}: good answer passes`, () => {
-      const score = scoreAnswer(fx.good, goldById[fx.id], fx.retrievedCitations);
+      const score = scoreAnswer(fx.good, goldById[fx.id]!, fx.retrievedCitations);
       expect(score.pass, JSON.stringify(score.checks)).toBe(true);
     });
 
     it(`${fx.id}: bad answer fails (${fx.badTrips})`, () => {
-      const score = scoreAnswer(fx.bad, goldById[fx.id], fx.retrievedCitations);
+      const score = scoreAnswer(fx.bad, goldById[fx.id]!, fx.retrievedCitations);
       expect(score.pass).toBe(false);
       expect(score.checks[fx.badTrips], `expected ${fx.badTrips} to fail`).toBe(false);
     });

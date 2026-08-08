@@ -38,7 +38,7 @@ function MaeFeedback({ question, answer }: { question: string; answer: string })
 
   const submit = (rating: "up" | "down", reason?: string) => {
     setStage("sent");
-    void fetch("/api/mae/feedback", {
+    void fetch("/api/demeter/feedback", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ rating, reason, note: note.trim() || undefined, question, answer }),
@@ -209,7 +209,7 @@ export default function MaeChat() {
       const meta = caseContext
         ? { mode: "case", state: caseState, ref: caseRef, question }
         : { mode: "general", state: null, ref: null, question };
-      const res = await fetch("/api/mae", {
+      const res = await fetch("/api/demeter", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ messages: apiMessages, meta }),
@@ -237,6 +237,10 @@ export default function MaeChat() {
         let scheduled = false;
         const raf =
           typeof requestAnimationFrame === "function" ? requestAnimationFrame : (fn: () => void) => setTimeout(fn, 32);
+        // Recompose protocol (engine T-A): everything before this marker was an
+        // unverified draft the engine aborted — REPLACE it, don't append. The
+        // verified recomposition (or the quotes-only degrade) follows the marker.
+        const RECOMPOSE_MARKER = "⟲ recomposing with verified sources…";
         const flush = () => {
           scheduled = false;
           if (!buf) return;
@@ -245,7 +249,17 @@ export default function MaeChat() {
           setMessages((m) => {
             const copy = m.slice();
             const last = copy[copy.length - 1];
-            if (last && last.role === "assistant") copy[copy.length - 1] = { ...last, content: last.content + add };
+            if (last && last.role === "assistant") {
+              const combined = last.content + add;
+              const markerAt = combined.lastIndexOf(RECOMPOSE_MARKER);
+              copy[copy.length - 1] = {
+                ...last,
+                content:
+                  markerAt >= 0
+                    ? combined.slice(markerAt + RECOMPOSE_MARKER.length).replace(/^\s+/, "")
+                    : combined,
+              };
+            }
             return copy;
           });
         };

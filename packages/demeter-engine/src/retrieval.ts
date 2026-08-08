@@ -90,7 +90,7 @@ function packTopics(pack: StatePack | null): ExternalTopic[] {
   if (!pack) return [];
   return pack.topics.map((t: PackTopic) => ({
     terms: t.terms,
-    suppressSections: t.suppress_sections,
+    ...(t.suppress_sections ? { suppressSections: t.suppress_sections } : {}),
     curated: curatedAuthority(t.citation, t.heading, t.text, t.source_url),
   }));
 }
@@ -155,7 +155,7 @@ export interface RetrieveOptions {
   /** State pack to merge with the federal corpus. Defaults to the launch state
    *  (CA), preserving the pre-pack behavior; an unregistered code degrades to
    *  federal-only. */
-  state?: string | null;
+  state?: string | null | undefined;
   k?: number; // max chunks (default 6)
   charBudget?: number; // total injected chars (default 10000)
   maxChunkChars?: number; // per-chunk cap (default 3500)

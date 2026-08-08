@@ -3,6 +3,7 @@ import { withSentryConfig } from "@sentry/nextjs";
 
 const nextConfig: NextConfig = {
   transpilePackages: [
+    "@civica/demeter-engine",
     "@civica/snap-enums",
     "@civica/snap-qc-engine",
     "@civica/snap-rules",

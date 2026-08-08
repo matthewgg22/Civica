@@ -113,7 +113,7 @@ function buildPack(
   return {
     ...pack,
     topics: supplements.supplements,
-    supersessions: supplements.supersessions,
+    ...(supplements.supersessions ? { supersessions: supplements.supersessions } : {}),
     authorities: authorities.patterns.map((p) => ({
       ...p,
       // Fresh RegExp per pack build; consumers must not share lastIndex state.
@@ -153,9 +153,16 @@ const REGISTRY: Record<StateCode, StatePack> = {
 
 /** Pack for a state code, or null when no pack is registered. Callers treat
  *  null as "federal-only" — never a hard error, so an unknown state degrades
- *  to the federal floor exactly as the system prompt describes. */
+ *  to the federal floor exactly as the system prompt describes.
+ *
+ *  Argument semantics (eng review T-C — the CA-leak fix):
+ *    - undefined (arg omitted): legacy DEFAULT_STATE (CA) — the staff dashboard's
+ *      historical behavior only. New callers pass an explicit value.
+ *    - null: EXPLICIT federal floor — no pack. An anonymous public user with no
+ *      state selected must never inherit California supplements. */
 export function getStatePack(code?: string | null): StatePack | null {
-  if (!code) return REGISTRY[DEFAULT_STATE];
+  if (code === null) return null;
+  if (code === undefined) return REGISTRY[DEFAULT_STATE];
   const upper = code.toUpperCase() as StateCode;
   return REGISTRY[upper] ?? null;
 }

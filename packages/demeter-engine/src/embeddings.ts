@@ -54,6 +54,6 @@ export async function embed(text: string): Promise<number[]> {
 /** Cosine similarity of two unit-normalized vectors (== dot product). */
 export function cosine(a: number[], b: number[]): number {
   let d = 0;
-  for (let i = 0; i < a.length && i < b.length; i++) d += a[i] * b[i];
+  for (let i = 0; i < a.length && i < b.length; i++) d += a[i]! * b[i]!;
   return d;
 }
