@@ -127,3 +127,14 @@ describe("pack verification metadata (public /verify + guide pages)", () => {
   });
 });
 
+
+describe("recompose marker", () => {
+  it("the client-safe copy is byte-identical to what the stream emits", async () => {
+    const { RECOMPOSE_MARKER } = await import("../packs");
+    const { STREAM_RECOMPOSE_MARKER } = await import("../orchestrator");
+    // Chat UIs slice on this exact string. The two components used to hardcode
+    // a version WITHOUT the surrounding newlines and only worked because
+    // lastIndexOf still matched the substring — a silent trap.
+    expect(RECOMPOSE_MARKER).toBe(STREAM_RECOMPOSE_MARKER);
+  });
+});

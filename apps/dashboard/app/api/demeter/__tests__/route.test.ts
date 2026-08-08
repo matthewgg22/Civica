@@ -22,7 +22,8 @@ vi.mock("@civica/demeter-engine", async (importOriginal) => {
   return { ...actual, answerQuestion: mockAnswer };
 });
 
-import { POST, RECOMPOSE_MARKER } from "../route";
+import { POST } from "../route";
+import { STREAM_RECOMPOSE_MARKER as RECOMPOSE_MARKER } from "@civica/demeter-engine";
 
 function makeReq(body: unknown): NextRequest {
   return new NextRequest("http://localhost/api/demeter", {
