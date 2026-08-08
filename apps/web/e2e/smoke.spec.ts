@@ -34,9 +34,15 @@ test.describe("chat surface", () => {
     await expect
       .poll(
         async () => {
-          const assistant = await page.locator(".demeter__msg--assistant").last().textContent();
+          // Count FIRST. On the no-key path the empty assistant bubble is
+          // removed and the honest banner renders instead, so calling
+          // .textContent() on the absent bubble would block until timeout and
+          // the banner would never be checked.
+          const assistants = page.locator(".demeter__msg--assistant");
+          const n = await assistants.count();
+          const text = n > 0 ? (await assistants.last().textContent()) ?? "" : "";
           const banner = await page.locator(".demeter__error").count();
-          return (assistant ?? "").length > 0 || banner > 0;
+          return text.trim().length > 0 || banner > 0;
         },
         { timeout: 40_000 },
       )
