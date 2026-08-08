@@ -40,6 +40,20 @@ describe("Mae citation verifier", () => {
     expect(trailer).toContain("◑");
   });
 
+  it("renders the trailer in Spanish when the answer language is es", () => {
+    const checks = [
+      { citation: "7 CFR 273.10", status: "known" as const },
+      { citation: "7 CFR 273.99", status: "unrecognized" as const },
+    ];
+    const es = formatCitationTrailer(checks, "es");
+    expect(es).toContain("Citas:");
+    expect(es).toContain("autoridad reconocida");
+    expect(es).toContain("NO reconocida");
+    expect(es).not.toContain("recognized authority");
+    // Default stays English.
+    expect(formatCitationTrailer(checks)).toContain("Citation:");
+  });
+
   it("recognizes the verification-limits authority cluster the ME reviewers actually cite", () => {
     const byCite = Object.fromEntries(
       verifyCitations(

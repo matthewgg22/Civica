@@ -37,6 +37,13 @@ describe("Mae freshness monitoring", () => {
     expect(stale).toContain("⚠️");
   });
 
+  it("localizes the as-of line for Spanish answers", () => {
+    const es = formatFreshnessFooter(new Date("2026-06-15T00:00:00Z"), CORPUS, undefined, "es");
+    expect(es).toContain("Fuentes al");
+    expect(es).toContain("cifras federales FY26 (vigentes hasta");
+    expect(es).not.toContain("Sources as of");
+  });
+
   it("warns before 2026-06-01 that CA ABAWD screening is not yet in effect, and is silent after", () => {
     const before = assessFreshness(new Date("2026-05-15T00:00:00Z"), CORPUS);
     expect(before.warnings.join(" ")).toMatch(/ABAWD time-limit screening does not begin/i);
