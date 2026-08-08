@@ -105,7 +105,7 @@ hearing mechanics beyond the two federal deadlines. (~70% of manual pages, ~3% o
 | IL | State | IDHS PM/WAG HTML | EASY-MED | **165%** | RMP in Cook & Franklin counties only |
 | AZ | State | CNAP static HTML + archive tree | MED | 200% | Current-values page is directly fetchable |
 | FL | State | Per-chapter PDFs (right host: ffic.myflfamilies.com) | MED | 200% | |
-| GA | State | ODIS portal (JS app) | MED | **130%** | THE "BBCE ≠ income relief" case |
+| GA | State | ~~ODIS (JS app)~~ **PAMMS static site** (plain curl; public GitLab history; per-section MT stamps) | **EASY** | **130%** (+200% all-adult elderly/disabled screen the FNS chart misses) | THE "BBCE ≠ income relief" case; liquid-only resources |
 | NV | State | E&P Manual chapter PDFs w/ **MTL revision stamps** | MED | 200% | Unstable URLs (dates in filenames); agency renamed DWSS→DSS |
 | TX | State | Texas Works Handbook HTML — **host 403s bots** | MED | **165% + $5k assets** | Kills the BBCE boolean; 4-mo certs |
 | MA | State | DTA Online Guide (JS app) + 106 CMR — mass.gov 403s | MED-HARD | 200% | Launch state, but not cheap to corpus-ify |

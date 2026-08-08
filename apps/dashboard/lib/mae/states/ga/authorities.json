@@ -1,0 +1,200 @@
+{
+  "_provenance": {
+    "note": "Georgia citation authorities. The DFCS SNAP Policy Manual is cited by section number ('SNAP Manual §3355'); amendments issue as numbered Manual Transmittals ('MT-87') with public cover-letter PDFs at pamms.dhs.ga.gov/dfcs/snap/_attachments/. Forms (297/297A/508/528/298/339/507/858/859/841/47/296) are referenced in prose, not extracted as citations. Every manual section carries a header with Effective Date + MT lineage — the best-versioned source in the roster so far.",
+    "extracted": "2026-08-07"
+  },
+  "patterns": [
+    {
+      "key": "gamanual",
+      "regex": "\\bSNAP\\s+Manual\\s+§?\\s*(3\\d{3})\\b",
+      "flags": "gi",
+      "template": "SNAP Manual §$1",
+      "normalize": "none",
+      "match": "exact",
+      "note": "DFCS SNAP Policy Manual sections (3000–3810); subsection cites like §3355.2 verify at the section base"
+    },
+    {
+      "key": "gamt",
+      "regex": "\\bMT-(\\d{2})\\b",
+      "flags": "g",
+      "template": "MT-$1",
+      "normalize": "upper",
+      "match": "exact",
+      "note": "DFCS Manual Transmittals; cover letters at /dfcs/snap/_attachments/cover-letter-mt-NN.pdf"
+    }
+  ],
+  "known": {
+    "gamanual": [
+      {
+        "value": "SNAP Manual §3000",
+        "note": "program overview — administration model (DHS/DFCS via county offices)"
+      },
+      {
+        "value": "SNAP Manual §3105",
+        "note": "application processing — cert-period menu, interviews (incl. On-Demand), NOMI, 30-day SOP"
+      },
+      {
+        "value": "SNAP Manual §3110",
+        "note": "expedited — 7th-calendar-day standard, issue by day 6, criteria, Gateway auto-screening"
+      },
+      {
+        "value": "SNAP Manual §3205",
+        "note": "elderly-disabled separate-AU rule — the real purpose of the 165% column"
+      },
+      {
+        "value": "SNAP Manual §3210",
+        "note": "categorical eligibility — TCOS conferral, 130%/200% screens, cat-el carve-outs"
+      },
+      {
+        "value": "SNAP Manual §3345",
+        "note": "E&T structure — SNAP Works, voluntary"
+      },
+      {
+        "value": "SNAP Manual §3350",
+        "note": "work registration — post-OBBBA registrant ages, exemptions, homelessness posture"
+      },
+      {
+        "value": "SNAP Manual §3355",
+        "note": "ABAWD — fixed clock (Dec 2023–Nov 2026), Aged ABAWD 60–65, workfare formula, Time Clock/Form 507"
+      },
+      {
+        "value": "SNAP Manual §3360",
+        "note": "E&T populations — veterans/homeless E&T-eligible (no longer time-limit exceptions)"
+      },
+      {
+        "value": "SNAP Manual §3370",
+        "note": "E&T components — 120-hour cap, job-search sub-50% rule, 24-month education cap"
+      },
+      {
+        "value": "SNAP Manual §3375",
+        "note": "E&T supports — transportation, job-retention incidentals"
+      },
+      {
+        "value": "SNAP Manual §3380",
+        "note": "work-rules sanctions — 1/3/6-month minimums or-until-compliance ladder (distinct from ABAWD limit)"
+      },
+      {
+        "value": "SNAP Manual §3400",
+        "note": "resource limits — $3,000/$4,500 liquid-only; SNAP policy = TCOS policy"
+      },
+      {
+        "value": "SNAP Manual §3405",
+        "note": "resource types — vehicles NEVER counted; real property excluded (June 2026 chart); transfer table"
+      },
+      {
+        "value": "SNAP Manual §3415",
+        "note": "real property — STALE (Nov 2019, MT-57): still describes counting non-home property; §3405 controls"
+      },
+      {
+        "value": "SNAP Manual §3420",
+        "note": "income exclusions — LIHEAP excluded as income"
+      },
+      {
+        "value": "SNAP Manual §3610",
+        "note": "budgeting — gross income ceiling (130%), deduction order"
+      },
+      {
+        "value": "SNAP Manual §3611",
+        "note": "deductions overview"
+      },
+      {
+        "value": "SNAP Manual §3612",
+        "note": "earned income deduction — 20%"
+      },
+      {
+        "value": "SNAP Manual §3613",
+        "note": "standard deduction — $209/$223/$261/$299 (Oct 2025)"
+      },
+      {
+        "value": "SNAP Manual §3614",
+        "note": "medical — SMD $161 ($196−$35), one-bill unlock, actuals over $196"
+      },
+      {
+        "value": "SNAP Manual §3615",
+        "note": "dependent care — uncapped, transportation included"
+      },
+      {
+        "value": "SNAP Manual §3616",
+        "note": "child support — DEDUCTION (not exclusion); arrears once"
+      },
+      {
+        "value": "SNAP Manual §3617",
+        "note": "shelter/utilities — $744 cap, H/C SUA $405, LSUA $358, phone $47, OBBBA LIHEAP restriction"
+      },
+      {
+        "value": "SNAP Manual §3618",
+        "note": "homeless shelter deduction — $199 (GA rounds the federal $198.99)"
+      },
+      {
+        "value": "SNAP Manual §3625",
+        "note": "budgeting for IPV/sanctioned members"
+      },
+      {
+        "value": "SNAP Manual §3704",
+        "note": "TSNAP — 5-month transitional benefits after TANF exit"
+      },
+      {
+        "value": "SNAP Manual §3705",
+        "note": "notices — 14-day timely notice"
+      },
+      {
+        "value": "SNAP Manual §3710",
+        "note": "renewals — timely 1st–15th, alternate renewals restored 3/2/2026, 24-month certs ended"
+      },
+      {
+        "value": "SNAP Manual §3715",
+        "note": "interim changes — $50 expedited change, 5-paycheck protection"
+      },
+      {
+        "value": "SNAP Manual §3720",
+        "note": "simplified reporting — applies to ALL AUs; the three required reports; Form 339"
+      },
+      {
+        "value": "SNAP Manual §3725",
+        "note": "Senior SNAP (GA's ESAP, WIMS #13440) — 36-month certs, waived renewal interview, Form 298 cascade"
+      },
+      {
+        "value": "SNAP Manual §3730",
+        "note": "periodic reporting — Form 528; PHASED OUT for regular AUs eff. 3/2/2026"
+      },
+      {
+        "value": "SNAP Manual §3805",
+        "note": "EBT — ConnectEBT, EPPIC, 1-888-421-3281, QUEST"
+      }
+    ],
+    "gamt": [
+      {
+        "value": "MT-79",
+        "note": "Oct 1, 2024 baseline (MT-80, Jan 2, 2025, is the companion revision)"
+      },
+      {
+        "value": "MT-80",
+        "note": "January 2025 — §3210 categorical eligibility update"
+      },
+      {
+        "value": "MT-81",
+        "note": "Feb 3, 2025 series updates"
+      },
+      {
+        "value": "MT-83",
+        "note": "§3614 medical deduction revision"
+      },
+      {
+        "value": "MT-84",
+        "note": "Oct 1, 2025 COLA transmittal — FY26 standards, SUAs on Form 296"
+      },
+      {
+        "value": "MT-85",
+        "note": "Nov 1, 2025 — OBBBA implementation: ABAWD ages/exception removals, heat-and-eat in §3617"
+      },
+      {
+        "value": "MT-86",
+        "note": "Jan 3, 2026 — On-Demand interview language (§3105/§3710); Senior SNAP age updates (§3725)"
+      },
+      {
+        "value": "MT-87",
+        "note": "June 1, 2026 — current at build; carried the March 2, 2026 cert-menu/alternate-renewal/periodic-report changes; §3617 housing chart + §3614 mileage rate"
+      }
+    ]
+  }
+}
