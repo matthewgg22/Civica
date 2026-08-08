@@ -62,10 +62,22 @@ export function assessFreshness(now: Date, corpusDate: string, state?: string | 
   return { asOf, warnings };
 }
 
-/** Render the "sources as of" footer (always) plus any staleness warnings. */
-export function formatFreshnessFooter(now: Date, corpusDate: string, state?: string | null): string {
+/** Render the "sources as of" footer (always) plus any staleness warnings.
+ * Staleness warnings stay in English — they're operator-facing (re-run a
+ * build script), not reader-facing. */
+export function formatFreshnessFooter(
+  now: Date,
+  corpusDate: string,
+  state?: string | null,
+  lang: "en" | "es" = "en",
+): string {
   const { asOf, warnings } = assessFreshness(now, corpusDate, state);
-  const lines = [`\n\n*Sources as of: ${asOf}.*`];
+  const asOfLocalized =
+    lang === "es"
+      ? asOf.replace("federal figures FY26 (current through", "cifras federales FY26 (vigentes hasta")
+      : asOf;
+  const label = lang === "es" ? "Fuentes al" : "Sources as of";
+  const lines = [`\n\n*${label}: ${asOfLocalized}.*`];
   for (const w of warnings) lines.push(`\n> ⚠️ ${w}`);
   return lines.join("");
 }

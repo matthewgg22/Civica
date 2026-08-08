@@ -141,20 +141,32 @@ export function verifyCitations(
   });
 }
 
+const TRAILER_STRINGS = {
+  en: {
+    header: "**Citation:**",
+    bad: "⚠️ **NOT recognized — likely an error, verify before relying:**",
+    inSrc: "✓ regulatory text retrieved for this question:",
+    known: "◑ recognized authority, but not in the retrieved text — confirm against source:",
+  },
+  es: {
+    header: "**Citas:**",
+    bad: "⚠️ **NO reconocida — probablemente un error, verifica antes de confiar:**",
+    inSrc: "✓ texto regulatorio recuperado para esta pregunta:",
+    known: "◑ autoridad reconocida, pero no está en el texto recuperado — confirma contra la fuente:",
+  },
+} as const;
+
 /** Render a transparency trailer for the caseworker. Empty if no citations. */
-export function formatCitationTrailer(checks: CitationCheck[]): string {
+export function formatCitationTrailer(checks: CitationCheck[], lang: "en" | "es" = "en"): string {
   if (checks.length === 0) return "";
+  const t = TRAILER_STRINGS[lang];
   const inSrc = checks.filter((c) => c.status === "in_sources").map((c) => c.citation);
   const known = checks.filter((c) => c.status === "known").map((c) => c.citation);
   const bad = checks.filter((c) => c.status === "unrecognized").map((c) => c.citation);
 
-  const lines: string[] = ["\n\n---", "**Citation:**"];
-  if (bad.length) {
-    lines.push(`- ⚠️ **NOT recognized — likely an error, verify before relying:** ${bad.join(", ")}`);
-  }
-  if (inSrc.length) lines.push(`- ✓ regulatory text retrieved for this question: ${inSrc.join(", ")}`);
-  if (known.length) {
-    lines.push(`- ◑ recognized authority, but not in the retrieved text — confirm against source: ${known.join(", ")}`);
-  }
+  const lines: string[] = ["\n\n---", t.header];
+  if (bad.length) lines.push(`- ${t.bad} ${bad.join(", ")}`);
+  if (inSrc.length) lines.push(`- ${t.inSrc} ${inSrc.join(", ")}`);
+  if (known.length) lines.push(`- ${t.known} ${known.join(", ")}`);
   return lines.join("\n");
 }

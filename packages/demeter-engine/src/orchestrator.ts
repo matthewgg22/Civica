@@ -138,7 +138,19 @@ function hasUnrecognized(checks: CitationCheck[]): boolean {
 
 /** Build the honest fallback when generation can't be verified twice: the
  *  verbatim retrieved sources, clearly framed. Nothing unverified survives. */
-function degradedAnswer(retrievedBlock: string): string {
+function degradedAnswer(retrievedBlock: string, lang: "en" | "es" = "en"): string {
+  // The quoted sources stay in English by design (the verified corpus is EN);
+  // only the wrapper localizes, and the ES wrapper says so.
+  if (lang === "es") {
+    return (
+      "No pude componer un resumen cuyas citas se verifiquen todas contra las " +
+      "fuentes recuperadas para esta pregunta — así que en lugar de adivinar, " +
+      "aquí está el texto fuente literal (en inglés):\n\n" +
+      retrievedBlock +
+      "\nSi esto no responde tu pregunta, intenta reformularla o contacta a la " +
+      "agencia SNAP de tu estado para una respuesta definitiva."
+    );
+  }
   return (
     "I couldn't compose a summary whose citations all check out against the " +
     "sources retrieved for this question — so instead of guessing, here is the " +
@@ -154,6 +166,7 @@ function degradedAnswer(retrievedBlock: string): string {
 export async function* answerQuestion(req: AnswerRequest): AsyncGenerator<AnswerFrame> {
   const { apiKey, signal, events, meta } = req;
   const state = req.state; // undefined = legacy CA default; null = federal floor
+  const lang = req.lang ?? "en";
   const audit = events?.audit ?? consoleAuditSink;
 
   // --- Redact PII before anything leaves the process ------------------------
@@ -293,7 +306,7 @@ export async function* answerQuestion(req: AnswerRequest): AsyncGenerator<Answer
     } else {
       outcome = "degraded";
       const chunks = await retrieve(lastUser, { state });
-      answerText = degradedAnswer(formatRetrievedSources(chunks, state));
+      answerText = degradedAnswer(formatRetrievedSources(chunks, state), lang);
       finalChecks = verifyCitations(answerText, retrievedCitations, state);
       yield { type: "delta", text: answerText };
     }
@@ -301,8 +314,8 @@ export async function* answerQuestion(req: AnswerRequest): AsyncGenerator<Answer
 
   // --- Trailer: citation verdicts + freshness -------------------------------
   // Surface, never silently strip — honesty over a tidy-looking answer.
-  const trailer = formatCitationTrailer(finalChecks);
-  const freshness = formatFreshnessFooter(new Date(), CORPUS_EFFECTIVE_DATE, state);
+  const trailer = formatCitationTrailer(finalChecks, lang);
+  const freshness = formatFreshnessFooter(new Date(), CORPUS_EFFECTIVE_DATE, state, lang);
   const trailerText = [trailer, freshness].filter(Boolean).join("");
   if (trailerText) yield { type: "trailer", text: trailerText };
 
