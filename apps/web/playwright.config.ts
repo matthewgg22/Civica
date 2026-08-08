@@ -19,7 +19,10 @@ export default defineConfig({
   webServer: process.env.PLAYWRIGHT_BASE_URL
     ? undefined
     : {
-        command: "pnpm start -- --port 3120",
+        // `pnpm start -- --port 3120` mangles the forwarded args — next parsed
+        // "--port" as the project directory and died. Invoke the binary
+        // directly so there is no forwarding layer to get it wrong.
+        command: "pnpm exec next start --port 3120",
         url: baseURL,
         reuseExistingServer: !process.env.CI,
         timeout: 120_000,
