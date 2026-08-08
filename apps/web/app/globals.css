@@ -4713,6 +4713,7 @@ html {
 .demeter__msg { max-width: 88%; border-radius: 1rem; padding: 0.7rem 0.95rem; font-size: 0.97rem; line-height: 1.5; white-space: pre-wrap; overflow-wrap: anywhere; }
 .demeter__msg--user { align-self: flex-end; background: var(--civica-pine); color: #fff; border-bottom-right-radius: 0.3rem; }
 .demeter__msg--assistant { align-self: flex-start; background: #fff; color: var(--civica-ink); border: 1px solid #E4DFD5; border-bottom-left-radius: 0.3rem; }
+.demeter__rule { border: 0; border-top: 1px solid #E4DFD5; margin: 0.6rem 0 0.4rem; }
 .demeter__thinking { color: var(--civica-muted); font-style: italic; }
 .demeter__divider {
   align-self: center; text-align: center; font-size: 0.78rem; color: var(--civica-graphite);

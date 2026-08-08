@@ -10,7 +10,7 @@
 //  - EN/ES toggle (answers only — citations stay verbatim);
 //  - 429 / at-capacity / unconfigured states render honest, warm errors.
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 
 interface PackMetaLite {
   code: string;
@@ -23,6 +23,37 @@ type Msg =
   | { role: "divider"; content: string };
 
 const RECOMPOSE_MARKER = "⟲ recomposing with verified sources…";
+
+// Answers arrive as light markdown (the engine's prompt asks for bold, bullets,
+// and a `---` rule before the citation trailer). Render exactly that subset as
+// React nodes — never raw HTML, so streamed content has no injection surface.
+// Bullets and line breaks come free from the bubble's `white-space: pre-wrap`.
+function renderInline(line: string, keyBase: string): ReactNode[] {
+  const parts = line.split(/(\*\*[^*]+\*\*|\*[^*\s][^*]*\*)/g);
+  return parts.map((p, j) => {
+    if (p.startsWith("**") && p.endsWith("**") && p.length > 4) {
+      return <strong key={`${keyBase}b${j}`}>{p.slice(2, -2)}</strong>;
+    }
+    if (p.startsWith("*") && p.endsWith("*") && p.length > 2) {
+      return <em key={`${keyBase}i${j}`}>{p.slice(1, -1)}</em>;
+    }
+    return p;
+  });
+}
+
+export function renderAnswer(text: string): ReactNode[] {
+  const out: ReactNode[] = [];
+  const lines = text.split("\n");
+  lines.forEach((line, i) => {
+    if (line.trim() === "---") {
+      out.push(<hr key={`hr${i}`} className="demeter__rule" />);
+      return;
+    }
+    if (i > 0 && lines[i - 1]?.trim() !== "---") out.push("\n");
+    out.push(...renderInline(line, `l${i}`));
+  });
+  return out;
+}
 
 const T = {
   en: {
@@ -269,12 +300,17 @@ export function DemeterChat({
             </div>
           ) : (
             <div key={i} className={`demeter__msg demeter__msg--${m.role}`}>
-              {m.content ||
-                (m.role === "assistant" && busy && i === messages.length - 1 ? (
-                  <span className="demeter__thinking">{t.thinking}</span>
+              {m.content ? (
+                m.role === "assistant" ? (
+                  renderAnswer(m.content)
                 ) : (
                   m.content
-                ))}
+                )
+              ) : m.role === "assistant" && busy && i === messages.length - 1 ? (
+                <span className="demeter__thinking">{t.thinking}</span>
+              ) : (
+                m.content
+              )}
             </div>
           ),
         )}
