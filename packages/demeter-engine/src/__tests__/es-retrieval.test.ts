@@ -24,7 +24,32 @@ describe("expandEsQuery", () => {
   it("leaves queries without Spanish SNAP vocabulary unchanged", () => {
     expect(expandEsQuery("what is the income limit?")).toBe("what is the income limit?");
   });
+
+  it("does not fire short stems inside longer unrelated words", () => {
+    // Bare /auto/ used to match inside "autorización" and inject vehicle terms.
+    expect(expandEsQuery("necesito la autorización del condado")).not.toContain("vehicle");
+    // …while the real vehicle words still expand.
+    for (const q of ["mi carro", "mi automóvil", "el vehículo de mi esposo", "un auto viejo"]) {
+      expect(expandEsQuery(q), q).toContain("vehicle");
+    }
+  });
+
+  it("expands all three Spanish starter questions the chat ships", () => {
+    // Unaccented spellings too — users type without accents constantly.
+    const starters = [
+      "¿Cuál es el límite de ingresos para mi hogar?",
+      "Cual es el limite de ingresos para mi hogar?",
+      "¿Qué tan rápido puedo recibir beneficios en una emergencia?",
+      "Que tan rapido puedo recibir beneficios en una emergencia?",
+      "¿Tengo que hacer una entrevista por teléfono?",
+      "Tengo que hacer una entrevista por telefono?",
+    ];
+    for (const q of starters) {
+      expect(expandEsQuery(q), q).not.toBe(q); // something expanded
+    }
+  });
 });
+
 
 describe("retrieve with lang: es", () => {
   it("grounds the ES expedited question in the expedited-service regulation", async () => {

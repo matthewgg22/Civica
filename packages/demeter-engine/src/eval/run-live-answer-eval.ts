@@ -33,7 +33,18 @@ export async function runLiveAnswerEval(): Promise<LiveEvalResult[]> {
   // EVAL_ONLY="id1,id2" reruns a subset — for iterating on a fix without
   // paying for the full gold set.
   const only = process.env.EVAL_ONLY?.split(",").map((s) => s.trim()).filter(Boolean);
+  if (only?.length) {
+    // A typo'd id would otherwise filter to zero cases and the suite would
+    // pass VACUOUSLY (no cases → no assertions → green). Fail loudly instead.
+    const unknown = only.filter((id) => !ALL_GOLD.some((g) => g.id === id));
+    if (unknown.length) {
+      throw new Error(
+        `EVAL_ONLY names unknown case id(s): ${unknown.join(", ")}. Known ids: ${ALL_GOLD.map((g) => g.id).join(", ")}`,
+      );
+    }
+  }
   const cases = only?.length ? ALL_GOLD.filter((g) => only.includes(g.id)) : ALL_GOLD;
+  if (!cases.length) throw new Error("No eval cases selected — refusing to pass vacuously.");
 
   for (const g of cases) {
     // The scorers verify citations against what retrieval ACTUALLY surfaced
