@@ -77,11 +77,19 @@ const T = {
   },
 } as const;
 
-export function DemeterChat({ states }: { states: PackMetaLite[] }) {
+export function DemeterChat({
+  states,
+  initialState = null,
+  initialQuestion = null,
+}: {
+  states: PackMetaLite[];
+  initialState?: string | null;
+  initialQuestion?: string | null;
+}) {
   const [lang, setLang] = useState<"en" | "es">("en");
-  const [state, setState] = useState<string | null>(null);
+  const [state, setState] = useState<string | null>(initialState);
   const [messages, setMessages] = useState<Msg[]>([]);
-  const [input, setInput] = useState("");
+  const [input, setInput] = useState(initialQuestion ?? "");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const abortRef = useRef<AbortController | null>(null);

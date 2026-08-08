@@ -12,15 +12,22 @@ export const metadata: Metadata = {
     "Ask anything about SNAP (food stamps) and get answers grounded in the actual rules — federal regulations plus adversarially verified state policy, with citations you can check.",
 };
 
-export default function DemeterPage() {
+export default async function DemeterPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ state?: string; q?: string }>;
+}) {
+  const { state, q } = await searchParams;
   const states = VERIFIED_STATES.map((s) => ({
     code: s.code,
     program: s.program,
     verified: true as const,
   }));
+  const initialState =
+    state && states.some((s) => s.code === state.toUpperCase()) ? state.toUpperCase() : null;
   return (
     <main className="demeter-page">
-      <DemeterChat states={states} />
+      <DemeterChat states={states} initialState={initialState} initialQuestion={q ?? null} />
     </main>
   );
 }

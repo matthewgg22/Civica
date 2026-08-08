@@ -11,6 +11,13 @@ import waPack from "./states/wa/pack.json";
 import txPack from "./states/tx/pack.json";
 import nyPack from "./states/ny/pack.json";
 
+export interface PackVerification {
+  verified_on: string;
+  method: string;
+  gates: string;
+  sources: string[];
+}
+
 export interface PackMeta {
   code: string;
   /** What the state calls the program (e.g. "CalFresh", "Basic Food"). */
@@ -19,6 +26,8 @@ export interface PackMeta {
   adminModel: "state" | "county";
   portal?: { name: string; url: string } | undefined;
   verified: true;
+  /** Public verification trail (rendered on /verify and the guide pages). */
+  verification: PackVerification;
 }
 
 const meta = (p: {
@@ -27,6 +36,7 @@ const meta = (p: {
   agency: string;
   admin_model: string;
   portal?: { name: string; url: string } | undefined;
+  verification: PackVerification;
 }): PackMeta => ({
   code: p.code,
   program: p.program,
@@ -34,6 +44,7 @@ const meta = (p: {
   adminModel: p.admin_model === "county" ? "county" : "state",
   portal: p.portal,
   verified: true,
+  verification: p.verification,
 });
 
 /** Every state with an adversarially verified pack, in display order. */

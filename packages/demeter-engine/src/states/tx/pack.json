@@ -5,10 +5,33 @@
   "admin_model": "state",
   "admin_note": "State-administered; eligibility determined by Texas Works Advisors in HHSC offices statewide. Policy lives in the Texas Works Handbook (TWH) with rules in 1 TAC Chapter 372; changes issue via policy bulletins and TIERS releases — and the ONLINE handbook can lag the bulletins (verified stale on ABAWD age bands in Aug 2026), so bulletins/TIERS control when they conflict.",
   "system": "TIERS (Texas Integrated Eligibility Redesign System)",
-  "portal": { "name": "YourTexasBenefits.com (+ Your Texas Benefits mobile app)", "url": "https://www.yourtexasbenefits.com" },
+  "portal": {
+    "name": "YourTexasBenefits.com (+ Your Texas Benefits mobile app)",
+    "url": "https://www.yourtexasbenefits.com"
+  },
   "update_channels": [
-    { "name": "Texas Works Handbook revisions", "url": "https://www.hhs.texas.gov/handbooks/texas-works-handbook" },
-    { "name": "HHSC policy bulletins (MEPD & TW)", "url": "https://www.hhs.texas.gov/handbooks" },
-    { "name": "1 TAC Chapter 372 (Texas Administrative Code)", "url": "https://texas-sos.appianportalsgov.com/rules-and-meetings" }
-  ]
+    {
+      "name": "Texas Works Handbook revisions",
+      "url": "https://www.hhs.texas.gov/handbooks/texas-works-handbook"
+    },
+    {
+      "name": "HHSC policy bulletins (MEPD & TW)",
+      "url": "https://www.hhs.texas.gov/handbooks"
+    },
+    {
+      "name": "1 TAC Chapter 372 (Texas Administrative Code)",
+      "url": "https://texas-sos.appianportalsgov.com/rules-and-meetings"
+    }
+  ],
+  "verification": {
+    "verified_on": "2026-08-07",
+    "method": "5-cluster source fetch (browser-header strategy for the bot-blocking host; local HHSC FOIA documents) → independent cross-check → draft → eval (14 cases) → adversarial refute gate.",
+    "gates": "Cross-check: SAFE_TO_BUILD, 6 confirmed / 1 contradicted (the brief's wrong $22,000 vehicle figure — pack carries the correct $22,500). Refute gate: 72 claims — 61 confirmed, 11 corrected, 0 fabricated.",
+    "sources": [
+      "Texas Works Handbook (fhb.hhs.texas.gov)",
+      "1 TAC Chapter 372",
+      "HHSC MEPD & TW Bulletins 25-16 / 26-08 (FOIA production A05292026.0450037)",
+      "Tex. Hum. Res. Code §33.021 (HB 1287)"
+    ]
+  }
 }

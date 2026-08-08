@@ -22,5 +22,15 @@
       "name": "Manual of Policies and Procedures (MPP)",
       "url": "https://www.cdss.ca.gov/inforesources/letters-regulations/legislation-and-regulations/food-stamps-regulations"
     }
-  ]
+  ],
+  "verification": {
+    "verified_on": "2026-08-05",
+    "method": "Wave 0 — extracted verbatim from the production Mae corpus (built from primary CDSS sources) and guarded by the retrieval eval suite (40+ front-door cases).",
+    "gates": "Faithful-extraction proof: the full pre-existing eval suite passed unchanged against the extracted pack.",
+    "sources": [
+      "eCFR 7 CFR 273 (vendored, dated)",
+      "CDSS All-County Letters (ACL) + ACINs",
+      "CDSS MPP Division 63"
+    ]
+  }
 }
