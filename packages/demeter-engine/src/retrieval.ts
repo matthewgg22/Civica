@@ -151,6 +151,85 @@ function truncate(text: string, max: number): string {
   return text.length <= max ? text : `${text.slice(0, max).trimEnd()} […truncated; full text at the cited URL]`;
 }
 
+/**
+ * Fit an oversized corpus entry into the budget by keeping the passages that
+ * ANSWER THE QUERY, not the first N characters.
+ *
+ * Some eCFR entries are enormous (7 CFR 273.2(i) is 22k chars) and the head is
+ * often unrelated: head-truncation kept §273.2's delay-fault boilerplate and
+ * cut the expedited-service thresholds at offset ~8,600 — so the grounding for
+ * "how fast can I get benefits in an emergency" contained no $150/$100 at all.
+ * Answers then supplied those figures from model memory: silently unverifiable
+ * in English, and in Spanish a numeric-equivalence failure that degraded the
+ * answer intermittently (live eval, es-expedited).
+ *
+ * Falls back to head-truncation when the entry has no internal structure or no
+ * passage matches the query, preserving the previous behavior.
+ */
+function selectPassages(text: string, max: number, queryWords: Set<string>): string {
+  if (text.length <= max) return text;
+  const blocks = text.split("\n").filter((b) => b.trim().length > 0);
+  if (blocks.length < 2) return truncate(text, max);
+
+  const terms = [...queryWords].filter((w) => w.length >= 4);
+  const scored = blocks.map((b, i) => {
+    const bl = b.toLowerCase();
+    let score = 0;
+    for (const t of terms) if (bl.includes(t)) score++;
+    return { i, b, score };
+  });
+  if (scored.every((s) => s.score === 0)) return truncate(text, max);
+
+  // Highest-scoring passages first, then restored to document order so the
+  // excerpt still reads as regulation.
+  const chosen = new Set<number>();
+  let used = 0;
+  const take = (s: { i: number; b: string } | undefined): boolean => {
+    if (!s || chosen.has(s.i) || used + s.b.length > max) return false;
+    chosen.add(s.i);
+    used += s.b.length;
+    return true;
+  };
+
+  // Rank by score DENSITY (hits per character), not raw hits. In 7 CFR
+  // 273.2(i) the operative "Entitlement to expedited service" heading is 119
+  // chars with 2 hits, while seven blocks of State-agency processing prose run
+  // 500-2,300 chars with 3 hits each. Raw-hit ranking spends the whole budget
+  // on the procedural prose; density puts the rule that answers the question
+  // first.
+  const ranked = [...scored]
+    .filter((s) => s.score > 0)
+    .sort((a, b) => b.score / b.b.length - a.score / a.b.length || a.i - b.i);
+  if (!ranked.length) return truncate(text, max);
+
+  // Take each block WITH its immediate neighbours, because the passage that
+  // answers a question frequently shares no words with it: the "$150 monthly
+  // gross income / $100 liquid resources" block scores ZERO against "how fast
+  // can I get benefits in an emergency" — it says neither "fast" nor
+  // "emergency" — yet it is the enumerated condition sitting directly under
+  // the heading that does match. Neighbours are taken immediately so a
+  // qualifying rule can never be stranded by budget spent later.
+  for (const s of ranked) {
+    if (!take(s) && !chosen.has(s.i)) continue;
+    take(scored[s.i - 1]);
+    take(scored[s.i + 1]);
+  }
+  if (!chosen.size) return truncate(text, max);
+  const picked = scored.filter((s) => chosen.has(s.i));
+
+
+  const parts: string[] = [];
+  let prev = -1;
+  for (const p of picked) {
+    if (prev !== -1 && p.i !== prev + 1) parts.push("[…]");
+    parts.push(p.b.trim());
+    prev = p.i;
+  }
+  if (picked[0]!.i > 0) parts.unshift("[…]");
+  if (picked[picked.length - 1]!.i < blocks.length - 1) parts.push("[…]");
+  return `${parts.join("\n")}\n[…excerpted for length; full text at the cited URL]`;
+}
+
 export interface RetrieveOptions {
   /** State pack to merge with the federal corpus. Defaults to the launch state
    *  (CA), preserving the pre-pack behavior; an unregistered code degrades to
@@ -272,8 +351,16 @@ export async function retrieve(rawQuery: string, opts: RetrieveOptions = {}): Pr
 
   // Topic hints whose phrasing appears in the query.
   const hintedCites: string[] = [];
+  // A fired hint's whole vocabulary also becomes passage-selection vocabulary:
+  // the domain terms that routed us to a section are the terms that identify
+  // the RIGHT PART of it. "emergency" routes to 273.2(i), but only the hint's
+  // sibling term "expedited" actually appears in the operative passage.
+  const passageTerms = new Set<string>(words);
   for (const hint of TOPIC_HINTS) {
-    if (hint.terms.some((t) => queryHasTerm(words, normalized, t))) hintedCites.push(...hint.cites);
+    if (hint.terms.some((t) => queryHasTerm(words, normalized, t))) {
+      hintedCites.push(...hint.cites);
+      for (const t of hint.terms) passageTerms.add(t);
+    }
   }
 
   // External-authority topics the USDA corpus shouldn't answer: inject a curated
@@ -331,7 +418,7 @@ export async function retrieve(rawQuery: string, opts: RetrieveOptions = {}): Pr
   }
   for (const { c } of scored) {
     if (out.length >= k) break;
-    const t = truncate(c.text, maxChunkChars);
+    const t = selectPassages(c.text, maxChunkChars, passageTerms);
     if (used + t.length > charBudget && out.length > 0) continue;
     out.push({ ...c, text: t });
     used += t.length;
