@@ -16,7 +16,7 @@
 
 import { NextResponse, type NextRequest } from "next/server";
 import { cookies } from "next/headers";
-import { answerQuestion, parseMessages } from "@civica/demeter-engine";
+import { answerQuestion, parseMessages, STREAM_RECOMPOSE_MARKER } from "@civica/demeter-engine";
 import { createServerClientFromCookies } from "../../../lib/supabase";
 import { isStaff } from "../../../lib/roleRouting";
 import { supabaseAuditSink } from "../../../lib/mae-audit-sink";
@@ -26,9 +26,8 @@ import { supabaseAuditSink } from "../../../lib/mae-audit-sink";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-// Client-visible marker for a stream restart: everything before it is an
-// unverified draft the client must discard. MaeChat splits on this token.
-export const RECOMPOSE_MARKER = "\n\n⟲ recomposing with verified sources…\n\n";
+// Re-exported for the route test + MaeChat; the marker itself lives in the engine.
+export const RECOMPOSE_MARKER = STREAM_RECOMPOSE_MARKER;
 
 export async function POST(req: NextRequest) {
   // --- Auth: staff only, UNLESS public-preview mode is explicitly enabled ---
