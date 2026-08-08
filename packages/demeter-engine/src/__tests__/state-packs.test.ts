@@ -112,3 +112,18 @@ describe("CA pack — Wave-0 extraction fidelity", () => {
     expect(byKey["ca-abawd-effective"]!.date).toBe("2026-06-01");
   });
 });
+
+import { VERIFIED_STATES } from "../packs";
+
+describe("pack verification metadata (public /verify + guide pages)", () => {
+  it("every verified pack carries a complete verification block", () => {
+    expect(VERIFIED_STATES.length).toBeGreaterThanOrEqual(4);
+    for (const s of VERIFIED_STATES) {
+      expect(s.verification.verified_on, s.code).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+      expect(s.verification.method.length, s.code).toBeGreaterThan(40);
+      expect(s.verification.gates.length, s.code).toBeGreaterThan(40);
+      expect(s.verification.sources.length, s.code).toBeGreaterThanOrEqual(3);
+    }
+  });
+});
+
