@@ -67,9 +67,10 @@ already points there; nothing in this plan forecloses it.
 
 1. **Rename Mae → Demeter AI** across code, routes, and docs. The engine moves from
    `apps/dashboard/lib/mae` to a shared **`packages/demeter-engine`** consumed by both
-   apps (this is the integration mechanism for the public page — ~1 day, estimated
-   separately). `/api/mae` keeps a compatibility redirect for 30 days (sole consumer
-   today is the dashboard's own UI), then dies.
+   apps (eng review: user kept the Demeter package name — decision 1B — accepting the
+   rename risk if the trademark screen fails; rename surface = package.json + two
+   transpilePackages lists + two CI filter lists). `/api/mae` dies in the same PR —
+   the dashboard UI (its only consumer) is updated to the new route; no redirect.
 2. **Public chat page** (in `apps/web`, which already has Google OAuth): anonymous
    rate-limited Q&A; signed-in users get history (last 50 conversations, 90-day
    retention; anonymous conversation HISTORY is never retained or shown — question
@@ -232,7 +233,7 @@ Timeline therefore: go-live Aug 21 → interim readout Oct 7 (Westly) → full r
 ## Implementation Tasks
 Synthesized from this review's findings. Run with Claude Code; checkbox as you ship.
 
-- [ ] **T1 (P1, CC: ~1d)** — engine — Extract lib/mae → packages/demeter-engine (name-agnostic internals until trademark clears); update dashboard caller; delete /api/mae
+- [ ] **T1 (P1, CC: ~1-1.5d, re-estimated)** — engine — Extract lib/mae → packages/demeter-engine: answerQuestion() orchestrator (5A) with injectable auth/limits/events hooks; **state threaded end-to-end** (T-C: explicit state or NONE→federal floor — CA default survives only in the legacy dashboard route; formatEngineParams stays CA/MA with an explicit 'live figures not yet wired for {state}' line replacing the swallowed UnknownStateError); audit.ts refactored into the events hook; split entry points (`.` server, `./packs` client-safe — keeps the 1MB corpus out of client bundles); 71-test suite relocates into the package; update dashboard caller; delete /api/mae
 - [ ] **T2 (P1, CC: ~1d)** — infra — Durable rate limiter + $200 spend counter (Supabase/Upstash) with shed policy protecting referral-code sessions
 - [ ] **T3 (P1, CC: ~1.5d)** — web — Public chat page: anonymous-first, streaming, citations UI, state selector + verified badges, state-switch divider, off-topic warm referral, mobile-first criteria
 - [ ] **T4 (P1, CC: ~half d)** — engine — Verifier-fail path: retry once → verified-quotes degrade + event (degraded=FAIL); federal-floor decline-numbers policy
@@ -247,16 +248,34 @@ Synthesized from this review's findings. Run with Claude Code; checkbox as you s
 - [ ] **T13 (P2, CC: ~half d)** — bench — Public Benefits Bench dry-run privately; publish-threshold decision
 - [ ] **T14 (P3, corpus)** — corpus — OR pack (sources fetched) → MA pack (front-loaded) → Wave 2 remainder
 
+
+## Eng-Review Decisions (2026-08-07, all user-decided)
+
+| # | Decision | Outcome |
+|---|----------|---------|
+| 1 | Package name | **1B (user override)** — ships as `@civica/demeter-engine`; rename risk accepted; marketing copy still gated on trademark screen |
+| 2 | Counter store | Supabase table + atomic RPC; **REVOKE PUBLIC / GRANT service_role** (20260571 precedent — closes the counter-spin DoS) |
+| 3 | Embedding model | **Vendored** (~23MB quantized ONNX committed to git), `allowRemoteModels=false`, `outputFileTracingIncludes` in BOTH apps, cwd-anchored path convention, per-cold-start warmup |
+| 4 | Env checklist (T7) | `ANTHROPIC_API_KEY`, `SUPABASE_SERVICE_ROLE_KEY` (exact name), `SENTRY_DSN` + `NEXT_PUBLIC_SENTRY_DSN` + `SENTRY_AUTH_TOKEN/ORG/PROJECT`, `NEXT_PUBLIC_SUPABASE_URL/ANON_KEY` (never Sensitive), **Anthropic Console workspace spend cap $200** |
+| 5 | Pipeline | ONE `answerQuestion()` orchestrator in the package; both routes thin wrappers |
+| 6 | Tests | Suite relocates + 5 new specs (auth matrix, exact-ceiling, ES numeric-equivalence, guide-SSG snapshot, counter concurrency **against real Postgres in CI**); package added to BOTH hand-maintained CI filter lists (api-ci, ts-typecheck) + NEW apps/web vitest CI job (today NO CI runs app unit tests) |
+| 7 | Guide + /verify pages | Build-time SSG via generateStaticParams; pack.json extended with a structured verification-summary object (backfill CA/WA/TX/NY; GA badge appears only after #600 merges) |
+| T-A | Streaming × verification | **Incremental verify + early abort**: stream normally, verify accumulated text at intervals, abort on first bad citation → 'recomposing with verified sources…' frame → one buffered retry → verified-quotes degrade; AbortSignal threaded (disconnect stops billing) |
+| T-B | Counter semantics | **Lagging counter**: estimate-check before, settle actuals via Next `after()` (never fire-and-forget); Anthropic Console cap = hard backstop; **fail-OPEN** on counter outage |
+| T-C | State threading | End-to-end now (see T1); anonymous no-state = federal floor, never CA |
+| T-D | Prerequisites | **apps/web Vercel project migrates from standalone npm to the pnpm/turbo monorepo build** + transpilePackages (demeter-engine AND snap-rules) + serverExternalPackages (@xenova/transformers, onnxruntime-node) — the silent prerequisite of everything above |
+
 ## GSTACK REVIEW REPORT
 
 | Review | Trigger | Why | Runs | Status | Findings |
 |--------|---------|-----|------|--------|----------|
-| CEO Review | `/plan-ceo-review` | Scope & strategy | 1 | issues_resolved | 7 proposals, 6 accepted, 1 deferred; 8 findings + 8 tensions all decided; spec-review 3 rounds, 29 fixed, 8/10 |
-| Codex Review | `/codex review` | Independent 2nd opinion | 0 | — | Codex not installed; Claude-subagent outside voice ran (14 findings → 8 tensions) |
-| Eng Review | `/plan-eng-review` | Architecture & tests (required) | 0 | — | recommended next |
-| Design Review | `/plan-design-review` | UI/UX gaps | 0 | — | recommended before build (UI scope) |
+| CEO Review | `/plan-ceo-review` | Scope & strategy | 1 | clean | 7 proposals, 6 accepted, 1 deferred; 8 findings + 8 tensions decided |
+| Codex Review | `/codex review` | Independent 2nd opinion | 0 | — | Codex not installed; Claude outside voices ran in both reviews |
+| Eng Review | `/plan-eng-review` | Architecture & tests (required) | 1 | clean | 7 section findings (1 user-overridden) + 10 outside-voice findings → 4 tensions, all decided |
+| Design Review | `/plan-design-review` | UI/UX gaps | 0 | — | recommended before build (mobile-first UI scope) |
+| DX Review | `/plan-devex-review` | Developer experience gaps | 0 | — | n/a |
 
-**CROSS-MODEL:** outside voice (fresh-context Claude) contradicted the review on 8 points; user accepted 6, rejected 1 (Stripe stays), split 1 (retention middle path).
-**VERDICT:** CEO CLEARED — scope, tensions, and timeline all user-decided; eng review required before build.
+**CROSS-MODEL:** the eng outside voice (fresh-context Claude, code-grounded) overturned three review assumptions: streaming×verification was unresolved (now: incremental verify + early abort), the apps/web Vercel project cannot build workspace packages (now: monorepo-build migration is a named prerequisite), and state threading was unwired (now: end-to-end in T1). One review recommendation was user-overridden (package keeps the Demeter name).
+**VERDICT:** CEO + ENG CLEARED — ready to implement; /plan-design-review recommended before the chat UI lands.
 
 NO UNRESOLVED DECISIONS
