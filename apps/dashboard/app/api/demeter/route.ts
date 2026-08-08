@@ -27,7 +27,9 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 // Re-exported for the route test + MaeChat; the marker itself lives in the engine.
-export const RECOMPOSE_MARKER = STREAM_RECOMPOSE_MARKER;
+// NOT exported: a Next route module may only export handlers + route config,
+// and `next build` rejects anything else (tsc --noEmit does not catch it).
+const RECOMPOSE_MARKER = STREAM_RECOMPOSE_MARKER;
 
 export async function POST(req: NextRequest) {
   // --- Auth: staff only, UNLESS public-preview mode is explicitly enabled ---

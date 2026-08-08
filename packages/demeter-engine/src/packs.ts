@@ -56,3 +56,13 @@ export const VERIFIED_STATE_CODES: string[] = VERIFIED_STATES.map((s) => s.code)
 export function isVerifiedState(code: string | null | undefined): boolean {
   return !!code && VERIFIED_STATE_CODES.includes(code.toUpperCase());
 }
+
+/** The sentinel the streaming protocol emits when an unverified draft is
+ *  discarded and recomposed. Chat UIs replace everything before it. Exported
+ *  from the CLIENT-SAFE entry on purpose: both chat components need it, and
+ *  importing the root barrel would pull the 1MB corpus into the browser
+ *  bundle. Previously hardcoded as a literal in two components — if the
+ *  engine's marker ever changed, the recompose UX would silently stop working
+ *  in both.
+ */
+export const RECOMPOSE_MARKER = "\n\n⟲ recomposing with verified sources…\n\n";

@@ -10,6 +10,7 @@
 // route enforces the same gate server-side regardless of what the client does.
 
 import Link from "next/link";
+import { RECOMPOSE_MARKER } from "@civica/demeter-engine/packs";
 import { useCallback, useEffect, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -240,7 +241,6 @@ export default function MaeChat() {
         // Recompose protocol (engine T-A): everything before this marker was an
         // unverified draft the engine aborted — REPLACE it, don't append. The
         // verified recomposition (or the quotes-only degrade) follows the marker.
-        const RECOMPOSE_MARKER = "⟲ recomposing with verified sources…";
         const flush = () => {
           scheduled = false;
           if (!buf) return;

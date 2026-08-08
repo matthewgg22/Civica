@@ -11,6 +11,7 @@
 //  - 429 / at-capacity / unconfigured states render honest, warm errors.
 
 import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
+import { RECOMPOSE_MARKER } from "@civica/demeter-engine/packs";
 
 interface PackMetaLite {
   code: string;
@@ -22,7 +23,7 @@ type Msg =
   | { role: "user" | "assistant"; content: string }
   | { role: "divider"; content: string };
 
-const RECOMPOSE_MARKER = "⟲ recomposing with verified sources…";
+
 
 // Answers arrive as light markdown (the engine's prompt asks for bold, bullets,
 // and a `---` rule before the citation trailer). Render exactly that subset as
