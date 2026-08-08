@@ -8,7 +8,9 @@ import { runLiveAnswerEval } from "../eval/run-live-answer-eval";
 
 const hasKey = !!process.env.ANTHROPIC_API_KEY;
 
-describe.skipIf(!hasKey)("Mae live answer faithfulness", { timeout: 180_000 }, () => {
+// 25 gold cases (EN + ES + distress) through the full pipeline, retries
+// included — budget generously.
+describe.skipIf(!hasKey)("Demeter live answer faithfulness", { timeout: 1_500_000 }, () => {
   it("every gold answer passes the deterministic faithfulness checks", async () => {
     const results = await runLiveAnswerEval();
 

@@ -1,43 +1,68 @@
-// Live answer-faithfulness runner — generates a REAL Mae answer per gold
-// question (using the exact production system assembly) and scores it with the
-// deterministic scorers. Requires ANTHROPIC_API_KEY, so it is invoked only from
-// the key-gated test (skipped in CI without a key) or ad hoc once Mae is
-// activated. This is the harness that converts Mae from "principled" to
-// "measured" — run it after every prompt/corpus change.
+// Live answer-faithfulness runner — drives the REAL production pipeline
+// (answerQuestion: PII → state-threaded grounding → incremental verification →
+// retry → degrade → trailer) for every gold case, then applies the
+// deterministic scorers. Requires ANTHROPIC_API_KEY, so it is invoked only
+// from the key-gated test (skipped in CI without a key) or ad hoc. This is the
+// harness that converts Demeter from "principled" to "measured" — run it after
+// every prompt/corpus change.
+//
+// A degraded outcome counts as a FAIL (the 97% metric's definition), enforced
+// via the notDegraded check on every case.
 //
 // Next layer (not yet wired): an LLM-judge pass for nuanced correctness/
 // completeness on top of these deterministic checks.
 
-import Anthropic from "@anthropic-ai/sdk";
-import { buildMaeSystem, MAE_GENERATION } from "../answer";
-import { ANSWER_GOLD, scoreAnswer, type AnswerScore } from "./answer-eval";
+import { answerQuestion } from "../orchestrator";
+import { buildMaeSystem } from "../answer";
+import { ALL_GOLD, scoreAnswer, type AnswerScore } from "./answer-eval";
 
 export interface LiveEvalResult extends AnswerScore {
   question: string;
   answer: string;
+  verifierOutcome: string;
 }
 
 /** Generate + score every gold question. Throws if ANTHROPIC_API_KEY is unset. */
 export async function runLiveAnswerEval(): Promise<LiveEvalResult[]> {
-  if (!process.env.ANTHROPIC_API_KEY) {
+  const apiKey = process.env.ANTHROPIC_API_KEY;
+  if (!apiKey) {
     throw new Error("runLiveAnswerEval requires ANTHROPIC_API_KEY");
   }
-  const client = new Anthropic();
   const results: LiveEvalResult[] = [];
 
-  for (const g of ANSWER_GOLD) {
-    const { systemBlocks, retrievedCitations } = await buildMaeSystem(g.question);
-    const msg = await client.messages.create({
-      ...MAE_GENERATION,
-      max_tokens: 1024,
-      system: systemBlocks,
+  // EVAL_ONLY="id1,id2" reruns a subset — for iterating on a fix without
+  // paying for the full gold set.
+  const only = process.env.EVAL_ONLY?.split(",").map((s) => s.trim()).filter(Boolean);
+  const cases = only?.length ? ALL_GOLD.filter((g) => only.includes(g.id)) : ALL_GOLD;
+
+  for (const g of cases) {
+    // The scorers verify citations against what retrieval ACTUALLY surfaced
+    // for this question — same grounding call the pipeline makes.
+    const { retrievedCitations } = await buildMaeSystem(
+      g.question,
+      g.state === undefined ? undefined : g.state,
+      g.lang ?? "en",
+    );
+
+    let answer = "";
+    let outcome = "clean";
+    const request: Parameters<typeof answerQuestion>[0] = {
       messages: [{ role: "user", content: g.question }],
-    });
-    const answer = msg.content
-      .filter((b): b is Anthropic.TextBlock => b.type === "text")
-      .map((b) => b.text)
-      .join("");
-    results.push({ question: g.question, answer, ...scoreAnswer(answer, g, retrievedCitations) });
+      apiKey,
+      events: { onVerified: (o) => (outcome = o), audit: async () => {} },
+      meta: { staffUserId: null, mode: "eval" },
+      ...(g.state === undefined ? {} : { state: g.state }),
+      ...(g.lang ? { lang: g.lang } : {}),
+    };
+    for await (const frame of answerQuestion(request)) {
+      // Deltas only — the trailer's own citation lines would double-count.
+      if (frame.type === "delta") answer += frame.text;
+    }
+
+    const score = scoreAnswer(answer, g, retrievedCitations);
+    score.checks.notDegraded = outcome !== "degraded";
+    score.pass = Object.values(score.checks).every(Boolean);
+    results.push({ question: g.question, answer, verifierOutcome: outcome, ...score });
   }
   return results;
 }

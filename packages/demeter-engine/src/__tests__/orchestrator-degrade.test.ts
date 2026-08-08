@@ -124,6 +124,21 @@ describe("answerQuestion verifier ladder", () => {
     expect(audits[0]!.verifierOutcome).toBe("degraded");
   });
 
+  it("Spanish answers may echo the USER'S own numbers without tripping the gate", async () => {
+    // "$1,500" appears only in the question — repeating it is not invention.
+    sdk.stream.mockReturnValue(
+      fakeStream(Array(12).fill("Con ingresos de $1,500 al mes, depende del tamaño del hogar. ")),
+    );
+    const frames = await collect({
+      ...baseRequest(audits, outcomes),
+      messages: [{ role: "user" as const, content: "Gano $1,500 al mes — ¿califico?" }],
+      lang: "es" as const,
+    });
+
+    expect(frames.map((f) => f.type)).not.toContain("recompose");
+    expect(outcomes).toEqual(["clean"]);
+  });
+
   it("Spanish answers with numbers absent from the grounding also trip the ladder", async () => {
     // "$12,345" appears in no retrieved source — the ES numeric gate must abort.
     sdk.stream.mockReturnValue(
