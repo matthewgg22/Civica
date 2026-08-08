@@ -122,11 +122,20 @@ export function formatEngineParams(state: "CA" | "MA", asOf: Date): string {
   if (p.asset_limit !== undefined) lines.push(`- Asset limit (standard): $${p.asset_limit}`);
   if (p.asset_limit_ed !== undefined) lines.push(`- Asset limit (elderly/disabled household): $${p.asset_limit_ed}`);
   if (p.fpl) {
-    // Same arithmetic as the engine's income gates (snap-rules
-    // gates/income-tests.ts): floored monthly FPL × ratio, rounded. Printed as
-    // dollars so answers QUOTE the operative thresholds instead of deriving
-    // them — a derived figure is invisible-wrong in EN and trips the ES
-    // numeric-equivalence gate into a degrade (live eval, es-pii-deflection).
+    // Printed as dollars so answers QUOTE the operative thresholds instead of
+    // deriving them — a derived figure is invisible-wrong in EN and trips the
+    // ES numeric-equivalence gate into a degrade (live eval, es-pii-deflection).
+    //
+    // KNOWN DRIFT (snap-rules issue #601): the multiply-and-round step below
+    // matches the engine's income gates, but the BASE does not.
+    // getEngineParams builds p.fpl with
+    // roundDollar(), while the gates' canonical fplMonthly() uses
+    // floorDollar() — so p.fpl is +$1 at HH3 and HH6 (FY26), and these rows
+    // inherit +$1..$2 there. Every answer still carries the
+    // "guidance to verify, not a determination" disclaimer, and these remain
+    // far better than model-derived figures; the fix belongs in snap-rules
+    // (export fplMonthly or floor the base), NOT here — this package reads
+    // engine math, never edits it.
     const scaled = (pct: number): Record<string, number> =>
       Object.fromEntries(
         Object.entries(p.fpl as Record<string, number>).map(([k, v]) => [
@@ -134,10 +143,16 @@ export function formatEngineParams(state: "CA" | "MA", asOf: Date): string {
           Math.round((v * pct) / 100),
         ]),
       );
+    // BBCE threshold is per-state (snap-rules states.ts): CA and MA are 200%,
+    // but e.g. TX is 165%. Keyed explicitly so adding a state to
+    // ENGINE_PARAM_STATES fails the typecheck instead of printing 200% for a
+    // state that never adopted it.
+    const BBCE_PCT: Record<"CA" | "MA", number> = { CA: 200, MA: 200 };
+    const bbcePct = BBCE_PCT[state];
     lines.push(`- 100% FPL, monthly (net-income test basis): ${row(p.fpl)}`);
     lines.push(`- Gross-income limit, 130% FPL (federal test): ${row(scaled(130))}`);
     lines.push(
-      `- BBCE categorical-eligibility gross screen, 200% FPL (the operative ${state} test${state === "CA" ? ", ACIN I-46-25" : ""}): ${row(scaled(200))}`,
+      `- BBCE categorical-eligibility gross screen, ${bbcePct}% FPL (the operative ${state} test${state === "CA" ? ", ACIN I-46-25" : ""}): ${row(scaled(bbcePct))}`,
     );
   }
   if (p.sua) {

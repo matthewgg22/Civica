@@ -221,7 +221,8 @@ const ES_RETRIEVAL_GLOSSARY: Array<[RegExp, string]> = [
   [/ingresos?|gana|salario|sueldo/i, "income limit gross net"],
   [/estatus migratorio|inmigraci[oó]n|carga p[uú]blica/i, "public charge immigration status"],
   [/estudiantes?|universidad|colegio/i, "student eligibility enrollment"],
-  [/carro|coche|auto|veh[ií]culo/i, "vehicle car resource asset"],
+  // \b on the short stems: bare /auto/ matched inside "autorización".
+  [/\bcarro|\bcoche|\bauto\b|autom[oó]vil|veh[ií]culo/i, "vehicle car resource asset"],
   [/robar|robaron|robo|skimming/i, "stolen benefits replacement skimming"],
   [/tarjeta|ebt/i, "EBT card"],
   [/requisitos de trabajo|trabajar|empleo/i, "work requirements ABAWD employment"],

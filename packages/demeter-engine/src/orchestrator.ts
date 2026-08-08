@@ -312,7 +312,10 @@ export async function* answerQuestion(req: AnswerRequest): AsyncGenerator<Answer
       yield { type: "delta", text: retryText };
     } else {
       outcome = "degraded";
-      const chunks = await retrieve(lastUser, { state });
+      // lang matters MOST here: this is the verbatim-sources fallback, and an
+      // unexpanded Spanish query retrieves thin sources exactly when the
+      // answer has already lost its summary.
+      const chunks = await retrieve(lastUser, { state, lang });
       answerText = degradedAnswer(formatRetrievedSources(chunks, state), lang);
       finalChecks = verifyCitations(answerText, retrievedCitations, state);
       yield { type: "delta", text: answerText };
