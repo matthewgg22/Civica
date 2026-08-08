@@ -14,6 +14,11 @@ const nextConfig: NextConfig = {
   // Native-binding packages must stay out of Next's bundler. @xenova/transformers
   // (Mae's local embedding model) pulls onnxruntime-node + sharp.
   serverExternalPackages: ["@duckdb/node-api", "@xenova/transformers", "onnxruntime-node", "sharp"],
+  // Vendored embedding model (packages/demeter-engine/models/) is fs-read at
+  // runtime — invisible to Vercel's tracer without this include.
+  outputFileTracingIncludes: {
+    "/api/demeter": ["../../packages/demeter-engine/models/**"],
+  },
   webpack(config) {
     // Workspace packages use .js extensions for TypeScript ESM imports (node16).
     // Webpack needs this alias to resolve ./foo.js → ./foo.ts at build time.

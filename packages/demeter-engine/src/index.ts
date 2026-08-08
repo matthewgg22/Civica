@@ -23,6 +23,7 @@ export {
 export { retrieve, formatRetrievedSources, CORPUS_EFFECTIVE_DATE } from "./retrieval";
 export { formatFreshnessFooter } from "./freshness";
 export { redactPii } from "./pii";
+export { warmupEmbeddings, semanticLayerStatus, retrievalMode } from "./embeddings";
 export { consoleAuditSink, type MaeAuditRecord, type MaeAuditSink } from "./audit";
 export { getStatePack, registeredStates, DEFAULT_STATE, type StateCode, type StatePack } from "./states";
 export { VERIFIED_STATES, VERIFIED_STATE_CODES, isVerifiedState, type PackMeta } from "./packs";

@@ -29,6 +29,7 @@ import { redactPii } from "./pii";
 import { retrieve, formatRetrievedSources, CORPUS_EFFECTIVE_DATE } from "./retrieval";
 import { formatFreshnessFooter } from "./freshness";
 import { consoleAuditSink, type MaeAuditRecord, type MaeAuditSink } from "./audit";
+import { retrievalMode } from "./embeddings";
 
 export type ChatRole = "user" | "assistant";
 export interface ChatMessage {
@@ -292,6 +293,7 @@ export async function* answerQuestion(req: AnswerRequest): AsyncGenerator<Answer
     scopeState: state ?? null,
     scopeRef: meta?.scopeRef ?? null,
     verifierOutcome: outcome,
+    retrievalMode: retrievalMode(),
   };
   try {
     await audit(record);
