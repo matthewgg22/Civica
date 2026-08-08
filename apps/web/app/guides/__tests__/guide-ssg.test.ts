@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { generateStaticParams, generateMetadata, QUESTIONS } from "../[state]/page";
+import { generateStaticParams, generateMetadata } from "../[state]/page";
+import { QUESTIONS } from "../../../lib/guide-questions";
 import { VERIFIED_STATES } from "@civica/demeter-engine/packs";
 
 // Guide-SSG spec (T12 / 7A): the guides are the acquisition engine — every
