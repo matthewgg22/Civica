@@ -1,0 +1,164 @@
+// Mae's grounding in the SAME federal + state authorities the Civica eligibility
+// engine uses to compute verdicts and benefit amounts. This keeps Mae's answers
+// consistent with what the engine actually does, and makes its citations
+// traceable to primary law rather than model-recalled.
+//
+// PROVENANCE — every citation below is mirrored from the engine's own source,
+// which was triple-checked against primary sources (eCFR / FNS / CDSS / Congress)
+// on 2026-06-02:
+//   • Benefit math + citations:  packages/snap-rules/src/benefit-calc.ts
+//   • Verdict gates:             packages/snap-rules/src/verdict.ts + gates/*
+//   • Verification / Component R: packages/snap-recommendation/src/candidates.ts
+//   • CA state policy:           packages/snap-rules/src/constants/states.ts
+//   • Canonical FY26 values:     docs/snap_source_citation_fy26_federal.json
+//   • Signoff + verification:    docs/SNAP-source-citation-signoff.md
+//                                docs/findings/2026-06-02-snap-source-citation-triple-check.md
+//
+// CAVEATS Mae must honor (also stated in the prompt):
+//   • Dollar figures are FY26 (eff. 2025-10-01 .. 2026-09-30) on the annual USDA
+//     FNS COLA cycle — frame them as "as of FY26, confirm the current figure."
+//   • The citation set is engineering-verified but NOT yet counsel-signed
+//     (0 reviewer signatures on the signoff doc as of 2026-06-02).
+//   • The exact FY dollar figures are injected separately from getEngineParams()
+//     so they always track the engine; THIS file is the citation/authority layer.
+//
+// Refresh alongside the engine on each COLA cycle.
+
+import { getEngineParams } from "@civica/snap-rules";
+
+export const MAE_CITATIONS_PROVENANCE =
+  "The citations below mirror the Civica eligibility engine's own source, " +
+  "engineering-verified against eCFR / USDA FNS / CDSS / Congress.gov primary " +
+  "sources on 2026-06-02. They are not yet counsel-signed. Dollar figures are " +
+  "FY26 (Oct 1, 2025 - Sep 30, 2026) and change on the annual COLA cycle.";
+
+/**
+ * The rule → authority map the engine evaluates with, in engine order. Mae cites
+ * these so its answers match the engine's basis. Percentage/fixed rules that ARE
+ * the law (20% EID, 30% benefit reduction, 50% shelter threshold, $35 medical
+ * floor, FPL multipliers) are included; the FY dollar tables are injected live.
+ */
+export const MAE_ENGINE_CITATIONS = `## Authorities the Civica engine uses (cite these)
+
+The engine computes a verdict then a benefit amount. It cites federal law as 7 CFR Part 273 (and 272), federal statute as the Food and Nutrition Act (FNA) and OBBBA (Pub. L. No. 119-21), and California rules as CDSS All-County Letters (ACL) / All-County Information Notices (ACIN). Match these when you answer.
+
+### Verdict (eligibility gates, in order)
+- Household composition — 7 CFR 273.1
+- Disqualifications — IPV 7 CFR 273.16; fleeing felon 7 CFR 273.11(n); state-option drug felony 7 CFR 273.11(m); substantial lottery/gambling winnings 7 CFR 273.11(r) (state data-match procedure 7 CFR 272.17)
+- Student eligibility — 7 CFR 273.5
+- Immigration / non-citizen eligibility — 7 CFR 273.4; FNA § 6(f); OBBBA § 10108
+- ABAWD work requirement — 7 CFR 273.24, as amended by OBBBA § 10102
+- Gross income test (130% FPL; skipped for categorically eligible and elderly/disabled) — 7 CFR 273.9(a)(1)
+- Net income test (100% FPL, after the deduction stack) — 7 CFR 273.9(a)(2)
+- Asset/resource test (waived under BBCE / broad-based categorical eligibility) — 7 CFR 273.8
+- Categorical eligibility / BBCE — 7 CFR 273.2(j); in California, BBCE raises the gross-income test to 200% FPL per CDSS ACIN I-46-25 (FFY2026)
+- Mixed-status households use the eligible-only household size for size, income, and allotment — 7 CFR 273.11(c)(1)
+
+### Benefit calculation — 7 CFR 273.10
+- Earned income deduction = 20% of earned income — 7 CFR 273.9(d)(2)
+- Standard deduction (by household size) — 7 CFR 273.9(d)(1)
+- Medical deduction = unreimbursed medical over $35, elderly/disabled members only — 7 CFR 273.9(d)(3)
+- Dependent-care and legally-owed child-support deductions — 7 CFR 273.9(d)(4),(5)
+- Excess shelter deduction = shelter costs (rent + utility SUA + internet) minus 50% of adjusted income; capped for households WITHOUT an elderly/disabled member, uncapped with one — 7 CFR 273.9(d)(6)
+- Homeless households may take the homeless shelter deduction in lieu of actual shelter — 7 CFR 273.9(d)(6)(i)
+- Benefit = max allotment − 30% of net income (rounded) — 7 CFR 273.10(e)(2)(ii)(A)
+- Minimum benefit for 1-2 person households — 7 CFR 273.10(e)(2)(ii)(C)
+- OBBBA § 10104 excludes internet/telecommunication costs from the shelter deduction (effective-date question is open — confirm county practice)
+
+### Verification & recommendations (the engine's Component R)
+- Verification hierarchy (4 steps: document → collateral → home visit, per the regulatory order) — 7 CFR 273.2(f)
+- Income verification — 7 CFR 273.9(b)(1); 7 CFR 273.2(f)
+- Expedited service (apply within 7 days when income/resources are very low) — 7 CFR 273.2(i)
+- Quality control sampling basis — 7 CFR 275.12
+
+### Procedural (caseworker-facing)
+- Residency — 7 CFR 273.3
+- Social Security number requirement — 7 CFR 273.6
+- Work provisions: registration, Employment & Training, voluntary quit (distinct from the ABAWD time limit at 273.24) — 7 CFR 273.7
+- Reporting requirements / change reporting — 7 CFR 273.12
+- Notice of adverse action — 7 CFR 273.13
+- Recertification — 7 CFR 273.14
+- Fair hearings (appeals; aid paid pending) — 7 CFR 273.15
+- Restoration of lost benefits (underissuances) — 7 CFR 273.17
+
+### California specifics
+- Standard Utility Allowance (SUA) — CDSS ACL 25-68 (FY26 chart)
+- BBCE income standard (200% FPL) — CDSS ACIN I-46-25 (FFY2026)
+- Restaurant Meals Program (RMP) is a statewide mandate (AB 942, eff. 2019) — every CA county operates it
+- ABAWD time limits: California time limits RESUMED 2026-06-01 (CDSS ACL 25-93). Only a small set of counties hold a waiver through 2026-10-31. The engine cannot tell you whether a SPECIFIC county is waived this month — always have the caseworker confirm current county ABAWD waiver status before relying on it.
+
+### OBBBA (Pub. L. No. 119-21, enacted 2025-07-04) — key changes
+- ABAWD age band is 18-64 (§ 10102 / FNS implementation)
+- ABAWD exemption covers "Indian, Urban Indian, or California Indian" per the Indian Health Care Improvement Act — broader than ANCSA; removed exemptions for homeless, veterans, foster youth ≤24, and parents of children over 13 (FNS ABAWD Exceptions memo, 2025-10-03)
+- Non-citizen eligibility narrowed (§ 10108): eligible groups now U.S. nationals, LPRs, Cuban/Haitian entrants, and COFA migrants; refugees, asylees, and TPS holders removed (FNS Alien Eligibility memo, 2025-10-31)`;
+
+/**
+ * Render the LIVE FY figures the engine actually computes with, for one state, so
+ * Mae quotes the same numbers as the determination. Pulled from getEngineParams()
+ * at request time, so it tracks the engine across COLA updates. Deterministic
+ * output (sorted sizes) so the cached system prefix stays byte-stable within a FY.
+ */
+export function formatEngineParams(state: "CA" | "MA", asOf: Date): string {
+  const p = getEngineParams(state, asOf);
+  const row = (rec: Record<string, number> | undefined) =>
+    rec
+      ? Object.keys(rec)
+          .map(Number)
+          .sort((a, b) => a - b)
+          .map((n) => `HH${n} $${rec[String(n)]}`)
+          .join(", ")
+      : "n/a";
+
+  const lines: string[] = [];
+  lines.push(`## Live engine parameters — ${state}, current federal fiscal year`);
+  lines.push(
+    "These are the exact figures the engine uses right now. Quote them as the engine's current values, and remind the caseworker they renew on the Oct 1 COLA cycle.",
+  );
+  if (p.max_allotment) lines.push(`- Maximum monthly allotment: ${row(p.max_allotment)}`);
+  if (p.sd) lines.push(`- Standard deduction (by HH size): ${row(p.sd)}`);
+  if (p.shelter_cap !== undefined) lines.push(`- Excess shelter cap (no elderly/disabled member): $${p.shelter_cap}`);
+  if (p.homeless_ded !== undefined) lines.push(`- Homeless shelter deduction: $${p.homeless_ded}`);
+  if (p.min_benefit !== undefined) lines.push(`- Minimum benefit (HH 1-2): $${p.min_benefit}`);
+  if (p.asset_limit !== undefined) lines.push(`- Asset limit (standard): $${p.asset_limit}`);
+  if (p.asset_limit_ed !== undefined) lines.push(`- Asset limit (elderly/disabled household): $${p.asset_limit_ed}`);
+  if (p.fpl) {
+    // Printed as dollars so answers QUOTE the operative thresholds instead of
+    // deriving them — a derived figure is invisible-wrong in EN and trips the
+    // ES numeric-equivalence gate into a degrade (live eval, es-pii-deflection).
+    //
+    // KNOWN DRIFT (snap-rules issue #601): the multiply-and-round step below
+    // matches the engine's income gates, but the BASE does not.
+    // getEngineParams builds p.fpl with
+    // roundDollar(), while the gates' canonical fplMonthly() uses
+    // floorDollar() — so p.fpl is +$1 at HH3 and HH6 (FY26), and these rows
+    // inherit +$1..$2 there. Every answer still carries the
+    // "guidance to verify, not a determination" disclaimer, and these remain
+    // far better than model-derived figures; the fix belongs in snap-rules
+    // (export fplMonthly or floor the base), NOT here — this package reads
+    // engine math, never edits it.
+    const scaled = (pct: number): Record<string, number> =>
+      Object.fromEntries(
+        Object.entries(p.fpl as Record<string, number>).map(([k, v]) => [
+          k,
+          Math.round((v * pct) / 100),
+        ]),
+      );
+    // BBCE threshold is per-state (snap-rules states.ts): CA and MA are 200%,
+    // but e.g. TX is 165%. Keyed explicitly so adding a state to
+    // ENGINE_PARAM_STATES fails the typecheck instead of printing 200% for a
+    // state that never adopted it.
+    const BBCE_PCT: Record<"CA" | "MA", number> = { CA: 200, MA: 200 };
+    const bbcePct = BBCE_PCT[state];
+    lines.push(`- 100% FPL, monthly (net-income test basis): ${row(p.fpl)}`);
+    lines.push(`- Gross-income limit, 130% FPL (federal test): ${row(scaled(130))}`);
+    lines.push(
+      `- BBCE categorical-eligibility gross screen, ${bbcePct}% FPL (the operative ${state} test${state === "CA" ? ", ACIN I-46-25" : ""}): ${row(scaled(bbcePct))}`,
+    );
+  }
+  if (p.sua) {
+    lines.push(
+      `- Standard Utility Allowance tiers: HCSUA $${p.sua.HCSUA}, LUA $${p.sua.LUA}, phone-only $${p.sua.phone}`,
+    );
+  }
+  return lines.join("\n");
+}

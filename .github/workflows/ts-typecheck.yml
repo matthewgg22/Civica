@@ -108,6 +108,7 @@ jobs:
             --filter=@civica/benefitscal-cbo \
             --filter=@civica/cfr-273 \
             --filter=@civica/db \
+            --filter=@civica/demeter-engine \
             --filter=@civica/fixtures \
             --filter=@civica/recert-engine \
             --filter=@civica/snap-calculator \

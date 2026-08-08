@@ -91,7 +91,7 @@ describe("MaeChat", () => {
     await screen.findByText(/Shelter costs count\./i);
 
     expect(fetchSpy).toHaveBeenCalledWith(
-      "/api/mae",
+      "/api/demeter",
       expect.objectContaining({ method: "POST" }),
     );
     const sentBody = JSON.parse((fetchSpy.mock.calls[0][1] as RequestInit).body as string);
@@ -144,7 +144,7 @@ describe("MaeChat", () => {
     expect(body.meta).toEqual({ mode: "case", state: "CA", ref: "demo-pkt-elena", question: "What needs to be done?" });
   });
 
-  it("shows per-answer feedback and posts a thumbs-up to /api/mae/feedback", async () => {
+  it("shows per-answer feedback and posts a thumbs-up to /api/demeter/feedback", async () => {
     mocks.getUser.mockResolvedValue({ data: { user: { app_metadata: { role: "navigator" } } } });
     const fetchSpy = vi
       .spyOn(globalThis, "fetch")
@@ -161,7 +161,7 @@ describe("MaeChat", () => {
     fireEvent.click(await screen.findByRole("button", { name: /^helpful$/i }));
     await screen.findByText(/feedback recorded/i);
 
-    const fb = fetchSpy.mock.calls.find((c) => c[0] === "/api/mae/feedback");
+    const fb = fetchSpy.mock.calls.find((c) => c[0] === "/api/demeter/feedback");
     expect(fb).toBeTruthy();
     const body = JSON.parse((fb![1] as RequestInit).body as string);
     expect(body.rating).toBe("up");

@@ -1,6 +1,6 @@
 {
   "framework": "nextjs",
-  "installCommand": "npm install --legacy-peer-deps",
-  "buildCommand": "npm run build",
+  "installCommand": "pnpm install --no-frozen-lockfile",
+  "buildCommand": "pnpm turbo run build --filter=civica-web",
   "outputDirectory": ".next"
 }
