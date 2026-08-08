@@ -33,6 +33,8 @@ export interface MaeAuditRecord {
   verifierOutcome?: string | undefined;
   /** Which retrieval mode served the answer: "semantic+lexical" | "lexical". */
   retrievalMode?: string | undefined;
+  /** True when the distress gate fired on this question. */
+  distress?: boolean | undefined;
 }
 
 /** Persistence hook. Implementations must be best-effort and never throw. */

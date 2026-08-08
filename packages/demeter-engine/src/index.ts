@@ -5,6 +5,7 @@ export {
   answerQuestion,
   parseMessages,
   ANSWER_LIMITS,
+  STREAM_RECOMPOSE_MARKER,
   type AnswerFrame,
   type AnswerRequest,
   type AnswerEvents,
@@ -24,6 +25,8 @@ export { retrieve, formatRetrievedSources, CORPUS_EFFECTIVE_DATE } from "./retri
 export { formatFreshnessFooter } from "./freshness";
 export { redactPii } from "./pii";
 export { warmupEmbeddings, semanticLayerStatus, retrievalMode } from "./embeddings";
+export { detectDistress, DISTRESS_SYSTEM_ADDENDUM } from "./distress";
+export { verifyNumericEquivalence, type NumericCheckResult } from "./numeric-check";
 export { consoleAuditSink, type MaeAuditRecord, type MaeAuditSink } from "./audit";
 export { getStatePack, registeredStates, DEFAULT_STATE, type StateCode, type StatePack } from "./states";
 export { VERIFIED_STATES, VERIFIED_STATE_CODES, isVerifiedState, type PackMeta } from "./packs";

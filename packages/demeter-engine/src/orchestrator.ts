@@ -30,6 +30,8 @@ import { retrieve, formatRetrievedSources, CORPUS_EFFECTIVE_DATE } from "./retri
 import { formatFreshnessFooter } from "./freshness";
 import { consoleAuditSink, type MaeAuditRecord, type MaeAuditSink } from "./audit";
 import { retrievalMode } from "./embeddings";
+import { detectDistress, DISTRESS_SYSTEM_ADDENDUM } from "./distress";
+import { verifyNumericEquivalence } from "./numeric-check";
 
 export type ChatRole = "user" | "assistant";
 export interface ChatMessage {
@@ -92,6 +94,10 @@ export type AnswerFrame =
   | { type: "recompose" } // partial text is unverified — client replaces it
   | { type: "trailer"; text: string };
 
+/** Marker both route adapters emit for a recompose frame in plain-text
+ *  transports; clients replace everything before it. */
+export const STREAM_RECOMPOSE_MARKER = "\n\n⟲ recomposing with verified sources…\n\n";
+
 export interface AnswerEvents {
   /** Best-effort audit sink; defaults to the structured console sink. */
   audit?: MaeAuditSink;
@@ -109,6 +115,10 @@ export interface AnswerRequest {
   /** Pack state code, or null for the explicit federal floor (public no-state).
    *  undefined preserves the legacy dashboard default (CA). */
   state?: string | null;
+  /** Answer language. The corpus and verification stay ENGLISH; an "es" answer
+   *  is composed from verified EN content and additionally passes the numeric-
+   *  equivalence check (every $ and % must appear in the grounding text). */
+  lang?: "en" | "es";
   apiKey: string;
   /** Aborts generation (and billing) when the client disconnects. */
   signal?: AbortSignal;
@@ -158,6 +168,27 @@ export async function* answerQuestion(req: AnswerRequest): AsyncGenerator<Answer
   // --- Grounded system prompt (state-threaded; shared with the eval) --------
   const { systemBlocks, retrievedCitations } = await buildMaeSystem(lastUser, state);
 
+  // Distress gate (F2): crisis phrasing → the answer LEADS with immediate help.
+  const distressed = detectDistress(lastUser);
+  if (distressed) {
+    systemBlocks.push({ type: "text", text: DISTRESS_SYSTEM_ADDENDUM });
+  }
+  // Spanish answers: composed from the verified ENGLISH sources; citations stay
+  // verbatim; the numeric-equivalence check below guards translated numbers.
+  if (req.lang === "es") {
+    systemBlocks.push({
+      type: "text",
+      text:
+        "Responde COMPLETAMENTE en español, con calidez y claridad. Mantén las " +
+        "citas legales textualmente en su forma original (p. ej. '7 CFR 273.9') " +
+        "y NO traduzcas los números — cada cantidad en dólares y porcentaje debe " +
+        "copiarse exactamente de las fuentes provistas.",
+    });
+  }
+  const groundingText = systemBlocks.map((b) => b.text).join("\n");
+  const numbersOk = (text: string): boolean =>
+    req.lang !== "es" || verifyNumericEquivalence(text, groundingText).pass;
+
   const client = new Anthropic({ apiKey });
   const generation = {
     ...MAE_GENERATION,
@@ -188,7 +219,7 @@ export async function* answerQuestion(req: AnswerRequest): AsyncGenerator<Answer
           if (sinceVerify >= VERIFY_INTERVAL_CHARS) {
             sinceVerify = 0;
             const checks = verifyCitations(answerText, retrievedCitations, state);
-            if (hasUnrecognized(checks)) {
+            if (hasUnrecognized(checks) || !numbersOk(answerText)) {
               aborted = true;
               stream.abort();
               break;
@@ -205,7 +236,7 @@ export async function* answerQuestion(req: AnswerRequest): AsyncGenerator<Answer
         usageIn += final.usage.input_tokens;
         usageOut += final.usage.output_tokens;
         finalChecks = verifyCitations(answerText, retrievedCitations, state);
-        if (hasUnrecognized(finalChecks)) {
+        if (hasUnrecognized(finalChecks) || !numbersOk(answerText)) {
           aborted = true; // failed on the last unverified tail
         } else {
           if (buffered) {
@@ -256,7 +287,7 @@ export async function* answerQuestion(req: AnswerRequest): AsyncGenerator<Answer
       retryText = "";
     }
     finalChecks = verifyCitations(retryText, retrievedCitations, state);
-    if (retryText && !hasUnrecognized(finalChecks)) {
+    if (retryText && !hasUnrecognized(finalChecks) && numbersOk(retryText)) {
       answerText = retryText;
       yield { type: "delta", text: retryText };
     } else {
@@ -294,6 +325,7 @@ export async function* answerQuestion(req: AnswerRequest): AsyncGenerator<Answer
     scopeRef: meta?.scopeRef ?? null,
     verifierOutcome: outcome,
     retrievalMode: retrievalMode(),
+    distress: distressed,
   };
   try {
     await audit(record);

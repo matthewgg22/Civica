@@ -4673,3 +4673,69 @@ html {
     background: color-mix(in srgb, var(--civica-paper) 80%, transparent);
   }
 }
+
+/* ===== Demeter public chat (mobile-first — F8 acceptance criteria) ===== */
+.demeter-page { min-height: 100dvh; background: var(--civica-paper); display: flex; }
+.demeter {
+  display: flex; flex-direction: column; width: 100%; max-width: 720px;
+  margin: 0 auto; min-height: 100dvh; padding: 0.75rem 0.75rem calc(0.75rem + env(safe-area-inset-bottom));
+}
+.demeter__head { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; padding: 0.25rem 0.25rem 0.5rem; }
+.demeter__brand { display: flex; align-items: center; gap: 0.6rem; min-width: 0; }
+.demeter__avatar {
+  display: grid; place-items: center; width: 2.4rem; height: 2.4rem; border-radius: 50%;
+  background: var(--civica-pine); color: #fff; font-weight: 700; font-size: 1.05rem; flex: none;
+}
+.demeter__title { font-size: 1.15rem; font-weight: 700; color: var(--civica-ink); line-height: 1.15; }
+.demeter__tagline { font-size: 0.8rem; color: var(--civica-graphite); }
+.demeter__lang {
+  border: 1px solid var(--civica-pine); color: var(--civica-pine); background: transparent;
+  border-radius: 999px; padding: 0.45rem 0.9rem; font-size: 0.85rem; font-weight: 600; min-height: 44px;
+}
+.demeter__states { display: flex; gap: 0.4rem; overflow-x: auto; padding: 0.25rem; -webkit-overflow-scrolling: touch; scrollbar-width: none; align-items: center; }
+.demeter__states::-webkit-scrollbar { display: none; }
+.demeter__state {
+  flex: none; display: inline-flex; align-items: center; gap: 0.3rem; min-height: 44px;
+  border: 1px solid #D8D3C8; background: #fff; color: var(--civica-ink);
+  border-radius: 999px; padding: 0.4rem 0.85rem; font-size: 0.85rem; font-weight: 600;
+}
+.demeter__state.is-active { background: var(--civica-pine); border-color: var(--civica-pine); color: #fff; }
+.demeter__badge { color: var(--civica-pine); font-weight: 700; }
+.demeter__state.is-active .demeter__badge { color: var(--civica-wheat); }
+.demeter__how { flex: none; font-size: 0.8rem; color: var(--civica-pine); text-decoration: underline; padding: 0.4rem; min-height: 44px; display: inline-flex; align-items: center; }
+.demeter__scroll { flex: 1; overflow-y: auto; padding: 0.5rem 0.25rem; display: flex; flex-direction: column; gap: 0.6rem; }
+.demeter__empty { display: flex; flex-direction: column; gap: 0.5rem; margin: auto 0; padding: 1rem 0; }
+.demeter__suggest {
+  text-align: left; border: 1px solid #D8D3C8; background: #fff; color: var(--civica-ink);
+  border-radius: 0.9rem; padding: 0.8rem 1rem; font-size: 0.95rem; min-height: 44px;
+}
+.demeter__suggest:active { background: var(--civica-pine-surface); }
+.demeter__msg { max-width: 88%; border-radius: 1rem; padding: 0.7rem 0.95rem; font-size: 0.97rem; line-height: 1.5; white-space: pre-wrap; overflow-wrap: anywhere; }
+.demeter__msg--user { align-self: flex-end; background: var(--civica-pine); color: #fff; border-bottom-right-radius: 0.3rem; }
+.demeter__msg--assistant { align-self: flex-start; background: #fff; color: var(--civica-ink); border: 1px solid #E4DFD5; border-bottom-left-radius: 0.3rem; }
+.demeter__thinking { color: var(--civica-muted); font-style: italic; }
+.demeter__divider {
+  align-self: center; text-align: center; font-size: 0.78rem; color: var(--civica-graphite);
+  background: var(--civica-pine-surface); border-radius: 999px; padding: 0.35rem 0.9rem; margin: 0.25rem 0;
+}
+.demeter__error {
+  align-self: stretch; background: #FBEFE9; border: 1px solid #E4B8A5; color: #7C3A1D;
+  border-radius: 0.75rem; padding: 0.7rem 0.9rem; font-size: 0.9rem;
+}
+.demeter__inputrow { display: flex; gap: 0.5rem; align-items: flex-end; padding-top: 0.5rem; }
+.demeter__input {
+  flex: 1; resize: none; border: 1px solid #D8D3C8; border-radius: 1rem; background: #fff;
+  padding: 0.75rem 1rem; font: inherit; font-size: 1rem; color: var(--civica-ink); min-height: 48px; max-height: 8rem;
+}
+.demeter__input:focus { outline: 2px solid var(--civica-pine); outline-offset: 1px; }
+.demeter__send {
+  flex: none; min-height: 48px; min-width: 44px; border: none; border-radius: 999px;
+  background: var(--civica-pine); color: #fff; font-weight: 700; font-size: 0.95rem; padding: 0 1.2rem;
+}
+.demeter__send:disabled { background: var(--civica-pine-disabled); }
+.demeter__send--stop { background: #8A5A44; }
+.demeter__disclaimer { font-size: 0.72rem; color: var(--civica-muted); text-align: center; padding: 0.5rem 1rem 0; }
+@media (min-width: 720px) {
+  .demeter { padding: 1.25rem; }
+  .demeter__msg { max-width: 75%; }
+}

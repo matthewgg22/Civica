@@ -26,7 +26,22 @@ const nextConfig: NextConfig = {
   async redirects() {
     return [{ source: "/", destination: "/welcome", permanent: false }];
   },
-  webpack(config) {
+  webpack(config, { isServer }) {
+    // serverExternalPackages does NOT externalize imports made from inside a
+    // transpiled workspace package (demeter-engine → @xenova/transformers), so
+    // webpack tries to parse onnxruntime's native .node binaries and 500s.
+    // Explicit server externals leave the require to Node at runtime.
+    if (isServer) {
+      config.externals.push({
+        // ESM package: an "import" external keeps the dynamic import() real at
+        // runtime — a "commonjs" external would require() an ES module and
+        // crash Node's ESM-from-CJS loader, killing the server on first use.
+        "@xenova/transformers": "import @xenova/transformers",
+        // CJS native packages: plain require at runtime.
+        "onnxruntime-node": "commonjs onnxruntime-node",
+        sharp: "commonjs sharp",
+      });
+    }
     // Workspace packages use .js extensions for TypeScript ESM imports (node16).
     // Webpack needs this alias to resolve ./foo.js → ./foo.ts at build time.
     // Mirrored from apps/dashboard/next.config.ts.
