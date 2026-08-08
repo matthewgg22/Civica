@@ -303,6 +303,20 @@ export type { BenefitCalcDetail } from "./benefit-calc";
 // uses the same name + members so consumers don't notice the difference.
 export type { Facts, Member, IncomeLine, Shelter, Deductions } from "./facts";
 export { aggregateIncome, hasElderlyOrDisabled } from "./facts";
+// Expedited-service screening (7 CFR 273.2(i), all three paths) — #557.
+// Exported because the dashboard gate must call this instead of re-deriving a
+// partial heuristic of its own.
+export {
+  screenExpedited,
+  effectiveGrossMonthly,
+  expeditedShelterCost,
+} from "./gates/expedited";
+export type {
+  ExpeditedResult,
+  ExpeditedStatus,
+  ExpeditedPath,
+  ExpeditedOptions,
+} from "./gates/expedited";
 export { validateFacts } from "./facts-schema";
 export { getEngineParams } from "./constants/index";
 
