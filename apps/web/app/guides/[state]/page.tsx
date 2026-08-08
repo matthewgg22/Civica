@@ -32,7 +32,7 @@ export async function generateMetadata({
   };
 }
 
-const QUESTIONS: Record<string, string[]> = {
+export const QUESTIONS: Record<string, string[]> = {
   CA: [
     "What income limit applies to my CalFresh household?",
     "Do I have to do an interview for CalFresh?",
