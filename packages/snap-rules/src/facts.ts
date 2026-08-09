@@ -22,6 +22,12 @@ export interface Facts {
   expedited?: boolean;
   sponsor_income?: number | null;
   as_of_date?: string;
+  /**
+   * 5-digit state+county FIPS ("06107" = Tulare, CA). Optional: when absent
+   * the engine treats county as UNKNOWN, never as "not waived" — see #614 and
+   * the direction-of-error note on evaluateAbawd.
+   */
+  county_fips?: string;
 }
 
 export interface Member {
