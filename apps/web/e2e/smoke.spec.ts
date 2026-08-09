@@ -5,6 +5,28 @@ import { test, expect } from "@playwright/test";
 // a key is present (local), the honest unavailable banner when it isn't (CI).
 // Every spec runs on a phone profile (F8 mobile-first acceptance).
 
+test.describe("front door", () => {
+  test("the bare domain lands on the chat, ready to take a question", async ({ page }) => {
+    await page.goto("/");
+    await expect(page).toHaveURL(/\/demeter$/);
+    await expect(page.getByPlaceholder(/Ask anything about SNAP/)).toBeVisible();
+  });
+
+  test("root carries query params through, so campaign links keep working", async ({ page }) => {
+    await page.goto("/?state=TX&q=Does%20my%20car%20count%3F");
+    await expect(page).toHaveURL(/\/demeter\?/);
+    await expect(page.getByRole("radio", { name: /TX/ })).toHaveAttribute("aria-checked", "true");
+    await expect(page.getByPlaceholder(/Ask anything about SNAP/)).toHaveValue(
+      "Does my car count?",
+    );
+  });
+
+  test("the applicant landing is still reachable at its own URL", async ({ page }) => {
+    const res = await page.goto("/welcome");
+    expect(res?.status()).toBe(200);
+  });
+});
+
 test.describe("chat surface", () => {
   test("renders the chat with state chips and federal default", async ({ page }) => {
     await page.goto("/demeter");
