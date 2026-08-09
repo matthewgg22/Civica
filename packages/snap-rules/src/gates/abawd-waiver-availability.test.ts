@@ -60,6 +60,23 @@ describe("ABAWD area-waiver exemptions respect state waiver availability (#608)"
     expect(r.passes).toBe(true);
   });
 
+  it("MA now refuses an area waiver — its statewide waiver expired 2025-06-30", () => {
+    // DTA OLGTM-2025-31: no geographic waiver anywhere in MA for FY26. Before
+    // the flag was corrected this returned passes:true, silently exempting a
+    // household on a waiver that does not exist.
+    const r = evaluateAbawd(facts("abawd_exempt:waiver_county", 3), ASOF, "MA");
+    expect(r.passes).toBe(false);
+    expect(r.status).toBe("time_exhausted");
+  });
+
+  it("CA still honors the waiver — 7 counties really are waived", () => {
+    // CA keeps abawd_waiver_avail: true on purpose. A state-level boolean
+    // cannot say "7 of 58", and denying the genuinely-waived counties is the
+    // worse error. Revisit only when Facts carries county_fips.
+    const r = evaluateAbawd(facts("abawd_exempt:waiver_county", 3), ASOF, "CA");
+    expect(r.passes).toBe(true);
+  });
+
   it("still exhausts a plainly-subject ABAWD regardless of state", () => {
     for (const st of ["CA", "TX", undefined]) {
       const r = evaluateAbawd(facts("abawd_subject", 3), ASOF, st);

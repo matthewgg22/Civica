@@ -3739,9 +3739,10 @@
           "benefit": 298
         },
         "MA": {
-          "verdict": "APPROVE",
-          "eligible": true,
-          "benefit": 298
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null,
+          "reason": "no MA geographic ABAWD waiver in FY26 — statewide waiver expired 2025-06-30 (DTA OLGTM-2025-31), so the area exemption cannot hold and the exhausted 3-of-36 clock denies [7 CFR 273.24]"
         },
         "TX": {
           "verdict": "DENY",
