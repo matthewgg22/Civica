@@ -30,3 +30,12 @@ export { verifyNumericEquivalence, type NumericCheckResult } from "./numeric-che
 export { consoleAuditSink, type MaeAuditRecord, type MaeAuditSink } from "./audit";
 export { getStatePack, registeredStates, DEFAULT_STATE, type StateCode, type StatePack } from "./states";
 export { VERIFIED_STATES, VERIFIED_STATE_CODES, isVerifiedState, type PackMeta } from "./packs";
+
+// The CBO caseworker screening tool (accounts-gated; distinct from the
+// public open-Q&A path above). Slice 1 of the screening-tool build:
+// chat → structured facts → the real snap-rules engine → the mockup's six
+// outcomes. No UI, no auth, no storage — those are later slices.
+export { screenHousehold, type ScreeningTurnRequest, type ScreeningTurnResult } from "./screening/orchestrator";
+export { extractFacts, mergeFactsPatch, type PartialFacts, type ExtractionResult } from "./screening/facts-extraction";
+export { assessCompleteness, completeFactsShape, type CompletenessResult } from "./screening/completeness";
+export { classifyScreening, type ScreeningOutcome, type ScreeningClassification } from "./screening/classify";
