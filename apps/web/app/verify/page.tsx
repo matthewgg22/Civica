@@ -105,7 +105,7 @@ export default async function VerifyPage() {
                 </ul>
               </dd>
             </dl>
-            <Link className="vcard__cta" href={`/demeter?state=${s.code}`}>
+            <Link className="vcard__cta" href={`/screen/ask?state=${s.code}`}>
               Ask about {s.code} →
             </Link>
           </article>
@@ -115,7 +115,7 @@ export default async function VerifyPage() {
       <footer className="vpage__foot">
         <p>
           New states are verified and added continuously — each one ships only after its
-          refute gate passes. <Link href="/demeter">Ask Demeter a question</Link> or see
+          refute gate passes. <Link href="/screen/ask">Ask Demeter a question</Link> or see
           the <Link href="/supporters">organizations supporting this work</Link>.
         </p>
       </footer>

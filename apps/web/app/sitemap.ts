@@ -19,7 +19,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
 
   const core: MetadataRoute.Sitemap = [
-    { url: absoluteUrl("/demeter"), lastModified: now, changeFrequency: "daily", priority: 1.0 },
+    // /demeter 301s to /screen/ask (2026-08-09 merge) — list the real
+    // destination so crawlers index the canonical URL directly rather than
+    // discovering it only after following a redirect.
+    { url: absoluteUrl("/screen"), lastModified: now, changeFrequency: "daily", priority: 1.0 },
+    { url: absoluteUrl("/screen/ask"), lastModified: now, changeFrequency: "daily", priority: 1.0 },
     { url: absoluteUrl("/verify"), lastModified: now, changeFrequency: "weekly", priority: 0.8 },
     { url: absoluteUrl("/supporters"), lastModified: now, changeFrequency: "weekly", priority: 0.6 },
   ];
