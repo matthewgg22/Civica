@@ -216,9 +216,35 @@ class IncomeFacts(BaseModel):
         return sum((s.monthly_gross for s in self.sources), Decimal("0"))
 
     @property
+    def forward_gross_monthly_total(self) -> Decimal:
+        """Forward-looking gross: only sources still paying (is_ongoing).
+
+        A household whose wages just ended has $0 here, matching the
+        regulatory intent that terminated income not count toward a
+        FUTURE month's eligibility or benefit — the gross income gate and
+        the net-income deduction chain both need the forward-looking
+        figure, not the historical one. Mirrors the effective_gross
+        pattern already used in _is_expedited_eligible (#556).
+        """
+        return sum(
+            (s.monthly_gross for s in self.sources if s.is_ongoing),
+            Decimal("0"),
+        )
+
+    @property
     def earned_monthly_total(self) -> Decimal:
         return sum(
             (s.monthly_gross for s in self.sources if s.is_earned),
+            Decimal("0"),
+        )
+
+    @property
+    def forward_earned_monthly_total(self) -> Decimal:
+        """Forward-looking earned income only (is_ongoing AND is_earned).
+        See forward_gross_monthly_total — same rationale, filtered to the
+        earned subset that feeds the 20% earned-income deduction."""
+        return sum(
+            (s.monthly_gross for s in self.sources if s.is_earned and s.is_ongoing),
             Decimal("0"),
         )
 
