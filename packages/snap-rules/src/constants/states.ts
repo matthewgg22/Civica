@@ -189,7 +189,32 @@ const STATES: Record<string, StatePolicy> = {
     bbce_threshold_pct: 165,
     bbce_fpl_basis: "federal_fiscal_year",
     asset_waiver: true,
-    sua_by_tier: null,
+    // Texas FY26 utility standards — TWH A-1429; 1 TAC §372.410.
+    //
+    // Texas names its middle tier the BASIC Utility Allowance (BUA), not the
+    // federal "Limited" (LUA), but the role is identical: utility costs that
+    // don't qualify for the heating/cooling standard. determineSUATier's
+    // FULL/LIMITED/TELEPHONE/NONE ladder is state-neutral, so the mapping is
+    // SUA→HCSUA, BUA→LUA, telephone→phone.
+    //
+    // These standards are MANDATORY in Texas — 1 TAC §372.410(6) bars a
+    // deduction for actual utility expenses, so a household cannot elect its
+    // real bills the way it can in some states.
+    //
+    // Source: the adversarially verified TX state pack
+    // (packages/demeter-engine/src/states/tx/) — refute gate 72 claims, 61
+    // confirmed / 11 corrected / 0 fabricated, with live re-fetch preferred
+    // over curated extracts. Values are pinned by a cross-check test so the
+    // pack and the engine cannot drift apart.
+    //
+    // EXPIRES 2026-09-30 (October COLA): re-verify A-1429 and C-121 before
+    // quoting any Texas dollar amount for FY27.
+    sua_by_tier: {
+      HCSUA: new Decimal("445"),
+      LUA: new Decimal("400"),
+      phone: new Decimal("62"),
+      none: new Decimal("0"),
+    },
     allotment_tier: "48",
     drug_felony_ban: true,
     abawd_waiver_avail: false,
