@@ -10,6 +10,7 @@ import corpusJson from "./corpus/ecfr-snap.json";
 import { embed, cosine } from "./embeddings";
 import { DESCRIPTORS } from "./section-descriptors";
 import { getStatePack, type StatePack, type PackTopic } from "./states";
+import { FORM_QUESTION_HINTS } from "./form-questions";
 
 export interface RegChunk {
   id: string;
@@ -71,6 +72,10 @@ const TOPIC_HINTS: { terms: string[]; cites: string[] }[] = [
   { terms: ["authorized representative", "fill out for me", "fill it out for me", "submit for me", "submit the application for me", "on my behalf", "apply on my behalf", "represent me", "apply for me"], cites: ["273.2(n)"] },
   { terms: ["ice or immigration", "immigration find out", "find out if i apply", "data sharing", "data-sharing", "report me", "reported to", "confidential", "information shared", "who sees my", "shared with"], cites: ["272.1(c)"] },
   { terms: ["self-employment", "self employment", "self-employed", "self employed", "gig", "gig work", "uber", "lyft", "doordash", "independent contractor", "business income", "odd jobs"], cites: ["273.11"] },
+  // Application-form phrasing → the rule that governs it. People arrive stuck
+  // on a line of the form, not with a policy question; without these,
+  // "what does purchase and prepare separately mean" retrieves nothing useful.
+  ...FORM_QUESTION_HINTS,
 ];
 
 interface ExternalTopic {

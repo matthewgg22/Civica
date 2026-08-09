@@ -34,6 +34,7 @@ import { consoleAuditSink, type MaeAuditRecord, type MaeAuditSink } from "./audi
 import { retrievalMode } from "./embeddings";
 import { detectDistress, DISTRESS_SYSTEM_ADDENDUM } from "./distress";
 import { verifyNumericEquivalence } from "./numeric-check";
+import { classifyQuestionTopic } from "./form-questions";
 
 export type ChatRole = "user" | "assistant";
 export interface ChatMessage {
@@ -357,6 +358,9 @@ export async function* answerQuestion(req: AnswerRequest): AsyncGenerator<Answer
     scopeState: state ?? null,
     scopeRef: meta?.scopeRef ?? null,
     verifierOutcome: outcome,
+    // Which FORM question stopped them, not what they typed. Aggregating
+    // topics is how we learn where people get stuck without retaining text.
+    questionTopic: classifyQuestionTopic(lastUser),
     certainty: verdict.level,
     certaintyCode: verdict.code,
     retrievalMode: retrievalMode(),

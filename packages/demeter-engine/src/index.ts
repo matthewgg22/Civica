@@ -30,3 +30,5 @@ export { verifyNumericEquivalence, type NumericCheckResult } from "./numeric-che
 export { consoleAuditSink, type MaeAuditRecord, type MaeAuditSink } from "./audit";
 export { getStatePack, registeredStates, DEFAULT_STATE, type StateCode, type StatePack } from "./states";
 export { VERIFIED_STATES, VERIFIED_STATE_CODES, isVerifiedState, type PackMeta } from "./packs";
+
+export { FORM_QUESTIONS, matchFormQuestion, classifyQuestionTopic, type FormQuestion } from "./form-questions";
