@@ -103,9 +103,9 @@ export default function WhyCivicaPage() {
                     </svg>
                   </span>
                 </div>
-                <h3 className="why-feature-card__title">Mae, your AI guide</h3>
+                <h3 className="why-feature-card__title">Demeter, your AI guide</h3>
                 <p className="why-feature-card__text">
-                  Ask Mae any eligibility question — income limits, deductions, what documents
+                  Ask Demeter any eligibility question — income limits, deductions, what documents
                   to bring — in plain language, before you ever touch the form. No jargon,
                   no guessing.
                 </p>

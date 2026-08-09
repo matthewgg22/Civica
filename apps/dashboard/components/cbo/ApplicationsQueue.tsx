@@ -428,8 +428,8 @@ function buildVerification(app: QueueApplication): VCheck[] {
   ];
 }
 
-// Compact, PII-light snapshot of ONE case for Mae's context, so "Ask Mae about
-// this case" carries the application into the conversation — Mae can then answer
+// Compact, PII-light snapshot of ONE case for Demeter's context, so "Ask Demeter about
+// this case" carries the application into the conversation — Demeter can then answer
 // "what needs to be done?" concretely. Sends engine verdict, the §273.2 clocks,
 // interview state, and the outstanding cure items (categories + rule), NOT raw
 // identifiers (SSN/DOB/address/phone are never included; /api/mae also redacts).
@@ -1293,7 +1293,7 @@ function CaseRow({
                   onClick={askMae}
                   className="mt-2 text-[11px] font-medium text-pine hover:underline"
                 >
-                  Ask Mae about this case →
+                  Ask Demeter about this case →
                 </button>
               </EngineBlock>
             </div>
