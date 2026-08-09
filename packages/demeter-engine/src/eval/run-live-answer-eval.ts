@@ -49,8 +49,15 @@ export async function runLiveAnswerEval(): Promise<LiveEvalResult[]> {
   for (const g of cases) {
     // The scorers verify citations against what retrieval ACTUALLY surfaced
     // for this question — same grounding call the pipeline makes.
+    // Gold cases were authored against the staff persona; the audience the
+    // suite runs as is a separate question worth revisiting now that public
+    // is Demeter's primary surface, but that's an eval-content decision, not
+    // this fix's — pinning "staff" here preserves the existing gold answers'
+    // grounding rather than silently changing what they're scored against.
+    const audience = "staff" as const;
     const { retrievedCitations } = await buildMaeSystem(
       g.question,
+      audience,
       g.state === undefined ? undefined : g.state,
       g.lang ?? "en",
     );
@@ -59,6 +66,7 @@ export async function runLiveAnswerEval(): Promise<LiveEvalResult[]> {
     let outcome = "clean";
     const request: Parameters<typeof answerQuestion>[0] = {
       messages: [{ role: "user", content: g.question }],
+      audience,
       apiKey,
       events: { onVerified: (o) => (outcome = o), audit: async () => {} },
       meta: { staffUserId: null, mode: "eval" },

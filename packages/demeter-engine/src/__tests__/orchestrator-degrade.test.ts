@@ -54,6 +54,7 @@ async function collect(req: Parameters<typeof answerQuestion>[0]): Promise<Answe
 function baseRequest(audits: MaeAuditRecord[], outcomes: string[]) {
   return {
     messages: [{ role: "user" as const, content: "What is SNAP?" }],
+    audience: "public" as const,
     state: null, // federal floor
     apiKey: "test-key",
     events: {
