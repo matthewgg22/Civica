@@ -2,19 +2,16 @@
 
 import { useState, useRef, useEffect } from "react";
 
-// The three Civica product surfaces. Mirrors the dashboard-app ProductSwitcher
-// so the swap-between-surfaces affordance is identical across all three.
+// 2026-08-09: was three Civica product surfaces (this one, Staff Dashboard,
+// CBO Preview), mirroring the dashboard-app's own ProductSwitcher. Per the
+// sharpened pivot, Civica is now the parent company and Demeter AI's public
+// pages shouldn't link out to the parked internal tooling — cut the two
+// dashboard/CBO links rather than leave a live, public bridge into surfaces
+// that are otherwise fully hands-off. The dropdown collapses to a single
+// entry for now rather than being removed outright: AppNav's callers still
+// pass a `current` prop and this keeps that contract intact without forcing
+// a second, unrelated change to every page that renders it.
 const SURFACES = [
-  {
-    label: "Staff Dashboard",
-    description: "Navigator & caseworker view",
-    href: "https://civica-api.vercel.app/dashboard",
-  },
-  {
-    label: "CBO Preview",
-    description: "Prospective partner demo",
-    href: "https://civica-api.vercel.app/cbo-preview",
-  },
   {
     label: "Applicant Portal",
     description: "What the applicant sees",
@@ -26,7 +23,7 @@ export default function ProductSwitcher({ current }: { current: string }) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
-  const active = SURFACES.find((s) => s.label === current) ?? SURFACES[2];
+  const active = SURFACES.find((s) => s.label === current) ?? SURFACES[0];
 
   useEffect(() => {
     function handleClick(e: MouseEvent) {

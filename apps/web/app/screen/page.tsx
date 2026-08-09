@@ -1,10 +1,16 @@
-// /screen — the screening tool's landing page (mockup frame 01).
-//
-// A returning, already-signed-in org member skips straight to their
-// session — no reason to make them click through the pitch every visit.
-// A first-time or signed-out visitor sees the landing and picks a path:
-// sign in (frame 02) or continue as a guest (straight to /screen/session,
-// same as the mockup's own "Continue as a guest" link).
+// /screen — 2026-08-09: simplified per the sharpened pivot ("Demeter AI is
+// the sole initial launch — a simplified B2C chatbot"; the org/case-file/
+// PDF-export screening flow reads as caseworker tooling, not a B2C chatbot,
+// so it's no longer the front door). New/anonymous visitors go straight to
+// the plain Q&A chat at /screen/ask — same as root's own redirect
+// (next.config.ts). The org sign-in → session shortcut is UNCHANGED for
+// people who already have an org account: it's an existing convenience for
+// a real (if now-secondary) user, not new surface area, and nothing about
+// pausing the screening tool's promotion requires breaking it. The landing
+// pitch UI (sign in / continue as guest / "Screen a household") is left in
+// place as unlinked code — parked, not deleted, matching how the rest of
+// the pivot treats out-of-scope surfaces — reachable directly if this needs
+// to come back, just no longer where traffic default-lands.
 //
 // Deliberately calls resolveOrgIdentity(), NOT resolveScreeningIdentity() —
 // the latter mints a brand-new guest cookie (and starts that guest's
@@ -15,58 +21,18 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { resolveOrgIdentity } from "../../lib/screening-auth";
-import { DemeterMark } from "../../components/DemeterMark";
 
 export const metadata: Metadata = {
-  title: "Demeter AI — SNAP screening & verified answers",
-  description: "SNAP eligibility screening for caseworkers — cited, exportable, state-aware.",
+  title: "Demeter AI — verified SNAP answers",
+  description: "Free, verified answers to SNAP questions — for any state.",
   openGraph: {
-    title: "Demeter AI — SNAP screening & verified answers",
-    description: "SNAP eligibility screening for caseworkers — cited, exportable, state-aware.",
+    title: "Demeter AI — verified SNAP answers",
+    description: "Free, verified answers to SNAP questions — for any state.",
     type: "website",
   },
 };
 
 export default async function ScreenLandingPage() {
   const org = await resolveOrgIdentity();
-  if (org) redirect("/screen/session");
-
-  return (
-    <div className="screen-landing">
-      <header className="screen-landing__head">
-        <div className="screen-landing__brand">
-          <DemeterMark size={32} />
-          <span className="screen-landing__brand-name">Demeter</span>
-        </div>
-      </header>
-
-      <main className="screen-landing__main">
-        <div className="screen-landing__card">
-          <h1 className="screen-landing__title">Screen a household in minutes</h1>
-          <p className="screen-landing__subtitle">
-            Ask about the household, and Demeter builds the case file as you go — a live benefit
-            calculation, a cited screening result, and a checklist of what&apos;s still needed.
-            Estimate only; the county agency makes the final determination.
-          </p>
-
-          <div className="screen-landing__actions">
-            <a className="screen-landing__cta screen-landing__cta--primary" href="/screen/sign-in">
-              Sign in
-            </a>
-            <a className="screen-landing__cta screen-landing__cta--secondary" href="/screen/session">
-              Continue as a guest →
-            </a>
-          </div>
-          <p className="screen-landing__guest-note">
-            Guest screenings aren&apos;t saved to an organization and are capped at 5. Sign in to
-            keep a case file, export it, and pick up where you left off.
-          </p>
-          <p className="screen-landing__ask-note">
-            Just have a question, not a full household to screen?{" "}
-            <a href="/screen/ask">Ask Demeter</a> — no sign-in needed.
-          </p>
-        </div>
-      </main>
-    </div>
-  );
+  redirect(org ? "/screen/session" : "/screen/ask");
 }
