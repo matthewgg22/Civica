@@ -93,6 +93,38 @@ export const FORM_QUESTIONS: FormQuestion[] = [
       "This screens you for benefits within 7 days. Very low income and resources, or housing costs above your income, can qualify you — and the agency has to screen every application for it whether or not you ask.",
   },
   {
+    topic: "missed_interview",
+    phrasings: [
+      "missed my interview",
+      "missed the interview",
+      "notice of missed interview",
+      "a nomi letter",
+      "nomi notice",
+      "nobody called me for my interview",
+      "no one called for my interview",
+      "did i lose my application because i missed the call",
+      "reschedule my interview",
+      "they said i have to reapply",
+    ],
+    citation: "7 CFR 273.2(e)(3)",
+    whyAsked:
+      "A missed call is not an automatic denial. The county has to send you a written notice and give you until day 30 from your application date to reschedule — and if that notice never came, or came after the interview already happened, the denial doesn't hold up. You don't have to reapply; you can call to reschedule.",
+  },
+  {
+    topic: "repeat_verification",
+    phrasings: [
+      "they asked for documents i already sent",
+      "asked me to prove it again",
+      "why do i need to send this again",
+      "already gave them this",
+      "denied for failure to provide",
+      "keep asking for more proof",
+    ],
+    citation: "7 CFR 273.2(f)(4)",
+    whyAsked:
+      "The county can only ask for proof of something that's actually in question — not re-request what's already in your file, and not deny you for 'failure to provide' something you already gave them. If a document you sent is being asked for again, that's worth pushing back on, not resubmitting by default.",
+  },
+  {
     topic: "self_employment",
     phrasings: [
       "self-employment",
@@ -165,7 +197,9 @@ export function matchFormQuestion(text: string): FormQuestion | null {
   for (const q of FORM_QUESTIONS) {
     for (const p of q.phrasings) {
       // Longest matching phrase wins, so "purchase and prepare" beats "prepare".
-      if (t.includes(p) && (!best || p.length > best.len)) best = { q, len: p.length };
+      // p is lowercased too: phrasings are written lowercase by convention, but
+      // this makes matching correct even if one isn't (was a silent no-op before).
+      if (t.includes(p.toLowerCase()) && (!best || p.length > best.len)) best = { q, len: p.length };
     }
   }
   return best?.q ?? null;
