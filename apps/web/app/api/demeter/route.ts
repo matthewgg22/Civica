@@ -98,6 +98,7 @@ export async function POST(req: NextRequest) {
 
   const frames = answerQuestion({
     messages: parsed.messages,
+    audience: "public",
     state, // null = federal floor
     lang,
     apiKey,

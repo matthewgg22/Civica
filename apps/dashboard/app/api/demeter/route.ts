@@ -73,6 +73,7 @@ export async function POST(req: NextRequest) {
   const encoder = new TextEncoder();
   const frames = answerQuestion({
     messages: parsed.messages,
+    audience: "staff",
     // Legacy dashboard default (CA) when the UI sends no state — the staff
     // surface's historical behavior. Explicit states pass through.
     state: scopeState,

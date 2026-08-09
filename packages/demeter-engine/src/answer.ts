@@ -5,13 +5,18 @@
 // verifier checks against).
 
 import type Anthropic from "@anthropic-ai/sdk";
-import { MAE_MODEL, MAE_SYSTEM_PROMPT } from "./system-prompt";
+import { MAE_MODEL, STAFF_SYSTEM_PROMPT, PUBLIC_SYSTEM_PROMPT } from "./system-prompt";
 import {
   MAE_ENGINE_CITATIONS,
   MAE_CITATIONS_PROVENANCE,
   formatEngineParams,
 } from "./engine-citations";
 import { retrieve, formatRetrievedSources } from "./retrieval";
+
+/** Who's asking — selects which persona prompt is sent. No default: the bug
+ *  this type exists to prevent was exactly an audience flag that got set on a
+ *  request and silently never reached prompt selection (see system-prompt.ts). */
+export type Audience = "staff" | "public";
 
 export interface MaeSystem {
   systemBlocks: Anthropic.TextBlockParam[];
@@ -35,12 +40,14 @@ const ENGINE_PARAM_STATES = new Set(["CA", "MA"]);
  *  Block 0 (cached): frozen instructions + authority map + provenance + live FY
  *  figures. Block 1 (un-cached): the verbatim eCFR/pack text retrieved for this Q.
  *
- *  `state` semantics (threaded end-to-end — eng review T-C):
+ *  `audience` selects the persona (REQUIRED, no default — see the Audience
+ *  type doc). `state` semantics (threaded end-to-end — eng review T-C):
  *    - a pack state code ("CA", "TX", …): state-scoped retrieval + freshness;
  *    - null: FEDERAL FLOOR — no state pack, no state supplements. Used for
  *      anonymous public users with no state selected. Never defaults to CA. */
 export async function buildMaeSystem(
   lastUserText: string,
+  audience: Audience,
   state: string | null = "CA",
   lang: "en" | "es" = "en",
 ): Promise<MaeSystem> {
@@ -57,7 +64,8 @@ export async function buildMaeSystem(
       `assistant — cite the verified ${state} policy sources below for rules, and ` +
       `direct users to their state agency for exact current dollar amounts.`;
   }
-  const systemText = [MAE_SYSTEM_PROMPT, MAE_CITATIONS_PROVENANCE, MAE_ENGINE_CITATIONS, liveParams]
+  const personaPrompt = audience === "public" ? PUBLIC_SYSTEM_PROMPT : STAFF_SYSTEM_PROMPT;
+  const systemText = [personaPrompt, MAE_CITATIONS_PROVENANCE, MAE_ENGINE_CITATIONS, liveParams]
     .filter(Boolean)
     .join("\n\n");
 

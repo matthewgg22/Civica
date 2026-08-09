@@ -13,7 +13,7 @@ export {
   type ChatRole,
   type VerifierOutcome,
 } from "./orchestrator";
-export { buildMaeSystem, MAE_GENERATION, type MaeSystem } from "./answer";
+export { buildMaeSystem, MAE_GENERATION, type MaeSystem, type Audience } from "./answer";
 export {
   verifyCitations,
   extractCitations,

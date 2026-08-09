@@ -19,7 +19,7 @@
 // (events.verifierOutcome = "degraded") — the metric cannot game itself.
 
 import Anthropic from "@anthropic-ai/sdk";
-import { buildMaeSystem, MAE_GENERATION } from "./answer";
+import { buildMaeSystem, MAE_GENERATION, type Audience } from "./answer";
 import {
   verifyCitations,
   formatCitationTrailer,
@@ -115,6 +115,11 @@ export interface AnswerEvents {
 export interface AnswerRequest {
   /** Validated messages (run parseMessages first). PII is redacted here. */
   messages: ChatMessage[];
+  /** Who's asking — "staff" (Civica dashboard) or "public" (apps/web).
+   *  REQUIRED, no default: this selects the persona prompt (system-prompt.ts),
+   *  and it must be impossible for a caller to forget it and silently get the
+   *  wrong one, the way `meta.mode` was set and never consulted before. */
+  audience: Audience;
   /** Pack state code, or null for the explicit federal floor (public no-state).
    *  undefined preserves the legacy dashboard default (CA). */
   state?: string | null;
@@ -167,7 +172,7 @@ function degradedAnswer(retrievedBlock: string, lang: "en" | "es" = "en"): strin
 /** The single answer pipeline. Yields frames; the caller adapts them to its
  *  transport (SSE, plain text stream, buffered JSON). */
 export async function* answerQuestion(req: AnswerRequest): AsyncGenerator<AnswerFrame> {
-  const { apiKey, signal, events, meta } = req;
+  const { apiKey, signal, events, meta, audience } = req;
   const state = req.state; // undefined = legacy CA default; null = federal floor
   const lang = req.lang ?? "en";
   const audit = events?.audit ?? consoleAuditSink;
@@ -182,7 +187,7 @@ export async function* answerQuestion(req: AnswerRequest): AsyncGenerator<Answer
   const lastUser = messages[messages.length - 1]!.content;
 
   // --- Grounded system prompt (state-threaded; shared with the eval) --------
-  const { systemBlocks, retrievedCitations } = await buildMaeSystem(lastUser, state, lang);
+  const { systemBlocks, retrievedCitations } = await buildMaeSystem(lastUser, audience, state, lang);
 
   // Distress gate (F2): crisis phrasing → the answer LEADS with immediate help.
   const distressed = detectDistress(lastUser);
