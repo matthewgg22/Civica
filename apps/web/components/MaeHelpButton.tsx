@@ -35,7 +35,7 @@ export function MaeHelpButton() {
       {open && (
         <div className="mae-panel" role="dialog" aria-label={c.title}>
           <div className="mae-panel__head">
-            <span className="mae-panel__avatar" aria-hidden>M</span>
+            <span className="mae-panel__avatar" aria-hidden>D</span>
             <p className="mae-panel__title">{c.title}</p>
             <button className="mae-panel__close" aria-label={c.close} onClick={() => setOpen(false)}>✕</button>
           </div>
@@ -50,7 +50,7 @@ export function MaeHelpButton() {
         aria-expanded={open}
         onClick={() => setOpen((v) => !v)}
       >
-        <span className="mae-fab__avatar" aria-hidden>M</span>
+        <span className="mae-fab__avatar" aria-hidden>D</span>
         {c.open}
       </button>
     </>

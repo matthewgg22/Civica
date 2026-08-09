@@ -28,6 +28,7 @@ export const publicAuditSink: MaeAuditSink = async (rec: MaeAuditRecord) => {
         // The evidence loop: the verdict shown to the reader, why it landed
         // there, and how the answer was produced. Without these persisted the
         // grounded-rate claim could only ever be asserted (migration 20260612).
+        question_topic: rec.questionTopic ?? null,
         certainty: rec.certainty ?? null,
         certainty_code: rec.certaintyCode ?? null,
         verifier_outcome: rec.verifierOutcome ?? null,

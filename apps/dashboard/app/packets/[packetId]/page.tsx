@@ -21,6 +21,7 @@ import LifecycleStrip from "../../../components/LifecycleStrip";
 import HandoffPanel from "../../../components/HandoffPanel";
 import BenefitsCalPanel from "../../../components/BenefitsCalPanel";
 import ExpeditedReviewGate from "./ExpeditedReviewGate";
+import { computeExpeditedPaths } from "./expedited-gate";
 import ShelterAllocationPanel from "../../../components/ShelterAllocationPanel";
 import type { ShelterAllocation } from "../../../components/ShelterAllocationPanel";
 import { classifyTenancy, detectMissedElections, totalMissedMonthlyValue, perPacketGapContribution } from "@civica/snap-qc-engine";
@@ -261,16 +262,22 @@ export default async function PacketDetailPage({
   }
   const shelterAllocation = shelterAllocationResult?.data ?? null;
 
-  // Expedited review gate (OBBBA §10102(a)): show when employment_status = "unemployed"
-  // AND monthly gross income is very low or unanswered AND navigator hasn't acted yet.
-  const employmentAnswer = answers.find((a) => a.question_key === "employment_status");
-  const incomeAnswer = answers.find((a) => a.question_key === "monthly_gross_income");
-  const grossIncome = incomeAnswer ? parseFloat(incomeAnswer.applicant_answer ?? "NaN") : NaN;
-  const looksExpedited =
-    employmentAnswer?.applicant_answer === "unemployed" &&
-    (isNaN(grossIncome) || grossIncome < 150);
+  // Expedited review gate (OBBBA §10102(a) / 7 CFR 273.2(i)) — navigator hasn't
+  // acted yet AND at least one of the computable paths fires. #557: this used
+  // to be Path 1 only, and didn't check liquid resources at all (over-triggered
+  // for unemployed households with real savings); see expedited-gate.ts for
+  // the full Path 1 + Path 2 logic and why Path 3 isn't implemented here.
+  const expeditedPaths = computeExpeditedPaths({
+    employment_status: getAnswer("employment_status"),
+    monthly_gross_income: getAnswer("monthly_gross_income"),
+    savings_amount: getAnswer("savings_amount"),
+    monthly_rent_or_mortgage: getAnswer("monthly_rent_or_mortgage"),
+    has_heating_costs: suaAnswers.has_heating_costs,
+    has_electric_or_gas: suaAnswers.has_electric_or_gas,
+    has_phone: suaAnswers.has_phone,
+  });
   const showExpeditedGate =
-    looksExpedited &&
+    expeditedPaths.length > 0 &&
     (packet as { is_expedited?: boolean | null }).is_expedited === null &&
     EXPEDITED_GATE_STATUSES.has(packet.status);
 
@@ -978,7 +985,7 @@ export default async function PacketDetailPage({
         )}
 
         {/* Expedited review gate — OBBBA §10102(a) compliance */}
-        {showExpeditedGate && <ExpeditedReviewGate packetId={packetId} />}
+        {showExpeditedGate && <ExpeditedReviewGate packetId={packetId} paths={expeditedPaths} />}
 
         {/* Status transition */}
         {nextStatuses.length > 0 && (
