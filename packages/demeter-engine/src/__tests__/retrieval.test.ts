@@ -66,4 +66,32 @@ describe("Mae eCFR retrieval", { timeout: 60_000 }, () => {
     expect(hits.length).toBeGreaterThan(0);
     expect(total).toBeLessThan(4000 + 3500);
   });
+
+  // #622: the bare "what counts" hint fired on ANY "what counts as X"
+  // question regardless of domain, injecting 273.9(b)/(c) (income exclusions)
+  // with enough weight to push the actually-relevant section out of the
+  // top-k entirely. Dropped the bare phrase; kept income-specific "what
+  // counts as ___ income" variants so genuine income questions still route.
+  it("'what counts as X' only routes to income exclusions when X actually is income (#622)", async () => {
+    // The exact failing case from #622 — a disqualification question must
+    // NOT be answered with income-exclusion text. (It also doesn't yet route
+    // to the CORRECT section, 273.11(n) — that's a separate defect, #629,
+    // caused by scoring rather than by a hint; this assertion only covers
+    // what #622 is actually about.)
+    const felonHits = await topCite("what counts as a fleeing felon on this form?");
+    expect(felonHits).not.toMatch(/273\.9\(b\)|273\.9\(c\)/);
+
+    // Other off-domain "what counts as X" phrasings must route to X's own
+    // section, not get hijacked into income exclusions either.
+    expect(await topCite("what counts as a student on this form?")).toContain("273.5");
+    expect(await topCite("what counts as a resource on this form?")).toContain("273.8");
+    expect(await topCite("what counts as an intentional program violation?")).toContain("273.16");
+    expect(await topCite("what counts as a boarder?")).toContain("273.1");
+
+    // But a genuine income question must still route correctly — the bare
+    // "what counts" term is gone, replaced with income-specific variants.
+    expect(await topCite("what counts as income on this form?")).toContain("273.9");
+    expect(await topCite("what counts as household income on this form?")).toContain("273.9");
+    expect(await topCite("what counts as a shelter deduction?")).toBe("7 CFR 273.9(d)(6)");
+  });
 });
