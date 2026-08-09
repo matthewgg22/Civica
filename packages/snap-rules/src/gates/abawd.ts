@@ -20,6 +20,7 @@
 
 import type { Facts } from "../facts";
 import { statePolicyFor } from "../constants/states";
+import { isWaivedCounty, WAIVER_WINDOWS } from "../work-requirements/waiver-counties";
 
 // Exemption reasons that rest on the member's AREA being waived rather than on
 // anything personal (7 CFR 273.24(f) — waivers for areas with insufficient
@@ -65,7 +66,20 @@ export function evaluateAbawd(facts: Facts, asOf: Date, state?: string): AbawdRe
   // A waiver exemption is only real where the state actually holds a waiver
   // (7 CFR 273.24(f)). Optional + fail-open: omit `state`, or pass one that
   // isn't registered, and nothing changes. See #608.
+  //
+  // County refinement (#614): where the state publishes a per-county waiver
+  // list AND the household's county is known, resolve the claim precisely —
+  // California waives 7 of 58 counties, so a state-level boolean is wrong in
+  // one direction or the other for everyone.
+  //
+  // DIRECTION OF ERROR, deliberately asymmetric: an ABSENT county is UNKNOWN,
+  // never "not waived". We only strip an exemption when the county is known
+  // and demonstrably outside the live waiver list — never on missing data.
   const noWaiverHere = stateOffersNoWaiver(state);
+  const countyKnown = !!facts.county_fips;
+  const stateHasCountyList = !!state && !!WAIVER_WINDOWS[state];
+  const countyOutsideWaiver =
+    countyKnown && stateHasCountyList && !isWaivedCounty(state, facts.county_fips, asOf);
   // Post-OBBBA the veteran_homeless exemption is gone.
   const veteranHomelessExempt = asOf < OBBBA_EFFECTIVE;
   // Post-OBBBA the age ceiling is 64 (was 49/54 prior).
@@ -88,9 +102,12 @@ export function evaluateAbawd(facts: Facts, asOf: Date, state?: string): AbawdRe
       if (reason === "veteran_homeless" && !veteranHomelessExempt) {
         // Post-OBBBA: exemption removed → member is now subject.
         // Continue to time-limit check below.
-      } else if (WAIVER_EXEMPTION_REASONS.has(reason) && noWaiverHere) {
-        // Area-based exemption claimed in a state that holds no waiver — the
-        // premise can't hold, so the member stays subject to the time limit.
+      } else if (WAIVER_EXEMPTION_REASONS.has(reason) && (noWaiverHere || countyOutsideWaiver)) {
+        // Area-based exemption whose premise can't hold — either the state
+        // holds no waiver at all, or the household's county is known and sits
+        // outside the live list (or the grant window has closed). The member
+        // stays subject to the time limit.
+        //
         // Personal exemptions (disability, tribal, caretaker…) are untouched:
         // they don't depend on where the household lives.
       } else {

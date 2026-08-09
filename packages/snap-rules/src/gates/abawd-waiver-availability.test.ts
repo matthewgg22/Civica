@@ -84,3 +84,79 @@ describe("ABAWD area-waiver exemptions respect state waiver availability (#608)"
     }
   });
 });
+
+// County-level resolution (#614). CA waives 7 of 58 counties, so the
+// state-level boolean is wrong for someone no matter which way it is set.
+// With a county in hand the gate can answer precisely — but ONLY tightening
+// where the county is known and demonstrably outside the live list.
+describe("county-level ABAWD waiver resolution (#614)", () => {
+  function inCounty(fips: string | undefined, monthsUsed = 3): Facts {
+    const f = facts("abawd_exempt:waiver_county", monthsUsed) as Facts & { county_fips?: string };
+    if (fips) f.county_fips = fips;
+    return f;
+  }
+
+  it("honors the waiver in a genuinely waived CA county (Tulare)", () => {
+    expect(evaluateAbawd(inCounty("06107"), ASOF, "CA").passes).toBe(true);
+  });
+
+  it("refuses it in a CA county that is NOT waived (Los Angeles)", () => {
+    // The 51 time-limited counties were silently over-approved before this.
+    const r = evaluateAbawd(inCounty("06037"), ASOF, "CA");
+    expect(r.passes).toBe(false);
+    expect(r.status).toBe("time_exhausted");
+  });
+
+  it("treats an ABSENT county as unknown, not as unwaived", () => {
+    // The critical asymmetry: missing data must never manufacture a denial.
+    expect(evaluateAbawd(inCounty(undefined), ASOF, "CA").passes).toBe(true);
+  });
+
+  it("stops honoring CA waivers once the grant window closes (after 2026-10-31)", () => {
+    const afterExpiry = new Date("2026-11-15");
+    expect(evaluateAbawd(inCounty("06107"), afterExpiry, "CA").passes).toBe(false);
+  });
+
+  it("honored them inside the window", () => {
+    expect(evaluateAbawd(inCounty("06107"), new Date("2026-03-01"), "CA").passes).toBe(true);
+  });
+
+  it("does not deny a waived-county member who still has months left", () => {
+    expect(evaluateAbawd(inCounty("06037", 0), ASOF, "CA").passes).toBe(true);
+  });
+
+  it("MA denies regardless of county — it holds no waiver at all", () => {
+    expect(evaluateAbawd(inCounty("25025"), ASOF, "MA").passes).toBe(false);
+  });
+});
+
+describe("county_fips passes schema validation (#614)", () => {
+  // validateFacts returns string[] of problems, or null when clean.
+  const base = {
+    household: [
+      { member_id: "m1", role: "head", age: 35, work_class: "abawd_subject", abawd_months_used: 0 },
+    ],
+    income: [],
+    shelter: { rent: 0, sua_tier: "none" },
+    deductions: {},
+    assets: 0,
+    cat_elig: "none",
+  };
+
+  it("accepts a well-formed 5-digit FIPS", async () => {
+    const { validateFacts } = await import("../facts-schema");
+    expect(validateFacts({ ...base, county_fips: "06107" })).toBeNull();
+  });
+
+  it("reports a malformed FIPS instead of letting it through", async () => {
+    const { validateFacts } = await import("../facts-schema");
+    const errs = validateFacts({ ...base, county_fips: "6107" }); // not zero-padded
+    expect(errs).not.toBeNull();
+    expect(errs!.join(" ")).toContain("county_fips");
+  });
+
+  it("stays optional — omitting it is still valid", async () => {
+    const { validateFacts } = await import("../facts-schema");
+    expect(validateFacts(base)).toBeNull();
+  });
+});
