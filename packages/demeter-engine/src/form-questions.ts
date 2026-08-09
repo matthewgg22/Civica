@@ -125,6 +125,35 @@ export const FORM_QUESTIONS: FormQuestion[] = [
       "The county can only ask for proof of something that's actually in question — not re-request what's already in your file, and not deny you for 'failure to provide' something you already gave them. If a document you sent is being asked for again, that's worth pushing back on, not resubmitting by default.",
   },
   {
+    topic: "abawd_work_requirement",
+    phrasings: [
+      "80 hours a month",
+      "20 hours a week",
+      "work requirement notice",
+      "able-bodied adult without dependents",
+      "three months in three years",
+      "time limit on my benefits",
+      "countable month",
+    ],
+    citation: "7 CFR 273.24",
+    whyAsked:
+      "This is the ABAWD work rule: without a qualifying work activity or an exemption, benefits are limited to three countable months in a three-year period. Most adults never hit this rule at all — several exemptions apply (disability, caring for a child, pregnancy, and others) — and a late or missing notice can itself be grounds to challenge a cutoff.",
+  },
+  {
+    topic: "denial_notice_validity",
+    phrasings: [
+      "the notice doesn't make sense",
+      "my denial letter has two reasons",
+      "the letter says something that isn't true",
+      "wrong reason on my notice",
+      "confusing termination letter",
+      "does my denial letter have to be right",
+    ],
+    citation: "7 CFR 273.13",
+    whyAsked:
+      "A denial or termination notice has to state the real reason, in plain language, and if it lists more than one reason every single one has to be accurate — one wrong reason can invalidate the whole notice, not just that line. A letter that's confusing or doesn't match what actually happened is worth questioning, not just accepting.",
+  },
+  {
     topic: "self_employment",
     phrasings: [
       "self-employment",
