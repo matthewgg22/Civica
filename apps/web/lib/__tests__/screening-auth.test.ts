@@ -99,6 +99,17 @@ describe("resolveScreeningIdentity", () => {
     expect(mockRpc).toHaveBeenCalledWith("demeter_guest_screening_count", { p_guest_token: "t1" });
   });
 
+  it("REGRESSION: an unconfigured Supabase (createSupabaseServerClient throws) still resolves a guest, never 500s", async () => {
+    // Caught live, not by the mocked suite: createSupabaseServerClient()
+    // throws SYNCHRONOUSLY when NEXT_PUBLIC_SUPABASE_URL is unset, and
+    // nothing caught it — a guest, who needs no auth at all, got a 500.
+    mockCreateServerClient.mockRejectedValueOnce(
+      new Error("Missing Supabase config: set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY."),
+    );
+    const id = await resolveScreeningIdentity();
+    expect(id.kind).toBe("guest");
+  });
+
   it("fails OPEN on the read — a store outage never blocks resolving an identity", async () => {
     cookieStore.set(GUEST_COOKIE, "t1");
     mockRpc.mockRejectedValue(new Error("db down"));
