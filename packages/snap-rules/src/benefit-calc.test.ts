@@ -36,24 +36,25 @@ describe("computeBenefit — SUA-not-authored regression (#436)", () => {
     expect(r.excess_shelter_deduction).toBeGreaterThanOrEqual(0);
   });
 
-  it("FL household with sua_tier='none' computes without throw", () => {
+  it("PA household with sua_tier='none' computes without throw", () => {
     const facts = baseFacts("none");
-    expect(() => computeBenefit(facts, "FL", ASOF)).not.toThrow();
-    const r = computeBenefit(facts, "FL", ASOF);
+    expect(() => computeBenefit(facts, "PA", ASOF)).not.toThrow();
+    const r = computeBenefit(facts, "PA", ASOF);
     expect(r.trace.state_sua_value).toBe(0);
   });
 
-  it("FL household with sua_tier='HCSUA' still throws (engine invariant)", () => {
+  it("PA household with sua_tier='HCSUA' still throws (engine invariant)", () => {
     // Composer must SKIP before reaching computeBenefit for this case; if
     // any caller reaches here directly with non-"none" tier on an
     // unauthored state, the throw is the correct fail-loud signal.
     //
-    // This case has moved exemplars twice as states got authored: TX (until
-    // #607), then KS (until #607's follow-through — KS/AK sourced 2026-08-09).
-    // FL/IL/PA/OH remain unauthored (Tranche 1, #619) and are the current
-    // exemplars.
+    // This case has moved exemplars three times as states got authored:
+    // TX (until #607), then KS (until #607's follow-through), then FL
+    // (until #619 sourced FL/IL/OH — 2026-08-09). PA remains a genuine,
+    // logged verification gap (see its comment in states.ts) and is the
+    // current exemplar.
     const facts = baseFacts("HCSUA");
-    expect(() => computeBenefit(facts, "FL", ASOF)).toThrow(/SUA not authored for state FL/);
+    expect(() => computeBenefit(facts, "PA", ASOF)).toThrow(/SUA not authored for state PA/);
   });
 
   it("TX with sua_tier='HCSUA' now COMPUTES — its standards are authored (#607)", () => {
@@ -85,10 +86,10 @@ describe("computeBenefit — SUA-not-authored regression (#436)", () => {
     expect(typeof result.benefit).toBe("number");
   });
 
-  it("composeVerdict on FL + sua_tier='HCSUA' still SKIPs cleanly", () => {
-    // Same re-pointing as above: FL is now the unauthored exemplar.
+  it("composeVerdict on PA + sua_tier='HCSUA' still SKIPs cleanly", () => {
+    // Same re-pointing as above: PA is now the unauthored exemplar.
     const facts = baseFacts("HCSUA");
-    const result = composeVerdict(facts, "FL", ASOF);
+    const result = composeVerdict(facts, "PA", ASOF);
     expect(result.not_implemented_surfaces).toContain("shelter.sua.HCSUA");
   });
 
