@@ -111,3 +111,49 @@ describe("computeBenefit — SUA-not-authored regression (#436)", () => {
     expect(result.not_implemented_surfaces).toBeUndefined();
   });
 });
+
+describe("computeBenefit — AK real per-region SUA (#631)", () => {
+  function akFacts(countyFips?: string): Facts {
+    const facts = baseFacts("HCSUA");
+    return countyFips ? { ...facts, county_fips: countyFips } : facts;
+  }
+
+  it("no county_fips — falls back to the Central region (states.ts's AK.sua_by_tier), exactly as before #631", () => {
+    const r = computeBenefit(akFacts(), "AK", ASOF);
+    expect(r.trace.state_sua_value).toBe(625);
+  });
+
+  it("county_fips in Nome (Northwest, 02180) uses the REAL Northwest rate, not Central", () => {
+    const r = computeBenefit(akFacts("02180"), "AK", ASOF);
+    expect(r.trace.state_sua_value).toBe(1107);
+    expect(r.trace.state_sua_value).not.toBe(625); // the bug #631 exists to fix
+  });
+
+  it("county_fips in Anchorage (Central, 02020) matches the fallback value — same region either way", () => {
+    const r = computeBenefit(akFacts("02020"), "AK", ASOF);
+    expect(r.trace.state_sua_value).toBe(625);
+  });
+
+  it("an unrecognized county_fips falls back to Central rather than throwing or zeroing", () => {
+    const r = computeBenefit(akFacts("00000"), "AK", ASOF);
+    expect(r.trace.state_sua_value).toBe(625);
+  });
+
+  it("county_fips for a NON-Alaska state is ignored — this precision is AK-only", () => {
+    // 02180 (Nome, AK) has no meaning as a TX county; TX must use its own
+    // authored SUA, not accidentally pick up AK's regional table.
+    const facts = { ...baseFacts("HCSUA"), county_fips: "02180" };
+    const r = computeBenefit(facts, "TX", ASOF);
+    expect(r.trace.state_sua_value).toBe(445); // TX's own authored HCSUA
+  });
+
+  it("LUA and phone tiers also pick up the real region, not just HCSUA", () => {
+    const heat = computeBenefit(akFacts("02180"), "AK", ASOF); // uses the HCSUA tier from akFacts
+    // Build LUA/phone-tier variants directly to check the other two tiers.
+    const luaFacts = { ...baseFacts("LUA"), county_fips: "02180" };
+    const phoneFacts = { ...baseFacts("phone"), county_fips: "02180" };
+    expect(computeBenefit(luaFacts, "AK", ASOF).trace.state_sua_value).toBe(158 + 48 + 63); // Northwest LUA
+    expect(computeBenefit(phoneFacts, "AK", ASOF).trace.state_sua_value).toBe(37); // Northwest phone
+    expect(heat.trace.state_sua_value).toBe(1107); // sanity: HCSUA tier still Northwest's heat figure
+  });
+});
