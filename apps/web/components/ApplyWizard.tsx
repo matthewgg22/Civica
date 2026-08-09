@@ -356,6 +356,9 @@ function HouseholdFields({ draft, setDraft, t }: SectionProps) {
       <TernaryField label={t("field_anyone_pregnant")}
         value={h.anyonePregnant}
         onChange={(v) => update({ anyonePregnant: v })} t={t} />
+      <TernaryField label={t("field_migrant_farmworker")}
+        value={h.isMigrantOrSeasonalFarmworker}
+        onChange={(v) => update({ isMigrantOrSeasonalFarmworker: v })} t={t} />
       <TernaryField label={t("field_anyone_unhoused")}
         value={h.anyoneUnhousedOrNoFixedMailingAddress}
         onChange={(v) => update({ anyoneUnhousedOrNoFixedMailingAddress: v })} t={t} />

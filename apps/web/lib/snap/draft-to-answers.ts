@@ -63,6 +63,9 @@ export function draftToAnswerTuples(d: SNAPApplicationDraft): AnswerTuple[] {
     d.household.anyoneUnhousedOrNoFixedMailingAddress);
   push("household_safe_mailing_option", "Safe mailing option",
     d.household.preferredSafeMailingContactOption);
+  // #652: feeds the dashboard's expedited-review Path 3 test.
+  push("household_migrant_farmworker", "Migrant or seasonal farmworker",
+    d.household.isMigrantOrSeasonalFarmworker);
 
   // Contact
   push("preferred_contact_method", "Preferred contact method",
