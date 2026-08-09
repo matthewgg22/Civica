@@ -56,6 +56,47 @@ describe("MFAVerifyPage", () => {
     expect(mockChallenge).not.toHaveBeenCalled();
   });
 
+  // #512: middleware now fail-closes to this page on an indeterminate AAL
+  // check, not only for genuinely-enrolled-but-unverified staff -- so a
+  // non-enrolled visitor (or one hitting a real listFactors/challenge
+  // error) can land here too. Before this fix that silently produced a
+  // permanently-disabled Verify button with no explanation; these three
+  // tests cover the explicit recovery UI that replaced it.
+  describe("#512: no_factor / check_failed recovery UI", () => {
+    it("shows a clear message (not the code form) when no TOTP factor is enrolled", async () => {
+      mockListFactors.mockResolvedValue({ data: { totp: [] } });
+      render(<MFAVerifyPage />);
+      await screen.findByText(/no two-factor method found/i);
+      expect(screen.queryByLabelText(/6-digit code/i)).toBeNull();
+      expect(screen.getByRole("button", { name: /try again/i })).toBeDefined();
+      expect(screen.getByRole("button", { name: /sign out/i })).toBeDefined();
+    });
+
+    it("shows a clear message when listFactors itself errors", async () => {
+      mockListFactors.mockResolvedValue({ data: null, error: { message: "network error" } });
+      render(<MFAVerifyPage />);
+      await screen.findByText(/couldn.t verify two-factor status/i);
+      expect(screen.queryByLabelText(/6-digit code/i)).toBeNull();
+    });
+
+    it("shows a clear message when the challenge call fails for an enrolled factor", async () => {
+      mockChallenge.mockResolvedValue({ data: null, error: { message: "network error" } });
+      render(<MFAVerifyPage />);
+      await screen.findByText(/couldn.t verify two-factor status/i);
+      expect(screen.queryByLabelText(/6-digit code/i)).toBeNull();
+    });
+
+    it("the sign-out escape hatch posts to /auth/signout, not a GET link", async () => {
+      // /auth/signout only has a POST handler -- a plain <a href> would 405.
+      mockListFactors.mockResolvedValue({ data: { totp: [] } });
+      render(<MFAVerifyPage />);
+      const signOutButton = await screen.findByRole("button", { name: /sign out/i });
+      const form = signOutButton.closest("form");
+      expect(form?.getAttribute("action")).toBe("/auth/signout");
+      expect(form?.getAttribute("method")).toBe("post");
+    });
+  });
+
   it("redirects to /packets on successful verify", async () => {
     mockVerify.mockResolvedValue({ error: null });
     render(<MFAVerifyPage />);
