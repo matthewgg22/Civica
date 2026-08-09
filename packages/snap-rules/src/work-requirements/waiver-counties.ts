@@ -17,3 +17,25 @@ export const CA_WAIVER_COUNTY_FIPS = new Set<string>([
   '06063', // Plumas    — confirmed ACL 26-15 (Feb 26, 2026)
 ]);
 export const MA_WAIVER_COUNTY_FIPS = new Set<string>([]);
+
+// Per-state county-waiver sets, for states where one has been authored.
+// Deliberately NOT every state in states.ts — only CA and MA have had their
+// actual county-level waiver geography sourced. A state absent from this map
+// means "no county-level data yet," not "no waiver" — callers must fall back
+// to the state-level abawd_waiver_avail boolean for those, never treat an
+// absent entry as an empty waiver set.
+const WAIVER_COUNTIES_BY_STATE: Record<string, Set<string>> = {
+  CA: CA_WAIVER_COUNTY_FIPS,
+  MA: MA_WAIVER_COUNTY_FIPS,
+};
+
+/**
+ * The authored county-waiver set for `state`, or undefined if none has been
+ * sourced yet. Undefined is NOT the same as an empty Set — undefined means
+ * "we don't have county-level data for this state," while an empty Set (MA)
+ * means "we checked, and this state genuinely holds no county waiver."
+ */
+export function waiverCountiesFor(state: string | undefined): Set<string> | undefined {
+  if (!state) return undefined;
+  return WAIVER_COUNTIES_BY_STATE[state];
+}

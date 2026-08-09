@@ -20,6 +20,7 @@
 
 import type { Facts } from "../facts";
 import { statePolicyFor } from "../constants/states";
+import { waiverCountiesFor } from "../work-requirements/waiver-counties";
 
 // Exemption reasons that rest on the member's AREA being waived rather than on
 // anything personal (7 CFR 273.24(f) — waivers for areas with insufficient
@@ -27,14 +28,34 @@ import { statePolicyFor } from "../constants/states";
 const WAIVER_EXEMPTION_REASONS = new Set(["waiver", "waiver_county", "waived_area"]);
 
 /**
- * True only when we AFFIRMATIVELY know the state offers no ABAWD waivers.
+ * True only when we AFFIRMATIVELY know the household's specific AREA holds
+ * no ABAWD waiver — the precise, county-level answer (#614).
  *
- * Direction of error is deliberate: an unknown or unregistered state returns
- * false, so the exemption stands. Stripping an exemption denies food, and we
- * will not do that on the strength of a state we can't look up.
+ * Two-tier resolution, in order:
+ *   1. County-level: if `county_fips` is given AND the state has an authored
+ *      county-waiver set (currently CA and MA — see waiverCountiesFor), the
+ *      real answer is "is this exact county in that set." This is the only
+ *      path that can say "true" for a household in one of CA's 51
+ *      non-waived counties without also wrongly denying the 7 that ARE
+ *      waived — a state-level boolean cannot express that distinction.
+ *   2. State-level fallback: no county given, or the state has no county
+ *      data authored — falls back to the original abawd_waiver_avail
+ *      boolean, UNCHANGED from before this field existed.
+ *
+ * Direction of error is still deliberate at every tier: anything we can't
+ * affirmatively resolve returns false, so the exemption stands. Stripping
+ * an exemption denies food, and we will not do that on an unresolved case.
  */
-function stateOffersNoWaiver(state: string | undefined): boolean {
+function areaOffersNoWaiver(state: string | undefined, countyFips: string | undefined): boolean {
   if (!state) return false;
+  const countySet = waiverCountiesFor(state);
+  if (countyFips && countySet) {
+    // We have BOTH the household's county AND this state's real waiver
+    // geography — the county-level answer is authoritative, full stop. Does
+    // not fall through to the state-level boolean even when it disagrees;
+    // that boolean exists precisely because it CAN'T express this.
+    return !countySet.has(countyFips);
+  }
   try {
     return statePolicyFor(state).abawd_waiver_avail === false;
   } catch {
@@ -62,10 +83,11 @@ const OBBBA_EFFECTIVE = new Date(Date.UTC(2025, 10, 1));
  *   - post-2025-07-04: ABAWD ages 18-64
  */
 export function evaluateAbawd(facts: Facts, asOf: Date, state?: string): AbawdResult {
-  // A waiver exemption is only real where the state actually holds a waiver
-  // (7 CFR 273.24(f)). Optional + fail-open: omit `state`, or pass one that
-  // isn't registered, and nothing changes. See #608.
-  const noWaiverHere = stateOffersNoWaiver(state);
+  // A waiver exemption is only real where the household's actual AREA holds
+  // a waiver (7 CFR 273.24(f)). Optional + fail-open: omit `state` (and/or
+  // county_fips), or pass a state that isn't registered, and nothing
+  // changes. See #608, #614.
+  const noWaiverHere = areaOffersNoWaiver(state, facts.county_fips);
   // Post-OBBBA the veteran_homeless exemption is gone.
   const veteranHomelessExempt = asOf < OBBBA_EFFECTIVE;
   // Post-OBBBA the age ceiling is 64 (was 49/54 prior).

@@ -88,6 +88,7 @@ export const FactsSchema = z
     expedited: z.boolean().optional(),
     sponsor_income: z.number().nullable().optional(),
     as_of_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
+    county_fips: z.string().regex(/^\d{5}$/).optional(),
   })
   .passthrough();
 

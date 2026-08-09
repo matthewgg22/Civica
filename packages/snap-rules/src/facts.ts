@@ -22,6 +22,16 @@ export interface Facts {
   expedited?: boolean;
   sponsor_income?: number | null;
   as_of_date?: string;
+  /**
+   * "SSCCC" (2-digit state FIPS + 3-digit county FIPS), zero-padded — e.g.
+   * "06011" for Colusa County, CA. Optional: when present, the ABAWD gate
+   * checks it against the state's actual waiver-county set (#614) instead
+   * of falling back to the state-level abawd_waiver_avail boolean, which
+   * cannot express "7 of 58 counties" precisely. Omitting it preserves the
+   * prior fail-open behavior exactly — this field only ever ADDS precision,
+   * never removes the existing fallback.
+   */
+  county_fips?: string;
 }
 
 export interface Member {
