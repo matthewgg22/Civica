@@ -39,7 +39,14 @@ const TOPIC_HINTS: { terms: string[]; cites: string[] }[] = [
   { terms: ["dependent care", "child care", "childcare"], cites: ["273.9(d)(4)"] },
   { terms: ["child support paid", "pay child support", "child support i pay", "support payment"], cites: ["273.9(d)(5)"] },
   { terms: ["deduction", "deductions", "deduct", "deductible", "write off", "what can i claim"], cites: ["273.9(d)"] },
-  { terms: ["counts as income", "count as income", "what counts", "whose income", "included as income", "considered income", "is that income", "does it count"], cites: ["273.9(b)", "273.9(c)"] },
+  // "what counts" (bare) used to live here — dropped: it's a two-word phrase
+  // that fires on any "what counts as X" question regardless of domain
+  // ("what counts as a fleeing felon", "what counts as a student"), injecting
+  // income-exclusion text with enough weight to push the actually-relevant
+  // section out of the top-k entirely (#622). Replaced with income-specific
+  // "what counts as ___ income" variants so a genuine income question still
+  // routes correctly without the bare phrase's false-positive rate.
+  { terms: ["counts as income", "count as income", "what counts as income", "what income counts", "which income counts", "counts as household income", "counts as earned income", "counts as unearned income", "whose income", "included as income", "considered income", "is that income", "does it count"], cites: ["273.9(b)", "273.9(c)"] },
   { terms: ["expedited", "seven day", "7 day", "emergency", "expedite"], cites: ["273.2(i)"] },
   { terms: ["verification", "verify", "verifying", "documentation", "document"], cites: ["273.2(f)"] },
   { terms: ["categorical", "categorically", "bbce", "broad-based", "broad based"], cites: ["273.2(j)"] },
