@@ -11,14 +11,9 @@
 //  - 429 / at-capacity / unconfigured states render honest, warm errors.
 
 import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
-import { RECOMPOSE_MARKER } from "@civica/demeter-engine/packs";
+import { RECOMPOSE_MARKER, type PackMeta } from "@civica/demeter-engine/packs";
 import { DemeterMark } from "./DemeterMark";
-
-interface PackMetaLite {
-  code: string;
-  program: string;
-  verified: boolean;
-}
+import { DemeterStatePicker } from "./DemeterStatePicker";
 
 type Msg =
   | { role: "user" | "assistant"; content: string }
@@ -81,6 +76,15 @@ const T = {
     empty1: "What's the income limit for my household?",
     empty2: "How fast can I get benefits in an emergency?",
     empty3: "Do I have to do a phone interview?",
+    picker: {
+      label: "Your state",
+      federal: "All states (federal rules)",
+      federalHint: "Federal floor — state figures deferred to your agency",
+      search: "Search by state, program, or agency…",
+      verified: "Verified",
+      noMatch: "No verified pack for that state yet — federal rules still apply.",
+    },
+    howWeVerify: "How we verify",
   },
   es: {
     title: "Demeter",
@@ -107,6 +111,15 @@ const T = {
     empty1: "¿Cuál es el límite de ingresos para mi hogar?",
     empty2: "¿Qué tan rápido puedo recibir beneficios en una emergencia?",
     empty3: "¿Tengo que hacer una entrevista por teléfono?",
+    picker: {
+      label: "Tu estado",
+      federal: "Todos los estados (reglas federales)",
+      federalHint: "Base federal — las cifras estatales se remiten a tu agencia",
+      search: "Busca por estado, programa o agencia…",
+      verified: "Verificado",
+      noMatch: "Aún no hay paquete verificado para ese estado — las reglas federales aplican.",
+    },
+    howWeVerify: "Cómo verificamos",
   },
 } as const;
 
@@ -115,7 +128,7 @@ export function DemeterChat({
   initialState = null,
   initialQuestion = null,
 }: {
-  states: PackMetaLite[];
+  states: PackMeta[];
   initialState?: string | null;
   initialQuestion?: string | null;
 }) {
@@ -257,33 +270,17 @@ export function DemeterChat({
         </button>
       </header>
 
-      <div className="demeter__states" role="radiogroup" aria-label={t.stateLabel}>
-        <button
-          type="button"
-          role="radio"
-          aria-checked={state === null}
-          className={`demeter__state ${state === null ? "is-active" : ""}`}
-          onClick={() => changeState(null)}
-        >
-          {t.federal}
-        </button>
-        {states.map((s) => (
-          <button
-            key={s.code}
-            type="button"
-            role="radio"
-            aria-checked={state === s.code}
-            className={`demeter__state ${state === s.code ? "is-active" : ""}`}
-            onClick={() => changeState(s.code)}
-          >
-            {s.code}
-            <span className="demeter__badge" title={`${t.verified} — ${s.program}`}>
-              ✓
-            </span>
-          </button>
-        ))}
+      {/* One control, one selected state — replaces the chip row that ate a
+          full row and still clipped this link off the right edge at 1280px. */}
+      <div className="demeter__scope">
+        <DemeterStatePicker
+          states={states}
+          value={state}
+          onChange={changeState}
+          copy={t.picker}
+        />
         <a className="demeter__how" href="/verify">
-          {lang === "en" ? "How we verify" : "Cómo verificamos"}
+          {t.howWeVerify}
         </a>
       </div>
 

@@ -5028,3 +5028,200 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 .screen-auth__links { font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif; display: flex; justify-content: space-between; margin-top: 1.1rem; font-size: 0.82rem; }
 .screen-auth__links a { color: var(--demeter-terracotta); text-decoration: underline; }
 .screen-auth__links a:hover { color: var(--demeter-terracotta-deep); }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Demeter public page — lede / chat / depth  (2026-08-09 rebuild)
+
+   Type rule from Type Directions Turn 3, written down because the doc says the
+   failure mode is a developer reaching for the sans "because it looks cleaner
+   in a data row": SERIF SPEAKS (headings, lede, body, answers → Newsreader),
+   SANS LABELS (buttons, inputs, eyebrows, badges, chrome → Be Vietnam Pro).
+
+   Wheat (--demeter-wheat) appears in exactly one place here: the 2px rule under
+   a source link. Never a fill, never text. Same rule as the logo mark.
+   ═════════════════════════════════════════════════════════════════════════ */
+
+.dmpage { min-height: 100dvh; background: var(--demeter-paper); display: block; }
+.dmpage__inner {
+  width: 100%; max-width: 1180px; margin: 0 auto;
+  padding: 0 clamp(1rem, 4vw, 3.5rem) calc(4rem + env(safe-area-inset-bottom));
+}
+
+/* The chat, inside the page: drop the standalone 720px column and the forced
+   full-viewport height that together produced a narrow strip with a large
+   dead band under it. */
+.dmpage .demeter {
+  max-width: none; min-height: 0; margin: 0; padding: 0;
+}
+.dmpage__chat {
+  background: var(--demeter-card); border: 1px solid var(--demeter-rule);
+  border-radius: 20px; padding: clamp(1rem, 2.5vw, 1.75rem);
+  box-shadow: 0 30px 60px -34px rgba(72, 32, 18, 0.4);
+  scroll-margin-top: 1rem;
+}
+.dmpage .demeter__scroll { min-height: 18rem; max-height: 60vh; }
+
+/* ── Scope row: one picker + the verify link, which used to clip ───────────── */
+.demeter__scope {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 1rem; flex-wrap: wrap; padding: 0.25rem 0 0.75rem;
+}
+
+/* ── State picker ─────────────────────────────────────────────────────────── */
+.dmst { position: relative; min-width: 0; flex: 1 1 22rem; }
+.dmst__trigger {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  display: flex; align-items: center; gap: 0.6rem; width: 100%; min-height: 48px;
+  padding: 0.5rem 0.9rem; text-align: left; cursor: pointer;
+  background: var(--demeter-card); color: var(--demeter-ink);
+  border: 1px solid var(--demeter-rule-strong); border-radius: 12px;
+}
+.dmst__trigger:hover { border-color: var(--demeter-terracotta); }
+.dmst__trigger:focus-visible { outline: 2px solid var(--demeter-terracotta); outline-offset: 1px; }
+.dmst__trigger-text { display: flex; flex-direction: column; gap: 0.1rem; min-width: 0; flex: 1; }
+.dmst__trigger-label {
+  font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--demeter-muted);
+}
+.dmst__trigger-value {
+  font-size: 0.95rem; font-weight: 500; color: var(--demeter-ink);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.dmst__check { color: var(--demeter-terracotta); font-weight: 700; flex: none; }
+.dmst__caret { color: var(--demeter-muted); flex: none; font-size: 0.8rem; }
+
+.dmst__panel {
+  position: absolute; z-index: 40; top: calc(100% + 0.35rem); left: 0; right: 0;
+  background: var(--demeter-card); border: 1px solid var(--demeter-rule);
+  border-radius: 14px; box-shadow: 0 24px 48px -28px rgba(72, 32, 18, 0.45);
+  padding: 0.5rem; display: flex; flex-direction: column; gap: 0.4rem;
+}
+.dmst__search {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  width: 100%; min-height: 42px; padding: 0.45rem 0.7rem; font-size: 0.9rem;
+  color: var(--demeter-ink); background: var(--demeter-paper);
+  border: 1px solid var(--demeter-rule-strong); border-radius: 9px;
+}
+.dmst__search:focus { outline: 2px solid var(--demeter-terracotta); outline-offset: 1px; }
+.dmst__list { list-style: none; margin: 0; padding: 0; max-height: 17rem; overflow-y: auto; }
+.dmst__opt {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  display: flex; flex-direction: column; gap: 0.15rem; width: 100%; min-height: 48px;
+  padding: 0.55rem 0.7rem; text-align: left; cursor: pointer;
+  background: transparent; border: 0; border-radius: 9px; color: var(--demeter-ink);
+}
+.dmst__opt:hover { background: var(--demeter-paper); }
+.dmst__opt.is-sel { background: #FBF1EC; }
+.dmst__opt-name { font-size: 0.92rem; font-weight: 500; display: flex; align-items: center; gap: 0.5rem; }
+.dmst__opt-sub { font-size: 0.78rem; color: var(--demeter-muted); }
+.dmst__opt-badge {
+  font-size: 0.62rem; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--demeter-terracotta-deep); border: 1px solid #EAD9C8;
+  background: #F7EDE4; border-radius: 5px; padding: 0.1rem 0.35rem;
+}
+.dmst__none {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.85rem; color: var(--demeter-muted); padding: 0.7rem;
+}
+
+/* ── Explainer bands ──────────────────────────────────────────────────────── */
+.dmx { padding: clamp(2.5rem, 6vw, 4.5rem) 0; border-top: 1px solid var(--demeter-rule); }
+.dmx--lede { border-top: 0; padding-top: clamp(2rem, 5vw, 3.5rem); }
+.dmx__eyebrow {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--demeter-muted); margin: 0 0 0.75rem;
+}
+.dmx__h2 {
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+  font-size: clamp(1.6rem, 3.4vw, 2.35rem); line-height: 1.12; letter-spacing: -0.02em;
+  font-weight: 600; color: var(--demeter-ink); margin: 0 0 1rem; text-wrap: pretty;
+  max-width: 22ch;
+}
+.dmx--lede .dmx__h2 { max-width: 18ch; }
+.dmx__h3 {
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+  font-size: 1.15rem; line-height: 1.25; letter-spacing: -0.01em; font-weight: 600;
+  color: var(--demeter-ink); margin: 0 0 0.4rem;
+}
+.dmx__lede {
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+  font-size: clamp(1.05rem, 1.6vw, 1.2rem); line-height: 1.62; color: var(--demeter-body);
+  margin: 0; max-width: 46ch; text-wrap: pretty;
+}
+.dmx__body {
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+  font-size: 1rem; line-height: 1.65; color: var(--demeter-body); margin: 0 0 1rem;
+  max-width: 46ch; text-wrap: pretty;
+}
+.dmx__note {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.85rem; line-height: 1.6; color: var(--demeter-muted); margin: 1.25rem 0 0;
+  max-width: 52ch;
+}
+.dmx__link {
+  color: var(--demeter-terracotta); text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.dmx__link:hover { color: var(--demeter-terracotta-deep); }
+
+.dmx__defs { display: grid; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); gap: 1.75rem; margin: 1.5rem 0 0; }
+.dmx__def dt {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--demeter-terracotta-deep); margin: 0 0 0.5rem;
+}
+.dmx__def dd {
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+  font-size: 0.97rem; line-height: 1.62; color: var(--demeter-body); margin: 0; max-width: 42ch;
+}
+
+.dmx__grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr)); gap: 1.25rem; margin-top: 1.5rem; }
+.dmx__card {
+  background: var(--demeter-card); border: 1px solid var(--demeter-rule);
+  border-radius: 20px; padding: 1.4rem;
+}
+.dmx__card .dmx__body { margin: 0; font-size: 0.95rem; }
+
+.dmx__steps { list-style: none; margin: 1.5rem 0 0; padding: 0; display: flex; flex-direction: column; gap: 1.5rem; }
+.dmx__step { display: flex; gap: 1.1rem; align-items: flex-start; }
+.dmx__num {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.72rem; letter-spacing: 0.1em; color: var(--demeter-terracotta);
+  border: 1px solid var(--demeter-rule-strong); border-radius: 999px;
+  padding: 0.3rem 0.6rem; flex: none;
+}
+.dmx__step .dmx__body { margin: 0; }
+
+.dmx__agencies { list-style: none; margin: 1.5rem 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr)); gap: 1rem; }
+.dmx__agency {
+  display: flex; gap: 0.85rem; align-items: flex-start;
+  border: 1px solid var(--demeter-rule); border-radius: 14px;
+  background: var(--demeter-card); padding: 1rem 1.1rem;
+}
+.dmx__agency-code {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.8rem; font-weight: 600; letter-spacing: 0.06em;
+  color: var(--demeter-terracotta-deep); flex: none; padding-top: 0.1rem;
+}
+.dmx__agency-body { display: flex; flex-direction: column; gap: 0.2rem; min-width: 0; }
+.dmx__agency-program {
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+  font-size: 1rem; font-weight: 600; color: var(--demeter-ink);
+}
+.dmx__agency-name {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.82rem; line-height: 1.5; color: var(--demeter-muted);
+}
+/* Wheat's one sanctioned job outside the logo: a 2px rule under a source link. */
+.dmx__agency .dmx__link {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.82rem; align-self: flex-start; margin-top: 0.15rem;
+  text-decoration: none; border-bottom: 2px solid var(--demeter-wheat); padding-bottom: 1px;
+}
+
+@media (max-width: 640px) {
+  .dmpage__chat { border-radius: 16px; }
+  .dmst { flex-basis: 100%; }
+  .demeter__scope { gap: 0.5rem; }
+}
