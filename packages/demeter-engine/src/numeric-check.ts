@@ -1,12 +1,17 @@
-// ES numeric-equivalence check (eng review T8-bundle item 5 / outside voice #8).
+// Numeric-equivalence check (originally eng review T8-bundle item 5 / outside
+// voice #8, built ES-only; unconditional as of the Beeck Center/Digital
+// Benefits Network audit — see orchestrator.ts's numbersOk).
 //
-// Verification runs on the ENGLISH corpus; a Spanish answer is composed from
-// verified English content — so the one thing translation can silently break
-// is a NUMBER (income limit, deduction, deadline). This check extends the
-// "0 fabricated" property to the Spanish surface: every dollar amount and
-// percentage in the composed answer must literally appear in the source
+// Citation verification confirms a CITED SECTION was actually retrieved; it
+// says nothing about whether a specific dollar figure sitting next to a real
+// citation is the real number or an invention borrowing that citation's
+// credibility. This closes that gap: every dollar amount and percentage in
+// the composed answer, in any language, must literally appear in the source
 // material the answer was grounded on. A mismatch routes into the same
-// retry-then-degrade path as a bad citation.
+// retry-then-degrade path as a bad citation. (The Spanish case remains a
+// real risk this also covers: verification runs on the ENGLISH corpus, and a
+// Spanish answer is composed from that verified English content, so the one
+// thing translation can silently break is a number.)
 
 const MONEY_RE = /\$\s?\d[\d,]*(?:\.\d+)?/g;
 const PERCENT_RE = /\d[\d.]*\s?(?:%|percent|por ciento)/gi;
