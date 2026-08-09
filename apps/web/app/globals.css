@@ -4684,7 +4684,7 @@ html {
 .demeter__brand { display: flex; align-items: center; gap: 0.6rem; min-width: 0; }
 .demeter__avatar {
   display: grid; place-items: center; width: 2.4rem; height: 2.4rem; border-radius: 50%;
-  background: var(--civica-pine); color: #fff; font-weight: 700; font-size: 1.05rem; flex: none;
+  overflow: hidden; flex: none;
 }
 .demeter__title { font-size: 1.15rem; font-weight: 700; color: var(--civica-ink); line-height: 1.15; }
 .demeter__tagline { font-size: 0.8rem; color: var(--civica-graphite); }

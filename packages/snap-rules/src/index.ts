@@ -296,6 +296,11 @@ export {
 // ---------------------------------------------------------------------------
 
 export { composeVerdict } from "./verdict";
+// Exported for the screening classifier (packages/demeter-engine/src/screening/):
+// it needs to distinguish a pure-cash categorical APPROVE from an ordinary one,
+// which composeVerdict's own result doesn't surface.
+export { evaluateCategorical } from "./gates/categorical";
+export type { CategoricalResult, CategoricalPath } from "./gates/categorical";
 export type { Verdict, VerdictResult } from "./verdict";
 export { computeBenefit } from "./benefit-calc";
 export type { BenefitCalcDetail } from "./benefit-calc";
