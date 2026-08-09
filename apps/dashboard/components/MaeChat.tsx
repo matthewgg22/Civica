@@ -18,10 +18,14 @@ import { createClient } from "../lib/supabase";
 import { isStaff } from "../lib/roleRouting";
 
 // Persistent UI disclaimer — shown in the panel regardless of any single
-// answer's content. Mirrors lib/mae/system-prompt.ts MAE_DISCLAIMER (kept inline
-// here so the server-only system prompt never ships to the browser bundle).
+// answer's content. Mirrors (and intentionally extends, with the PII/
+// hypothetical reminder) MAE_DISCLAIMER in
+// packages/demeter-engine/src/system-prompt.ts — kept as a separate hardcoded
+// copy here so the server-only system prompt (and its corpus/SDK deps) never
+// ship to the browser bundle. See #645 for de-duplicating via a client-safe
+// export once that constant's own Mae->Demeter fix (PR #623) lands.
 const MAE_DISCLAIMER =
-  "Mae can be wrong. General SNAP policy guidance, not an eligibility determination — verify against current CalFresh/CDSS rules and the county system of record. Don't paste the applicant's PII (name, case number, etc.) — keep questions hypothetical.";
+  "Demeter can be wrong. General SNAP policy guidance, not an eligibility determination — verify against current CalFresh/CDSS rules and the county system of record. Don't paste the applicant's PII (name, case number, etc.) — keep questions hypothetical.";
 
 type ChatMessage = { role: "user" | "assistant"; content: string };
 
@@ -223,8 +227,8 @@ export default function MaeChat() {
           res.status === 401 || res.status === 403
             ? "Your session expired. Refresh and sign in again."
             : res.status === 503
-              ? "Mae isn't available yet — ask an admin to finish setup."
-              : "Mae hit an error. Please try again.";
+              ? "Demeter isn't available yet — ask an admin to finish setup."
+              : "Demeter hit an error. Please try again.";
         setError(msg);
         return;
       }
@@ -277,7 +281,7 @@ export default function MaeChat() {
     } catch (err) {
       dropPlaceholder();
       if (!(err instanceof DOMException && err.name === "AbortError")) {
-        setError("Mae hit a network error. Please try again.");
+        setError("Demeter hit a network error. Please try again.");
       }
     } finally {
       setBusy(false);
@@ -306,7 +310,7 @@ export default function MaeChat() {
       {open && (
         <div
           role="dialog"
-          aria-label="Ask Mae — SNAP policy assistant"
+          aria-label="Ask Demeter — SNAP policy assistant"
           className="fixed bottom-20 right-4 z-50 flex h-[40rem] max-h-[calc(100vh-5rem)] w-[32rem] max-w-[calc(100vw-2rem)] flex-col overflow-hidden rounded-[3px] border border-hairline bg-paper shadow-xl"
         >
           {/* Header */}
@@ -318,7 +322,7 @@ export default function MaeChat() {
               M
             </span>
             <div className="flex-1 leading-tight">
-              <p className="text-sm font-semibold text-ink">Ask Mae</p>
+              <p className="text-sm font-semibold text-ink">Ask Demeter</p>
               <p className="text-[11px] text-muted">Calibrated to California · CalFresh rules</p>
               {caseLabel && (
                 <span className="mt-0.5 inline-flex items-center gap-1 rounded-[2px] bg-pine-surface px-1.5 py-0.5 text-[10px] font-medium text-ink">
@@ -336,7 +340,7 @@ export default function MaeChat() {
             </div>
             <button
               type="button"
-              aria-label="Close Mae"
+              aria-label="Close Demeter"
               onClick={closePanel}
               className="rounded-[2px] px-2 py-1 text-muted hover:bg-surface-secondary hover:text-ink"
             >
@@ -402,7 +406,7 @@ export default function MaeChat() {
                           <ReactMarkdown remarkPlugins={[remarkGfm]}>{m.content}</ReactMarkdown>
                         </div>
                       ) : (
-                        <span className="inline-flex items-center gap-1" aria-label="Mae is thinking">
+                        <span className="inline-flex items-center gap-1" aria-label="Demeter is thinking">
                           <span className="h-1.5 w-1.5 rounded-full bg-graphite/50 animate-bounce [animation-delay:-200ms]" />
                           <span className="h-1.5 w-1.5 rounded-full bg-graphite/50 animate-bounce [animation-delay:-100ms]" />
                           <span className="h-1.5 w-1.5 rounded-full bg-graphite/50 animate-bounce" />
@@ -457,7 +461,7 @@ export default function MaeChat() {
                 </div>
               )}
               <p className="text-muted">
-                Inside the navigator portal, Mae answers this in place &mdash; citing the governing
+                Inside the navigator portal, Demeter answers this in place &mdash; citing the governing
                 CalFresh rules, never applicant PII.
               </p>
               <Link
@@ -476,7 +480,7 @@ export default function MaeChat() {
         <button
           type="button"
           aria-expanded={open}
-          aria-label="Ask Mae"
+          aria-label="Ask Demeter"
           onClick={() => (open ? closePanel() : setOpen(true))}
           className="fixed bottom-4 right-4 z-50 flex items-center gap-2 rounded-full bg-pine px-4 py-2.5 text-sm font-medium text-white shadow-lg hover:bg-pine-pressed"
         >
@@ -486,7 +490,7 @@ export default function MaeChat() {
           >
             M
           </span>
-          Ask Mae
+          Ask Demeter
         </button>
       )}
     </>
