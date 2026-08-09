@@ -124,8 +124,8 @@ export interface AnswerRequest {
    *  undefined preserves the legacy dashboard default (CA). */
   state?: string | null;
   /** Answer language. The corpus and verification stay ENGLISH; an "es" answer
-   *  is composed from verified EN content and additionally passes the numeric-
-   *  equivalence check (every $ and % must appear in the grounding text). */
+   *  is composed from verified EN content. Every $ and % in the final answer,
+   *  in EITHER language, must appear in the grounding text — see numbersOk. */
   lang?: "en" | "es";
   apiKey: string;
   /** Aborts generation (and billing) when the client disconnects. */
@@ -194,8 +194,9 @@ export async function* answerQuestion(req: AnswerRequest): AsyncGenerator<Answer
   if (distressed) {
     systemBlocks.push({ type: "text", text: DISTRESS_SYSTEM_ADDENDUM });
   }
-  // Spanish answers: composed from the verified ENGLISH sources; citations stay
-  // verbatim; the numeric-equivalence check below guards translated numbers.
+  // Spanish answers: composed from the verified ENGLISH sources; citations
+  // stay verbatim. The numeric-equivalence check below now guards both the
+  // translation risk here AND plain invention in English — see numbersOk.
   if (req.lang === "es") {
     systemBlocks.push({
       type: "text",
@@ -210,12 +211,23 @@ export async function* answerQuestion(req: AnswerRequest): AsyncGenerator<Answer
   // user's own figures (an answer that echoes "with $1,500/month income…" is
   // repeating the question, not inventing data — live eval caught the gate
   // degrading exactly that).
+  //
+  // Applies to EVERY language, not just Spanish. This used to be ES-only —
+  // built to catch a number surviving citation verification in English but
+  // getting altered in translation. But citation verification only checks
+  // that a CITED SECTION was actually retrieved; it says nothing about
+  // whether a specific dollar figure next to that citation is the real one
+  // or a fabrication wearing a real citation's credibility. Gating this to
+  // "es" left English — the majority-language, default surface — with no
+  // mechanical check on numbers at all, just the prompt asking nicely. Same
+  // failure mode the Beeck Center/Digital Benefits Network study found:
+  // plain prompting hits 0% accuracy on numerical rules even when the
+  // structural/citation stuff is fine.
   const numericSource =
     systemBlocks.map((b) => b.text).join("\n") +
     "\n" +
     messages.map((m) => m.content).join("\n");
-  const numbersOk = (text: string): boolean =>
-    req.lang !== "es" || verifyNumericEquivalence(text, numericSource).pass;
+  const numbersOk = (text: string): boolean => verifyNumericEquivalence(text, numericSource).pass;
 
   const client = new Anthropic({ apiKey });
   const generation = {
