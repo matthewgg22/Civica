@@ -101,6 +101,17 @@ export interface VariantBlock {
 export interface Variant {
   facts_patch: Record<string, unknown>;
   verdict: VerdictString;
+  /**
+   * Per-state override for `verdict`. Variant profiles originally carried ONE
+   * verdict for every state, which silently assumes the income screen is the
+   * same everywhere — it is not. BBCE runs 130% (GA), 165% (TX, IL), 200%
+   * (most) and dual-pathway (NY), so a household can legitimately be approved
+   * in one state and denied in another on identical facts.
+   *
+   * Falls back to `verdict` when a state isn't listed, so existing profiles
+   * are unaffected. See #609.
+   */
+  verdict_by_state?: Record<string, VerdictString>;
   benefit?: number | null;
   note?: string;
 }

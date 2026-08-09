@@ -220,6 +220,68 @@ const STATES: Record<string, StatePolicy> = {
     abawd_waiver_avail: false,
     rmp_operated: false,
   },
+  // Washington — Basic Food. State-administered, BBCE 200%, no Standard
+  // Medical Deduction, 12-month certifications only, WASHCAP for SSI
+  // households.
+  //
+  // Utility standards: WAC 388-450-0195 as amended by WSR 26-02-071.
+  // MANDATORY — "The department uses utility allowances instead of the actual
+  // utility costs" the AU pays, so a household cannot elect real bills.
+  // NOTE the effective date: Washington codified these in FEBRUARY 2026, NOT
+  // on the usual Oct 1 COLA cycle, so the refresh clock differs from every
+  // other state in the roster.
+  //
+  // Source: the adversarially verified WA state pack
+  // (packages/demeter-engine/src/states/wa/). Pinned by a parity test.
+  WA: {
+    state_code: "WA",
+    label: "Washington / DSHS — Basic Food",
+    bbce: true,
+    bbce_threshold_pct: 200,
+    bbce_fpl_basis: "federal_fiscal_year",
+    asset_waiver: true,
+    sua_by_tier: {
+      HCSUA: new Decimal("515"),
+      LUA: new Decimal("406"),
+      phone: new Decimal("58"),
+      none: new Decimal("0"),
+    },
+    allotment_tier: "48",
+    drug_felony_ban: false,
+    abawd_waiver_avail: true,
+    rmp_operated: true,
+  },
+  // Georgia — the "BBCE is not income relief" case: TCOS categorical
+  // eligibility keeps the gross screen at the FEDERAL 130% for regular
+  // households (§3210), with a 200% screen only where every adult member is
+  // elderly/disabled. bbce_threshold_pct records the screen that binds for a
+  // regular household; the all-adult-E/D sub-screen is not yet modelled
+  // (coverage framework §5.1).
+  //
+  // Utility standards: SNAP Manual §3617 (June 2026) — H/C SUA $405,
+  // Limited SUA $358, telephone $47. Georgia's LSUA covers cooking fuel,
+  // non-heating electricity, one telephone, well/septic and trash.
+  //
+  // Source: the adversarially verified GA state pack (refute gate: 84 claims,
+  // 79 confirmed / 5 corrected / 0 fabricated). Pinned by a parity test.
+  GA: {
+    state_code: "GA",
+    label: "Georgia / DFCS",
+    bbce: true,
+    bbce_threshold_pct: 130,
+    bbce_fpl_basis: "federal_fiscal_year",
+    asset_waiver: false,
+    sua_by_tier: {
+      HCSUA: new Decimal("405"),
+      LUA: new Decimal("358"),
+      phone: new Decimal("47"),
+      none: new Decimal("0"),
+    },
+    allotment_tier: "48",
+    drug_felony_ban: false,
+    abawd_waiver_avail: false,
+    rmp_operated: false,
+  },
   KS: {
     state_code: "KS",
     label: "Non-BBCE archetype (e.g. KS)",

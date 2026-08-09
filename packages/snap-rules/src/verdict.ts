@@ -145,7 +145,7 @@ export function composeVerdict(facts: Facts, state: string, asOf: Date): Verdict
   }
 
   // ── ABAWD work requirement (7 CFR 273.24, as amended by OBBBA §10102) ─
-  const abawd = evaluateAbawd(facts, asOf);
+  const abawd = evaluateAbawd(facts, asOf, state);
   trace.abawd = abawd;
   if (!abawd.passes) {
     return { verdict: "DENY", benefit: null, reason: abawd.reason, trace };

@@ -1,6 +1,8 @@
 import { describe, it, expect } from "vitest";
 import { getEngineParams } from "@civica/snap-rules";
 import txSupplements from "../states/tx/supplements.json";
+import waSupplements from "../states/wa/supplements.json";
+import gaSupplements from "../states/ga/supplements.json";
 import txFreshness from "../states/tx/freshness.json";
 
 // TX utility standards live in TWO places by necessity: the engine
@@ -46,5 +48,26 @@ describe("TX utility standards: engine ↔ pack parity", () => {
     expect(entry, "tx pack should pin an FY26 dollar-value expiry").toBeTruthy();
     expect(entry!.date).toBe("2026-09-30");
     expect(entry!.warning).toContain("A-1429");
+  });
+});
+
+// WA and GA authored in Tranche 0 — same seam, same reason.
+describe("WA + GA utility standards: engine ↔ pack parity", () => {
+  it.each([
+    ["WA", { HCSUA: 515, LUA: 406, phone: 58 }, waSupplements, "388-450-0195"],
+    ["GA", { HCSUA: 405, LUA: 358, phone: 47 }, gaSupplements, "3617"],
+  ])("%s engine values match the pack", (code, want, supp, cite) => {
+    const p = getEngineParams(code as string, new Date("2026-08-08"));
+    expect(p.sua, `${code} SUA must be authored`).toBeTruthy();
+    expect(p.sua!.HCSUA).toBe((want as Record<string, number>).HCSUA);
+    expect(p.sua!.LUA).toBe((want as Record<string, number>).LUA);
+    expect(p.sua!.phone).toBe((want as Record<string, number>).phone);
+
+    const sua = (supp as { supplements: Array<{ key: string; text: string; citation: string }> })
+      .supplements.find((s) => s.key === "sua-values")!;
+    for (const v of Object.values(want as Record<string, number>)) {
+      expect(sua.text, `${code} pack should quote $${v}`).toContain(`$${v}`);
+    }
+    expect(sua.citation).toContain(cite as string);
   });
 });
