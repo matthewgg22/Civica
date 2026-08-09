@@ -312,13 +312,15 @@ const STATES: Record<string, StatePolicy> = {
   // BBCE-States-Chart-June2026.pdf), read 2026-08-09. allotment_tier is "48"
   // for all four (contiguous states share the federal table).
   //
-  // NOT SOURCED YET — and deliberately left at the permissive value rather
-  // than guessed (see #619):
-  //   • sua_by_tier: null. Each state publishes utility standards in its own
-  //     annual table, NOT in the rule text — Ohio's OAC 5101:4-4-23 defines
-  //     the SUA framework and contains no dollar amounts at all. A wrong SUA
-  //     miscomputes every shelter deduction, so these stay null and
-  //     computeBenefit fails loudly (the #436 invariant) rather than quietly.
+  // SUA (#619): FL, IL, and OH now carry sourced production values — each
+  // state publishes its utility standards in an annual table, not the rule
+  // text, so the citations below point at that table, not the OAC/rule
+  // sections that merely describe the framework. PA's sua_by_tier stays
+  // null — a genuine, logged verification gap, see the PA entry's own
+  // comment for exactly what was and wasn't found.
+  //
+  // STILL NOT SOURCED — and deliberately left at the permissive value
+  // rather than guessed:
   //   • abawd_waiver_avail: true and drug_felony_ban: false are FAIL-OPEN
   //     defaults, not findings. Both err toward eligibility, per the
   //     direction-of-error rule in #608/#614: never deny on unverified data.
@@ -328,6 +330,12 @@ const STATES: Record<string, StatePolicy> = {
   // all-adult elderly/disabled screen). Treat these thresholds as good enough
   // to gate income tests, and confirm against each state's own manual before
   // quoting a figure to a user.
+  // Florida utility standards — Fla. Admin. Code Ann. R. 65A-1.603 (Food
+  // Assistance Program Income and Expenses), version effective 2/5/2025,
+  // confirmed live 2026-08-09 at flrules.org (gateway/ruleno.asp?id=65A-1.603).
+  // FL names its middle tier the Basic Utility Allowance (BUA), same role
+  // as TX's BUA / other states' LUA — a household billed for 2+ non-heat
+  // utilities. SUA→HCSUA, BUA→LUA, telephone standard→phone.
   FL: {
     state_code: "FL",
     label: "Florida / DCF",
@@ -335,13 +343,25 @@ const STATES: Record<string, StatePolicy> = {
     bbce_threshold_pct: 200,
     bbce_fpl_basis: "federal_fiscal_year",
     asset_waiver: true,
-    sua_by_tier: null,
+    sua_by_tier: {
+      HCSUA: new Decimal("426"),
+      LUA: new Decimal("340"),
+      phone: new Decimal("49"),
+      none: new Decimal("0"),
+    },
     allotment_tier: "48",
     drug_felony_ban: false,
     abawd_waiver_avail: true,
     rmp_operated: false,
   },
   // Illinois is BBCE at 165% — the same "BBCE is not a boolean" case as TX.
+  //
+  // Utility standards: IDHS WAG 13-01-08-b (The Utility Allowance), MR
+  // #25.33 (October 2025 SNAP COLA adjustments), effective 09/26/2025.
+  // Confirmed live 2026-08-09 at dhs.state.il.us (page.aspx?item=16170).
+  // IL's "Single Utility" tier ($78, one non-heat/non-phone utility) has
+  // no slot in this engine's {HCSUA, LUA, phone} shape — undermodeled the
+  // same way as OH's identically-named tier (see OH's own comment).
   IL: {
     state_code: "IL",
     label: "Illinois / IDHS",
@@ -349,7 +369,12 @@ const STATES: Record<string, StatePolicy> = {
     bbce_threshold_pct: 165,
     bbce_fpl_basis: "federal_fiscal_year",
     asset_waiver: true,
-    sua_by_tier: null,
+    sua_by_tier: {
+      HCSUA: new Decimal("546"),
+      LUA: new Decimal("457"),
+      phone: new Decimal("67"),
+      none: new Decimal("0"),
+    },
     allotment_tier: "48",
     drug_felony_ban: false,
     // RMP runs in Cook and Franklin counties ONLY — a state-level boolean
@@ -359,6 +384,35 @@ const STATES: Record<string, StatePolicy> = {
     abawd_waiver_avail: true,
     rmp_operated: false,
   },
+  // Pennsylvania utility standards — !!! PENDING PRIMARY-SOURCE VERIFICATION,
+  // same status as MA's SUA gap when it was blocked (see MA's own comment
+  // above for that resolution once it lands). sua_by_tier stays null; the
+  // #436 invariant fails loudly rather than guessing.
+  //
+  // The codified rule (55 Pa. Code §501.7, PA Bulletin Doc. No. 02-110) is
+  // STALE — 2001 figures ($333 heating / $181 nonheating / $26 phone) that
+  // the rule itself says are superseded annually by Department notice, not
+  // by amending the rule text. VERIFICATION ATTEMPTS LOGGED 2026-08-09:
+  //   - services.dpw.state.pa.us (the OIM policy manual host cited by
+  //     PA's own DHS pages) — connection refused, twice, different pages.
+  //   - pa.gov/agencies/dhs/resources/snap/hsua — live page, describes
+  //     eligibility for the heating tier, publishes no dollar figures at
+  //     all ("contact your CAO").
+  //   - Six PA DHS Operations Memoranda searched by title/date for 2025;
+  //     the one COLA-titled memo found (#25-12-01) turned out to be about
+  //     RSDI/SSI/Railroad Retirement COLA passthrough, unrelated to SUA.
+  //   - USDA's federal FY26 SUA compilation (which DOES carry PA's real
+  //     number) is blocked by Akamai bot protection on both curl and
+  //     WebFetch — the same wall AK's fetch hit before a browser-download
+  //     workaround got through; that workaround failed here (403, not a
+  //     download prompt).
+  //   - "$497" appears repeated, uncorroborated, across several secondary
+  //     SNAP-calculator sites (snapscreener.com, snapbenefitscalculator.com)
+  //     with no primary citation behind any of them — NOT used here; a
+  //     number two secondary sites agree on is not primary sourcing.
+  // ACTION: needs an operator with a working services.dpw.state.pa.us
+  // session, or a direct call to PA DHS's Statewide Customer Service
+  // Center (1-877-395-8930), to get the current OIM bulletin/notice.
   PA: {
     state_code: "PA",
     label: "Pennsylvania / DHS",
@@ -375,6 +429,20 @@ const STATES: Record<string, StatePolicy> = {
   // Ohio is BBCE at the FEDERAL 130% — categorical eligibility that waives the
   // asset test without raising the income screen, the same archetype as
   // Georgia. Worth knowing before anyone assumes BBCE means 200%.
+  //
+  // Utility standards: ODJFS Food Assistance Change Transmittal No. 105
+  // (Aug 29, 2025), "October 1, 2025, Mass Change", fetched live 2026-08-09
+  // at dam.assets.ohio.gov. OAC 5101:4-4-23 defines the SUA framework but
+  // (confirmed) carries no dollar amounts — the transmittal is the actual
+  // source, same pattern as CA's ACL-vs-ACIN split.
+  //
+  // Ohio publishes a FOURTH tier this engine's {HCSUA, LUA, phone} shape
+  // has no slot for: "Single Standard Utility Allowance" ($108, exactly
+  // one non-heat, non-phone utility — more granular than LUA's "2+
+  // utilities"). Mapped only the three tiers the engine can actually
+  // select via Facts.shelter.sua_tier; $108 is real but unreachable until
+  // that enum grows a fifth value. Documented rather than silently
+  // dropped, same discipline as AK's unmapped 5 non-Central regions (#631).
   OH: {
     state_code: "OH",
     label: "Ohio / ODJFS",
@@ -382,7 +450,12 @@ const STATES: Record<string, StatePolicy> = {
     bbce_threshold_pct: 130,
     bbce_fpl_basis: "federal_fiscal_year",
     asset_waiver: true,
-    sua_by_tier: null,
+    sua_by_tier: {
+      HCSUA: new Decimal("766"),
+      LUA: new Decimal("479"),
+      phone: new Decimal("46"),
+      none: new Decimal("0"),
+    },
     allotment_tier: "48",
     drug_felony_ban: false,
     abawd_waiver_avail: true,
