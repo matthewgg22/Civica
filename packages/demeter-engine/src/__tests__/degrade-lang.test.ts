@@ -67,6 +67,7 @@ describe("degraded answers retrieve in the user's language", () => {
   it("passes lang: es to the fallback retrieve on the degrade path", async () => {
     const outcomes = await drain({
       messages: [{ role: "user", content: "¿Cuánto es el máximo para 4 personas?" }],
+      audience: "public",
       state: "CA",
       lang: "es",
       apiKey: "test-key",
@@ -85,6 +86,7 @@ describe("degraded answers retrieve in the user's language", () => {
   it("leaves English requests on the English path", async () => {
     await drain({
       messages: [{ role: "user", content: "What is the max for a family of 4?" }],
+      audience: "public",
       state: "CA",
       apiKey: "test-key",
       events: { audit: async () => {} },

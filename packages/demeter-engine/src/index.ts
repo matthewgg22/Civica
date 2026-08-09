@@ -13,7 +13,7 @@ export {
   type ChatRole,
   type VerifierOutcome,
 } from "./orchestrator";
-export { buildMaeSystem, MAE_GENERATION, type MaeSystem } from "./answer";
+export { buildMaeSystem, MAE_GENERATION, type MaeSystem, type Audience } from "./answer";
 export {
   verifyCitations,
   extractCitations,
@@ -39,3 +39,4 @@ export { screenHousehold, type ScreeningTurnRequest, type ScreeningTurnResult } 
 export { extractFacts, mergeFactsPatch, type PartialFacts, type ExtractionResult } from "./screening/facts-extraction";
 export { assessCompleteness, completeFactsShape, type CompletenessResult } from "./screening/completeness";
 export { classifyScreening, type ScreeningOutcome, type ScreeningClassification } from "./screening/classify";
+export { FORM_QUESTIONS, matchFormQuestion, classifyQuestionTopic, type FormQuestion } from "./form-questions";

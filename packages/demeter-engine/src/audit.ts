@@ -31,6 +31,9 @@ export interface MaeAuditRecord {
   scopeRef?: string | null | undefined;
   /** How verification concluded: "clean" | "recomposed" | "degraded". */
   verifierOutcome?: string | undefined;
+  /** Which application-form question the user was stuck on, if recognizable.
+   *  A topic key, never the question text. */
+  questionTopic?: string | null | undefined;
   /** "certain" | "uncertain" — the verdict shown to the reader. */
   certainty?: string | undefined;
   /** Why: grounded | unrecognized_citation | degraded_to_sources | authority_not_retrieved | state_not_verified. */

@@ -127,6 +127,25 @@ export const FRONTDOOR_EVAL: FrontDoorCase[] = [
   { id: "notice-two-reasons", category: "Notices", question: "The denial notice listed two different reasons and one of them is wrong — does the correct one save it?", expect: { kind: "external", citation: "FNS Handbook 310" } },
   { id: "notice-invalid-denial", category: "Notices", question: "What makes a denial procedurally invalid on review?", expect: { kind: "external", citation: "FNS Handbook 310" } },
 
+  // ── Applicant-voiced companions to the FOIA cases above ─────────────────────
+  // Every case above this line that came out of the 2026-07-23 FOIA production
+  // (Error-avoidance, Work/ABAWD, Notices) was written caseworker-side — "my
+  // client", "should I ask" — from when Mae served the dashboard staff chat.
+  // Demeter's primary surface post-pivot is the public applicant chat, and
+  // nobody re-voiced this content for the person actually typing it in. These
+  // mirror the same FOIA facts/citations, first person, worried-and-confused
+  // register instead of clinical.
+  { id: "rights-oververify-onfile", category: "Applicant rights", question: "I already gave them my bank statements — why are they asking for them again?", expect: { kind: "external", citation: "273.2(f)" } },
+  { id: "rights-failure-to-provide", category: "Applicant rights", question: "Can they deny me for not providing something I already sent them?", expect: { kind: "external", citation: "273.2(f)" } },
+  { id: "rights-twn-first", category: "Applicant rights", question: "Do I have to send pay stubs if they can already look up my income electronically?", expect: { kind: "external", citation: "273.2(f)" } },
+  { id: "rights-not-questionable", category: "Applicant rights", question: "Do I have to prove something on my application that they haven't said is a problem?", expect: { kind: "external", citation: "273.2(f)" } },
+  { id: "rights-nomi-valid", category: "Applicant rights", question: "I did my interview, but I still got a letter saying I missed it — is that even allowed?", expect: { kind: "grounded", section: "273.2" } },
+  { id: "rights-30day-deny", category: "Applicant rights", question: "My application is past the 30-day mark — can they still deny it for a missing document?", expect: { kind: "grounded", section: "273.2" } },
+  { id: "rights-reapply-after-miss", category: "Applicant rights", question: "Nobody called me for my interview — do I have to start my application over?", expect: { kind: "grounded", section: "273.2" } },
+  { id: "rights-noa-two-reasons", category: "Applicant rights", question: "My denial notice listed two different reasons and one of them is wrong — does the correct one save it?", expect: { kind: "external", citation: "FNS Handbook 310" } },
+  { id: "rights-cf886-sanction", category: "Applicant rights", question: "I got a CF 886 letter in the mail — does that mean I'm losing my food stamps?", expect: { kind: "external", citation: "CF 886" } },
+  { id: "rights-abawd-hours", category: "Applicant rights", question: "How many workfare hours do I owe to meet the work requirement?", expect: { kind: "external", citation: "273.24 (ABAWD)" } },
+
   // ── Washington pack (Wave 1 — first new state; framework gate: ≥12 cases) ──
   // All routed with state:"WA". The federal-floor control (wa-federal-benefit)
   // proves the pack does NOT hijack questions the federal corpus should answer.
