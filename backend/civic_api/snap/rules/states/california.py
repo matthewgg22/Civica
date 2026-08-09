@@ -83,7 +83,8 @@ class CaliforniaSNAPRules(FederalSNAPRules):
             table.monthly_for_household_size(household.household_size)
             * CA_BBCE_GROSS_INCOME_RATIO
         )
-        actual = _round_dollar(household.income.gross_monthly_total)
+        # #556: forward-looking gross, same fix as the federal gate.
+        actual = _round_dollar(household.income.forward_gross_monthly_total)
         return TestOutcome(
             test_name="gross_income_200pct_fpl_ca_mce",
             passes=actual <= threshold,
