@@ -5,14 +5,27 @@ import { recordExpeditedReview } from "./actions";
 
 interface Props {
   packetId: string;
+  /** #557: which computable federal test(s) fired, so the explanation is
+   * accurate to the actual reason — Path 1 and Path 2 are different tests
+   * and a household can trigger either one independently. */
+  paths: Array<"path1" | "path2">;
 }
 
-export default function ExpeditedReviewGate({ packetId }: Props) {
+const PATH_COPY: Record<"path1" | "path2", string> = {
+  path1:
+    "gross income under $150/month and liquid resources of $100 or less [7 CFR 273.2(i)(1)(i)]",
+  path2:
+    "combined gross income and liquid resources under the household's monthly rent plus utility allowance [7 CFR 273.2(i)(1)(iii)]",
+};
+
+export default function ExpeditedReviewGate({ packetId, paths }: Props) {
   const [isPending, startTransition] = useTransition();
 
   function decide(isExpedited: boolean) {
     startTransition(() => { void recordExpeditedReview(packetId, isExpedited); });
   }
+
+  const reasons = paths.map((p) => PATH_COPY[p]).join(", or ");
 
   return (
     <section className="bg-surface border border-warning/50 rounded-[4px] overflow-hidden ring-1 ring-warning/20">
@@ -25,9 +38,8 @@ export default function ExpeditedReviewGate({ packetId }: Props) {
           This applicant may qualify for expedited SNAP processing
         </h3>
         <p className="text-[14px] text-graphite mt-2 leading-relaxed">
-          Answers indicate the applicant is unemployed with very low income.
-          Under 7&nbsp;CFR&nbsp;273.2(i), households with gross income under $150/month
-          and liquid resources under $100 are entitled to expedited processing within 7 days.
+          Answers indicate this household meets the federal test for {reasons}.
+          Households meeting either test are entitled to expedited processing within 7 days.
           Please review and confirm how to proceed before advancing this packet.
         </p>
         <div className="mt-5 flex flex-wrap gap-3">
