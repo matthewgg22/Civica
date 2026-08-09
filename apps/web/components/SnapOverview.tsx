@@ -18,20 +18,60 @@
 import type { PackMeta } from "@civica/demeter-engine/packs";
 
 /** The lede — renders ABOVE the chat, so the page explains itself before it
- *  asks for input, without pushing the chat below the fold. */
-export function SnapLede() {
+ *  asks for input, without pushing the chat below the fold.
+ *
+ *  Two columns on wide screens. The right column is not decoration: a
+ *  single-column lede left ~740px of the 1180px container empty, which is the
+ *  "doesn't fill the page" complaint this rebuild exists to fix — and the
+ *  honest thing to put there is what makes the answers trustworthy, stated
+ *  plainly enough to be quoted. */
+export function SnapLede({ states }: { states: PackMeta[] }) {
   return (
     <section className="dmx dmx--lede" aria-labelledby="what-is-snap">
-      <p className="dmx__eyebrow">Supplemental Nutrition Assistance Program</p>
-      <h2 id="what-is-snap" className="dmx__h2">
-        SNAP is monthly money for groceries, paid onto a card.
-      </h2>
-      <p className="dmx__lede">
-        Formerly called food stamps, SNAP is a federal program run by each state. If you
-        qualify, benefits arrive once a month on an EBT card you use like a debit card at
-        most grocery stores. Applying is free, and you can apply whether or not you are
-        working.
-      </p>
+      <div className="dmx__ledegrid">
+        <div>
+          <p className="dmx__eyebrow">Supplemental Nutrition Assistance Program</p>
+          <h2 id="what-is-snap" className="dmx__h2">
+            SNAP is monthly money for groceries, paid onto a card.
+          </h2>
+          <p className="dmx__lede">
+            Formerly called food stamps, SNAP is a federal program run by each state. If
+            you qualify, benefits arrive once a month on an EBT card you use like a debit
+            card at most grocery stores. Applying is free, and you can apply whether or not
+            you are working.
+          </p>
+        </div>
+        <aside className="dmx__trust" aria-label="How these answers are made">
+          <dl className="dmx__trustlist">
+            <div className="dmx__trustrow">
+              <dt>Free, no account</dt>
+              <dd>Ask as many questions as you need. Nothing to sign up for.</dd>
+            </div>
+            <div className="dmx__trustrow">
+              <dt>Every claim cited</dt>
+              <dd>
+                Answers quote the federal regulation, and the state manual where we have
+                verified one.
+              </dd>
+            </div>
+            <div className="dmx__trustrow">
+              <dt>
+                {states.length} state{states.length === 1 ? "" : "s"} verified
+              </dt>
+              <dd>
+                {`${states.map((s) => s.code).join(" · ")} — each checked against that agency’s own published rules before going live.`}
+              </dd>
+            </div>
+            <div className="dmx__trustrow">
+              <dt>Everywhere else</dt>
+              <dd>
+                Federal rules still answer. Figures that vary by state are deferred to your
+                agency rather than guessed.
+              </dd>
+            </div>
+          </dl>
+        </aside>
+      </div>
     </section>
   );
 }

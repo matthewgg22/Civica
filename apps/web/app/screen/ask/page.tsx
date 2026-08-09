@@ -94,7 +94,7 @@ export default async function ScreenAskPage({
   return (
     <main className="dmpage">
       <div className="dmpage__inner">
-        <SnapLede />
+        <SnapLede states={VERIFIED_STATES} />
         <div className="dmpage__chat">
           <DemeterChat
             states={VERIFIED_STATES}

@@ -5225,3 +5225,25 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   .dmst { flex-basis: 100%; }
   .demeter__scope { gap: 0.5rem; }
 }
+
+/* Lede: two columns on wide screens — the single column left ~740px of the
+   container empty, which was the original "doesn't fill the page" complaint. */
+.dmx__ledegrid { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr); gap: clamp(2rem, 5vw, 4rem); align-items: start; }
+.dmx__trust {
+  background: var(--demeter-card); border: 1px solid var(--demeter-rule);
+  border-radius: 20px; padding: clamp(1.25rem, 2.5vw, 1.75rem);
+}
+.dmx__trustlist { margin: 0; display: flex; flex-direction: column; gap: 1.1rem; }
+.dmx__trustrow { display: flex; flex-direction: column; gap: 0.25rem; }
+.dmx__trustrow dt {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--demeter-terracotta-deep);
+}
+.dmx__trustrow dd {
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+  font-size: 0.93rem; line-height: 1.6; color: var(--demeter-body); margin: 0;
+}
+@media (max-width: 860px) {
+  .dmx__ledegrid { grid-template-columns: 1fr; }
+}
