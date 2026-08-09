@@ -18,6 +18,7 @@
   },
   "dependencies": {
     "@civica/demeter-engine": "workspace:*",
+    "@react-pdf/renderer": "^4.3.0",
     "@sentry/nextjs": "^9.0.0",
     "@supabase/ssr": "^0.10.3",
     "@supabase/supabase-js": "^2.105.4",

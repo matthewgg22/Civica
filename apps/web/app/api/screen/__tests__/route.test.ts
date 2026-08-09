@@ -161,6 +161,26 @@ describe("POST /api/screen", () => {
     expect(mockScreenHousehold).not.toHaveBeenCalled();
   });
 
+  it("REGRESSION: a store failure on create (e.g. Supabase unconfigured) returns a clean 503, not an unhandled exception", async () => {
+    // Caught live: createScreening() threw a bare Error (Supabase env unset)
+    // with nothing catching it above resolveScreeningIdentity's own guard —
+    // it escaped POST entirely as an unhandled rejection, producing Next's
+    // generic error page instead of this route's own JSON error shape.
+    mockCreate.mockRejectedValue(new Error("Missing Supabase admin config: set NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY."));
+    const res = await POST(makeReq({ message: "hi", state: "CA" }));
+    expect(res.status).toBe(503);
+    const json = (await res.json()) as { reason: string };
+    expect(json.reason).toBe("store_unavailable");
+    expect(mockScreenHousehold).not.toHaveBeenCalled();
+  });
+
+  it("REGRESSION: a store failure on load also returns a clean 503, not an unhandled exception", async () => {
+    mockLoad.mockRejectedValue(new Error("Missing Supabase admin config."));
+    const res = await POST(makeReq({ screeningId: "s1", message: "hi" }));
+    expect(res.status).toBe(503);
+    expect(((await res.json()) as { reason: string }).reason).toBe("store_unavailable");
+  });
+
   it("even a mid-turn engine failure still settles an estimated spend — never unmetered", async () => {
     mockScreenHousehold.mockRejectedValue(new Error("anthropic blew up"));
     const res = await POST(makeReq({ message: "She's 62.", state: "CA" }));

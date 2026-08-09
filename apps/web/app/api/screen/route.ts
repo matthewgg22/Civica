@@ -17,7 +17,7 @@
 import { NextResponse, after, type NextRequest } from "next/server";
 import { screenHousehold } from "@civica/demeter-engine";
 import { checkUsageGate, settleSpend, costUsd, estimateTokensFromChars } from "../../../lib/demeter-usage";
-import { resolveScreeningIdentity } from "../../../lib/screening-auth";
+import { resolveScreeningIdentity, GUEST_CAP } from "../../../lib/screening-auth";
 import {
   loadScreening,
   createScreening,
@@ -67,32 +67,44 @@ export async function POST(req: NextRequest) {
   const identity = await resolveScreeningIdentity();
 
   let screening;
-  if (typeof b.screeningId === "string" && b.screeningId) {
-    screening = await loadScreening(b.screeningId, identity);
-    if (!screening) {
-      return NextResponse.json({ error: "Screening not found" }, { status: 404 });
-    }
-  } else {
-    const state =
-      typeof b.state === "string" && b.state
-        ? b.state.toUpperCase()
-        : identity.kind === "org"
-          ? identity.stateCode
-          : null;
-    if (!state) {
-      return NextResponse.json({ error: "state is required to start a screening" }, { status: 400 });
-    }
-    try {
-      screening = await createScreening(identity, state);
-    } catch (err) {
-      if (err instanceof GuestCapReachedError) {
-        return NextResponse.json(
-          { error: "Guest screening limit reached — sign in to keep going.", reason: "guest_cap_reached" },
-          { status: 403 },
-        );
+  let createdNew = false;
+  try {
+    if (typeof b.screeningId === "string" && b.screeningId) {
+      screening = await loadScreening(b.screeningId, identity);
+      if (!screening) {
+        return NextResponse.json({ error: "Screening not found" }, { status: 404 });
       }
-      throw err;
+    } else {
+      const state =
+        typeof b.state === "string" && b.state
+          ? b.state.toUpperCase()
+          : identity.kind === "org"
+            ? identity.stateCode
+            : null;
+      if (!state) {
+        return NextResponse.json({ error: "state is required to start a screening" }, { status: 400 });
+      }
+      screening = await createScreening(identity, state);
+      createdNew = true;
     }
+  } catch (err) {
+    if (err instanceof GuestCapReachedError) {
+      return NextResponse.json(
+        { error: "Guest screening limit reached — sign in to keep going.", reason: "guest_cap_reached" },
+        { status: 403 },
+      );
+    }
+    // A store failure (unconfigured Supabase, network outage) is distinct
+    // from an engine failure below — screenings genuinely can't exist
+    // without persistence, so this can't fail open like guest identity
+    // resolution does. But it must still surface as the same clean JSON
+    // shape every other failure in this route returns, not an unhandled
+    // exception leaking Next's generic error page.
+    console.error("[screen] store unavailable:", err instanceof Error ? err.message : String(err));
+    return NextResponse.json(
+      { error: "Screening storage is temporarily unavailable. Please try again.", reason: "store_unavailable" },
+      { status: 503 },
+    );
   }
 
   const messages: ScreeningMessage[] = [...screening.messages, { role: "user", content: message }];
@@ -131,6 +143,13 @@ export async function POST(req: NextRequest) {
       facts: result.facts,
       classification: result.classification,
       extractedNothing: result.extractedNothing,
+      // Guest screening count AFTER this turn — identity.screeningsUsed was
+      // read before this request's own create, so add 1 when this call was
+      // the one that created a new screening.
+      guestScreeningsLeft:
+        identity.kind === "guest"
+          ? Math.max(0, GUEST_CAP - (identity.screeningsUsed + (createdNew ? 1 : 0)))
+          : null,
     });
   } catch (err) {
     console.error("[screen] turn failed:", err instanceof Error ? err.message : String(err));

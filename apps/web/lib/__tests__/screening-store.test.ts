@@ -27,7 +27,7 @@ vi.mock("../supabase-server", () => ({
   supabaseAdmin: mockAdmin,
 }));
 
-import { loadScreening, createScreening, saveScreeningTurn, GuestCapReachedError } from "../screening-store";
+import { loadScreening, createScreening, saveScreeningTurn, markScreeningExported, GuestCapReachedError } from "../screening-store";
 import { GUEST_CAP } from "../screening-auth";
 
 const ORG_IDENTITY = {
@@ -117,5 +117,15 @@ describe("saveScreeningTurn", () => {
       expect.objectContaining({ facts: { assets: 500 }, outcome: "not_enough_information" }),
     );
     expect(chain.eq).toHaveBeenCalledWith("guest_token", "g1");
+  });
+});
+
+describe("markScreeningExported", () => {
+  it("flips status to exported, scoped to the caller's own row", async () => {
+    const chain = makeChain({ data: null, error: null });
+    mockFrom.mockReturnValue(chain);
+    await markScreeningExported("s1", ORG_IDENTITY);
+    expect(chain.update).toHaveBeenCalledWith(expect.objectContaining({ status: "exported" }));
+    expect(chain.eq).toHaveBeenCalledWith("org_id", "org1");
   });
 });

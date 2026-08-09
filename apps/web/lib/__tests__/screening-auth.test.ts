@@ -22,7 +22,7 @@ vi.mock("next/headers", () => ({
   })),
 }));
 
-import { resolveScreeningIdentity, GUEST_COOKIE } from "../screening-auth";
+import { resolveScreeningIdentity, resolveOrgIdentity, GUEST_COOKIE } from "../screening-auth";
 
 function orgQueryChain(result: unknown) {
   const chain: Record<string, unknown> = {};
@@ -99,11 +99,59 @@ describe("resolveScreeningIdentity", () => {
     expect(mockRpc).toHaveBeenCalledWith("demeter_guest_screening_count", { p_guest_token: "t1" });
   });
 
+  it("REGRESSION: an unconfigured Supabase (createSupabaseServerClient throws) still resolves a guest, never 500s", async () => {
+    // Caught live, not by the mocked suite: createSupabaseServerClient()
+    // throws SYNCHRONOUSLY when NEXT_PUBLIC_SUPABASE_URL is unset, and
+    // nothing caught it — a guest, who needs no auth at all, got a 500.
+    mockCreateServerClient.mockRejectedValueOnce(
+      new Error("Missing Supabase config: set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY."),
+    );
+    const id = await resolveScreeningIdentity();
+    expect(id.kind).toBe("guest");
+  });
+
   it("fails OPEN on the read — a store outage never blocks resolving an identity", async () => {
     cookieStore.set(GUEST_COOKIE, "t1");
     mockRpc.mockRejectedValue(new Error("db down"));
     const id = await resolveScreeningIdentity();
     expect(id.kind).toBe("guest");
     if (id.kind === "guest") expect(id.screeningsUsed).toBe(0);
+  });
+});
+
+describe("resolveOrgIdentity", () => {
+  it("returns the org for a signed-in member, same as resolveScreeningIdentity would", async () => {
+    mockGetUser.mockResolvedValue({ data: { user: { id: "u1" } } });
+    mockOrgFrom.mockReturnValue(
+      orgQueryChain({
+        data: { org_id: "org1", demeter_orgs: { name: "Franklin County Food Alliance", state_code: "OH", case_label_prefix: "FCFA" } },
+        error: null,
+      }),
+    );
+    const org = await resolveOrgIdentity();
+    expect(org?.orgName).toBe("Franklin County Food Alliance");
+  });
+
+  it("returns null (not a guest identity) when there's no session — the landing page must not mint a guest", async () => {
+    const org = await resolveOrgIdentity();
+    expect(org).toBeNull();
+  });
+
+  it("returns null for a signed-in user with no org membership yet", async () => {
+    mockGetUser.mockResolvedValue({ data: { user: { id: "u1" } } });
+    mockOrgFrom.mockReturnValue(orgQueryChain({ data: null, error: null }));
+    const org = await resolveOrgIdentity();
+    expect(org).toBeNull();
+  });
+
+  it("returns null, never throws, when Supabase is unconfigured", async () => {
+    mockCreateServerClient.mockRejectedValueOnce(new Error("Missing Supabase config."));
+    const org = await resolveOrgIdentity();
+    expect(org).toBeNull();
+  });
+
+  it("never writes a guest cookie — checking for an org session is not the same as starting a guest one", async () => {
+    await resolveOrgIdentity();
+    expect(mockCookieSet).not.toHaveBeenCalled();
   });
 });

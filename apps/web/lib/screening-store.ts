@@ -116,6 +116,24 @@ export async function createScreening(
   };
 }
 
+/** Marks a screening exported (mockup frame 07's terminal state) — a read
+ *  cache on status, same spirit as the outcome column; nothing branches on
+ *  it today, but it's how a future case-list view would show "already
+ *  exported" without recomputing. Ownership-scoped like every other write
+ *  here. Best-effort: an export that fails to flip this flag has still
+ *  handed the caseworker their PDF, so the caller doesn't need to fail the
+ *  whole request over it. */
+export async function markScreeningExported(id: string, identity: ScreeningIdentity): Promise<void> {
+  const db = supabaseAdmin();
+  const scope = scopeFilter(identity);
+  await db
+    .schema("snap_enrollment")
+    .from("demeter_screenings")
+    .update({ status: "exported", updated_at: new Date().toISOString() })
+    .eq("id", id)
+    .eq(scope.column, scope.value);
+}
+
 export async function saveScreeningTurn(
   id: string,
   identity: ScreeningIdentity,
