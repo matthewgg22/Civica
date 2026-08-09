@@ -9,6 +9,7 @@ vi.mock("../../lib/supabase", () => ({
 }));
 
 import MaeChat from "../MaeChat";
+import { MAE_DISCLAIMER as ENGINE_DISCLAIMER } from "@civica/demeter-engine/system-prompt";
 
 /** A streaming Response stub: yields `chunks` then done. */
 function streamingResponse(chunks: string[]) {
@@ -101,6 +102,27 @@ describe("MaeChat", () => {
     });
     // A plain (non-case) query is logged as a generalist surface, with the clean question.
     expect(sentBody.meta).toEqual({ mode: "general", state: null, ref: null, question: "What is a shelter deduction?" });
+  });
+
+  it("#645: disclaimer is the engine's own MAE_DISCLAIMER (not a re-hardcoded copy), plus the PII reminder", async () => {
+    mocks.getUser.mockResolvedValue({
+      data: { user: { app_metadata: { role: "navigator" } } },
+    });
+    vi.spyOn(globalThis, "fetch").mockResolvedValue(streamingResponse([]) as unknown as Response);
+
+    render(<MaeChat />);
+    const launcher = await screen.findByRole("button", { name: /ask demeter/i });
+    fireEvent.click(launcher);
+
+    // The panel's disclaimer text starts with the exact string imported from
+    // @civica/demeter-engine/system-prompt -- not a second, hand-maintained
+    // copy that can drift (this is what #645 fixed: the old local copy still
+    // said "Mae can be wrong..." after the engine's own string had already
+    // been rebranded to "Demeter can be wrong...").
+    const disclaimer = await screen.findByText((_, node) => node?.textContent === `${ENGINE_DISCLAIMER} Don't paste the applicant's PII (name, case number, etc.) — keep questions hypothetical.`);
+    expect(disclaimer).toBeInTheDocument();
+    expect(disclaimer.textContent).toContain("Demeter can be wrong");
+    expect(disclaimer.textContent).not.toContain("Mae can be wrong");
   });
 
   it("injects case context into the payload (not the visible transcript) when opened from a case", async () => {

@@ -170,6 +170,51 @@ describe("middleware", () => {
     });
   });
 
+  describe("MFA gate — indeterminate AAL check (#512, fail-closed)", () => {
+    beforeEach(() => {
+      mockGetUser.mockResolvedValue({
+        data: { user: { app_metadata: { role: "navigator" }, email: "nav@civica.co" } },
+      });
+    });
+
+    it("fails CLOSED (redirects to verify) when the AAL check errors on both the initial call and the retry", async () => {
+      mockGetAAL.mockResolvedValue({ data: null, error: new Error("network blip") });
+      const res = await middleware(makeRequest("/packets"));
+      expect(res.status).toBe(307);
+      const location = res.headers.get("location") ?? "";
+      expect(location).toContain("/auth/mfa/verify");
+      expect(location).toContain("aal_check_failed");
+      // Retried once: two calls, not one.
+      expect(mockGetAAL).toHaveBeenCalledTimes(2);
+    });
+
+    it("fails CLOSED when the AAL check returns null data with no error (SDK-shape edge case)", async () => {
+      mockGetAAL.mockResolvedValue({ data: null, error: null });
+      const res = await middleware(makeRequest("/packets"));
+      expect(res.status).toBe(307);
+      expect(res.headers.get("location") ?? "").toContain("/auth/mfa/verify");
+    });
+
+    it("recovers on retry: an error on the first call but success on the second passes the gate normally", async () => {
+      // Not enrolled (aal1/aal1) once the retry succeeds -- should pass
+      // through, proving a single transient blip doesn't strand a
+      // non-enrolled staff member on the verify page.
+      mockGetAAL
+        .mockResolvedValueOnce({ data: null, error: new Error("transient") })
+        .mockResolvedValueOnce({ data: { currentLevel: "aal1", nextLevel: "aal1" } });
+      const res = await middleware(makeRequest("/packets"));
+      expect(res.status).toBe(200);
+      expect(mockGetAAL).toHaveBeenCalledTimes(2);
+    });
+
+    it("does NOT retry or fail-closed when the check simply succeeds (no regression on the happy path)", async () => {
+      mockGetAAL.mockResolvedValue({ data: { currentLevel: "aal1", nextLevel: "aal1" } });
+      const res = await middleware(makeRequest("/packets"));
+      expect(res.status).toBe(200);
+      expect(mockGetAAL).toHaveBeenCalledTimes(1);
+    });
+  });
+
   describe("authenticated state_deputy (restricted audience role)", () => {
     beforeEach(() => {
       mockGetUser.mockResolvedValue({

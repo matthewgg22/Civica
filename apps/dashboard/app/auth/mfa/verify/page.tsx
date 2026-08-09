@@ -2,10 +2,23 @@
 
 // Shown when a navigator has TOTP enrolled but hasn't verified this session.
 // Middleware redirects here when currentLevel=aal1 but nextLevel=aal2.
+//
+// #512: middleware now ALSO redirects here on an indeterminate AAL check
+// (error, or still erroring after one retry) — a fail-closed response to a
+// Supabase blip, not just the normal "enrolled but unverified" case. That
+// means a visitor who lands here might not actually have a TOTP factor at
+// all (a non-enrolled staff member hit the same transient error). The old
+// version handled that silently: listFactors() found nothing, factorId/
+// challengeId stayed null, and the Verify button just sat permanently
+// disabled with no explanation — effectively locking that person out with
+// no way forward. checkState below makes that an explicit, actionable
+// branch instead of a mystery-disabled form.
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "../../../../lib/supabase";
+
+type CheckState = "checking" | "ready" | "no_factor" | "check_failed";
 
 export default function MFAVerifyPage() {
   const router = useRouter();
@@ -14,17 +27,37 @@ export default function MFAVerifyPage() {
   const [challengeId, setChallengeId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [checkState, setCheckState] = useState<CheckState>("checking");
 
   useEffect(() => {
     const supabase = createClient();
-    supabase.auth.mfa.listFactors().then(({ data }) => {
-      const totp = data?.totp?.[0];
-      if (!totp) return;
-      setFactorId(totp.id);
-      supabase.auth.mfa.challenge({ factorId: totp.id }).then(({ data: c }) => {
-        if (c) setChallengeId(c.id);
-      });
-    });
+    supabase.auth.mfa
+      .listFactors()
+      .then(({ data, error: listErr }) => {
+        if (listErr) {
+          setCheckState("check_failed");
+          return;
+        }
+        const totp = data?.totp?.[0];
+        if (!totp) {
+          // Genuinely not enrolled — nothing to verify. Middleware only
+          // sends non-enrolled staff here on a failed AAL check (fail-
+          // closed), not as a normal flow, so this is the recovery path
+          // for that case rather than an error in itself.
+          setCheckState("no_factor");
+          return;
+        }
+        setFactorId(totp.id);
+        supabase.auth.mfa.challenge({ factorId: totp.id }).then(({ data: c, error: challengeErr }) => {
+          if (challengeErr || !c) {
+            setCheckState("check_failed");
+            return;
+          }
+          setChallengeId(c.id);
+          setCheckState("ready");
+        });
+      })
+      .catch(() => setCheckState("check_failed"));
   }, []);
 
   async function handleVerify(e: React.FormEvent) {
@@ -58,6 +91,49 @@ export default function MFAVerifyPage() {
     </div>
   );
 
+  // #512: no_factor / check_failed both land here on a fail-closed
+  // redirect, not the normal "enrolled but unverified" flow — the actual
+  // fix in both cases is usually just retrying (the AAL check that sent
+  // them here was itself transient), so lead with that rather than a dead
+  // end.
+  if (checkState === "no_factor" || checkState === "check_failed") {
+    return (
+      <div className="min-h-screen flex items-center justify-center px-4">
+        <div className="bg-surface p-8 rounded-[4px] border border-hairline shadow-md w-full max-w-md">
+          {lockup}
+          <h2 className="text-[24px] font-semibold tracking-tight text-ink mb-2">
+            {checkState === "no_factor" ? "No two-factor method found" : "Couldn't verify two-factor status"}
+          </h2>
+          <p className="text-[14px] text-muted mb-6 leading-relaxed">
+            {checkState === "no_factor"
+              ? "We couldn't confirm your account's two-factor status, and no authenticator is set up on it. This is usually a temporary connection issue — try again."
+              : "We couldn't reach the two-factor verification service. This is usually temporary — try again."}
+          </p>
+          <div className="space-y-3">
+            <button
+              type="button"
+              onClick={() => window.location.reload()}
+              className="w-full bg-pine text-white py-3 rounded-[3px] text-[15px] font-medium hover:opacity-90 transition-opacity"
+            >
+              Try again
+            </button>
+            <form action="/auth/signout" method="post">
+              <button
+                type="submit"
+                className="w-full border border-hairline text-graphite py-3 rounded-[3px] text-[15px] font-medium hover:bg-paper transition-colors"
+              >
+                Sign out
+              </button>
+            </form>
+          </div>
+          <p className="text-[12px] text-muted mt-5 leading-relaxed">
+            Still stuck after a few tries? Contact your administrator.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen flex items-center justify-center px-4">
       <div className="bg-surface p-8 rounded-[4px] border border-hairline shadow-md w-full max-w-md">
@@ -85,10 +161,10 @@ export default function MFAVerifyPage() {
           {error && <p className="text-[13px] text-error">{error}</p>}
           <button
             type="submit"
-            disabled={loading || code.length < 6 || !challengeId}
+            disabled={loading || code.length < 6 || !challengeId || checkState !== "ready"}
             className="w-full bg-pine text-white py-3 rounded-[3px] text-[15px] font-medium hover:opacity-90 disabled:opacity-50 transition-opacity"
           >
-            {loading ? "Verifying…" : "Verify"}
+            {loading ? "Verifying…" : checkState === "checking" ? "Checking…" : "Verify"}
           </button>
         </form>
       </div>

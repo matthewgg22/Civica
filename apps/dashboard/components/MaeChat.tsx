@@ -11,21 +11,30 @@
 
 import Link from "next/link";
 import { RECOMPOSE_MARKER } from "@civica/demeter-engine/packs";
+import { MAE_DISCLAIMER as ENGINE_DISCLAIMER } from "@civica/demeter-engine/system-prompt";
 import { useCallback, useEffect, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { createClient } from "../lib/supabase";
 import { isStaff } from "../lib/roleRouting";
 
-// Persistent UI disclaimer — shown in the panel regardless of any single
-// answer's content. Mirrors (and intentionally extends, with the PII/
-// hypothetical reminder) MAE_DISCLAIMER in
-// packages/demeter-engine/src/system-prompt.ts — kept as a separate hardcoded
-// copy here so the server-only system prompt (and its corpus/SDK deps) never
-// ship to the browser bundle. See #645 for de-duplicating via a client-safe
-// export once that constant's own Mae->Demeter fix (PR #623) lands.
-const MAE_DISCLAIMER =
-  "Demeter can be wrong. General SNAP policy guidance, not an eligibility determination — verify against current CalFresh/CDSS rules and the county system of record. Don't paste the applicant's PII (name, case number, etc.) — keep questions hypothetical.";
+// #645: was a second, hand-maintained copy of the engine's own
+// MAE_DISCLAIMER (and had drifted to the pre-Demeter-rebrand "Mae can be
+// wrong..." wording). Now imports the canonical string from
+// system-prompt.ts's own dedicated client-safe subpath — that file has
+// zero imports of its own (pure string constants), so re-exporting it
+// this way can't drag in retrieval.ts / @anthropic-ai/sdk / the corpus.
+//
+// This dashboard panel's copy has genuinely diverged in CONTENT, not just
+// branding, from the engine's own disclaimer: it appends a PII/keep-it-
+// hypothetical reminder the engine string doesn't carry (that reminder
+// duplicates what STAFF_SYSTEM_PROMPT's own "do not request... PII"
+// instruction already tells the model, per that prompt's own comment —
+// this is the UI-side persistent reminder, not a repeat of the model's
+// system prompt). Kept as its own sentence rather than dropped.
+const PII_REMINDER =
+  "Don't paste the applicant's PII (name, case number, etc.) — keep questions hypothetical.";
+const MAE_DISCLAIMER = `${ENGINE_DISCLAIMER} ${PII_REMINDER}`;
 
 type ChatMessage = { role: "user" | "assistant"; content: string };
 

@@ -12,6 +12,10 @@
     "./packs": {
       "types": "./src/packs.ts",
       "default": "./src/packs.ts"
+    },
+    "./system-prompt": {
+      "types": "./src/system-prompt.ts",
+      "default": "./src/system-prompt.ts"
     }
   },
   "scripts": {
