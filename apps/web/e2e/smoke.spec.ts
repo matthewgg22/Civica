@@ -15,7 +15,9 @@ test.describe("front door", () => {
   test("root carries query params through, so campaign links keep working", async ({ page }) => {
     await page.goto("/?state=TX&q=Does%20my%20car%20count%3F");
     await expect(page).toHaveURL(/\/screen\/ask\?/);
-    await expect(page.getByRole("radio", { name: /TX/ })).toHaveAttribute("aria-checked", "true");
+    // The state selector is a combobox (2026-08-09): one selection, shown on
+    // the trigger, rather than a row of radio chips.
+    await expect(page.getByRole("button", { name: "Your state" })).toContainText("TX");
     await expect(page.getByPlaceholder(/Ask anything about SNAP/)).toHaveValue(
       "Does my car count?",
     );
@@ -28,18 +30,26 @@ test.describe("front door", () => {
 });
 
 test.describe("chat surface", () => {
-  test("renders the chat with state chips and federal default", async ({ page }) => {
+  test("renders the chat, the explainer, and the federal default", async ({ page }) => {
     await page.goto("/screen/ask");
-    await expect(page.getByRole("heading", { name: "Demeter" })).toBeVisible();
-    const federal = page.getByRole("radio", { name: /All states/ });
-    await expect(federal).toHaveAttribute("aria-checked", "true");
-    await expect(page.getByRole("radio", { name: /CA/ })).toBeVisible();
+    // `name` matches a SUBSTRING by default, and the explainer now has a
+    // "How Demeter answers" heading — so this has to be exact or it resolves
+    // to two elements and fails strict mode.
+    await expect(page.getByRole("heading", { name: "Demeter", exact: true })).toBeVisible();
+    const picker = page.getByRole("button", { name: "Your state" });
+    await expect(picker).toContainText("All states");
+    // The explainer is SERVER-rendered — its presence in the DOM is what makes
+    // the page quotable by generative search, so it is worth a smoke assertion.
+    await expect(page.getByRole("heading", { name: /SNAP is monthly money/ })).toBeVisible();
     await expect(page.getByPlaceholder(/Ask anything about SNAP/)).toBeVisible();
+    // Opening the picker reveals every verified pack.
+    await picker.click();
+    await expect(page.getByRole("option", { name: /CalFresh/ })).toBeVisible();
   });
 
   test("guide deep-link preselects state and question", async ({ page }) => {
     await page.goto("/screen/ask?state=TX&q=Does%20my%20car%20count%3F");
-    await expect(page.getByRole("radio", { name: /TX/ })).toHaveAttribute("aria-checked", "true");
+    await expect(page.getByRole("button", { name: "Your state" })).toContainText("TX");
     await expect(page.getByPlaceholder(/Ask anything about SNAP/)).toHaveValue(
       "Does my car count?",
     );
@@ -71,11 +81,21 @@ test.describe("chat surface", () => {
       .toBe(true);
   });
 
-  test("language toggle switches the surface to Spanish", async ({ page }) => {
-    await page.goto("/screen/ask");
-    await page.getByRole("button", { name: "Cambiar a español" }).click();
-    await expect(page.getByPlaceholder(/Pregunta lo que sea sobre SNAP/)).toBeVisible();
-  });
+  // The EN/ES toggle became a four-language picker (2026-08-09) once the engine
+  // gained real VI/ZH support. Each language is asserted end-to-end because the
+  // point of doing the engine work rather than shipping a selector is that a
+  // language offered here is a language the surface actually speaks.
+  for (const [label, placeholder] of [
+    ["Español", /Pregunta lo que sea sobre SNAP/],
+    ["Tiếng Việt", /Hỏi bất cứ điều gì về SNAP/],
+    ["中文", /关于 SNAP/],
+  ] as Array<[string, RegExp]>) {
+    test(`language picker switches the surface to ${label}`, async ({ page }) => {
+      await page.goto("/screen/ask");
+      await page.getByLabel("Language").selectOption({ label });
+      await expect(page.getByPlaceholder(placeholder)).toBeVisible();
+    });
+  }
 });
 
 test.describe("growth surfaces", () => {
@@ -95,7 +115,7 @@ test.describe("growth surfaces", () => {
     await expect(first).toBeVisible();
     await first.click();
     await expect(page).toHaveURL(/\/screen\/ask\?state=TX/);
-    await expect(page.getByRole("radio", { name: /TX/ })).toHaveAttribute("aria-checked", "true");
+    await expect(page.getByRole("button", { name: "Your state" })).toContainText("TX");
   });
 
   test("unknown guide slugs 404 (dynamicParams=false)", async ({ page }) => {

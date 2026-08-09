@@ -5326,3 +5326,20 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   .demeter__body { grid-template-columns: 1fr; }
   .dmw { position: static; }
 }
+
+/* Screen-reader-only. The language picker needs a real <label>, but the
+   control is self-describing visually (each option is in its own language),
+   so the label text is announced rather than shown. */
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
+}
+.demeter__lang { display: inline-flex; align-items: center; flex: none; }
+.demeter__lang-select {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  min-height: 44px; padding: 0.4rem 0.7rem; font-size: 0.85rem; cursor: pointer;
+  color: var(--demeter-terracotta); background: var(--demeter-card);
+  border: 1px solid var(--demeter-terracotta); border-radius: 999px;
+}
+.demeter__lang-select:hover { color: var(--demeter-terracotta-deep); border-color: var(--demeter-terracotta-deep); }
+.demeter__lang-select:focus-visible { outline: 2px solid var(--demeter-terracotta); outline-offset: 1px; }

@@ -11,7 +11,13 @@
 //  - 429 / at-capacity / unconfigured states render honest, warm errors.
 
 import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
-import { RECOMPOSE_MARKER, type PackMeta } from "@civica/demeter-engine/packs";
+import {
+  RECOMPOSE_MARKER,
+  ANSWER_LANGS,
+  LANG_NATIVE_NAME,
+  type PackMeta,
+  type AnswerLang,
+} from "@civica/demeter-engine/packs";
 // TYPE-ONLY from the root barrel: erased at compile time, so this costs the
 // browser bundle nothing. A VALUE import here would drag the 1MB eCFR corpus
 // onto every phone — the reason the client-safe /packs entry exists at all.
@@ -90,6 +96,7 @@ const T = {
       noMatch: "No verified pack for that state yet — federal rules still apply.",
     },
     howWeVerify: "How we verify",
+    languageLabel: "Language",
     worksheet: {
       title: "Your estimate",
       subtitle: "Builds as you talk",
@@ -138,6 +145,7 @@ const T = {
       noMatch: "Aún no hay paquete verificado para ese estado — las reglas federales aplican.",
     },
     howWeVerify: "Cómo verificamos",
+    languageLabel: "Idioma",
     worksheet: {
       title: "Tu estimado",
       subtitle: "Se arma mientras conversas",
@@ -152,6 +160,101 @@ const T = {
       pickState: "Elige tu estado arriba y tu estimado se irá armando aquí.",
     },
   },
+  vi: {
+    title: "Demeter",
+    tagline: "Câu trả lời đã được xác minh về SNAP — cho mọi tiểu bang.",
+    inputPlaceholder: "Hỏi bất cứ điều gì về SNAP…",
+    send: "Gửi",
+    stop: "Dừng",
+    stateLabel: "Tiểu bang của bạn",
+    federal: "Tất cả tiểu bang (quy định liên bang)",
+    verified: "Đã xác minh",
+    federalBadge: "Hướng dẫn liên bang",
+    dividerTo: (name: string) =>
+      `Bây giờ đang trả lời cho ${name} — các câu trả lời trước có thể không còn áp dụng.`,
+    dividerFederal:
+      "Bây giờ chỉ trả lời theo quy định liên bang — các câu trả lời trước có thể không còn áp dụng.",
+    disclaimer:
+      "Demeter cung cấp thông tin, không phải tư vấn pháp lý. Hãy xác nhận quyết định với cơ quan SNAP của bạn.",
+    err429: "Quá nhiều câu hỏi cùng lúc — vui lòng đợi một phút rồi thử lại.",
+    errCapacity:
+      "Demeter đã đạt giới hạn của tháng. Để được trợ giúp về SNAP ngay bây giờ, hãy gọi 211 hoặc cơ quan SNAP của tiểu bang bạn.",
+    errConfig: "Demeter chưa sẵn sàng — vui lòng quay lại sau.",
+    errNetwork: "Đã xảy ra lỗi. Vui lòng thử lại.",
+    thinking: "Đang đọc các quy định…",
+    empty1: "Giới hạn thu nhập cho hộ gia đình tôi là bao nhiêu?",
+    empty2: "Tôi có thể nhận trợ cấp nhanh thế nào trong trường hợp khẩn cấp?",
+    empty3: "Tôi có bắt buộc phải phỏng vấn qua điện thoại không?",
+    picker: {
+      label: "Tiểu bang của bạn",
+      federal: "Tất cả tiểu bang (quy định liên bang)",
+      federalHint: "Mức cơ bản liên bang — các con số của tiểu bang do cơ quan bạn quyết định",
+      search: "Tìm theo tiểu bang, chương trình hoặc cơ quan…",
+      verified: "Đã xác minh",
+      noMatch: "Chưa có gói đã xác minh cho tiểu bang đó — quy định liên bang vẫn áp dụng.",
+    },
+    howWeVerify: "Cách chúng tôi xác minh",
+    languageLabel: "Ngôn ngữ",
+    worksheet: {
+      title: "Ước tính của bạn",
+      subtitle: "Được xây dựng khi bạn trò chuyện",
+      result: "Kết quả tạm tính",
+      estimate: "Trợ cấp hàng tháng ước tính:",
+      calc: "Cách tính ra con số đó",
+      stillNeeded: "Còn thiếu",
+      empty:
+        "Hãy cho Demeter biết về hộ gia đình của bạn — ai sống cùng bạn, bạn kiếm được bao nhiêu, bạn trả bao nhiêu tiền thuê nhà — và ước tính sẽ hiện ở đây.",
+      privacy: "Không có gì ở đây được lưu lại. Đóng tab này là mọi thứ biến mất.",
+      disclaimer: "Chỉ là ước tính, không phải quyết định. Cơ quan quận của bạn mới là nơi quyết định.",
+      pickState: "Chọn tiểu bang của bạn ở trên để ước tính có thể hiện ở đây.",
+    },
+  },
+  zh: {
+    title: "Demeter",
+    tagline: "经过核实的 SNAP 答案——适用于任何州。",
+    inputPlaceholder: "关于 SNAP，想问什么都可以…",
+    send: "发送",
+    stop: "停止",
+    stateLabel: "您所在的州",
+    federal: "所有州（联邦规定）",
+    verified: "已核实",
+    federalBadge: "联邦指引",
+    dividerTo: (name: string) => `现在按 ${name} 的规定回答——之前的回答可能不再适用。`,
+    dividerFederal: "现在仅按联邦规定回答——之前的回答可能不再适用。",
+    disclaimer: "Demeter 提供信息，而非法律建议。请与您所在州的 SNAP 机构确认。",
+    err429: "同时提问太多了——请稍等一分钟再试。",
+    errCapacity:
+      "Demeter 本月已达使用上限。如需即时的 SNAP 帮助，请拨打 211 或联系您所在州的 SNAP 机构。",
+    errConfig: "Demeter 尚未开放——请稍后再来。",
+    errNetwork: "出了点问题。请再试一次。",
+    thinking: "正在查阅法规…",
+    empty1: "我家的收入上限是多少？",
+    empty2: "紧急情况下我最快多久能拿到补助？",
+    empty3: "我必须接受电话面谈吗？",
+    picker: {
+      label: "您所在的州",
+      federal: "所有州（联邦规定）",
+      federalHint: "联邦最低标准——各州的具体金额请以您所在机构为准",
+      search: "按州、项目或机构搜索…",
+      verified: "已核实",
+      noMatch: "该州暂无已核实的政策包——联邦规定仍然适用。",
+    },
+    howWeVerify: "我们如何核实",
+    languageLabel: "语言",
+    worksheet: {
+      title: "您的估算",
+      subtitle: "随着对话逐步生成",
+      result: "初步结果",
+      estimate: "每月估计补助：",
+      calc: "计算方式",
+      stillNeeded: "仍需提供",
+      empty:
+        "告诉 Demeter 您的家庭情况——谁和您同住、收入多少、房租多少——估算就会在这里逐步生成。",
+      privacy: "这里的内容不会被保存。关闭此页面即消失。",
+      disclaimer: "这只是估算，不是决定。最终由您所在县的机构裁定。",
+      pickState: "请在上方选择您所在的州，估算就能在这里生成。",
+    },
+  },
 } as const;
 
 export function DemeterChat({
@@ -163,7 +266,7 @@ export function DemeterChat({
   initialState?: string | null;
   initialQuestion?: string | null;
 }) {
-  const [lang, setLang] = useState<"en" | "es">("en");
+  const [lang, setLang] = useState<AnswerLang>("en");
   const [state, setState] = useState<string | null>(initialState);
   const [messages, setMessages] = useState<Msg[]>([]);
   const [input, setInput] = useState(initialQuestion ?? "");
@@ -338,14 +441,25 @@ export function DemeterChat({
             <p className="demeter__tagline">{t.tagline}</p>
           </div>
         </div>
-        <button
-          type="button"
-          className="demeter__lang"
-          onClick={() => setLang(lang === "en" ? "es" : "en")}
-          aria-label={lang === "en" ? "Cambiar a español" : "Switch to English"}
-        >
-          {lang === "en" ? "Español" : "English"}
-        </button>
+        {/* A real picker, not a two-way toggle: the engine now answers in four
+            languages, and a toggle cannot express that. Each option is labelled
+            in its OWN language — someone looking for Tiếng Việt is not helped by
+            the word "Vietnamese". */}
+        <label className="demeter__lang">
+          <span className="sr-only">{t.languageLabel}</span>
+          <select
+            className="demeter__lang-select"
+            value={lang}
+            aria-label={t.languageLabel}
+            onChange={(e) => setLang(e.target.value as AnswerLang)}
+          >
+            {ANSWER_LANGS.map((code) => (
+              <option key={code} value={code}>
+                {LANG_NATIVE_NAME[code]}
+              </option>
+            ))}
+          </select>
+        </label>
       </header>
 
       {/* One control, one selected state — replaces the chip row that ate a
