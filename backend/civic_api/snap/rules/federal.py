@@ -61,6 +61,24 @@ class FederalSNAPRules:
     def rules_version(self) -> str:
         return f"federal-{self.effective_date.isoformat()}"
 
+    @property
+    def state_code(self) -> str | None:
+        """Which state's ELECTED policy options this rules engine instance
+        represents — None for the bare federal baseline. State subclasses
+        (CaliforniaSNAPRules, MassachusettsSNAPRules) override this.
+
+        #643: state-option lookups (standard_medical_deduction, etc.) must
+        key off THIS — the rules engine's own identity — not
+        `household.state`, which is a data fact about the household being
+        evaluated and says nothing about which rules engine is doing the
+        evaluating. A household can carry state="MA" while still being
+        run through the bare federal engine (e.g. for a federal-baseline
+        comparison); that shouldn't pull in MA's elected $155 standard
+        medical deduction, which only applies when MassachusettsSNAPRules
+        itself is the one determining eligibility.
+        """
+        return None
+
     def determine_eligibility(self, household: Household) -> EligibilityResult:
         # Pre-transforms — each identity when its fields are unset, so ordinary
         # determinations are byte-identical: §20 minor-student earnings exclusion;
@@ -278,7 +296,11 @@ class FederalSNAPRules:
                 # Standard medical deduction (state option): take the flat standard, or the
                 # itemized excess-over-$35 when that is higher. Federal/no-standard states
                 # keep the itemized excess only — so those determinations are unchanged.
-                standard = state_params_for(household.state).standard_medical_deduction
+                # #643: keyed on self.state_code (which RULES ENGINE is running),
+                # not household.state (a fact about the household) — a household
+                # can carry state="MA" while still being evaluated by the bare
+                # federal engine, which must not pull in MA's elected standard.
+                standard = state_params_for(self.state_code).standard_medical_deduction
                 medical = max(standard, itemized) if standard is not None else itemized
 
         # Excess shelter: shelter costs above 50% of (gross - earned_deduction

@@ -35,5 +35,5 @@ _STATE: dict[str, StateParameters] = {
 }
 
 
-def state_params_for(state: str) -> StateParameters:
+def state_params_for(state: str | None) -> StateParameters:
     return _STATE.get((state or "").upper(), _DEFAULT)
