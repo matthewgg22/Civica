@@ -328,7 +328,7 @@ export default function MaeChat() {
               aria-hidden
               className="flex h-6 w-6 items-center justify-center rounded-full bg-pine text-xs font-semibold text-white"
             >
-              M
+              D
             </span>
             <div className="flex-1 leading-tight">
               <p className="text-sm font-semibold text-ink">Ask Demeter</p>
@@ -497,7 +497,7 @@ export default function MaeChat() {
             aria-hidden
             className="flex h-5 w-5 items-center justify-center rounded-full bg-white/20 text-xs font-semibold"
           >
-            M
+            D
           </span>
           Ask Demeter
         </button>

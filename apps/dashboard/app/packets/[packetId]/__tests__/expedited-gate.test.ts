@@ -14,6 +14,7 @@ const BLANK: ExpeditedGateAnswers = {
   has_heating_costs: null,
   has_electric_or_gas: null,
   has_phone: null,
+  is_migrant_or_seasonal_farmworker: null,
 };
 
 describe("computeExpeditedPaths — Path 1 (7 CFR 273.2(i)(1)(i))", () => {
@@ -167,7 +168,81 @@ describe("computeExpeditedPaths — Path 2 (7 CFR 273.2(i)(1)(iii))", () => {
   });
 });
 
-describe("computeExpeditedPaths — both paths can fire together", () => {
+describe("computeExpeditedPaths — Path 3 (7 CFR 273.2(i)(1)(ii), #652)", () => {
+  it("fires: farmworker, no income reported, liquid at limit", () => {
+    const paths = computeExpeditedPaths({
+      ...BLANK,
+      is_migrant_or_seasonal_farmworker: "yes",
+      monthly_gross_income: "0",
+      savings_amount: "100",
+    });
+    expect(paths).toContain("path3");
+  });
+
+  it("fires: farmworker, income entirely unanswered, liquid unanswered", () => {
+    // Both "unanswered" -- the approximation treats a genuinely-blank
+    // household the same as "no income reported", same direction as
+    // Path 1's own unanswered handling.
+    const paths = computeExpeditedPaths({
+      ...BLANK,
+      is_migrant_or_seasonal_farmworker: "yes",
+    });
+    expect(paths).toContain("path3");
+  });
+
+  it("does not fire: not a farmworker, even with no income and low liquid", () => {
+    const paths = computeExpeditedPaths({
+      ...BLANK,
+      is_migrant_or_seasonal_farmworker: "no",
+      monthly_gross_income: "0",
+      savings_amount: "0",
+    });
+    expect(paths).not.toContain("path3");
+  });
+
+  it("does not fire: 'not_sure' on farmworker status does not count as yes", () => {
+    const paths = computeExpeditedPaths({
+      ...BLANK,
+      is_migrant_or_seasonal_farmworker: "not_sure",
+      monthly_gross_income: "0",
+      savings_amount: "0",
+    });
+    expect(paths).not.toContain("path3");
+  });
+
+  it("does not fire: farmworker with real income reported", () => {
+    const paths = computeExpeditedPaths({
+      ...BLANK,
+      is_migrant_or_seasonal_farmworker: "yes",
+      monthly_gross_income: "1200",
+      savings_amount: "0",
+    });
+    expect(paths).not.toContain("path3");
+  });
+
+  it("does not fire: farmworker with no income but liquid resources over $100", () => {
+    const paths = computeExpeditedPaths({
+      ...BLANK,
+      is_migrant_or_seasonal_farmworker: "yes",
+      monthly_gross_income: "0",
+      savings_amount: "500",
+    });
+    expect(paths).not.toContain("path3");
+  });
+
+  it("is independent of employment_status (Path 3 has no employment leg, unlike Path 1)", () => {
+    const paths = computeExpeditedPaths({
+      ...BLANK,
+      is_migrant_or_seasonal_farmworker: "yes",
+      employment_status: "employed",
+      monthly_gross_income: "0",
+      savings_amount: "0",
+    });
+    expect(paths).toContain("path3");
+  });
+});
+
+describe("computeExpeditedPaths — multiple paths can fire together", () => {
   it("returns both path1 and path2 when both tests are met", () => {
     const paths = computeExpeditedPaths({
       employment_status: "unemployed",
@@ -177,9 +252,25 @@ describe("computeExpeditedPaths — both paths can fire together", () => {
       has_heating_costs: "yes",
       has_electric_or_gas: "yes",
       has_phone: "yes",
+      is_migrant_or_seasonal_farmworker: null,
     });
     expect(paths).toEqual(expect.arrayContaining(["path1", "path2"]));
     expect(paths).toHaveLength(2);
+  });
+
+  it("#652: all three paths fire together when the household meets every test", () => {
+    const paths = computeExpeditedPaths({
+      employment_status: "unemployed",
+      monthly_gross_income: "0",
+      savings_amount: "0",
+      monthly_rent_or_mortgage: "700",
+      has_heating_costs: "yes",
+      has_electric_or_gas: "yes",
+      has_phone: "yes",
+      is_migrant_or_seasonal_farmworker: "yes",
+    });
+    expect(paths).toEqual(expect.arrayContaining(["path1", "path2", "path3"]));
+    expect(paths).toHaveLength(3);
   });
 
   it("returns an empty array when neither test fires", () => {

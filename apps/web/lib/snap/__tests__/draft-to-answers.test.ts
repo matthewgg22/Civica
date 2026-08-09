@@ -30,6 +30,14 @@ describe("draftToAnswerTuples", () => {
     expect(incomeRow?.applicant_answer).toBe("1500");
   });
 
+  it("#652: emits household_migrant_farmworker when answered", () => {
+    const d = emptyDraft();
+    d.household.isMigrantOrSeasonalFarmworker = "yes";
+    const tuples = draftToAnswerTuples(d);
+    const row = tuples.find((t) => t.question_key === "household_migrant_farmworker");
+    expect(row?.applicant_answer).toBe("yes");
+  });
+
   it("maps booleans to yes/no strings", () => {
     const d = emptyDraft();
     d.studentStatus.isCurrentlyEnrolledInHigherEducation = true;

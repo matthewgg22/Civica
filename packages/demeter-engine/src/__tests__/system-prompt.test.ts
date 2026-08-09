@@ -127,4 +127,13 @@ describe("public system prompt — persona-specific", () => {
     expect(p).toContain("day 30");
     expect(p).toMatch(/re-prove|already gave|already provided/);
   });
+
+  // Advisor review (2026-08-09): users often don't know whether a benefits
+  // chatbot has access to their actual case, which is exactly what makes a
+  // vague or evasive answer to "where's my application" actively misleading.
+  it("says plainly it has no access to anyone's actual case, and redirects", () => {
+    const p = PUBLIC_SYSTEM_PROMPT.toLowerCase();
+    expect(p).toMatch(/no access to (anyone's )?(actual )?case/);
+    expect(p).toMatch(/state's online portal|snap agency phone line/);
+  });
 });

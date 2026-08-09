@@ -66,7 +66,16 @@ describe("MaeChat", () => {
       data: { user: { app_metadata: { role: "navigator" } } },
     });
     render(<MaeChat />);
-    await screen.findByRole("button", { name: /ask demeter/i });
+    const launcher = await screen.findByRole("button", { name: /ask demeter/i });
+    // The launcher's decorative avatar badge is "D" for Demeter, not a
+    // leftover "M" — regressed once (found 2026-08-09 while re-verifying the
+    // #649 rename): the "Ask Demeter" *text* was fixed everywhere, but this
+    // aria-hidden initial slipped through, invisible to a11y-role queries
+    // (and to a naive textContent substring check — "Demeter" itself
+    // contains an "m"). Assert the avatar span's OWN content, isolated from
+    // the button's full label text.
+    const avatar = launcher.querySelector("span[aria-hidden]");
+    expect(avatar?.textContent?.trim()).toBe("D");
   });
 
   it("opens the panel, streams an answer, and shows the disclaimer", async () => {
@@ -83,6 +92,13 @@ describe("MaeChat", () => {
 
     // Disclaimer is always visible in the open panel.
     expect(screen.getByText(/not an eligibility determination/i)).toBeInTheDocument();
+
+    // The open panel's own header repeats the "D" avatar (a distinct DOM
+    // node from the launcher's) — same #649 avatar-badge gap, checked here
+    // for the panel header specifically.
+    const dialog = screen.getByRole("dialog", { name: /ask demeter/i });
+    const headerAvatar = dialog.querySelector("span[aria-hidden]");
+    expect(headerAvatar?.textContent?.trim()).toBe("D");
 
     const textarea = screen.getByPlaceholderText(/ask a snap policy question/i);
     fireEvent.change(textarea, { target: { value: "What is a shelter deduction?" } });
