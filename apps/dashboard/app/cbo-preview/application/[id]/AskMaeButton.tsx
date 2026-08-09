@@ -1,8 +1,8 @@
 "use client";
 
-// Opens the global Mae assistant (mounted in the root layout) from the
+// Opens the global Demeter assistant (mounted in the root layout) from the
 // full-application page. Decoupled via the "mae:prefill" window event so this
-// button doesn't import Mae — same channel the caseload's "Ask Mae" uses. Opens
+// button doesn't import Mae — same channel the caseload's "Ask Demeter" uses. Opens
 // with an empty composer; the caseworker types their own (PII-free) question.
 export default function AskMaeButton() {
   return (
@@ -15,9 +15,9 @@ export default function AskMaeButton() {
         aria-hidden
         className="flex h-4 w-4 items-center justify-center rounded-full bg-pine text-[10px] font-semibold text-white"
       >
-        M
+        D
       </span>
-      Ask Mae
+      Ask Demeter
     </button>
   );
 }

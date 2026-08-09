@@ -14,7 +14,7 @@ const STATES = [
 ];
 
 const MILESTONES = [
-  { label: "Draft application", sub: "Mae guides every answer", x: 1010, step: 1 },
+  { label: "Draft application", sub: "Demeter guides every answer", x: 1010, step: 1 },
   { label: "Complete interview", sub: "Prep + reminders", x: 1185, step: 2 },
   { label: "Receive feedback", sub: "Status + next steps", x: 1360, step: 3 },
 ];
