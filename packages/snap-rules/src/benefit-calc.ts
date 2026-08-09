@@ -54,6 +54,7 @@ import {
   medicalFloorFor,
 } from "./constants/federal-tables";
 import { statePolicyFor } from "./constants/states";
+import { akUtilityRegionFor } from "./constants/ak-utility-regions";
 
 export interface BenefitCalcDetail {
   gross_monthly_income: number;
@@ -128,8 +129,17 @@ export function computeBenefit(facts: Facts, state: string, asOf: Date): Benefit
         throw new Error(`SUA not authored for state ${state} — composer should not call computeBenefit here`);
       }
       suaVal = ZERO;
+    } else if (facts.shelter.sua_tier === "none") {
+      suaVal = ZERO;
     } else {
-      suaVal = policy.sua_by_tier[facts.shelter.sua_tier];
+      // Alaska real-region precision (#631): when the household's actual
+      // county is known AND maps to an authored region, that region's rate
+      // is the real answer — states.ts's AK.sua_by_tier (the Central/
+      // Anchorage region) is a state-level FALLBACK for when county_fips is
+      // absent, not the answer itself, the same relationship #614 already
+      // established for CA's ABAWD county waivers.
+      const akRegion = state === "AK" ? akUtilityRegionFor(facts.county_fips) : undefined;
+      suaVal = akRegion ? akRegion[facts.shelter.sua_tier] : policy.sua_by_tier[facts.shelter.sua_tier];
     }
     stateSuaVal = suaVal.toNumber();
     // OBBBA §10104: internet excluded from shelter deduction effective 2025-10-01

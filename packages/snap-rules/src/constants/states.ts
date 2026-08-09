@@ -497,29 +497,22 @@ const STATES: Record<string, StatePolicy> = {
   // Southwestern), each with its OWN heating standard, PLUS separately
   // itemized non-heating standards (electricity / telephone / sewer / water)
   // per region — not the single flat {HCSUA, LUA, phone} most states publish.
-  // StatePolicy.sua_by_tier has no room for that; a true fix needs a
-  // per-region lookup, which is a bigger shape change than this pass makes.
   //
-  // Deliberate simplification, not an oversight: values below are the
-  // CENTRAL region (Anchorage/Wasilla/Palmer — Alaska's most populous area,
-  // used as the representative baseline the way a single archetype value
-  // has to be for every other non-regional state here too):
-  //   HCSUA = $625  (Central heating standard, published directly)
-  //   phone = $26   (Central telephone standard, published directly)
-  //   LUA   = $254  (Central electricity $134 + sewer $61 + water $59 —
-  //           MY OWN combination, not a figure AK publishes as one line;
-  //           telephone is excluded here since it has its own dedicated
-  //           tier in this model. If AK's actual LUA-equivalent
-  //           determination combines these differently, this needs
-  //           correcting against the Alaska Food Stamp Manual's
-  //           deduction-determination text, which this pass didn't reach.)
+  // FIXED AS A REAL PER-REGION LOOKUP (#631, same two-tier pattern as #614's
+  // county-level ABAWD waivers): constants/ak-utility-regions.ts maps every
+  // current AK county FIPS to its real region's rates, and benefit-calc.ts
+  // consults it FIRST whenever state === "AK" and facts.county_fips is
+  // known. The sua_by_tier below is now ONLY the fallback for when county
+  // is unknown — not the answer itself. It's still the CENTRAL region
+  // (Anchorage/Wasilla/Palmer, the most populous area), the same
+  // representative-default choice every non-regional state here already
+  // makes for its single value.
   //
-  // Other five regions, for whoever builds the real per-region model:
-  //   Northern:      heat $825, electricity $170, phone $35, sewer $45, water $44
-  //   Northwest:     heat $1,107, electricity $158, phone $37, sewer $48, water $63
-  //   South Central: heat $591, electricity $109, phone $27, sewer $65, water $42
-  //   Southeastern:  heat $517, electricity $72, phone $36, sewer $81, water $49
-  //   Southwestern:  heat $1,064, electricity $169, phone $36, sewer $54, water $111
+  // LUA is not a figure AK publishes as one line for ANY region — every
+  // region's LUA here is electricity + sewer + water (telephone excluded,
+  // it has its own tier). If AK's actual LUA-equivalent determination
+  // combines these differently, every region needs the same correction,
+  // not just Central — see ak-utility-regions.ts's own caveat.
   AK: {
     state_code: "AK",
     label: "Alaska (non-BBCE, higher allotments)",
