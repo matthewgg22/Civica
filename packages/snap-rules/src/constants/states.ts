@@ -299,6 +299,92 @@ const STATES: Record<string, StatePolicy> = {
     abawd_waiver_avail: false,
     rmp_operated: false,
   },
+  // ── Tranche 1 (docs/plans/state-coverage-framework-2026-08.md) ──────────
+  // FL, IL, PA and OH are the four states that, with CA/TX/NY/GA, put >50% of
+  // national SNAP issuance behind the engine.
+  //
+  // SOURCED: bbce / bbce_threshold_pct / asset_waiver come from the FNS
+  // Broad-Based Categorical Eligibility States Chart, June 2026
+  // (fns.usda.gov/snap/broad-based-categorical-eligibility →
+  // BBCE-States-Chart-June2026.pdf), read 2026-08-09. allotment_tier is "48"
+  // for all four (contiguous states share the federal table).
+  //
+  // NOT SOURCED YET — and deliberately left at the permissive value rather
+  // than guessed (see #619):
+  //   • sua_by_tier: null. Each state publishes utility standards in its own
+  //     annual table, NOT in the rule text — Ohio's OAC 5101:4-4-23 defines
+  //     the SUA framework and contains no dollar amounts at all. A wrong SUA
+  //     miscomputes every shelter deduction, so these stay null and
+  //     computeBenefit fails loudly (the #436 invariant) rather than quietly.
+  //   • abawd_waiver_avail: true and drug_felony_ban: false are FAIL-OPEN
+  //     defaults, not findings. Both err toward eligibility, per the
+  //     direction-of-error rule in #608/#614: never deny on unverified data.
+  //
+  // CAVEAT on the FNS chart: it is corroboration, not the last word — it
+  // under-describes Georgia (prints a single 130% row, missing §3210's 200%
+  // all-adult elderly/disabled screen). Treat these thresholds as good enough
+  // to gate income tests, and confirm against each state's own manual before
+  // quoting a figure to a user.
+  FL: {
+    state_code: "FL",
+    label: "Florida / DCF",
+    bbce: true,
+    bbce_threshold_pct: 200,
+    bbce_fpl_basis: "federal_fiscal_year",
+    asset_waiver: true,
+    sua_by_tier: null,
+    allotment_tier: "48",
+    drug_felony_ban: false,
+    abawd_waiver_avail: true,
+    rmp_operated: false,
+  },
+  // Illinois is BBCE at 165% — the same "BBCE is not a boolean" case as TX.
+  IL: {
+    state_code: "IL",
+    label: "Illinois / IDHS",
+    bbce: true,
+    bbce_threshold_pct: 165,
+    bbce_fpl_basis: "federal_fiscal_year",
+    asset_waiver: true,
+    sua_by_tier: null,
+    allotment_tier: "48",
+    drug_felony_ban: false,
+    // RMP runs in Cook and Franklin counties ONLY — a state-level boolean
+    // cannot say that, so it stays false until county granularity exists
+    // (#614). False under-claims a real program rather than over-claiming it
+    // statewide.
+    abawd_waiver_avail: true,
+    rmp_operated: false,
+  },
+  PA: {
+    state_code: "PA",
+    label: "Pennsylvania / DHS",
+    bbce: true,
+    bbce_threshold_pct: 200,
+    bbce_fpl_basis: "federal_fiscal_year",
+    asset_waiver: true,
+    sua_by_tier: null,
+    allotment_tier: "48",
+    drug_felony_ban: false,
+    abawd_waiver_avail: true,
+    rmp_operated: false,
+  },
+  // Ohio is BBCE at the FEDERAL 130% — categorical eligibility that waives the
+  // asset test without raising the income screen, the same archetype as
+  // Georgia. Worth knowing before anyone assumes BBCE means 200%.
+  OH: {
+    state_code: "OH",
+    label: "Ohio / ODJFS",
+    bbce: true,
+    bbce_threshold_pct: 130,
+    bbce_fpl_basis: "federal_fiscal_year",
+    asset_waiver: true,
+    sua_by_tier: null,
+    allotment_tier: "48",
+    drug_felony_ban: false,
+    abawd_waiver_avail: true,
+    rmp_operated: false,
+  },
   KS: {
     state_code: "KS",
     label: "Non-BBCE archetype (e.g. KS)",
