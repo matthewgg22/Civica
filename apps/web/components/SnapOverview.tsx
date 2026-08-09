@@ -16,6 +16,26 @@
 // agency, where it arrives cited and current.
 
 import type { PackMeta } from "@civica/demeter-engine/packs";
+import { FORM_QUESTIONS, type FormQuestion } from "@civica/demeter-engine";
+
+/** The most form-like phrasing for a topic — the longest one, which is the
+ *  closest to how the question is actually printed. Derived rather than
+ *  hand-listed so this can never drift from FORM_QUESTIONS. */
+export function representativePhrasing(q: FormQuestion): string {
+  return [...q.phrasings].sort((a, b) => b.length - a.length)[0] ?? q.topic;
+}
+
+/** "household_composition" → "Household composition". */
+export function topicLabel(topic: string): string {
+  const words = topic.replace(/_/g, " ");
+  return words.charAt(0).toUpperCase() + words.slice(1);
+}
+
+/** The FAQ question form used in BOTH the visible section and the JSON-LD, so
+ *  a generative engine reads the same wording it would see on the page. */
+export function formQuestionHeading(q: FormQuestion): string {
+  return `What does "${representativePhrasing(q)}" mean on a SNAP application?`;
+}
 
 /** The lede — renders ABOVE the chat, so the page explains itself before it
  *  asks for input, without pushing the chat below the fold.
@@ -206,6 +226,39 @@ export function SnapDetail({ states }: { states: PackMeta[] }) {
             </div>
           </li>
         </ol>
+      </section>
+
+      {/* The questions the FORM asks, decoded. Rendered from FORM_QUESTIONS —
+          the same vetted, citation-backed entries the chat routes on — so this
+          section and the engine can never disagree, and neither can this and
+          the JSON-LD (both call formQuestionHeading()).
+
+          This is the page's GEO core. It is the content a generative engine is
+          most likely to quote, because it answers the literal question someone
+          types, and every entry names the governing rule. None of it carries a
+          dollar figure, so it does not rot at the October COLA. */}
+      <section className="dmx" aria-labelledby="form-questions">
+        <h2 id="form-questions" className="dmx__h2">
+          What the application is actually asking
+        </h2>
+        <p className="dmx__body">
+          These are the questions people get stuck on — the phrasing is legal, not
+          conversational. Here is what each one means and the rule behind it.
+        </p>
+        <dl className="dmx__faq">
+          {FORM_QUESTIONS.map((q) => (
+            <div className="dmx__faqitem" key={q.topic}>
+              <dt className="dmx__faqq">
+                <span className="dmx__faqtopic">{topicLabel(q.topic)}</span>
+                {formQuestionHeading(q)}
+              </dt>
+              <dd className="dmx__faqa">
+                {q.whyAsked}
+                <span className="dmx__faqcite">{q.citation}</span>
+              </dd>
+            </div>
+          ))}
+        </dl>
       </section>
 
       <section className="dmx" aria-labelledby="agencies">

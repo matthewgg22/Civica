@@ -15,9 +15,10 @@
 // case-file builder. The old /demeter path 301s here.
 
 import type { Metadata } from "next";
-import { VERIFIED_STATES } from "@civica/demeter-engine/packs";
+import { VERIFIED_STATES, ANSWER_LANGS, LANG_TAG } from "@civica/demeter-engine/packs";
+import { FORM_QUESTIONS, CORPUS_EFFECTIVE_DATE } from "@civica/demeter-engine";
 import { DemeterChat } from "../../../components/DemeterChat";
-import { SnapLede, SnapDetail } from "../../../components/SnapOverview";
+import { SnapLede, SnapDetail, formQuestionHeading } from "../../../components/SnapOverview";
 
 const TITLE = "Demeter AI — verified SNAP answers, with the rule attached";
 const DESCRIPTION =
@@ -58,6 +59,30 @@ function structuredData(): string {
       a: "Households with very low income and resources, or whose housing costs exceed their income, may qualify for expedited service, which carries a much shorter federal processing deadline than a standard application. Your state agency screens every application for it.",
     },
   ];
+  // The form-question entries carry the real weight: they are the literal
+  // questions people type, each already vetted and tied to a governing rule,
+  // and they reuse formQuestionHeading() so the JSON-LD wording is IDENTICAL
+  // to the visible section. An engine that quotes either one quotes the same
+  // sentence, which is the whole point — mismatched structured data reads as
+  // cloaking and is worth less than none.
+  const formFaq = FORM_QUESTIONS.map((q) => ({
+    q: formQuestionHeading(q),
+    a: `${q.whyAsked} (${q.citation})`,
+  }));
+
+  // Provenance, stated in machine-readable form: what this is built from, and
+  // when it was last true. Freshness and sourcing are exactly what a
+  // generative engine weighs when deciding whether to trust a benefits page.
+  // schema.org `citation` accepts Text as well as a URL, and most pack sources
+  // are NAMED instruments rather than links ("CDSS All-County Letters (ACL) +
+  // ACINs", "18 NYCRR Part 387"). Filtering to URLs dropped all but one and
+  // threw away the provenance that makes this page credible — the named
+  // instrument is the more useful citation to a reader and to an engine.
+  const citations = [
+    "https://www.ecfr.gov/current/title-7/part-273",
+    ...new Set(VERIFIED_STATES.flatMap((s) => s.verification.sources)),
+  ];
+
   return JSON.stringify([
     {
       "@context": "https://schema.org",
@@ -67,11 +92,20 @@ function structuredData(): string {
       description: DESCRIPTION,
       offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
       audience: { "@type": "Audience", audienceType: "SNAP applicants and recipients" },
+      // Civica is the parent organization behind Demeter AI, not the
+      // consumer-facing product name.
+      publisher: { "@type": "Organization", name: "Civica" },
+      inLanguage: ANSWER_LANGS.map((l) => LANG_TAG[l]),
+      isAccessibleForFree: true,
+      ...(CORPUS_EFFECTIVE_DATE ? { dateModified: CORPUS_EFFECTIVE_DATE } : {}),
+      citation: citations,
     },
     {
       "@context": "https://schema.org",
       "@type": "FAQPage",
-      mainEntity: faq.map((f) => ({
+      inLanguage: "en",
+      ...(CORPUS_EFFECTIVE_DATE ? { dateModified: CORPUS_EFFECTIVE_DATE } : {}),
+      mainEntity: [...faq, ...formFaq].map((f) => ({
         "@type": "Question",
         name: f.q,
         acceptedAnswer: { "@type": "Answer", text: f.a },

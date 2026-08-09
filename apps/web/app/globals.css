@@ -5343,3 +5343,32 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 }
 .demeter__lang-select:hover { color: var(--demeter-terracotta-deep); border-color: var(--demeter-terracotta-deep); }
 .demeter__lang-select:focus-visible { outline: 2px solid var(--demeter-terracotta); outline-offset: 1px; }
+
+/* ── Form-question FAQ: the page's GEO core ───────────────────────────────── */
+.dmx__faq { margin: 1.75rem 0 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(21rem, 1fr)); gap: 1.25rem; }
+.dmx__faqitem {
+  background: var(--demeter-card); border: 1px solid var(--demeter-rule);
+  border-radius: 20px; padding: 1.35rem;
+}
+.dmx__faqtopic {
+  display: block; margin-bottom: 0.4rem;
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--demeter-muted);
+}
+.dmx__faqq {
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+  font-size: 1.02rem; line-height: 1.35; font-weight: 600; letter-spacing: -0.01em;
+  color: var(--demeter-ink); margin: 0 0 0.55rem; text-wrap: pretty;
+}
+.dmx__faqa {
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+  font-size: 0.95rem; line-height: 1.62; color: var(--demeter-body); margin: 0;
+  display: flex; flex-direction: column; gap: 0.7rem;
+}
+.dmx__faqcite {
+  align-self: flex-start;
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.7rem; letter-spacing: 0.02em; color: var(--demeter-terracotta-deep);
+  background: #F7EDE4; border: 1px solid #EAD9C8; border-radius: 5px; padding: 0.2rem 0.5rem;
+}
