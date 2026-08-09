@@ -19,6 +19,10 @@ describe("form-question matching", () => {
     ["will this affect my immigration status", "immigration_status"],
     ["do I have to give my social security number", "ssn_requirement"],
     ["do you own a car — does that count", "resources_assets"],
+    ["nobody called me for my interview, did I lose my case", "missed_interview"],
+    ["I got a nomi letter, what does that mean", "missed_interview"],
+    ["they asked for documents I already sent", "repeat_verification"],
+    ["I was denied for failure to provide something I already gave them", "repeat_verification"],
   ])("%s → %s", (text, topic) => {
     expect(classifyQuestionTopic(text)).toBe(topic);
   });
@@ -60,6 +64,8 @@ describe("form phrasing routes retrieval to the governing rule", () => {
     ["what does purchase and prepare meals separately mean?", "273.1"],
     ["do I pay heating or cooling separately from rent?", "273.9(d)(6)"],
     ["the application asks about a fleeing felon", "273.11(n)"],
+    ["nobody called me for my scheduled interview", "273.2(e)"],
+    ["they keep asking for documents I already sent them", "273.2(f)"],
   ])("%s retrieves %s", async (q, cite) => {
     const chunks = await retrieve(q, { state: "CA" });
     expect(
