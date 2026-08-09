@@ -10,7 +10,7 @@ import { ScreeningChat } from "../../../components/ScreeningChat";
 
 export const metadata: Metadata = {
   title: "Demeter Screening",
-  description: "SNAP eligibility screening for caseworkers — cited, exportable, state-aware.",
+  description: "Screen your household's SNAP eligibility — cited, exportable, state-aware.",
 };
 
 export default async function ScreeningSessionPage({

@@ -19,10 +19,10 @@ import { DemeterMark } from "../../components/DemeterMark";
 
 export const metadata: Metadata = {
   title: "Demeter AI — SNAP screening & verified answers",
-  description: "SNAP eligibility screening for caseworkers — cited, exportable, state-aware.",
+  description: "Screen your household's SNAP eligibility — cited, exportable, state-aware.",
   openGraph: {
     title: "Demeter AI — SNAP screening & verified answers",
-    description: "SNAP eligibility screening for caseworkers — cited, exportable, state-aware.",
+    description: "Screen your household's SNAP eligibility — cited, exportable, state-aware.",
     type: "website",
   },
 };
