@@ -1,3 +1,4 @@
+import { siteUrl } from "../lib/site-url";
 import type { Metadata } from "next";
 import { Hanken_Grotesk } from "next/font/google";
 import "./globals.css";
@@ -9,7 +10,10 @@ const hanken = Hanken_Grotesk({
   variable: "--civica-font-loaded",
 });
 
+// metadataBase makes every relative OG/canonical URL absolute — without it
+// Next emits relative og:image paths that crawlers and Slack can't resolve.
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl()),
   title: "Civica — Apply for SNAP food benefits",
   description:
     "SNAP — also called CalFresh, EBT, or food stamps — is monthly money for groceries. Civica reads your state's rules and walks you through the application in about 10 minutes.",
