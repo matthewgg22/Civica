@@ -44,6 +44,7 @@ export function ScreeningChat({ initialState }: { initialState: string }) {
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [errorReason, setErrorReason] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement | null>(null);
 
   const scrollDown = useCallback(() => {
@@ -57,6 +58,7 @@ export function ScreeningChat({ initialState }: { initialState: string }) {
       const q = text.trim();
       if (!q || busy) return;
       setError(null);
+      setErrorReason(null);
       setBusy(true);
       setInput("");
       setMessages((m) => [...m, { role: "user", content: q }]);
@@ -72,6 +74,7 @@ export function ScreeningChat({ initialState }: { initialState: string }) {
           const j = (await res.json().catch(() => ({}))) as { error?: string; reason?: string };
           if (res.status === 403 && j.reason === "guest_cap_reached") {
             setGuestLeft(0);
+            setErrorReason("guest_cap_reached");
             setError("Guest screening limit reached — sign in to keep going.");
           } else if (res.status === 429) {
             setError("Too many requests — try again in a minute.");
@@ -146,7 +149,16 @@ export function ScreeningChat({ initialState }: { initialState: string }) {
                 {m.content}
               </div>
             ))}
-            {error && <div className="screening__error">{error}</div>}
+            {error && (
+              <div className="screening__error">
+                {error}
+                {errorReason === "guest_cap_reached" && (
+                  <a className="screening__error-cta" href="/screen/sign-in">
+                    Sign in →
+                  </a>
+                )}
+              </div>
+            )}
           </div>
           <form
             className="screening__inputrow"
@@ -178,6 +190,7 @@ export function ScreeningChat({ initialState }: { initialState: string }) {
         </div>
 
         <ScreeningWorksheet
+          screeningId={screeningId}
           caseLabel={caseLabel}
           stateCode={state}
           classification={classification}

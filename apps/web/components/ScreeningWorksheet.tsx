@@ -7,60 +7,25 @@
 // re-derived or rounded again in this component.
 
 import type { ScreeningClassification } from "@civica/demeter-engine";
-
-const OUTCOME_COPY: Record<
-  string,
-  { label: string; tone: "certain" | "warn" | "deny" | "pending" }
-> = {
-  categorically_eligible: { label: "Categorically eligible", tone: "certain" },
-  expedited: { label: "Expedited", tone: "certain" },
-  likely_eligible: { label: "Likely eligible", tone: "certain" },
-  likely_ineligible: { label: "Likely ineligible", tone: "deny" },
-  needs_county_review: { label: "Needs county review", tone: "warn" },
-  not_enough_information: { label: "Not enough information", tone: "pending" },
-};
-
-interface BenefitCalcDetail {
-  gross_monthly_income: number;
-  earned_income_deduction: number;
-  standard_deduction: number;
-  dependent_care_deduction: number;
-  medical_deduction: number;
-  child_support_deduction: number;
-  excess_shelter_deduction: number;
-  net_monthly_income: number;
-  thirty_percent_of_net: number;
-  max_allotment_for_household_size: number;
-  monthly_benefit: number;
-}
-
-function money(n: number): string {
-  return n < 0 ? `-$${Math.abs(n).toLocaleString()}` : `$${n.toLocaleString()}`;
-}
-
-const CALC_ROWS: Array<[keyof BenefitCalcDetail, string]> = [
-  ["gross_monthly_income", "Gross monthly income"],
-  ["earned_income_deduction", "Earned income deduction, 20%"],
-  ["standard_deduction", "Standard deduction"],
-  ["dependent_care_deduction", "Dependent care deduction"],
-  ["medical_deduction", "Excess medical, over $35"],
-  ["child_support_deduction", "Child support paid"],
-  ["excess_shelter_deduction", "Excess shelter deduction"],
-  ["net_monthly_income", "Net monthly income"],
-  ["max_allotment_for_household_size", "Maximum allotment"],
-];
+import { OUTCOME_COPY, CALC_ROWS, money, type BenefitCalcDetail } from "../lib/screening-worksheet-shape";
 
 export function ScreeningWorksheet({
+  screeningId,
   caseLabel,
   stateCode,
   classification,
   guestScreeningsLeft,
 }: {
+  screeningId: string | null;
   caseLabel: string | null;
   stateCode: string;
   classification: ScreeningClassification | null;
   guestScreeningsLeft: number | null;
 }) {
+  // guestScreeningsLeft is populated ONLY for a guest identity (route.ts
+  // sets it to null for an org member) — the same signal the route already
+  // uses, reused here rather than threading a separate isOrgMember prop.
+  const canExport = screeningId !== null && guestScreeningsLeft === null && classification !== null;
   const outcome = classification?.outcome;
   const copy = outcome ? OUTCOME_COPY[outcome] : undefined;
   const calc = classification?.verdict?.trace?.benefit_calc as BenefitCalcDetail | undefined;
@@ -139,9 +104,27 @@ export function ScreeningWorksheet({
         </p>
       )}
 
-      <button type="button" className="worksheet__export" disabled title="Export needs an account">
-        Export PDF
-      </button>
+      {guestScreeningsLeft === 0 && (
+        <section className="worksheet__paywall">
+          <p className="worksheet__paywall-text">
+            This is your last guest screening. Sign in to keep this case file, screen more
+            households, and export to PDF.
+          </p>
+          <a className="worksheet__paywall-cta" href="/screen/sign-in">
+            Sign in
+          </a>
+        </section>
+      )}
+
+      {canExport ? (
+        <a className="worksheet__export" href={`/api/screen/${screeningId}/export`}>
+          Export PDF
+        </a>
+      ) : (
+        <button type="button" className="worksheet__export" disabled title="Export needs an account">
+          Export PDF
+        </button>
+      )}
       <p className="worksheet__disclaimer">
         Screening estimate only. The county agency makes the final determination.
       </p>
