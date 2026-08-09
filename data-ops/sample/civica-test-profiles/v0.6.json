@@ -4734,13 +4734,16 @@
               "income.0.amount": 1800
             },
             "verdict": "APPROVE",
-            "note": "$1,800 gross HH1: clears 200% ($2,610) and TX's 165% ($2,153); denied only under the federal 130% screen ($1,697).",
+            "note": "$1,800 gross HH1: clears 200% ($2,610) and both TX's and IL's 165% ($2,153); denied under the federal 130% screen ($1,696-97) — KS/AK/OH/GA (GA's regular-household screen stays federal 130% under TCOS categorical eligibility, same archetype as OH).",
             "verdict_by_state": {
               "CA": "APPROVE",
               "MA": "APPROVE",
               "TX": "APPROVE",
               "KS": "DENY",
-              "AK": "DENY"
+              "AK": "DENY",
+              "IL": "APPROVE",
+              "OH": "DENY",
+              "GA": "DENY"
             }
           },
           "recent_high_month": {
@@ -4749,13 +4752,16 @@
               "income.0.amount": 2200
             },
             "verdict": "APPROVE",
-            "note": "$2,200 gross HH1: clears only the 200% screen ($2,610). BBCE is not a boolean — TX at 165% denies (#609).",
+            "note": "$2,200 gross HH1: clears only the 200% screen ($2,610). BBCE is not a boolean — TX and IL (both 165%, $2,153) deny; OH and GA (both federal 130%, $1,696-97) deny too (#609).",
             "verdict_by_state": {
               "CA": "APPROVE",
               "MA": "APPROVE",
               "TX": "DENY",
               "KS": "DENY",
-              "AK": "DENY"
+              "AK": "DENY",
+              "IL": "DENY",
+              "OH": "DENY",
+              "GA": "DENY"
             }
           }
         }
