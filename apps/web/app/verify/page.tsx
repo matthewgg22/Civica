@@ -1,11 +1,16 @@
 // /verify — the public "How we verify" page (CEO scope item 6; the
-// credibility artifact no competitor can copy). Fully static: rendered at
-// build from the pack verification blocks; a pack merge redeploys and
-// regenerates. Client-safe packs entry only — never the corpus barrel.
+// credibility artifact no competitor can copy). The state cards come from the
+// pack verification blocks at build time; the grounded-rate readout is a live
+// count, so the page is ISR rather than fully static. Client-safe packs entry
+// only — never the corpus barrel.
 
 import type { Metadata } from "next";
 import Link from "next/link";
 import { VERIFIED_STATES } from "@civica/demeter-engine/packs";
+import { certaintyStats, REASON_LABEL } from "../../lib/certainty-stats";
+
+// The measured rate refreshes without a deploy; the pack cards don't move.
+export const revalidate = 300;
 
 export const metadata: Metadata = {
   title: "How Demeter verifies its answers",
@@ -13,7 +18,8 @@ export const metadata: Metadata = {
     "Every state in Demeter is built from primary sources and adversarially fact-checked before it ships — here is the verification trail, state by state.",
 };
 
-export default function VerifyPage() {
+export default async function VerifyPage() {
+  const stats = await certaintyStats(30);
   return (
     <main className="vpage">
       <header className="vpage__head">
@@ -26,6 +32,44 @@ export default function VerifyPage() {
           only job is to prove the draft wrong. Corrections are applied before
           publication, and every answer carries citations you can check.
         </p>
+        <section className="vstat" aria-label="Measured grounded rate">
+          {stats.measured ? (
+            <>
+              <div className="vstat__figure">
+                <span className="vstat__pct">{stats.groundedRate}%</span>
+                <span className="vstat__unit">
+                  of the last {stats.totalAnswers.toLocaleString()} answers were marked{" "}
+                  <strong>CERTAIN</strong>
+                </span>
+              </div>
+              <p className="vstat__note">
+                Measured over the past {stats.windowDays} days from Demeter&apos;s own
+                answer log — not a target, not a claim. An answer only counts as
+                certain when every rule it cites is backed by regulation text pulled
+                for that specific question. Answers where Demeter fell back to quoting
+                sources verbatim count as <em>failures</em> here ({stats.degraded} of
+                them), so the number can&apos;t flatter itself.
+                {stats.topReason && REASON_LABEL[stats.topReason] ? (
+                  <> The most common reason certainty was withheld:{" "}
+                  {REASON_LABEL[stats.topReason]}.</>
+                ) : null}
+              </p>
+            </>
+          ) : (
+            <>
+              <div className="vstat__figure">
+                <span className="vstat__pending">Not yet measured</span>
+              </div>
+              <p className="vstat__note">
+                This space shows the share of answers Demeter marks{" "}
+                <strong>CERTAIN</strong>, counted from its own answer log over a rolling
+                30 days. It stays blank until there are real answers to count — we&apos;d
+                rather show nothing than a number with no observations behind it.
+              </p>
+            </>
+          )}
+        </section>
+
         <p className="vpage__lede">
           States without a verified pack get <strong>federal guidance only</strong> — and
           for rules that vary by state (income limits, deductions), Demeter declines to
