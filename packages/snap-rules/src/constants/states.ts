@@ -161,6 +161,19 @@ const STATES: Record<string, StatePolicy> = {
     },
     allotment_tier: "48",
     drug_felony_ban: false,
+    // DELIBERATELY `true`, and deliberately imprecise. California DOES hold
+    // waivers — but only in 7 of 58 counties (Colusa, Imperial, Tulare,
+    // Alpine, Merced, Monterey, Plumas; ACL 25-79 + 26-15, through
+    // 2026-10-31). Statewide time limits otherwise resumed 2026-06-01
+    // (ACL 25-93).
+    //
+    // A state-level boolean cannot express "7 of 58", so both values are
+    // wrong — the question is which way. `true` over-approves the 51
+    // time-limited counties; `false` would DENY the 7 genuinely waived ones.
+    // Wrongly denying food is the worse error, so we keep the permissive
+    // value until Facts carries county_fips and the county waiver list
+    // (CA_WAIVER_COUNTY_FIPS, already used by enrollment-api) can be read
+    // here. Do not "fix" this to false without that layer.
     abawd_waiver_avail: true,
     rmp_operated: true,
   },
@@ -179,7 +192,11 @@ const STATES: Record<string, StatePolicy> = {
     },
     allotment_tier: "48",
     drug_felony_ban: false,
-    abawd_waiver_avail: true,
+    // MA holds NO geographic ABAWD waiver: the statewide waiver expired
+    // 2025-06-30 (DTA OLGTM-2025-31) and none was reinstated for FY26. With
+    // the waiver-availability rule now live (#608), this correctly stops an
+    // area-based exemption from being honored anywhere in Massachusetts.
+    abawd_waiver_avail: false,
     rmp_operated: false,
   },
   TX: {
