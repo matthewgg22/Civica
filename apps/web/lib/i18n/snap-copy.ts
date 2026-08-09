@@ -110,6 +110,9 @@ export const snapStrings = {
     field_anyone_60_plus: "Is anyone in the household age 60 or older?",
     field_anyone_disability: "Does anyone in the household have a disability?",
     field_anyone_pregnant: "Is anyone in the household pregnant?",
+    // #652: same question + copy iOS already asks (SNAPHouseholdQuestionStrings
+    // .migrantFarmworkerTitle), reused verbatim for cross-platform consistency.
+    field_migrant_farmworker: "Is anyone in your household a migrant or seasonal farmworker?",
     field_anyone_unhoused: "Is anyone unhoused or without a fixed mailing address?",
     field_safe_mailing: "Preferred safe mailing contact option",
     safe_mailing_shelter: "Shelter",
@@ -329,6 +332,7 @@ export const snapStrings = {
     field_anyone_60_plus: "¿Hay alguien en el hogar de 60 años o más?",
     field_anyone_disability: "¿Tiene alguien en el hogar una discapacidad?",
     field_anyone_pregnant: "¿Hay alguien en el hogar embarazada?",
+    field_migrant_farmworker: "¿Alguien en tu hogar es trabajador agrícola migrante o de temporada?",
     field_anyone_unhoused: "¿Hay alguien sin vivienda o sin dirección postal fija?",
     field_safe_mailing: "Opción preferida de contacto seguro",
     safe_mailing_shelter: "Refugio",

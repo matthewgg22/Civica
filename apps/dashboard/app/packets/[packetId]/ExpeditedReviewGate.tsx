@@ -2,20 +2,23 @@
 
 import { useTransition } from "react";
 import { recordExpeditedReview } from "./actions";
+import type { ExpeditedPath } from "./expedited-gate";
 
 interface Props {
   packetId: string;
-  /** #557: which computable federal test(s) fired, so the explanation is
-   * accurate to the actual reason — Path 1 and Path 2 are different tests
-   * and a household can trigger either one independently. */
-  paths: Array<"path1" | "path2">;
+  /** #557/#652: which computable federal test(s) fired, so the explanation
+   * is accurate to the actual reason — each path is a different test and a
+   * household can trigger more than one independently. */
+  paths: ExpeditedPath[];
 }
 
-const PATH_COPY: Record<"path1" | "path2", string> = {
+const PATH_COPY: Record<ExpeditedPath, string> = {
   path1:
     "gross income under $150/month and liquid resources of $100 or less [7 CFR 273.2(i)(1)(i)]",
   path2:
     "combined gross income and liquid resources under the household's monthly rent plus utility allowance [7 CFR 273.2(i)(1)(iii)]",
+  path3:
+    "a migrant or seasonal farmworker household with no income reported and liquid resources of $100 or less [7 CFR 273.2(i)(1)(ii)] — confirm the household's income has actually stopped, since this intake can't yet distinguish that from simply not having reported income",
 };
 
 export default function ExpeditedReviewGate({ packetId, paths }: Props) {
@@ -39,7 +42,7 @@ export default function ExpeditedReviewGate({ packetId, paths }: Props) {
         </h3>
         <p className="text-[14px] text-graphite mt-2 leading-relaxed">
           Answers indicate this household meets the federal test for {reasons}.
-          Households meeting either test are entitled to expedited processing within 7 days.
+          Households meeting any of these tests are entitled to expedited processing within 7 days.
           Please review and confirm how to proceed before advancing this packet.
         </p>
         <div className="mt-5 flex flex-wrap gap-3">

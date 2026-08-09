@@ -2,14 +2,9 @@
 // Extracted from page.tsx (#557) so it's unit-testable without rendering the
 // whole packet detail page — this was previously ~15 lines of inline
 // business logic with zero test coverage.
-//
-// Path 3 (destitute migrant/seasonal farmworker, 7 CFR 273.2(i)(1)(ii)) is
-// NOT implemented here — no farmworker-status question exists anywhere in
-// this intake flow to read from (confirmed via repo-wide grep, 2026-08-09).
-// Tracked as a follow-up rather than guessed.
 import { determineSUATier, CA_SUA_FFY2026, type SUATier } from "@civica/snap-rules";
 
-export type ExpeditedPath = "path1" | "path2";
+export type ExpeditedPath = "path1" | "path2" | "path3";
 
 export interface ExpeditedGateAnswers {
   employment_status: string | null;
@@ -19,6 +14,8 @@ export interface ExpeditedGateAnswers {
   has_heating_costs: "yes" | "no" | null;
   has_electric_or_gas: "yes" | "no" | null;
   has_phone: "yes" | "no" | null;
+  // #652: household_migrant_farmworker in draft-to-answers.ts.
+  is_migrant_or_seasonal_farmworker: "yes" | "no" | "not_sure" | null;
 }
 
 function toNumber(v: string | null): number {
@@ -27,8 +24,7 @@ function toNumber(v: string | null): number {
 
 /**
  * Which of the computable federal expedited-service tests fire for this
- * household. Empty array = neither test fires (may still be Path-3-eligible,
- * which this can't detect).
+ * household.
  *
  * Unanswered income/liquid-resources are treated as satisfying the low-value
  * side of each test — the cost of an extra navigator review is low; the cost
@@ -65,5 +61,30 @@ export function computeExpeditedPaths(answers: ExpeditedGateAnswers): ExpeditedP
     (isNaN(grossIncome) ? 0 : grossIncome) + (isNaN(liquidResources) ? 0 : liquidResources) <
       rent + suaDollarValue;
 
-  return [...(path1 ? (["path1"] as const) : []), ...(path2 ? (["path2"] as const) : [])];
+  // Path 3 (7 CFR 273.2(i)(1)(ii)): destitute migrant/seasonal farmworker —
+  // liquid <= $100 AND (all income sources terminated, OR a new source with
+  // <= $25 has arrived within the last 10 days). #652 wires the farmworker
+  // question through, but the income-side test here is a DELIBERATE
+  // APPROXIMATION, not the real federal test: this intake flow has no
+  // concept of a per-source is_ongoing/termination flag at all (unlike
+  // packages/snap-rules's IncomeFacts.forward_gross_monthly_total, #556) and
+  // no "new source arrived within 10 days" tracking either — there is
+  // exactly one aggregate monthly_gross_income figure to work with. Treating
+  // "no income reported" (unanswered or $0) as a stand-in for "terminated"
+  // is the closest available proxy, not a distinction the intake can
+  // actually draw (a household with genuinely $0 ongoing income and one
+  // that's simply never reported income look identical here). Flagged for
+  // navigator review either way, which is the acceptable failure mode for a
+  // gate that only ever recommends a human look, never denies on its own.
+  const noIncomeReported = isNaN(grossIncome) || grossIncome === 0;
+  const path3 =
+    answers.is_migrant_or_seasonal_farmworker === "yes" &&
+    liquidUnderLimit &&
+    noIncomeReported;
+
+  return [
+    ...(path1 ? (["path1"] as const) : []),
+    ...(path2 ? (["path2"] as const) : []),
+    ...(path3 ? (["path3"] as const) : []),
+  ];
 }
