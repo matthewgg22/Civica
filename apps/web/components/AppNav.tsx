@@ -1,7 +1,6 @@
 "use client";
 
 import type { ReactNode } from "react";
-import ProductSwitcher from "./ProductSwitcher";
 
 export type NavTab = { label: string; href: string; active?: boolean };
 
@@ -24,11 +23,15 @@ export type NavPrimaryCta = {
   menuLabel?: string; // accessible label for the chevron toggle
 };
 
-// Unified nav bar for the applicant portal — mirrors the staff-dashboard
-// AppHeader design (wheat logo + Civica wordmark + ProductSwitcher + tabs).
-// `tabs` is caller-supplied so the marketing home and the in-app status page
-// can share one bar with different destinations. `rightSlot` holds page-specific
-// chrome (locale toggle, demo badge). `primaryCta` is the dominant action.
+// Unified nav bar for the applicant portal — wheat logo + Civica wordmark +
+// tabs. `tabs` is caller-supplied so the marketing home and the in-app status
+// page can share one bar with different destinations. `rightSlot` holds
+// page-specific chrome (locale toggle, demo badge). `primaryCta` is the
+// dominant action. Deliberately no ProductSwitcher here (removed 2026-08-09):
+// this is public, unauthenticated marketing surface — it shouldn't offer a
+// menu into the staff dashboard or the CBO sales-demo preview. The dashboard
+// app's own ProductSwitcher (apps/dashboard/components/ProductSwitcher.tsx)
+// is unaffected; that one's staff-only.
 export default function AppNav({
   tabs = [],
   demo = false,
@@ -51,7 +54,6 @@ export default function AppNav({
         </a>
         <div className="app-nav__brand-block">
           <a href={logoHref} className="app-nav__brand">Civica</a>
-          <ProductSwitcher current="Applicant Portal" />
         </div>
         {tabs.length > 0 && (
           <nav className="app-nav__tabs" aria-label="Sections">
