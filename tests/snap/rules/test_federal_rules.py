@@ -315,6 +315,25 @@ class TestNetIncomeAndBenefit:
         result = federal_rules.determine_eligibility(hh)
         assert result.benefit_calculation.medical_deduction == Decimal("0")
 
+    def test_bare_federal_engine_ignores_household_states_standard_medical(
+        self, federal_rules, ma_rules, make_household, make_member
+    ):
+        # #643: the bare FederalSNAPRules instance must NOT pick up MA's
+        # elected $155 standard medical deduction just because the
+        # household happens to carry state="MA" — that election only
+        # applies when MassachusettsSNAPRules itself is the engine doing
+        # the determining. $50 medical, $35 floor → $15 itemized excess.
+        hh = make_household(
+            state="MA",
+            members=[make_member(age=68, is_elderly=True)],
+            unearned=1000,
+            medical=50,
+        )
+        federal_result = federal_rules.determine_eligibility(hh)
+        ma_result = ma_rules.determine_eligibility(hh)
+        assert federal_result.benefit_calculation.medical_deduction == Decimal("15")
+        assert ma_result.benefit_calculation.medical_deduction == Decimal("155")
+
     def test_dependent_care_deduction_applied(
         self, federal_rules, make_household, make_member
     ):
