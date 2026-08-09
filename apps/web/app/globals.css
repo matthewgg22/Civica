@@ -4785,3 +4785,13 @@ html {
 .ssignon__error { color: #7C3A1D; background: #FBEFE9; border-radius: 0.6rem; padding: 0.6rem 0.8rem; font-size: 0.88rem; }
 .ssignon__submit { align-self: flex-start; background: var(--civica-pine); color: #fff; border: none; border-radius: 999px; padding: 0.7rem 1.4rem; font-weight: 700; font-size: 0.95rem; min-height: 48px; }
 .ssignon__submit:disabled { background: var(--civica-pine-disabled); }
+
+/* /verify — measured grounded-rate readout. Deliberately restrained: this is
+   evidence, not a marketing stat, so no gradient, no oversized number. */
+.vstat { margin: 1.75rem 0 0; padding: 1.25rem 1.35rem; background: #fff;
+  border: 1px solid #E4DFD5; border-radius: 1rem; }
+.vstat__figure { display: flex; align-items: baseline; flex-wrap: wrap; gap: 0.6rem; }
+.vstat__pct { font-size: 2.1rem; font-weight: 650; color: var(--civica-pine); line-height: 1; }
+.vstat__unit { font-size: 0.97rem; color: var(--civica-ink); }
+.vstat__pending { font-size: 1.15rem; font-weight: 600; color: #6E5F55; }
+.vstat__note { margin: 0.7rem 0 0; font-size: 0.9rem; line-height: 1.55; color: #5E4F45; }
