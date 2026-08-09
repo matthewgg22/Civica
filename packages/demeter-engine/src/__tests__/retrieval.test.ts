@@ -66,4 +66,46 @@ describe("Mae eCFR retrieval", { timeout: 60_000 }, () => {
     expect(hits.length).toBeGreaterThan(0);
     expect(total).toBeLessThan(4000 + 3500);
   });
+
+  // #622: the bare "what counts" hint fired on ANY "what counts as X"
+  // question regardless of domain, injecting 273.9(b)/(c) (income exclusions)
+  // with enough weight to push the actually-relevant section out of the
+  // top-k entirely. Dropped the bare phrase; kept income-specific "what
+  // counts as ___ income" variants so genuine income questions still route.
+  it("'what counts as X' only routes to income exclusions when X actually is income (#622)", async () => {
+    // The exact failing case from #622 — a disqualification question must
+    // route to its OWN section, not income-exclusion text. (#629, a
+    // separate scoring defect with the same symptom, is fixed too — see
+    // its own dedicated test below — so this now asserts the real answer.)
+    expect(await topCite("what counts as a fleeing felon on this form?")).toContain("273.11(n)");
+
+    // Other off-domain "what counts as X" phrasings must route to X's own
+    // section, not get hijacked into income exclusions either.
+    expect(await topCite("what counts as a student on this form?")).toContain("273.5");
+    expect(await topCite("what counts as a resource on this form?")).toContain("273.8");
+    expect(await topCite("what counts as an intentional program violation?")).toContain("273.16");
+    expect(await topCite("what counts as a boarder?")).toContain("273.1");
+
+    // But a genuine income question must still route correctly — the bare
+    // "what counts" term is gone, replaced with income-specific variants.
+    expect(await topCite("what counts as income on this form?")).toContain("273.9");
+    expect(await topCite("what counts as household income on this form?")).toContain("273.9");
+    expect(await topCite("what counts as a shelter deduction?")).toBe("7 CFR 273.9(d)(6)");
+  });
+
+  it("routes every phrasing of 'fleeing felon' to 273.11(n), not 273.4 (#629)", async () => {
+    // Before the fix: zero TOPIC_HINTS fired for any of these (confirmed via
+    // direct instrumentation), yet all four landed on 273.4 (immigration) —
+    // the semantic layer had nowhere correct to route since
+    // section-descriptors.ts had no 273.11(n) entry at all. Fixed with both
+    // a dedicated hint AND a descriptor, per the issue's own suggested (c).
+    for (const q of [
+      "fleeing felon",
+      "the application asks about a fleeing felon",
+      "what does fleeing felon mean on the form",
+      "what counts as a fleeing felon on this form?",
+    ]) {
+      expect(await topCite(q), q).toContain("273.11(n)");
+    }
+  });
 });

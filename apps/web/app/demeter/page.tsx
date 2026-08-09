@@ -1,33 +1,22 @@
-// /demeter — the public Demeter chat page (the pivot's beachhead surface).
-// Server shell: metadata + the verified-state list (from the client-safe
-// packs entry — never the root barrel, which drags the 1MB corpus).
+// /demeter — retired 2026-08-09. The public chat now lives at /screen/ask,
+// folded into the screening tool's own route tree so "Demeter AI" is one
+// surface (/screen) instead of two unrelated top-level routes. This page
+// stays only as a permanent redirect so old links/bookmarks/search results
+// (and any `?state=`/`?q=` query params they carry — see /guides/[state]
+// and /verify, which used to deep-link here) still land somewhere real.
 
-import type { Metadata } from "next";
-import { VERIFIED_STATES } from "@civica/demeter-engine/packs";
-import { DemeterChat } from "../../components/DemeterChat";
+import { permanentRedirect } from "next/navigation";
 
-export const metadata: Metadata = {
-  title: "Demeter — verified SNAP answers",
-  description:
-    "Ask anything about SNAP (food stamps) and get answers grounded in the actual rules — federal regulations plus adversarially verified state policy, with citations you can check.",
-};
-
-export default async function DemeterPage({
+export default async function DemeterRedirectPage({
   searchParams,
 }: {
-  searchParams: Promise<{ state?: string; q?: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
-  const { state, q } = await searchParams;
-  const states = VERIFIED_STATES.map((s) => ({
-    code: s.code,
-    program: s.program,
-    verified: true as const,
-  }));
-  const initialState =
-    state && states.some((s) => s.code === state.toUpperCase()) ? state.toUpperCase() : null;
-  return (
-    <main className="demeter-page">
-      <DemeterChat states={states} initialState={initialState} initialQuestion={q ?? null} />
-    </main>
-  );
+  const params = await searchParams;
+  const qs = new URLSearchParams();
+  for (const [key, value] of Object.entries(params)) {
+    if (typeof value === "string") qs.set(key, value);
+  }
+  const suffix = qs.toString();
+  permanentRedirect(suffix ? `/screen/ask?${suffix}` : "/screen/ask");
 }

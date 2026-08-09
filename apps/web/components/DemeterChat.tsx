@@ -12,6 +12,7 @@
 
 import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import { RECOMPOSE_MARKER } from "@civica/demeter-engine/packs";
+import { DemeterMark } from "./DemeterMark";
 
 interface PackMetaLite {
   code: string;
@@ -238,7 +239,9 @@ export function DemeterChat({
     <div className="demeter">
       <header className="demeter__head">
         <div className="demeter__brand">
-          <span className="demeter__avatar" aria-hidden>D</span>
+          <span className="demeter__avatar" aria-hidden>
+            <DemeterMark size={40} />
+          </span>
           <div>
             <h1 className="demeter__title">{t.title}</h1>
             <p className="demeter__tagline">{t.tagline}</p>

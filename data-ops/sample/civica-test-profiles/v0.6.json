@@ -351,6 +351,16 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": null
+        },
+        "WA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 759
+        },
+        "GA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 759
         }
       }
     },
@@ -456,6 +466,16 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": null
+        },
+        "WA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "GA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
         }
       }
     },
@@ -594,6 +614,16 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": null
+        },
+        "WA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 804
+        },
+        "GA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 804
         }
       }
     },
@@ -678,6 +708,16 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": null
+        },
+        "WA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "GA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
         }
       }
     },
@@ -789,6 +829,16 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": null
+        },
+        "WA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 530
+        },
+        "GA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 497
         }
       }
     },
@@ -898,6 +948,16 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": null
+        },
+        "WA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 546
+        },
+        "GA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 546
         }
       }
     },
@@ -994,6 +1054,16 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": null
+        },
+        "WA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 292
+        },
+        "GA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 277
         }
       }
     },
@@ -1118,6 +1188,16 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": null
+        },
+        "WA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
+        },
+        "GA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
         }
       }
     },
@@ -1227,6 +1307,16 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": null
+        },
+        "WA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 472
+        },
+        "GA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 472
         }
       }
     },
@@ -1351,6 +1441,16 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": null
+        },
+        "WA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 783
+        },
+        "GA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 783
         }
       }
     },
@@ -1441,6 +1541,16 @@
           "benefit": null
         },
         "AK": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "WA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 24
+        },
+        "GA": {
           "verdict": "DENY",
           "eligible": false,
           "benefit": null
@@ -1537,6 +1647,17 @@
           "verdict": "DENY",
           "eligible": false,
           "benefit": null
+        },
+        "WA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "GA": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null,
+          "reason": "countable resources over the federal limit — GA does not waive the asset test [7 CFR 273.8]"
         }
       }
     },
@@ -1683,6 +1804,16 @@
           "verdict": "DENY",
           "eligible": false,
           "benefit": null
+        },
+        "WA": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "GA": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
         }
       }
     },
@@ -1791,6 +1922,16 @@
           "verdict": "DENY",
           "eligible": false,
           "benefit": null
+        },
+        "WA": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "GA": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
         }
       }
     },
@@ -1875,6 +2016,16 @@
           "verdict": "DENY",
           "eligible": false,
           "benefit": null
+        },
+        "WA": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "GA": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
         }
       }
     },
@@ -1956,6 +2107,16 @@
           "benefit": null
         },
         "AK": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "WA": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "GA": {
           "verdict": "DENY",
           "eligible": false,
           "benefit": null
@@ -2050,6 +2211,16 @@
           "benefit": null
         },
         "AK": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "WA": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "GA": {
           "verdict": "DENY",
           "eligible": false,
           "benefit": null
@@ -2179,6 +2350,16 @@
           "verdict": "DENY",
           "eligible": false,
           "benefit": null
+        },
+        "WA": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "GA": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
         }
       }
     },
@@ -2270,6 +2451,16 @@
           "benefit": null
         },
         "AK": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "WA": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "GA": {
           "verdict": "DENY",
           "eligible": false,
           "benefit": null
@@ -2366,6 +2557,16 @@
           "benefit": null
         },
         "AK": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "WA": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "GA": {
           "verdict": "DENY",
           "eligible": false,
           "benefit": null
@@ -2492,6 +2693,16 @@
           "verdict": "DENY",
           "eligible": false,
           "benefit": null
+        },
+        "WA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 74
+        },
+        "GA": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
         }
       }
     },
@@ -2600,6 +2811,17 @@
           "verdict": "DENY",
           "eligible": false,
           "benefit": null
+        },
+        "WA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 496
+        },
+        "GA": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null,
+          "reason": "countable resources over the federal limit — GA does not waive the asset test [7 CFR 273.8]"
         }
       }
     },
@@ -2722,6 +2944,16 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": null
+        },
+        "WA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 176
+        },
+        "GA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 176
         }
       }
     },
@@ -2840,6 +3072,16 @@
           "verdict": "DENY",
           "eligible": false,
           "benefit": null
+        },
+        "WA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 256
+        },
+        "GA": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
         }
       }
     },
@@ -2936,6 +3178,16 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": null
+        },
+        "WA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "GA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 274
         }
       }
     },
@@ -3056,6 +3308,16 @@
           "benefit": null
         },
         "AK": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "WA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 327
+        },
+        "GA": {
           "verdict": "DENY",
           "eligible": false,
           "benefit": null
@@ -3191,6 +3453,16 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": null
+        },
+        "WA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 392
+        },
+        "GA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 359
         }
       }
     },
@@ -3308,6 +3580,16 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": null
+        },
+        "WA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 424
+        },
+        "GA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 420
         }
       }
     },
@@ -3441,6 +3723,16 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": null
+        },
+        "WA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 687
+        },
+        "GA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 687
         }
       }
     },
@@ -3567,6 +3859,16 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": null
+        },
+        "WA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
+        },
+        "GA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
         }
       }
     },
@@ -3674,6 +3976,16 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": null
+        },
+        "WA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 177
+        },
+        "GA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 177
         }
       }
     },
@@ -3758,6 +4070,17 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": null
+        },
+        "WA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "GA": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null,
+          "reason": "no GA geographic or state-level ABAWD waiver [7 CFR 273.24]"
         }
       }
     },
@@ -3855,6 +4178,16 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": null
+        },
+        "WA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "GA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
         }
       }
     },
@@ -3920,7 +4253,10 @@
               "as_of_date": "2025-06-01",
               "household.0.work_class": "abawd_exempt:veteran_homeless"
             },
-            "verdict": "APPROVE"
+            "verdict": "APPROVE",
+            "verdict_by_state": {
+              "GA": "APPROVE"
+            }
           },
           "post_2025-11-01": {
             "facts_patch": {
@@ -3928,7 +4264,10 @@
               "household.0.work_class": "abawd_subject",
               "household.0.abawd_months_used": 3
             },
-            "verdict": "DENY"
+            "verdict": "DENY",
+            "verdict_by_state": {
+              "GA": "DENY"
+            }
           }
         }
       }
@@ -4013,6 +4352,16 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": null
+        },
+        "WA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "GA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
         }
       }
     },
@@ -4078,14 +4427,20 @@
               "household.0.weekly_work_hours": 19,
               "household.0.student": "he_halftime_subject"
             },
-            "verdict": "DENY"
+            "verdict": "DENY",
+            "verdict_by_state": {
+              "GA": "DENY"
+            }
           },
           "work_21hr": {
             "facts_patch": {
               "household.0.weekly_work_hours": 21,
               "household.0.student": "he_exempt:work20"
             },
-            "verdict": "APPROVE"
+            "verdict": "APPROVE",
+            "verdict_by_state": {
+              "GA": "APPROVE"
+            }
           }
         }
       }
@@ -4167,14 +4522,20 @@
               "household.1.age": 11,
               "household.0.student": "he_exempt:single_parent_child_under12"
             },
-            "verdict": "APPROVE"
+            "verdict": "APPROVE",
+            "verdict_by_state": {
+              "GA": "APPROVE"
+            }
           },
           "child_12": {
             "facts_patch": {
               "household.1.age": 12,
               "household.0.student": "he_halftime_subject"
             },
-            "verdict": "DENY"
+            "verdict": "DENY",
+            "verdict_by_state": {
+              "GA": "DENY"
+            }
           }
         }
       }
@@ -4306,6 +4667,16 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": null
+        },
+        "WA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 352
+        },
+        "GA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 342
         }
       }
     },
@@ -4397,6 +4768,16 @@
           "benefit": null
         },
         "AK": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "WA": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "GA": {
           "verdict": "DENY",
           "eligible": false,
           "benefit": null
@@ -4509,6 +4890,16 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": null
+        },
+        "WA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 520
+        },
+        "GA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 520
         }
       }
     },
@@ -4586,13 +4977,19 @@
             "facts_patch": {
               "coresident_income_pct": 160
             },
-            "verdict": "APPROVE"
+            "verdict": "APPROVE",
+            "verdict_by_state": {
+              "GA": "APPROVE"
+            }
           },
           "coresident_gt_165pct": {
             "facts_patch": {
               "coresident_income_pct": 170
             },
-            "verdict": "DENY"
+            "verdict": "DENY",
+            "verdict_by_state": {
+              "GA": "DENY"
+            }
           }
         }
       }
@@ -4659,14 +5056,20 @@
               "household.0.role": "roomer",
               "shares_meals": false
             },
-            "verdict": "APPROVE"
+            "verdict": "APPROVE",
+            "verdict_by_state": {
+              "GA": "APPROVE"
+            }
           },
           "boarder": {
             "facts_patch": {
               "household.0.role": "boarder",
               "shares_meals": true
             },
-            "verdict": "DENY"
+            "verdict": "DENY",
+            "verdict_by_state": {
+              "GA": "DENY"
+            }
           }
         }
       }
@@ -4734,13 +5137,16 @@
               "income.0.amount": 1800
             },
             "verdict": "APPROVE",
-            "note": "$1,800 gross HH1: clears 200% ($2,610) and TX's 165% ($2,153); denied only under the federal 130% screen ($1,697).",
+            "note": "$1,800 gross HH1: clears 200% ($2,610) and both TX's and IL's 165% ($2,153); denied under the federal 130% screen ($1,696-97) — KS/AK/OH/GA (GA's regular-household screen stays federal 130% under TCOS categorical eligibility, same archetype as OH).",
             "verdict_by_state": {
               "CA": "APPROVE",
               "MA": "APPROVE",
               "TX": "APPROVE",
               "KS": "DENY",
-              "AK": "DENY"
+              "AK": "DENY",
+              "IL": "APPROVE",
+              "OH": "DENY",
+              "GA": "DENY"
             }
           },
           "recent_high_month": {
@@ -4749,13 +5155,16 @@
               "income.0.amount": 2200
             },
             "verdict": "APPROVE",
-            "note": "$2,200 gross HH1: clears only the 200% screen ($2,610). BBCE is not a boolean — TX at 165% denies (#609).",
+            "note": "$2,200 gross HH1: clears only the 200% screen ($2,610). BBCE is not a boolean — TX and IL (both 165%, $2,153) deny; OH and GA (both federal 130%, $1,696-97) deny too (#609).",
             "verdict_by_state": {
               "CA": "APPROVE",
               "MA": "APPROVE",
               "TX": "DENY",
               "KS": "DENY",
-              "AK": "DENY"
+              "AK": "DENY",
+              "IL": "DENY",
+              "OH": "DENY",
+              "GA": "DENY"
             }
           }
         }
@@ -4871,6 +5280,16 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": null
+        },
+        "WA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
+        },
+        "GA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
         }
       }
     },
@@ -4953,6 +5372,16 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": null
+        },
+        "WA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "GA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
         }
       }
     },
@@ -5061,6 +5490,16 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": null
+        },
+        "WA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 546
+        },
+        "GA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 546
         }
       }
     },
@@ -5157,7 +5596,10 @@
               "shelter.internet": 60
             },
             "verdict": "APPROVE",
-            "note": "internet counts"
+            "note": "internet counts",
+            "verdict_by_state": {
+              "GA": "APPROVE"
+            }
           },
           "post_2025-11-01": {
             "facts_patch": {
@@ -5165,7 +5607,10 @@
               "shelter.internet": 0
             },
             "verdict": "APPROVE",
-            "note": "10104 removed"
+            "note": "10104 removed",
+            "verdict_by_state": {
+              "GA": "APPROVE"
+            }
           }
         }
       }
@@ -5254,7 +5699,10 @@
               "shelter.sua_tier": "HCSUA"
             },
             "verdict": "APPROVE",
-            "note": "heat-and-eat"
+            "note": "heat-and-eat",
+            "verdict_by_state": {
+              "GA": "APPROVE"
+            }
           },
           "post_2025-11-01": {
             "facts_patch": {
@@ -5262,7 +5710,10 @@
               "shelter.sua_tier": "LUA"
             },
             "verdict": "APPROVE",
-            "note": "10103 restricted to E/D"
+            "note": "10103 restricted to E/D",
+            "verdict_by_state": {
+              "GA": "APPROVE"
+            }
           }
         }
       }
@@ -5375,6 +5826,16 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": null
+        },
+        "WA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 544
+        },
+        "GA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 544
         }
       }
     },
@@ -5464,14 +5925,20 @@
             "facts_patch": {
               "deductions.child_support_paid": 250
             },
-            "verdict": "APPROVE"
+            "verdict": "APPROVE",
+            "verdict_by_state": {
+              "GA": "APPROVE"
+            }
           },
           "without": {
             "facts_patch": {
               "deductions.child_support_paid": 0
             },
             "verdict": "APPROVE",
-            "note": "RE-AUTHOR: original 'DENY' expectation unreachable at gross income $0; max allotment forced per 7 CFR 273.10(e)(2)(ii)(A). For a true child-support-deduction verdict-flip, base income must be set near the BBCE gross threshold and tested in a non-BBCE state. Tracking: #443"
+            "note": "RE-AUTHOR: original 'DENY' expectation unreachable at gross income $0; max allotment forced per 7 CFR 273.10(e)(2)(ii)(A). For a true child-support-deduction verdict-flip, base income must be set near the BBCE gross threshold and tested in a non-BBCE state. Tracking: #443",
+            "verdict_by_state": {
+              "GA": "APPROVE"
+            }
           }
         }
       }
@@ -5554,7 +6021,10 @@
               "household.0.role": "child",
               "must_combine_with_parent": true
             },
-            "verdict": "DENY"
+            "verdict": "DENY",
+            "verdict_by_state": {
+              "GA": "DENY"
+            }
           },
           "age22_separate": {
             "facts_patch": {
@@ -5562,7 +6032,10 @@
               "household.0.role": "head",
               "must_combine_with_parent": false
             },
-            "verdict": "APPROVE"
+            "verdict": "APPROVE",
+            "verdict_by_state": {
+              "GA": "APPROVE"
+            }
           }
         }
       }
@@ -5631,14 +6104,20 @@
               ],
               "active_warrant": true
             },
-            "verdict": "DENY"
+            "verdict": "DENY",
+            "verdict_by_state": {
+              "GA": "DENY"
+            }
           },
           "no_active_warrant": {
             "facts_patch": {
               "household.0.disqual": [],
               "active_warrant": false
             },
-            "verdict": "APPROVE"
+            "verdict": "APPROVE",
+            "verdict_by_state": {
+              "GA": "APPROVE"
+            }
           }
         }
       }
@@ -5717,14 +6196,20 @@
             "facts_patch": {
               "deductions.medical_unreimbursed": 200
             },
-            "verdict": "APPROVE"
+            "verdict": "APPROVE",
+            "verdict_by_state": {
+              "GA": "APPROVE"
+            }
           },
           "medical_30": {
             "facts_patch": {
               "deductions.medical_unreimbursed": 30
             },
             "verdict": "APPROVE",
-            "note": "under $35 floor per 7 CFR 273.9(d)(3) — engine zeros the deduction correctly; RE-AUTHOR: 'DENY' was unreachable because E/D household at $1250 RSDI lands net at $98 (CA) / $0 (MA), far under the $1305 net-test threshold even with no medical deduction. For a real medical-floor verdict-flip, RSDI must be tuned to ~$2070 so the household is marginally over 100% FPL net without the deduction. Tracking: #445"
+            "note": "under $35 floor per 7 CFR 273.9(d)(3) — engine zeros the deduction correctly; RE-AUTHOR: 'DENY' was unreachable because E/D household at $1250 RSDI lands net at $98 (CA) / $0 (MA), far under the $1305 net-test threshold even with no medical deduction. For a real medical-floor verdict-flip, RSDI must be tuned to ~$2070 so the household is marginally over 100% FPL net without the deduction. Tracking: #445",
+            "verdict_by_state": {
+              "GA": "APPROVE"
+            }
           }
         }
       }
@@ -5801,14 +6286,20 @@
               "income.0.type": "gift_cash"
             },
             "verdict": "APPROVE",
-            "note": "countable unearned per 7 CFR 273.9(b)(2) — engine correctly counts the cash gift; RE-AUTHOR: 'DENY' was unreachable because $400 unearned for HH1 is far below CA BBCE gross threshold ($2610) and any net threshold. For a real countable-vs-excluded verdict-flip, gift amount must be ~$3000+ to cross the CA gross test. Tracking: #446"
+            "note": "countable unearned per 7 CFR 273.9(b)(2) — engine correctly counts the cash gift; RE-AUTHOR: 'DENY' was unreachable because $400 unearned for HH1 is far below CA BBCE gross threshold ($2610) and any net threshold. For a real countable-vs-excluded verdict-flip, gift amount must be ~$3000+ to cross the CA gross test. Tracking: #446",
+            "verdict_by_state": {
+              "GA": "APPROVE"
+            }
           },
           "vendor_to_landlord": {
             "facts_patch": {
               "income.0.type": "gift_vendor_payment"
             },
             "verdict": "APPROVE",
-            "note": "excluded vendor"
+            "note": "excluded vendor",
+            "verdict_by_state": {
+              "GA": "APPROVE"
+            }
           }
         }
       }
@@ -5890,14 +6381,20 @@
               "household.0.student": "he_halftime_subject",
               "household.1.student": "he_halftime_subject"
             },
-            "verdict": "DENY"
+            "verdict": "DENY",
+            "verdict_by_state": {
+              "GA": "DENY"
+            }
           },
           "one_works_20hr": {
             "facts_patch": {
               "household.0.student": "he_exempt:work20",
               "household.1.student": "he_halftime_subject"
             },
-            "verdict": "APPROVE"
+            "verdict": "APPROVE",
+            "verdict_by_state": {
+              "GA": "APPROVE"
+            }
           }
         }
       }
@@ -5994,14 +6491,20 @@
               "income.0.amount": 850,
               "income.0.source_status": "new"
             },
-            "verdict": "APPROVE"
+            "verdict": "APPROVE",
+            "verdict_by_state": {
+              "GA": "APPROVE"
+            }
           },
           "ongoing_anticipated": {
             "facts_patch": {
               "income.0.amount": 4500,
               "income.0.source_status": "ongoing"
             },
-            "verdict": "DENY"
+            "verdict": "DENY",
+            "verdict_by_state": {
+              "GA": "DENY"
+            }
           }
         }
       }
@@ -6095,6 +6598,16 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": null
+        },
+        "WA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 203
+        },
+        "GA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 203
         }
       }
     },
@@ -6181,14 +6694,20 @@
             "facts_patch": {
               "income.1.amount": 400
             },
-            "verdict": "APPROVE"
+            "verdict": "APPROVE",
+            "verdict_by_state": {
+              "GA": "APPROVE"
+            }
           },
           "above_net_limit": {
             "facts_patch": {
               "income.1.amount": 1500
             },
             "verdict": "DENY",
-            "note": "Wages tuned from 1200 to 1500 (2026-06-03) so that both CA HCSUA $663 and MA HCSUA $914 keep net > $1305 (100% FPL HH1) per 7 CFR 273.9(a)(2). At wages 1200, MA's higher SUA legitimately produced APPROVE — that's policy-correct, not engine drift, but the variant block has no per-state override. Tracking: #447"
+            "note": "Wages tuned from 1200 to 1500 (2026-06-03) so that both CA HCSUA $663 and MA HCSUA $914 keep net > $1305 (100% FPL HH1) per 7 CFR 273.9(a)(2). At wages 1200, MA's higher SUA legitimately produced APPROVE — that's policy-correct, not engine drift, but the variant block has no per-state override. Tracking: #447",
+            "verdict_by_state": {
+              "GA": "DENY"
+            }
           }
         }
       }
@@ -6280,6 +6799,16 @@
           "benefit": null
         },
         "AK": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "WA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 24
+        },
+        "GA": {
           "verdict": "DENY",
           "eligible": false,
           "benefit": null
@@ -6466,6 +6995,16 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": null
+        },
+        "WA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 1284
+        },
+        "GA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 1284
         }
       }
     },
@@ -6579,6 +7118,16 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": null
+        },
+        "WA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
+        },
+        "GA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
         }
       }
     },
@@ -6677,6 +7226,16 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": null
+        },
+        "WA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 546
+        },
+        "GA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 546
         }
       }
     },
@@ -6799,6 +7358,16 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": null
+        },
+        "WA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
+        },
+        "GA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
         }
       }
     },
@@ -6921,6 +7490,16 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": null
+        },
+        "WA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
+        },
+        "GA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
         }
       }
     },
@@ -7043,6 +7622,16 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": null
+        },
+        "WA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 639
+        },
+        "GA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 639
         }
       }
     },
@@ -7165,6 +7754,16 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": null
+        },
+        "WA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 459
+        },
+        "GA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 459
         }
       }
     },
@@ -7287,6 +7886,16 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": null
+        },
+        "WA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 279
+        },
+        "GA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 279
         }
       }
     },
@@ -7411,6 +8020,16 @@
           "eligible": false,
           "benefit": null,
           "reason": "gross_income_over_130pct_fpl [7 CFR 273.9(a)(1)]: $2,888 vs $2,887 (130% of floor(annual FPL/12) for HH3, CDSS ACIN I-46-25 basis)"
+        },
+        "WA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 155
+        },
+        "GA": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
         }
       }
     },
@@ -7503,6 +8122,16 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": null
+        },
+        "WA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "GA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
         }
       }
     },
@@ -7595,6 +8224,16 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": null
+        },
+        "WA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 212
+        },
+        "GA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 212
         }
       }
     },
@@ -7687,6 +8326,16 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": null
+        },
+        "WA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 104
+        },
+        "GA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 104
         }
       }
     },
@@ -7779,6 +8428,16 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": null
+        },
+        "WA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 32
+        },
+        "GA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 32
         }
       }
     },
@@ -7871,6 +8530,16 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": null
+        },
+        "WA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 24
+        },
+        "GA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 24
         }
       }
     },
@@ -7993,6 +8662,16 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": null
+        },
+        "WA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 459
+        },
+        "GA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 459
         }
       }
     },
@@ -8115,6 +8794,16 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": null
+        },
+        "WA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 591
+        },
+        "GA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 591
         }
       }
     },
@@ -8240,6 +8929,16 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": null
+        },
+        "WA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 459
+        },
+        "GA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 459
         }
       }
     },
@@ -8350,6 +9049,16 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": null
+        },
+        "WA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 546
+        },
+        "GA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 546
         }
       }
     },
@@ -8538,6 +9247,16 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": null
+        },
+        "WA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 1789
+        },
+        "GA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 1789
         }
       }
     },
@@ -8642,6 +9361,16 @@
           "benefit": null
         },
         "AK": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "WA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 112
+        },
+        "GA": {
           "verdict": "DENY",
           "eligible": false,
           "benefit": null
@@ -8768,6 +9497,16 @@
           "verdict": "DENY",
           "eligible": false,
           "benefit": null
+        },
+        "WA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 0
+        },
+        "GA": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
         }
       }
     },
@@ -8890,6 +9629,16 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": null
+        },
+        "WA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 416
+        },
+        "GA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 416
         }
       }
     },
@@ -9012,6 +9761,16 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": null
+        },
+        "WA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 471
+        },
+        "GA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 471
         }
       }
     },
@@ -9134,6 +9893,16 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": null
+        },
+        "WA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 591
+        },
+        "GA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 591
         }
       }
     },
@@ -9256,6 +10025,16 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": null
+        },
+        "WA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 639
+        },
+        "GA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 639
         }
       }
     },
@@ -9378,6 +10157,16 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": null
+        },
+        "WA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 639
+        },
+        "GA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 639
         }
       }
     },
@@ -9500,6 +10289,16 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": null
+        },
+        "WA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 639
+        },
+        "GA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 639
         }
       }
     },
@@ -9625,6 +10424,16 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": null
+        },
+        "WA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 308
+        },
+        "GA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 308
         }
       }
     },
@@ -9750,6 +10559,16 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": null
+        },
+        "WA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 429
+        },
+        "GA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 429
         }
       }
     },
@@ -9875,6 +10694,16 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": null
+        },
+        "WA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 477
+        },
+        "GA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 477
         }
       }
     },
@@ -10000,6 +10829,16 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": null
+        },
+        "WA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 669
+        },
+        "GA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 669
         }
       }
     },
@@ -10125,6 +10964,16 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": null
+        },
+        "WA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
+        },
+        "GA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
         }
       }
     },
@@ -10250,6 +11099,16 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": null
+        },
+        "WA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
+        },
+        "GA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
         }
       }
     },
@@ -10341,20 +11200,29 @@
               "income.0.type": "americorps_sn_excluded"
             },
             "verdict": "APPROVE",
-            "note": "excluded NCSA 12637(d)"
+            "note": "excluded NCSA 12637(d)",
+            "verdict_by_state": {
+              "GA": "APPROVE"
+            }
           },
           "vista_prior_snap": {
             "facts_patch": {
               "income.0.type": "americorps_vista_excluded"
             },
-            "verdict": "APPROVE"
+            "verdict": "APPROVE",
+            "verdict_by_state": {
+              "GA": "APPROVE"
+            }
           },
           "vista_no_prior": {
             "facts_patch": {
               "income.0.type": "americorps_vista_counted"
             },
             "verdict": "APPROVE",
-            "note": "engine correctly counts the stipend per 7 CFR 273.9(c) exhaustive-exclusions clause + DVSA §404(g) prior-SNAP condition; RE-AUTHOR: 'DENY' was unreachable because $1500/mo for HH-2 is below both CA BBCE gross threshold ($3526) and 100% FPL net threshold ($1763). For a real count-vs-exclude verdict-flip, stipend must be ~$3800+. Tracking: #449"
+            "note": "engine correctly counts the stipend per 7 CFR 273.9(c) exhaustive-exclusions clause + DVSA §404(g) prior-SNAP condition; RE-AUTHOR: 'DENY' was unreachable because $1500/mo for HH-2 is below both CA BBCE gross threshold ($3526) and 100% FPL net threshold ($1763). For a real count-vs-exclude verdict-flip, stipend must be ~$3800+. Tracking: #449",
+            "verdict_by_state": {
+              "GA": "APPROVE"
+            }
           }
         }
       }
@@ -10518,6 +11386,16 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": null
+        },
+        "WA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 633
+        },
+        "GA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 600
         }
       }
     },
@@ -10681,6 +11559,16 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": null
+        },
+        "WA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 956
+        },
+        "GA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 956
         }
       }
     },
@@ -10799,6 +11687,16 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": null
+        },
+        "WA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 546
+        },
+        "GA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 546
         }
       }
     },
@@ -10888,6 +11786,16 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": null
+        },
+        "WA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "GA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
         }
       }
     },
@@ -10990,6 +11898,16 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": null
+        },
+        "WA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 203
+        },
+        "GA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 203
         }
       }
     },
@@ -11092,6 +12010,16 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": null
+        },
+        "WA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "GA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
         }
       }
     },
@@ -11168,13 +12096,19 @@
             "facts_patch": {
               "household.0.student": "he_exempt:work20"
             },
-            "verdict": "APPROVE"
+            "verdict": "APPROVE",
+            "verdict_by_state": {
+              "GA": "APPROVE"
+            }
           },
           "lt_20hr": {
             "facts_patch": {
               "household.0.student": "he_halftime_subject"
             },
-            "verdict": "DENY"
+            "verdict": "DENY",
+            "verdict_by_state": {
+              "GA": "DENY"
+            }
           }
         }
       }
@@ -11270,6 +12204,16 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": null
+        },
+        "WA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "GA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
         }
       }
     },
@@ -11351,6 +12295,16 @@
           "benefit": null
         },
         "AK": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "WA": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "GA": {
           "verdict": "DENY",
           "eligible": false,
           "benefit": null
@@ -11448,6 +12402,16 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": null
+        },
+        "WA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "GA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
         }
       }
     },
@@ -11542,6 +12506,16 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": null
+        },
+        "WA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "GA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
         }
       }
     },
@@ -11623,6 +12597,16 @@
           "benefit": null
         },
         "AK": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "WA": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "GA": {
           "verdict": "DENY",
           "eligible": false,
           "benefit": null
@@ -11740,6 +12724,16 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": null
+        },
+        "WA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
+        },
+        "GA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
         }
       }
     },
@@ -11849,6 +12843,16 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": null
+        },
+        "WA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 544
+        },
+        "GA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 544
         }
       }
     },
@@ -11959,6 +12963,16 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": null
+        },
+        "WA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 546
+        },
+        "GA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 546
         }
       }
     },
@@ -12053,6 +13067,16 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": null
+        },
+        "WA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "GA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
         }
       }
     },
@@ -12147,6 +13171,16 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": null
+        },
+        "WA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "GA": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
         }
       }
     }

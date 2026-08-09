@@ -46,8 +46,8 @@
   --civica-radius-pill: 999px;
 
   /* Type scale (rendered as rem, tuned for desktop reading) */
-  --civica-font-body: "Hanken Grotesk", -apple-system, BlinkMacSystemFont,
-    "Segoe UI", Helvetica, Arial, sans-serif;
+  --civica-font-body: var(--civica-font-loaded), -apple-system,
+    BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
 
   /* Layout */
   --civica-max-content: 720px;
@@ -4674,68 +4674,77 @@ html {
   }
 }
 
-/* ===== Demeter public chat (mobile-first — F8 acceptance criteria) ===== */
-.demeter-page { min-height: 100dvh; background: var(--civica-paper); display: flex; }
+/* ===== Demeter public chat (mobile-first — F8 acceptance criteria) =====
+   Reskinned onto --demeter-* (was still on the pre-rebrand --civica-*
+   pine-green palette — Slice 6's "visual pass against the design spec"
+   rebrand only ever touched .screening, .screen-landing, .screen-auth;
+   this block predates the --demeter-* tokens entirely and was missed).
+   Token choices mirror the equivalent .screening__* rules 1:1 so this
+   reads as the same surface once it's embedded at /screen/ask. */
+.demeter-page { min-height: 100dvh; background: var(--demeter-parchment); display: flex; }
 .demeter {
   display: flex; flex-direction: column; width: 100%; max-width: 720px;
   margin: 0 auto; min-height: 100dvh; padding: 0.75rem 0.75rem calc(0.75rem + env(safe-area-inset-bottom));
+  color: var(--demeter-ink); font-family: var(--demeter-font-display), system-ui, -apple-system, "Segoe UI", sans-serif;
 }
 .demeter__head { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; padding: 0.25rem 0.25rem 0.5rem; }
 .demeter__brand { display: flex; align-items: center; gap: 0.6rem; min-width: 0; }
 .demeter__avatar {
   display: grid; place-items: center; width: 2.4rem; height: 2.4rem; border-radius: 50%;
-  background: var(--civica-pine); color: #fff; font-weight: 700; font-size: 1.05rem; flex: none;
+  overflow: hidden; flex: none;
 }
-.demeter__title { font-size: 1.15rem; font-weight: 700; color: var(--civica-ink); line-height: 1.15; }
-.demeter__tagline { font-size: 0.8rem; color: var(--civica-graphite); }
+.demeter__title { font-size: 1.15rem; font-weight: 700; color: var(--demeter-ink); line-height: 1.15; }
+.demeter__tagline { font-size: 0.8rem; color: var(--demeter-mono); }
 .demeter__lang {
-  border: 1px solid var(--civica-pine); color: var(--civica-pine); background: transparent;
+  border: 1px solid var(--demeter-terracotta); color: var(--demeter-terracotta); background: transparent;
   border-radius: 999px; padding: 0.45rem 0.9rem; font-size: 0.85rem; font-weight: 600; min-height: 44px;
 }
 .demeter__states { display: flex; gap: 0.4rem; overflow-x: auto; padding: 0.25rem; -webkit-overflow-scrolling: touch; scrollbar-width: none; align-items: center; }
 .demeter__states::-webkit-scrollbar { display: none; }
 .demeter__state {
   flex: none; display: inline-flex; align-items: center; gap: 0.3rem; min-height: 44px;
-  border: 1px solid #D8D3C8; background: #fff; color: var(--civica-ink);
+  border: 1px solid var(--demeter-border-clay); background: var(--demeter-card); color: var(--demeter-ink);
   border-radius: 999px; padding: 0.4rem 0.85rem; font-size: 0.85rem; font-weight: 600;
 }
-.demeter__state.is-active { background: var(--civica-pine); border-color: var(--civica-pine); color: #fff; }
-.demeter__badge { color: var(--civica-pine); font-weight: 700; }
-.demeter__state.is-active .demeter__badge { color: var(--civica-wheat); }
-.demeter__how { flex: none; font-size: 0.8rem; color: var(--civica-pine); text-decoration: underline; padding: 0.4rem; min-height: 44px; display: inline-flex; align-items: center; }
+.demeter__state.is-active { background: var(--demeter-terracotta); border-color: var(--demeter-terracotta); color: #fff; }
+.demeter__badge { color: var(--demeter-terracotta); font-weight: 700; }
+/* Active badge sits on a terracotta pill — parchment for contrast, never
+   --demeter-wheat (mark-only, per the spec's own rule). */
+.demeter__state.is-active .demeter__badge { color: var(--demeter-parchment); }
+.demeter__how { flex: none; font-size: 0.8rem; color: var(--demeter-link); text-decoration: underline; padding: 0.4rem; min-height: 44px; display: inline-flex; align-items: center; }
 .demeter__scroll { flex: 1; overflow-y: auto; padding: 0.5rem 0.25rem; display: flex; flex-direction: column; gap: 0.6rem; }
 .demeter__empty { display: flex; flex-direction: column; gap: 0.5rem; margin: auto 0; padding: 1rem 0; }
 .demeter__suggest {
-  text-align: left; border: 1px solid #D8D3C8; background: #fff; color: var(--civica-ink);
+  text-align: left; border: 1px solid var(--demeter-border-clay); background: var(--demeter-card); color: var(--demeter-ink);
   border-radius: 0.9rem; padding: 0.8rem 1rem; font-size: 0.95rem; min-height: 44px;
 }
-.demeter__suggest:active { background: var(--civica-pine-surface); }
+.demeter__suggest:active { border-color: var(--demeter-terracotta); background: #FBF1EC; }
 .demeter__msg { max-width: 88%; border-radius: 1rem; padding: 0.7rem 0.95rem; font-size: 0.97rem; line-height: 1.5; white-space: pre-wrap; overflow-wrap: anywhere; }
-.demeter__msg--user { align-self: flex-end; background: var(--civica-pine); color: #fff; border-bottom-right-radius: 0.3rem; }
-.demeter__msg--assistant { align-self: flex-start; background: #fff; color: var(--civica-ink); border: 1px solid #E4DFD5; border-bottom-left-radius: 0.3rem; }
-.demeter__rule { border: 0; border-top: 1px solid #E4DFD5; margin: 0.6rem 0 0.4rem; }
-.demeter__thinking { color: var(--civica-muted); font-style: italic; }
+.demeter__msg--user { align-self: flex-end; background: var(--demeter-terracotta); color: #fff; border-bottom-right-radius: 0.3rem; }
+.demeter__msg--assistant { align-self: flex-start; background: var(--demeter-card); color: var(--demeter-ink); border: 1px solid var(--demeter-border-card); border-bottom-left-radius: 0.3rem; }
+.demeter__rule { border: 0; border-top: 1px solid var(--demeter-border-card); margin: 0.6rem 0 0.4rem; }
+.demeter__thinking { color: var(--demeter-mono); font-style: italic; }
 .demeter__divider {
-  align-self: center; text-align: center; font-size: 0.78rem; color: var(--civica-graphite);
-  background: var(--civica-pine-surface); border-radius: 999px; padding: 0.35rem 0.9rem; margin: 0.25rem 0;
+  align-self: center; text-align: center; font-size: 0.78rem; color: var(--demeter-mono);
+  background: #FBF1EC; border-radius: 999px; padding: 0.35rem 0.9rem; margin: 0.25rem 0;
 }
 .demeter__error {
-  align-self: stretch; background: #FBEFE9; border: 1px solid #E4B8A5; color: #7C3A1D;
+  align-self: stretch; background: #FBEAE5; border: 1px solid #E9C2B4; color: var(--demeter-terracotta-deep);
   border-radius: 0.75rem; padding: 0.7rem 0.9rem; font-size: 0.9rem;
 }
 .demeter__inputrow { display: flex; gap: 0.5rem; align-items: flex-end; padding-top: 0.5rem; }
 .demeter__input {
-  flex: 1; resize: none; border: 1px solid #D8D3C8; border-radius: 1rem; background: #fff;
-  padding: 0.75rem 1rem; font: inherit; font-size: 1rem; color: var(--civica-ink); min-height: 48px; max-height: 8rem;
+  flex: 1; resize: none; border: 1px solid var(--demeter-border-clay); border-radius: 1rem; background: var(--demeter-card);
+  padding: 0.75rem 1rem; font: inherit; font-size: 1rem; color: var(--demeter-ink); min-height: 48px; max-height: 8rem;
 }
-.demeter__input:focus { outline: 2px solid var(--civica-pine); outline-offset: 1px; }
+.demeter__input:focus { outline: 2px solid var(--demeter-terracotta); outline-offset: 1px; }
 .demeter__send {
   flex: none; min-height: 48px; min-width: 44px; border: none; border-radius: 999px;
-  background: var(--civica-pine); color: #fff; font-weight: 700; font-size: 0.95rem; padding: 0 1.2rem;
+  background: var(--demeter-terracotta); color: #fff; font-weight: 700; font-size: 0.95rem; padding: 0 1.2rem;
 }
-.demeter__send:disabled { background: var(--civica-pine-disabled); }
-.demeter__send--stop { background: #8A5A44; }
-.demeter__disclaimer { font-size: 0.72rem; color: var(--civica-muted); text-align: center; padding: 0.5rem 1rem 0; }
+.demeter__send:disabled { opacity: 0.5; }
+.demeter__send--stop { background: var(--demeter-terracotta-deep); }
+.demeter__disclaimer { font-size: 0.72rem; color: var(--demeter-mono); text-align: center; padding: 0.5rem 1rem 0; }
 @media (min-width: 720px) {
   .demeter { padding: 1.25rem; }
   .demeter__msg { max-width: 75%; }
@@ -4795,3 +4804,201 @@ html {
 .vstat__unit { font-size: 0.97rem; color: var(--civica-ink); }
 .vstat__pending { font-size: 1.15rem; font-weight: 600; color: #6E5F55; }
 .vstat__note { margin: 0.7rem 0 0; font-size: 0.9rem; line-height: 1.55; color: #5E4F45; }
+
+/* ── Demeter identity tokens (Demeter AI Design Spec) ────────────────────
+   Scoped to .screening* — NOT the shared --civica-* tokens, which the older
+   green Civica surfaces (/welcome, /apply) still use. Values are the spec's
+   own hex codes, not approximations. */
+:root {
+  --demeter-terracotta: #C0553B;
+  --demeter-terracotta-deep: #8E3A26;
+  --demeter-wheat: #EFB544; /* mark only — never a UI fill, per the spec's own rule */
+  --demeter-ink: #2A211C;
+  --demeter-ink-deep: #231B17;
+  --demeter-body: #5E4F45;
+  --demeter-secondary: #6E5F55;
+  --demeter-mono: #8A7666;
+  --demeter-placeholder: #A0907F;
+  --demeter-link: #B24A30; /* plain inline text links only — CTA buttons stay --demeter-terracotta */
+  --demeter-clay-light: #E8B79A;
+  --demeter-parchment: #FCF8F1;
+  --demeter-card: #FFFFFF;
+  --demeter-border: #E5D9C9;
+  --demeter-border-card: #EFE4D6;
+  --demeter-border-clay: #E4CDB8;
+}
+
+/* --demeter-font-display / --demeter-font-mono are defined by next/font
+   (layout.tsx's Space_Grotesk/JetBrains_Mono .variable classes on <html>)
+   — NOT redeclared here. Each use site appends its own system-font
+   fallback after the var(), same pattern as --civica-font-loaded. */
+
+.screening {
+  display: flex; flex-direction: column; height: 100dvh; background: var(--demeter-parchment);
+  color: var(--demeter-ink); font-family: var(--demeter-font-display), system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+.screening__head {
+  display: flex; align-items: center; justify-content: space-between; gap: 0.75rem;
+  padding: 0.9rem 1.1rem; border-bottom: 1px solid var(--demeter-border); background: var(--demeter-card);
+}
+.screening__brand { display: flex; align-items: center; gap: 0.6rem; min-width: 0; }
+.screening__case-chip {
+  font-family: var(--demeter-font-mono), ui-monospace, monospace; font-size: 0.72rem; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--demeter-mono); background: #F7EDE4; border: 1px solid var(--demeter-border-clay);
+  padding: 0.25rem 0.6rem; border-radius: 0.4rem; white-space: nowrap;
+}
+.screening__title { font-size: 1.02rem; font-weight: 650; line-height: 1.1; }
+.screening__sub { font-size: 0.78rem; color: var(--demeter-mono); }
+
+.screening__body { flex: 1; display: grid; grid-template-columns: 1fr 320px; min-height: 0; }
+@media (max-width: 860px) { .screening__body { grid-template-columns: 1fr; } }
+
+.screening__chat { display: flex; flex-direction: column; min-height: 0; border-right: 1px solid var(--demeter-border); }
+.screening__scroll { flex: 1; overflow-y: auto; padding: 1.1rem; display: flex; flex-direction: column; gap: 0.7rem; }
+
+.screening__msg { max-width: 88%; border-radius: 1rem; padding: 0.7rem 0.95rem; font-size: 0.95rem; line-height: 1.55; white-space: pre-wrap; overflow-wrap: anywhere; }
+.screening__msg--user { align-self: flex-end; background: var(--demeter-terracotta); color: #fff; border-bottom-right-radius: 0.3rem; }
+.screening__msg--system { align-self: flex-start; background: var(--demeter-card); border: 1px solid var(--demeter-border-card); border-bottom-left-radius: 0.3rem; }
+.screening__msg--outcome { font-weight: 600; }
+
+.screening__empty { display: flex; flex-direction: column; gap: 0.7rem; padding: 1.4rem 1.1rem; }
+.screening__empty-lede { font-size: 1.05rem; font-weight: 600; }
+.screening__starter {
+  text-align: left; background: var(--demeter-card); border: 1px solid var(--demeter-border-card); border-radius: 0.85rem;
+  padding: 0.85rem 1rem; font-size: 0.92rem; color: var(--demeter-body); cursor: pointer;
+}
+.screening__starter:hover { border-color: var(--demeter-terracotta); }
+
+.screening__inputrow { display: flex; gap: 0.6rem; padding: 0.8rem 1rem; border-top: 1px solid var(--demeter-border); background: var(--demeter-card); }
+.screening__input {
+  flex: 1; min-height: 2.6rem; max-height: 8rem; resize: none; border: 1px solid var(--demeter-border-clay);
+  border-radius: 0.85rem; padding: 0.6rem 0.85rem; font-size: 0.95rem; font-family: inherit; background: var(--demeter-parchment);
+}
+.screening__input:focus { outline: 2px solid var(--demeter-terracotta); outline-offset: 1px; }
+.screening__send {
+  background: var(--demeter-terracotta); color: #fff; border: none; border-radius: 999px; padding: 0 1.3rem;
+  font-size: 0.92rem; font-weight: 600; cursor: pointer; min-width: 44px;
+}
+.screening__send:disabled { opacity: 0.5; cursor: default; }
+.screening__disclaimer { padding: 0 1rem 0.7rem; font-size: 0.72rem; color: var(--demeter-mono); text-align: center; }
+.screening__error { align-self: flex-start; background: #FBEAE5; border: 1px solid #E9C2B4; color: var(--demeter-terracotta-deep); padding: 0.6rem 0.85rem; border-radius: 0.7rem; font-size: 0.88rem; }
+
+/* Worksheet (right panel) */
+.worksheet { overflow-y: auto; padding: 1.1rem; display: flex; flex-direction: column; gap: 1rem; background: var(--demeter-parchment); }
+.worksheet__head { display: flex; flex-direction: column; gap: 0.2rem; }
+.worksheet__eyebrow { font-family: var(--demeter-font-mono), ui-monospace, monospace; font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--demeter-mono); }
+.worksheet__case { font-size: 0.92rem; font-weight: 650; }
+.worksheet__case--guest { color: var(--demeter-mono); font-weight: 500; }
+.worksheet__policy { font-size: 0.8rem; color: var(--demeter-mono); margin: -0.5rem 0 0; }
+
+.worksheet__result { border-radius: 0.9rem; padding: 0.85rem 1rem; border: 1px solid var(--demeter-border-card); background: var(--demeter-card); }
+.worksheet__result--certain { border-color: #BFDACB; background: #F1F8F4; }
+.worksheet__result--deny { border-color: var(--demeter-border-clay); background: #FBF1EC; }
+.worksheet__result--warn { border-color: #EAD9AE; background: #FBF4E4; }
+.worksheet__result--pending { background: var(--demeter-card); }
+.worksheet__result-label { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--demeter-mono); margin: 0; }
+.worksheet__result-value { font-size: 1.05rem; font-weight: 700; margin: 0.15rem 0; }
+.worksheet__result-summary { font-size: 0.85rem; color: var(--demeter-body); margin: 0; }
+.worksheet__result-benefit { font-size: 0.88rem; margin: 0.5rem 0 0; }
+
+.worksheet__section-title { display: flex; align-items: center; justify-content: space-between; font-size: 0.78rem; font-weight: 650; text-transform: uppercase; letter-spacing: 0.04em; color: var(--demeter-secondary); margin: 0 0 0.5rem; }
+.worksheet__needed-count { font-weight: 500; color: var(--demeter-mono); text-transform: none; letter-spacing: 0; }
+.worksheet__calc-list { display: flex; flex-direction: column; gap: 0.3rem; margin: 0; }
+.worksheet__calc-row { display: flex; justify-content: space-between; font-size: 0.85rem; }
+.worksheet__calc-row dt { color: var(--demeter-body); font-weight: 400; }
+.worksheet__calc-row dd { margin: 0; font-weight: 600; }
+.worksheet__needed ul { margin: 0; padding-left: 1.1rem; font-size: 0.85rem; color: var(--demeter-body); display: flex; flex-direction: column; gap: 0.3rem; }
+.worksheet__empty { font-size: 0.85rem; color: var(--demeter-mono); }
+.worksheet__guest-note { font-size: 0.8rem; color: var(--demeter-terracotta-deep); background: #FBF1EC; border: 1px solid var(--demeter-border-clay); border-radius: 0.6rem; padding: 0.55rem 0.7rem; }
+.worksheet__export {
+  display: block; text-align: center; text-decoration: none; border: 1px solid var(--demeter-border-clay);
+  background: var(--demeter-card); color: var(--demeter-placeholder); border-radius: 999px;
+  padding: 0.55rem 1rem; font-size: 0.85rem; font-weight: 600; cursor: not-allowed;
+}
+a.worksheet__export { color: #fff; background: var(--demeter-terracotta); border-color: var(--demeter-terracotta); cursor: pointer; }
+a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
+.worksheet__disclaimer { font-size: 0.72rem; color: var(--demeter-mono); }
+
+.worksheet__paywall {
+  border: 1px solid var(--demeter-border-clay); background: #FBF1EC; border-radius: 0.9rem;
+  padding: 0.9rem 1rem; display: flex; flex-direction: column; gap: 0.6rem;
+}
+.worksheet__paywall-text { font-size: 0.85rem; color: var(--demeter-terracotta-deep); margin: 0; line-height: 1.5; }
+.worksheet__paywall-cta {
+  align-self: flex-start; background: var(--demeter-terracotta); color: #fff; text-decoration: none;
+  border-radius: 999px; padding: 0.5rem 1.1rem; font-size: 0.85rem; font-weight: 650;
+}
+.worksheet__paywall-cta:hover { background: var(--demeter-terracotta-deep); }
+
+.screening__error-cta { margin-left: 0.6rem; color: var(--demeter-link); font-weight: 650; text-decoration: none; white-space: nowrap; }
+.screening__error-cta:hover { color: var(--demeter-terracotta-deep); text-decoration: underline; }
+
+/* ── Landing (frame 01) + sign-in (frame 02) — the two entry points
+   before a screening session starts. Shared header treatment with
+   .screening's own brand mark; content column is centered and narrow,
+   distinct from the two-column session layout. */
+.screen-landing, .screen-auth {
+  min-height: 100dvh; display: flex; flex-direction: column; background: var(--demeter-parchment);
+  color: var(--demeter-ink); font-family: var(--demeter-font-display), system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+.screen-landing__head {
+  display: flex; align-items: center; padding: 0.9rem 1.1rem; border-bottom: 1px solid var(--demeter-border);
+  background: var(--demeter-card);
+}
+.screen-landing__brand { display: flex; align-items: center; gap: 0.6rem; }
+.screen-landing__brand-name { font-size: 1.02rem; font-weight: 650; }
+
+.screen-landing__main {
+  flex: 1; display: flex; align-items: center; justify-content: center; padding: 2rem 1.25rem;
+}
+.screen-landing__card { max-width: 34rem; text-align: center; }
+/* Design spec's "Section heading" scale: 38/1.12/600/-0.03em. */
+.screen-landing__title { font-size: 2.375rem; font-weight: 600; line-height: 1.12; letter-spacing: -0.03em; margin: 0 0 0.85rem; }
+/* Spec's "Lead paragraph" scale: 19/1.62/400, set narrow (44ch). */
+.screen-landing__subtitle { font-size: 1.1875rem; line-height: 1.62; color: var(--demeter-body); margin: 0 auto 1.75rem; max-width: 44ch; }
+.screen-landing__actions { display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap; }
+.screen-landing__cta {
+  display: inline-flex; align-items: center; justify-content: center; border-radius: 999px;
+  padding: 0.94rem 1.875rem; font-size: 1rem; font-weight: 500; text-decoration: none; cursor: pointer;
+}
+.screen-landing__cta--primary { background: var(--demeter-terracotta); color: #fff; }
+.screen-landing__cta--primary:hover { background: var(--demeter-terracotta-deep); }
+.screen-landing__cta--secondary { background: var(--demeter-card); color: var(--demeter-ink); border: 1px solid var(--demeter-border-clay); }
+.screen-landing__cta--secondary:hover { border-color: var(--demeter-terracotta); color: var(--demeter-terracotta-deep); }
+.screen-landing__guest-note { margin: 1.25rem 0 0; font-size: 0.8rem; color: var(--demeter-mono); }
+.screen-landing__ask-note { margin: 0.6rem 0 0; font-size: 0.8rem; color: var(--demeter-mono); }
+.screen-landing__ask-note a { color: var(--demeter-link); text-decoration: none; }
+.screen-landing__ask-note a:hover { color: var(--demeter-terracotta-deep); text-decoration: underline; }
+
+.screen-auth__main { flex: 1; display: flex; align-items: center; justify-content: center; padding: 2rem 1.25rem; }
+.screen-auth__card {
+  width: 100%; max-width: 24rem; background: var(--demeter-card); border: 1px solid #E7DACA;
+  border-radius: 1.25rem; padding: 1.75rem 1.6rem; box-shadow: 0 30px 60px -34px rgba(72, 32, 18, 0.4);
+}
+/* Design spec's "Card heading" scale: 21/1.25/600/-0.02em. */
+.screen-auth__title { font-size: 1.3125rem; font-weight: 600; line-height: 1.25; letter-spacing: -0.02em; margin: 0 0 0.3rem; }
+.screen-auth__subtitle { font-size: 0.88rem; color: var(--demeter-mono); margin: 0 0 1.4rem; }
+.screen-auth__form { display: flex; flex-direction: column; gap: 0.4rem; }
+.screen-auth__label { font-size: 0.78rem; font-weight: 600; color: var(--demeter-secondary); margin-top: 0.6rem; }
+.screen-auth__input {
+  border: 1px solid var(--demeter-border-clay); border-radius: 0.6rem; padding: 0.6rem 0.8rem; font-size: 0.95rem;
+  font-family: inherit; background: var(--demeter-parchment); color: var(--demeter-ink);
+}
+.screen-auth__input:focus { outline: 2px solid var(--demeter-terracotta); outline-offset: 1px; }
+.screen-auth__error {
+  font-size: 0.85rem; color: var(--demeter-terracotta-deep); background: #FBEAE5; border: 1px solid #E9C2B4;
+  border-radius: 0.6rem; padding: 0.55rem 0.75rem; margin-top: 0.7rem;
+}
+.screen-auth__submit {
+  margin-top: 1rem; background: var(--demeter-terracotta); color: #fff; border: none; border-radius: 0.7rem;
+  padding: 0.7rem; font-size: 0.95rem; font-weight: 650; cursor: pointer;
+}
+.screen-auth__submit:disabled { opacity: 0.6; cursor: default; }
+.screen-auth__sso {
+  width: 100%; margin-top: 0.75rem; background: var(--demeter-card); color: var(--demeter-placeholder);
+  border: 1px solid var(--demeter-border-clay); border-radius: 0.7rem; padding: 0.68rem; font-size: 0.88rem;
+  font-weight: 600; cursor: not-allowed;
+}
+.screen-auth__links { display: flex; justify-content: space-between; margin-top: 1.1rem; font-size: 0.82rem; }
+.screen-auth__links a { color: var(--demeter-link); text-decoration: none; }
+.screen-auth__links a:hover { color: var(--demeter-terracotta-deep); text-decoration: underline; }

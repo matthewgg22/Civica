@@ -41,34 +41,53 @@ describe("Tranche 1 income screens (FNS BBCE chart, June 2026)", () => {
   });
 });
 
+describe("Tranche 1 SUA — FL/IL/OH sourced, PA a logged verification gap (#619)", () => {
+  it.each([
+    ["FL", 426, 340, 49],
+    ["IL", 546, 457, 67],
+    ["OH", 766, 479, 46],
+  ])("%s's authored SUA computes a real shelter deduction (HCSUA $%i)", (code, hcsua, lua, phone) => {
+    const p = statePolicyFor(code);
+    expect(p.sua_by_tier).not.toBeNull();
+    expect(p.sua_by_tier!.HCSUA.toNumber()).toBe(hcsua);
+    expect(p.sua_by_tier!.LUA.toNumber()).toBe(lua);
+    expect(p.sua_by_tier!.phone.toNumber()).toBe(phone);
+
+    const facts = {
+      household: [{ member_id: "m1", role: "head", age: 40, work_class: "gen_work_subject" }],
+      income: [{ member: "m1", type: "wages", amount: 1000, anticipation: "averaged" }],
+      shelter: { rent: 900, sua_tier: "HCSUA", sua_amount: 0, internet: 0, homeless_deduction: false },
+      deductions: { dependent_care: 0, medical_unreimbursed: 0, child_support_paid: 0 },
+      assets: 0,
+      cat_elig: "NPA",
+    } as unknown as Facts;
+    const r = computeBenefit(facts, code, ASOF);
+    expect(r.trace.state_sua_value).toBe(hcsua);
+  });
+
+  it("PA has NO authored SUA — a logged verification gap, not an oversight", () => {
+    expect(
+      statePolicyFor("PA").sua_by_tier,
+      "PA SUA stays null until a working primary source is reached (#619) — see the states.ts comment for what was tried",
+    ).toBeNull();
+  });
+
+  it("PA fails LOUDLY on a shelter deduction rather than inventing one", () => {
+    const facts = {
+      household: [{ member_id: "m1", role: "head", age: 40, work_class: "gen_work_subject" }],
+      income: [],
+      shelter: { rent: 900, sua_tier: "HCSUA" },
+      deductions: {},
+      assets: 0,
+      cat_elig: "none",
+    } as unknown as Facts;
+    // The #436 invariant: an unauthored SUA must throw, never silently
+    // substitute zero or another state's value.
+    expect(() => computeBenefit(facts, "PA", ASOF)).toThrow(/SUA not authored/);
+  });
+});
+
 describe("Tranche 1 unsourced axes stay honest", () => {
-  it.each(["FL", "IL", "PA", "OH"])(
-    "%s has NO authored SUA — utility standards were not sourced",
-    (code) => {
-      expect(
-        statePolicyFor(code).sua_by_tier,
-        `${code} SUA must stay null until its published utility table is sourced (#619)`,
-      ).toBeNull();
-    },
-  );
-
-  it.each(["FL", "IL", "PA", "OH"])(
-    "%s fails LOUDLY on a shelter deduction rather than inventing one",
-    (code) => {
-      const facts = {
-        household: [{ member_id: "m1", role: "head", age: 40, work_class: "gen_work_subject" }],
-        income: [],
-        shelter: { rent: 900, sua_tier: "HCSUA" },
-        deductions: {},
-        assets: 0,
-        cat_elig: "none",
-      } as unknown as Facts;
-      // The #436 invariant: an unauthored SUA must throw, never silently
-      // substitute zero or another state's value.
-      expect(() => computeBenefit(facts, code, ASOF)).toThrow(/SUA not authored/);
-    },
-  );
-
   it("fail-open flags err toward eligibility, never toward denial", () => {
     // These are defaults pending sourcing, not findings. Both directions
     // matter: a wrong `false` on the waiver flag would strip an ABAWD

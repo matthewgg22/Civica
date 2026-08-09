@@ -36,23 +36,25 @@ describe("computeBenefit — SUA-not-authored regression (#436)", () => {
     expect(r.excess_shelter_deduction).toBeGreaterThanOrEqual(0);
   });
 
-  it("KS household with sua_tier='none' computes without throw", () => {
+  it("PA household with sua_tier='none' computes without throw", () => {
     const facts = baseFacts("none");
-    expect(() => computeBenefit(facts, "KS", ASOF)).not.toThrow();
-    const r = computeBenefit(facts, "KS", ASOF);
+    expect(() => computeBenefit(facts, "PA", ASOF)).not.toThrow();
+    const r = computeBenefit(facts, "PA", ASOF);
     expect(r.trace.state_sua_value).toBe(0);
   });
 
-  it("KS household with sua_tier='HCSUA' still throws (engine invariant)", () => {
+  it("PA household with sua_tier='HCSUA' still throws (engine invariant)", () => {
     // Composer must SKIP before reaching computeBenefit for this case; if
     // any caller reaches here directly with non-"none" tier on an
     // unauthored state, the throw is the correct fail-loud signal.
     //
-    // This case used TX until TX's FY26 standards were authored (#607).
-    // The invariant is unchanged — it just needs a state that still has
-    // sua_by_tier: null to exercise it. KS and AK remain unauthored.
+    // This case has moved exemplars three times as states got authored:
+    // TX (until #607), then KS (until #607's follow-through), then FL
+    // (until #619 sourced FL/IL/OH — 2026-08-09). PA remains a genuine,
+    // logged verification gap (see its comment in states.ts) and is the
+    // current exemplar.
     const facts = baseFacts("HCSUA");
-    expect(() => computeBenefit(facts, "KS", ASOF)).toThrow(/SUA not authored for state KS/);
+    expect(() => computeBenefit(facts, "PA", ASOF)).toThrow(/SUA not authored for state PA/);
   });
 
   it("TX with sua_tier='HCSUA' now COMPUTES — its standards are authored (#607)", () => {
@@ -60,6 +62,20 @@ describe("computeBenefit — SUA-not-authored regression (#436)", () => {
     expect(() => computeBenefit(facts, "TX", ASOF)).not.toThrow();
     const r = computeBenefit(facts, "TX", ASOF);
     expect(r.trace.state_sua_value).toBe(445); // TWH A-1429 heating/cooling SUA
+  });
+
+  it("KS with sua_tier='HCSUA' now COMPUTES — KEESM §7226 is authored (#607)", () => {
+    const facts = baseFacts("HCSUA");
+    expect(() => computeBenefit(facts, "KS", ASOF)).not.toThrow();
+    const r = computeBenefit(facts, "KS", ASOF);
+    expect(r.trace.state_sua_value).toBe(469); // KEESM §7226 heating/cooling standard
+  });
+
+  it("AK with sua_tier='HCSUA' now COMPUTES — Central region is authored (#607)", () => {
+    const facts = baseFacts("HCSUA");
+    expect(() => computeBenefit(facts, "AK", ASOF)).not.toThrow();
+    const r = computeBenefit(facts, "AK", ASOF);
+    expect(r.trace.state_sua_value).toBe(625); // FSP 77, Central utility region heating standard
   });
 
   it("composeVerdict on TX + sua_tier='none' returns APPROVE (no throw, no SKIP)", () => {
@@ -70,10 +86,10 @@ describe("computeBenefit — SUA-not-authored regression (#436)", () => {
     expect(typeof result.benefit).toBe("number");
   });
 
-  it("composeVerdict on KS + sua_tier='HCSUA' still SKIPs cleanly", () => {
-    // Same re-pointing as above: KS is now the unauthored exemplar.
+  it("composeVerdict on PA + sua_tier='HCSUA' still SKIPs cleanly", () => {
+    // Same re-pointing as above: PA is now the unauthored exemplar.
     const facts = baseFacts("HCSUA");
-    const result = composeVerdict(facts, "KS", ASOF);
+    const result = composeVerdict(facts, "PA", ASOF);
     expect(result.not_implemented_surfaces).toContain("shelter.sua.HCSUA");
   });
 
@@ -81,5 +97,63 @@ describe("computeBenefit — SUA-not-authored regression (#436)", () => {
     const facts = baseFacts("HCSUA");
     const result = composeVerdict(facts, "TX", ASOF);
     expect(result.not_implemented_surfaces).toBeUndefined();
+  });
+
+  it("composeVerdict on KS + sua_tier='HCSUA' no longer SKIPs", () => {
+    const facts = baseFacts("HCSUA");
+    const result = composeVerdict(facts, "KS", ASOF);
+    expect(result.not_implemented_surfaces).toBeUndefined();
+  });
+
+  it("composeVerdict on AK + sua_tier='HCSUA' no longer SKIPs", () => {
+    const facts = baseFacts("HCSUA");
+    const result = composeVerdict(facts, "AK", ASOF);
+    expect(result.not_implemented_surfaces).toBeUndefined();
+  });
+});
+
+describe("computeBenefit — AK real per-region SUA (#631)", () => {
+  function akFacts(countyFips?: string): Facts {
+    const facts = baseFacts("HCSUA");
+    return countyFips ? { ...facts, county_fips: countyFips } : facts;
+  }
+
+  it("no county_fips — falls back to the Central region (states.ts's AK.sua_by_tier), exactly as before #631", () => {
+    const r = computeBenefit(akFacts(), "AK", ASOF);
+    expect(r.trace.state_sua_value).toBe(625);
+  });
+
+  it("county_fips in Nome (Northwest, 02180) uses the REAL Northwest rate, not Central", () => {
+    const r = computeBenefit(akFacts("02180"), "AK", ASOF);
+    expect(r.trace.state_sua_value).toBe(1107);
+    expect(r.trace.state_sua_value).not.toBe(625); // the bug #631 exists to fix
+  });
+
+  it("county_fips in Anchorage (Central, 02020) matches the fallback value — same region either way", () => {
+    const r = computeBenefit(akFacts("02020"), "AK", ASOF);
+    expect(r.trace.state_sua_value).toBe(625);
+  });
+
+  it("an unrecognized county_fips falls back to Central rather than throwing or zeroing", () => {
+    const r = computeBenefit(akFacts("00000"), "AK", ASOF);
+    expect(r.trace.state_sua_value).toBe(625);
+  });
+
+  it("county_fips for a NON-Alaska state is ignored — this precision is AK-only", () => {
+    // 02180 (Nome, AK) has no meaning as a TX county; TX must use its own
+    // authored SUA, not accidentally pick up AK's regional table.
+    const facts = { ...baseFacts("HCSUA"), county_fips: "02180" };
+    const r = computeBenefit(facts, "TX", ASOF);
+    expect(r.trace.state_sua_value).toBe(445); // TX's own authored HCSUA
+  });
+
+  it("LUA and phone tiers also pick up the real region, not just HCSUA", () => {
+    const heat = computeBenefit(akFacts("02180"), "AK", ASOF); // uses the HCSUA tier from akFacts
+    // Build LUA/phone-tier variants directly to check the other two tiers.
+    const luaFacts = { ...baseFacts("LUA"), county_fips: "02180" };
+    const phoneFacts = { ...baseFacts("phone"), county_fips: "02180" };
+    expect(computeBenefit(luaFacts, "AK", ASOF).trace.state_sua_value).toBe(158 + 48 + 63); // Northwest LUA
+    expect(computeBenefit(phoneFacts, "AK", ASOF).trace.state_sua_value).toBe(37); // Northwest phone
+    expect(heat.trace.state_sua_value).toBe(1107); // sanity: HCSUA tier still Northwest's heat figure
   });
 });
