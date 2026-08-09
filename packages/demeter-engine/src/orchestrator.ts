@@ -28,6 +28,8 @@ import {
 import { redactPii } from "./pii";
 import { retrieve, formatRetrievedSources, CORPUS_EFFECTIVE_DATE } from "./retrieval";
 import { formatFreshnessFooter } from "./freshness";
+import { assessCertainty, formatCertaintyBanner } from "./certainty";
+import { isVerifiedState } from "./packs";
 import { consoleAuditSink, type MaeAuditRecord, type MaeAuditSink } from "./audit";
 import { retrievalMode } from "./embeddings";
 import { detectDistress, DISTRESS_SYSTEM_ADDENDUM } from "./distress";
@@ -324,9 +326,17 @@ export async function* answerQuestion(req: AnswerRequest): AsyncGenerator<Answer
 
   // --- Trailer: citation verdicts + freshness -------------------------------
   // Surface, never silently strip — honesty over a tidy-looking answer.
-  const trailer = formatCitationTrailer(finalChecks, lang);
+  // The verdict leads: CERTAIN/UNCERTAIN + why + what to check. The detailed
+  // citation breakdown follows for anyone who wants it.
+  const verdict = assessCertainty(
+    { checks: finalChecks, outcome, state, stateVerified: isVerifiedState(state ?? null) },
+    lang,
+  );
+  const banner = formatCertaintyBanner(verdict, lang);
+  // Both open with a horizontal rule; only the first one should keep it.
+  const trailer = formatCitationTrailer(finalChecks, lang).replace(/^\n\n---\n/, "");
   const freshness = formatFreshnessFooter(new Date(), CORPUS_EFFECTIVE_DATE, state, lang);
-  const trailerText = [trailer, freshness].filter(Boolean).join("");
+  const trailerText = [banner, trailer ? `\n\n${trailer}` : "", freshness].filter(Boolean).join("");
   if (trailerText) yield { type: "trailer", text: trailerText };
 
   events?.onVerified?.(outcome, finalChecks);
@@ -347,6 +357,8 @@ export async function* answerQuestion(req: AnswerRequest): AsyncGenerator<Answer
     scopeState: state ?? null,
     scopeRef: meta?.scopeRef ?? null,
     verifierOutcome: outcome,
+    certainty: verdict.level,
+    certaintyCode: verdict.code,
     retrievalMode: retrievalMode(),
     distress: distressed,
   };
