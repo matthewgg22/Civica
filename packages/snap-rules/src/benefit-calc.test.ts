@@ -36,23 +36,24 @@ describe("computeBenefit — SUA-not-authored regression (#436)", () => {
     expect(r.excess_shelter_deduction).toBeGreaterThanOrEqual(0);
   });
 
-  it("KS household with sua_tier='none' computes without throw", () => {
+  it("FL household with sua_tier='none' computes without throw", () => {
     const facts = baseFacts("none");
-    expect(() => computeBenefit(facts, "KS", ASOF)).not.toThrow();
-    const r = computeBenefit(facts, "KS", ASOF);
+    expect(() => computeBenefit(facts, "FL", ASOF)).not.toThrow();
+    const r = computeBenefit(facts, "FL", ASOF);
     expect(r.trace.state_sua_value).toBe(0);
   });
 
-  it("KS household with sua_tier='HCSUA' still throws (engine invariant)", () => {
+  it("FL household with sua_tier='HCSUA' still throws (engine invariant)", () => {
     // Composer must SKIP before reaching computeBenefit for this case; if
     // any caller reaches here directly with non-"none" tier on an
     // unauthored state, the throw is the correct fail-loud signal.
     //
-    // This case used TX until TX's FY26 standards were authored (#607).
-    // The invariant is unchanged — it just needs a state that still has
-    // sua_by_tier: null to exercise it. KS and AK remain unauthored.
+    // This case has moved exemplars twice as states got authored: TX (until
+    // #607), then KS (until #607's follow-through — KS/AK sourced 2026-08-09).
+    // FL/IL/PA/OH remain unauthored (Tranche 1, #619) and are the current
+    // exemplars.
     const facts = baseFacts("HCSUA");
-    expect(() => computeBenefit(facts, "KS", ASOF)).toThrow(/SUA not authored for state KS/);
+    expect(() => computeBenefit(facts, "FL", ASOF)).toThrow(/SUA not authored for state FL/);
   });
 
   it("TX with sua_tier='HCSUA' now COMPUTES — its standards are authored (#607)", () => {
@@ -60,6 +61,20 @@ describe("computeBenefit — SUA-not-authored regression (#436)", () => {
     expect(() => computeBenefit(facts, "TX", ASOF)).not.toThrow();
     const r = computeBenefit(facts, "TX", ASOF);
     expect(r.trace.state_sua_value).toBe(445); // TWH A-1429 heating/cooling SUA
+  });
+
+  it("KS with sua_tier='HCSUA' now COMPUTES — KEESM §7226 is authored (#607)", () => {
+    const facts = baseFacts("HCSUA");
+    expect(() => computeBenefit(facts, "KS", ASOF)).not.toThrow();
+    const r = computeBenefit(facts, "KS", ASOF);
+    expect(r.trace.state_sua_value).toBe(469); // KEESM §7226 heating/cooling standard
+  });
+
+  it("AK with sua_tier='HCSUA' now COMPUTES — Central region is authored (#607)", () => {
+    const facts = baseFacts("HCSUA");
+    expect(() => computeBenefit(facts, "AK", ASOF)).not.toThrow();
+    const r = computeBenefit(facts, "AK", ASOF);
+    expect(r.trace.state_sua_value).toBe(625); // FSP 77, Central utility region heating standard
   });
 
   it("composeVerdict on TX + sua_tier='none' returns APPROVE (no throw, no SKIP)", () => {
@@ -70,16 +85,28 @@ describe("computeBenefit — SUA-not-authored regression (#436)", () => {
     expect(typeof result.benefit).toBe("number");
   });
 
-  it("composeVerdict on KS + sua_tier='HCSUA' still SKIPs cleanly", () => {
-    // Same re-pointing as above: KS is now the unauthored exemplar.
+  it("composeVerdict on FL + sua_tier='HCSUA' still SKIPs cleanly", () => {
+    // Same re-pointing as above: FL is now the unauthored exemplar.
     const facts = baseFacts("HCSUA");
-    const result = composeVerdict(facts, "KS", ASOF);
+    const result = composeVerdict(facts, "FL", ASOF);
     expect(result.not_implemented_surfaces).toContain("shelter.sua.HCSUA");
   });
 
   it("composeVerdict on TX + sua_tier='HCSUA' no longer SKIPs", () => {
     const facts = baseFacts("HCSUA");
     const result = composeVerdict(facts, "TX", ASOF);
+    expect(result.not_implemented_surfaces).toBeUndefined();
+  });
+
+  it("composeVerdict on KS + sua_tier='HCSUA' no longer SKIPs", () => {
+    const facts = baseFacts("HCSUA");
+    const result = composeVerdict(facts, "KS", ASOF);
+    expect(result.not_implemented_surfaces).toBeUndefined();
+  });
+
+  it("composeVerdict on AK + sua_tier='HCSUA' no longer SKIPs", () => {
+    const facts = baseFacts("HCSUA");
+    const result = composeVerdict(facts, "AK", ASOF);
     expect(result.not_implemented_surfaces).toBeUndefined();
   });
 });

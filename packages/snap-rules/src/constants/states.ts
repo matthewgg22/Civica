@@ -385,25 +385,77 @@ const STATES: Record<string, StatePolicy> = {
     abawd_waiver_avail: true,
     rmp_operated: false,
   },
+  // Kansas utility standards — KEESM §7226 (Shelter Costs), rev. 07-26,
+  // confirmed live 2026-08-09 at content.dcf.ks.gov/EES/KEESM/Current/keesm7226.htm.
+  // Unlike TX/WA (mandatory standards, no election), KEESM does not state
+  // households must use the standard over actual costs — treated as the
+  // ordinary SNAP default (household may elect either) absent a stated
+  // mandatory-standard clause.
   KS: {
     state_code: "KS",
     label: "Non-BBCE archetype (e.g. KS)",
     bbce: false,
     bbce_fpl_basis: null,
     asset_waiver: false,
-    sua_by_tier: null,
+    sua_by_tier: {
+      HCSUA: new Decimal("469"),
+      LUA: new Decimal("345"),
+      phone: new Decimal("44"),
+      none: new Decimal("0"),
+    },
     allotment_tier: "48",
     drug_felony_ban: false,
     abawd_waiver_avail: false,
     rmp_operated: false,
   },
+  // Alaska utility standards — a genuinely different SHAPE than every other
+  // state modeled here, not just different numbers.
+  //
+  // Source: Alaska Dept. of Health / Division of Public Assistance, form
+  // FSP 77 (06-4198) rev 09/25, "Alaska SNAP Standards — Income Limits and
+  // Standard Deductions", effective 10/1/2025. Fetched live 2026-08-09 at
+  // health.alaska.gov/media/wzalr0op/alaska-snap-standards.pdf.
+  //
+  // AK publishes SIX geographic utility regions (Central/Anchorage-MatSu,
+  // Northern/Fairbanks, Northwest/Nome-Kotzebue, South Central, Southeastern,
+  // Southwestern), each with its OWN heating standard, PLUS separately
+  // itemized non-heating standards (electricity / telephone / sewer / water)
+  // per region — not the single flat {HCSUA, LUA, phone} most states publish.
+  // StatePolicy.sua_by_tier has no room for that; a true fix needs a
+  // per-region lookup, which is a bigger shape change than this pass makes.
+  //
+  // Deliberate simplification, not an oversight: values below are the
+  // CENTRAL region (Anchorage/Wasilla/Palmer — Alaska's most populous area,
+  // used as the representative baseline the way a single archetype value
+  // has to be for every other non-regional state here too):
+  //   HCSUA = $625  (Central heating standard, published directly)
+  //   phone = $26   (Central telephone standard, published directly)
+  //   LUA   = $254  (Central electricity $134 + sewer $61 + water $59 —
+  //           MY OWN combination, not a figure AK publishes as one line;
+  //           telephone is excluded here since it has its own dedicated
+  //           tier in this model. If AK's actual LUA-equivalent
+  //           determination combines these differently, this needs
+  //           correcting against the Alaska Food Stamp Manual's
+  //           deduction-determination text, which this pass didn't reach.)
+  //
+  // Other five regions, for whoever builds the real per-region model:
+  //   Northern:      heat $825, electricity $170, phone $35, sewer $45, water $44
+  //   Northwest:     heat $1,107, electricity $158, phone $37, sewer $48, water $63
+  //   South Central: heat $591, electricity $109, phone $27, sewer $65, water $42
+  //   Southeastern:  heat $517, electricity $72, phone $36, sewer $81, water $49
+  //   Southwestern:  heat $1,064, electricity $169, phone $36, sewer $54, water $111
   AK: {
     state_code: "AK",
     label: "Alaska (non-BBCE, higher allotments)",
     bbce: false,
     bbce_fpl_basis: null,
     asset_waiver: false,
-    sua_by_tier: null,
+    sua_by_tier: {
+      HCSUA: new Decimal("625"),
+      LUA: new Decimal("254"),
+      phone: new Decimal("26"),
+      none: new Decimal("0"),
+    },
     allotment_tier: "AK",
     drug_felony_ban: false,
     abawd_waiver_avail: true,
