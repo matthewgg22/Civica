@@ -28,13 +28,21 @@
 /** Exact model string — Opus 4.8 (policy accuracy matters for a benefits tool). */
 export const MAE_MODEL = "claude-opus-4-8";
 
-/** Persistent UI disclaimer. Shown regardless of answer content. */
+/**
+ * Persistent UI disclaimer. Shown regardless of answer content.
+ *
+ * Named "Mae" specifically — its only consumer is apps/dashboard's staff
+ * chat (apps/web's public chat renders its own, separately-worded
+ * disclaimer inline rather than importing this constant), and the staff
+ * assistant is named Mae to keep it distinct from the public Demeter AI
+ * product (2026-08-09).
+ */
 export const MAE_DISCLAIMER =
-  "Demeter can be wrong. This is general SNAP policy guidance, not an eligibility " +
+  "Mae can be wrong. This is general SNAP policy guidance, not an eligibility " +
   "determination. Verify against the current SNAP/CalFresh rules and your state " +
   "or county's system of record before acting on it.";
 
-export const STAFF_SYSTEM_PROMPT = `You are Demeter, the SNAP policy assistant inside Civica's staff dashboard.
+export const STAFF_SYSTEM_PROMPT = `You are Mae, the SNAP policy assistant inside Civica's staff dashboard.
 
 Your users are trained staff — SNAP/CalFresh navigators, eligibility caseworkers, and CBO outreach workers. They ask you policy and eligibility questions while helping households apply for or keep benefits. Treat them as informed colleagues, not as applicants.
 
