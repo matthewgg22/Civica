@@ -1,37 +1,36 @@
 import { describe, it, expect } from "vitest";
 import { STAFF_SYSTEM_PROMPT, PUBLIC_SYSTEM_PROMPT, MAE_MODEL, MAE_DISCLAIMER } from "../system-prompt";
 
-// These guardrails are the contract of both Demeter personas. If someone edits
-// a prompt and drops one, this test fails — the behavior the user asked for
-// (cite regs, refuse non-SNAP + PII, disclaim) must survive edits.
+// These guardrails are the contract of both personas — Mae (staff) and
+// Demeter (public), two distinct names since 2026-08-09 so the internal
+// staff assistant doesn't share a name with the public product. If someone
+// edits a prompt and drops one, this test fails — the behavior the user
+// asked for (cite regs, refuse non-SNAP + PII, disclaim) must survive edits.
 
 describe("shared model/disclaimer", () => {
   it("uses Opus 4.8", () => {
     expect(MAE_MODEL).toBe("claude-opus-4-8");
   });
 
-  it("ships a non-empty UI disclaimer that identifies as Demeter, not Mae", () => {
+  it("ships a non-empty UI disclaimer that identifies as Mae, not Demeter", () => {
+    // MAE_DISCLAIMER's only consumer is apps/dashboard's staff chat — apps/web's
+    // public chat renders its own, separately-worded disclaimer inline.
     expect(MAE_DISCLAIMER.length).toBeGreaterThan(40);
     expect(MAE_DISCLAIMER.toLowerCase()).toContain("verify");
-    expect(MAE_DISCLAIMER).toContain("Demeter");
-    expect(MAE_DISCLAIMER).not.toMatch(/\bMae\b/);
+    expect(MAE_DISCLAIMER).toContain("Mae");
+    expect(MAE_DISCLAIMER).not.toMatch(/\bDemeter\b/);
   });
 });
 
 // Both prompts, exercised identically, so a fact that's missing from ONE of
 // them fails loudly instead of only being caught on whichever surface someone
-// happens to test by hand.
+// happens to test by hand. Identity (which name each persona uses) is
+// deliberately NOT checked here — see the two persona-specific describe
+// blocks below, since staff and public now use different names.
 describe.each([
   ["staff", STAFF_SYSTEM_PROMPT],
   ["public", PUBLIC_SYSTEM_PROMPT],
 ])("%s system prompt", (_name, PROMPT) => {
-  it("identifies as Demeter, never Mae", () => {
-    expect(PROMPT).toContain("Demeter");
-    // Guards against a stray "Mae" surviving a find/replace pass. "Maeve" etc.
-    // would also trip this, but neither prompt uses those words.
-    expect(PROMPT).not.toMatch(/\bMae\b/);
-  });
-
   it("instructs citing 7 CFR 273", () => {
     expect(PROMPT).toContain("7 CFR 273");
   });
@@ -78,6 +77,12 @@ describe.each([
 });
 
 describe("staff system prompt — persona-specific", () => {
+  it("identifies as Mae, never Demeter (2026-08-09: distinct from the public product)", () => {
+    expect(STAFF_SYSTEM_PROMPT).toContain("Mae");
+    // Guards against a stray "Demeter" surviving a find/replace pass.
+    expect(STAFF_SYSTEM_PROMPT).not.toMatch(/\bDemeter\b/);
+  });
+
   it("is anchored to the real over-verification authorities, not the wrong ACL", () => {
     // Anchored to the authorities CDSS ME reviewers actually cite for verification
     // limits (NOT ACL 21-58, which the ME corpus shows is a student-exemption cite).
@@ -103,6 +108,13 @@ describe("staff system prompt — persona-specific", () => {
 });
 
 describe("public system prompt — persona-specific", () => {
+  it("identifies as Demeter, never Mae", () => {
+    expect(PUBLIC_SYSTEM_PROMPT).toContain("Demeter");
+    // Guards against a stray "Mae" surviving a find/replace pass. "Maeve" etc.
+    // would also trip this, but the prompt doesn't use those words.
+    expect(PUBLIC_SYSTEM_PROMPT).not.toMatch(/\bMae\b/);
+  });
+
   it("addresses the applicant directly, not staff", () => {
     const p = PUBLIC_SYSTEM_PROMPT.toLowerCase();
     expect(p).not.toContain("trained staff");

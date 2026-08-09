@@ -26,7 +26,7 @@ import { POST } from "../route";
 import { STREAM_RECOMPOSE_MARKER as RECOMPOSE_MARKER } from "@civica/demeter-engine";
 
 function makeReq(body: unknown): NextRequest {
-  return new NextRequest("http://localhost/api/demeter", {
+  return new NextRequest("http://localhost/api/mae", {
     method: "POST",
     body: JSON.stringify(body),
     headers: { "Content-Type": "application/json" },
@@ -43,7 +43,7 @@ async function* frames(list: Array<{ type: string; text?: string }>) {
   for (const f of list) yield f;
 }
 
-describe("POST /api/demeter (staff wrapper)", () => {
+describe("POST /api/mae (staff wrapper)", () => {
   beforeEach(() => {
     vi.stubEnv("ANTHROPIC_API_KEY", "sk-test");
     vi.stubEnv("NEXT_PUBLIC_MAE_PREVIEW", "");
