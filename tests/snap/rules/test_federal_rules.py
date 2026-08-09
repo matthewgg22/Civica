@@ -338,6 +338,99 @@ class TestNetIncomeAndBenefit:
 
 
 # ---------------------------------------------------------------------------
+# #556 regression: terminated income (is_ongoing=False) must not count
+# toward the gross income gate or the net-income/benefit deduction chain.
+# A household whose wages just ended should be evaluated on their CURRENT
+# ($0) income, not their now-stale former salary — same forward-looking
+# principle _is_expedited_eligible already applied for expedited service.
+# ---------------------------------------------------------------------------
+
+
+class TestTerminatedIncomeForwardLooking:
+    def test_terminated_wages_do_not_count_toward_gross_test(
+        self, federal_rules, make_household
+    ):
+        # $5,000 wages would blow well past any gross threshold if counted,
+        # but the source is terminated — forward-looking gross is $0.
+        hh = make_household(wages=5000, wages_ongoing=False)
+        result = federal_rules.determine_eligibility(hh)
+        assert result.status == EligibilityStatus.ELIGIBLE
+        assert (result.ineligibility_reason or "") == ""
+
+    def test_terminated_wages_yield_max_allotment_not_former_salary(
+        self, federal_rules, make_household
+    ):
+        # No ongoing income at all → net income $0 → benefit = max
+        # allotment(1) = $292, identical to a household that never had
+        # income (test_zero_income_one_person_gets_max_allotment above).
+        hh = make_household(wages=5000, wages_ongoing=False)
+        result = federal_rules.determine_eligibility(hh)
+        assert result.status == EligibilityStatus.ELIGIBLE
+        assert result.monthly_benefit == Decimal("292")
+        assert result.benefit_calculation.gross_monthly_income == Decimal("0")
+        assert result.benefit_calculation.earned_income_deduction == Decimal("0")
+
+    def test_terminated_unearned_income_also_excluded(self, federal_rules, make_household):
+        # Same forward-looking rule applies to unearned sources (e.g. a
+        # short-term disability payment that ended).
+        hh = make_household(unearned=2000, unearned_ongoing=False)
+        result = federal_rules.determine_eligibility(hh)
+        assert result.status == EligibilityStatus.ELIGIBLE
+        assert result.monthly_benefit == Decimal("292")
+
+    def test_ongoing_wages_still_count_normally(self, federal_rules, make_household):
+        # Baseline: is_ongoing=True (the default) is unaffected by #556 —
+        # same math as test_zero_income_one_person_gets_max_allotment's
+        # sibling cases elsewhere in this file.
+        hh = make_household(wages=1000)
+        result = federal_rules.determine_eligibility(hh)
+        assert result.benefit_calculation.gross_monthly_income == Decimal("1000")
+        assert result.benefit_calculation.earned_income_deduction == Decimal("200")
+
+    def test_mixed_ongoing_and_terminated_sources(self, federal_rules, make_household):
+        # $400 ongoing unearned + $3,000 terminated wages: only the $400
+        # should reach the gross/benefit math.
+        hh = make_household(wages=3000, wages_ongoing=False, unearned=400)
+        result = federal_rules.determine_eligibility(hh)
+        assert result.status == EligibilityStatus.ELIGIBLE
+        assert result.benefit_calculation.gross_monthly_income == Decimal("400")
+        assert result.benefit_calculation.earned_income_deduction == Decimal("0")
+
+    def test_terminated_earned_income_not_listed_as_contributing_factor(
+        self, federal_rules, make_household
+    ):
+        # #556 also fixed _contributing_factors to read benefit_calculation
+        # (the actual applied deduction) rather than the raw, unfiltered
+        # earned_monthly_total — otherwise this would still (incorrectly)
+        # list "earned_income_deduction_applied" despite a $0 deduction.
+        hh = make_household(wages=3000, wages_ongoing=False)
+        result = federal_rules.determine_eligibility(hh)
+        assert "earned_income_deduction_applied" not in result.contributing_factors
+
+    def test_terminated_wages_still_require_paystub_verification(
+        self, federal_rules, make_household
+    ):
+        # Deliberate non-change: required_verifications intentionally keeps
+        # using the raw (unfiltered) earned total — a terminated source
+        # still needs its most recent paystub verified, as proof the
+        # income existed before it ended.
+        hh = make_household(wages=3000, wages_ongoing=False)
+        result = federal_rules.determine_eligibility(hh)
+        codes = [v.code for v in result.required_verifications]
+        assert "income_paystub" in codes
+
+    def test_terminated_wages_excluded_from_ma_bbce_gross_test(
+        self, ma_rules, make_household
+    ):
+        # Same #556 fix applied to the state-specific gross-test override
+        # (MassachusettsSNAPRules._gross_income_test), not just the
+        # federal default.
+        hh = make_household(state="MA", wages=10000, wages_ongoing=False)
+        result = ma_rules.determine_eligibility(hh)
+        assert result.status == EligibilityStatus.ELIGIBLE
+
+
+# ---------------------------------------------------------------------------
 # Asset test (federal default — states may waive via BBCE)
 # ---------------------------------------------------------------------------
 
