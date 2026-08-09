@@ -66,6 +66,22 @@ describe("FactsSchema (Zod input contract)", () => {
     expect(errs).not.toBeNull();
     expect(errs!.some((e) => e.includes("household.0.age"))).toBe(true);
   });
+
+  it("accepts a well-formed county_fips (#614)", () => {
+    const withCounty = { ...okFacts, county_fips: "06011" };
+    expect(validateFacts(withCounty)).toBeNull();
+  });
+
+  it("rejects a county_fips that isn't 5 digits", () => {
+    const bad = { ...okFacts, county_fips: "6011" }; // missing the leading zero
+    const errs = validateFacts(bad);
+    expect(errs).not.toBeNull();
+    expect(errs!.some((e) => e.includes("county_fips"))).toBe(true);
+  });
+
+  it("county_fips is optional — a Facts without it still validates", () => {
+    expect(validateFacts(okFacts)).toBeNull();
+  });
 });
 
 describe("composeVerdict input gate", () => {
