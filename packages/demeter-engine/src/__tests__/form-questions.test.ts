@@ -23,6 +23,10 @@ describe("form-question matching", () => {
     ["I got a nomi letter, what does that mean", "missed_interview"],
     ["they asked for documents I already sent", "repeat_verification"],
     ["I was denied for failure to provide something I already gave them", "repeat_verification"],
+    ["does the 80 hours a month rule apply to me", "abawd_work_requirement"],
+    ["what does three months in three years mean", "abawd_work_requirement"],
+    ["my denial letter has two reasons and one seems wrong", "denial_notice_validity"],
+    ["the notice doesn't make sense to me", "denial_notice_validity"],
   ])("%s → %s", (text, topic) => {
     expect(classifyQuestionTopic(text)).toBe(topic);
   });
@@ -66,6 +70,8 @@ describe("form phrasing routes retrieval to the governing rule", () => {
     ["the application asks about a fleeing felon", "273.11(n)"],
     ["nobody called me for my scheduled interview", "273.2(e)"],
     ["they keep asking for documents I already sent them", "273.2(f)"],
+    ["what does the 80 hours a month work requirement mean", "273.24"],
+    ["wrong reason on my notice", "273.13"],
   ])("%s retrieves %s", async (q, cite) => {
     const chunks = await retrieve(q, { state: "CA" });
     expect(
