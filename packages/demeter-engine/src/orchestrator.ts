@@ -34,6 +34,7 @@ import { consoleAuditSink, type MaeAuditRecord, type MaeAuditSink } from "./audi
 import { retrievalMode } from "./embeddings";
 import { detectDistress, DISTRESS_SYSTEM_ADDENDUM } from "./distress";
 import { verifyNumericEquivalence } from "./numeric-check";
+import { answerInstruction, degradeWrapper, type AnswerLang } from "./lang";
 import { classifyQuestionTopic } from "./form-questions";
 
 export type ChatRole = "user" | "assistant";
@@ -126,7 +127,7 @@ export interface AnswerRequest {
   /** Answer language. The corpus and verification stay ENGLISH; an "es" answer
    *  is composed from verified EN content. Every $ and % in the final answer,
    *  in EITHER language, must appear in the grounding text — see numbersOk. */
-  lang?: "en" | "es";
+  lang?: AnswerLang;
   apiKey: string;
   /** Aborts generation (and billing) when the client disconnects. */
   signal?: AbortSignal;
@@ -146,27 +147,11 @@ function hasUnrecognized(checks: CitationCheck[]): boolean {
 
 /** Build the honest fallback when generation can't be verified twice: the
  *  verbatim retrieved sources, clearly framed. Nothing unverified survives. */
-function degradedAnswer(retrievedBlock: string, lang: "en" | "es" = "en"): string {
+function degradedAnswer(retrievedBlock: string, lang: AnswerLang = "en"): string {
   // The quoted sources stay in English by design (the verified corpus is EN);
-  // only the wrapper localizes, and the ES wrapper says so.
-  if (lang === "es") {
-    return (
-      "No pude componer un resumen cuyas citas se verifiquen todas contra las " +
-      "fuentes recuperadas para esta pregunta — así que en lugar de adivinar, " +
-      "aquí está el texto fuente literal (en inglés):\n\n" +
-      retrievedBlock +
-      "\nSi esto no responde tu pregunta, intenta reformularla o contacta a la " +
-      "agencia SNAP de tu estado para una respuesta definitiva."
-    );
-  }
-  return (
-    "I couldn't compose a summary whose citations all check out against the " +
-    "sources retrieved for this question — so instead of guessing, here is the " +
-    "verbatim source text itself:\n\n" +
-    retrievedBlock +
-    "\nIf this doesn't answer your question, try rephrasing it, or contact your " +
-    "state SNAP agency for a definitive answer."
-  );
+  // only this wrapper localizes, and each non-English version says so.
+  const { lead, tail } = degradeWrapper(lang);
+  return `${lead}\n\n${retrievedBlock}\n${tail}`;
 }
 
 /** The single answer pipeline. Yields frames; the caller adapts them to its
@@ -194,18 +179,13 @@ export async function* answerQuestion(req: AnswerRequest): AsyncGenerator<Answer
   if (distressed) {
     systemBlocks.push({ type: "text", text: DISTRESS_SYSTEM_ADDENDUM });
   }
-  // Spanish answers: composed from the verified ENGLISH sources; citations
-  // stay verbatim. The numeric-equivalence check below now guards both the
-  // translation risk here AND plain invention in English — see numbersOk.
-  if (req.lang === "es") {
-    systemBlocks.push({
-      type: "text",
-      text:
-        "Responde COMPLETAMENTE en español, con calidez y claridad. Mantén las " +
-        "citas legales textualmente en su forma original (p. ej. '7 CFR 273.9') " +
-        "y NO traduzcas los números — cada cantidad en dólares y porcentaje debe " +
-        "copiarse exactamente de las fuentes provistas.",
-    });
+  // Non-English answers are composed from the verified ENGLISH sources;
+  // citations stay verbatim. The numeric-equivalence gate below then applies
+  // to EVERY language, which is what keeps a translated answer from inventing
+  // a figure the sources never contained.
+  const langInstruction = answerInstruction(lang);
+  if (langInstruction) {
+    systemBlocks.push({ type: "text", text: langInstruction });
   }
   // Numbers the answer may legitimately carry: the verified sources PLUS the
   // user's own figures (an answer that echoes "with $1,500/month income…" is

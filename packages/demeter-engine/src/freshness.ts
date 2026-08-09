@@ -12,6 +12,7 @@
 // in states/<code>/freshness.json and are merged per request.
 
 import { getStatePack } from "./states";
+import type { AnswerLang } from "./lang";
 
 // Federal COLA figures (max allotment, deductions, income/asset limits, SUA)
 // are FY26 — effective 2025-10-01 through this date. After it, getEngineParams
@@ -69,7 +70,7 @@ export function formatFreshnessFooter(
   now: Date,
   corpusDate: string,
   state?: string | null,
-  lang: "en" | "es" = "en",
+  lang: AnswerLang = "en",
 ): string {
   const { asOf, warnings } = assessFreshness(now, corpusDate, state);
   const asOfLocalized =

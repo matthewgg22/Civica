@@ -5,6 +5,7 @@
 // verifier checks against).
 
 import type Anthropic from "@anthropic-ai/sdk";
+import type { AnswerLang } from "./lang";
 import { MAE_MODEL, STAFF_SYSTEM_PROMPT, PUBLIC_SYSTEM_PROMPT } from "./system-prompt";
 import {
   MAE_ENGINE_CITATIONS,
@@ -49,7 +50,7 @@ export async function buildMaeSystem(
   lastUserText: string,
   audience: Audience,
   state: string | null = "CA",
-  lang: "en" | "es" = "en",
+  lang: AnswerLang = "en",
 ): Promise<MaeSystem> {
   let liveParams = "";
   if (state && ENGINE_PARAM_STATES.has(state)) {

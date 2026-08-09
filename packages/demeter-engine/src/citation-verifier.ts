@@ -16,6 +16,7 @@
 //   unrecognized — neither. Likely invented or mistyped → flag loudly.
 
 import corpusJson from "./corpus/ecfr-snap.json";
+import type { AnswerLang } from "./lang";
 import { getStatePack, type CompiledAuthorityPattern } from "./states";
 
 export type CitationStatus = "in_sources" | "known" | "unrecognized";
@@ -154,10 +155,22 @@ const TRAILER_STRINGS = {
     inSrc: "✓ texto regulatorio recuperado para esta pregunta:",
     known: "◑ autoridad reconocida, pero no está en el texto recuperado — confirma contra la fuente:",
   },
+  vi: {
+    header: "**Trích dẫn:**",
+    bad: "⚠️ **KHÔNG nhận dạng được — có thể là lỗi, hãy xác minh trước khi dựa vào:**",
+    inSrc: "✓ văn bản quy định đã truy xuất cho câu hỏi này:",
+    known: "◑ văn bản có thật, nhưng không nằm trong nội dung đã truy xuất — hãy đối chiếu với nguồn:",
+  },
+  zh: {
+    header: "**引用：**",
+    bad: "⚠️ **无法识别——可能有误，依赖前请先核实：**",
+    inSrc: "✓ 为此问题检索到的法规原文：",
+    known: "◑ 已知的法规依据，但不在检索到的原文中——请与来源核对：",
+  },
 } as const;
 
 /** Render a transparency trailer for the caseworker. Empty if no citations. */
-export function formatCitationTrailer(checks: CitationCheck[], lang: "en" | "es" = "en"): string {
+export function formatCitationTrailer(checks: CitationCheck[], lang: AnswerLang = "en"): string {
   if (checks.length === 0) return "";
   const t = TRAILER_STRINGS[lang];
   const inSrc = checks.filter((c) => c.status === "in_sources").map((c) => c.citation);
