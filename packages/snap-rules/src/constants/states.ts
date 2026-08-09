@@ -410,9 +410,36 @@ const STATES: Record<string, StatePolicy> = {
   //     SNAP-calculator sites (snapscreener.com, snapbenefitscalculator.com)
   //     with no primary citation behind any of them — NOT used here; a
   //     number two secondary sites agree on is not primary sourcing.
-  // ACTION: needs an operator with a working services.dpw.state.pa.us
-  // session, or a direct call to PA DHS's Statewide Customer Service
-  // Center (1-877-395-8930), to get the current OIM bulletin/notice.
+  //
+  // RE-ATTEMPTED 2026-08-09 (second pass, #619) — six more distinct avenues,
+  // all dead ends:
+  //   - fns.usda.gov/snap/admin/sua-fy26 — request timeout (same Akamai wall).
+  //   - usda.gov/sites/default/files/guidance-documents/fns.snap-
+  //     simplifiedProcess-fy26sua-values.pdf — a DIFFERENT USDA host from
+  //     the fns.usda.gov one already blocked; still 403'd, both via WebFetch
+  //     and via curl with a real browser user-agent (490-byte HTML error
+  //     page, not the PDF).
+  //   - fna.usda.gov/snap/eligibility/deduction/standard-utility-allowances
+  //     (FNS's newer "FNA" rebrand domain) — request timeout, same pattern.
+  //   - web.archive.org snapshots of any of the above — blocked at the tool
+  //     level entirely ("Claude Code is unable to fetch from web.archive.org"),
+  //     not a page-content miss.
+  //   - pa.gov/agencies/dhs/resources/sandbox/proof-snap-redesign/snap-heat-eat
+  //     (a Feb-2026 policy-change page found via fresh search) — live,
+  //     describes HSUA eligibility narrowing to E/D households, publishes no
+  //     dollar figures, points to COMPASS / the CAO / the same phone line.
+  //   - pennsylvaniadhs.substack.com's Feb-2026 "shelter and utility
+  //     verification" post — describes the new verification REQUIREMENT,
+  //     not the allowance amounts.
+  //   - Searched pacodeandbulletin.gov directly for a 2025/2026 utility-
+  //     allowance notice (the PA Code's own text says future adjustments
+  //     are issued there) — found only the same stale 2001 codified figures
+  //     already logged above; no 2025/2026 notice indexed/surfaced.
+  // Genuinely exhausted via automated fetch across two verification passes
+  // now. ACTION unchanged: needs an operator with a working
+  // services.dpw.state.pa.us session, or a direct call to PA DHS's
+  // Statewide Customer Service Center (1-877-395-8930), to get the current
+  // OIM bulletin/notice.
   PA: {
     state_code: "PA",
     label: "Pennsylvania / DHS",
