@@ -43,12 +43,23 @@ describe("computeBenefit — SUA-not-authored regression (#436)", () => {
     expect(r.trace.state_sua_value).toBe(0);
   });
 
-  it("TX household with sua_tier='HCSUA' still throws (engine invariant)", () => {
+  it("KS household with sua_tier='HCSUA' still throws (engine invariant)", () => {
     // Composer must SKIP before reaching computeBenefit for this case; if
     // any caller reaches here directly with non-"none" tier on an
     // unauthored state, the throw is the correct fail-loud signal.
+    //
+    // This case used TX until TX's FY26 standards were authored (#607).
+    // The invariant is unchanged — it just needs a state that still has
+    // sua_by_tier: null to exercise it. KS and AK remain unauthored.
     const facts = baseFacts("HCSUA");
-    expect(() => computeBenefit(facts, "TX", ASOF)).toThrow(/SUA not authored for state TX/);
+    expect(() => computeBenefit(facts, "KS", ASOF)).toThrow(/SUA not authored for state KS/);
+  });
+
+  it("TX with sua_tier='HCSUA' now COMPUTES — its standards are authored (#607)", () => {
+    const facts = baseFacts("HCSUA");
+    expect(() => computeBenefit(facts, "TX", ASOF)).not.toThrow();
+    const r = computeBenefit(facts, "TX", ASOF);
+    expect(r.trace.state_sua_value).toBe(445); // TWH A-1429 heating/cooling SUA
   });
 
   it("composeVerdict on TX + sua_tier='none' returns APPROVE (no throw, no SKIP)", () => {
@@ -59,9 +70,16 @@ describe("computeBenefit — SUA-not-authored regression (#436)", () => {
     expect(typeof result.benefit).toBe("number");
   });
 
-  it("composeVerdict on TX + sua_tier='HCSUA' still SKIPs cleanly", () => {
+  it("composeVerdict on KS + sua_tier='HCSUA' still SKIPs cleanly", () => {
+    // Same re-pointing as above: KS is now the unauthored exemplar.
+    const facts = baseFacts("HCSUA");
+    const result = composeVerdict(facts, "KS", ASOF);
+    expect(result.not_implemented_surfaces).toContain("shelter.sua.HCSUA");
+  });
+
+  it("composeVerdict on TX + sua_tier='HCSUA' no longer SKIPs", () => {
     const facts = baseFacts("HCSUA");
     const result = composeVerdict(facts, "TX", ASOF);
-    expect(result.not_implemented_surfaces).toContain("shelter.sua.HCSUA");
+    expect(result.not_implemented_surfaces).toBeUndefined();
   });
 });
