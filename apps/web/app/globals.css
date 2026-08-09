@@ -46,8 +46,8 @@
   --civica-radius-pill: 999px;
 
   /* Type scale (rendered as rem, tuned for desktop reading) */
-  --civica-font-body: "Hanken Grotesk", -apple-system, BlinkMacSystemFont,
-    "Segoe UI", Helvetica, Arial, sans-serif;
+  --civica-font-body: var(--civica-font-loaded), -apple-system,
+    BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
 
   /* Layout */
   --civica-max-content: 720px;
