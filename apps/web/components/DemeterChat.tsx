@@ -12,8 +12,13 @@
 
 import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import { RECOMPOSE_MARKER, type PackMeta } from "@civica/demeter-engine/packs";
+// TYPE-ONLY from the root barrel: erased at compile time, so this costs the
+// browser bundle nothing. A VALUE import here would drag the 1MB eCFR corpus
+// onto every phone — the reason the client-safe /packs entry exists at all.
+import type { ScreeningClassification, PartialFacts } from "@civica/demeter-engine";
 import { DemeterMark } from "./DemeterMark";
 import { DemeterStatePicker } from "./DemeterStatePicker";
+import { DemeterWorksheet } from "./DemeterWorksheet";
 
 type Msg =
   | { role: "user" | "assistant"; content: string }
@@ -85,6 +90,19 @@ const T = {
       noMatch: "No verified pack for that state yet — federal rules still apply.",
     },
     howWeVerify: "How we verify",
+    worksheet: {
+      title: "Your estimate",
+      subtitle: "Builds as you talk",
+      result: "Where this lands",
+      estimate: "Estimated monthly benefit:",
+      calc: "How that was worked out",
+      stillNeeded: "Still needed",
+      empty:
+        "Tell Demeter about your household — who lives with you, what you earn, what you pay in rent — and your estimate builds here.",
+      privacy: "Nothing here is saved. Close this tab and it is gone.",
+      disclaimer: "An estimate, not a decision. Your county agency decides.",
+      pickState: "Pick your state above and your estimate can build here as you talk.",
+    },
   },
   es: {
     title: "Demeter",
@@ -120,6 +138,19 @@ const T = {
       noMatch: "Aún no hay paquete verificado para ese estado — las reglas federales aplican.",
     },
     howWeVerify: "Cómo verificamos",
+    worksheet: {
+      title: "Tu estimado",
+      subtitle: "Se arma mientras conversas",
+      result: "Dónde queda esto",
+      estimate: "Beneficio mensual estimado:",
+      calc: "Cómo se calculó",
+      stillNeeded: "Todavía falta",
+      empty:
+        "Cuéntale a Demeter sobre tu hogar — quién vive contigo, cuánto ganas, cuánto pagas de renta — y tu estimado se arma aquí.",
+      privacy: "Nada de esto se guarda. Cierra esta pestaña y desaparece.",
+      disclaimer: "Un estimado, no una decisión. Tu agencia del condado decide.",
+      pickState: "Elige tu estado arriba y tu estimado se irá armando aquí.",
+    },
   },
 } as const;
 
@@ -138,6 +169,13 @@ export function DemeterChat({
   const [input, setInput] = useState(initialQuestion ?? "");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // The right rail's state. Held HERE and nowhere else — never persisted, so
+  // it dies with the tab (see the worksheet route's header). Facts live in a
+  // ref rather than state: nothing renders them directly (the rail renders the
+  // CLASSIFICATION), and a ref is always current inside the async callback,
+  // where a state value would be a stale closure a turn behind.
+  const factsRef = useRef<PartialFacts>({});
+  const [classification, setClassification] = useState<ScreeningClassification | null>(null);
   const abortRef = useRef<AbortController | null>(null);
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const t = T[lang];
@@ -149,6 +187,12 @@ export function DemeterChat({
   const changeState = (next: string | null) => {
     if (next === state) return;
     setState(next);
+    // The verdict is state-specific — snap-rules computed it against the old
+    // state's parameters, so keeping it on screen under a new state's heading
+    // would be showing someone a number that no longer applies. The FACTS
+    // survive (household size and income don't change with the scope); only
+    // the computed outcome is dropped, and the next turn recomputes it.
+    setClassification(null);
     if (messages.some((m) => m.role !== "divider")) {
       const name = next ? states.find((s) => s.code === next)?.program ?? next : null;
       setMessages((m) => [
@@ -157,6 +201,34 @@ export function DemeterChat({
       ]);
     }
   };
+
+  /** Update the right rail. Never throws into the caller and never surfaces an
+   *  error in the chat: a quiet rail is an acceptable degradation, a chat that
+   *  reports "something went wrong" because a side panel failed is not. */
+  const refreshWorksheet = useCallback(
+    async (apiMessages: Array<{ role: "user" | "assistant"; content: string }>) => {
+      if (!state) return;
+      try {
+        const res = await fetch("/api/demeter/worksheet", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ messages: apiMessages, facts: factsRef.current, state }),
+        });
+        if (!res.ok) return;
+        const data = (await res.json()) as {
+          facts?: PartialFacts;
+          classification?: ScreeningClassification | null;
+        };
+        if (data.facts) factsRef.current = data.facts;
+        // Null classification = the route soft-failed or found nothing yet.
+        // Keep whatever is already on screen rather than blanking the panel.
+        if (data.classification) setClassification(data.classification);
+      } catch {
+        /* soft by design */
+      }
+    },
+    [state],
+  );
 
   const send = useCallback(async () => {
     const question = input.trim();
@@ -174,6 +246,12 @@ export function DemeterChat({
       { role: "user", content: question },
       { role: "assistant", content: "" },
     ]);
+
+    // The rail updates ALONGSIDE the answer, not after it: a second round trip
+    // in series would make every reply feel slower for a panel that is
+    // supplementary. It is intentionally not awaited and intentionally cannot
+    // throw into this scope — the answer must not depend on it.
+    if (state) void refreshWorksheet(apiMessages);
 
     const controller = new AbortController();
     abortRef.current = controller;
@@ -284,6 +362,8 @@ export function DemeterChat({
         </a>
       </div>
 
+      <div className="demeter__body">
+        <div className="demeter__main">
       <div className="demeter__scroll" ref={scrollRef}>
         {!hasChat && (
           <div className="demeter__empty">
@@ -358,6 +438,13 @@ export function DemeterChat({
         )}
       </form>
       <p className="demeter__disclaimer">{t.disclaimer}</p>
+        </div>
+        <DemeterWorksheet
+          classification={classification}
+          stateSelected={state !== null}
+          copy={t.worksheet}
+        />
+      </div>
     </div>
   );
 }

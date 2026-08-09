@@ -5247,3 +5247,82 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 @media (max-width: 860px) {
   .dmx__ledegrid { grid-template-columns: 1fr; }
 }
+
+/* ── Chat body: conversation + the live estimate rail ─────────────────────── */
+.demeter__body { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); gap: 1.5rem; align-items: start; }
+.demeter__main { display: flex; flex-direction: column; min-width: 0; }
+
+.dmw {
+  background: var(--demeter-paper); border: 1px solid var(--demeter-rule);
+  border-radius: 16px; padding: 1.1rem; display: flex; flex-direction: column; gap: 1rem;
+  position: sticky; top: 1rem;
+}
+.dmw__head { display: flex; flex-direction: column; gap: 0.15rem; }
+.dmw__eyebrow {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--demeter-terracotta-deep);
+}
+.dmw__sub {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.75rem; color: var(--demeter-muted);
+}
+.dmw__empty, .dmw__privacy, .dmw__disclaimer {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.8rem; line-height: 1.6; color: var(--demeter-muted); margin: 0;
+}
+.dmw__privacy { padding-top: 0.75rem; border-top: 1px solid var(--demeter-rule); }
+
+.dmw__result { border-radius: 12px; padding: 0.85rem; border: 1px solid var(--demeter-rule); background: var(--demeter-card); }
+.dmw__result--certain { border-color: #C9DCC4; background: #F3F8F1; }
+.dmw__result--warn { border-color: #E6D3A9; background: #FBF6EA; }
+.dmw__result--deny { border-color: #E9C2B4; background: #FBEAE5; }
+.dmw__result--pending { border-color: var(--demeter-rule-strong); }
+.dmw__result-label {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--demeter-muted); margin: 0 0 0.2rem;
+}
+.dmw__result-value {
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+  font-size: 1.1rem; font-weight: 600; color: var(--demeter-ink); margin: 0 0 0.35rem;
+}
+.dmw__result-summary {
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+  font-size: 0.88rem; line-height: 1.55; color: var(--demeter-body); margin: 0;
+}
+.dmw__result-benefit {
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+  font-size: 0.92rem; color: var(--demeter-ink); margin: 0.5rem 0 0;
+}
+
+.dmw__section-title {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--demeter-muted); margin: 0 0 0.5rem;
+  display: flex; align-items: center; justify-content: space-between; gap: 0.5rem;
+}
+.dmw__calc-list { margin: 0; display: flex; flex-direction: column; gap: 0.35rem; }
+.dmw__calc-row {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 1rem;
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.8rem; line-height: 1.45;
+}
+.dmw__calc-row dt { color: var(--demeter-body); }
+.dmw__calc-row dd { margin: 0; color: var(--demeter-ink); font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.dmw__needed ul {
+  margin: 0; padding-left: 1.1rem; display: flex; flex-direction: column; gap: 0.3rem;
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.8rem; line-height: 1.5; color: var(--demeter-body);
+}
+.dmw__needed-count {
+  font-size: 0.68rem; color: var(--demeter-terracotta-deep);
+  border: 1px solid #EAD9C8; background: #F7EDE4; border-radius: 5px; padding: 0.05rem 0.35rem;
+}
+
+/* Below the two-column breakpoint the rail goes UNDER the conversation and
+   stops sticking — a sticky panel on a phone just steals the viewport. */
+@media (max-width: 900px) {
+  .demeter__body { grid-template-columns: 1fr; }
+  .dmw { position: static; }
+}
