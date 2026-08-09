@@ -12,7 +12,7 @@ import type { Facts } from "../facts";
 
 const ASOF = new Date("2026-08-08"); // post-OBBBA
 
-function facts(workClass: string, monthsUsed: number): Facts {
+function facts(workClass: string, monthsUsed: number, countyFips?: string): Facts {
   return {
     household: [
       {
@@ -22,6 +22,7 @@ function facts(workClass: string, monthsUsed: number): Facts {
         abawd_months_used: monthsUsed,
       },
     ],
+    ...(countyFips ? { county_fips: countyFips } : {}),
   } as unknown as Facts;
 }
 
@@ -69,17 +70,51 @@ describe("ABAWD area-waiver exemptions respect state waiver availability (#608)"
     expect(r.status).toBe("time_exhausted");
   });
 
-  it("CA still honors the waiver — 7 counties really are waived", () => {
-    // CA keeps abawd_waiver_avail: true on purpose. A state-level boolean
-    // cannot say "7 of 58", and denying the genuinely-waived counties is the
-    // worse error. Revisit only when Facts carries county_fips.
+  it("CA falls back to the permissive state-level flag when county is UNKNOWN", () => {
+    // No county_fips given — the gate has no per-county answer available,
+    // so it falls back to abawd_waiver_avail: true exactly as before #614.
     const r = evaluateAbawd(facts("abawd_exempt:waiver_county", 3), ASOF, "CA");
     expect(r.passes).toBe(true);
   });
+});
 
-  it("still exhausts a plainly-subject ABAWD regardless of state", () => {
+describe("ABAWD area-waiver exemptions respect the actual COUNTY, when known (#614)", () => {
+  it("honors the waiver for a household in one of CA's 7 genuinely-waived counties", () => {
+    const r = evaluateAbawd(facts("abawd_exempt:waiver_county", 3, "06011"), ASOF, "CA"); // Colusa
+    expect(r.passes).toBe(true);
+  });
+
+  it("REGRESSION: denies the exemption for a household in a NON-waived CA county — the precision #614 exists for", () => {
+    // Before #614, CA's state-level abawd_waiver_avail: true honored this
+    // exemption in EVERY county, including this one (Los Angeles), which
+    // holds no waiver. That over-approved the 51 time-limited counties.
+    const r = evaluateAbawd(facts("abawd_exempt:waiver_county", 3, "06037"), ASOF, "CA"); // Los Angeles
+    expect(r.passes).toBe(false);
+    expect(r.status).toBe("time_exhausted");
+  });
+
+  it("MA's county set is real but empty — an MA county never satisfies the exemption", () => {
+    const r = evaluateAbawd(facts("abawd_exempt:waiver_county", 3, "25025"), ASOF, "MA"); // Suffolk
+    expect(r.passes).toBe(false);
+  });
+
+  it("a county_fips for a state with NO authored county data falls back to the state-level flag, same as before", () => {
+    // TX has no CA/MA-style county set authored — county_fips is present
+    // but unused, and abawd_waiver_avail: false still governs.
+    const r = evaluateAbawd(facts("abawd_exempt:waiver_county", 3, "48201"), ASOF, "TX"); // Harris
+    expect(r.passes).toBe(false);
+  });
+
+  it("the county-level answer wins even when it's MORE permissive than a naive state read would suggest", () => {
+    // Symmetry check: county precision cuts both ways. A waived county
+    // still exempts even though 51 of CA's 58 counties do not.
+    const r = evaluateAbawd(facts("abawd_exempt:waiver_county", 3, "06107"), ASOF, "CA"); // Tulare
+    expect(r.passes).toBe(true);
+  });
+
+  it("still exhausts a plainly-subject ABAWD regardless of state or county", () => {
     for (const st of ["CA", "TX", undefined]) {
-      const r = evaluateAbawd(facts("abawd_subject", 3), ASOF, st);
+      const r = evaluateAbawd(facts("abawd_subject", 3, "06011"), ASOF, st);
       expect(r.passes, `${st}`).toBe(false);
     }
   });

@@ -19,16 +19,19 @@
 //             but county *participation* is mandatory. `rmp_operated:
 //             true` is correct as a state-level boolean.
 //             Source: cdss.ca.gov/rmp
-//     ABAWD — !!! STALE/INCORRECT as a state-level flag !!!
-//             Statewide CA time limits RESUME 2026-06-01 per ACL 25-93.
-//             Active waivers (Nov 1 2025 — Oct 31 2026) cover only:
-//             Colusa, Imperial, Tulare, Alpine, Merced, Monterey,
-//             Plumas (7 of 58 counties). The other 51 are time-limited.
-//             `abawd_waiver_avail: true` is the wrong shape — needs a
-//             per-county effective-dated waiver list loader before
-//             ABAWD verdicts in any non-waived CA county are safe.
-//             Sources: ACL 25-79 (waivers), ACL 25-93 (resumption),
-//             ACL 26-15 (current extension); calfresh.guide tracker.
+//     ABAWD — FIXED AS A COUNTY-LEVEL LOOKUP (#614). Statewide CA time
+//             limits RESUME 2026-06-01 per ACL 25-93. Active waivers
+//             (Nov 1 2025 — Oct 31 2026) cover only: Colusa, Imperial,
+//             Tulare, Alpine, Merced, Monterey, Plumas (7 of 58
+//             counties, CA_WAIVER_COUNTY_FIPS in
+//             work-requirements/waiver-counties.ts). The other 51 are
+//             time-limited. `abawd_waiver_avail: true` below is ONLY
+//             the fallback the ABAWD gate uses when a household's
+//             county_fips isn't known — when it IS known, the gate
+//             checks the real 7-county set instead and this boolean is
+//             never consulted. Sources: ACL 25-79 (waivers), ACL 25-93
+//             (resumption), ACL 26-15 (current extension); calfresh.guide
+//             tracker.
 //     Mirror: Civica/Features/SNAP/SNAPRules/snap_eligibility_ca.json
 //             (production iOS profile; source_citations block).
 //
