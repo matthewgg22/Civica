@@ -156,4 +156,41 @@ describe("answerQuestion verifier ladder", () => {
     expect(text).not.toContain("$12,345");
     expect(outcomes).toEqual(["recomposed"]);
   });
+
+  // The gap this session's advisor review found: citation verification only
+  // confirms a CITED SECTION was retrieved, not that a dollar figure sitting
+  // next to it is real. This gate used to be Spanish-only; these two mirror
+  // the Spanish pair above for English — the majority-language, default
+  // surface — to prove numbersOk is no longer gated by req.lang.
+  it("English answers may echo the USER'S own numbers without tripping the gate", async () => {
+    // "$1,500" appears only in the question — repeating it is not invention.
+    sdk.stream.mockReturnValue(
+      fakeStream(Array(12).fill("With $1,500 a month in income, it depends on household size. ")),
+    );
+    const frames = await collect({
+      ...baseRequest(audits, outcomes),
+      messages: [{ role: "user" as const, content: "I make $1,500 a month — do I qualify?" }],
+    });
+
+    expect(frames.map((f) => f.type)).not.toContain("recompose");
+    expect(outcomes).toEqual(["clean"]);
+  });
+
+  it("English answers with numbers absent from the grounding also trip the ladder", async () => {
+    // "$12,345" appears in no retrieved source — the (now-unconditional)
+    // numeric gate must abort even though nothing about the citation is wrong.
+    sdk.stream.mockReturnValue(
+      fakeStream(Array(12).fill("The limit is $12,345 a month for everyone. ")),
+    );
+    sdk.create.mockResolvedValue({
+      content: [{ type: "text", text: "The provided sources don't cover that figure." }],
+      usage: { input_tokens: 80, output_tokens: 20 },
+    });
+    const frames = await collect(baseRequest(audits, outcomes));
+
+    expect(frames.map((f) => f.type)).toContain("recompose");
+    const text = frames.filter((f) => f.type === "delta").map((f) => f.text).join("");
+    expect(text).not.toContain("$12,345");
+    expect(outcomes).toEqual(["recomposed"]);
+  });
 });
