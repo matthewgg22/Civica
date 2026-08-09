@@ -32,6 +32,7 @@ export const DESCRIPTORS: SectionDescriptor[] = [
   // Non-citizens (OBBBA-sensitive)
   { cite: "273.4", text: "Non-citizen and immigrant eligibility, lawful permanent resident green card holder, refugee or asylee, qualified alien, the five-year bar, sponsored immigrant, whether immigration status affects SNAP eligibility" },
   { cite: "273.11(c)", text: "Mixed-status household, an undocumented parent applying for U.S.-citizen or LPR children, an ineligible household member, prorating benefits for the eligible members" },
+  { cite: "273.11(n)", text: "Fleeing felon or probation or parole violator disqualification, an outstanding felony warrant, fleeing to avoid prosecution or custody, avoiding arrest, wanted by law enforcement, an active warrant" },
 
   // Income, assets, deductions, benefit amount
   { cite: "273.5", text: "College student eligibility for SNAP, students enrolled in higher education, student work or exemption rules" },
