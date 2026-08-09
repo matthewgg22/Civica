@@ -134,7 +134,7 @@
     },
     "params": {
       "fy": "2026",
-      "note": "\u26a0 illustrative FY2026 values; confirm max-allotment & SD by size from FNS COLA memo",
+      "note": "⚠ illustrative FY2026 values; confirm max-allotment & SD by size from FNS COLA memo",
       "tolerance": 58,
       "sd": {
         "1": 209,
@@ -161,13 +161,13 @@
       "shelter_cap": 744,
       "fpl": {
         "1": 1305,
-        "2": 1764,
-        "3": 2222,
+        "2": 1763,
+        "3": 2221,
         "4": 2680,
-        "5": 3139,
-        "6": 3597,
-        "7": 4056,
-        "8": 4514
+        "5": 3138,
+        "6": 3596,
+        "7": 4055,
+        "8": 4513
       },
       "sua": {
         "HCSUA": 663,
@@ -213,7 +213,8 @@
           "7": 1995,
           "8": 2272
         }
-      }
+      },
+      "fpl_basis": "FLOOR(annual FPL / 12) before applying BBCE/130%/100% multipliers — the FNS/CalFresh published convention. Reconciled to CDSS ACIN I-46-25 (FFY2026) Attachment I; HALF_UP rounding here drifts +$1 at HH2/3/5/6/7/8 and breaks the published table (#606)."
     },
     "tolerances": {
       "verdict": "exact_match",
@@ -224,7 +225,7 @@
     "how_to_use": "Facts are state-independent. Pick a state from expected_by_state to run; A/B rows: apply expected.variants[k].facts_patch then assert verdict. requires[] lists engine surfaces so a partial engine can skip unbuilt ones. integrity rows: feed agency_keyed, assert qc_should_flag.",
     "caveats": [
       "Benefits computed by an INDEPENDENT oracle from facts (four-eyes), not citeable as PER; reconcile params.sd/allotment with production before trusting $.",
-      "SUA pinned to production for CA (663/170/20) and MA (914/556/64). TX/KS/AK SUA still illustrative \u2014 those states' expected_by_state benefits are null until production values land.",
+      "SUA pinned to production for CA (663/170/20) and MA (914/556/64). TX/KS/AK SUA still illustrative — those states' expected_by_state benefits are null until production values land.",
       "Generic dependent ages synthesized where unpinned; oracle/citation policy-sourced, never regenerate from the engine.",
       "compute_benefit applies the homeless-deduction substitute ($198.99 FY26) per 7 CFR 273.9(d)(6)(i) when shelter.homeless_deduction=true."
     ]
@@ -3679,7 +3680,7 @@
     {
       "id": "M12-abawd-in-a-waived-area",
       "legacy_id": "M12",
-      "label": "ABAWD in a waived area",
+      "label": "ABAWD in a waived area (time-limit exhausted; only the area waiver saves them)",
       "as_of_date": "2026-06-01",
       "facts": {
         "household": [
@@ -3693,8 +3694,8 @@
             "immigration": "citizen",
             "five_yr_bar": "n/a",
             "sponsored": false,
-            "work_class": "gen_work_subject",
-            "abawd_months_used": 0,
+            "work_class": "abawd_exempt:waiver_county",
+            "abawd_months_used": 3,
             "disqual": [],
             "living": "housed"
           }
@@ -4732,7 +4733,14 @@
               "income.0.amount": 1800
             },
             "verdict": "APPROVE",
-            "note": "CA approves both; flips in non-BBCE"
+            "note": "$1,800 gross HH1: clears 200% ($2,610) and TX's 165% ($2,153); denied only under the federal 130% screen ($1,697).",
+            "verdict_by_state": {
+              "CA": "APPROVE",
+              "MA": "APPROVE",
+              "TX": "APPROVE",
+              "KS": "DENY",
+              "AK": "DENY"
+            }
           },
           "recent_high_month": {
             "facts_patch": {
@@ -4740,7 +4748,14 @@
               "income.0.amount": 2200
             },
             "verdict": "APPROVE",
-            "note": "lower benefit; DENY in non-BBCE"
+            "note": "$2,200 gross HH1: clears only the 200% screen ($2,610). BBCE is not a boolean — TX at 165% denies (#609).",
+            "verdict_by_state": {
+              "CA": "APPROVE",
+              "MA": "APPROVE",
+              "TX": "DENY",
+              "KS": "DENY",
+              "AK": "DENY"
+            }
           }
         }
       }
@@ -5157,7 +5172,7 @@
     {
       "id": "M28-10103-heat-and-eat-hcsua-post-obbba",
       "legacy_id": "M28",
-      "label": "\u00a710103 heat-and-eat HCSUA (post-OBBBA)",
+      "label": "§10103 heat-and-eat HCSUA (post-OBBBA)",
       "as_of_date": "2026-06-01",
       "facts": {
         "household": [
@@ -7385,14 +7400,16 @@
           "benefit": null
         },
         "KS": {
-          "verdict": "APPROVE",
-          "eligible": true,
-          "benefit": null
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null,
+          "reason": "gross_income_over_130pct_fpl [7 CFR 273.9(a)(1)]: $2,888 vs $2,887 (130% of floor(annual FPL/12) for HH3, CDSS ACIN I-46-25 basis)"
         },
         "AK": {
-          "verdict": "APPROVE",
-          "eligible": true,
-          "benefit": null
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null,
+          "reason": "gross_income_over_130pct_fpl [7 CFR 273.9(a)(1)]: $2,888 vs $2,887 (130% of floor(annual FPL/12) for HH3, CDSS ACIN I-46-25 basis)"
         }
       }
     },

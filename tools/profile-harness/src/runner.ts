@@ -162,7 +162,9 @@ function runVariantProfile(
     };
   }
 
-  const verdictOk = result.verdict === variant.verdict;
+  // Per-state override wins where authored; otherwise the shared verdict (#609).
+  const expectedVerdict = variant.verdict_by_state?.[state] ?? variant.verdict;
+  const verdictOk = result.verdict === expectedVerdict;
   let benefitOk: boolean | null = null;
   if (benefitsAllowed && variant.benefit != null) {
     benefitOk = result.benefit === variant.benefit;
@@ -179,7 +181,7 @@ function runVariantProfile(
     label: `${profile.label} · ${variantKey}${variant.note ? " — " + variant.note : ""}`,
     state,
     kind,
-    expected_verdict: variant.verdict,
+    expected_verdict: expectedVerdict,
     actual_verdict: result.verdict,
     expected_benefit: variant.benefit,
     actual_benefit: result.benefit ?? null,
