@@ -32,6 +32,21 @@ describe("sitemap", () => {
     expect(urls).toContain("https://demeter.ai/verify");
   });
 
+  it("ranks the plain chat above the sign-in screening tool (2026-08-09 decision)", async () => {
+    // /screen/ask is Demeter's simplified B2C launch surface; /screen is the
+    // sign-in-or-guest household-screening tool with saved case files — a
+    // real secondary feature, not what search engines should find first.
+    vi.stubEnv("NEXT_PUBLIC_SITE_URL", "https://demeter.ai");
+    const { default: sitemap } = await fresh<{
+      default: () => Array<{ url: string; priority?: number }>;
+    }>("../sitemap");
+    const entries = sitemap();
+    const ask = entries.find((e) => e.url.endsWith("/screen/ask"))!;
+    const screen = entries.find((e) => e.url.endsWith("/screen"))!;
+    expect(ask.priority).toBe(1.0);
+    expect(screen.priority!).toBeLessThan(ask.priority!);
+  });
+
   it("emits absolute URLs on the canonical domain only", async () => {
     vi.stubEnv("NEXT_PUBLIC_SITE_URL", "https://demeter.ai");
     const { default: sitemap } = await fresh<{ default: () => Array<{ url: string }> }>(

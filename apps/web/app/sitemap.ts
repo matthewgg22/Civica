@@ -22,8 +22,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
     // /demeter 301s to /screen/ask (2026-08-09 merge) — list the real
     // destination so crawlers index the canonical URL directly rather than
     // discovering it only after following a redirect.
-    { url: absoluteUrl("/screen"), lastModified: now, changeFrequency: "daily", priority: 1.0 },
+    //
+    // /screen/ask (the plain chat) is the front door, not /screen (the
+    // sign-in-or-guest household-screening tool with saved case files) —
+    // deliberately un-tied priorities (2026-08-09, user decision): Demeter's
+    // launch surface is the simple chatbot; /screen is a real secondary
+    // feature, not what search engines should find first.
     { url: absoluteUrl("/screen/ask"), lastModified: now, changeFrequency: "daily", priority: 1.0 },
+    { url: absoluteUrl("/screen"), lastModified: now, changeFrequency: "daily", priority: 0.7 },
     { url: absoluteUrl("/verify"), lastModified: now, changeFrequency: "weekly", priority: 0.8 },
     { url: absoluteUrl("/supporters"), lastModified: now, changeFrequency: "weekly", priority: 0.6 },
   ];
