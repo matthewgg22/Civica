@@ -17,7 +17,7 @@ export default function AskMaeButton() {
       >
         M
       </span>
-      Ask Mae
+      Ask Demeter
     </button>
   );
 }

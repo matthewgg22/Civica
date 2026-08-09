@@ -1293,7 +1293,7 @@ function CaseRow({
                   onClick={askMae}
                   className="mt-2 text-[11px] font-medium text-pine hover:underline"
                 >
-                  Ask Mae about this case →
+                  Ask Demeter about this case →
                 </button>
               </EngineBlock>
             </div>
