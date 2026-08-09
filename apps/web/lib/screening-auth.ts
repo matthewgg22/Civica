@@ -47,37 +47,55 @@ export type ScreeningIdentity = OrgIdentity | GuestIdentity;
  * configured; only org-member resolution legitimately needs it.
  */
 export async function resolveScreeningIdentity(): Promise<ScreeningIdentity> {
+  const org = await resolveOrgIdentity();
+  if (org) return org;
+  return resolveGuestIdentity();
+}
+
+/**
+ * Just the org-membership check — no guest fallback, no guest cookie
+ * written. For a caller that needs to know "is this an already-signed-in
+ * org member?" without the side effect of minting a brand-new guest
+ * identity for someone who hasn't chosen a path yet (the landing page:
+ * visiting it shouldn't itself start a guest's lifetime-quota clock).
+ *
+ * Returns null on anything short of "signed in AND attached to an org" —
+ * no session, an expired session, unconfigured Supabase, or a signed-in
+ * user with no org membership yet all resolve the same way here.
+ */
+export async function resolveOrgIdentity(): Promise<OrgIdentity | null> {
   const user = await getAuthenticatedUser();
-  if (user) {
-    const db = supabaseAdmin();
-    const { data: membership } = await db
-      .schema("snap_enrollment")
-      .from("demeter_org_members")
-      .select("org_id, demeter_orgs(name, state_code, case_label_prefix)")
-      .eq("user_id", user.id)
-      .maybeSingle();
-    if (membership?.org_id) {
-      // Supabase's typed join returns an array or object depending on the
-      // relationship shape; normalize defensively rather than assume.
-      const org = Array.isArray(membership.demeter_orgs)
-        ? membership.demeter_orgs[0]
-        : membership.demeter_orgs;
-      if (org) {
-        return {
-          kind: "org",
-          userId: user.id,
-          orgId: membership.org_id as string,
-          orgName: org.name as string,
-          stateCode: org.state_code as string,
-          casePrefix: org.case_label_prefix as string,
-        };
-      }
-    }
-    // Authenticated but not (yet) attached to an org — treat as guest rather
-    // than fail; org onboarding is a separate flow (mockup's "Request access").
+  if (!user) return null;
+
+  const db = supabaseAdmin();
+  const { data: membership } = await db
+    .schema("snap_enrollment")
+    .from("demeter_org_members")
+    .select("org_id, demeter_orgs(name, state_code, case_label_prefix)")
+    .eq("user_id", user.id)
+    .maybeSingle();
+  if (!membership?.org_id) {
+    // Authenticated but not (yet) attached to an org — treat as no org
+    // rather than fail; org onboarding is a separate flow (mockup's
+    // "Request access").
+    return null;
   }
 
-  return resolveGuestIdentity();
+  // Supabase's typed join returns an array or object depending on the
+  // relationship shape; normalize defensively rather than assume.
+  const org = Array.isArray(membership.demeter_orgs)
+    ? membership.demeter_orgs[0]
+    : membership.demeter_orgs;
+  if (!org) return null;
+
+  return {
+    kind: "org",
+    userId: user.id,
+    orgId: membership.org_id as string,
+    orgName: org.name as string,
+    stateCode: org.state_code as string,
+    casePrefix: org.case_label_prefix as string,
+  };
 }
 
 /** null on ANY failure — unconfigured Supabase, an expired/invalid session,

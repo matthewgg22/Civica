@@ -4897,3 +4897,67 @@ html {
 .worksheet__guest-note { font-size: 0.8rem; color: var(--demeter-terracotta-deep); background: #FBF1EC; border: 1px solid var(--demeter-border-clay); border-radius: 0.6rem; padding: 0.55rem 0.7rem; }
 .worksheet__export { border: 1px solid var(--demeter-border-clay); background: var(--demeter-card); color: var(--demeter-placeholder); border-radius: 999px; padding: 0.55rem 1rem; font-size: 0.85rem; font-weight: 600; cursor: not-allowed; }
 .worksheet__disclaimer { font-size: 0.72rem; color: var(--demeter-mono); }
+
+/* ── Landing (frame 01) + sign-in (frame 02) — the two entry points
+   before a screening session starts. Shared header treatment with
+   .screening's own brand mark; content column is centered and narrow,
+   distinct from the two-column session layout. */
+.screen-landing, .screen-auth {
+  min-height: 100dvh; display: flex; flex-direction: column; background: var(--demeter-parchment);
+  color: var(--demeter-ink); font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+.screen-landing__head {
+  display: flex; align-items: center; padding: 0.9rem 1.1rem; border-bottom: 1px solid var(--demeter-border);
+  background: var(--demeter-card);
+}
+.screen-landing__brand { display: flex; align-items: center; gap: 0.6rem; }
+.screen-landing__brand-name { font-size: 1.02rem; font-weight: 650; }
+
+.screen-landing__main {
+  flex: 1; display: flex; align-items: center; justify-content: center; padding: 2rem 1.25rem;
+}
+.screen-landing__card { max-width: 34rem; text-align: center; }
+.screen-landing__title { font-size: 1.9rem; font-weight: 700; line-height: 1.2; margin: 0 0 0.85rem; }
+.screen-landing__subtitle { font-size: 1rem; line-height: 1.6; color: var(--demeter-body); margin: 0 0 1.75rem; }
+.screen-landing__actions { display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap; }
+.screen-landing__cta {
+  display: inline-flex; align-items: center; justify-content: center; border-radius: 999px;
+  padding: 0.75rem 1.6rem; font-size: 0.95rem; font-weight: 650; text-decoration: none; cursor: pointer;
+}
+.screen-landing__cta--primary { background: var(--demeter-terracotta); color: #fff; }
+.screen-landing__cta--primary:hover { background: var(--demeter-terracotta-deep); }
+.screen-landing__cta--secondary { background: var(--demeter-card); color: var(--demeter-ink); border: 1px solid var(--demeter-border-clay); }
+.screen-landing__cta--secondary:hover { border-color: var(--demeter-terracotta); }
+.screen-landing__guest-note { margin: 1.25rem 0 0; font-size: 0.8rem; color: var(--demeter-mono); }
+
+.screen-auth__main { flex: 1; display: flex; align-items: center; justify-content: center; padding: 2rem 1.25rem; }
+.screen-auth__card {
+  width: 100%; max-width: 24rem; background: var(--demeter-card); border: 1px solid var(--demeter-border-card);
+  border-radius: 1rem; padding: 1.75rem 1.6rem;
+}
+.screen-auth__title { font-size: 1.35rem; font-weight: 700; margin: 0 0 0.3rem; }
+.screen-auth__subtitle { font-size: 0.88rem; color: var(--demeter-mono); margin: 0 0 1.4rem; }
+.screen-auth__form { display: flex; flex-direction: column; gap: 0.4rem; }
+.screen-auth__label { font-size: 0.78rem; font-weight: 600; color: var(--demeter-secondary); margin-top: 0.6rem; }
+.screen-auth__input {
+  border: 1px solid var(--demeter-border-clay); border-radius: 0.6rem; padding: 0.6rem 0.8rem; font-size: 0.95rem;
+  font-family: inherit; background: var(--demeter-parchment); color: var(--demeter-ink);
+}
+.screen-auth__input:focus { outline: 2px solid var(--demeter-terracotta); outline-offset: 1px; }
+.screen-auth__error {
+  font-size: 0.85rem; color: var(--demeter-terracotta-deep); background: #FBEAE5; border: 1px solid #E9C2B4;
+  border-radius: 0.6rem; padding: 0.55rem 0.75rem; margin-top: 0.7rem;
+}
+.screen-auth__submit {
+  margin-top: 1rem; background: var(--demeter-terracotta); color: #fff; border: none; border-radius: 0.7rem;
+  padding: 0.7rem; font-size: 0.95rem; font-weight: 650; cursor: pointer;
+}
+.screen-auth__submit:disabled { opacity: 0.6; cursor: default; }
+.screen-auth__sso {
+  width: 100%; margin-top: 0.75rem; background: var(--demeter-card); color: var(--demeter-placeholder);
+  border: 1px solid var(--demeter-border-clay); border-radius: 0.7rem; padding: 0.68rem; font-size: 0.88rem;
+  font-weight: 600; cursor: not-allowed;
+}
+.screen-auth__links { display: flex; justify-content: space-between; margin-top: 1.1rem; font-size: 0.82rem; }
+.screen-auth__links a { color: var(--demeter-terracotta-deep); text-decoration: none; }
+.screen-auth__links a:hover { text-decoration: underline; }
