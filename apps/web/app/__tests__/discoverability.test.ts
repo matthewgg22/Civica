@@ -24,7 +24,11 @@ describe("sitemap", () => {
         `https://demeter.ai/guides/${s.code.toLowerCase()}`,
       );
     }
-    expect(urls).toContain("https://demeter.ai/demeter");
+    // /demeter merged into /screen (2026-08-09) — sitemap now points crawlers
+    // straight at the canonical /screen/ask instead of the old page that
+    // 301s there, plus the /screen landing itself.
+    expect(urls).toContain("https://demeter.ai/screen");
+    expect(urls).toContain("https://demeter.ai/screen/ask");
     expect(urls).toContain("https://demeter.ai/verify");
   });
 

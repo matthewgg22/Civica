@@ -18,8 +18,13 @@ import { resolveOrgIdentity } from "../../lib/screening-auth";
 import { DemeterMark } from "../../components/DemeterMark";
 
 export const metadata: Metadata = {
-  title: "Demeter Screening",
+  title: "Demeter AI — SNAP screening & verified answers",
   description: "SNAP eligibility screening for caseworkers — cited, exportable, state-aware.",
+  openGraph: {
+    title: "Demeter AI — SNAP screening & verified answers",
+    description: "SNAP eligibility screening for caseworkers — cited, exportable, state-aware.",
+    type: "website",
+  },
 };
 
 export default async function ScreenLandingPage() {
@@ -55,6 +60,10 @@ export default async function ScreenLandingPage() {
           <p className="screen-landing__guest-note">
             Guest screenings aren&apos;t saved to an organization and are capped at 5. Sign in to
             keep a case file, export it, and pick up where you left off.
+          </p>
+          <p className="screen-landing__ask-note">
+            Just have a question, not a full household to screen?{" "}
+            <a href="/screen/ask">Ask Demeter</a> — no sign-in needed.
           </p>
         </div>
       </main>

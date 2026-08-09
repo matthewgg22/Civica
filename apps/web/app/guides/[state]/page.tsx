@@ -75,7 +75,7 @@ export default async function GuidePage({
       />
       <header className="gpage__head">
         <p className="gpage__crumb">
-          <Link href="/demeter">Demeter</Link> / SNAP in {pack.code}
+          <Link href="/screen/ask">Demeter</Link> / SNAP in {pack.code}
         </p>
         <h1 className="gpage__title">
           SNAP in {pack.code}: {pack.program}
@@ -121,11 +121,11 @@ export default async function GuidePage({
         <ul className="gpage__questions">
           {questions.map((q) => (
             <li key={q}>
-              <Link href={`/demeter?state=${pack.code}&q=${encodeURIComponent(q)}`}>{q} →</Link>
+              <Link href={`/screen/ask?state=${pack.code}&q=${encodeURIComponent(q)}`}>{q} →</Link>
             </li>
           ))}
         </ul>
-        <Link className="gpage__cta" href={`/demeter?state=${pack.code}`}>
+        <Link className="gpage__cta" href={`/screen/ask?state=${pack.code}`}>
           Open the chat →
         </Link>
       </section>

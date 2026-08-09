@@ -8,13 +8,13 @@ import { test, expect } from "@playwright/test";
 test.describe("front door", () => {
   test("the bare domain lands on the chat, ready to take a question", async ({ page }) => {
     await page.goto("/");
-    await expect(page).toHaveURL(/\/demeter$/);
+    await expect(page).toHaveURL(/\/screen\/ask$/);
     await expect(page.getByPlaceholder(/Ask anything about SNAP/)).toBeVisible();
   });
 
   test("root carries query params through, so campaign links keep working", async ({ page }) => {
     await page.goto("/?state=TX&q=Does%20my%20car%20count%3F");
-    await expect(page).toHaveURL(/\/demeter\?/);
+    await expect(page).toHaveURL(/\/screen\/ask\?/);
     await expect(page.getByRole("radio", { name: /TX/ })).toHaveAttribute("aria-checked", "true");
     await expect(page.getByPlaceholder(/Ask anything about SNAP/)).toHaveValue(
       "Does my car count?",
@@ -29,7 +29,7 @@ test.describe("front door", () => {
 
 test.describe("chat surface", () => {
   test("renders the chat with state chips and federal default", async ({ page }) => {
-    await page.goto("/demeter");
+    await page.goto("/screen/ask");
     await expect(page.getByRole("heading", { name: "Demeter" })).toBeVisible();
     const federal = page.getByRole("radio", { name: /All states/ });
     await expect(federal).toHaveAttribute("aria-checked", "true");
@@ -38,7 +38,7 @@ test.describe("chat surface", () => {
   });
 
   test("guide deep-link preselects state and question", async ({ page }) => {
-    await page.goto("/demeter?state=TX&q=Does%20my%20car%20count%3F");
+    await page.goto("/screen/ask?state=TX&q=Does%20my%20car%20count%3F");
     await expect(page.getByRole("radio", { name: /TX/ })).toHaveAttribute("aria-checked", "true");
     await expect(page.getByPlaceholder(/Ask anything about SNAP/)).toHaveValue(
       "Does my car count?",
@@ -46,7 +46,7 @@ test.describe("chat surface", () => {
   });
 
   test("send always yields a response state (answer or honest banner)", async ({ page }) => {
-    await page.goto("/demeter");
+    await page.goto("/screen/ask");
     await page.getByPlaceholder(/Ask anything about SNAP/).fill("What is SNAP?");
     await page.getByRole("button", { name: /Send|Enviar/ }).click();
     // The user bubble appears immediately…
@@ -72,7 +72,7 @@ test.describe("chat surface", () => {
   });
 
   test("language toggle switches the surface to Spanish", async ({ page }) => {
-    await page.goto("/demeter");
+    await page.goto("/screen/ask");
     await page.getByRole("button", { name: "Cambiar a español" }).click();
     await expect(page.getByPlaceholder(/Pregunta lo que sea sobre SNAP/)).toBeVisible();
   });
@@ -91,10 +91,10 @@ test.describe("growth surfaces", () => {
   test("/guides/tx is statically served and deep-links into the chat", async ({ page }) => {
     await page.goto("/guides/tx");
     await expect(page.getByRole("heading", { level: 1 })).toContainText(/SNAP in TX/);
-    const first = page.locator('a[href^="/demeter?state=TX"]').first();
+    const first = page.locator('a[href^="/screen/ask?state=TX"]').first();
     await expect(first).toBeVisible();
     await first.click();
-    await expect(page).toHaveURL(/\/demeter\?state=TX/);
+    await expect(page).toHaveURL(/\/screen\/ask\?state=TX/);
     await expect(page.getByRole("radio", { name: /TX/ })).toHaveAttribute("aria-checked", "true");
   });
 

@@ -1,5 +1,5 @@
 // /screen/session — the active screening interface (mockup frames 03/04).
-// Distinct from /demeter (anonymous open Q&A): this is the accounts-gated
+// Distinct from /screen/ask (anonymous open Q&A): this is the accounts-gated
 // path with a live case file. Anonymous visitors still land here as a
 // guest (5-screening cap, enforced server-side) rather than being blocked —
 // the mockup's own "Continue as a guest" path. Reached either from the

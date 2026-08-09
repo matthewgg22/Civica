@@ -25,12 +25,17 @@ const nextConfig: NextConfig = {
   // should be able to ask a SNAP question immediately, not read marketing.
   // /welcome and the apply flow stay reachable at their own URLs.
   //
+  // Destination updated 2026-08-09: /demeter merged into the screening
+  // tool's own route tree as /screen/ask (same chat, /screen is now the
+  // whole Demeter AI public surface). /demeter itself 301s to /screen/ask
+  // so this could point straight there instead of chaining through it.
+  //
   // Still temporary (307), not 308: browsers cache permanent redirects hard,
   // so a 308 would strand every prior visitor if a distinct marketing page is
   // ever built for "/". Query strings carry through automatically, which keeps
   // campaign links like /?state=CA&q=… working.
   async redirects() {
-    return [{ source: "/", destination: "/demeter", permanent: false }];
+    return [{ source: "/", destination: "/screen/ask", permanent: false }];
   },
   webpack(config, { isServer }) {
     // serverExternalPackages does NOT externalize imports made from inside a
