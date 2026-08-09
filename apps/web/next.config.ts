@@ -19,12 +19,18 @@ const nextConfig: NextConfig = {
   outputFileTracingIncludes: {
     "/api/demeter": ["../../packages/demeter-engine/models/**"],
   },
-  // The root URL is the applicant portal's front door — send it to the polished
-  // /welcome page so there's one canonical applicant landing to maintain.
-  // Temporary (307) so it's trivially reversible if a distinct marketing page
-  // is ever built for /.
+  // The root URL is Demeter's front door. Since the 2026-08 pivot the chat IS
+  // the product, so "/" must land on it rather than the applicant-portal
+  // landing page — a visitor (or a prize reviewer) typing the bare domain
+  // should be able to ask a SNAP question immediately, not read marketing.
+  // /welcome and the apply flow stay reachable at their own URLs.
+  //
+  // Still temporary (307), not 308: browsers cache permanent redirects hard,
+  // so a 308 would strand every prior visitor if a distinct marketing page is
+  // ever built for "/". Query strings carry through automatically, which keeps
+  // campaign links like /?state=CA&q=… working.
   async redirects() {
-    return [{ source: "/", destination: "/welcome", permanent: false }];
+    return [{ source: "/", destination: "/demeter", permanent: false }];
   },
   webpack(config, { isServer }) {
     // serverExternalPackages does NOT externalize imports made from inside a
