@@ -11,7 +11,7 @@ export { dec, ZERO } from "../decimal";
  * Returns the engine's view of the constants for one (state, asOf).
  * Compared field-by-field against `suite.meta.params` in the harness.
  */
-import { snapshotFor } from "./federal-tables";
+import { snapshotFor, fplMonthly } from "./federal-tables";
 import { statePolicyFor } from "./states";
 
 export interface EngineParams {
@@ -40,11 +40,12 @@ export function getEngineParams(state: string, asOf: Date): EngineParams {
   }
   const fpl: Record<string, number> = {};
   for (let n = 1; n <= 8; n++) {
-    fpl[String(n)] = fed.fpl_annual_first_person
-      .add(fed.fpl_annual_each_additional.mul(n - 1))
-      .div(12)
-      .roundDollar()
-      .toNumber();
+    // MUST come from fplMonthly — the same helper grossIncomeTest and
+    // netIncomeTest use. Re-deriving it here with roundDollar() (HALF_UP)
+    // instead of fplMonthly's floorDollar() put this row +$1 above the gates
+    // at HH3 and HH6 in FY26, so anything quoting these params disagreed with
+    // the engine's own determination and with CDSS ACIN I-46-25. See #601.
+    fpl[String(n)] = fplMonthly(n, asOf).toNumber();
   }
   const maxA: Record<string, number> = {};
   for (let n = 1; n <= 8; n++) {

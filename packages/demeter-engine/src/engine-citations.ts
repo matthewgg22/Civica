@@ -125,17 +125,9 @@ export function formatEngineParams(state: "CA" | "MA", asOf: Date): string {
     // Printed as dollars so answers QUOTE the operative thresholds instead of
     // deriving them — a derived figure is invisible-wrong in EN and trips the
     // ES numeric-equivalence gate into a degrade (live eval, es-pii-deflection).
-    //
-    // KNOWN DRIFT (snap-rules issue #601): the multiply-and-round step below
-    // matches the engine's income gates, but the BASE does not.
-    // getEngineParams builds p.fpl with
-    // roundDollar(), while the gates' canonical fplMonthly() uses
-    // floorDollar() — so p.fpl is +$1 at HH3 and HH6 (FY26), and these rows
-    // inherit +$1..$2 there. Every answer still carries the
-    // "guidance to verify, not a determination" disclaimer, and these remain
-    // far better than model-derived figures; the fix belongs in snap-rules
-    // (export fplMonthly or floor the base), NOT here — this package reads
-    // engine math, never edits it.
+    // The base comes from fplMonthly via getEngineParams, the same helper the
+    // income gates compare against, so these agree with a determination and
+    // with CDSS ACIN I-46-25 (fixed in #601).
     const scaled = (pct: number): Record<string, number> =>
       Object.fromEntries(
         Object.entries(p.fpl as Record<string, number>).map(([k, v]) => [
