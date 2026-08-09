@@ -115,7 +115,7 @@ const SNAPSHOT_DATA: Record<
 function NavAvatar({ name }: { name: string }) {
   if (name === "Unassigned") {
     return (
-      <span className="shrink-0 inline-flex items-center justify-center w-7 h-7 rounded-full border border-dashed border-hairline text-[11px] text-muted">
+      <span className="shrink-0 inline-flex items-center justify-center w-7 h-7 rounded-full border border-dashed border-hairline text-[11px] text-graphite">
         ?
       </span>
     );
@@ -376,7 +376,7 @@ function NavigatorRow({
               note={`Progress report for navigator ${name}. Benefit estimate and verification needs are computed by Civica's rules engine.`}
             />
           ) : (
-            <span className="text-[11px] text-muted">no cases</span>
+            <span className="text-[11px] text-graphite">no cases</span>
           )}
         </div>
       </div>
@@ -488,7 +488,7 @@ function CaseRow({ app, border }: { app: QueueApplication; border: boolean }) {
         {flags > 0 ? (
           <span className="text-[11px] font-semibold text-brick tabular-nums">{flags} flag{flags > 1 ? "s" : ""}</span>
         ) : (
-          <span className="text-[11px] text-muted">clean</span>
+          <span className="text-[11px] text-graphite">clean</span>
         )}
       </span>
       <span className={`text-[11px] uppercase tracking-wider shrink-0 w-[32px] text-right ${riskText(app.risk)}`}>
@@ -886,7 +886,7 @@ export default function OverviewDirector({
             {benefits.usd > 0 ? (
               <>
                 <CountUpText value={formatUsd(benefits.usd)} className="text-[34px] font-semibold text-ink leading-none mt-2 block" />
-                <span className="mt-1.5 text-[11px] text-muted">
+                <span className="mt-1.5 text-[11px] text-graphite">
                   /mo · {benefits.households} household{benefits.households !== 1 ? "s" : ""}
                 </span>
               </>
@@ -966,7 +966,7 @@ export default function OverviewDirector({
               </button>
             </div>
           </div>
-          <p className="mt-2 text-[11px] text-muted">
+          <p className="mt-2 text-[11px] text-graphite">
             Exports the snapshot, caseload-by-phase, and caseworker roster for the selected range. Benefit + error-rate figures are engine-computed.
           </p>
         </div>

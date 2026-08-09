@@ -242,11 +242,11 @@ export default async function ApplicationDraftPage({
 
           {/* Footer */}
           <footer className="pt-4 mt-2 border-t border-ink/15 flex items-baseline justify-between gap-3 flex-wrap">
-            <p className="text-[10px] text-muted leading-relaxed max-w-lg">
+            <p className="text-[10px] text-graphite leading-relaxed max-w-lg">
               Working draft generated {generated}. The benefit estimate and verification needs are
               computed by Civica&rsquo;s rules engine. Not a filed application.
             </p>
-            <p className="text-[10px] font-mono text-muted tabular-nums">{app.caseId}</p>
+            <p className="text-[10px] font-mono text-graphite tabular-nums">{app.caseId}</p>
           </footer>
         </article>
       </div>

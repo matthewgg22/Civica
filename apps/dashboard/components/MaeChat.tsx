@@ -49,7 +49,7 @@ function MaeFeedback({ question, answer }: { question: string; answer: string })
   };
 
   if (stage === "sent") {
-    return <p className="mt-1 text-[11px] text-muted">Thanks — feedback recorded.</p>;
+    return <p className="mt-1 text-[11px] text-graphite">Thanks — feedback recorded.</p>;
   }
   if (stage === "reason") {
     return (
@@ -74,13 +74,13 @@ function MaeFeedback({ question, answer }: { question: string; answer: string })
           value={note}
           onChange={(e) => setNote(e.target.value)}
           placeholder="What was wrong? (optional)"
-          className="w-full rounded-[2px] border border-hairline bg-surface px-1.5 py-1 text-[11px] text-ink outline-none placeholder:text-muted focus:border-pine"
+          className="w-full rounded-[2px] border border-hairline bg-surface px-1.5 py-1 text-[11px] text-ink outline-none placeholder:text-graphite focus:border-pine"
         />
       </div>
     );
   }
   return (
-    <div className="mt-1 flex items-center gap-1.5 text-[11px] text-muted">
+    <div className="mt-1 flex items-center gap-1.5 text-[11px] text-graphite">
       <span>Was this helpful?</span>
       <button
         type="button"
@@ -319,7 +319,7 @@ export default function MaeChat() {
             </span>
             <div className="flex-1 leading-tight">
               <p className="text-sm font-semibold text-ink">Ask Mae</p>
-              <p className="text-[11px] text-muted">Calibrated to California · CalFresh rules</p>
+              <p className="text-[11px] text-graphite">Calibrated to California · CalFresh rules</p>
               {caseLabel && (
                 <span className="mt-0.5 inline-flex items-center gap-1 rounded-[2px] bg-pine-surface px-1.5 py-0.5 text-[10px] font-medium text-ink">
                   Calibrated to {caseLabel}
@@ -359,7 +359,7 @@ export default function MaeChat() {
                     <li>• &ldquo;Why is this expedited / overdue?&rdquo;</li>
                     <li>• &ldquo;What should I tell the client about the interview?&rdquo;</li>
                   </ul>
-                  <p className="text-[11px] text-muted">
+                  <p className="text-[11px] text-graphite">
                     I&rsquo;m working from the case&rsquo;s engine read + verification gaps — no personal identifiers.
                   </p>
                 </div>
@@ -423,7 +423,7 @@ export default function MaeChat() {
           </div>
 
           {/* Disclaimer */}
-          <p className="border-t border-hairline bg-surface px-3 py-1.5 text-[10px] leading-tight text-muted">
+          <p className="border-t border-hairline bg-surface px-3 py-1.5 text-[10px] leading-tight text-graphite">
             {MAE_DISCLAIMER}
           </p>
 
@@ -452,7 +452,7 @@ export default function MaeChat() {
               <p className="font-medium text-ink">You&rsquo;re previewing a navigator tool.</p>
               {input.trim() && (
                 <div className="rounded-[3px] border border-hairline bg-surface px-3 py-2 text-ink">
-                  <p className="mb-1 text-[11px] uppercase tracking-wider text-muted">The question for this case</p>
+                  <p className="mb-1 text-[11px] uppercase tracking-wider text-graphite">The question for this case</p>
                   <p className="text-sm">{input}</p>
                 </div>
               )}
