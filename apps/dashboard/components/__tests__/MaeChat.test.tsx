@@ -66,7 +66,7 @@ describe("MaeChat", () => {
       data: { user: { app_metadata: { role: "navigator" } } },
     });
     render(<MaeChat />);
-    await screen.findByRole("button", { name: /ask mae/i });
+    await screen.findByRole("button", { name: /ask demeter/i });
   });
 
   it("opens the panel, streams an answer, and shows the disclaimer", async () => {
@@ -78,7 +78,7 @@ describe("MaeChat", () => {
       .mockResolvedValue(streamingResponse(["Shelter ", "costs count."]) as unknown as Response);
 
     render(<MaeChat />);
-    const launcher = await screen.findByRole("button", { name: /ask mae/i });
+    const launcher = await screen.findByRole("button", { name: /ask demeter/i });
     fireEvent.click(launcher);
 
     // Disclaimer is always visible in the open panel.
@@ -111,7 +111,7 @@ describe("MaeChat", () => {
     vi.spyOn(globalThis, "fetch").mockResolvedValue(streamingResponse([]) as unknown as Response);
 
     render(<MaeChat />);
-    const launcher = await screen.findByRole("button", { name: /ask mae/i });
+    const launcher = await screen.findByRole("button", { name: /ask demeter/i });
     fireEvent.click(launcher);
 
     // The panel's disclaimer text starts with the exact string imported from
@@ -132,7 +132,7 @@ describe("MaeChat", () => {
       .mockResolvedValue(streamingResponse(["File the docs."]) as unknown as Response);
 
     render(<MaeChat />);
-    await screen.findByRole("button", { name: /ask mae/i });
+    await screen.findByRole("button", { name: /ask demeter/i });
 
     // Another surface ("Ask Mae about this case") loads a case as context.
     fireEvent(
@@ -173,7 +173,7 @@ describe("MaeChat", () => {
       .mockResolvedValue(streamingResponse(["Shelter costs count."]) as unknown as Response);
 
     render(<MaeChat />);
-    fireEvent.click(await screen.findByRole("button", { name: /ask mae/i }));
+    fireEvent.click(await screen.findByRole("button", { name: /ask demeter/i }));
     const textarea = screen.getByPlaceholderText(/ask a snap policy question/i);
     fireEvent.change(textarea, { target: { value: "What is a shelter deduction?" } });
     fireEvent.keyDown(textarea, { key: "Enter" });
@@ -201,7 +201,7 @@ describe("MaeChat", () => {
     } as unknown as Response);
 
     render(<MaeChat />);
-    fireEvent.click(await screen.findByRole("button", { name: /ask mae/i }));
+    fireEvent.click(await screen.findByRole("button", { name: /ask demeter/i }));
     const textarea = screen.getByPlaceholderText(/ask a snap policy question/i);
     fireEvent.change(textarea, { target: { value: "hello" } });
     fireEvent.keyDown(textarea, { key: "Enter" });
