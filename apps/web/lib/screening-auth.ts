@@ -39,13 +39,15 @@ export type ScreeningIdentity = OrgIdentity | GuestIdentity;
  * to (or creates) a guest token. Never throws — an unauthenticated,
  * cookie-less first visit becomes a fresh guest identity, which is the
  * point of anonymous-first: nobody is blocked from starting a screening.
+ *
+ * REGRESSION, caught live rather than by the (mocked) unit tests:
+ * createSupabaseServerClient() throws synchronously when Supabase env isn't
+ * configured, with nothing catching it — so a GUEST, who needs no auth at
+ * all, got a 500 anyway. Guest access must not depend on Supabase auth being
+ * configured; only org-member resolution legitimately needs it.
  */
 export async function resolveScreeningIdentity(): Promise<ScreeningIdentity> {
-  const supabase = await createSupabaseServerClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
+  const user = await getAuthenticatedUser();
   if (user) {
     const db = supabaseAdmin();
     const { data: membership } = await db
@@ -76,6 +78,20 @@ export async function resolveScreeningIdentity(): Promise<ScreeningIdentity> {
   }
 
   return resolveGuestIdentity();
+}
+
+/** null on ANY failure — unconfigured Supabase, an expired/invalid session,
+ *  a network hiccup. All of those mean "treat as guest," never "500". */
+async function getAuthenticatedUser(): Promise<{ id: string } | null> {
+  try {
+    const supabase = await createSupabaseServerClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    return user;
+  } catch {
+    return null;
+  }
 }
 
 async function resolveGuestIdentity(): Promise<GuestIdentity> {
