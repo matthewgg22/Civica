@@ -231,8 +231,34 @@ export function hasElderlyOrDisabled(facts: Facts): boolean {
   return facts.household.some((m) => m.disability === true || m.elderly === true || m.age >= 60);
 }
 
+// 7 CFR 273.8(e)(12): a Federal, State, or local income tax refund
+// (including the EITC) is excluded from RESOURCES, not just income, for
+// 12 months after receipt. isExcludedIncome() already keeps a
+// "excluded_tax_refund"-typed income line out of gross income (#633's
+// income-side half); this is the resource-side half.
+//
+// Facts.assets is a single flat total with no per-source breakdown, so
+// there's no field that says "$X of this total is the refund, still
+// inside its exclusion window." Rather than add one, this derives the
+// excluded amount from the matching income line(s) already present —
+// the same dollar figure a household would be reporting as "this landed
+// in my account as a refund." APPROXIMATION, not exact: a household that
+// already spent part of the refund on something non-liquid would break
+// this coupling (their remaining cash assets would be lower than the
+// refund amount, and this would over-exclude). Good enough for the
+// fixture's "just received it" scenario; a real per-source Facts field
+// would be needed for the general case (#633).
+function excludedTaxRefundResources(facts: Facts): number {
+  return facts.income
+    .filter((line) => line.type?.startsWith("excluded_tax_refund"))
+    .reduce((sum, line) => sum + line.amount, 0);
+}
+
 export function countableAssets(facts: Facts): number | null {
-  if (typeof facts.assets === "number") return facts.assets;
-  // Sentinels: cat-elig path skips the asset test entirely.
-  return null;
+  if (typeof facts.assets !== "number") {
+    // Sentinels: cat-elig path skips the asset test entirely.
+    return null;
+  }
+  const excluded = excludedTaxRefundResources(facts);
+  return excluded > 0 ? Math.max(0, facts.assets - excluded) : facts.assets;
 }
