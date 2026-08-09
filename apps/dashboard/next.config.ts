@@ -17,7 +17,7 @@ const nextConfig: NextConfig = {
   // Vendored embedding model (packages/demeter-engine/models/) is fs-read at
   // runtime — invisible to Vercel's tracer without this include.
   outputFileTracingIncludes: {
-    "/api/demeter": ["../../packages/demeter-engine/models/**"],
+    "/api/mae": ["../../packages/demeter-engine/models/**"],
   },
   webpack(config, { isServer }) {
     // serverExternalPackages does NOT externalize imports made from inside a

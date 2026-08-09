@@ -1,4 +1,9 @@
-// POST /api/demeter — staff "Ask Demeter" SNAP policy Q&A (formerly /api/mae).
+// POST /api/mae — staff "Ask Mae" SNAP policy Q&A. Named "Mae" specifically
+// so the dashboard's internal staff assistant doesn't share a name with the
+// public Demeter AI product (2026-08-09) — this route briefly lived at
+// /api/demeter during the Mae->Demeter rebrand before that overlap was
+// caught and reverted for this one surface; @civica/demeter-engine (the
+// shared answer pipeline both surfaces call into) keeps its own name.
 //
 // THIN WRAPPER (eng review 5A): the whole answer pipeline — PII redaction,
 // state-threaded retrieval, incremental citation verification with
@@ -46,7 +51,7 @@ export async function POST(req: NextRequest) {
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) {
     return NextResponse.json(
-      { error: "Demeter is not configured yet (ANTHROPIC_API_KEY is unset)." },
+      { error: "Mae is not configured yet (ANTHROPIC_API_KEY is unset)." },
       { status: 503 },
     );
   }
@@ -101,8 +106,8 @@ export async function POST(req: NextRequest) {
         }
       } catch (err) {
         if (!(err instanceof Error && err.name === "AbortError")) {
-          console.error("[demeter] stream error:", err);
-          enqueue("Demeter is temporarily unavailable. Please try again in a moment.");
+          console.error("[mae] stream error:", err);
+          enqueue("Mae is temporarily unavailable. Please try again in a moment.");
         }
       }
       if (!closed) {

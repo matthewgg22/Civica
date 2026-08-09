@@ -52,7 +52,7 @@ function MaeFeedback({ question, answer }: { question: string; answer: string })
 
   const submit = (rating: "up" | "down", reason?: string) => {
     setStage("sent");
-    void fetch("/api/demeter/feedback", {
+    void fetch("/api/mae/feedback", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ rating, reason, note: note.trim() || undefined, question, answer }),
@@ -223,7 +223,7 @@ export default function MaeChat() {
       const meta = caseContext
         ? { mode: "case", state: caseState, ref: caseRef, question }
         : { mode: "general", state: null, ref: null, question };
-      const res = await fetch("/api/demeter", {
+      const res = await fetch("/api/mae", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ messages: apiMessages, meta }),
@@ -236,8 +236,8 @@ export default function MaeChat() {
           res.status === 401 || res.status === 403
             ? "Your session expired. Refresh and sign in again."
             : res.status === 503
-              ? "Demeter isn't available yet — ask an admin to finish setup."
-              : "Demeter hit an error. Please try again.";
+              ? "Mae isn't available yet — ask an admin to finish setup."
+              : "Mae hit an error. Please try again.";
         setError(msg);
         return;
       }
@@ -290,7 +290,7 @@ export default function MaeChat() {
     } catch (err) {
       dropPlaceholder();
       if (!(err instanceof DOMException && err.name === "AbortError")) {
-        setError("Demeter hit a network error. Please try again.");
+        setError("Mae hit a network error. Please try again.");
       }
     } finally {
       setBusy(false);
@@ -319,7 +319,7 @@ export default function MaeChat() {
       {open && (
         <div
           role="dialog"
-          aria-label="Ask Demeter — SNAP policy assistant"
+          aria-label="Ask Mae — SNAP policy assistant"
           className="fixed bottom-20 right-4 z-50 flex h-[40rem] max-h-[calc(100vh-5rem)] w-[32rem] max-w-[calc(100vw-2rem)] flex-col overflow-hidden rounded-[3px] border border-hairline bg-paper shadow-xl"
         >
           {/* Header */}
@@ -328,10 +328,10 @@ export default function MaeChat() {
               aria-hidden
               className="flex h-6 w-6 items-center justify-center rounded-full bg-pine text-xs font-semibold text-white"
             >
-              D
+              M
             </span>
             <div className="flex-1 leading-tight">
-              <p className="text-sm font-semibold text-ink">Ask Demeter</p>
+              <p className="text-sm font-semibold text-ink">Ask Mae</p>
               <p className="text-[11px] text-graphite">Calibrated to California · CalFresh rules</p>
               {caseLabel && (
                 <span className="mt-0.5 inline-flex items-center gap-1 rounded-[2px] bg-pine-surface px-1.5 py-0.5 text-[10px] font-medium text-ink">
@@ -349,7 +349,7 @@ export default function MaeChat() {
             </div>
             <button
               type="button"
-              aria-label="Close Demeter"
+              aria-label="Close Mae"
               onClick={closePanel}
               className="rounded-[2px] px-2 py-1 text-muted hover:bg-surface-secondary hover:text-ink"
             >
@@ -415,7 +415,7 @@ export default function MaeChat() {
                           <ReactMarkdown remarkPlugins={[remarkGfm]}>{m.content}</ReactMarkdown>
                         </div>
                       ) : (
-                        <span className="inline-flex items-center gap-1" aria-label="Demeter is thinking">
+                        <span className="inline-flex items-center gap-1" aria-label="Mae is thinking">
                           <span className="h-1.5 w-1.5 rounded-full bg-graphite/50 animate-bounce [animation-delay:-200ms]" />
                           <span className="h-1.5 w-1.5 rounded-full bg-graphite/50 animate-bounce [animation-delay:-100ms]" />
                           <span className="h-1.5 w-1.5 rounded-full bg-graphite/50 animate-bounce" />
@@ -470,7 +470,7 @@ export default function MaeChat() {
                 </div>
               )}
               <p className="text-muted">
-                Inside the navigator portal, Demeter answers this in place &mdash; citing the governing
+                Inside the navigator portal, Mae answers this in place &mdash; citing the governing
                 CalFresh rules, never applicant PII.
               </p>
               <Link
@@ -489,7 +489,7 @@ export default function MaeChat() {
         <button
           type="button"
           aria-expanded={open}
-          aria-label="Ask Demeter"
+          aria-label="Ask Mae"
           onClick={() => (open ? closePanel() : setOpen(true))}
           className="fixed bottom-4 right-4 z-50 flex items-center gap-2 rounded-full bg-pine px-4 py-2.5 text-sm font-medium text-white shadow-lg hover:bg-pine-pressed"
         >
@@ -497,9 +497,9 @@ export default function MaeChat() {
             aria-hidden
             className="flex h-5 w-5 items-center justify-center rounded-full bg-white/20 text-xs font-semibold"
           >
-            D
+            M
           </span>
-          Ask Demeter
+          Ask Mae
         </button>
       )}
     </>

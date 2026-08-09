@@ -1,6 +1,6 @@
-// POST /api/demeter/feedback — caseworker feedback on a Mae answer.
+// POST /api/mae/feedback — caseworker feedback on a Mae answer.
 //
-// Staff-auth-gated (same gate as /api/demeter). Captures thumbs up/down + an
+// Staff-auth-gated (same gate as /api/mae). Captures thumbs up/down + an
 // optional reason + note, PII-scrubbed, into snap_enrollment.mae_feedback. This
 // is the human-in-the-loop signal: thumbs-down + "citation wrong" rows are the
 // triage queue for new answer-eval regression cases.
