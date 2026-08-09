@@ -19,6 +19,28 @@
 //   - Tribal exemption introduced (handled via work_class:abawd_exempt:tribal)
 
 import type { Facts } from "../facts";
+import { statePolicyFor } from "../constants/states";
+
+// Exemption reasons that rest on the member's AREA being waived rather than on
+// anything personal (7 CFR 273.24(f) — waivers for areas with insufficient
+// jobs). These are the only reasons state waiver availability can invalidate.
+const WAIVER_EXEMPTION_REASONS = new Set(["waiver", "waiver_county", "waived_area"]);
+
+/**
+ * True only when we AFFIRMATIVELY know the state offers no ABAWD waivers.
+ *
+ * Direction of error is deliberate: an unknown or unregistered state returns
+ * false, so the exemption stands. Stripping an exemption denies food, and we
+ * will not do that on the strength of a state we can't look up.
+ */
+function stateOffersNoWaiver(state: string | undefined): boolean {
+  if (!state) return false;
+  try {
+    return statePolicyFor(state).abawd_waiver_avail === false;
+  } catch {
+    return false; // UnknownStateError — stay conservative
+  }
+}
 
 export interface AbawdResult {
   passes: boolean;
@@ -39,7 +61,11 @@ const OBBBA_EFFECTIVE = new Date(Date.UTC(2025, 10, 1));
  *   - pre-OBBBA: ABAWD ages 18-49 (federal default) → 50-54 also subject under prior amendments
  *   - post-2025-07-04: ABAWD ages 18-64
  */
-export function evaluateAbawd(facts: Facts, asOf: Date): AbawdResult {
+export function evaluateAbawd(facts: Facts, asOf: Date, state?: string): AbawdResult {
+  // A waiver exemption is only real where the state actually holds a waiver
+  // (7 CFR 273.24(f)). Optional + fail-open: omit `state`, or pass one that
+  // isn't registered, and nothing changes. See #608.
+  const noWaiverHere = stateOffersNoWaiver(state);
   // Post-OBBBA the veteran_homeless exemption is gone.
   const veteranHomelessExempt = asOf < OBBBA_EFFECTIVE;
   // Post-OBBBA the age ceiling is 64 (was 49/54 prior).
@@ -62,6 +88,11 @@ export function evaluateAbawd(facts: Facts, asOf: Date): AbawdResult {
       if (reason === "veteran_homeless" && !veteranHomelessExempt) {
         // Post-OBBBA: exemption removed → member is now subject.
         // Continue to time-limit check below.
+      } else if (WAIVER_EXEMPTION_REASONS.has(reason) && noWaiverHere) {
+        // Area-based exemption claimed in a state that holds no waiver — the
+        // premise can't hold, so the member stays subject to the time limit.
+        // Personal exemptions (disability, tribal, caretaker…) are untouched:
+        // they don't depend on where the household lives.
       } else {
         // Exemption still applies → member doesn't count against gate.
         continue;
