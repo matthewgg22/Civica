@@ -47,7 +47,10 @@ export interface AnswerScore {
 const DISCLAIMER_RE =
   /(verify|confirm|county|not a determination|current (calfresh|cdss)|check the|verifica|confirma|condado|no (es )?una determinaci[oó]n|orientaci[oó]n)/i;
 const REFUSAL_RE =
-  /(can.?t help|i.?m scoped|scoped to|outside (my )?scope|outside what i (cover|do)|i.?m here for snap|only (cover|answer|help)|don.?t (cover|have)|no puedo (ayudar|con eso)|solo (respondo|cubro|ayudo|atiendo)|yo cubro|fuera de( mi)? alcance)/i;
+  // "pueda ayudar" added 2026-08-09 (live-eval finding): the model's actual
+  // refusal — "no es algo con lo que pueda ayudar" — is a real decline the
+  // original list just didn't anticipate the phrasing of; not a behavior gap.
+  /(can.?t help|i.?m scoped|scoped to|outside (my )?scope|outside what i (cover|do)|i.?m here for snap|only (cover|answer|help)|don.?t (cover|have)|no puedo (ayudar|con eso)|no (es algo con lo que )?pueda ayudar|solo (respondo|cubro|ayudo|atiendo)|yo cubro|fuera de( mi)? alcance)/i;
 
 /** Deterministically score one generated answer against its expectation. */
 export function scoreAnswer(
