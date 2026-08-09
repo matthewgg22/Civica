@@ -1,6 +1,6 @@
 import { siteUrl } from "../lib/site-url";
 import type { Metadata } from "next";
-import { Hanken_Grotesk } from "next/font/google";
+import { Hanken_Grotesk, Space_Grotesk, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 
 const hanken = Hanken_Grotesk({
@@ -8,6 +8,24 @@ const hanken = Hanken_Grotesk({
   weight: ["400", "500", "600"],
   display: "swap",
   variable: "--civica-font-loaded",
+});
+
+// Demeter's own type family (design spec: Space Grotesk 400/500/600/700,
+// JetBrains Mono 400/500) — separate variables from --civica-font-loaded,
+// same pattern as the --demeter-* color tokens staying separate from
+// --civica-*. Scoped to .screening/.screen-landing/.screen-auth in
+// globals.css; the older pine-branded pages are untouched.
+const spaceGrotesk = Space_Grotesk({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  display: "swap",
+  variable: "--demeter-font-display",
+});
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  weight: ["400", "500"],
+  display: "swap",
+  variable: "--demeter-font-mono",
 });
 
 // metadataBase makes every relative OG/canonical URL absolute — without it
@@ -31,7 +49,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={hanken.variable}>
+    <html lang="en" className={`${hanken.variable} ${spaceGrotesk.variable} ${jetbrainsMono.variable}`}>
       <body>{children}</body>
     </html>
   );
