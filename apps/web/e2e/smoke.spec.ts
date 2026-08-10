@@ -17,7 +17,7 @@ test.describe("front door", () => {
     await expect(page).toHaveURL(/\/screen\/ask\?/);
     // The state selector is a combobox (2026-08-09): one selection, shown on
     // the trigger, rather than a row of radio chips.
-    await expect(page.getByRole("button", { name: "Your state" })).toContainText("TX");
+    await expect(page.getByRole("button", { name: "Your state", exact: true })).toContainText("TX");
     await expect(page.getByPlaceholder(/Ask anything about SNAP/)).toHaveValue(
       "Does my car count?",
     );
@@ -32,11 +32,14 @@ test.describe("front door", () => {
 test.describe("chat surface", () => {
   test("renders the chat, the explainer, and the federal default", async ({ page }) => {
     await page.goto("/screen/ask");
-    // `name` matches a SUBSTRING by default, and the explainer now has a
-    // "How Demeter answers" heading — so this has to be exact or it resolves
-    // to two elements and fails strict mode.
+    // Playwright's `name` matches a SUBSTRING by default — testing-library's
+    // matches the FULL string — which is why these collisions surface only
+    // here and the jsdom suite stays green. Both locators on this page have
+    // now been bitten by it, so both are pinned exact:
+    //   "Demeter"     also matched the explainer's "How Demeter answers"
+    //   "Your state"  also matched the estimate rail's "Choose your state"
     await expect(page.getByRole("heading", { name: "Demeter", exact: true })).toBeVisible();
-    const picker = page.getByRole("button", { name: "Your state" });
+    const picker = page.getByRole("button", { name: "Your state", exact: true });
     await expect(picker).toContainText("All states");
     // The explainer is SERVER-rendered — its presence in the DOM is what makes
     // the page quotable by generative search, so it is worth a smoke assertion.
@@ -49,7 +52,7 @@ test.describe("chat surface", () => {
 
   test("guide deep-link preselects state and question", async ({ page }) => {
     await page.goto("/screen/ask?state=TX&q=Does%20my%20car%20count%3F");
-    await expect(page.getByRole("button", { name: "Your state" })).toContainText("TX");
+    await expect(page.getByRole("button", { name: "Your state", exact: true })).toContainText("TX");
     await expect(page.getByPlaceholder(/Ask anything about SNAP/)).toHaveValue(
       "Does my car count?",
     );
@@ -115,7 +118,7 @@ test.describe("growth surfaces", () => {
     await expect(first).toBeVisible();
     await first.click();
     await expect(page).toHaveURL(/\/screen\/ask\?state=TX/);
-    await expect(page.getByRole("button", { name: "Your state" })).toContainText("TX");
+    await expect(page.getByRole("button", { name: "Your state", exact: true })).toContainText("TX");
   });
 
   test("unknown guide slugs 404 (dynamicParams=false)", async ({ page }) => {
