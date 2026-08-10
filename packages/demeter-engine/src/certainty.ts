@@ -107,6 +107,10 @@ export interface CertaintyInput {
   state: string | null | undefined;
   /** Whether `state` has an adversarially verified pack. */
   stateVerified: boolean;
+  /** True when the distress gate fired — the answer LEADS with immediate help
+   *  (211, food banks) rather than with policy. Suppresses one specific hedge;
+   *  see the authority_not_retrieved branch in assessCertainty (#685). */
+  distress?: boolean | undefined;
 }
 
 /**
@@ -174,6 +178,28 @@ export function assessCertainty(input: CertaintyInput, lang: AnswerLang = "en"):
     return { level: "uncertain", code: "state_not_verified", reason: t.stateUnverified, basis: all };
   }
   if (inSources.length === 0) {
+    // DISTRESS RESPONSES ARE NOT HEDGED HERE (#685).
+    //
+    // A distress reply leads with immediate help — 211, food banks, the local
+    // office — because someone said their benefits were cut or their kids have
+    // no food. Its substance is a phone number, not a regulation, so it
+    // frequently cites nothing retrievable and lands in this branch. The
+    // banner then tells a person in crisis "we can't be certain" about advice
+    // that is not a policy claim at all. Measured on the gold set: this fired
+    // on distress-benefits-cut in consecutive runs.
+    //
+    // #686 already suppresses answers citing NOTHING. This covers the ones
+    // that cite something in passing — a distress reply that mentions 211
+    // alongside a rule — which that check could not see.
+    //
+    // SCOPED DELIBERATELY TO THIS BRANCH. Every other warning still fires for
+    // a distress answer, and that is the point: an unrecognized (fabricated)
+    // citation is MORE dangerous in a crisis reply, not less, so it must keep
+    // warning. Only the "we didn't have that authority's text" hedge is
+    // suppressed, because it is the one that misfires on help content.
+    if (input.distress) {
+      return { level: "not_applicable", code: "no_claim_to_verify", reason: "", basis: [] };
+    }
     return { level: "uncertain", code: "authority_not_retrieved", reason: t.notRetrieved, basis: all };
   }
   return { level: "certain", code: "grounded", reason: t.certain, basis: [...inSources, ...known] };
