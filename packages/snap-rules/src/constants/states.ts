@@ -319,11 +319,35 @@ const STATES: Record<string, StatePolicy> = {
   // null — a genuine, logged verification gap, see the PA entry's own
   // comment for exactly what was and wasn't found.
   //
-  // STILL NOT SOURCED — and deliberately left at the permissive value
-  // rather than guessed:
-  //   • abawd_waiver_avail: true and drug_felony_ban: false are FAIL-OPEN
-  //     defaults, not findings. Both err toward eligibility, per the
-  //     direction-of-error rule in #608/#614: never deny on unverified data.
+  // DRUG FELONY BAN (#619, sourced 2026-08-11): all four now stay `false` for
+  // a REASON, not as a default. Two distinct reasons, and the distinction
+  // matters to anyone reading the value:
+  //   • IL and OH are VERIFIED FULL OPT-OUTS — `false` is the correct answer,
+  //     confirmed against primary statute text. Nothing pending.
+  //   • FL and PA are MODIFIED bans, which this boolean cannot express. FL
+  //     denies only trafficking convictions; PA conditions eligibility on
+  //     treatment compliance. Flipping either to `true` would disqualify every
+  //     drug-felony household in the state, including the large majority the
+  //     statute protects. `false` under-claims a narrow real ban rather than
+  //     over-applying it — the #614 RMP discipline, and the direction-of-error
+  //     rule in #608: never deny on data the type cannot represent.
+  //     A richer type is filed separately; see each state's comment.
+  //
+  // STILL NOT SOURCED — deliberately left permissive rather than guessed:
+  //   • abawd_waiver_avail: true is a FAIL-OPEN default, not a finding. A
+  //     wrong `false` STRIPS a claimed waiver exemption (gates/abawd.ts reads
+  //     it as "we affirmatively know this area has no waiver"), which denies
+  //     food. Third sourcing pass 2026-08-11 also failed to produce a
+  //     citable answer: FNS/FNA publishes ABAWD waiver status quarterly, but
+  //     no FY26 quarterly PDF is posted (fna.usda.gov lists FY1997–2024), and
+  //     fna.usda.gov itself still times out — the same wall logged for PA's
+  //     SUA below. Secondary trackers report only MN/MT/ND holding statewide
+  //     waivers as of June 2026, which is NOT sufficient: post-OBBBA waivers
+  //     are county-level (>10% unemployment), so "no statewide waiver" cannot
+  //     be written as a state-level `false` without wrongly denying anyone in
+  //     a waived county. The correct fix is county sets in
+  //     work-requirements/waiver-counties.ts, as authored for CA — not a
+  //     boolean flip.
   //
   // CAVEAT on the FNS chart: it is corroboration, not the last word — it
   // under-describes Georgia (prints a single 130% row, missing §3210's 200%
@@ -350,6 +374,24 @@ const STATES: Record<string, StatePolicy> = {
       none: new Decimal("0"),
     },
     allotment_tier: "48",
+    // FL is a MODIFIED ban, not an opt-out and not a full ban. Fla. Stat.
+    // § 414.095(1) (2025 edition, flsenate.gov, read 2026-08-11): Florida
+    // "opts out of the provision of Pub. L. No. 104-193, s. 115" and provides
+    // that "[b]enefits may not be denied to an individual solely based on a
+    // felony drug conviction, unless the conviction is for trafficking
+    // pursuant to s. 893.135." Trafficking → ineligible for food assistance;
+    // every other felony drug conviction → eligible, conditioned on meeting
+    // program/treatment requirements. § 414.095 governs BOTH temporary cash
+    // assistance and food assistance, which is what makes it the right cite.
+    //
+    // CAUTION for whoever revisits this: the widely-linked Public Health Law
+    // Center map cites Fla. Stat. § 414.0652 for Florida. That section is
+    // TANF drug SCREENING (positive test → 1-year TANF ineligibility) and
+    // says nothing about SNAP or about convictions — verified 2026-08-11.
+    // A secondary source's citation was program-mismatched; check the statute.
+    //
+    // Stays false because `true` would deny all drug-felony households, not
+    // just the trafficking subset the statute actually excludes.
     drug_felony_ban: false,
     abawd_waiver_avail: true,
     rmp_operated: false,
@@ -376,12 +418,19 @@ const STATES: Record<string, StatePolicy> = {
       none: new Decimal("0"),
     },
     allotment_tier: "48",
+    // VERIFIED FULL OPT-OUT — 305 ILCS 5/1-10(c), read 2026-08-11 against the
+    // primary text at ilga.gov: "Persons shall not be determined ineligible
+    // for food stamps provided under this Code based upon a conviction of any
+    // felony…". Unconditional for SNAP, with no treatment or compliance
+    // strings. (Illinois cash assistance is separate and DOES restrict Class X
+    // and Class 1 drug felonies — do not carry that across; this field is
+    // SNAP-only.) `false` here is a finding, not a fail-open default.
     drug_felony_ban: false,
+    abawd_waiver_avail: true,
     // RMP runs in Cook and Franklin counties ONLY — a state-level boolean
     // cannot say that, so it stays false until county granularity exists
     // (#614). False under-claims a real program rather than over-claiming it
     // statewide.
-    abawd_waiver_avail: true,
     rmp_operated: false,
   },
   // Pennsylvania utility standards — !!! PENDING PRIMARY-SOURCE VERIFICATION,
@@ -449,6 +498,23 @@ const STATES: Record<string, StatePolicy> = {
     asset_waiver: true,
     sua_by_tier: null,
     allotment_tier: "48",
+    // MODIFIED ban, and the ONLY one of the four whose primary text could not
+    // be read. The Public Health Law Center map (secondary) reports a modified
+    // ban at 62 Pa. Stat. § 432.24 — eligibility conditioned on court-ordered
+    // treatment compliance and periodic screening, with a tiered penalty for
+    // failed tests. Primary text NOT verified: palegis.us's statute viewer
+    // returns only its navigation shell to automated fetch (2026-08-11), and
+    // legis.state.pa.us now 301s there.
+    //
+    // TWO things therefore remain UNCONFIRMED for PA, and neither should be
+    // asserted downstream: (a) the exact conditions, and (b) whether § 432.24
+    // reaches SNAP at all or only cash assistance. (b) is a live doubt, not
+    // pedantry — the same secondary source's Florida citation turned out to be
+    // a TANF-only section (see FL above), and PA's 2018 drug-felony policy
+    // change was reported under TANF.
+    //
+    // `false` regardless: a conditional ban cannot be expressed by this
+    // boolean, and `true` would deny every PA drug-felony household outright.
     drug_felony_ban: false,
     abawd_waiver_avail: true,
     rmp_operated: false,
@@ -484,6 +550,13 @@ const STATES: Record<string, StatePolicy> = {
       none: new Decimal("0"),
     },
     allotment_tier: "48",
+    // VERIFIED FULL OPT-OUT — Ohio Rev. Code § 5101.84 (eff. Oct 16, 2009),
+    // read 2026-08-11 against the primary text at codes.ohio.gov: "An
+    // individual otherwise ineligible for aid … because of paragraph (a) of
+    // 21 U.S.C. 862a is eligible for the aid or benefits if the individual
+    // meets all other eligibility requirements." Names SNAP explicitly (via
+    // the Food and Nutrition Act, 7 U.S.C. 2011 et seq.) and attaches no
+    // drug-specific condition. `false` is a finding, not a fail-open default.
     drug_felony_ban: false,
     abawd_waiver_avail: true,
     rmp_operated: false,
