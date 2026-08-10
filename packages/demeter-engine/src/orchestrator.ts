@@ -20,6 +20,7 @@
 
 import Anthropic from "@anthropic-ai/sdk";
 import { buildMaeSystem, MAE_GENERATION, type Audience } from "./answer";
+import { thinkingConfigFor } from "./thinking-config";
 import {
   verifyCitations,
   formatCitationTrailer,
@@ -242,6 +243,13 @@ export async function* answerQuestion(req: AnswerRequest): AsyncGenerator<Answer
   const generation = {
     ...MAE_GENERATION,
     model: modelUsed,
+    // Thinking configuration is MODEL-GATED, so it cannot be pinned alongside
+    // the model string. Adaptive thinking is rejected outright by older-family
+    // models (Haiku 4.5 returns 400 "adaptive thinking is not supported on
+    // this model"), which meant a comparison run could never have scored them
+    // — every case would have errored, not scored badly. Found by a 2-case
+    // smoke run before it cost a full sweep.
+    thinking: thinkingConfigFor(modelUsed),
     max_tokens: ANSWER_LIMITS.MAX_OUTPUT_TOKENS,
     system: systemBlocks,
   };
