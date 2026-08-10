@@ -99,6 +99,42 @@ export async function runModelComparison(models: string[]): Promise<ComparisonRe
   return { scorecards, results };
 }
 
+/**
+ * The per-case detail the aggregate table throws away (#685).
+ *
+ * The first sweep printed rates only, which was enough to choose a model and
+ * useless for the obvious follow-up: WHY is a quarter of the gold set marked
+ * uncertain? `certainty_code` already carries that answer per case; it was just
+ * never surfaced. Grouping by it turns "24% uncertain" into a ranked list of
+ * causes, which is the difference between a number and a work item.
+ *
+ * Costs nothing — it reads results already in memory. Not printing it meant
+ * paying for a full sweep again to recover data the first run had.
+ */
+export function formatDiagnostics(report: ComparisonReport): string {
+  const out: string[] = [];
+  for (const s of report.scorecards) {
+    const rs = report.results.filter((r) => r.model === s.model);
+    const uncertain = rs.filter((r) => r.certainty === "uncertain");
+    const byCode = new Map<string, string[]>();
+    for (const r of uncertain) {
+      const code = r.certaintyCode ?? "(no code)";
+      byCode.set(code, [...(byCode.get(code) ?? []), r.id]);
+    }
+    out.push(`  ${s.model} — why answers were uncertain (${uncertain.length}/${rs.length}):`);
+    if (byCode.size === 0) out.push("    (none)");
+    for (const [code, ids] of [...byCode].sort((a, b) => b[1].length - a[1].length)) {
+      out.push(`    ${String(ids.length).padStart(3)}  ${code}`);
+      out.push(`         ${ids.join(", ")}`);
+    }
+    if (s.failedCaseIds.length) {
+      out.push(`    failed checks: ${s.failedCaseIds.join(", ")}`);
+    }
+    out.push("");
+  }
+  return out.join("\n");
+}
+
 /** Fixed-width report. Printed by the key-gated test so an ad-hoc run shows
  *  numbers rather than a green bar. */
 export function formatComparison(report: ComparisonReport): string {
@@ -118,5 +154,6 @@ export function formatComparison(report: ComparisonReport): string {
     "  A high pass rate next to a high uncertain share is not a win — it is a",
     "  model hedging its way through the gates. Read both columns.",
     "",
+    formatDiagnostics(report),
   ].join("\n");
 }

@@ -23,6 +23,9 @@ export interface LiveEvalResult extends AnswerScore {
   /** The verdict the READER would have seen ("certain" / "uncertain"), lifted
    *  off the audit record. Undefined only if the pipeline emitted no record. */
   certainty: string | undefined;
+  /** WHY that verdict — e.g. "authority_not_retrieved", "grounded". This is the
+   *  field that turns an uncertain RATE into a ranked list of causes (#685). */
+  certaintyCode: string | undefined;
   /** Which model generated this answer — needed once results from several
    *  models land in one report. */
   model: string;
@@ -81,6 +84,7 @@ export async function runLiveAnswerEval(opts: LiveEvalOptions = {}): Promise<Liv
     // costs nothing and is the metric that distinguishes a model which answers
     // well from one that hedges its way through the gates.
     let certainty: string | undefined;
+    let certaintyCode: string | undefined;
     const request: Parameters<typeof answerQuestion>[0] = {
       messages: [{ role: "user", content: g.question }],
       audience,
@@ -89,6 +93,7 @@ export async function runLiveAnswerEval(opts: LiveEvalOptions = {}): Promise<Liv
         onVerified: (o) => (outcome = o),
         audit: async (rec) => {
           certainty = rec.certainty;
+          certaintyCode = rec.certaintyCode;
         },
       },
       meta: { staffUserId: null, mode: "eval" },
@@ -109,6 +114,7 @@ export async function runLiveAnswerEval(opts: LiveEvalOptions = {}): Promise<Liv
       answer,
       verifierOutcome: outcome,
       certainty,
+      certaintyCode,
       model: opts.model ?? MAE_GENERATION.model,
       ...score,
     });

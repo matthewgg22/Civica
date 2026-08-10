@@ -52,7 +52,14 @@ export const LANG_TAG: Record<AnswerLang, string> = {
 type Glossary = Array<[RegExp, string]>;
 
 const ES_GLOSSARY: Glossary = [
-  [/asignaci[oó]n m[aá]xima|beneficio m[aá]ximo/i, "maximum allotment"],
+  // Gap-tolerant for the same reason as the VI entry below (#685): "asignación
+  // máxima" happens to be contiguous in the gold question, but "asignación de
+  // CalFresh máxima" or "beneficio mensual máximo" would have silently missed.
+  // Fixed here too rather than waiting for the eval to catch it in Spanish.
+  [
+    /asignaci[oó]n(?:\s+\S+){0,3}\s*m[aá]xima|beneficio(?:\s+\S+){0,3}\s*m[aá]ximo/i,
+    "maximum allotment",
+  ],
   [/emergencia|urgente|r[aá]pido|cu[aá]nto tarda/i, "expedited service emergency seven days"],
   [/entrevista/i, "interview"],
   [/tel[eé]fono/i, "phone telephone"],
@@ -80,7 +87,17 @@ const ES_GLOSSARY: Glossary = [
 
 const VI_GLOSSARY: Glossary = [
   [/phiếu thực phẩm|trợ cấp thực phẩm|tem phiếu/i, "SNAP food stamps benefits"],
-  [/trợ cấp tối đa|mức tối đa/i, "maximum allotment"],
+  // GAP-TOLERANT (#685). This was /trợ cấp tối đa/ — a contiguous phrase — and
+  // it silently failed on "Trợ cấp SNAP tối đa", where the programme name sits
+  // between the two terms. Nothing else in the glossary matched either, so the
+  // query got NO expansion and the raw Vietnamese embedded next to 273.8
+  // (resources) instead of 273.10 (allotments): a correct, correctly-cited
+  // answer that the reader still sees marked uncertain.
+  //
+  // Allowing a few intervening tokens costs nothing — the terms still both have
+  // to be present, in order — and covers the natural way people name a benefit
+  // mid-phrase ("trợ cấp SNAP tối đa", "trợ cấp hàng tháng tối đa").
+  [/trợ cấp(?:\s+\S+){0,3}\s*tối đa|mức tối đa/i, "maximum allotment"],
   [/khẩn cấp|gấp|nhanh|bao lâu/i, "expedited service emergency seven days"],
   [/phỏng vấn/i, "interview"],
   [/điện thoại/i, "phone telephone"],
