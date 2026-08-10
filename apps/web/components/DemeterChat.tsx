@@ -261,12 +261,16 @@ export function DemeterChat({
   states,
   initialState = null,
   initialQuestion = null,
+  initialLang = "en",
 }: {
   states: PackMeta[];
   initialState?: string | null;
   initialQuestion?: string | null;
+  /** Set by the localized routes so the chat opens in the page's language
+   *  rather than rendering English and then flipping after hydration. */
+  initialLang?: AnswerLang;
 }) {
-  const [lang, setLang] = useState<AnswerLang>("en");
+  const [lang, setLang] = useState<AnswerLang>(initialLang);
   const [state, setState] = useState<string | null>(initialState);
   const [messages, setMessages] = useState<Msg[]>([]);
   const [input, setInput] = useState(initialQuestion ?? "");
