@@ -10,6 +10,7 @@ import corpusJson from "./corpus/ecfr-snap.json";
 import { embed, cosine } from "./embeddings";
 import { DESCRIPTORS } from "./section-descriptors";
 import { getStatePack, type StatePack, type PackTopic } from "./states";
+import { expandQuery, type AnswerLang } from "./lang";
 import { FORM_QUESTION_HINTS } from "./form-questions";
 
 export interface RegChunk {
@@ -256,7 +257,7 @@ export interface RetrieveOptions {
   /** Query language. "es" expands the query with English SNAP terms — the
    *  corpus and its embeddings are English, so a raw Spanish query retrieves
    *  weakly (live eval: ES degrades traced to empty/thin grounding). */
-  lang?: "en" | "es" | undefined;
+  lang?: AnswerLang | undefined;
   k?: number; // max chunks (default 6)
   charBudget?: number; // total injected chars (default 10000)
   maxChunkChars?: number; // per-chunk cap (default 3500)
@@ -310,42 +311,16 @@ function queryHasTerm(words: Set<string>, normalized: string, term: string): boo
 // English, so Spanish queries are expanded with the English SNAP terms they
 // imply BEFORE scoring. This changes only what retrieval sees — the user's
 // question, the answer language, and the audit record are untouched.
-const ES_RETRIEVAL_GLOSSARY: Array<[RegExp, string]> = [
-  [/asignaci[oó]n m[aá]xima|beneficio m[aá]ximo/i, "maximum allotment"],
-  [/emergencia|urgente|r[aá]pido|cu[aá]nto tarda/i, "expedited service emergency seven days"],
-  [/entrevista/i, "interview"],
-  [/tel[eé]fono/i, "phone telephone"],
-  [/ingresos?|gana|salario|sueldo/i, "income limit gross net"],
-  [/estatus migratorio|inmigraci[oó]n|carga p[uú]blica/i, "public charge immigration status"],
-  [/estudiantes?|universidad|colegio/i, "student eligibility enrollment"],
-  // \b on the short stems: bare /auto/ matched inside "autorización".
-  [/\bcarro|\bcoche|\bauto\b|autom[oó]vil|veh[ií]culo/i, "vehicle car resource asset"],
-  [/robar|robaron|robo|skimming/i, "stolen benefits replacement skimming"],
-  [/tarjeta|ebt/i, "EBT card"],
-  [/requisitos de trabajo|trabajar|empleo/i, "work requirements ABAWD employment"],
-  [/deducci[oó]n|deducciones/i, "deduction"],
-  [/renta|alquiler|vivienda|hipoteca/i, "shelter rent housing"],
-  [/servicios (p[uú]blicos|b[aá]sicos)|luz|utilidades/i, "utility allowance"],
-  [/recertificaci[oó]n|renovar|renovaci[oó]n/i, "recertification renewal"],
-  [/audiencia|apelar|apelaci[oó]n/i, "fair hearing appeal"],
-  [/reponen|reemplazo|reembolso/i, "replacement"],
-  [/seguro social|n[uú]mero de seguro/i, "social security number SSN"],
-  [/califica|calific[oa]|elegib(le|ilidad)/i, "eligibility qualify"],
-  [/hogar|familia|personas/i, "household size"],
-  [/mayores|ancian[oa]s?|discapacidad|discapacitad[oa]/i, "elderly disabled"],
-  [/solicitar|solicitud|aplicar|aplicaci[oó]n/i, "application apply"],
-  [/hijos?|ni[ñn][oa]s?/i, "children household"],
-  [/comida|alimentos|hambre/i, "food emergency"],
-];
+// (The ES glossary moved to lang.ts, alongside the VI and ZH ones.)
 
 /** Expand a Spanish query with the English SNAP terms it implies (exported for
- *  tests). Returns the query unchanged when nothing matches. */
+ *  tests). Returns the query unchanged when nothing matches.
+ *
+ *  @deprecated Kept as a thin alias so existing callers and tests keep working.
+ *  The glossaries now live in lang.ts, one per language — call expandQuery()
+ *  with an explicit lang instead. */
 export function expandEsQuery(query: string): string {
-  const extra: string[] = [];
-  for (const [re, en] of ES_RETRIEVAL_GLOSSARY) {
-    if (re.test(query)) extra.push(en);
-  }
-  return extra.length ? `${query}\n${extra.join(" ")}` : query;
+  return expandQuery(query, "es");
 }
 
 /** Score and rank corpus chunks for a query; returns the top set within budget.
@@ -356,7 +331,7 @@ export function expandEsQuery(query: string): string {
  * is best-effort — if the model can't load, this is exactly the lexical path. */
 export async function retrieve(rawQuery: string, opts: RetrieveOptions = {}): Promise<RegChunk[]> {
   const { k = 6, charBudget = 10_000, maxChunkChars = 3_500, minScore = DEFAULT_MIN_SCORE, state } = opts;
-  const query = opts.lang === "es" ? expandEsQuery(rawQuery) : rawQuery;
+  const query = expandQuery(rawQuery, opts.lang ?? "en");
   const normalized = query.toLowerCase();
   const words = new Set(normalized.match(/[a-z0-9]+/g) ?? []);
   const tokens = new Set(tokenize(query));

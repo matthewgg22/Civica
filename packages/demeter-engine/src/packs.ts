@@ -66,3 +66,15 @@ export function isVerifiedState(code: string | null | undefined): boolean {
  *  in both.
  */
 export const RECOMPOSE_MARKER = "\n\n⟲ recomposing with verified sources…\n\n";
+
+// Re-exported through the CLIENT-SAFE entry on purpose: the language picker is
+// a client component, and importing these from the root barrel would drag the
+// 1MB eCFR corpus into the browser bundle. Same reasoning as RECOMPOSE_MARKER
+// above. lang.ts itself imports nothing, so this costs the bundle nothing.
+export {
+  ANSWER_LANGS,
+  isAnswerLang,
+  LANG_NATIVE_NAME,
+  LANG_TAG,
+  type AnswerLang,
+} from "./lang";

@@ -14,6 +14,7 @@
 // confident wrong answer costs someone food.
 
 import type { CitationCheck } from "./citation-verifier";
+import type { AnswerLang } from "./lang";
 
 export type CertaintyLevel = "certain" | "uncertain";
 
@@ -63,6 +64,36 @@ const COPY = {
     labelUncertain: "NO CONFIRMADO",
     checkHeading: "Compruébalo tú mismo",
   },
+  vi: {
+    certain:
+      "Mọi quy định được trích dẫn ở đây đều lấy từ văn bản quy định được truy xuất cho câu hỏi của bạn — hãy tự kiểm tra bên dưới.",
+    unrecognized:
+      "Câu trả lời này trích dẫn một nguồn chúng tôi không đối chiếu được. Hãy coi là chưa được xác minh và xác nhận với cơ quan SNAP của bạn trước khi dựa vào nó.",
+    degraded:
+      "Chúng tôi không xác minh được phần tóm tắt, nên chúng tôi trích nguyên văn nguồn thay vì diễn giải lại.",
+    notRetrieved:
+      "Đây là những căn cứ có thật, nhưng chúng tôi không có nội dung của chúng cho câu hỏi này — nên xác nhận tại nguồn.",
+    stateUnverified:
+      "Đây là mức cơ bản của liên bang. Quy định riêng của tiểu bang bạn có thể khác, và chúng tôi chưa xác minh chính sách của tiểu bang đó.",
+    labelCertain: "CHẮC CHẮN",
+    labelUncertain: "CHƯA CHẮC",
+    checkHeading: "Tự kiểm tra",
+  },
+  zh: {
+    certain:
+      "这里引用的每条规定都来自为您的问题检索到的法规原文——请在下方自行核对。",
+    unrecognized:
+      "此回答引用了我们无法核对的来源。请视为未经证实，在依赖它之前先与您所在州的 SNAP 机构确认。",
+    degraded:
+      "我们无法核实摘要内容，因此直接引用来源原文，而不做转述。",
+    notRetrieved:
+      "这些是真实的法规依据，但我们没有针对此问题调取其原文——建议到来源处确认。",
+    stateUnverified:
+      "这是联邦最低标准。您所在州的规定可能不同，我们尚未核实该州的政策。",
+    labelCertain: "确定",
+    labelUncertain: "不确定",
+    checkHeading: "自行核对",
+  },
 } as const;
 
 export interface CertaintyInput {
@@ -89,7 +120,7 @@ export interface CertaintyInput {
  * check and was discarded before the reader saw it, and the replacement
  * cleared the same bar. That is the machinery working, not a weaker answer.
  */
-export function assessCertainty(input: CertaintyInput, lang: "en" | "es" = "en"): CertaintyVerdict {
+export function assessCertainty(input: CertaintyInput, lang: AnswerLang = "en"): CertaintyVerdict {
   const t = COPY[lang];
   const bad = input.checks.filter((c) => c.status === "unrecognized").map((c) => c.citation);
   const inSources = input.checks.filter((c) => c.status === "in_sources").map((c) => c.citation);
@@ -117,7 +148,7 @@ export function assessCertainty(input: CertaintyInput, lang: "en" | "es" = "en")
  * reason, and the citations to check. Deliberately plain — this has to read
  * the same to an applicant on a phone and to a program officer.
  */
-export function formatCertaintyBanner(v: CertaintyVerdict, lang: "en" | "es" = "en"): string {
+export function formatCertaintyBanner(v: CertaintyVerdict, lang: AnswerLang = "en"): string {
   const t = COPY[lang];
   const label = v.level === "certain" ? t.labelCertain : t.labelUncertain;
   const mark = v.level === "certain" ? "✓" : "⚠";

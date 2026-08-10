@@ -40,3 +40,7 @@ export { extractFacts, mergeFactsPatch, type PartialFacts, type ExtractionResult
 export { assessCompleteness, completeFactsShape, type CompletenessResult } from "./screening/completeness";
 export { classifyScreening, type ScreeningOutcome, type ScreeningClassification } from "./screening/classify";
 export { FORM_QUESTIONS, matchFormQuestion, classifyQuestionTopic, type FormQuestion } from "./form-questions";
+
+// Language registry — the picker and any caller that threads `lang` need
+// these, and they carry no corpus weight.
+export { ANSWER_LANGS, isAnswerLang, LANG_NATIVE_NAME, LANG_TAG, expandQuery, type AnswerLang } from "./lang";
