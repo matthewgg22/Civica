@@ -22,10 +22,22 @@ import { supabaseAdmin } from "./supabase-server";
 export const SPEND_CEILING_USD = Number(process.env.DEMETER_SPEND_CEILING_USD ?? 200);
 export const RATE_LIMIT_PER_MINUTE = Number(process.env.DEMETER_RATE_PER_MINUTE ?? 10);
 
-// Pinned-model pricing for settle (claude-opus-4-8, USD per million tokens).
+// Pinned-model pricing for settle (claude-sonnet-5, USD per million tokens).
 // Overridable so a repriced or re-pinned model is a config change, not a deploy.
-const INPUT_USD_PER_MTOK = Number(process.env.DEMETER_INPUT_USD_PER_MTOK ?? 15);
-const OUTPUT_USD_PER_MTOK = Number(process.env.DEMETER_OUTPUT_USD_PER_MTOK ?? 75);
+//
+// THESE DEFAULTS WERE ALREADY WRONG. They said $15/$75, which is not Opus 4.8's
+// price — Opus 4.8 is $5/$25 — so every answer was settled at 3x its real cost
+// and the $200 ceiling would have tripped after roughly a third of the spend it
+// was meant to allow. Erring toward cutting the service off early is the safe
+// direction, which is exactly why nobody would have noticed.
+//
+// Sonnet 5 list price is $3/$15. Anthropic is running an introductory $2/$10
+// through 2026-08-31; LIST is encoded deliberately, because pricing that
+// UNDER-counts spend lets real cost run past the ceiling, and an intro rate
+// hardcoded here would silently become an under-count the day it lapses.
+// Over-counting for the remaining intro window is the direction that fails safe.
+const INPUT_USD_PER_MTOK = Number(process.env.DEMETER_INPUT_USD_PER_MTOK ?? 3);
+const OUTPUT_USD_PER_MTOK = Number(process.env.DEMETER_OUTPUT_USD_PER_MTOK ?? 15);
 
 function ipBucket(ip: string, now: Date): string {
   const salt = process.env.DEMETER_IP_SALT ?? "demeter-v1";

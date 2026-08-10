@@ -25,8 +25,30 @@
 // disclaimer is load-bearing and is ALSO enforced in each surface's UI, so
 // even if a given answer omits it the reader still sees it.
 
-/** Exact model string — Opus 4.8 (policy accuracy matters for a benefits tool). */
-export const MAE_MODEL = "claude-opus-4-8";
+/** Exact model string.
+ *
+ * Sonnet 5 (was Opus 4.8). This surface is a PUBLIC, anonymous endpoint —
+ * anyone can ask anything, so per-answer cost is unbounded by us and bounded
+ * only by the spend ceiling. Opus rates ($5/$25 per Mtok) made that ceiling a
+ * few thousand questions; Sonnet 5 is $3/$15 list, and near-Opus on exactly
+ * the structured, citation-bound work this pipeline does.
+ *
+ * The accuracy argument for Opus is weaker here than it looks, because
+ * correctness is not left to the model: the citation verifier, the numeric
+ * equivalence gate and the certainty verdict all check the answer mechanically
+ * before a reader sees it. A weaker model fails by tripping those gates
+ * (an UNCERTAIN verdict), not by shipping a confident wrong answer.
+ *
+ * That is a claim to MEASURE, not to assert — #602 re-runs the live answer
+ * eval; grounded-rate and UNCERTAIN share across models are the numbers that
+ * decide whether this pin stays. Not moving to Haiku on a guess: the failure
+ * mode of a too-weak model here is a hedging product whose every metric still
+ * looks safe.
+ *
+ * `effort` is deliberately NOT set — Sonnet 5 defaults to `high`, and changing
+ * model and effort in the same step would make the eval uninterpretable.
+ */
+export const MAE_MODEL = "claude-sonnet-5";
 
 /**
  * Persistent UI disclaimer. Shown regardless of answer content.
