@@ -377,7 +377,6 @@ export function DemeterChat({
     sessionIdRef.current =
       typeof crypto !== "undefined" && "randomUUID" in crypto ? crypto.randomUUID() : "";
   }
-  const turnRef = useRef(0);
   const abortRef = useRef<AbortController | null>(null);
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const t = T[lang];
@@ -473,7 +472,18 @@ export function DemeterChat({
           state,
           lang,
           sessionId: sessionIdRef.current || undefined,
-          turnIndex: (turnRef.current += 1),
+          // Counts ANSWERS, not attempts — because an audit row is written per
+          // answer, so this has to agree with what actually lands in the log.
+          //
+          // Two wrong versions came before this one, both of which inflate the
+          // survival curve (backwards for a metric whose job is drop-off):
+          //   - a ref incremented per send: a 429 burns a turn number;
+          //   - counting USER turns: a failed request leaves its user message
+          //     in the history (only the assistant placeholder is dropped), so
+          //     it still counts.
+          // Completed assistant turns + 1 is the answer this request will be.
+          turnIndex:
+            chatTurns.filter((m) => m.role === "assistant" && m.content).length + 1,
         }),
         signal: controller.signal,
       });

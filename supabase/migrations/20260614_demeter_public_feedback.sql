@@ -25,7 +25,21 @@ ALTER TABLE snap_enrollment.mae_feedback
   ADD COLUMN IF NOT EXISTS source      TEXT NOT NULL DEFAULT 'staff',
   ADD COLUMN IF NOT EXISTS scope_state TEXT,
   ADD COLUMN IF NOT EXISTS lang        TEXT,
-  ADD COLUMN IF NOT EXISTS certainty   TEXT;
+  ADD COLUMN IF NOT EXISTS certainty   TEXT,
+  -- One row per REPORT, not per click. The public flow submits twice — the
+  -- thumbs-down fires immediately (most people never reach the follow-up), then
+  -- again if they add a reason and note. Without this key those are two rows,
+  -- and demeter_feedback_stats would count one person's single complaint twice
+  -- AND split it across two `reason` buckets — corrupting the exact number this
+  -- whole loop exists to produce. The route upserts on it.
+  ADD COLUMN IF NOT EXISTS report_id   UUID;
+
+-- NULLs are not equal in Postgres, so this constrains public reports (which
+-- always carry a report_id) while leaving every existing staff row — and any
+-- future one — free to keep report_id NULL.
+CREATE UNIQUE INDEX IF NOT EXISTS mae_feedback_report_id_key
+  ON snap_enrollment.mae_feedback (report_id)
+  WHERE report_id IS NOT NULL;
 
 -- Existing rows predate the public surface, so the 'staff' default is correct
 -- for them. Constraint added separately so the ALTER above stays idempotent.

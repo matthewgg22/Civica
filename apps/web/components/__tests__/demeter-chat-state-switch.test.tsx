@@ -119,6 +119,42 @@ describe("DemeterChat state switching", () => {
     expect(screen.queryByRole("status")).toBeNull();
   });
 
+  it("numbers turns from the conversation, so a failed request burns no turn", async () => {
+    // REGRESSION (second-pass review): turnIndex used to come from a counter
+    // that incremented on every ATTEMPT. An audit row is only written on a
+    // SUCCESSFUL answer, so a 429 consumed a turn number and max(turn_index)
+    // then reported the session as deeper than it got — inflating the survival
+    // curve, which is backwards for a drop-off metric.
+    render(<DemeterChat states={STATES} />);
+    await sendQuestion("first");
+    expect(JSON.parse((fetchMock.mock.calls[0]![1] as RequestInit).body as string).turnIndex).toBe(1);
+
+    // A rejected turn: no answer, so no audit row.
+    fetchMock.mockResolvedValueOnce(
+      new Response(JSON.stringify({ reason: "rate_limited" }), { status: 429 }),
+    );
+    fireEvent.change(screen.getByPlaceholderText(/Ask anything about SNAP/), {
+      target: { value: "rejected" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Send" }));
+    await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(2));
+
+    await sendQuestion("second");
+    const third = JSON.parse((fetchMock.mock.calls[2]![1] as RequestInit).body as string);
+    // The failed turn left no assistant message, so this is still turn 2.
+    expect(third.turnIndex).toBe(2);
+  });
+
+  it("sends one session id for the whole conversation", async () => {
+    render(<DemeterChat states={STATES} />);
+    await sendQuestion("first");
+    await sendQuestion("second");
+    const a = JSON.parse((fetchMock.mock.calls[0]![1] as RequestInit).body as string);
+    const b = JSON.parse((fetchMock.mock.calls[1]![1] as RequestInit).body as string);
+    expect(a.sessionId).toBeTruthy();
+    expect(b.sessionId).toBe(a.sessionId);
+  });
+
   it("filters the list by state, program, or agency", () => {
     render(<DemeterChat states={STATES} />);
     fireEvent.click(screen.getByRole("button", { name: "Your state" }));

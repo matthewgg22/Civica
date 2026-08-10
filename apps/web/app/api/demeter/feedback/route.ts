@@ -67,8 +67,18 @@ export async function POST(req: NextRequest) {
   const certainty =
     body.certainty === "certain" || body.certainty === "uncertain" ? body.certainty : null;
 
+  // One row per REPORT. The client sends the same id for the immediate
+  // thumbs-down and for the later reason+note, so the second call UPDATES
+  // rather than inserting a duplicate — otherwise one person's single
+  // complaint is counted twice and split across two `reason` buckets in the
+  // rollup. Validated as a UUID because it reaches a uuid column.
+  const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  const reportId =
+    typeof body.reportId === "string" && UUID_RE.test(body.reportId) ? body.reportId : null;
+
   const note = clip(body.note, MAX_NOTE);
   const row = {
+    report_id: reportId,
     staff_user_id: null,
     source: "public",
     rating,
@@ -90,10 +100,15 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: true, stored: false }, { status: 202 });
   }
 
-  const { error } = await createClient(url, key, { auth: { persistSession: false } })
+  const table = createClient(url, key, { auth: { persistSession: false } })
     .schema("snap_enrollment")
-    .from("mae_feedback")
-    .insert(row);
+    .from("mae_feedback");
+  // Upsert ONLY when the client supplied a report id. A row without one has
+  // nothing to conflict on, and passing onConflict for a null key would make
+  // every anonymous report collide with every other.
+  const { error } = reportId
+    ? await table.upsert(row, { onConflict: "report_id" })
+    : await table.insert(row);
   if (error) {
     console.error("[demeter-feedback]", error);
     return NextResponse.json({ ok: true, stored: false }, { status: 202 });

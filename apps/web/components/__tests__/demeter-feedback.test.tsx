@@ -85,7 +85,12 @@ describe("DemeterFeedback", () => {
     expect(screen.getByText("What was wrong with it?")).toBeTruthy();
   });
 
-  it("sends the reason and note as a second, richer report", () => {
+  it("enriches the SAME report rather than filing a second one", () => {
+    // REGRESSION (caught in second-pass review): the two submits used to be
+    // two independent rows, so demeter_feedback_stats counted one person's
+    // single complaint twice AND split it across two `reason` buckets —
+    // corrupting the exact number this loop exists to produce. Both calls now
+    // carry the same reportId and the route upserts on it.
     renderFb();
     fireEvent.click(screen.getByRole("button", { name: "No" }));
     fireEvent.click(screen.getByRole("button", { name: "The source doesn't say that" }));
@@ -93,12 +98,27 @@ describe("DemeterFeedback", () => {
       target: { value: "273.9 is about income, not students" },
     });
     fireEvent.click(screen.getByRole("button", { name: "Send" }));
+
     expect(bodyOf(1)).toMatchObject({
       rating: "down",
       reason: "citation_wrong",
       note: "273.9 is about income, not students",
     });
+    const first = bodyOf(0).reportId;
+    expect(first, "a report id must be sent").toBeTruthy();
+    expect(bodyOf(1).reportId, "both submits must share one id").toBe(first);
     expect(screen.getByText("Thank you")).toBeTruthy();
+  });
+
+  it("gives separate answers separate report ids", () => {
+    // Two rendered instances are two distinct reports; sharing an id would
+    // make the second silently overwrite the first.
+    renderFb();
+    fireEvent.click(screen.getByRole("button", { name: "Yes" }));
+    cleanup();
+    renderFb();
+    fireEvent.click(screen.getByRole("button", { name: "Yes" }));
+    expect(bodyOf(1).reportId).not.toBe(bodyOf(0).reportId);
   });
 
   it("keeps the thumbs-down when the reader skips the follow-up", () => {

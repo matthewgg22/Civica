@@ -16,7 +16,7 @@
 // teaches them not to bother next time. The failure is logged server-side where
 // it belongs.
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import type { AnswerLang } from "@civica/demeter-engine/packs";
 
 export interface FeedbackCopy {
@@ -54,6 +54,16 @@ export function DemeterFeedback({
   const [reason, setReason] = useState<string | null>(null);
   const [note, setNote] = useState("");
 
+  // ONE id per report, reused across both submits. The thumbs-down fires
+  // immediately and the reason+note follows, and without a shared key those
+  // are two rows — one person's single complaint counted twice, split across
+  // two `reason` buckets in the rollup. The route upserts on this.
+  const reportIdRef = useRef<string>("");
+  if (!reportIdRef.current) {
+    reportIdRef.current =
+      typeof crypto !== "undefined" && "randomUUID" in crypto ? crypto.randomUUID() : "";
+  }
+
   const submit = (r: "up" | "down", why?: string | null, text?: string) => {
     // Fire-and-forget by design: feedback must never make the page feel slow
     // or, worse, appear to fail.
@@ -61,6 +71,7 @@ export function DemeterFeedback({
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
+        reportId: reportIdRef.current || undefined,
         rating: r,
         reason: why ?? null,
         note: text ?? "",

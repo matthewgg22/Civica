@@ -10,10 +10,11 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 //      an address ends up.
 
 const insert = vi.hoisted(() => vi.fn());
+const upsert = vi.hoisted(() => vi.fn());
 const rateLimit = vi.hoisted(() => vi.fn());
 
 vi.mock("@supabase/supabase-js", () => ({
-  createClient: () => ({ schema: () => ({ from: () => ({ insert }) }) }),
+  createClient: () => ({ schema: () => ({ from: () => ({ insert, upsert }) }) }),
 }));
 vi.mock("@civica/demeter-engine", () => ({
   // Stand-in scrubber: proves the route ROUTES free text through redaction,
@@ -36,10 +37,13 @@ function req(body: unknown): Request {
   });
 }
 
+const REPORT_ID = "3f2504e0-4f89-41d3-9a0c-0305e82c3301";
+
 beforeEach(() => {
   vi.clearAllMocks();
   rateLimit.mockReturnValue(true);
   insert.mockResolvedValue({ error: null });
+  upsert.mockResolvedValue({ error: null });
   process.env.NEXT_PUBLIC_SUPABASE_URL = "https://x.supabase.co";
   process.env.SUPABASE_SERVICE_ROLE_KEY = "svc";
 });
@@ -68,6 +72,32 @@ describe("POST /api/demeter/feedback", () => {
       lang: "es",
       certainty: "certain",
     });
+  });
+
+  it("UPSERTS on report_id, so enriching a report does not file a second one", async () => {
+    // REGRESSION (second-pass review): two submits per thumbs-down used to be
+    // two rows, double-counting one complaint in demeter_feedback_stats and
+    // splitting it across two `reason` buckets.
+    await POST(req({ rating: "down", reportId: REPORT_ID }) as never);
+    expect(insert).not.toHaveBeenCalled();
+    expect(upsert).toHaveBeenCalledTimes(1);
+    expect(upsert.mock.calls[0]![0].report_id).toBe(REPORT_ID);
+    expect(upsert.mock.calls[0]![1]).toEqual({ onConflict: "report_id" });
+  });
+
+  it("plain-INSERTS when no report id is supplied", async () => {
+    // A row with no report_id has nothing to conflict on; upserting on a null
+    // key would make every anonymous report collide with every other.
+    await POST(req({ rating: "up" }) as never);
+    expect(upsert).not.toHaveBeenCalled();
+    expect(insert).toHaveBeenCalledTimes(1);
+    expect(insert.mock.calls[0]![0].report_id).toBeNull();
+  });
+
+  it("rejects a report id that is not a UUID", async () => {
+    await POST(req({ rating: "up", reportId: "'; drop table --" }) as never);
+    expect(upsert).not.toHaveBeenCalled();
+    expect(insert.mock.calls[0]![0].report_id).toBeNull();
   });
 
   it("scrubs PII out of the free-text note before it persists", async () => {
