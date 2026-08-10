@@ -368,6 +368,16 @@ export function DemeterChat({
   // there is no benefit calculation at all, so this is the difference between
   // a live estimate and a dead rail for anyone who never touched the picker.
   const [openPicker, setOpenPicker] = useState(0);
+  // Anonymous funnel key. Random, per-tab, dies with the tab, never sent to
+  // the model — it exists only so the log can tell "asked once and left" from
+  // "stayed and got somewhere", which nothing could distinguish before.
+  // Lazy initialiser so it is generated once, not on every render.
+  const sessionIdRef = useRef<string>("");
+  if (!sessionIdRef.current) {
+    sessionIdRef.current =
+      typeof crypto !== "undefined" && "randomUUID" in crypto ? crypto.randomUUID() : "";
+  }
+  const turnRef = useRef(0);
   const abortRef = useRef<AbortController | null>(null);
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const t = T[lang];
@@ -458,7 +468,13 @@ export function DemeterChat({
       const res = await fetch("/api/demeter", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: apiMessages, state, lang }),
+        body: JSON.stringify({
+          messages: apiMessages,
+          state,
+          lang,
+          sessionId: sessionIdRef.current || undefined,
+          turnIndex: (turnRef.current += 1),
+        }),
         signal: controller.signal,
       });
 

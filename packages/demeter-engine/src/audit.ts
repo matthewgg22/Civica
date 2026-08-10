@@ -29,6 +29,12 @@ export interface MaeAuditRecord {
   scopeState?: string | null | undefined;
   /** Internal packet ref for case-scoped queries; null otherwise (not the case #). */
   scopeRef?: string | null | undefined;
+  /** Random per-tab id grouping turns into one conversation. Not an identity:
+   *  generated in the browser, dies with the tab, never sent to the model.
+   *  Without it, "did people ask once and leave" is unanswerable. */
+  sessionId?: string | null | undefined;
+  /** 1-based question number within the session. */
+  turnIndex?: number | null | undefined;
   /** How verification concluded: "clean" | "recomposed" | "degraded". */
   verifierOutcome?: string | undefined;
   /** Which application-form question the user was stuck on, if recognizable.

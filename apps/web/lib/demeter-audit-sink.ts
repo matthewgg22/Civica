@@ -25,6 +25,8 @@ export const publicAuditSink: MaeAuditSink = async (rec: MaeAuditRecord) => {
         mode: "public",
         scope_state: rec.scopeState ?? null,
         scope_ref: rec.scopeRef ?? null,
+        session_id: rec.sessionId ?? null,
+        turn_index: rec.turnIndex ?? null,
         // The evidence loop: the verdict shown to the reader, why it landed
         // there, and how the answer was produced. Without these persisted the
         // grounded-rate claim could only ever be asserted (migration 20260612).
