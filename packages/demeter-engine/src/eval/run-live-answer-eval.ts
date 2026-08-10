@@ -13,17 +13,29 @@
 // completeness on top of these deterministic checks.
 
 import { answerQuestion } from "../orchestrator";
-import { buildMaeSystem } from "../answer";
+import { buildMaeSystem, MAE_GENERATION } from "../answer";
 import { ALL_GOLD, scoreAnswer, type AnswerScore } from "./answer-eval";
 
 export interface LiveEvalResult extends AnswerScore {
   question: string;
   answer: string;
   verifierOutcome: string;
+  /** The verdict the READER would have seen ("certain" / "uncertain"), lifted
+   *  off the audit record. Undefined only if the pipeline emitted no record. */
+  certainty: string | undefined;
+  /** Which model generated this answer — needed once results from several
+   *  models land in one report. */
+  model: string;
+}
+
+export interface LiveEvalOptions {
+  /** Generate with this model instead of the pin (#602 comparison runs).
+   *  Omit for the normal case: score the model production actually uses. */
+  model?: string;
 }
 
 /** Generate + score every gold question. Throws if ANTHROPIC_API_KEY is unset. */
-export async function runLiveAnswerEval(): Promise<LiveEvalResult[]> {
+export async function runLiveAnswerEval(opts: LiveEvalOptions = {}): Promise<LiveEvalResult[]> {
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) {
     throw new Error("runLiveAnswerEval requires ANTHROPIC_API_KEY");
@@ -64,12 +76,23 @@ export async function runLiveAnswerEval(): Promise<LiveEvalResult[]> {
 
     let answer = "";
     let outcome = "clean";
+    // The certainty verdict is already computed by the pipeline and attached to
+    // the audit record; the eval used to throw that record away. Capturing it
+    // costs nothing and is the metric that distinguishes a model which answers
+    // well from one that hedges its way through the gates.
+    let certainty: string | undefined;
     const request: Parameters<typeof answerQuestion>[0] = {
       messages: [{ role: "user", content: g.question }],
       audience,
       apiKey,
-      events: { onVerified: (o) => (outcome = o), audit: async () => {} },
+      events: {
+        onVerified: (o) => (outcome = o),
+        audit: async (rec) => {
+          certainty = rec.certainty;
+        },
+      },
       meta: { staffUserId: null, mode: "eval" },
+      ...(opts.model ? { modelOverride: opts.model } : {}),
       ...(g.state === undefined ? {} : { state: g.state }),
       ...(g.lang ? { lang: g.lang } : {}),
     };
@@ -81,7 +104,14 @@ export async function runLiveAnswerEval(): Promise<LiveEvalResult[]> {
     const score = scoreAnswer(answer, g, retrievedCitations);
     score.checks.notDegraded = outcome !== "degraded";
     score.pass = Object.values(score.checks).every(Boolean);
-    results.push({ question: g.question, answer, verifierOutcome: outcome, ...score });
+    results.push({
+      question: g.question,
+      answer,
+      verifierOutcome: outcome,
+      certainty,
+      model: opts.model ?? MAE_GENERATION.model,
+      ...score,
+    });
   }
   return results;
 }
