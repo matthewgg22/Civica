@@ -88,19 +88,44 @@ describe("Tranche 1 SUA — FL/IL/OH sourced, PA a logged verification gap (#619
 });
 
 describe("Tranche 1 unsourced axes stay honest", () => {
-  it("fail-open flags err toward eligibility, never toward denial", () => {
-    // These are defaults pending sourcing, not findings. Both directions
-    // matter: a wrong `false` on the waiver flag would strip an ABAWD
-    // exemption (#608), and a wrong `true` on the felony ban would
-    // disqualify someone outright.
+  it("the ABAWD waiver flag stays fail-open — it is still unsourced", () => {
+    // A wrong `false` STRIPS a claimed waiver exemption (gates/abawd.ts reads
+    // false as "we affirmatively know this area holds no waiver") and denies
+    // food. Three sourcing passes have failed to produce a citable FY26
+    // answer, so it stays true. See the states.ts block comment for why the
+    // real fix is county sets, not a boolean flip.
     for (const c of ["FL", "IL", "PA", "OH"]) {
       expect(statePolicyFor(c).abawd_waiver_avail, `${c} waiver flag`).toBe(true);
-      expect(statePolicyFor(c).drug_felony_ban, `${c} felony ban`).toBe(false);
     }
   });
 
   it("Illinois RMP stays false — it runs in Cook and Franklin counties only", () => {
     // Under-claiming a real county program beats advertising it statewide.
     expect(statePolicyFor("IL").rmp_operated).toBe(false);
+  });
+});
+
+// #619: every Tranche-1 felony ban is now SOURCED. The value is `false` for
+// all four, but for two different reasons, and collapsing them back into one
+// blanket assertion would lose the distinction — so they are asserted apart.
+describe("Tranche 1 drug felony bans are sourced, not defaulted", () => {
+  it("IL and OH are verified full opt-outs — false is the correct answer", () => {
+    // IL: 305 ILCS 5/1-10(c) — "shall not be determined ineligible for food
+    //     stamps … based upon a conviction of any felony", unconditional.
+    // OH: Ohio Rev. Code 5101.84 — 21 U.S.C. 862a(a) does not apply.
+    // Both read against primary statute text on 2026-08-11.
+    expect(statePolicyFor("IL").drug_felony_ban).toBe(false);
+    expect(statePolicyFor("OH").drug_felony_ban).toBe(false);
+  });
+
+  it("FL and PA are MODIFIED bans the boolean cannot express, so it under-claims", () => {
+    // FL denies only trafficking convictions (Fla. Stat. 414.095(1), citing
+    // s. 893.135); PA conditions eligibility on treatment compliance
+    // (62 Pa. Stat. 432.24, primary text unverified). Setting either to true
+    // would disqualify every drug-felony household in the state, including
+    // the majority each statute protects — the direction of error that #608
+    // forbids. Under-claiming a narrow real ban is the lesser harm.
+    expect(statePolicyFor("FL").drug_felony_ban).toBe(false);
+    expect(statePolicyFor("PA").drug_felony_ban).toBe(false);
   });
 });
