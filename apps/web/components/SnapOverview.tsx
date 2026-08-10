@@ -16,7 +16,13 @@
 // agency, where it arrives cited and current.
 
 import type { PackMeta } from "@civica/demeter-engine/packs";
-import { FORM_QUESTIONS, type FormQuestion } from "@civica/demeter-engine";
+import {
+  FORM_QUESTIONS,
+  FORM_QUESTION_I18N,
+  type FormQuestion,
+} from "@civica/demeter-engine";
+import type { AnswerLang } from "@civica/demeter-engine/packs";
+import { PAGE_COPY } from "../lib/i18n/snap-page";
 
 /** The most form-like phrasing for a topic — the longest one, which is the
  *  closest to how the question is actually printed. Derived rather than
@@ -32,9 +38,30 @@ export function topicLabel(topic: string): string {
 }
 
 /** The FAQ question form used in BOTH the visible section and the JSON-LD, so
- *  a generative engine reads the same wording it would see on the page. */
-export function formQuestionHeading(q: FormQuestion): string {
-  return `What does "${representativePhrasing(q)}" mean on a SNAP application?`;
+ *  a generative engine reads the same wording it would see on the page — in
+ *  whichever language that page is.
+ *
+ *  THE QUOTED PHRASE STAYS ENGLISH, on purpose. The frame around it localizes
+ *  ("¿Qué significa …?"), but the phrase itself is the literal text printed on
+ *  the form the person is looking at, and most SNAP applications they will
+ *  actually be handed are in English. Quoting a translated approximation would
+ *  be worse on both counts: it would no longer match anything on their page,
+ *  and the "right" translation varies by state, so we would be inventing form
+ *  wording rather than reporting it.
+ *
+ *  Accepted cost: someone searching in Spanish for the Spanish phrasing is less
+ *  likely to land here. If translated state applications become a target, the
+ *  fix is per-state translated phrasings sourced from the real forms — not a
+ *  machine translation of the English. */
+export function formQuestionHeading(q: FormQuestion, lang: AnswerLang = "en"): string {
+  return PAGE_COPY[lang].faqHeading(representativePhrasing(q));
+}
+
+/** The explanation in the reader's language. Falls back to the English source
+ *  rather than rendering nothing — but the engine's coverage test makes that
+ *  fallback unreachable in a healthy build. */
+export function formQuestionAnswer(q: FormQuestion, lang: AnswerLang = "en"): string {
+  return lang === "en" ? q.whyAsked : FORM_QUESTION_I18N[q.topic]?.[lang] ?? q.whyAsked;
 }
 
 /** The lede — renders ABOVE the chat, so the page explains itself before it
@@ -45,50 +72,33 @@ export function formQuestionHeading(q: FormQuestion): string {
  *  "doesn't fill the page" complaint this rebuild exists to fix — and the
  *  honest thing to put there is what makes the answers trustworthy, stated
  *  plainly enough to be quoted. */
-export function SnapLede({ states }: { states: PackMeta[] }) {
+export function SnapLede({ states, lang = "en" }: { states: PackMeta[]; lang?: AnswerLang }) {
+  const c = PAGE_COPY[lang];
   return (
     <section className="dmx dmx--lede" aria-labelledby="what-is-snap">
       <div className="dmx__ledegrid">
         <div>
-          <p className="dmx__eyebrow">Supplemental Nutrition Assistance Program</p>
+          <p className="dmx__eyebrow">{c.eyebrow}</p>
           <h2 id="what-is-snap" className="dmx__h2">
-            SNAP is monthly money for groceries, paid onto a card.
+            {c.h2}
           </h2>
-          <p className="dmx__lede">
-            Formerly called food stamps, SNAP is a federal program run by each state. If
-            you qualify, benefits arrive once a month on an EBT card you use like a debit
-            card at most grocery stores. Applying is free, and you can apply whether or not
-            you are working.
-          </p>
+          <p className="dmx__lede">{c.lede}</p>
         </div>
-        <aside className="dmx__trust" aria-label="How these answers are made">
+        <aside className="dmx__trust" aria-label={c.howH2}>
           <dl className="dmx__trustlist">
-            <div className="dmx__trustrow">
-              <dt>Free, no account</dt>
-              <dd>Ask as many questions as you need. Nothing to sign up for.</dd>
-            </div>
-            <div className="dmx__trustrow">
-              <dt>Every claim cited</dt>
-              <dd>
-                Answers quote the federal regulation, and the state manual where we have
-                verified one.
-              </dd>
-            </div>
-            <div className="dmx__trustrow">
-              <dt>
-                {states.length} state{states.length === 1 ? "" : "s"} verified
-              </dt>
-              <dd>
-                {`${states.map((s) => s.code).join(" · ")} — each checked against that agency’s own published rules before going live.`}
-              </dd>
-            </div>
-            <div className="dmx__trustrow">
-              <dt>Everywhere else</dt>
-              <dd>
-                Federal rules still answer. Figures that vary by state are deferred to your
-                agency rather than guessed.
-              </dd>
-            </div>
+            {c.trust.map((row, i) => (
+              <div className="dmx__trustrow" key={row.t}>
+                {/* The third row counts the packs, so its term carries the
+                    number and its detail lists the codes — everything else is
+                    static copy. */}
+                <dt>{i === 2 ? `${states.length} ${row.t}` : row.t}</dt>
+                <dd>
+                  {i === 2
+                    ? `${states.map((s) => s.code).join(" · ")} — ${row.d}`
+                    : row.d}
+                </dd>
+              </div>
+            ))}
           </dl>
         </aside>
       </div>
@@ -97,134 +107,62 @@ export function SnapLede({ states }: { states: PackMeta[] }) {
 }
 
 /** The depth — renders BELOW the chat. Carries the GEO weight: mechanisms,
- *  differentiation, and every verified state's real agency, all in server HTML. */
-export function SnapDetail({ states }: { states: PackMeta[] }) {
+ *  differentiation, the form-question FAQ, and every verified state's real
+ *  agency, all in server HTML, all in the page's own language. */
+export function SnapDetail({ states, lang = "en" }: { states: PackMeta[]; lang?: AnswerLang }) {
+  const c = PAGE_COPY[lang];
   return (
     <>
       <section className="dmx" aria-labelledby="what-decides">
         <h2 id="what-decides" className="dmx__h2">
-          What actually decides whether you qualify
+          {c.decidesH2}
         </h2>
-        <p className="dmx__body">
-          Not your income alone — that is the most common reason people who qualify never
-          apply. Eligibility turns on what is left after the deductions you are entitled to,
-          and on a short list of category rules.
-        </p>
+        <p className="dmx__body">{c.decidesBody}</p>
         <dl className="dmx__defs">
-          <div className="dmx__def">
-            <dt>Household size</dt>
-            <dd>
-              Who buys and prepares food together, which is not always who lives together.
-              Roommates who shop separately are usually separate households.
-            </dd>
-          </div>
-          <div className="dmx__def">
-            <dt>Income, after deductions</dt>
-            <dd>
-              Rent, utilities, childcare, child support you pay, and — for members who are
-              60+ or disabled — medical costs above a set floor all come off before the
-              limit is applied.
-            </dd>
-          </div>
-          <div className="dmx__def">
-            <dt>Category rules</dt>
-            <dd>
-              Students, non-citizens, and adults without dependents each have their own
-              rules, and most have exemptions that are missed more often than they are
-              applied.
-            </dd>
-          </div>
-          <div className="dmx__def">
-            <dt>Your state</dt>
-            <dd>
-              Federal rules set the floor; each state adds its own manual, its own utility
-              allowances, and in some states its own asset test. Advice from one state is
-              frequently wrong in the next.
-            </dd>
-          </div>
+          {c.defs.map((d) => (
+            <div className="dmx__def" key={d.t}>
+              <dt>{d.t}</dt>
+              <dd>{d.d}</dd>
+            </div>
+          ))}
         </dl>
       </section>
 
       <section className="dmx" aria-labelledby="why-hard">
         <h2 id="why-hard" className="dmx__h2">
-          Why a straight answer is hard to find
+          {c.whyHardH2}
         </h2>
         <div className="dmx__grid">
-          <div className="dmx__card">
-            <h3 className="dmx__h3">The rule is real but buried</h3>
-            <p className="dmx__body">
-              Most eligibility questions have one correct answer, sitting somewhere in a few
-              hundred pages of federal regulation and a state manual on top of it.
-            </p>
-          </div>
-          <div className="dmx__card">
-            <h3 className="dmx__h3">Old numbers keep circulating</h3>
-            <p className="dmx__body">
-              Limits change every October. Advice passed down from a few years ago turns
-              people away who would qualify today.
-            </p>
-          </div>
-          <div className="dmx__card">
-            <h3 className="dmx__h3">Deductions decide it</h3>
-            <p className="dmx__body">
-              Miss one deduction you are entitled to and a household looks over the limit
-              when it is not. This is the single most common way an eligible household gets
-              the wrong answer.
-            </p>
-          </div>
-          <div className="dmx__card">
-            <h3 className="dmx__h3">Asking feels risky</h3>
-            <p className="dmx__body">
-              People worry a wrong answer on a form will be held against them, so they never
-              file. Knowing what a question is actually asking is usually what gets someone
-              past it.
-            </p>
-          </div>
+          {c.cards.map((card) => (
+            <div className="dmx__card" key={card.t}>
+              <h3 className="dmx__h3">{card.t}</h3>
+              <p className="dmx__body">{card.d}</p>
+            </div>
+          ))}
         </div>
       </section>
 
       <section className="dmx" aria-labelledby="how-answers">
         <h2 id="how-answers" className="dmx__h2">
-          How Demeter answers
+          {c.howH2}
         </h2>
         <ol className="dmx__steps">
-          <li className="dmx__step">
-            <span className="dmx__num">01</span>
-            <div>
-              <h3 className="dmx__h3">Every claim carries its rule</h3>
-              <p className="dmx__body">
-                Answers cite the federal regulation and, in verified states, that state&rsquo;s
-                own manual — linked, so you can read the rule yourself or show it to a
-                caseworker who disagrees.
-              </p>
-            </div>
-          </li>
-          <li className="dmx__step">
-            <span className="dmx__num">02</span>
-            <div>
-              <h3 className="dmx__h3">It says when it is not sure</h3>
-              <p className="dmx__body">
-                Each answer is marked certain or uncertain, and says why. When the sources
-                retrieved do not cover your question, it says so instead of guessing a
-                number.
-              </p>
-            </div>
-          </li>
-          <li className="dmx__step">
-            <span className="dmx__num">03</span>
-            <div>
-              <h3 className="dmx__h3">State packs are checked adversarially</h3>
-              <p className="dmx__body">
-                Before a state goes live, its policy pack is cross-checked against the
-                state&rsquo;s own primary sources and run through a gate whose only job is to
-                prove the draft wrong. Corrections are applied before publication.{" "}
-                <a className="dmx__link" href="/verify">
-                  See how we verify
-                </a>
-                .
-              </p>
-            </div>
-          </li>
+          {c.steps.map((step, i) => (
+            <li className="dmx__step" key={step.t}>
+              <span className="dmx__num">{String(i + 1).padStart(2, "0")}</span>
+              <div>
+                <h3 className="dmx__h3">{step.t}</h3>
+                <p className="dmx__body">
+                  {step.d}{" "}
+                  {i === c.steps.length - 1 ? (
+                    <a className="dmx__link" href={lang === "en" ? "/verify" : `/${lang}/verify`}>
+                      {c.verifyLink}
+                    </a>
+                  ) : null}
+                </p>
+              </div>
+            </li>
+          ))}
         </ol>
       </section>
 
@@ -239,21 +177,20 @@ export function SnapDetail({ states }: { states: PackMeta[] }) {
           dollar figure, so it does not rot at the October COLA. */}
       <section className="dmx" aria-labelledby="form-questions">
         <h2 id="form-questions" className="dmx__h2">
-          What the application is actually asking
+          {c.faqH2}
         </h2>
-        <p className="dmx__body">
-          These are the questions people get stuck on — the phrasing is legal, not
-          conversational. Here is what each one means and the rule behind it.
-        </p>
+        <p className="dmx__body">{c.faqBody}</p>
         <dl className="dmx__faq">
           {FORM_QUESTIONS.map((q) => (
             <div className="dmx__faqitem" key={q.topic}>
               <dt className="dmx__faqq">
                 <span className="dmx__faqtopic">{topicLabel(q.topic)}</span>
-                {formQuestionHeading(q)}
+                {formQuestionHeading(q, lang)}
               </dt>
               <dd className="dmx__faqa">
-                {q.whyAsked}
+                {formQuestionAnswer(q, lang)}
+                {/* Citations render separately and VERBATIM — never translated,
+                    the same rule the answer pipeline follows. */}
                 <span className="dmx__faqcite">{q.citation}</span>
               </dd>
             </div>
@@ -263,13 +200,9 @@ export function SnapDetail({ states }: { states: PackMeta[] }) {
 
       <section className="dmx" aria-labelledby="agencies">
         <h2 id="agencies" className="dmx__h2">
-          Your state runs the program — here is who
+          {c.agenciesH2}
         </h2>
-        <p className="dmx__body">
-          Demeter never decides your case. Your state agency does. These are the agencies
-          whose own published rules the verified answers are built from, and where you
-          actually apply.
-        </p>
+        <p className="dmx__body">{c.agenciesBody}</p>
         <ul className="dmx__agencies">
           {states.map((s) => (
             <li key={s.code} className="dmx__agency">
@@ -291,10 +224,7 @@ export function SnapDetail({ states }: { states: PackMeta[] }) {
             </li>
           ))}
         </ul>
-        <p className="dmx__note">
-          Not listed? Demeter still answers at the federal floor, and points you to your own
-          state agency for figures that vary by state.
-        </p>
+        <p className="dmx__note">{c.agenciesNote}</p>
       </section>
     </>
   );

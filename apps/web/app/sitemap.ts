@@ -12,6 +12,7 @@
 import type { MetadataRoute } from "next";
 import { VERIFIED_STATES } from "@civica/demeter-engine/packs";
 import { absoluteUrl } from "../lib/site-url";
+import { PREFIXED_LANGS } from "../lib/i18n/routes";
 
 export const dynamic = "force-static";
 
@@ -34,6 +35,17 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: absoluteUrl("/supporters"), lastModified: now, changeFrequency: "weekly", priority: 0.6 },
   ];
 
+  // The localized entry pages. Listed at the same priority as the canonical
+  // chat: they are not duplicates but the same page in another language, and
+  // the whole point of building them was to make the non-English content
+  // reachable by crawlers at all.
+  const localized: MetadataRoute.Sitemap = PREFIXED_LANGS.map((lang) => ({
+    url: absoluteUrl(`/${lang}/screen/ask`),
+    lastModified: now,
+    changeFrequency: "daily" as const,
+    priority: 1.0,
+  }));
+
   // One entry per verified state; lastModified is the pack's own verification
   // date, so a re-verified pack legitimately signals freshness to crawlers.
   const guides: MetadataRoute.Sitemap = VERIFIED_STATES.map((s) => ({
@@ -43,5 +55,5 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.9,
   }));
 
-  return [...core, ...guides];
+  return [...core, ...localized, ...guides];
 }
