@@ -53,16 +53,23 @@ export interface DemeterWorksheetCopy {
   privacy: string;
   disclaimer: string;
   pickState: string;
+  pickStateCta: string;
 }
 
 export function DemeterWorksheet({
   classification,
   stateSelected,
   copy,
+  onPickState,
 }: {
   classification: ScreeningClassification | null;
   stateSelected: boolean;
   copy: DemeterWorksheetCopy;
+  /** Opens the state picker. Without a state there is no benefit calculation
+   *  at all — snap-rules is state-keyed — so this panel telling someone to go
+   *  find a control elsewhere on the page was the difference between a working
+   *  estimate and a dead rail for anyone who never touched the picker. */
+  onPickState?: () => void;
 }) {
   const outcome = classification?.outcome;
   const outcomeCopy = outcome ? OUTCOME_COPY[outcome] : undefined;
@@ -81,7 +88,15 @@ export function DemeterWorksheet({
       {!stateSelected ? (
         // snap-rules is state-keyed: there is no honest federal-floor benefit
         // number, so we ask rather than show an estimate we can't stand behind.
-        <p className="dmw__empty">{copy.pickState}</p>
+        // The ask is a BUTTON — see onPickState.
+        <div className="dmw__pick">
+          <p className="dmw__empty">{copy.pickState}</p>
+          {onPickState && (
+            <button type="button" className="dmw__pickbtn" onClick={onPickState}>
+              {copy.pickStateCta}
+            </button>
+          )}
+        </div>
       ) : !classification ? (
         <p className="dmw__empty">{copy.empty}</p>
       ) : null}

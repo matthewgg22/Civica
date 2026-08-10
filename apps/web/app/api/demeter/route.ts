@@ -89,6 +89,16 @@ export async function POST(req: NextRequest) {
   const lang: "en" | "es" = b.lang === "es" ? "es" : "en";
   // CBO referral attribution (T-D/D3.6): an opaque code, never identity.
   const rawRef = typeof b.ref === "string" ? b.ref.slice(0, 64) : null;
+  // Anonymous funnel grouping. Validated as a UUID rather than trusted: this
+  // reaches a uuid column, and an arbitrary client string would either error
+  // the insert or become a free-text field nobody sanctioned.
+  const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  const sessionId =
+    typeof b.sessionId === "string" && UUID_RE.test(b.sessionId) ? b.sessionId : null;
+  const turnIndex =
+    typeof b.turnIndex === "number" && Number.isInteger(b.turnIndex) && b.turnIndex > 0
+      ? Math.min(b.turnIndex, 1000)
+      : null;
 
   // --- Answer, adapting engine frames to a plain-text stream ----------------
   const encoder = new TextEncoder();
@@ -110,7 +120,7 @@ export async function POST(req: NextRequest) {
         usageOut = o;
       },
     },
-    meta: { staffUserId: null, mode: "public", scopeRef: rawRef },
+    meta: { staffUserId: null, mode: "public", scopeRef: rawRef, sessionId, turnIndex },
   });
 
   const stream = new ReadableStream<Uint8Array>({

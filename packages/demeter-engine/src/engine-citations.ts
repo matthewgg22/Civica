@@ -98,7 +98,14 @@ The engine computes a verdict then a benefit amount. It cites federal law as 7 C
  * at request time, so it tracks the engine across COLA updates. Deterministic
  * output (sorted sizes) so the cached system prefix stays byte-stable within a FY.
  */
-export function formatEngineParams(state: "CA" | "MA", asOf: Date): string {
+/** Throws (UnknownStateError from snap-rules) when the engine has no policy
+ *  for `state`. Callers decide what to say about that — see buildMaeSystem.
+ *
+ *  `state` is a plain string, not a "CA" | "MA" union: getEngineParams takes a
+ *  string and works for every state snap-rules has authored. The old narrow
+ *  union was written when only CA and MA existed and silently froze this at
+ *  two states while the engine grew to eleven. */
+export function formatEngineParams(state: string, asOf: Date): string {
   const p = getEngineParams(state, asOf);
   const row = (rec: Record<string, number> | undefined) =>
     rec
@@ -135,17 +142,40 @@ export function formatEngineParams(state: "CA" | "MA", asOf: Date): string {
           Math.round((v * pct) / 100),
         ]),
       );
-    // BBCE threshold is per-state (snap-rules states.ts): CA and MA are 200%,
-    // but e.g. TX is 165%. Keyed explicitly so adding a state to
-    // ENGINE_PARAM_STATES fails the typecheck instead of printing 200% for a
-    // state that never adopted it.
-    const BBCE_PCT: Record<"CA" | "MA", number> = { CA: 200, MA: 200 };
-    const bbcePct = BBCE_PCT[state];
+    // BBCE threshold is per-state. This map is DUPLICATED from snap-rules'
+    // `bbce_threshold_pct` (constants/states.ts) because statePolicyFor is not
+    // exported from that package's public entry, so there is no way to read it
+    // — see the issue linked below for deleting this in favour of the engine's
+    // own value.
+    //
+    // Every value here was read from states.ts, not recalled. The narrow key
+    // type is a deliberate TRIPWIRE, kept: adding a state without adding its
+    // real percentage fails the typecheck instead of printing 200% for a state
+    // that never adopted it. That tripwire has already caught this once (the
+    // hardcoded-200-for-TX bug) and caught it again when this file was widened
+    // from CA/MA to every state with authored math.
+    const BBCE_PCT = { CA: 200, MA: 200, TX: 165, WA: 200, GA: 130 } as const;
+    const bbcePct: number | undefined = (BBCE_PCT as Record<string, number>)[state];
     lines.push(`- 100% FPL, monthly (net-income test basis): ${row(p.fpl)}`);
     lines.push(`- Gross-income limit, 130% FPL (federal test): ${row(scaled(130))}`);
-    lines.push(
-      `- BBCE categorical-eligibility gross screen, ${bbcePct}% FPL (the operative ${state} test${state === "CA" ? ", ACIN I-46-25" : ""}): ${row(scaled(bbcePct))}`,
-    );
+    if (bbcePct === undefined) {
+      // Unknown percentage: say nothing rather than guess. Silence costs one
+      // line of context; a wrong screen costs someone their eligibility.
+      lines.push(
+        `- BBCE categorical-eligibility screen for ${state}: not encoded here — do not state a ${state} BBCE percentage; cite the state's own issuance.`,
+      );
+    } else if (bbcePct <= 130) {
+      // GA is 130 — identical to the federal gross test, i.e. its BBCE confers
+      // ASSET relief and no income relief. Printing it as "the operative
+      // screen" without that context reads as a higher limit than it is.
+      lines.push(
+        `- ${state} BBCE gross screen is ${bbcePct}% FPL — the SAME as the federal gross test above, so BBCE gives ${state} households asset-test relief, NOT a higher income limit. Do not describe it as raising the income limit.`,
+      );
+    } else {
+      lines.push(
+        `- BBCE categorical-eligibility gross screen, ${bbcePct}% FPL (the operative ${state} test${state === "CA" ? ", ACIN I-46-25" : ""}): ${row(scaled(bbcePct))}`,
+      );
+    }
   }
   if (p.sua) {
     lines.push(

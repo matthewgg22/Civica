@@ -88,12 +88,21 @@ export function classifyScreening(
   const verdict = composeVerdict(full, state, asOf);
 
   if (verdict.not_implemented_surfaces?.length) {
-    // The engine itself can't compute this household yet (e.g. an
-    // unauthored SUA tier) — that's a completeness gap from the SCREENER's
-    // point of view even though the shape validated.
+    // The engine itself can't compute this household yet — a completeness gap
+    // from the SCREENER's point of view even though the shape validated.
+    //
+    // But say WHOSE gap it is. "state-policy-not-loaded" means snap-rules has
+    // no policy for this state at all, which is OUR gap, not the reader's —
+    // and a corpus pack can exist for a state the calculator doesn't cover
+    // (NY today: badged Verified for ANSWERS, no benefit math). Telling
+    // someone who gave complete information that they are missing information
+    // is false, and it sends them looking for a document that does not exist.
+    const stateGap = verdict.not_implemented_surfaces.includes("state-policy-not-loaded");
     return {
       outcome: "not_enough_information",
-      summary: "This household needs information our screener doesn't have yet.",
+      summary: stateGap
+        ? `We can answer ${state} policy questions, but we can't calculate a benefit estimate for ${state} yet — that's our gap, not anything missing from what you told us. Your state agency can give you an exact figure.`
+        : "This household needs information our screener doesn't have yet.",
       verdict,
       completeness,
     };

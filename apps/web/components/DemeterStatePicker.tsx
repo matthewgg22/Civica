@@ -33,11 +33,18 @@ export function DemeterStatePicker({
   value,
   onChange,
   copy,
+  openSignal = 0,
 }: {
   states: PackMeta[];
   value: string | null;
   onChange: (next: string | null) => void;
   copy: StatePickerCopy;
+  /** Increment to open the picker from elsewhere on the page. The estimate
+   *  rail uses this: without a state there is no benefit calculation, so
+   *  "pick your state" needs to be one click rather than an instruction the
+   *  reader has to go act on themselves. A counter rather than a boolean so
+   *  repeated asks re-open it after a dismissal. */
+  openSignal?: number;
 }) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
@@ -55,6 +62,12 @@ export function DemeterStatePicker({
       [s.code, s.program, s.agency].some((f) => f.toLowerCase().includes(q)),
     );
   }, [states, query]);
+
+  // Opened from the estimate rail. Skips the initial 0 so the picker is not
+  // open on first paint.
+  useEffect(() => {
+    if (openSignal > 0) setOpen(true);
+  }, [openSignal]);
 
   useEffect(() => {
     if (!open) return;

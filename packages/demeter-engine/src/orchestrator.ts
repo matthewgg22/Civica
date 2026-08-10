@@ -133,7 +133,15 @@ export interface AnswerRequest {
   signal?: AbortSignal;
   events?: AnswerEvents;
   /** Audit metadata (already validated by the caller). */
-  meta?: { staffUserId?: string | null; mode?: string; scopeRef?: string | null; question?: string };
+  meta?: {
+    staffUserId?: string | null;
+    mode?: string;
+    scopeRef?: string | null;
+    question?: string;
+    /** Anonymous per-tab grouping key + turn number, for the drop-off curve. */
+    sessionId?: string | null;
+    turnIndex?: number | null;
+  };
 }
 
 // How often the incremental verifier runs over accumulated text. Small enough
@@ -354,6 +362,8 @@ export async function* answerQuestion(req: AnswerRequest): AsyncGenerator<Answer
     mode: meta?.mode,
     scopeState: state ?? null,
     scopeRef: meta?.scopeRef ?? null,
+    sessionId: meta?.sessionId ?? null,
+    turnIndex: meta?.turnIndex ?? null,
     verifierOutcome: outcome,
     // Which FORM question stopped them, not what they typed. Aggregating
     // topics is how we learn where people get stuck without retaining text.

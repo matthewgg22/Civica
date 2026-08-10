@@ -32,10 +32,17 @@ export const MAE_GENERATION = {
   thinking: { type: "adaptive" as const },
 };
 
-/** States with live engine dollar figures wired (packages/snap-rules). Pack
- *  states outside this set get an explicit "figures not wired" line rather
- *  than a swallowed UnknownStateError — honesty over silence. */
-const ENGINE_PARAM_STATES = new Set(["CA", "MA"]);
+// The hardcoded ENGINE_PARAM_STATES = {"CA","MA"} that used to live here is
+// gone. It was written when snap-rules had two states and silently froze at
+// two while the engine grew to eleven — so TX, WA and GA, which all have BOTH
+// a verified corpus pack AND authored engine math, were being told "figures
+// not yet wired" and answered without the live FY numbers they could have had.
+//
+// Asking the engine is the source of truth: getEngineParams throws
+// UnknownStateError for a state it has no policy for, and that throw is the
+// only reliable signal. Deriving it this way means a state authored in
+// snap-rules tomorrow gets live figures here with no edit to this file — the
+// class of drift that produced the bug in the first place.
 
 /** Build Demeter's grounded system prompt for one question.
  *  Block 0 (cached): frozen instructions + authority map + provenance + live FY
@@ -53,17 +60,18 @@ export async function buildMaeSystem(
   lang: AnswerLang = "en",
 ): Promise<MaeSystem> {
   let liveParams = "";
-  if (state && ENGINE_PARAM_STATES.has(state)) {
+  if (state) {
     try {
-      liveParams = formatEngineParams(state as "CA" | "MA", new Date());
-    } catch (err) {
-      console.error("[demeter] engine params unavailable:", err);
+      liveParams = formatEngineParams(state, new Date());
+    } catch {
+      // No authored policy for this state. Say so plainly rather than let the
+      // model fill the silence with a figure it recalled — honesty over
+      // silence, and silence over invention.
+      liveParams =
+        `NOTE: live ${state} benefit-calculation figures are not yet wired into this ` +
+        `assistant — cite the verified ${state} policy sources below for rules, and ` +
+        `direct users to their state agency for exact current dollar amounts.`;
     }
-  } else if (state) {
-    liveParams =
-      `NOTE: live ${state} benefit-calculation figures are not yet wired into this ` +
-      `assistant — cite the verified ${state} policy sources below for rules, and ` +
-      `direct users to their state agency for exact current dollar amounts.`;
   }
   const personaPrompt = audience === "public" ? PUBLIC_SYSTEM_PROMPT : STAFF_SYSTEM_PROMPT;
   const systemText = [personaPrompt, MAE_CITATIONS_PROVENANCE, MAE_ENGINE_CITATIONS, liveParams]
