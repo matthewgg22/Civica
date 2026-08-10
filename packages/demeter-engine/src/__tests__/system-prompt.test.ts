@@ -8,8 +8,22 @@ import { STAFF_SYSTEM_PROMPT, PUBLIC_SYSTEM_PROMPT, MAE_MODEL, MAE_DISCLAIMER } 
 // asked for (cite regs, refuse non-SNAP + PII, disclaim) must survive edits.
 
 describe("shared model/disclaimer", () => {
-  it("uses Opus 4.8", () => {
-    expect(MAE_MODEL).toBe("claude-opus-4-8");
+  it("pins Sonnet 5, and every caller reads that one pin", () => {
+    expect(MAE_MODEL).toBe("claude-sonnet-5");
+  });
+
+  it("facts extraction uses the same pin rather than its own copy", async () => {
+    // facts-extraction.ts hardcoded its own model string, so the two could
+    // drift silently — the answer path and the screening path would have been
+    // billed and behaved differently with nothing to catch it. Reading the
+    // source is the only way to assert a constant is *referenced*: asserting
+    // on the resolved value would pass just as happily against a second
+    // hardcoded copy that happens to match today.
+    const src = await import("node:fs/promises").then((fs) =>
+      fs.readFile(new URL("../screening/facts-extraction.ts", import.meta.url), "utf8"),
+    );
+    expect(src).toContain("model: MAE_MODEL");
+    expect(src).not.toMatch(/model:\s*"claude-/);
   });
 
   it("ships a non-empty UI disclaimer that identifies as Mae, not Demeter", () => {
