@@ -103,6 +103,32 @@ describe("assessCertainty", () => {
     expect(formatCertaintyBanner(v)).toBe("");
   });
 
+  it("does not hedge a distress reply that cites help, not regulation", () => {
+    // Someone said their benefits were cut. The answer leads with 211 and the
+    // local office — its substance is a phone number, not a policy claim — so
+    // it cites nothing retrievable and used to land on "we can't be certain".
+    // Measured firing on distress-benefits-cut in consecutive gold runs.
+    const v = assessCertainty({ ...base, checks: [known("7 CFR 273.15")], distress: true });
+    expect(v.level).toBe("not_applicable");
+    expect(formatCertaintyBanner(v)).toBe("");
+  });
+
+  it("STILL warns a distress reply that cites something fabricated", () => {
+    // The suppression is scoped to one branch on purpose. A made-up citation
+    // is more dangerous in a crisis reply, not less — this must keep warning.
+    const v = assessCertainty({ ...base, checks: [bad("7 CFR 999.99")], distress: true });
+    expect(v.level).toBe("uncertain");
+    expect(v.code).toBe("unrecognized_citation");
+    expect(formatCertaintyBanner(v)).toContain("UNCERTAIN");
+  });
+
+  it("a properly grounded distress reply is still CERTAIN, not silenced", () => {
+    // Suppression only replaces the authority_not_retrieved hedge; it does not
+    // strip a verdict the answer legitimately earned.
+    const v = assessCertainty({ ...base, checks: [inSrc("7 CFR 273.15")], distress: true });
+    expect(v.level).toBe("certain");
+  });
+
   it("still warns when authorities WERE cited but none were retrieved", () => {
     // The real recall failure must keep its warning — this is the case the
     // banner exists for, and the boundary that keeps #685's fix from

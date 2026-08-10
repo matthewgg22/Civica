@@ -365,7 +365,15 @@ export async function* answerQuestion(req: AnswerRequest): AsyncGenerator<Answer
   // The verdict leads: CERTAIN/UNCERTAIN + why + what to check. The detailed
   // citation breakdown follows for anyone who wants it.
   const verdict = assessCertainty(
-    { checks: finalChecks, outcome, state, stateVerified: isVerifiedState(state ?? null) },
+    {
+      checks: finalChecks,
+      outcome,
+      state,
+      stateVerified: isVerifiedState(state ?? null),
+      // Threaded from the distress gate above, so a crisis reply is not
+      // hedged for lacking a regulation it was never making a claim about.
+      distress: distressed,
+    },
     lang,
   );
   const banner = formatCertaintyBanner(verdict, lang);
