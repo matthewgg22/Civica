@@ -25,6 +25,19 @@ import type { ScreeningClassification, PartialFacts } from "@civica/demeter-engi
 import { DemeterMark } from "./DemeterMark";
 import { DemeterStatePicker } from "./DemeterStatePicker";
 import { DemeterWorksheet } from "./DemeterWorksheet";
+import { DemeterFeedback } from "./DemeterFeedback";
+
+/** Read the certainty verdict back off a finished answer.
+ *
+ *  Keys off the ✓ / ⚠ MARK, not the label: certainty.ts localizes the label
+ *  ("CERTAIN" / "SEGURO" / "CHẮC CHẮN" / "确定") but the mark is the same in
+ *  every language, so this stays correct as languages are added. Returns null
+ *  while an answer is still streaming and the trailer has not arrived. */
+export function readCertainty(answer: string): "certain" | "uncertain" | null {
+  if (answer.includes("\n✓ **")) return "certain";
+  if (answer.includes("\n⚠ **")) return "uncertain";
+  return null;
+}
 
 type Msg =
   | { role: "user" | "assistant"; content: string }
@@ -97,6 +110,22 @@ const T = {
     },
     howWeVerify: "How we verify",
     languageLabel: "Language",
+    feedback: {
+      prompt: "Was this helpful?",
+      helpful: "Yes",
+      notHelpful: "No",
+      thanks: "Thank you — that helps us fix it.",
+      reasonPrompt: "What was wrong with it?",
+      reasons: [
+        { value: "incorrect", label: "The answer was wrong" },
+        { value: "citation_wrong", label: "The source doesn't say that" },
+        { value: "unclear", label: "I couldn't understand it" },
+        { value: "other", label: "Something else" },
+      ],
+      notePlaceholder: "Anything else? (optional — please don't include personal details)",
+      send: "Send",
+      skip: "Skip",
+    },
     worksheet: {
       title: "Your estimate",
       subtitle: "Builds as you talk",
@@ -109,6 +138,7 @@ const T = {
       privacy: "Nothing here is saved. Close this tab and it is gone.",
       disclaimer: "An estimate, not a decision. Your county agency decides.",
       pickState: "Pick your state above and your estimate can build here as you talk.",
+      pickStateCta: "Choose your state",
     },
   },
   es: {
@@ -146,6 +176,22 @@ const T = {
     },
     howWeVerify: "Cómo verificamos",
     languageLabel: "Idioma",
+    feedback: {
+      prompt: "¿Te sirvió esta respuesta?",
+      helpful: "Sí",
+      notHelpful: "No",
+      thanks: "Gracias — eso nos ayuda a corregirlo.",
+      reasonPrompt: "¿Qué estuvo mal?",
+      reasons: [
+        { value: "incorrect", label: "La respuesta era incorrecta" },
+        { value: "citation_wrong", label: "La fuente no dice eso" },
+        { value: "unclear", label: "No la entendí" },
+        { value: "other", label: "Otra cosa" },
+      ],
+      notePlaceholder: "¿Algo más? (opcional — por favor no incluyas datos personales)",
+      send: "Enviar",
+      skip: "Omitir",
+    },
     worksheet: {
       title: "Tu estimado",
       subtitle: "Se arma mientras conversas",
@@ -158,6 +204,7 @@ const T = {
       privacy: "Nada de esto se guarda. Cierra esta pestaña y desaparece.",
       disclaimer: "Un estimado, no una decisión. Tu agencia del condado decide.",
       pickState: "Elige tu estado arriba y tu estimado se irá armando aquí.",
+      pickStateCta: "Elige tu estado",
     },
   },
   vi: {
@@ -195,6 +242,22 @@ const T = {
     },
     howWeVerify: "Cách chúng tôi xác minh",
     languageLabel: "Ngôn ngữ",
+    feedback: {
+      prompt: "Câu trả lời này có hữu ích không?",
+      helpful: "Có",
+      notHelpful: "Không",
+      thanks: "Cảm ơn bạn — điều này giúp chúng tôi sửa lại.",
+      reasonPrompt: "Điều gì chưa đúng?",
+      reasons: [
+        { value: "incorrect", label: "Câu trả lời sai" },
+        { value: "citation_wrong", label: "Nguồn không nói như vậy" },
+        { value: "unclear", label: "Tôi không hiểu được" },
+        { value: "other", label: "Điều khác" },
+      ],
+      notePlaceholder: "Còn gì nữa không? (không bắt buộc — xin đừng ghi thông tin cá nhân)",
+      send: "Gửi",
+      skip: "Bỏ qua",
+    },
     worksheet: {
       title: "Ước tính của bạn",
       subtitle: "Được xây dựng khi bạn trò chuyện",
@@ -207,6 +270,7 @@ const T = {
       privacy: "Không có gì ở đây được lưu lại. Đóng tab này là mọi thứ biến mất.",
       disclaimer: "Chỉ là ước tính, không phải quyết định. Cơ quan quận của bạn mới là nơi quyết định.",
       pickState: "Chọn tiểu bang của bạn ở trên để ước tính có thể hiện ở đây.",
+      pickStateCta: "Chọn tiểu bang",
     },
   },
   zh: {
@@ -241,6 +305,22 @@ const T = {
     },
     howWeVerify: "我们如何核实",
     languageLabel: "语言",
+    feedback: {
+      prompt: "这个回答有帮助吗？",
+      helpful: "有",
+      notHelpful: "没有",
+      thanks: "谢谢您——这能帮我们改正。",
+      reasonPrompt: "哪里不对？",
+      reasons: [
+        { value: "incorrect", label: "回答是错的" },
+        { value: "citation_wrong", label: "来源里并没有这么说" },
+        { value: "unclear", label: "我看不懂" },
+        { value: "other", label: "其他问题" },
+      ],
+      notePlaceholder: "还有别的吗？（选填——请勿填写个人信息）",
+      send: "发送",
+      skip: "跳过",
+    },
     worksheet: {
       title: "您的估算",
       subtitle: "随着对话逐步生成",
@@ -253,6 +333,7 @@ const T = {
       privacy: "这里的内容不会被保存。关闭此页面即消失。",
       disclaimer: "这只是估算，不是决定。最终由您所在县的机构裁定。",
       pickState: "请在上方选择您所在的州，估算就能在这里生成。",
+      pickStateCta: "选择您所在的州",
     },
   },
 } as const;
@@ -283,6 +364,10 @@ export function DemeterChat({
   // where a state value would be a stale closure a turn behind.
   const factsRef = useRef<PartialFacts>({});
   const [classification, setClassification] = useState<ScreeningClassification | null>(null);
+  // Bumped by the estimate rail to open the state picker. Without a state
+  // there is no benefit calculation at all, so this is the difference between
+  // a live estimate and a dead rail for anyone who never touched the picker.
+  const [openPicker, setOpenPicker] = useState(0);
   const abortRef = useRef<AbortController | null>(null);
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const t = T[lang];
@@ -474,6 +559,7 @@ export function DemeterChat({
           value={state}
           onChange={changeState}
           copy={t.picker}
+          openSignal={openPicker}
         />
         <a className="demeter__how" href="/verify">
           {t.howWeVerify}
@@ -498,17 +584,37 @@ export function DemeterChat({
               {m.content}
             </div>
           ) : (
-            <div key={i} className={`demeter__msg demeter__msg--${m.role}`}>
-              {m.content ? (
-                m.role === "assistant" ? (
-                  renderAnswer(m.content)
+            <div key={i}>
+              <div className={`demeter__msg demeter__msg--${m.role}`}>
+                {m.content ? (
+                  m.role === "assistant" ? (
+                    renderAnswer(m.content)
+                  ) : (
+                    m.content
+                  )
+                ) : m.role === "assistant" && busy && i === messages.length - 1 ? (
+                  <span className="demeter__thinking">{t.thinking}</span>
                 ) : (
                   m.content
-                )
-              ) : m.role === "assistant" && busy && i === messages.length - 1 ? (
-                <span className="demeter__thinking">{t.thinking}</span>
-              ) : (
-                m.content
+                )}
+              </div>
+              {/* Feedback only on a FINISHED assistant answer: the trailer has
+                  to have arrived (readCertainty returns null until it does),
+                  and asking someone to rate a half-streamed answer is asking
+                  about something they haven't read. */}
+              {m.role === "assistant" && m.content && !(busy && i === messages.length - 1) && (
+                <DemeterFeedback
+                  question={
+                    // The user turn this answered. Divider turns are never
+                    // adjacent to an assistant message, but guard anyway.
+                    messages[i - 1]?.role === "user" ? messages[i - 1]!.content : ""
+                  }
+                  answer={m.content}
+                  state={state}
+                  lang={lang}
+                  certainty={readCertainty(m.content)}
+                  copy={t.feedback}
+                />
               )}
             </div>
           ),
@@ -561,6 +667,7 @@ export function DemeterChat({
           classification={classification}
           stateSelected={state !== null}
           copy={t.worksheet}
+          onPickState={() => setOpenPicker((n) => n + 1)}
         />
       </div>
     </div>

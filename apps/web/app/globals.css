@@ -5372,3 +5372,59 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   font-size: 0.7rem; letter-spacing: 0.02em; color: var(--demeter-terracotta-deep);
   background: #F7EDE4; border: 1px solid #EAD9C8; border-radius: 5px; padding: 0.2rem 0.5rem;
 }
+
+/* ── Per-answer feedback: the only path a wrong answer has back to us ─────── */
+.dmfb {
+  display: flex; align-items: center; flex-wrap: wrap; gap: 0.5rem;
+  padding: 0.4rem 0.2rem 0.2rem;
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+}
+.dmfb--expanded { flex-direction: column; align-items: stretch; gap: 0.6rem; padding-bottom: 0.6rem; }
+.dmfb__prompt { font-size: 0.78rem; color: var(--demeter-muted); }
+.dmfb__btn {
+  font-family: inherit; font-size: 0.78rem; min-height: 32px; padding: 0.25rem 0.7rem;
+  cursor: pointer; color: var(--demeter-body); background: var(--demeter-card);
+  border: 1px solid var(--demeter-rule-strong); border-radius: 999px;
+}
+.dmfb__btn:hover { border-color: var(--demeter-terracotta); color: var(--demeter-terracotta-deep); }
+.dmfb__reasons { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.dmfb__reason {
+  font-family: inherit; font-size: 0.75rem; min-height: 32px; padding: 0.25rem 0.6rem;
+  cursor: pointer; text-align: left; color: var(--demeter-body);
+  background: var(--demeter-card); border: 1px solid var(--demeter-rule); border-radius: 8px;
+}
+.dmfb__reason.is-sel { border-color: var(--demeter-terracotta); background: #FBF1EC; color: var(--demeter-terracotta-deep); }
+.dmfb__note {
+  font-family: inherit; font-size: 0.82rem; padding: 0.5rem 0.6rem; resize: vertical;
+  color: var(--demeter-ink); background: var(--demeter-card);
+  border: 1px solid var(--demeter-rule-strong); border-radius: 8px;
+}
+.dmfb__note:focus { outline: 2px solid var(--demeter-terracotta); outline-offset: 1px; }
+.dmfb__actions { display: flex; gap: 0.5rem; }
+.dmfb__send {
+  font-family: inherit; font-size: 0.8rem; min-height: 36px; padding: 0.3rem 1rem;
+  cursor: pointer; color: #fff; background: var(--demeter-terracotta);
+  border: 0; border-radius: 999px; font-weight: 500;
+}
+.dmfb__send:hover { background: var(--demeter-terracotta-deep); }
+.dmfb__skip {
+  font-family: inherit; font-size: 0.8rem; min-height: 36px; padding: 0.3rem 0.8rem;
+  cursor: pointer; color: var(--demeter-muted); background: transparent; border: 0;
+  text-decoration: underline;
+}
+.dmfb__thanks {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.78rem; color: var(--demeter-muted); padding: 0.4rem 0.2rem 0.2rem; margin: 0;
+}
+
+/* The rail's "pick a state" is a BUTTON: without a state there is no
+   calculation at all, so this is a dead-rail fix, not decoration. */
+.dmw__pick { display: flex; flex-direction: column; gap: 0.6rem; align-items: flex-start; }
+.dmw__pickbtn {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.82rem; font-weight: 500; min-height: 40px; padding: 0.4rem 1rem;
+  cursor: pointer; color: #fff; background: var(--demeter-terracotta);
+  border: 0; border-radius: 999px;
+}
+.dmw__pickbtn:hover { background: var(--demeter-terracotta-deep); }
+.dmw__pickbtn:focus-visible { outline: 2px solid var(--demeter-terracotta); outline-offset: 2px; }
