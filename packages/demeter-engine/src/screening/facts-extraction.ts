@@ -14,6 +14,10 @@
 
 import Anthropic from "@anthropic-ai/sdk";
 import type { Facts } from "@civica/snap-rules";
+// Single source of truth for the pin. This file used to hardcode its own copy
+// of the model string, so the two could drift — and did not drift only because
+// nothing had changed the model since they were written.
+import { MAE_MODEL } from "../system-prompt";
 
 /** Deep-partial Facts: only fields the extractor is confident about. */
 export type PartialFacts = {
@@ -115,8 +119,19 @@ export async function extractFacts(
   const client = new Anthropic({ apiKey });
   const resp = await client.messages.create(
     {
-      model: "claude-opus-4-8",
+      model: MAE_MODEL,
       max_tokens: 1024,
+      // Thinking OFF, stated explicitly because the default flipped. On Opus
+      // 4.8 an omitted `thinking` field meant no thinking; on Sonnet 5 it
+      // means ADAPTIVE. Since max_tokens caps thinking + output together,
+      // inheriting the new default would have let reasoning eat into a
+      // 1024-token budget and truncate the tool call this request exists to
+      // produce. This is a mechanical extraction behind a forced tool_choice,
+      // so there is nothing for thinking to buy.
+      //
+      // (The usual caveat that thinking-off makes Sonnet 5 less tool-eager
+      // does not apply: tool_choice forces the call.)
+      thinking: { type: "disabled" as const },
       system:
         "You extract SNAP household facts from a caseworker's conversation with an eligibility " +
         "screening assistant. Extract ONLY what was explicitly stated in the LATEST user message " +
