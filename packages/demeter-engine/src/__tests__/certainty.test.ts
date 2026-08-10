@@ -83,8 +83,34 @@ describe("assessCertainty", () => {
   });
 
   it("never grants CERTAIN with no citations at all", () => {
+    // The guarantee this test exists for is in its name: no citations must
+    // never buy a confident label. That still holds. What changed (#685) is
+    // the other side — it no longer claims UNCERTAIN either, because an answer
+    // that cites nothing is usually a correct refusal, and telling someone
+    // "these are real authorities but we lacked their text" is false when
+    // there are no authorities.
     const v = assessCertainty({ ...base, checks: [] });
+    expect(v.level).not.toBe("certain");
+    expect(v.level).toBe("not_applicable");
+    expect(v.code).toBe("no_claim_to_verify");
+  });
+
+  it("shows no banner for an answer that makes no citation claim", () => {
+    // Measured on the gold set: ALL 7 uncertain answers were refusals, PII
+    // deflections or distress replies. A distress reply leading with emergency
+    // food help was being stamped "we can't be certain".
+    const v = assessCertainty({ ...base, checks: [] });
+    expect(formatCertaintyBanner(v)).toBe("");
+  });
+
+  it("still warns when authorities WERE cited but none were retrieved", () => {
+    // The real recall failure must keep its warning — this is the case the
+    // banner exists for, and the boundary that keeps #685's fix from
+    // swallowing it.
+    const v = assessCertainty({ ...base, checks: [known("7 CFR 273.7")] });
     expect(v.level).toBe("uncertain");
+    expect(v.code).toBe("authority_not_retrieved");
+    expect(formatCertaintyBanner(v)).toContain("UNCERTAIN");
   });
 });
 

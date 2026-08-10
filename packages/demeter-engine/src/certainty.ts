@@ -16,7 +16,9 @@
 import type { CitationCheck } from "./citation-verifier";
 import type { AnswerLang } from "./lang";
 
-export type CertaintyLevel = "certain" | "uncertain";
+/** "not_applicable" = the answer makes no citation claim to verify, so neither
+ *  verdict fits and no banner is shown. See assessCertainty (#685). */
+export type CertaintyLevel = "certain" | "uncertain" | "not_applicable";
 
 export interface CertaintyVerdict {
   level: CertaintyLevel;
@@ -26,7 +28,8 @@ export interface CertaintyVerdict {
     | "unrecognized_citation"
     | "degraded_to_sources"
     | "authority_not_retrieved"
-    | "state_not_verified";
+    | "state_not_verified"
+    | "no_claim_to_verify";
   /** One sentence a non-expert can act on. */
   reason: string;
   /** The citations to double-check, most authoritative first. */
@@ -127,6 +130,39 @@ export function assessCertainty(input: CertaintyInput, lang: AnswerLang = "en"):
   const known = input.checks.filter((c) => c.status === "known").map((c) => c.citation);
   const all = [...inSources, ...known, ...bad];
 
+  // NO CITATIONS AT ALL — nothing for this verdict to speak to (#685).
+  //
+  // A correct off-scope refusal, a PII deflection, or a distress reply that
+  // leads with emergency food help cites nothing, because there is no
+  // authority to cite when you are declining to answer. Those answers used to
+  // fall through to authority_not_retrieved, whose copy — "These are real
+  // authorities, but we did not have their text in front of us" — is not merely
+  // unhelpful there but FALSE: there are no authorities. Measured on the gold
+  // set (#602 run 2026-08-10), all 7 uncertain answers were exactly these
+  // cases, so the entire uncertain rate was this bug rather than a retrieval
+  // problem.
+  //
+  // Hedging a correct refusal inverts the signal on the responses we are most
+  // sure about, teaches readers to ignore the banner everywhere, and — worst —
+  // stamps "we can't be certain" on a reply to someone whose benefits were
+  // just cut. This check runs FIRST because it is a statement about the shape
+  // of the answer, not a competing quality signal.
+  //
+  // RESIDUAL RISK, stated plainly: an answer that asserts policy with no
+  // citations at all is also silenced here. The pipeline is built so that
+  // shouldn't happen — the prompt requires citations for policy claims — but
+  // if it does, this hides a warning rather than raising one. That is the
+  // trade for not hedging every refusal; worth revisiting if such answers turn
+  // up in mae_query_log with code no_claim_to_verify and real policy content.
+  if (input.checks.length === 0) {
+    return {
+      level: "not_applicable",
+      code: "no_claim_to_verify",
+      reason: "",
+      basis: [],
+    };
+  }
+
   // Worst signal wins, in order of how badly it could mislead someone.
   if (bad.length) {
     return { level: "uncertain", code: "unrecognized_citation", reason: t.unrecognized, basis: bad };
@@ -149,6 +185,10 @@ export function assessCertainty(input: CertaintyInput, lang: AnswerLang = "en"):
  * the same to an applicant on a phone and to a program officer.
  */
 export function formatCertaintyBanner(v: CertaintyVerdict, lang: AnswerLang = "en"): string {
+  // No claim, no banner. Returning "" rather than a third label keeps the
+  // refusal reading as a plain answer — the reader is not asked to evaluate
+  // the trustworthiness of a citation that was never made.
+  if (v.level === "not_applicable") return "";
   const t = COPY[lang];
   const label = v.level === "certain" ? t.labelCertain : t.labelUncertain;
   const mark = v.level === "certain" ? "✓" : "⚠";
