@@ -52,12 +52,29 @@ export async function POST(req: NextRequest) {
   }
 
   // --- Durable usage gate (rate window counts this request) -----------------
-  const gate = await checkUsageGate(clientIp(req));
+  const ip = clientIp(req);
+  const gate = await checkUsageGate(ip);
   if (!gate.allowed) {
     if (gate.reason === "rate_limited") {
       return NextResponse.json(
         { error: "Too many questions at once — try again in a minute.", reason: "rate_limited" },
         { status: 429, headers: { "Retry-After": "60" } },
+      );
+    }
+    if (gate.reason === "ip_daily_cap") {
+      // Distinct from at_capacity ON PURPOSE. "The service is full" and
+      // "you personally have used a lot today" are different facts, and
+      // telling someone the service is down when it isn't would send a real
+      // applicant away for no reason. Names 211 either way so the message is
+      // never a dead end.
+      return NextResponse.json(
+        {
+          error:
+            "You've asked a lot of questions today — this resets tomorrow. " +
+            "If you need help now, call your state SNAP agency or 211.",
+          reason: "ip_daily_cap",
+        },
+        { status: 429, headers: { "Retry-After": "3600" } },
       );
     }
     return NextResponse.json(
@@ -162,7 +179,8 @@ export async function POST(req: NextRequest) {
   after(async () => {
     const inTok = usageIn || estimateTokensFromChars(JSON.stringify(parsed.messages).length);
     const outTok = usageOut || estimateTokensFromChars(emittedChars);
-    await settleSpend(costUsd(inTok, outTok));
+    // Same ip the gate used, so the per-IP daily bucket actually accumulates.
+    await settleSpend(costUsd(inTok, outTok), new Date(), ip);
   });
 
   return new Response(stream, {

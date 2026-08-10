@@ -22,6 +22,25 @@ import { supabaseAdmin } from "./supabase-server";
 export const SPEND_CEILING_USD = Number(process.env.DEMETER_SPEND_CEILING_USD ?? 200);
 export const RATE_LIMIT_PER_MINUTE = Number(process.env.DEMETER_RATE_PER_MINUTE ?? 10);
 
+/** Per-IP daily spend cap.
+ *
+ * The monthly ceiling is GLOBAL, and the rate limit counts REQUESTS — neither
+ * stops one visitor from consuming everyone else's budget. A single IP sending
+ * max-size requests (40k chars ≈ 10k input tokens) at the rate limit burns
+ * roughly $0.30/min, which exhausts a $15 month in under an hour. The failure
+ * that matters there isn't the bill, it's that the service goes "at capacity"
+ * for every real applicant for the rest of the month.
+ *
+ * A per-IP daily cap bounds the blast radius: one abuser can spend at most
+ * this much before only THEY are cut off. Sized as a share of the monthly
+ * ceiling, so raising the ceiling raises this with it, and generous enough
+ * that a heavy legitimate session never notices — at ~$0.018/answer it is
+ * dozens of questions a day.
+ */
+export const IP_DAILY_SPEND_USD = Number(
+  process.env.DEMETER_IP_DAILY_SPEND_USD ?? Math.max(0.5, SPEND_CEILING_USD * 0.05),
+);
+
 // Pinned-model pricing for settle (claude-sonnet-5, USD per million tokens).
 // Overridable so a repriced or re-pinned model is a config change, not a deploy.
 //
@@ -50,6 +69,14 @@ function spendBucket(now: Date): string {
   return `spend:${now.toISOString().slice(0, 7)}`;
 }
 
+/** Per-IP spend for the calendar day, same hash as the rate window so one
+ *  visitor is one bucket without an IP ever being stored. */
+function ipSpendBucket(ip: string, now: Date): string {
+  const salt = process.env.DEMETER_IP_SALT ?? "demeter-v1";
+  const hash = createHash("sha256").update(`${salt}:${ip}`).digest("hex").slice(0, 16);
+  return `ipspend:${hash}:${now.toISOString().slice(0, 10)}`;
+}
+
 async function increment(bucket: string, amount: number): Promise<number> {
   const db = supabaseAdmin();
   const { data, error } = await db
@@ -61,7 +88,7 @@ async function increment(bucket: string, amount: number): Promise<number> {
 
 export type UsageGate =
   | { allowed: true }
-  | { allowed: false; reason: "rate_limited" | "at_capacity" };
+  | { allowed: false; reason: "rate_limited" | "at_capacity" | "ip_daily_cap" };
 
 /** Pre-answer gate: per-IP rate window + the monthly spend ceiling.
  *  The rate increment counts this request; the spend check reads the lagging
@@ -72,6 +99,11 @@ export async function checkUsageGate(ip: string, now: Date = new Date()): Promis
     if (requests > RATE_LIMIT_PER_MINUTE) return { allowed: false, reason: "rate_limited" };
     const spend = await increment(spendBucket(now), 0);
     if (spend >= SPEND_CEILING_USD) return { allowed: false, reason: "at_capacity" };
+    // Per-IP daily spend, checked LAST so a genuinely at-capacity service still
+    // says so rather than blaming the visitor. Lagging read (increment 0), same
+    // as the global check — settle happens after the answer.
+    const ipSpend = await increment(ipSpendBucket(ip, now), 0);
+    if (ipSpend >= IP_DAILY_SPEND_USD) return { allowed: false, reason: "ip_daily_cap" };
     return { allowed: true };
   } catch (err) {
     console.warn(
@@ -94,10 +126,28 @@ export function estimateTokensFromChars(chars: number): number {
 
 /** Post-answer settle with actual (or estimated) cost. Call from Next's
  *  after() so a frozen lambda can't drop the write. Best-effort. */
-export async function settleSpend(dollars: number, now: Date = new Date()): Promise<void> {
+export async function settleSpend(
+  dollars: number,
+  now: Date = new Date(),
+  ip?: string,
+): Promise<void> {
   if (!(dollars > 0)) return;
   try {
-    await increment(spendBucket(now), Math.round(dollars * 10_000) / 10_000);
+    const amount = Math.round(dollars * 10_000) / 10_000;
+    await increment(spendBucket(now), amount);
+    // The per-IP bucket only bounds anything if it actually accumulates. Its
+    // own try/catch: failing to attribute spend to one visitor must not lose
+    // the GLOBAL settle, which is the ceiling that protects the budget.
+    if (ip) {
+      try {
+        await increment(ipSpendBucket(ip, now), amount);
+      } catch (err) {
+        console.warn(
+          "[demeter-usage] per-IP settle failed (global still counted):",
+          err instanceof Error ? err.message : String(err),
+        );
+      }
+    }
   } catch (err) {
     console.warn(
       "[demeter-usage] settle failed (spend undercounted; Console cap backstops):",
