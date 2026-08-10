@@ -129,6 +129,17 @@ export interface AnswerRequest {
    *  in EITHER language, must appear in the grounding text — see numbersOk. */
   lang?: AnswerLang;
   apiKey: string;
+  /** EVAL ONLY — generate with a model other than the pin, so the same gold
+   *  set can be scored across candidates (#602). Setting this on a request
+   *  whose `meta.mode` is not "eval" THROWS rather than being ignored: a
+   *  silently-dropped override would make a comparison run look like it
+   *  measured three models when it measured the pin three times, which is
+   *  worse than an error because the numbers would look plausible.
+   *
+   *  Not a production knob. The model that actually ran is recorded on every
+   *  audit row, so a misuse is visible in mae_query_log.model rather than
+   *  inferred. */
+  modelOverride?: string;
   /** Aborts generation (and billing) when the client disconnects. */
   signal?: AbortSignal;
   events?: AnswerEvents;
@@ -217,9 +228,20 @@ export async function* answerQuestion(req: AnswerRequest): AsyncGenerator<Answer
     messages.map((m) => m.content).join("\n");
   const numbersOk = (text: string): boolean => verifyNumericEquivalence(text, numericSource).pass;
 
+  // Eval-only model override. Refuses rather than ignores when the caller
+  // hasn't declared an eval run — see the field's doc on AnswerRequest.
+  if (req.modelOverride && meta?.mode !== "eval") {
+    throw new Error(
+      `modelOverride is eval-only (got mode=${meta?.mode ?? "undefined"}). ` +
+        "Production requests generate with the pinned model.",
+    );
+  }
+  const modelUsed = req.modelOverride ?? MAE_GENERATION.model;
+
   const client = new Anthropic({ apiKey });
   const generation = {
     ...MAE_GENERATION,
+    model: modelUsed,
     max_tokens: ANSWER_LIMITS.MAX_OUTPUT_TOKENS,
     system: systemBlocks,
   };
@@ -357,7 +379,10 @@ export async function* answerQuestion(req: AnswerRequest): AsyncGenerator<Answer
     citations: finalChecks,
     unrecognizedCount: finalChecks.filter((c) => c.status === "unrecognized").length,
     piiRedactions,
-    model: MAE_GENERATION.model,
+    // The model that ACTUALLY generated this answer, not the pin — otherwise a
+    // comparison run would write the pin's name onto every row and the audit
+    // log would disagree with what happened.
+    model: modelUsed,
     corpusDate: CORPUS_EFFECTIVE_DATE,
     mode: meta?.mode,
     scopeState: state ?? null,
