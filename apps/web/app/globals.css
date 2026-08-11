@@ -6355,8 +6355,16 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 .dmmap__state--on:hover { fill: var(--demeter-terracotta); }
 .dmmap__state--on[data-sel] { fill: var(--demeter-terracotta-deep); }
 /* A <path> gets no focus ring for free, and a keyboard user cannot see where
-   they are without one. */
-.dmmap__state--on:focus-visible { outline: 2px solid var(--demeter-ink); outline-offset: 2px; }
+   they are without one — but `outline` is the wrong tool. It draws on the
+   bounding BOX, so on a shape like Florida or Michigan it frames mostly empty
+   sea, and Chrome paints its own blue ring on top of it regardless. A thick ink
+   stroke follows the actual border instead, cannot be clipped by the viewBox,
+   and reads against all three fills a state can have. */
+.dmmap__state--on:focus { outline: none; }
+.dmmap__state--on:focus-visible {
+  outline: none;
+  stroke: var(--demeter-ink); stroke-width: 2.5;
+}
 
 .dmmap__card {
   background: var(--demeter-card); border: 1px solid var(--demeter-rule);

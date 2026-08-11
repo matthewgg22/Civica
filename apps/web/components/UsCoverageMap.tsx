@@ -19,6 +19,7 @@
 import { useState } from "react";
 import type { PackMeta } from "@civica/demeter-engine/packs";
 import { US_MAP_VIEWBOX, US_STATE_PATHS } from "../lib/us-map-paths";
+import { programDisplayName } from "../lib/program-name";
 import { StateFlag } from "./StateFlag";
 
 export interface CoverageMapCopy {
@@ -64,7 +65,9 @@ export function UsCoverageMap({
               d={d}
               role="button"
               tabIndex={0}
-              aria-label={`${pack.program} — ${pack.agency}`}
+              /* Display name, not the raw field: an annotation clause read out
+                 on every arrow key is a paragraph where a name belongs. */
+              aria-label={`${programDisplayName(pack.program)} — ${pack.agency}`}
               aria-pressed={selected === code}
               onClick={() => setSelected(code === selected ? null : code)}
               onKeyDown={(e) => {
@@ -84,7 +87,7 @@ export function UsCoverageMap({
         {chosen ? (
           <>
             <StateFlag code={chosen.code} size={40} />
-            <p className="dmmap__program">{chosen.program}</p>
+            <p className="dmmap__program">{programDisplayName(chosen.program)}</p>
             <p className="dmmap__agency">
               <span className="dmmap__cardlabel">{copy.agency}</span>
               {chosen.agency}
