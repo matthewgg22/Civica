@@ -6173,3 +6173,57 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 .vcard, .vcard__facts dd, .vcard__sources li, .gpage__facts dd {
   overflow-wrap: anywhere;
 }
+
+/* ═══ CLEAR CONVERSATION (P1) ════════════════════════════════════════════════
+   For shared and public machines. On a library terminal the next person
+   otherwise sees the previous person's questions about their income, their
+   household, their felony record.
+
+   OUTLINE, never a fill. Terracotta fills are for progress — asking a question,
+   choosing a state. A destructive action that looks like the primary action is
+   how someone loses a conversation they wanted. */
+.demeter__clear {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  flex: none; font-size: 0.8rem; font-weight: 500; cursor: pointer;
+  color: var(--demeter-muted); background: transparent;
+  border: 1px solid var(--demeter-rule-strong); border-radius: 999px;
+  padding: 0 0.85rem; min-height: 44px; display: inline-flex; align-items: center;
+}
+.demeter__clear:hover { color: var(--demeter-ink); border-color: var(--demeter-muted); }
+
+/* The confirm step. The NOTE is the point of it: this is the last moment where
+   "we still keep the question and answer" can change what someone decides, and
+   burying that in a tooltip would make the button a smaller version of the
+   retention lie #703 fixed. */
+.demeter__clearconfirm {
+  display: inline-flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;
+  padding: 0.4rem 0.6rem; border-radius: 14px;
+  background: var(--demeter-paper); border: 1px solid var(--demeter-rule-strong);
+}
+.demeter__clearnote {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.78rem; line-height: 1.45; color: var(--demeter-body); max-width: 34ch;
+}
+.demeter__clearyes, .demeter__clearno {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.8rem; font-weight: 600; cursor: pointer; border-radius: 999px;
+  padding: 0 0.85rem; min-height: 44px; display: inline-flex; align-items: center;
+}
+.demeter__clearyes {
+  color: var(--demeter-terracotta-deep); background: transparent;
+  border: 1px solid var(--demeter-terracotta);
+}
+.demeter__clearyes:hover { background: #FBF1EC; }
+.demeter__clearno {
+  color: var(--demeter-muted); background: transparent; border: 1px solid transparent;
+}
+.demeter__clearno:hover { color: var(--demeter-ink); }
+
+/* The PII hint, under the composer. Quiet: this is guidance at the moment of
+   typing, not a warning banner — the trauma-informed rule says do not alarm. */
+.demeter__piihint {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.74rem; line-height: 1.5; color: var(--demeter-muted);
+  text-align: center; padding: 0.4rem 1rem 0; margin: 0; max-width: 56ch;
+  margin-left: auto; margin-right: auto;
+}
