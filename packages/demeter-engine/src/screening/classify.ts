@@ -93,10 +93,12 @@ export function classifyScreening(
     //
     // But say WHOSE gap it is. "state-policy-not-loaded" means snap-rules has
     // no policy for this state at all, which is OUR gap, not the reader's —
-    // and a corpus pack can exist for a state the calculator doesn't cover
-    // (NY today: badged Verified for ANSWERS, no benefit math). Telling
-    // someone who gave complete information that they are missing information
-    // is false, and it sends them looking for a document that does not exist.
+    // and a corpus pack CAN exist for a state the calculator doesn't cover
+    // (all 14 corpus states had engine parity as of #733/#734/etc., 2026-08;
+    // this path stays live for whenever a NEW state pack lands ahead of its
+    // own engine math again). Telling someone who gave complete information
+    // that they are missing information is false, and it sends them looking
+    // for a document that does not exist.
     const stateGap = verdict.not_implemented_surfaces.includes("state-policy-not-loaded");
     return {
       outcome: "not_enough_information",

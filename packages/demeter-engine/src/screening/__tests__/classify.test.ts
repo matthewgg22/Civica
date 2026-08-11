@@ -110,13 +110,20 @@ describe("classifyScreening — the six mockup outcomes", () => {
     }
   });
 
-  // A corpus pack can exist for a state snap-rules has no policy for — MN
-  // today (NY closed this gap in #733; MN, NV, AZ, OR, WI remain open, see
-  // issue #732): badged "✓ Verified" for ANSWERS, but with no benefit math.
-  // The screener used to tell that reader "this household needs information
-  // our screener doesn't have yet", which is false. Nothing was missing from
-  // what they said, and it sent someone who had answered everything looking
-  // for a document that does not exist.
+  // A corpus pack CAN exist for a state snap-rules has no policy for — that
+  // was literally true (NY, then NV/AZ/OR/WI/MN in sequence, see #732) until
+  // this same session closed the last of the six gaps. With ZERO corpus
+  // states currently missing engine coverage, this test has no real example
+  // left to point at — but the CODE PATH it protects is state-code-agnostic
+  // (composeVerdict converts ANY UnknownStateError into
+  // not_implemented_surfaces: ["state-policy-not-loaded"], regardless of
+  // whether a demeter-engine corpus pack exists for that code — see
+  // classify.ts). A synthetic code exercises the same real path without
+  // depending on a state staying permanently gap-having. The screener used
+  // to tell that reader "this household needs information our screener
+  // doesn't have yet", which is false. Nothing was missing from what they
+  // said, and it sent someone who had answered everything looking for a
+  // document that does not exist.
   it("names a missing STATE POLICY as our gap, not the reader's", () => {
     const facts: PartialFacts = {
       household: [{ member_id: "a", age: 40, role: "head", immigration: "citizen" }],
@@ -126,13 +133,13 @@ describe("classifyScreening — the six mockup outcomes", () => {
       assets: 100,
       cat_elig: "NPA",
     };
-    const c = classifyScreening(facts, "MN", ASOF);
+    const c = classifyScreening(facts, "ZZ", ASOF);
     expect(c.outcome).toBe("not_enough_information");
     expect(c.verdict?.not_implemented_surfaces).toContain("state-policy-not-loaded");
     // Must not blame the reader's information…
     expect(c.summary).not.toContain("needs information our screener");
     // …must name the state and own the gap.
-    expect(c.summary).toContain("MN");
+    expect(c.summary).toContain("ZZ");
     expect(c.summary.toLowerCase()).toContain("our gap");
   });
 });
