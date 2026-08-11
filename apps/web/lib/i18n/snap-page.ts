@@ -65,6 +65,9 @@ export interface PageCopy {
   /** The graphite footer. `footerDisclaimer` is the load-bearing one: it is the
    *  last thing anyone reads before acting on an answer, so it says plainly
    *  that the agency decides, not us. */
+  /** One line under the wordmark. "Demeter" is a Greek harvest goddess; on its
+   *  own it tells a first-time visitor nothing about SNAP. */
+  brandSubtitle: string;
   navAsk: string;
   navQuestions: string;
   footerPrivacy: string;
@@ -163,8 +166,9 @@ const en: PageCopy = {
   questionsIntro:
     "People do not arrive with a policy question. They arrive stuck on one line of a form. Here is what each line means and the rule that decides it.",
   questionsBack: "Ask Demeter about your own situation",
-  navAsk: "Ask",
-  navQuestions: "Questions",
+  brandSubtitle: "SNAP Employment Assistant",
+  navAsk: "Ask Demeter",
+  navQuestions: "Application questions",
   footerPrivacy: "Privacy",
   footerSupporters: "Supporters",
   footerDisclaimer:
@@ -264,8 +268,9 @@ const es: PageCopy = {
   questionsIntro:
     "La gente no llega con una pregunta de política. Llega atascada en una línea de un formulario. Esto es lo que significa cada línea y la regla que la decide.",
   questionsBack: "Pregúntale a Demeter sobre tu propia situación",
-  navAsk: "Preguntar",
-  navQuestions: "Preguntas",
+  brandSubtitle: "Asistente de Empleo de SNAP",
+  navAsk: "Pregúntale a Demeter",
+  navQuestions: "Preguntas de la solicitud",
   footerPrivacy: "Privacidad",
   footerSupporters: "Patrocinadores",
   footerDisclaimer:
@@ -365,8 +370,9 @@ const vi: PageCopy = {
   questionsIntro:
     "Người ta không đến với một câu hỏi về chính sách. Họ mắc kẹt ở một dòng trên tờ đơn. Đây là ý nghĩa của từng dòng và điều luật quyết định nó.",
   questionsBack: "Hỏi Demeter về hoàn cảnh của chính bạn",
-  navAsk: "Hỏi",
-  navQuestions: "Câu hỏi",
+  brandSubtitle: "Trợ lý Việc làm SNAP",
+  navAsk: "Hỏi Demeter",
+  navQuestions: "Câu hỏi trên đơn",
   footerPrivacy: "Quyền riêng tư",
   footerSupporters: "Nhà tài trợ",
   footerDisclaimer:
@@ -466,8 +472,9 @@ const zh: PageCopy = {
   questionsIntro:
     "人们并不是带着政策问题来的，而是卡在表格的某一行上。这里说明每一行的含义，以及决定它的条款。",
   questionsBack: "就您自己的情况询问 Demeter",
-  navAsk: "提问",
-  navQuestions: "常见问题",
+  brandSubtitle: "SNAP 就业助手",
+  navAsk: "询问 Demeter",
+  navQuestions: "申请表问题",
   footerPrivacy: "隐私政策",
   footerSupporters: "支持者",
   footerDisclaimer:

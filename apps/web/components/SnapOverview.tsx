@@ -23,6 +23,7 @@ import {
 } from "@civica/demeter-engine";
 import type { AnswerLang } from "@civica/demeter-engine/packs";
 import { PAGE_COPY } from "../lib/i18n/snap-page";
+import { StateFlag } from "./StateFlag";
 
 /** The most form-like phrasing for a topic — the longest one, which is the
  *  closest to how the question is actually printed. Derived rather than
@@ -121,7 +122,7 @@ export function SnapOrientation({
           <ul className="dmo__states-grid">
             {states.map((s) => (
               <li key={s.code}>
-                <span className="dmst__mark">{s.code}</span>
+                <StateFlag code={s.code} />
               </li>
             ))}
           </ul>
@@ -215,7 +216,7 @@ export function SnapDetail({ states, lang = "en" }: { states: PackMeta[]; lang?:
         <ul className="dmx__agencies">
           {states.map((s) => (
             <li key={s.code} className="dmx__agency">
-              <span className="dmx__agency-code">{s.code}</span>
+              <StateFlag code={s.code} size={34} />
               <span className="dmx__agency-body">
                 <span className="dmx__agency-program">{s.program}</span>
                 <span className="dmx__agency-name">{s.agency}</span>

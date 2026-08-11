@@ -42,7 +42,13 @@ export function DemeterNav({
       <div className="dmnav__inner">
         <Link className="dmnav__brand" href={p("/screen/ask")} aria-label="Demeter">
           <DemeterMark size={30} />
-          <span className="dmnav__wordmark">Demeter</span>
+          <span className="dmnav__brandtext">
+            <span className="dmnav__wordmark">Demeter</span>
+            {/* A one-line subtitle, so the wordmark alone is not the only thing
+                telling a first-time visitor what this is. "Demeter" is a Greek
+                harvest goddess; on its own it says nothing about SNAP. */}
+            <span className="dmnav__subtitle">{c.brandSubtitle}</span>
+          </span>
         </Link>
 
         <nav className="dmnav__tabs" aria-label="Demeter">

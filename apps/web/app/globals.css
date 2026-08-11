@@ -6275,3 +6275,58 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   border-left: 2px solid var(--demeter-rule-strong);
   padding-left: 0.6rem; margin-top: 0.35rem;
 }
+
+/* ═══ STATE FLAG + CODE ══════════════════════════════════════════════════════
+   Flag for RECOGNITION, code for LEGIBILITY. Neither does the job alone: a
+   state flag at 26px is mostly a smudge (most are a seal on a blue field), and
+   a bare two-letter code is unmistakable but not something you spot without
+   reading. Side by side they answer "is my state here?" at a glance and still
+   survive any size or eyesight.
+
+   The flag carries a hairline border because several — Ohio, Maryland, and
+   every mostly-white one — otherwise dissolve into the paper background. */
+.dmflag { display: inline-flex; align-items: center; gap: 0.45rem; flex: none; }
+.dmflag__img {
+  display: block; border-radius: 3px;
+  border: 1px solid rgba(36, 30, 26, 0.18);
+  object-fit: cover;
+}
+.dmflag__code {
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+  font-size: 0.9rem; font-weight: 600; letter-spacing: 0.01em;
+  color: var(--demeter-ink);
+}
+/* No asset (the federal floor, or a code we have no flag for): the code alone,
+   in the same chip the monogram used, so a gap never looks like a broken image. */
+.dmflag[data-noflag] .dmflag__code {
+  display: grid; place-items: center;
+  width: 2.15rem; height: 2.15rem; border-radius: 10px;
+  color: var(--demeter-muted); background: var(--demeter-paper);
+  border: 1px solid var(--demeter-rule);
+}
+
+/* ═══ THE ORPHANED CARD ══════════════════════════════════════════════════════
+   `.dmx__defs` holds FOUR definitions in an auto-fit grid whose minimum leaves
+   room for three, so the fourth ("Your state") dropped to a row of its own with
+   two empty columns beside it and a 1.75rem gap above. It read as a mistake
+   because it was one — the grid was sized for a list whose length nobody
+   checked against it.
+
+   Two columns instead: four items make two clean rows, the measure per column
+   gets wider (better for the prose these hold), and adding a fifth definition
+   later degrades to 3+2 rather than stranding one. */
+.dmx__defs { grid-template-columns: repeat(auto-fit, minmax(min(21rem, 100%), 1fr)); }
+
+/* Wordmark plus one line of what-this-is. "Demeter" is a Greek harvest
+   goddess; alone it tells a first-time visitor nothing about SNAP. */
+.dmnav__brandtext { display: flex; flex-direction: column; line-height: 1.15; }
+.dmnav__subtitle {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.66rem; letter-spacing: 0.08em; text-transform: uppercase;
+  font-weight: 600; color: var(--demeter-muted); margin-top: 0.1rem;
+}
+@media (max-width: 620px) {
+  /* The subtitle is the first thing to go when the bar has to hold a wordmark,
+     two tabs and four languages — the tabs are navigation, this is context. */
+  .dmnav__subtitle { display: none; }
+}
