@@ -164,6 +164,12 @@ export function formatEngineParams(state: string, asOf: Date): string {
     // Expanded Categorical Eligibility applies the SAME 200% FPL gross test
     // to every household, conferred via the "This Is Your Copy" TANF-brochure
     // page every applicant already receives (E&P MS A-180.2).
+    // AZ: 200 is a genuine flat screen, no tiering — Arizona's Expanded
+    // Categorical Eligibility applies the SAME 200% FPL gross test to every
+    // household, and unlike several other states' TANF-info-brochure
+    // conferral pathway (see the AZ corpus pack's income-pathways
+    // supplement), there is no conferring document at all — it is a pure
+    // income comparison (CNAP FAA5.I.01.B).
     const BBCE_PCT = {
       CA: 200,
       MA: 200,
@@ -174,6 +180,7 @@ export function formatEngineParams(state: string, asOf: Date): string {
       IL: 165,
       FL: 200,
       NV: 200,
+      AZ: 200,
     } as const;
     const bbcePct: number | undefined = (BBCE_PCT as Record<string, number>)[state];
     lines.push(`- 100% FPL, monthly (net-income test basis): ${row(p.fpl)}`);
