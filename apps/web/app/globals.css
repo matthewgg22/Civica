@@ -5241,7 +5241,12 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 }
 .dmo__cta:hover { background: var(--demeter-terracotta-deep); }
 
-@media (max-width: 560px) {
+/* 600px, not the 560 I first guessed. Measured on the deployed page: the
+   tagline needs 299px to sit on one line and gets 266px at a 561px viewport
+   (the header is 41px avatar + 150px language picker + 23px gaps before any
+   text). So 561–594px was a band where the tagline wrapped to two lines and the
+   chat header jumped back from 74px to 130px. 600 clears it with margin. */
+@media (max-width: 600px) {
   /* Tighter opening on a phone: the bar has to introduce the product AND
      still leave the chat card visible on the first screen. */
   .dmo { padding-top: 1.25rem; padding-bottom: 1rem; }
