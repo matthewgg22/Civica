@@ -1,0 +1,216 @@
+{
+  "_provenance": {
+    "note": "Minnesota SNAP curated supplements (docs/plans/mae-state-corpus-framework.md, Wave 3 — the hardest source in the roster: a Combined Manual on a legacy dhs.state.mn.us content-management system, mid-migration to a new DCYF agency). Drafted from pdftotext extraction of the Combined Manual's own section-body text, NOT from secondary summaries — one secondary-source claim (a lifetime drug-testing ban) was directly and flatly contradicted by the primary text and corrected before draft. Independently cross-checked and adversarially fact-checked before PR. See PROVENANCE.md.",
+    "extracted": "2026-08-11",
+    "source_fact_check": "pdftotext extraction of the Combined Manual PDF + primary-source cross-check + post-draft adversarial refute pass; corrections recorded in PROVENANCE.md"
+  },
+  "supplements": [
+    {
+      "key": "income-pathways",
+      "kind": "supplement",
+      "terms": [
+        "income limit",
+        "income limits",
+        "gross income limit",
+        "gross income ceiling",
+        "make too much",
+        "over income",
+        "bbce",
+        "categorical eligibility",
+        "categorically eligible",
+        "200 percent",
+        "200%",
+        "poverty level",
+        "domestic violence brochure"
+      ],
+      "citation": "CM 0013.06 — MN income pathways (flat 200% BBCE, exempt from BOTH asset and net income tests)",
+      "heading": "Minnesota's BBCE is conferred through a Domestic Violence Information Brochure — and unlike most flat-screen states, it exempts a unit from the NET income test too, not just the asset test",
+      "text": "Minnesota's Broad-Based Categorical Eligibility (BBCE) applies when a unit does not meet narrower Categorical Eligibility (CE — units entirely on GA/MSA/SSI, or with a member eligible for Transition Year/Basic Sliding Fee Child Care or the Diversionary Work Program) but the unit's countable gross income is at or below 200% FPG AND the unit has been given, or will be given upon approval, the Domestic Violence Information Brochure (DHS-3477) (CM 0013.06) — a genuinely distinctive conferral document, different from every other TANF-service-notice pathway in this roster (NV's TANF brochure, OR's Information and Referral pamphlet, WI's Job Center notice). CE and BBCE units are NOT subject to a net income test — a stronger exemption than most flat-screen states, which typically waive only the asset test. Because of this, a unit of 1-2 people may be eligible for at least the minimum SNAP benefit allotment even at very low net income, while a unit of 3+ people in the same position may be eligible for $0 in actual SNAP benefits — but $0-benefit SNAP eligibility still confers eligibility for other programs (Energy Assistance, telephone discount programs, subsidized housing, SNAP-Ed, WIC). Units NOT meeting CE and exceeding 200% FPG are ineligible for SNAP UNLESS they have an eligible elderly or disabled member — see the asset-rule supplement for that pathway.",
+      "source_url": "https://www.dhs.state.mn.us/main/idcplg?IdcService=GET_DYNAMIC_CONVERSION&RevisionSelectionMethod=LatestReleased&dDocName=CM_00130601"
+    },
+    {
+      "key": "asset-rule",
+      "kind": "supplement",
+      "terms": [
+        "asset limit",
+        "asset test",
+        "resource limit",
+        "resource test",
+        "resources",
+        "savings",
+        "savings limit",
+        "bank account",
+        "vehicle",
+        "car count",
+        "does my car count"
+      ],
+      "citation": "CM 0015.81 — MN asset/resource limits (only reached by non-categorically-eligible units)",
+      "heading": "Minnesota excludes one vehicle PER unit member age 16+ — more generous than most states' one-vehicle-per-unit exclusion",
+      "text": "Only non-categorically eligible SNAP units are subject to an asset test at all — categorically eligible (CE) and broad-based categorically eligible (BBCE) units are exempt entirely (CM 0015.81). For units that do get tested: $4,500 for units with at least one eligible elderly or disabled member, $3,000 for units without one. This includes the SAME pathway for units with an elderly/disabled member whose gross income exceeds 200% FPG (see the income-pathways supplement) — those units must pass the asset limit AND the 100% FPG net income test, but face no gross income test at all. Vehicles: Minnesota excludes ONE VEHICLE PER SNAP UNIT MEMBER who is age 16 or older — genuinely more generous than a typical one-vehicle-per-unit exclusion, since a household with three driving-age members can exclude three vehicles. Also excluded: leased/rented vehicles and vehicles the unit uses as their home. For non-excluded vehicles, count the trade-in value from the current NADA online guide (or a written dealer statement if the vehicle isn't listed or the value is disputed — the county/Tribal Nation must reimburse any cost of securing that statement). Substantial lottery/gambling winnings ($4,500+ in a single event) end CE/BBCE eligibility until the unit is approved once as non-categorically eligible.",
+      "source_url": "https://www.dhs.state.mn.us/main/idcplg?IdcService=GET_DYNAMIC_CONVERSION&RevisionSelectionMethod=LatestReleased&dDocName=CM_00158101"
+    },
+    {
+      "key": "sua-values",
+      "kind": "supplement",
+      "terms": [
+        "utility allowance",
+        "utility standard",
+        "shelter deduction",
+        "excess shelter",
+        "standard utility allowance",
+        "heating standard",
+        "cooling standard",
+        "telephone standard",
+        "electric utility"
+      ],
+      "citation": "CM 0018.15; CM 0018.15.09 — MN utility deductions (a single combined allowance, not a multi-tier ladder)",
+      "heading": "Minnesota runs ONE combined Standard Utility Allowance covering heat, cooling, electricity, water, sewer, garbage, AND phone together — not a multi-tier ladder like most states in this roster",
+      "text": "Minnesota's Standard Utility Allowance is a single combined figure available to units that incur expenses for heating and/or cooling — the allowance covers heating, cooling, electricity, water, sewer, garbage, and phone expenses all together, structurally distinct from every other state built in this roster, all of which split these into 3-7 separate tiers (Wisconsin's 7-tier HSUA/LUA/EUA/WUA/FUA/PUA/TUA ladder being the most granular contrast). A separate, smaller Electric Standard Utility Deduction applies to units responsible for an electricity expense without a heating/cooling obligation. This pack could NOT independently re-verify the exact current-FY dollar figures for either allowance against a live authoritative source — the Combined Manual's own utility-deduction section text was not captured in this pass's extraction, and a direct fetch of USDA's FY26 SUA values document and a DHS drug-felon-adjacent page both returned access-denied responses. Secondary sources describe a combined heating/cooling allowance figure and a roughly $235/month electric-only figure, but given this pass's documented failure rate for AI-summarized dollar figures on other states, DO NOT quote a specific Minnesota utility-allowance dollar amount without re-verifying against the current Combined Manual section 0018.15.09 directly. The Excess Shelter Deduction cap, per the manual's own text (issue-dated 10/2024), is $712/month for units without an elderly or disabled member — notably LOWER than the $744 FFY26 COLA figure this roster's more-recently-updated states show, suggesting this specific manual page has not yet been refreshed to the current federal cycle. See freshness.json and PROVENANCE.md.",
+      "source_url": "https://www.dhs.state.mn.us/main/idcplg?IdcService=GET_DYNAMIC_CONVERSION&RevisionSelectionMethod=LatestReleased&dDocName=CM_00181501"
+    },
+    {
+      "key": "medical-deduction",
+      "kind": "supplement",
+      "terms": [
+        "medical deduction",
+        "medical expense",
+        "medical expenses",
+        "medical bills",
+        "elderly deduction",
+        "disability deduction"
+      ],
+      "citation": "CM 0018.12 — MN medical deduction (plain federal actual-expense-minus-$35, no flat standard amount)",
+      "heading": "Minnesota uses the plain federal actual-expense-minus-$35 medical deduction — no flat Standard Medical Deduction",
+      "text": "Units may deduct verified medical expenses (including mail-order-prescription postage) for an eligible member age 60+, disabled, or receiving expedited SSI; for hospital/nursing-home expenses of a person who was an eligible unit member before admission; or for unpaid medical bills of a deceased eligible member (CM 0018.12). For regularly recurring medical expenses, $35 per unit is subtracted from the actual monthly expense to determine the deduction — the plain federal mechanism, matching Florida's and Oregon's approach rather than Georgia's or Illinois' flat Standard Medical Deduction dollar figures. Non-recurring medical expenses can be allowed entirely in one month, averaged over the rest of the certification period, or spread over a payment plan's schedule (continuing into a later certification period if needed). At recertification, units must verify changes in recurring medical expenses totaling more than $25 and any new expenses — but are not required to re-verify unchanged expenses.",
+      "source_url": "https://www.dhs.state.mn.us/main/idcplg?IdcService=GET_DYNAMIC_CONVERSION&RevisionSelectionMethod=LatestReleased&dDocName=CM_00181201"
+    },
+    {
+      "key": "dependent-care-child-support",
+      "kind": "supplement",
+      "terms": [
+        "dependent care",
+        "child care deduction",
+        "daycare",
+        "child support",
+        "support payments",
+        "child support deduction"
+      ],
+      "citation": "CM 0018.33 — MN child support deduction (ordinary deduction, applied after earned income but before shelter)",
+      "heading": "Minnesota treats court-ordered child support as an ordinary deduction — applied in a specific place in the calculation, after the earned-income deduction but before the shelter deduction",
+      "text": "Minnesota deducts court-ordered child support that a person whose income is counted pays to or for a non-household member — including vendor payments made on the other household's behalf, health-insurance payments for the child(ren), current payments, and arrears (CM 0018.33). This is the Georgia/Michigan/Oregon/Wisconsin-style ordinary DEDUCTION mechanism (7 CFR 273.9(d)(5)), not Illinois' income-exclusion approach. A specific ordering detail worth knowing: this deduction is allowed AFTER the earned income deduction but BEFORE the shelter deduction — the sequence matters because the shelter deduction's own calculation depends on net income after prior deductions are applied. Only support ACTUALLY PAID counts (not merely owed); administrative fees an employer charges for income-withholding services are not deductible. For prospectively budgeted units, the deduction is anticipated from the prior 30 days of payments if that's a reasonable indicator, or from the most recent 3 months if not.",
+      "source_url": "https://www.dhs.state.mn.us/main/idcplg?IdcService=GET_DYNAMIC_CONVERSION&RevisionSelectionMethod=LatestReleased&dDocName=CM_00183301"
+    },
+    {
+      "key": "abawd-work-requirement",
+      "kind": "supplement",
+      "terms": [
+        "abawd",
+        "able bodied adult",
+        "work requirement",
+        "time limit",
+        "3 month limit",
+        "work registration",
+        "waiver",
+        "waived area"
+      ],
+      "citation": "unconfirmed primary source this pass — see PROVENANCE.md",
+      "heading": "Minnesota reportedly held a statewide ABAWD waiver expiring June 30, 2026 — a date already past as of this pack's build date, and this pack could NOT independently confirm current status via a primary source",
+      "text": "Multiple secondary sources describe Minnesota (along with Montana and North Dakota) as holding an active STATEWIDE ABAWD work-requirement waiver, approved on the basis of an area unemployment rate above 10% (the only basis USDA now permits for new waiver approvals), with a stated expiration of June 30, 2026. Today's date is already past that expiration. This pack attempted to independently confirm Minnesota's current waiver status against a primary source but was blocked twice: a direct fetch of the relevant Minnesota DHS Combined Manual page returned an active bot-detection challenge (Radware/perfdrive), and USDA FNA's own ABAWD waiver-response documents for FY2025-2029 are distributed only as a bulk ZIP download this pass could not practically open and search. DO NOT tell a Minnesota household the state currently holds an active statewide ABAWD waiver — treat Minnesota as PRESUMPTIVELY UNWAIVED as of this pack's build date pending direct confirmation, and always recommend the household or caseworker check the current status directly with the county agency or USDA FNA's ABAWD waiver page. See freshness.json.",
+      "source_url": "https://www.fna.usda.gov/snap/waivers/timelimit/2025-2029"
+    },
+    {
+      "key": "criminal-justice-disqualifications",
+      "kind": "supplement",
+      "terms": [
+        "drug felony",
+        "felony conviction",
+        "criminal record",
+        "drug conviction",
+        "drug test",
+        "drug testing",
+        "lifetime ban"
+      ],
+      "citation": "CM 0011.27.03 — MN drug-felony treatment (effectively a full opt-out since 8/1/2023; drug testing is optional and carries NO denial/termination consequence)",
+      "heading": "Minnesota does NOT ban or sanction SNAP recipients for a drug felony conviction, and a positive or refused drug test cannot be used to deny or terminate benefits — this corrects a widely-repeated false secondary-source claim",
+      "text": "A person convicted of a drug felony within 10 years of the application or recertification date MAY be subject to random drug testing — but the Combined Manual's own current text (CM 0011.27.03, issue-dated 11/2024) is explicit on every point that matters: 'Random drug testing is optional. Agencies must decide whether to require such testing,' and 'Do not deny or terminate assistance for a person who tests positive or fails to show up for a random drug testing' — a positive test only triggers an offer of substance-use-disorder treatment information, never a benefits consequence. Separately, 'End any disqualifications for someone who was disqualified for Cash programs or SNAP as a drug felon prior to 08/01/2023. They are eligible for these programs as long as all other eligibility factors are met.' This pack found and is explicitly correcting a widely-repeated secondary-source claim that Minnesota imposes a lifetime SNAP ban after two failed drug tests — that claim is FLATLY CONTRADICTED by the manual's own current text and must not be repeated. Minnesota is, in substance, a full opt-out state (like Illinois or Nevada in this roster) with a formally-retained but functionally consequence-free optional testing/referral provision.",
+      "source_url": "https://www.dhs.state.mn.us/main/idcplg?IdcService=GET_DYNAMIC_CONVERSION&RevisionSelectionMethod=LatestReleased&dDocName=CM_0011270301"
+    },
+    {
+      "key": "restaurant-meals-program",
+      "kind": "supplement",
+      "terms": [
+        "restaurant meals program",
+        "rmp",
+        "eat at a restaurant",
+        "use ebt at restaurant",
+        "hot meal",
+        "hot food"
+      ],
+      "citation": "USDA FNA Restaurant Meals Program state list — MN does not operate RMP; a pilot bill has been proposed but not enacted",
+      "heading": "Minnesota does NOT operate a Restaurant Meals Program — proposed legislation (HF 3855/SF 4135) would create one for elderly, disabled, and homeless recipients, but it has not been enacted",
+      "text": "USDA FNA's own current list of 'States that Operate a Restaurant Meals Program' (fna.usda.gov/snap/retailer/restaurant-meals-program, cross-referenced against this same session's direct-curl fetch used for the Wisconsin pack) names Arizona, Maryland, New York, California, Massachusetts, Rhode Island, Illinois (Cook and Franklin Counties Only), Michigan, and Virginia — Minnesota is not on it. SNAP benefits in Minnesota can generally only be used for authorized retailers like grocery stores and farmers markets, not for hot prepared restaurant food. Minnesota legislation (HF 3855/SF 4135) has been proposed to limit prepared-meal use to existing EBT-authorized retailers for households where every member is elderly (60+), disabled, homeless, or the spouse of an eligible client — the standard federal RMP-eligible population — but this pack found no evidence the bill has been enacted as of this pack's build date; treat this as a genuinely live legislative risk to re-check, similar to Oregon's SB 1585 pilot but at an earlier legislative stage. A DIFFERENT existing Minnesota provision — using EBT at Meals on Wheels and congregate dining sites for older adults — is not the federal Restaurant Meals Program and should not be conflated with it.",
+      "source_url": "https://www.fna.usda.gov/snap/retailer/restaurant-meals-program"
+    },
+    {
+      "key": "expedited-service",
+      "kind": "supplement",
+      "terms": [
+        "expedited",
+        "expedited service",
+        "emergency",
+        "emergency food stamps",
+        "fast benefits",
+        "how fast",
+        "urgent",
+        "same day",
+        "7 day",
+        "seven day"
+      ],
+      "citation": "CM 0004.04 — MN expedited SNAP (federal-standard criteria)",
+      "heading": "Minnesota's expedited-service criteria match the federal standard exactly — under $150 income plus $100 liquid assets, 7-day issuance",
+      "text": "Expedited processing is designed to issue benefits to eligible units by the 7th day after the application date (CM 0004.04). Screening criteria: units with less than $150 in monthly countable income and $100 or less in liquid assets; destitute migrant/seasonal farmworker units with $100 or less in liquid assets; or units whose combined monthly countable income and liquid assets are less than their monthly housing cost plus the applicable standard utility deduction. It is considered best practice for county agencies and Tribal Nations to offer same-day interviews to all SNAP applicants; where that isn't offered, a screening for expedited eligibility must be conducted using whatever information is available (the CAF application, the MNbenefits cover page, submitted documentation).",
+      "source_url": "https://www.dhs.state.mn.us/main/idcplg?IdcService=GET_DYNAMIC_CONVERSION&RevisionSelectionMethod=LatestReleased&dDocName=CM_00040401"
+    },
+    {
+      "key": "reporting-certification",
+      "kind": "supplement",
+      "terms": [
+        "certification period",
+        "approval period",
+        "recertification",
+        "redetermination",
+        "how long does snap last",
+        "how long does my snap approval last",
+        "how long does my approval last",
+        "redo",
+        "renew",
+        "six-month report",
+        "change reporter"
+      ],
+      "citation": "CM 0009.03 — MN recertification periods (12-month standard, 6-month change-reporters with earned income, 24-month elderly/disabled-no-earned-income — capped at 24, no 36-month exception)",
+      "heading": "Minnesota certifies most units for 12 months, but change-reporting units with earned income must recertify every 6 months — and no Minnesota SNAP unit may have a recertification period longer than 24 months",
+      "text": "No unit's recertification period may exceed 24 months (CM 0009.03) — Minnesota caps this shorter than Wisconsin's exceptional 36-month elderly/blind/disabled-no-earned-income period in this same roster. Change-reporting units WITH earned income must be recertified every 6 months. Change-reporting units where all adult members are elderly or disabled AND have no earned income are recertified every 24 months, but the county/Tribal Nation must still make CONTACT with these units at least every 12 months to remind them of reporting obligations — a mandatory check-in, not a fully hands-off 24-month gap. Six-month reporting units are recertified every 12 months. All other change-reporting units are recertified every 12 months. Counties may set a shorter period than the maximum to align with another program's review date or expected circumstance changes, and must document the reason in case notes when doing so.",
+      "source_url": "https://www.dhs.state.mn.us/main/idcplg?IdcService=GET_DYNAMIC_CONVERSION&RevisionSelectionMethod=LatestReleased&dDocName=CM_00090301"
+    },
+    {
+      "key": "program-identity",
+      "kind": "supplement",
+      "terms": [
+        "how to apply",
+        "where do i apply",
+        "apply for snap",
+        "mnbenefits",
+        "who runs",
+        "what agency",
+        "administers",
+        "food support minnesota",
+        "tribal nation",
+        "maxis"
+      ],
+      "citation": "MN DCYF / MNbenefits program materials",
+      "heading": "Minnesota applies through MNbenefits.mn.gov; DCYF now sets policy, but the eligibility manual still runs on the legacy DHS system, and 87 counties plus 11 Tribal Nations administer eligibility independently",
+      "text": "Minnesota's SNAP program was formerly called \"Food Support\" or \"Food Stamps\" — the Combined Manual's own glossary still notes this history. Applications run through MNbenefits.mn.gov, with paper applications also accepted at local county or Tribal Nation offices; the MNFoodHelper outreach service can assist with applying. Eligibility policy is set by the Minnesota Department of Children, Youth, and Families (DCYF), created to take over food/family program functions previously run by the Department of Human Services (DHS) — but as of this pack's build date, the authoritative Combined Manual is STILL hosted on the legacy dhs.state.mn.us content-management system, not a DCYF-branded host. Actual eligibility determination is genuinely county-administered: 87 county agencies plus 11 Tribal Nations each run their own office and case processing on the shared MAXIS system — a different structure from Wisconsin's multi-county-consortium model in this same roster (every Minnesota county stands alone; there is no consortium layer).",
+      "source_url": "https://mnbenefits.mn.gov"
+    }
+  ]
+}

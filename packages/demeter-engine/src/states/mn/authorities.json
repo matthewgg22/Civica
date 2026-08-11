@@ -1,0 +1,30 @@
+{
+  "_provenance": {
+    "note": "Minnesota citation authorities. The Combined Manual cites its own sections as 4-digit-dot-decimal numbers (e.g. '0013.06', '0018.15.09'); this pack prefixes them 'CM <section>' to disambiguate, matching the pattern this roster already uses for other states' manual-section prefixes (Wisconsin's FSH, Illinois' PM/WAG).",
+    "extracted": "2026-08-11"
+  },
+  "patterns": [
+    {
+      "key": "cmsection",
+      "regex": "\\bCM\\s+(\\d{4}\\.\\d{2}(?:\\.\\d{2})?)\\b",
+      "flags": "gi",
+      "template": "CM $1",
+      "normalize": "none",
+      "match": "exact",
+      "note": "Minnesota Combined Manual sections, up to 3 decimal levels (e.g. 0013.06, 0018.15.09)"
+    }
+  ],
+  "known": {
+    "cmsection": [
+      { "value": "CM 0004.04", "note": "expedited SNAP — federal-standard criteria ($150/$100), 7-day issuance" },
+      { "value": "CM 0009.03", "note": "length of recertification periods — 12-month standard, 6-month change-reporters w/ earned income, 24-month elderly/disabled-no-earned-income (capped at 24, mandatory 12-month contact)" },
+      { "value": "CM 0011.27.03", "note": "drug felons — effectively a full opt-out since 8/1/2023; optional drug testing carries no denial/termination consequence, corrects a false secondary-source lifetime-ban claim" },
+      { "value": "CM 0013.06", "note": "SNAP categorical eligibility/ineligibility — 200% flat BBCE via Domestic Violence Information Brochure (DHS-3477); CE/BBCE exempt from asset AND net income tests" },
+      { "value": "CM 0015.81", "note": "assets - SNAP — $3,000/$4,500 by elderly/disabled status; one vehicle exclusion PER unit member age 16+" },
+      { "value": "CM 0018.12", "note": "medical deductions — actual-expense-minus-$35, no flat standard amount" },
+      { "value": "CM 0018.15", "note": "shelter deductions — housing costs, maximum shelter cap $712 (issue-dated 10/2024, may lag FFY26 COLA), homeless deduction $190.30" },
+      { "value": "CM 0018.15.09", "note": "utility deductions — a single combined SUA covering heat/cool/electric/water/sewer/garbage/phone, not a multi-tier ladder; exact current dollar figures unconfirmed this pass" },
+      { "value": "CM 0018.33", "note": "child and spousal support deductions — ordinary deduction (not exclusion), applied after earned-income deduction but before shelter deduction" }
+    ]
+  }
+}

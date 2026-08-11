@@ -1328,6 +1328,128 @@ export const WI_GOLD: AnswerExpectation[] = [
   },
 ];
 
+// Minnesota gold set (Wave 3, docs/plans/mae-state-corpus-framework.md §7 — the hardest source in the
+// roster, and the last of the county-administered states). At least 3 cases below require the answer to
+// prefer Minnesota's own text over a naive default: BBCE's net-income-test exemption (stronger than a
+// typical flat-screen state), the per-member vehicle exclusion, and — most importantly — the corrected
+// drug-felony policy, which guards against a widely-repeated FALSE secondary-source claim this pack
+// found and disproved against the Combined Manual's own current text (see PROVENANCE.md).
+export const MN_GOLD: AnswerExpectation[] = [
+  {
+    id: "mn-bbce-net-exempt",
+    // Minnesota's BBCE exempts a unit from BOTH the asset test AND the net
+    // income test — stronger than the typical flat-screen-state shape this
+    // roster otherwise shows (which usually waives only the asset test).
+    question: "If my household qualifies for broad-based categorical eligibility in Minnesota, do I still have to pass a net income test?",
+    state: "MN",
+    expectCitation: "CM 0013.06",
+    mustMention: "not",
+    mustDisclaim: true,
+  },
+  {
+    id: "mn-asset-limit-elderly",
+    question: "What's the SNAP resource limit in Minnesota for a household with an elderly or disabled member?",
+    state: "MN",
+    expectCitation: "CM 0015.81",
+    mustMention: "4,500",
+    mustDisclaim: true,
+  },
+  {
+    id: "mn-vehicle-per-member",
+    // Guards against assuming only ONE vehicle total is excluded —
+    // Minnesota excludes one vehicle PER unit member age 16+.
+    question: "I have two adult drivers in my household in Minnesota — how many of our vehicles are excluded from the SNAP asset test?",
+    state: "MN",
+    expectCitation: "CM 0015.81",
+    mustMention: "each",
+    mustDisclaim: true,
+  },
+  {
+    id: "mn-medical-deduction-no-flat",
+    question: "I'm disabled and have $50 a month in medical bills for Minnesota SNAP — do I get a deduction?",
+    state: "MN",
+    expectCitation: "CM 0018.12",
+    mustMention: "35",
+    mustDisclaim: true,
+  },
+  {
+    id: "mn-child-support-deduction",
+    question: "Does paying child support lower my countable income for SNAP in Minnesota?",
+    state: "MN",
+    expectCitation: "CM 0018.33",
+    mustMention: "deduct",
+    mustDisclaim: true,
+  },
+  {
+    id: "mn-abawd-waiver-unconfirmed",
+    // Guards against asserting Minnesota currently holds an active
+    // statewide ABAWD waiver — the reported expiration (6/30/2026) has
+    // already passed and this pack could not independently reconfirm
+    // current status.
+    question: "Is the SNAP work-requirement time limit currently waived anywhere in Minnesota?",
+    state: "MN",
+    mustNotMention: ["currently waived statewide", "active statewide waiver"],
+    mustDisclaim: true,
+  },
+  {
+    id: "mn-drug-felony-no-ban",
+    // The flagship correction of this pack: guards against a widely
+    // repeated FALSE claim that Minnesota imposes a lifetime SNAP ban
+    // after 2 failed drug tests — the Combined Manual's own current text
+    // says the opposite (testing is optional and carries no consequence).
+    question: "I have a drug felony conviction — can I still get SNAP in Minnesota, and will I have to take a drug test?",
+    state: "MN",
+    expectCitation: "CM 0011.27.03",
+    mustNotMention: ["lifetime ban", "permanently banned", "banned for life"],
+    mustDisclaim: true,
+  },
+  {
+    id: "mn-restaurant-meals-absent",
+    question: "Can I use my EBT card to buy a hot meal at a restaurant in Minnesota?",
+    state: "MN",
+    mustMention: "not",
+    mustDisclaim: true,
+  },
+  {
+    id: "mn-expedited-service",
+    question: "How fast can I get emergency SNAP benefits in Minnesota?",
+    state: "MN",
+    expectCitation: "CM 0004.04",
+    mustMention: "7",
+    mustDisclaim: true,
+  },
+  {
+    id: "mn-cert-period-max-24",
+    // Guards against assuming Wisconsin's exceptional 36-month EBD
+    // certification period also applies in Minnesota — Minnesota caps
+    // every unit at 24 months.
+    question: "How long does my SNAP approval last in Minnesota if everyone in my household is elderly with no earned income?",
+    state: "MN",
+    expectCitation: "CM 0009.03",
+    mustMention: "24",
+    mustDisclaim: true,
+  },
+  {
+    id: "mn-sua-single-combined",
+    // Guards against describing Minnesota's utility allowance as a
+    // multi-tier ladder (Wisconsin's shape) — Minnesota runs a single
+    // combined allowance covering heat/cool/electric/water/sewer/
+    // garbage/phone together.
+    question: "How does Minnesota's standard utility allowance work for SNAP — is it split into different tiers?",
+    state: "MN",
+    expectCitation: "CM 0018.15",
+    mustMention: "combined",
+    mustDisclaim: true,
+  },
+  {
+    id: "mn-federal-benefit",
+    question: "How is the monthly SNAP benefit amount calculated from net income in Minnesota?",
+    state: "MN",
+    expectCitation: "273.10",
+    mustDisclaim: true,
+  },
+];
+
 /** Everything the live runner executes. */
 export const ALL_GOLD: AnswerExpectation[] = [
   ...ANSWER_GOLD,
@@ -1344,4 +1466,5 @@ export const ALL_GOLD: AnswerExpectation[] = [
   ...AZ_GOLD,
   ...OR_GOLD,
   ...WI_GOLD,
+  ...MN_GOLD,
 ];
