@@ -445,6 +445,111 @@ export const ADVERSARIAL_GOLD: AnswerExpectation[] = [
   },
 ];
 
+// Michigan gold set (Wave 2, docs/plans/mae-state-corpus-framework.md): the
+// first state gold cases to carry expectCitation against STATE (not federal)
+// authorities — WA/TX/NY/GA shipped without this, leaving retrieval recall
+// asserted almost entirely on 7 CFR (#685). At least 3 cases below require the
+// answer to prefer Michigan's BEM/RFT text over the federal default it
+// overrides (categorical eligibility screen, vehicle exclusion, ABAWD clock).
+export const MI_GOLD: AnswerExpectation[] = [
+  {
+    id: "mi-categorical-eligibility-screen",
+    question: "What's the income limit for FAP in Michigan if my household gets DHS help with a utility bill or similar service?",
+    state: "MI",
+    expectCitation: "BEM 213",
+    mustMention: "200",
+    mustDisclaim: true,
+  },
+  {
+    id: "mi-vehicle-exclusion",
+    question: "Does my car count against me for Michigan FAP?",
+    state: "MI",
+    expectCitation: "BEM 400",
+    mustMention: "excluded",
+    mustDisclaim: true,
+  },
+  {
+    id: "mi-asset-limit-sdv",
+    question: "What's the FAP resource limit in Michigan for a household with a disabled member?",
+    state: "MI",
+    expectCitation: "BEM 400",
+    mustMention: "4,500",
+    mustDisclaim: true,
+  },
+  {
+    id: "mi-sua-heat-utility",
+    question: "How much is Michigan's heat and utility standard for FAP right now?",
+    state: "MI",
+    expectCitation: "RFT 255",
+    mustMention: "682",
+    mustDisclaim: true,
+  },
+  {
+    id: "mi-heat-included-in-rent",
+    question: "My heat is included in my rent in Michigan — can I still get the utility standard for FAP?",
+    state: "MI",
+    expectCitation: "BEM 554",
+    mustMention: "LIHEAP",
+    mustDisclaim: true,
+  },
+  {
+    id: "mi-abawd-clock",
+    question: "What are the current TLFA/ABAWD dates for Michigan FAP work requirements?",
+    state: "MI",
+    expectCitation: "BEM 620",
+    mustMention: "2027",
+    mustDisclaim: true,
+  },
+  {
+    id: "mi-expedited-service",
+    question: "How fast can I get emergency Michigan FAP benefits?",
+    state: "MI",
+    expectCitation: "BAM 117",
+    mustMention: "seventh",
+    mustDisclaim: true,
+  },
+  {
+    id: "mi-standard-medical-deduction",
+    question: "I'm disabled and have $50 a month in medical bills for Michigan FAP — do I get a deduction?",
+    state: "MI",
+    expectCitation: "BEM 554",
+    mustMention: "165",
+    mustDisclaim: true,
+  },
+  {
+    id: "mi-child-support-cooperation",
+    question: "Do I have to cooperate with child support enforcement to get FAP in Michigan?",
+    state: "MI",
+    mustMention: "not",
+    mustDisclaim: true,
+  },
+  {
+    id: "mi-lottery-winnings",
+    question: "I won $5,000 in the Michigan lottery — does that affect my FAP case?",
+    state: "MI",
+    expectCitation: "BEM 403",
+    mustMention: "4,500",
+    mustDisclaim: true,
+  },
+  {
+    id: "mi-drug-felony",
+    // Guards against inventing a drug-felony ban Michigan doesn't operate —
+    // BEM 203's disqualification list has no such category (see PROVENANCE.md).
+    question: "I was convicted of a drug felony years ago — can I still get FAP in Michigan?",
+    state: "MI",
+    mustNotMention: ["permanently banned", "lifetime ban", "you cannot receive"],
+    mustDisclaim: true,
+  },
+  {
+    id: "mi-restaurant-meals",
+    question: "Can I use my Michigan Bridge Card to buy a hot meal at a restaurant?",
+    state: "MI",
+    expectCitation: "BAM 119",
+    mustMention: "60",
+    mustDisclaim: true,
+  },
+];
+
 /** Everything the live runner executes. */
 export const ALL_GOLD: AnswerExpectation[] = [
   ...ANSWER_GOLD,
@@ -453,4 +558,5 @@ export const ALL_GOLD: AnswerExpectation[] = [
   ...ZH_GOLD,
   ...DISTRESS_GOLD,
   ...ADVERSARIAL_GOLD,
+  ...MI_GOLD,
 ];

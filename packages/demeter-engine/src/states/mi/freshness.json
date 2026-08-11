@@ -1,0 +1,26 @@
+{
+  "_provenance": {
+    "note": "Michigan dated facts. Dollar values ride the annual RFB dollar-table cycle (RFT 250/255/260, currently RFB 2025-006, eff. 10/1/2025) which follows but does not always land exactly on the federal October COLA. The TLFA (ABAWD) clock is a hard fixed-window cliff, distinct from the annual cycle. Waived-area status is separately volatile.",
+    "extracted": "2026-08-11"
+  },
+  "entries": [
+    {
+      "key": "mi-ffy26-dollar-values",
+      "kind": "expires",
+      "date": "2026-09-30",
+      "warning": "Michigan FFY 2026 dollar values (RFT 250 income limits, RFT 255 standard deduction/SUA/homeless-shelter deduction, RFT 260 issuance table — all RFB 2025-006, eff. 10/1/2025) are due for the October 2026 COLA update — find the successor RFB before quoting any Michigan dollar amount. (The $165 Standard Medical Deduction rides BEM 554/556, not the RFB cycle — re-verify separately.)"
+    },
+    {
+      "key": "mi-tlfa-window",
+      "kind": "expires",
+      "date": "2027-12-31",
+      "warning": "Michigan's fixed TLFA (ABAWD) 36-month window (Jan 1, 2025 – Dec 31, 2027) expires — the next window begins January 1, 2028 (BEM 620). Do not describe the old window after that date."
+    },
+    {
+      "key": "mi-tlfa-waived-areas",
+      "kind": "expires",
+      "date": "2026-12-01",
+      "warning": "Michigan's TLFA waived-area list (15 counties + 6 cities, effective 12/1/2025, per BEM 620) is volatile post-OBBBA and reviewed roughly annually — re-verify BEM 620's 'TLFA Locations' section and the current FNS ABAWD waiver file before naming a specific waived county or city."
+    }
+  ]
+}
