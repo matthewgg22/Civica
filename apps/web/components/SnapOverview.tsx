@@ -24,6 +24,7 @@ import {
 import type { AnswerLang } from "@civica/demeter-engine/packs";
 import { PAGE_COPY } from "../lib/i18n/snap-page";
 import { StateFlag } from "./StateFlag";
+import { UsCoverageMap } from "./UsCoverageMap";
 
 /** The most form-like phrasing for a topic — the longest one, which is the
  *  closest to how the question is actually printed. Derived rather than
@@ -213,28 +214,30 @@ export function SnapDetail({ states, lang = "en" }: { states: PackMeta[]; lang?:
           {c.agenciesH2}
         </h2>
         <p className="dmx__body">{c.agenciesBody}</p>
-        <ul className="dmx__agencies">
+        {/* A map, not a stack of fourteen cards. The list was accurate and
+            unusable: to answer "is MY state here?" you had to read all of it.
+            A map answers that before you read anything.
+
+            The cards' content is not lost — it moves into the panel beside the
+            map, one state at a time, which is how many anyone ever needed. */}
+        <UsCoverageMap states={states} copy={c.map} />
+        <p className="dmx__note">{c.agenciesNote}</p>
+
+        {/* Every state, still in the HTML. The map is a CLIENT component, so
+            its labels are invisible to a crawler that does not execute JS —
+            and this section is how a generative engine learns that Demeter
+            covers CalFresh, Basic Food, FoodShare and the rest by name. Visually
+            hidden, deliberately not display:none, so it stays in the
+            accessibility tree as a plain readable list for anyone who would
+            rather not poke at a map. */}
+        <ul className="dmx__sronly">
           {states.map((s) => (
-            <li key={s.code} className="dmx__agency">
-              <StateFlag code={s.code} size={34} />
-              <span className="dmx__agency-body">
-                <span className="dmx__agency-program">{s.program}</span>
-                <span className="dmx__agency-name">{s.agency}</span>
-                {s.portal ? (
-                  <a
-                    className="dmx__link"
-                    href={s.portal.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    {s.portal.name}
-                  </a>
-                ) : null}
-              </span>
+            <li key={s.code}>
+              {s.code} — {s.program}, {s.agency}
+              {s.portal ? `, ${s.portal.name} (${s.portal.url})` : ""}
             </li>
           ))}
         </ul>
-        <p className="dmx__note">{c.agenciesNote}</p>
       </section>
 
       {/* The one internal link out. The form-question cards are the content a

@@ -6330,3 +6330,74 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
      two tabs and four languages — the tabs are navigation, this is context. */
   .dmnav__subtitle { display: none; }
 }
+
+/* ═══ COVERAGE MAP ═══════════════════════════════════════════════════════════
+   Replaces fourteen stacked agency cards. The list was accurate and unusable:
+   to answer "is MY state here?" you had to read all of it. A map answers that
+   before a word is read — the same argument the flags won.
+
+   Unverified states are DRAWN, not hidden. The federal floor still answers for
+   them, and a map with holes would say the opposite. */
+.dmmap {
+  display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+  gap: clamp(1.5rem, 3vw, 2.5rem); align-items: start; margin-top: 1.5rem;
+}
+.dmmap__svg { width: 100%; height: auto; display: block; overflow: visible; }
+.dmmap__state {
+  fill: #E7E3DD; stroke: var(--demeter-paper); stroke-width: 1.2;
+  /* Unverified: not a target, not focusable, not announced. */
+  pointer-events: none;
+}
+.dmmap__state--on {
+  fill: #E9C6B6; cursor: pointer; pointer-events: auto;
+  transition: fill 140ms ease-out;
+}
+.dmmap__state--on:hover { fill: var(--demeter-terracotta); }
+.dmmap__state--on[data-sel] { fill: var(--demeter-terracotta-deep); }
+/* A <path> gets no focus ring for free, and a keyboard user cannot see where
+   they are without one. */
+.dmmap__state--on:focus-visible { outline: 2px solid var(--demeter-ink); outline-offset: 2px; }
+
+.dmmap__card {
+  background: var(--demeter-card); border: 1px solid var(--demeter-rule);
+  border-radius: 16px; padding: clamp(1rem, 2vw, 1.35rem);
+  display: flex; flex-direction: column; gap: 0.5rem;
+  /* Reserves its own height so selecting a state does not shove the page
+     around — the layout jump this whole design pass has been removing. */
+  min-height: 15rem;
+}
+.dmmap__program {
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+  font-size: 1.15rem; font-weight: 600; color: var(--demeter-ink); margin: 0.25rem 0 0;
+}
+.dmmap__cardlabel {
+  display: block;
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase;
+  font-weight: 600; color: var(--demeter-muted); margin-bottom: 0.15rem;
+}
+.dmmap__agency, .dmmap__prompt, .dmmap__federal {
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+  font-size: 0.95rem; line-height: 1.55; color: var(--demeter-body); margin: 0;
+}
+.dmmap__prompt { color: var(--demeter-ink); font-size: 1.05rem; }
+.dmmap__federal { color: var(--demeter-muted); font-size: 0.88rem; }
+.dmmap__portal {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.88rem; font-weight: 500; color: var(--demeter-terracotta-deep);
+  text-decoration: underline; text-underline-offset: 2px;
+  min-height: 44px; display: inline-flex; align-items: center; align-self: flex-start;
+}
+.dmmap__verified {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.72rem; color: var(--demeter-muted); margin: auto 0 0;
+}
+@media (max-width: 860px) {
+  /* Card FIRST on a phone: there the answer matters more than the picture, and
+     a map you have to scroll past to read the result is worse than a list. */
+  .dmmap { grid-template-columns: 1fr; }
+  .dmmap__card { order: -1; min-height: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .dmmap__state--on { transition: none; }
+}
