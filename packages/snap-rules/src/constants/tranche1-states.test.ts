@@ -88,15 +88,23 @@ describe("Tranche 1 SUA — FL/IL/OH sourced, PA a logged verification gap (#619
 });
 
 describe("Tranche 1 unsourced axes stay honest", () => {
-  it("the ABAWD waiver flag stays fail-open — it is still unsourced", () => {
+  it("FL/PA/OH's ABAWD waiver flag stays fail-open — still unsourced", () => {
     // A wrong `false` STRIPS a claimed waiver exemption (gates/abawd.ts reads
     // false as "we affirmatively know this area holds no waiver") and denies
     // food. Three sourcing passes have failed to produce a citable FY26
-    // answer, so it stays true. See the states.ts block comment for why the
-    // real fix is county sets, not a boolean flip.
-    for (const c of ["FL", "IL", "PA", "OH"]) {
+    // answer for these three, so they stay true. See the states.ts block
+    // comment for why the real fix is county sets, not a boolean flip.
+    for (const c of ["FL", "PA", "OH"]) {
       expect(statePolicyFor(c).abawd_waiver_avail, `${c} waiver flag`).toBe(true);
     }
+  });
+
+  it("Illinois' ABAWD waiver flag is SOURCED false — statewide waiver ended Nov 2025 (#701)", () => {
+    // Not fail-open anymore: IDHS Policy Memo "End of Waiver for Time-Limited
+    // SNAP Benefits..." (10/16/2025) states the waiver ends November 2025,
+    // corroborated by the active fixed 3-year clock already assigning
+    // countable months. See the states.ts IL block comment.
+    expect(statePolicyFor("IL").abawd_waiver_avail).toBe(false);
   });
 
   it("Illinois RMP stays false — it runs in Cook and Franklin counties only", () => {

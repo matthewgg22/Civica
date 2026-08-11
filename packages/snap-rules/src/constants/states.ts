@@ -426,7 +426,25 @@ const STATES: Record<string, StatePolicy> = {
     // and Class 1 drug felonies — do not carry that across; this field is
     // SNAP-only.) `false` here is a finding, not a fail-open default.
     drug_felony_ban: false,
-    abawd_waiver_avail: true,
+    // !!! CORRECTED 2026-08-11 (#701), was `true` !!! Illinois' STATEWIDE
+    // ABAWD work-requirement waiver ended per an IDHS Policy Memo, "End of
+    // Waiver for Time-Limited SNAP Benefits and Changes to Exemptions for
+    // SNAP Work Requirements" (dated 10/16/2025, dhs.state.il.us item=175082):
+    // "Illinois' Work Requirement waiver is ending in November 2025. The
+    // first potential countable month for [ABAWDs] who are not exempt or
+    // meeting the SNAP Work Requirement is December 2025." Corroborated by
+    // WAG 03-16-00 ("...their place of residence is in an unwaived county")
+    // and the active fixed 3-year ABAWD clock (01/01/2024–12/31/2026,
+    // WAG 03-16-04) already assigning countable months. Same bug class as
+    // MA's entry above — a stale `true` tells an ABAWD-subject household
+    // they hold a waiver exemption that no longer exists.
+    // NOT YET CONFIRMED: whether Illinois has since obtained any NEWER,
+    // county-level waivers post-November-2025 (the CA/#614 pattern — losing
+    // a statewide waiver doesn't preclude narrower ones). This pass found no
+    // current IL county-waiver list; re-verify against the FNS quarterly
+    // ABAWD waiver file or a newer IDHS Manual Release before assuming this
+    // stays a flat `false` forever.
+    abawd_waiver_avail: false,
     // RMP runs in Cook and Franklin counties ONLY — a state-level boolean
     // cannot say that, so it stays false until county granularity exists
     // (#614). False under-claims a real program rather than over-claiming it
