@@ -99,7 +99,9 @@ export function UsCoverageMap({
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                {copy.apply} {chosen.portal.name} ↗
+                {/* Bound to the last word: alone on a wrapped line the arrow
+                    reads as a stray glyph rather than part of the link. */}
+                {copy.apply} {chosen.portal.name}&nbsp;↗
               </a>
             )}
             <p className="dmmap__verified">

@@ -170,6 +170,58 @@ export function SnapDetail({ states, lang = "en" }: { states: PackMeta[]; lang?:
         </dl>
       </section>
 
+      {/* WHAT SNAP IS, before the rules that decide who gets it. The page went
+          straight from "here is why you can trust us" to "here is what decides
+          eligibility" — explaining the qualifying rules for a program it had
+          never actually described. One line in the orientation bar was carrying
+          the whole definition. */}
+      <section className="dmx" aria-labelledby="what-is-snap">
+        <h2 id="what-is-snap" className="dmx__h2">
+          {c.snapH2}
+        </h2>
+        <p className="dmx__body">{c.snapBody}</p>
+        <dl className="dmx__defs">
+          {c.snapFacts.map((f) => (
+            <div className="dmx__def" key={f.t}>
+              <dt>{f.t}</dt>
+              <dd>{f.d}</dd>
+            </div>
+          ))}
+        </dl>
+
+        {/* Pointing at USDA is exactly the place to say we are not USDA. A
+            benefits site that links the federal program without disclaiming
+            affiliation is one a worried applicant can easily read as official. */}
+        <div className="dmx__official">
+          <div>
+            <h3 className="dmx__h3">{c.officialH3}</h3>
+            <p className="dmx__note">{c.officialNote}</p>
+          </div>
+          <ul className="dmx__officiallinks">
+            <li>
+              <a
+                className="dmx__link"
+                href="https://www.fns.usda.gov/snap"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {c.officialFns} ↗
+              </a>
+            </li>
+            <li>
+              <a
+                className="dmx__link"
+                href="https://www.fns.usda.gov/snap/state-directory"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {c.officialDirectory} ↗
+              </a>
+            </li>
+          </ul>
+        </div>
+      </section>
+
       <section className="dmx" aria-labelledby="what-decides">
         <h2 id="what-decides" className="dmx__h2">
           {c.decidesH2}
@@ -207,6 +259,53 @@ export function SnapDetail({ states, lang = "en" }: { states: PackMeta[]; lang?:
             </li>
           ))}
         </ol>
+      </section>
+
+      {/* The outside evidence for the method described directly above, which is
+          why it sits here rather than anywhere else: "we cite our sources" is a
+          claim about ourselves, and this is someone else's finding that the
+          alternative does not hold up. */}
+      <section className="dmx dmx--evidence" aria-labelledby="evidence">
+        <h2 id="evidence" className="dmx__h2">
+          {c.evidenceH2}
+        </h2>
+        {/* Two columns on a wide screen: the argument on the left, the source
+            it rests on to the right. Stacked in one narrow column, this section
+            left half the page empty — and a pull-quote below its own body is a
+            decoration rather than a citation sitting beside the claim. */}
+        <div className="dmx__evgrid">
+          <p className="dmx__body">{c.evidenceBody}</p>
+          <div className="dmx__evaside">
+        <figure className="dmx__quote">
+          <blockquote cite="https://beeckcenter.georgetown.edu/report/ai-powered-rules-as-code-experiments-with-public-benefits-policy/">
+            “{c.evidenceQuote}”
+          </blockquote>
+          <figcaption>{c.evidenceAttrib}</figcaption>
+        </figure>
+        <ul className="dmx__officiallinks">
+          <li>
+            <a
+              className="dmx__link"
+              href="https://beeckcenter.georgetown.edu/report/ai-powered-rules-as-code-experiments-with-public-benefits-policy/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {c.evidenceReport}&nbsp;↗
+            </a>
+          </li>
+          <li>
+            <a
+              className="dmx__link"
+              href="https://beeckcenter.georgetown.edu/the-digital-benefits-network-showcases-twelve-generative-ai-experiments-for-benefits-policy-at-policy2code-demo-day/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {c.evidenceDemoDay}&nbsp;↗
+            </a>
+          </li>
+            </ul>
+          </div>
+        </div>
       </section>
 
       <section className="dmx" aria-labelledby="agencies">

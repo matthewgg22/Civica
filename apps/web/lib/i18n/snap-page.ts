@@ -44,6 +44,26 @@ export interface PageCopy {
    *  which, as a real section heading, printed "How Demeter answers" twice on
    *  the page. Distinct heading, and it names what the four rows actually say. */
   trustH2: string;
+  /** What SNAP IS, before the rules that decide who gets it. The page explained
+   *  eligibility in detail to people who had not been told what the program
+   *  does — one line in the orientation bar was carrying all of it. */
+  snapH2: string;
+  snapBody: string;
+  snapFacts: Pair[];
+  /** Links to the official program. Demeter is not the government, and the
+   *  place where we point at USDA is exactly where that has to be said. */
+  officialH3: string;
+  officialNote: string;
+  officialFns: string;
+  officialDirectory: string;
+  /** The Beeck Center's finding, which is the strongest outside evidence for
+   *  why this product cites its sources instead of just answering. */
+  evidenceH2: string;
+  evidenceBody: string;
+  evidenceQuote: string;
+  evidenceAttrib: string;
+  evidenceReport: string;
+  evidenceDemoDay: string;
   decidesH2: string;
   decidesBody: string;
   defs: Pair[];
@@ -111,6 +131,40 @@ const en: PageCopy = {
     },
   ],
   trustH2: "Free, cited, and clear about its limits",
+  snapH2: "What SNAP is",
+  snapBody:
+    "SNAP is the country’s largest food assistance program. The federal government pays for the benefit and writes the baseline rules; your state takes the application and decides your case. If you qualify, an amount arrives each month on an EBT card you use like a debit card.",
+  snapFacts: [
+    {
+      t: "Who pays, who decides",
+      d: "USDA’s Food and Nutrition Service funds the benefit and sets the federal rules. Your state agency takes the application and decides your case.",
+    },
+    {
+      t: "How it reaches you",
+      d: "A monthly amount on an EBT card, used like a debit card at most grocery stores and many farmers markets.",
+    },
+    {
+      t: "What it buys",
+      d: "Groceries to take home and prepare, and seeds and plants that grow food. Not alcohol, household goods, or hot food made to eat right away — though some states let certain households buy restaurant meals.",
+    },
+    {
+      t: "What applying costs",
+      d: "Nothing. Applying is free, and one household’s benefit does not come out of anyone else’s.",
+    },
+  ],
+  officialH3: "Official program information",
+  officialNote:
+    "Demeter is not a government agency, and is not affiliated with or endorsed by USDA. For the official program and to find your own state agency:",
+  officialFns: "USDA Food and Nutrition Service — SNAP",
+  officialDirectory: "SNAP state directory — find your agency",
+  evidenceH2: "Why we show you the rule instead of just answering",
+  evidenceBody:
+    "Georgetown University’s Beeck Center ran twelve experiments on turning benefits policy into working code with AI. Their conclusion was not that it cannot be done — it was that models handling genuinely complex policy logic still need outside knowledge and a person checking the result. A language model is fluent enough to be wrong convincingly, and benefits rules are exactly where that costs someone money. So Demeter quotes the regulation behind every claim and links it. You do not have to trust the answer; you can read what it came from.",
+  evidenceQuote: "still require external knowledge and human oversight",
+  evidenceAttrib:
+    "Beeck Center for Social Impact + Innovation, Georgetown University — AI-Powered Rules as Code, February 2025",
+  evidenceReport: "Read the report",
+  evidenceDemoDay: "The twelve Policy2Code experiments",
   decidesH2: "What actually decides whether you qualify",
   decidesBody:
     "Not your income alone — that is the most common reason people who qualify never apply. Eligibility turns on what is left after the deductions you are entitled to, and on a short list of category rules.",
@@ -221,6 +275,40 @@ const es: PageCopy = {
     },
   ],
   trustH2: "Gratis, con fuentes, y claro sobre sus límites",
+  snapH2: "Qué es SNAP",
+  snapBody:
+    "SNAP es el programa de asistencia alimentaria más grande del país. El gobierno federal paga el beneficio y fija las reglas básicas; tu estado recibe la solicitud y decide tu caso. Si calificas, cada mes llega una cantidad a una tarjeta EBT que usas como una tarjeta de débito.",
+  snapFacts: [
+    {
+      t: "Quién paga y quién decide",
+      d: "El Servicio de Alimentos y Nutrición del USDA financia el beneficio y fija las reglas federales. La agencia de tu estado recibe la solicitud y decide tu caso.",
+    },
+    {
+      t: "Cómo te llega",
+      d: "Una cantidad mensual en una tarjeta EBT, que se usa como tarjeta de débito en la mayoría de los supermercados y en muchos mercados de agricultores.",
+    },
+    {
+      t: "Para qué sirve",
+      d: "Alimentos para llevar a casa y preparar, y semillas y plantas que producen alimentos. No alcohol, artículos del hogar ni comida caliente preparada para comer de inmediato — aunque algunos estados permiten que ciertos hogares compren comidas en restaurantes.",
+    },
+    {
+      t: "Cuánto cuesta solicitar",
+      d: "Nada. Solicitar es gratis, y el beneficio de un hogar no se le quita a ningún otro.",
+    },
+  ],
+  officialH3: "Información oficial del programa",
+  officialNote:
+    "Demeter no es una agencia del gobierno, ni está afiliado al USDA ni respaldado por él. Para la información oficial del programa y para encontrar la agencia de tu estado:",
+  officialFns: "Servicio de Alimentos y Nutrición del USDA — SNAP",
+  officialDirectory: "Directorio estatal de SNAP — encuentra tu agencia",
+  evidenceH2: "Por qué te mostramos la regla en vez de solo responder",
+  evidenceBody:
+    "El Beeck Center de la Universidad de Georgetown realizó doce experimentos para convertir la política de beneficios en código funcional con inteligencia artificial. Su conclusión no fue que sea imposible, sino que, ante una lógica de política realmente compleja, los modelos siguen necesitando conocimiento externo y una persona que revise el resultado. Un modelo de lenguaje tiene la fluidez suficiente para equivocarse de forma convincente, y las reglas de beneficios son justo donde ese error le cuesta dinero a alguien. Por eso Demeter cita la regulación detrás de cada afirmación y la enlaza. No tienes que confiar en la respuesta: puedes leer de dónde salió.",
+  evidenceQuote: "todavía requieren conocimiento externo y supervisión humana",
+  evidenceAttrib:
+    "Beeck Center for Social Impact + Innovation, Georgetown University — AI-Powered Rules as Code, febrero de 2025",
+  evidenceReport: "Leer el informe",
+  evidenceDemoDay: "Los doce experimentos de Policy2Code",
   decidesH2: "Qué decide realmente si calificas",
   decidesBody:
     "No solo tus ingresos — esa es la razón más común por la que gente que sí califica nunca solicita. La elegibilidad depende de lo que queda después de las deducciones a las que tienes derecho, y de una lista corta de reglas por categoría.",
@@ -331,6 +419,40 @@ const vi: PageCopy = {
     },
   ],
   trustH2: "Miễn phí, có trích dẫn, và nói rõ giới hạn",
+  snapH2: "SNAP là gì",
+  snapBody:
+    "SNAP là chương trình hỗ trợ thực phẩm lớn nhất nước Mỹ. Chính phủ liên bang chi trả trợ cấp và đặt ra các quy định nền tảng; tiểu bang của bạn nhận đơn và quyết định hồ sơ của bạn. Nếu đủ điều kiện, mỗi tháng một khoản tiền sẽ được nạp vào thẻ EBT dùng như thẻ ghi nợ.",
+  snapFacts: [
+    {
+      t: "Ai chi trả, ai quyết định",
+      d: "Cơ quan Thực phẩm và Dinh dưỡng (FNS) thuộc Bộ Nông nghiệp Hoa Kỳ cấp kinh phí và đặt ra quy định liên bang. Cơ quan tiểu bang của bạn nhận đơn và quyết định hồ sơ.",
+    },
+    {
+      t: "Trợ cấp đến với bạn thế nào",
+      d: "Một khoản tiền hằng tháng trên thẻ EBT, dùng như thẻ ghi nợ tại hầu hết siêu thị và nhiều chợ nông sản.",
+    },
+    {
+      t: "Mua được những gì",
+      d: "Thực phẩm mang về nhà nấu, cùng hạt giống và cây trồng ra thực phẩm. Không mua rượu bia, đồ gia dụng, hay thức ăn nóng làm sẵn để ăn ngay — dù một số tiểu bang cho phép vài nhóm hộ mua bữa ăn tại nhà hàng.",
+    },
+    {
+      t: "Nộp đơn tốn bao nhiêu",
+      d: "Không tốn gì. Nộp đơn miễn phí, và trợ cấp của một hộ không lấy đi phần của hộ nào khác.",
+    },
+  ],
+  officialH3: "Thông tin chính thức về chương trình",
+  officialNote:
+    "Demeter không phải cơ quan chính phủ, không trực thuộc và không được Bộ Nông nghiệp Hoa Kỳ chứng thực. Để xem thông tin chính thức và tìm cơ quan tiểu bang của bạn:",
+  officialFns: "Cơ quan Thực phẩm và Dinh dưỡng USDA — SNAP",
+  officialDirectory: "Danh bạ SNAP theo tiểu bang — tìm cơ quan của bạn",
+  evidenceH2: "Vì sao chúng tôi đưa ra điều luật thay vì chỉ trả lời",
+  evidenceBody:
+    "Beeck Center thuộc Đại học Georgetown đã thực hiện mười hai thử nghiệm chuyển chính sách phúc lợi thành mã hoạt động bằng trí tuệ nhân tạo. Kết luận của họ không phải là điều đó bất khả thi, mà là khi xử lý logic chính sách thực sự phức tạp, các mô hình vẫn cần kiến thức bên ngoài và cần người kiểm tra kết quả. Mô hình ngôn ngữ đủ trôi chảy để sai một cách thuyết phục, và quy định phúc lợi đúng là nơi cái sai đó khiến người ta mất tiền. Vì vậy Demeter trích dẫn quy định đằng sau mỗi khẳng định và kèm liên kết. Bạn không cần tin câu trả lời — bạn có thể đọc nguồn của nó.",
+  evidenceQuote: "vẫn cần kiến thức bên ngoài và sự giám sát của con người",
+  evidenceAttrib:
+    "Beeck Center for Social Impact + Innovation, Georgetown University — AI-Powered Rules as Code, tháng 2 năm 2025",
+  evidenceReport: "Đọc báo cáo",
+  evidenceDemoDay: "Mười hai thử nghiệm Policy2Code",
   decidesH2: "Điều gì thực sự quyết định bạn có đủ điều kiện",
   decidesBody:
     "Không chỉ là thu nhập — đó là lý do phổ biến nhất khiến những người đủ điều kiện không bao giờ nộp đơn. Điều kiện phụ thuộc vào phần còn lại sau các khoản khấu trừ bạn được hưởng, và một danh sách ngắn các quy định theo nhóm.",
@@ -441,6 +563,40 @@ const zh: PageCopy = {
     },
   ],
   trustH2: "免费、有出处，并如实说明局限",
+  snapH2: "SNAP 是什么",
+  snapBody:
+    "SNAP 是美国最大的食品援助项目。联邦政府支付补助并制定基本规则；您所在的州受理申请并裁定您的个案。若符合条件，每月会有一笔钱存入 EBT 卡，像借记卡一样使用。",
+  snapFacts: [
+    {
+      t: "谁出钱，谁裁定",
+      d: "美国农业部食品与营养服务局（FNS）拨付补助并制定联邦规则。您所在州的机构受理申请并裁定个案。",
+    },
+    {
+      t: "补助怎么发放",
+      d: "每月一笔金额存入 EBT 卡，可在大多数超市和许多农夫市集像借记卡一样使用。",
+    },
+    {
+      t: "可以买什么",
+      d: "可买回家烹调的食品，以及能长出食物的种子和幼苗。不可买酒类、家居用品，或现做现吃的热食——不过部分州允许特定家庭购买餐馆餐食。",
+    },
+    {
+      t: "申请要花多少钱",
+      d: "不花钱。申请免费，而且一个家庭领取补助并不会减少其他任何家庭的份额。",
+    },
+  ],
+  officialH3: "官方项目信息",
+  officialNote:
+    "Demeter 不是政府机构，与美国农业部（USDA）无隶属关系，也未获其背书。查看官方项目信息并找到您所在州的机构：",
+  officialFns: "美国农业部食品与营养服务局 — SNAP",
+  officialDirectory: "SNAP 各州机构目录 — 找到您的机构",
+  evidenceH2: "我们为什么把条文摆出来，而不是只给答案",
+  evidenceBody:
+    "乔治城大学 Beeck 中心做了十二项实验，尝试用人工智能把福利政策转成可运行的代码。他们的结论不是这件事做不到，而是面对真正复杂的政策逻辑时，模型仍然需要外部知识，也需要有人复核结果。语言模型足够流畅，因此出错时同样很有说服力，而福利规则恰恰是出错就要让人损失金钱的地方。所以 Demeter 会引用每一条说法背后的法规并附上链接。您不必相信答案本身——您可以读它的出处。",
+  evidenceQuote: "仍然需要外部知识和人工监督",
+  evidenceAttrib:
+    "Beeck Center for Social Impact + Innovation, Georgetown University — AI-Powered Rules as Code，2025 年 2 月",
+  evidenceReport: "阅读报告",
+  evidenceDemoDay: "十二项 Policy2Code 实验",
   decidesH2: "真正决定您是否符合条件的是什么",
   decidesBody:
     "不只是收入——这正是许多本可获得补助的人从未申请的最常见原因。资格取决于扣除您应享有的各项之后还剩多少，以及一小组分类规定。",

@@ -5354,6 +5354,51 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 }
 .dmx__link:hover { color: var(--demeter-terracotta-deep); }
 
+/* Official program links, and the non-affiliation line that has to travel with
+   them. Set apart from the section body so it reads as a hand-off outward, not
+   as more of our own copy. */
+.dmx__official {
+  margin: 2rem 0 0; padding: 1.25rem 1.35rem;
+  border: 1px solid var(--demeter-rule); border-radius: 14px;
+  background: var(--demeter-card);
+  /* Links BESIDE the disclaimer, not under it. Stacked, this box put both in a
+     narrow left column and left half of itself empty. */
+  display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+  gap: clamp(1rem, 3vw, 2.5rem); align-items: start;
+}
+.dmx__official .dmx__note { margin-top: 0.35rem; }
+.dmx__official .dmx__officiallinks { margin-top: 0.2rem; }
+
+/* The argument left, the source right. Same reason. */
+.dmx__evgrid {
+  display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  gap: clamp(1.5rem, 4vw, 3rem); align-items: start;
+}
+.dmx__evgrid .dmx__body { margin-bottom: 0; }
+.dmx__evaside { display: flex; flex-direction: column; gap: 1rem; }
+.dmx__evaside .dmx__quote { margin-top: 0; }
+.dmx__officiallinks {
+  list-style: none; margin: 1rem 0 0; padding: 0;
+  display: flex; flex-direction: column; gap: 0.55rem;
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.92rem;
+}
+
+/* The Beeck finding. A pull-quote earns its weight here: it is the one line on
+   the page written by someone other than us. */
+.dmx__quote { margin: 1.5rem 0 0; padding-left: 1.1rem; border-left: 3px solid var(--demeter-terracotta); }
+.dmx__quote blockquote {
+  margin: 0;
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+  font-size: clamp(1.1rem, 1.8vw, 1.3rem); line-height: 1.5; font-style: italic;
+  color: var(--demeter-ink); max-width: 40ch; text-wrap: pretty;
+}
+.dmx__quote figcaption {
+  margin: 0.7rem 0 0;
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.78rem; line-height: 1.5; color: var(--demeter-muted); max-width: 46ch;
+}
+
 .dmx__defs { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(15rem, 100%), 1fr)); gap: 1.75rem; margin: 1.5rem 0 0; }
 .dmx__def dt {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
@@ -6405,6 +6450,10 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
      a map you have to scroll past to read the result is worse than a list. */
   .dmmap { grid-template-columns: 1fr; }
   .dmmap__card { order: -1; min-height: 0; }
+  /* Same collapse point for the other two-column blocks on this page, so they
+     all break at once rather than at three different widths. */
+  .dmx__official, .dmx__evgrid { grid-template-columns: 1fr; }
+  .dmx__evgrid .dmx__body { margin-bottom: 1rem; }
 }
 @media (prefers-reduced-motion: reduce) {
   .dmmap__state--on { transition: none; }

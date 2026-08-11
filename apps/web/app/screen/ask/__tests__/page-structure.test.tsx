@@ -224,3 +224,65 @@ describe("hreflang — each page family annotates its own set", () => {
     }
   });
 });
+
+describe("what SNAP is — the program, before the rules that decide who gets it", () => {
+  it("explains SNAP BEFORE explaining what decides eligibility", () => {
+    // The page went trust → eligibility, describing the qualifying rules for a
+    // program it had never actually defined. Order is the whole point of this
+    // section, so order is the thing worth pinning.
+    const { container } = render(<SnapDetail states={VERIFIED_STATES} />);
+    const text = container.textContent ?? "";
+    const isSnap = text.indexOf(PAGE_COPY.en.snapH2);
+    const decides = text.indexOf(PAGE_COPY.en.decidesH2);
+    expect(isSnap).toBeGreaterThan(-1);
+    expect(decides).toBeGreaterThan(-1);
+    expect(isSnap).toBeLessThan(decides);
+  });
+
+  it("disclaims affiliation wherever it points at USDA, in every language", () => {
+    // Linking the federal program without this is how a worried applicant ends
+    // up reading a private site as an official one.
+    for (const lang of ANSWER_LANGS) {
+      const { container } = render(<SnapDetail states={VERIFIED_STATES} lang={lang} />);
+      expect(
+        container.querySelector('a[href="https://www.fns.usda.gov/snap"]'),
+        `${lang} lost the USDA link`,
+      ).not.toBeNull();
+      expect(container.textContent, `${lang} lost the non-affiliation line`).toContain(
+        PAGE_COPY[lang].officialNote,
+      );
+      cleanup();
+    }
+  });
+
+  it("opens official links in a new tab without handing over the opener", () => {
+    const { container } = render(<SnapDetail states={VERIFIED_STATES} />);
+    for (const a of container.querySelectorAll<HTMLAnchorElement>('a[target="_blank"]')) {
+      expect(a.rel, a.href).toContain("noopener");
+    }
+  });
+});
+
+describe("the Beeck finding — the one claim on the page that is not ours", () => {
+  it("attributes the quote and links the report it came from", () => {
+    const { container } = render(<SnapDetail states={VERIFIED_STATES} />);
+    const fig = container.querySelector("figure.dmx__quote");
+    expect(fig).not.toBeNull();
+    // A quote without its source is just a sentence we wrote.
+    expect(fig!.querySelector("figcaption")?.textContent).toContain("Beeck Center");
+    expect(fig!.querySelector("blockquote")?.getAttribute("cite")).toContain(
+      "beeckcenter.georgetown.edu",
+    );
+    const links = [...container.querySelectorAll<HTMLAnchorElement>("a")].map((a) => a.href);
+    expect(links.some((h) => h.includes("ai-powered-rules-as-code"))).toBe(true);
+    expect(links.some((h) => h.includes("policy2code-demo-day"))).toBe(true);
+  });
+
+  it("makes the argument in every language, not just English", () => {
+    for (const lang of ANSWER_LANGS) {
+      const { container } = render(<SnapDetail states={VERIFIED_STATES} lang={lang} />);
+      expect(container.textContent, `${lang}`).toContain(PAGE_COPY[lang].evidenceQuote);
+      cleanup();
+    }
+  });
+});
