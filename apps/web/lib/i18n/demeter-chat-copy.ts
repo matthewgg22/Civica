@@ -65,6 +65,9 @@ export const T = {
       search: "Search by state, program, or agency…",
       verified: "Verified",
       noMatch: "No verified pack for that state yet — federal rules still apply.",
+      // These three do NOT run SNAP. The label has to say so, because a
+      // reader who sees "Puerto Rico" in a SNAP tool reasonably assumes SNAP.
+      napGroup: "Territories with a different program (not SNAP)",
     },
     howWeVerify: "How we verify",
     languageLabel: "Language",
@@ -161,6 +164,7 @@ export const T = {
       search: "Busca por estado, programa o agencia…",
       verified: "Verificado",
       noMatch: "Aún no hay paquete verificado para ese estado — las reglas federales aplican.",
+      napGroup: "Territorios con un programa distinto (no SNAP)",
     },
     howWeVerify: "Cómo verificamos",
     languageLabel: "Idioma",
@@ -253,6 +257,7 @@ export const T = {
       search: "Tìm theo tiểu bang, chương trình hoặc cơ quan…",
       verified: "Đã xác minh",
       noMatch: "Chưa có gói đã xác minh cho tiểu bang đó — quy định liên bang vẫn áp dụng.",
+      napGroup: "Lãnh thổ có chương trình khác (không phải SNAP)",
     },
     howWeVerify: "Cách chúng tôi xác minh",
     languageLabel: "Ngôn ngữ",
@@ -340,6 +345,7 @@ export const T = {
       search: "按州、项目或机构搜索…",
       verified: "已核实",
       noMatch: "该州暂无已核实的政策包——联邦规定仍然适用。",
+      napGroup: "使用其他项目的属地（非 SNAP）",
     },
     howWeVerify: "我们如何核实",
     languageLabel: "语言",

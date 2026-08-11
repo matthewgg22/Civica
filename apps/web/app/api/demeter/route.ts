@@ -21,7 +21,8 @@ import {
   warmupEmbeddings,
   STREAM_RECOMPOSE_MARKER,
 } from "@civica/demeter-engine";
-import { VERIFIED_STATE_CODES } from "@civica/demeter-engine/packs";
+import { VERIFIED_STATE_CODES, napJurisdiction } from "@civica/demeter-engine/packs";
+import { napHandoff } from "../../../lib/nap-handoff";
 import {
   checkUsageGate,
   settleSpend,
@@ -104,6 +105,35 @@ export async function POST(req: NextRequest) {
   const rawState = typeof b.state === "string" ? b.state.toUpperCase() : null;
   const state = rawState && VERIFIED_STATE_CODES.includes(rawState) ? rawState : null;
   const lang: "en" | "es" = b.lang === "es" ? "es" : "en";
+
+  // NAP TERRITORIES SHORT-CIRCUIT, BEFORE THE MODEL.
+  //
+  // Puerto Rico, American Samoa and the Northern Mariana Islands do not run
+  // SNAP. USDA: NAP block grants provide food assistance there "in lieu of"
+  // SNAP, and "the U.S. territories establish eligibility and benefit levels"
+  // themselves. Federal SNAP rules are not a floor in those places — they do
+  // not apply at all.
+  //
+  // So there is nothing for the model to be right about, and every incentive
+  // for it to be confidently wrong: it has a corpus full of SNAP income limits
+  // and deductions and no reason to know they are inapplicable here. Answering
+  // deterministically costs no tokens and cannot fabricate. Falling through to
+  // the federal floor, which is correct for any unverified STATE, is precisely
+  // the wrong behaviour for these three.
+  //
+  // NOT audited. mae_query_log is the accuracy record — one row per MODEL
+  // answer, carrying citations, a verifier outcome and a certainty code. This
+  // is none of those, and writing a synthetic row would put non-answers into
+  // the dataset the accuracy work is measured on. How many people arrive from a
+  // NAP territory is a real and useful number, and it deserves its own counter
+  // rather than a fake row in this one. Filed separately.
+  const nap = napJurisdiction(rawState);
+  if (nap) {
+    return new Response(napHandoff(nap, lang), {
+      status: 200,
+      headers: { "Content-Type": "text/plain; charset=utf-8", "Cache-Control": "no-store" },
+    });
+  }
   // CBO referral attribution (T-D/D3.6): an opaque code, never identity.
   const rawRef = typeof b.ref === "string" ? b.ref.slice(0, 64) : null;
   // Anonymous funnel grouping. Validated as a UUID rather than trusted: this

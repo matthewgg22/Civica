@@ -6227,3 +6227,14 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   text-align: center; padding: 0.4rem 1rem 0; margin: 0; max-width: 56ch;
   margin-left: auto; margin-right: auto;
 }
+
+/* Group heading inside the state picker. Not an option — presentational, so it
+   is skipped by keyboard and by a screen reader's option navigation, which is
+   right: it labels the rows under it rather than being selectable itself. */
+.dmst__group {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase;
+  font-weight: 600; color: var(--demeter-muted);
+  padding: 0.85rem 0.7rem 0.35rem; margin-top: 0.35rem;
+  border-top: 1px solid var(--demeter-rule);
+}
