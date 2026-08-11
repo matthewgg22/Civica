@@ -175,6 +175,13 @@ export function formatEngineParams(state: string, asOf: Date): string {
     // conferred via the "Information and Referral Services" pamphlet every
     // applicant already receives (OAR 461-135-0505(2)(a)(C)), the same
     // conferral-vehicle family as NV's TANF brochure.
+    // WI: 200 mirrors snap-rules' bbce_threshold_pct for standard households,
+    // conferred via a "Job Center of Wisconsin" services notice (FSH 4.2.1) —
+    // the same conferral-vehicle family as NV/OR. WI's EBD households with
+    // gross income OVER 200% get an even more generous pathway (NO gross
+    // limit at all, only a 100% net test) not modelled here — same accepted
+    // limitation as IL's and GA's asymmetric-tier gaps; the full picture
+    // lives in the WI corpus pack's own income-pathways supplement.
     const BBCE_PCT = {
       CA: 200,
       MA: 200,
@@ -187,6 +194,7 @@ export function formatEngineParams(state: string, asOf: Date): string {
       NV: 200,
       AZ: 200,
       OR: 200,
+      WI: 200,
     } as const;
     const bbcePct: number | undefined = (BBCE_PCT as Record<string, number>)[state];
     lines.push(`- 100% FPL, monthly (net-income test basis): ${row(p.fpl)}`);

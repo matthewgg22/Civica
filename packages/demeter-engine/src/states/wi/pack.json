@@ -1,0 +1,42 @@
+{
+  "code": "WI",
+  "program": "FoodShare (Wisconsin's name for SNAP)",
+  "agency": "Wisconsin Department of Health Services (DHS), Division of Medicaid Services",
+  "admin_model": "county",
+  "admin_note": "County-administered, with a distinctive two-track structure: 71 of Wisconsin's 72 counties are required to form multi-county Income Maintenance (IM) consortia — there are 11 consortia statewide — to determine eligibility and issue benefits, while Milwaukee County alone is served by Milwaukee Enrollment Services (MilES), a DIRECTLY STATE-STAFFED unit (not a consortium). Practice can vary by consortium the same way it varies by county in California or New York, and Milwaukee's state-run model is itself a genuinely distinct administrative layer from the rest of the state — worth flagging separately from a garden-variety county note.",
+  "system": "ForwardHealth (the shared eligibility portal for FoodShare, BadgerCare Plus/Medicaid, and Wisconsin Shares)",
+  "portal": {
+    "name": "ACCESS.wi.gov",
+    "url": "https://access.wisconsin.gov"
+  },
+  "update_channels": [
+    {
+      "name": "FoodShare Wisconsin Handbook (emhandbooks.wisconsin.gov/fsh) — the best-versioned source in this roster: every section has a per-release history page (e.g. .../fsh/history/25-03/25-03_<section>.htm)",
+      "url": "https://www.emhandbooks.wisconsin.gov/fsh/fsh.htm"
+    },
+    {
+      "name": "Income Maintenance and Tribal Agency Contact Information (consortium/MilES directory)",
+      "url": "https://www.dhs.wisconsin.gov/forwardhealth/imagency/index.htm"
+    },
+    {
+      "name": "FoodShare: Work Requirement (public-facing ABAWD page)",
+      "url": "https://www.dhs.wisconsin.gov/foodshare/work.htm"
+    }
+  ],
+  "verification": {
+    "verified_on": "2026-08-11",
+    "method": "Direct fetch of the FoodShare Wisconsin Policy Handbook at emhandbooks.wisconsin.gov/fsh (plain WebFetch — mostly clean HTML, unlike Oregon's PDF-only host), cross-checking every dollar figure against the handbook's own dollar-table sections (8.1.1 income/asset limits, 8.1.3 deductions) rather than a secondary aggregator site. USDA FNA's own SNAP Restaurant Meals Program page fetched directly via curl (WebFetch timed out twice on this specific URL, same as it did for Oregon) to resolve a real conflict between multiple secondary sources claiming Wisconsin operates RMP and the primary federal list, which does not include Wisconsin.",
+    "gates": "Cross-check: every dollar figure traced to the handbook's own numbered deductions/limits section, not a paraphrase. One significant live finding, disclosed rather than silently corrected: the CURRENT FoodShare handbook (Release 26-01, section 3.17.1, effective 10-01-25) still states the ABAWD age range as 18-54 citing the 2023 Fiscal Responsibility Act, with no mention of the federal OBBBA 18-64 expansion (enacted 7/4/2025) that every other state pack in this roster already reflects — even though Wisconsin's own Legislative Fiscal Bureau documented a DHS rulemaking deadline of June 1, 2026 for implementing it, a deadline already past as of this pack's build date. This pack does NOT restate the stale 18-54 figure as Mae's answer — it defers to the federal 18-64 band (which controls regardless of what a lagging state handbook page says) and flags the discrepancy. See PROVENANCE.md.",
+    "sources": [
+      "FoodShare Wisconsin Policy Handbook §4.2.1 Categorical and Broad-Based Categorical Eligibility (emhandbooks.wisconsin.gov)",
+      "FoodShare Wisconsin Policy Handbook §8.1.1 Income Limits / Asset Limits (emhandbooks.wisconsin.gov)",
+      "FoodShare Wisconsin Policy Handbook §8.1.3 Deductions — standard deduction, utility allowance ladder, shelter cap (emhandbooks.wisconsin.gov)",
+      "FoodShare Wisconsin Policy Handbook §3.17.1 FoodShare Work Requirements for ABAWDs, Release 26-01 (emhandbooks.wisconsin.gov)",
+      "FoodShare Wisconsin Policy Handbook §3.20.1 Drug Related Felonies (emhandbooks.wisconsin.gov)",
+      "FoodShare Wisconsin Policy Handbook §4.6.5 Support Payment Deductions (emhandbooks.wisconsin.gov)",
+      "FoodShare Wisconsin Policy Handbook §2.1.4 Expedited Service at Application; §2.2.1 Certification Periods (emhandbooks.wisconsin.gov)",
+      "USDA FNA Restaurant Meals Program state list (fna.usda.gov/snap/retailer/restaurant-meals-program), fetched via direct curl 2026-08-11",
+      "Wisconsin Legislative Fiscal Bureau, \"Impact of the One Big Beautiful Bill Act on Wisconsin's Medical Assistance and FoodShare Programs\" (docs.legis.wisconsin.gov), 2025-07-28"
+    ]
+  }
+}

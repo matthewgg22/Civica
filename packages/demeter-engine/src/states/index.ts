@@ -63,9 +63,13 @@ import orPack from "./or/pack.json";
 import orSupplements from "./or/supplements.json";
 import orAuthorities from "./or/authorities.json";
 import orFreshness from "./or/freshness.json";
+import wiPack from "./wi/pack.json";
+import wiSupplements from "./wi/supplements.json";
+import wiAuthorities from "./wi/authorities.json";
+import wiFreshness from "./wi/freshness.json";
 
 /** Registered pack codes. Widens as Wave 1+ states land (WA, TX, NY, …). */
-export type StateCode = "CA" | "WA" | "TX" | "NY" | "GA" | "MI" | "IL" | "FL" | "MA" | "NV" | "AZ" | "OR";
+export type StateCode = "CA" | "WA" | "TX" | "NY" | "GA" | "MI" | "IL" | "FL" | "MA" | "NV" | "AZ" | "OR" | "WI";
 
 /** Launch state; used when a caller does not specify. Preserves the pre-pack
  *  behavior in which the (then-hardcoded) CA content applied to every query. */
@@ -228,6 +232,12 @@ const REGISTRY: Record<StateCode, StatePack> = {
     orSupplements as { supplements: PackTopic[]; supersessions?: Record<string, string> },
     orAuthorities as unknown as RawAuthorities,
     orFreshness as { entries: PackFreshnessEntry[] },
+  ),
+  WI: buildPack(
+    wiPack as Omit<StatePack, "topics" | "authorities" | "freshness" | "supersessions">,
+    wiSupplements as { supplements: PackTopic[]; supersessions?: Record<string, string> },
+    wiAuthorities as unknown as RawAuthorities,
+    wiFreshness as { entries: PackFreshnessEntry[] },
   ),
 };
 

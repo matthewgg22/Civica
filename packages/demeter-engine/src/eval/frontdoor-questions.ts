@@ -310,4 +310,20 @@ export const FRONTDOOR_EVAL: FrontDoorCase[] = [
   { id: "or-expedited", category: "OR", question: "How fast can I get emergency SNAP benefits in Oregon?", expect: { kind: "external", citation: "OAR 461-135-0575" }, state: "OR" },
   { id: "or-cert-period", category: "OR", question: "How long does my SNAP approval last in Oregon before I have to recertify?", expect: { kind: "external", citation: "OAR 461-115-0450" }, state: "OR" },
   { id: "or-federal-benefit", category: "OR", question: "How is the monthly benefit amount calculated from net income?", expect: { kind: "grounded", section: "273.10" }, state: "OR" },
+
+  // Wisconsin — 13th verified state (docs/plans/mae-state-corpus-framework.md, Wave 3 — first of the
+  // two remaining county-administered states). Best-versioned handbook in the roster.
+  { id: "wi-program-name", category: "WI", question: "What agency runs FoodShare in Wisconsin and where do I apply?", expect: { kind: "external", citation: "WI DHS / ForwardHealth / ACCESS.wisconsin.gov program materials" }, state: "WI" },
+  { id: "wi-income-limit", category: "WI", question: "What's the income limit for FoodShare in Wisconsin?", expect: { kind: "external", citation: "FSH 4.2.1" }, state: "WI" },
+  { id: "wi-asset-limit", category: "WI", question: "Is there an asset or savings limit for FoodShare in Wisconsin?", expect: { kind: "external", citation: "FSH 8.1.1.3" }, state: "WI" },
+  { id: "wi-sua", category: "WI", question: "What's the heating standard utility allowance for FoodShare in Wisconsin right now?", expect: { kind: "external", citation: "FSH 4.6.7.3" }, state: "WI" },
+  { id: "wi-medical-deduction", category: "WI", question: "Is there a standard medical deduction for seniors on FoodShare in Wisconsin?", expect: { kind: "external", citation: "FSH 4.6.4" }, state: "WI" },
+  { id: "wi-child-support", category: "WI", question: "Does paying child support lower my FoodShare benefit in Wisconsin?", expect: { kind: "external", citation: "FSH 4.6.5" }, state: "WI" },
+  { id: "wi-abawd-clock", category: "WI", question: "What is the current ABAWD time limit window in Wisconsin?", expect: { kind: "external", citation: "FSH 3.17.1" }, state: "WI" },
+  { id: "wi-abawd-age", category: "WI", question: "What age range does the FoodShare work requirement apply to in Wisconsin?", expect: { kind: "external", citation: "FSH 3.17.1" }, state: "WI" },
+  { id: "wi-drug-felony", category: "WI", question: "I have a drug felony conviction — can I still get FoodShare in Wisconsin?", expect: { kind: "external", citation: "FSH 3.20.1" }, state: "WI" },
+  { id: "wi-restaurant-meals", category: "WI", question: "Can I use my QUEST card to buy a hot meal at a restaurant in Wisconsin?", expect: { kind: "external", citation: "Restaurant Meals Program" }, state: "WI" },
+  { id: "wi-expedited", category: "WI", question: "How fast can I get emergency FoodShare benefits in Wisconsin?", expect: { kind: "external", citation: "FSH 2.1.4" }, state: "WI" },
+  { id: "wi-cert-period", category: "WI", question: "How long does my FoodShare approval last in Wisconsin before I have to recertify?", expect: { kind: "external", citation: "FSH 2.2.1" }, state: "WI" },
+  { id: "wi-federal-benefit", category: "WI", question: "How is the monthly FoodShare benefit amount calculated from net income?", expect: { kind: "grounded", section: "273.10" }, state: "WI" },
 ];

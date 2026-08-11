@@ -1212,6 +1212,122 @@ export const OR_GOLD: AnswerExpectation[] = [
   },
 ];
 
+// Wisconsin gold set (Wave 3, docs/plans/mae-state-corpus-framework.md §7 — the first of the two
+// remaining county-administered states, picked for its best-in-roster versioned handbook). At least 3
+// cases below require the answer to prefer Wisconsin's own text over a naive default: the EBD
+// no-gross-limit exception (a genuinely different BBCE shape than every flat-screen state built so
+// far), the stale-handbook ABAWD age band (guards against repeating a state citation that has NOT
+// caught up to controlling federal law), and the one-time (not recurring, not permanent-ban) drug-test
+// mechanism.
+export const WI_GOLD: AnswerExpectation[] = [
+  {
+    id: "wi-ebd-no-gross-limit",
+    // Wisconsin's EBD exception — genuinely different from every other
+    // state's flat-BBCE-screen shape: EBD households over 200% FPL gross
+    // face NO gross income limit at all, only a 100% net test.
+    question: "My mother is 70 and lives with us in Wisconsin — is there still a gross income limit for our FoodShare case?",
+    state: "WI",
+    expectCitation: "FSH 4.2.1",
+    mustMention: "net",
+    mustDisclaim: true,
+  },
+  {
+    id: "wi-asset-limit-ebd",
+    question: "What's the FoodShare resource limit in Wisconsin for a household with an elderly or disabled member?",
+    state: "WI",
+    expectCitation: "FSH 8.1.1.3",
+    mustMention: "4,500",
+    mustDisclaim: true,
+  },
+  {
+    id: "wi-sua-heating",
+    question: "How much is Wisconsin's heating standard utility allowance for FoodShare right now?",
+    state: "WI",
+    expectCitation: "FSH 4.6.7.3",
+    mustMention: "553",
+    mustDisclaim: true,
+  },
+  {
+    id: "wi-medical-deduction-no-flat",
+    // Guards against a $200 "fallback" this pack found claimed by a
+    // secondary source but could not confirm in the handbook itself.
+    question: "I'm disabled and have $50 a month in medical bills for Wisconsin FoodShare — do I get a deduction?",
+    state: "WI",
+    expectCitation: "FSH 4.6.4",
+    mustMention: "35",
+    mustDisclaim: true,
+  },
+  {
+    id: "wi-child-support-deduction",
+    question: "Does paying child support lower my countable income for FoodShare in Wisconsin?",
+    state: "WI",
+    expectCitation: "FSH 4.6.5",
+    mustMention: "deduct",
+    mustDisclaim: true,
+  },
+  {
+    id: "wi-abawd-age-band-stale",
+    // The flagship freshness finding: Wisconsin's OWN handbook still says
+    // 18-54 (pre-OBBBA), but federal law controls at 18-64. Guards against
+    // Mae repeating the stale state citation as if it were current.
+    question: "What age range does the FoodShare work requirement apply to in Wisconsin?",
+    state: "WI",
+    mustMention: "64",
+    mustDisclaim: true,
+  },
+  {
+    id: "wi-abawd-fixed-window",
+    question: "What is the current ABAWD time limit window in Wisconsin?",
+    state: "WI",
+    expectCitation: "FSH 3.17.1",
+    mustMention: "2027",
+    mustDisclaim: true,
+  },
+  {
+    id: "wi-drug-felony-one-time-test",
+    // Guards against describing Wisconsin's mechanism as either a
+    // permanent ban or an ongoing/recurring testing regime — it's a
+    // one-time test within a 5-year window.
+    question: "I was convicted of a drug felony 2 years ago — can I still get FoodShare in Wisconsin?",
+    state: "WI",
+    expectCitation: "FSH 3.20.1",
+    mustNotMention: ["permanently banned", "lifetime ban", "you cannot receive"],
+    mustDisclaim: true,
+  },
+  {
+    id: "wi-restaurant-meals-absent",
+    // Guards against inventing an RMP Wisconsin doesn't operate, and
+    // against conflating it with the separate group-meal-site provision.
+    question: "Can I use my QUEST card to buy a hot meal at a restaurant in Wisconsin?",
+    state: "WI",
+    mustMention: "not",
+    mustDisclaim: true,
+  },
+  {
+    id: "wi-expedited-service",
+    question: "How fast can I get emergency FoodShare benefits in Wisconsin?",
+    state: "WI",
+    expectCitation: "FSH 2.1.4",
+    mustMention: "7",
+    mustDisclaim: true,
+  },
+  {
+    id: "wi-cert-period-ebd",
+    question: "How long does my FoodShare approval last in Wisconsin if everyone in my household is elderly with no earned income?",
+    state: "WI",
+    expectCitation: "FSH 2.2.1",
+    mustMention: "36",
+    mustDisclaim: true,
+  },
+  {
+    id: "wi-federal-benefit",
+    question: "How is the monthly FoodShare benefit amount calculated from net income in Wisconsin?",
+    state: "WI",
+    expectCitation: "273.10",
+    mustDisclaim: true,
+  },
+];
+
 /** Everything the live runner executes. */
 export const ALL_GOLD: AnswerExpectation[] = [
   ...ANSWER_GOLD,
@@ -1227,4 +1343,5 @@ export const ALL_GOLD: AnswerExpectation[] = [
   ...NV_GOLD,
   ...AZ_GOLD,
   ...OR_GOLD,
+  ...WI_GOLD,
 ];
