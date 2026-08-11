@@ -200,6 +200,22 @@ export function formatEngineParams(state: string, asOf: Date): string {
     // narrower 130%/$3,000 and 100%-net/$4,500 tiers that apply only to
     // disqualified/sanctioned households, lives in the PA corpus pack's
     // own income-pathways and asset-rule supplements.
+    // OH: 130 mirrors snap-rules' bbce_threshold_pct as-is — this is a
+    // DISCLOSED, UNRESOLVED DISCREPANCY, not a confirmed value like the
+    // other entries above. The OH corpus pack's own primary-source read of
+    // OAC 5101:4-2-02 found a genuine 200% FPL broad-based pathway ("Ohio
+    // careline" — a routine notice-plus-text-message TANF-funded service,
+    // the same conferral-vehicle family as NV/OR/WI/MN/GA/PA above) that
+    // waives the 130% gross test, net income test, AND resource limit —
+    // structurally the SAME shape as this file's other 200%-flat-screen
+    // entries, not GA's asset-only 130% pattern the states.ts comment
+    // claims OH matches. This file mirrors snap-rules' constant by design
+    // (see the note above the map) and packages/snap-rules is out of
+    // scope for corpus-only work, so the value here stays 130 pending a
+    // human decision — see the OH corpus pack's PROVENANCE.md ("BBCE
+    // threshold: states.ts says 130%; this pack found a genuine 200% FPL
+    // pathway") for the full writeup. Do not treat 130 as independently
+    // re-confirmed by this comment.
     const BBCE_PCT = {
       CA: 200,
       MA: 200,
@@ -212,6 +228,7 @@ export function formatEngineParams(state: string, asOf: Date): string {
       NV: 200,
       AZ: 200,
       OR: 200,
+      OH: 130,
       WI: 200,
       MN: 200,
       PA: 200,

@@ -1572,6 +1572,111 @@ export const PA_GOLD: AnswerExpectation[] = [
   },
 ];
 
+export const OH_GOLD: AnswerExpectation[] = [
+  {
+    id: "oh-careline-200-pct-broad-based",
+    // The flagship finding of this pack: Ohio's "Ohio careline" pathway is a
+    // genuine flat 200% FPL broad-based categorical-eligibility screen — NOT
+    // captured by the engine's current bbce_threshold_pct=130 constant. See
+    // this pack's PROVENANCE.md for the full discrepancy writeup.
+    question: "What is Ohio careline and how does it affect my SNAP eligibility?",
+    state: "OH",
+    expectCitation: "OAC 5101:4-2-02",
+    mustMention: "200",
+    mustDisclaim: true,
+  },
+  {
+    id: "oh-resource-limit-standard",
+    question: "What is the SNAP resource limit in Ohio if I'm not elderly, disabled, or on OWF/SSI?",
+    state: "OH",
+    expectCitation: "OAC 5101:4-4-01",
+    mustMention: "3,000",
+    mustDisclaim: true,
+  },
+  {
+    id: "oh-sua-value",
+    question: "What is the standard utility allowance for SNAP in Ohio?",
+    state: "OH",
+    expectCitation: "OAC 5101:4-4-23",
+    mustMention: "766",
+    mustDisclaim: true,
+  },
+  {
+    id: "oh-medical-deduction-no-flat",
+    question: "I'm disabled and have $50 a month in medical bills for Ohio SNAP — do I get a deduction?",
+    state: "OH",
+    expectCitation: "OAC 5101:4-4-23",
+    mustMention: "35",
+    mustDisclaim: true,
+  },
+  {
+    id: "oh-child-support-deduction",
+    question: "Does paying child support lower my countable income for SNAP in Ohio?",
+    state: "OH",
+    expectCitation: "OAC 5101:4-4-23",
+    mustMention: "deduct",
+    mustDisclaim: true,
+  },
+  {
+    id: "oh-abawd-waiver-prohibited",
+    // A second flagship finding: Ohio Revised Code 5101.548(B), effective
+    // 9/30/2025, statutorily PROHIBITS ODJFS from requesting an ABAWD
+    // geographic waiver — the opposite of the engine's abawd_waiver_avail=true.
+    question: "Is the SNAP work-requirement time limit currently waived anywhere in Ohio?",
+    state: "OH",
+    expectCitation: "ORC 5101.548",
+    mustMention: "not",
+    mustDisclaim: true,
+  },
+  {
+    id: "oh-drug-felony-no-ban",
+    question: "I have a drug felony conviction — can I still get SNAP in Ohio?",
+    state: "OH",
+    expectCitation: "ORC 5101.84",
+    mustNotMention: ["lifetime ban", "permanently banned", "banned for life", "disqualified"],
+    mustDisclaim: true,
+  },
+  {
+    id: "oh-restaurant-meals-not-operated",
+    question: "Can I use my EBT card to buy a hot meal at a restaurant in Ohio?",
+    state: "OH",
+    mustMention: "no",
+    mustDisclaim: true,
+  },
+  {
+    id: "oh-expedited-service",
+    question: "How fast can I get emergency SNAP benefits in Ohio?",
+    state: "OH",
+    expectCitation: "OAC 5101:4-6-09",
+    mustMention: "24",
+    mustDisclaim: true,
+  },
+  {
+    id: "oh-cert-period-36-month-zero-income",
+    question: "How long does my SNAP approval last in Ohio if everyone in my household is elderly with no income at all?",
+    state: "OH",
+    expectCitation: "OAC 5101:4-5-03",
+    mustMention: "36",
+    mustDisclaim: true,
+  },
+  {
+    id: "oh-vehicle-exclusion-gap",
+    // Guards against the model inventing a specific vehicle count/dollar
+    // figure this pack could NOT confirm in the codified rule text itself.
+    question: "How many vehicles are excluded from the SNAP resource test in Ohio?",
+    state: "OH",
+    expectCitation: "OAC 5101:4-4-03",
+    mustDisclaim: true,
+  },
+  {
+    id: "oh-federal-benefit",
+    question: "How is the monthly SNAP benefit amount calculated from net income in Ohio?",
+    state: "OH",
+    expectCitation: "273.10",
+    mustDisclaim: true,
+  },
+];
+
 /** Everything the live runner executes. */
 export const ALL_GOLD: AnswerExpectation[] = [
   ...ANSWER_GOLD,
@@ -1590,4 +1695,5 @@ export const ALL_GOLD: AnswerExpectation[] = [
   ...WI_GOLD,
   ...MN_GOLD,
   ...PA_GOLD,
+  ...OH_GOLD,
 ];

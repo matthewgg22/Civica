@@ -1,0 +1,43 @@
+{
+  "_provenance": {
+    "note": "Ohio citation authorities. Ohio uses TWO distinct authority families: Ohio Administrative Code rules (chapter:division-chapter-rule shape, e.g. '5101:4-2-02', '5101:4-4-23.3') and Ohio Revised Code statutory sections (chapter.section shape, e.g. '5101.84', '5101.548'). This pack prefixes OAC rules 'OAC <rule>' and ORC sections 'ORC <section>' to disambiguate and match the roster's convention of a short prefix per state's citation family (Wisconsin's FSH, Illinois' PM/WAG, Michigan's BEM/BAM, Pennsylvania's PAH).",
+    "extracted": "2026-08-11"
+  },
+  "patterns": [
+    {
+      "key": "oacrule",
+      "regex": "\\bOAC\\s+(5101:4-\\d{1,2}-\\d{1,3}(?:\\.\\d{1,2})?)\\b",
+      "flags": "gi",
+      "template": "OAC $1",
+      "normalize": "none",
+      "match": "exact",
+      "note": "Ohio Administrative Code Division 5101:4 (Food Stamps) rules, e.g. 5101:4-2-02, 5101:4-4-23, 5101:4-4-03"
+    },
+    {
+      "key": "orcsection",
+      "regex": "\\bORC\\s+§?\\s*(\\d{3,4}\\.\\d{1,4})\\b",
+      "flags": "gi",
+      "template": "ORC $1",
+      "normalize": "none",
+      "match": "exact",
+      "note": "Ohio Revised Code sections, e.g. 5101.84 (drug-felony opt-out), 5101.548 (ABAWD waiver-request prohibition)"
+    }
+  ],
+  "known": {
+    "oacrule": [
+      { "value": "OAC 5101:4-2-02", "note": "categorically eligible assistance groups — OWF/SSI/PRC narrow pathway (no income test) AND the flat 200% FPL 'Ohio careline' broad-based pathway; waives 130% gross, net income, and resource limit for both" },
+      { "value": "OAC 5101:4-4-01", "note": "resource eligibility general policy — the $3,000/$4,500 standard, and its cross-reference to 5101:4-2-02 for the categorical-eligibility exemption" },
+      { "value": "OAC 5101:4-4-03", "note": "resource exclusions — vehicles excluded under Ohio's TANF-plan authority (Pub. L. 106-387 § 847); exact per-vehicle mechanics not spelled out in this rule's own text" },
+      { "value": "OAC 5101:4-4-23", "note": "deductions from income — standard deduction, excess medical (>$35, elderly/disabled only), child support (ordinary deduction, vendor payments count, alimony excluded), shelter/utility" },
+      { "value": "OAC 5101:4-5-03", "note": "certification periods — 36-month zero-earned-income elderly/disabled tier down to 4-6 month tier for ABAWD-member or unstable households" },
+      { "value": "OAC 5101:4-6-09", "note": "expedited service — 24-hour (72-hour w/ mitigating circumstances) zero-net-income tier, plus the federal-standard 7-day $150/$100 tier" },
+      { "value": "OAC 5101:4-3-20", "note": "able-bodied adults without dependents (ABAWD) provisions — exemptions and work-requirement mechanics" },
+      { "value": "OAC 5101:4-6-29", "note": "elderly and disabled assistance group special rules, including Annual Reporter simplified-reporting status" },
+      { "value": "OAC 5101:4-1-03", "note": "definitions — includes the elderly/disabled definition used by the excess medical deduction and certification-period rules" }
+    ],
+    "orcsection": [
+      { "value": "ORC 5101.84", "note": "full statutory opt-out from the federal drug-felony SNAP ban — effective October 16, 2009, no conditions attached; independently confirmed by this pack, matches the already-verified snap-rules constant" },
+      { "value": "ORC 5101.548", "note": "prohibits ODJFS from requesting, applying for, or renewing an ABAWD geographic waiver — effective September 30, 2025 (enacted via HB 96); this pack found this CONTRADICTS the engine's current abawd_waiver_avail=true constant — see PROVENANCE.md" }
+    ]
+  }
+}
