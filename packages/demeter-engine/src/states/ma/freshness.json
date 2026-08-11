@@ -1,0 +1,32 @@
+{
+  "_provenance": {
+    "note": "Massachusetts dated facts. Most dollar values ride the federal October COLA plus DTA's own annual republication of 'Helpful Charts and Figures'; the BBCE/categorical-eligibility income standards ride a SEPARATE calendar-year cycle (effective 2/1 each year, per the CY federal poverty level) — the two cycles do not share a refresh date. The Standard Medical Deduction ($155) is NOT COLA'd annually and has held stable since at least 2017; do not auto-refresh it on the October cycle. ABAWD waiver status is inherently volatile and was found to have a real stale-artifact trap this session (see PROVENANCE.md) — always prefer the newest dated OLGT over any undated or old-dated 'current status' page.",
+    "extracted": "2026-08-10"
+  },
+  "entries": [
+    {
+      "key": "ma-ffy26-dollar-values",
+      "kind": "expires",
+      "date": "2026-09-30",
+      "warning": "Massachusetts FFY2026 dollar values effective 10/1/2025 (SUA $914/$556/$64, Bay State CAP SUA $914, shelter cap $744, homeless shelter deduction $199, standard deduction $209/$223/$261/$299, minimum benefit $24) are due for the October 2026 COLA — find the successor 'Helpful Charts and Figures' table (or a new OLGT) before quoting any Massachusetts FFY-cycle dollar amount. Do not assume the Standard Medical Deduction ($155) moves on this same cycle — it has historically held flat across COLA cycles; re-verify separately."
+    },
+    {
+      "key": "ma-cy2026-cat-el-standards",
+      "kind": "expires",
+      "date": "2027-01-31",
+      "warning": "Massachusetts' Broad-Based Categorical Eligibility (200% FPL) income standards became effective 2/1/2026 on the calendar-year federal poverty level cycle (a DIFFERENT cycle from the FFY dollar values above, which run 10/1-9/30). A new calendar-year FPL publication (typically mid-to-late January) will supersede these figures around 2/1/2027 — re-verify against a fresh DTA 'Helpful Charts and Figures' or categorical-eligibility OLGT before that date."
+    },
+    {
+      "key": "ma-abawd-waiver-status",
+      "kind": "expires",
+      "date": "2026-09-30",
+      "warning": "Massachusetts' statewide ABAWD geographic waiver expired 6/30/2025 (OLGT 2025-31) and this pack found no evidence of reinstatement as of the most recent ABAWD-related bulletin located (OLGT 2025-59, 10/30/2025). Waiver status is inherently volatile and depends on an FNS decision DTA had not yet received as of OLGT 2025-31 — re-verify against the newest dated OLGT before stating Massachusetts does or does not hold a waiver. Do NOT trust an undated or old-dated 'Waived Areas' page at face value: this pack found one such page (still live on DTA's site) whose own file metadata showed it was last touched in August 2022, predating the 2025 expiration by nearly three years, and it still read 'waived... at this time.'"
+    },
+    {
+      "key": "ma-abawd-clock-window",
+      "kind": "expires",
+      "date": "2026-09-30",
+      "warning": "This pack did not independently confirm Massachusetts' current fixed ABAWD 36-month clock start/end dates from a live source (unlike Illinois, Georgia, Washington, and Michigan's packs, which each confirmed exact dates) — do not assert a specific MA ABAWD clock window without re-verifying against the DTA Online Guide's 'ABAWD Clock' page directly."
+    }
+  ]
+}

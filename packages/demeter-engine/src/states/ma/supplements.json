@@ -1,0 +1,231 @@
+{
+  "_provenance": {
+    "note": "Massachusetts SNAP curated supplements. Drafted from verbatim source text fetched LIVE from eohhs.ehs.state.ma.us — a distinct DTA host from mass.gov (which 403'd every direct attempt, consistent with two prior verification passes this repo logged). This host serves both the DTA Online Guide (BEACON5, worker-facing policy pages) and actual 106 CMR regulation-text PDFs directly, plain curl with a browser User-Agent, no headless browser needed. A prior-year mass.gov PDF was additionally recovered via the Internet Archive Wayback Machine as a cross-check for the SUA figures. Independently cross-checked and adversarially fact-checked before PR — see PROVENANCE.md, including the ABAWD-waiver stale-artifact catch and the RMP engine-comment correction.",
+    "extracted": "2026-08-10",
+    "source_fact_check": "cross-check re-verification against live DTA Online Guide pages and 106 CMR regulation-text PDFs + post-draft adversarial refute pass; corrections recorded in PROVENANCE.md"
+  },
+  "supplements": [
+    {
+      "key": "income-pathways",
+      "kind": "supplement",
+      "terms": [
+        "income limit",
+        "income limits",
+        "gross income limit",
+        "gross income ceiling",
+        "make too much",
+        "over income",
+        "bbce",
+        "categorical eligibility",
+        "categorically eligible",
+        "200 percent",
+        "200%",
+        "poverty level",
+        "cat el",
+        "cat-el"
+      ],
+      "citation": "106 CMR 364.976; 106 CMR 365.180 — MA categorical eligibility / BBCE",
+      "heading": "Massachusetts confers Broad-Based Categorical Eligibility at 200% FPL, and households with an elderly or disabled member face NO gross income test at all",
+      "text": "106 CMR 364.976, \"Gross Monthly Categorical Eligibility Income Standards,\" states the standards \"are based on household size and are adjusted annually based on the federal poverty level\" and directs to 106 CMR 365.180 for the categorical-eligibility determination itself. A household is categorically eligible if all members receive or are authorized to receive SSI and/or EAEDC (Emergency Aid to the Elderly, Disabled and Children), or if all members receive or are authorized to receive TAFDC (Massachusetts' TANF cash program); a narrower \"SNAP-only TANF Services\" pathway also exists for households limited to a pregnant woman or children under 19 living with a parent/caretaker relative who receive a TANF-funded service, gated by the same 200% Gross Monthly Categorical Eligibility Standard. Current standards (\"Helpful Charts and Figures,\" DTA, last updated 1/2026, effective 2/1/2026 for the CY2026 federal poverty level cycle): household of 1 = $2,660/month; household of 2 = $3,607; household of 3 = $4,553; household of 4 = $5,500; each additional member = +$947. Separately, and independent of categorical-eligibility status: \"Unless the household includes at least one elderly (age 60 or over) or disabled individual, the total household income must be below the gross monthly income limit for the household size... There is no gross income limit for a household that includes an elderly and/or disabled person\" (DTA, \"What is SNAP?\", last updated 9/20/2024) — households with an elderly/disabled member skip the gross-income screen entirely and go straight to the net-income test, a materially different (and more generous) mechanic than the 200% BBCE screen non-elderly/disabled households use. Losing categorical eligibility is possible: a non-SSI elderly household member whose income exceeds the 200% Categorical Eligibility Gross Income Standard pulls the household out of categorical eligibility and back into the asset-tested, income-tested pool (DTA, \"Assets Overview - SNAP\").",
+      "source_url": "https://eohhs.ehs.state.ma.us/DTA/PolicyOnline/olg%20docs/guides/Helpful%20Charts%20and%20Figures.pdf"
+    },
+    {
+      "key": "asset-rule",
+      "kind": "supplement",
+      "terms": [
+        "asset limit",
+        "asset test",
+        "resource limit",
+        "resource test",
+        "resources",
+        "savings",
+        "savings limit",
+        "bank account",
+        "vehicle",
+        "car count",
+        "does my car count"
+      ],
+      "citation": "DTA \"Assets Overview - SNAP\" — MA resource rules",
+      "heading": "Massachusetts waives the asset test for categorically eligible households; the tested minority faces $3,000/$4,500 limits, and vehicles are never counted",
+      "text": "\"The asset eligibility limits and transfer of funds penalties do not apply to categorically eligible households\" (DTA, \"Assets Overview - SNAP\", last updated 9/20/2024). For the households that ARE asset-tested — a member disqualified for an Intentional Program Violation, a work-program-sanctioned or otherwise-disqualified member (multiple-benefits fraud, benefit trading, fleeing felon, voluntary quit), or a non-SSI elderly household member whose income exceeds the 200% categorical-eligibility gross standard — \"the total value of countable liquid and non-liquid assets owned by a household subject to asset limits shall not exceed... $4,500 for any household that includes at least one member who is aged 60 or over and/or disabled... and $3,000 for all other households.\" Vehicles are explicitly NOT countable: the source lists countable asset types as personal property, real estate, \"vehicles (currently not countable as an asset for SNAP),\" cash surrender value of life insurance, bank deposits, and negotiable securities. The countable value of a non-liquid asset is its equity value (fair market value less encumbrances); jointly owned assets count in full unless the household proves the asset is inaccessible (e.g., cannot practically be subdivided and a joint owner refuses to cooperate — with a specific carve-out for battered-women's-shelter residents whose jointly held asset with the former household is treated as inaccessible on the same theory). Verification of assets is mandatory except for households that meet the categorical-eligibility exception. Interest earned on an asset can still count as unearned income even for categorically eligible households, which are exempt from the ASSET rule but not from the income-counting rule for interest.",
+      "source_url": "https://eohhs.ehs.state.ma.us/DTA/PolicyOnline/BEACON5/!SSL!/WebHelp/SNAP/Eligibility/Assets_OvwSNAP.htm"
+    },
+    {
+      "key": "sua-values",
+      "kind": "supplement",
+      "terms": [
+        "utility allowance",
+        "utility standard",
+        "shelter deduction",
+        "excess shelter",
+        "heating standard",
+        "cooling standard",
+        "air conditioning",
+        "telephone standard",
+        "limited utility",
+        "bay state cap",
+        "sua"
+      ],
+      "citation": "106 CMR 364.945; 106 CMR 366.910 (Bay State CAP) — MA Standard Utility Allowances",
+      "heading": "Massachusetts runs a three-tier SUA (Heating/Cooling, Nonheating, Phone), plus a SEPARATE Bay State CAP citation that has tracked the Heating/Cooling figure dollar-for-dollar in every year checked",
+      "text": "106 CMR 364.945, \"The Standard Utility Allowances (SUA)\": the regulation text itself states only that the SUAs \"are updated periodically using a methodology approved by the USDA/FNS\" and directs to the DTA's own posted table — the dollar figures live in an annually republished chart, not the rule text, exactly as most states publish SUA. Current FFY2026 figures (\"Helpful Charts and Figures,\" DTA, last updated 1/2026): Heating/Cooling SUA $914 (up from $890 the prior year); Nonheating SUA $556 (up from $542); Phone SUA $64 (up from $62). A DIFFERENT citation, 106 CMR 366.910, governs the Bay State CAP Standard Utility Allowance — Bay State CAP is DTA's simplified-reporting/self-declaration track for elderly and disabled SNAP-only households (see reporting-certification). This pack independently fetched DTA's own Bay State CAP SUA document (prior FFY cycle, effective 10/1/2024): \"The Bay State CAP Standard Utility Allowance is $890\" — numerically IDENTICAL to that year's Heating/Cooling SUA ($890), and the current \"Helpful Charts and Figures\" table shows the same pattern again this year (Bay State CAP $914 = current Heating/Cooling SUA $914, both years' \"Last Year's Amount\" columns also match at $890=$890). Two years of primary-sourced data both showing an exact match strongly suggests Bay State CAP recipients receive the SAME dollar figure as the standard Heating/Cooling SUA in practice, even though it is legally a separate citation — worth flagging to a caseworker as \"same number, different rule\" rather than a silent risk of a materially different, uncomputed value. Verification of utility costs is required per DTA's February 2026 policy change (self-declaration accepted only when the household affirmatively states it cannot produce proof and explains why).",
+      "source_url": "https://eohhs.ehs.state.ma.us/DTA/PolicyOnline/olg%20docs/guides/Helpful%20Charts%20and%20Figures.pdf"
+    },
+    {
+      "key": "medical-deduction",
+      "kind": "supplement",
+      "terms": [
+        "medical deduction",
+        "medical expense",
+        "medical expenses",
+        "medical bills",
+        "standard medical deduction",
+        "elderly deduction",
+        "disability deduction",
+        "smd"
+      ],
+      "citation": "106 CMR 364.500(E)-(F); 106 CMR 361.210 — MA Standard Medical Deduction",
+      "heading": "Massachusetts runs a flat $155 Standard Medical Deduction for elderly/disabled households with $35.01-$190/month in expenses — a figure that has held stable since at least 2017, unlike SUA it is NOT annually COLA'd",
+      "text": "106 CMR 364.500(F), fetched as live regulation text: \"(1) For medical expenses between $35 and $190 per month, subtract $155. (2) For medical expenses that exceed $190 per month, subtract the amount that exceeds $35.\" Eligibility for any medical deduction requires the household member to meet one of the elderly/disabled criteria at 106 CMR 361.210, and the total allowable medical expenses (net of reimbursement, e.g., from a third-party insurer) must exceed $35/month before any deduction applies (106 CMR 364.500(E)). The flat $155 figure is NOT a COLA-adjusted value the way the Standard Deduction, SUA, or shelter cap are — the same $155 appears in the 106 CMR text (last revised 1/2017 on this section) and in DTA's own worked benefit-calculation walkthrough (\"How SNAP Benefits are Calculated,\" last updated 1/5/2023), consistent across a multi-year span rather than moving with the October COLA cycle. This pack found no OLGT superseding this figure — treat it as currently accurate but re-verify before the FY27 refresh rather than assuming an automatic COLA update the way SUA gets one.",
+      "source_url": "https://eohhs.ehs.state.ma.us/DTA/PolicyOnline/olg%20docs/regulations/fs/search/364/500.PDF"
+    },
+    {
+      "key": "dependent-care-child-support",
+      "kind": "supplement",
+      "terms": [
+        "dependent care",
+        "child care deduction",
+        "daycare",
+        "child support",
+        "support payments"
+      ],
+      "citation": "106 CMR 364.500(G)-(H); 106 CMR 364.400(D); 106 CMR 364.410 — dependent care + child support deductions",
+      "heading": "Massachusetts treats BOTH dependent care and child support as net-calculation DEDUCTIONS, applied in the same sequence — a real contrast with states (like Illinois) that exclude child support from gross income instead",
+      "text": "106 CMR 364.500, the net-income calculation sequence fetched as live regulation text, lists dependent care and child support as consecutive, separate deduction steps AFTER the medical deduction and BEFORE the shelter deduction: \"(G) Dependent Care Deduction — Subtract the actual monthly dependent care expenses, if any, as provided in 106 CMR 364.400(D) and 364.410,\" and \"(H) Allowable Child Support Payments — Subtract allowable monthly child support payments.\" This is mechanically different from a BBCE state that treats child support as an income EXCLUSION applied before the gross-income test (e.g., Illinois) — in Massachusetts, child support lowers NET income at the deduction stage, not the gross-income comparison used for the 200% BBCE screen. DTA's own benefit-calculation walkthrough confirms both are actual-cost deductions with no dollar cap printed: \"Dependent Care Deduction: This is the total value of the household's countable expenses for a babysitter, child-care provider, or elder care provider,\" and \"Child Support Deduction: This is the total amount that the household is currently paying for legally-obligated child support\" (DTA, \"How SNAP Benefits are Calculated\"). Child support requires verification of both the legal obligation to pay and of actual payment; a household cannot double-dip the deduction for a child who is also a member of the paying parent's own SNAP household, since that support is then countable income to the child(ren) it's paid for rather than a deductible expense.",
+      "source_url": "https://eohhs.ehs.state.ma.us/DTA/PolicyOnline/olg%20docs/regulations/fs/search/364/500.PDF"
+    },
+    {
+      "key": "abawd-work-requirement",
+      "kind": "supplement",
+      "terms": [
+        "abawd",
+        "able bodied adult",
+        "work requirement",
+        "time limit",
+        "3 month limit",
+        "work registration",
+        "waiver",
+        "waived area"
+      ],
+      "citation": "OLGT 2025-31; OLGT 2025-59 — MA ABAWD work requirement",
+      "heading": "Massachusetts' statewide ABAWD geographic waiver EXPIRED June 30, 2025 and was never reinstated as of the most recent primary source — do not describe Massachusetts as currently waived anywhere",
+      "text": "OLGT 2025-31 (July 25, 2025), fetched as a live primary DTA bulletin: \"DTA's last geographic waiver expired June 30, 2025. DTA has not yet received a decision from FNS on this year's waiver request, and as a result, the Department cannot continue applying the 'Resident of a Waived Area' reason to non-exempt individuals subject to the ABAWD work rules.\" BEACON removed the waived-area exemption overnight on June 30, 2025; affected households became ABAWD-work-rules-required effective July 1, 2025 (with July 2025 Good Cause applied for late notice), formally effective August 1, 2025 per their notice. The most recent ABAWD-related bulletin this pack found, OLGT 2025-59 (October 30, 2025), covers only OBBBA-mandated exemption changes and does not mention any new geographic waiver — no evidence of reinstatement as of this pack's build. IMPORTANT ADVERSARIAL CATCH: a DTA-hosted file titled \"ABAWD Work Rules – Waived Areas\" states \"The ABAWD time limit is waived in all cities and towns in Massachusetts at this time\" — but this file's own PDF metadata shows it was last created/modified August 4, 2022, nearly three years BEFORE OLGT 2025-31 ended the waiver. Do not trust that file's \"at this time\" language; it is a stale, unmaintained artifact contradicted by the dated, more recent OLGT. Separately, per OLGT 2025-59 (implementing the One Big Beautiful Bill Act of 2025, released the evening of 10/31/2025, viewable in BEACON from 11/3/2025): the ABAWD age-exemption ceiling rose from 55 to 65; the dependent-child exemption narrowed from caring for a child under 18 to a child under 14; the Veteran, Homeless, and Foster Care AWR exemptions were ELIMINATED; and a new exemption was ADDED for \"An Indian, Urban Indian, or California Indian as described in the Indian Health Care Improvement Act.\" General/ABAWD Work Rules screening itself was reintroduced in Massachusetts in April 2025 per the same bulletin's own framing, after a period this pack did not independently trace the reason or start date for — flag as an open question rather than asserting a cause.",
+      "source_url": "https://eohhs.ehs.state.ma.us/DTA/PolicyOnline/olg%20docs/olgtm/2025/31.pdf"
+    },
+    {
+      "key": "criminal-justice-disqualifications",
+      "kind": "supplement",
+      "terms": [
+        "drug felony",
+        "felony conviction",
+        "criminal record",
+        "drug conviction",
+        "fleeing felon",
+        "fugitive",
+        "probation",
+        "parole",
+        "ipv",
+        "intentional program violation",
+        "trading benefits"
+      ],
+      "citation": "OLGT 2024-45; DTA \"SNAP Disqualifications and Sanctions\" — MA criminal-justice disqualifications",
+      "heading": "Massachusetts has OPTED OUT of the federal permanent drug-felony ban — a past drug-felony conviction alone never disqualifies anyone from SNAP — but SNAP-benefit trafficking for drugs, firearms, or high value is a separate, real disqualification",
+      "text": "OLGT 2024-45 (August 15, 2024), fetched as a live primary DTA bulletin, states plainly: \"Clients who are found to be convicted of a drug felony under Federal or State law for the possession, use, or distribution of a controlled substance... on or after August 22, 1996, are still able to apply for and receive SNAP benefits if otherwise eligible. Massachusetts has opted out of invoking a permanent ban for these clients... these clients are not ineligible or banned from receiving SNAP.\" This transmittal exists SPECIFICALLY to prevent staff from confusing that opt-out with a genuinely separate, narrower disqualification: \"if it is determined that a client has been convicted of trading (buying or selling) SNAP benefits for drugs, this client will be ineligible for SNAP for two years for the first finding and permanently disqualified... for the second finding\" — a benefit-trafficking conviction, not a drug-possession conviction. DTA's \"SNAP Disqualifications and Sanctions\" page (last updated 4/16/2025) fetched live adds the remaining disqualification categories: Intentional Program Violation (IPV) — progressive 1 year / 2 years / permanent, each stage requiring the prior stage to have been assigned and ended; receipt of multiple SNAP benefits via fraudulent identity/residence claims — 10 years; trading SNAP for firearms, ammunition, or explosives — permanent on the first finding; trading SNAP with a value of $500 or more — permanent on the first finding; fleeing felons (an outstanding felony warrant for Escape/Flight-to-Avoid/Flight-Escape NCIC codes, with active law-enforcement pursuit) and probation/parole violators — ineligible while fleeing or in violation; and Voluntary Quit for clients subject to the General Work Rules who quit or cut hours without good cause. IPV is defined as any action \"committed knowingly, willfully, and/or with deceitful intent\" to establish, maintain, increase, or prevent a reduction in SNAP eligibility or benefits.",
+      "source_url": "https://eohhs.ehs.state.ma.us/DTA/PolicyOnline/olg%20docs/olgtm/2024/45.pdf"
+    },
+    {
+      "key": "expedited-service",
+      "kind": "supplement",
+      "terms": [
+        "expedited",
+        "expedited service",
+        "emergency",
+        "emergency food stamps",
+        "fast benefits",
+        "how fast",
+        "urgent",
+        "same day",
+        "7 day",
+        "seven day"
+      ],
+      "citation": "DTA \"Screening for Expedited Service\" / \"Issuing Expedited Benefits\" — MA expedited SNAP",
+      "heading": "Massachusetts expedited SNAP follows the federal criteria and must reach the household — EBT card in hand — within 7 calendar days of application; Massachusetts also layers a state-only expedited supplement on top",
+      "text": "A household qualifies for expedited SNAP if its monthly gross income is $150 or less AND liquid assets (cash and bank funds) are $100 or less; or if its shelter costs (rent/mortgage plus the Standard Utility Allowance DTA adds on) exceed the household's combined gross income and cash/savings; or if it is a migrant/seasonal farmworker household with $100 or less in liquid assets. DTA must screen every applicant for expedited eligibility at the time of first contact — typically during the application interview — and if the household qualifies, DTA \"must issue you SNAP benefits and make sure you have an EBT card in hand within 7 days of when you first apply,\" with identity as the only verification required before that initial issuance. Massachusetts additionally runs a State SNAP Supplement with its own expedited track, layered on top of (not instead of) the federal expedited standard — a household may qualify for the federal expedited benefit, the State SNAP Supplement expedited benefit, or both simultaneously. This pack's source discipline note: the specific dollar/day figures above are corroborated by a live DTA Online Guide page (\"Screening for Expedited Service\") this pass located via search but could not independently re-fetch the raw HTML for at draft time — the figures match the same federal expedited standard already primary-sourced in Illinois, Michigan, and Georgia's packs, which is the reason for the moderate-rather-than-highest confidence label here; re-verify with a raw fetch before treating this as fully primary-confirmed.",
+      "source_url": "https://eohhs.ehs.state.ma.us/DTA/PolicyOnline/BEACON5/!SSL!/WebHelp/SNAP/Application_Processing/Screening_for_Expedited_Service.htm"
+    },
+    {
+      "key": "reporting-certification",
+      "kind": "supplement",
+      "terms": [
+        "certification period",
+        "approval period",
+        "recertification",
+        "redetermination",
+        "rede",
+        "how long does snap last",
+        "how long does my snap approval last",
+        "how long does my approval last",
+        "redo",
+        "renew",
+        "simplified reporting",
+        "change reporting",
+        "report income",
+        "interim report",
+        "bay state cap"
+      ],
+      "citation": "DTA \"Simplified Reporting - Overview\"; \"Simplified Reporting - Recertification\" — MA certification periods and reporting",
+      "heading": "Massachusetts runs THREE simplified-reporting certification lengths — 12 months for most working households, and 24 or 36 months for elderly/disabled households depending on which special track they're on",
+      "text": "Fetched live from DTA's Online Guide: \"Simplified Reporting is a type of certification that allows for reduced reporting requirements for clients and reduced actions for DTA. Simplified Reporting clients are required to report changes... if their monthly gross income exceeds the limit for the household size,\" and if the household includes an ABAWD, if that person's work hours fall below 20/week or 80/month averaged — reportable no later than the 10th day following the end of the calendar month the change occurred. Three certification tracks this pack confirmed by household composition: Simplified Reporting - 12 Months (SIMP-12) — 12-month certification, one Interim Report (IR) required at month 6, typically households with earned income or mixed income/composition (may include an ABAWD); EDSAP Reporting (Elderly-Disabled Simplified Application Project) — 36-MONTH certification, NO interview required at recertification, NO gross income limit, and NO Interim Report requirement at all while the household stays eligible, for SNAP-only households where every adult member is elderly (60+) and/or disabled with no countable earned income; and a Simplified Reporting (Former EDSAP) track for households that lose EDSAP eligibility (e.g., a member turns 18 and isn't disabled, or the household picks up earned income) but keep their original 36-month certification with an added IR requirement. A related \"Bay State CAP Reporting\" track also exists for elderly/disabled households that can be converted to ordinary Simplified Reporting if they opt out and don't meet EDSAP criteria. Recertification mechanics apply across all tracks: the Recertification form is mailed to the head of household 45 days before the end of the certification period, with text/email reminders for households with a phone number in BEACON; a household can submit the form to the Document Processing Center or a Transitional Assistance Office, file electronically via DTA Connect (web or mobile app), recertify by phone through the DTA Assistance Line, or complete it in person.",
+      "source_url": "https://eohhs.ehs.state.ma.us/DTA/PolicyOnline/BEACON5/!SSL!/WebHelp/SNAP/Certification/Cert_SimpRptgOvw.htm"
+    },
+    {
+      "key": "restaurant-meals-program",
+      "kind": "supplement",
+      "terms": [
+        "restaurant meals program",
+        "rmp",
+        "eat at a restaurant",
+        "use ebt at restaurant",
+        "buy a hot meal",
+        "hot meal at a restaurant",
+        "prepared meals",
+        "hot food"
+      ],
+      "citation": "OLGT 2023-85 — MA Restaurant Meals Program",
+      "heading": "Massachusetts DOES operate a Restaurant Meals Program — launched December 2023, statewide by eligibility, growing in restaurant participation from an initial set of catchment areas",
+      "text": "OLGT 2023-85 (December 7, 2023), fetched as a live primary DTA bulletin, launched Massachusetts' Restaurant Meals Program (RMP): \"a state option that allows certain eligible households to use their SNAP benefits to purchase meals at approved restaurants,\" selected across \"priority communities\" for food insecurity, accessibility, cultural competency, equity, meal value, and location. Eligibility (statewide, automatic — no application needed): the SNAP grantee or a household member who is homeless, and/or federally certified as disabled, and/or 60 years or older; \"Eligible SNAP households will be automatically enrolled in the RMP and allowed to use their EBT cards at participating restaurant locations.\" Households receiving DTA CASH benefits (not just SNAP) may also purchase RMP meals with cash benefits regardless of the SNAP eligibility criteria, and a combo SNAP+cash household meeting RMP eligibility can use either benefit type. Purchase mechanics: meals average $11, are exempt from the state meals tax when paid by EBT at an RMP location, and SNAP funds cannot cover gratuity. RMP-eligible households are NOT limited to restaurants in their own catchment area — they \"may make purchases at any RMP-participating restaurant in Massachusetts\" — though DTA notifies households by text as new restaurants in their own catchment area come online. At launch, the first restaurant catchment areas were Fall River, Chelsea, Worcester, and Nubian Square, with ongoing expansion as more locations receive FNS approval. This directly corrects an earlier engine-constant assumption that Massachusetts does not operate an RMP at all — see PROVENANCE.md and the filed GitHub issue.",
+      "source_url": "https://eohhs.ehs.state.ma.us/DTA/PolicyOnline/olg%20docs/olgtm/2023/85.pdf"
+    },
+    {
+      "key": "program-identity",
+      "kind": "supplement",
+      "terms": [
+        "how to apply",
+        "where do i apply",
+        "apply for snap",
+        "who runs",
+        "what agency",
+        "which agency",
+        "administers",
+        "dta connect",
+        "beacon",
+        "ebt card",
+        "food stamps massachusetts"
+      ],
+      "citation": "DTA \"What is SNAP?\" — program identity",
+      "heading": "Massachusetts applies through DTA Connect; DTA runs SNAP directly with no county eligibility layer, and there is no special state nickname for the program",
+      "text": "\"The Supplemental Nutrition Assistance Program (SNAP, formerly known as Food Stamps), is a federally funded program that provides a monthly benefit to buy nutritious food\" (DTA, \"What is SNAP?\", last updated 9/20/2024) — Massachusetts uses the plain federal SNAP name; unlike CalFresh (CA), Basic Food (WA), or Illinois Link (IL's EBT brand), there is no distinct state program nickname. The Department of Transitional Assistance (DTA) administers SNAP directly through its Transitional Assistance Offices (TAOs) statewide — Massachusetts is state-administered, with no county-level eligibility agency layer (unlike California, New York, Wisconsin, or Minnesota in this roster). Applicants and clients use DTA Connect (dtaconnect.eohhs.mass.gov, also available as a mobile app) to apply, submit documents, recertify, and manage their case online; the worker-facing case-management system is BEACON. \"Eligibility guidelines are developed by the US Department of Agriculture (USDA)... The amount of SNAP benefits the household receives is based primarily on your monthly income and the number of people in your household,\" with dependent care costs, medical deductions, child support, and shelter costs also factored into net income and benefit calculation.",
+      "source_url": "https://eohhs.ehs.state.ma.us/DTA/PolicyOnline/BEACON5/!SSL!/WebHelp/SNAP/SNAP_WhatisSNAP.htm"
+    }
+  ]
+}

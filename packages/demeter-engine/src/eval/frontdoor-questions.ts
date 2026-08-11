@@ -251,4 +251,17 @@ export const FRONTDOOR_EVAL: FrontDoorCase[] = [
   { id: "fl-expedited", category: "FL", question: "How fast can I get emergency SNAP benefits in Florida?", expect: { kind: "external", citation: "FS 0610.0102" }, state: "FL" },
   { id: "fl-cert-period", category: "FL", question: "How long does my SNAP approval last in Florida before I have to redo it?", expect: { kind: "external", citation: "FS 0810.0400" }, state: "FL" },
   { id: "fl-federal-benefit", category: "FL", question: "How is the monthly benefit amount calculated from net income?", expect: { kind: "grounded", section: "273.10" }, state: "FL" },
+  // --- Massachusetts (Wave 2 — the two-cycle freshness case; resolved a prior SUA verification gap and two engine-comment errors along the way) ---
+  { id: "ma-program-name", category: "MA", question: "What agency runs SNAP in Massachusetts and where do I apply?", expect: { kind: "external", citation: "What is SNAP?" }, state: "MA" },
+  { id: "ma-income-limit", category: "MA", question: "What's the income limit for SNAP in Massachusetts?", expect: { kind: "external", citation: "106 CMR 364.976" }, state: "MA" },
+  { id: "ma-asset-limit", category: "MA", question: "Is there an asset or savings limit for SNAP in Massachusetts?", expect: { kind: "external", citation: "Assets Overview - SNAP" }, state: "MA" },
+  { id: "ma-sua", category: "MA", question: "What's the standard utility allowance for SNAP in Massachusetts?", expect: { kind: "external", citation: "106 CMR 364.945" }, state: "MA" },
+  { id: "ma-smd", category: "MA", question: "Is there a standard medical deduction for seniors on SNAP in Massachusetts?", expect: { kind: "external", citation: "106 CMR 364.500" }, state: "MA" },
+  { id: "ma-child-support", category: "MA", question: "Does paying child support lower my SNAP benefit in Massachusetts?", expect: { kind: "external", citation: "106 CMR 364.500" }, state: "MA" },
+  { id: "ma-abawd-waiver", category: "MA", question: "Is the SNAP work-requirement time limit currently waived anywhere in Massachusetts?", expect: { kind: "external", citation: "OLGT 2025-31" }, state: "MA" },
+  { id: "ma-drug-felony", category: "MA", question: "I have a drug felony conviction — can I still get SNAP in Massachusetts?", expect: { kind: "external", citation: "OLGT 2024-45" }, state: "MA" },
+  { id: "ma-restaurant-meals", category: "MA", question: "Can I use my EBT card to buy a hot meal at a restaurant in Massachusetts?", expect: { kind: "external", citation: "OLGT 2023-85" }, state: "MA" },
+  { id: "ma-expedited", category: "MA", question: "How fast can I get emergency SNAP benefits in Massachusetts?", expect: { kind: "external", citation: "Screening for Expedited Service" }, state: "MA" },
+  { id: "ma-cert-period", category: "MA", question: "How long does my SNAP approval last in Massachusetts before I have to recertify?", expect: { kind: "external", citation: "Simplified Reporting - Overview" }, state: "MA" },
+  { id: "ma-federal-benefit", category: "MA", question: "How is the monthly benefit amount calculated from net income?", expect: { kind: "grounded", section: "273.10" }, state: "MA" },
 ];
