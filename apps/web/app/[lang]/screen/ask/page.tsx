@@ -14,14 +14,16 @@
 // /screen/ask, which is the already-indexed URL.
 
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { VERIFIED_STATES, isAnswerLang, LANG_TAG, type AnswerLang } from "@civica/demeter-engine/packs";
-import { DemeterChat } from "../../../../components/DemeterChat";
+import { DemeterEntry } from "../../../../components/DemeterEntry";
+import { DemeterNav } from "../../../../components/DemeterNav";
+import { DemeterFooter } from "../../../../components/DemeterFooter";
+import { T } from "../../../../lib/i18n/demeter-chat-copy";
 import { SnapOrientation, SnapDetail } from "../../../../components/SnapOverview";
 import { PAGE_COPY } from "../../../../lib/i18n/snap-page";
 import { alternateLanguages, askUrl, PREFIXED_LANGS } from "../../../../lib/i18n/routes";
 import { askStructuredData } from "../../../screen/ask/structured-data";
-import { loadConversation } from "../../../../lib/demeter-conversations-server";
 
 export const dynamicParams = false;
 
@@ -78,9 +80,17 @@ export default async function LocalizedAskPage({
   const l = lang as AnswerLang;
 
   const { state, q, c, save } = await searchParams;
-  // Same as the English page: only read when ?c= is actually present, so the
-  // indexable path stays free of a cookie read.
-  const resumed = c ? await loadConversation(c) : null;
+  // Same rule as the English page: anything that is already a conversation
+  // belongs on the chat route, not the front door. Keeps the reader in their
+  // own language across the redirect.
+  if (c || q || save) {
+    const params = new URLSearchParams();
+    if (state) params.set("state", state);
+    if (q) params.set("q", q);
+    if (c) params.set("c", c);
+    if (save) params.set("save", save);
+    redirect(`/${l}/chat?${params.toString()}`);
+  }
   const initialState =
     state && VERIFIED_STATES.some((s) => s.code === state.toUpperCase())
       ? state.toUpperCase()
@@ -88,21 +98,28 @@ export default async function LocalizedAskPage({
 
   return (
     <main className="dmpage" lang={LANG_TAG[l]}>
+      <DemeterNav lang={l} path="/screen/ask" />
       <div className="dmpage__inner">
         <SnapOrientation lang={l} states={VERIFIED_STATES} />
         <div className="dmpage__chat">
-          <DemeterChat
+          {/* Entry point, not a chat — same as the English page. See
+              DemeterEntry's header for why the chat lives on its own route. */}
+          <DemeterEntry
             states={VERIFIED_STATES}
-            initialState={resumed ? resumed.state_code : initialState}
-            initialQuestion={q ?? null}
-            initialLang={l}
-            initialMessages={resumed?.messages ?? []}
-            savedConversationId={resumed?.id ?? null}
-            pendingSave={save === "pending"}
+            initialState={initialState}
+            lang={l}
+            copy={{
+              placeholder: T[l].inputPlaceholder,
+              send: T[l].send,
+              suggestions: [T[l].empty1, T[l].empty2, T[l].empty3],
+              picker: T[l].picker,
+              howWeVerify: T[l].howWeVerify,
+            }}
           />
         </div>
         <SnapDetail states={VERIFIED_STATES} lang={l} />
       </div>
+      <DemeterFooter lang={l} />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{

@@ -64,14 +64,6 @@ export function formQuestionAnswer(q: FormQuestion, lang: AnswerLang = "en"): st
   return lang === "en" ? q.whyAsked : FORM_QUESTION_I18N[q.topic]?.[lang] ?? q.whyAsked;
 }
 
-/** The lede — renders ABOVE the chat, so the page explains itself before it
- *  asks for input, without pushing the chat below the fold.
- *
- *  Two columns on wide screens. The right column is not decoration: a
- *  single-column lede left ~740px of the 1180px container empty, which is the
- *  "doesn't fill the page" complaint this rebuild exists to fix — and the
- *  honest thing to put there is what makes the answers trustworthy, stated
- *  plainly enough to be quoted. */
 /** THE ORIENTATION BAR — the top of the page and its only <h1>.
  *
  *  Replaces SnapLede, which opened the page with an <h2> about SNAP and left
@@ -109,7 +101,10 @@ export function SnapOrientation({
     // claim on this page that is countable and checkable, and they answer the
     // question a first-time visitor actually has — "does this know about MY
     // state?" — at a glance, before any prose.
-    <section className="dmo" aria-labelledby="demeter-h1">
+    <section
+      className={states.length > 0 ? "dmo dmo--split" : "dmo"}
+      aria-labelledby="demeter-h1"
+    >
       <div className="dmo__text">
         <p className="dmo__eyebrow">{c.eyebrow}</p>
         <h1 id="demeter-h1" className="dmo__h1">
