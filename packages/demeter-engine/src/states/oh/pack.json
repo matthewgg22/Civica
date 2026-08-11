@@ -1,0 +1,47 @@
+{
+  "code": "OH",
+  "program": "Supplemental Nutrition Assistance Program (SNAP) — no distinctive local nickname; ODJFS's own rules and the Ohio Benefits portal use the federal name throughout, sometimes shortened to \"Food Assistance\"",
+  "agency": "Ohio Department of Job and Family Services (ODJFS), administered locally by County Departments of Job and Family Services (CDJFS)",
+  "admin_model": "county",
+  "admin_note": "Ohio runs a state-supervised, COUNTY-administered system: ODJFS writes the Ohio Administrative Code 5101:4 rules and issues Food Assistance Change Transmittals, but each County Department of Job and Family Services (CDJFS) — a county government agency funded by federal, state, AND local dollars, not a state field office — determines eligibility. Confirm current operative practice (processing times, local outreach materials, whether a household actually received the Ohio Careline notice) with the applicant's own county CDJFS, the same caution this roster already carries for CA/NY/MN/WI.",
+  "system": "Ohio Benefits (the state's integrated eligibility system; applicants and caseworkers both call the online front end \"Ohio Benefits Self Service Portal\")",
+  "portal": {
+    "name": "Ohio Benefits Self Service Portal",
+    "url": "https://ssp.benefits.ohio.gov"
+  },
+  "update_channels": [
+    {
+      "name": "Ohio Administrative Code, Division 5101:4 (Food Stamps) — the authoritative eligibility rules, published at codes.ohio.gov",
+      "url": "https://codes.ohio.gov/ohio-administrative-code/chapter-5101:4-4"
+    },
+    {
+      "name": "ODJFS Food Assistance Certification Handbook and Change Transmittals — the annual FFY dollar-figure source (e.g. Food Assistance Change Transmittal No. 105, Oct 1 2025 mass change)",
+      "url": "https://emanuals.jfs.ohio.gov/CashFoodAssist/FACM/index.stm"
+    },
+    {
+      "name": "Ohio Department of Job and Family Services — Food Assistance program page",
+      "url": "https://jfs.ohio.gov/public-assistance/food-assistance"
+    },
+    {
+      "name": "USDA FNS ABAWD Waivers FY 2025-2029 (state response documents)",
+      "url": "https://www.fns.usda.gov/snap/waivers/timelimit/2025-2029"
+    }
+  ],
+  "verification": {
+    "verified_on": "2026-08-11",
+    "method": "Direct fetch of individual Ohio Administrative Code 5101:4 rule pages at codes.ohio.gov (including a raw-PDF curl of the authenticated LSC-stamped rule text for 5101:4-2-02 to resolve a paraphrase-tool inconsistency — see PROVENANCE.md), the Ohio Revised Code sections governing the drug-felony opt-out (§ 5101.84) and the 2025 ABAWD-waiver-request prohibition (§ 5101.548), and the October 1, 2025 FFY26 dollar-figure table (Food Assistance Change Transmittal No. 105). Cross-checked against the ALREADY-VERIFIED packages/snap-rules StatePolicy entry for OH (bbce_threshold_pct=130, asset_waiver=true, sua_by_tier HCSUA=766/LUA=479/phone=46, drug_felony_ban=false, abawd_waiver_avail=true) — two discrepancies found and disclosed rather than silently reconciled; see PROVENANCE.md.",
+    "gates": "Every dollar figure traced to Food Assistance Change Transmittal No. 105 (Aug 29, 2025, effective Oct 1, 2025), matching the SUA figures already independently verified in snap-rules' states.ts. Every categorical-eligibility and ABAWD-waiver claim traced to a specific, dated Ohio Administrative Code rule or Ohio Revised Code section fetched directly from codes.ohio.gov (including a raw authenticated-PDF read for the Ohio Careline provision after a summarization tool gave two contradictory paraphrases of the same rule on two separate fetches). Adversarial refute pass recorded in PROVENANCE.md, including the two flagged discrepancies against the corpus's own already-verified engine constants.",
+    "sources": [
+      "Ohio Administrative Code 5101:4-2-02, Categorically eligible assistance groups — effective October 1, 2024 (authenticated PDF, codes.ohio.gov)",
+      "Ohio Administrative Code 5101:4-4-01, Resource eligibility — effective December 1, 2023",
+      "Ohio Administrative Code 5101:4-4-03, Resource exclusions (vehicles) — effective December 1, 2023",
+      "Ohio Administrative Code 5101:4-4-23, Deductions from income — effective April 1, 2026",
+      "Ohio Administrative Code 5101:4-5-03, Certification periods — effective April 1, 2026",
+      "Ohio Administrative Code 5101:4-6-09, Expedited service — effective April 1, 2026",
+      "Ohio Revised Code § 5101.84, Drug-felony SNAP opt-out — effective October 16, 2009",
+      "Ohio Revised Code § 5101.548, ABAWD waiver-request prohibition (enacted via HB 96) — effective September 30, 2025",
+      "ODJFS Food Assistance Change Transmittal No. 105, October 1, 2025 Mass Change (dam.assets.ohio.gov) — issued August 29, 2025",
+      "USDA FNS Restaurant Meals Program state list; abawdmap.us current-waiver-status page, fetched 2026-08-11"
+    ]
+  }
+}

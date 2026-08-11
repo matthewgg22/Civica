@@ -85,4 +85,9 @@ export const QUESTIONS: Record<string, string[]> = {
     "Does my car count against me for SNAP in Pennsylvania?",
     "How fast can I get emergency SNAP benefits in Pennsylvania?",
   ],
+  OH: [
+    "What is the income limit for SNAP in Ohio?",
+    "Is the SNAP work-requirement time limit waived anywhere in Ohio?",
+    "How fast can I get emergency SNAP benefits in Ohio?",
+  ],
 };

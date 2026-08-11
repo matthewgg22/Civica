@@ -1,0 +1,225 @@
+{
+  "_provenance": {
+    "note": "Ohio SNAP curated supplements. Ohio is an unusual case in this roster: the Civica engine already carries a full, independently-verified StatePolicy entry for OH in packages/snap-rules/src/constants/states.ts (bbce_threshold_pct=130, asset_waiver=true, sua_by_tier HCSUA=766/LUA=479/phone=46, drug_felony_ban=false, abawd_waiver_avail=true) — this pack is CORPUS-ONLY and does not touch that file. Drafted from direct fetches of individual Ohio Administrative Code 5101:4 rule pages at codes.ohio.gov (including a raw authenticated-PDF read of 5101:4-2-02 after a summarizing fetch tool gave two CONTRADICTORY paraphrases of the same rule's Ohio Careline provision on two separate passes — resolved by reading the primary text directly rather than trusting either paraphrase), Ohio Revised Code sections at codes.ohio.gov, and ODJFS's own Food Assistance Change Transmittal No. 105 (the FFY26 dollar-figure source). Independently cross-checked against the already-verified states.ts entry; two genuine discrepancies found and disclosed rather than silently reconciled — see PROVENANCE.md.",
+    "extracted": "2026-08-11",
+    "source_fact_check": "direct fetch of individual Ohio Administrative Code rule pages (with a raw-PDF re-read where a summarizer proved unreliable) + Ohio Revised Code sections + ODJFS Food Assistance Change Transmittal No. 105 + cross-check against the already-verified snap-rules states.ts OH entry + post-draft adversarial refute pass; corrections and unresolved gaps recorded in PROVENANCE.md"
+  },
+  "supplements": [
+    {
+      "key": "income-pathways",
+      "kind": "supplement",
+      "terms": [
+        "income limit",
+        "income limits",
+        "gross income limit",
+        "gross income ceiling",
+        "make too much",
+        "over income",
+        "bbce",
+        "categorical eligibility",
+        "categorically eligible",
+        "broad-based categorical eligibility",
+        "200 percent",
+        "200%",
+        "poverty level",
+        "ohio careline",
+        "careline"
+      ],
+      "citation": "OAC 5101:4-2-02 — Ohio's categorical-eligibility structure (narrow OWF/SSI/PRC pathway with no income test at all, PLUS a genuine flat 200% FPL broad-based pathway called \"Ohio careline\" that this pack found is NOT reflected in the engine's bbce_threshold_pct=130 constant)",
+      "heading": "Ohio runs TWO very different categorical-eligibility pathways — a narrow one for OWF/SSI/PRC recipients with no income test at all, and a genuinely flat 200% FPL broad-based pathway called \"Ohio careline\" that this pack's primary-source read found is NOT captured by the engine's current BBCE constant",
+      "text": "Ohio Administrative Code 5101:4-2-02 defines categorical eligibility (waiving the 130% gross income limit, the net income limit, AND the resource limit — all three, per paragraph (C)) through several pathways. The narrow pathway: an assistance group is categorically eligible with no income test at all when every member receives or is authorized to receive Ohio Works First (OWF), Supplemental Security Income (SSI), or is authorized for Prevention, Retention, and Contingency (PRC) benefits/services — the classic TANF/SSI-recipient categorical-eligibility pathway every state has. SEPARATELY, and this is the flagship finding of this pack: paragraph (B)(1) defines \"Ohio careline\" — an assistance group with gross income at or below 200% of the federal poverty level is sent \"a notice and a text message with a link\" describing Ohio Careline's crisis-support services, delivered on the approval notice at BOTH application and recertification. Ohio Careline itself is a real, free, 24/7 statewide behavioral-health crisis call line (a TANF-funded, universally-available, non-cash service — structurally the same conferral-vehicle family as Georgia's TCOS pamphlet, Michigan's DVPS enrollment, Minnesota's Domestic Violence Information Brochure, Nevada's TANF brochure, Oregon's Information and Referral pamphlet, and Wisconsin's Job Center notice, all elsewhere in this roster). Once notified, the household is categorically eligible under the SAME waived-factors list as OWF/SSI/PRC households (5101:4-2-02(C)): the 130% gross test, the net income test, AND the resource limit are ALL waived — this is a genuine flat 200% FPL screen, not merely an asset-test waiver at the federal 130% gross ceiling. A household that exceeds 200% FPL, or that is excluded under 5101:4-2-02(D) (an intentional-program-violation disqualification, a probation/parole violation, a fleeing-felon status, or an ABAWD failing the work requirement), falls back to the standard federal test: 130% gross / 100% net with the ordinary $3,000/$4,500 resource limit described in the asset-rule supplement. SEPARATELY, Ohio also implements the standard federal \"separate assistance group\" provision for an elderly (60+) AND disabled individual living with others who is unable to purchase and prepare their own meals (OAC 5101:4-6-29, 7 CFR 273.1(b)(2)): if the OTHER people that person lives with have gross income at or below 165% of the federal poverty level for their own assistance-group size (comparing THEIR income only, not the elderly/disabled individual's), the elderly/disabled individual (and spouse) is treated as a separate one- or two-person assistance group rather than being folded into the larger household. This is the source of the 165% figure Food Assistance Change Transmittal No. 105 publishes alongside the 130%/200% tables — it is a household-COMPOSITION rule (who counts as a separate assistance group), not a third income-eligibility screen layered on top of the 130%/200% categorical-eligibility structure described above.",
+      "source_url": "https://codes.ohio.gov/ohio-administrative-code/rule-5101:4-2-02"
+    },
+    {
+      "key": "asset-rule",
+      "kind": "supplement",
+      "terms": [
+        "asset limit",
+        "asset test",
+        "resource limit",
+        "resource test",
+        "resources",
+        "savings",
+        "savings limit",
+        "bank account",
+        "vehicle",
+        "car count",
+        "does my car count"
+      ],
+      "citation": "OAC 5101:4-4-01; OAC 5101:4-4-03 — Ohio resource limits ($3,000 standard / $4,500 elderly-or-disabled, waived entirely for OWF/SSI/PRC/Ohio-careline categorically eligible households; vehicles excluded under Ohio's TANF-plan authority)",
+      "heading": "Ohio's $3,000/$4,500 resource limit only reaches households that are NOT categorically eligible under OAC 5101:4-2-02 — which, given Ohio Careline's 200% FPL reach, is a narrower slice of applicants than the raw dollar figures suggest",
+      "text": "OAC 5101:4-4-01 states plainly that an assistance group NOT determined categorically eligible under 5101:4-2-02 must be under the resource limit to qualify for SNAP. The standard resource limit is $3,000; households with at least one aged (60+) or disabled member face a $4,500 limit instead (both figures effective October 1, 2025 per Food Assistance Change Transmittal No. 105, unchanged from the prior FFY — the transmittal states resource standards did NOT increase this cycle even though every dollar-figure income/deduction table did). Because OAC 5101:4-2-02 waives the resource limit entirely for OWF/SSI/PRC recipients AND for any household at or below 200% FPL that received the Ohio Careline notice (see the income-pathways supplement), the population actually SUBJECT to this dollar limit is narrower than a reader might assume from the limit alone — it reaches only households above 200% FPL, or households otherwise excluded from categorical eligibility (an IPV disqualification, probation/parole violation, fleeing-felon status, or an ABAWD not meeting the work requirement). Vehicles: OAC 5101:4-4-03(A)(6) excludes vehicles \"in accordance with Ohio's temporary assistance for needy families (TANF) plan as permitted by\" the Agriculture, Rural Development, Food and Drug Administration and Related Agencies Appropriations Act of 2001 (Pub. L. No. 106-387 § 847) — the SAME federal vehicle-exclusion authority Pennsylvania's pack (elsewhere in this roster) cites for its blanket one-vehicle-per-household rule. This pack could NOT find the exact number of vehicles excluded, or a specific per-vehicle equity-value exclusion dollar figure, spelled out in the codified rule text itself — 5101:4-4-03(A)(6) defers entirely to Ohio's own TANF state plan rather than restating the mechanics in the SNAP rule, a genuine documentation gap a maintainer should resolve by pulling Ohio's current TANF state plan directly (jfs.ohio.gov) before building calculator logic on a specific vehicle-exclusion dollar amount.",
+      "source_url": "https://codes.ohio.gov/ohio-administrative-code/rule-5101:4-4-01"
+    },
+    {
+      "key": "sua-values",
+      "kind": "supplement",
+      "terms": [
+        "utility allowance",
+        "utility standard",
+        "shelter deduction",
+        "excess shelter",
+        "standard utility allowance",
+        "heating standard",
+        "cooling standard",
+        "telephone standard",
+        "phone standard",
+        "homeless shelter deduction"
+      ],
+      "citation": "OAC 5101:4-4-23; ODJFS Food Assistance Change Transmittal No. 105 (eff. Oct 1, 2025) — Ohio's four-tier utility-allowance structure (Standard Utility Allowance $766, Limited Utility Allowance $479, Single Standard Utility Allowance $108, Single Telephone Allowance $46), and FFY26 deduction figures",
+      "heading": "Ohio's SUA figures for FFY26 EXACTLY MATCH the already-independently-verified engine constants — a genuine four-tier ladder, but the engine currently maps only three of the four tiers",
+      "text": "Effective October 1, 2025, per Food Assistance Change Transmittal No. 105 (issued August 29, 2025, ODJFS's annual FFY dollar-table mass change): the Standard Utility Allowance (heating/cooling households) is $766/month, the Limited Utility Allowance (2+ non-heat utilities, no heat/cool) is $479/month, and the Single Telephone Allowance (phone-only utility cost) is $46/month — these three figures EXACTLY MATCH the already-independently-verified packages/snap-rules HCSUA/LUA/phone constants for Ohio, a clean cross-check with no discrepancy. Ohio publishes a FOURTH tier the engine's {HCSUA, LUA, phone} shape has no slot for: the Single Standard Utility Allowance, $108/month, for a household paying exactly one non-heat, non-phone utility — more granular than the Limited Utility Allowance's \"2+ utilities\" bucket. This mirrors what the engine's own states.ts comment already documents for Ohio (\"more granular than LUA's '2+ utilities' — mapped only the three tiers the engine can actually select ... $108 is real but unreachable\"), so this pack's independent primary-source read CONFIRMS rather than corrects that existing engine-side documentation. Separately: the Standard Deduction is $209 (assistance-group size 1-3), $223 (4), $261 (5), $299 (6+); the Excess Shelter Deduction cap is $744/month; and the Maximum Homeless Shelter Deduction is $198/month — all effective October 1, 2025, all due for the next October 2026 COLA refresh (see freshness.json). OAC 5101:4-4-23 (Deductions from Income) is the codified rule governing all of these deductions' MECHANICS; the dollar figures themselves live on the annual Change Transmittal, not in the codified rule text — the same table-not-rule-text split the states.ts author already flagged for Ohio's SUA sourcing.",
+      "source_url": "https://codes.ohio.gov/ohio-administrative-code/rule-5101:4-4-23"
+    },
+    {
+      "key": "medical-deduction",
+      "kind": "supplement",
+      "terms": [
+        "medical deduction",
+        "medical expense",
+        "medical expenses",
+        "medical bills",
+        "elderly deduction",
+        "disability deduction",
+        "excess medical"
+      ],
+      "citation": "OAC 5101:4-4-23 — Ohio excess medical deduction (plain federal actual-expense-minus-$35, elderly/disabled members only, no flat standard amount)",
+      "heading": "Ohio uses the plain federal actual-expense-minus-$35 Excess Medical Deduction — no Ohio-specific flat Standard Medical Deduction dollar figure",
+      "text": "OAC 5101:4-4-23 allows a deduction for non-reimbursable medical and dental costs (including psychotherapy and rehabilitation services from a state-licensed or otherwise qualified practitioner) that exceed $35/month, verified within 30 days of being billed or otherwise coming due — the plain federal mechanism (7 CFR 273.9(d)(3)) used by Minnesota, Florida, Oregon, and Pennsylvania in this roster rather than Georgia's or Illinois' flat Standard Medical Deduction dollar figure. The deduction is available only for an assistance group member who is elderly (60+) or disabled as defined in OAC 5101:4-1-03. A notable Ohio-specific carve-out: assistance groups with POTENTIAL categorical eligibility that include an SSI applicant later found categorically eligible (and entitled to restored benefits), as well as households receiving emergency SSI on presumptive eligibility, are also entitled to use the excess medical deduction when their restored benefits are calculated. This pack found no Ohio-specific flat medical-deduction dollar figure anywhere in the fetched rule text — the deduction is computed entirely from actual verified expenses above the $35 federal floor.",
+      "source_url": "https://codes.ohio.gov/ohio-administrative-code/rule-5101:4-4-23"
+    },
+    {
+      "key": "child-support-deduction",
+      "kind": "supplement",
+      "terms": [
+        "child support",
+        "support payments",
+        "child support deduction",
+        "dependent care",
+        "child care deduction",
+        "daycare",
+        "alimony"
+      ],
+      "citation": "OAC 5101:4-4-23 — Ohio child support deduction (ordinary deduction for legally-obligated payments, including vendor/third-party payments; alimony excluded)",
+      "heading": "Ohio deducts legally-obligated child support paid to (or on behalf of) a non-household member, including third-party vendor payments and arrearages — alimony does NOT count",
+      "text": "OAC 5101:4-4-23 provides an ordinary DEDUCTION (7 CFR 273.9(d)(5), the same mechanism this roster's other states — Georgia, Michigan, Minnesota, Oregon, Pennsylvania, Wisconsin — use, not Illinois' income-exclusion approach) for legally-obligated child support an assistance group member actually pays to or for a non-household member. This explicitly includes vendor payments — money paid directly to a third party (e.g., a landlord or medical provider) on the non-household member's behalf counts the same as a direct cash payment to the receiving parent. The county agency must allow a deduction for amounts paid toward arrearages (past-due support), in addition to current-month obligations. Ohio explicitly EXCLUDES alimony/spousal-support payments made to or for a non-household member from this deduction — alimony is not child support for this purpose, the same distinction Pennsylvania's pack documents. County agencies must budget child support payments PROSPECTIVELY (based on the expected future amount) regardless of which budgeting method — prospective or retrospective — applies to the rest of the assistance group's circumstances, a notable Ohio-specific procedural detail this pack did not find spelled out this precisely in every other state's pack in this roster. Dependent care costs are deducted separately under the same rule at actual verified cost.",
+      "source_url": "https://codes.ohio.gov/ohio-administrative-code/rule-5101:4-4-23"
+    },
+    {
+      "key": "abawd-work-requirement",
+      "kind": "supplement",
+      "terms": [
+        "abawd",
+        "able bodied adult",
+        "work requirement",
+        "time limit",
+        "3 month limit",
+        "work registration",
+        "waiver",
+        "waived area"
+      ],
+      "citation": "ORC 5101.548 (eff. Sept 30, 2025); OAC 5101:4-3-20 — Ohio's ABAWD time limit, and a STATUTORY PROHIBITION on ODJFS seeking any geographic waiver going forward — this pack found this DIRECTLY CONTRADICTS the engine's abawd_waiver_avail=true constant",
+      "heading": "Ohio is now LEGALLY BARRED from requesting an ABAWD geographic waiver — Ohio Revised Code § 5101.548, effective September 30, 2025, prohibits ODJFS from requesting, applying for, or renewing one, and this pack found the engine's current abawd_waiver_avail=true constant does not reflect this",
+      "text": "An able-bodied adult without dependents (ABAWD) is limited to three countable months of SNAP in a fixed three-year period unless meeting the work requirement, an exemption, or living in a currently-waived geographic area (7 CFR 273.24; OAC 5101:4-3-20 governs Ohio's ABAWD exemptions). THIS PACK'S FLAGSHIP FINDING: Ohio House Bill 96 (the FY2026-2027 state operating budget, signed June 30, 2025) enacted Ohio Revised Code § 5101.548, effective September 30, 2025, which states in subsection (B): the department of job and family services \"shall not request, apply for, or renew a waiver authorized by section 6(o)(4) of the 'Food and Nutrition Act of 2008,' 7 U.S.C. 2015(o)(4)\" — the exact federal provision that authorizes an ABAWD geographic time-limit waiver. Subsection (A) separately bars ODJFS from implementing the 15%-exemption discretionary option under 7 U.S.C. 2015(o)(6), with a narrow carve-out \"only to prevent a federal penalty and to maintain compliance with federal rules.\" Independently corroborated: as of this pack's build date, USDA's own current ABAWD waiver tracking and the independent abawdmap.us tracker both show Ohio with NO active statewide or county-level ABAWD waiver anywhere in the state — consistent with a state that is now statutorily prohibited from requesting one. THIS APPEARS TO DIRECTLY CONTRADICT the packages/snap-rules engine's current OH StatePolicy constant, abawd_waiver_avail=true — see PROVENANCE.md for the full discrepancy writeup; this pack does not silently resolve it, since packages/snap-rules is out of scope for this task and the discrepancy needs a human decision on which value the engine should carry going forward.",
+      "source_url": "https://codes.ohio.gov/ohio-revised-code/section-5101.548"
+    },
+    {
+      "key": "criminal-justice-disqualifications",
+      "kind": "supplement",
+      "terms": [
+        "drug felony",
+        "felony conviction",
+        "criminal record",
+        "drug conviction",
+        "drug test",
+        "drug testing",
+        "lifetime ban",
+        "fleeing felon",
+        "probation",
+        "parole",
+        "intentional program violation"
+      ],
+      "citation": "ORC 5101.84 (eff. Oct 16, 2009); OAC 5101:4-2-02(D) — Ohio's full statutory opt-out from the federal drug-felony SNAP ban, confirmed independently by this pack; separate probation/parole/fleeing-felon/IPV disqualifications remain",
+      "heading": "Ohio does NOT disqualify SNAP applicants or recipients for a drug felony conviction — this pack independently confirmed the primary statutory text the engine's already-verified drug_felony_ban=false constant relies on",
+      "text": "Ohio Revised Code § 5101.84 (effective October 16, 2009) states that an individual otherwise ineligible for SNAP benefits under the Food and Nutrition Act of 2008 because of the federal drug-felony provision (21 U.S.C. § 862a(a)) \"is eligible for the aid or benefits if the individual meets all other eligibility requirements\" — an unconditional, full statutory opt-out naming SNAP explicitly, with no treatment-compliance, drug-testing, or tiered-penalty condition attached (unlike, for example, Pennsylvania's neighboring modified-ban pattern the corpus roster documents for a different state). This pack independently fetched and confirmed the exact statutory text already cited in the engine's states.ts entry (\"VERIFIED FULL OPT-OUT\") — no discrepancy found here, unlike the ABAWD-waiver and BBCE-threshold findings elsewhere in this pack. Separately, OAC 5101:4-2-02(D) lists the disqualifications that DO still apply and cannot be cured by categorical eligibility: an intentional program violation (IPV) finding; failure to comply with specific work/reporting requirements; violating a condition of probation or parole; fleeing to avoid prosecution, custody, or confinement; or being out of compliance with a sentence for certain convictions. None of these is a drug-felony-specific disqualification — they are the same generic fleeing-felon/probation-violation/IPV categories this roster's other states also carry under 7 CFR 273.11(n) and 273.16.",
+      "source_url": "https://codes.ohio.gov/ohio-revised-code/section-5101.84"
+    },
+    {
+      "key": "restaurant-meals-program",
+      "kind": "supplement",
+      "terms": [
+        "restaurant meals program",
+        "rmp",
+        "eat at a restaurant",
+        "use ebt at restaurant",
+        "hot meal",
+        "hot food"
+      ],
+      "citation": "USDA FNS Restaurant Meals Program state list — Ohio does NOT operate a Restaurant Meals Program",
+      "heading": "Ohio does not operate a Restaurant Meals Program at all — no elderly, disabled, or homeless SNAP recipient can currently use EBT at any Ohio restaurant",
+      "text": "The Restaurant Meals Program (RMP) is a state OPTION under 7 CFR 274.7(g) allowing elderly (60+), disabled, and homeless SNAP recipients to buy prepared meals from authorized restaurants with their EBT card. Ohio is not among the states that have adopted it — USDA FNS's current RMP participant list includes Arizona, California, Illinois (Cook and Franklin counties), Maryland, Massachusetts, Michigan, New York, Rhode Island, and Virginia, and Ohio is not on that list. This confirms — rather than contradicts — the already-verified engine constant rmp_operated=false for Ohio; no discrepancy found. A Ohio SNAP recipient cannot use their EBT card at any restaurant under any circumstance, regardless of age, disability, or housing status, unless and until ODJFS elects to adopt the program.",
+      "source_url": "https://www.fns.usda.gov/snap/retailer/restaurant-meals-program"
+    },
+    {
+      "key": "expedited-service",
+      "kind": "supplement",
+      "terms": [
+        "expedited",
+        "expedited service",
+        "emergency",
+        "emergency food stamps",
+        "fast benefits",
+        "how fast",
+        "urgent",
+        "same day",
+        "24 hour",
+        "seven day",
+        "7 day"
+      ],
+      "citation": "OAC 5101:4-6-09 — Ohio expedited SNAP (a stricter, faster 24-hour tier for zero-net-income households on top of the federal-standard 7-day $150/$100 tier)",
+      "heading": "Ohio runs a two-tier expedited-service structure — a 24-hour (or 72-hour with mitigating circumstances) tier for zero-net-income households, faster than the federal-standard 7-day tier that covers everyone else who qualifies",
+      "text": "OAC 5101:4-6-09 establishes two distinct expedited-service tiers. The faster tier: an assistance group with ZERO net income AND liquid resources of $100 or less must be certified for SNAP benefits within 24 hours of application — or, when mitigating circumstances occur, within 72 hours. The standard federal tier (matching the 7-day ceiling this roster's other states describe): a household qualifies for expedited service if gross monthly income is under $150 AND liquid resources are $100 or less; if the household is a destitute migrant/seasonal farm-worker household with $100 or less in liquid resources; or if combined monthly income and liquid resources are less than the household's rent/mortgage plus utility costs. Identity is the ONLY verification required before expedited benefits are authorized — every other verification factor (residency, income, liquid resources) should be pursued through reasonable effort but must NOT delay benefits past the expedited-service processing standard; Social Security numbers specifically can be postponed until the household's second month of participation (or third month, for applications filed after the 15th of the month).",
+      "source_url": "https://codes.ohio.gov/ohio-administrative-code/rule-5101:4-6-09"
+    },
+    {
+      "key": "reporting-certification",
+      "kind": "supplement",
+      "terms": [
+        "certification period",
+        "approval period",
+        "recertification",
+        "redetermination",
+        "how long does snap last",
+        "how long does my snap approval last",
+        "how long does my approval last",
+        "redo",
+        "renew",
+        "annual reporter"
+      ],
+      "citation": "OAC 5101:4-5-03 — Ohio certification periods (36 months for zero-earned-income elderly/disabled households, down to 4-6 months for households with an ABAWD member or otherwise unstable circumstances)",
+      "heading": "Ohio's LONGEST certification period (36 months) goes to zero-earned-income elderly/disabled households, and its SHORTEST (4-6 months) goes to households with an able-bodied adult without dependents (ABAWD) member, or otherwise unstable circumstances",
+      "text": "OAC 5101:4-5-03 requires the county agency to assign the longest certification period the household's circumstances support. Four distinct tiers: a 36-month period applies when every adult member of the assistance group is elderly or disabled AND the group has no countable EARNED income (minor children may still be present regardless of disability status, but any assistance group containing an able-bodied adult (ABA) is barred from this tier entirely). A standard 12-month period applies to most households with stable, predictable circumstances — the rule's own default. Shorter periods of 4, 5, or 6 months apply to households with unstable circumstances: an assistance group containing an ABA specifically MUST receive a 6-month certification; other households facing zero net income, homelessness, anticipated ineligibility, or migrant/seasonal farm-worker status receive a 4-, 5-, or 6-month period depending on the individual circumstance that makes the household's situation unpredictable. Ohio also runs an \"Annual Reporter\" simplified-reporting status for elderly/disabled households with no earned income, carrying a mid-certification renewal requirement by the end of the 12th month even within a longer certification period — a maintainer should confirm the exact interaction between the 36-month certification tier and Annual Reporter mid-point renewal directly against OAC 5101:4-5-03 and 5101:4-6-29 before building calendar logic on it, since this pack's fetch of the certification-period rule did not itself define \"annual reporter\" in the same section.",
+      "source_url": "https://codes.ohio.gov/ohio-administrative-code/rule-5101:4-5-03"
+    },
+    {
+      "key": "program-identity",
+      "kind": "supplement",
+      "terms": [
+        "how to apply",
+        "where do i apply",
+        "apply for snap",
+        "ohio benefits",
+        "who runs",
+        "what agency",
+        "administers",
+        "cdjfs",
+        "county job and family services",
+        "jfs 07200"
+      ],
+      "citation": "ODJFS / Ohio Benefits program materials — Ohio applies through the Ohio Benefits Self Service Portal; County Departments of Job and Family Services (CDJFS) are actual COUNTY government agencies, not state field offices",
+      "heading": "Ohio applies through the Ohio Benefits Self Service Portal; unlike Pennsylvania's or Michigan's state-run field-office model, Ohio's County Departments of Job and Family Services are genuine county government agencies partly funded by local dollars",
+      "text": "Ohio's SNAP program carries no distinctive local nickname — ODJFS's own rules and public materials call it SNAP or \"Food Assistance\" throughout, unlike Minnesota's \"Food Support\" or Michigan's \"Food Assistance Program (FAP)\" branding elsewhere in this roster. Applications run through the Ohio Benefits Self Service Portal (ssp.benefits.ohio.gov, requiring an OHID login) or on paper (JFS 07200, \"Application for Supplemental Nutrition Assistance Program (SNAP), Cash Assistance, Medical Assistance, or Child Care Assistance\") at a local County Department of Job and Family Services (CDJFS). CRITICALLY, and unlike Pennsylvania's County Assistance Offices (which are DHS's own state field offices) or Michigan's state-run structure: Ohio runs a genuine state-SUPERVISED, county-ADMINISTERED system — ODJFS writes the OAC 5101:4 rules and issues the annual Food Assistance Change Transmittals, but each CDJFS is an actual county government agency, funded through a combination of federal, state, AND LOCAL county dollars, the same administrative archetype this roster already documents for California, New York, Minnesota, and Wisconsin. This matters for operative practice: exact processing behavior, outreach materials, and whether a specific household actually received the Ohio Careline notice can vary county to county even though the underlying OAC rules are statewide — confirm current practice with the applicant's own county CDJFS rather than assuming uniform statewide execution. Ohio's eligibility determinations run on the state's integrated \"Ohio Benefits\" system.",
+      "source_url": "https://jfs.ohio.gov/public-assistance/food-assistance"
+    }
+  ]
+}

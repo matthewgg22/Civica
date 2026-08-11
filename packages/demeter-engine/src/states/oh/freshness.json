@@ -1,0 +1,38 @@
+{
+  "_provenance": {
+    "note": "Ohio dated facts. Dollar values ride the annual FFY dollar-table cycle in ODJFS's Food Assistance Change Transmittal series (currently Transmittal No. 105, effective 10/1/2025), which this pass confirmed matches the SUA figures already independently verified in packages/snap-rules' states.ts. Two entries below record genuine, primary-source-confirmed DISCREPANCIES against that already-verified engine entry — not routine COLA-cycle warnings — and are the load-bearing content of this pack.",
+    "extracted": "2026-08-11"
+  },
+  "entries": [
+    {
+      "key": "oh-ffy26-dollar-values-recheck",
+      "kind": "expires",
+      "date": "2026-09-30",
+      "warning": "Ohio's FFY26 dollar figures (Standard Utility Allowance $766, Limited Utility Allowance $479, Single Standard Utility Allowance $108, Single Telephone Allowance $46, Standard Deduction $209/$223/$261/$299, Excess Shelter cap $744, Homeless Shelter Deduction $198, resource limits $3,000/$4,500) are all sourced from Food Assistance Change Transmittal No. 105, effective 10/1/2025 — due for the October 2026 COLA update. Find the successor transmittal (the next dated Food Assistance Change Transmittal at emanuals.jfs.ohio.gov) before quoting any Ohio dollar amount after this date."
+    },
+    {
+      "key": "oh-bbce-threshold-discrepancy-recheck",
+      "kind": "expires",
+      "date": "2026-11-01",
+      "warning": "DISCREPANCY vs the already-verified snap-rules engine constant: states.ts records OH bbce_threshold_pct=130 (\"BBCE at the FEDERAL 130% ... the same archetype as Georgia ... waives the asset test without raising the income screen\"). This pack's direct read of OAC 5101:4-2-02 (effective 10/1/2024, confirmed via a raw authenticated-PDF fetch after a summarizing tool gave contradictory paraphrases) found a genuine 200% FPL broad-based categorical-eligibility pathway — \"Ohio careline\" — that waives the 130% gross test, the net income test, AND the resource limit for any household at or below 200% FPL that receives the (routine, notice-plus-text-message) Careline notification at application or recertification. This is NOT reflected in the 130% engine constant. Re-verify OAC 5101:4-2-02 directly and resolve which figure the engine should carry before this date; this pack does not touch packages/snap-rules and does not resolve the discrepancy itself."
+    },
+    {
+      "key": "oh-abawd-waiver-prohibition-recheck",
+      "kind": "expires",
+      "date": "2026-11-01",
+      "warning": "DISCREPANCY vs the already-verified snap-rules engine constant: states.ts records OH abawd_waiver_avail=true. This pack found Ohio Revised Code § 5101.548(B), effective September 30, 2025 (enacted via HB 96), STATUTORILY PROHIBITS ODJFS from requesting, applying for, or renewing any ABAWD geographic waiver going forward. Independently corroborated: as of this pack's build date, USDA's current ABAWD waiver tracking and the independent abawdmap.us tracker both show Ohio with NO active waiver anywhere in the state. Re-verify ORC § 5101.548 and the current FNS ABAWD waiver list directly before this date and resolve which value the engine should carry; this pack does not touch packages/snap-rules and does not resolve the discrepancy itself."
+    },
+    {
+      "key": "oh-vehicle-exclusion-mechanics-gap",
+      "kind": "expires",
+      "date": "2026-12-01",
+      "warning": "OAC 5101:4-4-03(A)(6) excludes vehicles \"in accordance with Ohio's temporary assistance for needy families (TANF) plan\" under Pub. L. 106-387 § 847, but does not itself state how many vehicles are excluded or any per-vehicle equity-value exclusion dollar figure — those mechanics live in Ohio's TANF state plan, which this pack did not fetch directly. Pull Ohio's current TANF state plan (jfs.ohio.gov) before building calculator logic on a specific vehicle-exclusion count or dollar figure."
+    },
+    {
+      "key": "oh-annual-reporter-interaction-gap",
+      "kind": "expires",
+      "date": "2026-12-01",
+      "warning": "This pack's fetch of OAC 5101:4-5-03 (certification periods) did not itself define the \"Annual Reporter\" simplified-reporting status or spell out its exact mid-certification renewal interaction with the 36-month zero-earned-income elderly/disabled certification tier. Confirm the interaction directly against OAC 5101:4-5-03 and 5101:4-6-29 before relying on a specific renewal-timing claim for that household type."
+    }
+  ]
+}
