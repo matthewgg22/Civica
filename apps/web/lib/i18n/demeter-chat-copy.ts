@@ -31,7 +31,25 @@ export const T = {
     dividerFederal: "Now answering with federal rules only — earlier answers may not apply.",
     disclaimer:
       "Demeter gives information, not legal advice. Confirm decisions with your SNAP agency.",
+    // Sits under the composer, where the decision to type is made — not in the
+    // estimate rail, where it used to live and where it vanished entirely at
+    // narrow widths. Names the three things redactPii cannot save someone from
+    // (it strips structured identifiers but deliberately not names).
+    piiHint: "Please don’t type your Social Security number, bank details, or a full name.",
+    // The wording is load-bearing. This clears THIS BROWSER; every question and
+    // answer is still written to mae_query_log. Saying "clear" without saying
+    // that would be the retention lie #703 fixed, rebuilt as a button.
+    clear: "Clear this conversation",
+    clearNote:
+      "Removes it from this browser. We still keep the question and answer to check our accuracy.",
+    cleared: "Conversation cleared.",
     err429: "Too many questions at once — give it a minute and try again.",
+    // DISTINCT from err429, matching a distinction the route already makes
+    // deliberately. A per-minute rate limit resets in a minute; a daily cap
+    // resets tomorrow. Telling someone to wait a minute for something that
+    // resets tomorrow sends them into a retry loop.
+    errDailyCap:
+      "You have asked a lot of questions today — this resets tomorrow. For SNAP help right now, call 211 or your state SNAP agency.",
     errCapacity:
       "Demeter is at capacity for the month. For SNAP help right now, call 211 or your state SNAP agency.",
     errConfig: "Demeter isn't available yet — please check back soon.",
@@ -119,7 +137,15 @@ export const T = {
       "Ahora respondiendo solo con reglas federales — las respuestas anteriores pueden no aplicar.",
     disclaimer:
       "Demeter da información, no asesoría legal. Confirma las decisiones con tu agencia de SNAP.",
+    piiHint:
+      "Por favor no escribas tu número de Seguro Social, datos bancarios ni un nombre completo.",
+    clear: "Borrar esta conversación",
+    clearNote:
+      "La quita de este navegador. Seguimos guardando la pregunta y la respuesta para verificar nuestra exactitud.",
+    cleared: "Conversación borrada.",
     err429: "Demasiadas preguntas a la vez — espera un minuto e intenta de nuevo.",
+    errDailyCap:
+      "Has hecho muchas preguntas hoy — esto se reinicia mañana. Para ayuda con SNAP ahora mismo, llama al 211 o a la agencia SNAP de tu estado.",
     errCapacity:
       "Demeter llegó a su capacidad del mes. Para ayuda con SNAP ahora, llama al 211 o a tu agencia estatal.",
     errConfig: "Demeter aún no está disponible — vuelve pronto.",
@@ -204,7 +230,14 @@ export const T = {
       "Bây giờ chỉ trả lời theo quy định liên bang — các câu trả lời trước có thể không còn áp dụng.",
     disclaimer:
       "Demeter cung cấp thông tin, không phải tư vấn pháp lý. Hãy xác nhận quyết định với cơ quan SNAP của bạn.",
+    piiHint: "Xin đừng nhập số An sinh Xã hội, thông tin ngân hàng hay họ tên đầy đủ.",
+    clear: "Xóa cuộc trò chuyện này",
+    clearNote:
+      "Xóa khỏi trình duyệt này. Chúng tôi vẫn lưu câu hỏi và câu trả lời để kiểm tra độ chính xác.",
+    cleared: "Đã xóa cuộc trò chuyện.",
     err429: "Quá nhiều câu hỏi cùng lúc — vui lòng đợi một phút rồi thử lại.",
+    errDailyCap:
+      "Hôm nay bạn đã hỏi khá nhiều — số lượt sẽ đặt lại vào ngày mai. Cần trợ giúp SNAP ngay bây giờ, hãy gọi 211 hoặc cơ quan SNAP của tiểu bang bạn.",
     errCapacity:
       "Demeter đã đạt giới hạn của tháng. Để được trợ giúp về SNAP ngay bây giờ, hãy gọi 211 hoặc cơ quan SNAP của tiểu bang bạn.",
     errConfig: "Demeter chưa sẵn sàng — vui lòng quay lại sau.",
@@ -286,7 +319,12 @@ export const T = {
     dividerTo: (name: string) => `现在按 ${name} 的规定回答——之前的回答可能不再适用。`,
     dividerFederal: "现在仅按联邦规定回答——之前的回答可能不再适用。",
     disclaimer: "Demeter 提供信息，而非法律建议。请与您所在州的 SNAP 机构确认。",
+    piiHint: "请不要输入社会安全号码、银行信息或完整姓名。",
+    clear: "清除本次对话",
+    clearNote: "仅从此浏览器中清除。我们仍会保留问题和回答以核查准确性。",
+    cleared: "对话已清除。",
     err429: "同时提问太多了——请稍等一分钟再试。",
+    errDailyCap: "您今天提问较多——明天会重置。如需 SNAP 帮助，请拨打 211 或联系您所在州的 SNAP 机构。",
     errCapacity:
       "Demeter 本月已达使用上限。如需即时的 SNAP 帮助，请拨打 211 或联系您所在州的 SNAP 机构。",
     errConfig: "Demeter 尚未开放——请稍后再来。",
