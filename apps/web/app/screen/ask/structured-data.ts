@@ -42,16 +42,27 @@ const EN_GENERAL_FAQ = [
   },
 ];
 
+/** The form-question set, in the reader's language. Lives on /questions now,
+ *  which is where the visible cards moved — structured data must describe the
+ *  page it is ON. Exported so questionsStructuredData is the only caller. */
+export function formQuestionFaq(lang: AnswerLang): { q: string; a: string }[] {
+  return FORM_QUESTIONS.map((q) => ({
+    q: formQuestionHeading(q, lang),
+    a: `${formQuestionAnswer(q, lang)} (${q.citation})`,
+  }));
+}
+
 export function askStructuredData(
   lang: AnswerLang,
   name: string,
   description: string,
 ): string {
-  const formFaq = FORM_QUESTIONS.map((q) => ({
-    q: formQuestionHeading(q, lang),
-    a: `${formQuestionAnswer(q, lang)} (${q.citation})`,
-  }));
-  const faq = lang === "en" ? [...EN_GENERAL_FAQ, ...formFaq] : formFaq;
+  // ONLY the general FAQ. The 17 form questions moved to /questions along with
+  // their visible cards; leaving them in this page's JSON-LD would be claiming
+  // content the page no longer renders, which is cloaking — the exact failure
+  // the header of this file warns about. Non-English ask pages therefore carry
+  // no FAQPage at all, because EN_GENERAL_FAQ is deliberately English-only.
+  const faq = lang === "en" ? EN_GENERAL_FAQ : [];
 
   // schema.org `citation` accepts Text as well as a URL, and most pack sources
   // are NAMED instruments rather than links — filtering to URLs threw away the
@@ -79,20 +90,33 @@ export function askStructuredData(
       ...(CORPUS_EFFECTIVE_DATE ? { dateModified: CORPUS_EFFECTIVE_DATE } : {}),
       citation: citations,
     },
-    {
-      "@context": "https://schema.org",
-      "@type": "FAQPage",
-      // The language of THIS page, not the set — a FAQPage claiming four
-      // languages while carrying one is a mismatch a validator will flag.
-      inLanguage: LANG_TAG[lang],
-      ...(CORPUS_EFFECTIVE_DATE ? { dateModified: CORPUS_EFFECTIVE_DATE } : {}),
-      mainEntity: faq.map((f) => ({
-        "@type": "Question",
-        name: f.q,
-        acceptedAnswer: { "@type": "Answer", text: f.a },
-      })),
-    },
+    // Emitted only when there is something to put in it. An empty FAQPage is
+    // an invalid one.
+    ...(faq.length > 0 ? [faqPage(lang, faq)] : []),
   ]);
+}
+
+function faqPage(lang: AnswerLang, faq: { q: string; a: string }[]) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    // The language of THIS page, not the set — a FAQPage claiming four
+    // languages while carrying one is a mismatch a validator will flag.
+    inLanguage: LANG_TAG[lang],
+    ...(CORPUS_EFFECTIVE_DATE ? { dateModified: CORPUS_EFFECTIVE_DATE } : {}),
+    mainEntity: faq.map((f) => ({
+      "@type": "Question",
+      name: f.q,
+      acceptedAnswer: { "@type": "Answer", text: f.a },
+    })),
+  };
+}
+
+/** /questions — the FAQPage that used to ride on the ask page, now on the page
+ *  that actually renders the cards. Same helpers, so an engine quoting the
+ *  markup quotes the sentence a reader sees. */
+export function questionsStructuredData(lang: AnswerLang): string {
+  return JSON.stringify([faqPage(lang, formQuestionFaq(lang))]);
 }
 
 // The page title/description used by the canonical English route, kept here so

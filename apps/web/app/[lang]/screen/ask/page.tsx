@@ -17,7 +17,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { VERIFIED_STATES, isAnswerLang, LANG_TAG, type AnswerLang } from "@civica/demeter-engine/packs";
 import { DemeterChat } from "../../../../components/DemeterChat";
-import { SnapLede, SnapDetail } from "../../../../components/SnapOverview";
+import { SnapOrientation, SnapDetail } from "../../../../components/SnapOverview";
 import { PAGE_COPY } from "../../../../lib/i18n/snap-page";
 import { alternateLanguages, askUrl, PREFIXED_LANGS } from "../../../../lib/i18n/routes";
 import { askStructuredData } from "../../../screen/ask/structured-data";
@@ -89,7 +89,7 @@ export default async function LocalizedAskPage({
   return (
     <main className="dmpage" lang={LANG_TAG[l]}>
       <div className="dmpage__inner">
-        <SnapLede states={VERIFIED_STATES} lang={l} />
+        <SnapOrientation lang={l} />
         <div className="dmpage__chat">
           <DemeterChat
             states={VERIFIED_STATES}

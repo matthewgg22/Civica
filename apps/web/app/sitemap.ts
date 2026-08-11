@@ -30,6 +30,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
     // launch surface is the simple chatbot; /screen is a real secondary
     // feature, not what search engines should find first.
     { url: absoluteUrl("/screen/ask"), lastModified: now, changeFrequency: "daily", priority: 1.0 },
+    // The form-question cards, moved off /screen/ask so that page could lead
+    // with the product instead of a wall. High priority deliberately: this is
+    // the page that answers the literal thing people type ("what does purchase
+    // and prepare separately mean"), which is the highest-intent query the site
+    // can win. Content that moved without a sitemap entry and an inbound link
+    // is content that was deleted, as far as discovery is concerned.
+    { url: absoluteUrl("/questions"), lastModified: now, changeFrequency: "weekly", priority: 0.9 },
     { url: absoluteUrl("/screen"), lastModified: now, changeFrequency: "daily", priority: 0.7 },
     { url: absoluteUrl("/verify"), lastModified: now, changeFrequency: "weekly", priority: 0.8 },
     { url: absoluteUrl("/supporters"), lastModified: now, changeFrequency: "weekly", priority: 0.6 },
@@ -39,12 +46,23 @@ export default function sitemap(): MetadataRoute.Sitemap {
   // chat: they are not duplicates but the same page in another language, and
   // the whole point of building them was to make the non-English content
   // reachable by crawlers at all.
-  const localized: MetadataRoute.Sitemap = PREFIXED_LANGS.map((lang) => ({
-    url: absoluteUrl(`/${lang}/screen/ask`),
-    lastModified: now,
-    changeFrequency: "daily" as const,
-    priority: 1.0,
-  }));
+  const localized: MetadataRoute.Sitemap = PREFIXED_LANGS.flatMap((lang) => [
+    {
+      url: absoluteUrl(`/${lang}/screen/ask`),
+      lastModified: now,
+      changeFrequency: "daily" as const,
+      priority: 1.0,
+    },
+    // The localized /questions pages carry MORE translated content than the
+    // localized ask pages do — the form-question answers are fully translated,
+    // while the ask page's general FAQ is English-only by design.
+    {
+      url: absoluteUrl(`/${lang}/questions`),
+      lastModified: now,
+      changeFrequency: "weekly" as const,
+      priority: 0.9,
+    },
+  ]);
 
   // One entry per verified state; lastModified is the pack's own verification
   // date, so a re-verified pack legitimately signals freshness to crawlers.

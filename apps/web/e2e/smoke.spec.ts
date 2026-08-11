@@ -34,20 +34,49 @@ test.describe("chat surface", () => {
     await page.goto("/screen/ask");
     // Playwright's `name` matches a SUBSTRING by default — testing-library's
     // matches the FULL string — which is why these collisions surface only
-    // here and the jsdom suite stays green. Both locators on this page have
-    // now been bitten by it, so both are pinned exact:
-    //   "Demeter"     also matched the explainer's "How Demeter answers"
-    //   "Your state"  also matched the estimate rail's "Choose your state"
-    await expect(page.getByRole("heading", { name: "Demeter", exact: true })).toBeVisible();
+    // here and the jsdom suite stays green. "Your state" also matches the
+    // estimate rail's "Choose your state", so it stays pinned exact.
+    //
+    // The heading assertion used to look for a heading named "Demeter": the
+    // chat card's own <h1>. That <h1> moved to the orientation bar above the
+    // card, and the card's title is now a <p> — so this asserts the real thing
+    // instead, and that there is EXACTLY ONE <h1>. The old shape had an <h2>
+    // before the <h1> in document order, which is what this change fixed.
+    const h1 = page.getByRole("heading", { level: 1 });
+    await expect(h1).toHaveCount(1);
+    await expect(h1).toHaveText(/get the actual rule/i);
     const picker = page.getByRole("button", { name: "Your state", exact: true });
     await expect(picker).toContainText("All states");
-    // The explainer is SERVER-rendered — its presence in the DOM is what makes
-    // the page quotable by generative search, so it is worth a smoke assertion.
-    await expect(page.getByRole("heading", { name: /SNAP is monthly money/ })).toBeVisible();
+    // The orientation copy is SERVER-rendered — its presence in the DOM is
+    // what makes the page quotable by generative search. It is a <p> now, not
+    // a heading: the page leads with what Demeter is, and explains SNAP as
+    // orientation underneath rather than as the page's own claim.
+    await expect(page.getByText(/SNAP is monthly money for groceries/)).toBeVisible();
     await expect(page.getByPlaceholder(/Ask anything about SNAP/)).toBeVisible();
     // Opening the picker reveals every verified pack.
     await picker.click();
     await expect(page.getByRole("option", { name: /CalFresh/ })).toBeVisible();
+  });
+
+  // The content moved off the chat page. A unit test can prove the components
+  // render; only this can prove the ROUTE exists and the link between them
+  // works, which is the whole safety argument for moving rather than cutting.
+  test("the form questions moved to /questions and are linked from the chat page", async ({
+    page,
+  }) => {
+    await page.goto("/screen/ask");
+    await page.getByRole("link", { name: /What the application is actually asking/i }).click();
+    await expect(page).toHaveURL(/\/questions$/);
+
+    const h1 = page.getByRole("heading", { level: 1 });
+    await expect(h1).toHaveCount(1);
+    await expect(h1).toHaveText(/What the application is actually asking/i);
+    // A representative card and its citation — the pairing is the product.
+    await expect(page.getByText(/buy and fix food together/i).first()).toBeVisible();
+    await expect(page.getByText("7 CFR 273.1").first()).toBeVisible();
+    // And back to the chat.
+    await page.getByRole("link", { name: /Ask Demeter about your own situation/i }).click();
+    await expect(page).toHaveURL(/\/screen\/ask$/);
   });
 
   test("guide deep-link preselects state and question", async ({ page }) => {
