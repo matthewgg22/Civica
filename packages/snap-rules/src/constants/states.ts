@@ -670,6 +670,88 @@ const STATES: Record<string, StatePolicy> = {
     // reasoning as CA's entry above.
     rmp_operated: true,
   },
+  // New York — OTDA. The hardest schema fit in this file: NY runs THREE
+  // simultaneous BBCE income tiers (200% aged/disabled or dependent-care,
+  // 150% earned-income, 130% default — 18 NYCRR §387.14, directive lineage
+  // 07-ADM-09 → 09-ADM-06 → 16-ADM-06) and REGIONAL SUAs (NYC / Nassau-Suffolk
+  // / Rest of State, each a different dollar figure). Neither fits this
+  // schema's single scalar bbce_threshold_pct or single-set sua_by_tier — see
+  // issue #732 (tracking) and #731 (this entry's own filed follow-up) for the
+  // schema-extension work this doesn't attempt.
+  //
+  // bbce_threshold_pct is set to 130 (the DEFAULT/general tier) — the SAME
+  // accepted-limitation pattern as GA's 130% and IL's 165%: the higher tiers
+  // for aged/disabled (200%) and earned-income (150%) households are NOT
+  // modeled here, so this engine will UNDER-approve those households against
+  // a stricter 130% gross test than NY actually applies to them. That is the
+  // safer direction of error for THIS schema gap specifically (a household
+  // this engine denies at 130% who was actually eligible at 150%/200% is a
+  // false negative the corpus/chatbot layer can still catch by citing NY's
+  // real tiers in text) — but it means this engine's own NY verdict is NOT
+  // reliable for aged/disabled or dependent-care-paying households until the
+  // schema is extended. Full picture: packages/demeter-engine/src/states/ny/
+  // supplements.json income-pathways entry.
+  //
+  // sua_by_tier uses ROI (Rest of State) values — the residual/default
+  // region, same "pick the general case" principle as the BBCE field above —
+  // NOT NYC ($1,062/$419) or Nassau-Suffolk ($988/$388), both of which are
+  // HIGHER. This engine will UNDER-compute the shelter deduction (and so
+  // under-compute the benefit) for any NYC or Nassau-Suffolk household. Same
+  // single-region-approximation pattern already used for AK (issue #631,
+  // "single-region approximation of a genuinely 6-region system") — not a
+  // novel shortcut for this codebase. Source: GIS 25DC059 (eff. 10/1/2025).
+  //
+  // OBBBA HEAP/HCSUA rewiring (GIS 25DC061, retroactive to 7/4/2025) is NOT
+  // modeled: NY now requires an aged/disabled household member to use LIHEAP
+  // receipt as the HCSUA trigger; all-other households must show a genuine
+  // heating/cooling expense directly. This engine's sua.ts tier-selection
+  // logic predates that distinction for every state, not just NY — a
+  // pre-existing engine-wide gap, out of scope for this entry.
+  NY: {
+    state_code: "NY",
+    label: "New York / OTDA",
+    bbce: true,
+    bbce_threshold_pct: 130,
+    bbce_fpl_basis: "federal_fiscal_year",
+    // Resource test is eliminated for categorically eligible households
+    // (07-ADM-09, eff. 1/1/2008) — nearly every NY household. It survives
+    // only for sanctioned/IPV households and aged/disabled households over
+    // 200% FPL on the federal net-only path — the same "asset_waiver: true
+    // is the general case, a documented minority still gets tested" shape
+    // as CA/MA/TX/WA/GA/FL/IL/MI above.
+    asset_waiver: true,
+    sua_by_tier: {
+      HCSUA: new Decimal("877"),
+      LUA: new Decimal("355"),
+      phone: new Decimal("32"),
+      none: new Decimal("0"),
+    },
+    allotment_tier: "48",
+    // New York has fully opted out of the federal drug-felony ban (multiple
+    // independent secondary sources agree; NOT independently confirmed
+    // against an OTDA primary source in this pass — the NY corpus pack
+    // itself (built 2026-08-07) never addressed this topic, a real gap in
+    // that pack worth a follow-up). Consistent with every other Northeast/
+    // progressive-policy state already in this file (IL, NV, MA all `false`).
+    drug_felony_ban: false,
+    // FALSE is the affirmatively correct current finding, not a fail-open
+    // default: FNS terminated NY's waiver 11/2/2025 (25-ADM-03-P);
+    // litigation reinstated it through 2/28/2026 for every county except
+    // Saratoga; but the CURRENT status (GIS 26DC012, confirmed as of this
+    // pack's 2026-08-07 build) is that the time limit operates in ALL 58
+    // districts since March 1, 2026 — only the Tuscarora Nation Reservation
+    // and Poospatuck (State) Reservation remain waived, through 2/28/2027.
+    // Unlike CA's or MI's entries above (where the waived exceptions are a
+    // meaningful fraction of counties, justifying a permissive `true`
+    // fallback), NY's waived area is two tiny reservations out of 58
+    // districts — `false` is the correct general-case default here. No
+    // NY_WAIVER_COUNTY_FIPS lookup exists for the reservation carve-out.
+    abawd_waiver_avail: false,
+    // New York is confirmed on USDA FNA's own "States that Operate a
+    // Restaurant Meals Program" list (fetched live via curl this session for
+    // the WI/MN packs) — a genuine statewide program, not county-restricted.
+    rmp_operated: true,
+  },
   // Kansas utility standards — KEESM §7226 (Shelter Costs), rev. 07-26,
   // confirmed live 2026-08-09 at content.dcf.ks.gov/EES/KEESM/Current/keesm7226.htm.
   // Unlike TX/WA (mandatory standards, no election), KEESM does not state

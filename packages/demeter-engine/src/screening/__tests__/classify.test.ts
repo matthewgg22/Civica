@@ -110,12 +110,13 @@ describe("classifyScreening — the six mockup outcomes", () => {
     }
   });
 
-  // A corpus pack can exist for a state snap-rules has no policy for — NY
-  // today: badged "✓ Verified" for ANSWERS, but with no benefit math. The
-  // screener used to tell that reader "this household needs information our
-  // screener doesn't have yet", which is false. Nothing was missing from what
-  // they said, and it sent someone who had answered everything looking for a
-  // document that does not exist.
+  // A corpus pack can exist for a state snap-rules has no policy for — MN
+  // today (NY closed this gap in #733; MN, NV, AZ, OR, WI remain open, see
+  // issue #732): badged "✓ Verified" for ANSWERS, but with no benefit math.
+  // The screener used to tell that reader "this household needs information
+  // our screener doesn't have yet", which is false. Nothing was missing from
+  // what they said, and it sent someone who had answered everything looking
+  // for a document that does not exist.
   it("names a missing STATE POLICY as our gap, not the reader's", () => {
     const facts: PartialFacts = {
       household: [{ member_id: "a", age: 40, role: "head", immigration: "citizen" }],
@@ -125,13 +126,13 @@ describe("classifyScreening — the six mockup outcomes", () => {
       assets: 100,
       cat_elig: "NPA",
     };
-    const c = classifyScreening(facts, "NY", ASOF);
+    const c = classifyScreening(facts, "MN", ASOF);
     expect(c.outcome).toBe("not_enough_information");
     expect(c.verdict?.not_implemented_surfaces).toContain("state-policy-not-loaded");
     // Must not blame the reader's information…
     expect(c.summary).not.toContain("needs information our screener");
     // …must name the state and own the gap.
-    expect(c.summary).toContain("NY");
+    expect(c.summary).toContain("MN");
     expect(c.summary.toLowerCase()).toContain("our gap");
   });
 });
