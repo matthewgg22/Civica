@@ -34,11 +34,14 @@ export function DemeterEntry({
   states,
   initialState = null,
   lang = "en",
+  hint = null,
   copy,
 }: {
   states: PackMeta[];
   initialState?: string | null;
   lang?: AnswerLang;
+  /** IP-derived state suggestion from the edge. Offered, never applied. */
+  hint?: string | null;
   copy: EntryCopy;
 }) {
   const router = useRouter();
@@ -63,6 +66,7 @@ export function DemeterEntry({
           value={state}
           onChange={setState}
           copy={copy.picker}
+          hint={hint}
         />
         <a className="dment__verify" href={lang === "en" ? "/verify" : `/${lang}/verify`}>
           {copy.howWeVerify}

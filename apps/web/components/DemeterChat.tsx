@@ -123,6 +123,7 @@ export function DemeterChat({
   initialMessages = [],
   savedConversationId = null,
   pendingSave = false,
+  geoHint = null,
 }: {
   states: PackMeta[];
   initialState?: string | null;
@@ -137,6 +138,10 @@ export function DemeterChat({
   /** ?save=pending — we have just come back from signing in and there is a
    *  conversation waiting in localStorage to be restored and saved. */
   pendingSave?: boolean;
+  /** IP-derived state suggestion, resolved at the edge and passed in from the
+   *  server component. OFFERED in the picker, never applied — see
+   *  lib/geo-hint.ts for why this is not navigator.geolocation. */
+  geoHint?: string | null;
 }) {
   const [lang, setLang] = useState<AnswerLang>(initialLang);
   const [state, setState] = useState<string | null>(initialState);
@@ -508,6 +513,7 @@ export function DemeterChat({
           value={state}
           onChange={changeState}
           copy={t.picker}
+          hint={geoHint}
           openSignal={openPicker}
         />
         <a className="demeter__how" href="/verify">

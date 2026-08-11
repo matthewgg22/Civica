@@ -9,7 +9,8 @@
 
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { VERIFIED_STATES, isAnswerLang, LANG_TAG, type AnswerLang } from "@civica/demeter-engine/packs";
+import { VERIFIED_STATES, VERIFIED_STATE_CODES, isAnswerLang, LANG_TAG, type AnswerLang } from "@civica/demeter-engine/packs";
+import { geoHint } from "../../../lib/geo-hint";
 import { DemeterChat } from "../../../components/DemeterChat";
 import { DemeterNav } from "../../../components/DemeterNav";
 import { PREFIXED_LANGS } from "../../../lib/i18n/routes";
@@ -49,6 +50,7 @@ export default async function LocalizedChatPage({
 
   const { state, q, c, save } = await searchParams;
   const resumed = c ? await loadConversation(c) : null;
+  const hint = await geoHint(VERIFIED_STATE_CODES);
   const initialState =
     state && VERIFIED_STATES.some((s) => s.code === state.toUpperCase())
       ? state.toUpperCase()
@@ -66,6 +68,7 @@ export default async function LocalizedChatPage({
           initialMessages={resumed?.messages ?? []}
           savedConversationId={resumed?.id ?? null}
           pendingSave={save === "pending"}
+          geoHint={hint}
         />
       </main>
     </div>

@@ -17,7 +17,7 @@
 // filter as it grows, and a native select can't show agency + program per row.
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { NAP_JURISDICTIONS, type PackMeta } from "@civica/demeter-engine/packs";
+import { NAP_JURISDICTIONS, napJurisdiction, type PackMeta } from "@civica/demeter-engine/packs";
 
 export interface StatePickerCopy {
   label: string;
@@ -28,6 +28,19 @@ export interface StatePickerCopy {
   noMatch: string;
   /** Heading for the NAP-territory group — these do not run SNAP. */
   napGroup: string;
+  /** Offer for the IP-derived hint. Concrete on purpose — "Use CalFresh" beats
+   *  "Use my location", which asks someone to accept a guess they cannot see.
+   *
+   *  A TEMPLATE STRING with `{state}`, not a function. This copy object crosses
+   *  the server/client boundary as a prop (the landing page renders the entry
+   *  card on the server), and a function cannot be serialized across it —
+   *  Next throws "Functions cannot be passed directly to Client Components".
+   *  The other copy functions in this table are fine because DemeterChat
+   *  imports the table itself rather than receiving it. */
+  useHint: string;
+  /** What the confirmation card calls the agency line. */
+  scopeAgency: string;
+  scopeApply: string;
 }
 
 export function DemeterStatePicker({
@@ -35,12 +48,17 @@ export function DemeterStatePicker({
   value,
   onChange,
   copy,
+  hint = null,
   openSignal = 0,
 }: {
   states: PackMeta[];
   value: string | null;
   onChange: (next: string | null) => void;
   copy: StatePickerCopy;
+  /** A state code derived from the request IP at the edge. OFFERED, never
+   *  applied — see lib/geo-hint.ts. Null when there is no header (local, tests,
+   *  outside the US) or the region is not one we answer for. */
+  hint?: string | null;
   /** Increment to open the picker from elsewhere on the page. The estimate
    *  rail uses this: without a state there is no benefit calculation, so
    *  "pick your state" needs to be one click rather than an instruction the
@@ -54,6 +72,13 @@ export function DemeterStatePicker({
   const searchRef = useRef<HTMLInputElement | null>(null);
 
   const selected = value ? states.find((s) => s.code === value) ?? null : null;
+  // Only suggest a state we have a verified pack for. Offering an unverified
+  // one would promise more than the federal floor it would actually get.
+  const hintState = hint ? states.find((s) => s.code === hint) ?? null : null;
+  // A NAP territory is not in `states`, so `selected` is null for one — it
+  // needs its own lookup or the confirmation card silently never appears for
+  // exactly the jurisdictions whose difference most needs stating.
+  const napSelected = napJurisdiction(value);
 
   const matches = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -136,6 +161,50 @@ export function DemeterStatePicker({
         <span className="dmst__caret" aria-hidden>▾</span>
       </button>
 
+      {/* IMMEDIATE CONFIRMATION. The trigger alone showed only the program
+          name, so after choosing you knew Demeter had accepted "CalFresh" but
+          not WHICH agency it would answer from or where you would actually
+          apply. Both already exist in the pack and were only rendered at the
+          bottom of the landing page, hundreds of pixels from the decision.
+
+          Naming the real agency is also what makes an answer feel like it came
+          from somewhere rather than from a model — the same reason the picker
+          rows carry it. */}
+      {selected && !open && (
+        <div className="dmst__scope">
+          <span className="dmst__scope-agency">
+            {copy.scopeAgency}: {selected.agency}
+          </span>
+          {selected.portal && (
+            <a
+              className="dmst__scope-portal"
+              href={selected.portal.url}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {copy.scopeApply} {selected.portal.name} ↗
+            </a>
+          )}
+        </div>
+      )}
+      {napSelected && !open && (
+        <div className="dmst__scope dmst__scope--nap">
+          <span className="dmst__scope-agency">
+            {napSelected.program} · {napSelected.agency}
+          </span>
+          {napSelected.agencyUrl && (
+            <a
+              className="dmst__scope-portal"
+              href={napSelected.agencyUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {copy.scopeApply} {napSelected.name} ↗
+            </a>
+          )}
+        </div>
+      )}
+
       {open && (
         <div className="dmst__panel">
           <input
@@ -147,6 +216,18 @@ export function DemeterStatePicker({
             value={query}
             onChange={(e) => setQuery(e.target.value)}
           />
+          {/* The IP hint, offered once and only while nothing is chosen. Named
+              concretely ("Use California") rather than "use my location",
+              because accepting a guess you cannot see is not a choice. Hidden
+              the moment a state is selected — at that point it is noise, and
+              re-offering a guess over a deliberate choice is how someone ends
+              up scoped to the wrong state. */}
+          {hintState && !value && !query && (
+            <button type="button" className="dmst__hint" onClick={() => pick(hintState.code)}>
+              <span className="dmst__mark">{hintState.code}</span>
+              <span>{copy.useHint.replace("{state}", hintState.program)}</span>
+            </button>
+          )}
           <ul className="dmst__list" role="listbox" aria-label={copy.label}>
             <li>
               <button
