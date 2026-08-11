@@ -39,6 +39,11 @@ export interface PageCopy {
   h2: string;
   lede: string;
   trust: Pair[];
+  /** Heading for the trust rows once they moved below the chat. They used to be
+   *  an unlabelled <aside> in the lede, borrowing howH2 for its aria-label —
+   *  which, as a real section heading, printed "How Demeter answers" twice on
+   *  the page. Distinct heading, and it names what the four rows actually say. */
+  trustH2: string;
   decidesH2: string;
   decidesBody: string;
   defs: Pair[];
@@ -85,6 +90,7 @@ const en: PageCopy = {
       d: "Federal rules still answer. Figures that vary by state are deferred to your agency rather than guessed.",
     },
   ],
+  trustH2: "Free, cited, and clear about its limits",
   decidesH2: "What actually decides whether you qualify",
   decidesBody:
     "Not your income alone — that is the most common reason people who qualify never apply. Eligibility turns on what is left after the deductions you are entitled to, and on a short list of category rules.",
@@ -178,6 +184,7 @@ const es: PageCopy = {
       d: "Las reglas federales siguen respondiendo. Las cifras que varían por estado se remiten a tu agencia en vez de adivinarse.",
     },
   ],
+  trustH2: "Gratis, con fuentes, y claro sobre sus límites",
   decidesH2: "Qué decide realmente si calificas",
   decidesBody:
     "No solo tus ingresos — esa es la razón más común por la que gente que sí califica nunca solicita. La elegibilidad depende de lo que queda después de las deducciones a las que tienes derecho, y de una lista corta de reglas por categoría.",
@@ -271,6 +278,7 @@ const vi: PageCopy = {
       d: "Quy định liên bang vẫn trả lời được. Những con số khác nhau theo tiểu bang sẽ được chuyển về cơ quan của bạn thay vì đoán.",
     },
   ],
+  trustH2: "Miễn phí, có trích dẫn, và nói rõ giới hạn",
   decidesH2: "Điều gì thực sự quyết định bạn có đủ điều kiện",
   decidesBody:
     "Không chỉ là thu nhập — đó là lý do phổ biến nhất khiến những người đủ điều kiện không bao giờ nộp đơn. Điều kiện phụ thuộc vào phần còn lại sau các khoản khấu trừ bạn được hưởng, và một danh sách ngắn các quy định theo nhóm.",
@@ -360,6 +368,7 @@ const zh: PageCopy = {
       d: "联邦规定依然可以回答。各州不同的具体金额会转交您所在机构，而不是猜测。",
     },
   ],
+  trustH2: "免费、有出处，并如实说明局限",
   decidesH2: "真正决定您是否符合条件的是什么",
   decidesBody:
     "不只是收入——这正是许多本可获得补助的人从未申请的最常见原因。资格取决于扣除您应享有的各项之后还剩多少，以及一小组分类规定。",

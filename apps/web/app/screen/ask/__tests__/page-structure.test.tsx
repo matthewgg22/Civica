@@ -104,6 +104,31 @@ describe("the chat page's depth — trimmed, and nothing orphaned", () => {
     }
   });
 
+  it("no two sections share a heading", () => {
+    // Caught a real one: the relocated trust rows borrowed `howH2` for what had
+    // been an <aside>'s aria-label, so once they became a real section the page
+    // printed "How Demeter answers" TWICE. Duplicate <h2>s make the document
+    // outline useless for heading navigation and give a search engine two
+    // sections it cannot tell apart — and nothing about the rendered page looks
+    // wrong, which is why this needs a test rather than an eye.
+    const { container } = render(<SnapDetail states={VERIFIED_STATES} lang="en" />);
+    const headings = [...container.querySelectorAll("h2, h3")].map((h) =>
+      (h.textContent ?? "").trim(),
+    );
+    expect(new Set(headings).size, headings.join(" | ")).toBe(headings.length);
+  });
+
+  it("no two sections share a heading, in any language", () => {
+    for (const lang of ANSWER_LANGS) {
+      const { container, unmount } = render(<SnapDetail states={VERIFIED_STATES} lang={lang} />);
+      const headings = [...container.querySelectorAll("h2, h3")].map((h) =>
+        (h.textContent ?? "").trim(),
+      );
+      expect(new Set(headings).size, `${lang}: ${headings.join(" | ")}`).toBe(headings.length);
+      unmount();
+    }
+  });
+
   it("links to /questions, so the moved content is reachable by a crawler", () => {
     // Moved content with no inbound link is deleted content as far as
     // discovery is concerned. This is the whole reason the move is safe.

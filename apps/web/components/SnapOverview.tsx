@@ -124,7 +124,7 @@ export function SnapDetail({ states, lang = "en" }: { states: PackMeta[]; lang?:
       {/* Trust, relocated from the old lede. Same four claims, same words. */}
       <section className="dmx" aria-labelledby="why-trust">
         <h2 id="why-trust" className="dmx__h2">
-          {c.howH2}
+          {c.trustH2}
         </h2>
         <dl className="dmx__trustlist dmx__trustlist--wide">
           {c.trust.map((row, i) => (
