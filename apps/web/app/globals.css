@@ -6049,12 +6049,14 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
    Composer FIRST, suggestions after. The old card led with three buttons and
    put the input below the fold, which is exactly why it read as a form with
    links rather than something you talk to. */
-.dment {
-  background: var(--demeter-card); border: 1px solid var(--demeter-rule);
-  border-radius: 20px; padding: clamp(1rem, 2.5vw, 1.6rem);
-  box-shadow: 0 30px 60px -34px rgba(72, 32, 18, 0.4);
-  display: flex; flex-direction: column; gap: 1rem;
-}
+/* NO CARD CHROME HERE. .dmpage__chat — the wrapper this sits in — already
+   carries the background, border, radius and shadow, from when it wrapped the
+   full chat. Adding them again produced a card inside an identical card: the
+   same defect as the double-ringed language pill, introduced in the same commit
+   that fixed it, and invisible until rendered.
+
+   The wrapper owns the surface; this owns the layout. */
+.dment { display: flex; flex-direction: column; gap: 1rem; }
 .dment__scope { display: flex; align-items: center; gap: 1rem; }
 .dment__scope .dmst { flex: 1; min-width: 0; }
 .dment__verify {
