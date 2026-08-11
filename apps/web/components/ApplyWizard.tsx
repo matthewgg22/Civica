@@ -5,7 +5,7 @@
 // function per section). Mirrors the iOS SNAPApplicationViewModel +
 // SNAPDraftStep pattern from Civica/Features/SNAP/SNAPApplicationViewModel.swift.
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useDraft } from "../lib/snap/draft-store";
 import type { Locale } from "../app/i18n";

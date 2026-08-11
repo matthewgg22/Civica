@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import AppNav from "../../components/AppNav";
 import { LanguagePicker } from "../../components/LanguagePicker";
@@ -94,8 +95,8 @@ export default function WelcomePage() {
               <span className="trust-chip" role="listitem">✓ USDA-verified</span>
             </div>
             <div className="home-hero__ctas">
-              <a href="/apply" className="btn btn--primary">{t.welcome_cta}</a>
-              <a href="/sign-in" className="btn btn--ghost">{t.home_hero_secondary}</a>
+              <Link href="/apply" className="btn btn--primary">{t.welcome_cta}</Link>
+              <Link href="/sign-in" className="btn btn--ghost">{t.home_hero_secondary}</Link>
             </div>
             <BenefitEstimator />
           </div>
@@ -214,7 +215,7 @@ export default function WelcomePage() {
       <section className="home-section home-section--alt">
         <div className="home-section__inner home-closing">
           <p className="home-closing__label">Ready to check your eligibility?</p>
-          <a href="/apply" className="btn btn--primary">{t.welcome_cta}</a>
+          <Link href="/apply" className="btn btn--primary">{t.welcome_cta}</Link>
           <p className="home-closing__sub">Takes about 10 minutes · No income minimum · 5 languages</p>
         </div>
       </section>
