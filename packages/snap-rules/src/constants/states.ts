@@ -561,6 +561,97 @@ const STATES: Record<string, StatePolicy> = {
     abawd_waiver_avail: true,
     rmp_operated: false,
   },
+  // Michigan — backfilled from the adversarially-verified Demeter corpus pack
+  // (packages/demeter-engine/src/states/mi/, PROVENANCE.md) rather than a
+  // #619-style Tranche-1 fetch; different provenance trail, same rigor.
+  //
+  // BBCE: Michigan's cat-el trigger runs through "enhanced authorization for
+  // Domestic Violence Prevention Services (DVPS)" — a universal, non-cash
+  // service (NOT restricted to DV survivors) that confers a 200% FPL gross
+  // screen with FULL asset-test relief, structurally the same move as GA's
+  // TCOS pamphlet under a different name. Source: BPG Glossary
+  // ("Categorical Eligibility"); BEM 213 ("Categorically eligible groups
+  // automatically meet the asset and income limits for the Food Assistance
+  // Program"). Confirmed live 2026-08-11 at dhhs.michigan.gov/OLMWEB.
+  //
+  // Utility standards: RFT 255 (RFB 2025-006, eff. 10/1/2025) — the annual
+  // Reference Table Bulletin; BEM 554 (the rule text) carries NO dollar
+  // figures at all, same table-not-rule-text pattern #619 hit for FL/IL/OH.
+  // Michigan's SUA shape does not fit this engine's {HCSUA, LUA, phone}
+  // ladder as a single-election model the way TX/WA do — Michigan instead
+  // STACKS up to 5 independently-priced standards (non-heat electric $181,
+  // water/sewer $119, telephone $31, cooking fuel $33, trash $30) for
+  // households not on the mandatory Heat/Utility bundle. The mapping below is
+  // NOT an approximation, though: this engine's determineSUATier() (sua.ts)
+  // asks exactly three yes/no questions — has_heating_costs,
+  // has_electric_or_gas, has_phone — and Michigan happens to publish a
+  // standard with that EXACT name and definition for the middle question
+  // ("non-heat electric... A SNAP group which has no heating/cooling expense
+  // but has a responsibility to pay for non-heat electricity... must use the
+  // non-heat electric standard," BEM 554) — so HCSUA and LUA are both clean
+  // 1:1 matches, not judgment calls. water/sewer ($119), cooking fuel ($33),
+  // and trash ($30) are the genuinely UNMAPPED standards — Michigan
+  // households responsible for ONLY one of those three (with no heat, no
+  // electric responsibility, but water or cooking-fuel or trash) fall through
+  // to has_phone/NONE and lose that deduction, the same documented-gap
+  // discipline as IL's Single Utility ($78) and OH's Single SUA ($108).
+  //
+  // Max allotment table (RFT 260, same RFB 2025-006 cycle): $298/$546/$785/
+  // $994/$1,183/$1,421/$1,571/$1,789 for HH 1-8 — identical to the federal
+  // 48-contiguous-state table (allotment_tier: "48" is correct; Michigan
+  // does not run its own schedule).
+  MI: {
+    state_code: "MI",
+    label: "Michigan / MDHHS",
+    bbce: true,
+    bbce_threshold_pct: 200,
+    bbce_fpl_basis: "federal_fiscal_year",
+    asset_waiver: true,
+    sua_by_tier: {
+      HCSUA: new Decimal("682"),
+      LUA: new Decimal("181"),
+      phone: new Decimal("31"),
+      none: new Decimal("0"),
+    },
+    allotment_tier: "48",
+    // VERIFIED FULL OPT-OUT — 2020 PA 392 (Senate Bill 1006, signed Jan.
+    // 2021) amended MCL 400.10b to add: "This subsection does not apply to
+    // an individual applying for food assistance if he or she has an
+    // outstanding felony warrant for a violation of part 74 of the public
+    // health code, 1978 PA 368, MCL 333.7401 to 333.7461" — i.e. a
+    // drug-related felony warrant is explicitly carved OUT of Michigan's
+    // felony-warrant assistance bar. MCL 400.10b's own History line confirms
+    // the amendment: "Am. 2020, Act 392, Imd. Eff. Jan. 4, 2021." Michigan's
+    // PRIOR rule disqualified anyone with 2+ drug-felony convictions; PA 392
+    // repealed it, and the current BEM 203 ("Criminal Justice
+    // Disqualifications") has no drug-felony-conviction category at all,
+    // confirming the repeal is fully reflected in current policy. `false`
+    // here is a finding, not a fail-open default.
+    drug_felony_ban: false,
+    // Michigan DOES hold real ABAWD/TLFA waivers as of build (unlike GA,
+    // which holds none) — effective 12/1/2025, 15 counties (Alcona, Alger,
+    // Arenac, Cheboygan, Iosco, Iron, Luce, Mackinac, Montmorency, Oceana,
+    // Ogemaw, Oscoda, Presque Isle, Roscommon, Schoolcraft) and 6 cities (Bay
+    // City, Detroit, Eastpointe, Flint, Jackson, Saginaw) are waived; every
+    // other county/city is TLFA-subject. A state-level boolean cannot express
+    // "15 of 83 counties + 6 cities," so `true` is both the CA-style
+    // permissive fallback AND, unlike CA, an affirmatively correct "this
+    // state currently holds waivers somewhere" finding — it is the FALLBACK
+    // ONLY for when a household's county/city isn't known; no
+    // MI_WAIVER_COUNTY_FIPS lookup exists yet (the CA/#614 pattern), so this
+    // boolean is consulted for every Michigan household today, not just the
+    // unknown-county case. Source: BEM 620, "TLFA Locations."
+    abawd_waiver_avail: true,
+    // Michigan's RMP is a genuine STATEWIDE program (like CA's AB 942
+    // mandate), NOT county-restricted the way IL's is (Cook/Franklin only,
+    // hence IL's `false`). Eligibility is gated by household composition
+    // (every group member must be elderly 60+, disabled, homeless, or an
+    // eligible recipient's spouse — BAM 119), not geography: any restaurant
+    // meeting the state's authorization criteria anywhere in Michigan may
+    // participate. `true` is correct as a state-level boolean under the same
+    // reasoning as CA's entry above.
+    rmp_operated: true,
+  },
   // Kansas utility standards — KEESM §7226 (Shelter Costs), rev. 07-26,
   // confirmed live 2026-08-09 at content.dcf.ks.gov/EES/KEESM/Current/keesm7226.htm.
   // Unlike TX/WA (mandatory standards, no election), KEESM does not state
