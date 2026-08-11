@@ -5249,12 +5249,16 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   .dmo__lede { font-size: 1rem; line-height: 1.5; }
   .dmo__snap { font-size: 0.9rem; line-height: 1.5; }
 
-  /* The chat card's own header was 193px on a 375px screen: the tagline got
-     squeezed into a ~160px column beside a full-size language picker and wrapped
-     to five lines. Stack them — the brand reads on one line, the picker sits
-     under it — which is ~100px back for the part of the card that matters. */
-  .demeter__head { flex-direction: column; align-items: stretch; gap: 0.5rem; }
-  .demeter__lang { align-self: flex-start; }
+  /* The chat card's header was 193px on a 375px screen: the tagline squeezed
+     into a ~160px column beside a full-size language picker, wrapping to five
+     lines.
+
+     Stacking them was tried first and measured WORSE (200px) — the tagline
+     dropped to two lines but the picker gained a whole row. The actual fix is
+     that on a phone the tagline is REDUNDANT: "Verified answers about SNAP, for
+     any state" restates the orientation bar's own lede, which sits three lines
+     above it and says it better. Drop the duplicate, keep the row. */
+  .demeter__tagline { display: none; }
 }
 
 .dmx { padding: clamp(2.5rem, 6vw, 4.5rem) 0; border-top: 1px solid var(--demeter-rule); }
