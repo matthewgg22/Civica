@@ -25,7 +25,8 @@
 // hreflang annotations — a one-directional hreflang set is silently ignored.
 
 import type { Metadata } from "next";
-import { VERIFIED_STATES } from "@civica/demeter-engine/packs";
+import { VERIFIED_STATES, VERIFIED_STATE_CODES } from "@civica/demeter-engine/packs";
+import { geoHint } from "../../../lib/geo-hint";
 import { redirect } from "next/navigation";
 import { DemeterEntry } from "../../../components/DemeterEntry";
 import { T } from "../../../lib/i18n/demeter-chat-copy";
@@ -66,6 +67,7 @@ export default async function ScreenAskPage({
     redirect(`/chat?${params.toString()}`);
   }
 
+  const hint = await geoHint(VERIFIED_STATE_CODES);
   const initialState =
     state && VERIFIED_STATES.some((s) => s.code === state.toUpperCase())
       ? state.toUpperCase()
@@ -81,6 +83,7 @@ export default async function ScreenAskPage({
           <DemeterEntry
             states={VERIFIED_STATES}
             initialState={initialState}
+            hint={hint}
             copy={{
               placeholder: T.en.inputPlaceholder,
               send: T.en.send,

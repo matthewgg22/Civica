@@ -15,7 +15,8 @@
 
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
-import { VERIFIED_STATES, isAnswerLang, LANG_TAG, type AnswerLang } from "@civica/demeter-engine/packs";
+import { VERIFIED_STATES, VERIFIED_STATE_CODES, isAnswerLang, LANG_TAG, type AnswerLang } from "@civica/demeter-engine/packs";
+import { geoHint } from "../../../../lib/geo-hint";
 import { DemeterEntry } from "../../../../components/DemeterEntry";
 import { DemeterNav } from "../../../../components/DemeterNav";
 import { DemeterFooter } from "../../../../components/DemeterFooter";
@@ -91,6 +92,7 @@ export default async function LocalizedAskPage({
     if (save) params.set("save", save);
     redirect(`/${l}/chat?${params.toString()}`);
   }
+  const hint = await geoHint(VERIFIED_STATE_CODES);
   const initialState =
     state && VERIFIED_STATES.some((s) => s.code === state.toUpperCase())
       ? state.toUpperCase()
@@ -108,6 +110,7 @@ export default async function LocalizedAskPage({
             states={VERIFIED_STATES}
             initialState={initialState}
             lang={l}
+            hint={hint}
             copy={{
               placeholder: T[l].inputPlaceholder,
               send: T[l].send,

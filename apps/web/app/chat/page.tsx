@@ -20,7 +20,8 @@
 // page claiming to be the same application would split the signal.
 
 import type { Metadata } from "next";
-import { VERIFIED_STATES } from "@civica/demeter-engine/packs";
+import { VERIFIED_STATES, VERIFIED_STATE_CODES } from "@civica/demeter-engine/packs";
+import { geoHint } from "../../lib/geo-hint";
 import { DemeterChat } from "../../components/DemeterChat";
 import { DemeterNav } from "../../components/DemeterNav";
 import { loadConversation } from "../../lib/demeter-conversations-server";
@@ -43,6 +44,7 @@ export default async function ChatPage({
   const { state, q, c, save } = await searchParams;
   const resumed = c ? await loadConversation(c) : null;
 
+  const hint = await geoHint(VERIFIED_STATE_CODES);
   const initialState =
     state && VERIFIED_STATES.some((s) => s.code === state.toUpperCase())
       ? state.toUpperCase()
@@ -59,6 +61,7 @@ export default async function ChatPage({
           initialMessages={resumed?.messages ?? []}
           savedConversationId={resumed?.id ?? null}
           pendingSave={save === "pending"}
+          geoHint={hint}
         />
       </main>
     </div>
