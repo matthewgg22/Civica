@@ -35,4 +35,9 @@ export const QUESTIONS: Record<string, string[]> = {
     "Does my car count against me for SNAP in Georgia?",
     "Is there a simplified SNAP application for seniors in Georgia?",
   ],
+  MI: [
+    "What is the income limit for FAP in Michigan?",
+    "Does my car count against me for FAP in Michigan?",
+    "How fast can I get emergency food assistance in Michigan?",
+  ],
 };
