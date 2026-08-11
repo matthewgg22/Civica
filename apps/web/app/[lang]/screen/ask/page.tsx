@@ -21,6 +21,7 @@ import { SnapLede, SnapDetail } from "../../../../components/SnapOverview";
 import { PAGE_COPY } from "../../../../lib/i18n/snap-page";
 import { alternateLanguages, askUrl, PREFIXED_LANGS } from "../../../../lib/i18n/routes";
 import { askStructuredData } from "../../../screen/ask/structured-data";
+import { loadConversation } from "../../../../lib/demeter-conversations-server";
 
 export const dynamicParams = false;
 
@@ -68,7 +69,7 @@ export default async function LocalizedAskPage({
   searchParams,
 }: {
   params: Promise<{ lang: string }>;
-  searchParams: Promise<{ state?: string; q?: string }>;
+  searchParams: Promise<{ state?: string; q?: string; c?: string; save?: string }>;
 }) {
   const { lang } = await params;
   // dynamicParams=false already restricts this, but a bad value must never
@@ -76,7 +77,10 @@ export default async function LocalizedAskPage({
   if (!isAnswerLang(lang) || lang === "en") notFound();
   const l = lang as AnswerLang;
 
-  const { state, q } = await searchParams;
+  const { state, q, c, save } = await searchParams;
+  // Same as the English page: only read when ?c= is actually present, so the
+  // indexable path stays free of a cookie read.
+  const resumed = c ? await loadConversation(c) : null;
   const initialState =
     state && VERIFIED_STATES.some((s) => s.code === state.toUpperCase())
       ? state.toUpperCase()
@@ -89,9 +93,12 @@ export default async function LocalizedAskPage({
         <div className="dmpage__chat">
           <DemeterChat
             states={VERIFIED_STATES}
-            initialState={initialState}
+            initialState={resumed ? resumed.state_code : initialState}
             initialQuestion={q ?? null}
             initialLang={l}
+            initialMessages={resumed?.messages ?? []}
+            savedConversationId={resumed?.id ?? null}
+            pendingSave={save === "pending"}
           />
         </div>
         <SnapDetail states={VERIFIED_STATES} lang={l} />

@@ -40,6 +40,30 @@ export const snapStrings = {
     signin_error_invalid_code: "That code didn't match. Try again or send a new one.",
     signin_error_generic: "Something went wrong. Please try again.",
 
+    // Sign-in, arriving from the Demeter chat's Save button. The default copy
+    // above is about saving an APPLICATION, which is the wrong promise to make
+    // to someone who is keeping a conversation — and overstates what they are
+    // signing up for on a surface whose whole point is that it asks for nothing.
+    signin_title_conversation: "Save your conversation",
+    signin_google_disclosure_conversation:
+      "We only use your Google account to sign you in and save your conversation.",
+    signin_subtitle_conversation:
+      "Sign in and this conversation will be here when you come back. The chat itself is always free — an account is only for saving.",
+
+    // Email magic link (PR #690's route; this is its UI).
+    signin_or: "or",
+    signin_email_label: "Email address",
+    signin_email_placeholder: "you@example.com",
+    signin_email_cta: "Email me a sign-in link",
+    signin_email_sending: "Sending…",
+    signin_email_sent_title: "Check your email",
+    signin_email_sent_body:
+      "We sent a sign-in link to {email}. Open it on this device to finish — it expires shortly.",
+    signin_email_retry: "Use a different address",
+    signin_error_invalid_email: "Please enter a valid email address.",
+    signin_email_disclosure:
+      "We use your email only to sign you in. No password to remember, and no marketing.",
+
     // Wizard frame
     wizard_step_of: "Section {current} of {total}",
     wizard_completed: "% Completed",
@@ -268,6 +292,25 @@ export const snapStrings = {
     signin_error_rate_limited: "Demasiados intentos. Por favor espera 10 minutos e intenta de nuevo.",
     signin_error_invalid_code: "Ese código no coincide. Intenta de nuevo o envía uno nuevo.",
     signin_error_generic: "Algo salió mal. Por favor intenta de nuevo.",
+
+    signin_title_conversation: "Guarda tu conversación",
+    signin_google_disclosure_conversation:
+      "Solo usamos tu cuenta de Google para iniciar sesión y guardar tu conversación.",
+    signin_subtitle_conversation:
+      "Inicia sesión y esta conversación estará aquí cuando regreses. El chat siempre es gratis — la cuenta es solo para guardar.",
+
+    signin_or: "o",
+    signin_email_label: "Correo electrónico",
+    signin_email_placeholder: "tu@ejemplo.com",
+    signin_email_cta: "Envíame un enlace para iniciar sesión",
+    signin_email_sending: "Enviando…",
+    signin_email_sent_title: "Revisa tu correo",
+    signin_email_sent_body:
+      "Enviamos un enlace de inicio de sesión a {email}. Ábrelo en este dispositivo para terminar — vence pronto.",
+    signin_email_retry: "Usar otro correo",
+    signin_error_invalid_email: "Por favor ingresa un correo electrónico válido.",
+    signin_email_disclosure:
+      "Usamos tu correo solo para iniciar sesión. Sin contraseña que recordar y sin publicidad.",
 
     wizard_step_of: "Sección {current} de {total}",
     wizard_completed: "% Completado",

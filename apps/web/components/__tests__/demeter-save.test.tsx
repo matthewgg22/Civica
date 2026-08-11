@@ -1,0 +1,284 @@
+// @vitest-environment jsdom
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { render, screen, fireEvent, cleanup, waitFor } from "@testing-library/react";
+import { DemeterSave } from "../DemeterSave";
+import type { SavedMsg } from "../../lib/demeter-conversations";
+
+// Save/resume on the public chat.
+//
+// The rule every one of these guards: NOBODY IS EVER BLOCKED FROM ASKING. The
+// chat is free and anonymous, and an account buys exactly one thing — coming
+// back later. A signed-out visitor who presses Save must get an invitation with
+// a way out of it, never a wall, and the transcript has to survive the
+// full-page navigation that signing in requires.
+
+const COPY = {
+  save: "Save this conversation",
+  saving: "Saving…",
+  saved: "Saved",
+  viewSaved: "Your conversations",
+  panelTitle: "Save this conversation",
+  panelBody: "Make a free account and this conversation will be here when you come back.",
+  panelStored: "We keep what you typed, word for word.",
+  panelCta: "Sign in to save",
+  panelDismiss: "Not now",
+  limit: (n: number) => `You've saved ${n} conversations.`,
+  error: "That didn't save. Please try again.",
+} as const;
+
+const CONVERSATION: SavedMsg[] = [
+  { role: "user", content: "What's the income limit for my household?" },
+  { role: "assistant", content: "For a household of two in California…" },
+];
+
+const fetchMock = vi.fn();
+
+// vitest's jsdom environment does not expose window.localStorage on the Node
+// versions this repo runs (probed: `typeof window.localStorage === "undefined"`
+// even with a real http:// origin). Real browsers obviously have it, so the
+// component is right to use it — the test environment is what needs the
+// stand-in. Minimal on purpose: the component only ever gets/sets/removes.
+function installStorage() {
+  const store = new Map<string, string>();
+  Object.defineProperty(window, "localStorage", {
+    configurable: true,
+    value: {
+      getItem: (k: string) => store.get(k) ?? null,
+      setItem: (k: string, v: string) => void store.set(k, String(v)),
+      removeItem: (k: string) => void store.delete(k),
+      clear: () => store.clear(),
+    },
+  });
+}
+
+beforeEach(() => {
+  fetchMock.mockReset();
+  vi.stubGlobal("fetch", fetchMock);
+  installStorage();
+});
+
+afterEach(() => {
+  cleanup();
+  vi.unstubAllGlobals();
+});
+
+function renderSave(props: Partial<Parameters<typeof DemeterSave>[0]> = {}) {
+  return render(
+    <DemeterSave
+      messages={CONVERSATION}
+      state="CA"
+      lang="en"
+      busy={false}
+      pendingSave={false}
+      initialSavedId={null}
+      onRestore={props.onRestore ?? (() => {})}
+      copy={COPY}
+      {...props}
+    />,
+  );
+}
+
+const bodyOf = (i = 0) => JSON.parse((fetchMock.mock.calls[i]![1] as RequestInit).body as string);
+
+const jsonResponse = (status: number, body: unknown) =>
+  new Response(JSON.stringify(body), { status, headers: { "Content-Type": "application/json" } });
+
+describe("when there is nothing to save", () => {
+  it("shows no button before an answer has arrived", () => {
+    renderSave({ messages: [{ role: "user", content: "hello?" }] });
+    expect(screen.queryByRole("button", { name: COPY.save })).toBeNull();
+  });
+
+  it("shows no button while the first answer is still streaming", () => {
+    // The chat appends an EMPTY assistant bubble as a placeholder. Offering
+    // Save then would capture a half-written answer.
+    renderSave({
+      messages: [{ role: "user", content: "hello?" }, { role: "assistant", content: "" }],
+      busy: true,
+    });
+    expect(screen.queryByRole("button", { name: COPY.save })).toBeNull();
+  });
+});
+
+describe("signed in", () => {
+  it("saves and offers the way back to the list", async () => {
+    fetchMock.mockResolvedValue(jsonResponse(201, { conversation: { id: "conv-1" } }));
+    renderSave();
+
+    fireEvent.click(screen.getByRole("button", { name: COPY.save }));
+
+    await screen.findByText(COPY.saved);
+    expect(screen.getByRole("link", { name: COPY.viewSaved })).toHaveProperty(
+      "search",
+      "?lang=en",
+    );
+    expect(bodyOf()).toMatchObject({ messages: CONVERSATION, state: "CA", lang: "en" });
+  });
+
+  it("keeps the saved conversation up to date as the chat continues", async () => {
+    // Saving a prefix and never updating it would mean resume shows the
+    // conversation as it was at the moment they pressed the button, not as
+    // they left it.
+    fetchMock.mockResolvedValue(jsonResponse(201, { conversation: { id: "conv-1" } }));
+    const { rerender } = renderSave();
+    fireEvent.click(screen.getByRole("button", { name: COPY.save }));
+    await screen.findByText(COPY.saved);
+
+    const longer: SavedMsg[] = [
+      ...CONVERSATION,
+      { role: "user", content: "and if my rent goes up?" },
+      { role: "assistant", content: "Then the shelter deduction…" },
+    ];
+    rerender(
+      <DemeterSave
+        messages={longer}
+        state="CA"
+        lang="en"
+        busy={false}
+        pendingSave={false}
+        initialSavedId={null}
+        onRestore={() => {}}
+        copy={COPY}
+      />,
+    );
+
+    await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(2));
+    // Same row, not a second conversation.
+    expect(bodyOf(1)).toMatchObject({ id: "conv-1", messages: longer });
+  });
+
+  it("does not re-save while an answer is still streaming", async () => {
+    fetchMock.mockResolvedValue(jsonResponse(201, { conversation: { id: "conv-1" } }));
+    const { rerender } = renderSave();
+    fireEvent.click(screen.getByRole("button", { name: COPY.save }));
+    await screen.findByText(COPY.saved);
+
+    rerender(
+      <DemeterSave
+        messages={[...CONVERSATION, { role: "assistant", content: "partial…" }]}
+        state="CA"
+        lang="en"
+        busy
+        pendingSave={false}
+        initialSavedId={null}
+        onRestore={() => {}}
+        copy={COPY}
+      />,
+    );
+    // Still just the original save.
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe("signed out — an invitation, never a wall", () => {
+  beforeEach(() => {
+    fetchMock.mockResolvedValue(jsonResponse(401, { error: "sign_in_required" }));
+  });
+
+  it("offers sign-in and a way to decline it", async () => {
+    renderSave();
+    fireEvent.click(screen.getByRole("button", { name: COPY.save }));
+
+    await screen.findByText(COPY.panelTitle);
+    expect(screen.getByRole("link", { name: COPY.panelCta })).toBeTruthy();
+
+    // "Not now" must return them to the chat with the offer gone — the whole
+    // premise is that declining costs nothing.
+    fireEvent.click(screen.getByRole("button", { name: COPY.panelDismiss }));
+    // By role, not by text: the panel's heading and the button share the same
+    // wording, so a text query matches the button that replaces the panel.
+    expect(screen.queryByRole("dialog")).toBeNull();
+    expect(screen.getByRole("button", { name: COPY.save })).toBeTruthy();
+  });
+
+  it("holds the transcript so it survives the trip through sign-in", async () => {
+    renderSave();
+    fireEvent.click(screen.getByRole("button", { name: COPY.save }));
+    await screen.findByText(COPY.panelTitle);
+
+    const stash = JSON.parse(window.localStorage.getItem("demeter:pending-save")!);
+    expect(stash).toMatchObject({ messages: CONVERSATION, state: "CA", lang: "en" });
+    expect(typeof stash.at).toBe("number");
+  });
+
+  it("sends them back to the page they were on, not always the English one", async () => {
+    window.history.replaceState({}, "", "/es/screen/ask");
+    renderSave({ lang: "es" });
+    fireEvent.click(screen.getByRole("button", { name: COPY.save }));
+
+    await screen.findByText(COPY.panelTitle);
+    const href = screen.getByRole("link", { name: COPY.panelCta }).getAttribute("href");
+    expect(href).toBe(`/sign-in?next=${encodeURIComponent("/es/screen/ask?save=pending")}`);
+    window.history.replaceState({}, "", "/");
+  });
+});
+
+describe("coming back from sign-in", () => {
+  it("puts the conversation back on screen and then saves it", async () => {
+    window.localStorage.setItem(
+      "demeter:pending-save",
+      JSON.stringify({ at: Date.now(), messages: CONVERSATION, state: "CA", lang: "en" }),
+    );
+    fetchMock.mockResolvedValue(jsonResponse(201, { conversation: { id: "conv-9" } }));
+    const onRestore = vi.fn();
+
+    renderSave({ messages: [], pendingSave: true, onRestore });
+
+    // Restored FIRST: landing on an empty chat with a "saved" badge would be a
+    // worse outcome than not offering this at all.
+    await waitFor(() => expect(onRestore).toHaveBeenCalledWith(CONVERSATION, "CA", "en"));
+    await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(1));
+    expect(bodyOf()).toMatchObject({ messages: CONVERSATION });
+    // Consumed, so a later reload cannot resurrect someone's transcript.
+    expect(window.localStorage.getItem("demeter:pending-save")).toBeNull();
+  });
+
+  it("ignores a stash left over from hours ago", async () => {
+    window.localStorage.setItem(
+      "demeter:pending-save",
+      JSON.stringify({
+        at: Date.now() - 60 * 60_000,
+        messages: CONVERSATION,
+        state: "CA",
+        lang: "en",
+      }),
+    );
+    const onRestore = vi.fn();
+    renderSave({ messages: [], pendingSave: true, onRestore });
+
+    await waitFor(() =>
+      expect(window.localStorage.getItem("demeter:pending-save")).toBeNull(),
+    );
+    expect(onRestore).not.toHaveBeenCalled();
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+});
+
+describe("when saving cannot succeed", () => {
+  it("reports the cap with the number the server actually enforces", async () => {
+    fetchMock.mockResolvedValue(jsonResponse(409, { error: "limit_reached", limit: 50 }));
+    renderSave();
+    fireEvent.click(screen.getByRole("button", { name: COPY.save }));
+
+    expect(await screen.findByRole("alert")).toHaveProperty(
+      "textContent",
+      "You've saved 50 conversations.",
+    );
+  });
+
+  it("says so plainly on a server error, and leaves the button usable", async () => {
+    fetchMock.mockResolvedValue(jsonResponse(500, { error: "save_failed" }));
+    renderSave();
+    fireEvent.click(screen.getByRole("button", { name: COPY.save }));
+
+    expect(await screen.findByRole("alert")).toHaveProperty("textContent", COPY.error);
+    expect(screen.getByRole("button", { name: COPY.save })).toHaveProperty("disabled", false);
+  });
+
+  it("survives the network being gone", async () => {
+    fetchMock.mockRejectedValue(new Error("offline"));
+    renderSave();
+    fireEvent.click(screen.getByRole("button", { name: COPY.save }));
+    expect(await screen.findByRole("alert")).toHaveProperty("textContent", COPY.error);
+  });
+});

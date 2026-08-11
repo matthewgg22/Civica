@@ -26,6 +26,8 @@ import { DemeterMark } from "./DemeterMark";
 import { DemeterStatePicker } from "./DemeterStatePicker";
 import { DemeterWorksheet } from "./DemeterWorksheet";
 import { DemeterFeedback } from "./DemeterFeedback";
+import { DemeterSave } from "./DemeterSave";
+import type { SavedMsg } from "../lib/demeter-conversations";
 
 /** Read the certainty verdict back off a finished answer.
  *
@@ -39,9 +41,10 @@ export function readCertainty(answer: string): "certain" | "uncertain" | null {
   return null;
 }
 
-type Msg =
-  | { role: "user" | "assistant"; content: string }
-  | { role: "divider"; content: string };
+// The saved-conversation shape IS the chat's shape, deliberately: resume is
+// then a straight hydrate with no translation layer, and a message that can be
+// rendered is by construction a message that can be saved and read back.
+type Msg = SavedMsg;
 
 
 
@@ -126,6 +129,21 @@ const T = {
       send: "Send",
       skip: "Skip",
     },
+    save: {
+      save: "Save this conversation",
+      saving: "Saving…",
+      saved: "Saved",
+      viewSaved: "Your conversations",
+      panelTitle: "Save this conversation",
+      panelBody:
+        "Make a free account and this conversation will be here when you come back. You don't need one to keep asking — an account is only for saving.",
+      panelStored:
+        "We keep what you typed, word for word, so it reads the same when you return. Only you can see it, and you can delete it whenever you want.",
+      panelCta: "Sign in to save",
+      panelDismiss: "Not now",
+      limit: (n: number) => `You've saved ${n} conversations. Delete one to save another.`,
+      error: "That didn't save. Please try again.",
+    },
     worksheet: {
       title: "Your estimate",
       subtitle: "Builds as you talk",
@@ -191,6 +209,22 @@ const T = {
       notePlaceholder: "¿Algo más? (opcional — por favor no incluyas datos personales)",
       send: "Enviar",
       skip: "Omitir",
+    },
+    save: {
+      save: "Guardar esta conversación",
+      saving: "Guardando…",
+      saved: "Guardada",
+      viewSaved: "Tus conversaciones",
+      panelTitle: "Guarda esta conversación",
+      panelBody:
+        "Crea una cuenta gratis y esta conversación estará aquí cuando regreses. No necesitas una para seguir preguntando — la cuenta es solo para guardar.",
+      panelStored:
+        "Guardamos lo que escribiste, palabra por palabra, para que se lea igual cuando vuelvas. Solo tú puedes verla, y puedes borrarla cuando quieras.",
+      panelCta: "Inicia sesión para guardar",
+      panelDismiss: "Ahora no",
+      limit: (n: number) =>
+        `Ya guardaste ${n} conversaciones. Borra una para poder guardar otra.`,
+      error: "No se pudo guardar. Intenta de nuevo.",
     },
     worksheet: {
       title: "Tu estimado",
@@ -258,6 +292,22 @@ const T = {
       send: "Gửi",
       skip: "Bỏ qua",
     },
+    save: {
+      save: "Lưu cuộc trò chuyện này",
+      saving: "Đang lưu…",
+      saved: "Đã lưu",
+      viewSaved: "Cuộc trò chuyện của bạn",
+      panelTitle: "Lưu cuộc trò chuyện này",
+      panelBody:
+        "Tạo một tài khoản miễn phí và cuộc trò chuyện này sẽ vẫn còn khi bạn quay lại. Bạn không cần tài khoản để tiếp tục hỏi — tài khoản chỉ dùng để lưu.",
+      panelStored:
+        "Chúng tôi giữ nguyên những gì bạn đã viết, từng chữ một, để khi quay lại bạn đọc thấy y như cũ. Chỉ mình bạn xem được, và bạn có thể xóa bất cứ lúc nào.",
+      panelCta: "Đăng nhập để lưu",
+      panelDismiss: "Để sau",
+      limit: (n: number) =>
+        `Bạn đã lưu ${n} cuộc trò chuyện. Hãy xóa bớt một cuộc để lưu cuộc mới.`,
+      error: "Không lưu được. Vui lòng thử lại.",
+    },
     worksheet: {
       title: "Ước tính của bạn",
       subtitle: "Được xây dựng khi bạn trò chuyện",
@@ -321,6 +371,21 @@ const T = {
       send: "发送",
       skip: "跳过",
     },
+    save: {
+      save: "保存这次对话",
+      saving: "正在保存…",
+      saved: "已保存",
+      viewSaved: "你的对话",
+      panelTitle: "保存这次对话",
+      panelBody:
+        "注册一个免费账号，下次回来时这次对话还在。继续提问不需要账号——账号只用于保存。",
+      panelStored:
+        "我们会原样保留你输入的内容，一字不改，这样你回来时看到的和现在一样。只有你能看到，也可以随时删除。",
+      panelCta: "登录以保存",
+      panelDismiss: "暂不",
+      limit: (n: number) => `你已保存 ${n} 次对话。请先删除一次，再保存新的。`,
+      error: "保存失败，请再试一次。",
+    },
     worksheet: {
       title: "您的估算",
       subtitle: "随着对话逐步生成",
@@ -343,6 +408,9 @@ export function DemeterChat({
   initialState = null,
   initialQuestion = null,
   initialLang = "en",
+  initialMessages = [],
+  savedConversationId = null,
+  pendingSave = false,
 }: {
   states: PackMeta[];
   initialState?: string | null;
@@ -350,10 +418,17 @@ export function DemeterChat({
   /** Set by the localized routes so the chat opens in the page's language
    *  rather than rendering English and then flipping after hydration. */
   initialLang?: AnswerLang;
+  /** A resumed conversation's transcript (?c=<id>), loaded server-side. */
+  initialMessages?: Msg[];
+  /** The id being resumed — new answers keep updating that same row. */
+  savedConversationId?: string | null;
+  /** ?save=pending — we have just come back from signing in and there is a
+   *  conversation waiting in localStorage to be restored and saved. */
+  pendingSave?: boolean;
 }) {
   const [lang, setLang] = useState<AnswerLang>(initialLang);
   const [state, setState] = useState<string | null>(initialState);
-  const [messages, setMessages] = useState<Msg[]>([]);
+  const [messages, setMessages] = useState<Msg[]>(initialMessages);
   const [input, setInput] = useState(initialQuestion ?? "");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -402,6 +477,18 @@ export function DemeterChat({
       ]);
     }
   };
+
+  /** Put a conversation back on screen after signing in. Stable identity: it
+   *  sits in an effect's dependency list in DemeterSave, and a new function
+   *  every render would re-run the restore. */
+  const restoreConversation = useCallback(
+    (restored: Msg[], restoredState: string | null, restoredLang: AnswerLang) => {
+      setMessages(restored);
+      setState(restoredState);
+      setLang(restoredLang);
+    },
+    [],
+  );
 
   /** Update the right rail. Never throws into the caller and never surfaces an
    *  error in the chat: a quiet rail is an acceptable degradation, a chat that
@@ -590,6 +677,19 @@ export function DemeterChat({
         <a className="demeter__how" href="/verify">
           {t.howWeVerify}
         </a>
+        {/* Sits with the scope controls rather than under the composer: it acts
+            on the WHOLE conversation, like the state and language pickers, not
+            on the next thing typed. Renders nothing until an answer exists. */}
+        <DemeterSave
+          messages={messages}
+          state={state}
+          lang={lang}
+          busy={busy}
+          pendingSave={pendingSave}
+          initialSavedId={savedConversationId}
+          onRestore={restoreConversation}
+          copy={t.save}
+        />
       </div>
 
       <div className="demeter__body">

@@ -673,6 +673,31 @@ button {
   line-height: 1.5;
 }
 
+/* "or" rule between the Google button and the email form. The line is drawn
+   with a border on the pseudo-elements so it never overlaps the word. */
+.signin-divider {
+  display: flex;
+  align-items: center;
+  gap: var(--civica-space-md);
+  margin: var(--civica-space-lg) 0;
+  color: var(--civica-muted);
+  font-size: 0.8125rem;
+}
+
+.signin-divider::before,
+.signin-divider::after {
+  content: "";
+  flex: 1;
+  border-top: 1px solid var(--civica-hairline);
+}
+
+.signin-sent-title {
+  font-size: 1.0625rem;
+  font-weight: 600;
+  color: var(--civica-ink);
+  margin: 0 0 var(--civica-space-sm);
+}
+
 .signin-otp-sent {
   font-size: 0.9375rem;
   color: var(--civica-graphite);
@@ -5067,6 +5092,57 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   gap: 1rem; flex-wrap: wrap; padding: 0.25rem 0 0.75rem;
 }
 
+/* ── Save this conversation ───────────────────────────────────────────────────
+   Sits in the scope row with the verify link, because it acts on the whole
+   conversation rather than on the next thing typed. Quiet by default: it must
+   not compete with the state picker, which is the control that changes the
+   ANSWERS. `flex: none` so it never squeezes the picker on a narrow screen. */
+.demeter__savewrap { display: inline-flex; align-items: center; gap: 0.5rem; flex: none; }
+.demeter__save {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.8rem; min-height: 44px; padding: 0.4rem 0.85rem; cursor: pointer;
+  background: transparent; color: var(--demeter-terracotta);
+  border: 1px solid var(--demeter-rule-strong); border-radius: 10px;
+}
+.demeter__save:hover:not(:disabled) { border-color: var(--demeter-terracotta); }
+.demeter__save:focus-visible { outline: 2px solid var(--demeter-terracotta); outline-offset: 1px; }
+.demeter__save:disabled { opacity: 0.6; cursor: default; }
+.demeter__save-error {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.75rem; color: var(--demeter-muted); max-width: 18rem;
+}
+
+.demeter__saved {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  display: inline-flex; align-items: center; gap: 0.4rem; flex: none;
+  font-size: 0.8rem; color: var(--demeter-muted); min-height: 44px;
+}
+.demeter__saved-mark { color: var(--demeter-terracotta); font-weight: 700; }
+.demeter__saved-link { color: var(--demeter-terracotta); text-decoration: underline; }
+
+/* The invitation, not a wall. Full-width on its own row beneath the scope
+   controls so it reads as an offer rather than a modal over the chat — the
+   chat behind it stays usable, which is the whole point. */
+.demeter__savepanel {
+  flex: 1 1 100%;
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  background: var(--demeter-card); border: 1px solid var(--demeter-rule-strong);
+  border-radius: 12px; padding: 0.9rem 1rem; display: flex; flex-direction: column; gap: 0.5rem;
+}
+.demeter__savepanel-title { font-weight: 600; font-size: 0.95rem; color: var(--demeter-ink); }
+.demeter__savepanel-body { font-size: 0.85rem; color: var(--demeter-ink); line-height: 1.5; }
+.demeter__savepanel-stored { font-size: 0.78rem; color: var(--demeter-muted); line-height: 1.5; }
+.demeter__savepanel-actions { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; }
+.demeter__savepanel-cta {
+  display: inline-flex; align-items: center; min-height: 44px; padding: 0.5rem 1rem;
+  background: var(--demeter-terracotta); color: #fff; border-radius: 10px;
+  font-size: 0.85rem; font-weight: 600; text-decoration: none;
+}
+.demeter__savepanel-dismiss {
+  background: transparent; border: 0; cursor: pointer; min-height: 44px; padding: 0.4rem;
+  font-size: 0.85rem; color: var(--demeter-muted); text-decoration: underline;
+}
+
 /* ── State picker ─────────────────────────────────────────────────────────── */
 .dmst { position: relative; min-width: 0; flex: 1 1 22rem; }
 .dmst__trigger {
@@ -5428,3 +5504,70 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 }
 .dmw__pickbtn:hover { background: var(--demeter-terracotta-deep); }
 .dmw__pickbtn:focus-visible { outline: 2px solid var(--demeter-terracotta); outline-offset: 2px; }
+
+/* ── /screen/saved — the conversations you kept ────────────────────────────────
+   Uses the Demeter tokens rather than the Civica applicant ones: this page is
+   reached from the chat and returns to the chat, so it should read as the same
+   product rather than as the enrollment portal wearing a different hat. */
+.saved {
+  min-height: 100dvh;
+  background: var(--demeter-paper);
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  color: var(--demeter-ink);
+}
+.saved__inner { max-width: 44rem; margin: 0 auto; padding: 2.5rem 1.25rem 4rem; }
+.saved__heading {
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+  font-size: 1.6rem; font-weight: 700; margin: 0 0 0.5rem;
+}
+.saved__intro { font-size: 0.9rem; color: var(--demeter-muted); line-height: 1.55; margin: 0 0 2rem; }
+
+.saved__list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.75rem; }
+.saved__item {
+  display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem;
+  background: var(--demeter-card); border: 1px solid var(--demeter-rule-strong);
+  border-radius: 12px; padding: 0.9rem 1rem;
+}
+.saved__main { min-width: 0; flex: 1; }
+.saved__title {
+  font-size: 0.98rem; font-weight: 600; color: var(--demeter-ink); text-decoration: none;
+  display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.saved__title:hover { text-decoration: underline; }
+.saved__meta { font-size: 0.78rem; color: var(--demeter-muted); margin: 0.3rem 0 0; }
+.saved__scope { font-weight: 500; }
+.saved__error { font-size: 0.78rem; color: var(--demeter-terracotta-deep); margin: 0.4rem 0 0; }
+
+.saved__actions { display: flex; align-items: center; gap: 0.5rem; flex: none; }
+.saved__open {
+  display: inline-flex; align-items: center; min-height: 44px; padding: 0.4rem 0.9rem;
+  font-size: 0.82rem; font-weight: 600; text-decoration: none;
+  color: #fff; background: var(--demeter-terracotta); border-radius: 10px;
+}
+.saved__open:hover { background: var(--demeter-terracotta-deep); }
+/* Deliberately not red. A destructive-red button on every row turns the page
+   into a field of alarms; the confirm dialog is what makes this safe. */
+.saved__delete {
+  min-height: 44px; padding: 0.4rem 0.75rem; cursor: pointer;
+  font-size: 0.82rem; color: var(--demeter-muted);
+  background: transparent; border: 1px solid var(--demeter-rule-strong); border-radius: 10px;
+}
+.saved__delete:hover:not(:disabled) { border-color: var(--demeter-terracotta); color: var(--demeter-ink); }
+.saved__delete:disabled { opacity: 0.6; cursor: default; }
+
+.saved__empty {
+  background: var(--demeter-card); border: 1px solid var(--demeter-rule-strong);
+  border-radius: 12px; padding: 1.5rem; text-align: center;
+}
+.saved__empty-title { font-weight: 600; margin: 0 0 0.4rem; }
+.saved__empty-body { font-size: 0.87rem; color: var(--demeter-muted); line-height: 1.55; margin: 0 0 1rem; }
+.saved__empty-cta {
+  display: inline-flex; align-items: center; min-height: 44px; padding: 0.5rem 1.1rem;
+  background: var(--demeter-terracotta); color: #fff; border-radius: 10px;
+  font-size: 0.87rem; font-weight: 600; text-decoration: none;
+}
+
+@media (max-width: 30rem) {
+  .saved__item { flex-direction: column; align-items: stretch; }
+  .saved__actions { justify-content: flex-end; }
+}
