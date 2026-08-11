@@ -5201,7 +5201,74 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 }
 
 /* ── Explainer bands ──────────────────────────────────────────────────────── */
+/* ── Orientation bar (.dmo) — the top of the page and its only <h1> ──────────
+   Deliberately NOT a .dmx section: those are depth, separated by rules and
+   heavy vertical padding. This is the frame the page opens in, so it is tight
+   (the chat has to clear the fold) and carries no top rule.
+
+   Type follows the house rule — serif speaks, sans labels. The h1 and both
+   statements are Newsreader; only the eyebrow is Be Vietnam Pro. */
+.dmo { padding: clamp(1.75rem, 4vw, 2.75rem) 0 clamp(1.25rem, 2.5vw, 1.75rem); }
+.dmo__eyebrow {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--demeter-muted); margin: 0 0 0.75rem;
+}
+.dmo__h1 {
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+  font-size: clamp(1.9rem, 4.2vw, 3rem); line-height: 1.08; letter-spacing: -0.025em;
+  font-weight: 600; color: var(--demeter-ink); margin: 0 0 0.85rem;
+  max-width: 20ch; text-wrap: balance;
+}
+.dmo__lede {
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+  font-size: clamp(1.05rem, 1.6vw, 1.2rem); line-height: 1.6; color: var(--demeter-body);
+  margin: 0 0 0.6rem; max-width: 52ch; text-wrap: pretty;
+}
+/* The SNAP sentence sits a step down from the product sentence: same family,
+   smaller and muted. It is orientation for someone who does not know what SNAP
+   is, not the page's claim about itself. */
+.dmo__snap {
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+  font-size: 0.98rem; line-height: 1.6; color: var(--demeter-muted);
+  margin: 0; max-width: 52ch; text-wrap: pretty;
+}
+.dmo__cta {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  display: inline-flex; align-items: center; min-height: 44px; margin-top: 1.1rem;
+  padding: 0 1.2rem; border-radius: 999px; background: var(--demeter-terracotta);
+  color: #fff; font-weight: 700; font-size: 0.95rem; text-decoration: none;
+}
+.dmo__cta:hover { background: var(--demeter-terracotta-deep); }
+
 .dmx { padding: clamp(2.5rem, 6vw, 4.5rem) 0; border-top: 1px solid var(--demeter-rule); }
+/* The one internal link out of the chat page, to /questions. Reads as a door,
+   not a footnote — moved content with a weak link is content nobody finds. */
+.dmx--outlink { padding: clamp(1.75rem, 4vw, 2.5rem) 0; }
+.dmx__outlink {
+  display: block; text-decoration: none; background: var(--demeter-card);
+  border: 1px solid var(--demeter-rule); border-radius: 20px;
+  padding: clamp(1.25rem, 2.5vw, 1.75rem);
+}
+.dmx__outlink:hover { border-color: var(--demeter-terracotta); }
+.dmx__outlink-label {
+  display: block;
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+  font-size: clamp(1.2rem, 2vw, 1.5rem); line-height: 1.2; letter-spacing: -0.01em;
+  font-weight: 600; color: var(--demeter-terracotta); margin-bottom: 0.4rem;
+  text-decoration: underline; text-underline-offset: 3px;
+}
+.dmx__outlink-body {
+  display: block;
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+  font-size: 1rem; line-height: 1.6; color: var(--demeter-body); max-width: 52ch;
+}
+/* Heading kept for the document outline and skip-links, hidden visually
+   because the h1 immediately above already says it. */
+.dmx__sronly {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
 .dmx--lede { border-top: 0; padding-top: clamp(2rem, 5vw, 3.5rem); }
 .dmx__eyebrow {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
@@ -5310,6 +5377,13 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   border-radius: 20px; padding: clamp(1.25rem, 2.5vw, 1.75rem);
 }
 .dmx__trustlist { margin: 0; display: flex; flex-direction: column; gap: 1.1rem; }
+/* Trust moved out of the old right-hand lede column and below the chat, where
+   it has the full container width — so it lays out as a grid rather than a
+   narrow stack. Same four claims, same words. */
+.dmx__trustlist--wide {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  gap: 1.75rem; margin-top: 1.5rem;
+}
 .dmx__trustrow { display: flex; flex-direction: column; gap: 0.25rem; }
 .dmx__trustrow dt {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;

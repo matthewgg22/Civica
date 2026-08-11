@@ -72,47 +72,75 @@ export function formQuestionAnswer(q: FormQuestion, lang: AnswerLang = "en"): st
  *  "doesn't fill the page" complaint this rebuild exists to fix — and the
  *  honest thing to put there is what makes the answers trustworthy, stated
  *  plainly enough to be quoted. */
-export function SnapLede({ states, lang = "en" }: { states: PackMeta[]; lang?: AnswerLang }) {
+/** THE ORIENTATION BAR — the top of the page and its only <h1>.
+ *
+ *  Replaces SnapLede, which opened the page with an <h2> about SNAP and left
+ *  the product unnamed until the chat card's own <h1> 120 words later. That put
+ *  an <h2> BEFORE the <h1> in document order: an inverted heading hierarchy
+ *  that failed screen readers and told search engines the page was a SNAP
+ *  explainer containing a chatbot, rather than a product that answers SNAP
+ *  questions.
+ *
+ *  ~45 words, two statements, product first. Category research settled the
+ *  order: GetCalFresh leads with comprehension because it gave the application
+ *  away to BenefitsCal and comprehension is all it still owns; mRelief and
+ *  Consensus both own their tool and both put it at the top. Demeter owns the
+ *  answering, so it belongs in the second group.
+ *
+ *  The four trust rows that used to sit here moved BELOW the chat (SnapDetail).
+ *  Not deleted — every word is still server-rendered on this URL. They are
+ *  credibility, and credibility is what you read after you see the thing, not
+ *  the wall you climb to reach it. */
+export function SnapOrientation({ lang = "en" }: { lang?: AnswerLang }) {
   const c = PAGE_COPY[lang];
   return (
-    <section className="dmx dmx--lede" aria-labelledby="what-is-snap">
-      <div className="dmx__ledegrid">
-        <div>
-          <p className="dmx__eyebrow">{c.eyebrow}</p>
-          <h2 id="what-is-snap" className="dmx__h2">
-            {c.h2}
-          </h2>
-          <p className="dmx__lede">{c.lede}</p>
-        </div>
-        <aside className="dmx__trust" aria-label={c.howH2}>
-          <dl className="dmx__trustlist">
-            {c.trust.map((row, i) => (
-              <div className="dmx__trustrow" key={row.t}>
-                {/* The third row counts the packs, so its term carries the
-                    number and its detail lists the codes — everything else is
-                    static copy. */}
-                <dt>{i === 2 ? `${states.length} ${row.t}` : row.t}</dt>
-                <dd>
-                  {i === 2
-                    ? `${states.map((s) => s.code).join(" · ")} — ${row.d}`
-                    : row.d}
-                </dd>
-              </div>
-            ))}
-          </dl>
-        </aside>
-      </div>
+    <section className="dmo" aria-labelledby="demeter-h1">
+      <p className="dmo__eyebrow">{c.eyebrow}</p>
+      <h1 id="demeter-h1" className="dmo__h1">
+        {c.h1}
+      </h1>
+      <p className="dmo__lede">{c.productLede}</p>
+      <p className="dmo__snap">{c.snapLine}</p>
     </section>
   );
 }
 
-/** The depth — renders BELOW the chat. Carries the GEO weight: mechanisms,
- *  differentiation, the form-question FAQ, and every verified state's real
- *  agency, all in server HTML, all in the page's own language. */
+/** The depth — renders BELOW the chat. Carries the GEO weight: what the trust
+ *  claims actually mean, what decides eligibility, how answers are produced,
+ *  and every verified state's real agency. All server HTML, all in the page's
+ *  own language.
+ *
+ *  Two sections left here for /questions (SnapFormQuestions + SnapWhyHard):
+ *  the 17 form-question cards were the single largest block on the page at
+ *  ~635 words, and "why a straight answer is hard to find" is the natural
+ *  introduction to them. Moved rather than cut — the words stay indexable, on
+ *  a page that is ABOUT them. This page went from ~1,300 words of static copy
+ *  to ~600, and the chat from ~15% page depth to immediately under a 45-word
+ *  bar. */
 export function SnapDetail({ states, lang = "en" }: { states: PackMeta[]; lang?: AnswerLang }) {
   const c = PAGE_COPY[lang];
   return (
     <>
+      {/* Trust, relocated from the old lede. Same four claims, same words. */}
+      <section className="dmx" aria-labelledby="why-trust">
+        <h2 id="why-trust" className="dmx__h2">
+          {c.howH2}
+        </h2>
+        <dl className="dmx__trustlist dmx__trustlist--wide">
+          {c.trust.map((row, i) => (
+            <div className="dmx__trustrow" key={row.t}>
+              {/* The third row counts the packs, so its term carries the
+                  number and its detail lists the codes — everything else is
+                  static copy. */}
+              <dt>{i === 2 ? `${states.length} ${row.t}` : row.t}</dt>
+              <dd>
+                {i === 2 ? `${states.map((s) => s.code).join(" · ")} — ${row.d}` : row.d}
+              </dd>
+            </div>
+          ))}
+        </dl>
+      </section>
+
       <section className="dmx" aria-labelledby="what-decides">
         <h2 id="what-decides" className="dmx__h2">
           {c.decidesH2}
@@ -126,20 +154,6 @@ export function SnapDetail({ states, lang = "en" }: { states: PackMeta[]; lang?:
             </div>
           ))}
         </dl>
-      </section>
-
-      <section className="dmx" aria-labelledby="why-hard">
-        <h2 id="why-hard" className="dmx__h2">
-          {c.whyHardH2}
-        </h2>
-        <div className="dmx__grid">
-          {c.cards.map((card) => (
-            <div className="dmx__card" key={card.t}>
-              <h3 className="dmx__h3">{card.t}</h3>
-              <p className="dmx__body">{card.d}</p>
-            </div>
-          ))}
-        </div>
       </section>
 
       <section className="dmx" aria-labelledby="how-answers">
@@ -164,38 +178,6 @@ export function SnapDetail({ states, lang = "en" }: { states: PackMeta[]; lang?:
             </li>
           ))}
         </ol>
-      </section>
-
-      {/* The questions the FORM asks, decoded. Rendered from FORM_QUESTIONS —
-          the same vetted, citation-backed entries the chat routes on — so this
-          section and the engine can never disagree, and neither can this and
-          the JSON-LD (both call formQuestionHeading()).
-
-          This is the page's GEO core. It is the content a generative engine is
-          most likely to quote, because it answers the literal question someone
-          types, and every entry names the governing rule. None of it carries a
-          dollar figure, so it does not rot at the October COLA. */}
-      <section className="dmx" aria-labelledby="form-questions">
-        <h2 id="form-questions" className="dmx__h2">
-          {c.faqH2}
-        </h2>
-        <p className="dmx__body">{c.faqBody}</p>
-        <dl className="dmx__faq">
-          {FORM_QUESTIONS.map((q) => (
-            <div className="dmx__faqitem" key={q.topic}>
-              <dt className="dmx__faqq">
-                <span className="dmx__faqtopic">{topicLabel(q.topic)}</span>
-                {formQuestionHeading(q, lang)}
-              </dt>
-              <dd className="dmx__faqa">
-                {formQuestionAnswer(q, lang)}
-                {/* Citations render separately and VERBATIM — never translated,
-                    the same rule the answer pipeline follows. */}
-                <span className="dmx__faqcite">{q.citation}</span>
-              </dd>
-            </div>
-          ))}
-        </dl>
       </section>
 
       <section className="dmx" aria-labelledby="agencies">
@@ -226,6 +208,81 @@ export function SnapDetail({ states, lang = "en" }: { states: PackMeta[]; lang?:
         </ul>
         <p className="dmx__note">{c.agenciesNote}</p>
       </section>
+
+      {/* The one internal link out. The form-question cards are the content a
+          generative engine is most likely to quote, so they need a crawlable
+          path from the page that already ranks — a moved section with no link
+          into it is a deleted section as far as discovery is concerned. */}
+      <section className="dmx dmx--outlink">
+        <a className="dmx__outlink" href={questionsHref(lang)}>
+          <span className="dmx__outlink-label">{c.questionsLink}</span>
+          <span className="dmx__outlink-body">{c.questionsIntro}</span>
+        </a>
+      </section>
     </>
+  );
+}
+
+/** English stays un-prefixed; the localized pages live under /es|/vi|/zh. */
+export function questionsHref(lang: AnswerLang): string {
+  return lang === "en" ? "/questions" : `/${lang}/questions`;
+}
+
+export function askHref(lang: AnswerLang): string {
+  return lang === "en" ? "/screen/ask" : `/${lang}/screen/ask`;
+}
+
+/** Why the form's own wording defeats people. Introduces the cards below it,
+ *  which is the job it was always doing — it just used to do it three sections
+ *  away from them. */
+export function SnapWhyHard({ lang = "en" }: { lang?: AnswerLang }) {
+  const c = PAGE_COPY[lang];
+  return (
+    <section className="dmx" aria-labelledby="why-hard">
+      <h2 id="why-hard" className="dmx__h2">
+        {c.whyHardH2}
+      </h2>
+      <div className="dmx__grid">
+        {c.cards.map((card) => (
+          <div className="dmx__card" key={card.t}>
+            <h3 className="dmx__h3">{card.t}</h3>
+            <p className="dmx__body">{card.d}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+/** The questions the FORM asks, decoded. Rendered from FORM_QUESTIONS — the
+ *  same vetted, citation-backed entries the chat routes on — so this and the
+ *  engine can never disagree, and neither can this and the JSON-LD (both call
+ *  formQuestionHeading()).
+ *
+ *  Every entry names the governing rule and none carries a dollar figure, so
+ *  none of it rots at the October COLA. */
+export function SnapFormQuestions({ lang = "en" }: { lang?: AnswerLang }) {
+  return (
+    <section className="dmx" aria-labelledby="form-questions">
+      <h2 id="form-questions" className="dmx__sronly">
+        {PAGE_COPY[lang].faqH2}
+      </h2>
+      <dl className="dmx__faq">
+        {FORM_QUESTIONS.map((q) => (
+          <div className="dmx__faqitem" key={q.topic}>
+            <dt className="dmx__faqq">
+              <span className="dmx__faqtopic">{topicLabel(q.topic)}</span>
+              {formQuestionHeading(q, lang)}
+            </dt>
+            <dd className="dmx__faqa">
+              {formQuestionAnswer(q, lang)}
+              {/* Citations render separately and VERBATIM — never translated,
+                  the same rule the answer pipeline follows. */}
+              <span className="dmx__faqcite">{q.citation}</span>
+            </dd>
+          </div>
+        ))}
+      </dl>
+    </section>
   );
 }

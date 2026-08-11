@@ -663,7 +663,13 @@ export function DemeterChat({
             <DemeterMark size={40} />
           </span>
           <div>
-            <h1 className="demeter__title">{t.title}</h1>
+            {/* A <p>, not an <h1>. The page's <h1> is the orientation bar
+                above this card (SnapOrientation). This used to BE the h1, which
+                put it after the SNAP <h2> in document order — an inverted
+                heading hierarchy, and a card that claimed to be the page. Both
+                mount points render the orientation bar, so nothing is left
+                without a heading. */}
+            <p className="demeter__title">{t.title}</p>
             <p className="demeter__tagline">{t.tagline}</p>
           </div>
         </div>

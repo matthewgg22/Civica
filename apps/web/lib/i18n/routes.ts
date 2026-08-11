@@ -27,14 +27,30 @@ export function askUrl(lang: AnswerLang): string {
   return SITE_URL ? `${SITE_URL}${askPath(lang)}` : askPath(lang);
 }
 
+/** Same shape for /questions, which carries the form-question cards moved off
+ *  the ask page. Its own hreflang SET, not the ask page's — pointing a
+ *  /questions alternate at /screen/ask would annotate two different pages as
+ *  translations of each other, which is worse than no annotation. */
+export function questionsPath(lang: AnswerLang): string {
+  return lang === "en" ? "/questions" : `/${lang}/questions`;
+}
+
+export function questionsUrl(lang: AnswerLang): string {
+  return SITE_URL ? `${SITE_URL}${questionsPath(lang)}` : questionsPath(lang);
+}
+
 /** The hreflang set every localized page must carry — all four languages plus
  *  x-default. Every page in the set links to EVERY page in the set (including
  *  itself); a partial set is the most common way hreflang silently stops
- *  working, because search engines require the annotations to be reciprocal. */
-export function alternateLanguages(): Record<string, string> {
+ *  working, because search engines require the annotations to be reciprocal.
+ *
+ *  Takes the URL builder so each page family annotates its OWN set. */
+export function alternateLanguages(
+  url: (lang: AnswerLang) => string = askUrl,
+): Record<string, string> {
   const out: Record<string, string> = {};
-  for (const l of ANSWER_LANGS) out[LANG_TAG[l]] = askUrl(l);
-  out["x-default"] = askUrl("en");
+  for (const l of ANSWER_LANGS) out[LANG_TAG[l]] = url(l);
+  out["x-default"] = url("en");
   return out;
 }
 

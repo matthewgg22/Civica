@@ -21,6 +21,20 @@ export interface Pair {
 }
 
 export interface PageCopy {
+  /** THE ORIENTATION BAR — the page's h1 and the first thing anyone reads.
+   *
+   *  It exists because the page used to open with an h2 about SNAP and only
+   *  named the product 120 words later, inside the chat card. The markup said
+   *  it out loud: an <h2> preceded the <h1> in document order, so the page's
+   *  own structure claimed to be a SNAP explainer that happened to contain a
+   *  chatbot.
+   *
+   *  Two statements, ~45 words total: what Demeter is, then what SNAP is. The
+   *  first leads because it is the thing someone remembers — every other tool
+   *  in this category returns an estimate; this one hands you the rule. */
+  h1: string;
+  productLede: string;
+  snapLine: string;
   eyebrow: string;
   h2: string;
   lede: string;
@@ -36,6 +50,13 @@ export interface PageCopy {
   faqBody: string;
   /** The FAQ question form. Shared with the JSON-LD so both say the same thing. */
   faqHeading: (phrase: string) => string;
+  /** Link from the chat page to /questions, where the form-question cards and
+   *  the "why this is hard" section now live. Moved, not deleted — the words
+   *  are still server-rendered and indexable, on a page that is ABOUT them
+   *  rather than buried under a chat box. */
+  questionsLink: string;
+  questionsIntro: string;
+  questionsBack: string;
   agenciesH2: string;
   agenciesBody: string;
   agenciesNote: string;
@@ -43,6 +64,11 @@ export interface PageCopy {
 }
 
 const en: PageCopy = {
+  h1: "Ask about SNAP and get the actual rule.",
+  productLede:
+    "Demeter answers in plain language and quotes the federal regulation behind every claim — plus your state’s own manual, where we have verified one.",
+  snapLine:
+    "SNAP is monthly money for groceries, paid onto an EBT card. Formerly called food stamps. Applying is free.",
   eyebrow: "Supplemental Nutrition Assistance Program",
   h2: "SNAP is monthly money for groceries, paid onto a card.",
   lede:
@@ -118,6 +144,10 @@ const en: PageCopy = {
   faqBody:
     "These are the questions people get stuck on — the phrasing is legal, not conversational. Here is what each one means and the rule behind it.",
   faqHeading: (p) => `What does "${p}" mean on a SNAP application?`,
+  questionsLink: "What the application is actually asking",
+  questionsIntro:
+    "People do not arrive with a policy question. They arrive stuck on one line of a form. Here is what each line means and the rule that decides it.",
+  questionsBack: "Ask Demeter about your own situation",
   agenciesH2: "Your state runs the program — here is who",
   agenciesBody:
     "Demeter never decides your case. Your state agency does. These are the agencies whose own published rules the verified answers are built from, and where you actually apply.",
@@ -127,6 +157,11 @@ const en: PageCopy = {
 };
 
 const es: PageCopy = {
+  h1: "Pregunta sobre SNAP y obtén la regla exacta.",
+  productLede:
+    "Demeter responde en lenguaje sencillo y cita el reglamento federal detrás de cada afirmación — y el manual de tu estado, donde hemos verificado uno.",
+  snapLine:
+    "SNAP es dinero mensual para comida, depositado en una tarjeta EBT. Antes llamado cupones de alimentos. Solicitar es gratis.",
   eyebrow: "Programa de Asistencia Nutricional Suplementaria",
   h2: "SNAP es dinero mensual para comida, depositado en una tarjeta.",
   lede:
@@ -202,6 +237,10 @@ const es: PageCopy = {
   faqBody:
     "Estas son las preguntas donde la gente se atora — la redacción es legal, no conversacional. Esto es lo que significa cada una y la regla detrás.",
   faqHeading: (p) => `¿Qué significa "${p}" en una solicitud de SNAP?`,
+  questionsLink: "Lo que la solicitud realmente pregunta",
+  questionsIntro:
+    "La gente no llega con una pregunta de política. Llega atascada en una línea de un formulario. Esto es lo que significa cada línea y la regla que la decide.",
+  questionsBack: "Pregúntale a Demeter sobre tu propia situación",
   agenciesH2: "Tu estado administra el programa — estas son las agencias",
   agenciesBody:
     "Demeter nunca decide tu caso. Lo hace la agencia de tu estado. Estas son las agencias cuyas reglas publicadas sustentan las respuestas verificadas, y donde realmente se solicita.",
@@ -211,6 +250,11 @@ const es: PageCopy = {
 };
 
 const vi: PageCopy = {
+  h1: "Hỏi về SNAP và nhận đúng điều luật.",
+  productLede:
+    "Demeter trả lời bằng ngôn ngữ dễ hiểu và trích dẫn quy định liên bang đứng sau mỗi khẳng định — cùng với sổ tay của tiểu bang bạn, nơi chúng tôi đã xác minh.",
+  snapLine:
+    "SNAP là tiền mua thực phẩm hằng tháng, nạp vào thẻ EBT. Trước đây gọi là tem phiếu thực phẩm. Nộp đơn miễn phí.",
   eyebrow: "Chương trình Hỗ trợ Dinh dưỡng Bổ sung",
   h2: "SNAP là tiền mua thực phẩm hằng tháng, nạp vào một tấm thẻ.",
   lede:
@@ -286,6 +330,10 @@ const vi: PageCopy = {
   faqBody:
     "Đây là những câu khiến người ta mắc kẹt — cách diễn đạt mang tính pháp lý, không phải đời thường. Sau đây là ý nghĩa của từng câu và quy định đằng sau nó.",
   faqHeading: (p) => `"${p}" trên đơn SNAP nghĩa là gì?`,
+  questionsLink: "Đơn xin thực sự đang hỏi điều gì",
+  questionsIntro:
+    "Người ta không đến với một câu hỏi về chính sách. Họ mắc kẹt ở một dòng trên tờ đơn. Đây là ý nghĩa của từng dòng và điều luật quyết định nó.",
+  questionsBack: "Hỏi Demeter về hoàn cảnh của chính bạn",
   agenciesH2: "Tiểu bang của bạn điều hành chương trình — đây là các cơ quan",
   agenciesBody:
     "Demeter không bao giờ quyết định hồ sơ của bạn. Cơ quan tiểu bang mới quyết định. Đây là những cơ quan có quy định công bố làm nền cho các câu trả lời đã xác minh, và cũng là nơi bạn thực sự nộp đơn.",
@@ -295,6 +343,10 @@ const vi: PageCopy = {
 };
 
 const zh: PageCopy = {
+  h1: "询问 SNAP，拿到具体条款。",
+  productLede:
+    "Demeter 用通俗语言回答，并为每一条结论引用相应的联邦法规——以及我们已核实的贵州手册。",
+  snapLine: "SNAP 是每月打入 EBT 卡的食品补助，旧称食品券。申请免费。",
   eyebrow: "补充营养援助计划",
   h2: "SNAP 是每月发放到卡上的食品补助。",
   lede:
@@ -367,6 +419,10 @@ const zh: PageCopy = {
   faqBody:
     "这些是最容易卡住人的问题——它们的措辞是法律语言，不是日常说法。下面是每一条的含义，以及背后的规定。",
   faqHeading: (p) => `SNAP 申请表上的“${p}”是什么意思？`,
+  questionsLink: "申请表到底在问什么",
+  questionsIntro:
+    "人们并不是带着政策问题来的，而是卡在表格的某一行上。这里说明每一行的含义，以及决定它的条款。",
+  questionsBack: "就您自己的情况询问 Demeter",
   agenciesH2: "项目由您所在的州执行——以下是相关机构",
   agenciesBody:
     "Demeter 从不决定您的个案，作出决定的是您所在州的机构。以下这些机构自己公布的规定，正是已核实答案的依据，也是您实际递交申请的地方。",
