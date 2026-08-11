@@ -4739,12 +4739,12 @@ html {
   border-radius: 999px; padding: 0.4rem 0.85rem; font-size: 0.85rem; font-weight: 600;
 }
 .demeter__state.is-active { background: var(--demeter-terracotta); border-color: var(--demeter-terracotta); color: #fff; }
-.demeter__badge { color: var(--demeter-terracotta); font-weight: 700; }
+.demeter__badge { color: var(--demeter-terracotta-deep); font-weight: 700; }
 /* Active badge sits on a terracotta pill — paper for contrast, never
    --demeter-wheat (a 2px source-link rule and the logo mark only — never a
    fill or a letterform, per the spec's own rule). */
 .demeter__state.is-active .demeter__badge { color: var(--demeter-paper); }
-.demeter__how { font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif; flex: none; font-size: 0.8rem; color: var(--demeter-terracotta); text-decoration: underline; padding: 0.4rem; min-height: 44px; display: inline-flex; align-items: center; }
+.demeter__how { font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif; flex: none; font-size: 0.8rem; color: var(--demeter-terracotta-deep); text-decoration: underline; padding: 0.4rem; min-height: 44px; display: inline-flex; align-items: center; }
 .demeter__scroll { flex: 1; overflow-y: auto; padding: 0.5rem 0.25rem; display: flex; flex-direction: column; gap: 0.6rem; }
 .demeter__empty { display: flex; flex-direction: column; gap: 0.5rem; margin: auto 0; padding: 1rem 0; }
 .demeter__suggest {
@@ -5001,7 +5001,7 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 }
 .worksheet__paywall-cta:hover { background: var(--demeter-terracotta-deep); }
 
-.screening__error-cta { font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif; margin-left: 0.6rem; color: var(--demeter-terracotta); font-weight: 650; text-decoration: underline; white-space: nowrap; }
+.screening__error-cta { font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif; margin-left: 0.6rem; color: var(--demeter-terracotta-deep); font-weight: 650; text-decoration: underline; white-space: nowrap; }
 .screening__error-cta:hover { color: var(--demeter-terracotta-deep); }
 
 /* ── Landing (frame 01) + sign-in (frame 02) — the two entry points
@@ -5039,7 +5039,7 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 .screen-landing__cta--secondary:hover { border-color: var(--demeter-terracotta); color: var(--demeter-terracotta-deep); }
 .screen-landing__guest-note { font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif; margin: 1.25rem 0 0; font-size: 0.8rem; color: var(--demeter-muted); }
 .screen-landing__ask-note { font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif; margin: 0.6rem 0 0; font-size: 0.8rem; color: var(--demeter-muted); }
-.screen-landing__ask-note a { color: var(--demeter-terracotta); text-decoration: underline; }
+.screen-landing__ask-note a { color: var(--demeter-terracotta-deep); text-decoration: underline; }
 .screen-landing__ask-note a:hover { color: var(--demeter-terracotta-deep); }
 
 .screen-auth__main { flex: 1; display: flex; align-items: center; justify-content: center; padding: 2rem 1.25rem; }
@@ -5072,7 +5072,7 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   font-weight: 600; cursor: not-allowed;
 }
 .screen-auth__links { font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif; display: flex; justify-content: space-between; margin-top: 1.1rem; font-size: 0.82rem; }
-.screen-auth__links a { color: var(--demeter-terracotta); text-decoration: underline; }
+.screen-auth__links a { color: var(--demeter-terracotta-deep); text-decoration: underline; }
 .screen-auth__links a:hover { color: var(--demeter-terracotta-deep); }
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -5122,7 +5122,7 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 .demeter__save {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   font-size: 0.8rem; min-height: 44px; padding: 0.4rem 0.85rem; cursor: pointer;
-  background: transparent; color: var(--demeter-terracotta);
+  background: transparent; color: var(--demeter-terracotta-deep);
   border: 1px solid var(--demeter-rule-strong); border-radius: 10px;
 }
 .demeter__save:hover:not(:disabled) { border-color: var(--demeter-terracotta); }
@@ -5138,8 +5138,8 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   display: inline-flex; align-items: center; gap: 0.4rem; flex: none;
   font-size: 0.8rem; color: var(--demeter-muted); min-height: 44px;
 }
-.demeter__saved-mark { color: var(--demeter-terracotta); font-weight: 700; }
-.demeter__saved-link { color: var(--demeter-terracotta); text-decoration: underline; }
+.demeter__saved-mark { color: var(--demeter-terracotta-deep); font-weight: 700; }
+.demeter__saved-link { color: var(--demeter-terracotta-deep); text-decoration: underline; }
 
 /* The invitation, not a wall. Full-width on its own row beneath the scope
    controls so it reads as an offer rather than a modal over the chat — the
@@ -5184,7 +5184,7 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   font-size: 0.95rem; font-weight: 500; color: var(--demeter-ink);
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
-.dmst__check { color: var(--demeter-terracotta); font-weight: 700; flex: none; }
+.dmst__check { color: var(--demeter-terracotta-deep); font-weight: 700; flex: none; }
 .dmst__caret { color: var(--demeter-muted); flex: none; font-size: 0.8rem; }
 
 .dmst__panel {
@@ -5301,7 +5301,7 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   display: block;
   font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
   font-size: clamp(1.2rem, 2vw, 1.5rem); line-height: 1.2; letter-spacing: -0.01em;
-  font-weight: 600; color: var(--demeter-terracotta); margin-bottom: 0.4rem;
+  font-weight: 600; color: var(--demeter-terracotta-deep); margin-bottom: 0.4rem;
   text-decoration: underline; text-underline-offset: 3px;
 }
 .dmx__outlink-body {
@@ -5349,12 +5349,12 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   max-width: 52ch;
 }
 .dmx__link {
-  color: var(--demeter-terracotta); text-decoration: underline;
+  color: var(--demeter-terracotta-deep); text-decoration: underline;
   text-underline-offset: 2px;
 }
 .dmx__link:hover { color: var(--demeter-terracotta-deep); }
 
-.dmx__defs { display: grid; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); gap: 1.75rem; margin: 1.5rem 0 0; }
+.dmx__defs { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(15rem, 100%), 1fr)); gap: 1.75rem; margin: 1.5rem 0 0; }
 .dmx__def dt {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase;
@@ -5365,7 +5365,7 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   font-size: 0.97rem; line-height: 1.62; color: var(--demeter-body); margin: 0; max-width: 42ch;
 }
 
-.dmx__grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr)); gap: 1.25rem; margin-top: 1.5rem; }
+.dmx__grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(16rem, 100%), 1fr)); gap: 1.25rem; margin-top: 1.5rem; }
 .dmx__card {
   background: var(--demeter-card); border: 1px solid var(--demeter-rule);
   border-radius: 20px; padding: 1.4rem;
@@ -5376,13 +5376,13 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 .dmx__step { display: flex; gap: 1.1rem; align-items: flex-start; }
 .dmx__num {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
-  font-size: 0.72rem; letter-spacing: 0.1em; color: var(--demeter-terracotta);
+  font-size: 0.72rem; letter-spacing: 0.1em; color: var(--demeter-terracotta-deep);
   border: 1px solid var(--demeter-rule-strong); border-radius: 999px;
   padding: 0.3rem 0.6rem; flex: none;
 }
 .dmx__step .dmx__body { margin: 0; }
 
-.dmx__agencies { list-style: none; margin: 1.5rem 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr)); gap: 1rem; }
+.dmx__agencies { list-style: none; margin: 1.5rem 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(17rem, 100%), 1fr)); gap: 1rem; }
 .dmx__agency {
   display: flex; gap: 0.85rem; align-items: flex-start;
   border: 1px solid var(--demeter-rule); border-radius: 14px;
@@ -5427,7 +5427,7 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
    it has the full container width — so it lays out as a grid rather than a
    narrow stack. Same four claims, same words. */
 .dmx__trustlist--wide {
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(min(15rem, 100%), 1fr));
   gap: 1.75rem; margin-top: 1.5rem;
 }
 .dmx__trustrow { display: flex; flex-direction: column; gap: 0.25rem; }
@@ -5547,7 +5547,7 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 .demeter__lang-select:focus-visible { outline: 2px solid var(--demeter-terracotta); outline-offset: 1px; }
 
 /* ── Form-question FAQ: the page's GEO core ───────────────────────────────── */
-.dmx__faq { margin: 1.75rem 0 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(21rem, 1fr)); gap: 1.25rem; }
+.dmx__faq { margin: 1.75rem 0 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(21rem, 100%), 1fr)); gap: 1.25rem; }
 .dmx__faqitem {
   background: var(--demeter-card); border: 1px solid var(--demeter-rule);
   border-radius: 20px; padding: 1.35rem;
@@ -5771,7 +5771,7 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 .signin-page[data-surface="demeter"] .locale-toggle,
 .signin-page[data-surface="demeter"] .signin-resend {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
-  color: var(--demeter-terracotta);
+  color: var(--demeter-terracotta-deep);
   border-color: var(--demeter-rule-strong);
 }
 
@@ -5942,7 +5942,11 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   font-size: 0.85rem; line-height: 1.6; margin: 0;
   color: rgba(242, 239, 234, 0.66); max-width: 78ch;
 }
-.dmft__org { color: rgba(242, 239, 234, 0.45); }
+/* 0.55, not the 0.45 this shipped with. Composited over #22201E that was
+   #807D7A — a 3.97:1 ratio, under AA. Attribution is the least important line
+   in the footer, which is exactly why it got the lowest alpha and why nobody
+   would have checked it. 0.55 composites to #94928E at 5.23:1. */
+.dmft__org { color: rgba(242, 239, 234, 0.55); }
 
 @media (max-width: 720px) {
   .dmft__inner { grid-template-columns: 1fr; }
@@ -6061,7 +6065,7 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 .dment__scope .dmst { flex: 1; min-width: 0; }
 .dment__verify {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
-  flex: none; font-size: 0.8rem; color: var(--demeter-terracotta);
+  flex: none; font-size: 0.8rem; color: var(--demeter-terracotta-deep);
   text-decoration: underline; text-underline-offset: 2px;
   min-height: 44px; display: inline-flex; align-items: center;
 }
@@ -6136,3 +6140,36 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 /* The estimate rail keeps its own alignment: it is a panel that grows with
    what it knows, not a column that should stretch to the fold. */
 .dmchat .dmw { align-self: start; }
+
+/* Visually hidden, still announced. The clip-rect technique rather than
+   display:none or visibility:hidden — both of those remove the element from
+   the accessibility tree entirely, which would make the live region silent and
+   the whole thing pointless.
+
+   NOT reusing .dmx__sronly: that one is a static heading hidden from sight,
+   this one is a live region whose content changes. Same technique, different
+   job, and collapsing them would invite someone to add `display:none` to the
+   shared class one day and silently break answers for screen reader users. */
+.demeter__sr {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+/* ═══ REFLOW FIXES (WCAG 1.4.10) ═════════════════════════════════════════════
+   Found by the reflow audit, which had never been run. All four failures were
+   invisible at desktop width and made the page unusable at 200-400% zoom,
+   where a reader loses the start of every line and must pan for each one.
+
+   The nav language row overflowed /es/screen/ask by 10px at 640px: the labels
+   are wider in Spanish than the 620px breakpoint I guessed at. Wrapping is the
+   fix rather than a bigger magic number — the trigger is CONTENT width, which
+   changes per language, so no single breakpoint is right for four of them. */
+.dmnav__inner { flex-wrap: wrap; }
+
+/* /verify overflowed by 96px at 320px, and the offender was inside the card,
+   not the grid: verification sources are long unbroken URLs and instrument
+   names, which have no break opportunity and so set a floor on the card's
+   width. Everything else reflowed correctly around them. */
+.vcard, .vcard__facts dd, .vcard__sources li, .gpage__facts dd {
+  overflow-wrap: anywhere;
+}
