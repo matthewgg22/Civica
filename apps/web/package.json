@@ -13,7 +13,7 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:pg": "vitest run lib/__tests__/demeter-usage.pg.test.ts",
+    "test:pg": "vitest run .pg.test",
     "test:e2e": "playwright test"
   },
   "dependencies": {
