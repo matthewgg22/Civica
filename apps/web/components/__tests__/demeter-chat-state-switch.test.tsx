@@ -167,3 +167,15 @@ describe("DemeterChat state switching", () => {
     expect(screen.getByRole("option", { name: /Texas SNAP/ })).toBeTruthy();
   });
 });
+
+// The chat card is no longer the page's <h1>. It used to be, which put it
+// after the SNAP <h2> in document order — an inverted heading hierarchy, and a
+// card claiming to be the whole page. The <h1> now lives in the orientation bar
+// above it (SnapOrientation), on both mount points.
+describe("DemeterChat heading level", () => {
+  it("renders its title as a non-heading, leaving the page h1 to the orientation bar", () => {
+    render(<DemeterChat states={STATES} />);
+    expect(screen.queryByRole("heading", { level: 1 })).toBeNull();
+    expect(screen.getByText("Demeter")).toBeTruthy();
+  });
+});

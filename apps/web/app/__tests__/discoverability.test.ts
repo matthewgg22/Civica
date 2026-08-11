@@ -32,6 +32,22 @@ describe("sitemap", () => {
     expect(urls).toContain("https://demeter.ai/verify");
   });
 
+  it("indexes /questions in every language — moved content must stay findable", async () => {
+    // The 17 form-question cards moved off /screen/ask so that page could lead
+    // with the product. Content that moves without a sitemap entry has been
+    // deleted as far as discovery is concerned, and these cards answer the
+    // highest-intent query the site can win ("what does <form phrase> mean").
+    vi.stubEnv("NEXT_PUBLIC_SITE_URL", "https://demeter.ai");
+    const { default: sitemap } = await fresh<{ default: () => Array<{ url: string }> }>(
+      "../sitemap",
+    );
+    const urls = sitemap().map((e) => e.url);
+    expect(urls).toContain("https://demeter.ai/questions");
+    for (const lang of ["es", "vi", "zh"]) {
+      expect(urls, `${lang} questions page`).toContain(`https://demeter.ai/${lang}/questions`);
+    }
+  });
+
   it("ranks the plain chat above the sign-in screening tool (2026-08-09 decision)", async () => {
     // /screen/ask is Demeter's simplified B2C launch surface; /screen is the
     // sign-in-or-guest household-screening tool with saved case files — a
