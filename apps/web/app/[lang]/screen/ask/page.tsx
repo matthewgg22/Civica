@@ -89,7 +89,7 @@ export default async function LocalizedAskPage({
   return (
     <main className="dmpage" lang={LANG_TAG[l]}>
       <div className="dmpage__inner">
-        <SnapOrientation lang={l} />
+        <SnapOrientation lang={l} states={VERIFIED_STATES} />
         <div className="dmpage__chat">
           <DemeterChat
             states={VERIFIED_STATES}

@@ -91,16 +91,48 @@ export function formQuestionAnswer(q: FormQuestion, lang: AnswerLang = "en"): st
  *  Not deleted — every word is still server-rendered on this URL. They are
  *  credibility, and credibility is what you read after you see the thing, not
  *  the wall you climb to reach it. */
-export function SnapOrientation({ lang = "en" }: { lang?: AnswerLang }) {
+export function SnapOrientation({
+  lang = "en",
+  states = [],
+}: {
+  lang?: AnswerLang;
+  states?: PackMeta[];
+}) {
   const c = PAGE_COPY[lang];
   return (
+    // TWO COLUMNS. Measured at 1440: a single left-aligned column left 579px of
+    // the 1180px container empty — 49% of the page width, at the very top.
+    // Uniform emptiness is the strongest "generated page" tell there is, and it
+    // was the largest single contributor to this page reading as slop.
+    //
+    // The right column is not filler. Verified-state monograms are the one
+    // claim on this page that is countable and checkable, and they answer the
+    // question a first-time visitor actually has — "does this know about MY
+    // state?" — at a glance, before any prose.
     <section className="dmo" aria-labelledby="demeter-h1">
-      <p className="dmo__eyebrow">{c.eyebrow}</p>
-      <h1 id="demeter-h1" className="dmo__h1">
-        {c.h1}
-      </h1>
-      <p className="dmo__lede">{c.productLede}</p>
-      <p className="dmo__snap">{c.snapLine}</p>
+      <div className="dmo__text">
+        <p className="dmo__eyebrow">{c.eyebrow}</p>
+        <h1 id="demeter-h1" className="dmo__h1">
+          {c.h1}
+        </h1>
+        <p className="dmo__lede">{c.productLede}</p>
+        <p className="dmo__snap">{c.snapLine}</p>
+      </div>
+      {states.length > 0 && (
+        <aside className="dmo__states" aria-label={c.trust[2]?.t}>
+          <p className="dmo__states-label">
+            {states.length} {c.trust[2]?.t}
+          </p>
+          <ul className="dmo__states-grid">
+            {states.map((s) => (
+              <li key={s.code}>
+                <span className="dmst__mark">{s.code}</span>
+              </li>
+            ))}
+          </ul>
+          <p className="dmo__states-note">{c.trust[3]?.d}</p>
+        </aside>
+      )}
     </section>
   );
 }

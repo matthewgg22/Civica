@@ -28,6 +28,7 @@ import type { Metadata } from "next";
 import { VERIFIED_STATES } from "@civica/demeter-engine/packs";
 import { DemeterChat } from "../../../components/DemeterChat";
 import { SnapOrientation, SnapDetail } from "../../../components/SnapOverview";
+import { DemeterFooter } from "../../../components/DemeterFooter";
 import { alternateLanguages, askUrl } from "../../../lib/i18n/routes";
 import { loadConversation } from "../../../lib/demeter-conversations-server";
 import { askStructuredData, EN_TITLE, EN_DESCRIPTION } from "./structured-data";
@@ -59,7 +60,7 @@ export default async function ScreenAskPage({
   return (
     <main className="dmpage">
       <div className="dmpage__inner">
-        <SnapOrientation />
+        <SnapOrientation states={VERIFIED_STATES} />
         <div className="dmpage__chat">
           <DemeterChat
             states={VERIFIED_STATES}
@@ -74,6 +75,7 @@ export default async function ScreenAskPage({
         </div>
         <SnapDetail states={VERIFIED_STATES} />
       </div>
+      <DemeterFooter />
       <script
         type="application/ld+json"
         // Built from server-side literals — no user input reaches this, so
