@@ -1,0 +1,42 @@
+{
+  "_provenance": {
+    "note": "Oregon citation authorities. OAR (Oregon Administrative Rules) are cited as 'OAR 461-DDD-DDDD' (chapter-division-section, e.g. 'OAR 461-160-0420'). Oregon Revised Statutes are cited 'ORS DDD.DDD'.",
+    "extracted": "2026-08-11"
+  },
+  "patterns": [
+    {
+      "key": "oaroregon",
+      "regex": "\\bOAR\\s+461-(\\d{3}-\\d{4})\\b",
+      "flags": "gi",
+      "template": "OAR 461-$1",
+      "normalize": "none",
+      "match": "exact",
+      "note": "Oregon Administrative Rules, Chapter 461 (Self-Sufficiency Programs)"
+    },
+    {
+      "key": "orstat",
+      "regex": "\\bORS\\s+(\\d{3}\\.\\d{3})\\b",
+      "flags": "gi",
+      "template": "ORS $1",
+      "normalize": "none",
+      "match": "exact",
+      "note": "Oregon Revised Statutes"
+    }
+  ],
+  "known": {
+    "oaroregon": [
+      { "value": "OAR 461-115-0450", "note": "periodic redeterminations — 12-month cert w/ 6-month interim report; 24-month elderly/disabled-no-earned-income w/ 12-month report" },
+      { "value": "OAR 461-135-0505", "note": "categorical eligibility (CE/ECE/BBCE) — 200% flat BBCE screen via Information and Referral Services pamphlet" },
+      { "value": "OAR 461-135-0520", "note": "ABAWD time limit — fixed 1/1/25-12/31/27 clock, 5 tribal exempt areas, 7-county discretionary exemption eff. 2/1/26" },
+      { "value": "OAR 461-135-0575", "note": "expedited services — federal-standard criteria ($150/$100, rent+utility test), 7-day issuance" },
+      { "value": "OAR 461-140-0265", "note": "court-ordered child support income exclusion — EXPIRED, not made permanent within 180 temp days" },
+      { "value": "OAR 461-160-0015", "note": "resource limits — SNAP $3,000 standard / $4,500 elderly-or-disabled, waived for cat-el households" },
+      { "value": "OAR 461-160-0420", "note": "shelter cost / utility allowance — FUA $515, LUA $404, IUA $65, TUA $81; currently a TEMPORARY rule effective 3/19/26-9/14/26" },
+      { "value": "OAR 461-160-0430", "note": "income deductions — standard ($209/$223/$261/$299), medical (actual-minus-$35 w/ $170 floor), shelter cap $744, homeless deduction $198.99" },
+      { "value": "OAR 461-155-0190", "note": "income and payment standards — 130%/100% FPL gross/net tests, SNAP payment standard (TFP) table" }
+    ],
+    "orstat": [
+      { "value": "ORS 411.119", "note": "drug-felony treatment — general opt-out with a narrow trafficking-plus-supervision-plus-trading discretionary suspension path" }
+    ]
+  }
+}

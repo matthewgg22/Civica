@@ -294,4 +294,20 @@ export const FRONTDOOR_EVAL: FrontDoorCase[] = [
   { id: "az-restaurant-meals", category: "AZ", question: "Can I use my Arizona QUEST card to buy a hot meal at a restaurant?", expect: { kind: "external", citation: "CNAP FAA5.K.03" }, state: "AZ" },
   { id: "az-cert-period", category: "AZ", question: "How long does my SNAP approval last in Arizona before I have to redo it?", expect: { kind: "external", citation: "CNAP FAA5.I.01.D" }, state: "AZ" },
   { id: "az-federal-benefit", category: "AZ", question: "How is the monthly benefit amount calculated from net income?", expect: { kind: "grounded", section: "273.10" }, state: "AZ" },
+
+  // Oregon — 12th verified state (docs/plans/mae-state-corpus-framework.md, Wave 2). Picked to
+  // exercise the expiring-temporary-rule freshness case for real (see PROVENANCE.md).
+  { id: "or-program-name", category: "OR", question: "What agency runs SNAP in Oregon and where do I apply?", expect: { kind: "external", citation: "ODHS / ONE Online program materials" }, state: "OR" },
+  { id: "or-income-limit", category: "OR", question: "What's the income limit for SNAP in Oregon?", expect: { kind: "external", citation: "OAR 461-135-0505" }, state: "OR" },
+  { id: "or-asset-limit", category: "OR", question: "Is there an asset or savings limit for SNAP in Oregon?", expect: { kind: "external", citation: "OAR 461-160-0015" }, state: "OR" },
+  { id: "or-sua", category: "OR", question: "What's the standard utility allowance for SNAP in Oregon right now?", expect: { kind: "external", citation: "OAR 461-160-0420" }, state: "OR" },
+  { id: "or-medical-deduction", category: "OR", question: "Is there a standard medical deduction for seniors on SNAP in Oregon?", expect: { kind: "external", citation: "OAR 461-160-0430" }, state: "OR" },
+  { id: "or-child-support", category: "OR", question: "Does paying child support lower my SNAP benefit in Oregon?", expect: { kind: "external", citation: "OAR 461-160-0430" }, state: "OR" },
+  { id: "or-abawd-clock", category: "OR", question: "What is the current ABAWD time limit window in Oregon?", expect: { kind: "external", citation: "OAR 461-135-0520" }, state: "OR" },
+  { id: "or-abawd-waiver", category: "OR", question: "Is the SNAP work-requirement time limit waived anywhere in Oregon?", expect: { kind: "external", citation: "OAR 461-135-0520" }, state: "OR" },
+  { id: "or-drug-felony", category: "OR", question: "I have a drug felony conviction — can I still get SNAP in Oregon?", expect: { kind: "external", citation: "ORS 411.119" }, state: "OR" },
+  { id: "or-restaurant-meals", category: "OR", question: "Can I use my EBT card to buy a hot meal at a restaurant in Oregon?", expect: { kind: "external", citation: "SB 1585 (2024); ODHS RMP status page" }, state: "OR" },
+  { id: "or-expedited", category: "OR", question: "How fast can I get emergency SNAP benefits in Oregon?", expect: { kind: "external", citation: "OAR 461-135-0575" }, state: "OR" },
+  { id: "or-cert-period", category: "OR", question: "How long does my SNAP approval last in Oregon before I have to recertify?", expect: { kind: "external", citation: "OAR 461-115-0450" }, state: "OR" },
+  { id: "or-federal-benefit", category: "OR", question: "How is the monthly benefit amount calculated from net income?", expect: { kind: "grounded", section: "273.10" }, state: "OR" },
 ];

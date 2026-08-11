@@ -59,9 +59,13 @@ import azPack from "./az/pack.json";
 import azSupplements from "./az/supplements.json";
 import azAuthorities from "./az/authorities.json";
 import azFreshness from "./az/freshness.json";
+import orPack from "./or/pack.json";
+import orSupplements from "./or/supplements.json";
+import orAuthorities from "./or/authorities.json";
+import orFreshness from "./or/freshness.json";
 
 /** Registered pack codes. Widens as Wave 1+ states land (WA, TX, NY, …). */
-export type StateCode = "CA" | "WA" | "TX" | "NY" | "GA" | "MI" | "IL" | "FL" | "MA" | "NV" | "AZ";
+export type StateCode = "CA" | "WA" | "TX" | "NY" | "GA" | "MI" | "IL" | "FL" | "MA" | "NV" | "AZ" | "OR";
 
 /** Launch state; used when a caller does not specify. Preserves the pre-pack
  *  behavior in which the (then-hardcoded) CA content applied to every query. */
@@ -218,6 +222,12 @@ const REGISTRY: Record<StateCode, StatePack> = {
     azSupplements as { supplements: PackTopic[]; supersessions?: Record<string, string> },
     azAuthorities as unknown as RawAuthorities,
     azFreshness as { entries: PackFreshnessEntry[] },
+  ),
+  OR: buildPack(
+    orPack as Omit<StatePack, "topics" | "authorities" | "freshness" | "supersessions">,
+    orSupplements as { supplements: PackTopic[]; supersessions?: Record<string, string> },
+    orAuthorities as unknown as RawAuthorities,
+    orFreshness as { entries: PackFreshnessEntry[] },
   ),
 };
 

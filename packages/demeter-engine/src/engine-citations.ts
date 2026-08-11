@@ -170,6 +170,11 @@ export function formatEngineParams(state: string, asOf: Date): string {
     // conferral pathway (see the AZ corpus pack's income-pathways
     // supplement), there is no conferring document at all — it is a pure
     // income comparison (CNAP FAA5.I.01.B).
+    // OR: 200 is a genuine flat screen — Oregon's Broad-Based Categorical
+    // Eligibility applies the SAME 200% FPL gross test to every household,
+    // conferred via the "Information and Referral Services" pamphlet every
+    // applicant already receives (OAR 461-135-0505(2)(a)(C)), the same
+    // conferral-vehicle family as NV's TANF brochure.
     const BBCE_PCT = {
       CA: 200,
       MA: 200,
@@ -181,6 +186,7 @@ export function formatEngineParams(state: string, asOf: Date): string {
       FL: 200,
       NV: 200,
       AZ: 200,
+      OR: 200,
     } as const;
     const bbcePct: number | undefined = (BBCE_PCT as Record<string, number>)[state];
     lines.push(`- 100% FPL, monthly (net-income test basis): ${row(p.fpl)}`);

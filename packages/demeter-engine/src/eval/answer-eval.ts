@@ -1088,6 +1088,130 @@ export const AZ_GOLD: AnswerExpectation[] = [
   },
 ];
 
+// Oregon gold set (Wave 2, docs/plans/mae-state-corpus-framework.md §7 — OR was picked specifically
+// to exercise the expiring-temporary-rule freshness case with a real near-term date). At least 3 cases
+// below require the answer to prefer Oregon's own text over the federal default it overrides: the flat
+// 200% BBCE screen (vs. federal 130%), the hybrid medical-deduction floor (vs. the plain federal
+// actual-expense-minus-$35 shape), and the tribal (not county) ABAWD exempt areas — a state fact the
+// federal corpus has no way to supply at all.
+export const OR_GOLD: AnswerExpectation[] = [
+  {
+    id: "or-bbce-200-screen",
+    // Oregon's flat 200% BBCE screen — the state authority must win over the
+    // federal 130% default, conferred via the Information and Referral
+    // Services pamphlet every applicant already receives.
+    question: "What's the income limit for SNAP in Oregon if I don't have an elderly or disabled household member?",
+    state: "OR",
+    expectCitation: "OAR 461-135-0505",
+    mustMention: "200",
+    mustDisclaim: true,
+  },
+  {
+    id: "or-asset-limit-elderly",
+    question: "What's the SNAP resource limit in Oregon for a household with an elderly or disabled member?",
+    state: "OR",
+    expectCitation: "OAR 461-160-0015",
+    mustMention: "4,500",
+    mustDisclaim: true,
+  },
+  {
+    id: "or-sua-current-figures",
+    question: "How much is Oregon's full utility allowance for SNAP right now?",
+    state: "OR",
+    expectCitation: "OAR 461-160-0420",
+    mustMention: "515",
+    mustDisclaim: true,
+  },
+  {
+    id: "or-medical-deduction-floor",
+    // Guards against describing Oregon's mechanism as either a pure flat SMD
+    // (GA/IL/MA shape) or the plain federal actual-expense-only shape (FL) —
+    // it's a hybrid: actual costs minus $35, with a $170 floor.
+    question: "I'm disabled and have $50 a month in medical bills for Oregon SNAP — do I get a deduction?",
+    state: "OR",
+    expectCitation: "OAR 461-160-0430",
+    mustMention: "170",
+    mustDisclaim: true,
+  },
+  {
+    id: "or-child-support-unclear",
+    // Guards against asserting either an income-exclusion mechanism (the
+    // rule that would have created one, OAR 461-140-0265, EXPIRED in 2023
+    // without being made permanent) or a confident state-specific deduction
+    // rule this pack could not find live evidence for — the honest answer
+    // defers to the federal default rather than inventing an OR-specific
+    // mechanism.
+    question: "Does Oregon have its own rule for how child support affects my SNAP countable income?",
+    state: "OR",
+    mustNotMention: ["excluded from income", "income exclusion"],
+    mustDisclaim: true,
+  },
+  {
+    id: "or-abawd-fixed-window",
+    question: "What is the current ABAWD time limit window in Oregon?",
+    state: "OR",
+    expectCitation: "OAR 461-135-0520",
+    mustMention: "2027",
+    mustDisclaim: true,
+  },
+  {
+    id: "or-abawd-tribal-not-county",
+    // Guards against inventing county-based ABAWD waivers — Oregon's
+    // time-limit-exempt areas are five named Tribal jurisdictions, not
+    // counties; the separate 7-county mechanism is a "discretionary
+    // exemption," not an area waiver, and must not be conflated with one.
+    question: "Which parts of Oregon are currently waived from the SNAP work-requirement time limit?",
+    state: "OR",
+    expectCitation: "OAR 461-135-0520",
+    mustMention: "Tribal",
+    mustDisclaim: true,
+  },
+  {
+    id: "or-drug-felony-narrow-suspension",
+    // Guards against BOTH extremes: Oregon is not a clean full opt-out (it
+    // retains a narrow discretionary suspension path), and it is not a ban
+    // — must not say every drug felony disqualifies.
+    question: "I was convicted of a drug felony years ago — can I still get SNAP in Oregon?",
+    state: "OR",
+    expectCitation: "ORS 411.119",
+    mustNotMention: ["permanently banned", "lifetime ban", "you cannot receive"],
+    mustDisclaim: true,
+  },
+  {
+    id: "or-restaurant-meals-in-development",
+    // Guards against inventing an RMP Oregon doesn't yet operate, while
+    // still surfacing that a pilot is genuinely in development (unlike a
+    // settled no-RMP state) — a live freshness risk, not a stable fact.
+    question: "Can I use my EBT card to buy a hot meal at a restaurant in Oregon?",
+    state: "OR",
+    mustMention: "not",
+    mustDisclaim: true,
+  },
+  {
+    id: "or-expedited-service",
+    question: "How fast can I get emergency SNAP benefits in Oregon?",
+    state: "OR",
+    expectCitation: "OAR 461-135-0575",
+    mustMention: "7",
+    mustDisclaim: true,
+  },
+  {
+    id: "or-cert-period-elderly",
+    question: "How long does my SNAP approval last in Oregon if everyone in my household is elderly with no earned income?",
+    state: "OR",
+    expectCitation: "OAR 461-115-0450",
+    mustMention: "24",
+    mustDisclaim: true,
+  },
+  {
+    id: "or-federal-benefit",
+    question: "How is the monthly SNAP benefit amount calculated from net income in Oregon?",
+    state: "OR",
+    expectCitation: "273.10",
+    mustDisclaim: true,
+  },
+];
+
 /** Everything the live runner executes. */
 export const ALL_GOLD: AnswerExpectation[] = [
   ...ANSWER_GOLD,
@@ -1102,4 +1226,5 @@ export const ALL_GOLD: AnswerExpectation[] = [
   ...MA_GOLD,
   ...NV_GOLD,
   ...AZ_GOLD,
+  ...OR_GOLD,
 ];
