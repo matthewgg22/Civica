@@ -1,0 +1,215 @@
+{
+  "_provenance": {
+    "note": "Oregon SNAP curated supplements (docs/plans/mae-state-corpus-framework.md, Wave 2 — OR was picked specifically to exercise the expiring-temporary-rule freshness case per the framework's own §7 rationale). Drafted from pdftotext extraction of the actual OAR Chapter 461 PDFs (ch461rules.odhs.oregon.gov), NOT from AI web-fetch summaries of the same rules — three separate AI-summarized fetches produced wrong dollar figures for the SNAP resource limit before the raw PDF was pulled and read directly. Independently cross-checked and adversarially fact-checked before PR. See PROVENANCE.md.",
+    "extracted": "2026-08-11",
+    "source_fact_check": "pdftotext extraction of primary-source PDFs + post-draft adversarial refute pass; corrections recorded in PROVENANCE.md"
+  },
+  "supplements": [
+    {
+      "key": "program-identity",
+      "kind": "supplement",
+      "terms": [
+        "how to apply",
+        "where do i apply",
+        "apply for snap",
+        "one.oregon.gov",
+        "one online",
+        "who runs",
+        "what agency",
+        "administers",
+        "food stamps oregon"
+      ],
+      "citation": "ODHS / ONE Online program materials",
+      "heading": "Oregon applies through ONE Online; ODHS administers SNAP directly with no county eligibility layer",
+      "text": "Oregon SNAP applications and case management run through ONE Online (one.oregon.gov), a single application that also covers the Oregon Health Plan (OHP), Employment Related Day Care (ERDC), and TANF. The Oregon Department of Human Services (ODHS), Self-Sufficiency Programs, administers SNAP directly statewide — there is no county eligibility agency layer (Oregon is state-administered, unlike California, New York, Wisconsin, or Minnesota in this roster). A free ONE Mobile app is also available, in English and Spanish, for managing benefits, viewing messages, and uploading documents.",
+      "source_url": "https://one.oregon.gov"
+    },
+    {
+      "key": "income-pathways",
+      "kind": "supplement",
+      "terms": [
+        "income limit",
+        "income limits",
+        "gross income limit",
+        "gross income ceiling",
+        "make too much",
+        "over income",
+        "bbce",
+        "categorical eligibility",
+        "categorically eligible",
+        "200 percent",
+        "200%",
+        "poverty level",
+        "information and referral"
+      ],
+      "citation": "OAR 461-135-0505 — OR income pathways (flat 200% BBCE)",
+      "heading": "Oregon runs a flat 200% BBCE screen conferred through the Information and Referral Services pamphlet every applicant already receives",
+      "text": "Oregon's Broad-Based Categorical Eligibility (BBCE) applies when at least one filing-group member meets neither original Categorical Eligibility (CE — TANF/GA/SSI recipients) nor Expanded Categorical Eligibility (ECE — 1619(a)/(b) SSI-deemed, or Title IV-A/TANF-maintenance-of-effort services like ERDC, Pre-TANF, or the Housing Stabilization Program), but the filing group 'has received, or will receive upon approval, the pamphlet about Information and Referral Services' — receipt by ONE filing-group member counts for the whole group (OAR 461-135-0505(2)(a)(C)). Like Nevada's TANF-brochure conferral, this is a document-based pathway rather than a benefit-receipt pathway. The BBCE screen is FLAT — 'countable income is less than 200 percent of the federal poverty level' applies the same way regardless of whether the household has an elderly or disabled member (OAR 461-135-0505(2)(a)(C)(ii)) — no separate asymmetric tier the way Illinois or Michigan structure theirs. BBCE also requires liquid lottery/gambling-winnings assets stay under the resource limit (461-160-0015(6)(a)); a household that loses eligibility to lottery/gambling winnings cannot regain categorical eligibility until it separately meets the 130%/100% federal gross/net tests and the standard resource limit. Categorically eligible filing groups are 'presumed to meet' resource, income, and adjusted-income requirements, bypassing normal financial verification.",
+      "source_url": "https://ch461rules.odhs.oregon.gov/rules/461-135-0505.pdf"
+    },
+    {
+      "key": "asset-rule",
+      "kind": "supplement",
+      "terms": [
+        "asset limit",
+        "asset test",
+        "resource limit",
+        "resource test",
+        "resources",
+        "savings",
+        "savings limit",
+        "bank account"
+      ],
+      "citation": "OAR 461-160-0015 — OR asset/resource limits",
+      "heading": "Oregon's SNAP resource limit is $3,000 standard / $4,500 elderly-or-disabled — waived for the large majority of households under BBCE",
+      "text": "'In the Supplemental Nutrition Assistance Program (SNAP), unless categorically eligible (see OAR 461-135-0505), the resource limit is: (a) $4,500 for a financial group with at least one member who is elderly or an individual with a disability; (b) $3,000 for all other financial groups' (OAR 461-160-0015(6), effective 10-01-24). This figure sits on the SAME rule page as several other ODHS program resource limits (OSIP, OSIP-EPD, QMB, TANF) with different dollar amounts — a genuine risk of cross-contamination this pack confirmed and avoided by reading the rule's numbered subsections directly rather than a paraphrased summary (see PROVENANCE.md). Because most Oregon SNAP households clear the 200% BBCE screen, this asset test applies only to the non-categorically-eligible minority and to households temporarily disqualified for lottery/gambling winnings.",
+      "source_url": "https://ch461rules.odhs.oregon.gov/rules/461-160-0015.pdf"
+    },
+    {
+      "key": "sua-values",
+      "kind": "supplement",
+      "terms": [
+        "utility allowance",
+        "utility standard",
+        "shelter deduction",
+        "excess shelter",
+        "standard utility allowance",
+        "full utility allowance",
+        "limited utility allowance",
+        "heating standard",
+        "cooling standard",
+        "telephone standard"
+      ],
+      "citation": "OAR 461-160-0420 — OR utility allowance ladder (temporary rule citation, watch for lapse)",
+      "heading": "Oregon runs a 4-tier utility ladder (FUA/LUA/IUA/TUA) — currently codified in a TEMPORARY rule effective through 9/14/26",
+      "text": "Oregon's utility allowance has four tiers, all confirmed by direct pdftotext extraction of OAR 461-160-0420's TEMPORARY version (SSP 21-2026, effective 3/19/26 through 9/14/26): a Full Utility Allowance (FUA) of $515/month, given if the filing group incurs a heating/cooling cost, OR includes an elderly/disabled member who received an energy-assistance or weatherization-assistance payment over $20 in the current month or preceding 12 months (461-160-0420(4)(d)); a Limited Utility Allowance (LUA) of $404/month for filing groups not billed for heating/cooling but billed for at least two other qualifying utility costs (461-160-0420(4)(e)); an Individual Utility Allowance (IUA) of $65/month for exactly one qualifying non-telephone, non-heat/cool utility cost (461-160-0420(4)(f)); and a Telephone Utility Allowance (TUA) of $81/month for telephone-only billing (461-160-0420(4)(g)). These SAME four dollar figures also appear in the rule's immediately-prior PERMANENT version (effective 1-01-26) — this pack did NOT find evidence the temporary amendment changes the dollar amounts themselves; the temporary amendment's substantive content appears to be implementing a homeless-individual vehicle-shelter-cost provision under section 10103 of the 2025 federal reconciliation law (Pub. L. 119-21). What genuinely expires on 9/14/26 is the RULE CITATION as currently in force, not necessarily these dollar figures — but Oregon's own temp-rule mechanics have a real history of a rule lapsing outright rather than being renewed (see the dependent-care-child-support supplement below), so do not assume a successor rule preserves anything without checking. See freshness.json.",
+      "source_url": "https://ch461rules.odhs.oregon.gov/rules/461-160-0420.pdf"
+    },
+    {
+      "key": "medical-deduction",
+      "kind": "supplement",
+      "terms": [
+        "medical deduction",
+        "medical expense",
+        "medical expenses",
+        "medical bills",
+        "elderly deduction",
+        "disability deduction"
+      ],
+      "citation": "OAR 461-160-0430 — OR medical deduction (actual-expense floor, not a flat standard amount)",
+      "heading": "Oregon's medical deduction is actual-expense-minus-$35 with a $170 floor — a hybrid, not a pure flat Standard Medical Deduction",
+      "text": "Oregon's medical deduction applies to elderly individuals and individuals with a disability in the filing group. It is 'calculated by determining the total of their deductible medical costs and subtracting $35,' then: 'For an amount less than $0, no deduction is allowed. For an amount greater than $0 but less than $170.01, a deduction of $170 is allowed. For an amount greater than $170, a deduction of the amount determined under this subsection is allowed' (OAR 461-160-0430(1)(d), effective 10-01-25). This is genuinely different from both ends of the spectrum other states in this roster use: it is NOT a pure flat Standard Medical Deduction the way Georgia's $161 or Illinois' $185/$485 are (those apply regardless of actual costs above a minimum), and it is NOT the plain federal actual-expense-above-$35 approach with no floor (the way Florida runs it) — Oregon guarantees a $170 deduction for ANY household with more than $35 and up to $205 in verified medical costs, then reverts to dollar-for-dollar above that. If verification of a medical (or child-support) expense is not provided when requested, that expense is excluded from the deduction calculation until verified.",
+      "source_url": "https://ch461rules.odhs.oregon.gov/rules/461-160-0430.pdf"
+    },
+    {
+      "key": "dependent-care-child-support",
+      "kind": "supplement",
+      "terms": [
+        "dependent care",
+        "child care deduction",
+        "daycare",
+        "child support",
+        "support payments",
+        "child support deduction",
+        "child support exclusion"
+      ],
+      "citation": "OAR 461-160-0430; OAR 461-140-0265 (EXPIRED) — OR dependent care deduction; child support treatment unclear post-2023",
+      "heading": "Oregon's dependent care deduction is uncapped and verified; its ONE-TIME child-support income exclusion EXPIRED in 2023 and was never made permanent",
+      "text": "Dependent care (OAR 461-160-0430(1)(c)): a deduction for dependent-care costs billed to a filing-group member, not paid through another ODHS program, when necessary to accept/continue employment, seek employment (meeting case-plan job-search requirements), or attend vocational/educational training — no dollar cap stated in the current rule. Child support is where this pack found a genuine, undisclosed-if-unflagged gap: OAR 461-140-0265, 'Court Ordered Child Support Exclusion; SNAP,' effective January 19, 2023, would have excluded court-ordered child support paid by a filing-group member (for a child outside the filing group) from countable income entirely — an Illinois-style EXCLUSION mechanism, not a deduction. But the rule's own current text is bracketed and headed 'THIS RULE IS EXPIRED (NOT PERMED BEFORE 180TH TEMP DAY)' — Oregon temporary rules lapse if not made permanent within 180 days, and this one lapsed. The CURRENT deductions rule (461-160-0430, eff. 10-01-25) still cross-references 461-140-0265 in passing (for a child-support-funded EARNED-income deduction under subsection (1)(a)(B)), but this pack found no live, current OR-specific rule establishing child support as either a standalone deduction or an exclusion outside that narrow earned-income context. Do not tell a household Oregon runs either a child-support income exclusion (Illinois-style) or a standalone child-support deduction (Georgia/Michigan/Florida-style) without re-verifying against the current OAR — the safest answer defers to the federal default treatment (7 CFR 273.9(d)(5), a deduction) and flags that Oregon's own supplemental rule on this point has lapsed. See freshness.json and PROVENANCE.md.",
+      "source_url": "https://ch461rules.odhs.oregon.gov/rules/461-140-0265.pdf"
+    },
+    {
+      "key": "abawd-work-requirement",
+      "kind": "supplement",
+      "terms": [
+        "abawd",
+        "able bodied adult",
+        "work requirement",
+        "time limit",
+        "3 month limit",
+        "work registration",
+        "waiver",
+        "waived area",
+        "discretionary exemption"
+      ],
+      "citation": "OAR 461-135-0520 — OR ABAWD work requirement (fixed 1/1/25-12/31/27 clock, 5 tribal exempt areas, county discretionary exemptions)",
+      "heading": "Oregon's ABAWD clock is fixed (not rolling), age 18-64, with FIVE tribal exempt areas (not county waivers) and a separate county-level discretionary-exemption mechanism",
+      "text": "'An individual with an ABAWD status who resides in one of the SNAP time-limit areas is ineligible to receive food benefits... after the individual received food benefits for three countable months during January 1, 2025 to December 31, 2027' (OAR 461-135-0520(2), a fixed 36-month clock, not a rolling window). ABAWD is defined as 18 years or over but under 65, without dependents — the post-OBBBA national age band (461-135-0520(1)(a)). 'SNAP time-limit areas' (effective 12/1/2025) are ALL Oregon counties EXCEPT specific Tribal areas and lands held in trust. Genuinely distinct from most states in this roster: Oregon's exempt areas are five NAMED TRIBAL jurisdictions, not counties — the Burns Paiute Tribe, the Confederated Tribes of Siletz Indians, the Coquille Indian Tribe, the Cow Creek Band of Umpqua Tribe of Indians, and the Klamath Tribes (461-135-0520(1)(c)). Separately, ODHS is 'authorizing the use of discretionary exemptions, granted by the Food and Nutrition Service' — NOT the same as an area waiver — issued monthly (one month at a time, never retroactive) for individuals lacking USCIS work authorization in an area that otherwise offers ABAWD support services, resource parents declining to apply for a foster child, and, effective February 1, 2026, for any individual residing in Crook, Gilliam, Jefferson, Lake, Morrow, Sherman, or Wheeler counties — SNAP time-limit areas that do NOT offer ABAWD support services (461-135-0520(7)). Do not describe these seven counties as 'waived' — a discretionary exemption is a distinct, month-by-month individual mechanism, not an area-wide waiver.",
+      "source_url": "https://ch461rules.odhs.oregon.gov/rules/461-135-0520.pdf"
+    },
+    {
+      "key": "criminal-justice-disqualifications",
+      "kind": "supplement",
+      "terms": [
+        "drug felony",
+        "felony conviction",
+        "criminal record",
+        "drug conviction",
+        "drug trafficking",
+        "fleeing felon",
+        "manufacture or delivery"
+      ],
+      "citation": "ORS 411.119 — OR drug-felony treatment (opt-out with a narrow discretionary suspension path)",
+      "heading": "Oregon opts out of the federal drug-felony ban, but DHS may suspend benefits in a narrow trafficking-plus-supervision-plus-trading scenario",
+      "text": "'A person who is otherwise eligible to receive public assistance, including supplemental nutrition assistance... may not be denied assistance because the person has been convicted of a drug-related felony' (ORS 411.119(1)) — a general opt-out. But this is not an unconditional opt-out the way Illinois' or Nevada's are: DHS MAY suspend a person's SNAP if BOTH (a) 'the person has been convicted of the manufacture or delivery of a controlled substance under ORS 475.752 (1)(a) to (c)' AND (b) the person is on probation, parole, or post-prison supervision AND the supervising agency recommends suspension (ORS 411.119(2)). When making that recommendation, the supervising authority must specifically consider whether the person 'traded the person's supplemental nutrition assistance for controlled substances' and whether a dependent household member was deprived of SNAP as a result (411.119(3)) — a narrow, evidence-specific trigger, not a blanket post-conviction suspension. Reinstatement follows a recommendation from the supervising authority, considering household members' own SNAP receipt and the person's participation in a rehabilitation program (411.119(4)-(5)).",
+      "source_url": "https://oregon.public.law/statutes/ors_411.119"
+    },
+    {
+      "key": "restaurant-meals-program",
+      "kind": "supplement",
+      "terms": [
+        "restaurant meals program",
+        "rmp",
+        "eat at a restaurant",
+        "use ebt at restaurant",
+        "hot meal",
+        "hot food"
+      ],
+      "citation": "SB 1585 (2024); ODHS RMP status page — OR does not yet operate RMP, pilot in development",
+      "heading": "Oregon does NOT currently operate a Restaurant Meals Program — a pilot was authorized in 2024 but has not launched",
+      "text": "ODHS's own current status page states plainly: 'Right now, we're developing the program. We plan to test it in select areas in Oregon' (oregon.gov/odhs/agency/pages/ssp-rmp.aspx, fetched 2026-08-11) — no target launch date is published. The pilot was authorized by Senate Bill 1585 (2024 session) for people experiencing homelessness, people with a disability, and elderly people and their spouses — the standard federal RMP-eligible population — but as of this pack's build date, USDA FNA's own list of 'States that Operate a Restaurant Meals Program' does not include Oregon. SNAP benefits in Oregon can currently only be used for food items intended to be prepared and eaten at home, purchased at authorized retailers. Because this program is actively in development (unlike Florida's confirmed no-RMP status in this same roster, which is a settled fact), this is a genuinely live freshness risk — check ODHS's RMP page directly before telling a household RMP is unavailable in Oregon. See freshness.json.",
+      "source_url": "https://www.oregon.gov/odhs/agency/pages/ssp-rmp.aspx"
+    },
+    {
+      "key": "expedited-service",
+      "kind": "supplement",
+      "terms": [
+        "expedited",
+        "expedited service",
+        "emergency",
+        "emergency food stamps",
+        "fast benefits",
+        "how fast",
+        "urgent",
+        "same day",
+        "7 day",
+        "seven day"
+      ],
+      "citation": "OAR 461-135-0575 — OR expedited SNAP (federal-standard criteria)",
+      "heading": "Oregon's expedited-service criteria match the federal standard exactly — under $150 income plus $100 liquid resources, or a rent-plus-utilities test, 7-day issuance",
+      "text": "A filing group qualifies for expedited services if it 'has countable income less than $150 a month and liquid resources that do not exceed $100'; or its gross income and liquid resources combined fall below its total monthly rent/mortgage plus utility expenses; or it is a 'destitute household' meeting migrant/seasonal-farmworker and terminated/new-income-source conditions (OAR 461-135-0575). 'Liquid resources' means cash on hand, checking/savings accounts, savings certificates, and lump-sum payments. A filing group determined eligible for expedited services 'qualifies to receive benefits within seven days following the filing date.'",
+      "source_url": "https://ch461rules.odhs.oregon.gov/rules/461-135-0575.pdf"
+    },
+    {
+      "key": "reporting-certification",
+      "kind": "supplement",
+      "terms": [
+        "certification period",
+        "approval period",
+        "recertification",
+        "redetermination",
+        "how long does snap last",
+        "how long does my snap approval last",
+        "how long does my approval last",
+        "redo",
+        "renew",
+        "interim report",
+        "periodic report"
+      ],
+      "citation": "OAR 461-115-0450 — OR certification periods and periodic reporting",
+      "heading": "Oregon runs a 12-month certification period with a 6-month Interim Change Report for most households, and 24 months with a 12-month report for elderly/disabled households with no earned income",
+      "text": "Most Oregon SNAP households are certified for 12 months and must complete a Periodic (Interim Change) Report at the 6-month mark to keep benefits active — ODHS mails the report packet roughly halfway through the certification period. Households where every member is elderly or has a disability, with no earned income in the filing group, are certified for 24 months instead, with a report due at 12 months. A certification period generally may not exceed 12 months except for this elderly/disabled exception (OAR 461-115-0450).",
+      "source_url": "https://ch461rules.odhs.oregon.gov/rules/461-115-0450.pdf"
+    }
+  ]
+}

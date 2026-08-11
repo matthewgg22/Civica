@@ -65,4 +65,9 @@ export const QUESTIONS: Record<string, string[]> = {
     "Does my car count against me for SNAP in Arizona?",
     "How fast can I get emergency SNAP benefits in Arizona?",
   ],
+  OR: [
+    "What is the income limit for SNAP in Oregon?",
+    "Is the SNAP work-requirement time limit waived anywhere in Oregon?",
+    "Can I use my EBT card at a restaurant in Oregon?",
+  ],
 };
