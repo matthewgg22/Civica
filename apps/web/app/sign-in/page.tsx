@@ -4,6 +4,7 @@ import { Suspense, useEffect, useState, type FormEvent } from "react";
 import { useSearchParams } from "next/navigation";
 import { STORAGE_KEY, type Locale } from "../i18n";
 import { snapT } from "../../lib/i18n/snap-copy";
+import { DemeterMark } from "../../components/DemeterMark";
 
 export default function SignInPage() {
   return (
@@ -15,7 +16,19 @@ export default function SignInPage() {
 
 function SignInForm() {
   const search = useSearchParams();
-  const next = search.get("next") ?? "/apply";
+  // DEMETER IS THE DEFAULT (#698). This used to fall back to "/apply", which
+  // dated from before the pivot and meant every COLD entry to this page — a
+  // bookmark, a shared link, a back-navigation that dropped the query, an auth
+  // error redirect — greeted a Demeter user with "Save your application… for
+  // your navigator": an application they never started and a navigator they
+  // have never met.
+  //
+  // Both real callers pass `next` explicitly (DemeterSave → /screen/…,
+  // BuddyBanner → /apply), so the fallback only ever governed entries that
+  // named no destination. Those now read as the product people actually
+  // arrived from; the apply flow opts in, which is the inverse of before and
+  // the right way round now.
+  const next = search.get("next") ?? "/screen/ask";
   // Surfaced by /api/auth/google + /auth/callback when OAuth fails.
   const hasError = search.get("error") != null;
   // Where they came from decides what we promise. Arriving from the Demeter
@@ -75,9 +88,23 @@ function SignInForm() {
   };
 
   return (
-    <div className="signin-page">
+    // data-surface scopes the Demeter reskin, so the apply flow's own look is
+    // untouched rather than a shared page changing for everyone.
+    <div className="signin-page" data-surface={forConversation ? "demeter" : "civica"}>
       <header className="signin-header">
-        <a className="brand" href="/welcome">Civica</a>
+        {/* The brand has to match the product they came from. A Demeter user
+            sent to a "Civica" wordmark linking to /welcome — a page that is
+            itself on the retire list (#668) — lands somewhere unrelated to
+            what they were doing, mid sign-in, which is exactly when a person
+            is deciding whether this is trustworthy. */}
+        {forConversation ? (
+          <a className="signin-brand-demeter" href="/screen/ask">
+            <DemeterMark size={28} />
+            <span>Demeter</span>
+          </a>
+        ) : (
+          <a className="brand" href="/welcome">Civica</a>
+        )}
         <button
           type="button"
           className="locale-toggle"
