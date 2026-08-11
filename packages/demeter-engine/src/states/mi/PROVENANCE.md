@@ -22,13 +22,16 @@ from the fetched text with page-level citations, then adversarially fact-checked
 - **A second combined-application-project path** (MiCAP) alongside the standard application —
   SSI recipients get FAP through a centralized unit via a simplified form, structurally distinct
   from the general categorical-eligibility conferral.
-- **A negative finding on drug-felony bans, stated with the hedge it deserves.** BEM 203's
-  disqualification list is exhaustive (fleeing felon, probation/parole violator, IPV, duplicate
-  receipt) and contains no drug-felony-conviction category; MCL 400.10b's felony bar is
-  warrant-based, not conviction-based, and explicitly carves OUT controlled-substance warrants
-  from the FAP bar. This is corroborating, not conclusive, evidence of no standalone drug-felony
-  ban — the supplement text says so explicitly and this pack does not set an engine-side
-  `drug_felony_ban` boolean (that's `packages/snap-rules`, parked; see companion issue).
+- **A VERIFIED FULL OPT-OUT from the federal drug-felony ban — upgraded from an initial hedge.**
+  The first draft treated BEM 203's silence on drug-felony convictions as merely "corroborating,
+  not conclusive" evidence. A follow-up web search (prompted by the engine-constants work below)
+  turned up the actual repeal: 2020 PA 392 (Senate Bill 1006, signed Jan. 2021) amended MCL 400.10b
+  to carve controlled-substance warrants OUT of Michigan's felony-warrant assistance bar — MCL
+  400.10b's own History line confirms 'Am. 2020, Act 392, Imd. Eff. Jan. 4, 2021'. Michigan's PRIOR
+  rule disqualified anyone with 2+ drug-felony convictions; PA 392 repealed it. This is now a
+  primary-sourced, confirmed finding (same tier as IL's and OH's verified opt-outs in
+  `packages/snap-rules`), not an inference — the supplement text and the engine constant below were
+  both corrected to reflect it.
 - **Cross-state contrasts now live:** child support is a DEDUCTION here (same as GA; NY: exclusion)
   but MI additionally dropped OCS cooperation as a FAP condition (10/1/2024) — WA/GA/TX/NY/CA don't
   carry that fact; RMP is statewide by household composition (contrast IL's Cook/Franklin-county-only
@@ -121,3 +124,10 @@ from the fetched text with page-level citations, then adversarially fact-checked
   No fabricated facts or invented citations were found; all four corrections were mischaracterizations
   of correctly-fetched source text, not sourcing failures. Structural tests, the retrieval-recall
   probe (15/15), and the frontdoor eval (13/13 MI cases) were re-run clean after each fix.
+- **Drug-felony-ban upgrade (2026-08-11, same day, prompted by cross-checking against
+  `packages/snap-rules`'s engine-constants schema):** a WebSearch turned up 2020 PA 392
+  (Senate Bill 1006, eff. 1/4/2021), which amended MCL 400.10b to repeal Michigan's prior
+  2+-drug-felony-conviction SNAP ban. This upgrades the pack's finding from "corroborating, not
+  conclusive" to a confirmed verified full opt-out — corrected in `supplements.json`'s
+  `criminal-justice-disqualifications` topic and mirrored into the `drug_felony_ban: false` engine
+  constant with the same citation.

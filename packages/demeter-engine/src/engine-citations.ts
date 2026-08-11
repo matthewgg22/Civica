@@ -154,7 +154,7 @@ export function formatEngineParams(state: string, asOf: Date): string {
     // that never adopted it. That tripwire has already caught this once (the
     // hardcoded-200-for-TX bug) and caught it again when this file was widened
     // from CA/MA to every state with authored math.
-    const BBCE_PCT = { CA: 200, MA: 200, TX: 165, WA: 200, GA: 130 } as const;
+    const BBCE_PCT = { CA: 200, MA: 200, TX: 165, WA: 200, GA: 130, MI: 200 } as const;
     const bbcePct: number | undefined = (BBCE_PCT as Record<string, number>)[state];
     lines.push(`- 100% FPL, monthly (net-income test basis): ${row(p.fpl)}`);
     lines.push(`- Gross-income limit, 130% FPL (federal test): ${row(scaled(130))}`);

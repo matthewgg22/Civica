@@ -534,7 +534,8 @@ export const MI_GOLD: AnswerExpectation[] = [
   {
     id: "mi-drug-felony",
     // Guards against inventing a drug-felony ban Michigan doesn't operate —
-    // BEM 203's disqualification list has no such category (see PROVENANCE.md).
+    // Michigan is a VERIFIED FULL OPT-OUT (2020 PA 392 / SB 1006, amending
+    // MCL 400.10b, eff. 1/4/2021); see PROVENANCE.md.
     question: "I was convicted of a drug felony years ago — can I still get FAP in Michigan?",
     state: "MI",
     mustNotMention: ["permanently banned", "lifetime ban", "you cannot receive"],
