@@ -15,6 +15,7 @@ import miPack from "./states/mi/pack.json";
 import ilPack from "./states/il/pack.json";
 import flPack from "./states/fl/pack.json";
 import maPack from "./states/ma/pack.json";
+import nvPack from "./states/nv/pack.json";
 
 export interface PackVerification {
   verified_on: string;
@@ -53,7 +54,18 @@ const meta = (p: {
 });
 
 /** Every state with an adversarially verified pack, in display order. */
-export const VERIFIED_STATES: PackMeta[] = [caPack, waPack, txPack, nyPack, gaPack, miPack, ilPack, flPack, maPack].map(meta);
+export const VERIFIED_STATES: PackMeta[] = [
+  caPack,
+  waPack,
+  txPack,
+  nyPack,
+  gaPack,
+  miPack,
+  ilPack,
+  flPack,
+  maPack,
+  nvPack,
+].map(meta);
 
 export const VERIFIED_STATE_CODES: string[] = VERIFIED_STATES.map((s) => s.code);
 

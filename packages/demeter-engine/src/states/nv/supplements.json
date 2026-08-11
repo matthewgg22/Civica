@@ -1,0 +1,222 @@
+{
+  "_provenance": {
+    "note": "Nevada SNAP curated supplements — Wave 2 continued (docs/plans/mae-state-corpus-framework.md). Drafted from verbatim source text: the DSS Eligibility and Payments (E&P) Manual (dss.nv.gov, static PDF chapters under siteassets/, plain curl), a live FNS ABAWD waiver-response letter, the Nevada Legislature's own codified NRS text, and the FNS national Restaurant Meals Program page. Independently cross-checked (all pivotal facts CONFIRMED) and adversarially fact-checked before PR. See PROVENANCE.md.",
+    "extracted": "2026-08-11",
+    "source_fact_check": "cross-check re-verification + post-draft adversarial refute pass; corrections recorded in PROVENANCE.md"
+  },
+  "supplements": [
+    {
+      "key": "income-pathways",
+      "kind": "supplement",
+      "terms": [
+        "income limit",
+        "income limits",
+        "gross income limit",
+        "gross income ceiling",
+        "make too much",
+        "over income",
+        "bbce",
+        "categorical eligibility",
+        "categorically eligible",
+        "expanded categorical eligibility",
+        "200 percent",
+        "200%",
+        "poverty level",
+        "this is your copy"
+      ],
+      "citation": "E&P MS A-180.2; A-180; C-210.1 — NV expanded categorical eligibility (flat 200% BBCE)",
+      "heading": "Nevada runs a flat 200% BBCE screen, conferred through a TANF-funded page every SNAP applicant already receives — not a separate application",
+      "text": "Nevada's BBCE conferral vehicle is the \"This Is Your Copy\" page of the Application for Assistance — the same conferral-brochure family as Illinois's Guide to Services, Michigan's DVPS, and Georgia's TCOS under a different name, but here the page is TANF-funded informational text about a teen-pregnancy-prevention program (STARS): 'Categorical eligibility will be expanded to include all SNAP households whose gross income is equal to or below 200% of Federal Poverty Level (FPL) and who receive the updated \"This Is Your Copy\" page of the Application for Assistance' (E&P MS A-180.2). Because every applicant already receives this page as standard paperwork, Expanded Categorical Eligibility (ECE) functions as a flat 200% FPL screen — the C-210.1 chart prints '200% of Poverty (CAT ELIG)' as its own column alongside the base 100%-net/130%-gross tests (e.g. household of 1: $2,610; household of 4: $5,360 — effective 10/1/2025). ECE households skip both the gross AND net income tests as well as the resource test (E&P MS A-521). A narrower base categorical-eligibility group also exists independent of the 200% screen: households where ALL members receive TANF, SSI, or Interim Assistance/County or Indian General Assistance, or where at least one member receives certain TANF-funded benefits including one-time contracted substance-abuse/domestic-violence services or supportive services (E&P MS A-180, A-180.1) — this narrower group is categorically eligible regardless of income level. Categorical eligibility (both the base group and ECE) does NOT apply if: any member is disqualified from SNAP for an Intentional Program Violation; any member is ineligible as a fleeing felon, certain convicted felon, or probation/parole violator; or the household is in its first reapplication after a Substantial Lottery and Gambling Winnings (SLGW) disqualification with unchanged household composition (E&P MS A-180). When determining household size and the 200% FPL limit for ECE, include all household members whose income counts toward the SNAP household, including individuals disqualified for non-citizen status, SSN non-compliance, or ineligible ABAWD status (E&P MS A-180.2.1) — an offline, manual determination the case manager must make.",
+      "source_url": "https://www.dss.nv.gov/siteassets/dwss.nv.gov/content/eligibility/eligibility--payments/chapter-a-100-application-processing.pdf"
+    },
+    {
+      "key": "asset-rule",
+      "kind": "supplement",
+      "terms": [
+        "asset limit",
+        "asset test",
+        "resource limit",
+        "resource test",
+        "resources",
+        "savings",
+        "savings limit",
+        "bank account",
+        "vehicle",
+        "car count",
+        "does my car count"
+      ],
+      "citation": "E&P MS A-520; A-521; A-550 — NV resource and vehicle rules",
+      "heading": "Nevada waives the resource test entirely for categorically eligible households; the tested minority faces $3,000/$4,500 limits, and one vehicle per household is fully exempt no matter its value",
+      "text": "For households not categorically eligible, 'a household is ineligible if the total value of countable resources... [is] over $4,500 in households with a disabled member or a member age 60 or over; [or] over $3,000 for all other households' (E&P MS A-520). For categorically eligible households (base group or Expanded Categorical Eligibility): 'Do not apply the SNAP resource test to households that have been determined categorically eligible... It is not necessary to request or verify resources when the entire household has been determined categorically eligible' (E&P MS A-521) — a complete resource-verification waiver, not just a higher limit. Vehicles: Nevada exempts 'the total value of one vehicle no matter the value and vehicles owned by a categorically eligible household' (E&P MS A-550) — i.e. every categorically eligible household's vehicles are fully exempt regardless of count or value, and even a non-categorically-eligible household gets one vehicle fully exempt outright. Additional federal-standard vehicle exemptions apply on top of that: vehicles that are leased, used 50%+ for income-producing purposes (taxis, farm trucks, fishing boats), necessary for long-distance employment travel, used as the household's home, necessary to transport a disabled household/non-household member (up to one per disabled member), or with an equity value of $1,500 or less ('inaccessible'). All other non-exempt vehicles are tested TWO ways and counted at whichever is GREATER: the amount by which fair market value exceeds a $4,650 disregard, or the vehicle's equity value. Example from the manual: a vehicle with $5,000 fair market value and a $2,000 loan balance (so $3,000 equity) — the FMV test gives $5,000 − $4,650 = $350, the equity test gives $3,000, and the household is charged $3,000, the greater of the two. If a jointly owned non-exempt vehicle is stolen or located out of state and inaccessible to the household, it is not counted as a resource.",
+      "source_url": "https://www.dss.nv.gov/siteassets/dwss.nv.gov/content/eligibility/chapter-a-500-resources-nov-24-ada.pdf"
+    },
+    {
+      "key": "sua-values",
+      "kind": "supplement",
+      "terms": [
+        "utility allowance",
+        "utility standard",
+        "shelter deduction",
+        "excess shelter",
+        "heating standard",
+        "cooling standard",
+        "air conditioning",
+        "telephone standard",
+        "limited utility",
+        "single utility",
+        "individual utility"
+      ],
+      "citation": "E&P MS A-660.5.1.1; C-210.3 — NV four-tier utility allowance ladder",
+      "heading": "Nevada runs a four-tier utility allowance ladder — SUA $446, LUA $361, IUA $77, phone-only $52 (effective October 1, 2025)",
+      "text": "Nevada's ladder (E&P MS A-660.5.1.1, dollar values at C-210.3, MTL 21/25, effective 10/1/2025): the Standard Utility Allowance (SUA, $446) covers households billed for heating OR cooling (air conditioners/swamp coolers only, not fans/blowers) — 'the amount of the deduction allowed for the Standard Utility Allowance also includes the utility costs incurred by the household for additional electric costs (not used for heating or cooling), water, sewer, garbage, telephone, etc.' A household sharing heat/cooling costs with a separate SNAP household in the same residence gets the FULL SUA each, not a prorated share. The Limited Utility Allowance (LUA, $361) covers households billed for at least TWO of: non-heat/cool electricity, non-heat/cool fuel (e.g. cooking), water, sewer, well/septic installation-maintenance, telephone, or garbage. The Individual Utility Allowance (IUA, $77) covers households billed for exactly ONE of that same list MINUS telephone (electricity, fuel, water, sewer, well/septic, or garbage only) — telephone does not trigger the IUA. The Telephone Utility Allowance (TUA, $52) applies only when a household's sole utility cost is telephone service, and 'is not allowed with any other standard utility allowance.' The maximum excess shelter deduction is capped at $744 and the homeless shelter deduction is $198.99 (C-210.3) — both match the federal FY26 COLA figures exactly, the same cross-check the standard deduction below also confirms.",
+      "source_url": "https://www.dss.nv.gov/siteassets/dwss.nv.gov/content/eligibility/eligibility--payments/chapter-a-100-application-processing.pdf"
+    },
+    {
+      "key": "medical-deduction",
+      "kind": "supplement",
+      "terms": [
+        "medical deduction",
+        "medical expense",
+        "medical expenses",
+        "medical bills",
+        "elderly deduction",
+        "disability deduction",
+        "35 deductible",
+        "smd"
+      ],
+      "citation": "E&P MS A-660.3; A-660.3.1 — NV excess medical deduction",
+      "heading": "Nevada uses the federal actual-expense-minus-$35 medical deduction, not a flat Standard Medical Deduction — a real cross-state contrast with Illinois's and Georgia's flat-dollar approach",
+      "text": "'Allow medical expenses in excess of $35 per household to individuals who meet the definition of elderly or disabled in manual section B-400. If the individual has been or will be reimbursed for the medical expense, allow only the non-reimbursed amount' (E&P MS A-660.3) — no flat Standard Medical Deduction option exists in Nevada's manual; the household must report and verify its actual expenses, and the system applies the $35 floor automatically ('DO NOT manually deduct $35 from total medical expenses'). This is the same structure as Michigan's actual-expense approach and genuinely different from Illinois's flat $185/$485 two-tier Standard Medical Deduction or Georgia's flat $161 single tier. Allowable expenses (E&P MS A-660.3.1) include: medical/dental care and psychotherapy by a licensed practitioner; hospitalization, outpatient treatment, and nursing home care; health/hospital insurance premiums (not policies covering only income maintenance or lump-sum death/dismemberment); Medicare Part A/B/D premiums and Medicaid cost-sharing/patient liability; dentures, hearing aids, prosthetics, prescribed footwear; the cost of a service dog including food and vet bills; prescription eyeglasses; reasonable transportation and lodging to obtain medical services; the cost of maintaining an attendant, home health aide, or housekeeper needed due to age/illness (plus a one-person SNAP allotment if the household furnishes the attendant's meals — and where a cost could qualify as EITHER a medical or a dependent-care expense, it is always treated as medical); and prescribed drugs, medical equipment, supplies, or over-the-counter medication including insulin. Notably excluded: medical marijuana, even when prescribed by a medical professional, does not qualify as an allowable medical expense.",
+      "source_url": "https://www.dss.nv.gov/siteassets/dwss.nv.gov/ep-manual-section-a/chapter-a-600-budgeting-ada-8.2025.pdf"
+    },
+    {
+      "key": "dependent-care-child-support",
+      "kind": "supplement",
+      "terms": [
+        "dependent care",
+        "child care deduction",
+        "daycare",
+        "child support",
+        "support payments"
+      ],
+      "citation": "E&P MS A-660.2; A-660.4 — NV dependent care and child support deductions",
+      "heading": "Nevada treats child support paid as an uncapped DEDUCTION — like Georgia and Michigan, and a real structural contrast with Illinois's income-exclusion mechanism",
+      "text": "Dependent care is a straightforward deduction for actual, verified costs necessary for a working household member to accept/continue employment, comply with Employment & Training requirements, or attend qualifying training/education (E&P MS A-660.2) — not allowed if provided by another SNAP household member, covered by an excluded reimbursement, paid with 'at-risk' childcare funds, or for a child 16+ who is not disabled. Child support works as a DEDUCTION in Nevada, not an income exclusion (contrast Illinois, which excludes it from gross income instead): 'Deduct child support payments that a household member is legally obligated to pay, and actually pays to or for an individual outside the household' (E&P MS A-660.4) — current support, arrearages, medical support, third-party payments, and legally-assigned administrative/processing fees (e.g. wage-withholding collection fees) all qualify; alimony/spousal support does not, and an NCP's own medical-insurance premium is deductible only for the portion covering the child, unless the NCP is elderly/disabled. Budgeting differs by payment history: households WITHOUT three consecutive months of a paid record get the anticipated payment amount up to the obligated current-support figure; households WITH three or more consecutive months of payment get an average of at least three months including any arrears paid. If legally obligated child support is paid by a disqualified household member, the deduction treatment tracks the disqualification reason (E&P MS A-660.4.4): the FULL amount is deductible for an IPV, FSET non-cooperation, or Fleeing Felon disqualification, while it is PRORATED (deduct all but the disqualified member's share) for an ineligible non-citizen, SSN disqualification, or ineligible ABAWD. If an absent parent returns to the household and continues paying support that the household now receives, that payment is neither counted as income nor allowed as a deduction.",
+      "source_url": "https://www.dss.nv.gov/siteassets/dwss.nv.gov/ep-manual-section-a/chapter-a-600-budgeting-ada-8.2025.pdf"
+    },
+    {
+      "key": "abawd-work-requirement",
+      "kind": "supplement",
+      "terms": [
+        "abawd",
+        "able bodied adult",
+        "work requirement",
+        "time limit",
+        "3 month limit",
+        "work registration",
+        "waiver",
+        "waived area"
+      ],
+      "citation": "E&P MS B-470; B-470.1; B-472; B-473 — NV ABAWD work requirement",
+      "heading": "Nevada's statewide ABAWD waiver ended January 31, 2026; as of February 1, 2026 only specific tribal/reservation areas and Mineral County remain waived",
+      "text": "'Effective 07/04/2025, all ABAWD individuals ages 18 through 64 are ineligible to continue to receive SNAP benefits after receiving three (3) full issuances... if during a 36 month fixed period they did not' work 20+ hours/week (E&P MS B-470, MTL 11/26), participate 20+ hours/week in a qualifying WIOA/TAAA on-the-job training program, or perform 20+ hours/week of community service (E&P MS B-470). Nevada tracks this on ONE statewide fixed 36-month calendar rather than individual rolling clocks (E&P MS B-473) — this pack could not confirm the exact calendar start/end dates for the current fixed period from the sources fetched; do not state specific dates without re-verifying directly. Exemptions (E&P MS B-470.1): under 18 or 65+; medically certified physically/mentally unfit for employment; a SNAP household with a child under age 14; pregnancy; a high school student age 18–19; meeting a federal SNAPET exemption (excluding age-60 code 03); living in a waivered area; and membership in a federally recognized Indian Tribe. Waiver status is the most volatile fact here: Nevada held a statewide ABAWD waiver from 07/01/2024–06/30/2025, replaced by a 12-month statewide waiver from 02/01/2025–01/31/2026 (FNS partially approved a requested 24-month extension down to 12 months, based on Nevada's 5.3% average unemployment rate for Dec 2022–Nov 2024 against a 4.6% national-plus-20% threshold). That statewide waiver was NOT renewed: 'Nevada's statewide ABAWD waiver was terminated FY2026' (E&P MS B-470.1.2). Effective February 1, 2026, only narrower Labor Surplus/High Unemployment waiver areas remain (E&P MS B-472): Reservation/Tribal areas with unemployment over 10% (Battle Mountain/Off-Reservation Trust Land, Campbell Ranch, Dresslerville Colony, Elko Colony, Fort McDermitt Indian Reservation, Las Vegas Indian Colony, Lovelock Indian Colony, Pyramid Lake Paiute Reservation, Reno-Sparks Indian Colony, Stewart Community, Walker River Reservation, Yerington Colony), and Mineral County (Hawthorne, Luning, Mina, Schurtz, Walker Lake) at more than 10 percentage points above the national unemployment rate. Separately, under H.R.1, members of an Indian Tribe ages 18–64 are exempt from ABAWD work requirements statewide regardless of whether they live in a waiver area. A Fiscal Responsibility Act of 2023 provision allows states to apply DISCRETIONARY exemptions to up to 8% of the prior fiscal year's ABAWD caseload (NRS 422A.339 sets the only qualifying circumstances) — but 'Nevada currently does not have any discretionary exemptions for use' per the source's own reasoning, tied to the statewide waiver having been in place; a memo will follow once FNS makes exemptions available. Regaining eligibility after exhausting the 3 months requires 80 hours of work/program participation within a 30-day period (need not be recent or while on SNAP), granted only once per 36-month period.",
+      "source_url": "https://www.dss.nv.gov/siteassets/dwss.nv.gov/content/eligibility/eligibility--payments/chapter-b-400-special-households.pdf"
+    },
+    {
+      "key": "criminal-justice-disqualifications",
+      "kind": "supplement",
+      "terms": [
+        "drug felony",
+        "felony conviction",
+        "criminal record",
+        "drug conviction",
+        "fleeing felon",
+        "fugitive",
+        "warrant",
+        "active warrant",
+        "felony warrant",
+        "wanted by law enforcement",
+        "wanted",
+        "probation",
+        "probation violator",
+        "parole",
+        "parole violator",
+        "ipv",
+        "intentional program violation",
+        "lottery",
+        "winnings",
+        "gambling"
+      ],
+      "citation": "NRS 422A.345; E&P MS B-941.1; B-941.2; B-941.9; B-950 — NV criminal-justice and lottery/gambling disqualifications",
+      "heading": "Nevada is a VERIFIED FULL OPT-OUT from the federal drug-felony SNAP ban since a 2021 amendment removed the prior treatment-compliance condition",
+      "text": "NRS 422A.345 states: 'A person who has been convicted of a felony, an element of which is the possession, use or distribution of a controlled substance, may receive any public assistance for which he or she is otherwise eligible. Pursuant to 21 U.S.C. § 862a(d)(1)(A), all persons domiciled in this State are exempt from the application of 21 U.S.C. § 862a(a).' The statute was added in 2005 (22nd Special Session, ch. 12) and amended in 2021 (ch. 73, Assembly Bill 138), which eliminated a prior requirement that the person be participating in or have completed an approved substance-use-disorder treatment program — the current text carries NO compliance condition, verified directly against the Nevada Legislature's own codified statute text (leg.state.nv.us), not a secondary summary. This is a genuinely separate disqualification category from Nevada's B-941 series, which is FELONY-STATUS-based rather than conviction-based: fleeing felons (wanted by law enforcement for a felony crime, or for questioning about one) and parole/probation violators (violating a condition tied to a felony) are ineligible for SNAP for the DURATION of that status only, restored once verification of no-longer-wanted or current-compliance is provided (E&P MS B-941.1, B-941.2) — this removes only the individual from the SNAP unit, not the household. Separately, E&P MS B-941.9 restricts SNAP for people 'not in compliance with the terms of their sentence, parole or probation after being convicted of certain violent and severe felonies after February 7, 2014' (see E&P MS B-423 for the specific list) — remaining household members may still participate. Substantial Lottery and/or Gambling Winnings (SLGW, E&P MS B-950) trigger immediate ineligibility for ANY cash prize in a single game/event that meets or exceeds the CURRENT elderly/disabled resource limit ($4,500) — this reporting requirement applies even to categorically eligible and Expanded-Categorical-Eligibility households, and even if the household immediately spends the winnings below the limit. Multiple wins are evaluated separately, not summed; a win received before an initial application does not disqualify (it is evaluated as income/resource instead, not a categorical bar).",
+      "source_url": "https://www.leg.state.nv.us/nrs/NRS-422A.html"
+    },
+    {
+      "key": "expedited-service",
+      "kind": "supplement",
+      "terms": [
+        "expedited",
+        "expedited service",
+        "emergency",
+        "emergency food stamps",
+        "fast benefits",
+        "how fast",
+        "urgent",
+        "same day",
+        "7 day",
+        "seven day"
+      ],
+      "citation": "E&P MS A-140; A-141; A-146 — NV expedited SNAP",
+      "heading": "Nevada authorizes expedited SNAP the day of the interview or the next business day in the same week, and postpones all verification except identity for 10 days",
+      "text": "Nevada's expedited criteria (E&P MS A-141) are evaluated only for the month of application: a household qualifies if it has liquid resources of $100 or less AND gross monthly income under $150, OR if its reported liquid resources and gross income together total less than its current rent/mortgage plus utility expense (using the household's appropriate SUA/LUA/IUA/TUA tier). A household reapplying during its last benefit month, or that has already received SNAP from any source that month, does not qualify (benefits can't be duplicated). For qualifying households, staff 'postpone all verification except identity until 10 days following the date of the interview' and 'authorize benefits the day of the interview or the next business day in the same week they apply.' If an applicant files too late in the day to be interviewed, the interview happens the next business day within the same week (same day if the office won't be open the next business day); mailed or dropped-off applications must be evaluated the SAME day received, with a phone contact attempted that day if the household appears to meet expedited criteria. Special populations get their own guaranteed timelines: applicants in drug/alcohol treatment centers or group living arrangements must receive benefits by the 7th day after application, and joint SNAP/SSI applicants released from public institutions must receive benefits within 7 days of release. There is no limit on the number of expedited certifications a household can receive, as long as it either provided the previously postponed verification or was certified under normal processing since the last expedited certification (E&P MS A-142). Households applying between the 1st–15th get one prorated month pending postponed verification; those applying after the 15th get two months (prorated initial + one full month) — if postponed verification isn't provided within 10 days, the case terminates at the end of the affected benefit period (E&P MS A-146).",
+      "source_url": "https://www.dss.nv.gov/siteassets/dwss.nv.gov/content/eligibility/eligibility--payments/chapter-a-100-application-processing.pdf"
+    },
+    {
+      "key": "reporting-certification",
+      "kind": "supplement",
+      "terms": [
+        "certification period",
+        "approval period",
+        "recertification",
+        "redetermination",
+        "rede",
+        "how long does snap last",
+        "how long does my snap approval last",
+        "how long does my approval last",
+        "redo",
+        "renew",
+        "simplified reporting",
+        "change reporting",
+        "report income",
+        "10*10*13"
+      ],
+      "citation": "E&P MS A-1823.1; A-1823.2; A-1823.3; B-616.2; B-620 — NV certification periods and reporting",
+      "heading": "Nevada assigns a 6-month certification by default, 12 months when every member is elderly (60+) or disabled, and applies its own \"10*10*13 rule\" to change reporting",
+      "text": "Nevada's default certification is 6 months for households in which not all members are elderly or disabled — these are Simplified Reporting (SR) households (E&P MS A-1823.2). Households in which EVERY required member is elderly (age 60+) or disabled get a 12-month certification instead, designated Status Change reporters who must report changes within 10 days (E&P MS A-1823.3) — if any other required household member is ineligible for a disqualification or citizenship reason, THAT member must also independently be elderly or disabled for the household to qualify for the 12-month category. A household where the ONLY member is a non-exempt ABAWD gets a 3-month certification matching the ABAWD time limit itself (E&P MS A-1823.1). For Simplified Reporting households, the only mandatory mid-period report is 'gross income which exceeds the 130% poverty level for the household size' (E&P MS B-616.2) — the same 130% figures already printed in the C-210.1 income chart. A documented exception: Expanded-Categorical-Eligibility SR households whose income was between 130–200% of poverty AT APPROVAL must instead report if their income exceeds 200% of poverty — the higher ECE ceiling, not the general 130% SR trigger. Nevada's own shorthand for its change-reporting cycle is the '10*10*13 rule' (E&P MS B-620): the household has 10 days to report a change, the agency has 10 days to act on it, and the household gets a 13-day adverse-action notice before a reduction or termination takes effect (unless adverse action is waived or inapplicable). ABAWD individuals carry an ADDITIONAL reporting duty regardless of SR/Status-Change category: any drop in work hours below 20/week averaged monthly must be reported (E&P MS B-616.3).",
+      "source_url": "https://www.dss.nv.gov/siteassets/dwss.nv.gov/content/eligibility/eligibility--payments/chapter-a-1800-case-disposition.pdf"
+    },
+    {
+      "key": "program-identity",
+      "kind": "supplement",
+      "terms": [
+        "how to apply",
+        "where do i apply",
+        "apply for snap",
+        "who runs",
+        "what agency",
+        "which agency",
+        "administers",
+        "access nevada",
+        "ebt card",
+        "food stamps nevada",
+        "restaurant meals",
+        "hot food"
+      ],
+      "citation": "DSS/Access Nevada program materials; FNS Restaurant Meals Program page",
+      "heading": "Nevada applies through Access Nevada; the agency renamed from DWSS to DSS; there is no Restaurant Meals Program in Nevada",
+      "text": "Nevada SNAP applications, redeterminations, and case management run through Access Nevada (accessnevada.nv.gov). The administering agency is the Division of Social Services (DSS) — legacy URL paths across the agency's own site (dss.nv.gov/siteassets/dwss.nv.gov/...) still carry the prior name, Division of Welfare and Supportive Services (DWSS), confirming the rename directly in the agency's own infrastructure. There is no separately branded EBT card name (contrast Illinois's 'Illinois Link' or California's 'Golden State Advantage') — Nevada's card is referred to simply as an 'EBT card,' managed online at ebtedge.com. A Nevada-specific operational rule: 'SNAP households must use their EBT card at least once within a 274 day period or the benefits will be removed for inactivity.' Nevada does NOT operate a Restaurant Meals Program — confirmed against the FNS national RMP page (updated 08/07/2026), which lists only Arizona, California, Illinois (Cook and Franklin Counties only, per FNS's own page — see PROVENANCE.md for a note on this figure's currency), Maryland, Massachusetts, Michigan, New York, Rhode Island, and Virginia as participating states; Nevada does not appear.",
+      "source_url": "https://www.dss.nv.gov/access-nv/"
+    }
+  ]
+}

@@ -55,4 +55,9 @@ export const QUESTIONS: Record<string, string[]> = {
     "Does my car count against me for SNAP in Massachusetts?",
     "Can I use my EBT card at a restaurant in Massachusetts?",
   ],
+  NV: [
+    "What is the income limit for SNAP in Nevada?",
+    "Does my car count against me for SNAP in Nevada?",
+    "How fast can I get emergency SNAP benefits in Nevada?",
+  ],
 };

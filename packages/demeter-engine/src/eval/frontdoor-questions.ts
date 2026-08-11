@@ -264,4 +264,19 @@ export const FRONTDOOR_EVAL: FrontDoorCase[] = [
   { id: "ma-expedited", category: "MA", question: "How fast can I get emergency SNAP benefits in Massachusetts?", expect: { kind: "external", citation: "Screening for Expedited Service" }, state: "MA" },
   { id: "ma-cert-period", category: "MA", question: "How long does my SNAP approval last in Massachusetts before I have to recertify?", expect: { kind: "external", citation: "Simplified Reporting - Overview" }, state: "MA" },
   { id: "ma-federal-benefit", category: "MA", question: "How is the monthly benefit amount calculated from net income?", expect: { kind: "grounded", section: "273.10" }, state: "MA" },
+
+  // Nevada — 8th verified state (docs/plans/mae-state-corpus-framework.md, Wave 2).
+  { id: "nv-program-name", category: "NV", question: "What agency runs SNAP in Nevada and where do I apply?", expect: { kind: "external", citation: "Access Nevada" }, state: "NV" },
+  { id: "nv-income-limit", category: "NV", question: "What's the income limit for SNAP in Nevada?", expect: { kind: "external", citation: "C-210.1" }, state: "NV" },
+  { id: "nv-expanded-cat-elig", category: "NV", question: "Is there a higher income limit for SNAP in Nevada if I'm categorically eligible?", expect: { kind: "external", citation: "A-180.2" }, state: "NV" },
+  { id: "nv-asset-limit", category: "NV", question: "Is there an asset or savings limit for SNAP in Nevada?", expect: { kind: "external", citation: "A-520" }, state: "NV" },
+  { id: "nv-vehicle", category: "NV", question: "Does my car count against me for SNAP in Nevada?", expect: { kind: "external", citation: "A-550" }, state: "NV" },
+  { id: "nv-sua", category: "NV", question: "What's the utility allowance for SNAP in Nevada?", expect: { kind: "external", citation: "A-660.5.1.1" }, state: "NV" },
+  { id: "nv-medical-deduction", category: "NV", question: "Is there a standard medical deduction for seniors on SNAP in Nevada?", expect: { kind: "external", citation: "A-660.3" }, state: "NV" },
+  { id: "nv-child-support", category: "NV", question: "Does paying child support lower my countable income for SNAP in Nevada?", expect: { kind: "external", citation: "A-660.4" }, state: "NV" },
+  { id: "nv-abawd-waiver", category: "NV", question: "Is the SNAP work-requirement time limit waived anywhere in Nevada right now?", expect: { kind: "external", citation: "B-472" }, state: "NV" },
+  { id: "nv-drug-felony", category: "NV", question: "I have a drug felony conviction — can I still get SNAP in Nevada?", expect: { kind: "external", citation: "NRS 422A.345" }, state: "NV" },
+  { id: "nv-expedited", category: "NV", question: "How fast can I get emergency SNAP benefits in Nevada?", expect: { kind: "external", citation: "A-141" }, state: "NV" },
+  { id: "nv-cert-period", category: "NV", question: "How long does my SNAP approval last in Nevada before I have to redo it?", expect: { kind: "external", citation: "A-1823.2" }, state: "NV" },
+  { id: "nv-federal-benefit", category: "NV", question: "How is the monthly benefit amount calculated from net income?", expect: { kind: "grounded", section: "273.10" }, state: "NV" },
 ];
