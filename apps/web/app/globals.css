@@ -6121,9 +6121,18 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 .dmchat .demeter__head { display: none; }
 
 /* Fill the viewport properly: the transcript takes the slack and the composer
-   sits at the bottom of the screen rather than floating halfway up it, which is
-   the difference between a chat app and a form that happens to scroll. */
-.dmchat .demeter__body { flex: 1; min-height: 0; }
+   sits at the BOTTOM of the screen rather than floating halfway up it, which is
+   the difference between a chat app and a form that happens to scroll.
+   Measured before this: the composer ended at 433px of an 800px viewport.
+
+   `align-items: stretch` is the load-bearing line. .demeter__body is a GRID
+   with `align-items: start`, so every flex:1 below it was inert — the column
+   was sized to its content and had no slack to distribute. Flex on the
+   children could never have worked while the grid refused to stretch them. */
+.dmchat .demeter__body { flex: 1; min-height: 0; align-items: stretch; }
 .dmchat .demeter__main { flex: 1; min-height: 0; }
 .dmchat .demeter__scroll { flex: 1; min-height: 0; }
 .dmchat .demeter__disclaimer { padding-bottom: 0.25rem; }
+/* The estimate rail keeps its own alignment: it is a panel that grows with
+   what it knows, not a column that should stretch to the fold. */
+.dmchat .dmw { align-self: start; }
