@@ -4720,10 +4720,15 @@ html {
 }
 .demeter__title { font-size: 1.15rem; font-weight: 700; color: var(--demeter-ink); line-height: 1.15; }
 .demeter__tagline { font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif; font-size: 0.8rem; color: var(--demeter-muted); }
+/* .demeter__lang carries NO visual styling. It used to: border, radius, padding
+   and weight, from when the language control was a <button>. When it became a
+   <select>, this rule was never removed and the one at the bottom of the file
+   only ADDED display:inline-flex — CSS merges, it does not replace. So the
+   wrapper kept drawing a terracotta pill around a select that draws its own,
+   and the control shipped with two concentric rings. The select owns its look;
+   this is a layout box. */
 .demeter__lang {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
-  border: 1px solid var(--demeter-terracotta); color: var(--demeter-terracotta); background: transparent;
-  border-radius: 999px; padding: 0.45rem 0.9rem; font-size: 0.85rem; font-weight: 600; min-height: 44px;
 }
 .demeter__states { display: flex; gap: 0.4rem; overflow-x: auto; padding: 0.25rem; -webkit-overflow-scrolling: touch; scrollbar-width: none; align-items: center; }
 .demeter__states::-webkit-scrollbar { display: none; }
@@ -5526,13 +5531,19 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
 }
 .demeter__lang { display: inline-flex; align-items: center; flex: none; }
+/* A UTILITY control, not a call to action. It wore terracotta on both the text
+   and the border, which is the palette's accent — reserved for CTAs, links and
+   the mark. A language switcher styled like a primary button competes with the
+   actual primary button a few inches away, and on this page that button is the
+   one that starts a conversation. Quiet border, ink text; terracotta returns on
+   hover and focus, where it means "this is interactive" rather than "act here". */
 .demeter__lang-select {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
-  min-height: 44px; padding: 0.4rem 0.7rem; font-size: 0.85rem; cursor: pointer;
-  color: var(--demeter-terracotta); background: var(--demeter-card);
-  border: 1px solid var(--demeter-terracotta); border-radius: 999px;
+  min-height: 44px; padding: 0.4rem 0.7rem; font-size: 0.85rem; font-weight: 500; cursor: pointer;
+  color: var(--demeter-ink); background: var(--demeter-card);
+  border: 1px solid var(--demeter-rule-strong); border-radius: 999px;
 }
-.demeter__lang-select:hover { color: var(--demeter-terracotta-deep); border-color: var(--demeter-terracotta-deep); }
+.demeter__lang-select:hover { color: var(--demeter-terracotta-deep); border-color: var(--demeter-terracotta); }
 .demeter__lang-select:focus-visible { outline: 2px solid var(--demeter-terracotta); outline-offset: 1px; }
 
 /* ── Form-question FAQ: the page's GEO core ───────────────────────────────── */
@@ -5763,3 +5774,365 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   color: var(--demeter-terracotta);
   border-color: var(--demeter-rule-strong);
 }
+
+/* ═══ THE LABEL RECIPE ═══════════════════════════════════════════════════════
+   Every uppercase micro-label on a Demeter surface, in ONE place.
+
+   These were all weight 400 in a muted or terracotta-deep colour, sitting above
+   body text that is 16.5px serif — also weight 400. So a definition TERM read
+   lighter than its own definition: smaller, thinner-looking (uppercase sans at
+   12px has less visual mass than 16px serif), and in a colour with less
+   contrast than the text it was supposed to introduce. The hierarchy was
+   inverted, which is why the page read as tentative rather than authoritative.
+
+   Fixed with WEIGHT and CONTRAST, not with a new typographic idea: 400 → 600,
+   muted/terracotta-deep → ink. Each class keeps its own size and tracking, so
+   the compact eyebrow rhythm the cards depend on is unchanged.
+
+   Placed last on purpose. This is a cross-cutting rule that must win over the
+   individual class definitions above; grouping the selectors here means the
+   next label added to this system gets the treatment by joining one list
+   rather than by remembering three properties. */
+.dmo__eyebrow,
+.dmx__eyebrow,
+.dmx__def dt,
+.dmx__trustrow dt,
+.dmx__agency-code,
+.dmx__faqtopic,
+.dmw__eyebrow,
+.dmw__result-label,
+.dmw__section-title {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-weight: 600;
+  color: var(--demeter-ink);
+}
+
+/* Two exceptions, both deliberate.
+
+   The agency CODE is a monogram in a tinted chip, not a label introducing
+   prose — it needs to read as a mark, so it keeps terracotta. The FAQ topic
+   chip is the same shape. Both stay 600; only the colour differs. */
+.dmx__agency-code,
+.dmx__faqtopic {
+  color: var(--demeter-terracotta-deep);
+}
+
+/* ═══ STATE MONOGRAM ═════════════════════════════════════════════════════════
+   The selected state, as a mark rather than a word buried in a sentence.
+
+   Which state is selected changes every figure in an answer, so it is the one
+   control on the page whose value has to be readable without reading. Set in
+   the DISPLAY serif, not the label sans: this is a mark, and the serif is the
+   voice this product speaks in.
+
+   Chosen over real state flags deliberately — most US state flags are a seal
+   on a blue field and are illegible below ~32px, so at picker size they would
+   be muddier than the text they replaced, and only 9 states have verified packs
+   anyway. Two letters work at any size, for all 50, with no assets. */
+.dmst__mark {
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+  flex: none; display: grid; place-items: center;
+  width: 2.15rem; height: 2.15rem; border-radius: 10px;
+  font-size: 0.9rem; font-weight: 600; letter-spacing: 0.01em;
+  color: var(--demeter-terracotta-deep);
+  background: #F7EDE4;
+  border: 1px solid #E8D5C4;
+}
+/* The federal floor is not a state, so it does not get a state's chip — muted,
+   so "All states" never looks like a selection someone made. */
+.dmst__mark[data-federal] {
+  color: var(--demeter-muted);
+  background: var(--demeter-paper);
+  border-color: var(--demeter-rule);
+}
+
+/* Options become a row: mark, then the two text lines beside it. */
+.dmst__opt { flex-direction: row; align-items: center; gap: 0.65rem; }
+.dmst__opt-text { display: flex; flex-direction: column; gap: 0.15rem; min-width: 0; }
+
+/* ═══ CONVERSATION MOTION ════════════════════════════════════════════════════
+   There were NO animations on chat messages. None. Bubbles appeared instantly
+   at full size, which is why sending a question read as a state swap rather
+   than as something arriving.
+
+   Deliberately small: 180ms, 6px of travel, ease-out. This is a benefits page
+   read under stress, so motion's job is to say "a new thing arrived here",
+   not to perform. Anything longer starts to feel like waiting.
+
+   The assistant bubble gets a fractionally longer, later curve than the user's
+   — a reply should feel like a response to the message above it, not a
+   simultaneous event. */
+@keyframes dmMsgIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.demeter__msg {
+  animation: dmMsgIn 180ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.demeter__msg--assistant { animation-duration: 220ms; animation-delay: 40ms; }
+/* The thinking line pulses rather than sits, so a slow answer reads as working
+   rather than stalled. */
+@keyframes dmThinking { 0%, 100% { opacity: 0.45 } 50% { opacity: 1 } }
+.demeter__thinking { animation: dmThinking 1.4s ease-in-out infinite; }
+
+/* Vestibular safety: everything above is decoration, so all of it goes. */
+@media (prefers-reduced-motion: reduce) {
+  .demeter__msg,
+  .demeter__msg--assistant,
+  .demeter__thinking { animation: none; }
+}
+
+/* ═══ GRAPHITE FOOTER ════════════════════════════════════════════════════════
+   The page used to run out of content and stop on the same paper background it
+   started on, so the bottom read as unfinished rather than closed.
+
+   Dark on a light site is a deliberate break. It marks the footer as a
+   different KIND of content: everything above is the product talking to you,
+   everything here is the organization disclosing. Graphite rather than pure
+   black — #22201E is the ink token pushed one step darker, so it reads as the
+   same warm family rather than as a hole in the page.
+
+   Full-bleed: it sits OUTSIDE .dmpage__inner's max-width so the band spans the
+   viewport while its content stays on the same 1180px measure as everything
+   above it. */
+.dmft {
+  background: #22201E;
+  color: #F2EFEA;
+  margin-top: clamp(3rem, 7vw, 5.5rem);
+  padding: clamp(2.5rem, 5vw, 4rem) clamp(1rem, 4vw, 3.5rem) calc(2.5rem + env(safe-area-inset-bottom));
+}
+.dmft__inner {
+  width: 100%; max-width: 1180px; margin: 0 auto;
+  display: grid; gap: clamp(1.75rem, 3vw, 2.5rem);
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+  align-items: start;
+}
+.dmft__brand { display: flex; align-items: flex-start; gap: 0.85rem; }
+.dmft__name {
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+  font-size: 1.15rem; font-weight: 600; margin: 0 0 0.25rem; color: #FFFFFF;
+}
+.dmft__mission {
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+  font-size: 0.95rem; line-height: 1.6; margin: 0; max-width: 44ch;
+  /* Not pure white. Body text at full white on graphite vibrates; this is the
+     paper tone at reduced opacity, which keeps the warm cast. */
+  color: rgba(242, 239, 234, 0.72);
+}
+.dmft__nav { display: flex; flex-direction: column; gap: 0.7rem; }
+.dmft__link {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.92rem; font-weight: 500; color: #F2EFEA; text-decoration: none;
+  min-height: 44px; display: inline-flex; align-items: center;
+}
+/* Underline on hover, not by default — four permanently underlined links in a
+   column reads as a list of warnings. */
+.dmft__link:hover { color: #FFFFFF; text-decoration: underline; text-underline-offset: 3px; }
+.dmft__legal {
+  grid-column: 1 / -1;
+  border-top: 1px solid rgba(242, 239, 234, 0.16);
+  padding-top: 1.5rem;
+  display: flex; flex-direction: column; gap: 0.5rem;
+}
+.dmft__legal p {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  /* 0.85rem, NOT 10px fine print. This is the last thing someone reads before
+     acting on an answer; burying it would be the one place on this site where
+     small type is actually dishonest. */
+  font-size: 0.85rem; line-height: 1.6; margin: 0;
+  color: rgba(242, 239, 234, 0.66); max-width: 78ch;
+}
+.dmft__org { color: rgba(242, 239, 234, 0.45); }
+
+@media (max-width: 720px) {
+  .dmft__inner { grid-template-columns: 1fr; }
+  .dmft__nav { flex-direction: row; flex-wrap: wrap; gap: 0.25rem 1.25rem; }
+}
+
+/* ═══ ORIENTATION BAR: TWO COLUMNS ═══════════════════════════════════════════
+   A single left-aligned column left 579px of the 1180px container empty at
+   1440 — 49% of the page width, at the very top. Uniform emptiness is the
+   strongest "generated page" tell there is.
+
+   The right column carries the verified-state monograms: the one claim on this
+   page that is countable, and the answer to the question a first-time visitor
+   actually has ("does this know about MY state?") before any prose. */
+.dmo--split {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.75fr);
+  gap: clamp(2rem, 5vw, 4rem);
+  align-items: start;
+}
+.dmo__text { min-width: 0; }
+.dmo__states {
+  border-left: 1px solid var(--demeter-rule);
+  padding-left: clamp(1.25rem, 2.5vw, 2rem);
+}
+.dmo__states-label {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase;
+  font-weight: 600; color: var(--demeter-ink); margin: 0 0 0.85rem;
+}
+.dmo__states-grid {
+  list-style: none; margin: 0 0 1rem; padding: 0;
+  display: flex; flex-wrap: wrap; gap: 0.45rem;
+}
+.dmo__states-note {
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+  font-size: 0.88rem; line-height: 1.55; color: var(--demeter-muted);
+  margin: 0; max-width: 34ch;
+}
+/* Below 900 the second column would squeeze the h1 measure past readability,
+   so it stacks. The monograms stay — they are the point, not decoration. */
+@media (max-width: 900px) {
+  .dmo--split { grid-template-columns: 1fr; gap: 1.75rem; }
+  .dmo__states { border-left: 0; padding-left: 0; border-top: 1px solid var(--demeter-rule); padding-top: 1.25rem; }
+}
+
+/* ═══ HEADER NAV ═════════════════════════════════════════════════════════════
+   There was no site header. The mark lived inside the chat card, so nothing
+   above the fold said this was a product with more than one page, and the chat
+   was unreachable from anywhere except the landing page's own card.
+
+   Two tabs only. "Ask" is the tool, "Questions" is the reference — that is the
+   whole product, and a nav listing everything the site technically has is how
+   a two-page product starts looking like a directory. */
+.dmnav {
+  border-bottom: 1px solid var(--demeter-rule);
+  background: var(--demeter-paper);
+  position: sticky; top: 0; z-index: 20;
+}
+.dmnav__inner {
+  width: 100%; max-width: 1180px; margin: 0 auto;
+  padding: 0 clamp(1rem, 4vw, 3.5rem);
+  min-height: 60px; display: flex; align-items: center; gap: 1.5rem;
+}
+.dmnav__brand { display: flex; align-items: center; gap: 0.55rem; text-decoration: none; flex: none; }
+.dmnav__wordmark {
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+  font-size: 1.05rem; font-weight: 600; color: var(--demeter-ink);
+}
+.dmnav__tabs { display: flex; gap: 0.25rem; margin-left: auto; }
+.dmnav__tab {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.9rem; font-weight: 500; color: var(--demeter-body);
+  text-decoration: none; padding: 0 0.85rem; min-height: 44px;
+  display: inline-flex; align-items: center; border-radius: 999px;
+}
+.dmnav__tab:hover { color: var(--demeter-ink); background: rgba(0, 0, 0, 0.035); }
+/* The current tab is marked by weight and ink, not a background pill — a filled
+   tab next to the terracotta CTA would read as a second call to action. */
+.dmnav__tab[aria-current="page"] { color: var(--demeter-ink); font-weight: 600; }
+
+/* ═══ /chat — THE TOOL, FULL HEIGHT ══════════════════════════════════════════
+   The whole reason this page exists. On the landing page the chat is a card in
+   a scrolling document, so the composer sits below the fold and the empty state
+   shows buttons rather than a conversation. Here the transcript owns the
+   viewport and the composer is always in view, which is the difference between
+   something that looks like a chatbot and something that looks like a form. */
+.dmchat { min-height: 100dvh; display: flex; flex-direction: column; background: var(--demeter-paper); }
+.dmchat__body {
+  flex: 1; min-height: 0;
+  width: 100%; max-width: 940px; margin: 0 auto;
+  padding: clamp(0.75rem, 2vw, 1.5rem) clamp(1rem, 4vw, 2rem) calc(1rem + env(safe-area-inset-bottom));
+  display: flex; flex-direction: column;
+}
+/* Undo the landing page's card chrome: on its own page the chat IS the page,
+   so it needs no border, no shadow, and no capped scroll height. */
+.dmchat__body .demeter { max-width: none; min-height: 0; margin: 0; padding: 0; flex: 1; }
+.dmchat__body .demeter__scroll { min-height: 0; max-height: none; flex: 1; }
+
+/* ═══ LANDING ENTRY CARD ═════════════════════════════════════════════════════
+   Replaces the full chat that used to sit here. The chat lives at /chat now,
+   where it owns the viewport; this is the way in.
+
+   Composer FIRST, suggestions after. The old card led with three buttons and
+   put the input below the fold, which is exactly why it read as a form with
+   links rather than something you talk to. */
+/* NO CARD CHROME HERE. .dmpage__chat — the wrapper this sits in — already
+   carries the background, border, radius and shadow, from when it wrapped the
+   full chat. Adding them again produced a card inside an identical card: the
+   same defect as the double-ringed language pill, introduced in the same commit
+   that fixed it, and invisible until rendered.
+
+   The wrapper owns the surface; this owns the layout. */
+.dment { display: flex; flex-direction: column; gap: 1rem; }
+.dment__scope { display: flex; align-items: center; gap: 1rem; }
+.dment__scope .dmst { flex: 1; min-width: 0; }
+.dment__verify {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  flex: none; font-size: 0.8rem; color: var(--demeter-terracotta);
+  text-decoration: underline; text-underline-offset: 2px;
+  min-height: 44px; display: inline-flex; align-items: center;
+}
+.dment__form { display: flex; gap: 0.6rem; align-items: stretch; }
+.dment__input {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  flex: 1; min-width: 0; min-height: 52px; padding: 0.75rem 1rem; font-size: 1rem;
+  color: var(--demeter-ink); background: var(--demeter-card);
+  border: 1px solid var(--demeter-rule-strong); border-radius: 14px;
+}
+.dment__input:focus-visible { outline: 2px solid var(--demeter-terracotta); outline-offset: 1px; }
+.dment__send {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  flex: none; min-height: 52px; padding: 0 1.4rem; border: 0; border-radius: 14px;
+  background: var(--demeter-terracotta); color: #fff; font-weight: 700; font-size: 0.95rem;
+  cursor: pointer;
+}
+.dment__send:hover:not(:disabled) { background: var(--demeter-terracotta-deep); }
+.dment__send:disabled { opacity: 0.45; cursor: default; }
+.dment__suggest { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.dment__chip {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.88rem; color: var(--demeter-body); text-align: left; cursor: pointer;
+  background: var(--demeter-paper); border: 1px solid var(--demeter-rule);
+  border-radius: 999px; padding: 0.5rem 0.95rem; min-height: 40px;
+}
+.dment__chip:hover { border-color: var(--demeter-terracotta); color: var(--demeter-ink); }
+@media (max-width: 560px) {
+  .dment__scope { flex-direction: column; align-items: stretch; gap: 0.5rem; }
+  .dment__verify { align-self: flex-start; }
+}
+
+/* Language links in the nav. Quiet by default: they are wayfinding, not a call
+   to action, and four of them lit up would out-shout the two tabs that matter.
+   The current language is marked by ink and weight, same rule as the tabs. */
+.dmnav__langs { display: flex; gap: 0.1rem; margin-left: 0.5rem; padding-left: 0.75rem; border-left: 1px solid var(--demeter-rule); }
+.dmnav__lang {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.82rem; color: var(--demeter-muted); text-decoration: none;
+  padding: 0 0.5rem; min-height: 44px; display: inline-flex; align-items: center; border-radius: 999px;
+}
+.dmnav__lang:hover { color: var(--demeter-ink); }
+.dmnav__lang[aria-current] { color: var(--demeter-ink); font-weight: 600; }
+@media (max-width: 620px) {
+  /* On a phone the wordmark plus two tabs plus four languages does not fit.
+     The languages wrap to their own row rather than shrinking below a 44px
+     touch target. */
+  .dmnav__inner { flex-wrap: wrap; padding-top: 0.4rem; padding-bottom: 0.4rem; }
+  .dmnav__langs { margin-left: 0; padding-left: 0; border-left: 0; width: 100%; }
+}
+
+/* On /chat the NAV carries the mark, the name and the language links, so the
+   chat card's own header is a second copy of all three. Hidden here, kept on
+   the landing page where no nav sits above the card doing that job.
+   (The card's <select> and the nav's links are the same control twice; the nav
+   wins, because a link is something a crawler can follow.) */
+.dmchat .demeter__head { display: none; }
+
+/* Fill the viewport properly: the transcript takes the slack and the composer
+   sits at the BOTTOM of the screen rather than floating halfway up it, which is
+   the difference between a chat app and a form that happens to scroll.
+   Measured before this: the composer ended at 433px of an 800px viewport.
+
+   `align-items: stretch` is the load-bearing line. .demeter__body is a GRID
+   with `align-items: start`, so every flex:1 below it was inert — the column
+   was sized to its content and had no slack to distribute. Flex on the
+   children could never have worked while the grid refused to stretch them. */
+.dmchat .demeter__body { flex: 1; min-height: 0; align-items: stretch; }
+.dmchat .demeter__main { flex: 1; min-height: 0; }
+.dmchat .demeter__scroll { flex: 1; min-height: 0; }
+.dmchat .demeter__disclaimer { padding-bottom: 0.25rem; }
+/* The estimate rail keeps its own alignment: it is a panel that grows with
+   what it knows, not a column that should stretch to the fold. */
+.dmchat .dmw { align-self: start; }

@@ -26,10 +26,13 @@
 
 import type { Metadata } from "next";
 import { VERIFIED_STATES } from "@civica/demeter-engine/packs";
-import { DemeterChat } from "../../../components/DemeterChat";
+import { redirect } from "next/navigation";
+import { DemeterEntry } from "../../../components/DemeterEntry";
+import { T } from "../../../lib/i18n/demeter-chat-copy";
 import { SnapOrientation, SnapDetail } from "../../../components/SnapOverview";
+import { DemeterFooter } from "../../../components/DemeterFooter";
+import { DemeterNav } from "../../../components/DemeterNav";
 import { alternateLanguages, askUrl } from "../../../lib/i18n/routes";
-import { loadConversation } from "../../../lib/demeter-conversations-server";
 import { askStructuredData, EN_TITLE, EN_DESCRIPTION } from "./structured-data";
 
 export const metadata: Metadata = {
@@ -46,10 +49,22 @@ export default async function ScreenAskPage({
 }) {
   const { state, q, c, save } = await searchParams;
 
-  // ?c=<id> resumes a saved conversation. Only touched when the param is
-  // present, so the ordinary page — the one that has to be fast and indexable —
-  // never reads a cookie or the database to render.
-  const resumed = c ? await loadConversation(c) : null;
+  // ANYTHING THAT IS ALREADY A CONVERSATION BELONGS ON /chat. Resuming a saved
+  // thread (?c=), arriving with a question (?q=), or coming back from sign-in
+  // mid-save (?save=pending) are all "the chat is already happening" — this
+  // page is the front door, not the room. Redirecting rather than rendering a
+  // second chat here is what keeps there being exactly one chat.
+  //
+  // Old links keep working: /guides/[state] and /verify deep-link with ?state=
+  // and ?q=, and they land in the right place.
+  if (c || q || save) {
+    const params = new URLSearchParams();
+    if (state) params.set("state", state);
+    if (q) params.set("q", q);
+    if (c) params.set("c", c);
+    if (save) params.set("save", save);
+    redirect(`/chat?${params.toString()}`);
+  }
 
   const initialState =
     state && VERIFIED_STATES.some((s) => s.code === state.toUpperCase())
@@ -58,22 +73,26 @@ export default async function ScreenAskPage({
 
   return (
     <main className="dmpage">
+      <DemeterNav />
       <div className="dmpage__inner">
-        <SnapOrientation />
+        <SnapOrientation states={VERIFIED_STATES} />
         <div className="dmpage__chat">
-          <DemeterChat
+          {/* The way IN, not a second chat. See DemeterEntry's header. */}
+          <DemeterEntry
             states={VERIFIED_STATES}
-            // A resumed conversation carries its own scope; ?state= only
-            // decides where a NEW conversation starts.
-            initialState={resumed ? resumed.state_code : initialState}
-            initialQuestion={q ?? null}
-            initialMessages={resumed?.messages ?? []}
-            savedConversationId={resumed?.id ?? null}
-            pendingSave={save === "pending"}
+            initialState={initialState}
+            copy={{
+              placeholder: T.en.inputPlaceholder,
+              send: T.en.send,
+              suggestions: [T.en.empty1, T.en.empty2, T.en.empty3],
+              picker: T.en.picker,
+              howWeVerify: T.en.howWeVerify,
+            }}
           />
         </div>
         <SnapDetail states={VERIFIED_STATES} />
       </div>
+      <DemeterFooter />
       <script
         type="application/ld+json"
         // Built from server-side literals — no user input reaches this, so

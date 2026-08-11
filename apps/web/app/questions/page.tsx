@@ -26,6 +26,8 @@ import {
   askHref,
 } from "../../components/SnapOverview";
 import { PAGE_COPY } from "../../lib/i18n/snap-page";
+import { DemeterNav } from "../../components/DemeterNav";
+import { DemeterFooter } from "../../components/DemeterFooter";
 import { alternateLanguages, questionsUrl } from "../../lib/i18n/routes";
 import { questionsStructuredData } from "../screen/ask/structured-data";
 
@@ -47,6 +49,7 @@ export default function QuestionsPage() {
   const c = PAGE_COPY.en;
   return (
     <main className="dmpage">
+      <DemeterNav active="questions" path="/questions" />
       <div className="dmpage__inner">
         <section className="dmo" aria-labelledby="questions-h1">
           <p className="dmo__eyebrow">{c.eyebrow}</p>
@@ -62,6 +65,7 @@ export default function QuestionsPage() {
         <SnapWhyHard />
         <SnapFormQuestions />
       </div>
+      <DemeterFooter />
       <script
         type="application/ld+json"
         // Built from server-side literals — no user input reaches this, so

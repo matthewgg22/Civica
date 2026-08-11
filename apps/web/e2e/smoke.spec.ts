@@ -14,7 +14,11 @@ test.describe("front door", () => {
 
   test("root carries query params through, so campaign links keep working", async ({ page }) => {
     await page.goto("/?state=TX&q=Does%20my%20car%20count%3F");
-    await expect(page).toHaveURL(/\/screen\/ask\?/);
+    // Two hops now: / → /screen/ask → /chat. A campaign link carrying a
+    // QUESTION is already a conversation, so it belongs in the tool rather than
+    // on the front door. The params survive both hops, which is the thing that
+    // actually matters for a campaign link.
+    await expect(page).toHaveURL(/\/chat\?/);
     // The state selector is a combobox (2026-08-09): one selection, shown on
     // the trigger, rather than a row of radio chips.
     await expect(page.getByRole("button", { name: "Your state", exact: true })).toContainText("TX");
@@ -65,7 +69,13 @@ test.describe("chat surface", () => {
     page,
   }) => {
     await page.goto("/screen/ask");
-    await page.getByRole("link", { name: /What the application is actually asking/i }).click();
+    // .first() because the footer now carries the same link. Two routes to the
+    // same page is the intent, not a bug — the depth section hands you there
+    // after reading, the footer after scrolling past everything.
+    await page
+      .getByRole("link", { name: /What the application is actually asking/i })
+      .first()
+      .click();
     await expect(page).toHaveURL(/\/questions$/);
 
     const h1 = page.getByRole("heading", { level: 1 });
@@ -79,8 +89,30 @@ test.describe("chat surface", () => {
     await expect(page).toHaveURL(/\/screen\/ask$/);
   });
 
-  test("guide deep-link preselects state and question", async ({ page }) => {
+  // The landing card is an ENTRY POINT now, not a chat. Asking there hands the
+  // question to /chat rather than answering in place, which is the whole reason
+  // there is only one chat implementation.
+  test("asking on the landing page carries the question into /chat", async ({ page }) => {
+    await page.goto("/screen/ask");
+    await page.getByPlaceholder(/Ask anything about SNAP/).fill("Do I qualify?");
+    await page.getByRole("button", { name: /Send|Enviar/ }).click();
+    await expect(page).toHaveURL(/\/chat\?/);
+    await expect(page).toHaveURL(/q=Do\+I\+qualify/);
+    // And it arrives in the composer, ready to send rather than already sent.
+    await expect(page.getByPlaceholder(/Ask anything about SNAP/)).toHaveValue("Do I qualify?");
+  });
+
+  test("a suggested question goes straight to /chat", async ({ page }) => {
+    await page.goto("/screen/ask");
+    await page.getByRole("button", { name: /income limit for my household/i }).click();
+    await expect(page).toHaveURL(/\/chat\?/);
+  });
+
+  // Deep links from /guides and /verify carry a question, so they are already a
+  // conversation and redirect to the tool rather than the front door.
+  test("guide deep-link redirects to /chat with state and question intact", async ({ page }) => {
     await page.goto("/screen/ask?state=TX&q=Does%20my%20car%20count%3F");
+    await expect(page).toHaveURL(/\/chat\?/);
     await expect(page.getByRole("button", { name: "Your state", exact: true })).toContainText("TX");
     await expect(page.getByPlaceholder(/Ask anything about SNAP/)).toHaveValue(
       "Does my car count?",
@@ -88,7 +120,7 @@ test.describe("chat surface", () => {
   });
 
   test("send always yields a response state (answer or honest banner)", async ({ page }) => {
-    await page.goto("/screen/ask");
+    await page.goto("/chat");
     await page.getByPlaceholder(/Ask anything about SNAP/).fill("What is SNAP?");
     await page.getByRole("button", { name: /Send|Enviar/ }).click();
     // The user bubble appears immediately…
@@ -113,21 +145,36 @@ test.describe("chat surface", () => {
       .toBe(true);
   });
 
-  // The EN/ES toggle became a four-language picker (2026-08-09) once the engine
-  // gained real VI/ZH support. Each language is asserted end-to-end because the
-  // point of doing the engine work rather than shipping a selector is that a
-  // language offered here is a language the surface actually speaks.
-  for (const [label, placeholder] of [
-    ["Español", /Pregunta lo que sea sobre SNAP/],
-    ["Tiếng Việt", /Hỏi bất cứ điều gì về SNAP/],
-    ["中文", /关于 SNAP/],
-  ] as Array<[string, RegExp]>) {
-    test(`language picker switches the surface to ${label}`, async ({ page }) => {
+  // Each language is asserted end-to-end because the point of doing the engine
+  // work rather than shipping a selector is that a language offered here is a
+  // language the surface actually speaks.
+  //
+  // The in-chat <select> moved to the NAV as real links. That matters beyond
+  // tidiness: when the chat moved to /chat, the landing page lost the switcher
+  // entirely, so a Spanish speaker arriving on the English page had no way
+  // across. Links also mean a crawler can follow them and switching keeps you
+  // on the page you were reading.
+  for (const [label, path, placeholder] of [
+    ["Español", "/es/screen/ask", /Pregunta lo que sea sobre SNAP/],
+    ["Tiếng Việt", "/vi/screen/ask", /Hỏi bất cứ điều gì về SNAP/],
+    ["中文", "/zh/screen/ask", /关于 SNAP/],
+  ] as Array<[string, string, RegExp]>) {
+    test(`the nav switches the surface to ${label}`, async ({ page }) => {
       await page.goto("/screen/ask");
-      await page.getByLabel("Language").selectOption({ label });
+      await page.getByRole("link", { name: label, exact: true }).click();
+      await expect(page).toHaveURL(new RegExp(path.replace(/\//g, "\\/")));
       await expect(page.getByPlaceholder(placeholder)).toBeVisible();
     });
   }
+
+  test("the language links keep you on the page you were reading", async ({ page }) => {
+    // The old <select> lived in the chat, so switching language could only ever
+    // mean "switch the chat". From /questions, Español must go to
+    // /es/questions — not back to the chat.
+    await page.goto("/questions");
+    await page.getByRole("link", { name: "Español", exact: true }).click();
+    await expect(page).toHaveURL(/\/es\/questions$/);
+  });
 });
 
 test.describe("growth surfaces", () => {
@@ -146,7 +193,11 @@ test.describe("growth surfaces", () => {
     const first = page.locator('a[href^="/screen/ask?state=TX"]').first();
     await expect(first).toBeVisible();
     await first.click();
-    await expect(page).toHaveURL(/\/screen\/ask\?state=TX/);
+    // The guide links carry a QUESTION as well as a state, so they land in the
+    // tool. The guide pages themselves are unchanged — the redirect is what
+    // keeps every existing deep link working without editing 9 state packs.
+    await expect(page).toHaveURL(/\/chat\?/);
+    await expect(page).toHaveURL(/state=TX/);
     await expect(page.getByRole("button", { name: "Your state", exact: true })).toContainText("TX");
   });
 

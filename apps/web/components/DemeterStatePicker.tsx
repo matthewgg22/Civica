@@ -102,10 +102,21 @@ export function DemeterStatePicker({
         aria-label={copy.label}
         onClick={() => setOpen((o) => !o)}
       >
+        {/* The state as a MONOGRAM, far left — the thing the eye lands on.
+            Which state is selected changes every figure in the answer, so it
+            deserves to be readable at a glance rather than parsed out of a
+            sentence. A real state flag was the other option and was rejected:
+            most are a seal on a blue field and turn to mush below ~32px, which
+            is worse than the text it would replace. Two letters in the display
+            serif stay legible at any size and work for all 50 states on day
+            one, not just the verified ones. */}
+        <span className="dmst__mark" data-federal={selected ? undefined : "true"}>
+          {selected ? selected.code : "US"}
+        </span>
         <span className="dmst__trigger-text">
           <span className="dmst__trigger-label">{copy.label}</span>
           <span className="dmst__trigger-value">
-            {selected ? `${selected.code} · ${selected.program}` : copy.federal}
+            {selected ? selected.program : copy.federal}
           </span>
         </span>
         {selected ? <span className="dmst__check" aria-hidden>✓</span> : null}
@@ -132,8 +143,11 @@ export function DemeterStatePicker({
                 className={`dmst__opt ${value === null ? "is-sel" : ""}`}
                 onClick={() => pick(null)}
               >
-                <span className="dmst__opt-name">{copy.federal}</span>
-                <span className="dmst__opt-sub">{copy.federalHint}</span>
+                <span className="dmst__mark" data-federal="true">US</span>
+                <span className="dmst__opt-text">
+                  <span className="dmst__opt-name">{copy.federal}</span>
+                  <span className="dmst__opt-sub">{copy.federalHint}</span>
+                </span>
               </button>
             </li>
             {matches.map((s) => (
@@ -145,11 +159,14 @@ export function DemeterStatePicker({
                   className={`dmst__opt ${value === s.code ? "is-sel" : ""}`}
                   onClick={() => pick(s.code)}
                 >
-                  <span className="dmst__opt-name">
-                    {s.code} · {s.program}
-                    <span className="dmst__opt-badge">{copy.verified}</span>
+                  <span className="dmst__mark">{s.code}</span>
+                  <span className="dmst__opt-text">
+                    <span className="dmst__opt-name">
+                      {s.program}
+                      <span className="dmst__opt-badge">{copy.verified}</span>
+                    </span>
+                    <span className="dmst__opt-sub">{s.agency}</span>
                   </span>
-                  <span className="dmst__opt-sub">{s.agency}</span>
                 </button>
               </li>
             ))}

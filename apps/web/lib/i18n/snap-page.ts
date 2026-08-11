@@ -62,6 +62,15 @@ export interface PageCopy {
   questionsLink: string;
   questionsIntro: string;
   questionsBack: string;
+  /** The graphite footer. `footerDisclaimer` is the load-bearing one: it is the
+   *  last thing anyone reads before acting on an answer, so it says plainly
+   *  that the agency decides, not us. */
+  navAsk: string;
+  navQuestions: string;
+  footerPrivacy: string;
+  footerSupporters: string;
+  footerDisclaimer: string;
+  footerOrg: string;
   agenciesH2: string;
   agenciesBody: string;
   agenciesNote: string;
@@ -154,6 +163,13 @@ const en: PageCopy = {
   questionsIntro:
     "People do not arrive with a policy question. They arrive stuck on one line of a form. Here is what each line means and the rule that decides it.",
   questionsBack: "Ask Demeter about your own situation",
+  navAsk: "Ask",
+  navQuestions: "Questions",
+  footerPrivacy: "Privacy",
+  footerSupporters: "Supporters",
+  footerDisclaimer:
+    "Demeter gives information, not legal advice, and does not decide your case. Your state agency does. Always confirm before acting on an answer.",
+  footerOrg: "Demeter AI is built by Civica.",
   agenciesH2: "Your state runs the program — here is who",
   agenciesBody:
     "Demeter never decides your case. Your state agency does. These are the agencies whose own published rules the verified answers are built from, and where you actually apply.",
@@ -248,6 +264,13 @@ const es: PageCopy = {
   questionsIntro:
     "La gente no llega con una pregunta de política. Llega atascada en una línea de un formulario. Esto es lo que significa cada línea y la regla que la decide.",
   questionsBack: "Pregúntale a Demeter sobre tu propia situación",
+  navAsk: "Preguntar",
+  navQuestions: "Preguntas",
+  footerPrivacy: "Privacidad",
+  footerSupporters: "Patrocinadores",
+  footerDisclaimer:
+    "Demeter da información, no asesoría legal, y no decide tu caso. Lo decide la agencia de tu estado. Confirma siempre antes de actuar según una respuesta.",
+  footerOrg: "Demeter AI es un producto de Civica.",
   agenciesH2: "Tu estado administra el programa — estas son las agencias",
   agenciesBody:
     "Demeter nunca decide tu caso. Lo hace la agencia de tu estado. Estas son las agencias cuyas reglas publicadas sustentan las respuestas verificadas, y donde realmente se solicita.",
@@ -342,6 +365,13 @@ const vi: PageCopy = {
   questionsIntro:
     "Người ta không đến với một câu hỏi về chính sách. Họ mắc kẹt ở một dòng trên tờ đơn. Đây là ý nghĩa của từng dòng và điều luật quyết định nó.",
   questionsBack: "Hỏi Demeter về hoàn cảnh của chính bạn",
+  navAsk: "Hỏi",
+  navQuestions: "Câu hỏi",
+  footerPrivacy: "Quyền riêng tư",
+  footerSupporters: "Nhà tài trợ",
+  footerDisclaimer:
+    "Demeter cung cấp thông tin, không phải tư vấn pháp lý, và không quyết định hồ sơ của bạn. Cơ quan tiểu bang của bạn quyết định. Hãy luôn xác nhận trước khi hành động theo một câu trả lời.",
+  footerOrg: "Demeter AI do Civica xây dựng.",
   agenciesH2: "Tiểu bang của bạn điều hành chương trình — đây là các cơ quan",
   agenciesBody:
     "Demeter không bao giờ quyết định hồ sơ của bạn. Cơ quan tiểu bang mới quyết định. Đây là những cơ quan có quy định công bố làm nền cho các câu trả lời đã xác minh, và cũng là nơi bạn thực sự nộp đơn.",
@@ -436,6 +466,13 @@ const zh: PageCopy = {
   questionsIntro:
     "人们并不是带着政策问题来的，而是卡在表格的某一行上。这里说明每一行的含义，以及决定它的条款。",
   questionsBack: "就您自己的情况询问 Demeter",
+  navAsk: "提问",
+  navQuestions: "常见问题",
+  footerPrivacy: "隐私政策",
+  footerSupporters: "支持者",
+  footerDisclaimer:
+    "Demeter 提供信息，不提供法律建议，也不会决定您的申请结果。决定权在您所在州的机构。根据答案采取行动前请务必核实。",
+  footerOrg: "Demeter AI 由 Civica 开发。",
   agenciesH2: "项目由您所在的州执行——以下是相关机构",
   agenciesBody:
     "Demeter 从不决定您的个案，作出决定的是您所在州的机构。以下这些机构自己公布的规定，正是已核实答案的依据，也是您实际递交申请的地方。",
