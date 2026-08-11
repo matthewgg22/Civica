@@ -1,0 +1,26 @@
+{
+  "_provenance": {
+    "note": "Illinois dated facts. Dollar values ride the federal October COLA via MR #25.33 (eff. 10/1/2025 issuances). The fixed ABAWD 3-year clock is a hard cliff. Waiver status ended statewide in Nov 2025 and is otherwise volatile.",
+    "extracted": "2026-08-11"
+  },
+  "entries": [
+    {
+      "key": "il-ffy26-dollar-values",
+      "kind": "expires",
+      "date": "2026-09-30",
+      "warning": "Illinois FFY 2026 dollar values (MR #25.33, eff. Oct 2025 issuances: SUA $546/$457/$78/$67, shelter cap $744, homeless deduction $199, SMD $185/$485, asset limits $3,000/$4,500) are due for the October 2026 COLA — find the successor Manual Release before quoting any Illinois dollar amount. Note: MR #25.33's own printed standard deduction ($205/$219/$257/$295) does NOT match the authoritative USDA FNS FY26 COLA memo ($209/$223/$261/$299) — quote the federal figure, not IL's bulletin, and flag the discrepancy if asked. See PROVENANCE.md."
+    },
+    {
+      "key": "il-abawd-clock-reset",
+      "kind": "expires",
+      "date": "2026-12-31",
+      "warning": "Illinois' fixed statewide ABAWD 3-year window (Jan 1, 2024 – Dec 31, 2026) expires — a NEW window begins January 1, 2027 (WAG 03-16-04). Do not describe the old window after that date."
+    },
+    {
+      "key": "il-waiver-status",
+      "kind": "expires",
+      "date": "2026-12-31",
+      "warning": "Illinois' statewide ABAWD waiver ended in November 2025 (IDHS Policy Memo, 10/16/2025) — this pack found no evidence of any NEWER county-level waiver as of build. Waiver status is inherently volatile; re-verify against the current FNS quarterly ABAWD waiver file or a newer IDHS Manual Release before stating Illinois holds (or does not hold) any waiver."
+    }
+  ]
+}

@@ -1,0 +1,233 @@
+{
+  "_provenance": {
+    "note": "Illinois SNAP curated supplements — Wave 2 continued (docs/plans/mae-state-corpus-framework.md). Drafted from verbatim source text: the IDHS Cash, SNAP, and Medical Manual (Policy Manual + Workers' Action Guide, dhs.state.il.us — static Antora-style site, plain curl), Manual Release MR #25.33, and the 10/16/2025 end-of-waiver Policy Memo, cross-checked against the already-verified #619 engine sourcing (SUA, drug-felony, RMP) and the authoritative USDA FNS FY26 COLA memo. Independently cross-checked (all pivotal facts CONFIRMED) and adversarially fact-checked before PR. See PROVENANCE.md.",
+    "extracted": "2026-08-11",
+    "source_fact_check": "cross-check re-verification + post-draft adversarial refute pass; corrections recorded in PROVENANCE.md"
+  },
+  "supplements": [
+    {
+      "key": "income-pathways",
+      "kind": "supplement",
+      "terms": [
+        "income limit",
+        "income limits",
+        "gross income limit",
+        "gross income ceiling",
+        "make too much",
+        "over income",
+        "bbce",
+        "categorical eligibility",
+        "categorically eligible",
+        "165 percent",
+        "165%",
+        "200 percent",
+        "200%",
+        "poverty level",
+        "qualifying member"
+      ],
+      "citation": "PM 05-07-00; PM 13-01-01; WAG 13-01-01-a — IL income pathways (two-tier BBCE)",
+      "heading": "Illinois runs a TWO-TIER BBCE screen — 165% for most households, 200% for households with an elderly or disabled 'Qualifying Member'",
+      "text": "Illinois's BBCE conferral vehicle is the Guide to Services (DHS 4474) — a TANF-funded information-and-referral brochure, the same conferral mechanism family as Georgia's TCOS and Michigan's DVPS under a different name: 'Guide to Services (DHS 4474), a TANF funded information and referral service brochure is given to the SNAP household and gross monthly income does not exceed the Gross Monthly Income Standard for the household size' (PM 05-07-00). The screen it confers is NOT flat, though — the manual's own income-standards table (WAG 13-01-01-a) prints two columns: 'Maximum Gross Income Standard (165%) Nonqualifying Member Units' and 'Maximum Gross Income Standard (200%) Qualifying Member Units.' A Qualifying Member is a household member who is age 60+ or disabled (PM 05-06-01). FFY2026 values (MR #25.33, eff. Oct 2025) for a household of 1: 165% = $2,152, 200% = $2,608; household of 4: $4,421 / $5,358. 'If households that include a Qualifying Member exceed the gross income standard, perform a net income test' (WAG 13-01-01-a) — i.e. the 200% screen for Qualifying-Member households is itself a BBCE-raised gross test, not just a net-test fallback; households WITHOUT a qualifying member that clear the plain 165% screen and hold BBCE status skip both the gross and net tests entirely, per federal BBCE policy (matching PM 13-01-01: 'When every person in the SNAP household is authorized to receive TANF, GA, or SSI... the household is categorically eligible and are not required to meet the Gross or Net Monthly Income Standard'). Not categorically eligible (PM 05-07-02): a member disqualified for Intentional Program Violation; a member sanctioned for failure to comply with a Work Provision; a Qualifying-Member household whose gross income exceeds the 200% screen; and the first reapplication after losing eligibility to substantial lottery/gambling winnings (PM 07-04-21). A SNAP application cannot be denied for over-income based solely on the applicant's statement — gross income must be verified first (WAG 13-01-01).",
+      "source_url": "https://www.dhs.state.il.us/page.aspx?item=13637"
+    },
+    {
+      "key": "asset-rule",
+      "kind": "supplement",
+      "terms": [
+        "asset limit",
+        "asset test",
+        "resource limit",
+        "resource test",
+        "resources",
+        "savings",
+        "savings limit",
+        "bank account",
+        "vehicle",
+        "car count",
+        "does my car count",
+        "lottery",
+        "winnings",
+        "gambling"
+      ],
+      "citation": "PM 07-04-01; PM 07-04-17; PM 07-04-21 — IL resource rules",
+      "heading": "Illinois waives the asset test for categorically eligible households; the tested minority faces $3,000/$4,500 limits and licensed vehicles are excluded",
+      "text": "'SNAP asset limits do not apply to categorically eligible households unless the household receives substantial lottery or gambling winnings as a cash prize of more than $4,500' (PM 07-04-01). For the noncategorically eligible minority, the federal-standard limits apply: '$4,500 if at least one member in the household is a qualifying member; or $3,000 for all other SNAP households without a qualifying member' (PM 07-04-01). Licensed vehicles are excluded as a resource (PM 07-04-17), matching the federal default rather than counting equity value. Assets are always verified except for expedited-service households or categorically eligible households (PM 07-04-01). Substantial lottery/gambling winnings get their own separate resource rule, applying to EVERY SNAP household regardless of categorical status: 'a member of the household wins a cash prize in a single game... that is greater than the applicable resource limit allocated to the household member' (PM 07-04-21) triggers immediate ineligibility — cancellation with a timely 10-day notice — even if the household has since spent the money below the limit. Winnings received BEFORE an application does not affect eligibility; only winnings won during the certification period or at redetermination count. Regaining eligibility after a lottery/gambling closure strips categorical status for that first reapplication: the household must meet the regular $3,000/$4,500 asset test and the net income limit, with all assets and income verified — matching Michigan's and Georgia's identical lottery-carve-out structure. If household composition changes after the winnings (a member leaves), the remaining members are treated as a NEW household for this purpose, unaffected by the prior winnings.",
+      "source_url": "https://www.dhs.state.il.us/page.aspx?item=15070"
+    },
+    {
+      "key": "sua-values",
+      "kind": "supplement",
+      "terms": [
+        "utility allowance",
+        "utility standard",
+        "shelter deduction",
+        "excess shelter",
+        "heating standard",
+        "cooling standard",
+        "air conditioning",
+        "telephone standard",
+        "limited utility",
+        "single utility"
+      ],
+      "citation": "PM 13-01-08-b; WAG 13-01-08-b — IL utility standard ladder (MR #25.33)",
+      "heading": "Illinois uses a FOUR-tier utility standard ladder, not the three-tier shape most states publish, with a real dollar value at every tier",
+      "text": "Illinois's ladder (WAG 13-01-08-b, MR #25.33, eff. Oct 2025) runs FOUR steps, checked in order — the household qualifies for the FIRST one it meets: Step 1, Air Conditioning/Heating Standard ($546) — billed for heat and/or A/C, or has a Qualifying Member (60+/disabled) who received $21+ of LIHEAP in the application month or the prior 12 months. Step 2, Limited Utility Standard ($457) — billed for at least 2 of: electricity (no A/C or heat), cooking fuel, water/sewerage, garbage, phone, well/septic installation, a start-up fee, or a flat utility charge. Step 3, Single Utility Standard ($78) — billed for exactly ONE of that same list (excluding telephone). Step 4, Telephone Standard ($67) — the household's only utility expense is basic phone service (including cell phone; a TracFone with prepaid minutes qualifies, a bare prepaid card with no device attached does not). The Single Utility Standard has no slot in this engine's {HCSUA, LUA, phone} shape — the same undermodeled-tier pattern as Ohio's identically-named $108 tier and Georgia's LSUA structure; a household billed for exactly one non-heat, non-phone utility currently falls through to the Telephone Standard or NONE tier and loses the deduction. Post-OBBBA change effective 9/26/2025: LIHEAP receipt alone no longer auto-qualifies a household WITHOUT a Qualifying Member for the A/C-Heating Standard — only Qualifying-Member households retain that automatic path now; households without one must show an actual heat/cooling bill. Verification of utility expenses is NOT required (WAG 13-01-08-b) — client statement suffices unless questionable, and a household paying a flat utility fee must simply specify which utilities are included. When 2+ SNAP households share a residence and utility costs, EACH contributing household gets its own full standard, whether or not everyone in the residence receives SNAP.",
+      "source_url": "https://www.dhs.state.il.us/page.aspx?item=16170"
+    },
+    {
+      "key": "medical-deduction",
+      "kind": "supplement",
+      "terms": [
+        "medical deduction",
+        "medical expense",
+        "medical expenses",
+        "medical bills",
+        "standard medical deduction",
+        "elderly deduction",
+        "disability deduction",
+        "smd"
+      ],
+      "citation": "PM 13-01-05; WAG 13-01-05 — IL Standard Medical Deduction",
+      "heading": "Illinois runs a two-tier flat Standard Medical Deduction ($185 general, $485 for Group Home/CILA residents) instead of the federal actual-expense-minus-$35 approach",
+      "text": "'To be eligible for a Standard Medical Deduction, the Food Assistance household must contain a qualifying member (age 60 or older or disabled) and verify that they have more than $35 per month in allowable medical expenses' (PM 13-01-05). Two flat amounts, by living situation: 'The Standard Medical Deduction for residents of Group Homes, including CILAs is $485 a month. The Standard Medical Deduction for all other eligible Food Assistance households is $185.' A household may instead use ACTUAL verified medical expenses if they exceed the applicable standard — but only after verifying the total; if the household verifies expenses over $35 but fails to verify the full total, it defaults to the flat Standard Medical Deduction rather than losing the deduction outright. Group Home and Community Integrated Living Arrangement (CILA) residents have a distinct computation: the medical-expense amount is largely DERIVED from what the facility retains for care (after backing out verified housing costs, the telephone standard if the resident pays for a private phone, and the Personal Needs Allowance for CILA residents), not itemized bill-by-bill. This is a genuinely different structure from Georgia's flat $161 SMD (one tier, no group-home split) and from Michigan's actual-expense-minus-$35 formula (no flat standard at all) — a real cross-state contrast in how the identical federal '$35 medical floor' authority (7 CFR 273.9(d)(3)) gets implemented as state policy.",
+      "source_url": "https://www.dhs.state.il.us/page.aspx?item=16141"
+    },
+    {
+      "key": "dependent-care-child-support",
+      "kind": "supplement",
+      "terms": [
+        "dependent care",
+        "child care deduction",
+        "daycare",
+        "child support",
+        "support payments"
+      ],
+      "citation": "PM 13-01-06; PM 13-01-07 — dependent care deduction + child support treatment",
+      "heading": "Illinois allows dependent care as a deduction, but treats child support as an income EXCLUSION rather than a deduction — a real cross-state contrast",
+      "text": "Dependent care is a straightforward deduction: 'Allow the amount the SNAP household actually pays for dependent care. Accept the customer's statement of the amount paid for dependent care. Verification is not required' (PM 13-01-06) — no dollar cap. Attendant care for an incapacitated household member of any age may be claimed EITHER as the dependent-care deduction OR as a medical expense deduction (not both), whichever benefits the household more. Child support works differently than in Georgia or Michigan, where it is a net-calculation deduction: Illinois excludes it from GROSS income before comparing to the income standard, and explicitly does NOT allow it again as a deduction in the net benefit calculation — 'Court-ordered child support payments are treated as an income exclusion from the SNAP household's total gross income when comparing to the Maximum Monthly Gross Income Standard for the household size... Do not allow as an income deduction in the net benefit calculation' (PM 13-01-07). This includes third-party vendor payments made on the non-household member's behalf and payments toward arrearages; alimony does NOT qualify. The exclusion uses actual payments from the last 30 days, converted to a monthly figure. Practically: a household's child-support payment lowers the number tested against the gross income standard, but the 20% earned-income deduction and other net-calc math still run off the UNREDUCED gross figure — a subtle mechanical difference from a state that treats it as a straight net deduction.",
+      "source_url": "https://www.dhs.state.il.us/page.aspx?item=16162"
+    },
+    {
+      "key": "abawd-work-requirement",
+      "kind": "supplement",
+      "terms": [
+        "abawd",
+        "able bodied adult",
+        "work requirement",
+        "time limit",
+        "3 month limit",
+        "work registration",
+        "waiver",
+        "waived area"
+      ],
+      "citation": "PM 03-16-00; WAG 03-16-01; WAG 03-16-04; WAG 03-16-05 — IL ABAWD work requirement",
+      "heading": "Illinois runs a fixed Jan 2024–Dec 2026 ABAWD clock, and the statewide waiver ENDED in November 2025 — do not describe Illinois as currently waived",
+      "text": "'The current 36-month period in Illinois is a fixed 3-year period that begins 01/01/2024 and ends 12/31/2026' (WAG 03-16-00). Illinois HELD a statewide waiver through most of 2025, but it ended: an IDHS Policy Memo dated 10/16/2025 states 'Illinois' Work Requirement waiver is ending in November 2025. The first potential countable month for [ABAWDs] who are not exempt or meeting the SNAP Work Requirement is December 2025' — corroborated by WAG 03-16-00's own framing that the requirement applies to residents of 'an unwaived county.' This pack found no evidence of a newer, narrower county-level waiver replacing the expired statewide one (see freshness.json). Post-OBBBA exemptions (10/16/2025 memo): age 17 or younger or 65+ (i.e. the Work Requirement applies to ages 18-64 — do not confuse this with the SEPARATE, still-current age-60 exemption from the broader Work PROVISIONS rule at PM 03-15-02, a different requirement this memo explicitly says is unaffected); a physical/mental condition limiting ability to work; chronic homelessness (a NEW category — homeless for 1+ year, or 4+ separate occurrences in 3 years, AND a qualifying condition: substance use disorder, serious mental illness, developmental disability, PTSD, cognitive impairment from brain injury, or chronic illness/disability); pregnancy; living with a child under 14 (stated in the source both as 'age 13 or younger' and 'under age 14' — the same threshold, not two different ones); and Alaska Native/American Indian/Urban Indian/California Indian status (Indian Health Care Improvement Act definition) — a NEW exemption. REMOVED as of the same date: veteran status, plain homelessness (without the chronic-homelessness showing), and former-foster-youth status ≤24 — the same removal pattern OBBBA produced nationally. Meeting the requirement: 80 hours/month (20 hrs/week) paid, unpaid, or in-kind work; a qualifying work program (WIOA, veteran E&T, SNAP E&T including Earnfare); or Community Workfare at hours = monthly benefit ÷ state minimum wage. Three countable (unmet) months exhaust eligibility for the rest of the 3-year window (a prorated application month never counts); out-of-state countable months from the last 12 months transfer in via client attestation. Regaining eligibility requires 80 hours of work/program participation within a 30-day period, or becoming exempt — unlimited regains permitted, and one additional 3-consecutive-month grant is available once per 3-year period after a successful regain.",
+      "source_url": "https://www.dhs.state.il.us/page.aspx?item=174187"
+    },
+    {
+      "key": "criminal-justice-disqualifications",
+      "kind": "supplement",
+      "terms": [
+        "drug felony",
+        "felony conviction",
+        "criminal record",
+        "drug conviction",
+        "fleeing felon",
+        "fugitive",
+        "probation",
+        "parole",
+        "ipv",
+        "intentional program violation"
+      ],
+      "citation": "PM 03-23-00; WAG 03-23-05; 305 ILCS 5/1-10(c) — IL criminal-justice disqualifications",
+      "heading": "Illinois is a VERIFIED FULL OPT-OUT from the federal drug-felony SNAP ban — a past drug-felony conviction, however extensive, does not disqualify anyone from SNAP",
+      "text": "305 ILCS 5/1-10(c), the Illinois Public Aid Code, states: 'Persons shall not be determined ineligible for food stamps provided under this Code based upon a conviction of any felony...' — unconditional for SNAP, with no treatment or compliance strings attached (this citation was independently primary-sourced against ilga.gov in the #619 engine-constants pass and is reused here, not re-derived). Illinois cash assistance is a SEPARATE program that DOES restrict Class X and Class 1 drug felonies — do not carry that restriction across to SNAP. The Policy Manual's own disqualification chapter (PM 03-23-00) confirms this by omission: its categories are incarceration, misrepresenting an address, fugitive felons/probation-parole violators, and criminal violation of the Public Aid Code (cash-only) — no drug-felony-conviction category appears. Fugitive felon and probation/parole-violator status (WAG 03-23-05) is a SEPARATE, narrower disqualification: an active felony warrant where the person is actively being sought, or an active probation/parole violation — not a past conviction. It removes only the disqualified individual from the SNAP unit (their income/assets still count toward the remaining household, per PM 05-03-00), not the whole household, unless they are the household's only member. If verification of fugitive/violator status isn't completed by day 30 of the application, IES defaults the answer to 'No' and eligibility proceeds — a defensible-eligibility-over-unverified-suspicion default.",
+      "source_url": "https://www.dhs.state.il.us/page.aspx?item=14737"
+    },
+    {
+      "key": "expedited-service",
+      "kind": "supplement",
+      "terms": [
+        "expedited",
+        "expedited service",
+        "emergency",
+        "emergency food stamps",
+        "fast benefits",
+        "how fast",
+        "urgent",
+        "same day",
+        "7 day",
+        "seven day"
+      ],
+      "citation": "PM 02-08-00; PM 02-08-01; PM 02-08-02; WAG 02-08-02-b — IL expedited SNAP",
+      "heading": "Illinois expedited SNAP follows the federal criteria and issues benefits the SAME DAY the case is certified, via the Illinois Link EBT card",
+      "text": "Expedited eligibility criteria match the federal standard (PM 02-08-01): gross monthly income under $150 AND liquid assets of $100 or less; or a destitute migrant/seasonal farmworker with $100 or less in liquid assets; or the household's combined income and liquid assets fall below its rent/mortgage plus utility standard. Once certified, 'Mercury benefits are issued in real time after the benefits are certified in IES. They are immediately available through the Illinois Link System the day they are certified' (WAG 02-08-02-b) — the manual's own worked examples show an application filed Monday certified by close-of-business Friday, and an application filed Friday certified by close-of-business the following Wednesday, both within the federal 7-calendar-day expedited standard, with benefits landing on the household's Illinois Link card same-day. A household filing a TIMELY redetermination, or filing between the 15th and the last day of its current approval period, does NOT qualify for expedited service on that filing — but a household that reapplies AFTER its approval period has already ended CAN still get expedited service if it otherwise meets the criteria (PM 02-08-06). Social Security numbers and work registration requirements still apply even under expedited processing.",
+      "source_url": "https://www.dhs.state.il.us/page.aspx?item=13005"
+    },
+    {
+      "key": "reporting-certification",
+      "kind": "supplement",
+      "terms": [
+        "certification period",
+        "approval period",
+        "recertification",
+        "redetermination",
+        "rede",
+        "how long does snap last",
+        "how long does my snap approval last",
+        "how long does my approval last",
+        "redo",
+        "renew",
+        "simplified reporting",
+        "change reporting",
+        "report income"
+      ],
+      "citation": "PM 17-05-02; WAG 17-05-02; PM 19-07-00 — IL certification periods and reporting",
+      "heading": "Illinois assigns a 6-month approval period to most SNAP households and a 24-month period under EDSRP for elderly/disabled households",
+      "text": "'IES assigns a 6-month approval period to all SNAP households' by default (PM 17-05-02) — a Simplified Reporting (SR) household is 'a regular roll TANF case... with earned income to budget' or any other program category with SNAP benefits EXCEPT EDSRP cases (PM 19-07-01); a case stays SR from IES approval until the first redetermination where no earned income is budgeted. Two reporting triggers this pack independently verified for SR households specifically: substantial lottery/gambling winnings of $4,500+, reportable 'by the 10th calendar day of the month after the month that the winnings were received' (PM 07-04-21), and a mandatory ABAWD participant's work hours dropping below 80/month, reportable within 10 days (WAG 03-16-02). The exact mechanism of the broader income-change reporting rule (MR #25.33 references a '$125 Income Reporting Requirement' without this pack having fetched its full text) is NOT confirmed here — do not state a specific income-change trigger amount without re-verifying PM 19-07-06 directly. Elderly/disabled households meeting the Elderly and/or Disabled Simplified Redetermination Project (EDSRP) criteria get a 24-month period instead — 'If the household no longer meets eligibility for EDSRP, IES will assign a 6-month approval period at the next REDE' (WAG 17-05-02), i.e. the extended period is re-tested every redetermination, not locked in permanently. Expedited-service households and other special categories follow their own sub-schedules (WAG 17-05-02-a through -i) layered on top of this base chart. This mirrors the same elderly/disabled-favoring cert-length pattern Michigan (24-month) and California run, using a differently-named eligibility gate (EDSRP vs. Michigan's income/source test).",
+      "source_url": "https://www.dhs.state.il.us/page.aspx?item=17029"
+    },
+    {
+      "key": "restaurant-meals-program",
+      "kind": "supplement",
+      "terms": [
+        "restaurant meals program",
+        "rmp",
+        "eat at a restaurant",
+        "use ebt at restaurant",
+        "buy a hot meal",
+        "hot meal at a restaurant",
+        "illinois link card",
+        "prepared meals",
+        "hot food"
+      ],
+      "citation": "PM 06-32-00; MR #25.26 — IL Restaurant Meals Program",
+      "heading": "Illinois's Restaurant Meals Program is STATEWIDE by eligibility as of July 2025 — restaurant participation is still expanding from its Cook/Franklin County pilot roots",
+      "text": "RMP started in 2022 as a pilot limited to four Cook County zip codes (60617, 60619, 60620, 60628) and Franklin County. It changed status in mid-2025: 'This Manual Release introduces the Restaurant Meals Program (RMP)... It has since been made permanent, and is now being expanded to include more counties and restaurants in Illinois. RMP allows eligible SNAP customers STATEWIDE to use their Illinois Link card at approved restaurants' (MR #25.26, 07/15/2025) — do not describe RMP as Cook/Franklin-limited; that was the pilot's starting footprint, not its current scope. Eligibility (statewide): the customer or their spouse is elderly (60+), designated disabled by a government entity, or experiencing homelessness (lacking a fixed regular nighttime residence, or in a shelter/halfway house/place not designed for sleeping, including someone temporarily staying with another person for 90 days or less). Eligible customers' Illinois Link cards are enabled SYSTEMATICALLY — no application or FCRC action required. Tips and delivery fees cannot be paid with RMP funds; participating restaurants must offer dine-in, not carry-out only. What is NOT yet confirmed by this pack: exactly how many restaurants currently participate or how evenly they're distributed across the state — the program's history means restaurant DENSITY may still lag well behind the statewide ELIGIBILITY, the same eligibility-vs-availability distinction California's mandatory-but-uneven RMP already illustrates.",
+      "source_url": "https://www.dhs.state.il.us/page.aspx?item=168870"
+    },
+    {
+      "key": "program-identity",
+      "kind": "supplement",
+      "terms": [
+        "how to apply",
+        "where do i apply",
+        "apply for snap",
+        "who runs",
+        "what agency",
+        "which agency",
+        "administers",
+        "illinois link",
+        "abe",
+        "application for benefits",
+        "ebt card",
+        "food stamps illinois"
+      ],
+      "citation": "IDHS/ABE program materials",
+      "heading": "Illinois applies through ABE (Application for Benefits Eligibility); the EBT card is branded Illinois Link",
+      "text": "Illinois SNAP applications, redeterminations, and case management run through ABE (Application for Benefits Eligibility, abe.illinois.gov), the state's online portal for SNAP, cash assistance, health coverage, and Medicare Savings Program applications. Worker-facing case processing runs on IES (Integrated Eligibility System). The EBT card brand is 'Illinois Link' — benefits post to the Illinois Link System the same day a case is certified. IDHS administers SNAP through Family Community Resource Centers (FCRCs) statewide; there is no county-level eligibility agency layer (Illinois is state-administered, unlike California, New York, Wisconsin, or Minnesota in this roster).",
+      "source_url": "https://abe.illinois.gov"
+    }
+  ]
+}
