@@ -80,10 +80,21 @@ describe("orientation bar — the page names the product before it explains SNAP
 describe("the chat page's depth — trimmed, and nothing orphaned", () => {
   it("no longer renders the 17 form-question cards", () => {
     render(<SnapDetail states={VERIFIED_STATES} />);
-    // A representative card. If this reappears here, the page has regrown the
-    // wall this change removed.
-    expect(screen.queryByText(/purchase and prepare/i)).toBeNull();
+    // The phrase a card ACTUALLY renders. formQuestionHeading picks the LONGEST
+    // phrasing, so household_composition prints "buy and fix food together",
+    // never "purchase and prepare" — an assertion on the latter passes whether
+    // the cards are here or not, which is worse than no assertion. (The e2e
+    // suite caught this by failing on a real page; the first draft of this test
+    // was vacuous.)
+    expect(screen.queryByText(/buy and fix food together/i)).toBeNull();
     expect(screen.queryByText(PAGE_COPY.en.faqBody)).toBeNull();
+  });
+
+  it("and the phrase that proves it is one a card really prints", () => {
+    // Guards the assertion above against becoming vacuous again if the
+    // phrasings list is reordered.
+    render(<SnapFormQuestions />);
+    expect(screen.getByText(/buy and fix food together/i)).toBeTruthy();
   });
 
   it("still renders the trust claims — they moved down, they were not deleted", () => {
