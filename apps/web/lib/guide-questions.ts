@@ -70,4 +70,9 @@ export const QUESTIONS: Record<string, string[]> = {
     "Is the SNAP work-requirement time limit waived anywhere in Oregon?",
     "Can I use my EBT card at a restaurant in Oregon?",
   ],
+  WI: [
+    "What is the income limit for FoodShare in Wisconsin?",
+    "Does my car count against me for FoodShare in Wisconsin?",
+    "How long does my FoodShare certification last in Wisconsin?",
+  ],
 };

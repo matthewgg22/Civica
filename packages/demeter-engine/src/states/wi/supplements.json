@@ -1,0 +1,219 @@
+{
+  "_provenance": {
+    "note": "Wisconsin FoodShare curated supplements (docs/plans/mae-state-corpus-framework.md, Wave 3 — the first of the two remaining county-administered states, picked because its versioned handbook is the best supersession-tracking teacher in the roster). Drafted from direct fetches of the FoodShare Wisconsin Policy Handbook (emhandbooks.wisconsin.gov/fsh), cross-checking every dollar figure against the handbook's own numbered deductions/limits sections. USDA FNA's own RMP state list fetched via direct curl to resolve a real conflict between secondary sources and the primary federal record. Independently cross-checked and adversarially fact-checked before PR. See PROVENANCE.md.",
+    "extracted": "2026-08-11",
+    "source_fact_check": "direct handbook-section fetch + primary-source cross-check + post-draft adversarial refute pass; corrections recorded in PROVENANCE.md"
+  },
+  "supplements": [
+    {
+      "key": "income-pathways",
+      "kind": "supplement",
+      "terms": [
+        "income limit",
+        "income limits",
+        "gross income limit",
+        "gross income ceiling",
+        "make too much",
+        "over income",
+        "bbce",
+        "categorical eligibility",
+        "categorically eligible",
+        "200 percent",
+        "200%",
+        "poverty level",
+        "job center"
+      ],
+      "citation": "FSH 4.2.1 — WI income pathways (flat 200% BBCE, EBD gross-limit exception)",
+      "heading": "Wisconsin runs a flat 200% BBCE screen conferred through a Job Center of Wisconsin notice — but EBD households have NO gross income limit at all",
+      "text": "Most Wisconsin FoodShare food units are broad-based categorically eligible when gross income is at or below 200% of the federal poverty level AND language about 'Job Center of Wisconsin' (formerly JobNet) services — a partially TANF-funded service every food unit member is authorized to receive — appears on the food unit's CWW-generated notice of decision (FSH 4.2.1). This is the same TANF-funded-service-notice conferral family as Nevada's TANF brochure and Oregon's Information and Referral Services pamphlet, under Wisconsin's own name. Genuinely distinct from most states in this roster: food units with an elderly, blind, or disabled (EBD) member and gross income OVER 200% FPL are NOT simply denied — they get a separate, more generous pathway with NO gross income limit at all, only a net income limit of 100% FPL, plus an EBD-specific asset test (FSH 4.2.1.3). This is a genuinely different shape from Oregon's or Nevada's flat screens: Wisconsin's BBCE isn't just 'raise the gross limit for everyone' — it exempts EBD households from the gross test entirely once their income clears 200%.",
+      "source_url": "https://www.emhandbooks.wisconsin.gov/fsh/policy_files/4/42/4.2.1.htm"
+    },
+    {
+      "key": "asset-rule",
+      "kind": "supplement",
+      "terms": [
+        "asset limit",
+        "asset test",
+        "resource limit",
+        "resource test",
+        "resources",
+        "savings",
+        "savings limit",
+        "bank account",
+        "lottery",
+        "gambling"
+      ],
+      "citation": "FSH 8.1.1.3 — WI asset/resource limits",
+      "heading": "Wisconsin's asset limit is the standard federal $3,000/$4,500 split — but it only applies to EBD households over the 200% BBCE gross screen, or households disqualified for lottery/gambling winnings",
+      "text": "Standard (non-EBD) food units: $3,000 countable resource limit. Elderly, Blind, or Disabled (EBD) food units: $4,500 countable resource limit. A $4,500 asset limit also applies specifically to substantial lottery or gambling winnings that can disqualify a food unit from categorical eligibility (FSH 8.1.1.3, effective 10/1/2025-9/30/2026). Because BBCE covers the large majority of Wisconsin food units with gross income at or below 200% FPL, and EBD households above 200% clear the gross test entirely (see the income-pathways supplement), this asset test in practice reaches a narrower slice of Wisconsin cases than it would in a state without BBCE.",
+      "source_url": "https://www.emhandbooks.wisconsin.gov/fsh/policy_files/8/81/8.1.1.htm"
+    },
+    {
+      "key": "sua-values",
+      "kind": "supplement",
+      "terms": [
+        "utility allowance",
+        "utility standard",
+        "shelter deduction",
+        "excess shelter",
+        "standard utility allowance",
+        "heating standard",
+        "cooling standard",
+        "telephone standard",
+        "water bill",
+        "trash",
+        "garbage"
+      ],
+      "citation": "FSH 4.6.7.3; FSH 8.1.3 — WI utility allowance ladder (7 tiers, the most granular in this roster)",
+      "heading": "Wisconsin runs a genuinely 7-tier utility allowance ladder — more granular than any other state built so far",
+      "text": "Wisconsin qualifies food units into SEVEN distinct utility-allowance tiers by exact billed-cost combination (FSH 4.6.7.3, dollar figures FSH 8.1.3, effective 10/1/2025): Heating Standard Utility Allowance (HSUA) $553/month, for any obligation to pay a heating (or cooling) source; Limited Utility Allowance (LUA) $385/month, for two or more non-heat qualifying utility expenses; Electric Utility Allowance (EUA) $155/month, for a non-heat electric bill only (including air conditioning); Water Utility Allowance (WUA) $106/month, for water/sewer/septic-installation costs only; Fuel Utility Allowance (FUA — cooking fuel, NOT Oregon's identically-abbreviated 'Full Utility Allowance') $48/month, for a cooking-fuel-only obligation; Phone Utility Allowance (PUA) $31/month, telephone-only including cellular; Trash Utility Allowance (TUA) $28/month, garbage/trash-only. Every other state built in this roster collapses to 3-4 tiers; Wisconsin's handbook keeps water, cooking fuel, and trash as their own separate standards rather than folding them into a single 'limited' bucket. The Excess Shelter Deduction cap for non-EBD households is $744/month (FSH 8.1.3), the same federal FY26 COLA figure every other state in this roster shares.",
+      "source_url": "https://www.emhandbooks.wisconsin.gov/fsh/policy_files/4/46/4.6.7.htm"
+    },
+    {
+      "key": "medical-deduction",
+      "kind": "supplement",
+      "terms": [
+        "medical deduction",
+        "medical expense",
+        "medical expenses",
+        "medical bills",
+        "elderly deduction",
+        "disability deduction"
+      ],
+      "citation": "FSH 4.6.4; FSH 8.1.3 — WI medical deduction (plain federal actual-expense-minus-$35, no flat standard amount found)",
+      "heading": "Wisconsin uses the plain federal actual-expense-minus-$35 medical deduction for EBD members — this pack found no flat Standard Medical Deduction dollar figure",
+      "text": "The medical expense deduction applies to verified allowable monthly medical costs incurred by elderly, blind, or disabled food unit members that exceed $35/month (FSH 4.6.4, dollar threshold confirmed in FSH 8.1.3) — the same plain federal mechanism Florida and Oregon use (actual costs above the $35 floor, no separate flat substitute the way Georgia's $161 or Illinois' $185/$485 SMD work). One secondary source (not the handbook itself) claimed a '$200 unverified-expense fallback' — this pack could not find that provision in a direct fetch of FSH 4.6.4 or 8.1.3 and does NOT assert it exists; if a household cannot verify a claimed medical expense, the safest answer is that the unverified amount is not used to calculate the deduction, consistent with every other state's verification-postponement pattern in this roster, rather than a specific $200 Wisconsin figure this pack could not confirm.",
+      "source_url": "https://www.emhandbooks.wisconsin.gov/fsh/policy_files/4/46/4.6.7.htm"
+    },
+    {
+      "key": "dependent-care-child-support",
+      "kind": "supplement",
+      "terms": [
+        "dependent care",
+        "child care deduction",
+        "daycare",
+        "child support",
+        "support payments",
+        "child support deduction"
+      ],
+      "citation": "FSH 4.6.5 — WI child support deduction (legally obligated/court-ordered, verified, ordinary deduction not exclusion)",
+      "heading": "Wisconsin treats legally obligated child support as an ordinary net-income deduction, verified against court and Child Support Enforcement records",
+      "text": "The FoodShare child support deduction covers only legally obligated or court-ordered child support payments — including court-ordered arrearages actually made or reasonably anticipated to be made — to a person outside the food unit, so long as none of the payment returns to the household (FSH 4.6.5). This is the Georgia/Michigan/Oregon-style ordinary DEDUCTION mechanism (7 CFR 273.9(d)(5)), not Illinois' income-exclusion approach. If a claimed child-support obligation is reported but not verified, or turns out not to be court-ordered, eligibility is determined WITHOUT that expense in the budget — Wisconsin does not apply any lesser fallback amount for an unverified child-support claim. Verification comes from court documents or the State Child Support Enforcement agency.",
+      "source_url": "https://www.emhandbooks.wisconsin.gov/fsh/policy_files/4/46/4.6.5.htm"
+    },
+    {
+      "key": "abawd-work-requirement",
+      "kind": "supplement",
+      "terms": [
+        "abawd",
+        "able bodied adult",
+        "work requirement",
+        "time limit",
+        "3 month limit",
+        "work registration",
+        "waiver",
+        "waived area",
+        "discretionary exemption"
+      ],
+      "citation": "FSH 3.17.1 (handbook text NOT yet updated for OBBBA — treat with caution) — WI ABAWD work requirement",
+      "heading": "Wisconsin's own current handbook still states the PRE-OBBBA 18-54 ABAWD age band — this pack defers to the federal 18-64 band rather than repeat a stale state citation",
+      "text": "Wisconsin runs a fixed, statewide ABAWD clock: 'countable months' run January 1, 2025 through December 31, 2027 (the current three-year period), with the next period beginning January 1, 2028 (FSH 3.17.1.7). A genuinely significant finding from this pack's build: the CURRENT FoodShare handbook (Release 26-01, effective 10/1/2025) still states in 3.17.1.1 that 'from October 1, 2024 and going forward, the age range is 18 to 54 years old' — citing the 2023 Fiscal Responsibility Act, with NO mention of the federal One Big Beautiful Bill Act (OBBBA, enacted 7/4/2025), which raised the national ABAWD age ceiling to 64 and which every other state's pack in this roster already reflects. Wisconsin's own Legislative Fiscal Bureau documented a DHS rulemaking deadline of June 1, 2026 to implement this — a deadline already past as of this pack's build date (2026-08-11) — meaning the state's own published policy text is stale relative to controlling federal law. DO NOT tell a Wisconsin household aged 55-64 that they are exempt from the ABAWD time limit based on this handbook's 18-54 language; federal law controls regardless of what a lagging state page says, and the federal layer's own OBBBA-aware age-band framing should govern. Separately, effective October 1, 2025, ABAWD applicants and members who are tribal members NOT living on a tribal reservation area receive a discretionary exemption (FSH 3.17.1.11) — check current area-waiver status directly with DHS/the relevant IM consortium before telling a household their county or consortium area is currently waived; this pack did not find specific currently-waived Wisconsin counties in the handbook text itself. See freshness.json and PROVENANCE.md.",
+      "source_url": "https://www.emhandbooks.wisconsin.gov/fsh/policy_files/3/3.17.1.htm"
+    },
+    {
+      "key": "criminal-justice-disqualifications",
+      "kind": "supplement",
+      "terms": [
+        "drug felony",
+        "felony conviction",
+        "criminal record",
+        "drug conviction",
+        "drug test",
+        "drug testing"
+      ],
+      "citation": "FSH 3.20.1 — WI drug-felony treatment (5-year lookback, one-time drug test, 12-month sanction on failure)",
+      "heading": "Wisconsin requires a ONE-TIME drug test (not an ongoing testing regime) for a drug felony within the last 5 years, with a 12-month sanction on failure — not a permanent ban",
+      "text": "For FoodShare purposes, a 'drug-related felony' is a felony conviction in a state or federal court for possession, use, or distribution of a controlled substance within the LAST FIVE YEARS (FSH 3.20.1) — an automatic 5-year sunset this pack has not seen in any other state built so far. Within that 5-year window, an applicant or member with a qualifying conviction must agree to take a drug test and pass it to maintain FoodShare eligibility — but 'a person must only take and pass a drug test once,' i.e. this is a one-time gate, not recurring testing. Failing the test triggers a 12-month sanction; to regain eligibility afterward, the person must re-request FoodShare and agree to another drug test, UNLESS the underlying conviction is by then more than five years old (in which case the whole provision no longer applies at all). This is a distinct fourth shape for this roster's drug-felony treatments, alongside Illinois'/Nevada's full opt-outs, Florida's/Arizona's modified bans, and Oregon's opt-out-with-narrow-suspension-path: Wisconsin conditions continued eligibility on passing a ONE-TIME test within a hard 5-year window, not an indefinite ban or an ongoing supervision-based suspension.",
+      "source_url": "https://www.emhandbooks.wisconsin.gov/fsh/policy_files/3/3.20.1.htm"
+    },
+    {
+      "key": "restaurant-meals-program",
+      "kind": "supplement",
+      "terms": [
+        "restaurant meals program",
+        "rmp",
+        "eat at a restaurant",
+        "use ebt at restaurant",
+        "hot meal",
+        "hot food",
+        "quest card restaurant"
+      ],
+      "citation": "USDA FNA Restaurant Meals Program state list — WI does not operate RMP",
+      "heading": "Wisconsin does NOT operate a Restaurant Meals Program — do not confuse this with WI's separate prepared-meal-site provision",
+      "text": "USDA FNA's own current list of 'States that Operate a Restaurant Meals Program' (fna.usda.gov/snap/retailer/restaurant-meals-program, fetched via direct curl 2026-08-11 after two AI-summarized web-fetches of the same URL timed out) names Arizona, Maryland, New York, California, Massachusetts, Rhode Island, Illinois (Cook and Franklin Counties Only), Michigan, and Virginia. Wisconsin is NOT on that list — the engine's `rmp_operated: false` for WI (if authored) would be correct. This pack found several secondary sources incorrectly claiming Wisconsin has an RMP for elderly/disabled/homeless recipients; that claim appears to conflate the actual federal Restaurant Meals Program (buying commercial restaurant meals directly with a QUEST card) with a genuinely DIFFERENT Wisconsin FoodShare provision: FoodShare benefits CAN pay for a prepared meal at an authorized site such as a group meal site for the elderly, a homeless shelter, a domestic-violence shelter, a drug/alcohol treatment center, or a group home for people who are disabled, and can pay for delivered meals like Meals-on-Wheels — but that is a distinct federal SNAP provision from an individual using a QUEST card at a commercial restaurant, and does not make Wisconsin an RMP state. Do not conflate the two.",
+      "source_url": "https://www.fna.usda.gov/snap/retailer/restaurant-meals-program"
+    },
+    {
+      "key": "expedited-service",
+      "kind": "supplement",
+      "terms": [
+        "expedited",
+        "expedited service",
+        "emergency",
+        "emergency food stamps",
+        "fast benefits",
+        "how fast",
+        "urgent",
+        "same day",
+        "7 day",
+        "seven day"
+      ],
+      "citation": "FSH 2.1.4 — WI expedited service (federal-standard criteria)",
+      "heading": "Wisconsin's expedited-service criteria match the federal standard exactly — under $150 gross income plus $100 liquid assets, 7-day issuance",
+      "text": "A person or food unit qualifies for priority services and expedited issuance if gross monthly income is less than $150 AND available liquid assets are $100 or less (FSH 2.1.4). If determined eligible, FoodShare benefits must be issued no later than the seventh day after the application (or late-renewal) date.",
+      "source_url": "https://www.emhandbooks.wisconsin.gov/fsh/policy_files/2/21/2.1.4.htm"
+    },
+    {
+      "key": "reporting-certification",
+      "kind": "supplement",
+      "terms": [
+        "certification period",
+        "approval period",
+        "recertification",
+        "redetermination",
+        "approval last",
+        "how long does snap last",
+        "how long does foodshare last",
+        "redo",
+        "renew",
+        "semi-annual report",
+        "smrf"
+      ],
+      "citation": "FSH 2.2.1 — WI certification periods (12-month standard, 6-month homeless/migrant, 36-month EBD-no-earned-income — the longest EBD period in this roster)",
+      "heading": "Wisconsin's EBD-no-earned-income certification period runs 36 months — longer than any other state built so far in this roster",
+      "text": "Wisconsin certification periods vary by household composition (FSH 2.2.1): most food units are certified for periods ranging up to 12 months; food units where every member is experiencing homelessness, and food units that include a migrant or seasonal farmworker, get a 6-month certification period (FSH 2.2.1.1); food units where every member is elderly, blind, or disabled (EBD) AND the food unit has no earned income can receive a 36-MONTH certification period, during which they will not need to complete Semi-Annual Report Forms (SMRFs) and may not need to complete an interview at renewal (FSH 2.2.1.2) — notably longer than Oregon's or Florida's 24-month EBD period, the longest in this roster so far. Members must complete an interview and verify current household information in the last month of the certification period to be recertified.",
+      "source_url": "https://www.emhandbooks.wisconsin.gov/fsh/policy_files/2/22/2.2.1.htm"
+    },
+    {
+      "key": "program-identity",
+      "kind": "supplement",
+      "terms": [
+        "how to apply",
+        "where do i apply",
+        "apply for snap",
+        "access.wisconsin.gov",
+        "who runs",
+        "what agency",
+        "administers",
+        "food stamps wisconsin",
+        "milwaukee enrollment services",
+        "consortium",
+        "consortia"
+      ],
+      "citation": "WI DHS / ForwardHealth / ACCESS.wisconsin.gov program materials",
+      "heading": "Wisconsin applies through ACCESS.wisconsin.gov; 11 multi-county Income Maintenance consortia administer FoodShare everywhere except Milwaukee County, which is state-staffed",
+      "text": "Wisconsin's SNAP program is called FoodShare. Applications and case management run through ACCESS.wisconsin.gov, part of the shared ForwardHealth eligibility system that also covers BadgerCare Plus (Medicaid) and Wisconsin Shares. The Department of Health Services (DHS), Division of Medicaid Services, sets policy, but ELIGIBILITY DETERMINATION is genuinely county-administered: 71 of Wisconsin's 72 counties are required to form multi-county Income Maintenance (IM) consortia — 11 consortia statewide — each of which operates its own call center and does its own application processing, eligibility determination, and case management. Milwaukee County alone is different: it is served by Milwaukee Enrollment Services (MilES), a unit DIRECTLY STAFFED BY THE STATE rather than a county-run consortium — a genuinely distinct third administrative model, alongside every-county-for-itself (CA, NY) and single-state-agency (most of this roster).",
+      "source_url": "https://access.wisconsin.gov"
+    }
+  ]
+}
