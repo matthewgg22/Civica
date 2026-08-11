@@ -1,0 +1,38 @@
+{
+  "_provenance": {
+    "note": "Arizona dated facts. Most FFY26 dollar values ride the federal October 2025 COLA cycle, but Arizona's 200% FPL (Expanded Categorical Eligibility + Simplified Reporting IRT) table runs on a DIFFERENT, later cycle (effective 3/1/2026) — a genuine within-state inconsistency worth its own freshness entry, not a data-entry assumption. The ABAWD geographic waiver list is the most volatile fact in this pack.",
+    "extracted": "2026-08-11"
+  },
+  "entries": [
+    {
+      "key": "az-ffy26-october-cycle-dollar-values",
+      "kind": "expires",
+      "date": "2026-09-30",
+      "warning": "Arizona's October-cycle FFY 2026 dollar values (130%/100%/165% FPL income standards, standard deduction $209/$223/$261/$299, SUA $323/$438 and LUA $149/$201 (size-banded) and TUA $44, shelter cap $744, homeless deduction $198.99 — all effective 10/01/2025) are due for the October 2026 COLA. Find the successor CNAP page (each carries its own 'effective' date) before quoting any of these figures."
+    },
+    {
+      "key": "az-200pct-fpl-different-cycle",
+      "kind": "expires",
+      "date": "2026-09-30",
+      "warning": "Arizona's 200% FPL table (used for the Expanded Categorical Eligibility income screen AND the Simplified Reporting mandatory-report threshold) is effective 03/01/2026 — a DIFFERENT cycle than the October-COLA values above, not a data-entry error in this pack. Re-verify this table's own successor date separately; do not assume it changes on the same October 1 schedule as the rest of Arizona's dollar figures."
+    },
+    {
+      "key": "az-abawd-waived-areas",
+      "kind": "expires",
+      "date": "2026-12-31",
+      "warning": "Arizona's current ABAWD geographic waiver list (Yuma County; Cocopah Reservation; Hualapai Indian Reservation and Off-Reservation Trust Land; Maricopa (Ak Chin) Indian Reservation and Off-Reservation Trust Land; Salt River Reservation; San Carlos Reservation; Pascua Pueblo Yaqui Reservation and Off-Reservation Trust Land), reflected in the CNAP manual as of this pack's build (2026-08-11), is inherently volatile and tied to FNS unemployment-based waiver approvals. Re-verify against a current CNAP ABAWD Exemptions fetch or the FNS ABAWD waiver status page before stating which areas are currently waived."
+    },
+    {
+      "key": "az-abawd-fixed-period-ends",
+      "kind": "expires",
+      "date": "2027-12-31",
+      "warning": "Arizona's fixed statewide ABAWD 3-year period runs 01/01/2025-12/31/2027 (CNAP FAA2.M.09.A) — a new period begins 01/01/2028. Do not describe the current window after that date."
+    },
+    {
+      "key": "az-drug-felony-no-state-optout-confirmed",
+      "kind": "expires",
+      "date": "2026-12-31",
+      "warning": "As of this pack's build, no Arizona statute opting out of or modifying the federal drug-felony SNAP ban was found (ARS 46-215, cited on the CNAP disqualifications page, was independently checked and does not address controlled-substance convictions). This is an ABSENCE finding, not a certainty that no such statute exists anywhere in Arizona law — re-verify directly (e.g. an ARS full-text search for 'controlled substance' + 'nutrition assistance' or 'food stamps') before restating this as settled, especially after any Arizona legislative session."
+    }
+  ]
+}

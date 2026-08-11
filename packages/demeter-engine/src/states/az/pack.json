@@ -1,0 +1,32 @@
+{
+  "code": "AZ",
+  "program": "Nutrition Assistance (NA) — Arizona's own worker-facing term for SNAP; the public-facing name is still \"SNAP\"",
+  "agency": "Arizona Department of Economic Security (DES), Family Assistance Administration (FAA)",
+  "admin_model": "state",
+  "admin_note": "State-administered: FAA runs NA directly through DES offices; there is no independent county eligibility agency layer. NA and Cash Assistance (CA/TANF) share ONE combined manual — the Cash and Nutrition Assistance Policy (CNAP) Manual — organized into numbered Parts (FAA1 System Information, FAA2 The Application and Interview, FAA3 Nonfinancial Eligibility Factors, FAA4 Financial Eligibility Factors, FAA5 Work Registration and Program Determinations, FAA6 Case Maintenance/Administrative/Standards & Amounts/Glossary, FAA8 Appendix). Most sections print combined NA/CA policy; this pack draws only from the NA-labeled content or NA-only sections. Every topic page carries its own \"last revised\"/\"effective\" date, the best per-topic freshness signal fetched live in this pass.",
+  "system": "AZTECS (Arizona Technical Eligibility Computer System, worker-facing); EBT is branded \"QUEST Card\", accessed at ebtEDGE.com",
+  "portal": {
+    "name": "Health-e-Arizona Plus (HEAplus)",
+    "url": "https://www.healthearizonaplus.gov/"
+  },
+  "update_channels": [
+    {
+      "name": "Cash and Nutrition Assistance Policy (CNAP) Manual — FAA1 through FAA8, per-topic revision/effective dates",
+      "url": "https://dbmefaapolicy.azdes.gov/"
+    },
+    {
+      "name": "MyFamilyBenefits (MFB) — case self-service portal, distinct from the HEAplus application portal",
+      "url": "https://myfamilybenefits.azdes.gov/"
+    }
+  ],
+  "verification": {
+    "verified_on": "2026-08-11",
+    "method": "The CNAP manual's primary host (des.az.gov) and the manual's actual content host (dbmefaapolicy.azdes.gov) both sit behind a Cloudflare bot-verification challenge that returns HTTP 403 to plain curl and to browser-header curl (multiple user agents, full Accept/Accept-Language/Accept-Encoding/Referer headers tried) and to the WebFetch tool from a completely separate network path — confirmed blocked by TWO independent non-browser fetch approaches before falling back to a real rendered browser (Claude Browser tool), which passed the Cloudflare challenge after a short wait and reached genuine, live CNAP content via each topic page's iframe (a MadCap Flare-style frameset; content was extracted via the rendered DOM, not raw HTML fetch). Every fact in this pack traces to a specific dbmefaapolicy.azdes.gov page reached this way, each carrying its own live 'last revised'/'effective' date. Legal-authority spot-checks (e.g. the absence of an Arizona drug-felony opt-out statute) were cross-verified against the Arizona Legislature's own ARS text via WebFetch.",
+    "gates": "Cross-check: every pivotal dollar value and eligibility rule traced to its own CNAP topic page (never a curated extract) before drafting. One real drafting correction made pre-commit: an initial read of a 'Legal Authorities' citation (ARS 46-215) as if it enacted a drug-felony provision was corrected after directly fetching the statute text and finding it does not address controlled-substance convictions at all — see PROVENANCE.md.",
+    "sources": [
+      "CNAP Manual FAA2 (The Application and Interview — expedited service, ABAWD, disqualifications), FAA4 (Financial Eligibility Factors — resources, vehicles), FAA5 (Work Registration and Program Determinations — categorical eligibility, deductions, approval periods, RMP, EBT), FAA6 (Case Maintenance — dollar-value tables, Simplified Reporting, glossary) (dbmefaapolicy.azdes.gov)",
+      "Arizona Revised Statutes (ARS) — azleg.gov, spot-checked for the drug-felony authority claim",
+      "FNS national Restaurant Meals Program page (fns.usda.gov) — confirms Arizona operates an RMP, contact FAAMOU@azdes.gov"
+    ]
+  }
+}

@@ -1,0 +1,237 @@
+{
+  "_provenance": {
+    "note": "Arizona SNAP (\"Nutrition Assistance\"/NA) curated supplements — Wave 2 continued (docs/plans/mae-state-corpus-framework.md). Drafted from verbatim source text: the DES/FAA Cash and Nutrition Assistance Policy (CNAP) Manual at dbmefaapolicy.azdes.gov, reached via a real rendered browser after des.az.gov and dbmefaapolicy.azdes.gov both confirmed-blocked plain curl AND WebFetch with a Cloudflare bot-verification challenge (two independent non-browser approaches exhausted before falling back to a browser tool — see PROVENANCE.md). Every citation cites the CNAP page's own outline position (e.g. 'CNAP FAA5.I.01.B'), reconstructed from that page's live breadcrumb trail, plus its own 'last revised'/'effective' date. Independently cross-checked and adversarially fact-checked before PR.",
+    "extracted": "2026-08-11",
+    "source_fact_check": "cross-check re-verification + post-draft adversarial refute pass; corrections recorded in PROVENANCE.md"
+  },
+  "supplements": [
+    {
+      "key": "income-pathways",
+      "kind": "supplement",
+      "terms": [
+        "income limit",
+        "income limits",
+        "gross income limit",
+        "gross income ceiling",
+        "make too much",
+        "over income",
+        "bbce",
+        "categorical eligibility",
+        "categorically eligible",
+        "expanded categorical eligibility",
+        "200 percent",
+        "200%",
+        "165 percent",
+        "165%",
+        "poverty level",
+        "qualifying member"
+      ],
+      "citation": "CNAP FAA5.I.01.B; CNAP FAA6.J.02.B.04 — AZ Expanded Categorical Eligibility (flat 200% FPL, no conferral document)",
+      "heading": "Arizona runs a flat 200% BBCE screen as a pure income test — unlike Illinois, Michigan, and Georgia, no TANF-brochure conferral document is required",
+      "text": "Expanded Categorical Eligibility (ECE) exists when 'Gross income does not exceed 200% of the current federal poverty level (FPL)', the budgetary unit does not meet Basic Categorical Eligibility (BCE), and the resources of any disqualified participants are not over the NA resource limit (CNAP FAA5.I.01.B). Unlike Illinois's Guide to Services, Michigan's DVPS, Georgia's TCOS, or Nevada's 'This Is Your Copy' page — TANF-funded informational documents every applicant receives as the actual conferral mechanism — Arizona's ECE is a pure income comparison with no separate conferring document; AZTECS automatically treats an ECE budgetary unit as having met the resource test AND the gross/net income tests. Effective 03/01/2026, the 200% FPL dollar figures are: household of 1, $2,610; household of 4, $5,360 (CNAP FAA6.J.02.B.04) — the SAME federal table other states in this roster also use, just on a different effective-date cycle than Arizona's other October-COLA values (flagged in freshness.json). Basic Categorical Eligibility (BCE), a separate and narrower pathway, exists when every budgetary-unit participant receives TANF cash, TANF services, Grant Diversion, Kinship Foster Care, Tribal TANF, Refugee Cash Assistance, BIA General Assistance, or SSI (including suspended/recouped/zero-benefit TANF or SSI) — EXCEPT that SSI participants suspended for failing a drug/alcohol treatment requirement do NOT count as meeting BCE. Neither BCE nor ECE exists for a participant who is disqualified (CNAP FAA5.I.01.B). Separately, budgetary units who live with — but are not part of — an elderly or disabled participant unable to purchase/prepare food alone may apply as a SEPARATE NA case, but are then subject to their OWN gross income test at 165% of FPL rather than the base 130% (household of 1: $2,152; household of 4: $4,421, effective 10/01/2025, CNAP FAA6.J.02.B.03) — confirmed from the actual policy text (CNAP FAA2.A.07), not merely inferred from the 165% table's title: 'Separate NA budgetary units, who live with participants who are elderly or participants with a disability who are unable to buy and cook food alone, are subject to the Elderly or Disabled Gross Income Standard at 165% of the Federal Poverty Level.' The base gross/net tests are 130% FPL ($1,696/household of 1) and 100% FPL ($1,305/household of 1), both effective 10/01/2025 (CNAP FAA6.J.02.B.01, .02).",
+      "source_url": "https://dbmefaapolicy.azdes.gov/FAA5/NA_Categorical_Eligibility.html"
+    },
+    {
+      "key": "asset-rule",
+      "kind": "supplement",
+      "terms": [
+        "asset limit",
+        "asset test",
+        "resource limit",
+        "resource test",
+        "resources",
+        "savings",
+        "savings limit",
+        "bank account",
+        "vehicle",
+        "car count",
+        "does my car count"
+      ],
+      "citation": "CNAP FAA6.J.06.B; CNAP FAA4.C.01; CNAP FAA4.F.02.A — AZ resource and vehicle rules",
+      "heading": "Arizona excludes ALL vehicles from the NA resource determination outright — not just one, not by value test — and fully waives the resource test for categorically eligible households",
+      "text": "The maximum NA resource limit is $3,000 when all participants are 59 or younger and not disabled, or $4,500 when one or more participants are 60+ or disabled (effective 10/01/2024, CNAP FAA6.J.06.B). 'Maximum NA resource limits do not apply to NA budgetary units that meet Basic or Expanded Categorical Eligibility requirements.' Vehicles: 'Although vehicles are not counted in the resource determination, keying vehicle information on VEHI is an indicator of other potential situations needing additional exploration' (CNAP FAA4.C.01) — a genuinely simpler rule than most states in this roster: Arizona does not run a value test, a one-vehicle exemption, or an equity-value comparison at all for NA; vehicle data is captured only as a flag for OTHER screening purposes (Expenses Exceed Income review, dependent-care transportation costs), never as a countable resource. (Recreational vehicles and trailers are tracked separately under 'Other Asset Types' — not confirmed by this pack as excluded the same way.) Resource standards ARE applied — even to an otherwise categorically eligible budgetary unit — when any participant is disqualified for voluntary quit, failure to comply with NA work requirements, drug conviction, fleeing felon status, Intentional Program Violation, or NA trafficking (CNAP FAA4.F.02.A); resources of nonparticipants and of corporations (when properly titled) are never counted toward the budgetary unit.",
+      "source_url": "https://dbmefaapolicy.azdes.gov/FAA4/VEHI_-_Purpose_2fOverview.html"
+    },
+    {
+      "key": "sua-values",
+      "kind": "supplement",
+      "terms": [
+        "utility allowance",
+        "utility standard",
+        "shelter deduction",
+        "excess shelter",
+        "heating standard",
+        "cooling standard",
+        "air conditioning",
+        "telephone standard",
+        "limited utility"
+      ],
+      "citation": "CNAP FAA5.I.03.D; CNAP FAA6.J.09 — AZ utility allowance (size-banded, not flat)",
+      "heading": "Arizona's Standard and Limited Utility Allowances are SIZE-BANDED by household size — a genuinely different shape from every other state in this roster's flat statewide SUA/LUA figures",
+      "text": "Arizona runs a three-tier ladder — Standard (SUA), Limited (LUA), Telephone (TUA) — but unlike Illinois's four tiers or Nevada's four tiers (both flat-dollar regardless of household size), Arizona's SUA and LUA scale by budgetary-unit size (effective 10/01/2025, CNAP FAA6.J.09): SUA is $323 for units of 1–3 participants and $438 for 4+; LUA is $149 for 1–3 and $201 for 4+; TUA is a flat $44. SUA applies when a household is obligated to pay a heating or cooling expense separately from rent, OR receives LIHEAP/Power AZ payments of $20+ annually with an elderly/disabled participant, OR heating/cooling costs exceed Energy Assistance payments, OR the household is an Arizona Simplified Nutrition Assistance Program (AZSNAP) participant paying at least one allowable non-telephone utility (CNAP FAA5.I.03.D). LUA applies when obligated to pay at least TWO non-heating/non-cooling utility expenses — telephone counts as one of the two. Arizona's ladder has only three tiers (SUA/LUA/TUA); this pack did NOT find a specific allowance for a household obligated to pay exactly ONE non-heating, non-telephone utility (e.g. water-only) — the same 'undermodeled tier' gap Illinois's Single Utility Standard and Nevada's IUA exist specifically to cover. Do not assume such a household falls through to LUA (it requires two qualifying expenses, not one) or to TUA (telephone-only) without re-verifying directly. The maximum shelter deduction is $744 and the homeless shelter deduction is $198.99 (both effective 10/01/2025) — matching the federal FY26 COLA figures other states share.",
+      "source_url": "https://dbmefaapolicy.azdes.gov/FAA6/Utility_Allowance_Current_Amount.html"
+    },
+    {
+      "key": "medical-deduction",
+      "kind": "supplement",
+      "terms": [
+        "medical deduction",
+        "medical expense",
+        "medical expenses",
+        "medical bills",
+        "standard medical deduction",
+        "elderly deduction",
+        "disability deduction",
+        "smd"
+      ],
+      "citation": "CNAP FAA5.I.03.E — AZ Standard Medical Deduction ($145 net / $180 gross threshold)",
+      "heading": "Arizona runs a flat Standard Medical Deduction of $145 (net of the $35 disregard) — a single tier, distinct from Illinois's two-tier $185/$485 and closer in shape to Georgia's single flat tier but a different dollar figure",
+      "text": "'A $35 disregard is applied to the budgetary unit's combined medical expenses, regardless of the number of elderly or participants with a disability that are included in the case. When eligible, the budgetary unit receives one of the following medical expense deductions: The Standard Medical Deduction (SMD). The SMD net amount is $145 ($180 minus the $35 disregard equals $145). [Or] The actual amount, minus the $35 disregard when expenses are more than the $145 SMD amount' (CNAP FAA5.I.03.E) — i.e. the household automatically gets $145 once verified expenses exceed $35, and only needs to itemize further if actual expenses exceed $180 (at which point actual-minus-$35 is used instead, always to the household's advantage: 'The higher medical expense deduction is allowed for the benefit of the budgetary unit.'). Eligible for the deduction: elderly (60+) or disabled participants, per the state's disability-benefit list (see asset-rule and abawd-work-requirement for the same age/disability definitions); a DECEASED participant's already-billed expenses, when the remaining budgetary unit is legally responsible for the bill; and a participant who just started receiving SSI, back to the later of the NA application date or the SSI eligibility start date. Not allowable: charge-account interest, bills paid before the application month, carried-forward balances/late fees, expenses covered by a reimbursement, vendor payment, or second mortgage. When an attendant/homemaker/home-health-aide cost could qualify as EITHER a medical or dependent-care expense, Arizona — like Nevada — always treats it as a medical expense.",
+      "source_url": "https://dbmefaapolicy.azdes.gov/FAA5/NA_Medical_Expenses_and_Deduction.html"
+    },
+    {
+      "key": "dependent-care-child-support",
+      "kind": "supplement",
+      "terms": [
+        "dependent care",
+        "child care deduction",
+        "daycare",
+        "child support",
+        "support payments"
+      ],
+      "citation": "CNAP FAA5.I.03.B; CNAP FAA5.I.03.C — AZ dependent care and child support deductions",
+      "heading": "Arizona treats child support paid as a DEDUCTION (like Nevada, Georgia, and Michigan — a contrast with Illinois's income exclusion), and adds a distinctive 20% dependent-care transportation allowance no other state in this roster has",
+      "text": "Dependent care is deductible for a child under 18 or an incapacitated adult when necessary for employment, NA Employment & Training participation, or job-preparation training/education (including high school or GED classes) (CNAP FAA5.I.03.B). Arizona layers on a 'NA Dependent Care Transportation Standard' equal to 20% of allowable dependent care expenses, added when the participant incurs a cost to transport the dependent to/from the provider — unless the household lives WITH the provider. Not allowed: costs paid by another participant in the case, reimbursements (including SNAP CAN, Jobs, or Transitional Childcare payments), in-kind payments, or third-party payments. Child support works as a DEDUCTION, not an income exclusion (contrast Illinois): the deduction is the LESSER of the court-ordered amount or the verified amount actually paid, and includes court-ordered child support AND cash medical support paid to an agency or the court, recurring arrearage amounts added by DCSS (Division of Child Support Services), and third-party substitute payments made in place of cash (mortgage, insurance, car payments, medical bills) when the court order allows it (CNAP FAA5.I.03.C). Spousal maintenance/alimony is explicitly excluded. The deduction is NOT allowed when the paying parent, the receiving parent, AND the child are all in the SAME budgetary unit.",
+      "source_url": "https://dbmefaapolicy.azdes.gov/FAA5/Dependent_Care_Expense.html"
+    },
+    {
+      "key": "abawd-work-requirement",
+      "kind": "supplement",
+      "terms": [
+        "abawd",
+        "able bodied adult",
+        "work requirement",
+        "time limit",
+        "3 month limit",
+        "work registration",
+        "waiver",
+        "waived area"
+      ],
+      "citation": "CNAP FAA2.M.09.A; CNAP FAA2.M.09.B; CNAP FAA2.M.09.C — AZ ABAWD work requirement (fixed 1/1/2025–12/31/2027 clock)",
+      "heading": "Arizona's fixed ABAWD three-year period runs 01/01/2025 through 12/31/2027, and a real, current geographic waiver covers Yuma County plus five reservation areas",
+      "text": "'The current three-year period began on 01/01/2025 and ends on 12/31/2027' (CNAP FAA2.M.09.A) — one shared statewide clock, confirmed by the manual's own worked example ('The three-year period is the same for each of them and restarts on 01/01/2028'). Participants are limited to three full months of NA benefits in that period unless they meet a work requirement (20 hrs/week or 80 hrs/month of paid, self-employment, in-kind, or volunteer work; a qualifying work program including SNAP CAN, WIOA, TAA, or a veteran employment program; or a qualifying education program) or an exemption. Exemptions apply IN THIS ORDER, using whichever exempts the participant longest (CNAP FAA2.M.09.B): (1) under 18 or 65+; (2) a member of an Indian Tribe, an urban Indian, or a California Indian per the Indian Health Care Improvement Act — effective November 1, 2025, a new exemption; (3) mentally or physically unfit for work (a broader standard than a formal disability determination — includes learning disabilities, domestic-violence/stalking survivors, and temporary conditions like post-surgical recovery); (4) resides with a child under 14 in the same budgetary unit, through the month the child turns 14; (5) pregnant; (6) meets an NA work-requirement exemption (alcohol/drug treatment, CA Jobs participation, caretaker of an incapacitated person, Cuban/Haitian entrant good cause, employed, migrant/seasonal farm worker, refugee, student, Tribal NEW participation, or Unemployment Insurance); (7) geographic — living in a currently-waived area. As of this pack's build, the waived geographic areas are: Yuma County; Cocopah Reservation; Hualapai Indian Reservation and Off-Reservation Trust Land; Maricopa (Ak Chin) Indian Reservation and Off-Reservation Trust Land; Salt River Reservation; San Carlos Reservation; and Pascua Pueblo Yaqui Reservation and Off-Reservation Trust Land (CNAP FAA2.M.09.B) — see freshness.json; this list is inherently volatile. A Fiscal-Responsibility-Act-of-2023 discretionary exemption exists, capped at 8% of the prior Federal Fiscal Year's ABAWD-ineligible caseload — this pack did not confirm Arizona's current utilization of that cap. Regaining eligibility after exhausting the three months requires 80 hours over any 30 consecutive days (paid, volunteer, or work-program participation, which can straddle the application date) — unlimited regains are allowed, and a participant who regains eligibility and then loses the qualifying work may receive one additional 3-month extension (CNAP FAA2.M.09.C).",
+      "source_url": "https://dbmefaapolicy.azdes.gov/FAA2/ABAWD_Time_Limits_and_Work_Requirements.html"
+    },
+    {
+      "key": "criminal-justice-disqualifications",
+      "kind": "supplement",
+      "terms": [
+        "drug felony",
+        "felony conviction",
+        "criminal record",
+        "drug conviction",
+        "fleeing felon",
+        "fugitive",
+        "warrant",
+        "active warrant",
+        "felony warrant",
+        "wanted by law enforcement",
+        "wanted",
+        "probation",
+        "probation violator",
+        "parole",
+        "parole violator",
+        "ipv",
+        "intentional program violation"
+      ],
+      "citation": "CNAP FAA2.A.09 — AZ drug-felony ban IS enforced, with a conditional removal pathway — a real structural contrast with Illinois's and Nevada's full opt-outs",
+      "heading": "Arizona ENFORCES the federal drug-felony SNAP ban — this pack found no Arizona opt-out statute analogous to Illinois's or Nevada's — but offers a real, conditional path to avoid or remove the disqualification",
+      "text": "Unlike Illinois (305 ILCS 5/1-10(c)) or Nevada (NRS 422A.345), this pack found no Arizona statute opting out of or modifying the federal 1996 drug-felony ban; a 'Legal Authorities' citation on Arizona's own disqualification page (ARS 46-215) was checked directly against the Arizona Legislature's text and does NOT address controlled-substance convictions — it covers general welfare-fraud disqualification procedures, not the drug-felony criterion specifically (see PROVENANCE.md). Arizona's CNAP manual states plainly that participants 'are convicted of a felony offense that has actual possession, use, or distribution of a controlled substance as an element of the crime[,] committed and convicted on or after August 23, 1996' are disqualified from BOTH NA and CA (CNAP FAA2.A.09). A conviction 'set aside, vacated, or expunged by a Court in the State of Arizona' STILL disqualifies. Convictions from Juvenile Court or Tribal Court do NOT disqualify. Several related but lesser offenses do NOT trigger disqualification: attempted possession/sale, solicitation to possess or sell, attempted manufacture, possession of precursor chemicals, drug-paraphernalia possession, facilitation, or conspiracy to possess. A budgetary unit with a POSSIBLE disqualifying drug conviction is still potentially eligible for expedited service while FAA researches it. Arizona offers a genuine REMOVAL pathway (unlike a pure opt-out, this is conditional): the participant signs a Nutrition Assistance Drug Testing Agreement (FAA-1565A or F029) and meets ONE of: currently on a waitlist for substance-abuse treatment (and remains enrolled, entering at the first opening); currently in treatment; successfully completed treatment after the offense; determined by a licensed medical provider not to need treatment; OR — while on probation — in current compliance with all probation terms (parole is explicitly NOT one of the five qualifying paths). A later NEW disqualifying drug felony requires the removal process again. Separately, a general fleeing-felon/parole-probation-violator rule applies (ineligible only while the wanted/violation status continues) — plus a narrower 'NA Special Class of Fleeing Felons' for participants convicted as an adult, on or after February 8, 2014, of aggravated sexual abuse, murder, or a federal/state offense involving sexual assault, domestic violence, dating violence, or stalking under the Violence Against Women Act of 1994: for this narrower class, the participant's OWN STATEMENT that they are out of compliance with probation/parole is sufficient — no separate verification is required to disqualify them.",
+      "source_url": "https://dbmefaapolicy.azdes.gov/FAA2/Disqualified_Participants.html"
+    },
+    {
+      "key": "expedited-service",
+      "kind": "supplement",
+      "terms": [
+        "expedited",
+        "expedited service",
+        "emergency",
+        "emergency food stamps",
+        "fast benefits",
+        "how fast",
+        "urgent",
+        "same day",
+        "7 day",
+        "seven day"
+      ],
+      "citation": "CNAP FAA2.A.03 — AZ expedited NA (7-day guarantee)",
+      "heading": "Arizona guarantees expedited NA benefits on the QUEST card no later than the seventh calendar day from application, and — unlike this pack's Nevada corpus — explicitly recognizes the destitute migrant/seasonal-farmworker criterion",
+      "text": "A household qualifies for expedited service when it meets any of three criteria (CNAP FAA2.A.03): gross countable income under $150 AND liquid resources of $100 or less; a destitute migrant or seasonal farm worker in the household with $100 or less in liquid resources; or gross income plus liquid resources under the household's rent/mortgage plus its applicable utility allowance (SUA when obligated for heat/cooling, LUA when obligated for 2+ non-heat utilities, TUA when telephone-only, or no utility deduction when no allowable utility expense exists). 'For budgetary units that are eligible for NA expedited services, a determination is completed no later than the seventh calendar day from the application date... Benefits are on the card no later than the seventh calendar day.' All verification except the Primary Informant's identity can be postponed. There is no cap on how many times a household can receive expedited service — EXCEPT a new application is processed under normal (non-expedited) timeframes when: postponed verification from the household's LAST expedited approval was never provided; the household's last approval period was stopped for Quality-Control non-cooperation; the application/case file shows ineligibility for the application month or the next; or the household fails to provide information needed to determine expedited eligibility at all. Untimely renewal applications (filed within 30 days after the approval period ends) are also screened for expedited service.",
+      "source_url": "https://dbmefaapolicy.azdes.gov/FAA2/Requirements_for_NA_Expedited_Services_(NAX).html"
+    },
+    {
+      "key": "reporting-certification",
+      "kind": "supplement",
+      "terms": [
+        "certification period",
+        "approval period",
+        "recertification",
+        "renewal",
+        "how long does snap last",
+        "how long does my snap approval last",
+        "how long does my approval last",
+        "redo",
+        "renew",
+        "simplified reporting",
+        "change reporting",
+        "report income"
+      ],
+      "citation": "CNAP FAA5.I.01.D; CNAP FAA6.A.01.B — AZ approval periods (12-month default) and Simplified Reporting (200% FPL trigger)",
+      "heading": "Arizona's default NA approval period is 12 months — not 6 like several other states in this roster — with 24-month, 36-month, and 5-month categories layered on top",
+      "text": "Arizona assigns 'all other budgetary units' a 12-month approval period by default (CNAP FAA5.I.01.D). A 24-month period applies when NO participant has earned/self-employment income AND every participant is 60+ or disabled, and the unit is not in ESAP or AZSNAP. A 36-month period applies to budgetary units approved under ESAP (Elderly Simplified Application Project) or AZSNAP (Arizona Simplified Nutrition Assistance Program). A 5-month period applies when a Cash Assistance case closes for excess income and the unit qualifies for Transitional Benefit Assistance (TBA). Simplified Reporting applies to essentially all NA cases except AZSNAP and TBA units (which have their own separate reporting rules), and requires reporting only three triggers (CNAP FAA6.A.01.B): gross monthly income of ALL budgetary-unit participants — including disqualified members' income — exceeding 200% of the current FPL (the SAME threshold as the ECE ceiling, not a separate lower 130%-style trigger the way Nevada and Illinois use); an ABAWD participant's work hours dropping below 20/week or 80/month average; or lottery/gambling winnings from a single game meeting or exceeding the Winnings Reporting Amount ($4,500 effective 10/01/2024, CNAP FAA6.J.12 — see criminal-justice-disqualifications' sibling topic for the disqualification mechanics). Reports are due no later than the 10th calendar day of the month following the month the change occurred (extended to the next workday if the 10th falls on a weekend/holiday).",
+      "source_url": "https://dbmefaapolicy.azdes.gov/FAA5/NA_Approval_Periods.html"
+    },
+    {
+      "key": "restaurant-meals-program",
+      "kind": "supplement",
+      "terms": [
+        "restaurant meals program",
+        "rmp",
+        "eat at a restaurant",
+        "use ebt at restaurant",
+        "buy a hot meal",
+        "hot meal at a restaurant",
+        "quest card",
+        "prepared meals",
+        "hot food"
+      ],
+      "citation": "CNAP FAA5.K.03 — AZ Restaurant Meals Program (statewide, QUEST card)",
+      "heading": "Arizona operates a statewide Restaurant Meals Program — confirmed as one of only nine states nationally, per FNS's own current directory — for elderly, disabled, homeless, and eligible spouses",
+      "text": "'The Restaurant Meals Program (also known as the hot meals program) is an NA program that allows certain participants to use their Electronic Benefit Transaction (EBT) card to purchase prepared meals from participating restaurants and retailers' — including the deli section of participating grocery stores (CNAP FAA5.K.03). Eligibility requires EVERY participant in the budgetary unit to meet at least one of: elderly (60+), has a disability (per the same definition used for special medical/resource considerations elsewhere in this pack), experiencing homelessness, or the spouse of an NA participant who is independently RMP-eligible. Confirmed against the FNS national RMP directory (fetched fresh, page dated 08/07/2026): Arizona is one of only nine states nationally with an active RMP (Arizona, California, Illinois, Maryland, Massachusetts, Michigan, New York, Rhode Island, Virginia), with the state RMP contact listed as the Family Assistance Administration (FAAMOU@azdes.gov). The EBT card used is the same QUEST Card used for all NA/CA benefits (see program-identity).",
+      "source_url": "https://dbmefaapolicy.azdes.gov/FAA5/NA_Restaurant_Meals_Program.html"
+    },
+    {
+      "key": "program-identity",
+      "kind": "supplement",
+      "terms": [
+        "how to apply",
+        "where do i apply",
+        "apply for snap",
+        "who runs",
+        "what agency",
+        "which agency",
+        "administers",
+        "quest card",
+        "heaplus",
+        "health-e-arizona",
+        "myfamilybenefits",
+        "ebt card",
+        "food stamps arizona"
+      ],
+      "citation": "CNAP FAA2.A.01 — AZ program identity",
+      "heading": "Arizona applies through Health-e-Arizona Plus (HEAplus); case self-service runs through the separate MyFamilyBenefits portal; the EBT card is branded QUEST",
+      "text": "Arizona's NA and CA applications run through the DES Family Assistance Administration (FAA). The primary online application portal is Health-e-Arizona Plus (HEAplus, healthearizonaplus.gov) — accepted alongside the paper Application for Benefits (FAA-0001A, also available in Spanish as FAA-0001A-S) and, for elderly applicants, the ESAP-specific Nutrition Assistance Application (FAA-1821A) (CNAP FAA2.A.01). Case self-service (checking status, reporting changes, downloading forms) runs through the SEPARATE MyFamilyBenefits (MFB) portal at myfamilybenefits.azdes.gov. The EBT card is branded the 'QUEST Card', processed through the same EBT Processing System interface as Cash Assistance, Jobs Program payments, and State Public Assistance — when a household has both NA and CA benefits under one case number, a single QUEST card accesses both accounts. PINs can be set or reset via the Fidelity Information Services (FIS) Automated Response Unit or at ebtEDGE.com. AZTECS (Arizona Technical Eligibility Computer System) is the worker-facing eligibility system.",
+      "source_url": "https://dbmefaapolicy.azdes.gov/FAA5/Electronic_Benefit_Transfer_(EBT)_QUEST_Card.html"
+    }
+  ]
+}

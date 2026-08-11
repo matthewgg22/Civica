@@ -985,6 +985,109 @@ export const NV_GOLD: AnswerExpectation[] = [
   },
 ];
 
+export const AZ_GOLD: AnswerExpectation[] = [
+  {
+    id: "az-expanded-cat-elig-200",
+    // Arizona's flat 200% BBCE screen — the state authority must win over
+    // the federal 130% default. Unlike several other states' TANF-brochure
+    // conferral pathway, Arizona's is a pure income comparison.
+    question: "Is there a higher income limit for SNAP in Arizona if I'm categorically eligible?",
+    state: "AZ",
+    expectCitation: "CNAP FAA5.I.01.B",
+    mustMention: "200",
+    mustDisclaim: true,
+  },
+  {
+    id: "az-vehicle-exclusion",
+    question: "Does my car count against me for SNAP in Arizona?",
+    state: "AZ",
+    expectCitation: "CNAP FAA4.C.01",
+    mustMention: "not counted",
+    mustDisclaim: true,
+  },
+  {
+    id: "az-asset-limit",
+    question: "What's the SNAP resource limit in Arizona for a household with a member over 60?",
+    state: "AZ",
+    expectCitation: "CNAP FAA6.J.06.B",
+    mustMention: "4,500",
+    mustDisclaim: true,
+  },
+  {
+    id: "az-sua-standard",
+    question: "How much is Arizona's Standard Utility Allowance for SNAP for a household of two?",
+    state: "AZ",
+    expectCitation: "CNAP FAA6.J.09",
+    mustMention: "323",
+    mustDisclaim: true,
+  },
+  {
+    id: "az-medical-deduction-flat-smd",
+    // Arizona runs a flat $145 Standard Medical Deduction — the state
+    // authority must win over an assumption drawn from a different state's
+    // actual-expense-only mechanism.
+    question: "I'm disabled and have $50 a month in medical bills for Arizona SNAP — do I get a deduction?",
+    state: "AZ",
+    expectCitation: "CNAP FAA5.I.03.E",
+    mustMention: "145",
+    mustDisclaim: true,
+  },
+  {
+    id: "az-child-support-deduction",
+    question: "Does paying child support lower my countable income for SNAP in Arizona?",
+    state: "AZ",
+    expectCitation: "CNAP FAA5.I.03.C",
+    mustMention: "deduct",
+    mustDisclaim: true,
+  },
+  {
+    id: "az-abawd-fixed-window",
+    // Arizona's exact fixed ABAWD clock (1/1/2025-12/31/2027) — a state
+    // authority fact the federal corpus cannot supply.
+    question: "What is the current three-year ABAWD time limit window in Arizona?",
+    state: "AZ",
+    expectCitation: "CNAP FAA2.M.09.A",
+    mustMention: "2027",
+    mustDisclaim: true,
+  },
+  {
+    id: "az-drug-felony-enforced",
+    // Guards against Mae inventing an Arizona opt-out that doesn't exist —
+    // Arizona ENFORCES the federal drug-felony ban (unlike IL/NV in this
+    // roster) but offers a real conditional removal pathway; see
+    // PROVENANCE.md.
+    question: "I was convicted of a drug felony years ago — can I still get SNAP in Arizona?",
+    state: "AZ",
+    expectCitation: "CNAP FAA2.A.09",
+    mustMention: "treatment",
+    mustDisclaim: true,
+  },
+  {
+    id: "az-expedited-service",
+    question: "How fast can I get emergency SNAP benefits in Arizona?",
+    state: "AZ",
+    expectCitation: "CNAP FAA2.A.03",
+    mustMention: "seventh",
+    mustDisclaim: true,
+  },
+  {
+    id: "az-restaurant-meals",
+    question: "Can I use my Arizona QUEST card to buy a hot meal at a restaurant?",
+    state: "AZ",
+    expectCitation: "CNAP FAA5.K.03",
+    mustMention: "quest",
+    mustDisclaim: true,
+  },
+  {
+    id: "az-certification-period",
+    question: "How long does my SNAP approval last in Arizona before I have to redo it?",
+    state: "AZ",
+    expectCitation: "CNAP FAA5.I.01.D",
+    mustMention: "12",
+    mustDisclaim: true,
+  },
+];
+
 /** Everything the live runner executes. */
 export const ALL_GOLD: AnswerExpectation[] = [
   ...ANSWER_GOLD,
@@ -998,4 +1101,5 @@ export const ALL_GOLD: AnswerExpectation[] = [
   ...FL_GOLD,
   ...MA_GOLD,
   ...NV_GOLD,
+  ...AZ_GOLD,
 ];
