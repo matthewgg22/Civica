@@ -102,3 +102,71 @@ export {
   LANG_TAG,
   type AnswerLang,
 } from "./lang";
+
+// ═══ NAP JURISDICTIONS ═══════════════════════════════════════════════════════
+//
+// Three US territories do NOT run SNAP. They run the Nutrition Assistance
+// Program, a block grant, and USDA's own wording is unambiguous:
+//
+//   "IN LIEU OF the Supplemental Nutrition Assistance Program (SNAP), the
+//    Nutrition Assistance Program (NAP) block grants provide food assistance to
+//    low-income households in the U.S. territories of the Commonwealth of
+//    Puerto Rico, American Samoa, and the Commonwealth of the Northern Mariana
+//    Islands."
+//    — fna.usda.gov/nap/nutrition-assistance-program-block-grants
+//
+// And, decisively for this product: "the U.S. territories establish eligibility
+// and benefit levels for their nutrition assistance programs." Federal SNAP
+// rules are not a floor there. They do not apply at all.
+//
+// WHY THIS EXISTS AS DATA rather than as an unverified-state fallback: for every
+// state without a pack, the federal floor is a correct and useful answer. For
+// these three it is a confidently WRONG answer about a program that does not
+// exist where the reader lives — income limits, deductions, allotments, the
+// ABAWD rules, all of it. Silence would be better; a hand-off is better still.
+//
+// Guam and the US Virgin Islands DO run SNAP, so they are deliberately absent:
+// the federal floor is right for them, exactly as it is for an unverified
+// state. Adding them here would be inventing a distinction USDA does not make.
+export interface NapJurisdiction {
+  code: string;
+  name: string;
+  /** What the territory calls its program. */
+  program: string;
+  agency: string;
+  agencyUrl?: string;
+}
+
+export const NAP_JURISDICTIONS: NapJurisdiction[] = [
+  {
+    code: "PR",
+    name: "Puerto Rico",
+    program: "Programa de Asistencia Nutricional (PAN / NAP)",
+    agency: "Departamento de la Familia — ADSEF",
+    agencyUrl: "https://www.adsef.pr.gov/",
+  },
+  {
+    code: "AS",
+    name: "American Samoa",
+    program: "Nutrition Assistance Program (NAP)",
+    agency: "American Samoa Department of Human and Social Services",
+  },
+  {
+    code: "MP",
+    name: "Northern Mariana Islands",
+    program: "Nutrition Assistance Program (NAP)",
+    agency: "CNMI Nutrition Assistance Program",
+  },
+];
+
+export const NAP_CODES: string[] = NAP_JURISDICTIONS.map((j) => j.code);
+
+/** True when SNAP rules — federal OR state — do not govern this jurisdiction. */
+export function isNapJurisdiction(code: string | null | undefined): boolean {
+  return !!code && NAP_CODES.includes(code.toUpperCase());
+}
+
+export function napJurisdiction(code: string | null | undefined): NapJurisdiction | null {
+  if (!code) return null;
+  return NAP_JURISDICTIONS.find((j) => j.code === code.toUpperCase()) ?? null;
+}

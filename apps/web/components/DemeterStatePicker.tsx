@@ -17,7 +17,7 @@
 // filter as it grows, and a native select can't show agency + program per row.
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import type { PackMeta } from "@civica/demeter-engine/packs";
+import { NAP_JURISDICTIONS, type PackMeta } from "@civica/demeter-engine/packs";
 
 export interface StatePickerCopy {
   label: string;
@@ -26,6 +26,8 @@ export interface StatePickerCopy {
   search: string;
   verified: string;
   noMatch: string;
+  /** Heading for the NAP-territory group — these do not run SNAP. */
+  napGroup: string;
 }
 
 export function DemeterStatePicker({
@@ -62,6 +64,17 @@ export function DemeterStatePicker({
       [s.code, s.program, s.agency].some((f) => f.toLowerCase().includes(q)),
     );
   }, [states, query]);
+
+  // Searchable on the same terms. "Puerto Rico", "PR" and "PAN" all find it —
+  // someone looking for their program by its local name is exactly the person
+  // this group exists for.
+  const napMatches = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (!q) return NAP_JURISDICTIONS;
+    return NAP_JURISDICTIONS.filter((j) =>
+      [j.code, j.name, j.program, j.agency].some((f) => f.toLowerCase().includes(q)),
+    );
+  }, [query]);
 
   // Opened from the estimate rail. Skips the initial 0 so the picker is not
   // open on first paint.
@@ -170,7 +183,41 @@ export function DemeterStatePicker({
                 </button>
               </li>
             ))}
-            {matches.length === 0 && <li className="dmst__none">{copy.noMatch}</li>}
+            {/* NAP territories, in their own group and labelled as a different
+                program. Not mixed in with the states: Puerto Rico, American
+                Samoa and the Northern Mariana Islands do not run SNAP, so
+                listing them as though they were states-without-a-pack would
+                promise a federal floor that does not exist there. Selecting one
+                produces a hand-off to their real agency, not a SNAP answer. */}
+            {napMatches.length > 0 && (
+              <>
+                <li className="dmst__group" role="presentation">
+                  {copy.napGroup}
+                </li>
+                {napMatches.map((j) => (
+                  <li key={j.code}>
+                    <button
+                      type="button"
+                      role="option"
+                      aria-selected={value === j.code}
+                      className={`dmst__opt ${value === j.code ? "is-sel" : ""}`}
+                      onClick={() => pick(j.code)}
+                    >
+                      <span className="dmst__mark" data-federal="true">
+                        {j.code}
+                      </span>
+                      <span className="dmst__opt-text">
+                        <span className="dmst__opt-name">{j.name}</span>
+                        <span className="dmst__opt-sub">{j.program}</span>
+                      </span>
+                    </button>
+                  </li>
+                ))}
+              </>
+            )}
+            {matches.length === 0 && napMatches.length === 0 && (
+              <li className="dmst__none">{copy.noMatch}</li>
+            )}
           </ul>
         </div>
       )}

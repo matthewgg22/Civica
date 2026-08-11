@@ -36,6 +36,18 @@ vi.mock("@civica/demeter-engine", () => ({
 }));
 vi.mock("@civica/demeter-engine/packs", () => ({
   VERIFIED_STATE_CODES: ["CA", "WA", "TX", "NY"],
+  // Real shape, small fixture. Puerto Rico is the case that matters: it does
+  // NOT run SNAP, so the route must answer without going near the model.
+  napJurisdiction: (code: string | null) =>
+    code?.toUpperCase() === "PR"
+      ? {
+          code: "PR",
+          name: "Puerto Rico",
+          program: "Programa de Asistencia Nutricional (PAN / NAP)",
+          agency: "Departamento de la Familia — ADSEF",
+          agencyUrl: "https://www.adsef.pr.gov/",
+        }
+      : null,
 }));
 vi.mock("../../../../lib/demeter-usage", () => ({
   checkUsageGate: mockGate,
@@ -66,6 +78,11 @@ const MSGS = [{ role: "user", content: "What is SNAP?" }];
  *  so it fails with that message rather than "cannot read property of null". */
 function capturedReq(): Record<string, unknown> {
   if (!captured.req) throw new Error("the route never called answerQuestion");
+  return captured.req;
+}
+
+/** For the cases where NOT reaching the engine is the point. */
+function capturedReqOrNull(): Record<string, unknown> | null {
   return captured.req;
 }
 
@@ -105,6 +122,40 @@ describe("POST /api/demeter (public wrapper)", () => {
     expect(text).toBe("draft ⟲ recomposing with verified sources…verified answer\n\n---\ntrailer");
     expect(res.headers.get("Content-Type")).toContain("text/plain");
     expect(res.headers.get("Cache-Control")).toBe("no-store");
+  });
+
+  it("answers a NAP territory WITHOUT calling the model", async () => {
+    // Puerto Rico does not run SNAP — USDA provides NAP block grants there "in
+    // lieu of" it, and the territory sets its own eligibility and benefit
+    // levels. So the federal floor, which is a correct answer for any
+    // unverified STATE, is a confidently wrong answer here: income limits,
+    // deductions, allotments, ABAWD, none of it applies.
+    //
+    // The model is never asked, because there is nothing for it to be right
+    // about and every incentive for it to fabricate from a corpus full of SNAP
+    // figures. Asserting the engine was NOT called is the real test.
+    const res = await POST(makeReq({ messages: MSGS, state: "PR" }));
+    expect(res.status).toBe(200);
+    const text = await res.text();
+
+    // `captured.req` is nulled in beforeEach, so it being null here means the
+    // engine was not reached BY THIS REQUEST. Asserting on the mock's call
+    // count instead would be wrong: it is created once in the mock factory and
+    // accumulates across every test in the file, so it is already non-zero by
+    // the time this one runs.
+    expect(capturedReqOrNull()).toBeNull();
+    expect(text).toContain("does not run SNAP");
+    expect(text).toContain("Departamento de la Familia");
+    // Named so someone can act, not just be turned away.
+    expect(text).toContain("adsef.pr.gov");
+  });
+
+  it("does not short-circuit a real state", async () => {
+    // Guam and the US Virgin Islands DO run SNAP, and so does every state
+    // without a verified pack — the federal floor is right for all of them.
+    // Only the three NAP territories are special.
+    await (await POST(makeReq({ messages: MSGS, state: "WA" }))).text();
+    expect(capturedReq().state).toBe("WA");
   });
 
   it("returns an honest 503 when the API key is absent", async () => {
