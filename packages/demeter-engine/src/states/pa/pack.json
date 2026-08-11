@@ -1,0 +1,43 @@
+{
+  "code": "PA",
+  "program": "Supplemental Nutrition Assistance Program (SNAP) — no distinctive local nickname; Pennsylvania's own SNAP Handbook glossary uses the federal name throughout",
+  "agency": "Pennsylvania Department of Human Services (DHS)",
+  "admin_model": "state",
+  "system": "eCIS (DHS's internal Client Information System, called \"CIS\" in older handbook text); applicants apply through COMPASS (Commonwealth of Pennsylvania Application for Social Services)",
+  "portal": {
+    "name": "COMPASS",
+    "url": "https://www.compass.state.pa.us"
+  },
+  "update_channels": [
+    {
+      "name": "SNAP Handbook — the authoritative eligibility policy source, hosted on the legacy services.dpw.state.pa.us content-management system (Adobe RoboHelp). This host serves HTTP ONLY — a direct TLS connection attempt to port 443 times out, confirmed by direct testing during this pack's build, and Pennsylvania's own current pa.gov DHS resource page links to the SAME http:// URL as its \"Open Handbook\" pointer. See PROVENANCE.md.",
+      "url": "https://www.pa.gov/agencies/dhs/resources/snap/snap-policies-procedures"
+    },
+    {
+      "name": "Pennsylvania DHS — SNAP program page",
+      "url": "https://www.pa.gov/agencies/dhs/resources/snap"
+    },
+    {
+      "name": "USDA FNS ABAWD Waivers FY 2025-2029 (state response documents)",
+      "url": "https://www.fns.usda.gov/snap/waivers/timelimit/2025-2029"
+    }
+  ],
+  "verification": {
+    "verified_on": "2026-08-11",
+    "method": "Direct HTTP fetch (curl, plain http://) of ~20 individual SNAP Handbook section pages at services.dpw.state.pa.us — the host that a prior session flagged as 'Pennsylvania is a known dead end, never attempted' turned out to be fully readable content once fetched over its native protocol; the earlier dead-end assessment appears to have come from a generic HTTPS-only fetch tool failing silently (ECONNREFUSED / connection timeout on port 443) rather than from the content itself being inaccessible. Every dollar figure and policy rule in this pack traces to a specific numbered Handbook section with its own visible 'Updated <date>, replacing <date>' issue-date stamp, not to a secondary summary. Cross-checked against a live WebSearch/WebFetch pass and against pa.gov's own current DHS SNAP pages.",
+    "gates": "Cross-check: every claim traced to a specific Handbook section body (with its own issue-date stamp visible in the fetched text) rather than a secondary paraphrase. Adversarial refute pass recorded in PROVENANCE.md — including a confirmed internal staleness gap (the Homeless Shelter Deduction narrative in §560.7 still shows the FFY25 figure while the FFY26 dollar table in §560 Appendix A has already been updated) and an unresolved anomaly in the FFY26 Phone/Telephone standard figure that could not be independently corroborated against a second source in this pass. `packages/snap-rules` stays fully parked per this session's standing rule — no PA StatePolicy entry exists yet (a pre-existing authoring gap, not a finding from this pack).",
+    "sources": [
+      "PA SNAP Handbook §512.1, General Policy — Expanded Categorical Eligibility (services.dpw.state.pa.us) — updated March 13, 2026",
+      "PA SNAP Handbook §540.1, General Policy — Resources (services.dpw.state.pa.us) — updated March 13, 2026",
+      "PA SNAP Handbook §540.3, Countable Resources; §540.5, Excluded Resources (services.dpw.state.pa.us) — updated March 13, 2026",
+      "PA SNAP Handbook §560 Appendix A, Tables of Maximum Allowable Deductions (services.dpw.state.pa.us) — effective October 1, 2025, updated September 9, 2025",
+      "PA SNAP Handbook §560.6, Child Support Deduction; §560.7, Homeless Shelter Deduction (services.dpw.state.pa.us)",
+      "PA SNAP Handbook §536.1, General Policy; §536.2, ABAWD Exemptions; Appendix A, Current Geographical Areas Waived by FNS (services.dpw.state.pa.us) — Appendix A updated September 3, 2025",
+      "PA SNAP Handbook §503 Appendix B, Criminal History Desk Guide (services.dpw.state.pa.us) — updated March 11, 2026",
+      "PA SNAP Handbook §503.3, Included and Excluded Items; §511.2, Homeless Persons (services.dpw.state.pa.us) — §511.2 revised September 17, 2025",
+      "PA SNAP Handbook §506.3, Determining Entitlement to Expedited Service; §506.4, Time Frame for Issuing Benefits (services.dpw.state.pa.us)",
+      "PA SNAP Handbook §571.1, General Policy (SAR); §575.2, Guidelines for Assigning Certification Periods (services.dpw.state.pa.us) — §575.2 updated April 10, 2026",
+      "Pennsylvania DHS SNAP program pages (pa.gov), fetched 2026-08-11"
+    ]
+  }
+}

@@ -1,0 +1,230 @@
+{
+  "_provenance": {
+    "note": "Pennsylvania SNAP curated supplements (docs/plans/mae-state-corpus-framework.md roster — PA rated EASY-MED, 'HTML handbook, publishes prior-year tables inline'). A PRIOR session flagged 'Pennsylvania is a known dead end, never attempted' with no further detail; this pack's build found the SNAP Handbook fully readable via a direct plain-HTTP fetch (curl) — the host services.dpw.state.pa.us serves HTTP ONLY and a generic fetch tool that force-upgrades to HTTPS gets ECONNREFUSED/timeout on port 443, which is almost certainly what the prior session hit. Drafted from verbatim Handbook section text, each with its own visible issue-date stamp, not from secondary summaries. Independently cross-checked and adversarially fact-checked before PR. See PROVENANCE.md.",
+    "extracted": "2026-08-11",
+    "source_fact_check": "direct HTTP fetch of individual Handbook section pages + primary-source cross-check + post-draft adversarial refute pass; corrections and unresolved gaps recorded in PROVENANCE.md"
+  },
+  "supplements": [
+    {
+      "key": "income-pathways",
+      "kind": "supplement",
+      "terms": [
+        "income limit",
+        "income limits",
+        "gross income limit",
+        "gross income ceiling",
+        "make too much",
+        "over income",
+        "bbce",
+        "categorical eligibility",
+        "categorically eligible",
+        "expanded categorical eligibility",
+        "200 percent",
+        "200%",
+        "poverty level",
+        "pub 567",
+        "help for pennsylvanians in need"
+      ],
+      "citation": "PAH 512.1 — PA income pathways (flat 200% Expanded Categorical Eligibility, conferred via the PUB 567 brochure)",
+      "heading": "Pennsylvania's 200% screen is called \"Expanded Categorical Eligibility\" and is conferred by handing the household the PUB 567 brochure — no separate net income test applies to units under 200% FPIG unless a member is disqualified or sanctioned",
+      "text": "Pennsylvania's Expanded Categorical Eligibility (its name for BBCE) covers two overlapping groups: households WITHOUT an elderly or disabled member whose income is at or below 200% of the Federal Poverty Income Guidelines (FPIGs), and households WITH an elderly or disabled member whose income is at or below 200% FPIG (PAH 512.1). Expanded categorically eligible households receive the PUB 567 brochure, \"Help for Pennsylvanians in Need,\" from the County Assistance Office (CAO) — the state's conferral document, structurally the same move as Minnesota's Domestic Violence Information Brochure or Georgia's TCOS pamphlet, but PA's brochure is not restricted to a domestic-violence-services framing. Narrower Categorical Eligibility (all-TANF/SBP/SSI households, or households authorized-but-not-yet-paid, suspended, or receiving under $5/month) does not require the brochure and has no income test at all (7 CFR § 273.2(j)). The Handbook's own worked examples (§512.1) confirm the practical effect: a household of 4 with $2,460 gross monthly income and $4,500 in resources — well above what a 130%-only state would allow — is eligible under expanded categorical eligibility because income is below 200% FPIG and the household faces NO resource limit at all. A household does NOT qualify for categorical or expanded categorical eligibility if a member is disqualified for an intentional program violation (IPV), failure to comply with semiannual reporting (SAR), failure to comply with employment/training requirements (head of household only), or a probation/parole violation (§512.1) — those households instead face the narrower 130% FPIG gross test with a $3,000/$4,500 resource limit (see the asset-rule supplement). Ineligible noncitizens, ineligible students, and institutionalized individuals (absent an exemption) are never counted as SNAP household members for this determination (7 CFR § 273.2(j)(2)(ix)).",
+      "source_url": "https://www.pa.gov/agencies/dhs/resources/snap/snap-policies-procedures"
+    },
+    {
+      "key": "asset-rule",
+      "kind": "supplement",
+      "terms": [
+        "asset limit",
+        "asset test",
+        "resource limit",
+        "resource test",
+        "resources",
+        "savings",
+        "savings limit",
+        "bank account",
+        "vehicle",
+        "car count",
+        "does my car count",
+        "lottery",
+        "gambling",
+        "winnings"
+      ],
+      "citation": "PAH 540.1; PAH 540.3; PAH 540.5 — PA resource limits (no limit for the vast majority; $3,000/$4,500 only for disqualified/sanctioned households)",
+      "heading": "Pennsylvania has NO resource limit at all for households under 200% FPIG with no disqualified member — the $3,000/$4,500 limit reaches only a narrow slice of cases",
+      "text": "Per the Handbook's own summary table (PAH 540.1, updated March 13, 2026): households with an elderly (60+) and/or disabled member at or below 200% FPIG face NO resource limit; households with no elderly/disabled member and no sanctioned/disqualified member at or below 200% FPIG ALSO face no resource limit; households with a disqualified or sanctioned member face a 130% FPIG gross test AND a $3,000 resource limit; households with a disqualified/sanctioned member who ALSO have an elderly/disabled member, or elderly/disabled households whose income exceeds 200% FPIG, face a 100% FPIG net test AND a $4,500 resource limit. That $4,500 figure doubles as the threshold for \"substantial\" lottery or gambling winnings (PAH 540.1, 540.311) — a single-event cash prize at or above the elderly/disabled resource limit triggers immediate SNAP ineligibility for ALL household types, including categorically and expanded-categorically eligible households, which must then reapply under REGULAR (non-categorical) rules for their next certification — after which they may return to categorical/expanded-categorical treatment going forward (§540.315). Vehicles: the CAO totally excludes ONE licensed or unlicensed vehicle per household regardless of use, equity, or fair market value (PAH 540.351, citing Pub. L. 106-387 § 847) — a blanket one-per-HOUSEHOLD exclusion, not one-per-driver like Minnesota's. Additional vehicles are excluded if income-producing, used as the household's home, needed to transport a physically disabled member (one exclusion per disabled member), needed to carry primary heating fuel or water, or needed for employment-related long-distance travel; a vehicle with $1,500 or less in net equity value is also excluded as inaccessible regardless of type. For non-excluded vehicles, the CAO subtracts $4,650 from each vehicle's individually appraised fair market value (using Edmunds, Kelly Blue Book, or NADA) — the remainder counts toward the resource limit; the CAO may NOT combine two vehicles' fair market values to reach a combined excess (PAH 540.353-354). Digital wallet balances (Venmo, Cash App, PayPal), cryptocurrency, and crowdfunding-account balances are treated as countable liquid resources as of this Handbook revision — a recent addition (§540.31).",
+      "source_url": "https://www.pa.gov/agencies/dhs/resources/snap/snap-policies-procedures"
+    },
+    {
+      "key": "sua-values",
+      "kind": "supplement",
+      "terms": [
+        "utility allowance",
+        "utility standard",
+        "shelter deduction",
+        "excess shelter",
+        "standard utility allowance",
+        "heating standard",
+        "cooling standard",
+        "telephone standard",
+        "electric utility",
+        "phone standard"
+      ],
+      "citation": "PAH 560 Appendix A; PAH 560.8 — PA utility deductions (four-tier SUA ladder: Heating, Non-heating, Limited, Homeless, plus a separate Phone standard)",
+      "heading": "Pennsylvania runs a four-tier Standard Utility Allowance ladder — and this pack found an internal staleness gap AND an unresolved dollar-figure anomaly in the state's own current table",
+      "text": "Effective October 1, 2025 (FFY26), per PAH 560 Appendix A: the Heating SUA is $857/month, the Non-heating SUA is $488/month, the Limited Utility Allowance is $128/month, and a fourth SUA tier labeled \"Homeless\" is $199/month — structurally a four-tier ladder, more granular than a single combined allowance (Minnesota) but less granular than Wisconsin's seven tiers. The Excess Shelter Deduction cap is $744/month (matching the federal FFY26 COLA figure this roster's other states also show), and Dependent Care is deducted at actual cost with NO cap. The Standard Deduction is $209 (1-3 person households), $223 (4), $261 (5), $299 (6+) — again matching the federal FFY26 figures. A separate \"Phone\" standard, listed as its own column alongside (not part of) the four-tier SUA block, is $107 for FFY26 — but this pack found and is EXPLICITLY FLAGGING an unresolved anomaly: the prior year's (FFY25, eff. 10/1/2024) Phone figure was only $34, and the Handbook's own multi-year historical table shows this figure moving in small single-digit increments every year back to at least 2013 ($33-$34 range for over a decade) before this one abrupt >3x jump. This pack could NOT independently corroborate the $107 figure against a second primary source in this pass — treat it as what PA's own current table states, not as independently confirmed, and re-verify directly against PAH 560 Appendix A before quoting it with confidence. SEPARATELY, this pack found a genuine INTERNAL STALENESS gap: PAH 560.7's own narrative text (\"the CAO must use the standard homeless shelter deduction of $190...\") is dated \"Updated September 30, 2024\" and still shows the FFY25 figure, while PAH 560 Appendix A's dollar table (dated \"Updated September 9, 2025\") already shows the FFY26 figure for the same deduction as $199 — the two sections of the SAME Handbook currently disagree with each other by $9 because one was refreshed for the October 2025 COLA cycle and the other was not. Use the Appendix A table's $199 as the more current figure, but flag this disagreement rather than silently picking one.",
+      "source_url": "https://www.pa.gov/agencies/dhs/resources/snap/snap-policies-procedures"
+    },
+    {
+      "key": "medical-deduction",
+      "kind": "supplement",
+      "terms": [
+        "medical deduction",
+        "medical expense",
+        "medical expenses",
+        "medical bills",
+        "elderly deduction",
+        "disability deduction",
+        "excess medical"
+      ],
+      "citation": "PAH 560.4; PAH 560 Appendix A — PA excess medical deduction (plain federal actual-expense-minus-$35, no flat standard amount)",
+      "heading": "Pennsylvania uses the plain federal actual-expense-minus-$35 Excess Medical Deduction — no flat Standard Medical Deduction dollar figure",
+      "text": "Every household is entitled to the Standard Deduction (PAH 560.3) — see the sua-values supplement for the current dollar figures by household size. Separately, the Excess Medical Deduction allows a deduction for verified allowable medical expenses exceeding $35 per month for an eligible elderly (60+) or disabled member — matching the plain federal mechanism used by Minnesota, Florida, and Oregon in this roster rather than Georgia's or Illinois' flat Standard Medical Deduction dollar figure. PAH 560 Appendix A states the rule tersely: \"Excess Medical — 7 CFR § 273.9(d)(3) — >$35\" — the deduction is the amount of verified allowable expenses ABOVE $35, with no flat floor amount substituted below that threshold the way Michigan's flat $165 SMD example works. This pack found no PA-specific standard medical deduction dollar figure anywhere in the fetched Handbook sections; the deduction is computed entirely from actual verified expenses.",
+      "source_url": "https://www.pa.gov/agencies/dhs/resources/snap/snap-policies-procedures"
+    },
+    {
+      "key": "child-support-deduction",
+      "kind": "supplement",
+      "terms": [
+        "child support",
+        "support payments",
+        "child support deduction",
+        "dependent care",
+        "child care deduction",
+        "daycare"
+      ],
+      "citation": "PAH 560.6 — PA child support deduction (ordinary deduction using a distinctive \"4.0 conversion,\" applied BEFORE the shelter deduction)",
+      "heading": "Pennsylvania deducts legally-obligated child support actually paid to a non-household member using a \"4.0 conversion\" for weekly/biweekly payments — applied before the shelter deduction is calculated",
+      "text": "A household qualifies for the child support deduction when a member has a legal obligation to pay child support (court order, administrative order, or legally enforceable separation agreement), actually makes the payment to a non-household member, the obligation and payment amount are verified, and the support is for a child who is NOT a SNAP household member (PAH 560.61) — the Georgia/Michigan/Minnesota/Oregon/Wisconsin-style ordinary DEDUCTION mechanism (7 CFR 273.9(d)(5)), not Illinois' income-exclusion approach, and applied BEFORE calculation of the shelter deduction (matching this roster's other states' ordering). Pennsylvania's own distinctive mechanic: \"the amount of the deduction is the amount paid using the 4.0 conversion, not to exceed the amount of the court-ordered support\" — the Handbook does not spell out the arithmetic of the 4.0 conversion in the sections this pack fetched, but its function is to convert a weekly or biweekly support payment into a monthly-equivalent figure (analogous to the federal 4.3-weeks-per-month averaging convention used elsewhere in SNAP budgeting, though PA's own factor is stated as 4.0, not 4.3 — this pack does NOT confirm the exact PA-specific arithmetic and a maintainer should verify the conversion mechanics directly against PAH 560.6 before building calculator logic on it). If the payment includes a past-due (arrears) amount, the deduction is the current month's payment (not exceeding the monthly obligation) PLUS the amount paid toward the arrearage. Payments for rent to a landlord or health insurance for the child count as support if legally obligated; alimony/spousal support does NOT count as child support (PAH 560.62). Households enrolled in Semiannual Reporting (SAR) must report child support changes on the SAR form with verification — failure to report does not make the SAR form incomplete, but SNAP benefits must then be computed WITHOUT the child support deduction (PAH 560.63). Dependent Care is deducted separately at actual cost with no cap (PAH 560 Appendix A) — see the sua-values supplement.",
+      "source_url": "https://www.pa.gov/agencies/dhs/resources/snap/snap-policies-procedures"
+    },
+    {
+      "key": "abawd-work-requirement",
+      "kind": "supplement",
+      "terms": [
+        "abawd",
+        "able bodied adult",
+        "work requirement",
+        "time limit",
+        "3 month limit",
+        "work registration",
+        "waiver",
+        "waived area",
+        "peer"
+      ],
+      "citation": "PAH 536.1; PAH 536 Appendix A — PA ABAWD (all counties currently UNWAIVED statewide as of September 1, 2025 — a definitive, dated primary-source confirmation)",
+      "heading": "Pennsylvania's own SNAP Handbook states plainly: as of September 1, 2025, ALL counties are subject to the ABAWD time limit — FNS has not approved any Pennsylvania geographic waiver request",
+      "text": "An ABAWD (able-bodied adult without dependents) is limited to three countable months of SNAP in a fixed three-year period unless meeting the work requirement, an exemption, or living in a waived area (PAH 536.1, 7 CFR § 273.24). The current fixed three-year period is January 1, 2024 through December 31, 2026 for the entire caseload — a fixed clock, not a rolling one. The Handbook's own text still defines the ABAWD age range as 18 through 54 (PAH 536.1, 536.2, citing 7 CFR § 273.24(c)(1) for the under-18/55-plus exemption) — this has NOT been updated to reflect OBBBA's federal extension of the ABAWD age ceiling to 64; verify the current federal age band before quoting an age boundary rather than trusting this Handbook text as current, exactly the caution this roster's other 2026-built states (e.g. Michigan, Wisconsin) already flag for their own unrefreshed age-band text. MOST IMPORTANTLY, and unlike several other states in this roster whose current waiver status could not be confirmed against a primary source: Pennsylvania's own Handbook Appendix A states, in bold red text, dated September 3, 2025 (\"Updated September 3, 2025, replacing September 30, 2024\"): \"As of September 1, 2025, The Food and Nutrition Service (FNS) has not approved Pennsylvania's request for a geographic waiver. All counties in Pennsylvania are subject to the Time-Limited Receipt of Benefits.\" This is a definitive, dated, primary-source statement — treat Pennsylvania as STATEWIDE UNWAIVED as of this pack's build date, not merely \"unconfirmed.\" The same Appendix A page's historical tables show that BEFORE this date, several counties and cities (Lancaster City, Norristown, York City/Township, Lebanon City, Springettsbury Township, and \"balance of counties\" exceptions for Butler and Cumberland outside Cranberry/Hampden Townships) HAD been waived on a staggered timeline running from June 1, 2025 through October 1, 2025 — that waiver relief has now fully lapsed statewide. Also note: Pennsylvania has adopted \"Pennsylvanians with Employment and/or Engagement Requirements (PEER)\" as a broader internal label appearing in the resources/certification sections (PAH 540.3, 575.24-25) alongside the ABAWD-specific term — a maintainer should not conflate PEER (PA's own administrative-process label) with the federal ABAWD term without checking whether a given Handbook passage is using PEER in the narrower ABAWD sense or a broader sense.",
+      "source_url": "https://www.pa.gov/agencies/dhs/resources/snap/snap-policies-procedures"
+    },
+    {
+      "key": "criminal-justice-disqualifications",
+      "kind": "supplement",
+      "terms": [
+        "drug felony",
+        "felony conviction",
+        "criminal record",
+        "drug conviction",
+        "drug test",
+        "drug testing",
+        "lifetime ban",
+        "fleeing felon",
+        "probation",
+        "parole",
+        "intentional program violation"
+      ],
+      "citation": "PAH 503 Appendix B — PA criminal-justice disqualifications (a full opt-out from the federal drug-felony ban; only a treatment-REFERRAL obligation, never a benefits denial, for post-8/22/1996 drug felony convictions)",
+      "heading": "Pennsylvania does NOT disqualify SNAP applicants or recipients for a drug felony conviction — its own Criminal History Desk Guide's SNAP-specific ineligibility list has no drug-felony category at all",
+      "text": "The Handbook's Criminal History Desk Guide (PAH 503 Appendix B, updated March 11, 2026) lists the SNAP Policy ineligibility triggers exhaustively, and a drug felony conviction is NOT among them: SNAP ineligibility results only from (1) fleeing to avoid prosecution/custody/confinement after a felony conviction (a \"fleeing felon\" — someone with a felony ARREST WARRANT for escape/flight, who has knowledge of the warrant and fails to verify it's been satisfied); (2) violating probation or parole terms while being ACTIVELY sought by law enforcement (defined precisely: law enforcement states an intent to enforce within 20 days of a CAO information request, presents an arrest warrant directly, or states an intent to enforce within 30 days of a specific CAO request — if law enforcement doesn't respond within that window, the CAO must find the person NOT a violator); (3) incarceration; (4) a 10-year disqualification for fraudulently misrepresenting identity/residence to receive multiple SNAP benefits; and (5) intentional program violation (IPV) findings, which carry escalating disqualification periods (1 year first violation, 2 years second, PERMANENT on a third). Separately, the SAME desk guide's PROCEDURE section requires the CAO to \"determine whether a referral to a Drug and Alcohol Treatment facility for assessment or treatment is necessary if the person was convicted of a felony offense for conduct occurring after August 22, 1996, related to the use, possession, or distribution of a controlled substance\" — this is explicitly a TREATMENT-REFERRAL obligation, structurally identical to a screening step, never described anywhere in this Handbook section as a basis to deny or terminate SNAP benefits. Pennsylvania is, in substance, a full opt-out state from the federal 21 U.S.C. § 862a(1) drug-felony SNAP ban — the same pattern this roster has already confirmed for Illinois, Nevada, and (since August 2023) Minnesota. This pack did NOT find a widely-repeated FALSE secondary-source claim to correct for Pennsylvania specifically (unlike Illinois' ABAWD-waiver correction or Minnesota's drug-testing correction) — general secondary sources this pack checked already correctly describe Pennsylvania as not imposing a drug-felony SNAP ban, so this entry documents the primary-source CONFIRMATION of an already-accurate secondary consensus rather than a correction.",
+      "source_url": "https://www.pa.gov/agencies/dhs/resources/snap/snap-policies-procedures"
+    },
+    {
+      "key": "restaurant-meals-program",
+      "kind": "supplement",
+      "terms": [
+        "restaurant meals program",
+        "rmp",
+        "eat at a restaurant",
+        "use ebt at restaurant",
+        "hot meal",
+        "hot food"
+      ],
+      "citation": "PAH 503.3; PAH 511.24; PAH 511.2 — PA restaurant meals provision (legally HOMELESS-ONLY, narrower than the typical elderly+disabled+homeless model, and currently NON-OPERATIONAL — zero authorized restaurants statewide as of September 17, 2025)",
+      "heading": "Pennsylvania's SNAP restaurant-meal provision legally covers ONLY homeless individuals (not elderly or disabled) — and its own Handbook states plainly that, as of September 17, 2025, there are currently ZERO authorized restaurants anywhere in the state",
+      "text": "Pennsylvania's SNAP restaurant provision is narrower in scope AND currently dormant compared with the states in this roster that operate an active Restaurant Meals Program (Arizona, Maryland, New York, California, Massachusetts, Rhode Island, Illinois' Cook/Franklin Counties, Michigan, and Virginia per USDA FNS's current RMP list — Pennsylvania is not on that list). PAH 503.31 lists \"authorized restaurants serving meals to the homeless, elderly, or disabled\" among items SNAP may pay for, but PAH 503.31's own very next sentence narrows this in PA's actual implementation: \"Only homeless persons may use SNAP benefits in qualified restaurants. The CAO must issue a PA 2SP to the eligible client\" as a controlled document — Pennsylvania's operational restaurant-meal provision, unlike the multi-population RMP model, is limited to homeless individuals specifically, not elderly or disabled recipients. Most importantly: PAH 511.24 (revised September 17, 2025 — among the most recently updated sections fetched for this pack) states outright, after describing the legal authority for homeless individuals to buy meals from authorized restaurants (7 CFR § 274.7(g)(4)(ii)): \"NOTE: At this time there are no authorized restaurants in the state that accept SNAP.\" So the provision exists in law and Handbook policy but has zero live restaurant participants as of this pack's build date — do not tell a Pennsylvania household they can currently use SNAP at any restaurant, even if homeless and otherwise eligible under the PA 2SP process. Meal providers for the homeless more broadly (soup kitchens, halfway houses/shelters, and restaurants under a low/reduced-price meal CONTRACT) require Division of Federal Programs and Program Management approval (PAH 511.24) — a separate, narrower approval track from ordinary SNAP-retailer authorization.",
+      "source_url": "https://www.pa.gov/agencies/dhs/resources/snap/snap-policies-procedures"
+    },
+    {
+      "key": "expedited-service",
+      "kind": "supplement",
+      "terms": [
+        "expedited",
+        "expedited service",
+        "emergency",
+        "emergency food stamps",
+        "fast benefits",
+        "how fast",
+        "urgent",
+        "same day",
+        "5 day",
+        "five day"
+      ],
+      "citation": "PAH 506.3; PAH 506.4 — PA expedited SNAP (federal-standard $150/$100 screening criteria, but PA's own OPERATIONAL target is 5 calendar days — faster than the federal 7-day ceiling)",
+      "heading": "Pennsylvania's expedited-service screening criteria match the federal standard, but the Handbook sets PA's own internal issuance target at 5 calendar days — faster than the federal maximum most other states in this roster describe as 7 days",
+      "text": "A household is entitled to expedited service if: countable liquid resources are $100 or less AND countable monthly gross income is under $150; the household's combined monthly gross income and liquid resources are less than its monthly shelter expenses (rent/mortgage, property taxes, homeowner's insurance, and the applicable Standard Utility Allowance); or all members are destitute migrant/seasonal farm workers with $100 or less in liquid resources and nothing else to live on (PAH 506.3). PA's own Handbook then states its issuance target distinctively: \"the County Assistance Office (CAO) must make sure the first benefit is available within five calendar days\" (PAH 506.4, citing 7 CFR § 273.2(i)(3)(i)) — a faster operational standard than the 7-calendar-day ceiling this roster's other packs (e.g. Minnesota, Michigan) cite as the federal maximum; this pack did not find language in PA's own text describing this as merely an internal safety margin versus a distinct PA-specific commitment, so state the 5-day figure as PA's own stated standard without asserting it is either identical to or stricter than the federal floor without further verification. Mechanically: the CAO must issue the EBT card and authorize benefits by the 4th calendar day after filing so benefits are live on the EBT system by day 5; weekends and holidays count toward the 5 days, and if a CAO closure would otherwise push past day 5, the CAO must issue the card earlier to still meet the deadline (worked Thanksgiving-week example in §506.41). If a household is initially screened as NOT expedited-eligible but the CAO later discovers eligibility (e.g. at interview), the 5-day count restarts from the date of that discovery, not the original application date (PAH 506.42).",
+      "source_url": "https://www.pa.gov/agencies/dhs/resources/snap/snap-policies-procedures"
+    },
+    {
+      "key": "reporting-certification",
+      "kind": "supplement",
+      "terms": [
+        "certification period",
+        "approval period",
+        "recertification",
+        "redetermination",
+        "how long does snap last",
+        "how long does my snap approval last",
+        "how long does my approval last",
+        "redo",
+        "renew",
+        "semiannual reporting",
+        "sar",
+        "change reporter"
+      ],
+      "citation": "PAH 575.2; PAH 571.1 — PA certification periods (a four-tier structure: 36 months for zero-income elderly/disabled, 24 months for elderly/disabled WITH income, 12 months for standard households, 6 months for migrant/seasonal/zero-income/exempt-income-only households)",
+      "heading": "Pennsylvania runs the most granular certification-period ladder in this roster — and, distinctively, gives its LONGEST period (36 months) to zero-income elderly/disabled households, while non-elderly/disabled working households get the SHORTEST standard period (12 months)",
+      "text": "The CAO must assign the longest certification period the household qualifies for (PAH 575.2, 7 CFR § 273.10(f)) — never based on SAR enrollment status alone. Four tiers: a 36-month period (§575.21) applies ONLY when all members are elderly or disabled AND have countable UNEARNED income only, budget-coded FS 75 — zero-income Elderly/Disabled Simplified Application Process (ESAP) households also receive 36 months. A 24-month period (§575.22) applies when all adult members are elderly or disabled with countable income of ANY kind (earned or unearned) — so an elderly/disabled household that picks up earned income does NOT lose eligibility for the 24-month period, but drops to 6 months if income falls to zero. A 12-month period (§575.23) applies to standard households (not elderly/disabled) with earned or unearned income, and may also apply to a PEER-status household not subject to time limits living in a geographically-waived area. A 6-month period (§575.24) applies to migrant/seasonal farm worker households, zero-income households (unless ESAP), and households with ONLY exempt income (e.g. cash-assistance-only income counts as \"exempt\" for this purpose). Households with an active PEER (ABAWD-adjacent) member not meeting the work requirement and not exempt get a certification period capped at however many months of SNAP that PEER is still allowed to receive (§575.25, see the abawd-work-requirement supplement). Separately, Semiannual Reporting (SAR): the CAO must enroll all SNAP households in SAR EXCEPT PA CAP (FS70) and Extended SNAP (FS43) households — households where all adult members are elderly/disabled ARE enrolled in SAR (unlike some other states that exempt elderly/disabled households from periodic reporting entirely), though FS75 (zero-income ESAP) households are change-reporting instead, and 24-month households must still report once, in month 12 of their certification (PAH 571.1, 571.11). SAR forms (PA 564) must be returned by the end of the reporting period and are available in English or Spanish.",
+      "source_url": "https://www.pa.gov/agencies/dhs/resources/snap/snap-policies-procedures"
+    },
+    {
+      "key": "program-identity",
+      "kind": "supplement",
+      "terms": [
+        "how to apply",
+        "where do i apply",
+        "apply for snap",
+        "compass",
+        "who runs",
+        "what agency",
+        "administers",
+        "cao",
+        "county assistance office",
+        "ecis",
+        "access card"
+      ],
+      "citation": "PA DHS / COMPASS program materials",
+      "heading": "Pennsylvania applies through COMPASS; County Assistance Offices (CAOs) are DHS's own state-run local offices, not independent county government agencies",
+      "text": "Pennsylvania's SNAP program carries no distinctive local nickname in the Handbook's own text — it is simply called SNAP throughout, unlike Minnesota's \"Food Support\" or Michigan's \"Food Assistance Program (FAP)\" branding elsewhere in this roster. Applications run through COMPASS (Commonwealth of Pennsylvania Application for Social Services, compass.state.pa.us), with paper applications also accepted at local County Assistance Offices (CAOs). Despite the name, a CAO is a Pennsylvania DHS field office — DHS runs SNAP eligibility STATEWIDE through these offices directly, the same state-administered structure this roster already documents for Michigan and Georgia, not an independently-run county-government structure like California, New York, Minnesota, or Wisconsin's consortium model. Eligibility determinations run on DHS's internal Client Information System, referred to as \"eCIS\" in current Handbook text and simply \"CIS\" in older sections — a mid-migration naming pattern similar to (though less consequential than) Minnesota's DHS-to-DCYF agency transition. Benefits load onto the PA Electronic Benefit Transfer (EBT) card, also called the ACCESS card (PAH 506.41). Authorized representatives, homeless applicants without a fixed mailing address, and households applying jointly for cash assistance and SNAP are all handled through the same CAO/COMPASS front door — see the expedited-service and reporting-certification supplements for process specifics that differ by household type.",
+      "source_url": "https://www.pa.gov/agencies/dhs/resources/snap"
+    }
+  ]
+}
