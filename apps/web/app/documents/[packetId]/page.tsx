@@ -55,7 +55,10 @@ export default function DocumentUploadPage({
 
   useEffect(() => { void refresh(); }, [refresh]);
 
-  const t = (k: SnapStringKey) => snapT(locale, k);
+  // Memoized on `locale` because `upload` depends on it: a fresh `t` every
+  // render made `upload`'s useCallback recompute every render, which quietly
+  // turned a memoized handler into an unmemoized one.
+  const t = useCallback((k: SnapStringKey) => snapT(locale, k), [locale]);
 
   const upload = useCallback(async (file: File) => {
     setUploading(true);

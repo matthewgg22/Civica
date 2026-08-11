@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { strings, STORAGE_KEY, LOCALES, type Locale } from "./i18n";
 import { HeroLPIE } from "../components/HeroLPIE";
@@ -35,9 +36,9 @@ export default function Page() {
     <div className="page">
       <header className="site-header">
         <div className="container site-header__inner">
-          <a className="brand" href="/">
+          <Link className="brand" href="/">
             Civica
-          </a>
+          </Link>
           <nav className="site-nav" aria-label="Main">
             <a className="site-nav__link" href="/why-civica">
               Why Civica

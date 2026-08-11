@@ -50,6 +50,37 @@ jobs:
       - name: Run web unit tests
         run: pnpm --filter civica-web run test
 
+  lint:
+    name: apps/web lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # Added only after the app was already clean (#695). apps/web declared a
+      # lint script and depended on eslint for a long time with no flat config,
+      # so `pnpm lint` exited 2 before reading a file and nothing here ever ran
+      # it — `next build` does not lint in Next 16 either.
+      #
+      # --max-warnings=0 lives in the package script, not here: pnpm --filter
+      # does not forward `--` args, and more importantly `pnpm lint` should mean
+      # the same thing on a laptop as it does in CI. The app is at zero warnings
+      # today, and a job that tolerates a growing pile of them is a job people
+      # stop reading.
+      - name: Lint
+        run: pnpm --filter civica-web run lint
+
   db-specs:
     name: Database-backed specs vs real Postgres
     runs-on: ubuntu-latest

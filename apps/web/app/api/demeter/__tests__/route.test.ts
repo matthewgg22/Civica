@@ -6,7 +6,11 @@ import { NextRequest } from "next/server";
 // normalization, frame→plain-text adaptation, the unconfigured 503, and the
 // after() spend settle (estimate path).
 
-const captured = vi.hoisted(() => ({ req: null as any }));
+// The AnswerRequest the route handed the orchestrator. Typed loosely on purpose
+// — the point of these assertions is what the ROUTE put in it, so pinning the
+// engine's exact request type here would make an unrelated engine change fail
+// this file. `unknown` values still force each assertion to say what it expects.
+const captured = vi.hoisted(() => ({ req: null as Record<string, unknown> | null }));
 const mockGate = vi.hoisted(() => vi.fn());
 const mockSettle = vi.hoisted(() => vi.fn());
 const afterCallbacks = vi.hoisted(() => [] as Array<() => Promise<void>>);
@@ -21,7 +25,7 @@ vi.mock("@civica/demeter-engine", () => ({
       : { error: "messages must be an array" };
   },
   answerQuestion: vi.fn((req: unknown) => {
-    captured.req = req;
+    captured.req = req as Record<string, unknown>;
     return (async function* () {
       yield { type: "delta", text: "draft " };
       yield { type: "recompose" };
@@ -57,6 +61,14 @@ function makeReq(body: unknown): NextRequest {
 
 const MSGS = [{ role: "user", content: "What is SNAP?" }];
 
+/** The captured request, asserting it exists. A null here means the route never
+ *  reached the engine at all, which is a different failure than a wrong field —
+ *  so it fails with that message rather than "cannot read property of null". */
+function capturedReq(): Record<string, unknown> {
+  if (!captured.req) throw new Error("the route never called answerQuestion");
+  return captured.req;
+}
+
 describe("POST /api/demeter (public wrapper)", () => {
   beforeEach(() => {
     vi.stubEnv("ANTHROPIC_API_KEY", "test-key");
@@ -71,7 +83,7 @@ describe("POST /api/demeter (public wrapper)", () => {
     const res = await POST(makeReq({ messages: MSGS, state: "TX", ref: "CBO-PB-01" }));
     expect(res.status).toBe(200);
     await res.text();
-    expect(captured.req.meta).toMatchObject({
+    expect(capturedReq().meta).toMatchObject({
       mode: "public",
       staffUserId: null,
       scopeRef: "CBO-PB-01",
@@ -80,11 +92,11 @@ describe("POST /api/demeter (public wrapper)", () => {
 
   it("normalizes state: lowercase verified code upcases, unknown becomes the federal floor", async () => {
     await (await POST(makeReq({ messages: MSGS, state: "tx" }))).text();
-    expect(captured.req.state).toBe("TX");
+    expect(capturedReq().state).toBe("TX");
     await (await POST(makeReq({ messages: MSGS, state: "ZZ" }))).text();
-    expect(captured.req.state).toBeNull();
+    expect(capturedReq().state).toBeNull();
     await (await POST(makeReq({ messages: MSGS }))).text();
-    expect(captured.req.state).toBeNull();
+    expect(capturedReq().state).toBeNull();
   });
 
   it("adapts engine frames to plain text with the recompose marker inline", async () => {

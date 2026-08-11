@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import AppNav from "../../components/AppNav";
@@ -216,9 +217,9 @@ export default function WhyCivicaPage() {
             <h2 className="section__title">Ready to find out what you qualify for?</h2>
             <p className="section__body">Takes about 10 minutes. Free, confidential, no account required.</p>
             <div className="cta-row" style={{ marginTop: "var(--civica-space-xl)" }}>
-              <a href="/apply" className="btn btn--primary">
+              <Link href="/apply" className="btn btn--primary">
                 Check my eligibility
-              </a>
+              </Link>
               <a href="/welcome" className="btn btn--secondary">
                 Back to home
               </a>

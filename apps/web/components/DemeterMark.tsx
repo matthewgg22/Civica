@@ -11,13 +11,19 @@
 // apps/dashboard (ApplyHeader, AppNav, dashboard auth pages, cbo-preview,
 // compliance, AppHeader, etc.) — a rename in place would 404 all of those.
 // This is a separate, Demeter-scoped copy, not a move.
+import Image from "next/image";
+
 export function DemeterMark({ size = 40 }: { size?: number }) {
   return (
-    <img
+    <Image
       src="/demeter-wheat-mark.png"
       alt="Demeter"
       width={size}
       height={size}
+      // The mark sits in the header above the fold on every Demeter surface.
+      // Lazy-loading it would pop the brand in after first paint, which is the
+      // one image on the page where that is worth avoiding.
+      priority
       style={{ display: "block", flex: "none", width: size, height: size, borderRadius: "50%" }}
     />
   );
