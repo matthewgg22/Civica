@@ -662,6 +662,102 @@ export const IL_GOLD: AnswerExpectation[] = [
   },
 ];
 
+// Florida gold set (Wave 2 continued) — a flat 200% BBCE state (no elderly/
+// disabled asymmetric tier, unlike GA/MI/IL), carrying expectCitation
+// against STATE (not federal) authorities per the pattern MI/IL established.
+// At least 3 cases below require the answer to prefer Florida's own text
+// over the federal default: the flat 200% screen (vs. federal 130%), the
+// child-support NCP-request quirk (vs. an automatic-once-verified federal
+// default), and the drug-felony trafficking-only opt-out (vs. a federal
+// full ban).
+export const FL_GOLD: AnswerExpectation[] = [
+  {
+    id: "fl-flat-bbce-screen",
+    question: "What's the income limit for SNAP in Florida if my household has an elderly member?",
+    state: "FL",
+    expectCitation: "FS 2010.0201",
+    mustMention: "200",
+    mustDisclaim: true,
+  },
+  {
+    id: "fl-asset-limit-elderly",
+    question: "What's the SNAP resource limit in Florida for a household with an elderly or disabled member?",
+    state: "FL",
+    expectCitation: "FS 1610.0200",
+    mustMention: "4,500",
+    mustDisclaim: true,
+  },
+  {
+    id: "fl-sua-standard",
+    question: "How much is Florida's standard utility allowance for SNAP right now?",
+    state: "FL",
+    expectCitation: "FS 2410.0344",
+    mustMention: "426",
+    mustDisclaim: true,
+  },
+  {
+    id: "fl-dependent-care-cap",
+    question: "My dependent care costs $250 a month for SNAP in Florida but I can't get a receipt — what happens?",
+    state: "FL",
+    expectCitation: "FS 2410.0324",
+    mustMention: "200",
+    mustDisclaim: true,
+  },
+  {
+    id: "fl-child-support-ncp-request",
+    question: "I pay legally-obligated child support — does it automatically lower my countable income for SNAP in Florida?",
+    state: "FL",
+    expectCitation: "FS 2410.0331",
+    mustMention: "request",
+    mustDisclaim: true,
+  },
+  {
+    id: "fl-abawd-age-band",
+    question: "I'm 60 — does the SNAP work-requirement time limit apply to me in Florida?",
+    state: "FL",
+    expectCitation: "DCF ABAWD FAQ",
+    mustMention: "64",
+    mustDisclaim: true,
+  },
+  {
+    id: "fl-drug-felony",
+    // Guards against inventing a full drug-felony ban Florida doesn't
+    // operate — Florida is a MODIFIED ban (trafficking convictions only,
+    // Fla. Stat. § 414.095), reused from the already-verified #619 engine
+    // pass. Must NOT say every drug felony disqualifies.
+    question: "I was convicted of a drug felony years ago — can I still get SNAP in Florida?",
+    state: "FL",
+    mustNotMention: ["permanently banned", "lifetime ban", "you cannot receive"],
+    mustDisclaim: true,
+  },
+  {
+    id: "fl-restaurant-meals-absent",
+    // Guards against inventing an RMP Florida doesn't operate — the one
+    // RMP check this session that confirmed the existing engine constant
+    // rather than contradicting it.
+    question: "Can I use my EBT card to buy a hot meal at a restaurant in Florida?",
+    state: "FL",
+    mustMention: "not",
+    mustDisclaim: true,
+  },
+  {
+    id: "fl-expedited-service",
+    question: "How fast can I get emergency SNAP benefits in Florida?",
+    state: "FL",
+    expectCitation: "FS 0610.0102",
+    mustMention: "150",
+    mustDisclaim: true,
+  },
+  {
+    id: "fl-cert-period-abawd",
+    question: "How long does my SNAP certification last in Florida if everyone in my household is an ABAWD?",
+    state: "FL",
+    expectCitation: "FS 0810.0400",
+    mustMention: "4",
+    mustDisclaim: true,
+  },
+];
+
 /** Everything the live runner executes. */
 export const ALL_GOLD: AnswerExpectation[] = [
   ...ANSWER_GOLD,
@@ -672,4 +768,5 @@ export const ALL_GOLD: AnswerExpectation[] = [
   ...ADVERSARIAL_GOLD,
   ...MI_GOLD,
   ...IL_GOLD,
+  ...FL_GOLD,
 ];

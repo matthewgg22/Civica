@@ -1,0 +1,61 @@
+{
+  "_provenance": {
+    "note": "Florida citation authorities. The ACCESS Florida Program Policy Manual cites passages by chapter.program.section, e.g. '2410.0344' — the '10' in the middle two digits of the chapter marks it Food Stamps (FS); '20' would be TCA, '30' MFAM, etc. Cited here as 'FS <passage>' to disambiguate from the same numeric passage under a different program, matching how this pack's own text distinguishes them (e.g. every FS passage title ends '(FS)' in the source itself). Florida Administrative Code rules are cited 'F.A.C. 65A-1.NNN'; statutes as 'Fla. Stat. § NNN.NNN'.",
+    "extracted": "2026-08-11"
+  },
+  "patterns": [
+    {
+      "key": "flpassage",
+      "regex": "\\bFS\\s+(\\d{4}\\.\\d{4}(?:\\.\\d{2})?)\\b",
+      "flags": "gi",
+      "template": "FS $1",
+      "normalize": "none",
+      "match": "exact",
+      "note": "ACCESS Florida manual passages, Food Stamps program (chapter middle-digits '10'). Sub-passages like 2410.0214.05 verify at exact form."
+    },
+    {
+      "key": "flfac",
+      "regex": "\\bF\\.A\\.C\\.\\s+65A-1\\.(\\d{3})\\b",
+      "flags": "gi",
+      "template": "F.A.C. 65A-1.$1",
+      "normalize": "none",
+      "match": "exact",
+      "note": "Florida Administrative Code, Chapter 65A-1 (Public Assistance Programs, DCF Economic Self-Sufficiency)"
+    },
+    {
+      "key": "flstat",
+      "regex": "\\bFla\\.\\s+Stat\\.\\s+§\\s*(\\d{3}\\.\\d{3,4})\\b",
+      "flags": "gi",
+      "template": "Fla. Stat. § $1",
+      "normalize": "none",
+      "match": "exact",
+      "note": "Florida Statutes — reused from the #619 engine pass for § 414.095 (drug-felony opt-out)"
+    }
+  ],
+  "known": {
+    "flpassage": [
+      { "value": "FS 0610.0102", "note": "expedited services — federal-standard criteria ($150/$100, destitute farmworker, rent+utility test)" },
+      { "value": "FS 0810.0200", "note": "simplified reporting, effective 11/1/2009 — report income over 130% or ABAWD hours below 20/week by the 10th of the following month" },
+      { "value": "FS 0810.0400", "note": "certification periods — 6-month default, 24-month elderly/disabled with a 12-month interim contact, 4-month ABAWD-only households" },
+      { "value": "FS 0810.0401", "note": "ending certification periods — adverse action notice rules, expedited-service postponed-verification limits" },
+      { "value": "FS 1610.0200", "note": "asset limits — $3,000/$4,500 by elderly/disabled status, waived for cat-el households" },
+      { "value": "FS 1610.0206", "note": "asset verification — required only within $100 of the limit" },
+      { "value": "FS 2010.0201", "note": "categorically eligible assistance groups — ACCESS Florida notice conferral, 200% flat gross screen for elderly/disabled fallback" },
+      { "value": "FS 2010.0202", "note": "noncategorically eligible assistance groups — IPV, felony drug trafficking (since 8/22/1996), fleeing felon, certain violent/sexual felons, E&T sanction" },
+      { "value": "FS 2410.0100", "note": "income limits overview — gross/net tests, elderly/disabled net-only" },
+      { "value": "FS 2410.0323", "note": "dependent care disregard" },
+      { "value": "FS 2410.0329", "note": "child support deduction" },
+      { "value": "FS 2410.0344", "note": "standard utility allowance (SUA) — heating/cooling expense, LIHEAP $20+/year, or landlord-billed usage" },
+      { "value": "FS 2410.0345", "note": "basic utility allowance (BUA) — 2+ non-heat utilities" },
+      { "value": "FS 2410.0346", "note": "telephone standard" },
+      { "value": "FS 2410.0353", "note": "excess medical expenses — actual-expense floor, broad elderly/disabled/veteran eligible-category list" },
+      { "value": "FS 2410.0356", "note": "$35 medical disregard — federal-standard floor, no flat standard amount" }
+    ],
+    "flfac": [
+      { "value": "F.A.C. 65A-1.603", "note": "Food Assistance Program Income and Expenses — SUA/BUA/telephone/shelter-cap dollar figures, effective 2/5/2025; a new amendment was PROPOSED 8/10/2026, watch for supersession" }
+    ],
+    "flstat": [
+      { "value": "Fla. Stat. § 414.095", "note": "drug-felony opt-out (trafficking-only ban) — reused from the #619 engine pass" }
+    ]
+  }
+}

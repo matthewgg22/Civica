@@ -1,0 +1,20 @@
+{
+  "_provenance": {
+    "note": "Florida dated facts. Unlike most states in this roster, Florida's utility-standard rule does NOT ride a fixed October COLA cycle — it updates on its own Florida Administrative Code rulemaking schedule, which is actively in motion as of this pack's build date.",
+    "extracted": "2026-08-11"
+  },
+  "entries": [
+    {
+      "key": "fl-facrule-active-amendment",
+      "kind": "expires",
+      "date": "2026-11-01",
+      "warning": "F.A.C. 65A-1.603 (SUA/BUA/telephone standard/shelter deduction) — the currently-effective version dates to 2/5/2025, but a NEW amendment to this same rule was PROPOSED 8/10/2026 (flrules.org notice ID 31229555, \"Amend to update the standard utility allowance, basic utility allowance, telephone standard and shelter deduction... and adds verification of allowable expenses and deductions\"), with an earlier development-stage notice from 7/22/2026. Florida Administrative Procedure Act rulemaking typically takes 60-90+ days from proposal to adoption — this pack's figures ($426 SUA / $340 BUA / $49 telephone, reused from the #619 engine pass) are very likely to be superseded within weeks to a few months of this pack's build date. Check flrules.org/gateway/RuleNo.asp?ID=65A-1.603 for the current effective version before quoting any Florida utility-standard dollar figure."
+    },
+    {
+      "key": "fl-abawd-waiver-status",
+      "kind": "expires",
+      "date": "2026-12-31",
+      "warning": "This pack found NO current ABAWD area-waiver response on file for Florida in USDA FNA's FY2025-2029 waiver-response index (fna.usda.gov), and a secondary source states Florida held no waiver as of FY2024 Q4 — but this was not confirmed against a direct FNA quarterly waiver-status PDF (see issue #708). Do not assert Florida currently holds or lacks an ABAWD area waiver without re-checking the current FNA quarterly file; the engine's abawd_waiver_avail constant is flagged as possibly stale for the same reason."
+    }
+  ]
+}
