@@ -1,11 +1,36 @@
 import { siteUrl } from "../lib/site-url";
 import type { Metadata } from "next";
-import { Hanken_Grotesk, Newsreader, Be_Vietnam_Pro, Noto_Serif_SC, Noto_Sans_SC } from "next/font/google";
+import localFont from "next/font/local";
+// CJK, self-hosted from npm rather than fetched from Google at build time.
+// These two ship ~165 pre-subsetted woff2 files with unicode-range, so a
+// browser still downloads only the glyph ranges a page actually uses — which
+// is why they are NOT next/font/local like the Latin faces below. localFont
+// cannot express unicode-range, so pointing it at a single CJK file would make
+// every /zh visitor download ~5MB to read one page. They are also why the
+// files are not committed: 165 files / 10MB of binary does not belong in git.
+import "@fontsource/noto-serif-sc";
+import "@fontsource/noto-sans-sc";
 import "./globals.css";
 
-const hanken = Hanken_Grotesk({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
+// SELF-HOSTED (#697). These were next/font/google, which DOWNLOADS THE FILES
+// DURING THE BUILD — so an unreachable fonts.gstatic.com did not degrade
+// typography, it failed the deploy. It took out CI on PR #696 for a change
+// that had nothing to do with fonts.
+//
+// Provenance, so these can be regenerated deliberately rather than guessed:
+//   pnpm add -D @fontsource-variable/newsreader@5.3.0 \
+//              @fontsource-variable/hanken-grotesk@5.3.0 \
+//              @fontsource/be-vietnam-pro@5.3.0
+//   cp node_modules/<pkg>/files/<face>-latin-*.woff2 app/fonts/
+// The three packages are then removed again — once the files are committed the
+// build needs nothing but the repo.
+//
+// Latin only, which is the whole Latin payload: 9 files, 288KB. The CJK half
+// is what made the Google fetch 230 files and 11MB.
+const hanken = localFont({
+  src: "./fonts/hanken-grotesk-latin-wght-normal.woff2",
+  // Variable font: one file covers the whole 400–600 range the design uses.
+  weight: "100 900",
   display: "swap",
   variable: "--civica-font-loaded",
 });
@@ -18,34 +43,27 @@ const hanken = Hanken_Grotesk({
 // separate from --civica-*. Scoped to .screening/.screen-landing/.screen-auth
 // in globals.css; the older pine-branded pages are untouched. No mono face —
 // the prior JetBrains Mono use sites were both labels and moved to sans.
-const newsreader = Newsreader({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-  style: ["normal", "italic"],
+const newsreader = localFont({
+  src: [
+    { path: "./fonts/newsreader-latin-wght-normal.woff2", style: "normal", weight: "100 900" },
+    { path: "./fonts/newsreader-latin-wght-italic.woff2", style: "italic", weight: "100 900" },
+  ],
   display: "swap",
   variable: "--demeter-font-display",
 });
-const beVietnamPro = Be_Vietnam_Pro({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-  style: ["normal", "italic"],
+// Be Vietnam Pro has no variable build, so each weight/style is its own file —
+// the same six next/font/google was fetching.
+const beVietnamPro = localFont({
+  src: [
+    { path: "./fonts/be-vietnam-pro-latin-400-normal.woff2", style: "normal", weight: "400" },
+    { path: "./fonts/be-vietnam-pro-latin-400-italic.woff2", style: "italic", weight: "400" },
+    { path: "./fonts/be-vietnam-pro-latin-500-normal.woff2", style: "normal", weight: "500" },
+    { path: "./fonts/be-vietnam-pro-latin-500-italic.woff2", style: "italic", weight: "500" },
+    { path: "./fonts/be-vietnam-pro-latin-600-normal.woff2", style: "normal", weight: "600" },
+    { path: "./fonts/be-vietnam-pro-latin-600-italic.woff2", style: "italic", weight: "600" },
+  ],
   display: "swap",
   variable: "--demeter-font-sans",
-});
-// CJK fallbacks — "Noto sits behind each for Simplified Chinese." Own
-// variables (not bundled into the fallback stack as bare family-name
-// strings) so next/font actually loads and subsets them.
-const notoSerifSC = Noto_Serif_SC({
-  subsets: ["latin"],
-  weight: ["400", "600"],
-  display: "swap",
-  variable: "--demeter-font-serif-cjk",
-});
-const notoSansSC = Noto_Sans_SC({
-  subsets: ["latin"],
-  weight: ["400", "500"],
-  display: "swap",
-  variable: "--demeter-font-sans-cjk",
 });
 
 // metadataBase makes every relative OG/canonical URL absolute — without it
@@ -69,7 +87,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${hanken.variable} ${newsreader.variable} ${beVietnamPro.variable} ${notoSerifSC.variable} ${notoSansSC.variable}`}>
+    // --demeter-font-serif-cjk / --demeter-font-sans-cjk are no longer
+    // next/font variables (those two faces come from @fontsource now, which
+    // registers the plain family names). They are declared in globals.css
+    // instead, so every `var(--demeter-font-*-cjk)` use site is unchanged.
+    <html lang="en" className={`${hanken.variable} ${newsreader.variable} ${beVietnamPro.variable}`}>
       <body>{children}</body>
     </html>
   );

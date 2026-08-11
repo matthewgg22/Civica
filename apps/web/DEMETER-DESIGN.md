@@ -104,8 +104,18 @@ partial dark mode — a half-themed benefits page is worse than a light one.
 
 ## 4. Typography
 
-Two faces, loaded via `next/font` in `layout.tsx`, exposed as `.variable` classes on
-`<html>`. Never redeclared in CSS.
+Two faces, loaded via **`next/font/local`** in `layout.tsx` from woff2 committed under
+`app/fonts/`, exposed as `.variable` classes on `<html>`. Never redeclared in CSS.
+
+**Self-hosted, and it must stay that way (#697).** `next/font/google` downloads the
+files *during the build*, so an unreachable `fonts.gstatic.com` did not degrade
+typography — it failed the deploy. Do not reintroduce a `next/font/google` import;
+`app/__tests__/fonts.test.ts` guards it.
+
+The two CJK faces are the deliberate exception: they come from `@fontsource/noto-*-sc`
+on npm, because `localFont` cannot express `unicode-range`. Their ~165 pre-subsetted
+files mean a browser fetches only the glyph ranges a page uses; a single CJK file would
+be ~5MB for every `/zh` visitor, and 10MB of binary does not belong in git.
 
 | Variable | Face | Role |
 |---|---|---|
@@ -250,6 +260,7 @@ Do not ship:
 
 | Date | Decision | Rationale |
 |---|---|---|
+| 2026-08-11 | Fonts self-hosted; `next/font/google` banned | The build downloaded them, so a Google outage failed the deploy (#697). CJK stays on `@fontsource` for `unicode-range`. |
 | 2026-08-11 | This file created | Three surfaces had drifted with no written system; `/design-consultation` |
 | 2026-08-11 | Orientation bar carries the h1; product stated before SNAP | Fixed an inverted heading hierarchy; category research (GetCalFresh vs mRelief/Consensus) |
 | 2026-08-11 | Form-question cards + "why this is hard" moved to `/questions` | ~1,300 → ~600 words on the entry page; moved, not cut; better GEO on a focused URL |
