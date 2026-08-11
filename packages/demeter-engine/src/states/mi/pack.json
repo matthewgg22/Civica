@@ -1,0 +1,35 @@
+{
+  "code": "MI",
+  "program": "Food Assistance Program (FAP) — Michigan's name for SNAP",
+  "agency": "Michigan Department of Health and Human Services (MDHHS)",
+  "admin_model": "state",
+  "admin_note": "State-administered: MDHHS runs FAP directly through local offices; there are no independent county eligibility agencies. Policy lives in the Bridges Eligibility Manual (BEM) and Bridges Administrative Manual (BAM), amended by numbered Bulletins (BPB — Bridges Policy Bulletin); dollar tables live separately in the Reference Tables Manual (RFT), amended by Reference Table Bulletins (RFB). Bridges is both MDHHS's eligibility system and the name lending itself to the manuals.",
+  "system": "Bridges (state eligibility system)",
+  "portal": {
+    "name": "MI Bridges",
+    "url": "https://newmibridges.michigan.gov"
+  },
+  "update_channels": [
+    {
+      "name": "Bridges Eligibility Manual (BEM) + Bridges Administrative Manual (BAM), amended by BPB bulletins",
+      "url": "https://dhhs.michigan.gov/OLMWEB/EX/BP/Public/BEM/000.pdf"
+    },
+    {
+      "name": "Reference Tables Manual (RFT), amended by RFB bulletins — annual FY dollar tables",
+      "url": "https://dhhs.michigan.gov/OLMWEB/EX/RF/Public/RFT/000.pdf"
+    }
+  ],
+  "verification": {
+    "verified_on": "2026-08-11",
+    "method": "Direct fetch of ~35 BEM/BAM/RFT PDFs + the BPG Glossary over plain curl (dhhs.michigan.gov/OLMWEB — stable per-document URLs, no host blocking observed) + MCL 400.10b (legislature.mi.gov) → cross-read against the FNS BBCE chart and framework roster entry → draft → adversarial refute gate.",
+    "gates": "Cross-check: every pivotal dollar value and eligibility rule traced to its own PDF page image (not a curated extract) before drafting. Refute gate recorded in PROVENANCE.md.",
+    "sources": [
+      "Bridges Eligibility Manual (BEM) 203, 212, 213, 225, 245, 255, 400, 403, 406, 500, 501, 503, 505, 550, 554, 556, 615, 617, 618, 619, 620, 708 (dhhs.michigan.gov/OLMWEB)",
+      "Bridges Administrative Manual (BAM) 105, 110, 115, 116, 117, 119, 130, 200, 210, 220, 400, 401E, 502, 600 (dhhs.michigan.gov/OLMWEB)",
+      "Reference Tables Manual (RFT) 250, 255, 260, 262 (dhhs.michigan.gov/OLMWEB)",
+      "Bridges Policy Glossary (BPG) (dhhs.michigan.gov/OLMWEB)",
+      "MCL 400.10b, Social Welfare Act 280 of 1939 (legislature.mi.gov) — felony-warrant disqualification statute",
+      "FNS BBCE chart, June 2026 (corroboration only)"
+    ]
+  }
+}

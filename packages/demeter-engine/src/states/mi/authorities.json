@@ -1,0 +1,96 @@
+{
+  "_provenance": {
+    "note": "Michigan citation authorities. Policy is split across two manuals cited by number: the Bridges Eligibility Manual ('BEM 213') and the Bridges Administrative Manual ('BAM 117'), both amended by numbered Bridges Policy Bulletins ('BPB 2026-007'). Dollar tables live in the Reference Tables Manual ('RFT 255'), amended by Reference Table Bulletins ('RFB 2025-006'). Some BEM/BAM numbers carry a trailing letter (BEM 230B, BAM 401E) that the regex preserves. The statewide glossary (BPG) is cited by section name in prose, not as a numbered citation, and carries no extraction pattern.",
+    "extracted": "2026-08-11"
+  },
+  "patterns": [
+    {
+      "key": "bem",
+      "regex": "\\bBEM\\s+(\\d{3}[A-Z]?)\\b",
+      "flags": "gi",
+      "template": "BEM $1",
+      "normalize": "upper",
+      "match": "exact",
+      "note": "Bridges Eligibility Manual sections; some carry a trailing letter suffix (e.g. BEM 230B)"
+    },
+    {
+      "key": "bam",
+      "regex": "\\bBAM\\s+(\\d{3}[A-Z]?)\\b",
+      "flags": "gi",
+      "template": "BAM $1",
+      "normalize": "upper",
+      "match": "exact",
+      "note": "Bridges Administrative Manual sections; some carry a trailing letter suffix (e.g. BAM 401E)"
+    },
+    {
+      "key": "rft",
+      "regex": "\\bRFT\\s+(\\d{3})\\b",
+      "flags": "gi",
+      "template": "RFT $1",
+      "normalize": "none",
+      "match": "exact",
+      "note": "Reference Tables Manual — dated dollar/table sections"
+    },
+    {
+      "key": "mcl",
+      "regex": "\\bMCL\\s+(400\\.\\d+[a-z]?)\\b",
+      "flags": "gi",
+      "template": "MCL $1",
+      "normalize": "none",
+      "match": "exact",
+      "note": "Michigan Compiled Laws, Social Welfare Act 280 of 1939, Article 4 (public assistance disqualifications)"
+    }
+  ],
+  "known": {
+    "bem": [
+      { "value": "BEM 203", "note": "criminal justice disqualifications — fleeing felon, probation/parole violator, no standalone drug-felony ban" },
+      { "value": "BEM 212", "note": "FAP group composition — includes the 165% elderly/disabled separate-group test" },
+      { "value": "BEM 213", "note": "categorical eligibility — DVPS-conferred 200% screen, skip asset+income tests" },
+      { "value": "BEM 225", "note": "citizenship/non-citizen status" },
+      { "value": "BEM 245", "note": "school attendance and student status" },
+      { "value": "BEM 255", "note": "child support — cooperation not required for FAP as of 10/1/2024" },
+      { "value": "BEM 400", "note": "assets — $3,000/$4,500 FAP limits, vehicles fully excluded" },
+      { "value": "BEM 403", "note": "lottery/gambling winnings — $4,500 trigger, cat-el loss on reapplication" },
+      { "value": "BEM 406", "note": "FAP divestment/resource transfer" },
+      { "value": "BEM 500", "note": "income overview" },
+      { "value": "BEM 501", "note": "income from employment" },
+      { "value": "BEM 503", "note": "unearned income" },
+      { "value": "BEM 505", "note": "prospective budgeting / income change processing" },
+      { "value": "BEM 550", "note": "FAP income budgeting — disqualified/ineligible person income treatment" },
+      { "value": "BEM 554", "note": "SNAP allowable expenses — SUA mechanics, SMD, child support/dependent-care deductions" },
+      { "value": "BEM 556", "note": "computing the FAP budget — line-by-line worksheet, 20% earned-income deduction" },
+      { "value": "BEM 615", "note": "group living facilities" },
+      { "value": "BEM 617", "note": "FAP in nonprofit group living facilities" },
+      { "value": "BEM 618", "note": "MiCAP — SSI-only combined-application demonstration project" },
+      { "value": "BEM 619", "note": "Summer EBT program" },
+      { "value": "BEM 620", "note": "Time Limited Food Assistance (TLFA/ABAWD) — fixed clock, waived counties/cities, deferrals" },
+      { "value": "BEM 708", "note": "client disqualifications overview" }
+    ],
+    "bam": [
+      { "value": "BAM 105", "note": "rights and responsibilities" },
+      { "value": "BAM 110", "note": "application filing and registration" },
+      { "value": "BAM 115", "note": "application processing — 30-day SOP, benefit-period assignment" },
+      { "value": "BAM 116", "note": "SSI/FAP joint application processing" },
+      { "value": "BAM 117", "note": "FAP expedited service — 7-day SOP, three-test eligibility" },
+      { "value": "BAM 119", "note": "Restaurant Meals Program — statewide, elderly/disabled/homeless" },
+      { "value": "BAM 130", "note": "verification and collateral contacts" },
+      { "value": "BAM 200", "note": "simplified reporting — three triggers, ineligible-group carveouts" },
+      { "value": "BAM 210", "note": "redetermination/ex parte review — 12/24/36-month periods" },
+      { "value": "BAM 220", "note": "case actions" },
+      { "value": "BAM 400", "note": "issuance of program benefits" },
+      { "value": "BAM 401E", "note": "EBT issuance system" },
+      { "value": "BAM 502", "note": "food benefit replacement" },
+      { "value": "BAM 600", "note": "hearings" }
+    ],
+    "rft": [
+      { "value": "RFT 250", "note": "FAP income limits table — 130%/100%/165%/200%/SR by group size" },
+      { "value": "RFT 255", "note": "Food Assistance Standards — SUA table, standard deduction, homeless shelter deduction" },
+      { "value": "RFT 260", "note": "Food Assistance Issuance Table — benefit amount by net income and group size" },
+      { "value": "RFT 262", "note": "restaurants authorized to accept FAP" }
+    ],
+    "mcl": [
+      { "value": "MCL 400.10b", "note": "felony-warrant / absconding disqualification, with an explicit FAP carve-out for controlled-substance warrants" },
+      { "value": "MCL 400.10e", "note": "lottery/gambling winnings inclusion in financial eligibility" }
+    ]
+  }
+}
