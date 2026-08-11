@@ -387,6 +387,11 @@
           "eligible": true,
           "benefit": 759
         },
+        "NV": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 759
+        },
         "AZ": {
           "verdict": "APPROVE",
           "eligible": true,
@@ -528,6 +533,11 @@
           "benefit": 298
         },
         "NY": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "NV": {
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 298
@@ -710,6 +720,11 @@
           "eligible": true,
           "benefit": 804
         },
+        "NV": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 804
+        },
         "AZ": {
           "verdict": "APPROVE",
           "eligible": true,
@@ -830,6 +845,11 @@
           "benefit": 298
         },
         "NY": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "NV": {
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 298
@@ -985,6 +1005,11 @@
           "eligible": true,
           "benefit": 546
         },
+        "NV": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 509
+        },
         "AZ": {
           "verdict": "APPROVE",
           "eligible": true,
@@ -1134,6 +1159,11 @@
           "eligible": true,
           "benefit": 546
         },
+        "NV": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 546
+        },
         "AZ": {
           "verdict": "APPROVE",
           "eligible": true,
@@ -1269,6 +1299,11 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 277
+        },
+        "NV": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 278
         },
         "AZ": {
           "verdict": "APPROVE",
@@ -1434,6 +1469,11 @@
           "eligible": true,
           "benefit": 785
         },
+        "NV": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
+        },
         "AZ": {
           "verdict": "APPROVE",
           "eligible": true,
@@ -1579,6 +1619,11 @@
           "benefit": 454
         },
         "NY": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 472
+        },
+        "NV": {
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 472
@@ -1747,6 +1792,11 @@
           "eligible": true,
           "benefit": 783
         },
+        "NV": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 783
+        },
         "AZ": {
           "verdict": "APPROVE",
           "eligible": true,
@@ -1880,6 +1930,11 @@
           "eligible": false,
           "benefit": null
         },
+        "NV": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 24
+        },
         "AZ": {
           "verdict": "APPROVE",
           "eligible": true,
@@ -2010,6 +2065,11 @@
           "benefit": 298
         },
         "NY": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "NV": {
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 298
@@ -2200,6 +2260,11 @@
           "eligible": false,
           "benefit": null
         },
+        "NV": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
         "AZ": {
           "verdict": "DENY",
           "eligible": false,
@@ -2348,6 +2413,11 @@
           "eligible": false,
           "benefit": null
         },
+        "NV": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
         "AZ": {
           "verdict": "DENY",
           "eligible": false,
@@ -2472,6 +2542,11 @@
           "eligible": false,
           "benefit": null
         },
+        "NV": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
         "AZ": {
           "verdict": "DENY",
           "eligible": false,
@@ -2592,6 +2667,11 @@
           "benefit": null
         },
         "NY": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "NV": {
           "verdict": "DENY",
           "eligible": false,
           "benefit": null
@@ -2726,6 +2806,11 @@
           "benefit": null
         },
         "NY": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "NV": {
           "verdict": "DENY",
           "eligible": false,
           "benefit": null
@@ -2896,6 +2981,11 @@
           "eligible": false,
           "benefit": null
         },
+        "NV": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
         "AZ": {
           "verdict": "DENY",
           "eligible": false,
@@ -3026,6 +3116,11 @@
           "benefit": null
         },
         "NY": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "NV": {
           "verdict": "DENY",
           "eligible": false,
           "benefit": null
@@ -3162,6 +3257,11 @@
           "benefit": null
         },
         "NY": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "NV": {
           "verdict": "DENY",
           "eligible": false,
           "benefit": null
@@ -3329,6 +3429,11 @@
           "eligible": false,
           "benefit": null
         },
+        "NV": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 53
+        },
         "AZ": {
           "verdict": "APPROVE",
           "eligible": true,
@@ -3474,6 +3579,11 @@
           "benefit": 496
         },
         "NY": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 496
+        },
+        "NV": {
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 496
@@ -3640,6 +3750,11 @@
           "eligible": true,
           "benefit": 176
         },
+        "NV": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 176
+        },
         "AZ": {
           "verdict": "APPROVE",
           "eligible": true,
@@ -3798,6 +3913,11 @@
           "eligible": false,
           "benefit": null
         },
+        "NV": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 240
+        },
         "AZ": {
           "verdict": "APPROVE",
           "eligible": true,
@@ -3933,6 +4053,11 @@
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 298
+        },
+        "NV": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 286
         },
         "AZ": {
           "verdict": "APPROVE",
@@ -4096,6 +4221,11 @@
           "verdict": "DENY",
           "eligible": false,
           "benefit": null
+        },
+        "NV": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 317
         },
         "AZ": {
           "verdict": "APPROVE",
@@ -4269,6 +4399,11 @@
           "eligible": true,
           "benefit": 423
         },
+        "NV": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 371
+        },
         "AZ": {
           "verdict": "APPROVE",
           "eligible": true,
@@ -4422,6 +4557,11 @@
           "benefit": 424
         },
         "NY": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 424
+        },
+        "NV": {
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 424
@@ -4599,6 +4739,11 @@
           "eligible": true,
           "benefit": 687
         },
+        "NV": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 687
+        },
         "AZ": {
           "verdict": "APPROVE",
           "eligible": true,
@@ -4765,6 +4910,11 @@
           "eligible": true,
           "benefit": 785
         },
+        "NV": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
+        },
         "AZ": {
           "verdict": "APPROVE",
           "eligible": true,
@@ -4912,6 +5062,11 @@
           "eligible": true,
           "benefit": 177
         },
+        "NV": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 177
+        },
         "AZ": {
           "verdict": "APPROVE",
           "eligible": true,
@@ -5037,6 +5192,11 @@
           "verdict": "DENY",
           "eligible": false,
           "benefit": null
+        },
+        "NV": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
         },
         "AZ": {
           "verdict": "APPROVE",
@@ -5171,6 +5331,11 @@
           "benefit": 298
         },
         "NY": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "NV": {
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 298
@@ -5381,6 +5546,11 @@
           "benefit": 298
         },
         "NY": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "NV": {
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 298
@@ -5742,6 +5912,11 @@
           "eligible": true,
           "benefit": 352
         },
+        "NV": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 352
+        },
         "AZ": {
           "verdict": "APPROVE",
           "eligible": true,
@@ -5872,6 +6047,11 @@
           "benefit": null
         },
         "NY": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "NV": {
           "verdict": "DENY",
           "eligible": false,
           "benefit": null
@@ -6021,6 +6201,11 @@
           "benefit": 520
         },
         "NY": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 520
+        },
+        "NV": {
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 520
@@ -6459,6 +6644,11 @@
           "eligible": true,
           "benefit": 785
         },
+        "NV": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
+        },
         "AZ": {
           "verdict": "APPROVE",
           "eligible": true,
@@ -6577,6 +6767,11 @@
           "benefit": 298
         },
         "NY": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "NV": {
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 298
@@ -6725,6 +6920,11 @@
           "benefit": 546
         },
         "NY": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 546
+        },
+        "NV": {
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 546
@@ -7103,6 +7303,11 @@
           "benefit": 544
         },
         "NY": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 544
+        },
+        "NV": {
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 544
@@ -7951,6 +8156,11 @@
           "eligible": true,
           "benefit": 203
         },
+        "NV": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 203
+        },
         "AZ": {
           "verdict": "APPROVE",
           "eligible": true,
@@ -8191,6 +8401,11 @@
           "eligible": false,
           "benefit": null
         },
+        "NV": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 24
+        },
         "AZ": {
           "verdict": "APPROVE",
           "eligible": true,
@@ -8414,6 +8629,11 @@
           "eligible": true,
           "benefit": 1284
         },
+        "NV": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 1284
+        },
         "AZ": {
           "verdict": "APPROVE",
           "eligible": true,
@@ -8567,6 +8787,11 @@
           "eligible": true,
           "benefit": 785
         },
+        "NV": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
+        },
         "AZ": {
           "verdict": "APPROVE",
           "eligible": true,
@@ -8701,6 +8926,11 @@
           "benefit": 546
         },
         "NY": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 546
+        },
+        "NV": {
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 546
@@ -8867,6 +9097,11 @@
           "eligible": true,
           "benefit": 785
         },
+        "NV": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
+        },
         "AZ": {
           "verdict": "APPROVE",
           "eligible": true,
@@ -9025,6 +9260,11 @@
           "benefit": 785
         },
         "NY": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
+        },
+        "NV": {
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 785
@@ -9191,6 +9431,11 @@
           "eligible": true,
           "benefit": 639
         },
+        "NV": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 639
+        },
         "AZ": {
           "verdict": "APPROVE",
           "eligible": true,
@@ -9353,6 +9598,11 @@
           "eligible": true,
           "benefit": 459
         },
+        "NV": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 459
+        },
         "AZ": {
           "verdict": "APPROVE",
           "eligible": true,
@@ -9511,6 +9761,11 @@
           "benefit": 279
         },
         "NY": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 279
+        },
+        "NV": {
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 279
@@ -9679,6 +9934,11 @@
           "eligible": false,
           "benefit": null
         },
+        "NV": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 155
+        },
         "AZ": {
           "verdict": "APPROVE",
           "eligible": true,
@@ -9807,6 +10067,11 @@
           "benefit": 298
         },
         "NY": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "NV": {
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 298
@@ -9943,6 +10208,11 @@
           "eligible": true,
           "benefit": 212
         },
+        "NV": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 212
+        },
         "AZ": {
           "verdict": "APPROVE",
           "eligible": true,
@@ -10071,6 +10341,11 @@
           "benefit": 104
         },
         "NY": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 104
+        },
+        "NV": {
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 104
@@ -10207,6 +10482,11 @@
           "eligible": true,
           "benefit": 32
         },
+        "NV": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 32
+        },
         "AZ": {
           "verdict": "APPROVE",
           "eligible": true,
@@ -10335,6 +10615,11 @@
           "benefit": 24
         },
         "NY": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 24
+        },
+        "NV": {
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 24
@@ -10501,6 +10786,11 @@
           "eligible": true,
           "benefit": 459
         },
+        "NV": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 459
+        },
         "AZ": {
           "verdict": "APPROVE",
           "eligible": true,
@@ -10659,6 +10949,11 @@
           "benefit": 591
         },
         "NY": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 591
+        },
+        "NV": {
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 591
@@ -10828,6 +11123,11 @@
           "eligible": true,
           "benefit": 459
         },
+        "NV": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 459
+        },
         "AZ": {
           "verdict": "APPROVE",
           "eligible": true,
@@ -10974,6 +11274,11 @@
           "benefit": 546
         },
         "NY": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 546
+        },
+        "NV": {
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 546
@@ -11206,6 +11511,11 @@
           "eligible": true,
           "benefit": 1789
         },
+        "NV": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 1789
+        },
         "AZ": {
           "verdict": "APPROVE",
           "eligible": true,
@@ -11352,6 +11662,11 @@
           "verdict": "DENY",
           "eligible": false,
           "benefit": null
+        },
+        "NV": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 112
         },
         "AZ": {
           "verdict": "APPROVE",
@@ -11516,6 +11831,11 @@
           "eligible": false,
           "benefit": null
         },
+        "NV": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 0
+        },
         "AZ": {
           "verdict": "APPROVE",
           "eligible": true,
@@ -11674,6 +11994,11 @@
           "benefit": 416
         },
         "NY": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 416
+        },
+        "NV": {
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 416
@@ -11840,6 +12165,11 @@
           "eligible": true,
           "benefit": 471
         },
+        "NV": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 471
+        },
         "AZ": {
           "verdict": "APPROVE",
           "eligible": true,
@@ -11998,6 +12328,11 @@
           "benefit": 591
         },
         "NY": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 591
+        },
+        "NV": {
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 591
@@ -12164,6 +12499,11 @@
           "eligible": true,
           "benefit": 639
         },
+        "NV": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 639
+        },
         "AZ": {
           "verdict": "APPROVE",
           "eligible": true,
@@ -12326,6 +12666,11 @@
           "eligible": true,
           "benefit": 639
         },
+        "NV": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 639
+        },
         "AZ": {
           "verdict": "APPROVE",
           "eligible": true,
@@ -12484,6 +12829,11 @@
           "benefit": 639
         },
         "NY": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 639
+        },
+        "NV": {
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 639
@@ -12653,6 +13003,11 @@
           "eligible": true,
           "benefit": 308
         },
+        "NV": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 308
+        },
         "AZ": {
           "verdict": "APPROVE",
           "eligible": true,
@@ -12814,6 +13169,11 @@
           "benefit": 429
         },
         "NY": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 429
+        },
+        "NV": {
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 429
@@ -12983,6 +13343,11 @@
           "eligible": true,
           "benefit": 477
         },
+        "NV": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 477
+        },
         "AZ": {
           "verdict": "APPROVE",
           "eligible": true,
@@ -13144,6 +13509,11 @@
           "benefit": 669
         },
         "NY": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 669
+        },
+        "NV": {
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 669
@@ -13313,6 +13683,11 @@
           "eligible": true,
           "benefit": 785
         },
+        "NV": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
+        },
         "AZ": {
           "verdict": "APPROVE",
           "eligible": true,
@@ -13474,6 +13849,11 @@
           "benefit": 785
         },
         "NY": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
+        },
+        "NV": {
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 785
@@ -13804,6 +14184,11 @@
           "eligible": true,
           "benefit": 716
         },
+        "NV": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 612
+        },
         "AZ": {
           "verdict": "APPROVE",
           "eligible": true,
@@ -14007,6 +14392,11 @@
           "eligible": true,
           "benefit": 956
         },
+        "NV": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 956
+        },
         "AZ": {
           "verdict": "APPROVE",
           "eligible": true,
@@ -14165,6 +14555,11 @@
           "eligible": true,
           "benefit": 546
         },
+        "NV": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 546
+        },
         "AZ": {
           "verdict": "APPROVE",
           "eligible": true,
@@ -14290,6 +14685,11 @@
           "benefit": 298
         },
         "NY": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "NV": {
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 298
@@ -14436,6 +14836,11 @@
           "eligible": true,
           "benefit": 203
         },
+        "NV": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 203
+        },
         "AZ": {
           "verdict": "APPROVE",
           "eligible": true,
@@ -14574,6 +14979,11 @@
           "benefit": 298
         },
         "NY": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "NV": {
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 298
@@ -14808,6 +15218,11 @@
           "eligible": true,
           "benefit": 298
         },
+        "NV": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
         "AZ": {
           "verdict": "APPROVE",
           "eligible": true,
@@ -14928,6 +15343,11 @@
           "benefit": null
         },
         "NY": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "NV": {
           "verdict": "DENY",
           "eligible": false,
           "benefit": null
@@ -15066,6 +15486,11 @@
           "eligible": true,
           "benefit": 298
         },
+        "NV": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
         "AZ": {
           "verdict": "APPROVE",
           "eligible": true,
@@ -15200,6 +15625,11 @@
           "eligible": true,
           "benefit": 298
         },
+        "NV": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
         "AZ": {
           "verdict": "APPROVE",
           "eligible": true,
@@ -15320,6 +15750,11 @@
           "benefit": null
         },
         "NY": {
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null
+        },
+        "NV": {
           "verdict": "DENY",
           "eligible": false,
           "benefit": null
@@ -15478,6 +15913,11 @@
           "eligible": true,
           "benefit": 785
         },
+        "NV": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 785
+        },
         "AZ": {
           "verdict": "APPROVE",
           "eligible": true,
@@ -15623,6 +16063,11 @@
           "benefit": 544
         },
         "NY": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 544
+        },
+        "NV": {
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 544
@@ -15777,6 +16222,11 @@
           "eligible": true,
           "benefit": 546
         },
+        "NV": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 546
+        },
         "AZ": {
           "verdict": "APPROVE",
           "eligible": true,
@@ -15911,6 +16361,11 @@
           "eligible": true,
           "benefit": 298
         },
+        "NV": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
         "AZ": {
           "verdict": "APPROVE",
           "eligible": true,
@@ -16041,6 +16496,11 @@
           "benefit": 298
         },
         "NY": {
+          "verdict": "APPROVE",
+          "eligible": true,
+          "benefit": 298
+        },
+        "NV": {
           "verdict": "APPROVE",
           "eligible": true,
           "benefit": 298
