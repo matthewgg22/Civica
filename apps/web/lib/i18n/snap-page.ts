@@ -353,7 +353,11 @@ const vi: PageCopy = {
 const zh: PageCopy = {
   h1: "询问 SNAP，拿到具体条款。",
   productLede:
-    "Demeter 用通俗语言回答，并为每一条结论引用相应的联邦法规——以及我们已核实的贵州手册。",
+    // 贵州 is Guizhou Province, not "your state". The honorific 贵 works before
+    // a noun (贵公司 = your company) but 贵州 collides head-on with the province
+    // name, so a Chinese reader saw "the Guizhou manual" on a page whose whole
+    // claim is that it knows which state's rules apply to you.
+    "Demeter 用通俗语言回答，并为每一条结论引用相应的联邦法规——以及您所在州的手册，只要我们已核实。",
   snapLine: "SNAP 是每月打入 EBT 卡的食品补助，旧称食品券。申请免费。",
   eyebrow: "补充营养援助计划",
   h2: "SNAP 是每月发放到卡上的食品补助。",
