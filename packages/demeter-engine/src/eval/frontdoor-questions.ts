@@ -326,4 +326,20 @@ export const FRONTDOOR_EVAL: FrontDoorCase[] = [
   { id: "wi-expedited", category: "WI", question: "How fast can I get emergency FoodShare benefits in Wisconsin?", expect: { kind: "external", citation: "FSH 2.1.4" }, state: "WI" },
   { id: "wi-cert-period", category: "WI", question: "How long does my FoodShare approval last in Wisconsin before I have to recertify?", expect: { kind: "external", citation: "FSH 2.2.1" }, state: "WI" },
   { id: "wi-federal-benefit", category: "WI", question: "How is the monthly FoodShare benefit amount calculated from net income?", expect: { kind: "grounded", section: "273.10" }, state: "WI" },
+
+  // Minnesota — 14th verified state (docs/plans/mae-state-corpus-framework.md, Wave 3 — the last of
+  // the county-administered states, and the hardest source in the roster per the framework doc).
+  { id: "mn-program-name", category: "MN", question: "What agency runs SNAP in Minnesota and where do I apply?", expect: { kind: "external", citation: "MN DCYF / MNbenefits program materials" }, state: "MN" },
+  { id: "mn-income-limit", category: "MN", question: "What's the income limit for SNAP in Minnesota?", expect: { kind: "external", citation: "CM 0013.06" }, state: "MN" },
+  { id: "mn-asset-limit", category: "MN", question: "Is there an asset or savings limit for SNAP in Minnesota?", expect: { kind: "external", citation: "CM 0015.81" }, state: "MN" },
+  { id: "mn-vehicle", category: "MN", question: "Does my car count against me for SNAP in Minnesota?", expect: { kind: "external", citation: "CM 0015.81" }, state: "MN" },
+  { id: "mn-sua", category: "MN", question: "What's the standard utility allowance for SNAP in Minnesota?", expect: { kind: "external", citation: "CM 0018.15" }, state: "MN" },
+  { id: "mn-medical-deduction", category: "MN", question: "Is there a standard medical deduction for seniors on SNAP in Minnesota?", expect: { kind: "external", citation: "CM 0018.12" }, state: "MN" },
+  { id: "mn-child-support", category: "MN", question: "Does paying child support lower my SNAP benefit in Minnesota?", expect: { kind: "external", citation: "CM 0018.33" }, state: "MN" },
+  { id: "mn-abawd-waiver", category: "MN", question: "Is the SNAP work-requirement time limit currently waived anywhere in Minnesota?", expect: { kind: "external", citation: "unconfirmed primary source this pass" }, state: "MN" },
+  { id: "mn-drug-felony", category: "MN", question: "I have a drug felony conviction — can I still get SNAP in Minnesota?", expect: { kind: "external", citation: "CM 0011.27.03" }, state: "MN" },
+  { id: "mn-restaurant-meals", category: "MN", question: "Can I use my EBT card to buy a hot meal at a restaurant in Minnesota?", expect: { kind: "external", citation: "Restaurant Meals Program" }, state: "MN" },
+  { id: "mn-expedited", category: "MN", question: "How fast can I get emergency SNAP benefits in Minnesota?", expect: { kind: "external", citation: "CM 0004.04" }, state: "MN" },
+  { id: "mn-cert-period", category: "MN", question: "How long does my SNAP approval last in Minnesota before I have to recertify?", expect: { kind: "external", citation: "CM 0009.03" }, state: "MN" },
+  { id: "mn-federal-benefit", category: "MN", question: "How is the monthly SNAP benefit amount calculated from net income?", expect: { kind: "grounded", section: "273.10" }, state: "MN" },
 ];

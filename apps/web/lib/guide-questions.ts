@@ -75,4 +75,9 @@ export const QUESTIONS: Record<string, string[]> = {
     "Does my car count against me for FoodShare in Wisconsin?",
     "How long does my FoodShare certification last in Wisconsin?",
   ],
+  MN: [
+    "What is the income limit for SNAP in Minnesota?",
+    "Does my car count against me for SNAP in Minnesota?",
+    "How fast can I get emergency SNAP benefits in Minnesota?",
+  ],
 };

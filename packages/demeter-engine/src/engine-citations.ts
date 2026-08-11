@@ -182,6 +182,14 @@ export function formatEngineParams(state: string, asOf: Date): string {
     // limit at all, only a 100% net test) not modelled here — same accepted
     // limitation as IL's and GA's asymmetric-tier gaps; the full picture
     // lives in the WI corpus pack's own income-pathways supplement.
+    // MN: 200 mirrors snap-rules' bbce_threshold_pct, conferred via a
+    // Domestic Violence Information Brochure (CM 0013.06) — a distinct
+    // conferral document from every other state's TANF/services-notice
+    // pathway. MN's BBCE also exempts units from the NET income test (not
+    // just the asset test), and its own EBD-over-200% exception (no gross
+    // limit at all) is not modelled here — same accepted limitation as
+    // WI's; the full picture lives in the MN corpus pack's income-pathways
+    // supplement.
     const BBCE_PCT = {
       CA: 200,
       MA: 200,
@@ -195,6 +203,7 @@ export function formatEngineParams(state: string, asOf: Date): string {
       AZ: 200,
       OR: 200,
       WI: 200,
+      MN: 200,
     } as const;
     const bbcePct: number | undefined = (BBCE_PCT as Record<string, number>)[state];
     lines.push(`- 100% FPL, monthly (net-income test basis): ${row(p.fpl)}`);

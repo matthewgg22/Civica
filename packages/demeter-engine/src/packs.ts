@@ -19,6 +19,7 @@ import nvPack from "./states/nv/pack.json";
 import azPack from "./states/az/pack.json";
 import orPack from "./states/or/pack.json";
 import wiPack from "./states/wi/pack.json";
+import mnPack from "./states/mn/pack.json";
 
 export interface PackVerification {
   verified_on: string;
@@ -71,6 +72,7 @@ export const VERIFIED_STATES: PackMeta[] = [
   azPack,
   orPack,
   wiPack,
+  mnPack,
 ].map(meta);
 
 export const VERIFIED_STATE_CODES: string[] = VERIFIED_STATES.map((s) => s.code);

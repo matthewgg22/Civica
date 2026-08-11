@@ -1,0 +1,26 @@
+{
+  "_provenance": {
+    "note": "Minnesota dated facts. Two of the three entries below are forward-looking RECHECK dates rather than claims about when an underlying fact itself changes — this pack could not independently confirm Minnesota's current ABAWD waiver status or its Restaurant Meals Program bill's enactment status against a primary source in this pass (see PROVENANCE.md), and pack-freshness.test.ts fails the build on any ALREADY-past 'expires' date by design (a drift detector, not a fits-every-shape mechanism) — so an already-past reported waiver expiration could not be encoded directly. The load-bearing warnings live in the relevant supplement text instead.",
+    "extracted": "2026-08-11"
+  },
+  "entries": [
+    {
+      "key": "mn-abawd-waiver-status-recheck",
+      "kind": "expires",
+      "date": "2026-09-01",
+      "warning": "As of this pack's build date, secondary sources reported Minnesota holding a statewide ABAWD waiver with a stated expiration of June 30, 2026 — a date already past. This pack could NOT independently confirm current status against a primary DHS or USDA source (both attempts were blocked — see PROVENANCE.md). Re-check Minnesota's current ABAWD waiver status directly against USDA FNA's ABAWD waiver page or the Minnesota Combined Manual before telling a household any area of Minnesota is currently waived from the SNAP work-requirement time limit — do not assume the June 30, 2026 waiver has been renewed."
+    },
+    {
+      "key": "mn-ffy26-dollar-values-recheck",
+      "kind": "expires",
+      "date": "2026-09-30",
+      "warning": "Minnesota's Excess Shelter Deduction cap ($712/month, non-elderly/disabled units) and Homeless Shelter Deduction ($190.30) — both sourced from Combined Manual §0018.15, issue-dated 10/2024 — are notably LOWER than the FFY26 COLA figures ($744 and $198.99 respectively) this roster's more recently updated states show, suggesting this specific manual page has not been refreshed to the current federal cycle. Find the current Combined Manual §0018.15/§0018.15.09 dollar figures before quoting any Minnesota shelter or utility deduction amount after this date — and even before it, treat the figures in this pack as provisional given the documented staleness."
+    },
+    {
+      "key": "mn-rmp-bill-status-recheck",
+      "kind": "expires",
+      "date": "2026-12-31",
+      "warning": "Minnesota legislation (HF 3855/SF 4135) proposing a Restaurant Meals Program for elderly/disabled/homeless SNAP recipients had not been enacted as of this pack's build date. Re-check whether this bill has passed before stating flatly that Minnesota has no Restaurant Meals Program — this is a genuinely live legislative risk, not a settled fact the way it is in states with no such proposal on the table."
+    }
+  ]
+}

@@ -67,9 +67,13 @@ import wiPack from "./wi/pack.json";
 import wiSupplements from "./wi/supplements.json";
 import wiAuthorities from "./wi/authorities.json";
 import wiFreshness from "./wi/freshness.json";
+import mnPack from "./mn/pack.json";
+import mnSupplements from "./mn/supplements.json";
+import mnAuthorities from "./mn/authorities.json";
+import mnFreshness from "./mn/freshness.json";
 
 /** Registered pack codes. Widens as Wave 1+ states land (WA, TX, NY, …). */
-export type StateCode = "CA" | "WA" | "TX" | "NY" | "GA" | "MI" | "IL" | "FL" | "MA" | "NV" | "AZ" | "OR" | "WI";
+export type StateCode = "CA" | "WA" | "TX" | "NY" | "GA" | "MI" | "IL" | "FL" | "MA" | "NV" | "AZ" | "OR" | "WI" | "MN";
 
 /** Launch state; used when a caller does not specify. Preserves the pre-pack
  *  behavior in which the (then-hardcoded) CA content applied to every query. */
@@ -238,6 +242,12 @@ const REGISTRY: Record<StateCode, StatePack> = {
     wiSupplements as { supplements: PackTopic[]; supersessions?: Record<string, string> },
     wiAuthorities as unknown as RawAuthorities,
     wiFreshness as { entries: PackFreshnessEntry[] },
+  ),
+  MN: buildPack(
+    mnPack as Omit<StatePack, "topics" | "authorities" | "freshness" | "supersessions">,
+    mnSupplements as { supplements: PackTopic[]; supersessions?: Record<string, string> },
+    mnAuthorities as unknown as RawAuthorities,
+    mnFreshness as { entries: PackFreshnessEntry[] },
   ),
 };
 
