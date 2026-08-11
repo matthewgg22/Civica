@@ -758,6 +758,120 @@ export const FL_GOLD: AnswerExpectation[] = [
   },
 ];
 
+// Massachusetts gold set (Wave 2, docs/plans/mae-state-corpus-framework.md):
+// resolved a prior open SUA primary-source-verification gap in
+// packages/snap-rules and found two engine-comment errors (RMP, the ABAWD
+// waiver flag's own staleness claim) along the way — see
+// packages/demeter-engine/src/states/ma/PROVENANCE.md. At least 3 cases below
+// require the answer to prefer Massachusetts' 106 CMR/OLGT text over the
+// federal default it overrides (the flat Standard Medical Deduction instead
+// of the federal actual-expense-minus-$35 shape, the Restaurant Meals Program
+// the federal corpus has no concept of at all, and the ABAWD waiver status
+// which is a pure state fact the federal corpus cannot answer).
+export const MA_GOLD: AnswerExpectation[] = [
+  {
+    id: "ma-categorical-eligibility-screen",
+    question: "What's the income limit for SNAP in Massachusetts if I don't have an elderly or disabled household member?",
+    state: "MA",
+    expectCitation: "106 CMR 364.976",
+    mustMention: "200",
+    mustDisclaim: true,
+  },
+  {
+    id: "ma-elderly-no-gross-test",
+    question: "My mother is 62 and lives with us in Massachusetts — is there still a gross income limit for our SNAP case?",
+    state: "MA",
+    expectCitation: "106 CMR 364.976",
+    mustMention: "net",
+    mustDisclaim: true,
+  },
+  {
+    id: "ma-vehicle-exclusion",
+    question: "Does my car count against me for SNAP in Massachusetts?",
+    state: "MA",
+    expectCitation: "Assets Overview - SNAP",
+    mustMention: "not countable",
+    mustDisclaim: true,
+  },
+  {
+    id: "ma-asset-limit-elderly",
+    question: "What's the SNAP resource limit in Massachusetts for a household with an elderly or disabled member?",
+    state: "MA",
+    expectCitation: "Assets Overview - SNAP",
+    mustMention: "4,500",
+    mustDisclaim: true,
+  },
+  {
+    id: "ma-sua-heating-cooling",
+    question: "How much is the Heating/Cooling utility standard for SNAP in Massachusetts right now?",
+    state: "MA",
+    expectCitation: "106 CMR 364.945",
+    mustMention: "914",
+    mustDisclaim: true,
+  },
+  {
+    id: "ma-standard-medical-deduction",
+    // Guards the flat-$155 shape against the federal actual-minus-$35 default
+    // the corpus otherwise leads with — a real state override, not a restatement.
+    question: "I'm disabled and have $60 a month in medical bills for Massachusetts SNAP — do I get a deduction?",
+    state: "MA",
+    expectCitation: "106 CMR 364.500",
+    mustMention: "155",
+    mustDisclaim: true,
+  },
+  {
+    id: "ma-child-support-deduction",
+    // Guards against Mae describing MA's child support treatment as an income
+    // EXCLUSION the way Illinois works — Massachusetts deducts it net.
+    question: "Does paying child support lower my SNAP benefit in Massachusetts?",
+    state: "MA",
+    expectCitation: "106 CMR 364.500",
+    mustMention: "deduct",
+    mustDisclaim: true,
+  },
+  {
+    id: "ma-abawd-waiver-ended",
+    // Guards against Mae inheriting the stale "waived in all cities and towns"
+    // artifact this pack found still live on DTA's own site (PROVENANCE.md) —
+    // Massachusetts' statewide waiver expired June 30, 2025.
+    question: "Is the SNAP work-requirement time limit currently waived anywhere in Massachusetts?",
+    state: "MA",
+    expectCitation: "OLGT 2025-31",
+    mustMention: "2025",
+    mustDisclaim: true,
+  },
+  {
+    id: "ma-drug-felony",
+    // Guards against inventing a drug-felony ban Massachusetts doesn't operate
+    // — MA is a verified full opt-out (OLGT 2024-45), distinct from the real
+    // SNAP-benefit-trafficking-for-drugs disqualification.
+    question: "I was convicted of a drug felony years ago — can I still get SNAP in Massachusetts?",
+    state: "MA",
+    expectCitation: "OLGT 2024-45",
+    mustNotMention: ["permanently banned", "lifetime ban", "you cannot receive"],
+    mustDisclaim: true,
+  },
+  {
+    id: "ma-restaurant-meals-exists",
+    // Guards against the engine-comment error this pack found and filed
+    // (packages/snap-rules issue) claiming MA has no RMP at all — it launched
+    // statewide-by-eligibility in December 2023.
+    question: "Can I use my EBT card to buy a hot meal at a restaurant in Massachusetts?",
+    state: "MA",
+    expectCitation: "OLGT 2023-85",
+    mustMention: "60",
+    mustDisclaim: true,
+  },
+  {
+    id: "ma-edsap-certification",
+    question: "How long does my SNAP approval last in Massachusetts if I'm elderly with no earned income?",
+    state: "MA",
+    expectCitation: "Simplified Reporting - Overview",
+    mustMention: "36",
+    mustDisclaim: true,
+  },
+];
+
 /** Everything the live runner executes. */
 export const ALL_GOLD: AnswerExpectation[] = [
   ...ANSWER_GOLD,
@@ -769,4 +883,5 @@ export const ALL_GOLD: AnswerExpectation[] = [
   ...MI_GOLD,
   ...IL_GOLD,
   ...FL_GOLD,
+  ...MA_GOLD,
 ];

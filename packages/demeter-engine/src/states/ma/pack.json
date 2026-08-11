@@ -1,0 +1,34 @@
+{
+  "code": "MA",
+  "program": "Supplemental Nutrition Assistance Program (SNAP) — Massachusetts uses the federal name; \"Food Stamps\" survives only as the older, still-recognized public name (formally retired federally in 2008)",
+  "agency": "Department of Transitional Assistance (DTA), Executive Office of Health and Human Services (EOHHS)",
+  "admin_model": "state",
+  "admin_note": "State-administered: DTA runs SNAP directly through Transitional Assistance Offices (TAOs); there is no independent county eligibility layer (unlike CA, NY, WI, or MN in this roster). Policy lives in 106 CMR 360-366 (regulation text) plus the DTA Online Guide (BEACON5) — a worker-facing knowledge base at eohhs.ehs.state.ma.us that pairs narrative policy pages with dollar-figure charts, amended by numbered Online Guide Transmittals (OLGT). The eligibility system is BEACON; the applicant-facing portal/app is DTA Connect.",
+  "system": "BEACON (worker-facing eligibility system); EBT card is not separately branded from the federal Massachusetts EBT card",
+  "portal": {
+    "name": "DTA Connect",
+    "url": "https://dtaconnect.eohhs.mass.gov"
+  },
+  "update_channels": [
+    {
+      "name": "106 CMR 360-366 (Department of Transitional Assistance regulations) + DTA Online Guide (BEACON5), amended by numbered Online Guide Transmittals (OLGT)",
+      "url": "https://eohhs.ehs.state.ma.us/DTA/PolicyOnline/BEACON5/!SSL!/WebHelp/index.htm"
+    },
+    {
+      "name": "DTA program eligibility charts and tables (\"Helpful Charts and Figures\" — the annual COLA/SUA/FPL table)",
+      "url": "https://www.mass.gov/lists/department-of-transitional-assistance-program-eligibility-charts-and-tables"
+    }
+  ],
+  "verification": {
+    "verified_on": "2026-08-10",
+    "method": "Direct live fetch of ~20 DTA Online Guide (BEACON5) pages, 4 actual 106 CMR regulation-text PDFs, 3 Online Guide Transmittals (OLGT), and the current \"Helpful Charts and Figures\" COLA table, all from eohhs.ehs.state.ma.us (a distinct, unblocked DTA host discovered this session — plain curl with a browser User-Agent succeeded where mass.gov, masslegalhelp.org, and Cornell LII had all previously 403'd or dead-ended). A prior-year mass.gov PDF was additionally recovered via the Internet Archive Wayback Machine as a cross-check. Two masslegalhelp.org/masslegalservices.org cross-references used only as corroboration, never as the sole source for a dollar figure.",
+    "gates": "Every pivotal dollar figure and citation traced to a live-fetched DTA Online Guide page, an actual 106 CMR regulation-text PDF, or a dated OLGT bulletin — never a curated secondary extract alone. This pass RESOLVED the engine's open SUA primary-source-verification gap (see PROVENANCE.md) and found two real `packages/snap-rules` engine-constant discrepancies (RMP, and a stale contradicting artifact on the ABAWD waiver page) — both filed as GitHub issues, engine untouched. Adversarial refute pass recorded in PROVENANCE.md.",
+    "sources": [
+      "106 CMR 364.945 (Standard Utility Allowances), 364.500 (deductions, incl. Standard Medical Deduction), 364.975/364.976 (elderly/disabled standards, categorical eligibility income standards) — regulation text, eohhs.ehs.state.ma.us/DTA/PolicyOnline/olg docs/regulations/fs/",
+      "\"Helpful Charts and Figures—SNAP\" (eohhs.ehs.state.ma.us/DTA/PolicyOnline/olg docs/guides/), last updated 1/2026, FFY2026 dollar figures effective 10/1/2025 and 2/1/2026",
+      "DTA Online Guide Transmittal (OLGT) 2025-31 (7/25/2025, ABAWD geographic waiver expiration), OLGT 2025-59 (10/30/2025, OBBBA ABAWD exemption changes), OLGT 2023-85 (12/7/2023, Restaurant Meals Program launch)",
+      "DTA Online Guide (BEACON5) pages: Assets Overview - SNAP, SNAP Disqualifications and Sanctions, Intentional Program Violation Overview, How SNAP Benefits are Calculated, Simplified Reporting - Overview, Simplified Reporting - Recertification, What is SNAP?",
+      "Mass Legal Services \"2026 SNAP Advocacy Guide\" (masslegalservices.org) — used only as corroboration for the SUA CMR citation, not as the primary dollar-figure source"
+    ]
+  }
+}

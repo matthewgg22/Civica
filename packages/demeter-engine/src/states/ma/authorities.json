@@ -1,0 +1,49 @@
+{
+  "_provenance": {
+    "note": "Massachusetts citation authorities. DTA policy has TWO citable layers: 106 CMR 360-366 (the actual regulation text — fetched live this session as raw PDF text directly from eohhs.ehs.state.ma.us) and the DTA Online Guide (BEACON5), amended by numbered Online Guide Transmittals ('OLGT 2025-31'). Regulation sections carry the dollar-figure POINTERS ('posted at www.mass.gov/dta'); the actual current dollar tables live in DTA's periodically-republished 'Helpful Charts and Figures' guide, not in a numbered citation of their own — cited here by its OLGT/guide title, matching the framework's rule that a table gets cited as a table, not as the regulation section that merely authorizes it.",
+    "extracted": "2026-08-10"
+  },
+  "patterns": [
+    {
+      "key": "macmr",
+      "regex": "\\b106\\s+CMR\\s+(\\d{3}\\.\\d{3}(?:\\([A-Za-z0-9]+\\))?)\\b",
+      "flags": "gi",
+      "template": "106 CMR $1",
+      "normalize": "none",
+      "match": "exact",
+      "note": "106 CMR 360-366 — DTA regulations; subsection cites like 106 CMR 364.500(F) verify at exact form"
+    },
+    {
+      "key": "maolgt",
+      "regex": "\\bOLGT\\s*(\\d{4}-\\d{1,3}[A-Z]?)\\b",
+      "flags": "gi",
+      "template": "OLGT $1",
+      "normalize": "none",
+      "match": "exact",
+      "note": "DTA Online Guide Transmittals — numbered bulletins amending the Online Guide, e.g. OLGT 2025-31"
+    }
+  ],
+  "known": {
+    "macmr": [
+      { "value": "106 CMR 364.400", "note": "standard deduction + shelter/utility framework overview (cross-referenced by 364.500, 364.945)" },
+      { "value": "106 CMR 364.410", "note": "dependent care deduction detail, cross-referenced by 364.500(G)" },
+      { "value": "106 CMR 364.500", "note": "the net-income calculation sequence: earned income deduction (B), unearned income (C), standard deduction (D), medical expenses (E), medical deduction (F), dependent care deduction (G), child support (H), homeless shelter/utility deduction (I)" },
+      { "value": "106 CMR 364.500(E)", "note": "medical expense threshold — must exceed $35/month, net of reimbursement, for members meeting 106 CMR 361.210" },
+      { "value": "106 CMR 364.500(F)", "note": "Standard Medical Deduction — $155 flat for $35.01-$190/month in expenses; actual-minus-$35 for expenses over $190/month" },
+      { "value": "106 CMR 364.500(G)", "note": "dependent care deduction — actual monthly expenses" },
+      { "value": "106 CMR 364.500(H)", "note": "child support deduction — allowable monthly legally-obligated payments" },
+      { "value": "106 CMR 364.945", "note": "Standard Utility Allowances (SUA) — regulation text points to DTA's posted table, does not itself state the dollar figures" },
+      { "value": "106 CMR 364.975", "note": "Standards for Special Circumstances Involving an Elderly and Disabled Individual — cross-references 106 CMR 361.200(B)(4)(a)-(b)" },
+      { "value": "106 CMR 364.976", "note": "Gross Monthly Categorical Eligibility Income Standards — the BBCE citation; 200% FPL, cross-references 106 CMR 365.180 for the categorical-eligibility determination itself" },
+      { "value": "106 CMR 365.180", "note": "categorical eligibility determination mechanism (cross-referenced by 364.976, not independently fetched this session)" },
+      { "value": "106 CMR 361.210", "note": "elderly/disabled member definition gating the medical deduction" },
+      { "value": "106 CMR 366.910", "note": "Bay State CAP Standard Utility Allowance — a separate citation from 364.945's general SUA; numerically identical to the Heating/Cooling SUA in both years this pack checked" }
+    ],
+    "maolgt": [
+      { "value": "OLGT 2023-85", "note": "Restaurant Meals Program launch, 12/7/2023 — statewide eligibility (homeless/disabled/60+), growing restaurant participation" },
+      { "value": "OLGT 2024-45", "note": "Clarification of Drug Felon Policy, 8/15/2024 — MA is a full opt-out from the federal drug-felony ban; SNAP-benefit-trafficking-for-drugs is a separate, real disqualification" },
+      { "value": "OLGT 2025-31", "note": "ABAWD geographic waiver expired 6/30/2025, 7/25/2025 — no FNS decision yet on reinstatement as of this bulletin" },
+      { "value": "OLGT 2025-59", "note": "OBBBA-mandated ABAWD Work Rules changes, 10/30/2025 — age exemption 55→65, dependent-child exemption 18→14, Veteran/Homeless/Foster-Care exemptions eliminated, new AI/AN Indian Health Care Improvement Act exemption added" }
+    ]
+  }
+}
