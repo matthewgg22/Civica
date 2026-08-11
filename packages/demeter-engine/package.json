@@ -2,7 +2,7 @@
   "name": "@civica/demeter-engine",
   "version": "0.1.0",
   "private": true,
-  "description": "Demeter answer engine: verified SNAP Q&A \u2014 retrieval over the eCFR corpus + state packs, citation verification, freshness, PII redaction, and the answerQuestion() orchestrator. Shared by apps/web (public chat) and apps/dashboard (staff chat).",
+  "description": "Demeter answer engine: verified SNAP Q&A — retrieval over the eCFR corpus + state packs, citation verification, freshness, PII redaction, and the answerQuestion() orchestrator. Shared by apps/web (public chat) and apps/dashboard (staff chat).",
   "type": "module",
   "exports": {
     ".": {
@@ -20,7 +20,8 @@
   },
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "test": "vitest run"
+    "test": "vitest run",
+    "lint": "eslint src --max-warnings=0"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.102.0",
@@ -29,7 +30,10 @@
   },
   "devDependencies": {
     "@civica/config": "workspace:*",
+    "@eslint/js": "^9",
+    "eslint": "^9",
     "typescript": "^5",
+    "typescript-eslint": "^8",
     "vitest": "^2.1.5"
   }
 }

@@ -85,6 +85,11 @@ async function getExtractor(): Promise<Extractor> {
         "feature-extraction",
         EMBED_MODEL,
       )) as unknown as Extractor;
+      // Kept, not silenced. Whether the semantic layer actually loaded or
+      // quietly fell back to lexical-only is invisible from output — and when
+      // it was silently dead locally it corrupted a whole eval run before
+      // anyone noticed. This line is how you tell the two apart.
+      // eslint-disable-next-line no-console -- readiness signal for a layer that fails silently
       console.info(`[demeter] semantic layer ready (vendored model at ${localPath})`);
       status = "ready";
       return extractor;

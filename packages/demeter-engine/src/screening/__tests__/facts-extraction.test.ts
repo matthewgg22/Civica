@@ -10,8 +10,17 @@ describe("mergeFactsPatch", () => {
     expect(merged.household).toEqual([{ member_id: "applicant", age: 62, role: "head" }]);
   });
 
-  it("a correction REPLACES the prior value — 'actually $1,300' wins", () => {
-    const base = mergeFactsPatch({}, { income: [{ member: "a", type: "ssa", amount: 1180 }] });
+  // RENAMED. This used to be called "a correction REPLACES the prior value —
+  // 'actually $1,300' wins" and set up an income line of 1180 that it never
+  // touched: the assertion below is about a household AGE, and no $1,300
+  // appears anywhere. The income setup was left over from a test that was
+  // abandoned for the reason the comment gives, and the name outlived it —
+  // so the suite claimed to cover income corrections and did not.
+  //
+  // Income correction is covered, correctly, by "appends income lines across
+  // turns" below. Found by the first lint pass (#721) via the unused variable;
+  // tsc cannot see a test whose name disagrees with its body.
+  it("a corrected member field REPLACES the prior value — age 62 becomes 63", () => {
     // Extraction is additive on income lines (a caseworker who corrects an
     // amount is expected to say so in a way that produces a new line, not a
     // silent overwrite of a prior one) — so a correction is a new fact
