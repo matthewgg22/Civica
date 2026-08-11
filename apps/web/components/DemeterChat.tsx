@@ -42,6 +42,33 @@ export function readCertainty(answer: string): "certain" | "uncertain" | null {
   return null;
 }
 
+/** What a screen reader is told when an answer finishes.
+ *
+ *  Built ENTIRELY from text already on screen — the certainty banner line as
+ *  certainty.ts localized it, plus the answer body. No new strings, so this
+ *  cannot drift from what a sighted reader sees and needs no fifth translation
+ *  of anything.
+ *
+ *  The citation trailer is deliberately EXCLUDED. It is a list of links after a
+ *  `---` rule; read aloud it is a long recitation of section numbers between
+ *  the reader and the next thing they want to do. It stays in the transcript,
+ *  which is navigable — a screen reader user reaches it by moving through the
+ *  document, which is how they would want to read a reference list anyway.
+ *
+ *  The VERDICT leads. An answer spoken without "certain" or "uncertain" is the
+ *  overconfidence the citation verifier exists to prevent; a sighted reader
+ *  sees that banner, so a screen reader user has to hear it, and hear it first.
+ *
+ *  Markdown emphasis is stripped: a screen reader reads `**` aloud as "star
+ *  star" or, worse, silently changes voice mid-sentence. */
+export function announcementFor(answer: string): string {
+  const lines = answer.split("\n");
+  const banner = lines.find((l) => l.startsWith("✓ **") || l.startsWith("⚠ **")) ?? "";
+  const body = answer.split(/\n-{3,}\n/)[0] ?? "";
+  const strip = (s: string) => s.replace(/\*\*/g, "").replace(/(^|\s)\*(\S[^*]*)\*/g, "$1$2").trim();
+  return [strip(banner), strip(body)].filter(Boolean).join(". ");
+}
+
 // The saved-conversation shape IS the chat's shape, deliberately: resume is
 // then a straight hydrate with no translation layer, and a message that can be
 // rendered is by construction a message that can be saved and read back.
@@ -145,6 +172,19 @@ export function DemeterChat({
   const abortRef = useRef<AbortController | null>(null);
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const t = T[lang];
+
+  // What the live region below the transcript currently holds. Set ONLY when a
+  // stream finishes — see the region's own comment for why announcing tokens is
+  // worse than announcing nothing.
+  const [announcement, setAnnouncement] = useState("");
+  useEffect(() => {
+    // While busy, the last bubble is still filling; announcing now would be
+    // announcing a fragment, and would re-announce on every token.
+    if (busy) return;
+    const last = messages[messages.length - 1];
+    if (last?.role !== "assistant" || !last.content) return;
+    setAnnouncement(announcementFor(last.content));
+  }, [busy, messages]);
 
   // THE JUDDER FIX. This used to run on [messages, busy] with behavior:"smooth".
   // `messages` changes on EVERY streamed token, so every token started a new
@@ -475,6 +515,31 @@ export function DemeterChat({
             {error}
           </div>
         )}
+      </div>
+
+      {/* THE ANSWER, FOR SCREEN READERS. Until now nothing on this page was a
+          live region, so a screen reader user asked a question and was told
+          NOTHING — not that a reply had started, not that it had finished, not
+          what it said. On a product whose entire value is the answer, that made
+          it unusable rather than merely awkward.
+
+          Why a SEPARATE region instead of aria-live on the transcript: the
+          transcript mutates on every streamed token, and a live region fed
+          token-by-token produces continuous stuttering speech that is worse
+          than silence — most screen readers restart the utterance on each
+          change. So the transcript stays silent and this announces the
+          FINISHED answer once.
+
+          Why the certainty verdict is included: an answer read aloud without
+          "certain" or "uncertain" is exactly the overconfidence the citation
+          verifier exists to prevent. A sighted reader sees the banner; a screen
+          reader user must hear it.
+
+          `polite` (not assertive) so it waits for a pause rather than cutting
+          off someone mid-sentence in the composer — the criteria's own point
+          about not interrupting input. */}
+      <div className="demeter__sr" aria-live="polite" aria-atomic="true">
+        {announcement}
       </div>
 
       <form
