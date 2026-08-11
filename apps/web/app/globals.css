@@ -6112,3 +6112,18 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   .dmnav__inner { flex-wrap: wrap; padding-top: 0.4rem; padding-bottom: 0.4rem; }
   .dmnav__langs { margin-left: 0; padding-left: 0; border-left: 0; width: 100%; }
 }
+
+/* On /chat the NAV carries the mark, the name and the language links, so the
+   chat card's own header is a second copy of all three. Hidden here, kept on
+   the landing page where no nav sits above the card doing that job.
+   (The card's <select> and the nav's links are the same control twice; the nav
+   wins, because a link is something a crawler can follow.) */
+.dmchat .demeter__head { display: none; }
+
+/* Fill the viewport properly: the transcript takes the slack and the composer
+   sits at the bottom of the screen rather than floating halfway up it, which is
+   the difference between a chat app and a form that happens to scroll. */
+.dmchat .demeter__body { flex: 1; min-height: 0; }
+.dmchat .demeter__main { flex: 1; min-height: 0; }
+.dmchat .demeter__scroll { flex: 1; min-height: 0; }
+.dmchat .demeter__disclaimer { padding-bottom: 0.25rem; }
