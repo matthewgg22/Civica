@@ -1,0 +1,53 @@
+{
+  "_provenance": {
+    "note": "Pennsylvania citation authorities. The SNAP Handbook cites its own sections as plain decimal numbers (e.g. '512.1', '540.351', '560.8'), with Appendices cited by chapter + letter (e.g. '536 Appendix A'). This pack prefixes numbered sections 'PAH <section>' to disambiguate, matching the pattern this roster already uses for other single-manual states' prefixes (Wisconsin's FSH, Illinois' PM/WAG, Michigan's BEM/BAM). Appendices are folded into the known set as their own literal strings since their citation shape (chapter number + 'Appendix' + letter) does not fit the plain-decimal regex.",
+    "extracted": "2026-08-11"
+  },
+  "patterns": [
+    {
+      "key": "pahsection",
+      "regex": "\\bPAH\\s+(\\d{3}\\.\\d{1,3}(?:\\.\\d{1,3})?)\\b",
+      "flags": "gi",
+      "template": "PAH $1",
+      "normalize": "none",
+      "match": "exact",
+      "note": "Pennsylvania SNAP Handbook sections, up to 2 decimal levels (e.g. 512.1, 540.351, 560.8)"
+    },
+    {
+      "key": "pahappendix",
+      "regex": "\\bPAH\\s+(\\d{3}\\s+Appendix\\s+[A-Z])\\b",
+      "flags": "gi",
+      "template": "PAH $1",
+      "normalize": "none",
+      "match": "exact",
+      "note": "Pennsylvania SNAP Handbook chapter appendices (e.g. 503 Appendix B, 536 Appendix A, 560 Appendix A)"
+    }
+  ],
+  "known": {
+    "pahsection": [
+      { "value": "PAH 503.3", "note": "included and excluded items — restaurant meals legal authority, homeless-only in PA's implementation" },
+      { "value": "PAH 506.3", "note": "determining entitlement to expedited service — federal-standard $150/$100 screening criteria" },
+      { "value": "PAH 506.4", "note": "time frame for issuing expedited benefits — PA's own 5-calendar-day operational standard" },
+      { "value": "PAH 511.2", "note": "homeless persons — mailing address, household status, and the current zero-authorized-restaurants note (revised 9/17/2025)" },
+      { "value": "PAH 511.24", "note": "meal providers for the homeless — restaurant/soup-kitchen/shelter approval track" },
+      { "value": "PAH 512.1", "note": "categorical eligibility general policy — 200% flat Expanded Categorical Eligibility via PUB 567 brochure" },
+      { "value": "PAH 536.1", "note": "ABAWD general policy — fixed 1/1/2024-12/31/2026 three-year clock; handbook text still shows pre-OBBBA age 18-54" },
+      { "value": "PAH 536.2", "note": "ABAWD exemptions — age-based and geographic-waiver exemption status codes" },
+      { "value": "PAH 540.1", "note": "resources general policy — the household-type/income/resource-limit summary table" },
+      { "value": "PAH 540.3", "note": "countable resources — liquid/non-liquid resources, lottery/gambling winnings, vehicles" },
+      { "value": "PAH 540.5", "note": "excluded resources — home, vehicles, retirement accounts, ABLE/SEED accounts, and more" },
+      { "value": "PAH 560.3", "note": "standard deduction — points to the Appendix A dollar table" },
+      { "value": "PAH 560.4", "note": "excess medical deduction — actual-expense-minus-$35, no flat standard amount" },
+      { "value": "PAH 560.6", "note": "child support deduction — ordinary deduction using PA's \"4.0 conversion,\" applied before shelter" },
+      { "value": "PAH 560.7", "note": "homeless shelter deduction — narrative text stale relative to Appendix A's FFY26 figure (see freshness.json)" },
+      { "value": "PAH 560.8", "note": "shelter/utility deduction — points to the Appendix A dollar table for the four-tier SUA ladder" },
+      { "value": "PAH 571.1", "note": "semiannual reporting (SAR) general policy — enrollment rules, PA 564 form" },
+      { "value": "PAH 575.2", "note": "guidelines for assigning certification periods — the 36/24/12/6-month tiered structure" }
+    ],
+    "pahappendix": [
+      { "value": "PAH 503 Appendix B", "note": "criminal history desk guide — SNAP ineligibility list has no drug-felony category; only a treatment-referral obligation" },
+      { "value": "PAH 536 Appendix A", "note": "current geographical areas waived by FNS — confirms ALL Pennsylvania counties unwaived as of 9/1/2025" },
+      { "value": "PAH 560 Appendix A", "note": "tables of maximum allowable deductions — the FFY26 dollar-figure table, effective 10/1/2025" }
+    ]
+  }
+}

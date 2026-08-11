@@ -190,6 +190,16 @@ export function formatEngineParams(state: string, asOf: Date): string {
     // limit at all) is not modelled here — same accepted limitation as
     // WI's; the full picture lives in the MN corpus pack's income-pathways
     // supplement.
+    // PA: 200 is a genuine flat screen — Pennsylvania calls it "Expanded
+    // Categorical Eligibility" and confers it via the PUB 567 brochure,
+    // "Help for Pennsylvanians in Need" (PAH 512.1). Unlike GA/IL/WI's
+    // tiered structure, PA applies the SAME 200% FPL gross test to every
+    // household regardless of elderly/disabled status, and — like MN —
+    // households under this screen face NO resource limit at all (not
+    // merely a waived asset test); the full picture, including the
+    // narrower 130%/$3,000 and 100%-net/$4,500 tiers that apply only to
+    // disqualified/sanctioned households, lives in the PA corpus pack's
+    // own income-pathways and asset-rule supplements.
     const BBCE_PCT = {
       CA: 200,
       MA: 200,
@@ -204,6 +214,7 @@ export function formatEngineParams(state: string, asOf: Date): string {
       OR: 200,
       WI: 200,
       MN: 200,
+      PA: 200,
     } as const;
     const bbcePct: number | undefined = (BBCE_PCT as Record<string, number>)[state];
     lines.push(`- 100% FPL, monthly (net-income test basis): ${row(p.fpl)}`);

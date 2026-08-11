@@ -1450,6 +1450,128 @@ export const MN_GOLD: AnswerExpectation[] = [
   },
 ];
 
+// Pennsylvania gold set — a RETRY. A prior session flagged "Pennsylvania is a known dead end, never
+// attempted" for corpus-building with no further detail. This build found the primary source fully
+// readable via plain HTTP (the host serves HTTP only — a generic HTTPS-upgrading fetch tool gets
+// ECONNREFUSED, which is almost certainly what stalled the prior attempt; see PROVENANCE.md). At
+// least 3 cases below require the answer to prefer Pennsylvania's own text over a naive default: the
+// $0-resource-limit Expanded Categorical Eligibility screen, the one-vehicle-per-HOUSEHOLD exclusion
+// (not per-driver), and — most importantly — the definitive, dated primary-source confirmation that
+// Pennsylvania is currently STATEWIDE UNWAIVED for ABAWD, a stronger finding than several other
+// packs in this roster could achieve for their own states.
+export const PA_GOLD: AnswerExpectation[] = [
+  {
+    id: "pa-ece-no-resource-limit",
+    // Guards against assuming Pennsylvania's 200% screen only waives the
+    // resource test the way a typical flat-BBCE state does — the Handbook's
+    // own summary table shows NO resource limit at all for the vast majority
+    // of Pennsylvania SNAP households.
+    question: "Does Pennsylvania have a resource or asset limit for SNAP if my income is under 200% of the poverty line?",
+    state: "PA",
+    expectCitation: "PAH 540.1",
+    mustMention: "no",
+    mustDisclaim: true,
+  },
+  {
+    id: "pa-ece-brochure",
+    question: "What is Expanded Categorical Eligibility for SNAP in Pennsylvania, and how do I get it?",
+    state: "PA",
+    expectCitation: "PAH 512.1",
+    mustMention: "200",
+    mustDisclaim: true,
+  },
+  {
+    id: "pa-vehicle-one-per-household",
+    // Guards against assuming Pennsylvania excludes one vehicle PER DRIVER
+    // (Minnesota's rule, same roster) — Pennsylvania excludes only ONE
+    // vehicle total per household.
+    question: "I have two adult drivers in my household in Pennsylvania — how many of our vehicles are excluded from the SNAP resource test?",
+    state: "PA",
+    expectCitation: "PAH 540.3",
+    mustMention: "one",
+    mustDisclaim: true,
+  },
+  {
+    id: "pa-medical-deduction-no-flat",
+    question: "I'm disabled and have $50 a month in medical bills for Pennsylvania SNAP — do I get a deduction?",
+    state: "PA",
+    expectCitation: "PAH 560.4",
+    mustMention: "35",
+    mustDisclaim: true,
+  },
+  {
+    id: "pa-child-support-deduction",
+    question: "Does paying child support lower my countable income for SNAP in Pennsylvania?",
+    state: "PA",
+    expectCitation: "PAH 560.6",
+    mustMention: "deduct",
+    mustDisclaim: true,
+  },
+  {
+    id: "pa-abawd-statewide-unwaived",
+    // The flagship finding of this pack: Pennsylvania's own Handbook states
+    // definitively that NO county currently holds an ABAWD waiver — a
+    // stronger, dated primary-source confirmation than several other states
+    // in this roster could achieve.
+    question: "Is the SNAP work-requirement time limit currently waived anywhere in Pennsylvania?",
+    state: "PA",
+    expectCitation: "PAH 536",
+    mustMention: "not",
+    mustDisclaim: true,
+  },
+  {
+    id: "pa-drug-felony-no-ban",
+    question: "I have a drug felony conviction — can I still get SNAP in Pennsylvania?",
+    state: "PA",
+    expectCitation: "PAH 503",
+    mustNotMention: ["lifetime ban", "permanently banned", "banned for life", "disqualified"],
+    mustDisclaim: true,
+  },
+  {
+    id: "pa-restaurant-meals-zero-current",
+    // Guards against a household believing Pennsylvania currently has
+    // participating restaurants just because the legal provision exists.
+    question: "Can I use my EBT card to buy a hot meal at a restaurant in Pennsylvania?",
+    state: "PA",
+    mustMention: "no",
+    mustDisclaim: true,
+  },
+  {
+    id: "pa-expedited-service",
+    question: "How fast can I get emergency SNAP benefits in Pennsylvania?",
+    state: "PA",
+    expectCitation: "PAH 506.4",
+    mustMention: "5",
+    mustDisclaim: true,
+  },
+  {
+    id: "pa-cert-period-36-month-zero-income",
+    // Guards against assuming Pennsylvania's longest certification period
+    // goes to working households — it goes to zero-income elderly/disabled
+    // households instead, the inverse of a naive assumption.
+    question: "How long does my SNAP approval last in Pennsylvania if everyone in my household is elderly with no income at all?",
+    state: "PA",
+    expectCitation: "PAH 575.2",
+    mustMention: "36",
+    mustDisclaim: true,
+  },
+  {
+    id: "pa-sua-four-tier",
+    question: "How does Pennsylvania's standard utility allowance work for SNAP — is it one flat amount?",
+    state: "PA",
+    expectCitation: "PAH 560",
+    mustMention: "heating",
+    mustDisclaim: true,
+  },
+  {
+    id: "pa-federal-benefit",
+    question: "How is the monthly SNAP benefit amount calculated from net income in Pennsylvania?",
+    state: "PA",
+    expectCitation: "273.10",
+    mustDisclaim: true,
+  },
+];
+
 /** Everything the live runner executes. */
 export const ALL_GOLD: AnswerExpectation[] = [
   ...ANSWER_GOLD,
@@ -1467,4 +1589,5 @@ export const ALL_GOLD: AnswerExpectation[] = [
   ...OR_GOLD,
   ...WI_GOLD,
   ...MN_GOLD,
+  ...PA_GOLD,
 ];

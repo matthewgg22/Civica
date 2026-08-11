@@ -80,4 +80,9 @@ export const QUESTIONS: Record<string, string[]> = {
     "Does my car count against me for SNAP in Minnesota?",
     "How fast can I get emergency SNAP benefits in Minnesota?",
   ],
+  PA: [
+    "What is the income limit for SNAP in Pennsylvania?",
+    "Does my car count against me for SNAP in Pennsylvania?",
+    "How fast can I get emergency SNAP benefits in Pennsylvania?",
+  ],
 };
