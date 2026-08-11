@@ -752,6 +752,80 @@ const STATES: Record<string, StatePolicy> = {
     // the WI/MN packs) — a genuine statewide program, not county-restricted.
     rmp_operated: true,
   },
+  // Nevada — DSS (renamed from DWSS; legacy dwss.nv.gov paths still appear in
+  // the agency's own site assets). A much cleaner schema fit than NY: flat
+  // 200% BBCE (no tiers) and a genuine 4-tier utility ladder that maps onto
+  // this schema's HCSUA/LUA/phone/none shape directly, not an approximation.
+  //
+  // Expanded Categorical Eligibility (ECE) is conferred through the "This Is
+  // Your Copy" page of the Application for Assistance — a TANF-funded
+  // informational page every SNAP applicant already receives as standard
+  // paperwork, functionally a flat screen (E&P MS A-180.2). ECE households
+  // skip BOTH income tests and the resource test entirely.
+  //
+  // sua_by_tier maps NV's SUA→HCSUA ($446) and LUA→LUA ($361) directly (E&P
+  // MS A-660.5.1.1 / C-210.3, MTL 21/25, eff. 10/1/2025); phone maps to NV's
+  // Telephone Utility Allowance ($52). NV's fourth tier, the Individual
+  // Utility Allowance ($77, exactly one non-telephone utility), has NO slot
+  // in this schema and falls through to NONE — the same documented-gap
+  // discipline as IL's Single Utility ($78), OH's Single SUA ($108), and MI's
+  // water/sewer/cooking-fuel/trash standards (see the MI comment above): a
+  // Nevada household billed for exactly one utility OTHER than telephone
+  // loses that deduction under this engine until the schema grows a 5th slot.
+  NV: {
+    state_code: "NV",
+    label: "Nevada / DSS",
+    bbce: true,
+    bbce_threshold_pct: 200,
+    bbce_fpl_basis: "federal_fiscal_year",
+    // "Do not apply the SNAP resource test to households that have been
+    // determined categorically eligible... It is not necessary to request or
+    // verify resources" (E&P MS A-521) — a full verification waiver, not
+    // merely a higher limit, for both the base categorical group and ECE.
+    // Non-categorically-eligible households still face $3,000/$4,500
+    // (E&P MS A-520) — same "asset_waiver: true is the general case, a
+    // documented minority still gets tested" shape as every state above.
+    asset_waiver: true,
+    sua_by_tier: {
+      HCSUA: new Decimal("446"),
+      LUA: new Decimal("361"),
+      phone: new Decimal("52"),
+      none: new Decimal("0"),
+    },
+    allotment_tier: "48",
+    // VERIFIED FULL OPT-OUT — NRS 422A.345, checked against the Nevada
+    // Legislature's own codified statute text (leg.state.nv.us), not a
+    // secondary summary: "all persons domiciled in this State are exempt
+    // from the application of 21 U.S.C. § 862a(a)." A 2021 amendment (ch.
+    // 73, AB 138) REMOVED a prior condition requiring substance-use-disorder
+    // treatment participation — an initial secondary source described that
+    // now-repealed condition as current policy; the NV corpus pack caught
+    // this before drafting anything (see PROVENANCE.md). `false` here is a
+    // finding against the CURRENT statute, not a fail-open default.
+    drug_felony_ban: false,
+    // Nevada's statewide ABAWD waiver (02/01/2025-01/31/2026) was NOT
+    // renewed — "Nevada's statewide ABAWD waiver was terminated FY2026"
+    // (E&P MS B-470.1.2). But UNLIKE NY's post-expiration picture (2 tiny
+    // reservations out of 58 districts), Nevada's post-expiration waived-area
+    // list (eff. 2/1/2026, E&P MS B-472) is a genuinely substantial set: 11
+    // named Tribal/Reservation areas (Battle Mountain, Campbell Ranch,
+    // Dresslerville Colony, Elko Colony, Fort McDermitt, Las Vegas Indian
+    // Colony, Lovelock Indian Colony, Pyramid Lake Paiute Reservation,
+    // Reno-Sparks Indian Colony, Stewart Community, Walker River Reservation,
+    // Yerington Colony) PLUS all of Mineral County. No NV_WAIVER_COUNTY_FIPS
+    // lookup exists, so this boolean is consulted for every Nevada household
+    // today, not just an unknown-area fallback — same shape as MI's entry
+    // above. `true` is chosen under the same "wrongly denying food is the
+    // worse error" reasoning MI and CA use: it over-approves ABAWD households
+    // OUTSIDE the waived areas (including Nevada's population centers,
+    // Clark/Washoe counties, which are NOT on the waived list) rather than
+    // risk denying the real households inside 12 currently-waived areas.
+    abawd_waiver_avail: true,
+    // Confirmed ABSENT from USDA FNA's own national Restaurant Meals Program
+    // page (fetched fresh by the NV corpus pack, updated the same week) —
+    // lists AZ, CA, IL (Cook/Franklin only), MD, MA, MI, NY, RI, VA; no NV.
+    rmp_operated: false,
+  },
   // Kansas utility standards — KEESM §7226 (Shelter Costs), rev. 07-26,
   // confirmed live 2026-08-09 at content.dcf.ks.gov/EES/KEESM/Current/keesm7226.htm.
   // Unlike TX/WA (mandatory standards, no election), KEESM does not state
