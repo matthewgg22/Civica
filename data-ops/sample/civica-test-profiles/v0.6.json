@@ -4708,9 +4708,10 @@
           "benefit": 298
         },
         "IL": {
-          "verdict": "APPROVE",
-          "eligible": true,
-          "benefit": 298
+          "verdict": "DENY",
+          "eligible": false,
+          "benefit": null,
+          "reason": "no IL ABAWD waiver — statewide waiver ended Nov 2025 (IDHS memo 10/16/2025), 3-of-36 clock exhausted [7 CFR 273.24]"
         },
         "OH": {
           "verdict": "APPROVE",
