@@ -551,6 +551,117 @@ export const MI_GOLD: AnswerExpectation[] = [
   },
 ];
 
+// Illinois gold set (Wave 2 continued) — a two-tier BBCE state (165%
+// general / 200% for elderly-disabled "Qualifying Member" households),
+// carrying expectCitation against STATE (not federal) authorities per the
+// pattern MI established. At least 3 cases below require the answer to
+// prefer Illinois's own PM/WAG text over the federal default it overrides
+// (the two-tier income screen, the child-support EXCLUSION mechanism vs.
+// the more common deduction treatment, and the drug-felony full opt-out).
+export const IL_GOLD: AnswerExpectation[] = [
+  {
+    id: "il-qualifying-member-screen",
+    question: "My mother is 62 and lives with us in Illinois — does that raise our SNAP income limit?",
+    state: "IL",
+    expectCitation: "PM 05-07-00",
+    mustMention: "200",
+    mustDisclaim: true,
+  },
+  {
+    id: "il-vehicle-exclusion",
+    question: "Does my car count against me for SNAP in Illinois?",
+    state: "IL",
+    expectCitation: "PM 07-04-17",
+    mustMention: "excluded",
+    mustDisclaim: true,
+  },
+  {
+    id: "il-asset-limit-qualifying-member",
+    question: "What's the SNAP resource limit in Illinois for a household with an elderly or disabled member?",
+    state: "IL",
+    expectCitation: "PM 07-04-01",
+    mustMention: "4,500",
+    mustDisclaim: true,
+  },
+  {
+    id: "il-sua-ac-heating",
+    question: "How much is Illinois's Air Conditioning/Heating utility standard for SNAP right now?",
+    state: "IL",
+    expectCitation: "WAG 13-01-08-b",
+    mustMention: "546",
+    mustDisclaim: true,
+  },
+  {
+    id: "il-standard-medical-deduction",
+    question: "I'm disabled and have $50 a month in medical bills for Illinois SNAP — do I get a deduction?",
+    state: "IL",
+    expectCitation: "PM 13-01-05",
+    mustMention: "185",
+    mustDisclaim: true,
+  },
+  {
+    id: "il-child-support-exclusion",
+    question: "Does paying child support lower my countable income for SNAP in Illinois?",
+    state: "IL",
+    expectCitation: "PM 13-01-07",
+    mustMention: "exclu",
+    mustDisclaim: true,
+  },
+  {
+    id: "il-abawd-waiver-ended",
+    // Guards against Mae inheriting a stale "IL is waived" belief the way
+    // the engine constant itself did until #701/#702 fixed it — IL's
+    // statewide waiver ended November 2025.
+    question: "Is the SNAP work-requirement time limit currently waived anywhere in Illinois?",
+    state: "IL",
+    expectCitation: "PM 03-16-00",
+    mustMention: "2025",
+    mustDisclaim: true,
+  },
+  {
+    id: "il-drug-felony",
+    // Guards against inventing a drug-felony ban Illinois doesn't operate —
+    // Illinois is a VERIFIED FULL OPT-OUT (305 ILCS 5/1-10(c)), already
+    // primary-sourced in the #619 engine pass; see PROVENANCE.md.
+    question: "I was convicted of a drug felony years ago — can I still get SNAP in Illinois?",
+    state: "IL",
+    mustNotMention: ["permanently banned", "lifetime ban", "you cannot receive"],
+    mustDisclaim: true,
+  },
+  {
+    id: "il-lottery-winnings",
+    question: "I won $5,000 in the Illinois lottery — does that affect my SNAP case?",
+    state: "IL",
+    expectCitation: "PM 07-04-21",
+    mustMention: "4,500",
+    mustDisclaim: true,
+  },
+  {
+    id: "il-expedited-service",
+    question: "How fast can I get emergency SNAP benefits in Illinois?",
+    state: "IL",
+    expectCitation: "PM 02-08-02",
+    mustMention: "same day",
+    mustDisclaim: true,
+  },
+  {
+    id: "il-restaurant-meals-statewide",
+    question: "Can I use my Illinois Link card to buy a hot meal at a restaurant?",
+    state: "IL",
+    expectCitation: "PM 06-32-00",
+    mustMention: "statewide",
+    mustDisclaim: true,
+  },
+  {
+    id: "il-approval-period",
+    question: "How long does my SNAP approval last in Illinois before I have to redo it?",
+    state: "IL",
+    expectCitation: "PM 17-05-02",
+    mustMention: "6",
+    mustDisclaim: true,
+  },
+];
+
 /** Everything the live runner executes. */
 export const ALL_GOLD: AnswerExpectation[] = [
   ...ANSWER_GOLD,
@@ -560,4 +671,5 @@ export const ALL_GOLD: AnswerExpectation[] = [
   ...DISTRESS_GOLD,
   ...ADVERSARIAL_GOLD,
   ...MI_GOLD,
+  ...IL_GOLD,
 ];

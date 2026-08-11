@@ -224,4 +224,18 @@ export const FRONTDOOR_EVAL: FrontDoorCase[] = [
   { id: "mi-expedited", category: "MI", question: "How fast can I get emergency food assistance in Michigan?", expect: { kind: "external", citation: "BAM 117" }, state: "MI" },
   { id: "mi-simplified-reporting", category: "MI", question: "Do I have to report every income change during my Michigan FAP certification period?", expect: { kind: "external", citation: "BAM 200" }, state: "MI" },
   { id: "mi-federal-benefit", category: "MI", question: "How is the monthly benefit amount calculated from net income?", expect: { kind: "grounded", section: "273.10" }, state: "MI" },
+  // --- Illinois (Wave 2 — two-tier BBCE screen, 4-tier SUA, an engine bug found + fixed along the way) ---
+  { id: "il-program-name", category: "IL", question: "What agency runs SNAP in Illinois and where do I apply?", expect: { kind: "external", citation: "ABE" }, state: "IL" },
+  { id: "il-income-limit", category: "IL", question: "What's the income limit for SNAP in Illinois?", expect: { kind: "external", citation: "WAG 13-01-01-a" }, state: "IL" },
+  { id: "il-qualifying-member-screen", category: "IL", question: "My mother is 62 and lives with us — does that change our SNAP income limit in Illinois?", expect: { kind: "external", citation: "PM 05-07-00" }, state: "IL" },
+  { id: "il-asset-limit", category: "IL", question: "Is there an asset or savings limit for SNAP in Illinois?", expect: { kind: "external", citation: "PM 07-04-01" }, state: "IL" },
+  { id: "il-sua", category: "IL", question: "What's the utility allowance for SNAP in Illinois?", expect: { kind: "external", citation: "WAG 13-01-08-b" }, state: "IL" },
+  { id: "il-smd", category: "IL", question: "Is there a standard medical deduction for seniors on SNAP in Illinois?", expect: { kind: "external", citation: "PM 13-01-05" }, state: "IL" },
+  { id: "il-child-support", category: "IL", question: "Does paying child support lower my countable income for SNAP in Illinois?", expect: { kind: "external", citation: "PM 13-01-07" }, state: "IL" },
+  { id: "il-abawd-waiver", category: "IL", question: "Is the SNAP work-requirement time limit waived anywhere in Illinois right now?", expect: { kind: "external", citation: "PM 03-16-00" }, state: "IL" },
+  { id: "il-drug-felony", category: "IL", question: "I have a drug felony conviction — can I still get SNAP in Illinois?", expect: { kind: "external", citation: "305 ILCS 5/1-10" }, state: "IL" },
+  { id: "il-restaurant-meals", category: "IL", question: "Can I use my Illinois Link card to buy a hot meal at a restaurant?", expect: { kind: "external", citation: "PM 06-32-00" }, state: "IL" },
+  { id: "il-expedited", category: "IL", question: "How fast can I get emergency SNAP benefits in Illinois?", expect: { kind: "external", citation: "PM 02-08-00" }, state: "IL" },
+  { id: "il-cert-period", category: "IL", question: "How long does my SNAP approval last in Illinois before I have to redo it?", expect: { kind: "external", citation: "PM 17-05-02" }, state: "IL" },
+  { id: "il-federal-benefit", category: "IL", question: "How is the monthly benefit amount calculated from net income?", expect: { kind: "grounded", section: "273.10" }, state: "IL" },
 ];

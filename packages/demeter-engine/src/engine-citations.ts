@@ -154,7 +154,13 @@ export function formatEngineParams(state: string, asOf: Date): string {
     // that never adopted it. That tripwire has already caught this once (the
     // hardcoded-200-for-TX bug) and caught it again when this file was widened
     // from CA/MA to every state with authored math.
-    const BBCE_PCT = { CA: 200, MA: 200, TX: 165, WA: 200, GA: 130, MI: 200 } as const;
+    // IL: 165 mirrors snap-rules' bbce_threshold_pct, which (like GA's 130%
+    // all-adult-E/D sub-screen) only encodes the GENERAL screen — IL's real
+    // 200% screen for households with an elderly/disabled "Qualifying
+    // Member" is not yet modelled here either. Same accepted limitation as
+    // GA's; the full two-tier picture lives in the IL corpus pack's own
+    // income-pathways supplement, which retrieval also surfaces.
+    const BBCE_PCT = { CA: 200, MA: 200, TX: 165, WA: 200, GA: 130, MI: 200, IL: 165 } as const;
     const bbcePct: number | undefined = (BBCE_PCT as Record<string, number>)[state];
     lines.push(`- 100% FPL, monthly (net-income test basis): ${row(p.fpl)}`);
     lines.push(`- Gross-income limit, 130% FPL (federal test): ${row(scaled(130))}`);
