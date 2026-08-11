@@ -1,5 +1,5 @@
 /* Civica design tokens — values mirror CivicaDesignSystem (Swift). */
-/* Hanken Grotesk loaded via next/font in layout.tsx. */
+/* Hanken Grotesk loaded via next/font/local in layout.tsx (app/fonts/). */
 
 :root {
   /* Color — light mode (v2 pine palette, locked 2026-05-20) */
@@ -4851,6 +4851,20 @@ html {
    table heads). link is retired outright — #B24A30 sat 5 points from
    terracotta and read as indistinguishable from it, so links are now
    terracotta with an underline instead (see each `a` rule below). */
+/* The two CJK faces (#697). They used to be next/font/google objects whose
+   .variable class set these; they come from @fontsource now, which registers
+   the plain family names, so the variables are declared here instead. Every
+   `var(--demeter-font-serif-cjk)` use site is unchanged — that indirection is
+   exactly why swapping the loader did not touch 40 font-family declarations.
+
+   Quoted because the family names contain spaces. The system faces after each
+   are a real fallback, not decoration: if the webfont has not arrived, a
+   Chinese reader gets PingFang/Heiti rather than a page of tofu boxes. */
+:root {
+  --demeter-font-serif-cjk: "Noto Serif SC", "Songti SC", "SimSun", serif;
+  --demeter-font-sans-cjk: "Noto Sans SC", "PingFang SC", "Heiti SC", "Microsoft YaHei", sans-serif;
+}
+
 :root {
   --demeter-terracotta: #C0553B;      /* unchanged — CTAs, links, marks */
   --demeter-terracotta-deep: #8E3A26; /* unchanged — wordmark "AI", hover, error, small text */
@@ -4867,8 +4881,10 @@ html {
 /* --demeter-font-display (Newsreader, serif — "anything that speaks": answers,
    headings, page titles, the whole PDF) and --demeter-font-sans (Be Vietnam
    Pro — "anything that labels or operates": buttons, inputs, table heads,
-   toolbars) are defined by next/font (layout.tsx's Newsreader/Be_Vietnam_Pro
-   .variable classes on <html>) — NOT redeclared here. Each use site appends
+   toolbars) are defined by next/font/LOCAL (layout.tsx's .variable classes on
+   <html>, from woff2 committed under app/fonts/) — NOT redeclared here. They
+   were next/font/google until #697; the variables are the reason that swap
+   touched two files instead of forty. Each use site appends
    its own Noto Serif/Sans SC + system-font fallback after the var(), same
    pattern as --civica-font-loaded. There is no mono face in this system —
    the two prior --demeter-font-mono use sites (a case-ID chip, a worksheet
