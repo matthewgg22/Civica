@@ -5571,3 +5571,80 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   .saved__item { flex-direction: column; align-items: stretch; }
   .saved__actions { justify-content: flex-end; }
 }
+
+/* ── Sign-in, Demeter framing (#698) ──────────────────────────────────────
+   The page is shared by two products. Arriving from the Demeter chat and
+   landing on Civica's apply styling makes the seam visible at exactly the
+   moment a person is deciding whether to trust this with their email.
+
+   Scoped to .signin-page[data-surface="demeter"] so the apply flow keeps its
+   own look untouched — this reskins the Demeter path only, rather than
+   changing a shared page for everyone. */
+
+.signin-page[data-surface="demeter"] {
+  background: var(--demeter-paper);
+  color: var(--demeter-ink);
+}
+
+.signin-page[data-surface="demeter"] .signin-header {
+  border-bottom-color: var(--demeter-rule);
+}
+
+/* Mark + wordmark, matching the chat header's pairing so the two pages read
+   as one product. */
+.signin-brand-demeter {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  text-decoration: none;
+  color: var(--demeter-ink);
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.signin-page[data-surface="demeter"] .signin-card {
+  background: var(--demeter-card);
+  border-color: var(--demeter-rule);
+}
+
+/* Serif for the heading, sans for everything functional — the type rule the
+   rest of the Demeter surface follows. */
+.signin-page[data-surface="demeter"] .signin-title,
+.signin-page[data-surface="demeter"] .signin-sent-title {
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+  color: var(--demeter-ink);
+}
+
+.signin-page[data-surface="demeter"] .signin-subtitle,
+.signin-page[data-surface="demeter"] .signin-disclosure,
+.signin-page[data-surface="demeter"] .signin-otp-sent,
+.signin-page[data-surface="demeter"] .signin-label {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  color: var(--demeter-muted);
+}
+
+.signin-page[data-surface="demeter"] .signin-input {
+  border-color: var(--demeter-rule-strong);
+  background: var(--demeter-card);
+  color: var(--demeter-ink);
+}
+
+/* Terracotta is Demeter's action colour. The Google button deliberately keeps
+   its own treatment — Google's branding guidance governs that one, not ours. */
+.signin-page[data-surface="demeter"] .signin-cta {
+  background: var(--demeter-terracotta);
+  border-color: var(--demeter-terracotta);
+  color: #fff;
+}
+
+.signin-page[data-surface="demeter"] .signin-cta:disabled {
+  opacity: 0.5;
+}
+
+.signin-page[data-surface="demeter"] .locale-toggle,
+.signin-page[data-surface="demeter"] .signin-resend {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  color: var(--demeter-terracotta);
+  border-color: var(--demeter-rule-strong);
+}
