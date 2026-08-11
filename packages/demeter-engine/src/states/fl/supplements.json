@@ -1,0 +1,218 @@
+{
+  "_provenance": {
+    "note": "Florida SNAP curated supplements — Wave 2 continued (docs/plans/mae-state-corpus-framework.md). Drafted from verbatim source text: the ACCESS Florida Program Policy Manual (ffic.myflfamilies.com, static host, plain curl), Florida Administrative Code Rule 65A-1.603 (flrules.org, browser-header curl), the DCF ABAWD FAQ page, and USDA FNA's authoritative RMP state list and ABAWD waiver-response index — cross-checked against the already-verified #619 engine sourcing for FL's drug-felony statute and SUA figures. Independently cross-checked and adversarially fact-checked before PR. See PROVENANCE.md.",
+    "extracted": "2026-08-11",
+    "source_fact_check": "cross-check re-verification + post-draft adversarial refute pass; corrections recorded in PROVENANCE.md"
+  },
+  "supplements": [
+    {
+      "key": "income-pathways",
+      "kind": "supplement",
+      "terms": [
+        "income limit",
+        "income limits",
+        "gross income limit",
+        "gross income ceiling",
+        "make too much",
+        "over income",
+        "bbce",
+        "categorical eligibility",
+        "categorically eligible",
+        "200 percent",
+        "200%",
+        "poverty level"
+      ],
+      "citation": "FS 2010.0201; FS 2010.0202 — FL income pathways (flat 200% BBCE)",
+      "heading": "Florida runs a flat 200% BBCE screen conferred through an ACCESS Florida notice about TANF/Maintenance-of-Effort funded services",
+      "text": "'A broad-based categorically eligible standard filing unit (SFU) is one that receives information about Temporary Assistance for Needy Families or Maintenance of Effort funded services or benefits on an ACCESS Florida notice and does not contain a disqualified member' (FS 2010.0201) — the same TANF-funded-information-brochure conferral family as Georgia's TCOS, Michigan's DVPS, and Illinois' Guide to Services, under Florida's own name. Families receiving or authorized for Healthy Families Florida services are also categorically eligible. Unlike Georgia, Michigan, and Illinois, Florida's BBCE screen is FLAT — 200% of the federal poverty level applies the same way whether or not the household contains an elderly or disabled member: 'Broad-based categorically eligible SFUs must meet the 200% gross income limits. If the SFU contains a member who is age 60 or over or meets the definition of food stamp disabled, the SFU must meet the gross income limit of 200% of the federal poverty level for the AG size' (FS 2010.0201) — no separate, higher elderly/disabled tier the way Illinois or Michigan structure theirs. Categorically eligible households are 'considered to have met gross and net income limits, asset limits, SSN requirements, and residency without further verification, unless questionable.' If a household does NOT meet the 200% screen, it falls back to '100% of the federal poverty level for the AG size and the asset limit of $4,500' — the standard federal net-income/elderly-disabled-asset-limit combination. NOT categorically eligible (FS 2010.0202): a household opting out of Temporary Cash Assistance receipt for the month; a household with an ineligible/disqualified member or receiving medical-assistance-only; and — the same disqualification list checked for asset-rule purposes — IPV, felony drug trafficking (for conduct committed on or after 8/22/1996), fleeing felon, certain violent/sexual felons not in compliance with sentence terms, or an Employment & Training sanction.",
+      "source_url": "https://ffic.myflfamilies.com/manual/2000.pdf"
+    },
+    {
+      "key": "asset-rule",
+      "kind": "supplement",
+      "terms": [
+        "asset limit",
+        "asset test",
+        "resource limit",
+        "resource test",
+        "resources",
+        "savings",
+        "savings limit",
+        "bank account",
+        "vehicle",
+        "car count",
+        "does my car count"
+      ],
+      "citation": "FS 1610.0200; FS 1610.0206 — FL asset limits",
+      "heading": "Florida's asset limit is the standard federal $3,000/$4,500 split, waived for categorically eligible households",
+      "text": "'The total countable assets of the assistance group cannot exceed: $3,000 for assistance groups that do not include an elderly or disabled member; or $4,500 for assistance groups that include a member(s) who is elderly or disabled. Elderly is defined as being age 60 or older' (FS 1610.0200) — the household is treated as elderly if a member 'will be age 60 by the last day of the application month,' a slightly forward-looking definition worth noting. 'For categorically eligible households, countable assets are assumed to be within the FS asset limits' — the asset test is effectively skipped for the large majority of Florida SNAP households that clear the 200% BBCE screen. For the noncategorically eligible minority actually tested: 'Verification of all assets, except cash, is required when the total assets of the SFU are within $100 of the asset limit. The individual's statement of the amount of cash is accepted' (FS 1610.0206) — assets aren't verified at all unless the household is close to the limit or otherwise questionable.",
+      "source_url": "https://ffic.myflfamilies.com/manual/1610.pdf"
+    },
+    {
+      "key": "sua-values",
+      "kind": "supplement",
+      "terms": [
+        "utility allowance",
+        "utility standard",
+        "shelter deduction",
+        "excess shelter",
+        "standard utility allowance",
+        "basic utility allowance",
+        "heating standard",
+        "cooling standard",
+        "telephone standard"
+      ],
+      "citation": "FS 2410.0344; FS 2410.0345; FS 2410.0346; F.A.C. 65A-1.603 — FL utility standard ladder",
+      "heading": "Florida's utility ladder maps cleanly onto this engine's 3-tier shape (SUA→HCSUA, BUA→LUA, telephone→phone), but the dollar figures are mid-revision right now — an amendment was proposed the day before this pack was built",
+      "text": "Florida runs a 3-standard ladder, not the undermodeled 4-tier shape some other states in this roster have. The Standard Utility Allowance (SUA — this engine's HCSUA) is 'available only to assistance groups who: 1. incur a heating or cooling expense separate and apart from their rent or mortgage; 2. receive direct or indirect assistance greater than $20 annually under [LIHEAP]; or 3. live in private rental housing and are billed by their landlords on the basis of individual usage or are charged a flat rate separately from their rent for heating or cooling' (FS 2410.0344) — an irregular heating expense (e.g. buying fuel oil once a year) still qualifies the household year-round. The Basic Utility Allowance (BUA — this engine's LUA) is 'available to assistance groups who do not incur a heating or cooling expense, but incur at least two utility expenses, separate and apart from their rent or mortgage' — electric, fuel, water, sewer, telephone, or garbage (FS 2410.0345). The Telephone Standard is 'available to assistance groups who have only a telephone expense'; electing SUA or BUA forecloses a separate telephone allowance (FS 2410.0346). A household expecting a qualifying utility expense within the next 12 months (e.g. moving into A/C season) can still be allowed the standard based on a documented past pattern of energy use. Dollar figures ($426 SUA / $340 BUA / $49 telephone, F.A.C. 65A-1.603, effective 2/5/2025) are REUSED from the #619 engine pass, not re-derived — but this pass found something the #619 pass didn't have to consider: the SAME rule (65A-1.603) has a NEW amendment PROPOSED as of 8/10/2026 (the day before this pack was built) specifically 'to update the standard utility allowance, basic utility allowance, telephone standard and shelter deduction' — meaning these exact figures are actively mid-revision and should be treated as short-lived. See freshness.json.",
+      "source_url": "https://www.flrules.org/gateway/RuleNo.asp?title=&ID=65A-1.603"
+    },
+    {
+      "key": "medical-deduction",
+      "kind": "supplement",
+      "terms": [
+        "medical deduction",
+        "medical expense",
+        "medical expenses",
+        "medical bills",
+        "elderly deduction",
+        "disability deduction"
+      ],
+      "citation": "FS 2410.0353; FS 2410.0356 — FL excess medical expenses",
+      "heading": "Florida uses the plain federal actual-expense-minus-$35 medical deduction — no flat Standard Medical Deduction the way Georgia or Illinois publish",
+      "text": "Florida does not run a flat Standard Medical Deduction dollar figure. Instead, 'a disregard will be allowed for a portion of non-reimbursable medical expenses, excluding special diets, incurred by any assistance group individual who' meets one of a genuinely broad set of elderly/disabled/veteran categories (FS 2410.0353): age 60+ (or turning 60 by month-end); SSI recipients (including presumptive-eligibility emergency SSI, if actually receiving payments); SSA disability/blindness benefit recipients across several Social Security Act titles; a veteran with a service-connected or non-service-connected total disability rating, or needing regular aid and attendance, or permanently housebound; a veteran's surviving spouse or child in equivalent circumstances. The deduction itself is the federal-standard actual-expense-above-$35 floor (FS 2410.0356) — Florida publishes no flat substitute amount the way Georgia's $161 or Illinois' $185/$485 SMD do; a household must verify its real medical costs to claim anything above $35.",
+      "source_url": "https://ffic.myflfamilies.com/manual/2400.pdf"
+    },
+    {
+      "key": "dependent-care-child-support",
+      "kind": "supplement",
+      "terms": [
+        "dependent care",
+        "child care deduction",
+        "daycare",
+        "child support",
+        "support payments",
+        "child support deduction"
+      ],
+      "citation": "FS 2410.0323; FS 2410.0324; FS 2410.0329; FS 2410.0330; FS 2410.0331 — FL dependent care + child support deductions",
+      "heading": "Florida treats both dependent care and legally-obligated child support as ordinary net-income deductions — but child support is only budgeted if the non-custodial parent affirmatively requests it",
+      "text": "Dependent care (FS 2410.0323): actual, verified costs are allowed when necessary for a household member to accept/continue employment, to search for work under the job-search criteria, or to attend training/education preparatory to employment. Notable exclusions: kindergarten expenses are NOT allowed ('since kindergarten is mandatory in Florida'), transportation to/from the provider is not allowed, amounts paid by vendor payment are not allowed, and amounts paid or reimbursed by the JOBS or Transitional Child Care programs are not deductible (though a household paying MORE than the vendored amount can deduct the excess). Verification is required once monthly dependent care expense exceeds $200 per child — 'If the individual fails to provide verification of the dependent care expense exceeding $200, the AG is only eligible for a $200 per child deduction' (FS 2410.0324), a real dollar-capped fallback worth knowing. Where attendant care could qualify as EITHER a medical expense or a dependent care expense, Florida requires treating it as medical, not dependent care (FS 2410.0323) — a mandatory tie-breaker, not a household election. Child support (FS 2410.0329, .0330, .0331) works as an ordinary net-income deduction — Georgia's and Michigan's mechanical treatment for the same federal authority (7 CFR 273.9(d)(4)-(5)), contrasting with Illinois' income-EXCLUSION mechanism for the identical rule. Only LEGALLY obligated payments count (court/administrative order or a legally enforceable separation agreement); alimony and above-obligation payments do NOT count, EXCEPT arrearages, which do. The genuinely Florida-specific procedural quirk: 'The legally obligated child support payment will be budgeted only after a request is received from the Non-Custodial Parent (NCP) that the deduction be allowed' (FS 2410.0331) — unlike states where a verified obligation is simply applied, Florida requires the NCP to affirmatively ask for it, at certification/recertification or any time during the certification period.",
+      "source_url": "https://ffic.myflfamilies.com/manual/2400.pdf"
+    },
+    {
+      "key": "abawd-work-requirement",
+      "kind": "supplement",
+      "terms": [
+        "abawd",
+        "able bodied adult",
+        "work requirement",
+        "time limit",
+        "3 month limit",
+        "work registration",
+        "waiver",
+        "waived area"
+      ],
+      "citation": "DCF ABAWD FAQ; FS 0810.0400 — FL ABAWD work requirement",
+      "heading": "Florida defines ABAWD as ages 18-64 post-OBBBA, and this pack found NO current area waiver on file — treat Florida as unwaived until confirmed otherwise",
+      "text": "'The term ABAWD applies to individuals who are: Aged 18 to 64, Physically and mentally able to work, and Not the parent or a household member responsible for the care of a dependent child under 14 years old' (DCF ABAWD FAQ) — the post-OBBBA national age band. Exemptions removed as of the 2025 federal law: homeless individuals, veterans, former foster youth (24 or younger), and — notably — households with a dependent child aged 14 and up specifically lost the exemption (the exemption now only covers a child under 14). Remaining exemptions mirror the federal list: under 16 or 65+; a 16-17-year-old non-head-of-household or one attending school/training half-time; SSI/SSDI recipients; medically certified unfit for work; drug/alcohol treatment program participants (excluding AA/NA/Sober Living Houses); half-time students; caretakers of a child under 6 or an incapacitated individual; already working 30+ hours/week or earning $217.50+/week. Florida assigns a distinctively SHORT 4-month certification period specifically to 'simplified reporting SFUs where all members are [ABAWDs] or potential ABAWDs' (FS 0810.0400) — shorter than the 6-month default and far shorter than the 24-month elderly/disabled period, forcing more frequent recertification review for this population. This pack found NO current ABAWD area-waiver response on file for Florida in USDA's FY2025-2029 waiver-response index, and a secondary source states Florida held no waiver as of FY2024 Q4 — treat Florida as an UNWAIVED state (the ABAWD time-limit clock runs statewide) until a direct FNA quarterly waiver-status file confirms otherwise. See freshness.json and issue #708.",
+      "source_url": "https://www.myflfamilies.com/services/public-assistance/abawd"
+    },
+    {
+      "key": "criminal-justice-disqualifications",
+      "kind": "supplement",
+      "terms": [
+        "drug felony",
+        "felony conviction",
+        "criminal record",
+        "drug conviction",
+        "drug trafficking",
+        "fleeing felon",
+        "fugitive",
+        "ipv",
+        "intentional program violation"
+      ],
+      "citation": "Fla. Stat. § 414.095; FS 2010.0202; FS 0810.0200 — FL criminal-justice disqualifications",
+      "heading": "Florida bans ONLY drug-trafficking convictions from SNAP, for conduct committed on or after 8/22/1996 — every other drug-felony conviction is not a bar",
+      "text": "Florida is a MODIFIED ban, not a full ban and not a full opt-out: 'Florida... provides that benefits may not be denied to an individual solely based on a felony drug conviction, unless the conviction is for trafficking pursuant to s. 893.135' (Fla. Stat. § 414.095(1); citation reused from the already-verified #619 engine pass). This pack independently corroborates the exact same trafficking-only scope directly in the eligibility manual, with a fixed historical date qualifier the statute reference alone doesn't carry: Standard filing units containing a member disqualified for 'felony drug trafficking including agreeing, conspiring, combining, or confederating with another person to commit the act committed on or after 8/22/1996' lose broad-based categorical eligibility (FS 2010.0202). The simplified-reporting passage (FS 0810.0200) lists the same disqualification categories (IPV, fleeing felon, felony drug trafficking, certain violent/sexual felons, E&T sanction) but does NOT repeat the date qualifier in that specific passage — the 8/22/1996 cutoff is confirmed only at FS 2010.0202; do not assume it's restated everywhere the disqualification list appears. Florida's disqualification list is broader than most states in this roster: beyond IPV, fleeing felon, and trafficking, it also excludes SFUs with a member disqualified for 'certain felons (aggravated sexual abuse, murder, sexual exploitation and other related abuse of children, or offense involving sexual assault) who are not in compliance with their sentence terms' — a distinct, additional disqualification category this pack did not find an equivalent for in CA/WA/TX/NY/GA/MI/IL's own disqualification lists, worth flagging as genuinely Florida-specific rather than assuming it generalizes.",
+      "source_url": "https://ffic.myflfamilies.com/manual/2000.pdf"
+    },
+    {
+      "key": "expedited-service",
+      "kind": "supplement",
+      "terms": [
+        "expedited",
+        "expedited service",
+        "emergency",
+        "emergency food stamps",
+        "fast benefits",
+        "how fast",
+        "urgent",
+        "same day",
+        "7 day",
+        "seven day"
+      ],
+      "citation": "FS 0610.0102 — FL expedited SNAP",
+      "heading": "Florida's expedited criteria match the federal standard exactly — under $150 gross plus $100 liquid assets, or a rent-plus-utilities test",
+      "text": "'Screen each SFU for potential eligibility for food stamp expedited services (including applications received through the joint SSI/food stamp process)' during every application (FS 0610.0102). Eligible: 'Standard filing units with less than $150 monthly gross income provided liquid assets do not exceed $100'; 'Standard filing units with combined monthly gross income and liquid assets less than the SFU's monthly rent or mortgage and appropriate utility allowance or standard, if incurred'; or a destitute migrant/seasonal farmworker SFU with $100 or less in liquid assets and only terminated-source or limited new-source income. 'Provide eligible SFUs expedited services regardless of whether they are requested' — Florida screens proactively rather than waiting for a request. Verification of most factors can be postponed past the expedited timeframe (identity cannot be postponed), but 'may not receive any benefits beyond the first two months of eligibility until they provide the postponed verification(s) or are certified under non-expedited criteria.' Households reapplying DURING their current certification period are not eligible for expedited service on that reapplication.",
+      "source_url": "https://ffic.myflfamilies.com/manual/600.pdf"
+    },
+    {
+      "key": "reporting-certification",
+      "kind": "supplement",
+      "terms": [
+        "certification period",
+        "approval period",
+        "recertification",
+        "redetermination",
+        "rede",
+        "how long does snap last",
+        "how long does my snap approval last",
+        "how long does my approval last",
+        "redo",
+        "renew",
+        "simplified reporting",
+        "change reporting",
+        "report income"
+      ],
+      "citation": "FS 0810.0200; FS 0810.0400 — FL certification periods and simplified reporting",
+      "heading": "Florida runs three certification-period lengths by household type: 6 months default, 24 months for elderly/disabled-only households, and a distinctively short 4 months for ABAWD-only households",
+      "text": "'Effective November 1, 2009 all food stamp households are simplified reporting' (FS 0810.0200) — Florida has had no non-simplified-reporting SNAP category for over 15 years. Certification periods (FS 0810.0400): '1. A six-month certification period for simplified reporting SFUs that contain members who are not elderly or disabled. 2. A 24-month certification period with an interim contact due by the end of 12 months for simplified reporting SFUs that contain only elderly or disabled members with no earned income. The longest certification period FLORIDA allows is 12 months. Assign the first 12-month period and another 12 months after the interim contact for a total of 24 months. 3. A four-month certification period for simplified reporting SFUs where all members are [ABAWDs] or potential ABAWDs.' A certification period cannot be shortened below 6 months for a mid-period change, nor extended past 6 or 24 months from the original certification/recertification. Simplified Reporting households must report only when income exceeds 130% of the monthly income limit for the AG size, or when an ABAWD's work hours drop below 20/week — reportable by the 10th day of the following month (FS 0810.0200).",
+      "source_url": "https://ffic.myflfamilies.com/manual/800.pdf"
+    },
+    {
+      "key": "restaurant-meals-program",
+      "kind": "supplement",
+      "terms": [
+        "restaurant meals program",
+        "rmp",
+        "eat at a restaurant",
+        "use ebt at restaurant",
+        "hot meal",
+        "hot food"
+      ],
+      "citation": "USDA FNA Restaurant Meals Program state list — FL does not operate RMP",
+      "heading": "Florida does NOT operate a Restaurant Meals Program",
+      "text": "USDA FNA's own current list of 'States that Operate a Restaurant Meals Program' (fna.usda.gov/snap/retailer/restaurant-meals-program, fetched 2026-08-11) names Arizona, Maryland, New York, California, Massachusetts, Rhode Island, Illinois (Cook and Franklin Counties Only), Michigan, and Virginia. Florida is not on that list, matching the engine's existing `rmp_operated: false` (this is the one RMP finding in this pack's cross-checks that CONFIRMED the existing engine constant rather than contradicting it — contrast the WA and Illinois findings from this same session, issues #704 and #707). SNAP benefits in Florida can only be used for food items intended to be prepared and eaten at home, purchased at authorized retailers — not for prepared restaurant meals.",
+      "source_url": "https://www.fna.usda.gov/snap/retailer/restaurant-meals-program"
+    },
+    {
+      "key": "program-identity",
+      "kind": "supplement",
+      "terms": [
+        "how to apply",
+        "where do i apply",
+        "apply for snap",
+        "myaccess",
+        "who runs",
+        "what agency",
+        "administers",
+        "ebt card",
+        "food stamps florida"
+      ],
+      "citation": "DCF / MyACCESS program materials",
+      "heading": "Florida applies through MyACCESS Florida; DCF administers SNAP with no county eligibility layer",
+      "text": "Florida SNAP applications and case management run through MyACCESS Florida (myaccessflorida.com), the state's online portal. The Department of Children and Families (DCF) administers SNAP directly and state-wide — there is no county eligibility agency layer (Florida is state-administered, unlike California, New York, Wisconsin, or Minnesota in this roster). SNAP Employment & Training referrals route through FloridaCommerce and local CareerSource centers, operated by Local Workforce Development Boards — a genuinely distinct inter-agency handoff from most states in this roster, where E&T stays inside the same eligibility agency.",
+      "source_url": "https://www.myaccessflorida.com"
+    }
+  ]
+}

@@ -160,7 +160,7 @@ export function formatEngineParams(state: string, asOf: Date): string {
     // Member" is not yet modelled here either. Same accepted limitation as
     // GA's; the full two-tier picture lives in the IL corpus pack's own
     // income-pathways supplement, which retrieval also surfaces.
-    const BBCE_PCT = { CA: 200, MA: 200, TX: 165, WA: 200, GA: 130, MI: 200, IL: 165 } as const;
+    const BBCE_PCT = { CA: 200, MA: 200, TX: 165, WA: 200, GA: 130, MI: 200, IL: 165, FL: 200 } as const;
     const bbcePct: number | undefined = (BBCE_PCT as Record<string, number>)[state];
     lines.push(`- 100% FPL, monthly (net-income test basis): ${row(p.fpl)}`);
     lines.push(`- Gross-income limit, 130% FPL (federal test): ${row(scaled(130))}`);

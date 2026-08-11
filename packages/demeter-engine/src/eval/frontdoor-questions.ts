@@ -238,4 +238,17 @@ export const FRONTDOOR_EVAL: FrontDoorCase[] = [
   { id: "il-expedited", category: "IL", question: "How fast can I get emergency SNAP benefits in Illinois?", expect: { kind: "external", citation: "PM 02-08-00" }, state: "IL" },
   { id: "il-cert-period", category: "IL", question: "How long does my SNAP approval last in Illinois before I have to redo it?", expect: { kind: "external", citation: "PM 17-05-02" }, state: "IL" },
   { id: "il-federal-benefit", category: "IL", question: "How is the monthly benefit amount calculated from net income?", expect: { kind: "grounded", section: "273.10" }, state: "IL" },
+  // --- Florida (Wave 2 — flat 200% BBCE, 3-tier SUA mid-revision, engine RMP check confirmed correct, ABAWD-waiver + a bonus WA finding both flagged) ---
+  { id: "fl-program-name", category: "FL", question: "What agency runs SNAP in Florida and where do I apply?", expect: { kind: "external", citation: "MyACCESS" }, state: "FL" },
+  { id: "fl-income-limit", category: "FL", question: "What's the income limit for SNAP in Florida?", expect: { kind: "external", citation: "FS 2010.0201" }, state: "FL" },
+  { id: "fl-asset-limit", category: "FL", question: "Is there an asset or savings limit for SNAP in Florida?", expect: { kind: "external", citation: "FS 1610.0200" }, state: "FL" },
+  { id: "fl-sua", category: "FL", question: "What's the standard utility allowance for SNAP in Florida?", expect: { kind: "external", citation: "FS 2410.0344" }, state: "FL" },
+  { id: "fl-medical-deduction", category: "FL", question: "I'm disabled and have medical bills — do I get a deduction for SNAP in Florida?", expect: { kind: "external", citation: "FS 2410.0353" }, state: "FL" },
+  { id: "fl-child-support", category: "FL", question: "Does paying child support lower my countable income for SNAP in Florida?", expect: { kind: "external", citation: "FS 2410.0329" }, state: "FL" },
+  { id: "fl-abawd-waiver", category: "FL", question: "Is the SNAP work-requirement time limit waived anywhere in Florida right now?", expect: { kind: "external", citation: "DCF ABAWD FAQ" }, state: "FL" },
+  { id: "fl-drug-felony", category: "FL", question: "I have a drug felony conviction — can I still get SNAP in Florida?", expect: { kind: "external", citation: "Fla. Stat. § 414.095" }, state: "FL" },
+  { id: "fl-restaurant-meals", category: "FL", question: "Can I use my EBT card to buy a hot meal at a restaurant in Florida?", expect: { kind: "external", citation: "Restaurant Meals Program" }, state: "FL" },
+  { id: "fl-expedited", category: "FL", question: "How fast can I get emergency SNAP benefits in Florida?", expect: { kind: "external", citation: "FS 0610.0102" }, state: "FL" },
+  { id: "fl-cert-period", category: "FL", question: "How long does my SNAP approval last in Florida before I have to redo it?", expect: { kind: "external", citation: "FS 0810.0400" }, state: "FL" },
+  { id: "fl-federal-benefit", category: "FL", question: "How is the monthly benefit amount calculated from net income?", expect: { kind: "grounded", section: "273.10" }, state: "FL" },
 ];
