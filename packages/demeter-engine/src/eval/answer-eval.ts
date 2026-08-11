@@ -872,6 +872,119 @@ export const MA_GOLD: AnswerExpectation[] = [
   },
 ];
 
+export const NV_GOLD: AnswerExpectation[] = [
+  {
+    id: "nv-expanded-cat-elig-200",
+    // Nevada's flat 200% BBCE screen — the state authority must win over the
+    // federal 130% default, since every SNAP applicant already receives the
+    // conferring "This Is Your Copy" TANF page.
+    question: "Is there a higher income limit for SNAP in Nevada if I'm categorically eligible?",
+    state: "NV",
+    expectCitation: "A-180.2",
+    mustMention: "200",
+    mustDisclaim: true,
+  },
+  {
+    id: "nv-vehicle-exclusion",
+    question: "Does my car count against me for SNAP in Nevada?",
+    state: "NV",
+    expectCitation: "A-550",
+    mustMention: "exempt",
+    mustDisclaim: true,
+  },
+  {
+    id: "nv-asset-limit",
+    question: "What's the SNAP resource limit in Nevada for a household with a member over 60?",
+    state: "NV",
+    expectCitation: "A-520",
+    mustMention: "4,500",
+    mustDisclaim: true,
+  },
+  {
+    id: "nv-sua-standard",
+    question: "How much is Nevada's Standard Utility Allowance for SNAP right now?",
+    state: "NV",
+    expectCitation: "A-660.5.1.1",
+    mustMention: "446",
+    mustDisclaim: true,
+  },
+  {
+    id: "nv-medical-deduction-no-flat-standard",
+    // Nevada uses the federal actual-expense-minus-$35 approach, NOT a flat
+    // Standard Medical Deduction like Illinois or Georgia — the state
+    // authority (which describes the mechanism) must win over any inference
+    // from another state's flat-dollar pattern.
+    question: "I'm disabled and have $50 a month in medical bills for Nevada SNAP — do I get a deduction?",
+    state: "NV",
+    expectCitation: "A-660.3",
+    mustMention: "35",
+    mustDisclaim: true,
+  },
+  {
+    id: "nv-child-support-deduction",
+    // Nevada treats paid child support as a DEDUCTION, not an income
+    // exclusion like Illinois — the state authority must win over the
+    // federal-default framing this pack's own IL pack established.
+    question: "Does paying child support lower my countable income for SNAP in Nevada?",
+    state: "NV",
+    expectCitation: "A-660.4",
+    mustMention: "deduct",
+    mustDisclaim: true,
+  },
+  {
+    id: "nv-abawd-statewide-waiver-ended",
+    // Guards against Mae stating Nevada currently holds a STATEWIDE ABAWD
+    // waiver — it ended January 31, 2026; only narrower areas remain waived.
+    question: "Is the SNAP work-requirement time limit currently waived statewide in Nevada?",
+    state: "NV",
+    expectCitation: "B-472",
+    mustMention: "waiv",
+    mustDisclaim: true,
+  },
+  {
+    id: "nv-drug-felony-full-optout",
+    // Guards against inventing a drug-felony ban Nevada doesn't operate —
+    // Nevada is a VERIFIED FULL OPT-OUT (NRS 422A.345), with no treatment
+    // condition since the 2021 amendment; see PROVENANCE.md.
+    question: "I was convicted of a drug felony years ago — can I still get SNAP in Nevada?",
+    state: "NV",
+    mustNotMention: ["permanently banned", "lifetime ban", "you cannot receive"],
+    mustDisclaim: true,
+  },
+  {
+    id: "nv-fleeing-felon",
+    question: "I have an active felony warrant — can I get SNAP in Nevada?",
+    state: "NV",
+    expectCitation: "B-941.1",
+    mustMention: "wanted",
+    mustDisclaim: true,
+  },
+  {
+    id: "nv-lottery-winnings",
+    question: "I won $5,000 in the Nevada lottery — does that affect my SNAP case?",
+    state: "NV",
+    expectCitation: "B-950",
+    mustMention: "resource limit",
+    mustDisclaim: true,
+  },
+  {
+    id: "nv-expedited-service",
+    question: "How fast can I get emergency SNAP benefits in Nevada?",
+    state: "NV",
+    expectCitation: "A-141",
+    mustMention: "150",
+    mustDisclaim: true,
+  },
+  {
+    id: "nv-certification-period",
+    question: "How long does my SNAP approval last in Nevada before I have to redo it?",
+    state: "NV",
+    expectCitation: "A-1823.2",
+    mustMention: "6",
+    mustDisclaim: true,
+  },
+];
+
 /** Everything the live runner executes. */
 export const ALL_GOLD: AnswerExpectation[] = [
   ...ANSWER_GOLD,
@@ -884,4 +997,5 @@ export const ALL_GOLD: AnswerExpectation[] = [
   ...IL_GOLD,
   ...FL_GOLD,
   ...MA_GOLD,
+  ...NV_GOLD,
 ];
