@@ -826,6 +826,214 @@ const STATES: Record<string, StatePolicy> = {
     // lists AZ, CA, IL (Cook/Franklin only), MD, MA, MI, NY, RI, VA; no NV.
     rmp_operated: false,
   },
+  // Arizona — DES/FAA. A NEW kind of schema mismatch: Arizona's SUA and LUA
+  // are SIZE-BANDED (1-3 participants vs. 4+), the only state in this file
+  // with a household-size dimension in its utility ladder — every other
+  // state's tiers are flat regardless of household size. This schema has no
+  // size dimension either, so the 1-3 band (the more common household size)
+  // is encoded; a 4+ household's real SUA/LUA is $115/$52 HIGHER than what
+  // this engine computes (CNAP FAA6.J.09, eff. 10/1/2025). Arizona also has
+  // the same undermodeled-single-utility gap as NV's IUA/IL's Single Utility:
+  // a household billed for exactly one non-heating, non-telephone utility
+  // has no confirmed tier at all (the AZ corpus pack explicitly declined to
+  // guess which one applies) and falls through to NONE here.
+  AZ: {
+    state_code: "AZ",
+    label: "Arizona / DES-FAA",
+    bbce: true,
+    bbce_threshold_pct: 200,
+    bbce_fpl_basis: "federal_fiscal_year",
+    // "Maximum NA resource limits do not apply to NA budgetary units that
+    // meet Basic or Expanded Categorical Eligibility requirements" (CNAP
+    // FAA6.J.06.B) — full waiver for the categorically-eligible majority;
+    // $3,000/$4,500 for the tested minority, same shape as every state above.
+    asset_waiver: true,
+    sua_by_tier: {
+      HCSUA: new Decimal("323"),
+      LUA: new Decimal("149"),
+      phone: new Decimal("44"),
+      none: new Decimal("0"),
+    },
+    allotment_tier: "48",
+    // Arizona ENFORCES the federal drug-felony ban — the AZ corpus pack found
+    // no opt-out statute (two candidate citations, ARS 46-215 and ARS 46-201,
+    // were BOTH checked directly against the Legislature's own text and
+    // neither covers controlled substances) — but the ban carries a real,
+    // genuine CONDITIONAL removal pathway: sign a drug-testing agreement and
+    // meet one of five treatment/compliance conditions. Per this file's
+    // established rule for a modified/conditional ban the boolean can't
+    // express (see FL's and PA's entries above — "under-claiming a narrow
+    // real ban is the lesser harm"), `false` is chosen deliberately: setting
+    // `true` would deny every AZ drug-felony household, including everyone
+    // who qualifies for removal, which #608 forbids. This is a genuine
+    // under-claim, not a fail-open default.
+    drug_felony_ban: false,
+    // Arizona's fixed 1/1/2025-12/31/2027 ABAWD clock currently has 7 real
+    // waived areas (CNAP FAA2.M.09.B): Yuma County, plus 6 Tribal/
+    // Reservation/Trust-Land areas (Cocopah, Hualapai, Maricopa/Ak-Chin,
+    // Salt River, San Carlos, Pascua Yaqui). No AZ_WAIVER_COUNTY_FIPS lookup
+    // exists, so — same reasoning as NV's and MI's entries above — `true`
+    // avoids wrongly denying the real households inside those 7 areas, at
+    // the cost of over-approving ABAWD households elsewhere in the state.
+    abawd_waiver_avail: true,
+    // Confirmed on USDA FNA's own national Restaurant Meals Program page —
+    // one of only 9 states nationally (AZ, CA, IL Cook/Franklin only, MD, MA,
+    // MI, NY, RI, VA) — genuine statewide operation, not county-restricted.
+    rmp_operated: true,
+  },
+  // Oregon — ODHS. Flat 200% BBCE (Information and Referral Services
+  // pamphlet conferral, OAR 461-135-0505), no tiering. SUA is a genuine
+  // 4-tier ladder that maps cleanly: FUA→HCSUA, LUA→LUA, TUA→phone — the
+  // same undermodeled-single-utility gap as NV's IUA/AZ's one-utility case
+  // applies to OR's IUA ($65, exactly one non-heat/cool utility), which
+  // falls through to NONE here. NOTE: OAR 461-160-0420 is currently a
+  // TEMPORARY rule (SSP 21-2026, effective 3/19/26-9/14/26) — the OR corpus
+  // pack confirmed these SAME dollar figures also appear in the immediately-
+  // prior PERMANENT version, so the values themselves are not expected to
+  // change on expiration, but the citation needs re-verification after that
+  // date regardless (see the OR corpus pack's freshness.json).
+  OR: {
+    state_code: "OR",
+    label: "Oregon / ODHS",
+    bbce: true,
+    bbce_threshold_pct: 200,
+    bbce_fpl_basis: "federal_fiscal_year",
+    // "Categorically eligible filing groups are 'presumed to meet' resource,
+    // income, and adjusted-income requirements" (OAR 461-135-0505) — full
+    // waiver for the BBCE majority; $3,000/$4,500 for the tested minority.
+    asset_waiver: true,
+    sua_by_tier: {
+      HCSUA: new Decimal("515"),
+      LUA: new Decimal("404"),
+      phone: new Decimal("81"),
+      none: new Decimal("0"),
+    },
+    allotment_tier: "48",
+    // Oregon opts out of the federal drug-felony ban (ORS 411.119(1)) — a
+    // GENUINE, currently-operative opt-out, not a modified ban requiring the
+    // FL/PA/AZ under-claim treatment. DHS retains a narrow discretionary
+    // SUSPENSION path (trafficking conviction + active supervision +
+    // evidence of trading SNAP for drugs) — evidence-specific enough that it
+    // does not change the base-case answer for the vast majority of OR
+    // drug-felony households.
+    drug_felony_ban: false,
+    // Oregon's ABAWD exempt areas are 5 NAMED TRIBAL jurisdictions (not
+    // counties) — Burns Paiute, Confederated Tribes of Siletz Indians,
+    // Coquille, Cow Creek Band of Umpqua, Klamath Tribes (OAR 461-135-0520).
+    // A separate 7-county "discretionary exemption" mechanism exists but is
+    // explicitly NOT an area waiver — the OR corpus pack's own supplement
+    // warns "Do not describe these seven counties as 'waived.'" Given the
+    // real area exemption covers only 5 tribal jurisdictions (not a
+    // meaningful fraction of Oregon's 36 counties), `false` follows the same
+    // reasoning as NY's entry above rather than NV's/AZ's/MI's `true`.
+    abawd_waiver_avail: false,
+    // Confirmed ABSENT from USDA FNA's national RMP list. A pilot (SB 1585,
+    // 2024) is authorized but ODHS's own status page says it is still in
+    // development with no target launch date — a live freshness risk, not a
+    // settled fact the way most other `false` entries in this file are.
+    rmp_operated: false,
+  },
+  // Wisconsin — DHS/FoodShare. Flat 200% BBCE (Job Center of Wisconsin
+  // notice, FSH 4.2.1), but EBD households over 200% FPG get an even MORE
+  // generous pathway (no gross test at all, only 100% net) not modelled
+  // here — same accepted asymmetric-tier limitation as GA's/IL's entries.
+  // Wisconsin's utility ladder has SEVEN tiers, the most severe SUA-schema
+  // mismatch in this file: only HSUA→HCSUA, LUA→LUA, PUA→phone map onto this
+  // schema's 4 slots. FOUR separate WI standards have NO slot at all — EUA
+  // (electric-only, $155), WUA (water/sewer, $106), FUA (cooking fuel, $48),
+  // TUA (trash, $28) — a Wisconsin household billed for exactly one of those
+  // four loses that deduction entirely under this engine, a materially
+  // bigger gap than the single-tier gaps other states in this file carry.
+  WI: {
+    state_code: "WI",
+    label: "Wisconsin / DHS — FoodShare",
+    bbce: true,
+    bbce_threshold_pct: 200,
+    bbce_fpl_basis: "federal_fiscal_year",
+    asset_waiver: true,
+    sua_by_tier: {
+      HCSUA: new Decimal("553"),
+      LUA: new Decimal("385"),
+      phone: new Decimal("31"),
+      none: new Decimal("0"),
+    },
+    allotment_tier: "48",
+    // Wisconsin requires a ONE-TIME drug test (not an ongoing regime) for a
+    // qualifying conviction within the last 5 years, with a 12-month
+    // sanction on FAILURE (FSH 3.20.1) — genuine disqualifying teeth for a
+    // narrow subset (recent conviction + failed/refused test), but the
+    // majority of affected people (conviction 5+ years old, or a passed
+    // test) face no restriction at all. Same FL/PA/AZ under-claim reasoning:
+    // `true` would wrongly deny that majority, so `false` is the deliberate
+    // choice — this boolean cannot express a time-boxed, test-conditional
+    // sanction any more than it can express AZ's treatment-conditional one.
+    drug_felony_ban: false,
+    // The WI corpus pack explicitly could not find any currently-waived
+    // Wisconsin county in the handbook text itself ("this pack did not find
+    // specific currently-waived Wisconsin counties in the handbook text
+    // itself") — unlike NV/AZ (confirmed real waived areas) or OR/NY
+    // (confirmed narrow/no waiver), Wisconsin's status is simply UNCONFIRMED.
+    // Absent any confirmed waiver, `false` is the honest default (same as
+    // MA's entry above: no evidence of a current waiver defaults to none).
+    abawd_waiver_avail: false,
+    // Confirmed ABSENT from USDA FNA's national RMP list via direct curl
+    // (not the AI-summarized WebFetch that produced false positives for
+    // other states this session). Do not confuse with WI's separate
+    // group-meal-site/shelter/Meals-on-Wheels provision, which is real but
+    // is not the federal Restaurant Meals Program.
+    rmp_operated: false,
+  },
+  // Minnesota — DCYF (Combined Manual still hosted on the legacy DHS
+  // system). Flat 200% BBCE (Domestic Violence Information Brochure
+  // DHS-3477, CM 0013.06) — but MN's BBCE exempts a unit from BOTH the asset
+  // test AND the net income test, stronger than every other flat-screen
+  // state in this file. sua_by_tier is DELIBERATELY null: Minnesota runs a
+  // SINGLE COMBINED utility allowance (heat/cool/electric/water/sewer/
+  // garbage/phone all together, not a tiered ladder at all), and the MN
+  // corpus pack's own build could NOT independently confirm the current
+  // dollar figure against a live authoritative source (the Combined
+  // Manual's utility-deduction section text wasn't captured in that pass,
+  // and both a USDA FY26 SUA PDF and a DHS page returned access-denied
+  // responses — see the MN corpus pack's PROVENANCE.md). Same discipline as
+  // PA's entry above: SUA stays null until a working primary source is
+  // reached, not guessed from a secondary figure this pack explicitly
+  // declined to trust (~$235/month electric-only, unconfirmed).
+  MN: {
+    state_code: "MN",
+    label: "Minnesota / DCYF",
+    bbce: true,
+    bbce_threshold_pct: 200,
+    bbce_fpl_basis: "federal_fiscal_year",
+    // "CE and BBCE units are NOT subject to a net income test" (CM 0013.06)
+    // — full waiver, stronger than the asset-only waiver most states above
+    // use; non-categorically-eligible units still face $3,000/$4,500.
+    asset_waiver: true,
+    sua_by_tier: null,
+    allotment_tier: "48",
+    // GENUINE clean full opt-out — "End any disqualifications for someone
+    // who was disqualified for Cash programs or SNAP as a drug felon prior
+    // to 08/01/2023" and "Do not deny or terminate assistance for a person
+    // who tests positive" (CM 0011.27.03, issue-dated 11/2024). This
+    // corrects a widely-repeated FALSE secondary-source claim that Minnesota
+    // imposes a lifetime ban after 2 failed drug tests — the MN corpus
+    // pack's own adversarial refute pass caught and disproved this against
+    // the Combined Manual's primary text before drafting anything. Unlike
+    // AZ's/WI's judgment-call `false` (a real conditional restriction the
+    // boolean can't express), MN's `false` is a clean, unconditional finding
+    // — the same shape as IL's and NV's entries above.
+    drug_felony_ban: false,
+    // The MN corpus pack's own supplement is explicit: "treat Minnesota as
+    // PRESUMPTIVELY UNWAIVED... pending direct confirmation" — two access
+    // barriers (a DHS bot-detection wall, a USDA ZIP-only waiver archive)
+    // blocked independent confirmation of current status. `false` follows
+    // the pack's own stated instruction rather than assume either direction.
+    abawd_waiver_avail: false,
+    // Confirmed ABSENT from USDA FNA's national RMP list (reused from the
+    // same-session direct-curl fetch the WI pack used). Minnesota
+    // legislation (HF 3855/SF 4135) proposing an RMP has not been enacted —
+    // a live legislative risk, not a settled fact.
+    rmp_operated: false,
+  },
   // Kansas utility standards — KEESM §7226 (Shelter Costs), rev. 07-26,
   // confirmed live 2026-08-09 at content.dcf.ks.gov/EES/KEESM/Current/keesm7226.htm.
   // Unlike TX/WA (mandatory standards, no election), KEESM does not state
