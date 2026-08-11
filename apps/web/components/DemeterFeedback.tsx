@@ -16,7 +16,7 @@
 // teaches them not to bother next time. The failure is logged server-side where
 // it belongs.
 
-import { useRef, useState } from "react";
+import { useState } from "react";
 import type { AnswerLang } from "@civica/demeter-engine/packs";
 
 export interface FeedbackCopy {
@@ -58,11 +58,15 @@ export function DemeterFeedback({
   // immediately and the reason+note follows, and without a shared key those
   // are two rows — one person's single complaint counted twice, split across
   // two `reason` buckets in the rollup. The route upserts on this.
-  const reportIdRef = useRef<string>("");
-  if (!reportIdRef.current) {
-    reportIdRef.current =
-      typeof crypto !== "undefined" && "randomUUID" in crypto ? crypto.randomUUID() : "";
-  }
+  // useState with a lazy initializer, not a ref written during render. Same
+  // guarantee — computed once per mount, never again — but it is the form React
+  // supports for it: writing a ref during render is untracked mutation, and
+  // React 19 flags it because a replayed render can observe a different value.
+  // The setter is deliberately unused; this is a constant for this component's
+  // lifetime.
+  const [reportId] = useState<string>(() =>
+    typeof crypto !== "undefined" && "randomUUID" in crypto ? crypto.randomUUID() : "",
+  );
 
   const submit = (r: "up" | "down", why?: string | null, text?: string) => {
     // Fire-and-forget by design: feedback must never make the page feel slow
@@ -71,7 +75,7 @@ export function DemeterFeedback({
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        reportId: reportIdRef.current || undefined,
+        reportId: reportId || undefined,
         rating: r,
         reason: why ?? null,
         note: text ?? "",

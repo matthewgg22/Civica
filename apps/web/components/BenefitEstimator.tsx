@@ -39,11 +39,16 @@ export function BenefitEstimator() {
   const [size, setSize] = useState(2);
   const target = MAX_BENEFIT[Math.min(size, 8)];
   const displayed = useCountUp(target);
-  const prevSize = useRef(size);
-  const direction = size > prevSize.current ? "up" : size < prevSize.current ? "down" : "none";
+  // Which way the number moved, for the CSS animation. This used to read a ref
+  // DURING RENDER (`size > prevSize.current`), which React 19 flags: a ref is
+  // mutable and not tracked, so under concurrent rendering a render can observe
+  // a value that does not match the state it is rendering, and the same render
+  // replayed can produce a different class. Keeping it in state makes the
+  // render a pure function of state, which is what the animation needs anyway.
+  const [direction, setDirection] = useState<"up" | "down" | "none">("none");
 
   function handleSize(n: number) {
-    prevSize.current = size;
+    setDirection(n > size ? "up" : n < size ? "down" : "none");
     setSize(n);
   }
 

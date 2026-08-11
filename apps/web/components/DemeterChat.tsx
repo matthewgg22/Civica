@@ -651,7 +651,12 @@ export function DemeterChat({
       setBusy(false);
       abortRef.current = null;
     }
-  }, [input, busy, messages, state, lang, t]);
+    // refreshWorksheet is memoized on [state], which is already here, so
+    // listing it adds no extra invalidation. It is listed anyway because the
+    // two staying in sync is currently a coincidence of their dep lists
+    // matching: give refreshWorksheet one dependency send does not have, and
+    // send would silently hold a stale copy with no warning.
+  }, [input, busy, messages, state, lang, t, refreshWorksheet]);
 
   const hasChat = messages.length > 0;
 
