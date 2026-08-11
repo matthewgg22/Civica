@@ -101,6 +101,7 @@ export function DemeterSave({
   pendingSave,
   initialSavedId,
   onRestore,
+  onSavedChange,
   copy,
 }: {
   messages: SavedMsg[];
@@ -112,6 +113,11 @@ export function DemeterSave({
   /** Set when the page was opened as ?c=<id>: already saved, keep it current. */
   initialSavedId: string | null;
   onRestore: (messages: SavedMsg[], state: string | null, lang: AnswerLang) => void;
+  /** Reported upward only so the worksheet's privacy line can stop saying the
+   *  conversation is gone when the tab closes (#703). Deliberately a
+   *  notification, not a lift: whether a row exists is this component's fact,
+   *  and a second copy of it in the parent is a second thing to get wrong. */
+  onSavedChange?: (saved: boolean) => void;
   copy: SaveCopy;
 }) {
   const [savedId, setSavedId] = useState<string | null>(initialSavedId);
@@ -131,6 +137,8 @@ export function DemeterSave({
   // development, which would otherwise post the restored transcript twice and
   // leave two identical conversations in the list.
   const restoredRef = useRef(false);
+
+  useEffect(() => onSavedChange?.(savedId !== null), [savedId, onSavedChange]);
 
   const post = useCallback(
     async (

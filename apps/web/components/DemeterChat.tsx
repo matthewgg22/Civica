@@ -79,7 +79,10 @@ export function renderAnswer(text: string): ReactNode[] {
   return out;
 }
 
-const T = {
+// Exported for the retention-copy test (#703): the privacy line is a claim
+// about what we store, so it is pinned per locale rather than left to whoever
+// edits this table next.
+export const T = {
   en: {
     title: "Demeter",
     tagline: "Verified answers about SNAP — for any state.",
@@ -153,7 +156,14 @@ const T = {
       stillNeeded: "Still needed",
       empty:
         "Tell Demeter about your household — who lives with you, what you earn, what you pay in rent — and your estimate builds here.",
-      privacy: "Nothing here is saved. Close this tab and it is gone.",
+      // Retention copy — see #703 and the header of DemeterWorksheet. The
+      // second sentence is the honest version of a claim we cannot make:
+      // redactPii strips structured identifiers but deliberately NOT names, and
+      // says so in its own header, so this asks rather than promises.
+      privacy:
+        "Close this tab and you cannot return to this conversation. We keep the question and answer to check our accuracy, so please avoid typing names or personal details.",
+      privacySaved:
+        "Saved to your account — you can come back to it or delete it. We keep the question and answer to check our accuracy, so please avoid typing names or personal details.",
       disclaimer: "An estimate, not a decision. Your county agency decides.",
       pickState: "Pick your state above and your estimate can build here as you talk.",
       pickStateCta: "Choose your state",
@@ -235,7 +245,10 @@ const T = {
       stillNeeded: "Todavía falta",
       empty:
         "Cuéntale a Demeter sobre tu hogar — quién vive contigo, cuánto ganas, cuánto pagas de renta — y tu estimado se arma aquí.",
-      privacy: "Nada de esto se guarda. Cierra esta pestaña y desaparece.",
+      privacy:
+        "Cierra esta pestaña y no podrás volver a esta conversación. Guardamos la pregunta y la respuesta para verificar nuestra exactitud, así que evita escribir nombres o datos personales.",
+      privacySaved:
+        "Guardada en tu cuenta — puedes volver a ella o borrarla. Guardamos la pregunta y la respuesta para verificar nuestra exactitud, así que evita escribir nombres o datos personales.",
       disclaimer: "Un estimado, no una decisión. Tu agencia del condado decide.",
       pickState: "Elige tu estado arriba y tu estimado se irá armando aquí.",
       pickStateCta: "Elige tu estado",
@@ -317,7 +330,10 @@ const T = {
       stillNeeded: "Còn thiếu",
       empty:
         "Hãy cho Demeter biết về hộ gia đình của bạn — ai sống cùng bạn, bạn kiếm được bao nhiêu, bạn trả bao nhiêu tiền thuê nhà — và ước tính sẽ hiện ở đây.",
-      privacy: "Không có gì ở đây được lưu lại. Đóng tab này là mọi thứ biến mất.",
+      privacy:
+        "Đóng tab này thì bạn không thể quay lại cuộc trò chuyện này. Chúng tôi lưu câu hỏi và câu trả lời để kiểm tra độ chính xác, vì vậy xin đừng nhập tên hay thông tin cá nhân.",
+      privacySaved:
+        "Đã lưu vào tài khoản của bạn — bạn có thể quay lại hoặc xóa đi. Chúng tôi lưu câu hỏi và câu trả lời để kiểm tra độ chính xác, vì vậy xin đừng nhập tên hay thông tin cá nhân.",
       disclaimer: "Chỉ là ước tính, không phải quyết định. Cơ quan quận của bạn mới là nơi quyết định.",
       pickState: "Chọn tiểu bang của bạn ở trên để ước tính có thể hiện ở đây.",
       pickStateCta: "Chọn tiểu bang",
@@ -395,7 +411,10 @@ const T = {
       stillNeeded: "仍需提供",
       empty:
         "告诉 Demeter 您的家庭情况——谁和您同住、收入多少、房租多少——估算就会在这里逐步生成。",
-      privacy: "这里的内容不会被保存。关闭此页面即消失。",
+      privacy:
+        "关闭此页面后将无法返回本次对话。我们会保留问题和回答以核查准确性，因此请勿输入姓名或个人信息。",
+      privacySaved:
+        "已保存到您的账户 — 您可以随时返回或删除。我们会保留问题和回答以核查准确性，因此请勿输入姓名或个人信息。",
       disclaimer: "这只是估算，不是决定。最终由您所在县的机构裁定。",
       pickState: "请在上方选择您所在的州，估算就能在这里生成。",
       pickStateCta: "选择您所在的州",
@@ -443,6 +462,11 @@ export function DemeterChat({
   // there is no benefit calculation at all, so this is the difference between
   // a live estimate and a dead rail for anyone who never touched the picker.
   const [openPicker, setOpenPicker] = useState(0);
+  // Reported up by DemeterSave. Used for one thing only: the estimate rail's
+  // privacy line, whose "close the tab and it is gone" half stops being true
+  // the moment a row exists (#703). Seeded from the prop so resuming a saved
+  // conversation reads correctly on the very first paint.
+  const [conversationSaved, setConversationSaved] = useState(savedConversationId !== null);
   // Anonymous funnel key. Random, per-tab, dies with the tab, never sent to
   // the model — it exists only so the log can tell "asked once and left" from
   // "stayed and got somewhere", which nothing could distinguish before.
@@ -688,6 +712,10 @@ export function DemeterChat({
           pendingSave={pendingSave}
           initialSavedId={savedConversationId}
           onRestore={restoreConversation}
+          // Plain setter, not an inline arrow: it lands in an effect's
+          // dependency list in DemeterSave, and React guarantees a state
+          // setter's identity is stable across renders.
+          onSavedChange={setConversationSaved}
           copy={t.save}
         />
       </div>
@@ -792,6 +820,7 @@ export function DemeterChat({
         <DemeterWorksheet
           classification={classification}
           stateSelected={state !== null}
+          saved={conversationSaved}
           copy={t.worksheet}
           onPickState={() => setOpenPicker((n) => n + 1)}
         />
