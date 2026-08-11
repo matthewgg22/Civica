@@ -15,9 +15,21 @@
 // What replaces them is second person. "Your income", not "gross monthly
 // income for the household". The person reading this is the household.
 //
-// Nothing here is persisted — the facts live in the chat component's state and
-// die with the tab. The empty state says so, because a panel that displays
-// someone's income should tell them where it goes.
+// The facts on this panel live in the chat component's state and die with the
+// tab, and the privacy line says so — a panel that displays someone's income
+// should tell them where it goes.
+//
+// What it must NOT say is that nothing is kept anywhere (#703). Every public
+// answer writes the question and the full answer to `mae_query_log` via
+// publicAuditSink; that is deliberate and it is what the accuracy work runs on.
+// This line read "Nothing here is saved" from before that sink was wired, which
+// made it a retention claim that understated retention — the wrong direction on
+// a benefits service, to people already nervous about being on the record.
+//
+// It also has to survive the person pressing Save, hence the two variants: the
+// "close the tab and it is gone" half stops being true the moment there is a
+// row, and a sidebar contradicting the ✓ Saved badge a few inches away teaches
+// people not to believe either one.
 
 import type { ScreeningClassification } from "@civica/demeter-engine";
 import {
@@ -50,7 +62,10 @@ export interface DemeterWorksheetCopy {
   calc: string;
   stillNeeded: string;
   empty: string;
+  /** Shown while this conversation has no saved row. */
   privacy: string;
+  /** Shown once it does. Same retention sentence, different first half. */
+  privacySaved: string;
   disclaimer: string;
   pickState: string;
   pickStateCta: string;
@@ -59,11 +74,15 @@ export interface DemeterWorksheetCopy {
 export function DemeterWorksheet({
   classification,
   stateSelected,
+  saved,
   copy,
   onPickState,
 }: {
   classification: ScreeningClassification | null;
   stateSelected: boolean;
+  /** Whether this conversation has a saved row. Only decides which privacy
+   *  sentence is true; the panel holds no saved state of its own. */
+  saved?: boolean;
   copy: DemeterWorksheetCopy;
   /** Opens the state picker. Without a state there is no benefit calculation
    *  at all — snap-rules is state-keyed — so this panel telling someone to go
@@ -144,7 +163,7 @@ export function DemeterWorksheet({
         </section>
       )}
 
-      <p className="dmw__privacy">{copy.privacy}</p>
+      <p className="dmw__privacy">{saved ? copy.privacySaved : copy.privacy}</p>
       <p className="dmw__disclaimer">{copy.disclaimer}</p>
     </aside>
   );
