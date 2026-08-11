@@ -231,6 +231,30 @@ export function DemeterChat({
   /** Put a conversation back on screen after signing in. Stable identity: it
    *  sits in an effect's dependency list in DemeterSave, and a new function
    *  every render would re-run the restore. */
+  // Clearing is DESTRUCTIVE and irreversible — an unsaved conversation is gone
+  // — so it confirms rather than firing on one click. The confirm step is also
+  // where the honest note belongs: it is the moment the sentence "we still keep
+  // the question and answer" can still change what someone decides to do.
+  const [confirmClear, setConfirmClear] = useState(false);
+  const clearConversation = useCallback(() => {
+    setMessages([]);
+    setInput("");
+    setError(null);
+    setClassification(null);
+    factsRef.current = {};
+    setConfirmClear(false);
+    // The pending-save stash holds a full transcript in localStorage for 30
+    // minutes (see DemeterSave). Leaving it behind would mean "cleared" left
+    // the conversation sitting in this browser's storage — which on a shared
+    // machine is precisely the thing the button is for.
+    try {
+      window.localStorage.removeItem("demeter:pending-save");
+    } catch {
+      /* storage disabled — nothing was stored either */
+    }
+    setAnnouncement(t.cleared);
+  }, [t]);
+
   const restoreConversation = useCallback(
     (restored: Msg[], restoredState: string | null, restoredLang: AnswerLang) => {
       setMessages(restored);
@@ -300,6 +324,35 @@ export function DemeterChat({
           : m,
       );
 
+    /** Hand the question back so the next tap is Send, not retyping it.
+     *
+     *  Without this a failed request left the composer EMPTY and the user's
+     *  message stranded in the transcript above an error — so someone on a
+     *  flaky prepaid connection, which is most of this audience, had to retype
+     *  a question they had already carefully worded. That is the opposite of an
+     *  actionable recovery step.
+     *
+     *  Drops their turn from the transcript as well as the empty assistant
+     *  bubble, because the honest state after a failed send is "you typed this
+     *  and it did not go", not "you asked this and were ignored" — and leaving
+     *  it would duplicate the turn when they send again.
+     *
+     *  Only for failures where trying again can actually work. At capacity for
+     *  the month, or unconfigured, retrying is a worse offer than the error's
+     *  own advice to call 211. */
+    const handBackForRetry = () => {
+      setMessages((m) => {
+        const withoutPlaceholder =
+          m[m.length - 1]?.role === "assistant" && m[m.length - 1]?.content === ""
+            ? m.slice(0, -1)
+            : m;
+        return withoutPlaceholder[withoutPlaceholder.length - 1]?.role === "user"
+          ? withoutPlaceholder.slice(0, -1)
+          : withoutPlaceholder;
+      });
+      setInput(question);
+    };
+
     try {
       const res = await fetch("/api/demeter", {
         method: "POST",
@@ -331,15 +384,31 @@ export function DemeterChat({
         try {
           reason = ((await res.json()) as { reason?: string }).reason ?? "";
         } catch { /* non-JSON error body */ }
-        setError(
-          res.status === 429
-            ? t.err429
-            : reason === "at_capacity"
-              ? t.errCapacity
-              : res.status === 503
-                ? t.errConfig
-                : t.errNetwork,
-        );
+        // REASON FIRST, status second. Keying on status alone flattened a
+        // distinction the route makes on purpose: it returns 429 for BOTH a
+        // per-minute rate limit and a per-IP DAILY cap, with different bodies
+        // and different Retry-After values (60s vs 3600s). The client showed
+        // "give it a minute" for both — so someone who had hit the daily cap
+        // was told to wait a minute for something that resets tomorrow, and
+        // would sit there retrying. The route's own comment calls the two
+        // "distinct ON PURPOSE"; this is where that distinction was being lost.
+        const message =
+          reason === "at_capacity"
+            ? t.errCapacity
+            : reason === "ip_daily_cap"
+              ? t.errDailyCap
+              : reason === "rate_limited" || res.status === 429
+                ? t.err429
+                : res.status === 503
+                  ? t.errConfig
+                  : t.errNetwork;
+        setError(message);
+        // Hand the question back only where trying again can actually work.
+        // A per-minute limit clears; a daily cap, a spent monthly budget and an
+        // unconfigured service do not, and offering a retry there loops someone
+        // instead of sending them to the 211 number the message gives them.
+        const retryable = message === t.err429 || message === t.errNetwork;
+        if (retryable) handBackForRetry();
         return;
       }
 
@@ -369,9 +438,15 @@ export function DemeterChat({
         }
       }
     } catch (err) {
-      dropPlaceholder();
-      if (!(err instanceof DOMException && err.name === "AbortError")) {
+      // An abort is the user pressing Stop, not a failure — their question was
+      // answered as far as they wanted it to be, so nothing is handed back.
+      if (err instanceof DOMException && err.name === "AbortError") {
+        dropPlaceholder();
+      } else {
+        // A thrown fetch is the flaky-connection case, which is the one this
+        // audience hits most and the one where retyping hurts most.
         setError(t.errNetwork);
+        handBackForRetry();
       }
     } finally {
       setBusy(false);
@@ -455,6 +530,34 @@ export function DemeterChat({
           onSavedChange={setConversationSaved}
           copy={t.save}
         />
+        {/* CLEAR, for shared and public machines. On a library terminal the
+            next person otherwise sees the previous person's questions about
+            their income, their household, their felony record.
+            Renders only once there is something to clear. */}
+        {hasChat &&
+          (confirmClear ? (
+            <span className="demeter__clearconfirm" role="group" aria-label={t.clear}>
+              <span className="demeter__clearnote">{t.clearNote}</span>
+              <button type="button" className="demeter__clearyes" onClick={clearConversation}>
+                {t.clear}
+              </button>
+              <button
+                type="button"
+                className="demeter__clearno"
+                onClick={() => setConfirmClear(false)}
+              >
+                {t.save.panelDismiss}
+              </button>
+            </span>
+          ) : (
+            <button
+              type="button"
+              className="demeter__clear"
+              onClick={() => setConfirmClear(true)}
+            >
+              {t.clear}
+            </button>
+          ))}
       </div>
 
       <div className="demeter__body">
@@ -577,6 +680,12 @@ export function DemeterChat({
           </button>
         )}
       </form>
+      {/* Under the composer, where the decision to type is made. It used to be
+          in the estimate rail only, which is the wrong place and — at narrow
+          widths where the rail stacks below the conversation — no place at all.
+          redactPii strips structured identifiers but deliberately NOT names, so
+          this asks rather than promises. */}
+      <p className="demeter__piihint">{t.piiHint}</p>
       <p className="demeter__disclaimer">{t.disclaimer}</p>
         </div>
         <DemeterWorksheet
