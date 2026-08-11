@@ -64,20 +64,38 @@ describe("POST /api/auth/magic-link", () => {
     expect(signInWithOtp).not.toHaveBeenCalled();
   });
 
-  it("refuses to bounce the user off-origin after the inbox round trip", async () => {
-    // `next` survives a trip through email, so an open redirect here is a
-    // phishing primitive: a real Demeter sign-in mail landing on evil.example.
-    await POST(req({ email: "a@example.com", next: "https://evil.example/x" }));
-    expect(signInWithOtp.mock.calls[0][0].options.emailRedirectTo).toContain(
-      encodeURIComponent("/screen/ask"),
+  it("sends a redirect URL with NO query string — it must match the allow list exactly", async () => {
+    // A `?next=` here made Supabase's Redirect URL match fail, so it fell back
+    // to the project Site URL — the staff dashboard — and applicants signing in
+    // to save a conversation landed in software they cannot use. Observed in
+    // production 2026-08-11. The destination rides a cookie now.
+    await POST(req({ email: "a@example.com", next: "/screen/ask?state=CA" }));
+    expect(signInWithOtp.mock.calls[0][0].options.emailRedirectTo).toBe(
+      "https://demeter.test/auth/callback",
     );
-    expect(signInWithOtp.mock.calls[0][0].options.emailRedirectTo).not.toContain("evil.example");
   });
 
-  it("keeps a same-origin next", async () => {
-    await POST(req({ email: "a@example.com", next: "/screen/ask?state=CA" }));
-    expect(signInWithOtp.mock.calls[0][0].options.emailRedirectTo).toContain(
-      encodeURIComponent("/screen/ask?state=CA"),
-    );
+  it("carries the destination in a cookie instead", async () => {
+    const res = await POST(req({ email: "a@example.com", next: "/screen/ask?state=CA" }));
+    const cookie = res.headers.get("set-cookie") ?? "";
+    expect(cookie).toContain("demeter_auth_next=");
+    expect(decodeURIComponent(cookie)).toContain("/screen/ask?state=CA");
+    // HttpOnly so page scripts cannot read or steer it; Lax because clicking a
+    // link in an email is a cross-site top-level GET and Strict would withhold
+    // the cookie on exactly the request it exists for.
+    expect(cookie).toContain("HttpOnly");
+    expect(cookie).toMatch(/SameSite=Lax/i);
+  });
+
+  it("refuses to stash an off-origin destination", async () => {
+    // The value round-trips through the user's inbox, so an open redirect is a
+    // phishing primitive: a genuine Demeter sign-in email landing on
+    // evil.example. Clamped before it is ever written.
+    for (const bad of ["https://evil.example/x", "//evil.example/x", "/\\evil.example"]) {
+      const res = await POST(req({ email: "a@example.com", next: bad }));
+      const cookie = decodeURIComponent(res.headers.get("set-cookie") ?? "");
+      expect(cookie).not.toContain("evil.example");
+      expect(cookie).toContain("/screen/ask");
+    }
   });
 });

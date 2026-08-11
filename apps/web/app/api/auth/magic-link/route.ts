@@ -19,6 +19,7 @@
 import { NextResponse } from "next/server";
 import { createSupabaseServerClient } from "../../../../lib/supabase-server";
 import { durableRateLimit } from "../../../../lib/durable-rate-limit";
+import { safeNext, setAuthNext } from "../../../../lib/auth-next";
 
 function clientIp(req: Request): string {
   const fwd = req.headers.get("x-forwarded-for");
@@ -26,14 +27,6 @@ function clientIp(req: Request): string {
   return req.headers.get("x-real-ip") ?? "unknown";
 }
 
-/** Same-origin relative paths only — a crafted `next` must not become an open
- *  redirect, and this value survives a round trip through the user's inbox. */
-function safeNext(raw: unknown): string {
-  if (typeof raw !== "string" || !raw.startsWith("/") || raw.startsWith("//")) {
-    return "/screen/ask";
-  }
-  return raw;
-}
 
 // Deliberately permissive: the authority on whether an address exists is the
 // delivery attempt, not a regex. This only rejects input that cannot be an
@@ -76,7 +69,13 @@ export async function POST(request: Request) {
   const { error } = await supabase.auth.signInWithOtp({
     email,
     options: {
-      emailRedirectTo: `${origin}/auth/callback?next=${encodeURIComponent(next)}`,
+      // NO QUERY STRING. Supabase matches this whole URL against the project's
+      // Redirect URL allow list; a `?next=` made it miss, Supabase fell back to
+      // the Site URL — the staff dashboard — and applicants signing in to save
+      // a conversation were dropped into software they cannot use (observed in
+      // production 2026-08-11). The destination rides a cookie instead, so this
+      // is a constant and an exact allow-list match.
+      emailRedirectTo: `${origin}/auth/callback`,
       // Sign-in AND sign-up are the same act here. Requiring a separate
       // registration step would be a second wall in front of someone who
       // only wants to keep their own conversation.
@@ -93,5 +92,9 @@ export async function POST(request: Request) {
   // person has used a benefits service — which is exactly the kind of fact
   // that should not be probeable. The user is told to check their inbox
   // either way.
-  return NextResponse.json({ ok: true });
+  // Cookie is set even when the send failed, so the two paths are
+  // indistinguishable from the outside — see the note above.
+  const res = NextResponse.json({ ok: true });
+  setAuthNext(res, next);
+  return res;
 }
