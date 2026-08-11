@@ -53,7 +53,11 @@ export interface MaeAuditRecord {
 /** Persistence hook. Implementations must be best-effort and never throw. */
 export type MaeAuditSink = (rec: MaeAuditRecord) => void | Promise<void>;
 
-/** Fallback sink: a structured stderr line the platform log drain captures. */
-export const consoleAuditSink: MaeAuditSink = (rec) => {
-  console.info("[demeter-audit]", JSON.stringify(rec));
-};
+/** Fallback sink: a structured log line the platform drain captures.
+ *
+ *  The console call IS the implementation here — this is the sink of last
+ *  resort when the database write fails, and it is the only thing standing
+ *  between a rejected audit row and total silence. Silencing it to satisfy
+ *  no-console would delete the fallback, not tidy it. */
+// eslint-disable-next-line no-console -- this function is a console sink by definition
+export const consoleAuditSink: MaeAuditSink = (rec) => console.info("[demeter-audit]", JSON.stringify(rec));

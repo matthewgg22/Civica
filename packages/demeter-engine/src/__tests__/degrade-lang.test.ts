@@ -1,4 +1,9 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
+// A named type import rather than `typeof import("../retrieval")` inline in the
+// annotation below. Same type, but consistent-type-imports forbids the inline
+// form, and the named one says which module is being partially mocked at the
+// top of the file instead of burying it in a generic argument.
+import type * as RetrievalModule from "../retrieval";
 
 // Degrade-path language threading (regression). The degraded answer is the
 // verbatim-sources fallback — the LAST honesty backstop after a draft and a
@@ -11,7 +16,7 @@ const retrieveMock = vi.hoisted(() => vi.fn());
 const sdk = vi.hoisted(() => ({ stream: vi.fn(), create: vi.fn() }));
 
 vi.mock("../retrieval", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("../retrieval")>();
+  const actual = await importOriginal<typeof RetrievalModule>();
   return { ...actual, retrieve: retrieveMock };
 });
 vi.mock("@anthropic-ai/sdk", () => ({
