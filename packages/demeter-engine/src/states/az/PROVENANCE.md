@@ -85,11 +85,19 @@ find or file an issue for. `packages/snap-rules` remains untouched by this PR pe
    invented. This may be the SAME kind of "undermodeled tier" gap Illinois's Single Utility Standard and Nevada's
    IUA exist specifically to close, or Arizona may simply not offer a utility allowance in that scenario; only a
    direct re-fetch of a currently-missing page (if one exists) could resolve this.
-3. **A "Legal Authorities" citation is not automatically evidence for the claim it's attached to.** The
-   Disqualified Participants page cites ARS 46-215 alongside the drug-felony provision. Fetched directly, ARS
-   46-215 covers general welfare-fraud disqualification procedures and does NOT mention controlled substances —
-   it is very likely cited on that page for the disqualification-TRACKING mechanism broadly, not the drug-felony
-   criterion specifically. The pack does not attribute the drug ban to this statute.
+3. **A "Legal Authorities" citation is not automatically evidence for the claim it's attached to — and neither is
+   a secondary source's citation.** The Disqualified Participants page cites ARS 46-215 alongside the drug-felony
+   provision; fetched directly, it covers general welfare-fraud disqualification procedures and does NOT mention
+   controlled substances. Separately, a WebSearch summary (citing Public Health Law Center's SNAP-ban opt-out map)
+   attributed Arizona's drug-testing/removal pathway to ARS 46-201 — also fetched directly, and that section covers
+   application/certification procedures, not drug convictions either. TWO candidate statutes, both checked directly
+   against the Legislature's own text, both ruled out. The removal-pathway MECHANICS themselves (drug-testing
+   agreement + one of five conditions) are confirmed straight from CNAP operational policy regardless — this pack
+   just cannot name the specific enabling statute (if a distinct one exists at all; it may be implemented purely
+   administratively via CNAP/AAC rulemaking rather than a standalone ARS section). Multiple secondary sources
+   (Public Health Law Center; a February 2026 Prison Policy Initiative analysis) independently describe Arizona as
+   one of four states — with Mississippi, South Carolina, West Virginia — still enforcing some form of the ban as
+   of 2026; carried in the supplement as context, explicitly labeled non-primary, not as a verified count.
 4. **Arizona's 200% FPL table (categorical eligibility + Simplified Reporting) runs on a different effective-date
    cycle (3/1/2026) than every other Arizona dollar figure in this pack (10/1/2025 or 10/1/2024)** — confirmed
    directly from each page's own "effective" line, not assumed to be a single unified COLA cycle the way most
