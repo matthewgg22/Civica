@@ -480,8 +480,28 @@ export function DemeterChat({
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const t = T[lang];
 
+  // THE JUDDER FIX. This used to run on [messages, busy] with behavior:"smooth".
+  // `messages` changes on EVERY streamed token, so every token started a new
+  // smooth-scroll animation that cancelled the one still in flight — the scroll
+  // never completed a single easing curve, which is what read as a jagged jump
+  // rather than a conversation moving.
+  //
+  // Now: smooth ONLY when the number of messages changes (a new bubble appears,
+  // which is a real event worth animating), and a plain instant follow while
+  // text streams into the last bubble. Instant during streaming is not a
+  // compromise — it is what makes it look like text arriving rather than the
+  // viewport chasing it.
+  const messageCount = messages.length;
   useEffect(() => {
-    scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
+    const el = scrollRef.current;
+    if (!el) return;
+    el.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
+  }, [messageCount]);
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el || !busy) return;
+    el.scrollTop = el.scrollHeight;
   }, [messages, busy]);
 
   const changeState = (next: string | null) => {
