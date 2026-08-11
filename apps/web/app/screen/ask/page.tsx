@@ -18,6 +18,7 @@ import { VERIFIED_STATES } from "@civica/demeter-engine/packs";
 import { DemeterChat } from "../../../components/DemeterChat";
 import { SnapLede, SnapDetail } from "../../../components/SnapOverview";
 import { alternateLanguages, askUrl } from "../../../lib/i18n/routes";
+import { loadConversation } from "../../../lib/demeter-conversations-server";
 import { askStructuredData, EN_TITLE, EN_DESCRIPTION } from "./structured-data";
 
 export const metadata: Metadata = {
@@ -30,9 +31,15 @@ export const metadata: Metadata = {
 export default async function ScreenAskPage({
   searchParams,
 }: {
-  searchParams: Promise<{ state?: string; q?: string }>;
+  searchParams: Promise<{ state?: string; q?: string; c?: string; save?: string }>;
 }) {
-  const { state, q } = await searchParams;
+  const { state, q, c, save } = await searchParams;
+
+  // ?c=<id> resumes a saved conversation. Only touched when the param is
+  // present, so the ordinary page — the one that has to be fast and indexable —
+  // never reads a cookie or the database to render.
+  const resumed = c ? await loadConversation(c) : null;
+
   const initialState =
     state && VERIFIED_STATES.some((s) => s.code === state.toUpperCase())
       ? state.toUpperCase()
@@ -45,8 +52,13 @@ export default async function ScreenAskPage({
         <div className="dmpage__chat">
           <DemeterChat
             states={VERIFIED_STATES}
-            initialState={initialState}
+            // A resumed conversation carries its own scope; ?state= only
+            // decides where a NEW conversation starts.
+            initialState={resumed ? resumed.state_code : initialState}
             initialQuestion={q ?? null}
+            initialMessages={resumed?.messages ?? []}
+            savedConversationId={resumed?.id ?? null}
+            pendingSave={save === "pending"}
           />
         </div>
         <SnapDetail states={VERIFIED_STATES} />
