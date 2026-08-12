@@ -33,7 +33,13 @@
 import type { Metadata } from "next";
 import { VERIFIED_STATES } from "@civica/demeter-engine/packs";
 import { redirect } from "next/navigation";
-import { SnapOrientation, SnapDetail, SnapAskCta } from "../../../components/SnapOverview";
+import {
+  SnapOrientation,
+  SnapDetail,
+  SnapAskCta,
+  SnapFoodNow,
+  SnapFears,
+} from "../../../components/SnapOverview";
 import { DemeterFooter } from "../../../components/DemeterFooter";
 import { DemeterNav } from "../../../components/DemeterNav";
 import { alternateLanguages, askUrl } from "../../../lib/i18n/routes";
@@ -80,11 +86,16 @@ export default async function ScreenAskPage({
       <DemeterNav />
       <div className="dmpage__inner">
         <SnapOrientation states={VERIFIED_STATES} />
+        {/* High, and not behind a click: SNAP takes at least seven days even
+            when it is urgent. */}
+        <SnapFoodNow />
         {/* The composer, the state picker and the suggested questions all live
             on /chat now. This page explains and hands over; it does not start
             the conversation and then forward it. */}
         <SnapAskCta state={initialState} />
         <SnapDetail states={VERIFIED_STATES} />
+        {/* Last: the fears are the final thing between reading and acting. */}
+        <SnapFears />
       </div>
       <DemeterFooter />
       <script

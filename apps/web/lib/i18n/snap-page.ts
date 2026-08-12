@@ -87,6 +87,27 @@ export interface PageCopy {
    *  page needs to hand over rather than half-start the conversation. */
   askLink: string;
   askIntro: string;
+  /** "I need food today." SNAP takes at least seven days even when it is
+   *  urgent, so a page that only explains SNAP leaves someone out of food this
+   *  week with an accurate answer and no dinner. Every comparable service
+   *  (Feeding America, GetCalFresh) carries this; we carried nothing. */
+  /** Where the EBT card actually works. "{n}" is the store count and "{date}"
+   *  the date it was pulled — both interpolated so the figure and its vintage
+   *  can never drift apart in translation. */
+  retailersH3: string;
+  retailersBody: string;
+  retailersNote: string;
+  foodNowLabel: string;
+  foodNowBody: string;
+  foodNowBank: string;
+  foodNow211: string;
+  /** The reasons eligible people never apply. The page explained the rules
+   *  well and never addressed why someone would not try. */
+  fearsH2: string;
+  fearsBody: string;
+  fears: { q: string; a: string }[];
+  fearsCta: string;
+  fearsCtaNote: string;
   /** What happens after you apply, on the clock the regulation actually sets.
    *  The form-question cards explain what a question MEANS; this explains what
    *  happens next, which is the other half of what people arrive not knowing.
@@ -245,6 +266,47 @@ const en: PageCopy = {
   askLink: "Ask Demeter about your situation",
   askIntro:
     "Plain-language answers with the rule attached. Pick your state and ask anything about SNAP.",
+  retailersH3: "Where the card works",
+  retailersBody:
+    "{n} stores across every state and territory accept EBT — supermarkets, corner shops, many farmers markets, and online at some retailers.",
+  retailersNote:
+    "Store counts published by USDA, as of {date}. More stores in a state does not mean one is easier to reach.",
+  foodNowLabel: "Need food this week?",
+  foodNowBody:
+    "SNAP takes at least seven days even when it is urgent. A food bank can help now, and 211 will find one near you.",
+  foodNowBank: "Find a food bank",
+  foodNow211: "Call or visit 211",
+  fearsH2: "The reasons people don\u2019t apply",
+  fearsBody:
+    "These are the worries that stop people who would qualify. Here is what is actually true \u2014 including the one we cannot give you a flat answer on.",
+  fears: [
+    {
+      q: "Does this affect my immigration status?",
+      a: "This one is changing, so we will not give you a flat answer. Federal public charge rules have not counted SNAP since 2022 \u2014 but DHS has rescinded that rule effective 18 September 2026, and after that date officers can weigh benefits case by case. If anyone in your household is not a US citizen, talk to a free immigration legal aid before you apply \u2014 not to us, and not to a caseworker.",
+    },
+    {
+      q: "Will I have to pay it back?",
+      a: "Not if what you reported was right. Benefits are not a loan. If an agency later finds it paid more than you were owed \u2014 usually a reporting mistake, on either side \u2014 it can ask for that overpayment back.",
+    },
+    {
+      q: "Am I taking it from someone who needs it more?",
+      a: "No. SNAP is not a fixed pot that runs out. Your benefit is not subtracted from anyone else\u2019s, and one more approved household does not make another household\u2019s smaller.",
+    },
+    {
+      q: "Can I get it if I own a car, or have savings?",
+      a: "Usually yes. Most states have dropped the asset test entirely. Where one still applies, a vehicle you need to get to work or to medical care is normally not counted. This is one of the rules that varies most by state, so it is worth asking about yours.",
+    },
+    {
+      q: "Do I have to be unemployed?",
+      a: "No. Most SNAP households with a working-age adult have someone earning. Working does not disqualify you \u2014 earnings are counted after the deductions you are entitled to, which is why the limit is higher than most people assume.",
+    },
+    {
+      q: "Will they investigate me?",
+      a: "The agency checks what you report \u2014 who lives with you, what you earn, what you pay for housing. That is routine verification and it happens on every application. It is not an investigation, and it is not an accusation.",
+    },
+  ],
+  fearsCta: "Worried about something else? Ask Demeter",
+  fearsCtaNote: "Every answer quotes the rule it comes from, so you can check it.",
   timelineH2: "What happens after you apply",
   timelineBody:
     "The deadlines below are federal, so they hold in every state. Your agency may move faster; it is not allowed to move slower without telling you why.",
@@ -429,6 +491,47 @@ const es: PageCopy = {
   askLink: "Pregúntale a Demeter sobre tu situación",
   askIntro:
     "Respuestas en lenguaje claro, con la regla adjunta. Elige tu estado y pregunta lo que quieras sobre SNAP.",
+  retailersH3: "Dónde funciona la tarjeta",
+  retailersBody:
+    "{n} tiendas en todos los estados y territorios aceptan EBT: supermercados, tiendas de barrio, muchos mercados de agricultores y, en algunos comercios, compras en línea.",
+  retailersNote:
+    "Conteo de tiendas publicado por el USDA, al {date}. Más tiendas en un estado no significa que sea más fácil llegar a una.",
+  foodNowLabel: "\u00bfNecesitas comida esta semana?",
+  foodNowBody:
+    "SNAP tarda al menos siete d\u00edas incluso cuando es urgente. Un banco de alimentos puede ayudarte ahora, y el 211 te encuentra uno cerca.",
+  foodNowBank: "Buscar un banco de alimentos",
+  foodNow211: "Llama o visita el 211",
+  fearsH2: "Por qu\u00e9 la gente no solicita",
+  fearsBody:
+    "Estas son las preocupaciones que detienen a personas que s\u00ed calificar\u00edan. Esto es lo que realmente ocurre \u2014 incluida la \u00fanica sobre la que no podemos darte una respuesta rotunda.",
+  fears: [
+    {
+      q: "\u00bfEsto afecta mi estatus migratorio?",
+      a: "Esta est\u00e1 cambiando, as\u00ed que no te daremos una respuesta rotunda. Las reglas federales de carga p\u00fablica no cuentan SNAP desde 2022, pero el DHS derog\u00f3 esa norma con efecto el 18 de septiembre de 2026, y a partir de esa fecha los oficiales pueden considerar los beneficios caso por caso. Si alguien en tu hogar no es ciudadano estadounidense, consulta con ayuda legal migratoria gratuita antes de solicitar \u2014 no con nosotros, ni con un trabajador del condado.",
+    },
+    {
+      q: "\u00bfTendr\u00e9 que devolverlo?",
+      a: "No, si lo que reportaste era correcto. Los beneficios no son un pr\u00e9stamo. Si la agencia descubre despu\u00e9s que pag\u00f3 m\u00e1s de lo que te correspond\u00eda \u2014 casi siempre un error de reporte, de cualquiera de las dos partes \u2014 puede pedirte ese pago de m\u00e1s.",
+    },
+    {
+      q: "\u00bfLe estoy quitando a alguien que lo necesita m\u00e1s?",
+      a: "No. SNAP no es una bolsa fija que se agota. Tu beneficio no se le resta a nadie, y un hogar aprobado m\u00e1s no hace m\u00e1s peque\u00f1o el de otro.",
+    },
+    {
+      q: "\u00bfPuedo recibirlo si tengo carro o ahorros?",
+      a: "Por lo general s\u00ed. La mayor\u00eda de los estados elimin\u00f3 por completo la prueba de bienes. Donde a\u00fan aplica, el veh\u00edculo que necesitas para trabajar o para ir al m\u00e9dico normalmente no cuenta. Esta es una de las reglas que m\u00e1s var\u00eda por estado, as\u00ed que vale la pena preguntar por el tuyo.",
+    },
+    {
+      q: "\u00bfTengo que estar desempleado?",
+      a: "No. En la mayor\u00eda de los hogares con SNAP que tienen un adulto en edad de trabajar, alguien trabaja. Trabajar no te descalifica \u2014 los ingresos se cuentan despu\u00e9s de las deducciones a las que tienes derecho, por eso el l\u00edmite es m\u00e1s alto de lo que la gente supone.",
+    },
+    {
+      q: "\u00bfMe van a investigar?",
+      a: "La agencia verifica lo que reportas: qui\u00e9n vive contigo, cu\u00e1nto ganas, cu\u00e1nto pagas de vivienda. Es verificaci\u00f3n de rutina y ocurre en todas las solicitudes. No es una investigaci\u00f3n ni una acusaci\u00f3n.",
+    },
+  ],
+  fearsCta: "\u00bfTe preocupa otra cosa? Preg\u00fantale a Demeter",
+  fearsCtaNote: "Cada respuesta cita la regla de la que proviene, para que puedas comprobarla.",
   timelineH2: "Qué pasa después de solicitar",
   timelineBody:
     "Los plazos de abajo son federales, así que rigen en todos los estados. Tu agencia puede ir más rápido; no puede ir más lento sin decirte por qué.",
@@ -613,6 +716,48 @@ const vi: PageCopy = {
   askLink: "Hỏi Demeter về hoàn cảnh của bạn",
   askIntro:
     "Câu trả lời bằng ngôn ngữ dễ hiểu, kèm theo điều luật. Chọn tiểu bang của bạn và hỏi bất cứ điều gì về SNAP.",
+  retailersH3: "Thẻ dùng được ở đâu",
+  retailersBody:
+    "{n} cửa hàng trên khắp các tiểu bang và vùng lãnh thổ chấp nhận EBT — siêu thị, cửa hàng tạp hóa, nhiều chợ nông sản, và mua trực tuyến ở một số nơi.",
+  retailersNote:
+    "Số liệu cửa hàng do Bộ Nông nghiệp Hoa Kỳ công bố, tính đến {date}. Một bang có nhiều cửa hàng hơn không có nghĩa là dễ đến hơn.",
+  foodNowLabel: "Cần thực phẩm ngay tuần này?",
+  foodNowBody:
+    "SNAP mất ít nhất bảy ngày ngay cả khi khẩn cấp. Ngân hàng thực phẩm có thể giúp ngay, và tổng đài 211 sẽ tìm giúp bạn một nơi gần nhà.",
+  foodNowBank: "Tìm ngân hàng thực phẩm",
+  foodNow211: "Gọi hoặc truy cập 211",
+  fearsH2: "Vì sao người ta không nộp đơn",
+  fearsBody:
+    "Đây là những lo lắng khiến những người vốn đủ điều kiện không nộp đơn. Đây là sự thật — kể cả điều duy nhất mà chúng tôi không thể trả lời dứt khoát.",
+  fears: [
+    {
+      q: "Điều này có ảnh hưởng đến tình trạng di trú của tôi không?",
+      a: "Điều này đang thay đổi, nên chúng tôi sẽ không trả lời dứt khoát. Từ năm 2022, quy định liên bang về “gánh nặng xã hội” không tính SNAP — nhưng Bộ Nội an đã bãi bỏ quy định đó, có hiệu lực từ ngày 18 tháng 9 năm 2026, và sau ngày đó viên chức có thể xét từng trường hợp. Nếu trong nhà bạn có người không phải công dân Hoa Kỳ, hãy hỏi trợ giúp pháp lý di trú miễn phí trước khi nộp đơn — không phải hỏi chúng tôi, cũng không phải hỏi nhân viên xét hồ sơ.",
+    },
+    {
+      q: "Tôi có phải trả lại không?",
+      a: "Không, nếu những gì bạn khai là đúng. Trợ cấp không phải là khoản vay. Nếu sau này cơ quan phát hiện đã trả nhiều hơn mức bạn được hưởng — thường là do sai sót khi khai báo, từ bất kỳ bên nào — họ có thể yêu cầu bạn hoàn lại phần thừa.",
+    },
+    {
+      q: "Tôi có đang lấy mất phần của người khác không?",
+      a: "Không. SNAP không phải một quỹ cố định sẽ cạn. Phần của bạn không bị trừ vào phần của ai khác, và thêm một hộ được duyệt không làm phần của hộ khác nhỏ đi.",
+    },
+    {
+      q: "Tôi có xe hoặc có tiết kiệm thì có được không?",
+      a: "Thường là có. Hầu hết các tiểu bang đã bỏ hẳn việc xét tài sản. Nơi nào còn xét, chiếc xe bạn cần để đi làm hoặc đi khám thường không bị tính. Đây là một trong những quy định khác nhau nhiều nhất giữa các bang, nên bạn nên hỏi về bang mình.",
+    },
+    {
+      q: "Tôi có bắt buộc phải thất nghiệp không?",
+      a: "Không. Trong phần lớn hộ nhận SNAP có người lớn trong độ tuổi lao động, vẫn có người đi làm. Đi làm không khiến bạn mất quyền — thu nhập được tính sau khi trừ các khoản bạn được hưởng, vì vậy mức giới hạn cao hơn nhiều người nghĩ.",
+    },
+    {
+      q: "Họ có điều tra tôi không?",
+      a: "Cơ quan kiểm chứng những gì bạn khai: ai sống cùng bạn, bạn kiếm bao nhiêu, bạn trả bao nhiêu tiền nhà. Đó là việc xác minh thông thường, áp dụng cho mọi hồ sơ. Đó không phải điều tra và cũng không phải cáo buộc.",
+    },
+  ],
+  fearsCta: "Bạn lo điều gì khác? Hãy hỏi Demeter",
+  fearsCtaNote:
+    "Mỗi câu trả lời đều trích dẫn điều luật mà nó dựa vào, để bạn tự kiểm chứng được.",
   timelineH2: "Sau khi nộp đơn thì điều gì xảy ra",
   timelineBody:
     "Các mốc thời hạn dưới đây là của liên bang, nên áp dụng ở mọi tiểu bang. Cơ quan của bạn có thể làm nhanh hơn; nhưng không được chậm hơn mà không nói rõ lý do.",
@@ -797,6 +942,47 @@ const zh: PageCopy = {
   askLink: "就您的情况询问 Demeter",
   askIntro:
     "用通俗语言作答，并附上条文。选择您所在的州，随便问关于 SNAP 的问题。",
+  retailersH3: "这张卡在哪里能用",
+  retailersBody:
+    "全美各州和各领地共有 {n} 家商店接受 EBT——超市、街角小店、许多农夫市集，部分商家还支持网上购买。",
+  retailersNote:
+    "商店数量由美国农业部公布，截至 {date}。某个州商店多，并不代表更容易到达。",
+  foodNowLabel: "这周就需要食物？",
+  foodNowBody:
+    "即使情况紧急，SNAP 也至少需要七天。食物银行现在就能帮忙，211 可以帮您找到附近的一家。",
+  foodNowBank: "查找食物银行",
+  foodNow211: "致电或访问 211",
+  fearsH2: "人们不申请的原因",
+  fearsBody:
+    "以下是让本来符合条件的人望而却步的担心。这是实际情况——包括唯一一个我们无法给出肯定答案的问题。",
+  fears: [
+    {
+      q: "这会影响我的移民身份吗？",
+      a: "这一条正在变化，所以我们不会给您肯定的答案。自 2022 年起，联邦“公共负担”规则不将 SNAP 计入——但国土安全部已废除该规则，自 2026 年 9 月 18 日起生效；此后官员可逐案考量福利领取情况。如果您家中有人不是美国公民，请在申请前咨询免费的移民法律援助——不要问我们，也不要问个案工作人员。",
+    },
+    {
+      q: "我以后需要还钱吗？",
+      a: "只要您如实申报，就不需要。补助不是贷款。如果机构事后发现多发了——通常是双方某一方的申报失误——可以要求您退回多发的部分。",
+    },
+    {
+      q: "我是不是抢了更需要的人的份额？",
+      a: "不是。SNAP 不是一个会用完的固定额度。您的补助不会从别人那里扣除，多一个家庭获批也不会让另一个家庭的变少。",
+    },
+    {
+      q: "我有车或有存款，还能申请吗？",
+      a: "通常可以。大多数州已完全取消资产审查。在仍需审查的地方，您上班或就医所需的车辆通常不计入。这是各州差异最大的规则之一，值得就您所在的州问一问。",
+    },
+    {
+      q: "我必须失业才行吗？",
+      a: "不是。在有劳动年龄成年人的 SNAP 家庭中，大多数都有人在工作。工作并不会让您失去资格——收入是在扣除您应得的项目后才计算的，所以实际上限比大多数人以为的高。",
+    },
+    {
+      q: "他们会调查我吗？",
+      a: "机构会核实您申报的内容：谁与您同住、您收入多少、住房支出多少。这是常规核实，每份申请都会经过。这不是调查，也不是指控。",
+    },
+  ],
+  fearsCta: "还担心别的？问问 Demeter",
+  fearsCtaNote: "每条回答都会引用其依据的条文，方便您自行核对。",
   timelineH2: "递交申请之后会发生什么",
   timelineBody:
     "下面的期限是联邦规定，各州通用。您所在的机构可以更快；但不能更慢而不向您说明原因。",

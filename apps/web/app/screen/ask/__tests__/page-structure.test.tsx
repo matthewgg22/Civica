@@ -25,6 +25,8 @@ import {
   SnapFormQuestions,
   SnapWhyHard,
   SnapTimeline,
+  SnapFoodNow,
+  SnapFears,
   SnapAskCta,
   questionsHref,
   askHref,
@@ -359,5 +361,62 @@ describe("the Beeck finding — the one claim on the page that is not ours", () 
       expect(container.textContent, `${lang}`).toContain(PAGE_COPY[lang].evidenceQuote);
       cleanup();
     }
+  });
+});
+
+describe("food this week — the page's one obligation", () => {
+  it("is not behind a click, and points somewhere that can help today", () => {
+    // SNAP takes at least seven days even under expedited service. A page that
+    // only explains SNAP hands someone who is out of food an accurate answer
+    // and no dinner.
+    for (const lang of ANSWER_LANGS) {
+      const { container } = render(<SnapFoodNow lang={lang} />);
+      expect(container.textContent, lang).toContain(PAGE_COPY[lang].foodNowBody);
+      const hrefs = [...container.querySelectorAll("a")].map((a) => a.getAttribute("href") ?? "");
+      expect(hrefs.some((h) => h.includes("feedingamerica.org")), `${lang} food bank`).toBe(true);
+      expect(hrefs.some((h) => h.includes("211.org")), `${lang} 211`).toBe(true);
+      // Inside a <details> it would be one click away from someone who needs it
+      // most, which is the whole thing this section exists to avoid.
+      expect(container.querySelector("details"), `${lang} hid it`).toBeNull();
+      cleanup();
+    }
+  });
+});
+
+describe("the fears — the reasons eligible people never apply", () => {
+  it("renders every answer in the HTML, open or closed", () => {
+    // <details> keeps closed answers in the markup, which is what makes them
+    // readable by a crawler and quotable by a generative engine.
+    const { container } = render(<SnapFears />);
+    for (const f of PAGE_COPY.en.fears) {
+      expect(container.textContent, f.q).toContain(f.a);
+    }
+    expect(container.querySelectorAll("details")).toHaveLength(PAGE_COPY.en.fears.length);
+  });
+
+  it("does NOT give a flat answer on public charge, and names the date", () => {
+    // DHS rescinded the 2022 rule effective 2026-09-18. "SNAP isn't counted"
+    // is true today and wrong next month, and this is the highest-stakes
+    // sentence in the product — see issue #759.
+    const immigration = PAGE_COPY.en.fears[0];
+    expect(immigration.q).toMatch(/immigration/i);
+    expect(immigration.a).toContain("18 September 2026");
+    expect(immigration.a).toMatch(/rescinded/i);
+    // The reassuring phrasing on its own would be the defect.
+    expect(immigration.a).not.toMatch(/^No[.,]/);
+  });
+
+  it("names the date in every language, so no locale keeps the old promise", () => {
+    for (const lang of ANSWER_LANGS) {
+      const a = PAGE_COPY[lang].fears[0]?.a ?? "";
+      expect(a, `${lang} lost the effective date`).toMatch(/2026/);
+      expect(a.length, `${lang} immigration answer is too short to be careful`).toBeGreaterThan(80);
+    }
+  });
+
+  it("offers a way out to the chat for whatever is not listed", () => {
+    const { container } = render(<SnapFears lang="es" />);
+    const cta = container.querySelector("a.dmfear__cta");
+    expect(cta?.getAttribute("href")).toBe("/es/chat");
   });
 });

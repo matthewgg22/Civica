@@ -18,7 +18,13 @@ import { notFound, redirect } from "next/navigation";
 import { VERIFIED_STATES, isAnswerLang, LANG_TAG, type AnswerLang } from "@civica/demeter-engine/packs";
 import { DemeterNav } from "../../../../components/DemeterNav";
 import { DemeterFooter } from "../../../../components/DemeterFooter";
-import { SnapOrientation, SnapDetail, SnapAskCta } from "../../../../components/SnapOverview";
+import {
+  SnapOrientation,
+  SnapDetail,
+  SnapAskCta,
+  SnapFoodNow,
+  SnapFears,
+} from "../../../../components/SnapOverview";
 import { PAGE_COPY } from "../../../../lib/i18n/snap-page";
 import { alternateLanguages, askUrl, PREFIXED_LANGS } from "../../../../lib/i18n/routes";
 import { askStructuredData } from "../../../screen/ask/structured-data";
@@ -99,10 +105,12 @@ export default async function LocalizedAskPage({
       <DemeterNav lang={l} path="/screen/ask" />
       <div className="dmpage__inner">
         <SnapOrientation lang={l} states={VERIFIED_STATES} />
+        <SnapFoodNow lang={l} />
         {/* Composer, picker and suggestions all live on /chat now — same
             as the English page. This one explains and hands over. */}
         <SnapAskCta lang={l} state={initialState} />
         <SnapDetail states={VERIFIED_STATES} lang={l} />
+        <SnapFears lang={l} />
       </div>
       <DemeterFooter lang={l} />
       <script

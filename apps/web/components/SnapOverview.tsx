@@ -26,6 +26,7 @@ import Image from "next/image";
 import { PAGE_COPY } from "../lib/i18n/snap-page";
 import { StateFlag } from "./StateFlag";
 import { UsCoverageMap } from "./UsCoverageMap";
+import { SnapRetailerMap } from "./SnapRetailerMap";
 
 /** REQUIRED VERBATIM by FNS wherever an organisation outside USDA uses the SNAP
  *  logo. Not our sentence to reword, and deliberately NOT in the localized copy
@@ -202,6 +203,10 @@ export function SnapDetail({ states, lang = "en" }: { states: PackMeta[]; lang?:
           ))}
         </dl>
 
+        {/* Answers "where can I actually use this?", which the facts above
+            raise and do not settle. */}
+        <SnapRetailerMap lang={lang} />
+
         {/* Pointing at USDA is exactly the place to say we are not USDA. A
             benefits site that links the federal program without disclaiming
             affiliation is one a worried applicant can easily read as official. */}
@@ -376,6 +381,84 @@ export function SnapDetail({ states, lang = "en" }: { states: PackMeta[]; lang?:
         </a>
       </section>
     </>
+  );
+}
+
+/** "I need food this week."
+ *
+ *  SNAP takes at least seven days even under expedited service, so a page that
+ *  only explains SNAP hands someone who is out of food an accurate answer and
+ *  no dinner. Feeding America leads with a food-bank finder; GetCalFresh points
+ *  at real people. We carried nothing.
+ *
+ *  Deliberately NOT inside an accordion, not below the fold, and not phrased as
+ *  a caveat. Someone in that situation should not have to read a page about
+ *  eligibility rules to find it. */
+export function SnapFoodNow({ lang = "en" }: { lang?: AnswerLang }) {
+  const c = PAGE_COPY[lang];
+  return (
+    <aside className="dmnow" aria-label={c.foodNowLabel}>
+      <p className="dmnow__label">{c.foodNowLabel}</p>
+      <p className="dmnow__body">{c.foodNowBody}</p>
+      <p className="dmnow__links">
+        <a
+          className="dmnow__link"
+          href="https://www.feedingamerica.org/find-your-local-foodbank"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {c.foodNowBank}&nbsp;↗
+        </a>
+        <a
+          className="dmnow__link"
+          href="https://www.211.org/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {c.foodNow211}&nbsp;↗
+        </a>
+      </p>
+    </aside>
+  );
+}
+
+/** The reasons eligible people never apply.
+ *
+ *  The page explained the rules well and never addressed why someone would not
+ *  try. These are the fears, answered plainly, and they close the page because
+ *  they are the last thing standing between reading and acting.
+ *
+ *  <details>/<summary>: native disclosure, keyboard-operable and announced
+ *  correctly with no JavaScript, so it works in the server-rendered HTML a
+ *  crawler and a generative engine both read. Every answer is IN the markup
+ *  whether or not it is open.
+ *
+ *  The immigration one is the reason this section is careful rather than
+ *  reassuring: DHS rescinded the 2022 public charge rule effective 18 Sept
+ *  2026, so a flat "SNAP doesn't count" is true today and wrong next month.
+ *  See issue #759 — /welcome still says the flat version. */
+export function SnapFears({ lang = "en" }: { lang?: AnswerLang }) {
+  const c = PAGE_COPY[lang];
+  return (
+    <section className="dmx" aria-labelledby="fears">
+      <h2 id="fears" className="dmx__h2">
+        {c.fearsH2}
+      </h2>
+      <p className="dmx__body">{c.fearsBody}</p>
+      <div className="dmfear">
+        {c.fears.map((f) => (
+          <details className="dmfear__item" key={f.q}>
+            <summary className="dmfear__q">{f.q}</summary>
+            <p className="dmfear__a">{f.a}</p>
+          </details>
+        ))}
+      </div>
+      {/* The way out of a list of answers we chose in advance. */}
+      <a className="dmfear__cta" href={lang === "en" ? "/chat" : `/${lang}/chat`}>
+        <span className="dmfear__ctalabel">{c.fearsCta}</span>
+        <span className="dmfear__ctanote">{c.fearsCtaNote}</span>
+      </a>
+    </section>
   );
 }
 

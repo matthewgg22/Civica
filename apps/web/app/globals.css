@@ -5535,6 +5535,86 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   font-size: 0.78rem; line-height: 1.5; color: var(--demeter-muted); max-width: 46ch;
 }
 
+/* Where the card works. The sentence carries the fact; the map is the picture
+   of it, so text leads and the map takes the space left over. */
+.dmret {
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 22rem);
+  gap: clamp(1rem, 3vw, 2.5rem); align-items: center; margin: 2rem 0 0;
+}
+.dmret__text .dmx__body { margin-bottom: 0.5rem; }
+.dmret__text .dmx__note { margin-top: 0.5rem; }
+.dmret__svg { width: 100%; height: auto; display: block; }
+@media (max-width: 860px) {
+  .dmret { grid-template-columns: 1fr; }
+}
+
+/* "I need food this week." Quiet but unmissable — a tinted band, not a card in
+   the flow, because it is an interruption on purpose. It sits directly under
+   the orientation so someone who is out of food never has to read a page about
+   eligibility rules to find it. */
+.dmnow {
+  margin: 1.5rem 0 0; padding: 1rem 1.2rem;
+  border-left: 3px solid var(--demeter-terracotta-deep);
+  background: var(--demeter-card); border-radius: 0 12px 12px 0;
+}
+.dmnow__label {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase;
+  font-weight: 600; color: var(--demeter-terracotta-deep); margin: 0 0 0.35rem;
+}
+.dmnow__body {
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+  font-size: 1rem; line-height: 1.55; color: var(--demeter-body); margin: 0; max-width: 62ch;
+}
+.dmnow__links {
+  display: flex; flex-wrap: wrap; gap: 0.4rem 1.5rem; margin: 0.7rem 0 0;
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.92rem;
+}
+.dmnow__link { color: var(--demeter-terracotta-deep); text-decoration: underline; text-underline-offset: 2px; }
+
+/* The fears. <details> so every answer is in the HTML whether or not it is
+   open — a crawler and a generative engine read the closed ones too. */
+.dmfear { margin: 1.5rem 0 0; border-top: 1px solid var(--demeter-rule); }
+.dmfear__item { border-bottom: 1px solid var(--demeter-rule); }
+.dmfear__q {
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+  font-size: 1.05rem; line-height: 1.4; color: var(--demeter-ink);
+  padding: 0.95rem 2rem 0.95rem 0; cursor: pointer; position: relative;
+  list-style: none; min-height: 44px; display: flex; align-items: center;
+}
+.dmfear__q::-webkit-details-marker { display: none; }
+/* Our own marker, since the native triangle is removed. Rotates on open. */
+.dmfear__q::after {
+  content: "+"; position: absolute; right: 0.25rem;
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 1.3rem; line-height: 1; color: var(--demeter-terracotta-deep);
+  transition: transform 160ms ease-out;
+}
+.dmfear__item[open] .dmfear__q::after { transform: rotate(45deg); }
+.dmfear__q:focus-visible { outline: 2px solid var(--demeter-ink); outline-offset: -2px; }
+.dmfear__a {
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+  font-size: 0.98rem; line-height: 1.62; color: var(--demeter-body);
+  margin: 0 0 1.1rem; max-width: 68ch; text-wrap: pretty;
+}
+.dmfear__cta {
+  display: inline-flex; flex-direction: column; gap: 0.2rem;
+  margin: 1.5rem 0 0; padding: 0.9rem 1.2rem;
+  border: 1px solid var(--demeter-terracotta); border-radius: 14px;
+  text-decoration: none; background: var(--demeter-card);
+}
+.dmfear__cta:hover { border-color: var(--demeter-terracotta-deep); }
+.dmfear__ctalabel {
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+  font-size: 1.05rem; font-weight: 600; color: var(--demeter-terracotta-deep);
+}
+.dmfear__ctanote {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.82rem; color: var(--demeter-muted);
+}
+@media (prefers-reduced-motion: reduce) { .dmfear__q::after { transition: none; } }
+
 /* The application timeline, read LEFT TO RIGHT: each step is a column with its
    deadline as the header on top and the detail underneath.
    Was a vertical left rail — accurate, but it made six steps into a tall
