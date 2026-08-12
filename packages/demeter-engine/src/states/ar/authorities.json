@@ -1,0 +1,51 @@
+{
+  "_provenance": {
+    "note": "Arkansas citation authorities. Arkansas's operative SNAP policy lives in DHS's SNAP Certification Manual, cited by section number, e.g. 'SNAP 1919' (Broad Based Categorically Eligible Household), 'SNAP 3100' (Work Registration Requirements), 'SNAP 9200' (Households Entitled to Expedited Service) — the manual's own native format is a bare section number, sometimes with 'SNAP' prefixed, sometimes shown as a section symbol ('§'). This pack normalizes to 'SNAP $1' in display form, matching the manual's own most common in-text citation style. This pack ALSO cites Arkansas Code Annotated — most consequentially § 20-76-115 (Act 675 of 2023's BBCE/resource-limit statute, this pack's flagship structural finding) and § 20-76-409 (the drug-felony opt-out) — so this pack defines a SECOND citation family, 'Ark. Code §', matching this roster's Kentucky, Alabama, Louisiana, and Oklahoma packs' two-family pattern.",
+    "extracted": "2026-08-12"
+  },
+  "patterns": [
+    {
+      "key": "arsnap",
+      "regex": "\\bSNAP\\s?§?\\s?(\\d{3,5}(?:\\.\\d{1,2})?)\\b",
+      "flags": "gi",
+      "template": "SNAP $1",
+      "normalize": "none",
+      "match": "exact",
+      "note": "Arkansas DHS SNAP Certification Manual, section number, always preceded by the literal word 'SNAP' in this pack's own citation style (matching the manual's own native in-text citations, e.g. 'See SNAP 1920'), e.g. SNAP 1919 (Broad Based Categorically Eligible Household), SNAP 3100 (Work Registration Requirements Summary), SNAP 4840 (Excluded Vehicles), SNAP 6520 (Medical Standard or Actual Expenses), SNAP 9200 (Households Entitled to Expedited Service)."
+    },
+    {
+      "key": "arcode",
+      "regex": "\\bArk\\.?\\s?Code\\.?\\s?(?:Ann\\.?\\s?)?§?\\s?(20-76-\\d{2,4})\\b",
+      "flags": "gi",
+      "template": "Ark. Code § $1",
+      "normalize": "none",
+      "match": "exact",
+      "note": "Arkansas Code Annotated, Title 20 (Public Health and Welfare), Chapter 76 (Grants of Assistance), cited by section number. This pack cites § 20-76-115 (Federal resource limits for Supplemental Nutrition Assistance Program — Resource limit waiver, added by Act 675 of 2023; this pack's flagship structural finding) and § 20-76-409 (Opt out — the drug-felony ban full opt-out)."
+    }
+  ],
+  "known": {
+    "arsnap": [
+      { "value": "SNAP 100", "note": "General Provisions — purpose of the Supplemental Nutrition Assistance Program" },
+      { "value": "SNAP 120", "note": "Meal Delivery Services — includes the DHS-contracted restaurant option for homeless households" },
+      { "value": "SNAP 121", "note": "Communal Dining Facilities — the DHS-contracted restaurant/meal-delivery mechanism for homeless, elderly, and SSI-recipient households, a narrower option than USDA's Restaurant Meals Program" },
+      { "value": "SNAP 1630", "note": "Determining if the Declared Household Composition is Correct — includes the elderly/disabled-member 165%-of-net-income-standard separate-household provision for other household members' income" },
+      { "value": "SNAP 1919", "note": "Broad Based Categorically Eligible Household — the Act 675 of 2023 temporary resource-limit-increase track (non-cash TANF/MOE benefit; $5,500 limit for up to 12 months once every 5 years)" },
+      { "value": "SNAP 1920", "note": "Categorically Eligible Household — ordinary SSI and/or TEA (TANF) cash-recipient categorical eligibility, narrower than Oklahoma's 2-1-1-inclusive pathway" },
+      { "value": "SNAP 1921", "note": "Financial Eligibility Factors — categorically eligible households have neither gross nor net income limits" },
+      { "value": "SNAP 3100", "note": "Work Registration Requirements — Summary. States the 2023 Fiscal Responsibility Act's pre-OBBBA incremental ABAWD age table, topping out at exempt-at-55; dated 01/01/2024, now stale relative to OBBBA's 18-64 standard" },
+      { "value": "SNAP 3320", "note": "Individuals to be Registered for Work — includes the 36-month certification-period provision for all-elderly/disabled households with minor dependents 15 or younger and no earned income/child support deduction" },
+      { "value": "SNAP 3501", "note": "Waivers — states plainly Arkansas is 'currently not under a waiver' as of its own last revision, dated 01/01/17 (roughly nine years stale relative to the manual's overall 07/01/2026 cover-page revision date)" },
+      { "value": "SNAP 4300", "note": "Resource Eligibility Standards — households denied/terminated when countable resources exceed the applicable limit" },
+      { "value": "SNAP 4400", "note": "Excluded Resources — general list, including the home/lot, household goods, and certain vehicles" },
+      { "value": "SNAP 4840", "note": "Excluded Vehicles — at least one household vehicle, licensed or unlicensed, is excluded outright with no value cap; additional vehicles excluded if used for employment, income-production, as a residence, or disabled-member transport" },
+      { "value": "SNAP 6520", "note": "Medical Standard or Actual Expenses — the flat $190 Standard Medical Deduction shortcut for elderly/disabled households with qualifying medical expenses over $35.01/month" },
+      { "value": "SNAP 8500", "note": "Normal Processing Standards — the plain federal 30-calendar-day ceiling for an initial application" },
+      { "value": "SNAP 9100", "note": "Expedited Case Actions — Summary. Confirms the plain federal 7-calendar-day expedited processing ceiling" },
+      { "value": "SNAP 9200", "note": "Households Entitled to Expedited Service — plain federal gates (liquid resources ≤ $100 and gross income < $150; combined income/resources less than shelter costs; destitute migrant/seasonal farmworker)" }
+    ],
+    "arcode": [
+      { "value": "Ark. Code § 20-76-115", "note": "Federal resource limits for Supplemental Nutrition Assistance Program — Resource limit waiver, added by Act 675 of 2023 (SB306). This pack's flagship structural finding: statutorily bars income-based BBCE absent a federal waiver, caps resource-based categorical-eligibility exemption to a temporary $5,500 limit for up to 12 months once every 5 years" },
+      { "value": "Ark. Code § 20-76-409", "note": "Opt out — Arkansas's full opt-out of Section 115 of the Personal Responsibility and Work Opportunity Reconciliation Act of 1996 (21 U.S.C. § 862a), the federal drug-felony SNAP/TANF ban provision" }
+    ]
+  }
+}

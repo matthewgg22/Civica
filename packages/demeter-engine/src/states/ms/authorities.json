@@ -1,0 +1,52 @@
+{
+  "_provenance": {
+    "note": "Mississippi citation authorities. Mississippi's operative SNAP policy lives in the SNAP Policy Manual (Title 18, Part 14 of the Mississippi Administrative Code), cited internally as bare 'Rule ##.#' (e.g. 'Rule 15.1', 'Rule 22.14', 'Rule 13.12'). This pack writes 'MS Rule' before a citation in running prose purely for cross-state disambiguation (matching this roster's general convention), while the regex below matches the bare 'Rule ##.##' form Mississippi's own manual uses natively. This pack ALSO cites two real Mississippi Code Annotated sections (§43-12-71, the drug-felony opt-out; §43-12-19, the ABAWD waiver-authority statute), so this pack defines a SECOND citation family, 'mscode', matching this roster's Connecticut, Kentucky, Alabama, and Louisiana packs' multi-family pattern.",
+    "extracted": "2026-08-12"
+  },
+  "patterns": [
+    {
+      "key": "msrule",
+      "regex": "\\bRule\\s?(\\d{1,2}\\.\\d{1,2})\\b",
+      "flags": "gi",
+      "template": "MS Rule $1",
+      "normalize": "none",
+      "match": "exact",
+      "note": "Mississippi SNAP Policy Manual (Title 18, Part 14), bare 'Rule ##.##' numbering, e.g. Rule 15.1 (Categorically Eligible Households - General), Rule 22.14 (Individuals Convicted of Drug-Related Felonies), Rule 13.12 (ABAWD Waivers)."
+    },
+    {
+      "key": "mscode",
+      "regex": "\\bMiss\\.?\\s?Code\\s?Ann\\.?\\s?§?\\s?43-12-(\\d{1,3})\\b",
+      "flags": "gi",
+      "template": "Miss. Code Ann. §43-12-$1",
+      "normalize": "none",
+      "match": "exact",
+      "note": "Mississippi Code Annotated, Title 43 (Public Welfare), Chapter 12 (Food Stamps/SNAP-related provisions), cited by section number. This pack cites two: §43-12-71 (drug-related felony SNAP eligibility, opt-out effective July 1, 2019) and §43-12-19 (ABAWD waiver authority requiring a natural-disaster declaration and Governor's approval)."
+    }
+  ],
+  "known": {
+    "msrule": [
+      { "value": "MS Rule 2.1", "note": "Application Process - three steps: filing, interview, verification" },
+      { "value": "MS Rule 4.2", "note": "Expedited Service - Screening Requirements: <$150 gross income and <=$100 liquid resources; destitute migrant/seasonal farmworkers; or combined income+resources less than rent/mortgage+utilities" },
+      { "value": "MS Rule 12.4", "note": "Exemptions to General Work Requirements - age 60+ or under 16 exempt (distinct from the ABAWD 18-64 age band in Rule 13.1)" },
+      { "value": "MS Rule 13.1", "note": "ABAWD General Rule - age 18 but under 65, under-14 dependent exemption, 3 countable months per 36-month period; revised May 2026 (current OBBBA-era parameters)" },
+      { "value": "MS Rule 13.12", "note": "ABAWD Waivers - MDHS may seek a waiver only during a formal state or federal natural-disaster declaration with the Governor's approval; cites Miss. Code Ann. §43-12-19 - a Mississippi-specific statutory gate distinct from the federal unemployment-rate waiver criteria most other states use" },
+      { "value": "MS Rule 15.1", "note": "Categorically Eligible Households - General: categorical eligibility limited strictly to households where every member receives or is eligible for TANF and/or SSI - Mississippi has NO income-based BBCE track" },
+      { "value": "MS Rule 15.2", "note": "Categorically Eligible Households - Income and Resource Exceptions: categorically eligible households are exempt from gross income, net income, AND resource maximums entirely" },
+      { "value": "MS Rule 16.1", "note": "Resources - General: MDHS applies 'uniform national resource standards of eligibility ... published every October 1st by USDA' - no Mississippi-specific dollar figure published in the manual itself; also states MDHS exempts most vehicles to align with MS TANF policy" },
+      { "value": "MS Rule 16.4", "note": "Excluded Resources - subsection H excludes MOST vehicles used for regular transportation entirely, with no fair-market-value threshold" },
+      { "value": "MS Rule 16.5", "note": "Value of Non-Excluded Recreational Vehicles - counted only above $4,650 excess fair market value or equity value, whichever is higher" },
+      { "value": "MS Rule 18.2", "note": "Standard Deduction - 8.31% of the monthly net income eligibility standard for household sizes 1-6, national minimum-standard formula per 7 CFR 273.9(d)(1)(i)" },
+      { "value": "MS Rule 18.4", "note": "Excess Medical Deduction - actual verified expenses over $35/month for an elderly or disabled household member; no flat Standard Medical Deduction shortcut" },
+      { "value": "MS Rule 18.8", "note": "Excess Shelter Deduction - capped at the FNS national maximum unless the household contains an elderly or disabled member (then uncapped)" },
+      { "value": "MS Rule 18.9", "note": "Standard Utility Allowances - SUA (heating/cooling), BUA (2+ other utilities), and standard telephone allowance; structure only, no MS-specific dollar figures published in the manual" },
+      { "value": "MS Rule 22.14", "note": "Individuals Convicted of Drug-Related Felonies - Mississippi fully opted out of the federal drug-felony SNAP ban effective July 1, 2019; cites Miss. Code Ann. §43-12-71" },
+      { "value": "MS Rule 28.2", "note": "ESAP Eligibility - ALL household members must be age 65 or older (not 60) with no earned income; mandatory track, ineligible for regular SNAP if qualified" },
+      { "value": "MS Rule 28.5", "note": "ESAP Certification Periods - 36 months" },
+      { "value": "MS Rule 30.14", "note": "Certification periods may be lengthened up to 24 months for all-elderly/disabled households, 12 months for other households" }
+    ],
+    "mscode": [
+      { "value": "Miss. Code Ann. §43-12-71", "note": "Eligibility for TANF or SNAP benefits following certain criminal convictions - Mississippi's full opt-out of the federal drug-related-felony SNAP ban, effective July 1, 2019 (formerly HB 1352, 2019 regular session)" },
+      { "value": "Miss. Code Ann. §43-12-19", "note": "ABAWD waiver authority - MDHS may seek a waiver of ABAWD time limits only during a formal state or federal declaration of a natural disaster, with the Governor's approval" }
+    ]
+  }
+}

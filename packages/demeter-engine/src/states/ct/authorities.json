@@ -1,0 +1,42 @@
+{
+  "_provenance": {
+    "note": "Connecticut citation authorities. Connecticut's operative SNAP policy lives in the Uniform Policy Manual (UPM), cited by a bare numeric section number (e.g. '5520.35', '4005.05') sometimes prefixed 'P-' for the Procedures companion to a Policy section (e.g. 'P-5520.35'). Unlike Kentucky's 'MS ####' or Louisiana's 'B-1040-SNAP' conventions, Connecticut's own manual uses NO letter prefix on Policy sections at all — this pack writes 'UPM' before a citation in running prose purely for cross-state disambiguation (matching this roster's general convention), while the regex below matches the bare '####.##' or 'P-####.##' form Connecticut's own manual uses natively. This pack ALSO cites a real, separate Connecticut General Statute (CGS § 17b-112d) for the drug-felony finding, so this pack defines a SECOND citation family, 'CGS 17b-', matching this roster's Kentucky, Alabama, and Louisiana packs' multi-family pattern.",
+    "extracted": "2026-08-12"
+  },
+  "patterns": [
+    {
+      "key": "ctupm",
+      "regex": "\\bP?-?\\s?(\\d{4}\\.\\d{2}[a-z]?)\\b",
+      "flags": "gi",
+      "template": "UPM $1",
+      "normalize": "none",
+      "match": "exact",
+      "note": "Connecticut DSS Uniform Policy Manual, bare numeric section number (Policy) or P-prefixed (Procedures), e.g. 5520.35 (Determining Eligibility for SNAP), 4005.05 (Asset Limits - General Principles), 2500.01 (Categorical Eligibility - Definitions)."
+    },
+    {
+      "key": "ctcgs",
+      "regex": "\\bCGS\\s?§?\\s?17b-(\\d{3}[a-z]?)\\b",
+      "flags": "gi",
+      "template": "CGS § 17b-$1",
+      "normalize": "none",
+      "match": "exact",
+      "note": "Connecticut General Statutes, Title 17b (Social Services), Chapter 319s (Financial Assistance), cited by section number. This pack cites exactly one: CGS § 17b-112d, the drug-felony TFA/SNAP eligibility modification statute."
+    }
+  ],
+  "known": {
+    "ctupm": [
+      { "value": "UPM 2500", "note": "Categorical Eligibility Requirements — chapter overview, covers AFDC/State Supplement/Medicaid categorical requirements and cross-references Food Stamp categorical eligibility" },
+      { "value": "UPM 2500.01", "note": "Categorical Eligibility Requirements — Definitions (Applied Income, Categorical Eligibility Requirement, etc.)" },
+      { "value": "UPM 2510", "note": "Deprivation of Parental Support or Care — AFDC-specific chapter, not SNAP-applicable" },
+      { "value": "UPM 4005.05", "note": "Asset Limits — General Principles: for every DSS-administered program there is a definite asset limit; under Food Stamps specifically, an asset is available when the individual owns it and can convert it to cash within the certification period; cross-references Section 2500 (Categorical Eligibility) for the categorical-eligibility asset-limit waiver" },
+      { "value": "UPM 4005.15", "note": "Asset Limits — Reduction of Excess Assets (Applicants/Recipients, by program)" },
+      { "value": "UPM 4010.10", "note": "Determination of Ownership — Considering Assets Held Jointly" },
+      { "value": "UPM 5520", "note": "Income Eligibility Tests — chapter overview: presents the tests used to determine income eligibility for financial, medical, and FS (Food Stamps) programs" },
+      { "value": "UPM 5520.05", "note": "Income Eligibility Tests — AFDC-specific gross/applied income tests, not SNAP-applicable" },
+      { "value": "UPM 5520.35", "note": "Determining Eligibility for the Supplemental Nutrition Assistance Program — the SNAP-specific income-eligibility-test procedure; this specific section's own worked-example dollar figures are dated 10-1-11/UP-11-09 and are STALE — this pack does NOT cite its numbers, only its structural procedure (categorical-eligibility skip, elderly/disabled gross-test skip, 130%/net-income sequence), see PROVENANCE.md Finding 2" }
+    ],
+    "ctcgs": [
+      { "value": "CGS § 17b-112d", "note": "Eligibility for temporary assistance for needy families or supplemental nutrition assistance program for person convicted of controlled substance felony — effective July 1, 1997 (June 18 Sp. Sess. P.A. 97-2, S. 123, 165), amended P.A. 09-9 (2009, terminology update). A MODIFIED opt-out under 21 U.S.C. § 862a(d)(1): three independent eligibility paths (sentence completed / satisfactorily on probation / mandatory treatment-or-testing program in progress or completed) — not a full, unconditional opt-out like Kentucky's KRS 205.2005" }
+    ]
+  }
+}

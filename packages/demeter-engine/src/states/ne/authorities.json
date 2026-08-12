@@ -1,0 +1,39 @@
+{
+  "_provenance": {
+    "note": "Nebraska citation authorities. Nebraska's operative SNAP policy manual is Title 475 of the Nebraska Administrative Code (475 NAC), cited by a bare numbered-section convention such as '3-003.01H3' (Chapter 3, Eligibility, section 003.01, subsection H3). This pack also cites a real Nebraska Revised Statute, Neb. Rev. Stat. § 68-1017.02, for the drug-felony and ABAWD-waiver-bar findings, so this pack defines a SECOND citation family, 'NRS 68-', matching this roster's Connecticut, Kentucky, Alabama, and Louisiana packs' multi-family pattern.",
+    "extracted": "2026-08-12"
+  },
+  "patterns": [
+    {
+      "key": "nenac",
+      "regex": "\\b(\\d{1}-\\d{3}(?:\\.\\d{2})?[A-Z]?\\d?[a-z]?)\\b",
+      "flags": "gi",
+      "template": "475 NAC $1",
+      "normalize": "none",
+      "match": "exact",
+      "note": "Nebraska DHHS SNAP Policy Manual, Title 475 NAC, cited by bare chapter-section-subsection number, e.g. 3-003.01H (Utility Allowance), 3-003.01H3 (One Utility Allowance), 3-003.01H1b (SUA Eligibility)."
+    },
+    {
+      "key": "nenrs",
+      "regex": "\\bNRS\\s?§?\\s?68-(\\d{4}\\.\\d{2}[a-z]?)\\b",
+      "flags": "gi",
+      "template": "Neb. Rev. Stat. § 68-$1",
+      "normalize": "none",
+      "match": "exact",
+      "note": "Nebraska Revised Statutes, Chapter 68 (Public Assistance), cited by section number. This pack cites exactly one: Neb. Rev. Stat. § 68-1017.02, the drug-felony modified-ban and ABAWD-waiver-bar statute."
+    }
+  ],
+  "known": {
+    "nenac": [
+      { "value": "475 NAC 3-003.01H", "note": "Utility Allowance — chapter overview: household may receive one of SUA, LUA, OUA, or Telephone Standard Allowance; lists non-allowable utility costs" },
+      { "value": "475 NAC 3-003.01H1", "note": "Standard Utility Allowance (SUA) — heating or cooling costs billed on a recurring, separate basis, or anticipated NLIEAP energy-assistance payment" },
+      { "value": "475 NAC 3-003.01H1b", "note": "Eligibility for Standard Utility Allowance (SUA) — clarifies 'recurring' expense standard, qualifying cooling systems (a/c, evaporative cooler, room units — not a fan), non-qualifying supplemental heat sources (space heaters, electric blankets, heat lamps, cooking stoves)" },
+      { "value": "475 NAC 3-003.01H2", "note": "Limited Utility Allowance (LUA) — household billed for at least TWO utilities other than heating/cooling (telephone, water, sewer, garbage/trash, well/septic maintenance, non-heating gas/electric)" },
+      { "value": "475 NAC 3-003.01H3", "note": "One Utility Allowance (OUA) — household billed for EXACTLY ONE utility other than heating/cooling and other than telephone; cannot combine with SUA or Telephone Allowance eligibility" },
+      { "value": "475 NAC 3-003.01H4", "note": "Telephone Allowance — household billed for basic telephone service fee (landline), or a cell phone used as the primary phone when no house phone is available" }
+    ],
+    "nenrs": [
+      { "value": "Neb. Rev. Stat. § 68-1017.02", "note": "SNAP eligibility — drug-felony modified ban, subsection (1)(b): permanent ineligibility only for (i) three or more felony convictions for possession/use of a controlled substance, or (ii) any felony conviction for sale/distribution/intent to sell or distribute; individuals with one or two possession/use felony convictions remain eligible while participating in or after completing a state-licensed or nationally accredited substance-abuse treatment program since the conviction date. ALSO bars DHHS from seeking, applying for, accepting, or renewing an area-wide ABAWD work-requirement waiver except where expressly required by federal law. A 2025 bill (LB319) that would have replaced the drug-felony provision with a broader rule was vetoed and the veto was sustained — this statute's text is UNCHANGED as of this pack's fetch date." }
+    ]
+  }
+}

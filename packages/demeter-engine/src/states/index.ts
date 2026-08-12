@@ -131,9 +131,41 @@ import okPack from "./ok/pack.json";
 import okSupplements from "./ok/supplements.json";
 import okAuthorities from "./ok/authorities.json";
 import okFreshness from "./ok/freshness.json";
+import ctPack from "./ct/pack.json";
+import ctSupplements from "./ct/supplements.json";
+import ctAuthorities from "./ct/authorities.json";
+import ctFreshness from "./ct/freshness.json";
+import utPack from "./ut/pack.json";
+import utSupplements from "./ut/supplements.json";
+import utAuthorities from "./ut/authorities.json";
+import utFreshness from "./ut/freshness.json";
+import iaPack from "./ia/pack.json";
+import iaSupplements from "./ia/supplements.json";
+import iaAuthorities from "./ia/authorities.json";
+import iaFreshness from "./ia/freshness.json";
+import arPack from "./ar/pack.json";
+import arSupplements from "./ar/supplements.json";
+import arAuthorities from "./ar/authorities.json";
+import arFreshness from "./ar/freshness.json";
+import msPack from "./ms/pack.json";
+import msSupplements from "./ms/supplements.json";
+import msAuthorities from "./ms/authorities.json";
+import msFreshness from "./ms/freshness.json";
+import ksPack from "./ks/pack.json";
+import ksSupplements from "./ks/supplements.json";
+import ksAuthorities from "./ks/authorities.json";
+import ksFreshness from "./ks/freshness.json";
+import nmPack from "./nm/pack.json";
+import nmSupplements from "./nm/supplements.json";
+import nmAuthorities from "./nm/authorities.json";
+import nmFreshness from "./nm/freshness.json";
+import nePack from "./ne/pack.json";
+import neSupplements from "./ne/supplements.json";
+import neAuthorities from "./ne/authorities.json";
+import neFreshness from "./ne/freshness.json";
 
 /** Registered pack codes. Widens as Wave 1+ states land (WA, TX, NY, …). */
-export type StateCode = "CA" | "WA" | "TX" | "NY" | "GA" | "MI" | "IL" | "FL" | "MA" | "NV" | "AZ" | "OR" | "WI" | "MN" | "PA" | "OH" | "NC" | "NJ" | "VA" | "TN" | "IN" | "MO" | "MD" | "CO" | "SC" | "AL" | "LA" | "KY" | "OK";
+export type StateCode = "CA" | "WA" | "TX" | "NY" | "GA" | "MI" | "IL" | "FL" | "MA" | "NV" | "AZ" | "OR" | "WI" | "MN" | "PA" | "OH" | "NC" | "NJ" | "VA" | "TN" | "IN" | "MO" | "MD" | "CO" | "SC" | "AL" | "LA" | "KY" | "OK" | "CT" | "UT" | "IA" | "AR" | "MS" | "KS" | "NM" | "NE";
 
 /** Launch state; used when a caller does not specify. Preserves the pre-pack
  *  behavior in which the (then-hardcoded) CA content applied to every query. */
@@ -398,6 +430,54 @@ const REGISTRY: Record<StateCode, StatePack> = {
     okSupplements as { supplements: PackTopic[]; supersessions?: Record<string, string> },
     okAuthorities as unknown as RawAuthorities,
     okFreshness as { entries: PackFreshnessEntry[] },
+  ),
+  CT: buildPack(
+    ctPack as Omit<StatePack, "topics" | "authorities" | "freshness" | "supersessions">,
+    ctSupplements as { supplements: PackTopic[]; supersessions?: Record<string, string> },
+    ctAuthorities as unknown as RawAuthorities,
+    ctFreshness as { entries: PackFreshnessEntry[] },
+  ),
+  UT: buildPack(
+    utPack as Omit<StatePack, "topics" | "authorities" | "freshness" | "supersessions">,
+    utSupplements as { supplements: PackTopic[]; supersessions?: Record<string, string> },
+    utAuthorities as unknown as RawAuthorities,
+    utFreshness as { entries: PackFreshnessEntry[] },
+  ),
+  IA: buildPack(
+    iaPack as Omit<StatePack, "topics" | "authorities" | "freshness" | "supersessions">,
+    iaSupplements as { supplements: PackTopic[]; supersessions?: Record<string, string> },
+    iaAuthorities as unknown as RawAuthorities,
+    iaFreshness as { entries: PackFreshnessEntry[] },
+  ),
+  AR: buildPack(
+    arPack as Omit<StatePack, "topics" | "authorities" | "freshness" | "supersessions">,
+    arSupplements as { supplements: PackTopic[]; supersessions?: Record<string, string> },
+    arAuthorities as unknown as RawAuthorities,
+    arFreshness as { entries: PackFreshnessEntry[] },
+  ),
+  MS: buildPack(
+    msPack as Omit<StatePack, "topics" | "authorities" | "freshness" | "supersessions">,
+    msSupplements as { supplements: PackTopic[]; supersessions?: Record<string, string> },
+    msAuthorities as unknown as RawAuthorities,
+    msFreshness as { entries: PackFreshnessEntry[] },
+  ),
+  KS: buildPack(
+    ksPack as Omit<StatePack, "topics" | "authorities" | "freshness" | "supersessions">,
+    ksSupplements as { supplements: PackTopic[]; supersessions?: Record<string, string> },
+    ksAuthorities as unknown as RawAuthorities,
+    ksFreshness as { entries: PackFreshnessEntry[] },
+  ),
+  NM: buildPack(
+    nmPack as Omit<StatePack, "topics" | "authorities" | "freshness" | "supersessions">,
+    nmSupplements as { supplements: PackTopic[]; supersessions?: Record<string, string> },
+    nmAuthorities as unknown as RawAuthorities,
+    nmFreshness as { entries: PackFreshnessEntry[] },
+  ),
+  NE: buildPack(
+    nePack as Omit<StatePack, "topics" | "authorities" | "freshness" | "supersessions">,
+    neSupplements as { supplements: PackTopic[]; supersessions?: Record<string, string> },
+    neAuthorities as unknown as RawAuthorities,
+    neFreshness as { entries: PackFreshnessEntry[] },
   ),
 };
 

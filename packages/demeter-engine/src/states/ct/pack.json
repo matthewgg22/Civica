@@ -1,0 +1,61 @@
+{
+  "code": "CT",
+  "program": "SNAP — Connecticut has no distinctive local program nickname; the manual and consumer pages both use plain \"SNAP\" (see PROVENANCE.md)",
+  "agency": "Connecticut Department of Social Services (DSS)",
+  "admin_model": "state",
+  "admin_note": "Connecticut is a STATE-ADMINISTERED SNAP program (no county option-in like CA/NY/MN/WI/VA) — DSS administers directly, statewide, with no county-level policy variation. GENUINE STRUCTURAL DEPARTURE this pack found: Connecticut's operative policy source, the Uniform Policy Manual (UPM), is NOT organized as a dedicated SNAP volume the way most of this roster's states are — it is a single manual spanning EIGHT topical chapters (UPM1 Rights/Eligibility Process through UPM9 Special Benefits) shared across FOUR programs at once (AFDC/TFA, AABD, MA/Medicaid, and FS/SNAP), with each numbered section (e.g., \"5520.35\") carrying a \"Program:\" tag showing which of the four programs it applies to. There is no single \"the SNAP manual\" the way Kentucky's Volume 2 or Louisiana's B-1040-SNAP is — SNAP policy is threaded through the same topical sections as CT's other public-assistance programs. This pack also found CT's OWN current SNAP procedures use \"EDG\" (Eligibility Determination Group) as its household-unit term, distinct from \"assistance unit\" used in this manual's older (1980s-2000s) sections and from most other states' terminology in this roster. Confirm current operative practice with the applicant's own local DSS office, the same caution this roster already carries for CA/NY/MN/WI/OH/NC/NJ/VA/GA/IN/TN/MO/MD/CO/SC/AL/LA/KY.",
+  "system": "DSS processes SNAP centrally (no county offices with independent policy authority); applicants apply online through the ConneCT self-service portal (connect.ct.gov) or the newer, mobile-friendly MyDSS portal (same login), by phone through the DSS Benefits Center (1-855-626-6632), in person at a DSS office, or by mailing a printed Application for Benefits. Most households recertify every 12 months and complete a mandatory Periodic Report Form (PRF) at the 6-month midpoint — except ESAP households (all adult members elderly 60+ or disabled, with no earned income), which are exempt from the PRF.",
+  "portal": {
+    "name": "ConneCT (connect.ct.gov) / MyDSS",
+    "url": "https://www.connect.ct.gov/"
+  },
+  "update_channels": [
+    {
+      "name": "Connecticut DSS — Uniform Policy Manual (UPM), UPM5 (Treatment of Income, Income Eligibility) — Section 5520 (Income Eligibility Tests), individual SNAP procedure P-5520.35",
+      "url": "https://portal.ct.gov/dss/lists/uniform-policy-manual/upm5---treatment-of-income-income-eligibility"
+    },
+    {
+      "name": "Connecticut DSS — Uniform Policy Manual, UPM4 (Treatment of Assets, Standards of Assistance)",
+      "url": "https://portal.ct.gov/dss/lists/uniform-policy-manual/upm4---treatment-of-assets-standards-of-assistance"
+    },
+    {
+      "name": "Connecticut DSS — SNAP Policy Manual Tables (current dollar-figure standards, effective 10/1/2025) — accessed via Internet Archive Wayback Machine after the live portaldir.ct.gov host returned a bot-detection block; see PROVENANCE.md",
+      "url": "https://web.archive.org/web/20260307213335/https://portaldir.ct.gov/dss/snap/Tables.html"
+    },
+    {
+      "name": "Connecticut DSS — SNAP Work Rules Pre-screener / ABAWD current status (Dec. 1, 2025 statewide work-rule effective date)",
+      "url": "https://portal.ct.gov/dss/snap/able-bodied-adults-without-dependents-or-abawds"
+    },
+    {
+      "name": "Connecticut DSS — ABAWD Work Rules (age range, hours, exemptions)",
+      "url": "https://portal.ct.gov/dss/snap/able-bodied-adults-without-dependents-or-abawds/abawd-work-rules"
+    },
+    {
+      "name": "Connecticut General Statutes § 17b-112d, Eligibility for TFA or SNAP for person convicted of controlled substance felony (effective July 1, 1997, June 18 Sp. Sess. P.A. 97-2)",
+      "url": "https://www.cga.ct.gov/current/pub/chap_319s.htm"
+    },
+    {
+      "name": "USDA FNA — SNAP Restaurant Meals Program state list (Connecticut absent)",
+      "url": "https://www.fns.usda.gov/snap/retailer/restaurant-meals-program"
+    },
+    {
+      "name": "Connecticut General Assembly — 2025 Senate Bill 1475, Restaurant Meals Program directive to DSS Commissioner (status not confirmed enacted as of this pack's fetch date)",
+      "url": "https://www.cga.ct.gov/2025/TOB/S/PDF/2025SB-01475-R00-SB.PDF"
+    }
+  ],
+  "verification": {
+    "verified_on": "2026-08-12",
+    "method": "Direct curl fetch (browser User-Agent) of Connecticut DSS's Uniform Policy Manual (UPM) Word-document sections at portal.ct.gov/dss/-/media/departments-and-agencies/dss/upms/ (converted with macOS textutil), covering UPM2 (Categorical Eligibility), UPM4 (Assets), and UPM5 (Income Eligibility, including P-5520.35, the SNAP-specific income-eligibility-test procedure). Also directly fetched Connecticut's ABAWD Work Rules pages and SNAP Work Rules Pre-screener landing page (portal.ct.gov/dss/snap/), and the full text of Connecticut General Statutes § 17b-112d from cga.ct.gov (no access barrier). Connecticut's separately-maintained \"Tables\" page (portaldir.ct.gov/dss/snap/Tables.html), which carries the actual current FFY2026 dollar figures (effective 10/1/2025) referenced from the numbered UPM sections, returned an active bot-detection challenge (Radware/TSPD) to every direct curl attempt — resolved via the Internet Archive Wayback Machine, which held a clean snapshot captured March 7, 2026 (after the 10/1/2025 effective date, so current for this fetch). The same Wayback route also recovered CT DSS's Categorical Eligibility, Regular Categorical Eligibility (RCE), and Expanded Categorical Eligibility (ECE) explainer pages. Cross-checked against USDA FNA's current Restaurant Meals Program state list (direct curl, clean HTTP 200) and WebSearch corroboration for the SB 1475 pending-legislation status.",
+    "gates": "portal.ct.gov and cga.ct.gov returned clean HTTP 200 to every direct curl fetch with a browser User-Agent, including a direct, successful read of CGS § 17b-112d's own statute text — a genuine departure from this roster's now-familiar Justia-403 pattern for equivalent statutes in other states. The genuine access barrier this pack found was different: portaldir.ct.gov (a separate legacy subdomain hosting CT's SNAP policy manual's numbered-index view AND its separately-maintained current-dollar-figures \"Tables\" page) returned an active Radware/TSPD bot-detection challenge page to every direct curl attempt, regardless of User-Agent — this is a genuine bot-detection wall, not a tooling artifact, and this pack resolved it via the Internet Archive Wayback Machine rather than fabricating figures. This pack discloses the access route explicitly in every citation drawn from that source.",
+    "sources": [
+      "CT DSS Uniform Policy Manual, UPM5 — Section 5520 (Income Eligibility Tests), P-5520.35 (Determining Eligibility for SNAP) — direct curl fetch, clean HTTP 200, dated 10-1-11/UP-11-09 — this specific PROCEDURE section's own worked-example dollar figures are STALE (2011-era); this pack does NOT use them, see PROVENANCE.md Finding 2",
+      "CT DSS Uniform Policy Manual, UPM4 (Treatment of Assets) and UPM2 (Categorical Eligibility Requirements) — direct curl fetch, clean HTTP 200, general-principles sections",
+      "CT DSS SNAP Policy Manual Tables (current FFY2026 dollar figures, effective 10/1/2025) — Internet Archive Wayback Machine snapshot dated 2026-03-07, recovered after portaldir.ct.gov returned a live bot-detection block to direct curl",
+      "CT DSS, Categorical Eligibility / Regular Categorical Eligibility (RCE) / Expanded Categorical Eligibility (ECE) explainer pages — Internet Archive Wayback Machine snapshots dated 2025-06-14, same access-barrier resolution",
+      "CT DSS, SNAP Work Rules Pre-screener and ABAWD Work Rules pages — direct curl fetch, clean HTTP 200, current statewide work-rule effective date (Dec. 1, 2025) and age/hours/exemption detail",
+      "Connecticut General Statutes § 17b-112d — direct curl fetch of cga.ct.gov, clean HTTP 200, full statute text read directly, effective July 1, 1997 (June 18 Sp. Sess. P.A. 97-2, S. 123, 165; amended P.A. 09-9)",
+      "USDA FNA, SNAP Restaurant Meals Program state list — direct curl fetch, clean HTTP 200 — Connecticut absent",
+      "Connecticut General Assembly, 2025 Senate Bill 1475 (Restaurant Meals Program directive) — WebSearch corroboration only; this pack could not confirm enactment as a Public Act as of its fetch date, see PROVENANCE.md and freshness.json"
+    ]
+  }
+}

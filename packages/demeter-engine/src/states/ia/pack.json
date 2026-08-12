@@ -1,0 +1,72 @@
+{
+  "code": "IA",
+  "program": "SNAP — Iowa has no distinctive local program nickname; consumer materials say plainly \"Food Assistance\" or \"SNAP\" (see PROVENANCE.md)",
+  "agency": "Iowa Department of Health and Human Services (Iowa HHS) — no rebrand-lag issue this pack found: Iowa HHS is the current, consistent name used throughout the Employees' Manual, the Iowa Administrative Code (441 IAC 65), and Iowa HHS's own consumer-facing SNAP page, unlike this roster's Oklahoma and Kentucky findings",
+  "admin_model": "state",
+  "admin_note": "Iowa is a STATE-ADMINISTERED SNAP program (no county option-in like CA/NY/MN/WI/VA) — Iowa HHS runs it directly through local HHS offices, not independent county agencies. GENUINE STRUCTURAL FINDING this pack found: Iowa's Employees' Manual is internally split across two different COLA cycles at once — Chapter E (Income/Deductions), last revised February 13, 2026, already reflects current FFY2026 dollar figures (Standard Deduction $209/$223/$261/$299, Big/Little/Telephone SUA $554/$292/$36), while Chapter C (Nonfinancial Eligibility)'s own income-percentage tables (the PHMP 160% FPL categorical-eligibility ceiling, the elderly/disabled-assistant 165% FPL separate-household ceiling) and Iowa HHS's own consumer-facing income-guidelines flyer (Comm. 002, Rev. 09/24) were last revised September 27, 2024 and still show FFY2025-cycle dollar figures — a genuine, disclosed cross-chapter staleness this pack found and corroborated against independent third-party trackers citing $1,696/$1,305 (HH1 gross/net) as the true current FFY2026 figures, versus Comm. 002's own stated $1,632/$1,255 (see PROVENANCE.md Finding 1). SEPARATELY, and by contrast, Iowa's ABAWD age-exemption text (Chapter I, revised February 13, 2026) is FULLY CURRENT with the true federal 18-64 standard (OBBBA, eff. July 4, 2025) and the narrowed under-14 caregiver exemption — the OPPOSITE of this roster's Oklahoma finding, where all three of Oklahoma's own sources were stale (see PROVENANCE.md Finding 2). Confirm current operative dollar figures with the applicant's own local Iowa HHS office or the Iowa HHS Self-Service Portal, the same caution this roster already carries for CA/NY/MN/WI/OH/NC/NJ/VA/GA/IN/TN/MO/MD/CO/SC/AL/LA/KY/OK.",
+  "system": "Iowa HHS processes SNAP; applicants apply online through Iowa's Self-Service Portal (hhsservices.iowa.gov), at a local HHS office, by mailed/faxed/emailed paper application, or by phone. A signed application starts the clock; ordinary processing is no later than 30 calendar days (Employees' Manual 7-B, Processing Standards; 7 CFR 273.2(g)), and emergency (expedited) service is 7 calendar days, the plain federal ceiling — Iowa does not shorten this the way this roster's Kentucky pack found Kentucky does (5 days), the same contrast this roster's Oklahoma pack independently confirmed for Oklahoma. An interview is generally required.",
+  "portal": {
+    "name": "Iowa HHS Self-Service Portal",
+    "url": "https://hhsservices.iowa.gov/"
+  },
+  "update_channels": [
+    {
+      "name": "Iowa HHS Employees' Manual, Title 7, Chapter E (Income) — Standard Deduction, Standard Utility Allowances, Medical/Shelter/Homeless deductions, current per-revision (2/13/2026, FFY2026 figures)",
+      "url": "https://hhs.iowa.gov/media/3997/download"
+    },
+    {
+      "name": "Iowa HHS Employees' Manual, Title 7, Chapter D (Resources) — resource limits, vehicle treatment, current per-revision (9/27/2024)",
+      "url": "https://hhs.iowa.gov/media/3996/download"
+    },
+    {
+      "name": "Iowa HHS Employees' Manual, Title 7, Chapter C (Nonfinancial Eligibility) — categorical eligibility (FIP/SSI/GA/PHMP), household composition, current per-revision (9/27/2024) — this pack's flagged stale-cycle chapter, see admin_note",
+      "url": "https://hhs.iowa.gov/media/3995/download"
+    },
+    {
+      "name": "Iowa HHS Employees' Manual, Title 7, Chapter I (Specific Households and Participants) — ABAWD, fleeing felons, current per-revision (2/13/2026)",
+      "url": "https://hhs.iowa.gov/media/4001/download"
+    },
+    {
+      "name": "Iowa HHS Employees' Manual, Title 7, Chapter B (Application Processing) — processing standards, emergency service, current per-revision (1/30/2026)",
+      "url": "https://hhs.iowa.gov/media/3994/download"
+    },
+    {
+      "name": "Iowa Administrative Code 441, Chapter 65 (SNAP Administration) — official Iowa Legislature-hosted regulatory text",
+      "url": "https://www.legis.iowa.gov/docs/iac/chapter/441.65.pdf"
+    },
+    {
+      "name": "Iowa HHS, Comm. 002, Facts About SNAP — Income Guidelines (consumer-facing income/benefit chart, Rev. 09/24 — this pack's flagged stale document, see admin_note and PROVENANCE.md Finding 1)",
+      "url": "https://hhs.iowa.gov/media/6409/download"
+    },
+    {
+      "name": "Iowa HHS — SNAP consumer page (application steps, EBT/ConnectEBT information, Double Up Food Bucks-style fruit/vegetable match mention)",
+      "url": "https://hhs.iowa.gov/assistance-programs/food-assistance/snap"
+    },
+    {
+      "name": "USDA FNA — SNAP Restaurant Meals Program state list (Iowa absent)",
+      "url": "https://www.fns.usda.gov/snap/retailer/restaurant-meals-program"
+    },
+    {
+      "name": "USDA FNA — ABAWD Time Limit Waivers FY2025-2029 (Iowa absent from every state list and every FNA response-letter list — no current or historical waiver request found)",
+      "url": "https://www.fns.usda.gov/snap/abawd/waivers/2025-2029"
+    }
+  ],
+  "verification": {
+    "verified_on": "2026-08-12",
+    "method": "Direct curl fetch (browser User-Agent) of five Iowa HHS Employees' Manual chapters — 7-B (Application Processing), 7-C (Nonfinancial Eligibility), 7-D (Resources), 7-E (Income/Deductions), 7-I (Specific Households and Participants) — all clean HTTP 200, converted with pdftotext -layout and read in full for the sections cited in this pack. Also directly fetched: Iowa Administrative Code 441, Chapter 65 (SNAP Administration) via the Iowa Legislature's own official host (legis.iowa.gov), clean HTTP 200; Iowa HHS's own consumer-facing income-guidelines flyer (Comm. 002, Rev. 09/24), clean HTTP 200; Iowa HHS's SNAP consumer page (HTML, direct fetch); USDA FNA's current Restaurant Meals Program state list and ABAWD Time Limit Waivers FY2025-2029 state-response index, both direct curl fetch, clean HTTP 200. WebSearch cross-checks corroborated Iowa's drug-felony full-opt-out status (convergent with this pack's own primary-source finding that Iowa's Employees' Manual lists no drug-felony disqualification category anywhere in its ineligible-member list, and states plainly that a felony conviction does not affect SNAP citizenship eligibility) and identified the FFY2026 income-limit discrepancy this pack flags in Finding 1.",
+    "gates": "No HTTP-403 access barrier was encountered for any Iowa HHS or Iowa Legislature primary source during this pack's research — a genuine contrast with this roster's Oklahoma, Louisiana, Virginia, Indiana, Missouri, Maryland, Colorado, South Carolina, Alabama, and Kentucky packs, each of which found at least one blocked primary host. The Public Health Law Center's state-specific drug-felony opt-out map page (publichealthlawcenter.org/resources/snap-ban-opt-out-states-map/ia) DID return a clean HTTP 403 to direct curl with a browser User-Agent — consistent with this roster's now-familiar pattern of certain third-party legal-aggregator sites blocking automated fetches — resolved via this pack's own direct primary-source read (Iowa's Employees' Manual ineligible-member list and citizenship-status statement) rather than the blocked secondary source, a stronger resolution than most of this roster's prior 403-workarounds achieved. This pack's most consequential finding is not an access barrier but a genuine cross-chapter STALENESS discrepancy within Iowa's own primary sources (see Finding 1) — disclosed explicitly, not silently resolved by picking one chapter's figures over another's.",
+    "sources": [
+      "Iowa HHS, Employees' Manual, Title 7, Chapter B (Application Processing) — direct curl fetch, clean HTTP 200, revised 1/30/2026 (Processing Standards section) with some sections dated 9/27/2024",
+      "Iowa HHS, Employees' Manual, Title 7, Chapter C (Nonfinancial Eligibility) — direct curl fetch, clean HTTP 200, revised 9/27/2024 throughout — this pack's flagged stale-cycle chapter",
+      "Iowa HHS, Employees' Manual, Title 7, Chapter D (Resources) — direct curl fetch, clean HTTP 200, revised 9/27/2024",
+      "Iowa HHS, Employees' Manual, Title 7, Chapter E (Income) — direct curl fetch, clean HTTP 200, revised 2/13/2026 (Standard Deduction, SUA, Medical Deduction sections) with some sections dated 9/27/2024",
+      "Iowa HHS, Employees' Manual, Title 7, Chapter I (Specific Households and Participants) — direct curl fetch, clean HTTP 200, revised 2/13/2026 (ABAWD, Fleeing Felons sections)",
+      "Iowa Administrative Code 441, Chapter 65 (Supplemental Nutrition Assistance Program Administration) — direct curl fetch from legis.iowa.gov, clean HTTP 200, current through IAC Supplement 6/10/26",
+      "Iowa HHS, Comm. 002, Facts About SNAP — Income Guidelines — direct curl fetch, clean HTTP 200, Rev. 09/24 — this pack's flagged stale document",
+      "Iowa HHS, SNAP consumer page (hhs.iowa.gov/assistance-programs/food-assistance/snap) — direct fetch, confirms Self-Service Portal, ConnectEBT, and a fruit/vegetable incentive-match mention",
+      "USDA FNA, SNAP Restaurant Meals Program state list — direct curl fetch, clean HTTP 200 — Arizona, California, Illinois (Cook/Franklin Counties), Maryland, Massachusetts, Michigan, New York, Rhode Island, Virginia listed; Iowa absent",
+      "USDA FNA, ABAWD Time Limit Waivers FY2025-2029 — direct curl fetch, clean HTTP 200 — Iowa does not appear anywhere in the state-request or FNA-response index, unlike Oklahoma (statutorily barred but still discussed) or Kentucky (active narrow waiver)",
+      "WebSearch convergent cross-check (multiple independent SNAP-benefits trackers) — corroborates Iowa's full drug-felony opt-out and identifies the FFY2026 $1,696/$1,305 (HH1 gross/net) figures this pack's own Comm. 002 fetch found stale at $1,632/$1,255"
+    ]
+  }
+}

@@ -1,0 +1,69 @@
+{
+  "code": "NE",
+  "program": "SNAP — Nebraska has no distinctive local program nickname; DHHS's own consumer pages use plain \"SNAP\" (formerly Food Stamps), see PROVENANCE.md",
+  "agency": "Nebraska Department of Health and Human Services (DHHS)",
+  "admin_model": "state",
+  "admin_note": "Nebraska is a STATE-ADMINISTERED SNAP program (no county option-in like CA/NY/MN/WI/VA) — DHHS administers directly through its Economic Assistance division, with no county-level policy variation. GENUINE STRUCTURAL FLAGSHIP FINDING this pack found: unlike most of this roster's states, where a single BBCE percentage applies to every household, Nebraska's elevated 165% FPL gross-income column on DHHS's own current SNAP Program Standards table applies ONLY to \"Elderly, Disabled, Separate Household, and ERP [Expanded Resource Program] Households\" — an ordinary working-age household that has not separately qualified for Nebraska's Expanded Resource Program remains subject to the plain federal 130% FPL gross-income test, not 165%. Nebraska's ERP is also a RESOURCE-limit mechanism (raising the asset ceiling to $25,000, not waiving it outright) rather than the asset-waiver-plus-flat-income-ceiling shape this roster's other BBCE states generally use — see income-pathways supplement. SEPARATE FLAGSHIP FINDING: Neb. Rev. Stat. § 68-1017.02 statutorily bars DHHS from seeking, applying for, accepting, or renewing an AREA-WIDE ABAWD work-requirement waiver except where expressly required by federal law — Nebraska's current lack of any ABAWD waiver is a legislative mandate, not merely a labor-market/policy-choice fact the way it is in most other states this roster has built (see abawd-work-requirement supplement). THIRD FLAGSHIP FINDING: a 2025 bill (LB319) that would have replaced Nebraska's current MODIFIED drug-felony ban with a broader eligibility rule passed the full Legislature 32-17 but was VETOED by Gov. Jim Pillen the same day, and a veto-override motion failed 24-24 (six votes short of the 30 needed) — the pre-existing, narrower Neb. Rev. Stat. § 68-1017.02(1)(b) modified ban remains CURRENT, unchanged law, directly contradicting several secondary sources (and this pack's own initial web-search synthesis) that describe Nebraska as having already \"opted out\" of the federal drug-felony ban (see criminal-justice-disqualifications supplement). Confirm current operative practice with the applicant's own local DHHS office, the same caution this roster already carries for CA/NY/MN/WI/OH/NC/NJ/VA/GA/IN/TN/MO/MD/CO/SC/AL/LA/KY/OK/CT.",
+  "system": "DHHS's Economic Assistance division processes SNAP centrally (no county offices with independent policy authority); applicants apply online through iServe Nebraska (iserve.nebraska.gov, DHHS's current self-service portal, successor to the ACCESSNebraska/N-FOCUS branding still visible on some older DHHS materials and forms — see program-identity supplement), by phone through the Economic Assistance Contact Center (1-800-383-4278), by mail, or in person at a local DHHS office. Most non-elderly/disabled households are Simplified Reporting (SR) households; households where every member is elderly (60+) or disabled with no earned income may receive a 12-month certification period without periodic reporting, or a 24-month certification period with a 12-month periodic report — this pack flags this specific detail as lower-confidence, see freshness.json.",
+  "portal": {
+    "name": "iServe Nebraska",
+    "url": "https://iserve.nebraska.gov/"
+  },
+  "update_channels": [
+    {
+      "name": "Nebraska DHHS — SNAP Program Standards (current FFY2026 income/resource/allotment table, effective 10/1/2025) — direct curl fetch, clean HTTP 200",
+      "url": "https://dhhs.ne.gov/Guidance%20Docs/SNAP%20Program%20Standards.pdf"
+    },
+    {
+      "name": "Nebraska DHHS — SNAP Monthly Deductions (current and historical Standard Deduction, SUA, LUA, OUA, Telephone Allowance, Maximum Shelter Deduction, Homeless Shelter Standard, effective 10/1/2025) — direct curl fetch, clean HTTP 200",
+      "url": "https://dhhs.ne.gov/Guidance%20Docs/SNAP%20Monthly%20Deductions.pdf"
+    },
+    {
+      "name": "Nebraska DHHS SNAP Policy Manual (475 NAC), 3-003.01H Utility Allowance and subsections (SUA/LUA/OUA/Telephone Allowance definitions) — direct curl fetch, clean HTTP 200",
+      "url": "https://public-dhhs.ne.gov/nfocus/Manuals/NAC475/nac475/3_003_01h_utility_allowance.htm"
+    },
+    {
+      "name": "Nebraska Revised Statute § 68-1017.02 (SNAP drug-felony modified ban and statutory ABAWD-waiver bar), full text — direct curl fetch, clean HTTP 200",
+      "url": "https://nebraskalegislature.gov/laws/statutes.php?statute=68-1017.02"
+    },
+    {
+      "name": "Nebraska DHHS — Rolling Out New Federal Requirements for SNAP (OBBBA ABAWD age range, exemption changes, alien-eligibility restrictions, effective 10/20/2025)",
+      "url": "https://dhhs.ne.gov/Pages/Nebraska-Rolling-Out-New-Federal-Requirements-for-SNAP.aspx"
+    },
+    {
+      "name": "Nebraska DHHS — SNAP One Big Beautiful Bill Act Public Information page",
+      "url": "https://dhhs.ne.gov/Pages/SNAP-One-Big-Beautiful-Bill-Act-Public-Information.aspx"
+    },
+    {
+      "name": "USDA FNS — Nebraska SNAP Food Restriction (soda/energy-drink) Waiver page, showing the waiver's approval and the June 22, 2026 court vacatur",
+      "url": "https://www.fna.usda.gov/snap/waivers/foodrestriction/nebraska"
+    },
+    {
+      "name": "Nebraska Examiner — Federal judge rules Nebraska can't restrict SNAP purchases of soda and energy drinks (June 23, 2026), reporting Aragon et al. v. Rollins et al., 1:26-cv-00861 (D.D.C.)",
+      "url": "https://nebraskaexaminer.com/2026/06/23/federal-judge-rules-nebraska-cant-restrict-snap-purchases-of-soda-and-energy-drinks/"
+    },
+    {
+      "name": "Nebraska Unicameral Update — Veto of SNAP eligibility expansion (LB319) sustained, 24-24 override vote",
+      "url": "https://update.legislature.ne.gov/?p=39035"
+    },
+    {
+      "name": "Nebraska Legislature — LB192 (2025), eliminating the sunset on the 165% FPL SNAP gross-income eligibility level, became law June 2, 2025",
+      "url": "https://nebraskalegislature.gov/FloorDocs/109/PDF/Intro/LB192.pdf"
+    }
+  ],
+  "verification": {
+    "verified_on": "2026-08-12",
+    "method": "Direct curl fetch (browser User-Agent) of Nebraska DHHS's current SNAP Program Standards and SNAP Monthly Deductions guidance-document PDFs (converted with pdftotext -layout), both effective 10/1/2025 and both returning clean HTTP 200 with no access barrier — a genuine departure from this roster's now-familiar bot-detection pattern for dollar-figure pages (CT's portaldir.ct.gov, etc.). Also directly fetched Nebraska's 475 NAC SNAP policy manual's utility-allowance sections (general section plus the OUA and LUA subsections specifically, to resolve the OUA-vs-Telephone-Allowance structural question), Neb. Rev. Stat. § 68-1017.02's full text from nebraskalegislature.gov (no access barrier), DHHS's own OBBBA/federal-requirements rollout pages, USDA FNS's Nebraska-specific food-restriction-waiver page, and cross-checked news reporting (Nebraska Examiner, Nebraska Public Media, WOWT, Unicameral Update — the Legislature's own official reporting service) for the LB319 veto/override outcome and the Aragon v. Rollins court vacatur of the soda/energy-drink waiver, since neither is fully documented on a single DHHS policy page as of this pack's fetch date.",
+    "gates": "dhhs.ne.gov, public-dhhs.ne.gov, and nebraskalegislature.gov all returned clean HTTP 200 to every direct curl attempt with a browser User-Agent, including two PDF guidance documents (SNAP Program Standards, SNAP Monthly Deductions) that WebFetch's markdown converter could not parse directly (returned as unreadable binary/compressed-stream content) but that a direct curl fetch plus local pdftotext conversion read cleanly — a tooling-layer limitation, not a source-side access barrier, resolved without any external archive fallback. This pack found NO bot-detection wall anywhere in its Nebraska research, a genuine contrast with this roster's Connecticut, Arkansas, and several other prior packs.",
+    "sources": [
+      "Nebraska DHHS, SNAP Program Standards (effective 10/1/2025) — direct curl fetch, clean HTTP 200, converted via pdftotext; current FFY2026 income-limit table (100%/130%/165% FPL columns), resource limits ($4,500 elderly/disabled, $3,000 all other, $25,000 ERP), maximum allotments, minimum allotment",
+      "Nebraska DHHS, SNAP Monthly Deductions (effective 10/1/2025) — direct curl fetch, clean HTTP 200, converted via pdftotext; Standard Deduction, SUA, LUA, OUA, Telephone Allowance, Maximum Shelter Deduction, Homeless Shelter Standard, medical-deduction threshold, earned-income deduction, dependent-care deduction, all with full historical effective-date series confirming the current figure is genuinely current, not stale",
+      "Nebraska DHHS 475 NAC SNAP Policy Manual, § 3-003.01H (Utility Allowance) and subsections H2 (LUA) and H3 (OUA) — direct curl fetch, clean HTTP 200, resolving the precise qualifying-utility-count distinction between LUA (2+ non-heating utilities) and OUA (exactly 1 non-heating, non-phone utility)",
+      "Neb. Rev. Stat. § 68-1017.02 — direct curl fetch of nebraskalegislature.gov, clean HTTP 200, full statute text read directly: drug-felony modified ban (subsection (1)(b)) and statutory bar on DHHS seeking/renewing ABAWD area waivers",
+      "Nebraska DHHS, 'Nebraska Rolling Out New Federal Requirements for SNAP' and 'SNAP - One Big Beautiful Bill Act Public Information' pages — direct fetch, OBBBA ABAWD age-range expansion (18-64), exemption changes, alien-eligibility restrictions, effective 10/20/2025",
+      "USDA FNS, Nebraska SNAP Food Restriction Waiver page — direct fetch, showing 4/14/2025 approval effective 1/1/2026 and the waiver's current vacated status",
+      "Nebraska Examiner, Nebraska Public Media, WOWT, and Nebraska Legislature's own Unicameral Update — WebSearch/WebFetch corroboration for LB319's veto/override-failure outcome and the June 22, 2026 Aragon v. Rollins court vacatur of the soda/energy-drink waiver, cross-checked against Covington & Burling LLP's legal-analysis summary of the same court order",
+      "Nebraska DHHS, SNAP Resource Tips (public-dhhs.ne.gov/nfocus/HowDoI) and Nebraska Legislature LB192 reporting — corroboration for the Categorical Eligibility (CE) vs. Expanded Resource Program (ERP) distinction and the 2025 permanent removal of the 165% FPL sunset date"
+    ]
+  }
+}

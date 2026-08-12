@@ -1,0 +1,173 @@
+{
+  "_provenance": {
+    "note": "Kansas SNAP curated supplements. UNLIKE most of this roster's recent blank-slate corpus-only builds, Kansas ALREADY has a packages/snap-rules StatePolicy entry AND full 92-profile oracle-fixture coverage (data-ops/sample/civica-test-profiles/v0.6.json) — but that entry is explicitly labeled \"Non-BBCE archetype (e.g. KS)\" and the file's own top-of-file comment flags TX/KS/AK SUA values as \"illustrative until the FNS-published values are loaded.\" This pack's central task was an independent, from-scratch primary-source discrepancy check against that flagged placeholder, not a from-scratch blank-slate build. This pack is CORPUS-ONLY and does not touch packages/snap-rules or the oracle fixture — see pack.json's admin_note and PROVENANCE.md for the full reconciliation. Kansas is part of this roster's smaller-population BATCH TIER, built in parallel with Mississippi, New Mexico, and Nebraska.",
+    "extracted": "2026-08-12",
+    "source_fact_check": "direct fetch of Kansas DCF's KEESM Appendix F-2 Food Assistance Program Standards PDF (effective 10/1/2025-9/30/2026), KEESM 2510 (Categorically Eligible Households), K.S.A. 39-709e from ksrevisor.gov, and DCF's Food Assistance program page, cross-referenced against their own section headers and effective dates + WebSearch cross-checks for the ABAWD waiver status, Restaurant Meals Program absence, and resource/asset-limit figures (the one area this pack could not confirm via a single directly-fetched dated KEESM section) + post-draft adversarial refute pass; findings and gaps recorded in PROVENANCE.md",
+    "access_note": "content.dcf.ks.gov and ksrevisor.gov returned clean, directly-fetchable content for every URL this pack attempted — no bot-detection, paywall, or Justia-403 pattern encountered, a genuine departure from several of this roster's more recent state builds. The one disclosed gap: several individual KEESM numbered sections in the 5000-5300 series (the resource/asset-limit chapter) either 404'd or did not state the dollar figure explicitly within this pack's fetch window, so the $3,000/$4,500 asset-limit figures rest on WebSearch-aggregator corroboration rather than a single directly-fetched, dated KEESM citation — disclosed explicitly, not silently upgraded to full confidence."
+  },
+  "supplements": [
+    {
+      "key": "program-identity",
+      "kind": "supplement",
+      "terms": [
+        "how to apply",
+        "where do i apply",
+        "apply for snap",
+        "kees",
+        "who runs",
+        "what agency",
+        "administers",
+        "dcf",
+        "department for children and families",
+        "ebt card",
+        "food stamps",
+        "food assistance",
+        "keesm"
+      ],
+      "citation": "Kansas DCF Food Assistance program page; KEESM (Kansas Economic and Employment Support Manual)",
+      "heading": "Kansas calls its program \"Food Assistance,\" not \"SNAP\" — DCF's own consumer materials lead with the state name",
+      "text": "Kansas's Department for Children and Families (DCF) administers the federal Supplemental Nutrition Assistance Program (SNAP) under the state name \"Food Assistance\" — DCF's own consumer-facing page states plainly that the USDA's SNAP program is \"known as the Food Assistance program\" in Kansas. This pack found no evidence of a distinctive EBT-card brand name the way CalFresh (CA) or Basic Food (WA) carry one; Kansas materials this pack found use \"EBT card\" generically. Kansas is STATE-ADMINISTERED — DCF operates centrally through the Kansas Eligibility Enforcement System (KEES), with no county-level policy variation the way CA/NY/MN/WI/VA's county-administered programs have. Applicants apply online through the KEES self-service portal (cssp.kees.ks.gov), by phone through the DCF Consumer Assistance Line (1-888-369-4777), in person at a DCF service center, or by mailing a paper Application for Benefits (form ES-3100). Kansas's operative policy manual is the Kansas Economic and Employment Support Manual (KEESM), cited by bare numeric section number (e.g. \"2510,\" \"7226\") without a program-name prefix — a structurally SIMPLER citation convention than Connecticut's multi-program UPM or Kentucky's \"MS ####\" convention, because KEESM appears to be organized as Kansas's dedicated economic/employment-support manual rather than shared verbatim across multiple, differently-named cash/medical programs the way CT's UPM is.",
+      "source_url": "https://www.dcf.ks.gov/services/ees/pages/food/foodassistance.aspx"
+    },
+    {
+      "key": "income-pathways",
+      "kind": "supplement",
+      "terms": [
+        "income limit",
+        "income limits",
+        "gross income limit",
+        "gross income ceiling",
+        "make too much",
+        "over income",
+        "bbce",
+        "broad based categorical eligibility",
+        "broadbased categorical eligibility",
+        "categorical eligibility",
+        "categorically eligible",
+        "200 percent",
+        "200%",
+        "130 percent",
+        "130%",
+        "poverty level",
+        "ssi",
+        "tanf",
+        "non-bbce",
+        "strict federal rules"
+      ],
+      "citation": "KEESM 2510 (Categorically Eligible Households); KEESM Appendix F-2, Food Assistance Program Standards (effective 10/1/2025) — Kansas has NO broad-based categorical eligibility track; the gross-income table matches the plain federal 130% FPL default at every household size",
+      "heading": "CONFIRMED (not an engine-fixture guess): Kansas has NOT adopted BBCE — categorical eligibility is narrowly limited to TANF/SSI-authorized households, and the gross income limit stays at the plain 130% FPL federal default",
+      "text": "This pack independently confirms — directly against KEESM 2510's own text — that Kansas is one of a minority of states that has NOT adopted Broad-Based Categorical Eligibility (BBCE), the option under 7 CFR § 273.2(j)(2)(ii) that lets a state raise the gross-income gate (commonly to 200% FPL) for the general SNAP population via a nominal TANF-funded service or brochure, the mechanism this roster's Connecticut, Kentucky, and many other states' packs document extensively. KEESM 2510 recognizes categorical eligibility ONLY for households where every member is authorized to receive TANF or SSI, plus a narrow track for households whose adults are all authorized to receive TransMed, Four-Month Extended Medical, or TANF work-program support services — there is no general, income-threshold-only categorical eligibility track open to the ordinary working household the way BBCE states operate. Consistent with this, KEESM Appendix F-2's own current gross-income table (effective 10/1/2025-9/30/2026) sets the household-of-1 gross ceiling at $1,696/month and household-of-4 at $3,483/month — figures that match the plain 130% FPL federal default this roster's other states document as their PRE-BBCE baseline, not an elevated 200% FPL BBCE ceiling. This pack flags this finding as a genuine CONFIRMATION, not merely a repeat, of this repo's existing packages/snap-rules KS StatePolicy entry, which is labeled \"Non-BBCE archetype\" but was flagged in the same file's own top-of-file comment as an illustrative placeholder pending real research — this pack's independent primary-source read closes that gap and finds the placeholder's bbce:false value happens to be correct.",
+      "source_url": "https://content.dcf.ks.gov/ees/KEESM/current/keesm2510.htm"
+    },
+    {
+      "key": "asset-rule",
+      "kind": "supplement",
+      "terms": [
+        "asset limit",
+        "asset test",
+        "resource limit",
+        "resource test",
+        "resources",
+        "savings",
+        "savings limit",
+        "bank account",
+        "vehicle",
+        "car count",
+        "does my car count",
+        "second car",
+        "truck"
+      ],
+      "citation": "Multiple independent current SNAP-calculator aggregators (Propel, snapscreener, povertylevelcalculator), WebSearch-corroborated only — $3,000 standard resource limit, $4,500 for households with an elderly (60+) or disabled member, matching this roster's already-confirmed FFY2026 national default figures; this pack could NOT locate a directly-fetched, dated KEESM section stating these figures explicitly within its fetch window",
+      "heading": "Kansas enforces the standard federal asset test in full — no BBCE waiver — but this pack discloses a genuine sourcing gap on the exact current dollar figures",
+      "text": "Because Kansas has not adopted BBCE (see income-pathways), and because Kansas's own KEESM 2510 categorical-eligibility track is narrowly TANF/SSI-only (not a general income-based waiver), the ordinary federal SNAP asset/resource test applies in full to the overwhelming majority of Kansas Food Assistance households — a genuine structural contrast with Connecticut, Kentucky, and most of this roster's other recently-built states, where BBCE or ECE-style categorical eligibility waives the asset test for nearly every household under the state's elevated income ceiling. This pack found consistent, independently-converging figures across multiple current SNAP-calculator aggregator sites: $3,000 for a standard household, rising to $4,500 for a household with a member who is 60 or older or disabled — figures that match this roster's already-confirmed current FFY2026 national default asset limits (the same figures Connecticut's, Kentucky's, Louisiana's, Alabama's, Missouri's, Maryland's, and Colorado's packs each independently confirmed for their own narrow-asset-test populations). This pack explicitly DISCLOSES that, unlike its SUA and income-limit figures (each grounded in a directly-fetched, dated KEESM Appendix F-2 PDF), this asset-limit figure rests on WebSearch-aggregator corroboration only — several individual KEESM numbered sections in the 5000-5300 series either returned a 404 or did not state the dollar figure explicitly in the content this pack was able to fetch within its window. Treat this figure as well-corroborated but not verified against Kansas's own numbered manual at the same evidentiary standard as this pack's other findings, and re-verify against a live KEESM 5000-series section before treating it as a hard fact in a high-stakes context.",
+      "source_url": "https://content.dcf.ks.gov/ees/keesm/appendix/appendix.html"
+    },
+    {
+      "key": "criminal-justice-disqualifications",
+      "kind": "supplement",
+      "terms": [
+        "drug felony",
+        "felony conviction",
+        "criminal record",
+        "drug conviction",
+        "lifetime ban",
+        "fleeing felon",
+        "probation",
+        "parole",
+        "controlled substance",
+        "marijuana",
+        "cannabis",
+        "drug testing",
+        "drug treatment"
+      ],
+      "citation": "K.S.A. 39-709e — a MODIFIED opt-out under 21 U.S.C. § 862a(d)(1): eligible if assessed as not needing substance-abuse treatment, OR is participating in/has completed a recommended treatment program, subject to a positive-test disqualification while on supervision or in treatment",
+      "heading": "CORRECTION: Kansas's drug-felony SNAP policy is a MODIFIED opt-out with assessment/treatment conditions, not the simple \"lifetime ban\" framing a 2022 secondary source repeats",
+      "text": "21 U.S.C. § 862a(a)(2) sets a federal default: anyone convicted of a state or federal felony for possessing, using, or distributing a controlled substance is permanently ineligible for SNAP unless a state opts out or modifies the ban under § 862a(d)(1). This pack fetched and read K.S.A. 39-709e directly from Kansas's own ksrevisor.gov statute database (no access barrier) and found Kansas chose the MODIFY option, not a full unconditional opt-out (Kentucky's approach) and not a full, unconditional lifetime ban either. The statute conditions eligibility on: (1) the individual has been assessed by a licensed substance-abuse treatment provider as NOT requiring treatment; OR (2) the individual was assessed as needing treatment and is currently participating in, or has successfully completed, a licensed substance-abuse treatment program. A person loses eligibility if a required drug test taken while on probation, parole, conditional release, postrelease supervision, or during mandated treatment comes back positive — with a 30-day reapplication window after that disqualification. This pack found and corrects a genuine, consequential secondary-source claim: a 2022 news article this pack located states flatly that \"Kansans with drug felonies remain banned for life from SNAP\" — this pack's direct read of the CURRENT statute text finds that framing incomplete at best: Kansas's ban is conditional on assessment/treatment/testing compliance, not an unconditional lifetime bar, and a person who is assessed as not needing treatment, or who completes a recommended program, regains eligibility. This pack could not determine from the statute's own text whether the 2022 article was describing an earlier, since-superseded version of Kansas law or was simply imprecise about the modified nature of the ban; either way, the CURRENT text (as directly fetched by this pack) is the modified-opt-out framing above, and this pack treats that as the operative fact.",
+      "source_url": "https://ksrevisor.gov/statutes/chapters/ch39/039_007_0009e.html"
+    },
+    {
+      "key": "shelter-utility-deductions",
+      "kind": "supplement",
+      "terms": [
+        "utility allowance",
+        "utility standard",
+        "shelter deduction",
+        "excess shelter",
+        "standard utility allowance",
+        "limited utility allowance",
+        "telephone allowance",
+        "standard deduction",
+        "sua",
+        "lua",
+        "hcsua",
+        "homeless",
+        "homeless shelter deduction",
+        "medical deduction",
+        "standard medical deduction"
+      ],
+      "citation": "KEESM Appendix F-2, Food Assistance Program Standards, effective October 1, 2025 - September 30, 2026 — Standard Deduction $209 (sizes 1-3), $223 (4), $261 (5), $299 (6+); Standard Utility Allowance $469; Limited Utility Allowance $345; Telephone Standard $44; Maximum Excess Shelter Deduction $744; Homeless Shelter Expense $198.99; Standard Medical Deduction $175",
+      "heading": "CONFIRMED (not an engine-fixture guess): Kansas's SUA/LUA/telephone figures exactly match the existing packages/snap-rules placeholder values — real Kansas policy, not a coincidence of illustrative numbers",
+      "text": "This pack independently confirmed, via a direct fetch of KEESM Appendix F-2 (the manual's own dated, current dollar-figure standards table, effective 10/1/2025-9/30/2026), that Kansas's Standard Utility Allowance is $469/month, its Limited Utility Allowance is $345/month, and its standalone Telephone Standard is $44/month — figures that match, to the dollar, this repo's existing packages/snap-rules KS StatePolicy entry (sua_by_tier: HCSUA 469 / LUA 345 / phone 44). Given that entry's own file-level comment flags KS's SUA values as \"illustrative until the FNS-published values are loaded,\" this pack's finding is a genuine, worth-stating CONFIRMATION: the placeholder figures were not fabricated round numbers — they are real Kansas dollar figures, either coincidentally correct or drawn from an earlier, undocumented partial correction (a separate in-code comment directly above the KS entry claims \"confirmed live 2026-08-09,\" but that claim was never reconciled with the file's broader \"archetype\"/\"illustrative\" framing one screen above it — see pack.json's admin_note and PROVENANCE.md). Kansas's Standard Deduction is $209 for household sizes 1 through 3, $223 for size 4, $261 for size 5, and $299 for size 6 or more — matching the current national FFY2026 figures this roster's other states have independently confirmed. The Maximum Excess Shelter Deduction is capped at $744/month (for households without an elderly/disabled member; KEESM's F-2 table does not carry a separate uncapped column the way Connecticut's does, and this pack did not find Kansas-specific text confirming an elderly/disabled uncapped exception — treat the $744 cap as the stated figure, not confirmed-uncapped-for-elderly/disabled). The Homeless Shelter Expense is $198.99/month, matching the federally-published standard homeless shelter deduction figure (7 CFR § 273.9(d)(6)(iii)) this roster's other states also cite. Kansas's Standard Medical Deduction is a FLAT $175/month shortcut for an elderly or disabled household member with allowable medical expenses — placing Kansas in this roster's flat-shortcut camp (with Kentucky's $137, Louisiana's $161, South Carolina's $175 — an exact match to South Carolina's figure — Missouri's $135, Colorado's $165, and Alabama's $185) rather than Connecticut's or Indiana's actual-expense-only mechanism.",
+      "source_url": "https://content.dcf.ks.gov/EES/KEESM/Appendix/F-2%20FA%20Program%20Standards.pdf"
+    },
+    {
+      "key": "abawd-work-requirement",
+      "kind": "supplement",
+      "terms": [
+        "abawd",
+        "able bodied adult",
+        "work requirement",
+        "3 month limit",
+        "work registration",
+        "waiver",
+        "waived area",
+        "time limit",
+        "wichita",
+        "topeka",
+        "kansas city",
+        "overland park"
+      ],
+      "citation": "WebSearch-corroborated (this pack could not directly fetch a live FNS FY2025-2029 quarterly waiver list within its window — see freshness.json): Kansas currently has NO ABAWD waiver, statewide or county-level, across all 105 counties; federal age range 18-64",
+      "heading": "Kansas has NO ABAWD waiver anywhere in the state — all 105 counties currently enforce SNAP work requirements",
+      "text": "An able-bodied adult without dependents (ABAWD) is limited to three countable months of SNAP within a 36-month period absent 80 hours/month of a qualifying work activity or an exemption. This pack's WebSearch-based cross-check (a direct fetch of FNS's live FY2025-2029 quarterly waiver list timed out within this pack's fetch window, an access limitation this pack discloses rather than papering over) found consistent, independently-converging current reporting that Kansas has no statewide or county-level ABAWD waiver in effect — DCF enforces the standard work requirement across all 105 Kansas counties. The one Kansas-specific ABAWD relaxation this pack found in its search results (a 2020 DCF announcement suspending ABAWD time limits under the Families First Coronavirus Response Act) is clearly PANDEMIC-ERA and long superseded; this pack does not treat it as current and flags it explicitly to avoid a reader mistaking a five-year-old emergency measure for Kansas's present policy. The federal ABAWD age range is 18 through 64 (post-OBBBA, July 2025), consistent with the nationwide rollout timeline this roster has documented in other 2025-2026-built packs. This pack could not independently confirm Kansas's specific work-hour alternative (e.g., a dollar-earnings equivalent the way Connecticut publishes one) within its fetch window and does not assert one; treat the standard 80 hours/month or 20 hours/week federal default as the baseline absent a Kansas-specific figure.",
+      "source_url": "https://www.fns.usda.gov/snap/abawd/waivers/2025-2029"
+    },
+    {
+      "key": "restaurant-meals-program",
+      "kind": "supplement",
+      "terms": [
+        "restaurant meals program",
+        "rmp",
+        "eat at a restaurant",
+        "use ebt at restaurant",
+        "hot meal",
+        "hot food",
+        "prepared food"
+      ],
+      "citation": "USDA FNS's current SNAP Restaurant Meals Program state list (Arizona, Maryland, New York, California, Massachusetts, Rhode Island, Illinois [Cook/Franklin Counties], Michigan, Virginia — Kansas absent, WebSearch-cross-checked against this roster's already-confirmed current RMP list)",
+      "heading": "Kansas does NOT operate a Restaurant Meals Program",
+      "text": "The Restaurant Meals Program (RMP) is a state OPTION under 7 CFR § 274.7(g) letting elderly (60+), disabled, and homeless SNAP recipients buy prepared, hot meals from authorized restaurants with EBT year-round. This pack cross-checked Kansas against USDA FNS's current RMP state list, which this roster's other recently-built packs have each independently fetched and confirmed names Arizona, Maryland, New York, California, Massachusetts, Rhode Island, Illinois (Cook and Franklin Counties only), Michigan, and Virginia — Kansas is absent, and this pack found no pending Kansas legislation analogous to Connecticut's SB 1475 directing DCF toward one. A Kansas SNAP applicant cannot currently use EBT to buy a hot, prepared restaurant meal.",
+      "source_url": "https://www.fns.usda.gov/snap/retailer/restaurant-meals-program"
+    }
+  ]
+}

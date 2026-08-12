@@ -1,0 +1,44 @@
+{
+  "_provenance": {
+    "note": "Arkansas dated facts. Because Arkansas has NO existing packages/snap-rules StatePolicy entry, there is no engine constant to cross-check against — every entry below is either a routine COLA-cycle reminder, a disclosed research gap, or a warning about a confirmed staleness/discrepancy trap this pack found.",
+    "extracted": "2026-08-12"
+  },
+  "entries": [
+    {
+      "key": "ar-abawd-age-range-pre-obbba-stale",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "Arkansas's SNAP Certification Manual § 3100 (dated 01/01/2024) states only the 2023 Fiscal Responsibility Act's pre-OBBBA incremental ABAWD age table, topping out at 'fifty-five (55)' (i.e., subject through age 54) — with no mention anywhere in the manual of OBBBA's true current federal standard, 18-64, effective immediately upon its July 4, 2025 enactment. Before telling an Arkansas applicant their exact ABAWD age exposure, use 18-64 as the operative federal standard regardless of Arkansas's own stale 55 figure, and re-check whether § 3100 has since been revised."
+    },
+    {
+      "key": "ar-abawd-waiver-status-nine-years-stale",
+      "kind": "expires",
+      "date": "2026-09-15",
+      "warning": "SNAP Certification Manual § 3501 (Waivers) is dated 'SNAP Manual 01/01/17' — the oldest individually-dated section this pack found anywhere in Arkansas's manual, roughly nine years unrevised despite the manual's own cover page showing a 07/01/2026 overall revision date. It states Arkansas is 'currently not under a waiver... as of January 1, 2016.' This pack found no more recent Arkansas-specific ABAWD waiver statement in DHS's own manual and did not independently verify current county-level unemployment data against USDA FNS's own waiver-eligibility criteria. Before asserting Arkansas has no current ABAWD waiver with full confidence, check USDA FNS's own current quarterly ABAWD waiver list for Arkansas directly, since DHS's own manual section on this exact question is confirmed stale."
+    },
+    {
+      "key": "ar-bbce-federal-income-waiver-status-unverified",
+      "kind": "expires",
+      "date": "2026-12-01",
+      "warning": "Arkansas Code § 20-76-115(b)(1)(A)-(B) permits DHS to obtain a federal waiver either exempting SNAP enrollees from the federal RESOURCE limit (which DHS did obtain and implement via its April 2025 emergency rule, setting the $5,500 temporary asset limit) OR, separately, a broad-based categorical eligibility waiver affecting the GROSS INCOME standard. This pack found DHS's own emergency-rule filing addresses ONLY the resource-limit waiver — this pack found no evidence DHS has separately sought or obtained an income-standard BBCE waiver, and therefore treats Arkansas's plain federal 130% FPL gross income test as still operative. Before asserting Arkansas's income limit is capped at the plain federal 130% FPL with full confidence, re-check DHS's current rule filings for any subsequent income-standard waiver request or grant."
+    },
+    {
+      "key": "ar-smd-effective-date-lag-vs-rest-of-appendix-d",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "Appendix D lists the Standard Medical Deduction ($190) as effective '10/01/2024' while every other dollar figure on the same Appendix D table (standard deduction, SUA, BUA, telephone standard, excess shelter cap, homeless living allowance) is dated '10/01/2025' — one full FFY cycle newer. This pack does not know whether this reflects an intentional SMD freeze (plausible, since the federal SMD figure does not always move every FFY cycle) or a document oversight. Before restating Arkansas's $190 SMD figure with full confidence, check DHS's current Appendix D for whether this date has since been corrected or confirmed unchanged."
+    },
+    {
+      "key": "ar-dhs-host-403-recheck-access",
+      "kind": "expires",
+      "date": "2026-09-15",
+      "warning": "Every DHS-hosted PDF this pack attempted (SNAP Certification Manual, Appendix D/Exhibits, SNAP Policy Directives) returned a clean HTTP 403 to direct curl fetch with a browser User-Agent on every attempt during this pack's research (2026-08-12); this pack instead retrieved the same documents successfully via WebFetch. This access barrier may be a temporary bot-detection artifact specific to curl rather than a permanent block (WebFetch's own retrieval path succeeded on the identical files). Before repeating this workaround for a future update, re-attempt a direct curl fetch of DHS's own hosts first."
+    },
+    {
+      "key": "ar-ffy2027-cola-reminder",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "This pack's confirmed dollar figures (Standard Deduction $209/$209/$209/$223/$261/$299, SUA $342, BUA $274, Telephone Standard $51, capped excess shelter $744, Homeless Living Allowance $198.99, resource limits $3,000/$4,500/$5,500-temporary, and the Appendix D Exhibit A/B income-eligibility and benefit tables) are drawn from DHS's own Appendix D, effective October 1, 2025, and match the current FFY2026 cycle (October 1, 2025 - September 30, 2026). The FFY2027 COLA cycle begins October 1, 2026 — under two months from this pack's fetch date. Check DHS's SNAP-Appendices PDF (humanservices.arkansas.gov) for an updated version after that date before restating any Arkansas-specific dollar figure with full confidence."
+    }
+  ]
+}

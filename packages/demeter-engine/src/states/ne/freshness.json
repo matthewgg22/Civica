@@ -1,0 +1,50 @@
+{
+  "_provenance": {
+    "note": "Nebraska dated facts. Because Nebraska has NO existing packages/snap-rules StatePolicy entry, there is no engine constant to cross-check against — every entry below is either a routine COLA-cycle reminder, a disclosed research gap, or a warning about a confirmed time-sensitive or actively-litigated fact this pack found.",
+    "extracted": "2026-08-12"
+  },
+  "entries": [
+    {
+      "key": "ne-food-restriction-waiver-vacated-verify-current",
+      "kind": "expires",
+      "date": "2026-09-15",
+      "warning": "Nebraska's SNAP soda/energy-drink purchase restriction waiver was approved by USDA (effective 1/1/2026) and then VACATED by a federal court (Aragon et al. v. Rollins et al., 1:26-cv-00861, D.D.C., order dated June 22, 2026). Nebraska DHHS is, as of this pack's fetch date, in the process of unwinding the restriction with retailers — a process reporting from early July 2026 described as still in progress, not instantaneous. Before telling a Nebraska applicant whether soda/energy drinks are currently purchasable with SNAP, re-check https://www.fna.usda.gov/snap/waivers/foodrestriction/nebraska and recent Nebraska DHHS press communications directly — this is among the most actively-changing facts in this pack."
+    },
+    {
+      "key": "ne-lb901-am2406-restaurant-meals-content-unconfirmed",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "LB920 (Nebraska's 2025-2026 Restaurant Meals Program bill) FAILED on April 17, 2026, with some of its provisions amended into a different bill, LB901, via floor amendment AM2406. This pack could NOT confirm whether LB901's amended provisions retained anything resembling an RMP directive or substituted unrelated content — re-check LB901's enacted text directly at nebraskalegislature.gov before treating Nebraska's Restaurant Meals Program status as permanently settled."
+    },
+    {
+      "key": "ne-lb319-no-future-override-attempt-verify",
+      "kind": "expires",
+      "date": "2026-12-31",
+      "warning": "LB319 (2025), which would have replaced Nebraska's modified drug-felony SNAP ban with a broader eligibility rule, was vetoed by Gov. Pillen on May 14, 2025 and the override motion failed 24-24 on May 19, 2025 (six votes short of the 30 needed). This pack treats Neb. Rev. Stat. § 68-1017.02's current, unchanged text as controlling. A similar bill could be reintroduced in a future legislative session — re-check nebraskalegislature.gov and Neb. Rev. Stat. § 68-1017.02's current text directly before restating Nebraska's drug-felony policy with full confidence beyond this window."
+    },
+    {
+      "key": "ne-cert-period-sourcing-gap",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "This pack's reporting-certification supplement (Simplified Reporting default, 12-month/24-month elderly-disabled certification structure) is corroborated by secondary sources only, NOT by a directly-fetched, dated 475 NAC certification-period section the way this pack's other findings are — this pack's fetch of public-dhhs.ne.gov's certification-periods page returned only a caseworker-facing system-navigation walkthrough, not substantive policy text. Before restating Nebraska's certification-period structure with full confidence, locate and fetch the current 475 NAC certification-period chapter directly."
+    },
+    {
+      "key": "ne-ce-resource-waiver-lower-confidence",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "This pack's asset-rule supplement describes Nebraska's Categorical Eligibility (CE) pathway as having no stated resource limit (a fuller waiver than the Expanded Resource Program's elevated-but-real $25,000 ceiling), based on a resource-tips page excerpt that did not include an explicit 'no resource limit' statement in as many words. Re-verify the CE resource treatment against 475 NAC's categorical-eligibility chapter directly before treating this as a hard fact in a high-stakes context."
+    },
+    {
+      "key": "ne-erp-origin-lb-number-unverified",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "This pack traced the 165% FPL gross-income level's origin to a bill this pack found referenced as 'LB108' in a 2021-era secondary source (a Nebraska Appleseed fact sheet), but did NOT independently verify this bill number against the Nebraska Legislature's own bill-text archive. The 2023 sunset (LB227) and its 2025 permanent removal (LB192) ARE independently confirmed via direct/secondary corroboration. Re-verify the originating bill number before citing it as a hard fact."
+    },
+    {
+      "key": "ne-ffy2027-cola-reminder",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "This pack's confirmed dollar figures (Standard Deduction $209/$209/$209/$223/$261/$299, SUA $615, LUA $321, OUA $63, Telephone Allowance $54, Maximum Shelter Deduction $744, Homeless Shelter Standard $198.99, resource limits $4,500/$3,000/$25,000, and the income-eligibility table by household size) are drawn from Nebraska DHHS's own current SNAP Program Standards and SNAP Monthly Deductions documents, effective October 1, 2025, matching the current FFY2026 cycle (October 1, 2025 - September 30, 2026). The FFY2027 COLA cycle begins October 1, 2026 — under two months from this pack's fetch date. Check dhhs.ne.gov's Guidance Docs pages for updated figures after that date before restating any Nebraska-specific dollar figure with full confidence."
+    }
+  ]
+}

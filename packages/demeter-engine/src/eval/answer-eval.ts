@@ -3224,7 +3224,788 @@ export const OK_GOLD: AnswerExpectation[] = [
   },
 ];
 
+export const CT_GOLD: AnswerExpectation[] = [
+  {
+    id: "ct-ece-flat-200-not-185",
+    // Guards the structural correction: Connecticut's ECE ceiling is a FLAT
+    // 200% FPL, not the "185%" figure repeated in some secondary sources.
+    question: "Does Connecticut's categorical eligibility raise my SNAP income limit above the normal amount?",
+    state: "CT",
+    expectCitation: "5520.35",
+    mustMention: "200",
+    mustDisclaim: true,
+  },
+  {
+    id: "ct-income-limit-current-not-stale-2011-table",
+    // Guards against the model surfacing P-5520.35's own stale 2011 worked
+    // example instead of the current FFY2026 Tables figures.
+    question: "What is the income limit for SNAP in Connecticut?",
+    state: "CT",
+    expectCitation: "5520.35",
+    mustDisclaim: true,
+  },
+  {
+    id: "ct-drug-felony-modified-not-full-optout",
+    // Guards the flagship refinement finding: CGS 17b-112d is a MODIFIED
+    // opt-out with three independent eligibility paths, not a full opt-out.
+    question: "I have a drug felony conviction — can I still get SNAP in Connecticut?",
+    state: "CT",
+    expectCitation: "17b-112",
+    mustMention: "probation",
+    mustDisclaim: true,
+  },
+  {
+    id: "ct-abawd-no-waiver-current",
+    // Guards the flagship correction: Connecticut has NO ABAWD waiver as of
+    // Dec. 1, 2025 — contradicts the "statewide waiver" secondary-source claim.
+    question: "Is the SNAP work-requirement time limit currently waived anywhere in Connecticut?",
+    state: "CT",
+    mustMention: "no",
+    mustDisclaim: true,
+  },
+  {
+    id: "ct-abawd-age-range-current-federal",
+    question: "What is the ABAWD work requirement age range in Connecticut?",
+    state: "CT",
+    mustMention: "64",
+    mustDisclaim: true,
+  },
+  {
+    id: "ct-asset-limit-elderly-disabled-only",
+    // Guards the structural finding: CT's asset test only applies to
+    // elderly/disabled EDGs over 200% FPL — everyone else has no asset test.
+    question: "Does my car or savings count against me for SNAP in Connecticut?",
+    state: "CT",
+    expectCitation: "4005.05",
+    mustMention: "4,500",
+    mustDisclaim: true,
+  },
+  {
+    id: "ct-sua-flat-976",
+    question: "What utility deduction can I get for SNAP in Connecticut?",
+    state: "CT",
+    mustMention: "976",
+    mustDisclaim: true,
+  },
+  {
+    id: "ct-medical-deduction-actual-expense-no-shortcut",
+    question: "I'm disabled and have $50 a month in medical bills for Connecticut SNAP — do I get a deduction?",
+    state: "CT",
+    mustMention: "35",
+    mustDisclaim: true,
+  },
+  {
+    id: "ct-restaurant-meals-program-not-available",
+    question: "Does Connecticut have a Restaurant Meals Program for SNAP?",
+    state: "CT",
+    mustMention: "not",
+    mustDisclaim: true,
+  },
+  {
+    id: "ct-manual-is-multi-program-upm",
+    // Guards the structural finding: Connecticut's UPM is shared across
+    // AFDC/TFA, AABD, MA, and FS (SNAP) — citations need a Program-tag check.
+    question: "How do I apply for SNAP in Connecticut?",
+    state: "CT",
+    mustDisclaim: true,
+  },
+  {
+    id: "ct-federal-benefit",
+    question: "How is the monthly SNAP benefit amount calculated from net income in Connecticut?",
+    state: "CT",
+    expectCitation: "273.10",
+    mustDisclaim: true,
+  },
+];
+
+
+export const UT_GOLD: AnswerExpectation[] = [
+  {
+    id: "ut-no-bbce-federal-income-limits",
+    // Guards the confirmed finding: Utah has NOT adopted BBCE — plain
+    // federal 130%/100% FPL tests apply, no state-raised percentage band.
+    question: "What is the income limit for SNAP in Utah?",
+    state: "UT",
+    mustMention: "130",
+    mustDisclaim: true,
+  },
+  {
+    id: "ut-soft-drink-restriction",
+    // Guards the flagship structural finding: Utah's active 2-year FNA
+    // demonstration waiver bars SNAP from buying soft drinks (H.B. 403).
+    question: "Can I buy soda with my SNAP benefits in Utah?",
+    state: "UT",
+    mustMention: "soft drink",
+    mustDisclaim: true,
+  },
+  {
+    id: "ut-vehicle-usually-not-counted",
+    // Guards the correction of a widely-repeated secondary-source claim:
+    // Utah's own page says a car usually does NOT count against the limit.
+    question: "Does my car count against me for SNAP in Utah?",
+    state: "UT",
+    mustMention: "not",
+    mustDisclaim: true,
+  },
+  {
+    id: "ut-drug-felony-full-opt-out",
+    question: "I have a drug felony conviction — can I still get SNAP in Utah?",
+    state: "UT",
+    expectCitation: "35A-3-311",
+    mustMention: "eligible",
+    mustDisclaim: true,
+  },
+  {
+    id: "ut-abawd-age-range-current-federal-18-64",
+    // Guards the positive finding: Utah's own current manual already
+    // states the correct post-OBBBA 18-64 ABAWD age range.
+    question: "What is the ABAWD work requirement age range in Utah?",
+    state: "UT",
+    expectCitation: "342",
+    mustMention: "64",
+    mustDisclaim: true,
+  },
+  {
+    id: "ut-abawd-no-active-waiver",
+    question: "Is the SNAP work-requirement time limit currently waived anywhere in Utah?",
+    state: "UT",
+    mustMention: "waiver",
+    mustDisclaim: true,
+  },
+  {
+    id: "ut-resource-limit-elderly-disabled",
+    question: "What is the SNAP resource limit for a household with a disabled member in Utah?",
+    state: "UT",
+    mustMention: "4,500",
+    mustDisclaim: true,
+  },
+  {
+    id: "ut-ebt-card-name",
+    question: "What is my EBT card called in Utah?",
+    state: "UT",
+    mustMention: "Horizon",
+    mustDisclaim: true,
+  },
+  {
+    id: "ut-expedited-service-7-day-federal",
+    question: "How fast can I get emergency SNAP benefits in Utah?",
+    state: "UT",
+    mustMention: "7",
+    mustDisclaim: true,
+  },
+  {
+    id: "ut-esap-elderly-3-year-certification",
+    question: "How long does my SNAP approval last if I'm elderly in Utah?",
+    state: "UT",
+    mustMention: "three",
+    mustDisclaim: true,
+  },
+  {
+    id: "ut-tribal-fdpir-mutual-exclusivity",
+    question: "I live on tribal land in Utah — can I get both SNAP and FDPIR at the same time?",
+    state: "UT",
+    mustDisclaim: true,
+  },
+  {
+    id: "ut-restaurant-meals-program-not-available",
+    question: "Can I use my EBT card to buy a hot meal at a restaurant in Utah?",
+    state: "UT",
+    mustMention: "not",
+    mustDisclaim: true,
+  },
+  {
+    id: "ut-federal-benefit",
+    question: "How is the monthly SNAP benefit amount calculated from net income in Utah?",
+    state: "UT",
+    expectCitation: "273.10",
+    mustDisclaim: true,
+  },
+];
+
+
+export const IA_GOLD: AnswerExpectation[] = [
+  {
+    id: "ia-income-limit-comm002-staleness",
+    // Guards the flagship staleness finding: Iowa's own consumer flyer
+    // (Comm. 002, Rev. 09/24) states a stale FFY2025-cycle income limit
+    // ($1,632 HH1) — guards against confidently quoting it as current
+    // without disclaiming the cross-chapter COLA-cycle discrepancy.
+    question: "What is the income limit for SNAP in Iowa?",
+    state: "IA",
+    mustDisclaim: true,
+  },
+  {
+    id: "ia-drug-felony-full-opt-out",
+    // Guards the flagship CONFIRMATION finding: Iowa fully opted out of
+    // the federal drug-felony ban — grounded in a direct citizenship
+    // statement in Iowa's own Employees' Manual (7-C).
+    question: "I have a drug felony conviction — can I still get SNAP in Iowa?",
+    state: "IA",
+    mustMention: "eligible",
+    mustDisclaim: true,
+  },
+  {
+    id: "ia-vehicle-not-blanket-excluded",
+    // Guards the structural finding: Iowa applies the fuller federal
+    // vehicle rule (one per household + $4,650 fair-market-value test),
+    // NOT a blanket all-vehicles exclusion like Kentucky/Alabama.
+    question: "Does my car count against me for SNAP in Iowa?",
+    state: "IA",
+    mustDisclaim: true,
+  },
+  {
+    id: "ia-abawd-age-range-current-64",
+    // Guards the flagship CONTRAST finding: Iowa's own ABAWD manual
+    // chapter (revised Feb 2026) is fully current with the true federal
+    // 18-64 standard, unlike Oklahoma's three stale figures.
+    question: "What is the ABAWD work requirement age range in Iowa?",
+    state: "IA",
+    mustMention: "64",
+    mustDisclaim: true,
+  },
+  {
+    id: "ia-abawd-no-waiver-found",
+    question: "Is the SNAP work-requirement time limit currently waived anywhere in Iowa?",
+    state: "IA",
+    mustMention: "waiver",
+    mustDisclaim: true,
+  },
+  {
+    id: "ia-bbce-phmp-categorical-eligibility",
+    // Guards the structural finding: Iowa's BBCE-equivalent pathway runs
+    // through the Promoting Healthy Marriage Program (PHMP), a genuinely
+    // distinctive mechanism vs. other states' referral-service pathways.
+    question: "Does Iowa's categorical eligibility raise my SNAP income limit above the normal amount?",
+    state: "IA",
+    mustDisclaim: true,
+  },
+  {
+    id: "ia-resource-limit-elderly-disabled",
+    question: "What is the SNAP resource limit for a household with a disabled member in Iowa?",
+    state: "IA",
+    mustMention: "4,500",
+    mustDisclaim: true,
+  },
+  {
+    id: "ia-medical-deduction-standard-175",
+    // Guards the structural finding: Iowa DOES offer a flat standard
+    // medical deduction ($175), unlike Oklahoma's actual-expense-only
+    // policy.
+    question: "I'm disabled and have $50 a month in medical bills for Iowa SNAP — do I get a deduction?",
+    state: "IA",
+    mustMention: "35",
+    mustDisclaim: true,
+  },
+  {
+    id: "ia-expedited-service-7-day-federal",
+    question: "How fast can I get emergency SNAP benefits in Iowa?",
+    state: "IA",
+    mustMention: "7",
+    mustDisclaim: true,
+  },
+  {
+    id: "ia-restaurant-meals-program-not-available",
+    question: "Can I use my EBT card to buy a hot meal at a restaurant in Iowa?",
+    state: "IA",
+    mustMention: "not",
+    mustDisclaim: true,
+  },
+  {
+    id: "ia-ebt-card-no-distinctive-name",
+    question: "What is my EBT card called in Iowa?",
+    state: "IA",
+    mustDisclaim: true,
+  },
+  {
+    id: "ia-cert-period-6-months-default",
+    // Guards the structural finding: Iowa's DEFAULT certification period
+    // is 6 months, shorter than Oklahoma's flat 12-month standard.
+    question: "How long does my SNAP approval last in Iowa?",
+    state: "IA",
+    mustMention: "6",
+    mustDisclaim: true,
+  },
+  {
+    id: "ia-tribal-fdpir-meskwaki-unconfirmed",
+    question: "I live on tribal land in Iowa — can I get both SNAP and FDPIR at the same time?",
+    state: "IA",
+    mustDisclaim: true,
+  },
+  {
+    id: "ia-federal-benefit",
+    question: "How is the monthly SNAP benefit amount calculated from net income in Iowa?",
+    state: "IA",
+    expectCitation: "273.10",
+    mustDisclaim: true,
+  },
+];
+
+
+export const AR_GOLD: AnswerExpectation[] = [
+  {
+    id: "ar-bbce-resource-only-statutory-cap",
+    // Guards the flagship structural finding: Arkansas law bars income-based
+    // BBCE and caps its resource-based categorical-eligibility exemption to a
+    // temporary $5,500 limit, once every 5 years (Ark. Code § 20-76-115).
+    question: "Does Arkansas's categorical eligibility raise my SNAP income limit above the normal amount?",
+    state: "AR",
+    expectCitation: "20-76-115",
+    mustMention: "5,500",
+    mustDisclaim: true,
+  },
+  {
+    id: "ar-resource-limit-temporary-increase",
+    question: "What is the SNAP resource limit in Arkansas, and can it be temporarily higher?",
+    state: "AR",
+    mustMention: "5,500",
+    mustDisclaim: true,
+  },
+  {
+    id: "ar-drug-felony-full-opt-out",
+    // Guards the flagship CONFIRMATION finding: Arkansas fully opted out of
+    // the federal drug-felony ban (Ark. Code § 20-76-409).
+    question: "I have a drug felony conviction — can I still get SNAP in Arkansas?",
+    state: "AR",
+    expectCitation: "20-76-409",
+    mustMention: "eligible",
+    mustDisclaim: true,
+  },
+  {
+    id: "ar-abawd-age-range-current-federal-not-55",
+    // Guards against importing Arkansas's own stale "55" figure (Manual
+    // § 3100) — the true current federal ceiling is 64 (OBBBA).
+    question: "What is the ABAWD work requirement age range in Arkansas?",
+    state: "AR",
+    expectCitation: "3100",
+    mustMention: "64",
+    mustDisclaim: true,
+  },
+  {
+    id: "ar-abawd-waiver-status-stale-source",
+    // Guards against overclaiming current statewide waiver-free status from
+    // Arkansas's own nine-years-stale Manual § 3501.
+    question: "Is the SNAP work-requirement time limit currently waived anywhere in Arkansas?",
+    state: "AR",
+    expectCitation: "3501",
+    mustDisclaim: true,
+  },
+  {
+    id: "ar-vehicle-one-excluded-outright",
+    question: "Does my car count against me for SNAP in Arkansas?",
+    state: "AR",
+    expectCitation: "4840",
+    mustMention: "one",
+    mustDisclaim: true,
+  },
+  {
+    id: "ar-medical-deduction-standard-190",
+    question: "I'm disabled and have $50 a month in medical bills for Arkansas SNAP — do I get a deduction?",
+    state: "AR",
+    expectCitation: "6520",
+    mustMention: "35",
+    mustDisclaim: true,
+  },
+  {
+    id: "ar-expedited-service-7-day-federal",
+    question: "How fast can I get emergency SNAP benefits in Arkansas?",
+    state: "AR",
+    expectCitation: "9100",
+    mustMention: "7",
+    mustDisclaim: true,
+  },
+  {
+    id: "ar-restaurant-meals-homeless-contracted-only",
+    // Guards the structural nuance: Arkansas is absent from full RMP but has
+    // a narrower DHS-contracted meal option for homeless households.
+    question: "Can I use my EBT card to buy a hot meal at a restaurant in Arkansas?",
+    state: "AR",
+    mustMention: "homeless",
+    mustDisclaim: true,
+  },
+  {
+    id: "ar-ebt-card-no-distinctive-name",
+    // Guards against fabricating a branded card name this pack could not
+    // verify, unlike Oklahoma's confirmed "ACCESS Oklahoma Card".
+    question: "What is my EBT card called in Arkansas?",
+    state: "AR",
+    mustDisclaim: true,
+  },
+  {
+    id: "ar-cert-period-36-month-minor-dependent-gate",
+    question: "How long does my SNAP approval last in Arkansas if I'm disabled and have a young child?",
+    state: "AR",
+    expectCitation: "3320",
+    mustMention: "36",
+    mustDisclaim: true,
+  },
+  {
+    id: "ar-no-tribal-reservation",
+    question: "I live on tribal land in Arkansas — can I get both SNAP and FDPIR at the same time?",
+    state: "AR",
+    mustDisclaim: true,
+  },
+  {
+    id: "ar-federal-benefit",
+    question: "How is the monthly SNAP benefit amount calculated from net income in Arkansas?",
+    state: "AR",
+    expectCitation: "273.10",
+    mustDisclaim: true,
+  },
+];
+
+export const MS_GOLD: AnswerExpectation[] = [
+  {
+    id: "ms-no-bbce-tanf-ssi-only",
+    // Guards the flagship CONFIRMATION finding: Mississippi has NO income-based
+    // BBCE track — categorical eligibility is limited to TANF/SSI households.
+    question: "Does Mississippi's categorical eligibility raise my SNAP income limit above the normal amount?",
+    state: "MS",
+    expectCitation: "15.1",
+    mustMention: "TANF",
+    mustDisclaim: true,
+  },
+  {
+    id: "ms-abawd-waiver-disaster-gate",
+    // Guards the flagship structural finding: MS ties ABAWD waiver authority to
+    // a natural-disaster declaration, not the federal unemployment-rate test.
+    question: "Is the SNAP work-requirement time limit currently waived anywhere in Mississippi?",
+    state: "MS",
+    expectCitation: "13.12",
+    mustDisclaim: true,
+  },
+  {
+    id: "ms-drug-felony-full-opt-out",
+    // Guards the flagship CONFIRMATION finding: Mississippi fully opted out of
+    // the federal drug-felony ban (Miss. Code Ann. §43-12-71, July 1, 2019).
+    question: "I have a drug felony conviction — can I still get SNAP in Mississippi?",
+    state: "MS",
+    expectCitation: "43-12-71",
+    mustMention: "eligible",
+    mustDisclaim: true,
+  },
+  {
+    id: "ms-vehicle-broad-exclusion",
+    question: "Does my car count against me for SNAP in Mississippi?",
+    state: "MS",
+    expectCitation: "16.4",
+    mustDisclaim: true,
+  },
+  {
+    id: "ms-esap-age-65-not-60",
+    // Guards against importing the more common 60+ ESAP threshold this roster's
+    // other states use — Mississippi's ESAP requires all members 65+.
+    question: "How long does my SNAP approval last in Mississippi if I'm 65 or older?",
+    state: "MS",
+    expectCitation: "28.5",
+    mustMention: "36",
+    mustDisclaim: true,
+  },
+  {
+    id: "ms-abawd-age-range-current-federal-64",
+    question: "What is the ABAWD work requirement age range in Mississippi?",
+    state: "MS",
+    expectCitation: "13.1",
+    mustMention: "64",
+    mustDisclaim: true,
+  },
+  {
+    id: "ms-medical-deduction-actual-expense-35",
+    question: "I'm disabled and have $50 a month in medical bills for Mississippi SNAP — do I get a deduction?",
+    state: "MS",
+    expectCitation: "18.4",
+    mustMention: "35",
+    mustDisclaim: true,
+  },
+  {
+    id: "ms-expedited-service-criteria",
+    question: "How fast can I get emergency SNAP benefits in Mississippi?",
+    state: "MS",
+    expectCitation: "4.2",
+    mustDisclaim: true,
+  },
+  {
+    id: "ms-restaurant-meals-absent",
+    question: "Can I use my EBT card to buy a hot meal at a restaurant in Mississippi?",
+    state: "MS",
+    mustDisclaim: true,
+  },
+  {
+    id: "ms-ebt-card-no-distinctive-name",
+    // Guards against fabricating a branded card name this pack could not
+    // verify, unlike Texas's confirmed "Lone Star Card".
+    question: "What is my EBT card called in Mississippi?",
+    state: "MS",
+    mustDisclaim: true,
+  },
+  {
+    id: "ms-choctaw-fdp-alternative",
+    question: "I live on the Choctaw reservation in Mississippi — can I get both SNAP and food distribution benefits at the same time?",
+    state: "MS",
+    mustDisclaim: true,
+  },
+  {
+    id: "ms-sua-dollar-figure-gap",
+    // Guards against fabricating a Mississippi-specific SUA dollar figure this
+    // pack could not recover (usda.gov guidance-documents subdomain 403'd).
+    question: "What is the standard utility allowance amount for SNAP in Mississippi?",
+    state: "MS",
+    mustDisclaim: true,
+  },
+];
+
+
+export const NM_GOLD: AnswerExpectation[] = [
+  {
+    id: "nm-bbce-200-not-165",
+    // Guards the flagship correction: New Mexico's BBCE ceiling is a flat
+    // 200% FPG, effective 10/1/2024 — NOT the stale "165%" some sources show.
+    question: "What is the income limit for SNAP in New Mexico?",
+    state: "NM",
+    expectCitation: "8.139.420.8",
+    mustMention: "200",
+    mustDisclaim: true,
+  },
+  {
+    id: "nm-asset-limit-verification-waiver-not-no-limit",
+    // Guards the precise structural finding: NM DOES have asset limits
+    // ($3,000/$4,500) but broad-based CE waives resource VERIFICATION.
+    question: "Does my car or savings count against me for SNAP in New Mexico?",
+    state: "NM",
+    mustMention: "4,500",
+    mustDisclaim: true,
+  },
+  {
+    id: "nm-drug-felony-distribution-scope-ambiguous",
+    // Guards the flagship refinement: NM's opt-out is worded narrowly around
+    // DISTRIBUTION convictions — not confirmed to cover possession/use.
+    question: "I have a drug felony conviction — can I still get SNAP in New Mexico?",
+    state: "NM",
+    expectCitation: "27-2B-11",
+    mustMention: "distribution",
+    mustDisclaim: true,
+  },
+  {
+    id: "nm-abawd-partial-waiver-not-none",
+    // Guards the flagship correction: a narrow ABAWD waiver still covers Luna
+    // County and four pueblos even after the Jan 1, 2026 statewide rollout.
+    question: "Is the SNAP work-requirement time limit currently waived anywhere in New Mexico?",
+    state: "NM",
+    mustMention: "Luna",
+    mustDisclaim: true,
+  },
+  {
+    id: "nm-abawd-age-range-current-federal",
+    question: "What is the ABAWD work requirement age range in New Mexico?",
+    state: "NM",
+    mustMention: "64",
+    mustDisclaim: true,
+  },
+  {
+    id: "nm-restaurant-meals-program-not-available",
+    question: "Does New Mexico have a Restaurant Meals Program for SNAP?",
+    state: "NM",
+    mustMention: "not",
+    mustDisclaim: true,
+  },
+  {
+    id: "nm-cert-period-36-month-elderly-disabled",
+    // Guards the finding: 60+/disabled no-earned-income households get a
+    // 36-month certification period, effective 10/1/2024.
+    question: "How long does my SNAP approval last if I'm elderly or disabled in New Mexico?",
+    state: "NM",
+    mustMention: "36",
+    mustDisclaim: true,
+  },
+  {
+    id: "nm-agency-name-hca-not-hsd",
+    // Guards against surfacing the stale pre-7/1/2024 agency name.
+    question: "How do I apply for SNAP in New Mexico?",
+    state: "NM",
+    mustMention: "Health Care Authority",
+    mustDisclaim: true,
+  },
+  {
+    id: "nm-tribal-fdpir-exclusivity",
+    question: "I live on tribal land in New Mexico — can I get both SNAP and FDPIR at the same time?",
+    state: "NM",
+    mustDisclaim: true,
+  },
+  {
+    id: "nm-federal-benefit",
+    question: "How is the monthly SNAP benefit amount calculated from net income in New Mexico?",
+    state: "NM",
+    expectCitation: "273.10",
+    mustDisclaim: true,
+  },
+];
+
+
 /** Everything the live runner executes. */
+export const KS_GOLD: AnswerExpectation[] = [
+  {
+    id: "ks-no-bbce-confirmed",
+    // Guards the flagship CONFIRMATION finding: Kansas has NOT adopted BBCE —
+    // this pack's independent research confirms the existing packages/snap-rules
+    // "archetype" entry's bbce:false as accurate, not merely a placeholder guess.
+    question: "Does Kansas have broad-based categorical eligibility for SNAP?",
+    state: "KS",
+    expectCitation: "KEESM 2510",
+    mustMention: "not",
+    mustDisclaim: true,
+  },
+  {
+    id: "ks-asset-limit-sourcing-gap",
+    // Guards against overclaiming a directly-fetched dollar figure this pack
+    // only corroborated via WebSearch aggregators — see freshness.json.
+    question: "What is the SNAP asset or resource limit in Kansas?",
+    state: "KS",
+    mustMention: "3,000",
+    mustDisclaim: true,
+  },
+  {
+    id: "ks-drug-felony-modified-not-lifetime-ban",
+    // Guards the correction finding: K.S.A. 39-709e is a MODIFIED,
+    // assessment/treatment-conditioned opt-out, not the "banned for life"
+    // framing a 2022 secondary source repeats.
+    question: "I have a drug felony conviction — can I still get SNAP in Kansas?",
+    state: "KS",
+    expectCitation: "39-709e",
+    mustMention: "treatment",
+    mustDisclaim: true,
+  },
+  {
+    id: "ks-abawd-no-waiver-current",
+    question: "Is the SNAP work-requirement time limit currently waived anywhere in Kansas?",
+    state: "KS",
+    mustMention: "no",
+    mustDisclaim: true,
+  },
+  {
+    id: "ks-sua-flat-469",
+    question: "What utility deduction can I get for SNAP in Kansas?",
+    state: "KS",
+    mustMention: "469",
+    mustDisclaim: true,
+  },
+  {
+    id: "ks-restaurant-meals-program-not-available",
+    question: "Can I use my EBT card to buy a hot meal at a restaurant in Kansas?",
+    state: "KS",
+    mustMention: "not",
+    mustDisclaim: true,
+  },
+  {
+    id: "ks-program-name-food-assistance",
+    question: "How do I apply for SNAP in Kansas?",
+    state: "KS",
+    mustMention: "KEES",
+    mustDisclaim: true,
+  },
+  {
+    id: "ks-federal-benefit",
+    question: "How is the monthly SNAP benefit amount calculated from net income in Kansas?",
+    state: "KS",
+    expectCitation: "273.10",
+    mustDisclaim: true,
+  },
+];
+
+
+/** Everything the live runner executes. */
+export const NE_GOLD: AnswerExpectation[] = [
+  {
+    id: "ne-165-scoped-not-blanket",
+    // Guards the structural finding: NE's 165% FPL column is scoped to
+    // elderly/disabled/separate-household/ERP households, not everyone.
+    question: "What is the income limit for SNAP in Nebraska?",
+    state: "NE",
+    mustMention: "165",
+    mustDisclaim: true,
+  },
+  {
+    id: "ne-erp-raises-not-waives-resource-limit",
+    // Guards the structural finding: Nebraska's ERP RAISES the resource
+    // limit to $25,000 rather than waiving it outright.
+    question: "What is the SNAP resource limit in Nebraska, and can it be temporarily higher?",
+    state: "NE",
+    mustMention: "25,000",
+    mustDisclaim: true,
+  },
+  {
+    id: "ne-drug-felony-lb319-vetoed-modified-ban-current",
+    // Guards the flagship correction: LB319 was vetoed and the veto was
+    // sustained — Nebraska's older, narrower modified ban is still current.
+    question: "I have a drug felony conviction — can I still get SNAP in Nebraska?",
+    state: "NE",
+    expectCitation: "68-1017.02",
+    mustMention: "treatment",
+    mustDisclaim: true,
+  },
+  {
+    id: "ne-abawd-statutory-waiver-bar",
+    // Guards the flagship finding: NE's lack of an ABAWD waiver is a
+    // statutory mandate (68-1017.02), not just a labor-market fact.
+    question: "Is the SNAP work-requirement time limit currently waived anywhere in Nebraska?",
+    state: "NE",
+    expectCitation: "68-1017.02",
+    mustMention: "no",
+    mustDisclaim: true,
+  },
+  {
+    id: "ne-abawd-age-range-current-federal",
+    question: "What is the ABAWD work requirement age range in Nebraska?",
+    state: "NE",
+    mustMention: "64",
+    mustDisclaim: true,
+  },
+  {
+    id: "ne-soda-waiver-vacated-court-order",
+    // Guards the time-sensitive flagship finding: NE's soda/energy-drink
+    // waiver was approved, took effect, then was vacated by a federal court.
+    question: "Can I buy soda with my SNAP benefits in Nebraska?",
+    state: "NE",
+    mustMention: "court",
+    mustDisclaim: true,
+  },
+  {
+    id: "ne-utility-allowance-four-tier-oua",
+    // Guards the structural finding: NE has a distinct fourth utility tier,
+    // the One Utility Allowance (OUA), between LUA and Telephone Allowance.
+    question: "What utility deduction can I get for SNAP in Nebraska?",
+    state: "NE",
+    mustMention: "615",
+    mustDisclaim: true,
+  },
+  {
+    id: "ne-medical-deduction-actual-expense-no-shortcut",
+    question: "I'm disabled and have $50 a month in medical bills for Nebraska SNAP — do I get a deduction?",
+    state: "NE",
+    mustMention: "35",
+    mustDisclaim: true,
+  },
+  {
+    id: "ne-restaurant-meals-program-not-available",
+    question: "Does Nebraska have a Restaurant Meals Program for SNAP?",
+    state: "NE",
+    mustMention: "not",
+    mustDisclaim: true,
+  },
+  {
+    id: "ne-how-to-apply-iserve",
+    question: "How do I apply for SNAP in Nebraska?",
+    state: "NE",
+    mustDisclaim: true,
+  },
+  {
+    id: "ne-federal-benefit",
+    question: "How is the monthly SNAP benefit amount calculated from net income in Nebraska?",
+    state: "NE",
+    expectCitation: "273.10",
+    mustDisclaim: true,
+  },
+];
+
+
 export const ALL_GOLD: AnswerExpectation[] = [
   ...ANSWER_GOLD,
   ...ES_GOLD,
@@ -3256,4 +4037,12 @@ export const ALL_GOLD: AnswerExpectation[] = [
   ...LA_GOLD,
   ...KY_GOLD,
   ...OK_GOLD,
+  ...CT_GOLD,
+  ...UT_GOLD,
+  ...IA_GOLD,
+  ...AR_GOLD,
+  ...MS_GOLD,
+  ...KS_GOLD,
+  ...NM_GOLD,
+  ...NE_GOLD,
 ];
