@@ -5170,6 +5170,92 @@ export const DC_GOLD: AnswerExpectation[] = [
   },
 ];
 
+/** Everything the live runner executes for Alaska. */
+export const AK_GOLD: AnswerExpectation[] = [
+  {
+    id: "ak-bbce-200-recent-adoption",
+    // Guards the flagship finding: AK adopted BBCE (200% FPL) only for
+    // applications/recertifications on or after 7/1/2025 — a recent change.
+    question: "What is the income limit for SNAP in Alaska?",
+    state: "AK",
+    mustMention: "200",
+    mustDisclaim: true,
+  },
+  {
+    id: "ak-resource-limit-current-federal-floor",
+    // Guards the finding: AK's $3,000/$4,500 resource limit already matches
+    // the current federal FY2026 COLA floor (confirmed, not stale).
+    question: "Does Alaska have an asset or resource limit for SNAP?",
+    state: "AK",
+    mustMention: "3,000",
+    mustDisclaim: true,
+  },
+  {
+    id: "ak-drug-felony-modified-ban-rehab-pathway",
+    // Guards the flagship confirmation: AK's drug-felony ban is MODIFIED
+    // (AS 47.27.015 rehabilitation-pathway carve-out), not an absolute ban.
+    question: "I have a drug felony conviction — can I still get SNAP in Alaska?",
+    state: "AK",
+    mustMention: "treatment",
+    mustDisclaim: true,
+  },
+  {
+    id: "ak-abawd-waiver-active-except-anchorage",
+    // Guards the flagship finding: AK has an active Good Faith Exemption
+    // ABAWD waiver (11/1/2025-10/31/2026) covering all areas except Anchorage.
+    question: "Is the SNAP work-requirement time limit currently waived anywhere in Alaska?",
+    state: "AK",
+    mustMention: "Anchorage",
+    mustDisclaim: true,
+  },
+  {
+    id: "ak-abawd-age-range-current-federal",
+    // Guards the internal-inconsistency finding: AK's own live consumer page
+    // states a stale 18-54 range; the H.R. 1 FAQ page confirms 18-64 current.
+    question: "What is the ABAWD work requirement age range in Alaska?",
+    state: "AK",
+    mustMention: "64",
+    mustDisclaim: true,
+  },
+  {
+    id: "ak-max-allotment-zone-varies",
+    // Guards the structural finding: max allotment varies by three zones
+    // (Urban/Rural I/Rural II), a different axis than income eligibility.
+    question: "What is the maximum SNAP benefit amount in rural Alaska?",
+    state: "AK",
+    mustMention: "Rural",
+    mustDisclaim: true,
+  },
+  {
+    id: "ak-utility-deduction-six-region-system",
+    // Guards the structural finding: SUA is set by six named heating-utility
+    // regions, a separate axis from the three allotment zones.
+    question: "What utility deduction can I get for SNAP in Alaska?",
+    state: "AK",
+    mustDisclaim: true,
+  },
+  {
+    id: "ak-restaurant-meals-program-not-available",
+    question: "Does Alaska have a Restaurant Meals Program for SNAP?",
+    state: "AK",
+    mustMention: "not",
+    mustDisclaim: true,
+  },
+  {
+    id: "ak-how-to-apply-connect-portal",
+    question: "How do I apply for SNAP in Alaska?",
+    state: "AK",
+    mustDisclaim: true,
+  },
+  {
+    id: "ak-federal-benefit",
+    question: "How is the monthly SNAP benefit amount calculated from net income in Alaska?",
+    state: "AK",
+    expectCitation: "273.10",
+    mustDisclaim: true,
+  },
+];
+
 
 /** Everything the live runner executes for the U.S. Virgin Islands. Named
  *  USVI_GOLD, NOT VI_GOLD — VI_GOLD is already taken above for Vietnamese-
@@ -5322,5 +5408,6 @@ export const ALL_GOLD: AnswerExpectation[] = [
   ...WY_GOLD,
   ...VT_GOLD,
   ...DC_GOLD,
+  ...AK_GOLD,
   ...USVI_GOLD,
 ];

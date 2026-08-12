@@ -1,0 +1,68 @@
+{
+  "_provenance": {
+    "note": "Alaska dated facts. Because Alaska has NO existing packages/snap-rules StatePolicy entry, there is no engine constant to cross-check against — every entry below is either a routine COLA-cycle reminder, a disclosed research gap, or a warning about a fact this pack found time-sensitive, internally inconsistent within Alaska's own live site, or access-constrained.",
+    "extracted": "2026-08-12"
+  },
+  "entries": [
+    {
+      "key": "ak-abawd-age-internal-inconsistency",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "Alaska DOH's general SNAP consumer page (fetched 2026-08-12) states the PRE-OBBBA ABAWD age range ('between the ages of 18 and 54'), while DOH's own dedicated 'H.R. 1 - AK Impacts' FAQ page, fetched the SAME DAY, states the current, correct post-11/1/2025 OBBBA range (18-64) explicitly. This pack treats the H.R. 1 FAQ page as authoritative. Re-check both pages before restating Alaska's ABAWD age range with full confidence, since the general consumer page may be updated (removing this inconsistency) at any time, or the inconsistency may persist longer than expected."
+    },
+    {
+      "key": "ak-abawd-waiver-good-faith-exemption-window",
+      "kind": "expires",
+      "date": "2026-10-15",
+      "warning": "This pack's conclusion that Alaska has an active, near-statewide ABAWD waiver (all census areas/boroughs except the Municipality of Anchorage) rests on Alaska DOH's own H.R. 1 FAQ page, which states the 'Good Faith Exemption' waiver is effective November 1, 2025 through October 31, 2026 — a FIXED ONE-YEAR WINDOW. Re-verify at https://health.alaska.gov/en/education/hr-1-ak-impacts/ (or the successor FY2027 waiver materials at USDA FNS's ABAWD waiver index) before restating this waiver as active beyond October 31, 2026."
+    },
+    {
+      "key": "ak-bbce-recent-adoption",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "Alaska's BBCE program (200% FPL gross-income gate, no separate resource test) applies only to SNAP households that apply or recertify on or after July 1, 2025, per DOH's own BBCE FAQ dated 06/26/25. This is a genuinely recent state policy change — any secondary source, cached page, or prior conversation describing Alaska SNAP using only the older 130%/100% FPL two-column income structure (with no 200% BBCE column) predates this change and should not be treated as current."
+    },
+    {
+      "key": "ak-drug-felony-statute-not-primary-fetched",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "AS 47.27.015's exact statutory text (the modified drug-felony SNAP ban with a rehabilitation-pathway carve-out) could not be fetched directly by this pack — law.justia.com and codes.findlaw.com both returned HTTP 403 to every direct curl attempt, including with a browser User-Agent. This pack instead cross-corroborated the statutory language across three independent secondary sources (FindLaw, Justia's 2025-edition excerpt, CLASP's 50-state survey), all quoting materially identical text — reasonable but not primary-fetch-level confidence. Re-verify directly against akleg.gov or a working Justia/FindLaw fetch before citing exact statutory language with full confidence in a high-stakes context."
+    },
+    {
+      "key": "ak-legacy-manual-not-relied-on-for-dollar-figures",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "dpaweb.hss.state.ak.us, Alaska's older RoboHelp-generated SNAP policy manual, returns a clean HTTP 200 with no error signal, but its own broadcast/addendum index shows no update newer than December 2021 — predating BBCE (7/2025), OBBBA's ABAWD changes (11/2025), and at least four annual COLA cycles. This pack used it ONLY for one narrow, cross-corroborated structural feature (the PFD Hold Harmless mechanism) and does not rely on it for any dollar figure. Do not cite any dollar figure from dpaweb.hss.state.ak.us directly without separately confirming it against a current 2025/2026-dated Alaska DOH source."
+    },
+    {
+      "key": "ak-permanent-fund-dividend-mechanism-lower-confidence",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "The Permanent Fund Dividend (PFD) Hold Harmless mechanism detail in this pack (four-month suspension window, minimum-benefit interaction, 529 cash-refund treatment) is sourced from the disclosed-stale legacy manual (dpaweb.hss.state.ak.us, last updated December 2021), cross-corroborated only loosely against Alaska DOH's live consumer page's own brief 'Special rules apply to Alaska Permanent Fund Dividends' cross-reference (which does not itself state the mechanism in full). This pack judges the underlying federal-waiver mechanism unlikely to have changed on the same annual cadence as COLA dollar figures, but this is a judgment call, not a primary-fetch confirmation from a current-dated source — re-verify directly with DPA before restating PFD Hold Harmless mechanics with full confidence in a high-stakes context."
+    },
+    {
+      "key": "ak-restaurant-meals-program-secondary-only",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "This pack's finding that Alaska does NOT operate a Restaurant Meals Program rests on secondary-source corroboration and the absence of any RMP mention on Alaska DOH's own consumer materials — this pack did not independently re-fetch USDA's own current RMP state-operator list to confirm Alaska's specific absence. Re-verify against a current primary USDA source (e.g. https://www.fns.usda.gov/snap/retailer/restaurant-meals-program) before restating with full confidence."
+    },
+    {
+      "key": "ak-subsistence-program-2023-pdf-not-reverified",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "This pack's SNAP Subsistence hunting/fishing equipment-purchase program description is sourced from a DOH PDF with a 2023 creation date. This pack found no evidence the program's eligibility criteria, ineligible-community list, or eligible-item list has changed since, but did not independently locate or cross-check a more recent, FY2026-dated version of this specific guide. Re-verify directly with DPA before restating the ineligible-community list with full confidence, since that list in particular is the most likely element to have been updated without this pack having caught it."
+    },
+    {
+      "key": "ak-certification-period-composition-criteria-gap",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "This pack confirms Alaska uses both 12-month and 24-month standard SNAP certification periods (per DOH's own Interim Report cadence description) and a 36-month period under ESAP for all-elderly/disabled households, but did NOT locate a DOH page stating the precise household-composition criteria that place a given household on the 12-month versus 24-month standard track. A household should confirm its specific certification length directly with DPA rather than assume from this pack's general description."
+    },
+    {
+      "key": "ak-ffy2026-cola-reminder",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "This pack's confirmed income-eligibility, deduction, allotment, and utility-allowance dollar figures are drawn from Alaska DOH's 'Alaska SNAP Standards' PDF (FSP 77, rev 09/25), explicitly effective October 1, 2025 - September 30, 2026 (the FFY2026 cycle), and cross-checked against USDA FNS's national FY2026 table (also effective 10/1/2025-9/30/2026). The FFY2027 COLA cycle begins October 1, 2026 — under two months from this pack's fetch date. Check health.alaska.gov/media/wzalr0op/alaska-snap-standards.pdf (or its FFY2027 successor URL, which will likely differ) after that date before restating any Alaska-specific dollar figure with full confidence."
+    }
+  ]
+}
