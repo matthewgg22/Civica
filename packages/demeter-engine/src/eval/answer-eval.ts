@@ -3754,6 +3754,92 @@ export const MS_GOLD: AnswerExpectation[] = [
 ];
 
 
+export const NM_GOLD: AnswerExpectation[] = [
+  {
+    id: "nm-bbce-200-not-165",
+    // Guards the flagship correction: New Mexico's BBCE ceiling is a flat
+    // 200% FPG, effective 10/1/2024 — NOT the stale "165%" some sources show.
+    question: "What is the income limit for SNAP in New Mexico?",
+    state: "NM",
+    expectCitation: "8.139.420.8",
+    mustMention: "200",
+    mustDisclaim: true,
+  },
+  {
+    id: "nm-asset-limit-verification-waiver-not-no-limit",
+    // Guards the precise structural finding: NM DOES have asset limits
+    // ($3,000/$4,500) but broad-based CE waives resource VERIFICATION.
+    question: "Does my car or savings count against me for SNAP in New Mexico?",
+    state: "NM",
+    mustMention: "4,500",
+    mustDisclaim: true,
+  },
+  {
+    id: "nm-drug-felony-distribution-scope-ambiguous",
+    // Guards the flagship refinement: NM's opt-out is worded narrowly around
+    // DISTRIBUTION convictions — not confirmed to cover possession/use.
+    question: "I have a drug felony conviction — can I still get SNAP in New Mexico?",
+    state: "NM",
+    expectCitation: "27-2B-11",
+    mustMention: "distribution",
+    mustDisclaim: true,
+  },
+  {
+    id: "nm-abawd-partial-waiver-not-none",
+    // Guards the flagship correction: a narrow ABAWD waiver still covers Luna
+    // County and four pueblos even after the Jan 1, 2026 statewide rollout.
+    question: "Is the SNAP work-requirement time limit currently waived anywhere in New Mexico?",
+    state: "NM",
+    mustMention: "Luna",
+    mustDisclaim: true,
+  },
+  {
+    id: "nm-abawd-age-range-current-federal",
+    question: "What is the ABAWD work requirement age range in New Mexico?",
+    state: "NM",
+    mustMention: "64",
+    mustDisclaim: true,
+  },
+  {
+    id: "nm-restaurant-meals-program-not-available",
+    question: "Does New Mexico have a Restaurant Meals Program for SNAP?",
+    state: "NM",
+    mustMention: "not",
+    mustDisclaim: true,
+  },
+  {
+    id: "nm-cert-period-36-month-elderly-disabled",
+    // Guards the finding: 60+/disabled no-earned-income households get a
+    // 36-month certification period, effective 10/1/2024.
+    question: "How long does my SNAP approval last if I'm elderly or disabled in New Mexico?",
+    state: "NM",
+    mustMention: "36",
+    mustDisclaim: true,
+  },
+  {
+    id: "nm-agency-name-hca-not-hsd",
+    // Guards against surfacing the stale pre-7/1/2024 agency name.
+    question: "How do I apply for SNAP in New Mexico?",
+    state: "NM",
+    mustMention: "Health Care Authority",
+    mustDisclaim: true,
+  },
+  {
+    id: "nm-tribal-fdpir-exclusivity",
+    question: "I live on tribal land in New Mexico — can I get both SNAP and FDPIR at the same time?",
+    state: "NM",
+    mustDisclaim: true,
+  },
+  {
+    id: "nm-federal-benefit",
+    question: "How is the monthly SNAP benefit amount calculated from net income in New Mexico?",
+    state: "NM",
+    expectCitation: "273.10",
+    mustDisclaim: true,
+  },
+];
+
+
 /** Everything the live runner executes. */
 export const KS_GOLD: AnswerExpectation[] = [
   {
@@ -3957,5 +4043,6 @@ export const ALL_GOLD: AnswerExpectation[] = [
   ...AR_GOLD,
   ...MS_GOLD,
   ...KS_GOLD,
+  ...NM_GOLD,
   ...NE_GOLD,
 ];
