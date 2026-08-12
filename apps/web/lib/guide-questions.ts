@@ -194,4 +194,11 @@ export const QUESTIONS: Record<string, string[]> = {
     "What is the ABAWD work requirement age range in Arkansas?",
     "Can I use my EBT card to buy a hot meal at a restaurant in Arkansas?",
   ],
+  NE: [
+    "What is the income limit for SNAP in Nebraska?",
+    "I have a drug felony conviction — can I still get SNAP in Nebraska?",
+    "Is the SNAP work-requirement time limit currently waived anywhere in Nebraska?",
+    "Can I buy soda with my SNAP benefits in Nebraska?",
+    "What is the SNAP resource limit in Nebraska, and can it be temporarily higher?",
+  ],
 };
