@@ -163,7 +163,11 @@ export function DemeterStatePicker({
         <span className="dmst__trigger-text">
           <span className="dmst__trigger-label">{copy.label}</span>
           <span className="dmst__trigger-value">
-            {selected ? programDisplayName(selected.program) : copy.federal}
+            {/* The STATE, under a label that says YOUR STATE. This showed the
+                PROGRAM, so Massachusetts read "Supplemental Nutrition
+                Assistance Program (SNAP)" where the state belongs. The program
+                and agency are already named on the scope line beneath. */}
+            {selected ? stateName(selected.code) : copy.federal}
           </span>
         </span>
         {selected ? <span className="dmst__check" aria-hidden>✓</span> : null}

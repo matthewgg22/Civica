@@ -29,6 +29,7 @@ import { DemeterWorksheet, type WorksheetMode } from "./DemeterWorksheet";
 import { DemeterFeedback } from "./DemeterFeedback";
 import { DemeterSave } from "./DemeterSave";
 import { T } from "../lib/i18n/demeter-chat-copy";
+import { stateName } from "../lib/state-names";
 import type { SavedMsg } from "../lib/demeter-conversations";
 
 /** Read the certainty verdict back off a finished answer.
@@ -481,7 +482,14 @@ export function DemeterChat({
     // the computed outcome is dropped, and the next turn recomputes it.
     setClassification(null);
     if (messages.some((m) => m.role !== "divider")) {
-      const name = next ? states.find((s) => s.code === next)?.program ?? next : null;
+      // The STATE's name. This used the pack's `program` field, which for
+      // Massachusetts is the annotated corpus string — so the divider read
+      // "Now answering for Supplemental Nutrition Assistance Program (SNAP) —
+      // Massachusetts uses the federal name; 'Food Stamps' survives only as the
+      // older, still-recognized public name (formally retired federally in
+      // 2008) — earlier answers may not apply." Nobody needs the program's
+      // etymology to be told the scope changed. They need "Massachusetts".
+      const name = next ? stateName(next) : null;
       setMessages((m) => [
         ...m,
         { role: "divider", content: name ? t.dividerTo(name) : t.dividerFederal },

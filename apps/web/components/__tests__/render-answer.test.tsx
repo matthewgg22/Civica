@@ -1,6 +1,8 @@
 import { describe, it, expect } from "vitest";
 import { isValidElement } from "react";
 import { renderAnswer, splitFollowups, pendingQuestion } from "../DemeterChat";
+import { stateName } from "../../lib/state-names";
+import { VERIFIED_STATES } from "@civica/demeter-engine/packs";
 
 // renderAnswer returns React nodes (no DOM needed): <p> paragraph blocks and
 // <hr>, with <strong>/<em>/text inside them for the markdown subset the engine
@@ -258,5 +260,26 @@ describe("a duplicated freshness footer", () => {
   it("leaves a single footer alone", () => {
     const one = "Answer.\nSources as of: eCFR 2026-06-02.";
     expect(splitFollowups(one).body).toBe(one);
+  });
+});
+
+describe("the scope divider names a STATE", () => {
+  it("never uses the pack's annotated program string", () => {
+    // Shipped: the divider read "Now answering for Supplemental Nutrition
+    // Assistance Program (SNAP) — Massachusetts uses the federal name; 'Food
+    // Stamps' survives only as the older, still-recognized public name
+    // (formally retired federally in 2008) — earlier answers may not apply."
+    // It was interpolating `pack.program`, which is corpus annotation.
+    const ma = VERIFIED_STATES.find((s) => s.code === "MA")!;
+    expect(ma.program.length, "MA's program field is the annotated one").toBeGreaterThan(60);
+    expect(stateName("MA")).toBe("Massachusetts");
+  });
+
+  it("has a short, human name for every shipped pack", () => {
+    for (const p of VERIFIED_STATES) {
+      const n = stateName(p.code);
+      expect(n.length, `${p.code} → ${n}`).toBeLessThanOrEqual(24);
+      expect(n, `${p.code} kept an annotation`).not.toMatch(/—|\(/);
+    }
   });
 });

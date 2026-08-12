@@ -96,7 +96,14 @@ describe("DemeterChat state switching", () => {
     expect(screen.queryByRole("status")).toBeNull();
 
     pickState(/TX/);
-    expect(screen.getByRole("status").textContent).toContain("Now answering for Texas SNAP");
+    // The STATE, not the program. This asserted "Texas SNAP" and the code
+    // interpolated `pack.program` — which for Massachusetts is the annotated
+    // corpus string, so the divider shipped reading "Now answering for
+    // Supplemental Nutrition Assistance Program (SNAP) — Massachusetts uses the
+    // federal name; 'Food Stamps' survives only as the older, still-recognized
+    // public name (formally retired federally in 2008) — earlier answers may
+    // not apply."
+    expect(screen.getByRole("status").textContent).toContain("Now answering for Texas");
 
     await sendQuestion("And in Texas?");
     const body = JSON.parse((fetchMock.mock.calls[1]![1] as RequestInit).body as string);
