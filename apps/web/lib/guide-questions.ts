@@ -260,4 +260,12 @@ export const QUESTIONS: Record<string, string[]> = {
     "How long does my SNAP certification last in New Hampshire?",
     "What utility deduction can I get for SNAP in New Hampshire?",
   ],
+  ND: [
+    "What is the income limit for SNAP in North Dakota?",
+    "Does North Dakota have an asset or resource limit for SNAP?",
+    "I have a drug felony conviction — can I still get SNAP in North Dakota?",
+    "Is the SNAP work-requirement time limit currently waived anywhere in North Dakota?",
+    "Can I buy candy or soda with SNAP in North Dakota?",
+    "How do I apply for SNAP in North Dakota?",
+  ],
 };

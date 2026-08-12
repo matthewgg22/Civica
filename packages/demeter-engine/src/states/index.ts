@@ -183,9 +183,13 @@ import nhPack from "./nh/pack.json";
 import nhSupplements from "./nh/supplements.json";
 import nhAuthorities from "./nh/authorities.json";
 import nhFreshness from "./nh/freshness.json";
+import ndPack from "./nd/pack.json";
+import ndSupplements from "./nd/supplements.json";
+import ndAuthorities from "./nd/authorities.json";
+import ndFreshness from "./nd/freshness.json";
 
 /** Registered pack codes. Widens as Wave 1+ states land (WA, TX, NY, …). */
-export type StateCode = "CA" | "WA" | "TX" | "NY" | "GA" | "MI" | "IL" | "FL" | "MA" | "NV" | "AZ" | "OR" | "WI" | "MN" | "PA" | "OH" | "NC" | "NJ" | "VA" | "TN" | "IN" | "MO" | "MD" | "CO" | "SC" | "AL" | "LA" | "KY" | "OK" | "CT" | "UT" | "IA" | "AR" | "MS" | "KS" | "NM" | "NE" | "ID" | "WV" | "HI" | "ME" | "NH";
+export type StateCode = "CA" | "WA" | "TX" | "NY" | "GA" | "MI" | "IL" | "FL" | "MA" | "NV" | "AZ" | "OR" | "WI" | "MN" | "PA" | "OH" | "NC" | "NJ" | "VA" | "TN" | "IN" | "MO" | "MD" | "CO" | "SC" | "AL" | "LA" | "KY" | "OK" | "CT" | "UT" | "IA" | "AR" | "MS" | "KS" | "NM" | "NE" | "ID" | "WV" | "HI" | "ME" | "NH" | "ND";
 
 /** Launch state; used when a caller does not specify. Preserves the pre-pack
  *  behavior in which the (then-hardcoded) CA content applied to every query. */
@@ -528,6 +532,12 @@ const REGISTRY: Record<StateCode, StatePack> = {
     nhSupplements as { supplements: PackTopic[]; supersessions?: Record<string, string> },
     nhAuthorities as unknown as RawAuthorities,
     nhFreshness as { entries: PackFreshnessEntry[] },
+  ),
+  ND: buildPack(
+    ndPack as Omit<StatePack, "topics" | "authorities" | "freshness" | "supersessions">,
+    ndSupplements as { supplements: PackTopic[]; supersessions?: Record<string, string> },
+    ndAuthorities as unknown as RawAuthorities,
+    ndFreshness as { entries: PackFreshnessEntry[] },
   ),
 };
 

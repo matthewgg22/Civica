@@ -4455,6 +4455,94 @@ export const ME_GOLD: AnswerExpectation[] = [
 ];
 
 
+/** Everything the live runner executes for North Dakota. */
+export const ND_GOLD: AnswerExpectation[] = [
+  {
+    id: "nd-bbce-200-not-flat-figure",
+    // Guards the structural finding: ND's BBCE/ECE track is 200% FPG, with
+    // separate 130%/100%/165% tests for non-BBCE households.
+    question: "What is the income limit for SNAP in North Dakota?",
+    state: "ND",
+    mustMention: "200",
+    mustDisclaim: true,
+  },
+  {
+    id: "nd-resource-limit-corrects-secondary-source",
+    // Guards the flagship correction: ND's current resource limit is
+    // $3,000/$4,500, not the lower $2,250/$3,250 several aggregators repeat.
+    question: "Does North Dakota have an asset or resource limit for SNAP?",
+    state: "ND",
+    mustMention: "3,000",
+    mustDisclaim: true,
+  },
+  {
+    id: "nd-drug-felony-full-opt-out",
+    // Guards the flagship confirmation: ND fully opted out of the federal
+    // drug-felony ban via N.D. Cent. Code 50-06-05.1.
+    question: "I have a drug felony conviction — can I still get SNAP in North Dakota?",
+    state: "ND",
+    mustMention: "not",
+    mustDisclaim: true,
+  },
+  {
+    id: "nd-abawd-waiver-ended-corrects-secondary-source",
+    // Guards the flagship correction: the Rolette County/Turtle Mountain
+    // Reservation waiver ended 10/31/2025, contradicting a secondary source
+    // claiming an active statewide waiver through mid-2026.
+    question: "Is the SNAP work-requirement time limit currently waived anywhere in North Dakota?",
+    state: "ND",
+    mustMention: "no",
+    mustDisclaim: true,
+  },
+  {
+    id: "nd-abawd-tribal-exemption",
+    // Guards the tribal-disclosure finding: Indians/Urban Indians/California
+    // Indians (IHS-eligible) is a distinct ABAWD exemption category.
+    question: "Is there an ABAWD work-requirement exemption for tribal members in North Dakota?",
+    state: "ND",
+    mustDisclaim: true,
+  },
+  {
+    id: "nd-sua-mid-cycle-increase",
+    // Guards the structural finding: ND's SUA increased mid-fiscal-year
+    // (from $772 to $775, effective 4/1/2026), not just at the FFY start.
+    question: "What utility deduction can I get for SNAP in North Dakota?",
+    state: "ND",
+    mustMention: "775",
+    mustDisclaim: true,
+  },
+  {
+    id: "nd-restaurant-meals-program-not-available",
+    question: "Does North Dakota have a Restaurant Meals Program for SNAP?",
+    state: "ND",
+    mustMention: "not",
+    mustDisclaim: true,
+  },
+  {
+    id: "nd-food-restriction-waiver-not-yet-effective",
+    // Guards the time-sensitive flagship finding: the candy/soda/energy-drink
+    // restriction is NOT yet in effect (takes effect 9/1/2026).
+    question: "Can I buy candy or soda with SNAP in North Dakota?",
+    state: "ND",
+    mustMention: "September",
+    mustDisclaim: true,
+  },
+  {
+    id: "nd-how-to-apply-self-service-portal",
+    question: "How do I apply for SNAP in North Dakota?",
+    state: "ND",
+    mustDisclaim: true,
+  },
+  {
+    id: "nd-federal-benefit",
+    question: "How is the monthly SNAP benefit amount calculated from net income in North Dakota?",
+    state: "ND",
+    expectCitation: "273.10",
+    mustDisclaim: true,
+  },
+];
+
+
 export const ALL_GOLD: AnswerExpectation[] = [
   ...ANSWER_GOLD,
   ...ES_GOLD,
@@ -4499,4 +4587,5 @@ export const ALL_GOLD: AnswerExpectation[] = [
   ...HI_GOLD,
   ...ME_GOLD,
   ...NH_GOLD,
+  ...ND_GOLD,
 ];
