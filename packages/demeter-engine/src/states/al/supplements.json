@@ -1,0 +1,246 @@
+{
+  "_provenance": {
+    "note": "Alabama SNAP curated supplements. Alabama has NO existing packages/snap-rules StatePolicy entry and NO oracle-fixture coverage — a genuinely blank slate, like North Carolina's, Ohio's, New Jersey's, Virginia's, Tennessee's, Indiana's, Missouri's, Maryland's, Colorado's, and South Carolina's prior corpus-only builds in this same roster. This pack is CORPUS-ONLY and does not touch packages/snap-rules or the oracle fixture. Drafted from a direct curl fetch (browser User-Agent) of Alabama DHR's CURRENT per-chapter SNAP Points of Eligibility (POE) Manual (apps.dhr.alabama.gov), DHR's current Form DHR-FAP-1942 (Rev. 10/25), and DHR's Food Assistance landing page — with a stale 2022-vintage bundled PDF found on dhr.alabama.gov explicitly cross-checked and disclosed as a trap, not relied on for any current fact.",
+    "extracted": "2026-08-12",
+    "source_fact_check": "direct curl fetch (browser UA) of apps.dhr.alabama.gov's per-chapter POE manual PDFs (Chapters 1, 2, 7, 8, 9, cross-referenced against Chapter 10 § 1005 and Chapter 11 § 1107), converted with pdftotext -layout, all cited sections cross-referenced against their own section headers + direct curl fetch of dhr.alabama.gov/food-assistance/ and Form DHR-FAP-1942 (Rev. 10/25) (both clean HTTP 200) + direct curl fetch of dhr.alabama.gov's stale 2022 Appendix I bundle for explicit cross-check + direct curl fetch of abawdmap.us + WebSearch cross-checks for Ala. Code § 38-1-8 (Justia/FindLaw both 403'd) + post-draft adversarial refute pass; findings and gaps recorded in PROVENANCE.md",
+    "access_note": "apps.dhr.alabama.gov and dhr.alabama.gov both returned clean HTTP 200 to direct curl with a browser User-Agent on every fetch attempt — no login wall, no rate limiting. The one genuine access complication: dhr.alabama.gov itself hosts TWO different vintages of overlapping POE manual content (a current per-chapter version at apps.dhr.alabama.gov and a stale 2022-vintage bundled PDF at dhr.alabama.gov), both still live, with no visible flag on either page indicating one supersedes the other — see PROVENANCE.md Finding 3. Justia and FindLaw both 403'd on the underlying Ala. Code § 38-1-8 statute text, a now-familiar pattern in this roster; resolved via convergent secondary corroboration cross-checked against DHR's own primary-source manual text."
+  },
+  "supplements": [
+    {
+      "key": "program-identity",
+      "kind": "supplement",
+      "terms": [
+        "how to apply",
+        "where do i apply",
+        "apply for snap",
+        "mydhr",
+        "who runs",
+        "what agency",
+        "administers",
+        "dhr",
+        "county dhr office",
+        "family assistance",
+        "tanf",
+        "food assistance",
+        "ebt card",
+        "food stamps"
+      ],
+      "citation": "AL POE § 210(B) — Alabama uses the plain name \"SNAP\" on its own application form while DHR's own manual and internal materials consistently say \"food assistance\"; DHR is a single STATE agency operating through county DHR offices; \"Family Assistance\" is DHR's SEPARATE name for its TANF cash-assistance program, not another name for SNAP",
+      "heading": "FLAGSHIP FINDING: Alabama has TWO similarly-named, easily-confused DHR programs — \"Food Assistance\" (SNAP) and \"Family Assistance\" (TANF) — both administered by the same agency, both commonly abbreviated in ways that invite mix-ups",
+      "text": "Alabama Department of Human Resources (DHR), Food Assistance Division, has no distinctive local brand name for SNAP like CalFresh (CA) or Basic Food (WA); DHR's own SNAP Points of Eligibility (POE) Manual consistently calls the program \"food assistance,\" while DHR's own official application form is titled \"Supplemental Nutrition Assistance Program (SNAP) Application\" — both terms are genuinely in current, official use side by side. The more consequential naming quirk this pack found: DHR ALSO administers a separate, similarly-named program called \"Family Assistance\" (Alabama's TANF cash-assistance program, its own division on DHR's own website menu) — distinct from \"Food Assistance\" (SNAP), though DHR's own POE Manual abbreviates TANF/Family Assistance as \"FA\" throughout (e.g. \"FA benefits,\" \"FA case,\" \"Family Assistance work program\" as one of the ABAWD work-requirement-satisfying activities at AL POE § 710A.4). A caseworker or applicant conversation using \"Food Assistance\" vs. \"Family Assistance\" imprecisely could genuinely misdirect someone to the wrong DHR program — this pack flags it plainly because the two names differ by exactly one word. Alabama is a STATE-ADMINISTERED SNAP program: DHR is a single statewide agency, and its county DHR offices are DHR's own local arms (state employees under statewide DHR policy), matching this roster's Georgia/Indiana/Tennessee/Missouri/Maryland/South Carolina state-agency-with-local-offices archetype, NOT the independently-governed-county archetype documented for Virginia/North Carolina/Colorado. Applicants apply online through the MyDHR portal, in person, by mail, or by fax at a county DHR office. Qualified applicants begin receiving benefits within 30 days of application, or within 7 days for expedited service (AL POE § 208).",
+      "source_url": "https://dhr.alabama.gov/food-assistance/"
+    },
+    {
+      "key": "income-pathways",
+      "kind": "supplement",
+      "terms": [
+        "income limit",
+        "income limits",
+        "gross income limit",
+        "gross income ceiling",
+        "make too much",
+        "over income",
+        "bbce",
+        "broad based categorical eligibility",
+        "broadbased categorical eligibility",
+        "categorical eligibility",
+        "categorically eligible",
+        "expanded categorical eligibility",
+        "200 percent",
+        "200%",
+        "130 percent",
+        "130%",
+        "poverty level",
+        "ssi",
+        "tanf",
+        "family assistance"
+      ],
+      "citation": "AL POE § 210(B) — Expanded Categorical Eligibility (Alabama's BBCE analog) extends eligibility, on an income-only basis, to households at or below 130% of the Federal Poverty Level, OR at or below 200% of the FPL IF ALL household members are elderly or disabled AND the net income limit (100% FPL) is also met — households over the 200% ceiling revert to normal program rules ($3,000/$4,500 asset test, 100% FPL net income limit)",
+      "heading": "FLAGSHIP FINDING, PARTIALLY CORRECTING an oversimplified widely-repeated secondary-source claim: Alabama's 200% FPL BBCE figure is REAL, but applies ONLY to households where every member is elderly or disabled — most Alabama households qualify at 130% FPL, not 200%",
+      "text": "Secondary sources vary sharply on Alabama's BBCE income ceiling: some correctly cite 200% FPL, others cite the plain federal 130% floor, and this pack's own initial WebSearch results surfaced BOTH claims side by side with no way to tell which was current. Alabama's own POE Manual (§ 210(B), confirmed identical in both DHR's current apps.dhr.alabama.gov chapter text and cross-referenced against DHR's own Form 1942) resolves the apparent conflict: Expanded Categorical Eligibility is conferred to households authorized to receive TANF (Family Assistance) non-cash information-and-referral services, subject to an income test of EITHER (1) 130% of the Federal Poverty Level, OR (2) 200% of the FPL \"if all household members are elderly or disabled and the net income limit is at or below 100% of FPL\" — with an explicit instruction that \"the county department must revert to normal program policy (use of 100% net income limit and $3000 asset test) if the income of these households exceed the 200% gross income limit.\" In practical terms: a household with even one non-elderly, non-disabled member qualifies for Alabama's Expanded Categorical Eligibility pathway only up to 130% FPL, same as the ordinary federal floor; the 200% ceiling secondary sources cite is real, but is reserved specifically for households where every single member is elderly or disabled. Households qualifying under EITHER pathway are exempt from the asset (resource) test (AL POE § 210(B)); benefit levels are still based on net income after all deductions. Neither claim (\"Alabama is 130%\" or \"Alabama is 200%\") is simply wrong — both are true for different household compositions, and this pack states the actual dual-track structure plainly rather than picking one figure.",
+      "source_url": "https://apps.dhr.alabama.gov/POE/chapters/Chapter%202.pdf"
+    },
+    {
+      "key": "asset-rule",
+      "kind": "supplement",
+      "terms": [
+        "asset limit",
+        "asset test",
+        "resource limit",
+        "resource test",
+        "resources",
+        "savings",
+        "savings limit",
+        "bank account",
+        "vehicle",
+        "car count",
+        "does my car count",
+        "second car",
+        "boat",
+        "truck",
+        "retirement account",
+        "401k",
+        "ira"
+      ],
+      "citation": "AL POE § 800 — resource limit $3,000 (standard) / $4,500 (household with a member who is elderly or disabled), current FFY2026 figures, applicable only to households NOT eligible under Expanded Categorical Eligibility; AL POE § 802 — \"the value of all vehicles will be excluded from the resource determination (as allowed under PL 106-387 by adoption of Alabama's Family Assistance vehicle policy)\"",
+      "heading": "Alabama excludes ALL vehicles from the resource test (matching this roster's Missouri/Maryland/Colorado blanket-exempt pattern) — CURRENT resource limits are $3,000/$4,500, but a still-live, DHR-hosted 2022 PDF states stale $2,250/$3,500 figures (see freshness.json)",
+      "text": "Alabama's resource limit (AL POE § 800, confirmed current via both apps.dhr.alabama.gov's per-chapter manual AND DHR's own Form 1942, Rev. 10/25) is $3,000 for most households, $4,500 for households with a member who is elderly or disabled — current FFY2026 figures. Vehicles are NOT counted at all: AL POE § 802 states plainly, \"[t]he value of all non-liquid resources, including personal property, buildings, and land, will be excluded from the resource determination. The value of all vehicles will be excluded from the resource determination (as allowed under PL 106-387 by adoption of Alabama's Family Assistance vehicle policy)\" — a blanket all-vehicles exclusion, matching this roster's Missouri, Maryland, and Colorado pattern rather than South Carolina's per-licensed-driver exemption or Indiana's hybrid ordinary-vehicle-exempt/boats-and-campers-counted rule. Retirement and education accounts (401(k), 403(b), IRA, ABLE accounts, 529 plans, and more) are also excluded (AL POE § 802.5.ag). IMPORTANT: this pack separately fetched a DIFFERENT, still-live DHR-hosted PDF (dhr.alabama.gov's bundled 2022-vintage \"Appendix I\" POE manual) that states DIFFERENT, materially stale resource limits — $2,250 standard / $3,500 elderly-or-disabled — matching the FFY2022 cycle, not the current FFY2026 figures. This pack treats the current apps.dhr.alabama.gov per-chapter manual and Form 1942 as authoritative and discloses the stale duplicate explicitly (see PROVENANCE.md Finding 3 and freshness.json) rather than silently picking one without explanation.",
+      "source_url": "https://apps.dhr.alabama.gov/POE/chapters/Chapter%208.pdf"
+    },
+    {
+      "key": "criminal-justice-disqualifications",
+      "kind": "supplement",
+      "terms": [
+        "drug felony",
+        "felony conviction",
+        "criminal record",
+        "drug conviction",
+        "lifetime ban",
+        "fleeing felon",
+        "probation",
+        "parole",
+        "controlled substance",
+        "marijuana",
+        "cannabis",
+        "drug treatment"
+      ],
+      "citation": "AL POE § 101(f) — a felony drug-possession/use/distribution conviction (conduct after Aug. 22, 1996) is stated as a \"permanent\" disqualification, immediately followed by a carve-out: persons who have completed their sentence, OR are satisfactorily serving a period of probation (including satisfactorily completing mandatory participation in a drug treatment program), may be eligible for participation; implements Ala. Code § 38-1-8 (Act 2015-185, § 12)",
+      "heading": "FLAGSHIP FINDING, CORRECTING an oversimplified widely-repeated secondary-source framing: Alabama does NOT retain the unmodified federal lifetime drug-felony ban — Alabama enacted a real, MODIFIED opt-out via 2015 prison-reform legislation, though DHR's own manual still confusingly uses the word \"permanent\"",
+      "text": "21 U.S.C. § 862a(a)(2) sets a federal default: anyone convicted of a state or federal felony for possessing, using, or distributing a controlled substance is permanently ineligible for SNAP, unless a state enacts legislation opting out or modifying the ban under § 862a(d)(1). Some widely-circulated secondary sources (e.g. a 2022-era Equal Justice Initiative article titled \"Alabama in Minority of States That Ban Food Stamps for People Convicted of Drug Offenses\") could be read by an applicant as saying Alabama retains the full, unconditional ban — the same category this pack's South Carolina build documented as one of only two full-ban jurisdictions nationwide. Alabama's own POE Manual (§ 101(f), confirmed identical text in both apps.dhr.alabama.gov's current chapter and cross-referenced against Ala. Code § 38-1-8's operative language) tells a different, more specific story: Alabama DID enact modifying legislation — Act 2015-185, § 12 (part of Alabama's 2015 prison-reform package, effective on or about Jan. 30, 2016), codified at Ala. Code § 38-1-8. The statute's own text (independently corroborated by AL Reporter's Feb. 2016 \"The End of Alabama's Lifetime SNAP and TANF Bans\" and Alabama Today's contemporaneous coverage, since Justia and FindLaw both returned HTTP 403 on direct fetch) provides that a person otherwise disqualified for a drug-related felony becomes eligible for SNAP (and TANF) upon COMPLETING their sentence, OR while SATISFACTORILY SERVING a period of probation — including satisfactorily completing mandatory participation in a drug treatment program — provided all other program eligibility requirements are met. DHR's own POE Manual § 101(f) restates this almost verbatim, though its own wording is genuinely a little confusing: it states the disqualification \"is permanent\" and then, in the very next sentence, describes the sentence-completion/probation-compliance pathway back — using \"permanent\" to mean something closer to \"indefinite absent the statutory pathway\" than an unconditional lifetime bar. This pack states this as a CORRECTION to any secondary-source framing that reads Alabama as a full-ban state: Alabama sits in the MODIFIED-BAN category (like most states), not the tiny full-ban minority (South Carolina, Guam) this roster's South Carolina pack documented — though applicants should be told plainly that eligibility is conditional on completing a sentence or satisfactorily complying with probation and any required drug treatment, not automatic.",
+      "source_url": "https://apps.dhr.alabama.gov/POE/chapters/Chapter%201.pdf"
+    },
+    {
+      "key": "shelter-utility-deductions",
+      "kind": "supplement",
+      "terms": [
+        "utility allowance",
+        "utility standard",
+        "shelter deduction",
+        "excess shelter",
+        "standard utility allowance",
+        "mandatory utility allowance",
+        "basic utility allowance",
+        "telephone allowance",
+        "standard deduction",
+        "sua",
+        "bua"
+      ],
+      "citation": "AL POE § 903(A) — Standard Deduction $209 (household sizes 1-3), $223 (4), $261 (5), $299 (6+), current FFY2026 figures (DHR Form 1942, Rev. 10/25); AL POE § 903(F)-(J) — Standard Utility Allowance (SUA), Basic Utility Allowance (BUA), and Telephone Standard structure described in full, but DOLLAR AMOUNTS for all three are set on an internal \"Basis of Issuance Chart\" this pack could not locate at any public URL — a disclosed gap, not a confirmed figure",
+      "heading": "CURRENT Standard Deduction figures confirmed via DHR's own Form 1942 (Rev. 10/25) — but Alabama's SUA/BUA/telephone dollar amounts and its Excess Shelter Deduction cap are a genuine, disclosed RESEARCH GAP, not independently found in any Alabama-DHR-hosted primary source",
+      "text": "Alabama's Standard Deduction (AL POE § 903(A), confirmed via DHR's own Form DHR-FAP-1942, Rev. 10/25) is $209 for household sizes 1-3, $223 for 4, $261 for 5, $299 for 6 or more — matching the current national FFY2026 figures this roster's South Carolina and other packs independently confirmed. Alabama assigns qualifying households a Standard Utility Allowance (SUA, for households with a separate heating or cooling cost), a Basic Utility Allowance (BUA, for households billed for at least two other utility expenses), or a standalone Telephone Standard (for households with only a telephone expense) — the STRUCTURE of all three is described in detail in AL POE § 903(G)-(I), including a 2025-updated LIHEAP-SUA rule (see the abawd-work-requirement-adjacent freshness entry below) — but this pack could NOT locate the actual DOLLAR AMOUNTS for the SUA, BUA, or telephone standard, or the dollar cap on the Excess Shelter Deduction, in any Alabama-DHR-hosted primary source: DHR's own manual text repeatedly defers these figures to an internal \"Basis of Issuance Chart\" ('See Basis of Issuance Chart for listing of standard deduction... amount will be deducted by the computer'), which this pack could not locate published at any public DHR URL. Secondary sources report an Excess Shelter Deduction cap of $744 (matching the national FFY2026 figure this roster's South Carolina pack independently confirmed from SC's own primary source) and SUA figures in the range of $340-$625/month, but this pack did NOT independently verify either against Alabama's own primary numbers table, and states this plainly as a gap rather than presenting an unverified secondary figure as confirmed. See freshness.json.",
+      "source_url": "https://dhr.alabama.gov/wp-content/uploads/2025/10/Form-1942-Summarized-Eligibility-Requirements-Rev.-10-25.pdf"
+    },
+    {
+      "key": "medical-deduction",
+      "kind": "supplement",
+      "terms": [
+        "medical deduction",
+        "medical expense",
+        "medical expenses",
+        "medical bills",
+        "elderly deduction",
+        "disability deduction",
+        "excess medical",
+        "standard medical deduction"
+      ],
+      "citation": "AL POE § 903(C) — flat $185 Standard Medical Deduction for verified out-of-pocket medical expenses exceeding $35/month incurred by a household member who is elderly or disabled; households whose actual verified expenses exceed $185/month (after the $35 floor) may claim the actual excess amount instead",
+      "heading": "Alabama has a flat $185 medical-deduction shortcut — matching this roster's South Carolina/Missouri/Colorado flat-shortcut pattern, with its own distinct dollar figure",
+      "text": "AL POE § 903(C) allows a deduction for the portion of verified, out-of-pocket medical expenses exceeding $35 per month incurred by a household member who is elderly or disabled (other household members' medical costs are not deductible). Qualifying households \"are entitled to a standard medical deduction of $185\"; households whose verified medical expenses exceed $185/month may instead be entitled to a deduction \"for the actual amount of medical expenses in excess of $185.\" (DHR's own text does not spell out an explicit low-end dollar range for when the flat $185 applies versus actual-expense documentation the way South Carolina's manual does for its own $175 shortcut — this pack states the mechanism exactly as DHR's manual states it rather than inferring an unstated threshold.) This places Alabama in the same flat-shortcut camp as this roster's South Carolina ($175 for $35.01-$210), Missouri ($135 for $35.01-$170), and Colorado ($165 for $35.01-$200) packs, rather than Maryland's or Indiana's actual-expense-only mechanism — with Alabama's own distinct $185 figure.",
+      "source_url": "https://apps.dhr.alabama.gov/POE/chapters/Chapter%209.pdf"
+    },
+    {
+      "key": "child-support-deduction",
+      "kind": "supplement",
+      "terms": [
+        "child support",
+        "support payments",
+        "child support deduction",
+        "arrearage"
+      ],
+      "citation": "AL POE § 903(E) — legally obligated child support paid to a non-household member is listed as one of the ORDINARY § 903 Income Deductions, applied alongside the Standard, Earned Income, and Medical deductions — not an income exclusion applied before the gross income test",
+      "heading": "Alabama treats legally obligated child support as an ORDINARY DEDUCTION — matching this roster's Maryland/Indiana/Tennessee/South Carolina mechanism, NOT the income-exclusion-before-the-gross-test mechanism this roster's Virginia/New Jersey/Illinois/Missouri/Colorado packs document",
+      "text": "AL POE § 903(E) (Child Support Deduction) allows a deduction for legally obligated child support paid by a household member to a party outside the household, including vendor payments made on the payer's behalf and arrearage payments, but NOT voluntary payments in excess of the legally obligated amount. Critically, this deduction is listed as item (E) within § 903, \"Income Deductions\" — the same section that lists the Standard Deduction, Earned Income Deduction, and Medical Deduction, all of which are ordinary deductions applied AFTER gross income has already been established, per the standard net-income calculation structure. This places Alabama in the ORDINARY-DEDUCTION camp (7 CFR 273.9(d)(5)) alongside this roster's Maryland, Indiana, Tennessee, and South Carolina packs, in contrast to the INCOME-EXCLUSION mechanism (7 CFR 273.9(c)) this roster's Virginia, New Jersey, Illinois, Missouri, and Colorado packs document. Practically: a household whose child support payments would otherwise bring it under Alabama's gross income ceiling does NOT get that benefit from this deduction — it can lower NET income for the net income test and benefit calculation, but does not itself determine gross-income SNAP eligibility.",
+      "source_url": "https://apps.dhr.alabama.gov/POE/chapters/Chapter%209.pdf"
+    },
+    {
+      "key": "abawd-work-requirement",
+      "kind": "supplement",
+      "terms": [
+        "abawd",
+        "able bodied adult",
+        "work requirement",
+        "3 month limit",
+        "work registration",
+        "waiver",
+        "waived area",
+        "black belt",
+        "rural county",
+        "native american",
+        "tribal",
+        "time limit",
+        "birmingham",
+        "montgomery"
+      ],
+      "citation": "AL POE § 710(A)-(B) — current, OBBBA-updated text: ABAWD defined via exemption from \"under age 18 or at least age 65\" (i.e. the current federal 18-64 range), caregiver exemption for a household member under age 14, and an Indian/Urban Indian/California Indian exemption; Alabama holds ZERO ABAWD waivers anywhere in the state, including its historically high-unemployment Black Belt counties, per ABAWDMap.us",
+      "heading": "FLAGSHIP ACCESS-ARTIFACT FINDING: Alabama's CURRENT manual text is fully OBBBA-updated, but a DIFFERENT, still-live, DHR-hosted PDF of the SAME manual is badly stale — a genuine trap for anyone who finds the wrong document first. Separately: Alabama holds zero ABAWD waivers statewide, including its Black Belt counties",
+      "text": "An able-bodied adult without dependents (ABAWD) is limited to three countable months of SNAP within a 36-month period absent a qualifying work activity (20 hours/week or 80 hours/month) or an exemption. Alabama DHR's CURRENT SNAP Points of Eligibility Manual — the per-chapter version hosted at apps.dhr.alabama.gov, and independently cross-checked against DHR's own current Form 1942 (Rev. 10/25) — is fully updated for the 2025 One Big Beautiful Bill Act (OBBBA) changes: AL POE § 710(B) exempts individuals \"[u]nder age 18 or at least age 65\" (the current federal 18-64 ABAWD age range), narrows the caregiver exemption to a household member \"under the age of 14\" (down from the pre-OBBBA age-18 standard), and adds a new exemption for \"an individual who is an Indian, Urban Indian, or California Indian\" with self-attestation accepted unless questionable — all three OBBBA changes correctly reflected. HOWEVER: this pack separately found dhr.alabama.gov ALSO hosts a DIFFERENT, older bundled PDF (part of a 2022-vintage \"Appendix I\" D-SNAP plan bundle, form DHR-FAP-1942 stamped \"8/21\" internally) that is STILL LIVE and easily surfaced by a search, and that PDF states the PRE-OBBBA ABAWD rule: age exemption \"Under age 18 or at least age 50\" (the old 18-49 range), a caregiver exemption tied to \"under age 18,\" NO Indian/Urban Indian/California Indian exemption, and an explicit \"Jan 2019 to Dec 2021\" time-period reference confirming the document's true vintage. Nothing on either DHR page visibly flags the older PDF as superseded — a genuine access-artifact trap this pack discloses explicitly rather than silently resolving. Separately and more simply: Alabama holds ZERO ABAWD waivers anywhere in the state as of this pack's fetch date, per the independent ABAWDMap.us aggregator (\"No waiver — rule applies\") — including Alabama's Black Belt region (18 rural counties with a long, well-documented history of elevated unemployment), which this pack specifically checked given the region's economic profile and found NOT currently waived.",
+      "source_url": "https://apps.dhr.alabama.gov/POE/chapters/Chapter%207.pdf"
+    },
+    {
+      "key": "restaurant-meals-program",
+      "kind": "supplement",
+      "terms": [
+        "restaurant meals program",
+        "rmp",
+        "eat at a restaurant",
+        "use ebt at restaurant",
+        "hot meal",
+        "hot food",
+        "prepared food"
+      ],
+      "citation": "AL POE § 1107 — Alabama's ONLY restaurant/prepared-meal purchasing mechanism (homeless meal providers and DHR/USDA-approved restaurants) is limited strictly to homeless SNAP recipients; Alabama is absent from USDA FNA's current Restaurant Meals Program state list",
+      "heading": "Alabama does NOT operate a Restaurant Meals Program for elderly or disabled SNAP recipients — only a narrower, homeless-specific mechanism",
+      "text": "The Restaurant Meals Program (RMP) is a state OPTION under 7 CFR 274.7(g) allowing elderly (60+), disabled, and homeless SNAP recipients (and their spouses) to buy prepared, hot meals from authorized restaurants with EBT. This pack confirmed Alabama does not operate a general RMP: USDA FNA's own current Restaurant Meals Program state list (cross-checked against this roster's South Carolina, Missouri, and Indiana packs' own independent fetches of the same list) names Arizona, Maryland, New York, California, Massachusetts, Rhode Island, Illinois (Cook and Franklin Counties only), Michigan, and Virginia — Alabama is absent. Alabama's own POE Manual (§ 1107, \"Homeless Food Assistance Households\") describes exactly one restaurant/prepared-meal mechanism, and it is expressly limited to homeless SNAP recipients: homeless meal providers (soup kitchens, temporary shelters approved by DHR and USDA) and, separately, restaurants that sign a contract with the county DHR office to serve homeless SNAP recipients specifically. A restaurant's contract explicitly requires it to \"[a]ccept food assistance benefits only from homeless individuals,\" verified either by a marked ID card or the restaurant's own knowledge of the recipient's homeless status. A non-homeless elderly or disabled Alabama SNAP recipient asking whether they can use EBT to buy a hot restaurant meal should be told NO — Alabama's mechanism does not extend to them.",
+      "source_url": "https://apps.dhr.alabama.gov/POE/chapters/Chapter%2011.pdf"
+    },
+    {
+      "key": "expedited-service",
+      "kind": "supplement",
+      "terms": [
+        "expedited",
+        "expedited service",
+        "emergency",
+        "emergency food stamps",
+        "fast benefits",
+        "how fast",
+        "urgent",
+        "same day",
+        "7 day"
+      ],
+      "citation": "AL POE § 208(A) — plain federal expedited-service criteria (gross income under $150 and liquid resources of $100 or less, OR combined income/resources less than rent/mortgage plus utility standard, OR destitute migrant/seasonal farmworker) and § 208(C) — the standard 7-calendar-day ceiling, with no exceptions for weekends or holidays (benefits available the last working day before)",
+      "heading": "Alabama uses the standard federal expedited-service gates and 7-day ceiling, with no Alabama-specific modification found",
+      "text": "AL POE § 208(A) sets expedited eligibility to the standard federal criteria: households with less than $150 in monthly countable gross income and liquid resources of $100 or less; households whose combined gross income and liquid resources are less than their monthly rent/mortgage plus actual utility costs (substituting the telephone standard for actual telephone bills); or destitute migrant/seasonal farmworker households with liquid resources of $100 or less. Per § 208(C), food assistance must be available no later than the seventh calendar day following the date of application, with NO exceptions for weekends or holidays — if the seventh day falls on a weekend or holiday, the household may pick up benefits the last working day before. This pack found no Alabama-specific modification to these gates.",
+      "source_url": "https://apps.dhr.alabama.gov/POE/chapters/Chapter%202.pdf"
+    },
+    {
+      "key": "reporting-certification",
+      "kind": "supplement",
+      "terms": [
+        "certification period",
+        "approval period",
+        "recertification",
+        "redetermination",
+        "how long does snap last",
+        "how long does my snap approval last",
+        "how long does my approval last",
+        "redo",
+        "renew",
+        "six month report"
+      ],
+      "citation": "AL POE § 1005 — up to 12 months for households subject to simplified reporting (including ABAWDs, migrant/seasonal farmworkers, homeless households, and students), households with stable income (particularly elderly/disabled households), and households whose members are all in a single Family Assistance (TANF) grant; 1-2 months for households likely to become ineligible soon; 4 months for households coded entirely with work-registration code \"J\"",
+      "heading": "STRUCTURAL DEPARTURE from this roster's more common 6-month baseline: Alabama's standard certification period runs up to 12 MONTHS, including for ABAWDs — closer to Maryland's 12-month pattern than South Carolina's or Colorado's 6-month standard",
+      "text": "AL POE § 1005 instructs county DHR offices to assign \"the longest certification period possible based on the predictability of the household's circumstances,\" and its guidelines default to 12 months for most stable households: households subject to simplified reporting at certification — explicitly including ABAWDs, migrant/seasonal farmworkers, homeless households, residents of drug/alcohol treatment centers, and students — \"should be assigned a certification period of 12 months\"; households with stable income, \"particularly households with elderly or disabled adult members,\" should also be certified for 12 months; and households in which all members are included in a single Family Assistance (TANF) grant should be certified for up to 12 months, aligned to the TANF review month. Only households likely to become ineligible soon get a short 1-2 month certification, and households coded entirely with work-registration code \"J\" get 4 months (DHR's own guidelines do not resolve the apparent overlap between the 12-month ABAWD guideline and the 4-month \"J\"-code guideline — this pack states both exactly as written rather than picking one). Households on 12-month certifications with simplified reporting must still file a Six-Month Report partway through (DHR Form 1942, Rev. 10/25). This 12-month-standard structure is a genuine departure from this roster's more common 6-month baseline (South Carolina, Colorado) — closer to Maryland's 12-month certification pattern, though without Maryland's distinct mid-period \"Benefit Review\" mechanism.",
+      "source_url": "https://apps.dhr.alabama.gov/POE/chapters/Chapter%2010.pdf"
+    }
+  ]
+}

@@ -2744,6 +2744,123 @@ export const SC_GOLD: AnswerExpectation[] = [
   },
 ];
 
+export const AL_GOLD: AnswerExpectation[] = [
+  {
+    id: "al-bbce-dual-track-130-200",
+    // Guards the flagship finding: Alabama's Expanded Categorical Eligibility
+    // is 130% FPL generally, 200% FPL ONLY for all-elderly-or-disabled
+    // households — guards against the model overclaiming a flat 200% ceiling.
+    question: "What is the income limit for SNAP in Alabama?",
+    state: "AL",
+    expectCitation: "210",
+    mustMention: "130",
+    mustDisclaim: true,
+  },
+  {
+    id: "al-drug-felony-modified-not-full-ban",
+    // Guards the flagship CORRECTION finding: Alabama's drug-felony ban is
+    // MODIFIED (Ala. Code 38-1-8) — sentence completion or satisfactory
+    // probation compliance restores eligibility — not the unconditional
+    // federal default.
+    question: "I have a drug felony conviction — can I still get SNAP in Alabama?",
+    state: "AL",
+    expectCitation: "101(f)",
+    mustMention: "probation",
+    mustDisclaim: true,
+  },
+  {
+    id: "al-vehicle-blanket-exempt",
+    // Guards the structural finding: Alabama excludes ALL vehicles from the
+    // resource test (PL 106-387 Family Assistance vehicle policy).
+    question: "Does my car count against me for SNAP in Alabama?",
+    state: "AL",
+    expectCitation: "802",
+    mustMention: "excluded",
+    mustDisclaim: true,
+  },
+  {
+    id: "al-resource-limit-current-not-stale",
+    // Guards against the model surfacing the stale $2,250/$3,500 figures
+    // found in dhr.alabama.gov's still-live 2022-vintage bundled PDF instead
+    // of the current $3,000/$4,500 figures.
+    question: "What is the SNAP resource limit for a household with a disabled member in Alabama?",
+    state: "AL",
+    expectCitation: "800",
+    mustMention: "4,500",
+    mustNotMention: ["3,500"],
+    mustDisclaim: true,
+  },
+  {
+    id: "al-abawd-age-range-current-federal",
+    question: "What is the ABAWD work requirement age range in Alabama?",
+    state: "AL",
+    expectCitation: "710",
+    mustMention: "64",
+    mustDisclaim: true,
+  },
+  {
+    id: "al-abawd-zero-waivers-black-belt",
+    // Guards against overclaiming a Black Belt waiver — Alabama holds zero
+    // ABAWD waivers statewide per ABAWDMap.us.
+    question: "Is the SNAP work-requirement time limit currently waived anywhere in Alabama?",
+    state: "AL",
+    mustMention: "waiver",
+    mustDisclaim: true,
+  },
+  {
+    id: "al-restaurant-meals-program-not-available",
+    // Guards against overclaiming: unlike Maryland/Virginia, Alabama does
+    // NOT operate a general Restaurant Meals Program.
+    question: "Can I use my EBT card to buy a hot meal at a restaurant in Alabama?",
+    state: "AL",
+    mustMention: "not",
+    mustDisclaim: true,
+  },
+  {
+    id: "al-child-support-ordinary-deduction",
+    // Guards the structural finding: AL treats child support as an ordinary
+    // post-gross deduction, not an income exclusion.
+    question: "Does paying child support lower my countable income for SNAP in Alabama?",
+    state: "AL",
+    expectCitation: "903",
+    mustDisclaim: true,
+  },
+  {
+    id: "al-medical-deduction-standard-185",
+    question: "I'm disabled and have $50 a month in medical bills for Alabama SNAP — do I get a deduction?",
+    state: "AL",
+    expectCitation: "903",
+    mustMention: "35",
+    mustDisclaim: true,
+  },
+  {
+    id: "al-expedited-service-7-day",
+    question: "How fast can I get emergency SNAP benefits in Alabama?",
+    state: "AL",
+    expectCitation: "208",
+    mustMention: "7",
+    mustDisclaim: true,
+  },
+  {
+    id: "al-cert-period-12-month-standard",
+    // Guards the structural departure: Alabama's standard certification
+    // period is up to 12 months, not the 6-month baseline this roster has
+    // mostly documented.
+    question: "How long does my SNAP approval last in Alabama?",
+    state: "AL",
+    expectCitation: "1005",
+    mustMention: "12",
+    mustDisclaim: true,
+  },
+  {
+    id: "al-federal-benefit",
+    question: "How is the monthly SNAP benefit amount calculated from net income in Alabama?",
+    state: "AL",
+    expectCitation: "273.10",
+    mustDisclaim: true,
+  },
+];
+
 /** Everything the live runner executes. */
 export const ALL_GOLD: AnswerExpectation[] = [
   ...ANSWER_GOLD,
@@ -2772,4 +2889,5 @@ export const ALL_GOLD: AnswerExpectation[] = [
   ...MD_GOLD,
   ...CO_GOLD,
   ...SC_GOLD,
+  ...AL_GOLD,
 ];
