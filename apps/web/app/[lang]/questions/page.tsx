@@ -13,7 +13,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { isAnswerLang, LANG_TAG, type AnswerLang } from "@civica/demeter-engine/packs";
-import { SnapWhyHard, SnapFormQuestions, askHref } from "../../../components/SnapOverview";
+import { SnapWhyHard, SnapFormQuestions, SnapTimeline, askHref } from "../../../components/SnapOverview";
 import { PAGE_COPY } from "../../../lib/i18n/snap-page";
 import { DemeterNav } from "../../../components/DemeterNav";
 import { DemeterFooter } from "../../../components/DemeterFooter";
@@ -97,6 +97,7 @@ export default async function LocalizedQuestionsPage({
           </a>
         </section>
 
+        <SnapTimeline lang={l} />
         <SnapWhyHard lang={l} />
         <SnapFormQuestions lang={l} />
       </div>

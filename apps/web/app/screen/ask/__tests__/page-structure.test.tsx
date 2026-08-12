@@ -24,6 +24,8 @@ import {
   SnapDetail,
   SnapFormQuestions,
   SnapWhyHard,
+  SnapTimeline,
+  SnapAskCta,
   questionsHref,
   askHref,
 } from "../../../../components/SnapOverview";
@@ -222,6 +224,58 @@ describe("hreflang — each page family annotates its own set", () => {
     for (const url of Object.values(alts)) {
       expect(url.endsWith("/screen/ask")).toBe(true);
     }
+  });
+});
+
+describe("the application timeline", () => {
+  it("runs in chronological order, with expedited before the 30-day decision", () => {
+    // Seven days is the most useful fact here for someone out of food this
+    // week. Ordering it after the thirty-day decision is how it gets missed.
+    const { container } = render(<SnapTimeline />);
+    const whens = [...container.querySelectorAll(".dmtl__when")].map((n) => n.textContent);
+    expect(whens).toEqual(PAGE_COPY.en.timeline.map((s) => s.when));
+    const text = container.textContent ?? "";
+    expect(text.indexOf("By day 7")).toBeLessThan(text.indexOf("By day 30"));
+  });
+
+  it("is an ordered list, because it is a sequence", () => {
+    const { container } = render(<SnapTimeline />);
+    expect(container.querySelector("ol.dmtl")).not.toBeNull();
+    expect(container.querySelectorAll("ol.dmtl > li")).toHaveLength(
+      PAGE_COPY.en.timeline.length,
+    );
+  });
+
+  it("states no dollar figures, in any language", () => {
+    // House rule, and the accurate call: these move every October, and the
+    // rent-and-utilities test depends on figures that vary by state.
+    for (const lang of ANSWER_LANGS) {
+      const { container } = render(<SnapTimeline lang={lang} />);
+      expect(container.textContent, `${lang} states a dollar figure`).not.toMatch(/[$￥€]\s?\d/);
+      cleanup();
+    }
+  });
+
+  it("cites the regulation the deadlines come from", () => {
+    // Stating a deadline outright is only defensible because it is federal.
+    for (const lang of ANSWER_LANGS) {
+      const { container } = render(<SnapTimeline lang={lang} />);
+      expect(container.textContent, `${lang}`).toContain("7 CFR 273.2");
+      cleanup();
+    }
+  });
+});
+
+describe("the landing hands over to the chat rather than starting one", () => {
+  it("links to /chat and carries any chosen state with it", () => {
+    const { container } = render(<SnapAskCta state="CA" />);
+    const a = container.querySelector("a")!;
+    expect(a.getAttribute("href")).toBe("/chat?state=CA");
+  });
+
+  it("links to the localized chat for a localized page", () => {
+    const { container } = render(<SnapAskCta lang="es" />);
+    expect(container.querySelector("a")!.getAttribute("href")).toBe("/es/chat");
   });
 });
 

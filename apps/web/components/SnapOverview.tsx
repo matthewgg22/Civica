@@ -379,6 +379,75 @@ export function SnapDetail({ states, lang = "en" }: { states: PackMeta[]; lang?:
   );
 }
 
+/** What happens after you apply, on the clock the regulation sets.
+ *
+ *  The form-question cards on this page explain what a question MEANS. This is
+ *  the other half of what people arrive not knowing: what happens next, and by
+ *  when. The deadlines are federal (7 CFR 273.2), so unlike the dollar figures
+ *  — which vary by state and move every October — they can be stated outright.
+ *
+ *  Expedited service sits BEFORE the thirty-day decision rather than as a
+ *  footnote to it. Seven days is the most useful fact on the page for someone
+ *  who is out of food this week, and a footnote is where it goes to be missed.
+ *  Its criteria are described in plain terms rather than by their dollar
+ *  thresholds, which is both the house rule and the accurate move: the
+ *  thresholds are federal but the rent-and-utilities test depends on figures
+ *  that are not. */
+export function SnapTimeline({ lang = "en" }: { lang?: AnswerLang }) {
+  const c = PAGE_COPY[lang];
+  return (
+    <section className="dmx" aria-labelledby="timeline">
+      <h2 id="timeline" className="dmx__h2">
+        {c.timelineH2}
+      </h2>
+      <p className="dmx__body">{c.timelineBody}</p>
+      {/* An ordered list, because it is genuinely a sequence — a screen reader
+          announcing "3 of 6" is carrying the same information the rail does. */}
+      <ol className="dmtl">
+        {c.timeline.map((step) => (
+          <li className="dmtl__step" key={step.t}>
+            <span className="dmtl__when">{step.when}</span>
+            <div className="dmtl__body">
+              <h3 className="dmx__h3">{step.t}</h3>
+              <p className="dmx__body">{step.d}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+      <p className="dmx__note">{c.timelineNote}</p>
+    </section>
+  );
+}
+
+/** The hand-off to the chat, which now lives entirely on the Ask Demeter page.
+ *
+ *  The landing used to carry a working state picker and composer. Two places
+ *  to start the same conversation meant the landing shipped a picker whose
+ *  choice it then had to forward, and a first-time visitor met a half-chat on
+ *  a page that is not the chat. The composer belongs where the conversation
+ *  happens; this page's job is to explain and then hand over.
+ *
+ *  Any ?state= on the landing rides along, so /guides/[state] and /verify deep
+ *  links still arrive scoped. */
+export function SnapAskCta({
+  lang = "en",
+  state = null,
+}: {
+  lang?: AnswerLang;
+  state?: string | null;
+}) {
+  const c = PAGE_COPY[lang];
+  const base = lang === "en" ? "/chat" : `/${lang}/chat`;
+  return (
+    <section className="dmx dmx--outlink dmx--askcta">
+      <a className="dmx__outlink" href={state ? `${base}?state=${state}` : base}>
+        <span className="dmx__outlink-label">{c.askLink}</span>
+        <span className="dmx__outlink-body">{c.askIntro}</span>
+      </a>
+    </section>
+  );
+}
+
 /** English stays un-prefixed; the localized pages live under /es|/vi|/zh. */
 export function questionsHref(lang: AnswerLang): string {
   return lang === "en" ? "/questions" : `/${lang}/questions`;

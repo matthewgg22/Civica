@@ -6,9 +6,19 @@ import { test, expect } from "@playwright/test";
 // Every spec runs on a phone profile (F8 mobile-first acceptance).
 
 test.describe("front door", () => {
-  test("the bare domain lands on the chat, ready to take a question", async ({ page }) => {
+  // The front door EXPLAINS and hands over; it no longer takes a question. The
+  // composer, the picker and the suggested questions all live on /chat, so
+  // there is one place a conversation can start rather than two.
+  test("the bare domain lands on the explainer, with a way through to the chat", async ({
+    page,
+  }) => {
     await page.goto("/");
     await expect(page).toHaveURL(/\/screen\/ask$/);
+    await expect(page.getByPlaceholder(/Ask anything about SNAP/)).toHaveCount(0);
+    const cta = page.getByRole("link", { name: /Ask Demeter about your situation/i });
+    await expect(cta).toBeVisible();
+    await cta.click();
+    await expect(page).toHaveURL(/\/chat$/);
     await expect(page.getByPlaceholder(/Ask anything about SNAP/)).toBeVisible();
   });
 
@@ -49,17 +59,29 @@ test.describe("chat surface", () => {
     const h1 = page.getByRole("heading", { level: 1 });
     await expect(h1).toHaveCount(1);
     await expect(h1).toHaveText(/get the actual rule/i);
-    const picker = page.getByRole("button", { name: "Your state", exact: true });
-    await expect(picker).toContainText("All states");
+    // The picker moved to /chat with the rest of the chat. What the landing
+    // must still prove is that it is server-rendered and quotable.
+    await expect(page.getByRole("button", { name: "Your state", exact: true })).toHaveCount(0);
     // The orientation copy is SERVER-rendered — its presence in the DOM is
     // what makes the page quotable by generative search. It is a <p> now, not
     // a heading: the page leads with what Demeter is, and explains SNAP as
     // orientation underneath rather than as the page's own claim.
     await expect(page.getByText(/SNAP is monthly money for groceries/)).toBeVisible();
+    await expect(page.getByPlaceholder(/Ask anything about SNAP/)).toHaveCount(0);
+  });
+
+  test("the chat itself carries the picker, the composer and the suggestions", async ({ page }) => {
+    await page.goto("/chat");
+    const picker = page.getByRole("button", { name: "Your state", exact: true });
+    await expect(picker).toContainText("All states");
     await expect(page.getByPlaceholder(/Ask anything about SNAP/)).toBeVisible();
-    // Opening the picker reveals every verified pack.
+    await expect(page.getByRole("button", { name: /income limit for my household/i })).toBeVisible();
+    // Opening the picker reveals every verified pack — under its DISPLAY name.
+    // The raw corpus field carries annotation prose ("SNAP (no state-specific
+    // branding)"), which is written for retrieval, not for a list you scan.
     await picker.click();
     await expect(page.getByRole("option", { name: /CalFresh/ })).toBeVisible();
+    await expect(page.getByRole("option", { name: /no state-specific branding/ })).toHaveCount(0);
   });
 
   // The content moved off the chat page. A unit test can prove the components
@@ -89,23 +111,14 @@ test.describe("chat surface", () => {
     await expect(page).toHaveURL(/\/screen\/ask$/);
   });
 
-  // The landing card is an ENTRY POINT now, not a chat. Asking there hands the
-  // question to /chat rather than answering in place, which is the whole reason
-  // there is only one chat implementation.
-  test("asking on the landing page carries the question into /chat", async ({ page }) => {
-    await page.goto("/screen/ask");
-    await page.getByPlaceholder(/Ask anything about SNAP/).fill("Do I qualify?");
-    await page.getByRole("button", { name: /Send|Enviar/ }).click();
-    await expect(page).toHaveURL(/\/chat\?/);
-    await expect(page).toHaveURL(/q=Do\+I\+qualify/);
-    // And it arrives in the composer, ready to send rather than already sent.
-    await expect(page.getByPlaceholder(/Ask anything about SNAP/)).toHaveValue("Do I qualify?");
-  });
-
-  test("a suggested question goes straight to /chat", async ({ page }) => {
-    await page.goto("/screen/ask");
-    await page.getByRole("button", { name: /income limit for my household/i }).click();
-    await expect(page).toHaveURL(/\/chat\?/);
+  // A ?state= on the front door is scope, not a conversation, so it does not
+  // redirect — but it must survive the hand-off, or a /guides/[state] visitor
+  // arrives at the chat scoped to nothing.
+  test("the hand-off carries a state through to the chat", async ({ page }) => {
+    await page.goto("/screen/ask?state=TX");
+    await page.getByRole("link", { name: /Ask Demeter about your situation/i }).click();
+    await expect(page).toHaveURL(/\/chat\?state=TX/);
+    await expect(page.getByRole("button", { name: "Your state", exact: true })).toContainText("TX");
   });
 
   // Deep links from /guides and /verify carry a question, so they are already a
@@ -154,16 +167,18 @@ test.describe("chat surface", () => {
   // entirely, so a Spanish speaker arriving on the English page had no way
   // across. Links also mean a crawler can follow them and switching keeps you
   // on the page you were reading.
-  for (const [label, path, placeholder] of [
-    ["Español", "/es/screen/ask", /Pregunta lo que sea sobre SNAP/],
-    ["Tiếng Việt", "/vi/screen/ask", /Hỏi bất cứ điều gì về SNAP/],
-    ["中文", "/zh/screen/ask", /关于 SNAP/],
+  // Asserts on the localized EXPLAINER copy rather than the composer's
+  // placeholder, since the composer is no longer on this page.
+  for (const [label, path, marker] of [
+    ["Español", "/es/screen/ask", /Pregúntale a Demeter sobre tu situación/],
+    ["Tiếng Việt", "/vi/screen/ask", /Hỏi Demeter về hoàn cảnh của bạn/],
+    ["中文", "/zh/screen/ask", /就您的情况询问 Demeter/],
   ] as Array<[string, string, RegExp]>) {
     test(`the nav switches the surface to ${label}`, async ({ page }) => {
       await page.goto("/screen/ask");
       await page.getByRole("link", { name: label, exact: true }).click();
       await expect(page).toHaveURL(new RegExp(path.replace(/\//g, "\\/")));
-      await expect(page.getByPlaceholder(placeholder)).toBeVisible();
+      await expect(page.getByRole("link", { name: marker })).toBeVisible();
     });
   }
 

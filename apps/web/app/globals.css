@@ -5413,8 +5413,16 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 .dmx__h2 {
   font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
   font-size: clamp(1.6rem, 3.4vw, 2.35rem); line-height: 1.12; letter-spacing: -0.02em;
-  font-weight: 600; color: var(--demeter-ink); margin: 0 0 1rem; text-wrap: pretty;
-  max-width: 22ch;
+  font-weight: 600; color: var(--demeter-ink); margin: 0 0 1rem;
+  /* 22ch here forced a second line on headings that had room for one. Measured
+     at 1280: the column is 1180px, 22ch capped them at 537px, and the LONGEST
+     heading on the page needs 875px — so every wrap was the cap, not the space.
+     38ch (~930px) clears all of them and still stops a runaway future heading
+     from running the full width.
+
+     `balance` rather than `pretty`: when a heading does wrap on a narrow
+     screen, even lines beat a long line with one orphaned word. */
+  max-width: 38ch; text-wrap: balance;
 }
 .dmx--lede .dmx__h2 { max-width: 18ch; }
 .dmx__h3 {
@@ -5500,6 +5508,43 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   margin: 0.7rem 0 0;
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   font-size: 0.78rem; line-height: 1.5; color: var(--demeter-muted); max-width: 46ch;
+}
+
+/* The application timeline. A left rail with the deadline in it, so the whole
+   sequence can be read down the "when" column alone — which is how someone
+   working out whether they can wait actually reads it. */
+.dmtl { list-style: none; margin: 1.75rem 0 0; padding: 0; }
+.dmtl__step {
+  display: grid; grid-template-columns: 8.5rem minmax(0, 1fr);
+  gap: 0 1.75rem; padding-bottom: 1.75rem; position: relative;
+}
+/* The connecting line, in the GUTTER between the two columns — column one ends
+   at 8.5rem and column two starts after a 1.75rem gap, so 9.375rem is the
+   middle of that gap and the only place the rule clears both. Offset into the
+   label column instead and it draws straight through "WITHIN DAYS".
+   Stops at the last step, so the sequence has a visible end. */
+.dmtl__step::before {
+  content: ""; position: absolute; left: 9.375rem; top: 0.55rem; bottom: 0;
+  border-left: 1px solid var(--demeter-rule);
+}
+.dmtl__step:last-child { padding-bottom: 0; }
+.dmtl__step:last-child::before { display: none; }
+.dmtl__when {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.72rem; letter-spacing: 0.09em; text-transform: uppercase;
+  font-weight: 600; color: var(--demeter-terracotta-deep);
+  padding-top: 0.22rem; text-align: right;
+}
+.dmtl__body .dmx__body { margin-bottom: 0; }
+.dmtl__body .dmx__h3 { margin-bottom: 0.3rem; }
+
+@media (max-width: 700px) {
+  /* Stacked: an 8.5rem rail beside a paragraph leaves the paragraph about
+     nine words wide on a phone. The deadline reads as a label above its step,
+     which is the same information in the order you would say it aloud. */
+  .dmtl__step { grid-template-columns: 1fr; gap: 0.3rem; padding-left: 0; }
+  .dmtl__step::before { display: none; }
+  .dmtl__when { text-align: left; padding-top: 0; }
 }
 
 .dmx__defs { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(15rem, 100%), 1fr)); gap: 1.75rem; margin: 1.5rem 0 0; }
@@ -5995,7 +6040,12 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 }
 
 /* Options become a row: mark, then the two text lines beside it. */
-.dmst__opt { flex-direction: row; align-items: center; gap: 0.65rem; }
+/* Aligned to the TOP, not the centre. Centring works only while every row is
+   one line — Washington's agency name wraps to two, and the flag slid down
+   beside the second line instead of sitting with "Basic Food". The nudge
+   optically centres the mark on the program name it belongs to. */
+.dmst__opt { flex-direction: row; align-items: flex-start; gap: 0.65rem; }
+.dmst__opt .dmflag { padding-top: 0.1rem; }
 .dmst__opt-text { display: flex; flex-direction: column; gap: 0.15rem; min-width: 0; }
 
 /* ═══ CONVERSATION MOTION ════════════════════════════════════════════════════
@@ -6444,6 +6494,13 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   font-size: 0.9rem; font-weight: 600; letter-spacing: 0.01em;
   color: var(--demeter-ink);
 }
+/* Bigger inside the dropdown. The picker list is the one place you are hunting
+   for your own state among fourteen, so both halves of the mark — the flag you
+   recognise and the code you read — carry more weight there than anywhere the
+   state is merely being reported back to you. */
+.dmst__opt .dmflag__code { font-size: 1.02rem; }
+.dmst__opt .dmflag { gap: 0.55rem; }
+
 /* No asset (the federal floor, or a code we have no flag for): the code alone,
    in the same chip the monogram used, so a gap never looks like a broken image. */
 .dmflag[data-noflag] .dmflag__code {

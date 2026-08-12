@@ -82,6 +82,20 @@ export interface PageCopy {
   questionsLink: string;
   questionsIntro: string;
   questionsBack: string;
+  /** The way through to the chat. The landing used to carry a working composer
+   *  and state picker; both now live on the Ask Demeter page itself, so this
+   *  page needs to hand over rather than half-start the conversation. */
+  askLink: string;
+  askIntro: string;
+  /** What happens after you apply, on the clock the regulation actually sets.
+   *  The form-question cards explain what a question MEANS; this explains what
+   *  happens next, which is the other half of what people arrive not knowing.
+   *  Deadlines are federal (7 CFR 273.2) and therefore safe to state — unlike
+   *  the dollar figures, which vary and change every October. */
+  timelineH2: string;
+  timelineBody: string;
+  timeline: { when: string; t: string; d: string }[];
+  timelineNote: string;
   /** The graphite footer. `footerDisclaimer` is the load-bearing one: it is the
    *  last thing anyone reads before acting on an answer, so it says plainly
    *  that the agency decides, not us. */
@@ -228,6 +242,46 @@ const en: PageCopy = {
   questionsIntro:
     "People do not arrive with a policy question. They arrive stuck on one line of a form. Here is what each line means and the rule that decides it.",
   questionsBack: "Ask Demeter about your own situation",
+  askLink: "Ask Demeter about your situation",
+  askIntro:
+    "Plain-language answers with the rule attached. Pick your state and ask anything about SNAP.",
+  timelineH2: "What happens after you apply",
+  timelineBody:
+    "The deadlines below are federal, so they hold in every state. Your agency may move faster; it is not allowed to move slower without telling you why.",
+  timeline: [
+    {
+      when: "Day 0",
+      t: "You file",
+      d: "The date you file is the date that counts, and benefits are figured from it — not from the day you finish. An application with your name, address and signature is enough to start the clock. You can fill in the rest afterwards.",
+    },
+    {
+      when: "Within days",
+      t: "The interview",
+      d: "Nobody is approved without one. It is usually a phone call, and it does not have to be in person. If you miss it, that alone is not a denial — the agency has to give you another chance.",
+    },
+    {
+      when: "At least 10 days",
+      t: "What you have to prove",
+      d: "The agency verifies what it can on its own and asks you for the rest — identity, income, housing costs. When it asks, you get at least 10 days to produce it. If a document is hard to get, say so: they can help.",
+    },
+    {
+      when: "By day 7",
+      t: "If you have almost nothing coming in",
+      d: "Expedited service exists for people who cannot wait a month: very little income and almost nothing available to spend, or housing and utility costs that come to more than you have coming in. It is not a separate application — the same one qualifies, and benefits arrive within a week.",
+    },
+    {
+      when: "By day 30",
+      t: "The decision",
+      d: "Thirty days from the date you filed, the agency has to approve or deny. If it denies you, the notice must say why and how to appeal — and appealing is free.",
+    },
+    {
+      when: "Then, ongoing",
+      t: "Benefits, and keeping them",
+      d: "Approved benefits go onto an EBT card each month. Your case is certified for a set stretch of time, and before that runs out you recertify. Missing that deadline is one of the most common ways people lose benefits they still qualify for.",
+    },
+  ],
+  timelineNote:
+    "Federal floor, from 7 CFR 273.2. Your state may add steps of its own — ask Demeter about yours and the answer will cite that state's manual where we have verified one.",
   brandSubtitle: "SNAP Enrollment and Eligibility Assistance",
   navAsk: "Ask Demeter",
   navQuestions: "Application questions",
@@ -372,6 +426,46 @@ const es: PageCopy = {
   questionsIntro:
     "La gente no llega con una pregunta de política. Llega atascada en una línea de un formulario. Esto es lo que significa cada línea y la regla que la decide.",
   questionsBack: "Pregúntale a Demeter sobre tu propia situación",
+  askLink: "Pregúntale a Demeter sobre tu situación",
+  askIntro:
+    "Respuestas en lenguaje claro, con la regla adjunta. Elige tu estado y pregunta lo que quieras sobre SNAP.",
+  timelineH2: "Qué pasa después de solicitar",
+  timelineBody:
+    "Los plazos de abajo son federales, así que rigen en todos los estados. Tu agencia puede ir más rápido; no puede ir más lento sin decirte por qué.",
+  timeline: [
+    {
+      when: "Día 0",
+      t: "Presentas la solicitud",
+      d: "La fecha en que presentas es la que cuenta, y los beneficios se calculan desde ahí — no desde el día en que terminas. Basta con tu nombre, tu dirección y tu firma para que empiece el plazo. El resto lo puedes completar después.",
+    },
+    {
+      when: "En pocos días",
+      t: "La entrevista",
+      d: "Nadie es aprobado sin ella. Suele ser una llamada telefónica y no tiene que ser en persona. Si la pierdes, eso por sí solo no es una denegación: la agencia debe darte otra oportunidad.",
+    },
+    {
+      when: "Al menos 10 días",
+      t: "Lo que tienes que comprobar",
+      d: "La agencia verifica por su cuenta lo que puede y te pide el resto: identidad, ingresos, gastos de vivienda. Cuando te lo pide, tienes al menos 10 días para entregarlo. Si un documento es difícil de conseguir, dilo: pueden ayudarte.",
+    },
+    {
+      when: "Antes del día 7",
+      t: "Si casi no tienes nada entrando",
+      d: "El servicio acelerado existe para quien no puede esperar un mes: muy pocos ingresos y casi nada disponible para gastar, o gastos de vivienda y servicios que superan lo que te entra. No es otra solicitud — la misma califica, y los beneficios llegan en una semana.",
+    },
+    {
+      when: "Antes del día 30",
+      t: "La decisión",
+      d: "A los treinta días de la fecha en que presentaste, la agencia tiene que aprobar o denegar. Si te deniega, el aviso debe decir por qué y cómo apelar — y apelar es gratis.",
+    },
+    {
+      when: "Después, de forma continua",
+      t: "Los beneficios, y cómo conservarlos",
+      d: "Los beneficios aprobados llegan cada mes a una tarjeta EBT. Tu caso se certifica por un período determinado y, antes de que termine, hay que recertificar. Perder ese plazo es una de las formas más comunes de perder beneficios a los que todavía tienes derecho.",
+    },
+  ],
+  timelineNote:
+    "Base federal, del 7 CFR 273.2. Tu estado puede añadir pasos propios — pregúntale a Demeter por el tuyo y la respuesta citará el manual de ese estado cuando lo hayamos verificado.",
   brandSubtitle: "Asistencia de inscripción y elegibilidad de SNAP",
   navAsk: "Pregúntale a Demeter",
   navQuestions: "Preguntas de la solicitud",
@@ -516,6 +610,46 @@ const vi: PageCopy = {
   questionsIntro:
     "Người ta không đến với một câu hỏi về chính sách. Họ mắc kẹt ở một dòng trên tờ đơn. Đây là ý nghĩa của từng dòng và điều luật quyết định nó.",
   questionsBack: "Hỏi Demeter về hoàn cảnh của chính bạn",
+  askLink: "Hỏi Demeter về hoàn cảnh của bạn",
+  askIntro:
+    "Câu trả lời bằng ngôn ngữ dễ hiểu, kèm theo điều luật. Chọn tiểu bang của bạn và hỏi bất cứ điều gì về SNAP.",
+  timelineH2: "Sau khi nộp đơn thì điều gì xảy ra",
+  timelineBody:
+    "Các mốc thời hạn dưới đây là của liên bang, nên áp dụng ở mọi tiểu bang. Cơ quan của bạn có thể làm nhanh hơn; nhưng không được chậm hơn mà không nói rõ lý do.",
+  timeline: [
+    {
+      when: "Ngày 0",
+      t: "Bạn nộp đơn",
+      d: "Ngày bạn nộp là ngày được tính, và trợ cấp được tính từ mốc đó — không phải từ ngày bạn điền xong. Chỉ cần tên, địa chỉ và chữ ký là đồng hồ đã bắt đầu chạy. Phần còn lại có thể bổ sung sau.",
+    },
+    {
+      when: "Trong vài ngày",
+      t: "Buổi phỏng vấn",
+      d: "Không ai được duyệt mà bỏ qua bước này. Thường chỉ là một cuộc gọi điện thoại và không bắt buộc gặp trực tiếp. Nếu bạn lỡ hẹn, riêng điều đó không phải là bị từ chối — cơ quan phải cho bạn cơ hội khác.",
+    },
+    {
+      when: "Ít nhất 10 ngày",
+      t: "Những gì bạn phải chứng minh",
+      d: "Cơ quan tự xác minh những gì họ làm được và hỏi bạn phần còn lại: nhân thân, thu nhập, chi phí nhà ở. Khi họ hỏi, bạn có ít nhất 10 ngày để nộp. Nếu giấy tờ nào khó lấy, hãy nói ra: họ có thể hỗ trợ.",
+    },
+    {
+      when: "Trước ngày thứ 7",
+      t: "Nếu bạn gần như không có nguồn thu nào",
+      d: "Xét duyệt cấp tốc dành cho người không thể chờ cả tháng: thu nhập rất ít và gần như không còn gì để chi, hoặc tiền nhà và tiện ích còn cao hơn khoản thu vào. Đây không phải đơn riêng — vẫn đơn đó, và trợ cấp đến trong vòng một tuần.",
+    },
+    {
+      when: "Trước ngày thứ 30",
+      t: "Quyết định",
+      d: "Ba mươi ngày kể từ ngày bạn nộp, cơ quan phải duyệt hoặc từ chối. Nếu từ chối, thông báo phải nêu lý do và cách khiếu nại — và khiếu nại là miễn phí.",
+    },
+    {
+      when: "Sau đó, lâu dài",
+      t: "Nhận trợ cấp, và giữ được nó",
+      d: "Trợ cấp được duyệt sẽ vào thẻ EBT hằng tháng. Hồ sơ của bạn được chứng nhận trong một khoảng thời gian nhất định, và trước khi hết hạn bạn phải tái chứng nhận. Bỏ lỡ mốc đó là một trong những lý do phổ biến nhất khiến người ta mất trợ cấp mà lẽ ra vẫn đủ điều kiện.",
+    },
+  ],
+  timelineNote:
+    "Mức sàn liên bang, theo 7 CFR 273.2. Tiểu bang của bạn có thể có thêm bước riêng — hãy hỏi Demeter về tiểu bang đó, câu trả lời sẽ trích dẫn cẩm nang của bang khi chúng tôi đã xác minh.",
   brandSubtitle: "Hỗ trợ ghi danh và điều kiện SNAP",
   navAsk: "Hỏi Demeter",
   navQuestions: "Câu hỏi trên đơn",
@@ -660,6 +794,46 @@ const zh: PageCopy = {
   questionsIntro:
     "人们并不是带着政策问题来的，而是卡在表格的某一行上。这里说明每一行的含义，以及决定它的条款。",
   questionsBack: "就您自己的情况询问 Demeter",
+  askLink: "就您的情况询问 Demeter",
+  askIntro:
+    "用通俗语言作答，并附上条文。选择您所在的州，随便问关于 SNAP 的问题。",
+  timelineH2: "递交申请之后会发生什么",
+  timelineBody:
+    "下面的期限是联邦规定，各州通用。您所在的机构可以更快；但不能更慢而不向您说明原因。",
+  timeline: [
+    {
+      when: "第 0 天",
+      t: "您递交申请",
+      d: "递交那天才是起算日，补助也从那天开始计算——而不是您填完表格的那天。只要写上姓名、地址并签名，期限就开始计时，其余内容可以之后再补。",
+    },
+    {
+      when: "几天之内",
+      t: "面谈",
+      d: "没有面谈就不会获批。通常只是一通电话，不必亲自到场。万一错过，仅凭这一点不构成拒绝——机构必须再给您一次机会。",
+    },
+    {
+      when: "至少 10 天",
+      t: "您需要提供的证明",
+      d: "机构能自行核实的会自行核实，其余的会向您索取：身份、收入、住房支出。提出要求后，您至少有 10 天时间提交。若某份文件不好取得，请直接说明：他们可以协助。",
+    },
+    {
+      when: "第 7 天之前",
+      t: "如果您几乎没有任何进项",
+      d: "加急审理是为等不起一个月的人设的：收入极少且几乎没有可动用的钱，或者房租水电加起来超过您的进项。这不是另一份申请——同一份就可以，补助会在一周内到账。",
+    },
+    {
+      when: "第 30 天之前",
+      t: "作出决定",
+      d: "自递交之日起三十天内，机构必须批准或拒绝。若被拒绝，通知上必须写明原因和申诉方式——申诉是免费的。",
+    },
+    {
+      when: "之后，持续进行",
+      t: "领取补助，以及如何保住它",
+      d: "获批的补助每月存入 EBT 卡。您的个案会有一段认证期，期满前需要办理复审。错过这个期限，是人们明明仍符合条件却失去补助的最常见原因之一。",
+    },
+  ],
+  timelineNote:
+    "联邦底线，出自 7 CFR 273.2。您所在的州可能另有步骤——就该州询问 Demeter，凡我们已核实的，回答都会引用该州手册。",
   brandSubtitle: "SNAP 申请与资格协助",
   navAsk: "询问 Demeter",
   navQuestions: "申请表问题",

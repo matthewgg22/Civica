@@ -19,6 +19,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { NAP_JURISDICTIONS, napJurisdiction, type PackMeta } from "@civica/demeter-engine/packs";
 import { StateFlag } from "./StateFlag";
+import { programDisplayName } from "../lib/program-name";
+import { stateName } from "../lib/state-names";
 
 export interface StatePickerCopy {
   label: string;
@@ -161,7 +163,7 @@ export function DemeterStatePicker({
         <span className="dmst__trigger-text">
           <span className="dmst__trigger-label">{copy.label}</span>
           <span className="dmst__trigger-value">
-            {selected ? selected.program : copy.federal}
+            {selected ? programDisplayName(selected.program) : copy.federal}
           </span>
         </span>
         {selected ? <span className="dmst__check" aria-hidden>✓</span> : null}
@@ -232,7 +234,12 @@ export function DemeterStatePicker({
           {hintState && !value && !query && (
             <button type="button" className="dmst__hint" onClick={() => pick(hintState.code)}>
               <StateFlag code={hintState.code} />
-              <span>{copy.useHint.replace("{state}", hintState.program)}</span>
+              {/* The STATE's name. This substituted `program`, so the row read
+                  "Use Supplemental Nutrition Assistance Program (SNAP) —
+                  Massachusetts uses the federal name; …" instead of "Use
+                  Massachusetts", which is what the comment above always said it
+                  should say. */}
+              <span>{copy.useHint.replace("{state}", stateName(hintState.code))}</span>
             </button>
           )}
           <ul className="dmst__list" role="listbox" aria-label={copy.label}>
@@ -260,10 +267,13 @@ export function DemeterStatePicker({
                   className={`dmst__opt ${value === s.code ? "is-sel" : ""}`}
                   onClick={() => pick(s.code)}
                 >
-                  <StateFlag code={s.code} />
+                  {/* Larger here than in the trigger: the dropdown is where you
+                      scan for your own state, and recognition is the whole
+                      reason the flag is there at all. */}
+                  <StateFlag code={s.code} size={34} />
                   <span className="dmst__opt-text">
                     <span className="dmst__opt-name">
-                      {s.program}
+                      {programDisplayName(s.program)}
                       <span className="dmst__opt-badge">{copy.verified}</span>
                     </span>
                     <span className="dmst__opt-sub">{s.agency}</span>

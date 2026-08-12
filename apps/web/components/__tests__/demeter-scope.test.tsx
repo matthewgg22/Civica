@@ -57,11 +57,17 @@ describe("the location hint is an offer, never a selection", () => {
 
   it("names the state it is offering", () => {
     // "Use my location" asks someone to accept a guess they cannot see.
+    //
+    // This asserted "Use CalFresh" — the PROGRAM name — and so locked in the
+    // bug it was meant to guard. PackMeta has no state name, the component
+    // reached for the nearest string that looked like one, and the test
+    // agreed with it. On MA that rendered "Use Supplemental Nutrition
+    // Assistance Program (SNAP) — Massachusetts uses the federal name; …".
     render(
       <DemeterStatePicker states={STATES} value={null} onChange={vi.fn()} copy={COPY} hint="CA" />,
     );
     open();
-    expect(screen.getByText(COPY.useHint.replace("{state}", "CalFresh"))).toBeTruthy();
+    expect(screen.getByText(COPY.useHint.replace("{state}", "California"))).toBeTruthy();
   });
 
   it("applies only on a tap", () => {
@@ -70,7 +76,7 @@ describe("the location hint is an offer, never a selection", () => {
       <DemeterStatePicker states={STATES} value={null} onChange={onChange} copy={COPY} hint="CA" />,
     );
     open();
-    fireEvent.click(screen.getByText(COPY.useHint.replace("{state}", "CalFresh")));
+    fireEvent.click(screen.getByText(COPY.useHint.replace("{state}", "California")));
     expect(onChange).toHaveBeenCalledWith("CA");
   });
 
@@ -81,7 +87,7 @@ describe("the location hint is an offer, never a selection", () => {
       <DemeterStatePicker states={STATES} value="TX" onChange={vi.fn()} copy={COPY} hint="CA" />,
     );
     open();
-    expect(screen.queryByText(COPY.useHint.replace("{state}", "CalFresh"))).toBeNull();
+    expect(screen.queryByText(COPY.useHint.replace("{state}", "California"))).toBeNull();
   });
 
   it("ignores a hint for a state with no verified pack", () => {
