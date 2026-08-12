@@ -121,6 +121,22 @@ SNAP benefit would be under $50/month gets a state supplement bringing it to $50
 disclosed age-threshold discrepancy exists between the statute's "60" and the manual's own
 cross-reference to "62" — see freshness.json.
 
+## Finding 8 — a naming artifact: Maryland's governing statute subtitle is still headed "Food Stamps," predating the 2008 federal rename
+
+Maryland's own public-facing DHS materials and its current manual folder path
+(dhs.maryland.gov/documents/FIA/Manuals/Supplemental Nutrition Assistance Program (SNAP)/)
+consistently use the plain federal name "SNAP," but the governing Maryland Code, Human
+Services Article, Title 5 subtitle housing the program's statutes is still headed "Food
+Stamps" — a naming artifact that predates SNAP's 2008 federal rename, even though the lead
+section within that subtitle (§ 5-501) is itself titled "Supplemental Nutrition Assistance
+Program." Worked examples inside the manual's own deduction-calculation sections still use
+the old "FS" abbreviation.
+
+(Moved here from `pack.json`'s `program` field 2026-08-12 — that field renders directly in
+the UI's agency-list card, and this pack's original full-length version, at ~700 characters,
+was long enough to overflow the card at a 320px viewport and fail the WCAG 1.4.10 reflow e2e
+test. `program` should stay a short display string; longer research narrative belongs here.)
+
 ## Confirmed — no discrepancy found against an existing engine constant (no engine constant existed to check against)
 
 Maryland has no prior `packages/snap-rules` `StatePolicy` entry, so there is no existing engine
