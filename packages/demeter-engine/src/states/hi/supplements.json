@@ -1,0 +1,223 @@
+{
+  "_provenance": {
+    "note": "Hawaii SNAP curated supplements. Hawaii has NO existing packages/snap-rules StatePolicy entry and NO oracle-fixture coverage — a genuine blank slate, like this roster's Nebraska, Connecticut, Utah, Iowa, and Arkansas builds. This pack is CORPUS-ONLY and does not touch packages/snap-rules or the oracle fixture. Hawaii was built in the same parallel round as Idaho, West Virginia, New Hampshire, and Maine (separate agents, same window). Drafted from direct curl fetches (browser User-Agent) of Hawaii DHS BESSD's current SNAP consumer page, Hawaii Administrative Rules Title 17 Chapters 663 and 676, USDA FNA's FY2026 Maximum Allotments and Deductions table, USDA FNA's ABAWD Time Limit Waivers FY2025-2029 index, USDA FNA's Restaurant Meals Program state list, USDA FNA's Hawaii-specific Food Restriction Waiver page, and Hawaii DHS's own OBBBA/ABAWD FAQ page — plus WebSearch/Justia-excerpt corroboration for Haw. Rev. Stat. § 346-53.3's exact text, disclosed as the one citation in this pack resting on secondary corroboration rather than a directly-fetched primary document.",
+    "extracted": "2026-08-12",
+    "source_fact_check": "direct curl fetch (browser UA) of humanservices.hawaii.gov (HTML page plus two HAR PDF chapters, converted with pdftotext -layout after WebFetch's markdown converter mangled the HAR-17-663 PDF) and fna.usda.gov's FY2026 national deductions table, ABAWD waiver index, RMP list, and Hawaii food-restriction-waiver page, cross-referenced against their own effective-date stamps and page-updated timestamps to confirm currency + WebSearch/Justia-excerpt cross-check for Haw. Rev. Stat. § 346-53.3 (both law.justia.com and capitol.hawaii.gov returned HTTP 403 to every direct-fetch attempt) + post-draft adversarial refute pass; findings and gaps recorded in PROVENANCE.md",
+    "access_note": "humanservices.hawaii.gov and fna.usda.gov both returned clean HTTP 200 to every direct curl attempt with a browser User-Agent, including PDF documents WebFetch's markdown converter could not parse directly. The one genuine, unresolved access barrier this pack found: law.justia.com and capitol.hawaii.gov (the Hawaii Legislature's own statute-text host) both returned HTTP 403 to every direct curl attempt (browser User-Agent, plain HTTP, and a Wayback Machine attempt that was itself blocked by an unrelated archive.org rate limit) — Haw. Rev. Stat. § 346-53.3's exact text rests on a WebSearch/Justia-excerpt corroboration rather than a directly-fetched primary document, disclosed explicitly here and in freshness.json."
+  },
+  "supplements": [
+    {
+      "key": "program-identity",
+      "kind": "supplement",
+      "terms": [
+        "how to apply",
+        "where do i apply",
+        "apply for snap",
+        "pais",
+        "who runs",
+        "what agency",
+        "administers",
+        "dhs",
+        "bessd",
+        "department of human services",
+        "ebt card",
+        "food stamps",
+        "hi ebt"
+      ],
+      "citation": "Hawaii DHS BESSD SNAP consumer page (humanservices.hawaii.gov/bessd/snap/); PAIS application portal (pais.dhs.hawaii.gov)",
+      "heading": "Hawaii calls its program plainly \"SNAP\" — no distinctive local brand — and applications go through PAIS, DHS's online portal",
+      "text": "Hawaii DHS's own consumer page uses only the generic federal name \"SNAP\" (Supplemental Nutrition Assistance Program) — this pack found no distinctive Hawaii-specific program nickname the way California has \"CalFresh\" or Washington has \"Basic Food,\" and no evidence of a distinctively-branded EBT card name beyond the generic \"Hawaii Electronic Benefit Transfer (HI/EBT)\" system, which also processes TANF, TAONF, General Assistance, AABD, and other cash-assistance programs alongside SNAP. Hawaii's SNAP program is administered by the Department of Human Services (DHS), specifically its Benefit, Employment & Support Services Division (BESSD) — a state-administered program processed centrally through statewide processing centers, with no county-level policy authority, structurally similar to this roster's Nebraska, Connecticut, North Carolina, Ohio, and other state-administered packs and distinct from county-administered states like CA, NY, MN, WI, and VA. Applicants can apply online through PAIS (pais.dhs.hawaii.gov/PAIS), Hawaii DHS's current online SNAP/Financial-Assistance application and recertification portal, by U.S. Postal Mail using the DHS-1240 paper application form, or by dropping off a completed paper application at a processing center. The Public Assistance Information Line (1-855-643-1643) is DHS's general SNAP phone line.",
+      "source_url": "https://humanservices.hawaii.gov/bessd/snap/"
+    },
+    {
+      "key": "income-pathways",
+      "kind": "supplement",
+      "terms": [
+        "income limit",
+        "income limits",
+        "gross income limit",
+        "gross income ceiling",
+        "make too much",
+        "over income",
+        "bbce",
+        "broad based categorical eligibility",
+        "broadbased categorical eligibility",
+        "categorical eligibility",
+        "categorically eligible",
+        "200 percent",
+        "200%",
+        "130 percent",
+        "130%",
+        "poverty level",
+        "net income test",
+        "tanf",
+        "ssi"
+      ],
+      "citation": "Hawaii DHS BESSD, SNAP consumer page (effective 10/1/2025) — SNAP Gross Monthly Income Eligibility Standards: 130% FPL and 200% FPL (BBCE) columns by household size; \"As of February 1, 2025, under BBCE households are also not subject to the net income test\"",
+      "heading": "FLAGSHIP FINDING (minority-position confirmation): Hawaii's BBCE waives the NET income test entirely, not merely the asset test — a more aggressive BBCE implementation than the typical shape",
+      "text": "Hawaii DHS's own current SNAP consumer page (effective 10/1/2025) lists a gross monthly income table with two columns: 130% FPL (the plain federal gross-income test, e.g. $1,949/month for a household of 1) and 200% FPL (Hawaii's Broad-Based Categorical Eligibility ceiling, e.g. $3,000/month for a household of 1) — the highest BBCE percentage this pack has found in this roster to date. Separately, Hawaii's net monthly income table (100% FPL) lists $1,500/month for a household of 1, the standard net test most BBCE states still apply after gross-income screening. This pack found and confirms, quoting DHS's own page directly, a genuine structural departure worth flagging with more confidence than a single source alone would ordinarily justify: \"As of February 1, 2025, under BBCE households are also not subject to the net income test.\" This is a more complete BBCE waiver than the typical shape this roster's other BBCE states use, where the elevated gross-income ceiling functions as an ADDITIONAL screening step before the household still must clear the 100% FPL net test after deductions — Hawaii's own text states plainly that BBCE households clear BOTH the elevated 200% FPL gross screen AND skip the net test that would otherwise apply after deductions, leaving deductions to matter only for calculating the actual benefit amount, not for a second eligibility gate. DHS's page also confirms Hawaii's plain Categorical Eligibility pathway (all household members receiving TANF or SSI cash assistance) has no gross, net, or asset limit at all, and that households with an elderly or disabled member are subject ONLY to the net income test (100% FPL), not the gross test — consistent with 7 CFR § 273.10's federal elderly/disabled carve-out. DHS's page also flags that a household containing a member disqualified under SNAP may not qualify for BBCE, meaning the plain 130% FPL federal gross test (and the underlying federal resource limits, see asset-rule supplement) remains the operative standard for that narrower population.",
+      "source_url": "https://humanservices.hawaii.gov/bessd/snap/"
+    },
+    {
+      "key": "asset-rule",
+      "kind": "supplement",
+      "terms": [
+        "asset limit",
+        "asset test",
+        "resource limit",
+        "resource test",
+        "resources",
+        "savings",
+        "savings limit",
+        "bank account",
+        "vehicle",
+        "car count",
+        "does my car count",
+        "second car",
+        "truck",
+        "unlimited assets"
+      ],
+      "citation": "Hawaii DHS BESSD, SNAP consumer page — \"Under BBCE, the gross income limit is 200% FPL and there is an unlimited asset standard\"; USDA FNA FY2026 Maximum Allotments and Deductions — federal-baseline resource limits $4,500 (elderly/disabled) / $3,000 (all other) apply to non-BBCE households",
+      "heading": "BBCE gives most Hawaii households an unlimited asset standard; the $4,500/$3,000 federal-baseline resource limits apply only to the narrower non-BBCE population",
+      "text": "Hawaii DHS's own SNAP consumer page states directly that \"under BBCE, the gross income limit is 200% FPL and there is an unlimited asset standard\" — the large majority of Hawaii SNAP households, screened under BBCE (200% FPL gross, no net test as of 2/1/2025, see income-pathways supplement), face no asset/resource test at all. This pack found the federal-baseline resource limits — $4,500 for a household with at least one member age 60+ or disabled, $3,000 for all other households, drawn from USDA's own current FY2026 Maximum Allotments and Deductions national table — still apply to Hawaii's narrower non-BBCE population: households disqualified from BBCE (per DHS's own page, this includes households where a member has been disqualified under SNAP) and households screened under the plain federal 130% FPL gross test rather than the 200% FPL BBCE pathway. This pack did not find a Hawaii-specific vehicle-exclusion figure or vehicle-valuation methodology distinct from the federal standard, and flags this as a research gap rather than asserting a Hawaii-specific rule exists — see freshness.json.",
+      "source_url": "https://humanservices.hawaii.gov/bessd/snap/"
+    },
+    {
+      "key": "criminal-justice-disqualifications",
+      "kind": "supplement",
+      "terms": [
+        "drug felony",
+        "felony conviction",
+        "criminal record",
+        "drug conviction",
+        "lifetime ban",
+        "fleeing felon",
+        "probation",
+        "parole",
+        "controlled substance",
+        "marijuana",
+        "cannabis",
+        "treatment program",
+        "opt out"
+      ],
+      "citation": "Haw. Rev. Stat. § 346-53.3 — CONDITIONAL/modified ban: Section 115(a) of Public Law 104-193 (the federal drug-felony ban) does not apply in Hawaii ONLY to persons complying with treatment, or who have not refused or failed to comply with treatment",
+      "heading": "FLAGSHIP CORRECTION: Hawaii did NOT unconditionally opt out of the federal drug-felony SNAP ban — the state's own statute conditions the carve-out on treatment compliance, contradicting several secondary sources that describe an unconditional opt-out",
+      "text": "21 U.S.C. § 862a(a)(2) sets a federal default: anyone convicted of a state or federal felony for possessing, using, or distributing a controlled substance is permanently ineligible for SNAP unless a state opts out or modifies the ban under § 862a(d)(1). This pack found a genuine, worth-flagging correction: several secondary sources it encountered during research describe Hawaii as having \"fully opted out\" of the federal drug-felony ban, with people convicted of drug felonies eligible for SNAP with \"no additional requirements.\" This pack traced Haw. Rev. Stat. § 346-53.3's own operative text and found the carve-out is CONDITIONAL, not unconditional: \"Section 115(a) of Public Law 104-193 shall not apply in Hawaii to persons who are complying with treatment or who have not refused or failed to comply with treatment.\" Read plainly, this means a person with a qualifying drug-felony conviction who IS complying with treatment, or who has never refused or failed treatment, is not subject to the federal ban — but a person who has refused or failed to comply with a treatment requirement remains subject to it. This is structurally similar in kind (a treatment-compliance-conditioned carve-out rather than a blanket opt-out) to this roster's Nebraska pack's modified-ban finding, though Hawaii's specific conditioning language (compliance-or-non-refusal, rather than Nebraska's felony-count/felony-type structure) is its own distinct mechanism. This pack DISCLOSES an access-barrier limitation on this specific finding rather than presenting it with full confidence: both law.justia.com and capitol.hawaii.gov (the Hawaii Legislature's own statute-text host) returned HTTP 403 bot-detection walls to every direct-fetch attempt this pack made (browser User-Agent, plain HTTP, and a Wayback Machine attempt blocked by an unrelated archive.org rate limit), so this statute's exact text rests on a WebSearch/Justia-excerpt corroboration rather than a directly-fetched primary document — the only citation in this pack with that limitation. Re-verify this statute's current text directly against capitol.hawaii.gov before treating it as a hard fact in a high-stakes context.",
+      "source_url": "https://law.justia.com/codes/hawaii/title-20/chapter-346/section-346-53-3/"
+    },
+    {
+      "key": "abawd-work-requirement",
+      "kind": "supplement",
+      "terms": [
+        "abawd",
+        "able bodied adult",
+        "work requirement",
+        "3 month limit",
+        "work registration",
+        "waiver",
+        "waived area",
+        "time limit",
+        "honolulu",
+        "obbba"
+      ],
+      "citation": "USDA FNA, ABAWD Time Limit Waivers FY2025-2029 state-response index (Hawaii absent); Hawaii DHS, \"Changes to Able-Bodied Adult Work Requirements for SNAP – FAQs\" (posted 10/9/2025) — OBBBA age range 18-64 effective nationwide, Hawaii-specific impact: ~16,000 individuals aged 55-64, ~10,000 households with a dependent child 14+",
+      "heading": "FLAGSHIP FINDING: despite a favorable noncontiguous-state waiver threshold, Hawaii currently has NO active statewide ABAWD waiver anywhere in the islands",
+      "text": "An able-bodied adult without dependents (ABAWD, recently relabeled \"Able-Bodied Adults\" in some Hawaii DHS materials following OBBBA) is limited to three countable months of SNAP within a 36-month period absent 80 hours/month of a qualifying work activity or an exemption. Federal law gives noncontiguous states (Alaska and Hawaii specifically) a more favorable ABAWD area-waiver threshold than the mainland's flat unemployment-rate floor — Alaska and Hawaii can request a waiver for areas with an unemployment rate at or above 1.5 times the national average, rather than the stricter floor applicable elsewhere. This pack found a genuine, worth-flagging finding: despite this favorable threshold, USDA FNA's own current ABAWD Time Limit Waivers FY2025-2029 state-response index does NOT list Hawaii among the states that submitted a waiver request for FY2025 or FY2026 — Alaska, by contrast, appears on the same list with both an FY2025 and FY2026 waiver response. This pack reads Hawaii's current absence from that list as meaning no active statewide (or area-specific) ABAWD waiver currently exists anywhere in Hawaii, a state-specific fact distinct from the favorable THRESHOLD Hawaii could invoke if it chose to request one. Consistent with the OBBBA (One Big Beautiful Bill Act, signed July 4, 2025) nationwide rollout this roster has documented in other 2025-2026-built packs, Hawaii DHS's own FAQ page (posted Oct 9, 2025) confirms the ABAWD age range expanded from 18-54 to 18-64, the caregiver exemption narrowed to a child under 14 (from under 18), and the previously blanket-exempt homeless, veteran, and foster-youth-aging-out populations are now subject to the work requirement — and states Hawaii-specific impact estimates directly: an estimated 16,000 individuals aged 55-64, and an estimated 10,000 households with a dependent child aged 14 or older, are potentially affected by these changes. DHS's FAQ explicitly excludes from the ABAWD/Able-Bodied-Adults definition anyone who is pregnant, has a physical or mental disability, receives disability benefits, or participates in a drug or alcohol treatment program.",
+      "source_url": "https://humanservices.hawaii.gov/changes-to-able-bodied-adult-work-requirements-for-snap-faqs/"
+    },
+    {
+      "key": "shelter-utility-deductions",
+      "kind": "supplement",
+      "terms": [
+        "utility allowance",
+        "utility standard",
+        "shelter deduction",
+        "excess shelter",
+        "standard utility allowance",
+        "standard deduction",
+        "sua",
+        "telephone allowance",
+        "electric bill",
+        "water bill"
+      ],
+      "citation": "Hawaii Administrative Rules 17-676-73 (Standard Utility Allowance — individual per-utility-type structure); USDA FNA FY2026 Maximum Allotments and Deductions — HI Standard Deduction $295 (sizes 1-4) / $300 (5) / $344 (6+); Maximum Excess Shelter Deduction $1,003; Homeless Shelter Deduction $198.99",
+      "heading": "GENUINE STRUCTURAL DEPARTURE: Hawaii computes INDIVIDUAL per-utility-type standard allowances (sewer/trash, water, electricity/gas, mandatory telephone) rather than a single flat or tiered SUA/LUA figure most states use",
+      "text": "Hawaii's Standard Deduction (FY2026, effective 10/1/2025, drawn from USDA's own national Maximum Allotments and Deductions table since this pack could not locate a Hawaii-DHS-published version of this specific figure) is $295/month for household sizes 1 through 4, $300 for size 5, and $344 for size 6 or more — Hawaii's COLA-adjusted figures run noticeably higher than the $209/$223/$261/$299 baseline this roster's other 48-contiguous-state packs have confirmed, consistent with Hawaii's general cost-of-living adjustment (see max-allotment-cola supplement). This pack found a genuine structural departure worth flagging explicitly in Hawaii's utility-deduction mechanism: unlike this roster's Nebraska (four flat/tiered SUA/LUA/OUA/Telephone amounts) or most other states' typical two-or-three-tier flat SUA structure, Hawaii Administrative Rules § 17-676-73 establishes SEPARATE, INDIVIDUALLY-CALCULATED standard allowances for each utility TYPE a household is billed for: a sewer-and-trash standard (a statewide average weighted by each county's share of the SNAP caseload), a water standard (weighted by household size and county caseload share), an electricity-and-gas standard (weighted by household size, NUMBER OF BEDROOMS, and county caseload share), and a mandatory telephone allowance used whenever a household has telephone expenses, applied even if actual phone costs are lower. A household may claim the standard allowance for each individual utility it is separately billed for, rather than being assigned to a single \"tier\" the way most states' SUA/LUA distinction works. Hawaii's SUA use is OPTIONAL, not mandatory — households may switch between actual utility costs and the standard allowances at each recertification and one additional time per twelve-month certification period, per 17-676-73(c). This pack did NOT find the current specific dollar figures for each individual utility-type standard (sewer/trash, water, electricity/gas, telephone) in a single dated Hawaii DHS document — it confirms the STRUCTURAL RULE directly from HAR 17-676-73's own text, but discloses the current per-utility dollar amounts as an unconfirmed gap, see freshness.json. Hawaii's Maximum Excess Shelter Deduction (the capped figure applicable to households without an elderly/disabled member) is $1,003/month and its Homeless Shelter Deduction is $198.99/month (the latter identical to the federally-published standard homeless shelter deduction under 7 CFR § 273.9(d)(6)(iii), which this roster's Nebraska, Connecticut, and Louisiana packs also confirmed at the same figure), both drawn directly from USDA's own current FY2026 national table.",
+      "source_url": "https://humanservices.hawaii.gov/wp-content/uploads/2019/03/HAR-17-676-INCOME.pdf"
+    },
+    {
+      "key": "restaurant-meals-program",
+      "kind": "supplement",
+      "terms": [
+        "restaurant meals program",
+        "rmp",
+        "eat at a restaurant",
+        "use ebt at restaurant",
+        "hot meal",
+        "hot food",
+        "prepared food"
+      ],
+      "citation": "USDA FNA's current SNAP Restaurant Meals Program state-operator list (page updated 8/7/2026) — nine listed states (AZ, MD, NY, CA, MA, RI, IL-Cook/Franklin-only, MI, VA); Hawaii absent",
+      "heading": "SECONDARY-SOURCE CORRECTION: Hawaii does NOT currently operate a Restaurant Meals Program — this pack found and corrected a stale/wrong claim that it does",
+      "text": "The Restaurant Meals Program (RMP) is a state OPTION under 7 CFR § 274.7(g) letting elderly (60+), disabled, and homeless SNAP recipients (and their eligible spouses) buy prepared, hot meals from authorized restaurants with EBT. This pack found, and explicitly corrects, a genuinely wrong secondary-source claim it encountered during research: one aggregator source states that RMP is available in \"Arizona, California, Florida, Hawaii, Michigan and Rhode Island,\" including Hawaii on that list. This pack fetched USDA FNA's own current SNAP Restaurant Meals Program page directly (page updated August 7, 2026, the same fetch session as this pack's research) and found its state-operator list contains NINE states/jurisdictions with named RMP contacts: Arizona, Maryland, New York, California, Massachusetts, Rhode Island, Illinois (Cook and Franklin Counties only), Michigan, and Virginia — Hawaii is NOT among them, and neither is Florida, meaning the aggregator source this pack found was wrong on at least two counts. This pack's operative answer for a Hawaii SNAP applicant asking whether they can use SNAP at a restaurant is a plain no: Hawaii does not currently operate a Restaurant Meals Program.",
+      "source_url": "https://www.fna.usda.gov/snap/retailer/restaurant-meals-program"
+    },
+    {
+      "key": "food-restriction-waiver",
+      "kind": "supplement",
+      "terms": [
+        "soda",
+        "soft drink",
+        "sugary drink ban",
+        "healthy choice waiver",
+        "what can i buy with snap",
+        "food restriction",
+        "make america healthy again",
+        "maha"
+      ],
+      "citation": "USDA FNA, Hawaii SNAP Food Restriction Waiver page — approved for a two-year demonstration project excluding \"soft drinks,\" originally effective 8/1/2026; a June 15, 2026 status update pushed the implementation date to 4/1/2027",
+      "heading": "TIME-SENSITIVE FINDING: Hawaii's SNAP soft-drink purchase restriction is APPROVED but its implementation date has been pushed to April 1, 2027 — as of this pack's fetch date it is NOT yet in effect",
+      "text": "USDA's Food and Nutrition Administration approved a request from Hawaii DHS (requested Oct. 10, 2025; approval letter dated and signed by Secretary Brooke L. Rollins, addressed to Gov. Josh Green, M.D.) to run a two-year demonstration project amending the statutory definition of food for SNAP purchases to EXCLUDE soft drinks specifically — narrower in scope than some other states' waivers this roster has documented, which also exclude candy or energy drinks; Hawaii's approved waiver text names only \"soft drinks.\" The approval was originally effective August 1, 2026. This pack found, and flags as genuinely time-sensitive, a status update on USDA's own page: as of June 15, 2026, USDA approved the state's request to PUSH the implementation date to April 1, 2027 — meaning that as of this pack's August 12, 2026 fetch date, Hawaii's soft-drink restriction has been approved but is NOT yet in effect anywhere in the state. This pack's operative answer for a Hawaii SNAP applicant asking whether they can currently buy soda with SNAP is: yes, for now — the restriction does not take effect until April 1, 2027, and this pack flags that date explicitly for re-verification as it approaches, since further implementation-date changes are plausible given the one that already occurred.",
+      "source_url": "https://www.fna.usda.gov/snap/waivers/foodrestriction/hawaii"
+    },
+    {
+      "key": "reporting-certification",
+      "kind": "supplement",
+      "terms": [
+        "certification period",
+        "approval period",
+        "recertification",
+        "redetermination",
+        "how long does snap last",
+        "how long does my snap approval last",
+        "how long does my approval last",
+        "redo",
+        "renew",
+        "six month report",
+        "periodic report"
+      ],
+      "citation": "WebSearch-corroborated (this pack did not directly fetch a dated Hawaii DHS or HAR certification-period section that survived its own site's document structure): most Hawaii households renew every 6 or 12 months, with a Six-Month Report Form at the midpoint of a 12-month certification, except all-elderly/disabled no-earned-income households; a 2025-2026 bill (SB961) that would have extended the minimum certification period to 24-36 months did not pass",
+      "heading": "Hawaii's certification-period structure — this pack flags its own sourcing gap on this specific fact, and notes a failed 2025-2026 extension bill (SB961)",
+      "text": "This pack found consistent secondary-source corroboration that most Hawaii SNAP households are certified for either 6 or 12 months, and that households on a 12-month certification generally must complete a Six-Month Report Form at the midpoint of that period — except households where every member is elderly (60+) or disabled with no earned income, who are not required to file that mid-period report, structurally similar to this roster's Nebraska and Kentucky simplified-reporting carve-outs for elderly/disabled households. This pack explicitly DISCLOSES a sourcing gap here rather than overclaiming precision: it did not locate and directly fetch a dated Hawaii DHS or Hawaii Administrative Rules certification-period section stating these figures in as many words — this finding rests on WebSearch corroboration (Propel's Hawaii EBT guide, aggregator SNAP-recertification guides) rather than a primary Hawaii source the way this pack's other findings are. This pack separately found, and flags as a worth-knowing negative result, that Hawaii's 2025-2026 legislative session considered Senate Bill 961, which would have extended the minimum SNAP certification period to 24-36 months and had DHS participate in USDA's Elderly Simplified Application Project — this pack's tracking found SB961 did NOT pass (\"died\" in committee, per secondary reporting), meaning Hawaii's current 6-or-12-month structure remains the operative rule, not the longer period SB961 would have created. Treat the 6/12-month figures as reasonably well-corroborated by secondary sources but NOT verified against Hawaii's own numbered administrative-rules certification-period section the way this pack's other findings are, and re-verify before treating this as a hard fact in a high-stakes context.",
+      "source_url": "https://humanservices.hawaii.gov/bessd/snap/"
+    },
+    {
+      "key": "max-allotment-cola",
+      "kind": "supplement",
+      "terms": [
+        "how much snap will i get",
+        "maximum benefit",
+        "max allotment",
+        "cost of living",
+        "cola",
+        "why is hawaii different",
+        "alaska hawaii higher benefit",
+        "highest benefit"
+      ],
+      "citation": "USDA FNA, SNAP Fiscal Year 2026 Maximum Allotments and Deductions (national table, effective 10/1/2025) — HI maximum allotment for a household of 4: $1,689, versus $994 for the 48 contiguous states and D.C.",
+      "heading": "USER-FLAGGED CONFIRMATION: like Alaska, Hawaii's maximum SNAP allotment is COLA-adjusted materially higher than the 48 contiguous states — this pack sources the exact figures from USDA's own national table, not a Hawaii-specific document",
+      "text": "USDA's Thrifty Food Plan, which sets SNAP maximum allotments nationally, is adjusted for Hawaii (and Alaska, Guam, and the U.S. Virgin Islands) to reflect materially higher food costs than the 48 contiguous states and D.C. This pack confirms the exact current figures directly from USDA FNA's own FY2026 Maximum Allotments and Deductions table (effective 10/1/2025): Hawaii's maximum monthly allotment for a household of 4 is $1,689, compared to $994 for the 48 contiguous states and D.C. — roughly 70% higher. The same table shows Hawaii's Standard Deduction ($295 for household sizes 1-4, versus $209 for the 48 states), Maximum Excess Shelter Deduction ($1,003, versus $744), and household-of-1 maximum allotment ($506, versus $298) are all elevated on the same COLA basis. This pack explicitly discloses a sourcing distinction the user should be aware of: unlike most of this pack's other dollar figures, which come from Hawaii DHS's own consumer page or Hawaii Administrative Rules, these specific COLA-adjusted maximum-allotment and deduction figures are drawn from USDA's own NATIONAL publication (which includes a Hawaii-specific column alongside the 48-states/DC, Alaska, Guam, and Virgin Islands columns) rather than a Hawaii-DHS-published document — this pack did not find Hawaii DHS republishing these exact figures on its own consumer page in a way that would let this pack independently cross-check USDA's national figures against a Hawaii-specific primary source. This pack treats USDA's own national table as authoritative (it is the federal source that DETERMINES these figures, not merely reports them), but flags this sourcing distinction explicitly per the task's own instruction to confirm whether/how Hawaii's elevated schedule interacts with any federal-benefit-calculation citation — the underlying benefit-calculation MECHANISM (net income × 0.3, subtracted from the maximum allotment for the household's size, per 7 CFR § 273.10) is unchanged; only the maximum-allotment INPUT to that formula is Hawaii-specific and COLA-adjusted.",
+      "source_url": "https://fns-prod.azureedge.us/sites/default/files/resource-files/snap-fy26maximumAllotments-deductions.pdf"
+    }
+  ]
+}

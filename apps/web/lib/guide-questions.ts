@@ -238,6 +238,13 @@ export const QUESTIONS: Record<string, string[]> = {
     "Does West Virginia have a Restaurant Meals Program for SNAP?",
     "How do I apply for SNAP in West Virginia?",
   ],
+  HI: [
+    "What is the income limit for SNAP in Hawaii?",
+    "I have a drug felony conviction — can I still get SNAP in Hawaii?",
+    "Is there an ABAWD work-requirement waiver anywhere in Hawaii?",
+    "Can I use my SNAP benefits at a restaurant in Hawaii?",
+    "Why is the maximum SNAP benefit higher in Hawaii than the mainland?",
+  ],
   NH: [
     "What is the income limit for SNAP in New Hampshire?",
     "Does New Hampshire have an asset or resource limit for SNAP?",
