@@ -1,0 +1,50 @@
+{
+  "_provenance": {
+    "note": "New Jersey dated facts. Because New Jersey has NO existing packages/snap-rules StatePolicy entry, there is no engine constant to cross-check against — unlike a state with prior engine work in this roster, every entry below is a routine COLA-cycle reminder, a genuine disclosed research gap, or a re-verification trigger for an actively-changing federal implementation, not a disclosed engine-vs-corpus discrepancy.",
+    "extracted": "2026-08-11"
+  },
+  "entries": [
+    {
+      "key": "nj-ffy26-dollar-values-recheck",
+      "kind": "expires",
+      "date": "2026-09-30",
+      "warning": "New Jersey's FFY26 dollar figures (185% FPL BBCE income chart: $2,413/mo single, $4,109 for 3, $4,957 for 4, +$848/additional member; Standard Deduction $209/$223/$261/$299; Maximum Excess Shelter Deduction $744; Homeless Shelter Deduction $198.99; resource limits $3,000/$4,500 per the CURRENT federal standard, not New Jersey's own stale codified $2,000/$3,000 text) are sourced from USDA's FY2026 Maximum Allotments and Deductions table and DFD's own public eligibility page, both effective 10/1/2025 through 9/30/2026. Re-verify all dollar figures against the FFY27 successor tables before quoting any New Jersey dollar amount after this date."
+    },
+    {
+      "key": "nj-sua-figure-secondary-source-only",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "This pack's Heating and Cooling Standard Utility Allowance figure ($977/month, effective October 1, 2025, up from $878.00) rests on SECONDARY corroboration only — a NJ Medicaid Communication (No. 25-07) referencing DFD's SNAP figures — because this pack could NOT independently fetch that Communication's own PDF at either nj.gov URL variant tried (both returned a genuine HTTP 404 even via curl with a browser User-Agent header, unlike the successful curl-with-UA workaround that DID retrieve the main N.J.A.C. 10:87 manual). This pack also could NOT locate New Jersey's Limited Utility Allowance (LUA) or Uniform Telephone Allowance (UTA) dollar figures in this pass at all — a genuine, disclosed gap, not an invented figure. Before quoting any New Jersey utility-allowance dollar figure, locate DFD's own current SUA table directly (check policies/instructions issued under the Division of Family Development, or USDA's national SUA FFY-value guidance page, which did not render its data in a fetchable HTML/PDF form in this pass either) and confirm all three tiers independently."
+    },
+    {
+      "key": "nj-abawd-waiver-tracking",
+      "kind": "expires",
+      "date": "2027-01-31",
+      "warning": "New Jersey's current ABAWD geographic waiver (Cape May County and Camden City, effective February 1, 2026 through January 31, 2027) is a TIME-BOUND grant, confirmed via USDA's own approval letter dated February 10, 2026 — it is not a standing or renewed-by-default status. Before this expiration date, re-check DFD's \"Federal Changes to SNAP\" page and USDA's ABAWD Waivers FY2025-2029 page directly for whether New Jersey has requested and received a renewal, an expanded or narrowed waiver area, or allowed the waiver to lapse. Also re-verify DFD's own codified N.J.A.C. 10:87-10.20 exemption text — as fetched, it still lists pre-OBBBA criteria (age 18-54, dependent child under 18) that DFD's own separate 'Federal Changes' page says do not reflect the current operative federal standard (age 18-64, dependent child under 14, effective July 4, 2025) — the regulation text itself has not yet been formally amended to match."
+    },
+    {
+      "key": "nj-drug-felony-statute-primary-text-unconfirmed",
+      "kind": "expires",
+      "date": "2026-12-01",
+      "warning": "This pack's drug-felony full-opt-out finding rests on two independent sources — N.J.A.C. 10:87-3.18's own History note (confirming the drug-felony provision's 2012 repeal, fetched directly from the current manual) and the Collateral Consequences Resource Center's national survey (quoting N.J.S.A. 44:10-48(d)(1) directly) — but this pack could NOT independently fetch the raw N.J.S.A. 44:10-48 statute text at Justia or FindLaw (both returned HTTP 403 even via curl with a browser User-Agent header). Before restating this finding as fully primary-source-confirmed, locate a working direct fetch of the current N.J.S.A. 44:10-48 statute text (try the New Jersey Legislature's own statute database, or a Rutgers/Cornell mirror) and confirm subsection (d)(1)'s text matches the CCRC quotation exactly."
+    },
+    {
+      "key": "nj-njac-manual-partial-pdf-recheck",
+      "kind": "expires",
+      "date": "2026-12-01",
+      "warning": "The N.J.A.C. 10:87 manual PDF this pack directly fetched and pdftotext-extracted (from nj.gov/humanservices/notices/documents/rules-and-regulations/) is a 200-page file covering roughly Subchapters 1 through 5 (general provisions through unearned income) — it does NOT contain the full chapter text. Sections on deductions detail (5.9-5.10+), certification periods (Subchapter 6), simplified reporting (Subchapter 9), and ABAWD work requirements (Subchapter 10) were independently confirmed via Cornell LII's section-by-section N.J.A.C. mirror instead, which serves individual sections reliably but does not offer an easy single-file full-chapter export. Before extending this pack, either locate a complete single-file N.J.A.C. 10:87 PDF directly from nj.gov (search DFD's forms/regulations index for an updated or continuation file) or continue confirming individual sections via Cornell LII one at a time."
+    },
+    {
+      "key": "nj-restaurant-meals-bill-watch",
+      "kind": "expires",
+      "date": "2026-12-31",
+      "warning": "As of this pack's build date, New Jersey Senate Bill S3983 (\"establishes a Restaurant Meals Program... requires participation by certain restaurants operated by institutions of higher education,\" introduced March 19, 2026 by Sen. Joseph Vitale) remained pending in the Senate Health, Human Services and Senior Citizens Committee, with no indication of enactment. This is the THIRD legislative session in which a substantively similar bill has been introduced (after A2892 in 2020-2021, status \"Introduced - Dead,\" and S1163/A1460 in 2022) — re-check the New Jersey Legislature's bill-status page for S3983 directly before this date, and re-verify USDA's official RMP state list still excludes New Jersey if the bill's status changes."
+    },
+    {
+      "key": "nj-medical-deduction-itemization-gap",
+      "kind": "expires",
+      "date": "2026-12-01",
+      "warning": "This pack's medical-deduction supplement states only the plain federal $35/month threshold from N.J.A.C. 10:87-5.10 — it does NOT itemize New Jersey-specific inclusions or exclusions (service animals, transportation mileage rate, over-the-counter medication treatment) the way this roster's North Carolina pack does for its own state, because this pack's fetch of 10:87-5.10 did not surface that level of itemized detail. Before asserting a specific New Jersey medical-expense category is or is not deductible beyond the plain $35 federal threshold, fetch the full text of N.J.A.C. 10:87-5.10 directly (via Cornell LII or a complete manual PDF) rather than relying on this pack's federal-standard default."
+    }
+  ]
+}

@@ -1,0 +1,49 @@
+{
+  "_provenance": {
+    "note": "New Jersey citation authorities. New Jersey uses TWO distinct authority families: N.J.A.C. Title 10, Chapter 87 regulation sections (subchapter-dot-section shape, e.g. '10:87-2.36', '10:87-4.11') and N.J.S.A. statutory sections (title:chapter-section shape, e.g. '44:10-48'). This pack prefixes regulation sections 'N.J.A.C. <section>' and statute sections 'N.J.S.A. <section>' to disambiguate, matching the roster's convention of a short prefix per state's citation family (North Carolina's FNS/NCGS, Ohio's OAC/ORC, Wisconsin's FSH, Illinois' PM/WAG, Michigan's BEM/BAM, Pennsylvania's PAH). Unlike North Carolina's 'FNS ###(.##)' pattern, New Jersey's own section numbers already contain a dot that is part of the base section identifier itself (e.g. '2.36' is the whole section number, not a subsection of section '2') — so this pack's regex captures only the base 'subchapter-dot-section' shape and deliberately does NOT capture any trailing parenthetical subsection letter, avoiding a false truncation of the base section number the way a naive second-word-base rule would produce.",
+    "extracted": "2026-08-11"
+  },
+  "patterns": [
+    {
+      "key": "njacsection",
+      "regex": "\\bN\\.?\\s?J\\.?\\s?A\\.?\\s?C\\.?\\s+§?\\s*(10:87-\\d{1,2}\\.\\d{1,3})\\b",
+      "flags": "gi",
+      "template": "N.J.A.C. $1",
+      "normalize": "none",
+      "match": "exact",
+      "note": "New Jersey Administrative Code Title 10, Chapter 87 (NJ SNAP Manual) sections, e.g. 10:87-2.36 (Expanded categorical eligibility), 10:87-4.11 (Maximum allowable resources), 10:87-10.20 (ABAWD work activity). The capture group deliberately excludes any trailing parenthetical subsection (e.g. a cite of '10:87-2.36(a)' still displays as 'N.J.A.C. 10:87-2.36') so exact-match checking against `known` is safe without a second-word-base truncation rule."
+    },
+    {
+      "key": "njsasection",
+      "regex": "\\bN\\.?\\s?J\\.?\\s?S\\.?\\s?A\\.?\\s+§?\\s*(44:10-\\d{1,3})\\b",
+      "flags": "gi",
+      "template": "N.J.S.A. $1",
+      "normalize": "none",
+      "match": "exact",
+      "note": "New Jersey Statutes Annotated Title 44, Chapter 10 (WorkFirst New Jersey Act) sections, e.g. 44:10-48 (drug-felony SNAP opt-out, subsection (d)(1))"
+    }
+  ],
+  "known": {
+    "njacsection": [
+      { "value": "N.J.A.C. 10:87-2.32", "note": "categorically eligible WFNJ/TANF/SSI households — narrow pathway, no income test; waives gross/net income, resources, SSN verification, sponsored-alien info, residency" },
+      { "value": "N.J.A.C. 10:87-2.36", "note": "Expanded categorical eligibility — flat 185% FPL BBCE pathway, conferred via a brochure given at application; no net income test, resources not considered" },
+      { "value": "N.J.A.C. 10:87-2.28", "note": "expedited service — federal-standard eligibility gates ($150 gross income / $100 liquid resources)" },
+      { "value": "N.J.A.C. 10:87-2.29", "note": "expedited service processing standards — plain federal 7-calendar-day benefit-availability ceiling" },
+      { "value": "N.J.A.C. 10:87-3.18", "note": "current text: disqualification due to duplicate participation. HISTORY NOTE confirms the section's FORMER content — drug-felony disqualification — was repealed by R.2012 d.031, effective February 6, 2012" },
+      { "value": "N.J.A.C. 10:87-4.1", "note": "resource applicability — which households ARE and are NOT subject to the resource test; expanded categorical households are exempt" },
+      { "value": "N.J.A.C. 10:87-4.3", "note": "resources defined — ordinary vehicles excluded, recreational vehicles (boats, motor homes) counted at fair market value unless the household's primary residence" },
+      { "value": "N.J.A.C. 10:87-4.8", "note": "identification of resource exclusions — home, household goods, vehicles (per 4.3(a)4), burial plots/funeral agreements up to $1,500, life insurance cash value, pension/Keogh/IRA treatment" },
+      { "value": "N.J.A.C. 10:87-4.11", "note": "maximum allowable resources — codified text ($2,000/$3,000) is STALE relative to the current federal COLA-adjusted standard ($3,000/$4,500); see PROVENANCE.md" },
+      { "value": "N.J.A.C. 10:87-5.9", "note": "identification of income exclusions — legally obligated child support (including vendor payments and arrearages) EXCLUDED from income, not an ordinary deduction" },
+      { "value": "N.J.A.C. 10:87-5.10", "note": "income deductions — excess medical (>$35/month, elderly/disabled only), 20% earned income deduction, dependent care (actual cost), shelter deduction structure" },
+      { "value": "N.J.A.C. 10:87-6.20", "note": "certification periods — 12 months standard, 24 months for all-elderly/disabled-adult households with a 12-month contact requirement" },
+      { "value": "N.J.A.C. 10:87-7.7", "note": "treatment of income and resources of non-household and ineligible members — prorates shelter, child support, and dependent care expenses evenly among household members" },
+      { "value": "N.J.A.C. 10:87-9.5", "note": "simplified reporting and change reporting — 12-month certification with mandatory 6-month interim contact; report only income crossing 130% FPL (standard) or 185% FPL (expanded categorical)" },
+      { "value": "N.J.A.C. 10:87-10.20", "note": "mandatory work activity for able-bodied adults without dependents (ABAWDs) — 3-in-36-month time limit; codified exemption text predates OBBBA, see PROVENANCE.md" },
+      { "value": "N.J.A.C. 10:87-12.1", "note": "income deduction standards — standard deduction, shelter deduction cap, and HCSUA/LUA/UTA utility allowances all set annually via the federal Register table (7 CFR 273.9(d))" }
+    ],
+    "njsasection": [
+      { "value": "N.J.S.A. 44:10-48", "note": "WorkFirst New Jersey Act — subsection (d)(1) is New Jersey's statutory full opt-out from the federal drug-felony SNAP ban under 21 U.S.C. 862a(d)(1); underlies the N.J.A.C. 10:87-3.18 repeal" }
+    ]
+  }
+}
