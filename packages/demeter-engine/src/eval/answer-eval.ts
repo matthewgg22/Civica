@@ -2623,6 +2623,127 @@ export const CO_GOLD: AnswerExpectation[] = [
   },
 ];
 
+export const SC_GOLD: AnswerExpectation[] = [
+  {
+    id: "sc-bbce-130-percent-fpl",
+    // Guards the flagship CORRECTION finding: South Carolina's BBCE analog
+    // (Family Independence Information and Referral Services) caps out at
+    // 130% FPL, NOT the 200% FPL figure common to most other BBCE states —
+    // guards against the model overclaiming a 200% ceiling for SC.
+    question: "What is the income limit for SNAP in South Carolina?",
+    state: "SC",
+    expectCitation: "4.1",
+    mustMention: "130",
+    mustDisclaim: true,
+  },
+  {
+    id: "sc-drug-felony-full-lifetime-ban",
+    // Guards the flagship CONFIRMATION finding: South Carolina retains the
+    // full, unmodified federal lifetime drug-felony ban — one of only two
+    // U.S. jurisdictions (with Guam) to do so.
+    question: "I have a drug felony conviction — can I still get SNAP in South Carolina?",
+    state: "SC",
+    expectCitation: "2.3",
+    mustMention: "permanent",
+    mustDisclaim: true,
+  },
+  {
+    id: "sc-food-restriction-waiver-not-yet-effective",
+    // Guards the time-sensitive flagship finding: SC's approved candy/
+    // soda/energy-drink restriction is real but not effective until
+    // Aug. 31, 2026 — guards against the model claiming it already applies.
+    question: "Can I buy soda or candy with my SNAP EBT card in South Carolina?",
+    state: "SC",
+    mustMention: "2026",
+    mustDisclaim: true,
+  },
+  {
+    id: "sc-vehicle-per-licensed-driver",
+    // Guards the structural finding: SC exempts one SC-registered vehicle
+    // PER LICENSED DRIVER, not one per household.
+    question: "Does my car count against me for SNAP in South Carolina?",
+    state: "SC",
+    expectCitation: "10.3",
+    mustMention: "driver",
+    mustDisclaim: true,
+  },
+  {
+    id: "sc-boat-not-blanket-exempt",
+    // Guards against overclaiming a blanket all-vehicles-exempt rule (the
+    // Missouri/Maryland/Colorado pattern) — South Carolina's rule is
+    // narrower and per-driver, with a distinct FMV/equity counting test
+    // for additional vehicles.
+    question: "Does my boat count against me for SNAP in South Carolina?",
+    state: "SC",
+    expectCitation: "10.3",
+    mustDisclaim: true,
+  },
+  {
+    id: "sc-abawd-age-range-current-federal",
+    question: "What is the ABAWD work requirement age range in South Carolina?",
+    state: "SC",
+    expectCitation: "8.12",
+    mustMention: "64",
+    mustDisclaim: true,
+  },
+  {
+    id: "sc-abawd-zero-waivers",
+    question: "Is the SNAP work-requirement time limit currently waived anywhere in South Carolina?",
+    state: "SC",
+    mustMention: "waiver",
+    mustDisclaim: true,
+  },
+  {
+    id: "sc-restaurant-meals-program-not-available",
+    // Guards against overclaiming: unlike Maryland/Virginia, South
+    // Carolina does NOT operate a Restaurant Meals Program.
+    question: "Can I use my EBT card to buy a hot meal at a restaurant in South Carolina?",
+    state: "SC",
+    mustMention: "not",
+    mustDisclaim: true,
+  },
+  {
+    id: "sc-child-support-ordinary-deduction",
+    // Guards the structural finding: SC treats child support as an
+    // ordinary post-gross deduction, not an income exclusion.
+    question: "Does paying child support lower my countable income for SNAP in South Carolina?",
+    state: "SC",
+    expectCitation: "12.7",
+    mustDisclaim: true,
+  },
+  {
+    id: "sc-medical-deduction-sm-shortcut",
+    question: "I'm disabled and have $50 a month in medical bills for South Carolina SNAP — do I get a deduction?",
+    state: "SC",
+    expectCitation: "12.8",
+    mustMention: "35",
+    mustDisclaim: true,
+  },
+  {
+    id: "sc-expedited-service-7-day",
+    question: "How fast can I get emergency SNAP benefits in South Carolina?",
+    state: "SC",
+    expectCitation: "6.5",
+    mustMention: "7",
+    mustDisclaim: true,
+  },
+  {
+    id: "sc-cert-period-6-month-standard",
+    question: "How long does my SNAP approval last in South Carolina?",
+    state: "SC",
+    expectCitation: "13.8",
+    mustMention: "6",
+    mustDisclaim: true,
+  },
+  {
+    id: "sc-federal-benefit",
+    question: "How is the monthly SNAP benefit amount calculated from net income in South Carolina?",
+    state: "SC",
+    expectCitation: "273.10",
+    mustDisclaim: true,
+  },
+];
+
 /** Everything the live runner executes. */
 export const ALL_GOLD: AnswerExpectation[] = [
   ...ANSWER_GOLD,
@@ -2650,4 +2771,5 @@ export const ALL_GOLD: AnswerExpectation[] = [
   ...MO_GOLD,
   ...MD_GOLD,
   ...CO_GOLD,
+  ...SC_GOLD,
 ];

@@ -1,0 +1,38 @@
+{
+  "_provenance": {
+    "note": "South Carolina dated facts. Because South Carolina has NO existing packages/snap-rules StatePolicy entry, there is no engine constant to cross-check against — every entry below is either a routine COLA-cycle reminder or a genuine, disclosed research gap. South Carolina's own primary source (SNAP Policy Manual Volume 70, June 2026) was found current and internally consistent with no comparable staleness to this roster's Colorado or Missouri packs — the entries below are forward-looking reminders, not currently-known contradictions.",
+    "extracted": "2026-08-11"
+  },
+  "entries": [
+    {
+      "key": "sc-food-restriction-waiver-not-yet-effective",
+      "kind": "not-yet-effective",
+      "date": "2026-08-31",
+      "warning": "USDA approved South Carolina's SNAP Food Restriction Waiver (excluding candy, energy drinks, soft drinks, and sweetened beverages from SNAP-eligible purchases) on Dec. 10, 2025, modified Aug. 3, 2026 — but the approval is explicitly effective Aug. 31, 2026, a date still in the future as of this pack's fetch date (2026-08-11). Before this date, South Carolina SNAP households can buy candy, soda, energy drinks, and sweetened beverages exactly as under the ordinary federal rule — do NOT tell a South Carolina applicant the restriction is currently in effect. After Aug. 31, 2026, re-verify this pack's food-restriction-waiver supplement against SCDSS's own current materials and USDA's waiver page directly, since the exact scope of \"restricted soft drink\" was itself modified once already (Aug. 3, 2026) before the program even launched, and could be modified again."
+    },
+    {
+      "key": "sc-ffy2027-cola-reminder",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "This pack's dollar figures (Standard Deduction $209/$209/$209/$223/$261/$299, Excess Shelter cap $744, resource limits $3,000/$4,500, MUA $388, BUA $265, Telephone Allowance $27, income-eligibility table) are drawn from South Carolina's own SNAP Policy Manual Volume 70 (June 2026) and match the current FFY2026 cycle (effective Oct. 1, 2025 - Sept. 30, 2026). The FFY2027 COLA cycle begins Oct. 1, 2026 — under two months from this pack's fetch date. South Carolina's manual has historically been revised close to the federal cycle (Volume 70 landed within the same federal fiscal year it describes), but this should be re-verified rather than assumed: check for a newer SC SNAP Policy Manual volume after that date before restating any SC-specific dollar figure with full confidence."
+    },
+    {
+      "key": "sc-drug-felony-no-state-statute-confirm",
+      "kind": "expires",
+      "date": "2027-02-01",
+      "warning": "This pack found NO separate South Carolina statute governing the drug-felony SNAP disqualification — South Carolina's SNAP Manual § 2.3(7) restates the federal PRWORA default directly as agency policy, and two independent secondary aggregators (Prison Policy Initiative, Network for Public Health Law) both corroborate that South Carolina has enacted no opt-out or modification legislation under 21 U.S.C. § 862a(d)(1). This is a negative finding (absence of a statute) rather than a positive citation to one, which is inherently harder to fully foreclose than a positive citation — a future South Carolina legislative session could change this at any time by enacting new legislation. Before restating South Carolina's drug-felony rule as unchanged, re-check for any new South Carolina General Assembly bill addressing SNAP drug-felony eligibility and re-confirm § 2.3(7)'s text is unchanged in SCDSS's then-current manual volume."
+    },
+    {
+      "key": "sc-homeless-meal-provider-contract-status-unknown",
+      "kind": "expires",
+      "date": "2026-12-01",
+      "warning": "South Carolina's SNAP Manual Glossary describes a \"Homeless Meal Provider\" mechanism allowing a restaurant to contract with an appropriate State agency to serve meals to homeless SNAP recipients at concessional prices — but this pack could not confirm whether any such contract is CURRENTLY active with any specific South Carolina restaurant, nor find this mechanism referenced on SCDSS's own public-facing SNAP pages. Before telling a homeless South Carolina SNAP recipient this option is available to them concretely (rather than as a theoretical manual provision), verify current status with SCDSS directly."
+    },
+    {
+      "key": "sc-manual-volume-superseded-reminder",
+      "kind": "expires",
+      "date": "2027-01-01",
+      "warning": "This pack cites SC SNAP Policy Manual Volume 70 (June 2026). SCDSS revises this manual by sequential volume number at an unpredictable cadence (this pack's own search results surfaced Volumes 63, 65, 69, and 70 all still hosted on dss.sc.gov). Before restating ANY South Carolina SNAP policy detail with full confidence, check dss.sc.gov/resource-library/manuals/ (or an equivalent current URL) for a volume number higher than 70, and re-verify the cited section against the newer text."
+    }
+  ]
+}
