@@ -53,6 +53,9 @@ import mtPack from "./states/mt/pack.json";
 import riPack from "./states/ri/pack.json";
 import ndPack from "./states/nd/pack.json";
 import dePack from "./states/de/pack.json";
+import wyPack from "./states/wy/pack.json";
+import vtPack from "./states/vt/pack.json";
+import dcPack from "./states/dc/pack.json";
 import usviPack from "./states/vi/pack.json";
 
 export interface PackVerification {
@@ -140,6 +143,9 @@ export const VERIFIED_STATES: PackMeta[] = [
   riPack,
   ndPack,
   dePack,
+  wyPack,
+  vtPack,
+  dcPack,
   usviPack,
 ].map(meta);
 
