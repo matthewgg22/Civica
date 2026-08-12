@@ -172,4 +172,11 @@ export const QUESTIONS: Record<string, string[]> = {
     "Does Connecticut have a Restaurant Meals Program for SNAP?",
     "Does Connecticut's categorical eligibility raise my SNAP income limit above the normal amount?",
   ],
+  AR: [
+    "Does Arkansas's categorical eligibility raise my SNAP income limit above the normal amount?",
+    "What is the SNAP resource limit in Arkansas, and can it be temporarily higher?",
+    "I have a drug felony conviction — can I still get SNAP in Arkansas?",
+    "What is the ABAWD work requirement age range in Arkansas?",
+    "Can I use my EBT card to buy a hot meal at a restaurant in Arkansas?",
+  ],
 };
