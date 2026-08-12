@@ -29,6 +29,7 @@ import { DemeterWorksheet, type WorksheetMode } from "./DemeterWorksheet";
 import { DemeterFeedback } from "./DemeterFeedback";
 import { DemeterSave } from "./DemeterSave";
 import { T } from "../lib/i18n/demeter-chat-copy";
+import { stateName } from "../lib/state-names";
 import type { SavedMsg } from "../lib/demeter-conversations";
 
 /** Read the certainty verdict back off a finished answer.
@@ -114,15 +115,36 @@ function renderInline(line: string, keyBase: string): ReactNode[] {
  *  Returns the follow-ups only once the line is COMPLETE (a newline after it,
  *  or the stream has finished). Offering half a question would be worse than
  *  offering none. */
+/** Drops a freshness footer the MODEL wrote, keeping the one Civica appends.
+ *
+ *  The prompt tells it not to write its own "Sources as of" line. It sometimes
+ *  does anyway — seen in production, the same answer carrying the line twice —
+ *  and an instruction a model can ignore is not a guarantee. Ours is appended
+ *  last, in the trailer frame, so every occurrence but the final one goes. */
+function dropDuplicateFooter(text: string): string {
+  const marker = /^\s*(Sources as of|Fuentes al|Nguồn tính đến|来源截至)/;
+  const lines = text.split("\n");
+  const hits = lines.map((l, i) => (marker.test(l) ? i : -1)).filter((i) => i >= 0);
+  if (hits.length < 2) return text;
+  const keep = hits[hits.length - 1];
+  return lines.filter((_, i) => !hits.includes(i) || i === keep).join("\n");
+}
+
 export function splitFollowups(
-  text: string,
+  rawText: string,
   opts?: { streaming?: boolean },
 ): { body: string; followups: string[] } {
-  const at = text.lastIndexOf(`\n${FOLLOWUP_MARKER}`);
+  const text = dropDuplicateFooter(rawText);
+  // ANYWHERE, not only at the start of a line. This looked for "\n⟶", and the
+  // model does not reliably put the marker on its own line — when it wrote
+  // "…confirm those with your local district or OTDA. ⟶ What documents will I
+  // need? | …" the whole thing sailed through and the reader saw the raw arrow
+  // and the pipes printed in the answer. Seen in production.
+  const at = text.lastIndexOf(FOLLOWUP_MARKER);
   if (at < 0) return { body: text, followups: [] };
 
   const body = text.slice(0, at);
-  const rest = text.slice(at + 1 + FOLLOWUP_MARKER.length);
+  const rest = text.slice(at + FOLLOWUP_MARKER.length);
   const end = rest.indexOf("\n");
   const complete = end >= 0 || !opts?.streaming;
   if (!complete) return { body, followups: [] };
@@ -136,7 +158,31 @@ export function splitFollowups(
     .slice(0, 3);
 
   // Anything after the follow-ups line (the appended citation trailer) stays.
-  return { body: body + tail, followups };
+  return { body: (body.replace(/[ \t]+$/, "") + tail), followups };
+}
+
+/** The question Demeter is waiting on, if it ended by asking one.
+ *
+ *  When an answer closes with "which of those is yours?", a composer that still
+ *  says "Happy to answer any questions about SNAP" has forgotten its own last
+ *  sentence — and the person has to scroll back up to see what was asked. The
+ *  placeholder becomes the question instead.
+ *
+ *  Only the FINAL sentence, only if it is a question, and only if it is short
+ *  enough to read in a field. Everything else falls back to the standing
+ *  placeholder rather than truncating something into nonsense. */
+export function pendingQuestion(answer: string): string | null {
+  // Body only — the citation trailer often ends in a question-free line, and
+  // the follow-up chips are not what we are looking for either.
+  const body = splitFollowups(answer).body.split(/\n-{3,}\n/)[0] ?? "";
+  const sentences = body
+    .replace(/\*\*/g, "")
+    .split(/(?<=[?.!])\s+/)
+    .map((x) => x.trim())
+    .filter(Boolean);
+  const last = sentences[sentences.length - 1] ?? "";
+  if (!last.endsWith("?") || last.length > 90) return null;
+  return last;
 }
 
 /** Answer text → nodes, with paragraphs as real <p> BLOCKS.
@@ -214,6 +260,13 @@ export function renderAnswer(text: string, opts?: { streaming?: boolean }): Reac
 // Re-exported so existing imports of `T` from this file keep working.
 export { T };
 
+
+/** How fast a streamed answer is REVEALED — deliberately slower than it
+ *  arrives. ~40 characters a second at rest, ~120 catching up. Module scope so
+ *  the drain callback closes over a genuine constant, and one place to tune,
+ *  because "calm" is a judgement that will be revisited. */
+const STREAM_TICK_MS = 25;
+const STREAM_MAX_STEP = 3;
 
 export function DemeterChat({
   states,
@@ -329,14 +382,18 @@ export function DemeterChat({
     }
     // PROPORTIONAL WITH A CEILING, and the ceiling is the point.
     //
-    // Uncapped, `behind / 8` meant a long answer arrived at thousands of
-    // characters a second — technically "paced" and indistinguishable from a
-    // dump. This product is for someone frightened of losing food assistance,
-    // and text that lands faster than anyone can read it is not calm, it is
-    // urgent. So: ~125 characters a second at rest, ~250 when catching up.
-    // Around reading pace, deliberately, rather than around network pace.
+    // Uncapped, `behind / 8` meant thousands of characters a second —
+    // technically "paced", indistinguishable from a dump. The first cap (4 per
+    // 16ms = 250/sec) still cleared a short answer in about a second, which
+    // still read as a dump: answers got shorter at the same time the pacing
+    // landed, so the two changes cancelled out.
+    //
+    // Now ~40 characters a second at rest and ~120 catching up. That is slow
+    // next to how fast the tokens actually arrive, and that is the intent —
+    // this is for someone frightened of losing food assistance, and text
+    // landing faster than it can be read is not calm, it is urgent.
     const behind = full.length - shownRef.current;
-    const step = Math.min(4, Math.max(1, Math.ceil(behind / 40)));
+    const step = Math.min(STREAM_MAX_STEP, Math.max(1, Math.ceil(behind / 50)));
     shownRef.current = Math.min(full.length, shownRef.current + step);
     const text = full.slice(0, shownRef.current);
     setMessages((m) => {
@@ -351,7 +408,7 @@ export function DemeterChat({
       finishDrain();
       return;
     }
-    rafRef.current = window.setTimeout(drawStream, 16);
+    rafRef.current = window.setTimeout(drawStream, STREAM_TICK_MS);
   }, []);
 
   // A stream abandoned mid-flight must not keep painting into a component that
@@ -425,7 +482,14 @@ export function DemeterChat({
     // the computed outcome is dropped, and the next turn recomputes it.
     setClassification(null);
     if (messages.some((m) => m.role !== "divider")) {
-      const name = next ? states.find((s) => s.code === next)?.program ?? next : null;
+      // The STATE's name. This used the pack's `program` field, which for
+      // Massachusetts is the annotated corpus string — so the divider read
+      // "Now answering for Supplemental Nutrition Assistance Program (SNAP) —
+      // Massachusetts uses the federal name; 'Food Stamps' survives only as the
+      // older, still-recognized public name (formally retired federally in
+      // 2008) — earlier answers may not apply." Nobody needs the program's
+      // etymology to be told the scope changed. They need "Massachusetts".
+      const name = next ? stateName(next) : null;
       setMessages((m) => [
         ...m,
         { role: "divider", content: name ? t.dividerTo(name) : t.dividerFederal },
@@ -736,6 +800,15 @@ export function DemeterChat({
 
   const hasChat = messages.length > 0;
 
+  // What the composer asks for. If Demeter's last answer ended in a question,
+  // that question — otherwise the standing invitation. Never while an answer is
+  // still arriving: the placeholder would change under the person mid-read.
+  const lastAssistant = busy
+    ? null
+    : [...messages].reverse().find((m) => m.role === "assistant" && m.content)?.content ?? null;
+  const composerPrompt =
+    (lastAssistant ? pendingQuestion(lastAssistant) : null) ?? t.inputPlaceholder;
+
   return (
     <div className="demeter">
       <header className="demeter__head">
@@ -1013,9 +1086,9 @@ export function DemeterChat({
               void send();
             }
           }}
-          placeholder={t.inputPlaceholder}
+          placeholder={composerPrompt}
           rows={1}
-          aria-label={t.inputPlaceholder}
+          aria-label={composerPrompt}
         />
         {busy ? (
           <button

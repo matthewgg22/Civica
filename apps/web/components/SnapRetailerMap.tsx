@@ -17,6 +17,7 @@ import type { AnswerLang } from "@civica/demeter-engine/packs";
 import { PAGE_COPY } from "../lib/i18n/snap-page";
 import { US_MAP_VIEWBOX, US_STATE_PATHS } from "../lib/us-map-paths";
 import { RETAILERS_BY_STATE, RETAILER_TOTAL, RETAILERS_AS_OF } from "../lib/snap-retailers";
+import { RetailerSearch } from "./RetailerSearch";
 
 /** Four restrained steps, on a log-ish scale because the raw range is 93 (USVI)
  *  to 30,180 (CA) — a linear ramp would paint 45 states the same colour and
@@ -46,6 +47,9 @@ export function SnapRetailerMap({ lang = "en" }: { lang?: AnswerLang }) {
         <h3 className="dmx__h3">{c.retailersH3}</h3>
         <p className="dmx__body">{c.retailersBody.replace("{n}", total)}</p>
         <p className="dmx__note">{c.retailersNote.replace("{date}", RETAILERS_AS_OF)}</p>
+        {/* The map says "everywhere" and then locates nothing. This is the part
+            that answers where. */}
+        <RetailerSearch lang={lang} />
       </div>
       {/* Decorative: every fact it carries is in the sentence beside it, so a
           screen reader gains nothing from 51 unlabelled paths. */}

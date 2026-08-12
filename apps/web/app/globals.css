@@ -5501,7 +5501,12 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   /* Links BESIDE the disclaimer, not under it. Stacked, this box put both in a
      narrow left column and left half of itself empty. */
   display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
-  gap: clamp(1rem, 3vw, 2.5rem); align-items: start;
+  /* COLUMN gap only. `gap` sets both axes, so the 40px meant for the space
+     between the columns was also padding the service-mark row away from the
+     content above it — measured 60px of dead space there.
+     Centred, not start-aligned: the note is 101px against the logo-and-links
+     column's 176px, so aligning tops left an obvious hole under the text. */
+  column-gap: clamp(1rem, 3vw, 2.5rem); row-gap: 0; align-items: center;
 }
 .dmx__official .dmx__note { margin-top: 0.35rem; }
 .dmx__official .dmx__officiallinks { margin-top: 0.2rem; }
@@ -5559,6 +5564,60 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 .dmret__text .dmx__body { margin-bottom: 0.5rem; }
 .dmret__text .dmx__note { margin-top: 0.5rem; }
 .dmret__svg { width: 100%; height: auto; display: block; }
+
+/* The ZIP lookup. The map above it is the claim; this is the answer. */
+.dmret__search { margin: 1.25rem 0 0; }
+.dmret__label {
+  display: block; margin-bottom: 0.4rem;
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.72rem; letter-spacing: 0.09em; text-transform: uppercase;
+  font-weight: 600; color: var(--demeter-terracotta-deep);
+}
+.dmret__row { display: flex; gap: 0.5rem; align-items: stretch; }
+.dmret__input {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 1rem; width: 8.5rem; min-height: 48px; padding: 0 0.9rem;
+  border: 1px solid var(--demeter-rule-strong); border-radius: 12px;
+  background: var(--demeter-card); color: var(--demeter-ink);
+}
+.dmret__input:focus-visible { outline: 2px solid var(--demeter-terracotta); outline-offset: 1px; }
+.dmret__go {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.9rem; font-weight: 600; min-height: 48px; padding: 0 1.2rem;
+  border: 0; border-radius: 12px; cursor: pointer;
+  background: var(--demeter-terracotta-deep); color: var(--demeter-paper);
+}
+.dmret__go:disabled { opacity: 0.45; cursor: default; }
+
+.dmret__results { margin-top: 0.9rem; }
+.dmret__count {
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+  font-size: 1rem; color: var(--demeter-ink); margin: 0 0 0.6rem;
+}
+/* Capped and scrollable: forty stores would otherwise push the rest of the page
+   a long way down for someone who only wanted to check one. */
+.dmret__list {
+  list-style: none; margin: 0; padding: 0; max-height: 19rem; overflow-y: auto;
+  border-top: 1px solid var(--demeter-rule);
+}
+.dmret__store {
+  display: flex; flex-direction: column; gap: 0.1rem;
+  padding: 0.6rem 0; border-bottom: 1px solid var(--demeter-rule);
+}
+.dmret__name {
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+  font-size: 0.98rem; color: var(--demeter-ink);
+}
+.dmret__meta {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.8rem; color: var(--demeter-muted);
+}
+.dmret__maplink {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.8rem; color: var(--demeter-terracotta-deep);
+  text-decoration: underline; text-underline-offset: 2px;
+  align-self: flex-start; min-height: 32px; display: inline-flex; align-items: center;
+}
 @media (max-width: 860px) {
   .dmret { grid-template-columns: 1fr; }
 }
@@ -5630,23 +5689,30 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 }
 @media (prefers-reduced-motion: reduce) { .dmfear__q::after { transition: none; } }
 
-/* The application timeline, read LEFT TO RIGHT: each step is a column with its
-   deadline as the header on top and the detail underneath.
-   Was a vertical left rail — accurate, but it made six steps into a tall
-   scroll, and a sequence you scroll is one you experience as long rather than
-   as ordered.
-   Wrapping rather than one unbroken row on purpose: six columns across 1180px
-   is ~196px each, about twenty characters a line, which is not a timeline
-   anyone can read. Three across, wrapping to two rows, keeps the left-to-right
-   reading and keeps the prose legible. */
+/* The application timeline: ONE ROW, six columns, read left to right.
+   Six across 1180px is ~196px each — about 26 characters a line — so the step
+   copy was shortened to suit. That is the trade a single row demands, and the
+   two facts worth not losing (appealing is free; a missed recertification is a
+   top cause of losing benefits) moved into the note beneath rather than being
+   cut.
+   It scrolls sideways below the point where a column would stop being readable,
+   rather than wrapping — a wrapped "one line" is not one line. */
 .dmtl {
-  list-style: none; margin: 1.75rem 0 0; padding: 0;
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
-  gap: 1.75rem;
+  list-style: none; margin: 1.75rem 0 0; padding: 0 0 0.5rem;
+  display: grid; grid-auto-flow: column;
+  /* NARROW: a 13rem floor, so the columns stay readable and the row scrolls
+     sideways instead of crushing six steps into 50px each. */
+  grid-auto-columns: minmax(13rem, 1fr);
+  gap: 1.25rem; overflow-x: auto;
 }
-/* The rule across the top of each step IS the timeline — a continuous line
-   cannot survive wrapping, but a segment per step reads as one band and marks
-   where each stage begins. */
+@media (min-width: 1000px) {
+  /* WIDE: no floor, so six columns divide the width EXACTLY and there is no
+     scrollbar at all. Measured with the 11rem floor still in place: 1250px of
+     content in a 1065px box — one row, but 185px of it off-screen, which is not
+     what "fits on one line" means. */
+  .dmtl { grid-auto-columns: minmax(0, 1fr); gap: 1rem; overflow-x: visible; }
+}
+/* The rule across the top of each step IS the timeline. */
 .dmtl__step { position: relative; padding-top: 1.15rem; border-top: 2px solid var(--demeter-rule); }
 .dmtl__step::before {
   content: ""; position: absolute; top: -6px; left: 0;
@@ -5656,11 +5722,34 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 .dmtl__when {
   display: block; margin-bottom: 0.4rem;
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
-  font-size: 0.72rem; letter-spacing: 0.09em; text-transform: uppercase;
+  font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase;
   font-weight: 600; color: var(--demeter-terracotta-deep);
 }
-.dmtl__body .dmx__body { margin-bottom: 0; max-width: none; }
-.dmtl__body .dmx__h3 { margin-bottom: 0.35rem; }
+.dmtl__body .dmx__h3 { font-size: 1rem; margin-bottom: 0.3rem; }
+.dmtl__body .dmx__body {
+  margin-bottom: 0; max-width: none; font-size: 0.88rem; line-height: 1.5;
+}
+
+/* Each step fades and rises as it comes into view.
+   Scroll-driven CSS rather than an IntersectionObserver: no JavaScript, nothing
+   to hydrate, and it degrades to simply being visible where `animation-timeline`
+   is unsupported — which is the correct fallback for content that must be
+   readable and crawlable either way. */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .dmtl__step {
+      animation: dmtlIn linear both;
+      animation-timeline: view();
+      /* Done well before the column is centred, so it is never still fading
+         while someone is trying to read it. */
+      animation-range: entry 5% cover 25%;
+    }
+  }
+}
+@keyframes dmtlIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: none; }
+}
 
 .dmx__defs { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(15rem, 100%), 1fr)); gap: 1.75rem; margin: 1.5rem 0 0; }
 .dmx__def dt {
@@ -5851,9 +5940,18 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 @supports (interpolate-size: allow-keywords) {
   .dmw { interpolate-size: allow-keywords; transition: height 260ms cubic-bezier(0.22, 1, 0.36, 1); }
 }
-.dmw__mode ~ * { animation: dmModeIn 220ms cubic-bezier(0.22, 1, 0.36, 1) both; }
+/* Switching to "Build my estimate" replaces the whole panel, so a 220ms nudge
+   read as the content having been swapped rather than as the panel opening. It
+   is longer, softer, and STAGGERED — each block arrives just after the one above
+   it, which is what makes a panel feel like it is unfolding instead of
+   repainting. Slow enough to follow, short enough not to be waited on. */
+.dmw__mode ~ * { animation: dmModeIn 420ms cubic-bezier(0.22, 1, 0.36, 1) both; }
+.dmw__mode ~ *:nth-of-type(2) { animation-delay: 60ms; }
+.dmw__mode ~ *:nth-of-type(3) { animation-delay: 120ms; }
+.dmw__mode ~ *:nth-of-type(4) { animation-delay: 180ms; }
+.dmw__mode ~ *:nth-of-type(n + 5) { animation-delay: 240ms; }
 @keyframes dmModeIn {
-  from { opacity: 0; transform: translateY(4px); }
+  from { opacity: 0; transform: translateY(8px); }
   to { opacity: 1; transform: none; }
 }
 
@@ -6636,6 +6734,22 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   .demeter__followups { animation: none; }
   .demeter__followup { transition: none; }
 }
+
+/* Thumbs, not words. A round icon button is an offer; "Yes / No" beside a
+   question reads as a demand. Same 44px target either way. */
+.dmfb__btn--icon {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 34px; height: 34px; min-height: 34px; padding: 0;
+  border-radius: 999px; color: var(--demeter-muted);
+  transition: color 140ms ease-out, border-color 140ms ease-out, background-color 140ms ease-out;
+}
+.dmfb__btn--icon:hover {
+  color: var(--demeter-terracotta-deep); border-color: var(--demeter-terracotta);
+  background: var(--demeter-card);
+}
+/* The down thumb is the same path, turned over — so the two can never drift. */
+.dmfb__thumb[data-down] { transform: rotate(180deg); }
+@media (prefers-reduced-motion: reduce) { .dmfb__btn--icon { transition: none; } }
 
 .demeter__turn { display: flex; flex-direction: column; }
 .demeter__turn--user { align-items: flex-end; }

@@ -1,6 +1,8 @@
 import { describe, it, expect } from "vitest";
 import { isValidElement } from "react";
-import { renderAnswer, splitFollowups } from "../DemeterChat";
+import { renderAnswer, splitFollowups, pendingQuestion } from "../DemeterChat";
+import { stateName } from "../../lib/state-names";
+import { VERIFIED_STATES } from "@civica/demeter-engine/packs";
 
 // renderAnswer returns React nodes (no DOM needed): <p> paragraph blocks and
 // <hr>, with <strong>/<em>/text inside them for the markdown subset the engine
@@ -185,5 +187,99 @@ describe("suggested follow-ups", () => {
   it("caps at three, since a wall of buttons is still a wall", () => {
     const { followups } = splitFollowups("A.\n⟶ one? | two? | three? | four? | five?");
     expect(followups).toHaveLength(3);
+  });
+});
+
+describe("the composer echoes the question Demeter asked", () => {
+  it("uses the closing question", () => {
+    // A composer still saying "Happy to answer any questions about SNAP" after
+    // Demeter asked something has forgotten its own last sentence.
+    expect(
+      pendingQuestion("It depends which status you hold. Which of those is yours?"),
+    ).toBe("Which of those is yours?");
+  });
+
+  it("ignores an answer that did not ask anything", () => {
+    expect(pendingQuestion("SNAP is monthly help with groceries.")).toBeNull();
+  });
+
+  it("looks past the citation trailer and the follow-up chips", () => {
+    const answer =
+      "Which state are you in?\n⟶ How do I apply?\n---\n7 CFR 273.9";
+    expect(pendingQuestion(answer)).toBe("Which state are you in?");
+  });
+
+  it("declines a question too long to sit in a field", () => {
+    const long = "A".repeat(95) + "?";
+    expect(pendingQuestion(long)).toBeNull();
+  });
+
+  it("strips bold so the placeholder is plain text", () => {
+    expect(pendingQuestion("Tell me: **which state are you in**?")).toBe(
+      "Tell me: which state are you in?",
+    );
+  });
+});
+
+describe("the follow-up marker leaked into a real conversation", () => {
+  // Shipped and seen: the model put the marker INLINE after the last sentence
+  // rather than on its own line, and splitFollowups only ever looked for
+  // "\n⟶". So the reader got the raw arrow and the pipe separators printed in
+  // the middle of the answer.
+  const inline =
+    "I don't have New York's exact income limits loaded here, so confirm those with your local district or OTDA. ⟶ What documents will I need? | Do I qualify for expedited service? | What happens at the interview?";
+
+  it("strips the marker even when it is not at the start of a line", () => {
+    const { body, followups } = splitFollowups(inline);
+    expect(body).not.toContain("⟶");
+    expect(body).not.toContain("|");
+    expect(followups).toEqual([
+      "What documents will I need?",
+      "Do I qualify for expedited service?",
+      "What happens at the interview?",
+    ]);
+    expect(body.trim().endsWith("OTDA.")).toBe(true);
+  });
+
+  it("does not leave the marker in the composer placeholder either", () => {
+    expect(pendingQuestion(inline) ?? "").not.toContain("⟶");
+  });
+});
+
+describe("a duplicated freshness footer", () => {
+  it("keeps only the one Civica appends", () => {
+    // Seen in production: the model wrote its own "Sources as of" line despite
+    // the prompt telling it not to, so the answer carried it twice.
+    const doubled =
+      "In Nevada, SNAP is run by DWSS.\nSources as of: eCFR 2026-06-02.\nSources as of: eCFR 2026-06-02.";
+    const { body } = splitFollowups(doubled);
+    expect(body.match(/Sources as of/g)).toHaveLength(1);
+    expect(body).toContain("DWSS");
+  });
+
+  it("leaves a single footer alone", () => {
+    const one = "Answer.\nSources as of: eCFR 2026-06-02.";
+    expect(splitFollowups(one).body).toBe(one);
+  });
+});
+
+describe("the scope divider names a STATE", () => {
+  it("never uses the pack's annotated program string", () => {
+    // Shipped: the divider read "Now answering for Supplemental Nutrition
+    // Assistance Program (SNAP) — Massachusetts uses the federal name; 'Food
+    // Stamps' survives only as the older, still-recognized public name
+    // (formally retired federally in 2008) — earlier answers may not apply."
+    // It was interpolating `pack.program`, which is corpus annotation.
+    const ma = VERIFIED_STATES.find((s) => s.code === "MA")!;
+    expect(ma.program.length, "MA's program field is the annotated one").toBeGreaterThan(60);
+    expect(stateName("MA")).toBe("Massachusetts");
+  });
+
+  it("has a short, human name for every shipped pack", () => {
+    for (const p of VERIFIED_STATES) {
+      const n = stateName(p.code);
+      expect(n.length, `${p.code} → ${n}`).toBeLessThanOrEqual(24);
+      expect(n, `${p.code} kept an annotation`).not.toMatch(/—|\(/);
+    }
   });
 });

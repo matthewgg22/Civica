@@ -146,19 +146,28 @@ export function DemeterFeedback({
   return (
     <div className="dmfb">
       <span className="dmfb__prompt">{copy.prompt}</span>
+      {/* ICONS, with the words as the accessible name rather than as visible
+          labels. "Yes / No" beside "Was this helpful?" reads as a question
+          demanding an answer; a thumb is an offer you can ignore. The label is
+          still the localized string, so a screen reader hears "Yes", and the
+          title gives a sighted user the same word on hover. */}
       <button
         type="button"
-        className="dmfb__btn"
+        className="dmfb__btn dmfb__btn--icon"
+        aria-label={copy.helpful}
+        title={copy.helpful}
         onClick={() => {
           submit("up");
           setDone(true);
         }}
       >
-        {copy.helpful}
+        <ThumbIcon />
       </button>
       <button
         type="button"
-        className="dmfb__btn"
+        className="dmfb__btn dmfb__btn--icon"
+        aria-label={copy.notHelpful}
+        title={copy.notHelpful}
         onClick={() => {
           // Record the negative signal immediately — the reason is a bonus, and
           // most people will not stay for it.
@@ -166,8 +175,32 @@ export function DemeterFeedback({
           setRating("down");
         }}
       >
-        {copy.notHelpful}
+        <ThumbIcon down />
       </button>
     </div>
+  );
+}
+
+/** One outline thumb, rotated for the down state, so the pair cannot drift.
+ *  currentColor throughout: the button owns the colour, including on hover. */
+function ThumbIcon({ down = false }: { down?: boolean }) {
+  return (
+    <svg
+      className="dmfb__thumb"
+      data-down={down ? "true" : undefined}
+      viewBox="0 0 24 24"
+      width="18"
+      height="18"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.7"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+      focusable="false"
+    >
+      <path d="M7 10v10H4a1 1 0 0 1-1-1v-8a1 1 0 0 1 1-1h3Z" />
+      <path d="M7 10l4.2-7a2 2 0 0 1 3.6 1.5L14 9h4.6a2 2 0 0 1 2 2.4l-1.3 6A2 2 0 0 1 17.3 19H7" />
+    </svg>
   );
 }
