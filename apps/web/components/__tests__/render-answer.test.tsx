@@ -121,6 +121,26 @@ describe("paragraphs are blocks, so they can be given space", () => {
   });
 });
 
+describe("the question the composer echoes", () => {
+  it("drops the bullet marker when the closing question is a list item", () => {
+    // Answers very often end in a list of options, so the last sentence is the
+    // last bullet — and the marker came with it, putting a stray hyphen at the
+    // start of the composer on a large share of real answers.
+    const q = pendingQuestion("Some answer.\n\n- One thing?\n- Are you ready to apply now?");
+    expect(q).toBe("Are you ready to apply now?");
+  });
+
+  it("leaves an ordinary closing question alone", () => {
+    expect(pendingQuestion("A sentence. Which state are you in?")).toBe(
+      "Which state are you in?",
+    );
+  });
+
+  it("returns null when the answer does not end in a question", () => {
+    expect(pendingQuestion("A statement, and then another.")).toBeNull();
+  });
+});
+
 describe("the streaming cursor", () => {
   it("sits inside the last paragraph, not after it", () => {
     // Appended AFTER the paragraph it lands on its own line and reads as a

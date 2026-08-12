@@ -76,6 +76,43 @@ describe("figures the person supplied are not inventions", () => {
   });
 });
 
+// Round two, from a second real transcript. A rideshare driver said they made
+// 3 k last month and spent 300 on gas, and got the deadlock all over again —
+// because SNAP counts self-employment income as receipts MINUS business costs,
+// so the only useful answer contains $2,700: a number in no regulation,
+// reachable only by doing the arithmetic the programme requires. The first fix
+// admitted their figures and the same figures on another pay cadence, which was
+// not enough.
+describe("arithmetic on their own figures", () => {
+  const UBER = [
+    "last month I made about 3 k on uber and then spent 300 on gas last month",
+    "okay my monthly income is 3 k",
+  ].join("\n");
+
+  it("accepts receipts minus their own stated expenses", () => {
+    const r = verifyNumericEquivalence("That leaves about $2,700 a month.", "", UBER);
+    expect(r.mismatches).toEqual([]);
+  });
+
+  it("accepts that figure annualised", () => {
+    expect(verifyNumericEquivalence("$32,400 a year", "", UBER).pass).toBe(true);
+  });
+
+  it("still refuses a gross limit we never retrieved", () => {
+    expect(verifyNumericEquivalence("The limit is $3,380.", "", UBER).pass).toBe(false);
+  });
+
+  it("still refuses the standard deduction", () => {
+    // A real figure, and exactly the kind this gate exists to stop: it comes
+    // from the regulations, not from anything the person said.
+    expect(verifyNumericEquivalence("A standard deduction of $204.", "", UBER).pass).toBe(false);
+  });
+
+  it("still refuses a maximum allotment", () => {
+    expect(verifyNumericEquivalence("Up to $973 a month.", "", UBER).pass).toBe(false);
+  });
+});
+
 describe("the plain grounding behaviour is unchanged", () => {
   it("accepts an amount that appears literally in the sources", () => {
     expect(verifyNumericEquivalence("up to $292", "the maximum allotment is $292").pass).toBe(true);
