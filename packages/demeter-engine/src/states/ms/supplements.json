@@ -1,0 +1,228 @@
+{
+  "_provenance": {
+    "note": "Mississippi SNAP curated supplements. Mississippi has NO existing packages/snap-rules StatePolicy entry and NO oracle-fixture coverage — a genuine blank slate, like North Carolina's, Ohio's, New Jersey's, Virginia's, Tennessee's, Indiana's, Missouri's, Maryland's, Colorado's, South Carolina's, Alabama's, Louisiana's, Kentucky's, and Connecticut's prior corpus-only builds in this same roster. This pack is CORPUS-ONLY and does not touch packages/snap-rules or the oracle fixture. Mississippi is part of this roster's BATCH TIER — built alongside Kansas, New Mexico, and Nebraska in parallel by separate agents. Drafted from a direct curl fetch (browser User-Agent) of MDHS's current SNAP Policy Manual PDF (Title 18, Part 14, revised May 1, 2026), MDHS's consumer-facing SNAP pages, USDA FNA's current Restaurant Meals Program state list, and WebSearch corroboration for the Mississippi Code Ann. §43-12-71 drug-felony opt-out statute (blocked at the raw-text level by law.justia.com's Cloudflare challenge, but quoted and dated directly inside MDHS's own manual).",
+    "extracted": "2026-08-12",
+    "source_fact_check": "direct curl fetch (browser UA) of MDHS's current SNAP Policy Manual PDF, converted with pdftotext -layout and read chapter-by-chapter (Chapters 2, 4, 12, 13, 15, 16, 17, 18, 19, 22, 28, 29, 33), cross-referenced against each Rule's own \"Source:\" citation line and \"Revised:\" date + direct curl fetch of MDHS's SNAP landing/apply/EBT consumer pages + direct curl fetch of USDA FNA's current Restaurant Meals Program state list + WebSearch cross-checks against this roster's other independently-verified FFY2026 national dollar figures + post-draft adversarial refute pass; findings and gaps recorded in PROVENANCE.md",
+    "access_note": "mdhs.ms.gov returned clean HTTP 200 to every direct curl attempt with a browser User-Agent, including the full current Policy Manual PDF itself — no Justia-403-style pattern on Mississippi's own primary source. The genuine access barriers this pack found were both on third-party hosts: law.justia.com's raw statute text (HTTP 403, Cloudflare challenge) and usda.gov's guidance-documents subdomain hosting the national FY2026 SUA-values PDF (HTTP 403, Akamai block). Both are disclosed explicitly in the relevant supplement and in freshness.json rather than resolved by fabrication."
+  },
+  "supplements": [
+    {
+      "key": "program-identity",
+      "kind": "supplement",
+      "terms": [
+        "how to apply",
+        "where do i apply",
+        "apply for snap",
+        "access mississippi",
+        "access.ms.gov",
+        "who runs",
+        "what agency",
+        "administers",
+        "mdhs",
+        "department of human services",
+        "ebt card",
+        "food stamps",
+        "county office"
+      ],
+      "citation": "MDHS SNAP Policy Manual Rule 2.1-2.6 (Application), Rule 1.2 (State Agency Responsibilities); MDHS Applying for SNAP and EBT Card pages",
+      "heading": "Mississippi calls its program plainly \"SNAP\" and its EBT card just an \"EBT card\" — no distinctive local brand name for either",
+      "text": "Mississippi Department of Human Services (MDHS) administers SNAP directly and statewide through 82 county offices — an applicant's county determines which physical office serves them, not which policy rules apply, since MDHS sets uniform statewide policy with no county-level variation (the same non-devolved administrative structure this roster's Connecticut pack documents for DSS). Applicants apply online through the Access Mississippi portal (access.ms.gov/consumer/home), by phone through Economic Assistance Eligibility Client Services (1-800-948-3050), in person at a county MDHS office, or by mail, fax, or email — MDHS's own manual (Rule 2.6) lists all five filing channels as equally valid. This pack found no evidence Mississippi's EBT card carries any distinctive branded name the way Texas's Lone Star Card or Oklahoma's ACCESS Oklahoma Card do — MDHS's own EBT Card page and Propel's state-by-state EBT guide both refer to it plainly as the \"EBT Card\" or \"Mississippi EBT Card,\" with balance checks available via the Cardholder Services number on the card's back, a balance-inquiry transaction at a participating store's POS terminal, or the printed balance on the bottom of every EBT purchase receipt.",
+      "source_url": "https://www.mdhs.ms.gov/help/snap/apply/"
+    },
+    {
+      "key": "categorical-eligibility",
+      "kind": "supplement",
+      "terms": [
+        "income limit",
+        "income limits",
+        "gross income limit",
+        "gross income ceiling",
+        "make too much",
+        "over income",
+        "bbce",
+        "broad based categorical eligibility",
+        "broadbased categorical eligibility",
+        "categorical eligibility",
+        "categorically eligible",
+        "expanded categorical eligibility",
+        "200 percent",
+        "200%",
+        "130 percent",
+        "130%",
+        "poverty level",
+        "ssi",
+        "tanf"
+      ],
+      "citation": "MDHS SNAP Policy Manual, Rule 15.1-15.2 (Categorically Eligible Households — General; Income and Resource Exceptions), 7 CFR §273.2(j)(2) — categorical eligibility is limited STRICTLY to households where every member receives or is eligible for TANF and/or SSI; Mississippi has NO income-based BBCE track",
+      "heading": "FLAGSHIP FINDING, CONFIRMED not corrected: Mississippi does NOT operate Broad-Based or Expanded Categorical Eligibility in any form — every non-TANF/SSI household must pass the ordinary 130% gross / 100% net income tests",
+      "text": "This pack found and confirms a claim several secondary sources make about Mississippi (unlike the ABAWD-waiver and asset-limit claims this pack had to correct or refine elsewhere): Mississippi does not use Broad-Based Categorical Eligibility. MDHS's own current SNAP Policy Manual, Rule 15.1, defines categorical eligibility narrowly — a household qualifies only if every member receives, or is eligible to receive, TANF and/or SSI benefits (7 CFR §273.2(j)(2)). There is no parallel track, comparable to the ECE/RCE structure this roster's Kentucky and Connecticut packs document, that extends categorical eligibility to households below some higher gross-income percentage (185%, 200%, or otherwise) via a TANF-funded-referral-brochure mechanism. This is a genuine structural minority position in this roster: the large majority of states built so far use some form of income-based BBCE to raise the effective gross-income ceiling above 130% FPL for non-categorically-eligible households; Mississippi does not. A Mississippi household that does not have every member on TANF or SSI must pass the plain federal 130% FPL gross income test (unless elderly/disabled, which exempts the gross test only) and the 100% FPL net income test — full stop, with no categorical-eligibility escape valve at a higher income band. Households that ARE categorically eligible (every member on TANF/SSI) skip the gross, net, AND resource tests entirely (Rule 15.2.A) — Mississippi's version, unlike Connecticut's RCE/ECE split, has only ONE track rather than two, and that track's income requirement is narrow (TANF/SSI receipt or eligibility) rather than broad (mere income level).",
+      "source_url": "https://www.mdhs.ms.gov/wp-content/uploads/2026/07/SNAP-Policy-Manual-May-2026-1.pdf"
+    },
+    {
+      "key": "asset-rule",
+      "kind": "supplement",
+      "terms": [
+        "asset limit",
+        "asset test",
+        "resource limit",
+        "resource test",
+        "resources",
+        "savings",
+        "savings limit",
+        "bank account",
+        "vehicle",
+        "car count",
+        "does my car count",
+        "second car",
+        "truck"
+      ],
+      "citation": "MDHS SNAP Policy Manual, Rule 16.1 (Resources — General: \"MDHS will apply uniform national resource standards of eligibility that are published every October 1st by USDA\"), Rule 16.4.H (Excluded Resources — Most Vehicles), Rule 16.5 (Value of Non-Excluded Recreational Vehicles — $4,650 excess-fair-market-value threshold)",
+      "heading": "Mississippi's manual does NOT republish its own resource-limit dollar figures — it defers directly to USDA's annually-posted national standard, and this pack found stale FFY2025 figures repeated as current by multiple secondary sources",
+      "text": "Unlike most of this roster's other states' current-standards pages, Mississippi's own SNAP Policy Manual (Rule 16.1) states plainly that MDHS \"will apply uniform national resource standards of eligibility that are published every October 1st by USDA\" — it does not print a Mississippi-specific dollar figure anywhere in its 166-page text. This pack treats the current FFY2026 national standard ($3,000 for households without an elderly/disabled member, $4,500 for households with one, effective October 1, 2025) as controlling for Mississippi, matching the figures this roster's Connecticut and Arkansas packs each independently confirmed against their own states' current Tables. This pack found and flags a genuine secondary-source discrepancy: several SNAP-calculator sites report $2,750/$4,250 as Mississippi's \"current\" resource limits — these are the STALE FFY2025 figures (pre-COLA), not the current FFY2026 amounts, and this pack does not repeat them as current. Separately, and more distinctively Mississippi-specific: Rule 16.1.E states MDHS \"exempts most vehicles to align with MS TANF policy,\" and Rule 16.4.H confirms this in full — licensed or unlicensed vehicles used for regular on-road transportation (cars, trucks, vans, motorcycles) and any vehicle used as the household's home are excluded from resources ENTIRELY, with no fair-market-value threshold or equity test applied to them at all. Only recreational vehicles, ATVs, and other off-road/industrial vehicles not used as income-producing property are counted, and only for the excess of their fair market value over $4,650 or their equity value, whichever is higher (Rule 16.5). This is a broader vehicle exclusion than several of this roster's other states document — Mississippi does not run a per-vehicle dollar-threshold test on ordinary household cars and trucks at all, categorically eligible or not.",
+      "source_url": "https://www.mdhs.ms.gov/wp-content/uploads/2026/07/SNAP-Policy-Manual-May-2026-1.pdf"
+    },
+    {
+      "key": "criminal-justice-disqualifications",
+      "kind": "supplement",
+      "terms": [
+        "drug felony",
+        "felony conviction",
+        "criminal record",
+        "drug conviction",
+        "lifetime ban",
+        "fleeing felon",
+        "probation",
+        "parole",
+        "controlled substance",
+        "marijuana",
+        "cannabis"
+      ],
+      "citation": "MDHS SNAP Policy Manual, Rule 22.14 (Individuals Convicted of Drug-Related Felonies): \"Mississippi has opted out of the law that denies assistance and benefits after drug-related convictions... Mississippi statute as of July 1, 2019 provides that individuals convicted of drug-related felonies are eligible to receive SNAP benefits\" — Miss. Code Ann. §43-12-71",
+      "heading": "CONFIRMED, not corrected: Mississippi fully opted out of the federal drug-felony SNAP ban effective July 1, 2019 — a full, unconditional opt-out, matching secondary-source claims this pack found",
+      "text": "21 U.S.C. §862a(a)(2) sets a federal default: anyone convicted of a state or federal felony for possessing, using, or distributing a controlled substance is permanently ineligible for SNAP unless a state opts out or modifies the ban under §862a(d)(1). MDHS's own current manual (Rule 22.14) states this directly and unconditionally: Mississippi opted out of the federal ban, and \"as of July 1, 2019,\" individuals convicted of drug-related felonies are eligible to receive SNAP benefits, citing Miss. Code Ann. §43-12-71. This pack found no qualifying language in MDHS's own manual — no treatment-program requirement, no probation-compliance condition, no partial carve-out — unlike Connecticut's three-path MODIFIED opt-out this roster's Connecticut pack documents. This pack could not fetch the raw statute text of §43-12-71 directly (law.justia.com returned an HTTP 403 Cloudflare challenge, the familiar Justia-403 pattern this roster has repeatedly documented), but treats MDHS's own manual — which quotes the statute's effect and dates it precisely — as the controlling primary source, cross-checked against WebSearch corroboration (Public Health Law Center's SNAP Ban Opt-Out map, the Collateral Consequences Resource Center's 50-state SNAP/TANF drug-felony survey, and 2019 contemporaneous news coverage of the bill, then HB 1352, passing). This is a CONFIRMATION of the secondary-source consensus, not a correction — worth stating plainly because this roster has found several states (Connecticut, Kentucky, Louisiana) where the same secondary-source-repeated \"full opt-out\" framing needed refinement; Mississippi's is genuinely unconditional. Fleeing felons and probation/parole violators remain a SEPARATE, unrelated disqualification (Rule 22.2-22.6) — an individual with an outstanding felony warrant who is actively being pursued by law enforcement, or who is violating probation/parole terms, is excluded from the household for SNAP purposes regardless of the underlying conviction type.",
+      "source_url": "https://www.mdhs.ms.gov/wp-content/uploads/2026/07/SNAP-Policy-Manual-May-2026-1.pdf"
+    },
+    {
+      "key": "abawd-work-requirement",
+      "kind": "supplement",
+      "terms": [
+        "abawd",
+        "able bodied adult",
+        "work requirement",
+        "3 month limit",
+        "work registration",
+        "waiver",
+        "waived area",
+        "time limit",
+        "delta",
+        "bolivar",
+        "coahoma",
+        "sunflower",
+        "washington county"
+      ],
+      "citation": "MDHS SNAP Policy Manual, Rule 13.1 (age 18-64, under-14 caregiver exemption, revised May 2026), Rule 13.12 (Waivers: \"MDHS may seek a waiver of the ABAWD time limits with the Governor's approval only during a formal state or federal declaration of a natural disaster\" — Miss. Code Ann. §43-12-19)",
+      "heading": "FLAGSHIP FINDING, STRUCTURAL: Mississippi's ABAWD waiver authority is tied to a natural-disaster declaration with the Governor's approval, NOT the federal unemployment-rate criteria — explaining why Mississippi currently has no active waiver despite historically waiver-eligible Delta counties",
+      "text": "An able-bodied adult without dependents (ABAWD) is limited to three countable months of SNAP within a 36-month period absent 80 hours/month of a qualifying work activity or an exemption. MDHS's current manual (Rule 13.1, revised May 2026) confirms the current federal OBBBA-era parameters: the ABAWD age range is 18 through 64 (an ABAWD the month after turning 18, not an ABAWD the month of turning 65), and the caregiver exemption applies to a household member responsible for a child under 14 (narrowed from under 18 pre-OBBBA), consistent with this roster's other 2025-2026-built packs. This pack found a genuine, consequential structural finding worth flagging precisely: Rule 13.12, MDHS's OWN waiver-authority provision, states MDHS \"may seek a waiver of the ABAWD time limits with the Governor's approval only during a formal state or federal declaration of a natural disaster,\" citing Miss. Code Ann. §43-12-19 — a Mississippi-specific statutory gate that is narrower than, and structurally different from, the federal unemployment-rate-based waiver criteria (10%+ county unemployment) most other states' packs in this roster describe as the operative waiver mechanism. This pack found secondary sources (ABAWDMap.us) confirming Mississippi's current status as \"No waiver — rule applies\" statewide, and separately found historical references to several Mississippi Delta counties (Bolivar, Coahoma, Humphreys, Issaquena, Leflore, Quitman, Sharkey, Sunflower, Tallahatchie, Tunica, Washington) that qualified for unemployment-rate-based ABAWD waivers in past years. This pack's reading, grounded in MDHS's own current Rule 13.12: those historical Delta-county waivers were obtained under a PRIOR waiver-authority framework; Mississippi's own current manual text ties waiver authority exclusively to a disaster declaration, which would explain — independent of any general nationwide OBBBA unemployment-criteria tightening — why no Delta county currently carries an active waiver even in years where county unemployment might otherwise cross a 10% threshold. This pack could not independently confirm whether Miss. Code Ann. §43-12-19 itself changed recently or has read this way for longer; flagged for re-verification in freshness.json given how consequential and volatile ABAWD waiver status is for a Mississippi applicant.",
+      "source_url": "https://www.mdhs.ms.gov/wp-content/uploads/2026/07/SNAP-Policy-Manual-May-2026-1.pdf"
+    },
+    {
+      "key": "shelter-utility-deductions",
+      "kind": "supplement",
+      "terms": [
+        "utility allowance",
+        "utility standard",
+        "shelter deduction",
+        "excess shelter",
+        "standard utility allowance",
+        "limited utility allowance",
+        "basic utility allowance",
+        "telephone allowance",
+        "standard deduction",
+        "sua",
+        "bua",
+        "homeless",
+        "homeless shelter deduction"
+      ],
+      "citation": "MDHS SNAP Policy Manual, Rule 18.2 (Standard Deduction — 8.31% of net income eligibility standard, national formula), Rule 18.7-18.9 (Homeless Shelter Deduction, Excess Shelter Deduction, Standard Utility Allowances — structure only, no MS-specific dollar figures published); USDA FNA FY2026 SUA-values PDF (access-blocked, see PROVENANCE.md)",
+      "heading": "DISCLOSED GAP: Mississippi's manual describes the STRUCTURE of its utility and shelter deductions precisely, but does not publish its own current dollar figures — and this pack could not recover Mississippi's specific FY2026 SUA amount",
+      "text": "Mississippi's Standard Deduction (Rule 18.2) is calculated as 8.31% of the monthly net income eligibility standard for household sizes 1 through 6, rounded up to the nearest dollar, with sizes above 6 using the 6-person figure — this is the same national minimum-standard-deduction formula 7 CFR §273.9(d)(1)(i) sets for the 48 states, matching the current FFY2026 figures ($209 for sizes 1-3, $223 for size 4, $261 for size 5, $299 for size 6+) this roster's other packs have independently confirmed from their own states' current tables. Mississippi offers three utility-allowance types (Rule 18.9): a Standard Utility Allowance (SUA) including heating or cooling, available to households incurring those costs separately from rent/mortgage or to elderly/disabled households receiving more than $20/month in LIHEAP assistance; a Basic Utility Allowance (BUA) for households with at least two other utilities (electricity, gas, water, etc.) but no heating/cooling cost; and a Standard Telephone Allowance for households whose only separately-billed utility is a phone bill. Mississippi's excess shelter deduction (Rule 18.8) is capped at FNS's national maximum ($744 for FFY2026, matching this roster's other confirmed packs) UNLESS the household contains an elderly or disabled member, in which case it is uncapped. MDHS's own manual does NOT publish Mississippi's specific dollar SUA/BUA/telephone-allowance figures anywhere in its 166 pages — Rule 18.9 states only that households receive \"the appropriate utility allowances,\" deferring to a separately-maintained standards document this pack could not locate on mdhs.ms.gov, and USDA FNA's own national FY2026 SUA-values PDF (which would carry Mississippi's specific figure) returned a live Akamai bot-detection block (HTTP 403) to every direct fetch attempt. This pack does NOT fabricate a Mississippi SUA dollar figure — this is a disclosed, unresolved sourcing gap, flagged in freshness.json for re-verification.",
+      "source_url": "https://www.mdhs.ms.gov/wp-content/uploads/2026/07/SNAP-Policy-Manual-May-2026-1.pdf"
+    },
+    {
+      "key": "medical-deduction",
+      "kind": "supplement",
+      "terms": [
+        "medical deduction",
+        "medical expense",
+        "medical expenses",
+        "medical bills",
+        "elderly deduction",
+        "disability deduction",
+        "excess medical",
+        "standard medical deduction"
+      ],
+      "citation": "MDHS SNAP Policy Manual, Rule 18.4 (Excess Medical Deduction) — actual-expense-only mechanism: deduction for verified medical expenses over $35/month for an elderly or disabled household member; no flat Standard Medical Deduction shortcut found",
+      "heading": "Mississippi uses an ACTUAL-EXPENSE-ONLY medical deduction (expenses minus $35) — no flat Standard Medical Deduction shortcut, placing it with Connecticut's, Maryland's, and Indiana's mechanism rather than Kentucky's, Louisiana's, Alabama's, or South Carolina's flat-shortcut camp",
+      "text": "Mississippi allows a deduction for a portion of verified medical expenses exceeding $35/month (excluding special diets), incurred by a household member who is elderly or disabled (Rule 18.4). Spouses or others receiving benefits merely as a dependent of an SSI/disabled/blind recipient are not themselves eligible for this deduction. Allowable costs are broad: medical and dental care (including psychotherapy and rehabilitation by a Mississippi-licensed practitioner), hospitalization, nursing/nursing-home care, prescription drugs (except Schedule I controlled substances) and other-over-the-counter medication including insulin, dentures, hearing aids, prosthetics, transportation and lodging for medical treatment, health/hospitalization insurance premiums, Medicare premiums and Medicaid cost-sharing, service-dog costs (food and vet bills), prescribed eyeglasses, and homemaker/home-health-aide/childcare services necessary due to age, infirmity, or illness (with the same either/or rule this roster's other packs document: attendant-care costs can be claimed as a medical OR dependent-care deduction, but not both). This pack found no Mississippi-specific flat dollar figure functioning as a Standard Medical Deduction shortcut the way this roster's Kentucky ($137), Louisiana ($161), South Carolina ($175), Missouri ($135), Colorado ($165), and Alabama ($185) packs each document — Mississippi's manual requires the actual verified expense amount in every case, placing it in the same actual-expense-only camp this roster's Connecticut, Maryland, and Indiana packs describe. The $35 threshold itself is a fixed national SNAP program parameter (7 CFR §273.9(d)(3)) common to every state's manual, not a Mississippi-specific figure.",
+      "source_url": "https://www.mdhs.ms.gov/wp-content/uploads/2026/07/SNAP-Policy-Manual-May-2026-1.pdf"
+    },
+    {
+      "key": "restaurant-meals-program",
+      "kind": "supplement",
+      "terms": [
+        "restaurant meals program",
+        "rmp",
+        "eat at a restaurant",
+        "use ebt at restaurant",
+        "hot meal",
+        "hot food",
+        "prepared food"
+      ],
+      "citation": "USDA FNA's current SNAP Restaurant Meals Program state list (Arizona, Maryland, New York, California, Massachusetts, Rhode Island, Illinois [Cook/Franklin Counties], Michigan, Virginia — Mississippi absent, direct curl fetch, clean HTTP 200, page updated August 7, 2026)",
+      "heading": "Mississippi does NOT operate a Restaurant Meals Program",
+      "text": "The Restaurant Meals Program (RMP) is a state OPTION under 7 CFR §274.7(g) letting elderly (60+), disabled, and homeless SNAP recipients (and their eligible spouses) buy prepared, hot meals from authorized restaurants with EBT year-round. USDA FNA's own current RMP state list (fetched directly, clean HTTP 200, page metadata dated August 7, 2026) names Arizona, Maryland, New York, California, Massachusetts, Rhode Island, Illinois (Cook and Franklin Counties only), Michigan, and Virginia as the only participating states — Mississippi is absent, and this pack found no pending Mississippi legislation directing MDHS toward one (unlike Connecticut's SB 1475, which this roster's Connecticut pack documents as a live, unresolved gap). MDHS's own EBT Card page describes SNAP benefits being usable at authorized retailers, farmers markets, and truck vendors — no mention of restaurant use anywhere in Mississippi's own consumer-facing material, consistent with the federal list's exclusion. This pack's operative answer for a Mississippi applicant today is that Mississippi does not currently offer any Restaurant Meals Program option.",
+      "source_url": "https://www.fna.usda.gov/snap/retailer/restaurant-meals-program"
+    },
+    {
+      "key": "expedited-service",
+      "kind": "supplement",
+      "terms": [
+        "expedited",
+        "expedited service",
+        "emergency",
+        "emergency snap",
+        "emergency food",
+        "fast",
+        "how fast",
+        "urgent",
+        "immediate need"
+      ],
+      "citation": "MDHS SNAP Policy Manual, Rule 4.2 (Expedited Service — Screening Requirements) and Rule 4.4 (Expedited Service Minimum Actions) — plain federal expedited-eligibility criteria and the plain federal 7-calendar-day processing ceiling",
+      "heading": "Mississippi's expedited-service criteria and timeline are the plain federal standard — no state-specific acceleration or narrowing found",
+      "text": "A Mississippi household qualifies for expedited service under the standard federal criteria (Rule 4.2): less than $150 in monthly gross income AND $100 or less in liquid resources; a destitute migrant or seasonal farmworker household with $100 or less in liquid resources; or a household whose combined monthly gross income and liquid resources are less than its monthly rent/mortgage payment and utility expenses (including entitlement to a Standard Utility Allowance if higher than actual bills). A qualifying household must complete the application, complete the interview, and prove identity (Rule 4.4) — all other required verification may be postponed until before the second month's benefits are issued. This pack found no Mississippi-specific acceleration below, or narrowing above, the plain federal 7-calendar-day expedited-service ceiling (7 CFR §273.2(i)) — Mississippi's manual states the federal standard without modification, a contrast worth noting against this roster's Kentucky pack, whose own internal processing standard is faster than the federal floor. Mississippi's ORDINARY (non-expedited) processing standard is likewise the federal default: no later than 30 days from a valid application (Rule 30.15.A).",
+      "source_url": "https://www.mdhs.ms.gov/wp-content/uploads/2026/07/SNAP-Policy-Manual-May-2026-1.pdf"
+    },
+    {
+      "key": "reporting-certification",
+      "kind": "supplement",
+      "terms": [
+        "certification period",
+        "approval period",
+        "recertification",
+        "redetermination",
+        "how long does snap last",
+        "how long does my snap approval last",
+        "how long does my approval last",
+        "redo",
+        "renew",
+        "esap",
+        "mscap",
+        "choctaw"
+      ],
+      "citation": "MDHS SNAP Policy Manual, Rule 30.14.F (certification periods up to 24 months for all-elderly/disabled households, 12 months for others), Rule 28.1-28.5 (ESAP — all household members 65+, no earned income, 36-month certification), Chapter 29 (MSCAP, 36-month certification), Chapter 19 (Choctaw Food Distribution Program)",
+      "heading": "Mississippi's standard certification period is 12 months (up to 24 for all-elderly/disabled households); ESAP is narrower than this roster's other states' 60+ elderly-simplified tracks — Mississippi's ESAP requires EVERY household member to be 65 or older",
+      "text": "Mississippi's standard SNAP certification period is up to 12 months for ordinary households, lengthenable to up to 24 months for households where every member is elderly or disabled (Rule 30.14.F) — MDHS may not shorten an established certification period early except for a genuine change in eligibility, a change-reporting failure, or substantial lottery/gambling winnings; a mere loss of public assistance or change in employment status alone is insufficient. Mississippi's Elderly Simplified Application Project (ESAP, Chapter 28) is narrower than the age-60-or-disabled ESAP structure this roster's Connecticut and Kentucky packs document for their own states: Mississippi's ESAP requires EVERY household member to be age 65 OR OLDER (not 60, and disability alone does not qualify a household) with no earned income anywhere in the household — households meeting this test are MANDATORY for ESAP and become ineligible for regular SNAP processing. ESAP households get a 36-month certification period, self-declare most eligibility factors (verification is required only for non-citizen status, resources/transfers, medical expenses over $35, shelter, and utility costs), and receive an annual interim-contact form rather than a full recertification unless they have changes to report. The separate Mississippi Combined Application Project (MSCAP, Chapter 29) also carries a 36-month certification period. Mississippi additionally operates the Choctaw Food Distribution Program (FDP, Chapter 19) for the Mississippi Band of Choctaw Indians reservation — a genuine Mississippi-specific structural feature this pack flags: eligible reservation households (Choctaw and non-Choctaw residents alike, though off-reservation participation is limited to Choctaw Indian households specifically) may choose EITHER SNAP or a monthly FDP commodity food package, but not both in the same month, and switching between the two requires formally terminating one program and reapplying for the other.",
+      "source_url": "https://www.mdhs.ms.gov/wp-content/uploads/2026/07/SNAP-Policy-Manual-May-2026-1.pdf"
+    }
+  ]
+}
