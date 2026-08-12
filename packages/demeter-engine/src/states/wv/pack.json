@@ -1,0 +1,62 @@
+{
+  "code": "WV",
+  "program": "SNAP",
+  "agency": "West Virginia Department of Human Services (DoHS), Bureau for Family Assistance (BFA)",
+  "admin_model": "state",
+  "admin_note": "West Virginia is a STATE-ADMINISTERED SNAP program — DoHS's Bureau for Family Assistance administers SNAP centrally, with no county-level policy authority (county DoHS field offices process cases but do not set policy), structurally similar to this roster's Connecticut, Nebraska, Ohio, North Carolina, and most other non-CA/NY/MN/WI/VA states. NAMING-TRANSITION FINDING this pack found: West Virginia's Department of Health and Human Resources (DHHR) was split by a 2023 legislative reorganization into three successor agencies — the Department of Health, the Department of Human Services (DoHS), and the Department of Health Facilities. SNAP is now administered by DoHS's Bureau for Family Assistance (bfa.wv.gov), the CURRENT, live source this pack used throughout — but the legacy dhhr.wv.gov domain is still actively used for some press releases and older PDF forms (e.g., some SNAP application PDFs this pack found are still hosted at dhhr.wv.gov paths), and several secondary sources this pack found still describe \"DHHR\" as the SNAP administrator without noting the 2023 split. FLAGSHIP FINDING this pack found: West Virginia became the FIRST state in the nation to implement a USDA-approved SNAP \"Healthy Choices\" waiver restricting purchase of soda with SNAP benefits, effective January 1, 2026 — see food-restriction-waiver supplement. SECOND FLAGSHIP FINDING: unlike Nebraska's soda/energy-drink waiver (vacated by a federal court in Aragon v. Rollins, June 2026), this pack found NO litigation or court order affecting West Virginia's soda waiver as of this pack's fetch date — West Virginia's restriction remains active and enforced, a genuine contrast worth naming precisely rather than assuming all 2026 state SNAP food-restriction waivers share Nebraska's litigation outcome. THIRD FINDING (confirmation of a minority-position claim): West Virginia is one of a minority of states that has MODIFIED, not fully repealed, the federal drug-felony SNAP ban — W. Va. Code § 9-2-3a (enacted by HB2459, 2019) exempts West Virginians from the federal ban EXCEPT where the felony conviction itself involved misuse of SNAP benefits, loss of life, or causing physical injury; this pack independently confirmed this is still the CURRENT, unamended statute text (fetched directly from code.wvlegislature.gov, no repeal since 2019) and additionally found a 2026 WV Board of Review decision (26-BOR-1601) applying this exact rule to a live 2026 case, corroborating that the 2019 HB2459 modification remains the state's OPERATIVE, current policy — see criminal-justice-disqualifications supplement. FOURTH FINDING: West Virginia's ABAWD work-requirement waiver situation is a genuine structural finding worth flagging: West Virginia has a long history of holding a STATEWIDE ABAWD waiver due to persistently high unemployment in its Appalachian coal counties, but this pack found no active ABAWD waiver anywhere in West Virginia as of this pack's fetch date — consistent with the One Big Beautiful Bill Act's (OBBBA, July 2025) new requirement that an ABAWD waiver area document county-level unemployment above 10%, a threshold even West Virginia's highest-unemployment county (McDowell County, ~9.1%) currently falls short of. Confirm current operative practice with the applicant's own local DoHS office, the same caution this roster already carries for CA/NY/MN/WI/OH/NC/NJ/VA/GA/IN/TN/MO/MD/CO/SC/AL/LA/KY/OK/CT/NE.",
+  "system": "DoHS's Bureau for Family Assistance processes SNAP centrally; applicants apply online through the WV PATH portal (wvpath.wv.gov, \"People's Access To Help\"), by phone through the DoHS Office of Constituent Services Customer Service Center (1-877-716-1212), by mail, or in person at a county DoHS field office (open Monday, Tuesday, Thursday, and Friday). WV PATH also handles Medicaid, WVCHIP, LIEAP, Medicare Premium Assistance, and School Clothing Allowance applications. This pack flags a lower-confidence gap: it could not directly confirm West Virginia's current Standard Utility Allowance (SUA) dollar figures from a directly-fetched, dated primary-source table — see freshness.json.",
+  "portal": {
+    "name": "WV PATH",
+    "url": "https://www.wvpath.wv.gov/"
+  },
+  "update_channels": [
+    {
+      "name": "West Virginia Bureau for Family Assistance — SNAP program page (asset limits, income test structure, reporting requirements, ABAWD basics, how to apply) — direct curl fetch, clean HTTP 200",
+      "url": "https://bfa.wv.gov/snap"
+    },
+    {
+      "name": "West Virginia Bureau for Family Assistance — Income Maintenance Manual index",
+      "url": "https://bfa.wv.gov/income-maintenance-manual"
+    },
+    {
+      "name": "West Virginia Bureau for Family Assistance — Able-Bodied Adults Without Dependents (ABAWD) Requirements PDF (current 36-month period 1/1/2025-12/31/2027, 18-64 age range) — direct curl fetch, clean HTTP 200",
+      "url": "https://bfa.wv.gov/media/1761/download?inline="
+    },
+    {
+      "name": "West Virginia Code § 9-2-3a (drug-felony SNAP exemption, enacted by HB2459, 2019) — direct curl fetch of code.wvlegislature.gov, clean HTTP 200, full text read directly",
+      "url": "https://code.wvlegislature.gov/9-2-3a/"
+    },
+    {
+      "name": "West Virginia Bureau for Family Assistance — West Virginia Department of Human Services Announces Implementation of WV's SNAP Healthy Choices Waiver, Effective January 1, 2026",
+      "url": "https://bfa.wv.gov/article/west-virginia-department-human-services-announces-implementation-wvs-snap-healthy-choices"
+    },
+    {
+      "name": "USDA FNA — West Virginia SNAP Food Restriction (soda) Waiver page",
+      "url": "https://www.fns.usda.gov/snap/waivers/foodrestriction/westvirginia"
+    },
+    {
+      "name": "WV Office of Inspector General, Board of Review Decision 26-BOR-1601 (2026) — applying W. Va. Code § 9-2-3a's drug-felony SNAP exemption to a live 2026 appeal",
+      "url": "https://oig.wv.gov/media/39632/download?inline="
+    },
+    {
+      "name": "West Virginia Income Maintenance Manual, Chapter 11 (Assets) — direct curl fetch, clean HTTP 200 (dated sections; see freshness.json currency flag)",
+      "url": "https://www.wvdhhr.org/bcf/policy/imm/new_manual/immanual/manual_pdf_files/chapter_11/ch11_2.pdf"
+    }
+  ],
+  "verification": {
+    "verified_on": "2026-08-12",
+    "method": "Direct curl fetch (browser User-Agent) of West Virginia Bureau for Family Assistance's (bfa.wv.gov) live SNAP program page — a genuinely CURRENT agency page with an explicit 130%/200% FPL income table and asset-limit figures, a real departure from this roster's more common pattern of PDF-only current figures. Also directly fetched W. Va. Code § 9-2-3a's full text from code.wvlegislature.gov (no access barrier), West Virginia's ABAWD Requirements PDF from bfa.wv.gov, and several West Virginia Income Maintenance Manual (IMM) chapter PDFs from the legacy wvdhhr.org domain (Chapters 9 and 11, dated 2009-2013 in their page footers — see freshness.json currency flag). Cross-checked WebSearch/WebFetch corroboration (WV MetroNews, Fayette Tribune, WV Gazette-Mail, WV Center on Budget & Policy, Public Health Law Center's SNAP-ban opt-out map, Propel's state EBT guide, abawdmap.us) for the HB2459 drug-felony history, the Restaurant Meals Program's absence, and current ABAWD waiver status, and directly fetched a 2026 WV Board of Review decision (26-BOR-1601, oig.wv.gov) as live corroboration that the 2019 drug-felony modification remains current operative policy.",
+    "gates": "bfa.wv.gov and code.wvlegislature.gov both returned clean HTTP 200 to every direct curl attempt with a browser User-Agent — no bot-detection wall found anywhere in this pack's West Virginia research. The legacy wvdhhr.org domain (hosting older Income Maintenance Manual PDF chapters) also returned clean HTTP 200, but several of its chapter files carry OLD page-footer dates (10/13, 11/09, 10/08) predating this pack's fetch by more than a decade — this pack treats those IMM chapters as evidence of PROCEDURAL structure (how asset/income determinations work) but NOT as a source for current dollar figures, which this pack instead drew from bfa.wv.gov's live, dated SNAP page. This pack could not locate a directly-fetched, dated primary-source table for West Virginia's current Standard Utility Allowance (SUA) dollar figures within its research window — flagged explicitly in freshness.json rather than estimated or fabricated. This is a TOOLING/COVERAGE gap in this pack's own research, not a confirmed source-side access barrier — bfa.wv.gov and the IMM index page were both reachable; this pack simply did not converge on the specific IMM chapter (likely Chapter 12, Deductions) carrying the current SUA table within its fetch window.",
+    "sources": [
+      "West Virginia Bureau for Family Assistance, SNAP program page (bfa.wv.gov/snap) — direct curl fetch, clean HTTP 200; live 130%/200% FPL gross-income table by household size, $3,000/$4,500 asset limits, $35 medical-deduction threshold, reporting-threshold structure",
+      "W. Va. Code § 9-2-3a — direct curl fetch of code.wvlegislature.gov, clean HTTP 200, full statute text read directly: drug-felony SNAP exemption enacted by HB2459 (2019), current and unamended",
+      "West Virginia Bureau for Family Assistance, Able-Bodied Adults Without Dependents (ABAWD) Requirements PDF — direct curl fetch, clean HTTP 200; current 36-month period (1/1/2025-12/31/2027), 18-64 age range (confirming OBBBA's age-range expansion), work-requirement and exemption structure",
+      "West Virginia Bureau for Family Assistance, 'West Virginia Department of Human Services Announces Implementation of WV's SNAP Healthy Choices Waiver' press release, and USDA FNA's West Virginia food-restriction-waiver page — corroborated via WebSearch/WebFetch; soda restriction approved 8/4/2025, effective 1/1/2026, retailer compliance deadline 4/1/2026, waiver valid through 12/31/2027",
+      "WV Office of Inspector General, Board of Review Decision 26-BOR-1601 (2026) — direct curl fetch, clean HTTP 200 PDF; a live 2026 SNAP appeal applying W. Va. Code § 9-2-3a's drug-felony exemption, corroborating current operative practice",
+      "West Virginia Income Maintenance Manual, Chapters 9 (Eligibility Determination Groups) and 11 (Assets) — direct curl fetch of wvdhhr.org PDFs, clean HTTP 200, but carrying stale page-footer dates (as old as 2008-2013) — used for procedural structure only, not current dollar figures",
+      "WV MetroNews, Fayette Tribune, WV Gazette-Mail, West Virginia Center on Budget & Policy, Public Health Law Center's SNAP-ban opt-out state map, and CLASP's national drug-felony SNAP/TANF survey — WebSearch corroboration for HB2459's 2019 legislative history and West Virginia's modified-ban classification",
+      "Propel's West Virginia state EBT guide — WebSearch/WebFetch corroboration that West Virginia does NOT operate a SNAP Restaurant Meals Program",
+      "abawdmap.us — WebSearch/WebFetch corroboration that West Virginia currently has no active ABAWD work-requirement waiver anywhere in the state, cross-checked against OBBBA's new 10%-county-unemployment waiver threshold and West Virginia's current county-level unemployment data (McDowell County, the state's highest, at approximately 9.1%)"
+    ]
+  }
+}

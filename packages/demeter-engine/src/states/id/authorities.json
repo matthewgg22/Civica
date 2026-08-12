@@ -1,0 +1,35 @@
+{
+  "_provenance": {
+    "note": "Idaho citation authorities. Idaho's operative SNAP policy is Title 16 of the Idaho Administrative Code (IDAPA), Chapter 03.04, cited by section number such as '287' (Section 287, Ineligibility for a Felony Conviction) or '16.03.04.287' in fuller form. This pack found no distinct second citation family (no Idaho statute analogous to Nebraska's Neb. Rev. Stat. § 68-1017.02) — Idaho's drug-felony and ABAWD provisions both live directly inside IDAPA 16.03.04's own numbered sections, not in a separate Idaho Code title. Idaho's candy/soda restriction traces to Idaho House Bill 109, cited by its own bill number since it has not yet been independently confirmed as codified into a numbered Idaho Code or IDAPA section by this pack's sources.",
+    "extracted": "2026-08-12"
+  },
+  "patterns": [
+    {
+      "key": "idapa",
+      "regex": "\\b(?:IDAPA\\s?16\\.03\\.04\\.)?(\\d{3}(?:\\.\\d{2})?)\\b",
+      "flags": "gi",
+      "template": "IDAPA 16.03.04.$1",
+      "normalize": "none",
+      "match": "exact",
+      "note": "Idaho Administrative Code, Title 16 (Health and Welfare), Chapter 03.04 (Idaho Food Stamp Program), cited by bare section number, e.g. 287 (drug-felony ineligibility), 305 (resource limit), 543 (utility allowances)."
+    }
+  ],
+  "known": {
+    "idapa": [
+      { "value": "IDAPA 16.03.04.010.09", "note": "Definitions A through D — Broad-Based Categorical Eligibility (BBCE): households eligible under 7 CFR 273.2(j)(2) remain SUBJECT TO resource, gross, and net income eligibility standards (not exempt) — the flagship correction this pack found" },
+      { "value": "IDAPA 16.03.04.010.10", "note": "Definitions A through D — Categorical Eligibility (CE): households where all members receive TAFI, AABD, or SSI cash payments are exempt from resource, gross, and net income eligibility standards" },
+      { "value": "IDAPA 16.03.04.120", "note": "Household Interviews — frequency: every 24 months for households certified for 24 months, every 12 months for all other households" },
+      { "value": "IDAPA 16.03.04.178", "note": "Categorically Eligible Households — cash-benefit, benefits-recouped, and under-$10-grant categories; Department will not compute resource, gross, or net income limits for these households" },
+      { "value": "IDAPA 16.03.04.181", "note": "Broad-Based Categorically Eligible Household Exceptions — IPV disqualification, drug-related felony ineligibility, striker status, transferred resources, and refusal to cooperate all bar BBCE eligibility" },
+      { "value": "IDAPA 16.03.04.251", "note": "Able-Bodied Adults Without Dependents (ABAWD) Work Requirement — 80 hours/month work or work-program participation; three-month time limit within a 36-month period; subsection 05 preserves a High Unemployment Areas mechanism" },
+      { "value": "IDAPA 16.03.04.257", "note": "Persons Not Considered ABAWD — age, disability, household-with-minor, pregnancy, homeless, veteran, and student exemptions. TEXT IS PRE-OBBBA (dated 7-1-24) and now superseded on age range (shows 53/55, not the current federal 64) and on veteran/homeless/foster-youth exemptions (removed nationally by OBBBA effective 10/20/2025) — flag this section's text as stale relative to current federal law" },
+      { "value": "IDAPA 16.03.04.287", "note": "Ineligibility for a Felony Conviction for Possession, Use, or Distribution of a Controlled Substance — modified ban: eligible for Food Stamps while complying with the terms of a withheld judgment, probation, or parole; ineligible if not complying. No treatment-program requirement stated" },
+      { "value": "IDAPA 16.03.04.305", "note": "Resource Limit — $5,000 flat for Broad-Based Categorically Eligible households; non-BBCE households subject to FNS-published limits (federal baseline, currently $3,000/$4,500 elderly-disabled)" },
+      { "value": "IDAPA 16.03.04.334", "note": "Vehicles — vehicles used primarily for recreational purposes count toward the resource limit; other vehicles' values counted per 7 CFR 273's federal methodology" },
+      { "value": "IDAPA 16.03.04.532", "note": "Gross Income Limit — households exceeding the gross income limit for household size are ineligible unless categorically eligible or an elderly/disabled member is present (elderly/disabled households are exempt from the gross income test)" },
+      { "value": "IDAPA 16.03.04.533", "note": "Household Eligibility and Benefit Level — deductions computed per 7 CFR 273.10 except as stated: 20% earned-income deduction, FNS-set homeless shelter deduction, $35 excess-medical threshold, dependent-care deduction, child-support deduction, excess-shelter deduction (over 50% of income after other deductions)" },
+      { "value": "IDAPA 16.03.04.535", "note": "Medical Expenses — Standard Medical Expense (SME) deduction for elderly/disabled households with verified medical expenses over $35/month; household may choose SME or verify actual excess costs for an actual-expense deduction. Current SME dollar figure not stated in the rule text itself" },
+      { "value": "IDAPA 16.03.04.543", "note": "Utility Allowances — four-tier structure: Standard Utility Allowance (SUA, heating/cooling), Limited Utility Allowance (LUA, 2+ non-heating utilities), Minimum Utility Allowance (MUA, exactly 1 non-heating non-telephone utility), Telephone Utility Allowance (TUA, telephone only). Not prorated; one SUA per household maximum" }
+    ]
+  }
+}

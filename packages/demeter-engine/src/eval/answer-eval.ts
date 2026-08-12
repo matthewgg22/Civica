@@ -4005,6 +4005,182 @@ export const NE_GOLD: AnswerExpectation[] = [
   },
 ];
 
+export const ID_GOLD: AnswerExpectation[] = [
+  {
+    id: "id-income-limit-130-no-bbce-elevation",
+    // Guards the finding: Idaho runs the plain federal 130% FPL gross-income
+    // limit — no elevated BBCE income ceiling the way NE, etc. carry.
+    question: "What is the income limit for SNAP in Idaho?",
+    state: "ID",
+    mustMention: "1,696",
+    mustDisclaim: true,
+  },
+  {
+    id: "id-bbce-resource-limit-5000-not-waived",
+    // Guards the flagship correction: Idaho's BBCE RAISES the resource limit
+    // to a flat $5,000 rather than waiving it, contradicting a widely
+    // repeated secondary-source "no resource limit" claim.
+    question: "Does my car count against me for SNAP in Idaho?",
+    state: "ID",
+    expectCitation: "16.03.04.305",
+    mustMention: "5,000",
+    mustDisclaim: true,
+  },
+  {
+    id: "id-drug-felony-modified-ban-sentence-compliance",
+    // Guards the structural finding: Idaho's modified drug-felony ban turns
+    // on ongoing compliance with a withheld judgment, probation, or parole
+    // — not conviction count or a treatment-program requirement.
+    question: "I have a drug felony conviction — can I still get SNAP in Idaho?",
+    state: "ID",
+    expectCitation: "16.03.04.287",
+    mustMention: "probation",
+    mustDisclaim: true,
+  },
+  {
+    id: "id-abawd-age-range-current-federal-not-stale-rule-text",
+    // Guards the freshness finding: IDAPA 16.03.04.257's own text is
+    // pre-OBBBA and stale — current federal law controls (age 64).
+    question: "What is the ABAWD work requirement age range in Idaho?",
+    state: "ID",
+    mustMention: "64",
+    mustDisclaim: true,
+  },
+  {
+    id: "id-candy-soda-restriction-active-not-vacated",
+    // Guards the time-sensitive flagship finding: Idaho's candy/soda
+    // restriction was NOT among the waivers vacated by Aragon v. Rollins
+    // — unlike Nebraska's, it remains active.
+    question: "Can I buy candy or soda with my SNAP benefits in Idaho?",
+    state: "ID",
+    mustMention: "not",
+    mustDisclaim: true,
+  },
+  {
+    id: "id-utility-allowance-four-tier-mua",
+    // Guards the structural finding: Idaho has a distinct fourth utility
+    // tier, the Minimum Utility Allowance (MUA), between LUA and TUA.
+    question: "What utility deduction can I get for SNAP in Idaho?",
+    state: "ID",
+    mustMention: "heating",
+    mustDisclaim: true,
+  },
+  {
+    id: "id-medical-deduction-sme-shortcut-available",
+    question: "I'm disabled and have $50 a month in medical bills for Idaho SNAP — do I get a deduction?",
+    state: "ID",
+    mustMention: "35",
+    mustDisclaim: true,
+  },
+  {
+    id: "id-restaurant-meals-program-not-available",
+    question: "Does Idaho have a Restaurant Meals Program for SNAP?",
+    state: "ID",
+    mustMention: "not",
+    mustDisclaim: true,
+  },
+  {
+    id: "id-how-to-apply-idalink",
+    question: "How do I apply for SNAP in Idaho?",
+    state: "ID",
+    mustDisclaim: true,
+  },
+  {
+    id: "id-federal-benefit",
+    question: "How is the monthly SNAP benefit amount calculated from net income in Idaho?",
+    state: "ID",
+    expectCitation: "273.10",
+    mustDisclaim: true,
+  },
+];
+
+export const WV_GOLD: AnswerExpectation[] = [
+  {
+    id: "wv-bbce-200-broad-no-carveout",
+    // Guards the structural finding: WV's 200% FPL BBCE ceiling applies
+    // broadly, unlike NE's narrower elderly/disabled/ERP-scoped 165%.
+    question: "What is the income limit for SNAP in West Virginia?",
+    state: "WV",
+    mustMention: "200",
+    mustDisclaim: true,
+  },
+  {
+    id: "wv-asset-limit-bbce-waiver",
+    question: "Does my car or savings count against me for SNAP in West Virginia?",
+    state: "WV",
+    mustMention: "3,000",
+    mustDisclaim: true,
+  },
+  {
+    id: "wv-drug-felony-modified-ban-hb2459",
+    // Guards the flagship confirmation: W. Va. Code 9-2-3a's modified opt-out,
+    // corroborated by a live 2026 Board of Review decision.
+    question: "I have a drug felony conviction — can I still get SNAP in West Virginia?",
+    state: "WV",
+    expectCitation: "9-2-3a",
+    mustMention: "injury",
+    mustDisclaim: true,
+  },
+  {
+    id: "wv-abawd-waiver-lapsed-inference",
+    // Guards the flagship finding: WV's historical statewide ABAWD waiver
+    // appears lapsed under OBBBA's tightened 10% threshold.
+    question: "Is the SNAP work-requirement time limit currently waived anywhere in West Virginia?",
+    state: "WV",
+    mustMention: "no",
+    mustDisclaim: true,
+  },
+  {
+    id: "wv-abawd-age-range-current-federal",
+    question: "What is the ABAWD work requirement age range in West Virginia?",
+    state: "WV",
+    mustMention: "64",
+    mustDisclaim: true,
+  },
+  {
+    id: "wv-soda-waiver-first-state-active",
+    // Guards the flagship finding: WV is the first state with an active,
+    // unlitigated USDA soda-restriction waiver (contrast with NE's vacatur).
+    question: "Can I buy soda with my SNAP benefits in West Virginia?",
+    state: "WV",
+    mustMention: "2026",
+    mustDisclaim: true,
+  },
+  {
+    id: "wv-restaurant-meals-program-not-available",
+    question: "Does West Virginia have a Restaurant Meals Program for SNAP?",
+    state: "WV",
+    mustMention: "not",
+    mustDisclaim: true,
+  },
+  {
+    id: "wv-utility-deduction-sourcing-gap",
+    question: "What utility deduction can I get for SNAP in West Virginia?",
+    state: "WV",
+    mustDisclaim: true,
+  },
+  {
+    id: "wv-medical-deduction-actual-expense-no-shortcut",
+    question: "I'm disabled and have $50 a month in medical bills for West Virginia SNAP — do I get a deduction?",
+    state: "WV",
+    mustMention: "35",
+    mustDisclaim: true,
+  },
+  {
+    id: "wv-how-to-apply-wvpath",
+    question: "How do I apply for SNAP in West Virginia?",
+    state: "WV",
+    mustDisclaim: true,
+  },
+  {
+    id: "wv-federal-benefit",
+    question: "How is the monthly SNAP benefit amount calculated from net income in West Virginia?",
+    state: "WV",
+    expectCitation: "273.10",
+    mustDisclaim: true,
+  },
+];
+
 
 /** Everything the live runner executes for Maine. */
 export const ME_GOLD: AnswerExpectation[] = [
@@ -4139,5 +4315,7 @@ export const ALL_GOLD: AnswerExpectation[] = [
   ...KS_GOLD,
   ...NM_GOLD,
   ...NE_GOLD,
+  ...ID_GOLD,
+  ...WV_GOLD,
   ...ME_GOLD,
 ];
