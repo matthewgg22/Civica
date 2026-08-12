@@ -5457,6 +5457,20 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 }
 .dmx__official .dmx__note { margin-top: 0.35rem; }
 .dmx__official .dmx__officiallinks { margin-top: 0.2rem; }
+/* The mark itself: never restyled, never recoloured, never given a filter —
+   using it unaltered is a condition, not a preference. Only its box size is
+   ours to set. */
+.dmx__snaplogo { margin-bottom: 0.35rem; }
+.dmx__snaplogo img { width: 148px; height: auto; display: block; }
+/* Required notice. Small, because it is a legal footnote — but it sits with the
+   logo and stays legible: --demeter-muted on --demeter-card is a checked pair. */
+.dmx__servicemark {
+  grid-column: 1 / -1;
+  margin: 1rem 0 0; padding-top: 0.85rem;
+  border-top: 1px solid var(--demeter-rule);
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.74rem; line-height: 1.5; color: var(--demeter-muted);
+}
 
 /* The argument left, the source right. Same reason. */
 .dmx__evgrid {

@@ -22,9 +22,22 @@ import {
   type FormQuestion,
 } from "@civica/demeter-engine";
 import type { AnswerLang } from "@civica/demeter-engine/packs";
+import Image from "next/image";
 import { PAGE_COPY } from "../lib/i18n/snap-page";
 import { StateFlag } from "./StateFlag";
 import { UsCoverageMap } from "./UsCoverageMap";
+
+/** REQUIRED VERBATIM by FNS wherever an organisation outside USDA uses the SNAP
+ *  logo. Not our sentence to reword, and deliberately NOT in the localized copy
+ *  table — a mandated legal notice that can be translated is a mandated legal
+ *  notice that can drift. It renders in English on every language of the page,
+ *  which is what "must include the statement" means.
+ *
+ *  Source: fns.usda.gov/resource/snap-logo-guidance. The spacing in "U. S." is
+ *  theirs; it is reproduced rather than tidied. */
+const SNAP_SERVICE_MARK =
+  "The SNAP logo is a service mark of the U. S. Department of Agriculture. " +
+  "USDA does not endorse any goods, services, or enterprises.";
 
 /** The most form-like phrasing for a topic — the longest one, which is the
  *  closest to how the question is actually printed. Derived rather than
@@ -198,6 +211,14 @@ export function SnapDetail({ states, lang = "en" }: { states: PackMeta[]; lang?:
             <p className="dmx__note">{c.officialNote}</p>
           </div>
           <ul className="dmx__officiallinks">
+            {/* Decorative on purpose: it sits immediately beside a labelled link
+                to the same destination, so alt text would announce that
+                destination twice and add a duplicate tab stop. Rendered at its
+                true 663:460 ratio and otherwise untouched — "the logo cannot be
+                altered" is a condition of being allowed to use it. */}
+            <li className="dmx__snaplogo">
+              <Image src="/snap-logo.png" alt="" aria-hidden width={148} height={103} />
+            </li>
             <li>
               <a
                 className="dmx__link"
@@ -205,7 +226,7 @@ export function SnapDetail({ states, lang = "en" }: { states: PackMeta[]; lang?:
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                {c.officialFns} ↗
+                {c.officialFns}&nbsp;↗
               </a>
             </li>
             <li>
@@ -215,10 +236,15 @@ export function SnapDetail({ states, lang = "en" }: { states: PackMeta[]; lang?:
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                {c.officialDirectory} ↗
+                {c.officialDirectory}&nbsp;↗
               </a>
             </li>
           </ul>
+          {/* Must appear on any material where an organisation outside USDA
+              uses the mark. It lives inside this box, next to the logo, rather
+              than in the page footer — a required notice about a specific mark
+              belongs with the mark, not three sections away. */}
+          <p className="dmx__servicemark">{SNAP_SERVICE_MARK}</p>
         </div>
       </section>
 

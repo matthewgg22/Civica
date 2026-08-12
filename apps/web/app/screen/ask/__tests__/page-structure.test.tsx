@@ -255,6 +255,27 @@ describe("what SNAP is — the program, before the rules that decide who gets it
     }
   });
 
+  it("carries the SNAP service-mark notice verbatim, in every language", () => {
+    // FNS requires this exact sentence on any material where an organisation
+    // outside USDA uses the mark. It is a condition of being allowed to show
+    // the logo at all, so it is asserted character-for-character — including
+    // the spacing in "U. S." — and on every language of the page, since a
+    // notice that only appears in English is missing from three of them.
+    const REQUIRED =
+      "The SNAP logo is a service mark of the U. S. Department of Agriculture. " +
+      "USDA does not endorse any goods, services, or enterprises.";
+    for (const lang of ANSWER_LANGS) {
+      const { container } = render(<SnapDetail states={VERIFIED_STATES} lang={lang} />);
+      expect(container.textContent, `${lang} is missing the required notice`).toContain(
+        REQUIRED,
+      );
+      // The notice is meaningless if the logo it governs is not the one shown.
+      const logo = container.querySelector('img[src*="snap-logo"]');
+      expect(logo, `${lang} lost the SNAP logo`).not.toBeNull();
+      cleanup();
+    }
+  });
+
   it("opens official links in a new tab without handing over the opener", () => {
     const { container } = render(<SnapDetail states={VERIFIED_STATES} />);
     for (const a of container.querySelectorAll<HTMLAnchorElement>('a[target="_blank"]')) {
