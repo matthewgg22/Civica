@@ -115,9 +115,13 @@ import scPack from "./sc/pack.json";
 import scSupplements from "./sc/supplements.json";
 import scAuthorities from "./sc/authorities.json";
 import scFreshness from "./sc/freshness.json";
+import alPack from "./al/pack.json";
+import alSupplements from "./al/supplements.json";
+import alAuthorities from "./al/authorities.json";
+import alFreshness from "./al/freshness.json";
 
 /** Registered pack codes. Widens as Wave 1+ states land (WA, TX, NY, …). */
-export type StateCode = "CA" | "WA" | "TX" | "NY" | "GA" | "MI" | "IL" | "FL" | "MA" | "NV" | "AZ" | "OR" | "WI" | "MN" | "PA" | "OH" | "NC" | "NJ" | "VA" | "TN" | "IN" | "MO" | "MD" | "CO" | "SC";
+export type StateCode = "CA" | "WA" | "TX" | "NY" | "GA" | "MI" | "IL" | "FL" | "MA" | "NV" | "AZ" | "OR" | "WI" | "MN" | "PA" | "OH" | "NC" | "NJ" | "VA" | "TN" | "IN" | "MO" | "MD" | "CO" | "SC" | "AL";
 
 /** Launch state; used when a caller does not specify. Preserves the pre-pack
  *  behavior in which the (then-hardcoded) CA content applied to every query. */
@@ -358,6 +362,12 @@ const REGISTRY: Record<StateCode, StatePack> = {
     scSupplements as { supplements: PackTopic[]; supersessions?: Record<string, string> },
     scAuthorities as unknown as RawAuthorities,
     scFreshness as { entries: PackFreshnessEntry[] },
+  ),
+  AL: buildPack(
+    alPack as Omit<StatePack, "topics" | "authorities" | "freshness" | "supersessions">,
+    alSupplements as { supplements: PackTopic[]; supersessions?: Record<string, string> },
+    alAuthorities as unknown as RawAuthorities,
+    alFreshness as { entries: PackFreshnessEntry[] },
   ),
 };
 

@@ -1,0 +1,38 @@
+{
+  "_provenance": {
+    "note": "Alabama dated facts. Because Alabama has NO existing packages/snap-rules StatePolicy entry, there is no engine constant to cross-check against — every entry below is either a routine COLA-cycle reminder, a disclosed research gap, or a warning about the confirmed stale-duplicate-PDF trap this pack found on dhr.alabama.gov itself.",
+    "extracted": "2026-08-12"
+  },
+  "entries": [
+    {
+      "key": "al-stale-duplicate-poe-manual-pdf",
+      "kind": "expires",
+      "date": "2027-02-01",
+      "warning": "dhr.alabama.gov hosts a bundled 2022-vintage \"Appendix I\" POE manual PDF (dhr.alabama.gov/wp-content/uploads/2022/04/Appendix-I-Food-Assistance-SNAP-Points-of-Eligibility-Manual.pdf) that is MATERIALLY STALE against the current per-chapter manual at apps.dhr.alabama.gov/POE/ — it states pre-OBBBA ABAWD rules (18-49 age range, under-18 caregiver exemption, no Indian/Urban Indian/California Indian exemption) and FFY2022 dollar figures ($2,250/$3,500 resource limits, a $1,396/$1,074 one-person income table) instead of the current FFY2026 figures. This pack used ONLY apps.dhr.alabama.gov's per-chapter manual and DHR's own Form 1942 (Rev. 10/25) for every current fact. Before restating any Alabama SNAP policy detail, confirm which of the two DHR-hosted documents is being read — nothing on either page currently flags the older one as superseded. Re-check both URLs are still live and still diverge in the same way."
+    },
+    {
+      "key": "al-sua-bua-telephone-dollar-figures-unconfirmed",
+      "kind": "expires",
+      "date": "2026-11-01",
+      "warning": "This pack could NOT locate Alabama's Standard Utility Allowance (SUA), Basic Utility Allowance (BUA), or Telephone Standard dollar amounts, or the dollar cap on the Excess Shelter Deduction, in any Alabama-DHR-hosted primary source. DHR's own POE Manual (§ 903) repeatedly defers these figures to an internal \"Basis of Issuance Chart\" not published at any public URL this pack could locate. Secondary sources report an Excess Shelter cap of $744 (matching the national FFY2026 figure) and SUA figures in the $340-$625/month range, but this pack did NOT independently verify either against Alabama's own numbers table. Before stating a specific Alabama SUA/BUA/telephone/excess-shelter dollar figure with confidence, locate DHR's Basis of Issuance Chart directly or contact DHR's Food Assistance Division."
+    },
+    {
+      "key": "al-ffy2027-cola-reminder",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "This pack's confirmed dollar figures (Standard Deduction $209/$209/$209/$223/$261/$299, resource limits $3,000/$4,500, and the income-eligibility/max-allotment tables) are drawn from DHR's Form DHR-FAP-1942 (Rev. 10/25) and match the current FFY2026 cycle (effective Oct. 1, 2025 - Sept. 30, 2026). The FFY2027 COLA cycle begins Oct. 1, 2026 — under two months from this pack's fetch date. Check dhr.alabama.gov/food-assistance/ for a newer Form 1942 revision (currently \"Rev. 10/25\") after that date before restating any Alabama-specific dollar figure with full confidence, and re-confirm apps.dhr.alabama.gov/POE/ chapters have been updated to match."
+    },
+    {
+      "key": "al-drug-felony-statute-403-blocked-sources",
+      "kind": "expires",
+      "date": "2027-02-01",
+      "warning": "This pack's citation to Ala. Code § 38-1-8 (Act 2015-185, § 12) is corroborated via secondary sources (AL Reporter, Alabama Today) and cross-checked against DHR's own POE Manual § 101(f) text, because Justia and FindLaw both returned HTTP 403 on direct fetch of the statute itself. This pack did NOT read the Alabama Legislature's own bill-tracking or codified-statute text directly. Before restating this finding with full confidence, attempt a direct fetch of the Alabama Legislature's own statute database (alison.legislature.state.al.us) or a law-library mirror, and re-confirm § 38-1-8's text is unchanged."
+    },
+    {
+      "key": "al-liheap-sua-obbba-rule-confirm",
+      "kind": "expires",
+      "date": "2026-12-01",
+      "warning": "This pack found Alabama's CURRENT per-chapter POE Manual (§ 903(G)) already reflects a 2025-updated LIHEAP-to-SUA rule: only households with an elderly (60+) or disabled member are automatically conferred SUA eligibility from a qualifying LIHEAP payment alone; households without such a member must independently incur and verify a heating or cooling expense. This is a genuinely current, national \"Heat and Eat\" policy tightening this pack did not have space to research in comparative depth against other states in this roster. Before stating this as settled Alabama-specific policy, re-verify against DHR's then-current § 903(G) text, since this area of federal SNAP rulemaking has been actively changing through 2025-2026."
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "_provenance": {
+    "note": "Alabama citation authorities. Alabama's operative SNAP policy lives in DHR's SNAP Points of Eligibility (POE) Manual, cited by section number, e.g. 'Section 210', 'Section 710', 'Section 101(f)'. Sections are grouped by chapter in clean hundreds-blocks (Chapter 1 = §§ 100-199, Chapter 2 = §§ 200-299, ... Chapter 11 = §§ 1100-1199), so a bare section number self-identifies its chapter. This pack invents the short prefix 'AL POE' to disambiguate in running text, matching this roster's convention of an invented short prefix per state whose primary source has no natural standalone citation form of its own (MO's 'MO IM Manual', IN's 'IN PPM', VA's 'VA SNAP Manual Part', SC's 'SC SNAP Manual'). Distinctively for Alabama: this pack ALSO cites a real, separate Alabama Code statute (Ala. Code § 38-1-8, enacted by Act 2015-185, § 12) for the drug-felony finding — the statute Alabama's own POE Manual § 101(f) implements — so this pack defines a SECOND citation family, 'Ala. Code §', unlike South Carolina's pack (which found no separate state statute to cite at all). IMPORTANT ACCESS NOTE: this pack found TWO different DHR-hosted PDFs of overlapping POE manual content with MATERIALLY DIFFERENT text — apps.dhr.alabama.gov's current per-chapter manual (used for every citation below) and dhr.alabama.gov's stale 2022-vintage 'Appendix I' bundle (NOT used for any citation below, but still live and easily found in a search). Every citation in this file resolves to apps.dhr.alabama.gov's CURRENT per-chapter text.",
+    "extracted": "2026-08-12"
+  },
+  "patterns": [
+    {
+      "key": "alpoe",
+      "regex": "\\bAL\\s+POE,?\\s+§?\\s?(\\d{2,4}[A-Za-z]?(?:\\([A-Za-z0-9]+\\))?)\\b",
+      "flags": "gi",
+      "template": "AL POE § $1",
+      "normalize": "none",
+      "match": "exact",
+      "note": "Alabama Department of Human Resources SNAP Points of Eligibility (POE) Manual, cited by section number and optional lettered/parenthetical sub-part, e.g. 101(f) (drug-related felony disqualification), 210 (Categorical/Expanded Categorical Eligibility), 710 (ABAWD Work Requirements)."
+    },
+    {
+      "key": "alcode",
+      "regex": "\\bAla\\.?\\s+Code\\s+§?\\s?(\\d{1,3}-\\d{1,3}-\\d{1,3})\\b",
+      "flags": "gi",
+      "template": "Ala. Code § $1",
+      "normalize": "none",
+      "match": "exact",
+      "note": "Code of Alabama, cited by title-chapter-section. This pack cites exactly one: § 38-1-8 (Act 2015-185, § 12), the statute modifying Alabama's federal drug-felony SNAP/TANF disqualification."
+    }
+  ],
+  "known": {
+    "alpoe": [
+      { "value": "AL POE § 100", "note": "Household Definition — includes the elderly-impaired-member special household provision (165% FPL income ceiling for other household members)" },
+      { "value": "AL POE § 101(f)", "note": "Disqualified Member — felony drug-possession/use/distribution conviction (conduct after Aug. 22, 1996) is 'permanent,' but immediately carved out: persons who complete their sentence, or are satisfactorily serving probation (including completing a mandatory drug-treatment program), may be eligible for participation. Implements Ala. Code § 38-1-8" },
+      { "value": "AL POE § 208", "note": "Expedited Service — plain federal criteria (gross income under $150 and liquid resources $100 or less; combined income/resources less than rent/mortgage plus utility standard; destitute migrant/seasonal farmworker households) and the 7-calendar-day ceiling" },
+      { "value": "AL POE § 210", "note": "Public Assistance and Categorically Eligible Households — (A) PA/SSI recipients; (B) Expanded Categorical Eligibility via TANF (Family Assistance) non-cash information-and-referral services, 130% FPL general / 200% FPL if all members are elderly or disabled (net income limit 100% FPL, reverting to normal $3,000/$4,500 asset test if household income exceeds 200% FPL)" },
+      { "value": "AL POE § 700", "note": "Persons Required to Register (work registration, general)" },
+      { "value": "AL POE § 710", "note": "Work Requirements for Able-Bodied Adults without Dependents (ABAWDs) — (A) 3-of-36-month rule; (B) exemptions: under 18 or 65+, medically unfit, caregiver of a child under 14, pregnant, Indian/Urban Indian/California Indian; (C)-(E) regaining eligibility via 80 hours in 30 days" },
+      { "value": "AL POE § 800", "note": "Maximum Allowable Resources — $3,000 standard / $4,500 household with an elderly or disabled member, current FFY2026 figures" },
+      { "value": "AL POE § 802", "note": "Excluded Resources — 'the value of all vehicles will be excluded from the resource determination (as allowed under PL 106-387 by adoption of Alabama's Family Assistance vehicle policy)' — a blanket all-vehicles exclusion" },
+      { "value": "AL POE § 903", "note": "Income Deductions — (A) Standard Deduction; (B) Earned Income Deduction (20%); (C) Medical Deduction (flat $185 standard medical deduction for elderly/disabled households with qualifying expenses over $35/month; actual amount in excess of $185 for households with higher expenses); (E) Child Support Deduction (ordinary deduction, applied alongside the other § 903 deductions, not an income exclusion applied before the gross income test); (F) Shelter Costs" },
+      { "value": "AL POE § 1005", "note": "Certification Periods — up to 12 months for stable-income/elderly-disabled/simplified-reporting households (including ABAWDs); 1-2 months for households likely to become ineligible soon; 4 months for households coded entirely with work-registration code 'J'" },
+      { "value": "AL POE § 1107", "note": "Homeless Food Assistance Households — the ONLY restaurant/prepared-meal purchasing mechanism in Alabama's SNAP program: homeless meal providers (soup kitchens, shelters) and DHR/USDA-approved restaurants, BOTH limited strictly to homeless SNAP recipients, not a general elderly/disabled Restaurant Meals Program" }
+    ],
+    "alcode": [
+      { "value": "Ala. Code § 38-1-8", "note": "Enacted by Act 2015-185, § 12 (2015 Alabama prison-reform legislation, effective ~Jan. 30, 2016) — modifies the federal 21 U.S.C. § 862a(a)(2) drug-felony SNAP/TANF ban: a person otherwise disqualified becomes eligible upon completing their sentence, or while satisfactorily serving probation (including completing mandatory drug treatment), provided all other program eligibility requirements are met" }
+    ]
+  }
+}
