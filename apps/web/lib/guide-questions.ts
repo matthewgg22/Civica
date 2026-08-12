@@ -165,4 +165,12 @@ export const QUESTIONS: Record<string, string[]> = {
     "What is the ABAWD work requirement age range in Oklahoma?",
     "Can I use my EBT card to buy a hot meal at a restaurant in Oklahoma?",
   ],
+  UT: [
+    "What is the income limit for SNAP in Utah?",
+    "Can I buy soda with my SNAP benefits in Utah?",
+    "Does my car count against me for SNAP in Utah?",
+    "I have a drug felony conviction — can I still get SNAP in Utah?",
+    "Is the SNAP work-requirement time limit currently waived anywhere in Utah?",
+    "What is my EBT card called in Utah?",
+  ],
 };
