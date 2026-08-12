@@ -23,6 +23,10 @@ export interface MaeSystem {
   systemBlocks: Anthropic.TextBlockParam[];
   /** Citations of the chunks retrieved for this question (verifier allowlist). */
   retrievedCitations: string[];
+  /** The retrieved source TEXT. The verifier needs it, not only the chunk
+   *  labels: regulations cross-reference each other, and a citation the source
+   *  itself quotes is a real authority rather than an invention. */
+  retrievedText: string;
 }
 
 /** Generation knobs shared by the orchestrator and the eval. */
@@ -93,5 +97,5 @@ export async function buildMaeSystem(
   ];
   if (retrievedBlock) systemBlocks.push({ type: "text", text: retrievedBlock });
 
-  return { systemBlocks, retrievedCitations };
+  return { systemBlocks, retrievedCitations, retrievedText: retrievedBlock };
 }
