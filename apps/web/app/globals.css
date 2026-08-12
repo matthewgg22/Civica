@@ -5875,7 +5875,12 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   font-size: 0.8rem; line-height: 1.6; color: var(--demeter-muted); margin: 0;
 }
-.dmw__privacy { padding-top: 0.75rem; border-top: 1px solid var(--demeter-rule); }
+/* The standing caveats, smaller and tighter than the panel's own content. They
+   are true and they have to be there, but they were set at the same size as the
+   estimate and ran to two full paragraphs — more room than the thing they
+   qualify. Quieter, not gone. */
+.dmw__privacy, .dmw__disclaimer { font-size: 0.72rem; line-height: 1.45; }
+.dmw__privacy { padding-top: 0.65rem; border-top: 1px solid var(--demeter-rule); }
 
 .dmw__result { border-radius: 12px; padding: 0.85rem; border: 1px solid var(--demeter-rule); background: var(--demeter-card); }
 .dmw__result--certain { border-color: #C9DCC4; background: #F3F8F1; }
@@ -6882,7 +6887,16 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   margin: 0.6rem 0 0; padding: 0.7rem 0.9rem;
   border: 1px solid var(--demeter-rule-strong); border-radius: 14px;
   background: var(--demeter-card);
-  animation: dmTrailerIn 220ms ease-out both;
+  /* IT ARRIVES, it does not appear. A plain fade on a block that also pushes
+     the composer down reads as a jump — the thing you were about to type into
+     moves while you are looking at it. Growing from nothing carries the layout
+     with it, slowly enough to follow. */
+  animation: dmOfferIn 340ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  transform-origin: bottom center;
+}
+@keyframes dmOfferIn {
+  from { opacity: 0; transform: translateY(6px) scale(0.99); }
+  to   { opacity: 1; transform: none; }
 }
 .demeter__modeoffer-text {
   font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
@@ -7046,7 +7060,7 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 .dmchat .demeter__sidebtns .demeter__clear {
   min-height: 40px; justify-content: center; text-align: center;
   font-size: 0.78rem; font-weight: 600; padding: 0 0.6rem;
-  color: var(--demeter-body); background: transparent;
+  color: var(--demeter-body); background: var(--demeter-card);
   border: 1px solid var(--demeter-rule-strong); border-radius: 999px;
 }
 .dmchat .demeter__sidebtns .demeter__save:hover:not(:disabled),

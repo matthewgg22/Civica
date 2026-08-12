@@ -148,6 +148,36 @@ function renderInline(line: string, keyBase: string): ReactNode[] {
  *  does anyway — seen in production, the same answer carrying the line twice —
  *  and an instruction a model can ignore is not a guarantee. Ours is appended
  *  last, in the trailer frame, so every occurrence but the final one goes. */
+/** Drops trailer lines the MODEL wrote, keeping the ones Civica appends.
+ *
+ *  Seen in production: an answer carrying TWO certainty banners — its own
+ *  "⚠ UNCERTAIN — do not treat as settled; confirm with your county caseworker"
+ *  and ours immediately under it — plus two "Check it yourself" lines. The
+ *  reader is told the same caveat twice in two different wordings, which reads
+ *  less like care and more like the page arguing with itself.
+ *
+ *  Ours is appended LAST, in the trailer frame, so for each of these the final
+ *  occurrence is the one that survives. Same rule as the source footer below,
+ *  applied to the two other lines the model imitates. */
+function dropDuplicateTrailerLines(text: string): string {
+  const MARKERS = [
+    // Certainty banner: keyed off the MARK, which certainty.ts does not
+    // localize, so this holds as languages are added.
+    /^\s*[✓⚠]\s/,
+    // "Check it yourself:" and its translations, with or without emphasis.
+    /^\s*[*_]?(Check it yourself|Compruébalo tú mismo|Tự kiểm tra|自己核对)/i,
+  ];
+  let out = text;
+  for (const marker of MARKERS) {
+    const lines = out.split("\n");
+    const hits = lines.map((l, i) => (marker.test(l) ? i : -1)).filter((i) => i >= 0);
+    if (hits.length < 2) continue;
+    const keep = hits[hits.length - 1];
+    out = lines.filter((_, i) => !hits.includes(i) || i === keep).join("\n");
+  }
+  return out;
+}
+
 function dropDuplicateFooter(text: string): string {
   // Both labels: the footer was shortened from "Sources as of" to "Source", and
   // a saved conversation can still hold answers written under the old one.
@@ -163,7 +193,7 @@ export function splitFollowups(
   rawText: string,
   opts?: { streaming?: boolean },
 ): { body: string; followups: string[] } {
-  const text = dropDuplicateFooter(rawText);
+  const text = dropDuplicateTrailerLines(dropDuplicateFooter(rawText));
   // ANYWHERE, not only at the start of a line. This looked for "\n⟶", and the
   // model does not reliably put the marker on its own line — when it wrote
   // "…confirm those with your local district or OTDA. ⟶ What documents will I
@@ -1240,6 +1270,17 @@ export function DemeterChat({
         >
           <span className="demeter__modeoffer-text">{t.modeOffer}</span>
           <span className="demeter__modeoffer-actions">
+            {/* ORDER MIRRORS THE PANEL. The toggle in the right-hand column
+                reads "Just asking | Build my estimate"; this read the other way
+                round, so the same choice appeared twice on one screen with its
+                sides swapped. */}
+            <button
+              type="button"
+              className="demeter__modeoffer-no"
+              onClick={() => setModeAsked(true)}
+            >
+              {t.modeOfferAsk}
+            </button>
             <button
               type="button"
               className="demeter__modeoffer-yes"
@@ -1253,13 +1294,6 @@ export function DemeterChat({
               }}
             >
               {t.modeOfferEstimate}
-            </button>
-            <button
-              type="button"
-              className="demeter__modeoffer-no"
-              onClick={() => setModeAsked(true)}
-            >
-              {t.modeOfferAsk}
             </button>
           </span>
         </div>

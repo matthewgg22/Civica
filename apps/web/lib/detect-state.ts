@@ -102,9 +102,24 @@ export function detectState(text: string): StateMention | null {
   // Two-letter codes ONLY when written as a standalone capitalised token in the
   // original text — "in MA" is a state, "la" in "la comida" is not, and "in"
   // and "or" and "me" are all state codes.
+  //
+  // AND NOT WHEN THE CODE IS AN ACRONYM FOR SOMETHING ELSE. "he gets VA
+  // benefits" is Veterans Affairs, and it offered to re-scope the whole
+  // conversation to Virginia — mid-answer, to someone who had already said
+  // California. Veterans are a population this product cannot afford to
+  // mishandle: VA income, VA disability and VA health care all come up in SNAP
+  // screening constantly, and every one of them reads as a state code.
+  //
+  // "IN" and "OK" and "OR" are worse still as bare words, but those are already
+  // excluded by the capitalisation rule in ordinary prose.
+  const ACRONYM_CONTEXT =
+    /\b(VA|DE|MD|OK|IN|OR|ME|HI|LA|MS|MT|PA)\s+(benefits?|disability|claim|loan|health|hospital|care|clinic|rating|pension|form|office|department)\b/gi;
+  const acronyms = new Set(
+    [...text.matchAll(ACRONYM_CONTEXT)].map((m) => m[1]!.toUpperCase()),
+  );
   for (const m of text.matchAll(/\b([A-Z]{2})\b/g)) {
     const code = m[1]!;
-    if (STATE_NAMES[code]) hits.set(code, code);
+    if (STATE_NAMES[code] && !acronyms.has(code)) hits.set(code, code);
   }
 
   if (hits.size !== 1) return null;

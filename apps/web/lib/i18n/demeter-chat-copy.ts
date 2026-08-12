@@ -48,9 +48,9 @@ export const T = {
     stateOffer: "You mentioned {place}. Answer for {state}?",
     // Asked once, after the first answer — the toggle for this lives in the
     // right-hand panel, which nobody reads while taking in their first reply.
-    modeOffer: "Would you like me to work out a rough figure for you, or are you just after answers for now?",
-    modeOfferEstimate: "Work out a figure",
-    modeOfferAsk: "Just answers for now",
+    modeOffer: "Shall I start gathering your answers as we go, so you can take them to the application? Or keep this as just questions for now?",
+    modeOfferEstimate: "Gather my answers",
+    modeOfferAsk: "Just questions",
     // Shown in the transcript when a state is picked. The portal is where the
     // application actually goes; this is the one moment we know exactly which
     // link that is, so it should not be something they have to ask for.
@@ -143,23 +143,31 @@ export const T = {
       // second sentence is the honest version of a claim we cannot make:
       // redactPii strips structured identifiers but deliberately NOT names, and
       // says so in its own header, so this asks rather than promises.
-      privacy:
-        "Close this tab and you cannot return to this conversation. We keep the question and answer to check our accuracy, so please avoid typing names or personal details.",
-      privacySaved:
-        "Saved to your account — you can come back to it or delete it. We keep the question and answer to check our accuracy, so please avoid typing names or personal details.",
-      disclaimer: "An estimate, not a decision. Your county agency decides.",
+      // SHORT. This was two full paragraphs plus a disclaimer under the panel,
+      // taking more room than the estimate it qualified. Every clause that was
+      // load-bearing is still here: it goes when the tab closes, we keep the
+      // text, and this is not a decision.
+      privacy: "Closing the tab ends this. We keep the text to check our accuracy — avoid names.",
+      privacySaved: "Saved to your account. We keep the text to check our accuracy — avoid names.",
+      disclaimer: "An estimate, not a decision.",
       pickState: "Pick your state above and your estimate can build here as you talk.",
       pickStateCta: "Choose your state",
-      // The two-way switch at the top of the rail. "Just asking" is the
-      // DEFAULT: the panel used to gather household facts from the conversation
-      // whether or not anyone asked it to, which is a thing to offer rather
-      // than a thing to do quietly to someone already nervous about the system.
+      // THE TWO MODES, described for what they actually do.
+      //
+      // "Build my estimate" gathers what you say into something you can keep
+      // and take to the portal. "Just asking" gathers NOTHING — and that is the
+      // point of it: it is the mode you switch to mid-conversation to ask a
+      // hypothetical, or about a situation that might not be yours, without it
+      // being written into your case. Describing it as merely "no estimate is
+      // worked out" made it sound like the lesser of the two. It is the escape
+      // hatch, and people who are nervous about the system need to know it is
+      // there.
       modeLabel: "What do you want from this?",
       modeAsk: "Just asking",
       modeEstimate: "Build my estimate",
       modeAskNote:
-        "Ask anything. Nothing you say is gathered here, and no estimate is worked out.",
-      switchedToAsk: "Estimate cleared. Nothing is being gathered.",
+        "Nothing you say here is gathered or kept. Switch to this any time you want to ask a what-if, or about someone else, without it counting toward your own answers.",
+      switchedToAsk: "Nothing is being gathered. Ask anything.",
     },
   },
   es: {
@@ -265,17 +273,17 @@ export const T = {
       empty:
         "Cuéntale a Demeter sobre tu hogar — quién vive contigo, cuánto ganas, cuánto pagas de renta — y tu estimado se arma aquí.",
       privacy:
-        "Cierra esta pestaña y no podrás volver a esta conversación. Guardamos la pregunta y la respuesta para verificar nuestra exactitud, así que evita escribir nombres o datos personales.",
+        "Cerrar la pestaña termina esto. Guardamos el texto para verificar nuestra exactitud — evita nombres.",
       privacySaved:
-        "Guardada en tu cuenta — puedes volver a ella o borrarla. Guardamos la pregunta y la respuesta para verificar nuestra exactitud, así que evita escribir nombres o datos personales.",
-      disclaimer: "Un estimado, no una decisión. Tu agencia del condado decide.",
+        "Guardada en tu cuenta. Guardamos el texto para verificar nuestra exactitud — evita nombres.",
+      disclaimer: "Un estimado, no una decisión.",
       pickState: "Elige tu estado arriba y tu estimado se irá armando aquí.",
       pickStateCta: "Elige tu estado",
       modeLabel: "¿Qué buscas aquí?",
       modeAsk: "Solo preguntar",
       modeEstimate: "Calcular mi estimado",
       modeAskNote:
-        "Pregunta lo que quieras. Nada de lo que digas se recoge aquí y no se calcula ningún estimado.",
+        "Aquí no se recoge ni se guarda nada de lo que digas. Cámbiate a esto cuando quieras preguntar un supuesto, o por otra persona, sin que cuente para tus propias respuestas.",
       switchedToAsk: "Estimado borrado. No se está recogiendo nada.",
     },
   },
@@ -381,17 +389,17 @@ export const T = {
       empty:
         "Hãy cho Demeter biết về hộ gia đình của bạn — ai sống cùng bạn, bạn kiếm được bao nhiêu, bạn trả bao nhiêu tiền thuê nhà — và ước tính sẽ hiện ở đây.",
       privacy:
-        "Đóng tab này thì bạn không thể quay lại cuộc trò chuyện này. Chúng tôi lưu câu hỏi và câu trả lời để kiểm tra độ chính xác, vì vậy xin đừng nhập tên hay thông tin cá nhân.",
+        "Đóng tab là kết thúc. Chúng tôi lưu nội dung để kiểm tra độ chính xác — đừng nhập tên.",
       privacySaved:
-        "Đã lưu vào tài khoản của bạn — bạn có thể quay lại hoặc xóa đi. Chúng tôi lưu câu hỏi và câu trả lời để kiểm tra độ chính xác, vì vậy xin đừng nhập tên hay thông tin cá nhân.",
-      disclaimer: "Chỉ là ước tính, không phải quyết định. Cơ quan quận của bạn mới là nơi quyết định.",
+        "Đã lưu vào tài khoản của bạn. Chúng tôi lưu nội dung để kiểm tra độ chính xác — đừng nhập tên.",
+      disclaimer: "Chỉ là ước tính, không phải quyết định.",
       pickState: "Chọn tiểu bang của bạn ở trên để ước tính có thể hiện ở đây.",
       pickStateCta: "Chọn tiểu bang",
       modeLabel: "Bạn muốn gì ở đây?",
       modeAsk: "Chỉ hỏi thôi",
       modeEstimate: "Tính mức ước tính",
       modeAskNote:
-        "Cứ hỏi thoải mái. Không điều gì bạn nói được thu thập ở đây, và không có ước tính nào được tính.",
+        "Ở đây không có gì bạn nói được thu thập hay lưu lại. Hãy chuyển sang mục này khi bạn muốn hỏi giả định, hoặc hỏi giúp người khác, mà không ảnh hưởng đến câu trả lời của chính bạn.",
       switchedToAsk: "Đã xóa ước tính. Không có gì đang được thu thập.",
     },
   },
@@ -491,16 +499,16 @@ export const T = {
       empty:
         "告诉 Demeter 您的家庭情况——谁和您同住、收入多少、房租多少——估算就会在这里逐步生成。",
       privacy:
-        "关闭此页面后将无法返回本次对话。我们会保留问题和回答以核查准确性，因此请勿输入姓名或个人信息。",
+        "关闭标签页即结束。我们保留文字以核查准确性——请勿输入姓名。",
       privacySaved:
-        "已保存到您的账户 — 您可以随时返回或删除。我们会保留问题和回答以核查准确性，因此请勿输入姓名或个人信息。",
-      disclaimer: "这只是估算，不是决定。最终由您所在县的机构裁定。",
+        "已保存到您的账户。我们保留文字以核查准确性——请勿输入姓名。",
+      disclaimer: "这只是估算，不是决定。",
       pickState: "请在上方选择您所在的州，估算就能在这里生成。",
       pickStateCta: "选择您所在的州",
       modeLabel: "您希望在这里得到什么？",
       modeAsk: "只是问问",
       modeEstimate: "帮我算估算",
-      modeAskNote: "随便问。您说的内容不会在这里被收集，也不会计算任何估算。",
+      modeAskNote: "这里不会收集或保留您说的任何内容。任何时候想问假设情况、或替别人问，都可以切到这里，不会影响您自己的答案。",
       switchedToAsk: "估算已清除。没有在收集任何内容。",
     },
   },
