@@ -1,0 +1,40 @@
+{
+  "_provenance": {
+    "note": "Rhode Island citation authorities. Rhode Island's operative SNAP policy manual is 218-RICR-20-00-1 (TITLE 218 — Department of Human Services), Rhode Island's official Code of Regulations, cited by a decimal section-numbering convention such as '1.5.1' (Categorical Eligibility), '1.5.5' (Resources), or '1.5.7' (Deductions and Expenses). This pack defines a SECOND citation family, 'rigl', for Rhode Island General Laws (the state's statutes, distinct from its administrative regulations), since R.I. Gen. Laws § 40-6-8 (the drug-felony opt-out) is a statutory citation, not a regulatory one — matching this roster's New Hampshire, Nebraska, Connecticut, Kentucky, Alabama, and Louisiana packs' multi-family pattern.",
+    "extracted": "2026-08-12"
+  },
+  "patterns": [
+    {
+      "key": "ricr",
+      "regex": "\\b(?:218-RICR-20-00-1\\s?)?§?\\s?(1\\.\\d{1,2}(?:\\.\\d{1,2})?)\\b",
+      "flags": "gi",
+      "template": "218-RICR-20-00-1 § $1",
+      "normalize": "none",
+      "match": "exact",
+      "note": "Rhode Island's official Code of Regulations, Title 218 (Department of Human Services), Part 20-00-1 (SNAP), cited with the full '218-RICR-20-00-1' prefix before the bare decimal section number, e.g. 218-RICR-20-00-1 § 1.5.1 (Categorical Eligibility), § 1.5.5 (Resources), § 1.5.7 (Deductions and Expenses), § 1.8 (Certification Periods), § 1.11.9 (ABAWDs). This pack requires the leading '1.' in the regex to avoid false-positive matches against ordinary dollar figures and percentages elsewhere in generated answer text."
+    },
+    {
+      "key": "rigl",
+      "regex": "\\bR\\.?I\\.?\\s?Gen(?:eral)?\\.?\\s?Laws\\s?§?\\s?(40-\\d{1,2}-\\d{1,2})\\b",
+      "flags": "gi",
+      "template": "R.I. Gen. Laws § $1",
+      "normalize": "none",
+      "match": "exact",
+      "note": "Rhode Island General Laws, Title 40 (Human Services), Chapter 6 (Public Assistance Act). This pack cites R.I. Gen. Laws § 40-6-8 (Supplemental Nutrition Assistance Program (SNAP)), whose subsection (d) is the state's statutory drug-felony-ban opt-out clause."
+    }
+  ],
+  "known": {
+    "ricr": [
+      { "value": "218-RICR-20-00-1 § 1.5.1", "note": "Categorical Eligibility — RI Works/SSI/GPA/TANF-funded-service pathways; TANF-funded-service households must meet the 185%/200% FPG gross-income standard (Table IV/V in § 1.15) to establish expanded categorical eligibility" },
+      { "value": "218-RICR-20-00-1 § 1.5.5", "note": "Resources — $3,000 (all other households) / $4,500 (households with an elderly or disabled member) resource limits; categorically-eligible households (§ 1.5.1) exempt from the resource test entirely; vehicle exclusion capped at one per adult member, not to exceed two (2) vehicles per household; $1,500 inaccessible-resource threshold for vehicles" },
+      { "value": "218-RICR-20-00-1 § 1.5.7", "note": "Deductions and Expenses — five SNAP deductions (20% earned-income, standard deduction, excess-medical, dependent-care, shelter); Standard Deduction $209/$209/$209/$223/$261/$299 by household size (current FFY2026); excess-medical deduction for elderly/disabled above $35/month, Standard Medical Deduction $183 flat shortcut for $35-$218/month range, actual expenses required above $218/month; three utility-cost methods: Standard Utility Allowance ($844/month, single combined heating/cooling + all-other-utilities tier), actual non-heat utility expenses, or Standard Telephone Allowance ($26/month) for phone-only households not SUA-eligible" },
+      { "value": "218-RICR-20-00-1 § 1.8", "note": "Certification Periods — 36 months for ESAP (all-elderly/disabled, no-earned-income) households; 24 months for migrant/seasonal-farmworker households; 12 months (standard Simplified Reporting) for all other households" },
+      { "value": "218-RICR-20-00-1 § 1.11.9", "note": "Able Bodied Adults Without Dependents (ABAWDs) — 3 countable months in a 36-month period absent 80 hours/month of qualifying work activity or an exemption; current federal age scope 18-64" },
+      { "value": "218-RICR-20-00-1 § 1.24", "note": "Elderly Simplified Application Project (ESAP) — eligible households, application process, 36-month certification/recertification, reporting requirements" },
+      { "value": "218-RICR-20-00-1 § 1.9", "note": "Intentional Program Violations — trafficking and SNAP-benefits-for-controlled-substances disqualification penalties (24 months first offense / permanent second offense for a controlled-substance sale transaction); distinct from the drug-felony-conviction ban, which Rhode Island does not carry at all (see R.I. Gen. Laws § 40-6-8(d))" }
+    ],
+    "rigl": [
+      { "value": "R.I. Gen. Laws § 40-6-8", "note": "Supplemental Nutrition Assistance Program (SNAP) — subsection (d) is Rhode Island's full statutory opt-out of the federal drug-felony SNAP ban (citing 21 U.S.C. § 862a(a)(2) directly); subsection (e), added 2025, mandates a DHS Payment Error Rate reduction plan targeting below 6% with monthly legislative reporting starting 1/18/2026; most recently amended by P.L. 2025, ch. 278, art. 10, § 5, effective June 29, 2025" }
+    ]
+  }
+}

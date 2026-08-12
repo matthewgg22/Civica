@@ -4455,6 +4455,271 @@ export const ME_GOLD: AnswerExpectation[] = [
 ];
 
 
+/** Everything the live runner executes for South Dakota. */
+export const SD_GOLD: AnswerExpectation[] = [
+  {
+    id: "sd-no-bbce-strict-130-net-100",
+    // Guards the structural finding: SD does NOT run BBCE — strict 130%/100%
+    // FPG test applies unless narrowly (TANF/SSI/CCS) categorically eligible.
+    question: "Does South Dakota have broad-based categorical eligibility for SNAP?",
+    state: "SD",
+    mustMention: "130",
+    mustDisclaim: true,
+  },
+  {
+    id: "sd-resource-limit-current-not-stale",
+    // Guards the correction: current $4,500/$3,000, not the stale $2,750/$4,250
+    // several aggregator sites still repeat.
+    question: "What is the SNAP resource limit in South Dakota?",
+    state: "SD",
+    mustMention: "3,000",
+    mustDisclaim: true,
+  },
+  {
+    id: "sd-drug-felony-full-opt-out",
+    // Guards the flagship confirmation: SD fully opted out of the federal
+    // drug-felony ban (SDCL 28-12-3); manual has no such provision at all.
+    question: "I have a drug felony conviction — can I still get SNAP in South Dakota?",
+    state: "SD",
+    mustMention: "not",
+    mustDisclaim: true,
+  },
+  {
+    id: "sd-abawd-waiver-none-active",
+    question: "Is the SNAP work-requirement time limit currently waived anywhere in South Dakota?",
+    state: "SD",
+    mustMention: "no",
+    mustDisclaim: true,
+  },
+  {
+    id: "sd-abawd-native-american-exemption-statewide",
+    // Guards the tribal-land finding: the manual's Native American ABAWD
+    // exemption applies anywhere in the state, not just on reservations.
+    question: "Is there a Native American exemption from the SNAP work requirement in South Dakota?",
+    state: "SD",
+    mustMention: "anywhere",
+    mustDisclaim: true,
+  },
+  {
+    id: "sd-utility-deduction-sua-figure",
+    // Guards the internal-inconsistency finding: body-text SUA figure ($950)
+    // vs. a stale Table of Contents figure ($850).
+    question: "What utility deduction can I get for SNAP in South Dakota?",
+    state: "SD",
+    mustMention: "950",
+    mustDisclaim: true,
+  },
+  {
+    id: "sd-restaurant-meals-program-not-available",
+    question: "Does South Dakota have a Restaurant Meals Program for SNAP?",
+    state: "SD",
+    mustMention: "not",
+    mustDisclaim: true,
+  },
+  {
+    id: "sd-fdpir-cannot-combine-same-month",
+    question: "Can I get SNAP and FDPIR commodities at the same time in South Dakota?",
+    state: "SD",
+    mustMention: "not",
+    mustDisclaim: true,
+  },
+  {
+    id: "sd-how-to-apply-eaportal",
+    question: "How do I apply for SNAP in South Dakota?",
+    state: "SD",
+    mustDisclaim: true,
+  },
+  {
+    id: "sd-federal-benefit",
+    question: "How is the monthly SNAP benefit amount calculated from net income in South Dakota?",
+    state: "SD",
+    expectCitation: "273.10",
+    mustDisclaim: true,
+  },
+];
+
+/** Everything the live runner executes for Montana. */
+export const MT_GOLD: AnswerExpectation[] = [
+  {
+    id: "mt-resource-limit-3000-not-2750",
+    // Guards the correction finding: MT's current resource limit is $3,000,
+    // not the stale $2,750 figure several secondary sources repeat.
+    question: "Does Montana have an asset or resource limit for SNAP?",
+    state: "MT",
+    mustMention: "3,000",
+    mustDisclaim: true,
+  },
+  {
+    id: "mt-ece-200-not-blanket-no-asset-test",
+    question: "What is the income limit for SNAP in Montana?",
+    state: "MT",
+    mustMention: "200",
+    mustDisclaim: true,
+  },
+  {
+    id: "mt-drug-felony-modified-supervision-compliance",
+    // Guards the flagship correction: MT's ban is MODIFIED (conditioned on
+    // supervision compliance), not a flat "won't disqualify you" as a
+    // secondary source claims.
+    question: "I have a drug felony conviction — can I still get SNAP in Montana?",
+    state: "MT",
+    mustMention: "supervision",
+    mustDisclaim: true,
+  },
+  {
+    id: "mt-abawd-waiver-none-active",
+    // Guards the clean primary-source confirmation: SNAP 802-1 states
+    // directly no ABAWD geographic waivers exist anywhere in Montana.
+    question: "Is the SNAP work-requirement time limit currently waived anywhere in Montana?",
+    state: "MT",
+    mustMention: "no",
+    mustDisclaim: true,
+  },
+  {
+    id: "mt-abawd-age-range-current-federal",
+    question: "What is the ABAWD work requirement age range in Montana?",
+    state: "MT",
+    mustMention: "64",
+    mustDisclaim: true,
+  },
+  {
+    id: "mt-utility-allowance-sua-799",
+    question: "What utility deduction can I get for SNAP in Montana?",
+    state: "MT",
+    mustMention: "799",
+    mustDisclaim: true,
+  },
+  {
+    id: "mt-cert-period-12-months-standard",
+    question: "How long does my SNAP certification last in Montana?",
+    state: "MT",
+    mustMention: "12",
+    mustDisclaim: true,
+  },
+  {
+    id: "mt-restaurant-meals-program-not-available",
+    question: "Does Montana have a Restaurant Meals Program for SNAP?",
+    state: "MT",
+    mustMention: "not",
+    mustDisclaim: true,
+  },
+  {
+    id: "mt-how-to-apply-apply-mt-gov",
+    question: "How do I apply for SNAP in Montana?",
+    state: "MT",
+    mustDisclaim: true,
+  },
+  {
+    id: "mt-medical-deduction-actual-expense-no-shortcut",
+    question: "I'm disabled and have $50 a month in medical bills for Montana SNAP — do I get a deduction?",
+    state: "MT",
+    mustMention: "35",
+    mustDisclaim: true,
+  },
+  {
+    id: "mt-federal-benefit",
+    question: "How is the monthly SNAP benefit amount calculated from net income in Montana?",
+    state: "MT",
+    expectCitation: "273.10",
+    mustDisclaim: true,
+  },
+];
+
+/** Everything the live runner executes for Rhode Island. */
+export const RI_GOLD: AnswerExpectation[] = [
+  {
+    id: "ri-two-tier-185-200-not-flat-bbce",
+    // Guards the structural finding: RI's gross-income gate is two-tier
+    // (185% no elderly/disabled, 200% with) not a single flat BBCE percentage.
+    question: "What is the income limit for SNAP in Rhode Island?",
+    state: "RI",
+    mustMention: "185",
+    mustDisclaim: true,
+  },
+  {
+    id: "ri-resource-limit-not-flatly-none",
+    // Guards the structural finding: a non-categorically-eligible household
+    // still faces a real resource limit ($3,000 / $4,500), not a blanket waiver.
+    question: "Does Rhode Island have an asset or resource limit for SNAP?",
+    state: "RI",
+    mustMention: "3,000",
+    mustDisclaim: true,
+  },
+  {
+    id: "ri-vehicle-exclusion-capped-two",
+    // Guards the minority-position structural finding: RI caps vehicle
+    // exclusion at 2 vehicles per household, unlike uncapped-per-adult states.
+    question: "Does my car count against me for SNAP in Rhode Island?",
+    state: "RI",
+    mustMention: "two",
+    mustDisclaim: true,
+  },
+  {
+    id: "ri-drug-felony-full-opt-out-401968",
+    // Guards the flagship confirmation: RI fully opted out of the federal
+    // drug-felony ban (R.I. Gen. Laws § 40-6-8(d)).
+    question: "I have a drug felony conviction — can I still get SNAP in Rhode Island?",
+    state: "RI",
+    expectCitation: "40-6-8",
+    mustMention: "not",
+    mustDisclaim: true,
+  },
+  {
+    id: "ri-abawd-waiver-none-active",
+    question: "Is the SNAP work-requirement time limit currently waived anywhere in Rhode Island?",
+    state: "RI",
+    mustMention: "no",
+    mustDisclaim: true,
+  },
+  {
+    id: "ri-abawd-march-1-2026-delayed-rollout",
+    // Guards the flagship timing finding: RI delayed its OBBBA ABAWD rollout
+    // to March 1, 2026, later than the federal 11/1/2025 effective date.
+    question: "When did the new SNAP work requirements start for able-bodied adults in Rhode Island?",
+    state: "RI",
+    mustMention: "March",
+    mustDisclaim: true,
+  },
+  {
+    id: "ri-sua-single-tier-844",
+    // Guards the structural finding: RI's SUA is a single combined tier
+    // ($844), not a multi-tier structure split by utility type.
+    question: "What utility deduction can I get for SNAP in Rhode Island?",
+    state: "RI",
+    mustMention: "844",
+    mustDisclaim: true,
+  },
+  {
+    id: "ri-cert-period-12-months-standard",
+    question: "How long does my SNAP certification last in Rhode Island?",
+    state: "RI",
+    mustMention: "12",
+    mustDisclaim: true,
+  },
+  {
+    id: "ri-restaurant-meals-program-subway-only",
+    // Guards the finding: RI DOES have an RMP, but narrow — nine Subway
+    // locations only, restricted to homeless and some elderly/disabled households.
+    question: "Does Rhode Island have a Restaurant Meals Program for SNAP?",
+    state: "RI",
+    mustMention: "Subway",
+    mustDisclaim: true,
+  },
+  {
+    id: "ri-how-to-apply-healthyrhode",
+    question: "How do I apply for SNAP in Rhode Island?",
+    state: "RI",
+    mustDisclaim: true,
+  },
+  {
+    id: "ri-federal-benefit",
+    question: "How is the monthly SNAP benefit amount calculated from net income in Rhode Island?",
+    state: "RI",
+    expectCitation: "273.10",
+    mustDisclaim: true,
+  },
+];
+
 /** Everything the live runner executes for North Dakota. */
 export const ND_GOLD: AnswerExpectation[] = [
   {
@@ -4587,5 +4852,8 @@ export const ALL_GOLD: AnswerExpectation[] = [
   ...HI_GOLD,
   ...ME_GOLD,
   ...NH_GOLD,
+  ...SD_GOLD,
+  ...MT_GOLD,
+  ...RI_GOLD,
   ...ND_GOLD,
 ];
