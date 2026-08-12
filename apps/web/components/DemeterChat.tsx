@@ -579,75 +579,93 @@ export function DemeterChat({
 
       {/* One control, one selected state — replaces the chip row that ate a
           full row and still clipped this link off the right edge at 1280px. */}
-      <div className="demeter__scope">
-        <DemeterStatePicker
-          states={states}
-          value={state}
-          onChange={changeState}
-          copy={t.picker}
-          hint={geoHint}
-          openSignal={openPicker}
-        />
-        <a className="demeter__how" href="/verify">
-          {t.howWeVerify}
-        </a>
-        {/* Sits with the scope controls rather than under the composer: it acts
-            on the WHOLE conversation, like the state and language pickers, not
-            on the next thing typed. Renders nothing until an answer exists. */}
-        <DemeterSave
-          messages={messages}
-          state={state}
-          lang={lang}
-          busy={busy}
-          pendingSave={pendingSave}
-          initialSavedId={savedConversationId}
-          onRestore={restoreConversation}
-          // Plain setter, not an inline arrow: it lands in an effect's
-          // dependency list in DemeterSave, and React guarantees a state
-          // setter's identity is stable across renders.
-          onSavedChange={setConversationSaved}
-          copy={t.save}
-        />
-        {/* CLEAR, for shared and public machines. On a library terminal the
-            next person otherwise sees the previous person's questions about
-            their income, their household, their felony record.
-            Renders only once there is something to clear. */}
-        {hasChat &&
-          (confirmClear ? (
-            <span className="demeter__clearconfirm" role="group" aria-label={t.clear}>
-              <span className="demeter__clearnote">{t.clearNote}</span>
-              <button type="button" className="demeter__clearyes" onClick={clearConversation}>
-                {t.clear}
-              </button>
-              <button
-                type="button"
-                className="demeter__clearno"
-                onClick={() => setConfirmClear(false)}
-              >
-                {t.save.panelDismiss}
-              </button>
-            </span>
-          ) : (
-            <button
-              type="button"
-              className="demeter__clear"
-              onClick={() => setConfirmClear(true)}
-            >
-              {t.clear}
-            </button>
-          ))}
-      </div>
 
       <div className="demeter__body">
         <div className="demeter__main">
-      <div className="demeter__scroll" ref={scrollRef}>
-        {!hasChat && (
-          <div className="demeter__empty">
-            {[t.empty1, t.empty2, t.empty3].map((q) => (
-              <button key={q} type="button" className="demeter__suggest" onClick={() => setInput(q)}>
-                {q}
+          {/* The controls live INSIDE the conversation column, not in a full-width
+              row above it. Out here they started 68px above the rail and left
+              "How we verify" floating alone in the right column, belonging to
+              neither. In here both columns begin on the same line. */}
+        <div className="demeter__scope">
+          <DemeterStatePicker
+            states={states}
+            value={state}
+            onChange={changeState}
+            copy={t.picker}
+            hint={geoHint}
+            openSignal={openPicker}
+          />
+          <a className="demeter__how" href="/verify">
+            {t.howWeVerify}
+          </a>
+          {/* Sits with the scope controls rather than under the composer: it acts
+              on the WHOLE conversation, like the state and language pickers, not
+              on the next thing typed. Renders nothing until an answer exists. */}
+          <DemeterSave
+            messages={messages}
+            state={state}
+            lang={lang}
+            busy={busy}
+            pendingSave={pendingSave}
+            initialSavedId={savedConversationId}
+            onRestore={restoreConversation}
+            // Plain setter, not an inline arrow: it lands in an effect's
+            // dependency list in DemeterSave, and React guarantees a state
+            // setter's identity is stable across renders.
+            onSavedChange={setConversationSaved}
+            copy={t.save}
+          />
+          {/* CLEAR, for shared and public machines. On a library terminal the
+              next person otherwise sees the previous person's questions about
+              their income, their household, their felony record.
+              Renders only once there is something to clear. */}
+          {hasChat &&
+            (confirmClear ? (
+              <span className="demeter__clearconfirm" role="group" aria-label={t.clear}>
+                <span className="demeter__clearnote">{t.clearNote}</span>
+                <button type="button" className="demeter__clearyes" onClick={clearConversation}>
+                  {t.clear}
+                </button>
+                <button
+                  type="button"
+                  className="demeter__clearno"
+                  onClick={() => setConfirmClear(false)}
+                >
+                  {t.save.panelDismiss}
+                </button>
+              </span>
+            ) : (
+              <button
+                type="button"
+                className="demeter__clear"
+                onClick={() => setConfirmClear(true)}
+              >
+                {t.clear}
               </button>
             ))}
+        </div>
+      <div className="demeter__scroll" ref={scrollRef}>
+        {!hasChat && (
+          // A composed block, centred in the space rather than three buttons
+          // left in it. Measured: 414px of the 565px transcript was empty, and
+          // whichever end the chips were pinned to, they read as controls
+          // someone forgot rather than as the start of a conversation.
+          <div className="demeter__empty">
+            <DemeterMark size={52} />
+            <h2 className="demeter__emptytitle">{t.emptyTitle}</h2>
+            <p className="demeter__emptylede">{t.emptyLede}</p>
+            <div className="demeter__suggests">
+              {[t.empty1, t.empty2, t.empty3].map((q) => (
+                <button
+                  key={q}
+                  type="button"
+                  className="demeter__suggest"
+                  onClick={() => setInput(q)}
+                >
+                  {q}
+                </button>
+              ))}
+            </div>
           </div>
         )}
         {messages.map((m, i) =>

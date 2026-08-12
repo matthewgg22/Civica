@@ -55,6 +55,11 @@ export const T = {
     errConfig: "Demeter isn't available yet — please check back soon.",
     errNetwork: "Something went wrong. Please try again.",
     thinking: "Reading the rules…",
+    // The empty chat's own words. Three bare buttons floating in 414px of
+    // measured whitespace read as stray controls; a mark, a line, and the
+    // questions grouped under it read as an invitation.
+    emptyTitle: "What would you like to know?",
+    emptyLede: "Every answer quotes the rule it comes from, so you can check it.",
     empty1: "Do I earn too much to qualify?",
     empty2: "I need food this week — can I get help faster?",
     empty3: "Will I have to do an interview?",
@@ -167,6 +172,8 @@ export const T = {
     errConfig: "Demeter aún no está disponible — vuelve pronto.",
     errNetwork: "Algo salió mal. Intenta de nuevo.",
     thinking: "Leyendo las reglas…",
+    emptyTitle: "¿Qué te gustaría saber?",
+    emptyLede: "Cada respuesta cita la regla de la que proviene, para que puedas comprobarla.",
     empty1: "¿Gano demasiado para calificar?",
     empty2: "Necesito comida esta semana, ¿puedo recibir ayuda más rápido?",
     empty3: "¿Tendré que hacer una entrevista?",
@@ -269,6 +276,8 @@ export const T = {
     errConfig: "Demeter chưa sẵn sàng — vui lòng quay lại sau.",
     errNetwork: "Đã xảy ra lỗi. Vui lòng thử lại.",
     thinking: "Đang đọc các quy định…",
+    emptyTitle: "Bạn muốn biết điều gì?",
+    emptyLede: "Mỗi câu trả lời đều trích dẫn điều luật mà nó dựa vào, để bạn tự kiểm chứng được.",
     empty1: "Tôi kiếm được nhiều quá thì có còn đủ điều kiện không?",
     empty2: "Tuần này tôi cần thực phẩm — có cách nào nhận nhanh hơn không?",
     empty3: "Tôi có phải phỏng vấn không?",
@@ -366,6 +375,8 @@ export const T = {
     errConfig: "Demeter 尚未开放——请稍后再来。",
     errNetwork: "出了点问题。请再试一次。",
     thinking: "正在查阅法规…",
+    emptyTitle: "您想了解什么？",
+    emptyLede: "每条回答都会引用其依据的条文，方便您自行核对。",
     empty1: "我赚得太多，就不符合条件了吗？",
     empty2: "这周就需要食物，能更快拿到吗？",
     empty3: "我需要参加面谈吗？",

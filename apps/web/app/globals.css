@@ -4746,11 +4746,27 @@ html {
 .demeter__state.is-active .demeter__badge { color: var(--demeter-paper); }
 .demeter__how { font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif; flex: none; font-size: 0.8rem; color: var(--demeter-terracotta-deep); text-decoration: underline; padding: 0.4rem; min-height: 44px; display: inline-flex; align-items: center; }
 .demeter__scroll { flex: 1; overflow-y: auto; padding: 0.5rem 0.25rem; display: flex; flex-direction: column; gap: 0.6rem; }
-/* Pushed to the BOTTOM of the transcript, so the suggestions sit just above the
-   composer. `margin: auto 0` floated them in the vertical middle of an empty
-   scroll area, marooned in whitespace with nothing above or below them — they
-   read as stray buttons rather than as the first thing you might say. */
-.demeter__empty { display: flex; flex-direction: column; gap: 0.5rem; margin: auto 0 0; padding: 1rem 0; }
+/* Centred, and a composed block rather than loose buttons. Measured: 414px of a
+   565px transcript was empty, and pinning the chips to either end of that only
+   moved the hole — they read as controls someone forgot either way. A mark, a
+   question and the suggestions under it make the space deliberate. */
+.demeter__empty {
+  display: flex; flex-direction: column; align-items: center; text-align: center;
+  gap: 0.6rem; margin: auto 0; padding: 1rem 0;
+}
+.demeter__emptytitle {
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+  font-size: clamp(1.35rem, 2.4vw, 1.7rem); font-weight: 600; letter-spacing: -0.01em;
+  color: var(--demeter-ink); margin: 0.35rem 0 0;
+}
+.demeter__emptylede {
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+  font-size: 0.98rem; line-height: 1.55; color: var(--demeter-muted);
+  margin: 0 0 0.5rem; max-width: 44ch; text-wrap: pretty;
+}
+.demeter__suggests {
+  display: flex; flex-direction: column; gap: 0.5rem; width: 100%; align-items: center;
+}
 .demeter__suggest {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   text-align: left; border: 1px solid var(--demeter-rule-strong); background: var(--demeter-card); color: var(--demeter-ink);
@@ -6409,17 +6425,13 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 @media (min-width: 901px) {
   .dmchat .demeter__body { grid-template-columns: minmax(0, 1fr) minmax(0, 21rem); column-gap: 2.5rem; }
 
-  /* The scope row shares the body's columns instead of running the full width.
-     Measured before: the picker ended at 1201 while the conversation column
-     ended at 944, so it overhung the rail and nothing below it lined up with
-     anything above it. Picker sits over the transcript; "How we verify" and
-     Save sit over the rail. Two columns, one set of edges, top to bottom. */
-  .dmchat .demeter__scope {
-    display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 21rem);
-    column-gap: 2.5rem; align-items: center; justify-content: initial;
-  }
-  /* Everything after the picker shares the rail's column. */
-  .dmchat .demeter__scope > *:not(.dmst) { grid-column: 2; justify-self: start; }
+  /* The controls row now lives INSIDE the conversation column (see the JSX), so
+     it needs no grid of its own — it is already the width of the column it
+     belongs to, and both columns start on the same line because they are
+     siblings in the same grid.
+     Measured before: the picker began 68px above the rail, and "How we verify"
+     floated alone in the right column between them, belonging to neither. */
+  .dmchat .demeter__scope { padding-top: 0; }
 
   /* Flush with the composer at rest, so the two read as one control rather than
      a tall box with a short button parked at its corner. They stay bottom
@@ -6439,8 +6451,11 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
    ONLY above the two-column breakpoint: on a phone a wrapping row shrinks them
    to slivers, and full-width stacked is the right shape there anyway. */
 @media (min-width: 901px) {
-  .dmchat .demeter__empty {
-    flex-direction: row; flex-wrap: wrap; gap: 0.6rem; align-items: flex-start;
+  /* The suggestions wrap into a centred row; the block around them stays a
+     column. Sizing each chip to its own label — stretched to fill, three
+     questions look like three empty banners. */
+  .dmchat .demeter__suggests {
+    flex-direction: row; flex-wrap: wrap; justify-content: center; gap: 0.6rem;
   }
   .dmchat .demeter__suggest { flex: 0 0 auto; max-width: 100%; }
 }
