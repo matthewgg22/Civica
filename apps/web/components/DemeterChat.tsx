@@ -269,17 +269,30 @@ export function DemeterChat({
   // text streams into the last bubble. Instant during streaming is not a
   // compromise — it is what makes it look like text arriving rather than the
   // viewport chasing it.
+  //
+  // AND ONLY IF THE READER IS ALREADY AT THE BOTTOM. Following unconditionally
+  // means someone who scrolls up to re-read an earlier answer gets yanked back
+  // down on the next token — the transcript fighting the person reading it.
+  // Being left behind is recoverable; being dragged away mid-sentence is not.
+  const NEAR_BOTTOM = 120;
+  const atBottom = (el: HTMLDivElement) =>
+    el.scrollHeight - el.scrollTop - el.clientHeight < NEAR_BOTTOM;
+
   const messageCount = messages.length;
   useEffect(() => {
     const el = scrollRef.current;
     if (!el) return;
-    el.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
+    // A new bubble is a real event, so it follows from a little further up —
+    // but not from the top of a long transcript someone is reading.
+    if (el.scrollHeight - el.scrollTop - el.clientHeight < NEAR_BOTTOM * 3) {
+      el.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
+    }
   }, [messageCount]);
 
   useEffect(() => {
     const el = scrollRef.current;
     if (!el || !busy) return;
-    el.scrollTop = el.scrollHeight;
+    if (atBottom(el)) el.scrollTop = el.scrollHeight;
   }, [messages, busy]);
 
   const changeState = (next: string | null) => {
@@ -674,7 +687,12 @@ export function DemeterChat({
               {m.content}
             </div>
           ) : (
-            <div key={i}>
+            // THE WRAPPER CARRIES THE ALIGNMENT. It used to be a bare <div>,
+            // which made IT the flex child of the transcript — so the bubble's
+            // own `align-self: flex-end` was set correctly and reached nothing,
+            // and every message rendered left-aligned at its full 68ch max.
+            // Measured: "whats snap?" came out 635px wide, on the left.
+            <div key={i} className={`demeter__turn demeter__turn--${m.role}`}>
               <div className={`demeter__msg demeter__msg--${m.role}`}>
                 {m.content ? (
                   m.role === "assistant" ? (

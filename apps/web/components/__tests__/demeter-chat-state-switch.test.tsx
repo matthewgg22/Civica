@@ -180,3 +180,23 @@ describe("DemeterChat heading level", () => {
     expect(screen.getByText("Demeter")).toBeTruthy();
   });
 });
+
+describe("a transcript reads as a conversation", () => {
+  it("puts the turn's alignment on the flex CHILD, not on the bubble", async () => {
+    // The bubble used to sit inside a bare <div>, so THAT was the flex child
+    // and the bubble's own `align-self: flex-end` reached nothing. Measured
+    // before the fix: a three-word question rendered 635px wide, on the left,
+    // in the same place and shape as the answer.
+    //
+    // Asserted structurally because the symptom is purely visual — every test
+    // passed while it was broken, and it shipped for months.
+    render(<DemeterChat states={STATES} />);
+    await sendQuestion("whats snap?");
+    const bubble = document.querySelector(".demeter__msg--user");
+    expect(bubble, "no user bubble rendered").not.toBeNull();
+    const turn = bubble!.parentElement!;
+    expect(turn.className, "the bubble's parent must carry the turn class").toContain(
+      "demeter__turn--user",
+    );
+  });
+});

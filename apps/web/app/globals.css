@@ -5824,7 +5824,29 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   background: var(--demeter-terracotta-deep); color: var(--demeter-paper);
 }
 .dmw__modeopt:focus-visible { outline: 2px solid var(--demeter-ink); outline-offset: 2px; }
-@media (prefers-reduced-motion: reduce) { .dmw__modeopt { transition: none; } }
+
+/* THE 105px JUMP. Measured: the rail is 328px in "Just asking" and 433px in
+   "Build my estimate", and it used to get there instantly — the panel snapped
+   to a new size with nothing connecting the two states.
+   Two parts, because neither alone is enough: the content fades in so the
+   change reads as intentional, and the height eases where the browser can do
+   it. `interpolate-size` is what makes height:auto animatable at all; where it
+   is unsupported the height still snaps, but the fade already carries most of
+   the improvement. */
+@supports (interpolate-size: allow-keywords) {
+  .dmw { interpolate-size: allow-keywords; transition: height 260ms cubic-bezier(0.22, 1, 0.36, 1); }
+}
+.dmw__mode ~ * { animation: dmModeIn 220ms cubic-bezier(0.22, 1, 0.36, 1) both; }
+@keyframes dmModeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dmw__modeopt { transition: none; }
+  .dmw { transition: none; }
+  .dmw__mode ~ * { animation: none; }
+}
 
 .dmw__needed-count {
   font-size: 0.68rem; color: var(--demeter-terracotta-deep);
@@ -6221,12 +6243,34 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 }
 @keyframes dmCaret { 0%, 100% { opacity: 1 } 50% { opacity: 0 } }
 
+/* THE THINKING BUBBLE holds roughly the height of the first line of an answer,
+   so the moment the first token lands the bubble does not collapse and re-grow
+   under the dots. The swap was one of three separate jolts in a single reply. */
+.demeter__thinking { display: inline-flex; align-items: center; min-height: 1.68em; }
+
+/* The feedback row and the citation trailer both arrive AFTER the answer has
+   been read, and both used to appear instantly, shifting everything above them.
+   They fade in instead — they are additions to a finished answer, not part of
+   its arrival. */
+.demeter__msg--assistant .demeter__rule ~ *,
+.demeter__turn--assistant > .dmfb {
+  animation: dmTrailerIn 260ms ease-out both;
+}
+@keyframes dmTrailerIn { from { opacity: 0 } to { opacity: 1 } }
+@media (prefers-reduced-motion: reduce) {
+  .demeter__msg--assistant .demeter__rule ~ *,
+  .demeter__turn--assistant > .dmfb { animation: none; }
+}
+
 /* Vestibular safety: everything above is decoration, so all of it goes. */
 @media (prefers-reduced-motion: reduce) {
   .demeter__msg,
   .demeter__msg--assistant,
   .demeter__thinking,
+  .dmst__scope,
   .demeter__dots i { animation: none; }
+  .dmnav__tab { transition: none; }
+  .dmnav__tab:active { transform: none; }
   /* The caret stops BLINKING but stays visible — it is a status indicator, not
      decoration, and removing it would take away the only sign that an answer is
      still arriving. */
@@ -6524,6 +6568,42 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
    window; `ch` pins it where prose is actually readable, and `min()` keeps
    short replies from stretching to the full width on a wide screen. */
 .dmchat .demeter__msg { max-width: min(92%, 68ch); }
+
+/* A turn is the flex child, and it is what places the bubble. The bubble used
+   to sit inside a bare <div>, so ITS align-self reached nothing and every
+   message rendered left-aligned at the full 68ch cap — a three-word question
+   came out 635px wide, in the same place and the same shape as the answer. A
+   transcript where the question and the answer are indistinguishable is not
+   reading as a conversation, whatever else is wrong with it. */
+/* The state's agency and portal appear when you pick a state, pushing the
+   conversation down 74px (measured: the row goes 68px → 142px). I had planned
+   to move this into the rail; on doing it, that is the worse fix — the lines
+   describe the SELECTION, so they belong under the control you just used, and
+   in "Just asking" mode they would be orphaned in a panel that is otherwise
+   about the estimate.
+   So it stays, and the reveal is eased instead: it is a consequence of your own
+   click, arriving directly beneath it, which is a thing a person can follow. */
+.dmst__scope { animation: dmScopeIn 220ms cubic-bezier(0.22, 1, 0.36, 1) both; }
+@keyframes dmScopeIn {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* Immediate feedback on the tab you pressed. Navigation is fast, but with no
+   press state at all the gap between click and repaint reads as nothing having
+   happened.
+   NOT a whole-page cross-fade: animating the page in from opacity 0 delays the
+   LCP element's paint on a page whose entire argument is that it is fast and
+   server-rendered. A view transition is the "nicer" answer and the wrong trade
+   here. */
+.dmnav__tab { transition: color 120ms ease-out, background-color 120ms ease-out; }
+.dmnav__tab:active { transform: translateY(1px); }
+
+.demeter__turn { display: flex; flex-direction: column; }
+.demeter__turn--user { align-items: flex-end; }
+.demeter__turn--assistant, .demeter__turn--divider { align-items: flex-start; }
+/* Hug the text. max-width still caps the long ones at a readable measure. */
+.demeter__msg { width: fit-content; }
 
 /* The suggested questions are BUTTONS, and a button should be the size of its
    label. In a narrow column, stretching to fill was harmless; across a wide one
