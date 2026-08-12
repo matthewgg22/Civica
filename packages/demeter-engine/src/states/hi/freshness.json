@@ -1,0 +1,56 @@
+{
+  "_provenance": {
+    "note": "Hawaii dated facts. Because Hawaii has NO existing packages/snap-rules StatePolicy entry, there is no engine constant to cross-check against — every entry below is either a routine COLA-cycle reminder, a disclosed research gap, or a warning about a confirmed time-sensitive or actively-changing fact this pack found.",
+    "extracted": "2026-08-12"
+  },
+  "entries": [
+    {
+      "key": "hi-food-restriction-waiver-implementation-date-verify",
+      "kind": "expires",
+      "date": "2027-03-01",
+      "warning": "Hawaii's SNAP soft-drink purchase-restriction waiver was approved by USDA (originally effective 8/1/2026), then a June 15, 2026 USDA status update pushed the implementation date to April 1, 2027. As of this pack's fetch date (8/12/2026), the restriction is APPROVED but NOT YET IN EFFECT. Before telling a Hawaii applicant whether soft drinks are currently purchasable with SNAP, re-check https://www.fna.usda.gov/snap/waivers/foodrestriction/hawaii directly — a further implementation-date change is plausible given that one has already occurred, and this date is among the most actively-changing facts in this pack."
+    },
+    {
+      "key": "hi-drug-felony-statute-text-unverified-primary-source",
+      "kind": "expires",
+      "date": "2026-11-01",
+      "warning": "This pack's criminal-justice-disqualifications supplement quotes Haw. Rev. Stat. § 346-53.3's exact text ('...persons who are complying with treatment or who have not refused or failed to comply with treatment'), but this quote rests on WebSearch/Justia-excerpt corroboration, not a directly-fetched primary document — both law.justia.com and capitol.hawaii.gov (the Hawaii Legislature's own statute-text host) returned HTTP 403 to every direct curl attempt this pack made (browser User-Agent, plain HTTP, and a rate-limited Wayback Machine attempt). Re-verify this statute's current text directly against capitol.hawaii.gov before treating it as a hard fact in a high-stakes context — this is the one citation in this pack with an unresolved access barrier."
+    },
+    {
+      "key": "hi-abawd-waiver-absence-verify-quarterly",
+      "kind": "expires",
+      "date": "2026-11-01",
+      "warning": "This pack found Hawaii ABSENT from USDA FNA's ABAWD Time Limit Waivers FY2025-2029 state-response index as of this pack's fetch date, despite Hawaii's favorable noncontiguous-state 1.5x-national-unemployment-rate waiver threshold (which Alaska, listed on the same page, currently uses). FNA updates this waiver index quarterly per its own page text — re-check https://www.fna.usda.gov/snap/waivers/timelimit/2025-2029 directly before restating Hawaii's ABAWD-waiver-absence as settled beyond this window."
+    },
+    {
+      "key": "hi-sua-individual-dollar-amounts-not-found",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "This pack confirmed Hawaii's Standard Utility Allowance STRUCTURE directly from HAR §17-676-73 (individual per-utility-type allowances for sewer/trash, water, electricity/gas, and a mandatory telephone allowance, each separately weighted by county caseload share and, for some, household size/bedroom count) but did NOT find the current specific DOLLAR AMOUNTS for each individual utility-type standard in a single dated Hawaii DHS document. Before restating a specific Hawaii utility-allowance dollar figure, locate and fetch Hawaii DHS's current SUA rate table directly (likely published annually alongside the October 1 rate-setting cycle per 17-676-73(h))."
+    },
+    {
+      "key": "hi-cert-period-sourcing-gap",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "This pack's reporting-certification supplement (6-or-12-month certification, Six-Month Report Form midpoint, elderly/disabled carve-out, and SB961's failure to pass) is corroborated by secondary/WebSearch sources only, NOT by a directly-fetched, dated Hawaii DHS or Hawaii Administrative Rules certification-period section the way this pack's other findings are. Before restating Hawaii's certification-period structure with full confidence, locate and fetch the current HAR certification-period provisions (likely in Chapter 655 or 678) directly."
+    },
+    {
+      "key": "hi-vehicle-exclusion-not-found",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "This pack's asset-rule supplement did not find a Hawaii-specific vehicle-exclusion figure or vehicle-valuation methodology distinct from the federal SNAP standard. Most Hawaii households face no asset test at all under BBCE (see income-pathways/asset-rule supplements), which may explain the gap, but this pack did not independently confirm that a distinct Hawaii vehicle rule does not exist for the narrower non-BBCE population."
+    },
+    {
+      "key": "hi-ffy2027-cola-reminder",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "This pack's confirmed dollar figures (Hawaii Standard Deduction $295/$295/$295/$295/$300/$344, Maximum Excess Shelter Deduction $1,003, Homeless Shelter Deduction $198.99, maximum allotments by household size, and the 130%/200% FPL gross and 100% FPL net income-eligibility tables) are drawn from USDA FNA's own current FY2026 national table and Hawaii DHS's own consumer page, both effective October 1, 2025, matching the current FFY2026 cycle (October 1, 2025 - September 30, 2026). The FFY2027 COLA cycle begins October 1, 2026 — under two months from this pack's fetch date. Check fna.usda.gov and humanservices.hawaii.gov/bessd/snap/ for updated figures after that date before restating any Hawaii-specific dollar figure with full confidence."
+    },
+    {
+      "key": "hi-sb961-no-future-revival-verify",
+      "kind": "expires",
+      "date": "2026-12-31",
+      "warning": "Hawaii Senate Bill 961 (2025-2026 session), which would have extended the minimum SNAP certification period to 24-36 months and had DHS join USDA's Elderly Simplified Application Project, did NOT pass per this pack's secondary-source tracking. A similar bill could be reintroduced in a future legislative session — re-check the Hawaii Legislature's own bill-tracking system before restating Hawaii's certification-period structure as permanently settled beyond this window."
+    }
+  ]
+}

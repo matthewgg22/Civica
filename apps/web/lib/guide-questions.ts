@@ -223,4 +223,11 @@ export const QUESTIONS: Record<string, string[]> = {
     "Can I buy soda with my SNAP benefits in Nebraska?",
     "What is the SNAP resource limit in Nebraska, and can it be temporarily higher?",
   ],
+  HI: [
+    "What is the income limit for SNAP in Hawaii?",
+    "I have a drug felony conviction — can I still get SNAP in Hawaii?",
+    "Is there an ABAWD work-requirement waiver anywhere in Hawaii?",
+    "Can I use my SNAP benefits at a restaurant in Hawaii?",
+    "Why is the maximum SNAP benefit higher in Hawaii than the mainland?",
+  ],
 };
