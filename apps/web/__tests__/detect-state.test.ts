@@ -98,3 +98,36 @@ describe("places this product does not cover", () => {
     expect(detectUncoveredPlace("how much could I get")).toBeNull();
   });
 });
+
+// Regression: "but he gets VA benefits?" offered to re-scope a California
+// conversation to Virginia, mid-answer, after the state was already settled.
+//
+// Veterans are not an edge case here. VA income, VA disability and VA health
+// care come up in SNAP screening constantly, and every one of them reads as a
+// state code to a bare two-letter match.
+describe("two-letter codes that are acronyms for something else", () => {
+  it.each([
+    "but he gets VA benefits? my income is 2 k a month",
+    "he has a VA disability rating",
+    "I go to the VA hospital",
+    "waiting on my VA claim",
+  ])("does not read %s as Virginia", (text) => {
+    expect(detectState(text)).toBeNull();
+  });
+
+  it("still detects Virginia when they mean the state", () => {
+    expect(detectState("I live in VA")?.code).toBe("VA");
+    expect(detectState("I am in Virginia")?.code).toBe("VA");
+    expect(detectState("we moved to Richmond")?.code).toBe("VA");
+  });
+
+  // The rule keys off the NOUN that follows, not off the code alone — so it
+  // catches the phrasings that actually turn up in benefits conversations and
+  // deliberately does not try to catch every possible acronym. "my MD said I
+  // cannot work" is still read as Maryland; that is a known limit, not an
+  // oversight, and widening it costs real detections.
+  it("covers the same shape for other codes", () => {
+    expect(detectState("the DE office lost my form")).toBeNull();
+    expect(detectState("I applied for an OK loan")).toBeNull();
+  });
+});

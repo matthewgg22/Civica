@@ -67,7 +67,7 @@ describe("assessCompleteness", () => {
     expect(r.stillNeeded).not.toContain("Household size");
   });
 
-  it("an unrecognized malformed field surfaces visibly rather than vanishing", () => {
+  it("a malformed field surfaces visibly rather than vanishing", () => {
     const r = assessCompleteness({
       household: [{ member_id: "a", age: -5, role: "head", immigration: "citizen" }], // fails age min(0)
       shelter: { rent: 500, sua_tier: "none" },
@@ -75,7 +75,39 @@ describe("assessCompleteness", () => {
       assets: 0,
     });
     expect(r.computable).toBe(false);
-    expect(r.stillNeeded.some((s) => s.startsWith("Missing:"))).toBe(true);
+    expect(r.stillNeeded.length).toBeGreaterThan(0);
+    expect(r.rawErrors.length).toBeGreaterThan(0);
+  });
+
+  // The panel said "Missing: household.0.age" and "Missing: household.1.age" —
+  // internal field paths, one per member, in a list otherwise written in
+  // English. It told the reader nothing about what to say next.
+  it("names fields in English, and only once however many members are missing one", () => {
+    const r = assessCompleteness({
+      household: [
+        { member_id: "a", age: -5, role: "head", immigration: "citizen" },
+        { member_id: "b", age: -9, role: "spouse", immigration: "citizen" },
+      ],
+      shelter: { rent: 500, sua_tier: "none" },
+      cat_elig: "NPA",
+      assets: 0,
+    });
+    expect(r.stillNeeded.filter((x) => x.includes("age"))).toHaveLength(1);
+    expect(r.stillNeeded.join(" ")).not.toMatch(/household\.\d|Missing:/);
+  });
+
+  // Dropping an unmapped path silently would let stillNeeded empty out while
+  // the data is still malformed, and composeVerdict would be handed facts Zod
+  // has already rejected.
+  it("never reports computable while Zod is still rejecting the facts", () => {
+    const r = assessCompleteness({
+      household: [{ member_id: "a", age: -5, role: "head", immigration: "citizen" }],
+      shelter: { rent: 500, sua_tier: "none" },
+      cat_elig: "NPA",
+      assets: 0,
+    });
+    expect(r.rawErrors.length).toBeGreaterThan(0);
+    expect(r.computable).toBe(false);
   });
 
   it("computable:true means composeVerdict can ACTUALLY run — not just that Zod is happy with a default", () => {

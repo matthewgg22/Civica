@@ -121,6 +121,39 @@ describe("paragraphs are blocks, so they can be given space", () => {
   });
 });
 
+// Seen in production: an answer carrying TWO certainty banners — its own
+// "⚠ UNCERTAIN — do not treat as settled; confirm with your county caseworker"
+// and ours right under it — plus two "Check it yourself" lines. Told the same
+// caveat twice in two wordings, which reads as the page arguing with itself.
+describe("a trailer the model wrote alongside ours", () => {
+  const doubled = [
+    "The answer.",
+    "",
+    "⚠ UNCERTAIN — do not treat as settled; confirm with your county caseworker.",
+    "Check it yourself: 7 CFR 273.11",
+    "---",
+    "⚠ **UNCERTAIN** — These are real authorities, but we did not have their text.",
+    "_Check it yourself:_ 7 CFR 273.11",
+  ].join("\n");
+
+  it("keeps one certainty banner — ours, which is appended last", () => {
+    const { body } = splitFollowups(doubled);
+    expect(body).toContain("These are real authorities");
+    expect(body).not.toContain("do not treat as settled");
+  });
+
+  it("keeps one Check it yourself line", () => {
+    expect(splitFollowups(doubled).body.match(/Check it yourself/g) ?? []).toHaveLength(1);
+  });
+
+  it("leaves an answer with a single trailer untouched", () => {
+    const single = "The answer.\n---\n✓ **CERTAIN** — checked.\n_Check it yourself:_ 7 CFR 273.9";
+    const { body } = splitFollowups(single);
+    expect(body).toContain("CERTAIN");
+    expect(body.match(/Check it yourself/g) ?? []).toHaveLength(1);
+  });
+});
+
 describe("the question the composer echoes", () => {
   it("drops the bullet marker when the closing question is a list item", () => {
     // Answers very often end in a list of options, so the last sentence is the
