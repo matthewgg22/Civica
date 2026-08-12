@@ -307,4 +307,13 @@ export const QUESTIONS: Record<string, string[]> = {
     "How do I apply for SNAP in Wyoming?",
     "Can I use SNAP on the Wind River Reservation, or do I have to choose FDPIR instead?",
   ],
+  VT: [
+    "What is the income limit for 3SquaresVT in Vermont?",
+    "Does Vermont have an asset or resource limit for SNAP?",
+    "I have a drug felony conviction — can I still get 3SquaresVT in Vermont?",
+    "Is the SNAP work-requirement time limit currently waived anywhere in Vermont?",
+    "How long does my 3SquaresVT certification last in Vermont?",
+    "Does Vermont have a Restaurant Meals Program for SNAP?",
+    "Can I get my 3SquaresVT benefits as cash in Vermont?",
+  ],
 };

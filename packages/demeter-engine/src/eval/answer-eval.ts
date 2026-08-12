@@ -4998,6 +4998,98 @@ export const WY_GOLD: AnswerExpectation[] = [
   },
 ];
 
+export const VT_GOLD: AnswerExpectation[] = [
+  {
+    id: "vt-two-categorical-routes-not-just-185-bbce",
+    // Guards the structural finding: VT has TWO distinct categorical-
+    // eligibility routes (185% FPL gross income OR households with children
+    // who received the VT EITC), not just a flat BBCE gate.
+    question: "What is the income limit for 3SquaresVT in Vermont?",
+    state: "VT",
+    mustMention: "185",
+    mustDisclaim: true,
+  },
+  {
+    id: "vt-resource-limit-elderly-disabled-track-not-flatly-none",
+    // Guards the structural finding: a household outside both categorical-
+    // eligibility routes with an elderly/disabled member still faces a real
+    // $4,500 resource test.
+    question: "Does Vermont have an asset or resource limit for SNAP?",
+    state: "VT",
+    mustMention: "4,500",
+    mustDisclaim: true,
+  },
+  {
+    id: "vt-drug-felony-full-opt-out-2009",
+    // Guards the flagship statutory confirmation: VT fully opted out of the
+    // federal drug-felony ban via 33 V.S.A. § 1203a, added 2009.
+    question: "I have a drug felony conviction — can I still get 3SquaresVT in Vermont?",
+    state: "VT",
+    mustMention: "2009",
+    mustDisclaim: true,
+  },
+  {
+    id: "vt-abawd-waiver-none-active",
+    question: "Is the SNAP work-requirement time limit currently waived anywhere in Vermont?",
+    state: "VT",
+    mustMention: "no",
+    mustDisclaim: true,
+  },
+  {
+    id: "vt-abawd-age-range-current-federal",
+    question: "What is the ABAWD work requirement age range in Vermont?",
+    state: "VT",
+    mustMention: "64",
+    mustDisclaim: true,
+  },
+  {
+    id: "vt-utility-allowance-dollar-figures",
+    // Guards the disclosed-confidence finding: VT's SUA figures ARE known
+    // ($1,096/$311/$37) but rest on a single primary document.
+    question: "What utility deduction can I get for 3SquaresVT in Vermont?",
+    state: "VT",
+    mustMention: "1,096",
+    mustDisclaim: true,
+  },
+  {
+    id: "vt-cert-period-12-months-standard",
+    question: "How long does my 3SquaresVT certification last in Vermont?",
+    state: "VT",
+    mustMention: "12",
+    mustDisclaim: true,
+  },
+  {
+    id: "vt-restaurant-meals-program-not-available",
+    question: "Does Vermont have a Restaurant Meals Program for SNAP?",
+    state: "VT",
+    mustMention: "not",
+    mustDisclaim: true,
+  },
+  {
+    id: "vt-cash-out-option-flagship",
+    // Guards the flagship correction: VT has no formal RMP, but 43% of its
+    // caseload already receives benefits as cash usable at restaurants via
+    // the state's separate cash-out option.
+    question: "Can I get my 3SquaresVT benefits as cash in Vermont?",
+    state: "VT",
+    mustMention: "cash",
+    mustDisclaim: true,
+  },
+  {
+    id: "vt-how-to-apply-mybenefits",
+    question: "How do I apply for 3SquaresVT in Vermont?",
+    state: "VT",
+    mustDisclaim: true,
+  },
+  {
+    id: "vt-federal-benefit",
+    question: "How is the monthly SNAP benefit amount calculated from net income in Vermont?",
+    state: "VT",
+    expectCitation: "273.10",
+    mustDisclaim: true,
+  },
+];
+
 
 export const ALL_GOLD: AnswerExpectation[] = [
   ...ANSWER_GOLD,
@@ -5049,4 +5141,5 @@ export const ALL_GOLD: AnswerExpectation[] = [
   ...ND_GOLD,
   ...DE_GOLD,
   ...WY_GOLD,
+  ...VT_GOLD,
 ];
