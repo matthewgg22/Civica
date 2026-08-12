@@ -223,4 +223,12 @@ export const QUESTIONS: Record<string, string[]> = {
     "Can I buy soda with my SNAP benefits in Nebraska?",
     "What is the SNAP resource limit in Nebraska, and can it be temporarily higher?",
   ],
+  ME: [
+    "What is the income limit for SNAP in Maine?",
+    "I have a drug felony conviction — can I still get SNAP in Maine?",
+    "Is the SNAP work-requirement time limit currently waived anywhere in Maine?",
+    "What is the SNAP resource limit in Maine?",
+    "Does Maine have a Restaurant Meals Program for SNAP?",
+    "What utility deduction can I get for SNAP in Maine?",
+  ],
 };
