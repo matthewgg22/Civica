@@ -1,0 +1,38 @@
+{
+  "_provenance": {
+    "note": "Kansas citation authorities. Kansas's operative SNAP policy lives in the Kansas Economic and Employment Support Manual (KEESM), cited by a bare numeric section number (e.g. '2510', '7226') with no letter prefix at all — a structurally simpler convention than Connecticut's 'UPM' or Kentucky's 'MS ####' or Louisiana's 'B-1040-SNAP'. This pack writes 'KEESM' before a citation in running prose purely for cross-state disambiguation (matching this roster's general convention), while the regex below matches the bare '####' or '####.##' form Kansas's own manual uses natively. This pack ALSO cites a real, separate Kansas Statute (K.S.A. 39-709e) for the drug-felony finding, so this pack defines a SECOND citation family, 'KSA 39-', matching this roster's Kentucky, Alabama, Louisiana, and Connecticut packs' multi-family pattern.",
+    "extracted": "2026-08-12"
+  },
+  "patterns": [
+    {
+      "key": "kskeesm",
+      "regex": "\\bKEESM\\s?(\\d{4}(?:\\.\\d{1,2})?[a-z]?)\\b",
+      "flags": "gi",
+      "template": "KEESM $1",
+      "normalize": "none",
+      "match": "exact",
+      "note": "Kansas Economic and Employment Support Manual, bare numeric section number, e.g. 2510 (Categorically Eligible Households), 7226 (Shelter Costs), 5200/5430 (Resources)."
+    },
+    {
+      "key": "ksstat",
+      "regex": "\\bK\\.?S\\.?A\\.?\\s?39-(\\d{3}[a-z]?)\\b",
+      "flags": "gi",
+      "template": "K.S.A. 39-$1",
+      "normalize": "none",
+      "match": "exact",
+      "note": "Kansas Statutes Annotated, Chapter 39 (Mentally Ill, Incapacitated and Dependent Persons; Social Welfare), cited by section number. This pack cites exactly one: K.S.A. 39-709e, the drug-felony public-assistance eligibility modification statute."
+    }
+  ],
+  "known": {
+    "kskeesm": [
+      { "value": "KEESM 2510", "note": "Categorically Eligible Households — categorical eligibility limited to TANF/SSI-authorized households and a narrow TransMed/Four-Month-Extended-Medical/TANF-work-program-support-services track; NO general income-threshold BBCE track found — this pack's primary confirming evidence for bbce:false" },
+      { "value": "KEESM 5200", "note": "Resource Value of Property — general principles for valuing countable resources; this pack did not find the current dollar asset-limit figure stated explicitly in this section within its fetch window (see freshness.json)" },
+      { "value": "KEESM 5430", "note": "Resources of TAF/SSI Recipients — resource treatment for categorically-eligible-adjacent households" },
+      { "value": "KEESM 7226", "note": "Shelter Costs — governs the Standard Utility Allowance (SUA), Limited Utility Allowance (LUA), and Telephone Standard; current dollar figures ($469/$345/$44) are stated in the companion Appendix F-2 table, not this narrative section directly" },
+      { "value": "KEESM Appendix F-2", "note": "Food Assistance Program Standards — the manual's dated, current dollar-figure table (effective 10/1/2025-9/30/2026): maximum benefit/gross/net income by household size, Standard Deduction, Maximum Excess Shelter Deduction, Homeless Shelter Expense, SUA, LUA, Telephone Standard, Standard Medical Deduction. This pack's PRIMARY source for every current Kansas dollar figure." }
+    ],
+    "ksstat": [
+      { "value": "K.S.A. 39-709e", "note": "Eligibility for public assistance for person convicted of controlled substance felony — a MODIFIED opt-out under 21 U.S.C. § 862a(d)(1): eligible if assessed as not requiring substance-abuse treatment, OR is participating in/has completed a recommended treatment program; disqualified on a positive test while on supervision or in treatment, with a 30-day reapplication window. NOT the unconditional 'lifetime ban' framing a 2022 secondary source repeats." }
+    ]
+  }
+}
