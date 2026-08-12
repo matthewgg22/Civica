@@ -165,4 +165,11 @@ export const QUESTIONS: Record<string, string[]> = {
     "What is the ABAWD work requirement age range in Oklahoma?",
     "Can I use my EBT card to buy a hot meal at a restaurant in Oklahoma?",
   ],
+  IA: [
+    "What is the income limit for SNAP in Iowa?",
+    "I have a drug felony conviction — can I still get SNAP in Iowa?",
+    "Does my car count against me for SNAP in Iowa?",
+    "What is the ABAWD work requirement age range in Iowa?",
+    "How long does my SNAP approval last in Iowa?",
+  ],
 };
