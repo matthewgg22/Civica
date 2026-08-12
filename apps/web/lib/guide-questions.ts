@@ -299,4 +299,12 @@ export const QUESTIONS: Record<string, string[]> = {
     "How long does my SNAP certification last in Delaware?",
     "Does Delaware have a Restaurant Meals Program for SNAP?",
   ],
+  VI: [
+    "What is the income limit for SNAP in the U.S. Virgin Islands?",
+    "Does the U.S. Virgin Islands have an asset or resource limit for SNAP?",
+    "I have a drug felony conviction — can I still get SNAP in the U.S. Virgin Islands?",
+    "When do the new ABAWD work requirements start in the U.S. Virgin Islands?",
+    "Does the U.S. Virgin Islands have a Restaurant Meals Program for SNAP?",
+    "How do I apply for SNAP in the U.S. Virgin Islands?",
+  ],
 };
