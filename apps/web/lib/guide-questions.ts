@@ -144,4 +144,11 @@ export const QUESTIONS: Record<string, string[]> = {
     "Does my car count against me for SNAP in Alabama?",
     "How long does my SNAP approval last in Alabama?",
   ],
+  LA: [
+    "What is the income limit for SNAP in Louisiana?",
+    "I have a drug felony conviction — can I still get SNAP in Louisiana?",
+    "Does my car count against me for SNAP in Louisiana?",
+    "Is the SNAP work-requirement time limit currently waived anywhere in Louisiana?",
+    "Can I use my EBT card to buy a hot meal at a restaurant in Louisiana?",
+  ],
 };

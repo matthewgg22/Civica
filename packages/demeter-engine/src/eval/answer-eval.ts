@@ -2861,6 +2861,128 @@ export const AL_GOLD: AnswerExpectation[] = [
   },
 ];
 
+export const LA_GOLD: AnswerExpectation[] = [
+  {
+    id: "la-bbce-flat-200",
+    // Guards the flagship finding: Louisiana's BBCE ceiling is a FLAT 200%
+    // FPL for every household, structurally simpler than Alabama's dual-track
+    // 130%/200% split — guards against the model importing AL's structure.
+    question: "What is the income limit for SNAP in Louisiana?",
+    state: "LA",
+    expectCitation: "280",
+    mustMention: "200",
+    mustDisclaim: true,
+  },
+  {
+    id: "la-drug-felony-full-opt-out",
+    // Guards the flagship CONFIRMATION finding: Louisiana FULLY opted out of
+    // the federal drug-felony ban (R.S. 46:233.3) — no disqualification at
+    // all, unlike Alabama's modified/conditional pathway.
+    question: "I have a drug felony conviction — can I still get SNAP in Louisiana?",
+    state: "LA",
+    mustMention: "eligible",
+    mustDisclaim: true,
+  },
+  {
+    id: "la-vehicle-blanket-exempt",
+    // Guards the structural finding: Louisiana excludes ALL vehicles from
+    // the resource test (vehicles appear on neither B-1040-SNAP list).
+    question: "Does my car count against me for SNAP in Louisiana?",
+    state: "LA",
+    expectCitation: "1040",
+    mustMention: "excluded",
+    mustDisclaim: true,
+  },
+  {
+    id: "la-resource-limit-current",
+    // Guards the disclosed-gap figure: $3,000/$4,500, corroborated via
+    // B-1040-17-SNAP's own worked example (B-1030-SNAP itself unlocatable).
+    question: "What is the SNAP resource limit for a household with a disabled member in Louisiana?",
+    state: "LA",
+    expectCitation: "1040",
+    mustMention: "4,500",
+    mustDisclaim: true,
+  },
+  {
+    id: "la-abawd-double-locked-waivers",
+    // Guards against overclaiming a parish waiver: Act 308 (2024) plus OBBBA
+    // (2025) both independently bar Louisiana ABAWD waivers; zero statewide.
+    question: "Is the SNAP work-requirement time limit currently waived anywhere in Louisiana?",
+    state: "LA",
+    mustMention: "waiver",
+    mustDisclaim: true,
+  },
+  {
+    id: "la-abawd-age-range-current-federal",
+    question: "What is the ABAWD work requirement age range in Louisiana?",
+    state: "LA",
+    expectCitation: "221",
+    mustMention: "64",
+    mustDisclaim: true,
+  },
+  {
+    id: "la-restaurant-meals-program-not-available",
+    // Guards against overclaiming: Louisiana does NOT operate a standing
+    // Restaurant Meals Program (USDA's own current list omits it) — distinct
+    // from the temporary, expiring Tropical Storm Arthur hot-foods waiver.
+    question: "Can I use my EBT card to buy a hot meal at a restaurant in Louisiana?",
+    state: "LA",
+    mustMention: "not",
+    mustDisclaim: true,
+  },
+  {
+    id: "la-child-support-ordinary-deduction",
+    // Guards the structural finding: LA treats child support as an ordinary
+    // post-gross deduction, not an income exclusion.
+    question: "Does paying child support lower my countable income for SNAP in Louisiana?",
+    state: "LA",
+    expectCitation: "656",
+    mustDisclaim: true,
+  },
+  {
+    id: "la-medical-deduction-smd-161",
+    question: "I'm disabled and have $50 a month in medical bills for Louisiana SNAP — do I get a deduction?",
+    state: "LA",
+    expectCitation: "653",
+    mustMention: "35",
+    mustDisclaim: true,
+  },
+  {
+    id: "la-expedited-service-7-day",
+    question: "How fast can I get emergency SNAP benefits in Louisiana?",
+    state: "LA",
+    expectCitation: "661",
+    mustMention: "7",
+    mustDisclaim: true,
+  },
+  {
+    id: "la-cert-period-12-month-standard",
+    // Guards the structural finding: Louisiana's standard certification
+    // period is up to 12 months, not the 6-month baseline this roster has
+    // mostly documented.
+    question: "How long does my SNAP approval last in Louisiana?",
+    state: "LA",
+    mustMention: "12",
+    mustDisclaim: true,
+  },
+  {
+    id: "la-administering-agency-ldh",
+    // Guards the flagship finding: SNAP moved from DCFS to LDH on Oct. 1,
+    // 2025 — guards against the model naming only the legacy DCFS agency.
+    question: "What agency runs SNAP in Louisiana?",
+    state: "LA",
+    mustMention: "Health",
+    mustDisclaim: true,
+  },
+  {
+    id: "la-federal-benefit",
+    question: "How is the monthly SNAP benefit amount calculated from net income in Louisiana?",
+    state: "LA",
+    expectCitation: "273.10",
+    mustDisclaim: true,
+  },
+];
+
 /** Everything the live runner executes. */
 export const ALL_GOLD: AnswerExpectation[] = [
   ...ANSWER_GOLD,
@@ -2890,4 +3012,5 @@ export const ALL_GOLD: AnswerExpectation[] = [
   ...CO_GOLD,
   ...SC_GOLD,
   ...AL_GOLD,
+  ...LA_GOLD,
 ];

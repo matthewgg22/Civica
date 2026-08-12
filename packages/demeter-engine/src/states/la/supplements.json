@@ -1,0 +1,250 @@
+{
+  "_provenance": {
+    "note": "Louisiana SNAP curated supplements. Louisiana has NO existing packages/snap-rules StatePolicy entry and NO oracle-fixture coverage — a genuine blank slate, like North Carolina's, Ohio's, New Jersey's, Virginia's, Tennessee's, Indiana's, Missouri's, Maryland's, Colorado's, South Carolina's, and Alabama's prior corpus-only builds in this same roster. This pack is CORPUS-ONLY and does not touch packages/snap-rules or the oracle fixture. Drafted from direct curl fetches (browser User-Agent) of Louisiana's Economic Stability/Economic Independence (ES/EI) SNAP Policy Manual, individually hosted per-document on public.powerdms.com/LADCFS, plus LDH's and DCFS's own news pages.",
+    "extracted": "2026-08-12",
+    "source_fact_check": "direct curl fetch (browser UA) of public.powerdms.com/LADCFS per-document PDFs (B-650, B-1010, B-1020, B-1040, C-660, C-720, E-220/221/222, E-280, J-300, S-110), converted with pdftotext -layout, all cited sections cross-referenced against their own section headers + direct curl fetch of ldh.la.gov's Oct. 1, 2025 SNAP-transfer announcement, its Jul. 20, 2026 Tropical Storm Arthur hot-foods waiver announcement, and dcfs.louisiana.gov's Sept. 30, 2024 ABAWD-waiver-expiration announcement (all clean HTTP 200) + direct curl fetch of USDA FNA's current Restaurant Meals Program list and ABAWDMap.us's Louisiana entry + WebSearch cross-checks for La. R.S. 46:233.3 (Justia 403'd) + post-draft adversarial refute pass; findings and gaps recorded in PROVENANCE.md",
+    "access_note": "public.powerdms.com/LADCFS and both ldh.la.gov and dcfs.louisiana.gov all returned clean HTTP 200 to direct curl with a browser User-Agent on every fetch attempt — no login wall, no rate limiting. The genuine access complication this pack found is not a blocked fetch but a live, in-progress AGENCY TRANSFER (DCFS to LDH, Oct. 1, 2025) plus an internally-inconsistent MANUAL CHAPTER RENAME (\"Economic Stability\" to \"Economic Independence\") still visible in the same document header — see PROVENANCE.md Findings 1 and 2. Justia 403'd on the underlying La. R.S. 46:233.3 statute text, a now-familiar pattern in this roster; resolved via convergent secondary corroboration cross-checked against DCFS/LDH's own primary-source manual text, which independently confirms the same substantive rule (no drug-felony disqualification exists at all)."
+  },
+  "supplements": [
+    {
+      "key": "program-identity",
+      "kind": "supplement",
+      "terms": [
+        "how to apply",
+        "where do i apply",
+        "apply for snap",
+        "cafe",
+        "cafe portal",
+        "who runs",
+        "what agency",
+        "administers",
+        "dcfs",
+        "ldh",
+        "louisiana department of health",
+        "office of economic stability",
+        "fitap",
+        "family independence",
+        "louisiana purchase card",
+        "bayou card",
+        "ebt card",
+        "food stamps"
+      ],
+      "citation": "LA ldh.la.gov/news/snap-to-ldh (Oct. 1, 2025) — \"Today marks the first day the Louisiana Department of Health (LDH) officially administers the Supplemental Nutrition Assistance Program (SNAP)\"; LA ES/EI Manual, public.powerdms.com/LADCFS",
+      "heading": "FLAGSHIP FINDING: Louisiana's SNAP program changed ADMINISTERING AGENCY on October 1, 2025 — DCFS to LDH — and DCFS's own website still ranks first in an ordinary search",
+      "text": "Louisiana calls its program plainly \"SNAP\" — there is no distinctive local brand like CalFresh (CA) or Basic Food (WA). The EBT card itself DOES have a distinctive name, and it is genuinely worth stating correctly: Louisiana's official primary sources (the DCFS/LDH policy manual, and the state's own EBT-processor client brochure) consistently call it the \"Louisiana Purchase Card\" — NOT the \"Bayou Card,\" a name that appears confidently across several SEO/AI-aggregator sites this pack checked but that no Louisiana government primary source in this pack's research actually uses (see Finding 5, PROVENANCE.md). More consequentially: on October 1, 2025, Louisiana's SNAP program changed administering AGENCY under \"Project One Door\" legislation (2025 Regular Session Acts 477 and 478) — moving from the Department of Children and Family Services (DCFS) to the Louisiana Department of Health (LDH), which now runs it through its own Office of Economic Stability, alongside Medicaid. LDH's own press release states the move plainly: \"Today marks the first day the Louisiana Department of Health (LDH) officially administers [SNAP]... There are no changes to eligibility as part of this move.\" LDH ALSO acquired Louisiana's TANF program (the Family Independence Temporary Assistance Program, FITAP), KCSP, DDS, eHIP, and SUN Bucks in the same transfer. The genuine access risk for anyone researching Louisiana SNAP: DCFS's own website (dcfs.louisiana.gov) still hosts a large amount of legacy SNAP content and STILL ranks first in an ordinary \"Louisiana SNAP\" search — nothing on DCFS's own pages prominently flags that SNAP is no longer DCFS's program. Applicants call the same number either way (1-888-LA-HELP-U), and the underlying policy manual is unchanged in substance, but the correct current administering agency is LDH, not DCFS.",
+      "source_url": "https://ldh.la.gov/news/snap-to-ldh"
+    },
+    {
+      "key": "income-pathways",
+      "kind": "supplement",
+      "terms": [
+        "income limit",
+        "income limits",
+        "gross income limit",
+        "gross income ceiling",
+        "make too much",
+        "over income",
+        "bbce",
+        "broad based categorical eligibility",
+        "broadbased categorical eligibility",
+        "categorical eligibility",
+        "categorically eligible",
+        "200 percent",
+        "200%",
+        "130 percent",
+        "130%",
+        "poverty level",
+        "ssi",
+        "fitap",
+        "tanf"
+      ],
+      "citation": "LA E-280-SNAP / E-281-1-SNAP — Broad-Based Categorical Eligibility (BBCE) uses a FLAT gross income test of 200% of the Federal Poverty Level (FPL), replacing the ordinary 130% FPL test, for EVERY BBCE household regardless of composition; LA J-300-SNAP — current FFY2026 Income Eligibility Chart",
+      "heading": "Louisiana's BBCE income ceiling is a FLAT 200% FPL for every household — no elderly/disabled carve-out, unlike this roster's Alabama pack",
+      "text": "Louisiana's BBCE mechanism (E-280-SNAP, confirmed identical in both the current per-document manual and cross-referenced against E-281-1-SNAP and B-1022-SNAP) is structurally SIMPLER than this roster's most recent prior build, Alabama, found: Louisiana households authorized to receive a non-cash TANF/MOE-funded benefit or service (via FITAP) are \"Broad-Based Categorically Eligible,\" and BBCE households are subject to a gross income test of 200% of the FPL INSTEAD OF 130% — with no additional condition that every household member be elderly or disabled. LA's own manual states this as a flat substitution: \"the household is subject to the gross income test of 200% of the federal poverty limit instead of 130% of the federal poverty limit\" (E-280-SNAP). BBCE households have their resources EXCLUDED ENTIRELY from the eligibility determination — LA's manual instructs staff not to even request resource verification for these households (E-280-SNAP, E-281-1-SNAP, B-1022-SNAP). A BBCE household whose gross income exceeds 130% FPL but stays under 200% FPL must still separately pass the net income test (100% FPL) to receive more than the minimum allotment; a household exceeding 200% FPL loses BBCE status and SNAP eligibility outright. Households NOT BBCE-eligible (e.g., disqualified for IPV, work-registration non-compliance, fleeing-felon status, or certain post-2014 felony convictions) revert to the ordinary 130%/100% FPL gross/net test and the standard $3,000/$4,500 asset test. Current FFY2026 dollar figures (J-300-SNAP, effective Oct. 1, 2025): 130% FPL for a household of 1 is $1,696/month, 200% FPL is $2,609/month, 100% FPL (net) is $1,305/month.",
+      "source_url": "https://public.powerdms.com/LADCFS/documents/398402"
+    },
+    {
+      "key": "asset-rule",
+      "kind": "supplement",
+      "terms": [
+        "asset limit",
+        "asset test",
+        "resource limit",
+        "resource test",
+        "resources",
+        "savings",
+        "savings limit",
+        "bank account",
+        "vehicle",
+        "car count",
+        "does my car count",
+        "second car",
+        "boat",
+        "truck",
+        "retirement account",
+        "401k",
+        "ira"
+      ],
+      "citation": "LA B-1040-SNAP — Types of Resources (countable resources list omits vehicles entirely; retirement/IRA/Keogh accounts exempt); resource limit of $3,000 (standard) / $4,500 (household with a member who is elderly or disabled), current FFY2026 figures, confirmed via B-1040-17-SNAP's own worked example, applicable only to households NOT BBCE-eligible",
+      "heading": "Louisiana's resource limit is $3,000/$4,500 for non-BBCE households, and vehicles are excluded entirely — but most Louisiana households never reach this test because BBCE excludes resources outright",
+      "text": "Louisiana's B-1040-SNAP (\"Types of Resources\") lists what IS countable — cash, checking/savings accounts, CDs, stocks/bonds, credit-card gift cards and prepaid debit cards — and separately lists numerous specific exemptions (Agent Orange settlement payments, ABLE accounts, EITC refunds for 12 months, educational assistance, START college-savings accounts, energy assistance, IRAs, Keogh plans, trust funds meeting specific conditions, and more). Vehicles do not appear ANYWHERE on either list — they are simply never treated as a countable liquid resource in Louisiana's SNAP program, a blanket exclusion independently corroborated by WorkWorldApp's state-by-state vehicle-rule reference (\"Excludes the value of all vehicles\"), matching this roster's Alabama/Missouri/Maryland/Colorado pattern rather than South Carolina's per-licensed-driver exemption or Indiana's hybrid rule. This pack could not locate Louisiana's B-1030-SNAP document (the section B-1040-SNAP itself cites for \"required resource limits\") at a stable, independently-discoverable URL — the $3,000 standard / $4,500 elderly-or-disabled figures this pack states are drawn from B-1040-17-SNAP's own worked numerical example (\"Ms. Smith is below the household's $3000 resource limit...\") plus independent secondary confirmation, not a direct read of B-1030-SNAP itself; a disclosed gap, not a fabricated citation (see freshness.json). Critically, this resource test is largely academic for most Louisiana SNAP households: because Louisiana's BBCE mechanism (see income-pathways) excludes resources entirely for any household authorized to receive non-cash TANF/MOE services via FITAP, and BBCE is broadly available up to 200% FPL, the asset test only bites for households that are neither traditionally categorically eligible nor BBCE-eligible.",
+      "source_url": "https://public.powerdms.com/LADCFS/documents/398828"
+    },
+    {
+      "key": "criminal-justice-disqualifications",
+      "kind": "supplement",
+      "terms": [
+        "drug felony",
+        "felony conviction",
+        "criminal record",
+        "drug conviction",
+        "lifetime ban",
+        "fleeing felon",
+        "probation",
+        "parole",
+        "controlled substance",
+        "marijuana",
+        "cannabis",
+        "drug treatment"
+      ],
+      "citation": "La. R.S. 46:233.3 (effective October 1, 2017, enacted by 2017 Regular Session HB 681) — exempts all individuals domiciled in Louisiana from the federal drug-felony SNAP/TANF prohibition under 21 U.S.C. 862a; independently confirmed by LA E-220/E-222-SNAP's own disqualification list, which lists NO drug-felony disqualification",
+      "heading": "FLAGSHIP FINDING, CONFIRMING the minority position with confidence: Louisiana FULLY opted out of the federal drug-felony SNAP ban in 2017 — there is no drug-felony disqualification of any kind in Louisiana's SNAP program today",
+      "text": "21 U.S.C. 862a(a)(2) sets a federal default: anyone convicted of a state or federal felony for possessing, using, or distributing a controlled substance is permanently ineligible for SNAP, unless a state enacts legislation opting out or modifying the ban under 862a(d)(1). Louisiana is among a minority of states — alongside, per CLASP's 2022 \"No More Double Punishments\" report, North Dakota — that FULLY opted out, not merely modified, the ban: La. R.S. 46:233.3 (enacted by 2017 Regular Session House Bill 681, effective October 1, 2017) exempts ALL individuals domiciled in Louisiana from the federal prohibition on SNAP (and TANF cash-assistance) eligibility based on a prior drug conviction. This pack independently corroborates the FULL-OPT-OUT reading — as opposed to Alabama's modified/conditional pathway, this roster's most recent prior finding — by reading Louisiana's own current disqualification manual directly: LA's E-220-SNAP and E-222-SNAP (\"Members Disqualified Because of...\") list every category of SNAP member disqualification Louisiana's program currently applies — Social Security Number/alien/ABAWD-related disqualifications (E-221), and Intentional Program Violation, work-registration non-compliance, fleeing-felon status, probation/parole violation, and a narrow post-February-2014 felony list limited to Adam Walsh Act-style crimes (aggravated sexual abuse, murder, sexual exploitation of children, sexual assault as defined by the Violence Against Women Act) (E-222) — and a drug-related felony conviction, by itself, appears NOWHERE on either list. Justia 403'd on direct fetch of La. R.S. 46:233.3's own text; this finding is corroborated via convergent secondary sources (CLASP, Public Health Law Center's opt-out map) cross-checked against LA's own primary-source manual, which independently and affirmatively confirms the same substantive rule by omission.",
+      "source_url": "https://public.powerdms.com/LADCFS/documents/398389"
+    },
+    {
+      "key": "shelter-utility-deductions",
+      "kind": "supplement",
+      "terms": [
+        "utility allowance",
+        "utility standard",
+        "shelter deduction",
+        "excess shelter",
+        "standard utility allowance",
+        "basic utility allowance",
+        "telephone allowance",
+        "standard deduction",
+        "sua",
+        "bua",
+        "homeless",
+        "homeless shelter deduction"
+      ],
+      "citation": "LA B-652-SNAP — Standard Deduction $209 (household sizes 1-3), $223 (4), $261 (5), $299 (6+); LA B-654-1/2/3-SNAP — Standard Utility Allowance (SUA) $465, Basic Utility Allowance (BUA) $258, Telephone Standard $76; LA B-654-SNAP (procedures) — maximum (capped) excess shelter deduction $744; LA B-654-6-SNAP — flat Homeless Shelter Deduction $198.99, current FFY2026/June 2026 figures",
+      "heading": "STRUCTURAL FEATURE worth flagging: Louisiana has a flat $198.99 Homeless Shelter Deduction as an alternative to the capped excess shelter deduction, in addition to standard SUA/BUA/telephone figures",
+      "text": "Louisiana's Standard Deduction (B-652-SNAP, effective June 1, 2026) is $209 for household sizes 1-3, $223 for 4, $261 for 5, $299 for 6 or more — matching the current national FFY2026 figures this roster's Alabama and South Carolina packs independently confirmed. Louisiana's SUA is $465/month (households with separate heating/cooling costs; includes cooking fuel, propane, non-heating electricity, one telephone, water, sewerage, and trash), its BUA is $258/month (utility costs excluding heating/cooling), and its standalone Telephone Standard is $76/month — all current per B-654-1/2/3-SNAP (effective June 1, 2026). The capped excess shelter deduction is $744/month, matching the current national FFY2026 figure this roster's Alabama pack also confirmed (households with an elderly or disabled member are exempt from this cap — see the categorical-eligibility supplement). A genuinely distinctive Louisiana feature this pack found: a flat, standalone Homeless Shelter Deduction of $198.99/month (B-654-6-SNAP) available to households in which ALL members are homeless and have SOME out-of-pocket shelter expense (including a cell-phone-only expense) — offered as an alternative to the capped excess shelter deduction, with the household given an explicit choice at interview between the flat $198.99 and their actual, verified higher costs if applicable. Households receiving free housing and utilities throughout the month are not eligible for this deduction. Louisiana also allows a homeowner's PMI, HOA fees, and natural-disaster home-repair charges (not reimbursed) as shelter costs (B-654-SNAP) — a detail worth flagging given Louisiana's hurricane exposure.",
+      "source_url": "https://public.powerdms.com/LADCFS/documents/398997"
+    },
+    {
+      "key": "medical-deduction",
+      "kind": "supplement",
+      "terms": [
+        "medical deduction",
+        "medical expense",
+        "medical expenses",
+        "medical bills",
+        "elderly deduction",
+        "disability deduction",
+        "excess medical",
+        "standard medical deduction"
+      ],
+      "citation": "LA B-653-3-SNAP — Standard Medical Deduction (SMD) of $161/month for verified allowable medical expenses of at least $35.01/month incurred by a household member who is elderly (60+) or disabled; a $196 standard medical expense threshold is used to derive the $161 figure ($196 - $35 = $161); households with verified expenses exceeding $196/month may instead claim actual costs",
+      "heading": "Louisiana's flat medical-deduction shortcut is $161, a distinct dollar figure from Alabama's $185 and South Carolina's $175",
+      "text": "B-653-SNAP allows a deduction for verified out-of-pocket medical expenses exceeding $35/month incurred by a household member who is elderly (60 or older) or disabled (other household members' medical costs are not deductible). Louisiana's Standard Medical Deduction (SMD, B-653-3-SNAP) is a flat $161/month for households with verified allowable medical expenses of at least $35.01: LA's manual derives this from a stated $196 \"standard medical expense threshold\" minus the $35 floor ($196 - $35 = $161). Households whose verified medical expenses EXCEED $196/month may instead have their actual, verified excess amount budgeted. This places Louisiana in the same flat-shortcut camp as this roster's South Carolina ($175), Missouri ($135), Colorado ($165), and Alabama ($185) packs — each with its own distinct dollar figure — rather than Maryland's or Indiana's actual-expense-only mechanism. Households already receiving the SMD are not required to re-verify their medical expenses at redetermination unless their declaration becomes questionable. Allowable medical expenses under B-653-1-SNAP include a notably broad, itemized list: dental/medical/psychotherapy care, hospitalization and nursing-home care, prescribed medications and supplies (including approved over-the-counter medication), health insurance premiums (portion attributable to the elderly/disabled member only), Medicare premiums and Medicaid cost-sharing, dentures/hearing aids/prosthetics, service-animal costs (including food and vet bills), eyeglasses, verified medical travel and lodging, attendant/home-health-aide/child-care costs for the elderly/disabled member's care, and vehicle or home equipment modifications for accessibility. Medical marijuana costs are explicitly DISALLOWED (B-653-2-SNAP) despite the broad list.",
+      "source_url": "https://public.powerdms.com/LADCFS/documents/398997"
+    },
+    {
+      "key": "child-support-deduction",
+      "kind": "supplement",
+      "terms": [
+        "child support",
+        "support payments",
+        "child support deduction",
+        "arrearage"
+      ],
+      "citation": "LA B-656-SNAP — Child Support Payments is listed as one of the ORDINARY § B-600 Income Deductions, applied alongside the Standard, Earned Income, Medical, and Shelter deductions — not an income exclusion applied before the gross income test",
+      "heading": "Louisiana treats legally obligated child support as an ORDINARY DEDUCTION — matching this roster's Maryland/Indiana/Tennessee/South Carolina/Alabama mechanism, NOT the income-exclusion-before-the-gross-test mechanism this roster's Virginia/New Jersey/Illinois/Missouri/Colorado packs document",
+      "text": "LA B-656-SNAP (\"Child Support Payments\") allows a deduction for legally obligated child support a household member pays to someone outside the household — court-ordered, administratively-ordered, or under a legally enforceable separation agreement — including vendor payments (e.g. rent paid directly to a landlord on the payee's behalf) and payments toward arrearages, but capped at the legally obligated amount actually paid (voluntary excess payments are not deductible). Neither the child's age nor where the child currently lives affects eligibility for the deduction, and arrearage-only obligations remain deductible even after the child turns 18 — though amounts collected via IV-D intercepts (tax refunds, lottery/casino winnings) do not count toward the deduction. This deduction is listed within B-600, \"Income,\" alongside the Standard, Earned Income, Medical, Shelter, and Dependent Care deductions — all ordinary deductions applied AFTER gross income has already been established, per the standard net-income calculation structure (7 CFR 273.9(d)(5)). This places Louisiana in the ORDINARY-DEDUCTION camp alongside this roster's Maryland, Indiana, Tennessee, South Carolina, and Alabama packs, in contrast to the INCOME-EXCLUSION mechanism (7 CFR 273.9(c)) this roster's Virginia, New Jersey, Illinois, Missouri, and Colorado packs document. Practically: a household whose child support payments would otherwise bring it under Louisiana's gross income ceiling does NOT get that benefit from this deduction — it lowers NET income for the net income test and benefit calculation, but does not itself determine gross-income SNAP eligibility (though Louisiana's broad BBCE pathway, at 200% FPL gross with resources excluded, means gross-income eligibility is a non-issue for most Louisiana households regardless).",
+      "source_url": "https://public.powerdms.com/LADCFS/documents/398997"
+    },
+    {
+      "key": "abawd-work-requirement",
+      "kind": "supplement",
+      "terms": [
+        "abawd",
+        "able bodied adult",
+        "work requirement",
+        "3 month limit",
+        "work registration",
+        "waiver",
+        "waived area",
+        "rural parish",
+        "time limit",
+        "new orleans",
+        "baton rouge"
+      ],
+      "citation": "LA E-221-1-SNAP — ABAWD failure to meet the work requirement is a disqualifying condition; current federal OBBBA age range 18-64, under-14 caregiver exemption (per DCFS/LDH/ABAWDMap.us); Act 308 of the 2024 Regular Legislative Session independently bars DCFS/LDH from seeking or renewing ABAWD waivers unless required by federal law",
+      "heading": "FLAGSHIP FINDING: Louisiana is DOUBLE-LOCKED OUT of ABAWD waivers — a 2024 Louisiana state statute (Act 308) already barred them BEFORE OBBBA eliminated the federal waiver mechanism nationwide in 2025",
+      "text": "An able-bodied adult without dependents (ABAWD) is limited to three countable months of SNAP within a 36-month period absent a qualifying 80-hours/month work activity or an exemption. Louisiana's ABAWD story has two independent, reinforcing legal events, not one: FIRST, under Act 308 of Louisiana's OWN 2024 Regular Legislative Session, \"DCFS cannot seek or renew waivers or offer state-provided exemptions to these work requirements unless required by federal law\" — a Louisiana-specific policy choice, not a federal mandate, that took effect BEFORE the federal One Big Beautiful Bill Act (OBBBA) existed. As a direct result, Louisiana's last 33 parish-level, high-unemployment ABAWD waivers (covering more than half the state's 64 parishes, including Orleans, Jefferson, and Terrebonne) expired October 1, 2024, and were not renewed — DCFS's own announcement states plainly: \"For the first time in years, no time-limit waivers will be in effect in any of Louisiana's 64 parishes.\" SECOND, and independently, OBBBA (enacted July 2025) eliminated the federal ABAWD-waiver mechanism nationwide effective November 2025, raised the ABAWD age ceiling to 64 (from an already-Louisiana-specific 54, itself raised from 52 under the earlier federal Fiscal Responsibility Act), and narrowed the caregiver exemption to a household member under age 14 (from under 18). The current SNAP time-limit clock period is April 2026 - March 2029. ABAWDMap.us's independent aggregator confirms Louisiana holds ZERO ABAWD waivers anywhere in the state as of its last review (June 16, 2026) — \"No waiver — rule applies.\" Current exemptions (per DCFS's own list): physically/mentally unable to work, pregnant, caring for a dependent under 14, working 30+ hours/week or earning $217.50+/week, receiving/applying for unemployment, attending school/training at least half-time, meeting FITAP work rules, or participating in drug/alcohol treatment — note that OBBBA removed the PRIOR blanket exemptions for veterans, homeless individuals, and youth aging out of foster care that DCFS's 2024 announcement had still listed.",
+      "source_url": "https://www.dcfs.louisiana.gov/news/changes-to-snap-work-requirements-effective-october-1"
+    },
+    {
+      "key": "restaurant-meals-program",
+      "kind": "supplement",
+      "terms": [
+        "restaurant meals program",
+        "rmp",
+        "eat at a restaurant",
+        "use ebt at restaurant",
+        "hot meal",
+        "hot food",
+        "prepared food",
+        "hot foods waiver",
+        "tropical storm arthur"
+      ],
+      "citation": "USDA FNA's current (Aug. 7, 2026-dated) Restaurant Meals Program state list: Arizona, Maryland, New York, California, Massachusetts, Rhode Island, Illinois (Cook/Franklin Counties), Michigan, Virginia — Louisiana absent; SEPARATELY, LDH announced a temporary, STATEWIDE, all-recipient hot-foods DISASTER waiver following Tropical Storm Arthur, effective through August 13, 2026",
+      "heading": "TIME-SENSITIVE: Louisiana does NOT operate a standing Restaurant Meals Program, but a temporary statewide Tropical Storm Arthur disaster hot-foods waiver was active through August 13, 2026 — check current status before answering",
+      "text": "The Restaurant Meals Program (RMP) is a state OPTION under 7 CFR 274.7(g) letting elderly (60+), disabled, and homeless SNAP recipients buy prepared, hot meals from authorized restaurants with EBT year-round. USDA FNA's own current RMP state list (fetched directly, page dated updated August 7, 2026) names Arizona, Maryland, New York, California, Massachusetts, Rhode Island, Illinois (Cook and Franklin Counties only), Michigan, and Virginia — Louisiana is ABSENT. This corrects an ambiguous, sometimes-contradictory secondary-source picture this pack's initial research surfaced, where some summaries claimed Louisiana \"participates\" in an ongoing RMP for elderly/disabled/homeless residents; USDA's own authoritative, dated list says otherwise. SEPARATELY, and genuinely time-sensitive: this pack found LDH announced (July 20, 2026) a TEMPORARY, STATEWIDE waiver allowing ALL Louisiana SNAP participants — not just elderly/disabled/homeless — to buy hot or prepared foods (though still NOT restaurant meals) at any authorized SNAP retailer, following Tropical Storm Arthur, effective through August 13, 2026. This pack's own fetch date (August 12, 2026) falls one day before that stated expiration — this waiver may have already expired, or been extended, by the time this pack is read; check ldh.la.gov's current news for the live status before answering (see freshness.json). This pack ALSO found a genuine stale-duplicate-article trap on dcfs.louisiana.gov: a still-live \"'Hot Foods' Waiver Extended Through October 28\" article that reads, at a glance, like it could be about the current 2026 storm — but is in fact dated September 28, 2021, and describes an unrelated, long-expired Hurricane Ida waiver. This pack explicitly did not rely on that 2021 article for any current fact.",
+      "source_url": "https://ldh.la.gov/news/7685"
+    },
+    {
+      "key": "expedited-service",
+      "kind": "supplement",
+      "terms": [
+        "expedited",
+        "expedited service",
+        "emergency",
+        "emergency food stamps",
+        "fast benefits",
+        "how fast",
+        "urgent",
+        "same day",
+        "7 day"
+      ],
+      "citation": "LA C-661-SNAP — plain federal expedited-service criteria (gross income under $150 and liquid resources $100 or less; combined income/resources less than rent/mortgage plus appropriate utility standard; destitute migrant/seasonal farmworker) and the standard 7-calendar-day ceiling for initial benefits",
+      "heading": "Louisiana uses the standard federal expedited-service gates and 7-day ceiling, with no Louisiana-specific modification found",
+      "text": "LA C-661-SNAP sets expedited eligibility to the standard federal criteria: households with countable gross monthly income under $150 and liquid resources of $100 or less; households whose combined gross income and liquid resources are less than their monthly rent/mortgage (including escrow) plus the appropriate utility standard; or destitute migrant/seasonal farmworker households with liquid resources of $100 or less. C-660-SNAP confirms qualifying applicants receive faster service with postponed verification, and that households applying after the 15th of the month receive both the initial and second month's benefits together. There is no limit on how many times a household can be certified under expedited procedures, as long as previously-postponed verification requirements were eventually met or a normal 30-day certification occurred since the last expedited certification (C-662-SNAP). This pack found no Louisiana-specific modification to the standard federal 7-calendar-day ceiling for initial expedited benefits.",
+      "source_url": "https://public.powerdms.com/LADCFS/documents/399579"
+    },
+    {
+      "key": "reporting-certification",
+      "kind": "supplement",
+      "terms": [
+        "certification period",
+        "approval period",
+        "recertification",
+        "redetermination",
+        "how long does snap last",
+        "how long does my snap approval last",
+        "how long does my approval last",
+        "redo",
+        "renew",
+        "simplified report",
+        "esap"
+      ],
+      "citation": "LA S-110-SNAP — standard SNAP households are assigned 12-month certification periods with a required Simplified Report due at the midpoint (6 months); LA C-720-SNAP — Elderly Simplified Application Project (ESAP) households have the redetermination INTERVIEW waived by default",
+      "heading": "Louisiana's standard certification period runs up to 12 months, matching this roster's Alabama/Maryland pattern rather than South Carolina's/Colorado's 6-month baseline — with a distinct ESAP interview-waiver mechanism for elderly households",
+      "text": "Louisiana's Simplified Reporting policy (S-110-SNAP) confirms SNAP households are assigned 12-month certification periods and must submit a Simplified Report with required verification at the midpoint of that period (around month 6) — a structure closer to this roster's Alabama (12-month) and Maryland (12-month) pattern than South Carolina's or Colorado's 6-month standard baseline. Louisiana carries a distinct mechanism for elderly households: the Elderly Simplified Application Project (ESAP) waives the REDETERMINATION INTERVIEW by default (C-720-SNAP) — an ESAP household's redetermination application can be processed without a live interview UNLESS the case is being closed/denied, the application is questionable/incomplete/contradictory, or the household itself requests one. ESAP households with no earned income get streamlined handling: staff review the application and, if it appears eligible with all verification received, process the redetermination directly; missing or questionable information triggers a scheduled interview instead, with a Notice of Missed Interview (NOMI) process if the household doesn't show. Shelter-expense verification specifically is not required via interview unless the reported amount is questionable — DCFS/LDH cannot close or deny a case solely for unverified shelter expenses, since deductions are not themselves an eligibility factor.",
+      "source_url": "https://public.powerdms.com/LADCFS/documents/394421"
+    }
+  ]
+}
