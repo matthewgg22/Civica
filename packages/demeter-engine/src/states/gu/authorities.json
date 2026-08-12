@@ -1,0 +1,46 @@
+{
+  "_provenance": {
+    "note": "Guam citation authorities. Unlike this roster's mainland states, Guam has NO numbered, citable administrative-code SNAP manual this pack could locate online — no DSSM/FSM/He-W-style section-numbered manual. Guam's most substantive, reliable Guam-specific primary sources turned out to be DPHSS's own NUMBERED press releases (format 'PR##-###', e.g. 'PR26-025') and FAQs (format 'SNAP FAQ_00#', e.g. 'SNAP FAQ_001'), hosted on the Government of Guam's official document portal. This pack defines a citation-authority family for those DPHSS press-release/FAQ numbers, since a generated answer citing 'PR26-025' or 'SNAP FAQ_001' should be checkable against this pack's own known list the same way this roster's other packs check DSSM/FSM section numbers — and a SECOND, federal-only family for the USDA SNAP State Options Report edition number, since this pack's drug-felony, certification-period, reporting, and utility-treatment findings all cite that report specifically by edition.",
+    "extracted": "2026-08-12"
+  },
+  "patterns": [
+    {
+      "key": "gupr",
+      "regex": "\\bPR\\s?(\\d{2}-\\d{3})\\b",
+      "flags": "gi",
+      "template": "PR$1",
+      "normalize": "none",
+      "match": "exact",
+      "note": "Guam DPHSS numbered press release, e.g. PR26-025 (SNAP Benefits & Federal Government Shutdown FAQ, 10/31/2025). Guam DPHSS's own numbering convention runs on a fiscal-year-prefixed sequence (PR26-xxx covers releases issued during FY2026, i.e. starting October 2025)."
+    },
+    {
+      "key": "gufaq",
+      "regex": "\\bSNAP\\s?FAQ_?(\\d{3})\\b",
+      "flags": "gi",
+      "template": "SNAP FAQ_$1",
+      "normalize": "none",
+      "match": "exact",
+      "note": "Guam DPHSS's separately-numbered SNAP FAQ series (distinct from the general PR press-release sequence), e.g. SNAP FAQ_001 (ABAWD/OBBBA changes, dated 1/23/2026)."
+    },
+    {
+      "key": "gusor",
+      "regex": "\\bState\\s?Options\\s?Report,?\\s?(\\d{1,2}(?:st|nd|rd|th)\\s?Edition)\\b",
+      "flags": "gi",
+      "template": "SNAP State Options Report, $1",
+      "normalize": "none",
+      "match": "exact",
+      "note": "USDA FNS's own SNAP State Options Report, cited by edition number rather than a Guam-specific section — the only source this pack found for several of Guam's own reported policy-option selections (BBCE, drug-felony modification, certification periods, reporting, utility-expense treatment). This is a FEDERAL document, not a Guam-authored one, but this pack cites it by edition because it is Guam's own reported state-agency profile within that document, not a generic federal floor rule."
+    }
+  ],
+  "known": {
+    "gupr": [
+      { "value": "PR26-025", "note": "October 31, 2025 — SNAP Benefits & Federal Government Shutdown FAQ; confirms Guam's own locally-funded General Food Assistance Benefits (GFAB) backfill program for November 2025, distributed via the Guam Quest Card" }
+    ],
+    "gufaq": [
+      { "value": "SNAP FAQ_001", "note": "January 23, 2026 — DPHSS's own current confirmation of OBBBA ABAWD changes as implemented in Guam: enforcement effective 1/1/2026, compliance deadline 4/1/2026, current 18-64 age range and exemption list" }
+    ],
+    "gusor": [
+      { "value": "SNAP State Options Report, 17th Edition", "note": "Published August 2025, data reference period October 2024 — Guam's own dedicated State Agency Profile page: BBCE adopted, Modified drug-felony disqualification, 12/24-month certification periods, Simplified reporting only, Mandatory SUAs, State-administered, and (as of the October 2024 reference period) a Statewide ABAWD time limit waiver this pack flags as likely superseded by SNAP FAQ_001's later, active-enforcement description" }
+    ]
+  }
+}

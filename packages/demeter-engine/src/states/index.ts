@@ -219,9 +219,13 @@ import akPack from "./ak/pack.json";
 import akSupplements from "./ak/supplements.json";
 import akAuthorities from "./ak/authorities.json";
 import akFreshness from "./ak/freshness.json";
+import guPack from "./gu/pack.json";
+import guSupplements from "./gu/supplements.json";
+import guAuthorities from "./gu/authorities.json";
+import guFreshness from "./gu/freshness.json";
 
 /** Registered pack codes. Widens as Wave 1+ states land (WA, TX, NY, …). */
-export type StateCode = "CA" | "WA" | "TX" | "NY" | "GA" | "MI" | "IL" | "FL" | "MA" | "NV" | "AZ" | "OR" | "WI" | "MN" | "PA" | "OH" | "NC" | "NJ" | "VA" | "TN" | "IN" | "MO" | "MD" | "CO" | "SC" | "AL" | "LA" | "KY" | "OK" | "CT" | "UT" | "IA" | "AR" | "MS" | "KS" | "NM" | "NE" | "ID" | "WV" | "HI" | "ME" | "NH" | "SD" | "MT" | "RI" | "ND" | "DE" | "WY" | "VT" | "DC" | "AK";
+export type StateCode = "CA" | "WA" | "TX" | "NY" | "GA" | "MI" | "IL" | "FL" | "MA" | "NV" | "AZ" | "OR" | "WI" | "MN" | "PA" | "OH" | "NC" | "NJ" | "VA" | "TN" | "IN" | "MO" | "MD" | "CO" | "SC" | "AL" | "LA" | "KY" | "OK" | "CT" | "UT" | "IA" | "AR" | "MS" | "KS" | "NM" | "NE" | "ID" | "WV" | "HI" | "ME" | "NH" | "SD" | "MT" | "RI" | "ND" | "DE" | "WY" | "VT" | "DC" | "AK" | "GU";
 
 /** Launch state; used when a caller does not specify. Preserves the pre-pack
  *  behavior in which the (then-hardcoded) CA content applied to every query. */
@@ -618,6 +622,12 @@ const REGISTRY: Record<StateCode, StatePack> = {
     akSupplements as { supplements: PackTopic[]; supersessions?: Record<string, string> },
     akAuthorities as unknown as RawAuthorities,
     akFreshness as { entries: PackFreshnessEntry[] },
+  ),
+  GU: buildPack(
+    guPack as Omit<StatePack, "topics" | "authorities" | "freshness" | "supersessions">,
+    guSupplements as { supplements: PackTopic[]; supersessions?: Record<string, string> },
+    guAuthorities as unknown as RawAuthorities,
+    guFreshness as { entries: PackFreshnessEntry[] },
   ),
 };
 
