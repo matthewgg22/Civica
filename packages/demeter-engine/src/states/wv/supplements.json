@@ -1,0 +1,201 @@
+{
+  "_provenance": {
+    "note": "West Virginia SNAP curated supplements. West Virginia has NO existing packages/snap-rules StatePolicy entry and NO oracle-fixture coverage — a genuine blank slate, like this roster's Connecticut, Nebraska, Utah, Iowa, and Arkansas prior builds. This pack is CORPUS-ONLY and does not touch packages/snap-rules or the oracle fixture. West Virginia is built as one of five parallel-agent state builds in this roster's round (alongside Idaho, Hawaii, New Hampshire, and Maine, each on its own branch). Drafted from direct curl fetches (browser User-Agent) of West Virginia Bureau for Family Assistance's live SNAP page, W. Va. Code § 9-2-3a's full statute text, West Virginia's ABAWD Requirements PDF, a 2026 WV Board of Review decision, and older West Virginia Income Maintenance Manual PDF chapters (used for procedural structure only, flagged as dated), plus WebSearch/WebFetch corroboration for the HB2459 legislative history, the soda-restriction waiver rollout, Restaurant Meals Program absence, and current ABAWD waiver status.",
+    "extracted": "2026-08-12",
+    "source_fact_check": "direct curl fetch (browser UA) of bfa.wv.gov's live SNAP page and code.wvlegislature.gov's statute-text page, cross-referenced against a live 2026 WV Board of Review decision (26-BOR-1601) applying the same drug-felony rule to a real 2026 case, plus WebSearch/WebFetch cross-checks (WV MetroNews, WV Gazette-Mail, WV Center on Budget & Policy, Public Health Law Center, Propel, abawdmap.us, USDA FNA) + post-draft adversarial refute pass; findings and gaps recorded in PROVENANCE.md",
+    "access_note": "bfa.wv.gov and code.wvlegislature.gov both returned clean HTTP 200 to every direct curl attempt with a browser User-Agent — no bot-detection wall anywhere in this pack's West Virginia research. The only access complication this pack found was a COVERAGE gap, not a barrier: this pack could not locate a directly-fetched, dated primary-source table for West Virginia's current Standard Utility Allowance (SUA) dollar figures within its research window (the legacy wvdhhr.org Income Maintenance Manual mirror returned only dated 2008-2013 procedural chapters, not a current deductions table) — disclosed explicitly in freshness.json rather than estimated."
+  },
+  "supplements": [
+    {
+      "key": "program-identity",
+      "kind": "supplement",
+      "terms": [
+        "how to apply",
+        "where do i apply",
+        "apply for snap",
+        "wv path",
+        "who runs",
+        "what agency",
+        "administers",
+        "dohs",
+        "dhhr",
+        "department of human services",
+        "bureau for family assistance",
+        "ebt card",
+        "food stamps"
+      ],
+      "citation": "West Virginia Bureau for Family Assistance, SNAP program page (bfa.wv.gov/snap); WV PATH portal (wvpath.wv.gov)",
+      "heading": "West Virginia calls its program plainly \"SNAP\" — no distinctive local brand — and its administering agency changed name in a 2023 reorganization from DHHR to the Department of Human Services (DoHS)",
+      "text": "West Virginia's Bureau for Family Assistance (BFA), a division of the Department of Human Services (DoHS), uses only the generic federal name \"SNAP\" (Supplemental Nutrition Assistance Program) in its own consumer materials — this pack found no distinctive West Virginia-specific program nickname the way California has \"CalFresh\" or Washington has \"Basic Food.\" This pack found a genuine naming-transition worth flagging precisely: West Virginia's former Department of Health and Human Resources (DHHR) was split by a 2023 legislative reorganization into three successor agencies — the Department of Health, the Department of Human Services (DoHS), and the Department of Health Facilities. SNAP is now administered by DoHS's Bureau for Family Assistance, and this pack used bfa.wv.gov (the current, live domain) as its primary source throughout — but the legacy dhhr.wv.gov domain remains actively used for some 2025-2026 press releases and older application-form PDFs this pack found still hosted there, and several secondary sources this pack found (including some SNAP-eligibility aggregator sites current as of 2026) still describe \"DHHR\" as West Virginia's sole SNAP administrator without noting the 2023 split — a genuine naming-transition ambiguity worth flagging, structurally similar to this roster's Nebraska pack's ACCESSNebraska-to-iServe finding. Applicants apply online through the WV PATH portal (wvpath.wv.gov, \"People's Access To Help,\" which also handles Medicaid, WVCHIP, LIEAP, Medicare Premium Assistance, and School Clothing Allowance applications), by phone through the DoHS Office of Constituent Services Customer Service Center (1-877-716-1212, Monday-Friday 8 AM-5 PM), by mail, or in person at a county DoHS field office (open Monday, Tuesday, Thursday, and Friday). West Virginia's SNAP program is administered directly and centrally by DoHS/BFA — a state-administered program with no county-level policy authority, structurally similar to this roster's Connecticut, Nebraska, North Carolina, Ohio, New Jersey, Tennessee, Indiana, Missouri, Maryland, Colorado, South Carolina, Alabama, Louisiana, Kentucky, Oklahoma, Utah, Iowa, and Arkansas packs, and distinct from county-administered states like CA, NY, MN, WI, and VA.",
+      "source_url": "https://bfa.wv.gov/snap"
+    },
+    {
+      "key": "income-pathways",
+      "kind": "supplement",
+      "terms": [
+        "income limit",
+        "income limits",
+        "gross income limit",
+        "gross income ceiling",
+        "make too much",
+        "over income",
+        "bbce",
+        "broad based categorical eligibility",
+        "broadbased categorical eligibility",
+        "categorical eligibility",
+        "categorically eligible",
+        "200 percent",
+        "200%",
+        "130 percent",
+        "130%",
+        "poverty level",
+        "net income",
+        "net income limit"
+      ],
+      "citation": "West Virginia Bureau for Family Assistance, SNAP program page (bfa.wv.gov/snap) — current gross-income table: $1,696/month (130% FPL) and $2,610/month (200% FPL) for a household of one, scaling by household size; net income must be at or below 100% FPL after deductions",
+      "heading": "West Virginia runs a standard, BROAD Broad-Based Categorical Eligibility (BBCE) program at 200% FPL gross income for essentially ALL household types — no elderly/disabled/separate-household carve-out narrowing the elevated figure the way this roster's Nebraska pack found",
+      "text": "West Virginia's Bureau for Family Assistance's own live SNAP program page publishes a current gross-income reporting-threshold table with TWO columns by household size: a 130% FPL figure ($1,696/month for household size 1, $2,292 for 2, $2,888 for 3, $3,483 for 4, scaling up by roughly $596 per additional person) and a 200% FPL figure ($2,610 for household size 1, $3,526 for 2, $4,442 for 3, $5,360 for 4, scaling up by roughly $918 per additional person). This pack reads West Virginia's BBCE structure as APPLYING BROADLY to essentially all household types at 200% FPL gross income — this pack found no elderly/disabled/separate-household carve-out narrowing the elevated figure the way this roster's Nebraska pack found for Nebraska's 165% FPL column (which is scoped only to elderly/disabled/ERP households there). West Virginia's page states the specific reporting-threshold mechanic directly: households whose benefit was calculated using the 130% FPL gross test must report if income exceeds that 130% threshold, while households calculated using the elevated 200% FPL (BBCE) gross test must report only once income exceeds the 200% threshold — meaning the operative income CEILING for BBCE-eligible households is genuinely 200% FPL, not 130%. Net income (after standard deduction, 20% earned-income disregard, dependent-care costs, excess shelter/utility costs, and legally-obligated child support paid out) must still be at or below 100% FPL for all households, consistent with the federal SNAP net-income test (7 CFR § 273.9(a)) that applies uniformly regardless of a state's BBCE gross-income policy.",
+      "source_url": "https://bfa.wv.gov/snap"
+    },
+    {
+      "key": "asset-rule",
+      "kind": "supplement",
+      "terms": [
+        "asset limit",
+        "asset test",
+        "resource limit",
+        "resource test",
+        "resources",
+        "savings",
+        "savings limit",
+        "bank account",
+        "vehicle",
+        "car count",
+        "does my car count",
+        "3000",
+        "$3,000",
+        "4500",
+        "$4,500"
+      ],
+      "citation": "West Virginia Bureau for Family Assistance, SNAP program page (bfa.wv.gov/snap) — Asset limit: $3,000 for most households, $4,500 for households with a member age 60+ or disabled; \"Most households will not be subject to the asset limit\" (BBCE resource-test waiver)",
+      "heading": "West Virginia states its asset limit AND its BBCE waiver on the same page in the same breath — worth reading precisely: the $3,000/$4,500 figures are the statutory backstop, not what most applicants actually face",
+      "text": "West Virginia's Bureau for Family Assistance's own live SNAP program page states its asset limit plainly: \"$3,000 for households,\" with a note that households with at least one member age 60 or older, or disabled, face a $4,500 limit instead — these are the current national FFY2026 federal baseline figures. In the SAME paragraph, the page adds: \"Most households will not be subject to the asset limit,\" which this pack reads as West Virginia's Broad-Based Categorical Eligibility (BBCE) policy waiving the asset/resource test for the great majority of applicants (those within the 200% FPL BBCE gross-income ceiling described in the income-pathways supplement) — consistent with the standard BBCE mechanism this roster's other elevated-gross-income states use, though West Virginia's own page states this less explicitly than some other states' pages this roster has built (it does not use the phrase \"BBCE\" itself). This pack reads the $3,000/$4,500 figures as the statutory FEDERAL BASELINE that would apply to a household NOT covered by West Virginia's BBCE policy (for example, a household whose gross income exceeds the 200% FPL BBCE ceiling but which is still evaluated under some other pathway) rather than as figures the typical West Virginia SNAP applicant needs to plan around. Vehicles are excluded from the asset count for the large majority of BBCE-covered households; this pack found no West Virginia-specific vehicle-exclusion figure or valuation methodology sourced with enough confidence to state precisely — see freshness.json.",
+      "source_url": "https://bfa.wv.gov/snap"
+    },
+    {
+      "key": "criminal-justice-disqualifications",
+      "kind": "supplement",
+      "terms": [
+        "drug felony",
+        "felony conviction",
+        "criminal record",
+        "drug conviction",
+        "lifetime ban",
+        "fleeing felon",
+        "probation",
+        "parole",
+        "controlled substance",
+        "marijuana",
+        "cannabis",
+        "hb2459"
+      ],
+      "citation": "W. Va. Code § 9-2-3a (enacted by HB2459, 2019) — West Virginia exempts all individuals domiciled in the state from the federal drug-felony SNAP ban (21 U.S.C. § 862a(a)(2)) UNLESS the offense of conviction had as an element the misuse of SNAP benefits, loss of life, or the causing of physical injury; confirmed still current and unamended, and applied in a live 2026 WV Board of Review decision (26-BOR-1601)",
+      "heading": "CONFIRMATION FINDING: West Virginia is one of a minority of states with a genuinely MODIFIED (not fully repealed) federal drug-felony SNAP ban — this pack independently verified both the statute's current text and its live 2026 application",
+      "text": "21 U.S.C. § 862a(a)(2) sets a federal default: anyone convicted of a state or federal felony for possessing, using, or distributing a controlled substance is permanently ineligible for SNAP unless a state opts out or modifies the ban under § 862a(d)(1). This pack found West Virginia falls into a genuine minority position several secondary sources (Public Health Law Center's opt-out state map, CLASP's national drug-felony survey) describe with real confidence, and this pack independently verified rather than merely repeating: West Virginia's House Bill 2459 (passed by the Legislature February 20, 2019, effective 90 days later, May 21, 2019) enacted W. Va. Code § 9-2-3a, which this pack fetched and read directly from code.wvlegislature.gov: \"Pursuant to the authority and option granted by 21 U.S.C. §862a(d)(1)(A) to the states, West Virginia exempts all individuals domiciled within the state from the application of 21 U.S.C. §862a(a)(2) unless the offense of conviction has as an element thereof misuse of supplemental nutrition assistance program benefits, loss of life, or the causing of physical injury.\" This is a MODIFIED opt-out, not a full repeal of the ban: West Virginia residents remain permanently ineligible ONLY if their qualifying felony drug conviction itself involved one of those three specific elements (SNAP misuse, loss of life, or physical injury) — an ordinary drug-possession or drug-distribution felony conviction WITHOUT one of those three elements does not disqualify a West Virginia applicant at all, with NO treatment-program condition or waiting period attached (a genuine structural contrast with this roster's Nebraska pack, where 1-2 possession/use felonies remain eligible only while participating in or after completing a substance-abuse treatment program — West Virginia's exemption has no such condition). This pack found the statute's Bill History on code.wvlegislature.gov shows only the 2019 HB2459 enactment, with no subsequent amendment — confirming this remains CURRENT, unchanged law as of this pack's fetch date. This pack additionally found and fetched a live 2026 corroborating source: WV Office of Inspector General Board of Review Decision 26-BOR-1601, a real 2026 SNAP-denial appeal in which the hearing officer applied this exact rule (citing the West Virginia Income Maintenance Manual's own drug-felony policy language, which the decision quotes as requiring one of the same three disqualifying elements) to REVERSE a county DoHS office's denial of an applicant whose felony conviction did not involve any of the three elements — direct evidence that West Virginia's 2019 modified opt-out remains not just statutorily current but OPERATIONALLY current, applied in practice, seven years after enactment.",
+      "source_url": "https://code.wvlegislature.gov/9-2-3a/"
+    },
+    {
+      "key": "abawd-work-requirement",
+      "kind": "supplement",
+      "terms": [
+        "abawd",
+        "able bodied adult",
+        "work requirement",
+        "3 month limit",
+        "work registration",
+        "waiver",
+        "waived area",
+        "time limit",
+        "mcdowell",
+        "coalfields",
+        "appalachian"
+      ],
+      "citation": "West Virginia Bureau for Family Assistance, ABAWD Requirements PDF (current 36-month period 1/1/2025-12/31/2027, age range 18-64); abawdmap.us cross-check, no active West Virginia ABAWD waiver as of this pack's fetch date",
+      "heading": "FLAGSHIP FINDING: West Virginia's decades-long history of a STATEWIDE ABAWD waiver appears to have LAPSED — a genuine, consequential change worth flagging precisely rather than assuming the historical pattern still holds",
+      "text": "An able-bodied adult without dependents (ABAWD) is limited to three countable months of SNAP within a 36-month period absent 80 hours/month of a qualifying work activity or an exemption; West Virginia's current 36-month period runs January 1, 2025 through December 31, 2027, per BFA's own ABAWD Requirements PDF, which also confirms the OBBBA-expanded 18-64 age range (up from the pre-OBBBA 18-54) now in effect. This pack found a genuine, consequential structural change worth flagging with real precision: West Virginia has HISTORICALLY held a STATEWIDE ABAWD work-requirement waiver, reflecting persistently high unemployment across its Appalachian coalfield counties (McDowell, Wyoming, Mingo, Logan, and others), and several secondary sources this pack found still describe this historical pattern in the present tense. But this pack's direct cross-check of abawdmap.us — a live ABAWD-waiver-status tracker — found West Virginia currently marked \"No waiver — rule applies,\" the same status as neighboring Kentucky, Virginia, and Maryland. This pack reads this as consistent with, and likely explained by, the One Big Beautiful Bill Act's (OBBBA, signed July 4, 2025) new, substantially tighter ABAWD-waiver eligibility standard: an area must now document county-level unemployment ABOVE 10% (a considerably higher bar than the pre-OBBBA standard) to qualify for an area waiver. This pack found West Virginia's own current county-level unemployment data places even its HIGHEST-unemployment county, McDowell County, at approximately 9.1% as of mid-2026 — short of OBBBA's new 10% threshold, and statewide unemployment at approximately 4.3%. This pack's operative reading: West Virginia's long-standing statewide ABAWD waiver has LAPSED under OBBBA's tightened standard, not merely gone unrenewed by administrative choice, though this pack could not locate a single DoHS or FNS page stating this outcome in as many words — it is this pack's own inference from cross-checking abawdmap.us's live status against OBBBA's stated threshold and current county unemployment data, and this pack flags that inference explicitly rather than presenting it as a directly-quoted agency statement. An applicant in a former high-unemployment coalfield county who previously understood themselves as waiver-exempt should be told the waiver no longer appears active anywhere in West Virginia as of this pack's fetch date.",
+      "source_url": "https://bfa.wv.gov/media/1761/download?inline="
+    },
+    {
+      "key": "restaurant-meals-program",
+      "kind": "supplement",
+      "terms": [
+        "restaurant meals program",
+        "rmp",
+        "eat at a restaurant",
+        "use ebt at restaurant",
+        "hot meal",
+        "hot food",
+        "prepared food"
+      ],
+      "citation": "USDA FNA's current SNAP Restaurant Meals Program state list (West Virginia absent); Propel's West Virginia state EBT guide",
+      "heading": "West Virginia does NOT operate a Restaurant Meals Program — SNAP benefits may only be used for food intended for home preparation",
+      "text": "The Restaurant Meals Program (RMP) is a state OPTION under 7 CFR § 274.7(g) letting elderly (60+), disabled, and homeless SNAP recipients buy prepared, hot meals from authorized restaurants with EBT year-round; only a minority of states operate one. USDA's own current RMP state list does not include West Virginia, and this pack found direct corroboration from Propel's West Virginia state EBT guide, which states plainly that West Virginia \"does not participate in this program\" and that SNAP cardholders may only use their EBT at authorized retailers (grocery stores, farmers markets) for food intended to be prepared and eaten at home. This pack found no pending West Virginia legislation proposing to establish an RMP (a genuine contrast with this roster's Nebraska pack, which found and tracked a failed 2025-2026 RMP bill, LB920) — this pack's search did not surface any comparable West Virginia RMP legislative activity, and this pack treats that as a genuine negative result (no RMP proposal found) rather than an undisclosed gap.",
+      "source_url": "https://www.propel.app/snap/state/west-virginia/"
+    },
+    {
+      "key": "food-restriction-waiver",
+      "kind": "supplement",
+      "terms": [
+        "soda",
+        "soft drink",
+        "carbonated",
+        "sugary drink ban",
+        "healthy choice waiver",
+        "healthy choices",
+        "what can i buy with snap",
+        "food restriction"
+      ],
+      "citation": "USDA FNA, West Virginia SNAP Food Restriction Waiver page (approved 8/4/2025, effective 1/1/2026, retailer compliance deadline 4/1/2026, valid through 12/31/2027); West Virginia Bureau for Family Assistance press release announcing implementation",
+      "heading": "FLAGSHIP FINDING: West Virginia is the FIRST state in the nation to implement a USDA-approved SNAP soda-purchase restriction, effective January 1, 2026 — and, unlike Nebraska's parallel waiver, this pack found no litigation affecting it",
+      "text": "USDA's Food and Nutrition Service approved West Virginia's request for a SNAP \"Healthy Choices\" waiver on August 4, 2025, with signatures from USDA Secretary Brooke Rollins and Governor Patrick Morrisey — this pack found West Virginia is widely reported, and this pack independently corroborates via BFA's own press release, as the FIRST state in the nation to implement this kind of USDA-approved SNAP food-purchase restriction. Effective January 1, 2026, SNAP benefits in West Virginia can no longer be used to purchase soda — defined precisely as any carbonated non-alcoholic beverage containing water, a sweetening agent (sugar, high-fructose corn syrup, or artificial sweeteners), flavoring, and carbon dioxide gas for carbonation, EXPLICITLY including diet and zero-calorie sodas and beverages with added caffeine. This pack flags the boundary precisely: water, milk, juice, and energy drinks are NOT restricted under West Virginia's waiver — only carbonated, sweetened soda specifically — a genuine and worth-naming CONTRAST with Nebraska's parallel waiver (which this roster's Nebraska pack found also restricted energy drinks). All SNAP-authorized retailers in West Virginia were required to be fully compliant by April 1, 2026. The waiver is approved through December 31, 2027, with an option for the state to request a two-year extension. This pack's most consequential finding here is a genuine, worth-flagging DIFFERENCE from this roster's Nebraska pack: Nebraska's parallel soda/energy-drink restriction waiver was VACATED by a federal court (Aragon et al. v. Rollins et al., D.D.C., June 22, 2026) five-plus months after taking effect — but this pack found NO comparable litigation, court challenge, or vacatur affecting West Virginia's soda restriction as of this pack's fetch date (August 12, 2026), roughly seven and a half months after West Virginia's restriction took effect. This pack explicitly does NOT assume West Virginia's waiver shares Nebraska's litigation outcome merely because both are 2026 state SNAP food-restriction waivers approved under the same federal pilot-project authority the Aragon court found deficient for Nebraska — this is a genuinely open legal question this pack flags for ongoing monitoring rather than treating either outcome (litigation-immune vs. equally vulnerable) as settled. See freshness.json for the re-check reminder.",
+      "source_url": "https://bfa.wv.gov/article/west-virginia-department-human-services-announces-implementation-wvs-snap-healthy-choices"
+    },
+    {
+      "key": "shelter-utility-deductions",
+      "kind": "supplement",
+      "terms": [
+        "utility allowance",
+        "utility standard",
+        "shelter deduction",
+        "excess shelter",
+        "standard utility allowance",
+        "sua",
+        "heating",
+        "cooling",
+        "telephone allowance"
+      ],
+      "citation": "West Virginia Income Maintenance Manual (procedural structure only — this pack could NOT locate a directly-fetched, dated current SUA dollar-figure table; see freshness.json)",
+      "heading": "DISCLOSED SOURCING GAP: this pack could not confirm West Virginia's current Standard Utility Allowance (SUA) dollar figures from a directly-fetched primary source",
+      "text": "SNAP's excess-shelter deduction lets households with high housing costs deduct shelter/utility expenses exceeding half their income (capped for non-elderly/disabled households); most states, including West Virginia, use a Standard Utility Allowance (SUA) system letting a household claim a flat deduction for qualifying utility costs instead of documenting every individual bill, rather than requiring itemized utility-bill verification. This pack found general secondary-source description of West Virginia's utility-allowance TIERS — a Heating and Cooling Allowance (claimable if a household pays a heating/cooling utility bill, or receives over $20 in LIHEAP energy assistance with a household member age 60+ or disabled), a Basic Utility Allowance (two or more non-heating utility bills: electricity, gas, water, sewage, trash, or telephone), and a Single Utility Allowance (exactly one qualifying utility bill) — with a household eligible for only the highest tier it qualifies for. This pack explicitly DISCLOSES that it could NOT locate a directly-fetched, dated primary-source table stating West Virginia's CURRENT dollar figures for these tiers within its research window: the legacy wvdhhr.org Income Maintenance Manual mirror this pack fetched (Chapters 9 and 11) carries only procedural asset/eligibility-group content dated 2008-2013 in its page footers, not a current deductions table, and this pack's search for the specific current-figures chapter (likely Chapter 12, Deductions, based on this manual's numbering pattern) did not converge within this pack's fetch window. This pack treats the TIER STRUCTURE above as reasonably well-corroborated by secondary sources but explicitly does NOT state a specific current SUA dollar figure — see freshness.json, and re-verify against West Virginia's current Income Maintenance Manual Chapter 12 or bfa.wv.gov directly before stating a specific dollar figure to an applicant.",
+      "source_url": "https://bfa.wv.gov/income-maintenance-manual"
+    },
+    {
+      "key": "medical-deduction",
+      "kind": "supplement",
+      "terms": [
+        "medical deduction",
+        "medical expense",
+        "medical expenses",
+        "medical bills",
+        "elderly deduction",
+        "disability deduction",
+        "excess medical",
+        "35 dollars"
+      ],
+      "citation": "West Virginia Bureau for Family Assistance, SNAP program page (bfa.wv.gov/snap) — medical expenses over $35/month deductible for households with an elderly or disabled member",
+      "heading": "West Virginia's medical deduction follows the standard federal $35 excess-expense threshold — this pack found no West Virginia-specific flat shortcut figure",
+      "text": "West Virginia's Bureau for Family Assistance's own live SNAP program page states that households with an elderly (60+) or disabled member may deduct medical expenses \"over $35 per month\" — the fixed national SNAP program parameter (7 CFR § 273.9(d)(3)) common to every state's manual, applying to verified out-of-pocket medical expenses exceeding that $35 threshold. This pack found no West Virginia-specific flat dollar figure functioning as a Standard Medical Deduction (SMD) shortcut the way this roster's Kentucky ($137), Louisiana ($161), South Carolina ($175), Missouri ($135), Colorado ($165), and Alabama ($185) packs each document — West Virginia's own BFA page states only the $35 threshold with no accompanying flat-shortcut figure, placing West Virginia in the same actual-expense-only camp this roster's Connecticut, Maryland, Indiana, and Nebraska packs describe.",
+      "source_url": "https://bfa.wv.gov/snap"
+    }
+  ]
+}

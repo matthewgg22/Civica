@@ -1,0 +1,48 @@
+{
+  "_provenance": {
+    "note": "West Virginia citation authorities. West Virginia's operative SNAP policy manual is the West Virginia Income Maintenance Manual (IMM), cited by chapter-and-section numbers such as '11.2' or '9.1'. This pack also cites a real West Virginia Code section, W. Va. Code § 9-2-3a, for the drug-felony finding, so this pack defines a SECOND citation family, 'wvcode-', matching this roster's Nebraska, Connecticut, Kentucky, Alabama, and Louisiana packs' multi-family pattern.",
+    "extracted": "2026-08-12"
+  },
+  "patterns": [
+    {
+      "key": "wvimm",
+      "regex": "\\bChapter\\s?(\\d{1,2})(?:[.,]\\s?(\\d{1,2}))?\\b",
+      "flags": "gi",
+      "template": "WV IMM Ch. $1.$2",
+      "normalize": "none",
+      "match": "exact",
+      "note": "West Virginia Income Maintenance Manual, cited by chapter and section number, e.g. Chapter 11 (Assets), Chapter 9 (Eligibility Determination Groups), Chapter 3 (Federal Data Hub and Data Exchanges). This pack's own fetched IMM chapters carry stale 2008-2013 page-footer dates — see freshness.json — so this pattern is used for procedural/structural citations, not current dollar-figure citations."
+    },
+    {
+      "key": "wvcode",
+      "regex": "\\bW\\.?\\s?Va\\.?\\s?Code\\s?§?\\s?9-(\\d{1,2})-(\\d{1,3}[a-z]?)\\b",
+      "flags": "gi",
+      "template": "W. Va. Code § 9-$1-$2",
+      "normalize": "none",
+      "match": "exact",
+      "note": "West Virginia Code, Chapter 9 (Human Services), cited by article-section number. This pack cites exactly one: W. Va. Code § 9-2-3a, the drug-felony SNAP exemption statute enacted by HB2459 (2019)."
+    }
+  ],
+  "known": {
+    "wvimm": [
+      {
+        "value": "WV IMM Ch. 11.2",
+        "note": "Assets — Introduction, establishing date of asset eligibility for SNAP (as of date of application) vs. Medicaid/other programs (first moment of the month); lists Medicaid coverage groups with no asset test"
+      },
+      {
+        "value": "WV IMM Ch. 11.1",
+        "note": "Assets — definitions chapter (categorically eligible SNAP AG, cash savings, certificate of deposit, community spouse, conditional eligibility, etc.); dated 11/09-11/10 in this pack's fetched copy"
+      },
+      {
+        "value": "WV IMM Ch. 9.1",
+        "note": "Eligibility Determination Groups — defines the SNAP Assistance Group (AG): who must be included, individuals living alone, groups purchasing/preparing meals together"
+      }
+    ],
+    "wvcode": [
+      {
+        "value": "W. Va. Code § 9-2-3a",
+        "note": "Authorized exemption from federal law; exceptions. Enacted by HB2459 (2019), effective 5/21/2019. Exempts all individuals domiciled in West Virginia from the federal drug-felony SNAP ban (21 U.S.C. § 862a(a)(2)) UNLESS the offense of conviction had as an element the misuse of SNAP benefits, loss of life, or the causing of physical injury. Confirmed current and unamended as of this pack's fetch date (2026-08-12); applied in a live 2026 WV Board of Review decision (26-BOR-1601)."
+      }
+    ]
+  }
+}
