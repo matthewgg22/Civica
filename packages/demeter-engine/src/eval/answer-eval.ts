@@ -2983,6 +2983,134 @@ export const LA_GOLD: AnswerExpectation[] = [
   },
 ];
 
+export const KY_GOLD: AnswerExpectation[] = [
+  {
+    id: "ky-manual-is-volume-2-not-3",
+    // Guards the flagship structural finding: Kentucky's SNAP manual is
+    // Volume 2, not "Volume III" (Kentucky's KTAP/TANF manual).
+    question: "What is the income limit for SNAP in Kentucky?",
+    state: "KY",
+    expectCitation: "5200",
+    mustDisclaim: true,
+  },
+  {
+    id: "ky-ece-dual-track-130-not-flat-200",
+    // Guards the structural finding: Kentucky's ECE ceiling for
+    // non-elderly/non-disabled households stays at the ordinary 130% FPL —
+    // guards against the model importing Louisiana's flat-200% structure.
+    question: "Does Kentucky's categorical eligibility raise my SNAP income limit above the normal amount?",
+    state: "KY",
+    expectCitation: "3160",
+    mustMention: "130",
+    mustDisclaim: true,
+  },
+  {
+    id: "ky-drug-felony-full-opt-out",
+    // Guards the flagship CONFIRMATION finding: Kentucky FULLY opted out of
+    // the federal drug-felony ban (KRS 205.2005) in 2021.
+    question: "I have a drug felony conviction — can I still get SNAP in Kentucky?",
+    state: "KY",
+    mustMention: "eligible",
+    mustDisclaim: true,
+  },
+  {
+    id: "ky-vehicle-blanket-exempt",
+    // Guards the structural finding: Kentucky excludes ALL vehicles from
+    // the resource test (vehicles appear on neither MS 5050 nor MS 5060 list).
+    question: "Does my car count against me for SNAP in Kentucky?",
+    state: "KY",
+    expectCitation: "5050",
+    mustMention: "excluded",
+    mustDisclaim: true,
+  },
+  {
+    id: "ky-resource-limit-current-not-stale-webpage-figure",
+    // Guards the disclosed staleness finding: manual's current $3,000/$4,500
+    // figures, NOT the stale $2,250/$3,500 on Kentucky's own consumer page.
+    question: "What is the SNAP resource limit for a household with a disabled member in Kentucky?",
+    state: "KY",
+    expectCitation: "5000",
+    mustMention: "4,500",
+    mustDisclaim: true,
+  },
+  {
+    id: "ky-abawd-5-county-waiver",
+    // Guards against overclaiming/underclaiming: Kentucky has a narrow
+    // 5-Appalachian-county waiver effective Dec. 1, 2025, not zero waivers.
+    question: "Is the SNAP work-requirement time limit currently waived anywhere in Kentucky?",
+    state: "KY",
+    mustMention: "waiver",
+    mustDisclaim: true,
+  },
+  {
+    id: "ky-abawd-age-range-current-federal",
+    question: "What is the ABAWD work requirement age range in Kentucky?",
+    state: "KY",
+    expectCitation: "2000",
+    mustMention: "64",
+    mustDisclaim: true,
+  },
+  {
+    id: "ky-child-support-arrears-disqualification",
+    // Guards the structural finding: Kentucky actively disqualifies members
+    // $500+ delinquent on owed child support — distinct from the ordinary
+    // child-support-paid deduction.
+    question: "Can owing back child support affect my SNAP eligibility in Kentucky?",
+    state: "KY",
+    expectCitation: "2380",
+    mustDisclaim: true,
+  },
+  {
+    id: "ky-child-support-paid-ordinary-deduction",
+    question: "Does paying child support lower my countable income for SNAP in Kentucky?",
+    state: "KY",
+    expectCitation: "5510",
+    mustDisclaim: true,
+  },
+  {
+    id: "ky-medical-deduction-smd-137",
+    question: "I'm disabled and have $50 a month in medical bills for Kentucky SNAP — do I get a deduction?",
+    state: "KY",
+    expectCitation: "5400",
+    mustMention: "35",
+    mustDisclaim: true,
+  },
+  {
+    id: "ky-expedited-service-5-day",
+    // Guards the structural finding: Kentucky's expedited-service ceiling is
+    // 5 calendar days, faster than the federal 7-day floor.
+    question: "How fast can I get emergency SNAP benefits in Kentucky?",
+    state: "KY",
+    expectCitation: "6430",
+    mustMention: "5",
+    mustDisclaim: true,
+  },
+  {
+    id: "ky-restaurant-meals-program-not-available",
+    question: "Can I use my EBT card to buy a hot meal at a restaurant in Kentucky?",
+    state: "KY",
+    mustMention: "not",
+    mustDisclaim: true,
+  },
+  {
+    id: "ky-cert-period-three-tier",
+    // Guards the structural finding: Kentucky's tri-tier 4/12/36-month
+    // certification structure, not a flat 12-month default.
+    question: "How long does my SNAP approval last in Kentucky?",
+    state: "KY",
+    expectCitation: "6600",
+    mustMention: "12",
+    mustDisclaim: true,
+  },
+  {
+    id: "ky-federal-benefit",
+    question: "How is the monthly SNAP benefit amount calculated from net income in Kentucky?",
+    state: "KY",
+    expectCitation: "273.10",
+    mustDisclaim: true,
+  },
+];
+
 /** Everything the live runner executes. */
 export const ALL_GOLD: AnswerExpectation[] = [
   ...ANSWER_GOLD,
@@ -3013,4 +3141,5 @@ export const ALL_GOLD: AnswerExpectation[] = [
   ...SC_GOLD,
   ...AL_GOLD,
   ...LA_GOLD,
+  ...KY_GOLD,
 ];
