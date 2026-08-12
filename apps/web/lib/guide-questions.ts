@@ -173,4 +173,11 @@ export const QUESTIONS: Record<string, string[]> = {
     "Is the SNAP work-requirement time limit currently waived anywhere in Utah?",
     "What is my EBT card called in Utah?",
   ],
+  AR: [
+    "Does Arkansas's categorical eligibility raise my SNAP income limit above the normal amount?",
+    "What is the SNAP resource limit in Arkansas, and can it be temporarily higher?",
+    "I have a drug felony conviction — can I still get SNAP in Arkansas?",
+    "What is the ABAWD work requirement age range in Arkansas?",
+    "Can I use my EBT card to buy a hot meal at a restaurant in Arkansas?",
+  ],
 };

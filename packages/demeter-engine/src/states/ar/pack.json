@@ -1,0 +1,59 @@
+{
+  "code": "AR",
+  "program": "SNAP — Arkansas has no distinctive local program nickname; this pack found no distinctive branded EBT card name either (see PROVENANCE.md Finding 5)",
+  "agency": "Arkansas Department of Human Services (DHS), Division of County Operations (DCO)",
+  "admin_model": "state",
+  "admin_note": "Arkansas is a STATE-ADMINISTERED SNAP program run by DHS's Division of County Operations through county DHS offices — not independent county agencies like CA/NY/MN/WI/VA. GENUINE STRUCTURAL FLAGSHIP FINDING this pack found: Arkansas Code § 20-76-115, added by Act 675 of 2023 (SB306), STATUTORILY BARS DHS from adopting income-based broad-based categorical eligibility (raising the gross income standard above the plain federal 130% FPL, 7 U.S.C. § 2014(c)) UNLESS DHS separately obtains a federal BBCE waiver from USDA FNS — and, independently, caps any RESOURCE-based categorical-eligibility exemption to a TEMPORARY $5,500 asset limit for up to twelve (12) months once every five (5) years, not a permanent resource-test removal, per DHS's own April 2025 emergency-rule filing implementing the Act (see PROVENANCE.md Finding 1). This is a legislative self-restriction on the agency's own eligibility policy, structurally similar in KIND (though different in subject) to this roster's Oklahoma finding (statutory ABAWD-waiver-request ban) and Arkansas's own separate ABAWD finding below. SEPARATELY, this pack found the Arkansas SNAP Certification Manual's own ABAWD age-exemption table (SNAP Manual dated 01/01/2024) still reflects only the 2023 Fiscal Responsibility Act's PRE-OBBBA incremental schedule, topping out at exempt-at-55 (i.e., subject through age 54) — with NO mention anywhere in the manual of OBBBA's true current federal standard, 18-64, effective immediately upon its July 4, 2025 enactment (see PROVENANCE.md Finding 2). ALSO found: the manual's own ABAWD-waiver-status section (SNAP 3501) is dated 'SNAP Manual 01/01/17' — unrevised for roughly nine years despite the manual's front matter showing a 07/01/2026 revision date — and states plainly Arkansas is 'currently not under a waiver' as of that stale 2017 revision (see PROVENANCE.md Finding 3). Confirm current operative practice with the applicant's own local DHS county office, the same caution this roster already carries for CA/NY/MN/WI/OH/NC/NJ/VA/GA/IN/TN/MO/MD/CO/SC/AL/LA/KY/OK.",
+  "system": "DHS's Division of County Operations processes SNAP; applicants apply online through Access Arkansas (access.arkansas.gov), by mail, by fax, or in person at a local DHS county office. The normal processing standard is no later than 30 calendar days from the date a valid application is filed (SNAP Manual § 8500); expedited service (households with very low income and liquid resources, or destitute migrant/seasonal farmworkers) is the plain federal 7 calendar days (SNAP Manual § 9100) — Arkansas does not shorten this the way this roster's Kentucky pack found Kentucky does (5 days). An interview is generally required, in person or by phone.",
+  "portal": {
+    "name": "Access Arkansas",
+    "url": "https://access.arkansas.gov/"
+  },
+  "update_channels": [
+    {
+      "name": "Arkansas DHS — SNAP Certification Manual (full text), most recently revised 07/01/2026 per its own cover page, individual sections dated per their own last-revision stamp",
+      "url": "https://humanservices.arkansas.gov/wp-content/uploads/Supplemental-Nutrition-Assistance-Program-Policy-Manual.pdf"
+    },
+    {
+      "name": "Arkansas DHS — SNAP Certification Manual, Appendix D (Current Standards — dollar figures) and Exhibits A/B (income/benefit tables), effective 10/1/2025, current FFY2026 figures",
+      "url": "https://humanservices.arkansas.gov/wp-content/uploads/SNAP-Appendices-10.01.2025.pdf"
+    },
+    {
+      "name": "Arkansas Bureau of Legislative Research — Emergency Rule filing implementing Act 675 of 2023 (Broad-Based Categorical Eligibility asset-limit statute, includes the Act's own bill text, SB306)",
+      "url": "https://arkleg.state.ar.us/Home/FTPDocument?path=/Assembly/Meeting+Attachments/045/27347/Exhibit+B.01+-+DHS+DCO+Emergency+Rule+-+Supplemental+Nutrition+Assistance+Program+updates+pursuant+to+Act+675+of+2023+3.31.2025.pdf"
+    },
+    {
+      "name": "FindLaw — Arkansas Code § 20-76-409 (Opt out), current version, confirming Arkansas's full opt-out of the federal drug-felony ban (21 U.S.C. § 862a)",
+      "url": "https://codes.findlaw.com/ar/title-20-public-health-and-welfare/ar-code-sect-20-76-409.html"
+    },
+    {
+      "name": "Arkansas DHS — SNAP Requirement to Work & Time Limit Rules consumer page",
+      "url": "https://humanservices.arkansas.gov/divisions-shared-services/county-operations/supplemental-nutrition-assistance-snap/snap-time-limit-rules/"
+    },
+    {
+      "name": "Arkansas DHS — EBT Resource Center / EBT Card FAQs",
+      "url": "https://humanservices.arkansas.gov/divisions-shared-services/county-operations/supplemental-nutrition-assistance-snap/ebt/"
+    },
+    {
+      "name": "USDA FNS — SNAP Restaurant Meals Program state list (Arkansas absent)",
+      "url": "https://www.fns.usda.gov/snap/retailer/restaurant-meals-program"
+    },
+    {
+      "name": "USDA FNS — SNAP state agency directory entry for Arkansas",
+      "url": "https://www.fns.usda.gov/snap-directory-entry/arkansas"
+    }
+  ],
+  "verification": {
+    "verified_on": "2026-08-12",
+    "method": "Direct WebFetch retrieval of DHS's own official SNAP Certification Manual PDF (humanservices.arkansas.gov, 4.8MB, converted with pdftotext -layout) and DHS's own Appendix D/Exhibits A-B dollar-figure PDF (SNAP-Appendices-10.01.2025.pdf, effective 10/1/2025, current FFY2026 figures) — both read via WebFetch after direct curl with a browser User-Agent returned a clean HTTP 403 on every DHS host attempted (see PROVENANCE.md Finding 0). Also directly curl-fetched (clean HTTP 200, no barrier): the Arkansas Bureau of Legislative Research's own emergency-rule filing implementing Act 675 of 2023, which reproduces the Act's own enacted bill text (Senate Bill 306, 94th General Assembly) in full — read directly for its statutory language, not inferred from a secondary summary. USDA FNS's current Restaurant Meals Program state list was fetched directly (clean HTTP 200, Arkansas absent). WebSearch cross-checks located FindLaw's current-code mirror of Arkansas Code § 20-76-409 (Opt out), independently confirming Arkansas's full drug-felony opt-out, cross-checked against the SNAP Certification Manual's own current disqualification-category list (no drug-felony category found).",
+    "gates": "Every DHS-hosted PDF this pack attempted (the full SNAP Certification Manual, the Appendix D/Exhibits dollar-figure PDF, and the separate SNAP Policy Directives change-history PDF) returned a clean HTTP 403 to direct curl with a browser User-Agent on every attempt — a genuine, disclosed access barrier for Arkansas's PRIMARY policy-manual publisher. This pack resolved it by fetching the SAME PDFs through WebFetch instead, which retrieved each document's full binary content successfully (the manual PDF: 4.8MB; the appendices PDF: 1.2MB) for direct pdftotext extraction — a genuine, disclosed access-barrier workaround using a different fetch path to the SAME primary-source file, not a substitution of a different or lower-quality source. Justia's Arkansas Code mirror (law.justia.com) also 403'd on direct WebFetch, the now-familiar Justia-block pattern this roster has documented repeatedly (Louisiana, Virginia, Indiana, Missouri, Maryland, Colorado, South Carolina, Alabama, Kentucky, Oklahoma) — resolved via FindLaw's current-code mirror instead, which returned readable text cleanly. By contrast, the Arkansas Bureau of Legislative Research's own emergency-rule filing (arkleg.state.ar.us) returned a clean HTTP 200 to direct curl with no barrier at all.",
+    "sources": [
+      "Arkansas DHS, SNAP Certification Manual (full text, 4.8MB PDF) — WebFetch retrieval after direct curl 403'd, converted with pdftotext -layout, individual sections read with their own dated revision stamps (e.g. § 1919 dated 04/01/2025, § 3501 dated 01/01/17, § 3100 dated 01/01/2024)",
+      "Arkansas DHS, SNAP Certification Manual Appendix D (Current Standards) and Exhibits A-B (Income/Benefit Tables) — WebFetch retrieval after direct curl 403'd, effective 10/1/2025, current FFY2026 figures",
+      "Arkansas Bureau of Legislative Research, Emergency Rule filing implementing Act 675 of 2023 (Supplemental Nutrition Assistance Program updates), reproducing Senate Bill 306's own enacted text in full — direct curl fetch, clean HTTP 200",
+      "FindLaw, Arkansas Code § 20-76-409 (Opt out), current version — direct WebFetch, clean retrieval, confirms full drug-felony SNAP/TANF opt-out",
+      "USDA FNS, SNAP Restaurant Meals Program state list — direct curl fetch, clean HTTP 200 — Arizona, California, Illinois (Cook/Franklin Counties), Maryland, Massachusetts, Michigan, New York, Rhode Island, Virginia listed; Arkansas absent",
+      "Arkansas Heritage / WebSearch cross-check — confirms Arkansas has no federally recognized tribal reservations located within the state today"
+    ]
+  }
+}
