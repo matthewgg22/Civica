@@ -260,6 +260,21 @@ export const QUESTIONS: Record<string, string[]> = {
     "How long does my SNAP certification last in New Hampshire?",
     "What utility deduction can I get for SNAP in New Hampshire?",
   ],
+  SD: [
+    "What is the SNAP resource limit in South Dakota?",
+    "Does South Dakota have broad-based categorical eligibility for SNAP?",
+    "I have a drug felony conviction — can I still get SNAP in South Dakota?",
+    "Is the SNAP work-requirement time limit currently waived anywhere in South Dakota?",
+    "Does South Dakota have a Restaurant Meals Program for SNAP?",
+  ],
+  MT: [
+    "What is the income limit for SNAP in Montana?",
+    "Does Montana have an asset or resource limit for SNAP?",
+    "I have a drug felony conviction — can I still get SNAP in Montana?",
+    "Is the SNAP work-requirement time limit currently waived anywhere in Montana?",
+    "What utility deduction can I get for SNAP in Montana?",
+    "How do I apply for SNAP in Montana?",
+  ],
   DE: [
     "What is the income limit for SNAP in Delaware?",
     "Does Delaware have an asset or resource limit for SNAP?",
