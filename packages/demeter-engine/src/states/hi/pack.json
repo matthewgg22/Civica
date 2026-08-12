@@ -1,0 +1,66 @@
+{
+  "code": "HI",
+  "program": "SNAP",
+  "agency": "Hawaii Department of Human Services (DHS), Benefit, Employment & Support Services Division (BESSD)",
+  "admin_model": "state",
+  "admin_note": "Hawaii is a STATE-ADMINISTERED SNAP program — DHS's BESSD division processes all SNAP cases centrally through statewide processing centers, no county policy authority. Hawaii's own consumer-facing DHS page uses only the plain federal name \"SNAP\" — this pack found no distinctive branded nickname the way California has \"CalFresh\" or Washington has \"Basic Food\" (confirmed directly; see program-identity supplement). GENUINE STRUCTURAL FLAGSHIP FINDING: Hawaii's own current SNAP page states that, as of February 1, 2025, BBCE households are no longer subject to ANY net income test at all — not merely an elevated gross-income ceiling, the shape most other BBCE states in this roster use, but a full waiver of the net test itself for the BBCE population, which this pack confirms via a direct quote from DHS's own page (see income-pathways supplement) as a genuine, more-aggressive-than-typical BBCE implementation. SECOND FLAGSHIP FINDING (secondary-source correction): several secondary sources this pack found describe Hawaii as having fully \"opted out\" of the federal SNAP drug-felony ban with no conditions — this pack traced Haw. Rev. Stat. § 346-53.3's own text directly and found Hawaii's ban is MODIFIED, not eliminated: it applies only to persons \"complying with treatment or who have not refused or failed to comply with treatment,\" a conditional carve-out structurally similar to this roster's Nebraska and Kentucky modified-ban findings, not the unconditional full opt-out several aggregator sites describe (see criminal-justice-disqualifications supplement). THIRD FLAGSHIP FINDING: despite Hawaii's favorable noncontiguous-state ABAWD waiver threshold (1.5x the national unemployment rate, versus the mainland's flat 10% floor, per federal statute), this pack found Hawaii is ABSENT from USDA FNA's own FY2025-2029 ABAWD time-limit-waiver state list — unlike Alaska, which has an active waiver under the same favorable threshold, Hawaii currently has NO active statewide ABAWD waiver anywhere in the islands (see abawd-work-requirement supplement). FOURTH FLAGSHIP FINDING (secondary-source correction): this pack found and corrected a stale/wrong secondary-source claim that Hawaii currently operates a Restaurant Meals Program — USDA FNA's own current RMP state-operator list (fetched directly, updated August 7, 2026) does NOT include Hawaii among its nine listed RMP states (AZ, MD, NY, CA, MA, RI, IL-partial, MI, VA) — see restaurant-meals-program supplement. FIFTH FLAGSHIP, TIME-SENSITIVE FINDING: USDA approved a Hawaii SNAP soft-drink purchase-restriction demonstration waiver, but this pack found the implementation date was pushed from the original August 1, 2026 effective date to April 1, 2027 per a June 15, 2026 USDA status update — as of this pack's fetch date the restriction is approved but NOT yet in effect (see food-restriction-waiver supplement). SIXTH FINDING, USER-FLAGGED: like Alaska, Hawaii's COLA-adjusted maximum SNAP allotment schedule is materially higher than the 48 contiguous states' — this pack confirms the exact current dollar figures directly from USDA's own FY2026 Maximum Allotments and Deductions table (a national publication, not Hawaii-specific) rather than a Hawaii DHS document, and discloses this sourcing distinction explicitly (see max-allotment-cola supplement). Confirm current operative practice with the applicant's own local DHS processing center — the same caution this roster already carries for every other BBCE/modified-ban state built so far.",
+  "system": "DHS's BESSD division processes SNAP centrally through statewide processing centers (no county-level policy variation); applicants apply online through PAIS (Hawaii DHS's online SNAP/Financial Assistance application and recertification portal, pais.dhs.hawaii.gov), by U.S. Postal Mail using the DHS-1240 paper application, or by dropping off a completed paper application at a processing center. An intake worker reviews the completed application and assigns the household to one of Hawaii's three eligibility standards (130% FPL gross / BBCE 200% FPL gross / net-income-only for elderly-disabled households) based on household composition. Most households must renew every 6 or 12 months; households on a 12-month certification generally complete a Six-Month Report Form at the midpoint, except households where every member is elderly (60+) or disabled with no earned income, who this pack found secondary-source corroboration are not required to file that mid-period report — this pack flags the certification-period specifics as lower-confidence, see freshness.json. Public Assistance Information Line: 1-855-643-1643.",
+  "portal": {
+    "name": "PAIS (Hawaii DHS SNAP/TANF Application Portal)",
+    "url": "https://pais.dhs.hawaii.gov/PAIS/#!/"
+  },
+  "update_channels": [
+    {
+      "name": "Hawaii DHS BESSD — SNAP consumer page (current FFY2026 gross/net income eligibility tables, effective 10/1/2025; BBCE description; program-identity, application-method, and agency details) — direct curl fetch (browser User-Agent), clean HTTP 200",
+      "url": "https://humanservices.hawaii.gov/bessd/snap/"
+    },
+    {
+      "name": "USDA FNA — SNAP Fiscal Year 2026 Maximum Allotments and Deductions (national table with Hawaii-specific column: maximum allotment, standard deduction, maximum excess shelter deduction, homeless shelter deduction, asset limits), effective 10/1/2025 — direct curl fetch, clean HTTP 200",
+      "url": "https://fns-prod.azureedge.us/sites/default/files/resource-files/snap-fy26maximumAllotments-deductions.pdf"
+    },
+    {
+      "name": "Hawaii Administrative Rules Title 17, Chapter 676 (Income), § 17-676-73 (Standard Utility Allowance — individual per-utility-type allowance structure) — direct curl fetch (browser User-Agent) of humanservices.hawaii.gov, clean HTTP 200, converted with pdftotext -layout",
+      "url": "https://humanservices.hawaii.gov/wp-content/uploads/2019/03/HAR-17-676-INCOME.pdf"
+    },
+    {
+      "name": "Hawaii Administrative Rules Title 17, Chapter 663 (Special SNAP Households) — direct curl fetch, clean HTTP 200, converted with pdftotext -layout",
+      "url": "https://humanservices.hawaii.gov/wp-content/uploads/2014/01/17-663.pdf"
+    },
+    {
+      "name": "Haw. Rev. Stat. § 346-53.3 (SNAP/TANF drug-felony modified-ban statute) — full text corroborated via WebSearch/Justia excerpt after direct fetch of law.justia.com and capitol.hawaii.gov both returned HTTP 403 bot-detection walls",
+      "url": "https://law.justia.com/codes/hawaii/title-20/chapter-346/section-346-53-3/"
+    },
+    {
+      "name": "Hawaii DHS — Changes to Able-Bodied Adult Work Requirements for SNAP – FAQs (OBBBA ABAWD age-range/exemption changes, Hawaii-specific impact estimates, posted Oct 9, 2025) — direct curl fetch, clean HTTP 200",
+      "url": "https://humanservices.hawaii.gov/changes-to-able-bodied-adult-work-requirements-for-snap-faqs/"
+    },
+    {
+      "name": "USDA FNA — ABAWD Time Limit Waivers FY2025-2029 (state-by-state waiver-response index; Hawaii absent) — direct curl fetch, clean HTTP 200",
+      "url": "https://www.fna.usda.gov/snap/waivers/timelimit/2025-2029"
+    },
+    {
+      "name": "USDA FNA — SNAP Restaurant Meals Program (current state-operator list; Hawaii absent, page updated 8/7/2026) — direct curl fetch, clean HTTP 200",
+      "url": "https://www.fna.usda.gov/snap/retailer/restaurant-meals-program"
+    },
+    {
+      "name": "USDA FNA — Hawaii SNAP Food Restriction Waiver (soft-drink demonstration project; approval letter and June 15, 2026 implementation-date status update pushing the date to 4/1/2027) — direct curl fetch, clean HTTP 200",
+      "url": "https://www.fna.usda.gov/snap/waivers/foodrestriction/hawaii"
+    }
+  ],
+  "verification": {
+    "verified_on": "2026-08-12",
+    "method": "Direct curl fetch (browser User-Agent) of Hawaii DHS BESSD's current SNAP consumer page (converted from HTML directly), Hawaii Administrative Rules Title 17 Chapters 663 and 676 PDFs (converted with pdftotext -layout after WebFetch's markdown converter mangled the HAR-17-663 PDF's optional-content-group structure), and USDA FNA's FY2026 Maximum Allotments and Deductions PDF, ABAWD Time Limit Waivers FY2025-2029 page, SNAP Restaurant Meals Program state-operator list, and Hawaii-specific Food Restriction Waiver page — all clean HTTP 200 with a browser User-Agent. Haw. Rev. Stat. § 346-53.3's exact text was corroborated via WebSearch/Justia excerpt after both law.justia.com and capitol.hawaii.gov (the Hawaii Legislature's own statute-text host) returned HTTP 403 bot-detection walls to every direct curl attempt this pack made, including with a browser User-Agent, plain HTTP, and a Wayback Machine attempt (rate-limited) — a genuine, unresolved access barrier for that one specific citation, disclosed rather than papered over. All other primary sources fetched cleanly with no bot-detection wall.",
+    "gates": "humanservices.hawaii.gov and fna.usda.gov (formerly fns.usda.gov) both returned clean HTTP 200 to every direct curl attempt with a browser User-Agent, including PDF documents that WebFetch's built-in markdown converter could not parse cleanly (the HAR-17-663 PDF returned a PDF-structure syntax error through WebFetch, resolved by fetching directly with curl and converting locally with pdftotext -layout — a tooling-layer limitation, not a source-side barrier). law.justia.com and capitol.hawaii.gov both returned HTTP 403 to every direct curl attempt (browser User-Agent, plain HTTP, and Wayback Machine, the last blocked by an unrelated archive.org rate limit) — this is the one citation in this pack (Haw. Rev. Stat. § 346-53.3's exact text) resting on WebSearch/Justia-snippet corroboration rather than a directly-fetched primary document, disclosed explicitly in the criminal-justice-disqualifications supplement and freshness.json rather than treated as fully verified.",
+    "sources": [
+      "Hawaii DHS BESSD, SNAP consumer page (humanservices.hawaii.gov/bessd/snap/) — direct curl fetch, clean HTTP 200; FFY2026 gross/net income eligibility tables (effective 10/1/2025), BBCE description including the February 1, 2025 net-income-test waiver, program name, PAIS application portal link, agency identification",
+      "USDA FNA, SNAP Fiscal Year 2026 Maximum Allotments and Deductions (fns-prod.azureedge.us) — direct curl fetch, clean HTTP 200, converted with pdftotext -layout; Hawaii-specific maximum allotment, standard deduction, maximum excess shelter deduction, homeless shelter deduction, and the federal-baseline asset-limit table",
+      "Hawaii Administrative Rules Title 17, Chapter 676 (Income), § 17-676-73 — direct curl fetch, clean HTTP 200, converted with pdftotext -layout; the individual per-utility-type Standard Utility Allowance structure (sewer/trash, water, electricity/gas, mandatory telephone allowance), each separately weighted by county SNAP population and, for water/electricity/gas, by household size and bedroom count",
+      "Hawaii Administrative Rules Title 17, Chapter 663 — direct curl fetch, clean HTTP 200, converted with pdftotext -layout; SNAP special-household provisions including the ABAWD and drug-felony disqualification cross-reference structure",
+      "Haw. Rev. Stat. § 346-53.3 — WebSearch/Justia-excerpt corroboration only (both law.justia.com and capitol.hawaii.gov returned HTTP 403 to every direct-fetch attempt this pack made); full statute text: 'Section 115(a) of Public Law 104-193 shall not apply in Hawaii to persons who are complying with treatment or who have not refused or failed to comply with treatment'",
+      "Hawaii DHS, 'Changes to Able-Bodied Adult Work Requirements for SNAP – FAQs' (posted Oct 9, 2025) — direct curl fetch, clean HTTP 200; OBBBA ABAWD age-range expansion (18-64), caregiver-exemption narrowing, removed homeless/veteran/foster-youth exemptions, and Hawaii-specific impact estimates (16,000 individuals aged 55-64; 10,000 households with a dependent child aged 14+)",
+      "USDA FNA, ABAWD Time Limit Waivers FY2025-2029 state-response index — direct curl fetch, clean HTTP 200; Hawaii absent from the list of states that submitted an ABAWD waiver request for FY2025 or FY2026, despite the favorable 1.5x-national-unemployment-rate threshold available to noncontiguous states",
+      "USDA FNA, SNAP Restaurant Meals Program state-operator list — direct curl fetch, clean HTTP 200, page updated Aug 7, 2026; nine listed RMP states (AZ, MD, NY, CA, MA, RI, IL-Cook/Franklin-only, MI, VA), Hawaii absent",
+      "USDA FNA, Hawaii SNAP Food Restriction Waiver page — direct curl fetch, clean HTTP 200; USDA approval letter (soft-drink exclusion, two-year demonstration, originally effective Aug 1, 2026) and a June 15, 2026 status update pushing the implementation date to April 1, 2027"
+    ]
+  }
+}
