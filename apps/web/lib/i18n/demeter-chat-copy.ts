@@ -52,7 +52,7 @@ export const T = {
     portalLead: "In {state}, you apply through {agency}.",
     portalCta: "Apply at {portal}",
     portalStay:
-      "No need to go yet — you can work out what you'll be asked here first, and check anything you're unsure of, before you start the real form.",
+      "That is where the application is formally submitted. I'll be here the whole time — ask me anything as you go, and we can work through what it asks for together.",
     stateOfferYes: "Yes, use {state}",
     stateOfferNo: "No, keep as is",
     clearNote:
@@ -126,7 +126,7 @@ export const T = {
       error: "That didn't save. Please try again.",
     },
     worksheet: {
-      title: "Your estimate",
+      title: "What we know so far",
       subtitle: "Builds as you talk",
       result: "Where this lands",
       estimate: "Estimated monthly benefit:",
@@ -182,7 +182,7 @@ export const T = {
     portalLead: "En {state}, la solicitud se hace a través de {agency}.",
     portalCta: "Solicitar en {portal}",
     portalStay:
-      "No hace falta ir todavía: aquí puedes ver qué te van a preguntar y aclarar lo que no tengas claro antes de empezar el formulario real.",
+      "Ahí es donde se presenta formalmente la solicitud. Yo sigo aquí todo el tiempo — pregúntame lo que quieras sobre la marcha y vemos juntos lo que te pide.",
     stateOfferYes: "Sí, usa {state}",
     stateOfferNo: "No, déjalo así",
     clearNote:
@@ -248,7 +248,7 @@ export const T = {
       error: "No se pudo guardar. Intenta de nuevo.",
     },
     worksheet: {
-      title: "Tu estimado",
+      title: "Lo que sabemos hasta ahora",
       subtitle: "Se arma mientras conversas",
       result: "Dónde queda esto",
       estimate: "Beneficio mensual estimado:",
@@ -295,7 +295,7 @@ export const T = {
     portalLead: "Ở {state}, bạn nộp đơn qua {agency}.",
     portalCta: "Nộp đơn tại {portal}",
     portalStay:
-      "Chưa cần sang ngay đâu — bạn có thể xem trước họ sẽ hỏi những gì và làm rõ điều còn băn khoăn ở đây, trước khi bắt đầu mẫu đơn thật.",
+      "Đó là nơi nộp đơn chính thức. Tôi vẫn ở đây suốt — cứ hỏi tôi bất cứ điều gì trong lúc làm, chúng ta cùng xem đơn yêu cầu những gì.",
     stateOfferYes: "Vâng, dùng {state}",
     stateOfferNo: "Không, giữ nguyên",
     clearNote:
@@ -361,7 +361,7 @@ export const T = {
       error: "Không lưu được. Vui lòng thử lại.",
     },
     worksheet: {
-      title: "Ước tính của bạn",
+      title: "Những gì chúng tôi biết đến giờ",
       subtitle: "Được xây dựng khi bạn trò chuyện",
       result: "Kết quả tạm tính",
       estimate: "Trợ cấp hàng tháng ước tính:",
@@ -405,7 +405,7 @@ export const T = {
     portalLead: "在{state}，申请通过{agency}办理。",
     portalCta: "前往 {portal} 申请",
     portalStay:
-      "先不用急着过去——您可以在这里先弄清楚会被问到什么、把不确定的地方问明白，然后再去填真正的表格。",
+      "那里是正式提交申请的地方。我一直都在——填的过程中有任何问题都可以问我，我们一起把表格要求的内容弄清楚。",
     stateOfferYes: "好，用 {state}",
     stateOfferNo: "不用，保持不变",
     clearNote: "仅从此浏览器中清除。我们仍会保留问题和回答以核查准确性。",
@@ -468,7 +468,7 @@ export const T = {
       error: "保存失败，请再试一次。",
     },
     worksheet: {
-      title: "您的估算",
+      title: "目前已知的情况",
       subtitle: "随着对话逐步生成",
       result: "初步结果",
       estimate: "每月估计补助：",

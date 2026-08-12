@@ -255,8 +255,35 @@ export function renderAnswer(text: string, opts?: { streaming?: boolean }): Reac
     // treated as one or the other.
     let run: string[] = [];
     let prose: string[] = [];
+    /** A line that is NOTHING BUT a link is a place to go, not a sentence.
+     *
+     *  The one that matters is the state portal, handed over the moment a state
+     *  is chosen — the single most consequential link in the product, and it
+     *  rendered as underlined text in the middle of a paragraph, looking like
+     *  any citation. As a filled block in the logo's wheat it reads as the door
+     *  it is. Structural rather than a special message type, so it needs no new
+     *  role in the saved-conversation shape. */
+    const SOLE_LINK = /^\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)$/;
+
     const flushProse = () => {
       if (prose.length === 0) return;
+      const solo = prose.length === 1 ? SOLE_LINK.exec(prose[0]!.trim()) : null;
+      if (solo) {
+        prose = [];
+        out.push(
+          <a
+            className="demeter__gocta"
+            key={`cta${key}-${out.length}`}
+            href={solo[2]}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {solo[1]}
+            <span aria-hidden> →</span>
+          </a>,
+        );
+        return;
+      }
       const p = prose;
       prose = [];
       lastPara = out.length;
@@ -318,7 +345,26 @@ export function renderAnswer(text: string, opts?: { streaming?: boolean }): Reac
       </p>
     );
   }
-  return out;
+
+  // THE TRAILER IS A FOOTNOTE, not more answer. Certainty, the sections we
+  // checked, and where they came from were set in the same face and size as
+  // the answer itself, so every reply ended in four lines of apparatus
+  // competing with the thing the reader came for. It is not less important —
+  // it is what makes the answer checkable — but it is reference, and
+  // reference is read differently from prose.
+  //
+  // Split at the rule the engine already emits, so nothing here has to know
+  // what the trailer contains.
+  const cut = out.findIndex(
+    (n) => (n as React.ReactElement<{ className?: string }>)?.props?.className === "demeter__rule",
+  );
+  if (cut === -1) return out;
+  return [
+    ...out.slice(0, cut),
+    <div className="demeter__footnote" key="footnote">
+      {out.slice(cut + 1)}
+    </div>,
+  ];
 }
 
 // The copy table lives in lib/i18n/demeter-chat-copy.ts, NOT here.
@@ -1062,15 +1108,17 @@ export function DemeterChat({
                   )
                 ) : m.role === "assistant" && busy && i === messages.length - 1 ? (
                   <span className="demeter__thinking">
-                    {t.thinking}
-                    {/* Three dots, so the wait has a heartbeat. The pulsing
-                        text alone reads as a static label someone forgot to
-                        remove when nothing arrives for a few seconds. */}
-                    <span className="demeter__dots" aria-hidden>
-                      <i />
-                      <i />
-                      <i />
-                    </span>
+                    {/* THIRD ATTEMPT. Three dots read as a stall; a rule that
+                        filled and receded read as a progress bar lying about
+                        progress — both were separate objects next to the words,
+                        competing for the eye while nothing happened.
+
+                        Nothing is added here now. The words themselves carry a
+                        slow light across them, left to right, the way something
+                        working looks rather than the way something loading
+                        looks. One element, no jumping, and under
+                        prefers-reduced-motion it is simply the text. */}
+                    <span className="demeter__thinkingtext">{t.thinking}</span>
                   </span>
                 ) : (
                   m.content
@@ -1188,6 +1236,16 @@ export function DemeterChat({
             </button>
           </span>
         </div>
+      )}
+
+      {/* THE QUESTION YOU ARE ANSWERING, kept visible while you answer it.
+          It was already the composer's placeholder — which disappears the
+          instant you start typing, i.e. exactly when you need it. Someone
+          halfway through a long reply had nothing on screen telling them what
+          was asked. Shown only while there is something in the box, so an empty
+          composer is not carrying a second copy of its own placeholder. */}
+      {input.trim().length > 0 && composerPrompt !== t.inputPlaceholder && (
+        <p className="demeter__answering">{composerPrompt}</p>
       )}
 
       <form
