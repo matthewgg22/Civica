@@ -1,0 +1,50 @@
+{
+  "_provenance": {
+    "note": "New Hampshire dated facts. Because New Hampshire has NO existing packages/snap-rules StatePolicy entry, there is no engine constant to cross-check against — every entry below is either a routine COLA-cycle reminder, a disclosed research gap, or a warning about a fact this pack found time-sensitive or access-constrained.",
+    "extracted": "2026-08-12"
+  },
+  "entries": [
+    {
+      "key": "nh-dhhs-waf-access-barrier",
+      "kind": "expires",
+      "date": "2026-11-01",
+      "warning": "dhhs.nh.gov returns a clean HTTP 403 to every direct curl attempt (browser User-Agent, plain HTTP) — a WAF-level block, not a tooling artifact this pack could resolve with a User-Agent change alone. This pack's research relied on the Wayback Machine and the r.jina.ai reader proxy instead. If either of those channels degrades, re-verify this pack's dollar figures and policy text directly against dhhs.nh.gov before treating them as current."
+    },
+    {
+      "key": "nh-fsm-245-03-wayback-staleness-caught",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "A Wayback Machine snapshot of FSM § 245.03 (ABAWD exemption criteria) dated 10/31/2025 — one day before New Hampshire's 11/1/2025 OBBBA effective date — showed PRE-OBBBA exemption criteria (ages 55+, child under 18, homeless/veteran/foster-youth exemptions). This pack explicitly did NOT rely on that stale snapshot and instead fetched the LIVE, current § 245.03 text via r.jina.ai's reader proxy, confirming the current post-OBBBA criteria (ages 65+, child under 14, Indian/Indigenous IHS exemption, no homeless/veteran/foster-youth exemption). Re-confirm this reader-proxy fetch reflects the true live page before treating New Hampshire's ABAWD exemption list as settled beyond this window, since this pack could not cross-check the reader-proxy content against a second independent source for this specific section."
+    },
+    {
+      "key": "nh-suahigh-figure-single-source",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "This pack's $1,018/month Heating/Cooling Standard Utility Allowance figure — notably higher than most other states this roster has built — is drawn from a single fetch of DHHS's FSM Table I: SNAP Deductions page, with no explicit effective-date stamp on that specific page. Before restating this figure with full confidence in a high-stakes context, re-verify it against a second New Hampshire DHHS source (e.g., a dated SR document) or a directly-fetched He-W 742.02 administrative-rule text."
+    },
+    {
+      "key": "nh-vehicle-exclusion-secondary-only",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "This pack's income-and-resources supplement states that New Hampshire excludes one vehicle per adult household member regardless of value (He-W Chapter 741, 7 CFR 273.8(e)(3) baseline) — this specific figure is corroborated by WebSearch/secondary-source summary only; this pack did not independently fetch the full FSM § 409 Vehicles section text. Re-verify directly against FSM § 409 before treating this as a hard fact in a high-stakes context."
+    },
+    {
+      "key": "nh-6mo-simplified-reporting-threshold-secondary-only",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "This pack's reporting-certification supplement describes New Hampshire's 6-month Simplified Reporting households as required to report only income changes that push gross monthly income above 130% FPG mid-period — this specific threshold-reporting rule is corroborated by WebSearch/secondary-source summary only, not independently fetched from a numbered FSM section. Re-verify directly before treating this as a hard fact in a high-stakes context."
+    },
+    {
+      "key": "nh-abawd-waiver-status-cross-checked-not-fetched-live",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "This pack's conclusion that New Hampshire currently has NO active area-wide ABAWD waiver rests on (a) USDA FNS/FNA's ABAWD Time Limit Waivers FY 2025-2029 index showing no FY2026 New Hampshire entry, and (b) WebSearch corroboration that the prior Stratford/Hale's Location waiver expired 9/30/2025 and was not renewed — this pack did not find a single DHHS page stating New Hampshire's current waiver status in as many words. Re-check https://www.fna.usda.gov/snap/abawd/waivers/2025-2029 directly before restating this with full confidence beyond this window."
+    },
+    {
+      "key": "nh-ffy2027-cola-reminder",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "This pack's confirmed dollar figures (Standard Deduction $209/$209/$209/$223/$261/$299, Heating/Cooling SUA $1,018, Utilities-Only $373, Electric-Only $217, Telephone-Only $39, Excess Shelter Deduction $744, Homeless Shelter Deduction $199, Medical Expense Deduction $135, resource limits $4,500/$3,000, and the income-eligibility table by household size at 130%/100%/200% FPG) are drawn from New Hampshire DHHS's current BFA Program Net Monthly Income Limits document (published 07/2026) and FSM Table I, matching the current FFY2026 cycle (October 1, 2025 - September 30, 2026). The FFY2027 COLA cycle begins October 1, 2026 — under two months from this pack's fetch date. Check dhhs.nh.gov's income-limits PDF and FSM Table I after that date before restating any New Hampshire-specific dollar figure with full confidence."
+    }
+  ]
+}

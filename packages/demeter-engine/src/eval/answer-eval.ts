@@ -4278,6 +4278,88 @@ export const HI_GOLD: AnswerExpectation[] = [
   },
 ];
 
+export const NH_GOLD: AnswerExpectation[] = [
+  {
+    id: "nh-200-ece-not-blanket-no-asset-test",
+    // Guards the structural finding: NH's 200% FPG ECE track has no resource
+    // test, but a non-ECE household still faces a real $3,000/$4,500 limit.
+    question: "What is the income limit for SNAP in New Hampshire?",
+    state: "NH",
+    mustMention: "200",
+    mustDisclaim: true,
+  },
+  {
+    id: "nh-resource-limit-not-flatly-none",
+    // Guards the structural finding: a non-ECE household still faces a real
+    // resource limit ($3,000 Regular / $4,500 Target), not a blanket waiver.
+    question: "Does New Hampshire have an asset or resource limit for SNAP?",
+    state: "NH",
+    mustMention: "3,000",
+    mustDisclaim: true,
+  },
+  {
+    id: "nh-drug-felony-full-opt-out-1997",
+    // Guards the flagship confirmation: NH fully opted out of the federal
+    // drug-felony ban in 1997 (SR 97-27, HB 722-FN).
+    question: "I have a drug felony conviction — can I still get SNAP in New Hampshire?",
+    state: "NH",
+    mustMention: "1997",
+    mustDisclaim: true,
+  },
+  {
+    id: "nh-abawd-waiver-none-active",
+    question: "Is the SNAP work-requirement time limit currently waived anywhere in New Hampshire?",
+    state: "NH",
+    mustMention: "no",
+    mustDisclaim: true,
+  },
+  {
+    id: "nh-abawd-age-range-current-federal",
+    question: "What is the ABAWD work requirement age range in New Hampshire?",
+    state: "NH",
+    mustMention: "64",
+    mustDisclaim: true,
+  },
+  {
+    id: "nh-heating-cooling-sua-high-figure",
+    // Guards the structural finding: NH's Heating/Cooling SUA is notably
+    // high ($1,018) with a distinctive 4-tier structure incl. Electric-Only.
+    question: "What utility deduction can I get for SNAP in New Hampshire?",
+    state: "NH",
+    mustMention: "1,018",
+    mustDisclaim: true,
+  },
+  {
+    id: "nh-cert-period-6-months-standard",
+    // Guards the structural finding: NH's standard cert period is 6 months,
+    // not the 12-month norm; 36 months for ESAP.
+    question: "How long does my SNAP certification last in New Hampshire?",
+    state: "NH",
+    mustMention: "6",
+    mustDisclaim: true,
+  },
+  {
+    id: "nh-restaurant-meals-program-not-available",
+    question: "Does New Hampshire have a Restaurant Meals Program for SNAP?",
+    state: "NH",
+    mustMention: "not",
+    mustDisclaim: true,
+  },
+  {
+    id: "nh-how-to-apply-nheasy",
+    question: "How do I apply for SNAP in New Hampshire?",
+    state: "NH",
+    mustDisclaim: true,
+  },
+  {
+    id: "nh-federal-benefit",
+    question: "How is the monthly SNAP benefit amount calculated from net income in New Hampshire?",
+    state: "NH",
+    expectCitation: "273.10",
+    mustDisclaim: true,
+  },
+];
+
 
 /** Everything the live runner executes for Maine. */
 export const ME_GOLD: AnswerExpectation[] = [
@@ -4416,4 +4498,5 @@ export const ALL_GOLD: AnswerExpectation[] = [
   ...WV_GOLD,
   ...HI_GOLD,
   ...ME_GOLD,
+  ...NH_GOLD,
 ];

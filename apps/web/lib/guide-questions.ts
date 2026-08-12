@@ -253,4 +253,11 @@ export const QUESTIONS: Record<string, string[]> = {
     "Does Maine have a Restaurant Meals Program for SNAP?",
     "What utility deduction can I get for SNAP in Maine?",
   ],
+  NH: [
+    "What is the income limit for SNAP in New Hampshire?",
+    "Does New Hampshire have an asset or resource limit for SNAP?",
+    "I have a drug felony conviction — can I still get SNAP in New Hampshire?",
+    "How long does my SNAP certification last in New Hampshire?",
+    "What utility deduction can I get for SNAP in New Hampshire?",
+  ],
 };
