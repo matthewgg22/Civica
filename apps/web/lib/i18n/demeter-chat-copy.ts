@@ -40,6 +40,12 @@ export const T = {
     // answer is still written to mae_query_log. Saying "clear" without saying
     // that would be the retention lie #703 fixed, rebuilt as a button.
     clear: "Clear this conversation",
+    // Offered when someone names a place in the chat. An OFFER, never an
+    // automatic switch: re-scoping on a guess answers the wrong state with more
+    // confidence than before.
+    stateOffer: "You mentioned {place}. Answer for {state}?",
+    stateOfferYes: "Yes, use {state}",
+    stateOfferNo: "No, keep as is",
     clearNote:
       "Removes it from this browser. We still keep the question and answer to check our accuracy.",
     cleared: "Conversation cleared.",
@@ -161,6 +167,9 @@ export const T = {
     piiHint:
       "Por favor no escribas tu número de Seguro Social, datos bancarios ni un nombre completo.",
     clear: "Borrar esta conversación",
+    stateOffer: "Mencionaste {place}. ¿Respondo para {state}?",
+    stateOfferYes: "Sí, usa {state}",
+    stateOfferNo: "No, déjalo así",
     clearNote:
       "La quita de este navegador. Seguimos guardando la pregunta y la respuesta para verificar nuestra exactitud.",
     cleared: "Conversación borrada.",
@@ -265,6 +274,9 @@ export const T = {
       "Demeter cung cấp thông tin, không phải tư vấn pháp lý. Hãy xác nhận quyết định với cơ quan SNAP của bạn.",
     piiHint: "Xin đừng nhập số An sinh Xã hội, thông tin ngân hàng hay họ tên đầy đủ.",
     clear: "Xóa cuộc trò chuyện này",
+    stateOffer: "Bạn có nhắc đến {place}. Trả lời cho {state} nhé?",
+    stateOfferYes: "Vâng, dùng {state}",
+    stateOfferNo: "Không, giữ nguyên",
     clearNote:
       "Xóa khỏi trình duyệt này. Chúng tôi vẫn lưu câu hỏi và câu trả lời để kiểm tra độ chính xác.",
     cleared: "Đã xóa cuộc trò chuyện.",
@@ -366,6 +378,9 @@ export const T = {
     disclaimer: "Demeter 提供信息，而非法律建议。请与您所在州的 SNAP 机构确认。",
     piiHint: "请不要输入社会安全号码、银行信息或完整姓名。",
     clear: "清除本次对话",
+    stateOffer: "您提到了 {place}。要按 {state} 来回答吗？",
+    stateOfferYes: "好，用 {state}",
+    stateOfferNo: "不用，保持不变",
     clearNote: "仅从此浏览器中清除。我们仍会保留问题和回答以核查准确性。",
     cleared: "对话已清除。",
     err429: "同时提问太多了——请稍等一分钟再试。",
