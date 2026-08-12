@@ -115,4 +115,9 @@ export const QUESTIONS: Record<string, string[]> = {
     "Does my boat count against me for SNAP in Indiana?",
     "I have a drug felony conviction — can I still get SNAP in Indiana?",
   ],
+  MO: [
+    "What is the income limit for SNAP in Missouri?",
+    "Does my car count against me for SNAP in Missouri?",
+    "I have a drug felony conviction — can I still get SNAP in Missouri?",
+  ],
 };

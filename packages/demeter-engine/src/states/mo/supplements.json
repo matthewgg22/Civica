@@ -1,0 +1,267 @@
+{
+  "_provenance": {
+    "note": "Missouri SNAP curated supplements. Missouri has NO existing packages/snap-rules StatePolicy entry and NO oracle-fixture coverage — a genuinely blank slate, like North Carolina's, Ohio's, New Jersey's, Virginia's, Tennessee's, and Indiana's prior corpus-only builds in this same roster. This pack is CORPUS-ONLY and does not touch packages/snap-rules or the oracle fixture. Drafted from direct curl fetches (browser User-Agent) of eighteen current Missouri DSS Manuals SNAP-manual subsections, the current (10/2025) DSS SNAP Program Changes Flyer, Missouri's own Revisor of Statutes page for RSMo 208.247 (fetched with NO access barrier, unlike Indiana's equivalent statute), USDA's official Restaurant Meals Program and ABAWD waiver pages, the independent abawdmap.us aggregator, and (for the resource-limit figures only, after the specific manual subsection returned a password wall) convergent secondary corroboration from the Missouri Budget Project.",
+    "extracted": "2026-08-11",
+    "source_fact_check": "direct curl fetch (browser UA) of dssmanuals.mo.gov/food-stamps/ subsections 1100.000.00, 1105.035.00, 1105.015.10.35.10, 1110.020.10, 1115.035.05, 1115.035.15.05, 1115.035.20, 1115.035.25.05, 1115.035.25.15, 1115.095.00, 1115.099.00, 1125.010.00, 1130.005.00, 1135.020.20, 1135.035.00 + direct fetch of the DSS SNAP Program Changes Flyer PDF (10/2025) via pdftotext -layout + direct curl fetch of revisor.mo.gov RSMo 208.247 (full primary statutory text) + WebFetch of dss.mo.gov/fsd/intro.htm, mydss.mo.gov/hr1-implementation, USDA's Restaurant Meals Program and ABAWD waiver pages, abawdmap.us/state/missouri, and the Missouri Budget Project's 2025 SNAP overview + post-draft adversarial refute pass; findings and gaps recorded in PROVENANCE.md"
+  },
+  "supplements": [
+    {
+      "key": "income-pathways",
+      "kind": "supplement",
+      "terms": [
+        "income limit",
+        "income limits",
+        "gross income limit",
+        "gross income ceiling",
+        "make too much",
+        "over income",
+        "bbce",
+        "categorical eligibility",
+        "categorically eligible",
+        "broad-based categorical eligibility",
+        "expanded categorical eligibility",
+        "200 percent",
+        "200%",
+        "poverty level",
+        "tanf",
+        "temporary assistance",
+        "child care assistance",
+        "community partnerships"
+      ],
+      "citation": "MO IM Manual 1115.099.00 — plain 130% FPL gross / 100% FPL net income limits, no 200% FPL BBCE tier, current FFY2026 figures per the DSS SNAP Program Changes Flyer (10/2025); MO IM Manual 1135.035.00 — Categorical Eligibility (CE) extends to TANF/SSI/SAB/SP recipients AND to households receiving specific TANF-funded support services",
+      "heading": "THIS PACK'S FLAGSHIP FINDING: Missouri has NOT adopted Broad-Based Categorical Eligibility — its own manual publishes only the plain federal 130%/100% FPL limits, directly CORRECTING several unreliable secondary-source SNAP calculator sites that claim Missouri uses a 200% FPL BBCE test with no asset limit for most households",
+      "text": "Multiple SNAP-benefit calculator/explainer sites this pack checked during research (the kind of secondary source a chatbot might otherwise echo unchecked) assert that \"Missouri uses Broad-Based Categorical Eligibility (BBCE) at 200% of the federal poverty level with no asset limit for most households.\" This pack independently checked that claim against Missouri's own primary source and found it FALSE. Missouri's own current income-limit table (MO IM Manual 1115.099.00, cross-checked against the DSS SNAP Program Changes Flyer dated 10/2025) publishes exactly two income-limit columns: Maximum Gross Monthly Income at 130% of the Federal Poverty Level, and Maximum Net Monthly Income at 100% FPL — the plain federal test, with NO higher BBCE-style percentage (commonly 200% FPL in the roughly 40 states that have adopted it) anywhere in the table. Independent secondary corroboration converges on the same conclusion: Missouri is one of a small minority of states (alongside Arkansas, Kansas, Mississippi, Nebraska, South Dakota, Utah, and Wyoming, per research surfaced during this pack's drafting referencing USDA's own BBCE state list) that has NOT adopted BBCE and still uses the federal-floor 130%/100% FPL test. This is Missouri's own analog to Indiana's no-BBCE flagship finding in this roster — but here the correction is sharper, because this pack found and disproved an actively WRONG, specific, numbered secondary claim (200% FPL) rather than merely confirming an already-accurate one. A chatbot answering a Missouri applicant's income-limit question must NOT reach for a 200% FPL figure.",
+      "source_url": "https://dssmanuals.mo.gov/food-stamps/1115-000-00/1115-099-00/"
+    },
+    {
+      "key": "categorical-eligibility-services-pathway",
+      "kind": "supplement",
+      "terms": [
+        "categorical eligibility",
+        "categorically eligible",
+        "child care assistance",
+        "community partnerships",
+        "job training",
+        "employment services",
+        "special support services",
+        "mentoring"
+      ],
+      "citation": "MO IM Manual 1135.035.00 — Categorical Eligibility (CE) extends beyond TANF/SSI/SAB/SP cash recipients to households where a member receives or is authorized to receive specific TANF-funded \"special support services\" (Child Care assistance, Community Partnerships job-placement programs)",
+      "heading": "A genuine THIRD categorical-eligibility pattern this roster has not yet documented: Missouri expands CE to households receiving specific non-cash services, NOT by raising the income ceiling (BBCE's mechanism) — a structural departure worth flagging distinctly from both Indiana's narrow Basic-CE-only pattern and the income-threshold-raising BBCE pattern most other states in this roster use",
+      "text": "Missouri's own manual (MO IM Manual 1135.035.00) states that eligibility units (EUs) determined categorically eligible do not have to meet resource limits, gross income limits, or net income limits at all. The households that qualify are NOT limited to the narrowest \"Basic CE\" set (TANF/SSI-only, the pattern this roster's Indiana pack documents) — Missouri's own list additionally includes \"the EU contains a member receiving or authorized to receive one or more of the following special support services: Child Care [assistance] ... Community Partnerships [services to help prepare for the job market, including the Missouri Mentoring program for individuals up to age 21 in specific counties].\" This is a genuine THIRD structural pattern this roster has not documented elsewhere: it is broader than Indiana's narrow Basic-CE-only approach (Missouri extends CE to recipients of specific TANF-funded services, not just cash TANF/SSI), but it is NOT the classic Broad-Based Categorical Eligibility mechanism most other states in this roster use (which typically distributes a TANF-funded informational pamphlet to ALL applicants regardless of actual service receipt, raising the effective income ceiling for everyone). Missouri's mechanism instead requires the household to be ACTUALLY receiving or authorized for a genuine, named service — a narrower, service-conditioned expansion rather than a blanket income-ceiling raise. Categorically eligible one- or two-person EUs are entitled to the minimum benefit allotment (currently $23) regardless of income level; the eligibility system rejects or closes categorically eligible EUs of three or more persons whose income exceeds a separate, lower \"CE Eligible Monthly Limit\" issuance-table maximum published alongside the standard 130%/100% FPL columns in the same table.",
+      "source_url": "https://dssmanuals.mo.gov/food-stamps/1135-000-00/1135-035-00/"
+    },
+    {
+      "key": "asset-rule",
+      "kind": "supplement",
+      "terms": [
+        "asset limit",
+        "asset test",
+        "resource limit",
+        "resource test",
+        "resources",
+        "savings",
+        "savings limit",
+        "bank account",
+        "vehicle",
+        "car count",
+        "does my car count",
+        "boat",
+        "camper",
+        "trailer",
+        "recreational vehicle",
+        "motor home"
+      ],
+      "citation": "MO IM Manual 1110.005.00 — $3,000 standard / $4,500 elderly-or-disabled resource limit (secondary corroboration only — see freshness.json); MO IM Manual 1110.020.10 (Vehicles) — Missouri excludes the value of ALL vehicles, including recreational vehicles, boats, campers, and motor homes",
+      "heading": "Missouri excludes the value of ALL vehicles from countable resources — cars, trucks, motorcycles, AND recreational vehicles, boats, campers, and motor homes alike — a genuinely BROADER blanket exclusion than Indiana's hybrid rule in this roster",
+      "text": "Missouri's own manual, MO IM Manual 1110.020.10 (Vehicles), states in its opening line: \"Exclude the value of all vehicles.\" It defines a vehicle as \"a car, truck, motorcycle, or recreational vehicle that can be (but does not have to be) licensed,\" and gives all-terrain vehicles, trailers, and motor homes as examples of recreational vehicles. The section separately instructs caseworkers to RECORD both ordinary vehicles (automobiles, motorcycles, trucks, all-terrain vehicles) and recreational vehicles (campers/trailers, motor homes, trailers including boat trailers) on their respective FAMIS resource screens for tracking purposes — but the governing rule itself, stated plainly at the top of the section, excludes ALL of them from countable value. THIS IS A GENUINE, NOTABLE CONTRAST with this roster's Indiana pack, which documents a HYBRID rule (ordinary transportation vehicles exempt, but boats/campers counted at equity value): Missouri draws no such line at all. Every vehicle type this pack's research found named in Missouri's own manual — car, truck, motorcycle, ATV, camper, trailer, motor home, and (via the \"trailers (utility/boat/etc.)\" example) boat — is excluded. The household resource limit itself is $3,000 for AGs without an elderly (60+) or disabled member and $4,500 for AGs that include one, the current federally uniform FFY2026 standard this roster's other states have independently confirmed — BUT THIS PACK DISCLOSES A GENUINE ACCESS LIMITATION: Missouri's own manual subsection for this figure (1110.005.00) returned a password-protected wall on every direct-fetch attempt, even though the sibling Vehicles subsection in the SAME chapter rendered cleanly with no such wall. The $3,000/$4,500 figures rest on convergent secondary corroboration (the Missouri Budget Project's own 2025 SNAP overview, an in-state fiscal-policy research nonprofit, cross-checked against the current federal FFY2026 standard) rather than Missouri's own directly-fetched primary text — disclosed plainly, not smoothed over.",
+      "source_url": "https://dssmanuals.mo.gov/food-stamps/1110-000-00/1110-020-00/1110-020-10-vehicles/"
+    },
+    {
+      "key": "sua-values",
+      "kind": "supplement",
+      "terms": [
+        "utility allowance",
+        "utility standard",
+        "shelter deduction",
+        "excess shelter",
+        "standard utility allowance",
+        "heating standard",
+        "cooling standard",
+        "telephone standard",
+        "phone standard",
+        "homeless shelter deduction",
+        "standard deduction",
+        "non-heating",
+        "lower utility allowance"
+      ],
+      "citation": "MO IM Manual 1115.035.25.15 — four mandatory utility standards: SUA $495/month, Non-Heating/Cooling Standard (NHCS) $363/month, Lower Utility Allowance (LUA) $158/month, Telephone Standard $79/month — dated to IM-50 (September 2024, FFY2025), NOT independently reconfirmed for FFY2026; DSS SNAP Program Changes Flyer (10/2025) confirms current FFY2026 Standard Deduction ($209/$209/$209/$223/$261/$299), Excess Shelter cap ($744), and Homeless Standard Deduction ($198.99)",
+      "heading": "Missouri's Standard Deduction, Excess Shelter cap, and Homeless Deduction are CONFIRMED CURRENT for FFY2026 — but this pack could NOT independently confirm the Standard Utility Allowance figures past FFY2025, a genuine, disclosed partial staleness gap",
+      "text": "Missouri's own manual, MO IM Manual 1115.035.25.15 (Mandatory Utility Standards), sets four flat-dollar (not size-scaled) utility standards: the Standard Utility Allowance (SUA) at $495/month for households with a primary heating or cooling expense (or that received LIHEAP energy assistance over $20 in the past 12 months); the Non-Heating/Cooling Standard (NHCS) at $363/month for households billed separately for two or more non-heating/cooling utility expenses; the Lower Utility Allowance (LUA) at $158/month for households billed for exactly one qualifying utility expense; and a separate Telephone Standard at $79/month, usable alongside the NHCS or LUA (but not alongside the SUA, which already includes telephone). THIS PACK DISCLOSES A GENUINE PARTIAL STALENESS GAP: these four figures are dated to IM-50 (September 23, 2024, i.e. FFY2025), and despite a targeted search this pack could NOT locate a confirmed FFY2026 (effective 10/01/2025) update to these specific four dollar figures, even though the CURRENT DSS SNAP Program Changes Flyer (dated 10/2025 in its own footer) independently confirms Missouri's other FFY2026 figures are current: the Standard Deduction (MO IM Manual 1115.035.05) is $209 for 1-3 household members, $223 for 4, $261 for 5, and $299 for 6 or more; the Excess Shelter Expense Deduction cap is $744; and the Homeless Standard Deduction is $198.99 — all three matching this roster's Indiana and Virginia packs' own independently-confirmed current FFY2026 figures exactly, a positive cross-validation for everything EXCEPT the SUA/NHCS/LUA/telephone figures specifically. Do not state the $495/$363/$158/$79 utility figures as definitively current without re-checking MO IM Manual 1115.035.25.15 directly first (see freshness.json).",
+      "source_url": "https://dssmanuals.mo.gov/food-stamps/1115-000-00/1115-035-00/1115-035-25/1115-035-25-15/"
+    },
+    {
+      "key": "medical-deduction",
+      "kind": "supplement",
+      "terms": [
+        "medical deduction",
+        "medical expense",
+        "medical expenses",
+        "medical bills",
+        "elderly deduction",
+        "disability deduction",
+        "excess medical",
+        "standard medical deduction"
+      ],
+      "citation": "MO IM Manual 1115.035.15.05 — a genuine flat Standard Medical Deduction (SMD) of $135/month for elderly (60+) or disabled household members with $35.01-$170 in verified medical expenses, built from a $170 Medical Expense Standard (MES) less the plain federal $35 Excess Medical Deduction (EMD) floor",
+      "heading": "Missouri HAS a state-specific flat Medical Standard Deduction shortcut — the option this roster's Indiana pack searched for and did NOT find in Indiana's own manual",
+      "text": "MO IM Manual 1115.035.15.05 (Amount of Medical Deduction) establishes a Medical Expense Standard (MES) of $170.00 for elderly or disabled household members. All verified medical expenses are first reduced by the plain federal $35 Excess Medical Deduction (EMD) floor. If a household's total verified medical expenses fall between $35.01 and $170.00, the eligibility system automatically grants a flat Standard Medical Deduction (SMD) of $135.00 ($170.00 MES minus the $35.00 EMD) WITHOUT requiring the household to itemize the exact expense amount within that range. If verified expenses exceed $170.00, the system instead uses the actual verified expense amount minus the $35.00 EMD (i.e. the plain federal actual-expense mechanism takes over above the flat-deduction ceiling). If total medical expenses are $35.00 or less, no medical deduction applies at all. The deduction is calculated by pooling verified medical expenses across ALL household members entitled to the deduction, not per individual. This is a genuine, confirmed structural PLUS compared to this roster's Indiana pack, whose own research explicitly flagged (as a lower-confidence absence) that it could not locate a comparable flat Medical Standard Deduction option anywhere in Indiana's manual.",
+      "source_url": "https://dssmanuals.mo.gov/food-stamps/1115-000-00/1115-035-00/1115-035-15/1115-035-15-05/"
+    },
+    {
+      "key": "child-support-deduction",
+      "kind": "supplement",
+      "terms": [
+        "child support",
+        "support payments",
+        "child support deduction",
+        "child support exclusion",
+        "dependent care",
+        "child care deduction",
+        "daycare",
+        "alimony",
+        "arrearage"
+      ],
+      "citation": "MO IM Manual 1115.035.20 — Child Support Exclusion, applied BEFORE the gross 130% FPL income test itself (an income EXCLUSION, not merely an ordinary post-gross deduction)",
+      "heading": "Missouri treats legally obligated child support as a genuine INCOME EXCLUSION applied even to the gross-income eligibility test — matching this roster's Virginia/New Jersey/Illinois mechanism, and standing in direct CONTRAST to the ordinary-deduction mechanism this roster's Indiana, Tennessee, and most other states document",
+      "text": "Missouri's own manual, MO IM Manual 1115.035.20, is titled \"Child Support Exclusion\" — not \"deduction\" — and its own text confirms the exclusion mechanism is genuine, not merely a naming quirk: \"The actual amount of court ordered child support paid by the household to or for non-household members from the household's income is excluded to determine: eligibility based on 130% of the Federal Poverty Level (FPL); net income; expedite income.\" Explicitly listing the GROSS 130% FPL eligibility test among what the exclusion applies to is the decisive marker of the INCOME-EXCLUSION mechanism (7 CFR 273.9(c), applied before gross income is even calculated) rather than the ORDINARY-DEDUCTION mechanism (7 CFR 273.9(d)(5), subtracted only after gross income is already calculated) — matching this roster's Virginia, New Jersey, and Illinois packs, and standing in direct contrast to the ordinary-deduction pattern this roster's Indiana, Tennessee, North Carolina, Ohio, Georgia, Michigan, Minnesota, Oregon, Pennsylvania, and Wisconsin packs document. For the purpose of this exclusion, child support includes current payments, arrearages, vendor payments (rent, utilities, medical expenses paid on the child's behalf), and health insurance premiums, capped at the amount legally obligated. The exclusion continues even if the child later moves back in with the paying parent, as long as that parent remains legally obligated to continue payments to the other parent, or if the child moves back and forth between households. Verification of the legal obligation and actual amount paid is required, but the household's application is never pended past 30 days or denied solely for failure to provide child-support verification — the eligibility determination simply proceeds without the exclusion if unverified.",
+      "source_url": "https://dssmanuals.mo.gov/food-stamps/1115-000-00/1115-035-00/1115-035-20/"
+    },
+    {
+      "key": "abawd-work-requirement",
+      "kind": "supplement",
+      "terms": [
+        "abawd",
+        "able bodied adult",
+        "work requirement",
+        "3 month limit",
+        "work registration",
+        "waiver",
+        "waived area",
+        "kansas city",
+        "st louis",
+        "native american",
+        "tribal",
+        "time limit"
+      ],
+      "citation": "MO IM Manual 1105.035.00 — states the PRE-OBBBA 18-54 ABAWD age range (last updated IM-71, August 2023), genuinely STALE relative to the current federal 18-64 range effective 11/1/2025; Missouri's own HR1-implementation page confirms FAMIS/MEDES systems have separately been updated for the OBBBA ABAWD changes; Missouri currently holds ZERO active ABAWD waivers anywhere in the state",
+      "heading": "A genuine, disclosed staleness gap: Missouri's own public ABAWD manual page still states the pre-OBBBA 18-54 age range, even though the state's own internal eligibility systems have already been updated for the current 18-64 range",
+      "text": "An able-bodied adult without dependents (ABAWD) is limited to three countable months of SNAP within a fixed 36-month period unless meeting a work-activity requirement, qualifying for an exemption, or living in a waived area (7 CFR 273.24). Missouri's own manual, MO IM Manual 1105.035.00 (last updated by IM-71, August 31, 2023), states: \"Per the Fiscal Responsibility Act of 2023, ABAWD age limits will change as described below: As of 10/01/2023, 18-52 years old are the ABAWD age limits, As of 10/01/2024, 18-54 years old are the ABAWD age limits.\" THIS IS GENUINELY STALE: the One Big Beautiful Bill Act (OBBBA), effective July 4, 2025 with FNS implementation dated November 1, 2025, raised the federal ABAWD age ceiling to 64 — a change this pack independently confirmed via Missouri's OWN HR1-implementation page (mydss.mo.gov/hr1-implementation), which states plainly that Missouri \"[s]uccessfully made changes in FAMIS and MEDES that were required upon enactment of the law: Non-Citizen, Utility Changes, ABAWD changes.\" This is a genuine, disclosed gap between Missouri's internal ELIGIBILITY-SYSTEM logic (confirmed current for the 18-64 range) and its PUBLIC-FACING policy manual TEXT (not yet updated as of this pack's fetch date) — a notably different failure mode from this roster's Tennessee pack, where BOTH the codified rule and the numbered policy document were independently stale. SEPARATELY, THIS PACK INDEPENDENTLY CONFIRMS Missouri currently holds ZERO active ABAWD waivers anywhere in the state: unlike Indiana's manual, which affirmatively states \"there are currently no such designations,\" Missouri's own manual section is SILENT on waiver status entirely (a disclosed lower-confidence path) — but this pack cross-checked Missouri's absence from USDA's own Time Limit Waivers FY2025-2029 index, Missouri's absence from the independent abawdmap.us aggregator's active-waiver list (which explicitly codes Missouri as \"No waiver — rule applies\"), and Missouri's own current statewide unemployment rate (3.7%, with the highest single county at 5.4% — both far below the 10% federal waiver-eligibility threshold) — three independent, convergent sources all pointing to zero active Missouri waivers.",
+      "source_url": "https://dssmanuals.mo.gov/food-stamps/1105-000-00/1105-035-00/"
+    },
+    {
+      "key": "criminal-justice-disqualifications",
+      "kind": "supplement",
+      "terms": [
+        "drug felony",
+        "felony conviction",
+        "criminal record",
+        "drug conviction",
+        "drug test",
+        "drug testing",
+        "urinalysis",
+        "lifetime ban",
+        "fleeing felon",
+        "probation",
+        "parole",
+        "controlled substance",
+        "marijuana",
+        "cannabis"
+      ],
+      "citation": "RSMo § 208.247 (fetched directly, no access barrier) and MO IM Manual 1105.015.10.35.10 — a MODIFIED BAN requiring participant-paid voluntary urinalysis testing PLUS substance-abuse-treatment participation/completion/waitlist/not-needed AND compliance with all court/probation/parole obligations AND no additional controlled-substance conviction within one year AND no more than two total controlled-substance felony convictions ever",
+      "heading": "Missouri's modified drug-felony ban is genuinely STRICTER than Indiana's in this roster — Missouri is the only state so far whose own primary statute was fully, cleanly fetchable AND whose ban requires participant-funded drug testing as a standalone condition",
+      "text": "Missouri is a MODIFIED BAN state under RSMo § 208.247, fetched directly and in full from revisor.mo.gov — A GENUINE PLUS compared to this roster's Indiana pack, whose equivalent statute (Ind. Code Ann. § 12-14-30-3) required convergent secondary corroboration because Indiana's own statute-lookup site was an unexecutable client-side application. Missouri's statute conditions the exemption from the federal lifetime ban on ALL FOUR of: (1) meeting one of — currently/successfully participating in DBH-approved substance-abuse treatment, being on a waitlist for such treatment while enrolled, having completed such treatment, or being certified by a DBH provider as not needing treatment; (2) successfully complying with, or having already complied with, all obligations imposed by the court, DBH, and Probation and Parole; (3) not pleading guilty/no-contest to or being found guilty of an ADDITIONAL controlled-substance misdemeanor or felony within ONE YEAR of the original conviction (immediate disqualification if so); and (4) demonstrating sobriety through VOLUNTARY URINALYSIS TESTING — which Missouri's own implementing manual (1105.015.10.35.10) specifies MUST be paid for BY THE PARTICIPANT (\"The FSD will not pay for the urinalysis testing\"), cannot be self-administered, and must post-date the individual's most recent qualifying conviction. This is a NOTABLY STRICTER modified ban than Indiana's own (which the Indiana pack in this roster found requires NEITHER drug testing NOR treatment as a condition) — Missouri requires BOTH. The exemption never applies to an individual with TWO OR MORE subsequent controlled-substance felony convictions after the first. Missouri's own manual separately notes a genuinely current nuance: \"Medical use and adult use (over age 21) of cannabis (marijuana) in Missouri is legal pursuant to Article XIV of the Missouri state constitution\" (Missouri voters approved recreational marijuana in 2022) — relevant context for an applicant whose only controlled-substance history involves marijuana, though the ban itself applies to any qualifying controlled-substance felony conviction regardless of the substance's current state legal status.",
+      "source_url": "https://revisor.mo.gov/main/OneSection.aspx?section=208.247"
+    },
+    {
+      "key": "restaurant-meals-program",
+      "kind": "supplement",
+      "terms": [
+        "restaurant meals program",
+        "rmp",
+        "eat at a restaurant",
+        "use ebt at restaurant",
+        "hot meal",
+        "hot food"
+      ],
+      "citation": "No Missouri Restaurant Meals Program exists — Missouri is absent from USDA's own current national RMP participant list, despite four separate Missouri legislative bills (2022-2025) attempting to establish one, none of which passed",
+      "heading": "Missouri has no Restaurant Meals Program, matching this roster's Indiana and Tennessee findings — but Missouri is notable for repeated, so-far-unsuccessful legislative attempts to create one",
+      "text": "The Restaurant Meals Program (RMP) is a state OPTION under 7 CFR 274.7(g) allowing elderly (60+), disabled, and homeless SNAP recipients (and their spouses) to buy prepared, hot meals from authorized restaurants with their EBT card. Missouri does not operate one. This pack independently fetched USDA's own official \"States that Operate a Restaurant Meals Program\" list directly (fns.usda.gov/snap/retailer/restaurant-meals-program, page updated August 7, 2026): Arizona, Maryland, New York, California, Massachusetts, Rhode Island, Illinois (Cook and Franklin Counties only), Michigan, and Virginia — the same nine-jurisdiction list this roster's Indiana pack independently confirmed. Missouri is absent. Worth flagging distinctly: this pack's research found Missouri's legislature has introduced a Restaurant Meals Program bill in at least four consecutive sessions (SB973 in 2024, SB313 in 2023, SB798 in 2022, and SB130 in the current 2025 session) — none of which have passed into law as of this pack's fetch date. A Missouri household's EBT card can be used only at authorized retailers for food intended to be prepared and eaten at home; hot, ready-to-eat food purchases remain restricted under the ordinary federal rule.",
+      "source_url": "https://www.fns.usda.gov/snap/retailer/restaurant-meals-program"
+    },
+    {
+      "key": "expedited-service",
+      "kind": "supplement",
+      "terms": [
+        "expedited",
+        "expedited service",
+        "emergency",
+        "emergency food stamps",
+        "fast benefits",
+        "how fast",
+        "urgent",
+        "same day",
+        "7 day"
+      ],
+      "citation": "MO IM Manual 1125.010.00 (screening: gross income minus court-ordered child support under $150 AND liquid resources under $100, OR combined income/resources less than shelter costs, OR destitute migrant/seasonal farmworker) and MO IM Manual 1130.005.00 (plain federal 7-calendar-day ceiling for expedited-eligible households; standard 30-day ceiling otherwise)",
+      "heading": "Missouri uses the standard federal expedited-service gates and 7-day ceiling, with one Missouri-specific nuance: the Child Support Exclusion applies even to the expedited-service income test",
+      "text": "MO IM Manual 1125.010.00 (Expedited Service Criteria) sets expedited-service eligibility to the standard federal criteria: households (including categorically eligible ones) whose countable monthly gross income — MINUS court-ordered child support paid — is less than $150 AND whose liquid resources (cash, checking/savings, savings certificates, lump sums) do not exceed $100; households whose combined countable gross income (again minus child support paid) and liquid resources are less than their monthly shelter costs; or destitute migrant/seasonal farmworker households with liquid resources not exceeding $100. Explicitly subtracting court-ordered child support from the gross-income figure used for THIS test is the same Child Support Exclusion mechanism documented in this pack's child-support-deduction supplement — Missouri's own manual cross-references \"expedite income\" directly in section 1115.035.20. Unless the interview is waived, it must be completed within 6 days of the application date for the case to remain expedited-eligible; if not, the standard 30-day processing timeframe applies instead. MO IM Manual 1130.005.00 confirms benefits for a non-expedited initial application must be authorized no later than the 30th day after application (with two days' mail time for the EBT card built into that deadline), matching the plain federal 7 CFR 273.2(g) standard timeframe; expedited-eligible households receive benefits within 7 calendar days per 7 CFR 273.2(i)(3)(i).",
+      "source_url": "https://dssmanuals.mo.gov/food-stamps/1125-000-00/1125-010-00/"
+    },
+    {
+      "key": "reporting-certification",
+      "kind": "supplement",
+      "terms": [
+        "certification period",
+        "approval period",
+        "recertification",
+        "redetermination",
+        "how long does snap last",
+        "how long does my snap approval last",
+        "how long does my approval last",
+        "redo",
+        "renew",
+        "midpoint report",
+        "mid-certification"
+      ],
+      "citation": "MO IM Manual 1135.020.20 — initial certification period assigned up to 12 or 24 months; elderly (60+)/disabled household certification-length trigger confirmed via secondary source only (see freshness.json)",
+      "heading": "Missouri's certification periods run up to 12 or 24 months, with a midpoint report required regardless of length — the specific elderly/disabled 24-month trigger itself rests on a secondary source, a disclosed lower-confidence gap",
+      "text": "Missouri's own manual, MO IM Manual 1135.020.20 (Certification Periods), states plainly: \"Assign the initial certification period up to 12 months or 24 months\" — but this specific manual subsection, as fetched, does not itself spell out the criteria distinguishing which households receive which length. THIS PACK DISCLOSES A GENUINE LOWER-CONFIDENCE GAP: the widely-repeated claim that elderly (60+) or disabled households receive the 24-month period while other households receive 12 months is corroborated here only by a secondary source — a Missouri State Public Defender applicant-facing guide (\"A cardholder will need to renew SNAP certification every 12 months, or every 24 months if you have elderly (60+) or disabled household members\") — not by Missouri's own primary manual text for that specific trigger. Missouri's own manual DOES confirm, independent of certification length, that a midpoint (\"mid-certification\") report is required partway through the certification period regardless of the household's specific certification length, and that a recertification application is timely if submitted by the 15th day of the last month of the certification period (per this pack's search-corroborated review of MO IM Manual 1130.015.05), preserving uninterrupted benefits; a non-timely recertification received after the 15th but within 30 days of certification-period end can still be processed without a new full application in some circumstances.",
+      "source_url": "https://dssmanuals.mo.gov/food-stamps/1135-000-00/1135-020-00/1135-020-20/"
+    },
+    {
+      "key": "program-identity",
+      "kind": "supplement",
+      "terms": [
+        "how to apply",
+        "where do i apply",
+        "apply for snap",
+        "mydss",
+        "who runs",
+        "what agency",
+        "administers",
+        "fsd",
+        "family support division",
+        "local office",
+        "resource center",
+        "ebt card",
+        "famis",
+        "food stamps"
+      ],
+      "citation": "FSD/DSS program materials — Missouri uses the plain federal name \"SNAP\" in current public materials, though its own manual is titled the \"Supplemental Nutrition Assistance Program (SNAP) Manual\" while structured entirely under a legacy \"food-stamps\" URL path; applicants apply through myDSS.mo.gov or an FSD Resource Center; Missouri is STATE-administered",
+      "heading": "Missouri applies through myDSS.mo.gov or an FSD Resource Center in any of the state's 114 counties or the City of St. Louis; Missouri's own manual still carries \"Food Stamp\"-era naming even though current public materials use \"SNAP\"",
+      "text": "Missouri's Family Support Division (FSD), a division of the Department of Social Services (DSS), does not currently brand the SNAP program itself with a Missouri-specific name — current public-facing myDSS.mo.gov material and this pack's own primary-source fetches consistently use the plain federal name \"SNAP.\" However, Missouri's OWN internal manual structure has not fully caught up: the manual is titled the \"Supplemental Nutrition Assistance Program (SNAP) Manual\" but every one of the eighteen subsections this pack fetched lives under a URL path literally named \"food-stamps\" (dssmanuals.mo.gov/food-stamps/), and Missouri's own memo-numbering convention is still called \"IM\" — short for \"Income Maintenance,\" a naming holdover that predates SNAP's 2008 federal rename from \"Food Stamp Program.\" As of April 2025 (per IM-23), Missouri began \"Introducing the Combined Income Maintenance (IM) Policy Manual,\" folding its previously separate SNAP, TANF/Temporary Assistance, MAGI, and MHABD manuals into one combined structure — a genuine, ongoing internal reorganization this pack observed in progress but did not exhaustively verify the endpoint of. Missouri's EBT card is referred to plainly as the \"Missouri EBT Card\" (no distinct sub-brand this pack's research located, unlike Indiana's separately-branded \"Hoosier Works\" card), usable nationwide at any retailer displaying the Quest® Mark. Applications run through the myDSS.mo.gov Benefits Portal or in person, by mail, fax, or phone at an FSD Resource Center; FSD maintains an office in each of Missouri's 114 counties and the City of St. Louis. CRITICALLY, matching the administrative archetype this roster's Georgia, Indiana, and Tennessee packs document (a state agency operating through its own local field offices) rather than the county-administered archetype this roster's Virginia and North Carolina packs document: FSD is, by its own official description, \"a state-administered agency,\" with its Director appointed by the DSS Director — even though FSD's own grievance-and-appeals language still colloquially refers to \"the decision made by a county office,\" a naming holdover from an earlier, genuinely county-administered era. Missouri's eligibility caseworkers use the state's FAMIS (Family Assistance Management Information System) case-management system, cited throughout the manual by its own internal screen names (e.g. FM30, FM4A, FMXK).",
+      "source_url": "https://dss.mo.gov/fsd/intro.htm"
+    }
+  ]
+}

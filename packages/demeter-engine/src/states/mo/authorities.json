@@ -1,0 +1,48 @@
+{
+  "_provenance": {
+    "note": "Missouri citation authorities. Missouri maintains a SINGLE primary citation family — the DSS Manuals SNAP Manual (soon to be folded into a Combined Income Maintenance Policy Manual per IM-23, April 2025), published section-by-section under a legacy 'food-stamps' URL path, cited by chapter.section(.subsection...) e.g. '1105.035.00', '1115.035.25.15', or the deeper '1105.015.10.35.10'. This pack invents the short prefix 'MO IM Manual' (Missouri Income Maintenance Manual) to disambiguate in running text — matching Missouri's own memo-numbering convention ('IM-50', 'IM-71', etc., short for Income Maintenance) and this roster's convention of an invented short prefix per state (IN's 'IN PPM', VA's 'VA SNAP Manual Part', NC's 'FNS', TN's 'TN Rule'/'TDHS Policy'). Statute citations use 'RSMo §', Missouri's own standard citation form for Revised Statutes of Missouri sections.",
+    "extracted": "2026-08-11"
+  },
+  "patterns": [
+    {
+      "key": "moimmanual",
+      "regex": "\\bMO\\s+IM\\s+Manual\\s+(\\d{4}(?:\\.\\d{2,3}){1,4})\\b",
+      "flags": "gi",
+      "template": "MO IM Manual $1",
+      "normalize": "none",
+      "match": "exact",
+      "note": "Missouri DSS Manuals SNAP Manual, cited by chapter.section(.subsection...), e.g. 1105.035.00 (ABAWD Work Requirements), 1115.035.25.15 (Mandatory Utility Standards), 1105.015.10.35.10 (Exceptions to Felony Drug Conviction Disqualification)."
+    },
+    {
+      "key": "rsmo",
+      "regex": "\\bRSMo\\s?§?\\s*(\\d{2,3}\\.\\d{2,4})\\b",
+      "flags": "gi",
+      "template": "RSMo § $1",
+      "normalize": "none",
+      "match": "exact",
+      "note": "Revised Statutes of Missouri, Title XII (Public Health and Welfare), Chapter 208, e.g. 208.247 (food stamp eligibility, felony drug conviction exception)."
+    }
+  ],
+  "known": {
+    "moimmanual": [
+      { "value": "MO IM Manual 1115.099.00", "note": "Maximum Allowable Monthly Income Limits and Allotment — plain federal 130% FPL gross / 100% FPL net limits, no BBCE tier; current FFY2026 figures cross-checked against the DSS SNAP Program Changes Flyer (10/2025)" },
+      { "value": "MO IM Manual 1135.035.00", "note": "Categorical Eligibility (CE) — extends beyond TANF/SSI/SAB/SP cash recipients to households receiving specific TANF-funded 'special support services' (Child Care assistance, Community Partnerships); no gross/net income or resource test for CE-qualified EUs" },
+      { "value": "MO IM Manual 1110.005.00", "note": "Maximum Resources Allowed — $3,000 standard / $4,500 elderly-or-disabled resource limit. NOT independently confirmed from Missouri's own primary text: this specific subsection returned a password wall on every direct-fetch attempt; figure rests on convergent secondary corroboration (Missouri Budget Project) — see PROVENANCE.md Finding 0" },
+      { "value": "MO IM Manual 1110.020.10", "note": "Vehicles — 'Exclude the value of all vehicles,' including recreational vehicles, boats, campers, and motor homes; a genuinely broader blanket exclusion than any prior state in this roster" },
+      { "value": "MO IM Manual 1115.035.05", "note": "Earned and Standard Income Deductions — 20% earned-income deduction; Standard Deduction by household size, current FFY2026 figures ($209/$209/$209/$223/$261/$299) confirmed via the DSS SNAP Program Changes Flyer" },
+      { "value": "MO IM Manual 1115.035.15.05", "note": "Amount of Medical Deduction — flat $135 Standard Medical Deduction (SMD) for verified expenses $35.01-$170, built from a $170 Medical Expense Standard (MES) less the $35 federal Excess Medical Deduction (EMD) floor" },
+      { "value": "MO IM Manual 1115.035.20", "note": "Child Support Exclusion — legally obligated child support paid to non-household members excluded BEFORE the gross 130% FPL test, net income, and expedited-service income; an income-exclusion mechanism, not an ordinary post-gross deduction" },
+      { "value": "MO IM Manual 1115.035.25.05", "note": "Allowable Shelter Costs — rent/mortgage, condo/association fees, property taxes, structure insurance, utilities, natural-disaster repair costs; vendor payments made directly by outside parties are NOT deductible" },
+      { "value": "MO IM Manual 1115.035.25.15", "note": "Mandatory Utility Standards — SUA $495/NHCS $363/LUA $158/telephone $79, dated to IM-50 (September 2024, FFY2025); NOT independently reconfirmed for FFY2026 — see freshness.json" },
+      { "value": "MO IM Manual 1105.035.00", "note": "Able Bodied Adults Without Dependents (ABAWD) Work Requirements — states the PRE-OBBBA 18-54 age range (stale as of IM-71, August 2023); current federal range is 18-64 per OBBBA, confirmed separately implemented in Missouri's FAMIS/MEDES systems though not yet reflected in this manual text" },
+      { "value": "MO IM Manual 1105.015.10.35.10", "note": "Exceptions to Felony Drug Conviction Disqualification — implements RSMo 208.247: participant-paid voluntary urinalysis (not self-administered), DBH-approved substance-abuse treatment participation/waitlist/completion/not-needed, compliance with court/DBH/probation-parole obligations, no additional controlled-substance conviction within one year, no more than two total qualifying felony convictions ever" },
+      { "value": "MO IM Manual 1125.010.00", "note": "Expedited Service Criteria — gross income (minus child support paid) under $150 AND liquid resources under $100, OR combined income/resources less than shelter costs, OR destitute migrant/seasonal farmworker with resources under $100" },
+      { "value": "MO IM Manual 1130.005.00", "note": "Processing Time Frames — standard 30-day ceiling for non-expedited initial applications, with two days' mail time for the EBT card built into the deadline" },
+      { "value": "MO IM Manual 1135.020.20", "note": "Certification Periods — initial certification assigned up to 12 or 24 months; this specific subsection does not itself state the elderly/disabled 24-month trigger criteria (confirmed only via secondary source — see freshness.json)" },
+      { "value": "MO IM Manual 1100.000.00", "note": "Overview of the Supplemental Nutrition Assistance Program (SNAP) — introductory chapter of Missouri's SNAP manual" }
+    ],
+    "rsmo": [
+      { "value": "RSMo § 208.247", "note": "Food stamp eligibility, felony conviction not to make ineligible, when. — Missouri's modified drug-felony ban, opted out of the federal lifetime ban via the option in 21 U.S.C. § 862a(d), effective August 28, 2014 (S.B. 680 merged with S.B. 727). Fetched directly and in full from revisor.mo.gov with NO access barrier — a genuine contrast with Indiana's equivalent statute in this roster, whose primary text required convergent secondary corroboration instead." }
+    ]
+  }
+}

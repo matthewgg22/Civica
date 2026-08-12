@@ -1,0 +1,57 @@
+{
+  "code": "MO",
+  "program": "SNAP — Missouri uses the plain federal program name in current public-facing material, but its own Family Support Division manual is still titled the \"Supplemental Nutrition Assistance Program (SNAP) Manual\" while living entirely under a legacy \"food-stamps\" URL path (dssmanuals.mo.gov/food-stamps/) and citing itself through a memo series still called \"IM\" (Income Maintenance) memos — a naming artifact that predates SNAP's 2008 federal rename and persists in Missouri's internal document structure",
+  "agency": "Missouri Department of Social Services (DSS), Family Support Division (FSD)",
+  "admin_model": "state",
+  "admin_note": "Missouri is STATE-administered: the Family Support Division (FSD) is, by its own official description, \"a state-administered agency responsible by law for the administration of programs and services,\" whose Director is appointed by the Director of the Department of Social Services. FSD maintains an office in each of Missouri's 114 counties and the City of St. Louis, but — matching this roster's Georgia/Indiana/Tennessee administrative archetype, not Virginia's/North Carolina's independently governed county-welfare-department archetype — these are the STATE agency's own field offices. Notably, FSD's own appeals-process language still refers colloquially to \"the decision made by a county office,\" a naming holdover from a genuinely county-administered predecessor era, even though the agency's own current legal description is unambiguously state-administered. Confirm current operative practice (processing times, local outreach materials, exact office procedures) with the applicant's own FSD Resource Center, the same caution this roster already carries for CA/NY/MN/WI/OH/NC/NJ/VA/GA/IN/TN.",
+  "system": "Missouri's eligibility caseworkers use the state's FAMIS (Family Assistance Management Information System, referenced as \"FAMIS\" throughout the manual's own screen-name citations, e.g. the FM30 Supercase Eligibility Unit Summary screen and FM4A Food Stamp Budget Summary screen) and MEDES case-management systems; applicants apply online through myDSS.mo.gov, or in person, by mail, fax, or phone at an FSD Resource Center",
+  "portal": {
+    "name": "myDSS Benefits Portal",
+    "url": "https://mydss.mo.gov/"
+  },
+  "update_channels": [
+    {
+      "name": "Missouri DSS Manuals — Supplemental Nutrition Assistance Program (SNAP) Manual, published section-by-section under the legacy \"food-stamps\" URL path, now being folded into a Combined Income Maintenance (IM) Policy Manual per IM-23 (April 2025)",
+      "url": "https://dssmanuals.mo.gov/food-stamps/"
+    },
+    {
+      "name": "Missouri Revisor of Statutes, RSMo Chapter 208 (Old Age Assistance, Aid to Dependent Children and General Relief)",
+      "url": "https://revisor.mo.gov/main/OneSection.aspx?section=208.247"
+    },
+    {
+      "name": "Family Support Division Food Assistance / SNAP program page",
+      "url": "https://mydss.mo.gov/food-assistance"
+    },
+    {
+      "name": "DSS SNAP Program Changes Flyer (current federal-COLA-cycle income limits, benefit maximums, and deduction figures)",
+      "url": "https://dssmanuals.mo.gov/wp-content/uploads/2021/10/snap-changes-flyer.pdf"
+    },
+    {
+      "name": "USDA FNA ABAWD Time Limit Waivers FY 2025-2029 (state request/response index)",
+      "url": "https://www.fns.usda.gov/snap/waivers/timelimit/2025-2029"
+    }
+  ],
+  "verification": {
+    "verified_on": "2026-08-11",
+    "method": "Direct curl fetch (browser User-Agent) of eighteen current Missouri DSS Manuals SNAP-manual subsections from dssmanuals.mo.gov/food-stamps/ — every fetch a clean HTTP 200 except one (1110.005.00 Maximum Resources Allowed, which returned a password-protected wall even though sibling subsections in the same chapter, e.g. 1110.020.10 Vehicles, rendered without one — a genuine, disclosed, page-specific access inconsistency, not a site-wide barrier). Also fetched directly: the current DSS SNAP Program Changes Flyer (dated 10/2025 in its own footer, confirming FFY2026 income limits, standard deduction, excess-shelter cap, and homeless-deduction figures), Missouri's own Revisor of Statutes page for RSMo § 208.247 (full primary statutory text, clean HTTP 200 — NO access barrier, a genuine contrast with Indiana's equivalent statute in this roster, whose primary text was unreachable), USDA's official States that Operate a Restaurant Meals Program list and Time Limit Waivers FY2025-2029 index (Missouri absent from both), the independent abawdmap.us waiver aggregator's Missouri-specific page (\"No waiver — rule applies\"), Missouri's own HR1-implementation page confirming FAMIS/MEDES system changes for ABAWD OBBBA provisions, and a Missouri State Public Defender \"How To Apply for SNAP\" guide (dated November 2023, used ONLY for its still-current certification-period and drug-conviction-worksheet structural claims, never for its now-stale dollar figures).",
+    "gates": "Missouri's own SNAP manual proved MOSTLY current but genuinely mixed: the DSS SNAP Program Changes Flyer (10/2025, i.e. FFY2026) independently confirms the income limits, the $209/$209/$209/$223/$261/$299 Standard Deduction, the $744 Excess Shelter Expense Deduction cap, and the $198.99 Homeless Standard Deduction are all CURRENT — matching this roster's Indiana and Virginia packs' own independently-confirmed FFY2026 figures exactly. However, the Standard Utility Allowance figures ($495 SUA / $363 NHCS / $158 LUA / $79 telephone) found in Missouri's own manual (1115.035.25.15) are dated to IM-50 (September 23, 2024, i.e. FFY2025) and this pack could NOT locate a confirmed FFY2026 update to those specific four figures despite a targeted search — a genuine, disclosed partial staleness gap (see freshness.json). Separately, Missouri's own public ABAWD manual section (1105.035.00) still states the pre-OBBBA age range (\"As of 10/01/2024, 18-54 years old are the ABAWD age limits\"), even though Missouri's own HR1-implementation page confirms the state's FAMIS/MEDES systems have already been updated for the current federal 18-64 range — a genuine, disclosed gap between Missouri's internal system logic (current) and its public-facing policy manual text (stale). The resource-limit figures ($3,000 standard / $4,500 elderly-or-disabled) could NOT be confirmed from Missouri's own primary manual text directly: the specific subsection (1110.005.00) returned a password wall this pack's tooling could not pass, even though the sibling Vehicles subsection in the very same chapter rendered cleanly — resolved through convergent secondary corroboration (the Missouri Budget Project's own 2025 SNAP overview, an in-state fiscal-policy research nonprofit, plus consistency with the current federal FFY2026 standard this roster's Indiana and Virginia packs already independently confirmed), disclosed plainly as a partial access barrier rather than smoothed over.",
+    "sources": [
+      "Missouri DSS Manuals SNAP Manual, 1115.099.00 (Maximum Allowable Monthly Income Limits and Allotment) and DSS SNAP Program Changes Flyer, 10/2025",
+      "Missouri DSS Manuals SNAP Manual, 1135.035.00 (Categorical Eligibility (CE))",
+      "Missouri DSS Manuals SNAP Manual, 1110.020.10 (Vehicles)",
+      "Missouri DSS Manuals SNAP Manual, 1115.035.25.15 (Mandatory Utility Standards), 1115.035.05 (Earned and Standard Income Deductions), 1115.035.15.05 (Amount of Medical Deduction), 1115.035.20 (Child Support Exclusion), 1115.035.25.05 (Allowable Shelter Costs)",
+      "Missouri DSS Manuals SNAP Manual, 1105.035.00 (Able Bodied Adults Without Dependents (ABAWD) Work Requirements)",
+      "Missouri DSS Manuals SNAP Manual, 1105.015.10.35.10 (Exceptions to Felony Drug Conviction Disqualification)",
+      "Missouri Revisor of Statutes, RSMo § 208.247 (Food stamp eligibility, felony conviction not to make ineligible, when.) — fetched directly, full primary text, no access barrier",
+      "Missouri DSS Manuals SNAP Manual, 1125.010.00 (Expedited Service Criteria) and 1130.005.00 (Processing Time Frames)",
+      "Missouri DSS Manuals SNAP Manual, 1135.020.20 (Certification Periods)",
+      "Missouri Department of Social Services, \"About the Family Support Division\" (dss.mo.gov/fsd/intro.htm), fetched directly 2026-08-11",
+      "Missouri DSS, HR1 Implementation page (mydss.mo.gov/hr1-implementation), fetched 2026-08-11",
+      "USDA FNA, States that Operate a Restaurant Meals Program, fetched directly 2026-08-11 — Missouri absent from the nine-jurisdiction list",
+      "USDA FNA, Time Limit Waivers FY 2025-2029 index page, fetched directly 2026-08-11 — no Missouri entry found",
+      "abawdmap.us, Missouri state page, fetched directly 2026-08-11 — \"No waiver — rule applies\"",
+      "Missouri Budget Project, SNAP Overview 2025 (mobudget.org/snap-overview-2025), fetched 2026-08-11 — secondary corroboration for the resource-limit figures only",
+      "Missouri State Public Defender, \"How To: Apply for SNAP\" (publicdefender.mo.gov, last revised November 2023), fetched directly 2026-08-11 — used only for the still-current 12-or-24-month certification-period structural claim, not for its stale dollar figures"
+    ]
+  }
+}

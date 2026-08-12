@@ -2253,6 +2253,125 @@ export const IN_GOLD: AnswerExpectation[] = [
   },
 ];
 
+export const MO_GOLD: AnswerExpectation[] = [
+  {
+    id: "mo-no-bbce-plain-federal-limits",
+    // Flagship finding: Missouri has NOT adopted BBCE, directly correcting
+    // multiple secondary-source calculator sites that claim a 200% FPL test —
+    // guards against the model quoting a 200% FPL figure that does not apply.
+    question: "What is the income limit for SNAP in Missouri?",
+    state: "MO",
+    expectCitation: "1115.099.00",
+    mustMention: "130",
+    mustDisclaim: true,
+  },
+  {
+    id: "mo-resource-limit-3000-4500",
+    question: "What is the SNAP resource limit in Missouri if I'm not categorically eligible?",
+    state: "MO",
+    expectCitation: "1110.005.00",
+    mustMention: "3,000",
+    mustDisclaim: true,
+  },
+  {
+    id: "mo-car-exempt-all-vehicles",
+    question: "Does my car count against me for SNAP in Missouri?",
+    state: "MO",
+    expectCitation: "1110.020.10",
+    mustMention: "exclude",
+    mustDisclaim: true,
+  },
+  {
+    id: "mo-boat-exempt-all-vehicles",
+    // Guards the structural finding: unlike Indiana's hybrid vehicle rule,
+    // Missouri excludes the value of ALL vehicles including boats/campers.
+    question: "Does my boat count against me for SNAP in Missouri?",
+    state: "MO",
+    expectCitation: "1110.020.10",
+    mustMention: "exclude",
+    mustDisclaim: true,
+  },
+  {
+    id: "mo-medical-deduction-standard",
+    question: "I'm disabled and have $50 a month in medical bills for Missouri SNAP — do I get a deduction?",
+    state: "MO",
+    expectCitation: "1115.035.15.05",
+    mustMention: "135",
+    mustDisclaim: true,
+  },
+  {
+    id: "mo-child-support-exclusion",
+    // Guards the structural finding: Missouri treats child support as an
+    // income EXCLUSION applied before the gross 130% FPL test, not merely an
+    // ordinary post-gross deduction.
+    question: "Does paying child support lower my countable income for SNAP in Missouri?",
+    state: "MO",
+    expectCitation: "1115.035.20",
+    mustMention: "exclud",
+    mustDisclaim: true,
+  },
+  {
+    id: "mo-abawd-age-range-current-federal",
+    // Guards against the model repeating Missouri's own stale 18-54 manual
+    // text instead of the current federal 18-64 range.
+    question: "What is the ABAWD work requirement age range in Missouri?",
+    state: "MO",
+    expectCitation: "1105.035.00",
+    mustMention: "64",
+    mustDisclaim: true,
+  },
+  {
+    id: "mo-abawd-zero-waivers",
+    question: "Is the SNAP work-requirement time limit currently waived anywhere in Missouri?",
+    state: "MO",
+    expectCitation: "1105.035.00",
+    mustMention: "waiver",
+    mustDisclaim: true,
+  },
+  {
+    id: "mo-drug-felony-modified-ban",
+    // MO is a genuine MODIFIED ban with a stricter condition set than
+    // Indiana's (participant-paid urinalysis testing required) — guards
+    // against the model overclaiming a full ban or an unconditional opt-out.
+    question: "I have a drug felony conviction — can I still get SNAP in Missouri?",
+    state: "MO",
+    expectCitation: "208.247",
+    mustMention: "treatment",
+    mustDisclaim: true,
+  },
+  {
+    id: "mo-restaurant-meals-program-absent",
+    // Guards against overclaiming a Missouri RMP exists.
+    question: "Can I use my EBT card to buy a hot meal at a restaurant in Missouri?",
+    state: "MO",
+    mustMention: "no",
+    mustDisclaim: true,
+  },
+  {
+    id: "mo-expedited-service-7-day",
+    question: "How fast can I get emergency SNAP benefits in Missouri?",
+    state: "MO",
+    expectCitation: "1125.010.00",
+    mustMention: "7",
+    mustDisclaim: true,
+  },
+  {
+    id: "mo-cert-period-12-or-24-month",
+    question: "How long does my SNAP approval last in Missouri?",
+    state: "MO",
+    expectCitation: "1135.020.20",
+    mustMention: "12",
+    mustDisclaim: true,
+  },
+  {
+    id: "mo-federal-benefit",
+    question: "How is the monthly SNAP benefit amount calculated from net income in Missouri?",
+    state: "MO",
+    expectCitation: "273.10",
+    mustDisclaim: true,
+  },
+];
+
 /** Everything the live runner executes. */
 export const ALL_GOLD: AnswerExpectation[] = [
   ...ANSWER_GOLD,
@@ -2277,4 +2396,5 @@ export const ALL_GOLD: AnswerExpectation[] = [
   ...VA_GOLD,
   ...TN_GOLD,
   ...IN_GOLD,
+  ...MO_GOLD,
 ];
