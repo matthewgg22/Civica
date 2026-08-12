@@ -30,7 +30,7 @@ import { DemeterFeedback } from "./DemeterFeedback";
 import { DemeterSave } from "./DemeterSave";
 import { T } from "../lib/i18n/demeter-chat-copy";
 import { stateName } from "../lib/state-names";
-import { detectState, type StateMention } from "../lib/detect-state";
+import { detectState, detectUncoveredPlace, type StateMention } from "../lib/detect-state";
 import type { SavedMsg } from "../lib/demeter-conversations";
 
 /** Read the certainty verdict back off a finished answer.
@@ -689,6 +689,16 @@ export function DemeterChat({
     const mentioned = detectState(question);
     setStateOffer(mentioned && mentioned.code !== state ? mentioned : null);
 
+    // A place we do NOT cover has to be said out loud. "Washington DC" used to
+    // match the word "washington" and quietly answer for Washington State — a
+    // different agency, a different portal, different figures, and nothing on
+    // screen admitting it. Saying "not yet, here is what still applies" is a
+    // worse answer and a far better outcome than a confident wrong one.
+    const uncovered = detectUncoveredPlace(question);
+    const alreadySaid =
+      uncovered !== null &&
+      messages.some((m) => m.role === "divider" && m.content.includes(uncovered));
+
     // Fresh buffer per answer, or the next one types out on top of the last.
     clearTimeout(rafRef.current);
     rafRef.current = 0;
@@ -699,6 +709,9 @@ export function DemeterChat({
     setMessages((m) => [
       ...m,
       { role: "user", content: question },
+      ...(uncovered && !alreadySaid
+        ? [{ role: "divider" as const, content: t.dividerUncovered(uncovered) }]
+        : []),
       { role: "assistant", content: "" },
     ]);
 

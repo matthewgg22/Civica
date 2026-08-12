@@ -35,7 +35,7 @@ import { consoleAuditSink, type MaeAuditRecord, type MaeAuditSink } from "./audi
 import { retrievalMode } from "./embeddings";
 import { detectDistress, DISTRESS_SYSTEM_ADDENDUM } from "./distress";
 import { verifyNumericEquivalence } from "./numeric-check";
-import { answerInstruction, degradeWrapper, type AnswerLang } from "./lang";
+import { answerInstruction, degradeWrapper, degradeLeads, type AnswerLang } from "./lang";
 import { classifyQuestionTopic } from "./form-questions";
 
 export type ChatRole = "user" | "assistant";
@@ -179,8 +179,12 @@ function hasUnrecognized(checks: CitationCheck[]): boolean {
  *  have meant — the parameter stays so the caller keeps passing it and the
  *  retrieval is still what decides whether we got here.
  */
-function degradedAnswer(_retrievedBlock: string, lang: AnswerLang = "en"): string {
-  const { lead, tail } = degradeWrapper(lang);
+function degradedAnswer(
+  _retrievedBlock: string,
+  lang: AnswerLang = "en",
+  repeated = false,
+): string {
+  const { lead, tail } = degradeWrapper(lang, repeated);
   return `${lead}\n\n${tail}`;
 }
 
@@ -238,11 +242,24 @@ export async function* answerQuestion(req: AnswerRequest): AsyncGenerator<Answer
   // failure mode the Beeck Center/Digital Benefits Network study found:
   // plain prompting hits 0% accuracy on numerical rules even when the
   // structural/citation stuff is fine.
+  //
+  // The person's own turns go in SEPARATELY. They were already inside this
+  // blob, but only as literal strings, and someone typing "74 k a year" does
+  // not produce the "$74,000" an answer would write back — so their own income
+  // was scored as an invented figure and every useful answer had to degrade.
+  // One real conversation got the same dead paragraph five times over that.
+  // See numeric-check.ts on why this is a second channel and not just more
+  // text on the pile.
   const numericSource =
     systemBlocks.map((b) => b.text).join("\n") +
     "\n" +
     messages.map((m) => m.content).join("\n");
-  const numbersOk = (text: string): boolean => verifyNumericEquivalence(text, numericSource).pass;
+  const askedByUser = messages
+    .filter((m) => m.role === "user")
+    .map((m) => m.content)
+    .join("\n");
+  const numbersOk = (text: string): boolean =>
+    verifyNumericEquivalence(text, numericSource, askedByUser).pass;
 
   // Eval-only model override. Refuses rather than ignores when the caller
   // hasn't declared an eval run — see the field's doc on AnswerRequest.
@@ -369,7 +386,15 @@ export async function* answerQuestion(req: AnswerRequest): AsyncGenerator<Answer
       // unexpanded Spanish query retrieves thin sources exactly when the
       // answer has already lost its summary.
       const chunks = await retrieve(lastUser, { state, lang });
-      answerText = degradedAnswer(formatRetrievedSources(chunks, state), lang);
+      answerText = degradedAnswer(
+        formatRetrievedSources(chunks, state),
+        lang,
+        // Has this conversation already had one of these? If so, do not hand
+        // back the same paragraph — see DEGRADE_AGAIN in lang.ts.
+        messages.some(
+          (m) => m.role === "assistant" && degradeLeads(lang).some((l) => m.content.includes(l)),
+        ),
+      );
       finalChecks = verifyCitations(answerText, retrievedCitations, state, retrievedText);
       yield { type: "delta", text: answerText };
     }

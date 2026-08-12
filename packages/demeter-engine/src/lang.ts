@@ -221,8 +221,42 @@ const DEGRADE: Record<AnswerLang, { lead: string; tail: string }> = {
   },
 };
 
-export function degradeWrapper(lang: AnswerLang): { lead: string; tail: string } {
-  return DEGRADE[lang];
+// SAYING THE SAME THING TWICE IS A DIFFERENT FAILURE FROM SAYING IT ONCE.
+//
+// A real conversation received the paragraph above five consecutive times. The
+// person kept answering it — they gave their state, their household size, their
+// income, their rent — and each time got back a sentence telling them to ask
+// something narrower, worded identically. By the third one it no longer reads
+// as care about accuracy; it reads as a machine that has stopped listening, and
+// the honest thing at that point is to say so and hand over properly rather
+// than invite a fourth attempt at a door that is not opening.
+const DEGRADE_AGAIN: Record<AnswerLang, { lead: string; tail: string }> = {
+  en: {
+    lead: "I still cannot confirm this against the rules I have, and I do not want to keep saying that in the same words while you keep answering me.",
+    tail: "This is a gap on my side, not a problem with what you told me. Your state SNAP agency can run your actual numbers and give you a real answer — that is worth doing rather than waiting on me. I can still help with the parts I do have: what the application asks for, which documents you will need, and how the interview works.",
+  },
+  es: {
+    lead: "Sigo sin poder confirmar esto con las reglas que tengo, y no quiero repetirte lo mismo con las mismas palabras mientras tú sigues respondiéndome.",
+    tail: "Esto es una limitación mía, no un problema con lo que me contaste. La agencia de SNAP de tu estado puede calcular tus cifras reales y darte una respuesta de verdad — vale la pena hacerlo en vez de esperar por mí. Todavía puedo ayudarte con lo que sí tengo: qué pide la solicitud, qué documentos vas a necesitar y cómo funciona la entrevista.",
+  },
+  vi: {
+    lead: "Tôi vẫn chưa xác minh được điều này với các quy định tôi có, và tôi không muốn lặp lại đúng câu đó trong khi bạn vẫn đang trả lời tôi.",
+    tail: "Đây là thiếu sót ở phía tôi, không phải vấn đề với những gì bạn đã nói. Cơ quan SNAP của tiểu bang có thể tính trên số liệu thật của bạn và cho câu trả lời thực sự — nên làm vậy thay vì chờ tôi. Tôi vẫn giúp được phần tôi có: đơn hỏi những gì, bạn cần giấy tờ nào, và buổi phỏng vấn diễn ra ra sao.",
+  },
+  zh: {
+    lead: "这一条我仍然无法用手上的法规核实，而您一直在回答我，我不想再用同样的话重复一遍。",
+    tail: "这是我这边的缺口，不是您所说内容的问题。您所在州的 SNAP 机构可以按您的真实数字计算，给出确切答复——与其等我，不如直接去问。我手上有的部分仍然可以帮您：申请表会问什么、您需要准备哪些材料，以及面谈是怎么进行的。",
+  },
+};
+
+/** `repeated` — has this conversation already degraded at least once? */
+export function degradeWrapper(lang: AnswerLang, repeated = false): { lead: string; tail: string } {
+  return (repeated ? DEGRADE_AGAIN : DEGRADE)[lang];
+}
+
+/** The lead sentences, for spotting a prior degrade in a transcript. */
+export function degradeLeads(lang: AnswerLang): string[] {
+  return [DEGRADE[lang].lead, DEGRADE_AGAIN[lang].lead];
 }
 
 // ── Chrome copy: citation trailer + freshness footer ────────────────────────

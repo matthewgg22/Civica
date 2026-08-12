@@ -29,6 +29,8 @@ export const T = {
     federalBadge: "Federal guidance",
     dividerTo: (name: string) => `Now answering for ${name} — earlier answers may not apply.`,
     dividerFederal: "Now answering with federal rules only — earlier answers may not apply.",
+    dividerUncovered: (place: string) =>
+      `Demeter does not cover ${place} yet — answers below use federal rules, and your local agency is the one to confirm with.`,
     disclaimer:
       "Demeter gives information, not legal advice. Confirm decisions with your SNAP agency.",
     // Sits under the composer, where the decision to type is made — not in the
@@ -169,6 +171,8 @@ export const T = {
       `Ahora respondiendo para ${name} — las respuestas anteriores pueden no aplicar.`,
     dividerFederal:
       "Ahora respondiendo solo con reglas federales — las respuestas anteriores pueden no aplicar.",
+    dividerUncovered: (place: string) =>
+      `Demeter todavía no cubre ${place} — las respuestas de abajo usan reglas federales, y tu agencia local es la que debe confirmarlo.`,
     disclaimer:
       "Demeter da información, no asesoría legal. Confirma las decisiones con tu agencia de SNAP.",
     piiHint:
@@ -281,6 +285,8 @@ export const T = {
       `Bây giờ đang trả lời cho ${name} — các câu trả lời trước có thể không còn áp dụng.`,
     dividerFederal:
       "Bây giờ chỉ trả lời theo quy định liên bang — các câu trả lời trước có thể không còn áp dụng.",
+    dividerUncovered: (place: string) =>
+      `Demeter chưa hỗ trợ ${place} — các câu trả lời dưới đây theo quy định liên bang, và cơ quan địa phương của bạn mới là nơi xác nhận.`,
     disclaimer:
       "Demeter cung cấp thông tin, không phải tư vấn pháp lý. Hãy xác nhận quyết định với cơ quan SNAP của bạn.",
     piiHint: "Xin đừng nhập số An sinh Xã hội, thông tin ngân hàng hay họ tên đầy đủ.",
@@ -390,6 +396,8 @@ export const T = {
     federalBadge: "联邦指引",
     dividerTo: (name: string) => `现在按 ${name} 的规定回答——之前的回答可能不再适用。`,
     dividerFederal: "现在仅按联邦规定回答——之前的回答可能不再适用。",
+    dividerUncovered: (place: string) =>
+      `Demeter 尚未覆盖${place}——下面的回答按联邦规定，请以您当地机构的说法为准。`,
     disclaimer: "Demeter 提供信息，而非法律建议。请与您所在州的 SNAP 机构确认。",
     piiHint: "请不要输入社会安全号码、银行信息或完整姓名。",
     clear: "清除本次对话",
