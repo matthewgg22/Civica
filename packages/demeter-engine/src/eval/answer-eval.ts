@@ -4455,6 +4455,89 @@ export const ME_GOLD: AnswerExpectation[] = [
 ];
 
 
+/** Everything the live runner executes for South Dakota. */
+export const SD_GOLD: AnswerExpectation[] = [
+  {
+    id: "sd-no-bbce-strict-130-net-100",
+    // Guards the structural finding: SD does NOT run BBCE — strict 130%/100%
+    // FPG test applies unless narrowly (TANF/SSI/CCS) categorically eligible.
+    question: "Does South Dakota have broad-based categorical eligibility for SNAP?",
+    state: "SD",
+    mustMention: "130",
+    mustDisclaim: true,
+  },
+  {
+    id: "sd-resource-limit-current-not-stale",
+    // Guards the correction: current $4,500/$3,000, not the stale $2,750/$4,250
+    // several aggregator sites still repeat.
+    question: "What is the SNAP resource limit in South Dakota?",
+    state: "SD",
+    mustMention: "3,000",
+    mustDisclaim: true,
+  },
+  {
+    id: "sd-drug-felony-full-opt-out",
+    // Guards the flagship confirmation: SD fully opted out of the federal
+    // drug-felony ban (SDCL 28-12-3); manual has no such provision at all.
+    question: "I have a drug felony conviction — can I still get SNAP in South Dakota?",
+    state: "SD",
+    mustMention: "not",
+    mustDisclaim: true,
+  },
+  {
+    id: "sd-abawd-waiver-none-active",
+    question: "Is the SNAP work-requirement time limit currently waived anywhere in South Dakota?",
+    state: "SD",
+    mustMention: "no",
+    mustDisclaim: true,
+  },
+  {
+    id: "sd-abawd-native-american-exemption-statewide",
+    // Guards the tribal-land finding: the manual's Native American ABAWD
+    // exemption applies anywhere in the state, not just on reservations.
+    question: "Is there a Native American exemption from the SNAP work requirement in South Dakota?",
+    state: "SD",
+    mustMention: "anywhere",
+    mustDisclaim: true,
+  },
+  {
+    id: "sd-utility-deduction-sua-figure",
+    // Guards the internal-inconsistency finding: body-text SUA figure ($950)
+    // vs. a stale Table of Contents figure ($850).
+    question: "What utility deduction can I get for SNAP in South Dakota?",
+    state: "SD",
+    mustMention: "950",
+    mustDisclaim: true,
+  },
+  {
+    id: "sd-restaurant-meals-program-not-available",
+    question: "Does South Dakota have a Restaurant Meals Program for SNAP?",
+    state: "SD",
+    mustMention: "not",
+    mustDisclaim: true,
+  },
+  {
+    id: "sd-fdpir-cannot-combine-same-month",
+    question: "Can I get SNAP and FDPIR commodities at the same time in South Dakota?",
+    state: "SD",
+    mustMention: "not",
+    mustDisclaim: true,
+  },
+  {
+    id: "sd-how-to-apply-eaportal",
+    question: "How do I apply for SNAP in South Dakota?",
+    state: "SD",
+    mustDisclaim: true,
+  },
+  {
+    id: "sd-federal-benefit",
+    question: "How is the monthly SNAP benefit amount calculated from net income in South Dakota?",
+    state: "SD",
+    expectCitation: "273.10",
+    mustDisclaim: true,
+  },
+];
+
 /** Everything the live runner executes for Montana. */
 export const MT_GOLD: AnswerExpectation[] = [
   {
@@ -4587,5 +4670,6 @@ export const ALL_GOLD: AnswerExpectation[] = [
   ...HI_GOLD,
   ...ME_GOLD,
   ...NH_GOLD,
+  ...SD_GOLD,
   ...MT_GOLD,
 ];
