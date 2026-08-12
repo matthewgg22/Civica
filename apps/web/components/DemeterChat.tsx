@@ -301,7 +301,7 @@ export function DemeterChat({
       /* storage disabled — nothing was stored either */
     }
     setAnnouncement(t.cleared);
-  }, [t]);
+  }, [t, resetInputHeight]);
 
   const restoreConversation = useCallback(
     (restored: Msg[], restoredState: string | null, restoredLang: AnswerLang) => {
@@ -506,7 +506,7 @@ export function DemeterChat({
     // two staying in sync is currently a coincidence of their dep lists
     // matching: give refreshWorksheet one dependency send does not have, and
     // send would silently hold a stale copy with no warning.
-  }, [input, busy, messages, state, lang, t, refreshWorksheet]);
+  }, [input, busy, messages, state, lang, t, refreshWorksheet, resetInputHeight]);
 
   const hasChat = messages.length > 0;
 
