@@ -6751,6 +6751,34 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 .dmfb__thumb[data-down] { transform: rotate(180deg); }
 @media (prefers-reduced-motion: reduce) { .dmfb__btn--icon { transition: none; } }
 
+/* The state offer. Sits above the composer, tinted so it reads as the product
+   asking rather than as another answer, and it never switches by itself. */
+.demeter__stateoffer {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 0.9rem;
+  margin: 0.6rem 0 0; padding: 0.7rem 0.9rem;
+  border: 1px solid var(--demeter-terracotta); border-radius: 14px;
+  background: var(--demeter-card);
+  animation: dmTrailerIn 220ms ease-out both;
+}
+.demeter__stateoffer-text {
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+  font-size: 0.98rem; color: var(--demeter-ink);
+}
+.demeter__stateoffer-actions { display: flex; gap: 0.5rem; margin-left: auto; }
+.demeter__stateoffer-yes, .demeter__stateoffer-no {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.85rem; font-weight: 600; min-height: 36px; padding: 0 0.9rem;
+  border-radius: 999px; cursor: pointer;
+}
+.demeter__stateoffer-yes {
+  border: 0; background: var(--demeter-terracotta-deep); color: var(--demeter-paper);
+}
+.demeter__stateoffer-no {
+  border: 1px solid var(--demeter-rule-strong); background: transparent;
+  color: var(--demeter-muted);
+}
+@media (prefers-reduced-motion: reduce) { .demeter__stateoffer { animation: none; } }
+
 .demeter__turn { display: flex; flex-direction: column; }
 .demeter__turn--user { align-items: flex-end; }
 .demeter__turn--assistant, .demeter__turn--divider { align-items: flex-start; }

@@ -30,6 +30,7 @@ import { DemeterFeedback } from "./DemeterFeedback";
 import { DemeterSave } from "./DemeterSave";
 import { T } from "../lib/i18n/demeter-chat-copy";
 import { stateName } from "../lib/state-names";
+import { detectState, type StateMention } from "../lib/detect-state";
 import type { SavedMsg } from "../lib/demeter-conversations";
 
 /** Read the certainty verdict back off a finished answer.
@@ -315,6 +316,13 @@ export function DemeterChat({
    *  unreasonable thing to do quietly to someone who came to find out how the
    *  system works before telling it anything about themselves. */
   const [worksheetMode, setWorksheetMode] = useState<WorksheetMode>("ask");
+
+  // A place named in the chat, waiting to be confirmed. An OFFER, never an
+  // automatic switch: someone typed "im in boston" and the scope stayed on
+  // CalFresh — one of the most generous state programs — while answering a
+  // Massachusetts household. Re-scoping on a guess would have replaced that
+  // with a different wrong answer held more confidently.
+  const [stateOffer, setStateOffer] = useState<StateMention | null>(null);
   // Bumped by the estimate rail to open the state picker. Without a state
   // there is no benefit calculation at all, so this is the difference between
   // a live estimate and a dead rail for anyone who never touched the picker.
@@ -574,6 +582,11 @@ export function DemeterChat({
       (m): m is { role: "user" | "assistant"; content: string } => m.role !== "divider",
     );
     const apiMessages = [...chatTurns, { role: "user" as const, content: question }].slice(-20);
+    // Did they name somewhere? Offered, not applied — and only when it
+    // disagrees with the scope they are already on.
+    const mentioned = detectState(question);
+    setStateOffer(mentioned && mentioned.code !== state ? mentioned : null);
+
     // Fresh buffer per answer, or the next one types out on top of the last.
     clearTimeout(rafRef.current);
     rafRef.current = 0;
@@ -1058,6 +1071,39 @@ export function DemeterChat({
       <div className="demeter__sr" aria-live="polite" aria-atomic="true">
         {announcement}
       </div>
+
+      {/* THE OFFER. Sits above the composer, where the next thing you would do
+          is, and disappears either way once answered. It does not switch the
+          scope by itself — see detect-state.ts: a silent re-scope on a guess
+          answers the wrong state with more confidence than before. */}
+      {stateOffer && !busy && (
+        <div className="demeter__stateoffer" role="status">
+          <span className="demeter__stateoffer-text">
+            {t.stateOffer
+              .replace("{place}", stateOffer.matched)
+              .replace("{state}", stateOffer.name)}
+          </span>
+          <span className="demeter__stateoffer-actions">
+            <button
+              type="button"
+              className="demeter__stateoffer-yes"
+              onClick={() => {
+                changeState(stateOffer.code);
+                setStateOffer(null);
+              }}
+            >
+              {t.stateOfferYes.replace("{state}", stateOffer.name)}
+            </button>
+            <button
+              type="button"
+              className="demeter__stateoffer-no"
+              onClick={() => setStateOffer(null)}
+            >
+              {t.stateOfferNo}
+            </button>
+          </span>
+        </div>
+      )}
 
       <form
         className="demeter__inputrow"
