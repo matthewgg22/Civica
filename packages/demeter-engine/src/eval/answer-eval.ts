@@ -1788,6 +1788,119 @@ export const NC_GOLD: AnswerExpectation[] = [
   },
 ];
 
+export const NJ_GOLD: AnswerExpectation[] = [
+  {
+    id: "nj-expanded-185-pct-categorical",
+    // The flagship structural finding of this pack: New Jersey's Expanded
+    // Categorical Eligibility is a genuine flat 185% FPL broad-based screen,
+    // conferred via a brochure given at application (no separate pamphlet to
+    // seek out), waiving both the net income test and the resource test.
+    question: "What is Expanded Categorical Eligibility and how does it affect my SNAP eligibility in New Jersey?",
+    state: "NJ",
+    expectCitation: "N.J.A.C. 10:87-2.36",
+    mustMention: "185",
+    mustDisclaim: true,
+  },
+  {
+    id: "nj-resource-limit-stale-codified",
+    question: "What is the SNAP resource limit in New Jersey if I'm not categorically eligible?",
+    state: "NJ",
+    expectCitation: "N.J.A.C. 10:87-4.11",
+    mustMention: "3,000",
+    mustDisclaim: true,
+  },
+  {
+    id: "nj-boat-counted-not-excluded",
+    // Guards the contrast with North Carolina's pack in this roster: New
+    // Jersey counts boats/motor homes at fair market value, unlike NC's
+    // blanket all-vehicle exclusion.
+    question: "Does my boat count against me for SNAP in New Jersey?",
+    state: "NJ",
+    expectCitation: "N.J.A.C. 10:87-4.3",
+    mustMention: "boat",
+    mustDisclaim: true,
+  },
+  {
+    id: "nj-sua-hcsua-value",
+    question: "What is the standard utility allowance for SNAP in New Jersey?",
+    state: "NJ",
+    expectCitation: "N.J.A.C. 10:87-12.1",
+    mustMention: "977",
+    mustDisclaim: true,
+  },
+  {
+    id: "nj-medical-deduction-35-threshold",
+    question: "I'm disabled and have $50 a month in medical bills for New Jersey SNAP — do I get a deduction?",
+    state: "NJ",
+    expectCitation: "N.J.A.C. 10:87-5.10",
+    mustMention: "35",
+    mustDisclaim: true,
+  },
+  {
+    id: "nj-child-support-income-exclusion",
+    // Guards the mechanism-contrast finding: NJ EXCLUDES child support from
+    // income (Illinois-style), unlike most of this roster's ordinary-deduction
+    // states.
+    question: "Does paying child support lower my countable income for SNAP in New Jersey?",
+    state: "NJ",
+    expectCitation: "N.J.A.C. 10:87-5.9",
+    mustMention: "exclud",
+    mustDisclaim: true,
+  },
+  {
+    id: "nj-abawd-waiver-camden-capemay",
+    // Second flagship finding: New Jersey currently holds an active ABAWD
+    // waiver in Cape May County and Camden City through January 31, 2027 —
+    // nearly the opposite structural position from North Carolina's
+    // statutory ABAWD-waiver prohibition elsewhere in this roster.
+    question: "Is the SNAP work-requirement time limit currently waived anywhere in New Jersey?",
+    state: "NJ",
+    expectCitation: "N.J.A.C. 10:87-10.20",
+    mustMention: "Camden",
+    mustDisclaim: true,
+  },
+  {
+    id: "nj-drug-felony-full-opt-out",
+    // NJ is a genuine FULL opt-out — guards against the model overclaiming a
+    // permanent ban or a modified/conditional ban the way NC's pack documents.
+    question: "I have a drug felony conviction — can I still get SNAP in New Jersey?",
+    state: "NJ",
+    expectCitation: "N.J.S.A. 44:10-48",
+    mustMention: "not",
+    mustDisclaim: true,
+  },
+  {
+    id: "nj-restaurant-meals-bill-not-law",
+    question: "Can I use my EBT card to buy a hot meal at a restaurant in New Jersey?",
+    state: "NJ",
+    mustMention: "no",
+    mustDisclaim: true,
+  },
+  {
+    id: "nj-expedited-service-7-day",
+    question: "How fast can I get emergency SNAP benefits in New Jersey?",
+    state: "NJ",
+    expectCitation: "N.J.A.C. 10:87-2.29",
+    mustMention: "7",
+    mustDisclaim: true,
+  },
+  {
+    id: "nj-cert-period-12-month-default",
+    question: "How long does my SNAP approval last in New Jersey?",
+    state: "NJ",
+    expectCitation: "N.J.A.C. 10:87-6.20",
+    mustMention: "12",
+    mustDisclaim: true,
+  },
+  {
+    id: "nj-federal-benefit",
+    question: "How is the monthly SNAP benefit amount calculated from net income in New Jersey?",
+    state: "NJ",
+    expectCitation: "273.10",
+    mustDisclaim: true,
+  },
+];
+
 /** Everything the live runner executes. */
 export const ALL_GOLD: AnswerExpectation[] = [
   ...ANSWER_GOLD,
@@ -1808,4 +1921,5 @@ export const ALL_GOLD: AnswerExpectation[] = [
   ...PA_GOLD,
   ...OH_GOLD,
   ...NC_GOLD,
+  ...NJ_GOLD,
 ];

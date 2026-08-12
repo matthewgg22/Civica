@@ -1,0 +1,236 @@
+{
+  "_provenance": {
+    "note": "New Jersey SNAP (\"NJ SNAP\") curated supplements. New Jersey has NO existing packages/snap-rules StatePolicy entry and NO oracle-fixture coverage — a genuinely blank slate, like North Carolina's and Ohio's-corpus-only prior builds in this same roster. This pack is CORPUS-ONLY and does not touch packages/snap-rules or the oracle fixture. Drafted from a direct curl fetch (browser User-Agent) of the current N.J.A.C. 10:87 NJ SNAP Manual PDF, extracted with pdftotext, supplemented section-by-section via Cornell LII's N.J.A.C. mirror for sections outside that PDF's page range, cross-checked against N.J.S.A. 44:10-48(d)(1), USDA's official ABAWD waiver-approval letter for New Jersey FY2026, USDA's official Restaurant Meals Program state list, USDA's official FY2026 Maximum Allotments and Deductions table, and the New Jersey Legislature's bill-tracking records.",
+    "extracted": "2026-08-11",
+    "source_fact_check": "direct curl fetch (browser UA) of N.J.A.C. 10:87 PDF + pdftotext + Cornell LII section mirror + direct fetch of USDA's NJ FY2026 ABAWD waiver approval letter, RMP state list, and FY2026 deduction table + NJ Legislature bill-status records + post-draft adversarial refute pass; findings and gaps recorded in PROVENANCE.md"
+  },
+  "supplements": [
+    {
+      "key": "income-pathways",
+      "kind": "supplement",
+      "terms": [
+        "income limit",
+        "income limits",
+        "gross income limit",
+        "gross income ceiling",
+        "make too much",
+        "over income",
+        "bbce",
+        "categorical eligibility",
+        "categorically eligible",
+        "broad-based categorical eligibility",
+        "expanded categorical eligibility",
+        "185 percent",
+        "185%",
+        "poverty level",
+        "workfirst",
+        "wfnj"
+      ],
+      "citation": "N.J.A.C. 10:87-2.36 — New Jersey's Expanded Categorical Eligibility: a flat 185% FPL broad-based screen conferred through a brochure given at the time of every application, plus the narrower 10:87-2.32 WFNJ/TANF/SSI pathway",
+      "heading": "New Jersey runs a flat 185% FPL broad-based categorical-eligibility screen — Expanded Categorical Eligibility — conferred through a brochure given at the time of application, not a separate document a household must seek out",
+      "text": "N.J.A.C. 10:87-2.32 makes a household categorically eligible for NJ SNAP when every member is authorized to receive WFNJ/TANF, General Assistance (GA), or SSI benefits, waiving gross and net income limits, resource limits, Social Security number verification, sponsored-alien information, and residency verification (10:87-2.32(d)). SEPARATELY, and this is the pack's central finding: N.J.A.C. 10:87-2.36, \"Expanded categorical eligibility,\" states plainly that \"a household shall be eligible for NJ SNAP benefits when the gross income of that household is less than 185 percent of the Federal Poverty Level. Participants do not have to meet the net income test; however, certain deductions will be taken to determine the NJ SNAP benefit amount. Resources are not to be considered in determining eligibility.\" The section requires that \"each participant/household shall be given a brochure at the time of application, which will describe the services available for needy families\" — the same low-friction conferral-vehicle family this roster already documents for Georgia's TCOS pamphlet, Michigan's DVPS enrollment, Nevada's TANF brochure, Oregon's Information and Referral pamphlet, Wisconsin's Job Center notice, Ohio's Careline notice, and North Carolina's application-form language — New Jersey's version is a brochure handed out at application, not a separate mailing or text message. For FFY26 (October 1, 2025 through September 30, 2026), the 185% FPL gross income ceiling is $2,413/month for a household of one, $4,109/month for a household of three, $4,957/month for a household of four, and +$848 for each additional household member. Households with a member 60 or older, or with a disability, skip the gross income test entirely (they are evaluated on the net income test only, per the federal standard), regardless of whether they qualify under the 185% expanded-categorical screen. Individuals in expanded categorically eligible households who are not exempt from work registration remain subject to the NJ SNAP Employment and Training Program's work requirements (10:87-2.36(e)) — expanded categorical eligibility waives the income and resource tests, not the work requirements.",
+      "source_url": "https://www.law.cornell.edu/regulations/new-jersey/N-J-A-C-10-87-2-36"
+    },
+    {
+      "key": "asset-rule",
+      "kind": "supplement",
+      "terms": [
+        "asset limit",
+        "asset test",
+        "resource limit",
+        "resource test",
+        "resources",
+        "savings",
+        "savings limit",
+        "bank account",
+        "vehicle",
+        "car count",
+        "does my car count",
+        "boat",
+        "motor home"
+      ],
+      "citation": "N.J.A.C. 10:87-4.1; N.J.A.C. 10:87-4.3; N.J.A.C. 10:87-4.8; N.J.A.C. 10:87-4.11 — resource test applies to a narrow slice of households (most are exempt via categorical eligibility); New Jersey's own codified dollar figures are STALE (pre-2009 federal amounts); ordinary vehicles are excluded but boats/motor homes are COUNTED unless they are the household's home",
+      "heading": "New Jersey's resource test barely reaches anyone in practice — but where it does apply, watch two things: the codified dollar figures in the regulation text are outdated, and boats/motor homes are NOT automatically excluded the way ordinary cars are",
+      "text": "N.J.A.C. 10:87-4.1(b) exempts expanded categorically eligible households (and their alien sponsors, and households that removed an ineligible alien or student) from the resource test entirely — given the 185% FPL expanded-categorical screen documented in the income-pathways supplement, most New Jersey households never face a resource test at all. The resource test in 10:87-4.1(a) reaches only: households with an IPV-disqualified member, elderly/disabled households whose income exceeds 185% FPL but who still meet the (lower) net income standard, and households with a member who failed to comply with a work requirement. FLAG: N.J.A.C. 10:87-4.11's own codified text sets the maximum allowable resources at \"$2,000 for the household; except that for households including a member or members aged 60 or over, such resources shall not exceed $3,000\" — these are the PRE-2009 federal figures, not updated in New Jersey's own regulation text to reflect the annual COLA indexing the 2008 Farm Bill introduced. This pack independently fetched USDA's official FY2026 Maximum Allotments and Deductions table directly, confirming the CURRENT federal standard (7 CFR 273.8(b), applicable in every state including New Jersey regardless of what New Jersey's own un-amended regulation text says) is $3,000 for a standard household and $4,500 for a household with a member 60+ or disabled — the same figures this roster's North Carolina and Ohio packs cite for FFY26. New Jersey's own public-facing DFD eligibility messaging and every secondary source this pack checked already correctly state $3,000/$4,500 as the operative current figures, consistent with federal law — this is a codification lag in the regulation's own printed text, not a live, actionable New Jersey policy divergence, and this pack does not treat it as a secondary-source correction for that reason (see PROVENANCE.md). Separately, for the narrow population still subject to a resource test: N.J.A.C. 10:87-4.3(a)4 and 4.8(a)3 state that ordinary \"vehicles are excluded as a resource, except for recreational vehicles, such as boats, motor homes and so forth\" — recreational vehicles are counted toward the resource limit at fair market value (using NADA guide values, with no low-mileage markup permitted), UNLESS the boat or motor home is the household's primary residence, in which case it is excluded as a home. This is a genuine CONTRAST with North Carolina's pack in this same roster, which found ALL motor vehicles including boats fully excluded — a reader should not assume New Jersey mirrors that blanket exclusion.",
+      "source_url": "https://www.law.cornell.edu/regulations/new-jersey/N-J-A-C-10-87-4-11"
+    },
+    {
+      "key": "sua-values",
+      "kind": "supplement",
+      "terms": [
+        "utility allowance",
+        "utility standard",
+        "shelter deduction",
+        "excess shelter",
+        "standard utility allowance",
+        "heating standard",
+        "cooling standard",
+        "telephone standard",
+        "phone standard",
+        "homeless shelter deduction",
+        "hcsua",
+        "basic utility allowance"
+      ],
+      "citation": "N.J.A.C. 10:87-12.1 — New Jersey's three-tier utility structure (HCSUA, LUA, UTA), dollar figures set annually via the federal Register table, not baked into the regulation text",
+      "heading": "New Jersey's utility allowances follow the standard three-tier federal structure (heating/cooling, limited, telephone-only) but the dollar figures live in an annual DFD update, not the regulation text itself — and this pack could only independently confirm one of the three figures",
+      "text": "N.J.A.C. 10:87-12.1 defines three utility-allowance tiers — the Heating and Cooling Standard Utility Allowance (HCSUA), the Limited Utility Allowance (LUA, for households incurring at least two non-heating utility expenses), and the Uniform Telephone Allowance (UTA, for households whose only utility expense is a telephone) — and states each dollar figure is \"that calculated by the United States Department of Agriculture, published annually in the Federal Register pursuant to 7 CFR 273.9(d)(6), and effective October 1 of each year,\" the same federal-calculation mechanism the section uses for the Standard Deduction (7 CFR 273.9(d)(1)) and the Excess Shelter Deduction cap (7 CFR 273.9(d)(6)). A household may claim only ONE utility allowance, choosing the highest tier it qualifies for. This pack independently fetched USDA's FY2026 Maximum Allotments and Deductions table directly, confirming the FEDERALLY UNIFORM figures (identical in every one of the 48 contiguous states and DC, New Jersey included): Standard Deduction $209/month for household sizes 1-3, $223 (4), $261 (5), $299 (6 or more); Maximum Excess Shelter Deduction $744/month; Homeless Shelter Deduction $198.99/month. New Jersey's STATE-SPECIFIC HCSUA figure (unlike the deduction table above, HCSUA amounts vary by state) could only be corroborated via a secondary source in this pass: a New Jersey Medicaid Communication (No. 25-07, \"Post-Eligibility Treatment of Income – 2025 Adjusted Utility Allowance,\" dated October 8, 2025) that explicitly states its figures are \"the same as those applicable in determining eligibility under the authority of the Division of Family Development's SNAP program,\" and reports the HCSUA increased from $878.00 to $977.00 per month effective October 1, 2025. This pack could NOT independently fetch that Communication's own PDF at any URL tried (both nj.gov path variants returned 404 even via curl with a browser User-Agent header — see PROVENANCE.md), and could NOT locate New Jersey's LUA or UTA dollar figures in this pass at all. The $977 HCSUA figure and the LUA/UTA gap are both flagged explicitly in freshness.json rather than treated as fully verified or invented.",
+      "source_url": "https://www.law.cornell.edu/regulations/new-jersey/N-J-A-C-10-87-12-1"
+    },
+    {
+      "key": "medical-deduction",
+      "kind": "supplement",
+      "terms": [
+        "medical deduction",
+        "medical expense",
+        "medical expenses",
+        "medical bills",
+        "elderly deduction",
+        "disability deduction",
+        "excess medical",
+        "service animal"
+      ],
+      "citation": "N.J.A.C. 10:87-5.10 — New Jersey excess medical deduction (plain federal actual-expense-minus-$35, elderly/disabled household members only, no flat standard amount)",
+      "heading": "New Jersey uses the plain federal actual-expense-minus-$35 Excess Medical Deduction — no New Jersey-specific flat Standard Medical Deduction dollar figure",
+      "text": "N.J.A.C. 10:87-5.10 allows a deduction for \"that portion of medical expenses in excess of $35.00 per month\" for a household member who is elderly (60 or older) or disabled — the plain federal mechanism (7 CFR 273.9(d)(3)) rather than a flat Standard Medical Deduction dollar figure some other states in this roster use, matching the approach this roster's North Carolina, Ohio, and Pennsylvania packs also document. The same section sets New Jersey's Earned Income Deduction at a flat 20 percent of earned income (the plain federal standard, 7 CFR 273.9(d)(2)) and its Dependent Care Deduction at the household's actual cost of care, subject to timing and billing-period restrictions. New Jersey's regulation text (10:87-5.10) does not itemize the specific medical-expense categories the way some other states' manuals do (service animals, transportation, over-the-counter medication); this pack did not find New Jersey-specific exclusions or inclusions beyond the plain federal $35 threshold and defers to the federal standard where New Jersey's own text is silent — flagged as a gap in freshness.json rather than invented.",
+      "source_url": "https://www.law.cornell.edu/regulations/new-jersey/N-J-A-C-10-87-5-10"
+    },
+    {
+      "key": "child-support-deduction",
+      "kind": "supplement",
+      "terms": [
+        "child support",
+        "support payments",
+        "child support deduction",
+        "dependent care",
+        "child care deduction",
+        "daycare",
+        "alimony",
+        "arrearage"
+      ],
+      "citation": "N.J.A.C. 10:87-5.9 — New Jersey EXCLUDES legally obligated child support from income entirely (not an ordinary post-income deduction), including vendor payments and arrearages",
+      "heading": "New Jersey treats legally obligated child support as an INCOME EXCLUSION, not a post-income deduction — a genuine mechanism difference from most of this roster's other states",
+      "text": "N.J.A.C. 10:87-5.9, \"Identification of income exclusions,\" states that all legally obligated or court-ordered child support payments paid by a household member to, or on behalf of, a non-household member — including payments to a third party on behalf of the non-household member (vendor payments), and amounts paid toward arrearages — are EXCLUDED FROM INCOME. This is the same INCOME-EXCLUSION mechanism (7 CFR 273.9(c), counted before gross income is even calculated) this roster's Illinois pack documents, and a genuine CONTRAST with the ORDINARY DEDUCTION mechanism (7 CFR 273.9(d)(5), subtracted after gross income is calculated) this roster's North Carolina, Ohio, Georgia, Michigan, Minnesota, Oregon, Pennsylvania, and Wisconsin packs all document for their own states — the practical difference matters for households near a gross-income eligibility threshold, since an income exclusion lowers gross income itself (potentially preserving eligibility for the gross income test), while an ordinary deduction only lowers net income after the gross test has already been applied. Separately, N.J.A.C. 10:87-7.7 governs how child support (along with shelter and dependent care expenses) is treated when it is paid by or billed to an INELIGIBLE household member (an alien, a disqualified individual, or an ineligible student): that portion of the expense \"shall be divided evenly among the household members,\" and only the remaining eligible members' prorated share is counted as a deductible/excludable expense — the ineligible member's own share is neither excluded nor deducted. Alimony and spousal support are not addressed in the specific 10:87-5.9 text this pack fetched; this pack did not find explicit New Jersey confirmation either way and defers to the federal standard (alimony is NOT part of the 7 CFR 273.9(d)(5)/(c) child-support mechanism) rather than asserting a New Jersey-specific rule it could not confirm — flagged in freshness.json.",
+      "source_url": "https://www.law.cornell.edu/regulations/new-jersey/N-J-A-C-10-87-5-9"
+    },
+    {
+      "key": "abawd-work-requirement",
+      "kind": "supplement",
+      "terms": [
+        "abawd",
+        "able bodied adult",
+        "work requirement",
+        "time limit",
+        "3 month limit",
+        "work registration",
+        "waiver",
+        "waived area",
+        "camden",
+        "cape may"
+      ],
+      "citation": "N.J.A.C. 10:87-10.20; USDA FY2026 ABAWD waiver approval letter, dated 2/10/2026 — New Jersey currently holds an ACTIVE geographic waiver in Cape May County and Camden City, effective February 1, 2026 through January 31, 2027",
+      "heading": "New Jersey currently has an ABAWD time-limit waiver active in two specific areas — Cape May County and Camden City — through January 31, 2027; every other New Jersey county is under the standard 3-in-36-month time limit",
+      "text": "An able-bodied adult without dependents (ABAWD) is limited to three countable months of NJ SNAP benefits within a fixed 36-month period unless meeting the 80-hour/month (averaged 20 hours/week) work requirement, an exemption, or living in a currently-waived geographic area (7 CFR 273.24). New Jersey's own codified regulation text (N.J.A.C. 10:87-10.20, as fetched) lists pre-OBBBA exemption criteria (under 18, over 50, responsible for a dependent child under 18) that have NOT yet been formally amended to match the current federal standard — DFD's own separately-published \"Federal Changes to SNAP\" page (fetched directly) confirms the CURRENT operative rule, effective beginning July 4, 2025 per OBBBA/H.R. 1: the work-requirement age range widened from 18-54 to 18-65, and the dependent-child exemption narrowed from under-18 to under-14. THIS PACK'S FLAGSHIP FINDING: DFD's \"Federal Changes to SNAP\" page states plainly that \"New Jersey was under a waiver for all counties except Morris through January 31, 2026. As of February 1, 2026, only Camden City and Cape May County are under a time limit waiver.\" This pack independently fetched USDA's own approval letter for this waiver directly (New Jersey's FY2026 ABAWD waiver response, dated February 10, 2026): DHS requested (November 14, 2025) and FNS approved a waiver for Cape May County and Camden City, effective February 1, 2026 through January 31, 2027, based on three-month-average unemployment rates over 10 percent — Cape May County at 10.8% (February-April 2025 data) and Camden City at 10.5% (June-August 2025 data). This is close to the OPPOSITE structural position from North Carolina's flagship finding elsewhere in this roster (North Carolina is statutorily barred from ever requesting an ABAWD waiver) — New Jersey actively holds one right now, for two specific, narrowly-defined areas, on ordinary unemployment-rate grounds, not any special statutory authority. New Jersey's own ABAWD FAQ page (fetched directly) confirms the waiver period governs benefit-loss timing directly: \"Once we have counted 3 full months, you will lose your SNAP benefits until January 31, 2027\" for a non-exempt, non-waived-area ABAWD.",
+      "source_url": "https://www.law.cornell.edu/regulations/new-jersey/N-J-A-C-10-87-10-20"
+    },
+    {
+      "key": "criminal-justice-disqualifications",
+      "kind": "supplement",
+      "terms": [
+        "drug felony",
+        "felony conviction",
+        "criminal record",
+        "drug conviction",
+        "drug test",
+        "drug testing",
+        "lifetime ban",
+        "fleeing felon",
+        "probation",
+        "parole",
+        "intentional program violation",
+        "controlled substance"
+      ],
+      "citation": "N.J.A.C. 10:87-3.18 history (repealed by R.2012 d.031, eff. 2/6/2012); N.J.S.A. 44:10-48(d)(1) — New Jersey is a FULL OPT-OUT state: no SNAP disqualification for a drug felony conviction, of any kind, at any time",
+      "heading": "New Jersey does not disqualify anyone from SNAP because of a drug felony conviction — a full statutory opt-out from the federal ban, in effect since 2012",
+      "text": "New Jersey is a FULL OPT-OUT state from the federal drug-felony SNAP ban (21 U.S.C. § 862a(a)). This pack found two independent, mutually-corroborating pieces of primary/near-primary evidence. First: N.J.A.C. 10:87-3.18's own official History note, fetched directly from the current (through the New Jersey Register, June 16, 2025) codified manual, states that the FORMER N.J.A.C. 10:87-3.18 provision — titled, in the History note's own words, \"Individuals convicted of use, possession, or distribution of controlled substances\" — \"was repealed\" by R.2012 d.031, effective February 6, 2012 (operative March 7, 2012); the section number was subsequently reused for an unrelated duplicate-participation disqualification rule, and New Jersey's current NJ SNAP manual contains no drug-felony disqualification provision anywhere in its text as fetched. Second: the underlying statutory authority for that repeal is New Jersey Statutes Annotated 44:10-48(d)(1) — the WorkFirst New Jersey Act's own opt-out provision under 21 U.S.C. § 862a(d)(1)(A), which requires a state to act \"by specific reference in a law enacted\" rather than by regulation alone. This pack corroborated the statute's exact text via the Collateral Consequences Resource Center's national 50-state SNAP/TANF drug-conviction survey (a specialized legal research organization that quotes state statutes directly rather than summarizing them), which reads: \"Pursuant to the authorization provided to the states under 21 U.S.C. s.862a(d)(1), this State elects to exempt from the application of 21 U.S.C. s.862a(a)\" — applying to both WFNJ/food-assistance recipients with dependent children and single/childless individuals. This pack could NOT independently fetch the raw N.J.S.A. 44:10-48 statute text at Justia or FindLaw in this pass (both returned HTTP 403 even via curl with a browser User-Agent header, a different and apparently more deliberate anti-bot posture than the nj.gov 404s and Cornell/curl successes elsewhere in this pack) — flagged in freshness.json as a re-verification item, though the finding itself rests on two independent sources rather than a single unconfirmed one. New Jersey imposes no waiting period, no treatment-compliance condition, and no felony-class or conviction-location carve-out of the kind North Carolina's pack in this roster documents for its own modified-ban state — this is a genuine full opt-out, not a narrow reinstatement path.",
+      "source_url": "https://www.nj.gov/humanservices/notices/documents/rules-and-regulations/NJAC%2010_87%20NEW%20JERSEY%20SUPPLEMENTAL%20NUTRITION%20ASSISTANCE%20PROGRAM%20NJ%20SNAP%20MANUAL.PDF"
+    },
+    {
+      "key": "restaurant-meals-program",
+      "kind": "supplement",
+      "terms": [
+        "restaurant meals program",
+        "rmp",
+        "eat at a restaurant",
+        "use ebt at restaurant",
+        "hot meal",
+        "hot food"
+      ],
+      "citation": "USDA FNS Restaurant Meals Program state list (fetched 2026-08-11) — New Jersey does NOT operate a Restaurant Meals Program; several third-party sites describe a REPEATEDLY-INTRODUCED-BUT-NEVER-ENACTED New Jersey bill as if it were current law",
+      "heading": "New Jersey has no Restaurant Meals Program today — several SNAP-benefit explainer sites describe a bill that has been introduced (and left to die) in three separate legislative sessions as if it were already operating",
+      "text": "The Restaurant Meals Program (RMP) is a state OPTION under 7 CFR 274.7(g) allowing elderly (60+), disabled, and homeless SNAP recipients to buy prepared meals from authorized RESTAURANTS with their EBT card on an ONGOING basis. USDA's current official RMP state list (fetched directly, page updated August 7, 2026) names Arizona, Maryland, New York, California, Massachusetts, Rhode Island, Illinois (Cook and Franklin Counties only), Michigan, and Virginia — New Jersey is not on it, and this pack found no N.J.A.C. 10:87 section establishing an RMP. THIS PACK'S SECONDARY-SOURCE CORRECTION: several third-party SNAP-benefit explainer sites checked during this pass describe New Jersey as operating an RMP, using eligibility language (\"elderly 60+, disabled, or homeless individuals... may use SNAP benefits at approved food vendors... administered by the department in conjunction with the State's county welfare agencies\") that traces almost verbatim to a New Jersey bill that has been introduced, and left to die, in THREE separate legislative sessions without ever being enacted: Assembly Bill A2892 (2020-2021 session, official status \"Introduced - Dead\"), reintroduced as S1163/A1460 (2022 session), and currently pending as Senate Bill S3983 (introduced March 19, 2026 by Sen. Joseph Vitale, referred to the Senate Health, Human Services and Senior Citizens Committee, still awaiting action as of this pack's build date). The bill's own descriptive language appears to be the direct source of the third-party confusion — several explainer sites describe the BILL's proposed program in the present tense, as though it were already operating law, rather than pending legislation. A New Jersey SNAP recipient cannot use their EBT card at any restaurant today, regardless of age, disability, or housing status, unless and until this bill (or an equivalent) is actually enacted.",
+      "source_url": "https://www.fns.usda.gov/snap/retailer/restaurant-meals-program"
+    },
+    {
+      "key": "expedited-service",
+      "kind": "supplement",
+      "terms": [
+        "expedited",
+        "expedited service",
+        "emergency",
+        "emergency food stamps",
+        "fast benefits",
+        "how fast",
+        "urgent",
+        "same day",
+        "7 day",
+        "4 day"
+      ],
+      "citation": "N.J.A.C. 10:87-2.28; N.J.A.C. 10:87-2.29 — New Jersey expedited NJ SNAP service (federal-standard eligibility gates and the plain federal 7-day ceiling; no stated New Jersey-specific tighter internal buffer)",
+      "heading": "New Jersey uses the standard federal expedited-service eligibility gates and the plain federal 7-day benefit-availability ceiling — this pack found no New Jersey-specific internal buffer target the way North Carolina's pack documents for its own state",
+      "text": "N.J.A.C. 10:87-2.28 sets New Jersey's expedited-service eligibility gates to the federal standard: a household with gross monthly income under $150.00 AND liquid resources of $100.00 or less; a household whose combined monthly gross income and liquid resources are less than its rent/mortgage plus utility costs; or a destitute migrant/seasonal farmworker household with $100.00 or less in liquid resources. N.J.A.C. 10:87-2.29 requires the CSSA to make NJ SNAP benefits available \"not later than the seventh calendar day following the date an application was filed\" — the plain federal 7-day ceiling (7 CFR 273.2(i)), with the same standard extended to residents of substance-abuse treatment/rehabilitation centers, group living arrangements, and (calculated from release date rather than application date) residents of public institutions applying under SSA's Prerelease Program for the Institutionalized. If a household entitled to expedited service also qualifies for a waived office interview, the CSSA must still conduct the interview (unless the household cannot be reached) and complete the application within the expedited-service standard; time spent mailing an application to a household for signature does not count toward the 7-day clock. Unlike North Carolina's pack in this roster, which documents a North Carolina-specific internal 4-calendar-day operational buffer built to guarantee actual EBT availability inside the federal 7-day ceiling, this pack did not find a comparable New Jersey-specific tighter internal target in the sections fetched — flagged as a gap in freshness.json rather than assumed to not exist.",
+      "source_url": "https://www.law.cornell.edu/regulations/new-jersey/N-J-A-C-10-87-2-28"
+    },
+    {
+      "key": "reporting-certification",
+      "kind": "supplement",
+      "terms": [
+        "certification period",
+        "approval period",
+        "recertification",
+        "redetermination",
+        "how long does snap last",
+        "how long does my snap approval last",
+        "how long does my approval last",
+        "redo",
+        "renew",
+        "simplified reporting"
+      ],
+      "citation": "N.J.A.C. 10:87-6.20, 9.5 — New Jersey's certification periods: 12 months standard (with a mandatory 6-month interim contact for simplified-reporting cases), 24 months for households where every adult member is elderly or disabled",
+      "heading": "New Jersey's DEFAULT certification period is 12 months, with a mandatory 6-month check-in for most households — a 24-month period is reserved for households where every adult member is elderly or disabled",
+      "text": "N.J.A.C. 10:87-6.20 caps New Jersey's standard certification period at 12 months, except for households in which all adult members are elderly (60+) or disabled, which may be certified for up to 24 months, with at least one CSSA contact required at least every 12 months during that longer period. N.J.A.C. 10:87-9.5 governs simplified reporting: for households on simplified reporting (earned-income and unearned-income cases generally), the certification period is 12 months WITH a mandatory 6-month interim contact — a household on simplified reporting is required to report only ONE mid-certification change: total monthly household income exceeding 130 percent of the Federal Poverty Level (the maximum gross income eligibility limit for the standard NJ SNAP pathway) for households certified under the standard income test, or exceeding 185 percent of the Federal Poverty Level for households certified under the Expanded Categorical Eligibility pathway documented in the income-pathways supplement. This is a fairly typical two-tier structure — a 12-month default with a mid-period check-in, and a longer 24-month tier for elderly/disabled-only households — broadly similar in shape to several other states in this roster, without the unusually flat/short 6-month-default structure North Carolina's pack documents for its own state.",
+      "source_url": "https://www.law.cornell.edu/regulations/new-jersey/N-J-A-C-10-87-6-20"
+    },
+    {
+      "key": "program-identity",
+      "kind": "supplement",
+      "terms": [
+        "how to apply",
+        "where do i apply",
+        "apply for snap",
+        "mynjhelps",
+        "who runs",
+        "what agency",
+        "administers",
+        "county welfare agency",
+        "cssa",
+        "county social service agency",
+        "famis",
+        "ebt card"
+      ],
+      "citation": "NJ DHS/DFD program materials — New Jersey calls SNAP \"NJ SNAP\" and applies through the MyNJHelps portal; unlike North Carolina's pack in this roster, New Jersey's own manual uses \"FNS\" to mean the FEDERAL agency, never the state program",
+      "heading": "New Jersey applies through the MyNJHelps portal or a local County Social Service Agency; \"FNS\" in New Jersey's own manual means the federal USDA agency — the OPPOSITE convention from North Carolina's pack elsewhere in this roster",
+      "text": "New Jersey's SNAP program is branded \"NJ SNAP\" (New Jersey Supplemental Nutrition Assistance Program) throughout N.J.A.C. 10:87 and DFD's public materials. This pack flags an acronym-collision NOTE in the opposite direction from North Carolina's pack elsewhere in this roster: N.J.A.C. 10:87-1.1A's own abbreviations glossary defines \"FNS\" as \"the USDA, Food and Nutrition Service\" — the FEDERAL agency — never as New Jersey's own program name; a reference to \"FNS\" in New Jersey's manual always means the federal agency, unlike North Carolina's manual where the same three letters mean the state's own program. Applications run through the MyNJHelps self-service portal (mynjhelps.gov) or on paper at a local County Social Service Agency (CSSA — the manual's current defined term for the entity some older codified section text still calls a \"County Welfare Agency\"/CWA). New Jersey's eligibility system is FAMIS (Family Assistance Management Information System), the state's analog to systems like North Carolina's NC FAST or California's counterpart. CRITICALLY, and matching the administrative archetype this roster already documents for California, New York, Minnesota, Wisconsin, Ohio, and North Carolina: New Jersey runs a genuine state-SUPERVISED, county-ADMINISTERED system — DFD writes the N.J.A.C. 10:87 manual and issues statewide policy, but each CSSA is the entity responsible for day-to-day eligibility determination, enrollment, and recertification. This matters for operative practice: exact processing behavior and outreach materials can vary by CSSA even though the underlying manual is statewide — confirm current practice with the applicant's own CSSA rather than assuming uniform statewide execution. Benefits are issued on the \"NJ Families First EBT card\" (a newer chip/tap-enabled card was announced as forthcoming on DFD's own program page as of this pack's build date).",
+      "source_url": "https://www.nj.gov/humanservices/njsnap/"
+    }
+  ]
+}
