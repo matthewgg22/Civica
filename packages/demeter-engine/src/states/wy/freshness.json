@@ -1,0 +1,50 @@
+{
+  "_provenance": {
+    "note": "Wyoming dated facts. Because Wyoming has NO existing packages/snap-rules StatePolicy entry, there is no engine constant to cross-check against — every entry below is either a routine COLA-cycle reminder, a disclosed research gap, a genuinely time-sensitive not-yet-effective change, or a warning about an internal DFS-site inconsistency this pack found and resolved by treating the more clearly current source as authoritative.",
+    "extracted": "2026-08-12"
+  },
+  "entries": [
+    {
+      "key": "wy-do-i-qualify-page-stale-deductions",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "DFS's own 'SNAP: Do I Qualify?' consumer page states a Standard Deduction of $177 (AU sizes 1-3), $184 (AU 4), $215 (AU 5), $246 (AU 6+), and a $569 maximum excess-shelter deduction — all of which are LOWER than, and do not match, the figures on DFS's own current Table I page for the same FFY2026 cycle ($209/$223/$261/$299 standard deduction, $744 shelter cap). This pack could not date-stamp the 'Do I Qualify' page's figures to a specific prior FFY cycle with certainty, but treats them as stale relative to Table I's explicitly-dated current figures. Re-verify directly with DFS, or check whether the 'Do I Qualify' page has since been updated, before citing its specific dollar figures."
+    },
+    {
+      "key": "wy-food-restriction-waiver-not-yet-effective",
+      "kind": "expires",
+      "date": "2027-02-01",
+      "warning": "Wyoming has an APPROVED but NOT-YET-EFFECTIVE federal demonstration-project waiver (approval letter dated 3/4/2026) to exclude 'sweetened, carbonated beverages' from SNAP-purchasable items statewide, effective February 1, 2027 for a 2-year period. As of this pack's fetch date (2026-08-12), SNAP recipients in Wyoming can still purchase sweetened, carbonated beverages with EBT — do not state the restriction as currently in effect until on or after 2/1/2027. Re-verify this has actually taken effect (and has not been delayed, rescinded, or modified) directly against dfs.wyo.gov or a current FNA source before that date."
+    },
+    {
+      "key": "wy-abawd-waiver-status-not-independently-reconfirmed-past-fetch",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "This pack's conclusion that Wyoming currently has no active area-wide ABAWD waiver rests on Wyoming's complete absence from USDA FNA's SNAP Time Limit (ABAWD) Waivers FY2025-2029 state-response index as of this pack's fetch (2026-08-12), and no DFS manual section describing one. Re-check https://www.fna.usda.gov/snap/waivers/timelimit/2025-2029 directly before restating this with full confidence beyond this window, since Wyoming could submit and receive a new waiver request at any time."
+    },
+    {
+      "key": "wy-drug-felony-no-primary-wyoming-statute-located",
+      "kind": "gap",
+      "date": "2026-10-01",
+      "warning": "This pack's finding that Wyoming has fully opted out of the federal drug-felony SNAP ban rests on USDA FNA's own 16th-edition State Options Report (Wyoming listed under 'No disqualification') and the DFS manual's own silence on any drug-felony disqualification section — this pack did NOT independently locate the specific Wyoming Statutes citation or DFS policy-letter authorizing this opt-out (unlike Delaware's traceable 21 DE Reg. 722 repeal order). The conclusion is well-corroborated across two independent primary sources but the underlying enabling-statute citation itself remains an unresolved, disclosed gap rather than a fabricated citation."
+    },
+    {
+      "key": "wy-sua-not-independently-cross-checked-against-national-methodology",
+      "kind": "gap",
+      "date": "2026-10-01",
+      "warning": "Wyoming's Standard Utility Allowance ($510), utilities-only standard ($340), and telephone-only allowance ($57) are drawn directly from DFS's own current, explicitly-dated Table I page — a genuine contrast with this roster's Delaware pack, which could not locate its own state's COLA notice at all. This pack did NOT separately cross-check Wyoming's specific SUA dollar figure against USDA's FY2026 national SUA self-adjustment methodology memo the way the Delaware pack attempted (and failed) to do; Wyoming's own directly-published figure is treated as authoritative and current for the FFY2026 cycle without that additional cross-check."
+    },
+    {
+      "key": "wy-ffy2026-cola-reminder",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "This pack's confirmed income-eligibility dollar figures (165%/130%/100% FPL table by household size, standard/medical/shelter/utility deductions, maximum allotments) are drawn from Wyoming DFS's current Table I page, explicitly published for the period October 1, 2025 - September 30, 2026 (the FFY2026 cycle). The FFY2027 COLA cycle begins October 1, 2026 — under two months from this pack's fetch date. Check https://dfs.wyo.gov/about/policy-manuals/snap-and-power-policy-manual/table-i-snap-income-limits/ after that date before restating any Wyoming-specific income, deduction, or benefit-amount figure with full confidence; DFS's own page pattern (posting the new FFY table above the prior FFY table on the same URL) suggests the FFY2027 table should appear at the same URL when published."
+    },
+    {
+      "key": "wy-fna-agency-rebrand-2026",
+      "kind": "expires",
+      "date": "2026-12-31",
+      "warning": "This pack found USDA's Food and Nutrition Service (FNS) now redirects (HTTP 301) to a rebranded 'Food and Nutrition Administration' (FNA) domain (fna.usda.gov) for at least the SNAP State Options Report host and the ABAWD Time Limit Waivers index — a rename this pack had not previously encountered elsewhere in this roster. This pack did not independently research the scope, date, or permanence of this rebrand beyond observing the redirect; treat 'FNS' and 'FNA' as referring to the same federal agency for Wyoming SNAP administration purposes as of this pack's fetch date, but re-verify if citing the agency name directly in a context where precision matters."
+    }
+  ]
+}

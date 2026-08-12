@@ -1,0 +1,30 @@
+{
+  "_provenance": {
+    "note": "Wyoming citation authorities. Wyoming's operative SNAP policy manual is the SNAP and POWER Policy Manual, cited by a numbered-section convention such as 'Section 502' (Categorically Eligible Persons) or 'Section 708' (ABAWD Requirements), grouped into hundreds-blocks (100s intake, 500s eligibility factors, 600s citizenship/fleeing-felon, 700s work requirements, 800s assets, 1100s income, 1200s certification). This pack defines a single citation family, 'wysec', matching this section-number convention, since Wyoming's manual (unlike Delaware's DSSM, which mixes 'DSSM 9042'-style numbers with a separate Register-of-Regulations citation family) uses one consistent numbering scheme throughout with no separate amendment-order citation family this pack found reason to track.",
+    "extracted": "2026-08-12"
+  },
+  "patterns": [
+    {
+      "key": "wysec",
+      "regex": "\\bSection\\s?(\\d{3,4}(?:\\.\\d{1,2})?)\\b",
+      "flags": "gi",
+      "template": "Section $1",
+      "normalize": "none",
+      "match": "exact",
+      "note": "Wyoming DFS SNAP and POWER Policy Manual, cited with its own section number, e.g. Section 502 (Categorically Eligible Persons), Section 606 (Citizenship and Immigrant Status), Section 610 (Fleeing Felons/Probation or Parole Violator), Section 708 (ABAWD Requirements), Section 800 (Asset Limits), Section 1201 (Establishing a SNAP Certification Period)."
+    }
+  ],
+  "known": {
+    "wysec": [
+      { "value": "Section 401", "note": "Application/Intake Process — application timelines, Tribal TANF routing for enrolled Tribal members resident in Fremont or Hot Springs County" },
+      { "value": "Section 402", "note": "Client's Rights — includes the FDPIR/SNAP mutual-exclusion clause: households must choose one or the other and may not participate in both simultaneously" },
+      { "value": "Section 502", "note": "Categorically Eligible Persons — narrow SSI/POWER/Tribal-TANF-recipiency-based categorical eligibility only; NO 200% FPL BBCE gate exists in Wyoming's manual" },
+      { "value": "Section 606", "note": "Citizenship and Immigrant Status — current post-OBBBA (7/4/2025) noncitizen-eligibility table with embedded links to FNS implementation guidance" },
+      { "value": "Section 610", "note": "Fleeing Felons/Probation or Parole Violator — the ONLY criminal-justice SNAP disqualification category in Wyoming's manual; no drug-felony-conviction disqualification section exists anywhere in the 600 series" },
+      { "value": "Section 702", "note": "Exemptions From Work Registration — 12 categories, including age 60+, physical/mental unfitness, caretaker of a child under 6, drug/alcohol treatment program participant, bona fide student" },
+      { "value": "Section 708", "note": "ABAWD Requirements — current post-OBBBA age band (18 through 64 as of July 4, 2025), dependent-under-14 threshold, 36-month fixed period (current: 10/1/2024-9/30/2027), seven exemption categories including 'is a member of an Indian tribe'" },
+      { "value": "Section 800", "note": "Asset Limits — $3,000 (under 60, no disabled member) / $4,500 (60+ or disabled member present), matching the current federal FY2026 floor exactly; vehicle exemption for ALL licensed and unlicensed vehicles used for transportation" },
+      { "value": "Section 1201", "note": "Establishing a SNAP Certification Period — caps ALL certification periods at 12 months (calendar-month basis), including all-elderly/disabled no-earned-income households (no extended 24-month track), effective 1/1/2016" }
+    ]
+  }
+}
