@@ -5709,6 +5709,28 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   font-size: 0.8rem; line-height: 1.5; color: var(--demeter-body);
 }
+/* The two-way switch at the top of the rail. A segmented control rather than a
+   toggle: both options are named, so neither is the unlabelled "off" state of
+   the other, and nobody has to work out what the switch does before using it. */
+.dmw__mode {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 0.25rem;
+  margin: 0.75rem 0 0.9rem; padding: 0.25rem;
+  background: var(--demeter-paper); border: 1px solid var(--demeter-rule);
+  border-radius: 999px;
+}
+.dmw__modeopt {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.78rem; font-weight: 600; line-height: 1.2;
+  min-height: 36px; padding: 0.4rem 0.6rem; border: 0; border-radius: 999px;
+  background: transparent; color: var(--demeter-muted); cursor: pointer;
+  transition: background 140ms ease-out, color 140ms ease-out;
+}
+.dmw__modeopt[data-on] {
+  background: var(--demeter-terracotta-deep); color: var(--demeter-paper);
+}
+.dmw__modeopt:focus-visible { outline: 2px solid var(--demeter-ink); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) { .dmw__modeopt { transition: none; } }
+
 .dmw__needed-count {
   font-size: 0.68rem; color: var(--demeter-terracotta-deep);
   border: 1px solid #EAD9C8; background: #F7EDE4; border-radius: 5px; padding: 0.05rem 0.35rem;

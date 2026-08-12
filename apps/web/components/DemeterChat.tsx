@@ -24,7 +24,7 @@ import {
 import type { ScreeningClassification, PartialFacts } from "@civica/demeter-engine";
 import { DemeterMark } from "./DemeterMark";
 import { DemeterStatePicker } from "./DemeterStatePicker";
-import { DemeterWorksheet } from "./DemeterWorksheet";
+import { DemeterWorksheet, type WorksheetMode } from "./DemeterWorksheet";
 import { DemeterFeedback } from "./DemeterFeedback";
 import { DemeterSave } from "./DemeterSave";
 import { T } from "../lib/i18n/demeter-chat-copy";
@@ -191,6 +191,12 @@ export function DemeterChat({
   // where a state value would be a stale closure a turn behind.
   const factsRef = useRef<PartialFacts>({});
   const [classification, setClassification] = useState<ScreeningClassification | null>(null);
+  /** Defaults to "ask" DELIBERATELY. The rail used to read household facts out
+   *  of the conversation from the moment a state was picked, whether or not
+   *  anyone had asked for an estimate — a reasonable thing to offer and an
+   *  unreasonable thing to do quietly to someone who came to find out how the
+   *  system works before telling it anything about themselves. */
+  const [worksheetMode, setWorksheetMode] = useState<WorksheetMode>("ask");
   // Bumped by the estimate rail to open the state picker. Without a state
   // there is no benefit calculation at all, so this is the difference between
   // a live estimate and a dead rail for anyone who never touched the picker.
@@ -362,7 +368,10 @@ export function DemeterChat({
     // in series would make every reply feel slower for a panel that is
     // supplementary. It is intentionally not awaited and intentionally cannot
     // throw into this scope — the answer must not depend on it.
-    if (state) void refreshWorksheet(apiMessages);
+    // THE GATE. In "ask" mode this call never happens, so no facts are
+    // extracted, nothing lands in factsRef, and the paid extraction round trip
+    // is not made either.
+    if (state && worksheetMode === "estimate") void refreshWorksheet(apiMessages);
 
     const controller = new AbortController();
     abortRef.current = controller;
@@ -506,7 +515,7 @@ export function DemeterChat({
     // two staying in sync is currently a coincidence of their dep lists
     // matching: give refreshWorksheet one dependency send does not have, and
     // send would silently hold a stale copy with no warning.
-  }, [input, busy, messages, state, lang, t, refreshWorksheet, resetInputHeight]);
+  }, [input, busy, messages, state, lang, t, refreshWorksheet, resetInputHeight, worksheetMode]);
 
   const hasChat = messages.length > 0;
 
@@ -754,6 +763,21 @@ export function DemeterChat({
           saved={conversationSaved}
           copy={t.worksheet}
           onPickState={() => setOpenPicker((n) => n + 1)}
+          mode={worksheetMode}
+          onModeChange={(m) => {
+            setWorksheetMode(m);
+            // Turning it OFF throws away what was gathered. Leaving the last
+            // estimate on screen under "Just asking" would contradict the
+            // sentence right beneath it, and keeping the facts in memory
+            // against a later switch-back would make "nothing is gathered"
+            // mean "nothing is gathered from now on", which is not what it
+            // says.
+            if (m === "ask") {
+              factsRef.current = {};
+              setClassification(null);
+              setAnnouncement(t.worksheet.switchedToAsk);
+            }
+          }}
         />
       </div>
     </div>

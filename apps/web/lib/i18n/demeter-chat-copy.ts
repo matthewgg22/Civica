@@ -125,6 +125,16 @@ export const T = {
       disclaimer: "An estimate, not a decision. Your county agency decides.",
       pickState: "Pick your state above and your estimate can build here as you talk.",
       pickStateCta: "Choose your state",
+      // The two-way switch at the top of the rail. "Just asking" is the
+      // DEFAULT: the panel used to gather household facts from the conversation
+      // whether or not anyone asked it to, which is a thing to offer rather
+      // than a thing to do quietly to someone already nervous about the system.
+      modeLabel: "What do you want from this?",
+      modeAsk: "Just asking",
+      modeEstimate: "Build my estimate",
+      modeAskNote:
+        "Ask anything. Nothing you say is gathered here, and no estimate is worked out.",
+      switchedToAsk: "Estimate cleared. Nothing is being gathered.",
     },
   },
   es: {
@@ -222,6 +232,12 @@ export const T = {
       disclaimer: "Un estimado, no una decisión. Tu agencia del condado decide.",
       pickState: "Elige tu estado arriba y tu estimado se irá armando aquí.",
       pickStateCta: "Elige tu estado",
+      modeLabel: "¿Qué buscas aquí?",
+      modeAsk: "Solo preguntar",
+      modeEstimate: "Calcular mi estimado",
+      modeAskNote:
+        "Pregunta lo que quieras. Nada de lo que digas se recoge aquí y no se calcula ningún estimado.",
+      switchedToAsk: "Estimado borrado. No se está recogiendo nada.",
     },
   },
   vi: {
@@ -318,6 +334,12 @@ export const T = {
       disclaimer: "Chỉ là ước tính, không phải quyết định. Cơ quan quận của bạn mới là nơi quyết định.",
       pickState: "Chọn tiểu bang của bạn ở trên để ước tính có thể hiện ở đây.",
       pickStateCta: "Chọn tiểu bang",
+      modeLabel: "Bạn muốn gì ở đây?",
+      modeAsk: "Chỉ hỏi thôi",
+      modeEstimate: "Tính mức ước tính",
+      modeAskNote:
+        "Cứ hỏi thoải mái. Không điều gì bạn nói được thu thập ở đây, và không có ước tính nào được tính.",
+      switchedToAsk: "Đã xóa ước tính. Không có gì đang được thu thập.",
     },
   },
   zh: {
@@ -408,6 +430,11 @@ export const T = {
       disclaimer: "这只是估算，不是决定。最终由您所在县的机构裁定。",
       pickState: "请在上方选择您所在的州，估算就能在这里生成。",
       pickStateCta: "选择您所在的州",
+      modeLabel: "您希望在这里得到什么？",
+      modeAsk: "只是问问",
+      modeEstimate: "帮我算估算",
+      modeAskNote: "随便问。您说的内容不会在这里被收集，也不会计算任何估算。",
+      switchedToAsk: "估算已清除。没有在收集任何内容。",
     },
   },
 } as const;
