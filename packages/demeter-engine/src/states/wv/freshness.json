@@ -1,0 +1,44 @@
+{
+  "_provenance": {
+    "note": "West Virginia dated facts. Because West Virginia has NO existing packages/snap-rules StatePolicy entry, there is no engine constant to cross-check against — every entry below is either a routine COLA-cycle reminder, a disclosed research gap, or a warning about a confirmed time-sensitive fact this pack found.",
+    "extracted": "2026-08-12"
+  },
+  "entries": [
+    {
+      "key": "wv-sua-dollar-figures-unconfirmed",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "This pack's shelter-utility-deductions supplement describes West Virginia's Standard Utility Allowance (SUA) TIER STRUCTURE (Heating and Cooling Allowance, Basic Utility Allowance, Single Utility Allowance) based on secondary-source corroboration, but this pack could NOT locate a directly-fetched, dated primary-source table stating West Virginia's current SUA dollar figures — the wvdhhr.org Income Maintenance Manual mirror this pack fetched (Chapters 9 and 11) carries only 2008-2013-dated procedural content, not a current deductions table. Locate and fetch West Virginia's current Income Maintenance Manual Chapter 12 (Deductions) or an equivalent bfa.wv.gov page directly before stating a specific SUA dollar figure to an applicant."
+    },
+    {
+      "key": "wv-abawd-waiver-lapse-is-this-packs-own-inference",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "This pack concluded West Virginia's historical statewide ABAWD waiver has LAPSED under OBBBA's tightened 10%-county-unemployment waiver threshold, based on cross-checking abawdmap.us's live 'No waiver — rule applies' status against current West Virginia county unemployment data (McDowell County, the state's highest, at approximately 9.1%, short of the new 10% threshold). This is THIS PACK'S OWN INFERENCE — this pack did not find a single DoHS/BFA or USDA FNA page stating in as many words that West Virginia's waiver has lapsed. Re-verify current ABAWD waiver status directly with DoHS (1-800-642-8589) or the current USDA FNA ABAWD waivers page before stating this with full confidence."
+    },
+    {
+      "key": "wv-food-restriction-waiver-litigation-monitor",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "West Virginia's SNAP soda-purchase restriction (effective 1/1/2026) had NO litigation or court challenge affecting it as of this pack's fetch date (2026-08-12), a genuine contrast with Nebraska's parallel waiver, which was vacated by a federal court (Aragon v. Rollins, June 22, 2026) under the same federal pilot-project authority. Because West Virginia's waiver rests on the SAME underlying USDA pilot-project authority the Aragon court found deficient for Nebraska, a similar future legal challenge to West Virginia's waiver is plausible but NOT confirmed as pending. Re-check https://www.fns.usda.gov/snap/waivers/foodrestriction/westvirginia and recent West Virginia news coverage directly before stating West Virginia's soda restriction is settled/permanent."
+    },
+    {
+      "key": "wv-imm-chapters-stale-procedural-only",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "This pack's fetched West Virginia Income Maintenance Manual (IMM) PDF chapters (Chapters 9 and 11, from the legacy wvdhhr.org domain) carry page-footer dates as old as 2008-2013 — over a decade stale relative to this pack's fetch date. This pack used these chapters ONLY for procedural/structural content (how asset determinations work, AG composition rules) that is unlikely to have changed, NOT for any current dollar figure. Before citing any IMM chapter number for a CURRENT dollar figure, confirm the chapter has been updated more recently via bfa.wv.gov/income-maintenance-manual directly."
+    },
+    {
+      "key": "wv-dhhr-to-dohs-naming-transition",
+      "kind": "expires",
+      "date": "2026-12-31",
+      "warning": "West Virginia's Department of Health and Human Resources (DHHR) was split by a 2023 reorganization into three successor agencies (Department of Health, Department of Human Services, Department of Health Facilities). SNAP is now administered by the Department of Human Services (DoHS)'s Bureau for Family Assistance (bfa.wv.gov), this pack's primary source throughout — but the legacy dhhr.wv.gov domain remains in active use for some press releases and forms as of this pack's fetch date. Before citing a dhhr.wv.gov URL as this pack's primary source, confirm it has not been superseded by an equivalent bfa.wv.gov or dohs.wv.gov page."
+    },
+    {
+      "key": "wv-ffy2027-cola-reminder",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "This pack's confirmed dollar figures (130%/200% FPL gross-income table by household size, $3,000/$4,500 asset limits, $35 medical-deduction threshold) are drawn from West Virginia Bureau for Family Assistance's live SNAP page, matching the current FFY2026 cycle (October 1, 2025 - September 30, 2026). The FFY2027 COLA cycle begins October 1, 2026 — under two months from this pack's fetch date. Check bfa.wv.gov/snap for updated figures after that date before restating any West Virginia-specific dollar figure with full confidence."
+    }
+  ]
+}
