@@ -120,4 +120,10 @@ export const QUESTIONS: Record<string, string[]> = {
     "Does my car count against me for SNAP in Missouri?",
     "I have a drug felony conviction — can I still get SNAP in Missouri?",
   ],
+  MD: [
+    "What is the income limit for SNAP in Maryland?",
+    "Can I use my EBT card to buy a hot meal at a restaurant in Maryland?",
+    "I have a drug felony conviction — can I still get SNAP in Maryland?",
+    "How long does my SNAP approval last in Maryland?",
+  ],
 };
