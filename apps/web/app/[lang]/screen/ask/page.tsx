@@ -15,13 +15,16 @@
 
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
-import { VERIFIED_STATES, VERIFIED_STATE_CODES, isAnswerLang, LANG_TAG, type AnswerLang } from "@civica/demeter-engine/packs";
-import { geoHint } from "../../../../lib/geo-hint";
-import { DemeterEntry } from "../../../../components/DemeterEntry";
+import { VERIFIED_STATES, isAnswerLang, LANG_TAG, type AnswerLang } from "@civica/demeter-engine/packs";
 import { DemeterNav } from "../../../../components/DemeterNav";
 import { DemeterFooter } from "../../../../components/DemeterFooter";
-import { T } from "../../../../lib/i18n/demeter-chat-copy";
-import { SnapOrientation, SnapDetail } from "../../../../components/SnapOverview";
+import {
+  SnapOrientation,
+  SnapDetail,
+  SnapAskCta,
+  SnapFoodNow,
+  SnapFears,
+} from "../../../../components/SnapOverview";
 import { PAGE_COPY } from "../../../../lib/i18n/snap-page";
 import { alternateLanguages, askUrl, PREFIXED_LANGS } from "../../../../lib/i18n/routes";
 import { askStructuredData } from "../../../screen/ask/structured-data";
@@ -92,7 +95,6 @@ export default async function LocalizedAskPage({
     if (save) params.set("save", save);
     redirect(`/${l}/chat?${params.toString()}`);
   }
-  const hint = await geoHint(VERIFIED_STATE_CODES);
   const initialState =
     state && VERIFIED_STATES.some((s) => s.code === state.toUpperCase())
       ? state.toUpperCase()
@@ -103,24 +105,12 @@ export default async function LocalizedAskPage({
       <DemeterNav lang={l} path="/screen/ask" />
       <div className="dmpage__inner">
         <SnapOrientation lang={l} states={VERIFIED_STATES} />
-        <div className="dmpage__chat">
-          {/* Entry point, not a chat — same as the English page. See
-              DemeterEntry's header for why the chat lives on its own route. */}
-          <DemeterEntry
-            states={VERIFIED_STATES}
-            initialState={initialState}
-            lang={l}
-            hint={hint}
-            copy={{
-              placeholder: T[l].inputPlaceholder,
-              send: T[l].send,
-              suggestions: [T[l].empty1, T[l].empty2, T[l].empty3],
-              picker: T[l].picker,
-              howWeVerify: T[l].howWeVerify,
-            }}
-          />
-        </div>
+        <SnapFoodNow lang={l} />
+        {/* Composer, picker and suggestions all live on /chat now — same
+            as the English page. This one explains and hands over. */}
+        <SnapAskCta lang={l} state={initialState} />
         <SnapDetail states={VERIFIED_STATES} lang={l} />
+        <SnapFears lang={l} />
       </div>
       <DemeterFooter lang={l} />
       <script

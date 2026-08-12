@@ -69,7 +69,25 @@ export interface DemeterWorksheetCopy {
   disclaimer: string;
   pickState: string;
   pickStateCta: string;
+  modeLabel: string;
+  modeAsk: string;
+  modeEstimate: string;
+  modeAskNote: string;
+  switchedToAsk: string;
 }
+
+/** What this panel is for right now.
+ *
+ *  "ask" is the DEFAULT, and that is the point of the switch. This rail used to
+ *  read household facts out of the conversation — who lives with you, what you
+ *  earn, what you pay in rent — from the moment you picked a state, whether or
+ *  not you had asked for an estimate. That is a reasonable thing to OFFER and
+ *  an unreasonable thing to do quietly to someone who came to find out how the
+ *  system works before telling it anything about themselves.
+ *
+ *  It also stops a paid extraction call per turn for everyone who never wanted
+ *  the estimate. */
+export type WorksheetMode = "ask" | "estimate";
 
 export function DemeterWorksheet({
   classification,
@@ -77,6 +95,8 @@ export function DemeterWorksheet({
   saved,
   copy,
   onPickState,
+  mode,
+  onModeChange,
 }: {
   classification: ScreeningClassification | null;
   stateSelected: boolean;
@@ -89,6 +109,8 @@ export function DemeterWorksheet({
    *  find a control elsewhere on the page was the difference between a working
    *  estimate and a dead rail for anyone who never touched the picker. */
   onPickState?: () => void;
+  mode: WorksheetMode;
+  onModeChange: (m: WorksheetMode) => void;
 }) {
   const outcome = classification?.outcome;
   const outcomeCopy = outcome ? OUTCOME_COPY[outcome] : undefined;
@@ -101,10 +123,42 @@ export function DemeterWorksheet({
     <aside className="dmw" aria-label={copy.title}>
       <div className="dmw__head">
         <span className="dmw__eyebrow">{copy.title}</span>
-        <span className="dmw__sub">{copy.subtitle}</span>
+        {/* "Builds as you talk" is a claim about what is happening, and in ask
+            mode nothing is. Same defect as the old retention line: a standing
+            sentence that the state below it contradicts. */}
+        {mode === "estimate" && <span className="dmw__sub">{copy.subtitle}</span>}
       </div>
 
-      {!stateSelected ? (
+      {/* A radiogroup, not two toggle buttons: it is one exclusive choice, and
+          a screen reader should hear "2 of 2" rather than two unrelated
+          pressed/unpressed states. */}
+      <div className="dmw__mode" role="radiogroup" aria-label={copy.modeLabel}>
+        {(
+          [
+            ["ask", copy.modeAsk],
+            ["estimate", copy.modeEstimate],
+          ] as Array<[WorksheetMode, string]>
+        ).map(([value, label]) => (
+          <button
+            key={value}
+            type="button"
+            role="radio"
+            aria-checked={mode === value}
+            className="dmw__modeopt"
+            data-on={mode === value ? "true" : undefined}
+            onClick={() => onModeChange(value)}
+          >
+            {label}
+          </button>
+        ))}
+      </div>
+
+      {mode === "ask" ? (
+        // Nothing below this point applies: there is no estimate because none
+        // was asked for. Say that plainly rather than showing an empty panel
+        // that looks like it is waiting for something.
+        <p className="dmw__empty">{copy.modeAskNote}</p>
+      ) : !stateSelected ? (
         // snap-rules is state-keyed: there is no honest federal-floor benefit
         // number, so we ask rather than show an estimate we can't stand behind.
         // The ask is a BUTTON — see onPickState.
@@ -164,7 +218,10 @@ export function DemeterWorksheet({
       )}
 
       <p className="dmw__privacy">{saved ? copy.privacySaved : copy.privacy}</p>
-      <p className="dmw__disclaimer">{copy.disclaimer}</p>
+      {/* Only where there is an estimate to disclaim. The retention line above
+          stays in both modes — questions are logged either way, which is the
+          whole reason it cannot be quietly dropped. */}
+      {mode === "estimate" && <p className="dmw__disclaimer">{copy.disclaimer}</p>}
     </aside>
   );
 }

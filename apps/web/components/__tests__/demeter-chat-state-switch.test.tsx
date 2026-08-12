@@ -3,6 +3,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, fireEvent, cleanup, waitFor } from "@testing-library/react";
 import type { PackMeta } from "@civica/demeter-engine/packs";
 import { DemeterChat } from "../DemeterChat";
+import { T } from "../../lib/i18n/demeter-chat-copy";
 
 // State-switch spec (T12 / T-C): switching scope mid-conversation must
 // (1) insert a visible divider — earlier answers may no longer apply — and
@@ -64,7 +65,7 @@ afterEach(() => {
 });
 
 async function sendQuestion(text: string) {
-  fireEvent.change(screen.getByPlaceholderText(/Ask anything about SNAP/), {
+  fireEvent.change(screen.getByPlaceholderText(T.en.inputPlaceholder), {
     target: { value: text },
   });
   fireEvent.click(screen.getByRole("button", { name: "Send" }));
@@ -133,7 +134,7 @@ describe("DemeterChat state switching", () => {
     fetchMock.mockResolvedValueOnce(
       new Response(JSON.stringify({ reason: "rate_limited" }), { status: 429 }),
     );
-    fireEvent.change(screen.getByPlaceholderText(/Ask anything about SNAP/), {
+    fireEvent.change(screen.getByPlaceholderText(T.en.inputPlaceholder), {
       target: { value: "rejected" },
     });
     fireEvent.click(screen.getByRole("button", { name: "Send" }));
@@ -177,5 +178,25 @@ describe("DemeterChat heading level", () => {
     render(<DemeterChat states={STATES} />);
     expect(screen.queryByRole("heading", { level: 1 })).toBeNull();
     expect(screen.getByText("Demeter")).toBeTruthy();
+  });
+});
+
+describe("a transcript reads as a conversation", () => {
+  it("puts the turn's alignment on the flex CHILD, not on the bubble", async () => {
+    // The bubble used to sit inside a bare <div>, so THAT was the flex child
+    // and the bubble's own `align-self: flex-end` reached nothing. Measured
+    // before the fix: a three-word question rendered 635px wide, on the left,
+    // in the same place and shape as the answer.
+    //
+    // Asserted structurally because the symptom is purely visual — every test
+    // passed while it was broken, and it shipped for months.
+    render(<DemeterChat states={STATES} />);
+    await sendQuestion("whats snap?");
+    const bubble = document.querySelector(".demeter__msg--user");
+    expect(bubble, "no user bubble rendered").not.toBeNull();
+    const turn = bubble!.parentElement!;
+    expect(turn.className, "the bubble's parent must carry the turn class").toContain(
+      "demeter__turn--user",
+    );
   });
 });

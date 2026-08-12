@@ -18,6 +18,9 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { NAP_JURISDICTIONS, napJurisdiction, type PackMeta } from "@civica/demeter-engine/packs";
+import { StateFlag } from "./StateFlag";
+import { programDisplayName } from "../lib/program-name";
+import { stateName } from "../lib/state-names";
 
 export interface StatePickerCopy {
   label: string;
@@ -148,13 +151,19 @@ export function DemeterStatePicker({
             is worse than the text it would replace. Two letters in the display
             serif stay legible at any size and work for all 50 states on day
             one, not just the verified ones. */}
-        <span className="dmst__mark" data-federal={selected ? undefined : "true"}>
-          {selected ? selected.code : "US"}
-        </span>
+        {selected ? (
+          <StateFlag code={selected.code} />
+        ) : napSelected ? (
+          <StateFlag code={napSelected.code} />
+        ) : (
+          // The federal floor is not a place. No flag, and the muted chip makes
+          // "All states" never look like a selection someone made.
+          <span className="dmst__mark" data-federal="true">US</span>
+        )}
         <span className="dmst__trigger-text">
           <span className="dmst__trigger-label">{copy.label}</span>
           <span className="dmst__trigger-value">
-            {selected ? selected.program : copy.federal}
+            {selected ? programDisplayName(selected.program) : copy.federal}
           </span>
         </span>
         {selected ? <span className="dmst__check" aria-hidden>✓</span> : null}
@@ -224,8 +233,13 @@ export function DemeterStatePicker({
               up scoped to the wrong state. */}
           {hintState && !value && !query && (
             <button type="button" className="dmst__hint" onClick={() => pick(hintState.code)}>
-              <span className="dmst__mark">{hintState.code}</span>
-              <span>{copy.useHint.replace("{state}", hintState.program)}</span>
+              <StateFlag code={hintState.code} />
+              {/* The STATE's name. This substituted `program`, so the row read
+                  "Use Supplemental Nutrition Assistance Program (SNAP) —
+                  Massachusetts uses the federal name; …" instead of "Use
+                  Massachusetts", which is what the comment above always said it
+                  should say. */}
+              <span>{copy.useHint.replace("{state}", stateName(hintState.code))}</span>
             </button>
           )}
           <ul className="dmst__list" role="listbox" aria-label={copy.label}>
@@ -253,10 +267,13 @@ export function DemeterStatePicker({
                   className={`dmst__opt ${value === s.code ? "is-sel" : ""}`}
                   onClick={() => pick(s.code)}
                 >
-                  <span className="dmst__mark">{s.code}</span>
+                  {/* Larger here than in the trigger: the dropdown is where you
+                      scan for your own state, and recognition is the whole
+                      reason the flag is there at all. */}
+                  <StateFlag code={s.code} size={34} />
                   <span className="dmst__opt-text">
                     <span className="dmst__opt-name">
-                      {s.program}
+                      {programDisplayName(s.program)}
                       <span className="dmst__opt-badge">{copy.verified}</span>
                     </span>
                     <span className="dmst__opt-sub">{s.agency}</span>
@@ -284,9 +301,7 @@ export function DemeterStatePicker({
                       className={`dmst__opt ${value === j.code ? "is-sel" : ""}`}
                       onClick={() => pick(j.code)}
                     >
-                      <span className="dmst__mark" data-federal="true">
-                        {j.code}
-                      </span>
+                      <StateFlag code={j.code} />
                       <span className="dmst__opt-text">
                         <span className="dmst__opt-name">{j.name}</span>
                         <span className="dmst__opt-sub">{j.program}</span>

@@ -1,14 +1,20 @@
 // /screen/ask — the canonical English entry page, and the page the whole
 // product is judged on. Structure:
 //
-//   orientation  →  chat  →  depth  →  JSON-LD
+//   orientation  →  hand-off  →  depth  →  JSON-LD
 //
 // The orientation bar is ~45 words carrying the page's only <h1>: what Demeter
-// is, then what SNAP is, in that order. The chat follows immediately. The depth
-// below carries legitimacy and GEO weight. Everything except the chat is
-// server-rendered, because content that only exists after hydration is content
-// a generative search engine never sees — and being quotable BY those engines
-// is an explicit goal here.
+// is, then what SNAP is, in that order. The depth below carries legitimacy and
+// GEO weight. The whole page is server-rendered, because content that only
+// exists after hydration is content a generative search engine never sees —
+// and being quotable BY those engines is an explicit goal here.
+//
+// THE CHAT IS NOT HERE. It lives entirely on /chat, reached from the nav tab
+// and from the hand-off card. This page used to carry a working state picker
+// and composer, which meant two places to begin the same conversation, a
+// picker whose choice this page then had to forward, and a first-time visitor
+// meeting half a chat on a page that is not the chat. Now the page explains and
+// hands over — and it no longer ships a client-side picker to do it.
 //
 // WAS: lede → chat → depth, where the lede was an <h2> about SNAP plus four
 // trust rows, and the product went unnamed until the chat card's own <h1> at
@@ -25,12 +31,15 @@
 // hreflang annotations — a one-directional hreflang set is silently ignored.
 
 import type { Metadata } from "next";
-import { VERIFIED_STATES, VERIFIED_STATE_CODES } from "@civica/demeter-engine/packs";
-import { geoHint } from "../../../lib/geo-hint";
+import { VERIFIED_STATES } from "@civica/demeter-engine/packs";
 import { redirect } from "next/navigation";
-import { DemeterEntry } from "../../../components/DemeterEntry";
-import { T } from "../../../lib/i18n/demeter-chat-copy";
-import { SnapOrientation, SnapDetail } from "../../../components/SnapOverview";
+import {
+  SnapOrientation,
+  SnapDetail,
+  SnapAskCta,
+  SnapFoodNow,
+  SnapFears,
+} from "../../../components/SnapOverview";
 import { DemeterFooter } from "../../../components/DemeterFooter";
 import { DemeterNav } from "../../../components/DemeterNav";
 import { alternateLanguages, askUrl } from "../../../lib/i18n/routes";
@@ -67,7 +76,6 @@ export default async function ScreenAskPage({
     redirect(`/chat?${params.toString()}`);
   }
 
-  const hint = await geoHint(VERIFIED_STATE_CODES);
   const initialState =
     state && VERIFIED_STATES.some((s) => s.code === state.toUpperCase())
       ? state.toUpperCase()
@@ -78,22 +86,16 @@ export default async function ScreenAskPage({
       <DemeterNav />
       <div className="dmpage__inner">
         <SnapOrientation states={VERIFIED_STATES} />
-        <div className="dmpage__chat">
-          {/* The way IN, not a second chat. See DemeterEntry's header. */}
-          <DemeterEntry
-            states={VERIFIED_STATES}
-            initialState={initialState}
-            hint={hint}
-            copy={{
-              placeholder: T.en.inputPlaceholder,
-              send: T.en.send,
-              suggestions: [T.en.empty1, T.en.empty2, T.en.empty3],
-              picker: T.en.picker,
-              howWeVerify: T.en.howWeVerify,
-            }}
-          />
-        </div>
+        {/* High, and not behind a click: SNAP takes at least seven days even
+            when it is urgent. */}
+        <SnapFoodNow />
+        {/* The composer, the state picker and the suggested questions all live
+            on /chat now. This page explains and hands over; it does not start
+            the conversation and then forward it. */}
+        <SnapAskCta state={initialState} />
         <SnapDetail states={VERIFIED_STATES} />
+        {/* Last: the fears are the final thing between reading and acting. */}
+        <SnapFears />
       </div>
       <DemeterFooter />
       <script

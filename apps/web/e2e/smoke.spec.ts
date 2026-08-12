@@ -1,4 +1,14 @@
-import { test, expect } from "@playwright/test";
+import { test, expect, type Page } from "@playwright/test";
+
+/** The composer, located by what it IS rather than by what it says.
+ *
+ *  These specs used to match on the placeholder text. That made a copy edit —
+ *  "Ask anything about SNAP" → "Happy to answer any questions about SNAP" —
+ *  break seven assertions across three files that were not testing copy at all.
+ *  A locator should only be sensitive to the thing its test is about. */
+function composer(page: Page) {
+  return page.locator("textarea.demeter__input");
+}
 
 // Demeter public-surface smoke (T12): runs WITHOUT an ANTHROPIC_API_KEY in CI,
 // so the chat asserts "a response state arrives" — a real streamed answer when
@@ -6,10 +16,20 @@ import { test, expect } from "@playwright/test";
 // Every spec runs on a phone profile (F8 mobile-first acceptance).
 
 test.describe("front door", () => {
-  test("the bare domain lands on the chat, ready to take a question", async ({ page }) => {
+  // The front door EXPLAINS and hands over; it no longer takes a question. The
+  // composer, the picker and the suggested questions all live on /chat, so
+  // there is one place a conversation can start rather than two.
+  test("the bare domain lands on the explainer, with a way through to the chat", async ({
+    page,
+  }) => {
     await page.goto("/");
     await expect(page).toHaveURL(/\/screen\/ask$/);
-    await expect(page.getByPlaceholder(/Ask anything about SNAP/)).toBeVisible();
+    await expect(composer(page)).toHaveCount(0);
+    const cta = page.getByRole("link", { name: /Ask Demeter about your situation/i });
+    await expect(cta).toBeVisible();
+    await cta.click();
+    await expect(page).toHaveURL(/\/chat$/);
+    await expect(composer(page)).toBeVisible();
   });
 
   test("root carries query params through, so campaign links keep working", async ({ page }) => {
@@ -22,7 +42,7 @@ test.describe("front door", () => {
     // The state selector is a combobox (2026-08-09): one selection, shown on
     // the trigger, rather than a row of radio chips.
     await expect(page.getByRole("button", { name: "Your state", exact: true })).toContainText("TX");
-    await expect(page.getByPlaceholder(/Ask anything about SNAP/)).toHaveValue(
+    await expect(composer(page)).toHaveValue(
       "Does my car count?",
     );
   });
@@ -49,17 +69,32 @@ test.describe("chat surface", () => {
     const h1 = page.getByRole("heading", { level: 1 });
     await expect(h1).toHaveCount(1);
     await expect(h1).toHaveText(/get the actual rule/i);
-    const picker = page.getByRole("button", { name: "Your state", exact: true });
-    await expect(picker).toContainText("All states");
+    // The picker moved to /chat with the rest of the chat. What the landing
+    // must still prove is that it is server-rendered and quotable.
+    await expect(page.getByRole("button", { name: "Your state", exact: true })).toHaveCount(0);
     // The orientation copy is SERVER-rendered — its presence in the DOM is
     // what makes the page quotable by generative search. It is a <p> now, not
     // a heading: the page leads with what Demeter is, and explains SNAP as
     // orientation underneath rather than as the page's own claim.
     await expect(page.getByText(/SNAP is monthly money for groceries/)).toBeVisible();
-    await expect(page.getByPlaceholder(/Ask anything about SNAP/)).toBeVisible();
-    // Opening the picker reveals every verified pack.
+    await expect(composer(page)).toHaveCount(0);
+  });
+
+  test("the chat itself carries the picker, the composer and the suggestions", async ({ page }) => {
+    await page.goto("/chat");
+    const picker = page.getByRole("button", { name: "Your state", exact: true });
+    await expect(picker).toContainText("All states");
+    await expect(composer(page)).toBeVisible();
+    // By what they ARE, not by what they say — this asserted one suggestion's
+    // exact wording, so rephrasing the three starter questions broke a test
+    // that was checking they render at all.
+    await expect(page.locator(".demeter__suggest")).toHaveCount(3);
+    // Opening the picker reveals every verified pack — under its DISPLAY name.
+    // The raw corpus field carries annotation prose ("SNAP (no state-specific
+    // branding)"), which is written for retrieval, not for a list you scan.
     await picker.click();
     await expect(page.getByRole("option", { name: /CalFresh/ })).toBeVisible();
+    await expect(page.getByRole("option", { name: /no state-specific branding/ })).toHaveCount(0);
   });
 
   // The content moved off the chat page. A unit test can prove the components
@@ -89,23 +124,14 @@ test.describe("chat surface", () => {
     await expect(page).toHaveURL(/\/screen\/ask$/);
   });
 
-  // The landing card is an ENTRY POINT now, not a chat. Asking there hands the
-  // question to /chat rather than answering in place, which is the whole reason
-  // there is only one chat implementation.
-  test("asking on the landing page carries the question into /chat", async ({ page }) => {
-    await page.goto("/screen/ask");
-    await page.getByPlaceholder(/Ask anything about SNAP/).fill("Do I qualify?");
-    await page.getByRole("button", { name: /Send|Enviar/ }).click();
-    await expect(page).toHaveURL(/\/chat\?/);
-    await expect(page).toHaveURL(/q=Do\+I\+qualify/);
-    // And it arrives in the composer, ready to send rather than already sent.
-    await expect(page.getByPlaceholder(/Ask anything about SNAP/)).toHaveValue("Do I qualify?");
-  });
-
-  test("a suggested question goes straight to /chat", async ({ page }) => {
-    await page.goto("/screen/ask");
-    await page.getByRole("button", { name: /income limit for my household/i }).click();
-    await expect(page).toHaveURL(/\/chat\?/);
+  // A ?state= on the front door is scope, not a conversation, so it does not
+  // redirect — but it must survive the hand-off, or a /guides/[state] visitor
+  // arrives at the chat scoped to nothing.
+  test("the hand-off carries a state through to the chat", async ({ page }) => {
+    await page.goto("/screen/ask?state=TX");
+    await page.getByRole("link", { name: /Ask Demeter about your situation/i }).click();
+    await expect(page).toHaveURL(/\/chat\?state=TX/);
+    await expect(page.getByRole("button", { name: "Your state", exact: true })).toContainText("TX");
   });
 
   // Deep links from /guides and /verify carry a question, so they are already a
@@ -114,14 +140,14 @@ test.describe("chat surface", () => {
     await page.goto("/screen/ask?state=TX&q=Does%20my%20car%20count%3F");
     await expect(page).toHaveURL(/\/chat\?/);
     await expect(page.getByRole("button", { name: "Your state", exact: true })).toContainText("TX");
-    await expect(page.getByPlaceholder(/Ask anything about SNAP/)).toHaveValue(
+    await expect(composer(page)).toHaveValue(
       "Does my car count?",
     );
   });
 
   test("send always yields a response state (answer or honest banner)", async ({ page }) => {
     await page.goto("/chat");
-    await page.getByPlaceholder(/Ask anything about SNAP/).fill("What is SNAP?");
+    await composer(page).fill("What is SNAP?");
     await page.getByRole("button", { name: /Send|Enviar/ }).click();
     // The user bubble appears immediately…
     await expect(page.locator(".demeter__msg--user")).toHaveText("What is SNAP?");
@@ -154,16 +180,18 @@ test.describe("chat surface", () => {
   // entirely, so a Spanish speaker arriving on the English page had no way
   // across. Links also mean a crawler can follow them and switching keeps you
   // on the page you were reading.
-  for (const [label, path, placeholder] of [
-    ["Español", "/es/screen/ask", /Pregunta lo que sea sobre SNAP/],
-    ["Tiếng Việt", "/vi/screen/ask", /Hỏi bất cứ điều gì về SNAP/],
-    ["中文", "/zh/screen/ask", /关于 SNAP/],
+  // Asserts on the localized EXPLAINER copy rather than the composer's
+  // placeholder, since the composer is no longer on this page.
+  for (const [label, path, marker] of [
+    ["Español", "/es/screen/ask", /Pregúntale a Demeter sobre tu situación/],
+    ["Tiếng Việt", "/vi/screen/ask", /Hỏi Demeter về hoàn cảnh của bạn/],
+    ["中文", "/zh/screen/ask", /就您的情况询问 Demeter/],
   ] as Array<[string, string, RegExp]>) {
     test(`the nav switches the surface to ${label}`, async ({ page }) => {
       await page.goto("/screen/ask");
       await page.getByRole("link", { name: label, exact: true }).click();
       await expect(page).toHaveURL(new RegExp(path.replace(/\//g, "\\/")));
-      await expect(page.getByPlaceholder(placeholder)).toBeVisible();
+      await expect(page.getByRole("link", { name: marker })).toBeVisible();
     });
   }
 

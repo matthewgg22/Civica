@@ -4746,7 +4746,27 @@ html {
 .demeter__state.is-active .demeter__badge { color: var(--demeter-paper); }
 .demeter__how { font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif; flex: none; font-size: 0.8rem; color: var(--demeter-terracotta-deep); text-decoration: underline; padding: 0.4rem; min-height: 44px; display: inline-flex; align-items: center; }
 .demeter__scroll { flex: 1; overflow-y: auto; padding: 0.5rem 0.25rem; display: flex; flex-direction: column; gap: 0.6rem; }
-.demeter__empty { display: flex; flex-direction: column; gap: 0.5rem; margin: auto 0; padding: 1rem 0; }
+/* Centred, and a composed block rather than loose buttons. Measured: 414px of a
+   565px transcript was empty, and pinning the chips to either end of that only
+   moved the hole — they read as controls someone forgot either way. A mark, a
+   question and the suggestions under it make the space deliberate. */
+.demeter__empty {
+  display: flex; flex-direction: column; align-items: center; text-align: center;
+  gap: 0.6rem; margin: auto 0; padding: 1rem 0;
+}
+.demeter__emptytitle {
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+  font-size: clamp(1.35rem, 2.4vw, 1.7rem); font-weight: 600; letter-spacing: -0.01em;
+  color: var(--demeter-ink); margin: 0.35rem 0 0;
+}
+.demeter__emptylede {
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+  font-size: 0.98rem; line-height: 1.55; color: var(--demeter-muted);
+  margin: 0 0 0.5rem; max-width: 44ch; text-wrap: pretty;
+}
+.demeter__suggests {
+  display: flex; flex-direction: column; gap: 0.5rem; width: 100%; align-items: center;
+}
 .demeter__suggest {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   text-align: left; border: 1px solid var(--demeter-rule-strong); background: var(--demeter-card); color: var(--demeter-ink);
@@ -4772,8 +4792,28 @@ html {
 .demeter__input {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   flex: 1; resize: none; border: 1px solid var(--demeter-rule-strong); border-radius: 1rem; background: var(--demeter-card);
-  padding: 0.75rem 1rem; font-size: 1rem; color: var(--demeter-ink); min-height: 48px; max-height: 8rem;
+  padding: 0.75rem 1rem; font-size: 1rem; color: var(--demeter-ink); min-height: 48px; max-height: 12rem;
 }
+/* Taller on the chat page, where the composer is the main thing you act on
+   rather than a field at the end of a card. It also GROWS with what you type —
+   `rows={1}` with a fixed min-height meant a long question scrolled inside two
+   visible lines while the page had room to show all of it. */
+/* Padding computed so ONE line sits centred in the 68px box: 24px of line
+   between 22px above and below. The boxes were already identical — same top,
+   same bottom, same 17px radius — but the placeholder sat 12px from the top of
+   a 68px field while "Send" was centred in its button, so the two labels never
+   shared a line and the pair read as misaligned.
+   It still grows correctly: the auto-grow sets height from scrollHeight, which
+   includes this padding, so line two lands at exactly 68 + 24. */
+/* 24 (one line) + 13 + 13 (padding) + 1 + 1 (border) = 52, matching Send
+   exactly. In PX, not rem or a unitless ratio: the root font-size here is 17px,
+   so `line-height: 1.5` computes to 25.5 rather than 24 and the arithmetic
+   stops landing.
+   52 rather than the 68 this was: a composer taller than it needs to be reads
+   as a form field waiting to be filled in, and it was eating vertical space
+   from the transcript on every screen. Still well clear of the 44px target
+   minimum, and it still grows a clean 24px per line. */
+.dmchat .demeter__input { min-height: 52px; line-height: 24px; padding: 13px 1rem; }
 .demeter__input:focus { outline: 2px solid var(--demeter-terracotta); outline-offset: 1px; }
 .demeter__send {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
@@ -4794,16 +4834,64 @@ html {
 .vpage__lede, .spage__definition { font-size: 1rem; line-height: 1.6; color: var(--civica-graphite); margin-bottom: 0.9rem; }
 .spage__definition { font-weight: 600; color: var(--civica-ink); }
 .spage__sub { font-size: 0.9rem; line-height: 1.55; color: var(--civica-graphite); }
-.vpage__grid { display: grid; gap: 1rem; margin: 1.5rem 0; }
-@media (min-width: 700px) { .vpage__grid { grid-template-columns: 1fr 1fr; } }
-.vcard { background: #fff; border: 1px solid #E4DFD5; border-radius: 1rem; padding: 1.1rem 1.2rem; display: flex; flex-direction: column; gap: 0.6rem; }
-.vcard__state { font-size: 1.3rem; font-weight: 800; display: flex; align-items: center; gap: 0.5rem; }
-.vcard__badge { font-size: 0.72rem; font-weight: 700; color: var(--civica-pine); background: var(--civica-pine-surface); border-radius: 999px; padding: 0.2rem 0.6rem; }
-.vcard__program { color: var(--civica-graphite); font-weight: 600; }
-.vcard__facts dt { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--civica-muted); margin-top: 0.6rem; }
-.vcard__facts dd { font-size: 0.88rem; line-height: 1.5; }
-.vcard__sources { padding-left: 1.1rem; list-style: disc; }
-.vcard__cta, .gpage__cta { margin-top: auto; align-self: flex-start; background: var(--civica-pine); color: #fff; border-radius: 999px; padding: 0.55rem 1.1rem; font-weight: 700; font-size: 0.9rem; text-decoration: none; min-height: 44px; display: inline-flex; align-items: center; }
+/* /verify was still wearing the CIVICA palette — pine buttons, green badges,
+   heavy sans — on a page DEMETER-DESIGN.md governs. Next to the rest of the
+   product it read as a different site, which is most of what made it look
+   broken at awkward widths. Demeter tokens throughout now.
+
+   auto-fit rather than a hard two columns at 700px: fourteen cards of unequal
+   content were being forced into a rigid pair, so every short card stretched to
+   its tall neighbour and opened a hole above its button. */
+.vpage__grid {
+  display: grid; gap: 1rem; margin: 1.5rem 0;
+  grid-template-columns: repeat(auto-fit, minmax(min(20rem, 100%), 1fr));
+  align-items: start;
+}
+.vcard {
+  background: var(--demeter-card); border: 1px solid var(--demeter-rule);
+  border-radius: 16px; padding: 1.15rem 1.25rem;
+  display: flex; flex-direction: column; gap: 0.5rem;
+}
+.vcard__head { display: flex; align-items: center; gap: 0.55rem; }
+.vcard__state { margin: 0; }
+/* The heading's weight lives on the code, since the flag component owns the
+   markup inside it. */
+.vcard__state .dmflag__code {
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+  font-size: 1.2rem; font-weight: 600; letter-spacing: -0.01em; color: var(--demeter-ink);
+}
+.vcard__badge {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.66rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--demeter-terracotta-deep); border: 1px solid var(--demeter-terracotta);
+  border-radius: 999px; padding: 0.2rem 0.55rem; margin-left: auto;
+}
+.vcard__program {
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+  font-size: 1rem; line-height: 1.35; color: var(--demeter-body); margin: 0 0 0.3rem;
+}
+.vcard__facts { display: flex; flex-direction: column; gap: 0.7rem; margin: 0 0 1rem; }
+.vcard__facts dt {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.66rem; text-transform: uppercase; letter-spacing: 0.09em;
+  color: var(--demeter-muted); margin: 0 0 0.2rem;
+}
+/* A <dd> carries a 40px browser indent that made every value look misaligned
+   against its own label. */
+.vcard__facts dd {
+  margin: 0;
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+  font-size: 0.92rem; line-height: 1.5; color: var(--demeter-body);
+}
+.vcard__cta {
+  margin-top: auto; align-self: flex-start;
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  background: var(--demeter-terracotta-deep); color: var(--demeter-paper);
+  border-radius: 999px; padding: 0.55rem 1.1rem; font-weight: 600; font-size: 0.88rem;
+  text-decoration: none; min-height: 44px; display: inline-flex; align-items: center;
+}
+.vcard__cta:hover { background: var(--demeter-ink); }
+.gpage__cta { margin-top: auto; align-self: flex-start; background: var(--civica-pine); color: #fff; border-radius: 999px; padding: 0.55rem 1.1rem; font-weight: 700; font-size: 0.9rem; text-decoration: none; min-height: 44px; display: inline-flex; align-items: center; }
 .vpage__foot, .gpage__foot, .spage__foot { font-size: 0.85rem; color: var(--civica-graphite); border-top: 1px solid #E4DFD5; padding-top: 1rem; margin-top: 2rem; }
 .gpage__crumb { font-size: 0.8rem; color: var(--civica-muted); margin-bottom: 0.4rem; }
 .gpage__badge { font-size: 0.85rem; color: var(--civica-pine); font-weight: 600; margin: 0.4rem 0 1rem; }
@@ -4842,6 +4930,47 @@ html {
 .vstat__unit { font-size: 0.97rem; color: var(--civica-ink); }
 .vstat__pending { font-size: 1.15rem; font-weight: 600; color: #6E5F55; }
 .vstat__note { margin: 0.7rem 0 0; font-size: 0.9rem; line-height: 1.55; color: #5E4F45; }
+
+/* /verify is a DEMETER surface (DEMETER-DESIGN.md), and was the last page still
+   wearing Civica's. Half of it converted with the cards, which is worse than
+   either — a heavy sans headline above serif cards reads as two sites stapled
+   together. The shared .vpage/.gpage/.spage rules above keep dressing the
+   guides and supporters pages; these take ONLY /verify off that palette.
+
+   Wider than the shared 780px because the grid now flows: at 780 the cards
+   never got a third column no matter how much room the window had. */
+.vpage { color: var(--demeter-ink); max-width: 940px; }
+.vpage__title {
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+  font-size: clamp(2rem, 4vw, 2.6rem); font-weight: 600; letter-spacing: -0.02em;
+  line-height: 1.1; margin-bottom: 1rem;
+}
+.vpage__lede {
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+  font-size: 1.02rem; line-height: 1.62; color: var(--demeter-body);
+  max-width: 62ch; text-wrap: pretty;
+}
+.vpage__foot {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  color: var(--demeter-muted); border-top: 1px solid var(--demeter-rule);
+  max-width: 62ch; line-height: 1.6;
+}
+.vpage__foot a { color: var(--demeter-terracotta-deep); }
+.vstat {
+  background: var(--demeter-card); border: 1px solid var(--demeter-rule); border-radius: 16px;
+}
+.vstat__pct {
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+  color: var(--demeter-terracotta-deep); font-weight: 600;
+}
+.vstat__unit, .vstat__pending { color: var(--demeter-ink); }
+/* Serif speaks, sans labels: "Not yet measured" is a status label and stays
+   sans; the paragraph explaining it is prose, and was the one block of body
+   copy on the page still set in the wrong family. */
+.vstat__note, .vstat__unit {
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+}
+.vstat__note { color: var(--demeter-muted); }
 
 /* ── Demeter identity tokens (Demeter AI Design Spec, Turn 3 — "sibling not
    twin") ──────────────────────────────────────────────────────────────
@@ -5324,8 +5453,16 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 .dmx__h2 {
   font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
   font-size: clamp(1.6rem, 3.4vw, 2.35rem); line-height: 1.12; letter-spacing: -0.02em;
-  font-weight: 600; color: var(--demeter-ink); margin: 0 0 1rem; text-wrap: pretty;
-  max-width: 22ch;
+  font-weight: 600; color: var(--demeter-ink); margin: 0 0 1rem;
+  /* 22ch here forced a second line on headings that had room for one. Measured
+     at 1280: the column is 1180px, 22ch capped them at 537px, and the LONGEST
+     heading on the page needs 875px — so every wrap was the cap, not the space.
+     38ch (~930px) clears all of them and still stops a runaway future heading
+     from running the full width.
+
+     `balance` rather than `pretty`: when a heading does wrap on a narrow
+     screen, even lines beat a long line with one orphaned word. */
+  max-width: 38ch; text-wrap: balance;
 }
 .dmx--lede .dmx__h2 { max-width: 18ch; }
 .dmx__h3 {
@@ -5353,6 +5490,177 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   text-underline-offset: 2px;
 }
 .dmx__link:hover { color: var(--demeter-terracotta-deep); }
+
+/* Official program links, and the non-affiliation line that has to travel with
+   them. Set apart from the section body so it reads as a hand-off outward, not
+   as more of our own copy. */
+.dmx__official {
+  margin: 2rem 0 0; padding: 1.25rem 1.35rem;
+  border: 1px solid var(--demeter-rule); border-radius: 14px;
+  background: var(--demeter-card);
+  /* Links BESIDE the disclaimer, not under it. Stacked, this box put both in a
+     narrow left column and left half of itself empty. */
+  display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+  gap: clamp(1rem, 3vw, 2.5rem); align-items: start;
+}
+.dmx__official .dmx__note { margin-top: 0.35rem; }
+.dmx__official .dmx__officiallinks { margin-top: 0.2rem; }
+/* The mark itself: never restyled, never recoloured, never given a filter —
+   using it unaltered is a condition, not a preference. Only its box size is
+   ours to set. */
+.dmx__snaplogo { margin-bottom: 0.35rem; }
+.dmx__snaplogo img { width: 148px; height: auto; display: block; }
+/* Required notice. Small, because it is a legal footnote — but it sits with the
+   logo and stays legible: --demeter-muted on --demeter-card is a checked pair. */
+.dmx__servicemark {
+  grid-column: 1 / -1;
+  margin: 1rem 0 0; padding-top: 0.85rem;
+  border-top: 1px solid var(--demeter-rule);
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.74rem; line-height: 1.5; color: var(--demeter-muted);
+}
+
+/* The argument left, the source right. Same reason. */
+.dmx__evgrid {
+  display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  gap: clamp(1.5rem, 4vw, 3rem); align-items: start;
+}
+.dmx__evgrid .dmx__body { margin-bottom: 0; }
+.dmx__evaside { display: flex; flex-direction: column; gap: 1rem; }
+.dmx__evaside .dmx__quote { margin-top: 0; }
+.dmx__officiallinks {
+  list-style: none; margin: 1rem 0 0; padding: 0;
+  display: flex; flex-direction: column; gap: 0.55rem;
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.92rem;
+}
+
+/* The Beeck finding. A pull-quote earns its weight here: it is the one line on
+   the page written by someone other than us. */
+.dmx__quote { margin: 1.5rem 0 0; padding-left: 1.1rem; border-left: 3px solid var(--demeter-terracotta); }
+.dmx__quote blockquote {
+  margin: 0;
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+  font-size: clamp(1.1rem, 1.8vw, 1.3rem); line-height: 1.5; font-style: italic;
+  color: var(--demeter-ink); max-width: 40ch; text-wrap: pretty;
+}
+.dmx__quote figcaption {
+  margin: 0.7rem 0 0;
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.78rem; line-height: 1.5; color: var(--demeter-muted); max-width: 46ch;
+}
+
+/* Where the card works. The sentence carries the fact; the map is the picture
+   of it, so text leads and the map takes the space left over. */
+.dmret {
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 22rem);
+  gap: clamp(1rem, 3vw, 2.5rem); align-items: center; margin: 2rem 0 0;
+}
+.dmret__text .dmx__body { margin-bottom: 0.5rem; }
+.dmret__text .dmx__note { margin-top: 0.5rem; }
+.dmret__svg { width: 100%; height: auto; display: block; }
+@media (max-width: 860px) {
+  .dmret { grid-template-columns: 1fr; }
+}
+
+/* "I need food this week." Quiet but unmissable — a tinted band, not a card in
+   the flow, because it is an interruption on purpose. It sits directly under
+   the orientation so someone who is out of food never has to read a page about
+   eligibility rules to find it. */
+.dmnow {
+  margin: 1.5rem 0 0; padding: 1rem 1.2rem;
+  border-left: 3px solid var(--demeter-terracotta-deep);
+  background: var(--demeter-card); border-radius: 0 12px 12px 0;
+}
+.dmnow__label {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase;
+  font-weight: 600; color: var(--demeter-terracotta-deep); margin: 0 0 0.35rem;
+}
+.dmnow__body {
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+  font-size: 1rem; line-height: 1.55; color: var(--demeter-body); margin: 0; max-width: 62ch;
+}
+.dmnow__links {
+  display: flex; flex-wrap: wrap; gap: 0.4rem 1.5rem; margin: 0.7rem 0 0;
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.92rem;
+}
+.dmnow__link { color: var(--demeter-terracotta-deep); text-decoration: underline; text-underline-offset: 2px; }
+
+/* The fears. <details> so every answer is in the HTML whether or not it is
+   open — a crawler and a generative engine read the closed ones too. */
+.dmfear { margin: 1.5rem 0 0; border-top: 1px solid var(--demeter-rule); }
+.dmfear__item { border-bottom: 1px solid var(--demeter-rule); }
+.dmfear__q {
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+  font-size: 1.05rem; line-height: 1.4; color: var(--demeter-ink);
+  padding: 0.95rem 2rem 0.95rem 0; cursor: pointer; position: relative;
+  list-style: none; min-height: 44px; display: flex; align-items: center;
+}
+.dmfear__q::-webkit-details-marker { display: none; }
+/* Our own marker, since the native triangle is removed. Rotates on open. */
+.dmfear__q::after {
+  content: "+"; position: absolute; right: 0.25rem;
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 1.3rem; line-height: 1; color: var(--demeter-terracotta-deep);
+  transition: transform 160ms ease-out;
+}
+.dmfear__item[open] .dmfear__q::after { transform: rotate(45deg); }
+.dmfear__q:focus-visible { outline: 2px solid var(--demeter-ink); outline-offset: -2px; }
+.dmfear__a {
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+  font-size: 0.98rem; line-height: 1.62; color: var(--demeter-body);
+  margin: 0 0 1.1rem; max-width: 68ch; text-wrap: pretty;
+}
+.dmfear__cta {
+  display: inline-flex; flex-direction: column; gap: 0.2rem;
+  margin: 1.5rem 0 0; padding: 0.9rem 1.2rem;
+  border: 1px solid var(--demeter-terracotta); border-radius: 14px;
+  text-decoration: none; background: var(--demeter-card);
+}
+.dmfear__cta:hover { border-color: var(--demeter-terracotta-deep); }
+.dmfear__ctalabel {
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+  font-size: 1.05rem; font-weight: 600; color: var(--demeter-terracotta-deep);
+}
+.dmfear__ctanote {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.82rem; color: var(--demeter-muted);
+}
+@media (prefers-reduced-motion: reduce) { .dmfear__q::after { transition: none; } }
+
+/* The application timeline, read LEFT TO RIGHT: each step is a column with its
+   deadline as the header on top and the detail underneath.
+   Was a vertical left rail — accurate, but it made six steps into a tall
+   scroll, and a sequence you scroll is one you experience as long rather than
+   as ordered.
+   Wrapping rather than one unbroken row on purpose: six columns across 1180px
+   is ~196px each, about twenty characters a line, which is not a timeline
+   anyone can read. Three across, wrapping to two rows, keeps the left-to-right
+   reading and keeps the prose legible. */
+.dmtl {
+  list-style: none; margin: 1.75rem 0 0; padding: 0;
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  gap: 1.75rem;
+}
+/* The rule across the top of each step IS the timeline — a continuous line
+   cannot survive wrapping, but a segment per step reads as one band and marks
+   where each stage begins. */
+.dmtl__step { position: relative; padding-top: 1.15rem; border-top: 2px solid var(--demeter-rule); }
+.dmtl__step::before {
+  content: ""; position: absolute; top: -6px; left: 0;
+  width: 10px; height: 10px; border-radius: 50%;
+  background: var(--demeter-terracotta-deep);
+}
+.dmtl__when {
+  display: block; margin-bottom: 0.4rem;
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.72rem; letter-spacing: 0.09em; text-transform: uppercase;
+  font-weight: 600; color: var(--demeter-terracotta-deep);
+}
+.dmtl__body .dmx__body { margin-bottom: 0; max-width: none; }
+.dmtl__body .dmx__h3 { margin-bottom: 0.35rem; }
 
 .dmx__defs { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(15rem, 100%), 1fr)); gap: 1.75rem; margin: 1.5rem 0 0; }
 .dmx__def dt {
@@ -5511,6 +5819,50 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   font-size: 0.8rem; line-height: 1.5; color: var(--demeter-body);
 }
+/* The two-way switch at the top of the rail. A segmented control rather than a
+   toggle: both options are named, so neither is the unlabelled "off" state of
+   the other, and nobody has to work out what the switch does before using it. */
+.dmw__mode {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 0.25rem;
+  margin: 0.75rem 0 0.9rem; padding: 0.25rem;
+  background: var(--demeter-paper); border: 1px solid var(--demeter-rule);
+  border-radius: 999px;
+}
+.dmw__modeopt {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.78rem; font-weight: 600; line-height: 1.2;
+  min-height: 36px; padding: 0.4rem 0.6rem; border: 0; border-radius: 999px;
+  background: transparent; color: var(--demeter-muted); cursor: pointer;
+  transition: background 140ms ease-out, color 140ms ease-out;
+}
+.dmw__modeopt[data-on] {
+  background: var(--demeter-terracotta-deep); color: var(--demeter-paper);
+}
+.dmw__modeopt:focus-visible { outline: 2px solid var(--demeter-ink); outline-offset: 2px; }
+
+/* THE 105px JUMP. Measured: the rail is 328px in "Just asking" and 433px in
+   "Build my estimate", and it used to get there instantly — the panel snapped
+   to a new size with nothing connecting the two states.
+   Two parts, because neither alone is enough: the content fades in so the
+   change reads as intentional, and the height eases where the browser can do
+   it. `interpolate-size` is what makes height:auto animatable at all; where it
+   is unsupported the height still snaps, but the fade already carries most of
+   the improvement. */
+@supports (interpolate-size: allow-keywords) {
+  .dmw { interpolate-size: allow-keywords; transition: height 260ms cubic-bezier(0.22, 1, 0.36, 1); }
+}
+.dmw__mode ~ * { animation: dmModeIn 220ms cubic-bezier(0.22, 1, 0.36, 1) both; }
+@keyframes dmModeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dmw__modeopt { transition: none; }
+  .dmw { transition: none; }
+  .dmw__mode ~ * { animation: none; }
+}
+
 .dmw__needed-count {
   font-size: 0.68rem; color: var(--demeter-terracotta-deep);
   border: 1px solid #EAD9C8; background: #F7EDE4; border-radius: 5px; padding: 0.05rem 0.35rem;
@@ -5847,7 +6199,12 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 }
 
 /* Options become a row: mark, then the two text lines beside it. */
-.dmst__opt { flex-direction: row; align-items: center; gap: 0.65rem; }
+/* Aligned to the TOP, not the centre. Centring works only while every row is
+   one line — Washington's agency name wraps to two, and the flag slid down
+   beside the second line instead of sitting with "Basic Food". The nudge
+   optically centres the mark on the program name it belongs to. */
+.dmst__opt { flex-direction: row; align-items: flex-start; gap: 0.65rem; }
+.dmst__opt .dmflag { padding-top: 0.1rem; }
 .dmst__opt-text { display: flex; flex-direction: column; gap: 0.15rem; min-width: 0; }
 
 /* ═══ CONVERSATION MOTION ════════════════════════════════════════════════════
@@ -5875,11 +6232,64 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 @keyframes dmThinking { 0%, 100% { opacity: 0.45 } 50% { opacity: 1 } }
 .demeter__thinking { animation: dmThinking 1.4s ease-in-out infinite; }
 
+/* The waiting heartbeat. Three dots on a stagger, so a pause of a few seconds
+   still looks like something is happening rather than like a label nobody
+   removed. */
+.demeter__dots { display: inline-flex; gap: 0.22rem; margin-left: 0.4rem; vertical-align: middle; }
+.demeter__dots i {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--demeter-terracotta-deep);
+  animation: dmDot 1.2s ease-in-out infinite;
+}
+.demeter__dots i:nth-child(2) { animation-delay: 0.16s; }
+.demeter__dots i:nth-child(3) { animation-delay: 0.32s; }
+@keyframes dmDot {
+  0%, 60%, 100% { opacity: 0.25; transform: translateY(0); }
+  30% { opacity: 1; transform: translateY(-2px); }
+}
+
+/* The streaming cursor. Once text starts arriving there was NO signal at all —
+   a finished answer and a stalled one looked identical. A block caret at the
+   live end of the text is the oldest and clearest way to say "still writing". */
+.demeter__caret {
+  display: inline-block; width: 0.5ch; height: 1em; margin-left: 0.1em;
+  background: var(--demeter-terracotta-deep); vertical-align: text-bottom;
+  animation: dmCaret 1s step-end infinite;
+}
+@keyframes dmCaret { 0%, 100% { opacity: 1 } 50% { opacity: 0 } }
+
+/* THE THINKING BUBBLE holds roughly the height of the first line of an answer,
+   so the moment the first token lands the bubble does not collapse and re-grow
+   under the dots. The swap was one of three separate jolts in a single reply. */
+.demeter__thinking { display: inline-flex; align-items: center; min-height: 1.68em; }
+
+/* The feedback row and the citation trailer both arrive AFTER the answer has
+   been read, and both used to appear instantly, shifting everything above them.
+   They fade in instead — they are additions to a finished answer, not part of
+   its arrival. */
+.demeter__msg--assistant .demeter__rule ~ *,
+.demeter__turn--assistant > .dmfb {
+  animation: dmTrailerIn 260ms ease-out both;
+}
+@keyframes dmTrailerIn { from { opacity: 0 } to { opacity: 1 } }
+@media (prefers-reduced-motion: reduce) {
+  .demeter__msg--assistant .demeter__rule ~ *,
+  .demeter__turn--assistant > .dmfb { animation: none; }
+}
+
 /* Vestibular safety: everything above is decoration, so all of it goes. */
 @media (prefers-reduced-motion: reduce) {
   .demeter__msg,
   .demeter__msg--assistant,
-  .demeter__thinking { animation: none; }
+  .demeter__thinking,
+  .dmst__scope,
+  .demeter__dots i { animation: none; }
+  .dmnav__tab { transition: none; }
+  .dmnav__tab:active { transform: none; }
+  /* The caret stops BLINKING but stays visible — it is a status indicator, not
+     decoration, and removing it would take away the only sign that an answer is
+     still arriving. */
+  .demeter__caret { animation: none; opacity: 1; }
 }
 
 /* ═══ GRAPHITE FOOTER ════════════════════════════════════════════════════════
@@ -6035,9 +6445,15 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
    viewport and the composer is always in view, which is the difference between
    something that looks like a chatbot and something that looks like a form. */
 .dmchat { min-height: 100dvh; display: flex; flex-direction: column; background: var(--demeter-paper); }
+/* MEASURED, on a 1440 viewport, before this changed:
+     940px page cap → 515px conversation column → 380px message → 41 CHARACTERS
+     PER LINE, with ~570px of the window unused.
+   Comfortable prose is 60–75 characters a line, so the text was arriving in a
+   column barely half the width it wanted, in a page that had the room. Three
+   caps were compounding, and all three had to move. */
 .dmchat__body {
   flex: 1; min-height: 0;
-  width: 100%; max-width: 940px; margin: 0 auto;
+  width: 100%; max-width: 1360px; margin: 0 auto;
   padding: clamp(0.75rem, 2vw, 1.5rem) clamp(1rem, 4vw, 2rem) calc(1rem + env(safe-area-inset-bottom));
   display: flex; flex-direction: column;
 }
@@ -6136,6 +6552,123 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 .dmchat .demeter__body { flex: 1; min-height: 0; align-items: stretch; }
 .dmchat .demeter__main { flex: 1; min-height: 0; }
 .dmchat .demeter__scroll { flex: 1; min-height: 0; }
+
+/* The rail took 1fr of a 1.55fr/1fr split — 39% of the page — to show, most of
+   the time, "Pick your state above". The conversation is the page; the rail is
+   a panel beside it. It gets a fixed sensible width and the transcript takes
+   every pixel that is left.
+   INSIDE a min-width query, and that is load-bearing: `.dmchat .demeter__body`
+   outranks the `max-width: 900px` rule that collapses this to one column, so
+   unscoped it kept two columns on a phone and handed 21rem of a 356px screen
+   to the rail — measured, .demeter__main came out 0px wide. */
+@media (min-width: 901px) {
+  .dmchat .demeter__body { grid-template-columns: minmax(0, 1fr) minmax(0, 21rem); column-gap: 2.5rem; }
+
+  /* The controls row now lives INSIDE the conversation column (see the JSX), so
+     it needs no grid of its own — it is already the width of the column it
+     belongs to, and both columns start on the same line because they are
+     siblings in the same grid.
+     Measured before: the picker began 68px above the rail, and "How we verify"
+     floated alone in the right column between them, belonging to neither. */
+  .dmchat .demeter__scope { padding-top: 0; }
+
+  /* Flush with the composer at rest, so the two read as one control rather than
+     a tall box with a short button parked at its corner. They stay bottom
+     aligned as the composer grows. */
+  .dmchat .demeter__send { min-height: 52px; border-radius: 1rem; padding: 0 1.6rem; }
+}
+
+/* The measure, capped in CHARACTERS rather than as a percentage of whatever the
+   column happens to be. A percentage cap means the line length drifts with the
+   window; `ch` pins it where prose is actually readable, and `min()` keeps
+   short replies from stretching to the full width on a wide screen. */
+.dmchat .demeter__msg { max-width: min(92%, 68ch); }
+
+/* A turn is the flex child, and it is what places the bubble. The bubble used
+   to sit inside a bare <div>, so ITS align-self reached nothing and every
+   message rendered left-aligned at the full 68ch cap — a three-word question
+   came out 635px wide, in the same place and the same shape as the answer. A
+   transcript where the question and the answer are indistinguishable is not
+   reading as a conversation, whatever else is wrong with it. */
+/* The state's agency and portal appear when you pick a state, pushing the
+   conversation down 74px (measured: the row goes 68px → 142px). I had planned
+   to move this into the rail; on doing it, that is the worse fix — the lines
+   describe the SELECTION, so they belong under the control you just used, and
+   in "Just asking" mode they would be orphaned in a panel that is otherwise
+   about the estimate.
+   So it stays, and the reveal is eased instead: it is a consequence of your own
+   click, arriving directly beneath it, which is a thing a person can follow. */
+.dmst__scope { animation: dmScopeIn 220ms cubic-bezier(0.22, 1, 0.36, 1) both; }
+@keyframes dmScopeIn {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* Immediate feedback on the tab you pressed. Navigation is fast, but with no
+   press state at all the gap between click and repaint reads as nothing having
+   happened.
+   NOT a whole-page cross-fade: animating the page in from opacity 0 delays the
+   LCP element's paint on a page whose entire argument is that it is fast and
+   server-rendered. A view transition is the "nicer" answer and the wrong trade
+   here. */
+.dmnav__tab { transition: color 120ms ease-out, background-color 120ms ease-out; }
+.dmnav__tab:active { transform: translateY(1px); }
+
+/* Suggested follow-ups under a finished answer. Quieter than the starter
+   questions on the empty screen — those are an invitation to begin, these are
+   an aside after something has already been said, and they should not compete
+   with the answer above them. */
+.demeter__followups {
+  display: flex; flex-wrap: wrap; gap: 0.45rem; margin: 0.7rem 0 0;
+  animation: dmTrailerIn 260ms ease-out both;
+}
+.demeter__followup {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.86rem; line-height: 1.3; text-align: left; cursor: pointer;
+  color: var(--demeter-terracotta-deep); background: transparent;
+  border: 1px solid var(--demeter-rule-strong); border-radius: 999px;
+  padding: 0.45rem 0.85rem; min-height: 36px;
+  transition: border-color 140ms ease-out, background-color 140ms ease-out;
+}
+.demeter__followup:hover { border-color: var(--demeter-terracotta); background: var(--demeter-card); }
+.demeter__followup:focus-visible { outline: 2px solid var(--demeter-ink); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) {
+  .demeter__followups { animation: none; }
+  .demeter__followup { transition: none; }
+}
+
+.demeter__turn { display: flex; flex-direction: column; }
+.demeter__turn--user { align-items: flex-end; }
+.demeter__turn--assistant, .demeter__turn--divider { align-items: flex-start; }
+/* Hug the text. max-width still caps the long ones at a readable measure. */
+.demeter__msg { width: fit-content; }
+
+/* The suggested questions are BUTTONS, and a button should be the size of its
+   label. In a narrow column, stretching to fill was harmless; across a wide one
+   it makes three questions look like three empty banners.
+   ONLY above the two-column breakpoint: on a phone a wrapping row shrinks them
+   to slivers, and full-width stacked is the right shape there anyway. */
+@media (min-width: 901px) {
+  /* The suggestions wrap into a centred row; the block around them stays a
+     column. Sizing each chip to its own label — stretched to fill, three
+     questions look like three empty banners. */
+  .dmchat .demeter__suggests {
+    flex-direction: row; flex-wrap: wrap; justify-content: center; gap: 0.6rem;
+  }
+  .dmchat .demeter__suggest { flex: 0 0 auto; max-width: 100%; }
+}
+
+/* Set for READING, not for fitting. An answer is several sentences of prose a
+   worried person reads once, on a phone — 1.5 line-height at 0.97rem packs it
+   tighter than any other body copy in the product. */
+.dmchat .demeter__msg--assistant {
+  font-size: 1.02rem; line-height: 1.68; padding: 1rem 1.15rem;
+}
+/* Room between paragraphs. renderAnswer emits real <p> blocks now, precisely so
+   this is possible: a blank line under `white-space: pre-wrap` is one empty
+   line-height, which is not enough to separate two paragraphs of prose. */
+.demeter__para { margin: 0; }
+.demeter__para + .demeter__para { margin-top: 0.85em; }
 .dmchat .demeter__disclaimer { padding-bottom: 0.25rem; }
 /* The estimate rail keeps its own alignment: it is a panel that grows with
    what it knows, not a column that should stretch to the fold. */
@@ -6170,7 +6703,7 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
    not the grid: verification sources are long unbroken URLs and instrument
    names, which have no break opportunity and so set a floor on the card's
    width. Everything else reflowed correctly around them. */
-.vcard, .vcard__facts dd, .vcard__sources li, .gpage__facts dd {
+.vcard, .vcard__facts dd, .gpage__facts dd {
   overflow-wrap: anywhere;
 }
 
@@ -6227,6 +6760,12 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   text-align: center; padding: 0.4rem 1rem 0; margin: 0; max-width: 56ch;
   margin-left: auto; margin-right: auto;
 }
+/* One line. 56ch broke it across two at ~476px when the column had 830 to give,
+   and a two-line caption under a one-line control reads as a warning rather
+   than a note. */
+@media (min-width: 901px) {
+  .dmchat .demeter__piihint { max-width: none; }
+}
 
 /* Group heading inside the state picker. Not an option — presentational, so it
    is skipped by keyboard and by a screen reader's option navigation, which is
@@ -6274,4 +6813,149 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 .dmst__scope--nap {
   border-left: 2px solid var(--demeter-rule-strong);
   padding-left: 0.6rem; margin-top: 0.35rem;
+}
+
+/* ═══ STATE FLAG + CODE ══════════════════════════════════════════════════════
+   Flag for RECOGNITION, code for LEGIBILITY. Neither does the job alone: a
+   state flag at 26px is mostly a smudge (most are a seal on a blue field), and
+   a bare two-letter code is unmistakable but not something you spot without
+   reading. Side by side they answer "is my state here?" at a glance and still
+   survive any size or eyesight.
+
+   The flag carries a hairline border because several — Ohio, Maryland, and
+   every mostly-white one — otherwise dissolve into the paper background. */
+.dmflag { display: inline-flex; align-items: center; gap: 0.45rem; flex: none; }
+.dmflag__img {
+  display: block; border-radius: 3px;
+  border: 1px solid rgba(36, 30, 26, 0.18);
+  object-fit: cover;
+}
+.dmflag__code {
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+  font-size: 0.9rem; font-weight: 600; letter-spacing: 0.01em;
+  color: var(--demeter-ink);
+}
+/* Bigger inside the dropdown. The picker list is the one place you are hunting
+   for your own state among fourteen, so both halves of the mark — the flag you
+   recognise and the code you read — carry more weight there than anywhere the
+   state is merely being reported back to you. */
+.dmst__opt .dmflag__code { font-size: 1.02rem; }
+.dmst__opt .dmflag { gap: 0.55rem; }
+
+/* No asset (the federal floor, or a code we have no flag for): the code alone,
+   in the same chip the monogram used, so a gap never looks like a broken image. */
+.dmflag[data-noflag] .dmflag__code {
+  display: grid; place-items: center;
+  width: 2.15rem; height: 2.15rem; border-radius: 10px;
+  color: var(--demeter-muted); background: var(--demeter-paper);
+  border: 1px solid var(--demeter-rule);
+}
+
+/* ═══ THE ORPHANED CARD ══════════════════════════════════════════════════════
+   `.dmx__defs` holds FOUR definitions in an auto-fit grid whose minimum leaves
+   room for three, so the fourth ("Your state") dropped to a row of its own with
+   two empty columns beside it and a 1.75rem gap above. It read as a mistake
+   because it was one — the grid was sized for a list whose length nobody
+   checked against it.
+
+   Two columns instead: four items make two clean rows, the measure per column
+   gets wider (better for the prose these hold), and adding a fifth definition
+   later degrades to 3+2 rather than stranding one. */
+.dmx__defs { grid-template-columns: repeat(auto-fit, minmax(min(21rem, 100%), 1fr)); }
+
+/* Wordmark plus one line of what-this-is. "Demeter" is a Greek harvest
+   goddess; alone it tells a first-time visitor nothing about SNAP. */
+.dmnav__brandtext { display: flex; flex-direction: column; line-height: 1.15; }
+.dmnav__subtitle {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.66rem; letter-spacing: 0.08em; text-transform: uppercase;
+  font-weight: 600; color: var(--demeter-muted); margin-top: 0.1rem;
+}
+@media (max-width: 620px) {
+  /* The subtitle is the first thing to go when the bar has to hold a wordmark,
+     two tabs and four languages — the tabs are navigation, this is context. */
+  .dmnav__subtitle { display: none; }
+}
+
+/* ═══ COVERAGE MAP ═══════════════════════════════════════════════════════════
+   Replaces fourteen stacked agency cards. The list was accurate and unusable:
+   to answer "is MY state here?" you had to read all of it. A map answers that
+   before a word is read — the same argument the flags won.
+
+   Unverified states are DRAWN, not hidden. The federal floor still answers for
+   them, and a map with holes would say the opposite. */
+.dmmap {
+  display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+  gap: clamp(1.5rem, 3vw, 2.5rem); align-items: start; margin-top: 1.5rem;
+}
+.dmmap__svg { width: 100%; height: auto; display: block; overflow: visible; }
+.dmmap__state {
+  fill: #E7E3DD; stroke: var(--demeter-paper); stroke-width: 1.2;
+  /* Unverified: not a target, not focusable, not announced. */
+  pointer-events: none;
+}
+.dmmap__state--on {
+  fill: #E9C6B6; cursor: pointer; pointer-events: auto;
+  transition: fill 140ms ease-out;
+}
+.dmmap__state--on:hover { fill: var(--demeter-terracotta); }
+.dmmap__state--on[data-sel] { fill: var(--demeter-terracotta-deep); }
+/* A <path> gets no focus ring for free, and a keyboard user cannot see where
+   they are without one — but `outline` is the wrong tool. It draws on the
+   bounding BOX, so on a shape like Florida or Michigan it frames mostly empty
+   sea, and Chrome paints its own blue ring on top of it regardless. A thick ink
+   stroke follows the actual border instead, cannot be clipped by the viewBox,
+   and reads against all three fills a state can have. */
+.dmmap__state--on:focus { outline: none; }
+.dmmap__state--on:focus-visible {
+  outline: none;
+  stroke: var(--demeter-ink); stroke-width: 2.5;
+}
+
+.dmmap__card {
+  background: var(--demeter-card); border: 1px solid var(--demeter-rule);
+  border-radius: 16px; padding: clamp(1rem, 2vw, 1.35rem);
+  display: flex; flex-direction: column; gap: 0.5rem;
+  /* Reserves its own height so selecting a state does not shove the page
+     around — the layout jump this whole design pass has been removing. */
+  min-height: 15rem;
+}
+.dmmap__program {
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+  font-size: 1.15rem; font-weight: 600; color: var(--demeter-ink); margin: 0.25rem 0 0;
+}
+.dmmap__cardlabel {
+  display: block;
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase;
+  font-weight: 600; color: var(--demeter-muted); margin-bottom: 0.15rem;
+}
+.dmmap__agency, .dmmap__prompt, .dmmap__federal {
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+  font-size: 0.95rem; line-height: 1.55; color: var(--demeter-body); margin: 0;
+}
+.dmmap__prompt { color: var(--demeter-ink); font-size: 1.05rem; }
+.dmmap__federal { color: var(--demeter-muted); font-size: 0.88rem; }
+.dmmap__portal {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.88rem; font-weight: 500; color: var(--demeter-terracotta-deep);
+  text-decoration: underline; text-underline-offset: 2px;
+  min-height: 44px; display: inline-flex; align-items: center; align-self: flex-start;
+}
+.dmmap__verified {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.72rem; color: var(--demeter-muted); margin: auto 0 0;
+}
+@media (max-width: 860px) {
+  /* Card FIRST on a phone: there the answer matters more than the picture, and
+     a map you have to scroll past to read the result is worse than a list. */
+  .dmmap { grid-template-columns: 1fr; }
+  .dmmap__card { order: -1; min-height: 0; }
+  /* Same collapse point for the other two-column blocks on this page, so they
+     all break at once rather than at three different widths. */
+  .dmx__official, .dmx__evgrid { grid-template-columns: 1fr; }
+  .dmx__evgrid .dmx__body { margin-bottom: 1rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .dmmap__state--on { transition: none; }
 }

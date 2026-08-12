@@ -111,6 +111,14 @@ export function isVerifiedState(code: string | null | undefined): boolean {
  */
 export const RECOMPOSE_MARKER = "\n\n⟲ recomposing with verified sources…\n\n";
 
+/** Opens the line of suggested follow-up questions the model appends to an
+ *  answer, pipe-separated. Parsed out of the visible text and rendered as
+ *  buttons, so the reader never sees the marker.
+ *
+ *  A distinct glyph rather than a word, for the same reason RECOMPOSE_MARKER is
+ *  one: it cannot collide with anything in a SNAP answer or a citation. */
+export const FOLLOWUP_MARKER = "⟶";
+
 // Re-exported through the CLIENT-SAFE entry on purpose: the language picker is
 // a client component, and importing these from the root barrel would drag the
 // 1MB eCFR corpus into the browser bundle. Same reasoning as RECOMPOSE_MARKER

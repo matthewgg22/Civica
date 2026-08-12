@@ -22,7 +22,23 @@ import {
   type FormQuestion,
 } from "@civica/demeter-engine";
 import type { AnswerLang } from "@civica/demeter-engine/packs";
+import Image from "next/image";
 import { PAGE_COPY } from "../lib/i18n/snap-page";
+import { StateFlag } from "./StateFlag";
+import { UsCoverageMap } from "./UsCoverageMap";
+import { SnapRetailerMap } from "./SnapRetailerMap";
+
+/** REQUIRED VERBATIM by FNS wherever an organisation outside USDA uses the SNAP
+ *  logo. Not our sentence to reword, and deliberately NOT in the localized copy
+ *  table — a mandated legal notice that can be translated is a mandated legal
+ *  notice that can drift. It renders in English on every language of the page,
+ *  which is what "must include the statement" means.
+ *
+ *  Source: fns.usda.gov/resource/snap-logo-guidance. The spacing in "U. S." is
+ *  theirs; it is reproduced rather than tidied. */
+const SNAP_SERVICE_MARK =
+  "The SNAP logo is a service mark of the U. S. Department of Agriculture. " +
+  "USDA does not endorse any goods, services, or enterprises.";
 
 /** The most form-like phrasing for a topic — the longest one, which is the
  *  closest to how the question is actually printed. Derived rather than
@@ -121,7 +137,7 @@ export function SnapOrientation({
           <ul className="dmo__states-grid">
             {states.map((s) => (
               <li key={s.code}>
-                <span className="dmst__mark">{s.code}</span>
+                <StateFlag code={s.code} />
               </li>
             ))}
           </ul>
@@ -168,6 +184,75 @@ export function SnapDetail({ states, lang = "en" }: { states: PackMeta[]; lang?:
         </dl>
       </section>
 
+      {/* WHAT SNAP IS, before the rules that decide who gets it. The page went
+          straight from "here is why you can trust us" to "here is what decides
+          eligibility" — explaining the qualifying rules for a program it had
+          never actually described. One line in the orientation bar was carrying
+          the whole definition. */}
+      <section className="dmx" aria-labelledby="what-is-snap">
+        <h2 id="what-is-snap" className="dmx__h2">
+          {c.snapH2}
+        </h2>
+        <p className="dmx__body">{c.snapBody}</p>
+        <dl className="dmx__defs">
+          {c.snapFacts.map((f) => (
+            <div className="dmx__def" key={f.t}>
+              <dt>{f.t}</dt>
+              <dd>{f.d}</dd>
+            </div>
+          ))}
+        </dl>
+
+        {/* Answers "where can I actually use this?", which the facts above
+            raise and do not settle. */}
+        <SnapRetailerMap lang={lang} />
+
+        {/* Pointing at USDA is exactly the place to say we are not USDA. A
+            benefits site that links the federal program without disclaiming
+            affiliation is one a worried applicant can easily read as official. */}
+        <div className="dmx__official">
+          <div>
+            <h3 className="dmx__h3">{c.officialH3}</h3>
+            <p className="dmx__note">{c.officialNote}</p>
+          </div>
+          <ul className="dmx__officiallinks">
+            {/* Decorative on purpose: it sits immediately beside a labelled link
+                to the same destination, so alt text would announce that
+                destination twice and add a duplicate tab stop. Rendered at its
+                true 663:460 ratio and otherwise untouched — "the logo cannot be
+                altered" is a condition of being allowed to use it. */}
+            <li className="dmx__snaplogo">
+              <Image src="/snap-logo.png" alt="" aria-hidden width={148} height={103} />
+            </li>
+            <li>
+              <a
+                className="dmx__link"
+                href="https://www.fns.usda.gov/snap"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {c.officialFns}&nbsp;↗
+              </a>
+            </li>
+            <li>
+              <a
+                className="dmx__link"
+                href="https://www.fns.usda.gov/snap/state-directory"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {c.officialDirectory}&nbsp;↗
+              </a>
+            </li>
+          </ul>
+          {/* Must appear on any material where an organisation outside USDA
+              uses the mark. It lives inside this box, next to the logo, rather
+              than in the page footer — a required notice about a specific mark
+              belongs with the mark, not three sections away. */}
+          <p className="dmx__servicemark">{SNAP_SERVICE_MARK}</p>
+        </div>
+      </section>
+
       <section className="dmx" aria-labelledby="what-decides">
         <h2 id="what-decides" className="dmx__h2">
           {c.decidesH2}
@@ -207,33 +292,82 @@ export function SnapDetail({ states, lang = "en" }: { states: PackMeta[]; lang?:
         </ol>
       </section>
 
+      {/* The outside evidence for the method described directly above, which is
+          why it sits here rather than anywhere else: "we cite our sources" is a
+          claim about ourselves, and this is someone else's finding that the
+          alternative does not hold up. */}
+      <section className="dmx dmx--evidence" aria-labelledby="evidence">
+        <h2 id="evidence" className="dmx__h2">
+          {c.evidenceH2}
+        </h2>
+        {/* Two columns on a wide screen: the argument on the left, the source
+            it rests on to the right. Stacked in one narrow column, this section
+            left half the page empty — and a pull-quote below its own body is a
+            decoration rather than a citation sitting beside the claim. */}
+        <div className="dmx__evgrid">
+          <p className="dmx__body">{c.evidenceBody}</p>
+          <div className="dmx__evaside">
+        <figure className="dmx__quote">
+          <blockquote cite="https://beeckcenter.georgetown.edu/report/ai-powered-rules-as-code-experiments-with-public-benefits-policy/">
+            “{c.evidenceQuote}”
+          </blockquote>
+          <figcaption>{c.evidenceAttrib}</figcaption>
+        </figure>
+        <ul className="dmx__officiallinks">
+          <li>
+            <a
+              className="dmx__link"
+              href="https://beeckcenter.georgetown.edu/report/ai-powered-rules-as-code-experiments-with-public-benefits-policy/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {c.evidenceReport}&nbsp;↗
+            </a>
+          </li>
+          <li>
+            <a
+              className="dmx__link"
+              href="https://beeckcenter.georgetown.edu/the-digital-benefits-network-showcases-twelve-generative-ai-experiments-for-benefits-policy-at-policy2code-demo-day/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {c.evidenceDemoDay}&nbsp;↗
+            </a>
+          </li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
       <section className="dmx" aria-labelledby="agencies">
         <h2 id="agencies" className="dmx__h2">
           {c.agenciesH2}
         </h2>
         <p className="dmx__body">{c.agenciesBody}</p>
-        <ul className="dmx__agencies">
+        {/* A map, not a stack of fourteen cards. The list was accurate and
+            unusable: to answer "is MY state here?" you had to read all of it.
+            A map answers that before you read anything.
+
+            The cards' content is not lost — it moves into the panel beside the
+            map, one state at a time, which is how many anyone ever needed. */}
+        <UsCoverageMap states={states} copy={c.map} />
+        <p className="dmx__note">{c.agenciesNote}</p>
+
+        {/* Every state, still in the HTML. The map is a CLIENT component, so
+            its labels are invisible to a crawler that does not execute JS —
+            and this section is how a generative engine learns that Demeter
+            covers CalFresh, Basic Food, FoodShare and the rest by name. Visually
+            hidden, deliberately not display:none, so it stays in the
+            accessibility tree as a plain readable list for anyone who would
+            rather not poke at a map. */}
+        <ul className="dmx__sronly">
           {states.map((s) => (
-            <li key={s.code} className="dmx__agency">
-              <span className="dmx__agency-code">{s.code}</span>
-              <span className="dmx__agency-body">
-                <span className="dmx__agency-program">{s.program}</span>
-                <span className="dmx__agency-name">{s.agency}</span>
-                {s.portal ? (
-                  <a
-                    className="dmx__link"
-                    href={s.portal.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    {s.portal.name}
-                  </a>
-                ) : null}
-              </span>
+            <li key={s.code}>
+              {s.code} — {s.program}, {s.agency}
+              {s.portal ? `, ${s.portal.name} (${s.portal.url})` : ""}
             </li>
           ))}
         </ul>
-        <p className="dmx__note">{c.agenciesNote}</p>
       </section>
 
       {/* The one internal link out. The form-question cards are the content a
@@ -247,6 +381,153 @@ export function SnapDetail({ states, lang = "en" }: { states: PackMeta[]; lang?:
         </a>
       </section>
     </>
+  );
+}
+
+/** "I need food this week."
+ *
+ *  SNAP takes at least seven days even under expedited service, so a page that
+ *  only explains SNAP hands someone who is out of food an accurate answer and
+ *  no dinner. Feeding America leads with a food-bank finder; GetCalFresh points
+ *  at real people. We carried nothing.
+ *
+ *  Deliberately NOT inside an accordion, not below the fold, and not phrased as
+ *  a caveat. Someone in that situation should not have to read a page about
+ *  eligibility rules to find it. */
+export function SnapFoodNow({ lang = "en" }: { lang?: AnswerLang }) {
+  const c = PAGE_COPY[lang];
+  return (
+    <aside className="dmnow" aria-label={c.foodNowLabel}>
+      <p className="dmnow__label">{c.foodNowLabel}</p>
+      <p className="dmnow__body">{c.foodNowBody}</p>
+      <p className="dmnow__links">
+        <a
+          className="dmnow__link"
+          href="https://www.feedingamerica.org/find-your-local-foodbank"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {c.foodNowBank}&nbsp;↗
+        </a>
+        <a
+          className="dmnow__link"
+          href="https://www.211.org/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {c.foodNow211}&nbsp;↗
+        </a>
+      </p>
+    </aside>
+  );
+}
+
+/** The reasons eligible people never apply.
+ *
+ *  The page explained the rules well and never addressed why someone would not
+ *  try. These are the fears, answered plainly, and they close the page because
+ *  they are the last thing standing between reading and acting.
+ *
+ *  <details>/<summary>: native disclosure, keyboard-operable and announced
+ *  correctly with no JavaScript, so it works in the server-rendered HTML a
+ *  crawler and a generative engine both read. Every answer is IN the markup
+ *  whether or not it is open.
+ *
+ *  The immigration one is the reason this section is careful rather than
+ *  reassuring: DHS rescinded the 2022 public charge rule effective 18 Sept
+ *  2026, so a flat "SNAP doesn't count" is true today and wrong next month.
+ *  See issue #759 — /welcome still says the flat version. */
+export function SnapFears({ lang = "en" }: { lang?: AnswerLang }) {
+  const c = PAGE_COPY[lang];
+  return (
+    <section className="dmx" aria-labelledby="fears">
+      <h2 id="fears" className="dmx__h2">
+        {c.fearsH2}
+      </h2>
+      <p className="dmx__body">{c.fearsBody}</p>
+      <div className="dmfear">
+        {c.fears.map((f) => (
+          <details className="dmfear__item" key={f.q}>
+            <summary className="dmfear__q">{f.q}</summary>
+            <p className="dmfear__a">{f.a}</p>
+          </details>
+        ))}
+      </div>
+      {/* The way out of a list of answers we chose in advance. */}
+      <a className="dmfear__cta" href={lang === "en" ? "/chat" : `/${lang}/chat`}>
+        <span className="dmfear__ctalabel">{c.fearsCta}</span>
+        <span className="dmfear__ctanote">{c.fearsCtaNote}</span>
+      </a>
+    </section>
+  );
+}
+
+/** What happens after you apply, on the clock the regulation sets.
+ *
+ *  The form-question cards on this page explain what a question MEANS. This is
+ *  the other half of what people arrive not knowing: what happens next, and by
+ *  when. The deadlines are federal (7 CFR 273.2), so unlike the dollar figures
+ *  — which vary by state and move every October — they can be stated outright.
+ *
+ *  Expedited service sits BEFORE the thirty-day decision rather than as a
+ *  footnote to it. Seven days is the most useful fact on the page for someone
+ *  who is out of food this week, and a footnote is where it goes to be missed.
+ *  Its criteria are described in plain terms rather than by their dollar
+ *  thresholds, which is both the house rule and the accurate move: the
+ *  thresholds are federal but the rent-and-utilities test depends on figures
+ *  that are not. */
+export function SnapTimeline({ lang = "en" }: { lang?: AnswerLang }) {
+  const c = PAGE_COPY[lang];
+  return (
+    <section className="dmx" aria-labelledby="timeline">
+      <h2 id="timeline" className="dmx__h2">
+        {c.timelineH2}
+      </h2>
+      <p className="dmx__body">{c.timelineBody}</p>
+      {/* An ordered list, because it is genuinely a sequence — a screen reader
+          announcing "3 of 6" is carrying the same information the rail does. */}
+      <ol className="dmtl">
+        {c.timeline.map((step) => (
+          <li className="dmtl__step" key={step.t}>
+            <span className="dmtl__when">{step.when}</span>
+            <div className="dmtl__body">
+              <h3 className="dmx__h3">{step.t}</h3>
+              <p className="dmx__body">{step.d}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+      <p className="dmx__note">{c.timelineNote}</p>
+    </section>
+  );
+}
+
+/** The hand-off to the chat, which now lives entirely on the Ask Demeter page.
+ *
+ *  The landing used to carry a working state picker and composer. Two places
+ *  to start the same conversation meant the landing shipped a picker whose
+ *  choice it then had to forward, and a first-time visitor met a half-chat on
+ *  a page that is not the chat. The composer belongs where the conversation
+ *  happens; this page's job is to explain and then hand over.
+ *
+ *  Any ?state= on the landing rides along, so /guides/[state] and /verify deep
+ *  links still arrive scoped. */
+export function SnapAskCta({
+  lang = "en",
+  state = null,
+}: {
+  lang?: AnswerLang;
+  state?: string | null;
+}) {
+  const c = PAGE_COPY[lang];
+  const base = lang === "en" ? "/chat" : `/${lang}/chat`;
+  return (
+    <section className="dmx dmx--outlink dmx--askcta">
+      <a className="dmx__outlink" href={state ? `${base}?state=${state}` : base}>
+        <span className="dmx__outlink-label">{c.askLink}</span>
+        <span className="dmx__outlink-body">{c.askIntro}</span>
+      </a>
+    </section>
   );
 }
 

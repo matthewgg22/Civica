@@ -105,6 +105,8 @@ describe("retention copy — the estimate rail must not understate what is kept"
         stateSelected={false}
         saved={false}
         copy={copy}
+        mode="estimate"
+        onModeChange={() => {}}
       />,
     );
     expect(screen.getByText(copy.privacy)).toBeTruthy();
@@ -112,7 +114,14 @@ describe("retention copy — the estimate rail must not understate what is kept"
     cleanup();
 
     render(
-      <DemeterWorksheet classification={null} stateSelected={false} saved copy={copy} />,
+      <DemeterWorksheet
+        classification={null}
+        stateSelected={false}
+        saved
+        copy={copy}
+        mode="estimate"
+        onModeChange={() => {}}
+      />,
     );
     expect(screen.getByText(copy.privacySaved)).toBeTruthy();
     expect(screen.queryByText(copy.privacy)).toBeNull();
@@ -122,7 +131,15 @@ describe("retention copy — the estimate rail must not understate what is kept"
     // An omitted prop must not silently promise someone their conversation is
     // stored; the safe default is the one that claims less.
     const copy = T.en.worksheet;
-    render(<DemeterWorksheet classification={null} stateSelected={false} copy={copy} />);
+    render(
+      <DemeterWorksheet
+        classification={null}
+        stateSelected={false}
+        copy={copy}
+        mode="estimate"
+        onModeChange={() => {}}
+      />,
+    );
     expect(screen.getByText(copy.privacy)).toBeTruthy();
   });
 });

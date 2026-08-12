@@ -22,6 +22,7 @@
 import type { Metadata } from "next";
 import {
   SnapWhyHard,
+  SnapTimeline,
   SnapFormQuestions,
   askHref,
 } from "../../components/SnapOverview";
@@ -62,6 +63,7 @@ export default function QuestionsPage() {
           </a>
         </section>
 
+        <SnapTimeline />
         <SnapWhyHard />
         <SnapFormQuestions />
       </div>

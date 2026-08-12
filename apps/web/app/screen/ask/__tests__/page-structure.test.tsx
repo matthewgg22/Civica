@@ -24,6 +24,10 @@ import {
   SnapDetail,
   SnapFormQuestions,
   SnapWhyHard,
+  SnapTimeline,
+  SnapFoodNow,
+  SnapFears,
+  SnapAskCta,
   questionsHref,
   askHref,
 } from "../../../../components/SnapOverview";
@@ -222,5 +226,197 @@ describe("hreflang — each page family annotates its own set", () => {
     for (const url of Object.values(alts)) {
       expect(url.endsWith("/screen/ask")).toBe(true);
     }
+  });
+});
+
+describe("the application timeline", () => {
+  it("runs in chronological order, with expedited before the 30-day decision", () => {
+    // Seven days is the most useful fact here for someone out of food this
+    // week. Ordering it after the thirty-day decision is how it gets missed.
+    const { container } = render(<SnapTimeline />);
+    const whens = [...container.querySelectorAll(".dmtl__when")].map((n) => n.textContent);
+    expect(whens).toEqual(PAGE_COPY.en.timeline.map((s) => s.when));
+    const text = container.textContent ?? "";
+    expect(text.indexOf("By day 7")).toBeLessThan(text.indexOf("By day 30"));
+  });
+
+  it("is an ordered list, because it is a sequence", () => {
+    const { container } = render(<SnapTimeline />);
+    expect(container.querySelector("ol.dmtl")).not.toBeNull();
+    expect(container.querySelectorAll("ol.dmtl > li")).toHaveLength(
+      PAGE_COPY.en.timeline.length,
+    );
+  });
+
+  it("states no dollar figures, in any language", () => {
+    // House rule, and the accurate call: these move every October, and the
+    // rent-and-utilities test depends on figures that vary by state.
+    for (const lang of ANSWER_LANGS) {
+      const { container } = render(<SnapTimeline lang={lang} />);
+      expect(container.textContent, `${lang} states a dollar figure`).not.toMatch(/[$￥€]\s?\d/);
+      cleanup();
+    }
+  });
+
+  it("cites the regulation the deadlines come from", () => {
+    // Stating a deadline outright is only defensible because it is federal.
+    for (const lang of ANSWER_LANGS) {
+      const { container } = render(<SnapTimeline lang={lang} />);
+      expect(container.textContent, `${lang}`).toContain("7 CFR 273.2");
+      cleanup();
+    }
+  });
+});
+
+describe("the landing hands over to the chat rather than starting one", () => {
+  it("links to /chat and carries any chosen state with it", () => {
+    const { container } = render(<SnapAskCta state="CA" />);
+    const a = container.querySelector("a")!;
+    expect(a.getAttribute("href")).toBe("/chat?state=CA");
+  });
+
+  it("links to the localized chat for a localized page", () => {
+    const { container } = render(<SnapAskCta lang="es" />);
+    expect(container.querySelector("a")!.getAttribute("href")).toBe("/es/chat");
+  });
+});
+
+describe("what SNAP is — the program, before the rules that decide who gets it", () => {
+  it("explains SNAP BEFORE explaining what decides eligibility", () => {
+    // The page went trust → eligibility, describing the qualifying rules for a
+    // program it had never actually defined. Order is the whole point of this
+    // section, so order is the thing worth pinning.
+    const { container } = render(<SnapDetail states={VERIFIED_STATES} />);
+    const text = container.textContent ?? "";
+    const isSnap = text.indexOf(PAGE_COPY.en.snapH2);
+    const decides = text.indexOf(PAGE_COPY.en.decidesH2);
+    expect(isSnap).toBeGreaterThan(-1);
+    expect(decides).toBeGreaterThan(-1);
+    expect(isSnap).toBeLessThan(decides);
+  });
+
+  it("disclaims affiliation wherever it points at USDA, in every language", () => {
+    // Linking the federal program without this is how a worried applicant ends
+    // up reading a private site as an official one.
+    for (const lang of ANSWER_LANGS) {
+      const { container } = render(<SnapDetail states={VERIFIED_STATES} lang={lang} />);
+      expect(
+        container.querySelector('a[href="https://www.fns.usda.gov/snap"]'),
+        `${lang} lost the USDA link`,
+      ).not.toBeNull();
+      expect(container.textContent, `${lang} lost the non-affiliation line`).toContain(
+        PAGE_COPY[lang].officialNote,
+      );
+      cleanup();
+    }
+  });
+
+  it("carries the SNAP service-mark notice verbatim, in every language", () => {
+    // FNS requires this exact sentence on any material where an organisation
+    // outside USDA uses the mark. It is a condition of being allowed to show
+    // the logo at all, so it is asserted character-for-character — including
+    // the spacing in "U. S." — and on every language of the page, since a
+    // notice that only appears in English is missing from three of them.
+    const REQUIRED =
+      "The SNAP logo is a service mark of the U. S. Department of Agriculture. " +
+      "USDA does not endorse any goods, services, or enterprises.";
+    for (const lang of ANSWER_LANGS) {
+      const { container } = render(<SnapDetail states={VERIFIED_STATES} lang={lang} />);
+      expect(container.textContent, `${lang} is missing the required notice`).toContain(
+        REQUIRED,
+      );
+      // The notice is meaningless if the logo it governs is not the one shown.
+      const logo = container.querySelector('img[src*="snap-logo"]');
+      expect(logo, `${lang} lost the SNAP logo`).not.toBeNull();
+      cleanup();
+    }
+  });
+
+  it("opens official links in a new tab without handing over the opener", () => {
+    const { container } = render(<SnapDetail states={VERIFIED_STATES} />);
+    for (const a of container.querySelectorAll<HTMLAnchorElement>('a[target="_blank"]')) {
+      expect(a.rel, a.href).toContain("noopener");
+    }
+  });
+});
+
+describe("the Beeck finding — the one claim on the page that is not ours", () => {
+  it("attributes the quote and links the report it came from", () => {
+    const { container } = render(<SnapDetail states={VERIFIED_STATES} />);
+    const fig = container.querySelector("figure.dmx__quote");
+    expect(fig).not.toBeNull();
+    // A quote without its source is just a sentence we wrote.
+    expect(fig!.querySelector("figcaption")?.textContent).toContain("Beeck Center");
+    expect(fig!.querySelector("blockquote")?.getAttribute("cite")).toContain(
+      "beeckcenter.georgetown.edu",
+    );
+    const links = [...container.querySelectorAll<HTMLAnchorElement>("a")].map((a) => a.href);
+    expect(links.some((h) => h.includes("ai-powered-rules-as-code"))).toBe(true);
+    expect(links.some((h) => h.includes("policy2code-demo-day"))).toBe(true);
+  });
+
+  it("makes the argument in every language, not just English", () => {
+    for (const lang of ANSWER_LANGS) {
+      const { container } = render(<SnapDetail states={VERIFIED_STATES} lang={lang} />);
+      expect(container.textContent, `${lang}`).toContain(PAGE_COPY[lang].evidenceQuote);
+      cleanup();
+    }
+  });
+});
+
+describe("food this week — the page's one obligation", () => {
+  it("is not behind a click, and points somewhere that can help today", () => {
+    // SNAP takes at least seven days even under expedited service. A page that
+    // only explains SNAP hands someone who is out of food an accurate answer
+    // and no dinner.
+    for (const lang of ANSWER_LANGS) {
+      const { container } = render(<SnapFoodNow lang={lang} />);
+      expect(container.textContent, lang).toContain(PAGE_COPY[lang].foodNowBody);
+      const hrefs = [...container.querySelectorAll("a")].map((a) => a.getAttribute("href") ?? "");
+      expect(hrefs.some((h) => h.includes("feedingamerica.org")), `${lang} food bank`).toBe(true);
+      expect(hrefs.some((h) => h.includes("211.org")), `${lang} 211`).toBe(true);
+      // Inside a <details> it would be one click away from someone who needs it
+      // most, which is the whole thing this section exists to avoid.
+      expect(container.querySelector("details"), `${lang} hid it`).toBeNull();
+      cleanup();
+    }
+  });
+});
+
+describe("the fears — the reasons eligible people never apply", () => {
+  it("renders every answer in the HTML, open or closed", () => {
+    // <details> keeps closed answers in the markup, which is what makes them
+    // readable by a crawler and quotable by a generative engine.
+    const { container } = render(<SnapFears />);
+    for (const f of PAGE_COPY.en.fears) {
+      expect(container.textContent, f.q).toContain(f.a);
+    }
+    expect(container.querySelectorAll("details")).toHaveLength(PAGE_COPY.en.fears.length);
+  });
+
+  it("does NOT give a flat answer on public charge, and names the date", () => {
+    // DHS rescinded the 2022 rule effective 2026-09-18. "SNAP isn't counted"
+    // is true today and wrong next month, and this is the highest-stakes
+    // sentence in the product — see issue #759.
+    const immigration = PAGE_COPY.en.fears[0];
+    expect(immigration.q).toMatch(/immigration/i);
+    expect(immigration.a).toContain("18 September 2026");
+    expect(immigration.a).toMatch(/rescinded/i);
+    // The reassuring phrasing on its own would be the defect.
+    expect(immigration.a).not.toMatch(/^No[.,]/);
+  });
+
+  it("names the date in every language, so no locale keeps the old promise", () => {
+    for (const lang of ANSWER_LANGS) {
+      const a = PAGE_COPY[lang].fears[0]?.a ?? "";
+      expect(a, `${lang} lost the effective date`).toMatch(/2026/);
+      expect(a.length, `${lang} immigration answer is too short to be careful`).toBeGreaterThan(80);
+    }
+  });
+
+  it("offers a way out to the chat for whatever is not listed", () => {
+    const { container } = render(<SnapFears lang="es" />);
+    const cta = container.querySelector("a.dmfear__cta");
+    expect(cta?.getAttribute("href")).toBe("/es/chat");
   });
 });

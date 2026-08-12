@@ -13,6 +13,7 @@
 import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import {
   RECOMPOSE_MARKER,
+  FOLLOWUP_MARKER,
   ANSWER_LANGS,
   LANG_NATIVE_NAME,
   type PackMeta,
@@ -24,7 +25,7 @@ import {
 import type { ScreeningClassification, PartialFacts } from "@civica/demeter-engine";
 import { DemeterMark } from "./DemeterMark";
 import { DemeterStatePicker } from "./DemeterStatePicker";
-import { DemeterWorksheet } from "./DemeterWorksheet";
+import { DemeterWorksheet, type WorksheetMode } from "./DemeterWorksheet";
 import { DemeterFeedback } from "./DemeterFeedback";
 import { DemeterSave } from "./DemeterSave";
 import { T } from "../lib/i18n/demeter-chat-copy";
@@ -81,7 +82,14 @@ type Msg = SavedMsg;
 // React nodes — never raw HTML, so streamed content has no injection surface.
 // Bullets and line breaks come free from the bubble's `white-space: pre-wrap`.
 function renderInline(line: string, keyBase: string): ReactNode[] {
-  const parts = line.split(/(\*\*[^*]+\*\*|\*[^*\s][^*]*\*)/g);
+  // _underscores_ as well as *asterisks*. The system-appended trailer writes
+  // "_Check it yourself:_", which rendered with its underscores showing —
+  // visible in the product, on every cited answer, for as long as that trailer
+  // has existed.
+  //
+  // Underscores are matched only at a word boundary, so snake_case identifiers
+  // in a citation (7_CFR_273) are not mistaken for emphasis.
+  const parts = line.split(/(\*\*[^*]+\*\*|\*[^*\s][^*]*\*|\b_[^_\s][^_]*_\b)/g);
   return parts.map((p, j) => {
     if (p.startsWith("**") && p.endsWith("**") && p.length > 4) {
       return <strong key={`${keyBase}b${j}`}>{p.slice(2, -2)}</strong>;
@@ -89,21 +97,113 @@ function renderInline(line: string, keyBase: string): ReactNode[] {
     if (p.startsWith("*") && p.endsWith("*") && p.length > 2) {
       return <em key={`${keyBase}i${j}`}>{p.slice(1, -1)}</em>;
     }
+    if (p.startsWith("_") && p.endsWith("_") && p.length > 2) {
+      return <em key={`${keyBase}u${j}`}>{p.slice(1, -1)}</em>;
+    }
     return p;
   });
 }
 
-export function renderAnswer(text: string): ReactNode[] {
+/** Splits the model's suggested follow-ups off the visible answer.
+ *
+ *  The model ends with "⟶ one | two | three". Those become buttons, so the
+ *  marker line must never render as text — and it must be stripped even when
+ *  the line is still half-streamed, or the reader watches a stray arrow and a
+ *  pipe character type themselves out mid-answer.
+ *
+ *  Returns the follow-ups only once the line is COMPLETE (a newline after it,
+ *  or the stream has finished). Offering half a question would be worse than
+ *  offering none. */
+export function splitFollowups(
+  text: string,
+  opts?: { streaming?: boolean },
+): { body: string; followups: string[] } {
+  const at = text.lastIndexOf(`\n${FOLLOWUP_MARKER}`);
+  if (at < 0) return { body: text, followups: [] };
+
+  const body = text.slice(0, at);
+  const rest = text.slice(at + 1 + FOLLOWUP_MARKER.length);
+  const end = rest.indexOf("\n");
+  const complete = end >= 0 || !opts?.streaming;
+  if (!complete) return { body, followups: [] };
+
+  const line = end >= 0 ? rest.slice(0, end) : rest;
+  const tail = end >= 0 ? rest.slice(end) : "";
+  const followups = line
+    .split("|")
+    .map((q) => q.trim())
+    .filter((q) => q.length > 1 && q.length <= 80)
+    .slice(0, 3);
+
+  // Anything after the follow-ups line (the appended citation trailer) stays.
+  return { body: body + tail, followups };
+}
+
+/** Answer text → nodes, with paragraphs as real <p> BLOCKS.
+ *
+ *  This used to emit one flat run of text and "\n" strings, leaning on the
+ *  bubble's `white-space: pre-wrap` to do the breaking. That renders a blank
+ *  line as exactly one empty line-height, so an answer that was correctly
+ *  broken into paragraphs still read as a single block — most of what made
+ *  answers look like a wall even when their shape was right. Paragraphs can't
+ *  be given space until they're elements, so now they are.
+ *
+ *  Single newlines INSIDE a paragraph are preserved (bullets rely on them) and
+ *  still render through pre-wrap. */
+export function renderAnswer(text: string, opts?: { streaming?: boolean }): ReactNode[] {
   const out: ReactNode[] = [];
-  const lines = text.split("\n");
-  lines.forEach((line, i) => {
+  let para: string[] = [];
+  let n = 0;
+  let lastPara = -1;
+
+  const flush = () => {
+    if (para.length === 0) return;
+    const lines = para;
+    para = [];
+    const key = n++;
+    lastPara = out.length;
+    out.push(
+      <p className="demeter__para" key={`p${key}`}>
+        {lines.flatMap((line, i) => [
+          ...(i > 0 ? ["\n"] : []),
+          ...renderInline(line, `p${key}l${i}`),
+        ])}
+      </p>,
+    );
+  };
+
+  for (const line of text.split("\n")) {
+    // A standalone rule separates the answer from the citation trailer; it is
+    // not part of either paragraph, so it closes the one before it.
     if (line.trim() === "---") {
-      out.push(<hr key={`hr${i}`} className="demeter__rule" />);
-      return;
+      flush();
+      out.push(<hr key={`hr${n++}`} className="demeter__rule" />);
+      continue;
     }
-    if (i > 0 && lines[i - 1]?.trim() !== "---") out.push("\n");
-    out.push(...renderInline(line, `l${i}`));
-  });
+    if (line.trim() === "") {
+      flush();
+      continue;
+    }
+    para.push(line);
+  }
+  flush();
+
+  // The streaming cursor goes INSIDE the last paragraph, where a cursor
+  // belongs — appended after the paragraph it would sit on its own line, which
+  // reads as a stray mark rather than as "still writing".
+  //
+  // It exists because there was no signal at all once text started arriving:
+  // an answer that had finished and an answer that had stalled looked
+  // identical, and the only way to tell was to wait and see.
+  if (opts?.streaming && lastPara >= 0) {
+    const p = out[lastPara] as React.ReactElement<{ children?: ReactNode }>;
+    out[lastPara] = (
+      <p className="demeter__para" key={`p-stream`}>
+        {p.props.children}
+        <span className="demeter__caret" aria-hidden />
+      </p>
+    );
+  }
   return out;
 }
 
@@ -156,6 +256,12 @@ export function DemeterChat({
   // where a state value would be a stale closure a turn behind.
   const factsRef = useRef<PartialFacts>({});
   const [classification, setClassification] = useState<ScreeningClassification | null>(null);
+  /** Defaults to "ask" DELIBERATELY. The rail used to read household facts out
+   *  of the conversation from the moment a state was picked, whether or not
+   *  anyone had asked for an estimate — a reasonable thing to offer and an
+   *  unreasonable thing to do quietly to someone who came to find out how the
+   *  system works before telling it anything about themselves. */
+  const [worksheetMode, setWorksheetMode] = useState<WorksheetMode>("ask");
   // Bumped by the estimate rail to open the state picker. Without a state
   // there is no benefit calculation at all, so this is the difference between
   // a live estimate and a dead rail for anyone who never touched the picker.
@@ -176,6 +282,87 @@ export function DemeterChat({
   }
   const abortRef = useRef<AbortController | null>(null);
   const scrollRef = useRef<HTMLDivElement | null>(null);
+  const inputRef = useRef<HTMLTextAreaElement | null>(null);
+
+  // ── PACED STREAMING ────────────────────────────────────────────────────────
+  // The reader used to render every network chunk the instant it arrived, and
+  // chunks arrive in bursts of wildly uneven size — so a sentence would sit
+  // still, then a paragraph would land at once. Nothing was pacing it, which is
+  // the whole of the choppiness: it is not the animation that is wrong, it is
+  // that there is no animation, only network timing made visible.
+  //
+  // So the network fills a buffer and the SCREEN drains it on its own clock.
+  //   rawRef   everything received, before the recompose marker is resolved
+  //   fullRef  the authoritative answer text (after the marker)
+  //   shownRef how much of it is on screen
+  const rawRef = useRef("");
+  const fullRef = useRef("");
+  const shownRef = useRef(0);
+  const rafRef = useRef(0);
+  /** Resolved by the drain the instant the last character lands, so nothing
+   *  downstream has to poll for "is it finished yet". */
+  const drainedRef = useRef<(() => void) | null>(null);
+
+  /** Someone who asked for less motion is asking for less of exactly this. */
+  const paceStream = () =>
+    typeof window !== "undefined" &&
+    !window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+
+  // setTimeout, not requestAnimationFrame. rAF is the usual instinct for
+  // per-frame work, and it is the wrong one here: a BACKGROUNDED TAB stops
+  // firing it entirely, so an answer would freeze half-written the moment
+  // someone switches tabs to read something else, and nothing would restart it.
+  // A timer is throttled in that state but still fires, so the reply finishes.
+  // At ~16ms the visual result is identical.
+
+  const finishDrain = () => {
+    rafRef.current = 0;
+    drainedRef.current?.();
+    drainedRef.current = null;
+  };
+
+  const drawStream = useCallback(() => {
+    const full = fullRef.current;
+    if (shownRef.current >= full.length) {
+      finishDrain();
+      return;
+    }
+    // PROPORTIONAL WITH A CEILING, and the ceiling is the point.
+    //
+    // Uncapped, `behind / 8` meant a long answer arrived at thousands of
+    // characters a second — technically "paced" and indistinguishable from a
+    // dump. This product is for someone frightened of losing food assistance,
+    // and text that lands faster than anyone can read it is not calm, it is
+    // urgent. So: ~125 characters a second at rest, ~250 when catching up.
+    // Around reading pace, deliberately, rather than around network pace.
+    const behind = full.length - shownRef.current;
+    const step = Math.min(4, Math.max(1, Math.ceil(behind / 40)));
+    shownRef.current = Math.min(full.length, shownRef.current + step);
+    const text = full.slice(0, shownRef.current);
+    setMessages((m) => {
+      const copy = m.slice();
+      const last = copy[copy.length - 1];
+      if (last && last.role === "assistant") copy[copy.length - 1] = { role: "assistant", content: text };
+      return copy;
+    });
+    // Resolve in the SAME tick as the final render rather than on the next
+    // scheduled one, so nothing observes a finished answer with busy still set.
+    if (shownRef.current >= full.length) {
+      finishDrain();
+      return;
+    }
+    rafRef.current = window.setTimeout(drawStream, 16);
+  }, []);
+
+  // A stream abandoned mid-flight must not keep painting into a component that
+  // has moved on.
+  useEffect(() => () => clearTimeout(rafRef.current), []);
+  /** Back to one row. The composer grows as you type, so clearing the value
+   *  without clearing the inline height leaves an empty box the size of the
+   *  question you just sent. */
+  const resetInputHeight = useCallback(() => {
+    if (inputRef.current) inputRef.current.style.height = "";
+  }, []);
   const t = T[lang];
 
   // What the live region below the transcript currently holds. Set ONLY when a
@@ -202,17 +389,30 @@ export function DemeterChat({
   // text streams into the last bubble. Instant during streaming is not a
   // compromise — it is what makes it look like text arriving rather than the
   // viewport chasing it.
+  //
+  // AND ONLY IF THE READER IS ALREADY AT THE BOTTOM. Following unconditionally
+  // means someone who scrolls up to re-read an earlier answer gets yanked back
+  // down on the next token — the transcript fighting the person reading it.
+  // Being left behind is recoverable; being dragged away mid-sentence is not.
+  const NEAR_BOTTOM = 120;
+  const atBottom = (el: HTMLDivElement) =>
+    el.scrollHeight - el.scrollTop - el.clientHeight < NEAR_BOTTOM;
+
   const messageCount = messages.length;
   useEffect(() => {
     const el = scrollRef.current;
     if (!el) return;
-    el.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
+    // A new bubble is a real event, so it follows from a little further up —
+    // but not from the top of a long transcript someone is reading.
+    if (el.scrollHeight - el.scrollTop - el.clientHeight < NEAR_BOTTOM * 3) {
+      el.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
+    }
   }, [messageCount]);
 
   useEffect(() => {
     const el = scrollRef.current;
     if (!el || !busy) return;
-    el.scrollTop = el.scrollHeight;
+    if (atBottom(el)) el.scrollTop = el.scrollHeight;
   }, [messages, busy]);
 
   const changeState = (next: string | null) => {
@@ -244,6 +444,7 @@ export function DemeterChat({
   const clearConversation = useCallback(() => {
     setMessages([]);
     setInput("");
+    resetInputHeight();
     setError(null);
     setClassification(null);
     factsRef.current = {};
@@ -258,7 +459,7 @@ export function DemeterChat({
       /* storage disabled — nothing was stored either */
     }
     setAnnouncement(t.cleared);
-  }, [t]);
+  }, [t, resetInputHeight]);
 
   const restoreConversation = useCallback(
     (restored: Msg[], restoredState: string | null, restoredLang: AnswerLang) => {
@@ -303,11 +504,19 @@ export function DemeterChat({
     setError(null);
     setBusy(true);
     setInput("");
+    resetInputHeight();
 
     const chatTurns = messages.filter(
       (m): m is { role: "user" | "assistant"; content: string } => m.role !== "divider",
     );
     const apiMessages = [...chatTurns, { role: "user" as const, content: question }].slice(-20);
+    // Fresh buffer per answer, or the next one types out on top of the last.
+    clearTimeout(rafRef.current);
+    rafRef.current = 0;
+    rawRef.current = "";
+    fullRef.current = "";
+    shownRef.current = 0;
+
     setMessages((m) => [
       ...m,
       { role: "user", content: question },
@@ -318,7 +527,10 @@ export function DemeterChat({
     // in series would make every reply feel slower for a panel that is
     // supplementary. It is intentionally not awaited and intentionally cannot
     // throw into this scope — the answer must not depend on it.
-    if (state) void refreshWorksheet(apiMessages);
+    // THE GATE. In "ask" mode this call never happens, so no facts are
+    // extracted, nothing lands in factsRef, and the paid extraction round trip
+    // is not made either.
+    if (state && worksheetMode === "estimate") void refreshWorksheet(apiMessages);
 
     const controller = new AbortController();
     abortRef.current = controller;
@@ -424,23 +636,81 @@ export function DemeterChat({
           const { done, value } = await reader.read();
           if (done) break;
           const chunk = decoder.decode(value, { stream: true });
-          setMessages((m) => {
-            const copy = m.slice();
-            const last = copy[copy.length - 1];
-            if (last && last.role === "assistant") {
-              const combined = last.content + chunk;
-              const markerAt = combined.lastIndexOf(RECOMPOSE_MARKER);
-              copy[copy.length - 1] = {
-                role: "assistant",
-                content:
-                  markerAt >= 0
-                    ? combined.slice(markerAt + RECOMPOSE_MARKER.length).replace(/^\s+/, "")
-                    : combined,
-              };
-            }
-            return copy;
-          });
+          rawRef.current += chunk;
+
+          // The marker REPLACES the unverified draft, so it is resolved against
+          // everything received rather than against what is currently on
+          // screen — the display may legitimately be behind.
+          const markerAt = rawRef.current.lastIndexOf(RECOMPOSE_MARKER);
+          const next =
+            markerAt >= 0
+              ? rawRef.current.slice(markerAt + RECOMPOSE_MARKER.length).replace(/^\s+/, "")
+              : rawRef.current;
+
+          // If the recomposed answer does not continue what is already shown,
+          // the draft was thrown away — so the display starts over and the
+          // replacement types out. Seeing it rewrite is the honest rendering of
+          // what just happened.
+          if (!next.startsWith(fullRef.current.slice(0, shownRef.current))) shownRef.current = 0;
+          fullRef.current = next;
+
+          if (!paceStream()) {
+            shownRef.current = next.length;
+            setMessages((m) => {
+              const copy = m.slice();
+              const last = copy[copy.length - 1];
+              if (last && last.role === "assistant") copy[copy.length - 1] = { role: "assistant", content: next };
+              return copy;
+            });
+          } else if (!rafRef.current) {
+            rafRef.current = window.setTimeout(drawStream, 16);
+          }
         }
+      }
+
+      // Let the screen catch up before anything treats the answer as finished:
+      // the certainty verdict is read back off the rendered text, and the
+      // feedback row asks about an answer the person has to have seen.
+      //
+      // BOUNDED anyway. The timer survives a backgrounded tab, but it is
+      // throttled hard there, and an unbounded wait would leave busy stuck on —
+      // Stop showing instead of Send — for as long as the tab stayed hidden.
+      if (shownRef.current < fullRef.current.length) {
+        // A STALL WATCHDOG, not a deadline. A fixed ceiling would truncate a
+        // long answer that is pacing correctly — at reading pace a 2,000
+        // character reply legitimately takes eight seconds. What actually needs
+        // catching is the timer STOPPING (a hidden tab throttles it to
+        // nothing), so this watches for no progress rather than for elapsed
+        // time.
+        let watchdog = 0;
+        await Promise.race([
+          new Promise<void>((resolve) => {
+            drainedRef.current = resolve;
+          }),
+          new Promise<void>((resolve) => {
+            let last = shownRef.current;
+            watchdog = window.setInterval(() => {
+              if (shownRef.current !== last) {
+                last = shownRef.current;
+                return;
+              }
+              resolve();
+            }, 1200);
+          }),
+        ]);
+        clearInterval(watchdog);
+      }
+      if (shownRef.current < fullRef.current.length) {
+        clearTimeout(rafRef.current);
+        rafRef.current = 0;
+        shownRef.current = fullRef.current.length;
+        const finalText = fullRef.current;
+        setMessages((m) => {
+          const copy = m.slice();
+          const last = copy[copy.length - 1];
+          if (last && last.role === "assistant") copy[copy.length - 1] = { role: "assistant", content: finalText };
+          return copy;
+        });
       }
     } catch (err) {
       // An abort is the user pressing Stop, not a failure — their question was
@@ -462,7 +732,7 @@ export function DemeterChat({
     // two staying in sync is currently a coincidence of their dep lists
     // matching: give refreshWorksheet one dependency send does not have, and
     // send would silently hold a stale copy with no warning.
-  }, [input, busy, messages, state, lang, t, refreshWorksheet]);
+  }, [input, busy, messages, state, lang, t, refreshWorksheet, resetInputHeight, worksheetMode, drawStream]);
 
   const hasChat = messages.length > 0;
 
@@ -507,75 +777,93 @@ export function DemeterChat({
 
       {/* One control, one selected state — replaces the chip row that ate a
           full row and still clipped this link off the right edge at 1280px. */}
-      <div className="demeter__scope">
-        <DemeterStatePicker
-          states={states}
-          value={state}
-          onChange={changeState}
-          copy={t.picker}
-          hint={geoHint}
-          openSignal={openPicker}
-        />
-        <a className="demeter__how" href="/verify">
-          {t.howWeVerify}
-        </a>
-        {/* Sits with the scope controls rather than under the composer: it acts
-            on the WHOLE conversation, like the state and language pickers, not
-            on the next thing typed. Renders nothing until an answer exists. */}
-        <DemeterSave
-          messages={messages}
-          state={state}
-          lang={lang}
-          busy={busy}
-          pendingSave={pendingSave}
-          initialSavedId={savedConversationId}
-          onRestore={restoreConversation}
-          // Plain setter, not an inline arrow: it lands in an effect's
-          // dependency list in DemeterSave, and React guarantees a state
-          // setter's identity is stable across renders.
-          onSavedChange={setConversationSaved}
-          copy={t.save}
-        />
-        {/* CLEAR, for shared and public machines. On a library terminal the
-            next person otherwise sees the previous person's questions about
-            their income, their household, their felony record.
-            Renders only once there is something to clear. */}
-        {hasChat &&
-          (confirmClear ? (
-            <span className="demeter__clearconfirm" role="group" aria-label={t.clear}>
-              <span className="demeter__clearnote">{t.clearNote}</span>
-              <button type="button" className="demeter__clearyes" onClick={clearConversation}>
-                {t.clear}
-              </button>
-              <button
-                type="button"
-                className="demeter__clearno"
-                onClick={() => setConfirmClear(false)}
-              >
-                {t.save.panelDismiss}
-              </button>
-            </span>
-          ) : (
-            <button
-              type="button"
-              className="demeter__clear"
-              onClick={() => setConfirmClear(true)}
-            >
-              {t.clear}
-            </button>
-          ))}
-      </div>
 
       <div className="demeter__body">
         <div className="demeter__main">
-      <div className="demeter__scroll" ref={scrollRef}>
-        {!hasChat && (
-          <div className="demeter__empty">
-            {[t.empty1, t.empty2, t.empty3].map((q) => (
-              <button key={q} type="button" className="demeter__suggest" onClick={() => setInput(q)}>
-                {q}
+          {/* The controls live INSIDE the conversation column, not in a full-width
+              row above it. Out here they started 68px above the rail and left
+              "How we verify" floating alone in the right column, belonging to
+              neither. In here both columns begin on the same line. */}
+        <div className="demeter__scope">
+          <DemeterStatePicker
+            states={states}
+            value={state}
+            onChange={changeState}
+            copy={t.picker}
+            hint={geoHint}
+            openSignal={openPicker}
+          />
+          <a className="demeter__how" href="/verify">
+            {t.howWeVerify}
+          </a>
+          {/* Sits with the scope controls rather than under the composer: it acts
+              on the WHOLE conversation, like the state and language pickers, not
+              on the next thing typed. Renders nothing until an answer exists. */}
+          <DemeterSave
+            messages={messages}
+            state={state}
+            lang={lang}
+            busy={busy}
+            pendingSave={pendingSave}
+            initialSavedId={savedConversationId}
+            onRestore={restoreConversation}
+            // Plain setter, not an inline arrow: it lands in an effect's
+            // dependency list in DemeterSave, and React guarantees a state
+            // setter's identity is stable across renders.
+            onSavedChange={setConversationSaved}
+            copy={t.save}
+          />
+          {/* CLEAR, for shared and public machines. On a library terminal the
+              next person otherwise sees the previous person's questions about
+              their income, their household, their felony record.
+              Renders only once there is something to clear. */}
+          {hasChat &&
+            (confirmClear ? (
+              <span className="demeter__clearconfirm" role="group" aria-label={t.clear}>
+                <span className="demeter__clearnote">{t.clearNote}</span>
+                <button type="button" className="demeter__clearyes" onClick={clearConversation}>
+                  {t.clear}
+                </button>
+                <button
+                  type="button"
+                  className="demeter__clearno"
+                  onClick={() => setConfirmClear(false)}
+                >
+                  {t.save.panelDismiss}
+                </button>
+              </span>
+            ) : (
+              <button
+                type="button"
+                className="demeter__clear"
+                onClick={() => setConfirmClear(true)}
+              >
+                {t.clear}
               </button>
             ))}
+        </div>
+      <div className="demeter__scroll" ref={scrollRef}>
+        {!hasChat && (
+          // A composed block, centred in the space rather than three buttons
+          // left in it. Measured: 414px of the 565px transcript was empty, and
+          // whichever end the chips were pinned to, they read as controls
+          // someone forgot rather than as the start of a conversation.
+          <div className="demeter__empty">
+            <DemeterMark size={52} />
+            <h2 className="demeter__emptytitle">{t.emptyTitle}</h2>
+            <p className="demeter__emptylede">{t.emptyLede}</p>
+            <div className="demeter__suggests">
+              {[t.empty1, t.empty2, t.empty3].map((q) => (
+                <button
+                  key={q}
+                  type="button"
+                  className="demeter__suggest"
+                  onClick={() => setInput(q)}
+                >
+                  {q}
+                </button>
+              ))}
+            </div>
           </div>
         )}
         {messages.map((m, i) =>
@@ -584,16 +872,35 @@ export function DemeterChat({
               {m.content}
             </div>
           ) : (
-            <div key={i}>
+            // THE WRAPPER CARRIES THE ALIGNMENT. It used to be a bare <div>,
+            // which made IT the flex child of the transcript — so the bubble's
+            // own `align-self: flex-end` was set correctly and reached nothing,
+            // and every message rendered left-aligned at its full 68ch max.
+            // Measured: "whats snap?" came out 635px wide, on the left.
+            <div key={i} className={`demeter__turn demeter__turn--${m.role}`}>
               <div className={`demeter__msg demeter__msg--${m.role}`}>
                 {m.content ? (
                   m.role === "assistant" ? (
-                    renderAnswer(m.content)
+                    renderAnswer(
+                      splitFollowups(m.content, { streaming: busy && i === messages.length - 1 })
+                        .body,
+                      { streaming: busy && i === messages.length - 1 },
+                    )
                   ) : (
                     m.content
                   )
                 ) : m.role === "assistant" && busy && i === messages.length - 1 ? (
-                  <span className="demeter__thinking">{t.thinking}</span>
+                  <span className="demeter__thinking">
+                    {t.thinking}
+                    {/* Three dots, so the wait has a heartbeat. The pulsing
+                        text alone reads as a static label someone forgot to
+                        remove when nothing arrives for a few seconds. */}
+                    <span className="demeter__dots" aria-hidden>
+                      <i />
+                      <i />
+                      <i />
+                    </span>
+                  </span>
                 ) : (
                   m.content
                 )}
@@ -602,6 +909,34 @@ export function DemeterChat({
                   to have arrived (readCertainty returns null until it does),
                   and asking someone to rate a half-streamed answer is asking
                   about something they haven't read. */}
+              {/* Suggested follow-ups, on a FINISHED answer only — offering
+                  the next question while the current one is still arriving
+                  reads as being hurried along.
+                  They populate the composer rather than sending, matching the
+                  starter questions: a suggestion you can edit before asking is
+                  a suggestion, and one that fires on touch is a decision made
+                  for you. */}
+              {m.role === "assistant" && m.content && !(busy && i === messages.length - 1) && (
+                <>
+                  {splitFollowups(m.content).followups.length > 0 && (
+                    <div className="demeter__followups">
+                      {splitFollowups(m.content).followups.map((q) => (
+                        <button
+                          key={q}
+                          type="button"
+                          className="demeter__followup"
+                          onClick={() => {
+                            setInput(q);
+                            inputRef.current?.focus();
+                          }}
+                        >
+                          {q}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </>
+              )}
               {m.role === "assistant" && m.content && !(busy && i === messages.length - 1) && (
                 <DemeterFeedback
                   question={
@@ -660,8 +995,18 @@ export function DemeterChat({
       >
         <textarea
           className="demeter__input"
+          ref={inputRef}
           value={input}
-          onChange={(e) => setInput(e.target.value)}
+          onChange={(e) => {
+            setInput(e.target.value);
+            // Grow with the question. `rows={1}` and a fixed min-height meant a
+            // long question scrolled inside two visible lines on a page with
+            // room to show all of it. Reset to auto first or the box can only
+            // ever get taller, never shorter.
+            const el = e.currentTarget;
+            el.style.height = "auto";
+            el.style.height = `${el.scrollHeight}px`;
+          }}
           onKeyDown={(e) => {
             if (e.key === "Enter" && !e.shiftKey) {
               e.preventDefault();
@@ -676,7 +1021,23 @@ export function DemeterChat({
           <button
             type="button"
             className="demeter__send demeter__send--stop"
-            onClick={() => abortRef.current?.abort()}
+            onClick={() => {
+              abortRef.current?.abort();
+              // Stop pacing and show what already arrived. Continuing to type
+              // out an answer someone has just told us to stop would be the
+              // button not working.
+              clearTimeout(rafRef.current);
+              rafRef.current = 0;
+              shownRef.current = fullRef.current.length;
+              setMessages((m) => {
+                const copy = m.slice();
+                const last = copy[copy.length - 1];
+                if (last && last.role === "assistant") {
+                  copy[copy.length - 1] = { role: "assistant", content: fullRef.current };
+                }
+                return copy;
+              });
+            }}
           >
             {t.stop}
           </button>
@@ -700,6 +1061,21 @@ export function DemeterChat({
           saved={conversationSaved}
           copy={t.worksheet}
           onPickState={() => setOpenPicker((n) => n + 1)}
+          mode={worksheetMode}
+          onModeChange={(m) => {
+            setWorksheetMode(m);
+            // Turning it OFF throws away what was gathered. Leaving the last
+            // estimate on screen under "Just asking" would contradict the
+            // sentence right beneath it, and keeping the facts in memory
+            // against a later switch-back would make "nothing is gathered"
+            // mean "nothing is gathered from now on", which is not what it
+            // says.
+            if (m === "ask") {
+              factsRef.current = {};
+              setClassification(null);
+              setAnnouncement(t.worksheet.switchedToAsk);
+            }
+          }}
         />
       </div>
     </div>
