@@ -114,8 +114,35 @@ export function verifyCitations(
   answer: string,
   retrievedCitations: string[],
   state?: string | null,
+  /** The retrieved source TEXT. Regulations cross-reference each other, and a
+   *  citation the retrieved text ITSELF quotes is a real authority the model
+   *  read there — not an invention.
+   *
+   *  This is the bug it fixes, from production: asked "four people in my
+   *  household; I make 4 k a month and im in boston", the answer cited
+   *  45 CFR 260.31 — which appears verbatim inside 7 CFR 273.8(e)(19)
+   *  ("as defined by 45 CFR 260.31 (a)(1) and (a)(2)"). 45 CFR is not SNAP
+   *  corpus, so it scored `unrecognized`, the draft was rejected, the retry was
+   *  rejected, and the turn degraded. The model had done exactly the right
+   *  thing: cited what its source cited.
+   *
+   *  `known`, deliberately, not `in_sources` — the trailer renders that as
+   *  "recognized authority, but not in the retrieved text; confirm against
+   *  source", which is precisely the right thing to tell a reader about a
+   *  cross-reference we did not retrieve and cannot vouch for. */
+  retrievedText?: string,
 ): CitationCheck[] {
   const packPatterns = getStatePack(state)?.authorities ?? [];
+  const haystack = retrievedText ?? "";
+  /** Quoted by the sources we actually put in front of the model. */
+  const crossReferenced = (citation: string): boolean => {
+    if (!haystack) return false;
+    // Normalise spacing only — never a fuzzy match. "45 CFR 260.31" must be
+    // present as such for this to fire.
+    const needle = citation.replace(/\s+/g, " ").trim();
+    if (needle.length < 8) return false;
+    return haystack.replace(/\s+/g, " ").includes(needle);
+  };
   return extractCitations(answer, state).map((citation) => {
     if (/CFR/i.test(citation)) {
       const title = citation.split(" ")[0];
@@ -126,6 +153,7 @@ export function verifyCitations(
       if (CORPUS_CITATIONS.some((c) => lineage(citation, c)) || KNOWN_EXTRA.has(sectionWithTitle)) {
         return { citation, status: "known" as const };
       }
+      if (crossReferenced(citation)) return { citation, status: "known" as const };
       return { citation, status: "unrecognized" as const };
     }
     if (/^FNS Handbook/i.test(citation)) {

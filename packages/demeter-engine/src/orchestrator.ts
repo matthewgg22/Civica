@@ -202,7 +202,12 @@ export async function* answerQuestion(req: AnswerRequest): AsyncGenerator<Answer
   const lastUser = messages[messages.length - 1]!.content;
 
   // --- Grounded system prompt (state-threaded; shared with the eval) --------
-  const { systemBlocks, retrievedCitations } = await buildMaeSystem(lastUser, audience, state, lang);
+  const { systemBlocks, retrievedCitations, retrievedText } = await buildMaeSystem(
+    lastUser,
+    audience,
+    state,
+    lang,
+  );
 
   // Distress gate (F2): crisis phrasing → the answer LEADS with immediate help.
   const distressed = detectDistress(lastUser);
@@ -286,7 +291,7 @@ export async function* answerQuestion(req: AnswerRequest): AsyncGenerator<Answer
           sinceVerify += delta.length;
           if (sinceVerify >= VERIFY_INTERVAL_CHARS) {
             sinceVerify = 0;
-            const checks = verifyCitations(answerText, retrievedCitations, state);
+            const checks = verifyCitations(answerText, retrievedCitations, state, retrievedText);
             if (hasUnrecognized(checks) || !numbersOk(answerText)) {
               aborted = true;
               stream.abort();
@@ -303,7 +308,7 @@ export async function* answerQuestion(req: AnswerRequest): AsyncGenerator<Answer
         const final = await stream.finalMessage();
         usageIn += final.usage.input_tokens;
         usageOut += final.usage.output_tokens;
-        finalChecks = verifyCitations(answerText, retrievedCitations, state);
+        finalChecks = verifyCitations(answerText, retrievedCitations, state, retrievedText);
         if (hasUnrecognized(finalChecks) || !numbersOk(answerText)) {
           aborted = true; // failed on the last unverified tail
         } else {
@@ -354,7 +359,7 @@ export async function* answerQuestion(req: AnswerRequest): AsyncGenerator<Answer
       if (err instanceof Error && (err.name === "AbortError" || signal?.aborted)) return;
       retryText = "";
     }
-    finalChecks = verifyCitations(retryText, retrievedCitations, state);
+    finalChecks = verifyCitations(retryText, retrievedCitations, state, retrievedText);
     if (retryText && !hasUnrecognized(finalChecks) && numbersOk(retryText)) {
       answerText = retryText;
       yield { type: "delta", text: retryText };
@@ -365,7 +370,7 @@ export async function* answerQuestion(req: AnswerRequest): AsyncGenerator<Answer
       // answer has already lost its summary.
       const chunks = await retrieve(lastUser, { state, lang });
       answerText = degradedAnswer(formatRetrievedSources(chunks, state), lang);
-      finalChecks = verifyCitations(answerText, retrievedCitations, state);
+      finalChecks = verifyCitations(answerText, retrievedCitations, state, retrievedText);
       yield { type: "delta", text: answerText };
     }
   }
