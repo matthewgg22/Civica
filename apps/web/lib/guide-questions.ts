@@ -299,4 +299,13 @@ export const QUESTIONS: Record<string, string[]> = {
     "How long does my SNAP certification last in Delaware?",
     "Does Delaware have a Restaurant Meals Program for SNAP?",
   ],
+  GU: [
+    "Does Guam run SNAP or a different food assistance program?",
+    "What is the income limit for SNAP in Guam?",
+    "Why is the maximum SNAP benefit higher in Guam than in the mainland US?",
+    "I have a drug felony conviction — can I still get SNAP in Guam?",
+    "Is the SNAP work-requirement time limit currently waived anywhere in Guam?",
+    "Does Guam have a Restaurant Meals Program for SNAP?",
+    "How do I apply for SNAP in Guam?",
+  ],
 };

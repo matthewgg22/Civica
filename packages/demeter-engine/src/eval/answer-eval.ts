@@ -4890,6 +4890,95 @@ export const DE_GOLD: AnswerExpectation[] = [
 ];
 
 
+/** Everything the live runner executes for Guam. */
+export const GU_GOLD: AnswerExpectation[] = [
+  {
+    id: "gu-runs-snap-not-nap",
+    // Guards the threshold structural finding: Guam runs standard federal
+    // SNAP, not the NAP block grant PR/AS/MP run.
+    question: "Does Guam run SNAP or a different food assistance program?",
+    state: "GU",
+    mustMention: "SNAP",
+    mustDisclaim: true,
+  },
+  {
+    id: "gu-income-limit-not-territory-elevated",
+    // Guards the flagship finding: Guam's income ELIGIBILITY limits match
+    // the mainland/48-states table, unlike Alaska/Hawaii's elevated figures.
+    question: "What is the income limit for SNAP in Guam?",
+    state: "GU",
+    mustMention: "1,305",
+    mustDisclaim: true,
+  },
+  {
+    id: "gu-max-allotment-territory-elevated",
+    // Guards the other half of the flagship finding: Guam's BENEFIT figures
+    // (unlike its income limits) genuinely are territory-elevated.
+    question: "Why is the maximum SNAP benefit higher in Guam than in the mainland US?",
+    state: "GU",
+    mustMention: "1,465",
+    mustDisclaim: true,
+  },
+  {
+    id: "gu-drug-felony-modified-not-resolved",
+    // Guards the disclosed gap: USDA's State Options Report says "Modified
+    // disqualification" but this pack could not locate the exact terms.
+    question: "I have a drug felony conviction — can I still get SNAP in Guam?",
+    state: "GU",
+    mustMention: "modified",
+    mustDisclaim: true,
+  },
+  {
+    id: "gu-abawd-waiver-vs-active-enforcement",
+    question: "Is the SNAP work-requirement time limit currently waived anywhere in Guam?",
+    state: "GU",
+    mustMention: "January",
+    mustDisclaim: true,
+  },
+  {
+    id: "gu-restaurant-meals-program-pending-bill",
+    question: "Does Guam have a Restaurant Meals Program for SNAP?",
+    state: "GU",
+    mustMention: "not",
+    mustDisclaim: true,
+  },
+  {
+    id: "gu-how-to-apply-mybenefits",
+    question: "How do I apply for SNAP in Guam?",
+    state: "GU",
+    mustMention: "MyBenefits",
+    mustDisclaim: true,
+  },
+  {
+    id: "gu-asset-limit-not-territory-elevated",
+    question: "Does Guam have an asset or resource limit for SNAP?",
+    state: "GU",
+    mustMention: "3,000",
+    mustDisclaim: true,
+  },
+  {
+    id: "gu-agency-dphss",
+    question: "What agency administers SNAP in Guam?",
+    state: "GU",
+    mustMention: "DPHSS",
+    mustDisclaim: true,
+  },
+  {
+    id: "gu-utility-deduction-sua-gap-disclosed",
+    question: "What utility deduction can I get for SNAP in Guam?",
+    state: "GU",
+    mustDisclaim: true,
+  },
+  {
+    id: "gu-federal-benefit",
+    question: "How is the monthly SNAP benefit amount calculated from net income in Guam?",
+    state: "GU",
+    expectCitation: "273.10",
+    mustDisclaim: true,
+  },
+];
+
+
 export const ALL_GOLD: AnswerExpectation[] = [
   ...ANSWER_GOLD,
   ...ES_GOLD,
@@ -4939,4 +5028,5 @@ export const ALL_GOLD: AnswerExpectation[] = [
   ...RI_GOLD,
   ...ND_GOLD,
   ...DE_GOLD,
+  ...GU_GOLD,
 ];

@@ -1,0 +1,215 @@
+{
+  "_provenance": {
+    "note": "Guam SNAP curated supplements. Guam has NO existing packages/snap-rules StatePolicy entry and NO oracle-fixture coverage — a genuine blank slate, like this roster's Delaware, Nebraska, Connecticut, Utah, Iowa, Arkansas, Mississippi, Kansas, and New Hampshire prior builds. This pack is CORPUS-ONLY and does not touch packages/snap-rules or the oracle fixture. Guam was built as one of a six-agent parallel batch (AK, VT, WY, DC, GU, VI) closing out the standard 50-state-plus-territories roster; each agent built on its own branch. Drafted from direct live fetches of DPHSS's own numbered press releases and FAQs (go.opengovguam.com), the DPHSS SNAP services page (dphss.guam.gov), the Guam Legislature's bill-tracking page, and — after working around a persistent usda.gov Cloudflare 403 — a content-verified mirror of USDA's own FY2026 COLA memorandum and a working Azure CDN mirror of USDA's own SNAP State Options Report, 17th Edition.",
+    "extracted": "2026-08-12",
+    "source_fact_check": "This pack's single most important fact check was confirming, from USDA's own FY2026 COLA memorandum, that Guam's SNAP program is NOT territory-elevated across the board the way this pack's Guam-specific task brief warned might be the case (an Alaska/Hawaii-style pattern) — income ELIGIBILITY limits (net and gross FPL-based thresholds) are IDENTICAL to the 48 states/D.C./Virgin Islands table, while BENEFIT-CALCULATION figures (maximum allotment, standard deduction, maximum excess shelter deduction) ARE genuinely territory-elevated for Guam specifically, an asymmetric structure this pack found no secondary source describing precisely and treats as its flagship finding. This pack also fact-checked the task brief's central premise directly: USDA's FY2026 COLA memo lists Guam among the jurisdictions its SNAP COLA figures apply to by name, alongside the 48 states, D.C., Alaska, Hawaii, and the U.S. Virgin Islands — confirming Guam runs standard federal SNAP, not NAP.",
+    "access_note": "usda.gov itself returned a persistent Cloudflare-managed-challenge HTTP 403 to every direct-fetch and r.jina.ai reader-proxy attempt this pack made for both the COLA memo and (at its canonical fns-prod.azureedge.us URL) the State Options Report; resolved via a content-verified third-party mirror for the COLA memo and a working newer Azure Front Door CDN mirror URL for the State Options Report's current 17th edition. dphss.guam.gov, go.opengovguam.com, mybenefits.guam.gov, and guamlegislature.gov all returned clean HTTP 200 with no barrier. Guam has no equivalent of a numbered, citable administrative-code SNAP manual this pack could locate online — DPHSS's own numbered press releases and FAQs, not a codified manual, are this pack's most substantive Guam-specific primary sources."
+  },
+  "supplements": [
+    {
+      "key": "program-identity",
+      "kind": "supplement",
+      "terms": [
+        "how to apply",
+        "where do i apply",
+        "apply for snap",
+        "mybenefits",
+        "my benefits guam",
+        "who runs",
+        "what agency",
+        "administers",
+        "dphss",
+        "department of public health and social services",
+        "bureau of economic security",
+        "bes",
+        "division of public welfare",
+        "ebt card",
+        "quest card",
+        "guam quest card",
+        "food stamps",
+        "what is snap called in guam",
+        "does guam have snap",
+        "is guam snap or nap"
+      ],
+      "citation": "Guam DPHSS SNAP services page (dphss.guam.gov/services/snap); Guam DPHSS press release PR26-025 (10/31/2025); MyBenefits Guam portal (mybenefits.guam.gov)",
+      "heading": "Guam runs standard federal SNAP — not the Nutrition Assistance Program (NAP) block grant that Puerto Rico, American Samoa, and the CNMI run — administered by DPHSS's Bureau of Economic Security, with benefits issued on a locally-branded 'Guam Quest Card'",
+      "text": "This pack independently verified, directly from USDA's own FY2026 SNAP COLA memorandum, that Guam is a full federal SNAP jurisdiction: the memo groups Guam together with the 48 contiguous states, D.C., and the U.S. Virgin Islands as jurisdictions its official COLA figures govern, and gives Guam its own dedicated income-eligibility and benefit tables the same way it does for every other SNAP-operating jurisdiction. This confirms and does NOT contradict this roster's existing understanding, reflected in packages/demeter-engine/src/packs.ts's own NAP_JURISDICTIONS documentation, that Guam and the U.S. Virgin Islands — unlike Puerto Rico, American Samoa, and the Northern Mariana Islands — DO run standard SNAP rather than the territory-specific NAP block grant. Guam's SNAP program is administered centrally by the Department of Public Health and Social Services (DPHSS; CHamoru: Dipattamenton Salut Pupbleko Yan Setbision Susiat), specifically by its Bureau of Economic Security (BES) within the Division of Public Welfare — Guam has no counties or sub-territory administrative divisions, so there is no county-to-county policy variation to flag the way this roster flags California, New York, Minnesota, Wisconsin, and Virginia. Applicants can apply and manage their case through the MyBenefits Guam self-service portal (mybenefits.guam.gov), by contacting BES directly at (671) 300-8853 / (671) 300-8872 or centralbes@dphss.guam.gov, or in person at DPHSS's main office at 155 Hesler Place, Hagåtña. Guam's SNAP EBT card carries its own distinctive local name, the 'Guam Quest Card' — a genuine program-identity detail this pack found no equivalent of in most mainland states' plain generic 'EBT card' framing. DPHSS's own October 2025 shutdown-FAQ press release states that roughly 41,000 Guam residents — close to one-third of the territory's entire population — currently receive SNAP benefits, a strikingly high participation rate this pack flags as worth surfacing directly.",
+      "source_url": "https://dphss.guam.gov/services/snap"
+    },
+    {
+      "key": "income-and-benefit-cola",
+      "kind": "supplement",
+      "terms": [
+        "income limit",
+        "income limits",
+        "gross income limit",
+        "gross income ceiling",
+        "make too much",
+        "over income",
+        "bbce",
+        "broad based categorical eligibility",
+        "categorical eligibility",
+        "categorically eligible",
+        "poverty level",
+        "asset limit",
+        "asset test",
+        "resource limit",
+        "resource test",
+        "resources",
+        "savings",
+        "savings limit",
+        "bank account",
+        "maximum benefit",
+        "maximum allotment",
+        "how much snap will i get",
+        "benefit amount",
+        "cost of living",
+        "cola",
+        "territory adjustment",
+        "why is guam different",
+        "3000",
+        "$3,000",
+        "4500",
+        "$4,500"
+      ],
+      "citation": "USDA FNS, SNAP Fiscal Year 2026 Cost-of-Living Adjustments memorandum (effective 10/1/2025-9/30/2026); USDA FNS SNAP State Options Report, 17th Edition (BBCE selection, data reference October 2024)",
+      "heading": "STRUCTURAL FLAGSHIP FINDING: Guam's income ELIGIBILITY limits are identical to the mainland's — NOT territory-elevated the way Alaska's and Hawaii's are — but Guam's maximum ALLOTMENT, standard deduction, and shelter-deduction cap ARE genuinely elevated for territory cost-of-living, an asymmetric structure this pack found no secondary source describing precisely",
+      "text": "This pack fetched USDA's own FY2026 COLA memorandum directly and found a genuinely asymmetric structure specific to Guam that the task brief's own caution about 'territory-specific COLA adjustments similar to Alaska/Hawaii' only partly anticipates. For INCOME ELIGIBILITY, Guam is grouped with the 48 states, D.C., and the Virgin Islands in all three of the memo's eligibility tables — meaning a Guam household faces the SAME dollar thresholds as a mainland household, not an elevated Alaska/Hawaii-style figure: the Net Monthly Income Eligibility Standard (100% FPL) is $1,305/month for a household of 1, rising to $2,680 for a household of 4; the Gross Monthly Income Eligibility Standard (130% FPL, the standard gross-income test) is $1,696 for 1, $3,483 for 4; and the Gross Monthly Income Eligibility Standard for households where an elderly or disabled member forms a separate household (165% FPL) is $2,152 for 1, $4,421 for 4 (all figures for the 10/1/2025-9/30/2026 FFY2026 cycle). The territory-wide asset limit is likewise NOT elevated for Guam: $3,000 for most households, $4,500 for households with a member who is 60+ or disabled — identical to the mainland figure, per the same COLA memo's own asset-limit table, which lists Guam alongside the 48 states, D.C., Alaska, Hawaii, and the Virgin Islands at one uniform figure. BUT for BENEFIT CALCULATION, Guam gets its OWN elevated, territory-specific figures reflecting a higher Thrifty Food Plan cost basis in the territory: the maximum SNAP allotment for a household of 4 in Guam is $1,465/month (vs. $994 for the 48 states/D.C.), the standard deduction is $420/month for household sizes 1-2 rising to $598 for size 6+ (vs. $209-$299 mainland), and the maximum excess shelter deduction is $873 (vs. $744 mainland) — this is the same COLA-adjustment MECHANISM family Alaska and Hawaii use for their own elevated benefit figures, but this pack found it applies to Guam ONLY on the benefit-calculation side, not the eligibility-threshold side, a genuinely asymmetric structure. One figure is flat and uniform for every SNAP jurisdiction including Guam: the maximum homeless shelter deduction is $198.99 everywhere, with no territory or state variation at all. DISCLOSED GAP: USDA's own SNAP State Options Report (17th Edition) confirms Guam has adopted Broad-Based Categorical Eligibility (BBCE) as a policy option, which under federal SNAP rules generally lets a state or territory align its gross-income and asset limits with a TANF/Maintenance-of-Effort-funded noncash benefit program and can eliminate the standalone federal asset test for categorically eligible households — the same mechanism family this roster's Delaware pack found operating through a specific pregnancy-prevention-information service embedded in Delaware's own application. This pack could NOT independently locate Guam's own specific BBCE gross-income percentage or the specific noncash TANF/MOE benefit that confers Guam's categorical eligibility — secondary sources this pack found disagree with each other (one states 165% FPL, another states 200% FPL, neither independently verified against a Guam-specific primary text this pack could locate) — and this pack explicitly declines to guess rather than repeat either unverified figure with false confidence. See freshness.json.",
+      "source_url": "https://primarynewssource.org/wp-content/uploads/snap-cola-fy26memo.pdf"
+    },
+    {
+      "key": "drug-felony-disqualification",
+      "kind": "supplement",
+      "terms": [
+        "drug felony",
+        "felony conviction",
+        "criminal record",
+        "drug conviction",
+        "lifetime ban",
+        "controlled substance",
+        "marijuana",
+        "cannabis",
+        "modified disqualification"
+      ],
+      "citation": "USDA FNS SNAP State Options Report, 17th Edition — Guam State Agency Profile, 'Drug Felony Disqualifications: Modified disqualification' (data reference period October 2024)",
+      "heading": "Guam applies a MODIFIED drug-felony SNAP disqualification, per USDA's own current State Agency Profile — this pack could not independently locate Guam's own enabling statute defining the exact modification terms",
+      "text": "21 U.S.C. § 862a(a)(2) sets a federal default: anyone convicted of a state or federal felony for possessing, using, or distributing a controlled substance is permanently ineligible for SNAP, unless a state or territory legislature opts out entirely or modifies the ban to a less severe restriction under § 862a(d)(1). USDA's own current SNAP State Options Report (17th Edition, data reference period October 2024) lists Guam's own reported policy-option selection plainly, on Guam's dedicated State Agency Profile page, as 'Modified disqualification' — meaning Guam has NOT fully opted out of the federal drug-felony ban the way this roster's Delaware pack found Delaware had (Delaware shows 'No disqualification' in the same USDA report), but has adopted some less-severe modification of it rather than the full permanent lifetime ban. This pack made a genuine, good-faith effort to locate Guam's own enabling legislation defining the SPECIFIC terms of that modification (e.g., whether it is conditioned on sentence compliance, treatment-program participation, or a time-limited rather than permanent bar, the way several other 'modified' states structure their own versions) — including attempting to fetch a specific Guam bill (Bill No. 20-37) referenced in preliminary research, which returned a 404 — and could not locate Guam's own underlying statute or Guam Code Annotated section. This pack found other web sources making mutually contradictory claims about Guam's drug-felony policy (one describing Guam as having fully opted out, another describing Guam as one of only two U.S. jurisdictions maintaining the full lifetime ban) that this pack judges unreliable and does NOT rely on, since neither traces to a primary Guam-authored legal text this pack could independently verify. This pack's authoritative answer rests on USDA's own State Options Report characterization ('Modified disqualification') as the most current, reliable primary source located, while explicitly disclosing that the exact terms of Guam's specific modification remain an unresolved research gap — a genuinely open item a reader in a high-stakes situation should confirm directly with DPHSS's Bureau of Economic Security before relying on it. See freshness.json.",
+      "source_url": "https://fna-bwbufwdzbabpezgc.z01.azurefd.us/sites/default/files/resource-files/snap-stateOptionsReport-17edition-120925.pdf"
+    },
+    {
+      "key": "abawd-work-requirement",
+      "kind": "supplement",
+      "terms": [
+        "abawd",
+        "able bodied adult",
+        "work requirement",
+        "3 month limit",
+        "work registration",
+        "waiver",
+        "waived area",
+        "time limit",
+        "january 2026",
+        "80 hours"
+      ],
+      "citation": "Guam DPHSS official press release, 'SNAP FAQ_001' (January 23, 2026); USDA FNS SNAP State Options Report, 17th Edition (data reference period October 2024)",
+      "heading": "Guam enforces the OBBBA ABAWD work requirement on its OWN, LATER territory-specific timeline — enforcement began January 1, 2026 with an April 1, 2026 compliance deadline, roughly two months after most mainland states' November 1, 2025 date — and an older USDA data point showing a statewide waiver is likely superseded",
+      "text": "An able-bodied adult without dependents (ABAWD) is limited to three countable months of SNAP within a 36-month period absent 80 hours/month of a qualifying work activity or an exemption. This pack fetched Guam DPHSS's own live, dated 'SNAP FAQ_001' press release (January 23, 2026, signed by DPHSS Director Theresa C. Arriola, MBA) directly and confirms Guam's own implementation of the One Big Beautiful Bill Act's (OBBBA, signed into law July 4, 2025) ABAWD changes on a GENUINELY LATER, territory-specific timeline than most mainland states this roster has built: enforcement in Guam became effective January 1, 2026 (not the November 1, 2025 date this roster's other recent state packs, e.g. Delaware, cite), with newly-identified ABAWDs given a three-month compliance grace period to April 1, 2026 before benefits are terminated for non-compliance. This pack cross-checked this date against independent secondary reporting (Marianas Business Journal), which corroborates the January 1, 2026 date and adds that roughly 7,000 able-bodied adults in Guam were newly identified as ABAWDs under the changes. DPHSS's own current exemption list matches the federal post-OBBBA standard: under 18 or age 65+, caring for a child under age 14 or an incapacitated person of any age, physically or mentally unable to work, enrolled at least half-time in school/college/training, pregnant, or an Indian/Urban Indian/California Indian per the Indian Health Care Improvement Act — and DPHSS's own FAQ states plainly that homeless individuals, veterans, and young adults aging out of foster care at 18 are 'no longer valid' exemptions in Guam, matching the federal OBBBA removal of those exemption categories nationally. DISCLOSED INCONSISTENCY THIS PACK DID NOT SILENTLY RESOLVE: USDA's own SNAP State Options Report (17th Edition, data reference period October 2024 — the most current edition available at the time of this pack's research) separately shows Guam holding a 'Statewide ABAWD time limit waiver' as of that October 2024 reference period, which would ordinarily mean the ABAWD time limit itself was suspended territory-wide. This pack treats DPHSS's own live, later-dated (January 2026) FAQ — which describes active work-requirement enforcement with a real termination consequence for non-compliance — as authoritative for CURRENT status, and reads the State Options Report's October-2024-dated waiver entry as most likely superseded by the OBBBA-driven January 2026 rollout described in DPHSS's own FAQ, but flags explicitly that this pack could not locate a Guam-specific document stating in so many words that the prior area waiver was formally ended, and a reader should not treat this pack's reading as certain. Contact Guam's Bureau of Economic Security at centralbes@dphss.guam.gov with subject line 'ABAWD Letter Inquiry' for individual case questions. See freshness.json.",
+      "source_url": "https://go.opengovguam.com/uploads/news/news_1769160320_SNAP%20FAQ_001.pdf"
+    },
+    {
+      "key": "restaurant-meals-program",
+      "kind": "supplement",
+      "terms": [
+        "restaurant meals program",
+        "rmp",
+        "eat at a restaurant",
+        "use ebt at restaurant",
+        "hot meal",
+        "hot food",
+        "prepared food",
+        "meals for at-risk households",
+        "bill 78-38"
+      ],
+      "citation": "Guam Legislature, Bill No. 78-38 (COR), 'Meals for At-Risk Households Act of 2025' — official bill-tracking page (fetched, SESSION status)",
+      "heading": "Guam does NOT currently operate a Restaurant Meals Program — a bill to establish one, Bill No. 78-38, is still pending in the Guam Legislature",
+      "text": "The Restaurant Meals Program (RMP) is a state/territory OPTION under 7 CFR § 274.7(g) letting elderly (60+), disabled, and homeless SNAP recipients buy prepared, hot meals from authorized restaurants with EBT year-round. This pack fetched the Guam Legislature's own official bill-tracking page directly and confirms Bill No. 78-38 (COR), the 'Meals for At-Risk Households Act of 2025' (introduced March 2025 by Senator Shelly V. Calvo, which would establish an RMP for Guam's elderly, disabled, and homeless SNAP recipients, subject to final USDA-FNS approval), remains in SESSION status with NO Public Law number as of this pack's fetch — meaning the bill has been referred, had a fiscal note requested and issued, and received a committee report and transmittal, but has NOT been enacted, vetoed, or otherwise finally resolved. This pack's operative answer for an applicant asking whether they can use SNAP at a restaurant in Guam today is a plain no — Guam has no operating RMP as of this pack's research date. This is a genuinely live legislative item a reader asking again in the future should re-check, since the bill remains actively pending rather than dead.",
+      "source_url": "https://guamlegislature.gov/bills-page1/"
+    },
+    {
+      "key": "food-purchase-restriction-waiver",
+      "kind": "supplement",
+      "terms": [
+        "soda",
+        "candy",
+        "sugary drinks",
+        "can i buy candy or soda",
+        "food restriction",
+        "purchase restriction",
+        "smart snap"
+      ],
+      "citation": "Guam DPHSS Director Theresa C. Arriola, quoted in Marianas Business Journal reporting; secondary-source cross-check, not independently confirmed via a DPHSS-authored primary document",
+      "heading": "Guam has NOT received USDA approval for a soda/candy SNAP-purchase-restriction waiver as of this pack's research — a request was reportedly under DPHSS/Governor's Office review, not yet confirmed submitted or approved",
+      "text": "Several states have obtained USDA-approved waivers under the OBBBA-era wave of SNAP food-purchase-restriction requests barring SNAP funds from buying soda, soft drinks, or candy. This pack found secondary reporting (Marianas Business Journal) describing a similar waiver for Guam as under review by the Office of the Governor as of the article's reporting, with DPHSS Director Theresa C. Arriola quoted directly: 'We're not saying you cannot buy sodas or candy. We're just saying you can't buy it with SNAP dollars.' This pack could NOT independently confirm, from a DPHSS-authored primary document of its own, either that Guam formally submitted this waiver request to USDA-FNS or that USDA approved it — a WebSearch cross-check for a current list of USDA-approved food-restriction-waiver jurisdictions as of this pack's research date did not surface Guam among the approved list (23 states were listed as approved; Guam was not one of them). This pack's operative, disclosed answer: Guam does NOT currently have a confirmed, USDA-approved SNAP soda/candy purchase restriction as of this pack's research, though the territory's own DPHSS leadership has publicly discussed pursuing one — a reader should be told this is actively in motion and re-checked, not settled either way. See freshness.json.",
+      "source_url": "https://mbjguam.com/guam-snap-program-faces-work-requirements-food-restrictions-funding-changes"
+    },
+    {
+      "key": "cost-share-funding-context",
+      "kind": "supplement",
+      "terms": [
+        "is snap going away",
+        "funding cuts",
+        "cost share",
+        "why is snap changing",
+        "obbba funding",
+        "administrative cost"
+      ],
+      "citation": "Marianas Business Journal reporting, quoting DPHSS Director Theresa C. Arriola; cross-referenced against the OBBBA's federal SNAP administrative-cost-share provisions",
+      "heading": "The OBBBA shifts SNAP administrative cost-sharing from 50/50 federal/territory to 75% territory/25% federal starting FY2027 — an estimated $5 million additional annual cost to the Government of Guam",
+      "text": "This pack found secondary reporting (Marianas Business Journal, quoting DPHSS Director Theresa C. Arriola directly) describing a federal SNAP administrative-cost-sharing change under the OBBBA that affects Guam the same way it affects every state and territory operating SNAP: the federal government's share of SNAP administrative costs drops from 50% to 25% (with the state/territory share rising from 50% to 75%) beginning federal fiscal year 2027 (October 1, 2026) — an estimated $5 million additional annual cost to the Government of Guam specifically, per Director Arriola's own quoted figure. This pack did not independently fetch the underlying federal regulatory text (a Federal Register proposed rule on SNAP federal-state administrative cost-sharing) to verify the exact percentages and effective date beyond this secondary reporting, and flags this as background/context information relevant to a reader asking why Guam's SNAP program or its administration might be changing, rather than an eligibility-determining fact this pack verified to the same standard as its income, deduction, and ABAWD findings above. This pack found no evidence in any source that this cost-share change reduces SNAP BENEFIT amounts for individual Guam households directly — it is a cost borne by the territorial government's own budget, not (as reported) a benefit cut.",
+      "source_url": "https://mbjguam.com/guam-snap-program-faces-work-requirements-food-restrictions-funding-changes"
+    },
+    {
+      "key": "certification-and-reporting",
+      "kind": "supplement",
+      "terms": [
+        "certification period",
+        "approval period",
+        "recertification",
+        "redetermination",
+        "how long does snap last",
+        "how long does my snap approval last",
+        "how long does my approval last",
+        "redo",
+        "renew",
+        "periodic report",
+        "simplified reporting",
+        "interim report"
+      ],
+      "citation": "USDA FNS SNAP State Options Report, 17th Edition — Guam State Agency Profile, 'Certification Period Lengths: 12 months, 24 months' and 'Reporting Requirements: Simplified reporting only'",
+      "heading": "Guam's standard SNAP certification period is 12 months, with 24 months available, and Guam assigns Simplified Reporting only",
+      "text": "USDA's own SNAP State Options Report (17th Edition) lists Guam's own reported Certification Period Lengths as 12 and 24 months (matching the standard federal maximums — up to 24 months for households where all adult members are 60+ or disabled, up to 12 months for all other households) and Guam's own reported Reporting Requirements selection as 'Simplified reporting only,' meaning Guam does NOT use change reporting for any SNAP households — every Guam SNAP household reports changes periodically rather than within a fixed number of days of each individual change, per the federal Simplified Reporting framework. This pack found no Guam-specific consumer-facing page independently confirming these figures beyond USDA's own State Options Report characterization, and flags that a reader in a high-stakes situation should confirm their own specific certification length directly with DPHSS's Bureau of Economic Security, since USDA's report describes Guam's territory-wide POLICY SELECTION rather than every individual household's actual assigned certification period.",
+      "source_url": "https://fna-bwbufwdzbabpezgc.z01.azurefd.us/sites/default/files/resource-files/snap-stateOptionsReport-17edition-120925.pdf"
+    },
+    {
+      "key": "utility-deduction",
+      "kind": "supplement",
+      "terms": [
+        "utility allowance",
+        "utility standard",
+        "shelter deduction",
+        "excess shelter",
+        "standard utility allowance",
+        "sua",
+        "hcsua",
+        "standard deduction",
+        "medical deduction",
+        "heating",
+        "cooling"
+      ],
+      "citation": "USDA FNS SNAP State Options Report, 17th Edition — Guam State Agency Profile, 'Treatment of Utility Expenses: Mandatory SUAs'; USDA FNS FY2026 COLA memorandum (Guam-specific standard-deduction and shelter-cap tables)",
+      "heading": "Guam uses a Mandatory Standard Utility Allowance (households do not itemize actual utility costs), with an elevated, territory-specific standard-deduction table this pack confirmed directly, but Guam's own specific SUA dollar figure was not independently located",
+      "text": "USDA's own SNAP State Options Report (17th Edition) lists Guam's own reported Treatment of Utility Expenses policy selection as 'Mandatory SUAs' — meaning Guam households with qualifying utility expenses receive a flat Standard Utility Allowance rather than itemizing actual utility costs household-by-household, the more common and generally more generous approach relative to itemization. This pack independently confirmed, directly from USDA's own FY2026 COLA memorandum, Guam's OWN elevated, territory-specific Standard Deduction table ($420/month for household sizes 1-2, $420 for size 3, $445 for size 4, $522 for size 5, $598 for size 6+ — all higher than the mainland's $209-$299 range) and Guam's own elevated Maximum Excess Shelter Deduction ($873, vs. $744 mainland) — both confirmed primary figures, not estimates. This pack could NOT independently locate Guam's own specific Heating/Cooling Standard Utility Allowance (HCSUA) or other utility-tier dollar figures (the actual SUA amount itself, distinct from the standard deduction and shelter cap this pack DID confirm) in either of its two primary USDA sources or in any DPHSS-authored document this pack located — this is a disclosed, unresolved gap rather than a fabricated number, structurally the same kind of gap this roster's Delaware pack disclosed for its own utility-allowance figures. See freshness.json.",
+      "source_url": "https://primarynewssource.org/wp-content/uploads/snap-cola-fy26memo.pdf"
+    }
+  ]
+}
