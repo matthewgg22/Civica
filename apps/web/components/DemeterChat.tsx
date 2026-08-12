@@ -237,6 +237,76 @@ export function DemeterChat({
   const abortRef = useRef<AbortController | null>(null);
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLTextAreaElement | null>(null);
+
+  // ── PACED STREAMING ────────────────────────────────────────────────────────
+  // The reader used to render every network chunk the instant it arrived, and
+  // chunks arrive in bursts of wildly uneven size — so a sentence would sit
+  // still, then a paragraph would land at once. Nothing was pacing it, which is
+  // the whole of the choppiness: it is not the animation that is wrong, it is
+  // that there is no animation, only network timing made visible.
+  //
+  // So the network fills a buffer and the SCREEN drains it on its own clock.
+  //   rawRef   everything received, before the recompose marker is resolved
+  //   fullRef  the authoritative answer text (after the marker)
+  //   shownRef how much of it is on screen
+  const rawRef = useRef("");
+  const fullRef = useRef("");
+  const shownRef = useRef(0);
+  const rafRef = useRef(0);
+  /** Resolved by the drain the instant the last character lands, so nothing
+   *  downstream has to poll for "is it finished yet". */
+  const drainedRef = useRef<(() => void) | null>(null);
+
+  /** Someone who asked for less motion is asking for less of exactly this. */
+  const paceStream = () =>
+    typeof window !== "undefined" &&
+    !window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+
+  // setTimeout, not requestAnimationFrame. rAF is the usual instinct for
+  // per-frame work, and it is the wrong one here: a BACKGROUNDED TAB stops
+  // firing it entirely, so an answer would freeze half-written the moment
+  // someone switches tabs to read something else, and nothing would restart it.
+  // A timer is throttled in that state but still fires, so the reply finishes.
+  // At ~16ms the visual result is identical.
+
+  const finishDrain = () => {
+    rafRef.current = 0;
+    drainedRef.current?.();
+    drainedRef.current = null;
+  };
+
+  const drawStream = useCallback(() => {
+    const full = fullRef.current;
+    if (shownRef.current >= full.length) {
+      finishDrain();
+      return;
+    }
+    // PROPORTIONAL, not a fixed rate. A fixed characters-per-frame either lags
+    // badly behind a fast answer or crawls through a slow one; taking a
+    // fraction of the backlog each frame drains fast when far behind and eases
+    // as it catches up, which is what makes it read as typing rather than as a
+    // progress bar. The floor keeps it moving on the last few characters.
+    const behind = full.length - shownRef.current;
+    shownRef.current = Math.min(full.length, shownRef.current + Math.max(2, Math.ceil(behind / 8)));
+    const text = full.slice(0, shownRef.current);
+    setMessages((m) => {
+      const copy = m.slice();
+      const last = copy[copy.length - 1];
+      if (last && last.role === "assistant") copy[copy.length - 1] = { role: "assistant", content: text };
+      return copy;
+    });
+    // Resolve in the SAME tick as the final render rather than on the next
+    // scheduled one, so nothing observes a finished answer with busy still set.
+    if (shownRef.current >= full.length) {
+      finishDrain();
+      return;
+    }
+    rafRef.current = window.setTimeout(drawStream, 16);
+  }, []);
+
+  // A stream abandoned mid-flight must not keep painting into a component that
+  // has moved on.
+  useEffect(() => () => clearTimeout(rafRef.current), []);
   /** Back to one row. The composer grows as you type, so clearing the value
    *  without clearing the inline height leaves an empty box the size of the
    *  question you just sent. */
@@ -390,6 +460,13 @@ export function DemeterChat({
       (m): m is { role: "user" | "assistant"; content: string } => m.role !== "divider",
     );
     const apiMessages = [...chatTurns, { role: "user" as const, content: question }].slice(-20);
+    // Fresh buffer per answer, or the next one types out on top of the last.
+    clearTimeout(rafRef.current);
+    rafRef.current = 0;
+    rawRef.current = "";
+    fullRef.current = "";
+    shownRef.current = 0;
+
     setMessages((m) => [
       ...m,
       { role: "user", content: question },
@@ -509,23 +586,64 @@ export function DemeterChat({
           const { done, value } = await reader.read();
           if (done) break;
           const chunk = decoder.decode(value, { stream: true });
-          setMessages((m) => {
-            const copy = m.slice();
-            const last = copy[copy.length - 1];
-            if (last && last.role === "assistant") {
-              const combined = last.content + chunk;
-              const markerAt = combined.lastIndexOf(RECOMPOSE_MARKER);
-              copy[copy.length - 1] = {
-                role: "assistant",
-                content:
-                  markerAt >= 0
-                    ? combined.slice(markerAt + RECOMPOSE_MARKER.length).replace(/^\s+/, "")
-                    : combined,
-              };
-            }
-            return copy;
-          });
+          rawRef.current += chunk;
+
+          // The marker REPLACES the unverified draft, so it is resolved against
+          // everything received rather than against what is currently on
+          // screen — the display may legitimately be behind.
+          const markerAt = rawRef.current.lastIndexOf(RECOMPOSE_MARKER);
+          const next =
+            markerAt >= 0
+              ? rawRef.current.slice(markerAt + RECOMPOSE_MARKER.length).replace(/^\s+/, "")
+              : rawRef.current;
+
+          // If the recomposed answer does not continue what is already shown,
+          // the draft was thrown away — so the display starts over and the
+          // replacement types out. Seeing it rewrite is the honest rendering of
+          // what just happened.
+          if (!next.startsWith(fullRef.current.slice(0, shownRef.current))) shownRef.current = 0;
+          fullRef.current = next;
+
+          if (!paceStream()) {
+            shownRef.current = next.length;
+            setMessages((m) => {
+              const copy = m.slice();
+              const last = copy[copy.length - 1];
+              if (last && last.role === "assistant") copy[copy.length - 1] = { role: "assistant", content: next };
+              return copy;
+            });
+          } else if (!rafRef.current) {
+            rafRef.current = window.setTimeout(drawStream, 16);
+          }
         }
+      }
+
+      // Let the screen catch up before anything treats the answer as finished:
+      // the certainty verdict is read back off the rendered text, and the
+      // feedback row asks about an answer the person has to have seen.
+      //
+      // BOUNDED anyway. The timer survives a backgrounded tab, but it is
+      // throttled hard there, and an unbounded wait would leave busy stuck on —
+      // Stop showing instead of Send — for as long as the tab stayed hidden.
+      if (shownRef.current < fullRef.current.length) {
+        await Promise.race([
+          new Promise<void>((resolve) => {
+            drainedRef.current = resolve;
+          }),
+          new Promise<void>((resolve) => setTimeout(resolve, 3000)),
+        ]);
+      }
+      if (shownRef.current < fullRef.current.length) {
+        clearTimeout(rafRef.current);
+        rafRef.current = 0;
+        shownRef.current = fullRef.current.length;
+        const finalText = fullRef.current;
+        setMessages((m) => {
+          const copy = m.slice();
+          const last = copy[copy.length - 1];
+          if (last && last.role === "assistant") copy[copy.length - 1] = { role: "assistant", content: finalText };
+          return copy;
+        });
       }
     } catch (err) {
       // An abort is the user pressing Stop, not a failure — their question was
@@ -547,7 +665,7 @@ export function DemeterChat({
     // two staying in sync is currently a coincidence of their dep lists
     // matching: give refreshWorksheet one dependency send does not have, and
     // send would silently hold a stale copy with no warning.
-  }, [input, busy, messages, state, lang, t, refreshWorksheet, resetInputHeight, worksheetMode]);
+  }, [input, busy, messages, state, lang, t, refreshWorksheet, resetInputHeight, worksheetMode, drawStream]);
 
   const hasChat = messages.length > 0;
 
@@ -806,7 +924,23 @@ export function DemeterChat({
           <button
             type="button"
             className="demeter__send demeter__send--stop"
-            onClick={() => abortRef.current?.abort()}
+            onClick={() => {
+              abortRef.current?.abort();
+              // Stop pacing and show what already arrived. Continuing to type
+              // out an answer someone has just told us to stop would be the
+              // button not working.
+              clearTimeout(rafRef.current);
+              rafRef.current = 0;
+              shownRef.current = fullRef.current.length;
+              setMessages((m) => {
+                const copy = m.slice();
+                const last = copy[copy.length - 1];
+                if (last && last.role === "assistant") {
+                  copy[copy.length - 1] = { role: "assistant", content: fullRef.current };
+                }
+                return copy;
+              });
+            }}
           >
             {t.stop}
           </button>
