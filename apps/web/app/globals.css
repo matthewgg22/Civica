@@ -4794,16 +4794,64 @@ html {
 .vpage__lede, .spage__definition { font-size: 1rem; line-height: 1.6; color: var(--civica-graphite); margin-bottom: 0.9rem; }
 .spage__definition { font-weight: 600; color: var(--civica-ink); }
 .spage__sub { font-size: 0.9rem; line-height: 1.55; color: var(--civica-graphite); }
-.vpage__grid { display: grid; gap: 1rem; margin: 1.5rem 0; }
-@media (min-width: 700px) { .vpage__grid { grid-template-columns: 1fr 1fr; } }
-.vcard { background: #fff; border: 1px solid #E4DFD5; border-radius: 1rem; padding: 1.1rem 1.2rem; display: flex; flex-direction: column; gap: 0.6rem; }
-.vcard__state { font-size: 1.3rem; font-weight: 800; display: flex; align-items: center; gap: 0.5rem; }
-.vcard__badge { font-size: 0.72rem; font-weight: 700; color: var(--civica-pine); background: var(--civica-pine-surface); border-radius: 999px; padding: 0.2rem 0.6rem; }
-.vcard__program { color: var(--civica-graphite); font-weight: 600; }
-.vcard__facts dt { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--civica-muted); margin-top: 0.6rem; }
-.vcard__facts dd { font-size: 0.88rem; line-height: 1.5; }
-.vcard__sources { padding-left: 1.1rem; list-style: disc; }
-.vcard__cta, .gpage__cta { margin-top: auto; align-self: flex-start; background: var(--civica-pine); color: #fff; border-radius: 999px; padding: 0.55rem 1.1rem; font-weight: 700; font-size: 0.9rem; text-decoration: none; min-height: 44px; display: inline-flex; align-items: center; }
+/* /verify was still wearing the CIVICA palette — pine buttons, green badges,
+   heavy sans — on a page DEMETER-DESIGN.md governs. Next to the rest of the
+   product it read as a different site, which is most of what made it look
+   broken at awkward widths. Demeter tokens throughout now.
+
+   auto-fit rather than a hard two columns at 700px: fourteen cards of unequal
+   content were being forced into a rigid pair, so every short card stretched to
+   its tall neighbour and opened a hole above its button. */
+.vpage__grid {
+  display: grid; gap: 1rem; margin: 1.5rem 0;
+  grid-template-columns: repeat(auto-fit, minmax(min(20rem, 100%), 1fr));
+  align-items: start;
+}
+.vcard {
+  background: var(--demeter-card); border: 1px solid var(--demeter-rule);
+  border-radius: 16px; padding: 1.15rem 1.25rem;
+  display: flex; flex-direction: column; gap: 0.5rem;
+}
+.vcard__head { display: flex; align-items: center; gap: 0.55rem; }
+.vcard__state { margin: 0; }
+/* The heading's weight lives on the code, since the flag component owns the
+   markup inside it. */
+.vcard__state .dmflag__code {
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+  font-size: 1.2rem; font-weight: 600; letter-spacing: -0.01em; color: var(--demeter-ink);
+}
+.vcard__badge {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.66rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--demeter-terracotta-deep); border: 1px solid var(--demeter-terracotta);
+  border-radius: 999px; padding: 0.2rem 0.55rem; margin-left: auto;
+}
+.vcard__program {
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+  font-size: 1rem; line-height: 1.35; color: var(--demeter-body); margin: 0 0 0.3rem;
+}
+.vcard__facts { display: flex; flex-direction: column; gap: 0.7rem; margin: 0 0 1rem; }
+.vcard__facts dt {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.66rem; text-transform: uppercase; letter-spacing: 0.09em;
+  color: var(--demeter-muted); margin: 0 0 0.2rem;
+}
+/* A <dd> carries a 40px browser indent that made every value look misaligned
+   against its own label. */
+.vcard__facts dd {
+  margin: 0;
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+  font-size: 0.92rem; line-height: 1.5; color: var(--demeter-body);
+}
+.vcard__cta {
+  margin-top: auto; align-self: flex-start;
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  background: var(--demeter-terracotta-deep); color: var(--demeter-paper);
+  border-radius: 999px; padding: 0.55rem 1.1rem; font-weight: 600; font-size: 0.88rem;
+  text-decoration: none; min-height: 44px; display: inline-flex; align-items: center;
+}
+.vcard__cta:hover { background: var(--demeter-ink); }
+.gpage__cta { margin-top: auto; align-self: flex-start; background: var(--civica-pine); color: #fff; border-radius: 999px; padding: 0.55rem 1.1rem; font-weight: 700; font-size: 0.9rem; text-decoration: none; min-height: 44px; display: inline-flex; align-items: center; }
 .vpage__foot, .gpage__foot, .spage__foot { font-size: 0.85rem; color: var(--civica-graphite); border-top: 1px solid #E4DFD5; padding-top: 1rem; margin-top: 2rem; }
 .gpage__crumb { font-size: 0.8rem; color: var(--civica-muted); margin-bottom: 0.4rem; }
 .gpage__badge { font-size: 0.85rem; color: var(--civica-pine); font-weight: 600; margin: 0.4rem 0 1rem; }
@@ -4842,6 +4890,47 @@ html {
 .vstat__unit { font-size: 0.97rem; color: var(--civica-ink); }
 .vstat__pending { font-size: 1.15rem; font-weight: 600; color: #6E5F55; }
 .vstat__note { margin: 0.7rem 0 0; font-size: 0.9rem; line-height: 1.55; color: #5E4F45; }
+
+/* /verify is a DEMETER surface (DEMETER-DESIGN.md), and was the last page still
+   wearing Civica's. Half of it converted with the cards, which is worse than
+   either — a heavy sans headline above serif cards reads as two sites stapled
+   together. The shared .vpage/.gpage/.spage rules above keep dressing the
+   guides and supporters pages; these take ONLY /verify off that palette.
+
+   Wider than the shared 780px because the grid now flows: at 780 the cards
+   never got a third column no matter how much room the window had. */
+.vpage { color: var(--demeter-ink); max-width: 940px; }
+.vpage__title {
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+  font-size: clamp(2rem, 4vw, 2.6rem); font-weight: 600; letter-spacing: -0.02em;
+  line-height: 1.1; margin-bottom: 1rem;
+}
+.vpage__lede {
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+  font-size: 1.02rem; line-height: 1.62; color: var(--demeter-body);
+  max-width: 62ch; text-wrap: pretty;
+}
+.vpage__foot {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  color: var(--demeter-muted); border-top: 1px solid var(--demeter-rule);
+  max-width: 62ch; line-height: 1.6;
+}
+.vpage__foot a { color: var(--demeter-terracotta-deep); }
+.vstat {
+  background: var(--demeter-card); border: 1px solid var(--demeter-rule); border-radius: 16px;
+}
+.vstat__pct {
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+  color: var(--demeter-terracotta-deep); font-weight: 600;
+}
+.vstat__unit, .vstat__pending { color: var(--demeter-ink); }
+/* Serif speaks, sans labels: "Not yet measured" is a status label and stays
+   sans; the paragraph explaining it is prose, and was the one block of body
+   copy on the page still set in the wrong family. */
+.vstat__note, .vstat__unit {
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+}
+.vstat__note { color: var(--demeter-muted); }
 
 /* ── Demeter identity tokens (Demeter AI Design Spec, Turn 3 — "sibling not
    twin") ──────────────────────────────────────────────────────────────
@@ -6215,7 +6304,7 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
    not the grid: verification sources are long unbroken URLs and instrument
    names, which have no break opportunity and so set a floor on the card's
    width. Everything else reflowed correctly around them. */
-.vcard, .vcard__facts dd, .vcard__sources li, .gpage__facts dd {
+.vcard, .vcard__facts dd, .gpage__facts dd {
   overflow-wrap: anywhere;
 }
 

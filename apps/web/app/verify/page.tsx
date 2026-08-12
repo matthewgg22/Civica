@@ -8,6 +8,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { VERIFIED_STATES } from "@civica/demeter-engine/packs";
 import { certaintyStats, REASON_LABEL } from "../../lib/certainty-stats";
+import { publicVerification } from "../../lib/verification-summary";
+import { programDisplayName } from "../../lib/program-name";
+import { StateFlag } from "../../components/StateFlag";
 
 // The measured rate refreshes without a deploy; the pack cards don't move.
 export const revalidate = 300;
@@ -78,41 +81,74 @@ export default async function VerifyPage() {
         </p>
       </header>
 
+      {/* WHAT THIS GRID DELIBERATELY NO LONGER PRINTS: each pack's enumerated
+          primary sources, the pipeline that built it, and the specific
+          corrections its refute gate caught. Fourteen of those side by side
+          stopped being evidence of care and became a build sheet.
+
+          What survives is the claim itself — checked against N primary sources,
+          on this date, with this many corrections forced before it shipped.
+          The sources are not hidden: every answer cites the rule it actually
+          used, to the person who asked, for the question they asked. */}
       <section className="vpage__grid" aria-label="Verified states">
-        {VERIFIED_STATES.map((s) => (
-          <article key={s.code} className="vcard">
-            <div className="vcard__head">
-              <h2 className="vcard__state">
-                {s.code} <span className="vcard__badge">✓ Verified</span>
-              </h2>
-              <p className="vcard__program">{s.program}</p>
-            </div>
-            <dl className="vcard__facts">
-              <dt>Agency</dt>
-              <dd>{s.agency}</dd>
-              <dt>Verified</dt>
-              <dd>{s.verification.verified_on}</dd>
-              <dt>Method</dt>
-              <dd>{s.verification.method}</dd>
-              <dt>Gate results</dt>
-              <dd>{s.verification.gates}</dd>
-              <dt>Primary sources</dt>
-              <dd>
-                <ul className="vcard__sources">
-                  {s.verification.sources.map((src) => (
-                    <li key={src}>{src}</li>
-                  ))}
-                </ul>
-              </dd>
-            </dl>
-            <Link className="vcard__cta" href={`/screen/ask?state=${s.code}`}>
-              Ask about {s.code} →
-            </Link>
-          </article>
-        ))}
+        {VERIFIED_STATES.map((s) => {
+          const v = publicVerification(s);
+          return (
+            <article key={s.code} className="vcard">
+              <div className="vcard__head">
+                {/* StateFlag renders the code itself — the heading IS the flag
+                    and its code, not the flag plus a second copy of it. */}
+                <h2 className="vcard__state">
+                  <StateFlag code={s.code} size={34} />
+                </h2>
+                <span className="vcard__badge">Verified</span>
+              </div>
+              <p className="vcard__program">{programDisplayName(s.program)}</p>
+              <dl className="vcard__facts">
+                <div>
+                  <dt>Administered by</dt>
+                  <dd>{s.agency}</dd>
+                </div>
+                <div>
+                  <dt>Built from</dt>
+                  <dd>
+                    {v.sourceCount} primary {v.sourceCount === 1 ? "source" : "sources"}, read
+                    from the agency&apos;s own published rules
+                  </dd>
+                </div>
+                <div>
+                  <dt>Before it shipped</dt>
+                  <dd>
+                    {/* A number is credibility. The list of what each correction
+                        was is a map of where the hard parts are. */}
+                    {v.corrections === null
+                      ? "Passed an adversarial refute gate."
+                      : `Passed an adversarial refute gate, which forced ${v.corrections} ${
+                          v.corrections === 1 ? "correction" : "corrections"
+                        } before publication.`}
+                  </dd>
+                </div>
+                <div>
+                  <dt>Last verified</dt>
+                  <dd>{v.verifiedOn}</dd>
+                </div>
+              </dl>
+              <Link className="vcard__cta" href={`/screen/ask?state=${s.code}`}>
+                Ask about {s.code} →
+              </Link>
+            </article>
+          );
+        })}
       </section>
 
       <footer className="vpage__foot">
+        <p>
+          This page counts the sources behind each state rather than listing them,
+          because a citation is worth something when it is attached to the claim it
+          supports. Ask a question and the answer names the specific rule it used —
+          the federal regulation, and your state&apos;s own manual where we have
+          verified one — linked, so you can read it yourself.
+        </p>
         <p>
           New states are verified and added continuously — each one ships only after its
           refute gate passes. <Link href="/screen/ask">Ask Demeter a question</Link> or see
