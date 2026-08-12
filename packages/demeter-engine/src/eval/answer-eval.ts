@@ -3653,6 +3653,75 @@ export const AR_GOLD: AnswerExpectation[] = [
   },
 ];
 
+export const KS_GOLD: AnswerExpectation[] = [
+  {
+    id: "ks-no-bbce-confirmed",
+    // Guards the flagship CONFIRMATION finding: Kansas has NOT adopted BBCE —
+    // this pack's independent research confirms the existing packages/snap-rules
+    // "archetype" entry's bbce:false as accurate, not merely a placeholder guess.
+    question: "Does Kansas have broad-based categorical eligibility for SNAP?",
+    state: "KS",
+    expectCitation: "KEESM 2510",
+    mustMention: "not",
+    mustDisclaim: true,
+  },
+  {
+    id: "ks-asset-limit-sourcing-gap",
+    // Guards against overclaiming a directly-fetched dollar figure this pack
+    // only corroborated via WebSearch aggregators — see freshness.json.
+    question: "What is the SNAP asset or resource limit in Kansas?",
+    state: "KS",
+    mustMention: "3,000",
+    mustDisclaim: true,
+  },
+  {
+    id: "ks-drug-felony-modified-not-lifetime-ban",
+    // Guards the correction finding: K.S.A. 39-709e is a MODIFIED,
+    // assessment/treatment-conditioned opt-out, not the "banned for life"
+    // framing a 2022 secondary source repeats.
+    question: "I have a drug felony conviction — can I still get SNAP in Kansas?",
+    state: "KS",
+    expectCitation: "39-709e",
+    mustMention: "treatment",
+    mustDisclaim: true,
+  },
+  {
+    id: "ks-abawd-no-waiver-current",
+    question: "Is the SNAP work-requirement time limit currently waived anywhere in Kansas?",
+    state: "KS",
+    mustMention: "no",
+    mustDisclaim: true,
+  },
+  {
+    id: "ks-sua-flat-469",
+    question: "What utility deduction can I get for SNAP in Kansas?",
+    state: "KS",
+    mustMention: "469",
+    mustDisclaim: true,
+  },
+  {
+    id: "ks-restaurant-meals-program-not-available",
+    question: "Can I use my EBT card to buy a hot meal at a restaurant in Kansas?",
+    state: "KS",
+    mustMention: "not",
+    mustDisclaim: true,
+  },
+  {
+    id: "ks-program-name-food-assistance",
+    question: "How do I apply for SNAP in Kansas?",
+    state: "KS",
+    mustMention: "KEES",
+    mustDisclaim: true,
+  },
+  {
+    id: "ks-federal-benefit",
+    question: "How is the monthly SNAP benefit amount calculated from net income in Kansas?",
+    state: "KS",
+    expectCitation: "273.10",
+    mustDisclaim: true,
+  },
+];
+
 
 /** Everything the live runner executes. */
 export const NE_GOLD: AnswerExpectation[] = [
@@ -3785,4 +3854,5 @@ export const ALL_GOLD: AnswerExpectation[] = [
   ...IA_GOLD,
   ...AR_GOLD,
   ...NE_GOLD,
+  ...KS_GOLD,
 ];
