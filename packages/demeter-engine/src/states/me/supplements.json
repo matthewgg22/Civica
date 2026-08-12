@@ -1,0 +1,199 @@
+{
+  "_provenance": {
+    "note": "Maine SNAP curated supplements. Maine has NO existing packages/snap-rules StatePolicy entry and NO oracle-fixture coverage — a genuine blank slate, like this roster's Nebraska, Connecticut, Utah, Iowa, and Arkansas builds. This pack is CORPUS-ONLY and does not touch packages/snap-rules or the oracle fixture. Maine is built as part of a five-state parallel batch (ID, WV, HI, NH, ME), built concurrently by separate agents. Drafted from direct WebFetch/curl fetches of Maine DHHS's current SNAP consumer page, SNAP Rule #244's Rule Pages and Fact Sheet PDFs (10-144 C.M.R. Ch. 301, Section 999-3 Appendix), 22 M.R.S. § 3104's full statutory text, Maine DHHS ABAWD rulemaking pages, USDA FNA's ABAWD Waivers FY2025-2029 tracker, and USDA FNA's Restaurant Meals Program state list.",
+    "extracted": "2026-08-12",
+    "source_fact_check": "direct WebFetch of maine.gov consumer/rulemaking pages and legislature.maine.gov's statute page; direct curl fetch (browser UA) of two Maine DHHS Rule #244 PDF attachments, converted with pdftotext -layout; direct curl fetch (browser UA) of two fna.usda.gov pages (ABAWD waiver tracker, Restaurant Meals Program list), both clean HTTP 200 + WebSearch cross-checks (prisonpolicy.org, Ballotpedia, aggregator income-limit sites) specifically to find and correct stale/wrong secondary-source figures + post-draft adversarial refute pass; findings and gaps recorded in PROVENANCE.md",
+    "access_note": "maine.gov, legislature.maine.gov, and fna.usda.gov all returned clean HTTP 200 to direct fetches — no bot-detection wall found anywhere in this pack's Maine research. Two WebFetch calls to fna.usda.gov policy-memo pages (waiver-termination, waiver-reinstatement notices) timed out; this pack worked around it by reading the ABAWD Waivers FY2025-2029 index page directly instead, which supplied the Maine-specific fact needed (no FY2026 waiver-response entry) without those two memo pages. Maine's own Rule #244 Rule Pages PDF is a tracked-changes/redline document whose historical-figure rows partially overlap under pdftotext extraction in Charts 1-4; this pack cross-checked every FFY2026 figure it cites against a clean row or the live consumer page and discloses the one figure that could not be fully reconciled (Standard Deduction, household size 4) rather than silently picking a value."
+  },
+  "supplements": [
+    {
+      "key": "program-identity",
+      "kind": "supplement",
+      "terms": [
+        "food supplement",
+        "food supplement program",
+        "what is this program called",
+        "how to apply",
+        "where do i apply",
+        "apply for snap",
+        "my maine connection",
+        "who runs",
+        "what agency",
+        "administers",
+        "dhhs",
+        "office for family independence",
+        "ofi",
+        "ebt card",
+        "food stamps"
+      ],
+      "citation": "10-144 C.M.R. Ch. 301, SNAP Rules (rule title itself reads \"formerly FOOD SUPPLEMENT PROGRAM\"); Maine DHHS SNAP consumer page",
+      "heading": "Maine's SNAP program is now officially called \"SNAP\" — \"Food Supplement Program\" is the RETIRED former name, still visible in some older URLs and materials",
+      "text": "This pack fetched Maine's own current SNAP rules manual directly and found its own title page settles the naming question precisely: \"SUPPLEMENTAL NUTRITION ASSISTANCE PROGRAM (SNAP) RULES (formerly FOOD SUPPLEMENT PROGRAM)\" — Maine's Office for Family Independence (OFI) has completed a naming transition from \"Food Supplement Program,\" the name this pack found still embedded in some URL slugs (maine.gov/dhhs/ofi/programs-services/food-supplement) and in older secondary-source guides, to the plain federal name \"SNAP.\" Maine's statute itself reflects the same transition: the 2019-era codified version of 22 M.R.S. § 3104 was titled \"Statewide food supplement program,\" while the section's current title on legislature.maine.gov reads \"Statewide Supplemental Nutrition Assistance Program.\" This pack found no distinctively-branded EBT card name for Maine (unlike, e.g., California's CalFresh or Washington's Basic Food) — Maine issues a standard EBT card through its My Maine Connection self-service portal. OFI administers SNAP centrally and directly; applicants can apply online through My Maine Connection (www1.maine.gov/benefits/account/login.html), by phone (1-855-797-4357), by mail to the Office for Family Independence (114 Corn Shop Lane, Farmington, ME 04938), or in person at one of 16 regional DHHS district offices — those offices carry out state policy and have no independent county-level policy authority, a state-administered structure similar to this roster's Nebraska, Connecticut, and Ohio packs, and distinct from county-option-in states like CA, NY, MN, WI, and VA.",
+      "source_url": "https://www.maine.gov/dhhs/ofi/programs-services/food-supplement"
+    },
+    {
+      "key": "income-pathways",
+      "kind": "supplement",
+      "terms": [
+        "income limit",
+        "income limits",
+        "gross income limit",
+        "gross income ceiling",
+        "make too much",
+        "over income",
+        "bbce",
+        "broad based categorical eligibility",
+        "broadbased categorical eligibility",
+        "categorical eligibility",
+        "categorically eligible",
+        "200 percent",
+        "200%",
+        "165 percent",
+        "165%",
+        "130 percent",
+        "130%",
+        "poverty level",
+        "separate household",
+        "net income",
+        "gross income"
+      ],
+      "citation": "10-144 C.M.R. Ch. 301, § 999-3, Charts 2, 3, and 4 (effective 10/1/2025 for the FFY-indexed 130% test; effective 1/13/2026 for the calendar-year-indexed 200% BBCE test)",
+      "heading": "STRUCTURAL FLAGSHIP FINDING: Maine's 165% FPL income column is NOT its BBCE ceiling — it is a narrow \"separate household\" test for elderly/disabled roommates. Maine's actual BBCE gross-income ceiling is 200% FPL, updated on a CALENDAR-YEAR cycle, not the federal fiscal year",
+      "text": "This pack fetched Maine's own current SNAP Rules Appendix (10-144 C.M.R. Ch. 301, Section 999-3) directly and found FOUR distinct income tests, and flags a precise, worth-naming distinction between two of them that a reader skimming only percentages could easily conflate: Chart 2 is the plain federal 130% FPL gross-income test for non-categorically-eligible households, updated each federal fiscal year (FFY2026, effective 10/1/2025: $1,696/month for a household of one, $3,483 for a household of four, +$596 each additional member). Chart 3 carries a 165% FPL column, but this pack read its own header precisely: \"Gross income test for those purchasing and preparing meals with individuals who are elderly and have a disability and their spouses to qualify as a separate household (Section 111-1(2)(c))\" — a narrow eligibility test for an elderly or disabled person living with, and sharing food purchase/preparation with, someone else, determining whether they can be treated as their OWN separate SNAP household rather than folded into the larger one, NOT Maine's BBCE gross-income ceiling. Maine's actual, much higher BBCE ceiling is Chart 4's 200% FPL test (7 C.F.R. § 273.2(j)(2), authorized under 22 M.R.S. § 3104(13), raised from 185% to 200% effective July 2022) — and this pack found Chart 4 updates on a CALENDAR-YEAR cycle tied to the annual HHS poverty-guideline publication date, not the federal fiscal year the way Charts 1-3 do. The calendar-year-2026 figures (effective 1/13/2026, per SNAP Rule #244) are $2,660/month for a household of one and $5,500 for a household of four, +$947 each additional member. This pack found Maine DHHS's own LIVE consumer page, as fetched on this pack's verification date (2026-08-12), still displaying the calendar-year-2025 figures ($2,609/household of one, $5,359/household of four) rather than the calendar-year-2026 figures that took effect over six months earlier — this pack flags this as a live DHHS page-freshness gap, not a pack error, and recommends re-checking the live page directly before citing an exact BBCE dollar figure (see freshness.json). A household with an elderly (60+) or disabled member is exempt from the gross-income test entirely and subject only to the 100% FPL NET-income test (Chart 1; FFY2026: $1,305/one, $2,680/four, +$459 each additional).",
+      "source_url": "https://www.maine.gov/dhhs/about/rulemaking/snap-rule-244-ffy-2026-budgeting-figures-and-fpl-updates-2026-02-04"
+    },
+    {
+      "key": "asset-rule",
+      "kind": "supplement",
+      "terms": [
+        "asset limit",
+        "asset test",
+        "resource limit",
+        "resource test",
+        "resources",
+        "savings",
+        "savings limit",
+        "bank account",
+        "vehicle",
+        "car count",
+        "does my car count",
+        "4500",
+        "$4,500",
+        "3000",
+        "$3,000"
+      ],
+      "citation": "10-144 C.M.R. Ch. 301, § 999-3, Chart 9 — Asset Limits: No Limit (Certain Broad Based Categorical Households, since 1/1/2022), $4,500 (Non-Categorical Households with an elderly/disabled member), $3,000 (Non-Categorical Households with no elderly/disabled member)",
+      "heading": "Most Maine SNAP households face NO asset/resource limit at all under BBCE — the $4,500/$3,000 figures apply only to the narrower slice of households that are NOT categorically eligible",
+      "text": "Maine's own current SNAP Rules Appendix (Chart 9) lists three distinct resource-limit tiers, and this pack reads the structure as standard BBCE shape (similar to this roster's Connecticut and Kentucky packs, and distinct from Nebraska's elevated-but-real ERP ceiling): \"Certain Broad Based Categorical Households\" — the great majority of Maine SNAP households, qualifying via Maine's 200% FPL BBCE pathway — have carried NO stated resource limit since Calendar Year 2022 (1/1/22-), per Maine's own historical figure series. \"Non-Categorical Households with a Member who is Elderly or has a Disability\" (households that for some reason fall outside BBCE, e.g., exceeding 200% FPL) face a $4,500 resource limit; \"Non-Categorical Households with no Members who are Elderly or have a Disability\" face $3,000 — both figures current as of FFY2025 and, per this pack's cross-check against the current FFY2026 national resource-limit figures this roster's Nebraska pack independently confirmed, still current for FFY2026 (these particular limits are not updated every fiscal year the way income/deduction figures are). This pack did not find a Maine-specific vehicle-exclusion figure or vehicle-valuation methodology with the same direct-sourcing confidence as its other findings — treat any specific vehicle dollar figure as unconfirmed until re-verified against 10-144 C.M.R. Ch. 301's resource-counting sections directly (see freshness.json).",
+      "source_url": "https://www.maine.gov/dhhs/about/rulemaking/snap-rule-244-ffy-2026-budgeting-figures-and-fpl-updates-2026-02-04"
+    },
+    {
+      "key": "criminal-justice-disqualifications",
+      "kind": "supplement",
+      "terms": [
+        "drug felony",
+        "felony conviction",
+        "criminal record",
+        "drug conviction",
+        "lifetime ban",
+        "fleeing felon",
+        "probation",
+        "parole",
+        "controlled substance",
+        "marijuana",
+        "cannabis",
+        "violent crime",
+        "sexual assault",
+        "sex offense"
+      ],
+      "citation": "22 M.R.S. § 3104(14) — full opt-out of the federal drug-felony SNAP ban; 22 M.R.S. § 3104(15) — separate, narrower ineligibility for certain post-1/1/2018 violent-crime/sexual-assault felony convictions while not in compliance with sentence/parole/probation or as a fleeing felon",
+      "heading": "FLAGSHIP CORRECTION: Maine HAS fully opted out of the federal drug-felony SNAP ban — a February 2026 secondary source got this wrong; Maine's real, narrower criminal disqualification is for specific violent/sexual-assault felonies, not drug offenses",
+      "text": "21 U.S.C. § 862a(a)(2) sets a federal default: anyone convicted of a state or federal felony for possessing, using, or distributing a controlled substance is permanently ineligible for SNAP unless a state opts out or modifies the ban under § 862a(d)(1). This pack found a genuine, consequential correction to make here: a February 2026 prisonpolicy.org 50-state survey categorized Maine as having NOT opted out of the federal drug-felony ban (describing Maine only as asking a probation-violation question on its application, with \"no explicit disqualification\"). This pack fetched Maine's own statute directly and found the opposite is, and has for years been, the operative law: 22 M.R.S. § 3104(14) states plainly that \"a person who is otherwise eligible to receive food assistance... may not be denied assistance because the person has been convicted of a drug-related felony as described in the federal Personal Responsibility and Work Opportunity Reconciliation Act of 1996.\" Maine is a FULL opt-out state for drug felonies specifically — one of roughly a dozen states this roster and outside trackers describe that way — not a state with \"no explicit disqualification despite still asking about it,\" the framing this pack's secondary source used. This pack's own reading of why the secondary source likely erred: Maine DOES retain a separate, considerably narrower criminal disqualification that a surface read of the application or statute index could easily conflate with a drug-felony rule. 22 M.R.S. § 3104(15) makes a person ineligible for SNAP if they were convicted, on or after January 1, 2018, of aggravated sexual abuse, murder, an offense under 18 U.S.C. Chapter 110, a sexual-assault offense as defined by the federal Violence Against Women Act, or a substantially similar Maine-law offense — AND is not in compliance with the terms of their sentence, parole, or probation, or is a fleeing felon. This is a narrow, violent-crime/sexual-assault-specific, compliance-conditioned disqualification, structurally and substantively distinct from a drug-felony ban, and this pack found no indication it has ever been described by DHHS or any source this pack reviewed as a \"drug felony\" provision. An applicant with a drug-related felony conviction and no other disqualifying factor remains fully eligible for Maine SNAP if otherwise qualified.",
+      "source_url": "https://legislature.maine.gov/statutes/22/title22sec3104.html"
+    },
+    {
+      "key": "shelter-utility-deductions",
+      "kind": "supplement",
+      "terms": [
+        "utility allowance",
+        "utility standard",
+        "shelter deduction",
+        "excess shelter",
+        "standard utility allowance",
+        "full standard utility allowance",
+        "fsua",
+        "non-heat utility allowance",
+        "nhua",
+        "phone only utility allowance",
+        "phua",
+        "telephone allowance",
+        "standard deduction",
+        "heat and eat",
+        "heat & eat",
+        "liheap",
+        "homeless",
+        "homeless shelter deduction"
+      ],
+      "citation": "10-144 C.M.R. Ch. 301, § 999-3, Charts 7 and 8 (effective 10/1/2025) — Standard Deduction $209 (household sizes 1-3), $261 (5), $299 (6+) [see disclosed discrepancy for size 4, below]; Full Standard Utility Allowance (FSUA) $1,096; Non-Heat Utility Allowance (NHUA) $598; Phone-Only Utility Allowance (PhUA) $114; Maximum Shelter Deduction $744; Homeless Shelter Deduction $198.99",
+      "heading": "TIME-SENSITIVE STRUCTURAL FINDING: OBBBA's national \"Heat & Eat\" restriction now limits AUTOMATIC utility-allowance qualification via a small LIHEAP payment to households with an elderly or disabled member — an estimated 980 Maine households affected, effective Fall 2025. SEPARATELY DISCLOSED: an apparent transcription anomaly in Maine's own rule document for the Standard Deduction at household size 4",
+      "text": "Maine's own current SNAP Rules Appendix (Chart 8, effective 10/1/2025/FFY2026) lists a three-tier utility-allowance structure: the Full Standard Utility Allowance (FSUA, $1,096/month) for a household billed for heating or cooling costs; the Non-Heat Utility Allowance (NHUA, $598) for a household billed for two or more non-heating utilities; and the Phone-Only Utility Allowance (PhUA, $114) for a household whose only utility expense is a telephone. The Maximum Shelter Deduction (capped excess-shelter figure for households without an elderly/disabled member) is $744, and the Homeless Shelter Deduction is $198.99 — this pack notes the Homeless figure matches, to the penny, this roster's Nebraska, Connecticut, and Louisiana packs' own homeless-deduction figures, consistent with all four states drawing on the same federally-published standard (7 CFR § 273.9(d)(6)(iii)). This pack flags a genuine, time-sensitive STRUCTURAL finding worth naming precisely: Maine DHHS's own July 2025 blog post on OBBBA (H.R. 1) implementation states that the law's national restriction on the \"Heat & Eat\" mechanism — which previously let a household auto-qualify for the FSUA by receiving as little as a small annual LIHEAP energy-assistance payment, without a separately-billed heating/cooling cost — now LIMITS that automatic-LIHEAP pathway to households with an elderly or disabled member, effective Fall 2025, and DHHS's own estimate is that approximately 980 Maine households are affected. This pack reads this as affecting ONLY the automatic-LIHEAP-triggered pathway to the FSUA specifically — a household of any composition that is directly and separately billed for heating or cooling costs still qualifies for the FSUA regardless of this OBBBA change; the change removes a shortcut, not the underlying deduction itself, for non-elderly/disabled households. SEPARATELY, this pack discloses rather than silently resolves an apparent anomaly: Maine's own Chart 7 (Standard Deduction) lists $233/month for household size 4 in the FFY2026 row, but this pack's independent cross-check of the national FFY2026 SNAP Standard Deduction figure (identical across every state, per USDA FNS's own published table) found $223, not $233, for a household of four — a $10 discrepancy this pack could not resolve from its own sources and flags explicitly as a possible transcription error in Maine's own posted rule table rather than assuming either figure is correct without further verification (see freshness.json). The household-size 1-3 ($209), 5 ($261), and 6-or-more ($299) Standard Deduction figures in Maine's table DO match the confirmed national FFY2026 figures and carry no such flag.",
+      "source_url": "https://www.maine.gov/dhhs/about/rulemaking/snap-rule-244-ffy-2026-budgeting-figures-and-fpl-updates-2026-02-04"
+    },
+    {
+      "key": "medical-deduction",
+      "kind": "supplement",
+      "terms": [
+        "medical deduction",
+        "medical expense",
+        "medical expenses",
+        "medical bills",
+        "elderly deduction",
+        "disability deduction",
+        "excess medical",
+        "standard medical deduction"
+      ],
+      "citation": "7 C.F.R. § 273.9(d)(3), applied in Maine as in every state — Medical deduction: excess of $35/month for a household member who is elderly (60+) or disabled; no Maine-specific flat Standard Medical Deduction shortcut found in this pack's sources",
+      "heading": "Maine uses the ACTUAL-EXPENSE-ONLY medical deduction (verified expenses minus $35) — no flat Standard Medical Deduction shortcut found",
+      "text": "A Maine SNAP household member who is elderly (60+) or disabled may deduct verified out-of-pocket medical expenses exceeding $35/month, uncapped — this pack found secondary-source corroboration (Maine Equal Justice) stating explicitly that Maine places no upper limit on the medical deduction once the $35 threshold is exceeded, consistent with the federal baseline rule (7 CFR § 273.9(d)(3)) every state applies. This pack found no Maine-specific flat dollar figure functioning as a Standard Medical Deduction (SMD) shortcut the way this roster's Kentucky, Louisiana, South Carolina, Missouri, Colorado, and Alabama packs each document for their own states — Maine's own SNAP Rules Appendix (Section 999-3) lists no such flat-shortcut figure alongside its Standard Deduction, FSUA, NHUA, and PhUA figures, placing Maine in the same actual-expense-only camp this roster's Nebraska, Connecticut, Maryland, and Indiana packs describe. This pack additionally notes that Maine households with an elderly or disabled member are exempt from the gross-income test entirely (see income-pathways supplement) and face no cap on the excess-shelter deduction — making the uncapped medical deduction particularly consequential for elderly/disabled Maine households with high home-heating or medical costs.",
+      "source_url": "https://www.maine.gov/dhhs/about/rulemaking/snap-rule-244-ffy-2026-budgeting-figures-and-fpl-updates-2026-02-04"
+    },
+    {
+      "key": "abawd-work-requirement",
+      "kind": "supplement",
+      "terms": [
+        "abawd",
+        "able bodied adult",
+        "work requirement",
+        "3 month limit",
+        "work registration",
+        "waiver",
+        "waived area",
+        "time limit",
+        "portland",
+        "bangor",
+        "unemployment"
+      ],
+      "citation": "10-144 C.M.R. Ch. 301, § 111-7 (ABAWD criteria) and § 999-2 (Geographic Exemptions); USDA FNA ABAWD Waivers FY2025-2029 tracker — Maine's most recent waiver-response entry is dated 09/13/2024 (FY2025 only), no FY2026 entry found",
+      "heading": "TIME-SENSITIVE FLAGSHIP FINDING: Maine's FY2025 ABAWD geographic waiver (213 areas) expired September 30, 2025, and this pack found NO evidence of an FY2026 renewal — treat Maine as currently having NO active ABAWD area waiver anywhere in the state",
+      "text": "An able-bodied adult without dependents (ABAWD) is limited to three countable months of SNAP within a 36-month period absent 80 hours/month of a qualifying work activity or an exemption. Maine DHHS obtained USDA approval on September 17, 2024 for a geographic ABAWD time-limit waiver covering 213 qualifying cities, towns, unorganized territories, townships, and reservations meeting the federal 10%-unemployment (or insufficient-jobs) threshold, effective retroactive to October 1, 2024 (10-144 C.M.R. Ch. 301, § 999-2, later amended by SNAP Rule #234A to add Winterville and Woodville). This pack found consistent secondary-source reporting (Ballotpedia, aggregator trackers) that this waiver was set to expire September 30, 2025 — and this pack independently confirmed the expiration by fetching USDA FNA's own ABAWD Waivers FY2025-2029 state-response tracker directly: Maine's ONLY listed FNA response entry is dated 09/13/2024, covering FY2025 only, in sharp contrast to the roughly two dozen other states on the same tracker (including several of this roster's already-built states) that show a second, FY2026-dated response entry indicating a renewed or updated waiver. This pack found no FY2026 entry for Maine anywhere on USDA's own tracker, and reads this as strong evidence — not dispositive certainty, since USDA's page states it updates quarterly and a very recent late-breaking approval could exist that has not yet posted — that Maine currently has NO active ABAWD area waiver anywhere in the state as of this pack's fetch date. Consistent with the OBBBA (H.R. 1, July 2025) nationwide rollout this roster has documented in other 2025-2026-built packs, Maine's ABAWD age range expanded from 18-54 to 18-64 effective Fall 2025 (SNAP Rule #240A/#240P), the caregiver exemption narrowed from a child under 18 to a child under 14, and Maine DHHS's own blog post states OBBBA eliminated the veteran, homeless, and former-foster-youth exemption categories specifically — with Maine-specific estimated counts of 5,669 veterans, 25,203 homeless individuals, and 505 former foster youth affected by the loss of those blanket exemptions. An applicant who may have previously understood themselves as exempt from the ABAWD time limit on a veteran, homelessness, or foster-care-aged-out basis, or who lived in one of Maine's 213 previously-waived areas, is no longer exempt/waived on either basis under current law absent a new, not-yet-confirmed waiver.",
+      "source_url": "https://www.fna.usda.gov/snap/abawd/waivers/2025-2029"
+    },
+    {
+      "key": "restaurant-meals-program",
+      "kind": "supplement",
+      "terms": [
+        "restaurant meals program",
+        "rmp",
+        "eat at a restaurant",
+        "use ebt at restaurant",
+        "hot meal",
+        "hot food",
+        "prepared food"
+      ],
+      "citation": "USDA FNA's current SNAP Restaurant Meals Program state list (Arizona, Maryland, New York, California, Massachusetts, Rhode Island, Illinois [Cook and Franklin Counties only], Michigan, Virginia) — Maine absent",
+      "heading": "Maine does NOT currently operate a Restaurant Meals Program",
+      "text": "The Restaurant Meals Program (RMP) is a state OPTION under 7 CFR § 274.7(g) letting elderly (60+), disabled, and homeless SNAP recipients buy prepared, hot meals from authorized restaurants with EBT year-round. This pack fetched USDA FNA's own current RMP page directly (clean HTTP 200, no access barrier) and read its full \"States that Operate a Restaurant Meals Program\" list: Arizona, Maryland, New York, California, Massachusetts, Rhode Island, Illinois (Cook and Franklin Counties only), Michigan, and Virginia. Maine is not on this list, and this pack found no Maine-specific legislative or DHHS-rulemaking effort underway to establish one (unlike this roster's Nebraska pack, which found and documented a specific failed 2025-2026 RMP bill, LB920) — this pack's search did not surface any comparable pending Maine RMP legislation, and treats Maine's current answer as a stable \"no,\" not a live/evolving situation, absent evidence otherwise.",
+      "source_url": "https://www.fna.usda.gov/snap/retailer/restaurant-meals-program"
+    }
+  ]
+}

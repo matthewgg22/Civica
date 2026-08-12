@@ -1,0 +1,42 @@
+{
+  "_provenance": {
+    "note": "Maine citation authorities. Maine's operative SNAP policy manual is 10-144 C.M.R. Chapter 301 (Code of Maine Rules), cited by a hyphenated section-number convention such as '111-7' (ABAWD), '999-2' (Geographic Exemptions), '999-3' (Appendix Charts). This pack also cites Maine Revised Statutes, 22 M.R.S. § 3104 and its subsections, for the drug-felony opt-out, violent-crime disqualification, and categorical-eligibility statutory basis, so this pack defines a SECOND citation family, 'memrs', matching this roster's Nebraska, Connecticut, Kentucky, Alabama, and Louisiana packs' multi-family pattern.",
+    "extracted": "2026-08-12"
+  },
+  "patterns": [
+    {
+      "key": "mecmr",
+      "regex": "\\b(\\d{3}-\\d{1,2}[A-Z]?)\\b",
+      "flags": "gi",
+      "template": "10-144 C.M.R. ch. 301, § $1",
+      "normalize": "none",
+      "match": "exact",
+      "note": "Maine DHHS SNAP Rules, 10-144 C.M.R. Chapter 301, cited by bare hyphenated section number, e.g. 111-7 (Able-Bodied Adults Without Dependents), 999-2 (Geographic Exemptions from ABAWD Work Requirements), 999-3 (Appendix Charts)."
+    },
+    {
+      "key": "memrs",
+      "regex": "\\b22\\s?M\\.?R\\.?S\\.?\\s?§?\\s?3104(?:-A)?(?:\\((\\d{1,2})\\))?\\b",
+      "flags": "gi",
+      "template": "22 M.R.S. § 3104$1",
+      "normalize": "none",
+      "match": "exact",
+      "note": "Maine Revised Statutes, Title 22 (Health and Welfare), § 3104 (Statewide Supplemental Nutrition Assistance Program) and § 3104-A. This pack cites subsections (13) categorical eligibility, (14) drug-conviction opt-out, and (15) violent-crime/sexual-assault felon ineligibility."
+    }
+  ],
+  "known": {
+    "mecmr": [
+      { "value": "10-144 C.M.R. ch. 301, § 111-7", "note": "Able-Bodied Adults Without Dependents (ABAWD) — work-registration and time-limit criteria, amended by SNAP Rule #240A/#240P for OBBBA compliance (age range 18-64, caregiver exemption narrowed to child under 14)" },
+      { "value": "10-144 C.M.R. ch. 301, § 111-1", "note": "Household composition and \"separate household\" determinations, including subsection (2)(c) referenced by the 165% FPL income test for elderly/disabled individuals living with others" },
+      { "value": "10-144 C.M.R. ch. 301, § 999-2", "note": "Geographic Exemptions from ABAWD Work Requirements — lists Maine's waived areas when an active waiver exists; amended by SNAP Rule #234A (213 areas, FY2025, expired 9/30/2025)" },
+      { "value": "10-144 C.M.R. ch. 301, § 999-3", "note": "Appendix — Charts 1 through 9: 100%/130%/165%/200% FPL income tables, maximum allotments, minimum benefit, Standard Deduction, shelter/utility allowance chart, asset-limit chart. Updated via periodic numbered SNAP Rules (e.g. Rule #244, FFY2026 Budgeting Figures and FPL Updates)" },
+      { "value": "10-144 C.M.R. ch. 301, § 555-4", "note": "Referenced in SNAP Rule #241/#242 amendments alongside § 555-5 (2025-12-14 filings) — this pack did not independently verify the substantive content of this section beyond its rulemaking-history listing" },
+      { "value": "10-144 C.M.R. ch. 301, § 444-8", "note": "Household income-limit exemptions referenced by the Section 999-3 chart notes (\"households must have incomes below the appropriate income limits unless exempt per Section 444-8\") — this pack did not independently fetch this section's full substantive text" }
+    ],
+    "memrs": [
+      { "value": "22 M.R.S. § 3104(13)", "note": "Categorical eligibility — directs the Department to adopt rules maximizing SNAP access for households that would be TANF-dependent-child households but do not receive a cash grant; statutory basis for Maine's 200% FPL Broad-Based Categorical Eligibility (BBCE) pathway" },
+      { "value": "22 M.R.S. § 3104(14)", "note": "Prohibition against denial of assistance based on drug conviction — Maine's FULL opt-out of the federal drug-felony SNAP ban: an otherwise-eligible person may not be denied SNAP because of a drug-related felony conviction. FLAGSHIP CORRECTION: a February 2026 secondary source (prisonpolicy.org) miscategorized Maine as NOT having opted out." },
+      { "value": "22 M.R.S. § 3104(15)", "note": "Separate, narrower ineligibility for individuals convicted on or after 1/1/2018 of aggravated sexual abuse, murder, an 18 U.S.C. Chapter 110 offense, or a VAWA-defined sexual-assault offense (or a substantially similar Maine offense), while not in compliance with sentence/parole/probation terms or as a fleeing felon. Distinct from, and should not be conflated with, the drug-felony provision in subsection (14)." },
+      { "value": "22 M.R.S. § 3104-A", "note": "Referenced in SNAP Rule #244's Fact Sheet as additional statutory authority considered for general SNAP eligibility and benefit levels; this pack did not independently fetch this section's full text separately from § 3104" }
+    ]
+  }
+}

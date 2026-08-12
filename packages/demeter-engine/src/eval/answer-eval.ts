@@ -4361,6 +4361,100 @@ export const NH_GOLD: AnswerExpectation[] = [
 ];
 
 
+/** Everything the live runner executes for Maine. */
+export const ME_GOLD: AnswerExpectation[] = [
+  {
+    id: "me-bbce-200-not-165",
+    // Guards the structural finding: ME's BBCE ceiling is 200% FPL (Chart 4),
+    // not the 165% column, which is a narrow separate-household test.
+    question: "What is the income limit for SNAP in Maine?",
+    state: "ME",
+    mustMention: "200",
+    mustDisclaim: true,
+  },
+  {
+    id: "me-asset-limit-no-limit-bbce",
+    // Guards the finding: most ME households face no asset limit under BBCE;
+    // $4,500/$3,000 apply only to non-categorical households.
+    question: "What is the SNAP resource limit in Maine?",
+    state: "ME",
+    mustMention: "4,500",
+    mustDisclaim: true,
+  },
+  {
+    id: "me-drug-felony-full-opt-out",
+    // Guards the flagship correction: Maine fully opted out of the federal
+    // drug-felony ban (22 M.R.S. § 3104(14)) — a secondary source got this wrong.
+    question: "I have a drug felony conviction — can I still get SNAP in Maine?",
+    state: "ME",
+    expectCitation: "3104",
+    mustMention: "not",
+    mustDisclaim: true,
+  },
+  {
+    id: "me-abawd-waiver-expired-no-fy2026",
+    // Guards the flagship finding: ME's FY2025 ABAWD waiver expired 9/30/2025
+    // with no confirmed FY2026 renewal found on USDA's tracker.
+    question: "Is the SNAP work-requirement time limit currently waived anywhere in Maine?",
+    state: "ME",
+    mustMention: "expired",
+    mustDisclaim: true,
+  },
+  {
+    id: "me-abawd-age-range-current-federal",
+    question: "What is the ABAWD work requirement age range in Maine?",
+    state: "ME",
+    mustMention: "64",
+    mustDisclaim: true,
+  },
+  {
+    id: "me-utility-allowance-fsua-heat-and-eat",
+    // Guards the time-sensitive structural finding: OBBBA's Heat & Eat
+    // restriction now limits automatic LIHEAP-triggered FSUA to elderly/disabled households.
+    question: "What utility deduction can I get for SNAP in Maine?",
+    state: "ME",
+    mustMention: "1,096",
+    mustDisclaim: true,
+  },
+  {
+    id: "me-medical-deduction-actual-expense-no-shortcut",
+    question: "I'm disabled and have $50 a month in medical bills for Maine SNAP — do I get a deduction?",
+    state: "ME",
+    mustMention: "35",
+    mustDisclaim: true,
+  },
+  {
+    id: "me-restaurant-meals-program-not-available",
+    question: "Does Maine have a Restaurant Meals Program for SNAP?",
+    state: "ME",
+    mustMention: "not",
+    mustDisclaim: true,
+  },
+  {
+    id: "me-program-name-snap-not-food-supplement",
+    // Guards the naming-transition finding: Maine's own rules manual reads
+    // "SNAP...(formerly FOOD SUPPLEMENT PROGRAM)".
+    question: "What is Maine's SNAP program officially called?",
+    state: "ME",
+    mustMention: "SNAP",
+    mustDisclaim: true,
+  },
+  {
+    id: "me-how-to-apply-my-maine-connection",
+    question: "How do I apply for SNAP in Maine?",
+    state: "ME",
+    mustDisclaim: true,
+  },
+  {
+    id: "me-federal-benefit",
+    question: "How is the monthly SNAP benefit amount calculated from net income in Maine?",
+    state: "ME",
+    expectCitation: "273.10",
+    mustDisclaim: true,
+  },
+];
+
+
 export const ALL_GOLD: AnswerExpectation[] = [
   ...ANSWER_GOLD,
   ...ES_GOLD,
@@ -4403,5 +4497,6 @@ export const ALL_GOLD: AnswerExpectation[] = [
   ...ID_GOLD,
   ...WV_GOLD,
   ...HI_GOLD,
+  ...ME_GOLD,
   ...NH_GOLD,
 ];
