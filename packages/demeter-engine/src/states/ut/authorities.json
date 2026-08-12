@@ -1,0 +1,53 @@
+{
+  "_provenance": {
+    "note": "Utah citation authorities. Utah's operative day-to-day SNAP policy lives in DWS's own separately-published \"Child Care, Financial and SNAP Eligibility Policy Manual\" (jobs.utah.gov/infosource/eligibilitymanual/...), cited by numbered policy section, e.g. '342' (SNAP Work Requirements), '342-1A' (Federal Exemptions). This pack writes 'Policy' before the section number in running text purely for cross-state disambiguation (matching this roster's general convention), while the regex below matches the bare numbered form Utah's own manual uses natively. Utah's SNAP-specific Administrative Code chapter is Utah Admin. Code R986-900 (a genuinely thin two-section chapter — see PROVENANCE.md Finding 5), so this pack ALSO defines a SECOND citation family, 'R986-900-X', matching this roster's Oklahoma, Kentucky, and Alabama packs' two-family pattern. This pack does NOT define a family for the DWS Table numbers (Table 1, Table 2) cited for dollar figures, since those are not independently-numbered legal citations in the way OK's Appendix C-1/C-3 or KY's MS numbers are — they are referenced in prose only.",
+    "extracted": "2026-08-12"
+  },
+  "patterns": [
+    {
+      "key": "utpolicy",
+      "regex": "\\bPolicy\\s+(3[0-9]{2}(?:-\\d{1,2}[A-Z]?)?)\\b",
+      "flags": "gi",
+      "template": "Policy $1",
+      "normalize": "none",
+      "match": "exact",
+      "note": "DWS Child Care, Financial and SNAP Eligibility Policy Manual, section number in the 300 (Participation Requirements) range, e.g. 342 (SNAP Work Requirements), 342-1A (Federal Exemptions), 341 (ABAWD Time Limit Exemptions)."
+    },
+    {
+      "key": "utcode",
+      "regex": "\\b35A-3-(\\d{3})\\b",
+      "flags": "gi",
+      "template": "Utah Code § 35A-3-$1",
+      "normalize": "none",
+      "match": "exact",
+      "note": "Utah Code, Title 35A (Workforce Services Code), Chapter 3 (Employment Support Act), Part 3 (Family Employment Program), cited by section number. This pack cites § 35A-3-311 (Cash assistance to noncitizen legal residents and drug dependent persons) — the drug-felony SNAP opt-out provision."
+    },
+    {
+      "key": "utadmin",
+      "regex": "\\bR986-900-(\\d{3})\\b",
+      "flags": "gi",
+      "template": "Utah Admin. Code R986-900-$1",
+      "normalize": "none",
+      "match": "exact",
+      "note": "Utah Administrative Code, Title R986 (Employment Development), Rule R986-900 (Supplemental Nutrition Assistance Program). This chapter contains only two sections: 901 (Authority for Food Stamps and Applicable Rules) and 902 (Options and Waivers) — see PROVENANCE.md Finding 5 for why Utah's operative policy detail lives in the DWS eligibility manual instead."
+    }
+  ],
+  "known": {
+    "utpolicy": [
+      { "value": "Policy 341", "note": "ABAWD Time Limit Exemptions" },
+      { "value": "Policy 342", "note": "SNAP Work Requirements — states the current 18-64 ABAWD age range directly (effective 5/1/2026); 3-of-36-month time limit; general work-registration requirements" },
+      { "value": "Policy 342-1A", "note": "SNAP Work Requirements - Federal Exemptions (effective 2/1/2026) — federal general work-requirement exemptions (age 60+, under 16, caretaker of a child under 6, physically/mentally unfit, FEP recipient, 30+ hours/week working, student, etc.)" },
+      { "value": "Policy 342-3", "note": "Voluntary Reduction of Work Hours - SNAP" },
+      { "value": "Policy 342-4", "note": "Voluntary Quit - SNAP" },
+      { "value": "Policy 342-5", "note": "SNAP Work Requirements - Sanctions for Non-Compliance" },
+      { "value": "Policy 263", "note": "Authorized Representatives" }
+    ],
+    "utcode": [
+      { "value": "Utah Code § 35A-3-311", "note": "Cash assistance to noncitizen legal residents and drug dependent persons — subsection (2)(a) exercises the PRWORA § 115 drug-felony opt-out; (2)(b) extends it to both cash assistance and SNAP; (2)(c) ties a substance-abuse-treatment condition specifically to 'cash assistance under this part' (see supplements.json for the precise scoping question this pack flags). Current version effective 5/6/2026, amended by Chapter 362, 2026 General Session." }
+    ],
+    "utadmin": [
+      { "value": "R986-900-901", "note": "Authority for Food Stamps and Applicable Rules — incorporates 7 CFR 271 through 283 by reference; applies R986-100's general provisions to food stamps except where specifically noted otherwise" },
+      { "value": "R986-900-902", "note": "Options and Waivers — the short, specific list of federal SNAP options Utah has elected: state-level hearings, no ABAWD workfare program, mandatory application, mandatory Simplified Standard Utility Allowance (three tiers, updated annually), no photo ID cards (available on request for homeless/disabled/elderly), EBT issuance, diversion-payment counting, TANF vehicle-allowance rule applied to SNAP, ineligible-alien resource/income counting, waivable administrative disqualification hearing, self-employment 40%-deduction option, aligned educational-assistance-income counting with FEP, simplified reporting, and a Mini Simplified Food Stamp Program under 7 CFR 273.25" }
+    ]
+  }
+}

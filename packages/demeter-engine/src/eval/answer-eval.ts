@@ -3224,6 +3224,110 @@ export const OK_GOLD: AnswerExpectation[] = [
   },
 ];
 
+export const UT_GOLD: AnswerExpectation[] = [
+  {
+    id: "ut-no-bbce-federal-income-limits",
+    // Guards the confirmed finding: Utah has NOT adopted BBCE — plain
+    // federal 130%/100% FPL tests apply, no state-raised percentage band.
+    question: "What is the income limit for SNAP in Utah?",
+    state: "UT",
+    mustMention: "130",
+    mustDisclaim: true,
+  },
+  {
+    id: "ut-soft-drink-restriction",
+    // Guards the flagship structural finding: Utah's active 2-year FNA
+    // demonstration waiver bars SNAP from buying soft drinks (H.B. 403).
+    question: "Can I buy soda with my SNAP benefits in Utah?",
+    state: "UT",
+    mustMention: "soft drink",
+    mustDisclaim: true,
+  },
+  {
+    id: "ut-vehicle-usually-not-counted",
+    // Guards the correction of a widely-repeated secondary-source claim:
+    // Utah's own page says a car usually does NOT count against the limit.
+    question: "Does my car count against me for SNAP in Utah?",
+    state: "UT",
+    mustMention: "not",
+    mustDisclaim: true,
+  },
+  {
+    id: "ut-drug-felony-full-opt-out",
+    question: "I have a drug felony conviction — can I still get SNAP in Utah?",
+    state: "UT",
+    expectCitation: "35A-3-311",
+    mustMention: "eligible",
+    mustDisclaim: true,
+  },
+  {
+    id: "ut-abawd-age-range-current-federal-18-64",
+    // Guards the positive finding: Utah's own current manual already
+    // states the correct post-OBBBA 18-64 ABAWD age range.
+    question: "What is the ABAWD work requirement age range in Utah?",
+    state: "UT",
+    expectCitation: "342",
+    mustMention: "64",
+    mustDisclaim: true,
+  },
+  {
+    id: "ut-abawd-no-active-waiver",
+    question: "Is the SNAP work-requirement time limit currently waived anywhere in Utah?",
+    state: "UT",
+    mustMention: "waiver",
+    mustDisclaim: true,
+  },
+  {
+    id: "ut-resource-limit-elderly-disabled",
+    question: "What is the SNAP resource limit for a household with a disabled member in Utah?",
+    state: "UT",
+    mustMention: "4,500",
+    mustDisclaim: true,
+  },
+  {
+    id: "ut-ebt-card-name",
+    question: "What is my EBT card called in Utah?",
+    state: "UT",
+    mustMention: "Horizon",
+    mustDisclaim: true,
+  },
+  {
+    id: "ut-expedited-service-7-day-federal",
+    question: "How fast can I get emergency SNAP benefits in Utah?",
+    state: "UT",
+    mustMention: "7",
+    mustDisclaim: true,
+  },
+  {
+    id: "ut-esap-elderly-3-year-certification",
+    question: "How long does my SNAP approval last if I'm elderly in Utah?",
+    state: "UT",
+    mustMention: "three",
+    mustDisclaim: true,
+  },
+  {
+    id: "ut-tribal-fdpir-mutual-exclusivity",
+    question: "I live on tribal land in Utah — can I get both SNAP and FDPIR at the same time?",
+    state: "UT",
+    mustDisclaim: true,
+  },
+  {
+    id: "ut-restaurant-meals-program-not-available",
+    question: "Can I use my EBT card to buy a hot meal at a restaurant in Utah?",
+    state: "UT",
+    mustMention: "not",
+    mustDisclaim: true,
+  },
+  {
+    id: "ut-federal-benefit",
+    question: "How is the monthly SNAP benefit amount calculated from net income in Utah?",
+    state: "UT",
+    expectCitation: "273.10",
+    mustDisclaim: true,
+  },
+];
+
+
 export const IA_GOLD: AnswerExpectation[] = [
   {
     id: "ia-income-limit-comm002-staleness",
@@ -3487,6 +3591,7 @@ export const ALL_GOLD: AnswerExpectation[] = [
   ...LA_GOLD,
   ...KY_GOLD,
   ...OK_GOLD,
+  ...UT_GOLD,
   ...IA_GOLD,
   ...AR_GOLD,
 ];
