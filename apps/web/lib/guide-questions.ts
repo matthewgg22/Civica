@@ -201,4 +201,11 @@ export const QUESTIONS: Record<string, string[]> = {
     "Does my car count against me for SNAP in Mississippi?",
     "How long does my SNAP approval last in Mississippi if I'm 65 or older?",
   ],
+  KS: [
+    "Does Kansas have broad-based categorical eligibility for SNAP?",
+    "What is the SNAP asset or resource limit in Kansas?",
+    "I have a drug felony conviction — can I still get SNAP in Kansas?",
+    "Is the SNAP work-requirement time limit currently waived anywhere in Kansas?",
+    "Can I use my EBT card to buy a hot meal at a restaurant in Kansas?",
+  ],
 };

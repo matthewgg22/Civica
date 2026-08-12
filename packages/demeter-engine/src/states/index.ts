@@ -151,9 +151,13 @@ import msPack from "./ms/pack.json";
 import msSupplements from "./ms/supplements.json";
 import msAuthorities from "./ms/authorities.json";
 import msFreshness from "./ms/freshness.json";
+import ksPack from "./ks/pack.json";
+import ksSupplements from "./ks/supplements.json";
+import ksAuthorities from "./ks/authorities.json";
+import ksFreshness from "./ks/freshness.json";
 
 /** Registered pack codes. Widens as Wave 1+ states land (WA, TX, NY, …). */
-export type StateCode = "CA" | "WA" | "TX" | "NY" | "GA" | "MI" | "IL" | "FL" | "MA" | "NV" | "AZ" | "OR" | "WI" | "MN" | "PA" | "OH" | "NC" | "NJ" | "VA" | "TN" | "IN" | "MO" | "MD" | "CO" | "SC" | "AL" | "LA" | "KY" | "OK" | "CT" | "UT" | "IA" | "AR" | "MS";
+export type StateCode = "CA" | "WA" | "TX" | "NY" | "GA" | "MI" | "IL" | "FL" | "MA" | "NV" | "AZ" | "OR" | "WI" | "MN" | "PA" | "OH" | "NC" | "NJ" | "VA" | "TN" | "IN" | "MO" | "MD" | "CO" | "SC" | "AL" | "LA" | "KY" | "OK" | "CT" | "UT" | "IA" | "AR" | "MS" | "KS";
 
 /** Launch state; used when a caller does not specify. Preserves the pre-pack
  *  behavior in which the (then-hardcoded) CA content applied to every query. */
@@ -448,6 +452,12 @@ const REGISTRY: Record<StateCode, StatePack> = {
     msSupplements as { supplements: PackTopic[]; supersessions?: Record<string, string> },
     msAuthorities as unknown as RawAuthorities,
     msFreshness as { entries: PackFreshnessEntry[] },
+  ),
+  KS: buildPack(
+    ksPack as Omit<StatePack, "topics" | "authorities" | "freshness" | "supersessions">,
+    ksSupplements as { supplements: PackTopic[]; supersessions?: Record<string, string> },
+    ksAuthorities as unknown as RawAuthorities,
+    ksFreshness as { entries: PackFreshnessEntry[] },
   ),
 };
 
