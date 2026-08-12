@@ -1677,6 +1677,117 @@ export const OH_GOLD: AnswerExpectation[] = [
   },
 ];
 
+export const NC_GOLD: AnswerExpectation[] = [
+  {
+    id: "nc-expanded-200-pct-categorical",
+    // The flagship structural finding of this pack: North Carolina's Expanded
+    // (200%) Categorical Eligibility is a genuine flat 200% FPL broad-based
+    // screen, conferred via a TANF-services notice printed on every state
+    // application itself (no separate pamphlet to seek out).
+    question: "What is Expanded Categorical Eligibility and how does it affect my SNAP eligibility in North Carolina?",
+    state: "NC",
+    expectCitation: "FNS 220",
+    mustMention: "200",
+    mustDisclaim: true,
+  },
+  {
+    id: "nc-resource-limit-standard",
+    question: "What is the SNAP resource limit in North Carolina if I'm not categorically eligible?",
+    state: "NC",
+    expectCitation: "FNS 390",
+    mustMention: "3,000",
+    mustDisclaim: true,
+  },
+  {
+    id: "nc-vehicle-fully-excluded",
+    question: "Does my car count against me for SNAP in North Carolina?",
+    state: "NC",
+    expectCitation: "FNS 390",
+    mustMention: "vehicle",
+    mustDisclaim: true,
+  },
+  {
+    id: "nc-sua-scales-by-household-size",
+    // Guards the structural finding that NC's SUA is NOT a flat figure —
+    // it scales by household size, unlike every other state in this roster.
+    question: "What is the standard utility allowance for SNAP in North Carolina?",
+    state: "NC",
+    expectCitation: "FNS 340",
+    mustMention: "household size",
+    mustDisclaim: true,
+  },
+  {
+    id: "nc-medical-deduction-no-flat",
+    question: "I'm disabled and have $50 a month in medical bills for North Carolina SNAP — do I get a deduction?",
+    state: "NC",
+    expectCitation: "FNS 340",
+    mustMention: "35",
+    mustDisclaim: true,
+  },
+  {
+    id: "nc-child-support-deduction",
+    question: "Does paying child support lower my countable income for SNAP in North Carolina?",
+    state: "NC",
+    expectCitation: "FNS 340",
+    mustMention: "deduct",
+    mustDisclaim: true,
+  },
+  {
+    id: "nc-abawd-waiver-prohibited",
+    // Second flagship finding: North Carolina General Statute 108A-51.1,
+    // effective 10/1/2015, statutorily bars NCDHHS from seeking an ABAWD
+    // geographic waiver — a full decade of continuous prohibition.
+    question: "Is the SNAP work-requirement time limit currently waived anywhere in North Carolina?",
+    state: "NC",
+    expectCitation: "NCGS 108A-51.1",
+    mustMention: "not",
+    mustDisclaim: true,
+  },
+  {
+    id: "nc-drug-felony-modified-ban",
+    // NC is a genuine MODIFIED ban, not a full opt-out — guards against the
+    // model overclaiming either "permanently banned with no exception" or
+    // "no ban at all."
+    question: "I have a drug felony conviction — can I still get SNAP in North Carolina?",
+    state: "NC",
+    expectCitation: "FNS 270",
+    mustMention: "Class H",
+    mustDisclaim: true,
+  },
+  {
+    id: "nc-restaurant-meals-not-operated",
+    question: "Can I use my EBT card to buy a hot meal at a restaurant in North Carolina?",
+    state: "NC",
+    mustMention: "no",
+    mustDisclaim: true,
+  },
+  {
+    id: "nc-expedited-service",
+    question: "How fast can I get emergency SNAP benefits in North Carolina?",
+    state: "NC",
+    expectCitation: "FNS 425",
+    mustMention: "7",
+    mustDisclaim: true,
+  },
+  {
+    id: "nc-cert-period-default-6-month",
+    // Guards NC's distinctively FLAT, SHORT certification structure — 6
+    // months is the default, not a shortened tier for unstable households.
+    question: "How long does my SNAP approval last in North Carolina?",
+    state: "NC",
+    expectCitation: "FNS 500",
+    mustMention: "6",
+    mustDisclaim: true,
+  },
+  {
+    id: "nc-federal-benefit",
+    question: "How is the monthly SNAP benefit amount calculated from net income in North Carolina?",
+    state: "NC",
+    expectCitation: "273.10",
+    mustDisclaim: true,
+  },
+];
+
 /** Everything the live runner executes. */
 export const ALL_GOLD: AnswerExpectation[] = [
   ...ANSWER_GOLD,
@@ -1696,4 +1807,5 @@ export const ALL_GOLD: AnswerExpectation[] = [
   ...MN_GOLD,
   ...PA_GOLD,
   ...OH_GOLD,
+  ...NC_GOLD,
 ];

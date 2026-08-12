@@ -90,4 +90,9 @@ export const QUESTIONS: Record<string, string[]> = {
     "Is the SNAP work-requirement time limit waived anywhere in Ohio?",
     "How fast can I get emergency SNAP benefits in Ohio?",
   ],
+  NC: [
+    "What is the income limit for Food and Nutrition Services in North Carolina?",
+    "Does my car count against me for SNAP in North Carolina?",
+    "Is the SNAP work-requirement time limit waived anywhere in North Carolina?",
+  ],
 };

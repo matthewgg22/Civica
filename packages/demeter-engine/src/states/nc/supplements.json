@@ -1,0 +1,233 @@
+{
+  "_provenance": {
+    "note": "North Carolina SNAP (\"Food and Nutrition Services\"/FNS) curated supplements. North Carolina has NO existing packages/snap-rules StatePolicy entry and NO oracle-fixture coverage — a genuinely blank slate, unlike Ohio's prior build in this same roster. This pack is CORPUS-ONLY and does not touch packages/snap-rules or the oracle fixture. Drafted from direct curl fetches (browser User-Agent required — WebFetch itself 403'd on this host every time; see PROVENANCE.md) of individual FNS Certification Manual section PDFs at policies.ncdhhs.gov, extracted with pdftotext, plus a direct fetch of North Carolina General Statute § 108A-51.1 at ncleg.gov (including the original 2015 session law) and a cross-check of USDA's current Restaurant Meals Program state list against NCDHHS's own Hurricane Helene hot-foods-waiver press release.",
+    "extracted": "2026-08-11",
+    "source_fact_check": "direct curl fetch (browser UA) of individual FNS Certification Manual section PDFs, extracted with pdftotext + direct fetch of NCGS 108A-51.1 and its enacting session law at ncleg.gov + USDA FNS RMP state list + NCDHHS press release + post-draft adversarial refute pass; findings and gaps recorded in PROVENANCE.md"
+  },
+  "supplements": [
+    {
+      "key": "income-pathways",
+      "kind": "supplement",
+      "terms": [
+        "income limit",
+        "income limits",
+        "gross income limit",
+        "gross income ceiling",
+        "make too much",
+        "over income",
+        "bbce",
+        "categorical eligibility",
+        "categorically eligible",
+        "broad-based categorical eligibility",
+        "expanded categorical eligibility",
+        "200 percent",
+        "200%",
+        "poverty level",
+        "work first",
+        "wffa"
+      ],
+      "citation": "FNS 220 — North Carolina's categorical eligibility structure: a narrow Work First Family Assistance (WFFA)/SSI pathway with no income test at all, plus a genuine flat 200% FPL \"Expanded (200%) Categorical Eligibility\" pathway conferred through a notification baked into every state-approved application",
+      "heading": "North Carolina runs a flat 200% FPL broad-based categorical-eligibility screen — Expanded (200%) Categorical Eligibility — conferred automatically through a TANF-services notice printed on every application, not a separate pamphlet a household must seek out",
+      "text": "FNS 220 defines five categorical-eligibility types. The narrow pathways (A-D): every member of the FNS unit is authorized to receive Work First Family Assistance (WFFA, North Carolina's TANF program), Work First Employment Services for low-income working families or non-custodial parents, Supplemental Security Income (SSI), or a combination of WFFA and SSI. SEPARATELY, and this is the pack's central finding: pathway E, \"Expanded (200%) Categorical Eligibility,\" applies to any FNS unit that does NOT already qualify under A-D, has gross income at or below 200% of the federal poverty level, is not otherwise ineligible under FNS 220.03 (see the criminal-justice-disqualifications and asset-rule supplements), and \"has been notified of TANF funded services\" — a notification FNS 220.02(E)(4) states explicitly \"is included on all state approved applications,\" so a household is expanded-categorically-eligible from the date of application as long as the income and non-disqualification criteria are met, with NO separate document, pamphlet, or brochure to seek out. This is structurally the SAME conferral-vehicle family this roster already documents for Georgia's TCOS pamphlet, Michigan's DVPS enrollment, Nevada's TANF brochure, Oregon's Information and Referral pamphlet, Wisconsin's Job Center notice, and Ohio's Careline notice-plus-text-message — but North Carolina's version is even lower-friction: the notice is not a separate mailing or text, it is language printed on the application form itself. Once determined categorically eligible under EITHER the narrow or expanded pathway, FNS 220.05 confirms the household is exempt from ALL THREE of: the resource test (\"automatically passes\"), the gross income test, AND the net income test — not merely an asset-test waiver. A household exceeding 200% FPL, or excluded under FNS 220.03 (an IPV disqualification, work-requirement noncompliance, a disqualifying drug felony conviction, or $4,500+ in lottery/gambling winnings), falls back to the standard federal test described in the asset-rule supplement. SEPARATELY, North Carolina also implements the standard federal \"separate assistance group\" provision for an elderly or disabled individual living with others who cannot purchase and prepare meals separately (7 CFR 273.1(b)(2)): FNS 360.03 publishes a 165% of poverty income table for this purpose, comparing only the OTHER household members' income (by their own group size) against 165% FPL — this is a household-COMPOSITION rule governing who counts as a separate assistance group, not a third income-eligibility screen layered between the 130% federal test and the 200% expanded-categorical-eligibility screen described above, the same distinction Ohio's pack documents for its own parallel 165% figure.",
+      "source_url": "https://policies.ncdhhs.gov/document/fns-220-categorical-eligibility/"
+    },
+    {
+      "key": "asset-rule",
+      "kind": "supplement",
+      "terms": [
+        "asset limit",
+        "asset test",
+        "resource limit",
+        "resource test",
+        "resources",
+        "savings",
+        "savings limit",
+        "bank account",
+        "vehicle",
+        "car count",
+        "does my car count",
+        "boat"
+      ],
+      "citation": "FNS 390 — North Carolina resource limits ($3,000 standard / $4,500 elderly-or-disabled, waived entirely for categorically eligible households); ALL motor vehicles (including boats) are excluded resources",
+      "heading": "North Carolina's $3,000/$4,500 resource limit only reaches households NOT categorically eligible under FNS 220 — and even then, every motor vehicle (cars, trucks, and boats alike) is a fully excluded resource regardless of value",
+      "text": "FNS 390.01 sets the maximum allowable resources for a non-categorically-eligible FNS unit at $3,000 for a regular household, or $4,500 for a household including a member age 60 or older, or a \"Specified Person\" (North Carolina's term for the elderly/disabled category used throughout the manual). Resources belonging to a categorically eligible FNS unit (see the income-pathways supplement) are entirely excluded — \"the household automatically passes the resource test,\" with no resource verification required at all. For households that ARE subject to the dollar limit, FNS 390.14 lists \"Motor Vehicles — defined as an automobile or other vehicle used for transportation. This includes boats\" among the fully EXCLUDED resource categories — North Carolina counts no vehicle of any kind, at any value, toward the resource limit for a non-categorically-eligible household, a broader exclusion than a per-vehicle equity-value or one-vehicle-only rule some other states in this roster apply. A household that receives $4,500 or more in gambling, lottery, bingo, or cash-prize winnings loses FNS eligibility outright (and cannot re-establish categorical eligibility on reapplication — see FNS 220.03(D)) regardless of which resource tier it would otherwise fall under.",
+      "source_url": "https://policies.ncdhhs.gov/document/fns-390-resources/"
+    },
+    {
+      "key": "sua-values",
+      "kind": "supplement",
+      "terms": [
+        "utility allowance",
+        "utility standard",
+        "shelter deduction",
+        "excess shelter",
+        "standard utility allowance",
+        "heating standard",
+        "cooling standard",
+        "telephone standard",
+        "phone standard",
+        "homeless shelter deduction",
+        "basic utility allowance"
+      ],
+      "citation": "FNS 340.09; FNS 360.01 (Change #01-2025, eff. Oct 1, 2025) — North Carolina's three-tier utility structure (SUA, BUA, TUA), UNUSUALLY scaled by household size rather than the flat per-household figure most other states in this roster use",
+      "heading": "North Carolina's Standard Utility Allowance scales with household size ($637 for one person up to $912 for five-or-more) — a genuinely different structure from the single flat SUA figure this roster's other states publish",
+      "text": "FNS 340.09 establishes three utility-allowance tiers: the Standard Utility Allowance (SUA, for households incurring a heating or cooling expense), the Basic Utility Allowance (BUA, for households incurring at least two non-heating/non-cooling utility expenses — cooking fuel, non-heating electricity, water/sewage, garbage, or a telephone counted alongside at least one other utility), and the Telephone Utility Allowance (TUA, for households whose only utility expense is a telephone, land line or cellular). Effective October 1, 2025 (FNS Change Notice 01-2025, attachment FNS 360): the SUA is $637 (household size 1), $699 (2), $768 (3), $837 (4), and $912 (5 or more); the BUA is $392/$431/$474/$518/$564 for the same size tiers; the TUA is a flat $42 regardless of household size. THIS SCALING BY HOUSEHOLD SIZE IS A GENUINE STRUCTURAL DIFFERENCE from every other state this roster has built so far — Ohio, Pennsylvania, Wisconsin, and Minnesota all publish a single flat SUA/BUA/LUA figure that does not vary with household size; North Carolina's utility allowances instead scale exactly like its income and allotment tables do. Roomers, boarders, foster children not included in the FNS unit, and ineligible students do not count toward the unit size used to select the utility-allowance tier. Separately: the Standard Deduction is $209 for household sizes 1-3, $223 (4), $261 (5), $299 (6 or more) — this figure matches the federal COLA table other states in this roster also carry, unlike North Carolina's own size-scaled utility allowances; the maximum Excess Shelter Deduction for a household without a Specified Person is $744/month (uncapped with one); and the Homeless Shelter standard deduction is $198.99/month (FNS 360.01(G)) — note the odd 99-cent figure, confirmed directly from the primary source rather than rounded.",
+      "source_url": "https://policies.ncdhhs.gov/document/fns-360-determining-benefit-levels/"
+    },
+    {
+      "key": "medical-deduction",
+      "kind": "supplement",
+      "terms": [
+        "medical deduction",
+        "medical expense",
+        "medical expenses",
+        "medical bills",
+        "elderly deduction",
+        "disability deduction",
+        "excess medical",
+        "service animal"
+      ],
+      "citation": "FNS 340.13 — North Carolina excess medical deduction (plain federal actual-expense-minus-$35, Specified Persons only, no flat standard amount)",
+      "heading": "North Carolina uses the plain federal actual-expense-minus-$35 Excess Medical Deduction — no North Carolina-specific flat Standard Medical Deduction dollar figure",
+      "text": "FNS 340.13 allows a deduction for unreimbursed medical and dental expenses exceeding $35/month for a \"Specified Person\" (North Carolina's FNS 212.02 definition of elderly or disabled) — the plain federal mechanism (7 CFR 273.9(d)(3)) rather than a flat Standard Medical Deduction dollar figure some other states in this roster use. Allowable expenses include health/hospital insurance premiums, co-payments, service-animal costs (the animal must be specially trained to assist with the specific medical issue — a pet that later becomes a companion animal does not qualify retroactively), reasonable transportation and lodging for medical treatment (at the current IRS business mileage rate), Medicare premiums including Part D, hospitalization and nursing-home care, prescribed medical equipment and supplies, prescription and over-the-counter medications, and the cost of a non-household-member attendant (homemaker, home health aide, housekeeper). Explicitly NON-allowable: special-diet costs (including Ensure, even with a prescription), lump-sum death/dismemberment insurance premiums, income-maintenance-policy premiums, and senior-citizen pharmacy discounts. The deduction does not require full verification at every recertification — only when the type or source of expense changes, or the total changes by more than $25.",
+      "source_url": "https://policies.ncdhhs.gov/document/fns-340-deductions/"
+    },
+    {
+      "key": "child-support-deduction",
+      "kind": "supplement",
+      "terms": [
+        "child support",
+        "support payments",
+        "child support deduction",
+        "dependent care",
+        "child care deduction",
+        "daycare",
+        "alimony",
+        "arrearage"
+      ],
+      "citation": "FNS 340.19 — North Carolina child support deduction (ordinary deduction for legally-obligated payments, including vendor payments and arrearages; alimony explicitly excluded)",
+      "heading": "North Carolina deducts legally-obligated child support paid to or for a non-household member, including vendor payments and arrearages — alimony, spousal support, and property settlements do NOT count",
+      "text": "FNS 340.19 provides an ordinary DEDUCTION (7 CFR 273.9(d)(5), the same mechanism this roster's other states — Georgia, Michigan, Minnesota, Ohio, Oregon, Pennsylvania, Wisconsin — use, not Illinois' income-exclusion approach) for legally-obligated child support (court-ordered, IV-D administratively-ordered, or ordered through a legally enforceable separation agreement) an FNS unit member actually pays to or for a non-household member, including arrearages the member anticipates paying. This explicitly includes vendor payments — court-ordered rent, mortgage, or other shelter payments made directly to the custodial parent in lieu of child support, and court-ordered health-insurance premiums for the child (prorated to exclude any portion covering a non-custodial child). FNS 340.19(C)(3) explicitly EXCLUDES alimony, spousal support, and property-settlement payments from this deduction — the same alimony carve-out Ohio's and Pennsylvania's packs document. If the paying household member is disqualified (E&T, Workfare, Voluntary Quit, drug felon, IPV, or Transfer of Assets), the full child support payment is still deducted for the remaining eligible members; if paid by an ineligible alien or SSN-noncompliant member, only a prorated share is allowed; if paid by an ineligible STUDENT, no deduction is allowed at all — a distinction this pack did not find spelled out this explicitly in every other state's pack in this roster.",
+      "source_url": "https://policies.ncdhhs.gov/document/fns-340-deductions/"
+    },
+    {
+      "key": "abawd-work-requirement",
+      "kind": "supplement",
+      "terms": [
+        "abawd",
+        "able bodied adult",
+        "work requirement",
+        "time limit",
+        "3 month limit",
+        "work registration",
+        "waiver",
+        "waived area"
+      ],
+      "citation": "NCGS 108A-51.1 (eff. Oct 1, 2015, enacted S.L. 2015-294 § 16(a)); FNS 260 — North Carolina's ABAWD 3-in-36-month time limit, and a STATUTORY PROHIBITION, in continuous effect for over a decade, on NCDHHS ever seeking a geographic waiver",
+      "heading": "North Carolina has been LEGALLY BARRED from requesting an ABAWD geographic waiver since October 1, 2015 — a full decade before Ohio's comparable 2025 prohibition elsewhere in this roster — with a narrow carve-out only for post-disaster D-SNAP",
+      "text": "An able-bodied adult without dependents (ABAWD) is limited to three countable months of FNS benefits within a fixed 36-month period (currently January 1, 2025 through December 31, 2027, per FNS 260.03) unless meeting the 80-hour/month work requirement, an exemption, or living in a currently-waived geographic area (7 CFR 273.24). THIS PACK'S FLAGSHIP FINDING: North Carolina General Statute § 108A-51.1, \"Prohibition on certain waivers,\" enacted by Session Law 2015-294 § 16(a) (House Bill 318, the \"Protect North Carolina Workers Act,\" signed October 29, 2015, effective October 1, 2015) states verbatim: \"Except for waivers for the Disaster Supplemental Nutrition Assistance Program sought for an area that has received a Presidential disaster declaration of Individual Assistance from the Federal Emergency Management Agency, the Department shall not seek waivers to time limits established by federal law for food and nutrition benefits for able-bodied adults without dependents required to fulfill work requirements to qualify for those benefits.\" This pack independently fetched the current codified text at ncleg.gov and confirmed it remains in force with no repeal or amendment since 2015 — a full DECADE of continuous statutory prohibition, longer-standing than Ohio's comparable ORC § 5101.548 (effective September 30, 2025) elsewhere in this roster. Independently corroborated: NCDHHS's own current ABAWD program page states the 3-month time limit applies uniformly statewide with no reference to any waived area, and USDA's current ABAWD waiver tracking (checked via WebSearch during this pass) lists only Minnesota, Montana, and North Dakota as holding active statewide waivers as of the current reporting period — North Carolina is not among them. FNS 260 (revised December 1, 2025 to implement OBBBA/H.R. 1) governs the current exemption structure: age under 18 or 65+ (raised from 55 by OBBBA), responsibility for a child under 14 (narrowed from 18), pregnancy, receipt of disability benefits, obvious physical/mental unfitness (North Carolina's own guidance treats an active substance use disorder that functionally impairs work capacity, and chronic homelessness that creates barriers to 20 hours/week of work, as qualifying \"obvious unfitness\" categories at the eligibility worker's discretion), and the new Indian/Urban Indian/California Indian exemption effective November 1, 2025. OBBBA eliminated the standalone homeless, veteran, and former-foster-youth exemptions nationally; North Carolina's manual notes it may still reach chronically homeless individuals through the discretionary \"obviously unfit\" pathway even though the categorical homeless exemption itself is gone.",
+      "source_url": "https://policies.ncdhhs.gov/document/fns-260-able-bodied-adults-without-dependents/"
+    },
+    {
+      "key": "criminal-justice-disqualifications",
+      "kind": "supplement",
+      "terms": [
+        "drug felony",
+        "felony conviction",
+        "criminal record",
+        "drug conviction",
+        "drug test",
+        "drug testing",
+        "lifetime ban",
+        "fleeing felon",
+        "probation",
+        "parole",
+        "intentional program violation",
+        "controlled substance"
+      ],
+      "citation": "FNS 270 — North Carolina's MODIFIED drug-felony ban: permanent disqualification is the default for any controlled-substance felony conviction since August 23, 1996, with a narrow reinstatement path ONLY for a North Carolina Class H or I felony conviction, requiring a 6-month minimum wait plus Area Mental Health Authority (AMHA) treatment-compliance determination",
+      "heading": "North Carolina did NOT fully opt out of the federal drug-felony SNAP ban — permanent disqualification remains the default, with a narrow, conditional reinstatement path available only for the state's own two lowest felony classes",
+      "text": "FNS 270.01 states that an individual convicted, on or after August 23, 1996, under federal or North Carolina law, of any offense classified as a FELONY with an element of possession, use, or distribution of a controlled substance, is PERMANENTLY DISQUALIFIED from FNS benefits unless an exception applies. This is a genuinely different pattern from the full statutory opt-outs this roster has already documented for Minnesota and Ohio: North Carolina's default is permanent disqualification, not eligibility. FNS 270.02 provides the ONLY reinstatement path, and it is narrow on two axes at once: (1) the conviction must specifically be classified as a Class H or Class I felony under North Carolina's own felony-classification scheme (the state's two LEAST serious felony classes) — any higher felony class remains permanently disqualifying with no path back; and (2) the conviction must have occurred IN North Carolina specifically — a controlled-substance felony conviction from any other state remains permanently disqualifying regardless of its classification there (FNS 270 gives the explicit example of a Virginia Class H-equivalent conviction remaining a permanent NC disqualification). For an individual who clears both gates, reinstatement requires: a minimum disqualification period of six months from release from custody (or from the date of conviction, if never incarcerated), AND a notice of compliance from the local Area Mental Health Authority (AMHA) — the AMHA alone determines whether ongoing substance-abuse treatment participation is a condition of the cure, and can re-disqualify the individual for the SAME conviction if it later determines the individual is no longer successfully participating in required treatment. A subsequent controlled-substance felony conviction during the six-month window resets the clock from the new conviction date. This structure — a genuine, narrow, conditional modified opt-out rather than either a full ban or a full opt-out — is consistent with how outside secondary sources (the North Carolina Justice Center, the Collateral Consequences Resource Center's national SNAP/TANF drug-conviction survey, and the Public Health Law Center's opt-out-state map) already and ACCURATELY describe North Carolina as a \"modified ban\" state; this pack's primary-source read confirms rather than corrects that characterization. Separately, FNS 220.03 lists the other categorical-eligibility-blocking disqualifications that remain independent of the drug-felony rule: an IPV finding, work-requirement noncompliance, and $4,500+ in lottery/gambling winnings (which additionally terminates FNS eligibility outright, not merely categorical-eligibility status).",
+      "source_url": "https://policies.ncdhhs.gov/document/fns-270-controlled-substance-felons/"
+    },
+    {
+      "key": "restaurant-meals-program",
+      "kind": "supplement",
+      "terms": [
+        "restaurant meals program",
+        "rmp",
+        "eat at a restaurant",
+        "use ebt at restaurant",
+        "hot meal",
+        "hot food"
+      ],
+      "citation": "USDA FNS Restaurant Meals Program state list — North Carolina does NOT operate a Restaurant Meals Program; a temporary, unrelated Hurricane Helene hot-foods waiver (Oct 4 - Nov 3, 2024) is sometimes conflated with one by third-party sites",
+      "heading": "North Carolina has no ongoing Restaurant Meals Program — a one-month, disaster-specific hot-foods waiver after Hurricane Helene in 2024 is a different federal mechanism entirely, and this pack found third-party explainer sites conflating the two",
+      "text": "The Restaurant Meals Program (RMP) is a state OPTION under 7 CFR 274.7(g) allowing elderly (60+), disabled, and homeless SNAP recipients to buy prepared meals from authorized RESTAURANTS with their EBT card on an ONGOING basis. USDA's current RMP state list includes Arizona, California, Illinois (select counties), Maryland, Massachusetts, Michigan, New York, Rhode Island, and Virginia — North Carolina is not on it, and this pack found no North Carolina FNS Certification Manual section establishing an RMP. THIS PACK'S SECONDARY-SOURCE CORRECTION: several third-party SNAP-benefit explainer sites (checked during this pass) either list North Carolina among RMP states or publish North Carolina-specific \"how to use EBT at a restaurant\" guidance without the RMP's actual eligibility gate — this appears to conflate North Carolina's RMP-eligible population claim with a genuinely different, TEMPORARY, and already-expired mechanism: following Hurricane Helene, NCDHHS announced (October 4, 2024) that FNS participants could use EBT benefits to buy hot, prepared food from authorized EBT VENDORS (the press release specifically names gas stations and grocery-store deli departments) — explicitly EXCLUDING restaurants — for one month, ending November 3, 2024. This is a federal disaster hot-foods waiver (distinct statutory basis from the RMP, typically tied to a Presidential disaster declaration and a state's D-SNAP application, which NCDHHS was separately pursuing at the time), not an ongoing Restaurant Meals Program, not restaurant-specific, and not currently active. A North Carolina SNAP recipient cannot use their EBT card at any restaurant today under any circumstance, regardless of age, disability, or housing status, unless and until NCDHHS elects to adopt the RMP or a new disaster-specific waiver is issued for a future declared disaster.",
+      "source_url": "https://www.fns.usda.gov/snap/retailer/restaurant-meals-program"
+    },
+    {
+      "key": "expedited-service",
+      "kind": "supplement",
+      "terms": [
+        "expedited",
+        "expedited service",
+        "emergency",
+        "emergency food stamps",
+        "fast benefits",
+        "how fast",
+        "urgent",
+        "same day",
+        "24 hour",
+        "seven day",
+        "7 day",
+        "4 day"
+      ],
+      "citation": "FNS 425 — North Carolina expedited FNS service (federal-standard eligibility gates, with an internal 4-calendar-day disposition target built to guarantee EBT access within the federal 7-day ceiling)",
+      "heading": "North Carolina uses the standard federal expedited-service eligibility gates, but sets its OWN internal processing deadline at 4 calendar days — a full 3 days inside the federal 7-day ceiling — specifically to guarantee actual benefit availability, not just approval, within 7 days",
+      "text": "FNS 425.10 uses the federal-standard expedited-service eligibility gates: a household with gross monthly income under $150 AND liquid resources of $100 or less; a household whose combined income and liquid resources are less than its rent/mortgage plus utility costs; or a destitute migrant/seasonal farmworker household with $100 or less in liquid resources. Identity is the only verification that cannot be postponed before benefits are authorized. THE NORTH CAROLINA-SPECIFIC DETAIL: FNS 425.01-425.02 require the state agency to approve an expedited application within four (4) calendar days of the date of application — not the federal 7-day ceiling directly — specifically because North Carolina measures compliance by the household's actual Benefit Availability Date (BAVDT: the date the household has BOTH a valid EBT card and usable funds), not the approval/disposition date. Approving by day 4 leaves enough buffer for a new EBT card to be mailed (1 processing day + 2 mailing days) and still land inside the federal 7-day BAVDT ceiling; an application processed later than 4 days is flagged as an \"overdue application\" under North Carolina's own internal timeliness measure even if it might still technically clear 7 days for a household keeping an existing card. This is North Carolina's own OPERATIONAL buffer standard, not a stricter LEGAL eligibility gate — the underlying federal 7-day availability ceiling and the federal eligibility criteria themselves are unchanged.",
+      "source_url": "https://policies.ncdhhs.gov/document/fns-425-expedited-services-processing/"
+    },
+    {
+      "key": "reporting-certification",
+      "kind": "supplement",
+      "terms": [
+        "certification period",
+        "approval period",
+        "recertification",
+        "redetermination",
+        "how long does snap last",
+        "how long does my snap approval last",
+        "how long does my approval last",
+        "redo",
+        "renew",
+        "simplified reporting"
+      ],
+      "citation": "FNS 500.02 — North Carolina's certification periods: just two tiers, a 12-month period for zero-earned-income Specified-Person-only households, and 6 months for every other household — notably shorter and flatter than the multi-tier structures other states in this roster carry",
+      "heading": "North Carolina's DEFAULT certification period is 6 months — shorter than the 12-month default most other states in this roster use — with only ONE longer tier (12 months) reserved for households where every member is elderly or disabled with no earned income",
+      "text": "FNS 500.02 sets North Carolina's certification periods with only two tiers, a notably FLATTER structure than Ohio's four-tier (36/12/6/4-5-month) system or Pennsylvania's four-tier (36/24/12/6-month) system elsewhere in this roster: (A) a 12-month certification period for FNS units containing ONLY Specified Persons (North Carolina's elderly/disabled definition) with NO earned income; (B) a 6-month certification period for every other household — this is North Carolina's DEFAULT, not a shortened tier reserved for unstable circumstances the way a 6-month period functions in some other states' graduated structures. There is no 24- or 36-month tier reachable by any household type in North Carolina's manual as fetched. Simplified Reporting (FNS 500.01, applying to every FNS unit except Simplified Nutritional Assistance Program and Transitional FNS units) limits what a household must report mid-certification to just three triggers: an ABAWD member falling below the 80-hour/month work requirement (non-waiver counties), household income crossing the 130% federal gross income limit for its size at certification (this reporting THRESHOLD is fixed at certification and does not update if household size later changes), or any household member receiving $4,500 or more in lottery/gambling winnings. Reports are due by the 10th of the month following the month of change (or following the month the household received its notice of eligibility, for changes discovered before an application/recertification is disposed).",
+      "source_url": "https://policies.ncdhhs.gov/document/fns-500-sr-category-reporting-requirements/"
+    },
+    {
+      "key": "program-identity",
+      "kind": "supplement",
+      "terms": [
+        "how to apply",
+        "where do i apply",
+        "apply for snap",
+        "epass",
+        "who runs",
+        "what agency",
+        "administers",
+        "county dss",
+        "department of social services",
+        "nc fast",
+        "dss-8207"
+      ],
+      "citation": "NCDHHS / ePASS program materials — North Carolina calls SNAP \"Food and Nutrition Services (FNS)\" throughout its own manual and applies through the ePASS self-service portal; County Departments of Social Services are genuine COUNTY government agencies across all 100 counties, not state field offices",
+      "heading": "North Carolina applies through the ePASS portal or a local county DSS office; \"FNS\" in North Carolina's own materials means the STATE'S SNAP program, not the federal USDA agency of the same acronym — and all 100 County Departments of Social Services are actual county government, state-supervised but not state-run",
+      "text": "North Carolina's SNAP program has no separate consumer-facing brand name — NCDHHS's own Certification Manual, application forms, and public materials call it \"Food and Nutrition Services\" or \"FNS\" throughout, the SAME acronym USDA uses for its own national administering agency, Food and Nutrition Service. This pack flags the collision explicitly: a reference to \"FNS\" in North Carolina's own manual (\"FNS 220,\" \"the FNS unit,\" \"FNS benefits\") means North Carolina's state SNAP program specifically, not the federal USDA agency, even though the same three letters appear in federal-agency contexts elsewhere. Applications run through the ePASS self-service portal (epass.nc.gov) or on paper (DSS-8207, \"Application for Food and Nutrition Services\") at a local County Department of Social Services (DSS). CRITICALLY, and matching the administrative archetype this roster already documents for California, New York, Minnesota, Wisconsin, and Ohio: North Carolina runs a genuine state-SUPERVISED, county-ADMINISTERED system across all 100 of its counties — NCDHHS writes the FNS Certification Manual policy and issues the annual FNS Change Notices, but each county DSS is an actual county government agency responsible for day-to-day eligibility determination, enrollment, and recertification through the state's NC FAST eligibility system. This matters for operative practice: exact processing behavior and outreach materials can vary county to county even though the underlying FNS Certification Manual is statewide — confirm current practice with the applicant's own county DSS rather than assuming uniform statewide execution. Benefits are issued via EBT once a case is approved in NC FAST.",
+      "source_url": "https://www.ncdhhs.gov/divisions/child-and-family-well-being/food-and-nutrition-services-food-stamps"
+    }
+  ]
+}

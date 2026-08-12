@@ -1,0 +1,44 @@
+{
+  "_provenance": {
+    "note": "North Carolina dated facts. Dollar values ride the annual FFY dollar-table cycle in NCDHHS's FNS Change Notice series (currently FNS-CN-01-2025's FNS 360 attachment, effective 10/1/2025). Because North Carolina has NO existing packages/snap-rules StatePolicy entry, there is no engine constant to cross-check against — unlike Ohio's pack in this same roster, every entry below is a routine COLA-cycle or re-verification reminder, not a disclosed engine-vs-corpus discrepancy.",
+    "extracted": "2026-08-11"
+  },
+  "entries": [
+    {
+      "key": "nc-ffy26-dollar-values-recheck",
+      "kind": "expires",
+      "date": "2026-09-30",
+      "warning": "North Carolina's FFY26 dollar figures (SUA $637-$912 by household size, BUA $392-$564 by household size, TUA $42 flat, Standard Deduction $209/$223/$261/$299, Excess Shelter cap $744, Homeless Shelter Deduction $198.99, resource limits $3,000/$4,500, income limit tables at 100%/130%/165%/200% FPL, maximum allotments) are all sourced from FNS Change Notice 01-2025's FNS 360 attachment, effective 10/1/2025 through 9/30/2026. Find the successor Change Notice (the next dated FNS-CN at policies.ncdhhs.gov/divisional-n-z/social-services/food-and-nutrition-services/fns-change-notices/) before quoting any North Carolina dollar amount after this date."
+    },
+    {
+      "key": "nc-abawd-waiver-prohibition-recheck",
+      "kind": "expires",
+      "date": "2027-01-01",
+      "warning": "This pack found North Carolina General Statute § 108A-51.1 (enacted S.L. 2015-294 § 16(a), effective October 1, 2015) currently and continuously bars NCDHHS from seeking an ABAWD geographic waiver, with a narrow carve-out for post-disaster D-SNAP. Confirmed via a direct fetch of the current codified statute text at ncleg.gov showing no repeal or amendment since enactment, and independently corroborated against NCDHHS's own current ABAWD program page (no waived area referenced) and USDA's current ABAWD waiver-status reporting (North Carolina not listed as an active-waiver state). Re-verify the statute's current text directly at ncleg.gov before this date — a repeal would be a significant, high-salience policy reversal this pack would want caught quickly."
+    },
+    {
+      "key": "nc-abawd-obbba-transition-recheck",
+      "kind": "expires",
+      "date": "2026-12-01",
+      "warning": "FNS 260 was revised effective December 1, 2025 to implement OBBBA (H.R. 1, signed July 4, 2025) ABAWD exemption changes — age band widened to 18-64, dependent-child exemption narrowed to under-14, homeless/veteran/former-foster-youth categorical exemptions eliminated (with North Carolina noting a discretionary \"obviously unfit\" pathway may still reach some chronically homeless individuals), and the new Indian/Urban Indian/California Indian exemption effective November 1, 2025. This is a genuinely new, actively-transitioning federal policy area — re-verify FNS 260's current text directly before this date rather than relying on this pack's December 2025 snapshot, especially for any USDA implementation guidance issued after this pack's build date."
+    },
+    {
+      "key": "nc-drug-felony-reinstatement-mechanics-gap",
+      "kind": "expires",
+      "date": "2026-12-01",
+      "warning": "FNS 270's reinstatement path for a North Carolina Class H or I controlled-substance felony conviction depends on an Area Mental Health Authority (AMHA) treatment-compliance determination this pack could not further specify beyond the manual's own text — e.g., typical AMHA processing timelines, or how consistently AMHAs are reached/staffed across all 100 counties given North Carolina's county-administered structure. Confirm current AMHA referral practice with the applicant's own county DSS before relying on a specific reinstatement timeline beyond the codified 6-month minimum."
+    },
+    {
+      "key": "nc-rmp-secondary-source-conflation-recheck",
+      "kind": "expires",
+      "date": "2026-12-01",
+      "warning": "This pack found several third-party SNAP-benefit explainer sites conflating North Carolina's temporary, already-expired Hurricane Helene hot-foods waiver (Oct 4 - Nov 3, 2024, non-restaurant EBT vendors only) with an ongoing Restaurant Meals Program North Carolina does not operate. If a future disaster prompts NCDHHS to issue a new hot-foods waiver, re-verify its exact scope (which retailer types, what date range) directly against a NCDHHS press release or USDA waiver approval before restating any \"North Carolina allows hot food purchases\" claim — the distinction between a disaster hot-foods waiver and the RMP is easy to lose in secondary summarization."
+    },
+    {
+      "key": "nc-drug-felony-reform-bill-watch",
+      "kind": "expires",
+      "date": "2026-12-01",
+      "warning": "As of this pack's build date, North Carolina Senate Bill 564 / House Bill 682 (\"Public Safety Through Food Access Act,\" 2025-2026 session) would eliminate both the permanent and 6-month FNS 270 drug-felony disqualifications entirely, replacing them with immediate eligibility upon completion of required drug treatment. As of this pack's WebSearch check, the bill remained in committee (referred to Senate/House Rules committees in spring 2025, past the May 8, 2025 crossover deadline) and had NOT been enacted — this pack's criminal-justice-disqualifications supplement describes FNS 270's CURRENT modified-ban text, not this pending reform. Re-check ncleg.gov's bill-status page for S564/H682 directly before this date, and re-verify FNS 270's text has not been amended if either bill has since passed."
+    }
+  ]
+}
