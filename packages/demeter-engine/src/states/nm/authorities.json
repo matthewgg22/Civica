@@ -1,0 +1,39 @@
+{
+  "_provenance": {
+    "note": "New Mexico citation authorities. New Mexico's operative SNAP regulation is NMAC (New Mexico Administrative Code) Title 8, Chapter 139 (\"Food Stamp Program\"), a dedicated SNAP-only chapter (unlike Connecticut's shared multi-program UPM), cited by a 'Title.Chapter.Part.Section' pattern, e.g. '8.139.420.8 NMAC'. This pack ALSO cites a real, separate New Mexico statute (N.M. Stat. Ann. § 27-2B-11) for the drug-felony finding, so this pack defines a SECOND citation family, 'NMSA 27-2B-', matching this roster's Connecticut, Kentucky, Alabama, and Louisiana packs' multi-family pattern.",
+    "extracted": "2026-08-12"
+  },
+  "patterns": [
+    {
+      "key": "nmac",
+      "regex": "\\b(8\\.139\\.\\d{3}(?:\\.\\d{1,2})?)\\s?NMAC\\b",
+      "flags": "gi",
+      "template": "$1 NMAC",
+      "normalize": "none",
+      "match": "exact",
+      "note": "New Mexico Administrative Code, Title 8 (Social Services), Chapter 139 (Food Stamp Program), cited by Title.Chapter.Part.Section, e.g. 8.139.420.8 (Categorical Eligibility), 8.139.510 (Resources and Property), 8.139.520 (Income and Deductions), 8.139.120.8 (Recertification)."
+    },
+    {
+      "key": "nmsa",
+      "regex": "\\bN\\.?M\\.?S\\.?A\\.?\\s?(?:1978\\s?)?§?\\s?27-2B-(\\d{2}[A-Z]?)\\b",
+      "flags": "gi",
+      "template": "NMSA 1978 § 27-2B-$1",
+      "normalize": "none",
+      "match": "exact",
+      "note": "New Mexico Statutes Annotated, Chapter 27 (Public Assistance), Article 2B (New Mexico Works Act), cited by section number. This pack cites exactly one: § 27-2B-11(C), the drug-felony SNAP/TANF eligibility opt-out provision."
+    }
+  ],
+  "known": {
+    "nmac": [
+      { "value": "8.139.400 NMAC", "note": "Recipient Policy — Who Can Be a Recipient (household composition, basis for defining group); hsd.state.nm.us-hosted PDF still shows pre-2024 HSD issuing-agency line" },
+      { "value": "8.139.410 NMAC", "note": "General Recipient Requirements — Nonfinancial Eligibility Criteria (SSN enumeration, general work requirements); hsd.state.nm.us-hosted PDF still shows pre-2024 HSD issuing-agency line" },
+      { "value": "8.139.420 NMAC", "note": "General Recipient Requirements — Categorical Eligibility (CE); amended 7/16/2024, further amended 3/1/2025; 8.139.420.8 is the operative broad-based CE section, 200% FPG threshold" },
+      { "value": "8.139.510 NMAC", "note": "Eligibility Policy — Resources and Property; effective 7/16/2024; defers to USDA's own COLA page for the current dollar-figure resource limit rather than restating it" },
+      { "value": "8.139.520 NMAC", "note": "Eligibility Policy — Income and Deductions; amended 7/1/2024; states the 130%/100% FPG gross/net structure and the CE income-test distinction (financial-assistance CE skips both tests, broad-based CE must still meet both)" },
+      { "value": "8.139.120.8 NMAC", "note": "Recertification — timely-reapplication rule (15th day of the certification period's last month) for uninterrupted benefits" }
+    ],
+    "nmsa": [
+      { "value": "NMSA 1978 § 27-2B-11", "note": "New Mexico Works Act — ineligibility grounds for public assistance; subsection (C) is New Mexico's drug-felony SNAP/TANF opt-out, invoking 21 U.S.C. § 862a(d)(1)(A) but narrowly scoped in its own text to convictions for DISTRIBUTION of a controlled substance — this pack could not confirm, and flags as genuinely ambiguous, whether the exemption extends to possession/use convictions. Could not be fetched directly (law.justia.com 403, nmonesource.com 404); sourced via two independently-fetched, textually-convergent mirrors (Public Health Law Center, FindLaw), see PROVENANCE.md" }
+    ]
+  }
+}
