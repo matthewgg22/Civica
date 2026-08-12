@@ -167,13 +167,17 @@ import idPack from "./id/pack.json";
 import idSupplements from "./id/supplements.json";
 import idAuthorities from "./id/authorities.json";
 import idFreshness from "./id/freshness.json";
+import wvPack from "./wv/pack.json";
+import wvSupplements from "./wv/supplements.json";
+import wvAuthorities from "./wv/authorities.json";
+import wvFreshness from "./wv/freshness.json";
 import hiPack from "./hi/pack.json";
 import hiSupplements from "./hi/supplements.json";
 import hiAuthorities from "./hi/authorities.json";
 import hiFreshness from "./hi/freshness.json";
 
 /** Registered pack codes. Widens as Wave 1+ states land (WA, TX, NY, …). */
-export type StateCode = "CA" | "WA" | "TX" | "NY" | "GA" | "MI" | "IL" | "FL" | "MA" | "NV" | "AZ" | "OR" | "WI" | "MN" | "PA" | "OH" | "NC" | "NJ" | "VA" | "TN" | "IN" | "MO" | "MD" | "CO" | "SC" | "AL" | "LA" | "KY" | "OK" | "CT" | "UT" | "IA" | "AR" | "MS" | "KS" | "NM" | "NE" | "ID" | "HI";
+export type StateCode = "CA" | "WA" | "TX" | "NY" | "GA" | "MI" | "IL" | "FL" | "MA" | "NV" | "AZ" | "OR" | "WI" | "MN" | "PA" | "OH" | "NC" | "NJ" | "VA" | "TN" | "IN" | "MO" | "MD" | "CO" | "SC" | "AL" | "LA" | "KY" | "OK" | "CT" | "UT" | "IA" | "AR" | "MS" | "KS" | "NM" | "NE" | "ID" | "WV" | "HI";
 
 /** Launch state; used when a caller does not specify. Preserves the pre-pack
  *  behavior in which the (then-hardcoded) CA content applied to every query. */
@@ -492,6 +496,12 @@ const REGISTRY: Record<StateCode, StatePack> = {
     idSupplements as { supplements: PackTopic[]; supersessions?: Record<string, string> },
     idAuthorities as unknown as RawAuthorities,
     idFreshness as { entries: PackFreshnessEntry[] },
+  ),
+  WV: buildPack(
+    wvPack as Omit<StatePack, "topics" | "authorities" | "freshness" | "supersessions">,
+    wvSupplements as { supplements: PackTopic[]; supersessions?: Record<string, string> },
+    wvAuthorities as unknown as RawAuthorities,
+    wvFreshness as { entries: PackFreshnessEntry[] },
   ),
   HI: buildPack(
     hiPack as Omit<StatePack, "topics" | "authorities" | "freshness" | "supersessions">,

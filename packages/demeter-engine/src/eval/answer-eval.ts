@@ -4094,6 +4094,93 @@ export const ID_GOLD: AnswerExpectation[] = [
   },
 ];
 
+export const WV_GOLD: AnswerExpectation[] = [
+  {
+    id: "wv-bbce-200-broad-no-carveout",
+    // Guards the structural finding: WV's 200% FPL BBCE ceiling applies
+    // broadly, unlike NE's narrower elderly/disabled/ERP-scoped 165%.
+    question: "What is the income limit for SNAP in West Virginia?",
+    state: "WV",
+    mustMention: "200",
+    mustDisclaim: true,
+  },
+  {
+    id: "wv-asset-limit-bbce-waiver",
+    question: "Does my car or savings count against me for SNAP in West Virginia?",
+    state: "WV",
+    mustMention: "3,000",
+    mustDisclaim: true,
+  },
+  {
+    id: "wv-drug-felony-modified-ban-hb2459",
+    // Guards the flagship confirmation: W. Va. Code 9-2-3a's modified opt-out,
+    // corroborated by a live 2026 Board of Review decision.
+    question: "I have a drug felony conviction — can I still get SNAP in West Virginia?",
+    state: "WV",
+    expectCitation: "9-2-3a",
+    mustMention: "injury",
+    mustDisclaim: true,
+  },
+  {
+    id: "wv-abawd-waiver-lapsed-inference",
+    // Guards the flagship finding: WV's historical statewide ABAWD waiver
+    // appears lapsed under OBBBA's tightened 10% threshold.
+    question: "Is the SNAP work-requirement time limit currently waived anywhere in West Virginia?",
+    state: "WV",
+    mustMention: "no",
+    mustDisclaim: true,
+  },
+  {
+    id: "wv-abawd-age-range-current-federal",
+    question: "What is the ABAWD work requirement age range in West Virginia?",
+    state: "WV",
+    mustMention: "64",
+    mustDisclaim: true,
+  },
+  {
+    id: "wv-soda-waiver-first-state-active",
+    // Guards the flagship finding: WV is the first state with an active,
+    // unlitigated USDA soda-restriction waiver (contrast with NE's vacatur).
+    question: "Can I buy soda with my SNAP benefits in West Virginia?",
+    state: "WV",
+    mustMention: "2026",
+    mustDisclaim: true,
+  },
+  {
+    id: "wv-restaurant-meals-program-not-available",
+    question: "Does West Virginia have a Restaurant Meals Program for SNAP?",
+    state: "WV",
+    mustMention: "not",
+    mustDisclaim: true,
+  },
+  {
+    id: "wv-utility-deduction-sourcing-gap",
+    question: "What utility deduction can I get for SNAP in West Virginia?",
+    state: "WV",
+    mustDisclaim: true,
+  },
+  {
+    id: "wv-medical-deduction-actual-expense-no-shortcut",
+    question: "I'm disabled and have $50 a month in medical bills for West Virginia SNAP — do I get a deduction?",
+    state: "WV",
+    mustMention: "35",
+    mustDisclaim: true,
+  },
+  {
+    id: "wv-how-to-apply-wvpath",
+    question: "How do I apply for SNAP in West Virginia?",
+    state: "WV",
+    mustDisclaim: true,
+  },
+  {
+    id: "wv-federal-benefit",
+    question: "How is the monthly SNAP benefit amount calculated from net income in West Virginia?",
+    state: "WV",
+    expectCitation: "273.10",
+    mustDisclaim: true,
+  },
+];
+
 export const HI_GOLD: AnswerExpectation[] = [
   {
     id: "hi-bbce-200pct-no-net-test",
@@ -4232,5 +4319,6 @@ export const ALL_GOLD: AnswerExpectation[] = [
   ...NM_GOLD,
   ...NE_GOLD,
   ...ID_GOLD,
+  ...WV_GOLD,
   ...HI_GOLD,
 ];
