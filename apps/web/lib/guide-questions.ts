@@ -208,4 +208,12 @@ export const QUESTIONS: Record<string, string[]> = {
     "Is the SNAP work-requirement time limit currently waived anywhere in Kansas?",
     "Can I use my EBT card to buy a hot meal at a restaurant in Kansas?",
   ],
+  NM: [
+    "What is the income limit for SNAP in New Mexico?",
+    "Does my car or savings count against me for SNAP in New Mexico?",
+    "I have a drug felony conviction — can I still get SNAP in New Mexico?",
+    "Is the SNAP work-requirement time limit currently waived anywhere in New Mexico?",
+    "Does New Mexico have a Restaurant Meals Program for SNAP?",
+    "How long does my SNAP approval last if I'm elderly or disabled in New Mexico?",
+  ],
 };

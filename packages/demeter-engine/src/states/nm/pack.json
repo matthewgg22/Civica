@@ -1,0 +1,69 @@
+{
+  "code": "NM",
+  "program": "SNAP — New Mexico has no distinctive local program nickname and no distinctive branded EBT card name; consumer pages use plain \"SNAP\" and \"EBT Card\" throughout (see PROVENANCE.md Finding 6)",
+  "agency": "New Mexico Health Care Authority (HCA), Income Support Division (ISD) — renamed from the New Mexico Human Services Department (HSD) effective July 1, 2024, per 2023 Senate Bill 16",
+  "admin_model": "state",
+  "admin_note": "New Mexico is a STATE-ADMINISTERED SNAP program — HCA's Income Support Division (ISD) processes SNAP centrally through statewide field offices, not independent county agencies like CA/NY/MN/WI/VA. GENUINE STRUCTURAL FINDING this pack found: New Mexico's operative SNAP regulation, NMAC Title 8, Chapter 139 (\"Food Stamp Program\"), IS a dedicated, SNAP-only chapter (unlike Connecticut's shared multi-program UPM) — but this pack found a live, disclosed side effect of New Mexico's July 2024 HSD-to-HCA agency rename: individual NMAC 8.139 sections carry INCONSISTENT issuing-agency vintages depending on which host serves them. Sections re-published on the state's official records host (srca.nm.gov), such as 8.139.520 (amended 7/1/2024) and 8.139.420 (amended 7/16/2024, further amended 3/1/2025), correctly read \"Issuing Agency: New Mexico Health Care Authority.\" But some individual-section PDFs still hosted at hsd.state.nm.us — the legacy HSD domain, e.g. 8.139.410 and 8.139.400 — still read \"Issuing Agency: New Mexico Human Services Department\" with no post-2024 amendment stamp, even though the department itself has not existed under that name since July 1, 2024. This pack cites the srca.nm.gov versions wherever a section exists on both hosts, and flags the hsd.state.nm.us legacy PDFs as a live staleness risk distinct from CT's Program-tag-checking caution — here the risk is host provenance, not program scope. Confirm current operative practice with the applicant's own local HCA/ISD field office, the same caution this roster already carries for CA/NY/MN/WI/OH/NC/NJ/VA/GA/IN/TN/MO/MD/CO/SC/AL/LA/KY/OK/CT/UT/IA/AR.",
+  "system": "HCA's Income Support Division (ISD) processes SNAP centrally (no county offices with independent policy authority); applicants apply online through the YesNM self-service portal (yes.state.nm.us), by phone or in person at a local HCA/ISD field office, or by mailing a printed application. The customer service center can be reached at 1-800-283-4465. Most households recertify every 12 months with a 6-month Interim Report at the midpoint; households where every adult member is 60+ or disabled with no earned income were extended from 12-month to 36-month certification periods effective October 1, 2024.",
+  "portal": {
+    "name": "YesNM",
+    "url": "https://www.yes.state.nm.us/yesnm/home/index"
+  },
+  "update_channels": [
+    {
+      "name": "New Mexico Health Care Authority — Income Eligibility Guidelines for SNAP & Financial Assistance, FFY2026 (effective October 1, 2025 - September 30, 2026, ISD 017, revision date 9-30-2025) — current dollar-figure standards table",
+      "url": "https://www.hca.nm.gov/wp-content/uploads/ISD-017-FPG-Cards-FY-2026-10.01.25-to-09.30.2026.pdf"
+    },
+    {
+      "name": "NMAC 8.139.420 (Categorical Eligibility), amended 7/16/2024 and 3/1/2025 — current 200% FPG broad-based categorical eligibility threshold",
+      "url": "https://www.srca.nm.gov/parts/title08/08.139.0420.html"
+    },
+    {
+      "name": "NMAC 8.139.510 (Eligibility Policy — Resources and Property), effective 7/16/2024",
+      "url": "https://www.srca.nm.gov/parts/title08/08.139.0510.html"
+    },
+    {
+      "name": "NMAC 8.139.520 (Eligibility Policy / Income and Deductions), amended 7/1/2024",
+      "url": "https://www.srca.nm.gov/parts/title08/08.139.0520.html"
+    },
+    {
+      "name": "New Mexico Health Care Authority — Keep Your Benefits, NM! (ABAWD/SNAP work-requirement consumer page, current waiver-area list)",
+      "url": "https://www.hca.nm.gov/snapchanges/"
+    },
+    {
+      "name": "New Mexico Health Care Authority — Governor expands SNAP access, increases benefits for New Mexicans (Sept. 23, 2024 press release; dates the 165%→200% FPG BBCE change and the 36-month elderly/disabled certification-period extension, both effective Oct. 1, 2024)",
+      "url": "https://www.hca.nm.gov/2024/09/23/governor-expands-snap-access-increases-benefits-for-new-mexicans/"
+    },
+    {
+      "name": "New Mexico Health Care Authority — New federal SNAP rules prompt state-funded food assistance (Feb. 4, 2026; state-funded lump-sum backstop for lawfully-present immigrants losing federal eligibility under H.R. 1)",
+      "url": "https://www.hca.nm.gov/2026/02/04/new-federal-snap-rules-prompt-state-funded-food-assistance/"
+    },
+    {
+      "name": "N.M. Stat. Ann. § 27-2B-11(C) — drug-felony SNAP/TANF eligibility opt-out (via Public Health Law Center's SNAP Ban Opt-Out States Map and FindLaw's current-code mirror, cross-corroborating identical statutory text; direct law.justia.com and nmonesource.com access both returned barriers, see PROVENANCE.md Finding 5)",
+      "url": "https://www.publichealthlawcenter.org/resources/snap-ban-opt-out-states-map/nm"
+    },
+    {
+      "name": "USDA FNA — SNAP Restaurant Meals Program state list (New Mexico absent)",
+      "url": "https://www.fns.usda.gov/snap/retailer/restaurant-meals-program"
+    },
+    {
+      "name": "New Mexico Health Care Authority — USDA Food Distribution Program on Indian Reservations (FDPIR) page",
+      "url": "https://www.hca.nm.gov/lookingforassistance/usda_food_distribution_programs_on_indian_reservations/"
+    }
+  ],
+  "verification": {
+    "verified_on": "2026-08-12",
+    "method": "Direct curl fetch (browser User-Agent) of HCA's current FFY2026 Income Eligibility Guidelines for SNAP & Financial Assistance PDF (hca.nm.gov, converted with pdftotext -layout, clean HTTP 200, revision date 9-30-2025) — this pack's single most load-bearing source, carrying the current 200% FPG BBCE column, current asset limits ($3,000/$4,500), and current deduction figures (standard deduction, excess shelter cap, HCSUA/LUA/telephone standard, homeless shelter standard) in one dated, directly-fetched table. Also directly curl-fetched (clean HTTP 200) NMAC 8.139.420 (Categorical Eligibility), 8.139.510 (Resources and Property), and 8.139.520 (Income and Deductions) from srca.nm.gov, and directly WebFetched HCA's own consumer pages (SNAP program overview, Keep Your Benefits NM! ABAWD page, the Sept. 23, 2024 SNAP-expansion press release, the Feb. 4, 2026 state-funded-assistance press release, and the FDPIR page). Cross-checked a legacy, still-stale hsd.state.nm.us-hosted Income Eligibility Guidelines PDF (revision date 6-15-2023, showing 165% FPG) against the current HCA-hosted FFY2026 PDF (200% FPG) to trace the source of a widely-repeated stale secondary-source figure (see PROVENANCE.md Finding 1). The federal drug-felony opt-out statute (N.M. Stat. Ann. § 27-2B-11(C)) could not be reached directly — law.justia.com returned the now-familiar HTTP 403 this roster has documented repeatedly, and nmonesource.com (New Mexico's official compilation-commission statute host) returned HTTP 404 to every URL pattern this pack tried — resolved via two independently-fetched, textually-convergent quasi-primary mirrors (Public Health Law Center's SNAP Ban Opt-Out States Map and FindLaw's current-code republication), both quoting identical statutory language, disclosed as a genuine access barrier rather than a confirmed direct-primary read.",
+    "gates": "hca.nm.gov and srca.nm.gov returned clean HTTP 200 to every direct curl attempt with a browser User-Agent, including the single most consequential dollar-figure PDF (the FFY2026 Income Eligibility Guidelines) — a genuine departure from this roster's now-familiar bot-detection pattern (CT's portaldir.ct.gov, AR's humanservices.arkansas.gov). The one confirmed access barrier this pack found was New Mexico's own statute host: law.justia.com 403'd (the now-familiar Justia pattern), and nmonesource.com — the New Mexico Compilation Commission's official statute database, which this pack specifically tried as a state-run alternative to Justia — returned HTTP 404 on every URL pattern attempted, not a bot-detection challenge but a genuine inability to locate the correct document path within this pack's fetch window. This pack resolved the gap via two independently-fetched, textually-identical secondary/quasi-primary sources rather than fabricating statutory text, and discloses the access route explicitly in the criminal-justice-disqualifications supplement and PROVENANCE.md.",
+    "sources": [
+      "HCA — Income Eligibility Guidelines for SNAP & Financial Assistance, FFY2026 (ISD 017, revision date 9-30-2025) — direct curl fetch, clean HTTP 200, converted with pdftotext -layout",
+      "HCA — legacy Income Eligibility Guidelines PDF (hsd.state.nm.us, revision date 6-15-2023, showing stale 165% FPG BBCE column) — direct curl fetch, clean HTTP 200, cited ONLY to trace the stale-figure discrepancy, not as a current standard",
+      "NMAC 8.139.420 (Categorical Eligibility), NMAC 8.139.510 (Resources and Property), NMAC 8.139.520 (Income and Deductions) — direct curl fetch of srca.nm.gov, clean HTTP 200 each",
+      "NMAC 8.139.410 (General Recipient Requirements — Nonfinancial Eligibility), NMAC 8.139.400 (Recipient Policy — Who Can Be a Recipient) — direct curl fetch of hsd.state.nm.us PDFs, clean HTTP 200, but issuing-agency line still reads \"New Mexico Human Services Department\" (pre-rename), see admin_note",
+      "HCA — SNAP program overview page, Keep Your Benefits NM! (ABAWD) page, Sept. 23, 2024 SNAP-expansion press release, Feb. 4, 2026 state-funded-assistance press release, FDPIR page — direct WebFetch, no access barrier",
+      "N.M. Stat. Ann. § 27-2B-11(C) — Public Health Law Center's SNAP Ban Opt-Out States Map and FindLaw's current-code mirror, cross-corroborating identical statutory text; law.justia.com returned HTTP 403, nmonesource.com returned HTTP 404 to every attempted URL, both disclosed as genuine access barriers",
+      "USDA FNA — SNAP Restaurant Meals Program state list — direct curl fetch, clean HTTP 200 — New Mexico absent",
+      "USDA FNA — FDPIR/SNAP dual-participation exclusivity rule — WebSearch corroboration of the federal (not New Mexico-specific) household-level exclusivity requirement"
+    ]
+  }
+}
