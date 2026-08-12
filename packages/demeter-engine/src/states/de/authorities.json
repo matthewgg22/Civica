@@ -1,0 +1,45 @@
+{
+  "_provenance": {
+    "note": "Delaware citation authorities. Delaware's operative SNAP policy manual is the Division of Social Services Manual (DSSM), cited by a numbered-section convention such as '9042' (Categorically Eligible Households) or '9068.2' (24-Month Certification Periods for Elderly or Disabled Households), with a separate lower-numbered 2000-series chapter (Case Processing Procedures) covering cross-program disqualifications like '2027' (the repealed drug-felony provision). This pack defines a SECOND citation family, 'deregister', matching Delaware Register of Regulations final-order citations (e.g. '21 DE Reg. 722'), since this pack's flagship drug-felony finding rests specifically on a Register citation, not a DSSM section number, and this pack expects both forms to appear in generated answers.",
+    "extracted": "2026-08-12"
+  },
+  "patterns": [
+    {
+      "key": "dedssm",
+      "regex": "\\bDSSM\\s?(\\d{4}(?:\\.\\d{1,2})?)\\b",
+      "flags": "gi",
+      "template": "DSSM $1",
+      "normalize": "none",
+      "match": "exact",
+      "note": "Delaware Division of Social Services Manual (DSSM), cited with its own section number, e.g. DSSM 9042 (Categorically Eligible Households), DSSM 9045 (Maximum Allowable Resources), DSSM 9060 (Determining Income Deductions), DSSM 9068 (Certification Periods), DSSM 9018.2 (Maintaining and Regaining ABAWD Eligibility), DSSM 2027 (Repealed — Disqualification of Individuals Convicted of Drug Related Offenses)."
+    },
+    {
+      "key": "deregister",
+      "regex": "\\b(\\d{1,2}\\s?DE\\s?Reg\\.?\\s?\\d{1,4})\\b",
+      "flags": "gi",
+      "template": "$1",
+      "normalize": "none",
+      "match": "exact",
+      "note": "Delaware Register of Regulations final-order citation, e.g. 21 DE Reg. 722 (03/01/18), the Final Order repealing DSSM 2027's drug-felony Cash Assistance restriction. Also appears as amendment-history footnotes throughout the DSSM (e.g. 13 DE Reg. 1086 (02/01/10) for DSSM 9068's certification-period amendments)."
+    }
+  ],
+  "known": {
+    "dedssm": [
+      { "value": "DSSM 2025", "note": "Disqualification of Individuals Fleeing to Avoid Prosecution or Custody and Probation — fleeing felon / probation violator provisions" },
+      { "value": "DSSM 2026", "note": "Disqualification of Convicted Individuals for Trafficking — permanent disqualification for trafficking food stamp benefits of $500 or more" },
+      { "value": "DSSM 2027", "note": "Disqualification of Individuals Convicted of Drug Related Offenses — REPEALED effective 3/11/2018 per 21 DE Reg. 722; its own current text confirms 'Repealed'" },
+      { "value": "DSSM 9013", "note": "Household Concept — household definition, non-household members, ineligible-individual categories (9013.2)" },
+      { "value": "DSSM 9018", "note": "Work Requirements — work registration (9018.1), ABAWD eligibility (9018.2), work-registration exemptions (9018.3); this pack flags 9018.2/9018.3's own age-exemption text as pre-OBBBA (last amended 2013)" },
+      { "value": "DSSM 9042", "note": "Categorically Eligible Households — 200% FPL gross-income gate via TANF-funded pregnancy-prevention-information service; exclusion list at 9042.2 has no drug-felony category" },
+      { "value": "DSSM 9045", "note": "Maximum Allowable Resources — $2,000 general / $3,000 elderly-disabled text, unamended since at least 2009, below the current federal FY2026 $3,000/$4,500 floor; categorically eligible households exempt from this section entirely" },
+      { "value": "DSSM 9051", "note": "Licensed Vehicles — fair-market-value test with a $4,650 excess-value threshold and equity-value test; one licensed vehicle per household exempt from the equity test regardless of use" },
+      { "value": "DSSM 9060", "note": "Determining Income Deductions — Standard Deduction (amount deferred to the annual COLA notice), 20% Earned Income Deduction, $35 Excess Medical Deduction threshold, $143.00 Homeless Shelter Deduction, Excess Shelter Deduction, utility allowances (HCSUA/LUA/one-utility/telephone, amounts deferred to the annual COLA notice)" },
+      { "value": "DSSM 9068", "note": "Certification Periods — 12 months standard (9068.1), 24 months for all-elderly/disabled no-earned-income households (9068.2)" }
+    ],
+    "deregister": [
+      { "value": "21 DE Reg. 722", "note": "03/01/18 Final Order — repeals DSSM 2027's drug-felony Cash Assistance/General Assistance restriction, effective 3/11/2018, implementing House Bill No. 11 (2017) and 31 Del. C. §524" },
+      { "value": "13 DE Reg. 1086", "note": "02/01/10 — DSSM 9068 Certification Periods amendment authority" },
+      { "value": "18 DE Reg. 231", "note": "09/01/14 — DSSM 9060 Determining Income Deductions amendment authority, including the Homeless Shelter Deduction figure this pack flags as potentially stale" }
+    ]
+  }
+}

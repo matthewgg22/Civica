@@ -260,4 +260,12 @@ export const QUESTIONS: Record<string, string[]> = {
     "How long does my SNAP certification last in New Hampshire?",
     "What utility deduction can I get for SNAP in New Hampshire?",
   ],
+  DE: [
+    "What is the income limit for SNAP in Delaware?",
+    "Does Delaware have an asset or resource limit for SNAP?",
+    "I have a drug felony conviction — can I still get SNAP in Delaware?",
+    "Is the SNAP work-requirement time limit currently waived anywhere in Delaware?",
+    "How long does my SNAP certification last in Delaware?",
+    "Does Delaware have a Restaurant Meals Program for SNAP?",
+  ],
 };
