@@ -132,4 +132,10 @@ export const QUESTIONS: Record<string, string[]> = {
     "Can I buy soda or candy with my SNAP EBT card in Colorado?",
     "I have a drug felony conviction — can I still get SNAP in Colorado?",
   ],
+  SC: [
+    "What is the income limit for SNAP in South Carolina?",
+    "I have a drug felony conviction — can I still get SNAP in South Carolina?",
+    "Can I buy soda or candy with my SNAP EBT card in South Carolina?",
+    "Does my car count against me for SNAP in South Carolina?",
+  ],
 };
