@@ -2134,6 +2134,125 @@ export const TN_GOLD: AnswerExpectation[] = [
   },
 ];
 
+export const IN_GOLD: AnswerExpectation[] = [
+  {
+    id: "in-no-bbce-plain-federal-limits",
+    // Flagship finding: Indiana has NOT adopted BBCE, unlike most states this
+    // roster has built — guards against the model quoting a 200% FPL figure
+    // that does not apply in Indiana.
+    question: "What is the income limit for SNAP in Indiana?",
+    state: "IN",
+    expectCitation: "3010.05.00",
+    mustMention: "130",
+    mustDisclaim: true,
+  },
+  {
+    id: "in-resource-limit-3000-4500",
+    question: "What is the SNAP resource limit in Indiana if I'm not categorically eligible?",
+    state: "IN",
+    expectCitation: "3005.05.00",
+    mustMention: "3,000",
+    mustDisclaim: true,
+  },
+  {
+    id: "in-car-exempt-transportation",
+    question: "Does my car count against me for SNAP in Indiana?",
+    state: "IN",
+    expectCitation: "2615.60.10",
+    mustMention: "exempt",
+    mustDisclaim: true,
+  },
+  {
+    id: "in-boat-counts-as-resource",
+    // Guards the structural-hybrid finding: Indiana exempts ordinary
+    // transportation vehicles but counts boats/campers at equity value.
+    question: "Does my boat count against me for SNAP in Indiana?",
+    state: "IN",
+    expectCitation: "2615.60.25",
+    mustMention: "boat",
+    mustDisclaim: true,
+  },
+  {
+    id: "in-medical-deduction-standard",
+    question: "I'm disabled and have $50 a month in medical bills for Indiana SNAP — do I get a deduction?",
+    state: "IN",
+    expectCitation: "3440.45.05",
+    mustMention: "35",
+    mustDisclaim: true,
+  },
+  {
+    id: "in-child-support-ordinary-deduction",
+    question: "Does paying child support lower my countable income for SNAP in Indiana?",
+    state: "IN",
+    expectCitation: "3440.05.05",
+    mustMention: "deduct",
+    mustDisclaim: true,
+  },
+  {
+    id: "in-abawd-age-range-current-federal",
+    // Guards against the model failing to state the current 18-64 range,
+    // even though Indiana's own manual (unlike Tennessee's) is already current.
+    question: "What is the ABAWD work requirement age range in Indiana?",
+    state: "IN",
+    expectCitation: "2438.17.05",
+    mustMention: "64",
+    mustDisclaim: true,
+  },
+  {
+    id: "in-abawd-zero-waivers",
+    question: "Is the SNAP work-requirement time limit currently waived anywhere in Indiana?",
+    state: "IN",
+    expectCitation: "2438.17.05",
+    mustMention: "waiver",
+    mustDisclaim: true,
+  },
+  {
+    id: "in-drug-felony-modified-ban",
+    // IN is a genuine MODIFIED ban (opted out effective 2020) — guards
+    // against the model overclaiming a full ban or a full unconditional opt-out.
+    question: "I have a drug felony conviction — can I still get SNAP in Indiana?",
+    state: "IN",
+    expectCitation: "12-14-30-3",
+    mustMention: "probation",
+    mustDisclaim: true,
+  },
+  {
+    id: "in-restaurant-meals-program-absent",
+    // Guards against overclaiming an Indiana RMP exists.
+    question: "Can I use my EBT card to buy a hot meal at a restaurant in Indiana?",
+    state: "IN",
+    mustMention: "no",
+    mustDisclaim: true,
+  },
+  {
+    id: "in-expedited-service-7-day",
+    question: "How fast can I get emergency SNAP benefits in Indiana?",
+    state: "IN",
+    expectCitation: "2020.05.05",
+    mustMention: "7",
+    mustDisclaim: true,
+  },
+  {
+    id: "in-cert-period-12-month-standard",
+    // Guards the structural finding: Indiana's STANDARD certification period
+    // is 12 months, with a 36-month option for the Elderly Simplified
+    // Application Project — the longest elderly/disabled period this roster
+    // has documented.
+    question: "How long does my SNAP approval last in Indiana?",
+    state: "IN",
+    expectCitation: "2205.05.00",
+    mustMention: "12",
+    mustDisclaim: true,
+  },
+  {
+    id: "in-federal-benefit",
+    question: "How is the monthly SNAP benefit amount calculated from net income in Indiana?",
+    state: "IN",
+    expectCitation: "273.10",
+    mustDisclaim: true,
+  },
+];
+
 /** Everything the live runner executes. */
 export const ALL_GOLD: AnswerExpectation[] = [
   ...ANSWER_GOLD,
@@ -2157,4 +2276,5 @@ export const ALL_GOLD: AnswerExpectation[] = [
   ...NJ_GOLD,
   ...VA_GOLD,
   ...TN_GOLD,
+  ...IN_GOLD,
 ];

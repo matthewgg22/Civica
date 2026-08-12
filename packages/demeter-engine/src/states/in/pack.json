@@ -1,0 +1,50 @@
+{
+  "code": "IN",
+  "program": "SNAP — Indiana uses the plain federal program name throughout FSSA/DFR materials and its own Program Policy Manual; Indiana does NOT give the food-assistance program itself a state brand name, though its EBT card carries the brand name \"Hoosier Works\"",
+  "agency": "Indiana Family and Social Services Administration (FSSA), Division of Family Resources (DFR)",
+  "admin_model": "state",
+  "admin_note": "Indiana is STATE-administered: FSSA is the state agency responsible for social service and financial assistance programs, and the Division of Family Resources (DFR) — one of FSSA's seven major service divisions — has statewide responsibility for SNAP, TANF, and Medicaid. DFR's county-level \"local offices\" are the state agency's own field offices (FSSA's own manual describes FSSA as \"responsible for ensuring federal regulations are initially implemented and consistently applied in each county\"), not independently governed county welfare departments the way Virginia's LDSS or North Carolina's county DSS are — matching the administrative archetype this roster's Georgia and Tennessee packs document, not the county-administered archetype. Confirm current operative practice (processing times, local outreach materials, exact office procedures) with the applicant's own DFR local office, the same caution this roster already carries for CA/NY/MN/WI/OH/NC/NJ/VA.",
+  "system": "Indiana's eligibility caseworkers use the state's ICES (Indiana Client Eligibility System) case-management system; applicants apply through the FSSA Benefits Portal or in person/by mail/fax at a DFR local office",
+  "portal": {
+    "name": "FSSA Benefits Portal",
+    "url": "https://fssabenefits.in.gov/bp/"
+  },
+  "update_channels": [
+    {
+      "name": "FSSA Division of Family Resources SNAP/TANF Program Policy Manual — the integrated eligibility manual containing SNAP, TANF, and Refugee Cash Assistance policy, published chapter-by-chapter as PDFs on DFR's own site",
+      "url": "https://www.in.gov/fssa/dfr/forms-documents-and-tools/policy-manual/"
+    },
+    {
+      "name": "DFR SNAP (Food Assistance) program page",
+      "url": "https://secure.in.gov/fssa/dfr/snap-food-assistance/"
+    },
+    {
+      "name": "DFR EBT (Hoosier Works card) page",
+      "url": "https://www.in.gov/fssa/dfr/ebt-hoosier-works-card/"
+    },
+    {
+      "name": "USDA FNA ABAWD Time Limit Waivers FY 2025-2029 (state request/response index)",
+      "url": "https://www.fns.usda.gov/snap/waivers/timelimit/2025-2029"
+    }
+  ],
+  "verification": {
+    "verified_on": "2026-08-11",
+    "method": "Direct curl fetch (browser User-Agent) of eight current FSSA Division of Family Resources Program Policy Manual chapter PDFs (1000/2000/2200/2400/2600/3000/3200/3400, plus the full integrated ICES_Program_Policy_Manual.pdf) from in.gov/fssa/dfr/files — every fetch returned a clean HTTP 200, converted to text with pdftotext -layout, and searched for categorical eligibility, resource limits, vehicle treatment, utility standards, deductions, ABAWD provisions, expedited service, and certification-period sections. The Indiana General Assembly's own statute-lookup site (iga.in.gov) returned HTTP 200 but is a client-side JavaScript single-page application with no server-rendered statutory text (confirmed by inspecting the raw HTML: a bare <div id=\"root\"> and a bundled JS file, no article text) — a genuine, disclosed tooling barrier, not treated as a successful primary-text fetch. law.justia.com returned HTTP 403 and casetext.com returned HTTP 410 on every attempt (multiple User-Agents, both http and https) for Ind. Code Ann. § 12-14-30-3's full text. The drug-felony finding instead rests on convergent corroboration from Indiana's own FSSA FAQ page (faqs.in.gov, fetched directly), the Public Health Law Center's SNAP Ban Opt-Out States map (Indiana entry, fetched directly), and the Network for Public Health Law's compiled 50-state SNAP felony-ban survey PDF (fetched directly, Indiana row parsed from its table). Also fetched and cross-checked: USDA's official States that Operate a Restaurant Meals Program list (Indiana absent), USDA's FY2025-2029 ABAWD Time Limit Waivers index page, and abawdmap.us (independent aggregator, corroborating zero active Indiana waivers, cross-checked against Indiana's own Program Policy Manual language that there are 'currently no such designations').",
+    "gates": "Unlike Tennessee's pack in this roster, Indiana's own Program Policy Manual publishes CURRENT, dated, Indiana-specific dollar figures for every dollar-denominated SNAP standard this pack needed: the resource limits ($3,000 standard / $4,500 elderly-or-disabled, effective 10/01/2024), the income standards (130% gross / 100% net FPL, effective 10/01/2025, with the full AG-size chart), the four-tier Standard Utility Allowance ($486 heating/cooling, $283 non-heating/cooling, $62 single utility, $36 telephone, effective 10/01/2025), the Standard Deduction ($209/$209/$209/$223/$261/$299 by household size, effective 10/01/2025), the Excess Shelter Expense Deduction cap ($744, effective 10/01/2025), and the Homeless Shelter Deduction ($198.99, effective 10/1/2025) — all of these dollar figures match the current FFY2026 federal COLA-adjusted figures this roster's other packs (e.g. Virginia's) have already independently confirmed, so no dollar-figure gap exists in this pack unlike Tennessee's. The one genuine access limitation is Indiana's own statute text for the drug-felony provision (Ind. Code Ann. § 12-14-30-3): iga.in.gov's own site is a client-rendered SPA this pack's tooling could not execute, and both third-party statute-text mirrors this pack tried (law.justia.com, casetext.com) failed outright (HTTP 403 and HTTP 410 respectively) — a genuine, disclosed barrier, resolved through convergent corroboration from Indiana's own FAQ page plus two independent legal-research secondary sources, the same resolution path Tennessee's pack in this roster used for its own drug-felony finding.",
+    "sources": [
+      "FSSA DFR SNAP/TANF Program Policy Manual, Chapter 2400 (Nonfinancial Eligibility Requirements), Section 2414.10.05 (Categorical Eligibility) and Section 2438.17.00-2438.17.05 (ABAWD)",
+      "FSSA DFR SNAP/TANF Program Policy Manual, Chapter 2600 (Resources), Section 2610.00.00, 2615.60.00-2615.60.25 (Vehicles)",
+      "FSSA DFR SNAP/TANF Program Policy Manual, Chapter 3000 (Eligibility Standards), Section 3005.00.00 (Resource Limits), Section 3010.05.00 (Income Standards), Section 3020.00.00 (Utility Standards), Section 3025.00.00-3025.15.05 (Standard/Excess Shelter/Homeless Shelter Deductions)",
+      "FSSA DFR SNAP/TANF Program Policy Manual, Chapter 3400 (Budgeting and Benefit Calculation), Section 3440.05.05 (Child Support Deduction), Section 3440.45.00-3440.45.05 (Allowable Medical Expenses)",
+      "FSSA DFR SNAP/TANF Program Policy Manual, Chapter 2000 (Application Processing), Section 1830.25.00 (Screening for Expedited Services), Section 2020.05.05 (Time Standards for Expedited Service)",
+      "FSSA DFR SNAP/TANF Program Policy Manual, Chapter 2200 (Continuing Case Processing), Section 2205.05.00-2205.05.05 (Redetermination Month, Elderly Simplified Application Project), Section 2212.00.00 (Interim Reporting)",
+      "FSSA DFR SNAP/TANF Program Policy Manual, Chapter 1400 (Administrative Policy), Section 1400.00.00 (FSSA / DFR administrative structure)",
+      "Ind. Code Ann. § 12-14-30-3 (drug-related felony SNAP eligibility modification) — primary text hosts (iga.in.gov SPA, law.justia.com, casetext.com) all failed; finding rests on convergent secondary corroboration",
+      "FSSA FAQ, 'Can applicants get Supplemental Nutrition Assistance Program benefits if they have a felony drug conviction' (faqs.in.gov), fetched directly 2026-08-11",
+      "Public Health Law Center, SNAP Ban Opt-Out States Map — Indiana entry, fetched directly 2026-08-11",
+      "Network for Public Health Law, 50-State Survey: SNAP Drug Felony Bans (compiled survey PDF), fetched directly 2026-08-11 — Indiana row",
+      "USDA FNA, States that Operate a Restaurant Meals Program, fetched directly 2026-08-11 — Indiana absent from the nine-state list",
+      "USDA FNA, Time Limit Waivers FY 2025-2029 index page, fetched directly 2026-08-11; abawdmap.us independent waiver aggregator, fetched directly 2026-08-11 — both corroborate zero active Indiana ABAWD waivers"
+    ]
+  }
+}
