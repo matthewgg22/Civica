@@ -4181,6 +4181,103 @@ export const WV_GOLD: AnswerExpectation[] = [
   },
 ];
 
+export const HI_GOLD: AnswerExpectation[] = [
+  {
+    id: "hi-bbce-200pct-no-net-test",
+    // Guards the flagship minority-position confirmation: HI's BBCE waives
+    // the net income test entirely (not just an elevated gross ceiling).
+    question: "What is the income limit for SNAP in Hawaii?",
+    state: "HI",
+    mustMention: "200",
+    mustDisclaim: true,
+  },
+  {
+    id: "hi-bbce-unlimited-assets",
+    // Guards the asset-rule supplement: BBCE gives most HI households an
+    // unlimited asset standard; $4,500/$3,000 is the non-BBCE baseline only.
+    question: "What is the SNAP resource limit in Hawaii?",
+    state: "HI",
+    mustMention: "unlimited",
+    mustDisclaim: true,
+  },
+  {
+    id: "hi-drug-felony-conditional-not-full-optout",
+    // Guards the flagship correction: HI's carve-out is CONDITIONAL on
+    // treatment compliance, not an unconditional full opt-out.
+    question: "I have a drug felony conviction — can I still get SNAP in Hawaii?",
+    state: "HI",
+    expectCitation: "346-53.3",
+    mustMention: "treatment",
+    mustDisclaim: true,
+  },
+  {
+    id: "hi-abawd-no-active-waiver-despite-favorable-threshold",
+    // Guards the flagship finding: despite a favorable noncontiguous-state
+    // threshold, HI has NO active statewide ABAWD waiver.
+    question: "Is there an ABAWD work-requirement waiver anywhere in Hawaii?",
+    state: "HI",
+    mustMention: "no",
+    mustDisclaim: true,
+  },
+  {
+    id: "hi-abawd-age-range-current-federal",
+    question: "What is the ABAWD work requirement age range in Hawaii?",
+    state: "HI",
+    mustMention: "64",
+    mustDisclaim: true,
+  },
+  {
+    id: "hi-utility-allowance-per-utility-structure",
+    // Guards the structural finding: HI computes INDIVIDUAL per-utility-type
+    // standard allowances rather than a single flat/tiered SUA.
+    question: "What is the standard utility allowance for SNAP in Hawaii?",
+    state: "HI",
+    expectCitation: "17-676-73",
+    mustDisclaim: true,
+  },
+  {
+    id: "hi-restaurant-meals-program-not-offered",
+    // Guards the secondary-source correction: HI does NOT operate an RMP,
+    // contrary to a wrong aggregator claim this pack found and corrected.
+    question: "Can I use my SNAP benefits at a restaurant in Hawaii?",
+    state: "HI",
+    mustMention: "not",
+    mustDisclaim: true,
+  },
+  {
+    id: "hi-soda-restriction-approved-not-yet-effective",
+    // Guards the time-sensitive finding: HI's soft-drink waiver is approved
+    // but implementation was pushed to April 1, 2027 — not yet in effect.
+    question: "Can I buy soda with my SNAP benefits in Hawaii?",
+    state: "HI",
+    mustMention: "2027",
+    mustDisclaim: true,
+  },
+  {
+    id: "hi-how-to-apply-pais",
+    question: "How do I apply for SNAP in Hawaii?",
+    state: "HI",
+    mustDisclaim: true,
+  },
+  {
+    id: "hi-max-allotment-cola-adjusted",
+    // Guards the user-flagged finding: HI's max allotment is COLA-adjusted
+    // materially higher than the 48 contiguous states, sourced from USDA's
+    // own national table.
+    question: "Why is the maximum SNAP benefit higher in Hawaii than the mainland?",
+    state: "HI",
+    mustMention: "1,689",
+    mustDisclaim: true,
+  },
+  {
+    id: "hi-federal-benefit",
+    question: "How is the monthly SNAP benefit amount calculated from net income in Hawaii?",
+    state: "HI",
+    expectCitation: "273.10",
+    mustDisclaim: true,
+  },
+];
+
 
 export const ALL_GOLD: AnswerExpectation[] = [
   ...ANSWER_GOLD,
@@ -4223,4 +4320,5 @@ export const ALL_GOLD: AnswerExpectation[] = [
   ...NE_GOLD,
   ...ID_GOLD,
   ...WV_GOLD,
+  ...HI_GOLD,
 ];
