@@ -316,6 +316,15 @@ export const QUESTIONS: Record<string, string[]> = {
     "Does Vermont have a Restaurant Meals Program for SNAP?",
     "Can I get my 3SquaresVT benefits as cash in Vermont?",
   ],
+  DC: [
+    "What is the income limit for SNAP in DC?",
+    "Does DC have an asset or resource limit for SNAP?",
+    "I have a drug felony conviction — can I still get SNAP in DC?",
+    "Is the SNAP work-requirement time limit currently waived anywhere in DC?",
+    "How long does my SNAP certification last in DC?",
+    "Does DC have a Restaurant Meals Program for SNAP?",
+    "How do I apply for SNAP in DC?",
+  ],
   AK: [
     "What is the income limit for SNAP in Alaska?",
     "Does Alaska have an asset or resource limit for SNAP?",

@@ -1,0 +1,183 @@
+{
+  "_provenance": {
+    "note": "District of Columbia SNAP curated supplements. DC has NO existing packages/snap-rules StatePolicy entry and NO oracle-fixture coverage — a genuine blank slate, like this roster's Nebraska, Connecticut, Utah, Iowa, Arkansas, Mississippi, Kansas, New Mexico, New Hampshire, and Delaware prior builds. This pack is CORPUS-ONLY and does not touch packages/snap-rules or the oracle fixture. DC is built as part of a six-jurisdiction final-batch parallel run (AK, VT, WY, DC, Guam, USVI), built concurrently by separate agents. Drafted from direct live fetches of dhs.dc.gov, code.dccouncil.gov (DC Code, Title 4, Chapter 2B and §4-205.71), and USDA FNS's own Restaurant Meals Program and ABAWD Waivers pages, cross-checked against several secondary sources that this pack found stated two DC-specific claims incorrectly (see program-identity and abawd-work-requirement supplements below).",
+    "extracted": "2026-08-12",
+    "source_fact_check": "direct fetch of dhs.dc.gov's live SNAP Eligibility Requirements, SNAP Work Requirements, SNAP Monthly Benefit, and SNAP consumer pages, cross-referenced against DC Code Title 4 Chapter 2B (Food Stamp Expansion Act) and §4-205.71 (drug-felon opt-out) fetched directly via code.dccouncil.gov, and against USDA FNS's own current Restaurant Meals Program jurisdiction list and ABAWD Time Limit Waivers FY2025-2029 index; two widely-repeated secondary-source claims (a still-active districtwide ABAWD waiver, and DC operating a Restaurant Meals Program) were checked specifically against these primary sources and found FALSE as of this pack's fetch date, flagged explicitly rather than repeated",
+    "access_note": "dhs.dc.gov and code.dccouncil.gov both returned clean HTTP 200 to nearly every direct fetch this pack made — no WAF/bot-detection wall of the kind this roster's New Hampshire and Maine packs encountered. dhs.dc.gov/page/apply-benefits returned a 200-status 'Access denied' page body (a distinct failure mode from a WAF 403); this pack worked around it via DC Hunger Solutions' own apply-for-SNAP page, cross-checked against other dhs.dc.gov pages that did fetch cleanly. dcrules.elaws.us, an unofficial DCMR Title 29 mirror, carries its own page metadata reading 'Last Updated: September 13, 2017' — a nine-year-stale mirror with no HTTP error signal, used only to confirm DCMR chapter-numbering structure (no dedicated SNAP-eligibility chapter found there, unlike Delaware's DSSM 9000), never for a current figure."
+  },
+  "supplements": [
+    {
+      "key": "program-identity",
+      "kind": "supplement",
+      "terms": [
+        "how to apply",
+        "where do i apply",
+        "apply for snap",
+        "district direct",
+        "who runs",
+        "what agency",
+        "administers",
+        "dhs",
+        "department of human services",
+        "economic security administration",
+        "esa",
+        "ebt card",
+        "food stamps",
+        "service center",
+        "what is snap called in dc",
+        "washington dc snap",
+        "district of columbia snap"
+      ],
+      "citation": "DC DHS SNAP consumer page (dhs.dc.gov); District Direct portal (districtdirect.dc.gov/ua/); DC Code Title 4, Chapter 2B",
+      "heading": "The District of Columbia is not a state but runs SNAP as its own single, unified jurisdiction, administered centrally by DHS's Economic Security Administration (ESA) with no sub-jurisdictional policy variation",
+      "text": "DC's public-facing materials use only the generic federal name \"SNAP\" (Supplemental Nutrition Assistance Program), sometimes still referenced by its older name \"Food Stamps\" — this pack found no distinctive DC-specific consumer nickname the way California has \"CalFresh\" or Washington state has \"Basic Food.\" DC's own governing statute is titled the \"Food Stamp Expansion Act\" (DC Code Title 4, Chapter 2B), an older naming convention preserved in the codified statute title even though the program itself is branded plainly as SNAP on DHS's live pages. The District of Columbia SNAP program is administered directly and centrally by DHS's Economic Security Administration (ESA) — the District is legally a federal district, not a state or a county, but for SNAP administration purposes it functions as ONE single, unified jurisdiction with no county-level (or sub-district-level) policy variation, structurally the closest parallel in this roster to a state-administered program like Delaware's, Nebraska's, or New Hampshire's, and distinct from county-administered states like CA, NY, MN, WI, and VA. Applicants can apply online through District Direct (districtdirect.dc.gov/ua/), in person at any ESA Service Center (e.g., 661 H Street NE or 1649 Good Hope Rd SE for EBT pickup; call 202-727-5355 to find an assigned Service Center), by phone (DC Hunger Solutions, a DC-based SNAP outreach nonprofit, offers phone-based application help at 202-640-1088), or by fax/mail directly to ESA's Case Record Management Unit. This pack found and flags one small secondary-source staleness catch: DC Hunger Solutions' own apply-for-SNAP page cites a portal URL (dcbenefits.dhs.dc.gov) that this pack found returns a clean HTTP 404 — District Direct (districtdirect.dc.gov/ua/) is the current, confirmed-live portal instead. This pack also could not independently confirm, in DHS's own primary-source text, the \"DC Access\" EBT-card brand name that several secondary sources use; DHS's own EBT page refers to it only generically as \"your EBT card,\" and this pack discloses that specific branded name as unconfirmed rather than stating it with false confidence.",
+      "source_url": "https://dhs.dc.gov/service/supplemental-nutrition-assistance-program-snap"
+    },
+    {
+      "key": "income-and-resources",
+      "kind": "supplement",
+      "terms": [
+        "income limit",
+        "income limits",
+        "gross income limit",
+        "gross income ceiling",
+        "make too much",
+        "over income",
+        "bbce",
+        "broad based categorical eligibility",
+        "categorical eligibility",
+        "categorically eligible",
+        "200 percent",
+        "200%",
+        "130 percent",
+        "130%",
+        "poverty level",
+        "asset limit",
+        "asset test",
+        "resource limit",
+        "resource test",
+        "resources",
+        "savings",
+        "savings limit",
+        "bank account",
+        "tanf",
+        "ssi",
+        "3000",
+        "$3,000",
+        "4500",
+        "$4,500"
+      ],
+      "citation": "DC DHS SNAP Eligibility Requirements page (Gross/Net Monthly Income Limits table, effective 10/1/2025-9/30/2026); DC Code §4-261.02 (Categorical Eligibility for SNAP)",
+      "heading": "STRUCTURAL FINDING: DC's SNAP categorical-eligibility gate is 200% FPL gross income, codified directly in DC's own statute via a Mayor-established TANF-funded program — households that clear it face NO resource test; households that don't still face a real $3,000/$4,500 resource limit that matches the current federal floor",
+      "text": "DC DHS's own current Gross and Net Monthly Income Limits table (effective October 1, 2025 - September 30, 2026) lists three income columns by household size: the 130% FPL gross-income limit most households must meet ($1,696 for household size 1, $3,483 for size 4), the 200% FPL figure used for expanded categorical eligibility ($2,610 for size 1, $5,360 for size 4 — footnoted explicitly on DHS's own page as \"200% FPL Gross income standard is used to determine expanded categorical SNAP eligibility\"), and the 100% FPL net-income limit that applies to all households ($1,305 for size 1, $2,680 for size 4). This pack flags a genuine internal DC page labeling inconsistency worth disclosing precisely: DHS's own table HEADER for the 200% FPL column literally reads \"Maximum Net Monthly Income (200% FPL)\" even though the table's own footnote and DC Code §4-261.02 both confirm 200% FPL is actually a GROSS-income categorical-eligibility standard, not a net-income figure — a reader relying on the column header alone rather than the footnote would draw the wrong conclusion about which income figure (gross vs. net) the 200% threshold tests. Per DC Code §4-261.02, DC's own statute (not merely a generic USDA BBCE program description) grants categorical eligibility to ALL applicants with income at or below 200% FPL, achieved through a Mayor-established TANF-funded program or service — the same structural mechanism family as this roster's Delaware pack, though DC's version is directly codified in statute rather than described only in an agency manual. DHS's own consumer page confirms \"Most District residents applying for SNAP are determined categorically eligible\" and that categorically eligible households \"do not have a limit on resources.\" For the minority of households that are NOT categorically eligible, DHS's own page states the resource limit plainly: $3,000 for most households, $4,500 if the household includes a member age 60+ or with a disability — and this pack confirms these figures MATCH the current federal FY2026 COLA-adjusted floor under 7 CFR 273.8(a), unlike this roster's Delaware pack, which found its own regulatory text citing a stale, below-federal-floor $2,000/$3,000 figure. DC's resource-limit figures are current and correctly stated on DHS's own live page.",
+      "source_url": "https://dhs.dc.gov/service/snap-eligibility-general-requirements"
+    },
+    {
+      "key": "criminal-justice-disqualifications",
+      "kind": "supplement",
+      "terms": [
+        "drug felony",
+        "felony conviction",
+        "criminal record",
+        "drug conviction",
+        "lifetime ban",
+        "fleeing felon",
+        "probation",
+        "parole",
+        "controlled substance",
+        "marijuana",
+        "cannabis",
+        "4-205.71",
+        "drug felon"
+      ],
+      "citation": "DC Code §4-205.71 (Granting cash and food assistance benefits to drug felons)",
+      "heading": "CONFIRMED (minority-position claim confirmed via direct statutory text, not just a secondary-source label): DC has FULLY and unconditionally opted out of the federal drug-felony SNAP ban since 1999",
+      "text": "21 U.S.C. § 862a(a)(2) sets a federal default: anyone convicted of a state or federal felony for possessing, using, or distributing a controlled substance is permanently ineligible for SNAP unless a state (or DC) opts out or modifies the ban under § 862a(d)(1). Several secondary sources correctly describe DC as one of roughly 25-26 jurisdictions that have opted out of BOTH the SNAP and TANF drug-felony bans — a correct claim, but one this pack chose to verify directly against DC's own codified statute rather than accept on a secondary source's authority alone, since several secondary sources make the same claim about other jurisdictions with much less precision (see this roster's Delaware pack, which found several secondary sources describing a \"modified\" ban that was in fact a stale, pre-2018 characterization). This pack fetched DC Code §4-205.71 directly: \"An adult who is a drug felon shall not be denied cash or food assistance benefits, including TANF, Supplemental Nutrition Assistance Program, POWER, GAC, or Interim Disability Assistant benefits, solely because he or she is a drug felon.\" This is a full, unconditional statutory opt-out — no sentence-compliance condition, no treatment-program requirement, no waiting period — originally added April 20, 1999 (D.C. Law 12-241, § 4(g)) and most recently amended November 26, 2019 (D.C. Law 23-31, § 2). This pack's reading: the secondary-source characterization of DC as a full opt-out jurisdiction is confirmed directly by DC's own statutory text, stated with appropriate confidence rather than either under- or over-claiming it.",
+      "source_url": "https://code.dccouncil.gov/us/dc/council/code/sections/4-205.71"
+    },
+    {
+      "key": "shelter-utility-deductions",
+      "kind": "supplement",
+      "terms": [
+        "utility allowance",
+        "utility standard",
+        "shelter deduction",
+        "excess shelter",
+        "standard utility allowance",
+        "sua",
+        "heat and eat",
+        "liheap",
+        "standard deduction",
+        "medical deduction",
+        "$374",
+        "$712",
+        "$35",
+        "$204"
+      ],
+      "citation": "DC DHS SNAP Eligibility Requirements page (Deductions section); DC Code §4-261.03 (LIHEAP Heat and Eat initiative)",
+      "heading": "DC's current standard deduction, excess-shelter cap, and standard utility allowance are all hardcoded and current on DHS's own live page — plus a DC-specific statutory LIHEAP Heat and Eat mechanism that automatically maximizes the utility allowance for most SNAP households",
+      "text": "DHS's own current SNAP Eligibility Requirements page states DC's deduction structure plainly, with dollar figures effective for the October 1, 2025 - September 30, 2026 cycle: a 20% Earned Income Deduction; a Standard Deduction of $204 for households of 1-3 individuals (rising to $254 for households of 5, and $291 for households of 6 or more, with DHS's own page noting this may be higher for some larger households — this pack notes the page's own quoted figures skip the 4-person tier explicitly, though the progression is consistent with the standard national FY2026 Standard Deduction schedule); a Dependent Care Deduction (actual cost); legally owed child support payments; an Excess Shelter Deduction (shelter costs exceeding half of income after other deductions) capped at $712 UNLESS a household member is elderly or disabled (uncapped in that case, consistent with the federal rule); and a Standard Utility Allowance of $374, updated every October 1. This pack also found a genuinely DC-specific statutory mechanism worth flagging precisely: DC Code §4-261.03 establishes a \"LIHEAP Heat and Eat initiative,\" under which the Mayor must provide the maximum Standard Utility Allowance to SNAP households, and any SNAP household that would benefit from the minimum LIHEAP annual benefit described in the statute is AUTOMATICALLY enrolled — with that minimum LIHEAP benefit set by statute at $20.01/year. This is the same \"Heat and Eat\" mechanism family several other states use to extend the maximum utility deduction to renters and others without a direct heating bill, codified directly in DC's own statute rather than left to agency discretion. Households with an elderly (60+) or disabled member can also claim an Excess Medical Expense Deduction for out-of-pocket medical costs exceeding $35/month, per DHS's own page.",
+      "source_url": "https://dhs.dc.gov/service/snap-eligibility-general-requirements"
+    },
+    {
+      "key": "abawd-work-requirement",
+      "kind": "supplement",
+      "terms": [
+        "abawd",
+        "able bodied adult",
+        "work requirement",
+        "3 month limit",
+        "work registration",
+        "waiver",
+        "waived area",
+        "time limit",
+        "districtwide waiver"
+      ],
+      "citation": "DC DHS SNAP Work Requirements page (live, updated 7/20/2026); USDA FNS ABAWD Time Limit Waivers FY2025-2029 index (no FY2026 DC entry)",
+      "heading": "FLAGSHIP FINDING (correction of a widely-repeated false secondary-source claim, confirmed by TWO independent primary sources): DC's ABAWD work requirements STARTED June 1, 2026 — its long-standing districtwide waiver was NOT renewed for FY2026, contrary to several secondary sources still describing an active, ongoing districtwide waiver",
+      "text": "An able-bodied adult without dependents (ABAWD) is limited to three countable months of SNAP within a 3-year period absent a qualifying work activity or an exemption. DC has historically maintained a districtwide ABAWD waiver (due to high citywide unemployment), and several secondary sources this pack found (including a detailed-looking eligibility guide) still describe DC as having 'a districtwide ABAWD waiver, meaning work requirements are not being enforced anywhere in the District at this time.' This pack fetched DHS's own live SNAP Work Requirements page directly and found the OPPOSITE currently true: the page's own banner states plainly 'SNAP ABAWD work requirements implementation started on June 1, 2026,' with a fixed 36-month clock running June 1, 2026 through May 31, 2029 for all DC ABAWD customers. This pack independently cross-checked this finding against a wholly separate federal source — USDA FNS's own ABAWD Time Limit Waivers FY2025-2029 index — which lists DC's most recent posted waiver-response entries as three separate FY2025 responses (dated 04/26/2024, 01/13/2025, and 05/21/2025) with NO FY2026 entry, corroborating that DC's waiver lapsed and was not renewed for the current fiscal year. The current, post-implementation exemption list this pack confirmed from DHS's own page: under 18, age 65+, physical/mental health condition making 20hrs/week work difficult, pregnant, in a substance-abuse treatment program, receiving disability-related benefits (SSDI/SSI/workers' comp/veterans' disability), working 30+hrs/week or earning $217.50+/week, enrolled at least half-time in school/training/a federally recognized refugee program, living in a household with a child under 14, caring for a child under 6 or an ill/disabled person, receiving or applying for unemployment compensation, receiving TANF/complying with TANF work requirements, and American Indian/Alaska Native/Urban Indian/California Indian eligible for Indian Health Services. This pack also flags a specific, time-sensitive detail DHS's own page states directly: 'due to recent changes in federal law, SNAP customers aged 60-64 years old will be subject to ABAWD work requirements unless you meet an exemption' — the federal OBBBA-era ABAWD age-scope ceiling moved from 54 up through 64, meaning DC's 65+ age exemption (not the pre-OBBBA 50+ or 54+ thresholds several older secondary sources may still cite) is the current, correct threshold.",
+      "source_url": "https://dhs.dc.gov/page/snap-work-requirements"
+    },
+    {
+      "key": "restaurant-meals-program",
+      "kind": "supplement",
+      "terms": [
+        "restaurant meals program",
+        "rmp",
+        "eat at a restaurant",
+        "use ebt at restaurant",
+        "hot meal",
+        "hot food",
+        "prepared food"
+      ],
+      "citation": "USDA FNS \"States that Operate a Restaurant Meals Program\" list (DC absent); DC DHS SNAP consumer page (explicit purchase-restriction list)",
+      "heading": "FLAGSHIP FINDING (correction of a second widely-repeated false secondary-source claim, confirmed by TWO independent primary sources): DC does NOT operate a Restaurant Meals Program, despite several secondary sources stating that it does",
+      "text": "The Restaurant Meals Program (RMP) is a state OPTION under 7 CFR § 274.7(g) letting elderly (60+), disabled, and homeless SNAP recipients buy prepared, hot meals from authorized restaurants with EBT year-round. This pack found multiple secondary sources (including one detailed-looking guide) stating plainly that 'D.C. participates in the USDA SNAP Restaurant Meals Program.' This pack fetched USDA FNS's own official, current 'States that Operate a Restaurant Meals Program' list directly, and DC is NOT on it — the complete current list is: Arizona, Maryland, New York, California, Massachusetts, Rhode Island, Illinois (Cook and Franklin Counties only), Michigan, and Virginia. This pack independently cross-checked this against DHS's own live SNAP consumer page's explicit purchase-restriction list, which lists 'Hot foods' and 'Prepared Foods fit for immediate consumption' under items you CANNOT buy with SNAP in DC, with no RMP exception mentioned anywhere on that page. This pack's reading: DC does NOT currently operate an RMP, and the secondary-source claims to the contrary most likely conflate DC with its immediate RMP-operating neighbors, Maryland and Virginia, both of which DO appear on USDA's own list. An applicant asking whether they can use SNAP at a restaurant in DC should be told plainly no — EBT purchases are limited to grocery-style items for home preparation.",
+      "source_url": "https://www.fns.usda.gov/snap/retailer/restaurant-meals-program"
+    },
+    {
+      "key": "reporting-certification",
+      "kind": "supplement",
+      "terms": [
+        "certification period",
+        "approval period",
+        "recertification",
+        "redetermination",
+        "how long does snap last",
+        "how long does my snap approval last",
+        "how long does my approval last",
+        "redo",
+        "renew",
+        "periodic report",
+        "simplified reporting",
+        "interim report",
+        "esap",
+        "mid-certification"
+      ],
+      "citation": "DC DHS SNAP Eligibility Requirements page (Certification Period / Ongoing Eligibility Requirements sections) — 12 months standard, 36 months for ESAP-qualifying all-elderly/disabled no-earned-income households",
+      "heading": "DC's standard SNAP certification period is 12 months, matching the national norm, with a genuinely LONGER 36-month period for the Elderly Simplified Application Project (ESAP) — longer than the 24-month period several other jurisdictions in this roster use",
+      "text": "DHS's own current SNAP Eligibility Requirements page states plainly that most SNAP households receive a 12-month certification period, requiring a mid-certification/interim contact check-in at the midpoint (month 6) under simplified reporting. Households that meet Elderly Simplified Application Project (ESAP) criteria — all adults age 60+ and/or disabled, with no earned income — receive a LONGER 36-month certification period, and are explicitly exempt from the Mid-Certification process entirely. This pack flags this precisely: DC's 36-month ESAP period is genuinely longer than the 24-month elderly/disabled certification period several other jurisdictions in this roster (including Delaware) use — not a typo or a different reading of the same federal baseline, but DC's own distinctly longer figure, confirmed directly on DHS's own live page in two separate places (the general eligibility page and the elderly/disabled-specific page). If an all-elderly/disabled household DOES have earned income, DHS's page states the certification period drops to 12 months instead of the full 36. Standard simplified-reporting households must report specific changes (income exceeding the household's gross limit; a single lottery/gambling win of $4,250 or more) within 10 days of the end of the month in which the change occurred.",
+      "source_url": "https://dhs.dc.gov/service/snap-eligibility-general-requirements"
+    }
+  ]
+}
