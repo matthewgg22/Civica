@@ -3224,6 +3224,100 @@ export const OK_GOLD: AnswerExpectation[] = [
   },
 ];
 
+export const CT_GOLD: AnswerExpectation[] = [
+  {
+    id: "ct-ece-flat-200-not-185",
+    // Guards the structural correction: Connecticut's ECE ceiling is a FLAT
+    // 200% FPL, not the "185%" figure repeated in some secondary sources.
+    question: "Does Connecticut's categorical eligibility raise my SNAP income limit above the normal amount?",
+    state: "CT",
+    expectCitation: "5520.35",
+    mustMention: "200",
+    mustDisclaim: true,
+  },
+  {
+    id: "ct-income-limit-current-not-stale-2011-table",
+    // Guards against the model surfacing P-5520.35's own stale 2011 worked
+    // example instead of the current FFY2026 Tables figures.
+    question: "What is the income limit for SNAP in Connecticut?",
+    state: "CT",
+    expectCitation: "5520.35",
+    mustDisclaim: true,
+  },
+  {
+    id: "ct-drug-felony-modified-not-full-optout",
+    // Guards the flagship refinement finding: CGS 17b-112d is a MODIFIED
+    // opt-out with three independent eligibility paths, not a full opt-out.
+    question: "I have a drug felony conviction — can I still get SNAP in Connecticut?",
+    state: "CT",
+    expectCitation: "17b-112",
+    mustMention: "probation",
+    mustDisclaim: true,
+  },
+  {
+    id: "ct-abawd-no-waiver-current",
+    // Guards the flagship correction: Connecticut has NO ABAWD waiver as of
+    // Dec. 1, 2025 — contradicts the "statewide waiver" secondary-source claim.
+    question: "Is the SNAP work-requirement time limit currently waived anywhere in Connecticut?",
+    state: "CT",
+    mustMention: "no",
+    mustDisclaim: true,
+  },
+  {
+    id: "ct-abawd-age-range-current-federal",
+    question: "What is the ABAWD work requirement age range in Connecticut?",
+    state: "CT",
+    mustMention: "64",
+    mustDisclaim: true,
+  },
+  {
+    id: "ct-asset-limit-elderly-disabled-only",
+    // Guards the structural finding: CT's asset test only applies to
+    // elderly/disabled EDGs over 200% FPL — everyone else has no asset test.
+    question: "Does my car or savings count against me for SNAP in Connecticut?",
+    state: "CT",
+    expectCitation: "4005.05",
+    mustMention: "4,500",
+    mustDisclaim: true,
+  },
+  {
+    id: "ct-sua-flat-976",
+    question: "What utility deduction can I get for SNAP in Connecticut?",
+    state: "CT",
+    mustMention: "976",
+    mustDisclaim: true,
+  },
+  {
+    id: "ct-medical-deduction-actual-expense-no-shortcut",
+    question: "I'm disabled and have $50 a month in medical bills for Connecticut SNAP — do I get a deduction?",
+    state: "CT",
+    mustMention: "35",
+    mustDisclaim: true,
+  },
+  {
+    id: "ct-restaurant-meals-program-not-available",
+    question: "Does Connecticut have a Restaurant Meals Program for SNAP?",
+    state: "CT",
+    mustMention: "not",
+    mustDisclaim: true,
+  },
+  {
+    id: "ct-manual-is-multi-program-upm",
+    // Guards the structural finding: Connecticut's UPM is shared across
+    // AFDC/TFA, AABD, MA, and FS (SNAP) — citations need a Program-tag check.
+    question: "How do I apply for SNAP in Connecticut?",
+    state: "CT",
+    mustDisclaim: true,
+  },
+  {
+    id: "ct-federal-benefit",
+    question: "How is the monthly SNAP benefit amount calculated from net income in Connecticut?",
+    state: "CT",
+    expectCitation: "273.10",
+    mustDisclaim: true,
+  },
+];
+
 /** Everything the live runner executes. */
 export const ALL_GOLD: AnswerExpectation[] = [
   ...ANSWER_GOLD,
@@ -3256,4 +3350,5 @@ export const ALL_GOLD: AnswerExpectation[] = [
   ...LA_GOLD,
   ...KY_GOLD,
   ...OK_GOLD,
+  ...CT_GOLD,
 ];
