@@ -1,0 +1,47 @@
+{
+  "_provenance": {
+    "note": "South Dakota citation authorities. South Dakota's operative SNAP policy manual is the DSS SNAP Policy and Procedure Manual, cited by a numbered-section convention such as '9010' (Maximum Allowable Resources) or '13222' (Native American Exemption). This pack defines a single citation family, 'sdsnapmanual', for that numbered convention. South Dakota Codified Law 28-12-3 (the state's statutory drug-felony opt-out) is cited separately as a second family, 'sdcl', matching this roster's Nebraska, Connecticut, Kentucky, Alabama, Louisiana, and New Hampshire packs' multi-family pattern, since this pack expects both citation forms to appear in generated answers.",
+    "extracted": "2026-08-12"
+  },
+  "patterns": [
+    {
+      "key": "sdsnapmanual",
+      "regex": "\\b(?:Section|§)\\s?(\\d{1,5}(?:\\.\\d{1,2})?)\\b",
+      "flags": "gi",
+      "template": "SD SNAP Manual § $1",
+      "normalize": "none",
+      "match": "exact",
+      "note": "South Dakota DSS SNAP Policy and Procedure Manual, cited by DSS's own numbered-section convention (e.g. 3920/7370 Convicted Felon Attestation Procedures, 7700 Categorically Eligible Households, 9010 Maximum Allowable Resources, 10110 Standard Deduction, 10210 Medical Deductions, 10300/10310 Shelter Deductions, 10400/10411 Utility Deductions, 11300 Budgeting Income, 13221-13227 ABAWD Non-Work Exemptions). This pack requires the disambiguating 'Section' or '§' prefix in the regex to avoid false-positive matches against ordinary dollar figures and percentages elsewhere in generated answer text, matching this roster's IN PPM/OAC and NH FSM conventions."
+    },
+    {
+      "key": "sdcl",
+      "regex": "\\bSDCL\\s?§?\\s?(\\d{1,3}-\\d{1,3}-\\d{1,3})\\b",
+      "flags": "gi",
+      "template": "SDCL $1",
+      "normalize": "none",
+      "match": "exact",
+      "note": "South Dakota Codified Laws, cited in the standard chapter-section-subsection numeric format (e.g. 28-12-3, the statutory drug-felony SNAP-ban opt-out this pack cites for South Dakota's full opt-out status)."
+    }
+  ],
+  "known": {
+    "sdsnapmanual": [
+      { "value": "SD SNAP Manual § 3920", "note": "Convicted Felon Attestation Procedures — attestation requirement and process; cross-references § 7370's applicable-convictions list" },
+      { "value": "SD SNAP Manual § 7370", "note": "Convicted Felons — the 2014 Farm Bill's violent/sex-offense disqualification list (aggravated sexual abuse, murder, child sexual exploitation, sexual assault) for convictions after 2/7/2014; NOT a drug-felony provision" },
+      { "value": "SD SNAP Manual § 7700", "note": "Categorically Eligible Households — TANF/Tribal TANF/SSI/Child Care Services recipients only; no BBCE income-ceiling expansion; automatic pass of resource test and gross/net income tests" },
+      { "value": "SD SNAP Manual § 9010", "note": "Maximum Allowable Resources — $4,500 elderly/disabled, $3,000 all other households; categorically eligible households exempt from resource test" },
+      { "value": "SD SNAP Manual § 10110", "note": "Standard Deduction (effective 10/1/2025) — $209 (household sizes 1-3), $223 (4), $261 (5), $299 (6+)" },
+      { "value": "SD SNAP Manual § 10210", "note": "Medical Deductions for Persons Over Age 60 or Persons With a Disability — flat $165 standard deduction at $36-$200 in expenses; actual expenses minus $35 disregard above $200" },
+      { "value": "SD SNAP Manual § 10300", "note": "Shelter Deductions — costs in excess of 50% of net income after other deductions; $744 cap for non-elderly/disabled households, uncapped for elderly/disabled households" },
+      { "value": "SD SNAP Manual § 10310", "note": "Allowable Shelter Deductions — rent/mortgage, property tax/insurance, utility allowances, disaster-repair costs, homeless shelter deduction ($200 flat at $199.89-$200 in shelter costs, actual cost above $200)" },
+      { "value": "SD SNAP Manual § 10400", "note": "Determining Utility Costs / Utility Deductions (Allowances) — four-tier SUA/LUA/OUA/PUA structure; body text states SUA $950/LUA $265/OUA $109/PUA $60, contradicting a stale Table of Contents entry" },
+      { "value": "SD SNAP Manual § 10411", "note": "Standard Utility Allowance (SUA) — detailed heating/cooling cost eligibility rules; restates the $950 figure identically to § 10400" },
+      { "value": "SD SNAP Manual § 11300", "note": "Budgeting Income — states the 130% FPG gross / 100% FPG net income eligibility standard directly" },
+      { "value": "SD SNAP Manual § 13221", "note": "Individuals Under Age 18 or Over Age 64 (ABAWD) — current federal ABAWD age scope 18-64" },
+      { "value": "SD SNAP Manual § 13222", "note": "Native American Exemption (ABAWD) — statewide exemption for any Native American individual living anywhere in South Dakota, not restricted to reservation residency; ACCESS code 'I'" },
+      { "value": "SD SNAP Manual § 13224", "note": "Residing With Children Under 14 Years of Age (ABAWD) — exemption applies to all adults in the household, not just the child's parent" }
+    ],
+    "sdcl": [
+      { "value": "SDCL 28-12-3", "note": "South Dakota's statutory opt-out of the federal drug-felony SNAP ban (Pub. L. 104-193 § 115(a)(2)), enacted per a secondary legal-research source (Collateral Consequences Resource Center) dated to 2020; this pack could not independently fetch the statute's text from sdlegislature.gov or Justia (Cloudflare-blocked), see freshness.json" }
+    ]
+  }
+}
