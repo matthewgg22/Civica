@@ -4807,6 +4807,88 @@ export const ND_GOLD: AnswerExpectation[] = [
   },
 ];
 
+/** Everything the live runner executes for Delaware. */
+export const DE_GOLD: AnswerExpectation[] = [
+  {
+    id: "de-200-categorical-not-blanket-no-asset-test",
+    // Guards the structural finding: DE's 200% FPL categorical-eligibility
+    // gate has no resource test, but a non-categorical household still
+    // faces DSSM 9045's real resource limit.
+    question: "What is the income limit for SNAP in Delaware?",
+    state: "DE",
+    mustMention: "200",
+    mustDisclaim: true,
+  },
+  {
+    id: "de-resource-limit-not-flatly-none",
+    // Guards the structural finding: a non-categorically-eligible household
+    // still faces a real resource limit under DSSM 9045.
+    question: "Does Delaware have an asset or resource limit for SNAP?",
+    state: "DE",
+    mustMention: "2,000",
+    mustDisclaim: true,
+  },
+  {
+    id: "de-drug-felony-full-repeal-2018",
+    // Guards the flagship correction: DE fully repealed its drug-felony ban
+    // in 2018 (DSSM 2027, repealed per 21 DE Reg. 722) — several secondary
+    // sources describing a "modified" ban are working from pre-2018 text.
+    question: "I have a drug felony conviction — can I still get SNAP in Delaware?",
+    state: "DE",
+    mustMention: "2018",
+    mustDisclaim: true,
+  },
+  {
+    id: "de-abawd-waiver-none-active",
+    question: "Is the SNAP work-requirement time limit currently waived anywhere in Delaware?",
+    state: "DE",
+    mustMention: "no",
+    mustDisclaim: true,
+  },
+  {
+    id: "de-abawd-age-range-current-federal",
+    question: "What is the ABAWD work requirement age range in Delaware?",
+    state: "DE",
+    mustMention: "64",
+    mustDisclaim: true,
+  },
+  {
+    id: "de-utility-deduction-cola-notice-deferred",
+    // Guards the disclosed gap: DSSM 9060 defers exact utility-allowance
+    // dollar figures to a separate COLA notice this pack could not locate.
+    question: "What utility deduction can I get for SNAP in Delaware?",
+    state: "DE",
+    mustDisclaim: true,
+  },
+  {
+    id: "de-cert-period-12-months-standard",
+    question: "How long does my SNAP certification last in Delaware?",
+    state: "DE",
+    mustMention: "12",
+    mustDisclaim: true,
+  },
+  {
+    id: "de-restaurant-meals-program-not-available",
+    question: "Does Delaware have a Restaurant Meals Program for SNAP?",
+    state: "DE",
+    mustMention: "not",
+    mustDisclaim: true,
+  },
+  {
+    id: "de-how-to-apply-assist",
+    question: "How do I apply for SNAP in Delaware?",
+    state: "DE",
+    mustDisclaim: true,
+  },
+  {
+    id: "de-federal-benefit",
+    question: "How is the monthly SNAP benefit amount calculated from net income in Delaware?",
+    state: "DE",
+    expectCitation: "273.10",
+    mustDisclaim: true,
+  },
+];
+
 
 export const ALL_GOLD: AnswerExpectation[] = [
   ...ANSWER_GOLD,
@@ -4856,4 +4938,5 @@ export const ALL_GOLD: AnswerExpectation[] = [
   ...MT_GOLD,
   ...RI_GOLD,
   ...ND_GOLD,
+  ...DE_GOLD,
 ];

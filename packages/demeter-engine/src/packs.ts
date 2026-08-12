@@ -52,6 +52,7 @@ import sdPack from "./states/sd/pack.json";
 import mtPack from "./states/mt/pack.json";
 import riPack from "./states/ri/pack.json";
 import ndPack from "./states/nd/pack.json";
+import dePack from "./states/de/pack.json";
 
 export interface PackVerification {
   verified_on: string;
@@ -137,6 +138,7 @@ export const VERIFIED_STATES: PackMeta[] = [
   mtPack,
   riPack,
   ndPack,
+  dePack,
 ].map(meta);
 
 export const VERIFIED_STATE_CODES: string[] = VERIFIED_STATES.map((s) => s.code);

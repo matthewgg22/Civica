@@ -1,0 +1,62 @@
+{
+  "_provenance": {
+    "note": "Delaware dated facts. Because Delaware has NO existing packages/snap-rules StatePolicy entry, there is no engine constant to cross-check against — every entry below is either a routine COLA-cycle reminder, a disclosed research gap, or a warning about a fact this pack found time-sensitive, internally inconsistent within Delaware's own regulatory text, or access-constrained.",
+    "extracted": "2026-08-12"
+  },
+  "entries": [
+    {
+      "key": "de-dssm-9045-resource-limit-stale-vs-federal-floor",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "DSSM 9045's own text states Delaware's SNAP resource limit is $2,000 (general) / $3,000 (elderly/disabled) — figures this pack traced to at least a 2009-era baseline with no visible newer amendment. The current federal FY2026 COLA-adjusted resource-limit floor under 7 CFR 273.8(a) is $3,000/$4,500. This pack could NOT confirm whether Delaware's operative practice actually applies the current federal $3,000/$4,500 figure (with DSSM 9045's text simply being unamended paperwork) or genuinely still enforces the lower $2,000/$3,000 figure — this only matters for the minority of DE households that are not categorically eligible via the 200% FPL gate. Re-verify directly with DSS before treating either figure as settled in a high-stakes context."
+    },
+    {
+      "key": "de-dssm-9018-abawd-exemptions-pre-obbba-text",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "DSSM 9018.2 and 9018.3's own text (last amended 2013) lists PRE-OBBBA ABAWD age exemptions (under age 18, age 50 or older) — Delaware's live SNAP Alert consumer page confirms the current, operative post-11/1/2025 OBBBA exemption criteria (under 18, age 65+, no child-under-18 exemption but instead child-under-14, Indian/Urban Indian/California Indian exemption added). This pack relied on the live SNAP Alert page as authoritative, not DSSM 9018's own unamended text. Re-verify DSSM 9018 has not since been amended to match before citing its specific age thresholds directly."
+    },
+    {
+      "key": "de-dssm-9013-drug-felony-cross-reference-stale",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "DSSM 9013.2 (Household Concept, in the 9000-series SNAP manual) still lists 'Individuals who are ineligible because of a drug-related felony conviction per DSSM 2027' as an ineligible-individual category. DSSM 2027 itself (in the separate 2000-series manual) is marked '[Repealed - See 21 DE Reg. 722 (03/01/18)]' and the repeal's own Final Order text confirms the restriction was struck for Cash Assistance/General Assistance in 2018, with SNAP's own DSSM 9042.2 categorical-eligibility exclusion list containing no drug-felony category at all. This pack treats DSSM 9013.2's cross-reference as a stale, uncorrected artifact rather than evidence of an active drug-felony SNAP restriction, but flags the internal manual inconsistency explicitly since a reader who encounters DSSM 9013.2 alone (without also checking DSSM 2027 and 9042.2) would draw the wrong conclusion."
+    },
+    {
+      "key": "de-homeless-shelter-deduction-143-vs-federal-198.99",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "DSSM 9060.E states Delaware's Homeless Shelter Deduction is $143.00, with an amendment footer showing no revision newer than 09/01/14 (18 DE Reg. 231). USDA's current national FY2026 maximum homeless shelter deduction is $198.99. States may legitimately set their own homeless-shelter-deduction figure below the federal cap, so $143.00 is not necessarily incorrect — but this pack could not confirm whether Delaware has since raised this figure and did not locate a newer number to replace it with. Re-verify directly against a current Delaware DSS COLA notice before citing $143.00 with full confidence."
+    },
+    {
+      "key": "de-fy2026-sua-cola-notice-not-located",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "DSSM 9060 defers Delaware's Standard Deduction and utility-allowance (HCSUA/LUA/one-utility/telephone) dollar amounts entirely to 'the current October Cost-of-Living Adjustment Administrative Notice,' which this pack could not locate at a working URL (a 2022-vintage URL pattern this pack found now 404s). USDA FNS's own FY2026 SUA guidance memo confirms these figures are now calculated per-state via a 2.7% CPI-U self-adjustment from each state's FY2025 baseline rather than published in one national table, meaning this is a genuine, not-yet-resolved gap rather than a fabricated figure. Do not cite a specific Delaware HCSUA/LUA/telephone dollar amount without locating Delaware's own current COLA notice first."
+    },
+    {
+      "key": "de-abawd-waiver-status-fy2026-not-confirmed",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "This pack's conclusion that Delaware currently has no active area-wide ABAWD waiver rests on (a) USDA FNS's ABAWD Time Limit Waivers FY2025-2029 index showing Delaware's most recent posted entry as the FY2025 waiver (approved 09/19/2024, expired 9/30/2025), with no FY2026 entry as of this pack's fetch, and (b) no DSS page this pack found stating a current active waiver in as many words. Re-check https://www.fns.usda.gov/snap/abawd/waivers/2025-2029 directly before restating this with full confidence beyond this window, since Delaware could submit and receive a new FY2026 waiver request at any time."
+    },
+    {
+      "key": "de-november-2025-shutdown-abawd-pause-time-limited",
+      "kind": "expires",
+      "date": "2026-09-01",
+      "warning": "Delaware's own SNAP Alert page states USDA-FNS waived the ABAWD work requirement nationwide for November 2025 specifically due to the federal government shutdown and uncertainty around November benefits. This was an explicitly one-month, already-lapsed pause as of this pack's fetch date (2026-08-12) — do not confuse it with an ongoing area-specific Delaware ABAWD waiver, which per the entry above currently has no confirmed FY2026 renewal."
+    },
+    {
+      "key": "de-noncitizen-eligibility-change-4-1-2026",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "Delaware's live SNAP consumer and SNAP Alert pages confirm a federal law narrowing which noncitizens can receive SNAP food benefits took effect in Delaware on April 1, 2026 (U.S. citizens, U.S. nationals, Cuban and Haitian entrants, COFA citizens of Micronesia/Marshall Islands/Palau, and Lawful Permanent Residents with 5+ years of LPR status or a qualifying exemption). This pack did not independently verify the underlying federal statutory citation beyond DHSS's own consumer-page description; re-verify against a federal source before citing the specific eligible-category list with full confidence in a high-stakes context."
+    },
+    {
+      "key": "de-ffy2026-cola-reminder",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "This pack's confirmed income-eligibility dollar figures (200%/165%/130%/100% FPL table by household size, maximum benefit amounts) are drawn from Delaware DHSS's current Food Benefit Income Eligibility Limits table, explicitly published for the period October 1, 2025 - September 30, 2026 (the FFY2026 cycle). The FFY2027 COLA cycle begins October 1, 2026 — under two months from this pack's fetch date. Check dhss.delaware.gov/dss/division-of-social-services/snap/ after that date before restating any Delaware-specific income or benefit-amount figure with full confidence."
+    }
+  ]
+}
