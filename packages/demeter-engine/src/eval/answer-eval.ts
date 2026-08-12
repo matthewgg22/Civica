@@ -3319,6 +3319,124 @@ export const CT_GOLD: AnswerExpectation[] = [
 ];
 
 
+export const IA_GOLD: AnswerExpectation[] = [
+  {
+    id: "ia-income-limit-comm002-staleness",
+    // Guards the flagship staleness finding: Iowa's own consumer flyer
+    // (Comm. 002, Rev. 09/24) states a stale FFY2025-cycle income limit
+    // ($1,632 HH1) — guards against confidently quoting it as current
+    // without disclaiming the cross-chapter COLA-cycle discrepancy.
+    question: "What is the income limit for SNAP in Iowa?",
+    state: "IA",
+    mustDisclaim: true,
+  },
+  {
+    id: "ia-drug-felony-full-opt-out",
+    // Guards the flagship CONFIRMATION finding: Iowa fully opted out of
+    // the federal drug-felony ban — grounded in a direct citizenship
+    // statement in Iowa's own Employees' Manual (7-C).
+    question: "I have a drug felony conviction — can I still get SNAP in Iowa?",
+    state: "IA",
+    mustMention: "eligible",
+    mustDisclaim: true,
+  },
+  {
+    id: "ia-vehicle-not-blanket-excluded",
+    // Guards the structural finding: Iowa applies the fuller federal
+    // vehicle rule (one per household + $4,650 fair-market-value test),
+    // NOT a blanket all-vehicles exclusion like Kentucky/Alabama.
+    question: "Does my car count against me for SNAP in Iowa?",
+    state: "IA",
+    mustDisclaim: true,
+  },
+  {
+    id: "ia-abawd-age-range-current-64",
+    // Guards the flagship CONTRAST finding: Iowa's own ABAWD manual
+    // chapter (revised Feb 2026) is fully current with the true federal
+    // 18-64 standard, unlike Oklahoma's three stale figures.
+    question: "What is the ABAWD work requirement age range in Iowa?",
+    state: "IA",
+    mustMention: "64",
+    mustDisclaim: true,
+  },
+  {
+    id: "ia-abawd-no-waiver-found",
+    question: "Is the SNAP work-requirement time limit currently waived anywhere in Iowa?",
+    state: "IA",
+    mustMention: "waiver",
+    mustDisclaim: true,
+  },
+  {
+    id: "ia-bbce-phmp-categorical-eligibility",
+    // Guards the structural finding: Iowa's BBCE-equivalent pathway runs
+    // through the Promoting Healthy Marriage Program (PHMP), a genuinely
+    // distinctive mechanism vs. other states' referral-service pathways.
+    question: "Does Iowa's categorical eligibility raise my SNAP income limit above the normal amount?",
+    state: "IA",
+    mustDisclaim: true,
+  },
+  {
+    id: "ia-resource-limit-elderly-disabled",
+    question: "What is the SNAP resource limit for a household with a disabled member in Iowa?",
+    state: "IA",
+    mustMention: "4,500",
+    mustDisclaim: true,
+  },
+  {
+    id: "ia-medical-deduction-standard-175",
+    // Guards the structural finding: Iowa DOES offer a flat standard
+    // medical deduction ($175), unlike Oklahoma's actual-expense-only
+    // policy.
+    question: "I'm disabled and have $50 a month in medical bills for Iowa SNAP — do I get a deduction?",
+    state: "IA",
+    mustMention: "35",
+    mustDisclaim: true,
+  },
+  {
+    id: "ia-expedited-service-7-day-federal",
+    question: "How fast can I get emergency SNAP benefits in Iowa?",
+    state: "IA",
+    mustMention: "7",
+    mustDisclaim: true,
+  },
+  {
+    id: "ia-restaurant-meals-program-not-available",
+    question: "Can I use my EBT card to buy a hot meal at a restaurant in Iowa?",
+    state: "IA",
+    mustMention: "not",
+    mustDisclaim: true,
+  },
+  {
+    id: "ia-ebt-card-no-distinctive-name",
+    question: "What is my EBT card called in Iowa?",
+    state: "IA",
+    mustDisclaim: true,
+  },
+  {
+    id: "ia-cert-period-6-months-default",
+    // Guards the structural finding: Iowa's DEFAULT certification period
+    // is 6 months, shorter than Oklahoma's flat 12-month standard.
+    question: "How long does my SNAP approval last in Iowa?",
+    state: "IA",
+    mustMention: "6",
+    mustDisclaim: true,
+  },
+  {
+    id: "ia-tribal-fdpir-meskwaki-unconfirmed",
+    question: "I live on tribal land in Iowa — can I get both SNAP and FDPIR at the same time?",
+    state: "IA",
+    mustDisclaim: true,
+  },
+  {
+    id: "ia-federal-benefit",
+    question: "How is the monthly SNAP benefit amount calculated from net income in Iowa?",
+    state: "IA",
+    expectCitation: "273.10",
+    mustDisclaim: true,
+  },
+];
+
+
 export const AR_GOLD: AnswerExpectation[] = [
   {
     id: "ar-bbce-resource-only-statutory-cap",
@@ -3465,5 +3583,6 @@ export const ALL_GOLD: AnswerExpectation[] = [
   ...KY_GOLD,
   ...OK_GOLD,
   ...CT_GOLD,
+  ...IA_GOLD,
   ...AR_GOLD,
 ];

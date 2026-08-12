@@ -1,0 +1,248 @@
+{
+  "_provenance": {
+    "note": "Iowa SNAP curated supplements. Iowa has NO existing packages/snap-rules StatePolicy entry and NO oracle-fixture coverage — a genuine blank slate, like North Carolina's, Ohio's, New Jersey's, Virginia's, Tennessee's, Indiana's, Missouri's, Maryland's, Colorado's, South Carolina's, Alabama's, Louisiana's, Kentucky's, and Oklahoma's prior corpus-only builds in this same roster. This pack is CORPUS-ONLY and does not touch packages/snap-rules or the oracle fixture. Drafted from direct curl fetches of five Iowa HHS Employees' Manual chapters (7-B, 7-C, 7-D, 7-E, 7-I), the Iowa Administrative Code 441-65 (via the Iowa Legislature's own host), Iowa HHS's own consumer income-guidelines flyer (Comm. 002), and USDA FNA's current Restaurant Meals Program and ABAWD waiver lists.",
+    "extracted": "2026-08-12",
+    "source_fact_check": "direct curl fetch (browser UA) of Iowa HHS Employees' Manual Title 7 Chapters B, C, D, E, and I, each converted with pdftotext -layout and read in full for the sections cited below; direct curl fetch of Iowa Administrative Code 441-65 from the Iowa Legislature's own host; direct curl fetch of Iowa HHS's Comm. 002 consumer income-guidelines flyer and SNAP consumer page; direct fetch of USDA FNA's current Restaurant Meals Program state list and ABAWD Time Limit Waivers FY2025-2029 index; WebSearch convergent-corroboration cross-check for the drug-felony opt-out and the FFY2026 income-limit staleness finding; post-draft adversarial refute pass; findings and gaps recorded in PROVENANCE.md",
+    "access_note": "No HTTP-403 or other access barrier was encountered for any Iowa HHS or Iowa Legislature primary source during this pack's research — every Employees' Manual chapter, the Iowa Administrative Code chapter, and both Iowa HHS consumer documents returned clean HTTP 200 on direct curl fetch with a browser User-Agent. The only 403 this pack encountered was on a third-party legal-aggregator site (Public Health Law Center's Iowa-specific drug-felony map page), resolved via this pack's own direct primary-source read rather than the blocked secondary source. This pack's single most consequential finding is not an access barrier but a genuine, disclosed cross-chapter STALENESS discrepancy within Iowa's own Employees' Manual and its own consumer flyer — see PROVENANCE.md Finding 1."
+  },
+  "supplements": [
+    {
+      "key": "program-identity",
+      "kind": "supplement",
+      "terms": [
+        "how to apply",
+        "where do i apply",
+        "apply for snap",
+        "self-service portal",
+        "who runs",
+        "what agency",
+        "administers",
+        "iowa hhs",
+        "iowa department of health and human services",
+        "ebt card",
+        "food stamps",
+        "food assistance",
+        "connectebt"
+      ],
+      "citation": "Iowa HHS SNAP consumer page (hhs.iowa.gov/assistance-programs/food-assistance/snap); Iowa HHS Employees' Manual 7-B, Application Processing",
+      "heading": "Iowa calls its program plainly \"Food Assistance\" or \"SNAP\" — no distinctive brand name, and no rebrand-lag issue this pack found",
+      "text": "Iowa has no distinctive local program nickname like CalFresh (CA) or Basic Food (WA) — Iowa HHS's own consumer materials say plainly \"Food Assistance\" or \"SNAP.\" The administering agency, Iowa Department of Health and Human Services (Iowa HHS), is used consistently across every primary source this pack read — the Employees' Manual, the Iowa Administrative Code (441 IAC 65), and Iowa HHS's own consumer page — a genuine contrast with this roster's Oklahoma (OKDHS rebrand not yet propagated to its own statute/regulation) and Kentucky (benefind→kynect) findings, where this pack found a live, disclosed rebrand lag. Iowa is state-administered through local Iowa HHS offices, not independent county agencies like CA/NY/MN/WI/VA. Applicants apply through Iowa's Self-Service Portal (hhsservices.iowa.gov), at a local HHS office, by mailed/faxed/emailed paper application, or by phone. Iowa's EBT card carries NO distinctive branded name this pack found — Iowa HHS's own consumer page refers to it plainly as an \"EBT Card,\" and account access runs through ConnectEBT (connectebt.com), a shared multi-state EBT servicing platform, not an Iowa-specific brand — the same no-distinctive-name finding this roster's Kentucky pack made, and a genuine contrast with Oklahoma's confirmed \"ACCESS Oklahoma Card.\" Iowa HHS's consumer page also mentions a fruit/vegetable purchase-doubling incentive (\"up to $15/day\") — a Double Up Food Bucks-style supplemental match program, distinct from ordinary SNAP benefits and worth flagging as a genuinely Iowa-specific extra this pack found in passing, though this pack did not research the incentive program's own separate eligibility rules in depth.",
+      "source_url": "https://hhs.iowa.gov/assistance-programs/food-assistance/snap"
+    },
+    {
+      "key": "income-pathways",
+      "kind": "supplement",
+      "terms": [
+        "income limit",
+        "income limits",
+        "gross income limit",
+        "gross income ceiling",
+        "make too much",
+        "over income",
+        "bbce",
+        "broad based categorical eligibility",
+        "categorical eligibility",
+        "categorically eligible",
+        "expanded categorical eligibility",
+        "160 percent",
+        "160%",
+        "130 percent",
+        "130%",
+        "poverty level",
+        "fip",
+        "family investment program",
+        "ssi",
+        "phmp",
+        "healthy marriage"
+      ],
+      "citation": "Iowa HHS Employees' Manual 7-C, Categorical Eligibility — FIP/SSI/GA-based categorical eligibility removes BOTH gross and net income tests AND the resource test entirely; the Promoting Awareness of the Benefits of a Healthy Marriage Program (PHMP) pathway does the same at a stated 160% FPL gross-income ceiling",
+      "heading": "STRUCTURAL DEPARTURE worth flagging: Iowa's BBCE-equivalent pathway runs through a TANF-funded \"healthy marriage promotion\" program, not a general information/referral service — a genuinely distinctive mechanism this pack found nowhere else in this roster",
+      "text": "A household is categorically eligible in Iowa when all members receive or are authorized to receive FIP (Iowa's TANF cash-assistance program, the Family Investment Program), SSI, a qualifying General Assistance (GA) program, or when the household is eligible for the Promoting Awareness of the Benefits of a Healthy Marriage Program (PHMP) — a TANF-block-grant-funded program that provides information about the benefits of marriage, with NO separate application; the Iowa ABC computer system determines PHMP eligibility automatically whenever a household applies for SNAP (Employees' Manual 7-C). Categorical eligibility based on FIP/SSI/GA removes the resource limit, the gross AND net income limits, residency verification, and sponsored-alien verification entirely; categorical eligibility based ONLY on PHMP removes the resource limit and the gross AND net income limits, but still requires SSN, residency, and sponsored-alien information. PHMP eligibility itself requires total gross countable SNAP income at or below 160% of the federal poverty guidelines, no IPV disqualification, and a SNAP benefit amount greater than zero (Employees' Manual 7-C; Iowa HHS Comm. 002 confirms the 160% chart). This is a genuinely distinctive BBCE-equivalent mechanism this pack found nowhere else in this roster — Kentucky's ECE and Oklahoma's 2-1-1-Oklahoma referral pathway are general information/referral services, while Iowa's runs specifically through a TANF-funded marriage-promotion program, a structural curiosity worth naming plainly rather than treating as an unremarkable variant of the same BBCE pattern. A household NOT categorically eligible through any of these pathways is subject to the ordinary gross income standard (130% FPL) and net income standard (100% FPL) — see freshness.json for this pack's disclosed staleness finding about the specific current dollar figures for these ordinary standards.",
+      "source_url": "https://hhs.iowa.gov/media/3995/download"
+    },
+    {
+      "key": "asset-rule",
+      "kind": "supplement",
+      "terms": [
+        "asset limit",
+        "asset test",
+        "resource limit",
+        "resource test",
+        "resources",
+        "savings",
+        "savings limit",
+        "bank account",
+        "vehicle",
+        "car count",
+        "does my car count",
+        "second car",
+        "truck",
+        "lottery",
+        "gambling"
+      ],
+      "citation": "Iowa HHS Employees' Manual 7-D, Resources — $3,000 standard / $4,500 households with an elderly (60+) or disabled member; 441 IAC 65.30(2); resource limits do not apply to categorically eligible households",
+      "heading": "Iowa's vehicle-exclusion rule is NOT a blanket \"all vehicles excluded\" policy — it is the fuller federal one-per-household-plus-fair-market-value-test structure, a genuine contrast with this roster's Kentucky and Alabama findings",
+      "text": "Iowa's resource limits (Employees' Manual 7-D) are $3,000 for households with no elderly (60+) or disabled member and $4,500 for households that include one — matching the current national figures this roster's Kentucky, Louisiana, Alabama, Missouri, Maryland, Colorado, South Carolina, and Oklahoma packs have each independently confirmed. As with Oklahoma, this test applies ONLY to households that are NOT categorically eligible — most Iowa SNAP households, gated through FIP/SSI/GA/PHMP categorical eligibility, never face it at all. Households previously disqualified for substantial lottery or gambling winnings remain ineligible until they meet these regular resource limits, and cannot regain categorical eligibility until they do (7 CFR 273.11(r), the same federal boilerplate this roster's Oklahoma pack found). On VEHICLES, this pack found a genuine structural departure worth flagging plainly: Iowa does NOT blanket-exclude all vehicles from the resource test the way this roster's Kentucky and Alabama packs document. Iowa's Employees' Manual (7-D, Vehicles) instead applies the fuller federal structure: exclude the entire value of one motor vehicle per SNAP household outright, plus any REMAINING vehicle that is used to produce income, used for long-distance work travel, used to transport a physically disabled household member, used as the household's home, used to carry heating fuel or water, or that would net $1,500 or less in profit if sold. For any vehicles still remaining after those exclusions (one per adult household member, or a vehicle a household member under 18 drives to work/training/job search), Iowa counts the excess of the vehicle's fair market value over $4,650, or its equity value — whichever is higher — as a resource. This is a materially more complex, and more federally-standard, vehicle rule than a blanket exclusion, and this pack confirms it directly from Iowa's own manual text rather than assuming Iowa mirrors Kentucky's or Alabama's simpler policy.",
+      "source_url": "https://hhs.iowa.gov/media/3996/download"
+    },
+    {
+      "key": "criminal-justice-disqualifications",
+      "kind": "supplement",
+      "terms": [
+        "drug felony",
+        "felony conviction",
+        "criminal record",
+        "drug conviction",
+        "lifetime ban",
+        "fleeing felon",
+        "probation",
+        "parole",
+        "controlled substance",
+        "marijuana",
+        "cannabis"
+      ],
+      "citation": "Iowa HHS Employees' Manual 7-C, Citizenship and Alien Status (\"A person who has been convicted of a felony does lose certain rights of citizenship. However, these people are still considered to be citizens for the purposes of SNAP.\") and 7-C, Ineligible Members (the full ineligible-member list contains no drug-felony category); corroborated by convergent independent secondary sourcing",
+      "heading": "CONFIRMED via direct primary-source textual absence PLUS an explicit statement: Iowa FULLY opted out of the federal drug-felony SNAP ban",
+      "text": "21 U.S.C. § 862a(a)(2) sets a federal default: anyone convicted of a state or federal felony for possessing, using, or distributing a controlled substance is permanently ineligible for SNAP unless a state opts out or modifies the ban under § 862a(d)(1). Iowa is among the minority of states that FULLY opted out. This pack found DIRECT, PLAIN primary-source confirmation, stronger than a citation-only finding: Iowa's Employees' Manual (7-C, Citizenship and Alien Status) states outright, \"A person who has been convicted of a felony does lose certain rights of citizenship. However, these people are still considered to be citizens for the purposes of SNAP\" — meaning a felony conviction, drug-related or otherwise, does not itself remove SNAP eligibility in Iowa. This pack independently cross-checked Iowa's Employees' Manual's own comprehensive \"Ineligible Members\" list (7-C: ineligible aliens, ineligible students, no-SSN, no-NAC-match, IPV-disqualified, non-compliant mandatory work registrants, ABAWDs who exhaust their time limit, fleeing felons/probation-parole violators, SSI cash-out-state recipients, institution residents) and found NO drug-felony category anywhere in it — an affirmative, checked-for absence, not an unexamined gap. This reading converges with independent secondary sourcing found via WebSearch, which describes Iowa plainly as a full opt-out state (\"None of the Iowa Department of Human Services' contingent eligibility requirements relate to felony drug convictions\"). A THIRD-PARTY legal-aggregator page (Public Health Law Center's Iowa-specific drug-felony map) returned a clean HTTP 403 to direct curl during this pack's research, consistent with this roster's now-familiar pattern of certain legal-aggregator sites blocking automated fetches — this pack resolved the finding via its own direct primary-source read rather than that blocked source, a stronger evidentiary basis than most of this roster's prior drug-felony findings achieved.",
+      "source_url": "https://hhs.iowa.gov/media/3995/download"
+    },
+    {
+      "key": "shelter-utility-deductions",
+      "kind": "supplement",
+      "terms": [
+        "utility allowance",
+        "utility standard",
+        "shelter deduction",
+        "excess shelter",
+        "standard utility allowance",
+        "basic utility allowance",
+        "big standard utility allowance",
+        "little standard utility allowance",
+        "telephone allowance",
+        "standard deduction",
+        "sua",
+        "homeless",
+        "homeless shelter deduction"
+      ],
+      "citation": "Iowa HHS Employees' Manual 7-E, Deductions — Standard Deduction $209 (household sizes 1-3), $223 (4), $261 (5), $299 (6+); Big Standard Utility Allowance $554; Little Standard Utility Allowance $292; Telephone Standard Utility Allowance $36; maximum (capped) excess shelter deduction $744 (without an elderly/disabled member, uncapped with one); Homeless Standard Deduction $198.99",
+      "heading": "Iowa is the only pack in this roster this pack has seen call its two utility-allowance tiers \"Big\" and \"Little\" rather than \"Standard\"/\"Basic\" — a naming-convention quirk, not a substantive difference",
+      "text": "Iowa's Standard Deduction (Employees' Manual 7-E, revised February 13, 2026, matching the current national FFY2026 cycle) is $209 for household sizes 1-3, $223 for 4, $261 for 5, $299 for 6 or more — the same current national figures this roster's Oklahoma, Kentucky, Louisiana, Alabama, and South Carolina packs each independently confirmed. Iowa's terminology for its utility allowances is distinctive: the \"big\" standard utility allowance ($554/month, for a household responsible for any heating or air-conditioning cost, or receiving LIHEAP energy assistance) and the \"little\" standard utility allowance ($292/month, for a household with utility costs but no heating/cooling expense) — functionally identical to other states' \"Standard\"/\"Basic\" SUA distinction, but genuinely different naming this pack found worth noting rather than silently normalizing to another state's vocabulary. A household whose only utility expense is a telephone instead gets the Telephone Standard Utility Allowance, $36/month. A household may receive only ONE of the three. Iowa's capped excess shelter deduction is $744/month for households without an elderly or disabled member (uncapped for households WITH one, using full shelter costs exceeding 50% of income after other deductions) — matching the same current national figure this roster's Oklahoma, Kentucky, Louisiana, and Alabama packs also confirmed. Iowa's Homeless Standard Deduction is $198.99/month, available to households in which all members are homeless and who choose it instead of verifying actual shelter costs (a household choosing this deduction forfeits eligibility for a separate shelter or utility deduction) — closely matching Louisiana's $198.99 figure and this roster's Kentucky $199 figure, functionally the same current national formula.",
+      "source_url": "https://hhs.iowa.gov/media/3997/download"
+    },
+    {
+      "key": "medical-deduction",
+      "kind": "supplement",
+      "terms": [
+        "medical deduction",
+        "medical expense",
+        "medical expenses",
+        "medical bills",
+        "elderly deduction",
+        "disability deduction",
+        "excess medical",
+        "standard medical deduction"
+      ],
+      "citation": "Iowa HHS Employees' Manual 7-E, Standard Medical Deduction — a flat $175 deduction, available once a household verifies (at application) or declares (at recertification) qualifying medical expenses over $35/month for an elderly (60+) or disabled household member",
+      "heading": "Iowa DOES offer a flat standard medical deduction shortcut ($175) — joining Kentucky's, Louisiana's, South Carolina's, Missouri's, Colorado's, and Alabama's flat-dollar-shortcut camp, NOT Oklahoma's, Maryland's, or Indiana's actual-expense-only camp",
+      "text": "Iowa's Employees' Manual (7-E) allows a deduction for verified out-of-pocket medical expenses over $35/month incurred by an elderly (60+) or disabled household member, exactly as the federal standard requires — but ALSO offers households a flat Standard Medical Deduction of $175 as a simplified alternative to verifying and reporting actual expenses each period. To use the standard, the household must verify at initial application that its qualifying medical expenses exceed $35/month; at recertification, only a declaration (verbal or on a desk form) of continuing expenses over $35/month is required, with no further verification. Iowa HHS's own manual guidance recommends the standard specifically for households with expenses between $35.01 and $210/month, since actual expenses in that range would yield a similar or smaller deduction than the flat $175 — households with expenses over $210/month generally do better verifying and claiming the actual amount. Households may switch between the standard and actual expenses at any time during a certification period. This places Iowa in the same flat-shortcut camp this roster's Kentucky ($137), Louisiana ($161), South Carolina ($175 — an EXACT match to Iowa's own figure), Missouri ($135), Colorado ($165), and Alabama ($185) packs each document, a genuine contrast with this roster's Oklahoma, Maryland, and Indiana packs, which document an actual-expense-only camp with no flat shortcut at all.",
+      "source_url": "https://hhs.iowa.gov/media/3997/download"
+    },
+    {
+      "key": "abawd-work-requirement",
+      "kind": "supplement",
+      "terms": [
+        "abawd",
+        "able bodied adult",
+        "work requirement",
+        "3 month limit",
+        "work registration",
+        "waiver",
+        "waived area",
+        "rural county",
+        "time limit",
+        "des moines",
+        "cedar rapids"
+      ],
+      "citation": "Iowa HHS Employees' Manual 7-I, Able-Bodied Adults Without Dependents (ABAWDs), revised February 13, 2026 — states the current federal age exemptions (under 18, 65 or over) and the narrowed under-14 caregiver exemption; Iowa is absent from USDA FNA's current ABAWD Time Limit Waivers FY2025-2029 state-request and response index",
+      "heading": "FLAGSHIP CONTRAST FINDING: Iowa's ABAWD manual chapter is FULLY CURRENT with the true federal 18-64 standard — the opposite of this roster's Oklahoma finding, where all three of Oklahoma's own sources were stale",
+      "text": "An able-bodied adult without dependents (ABAWD) in Iowa is limited to three countable months of SNAP within a three-year period absent 80 hours/month of a qualifying work activity or an exemption (Employees' Manual 7-I; 8 U.S.C. § 2015(o)(3)). Iowa's current three-year periods are December 1, 2023 through November 30, 2026 (with November 2025 excluded as a countable ABAWD month due to the 2025 federal government shutdown — a distinctive, dated operational detail this pack found worth preserving) and December 1, 2026 through November 30, 2029. Iowa's ABAWD exemption list, drawn directly from the manual chapter revised February 13, 2026, states plainly: exempt if under age 18 (including the month of turning 18), exempt if aged 65 or over (including the month of turning 65) — meaning the population actually SUBJECT to the work requirement is ages 18-64, the TRUE current federal standard following OBBBA's July 4, 2025 enactment. Iowa's manual ALSO already reflects OBBBA's narrowed caregiver exemption: exempt if a member of a household that includes a child under age 14 (narrowed from the pre-OBBBA under-18 threshold). This is a genuine, deliberate CONTRAST this pack found worth stating plainly against this roster's Oklahoma pack, whose three own primary sources (1997 statute, 2024-amended regulation, and its own consumer page) each stated a DIFFERENT, stale age figure, none matching 18-64. On WAIVER STATUS: this pack directly fetched USDA FNA's current ABAWD Time Limit Waivers FY2025-2029 index page and found Iowa absent entirely — not merely lacking a currently-active waiver (as Louisiana's \"no waiver — rule applies\" status shows), but absent from the state-request list altogether, meaning this pack found no evidence Iowa has ever requested an ABAWD area waiver in this window. This pack did NOT find an Iowa-specific statutory bar on requesting a waiver analogous to Oklahoma's 56 O.S. § 241.3(C) — Iowa's absence from the FNA list appears to be a simple non-request rather than a legislative self-restriction, a structurally different (and less permanent) reason than Oklahoma's, disclosed as this pack's own reading rather than asserted with the same confidence as Oklahoma's explicit statutory text.",
+      "source_url": "https://hhs.iowa.gov/media/4001/download"
+    },
+    {
+      "key": "restaurant-meals-program",
+      "kind": "supplement",
+      "terms": [
+        "restaurant meals program",
+        "rmp",
+        "eat at a restaurant",
+        "use ebt at restaurant",
+        "hot meal",
+        "hot food",
+        "prepared food",
+        "hot foods waiver",
+        "disaster waiver"
+      ],
+      "citation": "USDA FNA's current Restaurant Meals Program state list: Arizona, California, Illinois (Cook/Franklin Counties), Maryland, Massachusetts, Michigan, New York, Rhode Island, Virginia — Iowa absent",
+      "heading": "Iowa does NOT operate a Restaurant Meals Program",
+      "text": "The Restaurant Meals Program (RMP) is a state OPTION under 7 CFR 274.7(g) letting elderly (60+), disabled, and homeless SNAP recipients buy prepared, hot meals from authorized restaurants with EBT year-round. USDA FNA's own current RMP state list (fetched directly, clean HTTP 200) names Arizona, California, Illinois (Cook and Franklin Counties only), Maryland, Massachusetts, Michigan, New York, Rhode Island, and Virginia — the identical nine-state/jurisdiction list this roster's Oklahoma and Kentucky packs each independently confirmed. Iowa is ABSENT, and this pack found no secondary source claiming otherwise. This pack did not find any current Iowa SNAP hot-foods disaster waiver active as of its fetch date, though — as with every state in this roster — this status can change quickly after a qualifying disaster declaration.",
+      "source_url": "https://www.fns.usda.gov/snap/retailer/restaurant-meals-program"
+    },
+    {
+      "key": "tribal-fdpir",
+      "kind": "supplement",
+      "terms": [
+        "tribal",
+        "reservation",
+        "indian",
+        "native american",
+        "fdpir",
+        "food distribution program",
+        "meskwaki",
+        "sac and fox",
+        "tama"
+      ],
+      "citation": "USDA FNA, Food Distribution Program on Indian Reservations (FDPIR) — Iowa's single federally recognized tribe, the Sac and Fox Tribe of the Mississippi in Iowa (Meskwaki Nation, near Tama), was not independently confirmed by this pack as an active FDPIR administering agency; SNAP itself remains entirely Iowa HHS-administered statewide",
+      "heading": "GENUINE OPEN ITEM, disclosed rather than guessed: Iowa's single federally recognized tribe is the Meskwaki Nation — this pack could NOT confirm whether it currently operates its own FDPIR program",
+      "text": "Iowa has ONE federally recognized tribal nation — the Sac and Fox Tribe of the Mississippi in Iowa, commonly known as the Meskwaki Nation, headquartered on the Meskwaki Settlement near Tama — a genuine structural contrast with this roster's Oklahoma pack, which documented 39 tribal nations. SNAP itself remains entirely state-administered by Iowa HHS through its ordinary local-office network, including for households living on the Meskwaki Settlement — this pack found no evidence of a tribal-specific SNAP variant. Whether the Meskwaki Nation separately operates the Food Distribution Program on Indian Reservations (FDPIR) — a mutually-exclusive USDA commodity-foods ALTERNATIVE to SNAP available on many reservations — is a genuine OPEN ITEM this pack could not confirm: WebSearch found the Meskwaki Nation operates a distinct \"Meskwaki Food Sovereignty Initiative\" (a traditional-agriculture program), but this pack did NOT find a direct primary-source confirmation that the Meskwaki Settlement is a current FDPIR administering agency, unlike the direct confirmations this roster's Oklahoma pack found for Choctaw Nation and Osage Nation. This pack states this as a disclosed gap rather than asserting FDPIR availability on the Meskwaki Settlement either way. If FDPIR IS available, the plain federal rule applies: a household may not participate in both FDPIR and SNAP at the same time.",
+      "source_url": "https://www.fna.usda.gov/fdpir/food-distribution-program-indian-reservations"
+    },
+    {
+      "key": "expedited-service",
+      "kind": "supplement",
+      "terms": [
+        "expedited",
+        "expedited service",
+        "emergency",
+        "emergency food stamps",
+        "fast benefits",
+        "how fast",
+        "urgent",
+        "same day",
+        "7 day"
+      ],
+      "citation": "Iowa HHS Employees' Manual 7-B, Emergency Service and Processing Standards — plain federal expedited-eligibility criteria (liquid resources $100 or less and gross monthly income under $150; OR shelter costs exceeding combined income and resources; OR a destitute migrant/seasonal farmworker household) and the plain federal 7-calendar-day EBT-access ceiling; ordinary processing is 30 calendar days",
+      "heading": "Iowa's emergency-service ceiling is the plain federal 7 calendar days — Iowa does NOT shorten it, the same contrast this roster's Oklahoma pack found for Oklahoma",
+      "text": "A household qualifies for Iowa's emergency (expedited) service under the standard federal criteria (Employees' Manual 7-B): liquid resources of $100 or less AND gross monthly income under $150, OR shelter costs (rent/mortgage plus the applicable utility allowance) higher than combined gross income and liquid resources, OR at least one household member who is a migrant or seasonal farmworker, destitute, with liquid resources of $100 or less. A household qualifying for emergency service must have an EBT card and access to benefits within 7 calendar days of application (allowing 2 days for mail delivery when setting internal processing deadlines) — the plain federal ceiling, not an accelerated state-specific standard, the same contrast this roster's Oklahoma pack found for Oklahoma against Kentucky's shortened 5-day internal standard. Iowa's ORDINARY (non-emergency) processing standard is the federal default: EBT access within 30 calendar days of application (Employees' Manual 7-B, Processing Standards, revised January 30, 2026).",
+      "source_url": "https://hhs.iowa.gov/media/3994/download"
+    },
+    {
+      "key": "reporting-certification",
+      "kind": "supplement",
+      "terms": [
+        "certification period",
+        "approval period",
+        "recertification",
+        "redetermination",
+        "how long does snap last",
+        "how long does my snap approval last",
+        "how long does my approval last",
+        "redo",
+        "renew"
+      ],
+      "citation": "Iowa HHS Employees' Manual 7-B, Establishing the Certification Period — 12 months for households where all adult members are 60+ or disabled with no earned income; 6 months for all other households; 4 months permitted for migrant farmworker households or households likely to become ineligible soon; no household certified for less than 4 months",
+      "heading": "Iowa's DEFAULT certification period is 6 months — shorter than this roster's Oklahoma finding of a flat 12-month standard, and a genuine three-tier structure",
+      "text": "Iowa's Employees' Manual (7-B, Approving an Initial Application) sets a genuinely tiered certification-period structure, distinct from a single flat standard: households where all adult members are aged 60 or older, or disabled, AND have no earned income get a 12-month certification period; ALL OTHER households get 6 months, Iowa's default — a materially shorter default than this roster's Oklahoma pack's flat 12-month standard; and a shorter 4-month period MAY be assigned for migrant farmworker households or households that appear likely to become ineligible in the near future. No Iowa household may be certified for less than 4 months, and once a certification period is set, it cannot be shortened. This pack specifically checked for Kentucky's tri-tier 4/12/36-month structure (which includes a longer 36-month period for all-elderly/no-earned-income households) and found Iowa's own longest tier caps at 12 months, not 36 — a genuine, checked-for structural difference this pack states plainly rather than assuming Iowa mirrors Kentucky's longer ceiling.",
+      "source_url": "https://hhs.iowa.gov/media/3994/download"
+    }
+  ]
+}
