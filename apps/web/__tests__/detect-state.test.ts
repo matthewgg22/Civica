@@ -3,7 +3,7 @@
 // failure this fixes was already that shape, answering a Massachusetts
 // household with California's rules.
 import { describe, expect, it } from "vitest";
-import { detectState } from "../lib/detect-state";
+import { detectState, detectUncoveredPlace } from "../lib/detect-state";
 
 describe("finds the state someone names", () => {
   it.each([
@@ -61,5 +61,40 @@ describe("refuses rather than guesses", () => {
 
   it("handles empty input", () => {
     expect(detectState("")).toBeNull();
+  });
+});
+
+// Regression: "I am in Washington dc" was answered as Washington State.
+//
+// `hay` contains " washington " — the trailing space belongs to "washington dc"
+// — so the substring pass matched WA and returned it as a confident single hit.
+// The person was shown a different agency, a different portal and different
+// figures for a jurisdiction they had named correctly and unambiguously.
+describe("places this product does not cover", () => {
+  it.each([
+    "I am in Washington dc",
+    "im in Washington, D.C.",
+    "I live in the District of Columbia",
+    "washington d.c. household of 2",
+  ])("does not read %s as Washington State", (text) => {
+    expect(detectState(text)).toBeNull();
+    expect(detectUncoveredPlace(text)).toBe("Washington, D.C.");
+  });
+
+  it("still detects Washington State when D.C. is not what they said", () => {
+    expect(detectState("I am in Washington")?.code).toBe("WA");
+    expect(detectState("I live in Seattle")?.code).toBe("WA");
+    expect(detectUncoveredPlace("I am in Washington")).toBeNull();
+  });
+
+  it("flags Puerto Rico, which runs NAP rather than SNAP", () => {
+    // Not a coverage gap we can close with a state pack: it is a different
+    // programme, so every figure on this site is wrong there.
+    expect(detectUncoveredPlace("I live in Puerto Rico")).toBe("Puerto Rico");
+    expect(detectState("I live in Puerto Rico")).toBeNull();
+  });
+
+  it("leaves ordinary messages alone", () => {
+    expect(detectUncoveredPlace("how much could I get")).toBeNull();
   });
 });
