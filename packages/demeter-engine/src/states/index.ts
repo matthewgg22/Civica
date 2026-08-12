@@ -131,9 +131,13 @@ import okPack from "./ok/pack.json";
 import okSupplements from "./ok/supplements.json";
 import okAuthorities from "./ok/authorities.json";
 import okFreshness from "./ok/freshness.json";
+import arPack from "./ar/pack.json";
+import arSupplements from "./ar/supplements.json";
+import arAuthorities from "./ar/authorities.json";
+import arFreshness from "./ar/freshness.json";
 
 /** Registered pack codes. Widens as Wave 1+ states land (WA, TX, NY, …). */
-export type StateCode = "CA" | "WA" | "TX" | "NY" | "GA" | "MI" | "IL" | "FL" | "MA" | "NV" | "AZ" | "OR" | "WI" | "MN" | "PA" | "OH" | "NC" | "NJ" | "VA" | "TN" | "IN" | "MO" | "MD" | "CO" | "SC" | "AL" | "LA" | "KY" | "OK";
+export type StateCode = "CA" | "WA" | "TX" | "NY" | "GA" | "MI" | "IL" | "FL" | "MA" | "NV" | "AZ" | "OR" | "WI" | "MN" | "PA" | "OH" | "NC" | "NJ" | "VA" | "TN" | "IN" | "MO" | "MD" | "CO" | "SC" | "AL" | "LA" | "KY" | "OK" | "AR";
 
 /** Launch state; used when a caller does not specify. Preserves the pre-pack
  *  behavior in which the (then-hardcoded) CA content applied to every query. */
@@ -398,6 +402,12 @@ const REGISTRY: Record<StateCode, StatePack> = {
     okSupplements as { supplements: PackTopic[]; supersessions?: Record<string, string> },
     okAuthorities as unknown as RawAuthorities,
     okFreshness as { entries: PackFreshnessEntry[] },
+  ),
+  AR: buildPack(
+    arPack as Omit<StatePack, "topics" | "authorities" | "freshness" | "supersessions">,
+    arSupplements as { supplements: PackTopic[]; supersessions?: Record<string, string> },
+    arAuthorities as unknown as RawAuthorities,
+    arFreshness as { entries: PackFreshnessEntry[] },
   ),
 };
 
