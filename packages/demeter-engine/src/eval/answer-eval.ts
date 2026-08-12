@@ -4889,6 +4889,86 @@ export const DE_GOLD: AnswerExpectation[] = [
   },
 ];
 
+/** Everything the live runner executes for the District of Columbia. */
+export const DC_GOLD: AnswerExpectation[] = [
+  {
+    id: "dc-200-categorical-via-tanf-statute",
+    // Guards the structural finding: DC's 200% FPL categorical-eligibility
+    // gate is codified directly in DC Code § 4-261.02 via a TANF-funded
+    // program, not merely a generic BBCE description.
+    question: "What is the income limit for SNAP in DC?",
+    state: "DC",
+    mustMention: "200",
+    mustDisclaim: true,
+  },
+  {
+    id: "dc-resource-limit-matches-federal-floor",
+    // Guards the finding that DC's $3,000/$4,500 resource limits match the
+    // current federal floor exactly (unlike DE's stale DSSM figure).
+    question: "Does DC have an asset or resource limit for SNAP?",
+    state: "DC",
+    mustMention: "3,000",
+    mustDisclaim: true,
+  },
+  {
+    id: "dc-drug-felony-full-unconditional-opt-out",
+    // Guards the confirmed finding: DC Code § 4-205.71 is a full,
+    // unconditional drug-felony SNAP/TANF ban opt-out since 1999.
+    question: "I have a drug felony conviction — can I still get SNAP in DC?",
+    state: "DC",
+    mustMention: "yes",
+    mustDisclaim: true,
+  },
+  {
+    id: "dc-abawd-implementation-started-june-2026",
+    // Guards the flagship correction: DC's districtwide ABAWD waiver was
+    // NOT renewed for FY2026 — work requirements started June 1, 2026,
+    // contrary to several secondary sources describing an active waiver.
+    question: "Is the SNAP work-requirement time limit currently waived anywhere in DC?",
+    state: "DC",
+    mustMention: "no",
+    mustDisclaim: true,
+  },
+  {
+    id: "dc-abawd-age-range-current-federal",
+    question: "What is the ABAWD work requirement age range in DC?",
+    state: "DC",
+    mustMention: "64",
+    mustDisclaim: true,
+  },
+  {
+    id: "dc-cert-period-36-months-esap",
+    // Guards the finding: DC's ESAP certification period is 36 months, not
+    // the 24-month figure several other jurisdictions in this roster use.
+    question: "How long does my SNAP certification last in DC?",
+    state: "DC",
+    mustMention: "12",
+    mustDisclaim: true,
+  },
+  {
+    id: "dc-restaurant-meals-program-not-available",
+    // Guards the second flagship correction: DC does NOT operate a
+    // Restaurant Meals Program, contrary to several secondary sources.
+    question: "Does DC have a Restaurant Meals Program for SNAP?",
+    state: "DC",
+    mustMention: "not",
+    mustDisclaim: true,
+  },
+  {
+    id: "dc-how-to-apply-district-direct",
+    question: "How do I apply for SNAP in DC?",
+    state: "DC",
+    mustDisclaim: true,
+  },
+  {
+    id: "dc-federal-benefit",
+    question: "How is the monthly SNAP benefit amount calculated from net income in DC?",
+    state: "DC",
+    expectCitation: "273.10",
+    mustDisclaim: true,
+  },
+];
+
 
 export const ALL_GOLD: AnswerExpectation[] = [
   ...ANSWER_GOLD,
@@ -4939,4 +5019,5 @@ export const ALL_GOLD: AnswerExpectation[] = [
   ...RI_GOLD,
   ...ND_GOLD,
   ...DE_GOLD,
+  ...DC_GOLD,
 ];
