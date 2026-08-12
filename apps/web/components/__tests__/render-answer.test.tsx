@@ -61,10 +61,22 @@ describe("renderAnswer (chat markdown subset)", () => {
     expect(texts(nodes)).toContain("$22,500 is exempt");
   });
 
-  it("turns a standalone --- line into an <hr> (the citation-trailer rule)", () => {
+  it("moves everything after --- into the footnote block", () => {
+    // The rule used to render as an <hr> with the trailer running on beneath
+    // it in the answer's own face and size. It is reference, not answer, so it
+    // is now a block of its own — the hairline is that block's top border.
     const nodes = renderAnswer("answer body\n\n---\n**Citation:**\n- ✓ ok");
-    expect(tags(nodes)).toContain("hr");
+    expect(tags(nodes)).toContain("div");
+    expect(tags(nodes)).not.toContain("hr");
+    // The content is all still there, and still marked up.
     expect(tags(nodes)).toContain("strong");
+    expect(texts(nodes)).toContain("Citation:");
+    expect(texts(nodes)).toContain("answer body");
+  });
+
+  it("leaves an answer with no trailer entirely alone", () => {
+    const nodes = renderAnswer("just an answer");
+    expect(tags(nodes)).not.toContain("div");
   });
 
   it("keeps HTML-looking content as inert text (no injection surface)", () => {
@@ -103,8 +115,9 @@ describe("paragraphs are blocks, so they can be given space", () => {
 
   it("the citation rule closes the paragraph before it", () => {
     const nodes = renderAnswer("The answer.\n---\n7 CFR 273.9");
-    expect(tags(nodes)).toContain("hr");
+    // Still two paragraphs — one in the answer, one inside the footnote.
     expect(paragraphs(nodes)).toBe(2);
+    expect(tags(nodes)).toContain("div");
   });
 });
 
