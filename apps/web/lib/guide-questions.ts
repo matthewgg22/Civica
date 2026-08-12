@@ -223,4 +223,11 @@ export const QUESTIONS: Record<string, string[]> = {
     "Can I buy soda with my SNAP benefits in Nebraska?",
     "What is the SNAP resource limit in Nebraska, and can it be temporarily higher?",
   ],
+  ID: [
+    "What is the income limit for SNAP in Idaho?",
+    "Does my car count against me for SNAP in Idaho?",
+    "I have a drug felony conviction — can I still get SNAP in Idaho?",
+    "Can I buy candy or soda with my SNAP benefits in Idaho?",
+    "How do I apply for SNAP in Idaho?",
+  ],
 };
