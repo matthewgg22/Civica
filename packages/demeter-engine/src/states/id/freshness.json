@@ -1,0 +1,50 @@
+{
+  "_provenance": {
+    "note": "Idaho dated facts. Because Idaho has NO existing packages/snap-rules StatePolicy entry, there is no engine constant to cross-check against — every entry below is either a routine COLA-cycle reminder, a disclosed research gap, or a warning about a confirmed time-sensitive or actively-litigated fact this pack found.",
+    "extracted": "2026-08-12"
+  },
+  "entries": [
+    {
+      "key": "id-candy-soda-restriction-verify-current",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "Idaho's SNAP candy-and-soda purchase restriction (Idaho House Bill 109, effective 2/15/2026) was NOT among the five states' waivers vacated by the June 22, 2026 Aragon et al. v. Rollins et al. (D.D.C.) court order — that order named Colorado, Iowa, Nebraska, Tennessee, and West Virginia specifically. Idaho DHW's own retailer page, dated 4/27/2026 (five weeks post-order), describes the restriction as actively in force with no medical exemptions. Before telling an Idaho applicant whether candy/soda are currently purchasable with SNAP, re-check https://healthandwelfare.idaho.gov/providers/snap-candy-and-soda-restrictions/idaho-snap-retailer-information-page and https://www.fna.usda.gov/snap/waivers/foodrestriction/idaho directly — a further appeal or a new lawsuit naming Idaho specifically could change this before this pack's next refresh."
+    },
+    {
+      "key": "id-abawd-rule-text-pre-obbba-stale",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "IDAPA 16.03.04.257 (Persons Not Considered ABAWD) is dated 7-1-24 — its text still shows the pre-OBBBA age exemption range (under 18, or 53/55 and older) and still lists veteran, homeless, and foster-youth exemption categories that OBBBA (One Big Beautiful Bill Act) removed NATIONALLY effective October 20, 2025, along with raising the ABAWD age ceiling to 64. This pack found no evidence Idaho has formally amended IDAPA 16.03.04.257 to reflect either federal change as of this pack's fetch date. Federal law controls regardless of whether Idaho's own administrative code text has caught up — do not quote Section 257's literal age range or exemption list as Idaho's current operative policy without checking for an amended version first."
+    },
+    {
+      "key": "id-sme-dollar-figure-unconfirmed",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "This pack's medical-deduction supplement cites a $144 Standard Medical Expense (SME) figure repeated across multiple secondary sources for Idaho, but this pack's own direct fetch of IDAPA 16.03.04.535 confirmed only the SME MECHANISM (the $35 threshold, the household's choice between SME and actual-expense verification) — not the current dollar amount, which the rule text defers to a DHW-published standard this pack's fetch window did not locate directly. Re-verify the $144 figure against a current, dated DHW source before treating it as confirmed."
+    },
+    {
+      "key": "id-utility-allowance-dollar-figures-not-located",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "This pack confirmed Idaho's four-tier utility-allowance STRUCTURE (SUA/LUA/MUA/TUA, IDAPA 16.03.04.543) directly from the rule's own qualifying-criteria text, but could NOT locate Idaho's current dollar figures for any of the four tiers from a directly-fetched, dated DHW source. The $744 maximum shelter deduction figure in this pack's shelter-utility-deductions supplement is a secondary-source-corroborated match to this roster's other confirmed FFY2026 figures, not independently fetched from an Idaho-specific dated table. Locate and fetch Idaho's current published utility-allowance and shelter-deduction figures directly before restating any of these dollar amounts with full confidence."
+    },
+    {
+      "key": "id-ec-certification-period-length-inferred",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "This pack's reporting-certification supplement infers that Idaho's Extended Certification Household (EC) definition (all elderly/disabled, no earned income) corresponds to the 24-month certification cadence implied by IDAPA 16.03.04.120's interview-frequency rule, but this pack did not locate a single IDAPA section explicitly stating which household categories receive which specific certification-period length. Re-verify the EC-to-24-month-certification link against IDAPA 16.03.04's certification-period-assignment section directly before treating it as a hard fact in a high-stakes context."
+    },
+    {
+      "key": "id-abawd-waiver-status-secondary-source-only",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "This pack's abawd-work-requirement supplement states Idaho does not currently maintain an active statewide or area-wide ABAWD waiver, based on secondary-source corroboration (search-engine synthesis describing Idaho as enforcing work requirements statewide) rather than a directly-fetched, dated USDA FNS active-waiver list specific to Idaho. Re-check https://www.fna.usda.gov/snap/abawd/waivers directly before restating Idaho's current ABAWD waiver status with full confidence, especially given IDAPA 16.03.04.251.05's own \"Residents of High Unemployment Areas\" mechanism, which this pack found preserved in the rule text but could not confirm as currently invoked anywhere in the state."
+    },
+    {
+      "key": "id-ffy2027-cola-reminder",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "This pack's confirmed dollar figures (gross monthly income limits $1,696 through $5,867 by household size, +$596 each additional member; $5,000 BBCE resource limit) are drawn from Idaho DHW's own current Apply for SNAP page, effective October 2025, matching the current FFY2026 cycle (October 1, 2025 - September 30, 2026). The FFY2027 COLA cycle begins October 1, 2026 — under two months from this pack's fetch date. Check healthandwelfare.idaho.gov's Apply for SNAP page for updated figures after that date before restating any Idaho-specific dollar figure with full confidence."
+    }
+  ]
+}
