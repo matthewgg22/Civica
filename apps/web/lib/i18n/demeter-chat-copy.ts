@@ -41,7 +41,7 @@ export const T = {
     // The wording is load-bearing. This clears THIS BROWSER; every question and
     // answer is still written to mae_query_log. Saying "clear" without saying
     // that would be the retention lie #703 fixed, rebuilt as a button.
-    clear: "Clear this conversation",
+    clear: "Start a new conversation",
     // Offered when someone names a place in the chat. An OFFER, never an
     // automatic switch: re-scoping on a guess answers the wrong state with more
     // confidence than before.
@@ -177,7 +177,7 @@ export const T = {
       "Demeter da información, no asesoría legal. Confirma las decisiones con tu agencia de SNAP.",
     piiHint:
       "Por favor no escribas tu número de Seguro Social, datos bancarios ni un nombre completo.",
-    clear: "Borrar esta conversación",
+    clear: "Empezar una conversación nueva",
     stateOffer: "Mencionaste {place}. ¿Respondo para {state}?",
     portalLead: "En {state}, la solicitud se hace a través de {agency}.",
     portalCta: "Solicitar en {portal}",
@@ -290,7 +290,7 @@ export const T = {
     disclaimer:
       "Demeter cung cấp thông tin, không phải tư vấn pháp lý. Hãy xác nhận quyết định với cơ quan SNAP của bạn.",
     piiHint: "Xin đừng nhập số An sinh Xã hội, thông tin ngân hàng hay họ tên đầy đủ.",
-    clear: "Xóa cuộc trò chuyện này",
+    clear: "Bắt đầu cuộc trò chuyện mới",
     stateOffer: "Bạn có nhắc đến {place}. Trả lời cho {state} nhé?",
     portalLead: "Ở {state}, bạn nộp đơn qua {agency}.",
     portalCta: "Nộp đơn tại {portal}",
@@ -400,7 +400,7 @@ export const T = {
       `Demeter 尚未覆盖${place}——下面的回答按联邦规定，请以您当地机构的说法为准。`,
     disclaimer: "Demeter 提供信息，而非法律建议。请与您所在州的 SNAP 机构确认。",
     piiHint: "请不要输入社会安全号码、银行信息或完整姓名。",
-    clear: "清除本次对话",
+    clear: "开始新的对话",
     stateOffer: "您提到了 {place}。要按 {state} 来回答吗？",
     portalLead: "在{state}，申请通过{agency}办理。",
     portalCta: "前往 {portal} 申请",

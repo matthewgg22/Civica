@@ -6891,6 +6891,35 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 .dmchat .demeter__side .dmst { width: 100%; flex: 0 0 auto; }
 .dmchat .dmw { align-self: stretch; margin: 0; }
 
+/* WHAT YOU DO WITH THE CONVERSATION, beneath what is known about it.
+   These lived above the transcript, alongside the scope controls — which put
+   "save this" on screen before there was anything to save, and scrolled it
+   away once there was. Someone lost a long conversation to a header link
+   having never passed an offer to keep it. */
+.dmchat .demeter__sidetools {
+  display: flex; flex-direction: column; gap: 0.6rem;
+  padding: 0 0.15rem;
+}
+/* Two small buttons on one line. They share a row because they are the pair of
+   choices about the same thing — keep this, or begin again — and each is
+   narrower than the panel above, so neither reads as the panel's own action. */
+.dmchat .demeter__sidebtns {
+  display: flex; gap: 0.5rem; align-items: stretch; flex-wrap: wrap;
+}
+.dmchat .demeter__sidebtns > * { flex: 1 1 0; min-width: 8.5rem; }
+.dmchat .demeter__sidebtns .demeter__save,
+.dmchat .demeter__sidebtns .demeter__clear {
+  min-height: 40px; justify-content: center; text-align: center;
+  font-size: 0.78rem; padding: 0 0.6rem;
+}
+/* The confirm step needs the whole row — it carries a sentence, not a label. */
+.dmchat .demeter__sidebtns .demeter__clearconfirm { flex: 1 1 100%; }
+/* Quieter than either button, and last: a standing promise about how answers
+   are checked, not something to do right now. */
+.dmchat .demeter__sidetools .demeter__how {
+  min-height: 0; padding: 0; font-size: 0.78rem; align-self: flex-start;
+}
+
 @media (max-width: 900px) {
   /* Stacked, and the picker goes FIRST — it is the thing to set before asking,
      and burying it under the transcript would be worse than where it started.

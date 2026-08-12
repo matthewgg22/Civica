@@ -32,6 +32,7 @@ import { T } from "../lib/i18n/demeter-chat-copy";
 import { stateName } from "../lib/state-names";
 import { detectState, detectUncoveredPlace, type StateMention } from "../lib/detect-state";
 import type { SavedMsg } from "../lib/demeter-conversations";
+import { saveChatSession, readChatSession, clearChatSession } from "../lib/chat-session";
 
 /** Read the certainty verdict back off a finished answer.
  *
@@ -487,6 +488,30 @@ export function DemeterChat({
 
   // A stream abandoned mid-flight must not keep painting into a component that
   // has moved on.
+  // SURVIVE A PAGE CHANGE. Reading the header's other tab and coming back used
+  // to destroy the conversation silently — see lib/chat-session.ts on why a
+  // beforeunload warning would not have caught that case. Restores only when
+  // this render started empty, so a saved conversation opened by id and a
+  // ?q= deep link both still win.
+  const restoredRef = useRef(false);
+  useEffect(() => {
+    if (restoredRef.current) return;
+    restoredRef.current = true;
+    if (initialMessages.length > 0) return;
+    const prior = readChatSession();
+    if (!prior) return;
+    setMessages(prior.messages);
+    setState(prior.state);
+    setLang(prior.lang as AnswerLang);
+  }, [initialMessages]);
+
+  // Written on every change rather than on unload, because a client-side
+  // navigation gives no unload to hook.
+  useEffect(() => {
+    if (busy) return; // mid-stream, the last message is a half-typed answer
+    saveChatSession({ messages, state, lang });
+  }, [messages, state, lang, busy]);
+
   useEffect(() => () => clearTimeout(rafRef.current), []);
   /** Back to one row. The composer grows as you type, so clearing the value
    *  without clearing the inline height leaves an empty box the size of the
@@ -632,6 +657,9 @@ export function DemeterChat({
     } catch {
       /* storage disabled — nothing was stored either */
     }
+    // And the per-tab copy, or "start a new conversation" would hand the next
+    // page load the old one straight back.
+    clearChatSession();
     setAnnouncement(t.cleared);
   }, [t, resetInputHeight]);
 
@@ -985,57 +1013,6 @@ export function DemeterChat({
               row above it. Out here they started 68px above the rail and left
               "How we verify" floating alone in the right column, belonging to
               neither. In here both columns begin on the same line. */}
-        <div className="demeter__scope">
-
-          <a className="demeter__how" href="/verify">
-            {t.howWeVerify}
-          </a>
-          {/* Sits with the scope controls rather than under the composer: it acts
-              on the WHOLE conversation, like the state and language pickers, not
-              on the next thing typed. Renders nothing until an answer exists. */}
-          <DemeterSave
-            messages={messages}
-            state={state}
-            lang={lang}
-            busy={busy}
-            pendingSave={pendingSave}
-            initialSavedId={savedConversationId}
-            onRestore={restoreConversation}
-            // Plain setter, not an inline arrow: it lands in an effect's
-            // dependency list in DemeterSave, and React guarantees a state
-            // setter's identity is stable across renders.
-            onSavedChange={setConversationSaved}
-            copy={t.save}
-          />
-          {/* CLEAR, for shared and public machines. On a library terminal the
-              next person otherwise sees the previous person's questions about
-              their income, their household, their felony record.
-              Renders only once there is something to clear. */}
-          {hasChat &&
-            (confirmClear ? (
-              <span className="demeter__clearconfirm" role="group" aria-label={t.clear}>
-                <span className="demeter__clearnote">{t.clearNote}</span>
-                <button type="button" className="demeter__clearyes" onClick={clearConversation}>
-                  {t.clear}
-                </button>
-                <button
-                  type="button"
-                  className="demeter__clearno"
-                  onClick={() => setConfirmClear(false)}
-                >
-                  {t.save.panelDismiss}
-                </button>
-              </span>
-            ) : (
-              <button
-                type="button"
-                className="demeter__clear"
-                onClick={() => setConfirmClear(true)}
-              >
-                {t.clear}
-              </button>
-            ))}
-        </div>
       <div className="demeter__scroll" ref={scrollRef}>
         {!hasChat && (
           // A composed block, centred in the space rather than three buttons
@@ -1319,6 +1296,67 @@ export function DemeterChat({
             }
           }}
         />
+        {/* WHAT YOU DO WITH THE CONVERSATION, under what it knows about it.
+            These used to sit above the transcript with the scope controls. A
+            reader lost an entire conversation by navigating away, having never
+            passed anything that offered to keep it — the offer was up at the
+            top, before there was anything to save, and scrolled off before
+            there was. Down here it stays beside the thing it acts on. */}
+        <div className="demeter__sidetools">
+          {/* Two small buttons on one line: keeping this, and starting over.
+              Both act on the WHOLE conversation, which is why they belong to
+              the panel that tracks it rather than under the composer, which
+              acts on the next thing typed. */}
+          <div className="demeter__sidebtns">
+          <DemeterSave
+            messages={messages}
+            state={state}
+            lang={lang}
+            busy={busy}
+            pendingSave={pendingSave}
+            initialSavedId={savedConversationId}
+            onRestore={restoreConversation}
+            // Plain setter, not an inline arrow: it lands in an effect's
+            // dependency list in DemeterSave, and React guarantees a state
+            // setter's identity is stable across renders.
+            onSavedChange={setConversationSaved}
+            copy={t.save}
+          />
+          {/* CLEAR, for shared and public machines. On a library terminal the
+              next person otherwise sees the previous person's questions about
+              their income, their household, their felony record.
+              Renders only once there is something to clear. */}
+          {hasChat &&
+            (confirmClear ? (
+              <span className="demeter__clearconfirm" role="group" aria-label={t.clear}>
+                <span className="demeter__clearnote">{t.clearNote}</span>
+                <button type="button" className="demeter__clearyes" onClick={clearConversation}>
+                  {t.clear}
+                </button>
+                <button
+                  type="button"
+                  className="demeter__clearno"
+                  onClick={() => setConfirmClear(false)}
+                >
+                  {t.save.panelDismiss}
+                </button>
+              </span>
+            ) : (
+              <button
+                type="button"
+                className="demeter__clear"
+                onClick={() => setConfirmClear(true)}
+              >
+                {t.clear}
+              </button>
+            ))}
+          </div>
+          {/* Underneath both, quieter than either: this is the standing promise
+              about how answers are checked, not something you do right now. */}
+          <a className="demeter__how" href="/verify">
+            {t.howWeVerify}
+          </a>
+        </div>
         </div>
       </div>
     </div>
