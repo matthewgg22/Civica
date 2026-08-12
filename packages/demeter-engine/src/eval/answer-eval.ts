@@ -4455,6 +4455,102 @@ export const ME_GOLD: AnswerExpectation[] = [
 ];
 
 
+/** Everything the live runner executes for Rhode Island. */
+export const RI_GOLD: AnswerExpectation[] = [
+  {
+    id: "ri-two-tier-185-200-not-flat-bbce",
+    // Guards the structural finding: RI's gross-income gate is two-tier
+    // (185% no elderly/disabled, 200% with) not a single flat BBCE percentage.
+    question: "What is the income limit for SNAP in Rhode Island?",
+    state: "RI",
+    mustMention: "185",
+    mustDisclaim: true,
+  },
+  {
+    id: "ri-resource-limit-not-flatly-none",
+    // Guards the structural finding: a non-categorically-eligible household
+    // still faces a real resource limit ($3,000 / $4,500), not a blanket waiver.
+    question: "Does Rhode Island have an asset or resource limit for SNAP?",
+    state: "RI",
+    mustMention: "3,000",
+    mustDisclaim: true,
+  },
+  {
+    id: "ri-vehicle-exclusion-capped-two",
+    // Guards the minority-position structural finding: RI caps vehicle
+    // exclusion at 2 vehicles per household, unlike uncapped-per-adult states.
+    question: "Does my car count against me for SNAP in Rhode Island?",
+    state: "RI",
+    mustMention: "two",
+    mustDisclaim: true,
+  },
+  {
+    id: "ri-drug-felony-full-opt-out-401968",
+    // Guards the flagship confirmation: RI fully opted out of the federal
+    // drug-felony ban (R.I. Gen. Laws § 40-6-8(d)).
+    question: "I have a drug felony conviction — can I still get SNAP in Rhode Island?",
+    state: "RI",
+    expectCitation: "40-6-8",
+    mustMention: "not",
+    mustDisclaim: true,
+  },
+  {
+    id: "ri-abawd-waiver-none-active",
+    question: "Is the SNAP work-requirement time limit currently waived anywhere in Rhode Island?",
+    state: "RI",
+    mustMention: "no",
+    mustDisclaim: true,
+  },
+  {
+    id: "ri-abawd-march-1-2026-delayed-rollout",
+    // Guards the flagship timing finding: RI delayed its OBBBA ABAWD rollout
+    // to March 1, 2026, later than the federal 11/1/2025 effective date.
+    question: "When did the new SNAP work requirements start for able-bodied adults in Rhode Island?",
+    state: "RI",
+    mustMention: "March",
+    mustDisclaim: true,
+  },
+  {
+    id: "ri-sua-single-tier-844",
+    // Guards the structural finding: RI's SUA is a single combined tier
+    // ($844), not a multi-tier structure split by utility type.
+    question: "What utility deduction can I get for SNAP in Rhode Island?",
+    state: "RI",
+    mustMention: "844",
+    mustDisclaim: true,
+  },
+  {
+    id: "ri-cert-period-12-months-standard",
+    question: "How long does my SNAP certification last in Rhode Island?",
+    state: "RI",
+    mustMention: "12",
+    mustDisclaim: true,
+  },
+  {
+    id: "ri-restaurant-meals-program-subway-only",
+    // Guards the finding: RI DOES have an RMP, but narrow — nine Subway
+    // locations only, restricted to homeless and some elderly/disabled households.
+    question: "Does Rhode Island have a Restaurant Meals Program for SNAP?",
+    state: "RI",
+    mustMention: "Subway",
+    mustDisclaim: true,
+  },
+  {
+    id: "ri-how-to-apply-healthyrhode",
+    question: "How do I apply for SNAP in Rhode Island?",
+    state: "RI",
+    mustDisclaim: true,
+  },
+  {
+    id: "ri-federal-benefit",
+    question: "How is the monthly SNAP benefit amount calculated from net income in Rhode Island?",
+    state: "RI",
+    expectCitation: "273.10",
+    mustDisclaim: true,
+  },
+];
+
+
 export const ALL_GOLD: AnswerExpectation[] = [
   ...ANSWER_GOLD,
   ...ES_GOLD,
@@ -4499,4 +4595,5 @@ export const ALL_GOLD: AnswerExpectation[] = [
   ...HI_GOLD,
   ...ME_GOLD,
   ...NH_GOLD,
+  ...RI_GOLD,
 ];
