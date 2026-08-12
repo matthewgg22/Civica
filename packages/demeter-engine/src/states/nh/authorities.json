@@ -1,0 +1,43 @@
+{
+  "_provenance": {
+    "note": "New Hampshire citation authorities. New Hampshire's operative SNAP policy manual is the DHHS Food Stamp Manual (FSM), cited by a numbered-section convention such as '133.09' (Certification Periods) or '245.03' (Criteria for Exemption from ABAWD Work Participation), each with its own References line pointing to the parallel Administrative Rules citation, He-W (New Hampshire Code of Administrative Rules, Title He-W, SNAP-related sections e.g. He-W 742.02, He-W 746.02, He-W Chapter 741). This pack defines a SECOND citation family, 'hew', matching this roster's Nebraska, Connecticut, Kentucky, Alabama, and Louisiana packs' multi-family pattern, since both citation forms appear in DHHS's own FSM References lines and this pack expects both forms to appear in generated answers.",
+    "extracted": "2026-08-12"
+  },
+  "patterns": [
+    {
+      "key": "nhfsm",
+      "regex": "\\bFSM\\s?§?\\s?(\\d{2,3}(?:\\.\\d{2})?)\\b",
+      "flags": "gi",
+      "template": "FSM $1",
+      "normalize": "none",
+      "match": "exact",
+      "note": "New Hampshire DHHS Food Stamp Manual (FSM), cited with the invented short prefix 'FSM' before the bare section number (matching this roster's IN PPM/OAC convention of a disambiguating prefix), e.g. FSM 133.09 (Certification Periods), FSM 231.05 (Expanded Categorical Eligibility Criteria), FSM 245.03 (Criteria for Exemption from ABAWD Work Participation), FSM 403 (Resource Limits). New Hampshire's own FSM does not use this exact short prefix in its section headers, but this pack requires it in the regex to avoid false-positive matches against ordinary dollar figures and percentages elsewhere in generated answer text."
+    },
+    {
+      "key": "nhhew",
+      "regex": "\\bHe-W\\s?(\\d{3}(?:\\.\\d{2})?)\\b",
+      "flags": "gi",
+      "template": "He-W $1",
+      "normalize": "none",
+      "match": "exact",
+      "note": "New Hampshire Code of Administrative Rules, Title He-W (Family Assistance Programs). This pack cites He-W 742.02 (deductions), He-W 746.02 (certification periods / recertification), He-W 766.01 and He-W 766.02 (redetermination), and He-W Chapter 741 (resources/vehicles)."
+    }
+  ],
+  "known": {
+    "nhfsm": [
+      { "value": "FSM 133.09", "note": "Certification Periods — 36 months for all-elderly/disabled no-earned-income (ESAP) households; 6 months for all other households" },
+      { "value": "FSM 161", "note": "Redetermination/Recertification — general recertification-interval overview, cross-references 133.09" },
+      { "value": "FSM 231.05", "note": "Expanded Categorical Eligibility Criteria — 200% FPG gross-income threshold plus non-cash MOE-funded-service eligibility (BFA Form 77u); ECE households not subject to the resource test" },
+      { "value": "FSM 245.03", "note": "Criteria for Exemption from ABAWD Work Requirements — current (post-11/1/2025 OBBBA) exemption list: child under 14, ages 65+, pregnant, high-unemployment area, medically unfit, Indian/Indigenous IHS eligible" },
+      { "value": "FSM 245.05", "note": "ABAWD Work Requirements — 80 hours/month work-or-approved-program standard; 3 countable months in a 36-month period absent qualifying activity or exemption" },
+      { "value": "FSM 403", "note": "Resource Limits — Target (elderly/disabled) $4,500; Categorically Eligible automatically resource-eligible; All Other Households $3,000" },
+      { "value": "FSM 601", "note": "Table I: SNAP Deductions — Standard Deduction, Heating/Cooling SUA, Utilities-Only, Electric-Only, Telephone-Only, Excess Shelter, Homeless Shelter, Medical Expense" }
+    ],
+    "nhhew": [
+      { "value": "He-W 742.02", "note": "SNAP Deductions — cited as the References-line authority for FSM Table I's Standard Deduction, utility-allowance tiers, Excess Shelter, Homeless Shelter, and Medical Expense Deduction figures" },
+      { "value": "He-W 746.02", "note": "Certification periods / recertification interval — cited as the References-line authority for FSM 133.09 and FSM 161" },
+      { "value": "He-W 766.01", "note": "Redetermination — cited alongside He-W 766.02 as a References-line authority for FSM 161" },
+      { "value": "He-W 766.02", "note": "Redetermination (continued) — cited alongside He-W 766.01 for FSM 161" }
+    ]
+  }
+}

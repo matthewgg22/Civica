@@ -223,4 +223,11 @@ export const QUESTIONS: Record<string, string[]> = {
     "Can I buy soda with my SNAP benefits in Nebraska?",
     "What is the SNAP resource limit in Nebraska, and can it be temporarily higher?",
   ],
+  NH: [
+    "What is the income limit for SNAP in New Hampshire?",
+    "Does New Hampshire have an asset or resource limit for SNAP?",
+    "I have a drug felony conviction — can I still get SNAP in New Hampshire?",
+    "How long does my SNAP certification last in New Hampshire?",
+    "What utility deduction can I get for SNAP in New Hampshire?",
+  ],
 };

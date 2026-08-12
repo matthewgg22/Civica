@@ -163,9 +163,13 @@ import nePack from "./ne/pack.json";
 import neSupplements from "./ne/supplements.json";
 import neAuthorities from "./ne/authorities.json";
 import neFreshness from "./ne/freshness.json";
+import nhPack from "./nh/pack.json";
+import nhSupplements from "./nh/supplements.json";
+import nhAuthorities from "./nh/authorities.json";
+import nhFreshness from "./nh/freshness.json";
 
 /** Registered pack codes. Widens as Wave 1+ states land (WA, TX, NY, …). */
-export type StateCode = "CA" | "WA" | "TX" | "NY" | "GA" | "MI" | "IL" | "FL" | "MA" | "NV" | "AZ" | "OR" | "WI" | "MN" | "PA" | "OH" | "NC" | "NJ" | "VA" | "TN" | "IN" | "MO" | "MD" | "CO" | "SC" | "AL" | "LA" | "KY" | "OK" | "CT" | "UT" | "IA" | "AR" | "MS" | "KS" | "NM" | "NE";
+export type StateCode = "CA" | "WA" | "TX" | "NY" | "GA" | "MI" | "IL" | "FL" | "MA" | "NV" | "AZ" | "OR" | "WI" | "MN" | "PA" | "OH" | "NC" | "NJ" | "VA" | "TN" | "IN" | "MO" | "MD" | "CO" | "SC" | "AL" | "LA" | "KY" | "OK" | "CT" | "UT" | "IA" | "AR" | "MS" | "KS" | "NM" | "NE" | "NH";
 
 /** Launch state; used when a caller does not specify. Preserves the pre-pack
  *  behavior in which the (then-hardcoded) CA content applied to every query. */
@@ -478,6 +482,12 @@ const REGISTRY: Record<StateCode, StatePack> = {
     neSupplements as { supplements: PackTopic[]; supersessions?: Record<string, string> },
     neAuthorities as unknown as RawAuthorities,
     neFreshness as { entries: PackFreshnessEntry[] },
+  ),
+  NH: buildPack(
+    nhPack as Omit<StatePack, "topics" | "authorities" | "freshness" | "supersessions">,
+    nhSupplements as { supplements: PackTopic[]; supersessions?: Record<string, string> },
+    nhAuthorities as unknown as RawAuthorities,
+    nhFreshness as { entries: PackFreshnessEntry[] },
   ),
 };
 
