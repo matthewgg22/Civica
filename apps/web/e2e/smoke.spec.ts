@@ -1,4 +1,14 @@
-import { test, expect } from "@playwright/test";
+import { test, expect, type Page } from "@playwright/test";
+
+/** The composer, located by what it IS rather than by what it says.
+ *
+ *  These specs used to match on the placeholder text. That made a copy edit —
+ *  "Ask anything about SNAP" → "Happy to answer any questions about SNAP" —
+ *  break seven assertions across three files that were not testing copy at all.
+ *  A locator should only be sensitive to the thing its test is about. */
+function composer(page: Page) {
+  return page.locator("textarea.demeter__input");
+}
 
 // Demeter public-surface smoke (T12): runs WITHOUT an ANTHROPIC_API_KEY in CI,
 // so the chat asserts "a response state arrives" — a real streamed answer when
@@ -14,12 +24,12 @@ test.describe("front door", () => {
   }) => {
     await page.goto("/");
     await expect(page).toHaveURL(/\/screen\/ask$/);
-    await expect(page.getByPlaceholder(/Ask anything about SNAP/)).toHaveCount(0);
+    await expect(composer(page)).toHaveCount(0);
     const cta = page.getByRole("link", { name: /Ask Demeter about your situation/i });
     await expect(cta).toBeVisible();
     await cta.click();
     await expect(page).toHaveURL(/\/chat$/);
-    await expect(page.getByPlaceholder(/Ask anything about SNAP/)).toBeVisible();
+    await expect(composer(page)).toBeVisible();
   });
 
   test("root carries query params through, so campaign links keep working", async ({ page }) => {
@@ -32,7 +42,7 @@ test.describe("front door", () => {
     // The state selector is a combobox (2026-08-09): one selection, shown on
     // the trigger, rather than a row of radio chips.
     await expect(page.getByRole("button", { name: "Your state", exact: true })).toContainText("TX");
-    await expect(page.getByPlaceholder(/Ask anything about SNAP/)).toHaveValue(
+    await expect(composer(page)).toHaveValue(
       "Does my car count?",
     );
   });
@@ -67,14 +77,14 @@ test.describe("chat surface", () => {
     // a heading: the page leads with what Demeter is, and explains SNAP as
     // orientation underneath rather than as the page's own claim.
     await expect(page.getByText(/SNAP is monthly money for groceries/)).toBeVisible();
-    await expect(page.getByPlaceholder(/Ask anything about SNAP/)).toHaveCount(0);
+    await expect(composer(page)).toHaveCount(0);
   });
 
   test("the chat itself carries the picker, the composer and the suggestions", async ({ page }) => {
     await page.goto("/chat");
     const picker = page.getByRole("button", { name: "Your state", exact: true });
     await expect(picker).toContainText("All states");
-    await expect(page.getByPlaceholder(/Ask anything about SNAP/)).toBeVisible();
+    await expect(composer(page)).toBeVisible();
     await expect(page.getByRole("button", { name: /income limit for my household/i })).toBeVisible();
     // Opening the picker reveals every verified pack — under its DISPLAY name.
     // The raw corpus field carries annotation prose ("SNAP (no state-specific
@@ -127,14 +137,14 @@ test.describe("chat surface", () => {
     await page.goto("/screen/ask?state=TX&q=Does%20my%20car%20count%3F");
     await expect(page).toHaveURL(/\/chat\?/);
     await expect(page.getByRole("button", { name: "Your state", exact: true })).toContainText("TX");
-    await expect(page.getByPlaceholder(/Ask anything about SNAP/)).toHaveValue(
+    await expect(composer(page)).toHaveValue(
       "Does my car count?",
     );
   });
 
   test("send always yields a response state (answer or honest banner)", async ({ page }) => {
     await page.goto("/chat");
-    await page.getByPlaceholder(/Ask anything about SNAP/).fill("What is SNAP?");
+    await composer(page).fill("What is SNAP?");
     await page.getByRole("button", { name: /Send|Enviar/ }).click();
     // The user bubble appears immediately…
     await expect(page.locator(".demeter__msg--user")).toHaveText("What is SNAP?");

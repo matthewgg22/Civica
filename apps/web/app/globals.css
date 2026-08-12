@@ -6246,7 +6246,7 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
    caps were compounding, and all three had to move. */
 .dmchat__body {
   flex: 1; min-height: 0;
-  width: 100%; max-width: 1280px; margin: 0 auto;
+  width: 100%; max-width: 1360px; margin: 0 auto;
   padding: clamp(0.75rem, 2vw, 1.5rem) clamp(1rem, 4vw, 2rem) calc(1rem + env(safe-area-inset-bottom));
   display: flex; flex-direction: column;
 }
@@ -6355,7 +6355,24 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
    unscoped it kept two columns on a phone and handed 21rem of a 356px screen
    to the rail — measured, .demeter__main came out 0px wide. */
 @media (min-width: 901px) {
-  .dmchat .demeter__body { grid-template-columns: minmax(0, 1fr) minmax(0, 21rem); }
+  .dmchat .demeter__body { grid-template-columns: minmax(0, 1fr) minmax(0, 21rem); column-gap: 2.5rem; }
+
+  /* The scope row shares the body's columns instead of running the full width.
+     Measured before: the picker ended at 1201 while the conversation column
+     ended at 944, so it overhung the rail and nothing below it lined up with
+     anything above it. Picker sits over the transcript; "How we verify" and
+     Save sit over the rail. Two columns, one set of edges, top to bottom. */
+  .dmchat .demeter__scope {
+    display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 21rem);
+    column-gap: 2.5rem; align-items: center; justify-content: initial;
+  }
+  /* Everything after the picker shares the rail's column. */
+  .dmchat .demeter__scope > *:not(.dmst) { grid-column: 2; justify-self: start; }
+
+  /* Flush with the composer at rest, so the two read as one control rather than
+     a tall box with a short button parked at its corner. They stay bottom
+     aligned as the composer grows. */
+  .dmchat .demeter__send { min-height: 68px; border-radius: 1rem; padding: 0 1.6rem; }
 }
 
 /* The measure, capped in CHARACTERS rather than as a percentage of whatever the
@@ -6477,6 +6494,12 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   font-size: 0.74rem; line-height: 1.5; color: var(--demeter-muted);
   text-align: center; padding: 0.4rem 1rem 0; margin: 0; max-width: 56ch;
   margin-left: auto; margin-right: auto;
+}
+/* One line. 56ch broke it across two at ~476px when the column had 830 to give,
+   and a two-line caption under a one-line control reads as a warning rather
+   than a note. */
+@media (min-width: 901px) {
+  .dmchat .demeter__piihint { max-width: none; }
 }
 
 /* Group heading inside the state picker. Not an option — presentational, so it

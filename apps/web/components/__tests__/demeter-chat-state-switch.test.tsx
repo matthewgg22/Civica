@@ -3,6 +3,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, fireEvent, cleanup, waitFor } from "@testing-library/react";
 import type { PackMeta } from "@civica/demeter-engine/packs";
 import { DemeterChat } from "../DemeterChat";
+import { T } from "../../lib/i18n/demeter-chat-copy";
 
 // State-switch spec (T12 / T-C): switching scope mid-conversation must
 // (1) insert a visible divider — earlier answers may no longer apply — and
@@ -64,7 +65,7 @@ afterEach(() => {
 });
 
 async function sendQuestion(text: string) {
-  fireEvent.change(screen.getByPlaceholderText(/Ask anything about SNAP/), {
+  fireEvent.change(screen.getByPlaceholderText(T.en.inputPlaceholder), {
     target: { value: text },
   });
   fireEvent.click(screen.getByRole("button", { name: "Send" }));
@@ -133,7 +134,7 @@ describe("DemeterChat state switching", () => {
     fetchMock.mockResolvedValueOnce(
       new Response(JSON.stringify({ reason: "rate_limited" }), { status: 429 }),
     );
-    fireEvent.change(screen.getByPlaceholderText(/Ask anything about SNAP/), {
+    fireEvent.change(screen.getByPlaceholderText(T.en.inputPlaceholder), {
       target: { value: "rejected" },
     });
     fireEvent.click(screen.getByRole("button", { name: "Send" }));

@@ -20,7 +20,7 @@ export const T = {
   en: {
     title: "Demeter",
     tagline: "Verified answers about SNAP — for any state.",
-    inputPlaceholder: "Ask anything about SNAP…",
+    inputPlaceholder: "Happy to answer any questions about SNAP…",
     send: "Send",
     stop: "Stop",
     stateLabel: "Your state",
@@ -130,7 +130,7 @@ export const T = {
   es: {
     title: "Demeter",
     tagline: "Respuestas verificadas sobre SNAP — para cualquier estado.",
-    inputPlaceholder: "Pregunta lo que sea sobre SNAP…",
+    inputPlaceholder: "Con gusto respondo cualquier pregunta sobre SNAP…",
     send: "Enviar",
     stop: "Parar",
     stateLabel: "Tu estado",
@@ -227,7 +227,7 @@ export const T = {
   vi: {
     title: "Demeter",
     tagline: "Câu trả lời đã được xác minh về SNAP — cho mọi tiểu bang.",
-    inputPlaceholder: "Hỏi bất cứ điều gì về SNAP…",
+    inputPlaceholder: "Rất sẵn lòng giải đáp mọi câu hỏi về SNAP…",
     send: "Gửi",
     stop: "Dừng",
     stateLabel: "Tiểu bang của bạn",
@@ -323,7 +323,7 @@ export const T = {
   zh: {
     title: "Demeter",
     tagline: "经过核实的 SNAP 答案——适用于任何州。",
-    inputPlaceholder: "关于 SNAP，想问什么都可以…",
+    inputPlaceholder: "关于 SNAP 的任何问题，都很乐意解答…",
     send: "发送",
     stop: "停止",
     stateLabel: "您所在的州",

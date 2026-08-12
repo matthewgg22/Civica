@@ -22,7 +22,7 @@ const STATES = [
 const STASH = "demeter:pending-save";
 
 function typeAndSend(text: string) {
-  fireEvent.change(screen.getByPlaceholderText(/Ask anything about SNAP/), {
+  fireEvent.change(screen.getByPlaceholderText(T.en.inputPlaceholder), {
     target: { value: text },
   });
   fireEvent.click(screen.getByRole("button", { name: T.en.send }));
@@ -118,7 +118,7 @@ describe("a failed send hands the question back", () => {
 
     await waitFor(() =>
       expect(
-        (screen.getByPlaceholderText(/Ask anything about SNAP/) as HTMLTextAreaElement).value,
+        (screen.getByPlaceholderText(T.en.inputPlaceholder) as HTMLTextAreaElement).value,
       ).toBe("Do I qualify with two kids?"),
     );
     expect(screen.getByRole("alert").textContent).toContain(T.en.errNetwork);
@@ -152,7 +152,7 @@ describe("a failed send hands the question back", () => {
     await waitFor(() => expect(screen.getByRole("alert")).toBeTruthy());
     expect(screen.getByRole("alert").textContent).toContain("211");
     expect(
-      (screen.getByPlaceholderText(/Ask anything about SNAP/) as HTMLTextAreaElement).value,
+      (screen.getByPlaceholderText(T.en.inputPlaceholder) as HTMLTextAreaElement).value,
     ).toBe("");
   });
 
