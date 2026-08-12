@@ -1,0 +1,56 @@
+{
+  "_provenance": {
+    "note": "North Dakota dated facts. Because North Dakota has NO existing packages/snap-rules StatePolicy entry, there is no engine constant to cross-check against — every entry below is either a routine COLA-cycle reminder, a disclosed research gap, or a warning about a fact this pack found time-sensitive, single-sourced, or resolved through a judgment call this pack wants a future pass to re-verify.",
+    "extracted": "2026-08-12"
+  },
+  "entries": [
+    {
+      "key": "nd-legacy-manual-host-stale-trap",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "nd.gov/dhs/policymanuals/43005/ (the legacy '430-05-xx-xx'-numbered manual host) returns clean HTTP 200 responses with plausible-looking, well-formatted SNAP policy content, but this pack found it to be substantially stale: its income-limit tables showed FFY2025 (not FFY2026) dollar figures, and its ABAWD exemption criteria (revised 11/1/2024) predate the 11/1/2025 OBBBA effective date by exactly one year, showing pre-OBBBA exemption categories. This pack used ONLY the current SNAP/ manual host (nd.gov/dhs/policymanuals/SNAP/, Release 26.5 as of this pack's research) for every dollar figure and post-OBBBA eligibility rule. A future research pass on North Dakota MUST verify it is reading the SNAP/ host, not the 43005 host, before trusting any fetched content — the two hosts do not cross-link or warn of each other's existence."
+    },
+    {
+      "key": "nd-tribal-fdpir-legacy-host-only",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "This pack's tribal-programs supplement (Food Distribution Program/FDPIR choice-of-program rules) is sourced from the legacy 43005 manual host, not independently re-confirmed against the current SNAP/ manual host, because this pack judged the underlying structural choice-of-program rule less likely to have changed in the 2025 renumbering than dollar figures or OBBBA-driven ABAWD criteria. This judgment call should be re-verified directly against the current SNAP/ host (likely under the '200 Household Composition' or a dedicated FDPIR-adjacent chapter) before being treated as settled beyond this window."
+    },
+    {
+      "key": "nd-abawd-veteran-homeless-fostercare-redline-ambiguity",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "North Dakota HHS Policy Release 25.7's summary line states the OBBBA rollout removed the Veteran, Homeless, and Former Foster Care ABAWD exemptions, but the same release document's detailed body text still lists all three as numbered exemption categories in a way that reads ambiguously in the extracted PDF text (likely lost strikethrough/tracked-changes formatting from the source). This pack resolved the ambiguity in favor of the release's explicit summary line, consistent with the nationwide OBBBA rollout this roster's other packs have documented, but this resolution should be re-verified against the CURRENT (not this specific dated release PDF) § 402 ABAWD Countable Months – Exemptions section text before being treated as fully settled."
+    },
+    {
+      "key": "nd-liheap-sua-trigger-release-log-summary-only",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "This pack's shelter-utility-deductions supplement states North Dakota restricted the automatic SUA-eligibility trigger tied to a LIHEAP payment to elderly/disabled households only, sourced from HHS's own Release Log summary line for Release 25.8 (effective 11/13/2025) rather than an independently fetched full current § 803 Shelter Deductions section text. Re-verify directly against the current § 803 section before treating this as a hard fact in a high-stakes context."
+    },
+    {
+      "key": "nd-food-restriction-waiver-not-yet-effective",
+      "kind": "expires",
+      "date": "2026-09-01",
+      "warning": "North Dakota's USDA-approved candy/soft-drink/energy-drink SNAP purchase restriction is NOT YET IN EFFECT as of this pack's research date (2026-08-12) — it takes effect 9/1/2026. This pack's food-restriction-waiver supplement is written to disclose the current (unrestricted) state alongside the upcoming date explicitly. After 9/1/2026, this pack's framing should be updated to describe the restriction as CURRENTLY ACTIVE, and the underlying Terms and Conditions PDF (not independently fetched by this pack) should be fetched directly for exact product-category definitions (e.g., the flour-content threshold distinguishing 'candy' from other confections, and the 'Supplement Facts' labeling test for energy drinks)."
+    },
+    {
+      "key": "nd-drug-felony-statute-secondary-sourced-text",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "This pack's quoted North Dakota Century Code § 50-06-05.1 operative text and its 2017 effective date are drawn from the Public Health Law Center's SNAP Ban Opt-Out States Map page, not from an independently fetched North Dakota Legislative Assembly session-law or Century Code text directly. The absence of a general drug-felony ban in HHS's own manual disqualification-rules text is independently confirmed and corroborates the claim, but the exact statutory text and 2017 date specifically should be re-verified against ndlegis.gov directly before being treated as a verbatim-accurate quotation in a high-stakes context."
+    },
+    {
+      "key": "nd-certification-review-period-length-unconfirmed",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "This pack was UNABLE to confirm North Dakota's standard SNAP certification/review period length from a primary HHS source — the current SNAP/ manual's § 105 Application Approval or Denial section describes application-processing timelines (30-day/7-day expedited) but not the standard review-period length itself, and the legacy-host § 430-05-20-50-15-10 (Length of Review Period) covers only expedited-service edge cases. WebSearch-surfaced secondary sources conflict with each other (6 months standard per one source; 6-12 months per another; up to 24 months for elderly/disabled fixed-income households per a third). This pack explicitly did NOT fabricate a specific figure for this topic and recommends a future pass search the current SNAP/ manual's '1000 Case Management' or '1005'-equivalent chapter directly, or contact HHS's Customer Support Center, before publishing a specific certification-period length as settled."
+    },
+    {
+      "key": "nd-ffy2027-cola-reminder",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "This pack's confirmed dollar figures (Standard Deduction $209/$209/$209/$223/$261/$299, SUA $775 as of 4/1/2026, LUSA $286, Minimum Utility Standard $126, Telephone Standard $35, Maximum Shelter Deduction $744, Homeless Shelter Deduction $198.99, resource limits $4,500/$3,000, vehicle exclusion $4,650, and the income-eligibility tables by household size at 200%/165%/130%/100% FPG) are drawn from North Dakota HHS's current SNAP/ manual host, Policy Releases 25.6 (effective 10/1/2025) and 26.2 (effective 4/1/2026), matching the current FFY2026 cycle (October 1, 2025 - September 30, 2026). The FFY2027 COLA cycle begins October 1, 2026 — under two months from this pack's fetch date. Check the SNAP/ manual host's Release Log after that date before restating any North Dakota-specific dollar figure with full confidence."
+    }
+  ]
+}

@@ -275,6 +275,22 @@ export const QUESTIONS: Record<string, string[]> = {
     "What utility deduction can I get for SNAP in Montana?",
     "How do I apply for SNAP in Montana?",
   ],
+  RI: [
+    "What is the income limit for SNAP in Rhode Island?",
+    "Does Rhode Island have an asset or resource limit for SNAP?",
+    "I have a drug felony conviction — can I still get SNAP in Rhode Island?",
+    "Is the SNAP work-requirement time limit currently waived anywhere in Rhode Island?",
+    "What utility deduction can I get for SNAP in Rhode Island?",
+    "Does Rhode Island have a Restaurant Meals Program for SNAP?",
+  ],
+  ND: [
+    "What is the income limit for SNAP in North Dakota?",
+    "Does North Dakota have an asset or resource limit for SNAP?",
+    "I have a drug felony conviction — can I still get SNAP in North Dakota?",
+    "Is the SNAP work-requirement time limit currently waived anywhere in North Dakota?",
+    "Can I buy candy or soda with SNAP in North Dakota?",
+    "How do I apply for SNAP in North Dakota?",
+  ],
   DE: [
     "What is the income limit for SNAP in Delaware?",
     "Does Delaware have an asset or resource limit for SNAP?",

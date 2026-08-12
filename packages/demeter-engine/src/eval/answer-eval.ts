@@ -4625,6 +4625,188 @@ export const MT_GOLD: AnswerExpectation[] = [
   },
 ];
 
+/** Everything the live runner executes for Rhode Island. */
+export const RI_GOLD: AnswerExpectation[] = [
+  {
+    id: "ri-two-tier-185-200-not-flat-bbce",
+    // Guards the structural finding: RI's gross-income gate is two-tier
+    // (185% no elderly/disabled, 200% with) not a single flat BBCE percentage.
+    question: "What is the income limit for SNAP in Rhode Island?",
+    state: "RI",
+    mustMention: "185",
+    mustDisclaim: true,
+  },
+  {
+    id: "ri-resource-limit-not-flatly-none",
+    // Guards the structural finding: a non-categorically-eligible household
+    // still faces a real resource limit ($3,000 / $4,500), not a blanket waiver.
+    question: "Does Rhode Island have an asset or resource limit for SNAP?",
+    state: "RI",
+    mustMention: "3,000",
+    mustDisclaim: true,
+  },
+  {
+    id: "ri-vehicle-exclusion-capped-two",
+    // Guards the minority-position structural finding: RI caps vehicle
+    // exclusion at 2 vehicles per household, unlike uncapped-per-adult states.
+    question: "Does my car count against me for SNAP in Rhode Island?",
+    state: "RI",
+    mustMention: "two",
+    mustDisclaim: true,
+  },
+  {
+    id: "ri-drug-felony-full-opt-out-401968",
+    // Guards the flagship confirmation: RI fully opted out of the federal
+    // drug-felony ban (R.I. Gen. Laws § 40-6-8(d)).
+    question: "I have a drug felony conviction — can I still get SNAP in Rhode Island?",
+    state: "RI",
+    expectCitation: "40-6-8",
+    mustMention: "not",
+    mustDisclaim: true,
+  },
+  {
+    id: "ri-abawd-waiver-none-active",
+    question: "Is the SNAP work-requirement time limit currently waived anywhere in Rhode Island?",
+    state: "RI",
+    mustMention: "no",
+    mustDisclaim: true,
+  },
+  {
+    id: "ri-abawd-march-1-2026-delayed-rollout",
+    // Guards the flagship timing finding: RI delayed its OBBBA ABAWD rollout
+    // to March 1, 2026, later than the federal 11/1/2025 effective date.
+    question: "When did the new SNAP work requirements start for able-bodied adults in Rhode Island?",
+    state: "RI",
+    mustMention: "March",
+    mustDisclaim: true,
+  },
+  {
+    id: "ri-sua-single-tier-844",
+    // Guards the structural finding: RI's SUA is a single combined tier
+    // ($844), not a multi-tier structure split by utility type.
+    question: "What utility deduction can I get for SNAP in Rhode Island?",
+    state: "RI",
+    mustMention: "844",
+    mustDisclaim: true,
+  },
+  {
+    id: "ri-cert-period-12-months-standard",
+    question: "How long does my SNAP certification last in Rhode Island?",
+    state: "RI",
+    mustMention: "12",
+    mustDisclaim: true,
+  },
+  {
+    id: "ri-restaurant-meals-program-subway-only",
+    // Guards the finding: RI DOES have an RMP, but narrow — nine Subway
+    // locations only, restricted to homeless and some elderly/disabled households.
+    question: "Does Rhode Island have a Restaurant Meals Program for SNAP?",
+    state: "RI",
+    mustMention: "Subway",
+    mustDisclaim: true,
+  },
+  {
+    id: "ri-how-to-apply-healthyrhode",
+    question: "How do I apply for SNAP in Rhode Island?",
+    state: "RI",
+    mustDisclaim: true,
+  },
+  {
+    id: "ri-federal-benefit",
+    question: "How is the monthly SNAP benefit amount calculated from net income in Rhode Island?",
+    state: "RI",
+    expectCitation: "273.10",
+    mustDisclaim: true,
+  },
+];
+
+/** Everything the live runner executes for North Dakota. */
+export const ND_GOLD: AnswerExpectation[] = [
+  {
+    id: "nd-bbce-200-not-flat-figure",
+    // Guards the structural finding: ND's BBCE/ECE track is 200% FPG, with
+    // separate 130%/100%/165% tests for non-BBCE households.
+    question: "What is the income limit for SNAP in North Dakota?",
+    state: "ND",
+    mustMention: "200",
+    mustDisclaim: true,
+  },
+  {
+    id: "nd-resource-limit-corrects-secondary-source",
+    // Guards the flagship correction: ND's current resource limit is
+    // $3,000/$4,500, not the lower $2,250/$3,250 several aggregators repeat.
+    question: "Does North Dakota have an asset or resource limit for SNAP?",
+    state: "ND",
+    mustMention: "3,000",
+    mustDisclaim: true,
+  },
+  {
+    id: "nd-drug-felony-full-opt-out",
+    // Guards the flagship confirmation: ND fully opted out of the federal
+    // drug-felony ban via N.D. Cent. Code 50-06-05.1.
+    question: "I have a drug felony conviction — can I still get SNAP in North Dakota?",
+    state: "ND",
+    mustMention: "not",
+    mustDisclaim: true,
+  },
+  {
+    id: "nd-abawd-waiver-ended-corrects-secondary-source",
+    // Guards the flagship correction: the Rolette County/Turtle Mountain
+    // Reservation waiver ended 10/31/2025, contradicting a secondary source
+    // claiming an active statewide waiver through mid-2026.
+    question: "Is the SNAP work-requirement time limit currently waived anywhere in North Dakota?",
+    state: "ND",
+    mustMention: "no",
+    mustDisclaim: true,
+  },
+  {
+    id: "nd-abawd-tribal-exemption",
+    // Guards the tribal-disclosure finding: Indians/Urban Indians/California
+    // Indians (IHS-eligible) is a distinct ABAWD exemption category.
+    question: "Is there an ABAWD work-requirement exemption for tribal members in North Dakota?",
+    state: "ND",
+    mustDisclaim: true,
+  },
+  {
+    id: "nd-sua-mid-cycle-increase",
+    // Guards the structural finding: ND's SUA increased mid-fiscal-year
+    // (from $772 to $775, effective 4/1/2026), not just at the FFY start.
+    question: "What utility deduction can I get for SNAP in North Dakota?",
+    state: "ND",
+    mustMention: "775",
+    mustDisclaim: true,
+  },
+  {
+    id: "nd-restaurant-meals-program-not-available",
+    question: "Does North Dakota have a Restaurant Meals Program for SNAP?",
+    state: "ND",
+    mustMention: "not",
+    mustDisclaim: true,
+  },
+  {
+    id: "nd-food-restriction-waiver-not-yet-effective",
+    // Guards the time-sensitive flagship finding: the candy/soda/energy-drink
+    // restriction is NOT yet in effect (takes effect 9/1/2026).
+    question: "Can I buy candy or soda with SNAP in North Dakota?",
+    state: "ND",
+    mustMention: "September",
+    mustDisclaim: true,
+  },
+  {
+    id: "nd-how-to-apply-self-service-portal",
+    question: "How do I apply for SNAP in North Dakota?",
+    state: "ND",
+    mustDisclaim: true,
+  },
+  {
+    id: "nd-federal-benefit",
+    question: "How is the monthly SNAP benefit amount calculated from net income in North Dakota?",
+    state: "ND",
+    expectCitation: "273.10",
+    mustDisclaim: true,
+  },
+];
+
 /** Everything the live runner executes for Delaware. */
 export const DE_GOLD: AnswerExpectation[] = [
   {
@@ -4754,5 +4936,7 @@ export const ALL_GOLD: AnswerExpectation[] = [
   ...NH_GOLD,
   ...SD_GOLD,
   ...MT_GOLD,
+  ...RI_GOLD,
+  ...ND_GOLD,
   ...DE_GOLD,
 ];
