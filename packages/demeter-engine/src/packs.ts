@@ -35,6 +35,7 @@ import alPack from "./states/al/pack.json";
 import laPack from "./states/la/pack.json";
 import kyPack from "./states/ky/pack.json";
 import okPack from "./states/ok/pack.json";
+import arPack from "./states/ar/pack.json";
 
 export interface PackVerification {
   verified_on: string;
@@ -103,6 +104,7 @@ export const VERIFIED_STATES: PackMeta[] = [
   laPack,
   kyPack,
   okPack,
+  arPack,
 ].map(meta);
 
 export const VERIFIED_STATE_CODES: string[] = VERIFIED_STATES.map((s) => s.code);

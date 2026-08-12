@@ -1,0 +1,252 @@
+{
+  "_provenance": {
+    "note": "Arkansas SNAP curated supplements. Arkansas has NO existing packages/snap-rules StatePolicy entry and NO oracle-fixture coverage — a genuine blank slate, like North Carolina's, Ohio's, New Jersey's, Virginia's, Tennessee's, Indiana's, Missouri's, Maryland's, Colorado's, South Carolina's, Alabama's, Louisiana's, Kentucky's, and Oklahoma's prior corpus-only builds in this same roster. This pack is CORPUS-ONLY and does not touch packages/snap-rules or the oracle fixture. Drafted from a WebFetch retrieval of DHS's own full SNAP Certification Manual PDF and its own Appendix D/Exhibits A-B dollar-figure PDF (both retrieved via WebFetch after direct curl 403'd on every DHS host), plus a direct curl fetch of the Arkansas Bureau of Legislative Research's own emergency-rule filing reproducing Act 675 of 2023's enacted bill text in full.",
+    "extracted": "2026-08-12",
+    "source_fact_check": "WebFetch retrieval (after direct curl 403'd) of DHS's own SNAP Certification Manual (4.8MB PDF, converted with pdftotext -layout, read in full for ABAWD/RTW §§ 3100-3502, categorical-eligibility §§ 1919-1924, resources §§ 4300-4870, deductions §§ 6200-6600, expedited/processing §§ 8500/9100-9200, certification periods § 3320/6521); WebFetch retrieval (after direct curl 403'd) of DHS's own Appendix D/Exhibits A-B dollar-figure PDF (effective 10/1/2025, FFY2026 figures); direct curl fetch of arkleg.state.ar.us's emergency-rule filing reproducing Act 675 of 2023 (SB306)'s own enacted statutory text in full; WebFetch cross-check of FindLaw's current-code mirror of Ark. Code § 20-76-409; direct curl fetch of USDA FNS's current Restaurant Meals Program state list; post-draft adversarial refute pass; findings and gaps recorded in PROVENANCE.md",
+    "access_note": "Every DHS-hosted PDF this pack attempted returned a clean HTTP 403 to direct curl with a browser User-Agent — a genuine, disclosed access barrier for Arkansas's PRIMARY policy-manual publisher, resolved by fetching the SAME PDFs via WebFetch instead (which succeeded on every DHS document attempted), not by substituting a lower-quality secondary source. Justia's Arkansas Code mirror also 403'd, the now-familiar Justia-block pattern this roster has documented repeatedly — resolved via FindLaw's current-code mirror instead. The Arkansas Bureau of Legislative Research's own emergency-rule filing (a different host, arkleg.state.ar.us) returned a clean HTTP 200 to direct curl with no barrier at all, and was this pack's single richest primary source — it reproduces Act 675 of 2023's enacted bill text verbatim. See PROVENANCE.md Findings 0-5."
+  },
+  "supplements": [
+    {
+      "key": "program-identity",
+      "kind": "supplement",
+      "terms": [
+        "how to apply",
+        "where do i apply",
+        "apply for snap",
+        "access arkansas",
+        "who runs",
+        "what agency",
+        "administers",
+        "arkansas dhs",
+        "department of human services",
+        "division of county operations",
+        "ebt card",
+        "food stamps"
+      ],
+      "citation": "Arkansas DHS SNAP Certification Manual §§ 100-121; Access Arkansas portal (access.arkansas.gov)",
+      "heading": "Arkansas calls its program plainly \"SNAP\" — and this pack found NO distinctive branded EBT card name, unlike this roster's Oklahoma and Louisiana findings",
+      "text": "Arkansas has no distinctive local program brand like CalFresh (CA) or Basic Food (WA) — it is called SNAP or, historically, \"food stamps.\" The administering agency is the Arkansas Department of Human Services (DHS), specifically its Division of County Operations (DCO), which runs SNAP through a network of local DHS county offices — Arkansas is state-administered, not county-administered like CA/NY/MN/WI/VA. Applicants apply through Access Arkansas (access.arkansas.gov), by mail, by fax, or in person. This pack specifically searched for a distinctive branded EBT card name (checking the pattern this roster's Oklahoma pack found — the \"ACCESS Oklahoma Card\" — and Louisiana's confirmed \"Louisiana Purchase Card\") and found NONE for Arkansas: DHS's own EBT materials refer to it plainly as an \"EBT card\" or \"electronic benefits transfer (EBT) card,\" routed through the Quest® network for point-of-sale and ATM transactions. This pack does not assert a distinctive card name it could not verify — the same evidentiary standard this roster's Kentucky pack applied when it rejected an unverified card-name claim from a secondary source.",
+      "source_url": "https://humanservices.arkansas.gov/divisions-shared-services/county-operations/supplemental-nutrition-assistance-snap/ebt/"
+    },
+    {
+      "key": "bbce-resource-only-statutory-cap",
+      "kind": "supplement",
+      "terms": [
+        "categorical eligibility",
+        "categorically eligible",
+        "broad based categorical eligibility",
+        "broadbased categorical eligibility",
+        "bbce",
+        "asset limit increase",
+        "resource limit increase",
+        "$5,500",
+        "5500",
+        "income limit",
+        "200 percent",
+        "200%",
+        "over income",
+        "make too much"
+      ],
+      "citation": "Arkansas Code § 20-76-115 (added by Act 675 of 2023, SB306) — statutorily bars income-based BBCE absent a federal waiver, and caps resource-based categorical-eligibility exemption to a temporary $5,500 asset limit for up to 12 months once every 5 years; SNAP Certification Manual § 1919 (Broad Based Categorically Eligible Household, dated 04/01/2025) and Appendix D",
+      "heading": "FLAGSHIP STRUCTURAL FINDING: Arkansas law BARS income-based BBCE and caps its resource-based categorical-eligibility exemption to a TEMPORARY $5,500 limit, once every 5 years — a genuine, legislatively-imposed departure from this roster's other BBCE-equivalent packs",
+      "text": "Most SNAP-corpus states in this roster document a BBCE pathway that removes BOTH the resource test AND raises the gross income ceiling (commonly to 200% FPL). Arkansas does neither in the way most states do, and this pack found the reason is a direct STATE LAW, not merely a policy choice DHS could reverse administratively. Arkansas Code § 20-76-115, added by Act 675 of 2023 (Senate Bill 306, read in full from the Arkansas Bureau of Legislative Research's own emergency-rule filing, which reproduces the Act's enacted text), states in relevant part: unless required by federal law, DHS 'shall not... [a]pply gross income standards for food assistance higher than the standards specified in 7 U.S.C. § 2014(c)' (the plain federal 130% FPL) NOR 'grant categorical eligibility that exempts households from the gross income standard... for any noncash, in-kind, or other benefit' UNLESS DHS separately obtains a federal waiver from USDA. Separately, the Act directs DHS to request (and DHS did obtain, per its own April 2025 emergency-rule filing) a waiver exempting SNAP enrollees from the FEDERAL RESOURCE limit — but caps the resulting benefit tightly: 'If an enrolled household is determined... to have accumulated countable assets greater than the federal resource limit, [DHS] shall grant a TEMPORARY increase of the asset limit for that household... for a period of up to one (1) year,' set at $5,500 (Ark. Code § 20-76-115(b)(2)(B)), and 'no more than one (1) time every five (5) years' (§ 20-76-115(b)(2)(C)). Arkansas's own SNAP Certification Manual § 1919 (dated 04/01/2025, implementing the Act) confirms this operationally: 'Broad Based Categorically Eligibility applies to all SNAP households that receive a non-cash TANF or Maintenance of Effort benefit... This allows the resource limit for all households to be increased... This increase is permitted for a twelve (12)-month period and can only be granted once every five (5) years.' This is a genuinely different, and more restrictive, structural shape than every other BBCE-equivalent pack this roster has built: Arkansas's version is TEMPORARY, RESOURCE-ONLY, and legislatively capped, with income-based BBCE affirmatively barred by state law absent a separate federal waiver this pack found no evidence DHS has obtained. Arkansas's ordinary (non-BBCE, non-SSI/TANF-categorical) household is instead subject to the plain federal 130% FPL gross income test and 100% FPL net income test (Appendix D Exhibit A: $1,696/month gross for a household of 1, $3,483 for a household of 4) — matching the same national FFY2026 figures this roster's other packs have independently confirmed.",
+      "source_url": "https://arkleg.state.ar.us/Home/FTPDocument?path=/Assembly/Meeting+Attachments/045/27347/Exhibit+B.01+-+DHS+DCO+Emergency+Rule+-+Supplemental+Nutrition+Assistance+Program+updates+pursuant+to+Act+675+of+2023+3.31.2025.pdf"
+    },
+    {
+      "key": "categorical-eligibility-narrow-ssi-tanf",
+      "kind": "supplement",
+      "terms": [
+        "ssi",
+        "tanf",
+        "tea cash assistance",
+        "categorically eligible household",
+        "automatic eligibility",
+        "cash assistance"
+      ],
+      "citation": "SNAP Certification Manual §§ 1920-1924 (Categorically Eligible Household) — SSI and/or TEA (Transitional Employment Assistance, Arkansas's TANF program) recipients only; § 1921 (Financial Eligibility Factors) confirms neither gross nor net income limits apply to this narrower category",
+      "heading": "Arkansas's ORDINARY categorical eligibility (distinct from the Act 675 BBCE track above) is narrow — SSI and/or TEA cash-assistance recipients only, no 2-1-1-style information/referral pathway",
+      "text": "Separate from the Act 675 BBCE track (see bbce-resource-only-statutory-cap), Arkansas's SNAP Certification Manual §§ 1920-1924 define an ordinary categorically eligible household as one where ALL members receive (or are authorized to receive) SSI, or at least one member receives (or is authorized to receive) Transitional Employment Assistance (TEA), Arkansas's TANF cash-assistance program. Manual § 1921 confirms these households 'are not subject to the resource and income limitations of [SNAP]... have neither gross nor net income limits' (income is still verified for benefit-amount purposes). This is a NARROWER categorical-eligibility gateway than this roster's Oklahoma pack found (which additionally recognizes a '2-1-1 Oklahoma' information/referral pathway) — this pack found no equivalent non-cash information/referral track for Arkansas's ordinary categorical eligibility, only SSI and/or TEA cash receipt. A household cannot be classified as categorically eligible if the entire household is institutionalized in a non-qualifying facility, or if any member is disqualified for an intentional program violation (Manual § 1920).",
+      "source_url": "https://humanservices.arkansas.gov/wp-content/uploads/Supplemental-Nutrition-Assistance-Program-Policy-Manual.pdf"
+    },
+    {
+      "key": "asset-rule",
+      "kind": "supplement",
+      "terms": [
+        "asset limit",
+        "asset test",
+        "resource limit",
+        "resource test",
+        "resources",
+        "savings",
+        "savings limit",
+        "bank account",
+        "vehicle",
+        "car count",
+        "does my car count",
+        "second car",
+        "truck",
+        "lottery",
+        "gambling"
+      ],
+      "citation": "Appendix D (effective 10/1/2025) — Regular households $3,000; households with a member 60+ or disabled $4,500; TEMPORARY BBCE resource limit $5,500 for up to 12 months once every 5 years (see bbce-resource-only-statutory-cap); SNAP Certification Manual § 4840 (Excluded Vehicles) — at least one vehicle per household is excluded regardless of licensing",
+      "heading": "Arkansas excludes at least ONE vehicle per household outright — a household's single vehicle never counts as a resource, regardless of value or whether it's licensed",
+      "text": "Arkansas's standard resource limits (Appendix D, effective October 1, 2025) are $3,000 for a household with no member aged 60 or older or disabled, and $4,500 for a household that includes one — matching the current national FFY2026 figure this roster's Oklahoma, Kentucky, Louisiana, Alabama, Missouri, Maryland, and Colorado packs have each independently confirmed. A household that is SSI/TEA categorically eligible has BOTH tests waived entirely (see categorical-eligibility-narrow-ssi-tanf); a household using the temporary Act 675 BBCE track instead gets a raised $5,500 ceiling for up to 12 months once every 5 years (see bbce-resource-only-statutory-cap). On vehicles specifically, Manual § 4840 states plainly: 'Each SNAP household may exclude at least one vehicle, licensed or unlicensed. If a household owns only one vehicle, that vehicle will be excluded' outright, with no value cap. A household's SECOND or additional vehicle may also be excluded if it is necessary for a household member's employment, is an income-producing vehicle, is used as the household's residence, or is used to transport a household member with a physical disability (§ 4840) — this pack confirms a genuine, directly-read blanket first-vehicle exclusion, matching the pattern this roster's Kentucky and Alabama packs also document, rather than leaving it unverified the way this roster's Oklahoma pack disclosed it could not confirm. The elderly/disabled resource limit ($4,500) also doubles as the substantial lottery/gambling-winnings disqualification threshold (Appendix D) — a household is disqualified once its winnings reach that figure.",
+      "source_url": "https://humanservices.arkansas.gov/wp-content/uploads/SNAP-Appendices-10.01.2025.pdf"
+    },
+    {
+      "key": "drug-felony-full-opt-out",
+      "kind": "supplement",
+      "terms": [
+        "drug felony",
+        "felony conviction",
+        "criminal record",
+        "drug conviction",
+        "lifetime ban",
+        "fleeing felon",
+        "probation",
+        "parole",
+        "controlled substance",
+        "marijuana",
+        "cannabis"
+      ],
+      "citation": "Arkansas Code § 20-76-409 (Opt out), current version, confirmed via FindLaw's current-code mirror — \"The State of Arkansas opts out of Section 115 of the Personal Responsibility and Work Opportunity Reconciliation Act of 1996\" (21 U.S.C. § 862a)",
+      "heading": "CONFIRMATION, directly grounded: Arkansas FULLY opted out of the federal drug-felony SNAP ban, and this pack read the statute's own plain-language opt-out text directly",
+      "text": "21 U.S.C. § 862a(a)(2) sets a federal default: anyone convicted of a state or federal felony for possessing, using, or distributing a controlled substance is permanently ineligible for SNAP unless a state opts out or modifies the ban under § 862a(d)(1). Arkansas is among the minority of states that FULLY opted out. This pack read Arkansas Code § 20-76-409's own current text directly (via FindLaw's current-code mirror, after Justia's own mirror 403'd — the now-familiar Justia-block pattern this roster has documented repeatedly): 'The State of Arkansas opts out of Section 115 of the Personal Responsibility and Work Opportunity Reconciliation Act of 1996, Pub. L. No. 104-193' — Section 115 of PRWORA is the specific federal provision (codified as 21 U.S.C. § 862a) that created the drug-felony SNAP/TANF ban in the first place, so an unconditional opt-out of Section 115 is a full opt-out, not a partial modification. This pack cross-checked the conclusion against the SNAP Certification Manual's own current disqualification-category provisions (fleeing felon, intentional program violation, work-registration noncompliance, substantial lottery/gambling winnings) and found no drug-felony disqualification category anywhere in the manual, independently corroborating the statute's plain opt-out language. WebSearch cross-checks (Collateral Consequences Resource Center; multiple secondary state-survey trackers) independently confirm Arkansas fully lifted its SNAP/TANF drug-felony restrictions, generally dated to around 2017 — consistent with, though this pack relies primarily on, the directly-read current statutory text rather than the secondary sources alone.",
+      "source_url": "https://codes.findlaw.com/ar/title-20-public-health-and-welfare/ar-code-sect-20-76-409.html"
+    },
+    {
+      "key": "shelter-utility-deductions",
+      "kind": "supplement",
+      "terms": [
+        "utility allowance",
+        "utility standard",
+        "shelter deduction",
+        "excess shelter",
+        "standard utility allowance",
+        "basic utility allowance",
+        "telephone allowance",
+        "standard deduction",
+        "sua",
+        "bua",
+        "homeless",
+        "homeless shelter deduction"
+      ],
+      "citation": "Appendix D (effective 10/1/2025) — Standard Deduction $209 (household sizes 1-3), $223 (4), $261 (5), $299 (6+); Standard Utility Allowance (SUA) $342; Basic Utility Allowance (BUA) $274; Telephone Standard $51; maximum (capped) excess shelter deduction $744 (without an elderly/disabled member); Homeless Living Allowance (HLA) $198.99",
+      "heading": "Arkansas's SUA ($342) and BUA ($274) are distinct, state-specific dollar figures, notably lower than this roster's Oklahoma ($412/$354) and Kentucky ($388/$331) figures",
+      "text": "Arkansas's Standard Deduction (Appendix D, effective October 1, 2025) is $209 for household sizes 1-3, $223 for 4, $261 for 5, $299 for 6 or more — matching the current national FFY2026 figures this roster's Oklahoma, Kentucky, Louisiana, Alabama, and South Carolina packs independently confirmed. Arkansas's Standard Utility Allowance is $342/month for a household incurring heating or cooling costs; a household billed for utilities but not heating/cooling instead uses the Basic Utility Allowance, $274/month; a household whose only utility expense is a telephone gets the standalone Telephone Standard, $51/month. These SUA/BUA/telephone figures are genuinely state-specific — every state calculates its own based on local utility costs, so Arkansas's $342/$274/$51 is a distinct, and notably LOWER, set of numbers than this roster's Oklahoma ($412/$354/$49) and Kentucky ($388/$331/$64) figures, worth stating plainly rather than assuming Arkansas mirrors its regional neighbors. Arkansas's capped excess shelter deduction is $744/month for households without an elderly or disabled member (uncapped for households WITH one) — matching the same national FFY2026 figure this roster's Oklahoma, Kentucky, Louisiana, and Alabama packs also confirmed. Arkansas's Homeless Living Allowance is $198.99/month, effectively identical to Kentucky's $199 and Louisiana's $198.99, both derived from the same national formula.",
+      "source_url": "https://humanservices.arkansas.gov/wp-content/uploads/SNAP-Appendices-10.01.2025.pdf"
+    },
+    {
+      "key": "medical-deduction",
+      "kind": "supplement",
+      "terms": [
+        "medical deduction",
+        "medical expense",
+        "medical expenses",
+        "medical bills",
+        "elderly deduction",
+        "disability deduction",
+        "excess medical",
+        "standard medical deduction"
+      ],
+      "citation": "SNAP Certification Manual § 6520 (Medical Standard or Actual Expenses); Appendix D — Standard Medical Deduction (SMD) $190 (dated 10/01/2024, one FFY cycle OLDER than the surrounding Appendix D dollar figures, all dated 10/01/2025 — see freshness.json)",
+      "heading": "Arkansas DOES offer a flat Standard Medical Deduction (SMD) shortcut — $190 — but this specific figure's own dated revision LAGS the rest of Appendix D by a full FFY cycle, a disclosed possible staleness trap",
+      "text": "Manual § 6520 confirms Arkansas offers households with allowable medical expenses (incurred by a member aged 60+ or disabled) a choice: a flat Standard Medical Deduction, or their actual verified expenses. To claim the standard, expenses must be at least $35.01/month; if total qualifying expenses are LESS than $138, the household is simply assigned the $190 SMD if they attest to and verify all medical costs; if expenses exceed $138, the household may choose either the $190 standard or their actual verified expenses. This places Arkansas in the same flat-shortcut camp this roster's Kentucky ($137), Louisiana ($161), South Carolina ($175), Missouri ($135), Colorado ($165), and Alabama ($185) packs each document with their own distinct figure — a genuine CONTRAST with this roster's Oklahoma and Maryland/Indiana findings (no flat shortcut at all, actual-expense-only). A distinct, disclosed staleness flag this pack found: Appendix D's own effective-date column lists the SMD figure as '10/01/2024' while every OTHER dollar figure in the same Appendix D table (standard deduction, SUA, BUA, telephone standard, excess shelter cap, homeless allowance) is dated '10/01/2025' — one full FFY cycle newer. This pack does not know whether this reflects an intentional SMD-freeze (the federal SMD figure genuinely does not always move every FFY cycle) or a simple oversight in DHS's own document, and discloses it rather than silently treating it as current-cycle-verified the same way every other figure on the same page is (see freshness.json).",
+      "source_url": "https://humanservices.arkansas.gov/wp-content/uploads/SNAP-Appendices-10.01.2025.pdf"
+    },
+    {
+      "key": "abawd-work-requirement",
+      "kind": "supplement",
+      "terms": [
+        "abawd",
+        "able bodied adult",
+        "work requirement",
+        "3 month limit",
+        "work registration",
+        "waiver",
+        "waived area",
+        "rural county",
+        "time limit",
+        "little rock",
+        "fayetteville"
+      ],
+      "citation": "SNAP Certification Manual § 3100 (Work Registration Requirements Summary, dated 01/01/2024) — states the pre-OBBBA Fiscal Responsibility Act incremental table, topping out at exempt-at-55; § 3501 (Waivers, dated 01/01/17) — \"the state of Arkansas is currently not under a waiver\" as of that 2017 revision",
+      "heading": "FLAGSHIP FINDING, TIME-SENSITIVE: Arkansas's own ABAWD manual sections are stale on TWO separate axes — the age-exemption table (pre-OBBBA, tops at 55) and the waiver-status statement itself (unrevised since January 2017)",
+      "text": "An able-bodied adult without dependents (ABAWD) is limited to three countable months of SNAP within a 36-month period absent 80 hours/month (averaged) of a qualifying work activity or an exemption (Manual § 3100). This pack found Arkansas's own manual sections carry TWO separate, independently disclosed staleness issues. FIRST, the age table: Manual § 3100 (dated 'SNAP Manual 01/01/2024') lists the 2023 federal Fiscal Responsibility Act's own incremental phase-in — 'Effective September 1, 2023, the ABAWD time limit increases to age fifty (50)... Effective October 1, 2023... fifty-two (52)... Effective October 1, 2024... fifty-four (54)... Effective October 1, 2025... fifty-five (55)' (i.e., subject through age 54) — with NO mention anywhere in the manual of the One Big Beautiful Bill Act (OBBBA), signed July 4, 2025, which raised the ABAWD age ceiling to 64 EFFECTIVE IMMEDIATELY upon enactment (narrowing the caregiver exemption from under-18 to under-14 children), with states directed to complete phase-in no later than June 2026 — well before this pack's August 12, 2026 fetch date. This pack treats OBBBA's 18-64 standard as the operative federal floor regardless of Arkansas's own stale 55 figure. SECOND, and independently: Manual § 3501 (Waivers) is dated 'SNAP Manual 01/01/17' — the OLDEST individually-dated section citation this pack found anywhere in Arkansas's manual, roughly nine years unrevised despite the manual's own cover page showing a 07/01/2026 overall revision date — and states plainly: 'The state of Arkansas is currently not under a waiver and RTW applies as of January 1, 2016.' This pack found no more recent Arkansas-specific ABAWD waiver statement anywhere in DHS's own manual, and did not independently verify current county-level unemployment data against USDA FNS's own waiver-eligibility criteria (10% unemployment threshold) — this pack states what Arkansas's own primary source says, discloses that the source itself is nine years stale, and does NOT assert current waiver status with full confidence (see freshness.json). Other ABAWD exemptions remain ordinary: medically unable to work, a household member under 14 (post-OBBBA) or 18 (per Arkansas's own stale text), pregnancy, homelessness, veteran status, or aging out of foster care under 24.",
+      "source_url": "https://humanservices.arkansas.gov/wp-content/uploads/Supplemental-Nutrition-Assistance-Program-Policy-Manual.pdf"
+    },
+    {
+      "key": "restaurant-meals-homeless-only",
+      "kind": "supplement",
+      "terms": [
+        "restaurant meals program",
+        "rmp",
+        "eat at a restaurant",
+        "use ebt at restaurant",
+        "hot meal",
+        "hot food",
+        "prepared food",
+        "hot foods waiver",
+        "communal dining"
+      ],
+      "citation": "USDA FNS's current Restaurant Meals Program state list: Arizona, California, Illinois (Cook/Franklin Counties), Maryland, Massachusetts, Michigan, New York, Rhode Island, Virginia — Arkansas absent; SNAP Certification Manual §§ 120-121 (Meal Delivery Services / Communal Dining Facilities) — a narrower, contract-based option limited to homeless, elderly, and SSI recipients",
+      "heading": "GENUINE STRUCTURAL NUANCE this pack found: Arkansas does NOT operate USDA's Restaurant Meals Program, but DOES allow homeless SNAP recipients to buy meals from DHS-CONTRACTED restaurants under a separate, narrower federal option",
+      "text": "The Restaurant Meals Program (RMP) is a state OPTION under 7 CFR 274.7(g) letting elderly (60+), disabled, and homeless SNAP recipients buy prepared, hot meals from ANY authorized restaurant with EBT year-round. USDA FNS's own current RMP state list (fetched directly, clean HTTP 200) names Arizona, California, Illinois (Cook and Franklin Counties only), Maryland, Massachusetts, Michigan, New York, Rhode Island, and Virginia — Arkansas is ABSENT, and this pack found no secondary source claiming otherwise. This pack found a genuinely DIFFERENT, narrower federal option Arkansas DOES use, worth distinguishing carefully rather than conflating with RMP: Manual §§ 120-121 (Communal Dining Facilities) permit 'households composed of homeless individuals' to 'purchase meals from restaurants that contract with the Arkansas Department of Human Services to supply meals to the homeless at an already low or reduced price,' and separately permit contracted meal-delivery services for elderly (60+) and SSI-recipient households. These restaurants must independently be approved by FNS to accept SNAP benefits, and must sign a SPECIFIC CONTRACT with DHS (identifying which population it serves) — a materially narrower mechanism than the full RMP: only DHS-CONTRACTED restaurants qualify (not any authorized retailer), and the manual's own text ties it to a reduced, negotiated price rather than ordinary menu pricing. This pack states both facts precisely rather than answering a plain 'can I use EBT at a restaurant' question with a flat 'no' that would understate Arkansas's homeless-specific option, or a flat 'yes' that would overstate it as equivalent to the nine-state RMP.",
+      "source_url": "https://www.fns.usda.gov/snap/retailer/restaurant-meals-program"
+    },
+    {
+      "key": "tribal-fdpir",
+      "kind": "supplement",
+      "terms": [
+        "tribal",
+        "reservation",
+        "indian",
+        "native american",
+        "fdpir",
+        "food distribution program"
+      ],
+      "citation": "Arkansas Heritage (state agency); USDA FNS FDPIR program-contacts list — Arkansas has no federally recognized tribal reservations located within the state today",
+      "heading": "CONFIRMATION: unlike this roster's Oklahoma pack, Arkansas has NO federally recognized tribal reservations today, and no in-state FDPIR program to check",
+      "text": "This pack specifically checked, given this roster's build guidance and the significant tribal history in the broader region, whether Arkansas has any current federally recognized tribal land or a Food Distribution Program on Indian Reservations (FDPIR) presence requiring SNAP/FDPIR mutual-exclusivity disclosure the way this roster's Oklahoma pack documents. It found none: most Native American nations historically present in Arkansas (Quapaw, Caddo, Osage, and later Cherokee) were forced out during the Indian Removals of the 1800s, relocated primarily to what is now Oklahoma, and Arkansas has no federally recognized tribal reservation located within the state today. This is a genuine, checked-for structural CONTRAST with Oklahoma (39 federally recognized tribal nations, several operating FDPIR) worth stating plainly rather than silently assuming Arkansas has a similar tribal-SNAP dimension it does not.",
+      "source_url": "https://www.arkansasheritage.com/arkansas-preservation/programs/review-compliance-program/federally-recognized-tribes"
+    },
+    {
+      "key": "expedited-service",
+      "kind": "supplement",
+      "terms": [
+        "expedited",
+        "expedited service",
+        "emergency",
+        "emergency food stamps",
+        "fast benefits",
+        "how fast",
+        "urgent",
+        "same day",
+        "7 day"
+      ],
+      "citation": "SNAP Certification Manual § 9100 (Expedited Case Actions Summary) and § 9200 (Households Entitled to Expedited Service) — plain federal expedited-eligibility criteria and the plain federal 7-calendar-day processing ceiling; § 8500 (Normal Processing Standards) — 30 calendar days",
+      "heading": "Arkansas's expedited-service ceiling is the plain federal 7 calendar days — Arkansas does NOT shorten it the way this roster's Kentucky pack found Kentucky does (5 days)",
+      "text": "A household qualifies for expedited service under the standard federal criteria (Manual § 9200): $100 or less in countable liquid resources AND less than $150 in gross monthly income; OR combined gross income and liquid resources less than the household's monthly rent/mortgage and utility costs; OR a destitute migrant/seasonal-farmworker household. When a household qualifies, 'certain eligible households are entitled to receive [SNAP] benefits within seven calendar days of application' (Manual § 9100) — the plain federal ceiling, not an accelerated state-specific standard, a genuine contrast this pack found worth stating plainly against this roster's Kentucky pack, whose own internal processing standard (5 calendar days) exceeds the federal floor. Arkansas's ORDINARY (non-expedited) processing standard is the federal default: no later than 30 calendar days from the date a valid application is filed (Manual § 8500).",
+      "source_url": "https://humanservices.arkansas.gov/wp-content/uploads/Supplemental-Nutrition-Assistance-Program-Policy-Manual.pdf"
+    },
+    {
+      "key": "reporting-certification",
+      "kind": "supplement",
+      "terms": [
+        "certification period",
+        "approval period",
+        "recertification",
+        "redetermination",
+        "how long does snap last",
+        "how long does my snap approval last",
+        "how long does my approval last",
+        "redo",
+        "renew"
+      ],
+      "citation": "SNAP Certification Manual § 3320 (Individuals to be Registered for Work, Annual Review subsection) — a household composed entirely of members 60+/disabled WITH minor dependents 15 or younger, and no earned income or child support deduction, may be assigned a 36-month certification period; ordinary certification is up to 12 months",
+      "heading": "Arkansas's ordinary certification period is up to 12 months, with a NARROWLY-GATED 36-month extension — only for all-elderly/disabled households that ALSO have minor dependents 15 or younger and no earnings or child support deduction",
+      "text": "Arkansas's ordinary SNAP certification period is up to 12 months (Manual § 6521 references 'certification period longer than twelve (12) months' as the exception, implying 12 months is the default ceiling for most households). This pack specifically checked for a tri-tier structure analogous to Kentucky's (4/12/36 months) and found Arkansas has an EXTENDED-certification provision, but with a MORE NARROWLY GATED condition than Kentucky's: Manual § 3320 states 'a household composed entirely of members aged 60 or older and/or individuals living with disabilities WITH MINOR DEPENDENT CHILDREN AGE 15 OR YOUNGER may also be assigned a 36-month certification period if no household member has earnings or a child support deduction' — the minor-dependent-child requirement is a genuine, distinctive Arkansas-specific gate this pack did not find stated the same way in this roster's Kentucky or Oklahoma packs (Kentucky's 36-month tier applies to all-elderly/no-earned-income households WITHOUT a minor-dependent-child requirement; Oklahoma's manual states a flat 12-month standard with no tri-tier structure at all). A household including an individual who should be work-registered cannot be certified for the full 36 months and must have its certification period shortened accordingly (Manual § 3320 Note).",
+      "source_url": "https://humanservices.arkansas.gov/wp-content/uploads/Supplemental-Nutrition-Assistance-Program-Policy-Manual.pdf"
+    }
+  ]
+}
