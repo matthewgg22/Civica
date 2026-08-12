@@ -1,0 +1,289 @@
+{
+  "_provenance": {
+    "note": "Kentucky SNAP curated supplements. Kentucky has NO existing packages/snap-rules StatePolicy entry and NO oracle-fixture coverage — a genuine blank slate, like North Carolina's, Ohio's, New Jersey's, Virginia's, Tennessee's, Indiana's, Missouri's, Maryland's, Colorado's, South Carolina's, Alabama's, and Louisiana's prior corpus-only builds in this same roster. This pack is CORPUS-ONLY and does not touch packages/snap-rules or the oracle fixture. Drafted from direct curl fetches (browser User-Agent) of Kentucky's Division of Family Support Operation Manual Volume 2 (the actual SNAP manual — NOT Volume III, which this pack independently verified is Kentucky's KTAP/TANF manual) and Volume IIA (SNAP Work Requirements/ABAWD).",
+    "extracted": "2026-08-12",
+    "source_fact_check": "direct curl fetch (browser UA) of chfs.ky.gov/agencies/dcbs/dfs/Documents/OMVOLII.pdf (197pp, current through R. 8/1/26) and OMVOLIIA.pdf (SNAP Work Requirements, current through R. 10/25/25), converted with pdftotext -layout, all cited MS-numbered sections cross-referenced against their own section headers and revision dates + direct curl fetch of chfs.ky.gov's current SNAP consumer page + direct curl fetch and full read of KRS 205.2005 (Kentucky's own legislature.ky.gov statute database, no access barrier) + direct curl fetch of USDA FNA's current Restaurant Meals Program list and Kentucky Disaster Nutrition Assistance page + direct curl fetch of ABAWDMap.us's Kentucky entry + WebSearch cross-checks + post-draft adversarial refute pass; findings and gaps recorded in PROVENANCE.md",
+    "access_note": "chfs.ky.gov, apps.legislature.ky.gov, and benefind.ky.gov all returned clean HTTP 200 to direct curl with a browser User-Agent on every fetch attempt — no login wall, no rate limiting, and (distinctively for this roster) no 403 on the drug-felony opt-out statute itself. The genuine access complication this pack found was not a blocked fetch but a STRUCTURAL MISCONCEPTION going into the build: Kentucky's SNAP manual is Volume 2, not \"Volume III\" — this pack fetched and read Volume III directly to confirm it is Kentucky's KTAP (TANF) manual, a different program. This pack also found Kentucky's own consumer SNAP page states resource limits one COLA cycle stale relative to its own current manual, two internal manual artifacts (dated 2010 and 2021) referencing a disqualification category the state's current lists no longer carry, and a live discrepancy between Kentucky's own current ABAWD county-waiver announcement and a third-party aggregator — see PROVENANCE.md Findings 1-4."
+  },
+  "supplements": [
+    {
+      "key": "program-identity",
+      "kind": "supplement",
+      "terms": [
+        "how to apply",
+        "where do i apply",
+        "apply for snap",
+        "kynect",
+        "benefind",
+        "who runs",
+        "what agency",
+        "administers",
+        "chfs",
+        "dcbs",
+        "cabinet for health and family services",
+        "department for community based services",
+        "division of family support",
+        "ebt card",
+        "food stamps"
+      ],
+      "citation": "KY DCBS Operation Manual, Volume 2 (chfs.ky.gov/agencies/dcbs/dfs/Documents/OMVOLII.pdf); KY consumer SNAP page (chfs.ky.gov/agencies/dcbs/dfs/nab/Pages/snap.aspx)",
+      "heading": "FLAGSHIP FINDING: Kentucky's SNAP manual is Volume 2 — Volume III is a DIFFERENT program (KTAP/TANF), a widely-assumed structural mismatch this pack independently disproved",
+      "text": "Kentucky calls its program plainly \"SNAP\" — there is no distinctive local brand like CalFresh (CA) or Basic Food (WA), and this pack found no evidence Kentucky's EBT card carries any special name either (see the ebt-card-name supplement below). More consequentially, this pack found and corrected a real structural misconception: Kentucky's Division of Family Support Operation Manual is organized into numbered volumes, and it is commonly assumed the SNAP manual is \"Volume III\" of that series. This pack fetched Volume III directly (chfs.ky.gov/agencies/dcbs/dfs/Documents/OMVOLIII.pdf) and found its own title page reads \"Kentucky Transitional Assistance Program (KTAP)\" — Kentucky's TANF cash-assistance program, an entirely separate program with its own eligibility rules, time limits, and work requirements (the companion Volume IIIA is the Kentucky Works Program, KTAP's work-activity component). Kentucky's actual, current SNAP manual is VOLUME 2 (\"Volume II — Supplemental Nutrition Assistance Program (SNAP)\"), current through revision 8/1/26 (OMTL-704), with ABAWD/work-requirement policy in a companion Volume IIA (\"SNAP Work Requirements\"). Kentucky is administered through a four-layer state hierarchy — the Cabinet for Health and Family Services (CHFS) → Department for Community Based Services (DCBS) → Division of Family Support (DFS) → Nutrition Assistance Branch (NAB) — with delivery through roughly 120 county-level Family Support offices (one per county; Kentucky is state-administered, not county-administered like CA/NY/MN/WI/VA). Applicants apply through the \"kynect benefits\" self-service portal, hosted at benefind.ky.gov — a rebrand from the portal's earlier name, \"benefind,\" that this pack found chfs.ky.gov's own current SNAP page has not caught up to: the page still displays and links the plain \"benefind.ky.gov\" text rather than the newer \"kynect benefits\" branding, even though the landing page itself now shows \"kynect benefits\" prominently.",
+      "source_url": "https://www.chfs.ky.gov/agencies/dcbs/dfs/Documents/OMVOLII.pdf"
+    },
+    {
+      "key": "ebt-card-name",
+      "kind": "supplement",
+      "terms": [
+        "ebt card name",
+        "what is my ebt card called",
+        "kentucky purchase card",
+        "special ebt card"
+      ],
+      "citation": "KY DCBS Operation Manual, Volume 2 (uses only the generic term \"EBT card\" throughout, 2,000+ instances, no distinctive branding); KY consumer SNAP page (same)",
+      "heading": "CORRECTION: Kentucky's EBT card has no distinctive branded name — a fabricated \"Kentucky Purchase EBT Card\" name surfaced in this pack's own initial research and was rejected after failing primary-source verification",
+      "text": "This pack's own initial research (a WebSearch AI-generated summary) confidently asserted Kentucky's EBT card is officially called the \"Kentucky Purchase EBT Card.\" This pack could not verify that name against ANY primary or credible secondary source: Kentucky's own policy manual (2,000+ occurrences of \"EBT card\" across Volume 2) and its consumer-facing SNAP page use only the plain, generic term \"EBT card\" throughout, with no distinctive state branding of any kind — unlike this roster's Louisiana pack, where the \"Louisiana Purchase Card\" name is genuinely and repeatedly used across multiple Kentucky-independent primary sources. This pack treats \"Kentucky Purchase EBT Card\" as an unverified, likely-fabricated name — probably pattern-matched by an AI summarizer off Louisiana's genuinely distinctive card name — and explicitly does NOT repeat it as fact. Kentucky's EBT processor portal is EBT Edge (ebtedge.com), consistent with a large multi-state EBT processor Kentucky shares with other states rather than a Kentucky-specific system.",
+      "source_url": "https://www.chfs.ky.gov/agencies/dcbs/dfs/nab/Pages/snap.aspx"
+    },
+    {
+      "key": "income-pathways",
+      "kind": "supplement",
+      "terms": [
+        "income limit",
+        "income limits",
+        "gross income limit",
+        "gross income ceiling",
+        "make too much",
+        "over income",
+        "bbce",
+        "broad based categorical eligibility",
+        "broadbased categorical eligibility",
+        "categorical eligibility",
+        "categorically eligible",
+        "expanded categorical eligibility",
+        "ece",
+        "200 percent",
+        "200%",
+        "130 percent",
+        "130%",
+        "poverty level",
+        "ssi",
+        "ktap",
+        "tanf"
+      ],
+      "citation": "KY OM Vol. 2, MS 3160 (Categorical Eligibility) and MS 5200 (Income Eligibility Scale), R. 6/30/26 and R. 10/1/25 — Expanded Categorical Eligibility (ECE) is a DUAL-TRACK gross income ceiling: 130% FPL for non-elderly/non-disabled ECE households (SAME as the ordinary ceiling), 200% FPL only for households in which ALL members are elderly or disabled",
+      "heading": "STRUCTURAL FEATURE worth flagging: Kentucky's ECE (its term for BBCE) raises the income ceiling ONLY for all-elderly/disabled households — for everyone else, ECE's real benefit is waiving the resource test, not raising the income limit",
+      "text": "Kentucky calls its categorical-eligibility mechanism \"Expanded Categorical Eligibility\" (ECE) rather than the more common \"Broad-Based Categorical Eligibility\" (BBCE) term this roster's other packs use, though the underlying federal authority (7 CFR 273.2(j)) is the same. Households that receive the TANF-funded informational sheet automatically generated at SNAP application are considered ECE UNLESS their income exceeds specific limits (MS 3160) — and those limits are genuinely dual-track, distinct from this roster's Louisiana pack (flat 200% FPL for every ECE household): (a) non-elderly/non-disabled ECE households must stay at or under 130% FPL — the SAME ceiling as an ordinary, non-ECE household; only (b) households in which ALL members are elderly or disabled get the elevated 200% FPL ceiling. Practically, this means ECE status does NOT raise the gross-income door for most Kentucky households — its real, universal benefit is that BOTH ECE tracks have the resource/asset test waived entirely (MS 3175: \"[ECE] households meet all eligibility factors listed above except for SSN information\" — resources are one of those waived factors), so a Kentucky household earning under 130% FPL gets ECE's asset-test waiver but gains no additional income headroom from ECE itself. Separately, \"Categorically Eligible\" (CE, not ECE) households — everyone in the household receiving KTAP, Kinship Care, WIN, FAST, or SSI — have BOTH the income AND resource tests waived entirely, with no percentage-of-FPL calculation at all. Current FFY2026 dollar figures (MS 5200, effective October 1, 2025): for a household of 1, 130% FPL is $1,696/month, 200% FPL is $2,610/month, and net income (100% FPL) is $1,305/month; for a household of 4, 130% FPL is $3,483/month and 200% FPL is $5,360/month. A distinct third income column, 165% FPL, applies specifically to the household members ASSISTING an elderly/disabled individual who cannot purchase/prepare their own food and is treated as a separate household (MS 5200(B)) — the 165% figure governs the assisting household's own eligibility, not the elderly/disabled individual's.",
+      "source_url": "https://www.chfs.ky.gov/agencies/dcbs/dfs/Documents/OMVOLII.pdf"
+    },
+    {
+      "key": "asset-rule",
+      "kind": "supplement",
+      "terms": [
+        "asset limit",
+        "asset test",
+        "resource limit",
+        "resource test",
+        "resources",
+        "savings",
+        "savings limit",
+        "bank account",
+        "vehicle",
+        "car count",
+        "does my car count",
+        "second car",
+        "truck",
+        "cryptocurrency",
+        "crowdfunding"
+      ],
+      "citation": "KY OM Vol. 2, MS 5000 (Resource Maximums, R. 10/1/24) — $3,000 standard / $4,500 households with a disabled member or a member age 60+ — applicable ONLY to households that are neither Categorically Eligible (CE) nor Expanded Categorically Eligible (ECE); MS 5050/5060 (Countable Resources, R. 5/15/25) omit vehicles from the countable-resources list entirely",
+      "heading": "CORRECTION: Kentucky's own current asset limits are $3,000/$4,500 (matching the national FFY2026 figure), NOT the $2,250/$3,500 Kentucky's own consumer-facing SNAP page currently states — a live, one-COLA-cycle-stale figure on the state's own website",
+      "text": "Kentucky's current policy manual (MS 5000, revised October 1, 2024) sets the SNAP resource limit at $3,000 for most households and $4,500 for households that include a member who is disabled or age 60 or older — matching the current national FFY2026 figure this roster's Louisiana, Alabama, Missouri, Maryland, and Colorado packs have each independently confirmed. This pack found Kentucky's OWN current consumer-facing SNAP page (chfs.ky.gov/agencies/dcbs/dfs/nab/Pages/snap.aspx, fetched the same day as the manual, clean HTTP 200, no stale-cache indicator) instead states \"$2,250 in cash and bank account assets\" and \"$3,500 in resources\" for households with a member 60+ — figures that match an OLDER federal COLA cycle (roughly FFY2019-2020), not the current one. This is a genuine, disclosed staleness finding on Kentucky's own primary source, not a fabricated contrast: this pack trusts the POLICY MANUAL's figures ($3,000/$4,500) as authoritative because MS 5000 carries an explicit, more recent revision date, and because the manual's numbers are internally consistent with the FFY2026 income-eligibility table (MS 5200) fetched the same day. Critically, this resource test only applies to households that are NEITHER Categorically Eligible NOR Expanded Categorically Eligible (see income-pathways) — both CE and ECE households have the resource test waived entirely, so most Kentucky SNAP households never reach this limit at all. Vehicles are excluded from Kentucky's countable-resources test entirely: MS 5050 and MS 5060 (the manual's own exhaustive lists of what IS and MAY be counted for non-CE/non-ECE households) never mention vehicles at all, and Kentucky's own consumer page states plainly, \"Vehicles are also excluded.\" Kentucky's countable-resources list (MS 5050) is otherwise ordinary — cash, checking/savings, CDs, stocks, bonds — but explicitly and distinctively adds cryptocurrency (\"such as Bitcoin, Doge, etc.\") and crowdfunding-platform balances (GoFundMe, Kickstarter, Indiegogo) as countable liquid resources, a level of specificity this pack did not find called out this explicitly in prior states' packs in this roster.",
+      "source_url": "https://www.chfs.ky.gov/agencies/dcbs/dfs/Documents/OMVOLII.pdf"
+    },
+    {
+      "key": "criminal-justice-disqualifications",
+      "kind": "supplement",
+      "terms": [
+        "drug felony",
+        "felony conviction",
+        "criminal record",
+        "drug conviction",
+        "lifetime ban",
+        "fleeing felon",
+        "probation",
+        "parole",
+        "controlled substance",
+        "marijuana",
+        "cannabis",
+        "child support arrears",
+        "child support disqualification"
+      ],
+      "citation": "KRS 205.2005 (effective June 29, 2021, 2021 Ky. Acts ch. 182, sec. 4) — exempts all individuals residing in Kentucky from the federal drug-felony SNAP/TANF ban under 21 U.S.C. sec. 862a(a); independently confirmed by KY OM Vol. 2's own CURRENT disqualification lists (MS 3455*, R. 8/1/26; MS 5520, R. 4/1/2021), which list no drug-felony disqualification category",
+      "heading": "FLAGSHIP FINDING, CONFIRMING the minority position with confidence: Kentucky FULLY opted out of the federal drug-felony SNAP ban in 2021",
+      "text": "21 U.S.C. 862a(a)(2) sets a federal default: anyone convicted of a state or federal felony for possessing, using, or distributing a controlled substance is permanently ineligible for SNAP unless a state opts out or modifies the ban under 862a(d)(1). Kentucky is among the minority of states that FULLY opted out: KRS 205.2005, effective June 29, 2021, states plainly, \"Pursuant to 21 U.S.C. sec. 862a(d)(1), all individuals residing in Kentucky shall be exempt from the application of 21 U.S.C. sec. 862a(a).\" This pack fetched and read the statute's own text directly from Kentucky's legislature.ky.gov database — no access barrier, a genuine departure from this roster's now-familiar Justia-403 pattern for equivalent statutes in other states. This full-opt-out reading is independently confirmed by Kentucky's own CURRENT disqualification lists (MS 3455*, revised August 1, 2026, and MS 5520, revised April 1, 2021): neither lists a drug-felony category among the reasons a member can be disqualified from SNAP (IPV, work-registration noncompliance, SSI cash-out, ineligible students/aliens, resource-transfer disqualification, duplicate participation, fleeing felon, and ABAWD noncompliance). DISCLOSED, NOT CONCEALED: this pack also found two internal manual artifacts that still reference drug-felony language — MS 5040 (\"RESOURCES - EXCLUDED\"), dated August 1, 2010, mentions a \"drug-related felony disqualification,\" and MS 7070 (\"HOUSEHOLD FAILURE TO COOPERATE\"), dated April 1, 2021, lists \"Drug felons\" among categories of household members who must cooperate with the agency. Both predate or narrowly precede KRS 205.2005's June 29, 2021 effective date and were not scrubbed afterward — stale artifacts inside an otherwise current (2025-2026-dated) manual, disclosed explicitly rather than treated as evidence of an active ban. SEPARATELY, and DISTINCTLY from the drug-felony question, Kentucky also runs an active CHILD-SUPPORT-ARREARAGE disqualification (MS 2380/2385) — see the child-support-arrears-disqualification supplement below.",
+      "source_url": "https://apps.legislature.ky.gov/law/statutes/statute.aspx?id=51439"
+    },
+    {
+      "key": "child-support-arrears-disqualification",
+      "kind": "supplement",
+      "terms": [
+        "owing back child support",
+        "owe back child support",
+        "owe child support",
+        "behind on child support",
+        "behind on my child support",
+        "child support arrears",
+        "child support arrearage",
+        "delinquent child support",
+        "delinquent on child support",
+        "unpaid child support",
+        "child support disqualification",
+        "child support debt",
+        "kases"
+      ],
+      "citation": "KY OM Vol. 2, MS 2380 (Child Support Disqualification Overview) and MS 2385 (Child Support Disqualification Exemptions), both R. 6/1/26 — individuals $500 or more delinquent on legally obligated child support are disqualified from SNAP until compliant or exempt, identified via an automated match against the Kentucky Automated Support and Enforcement System (KASES)",
+      "heading": "STRUCTURAL FEATURE worth flagging: Kentucky actively disqualifies SNAP members $500+ delinquent on child support THEY OWE — a distinct, optional state provision most SNAP guidance does not mention",
+      "text": "Kentucky DOES actively disqualify SNAP applicants/recipients who are $500 or more delinquent in legally-obligated child support payments (MS 2380/2385, both revised June 1, 2026) — an individual identified as delinquent through an automated match against the Kentucky Automated Support and Enforcement System (KASES) is disqualified until they meet their monthly court-ordered obligation on all court orders or qualify for a specific exemption verified by Family Support or Department of Child Support Services (DCSS) staff. Staff identify who must be disqualified strictly from the KASES Non-Payment Delinquent report — they are instructed NOT to make their own determination based on other system inquiries or self-reported information — and a disqualification is cured only when the individual appears on the corresponding KASES Non-Payment Cured Individuals report, or provides a verified exemption. This is an entirely different mechanism from the federal drug-felony ban (see the criminal-justice-disqualifications supplement) and is optional under federal welfare-reform authority (not every state adopts it) — not something this pack found explicitly documented in this roster's prior states' packs. It is also distinct from, and should not be confused with, Kentucky's ordinary child-support DEDUCTION for a household member who IS paying child support to someone outside the household (see the child-support-deduction supplement) — one is a benefit a payer can claim, the other is a disqualification for a payer who has fallen behind.",
+      "source_url": "https://www.chfs.ky.gov/agencies/dcbs/dfs/Documents/OMVOLII.pdf"
+    },
+    {
+      "key": "shelter-utility-deductions",
+      "kind": "supplement",
+      "terms": [
+        "utility allowance",
+        "utility standard",
+        "shelter deduction",
+        "excess shelter",
+        "standard utility allowance",
+        "basic utility allowance",
+        "telephone allowance",
+        "standard deduction",
+        "sua",
+        "bua",
+        "homeless",
+        "homeless shelter deduction"
+      ],
+      "citation": "KY OM Vol. 2, MS 5400 — Standard Deduction $209 (household sizes 1-3), $223 (4), $261 (5), $299 (6+); MS 5490 — Standard Utility Allowance (SUA) $388 flat for ALL household sizes; MS 5498 — Basic Utility Allowance (BUA) $331, Telephone Standard $64; MS 5400 — maximum (capped) excess shelter deduction $744, Homeless Shelter Deduction $199, all current per R. 10/1/25",
+      "heading": "Kentucky's SUA is a single flat figure ($388) regardless of household size, and its Homeless Shelter Deduction ($199) is offered explicitly IN LIEU OF the ordinary shelter deduction, not as an add-on",
+      "text": "Kentucky's Standard Deduction (MS 5400, effective October 1, 2025) is $209 for household sizes 1-3, $223 for 4, $261 for 5, $299 for 6 or more — matching the current national FFY2026 figures this roster's Louisiana, Alabama, and South Carolina packs independently confirmed. Kentucky's Standard Utility Allowance is $388/month, flat regardless of household size, for any household incurring a heating or cooling cost (MS 5490) — households billed for utilities but not heating/cooling use the Basic Utility Allowance instead, $331/month (MS 5498), and a household whose ONLY utility expense is a telephone gets the standalone Telephone Standard, $64/month. Kentucky's capped excess shelter deduction is $744/month for households without an elderly or disabled member (uncapped, using full shelter costs exceeding 50% of income after other deductions, for households WITH an elderly or disabled member) — matching the same national FFY2026 figure this roster's Louisiana and Alabama packs also confirmed. A distinctive Kentucky feature: the Homeless Shelter Deduction is $199/month, and Kentucky's manual (MS 5400(A)(7)) describes it explicitly as being used \"in lieu of shelter deductions\" — an alternative a homeless household chooses INSTEAD OF the ordinary (capped or uncapped) shelter deduction, not an add-on to it, structurally similar to this roster's Louisiana pack's own flat homeless-deduction mechanism but at a different dollar figure ($199 vs. Louisiana's $198.99 — functionally identical, both derived from the same current national formula).",
+      "source_url": "https://www.chfs.ky.gov/agencies/dcbs/dfs/Documents/OMVOLII.pdf"
+    },
+    {
+      "key": "medical-deduction",
+      "kind": "supplement",
+      "terms": [
+        "medical deduction",
+        "medical expense",
+        "medical expenses",
+        "medical bills",
+        "elderly deduction",
+        "disability deduction",
+        "excess medical",
+        "standard medical deduction"
+      ],
+      "citation": "KY OM Vol. 2, MS 5400 / MS 5410 — Standard Medical Deduction (SMD) of $137/month for verified allowable medical expenses of more than $35/month (and up to $172/month) incurred by a household member who is elderly (60+) or disabled; households with verified expenses over $172/month instead deduct the actual expense minus $35",
+      "heading": "Kentucky's flat medical-deduction shortcut is $137, a distinct dollar figure from Louisiana's $161, Alabama's $185, and South Carolina's $175",
+      "text": "MS 5400/5410 allow a deduction for verified out-of-pocket medical expenses exceeding $35/month incurred by a household member who is elderly (60 or older) or disabled (other household members' medical costs are not deductible, and the deduction does not apply if the member's SSI/RSDI is suspended specifically due to drug addiction or alcoholism, absent another qualifying reason). Kentucky's Standard Medical Deduction (SMD) is a flat $137/month for households with verified expenses greater than $35 but less than or equal to $172/month — MS 5400 derives this explicitly, \"$172-$35=$137.\" Households with verified expenses exceeding $172/month instead deduct their actual expense minus $35. This places Kentucky in the same flat-shortcut camp as this roster's Louisiana ($161), South Carolina ($175), Missouri ($135), Colorado ($165), and Alabama ($185) packs — each with its own distinct dollar figure — rather than Maryland's or Indiana's actual-expense-only mechanism. If a household member turns 60 during the initial certification month, medical (and shelter) deductions apply starting that month; if they turn 60 later in the certification period, it is handled as a reported case change. Persons under 60 who are certified for but not yet receiving disability benefits, or whose entire benefit is being recouped for a prior overpayment, are treated as disabled for this deduction's purposes.",
+      "source_url": "https://www.chfs.ky.gov/agencies/dcbs/dfs/Documents/OMVOLII.pdf"
+    },
+    {
+      "key": "child-support-deduction",
+      "kind": "supplement",
+      "terms": [
+        "child support",
+        "support payments",
+        "child support deduction",
+        "arrearage"
+      ],
+      "citation": "KY OM Vol. 2, MS 5510 — Child Support Deduction is listed as one of the ORDINARY § MS 5400-5599 Income Deductions, applied alongside the Standard, Earned Income, Medical, and Shelter deductions — not an income exclusion applied before the gross income test",
+      "heading": "Kentucky treats legally obligated child support PAID by a household member as an ordinary deduction — but SEPARATELY and distinctly, a member who is $500+ DELINQUENT on child support owed can be actively disqualified (see the criminal-justice-disqualifications supplement)",
+      "text": "MS 5510 (\"Child Support Deduction\") allows a deduction for legally obligated child support a household member pays, or expects to pay, to someone outside the household during the certification period — court-ordered or administratively-ordered, including payments made directly to the custodial parent/caretaker or through a third party such as a court, and payments toward a verified arrearage — but capped at the legally obligated amount (a household paying more than required in a given period is not credited for the excess unless it goes toward a verified arrearage). Alimony, spousal support, and property-settlement payments are NOT deductible under this provision. This deduction is listed within Kentucky's ordinary § MS 5400-5599 \"Deductions\" chapter, alongside the Standard, Earned Income, Medical, and Shelter deductions — an ordinary deduction applied AFTER gross income has already been established, per the standard net-income calculation structure (7 CFR 273.9(d)(5)), placing Kentucky in the same ordinary-deduction camp this roster's Louisiana, Maryland, Indiana, Tennessee, South Carolina, and Alabama packs document, rather than the income-exclusion mechanism (7 CFR 273.9(c)) this roster's Virginia, New Jersey, Illinois, Missouri, and Colorado packs document. Distinctively, and worth NOT confusing with this deduction: a Kentucky household member who OWES $500 or more in child support arrearages (rather than paying it) faces an active SNAP DISQUALIFICATION under MS 2380/2385 — an entirely separate mechanism from this ordinary deduction, described in the criminal-justice-disqualifications supplement.",
+      "source_url": "https://www.chfs.ky.gov/agencies/dcbs/dfs/Documents/OMVOLII.pdf"
+    },
+    {
+      "key": "abawd-work-requirement",
+      "kind": "supplement",
+      "terms": [
+        "abawd",
+        "able bodied adult",
+        "work requirement",
+        "3 month limit",
+        "work registration",
+        "waiver",
+        "waived area",
+        "rural county",
+        "eastern kentucky",
+        "appalachian",
+        "time limit",
+        "louisville",
+        "lexington"
+      ],
+      "citation": "KY OM Vol. 2A, MS 2000/2100/2105, individual sections R. 10/25/25; KY consumer SNAP page — Effective Nov. 1, 2025, ABAWDs in all 120 counties subject to work requirements; effective Dec. 1, 2025, Elliott, Lewis, Magoffin, Martin, and Wolfe counties (all in Kentucky's Appalachian east) exempt from ABAWD requirements",
+      "heading": "FLAGSHIP FINDING, TIME-SENSITIVE: Kentucky currently has a narrow, 5-county Appalachian ABAWD waiver — Elliott, Lewis, Magoffin, Martin, and Wolfe — that a third-party aggregator this pack checked does NOT reflect",
+      "text": "An able-bodied adult without dependents (ABAWD) is limited to three countable months of SNAP within a 36-month period absent 80 hours/month of a qualifying work activity or an exemption. Kentucky's own current consumer SNAP page (chfs.ky.gov, fetched directly, clean HTTP 200) states two dated facts in immediate sequence: \"Effective November 1, 2025, Able-Bodied Adults without Dependents (ABAWDs) in all 120 counties will be subject to the ABAWD requirements to remain eligible for SNAP benefits,\" followed immediately by, \"Effective December 1, 2025, the counties of Elliott, Lewis, Magoffin, Martin and Wolfe will be exempt from ABAWD requirements.\" All five named counties sit in Kentucky's Appalachian east — exactly the kind of high-unemployment, rural county cluster this roster's build guidance specifically flagged as worth checking. This pack found a genuine, disclosed CONFLICT worth surfacing rather than silently resolving: ABAWDMap.us, a third-party aggregator this pack independently checked (fetched directly, clean HTTP 200, dated \"last verified June 16, 2026\" — five to seven months AFTER Kentucky's own December 2025 waiver announcement), states \"No waiver — rule applies\" statewide and does not mention this 5-county exemption at all; its own text reads, \"The statewide waiver was reinstated only through Nov 30, 2025 and has since expired,\" apparently treating the END of Kentucky's prior, much broader (117-county) waiver as the full story without picking up the narrower successor waiver CHFS's own page describes. This pack treats Kentucky's own, more recently and more specifically dated primary source as authoritative, discloses the aggregator conflict explicitly, and flags this for re-verification given how easily a narrow county-level waiver like this can lapse or change (see freshness.json). The federal ABAWD age range is 18-64 (raised from 54 under OBBBA, enacted July 2025), with an under-14 caregiver exemption (narrowed from under-18); ABAWDs are exempt starting the month they turn 65. To remain eligible outside a waived county, an ABAWD must work (paid, self-employed, in-kind, or volunteer) at least 80 hours/month, or participate at least 20 hours/week in a WIOA/TAA-funded work program, or participate in Kentucky's Employment and Training (E&T) program. Other exemptions include being medically unable to work, living with a household member under 14, being pregnant, or already being exempt from ordinary SNAP work registration (MS 2105). A stale April 22, 2016 CHFS press release this pack found (\"ABAWD Changes in Eight Counties\") describes an entirely earlier episode of Kentucky's ABAWD history — the 2008-2015 nationwide statewide waiver's partial 2016 rollback in 8 counties — and was explicitly NOT relied on for any current fact.",
+      "source_url": "https://www.chfs.ky.gov/agencies/dcbs/dfs/nab/Pages/snap.aspx"
+    },
+    {
+      "key": "restaurant-meals-program",
+      "kind": "supplement",
+      "terms": [
+        "restaurant meals program",
+        "rmp",
+        "eat at a restaurant",
+        "use ebt at restaurant",
+        "hot meal",
+        "hot food",
+        "prepared food",
+        "hot foods waiver",
+        "disaster waiver"
+      ],
+      "citation": "USDA FNA's current (Aug. 7, 2026-dated) Restaurant Meals Program state list: Arizona, Maryland, New York, California, Massachusetts, Rhode Island, Illinois (Cook/Franklin Counties), Michigan, Virginia — Kentucky absent; USDA FNA's Kentucky Disaster Nutrition Assistance page confirms no active SNAP hot-foods waiver as of this pack's fetch date",
+      "heading": "Kentucky does NOT operate a standing Restaurant Meals Program and has no active hot-foods disaster waiver as of this pack's fetch date",
+      "text": "The Restaurant Meals Program (RMP) is a state OPTION under 7 CFR 274.7(g) letting elderly (60+), disabled, and homeless SNAP recipients buy prepared, hot meals from authorized restaurants with EBT year-round. USDA FNA's own current RMP state list (fetched directly, page dated updated August 7, 2026) names Arizona, Maryland, New York, California, Massachusetts, Rhode Island, Illinois (Cook and Franklin Counties only), Michigan, and Virginia — Kentucky is ABSENT, and this pack found no secondary source claiming otherwise (unlike this roster's Louisiana pack, where ambiguous secondary sources needed resolving). USDA FNA's Kentucky Disaster Nutrition Assistance page (fetched directly, clean HTTP 200) confirms \"There are no active disaster response efforts\" in Kentucky as of this pack's fetch date. The two most recent Kentucky SNAP-related disaster waivers on that page — a June 27, 2026 severe-storms waiver (15 named counties, expired July 17, 2026) and a January 25, 2026 winter-storms waiver (statewide, expired February 23, 2026) — were BOTH narrow 10-day-reporting waivers for food lost to power outages, NOT hot-foods purchase waivers, and both have since expired. A separate, June 2025 Summer EBT hot-foods waiver this pack found applied only to the Summer Electronic Benefits Transfer for Children program (a different program from adult/household SNAP) and also expired (July 2, 2025). This pack found no currently-active Kentucky SNAP hot-foods waiver of any kind as of its fetch date — a cleaner, less time-pressured finding than this roster's Louisiana pack, whose own hot-foods disaster waiver was live and one day from expiring at fetch time.",
+      "source_url": "https://www.fns.usda.gov/disaster/kentucky"
+    },
+    {
+      "key": "expedited-service",
+      "kind": "supplement",
+      "terms": [
+        "expedited",
+        "expedited service",
+        "emergency",
+        "emergency food stamps",
+        "fast benefits",
+        "how fast",
+        "urgent",
+        "same day",
+        "5 day",
+        "7 day"
+      ],
+      "citation": "KY OM Vol. 2, MS 6400/6430/6450, R. 5/31/26 — plain federal expedited-service eligibility criteria (gross income under $150 and liquid resources $100 or less; combined income/resources less than shelter costs; destitute migrant/seasonal farmworker), but Kentucky's OWN processing ceiling is 5 CALENDAR DAYS, faster than the federal 7-day floor",
+      "heading": "STRUCTURAL FEATURE worth flagging: Kentucky processes expedited SNAP applications within 5 calendar days, not the federal 7-day ceiling this roster's other packs have generally documented",
+      "text": "MS 6430 sets expedited eligibility to the standard federal criteria: households with liquid resources of $100 or less AND gross monthly income under $150, OR whose combined gross income and liquid resources are less than their actual monthly shelter expenses (using the SUA/BUA standard where applicable), OR destitute migrant/seasonal farmworker households. There is no limit on how many times a household can be certified under expedited procedures, as long as previously-postponed verification was eventually completed or a normal certification occurred since the last expedited certification. Distinctively, Kentucky's OWN processing standard (MS 6400/6450) is faster than the federal 7-calendar-day ceiling most SNAP guidance cites: Kentucky must make expedited benefits available \"no later than the 5th day\" — in practice, the application must be disposed of by the 4th calendar day after the date of application (with a table of examples by day-of-week filing). Special 5-calendar-day timeframes also apply specifically to residents of Drug Addiction/Alcohol (DAA) treatment centers and residents of shelters for battered persons and children. Kentucky's ORDINARY (non-expedited) processing standard remains the federal default: 30 calendar days from the date of application, with denial for failure to provide mandatory verification and a 60-day window to reactivate a denied application with the missing information, without a new application or interview.",
+      "source_url": "https://www.chfs.ky.gov/agencies/dcbs/dfs/Documents/OMVOLII.pdf"
+    },
+    {
+      "key": "reporting-certification",
+      "kind": "supplement",
+      "terms": [
+        "certification period",
+        "approval period",
+        "recertification",
+        "redetermination",
+        "how long does snap last",
+        "how long does my snap approval last",
+        "how long does my approval last",
+        "redo",
+        "renew",
+        "simplified report",
+        "safe",
+        "esap"
+      ],
+      "citation": "KY OM Vol. 2, MS 6600 (Assigning Certification Periods, R. 7/15/26) — a THREE-tier structure: 4 months (non-exempt ABAWD households), 12 months (default), 36 months (all-adult-members 60+ receiving RSDI/SSI with no earned income); MS 3200-3220 (SAFE) and MS 3300 (ESAP) — two distinct simplified elderly programs, both 36-month, no-interview",
+      "heading": "STRUCTURAL FEATURE worth flagging: Kentucky assigns THREE distinct certification-period lengths (4/12/36 months) tied to ABAWD status and elderly/no-earned-income status, not the two-tier (6-or-12-month) pattern this roster has generally documented",
+      "text": "Kentucky's certification-period policy (MS 6600, revised July 15, 2026) is a genuinely tri-tier structure: a 4-MONTH certification period for households that include a non-disabled, non-incapacitated ABAWD member with no household member under 14; a 12-MONTH certification period as the default for households meeting neither the 4-month nor 36-month criteria; and a 36-MONTH certification period for households in which ALL adult members are age 60 or older and receive RSDI or SSI with NO earned income (children with no earned income may still be present) — these 36-month households get a reminder notice of reporting requirements at months 12 and 24 rather than a full recertification. This differs from the 6-month or 12-month baseline pattern this roster's other packs (South Carolina, Colorado at 6 months; Louisiana, Alabama, Maryland at 12 months) have generally documented. Kentucky additionally operates TWO separate, interview-waived simplified programs for elderly households, both landing in the 36-month bucket: SAFE (Simplified Assistance for the Elderly, MS 3200-3220), a computer-matched program strictly for one/two-person households where all members are SSI recipients aged 60+, using a simplified flat-allotment formula based only on shelter cost and household size (income and deductions are not separately calculated); and ESAP (Elderly Simplified Application Project, MS 3300), a broader simplified track for elderly/disabled households with no earned income that still follows ordinary income/deduction rules but waives the interview and most periodic reporting. All Kentucky SNAP households are Simplified Reporting (SR) households by default (MS 6705, revised May 1, 2026) and are only required to report mid-period when gross monthly income exceeds the FPL percentage used to determine their eligibility (130% or 200%, matching their ECE track), when an ABAWD-subject member drops below 20 hours/week of work, or when a member receives substantial lottery/gambling winnings that could exceed the resource limit.",
+      "source_url": "https://www.chfs.ky.gov/agencies/dcbs/dfs/Documents/OMVOLII.pdf"
+    }
+  ]
+}

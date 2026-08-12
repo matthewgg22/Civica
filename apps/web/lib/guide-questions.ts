@@ -151,4 +151,11 @@ export const QUESTIONS: Record<string, string[]> = {
     "Is the SNAP work-requirement time limit currently waived anywhere in Louisiana?",
     "Can I use my EBT card to buy a hot meal at a restaurant in Louisiana?",
   ],
+  KY: [
+    "What is the income limit for SNAP in Kentucky?",
+    "I have a drug felony conviction — can I still get SNAP in Kentucky?",
+    "Does my car count against me for SNAP in Kentucky?",
+    "Is the SNAP work-requirement time limit currently waived anywhere in Kentucky?",
+    "How fast can I get emergency SNAP benefits in Kentucky?",
+  ],
 };
