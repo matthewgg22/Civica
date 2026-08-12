@@ -1,0 +1,50 @@
+{
+  "_provenance": {
+    "note": "Oklahoma dated facts. Because Oklahoma has NO existing packages/snap-rules StatePolicy entry, there is no engine constant to cross-check against — every entry below is either a routine COLA-cycle reminder, a disclosed research gap, or a warning about a confirmed staleness/discrepancy trap this pack found.",
+    "extracted": "2026-08-12"
+  },
+  "entries": [
+    {
+      "key": "ok-abawd-age-range-three-way-conflict",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "This pack found THREE different, mutually inconsistent ABAWD age ranges across Oklahoma's own primary sources: the 1997 statute (56 O.S. § 241.3(A)) states 'eighteen (18) years of age to fifty (50) years of age'; the administrative regulation (OAC 340:50-5-100, last amended Aug. 15, 2024) reflects the pre-OBBBA 2023 Fiscal Responsibility Act table (subject through age 54, exempt at 55+); and OKDHS's own current consumer SNAP page states 'ages 18 to 53' — a third figure matching neither. NONE reflect the true current federal standard, 18-64, effective immediately upon OBBBA's July 4, 2025 enactment. Before telling an Oklahoma applicant their exact ABAWD age exposure, use 18-64 as the operative federal standard regardless of which of Oklahoma's own three stale figures is quoted, and re-check whether any of the three sources has since been corrected."
+    },
+    {
+      "key": "ok-abawd-statutory-waiver-ban-verify-unrepealed",
+      "kind": "expires",
+      "date": "2027-01-01",
+      "warning": "56 O.S. § 241.3(C) (added by Laws 2013, c. 178, § 1, eff. Sept. 1, 2013) statutorily bars OKDHS from ever requesting an ABAWD area waiver. This pack found no evidence this provision has been repealed or amended in the Oklahoma Legislature's own current compiled Title 56 text (fetched 2026-08-12). Legislative repeal is always possible in a future session — before stating with full confidence that Oklahoma cannot have an ABAWD waiver, re-check that § 241.3(C) is still in force at oklegislature.gov's current Title 56 compilation."
+    },
+    {
+      "key": "ok-drug-felony-opt-out-citation-not-independently-codified",
+      "kind": "expires",
+      "date": "2027-02-01",
+      "warning": "This pack's drug-felony full-opt-out finding rests on TWO independently converging secondary sources (Collateral Consequences Resource Center; Prison Policy Initiative), both citing 1997 Okla. Sess. Laws ch. 414 (H.B. 2170), §§ 28 and 31 — but this pack could NOT independently locate those specific sections as standalone, currently-numbered Title 56 sections in the Oklahoma Legislature's own current compiled statute text, unlike neighboring sections of the same 1997 chapter (which ARE locatable and codified today). This pack cross-checked the conclusion against OAC 340:50's own current disqualification-category list (silent on drug felony), but has not performed a direct read of §§ 28/31's own text. Before restating Oklahoma's drug-felony SNAP policy with full confidence, attempt a fresh direct search for these specific session-law sections, or contact OKDHS directly to confirm current operative policy."
+    },
+    {
+      "key": "ok-vehicle-resource-treatment-unverified",
+      "kind": "expires",
+      "date": "2026-11-01",
+      "warning": "This pack could NOT obtain a full verbatim read of OAC 340:50-7-1 (Resources considered) or 340:50-7-6 (Resources — additional provisions) during its research — only secondary summaries were available. This pack therefore does NOT assert whether Oklahoma blanket-excludes vehicles from the resource test the way Kentucky and Alabama do, and treats this as an open item rather than guessing. Before answering a vehicle-specific resource question for Oklahoma with full confidence, fetch and read OAC 340:50-7-1 and 340:50-7-6 directly."
+    },
+    {
+      "key": "ok-bbce-211-income-ceiling-not-located",
+      "kind": "expires",
+      "date": "2026-12-01",
+      "warning": "This pack found that OAC 340:50-11-111 (Categorical eligibility) removes both the gross and net income tests entirely for TANF/SSI/2-1-1-Oklahoma-referral households, without publishing any percentage-of-FPL ceiling for the 2-1-1 pathway within the SNAP manual itself — a genuine structural departure from this roster's other BBCE-equivalent packs (Kentucky's dual 130%/200%, Louisiana's flat 200%). This pack could not verify whether 2-1-1 Oklahoma's own TANF-MOE-funded service itself applies an income screen upstream of SNAP eligibility, since that determination sits outside OKDHS's own SNAP manual. Before asserting Oklahoma's BBCE-equivalent pathway has literally no income ceiling of any kind, re-check whether 2-1-1 Oklahoma publishes its own eligibility threshold."
+    },
+    {
+      "key": "ok-oac-policy-library-403-recheck-access",
+      "kind": "expires",
+      "date": "2026-09-15",
+      "warning": "OKDHS's own HTML policy-library host (oklahoma.gov/okdhs/library/policy/current/oac-340/chapter-50.html) returned HTTP 403 to direct curl fetch on every attempt during this pack's research (2026-08-12); this pack instead read individual OAC 340:50 sections via the Cornell Legal Information Institute's regulatory mirror, which republishes OKDHS's own text and revision dates. This access barrier may be a temporary bot-detection artifact rather than a permanent block. Before repeating this workaround for a future update, re-attempt a direct fetch of OKDHS's own policy-library host first."
+    },
+    {
+      "key": "ok-ffy2027-cola-reminder",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "This pack's confirmed dollar figures (Standard Deduction $209/$209/$209/$223/$261/$299, SUA $412, BUA $354, Telephone Standard $49, capped excess shelter $744, Standard Homeless Shelter Deduction $199, resource limits $3,000/$4,500, lottery/gambling disqualified standard $4,500, and the Appendix C-3 income-eligibility tables) are drawn from OKDHS's own Appendix C-3, effective October 1, 2025, and match the current FFY2026 cycle (October 1, 2025 - September 30, 2026). The FFY2027 COLA cycle begins October 1, 2026 — under two months from this pack's fetch date. Check OKDHS's Appendix C-3 (oklahoma.gov/content/dam/ok/en/okdhs/documents/searchcenter/okdhsformresults/c-3.pdf) for an updated version after that date before restating any Oklahoma-specific dollar figure with full confidence."
+    }
+  ]
+}

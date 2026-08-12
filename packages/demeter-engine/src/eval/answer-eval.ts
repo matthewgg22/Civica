@@ -3111,6 +3111,119 @@ export const KY_GOLD: AnswerExpectation[] = [
   },
 ];
 
+export const OK_GOLD: AnswerExpectation[] = [
+  {
+    id: "ok-abawd-statutory-waiver-ban",
+    // Guards the flagship structural finding: Oklahoma is statutorily barred
+    // from ever requesting an ABAWD area waiver (56 O.S. § 241.3(C)).
+    question: "Is the SNAP work-requirement time limit currently waived anywhere in Oklahoma?",
+    state: "OK",
+    expectCitation: "241.3",
+    mustMention: "waiver",
+    mustDisclaim: true,
+  },
+  {
+    id: "ok-abawd-age-range-current-federal-not-53",
+    // Guards against importing OKDHS's own stale "18 to 53" consumer-page
+    // figure or the statute's stale "50" — the true current federal ceiling
+    // is 64 (OBBBA).
+    question: "What is the ABAWD work requirement age range in Oklahoma?",
+    state: "OK",
+    expectCitation: "5-100",
+    mustMention: "64",
+    mustDisclaim: true,
+  },
+  {
+    id: "ok-drug-felony-full-opt-out",
+    // Guards the flagship CONFIRMATION finding: Oklahoma fully opted out of
+    // the federal drug-felony ban in 1997 (H.B. 2170, ch. 414, §§ 28, 31).
+    question: "I have a drug felony conviction — can I still get SNAP in Oklahoma?",
+    state: "OK",
+    mustMention: "eligible",
+    mustDisclaim: true,
+  },
+  {
+    id: "ok-bbce-no-stated-income-ceiling",
+    // Guards the structural finding: Oklahoma's categorical-eligibility
+    // pathway removes the income test entirely with no stated FPL ceiling —
+    // guards against importing another state's flat-200%/dual-track figure.
+    question: "Does Oklahoma's categorical eligibility raise my SNAP income limit above the normal amount?",
+    state: "OK",
+    expectCitation: "11-111",
+    mustDisclaim: true,
+  },
+  {
+    id: "ok-resource-limit-elderly-disabled",
+    question: "What is the SNAP resource limit for a household with a disabled member in Oklahoma?",
+    state: "OK",
+    mustMention: "4,500",
+    mustDisclaim: true,
+  },
+  {
+    id: "ok-medical-deduction-actual-expense-no-flat-shortcut",
+    // Guards the structural finding: Oklahoma has no flat SMD shortcut —
+    // actual verified expense minus $35, unlike Kentucky's flat $137.
+    question: "I'm disabled and have $50 a month in medical bills for Oklahoma SNAP — do I get a deduction?",
+    state: "OK",
+    expectCitation: "7-31",
+    mustMention: "35",
+    mustDisclaim: true,
+  },
+  {
+    id: "ok-expedited-service-7-day-federal",
+    // Guards the structural CONTRAST: Oklahoma's expedited ceiling is the
+    // plain federal 7 days, not accelerated like Kentucky's 5-day standard.
+    question: "How fast can I get emergency SNAP benefits in Oklahoma?",
+    state: "OK",
+    expectCitation: "11-1",
+    mustMention: "7",
+    mustDisclaim: true,
+  },
+  {
+    id: "ok-restaurant-meals-program-not-available",
+    question: "Can I use my EBT card to buy a hot meal at a restaurant in Oklahoma?",
+    state: "OK",
+    mustMention: "not",
+    mustDisclaim: true,
+  },
+  {
+    id: "ok-ebt-card-name",
+    question: "What is my EBT card called in Oklahoma?",
+    state: "OK",
+    mustMention: "ACCESS Oklahoma",
+    mustDisclaim: true,
+  },
+  {
+    id: "ok-cert-period-12-months",
+    question: "How long does my SNAP approval last in Oklahoma?",
+    state: "OK",
+    expectCitation: "9-6",
+    mustMention: "12",
+    mustDisclaim: true,
+  },
+  {
+    id: "ok-tribal-fdpir-mutual-exclusivity",
+    question: "I live on tribal land in Oklahoma — can I get both SNAP and FDPIR at the same time?",
+    state: "OK",
+    mustDisclaim: true,
+  },
+  {
+    id: "ok-vehicle-resource-treatment-not-overclaimed",
+    // Guards against overclaiming a blanket vehicle exclusion this pack
+    // could not verify for Oklahoma (unlike Kentucky's and Alabama's).
+    question: "Does my car count against me for SNAP in Oklahoma?",
+    state: "OK",
+    mustDisclaim: true,
+  },
+  {
+    id: "ok-federal-benefit",
+    question: "How is the monthly SNAP benefit amount calculated from net income in Oklahoma?",
+    state: "OK",
+    expectCitation: "273.10",
+    mustDisclaim: true,
+  },
+];
+
 /** Everything the live runner executes. */
 export const ALL_GOLD: AnswerExpectation[] = [
   ...ANSWER_GOLD,
@@ -3142,4 +3255,5 @@ export const ALL_GOLD: AnswerExpectation[] = [
   ...AL_GOLD,
   ...LA_GOLD,
   ...KY_GOLD,
+  ...OK_GOLD,
 ];

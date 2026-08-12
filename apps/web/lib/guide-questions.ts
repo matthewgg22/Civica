@@ -158,4 +158,11 @@ export const QUESTIONS: Record<string, string[]> = {
     "Is the SNAP work-requirement time limit currently waived anywhere in Kentucky?",
     "How fast can I get emergency SNAP benefits in Kentucky?",
   ],
+  OK: [
+    "What is the income limit for SNAP in Oklahoma?",
+    "I have a drug felony conviction — can I still get SNAP in Oklahoma?",
+    "Is the SNAP work-requirement time limit currently waived anywhere in Oklahoma?",
+    "What is the ABAWD work requirement age range in Oklahoma?",
+    "Can I use my EBT card to buy a hot meal at a restaurant in Oklahoma?",
+  ],
 };

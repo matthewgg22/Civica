@@ -1,0 +1,66 @@
+{
+  "code": "OK",
+  "program": "SNAP — Oklahoma has no distinctive local program nickname; the EBT card itself is called the \"ACCESS Oklahoma Card\" (see PROVENANCE.md)",
+  "agency": "Oklahoma Human Services (OKDHS) — rebranded from \"Oklahoma Department of Human Services\" under Gov. Kevin Stitt; Oklahoma's own current SNAP statute (56 O.S. § 241 et seq.) and Administrative Code (OAC 340:50) still refer throughout to the \"Department of Human Services (DHS)\", a lagging-rebrand pattern this pack found and discloses (see PROVENANCE.md)",
+  "admin_model": "state",
+  "admin_note": "Oklahoma is a STATE-ADMINISTERED SNAP program (no county option-in like CA/NY/MN/WI/VA) — OKDHS runs it through a network of local Human Services Centers, not independent county agencies. GENUINE STRUCTURAL FINDING this pack found: Oklahoma is STATUTORILY BARRED from ever requesting an ABAWD work-requirement waiver — 56 O.S. § 241.3(C), added by Laws 2013, c. 178, § 1, eff. Sept. 1, 2013, reads in full, \"Beginning October 1, 2013, the Department of Human Services shall not request a waiver to provide Supplemental Nutrition Assistance Program services to able-bodied adults without dependents.\" This is a legislative self-restriction, not merely an unemployment-rate non-qualification, and it independently explains why this pack found no current or historical Oklahoma ABAWD area waiver anywhere (see PROVENANCE.md Finding 1). This pack ALSO found a three-layer ABAWD age-range staleness: the 1997 statute itself (56 O.S. § 241.3(A)) still states the pre-2023 age band \"eighteen (18) years of age to fifty (50) years of age\"; the administrative regulation (OAC 340:50-5-100, last amended Aug. 15, 2024) reflects the 2023 Fiscal Responsibility Act's incremental table topping out at exempt-at-55 (i.e., subject through age 54); and OKDHS's OWN current consumer-facing SNAP page states \"ages 18 to 53\" — a THIRD, different figure matching none of the other two. NONE of Oklahoma's three own sources reflect the true current federal standard, 18-64, which took effect immediately upon OBBBA's enactment July 4, 2025 (see PROVENANCE.md Finding 2). Confirm current operative practice with the applicant's own local OKDHS Human Services Center, the same caution this roster already carries for CA/NY/MN/WI/OH/NC/NJ/VA/GA/IN/TN/MO/MD/CO/SC/AL/LA/KY.",
+  "system": "OKDHS processes SNAP; applicants apply online through OKDHSLIVE (okdhslive.org), by phone, by mail, or in person at a local Human Services Center. A signed application starts the clock; ordinary processing is no later than 30 calendar days (OAC 340:50-3-1), expedited service (households with very low income and liquid resources, or destitute migrant/seasonal farmworkers) is 7 calendar days, the plain federal ceiling (OAC 340:50-11-1/11-5) — Oklahoma does not shorten this the way this roster's Kentucky pack found Kentucky does (5 days). An interview is generally required, in person or by phone.",
+  "portal": {
+    "name": "OKDHSLIVE (okdhslive.org)",
+    "url": "https://www.okdhslive.org/"
+  },
+  "update_channels": [
+    {
+      "name": "OKDHS — Appendix C-3, Maximum Food Benefit Allotments and Standards for Income and Deductions, current per-revision (10/1/2025, FFY2026 figures)",
+      "url": "https://oklahoma.gov/content/dam/ok/en/okdhs/documents/searchcenter/okdhsformresults/c-3.pdf"
+    },
+    {
+      "name": "OKDHS — Appendix C-1, Maximum Income, Resource, and Payment Standards, current per-revision (7/1/2026)",
+      "url": "https://oklahoma.gov/content/dam/ok/en/okdhs/documents/searchcenter/okdhsformresults/c-1.pdf"
+    },
+    {
+      "name": "Oklahoma Administrative Code, Title 340, Chapter 50 (Supplemental Nutrition Assistance Program) — official OKDHS policy-library index (returned HTTP 403 to direct curl fetch during this pack's research; see PROVENANCE.md Finding 0)",
+      "url": "https://oklahoma.gov/okdhs/library/policy/current/oac-340/chapter-50.html"
+    },
+    {
+      "name": "Cornell Legal Information Institute — Oklahoma Administrative Code Title 340, Chapter 50 regulatory mirror (used for individual-section text after the official host 403'd; republishes OKDHS's own revision/effective dates)",
+      "url": "https://www.law.cornell.edu/regulations/oklahoma/OAC-340-50-11-111"
+    },
+    {
+      "name": "Oklahoma Legislature — Oklahoma Statutes Title 56 (Poor Persons), official compiled text",
+      "url": "https://www.oklegislature.gov/OK_Statutes/CompleteTitles/os56.pdf"
+    },
+    {
+      "name": "OKDHS — SNAP consumer page (application steps, ACCESS Oklahoma Card, current ABAWD age-range text — see PROVENANCE.md Finding 2)",
+      "url": "https://oklahoma.gov/okdhs/services/snap.html"
+    },
+    {
+      "name": "OKDHS — EBT Resource Center (ACCESS Oklahoma Card)",
+      "url": "https://oklahoma.gov/okdhs/ebt.html"
+    },
+    {
+      "name": "USDA FNA — SNAP Restaurant Meals Program state list (Oklahoma absent)",
+      "url": "https://www.fns.usda.gov/snap/retailer/restaurant-meals-program"
+    },
+    {
+      "name": "Collateral Consequences Resource Center — Accessing SNAP and TANF Benefits after a Drug Conviction: A Survey of State Laws (secondary corroboration for Oklahoma's 1997 drug-felony opt-out; see PROVENANCE.md Finding 3)",
+      "url": "https://ccresourcecenter.org/national-snap-tanf-drug-felony-study/"
+    }
+  ],
+  "verification": {
+    "verified_on": "2026-08-12",
+    "method": "Direct curl fetch (browser User-Agent) of OKDHS's own official Appendix C-3 (\"Maximum Food Benefit Allotments and Standards for Income and Deductions\", 10/1/2025-dated, current FFY2026 figures) and Appendix C-1 (\"Maximum Income, Resource, and Payment Standards\", 7/1/2026-dated) PDFs, both clean HTTP 200, converted with pdftotext -layout. Also directly fetched: the Oklahoma Legislature's own official compiled Title 56 (Poor Persons) statute PDF (oklegislature.gov, clean HTTP 200, converted with pdftotext -layout, amendments through Laws 2024) — read in full for §§ 241, 241.1-241.5 (food-stamp-specific) and cross-referenced against §§ 230.50-230.75 (TANF-adjacent) to locate any drug-felony provision. When OKDHS's own HTML policy-library host (oklahoma.gov/okdhs/library/policy/...) returned HTTP 403 to direct curl, individual Oklahoma Administrative Code 340:50 sections (categorical eligibility, resources, deductions, ABAWD, expedited service, certification renewals) were instead read via the Cornell Legal Information Institute's regulatory mirror (law.cornell.edu/regulations/oklahoma/...), which republishes OKDHS's own section text together with its official revision/effective dates — a genuine, disclosed access-barrier workaround, not a silent substitution. USDA FNA's current Restaurant Meals Program state list was fetched directly (clean HTTP 200, Oklahoma absent). WebSearch cross-checks located two independently-converging secondary sources (Collateral Consequences Resource Center; Prison Policy Initiative) both citing the identical 1997 session-law provision (H.B. 2170, 1997 Okla. Sess. Laws ch. 414, §§ 28 and 31) for Oklahoma's full opt-out of the federal drug-felony SNAP ban — cross-checked against OAC 340:50's own current disqualification-category list (fleeing felon, intentional program violation, work-registration noncompliance, substantial lottery/gambling winnings, certain post-2014 convictions), which independently confirms no drug-felony disqualification category exists in Oklahoma's SNAP program today.",
+    "gates": "OKDHS's own HTML policy-library host (oklahoma.gov/okdhs/library/policy/current/oac-340/chapter-50.html) returned a clean HTTP 403 to direct curl with a browser User-Agent on every attempt — a genuine, disclosed access barrier for Oklahoma's PRIMARY administrative-code publisher, resolved by reading the same OAC 340:50 section text (with the same official revision/effective dates) via the Cornell Legal Information Institute's regulatory mirror instead, consistent with this roster's now-familiar pattern of a blocked primary host resolved via a faithful independent mirror rather than a fabricated citation. regulations.justia.com also 403'd on direct fetch (the now-familiar Justia-block pattern this roster has documented repeatedly). Separately, and more consequentially: this pack could NOT locate the specific 1997 session-law sections (H.B. 2170, ch. 414, §§ 28 and 31) that two independent secondary sources cite for Oklahoma's drug-felony opt-out as a standalone, currently-numbered Title 56 section in the Legislature's own current compiled statute text — Chapter 414's other sections (§§ 21, 23-26) ARE independently locatable and codified (as §§ 56-241.1, 241.3, 230.71-230.73), but §§ 28 and 31 are not, suggesting they were likely uncodified/session-only provisions of the omnibus 1997 welfare-reform act rather than freestanding numbered Title 56 sections that persist today. This pack discloses this as a genuine access/discoverability gap — resolved via convergent secondary corroboration (two independent organizations citing the identical session-law citation) cross-checked against the current regulation's own silence on drug-felony disqualification, not by fabricating a direct statute read this pack could not perform.",
+    "sources": [
+      "OKDHS, Appendix C-3, Maximum Food Benefit Allotments and Standards for Income and Deductions — direct curl fetch, clean HTTP 200, effective 10/1/2025, current FFY2026 figures",
+      "OKDHS, Appendix C-1, Maximum Income, Resource, and Payment Standards — direct curl fetch, clean HTTP 200, effective 7/1/2026",
+      "Oklahoma Legislature, Oklahoma Statutes Title 56 (Poor Persons), official compiled PDF (oklegislature.gov) — direct curl fetch, clean HTTP 200, amendments through Laws 2024",
+      "Cornell Legal Information Institute, Oklahoma Administrative Code 340:50-11-111 (Categorically eligible household), 340:50-7-1/340:50-7-31 (Resources/Deductions), 340:50-5-100 (ABAWD), 340:50-9-1/340:50-9-6 (Income standards/Certification renewals) — accessed after oklahoma.gov's own policy-library host 403'd; republishes OKDHS's own revision/effective dates",
+      "OKDHS, SNAP consumer page (oklahoma.gov/okdhs/services/snap.html) — direct fetch, current application steps, ACCESS Oklahoma Card name, and the \"ages 18 to 53\" ABAWD text this pack found stale (see PROVENANCE.md Finding 2)",
+      "OKDHS, EBT Resource Center (oklahoma.gov/okdhs/ebt.html) — direct fetch, confirms \"ACCESS Oklahoma Card\" as the state's EBT card name",
+      "USDA FNA, SNAP Restaurant Meals Program state list — direct curl fetch, clean HTTP 200 — Arizona, California, Illinois (Cook/Franklin Counties), Maryland, Massachusetts, Michigan, New York, Rhode Island, Virginia listed; Oklahoma absent",
+      "Collateral Consequences Resource Center, \"Accessing SNAP and TANF Benefits after a Drug Conviction: A Survey of State Laws\" — cites Oklahoma's full opt-out at 1997 Okla. Sess. Laws ch. 414 (H.B. 2170) § 28",
+      "Prison Policy Initiative, \"Hunger as punishment: How states restrict SNAP benefits for people on probation\" (Feb. 2026) — independently cites the same 1997 Okla. Sess. Law Serv. ch. 414 (H.B. 2170) §§ 28, 31 for Oklahoma's total opt-out, and separately confirms Oklahoma's SNAP application does not ask about probation violations"
+    ]
+  }
+}
