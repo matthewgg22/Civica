@@ -90,10 +90,10 @@ describe("paragraphs are blocks, so they can be given space", () => {
     expect(paragraphs(nodes)).toBe(3);
   });
 
-  it("keeps a single newline inside its paragraph, so bullets stay together", () => {
-    const nodes = renderAnswer("Bring:\n- ID\n- Proof of rent");
+  it("keeps a single newline inside a paragraph of prose", () => {
+    const nodes = renderAnswer("Line one\ncontinues here");
     expect(paragraphs(nodes)).toBe(1);
-    expect(texts(nodes)).toContain("- ID\n- Proof of rent");
+    expect(texts(nodes)).toContain("Line one\ncontinues here");
   });
 
   it("does not emit an empty paragraph for trailing or repeated blank lines", () => {
@@ -281,5 +281,43 @@ describe("the scope divider names a STATE", () => {
       expect(n.length, `${p.code} → ${n}`).toBeLessThanOrEqual(24);
       expect(n, `${p.code} kept an annotation`).not.toMatch(/—|\(/);
     }
+  });
+});
+
+describe("bullets are a real list", () => {
+  // Shipped as literal hyphens in a pre-wrap paragraph: no indent, no hanging
+  // alignment, so a wrapped item lined up under the dash instead of under its
+  // own first word. Three options read as a wall.
+  it("turns a run of - lines into <ul><li>", () => {
+    const nodes = renderAnswer("You can apply:\n- Online at DTAConnect.com\n- By phone\n- In person");
+    expect(tags(nodes)).toEqual(["ul", "li", "li", "li"]);
+    expect(texts(nodes)).not.toContain("- Online");
+    expect(texts(nodes)).toContain("Online at DTAConnect.com");
+  });
+
+  it("keeps the prose that introduces the list as its own paragraph", () => {
+    const nodes = renderAnswer("You can apply:\n- Online\n- By phone");
+    expect(paragraphs(nodes)).toBe(1);
+    expect(texts(nodes)).toContain("You can apply:");
+  });
+
+  it("resumes prose after the list", () => {
+    const nodes = renderAnswer("Ways:\n- One\n- Two\nThe filing date is what counts.");
+    expect(tags(nodes)).toContain("ul");
+    expect(texts(nodes)).toContain("The filing date is what counts.");
+  });
+
+  it("renders markdown inside an item", () => {
+    const nodes = renderAnswer("- **How many people** are in your household");
+    expect(tags(nodes)).toEqual(["ul", "li", "strong"]);
+  });
+
+  it("accepts • and * as bullets too", () => {
+    expect(tags(renderAnswer("• One\n• Two"))).toEqual(["ul", "li", "li"]);
+  });
+
+  it("does not treat a lone hyphenated sentence as a list", () => {
+    // "net income - deductions" has no leading dash, so nothing changes.
+    expect(tags(renderAnswer("net income - deductions"))).toEqual([]);
   });
 });

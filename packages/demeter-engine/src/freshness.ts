@@ -77,8 +77,17 @@ export function formatFreshnessFooter(
     lang === "es"
       ? asOf.replace("federal figures FY26 (current through", "cifras federales FY26 (vigentes hasta")
       : asOf;
-  const label = lang === "es" ? "Fuentes al" : "Sources as of";
-  const lines = [`\n\n*${label}: ${asOfLocalized}.*`];
+  // "Source", not "Sources as of". It sits at the foot of every answer, so it
+  // is read hundreds of times more often than it is acted on, and the shorter
+  // it is the less it competes with the answer above it.
+  //
+  // AND IT LINKS. A citation the reader cannot go and check is a claim about
+  // having checked, which is the opposite of this product's argument. eCFR
+  // Title 7 Part 273 is where every federal figure in an answer comes from.
+  const label = lang === "es" ? "Fuente" : "Source";
+  const lines = [
+    `\n\n*${label}: [${asOfLocalized}](https://www.ecfr.gov/current/title-7/part-273).*`,
+  ];
   for (const w of warnings) lines.push(`\n> ⚠️ ${w}`);
   return lines.join("");
 }

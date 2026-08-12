@@ -6333,17 +6333,27 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 /* The waiting heartbeat. Three dots on a stagger, so a pause of a few seconds
    still looks like something is happening rather than like a label nobody
    removed. */
-.demeter__dots { display: inline-flex; gap: 0.22rem; margin-left: 0.4rem; vertical-align: middle; }
-.demeter__dots i {
-  width: 5px; height: 5px; border-radius: 50%;
-  background: var(--demeter-terracotta-deep);
-  animation: dmDot 1.2s ease-in-out infinite;
+/* The wait. Three bouncing dots is the default every chat ships with, and it
+   reads as exactly that — a placeholder nobody chose. This is a single line
+   that fills and recedes: one continuous motion instead of three discrete
+   bounces, quiet enough to sit under a sentence without competing with it. */
+.demeter__dots {
+  display: inline-block; margin-left: 0.55rem; vertical-align: middle;
+  width: 2.4rem; height: 2px; border-radius: 2px;
+  background: var(--demeter-rule);
+  overflow: hidden; position: relative;
 }
-.demeter__dots i:nth-child(2) { animation-delay: 0.16s; }
-.demeter__dots i:nth-child(3) { animation-delay: 0.32s; }
-@keyframes dmDot {
-  0%, 60%, 100% { opacity: 0.25; transform: translateY(0); }
-  30% { opacity: 1; transform: translateY(-2px); }
+.demeter__dots i { display: none; }
+.demeter__dots::after {
+  content: ""; position: absolute; inset: 0;
+  background: var(--demeter-terracotta-deep);
+  transform-origin: left center;
+  animation: dmWait 1.6s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+}
+@keyframes dmWait {
+  0%   { transform: scaleX(0); opacity: 0.5; }
+  50%  { transform: scaleX(1); opacity: 1; }
+  100% { transform: scaleX(0); opacity: 0.5; transform-origin: right center; }
 }
 
 /* The streaming cursor. Once text starts arriving there was NO signal at all —
@@ -6770,9 +6780,16 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   font-size: 0.85rem; font-weight: 600; min-height: 36px; padding: 0 0.9rem;
   border-radius: 999px; cursor: pointer;
 }
+/* WHEAT — the logo colour — because this is the one place the product asks the
+   reader for something rather than telling them. Terracotta is used for every
+   other action here, so the ask needs to read differently from the answers
+   around it. Dark ink on wheat rather than paper: #EFB544 is a light gold and
+   white text on it fails contrast outright. */
 .demeter__stateoffer-yes {
-  border: 0; background: var(--demeter-terracotta-deep); color: var(--demeter-paper);
+  border: 0; background: var(--demeter-wheat); color: var(--demeter-ink); font-weight: 700;
 }
+.demeter__stateoffer-yes:hover { filter: brightness(0.94); }
+.demeter__stateoffer { border-color: var(--demeter-wheat); }
 .demeter__stateoffer-no {
   border: 1px solid var(--demeter-rule-strong); background: transparent;
   color: var(--demeter-muted);
@@ -6809,8 +6826,33 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 /* Room between paragraphs. renderAnswer emits real <p> blocks now, precisely so
    this is possible: a blank line under `white-space: pre-wrap` is one empty
    line-height, which is not enough to separate two paragraphs of prose. */
+/* Links inside an answer. Underlined rather than colour-only: colour alone is
+   not a link affordance for anyone who cannot distinguish it. */
+.demeter__link {
+  color: var(--demeter-terracotta-deep); text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
 .demeter__para { margin: 0; }
 .demeter__para + .demeter__para { margin-top: 0.85em; }
+
+/* Real bullets, with hanging indent. Rendered as plain text these were literal
+   hyphens down the left edge, and a wrapped item aligned under the DASH rather
+   than under its own first word — which is most of why three options read as a
+   wall rather than as three options. */
+.demeter__msg .demeter__list {
+  margin: 0.7em 0 0; padding: 0; list-style: none;
+  display: flex; flex-direction: column; gap: 0.4em;
+}
+.demeter__msg .demeter__list li {
+  position: relative; padding-left: 1.15em;
+}
+.demeter__msg .demeter__list li::before {
+  content: "•"; position: absolute; left: 0.15em; top: 0;
+  color: var(--demeter-terracotta-deep);
+}
+.demeter__para + .demeter__list { margin-top: 0.7em; }
+.demeter__list + .demeter__para { margin-top: 0.85em; }
 .dmchat .demeter__disclaimer { padding-bottom: 0.25rem; }
 /* The estimate rail keeps its own alignment: it is a panel that grows with
    what it knows, not a column that should stretch to the fold. */

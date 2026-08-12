@@ -44,6 +44,13 @@ export const T = {
     // automatic switch: re-scoping on a guess answers the wrong state with more
     // confidence than before.
     stateOffer: "You mentioned {place}. Answer for {state}?",
+    // Shown in the transcript when a state is picked. The portal is where the
+    // application actually goes; this is the one moment we know exactly which
+    // link that is, so it should not be something they have to ask for.
+    portalLead: "In {state}, you apply through {agency}.",
+    portalCta: "Apply at {portal}",
+    portalStay:
+      "No need to go yet — you can work out what you'll be asked here first, and check anything you're unsure of, before you start the real form.",
     stateOfferYes: "Yes, use {state}",
     stateOfferNo: "No, keep as is",
     clearNote:
@@ -168,6 +175,10 @@ export const T = {
       "Por favor no escribas tu número de Seguro Social, datos bancarios ni un nombre completo.",
     clear: "Borrar esta conversación",
     stateOffer: "Mencionaste {place}. ¿Respondo para {state}?",
+    portalLead: "En {state}, la solicitud se hace a través de {agency}.",
+    portalCta: "Solicitar en {portal}",
+    portalStay:
+      "No hace falta ir todavía: aquí puedes ver qué te van a preguntar y aclarar lo que no tengas claro antes de empezar el formulario real.",
     stateOfferYes: "Sí, usa {state}",
     stateOfferNo: "No, déjalo así",
     clearNote:
@@ -275,6 +286,10 @@ export const T = {
     piiHint: "Xin đừng nhập số An sinh Xã hội, thông tin ngân hàng hay họ tên đầy đủ.",
     clear: "Xóa cuộc trò chuyện này",
     stateOffer: "Bạn có nhắc đến {place}. Trả lời cho {state} nhé?",
+    portalLead: "Ở {state}, bạn nộp đơn qua {agency}.",
+    portalCta: "Nộp đơn tại {portal}",
+    portalStay:
+      "Chưa cần sang ngay đâu — bạn có thể xem trước họ sẽ hỏi những gì và làm rõ điều còn băn khoăn ở đây, trước khi bắt đầu mẫu đơn thật.",
     stateOfferYes: "Vâng, dùng {state}",
     stateOfferNo: "Không, giữ nguyên",
     clearNote:
@@ -379,6 +394,10 @@ export const T = {
     piiHint: "请不要输入社会安全号码、银行信息或完整姓名。",
     clear: "清除本次对话",
     stateOffer: "您提到了 {place}。要按 {state} 来回答吗？",
+    portalLead: "在{state}，申请通过{agency}办理。",
+    portalCta: "前往 {portal} 申请",
+    portalStay:
+      "先不用急着过去——您可以在这里先弄清楚会被问到什么、把不确定的地方问明白，然后再去填真正的表格。",
     stateOfferYes: "好，用 {state}",
     stateOfferNo: "不用，保持不变",
     clearNote: "仅从此浏览器中清除。我们仍会保留问题和回答以核查准确性。",

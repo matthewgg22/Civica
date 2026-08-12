@@ -91,7 +91,9 @@ function renderInline(line: string, keyBase: string): ReactNode[] {
   //
   // Underscores are matched only at a word boundary, so snake_case identifiers
   // in a citation (7_CFR_273) are not mistaken for emphasis.
-  const parts = line.split(/(\*\*[^*]+\*\*|\*[^*\s][^*]*\*|\b_[^_\s][^_]*_\b)/g);
+  const parts = line.split(
+    /(\[[^\]]+\]\(https?:\/\/[^\s)]+\)|\*\*[^*]+\*\*|\*[^*\s][^*]*\*|\b_[^_\s][^_]*_\b)/g,
+  );
   return parts.map((p, j) => {
     if (p.startsWith("**") && p.endsWith("**") && p.length > 4) {
       return <strong key={`${keyBase}b${j}`}>{p.slice(2, -2)}</strong>;
@@ -101,6 +103,23 @@ function renderInline(line: string, keyBase: string): ReactNode[] {
     }
     if (p.startsWith("_") && p.endsWith("_") && p.length > 2) {
       return <em key={`${keyBase}u${j}`}>{p.slice(1, -1)}</em>;
+    }
+    // [label](https://…). Only http(s), matched by the split above, so nothing
+    // else can become an href — no javascript:, no data:, no relative paths.
+    // Citations are worth nothing if the reader cannot go and look.
+    const link = /^\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)$/.exec(p);
+    if (link) {
+      return (
+        <a
+          key={`${keyBase}a${j}`}
+          className="demeter__link"
+          href={link[2]}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {link[1]}
+        </a>
+      );
     }
     return p;
   });
@@ -123,7 +142,9 @@ function renderInline(line: string, keyBase: string): ReactNode[] {
  *  and an instruction a model can ignore is not a guarantee. Ours is appended
  *  last, in the trailer frame, so every occurrence but the final one goes. */
 function dropDuplicateFooter(text: string): string {
-  const marker = /^\s*(Sources as of|Fuentes al|Nguồn tính đến|来源截至)/;
+  // Both labels: the footer was shortened from "Sources as of" to "Source", and
+  // a saved conversation can still hold answers written under the old one.
+  const marker = /^\s*\*?(Sources? as of|Source|Fuentes? al|Fuente|Nguồn|来源)\b/;
   const lines = text.split("\n");
   const hits = lines.map((l, i) => (marker.test(l) ? i : -1)).filter((i) => i >= 0);
   if (hits.length < 2) return text;
@@ -203,20 +224,65 @@ export function renderAnswer(text: string, opts?: { streaming?: boolean }): Reac
   let n = 0;
   let lastPara = -1;
 
+  /** A run of "- " lines is a LIST, and should be one.
+   *
+   *  These used to fall through as ordinary text, so the reader saw literal
+   *  hyphens down the left of the answer with no indent and no hanging
+   *  alignment — a wrapped item lined up under the dash instead of under its
+   *  own first word, which is most of why a three-item list read as a wall. */
+  const BULLET = /^[-•*]\s+/;
+
+  const flushBullets = (items: string[], key: number) => {
+    lastPara = out.length;
+    out.push(
+      <ul className="demeter__list" key={`ul${key}`}>
+        {items.map((item, i) => (
+          <li key={`ul${key}i${i}`}>{renderInline(item.replace(BULLET, ""), `ul${key}i${i}`)}</li>
+        ))}
+      </ul>,
+    );
+  };
+
   const flush = () => {
     if (para.length === 0) return;
     const lines = para;
     para = [];
     const key = n++;
-    lastPara = out.length;
-    out.push(
-      <p className="demeter__para" key={`p${key}`}>
-        {lines.flatMap((line, i) => [
-          ...(i > 0 ? ["\n"] : []),
-          ...renderInline(line, `p${key}l${i}`),
-        ])}
-      </p>,
-    );
+
+    // A paragraph can open with prose and then list ("You can apply:" followed
+    // by four options), so the two are split rather than the whole block being
+    // treated as one or the other.
+    let run: string[] = [];
+    let prose: string[] = [];
+    const flushProse = () => {
+      if (prose.length === 0) return;
+      const p = prose;
+      prose = [];
+      lastPara = out.length;
+      out.push(
+        <p className="demeter__para" key={`p${key}-${out.length}`}>
+          {p.flatMap((line, i) => [
+            ...(i > 0 ? ["\n"] : []),
+            ...renderInline(line, `p${key}l${i}`),
+          ])}
+        </p>,
+      );
+    };
+
+    for (const line of lines) {
+      if (BULLET.test(line)) {
+        flushProse();
+        run.push(line);
+      } else {
+        if (run.length) {
+          flushBullets(run, out.length);
+          run = [];
+        }
+        prose.push(line);
+      }
+    }
+    if (run.length) flushBullets(run, out.length);
+    flushProse();
   };
 
   for (const line of text.split("\n")) {
@@ -489,7 +555,12 @@ export function DemeterChat({
     // survive (household size and income don't change with the scope); only
     // the computed outcome is dropped, and the next turn recomputes it.
     setClassification(null);
-    if (messages.some((m) => m.role !== "divider")) {
+    // The DIVIDER is only meaningful once something has been said — it warns
+    // that earlier answers may not apply. The PORTAL message is not: picking a
+    // state before asking anything is the commonest way in, and that is exactly
+    // when someone most wants to know where the application goes. So the two
+    // are emitted on different conditions.
+    {
       // The STATE's name. This used the pack's `program` field, which for
       // Massachusetts is the annotated corpus string — so the divider read
       // "Now answering for Supplemental Nutrition Assistance Program (SNAP) —
@@ -498,9 +569,40 @@ export function DemeterChat({
       // 2008) — earlier answers may not apply." Nobody needs the program's
       // etymology to be told the scope changed. They need "Massachusetts".
       const name = next ? stateName(next) : null;
+      const pack = next ? states.find((x) => x.code === next) ?? null : null;
+
+      // WHERE THE APPLICATION ACTUALLY GOES. This is the one moment we know
+      // exactly which portal that is, so it should not be something the reader
+      // has to ask for — and the answer they would otherwise get is a general
+      // one about "your state's agency".
+      //
+      // With the invitation to stay attached, deliberately. Handing someone a
+      // link to a government form and going quiet is the point at which most
+      // people stop; the useful thing this can do is let them find out what
+      // they will be asked before they are sitting in front of it.
+      const portal =
+        pack?.portal && name
+          ? [
+              t.portalLead.replace("{state}", name).replace("{agency}", pack.agency),
+              t.portalCta
+                .replace("{portal}", pack.portal.name)
+                .replace(/^(.*)$/, `[$1](${pack.portal.url})`),
+              t.portalStay,
+            ].join("\n\n")
+          : null;
+
+      const hasSaidSomething = messages.some((m) => m.role !== "divider");
       setMessages((m) => [
         ...m,
-        { role: "divider", content: name ? t.dividerTo(name) : t.dividerFederal },
+        ...(hasSaidSomething
+          ? [
+              {
+                role: "divider" as const,
+                content: name ? t.dividerTo(name) : t.dividerFederal,
+              },
+            ]
+          : []),
+        ...(portal ? [{ role: "assistant" as const, content: portal }] : []),
       ]);
     }
   };
