@@ -4889,6 +4889,115 @@ export const DE_GOLD: AnswerExpectation[] = [
   },
 ];
 
+export const WY_GOLD: AnswerExpectation[] = [
+  {
+    id: "wy-no-bbce-narrow-categorical",
+    // Flagship structural finding: Wyoming is one of only 9 states without
+    // BBCE — categorical eligibility is narrow SSI/POWER/Tribal-TANF only,
+    // not a 200% FPL gate. Guards against Mae assuming a BBCE-style
+    // blanket asset-test exemption the way most other states' packs do.
+    question: "What is the income limit for SNAP in Wyoming?",
+    state: "WY",
+    expectCitation: "Section 502",
+    mustMention: "130",
+    mustDisclaim: true,
+  },
+  {
+    id: "wy-asset-limit-3000-4500",
+    question: "Does Wyoming have an asset or resource limit for SNAP?",
+    state: "WY",
+    expectCitation: "Section 800",
+    mustMention: "4,500",
+    mustDisclaim: true,
+  },
+  {
+    id: "wy-drug-felony-no-disqualification",
+    // Guards the flagship correction: Wyoming fully opted out of the
+    // federal drug-felony ban per USDA's own State Options Report and its
+    // own manual's silence on any such section — several secondary
+    // sources describing a "modified" ban are simply wrong for Wyoming.
+    question: "I have a drug felony conviction — can I still get SNAP in Wyoming?",
+    state: "WY",
+    mustNotMention: ["modified ban", "compliance with the terms of your sentence"],
+    mustDisclaim: true,
+  },
+  {
+    id: "wy-abawd-no-waiver",
+    question: "Is the SNAP work-requirement time limit currently waived anywhere in Wyoming?",
+    state: "WY",
+    mustMention: "no",
+    mustDisclaim: true,
+  },
+  {
+    id: "wy-abawd-age-and-tribal-exemption",
+    // Tribal-land/FDPIR note: Indian tribal membership is a full ABAWD
+    // exemption in Wyoming, relevant to Wind River Reservation residents.
+    question: "Does the SNAP work requirement apply to me if I'm a member of an Indian tribe in Wyoming?",
+    state: "WY",
+    expectCitation: "Section 708",
+    mustMention: "64",
+    mustDisclaim: true,
+  },
+  {
+    id: "wy-sua-heating",
+    question: "What is the Standard Utility Allowance for SNAP in Wyoming?",
+    state: "WY",
+    mustMention: "510",
+    mustDisclaim: true,
+  },
+  {
+    id: "wy-restaurant-meals-program-not-available",
+    question: "Can I use my EBT card at a restaurant in Wyoming?",
+    state: "WY",
+    mustMention: "not",
+    mustDisclaim: true,
+  },
+  {
+    id: "wy-how-to-apply-paper-only",
+    // Guards a structural fact: Wyoming has no online SNAP portal, it is
+    // paper-application-only.
+    question: "How do I apply for SNAP in Wyoming?",
+    state: "WY",
+    expectCitation: "Section 401",
+    mustMention: "paper",
+    mustDisclaim: true,
+  },
+  {
+    id: "wy-fdpir-mutual-exclusion",
+    // FDPIR/tribal-land note: SNAP and FDPIR are mutually exclusive on
+    // Wind River Reservation.
+    question: "Can I use SNAP on the Wind River Reservation, or do I have to choose FDPIR instead?",
+    state: "WY",
+    expectCitation: "Section 402",
+    mustMention: "FDPIR",
+    mustDisclaim: true,
+  },
+  {
+    id: "wy-cert-period-12-months-no-extension",
+    question: "How long does my SNAP certification last in Wyoming?",
+    state: "WY",
+    mustMention: "12",
+    mustDisclaim: true,
+  },
+  {
+    id: "wy-soda-waiver-not-yet-effective",
+    // Genuinely time-sensitive: the sweetened-beverage exclusion is
+    // approved but not effective until 2/1/2027 — guards against Mae
+    // stating the restriction as already in force.
+    question: "Can I buy soda with my SNAP benefits in Wyoming?",
+    state: "WY",
+    mustMention: "2027",
+    mustDisclaim: true,
+  },
+  {
+    id: "wy-federal-benefit",
+    question: "How is the monthly SNAP benefit amount calculated from net income in Wyoming?",
+    state: "WY",
+    expectCitation: "273.10",
+    mustDisclaim: true,
+  },
+];
+
 /** Everything the live runner executes for the District of Columbia. */
 export const DC_GOLD: AnswerExpectation[] = [
   {
@@ -5019,5 +5128,6 @@ export const ALL_GOLD: AnswerExpectation[] = [
   ...RI_GOLD,
   ...ND_GOLD,
   ...DE_GOLD,
+  ...WY_GOLD,
   ...DC_GOLD,
 ];

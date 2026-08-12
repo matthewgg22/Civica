@@ -299,6 +299,14 @@ export const QUESTIONS: Record<string, string[]> = {
     "How long does my SNAP certification last in Delaware?",
     "Does Delaware have a Restaurant Meals Program for SNAP?",
   ],
+  WY: [
+    "What is the income limit for SNAP in Wyoming?",
+    "Does Wyoming have an asset or resource limit for SNAP?",
+    "I have a drug felony conviction — can I still get SNAP in Wyoming?",
+    "Is the SNAP work-requirement time limit currently waived anywhere in Wyoming?",
+    "How do I apply for SNAP in Wyoming?",
+    "Can I use SNAP on the Wind River Reservation, or do I have to choose FDPIR instead?",
+  ],
   DC: [
     "What is the income limit for SNAP in DC?",
     "Does DC have an asset or resource limit for SNAP?",
