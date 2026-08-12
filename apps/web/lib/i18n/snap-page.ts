@@ -94,6 +94,17 @@ export interface PageCopy {
   /** Where the EBT card actually works. "{n}" is the store count and "{date}"
    *  the date it was pulled — both interpolated so the figure and its vintage
    *  can never drift apart in translation. */
+  /** The ZIP lookup. A national map answers "is it everywhere"; this answers
+   *  "can I use it at the shop on my corner", which is the question people
+   *  actually have. */
+  retailSearchLabel: string;
+  retailSearchPlaceholder: string;
+  retailSearchGo: string;
+  retailSearchCount: string;
+  retailSearchNone: string;
+  retailSearchError: string;
+  retailSearchMore: string;
+  retailSearchOpenMap: string;
   retailersH3: string;
   retailersBody: string;
   retailersNote: string;
@@ -266,6 +277,16 @@ const en: PageCopy = {
   askLink: "Ask Demeter about your situation",
   askIntro:
     "Plain-language answers with the rule attached. Pick your state and ask anything about SNAP.",
+  retailSearchLabel: "Check your area",
+  retailSearchPlaceholder: "ZIP code",
+  retailSearchGo: "Find stores",
+  retailSearchCount: "{n} stores in {zip} accept EBT",
+  retailSearchNone:
+    "No stores are listed in {zip}. USDA's list is by store address, so try a neighbouring ZIP — the shop you use may be registered in one.",
+  retailSearchError:
+    "That lookup did not come back. It does not mean there are no stores near you — try again, or check USDA's own locator.",
+  retailSearchMore: "Showing the first {n}. There are more.",
+  retailSearchOpenMap: "Open in maps",
   retailersH3: "Where the card works",
   retailersBody:
     "{n} stores across every state and territory accept EBT — supermarkets, corner shops, many farmers markets, and online at some retailers.",
@@ -491,6 +512,16 @@ const es: PageCopy = {
   askLink: "Pregúntale a Demeter sobre tu situación",
   askIntro:
     "Respuestas en lenguaje claro, con la regla adjunta. Elige tu estado y pregunta lo que quieras sobre SNAP.",
+  retailSearchLabel: "Consulta tu zona",
+  retailSearchPlaceholder: "Código postal",
+  retailSearchGo: "Buscar tiendas",
+  retailSearchCount: "{n} tiendas en {zip} aceptan EBT",
+  retailSearchNone:
+    "No hay tiendas registradas en {zip}. La lista del USDA usa la dirección de la tienda, así que prueba un código postal vecino: la tienda que usas puede estar registrada en otro.",
+  retailSearchError:
+    "Esa búsqueda no respondió. No significa que no haya tiendas cerca de ti: inténtalo otra vez o consulta el localizador del USDA.",
+  retailSearchMore: "Se muestran las primeras {n}. Hay más.",
+  retailSearchOpenMap: "Abrir en mapas",
   retailersH3: "Dónde funciona la tarjeta",
   retailersBody:
     "{n} tiendas en todos los estados y territorios aceptan EBT: supermercados, tiendas de barrio, muchos mercados de agricultores y, en algunos comercios, compras en línea.",
@@ -716,6 +747,16 @@ const vi: PageCopy = {
   askLink: "Hỏi Demeter về hoàn cảnh của bạn",
   askIntro:
     "Câu trả lời bằng ngôn ngữ dễ hiểu, kèm theo điều luật. Chọn tiểu bang của bạn và hỏi bất cứ điều gì về SNAP.",
+  retailSearchLabel: "Tra khu vực của bạn",
+  retailSearchPlaceholder: "Mã ZIP",
+  retailSearchGo: "Tìm cửa hàng",
+  retailSearchCount: "{n} cửa hàng ở {zip} chấp nhận EBT",
+  retailSearchNone:
+    "Không có cửa hàng nào được ghi nhận ở {zip}. Danh sách của USDA dựa theo địa chỉ cửa hàng, nên hãy thử mã ZIP lân cận — cửa hàng bạn hay đi có thể được đăng ký ở mã khác.",
+  retailSearchError:
+    "Lượt tra cứu không phản hồi. Điều đó không có nghĩa là quanh bạn không có cửa hàng — hãy thử lại, hoặc xem công cụ tra cứu của USDA.",
+  retailSearchMore: "Đang hiển thị {n} kết quả đầu. Còn nữa.",
+  retailSearchOpenMap: "Mở trong bản đồ",
   retailersH3: "Thẻ dùng được ở đâu",
   retailersBody:
     "{n} cửa hàng trên khắp các tiểu bang và vùng lãnh thổ chấp nhận EBT — siêu thị, cửa hàng tạp hóa, nhiều chợ nông sản, và mua trực tuyến ở một số nơi.",
@@ -942,6 +983,16 @@ const zh: PageCopy = {
   askLink: "就您的情况询问 Demeter",
   askIntro:
     "用通俗语言作答，并附上条文。选择您所在的州，随便问关于 SNAP 的问题。",
+  retailSearchLabel: "查询您所在的区域",
+  retailSearchPlaceholder: "邮政编码",
+  retailSearchGo: "查找商店",
+  retailSearchCount: "{zip} 有 {n} 家商店接受 EBT",
+  retailSearchNone:
+    "{zip} 没有登记在册的商店。美国农业部的名单按商店地址归类，可以试试相邻的邮编——您常去的那家可能登记在别的邮编下。",
+  retailSearchError:
+    "这次查询没有返回结果。这并不代表您附近没有商店——请再试一次，或查看美国农业部自己的查询工具。",
+  retailSearchMore: "仅显示前 {n} 家，还有更多。",
+  retailSearchOpenMap: "在地图中打开",
   retailersH3: "这张卡在哪里能用",
   retailersBody:
     "全美各州和各领地共有 {n} 家商店接受 EBT——超市、街角小店、许多农夫市集，部分商家还支持网上购买。",
