@@ -1,0 +1,64 @@
+{
+  "_provenance": {
+    "note": "Virginia citation authorities. Virginia uses TWO distinct authority families: the Virginia SNAP Manual (Volume V), which cites its own sections with ROMAN-NUMERAL Parts and lettered/numbered sub-items (e.g. 'Part II.G.3', 'Part IX.D.3', 'Part X.A.4.e') rather than a decimal or dotted-number scheme, and Va. Code Title 63.2 statutory sections (e.g. '63.2-505.2', '63.2-801'). THIS IS A GENUINE STRUCTURAL DEPARTURE from every other state this roster has built so far: NJ/NC/IL/MI all use decimal or dotted-number regulation/manual sections (10:87-2.36, FNS 340.19, PM 07-02-01, BEM 550), OH/WI use administrative-code-style numbering (OAC 5101, FSH 1.2.3), and PA uses plain decimal handbook sections (512.1) — none use a Roman-numeral-Part-plus-letter-plus-number citation shape. This pack invents the short prefix 'VA SNAP Manual Part' (Virginia's own manual does not self-cite with a short acronym prefix; it just says 'Part IX' in running text) to disambiguate manual sections from the Va. Code statutory family, matching the roster's convention of a short prefix per state's citation family (PA's PAH, NC's FNS/NCGS, NJ's N.J.A.C./N.J.S.A.). Statute sections are prefixed 'Va. Code §' matching Virginia's own official citation convention exactly (used verbatim in law.lis.virginia.gov's own section headers).",
+    "extracted": "2026-08-11"
+  },
+  "patterns": [
+    {
+      "key": "vamanualpart",
+      "regex": "\\bVA\\s+SNAP\\s+Manual\\s+Part\\s+([IVXL]+(?:\\.[A-Z](?:\\.\\d{1,2}){0,2}(?:\\.[a-z])?)?)\\b",
+      "flags": "gi",
+      "template": "VA SNAP Manual Part $1",
+      "normalize": "none",
+      "match": "exact",
+      "note": "Virginia SNAP Manual (Volume V) sections, cited by Roman-numeral Part plus an optional lettered chapter and up to two numbered/lettered sub-items, e.g. Part II.G.3 (Categorical Eligibility for PA Households), Part IX.D.3 (vehicles, exempt resources), Part X.A.4.e (utility standard). This shape is a genuine departure from every other state this roster has built — see PROVENANCE.md."
+    },
+    {
+      "key": "vacode",
+      "regex": "\\bVa\\.?\\s?Code\\s+§?\\s*(63\\.2-\\d{1,4}(?:\\.\\d{1,2})?)\\b",
+      "flags": "gi",
+      "template": "Va. Code § $1",
+      "normalize": "none",
+      "match": "exact",
+      "note": "Code of Virginia Title 63.2 (Welfare/Social Services) sections, e.g. 63.2-505.2 (drug-felony SNAP opt-out), 63.2-801 (BBCE, no asset limit, mandatory statewide Restaurant Meals Program participation)"
+    },
+    {
+      "key": "vamanualappendix",
+      "regex": "\\bVA\\s+SNAP\\s+Manual\\s+Part\\s+([IVXL]+\\s+Appendix\\s+[IVXL]+)\\b",
+      "flags": "gi",
+      "template": "VA SNAP Manual Part $1",
+      "normalize": "none",
+      "match": "exact",
+      "note": "Virginia SNAP Manual Part appendices, cited by Part Roman numeral + 'Appendix' + Appendix Roman numeral, e.g. Part XV Appendix I (Localities Whose Residents Are Exempted from the Work Requirement). Does not fit the plain vamanualpart regex shape, matching this roster's precedent (PA's separate appendix pattern)."
+    }
+  ],
+  "known": {
+    "vamanualpart": [
+      { "value": "VA SNAP Manual Part I.C", "note": "Benefit Issuance and Use — EBT card, VRMP restaurant carve-out from the hot-foods purchase restriction" },
+      { "value": "VA SNAP Manual Part II.G.3", "note": "Categorical Eligibility for PA Households (7 CFR 273.2(j)(2)) — narrow TANF/SSI/GR pathway plus the 200% FPL BBCE pathway; also the source of the $4,500+ lottery/gambling exception" },
+      { "value": "VA SNAP Manual Part IV.A", "note": "Certification Periods (7 CFR 273.10(f)) — 12 months standard, 24 months elderly/disabled-no-earned-income, 36 months VaCAP/ESAP, and other special-purpose periods" },
+      { "value": "VA SNAP Manual Part V.A", "note": "Entitlement to Expedited Service (7 CFR 273.2(i)(1)) — $150 gross income / $100 liquid resources gate" },
+      { "value": "VA SNAP Manual Part V.C", "note": "Expedited service processing standards — plain federal 7-calendar-day benefit-availability ceiling" },
+      { "value": "VA SNAP Manual Part IX.A", "note": "Resources (7 CFR 273.8) — general provision, liquid assets only" },
+      { "value": "VA SNAP Manual Part IX.B", "note": "Resource Limits — $3,000 standard / $4,500 elderly-or-disabled; does not apply to BBCE/categorically eligible households" },
+      { "value": "VA SNAP Manual Part IX.C", "note": "Nonexempt Resources — includes the $4,500+ single-game lottery/gambling winnings ineligibility rule" },
+      { "value": "VA SNAP Manual Part IX.D", "note": "Exempt Resources — real property, mobile homes, ALL vehicles (item 3, no qualifier), household goods, burial plots, life insurance cash value, retirement accounts" },
+      { "value": "VA SNAP Manual Part IX.D.3", "note": "Vehicles — unconditional exclusion, no recreational-vehicle carve-out (contrast with NJ's pack in this roster)" },
+      { "value": "VA SNAP Manual Part X.A.1", "note": "Standard Deduction (7 CFR 273.9(d)(1)) — $209/$223/$261/$299 by household size, matching the federal FY2026 table" },
+      { "value": "VA SNAP Manual Part X.A.4", "note": "Shelter Expense (7 CFR 273.9(d)(5)) — general shelter-deduction calculation, $744 cap (uncapped for elderly/disabled households)" },
+      { "value": "VA SNAP Manual Part X.A.4.e", "note": "Utility standard — size-scaled two-band SUA ($375 for 1-3 persons, $476 for 4+); no separate non-heating multi-utility tier" },
+      { "value": "VA SNAP Manual Part X.A.4.f", "note": "Telephone standard — flat $54/month for households whose only utility expense is a telephone" },
+      { "value": "VA SNAP Manual Part X.A.5", "note": "Medical Expenses (7 CFR 273.9(d)(3)) — $35 threshold, plus Virginia's own flat $200 Medical Standard Deduction option (elderly/disabled members only)" },
+      { "value": "VA SNAP Manual Part X.A.6", "note": "Homeless Shelter Allowance — flat $198.99/month, matching the federal FY2026 figure" },
+      { "value": "VA SNAP Manual Part XI.F.17", "note": "Legally Obligated Child Support Payments — income EXCLUSION (not an ordinary deduction), excludes vendor payments and arrearages, explicitly excludes alimony/spousal support" },
+      { "value": "VA SNAP Manual Part XV.A", "note": "Work Requirement, General Provisions — 3-in-36-month ABAWD time limit, current 18-64 age range stated correctly in this section's own body text" }
+    ],
+    "vacode": [
+      { "value": "Va. Code § 63.2-505.2", "note": "Eligibility for food stamps; drug-related felonies — full statutory opt-out from the federal drug-felony SNAP ban, effective July 1, 2020 (enacted 2005 c. 576; amended 2020 cc. 221, 361)" },
+      { "value": "Va. Code § 63.2-801", "note": "SNAP benefits program — subsection (A) mandates statewide VRMP participation by every political subdivision; subsection (B) codifies 200% FPL BBCE and no asset limit directly in statute; subsection (C) bars an in-person appearance requirement for application or renewal, to the extent federal law allows" }
+    ],
+    "vamanualappendix": [
+      { "value": "VA SNAP Manual Part XV Appendix I", "note": "Localities Whose Residents Are Exempted from the Work Requirement — historical waiver table; states 'No exempt areas' for July 2025 forward; the appendix's own footnote is STALE (still says 'except... over age 54')" }
+    ]
+  }
+}

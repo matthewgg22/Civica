@@ -1,0 +1,236 @@
+{
+  "_provenance": {
+    "note": "Virginia SNAP curated supplements. Virginia has NO existing packages/snap-rules StatePolicy entry and NO oracle-fixture coverage — a genuinely blank slate, like North Carolina's, Ohio's, and New Jersey's prior corpus-only builds in this same roster. This pack is CORPUS-ONLY and does not touch packages/snap-rules or the oracle fixture. Drafted from a direct curl fetch (browser User-Agent) of the complete, current Virginia SNAP Manual (Volume V) PDF, extracted with pdftotext -layout, cross-checked against Va. Code §§ 63.2-505.2 and 63.2-801 (both fetched directly), and USDA's official ABAWD Time Limit Waivers FY2025-2029 index (fetched directly).",
+    "extracted": "2026-08-11",
+    "source_fact_check": "direct curl fetch (browser UA) of the complete Virginia SNAP Manual PDF + pdftotext -layout + direct fetch of Va. Code §§ 63.2-505.2 and 63.2-801 at law.lis.virginia.gov + direct fetch of USDA's FY2025-2029 ABAWD waiver-response index + direct fetch of VDSS's VRMP public pages + WebSearch corroboration of SB1020/Chapter 321 (2025) bill history + post-draft adversarial refute pass; findings and gaps recorded in PROVENANCE.md"
+  },
+  "supplements": [
+    {
+      "key": "income-pathways",
+      "kind": "supplement",
+      "terms": [
+        "income limit",
+        "income limits",
+        "gross income limit",
+        "gross income ceiling",
+        "make too much",
+        "over income",
+        "bbce",
+        "categorical eligibility",
+        "categorically eligible",
+        "broad-based categorical eligibility",
+        "expanded categorical eligibility",
+        "200 percent",
+        "200%",
+        "poverty level",
+        "tanf",
+        "temporary assistance"
+      ],
+      "citation": "VA SNAP Manual Part II.G.3; Va. Code § 63.2-801(B) — a flat 200% FPL broad-based categorical eligibility screen, conferred through a TANF-funded service and codified directly in Virginia STATUTE, not just agency policy",
+      "heading": "Virginia runs a flat 200% FPL broad-based categorical-eligibility screen, and — unusually for this roster — the 200% threshold and the no-asset-limit rule are written directly into Virginia STATUTE, not just the SNAP Manual",
+      "text": "VA SNAP Manual Part II.G.3 makes a household categorically eligible for SNAP without a resource test, without the ordinary income limits, and without SSN/sponsored-alien/residency re-verification when at least one member receives (or is authorized to receive) a TANF-funded service — including a non-cash or in-kind service funded less than 50% by the TANF block grant — AND the household's gross income is at or below 200 percent of the federal poverty level (Broad Based Categorical Eligibility, BBCE). Households in which every member already receives TANF, General Relief–Unattached Child, or SSI are categorically eligible outright, with no income test at all. THIS PACK'S STRUCTURAL FINDING: unlike every other BBCE state this roster has documented so far (NJ's 185% FPL, most others' 200% FPL, all set by agency policy alone), Virginia's 200% FPL threshold and its no-asset-limit rule are written directly into the Code of Virginia itself — Va. Code § 63.2-801(B) directs the State Board of Social Services to \"(ii) set the gross income eligibility standard for SNAP benefits at 200 percent of the federal poverty guidelines, and (iii) not impose an asset limit for eligibility for SNAP benefits,\" \"to the extent authorized by federal law and regulations.\" A future change to Virginia's BBCE posture would require a statutory change, not merely an agency policy update — a meaningfully higher bar than most states in this roster. Categorically eligible households remain subject to nonfinancial eligibility rules (residency, work registration, etc.) and lose categorical eligibility if a member is disqualified for an intentional program violation, quits/reduces work without good cause, or is fleeing prosecution/violating probation or parole (Part II.G.3.b) — categorical eligibility waives the income and resource tests, not every other eligibility rule.",
+      "source_url": "https://law.lis.virginia.gov/vacode/title63.2/chapter8/section63.2-801/"
+    },
+    {
+      "key": "asset-rule",
+      "kind": "supplement",
+      "terms": [
+        "asset limit",
+        "asset test",
+        "resource limit",
+        "resource test",
+        "resources",
+        "savings",
+        "savings limit",
+        "bank account",
+        "vehicle",
+        "car count",
+        "does my car count",
+        "boat",
+        "motor home",
+        "lottery",
+        "gambling"
+      ],
+      "citation": "VA SNAP Manual Part IX.A-D — resource test reaches only a narrow slice of households (most are exempt via BBCE); ALL vehicles are excluded, but $4,500+ single-game lottery/gambling winnings make an otherwise-categorically-eligible household ineligible outright",
+      "heading": "Virginia's resource test barely reaches anyone in practice, and where it does, vehicles never count — but a single large lottery or gambling win can end SNAP eligibility even for a BBCE household",
+      "text": "VA SNAP Manual Part IX.B sets the resource limit at $4,500 for a household with a member 60 or older or disabled, and $3,000 for other households — but Part IX.B's very next sentence states plainly: \"The resource limits do not apply to categorically eligible households or members, including those who meet BBCE requirements.\" Given the 200% FPL BBCE screen documented in the income-pathways supplement, most Virginia households never face a resource test at all. Part IX.D (Exempt Resources) lists real property, mobile homes, and — item 3, with no qualifier or carve-out — simply \"Vehicles,\" full stop: EVERY vehicle a Virginia SNAP household owns is excluded as a resource, matching this roster's North Carolina pack's blanket vehicle exclusion and standing in direct CONTRAST to New Jersey's pack in this roster, which counts boats and motor homes at fair market value unless they are the household's home. A reader should not assume every state in this roster follows New Jersey's narrower exclusion; Virginia's rule is unconditional. Separately, Part IX.C.1.c creates a genuine exception that reaches EVEN categorically eligible households: \"Receipt of lottery or gambling winnings of $4,500 or more for a single game before taxes or other withholdings will cause households to be ineligible for benefits\" — Part II.G.3.a repeats this as an explicit carve-out from the categorical-eligibility resource waiver. This is a distinct, narrower rule from the ordinary resource test (it is a single-game threshold triggering outright ineligibility, not a running resource total) and is worth flagging because it is easy to conflate with the general $3,000/$4,500 resource limits, which do not apply to BBCE households at all.",
+      "source_url": "https://www.dss.virginia.gov/media/vdss/benefit-programs/documents/snap/snap-manual/Entire-Manual-eff-10012025.pdf"
+    },
+    {
+      "key": "sua-values",
+      "kind": "supplement",
+      "terms": [
+        "utility allowance",
+        "utility standard",
+        "shelter deduction",
+        "excess shelter",
+        "standard utility allowance",
+        "heating standard",
+        "cooling standard",
+        "telephone standard",
+        "phone standard",
+        "homeless shelter deduction"
+      ],
+      "citation": "VA SNAP Manual Part X.A.4.e-f — a SIZE-SCALED, two-band utility standard ($375 for 1-3 persons, $476 for 4+) plus a separate flat $54 telephone-only standard; no third (non-heating multi-utility) tier exists",
+      "heading": "Virginia's utility standard scales by household size in just two bands — and Virginia has only TWO utility-allowance tiers, not the usual three",
+      "text": "THIS PACK'S STRUCTURAL FINDING: Virginia's utility standard (Part X.A.4.e) scales with household size — $375/month for a residence of 1-3 persons, $476/month for 4 or more — a genuine departure from most states in this roster, which publish a single flat SUA figure regardless of household size (Ohio, Pennsylvania, Wisconsin, Minnesota, and New Jersey's HCSUA figure are all flat). This roster's North Carolina pack documents a comparable size-scaled structure, but North Carolina scales across FIVE bands (sizes 1, 2, 3, 4, 5+) with THREE separate tiers (SUA/BUA/TUA); Virginia's structure is flatter still — just TWO size bands, and, distinctively, only TWO tiers total: the single utility standard covers heat, cooling, electricity, gas, water, sewerage, septic maintenance, garbage collection, AND the basic telephone service fee all together (Part X.A.4.e) — there is no intermediate \"non-heating, multiple utilities\" allowance the way North Carolina's BUA or a typical three-tier state's LUA provides. A household not entitled to the utility standard (because it has no separately identifiable heating/cooling expense) either uses actual costs, or — if its ONLY utility expense is a telephone — claims the flat telephone standard of $54/month (Part X.A.4.f, divided among households sharing the expense). A household may use the utility standard for a full 12 months if it incurs a heating/cooling expense at any point in the year, or if it received LIHEAP energy-assistance payments at its current residence in the prior 12 months and has a member 60+ or disabled, even without incurring a direct cost. Multiple family units sharing one residence divide a single utility standard among the units contributing to heating/cooling costs (with a worked example in the manual: a 4-person unit sharing costs with one other person gets $238, i.e., $476 ÷ 2). Separately, the federally uniform figures Virginia's own manual states directly (Transmittal #36, 10/25, matching every other state this roster has verified against the current FY2026 table): Standard Deduction $209 (1-3), $223 (4), $261 (5), $299 (6+); Maximum Excess Shelter Deduction $744/month (uncapped for households with an elderly/disabled member); Homeless Shelter Allowance $198.99/month.",
+      "source_url": "https://www.dss.virginia.gov/media/vdss/benefit-programs/documents/snap/snap-manual/Entire-Manual-eff-10012025.pdf"
+    },
+    {
+      "key": "medical-deduction",
+      "kind": "supplement",
+      "terms": [
+        "medical deduction",
+        "medical expense",
+        "medical expenses",
+        "medical bills",
+        "elderly deduction",
+        "disability deduction",
+        "excess medical",
+        "medical standard deduction"
+      ],
+      "citation": "VA SNAP Manual Part X.A.5 — Virginia offers its own flat Medical Standard Deduction ($235 threshold, $200 flat deduction), an alternative to itemizing actual expenses, for elderly/disabled household members only",
+      "heading": "Virginia offers a flat Medical Standard Deduction of $200 once a household verifies more than $35/month in medical costs — an alternative to itemizing every receipt, not a replacement for the plain federal $35 threshold",
+      "text": "VA SNAP Manual Part X.A.5 allows a deduction for medical expenses of elderly (60+) or disabled household members that exceed $35/month — the plain federal mechanism (7 CFR 273.9(d)(3)) applied at the household level, not per-member. Virginia ALSO offers a state-option flat Medical Standard Deduction: once a household verifies that its eligible members incur MORE than $35 in allowable monthly medical expenses, it may take a flat $200 deduction (described in the manual as \"a medical standard deduction of $235 has been established\" — $235 in verified gross expenses yields a $200 net deduction after the $35 threshold is subtracted) WITHOUT needing to re-verify the exact expense amount for the rest of the certification period. Households with MORE than $235 in actual monthly medical expenses may opt out of the standard and itemize instead, subject to Part XIII.B.4's evaluation rules. A household may switch between the standard and actual costs only at certification (or when it moves, or was not previously entitled to the standard); once the standard is imposed, it continues for the rest of the certification period as long as the household retains an elderly/disabled member who was part of the household at certification. Only the elderly/disabled individual's own medical costs qualify — a spouse or dependent of that individual is not separately entitled to the deduction. Virginia's manual does not itemize specific covered categories beyond \"medical and dental care, including psychotherapy and rehabilitation services\" and related items (hospitalization, nursing care) in the text this pack fetched — a full itemized list (service animals, transportation, over-the-counter medication) was not independently confirmed in this pass and is flagged as a gap in freshness.json.",
+      "source_url": "https://www.dss.virginia.gov/media/vdss/benefit-programs/documents/snap/snap-manual/Entire-Manual-eff-10012025.pdf"
+    },
+    {
+      "key": "child-support-deduction",
+      "kind": "supplement",
+      "terms": [
+        "child support",
+        "support payments",
+        "child support deduction",
+        "dependent care",
+        "child care deduction",
+        "daycare",
+        "alimony",
+        "arrearage"
+      ],
+      "citation": "VA SNAP Manual Part XI.F.17 — Virginia EXCLUDES legally obligated child support from income entirely (an income exclusion, not an ordinary post-income deduction), though Part X.A.4's own summary text loosely calls it a \"deduction\"",
+      "heading": "Virginia treats legally obligated child support as an INCOME EXCLUSION under Part XI (Income), even though the manual's own income-deductions chapter (Part X) informally lists it alongside the deductions — the formal mechanism is an exclusion",
+      "text": "VA SNAP Manual Part XI.F.17, \"Legally Obligated Child Support Payments,\" states that child support paid by a household member to an individual or agency OUTSIDE the household — including vendor payments made on the child's behalf (such as payments toward health insurance) and amounts paid toward arrearages — is \"allowable as an income exclusion,\" verified before the exclusion is granted and capped at the monthly obligated amount (except for arrearage payments). This is the same INCOME-EXCLUSION mechanism (7 CFR 273.9(c), applied before gross income is even calculated) this roster's Illinois and New Jersey packs document for their own states, and stands in CONTRAST to the ORDINARY DEDUCTION mechanism (7 CFR 273.9(d)(5), subtracted after gross income is calculated) this roster's North Carolina, Ohio, Georgia, Michigan, Minnesota, Oregon, Pennsylvania, and Wisconsin packs document. THIS PACK FLAGS A MINOR INTERNAL-DOCUMENT INCONSISTENCY worth knowing about: Virginia's own Part X.A.4 (Shelter Expense) casually describes \"the child support deduction\" as one of several items subtracted to reach \"adjusted net income\" for the shelter-deduction calculation — informal language that could mislead a reader into treating it as an ordinary Part X deduction, when Part XI.F.17's own formal treatment (and its placement in the \"Excluded Income\" chapter) makes clear it is calculated as an income exclusion, mechanically earlier in the income calculation than a Part X deduction. The practical difference matters for households near a gross-income eligibility threshold: an income exclusion lowers gross income itself (potentially preserving eligibility under the 200%/130% gross income test), while an ordinary deduction only lowers net income after the gross test has already been applied. Part XI.F.17 explicitly excludes alimony and spousal support paid to or for a nonhousehold member from this exclusion — unlike New Jersey's pack in this roster, which could not confirm alimony's treatment either way, Virginia's manual states directly that alimony does NOT qualify for the child-support income exclusion.",
+      "source_url": "https://www.dss.virginia.gov/media/vdss/benefit-programs/documents/snap/snap-manual/Entire-Manual-eff-10012025.pdf"
+    },
+    {
+      "key": "abawd-work-requirement",
+      "kind": "supplement",
+      "terms": [
+        "abawd",
+        "able bodied adult",
+        "work requirement",
+        "time limit",
+        "3 month limit",
+        "work registration",
+        "waiver",
+        "waived area",
+        "northern virginia",
+        "appalachia"
+      ],
+      "citation": "VA SNAP Manual Part XV.A and Appendix I; USDA FNS/FNA ABAWD Time Limit Waivers FY2025-2029 index (fetched 2026-08-11) — Virginia currently holds ZERO active ABAWD waivers anywhere in the Commonwealth, a sharp reversal from its own waiver history through June 2025",
+      "heading": "Virginia currently has NO ABAWD time-limit waiver anywhere — not in Northern Virginia, not in rural Appalachian counties, not anywhere — a genuine change from Virginia's own waiver history as recently as mid-2025",
+      "text": "An able-bodied adult without dependents (ABAWD) is limited to three countable months of SNAP benefits within a fixed 36-month period unless meeting an 80-hour/month work activity requirement (averaged 20 hours/week), qualifying for an exemption, or living in a currently-waived geographic area (7 CFR 273.24). VA SNAP Manual Part XV.A confirms the current federal age range directly in its own body text: the 36-month tracking period applies to \"any household member who is at least 18 and under 65 years of age\" — the post-OBBBA 18-64 range, not the pre-OBBBA 18-54 range. THIS PACK'S FLAGSHIP FINDING, independently corroborated by two sources: Virginia's own Appendix I (\"Localities Whose Residents Are Exempted from the Work Requirement\") is a historical table tracking waived areas from April 2020 forward — a STATEWIDE exemption from April 2020-June 2023, narrowing to a list of specific waived localities (Brunswick, Buchanan, Danville, Dickenson, Dinwiddie, Greensville/Emporia, Hopewell, Martinsville, Petersburg, Surry, Sussex, and others across two earlier periods) through June 2025, and then: \"July 2025-June 2025 [sic, meaning forward]: No exempt areas.\" This pack independently fetched USDA's own official ABAWD Time Limit Waivers FY2025-2029 index directly (updated July 22, 2026) and confirmed Virginia is ABSENT from the list of states that have submitted ANY waiver request for FY2025 or FY2026 — a list that includes dense-population and rural-Appalachian-adjacent states alike (Kentucky, West Virginia is not shown either, but neighboring states like Maryland's DC-suburb dynamics are relevant comparators for Virginia's own Northern Virginia region). Virginia's Northern Virginia/DC-suburb counties (traditionally low unemployment) and its rural Southside/Appalachian counties (some of which appear repeatedly on the pre-2025 waived-locality list above) are BOTH currently subject to the standard 3-in-36-month time limit with no exception — this is a genuine, fairly recent policy tightening worth flagging clearly, since a reader relying on older information (or Virginia's own multi-year waiver history) could easily assume some Virginia locality is still covered. SEPARATELY, THIS PACK FLAGS A STALE INTERNAL-DOCUMENT FOOTNOTE: Appendix I's own asterisked footnote instructs BPS staff to \"track the work requirement for all household members except those persons under 18 or over age 54\" — pre-OBBBA language that has not been updated to match Part XV.A's own correctly-stated 18-64 range elsewhere in the SAME manual (Transmittal #36, 10/25) — a codification-lag finding structurally similar to New Jersey's stale resource-limit text elsewhere in this roster, though here the lag is between two sections of the SAME document rather than between statute and practice.",
+      "source_url": "https://www.fns.usda.gov/snap/waivers/timelimit/2025-2029"
+    },
+    {
+      "key": "criminal-justice-disqualifications",
+      "kind": "supplement",
+      "terms": [
+        "drug felony",
+        "felony conviction",
+        "criminal record",
+        "drug conviction",
+        "drug test",
+        "drug testing",
+        "lifetime ban",
+        "fleeing felon",
+        "probation",
+        "parole",
+        "intentional program violation",
+        "controlled substance"
+      ],
+      "citation": "Va. Code § 63.2-505.2 (enacted 2005 c. 576; amended 2020 cc. 221, 361) — Virginia is a FULL OPT-OUT state: no SNAP disqualification for a drug felony conviction, of any kind, at any time, effective July 1, 2020",
+      "heading": "Virginia does not disqualify anyone from SNAP because of a drug felony conviction — a full statutory opt-out, in effect since July 1, 2020",
+      "text": "Virginia is a FULL OPT-OUT state from the federal drug-felony SNAP ban (21 U.S.C. § 862a(a)). This pack fetched Va. Code § 63.2-505.2 directly from law.lis.virginia.gov: \"A person who is otherwise eligible to receive food stamp benefits shall be exempt from the application of § 115(a) of the federal Personal Responsibility and Work Opportunity Reconciliation Act of 1996, P.L. 104-193, and shall not be denied such assistance solely because he has been convicted of a drug-related felony.\" The statute's history note shows it originated in 2005 (c. 576) as Virginia's initial, narrower modification of the federal ban, then was AMENDED in 2020 (cc. 221, 361) to its current full-opt-out form — legislation reported contemporaneously (Virginia Mercury, VPM) as ending Virginia's ban on both SNAP and TANF assistance for people with drug felony convictions, effective July 1, 2020. Virginia's SNAP Manual itself contains NO drug-felony disqualification provision anywhere in the 33,000+ lines this pack fetched and searched — consistent with the statute's full-opt-out text — though the manual does retain an UNRELATED disqualification for a member \"fleeing prosecution or imprisonment or... violating probation or parole terms\" (Part II.G.3.b, Part VI.C.2.e), a separate federal rule (7 CFR 273.11(n), the \"fleeing felon\" provision) that Virginia's drug-felony opt-out does not touch. Virginia imposes no waiting period, no treatment-compliance condition, and no felony-class or conviction-location carve-out of the kind this roster's North Carolina pack documents for its own modified-ban state — this is a genuine full opt-out, matching the structural posture this roster's New Jersey pack documents for its own state, though on a different statutory timeline (Virginia's 2020 amendment vs. New Jersey's 2012 repeal).",
+      "source_url": "https://law.lis.virginia.gov/vacode/title63.2/chapter5/section63.2-505.2/"
+    },
+    {
+      "key": "restaurant-meals-program",
+      "kind": "supplement",
+      "terms": [
+        "restaurant meals program",
+        "rmp",
+        "vrmp",
+        "eat at a restaurant",
+        "use ebt at restaurant",
+        "hot meal",
+        "hot food"
+      ],
+      "citation": "Va. Code § 63.2-801(A); VA SNAP Manual Part I.C; SB1020 (2025), Chapter 321, effective July 1, 2025 — Virginia HAS an active, statewide-mandatory Restaurant Meals Program (VRMP), and USDA's own official RMP state list already names Virginia",
+      "heading": "Virginia's Restaurant Meals Program is real, current, and — unusually — mandated by STATUTE for every locality in the Commonwealth to participate in, not merely a local-option or agency-discretion program",
+      "text": "The Restaurant Meals Program (RMP) is a state option under 7 CFR 274.7(g) allowing elderly (60+), disabled, and homeless SNAP recipients (and their spouses) to buy prepared, hot meals from authorized restaurants with their EBT card on an ongoing basis. Virginia operates one, branded the Virginia Restaurant Meals Program (VRMP). THIS PACK CONFIRMS VRMP THROUGH THREE INDEPENDENT SOURCES rather than a single secondary summary: (1) Virginia's own SNAP Manual (Part I.C) instructs caseworkers to tell households that \"authorized retailers and restaurants participating in Virginia Restaurant Meals Program (VRMP) may display a sign... or that displays the QUEST logo,\" and explicitly carves VRMP meals out of the general \"hot foods ready for immediate consumption\" purchase restriction; (2) Va. Code § 63.2-801(A), fetched directly, states plainly: \"The Board is authorized... to implement a SNAP benefits program in which each political subdivision in the Commonwealth shall participate. Such program shall include participation in the Restaurant Meals Program\" — a genuinely unusual STATUTORY MANDATE that VRMP be part of the statewide program every locality participates in, not a program individual LDSSs or restaurants opt into at their own discretion; (3) SB1020 (2025 General Assembly session), enacted as Chapter 321, approved by the Governor March 21, 2025 and effective July 1, 2025, separately required VDSS to report to the Governor and General Assembly by December 1, 2025 on VRMP's implementation (participating-restaurant counts, names/addresses, barriers to expansion, and expansion recommendations) — confirming VRMP as a live, actively-monitored, and quite RECENT program (roughly one year old as of this pack's build date), not a longstanding fixture. This pack independently checked USDA's own official RMP state list (referenced in this roster's New Jersey pack, which found New Jersey absent from it) and confirms Virginia IS named on that list, alongside Arizona, Maryland, New York, California, Massachusetts, Rhode Island, Illinois (Cook and Franklin Counties only), and Michigan — Virginia's RMP is real and federally recognized, standing in direct CONTRAST to this roster's New Jersey pack, where a similarly-worded bill has died in committee three separate times without ever being enacted. Eligibility (elderly 60+, disabled, or homeless, and their spouses) and participating-restaurant identification (signage or the QUEST logo) match the standard federal RMP mechanism; this pack did not independently confirm a full current list of participating restaurants or any household spending cap in this pass.",
+      "source_url": "https://law.lis.virginia.gov/vacode/title63.2/chapter8/section63.2-801/"
+    },
+    {
+      "key": "expedited-service",
+      "kind": "supplement",
+      "terms": [
+        "expedited",
+        "expedited service",
+        "emergency",
+        "emergency food stamps",
+        "fast benefits",
+        "how fast",
+        "urgent",
+        "same day",
+        "7 day",
+        "4 day"
+      ],
+      "citation": "VA SNAP Manual Part V.A, C — standard federal expedited-service eligibility gates ($150 gross income / $100 liquid resources) and the plain federal 7-calendar-day benefit-availability ceiling; no Virginia-specific tighter internal buffer found",
+      "heading": "Virginia uses the standard federal expedited-service eligibility gates and the plain federal 7-day benefit-availability ceiling — this pack found no Virginia-specific internal buffer target the way North Carolina's pack documents for its own state",
+      "text": "VA SNAP Manual Part V.A sets expedited-service eligibility to the federal standard: a household with less than $150 in countable monthly gross income AND countable liquid resources of $100 or less; a destitute migrant/seasonal farmworker household with liquid resources of $100 or less; or a household whose combined monthly gross income and liquid resources are less than its incurred monthly rent/mortgage plus utility costs. Part V.C requires the LDSS to make SNAP benefits available \"no later than seven calendar days after the application filing date,\" the plain federal 7-day ceiling (7 CFR 273.2(i)(3)(i)), with the same standard extended to residents of public institutions applying for SSI and SNAP before release (calculated from the release date) and to households discovered to be expedited-eligible after the application date (seven days from the discovery date, not the original filing date). If a household entitled to expedited service also has an out-of-office interview arranged, the LDSS must still complete the interview and application within the expedited-service standard (excluding any time the application spends in the mail awaiting the household's signature). Unlike North Carolina's pack in this roster, which documents a North Carolina-specific internal 4-calendar-day operational buffer, this pack did not find a comparable Virginia-specific tighter internal target in the sections fetched — flagged as a gap in freshness.json rather than assumed not to exist.",
+      "source_url": "https://www.dss.virginia.gov/media/vdss/benefit-programs/documents/snap/snap-manual/Entire-Manual-eff-10012025.pdf"
+    },
+    {
+      "key": "reporting-certification",
+      "kind": "supplement",
+      "terms": [
+        "certification period",
+        "approval period",
+        "recertification",
+        "redetermination",
+        "how long does snap last",
+        "how long does my snap approval last",
+        "how long does my approval last",
+        "redo",
+        "renew",
+        "interim report"
+      ],
+      "citation": "VA SNAP Manual Part IV.A — Virginia's certification periods: 12 months standard (with a mandatory 6-month Interim Report), up to 24 months for elderly/disabled households with no earned income (12-month Interim Report), and several shorter special-purpose periods",
+      "heading": "Virginia's DEFAULT certification period is 12 months with a mandatory 6-month check-in — elderly/disabled households with no earned income can get up to 24 months, and several narrower categories get 5-, 6-, or 36-month periods",
+      "text": "VA SNAP Manual Part IV.A caps the standard certification period at 12 months, with a mandatory Interim Report filed by the sixth month (Part XIV.B). Households in which every member is 60+ or disabled, with NO earned income in the household, may be certified for up to 24 months, filing an Interim Report by the 12th month to receive the final 12 months of benefits — or, alternatively, up to 6 months with NO Interim Report at all if the household prefers to avoid the mid-period check-in entirely (a household choice this roster has not documented for other states so far). Several narrower categories get different periods: 36 months for households fully enrolled in the Virginia Combined Application Project (VaCAP) or the Elderly Simplified Application Project (ESAP), not subject to the Interim Report process; 6 months for households with a member on time-limited ABAWD benefits (structured as prorated + up to 3 countable months + Special Exemption E9 months); up to 6 months for households with unstable circumstances (homeless or migrant/seasonal farmworker households); and 5 months (frozen benefits) for households receiving Transitional Benefits after leaving TANF. This is a genuinely broader menu of certification-period lengths than most states this roster has documented, though its DEFAULT shape — a 12-month period with a mid-period check-in, and a longer tier for elderly/disabled households — is broadly similar to this roster's New Jersey pack (12 months + 6-month interim contact, 24 months for all-elderly/disabled households).",
+      "source_url": "https://www.dss.virginia.gov/media/vdss/benefit-programs/documents/snap/snap-manual/Entire-Manual-eff-10012025.pdf"
+    },
+    {
+      "key": "program-identity",
+      "kind": "supplement",
+      "terms": [
+        "how to apply",
+        "where do i apply",
+        "apply for snap",
+        "commonhelp",
+        "who runs",
+        "what agency",
+        "administers",
+        "local department of social services",
+        "ldss",
+        "bps",
+        "ebt card"
+      ],
+      "citation": "VDSS program materials — Virginia calls the program plain \"SNAP\" and applies through the CommonHelp portal or a Local Department of Social Services (LDSS); Virginia's own manual defines \"FNS\" as the FEDERAL agency, matching New Jersey's pack and the opposite of North Carolina's pack in this roster",
+      "heading": "Virginia applies through CommonHelp or a local LDSS; \"FNS\" in Virginia's own manual means the federal USDA agency, and Virginia's own caseworkers are called \"BPS\" (Benefit Programs Specialists) — an acronym worth distinguishing from unrelated uses elsewhere",
+      "text": "Virginia does not give SNAP its own state-specific brand name the way New Jersey (\"NJ SNAP\") does — Virginia's manual and DSS materials use the plain federal name \"SNAP\" (Supplemental Nutrition Assistance Program) throughout. This pack flags an acronym-collision note in the SAME direction as this roster's New Jersey pack: Virginia's manual's own Abbreviations/Acronyms glossary defines \"FNS\" as \"Food and Nutrition Service\" — the FEDERAL agency — never as Virginia's own program name, the opposite of North Carolina's pack in this roster, where the same three letters denote the state's own manual-section citation convention. Applications run through the CommonHelp self-service portal (commonhelp.virginia.gov) or in person, by mail, fax, or phone at a Local Department of Social Services (LDSS) — one per city or county. Virginia's manual refers to its eligibility caseworkers as \"Benefit Programs Specialists\" (BPS); this pack flags that VDSS's own \"BPS\" caseworker-title acronym is unrelated to any state-manual-section citation convention this roster uses elsewhere and should not be confused with a legal citation. CRITICALLY, and matching the administrative archetype this roster already documents for California, New York, Minnesota, Wisconsin, Ohio, North Carolina, and New Jersey: Virginia runs a genuine state-SUPERVISED, locally-ADMINISTERED system — VDSS writes the statewide SNAP Manual and Title 63.2 sets the governing statute, but each LDSS is the entity responsible for day-to-day eligibility determination, enrollment, and recertification. Confirm current operative practice (exact processing behavior, local outreach materials) with the applicant's own LDSS rather than assuming uniform statewide execution. Benefits are issued on an EBT card, usable at authorized retailers and (for VRMP-eligible households) authorized restaurants, as documented in the restaurant-meals-program supplement.",
+      "source_url": "https://www.dss.virginia.gov/relief/food-assistance/snap/"
+    }
+  ]
+}

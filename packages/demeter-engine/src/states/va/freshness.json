@@ -1,0 +1,50 @@
+{
+  "_provenance": {
+    "note": "Virginia dated facts. Because Virginia has NO existing packages/snap-rules StatePolicy entry, there is no engine constant to cross-check against — unlike a state with prior engine work in this roster, every entry below is a routine COLA-cycle reminder, a genuine disclosed research gap, or a re-verification trigger for an actively-changing federal implementation, not a disclosed engine-vs-corpus discrepancy.",
+    "extracted": "2026-08-11"
+  },
+  "entries": [
+    {
+      "key": "va-ffy26-dollar-values-recheck",
+      "kind": "expires",
+      "date": "2026-09-30",
+      "warning": "Virginia's FFY26 dollar figures (200% FPL BBCE gross income ceiling; Standard Deduction $209/$223/$261/$299; Maximum Excess Shelter Deduction $744; Homeless Shelter Allowance $198.99; resource limits $3,000/$4,500; utility standard $375 (1-3 persons)/$476 (4+); telephone standard $54; Medical Standard Deduction $235 threshold/$200 flat) are sourced directly from Virginia's own SNAP Manual (Transmittal #36, 10/25), effective October 1, 2025 through September 30, 2026. Re-verify all dollar figures against Virginia's FFY27 manual update (expect a new Transmittal in fall 2026) before quoting any Virginia dollar amount after this date."
+    },
+    {
+      "key": "va-sua-national-crosscheck-not-completed",
+      "kind": "expires",
+      "date": "2026-12-01",
+      "warning": "This pack's utility-standard figures ($375/$476, size-scaled two-band; $54 telephone standard) are traced DIRECTLY to Virginia's own SNAP Manual (a stronger primary source than a secondary corroboration), but this pack did NOT additionally cross-check them against USDA's national FY2026 SUA values page (fns.usda.gov/snap/admin/sua-fy26), which did not render its underlying data table in fetchable inline HTML text in this pass (the page appears to link to a downloadable resource this pack did not separately locate and fetch). This is a nice-to-have cross-check, not a live gap — Virginia's own manual is already the authoritative source — but a future pass should still locate and fetch USDA's national SUA table directly to confirm no transcription drift between VDSS's manual and USDA's published rollup."
+    },
+    {
+      "key": "va-abawd-waiver-status-recheck",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "This pack's flagship finding — Virginia currently has ZERO active ABAWD waivers anywhere in the Commonwealth — rests on Virginia's own SNAP Manual Appendix I ('No exempt areas' for July 2025 forward) AND USDA's official ABAWD Time Limit Waivers FY2025-2029 index (fetched directly 2026-08-11, page updated July 22, 2026, Virginia absent from the list of states with any submitted request). USDA updates that index quarterly with new requests and responses. Before restating 'Virginia has no ABAWD waiver' after this date, re-fetch USDA's index directly and re-check whether Virginia has requested a new waiver for any locality — unemployment conditions change, and Virginia's own multi-year waiver history (statewide through mid-2023, narrowing through mid-2025) shows this is not a stable, permanent posture."
+    },
+    {
+      "key": "va-abawd-appendix-footnote-stale",
+      "kind": "expires",
+      "date": "2026-12-01",
+      "warning": "Virginia SNAP Manual Appendix I's own footnote ('track the work requirement for all household members except those persons under 18 or over age 54') has NOT been updated to match Part XV.A's own correctly-stated current 18-64 age range in the SAME manual (both sections are within Transmittal #36, 10/25). This is a codification lag WITHIN Virginia's own single document, not a live policy divergence — the operative rule is 18-64 per Part XV.A and per OBBBA. Before quoting the Appendix I footnote's age range specifically, check whether a later transmittal has corrected it."
+    },
+    {
+      "key": "va-vrmp-restaurant-list-not-confirmed",
+      "kind": "expires",
+      "date": "2026-12-01",
+      "warning": "This pack confirms the Virginia Restaurant Meals Program (VRMP) is real, statutorily mandated (Va. Code § 63.2-801(A)), and recently implemented (SB1020/Chapter 321, effective July 1, 2025, with a VDSS report due December 1, 2025) — but did NOT independently fetch or verify a current list of participating restaurants, any per-meal or monthly spending guidance, or the December 2025 VDSS implementation report's actual contents in this pass. Before answering a specific 'which restaurants near me accept VRMP' question, fetch VDSS's current restaurant list directly (dss.virginia.gov/vrmp/restaurants.cgi) rather than relying on this pack's general description."
+    },
+    {
+      "key": "va-medical-deduction-itemization-gap",
+      "kind": "expires",
+      "date": "2026-12-01",
+      "warning": "This pack's medical-deduction supplement states Virginia's $35 threshold and $200 flat Medical Standard Deduction, plus the manual's general allowable-expense categories (medical/dental care, hospitalization, nursing care) — it does NOT itemize the FULL list of Virginia-specific inclusions or exclusions (service animals, transportation mileage rate, over-the-counter medication, health insurance premiums) the way this roster's North Carolina pack does for its own state, because the fetched text's full allowable/disallowed-expense subsections were not fully transcribed in this pass. Before asserting a specific expense category is or is not deductible beyond the general categories already stated, fetch the full text of Virginia SNAP Manual Part X.A.5's Allowable/Disallowed Expenses subsections directly."
+    },
+    {
+      "key": "va-resource-limit-language-recheck",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "Unlike New Jersey's pack in this roster (which found its own codified resource-limit text stale relative to current federal figures), Virginia's manual states the CURRENT federal resource limits ($3,000/$4,500) directly and correctly as of Transmittal #35/36 — no codification lag was found for this figure. This entry exists purely as a routine COLA-cycle reminder: re-verify against Virginia's FFY27 manual update before this date, since federal resource limits are indexed to inflation and may adjust for FFY27."
+    }
+  ]
+}
