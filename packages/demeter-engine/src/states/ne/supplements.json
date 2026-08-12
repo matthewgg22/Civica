@@ -1,0 +1,232 @@
+{
+  "_provenance": {
+    "note": "Nebraska SNAP curated supplements. Nebraska has NO existing packages/snap-rules StatePolicy entry and NO oracle-fixture coverage — a genuine blank slate, like this roster's Connecticut, Utah, Iowa, and Arkansas prior batch-tier builds. This pack is CORPUS-ONLY and does not touch packages/snap-rules or the oracle fixture. Nebraska is built in the roster's second batch tier, alongside Mississippi, Kansas, and New Mexico (built concurrently by separate agents). Drafted from direct curl fetches (browser User-Agent) of Nebraska DHHS's current SNAP Program Standards and SNAP Monthly Deductions guidance-document PDFs, Nebraska's 475 NAC SNAP policy manual utility-allowance sections, Neb. Rev. Stat. § 68-1017.02's full text (fetched directly, no access barrier), DHHS's OBBBA/federal-requirements rollout pages, USDA FNS's Nebraska-specific food-restriction-waiver page, and WebSearch/WebFetch corroboration for the LB319 veto outcome and the Aragon v. Rollins court vacatur of the soda/energy-drink waiver.",
+    "extracted": "2026-08-12",
+    "source_fact_check": "direct curl fetch (browser UA) of dhhs.ne.gov and public-dhhs.ne.gov guidance-document PDFs (converted with pdftotext -layout) and 475 NAC HTML manual sections, plus nebraskalegislature.gov's own statute-text page for Neb. Rev. Stat. § 68-1017.02, cross-referenced against their own effective-date stamps and historical figure series (to confirm the current figure is genuinely current, not stale) + WebSearch/WebFetch cross-checks (Nebraska Examiner, Unicameral Update, WOWT, Nebraska Public Media, Covington & Burling legal analysis) for the LB319 veto and the food-restriction-waiver court vacatur, both of which are not fully documented on a single DHHS policy page + post-draft adversarial refute pass; findings and gaps recorded in PROVENANCE.md",
+    "access_note": "dhhs.ne.gov, public-dhhs.ne.gov, and nebraskalegislature.gov all returned clean HTTP 200 to every direct curl attempt with a browser User-Agent — no bot-detection wall anywhere in this pack's Nebraska research, a genuine contrast with this roster's Connecticut, Arkansas, and several other prior packs. The only access complication this pack found was a TOOLING limitation, not a source-side barrier: two DHHS guidance-document PDFs (SNAP Program Standards, SNAP Monthly Deductions) returned unreadable binary/compressed-stream content through the standard WebFetch markdown converter, resolved by fetching the PDFs directly with curl and converting locally with pdftotext -layout — no external archive fallback was needed."
+  },
+  "supplements": [
+    {
+      "key": "program-identity",
+      "kind": "supplement",
+      "terms": [
+        "how to apply",
+        "where do i apply",
+        "apply for snap",
+        "iserve",
+        "accessnebraska",
+        "who runs",
+        "what agency",
+        "administers",
+        "dhhs",
+        "department of health and human services",
+        "ebt card",
+        "food stamps",
+        "n-focus"
+      ],
+      "citation": "Nebraska DHHS SNAP consumer page (dhhs.ne.gov/pages/snap.aspx); iServe Nebraska portal",
+      "heading": "Nebraska calls its program plainly \"SNAP\" — no distinctive local brand, and its self-service portal has recently transitioned from ACCESSNebraska branding to iServe Nebraska",
+      "text": "Nebraska DHHS's own consumer materials use only the generic federal name \"SNAP\" (Supplemental Nutrition Assistance Program), noting it was \"formerly known as Food Stamps\" — this pack found no distinctive Nebraska-specific program nickname the way California has \"CalFresh\" or Washington has \"Basic Food,\" and no evidence of a distinctively-branded EBT card name either. Nebraska DHHS's current self-service application portal is iServe Nebraska (iserve.nebraska.gov); this pack found the older \"ACCESSNebraska\" name still appears on some DHHS forms, older PDFs, and the underlying N-FOCUS case-management system's public-facing menu (dhhs-access-neb-menu.ne.gov) — this pack reads ACCESSNebraska as the older/legacy portal branding that iServe Nebraska has substantially, though perhaps not completely, superseded, and flags this as a minor naming-transition ambiguity worth re-checking rather than asserting one name has fully replaced the other. Applicants can also apply by phone through the Economic Assistance Contact Center (1-800-383-4278), by mail, or in person at a local DHHS office. Nebraska's SNAP program is administered directly and centrally by DHHS — a state-administered program with no county-level policy authority, structurally similar to this roster's Connecticut, North Carolina, Ohio, New Jersey, Tennessee, Indiana, Missouri, Maryland, Colorado, South Carolina, Alabama, Louisiana, Kentucky, Oklahoma, Utah, Iowa, and Arkansas packs, and distinct from county-administered states like CA, NY, MN, WI, and VA.",
+      "source_url": "https://dhhs.ne.gov/pages/snap.aspx"
+    },
+    {
+      "key": "income-pathways",
+      "kind": "supplement",
+      "terms": [
+        "income limit",
+        "income limits",
+        "gross income limit",
+        "gross income ceiling",
+        "make too much",
+        "over income",
+        "bbce",
+        "broad based categorical eligibility",
+        "broadbased categorical eligibility",
+        "categorical eligibility",
+        "categorically eligible",
+        "165 percent",
+        "165%",
+        "130 percent",
+        "130%",
+        "poverty level",
+        "erp",
+        "expanded resource program",
+        "tanf",
+        "adc",
+        "aabd",
+        "ssi"
+      ],
+      "citation": "Nebraska DHHS, SNAP Program Standards (effective 10/1/2025) — the 165% FPL gross-income column is labeled \"Maximum Gross Monthly Income for an Elderly, Disabled, Separate Household and ERP Households\" on DHHS's own table, NOT a blanket figure for every household",
+      "heading": "STRUCTURAL FLAGSHIP FINDING: Nebraska's 165% FPL gross-income ceiling applies ONLY to elderly, disabled, separate-household, and ERP (Expanded Resource Program) households — an ordinary working-age household not enrolled in ERP remains subject to the plain federal 130% FPL gross test",
+      "text": "Nebraska DHHS's own current SNAP Program Standards table (effective 10/1/2025) lists THREE separate gross/net income columns by household size: the 100% FPL net-income limit ($1,305/month for household size 1), the 130% FPL gross-income limit ($1,696), and a THIRD, elevated 165% FPL column ($2,152) labeled precisely \"Maximum Gross Monthly Income for an Elderly, Disabled, Separate Household and ERP Households.\" This pack reads this literally and precisely: unlike most of this roster's other BBCE states, where a single elevated percentage functions as the gross-income ceiling for every categorically-eligible household regardless of composition, Nebraska's 165% figure is scoped to four specific household types — elderly members, disabled members, \"separate household\" cases, and households enrolled in Nebraska's Expanded Resource Program (ERP). An ordinary working-age household that has not separately qualified for ERP remains subject to the plain federal 130% FPL gross test, the same as a non-BBCE state. Nebraska also recognizes a distinct, narrower Categorical Eligibility (CE) pathway for households where every member receives TANF/ADC, SSI, or AABD-funded assistance — this pack found DHHS's own resource-tips page lists CE households as having no stated resource limit (a fuller waiver, structurally similar to this roster's Connecticut RCE and Kentucky's dual-track categorical eligibility), while ERP households instead get an ELEVATED but real $25,000 resource ceiling (see asset-rule supplement) plus the 165% FPL gross-income column — not a full asset-test waiver. The 165% FPL level itself has a legislative history this pack traced precisely: it was raised from the plain federal 130% baseline by earlier Nebraska legislation (this pack found a 2021-era Nebraska Appleseed fact sheet referencing \"LB108\" as the origin, though did not independently verify the bill number against the Legislature's own bill-text archive), carried a sunset date of September 30, 2025 under 2023's LB227, and that sunset was ELIMINATED — making the 165% level permanent, not merely extended — by LB192, which this pack confirmed became law on June 2, 2025 via direct news-source corroboration (WOWT, Nebraska Appleseed), removing a scheduled reversion that would otherwise have affected an estimated 10,000 Nebraska households starting October 1, 2025.",
+      "source_url": "https://dhhs.ne.gov/Guidance%20Docs/SNAP%20Program%20Standards.pdf"
+    },
+    {
+      "key": "asset-rule",
+      "kind": "supplement",
+      "terms": [
+        "asset limit",
+        "asset test",
+        "resource limit",
+        "resource test",
+        "resources",
+        "savings",
+        "savings limit",
+        "bank account",
+        "vehicle",
+        "car count",
+        "does my car count",
+        "second car",
+        "truck",
+        "25000",
+        "$25,000"
+      ],
+      "citation": "Nebraska DHHS, SNAP Program Standards (effective 10/1/2025) — Resource limits: $4,500 (households with an elderly or disabled member), $3,000 (all other non-ERP households), $25,000 (Expanded Resource Program households, liquid resources)",
+      "heading": "Nebraska's Expanded Resource Program RAISES the asset limit to $25,000 rather than waiving it outright — a genuine structural departure from the full asset-waiver shape most of this roster's other BBCE-style states use",
+      "text": "Nebraska DHHS's own current SNAP Program Standards table (effective 10/1/2025) lists three distinct resource limits: $4,500 for households that include an elderly or disabled member (matching the current national FFY2026 elevated figure this roster's Kentucky, Louisiana, Alabama, Missouri, Maryland, Colorado, and Connecticut packs have each independently confirmed), $3,000 for all other Non-Categorical households (the plain federal FFY2026 baseline figure), and $25,000 for households enrolled in the Expanded Resource Program (ERP). This pack flags the ERP figure as a genuine structural departure worth naming explicitly: unlike this roster's Connecticut (RCE/ECE), Kentucky, and most other BBCE-style states, where categorical eligibility WAIVES the resource test entirely for the affected households, Nebraska's ERP instead RAISES the ceiling to a specific, still-enforced $25,000 figure — DHHS's own SNAP Resource Tips page states this limit applies to \"liquid resources,\" with non-liquid resources excluded from the ERP count. Separately, DHHS's resource-tips page describes a narrower Categorical Eligibility (CE) pathway (households where every member receives TANF/ADC, SSI, or AABD-funded assistance) with no resource limit stated at all in this pack's source excerpt — this pack reads that as consistent with a fuller waiver for CE households specifically, distinct from ERP's elevated-but-real $25,000 ceiling, but flags this CE-resource-waiver reading as somewhat less directly confirmed than the other figures in this supplement (this pack's CE source excerpt did not include an explicit \"no resource limit\" statement in as many words) and recommends re-verifying the CE resource treatment against 475 NAC's categorical-eligibility chapter directly before treating it as a hard fact in a high-stakes context. This pack did not find a Nebraska-specific vehicle-exclusion figure or vehicle-valuation methodology with enough direct sourcing to cite confidently — see freshness.json.",
+      "source_url": "https://dhhs.ne.gov/Guidance%20Docs/SNAP%20Program%20Standards.pdf"
+    },
+    {
+      "key": "criminal-justice-disqualifications",
+      "kind": "supplement",
+      "terms": [
+        "drug felony",
+        "felony conviction",
+        "criminal record",
+        "drug conviction",
+        "lifetime ban",
+        "fleeing felon",
+        "probation",
+        "parole",
+        "controlled substance",
+        "marijuana",
+        "cannabis",
+        "treatment program",
+        "lb319"
+      ],
+      "citation": "Neb. Rev. Stat. § 68-1017.02(1)(b) — CURRENT, unchanged law: permanent ineligibility only for 3+ possession/use felonies or any sale/distribution felony; 1-2 possession/use felonies remain eligible while participating in or after completing a state-licensed/accredited treatment program",
+      "heading": "FLAGSHIP CORRECTION: Nebraska did NOT opt out of the federal drug-felony ban in 2025 — a bill that would have done so (LB319) was vetoed and the veto was sustained; the older, narrower MODIFIED ban remains current law",
+      "text": "21 U.S.C. § 862a(a)(2) sets a federal default: anyone convicted of a state or federal felony for possessing, using, or distributing a controlled substance is permanently ineligible for SNAP unless a state opts out or modifies the ban under § 862a(d)(1). This pack found a genuine, consequential correction to make here — one this pack's own INITIAL web-search synthesis got wrong before verification against primary sources caught it, underscoring exactly why this correction matters: a 2025 bill, LB319, would have replaced Nebraska's existing drug-felony provision with a broader eligibility rule (eligible if the sentence is completed OR the person is currently serving parole, probation, or post-release supervision, dropping the treatment-program condition entirely). LB319 passed the full Nebraska Legislature on a 32-17 vote on May 14, 2025 — but Governor Jim Pillen vetoed it THE SAME DAY, citing \"loopholes\" that could let \"habitual offenders\" evade the substance-abuse-treatment requirement. A motion to override the veto was taken up on May 19, 2025 and failed 24-24 — six votes short of the 30-vote supermajority required. LB319 therefore never became law, and Nebraska's PRE-EXISTING statute, Neb. Rev. Stat. § 68-1017.02(1)(b) (in place since a 2005 modification, further clarified with a 2020 update to this pack's understanding of its operative date), remains the current, unchanged, operative law: a person is permanently ineligible for SNAP only if they (i) have three or more felony convictions for possession or use of a controlled substance, or (ii) have been convicted of a felony involving the sale, distribution, or intent to sell or distribute a controlled substance. A person with only one or two possession/use felony convictions remains eligible for SNAP while participating in, or after completing, a state-licensed or nationally accredited substance-abuse treatment program since the date of conviction — this treatment-program condition is exactly what LB319 would have removed, and did NOT get removed. This pack found several secondary sources (and its own preliminary search-synthesis pass) describing Nebraska's 2025 legislative action as if it had already taken effect, compressing \"a bill that opts Nebraska out was introduced and advanced through committee\" into \"Nebraska opted out\" — this pack's reading, grounded directly in the statute's still-current text and the Legislature's own Unicameral Update reporting of the sustained veto, is that Nebraska's operative drug-felony policy is the older, narrower, treatment-program-conditioned MODIFIED ban, not a broader opt-out.",
+      "source_url": "https://nebraskalegislature.gov/laws/statutes.php?statute=68-1017.02"
+    },
+    {
+      "key": "shelter-utility-deductions",
+      "kind": "supplement",
+      "terms": [
+        "utility allowance",
+        "utility standard",
+        "shelter deduction",
+        "excess shelter",
+        "standard utility allowance",
+        "limited utility allowance",
+        "one utility allowance",
+        "telephone allowance",
+        "standard deduction",
+        "sua",
+        "lua",
+        "oua",
+        "homeless",
+        "homeless shelter deduction"
+      ],
+      "citation": "Nebraska DHHS, SNAP Monthly Deductions (effective 10/1/2025) — Standard Deduction $209 (household sizes 1-3), $223 (4), $261 (5), $299 (6+); SUA $615 flat; LUA $321; OUA $63; Telephone Allowance $54; Maximum Shelter Deduction $744; Homeless Shelter Standard $198.99; 475 NAC 3-003.01H2/H3 (LUA vs. OUA qualifying-utility-count distinction)",
+      "heading": "GENUINE STRUCTURAL DEPARTURE: Nebraska runs a FOUR-tier utility-allowance system (SUA / LUA / OUA / Telephone Allowance), splitting most other states' two-utility \"Limited\" tier into a distinct two-or-more-utilities LUA and an exactly-one-utility OUA",
+      "text": "Nebraska's Standard Deduction (effective 10/1/2025) is $209 for household sizes 1 through 3, $223 for size 4, $261 for size 5, and $299 for size 6 or more — matching the current national FFY2026 figures this roster's Connecticut, Kentucky, Louisiana, Alabama, and South Carolina packs have each independently confirmed. Nebraska's utility-allowance structure is where this pack found a genuine, worth-flagging structural departure: unlike this roster's Connecticut (three tiers: SUA/LUA/TUA) and most other states, 475 NAC 3-003.01H lists FOUR distinct utility-allowance tiers, and this pack fetched and read the precise qualifying criteria for each directly from Nebraska's own policy manual: the Standard Utility Allowance (SUA, $615/month flat regardless of household size) applies to a household billed for heating or cooling costs, or anticipating a Nebraska Low Income Energy Assistance Program (NLIEAP) payment; the Limited Utility Allowance (LUA, $321) applies to a household billed for AT LEAST TWO non-heating/cooling utilities (basic telephone, water, sewer, garbage/trash, well/septic maintenance, or non-heating gas/electric); and — the genuinely distinctive tier this pack flags explicitly — the One Utility Allowance (OUA, $63) applies to a household billed for EXACTLY ONE non-heating/cooling, non-telephone utility, per 475 NAC 3-003.01H3's own text (\"the household must be billed for no more than one utility... cannot be eligible for the OUA and be billed for heating or cooling costs, the telephone, or have received a NLIEAP payment\"). A household whose ONLY utility expense is a telephone bill instead gets the standalone Telephone Allowance ($54/month), available for a landline or a cell phone used as the primary phone when no house phone is available. This four-way split (heating-or-cooling / two-or-more-non-heating / exactly-one-non-heating-non-phone / phone-only) is more granular than the typical three-tier structure (SUA/LUA/telephone-only) this roster's other states generally use, and this pack found no indication Nebraska's OUA amount is a rounding or transcription artifact of the LUA figure — it is its own separately-tracked historical series in DHHS's own Monthly Deductions document, running from $37 in 2011 to $63 effective 10/1/2025. Nebraska's Maximum Shelter Deduction (capped excess-shelter figure, applicable to households without an elderly/disabled member, since federal law exempts elderly/disabled households from any excess-shelter cap) is $744/month, matching the current national FFY2026 figure this roster's Connecticut, Kentucky, and Louisiana packs also confirmed. Nebraska's Shelter Standard for Homeless Households is $198.99/month — matching, to the penny, this roster's Connecticut and Louisiana packs' own homeless-deduction figures, consistent with all three states drawing on the same federally-published standard homeless shelter deduction (7 CFR § 273.9(d)(6)(iii)) rather than a state-specific calculation.",
+      "source_url": "https://dhhs.ne.gov/Guidance%20Docs/SNAP%20Monthly%20Deductions.pdf"
+    },
+    {
+      "key": "medical-deduction",
+      "kind": "supplement",
+      "terms": [
+        "medical deduction",
+        "medical expense",
+        "medical expenses",
+        "medical bills",
+        "elderly deduction",
+        "disability deduction",
+        "excess medical",
+        "standard medical deduction"
+      ],
+      "citation": "Nebraska DHHS, SNAP Monthly Deductions (effective 10/1/2025) — Medical deduction: excess of $35/month, dated 01-01-90; no flat Standard Medical Deduction shortcut found in this pack's sources",
+      "heading": "Nebraska uses an ACTUAL-EXPENSE-ONLY medical deduction (expenses minus $35) — no flat Standard Medical Deduction shortcut, placing it with this roster's Connecticut, Maryland, and Indiana packs' mechanism rather than Kentucky's, Louisiana's, Alabama's, or South Carolina's flat-shortcut camp",
+      "text": "Nebraska DHHS's own current SNAP Monthly Deductions document lists the medical deduction as \"Excess of $35\" with an effective date of 01-01-90 — the fixed national SNAP program parameter (7 CFR § 273.9(d)(3)) common to every state's manual, applying to a household member who is elderly (60+) or disabled and has verified out-of-pocket medical expenses exceeding $35/month. This pack found no Nebraska-specific flat dollar figure functioning as a Standard Medical Deduction (SMD) shortcut the way this roster's Kentucky ($137), Louisiana ($161), South Carolina ($175), Missouri ($135), Colorado ($165), and Alabama ($185) packs each document — Nebraska's own Monthly Deductions guidance document lists only the $35 threshold with no accompanying flat-shortcut figure, placing Nebraska in the same actual-expense-only camp this roster's Connecticut, Maryland, and Indiana packs describe. This pack notes this absence is a genuine finding about Nebraska's own published guidance document (which lists every OTHER deduction type with a specific current dollar figure) rather than a sourcing gap — if Nebraska had an SMD shortcut, it is the kind of figure this same document would be expected to list alongside the Standard Deduction, SUA, LUA, OUA, and Telephone Allowance figures it does provide.",
+      "source_url": "https://dhhs.ne.gov/Guidance%20Docs/SNAP%20Monthly%20Deductions.pdf"
+    },
+    {
+      "key": "abawd-work-requirement",
+      "kind": "supplement",
+      "terms": [
+        "abawd",
+        "able bodied adult",
+        "work requirement",
+        "3 month limit",
+        "work registration",
+        "waiver",
+        "waived area",
+        "time limit",
+        "omaha",
+        "lincoln"
+      ],
+      "citation": "Neb. Rev. Stat. § 68-1017.02 (statutory bar on DHHS seeking/renewing area-wide ABAWD waivers except where federally required); Nebraska DHHS, \"Rolling Out New Federal Requirements for SNAP\" and OBBBA public-information pages — ABAWD age range 18-64 effective 10/20/2025, no active waiver anywhere in Nebraska",
+      "heading": "FLAGSHIP FINDING: Nebraska's lack of any ABAWD waiver is a STATUTORY MANDATE, not a policy choice — Neb. Rev. Stat. § 68-1017.02 bars DHHS from seeking one except where federal law requires it",
+      "text": "An able-bodied adult without dependents (ABAWD) is limited to three countable months of SNAP within a 36-month (3-year) period absent 80 hours/month of a qualifying work activity or an exemption. This pack found a genuine structural finding worth flagging precisely: unlike most of this roster's other states, where an ABAWD waiver's absence reflects either a labor-market fact (unemployment rate too low to qualify) or a discretionary policy choice, Nebraska's statute itself, Neb. Rev. Stat. § 68-1017.02, directly bars DHHS from seeking, applying for, accepting, or renewing an area-wide ABAWD work-requirement waiver \"except where expressly required by federal law\" — a legislative self-restriction on the agency's own waiver-request authority, structurally similar in KIND (though different in subject matter) to this roster's Oklahoma and Arkansas packs' own statutory self-restriction findings. Consistent with this statutory bar, this pack found no active Nebraska ABAWD waiver anywhere in the state as of 2026 (contrasting with Minnesota, Montana, and North Dakota, which do carry active waivers through mid-2026 per this pack's cross-check). This is DISTINCT from DHHS's retained discretion over the standard, federally-permitted pool of individual, case-by-case ABAWD exemptions (the roughly 12%-of-caseload discretionary-exemption allotment every state administers) — the statute bars AREA-WIDE waivers specifically, not individual exemptions, and this pack found reporting describing Nebraska DHHS as continuing to exercise discretionary individual ABAWD exemptions in some rural counties, which does not conflict with the statutory area-waiver bar. Consistent with the OBBBA (One Big Beautiful Bill Act, July 2025) nationwide rollout timeline this roster has documented in other 2025-2026-built packs, Nebraska's ABAWD age range expanded from 18-54 to 18-64 effective October 20, 2025 (applying immediately to new/initial applications, and to existing households at their next recertification or when a household change is reported), and the caregiver exemption narrowed from a child under 18 to a child under 14. DHHS's own OBBBA public-information page states plainly that OBBBA REMOVED three previously-available discretionary exemption categories — veterans, homeless individuals, and individuals aging out of foster care — while ADDING a new exemption for Indians, Urban Indians, California Indians, and other individuals eligible for Indian Health Services. This pack flags the removed veteran/homeless/foster-youth exemptions explicitly: an applicant who may have previously understood themselves as exempt on one of those bases, prior to October 20, 2025, is no longer exempt on that basis under current Nebraska/federal law.",
+      "source_url": "https://dhhs.ne.gov/Pages/Nebraska-Rolling-Out-New-Federal-Requirements-for-SNAP.aspx"
+    },
+    {
+      "key": "restaurant-meals-program",
+      "kind": "supplement",
+      "terms": [
+        "restaurant meals program",
+        "rmp",
+        "eat at a restaurant",
+        "use ebt at restaurant",
+        "hot meal",
+        "hot food",
+        "prepared food",
+        "lb920"
+      ],
+      "citation": "USDA FNS's current SNAP Restaurant Meals Program state list (Nebraska absent); Nebraska LB920 (2025-2026 session) — failed April 17, 2026, some provisions amended into LB901 via AM2406",
+      "heading": "Nebraska does NOT currently operate a Restaurant Meals Program — 2025-2026 legislation (LB920) that would have required DHHS to establish one FAILED",
+      "text": "The Restaurant Meals Program (RMP) is a state OPTION under 7 CFR § 274.7(g) letting elderly (60+), disabled, and homeless SNAP recipients buy prepared, hot meals from authorized restaurants with EBT year-round. USDA FNS's own current RMP state list does not include Nebraska. This pack found LB920, introduced in the 2025-2026 legislative session by Omaha Senator Terrell McKinney, which would have required DHHS to establish an RMP no later than July 1, 2025, targeting elderly, disabled, and homeless SNAP recipients — this pack's legislative-tracking cross-check (LegiScan) found LB920 FAILED on April 17, 2026, with some of its provisions instead amended into a different bill, LB901, via floor amendment AM2406. This pack could not confirm, from the sources available to it, whether LB901's amended provisions retained anything resembling LB920's original Restaurant Meals Program directive or substituted different content entirely — this is a disclosed gap, not a confirmed answer either way, see freshness.json. Nebraska's operative answer for an applicant today is that Nebraska does NOT currently operate a Restaurant Meals Program, consistent with both USDA's own current list and LB920's own failure to pass in its original form.",
+      "source_url": "https://www.fna.usda.gov/snap/waivers/foodrestriction/nebraska"
+    },
+    {
+      "key": "food-restriction-waiver",
+      "kind": "supplement",
+      "terms": [
+        "soda",
+        "soft drink",
+        "energy drink",
+        "can i buy soda",
+        "sugary drink ban",
+        "healthy choice waiver",
+        "what can i buy with snap",
+        "food restriction"
+      ],
+      "citation": "USDA FNS, Nebraska SNAP Food Restriction Waiver page (approved 4/14/2025, effective 1/1/2026, for two years); Aragon et al. v. Rollins et al., 1:26-cv-00861 (D.D.C.), order dated June 22, 2026, vacating USDA's approval",
+      "heading": "TIME-SENSITIVE FLAGSHIP FINDING: Nebraska's SNAP soda/energy-drink purchase restriction was approved, took effect January 1, 2026, and was then VACATED by a federal court on June 22, 2026 — DHHS is actively unwinding it, but retailer-level removal is not instantaneous",
+      "text": "USDA's Food and Nutrition Service approved a request from Nebraska DHHS on April 14, 2025 to run a two-year demonstration project excluding soda, \"soft drinks,\" and energy drinks from SNAP-eligible purchases, effective January 1, 2026. This pack found, and flags as genuinely time-sensitive, that this restriction was then VACATED: on June 22, 2026, the U.S. District Court for the District of Columbia, in Aragon et al. v. Rollins et al., 1:26-cv-00861 (D.D.C.), ordered that USDA's approval of Nebraska's (and other states') SNAP food-restriction waivers be vacated and that the waivers' implementation may not proceed — the court found USDA lacked statutory authority under SNAP's pilot-project provisions to approve waivers of this kind, and separately found USDA had failed to publish the Federal Register notice at least 30 days before initiating a pilot project with this scale of public impact, as required. Following the ruling, Nebraska DHHS is, as of this pack's fetch date, actively working with SNAP retailers to remove the soda/energy-drink point-of-sale restrictions — this pack found reporting (KGFW, 1011 Now) from early July 2026 describing this as an in-progress rollback, explicitly noting \"many retailers will require time to update their systems before the restrictions are lifted.\" This pack's operative answer for a Nebraska SNAP applicant asking whether they can currently buy soda or energy drinks with SNAP is: the state-level restriction has been vacated and DHHS is unwinding it, but an individual retailer's point-of-sale system may not yet reflect that change — this is a live, evolving situation this pack flags explicitly for re-verification rather than stating a single flat yes/no answer as settled.",
+      "source_url": "https://www.fna.usda.gov/snap/waivers/foodrestriction/nebraska"
+    },
+    {
+      "key": "reporting-certification",
+      "kind": "supplement",
+      "terms": [
+        "certification period",
+        "approval period",
+        "recertification",
+        "redetermination",
+        "how long does snap last",
+        "how long does my snap approval last",
+        "how long does my approval last",
+        "redo",
+        "renew",
+        "periodic report",
+        "simplified reporting"
+      ],
+      "citation": "WebSearch-corroborated (this pack could not locate a directly-fetched, dated 475 NAC certification-period section that survived its own site's frame-based navigation structure): most Nebraska SNAP households are Simplified Reporting (SR); all-elderly/disabled, no-earned-income households may receive a 12-month certification period without periodic reporting, or a 24-month period with a 12-month periodic report",
+      "heading": "Nebraska's certification-period structure — this pack flags its own sourcing gap on this specific fact",
+      "text": "This pack found consistent secondary-source corroboration that most Nebraska SNAP households are certified under Simplified Reporting (SR) rules, and that households where every member is elderly (60+) or disabled with no earned income may receive either a 12-month certification period without a periodic/interim report, or a 24-month certification period with a single 12-month periodic report — structurally similar to this roster's Connecticut ESAP and Kentucky ESAP tracks. This pack explicitly DISCLOSES a sourcing gap here rather than overclaiming precision: this pack's attempt to fetch Nebraska's own 475 NAC certification-period section directly (public-dhhs.ne.gov/nfocus/HowDoI/howdoi/snap_certification_periods.htm) returned only a caseworker-facing system-navigation example (an N-FOCUS screen walkthrough), not the substantive policy text describing the standard certification-period lengths by household category — the site's frame-based structure appears to route the substantive content through a separate manual page this pack's fetch window did not converge on. Treat the SR/12-month/24-month figures as reasonably well-corroborated by secondary sources but NOT verified against Nebraska's own numbered 475 NAC section the way this pack's other findings are, and re-verify against the current 475 NAC certification-period chapter before treating this as a hard fact in a high-stakes context.",
+      "source_url": "https://public-dhhs.ne.gov/nfocus/HowDoI/howdoi/snap_certification_periods.htm"
+    }
+  ]
+}

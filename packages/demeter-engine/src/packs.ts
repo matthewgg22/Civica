@@ -42,6 +42,7 @@ import arPack from "./states/ar/pack.json";
 import msPack from "./states/ms/pack.json";
 import ksPack from "./states/ks/pack.json";
 import nmPack from "./states/nm/pack.json";
+import nePack from "./states/ne/pack.json";
 
 export interface PackVerification {
   verified_on: string;
@@ -117,6 +118,7 @@ export const VERIFIED_STATES: PackMeta[] = [
   msPack,
   ksPack,
   nmPack,
+  nePack,
 ].map(meta);
 
 export const VERIFIED_STATE_CODES: string[] = VERIFIED_STATES.map((s) => s.code);

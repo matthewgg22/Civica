@@ -216,4 +216,11 @@ export const QUESTIONS: Record<string, string[]> = {
     "Does New Mexico have a Restaurant Meals Program for SNAP?",
     "How long does my SNAP approval last if I'm elderly or disabled in New Mexico?",
   ],
+  NE: [
+    "What is the income limit for SNAP in Nebraska?",
+    "I have a drug felony conviction — can I still get SNAP in Nebraska?",
+    "Is the SNAP work-requirement time limit currently waived anywhere in Nebraska?",
+    "Can I buy soda with my SNAP benefits in Nebraska?",
+    "What is the SNAP resource limit in Nebraska, and can it be temporarily higher?",
+  ],
 };

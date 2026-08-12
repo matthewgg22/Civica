@@ -3911,6 +3911,101 @@ export const KS_GOLD: AnswerExpectation[] = [
 ];
 
 
+/** Everything the live runner executes. */
+export const NE_GOLD: AnswerExpectation[] = [
+  {
+    id: "ne-165-scoped-not-blanket",
+    // Guards the structural finding: NE's 165% FPL column is scoped to
+    // elderly/disabled/separate-household/ERP households, not everyone.
+    question: "What is the income limit for SNAP in Nebraska?",
+    state: "NE",
+    mustMention: "165",
+    mustDisclaim: true,
+  },
+  {
+    id: "ne-erp-raises-not-waives-resource-limit",
+    // Guards the structural finding: Nebraska's ERP RAISES the resource
+    // limit to $25,000 rather than waiving it outright.
+    question: "What is the SNAP resource limit in Nebraska, and can it be temporarily higher?",
+    state: "NE",
+    mustMention: "25,000",
+    mustDisclaim: true,
+  },
+  {
+    id: "ne-drug-felony-lb319-vetoed-modified-ban-current",
+    // Guards the flagship correction: LB319 was vetoed and the veto was
+    // sustained — Nebraska's older, narrower modified ban is still current.
+    question: "I have a drug felony conviction — can I still get SNAP in Nebraska?",
+    state: "NE",
+    expectCitation: "68-1017.02",
+    mustMention: "treatment",
+    mustDisclaim: true,
+  },
+  {
+    id: "ne-abawd-statutory-waiver-bar",
+    // Guards the flagship finding: NE's lack of an ABAWD waiver is a
+    // statutory mandate (68-1017.02), not just a labor-market fact.
+    question: "Is the SNAP work-requirement time limit currently waived anywhere in Nebraska?",
+    state: "NE",
+    expectCitation: "68-1017.02",
+    mustMention: "no",
+    mustDisclaim: true,
+  },
+  {
+    id: "ne-abawd-age-range-current-federal",
+    question: "What is the ABAWD work requirement age range in Nebraska?",
+    state: "NE",
+    mustMention: "64",
+    mustDisclaim: true,
+  },
+  {
+    id: "ne-soda-waiver-vacated-court-order",
+    // Guards the time-sensitive flagship finding: NE's soda/energy-drink
+    // waiver was approved, took effect, then was vacated by a federal court.
+    question: "Can I buy soda with my SNAP benefits in Nebraska?",
+    state: "NE",
+    mustMention: "court",
+    mustDisclaim: true,
+  },
+  {
+    id: "ne-utility-allowance-four-tier-oua",
+    // Guards the structural finding: NE has a distinct fourth utility tier,
+    // the One Utility Allowance (OUA), between LUA and Telephone Allowance.
+    question: "What utility deduction can I get for SNAP in Nebraska?",
+    state: "NE",
+    mustMention: "615",
+    mustDisclaim: true,
+  },
+  {
+    id: "ne-medical-deduction-actual-expense-no-shortcut",
+    question: "I'm disabled and have $50 a month in medical bills for Nebraska SNAP — do I get a deduction?",
+    state: "NE",
+    mustMention: "35",
+    mustDisclaim: true,
+  },
+  {
+    id: "ne-restaurant-meals-program-not-available",
+    question: "Does Nebraska have a Restaurant Meals Program for SNAP?",
+    state: "NE",
+    mustMention: "not",
+    mustDisclaim: true,
+  },
+  {
+    id: "ne-how-to-apply-iserve",
+    question: "How do I apply for SNAP in Nebraska?",
+    state: "NE",
+    mustDisclaim: true,
+  },
+  {
+    id: "ne-federal-benefit",
+    question: "How is the monthly SNAP benefit amount calculated from net income in Nebraska?",
+    state: "NE",
+    expectCitation: "273.10",
+    mustDisclaim: true,
+  },
+];
+
+
 export const ALL_GOLD: AnswerExpectation[] = [
   ...ANSWER_GOLD,
   ...ES_GOLD,
@@ -3949,4 +4044,5 @@ export const ALL_GOLD: AnswerExpectation[] = [
   ...MS_GOLD,
   ...KS_GOLD,
   ...NM_GOLD,
+  ...NE_GOLD,
 ];
