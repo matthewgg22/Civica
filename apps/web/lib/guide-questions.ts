@@ -95,4 +95,9 @@ export const QUESTIONS: Record<string, string[]> = {
     "Does my car count against me for SNAP in North Carolina?",
     "Is the SNAP work-requirement time limit waived anywhere in North Carolina?",
   ],
+  NJ: [
+    "What is the SNAP resource limit in New Jersey if I'm not categorically eligible?",
+    "Does my boat count against me for SNAP in New Jersey?",
+    "Is the SNAP work-requirement time limit currently waived anywhere in New Jersey?",
+  ],
 };
