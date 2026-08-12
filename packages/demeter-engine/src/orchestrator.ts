@@ -165,13 +165,23 @@ function hasUnrecognized(checks: CitationCheck[]): boolean {
   return checks.some((c) => c.status === "unrecognized");
 }
 
-/** Build the honest fallback when generation can't be verified twice: the
- *  verbatim retrieved sources, clearly framed. Nothing unverified survives. */
-function degradedAnswer(retrievedBlock: string, lang: AnswerLang = "en"): string {
-  // The quoted sources stay in English by design (the verified corpus is EN);
-  // only this wrapper localizes, and each non-English version says so.
+/** What a reader gets when generation cannot be verified twice.
+ *
+ *  The guardrail is WORKING when this fires — it has stopped the model asserting
+ *  a figure it could not source. This used to then paste the entire retrieved
+ *  block: someone who typed "four people, $4k, Boston" received several hundred
+ *  words of 7 CFR 273.8 on vehicle resource exclusions, under an
+ *  internal-sounding apology. Refusing to guess was right; that was not how to
+ *  say so.
+ *
+ *  `retrievedBlock` is deliberately NOT rendered. The citation trailer already
+ *  carries the sources as links, which is what "read it yourself" should always
+ *  have meant — the parameter stays so the caller keeps passing it and the
+ *  retrieval is still what decides whether we got here.
+ */
+function degradedAnswer(_retrievedBlock: string, lang: AnswerLang = "en"): string {
   const { lead, tail } = degradeWrapper(lang);
-  return `${lead}\n\n${retrievedBlock}\n${tail}`;
+  return `${lead}\n\n${tail}`;
 }
 
 /** The single answer pipeline. Yields frames; the caller adapts them to its

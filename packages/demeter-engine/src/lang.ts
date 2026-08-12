@@ -184,26 +184,40 @@ export function answerInstruction(lang: AnswerLang): string | null {
 }
 
 // ── Degrade wrapper ─────────────────────────────────────────────────────────
-// The verbatim-sources fallback. The QUOTED SOURCES stay English by design (the
-// verified corpus is English); only this wrapper localizes, and each non-English
-// version says so explicitly rather than leaving the reader to wonder why the
-// quoted text switched languages.
+// What a reader is told when the citation verifier refuses an answer twice.
+//
+// The guardrail itself is working when this fires: it has stopped the model
+// inventing a figure it could not source. What used to happen NEXT was the
+// failure — the reader got an internal-sounding apology followed by several
+// hundred words of raw regulation. Someone who typed "four people, $4k, Boston"
+// received 7 CFR 273.8 on vehicle resource exclusions and a "NOT recognized"
+// validation log.
+//
+// So this no longer dumps the retrieved text. It says plainly what could not be
+// confirmed, says what actually decides the answer WITHOUT naming a figure (the
+// whole point is that we could not verify one), and hands over. The citation
+// trailer still carries the links, so "read it yourself" survives — as a link,
+// which is what that offer should always have been.
+//
+// It must state NO numbers. A static string cannot know the household size or
+// the state, and putting a plausible threshold here would be exactly the
+// fabrication the gate just prevented.
 const DEGRADE: Record<AnswerLang, { lead: string; tail: string }> = {
   en: {
-    lead: "I couldn't compose a summary whose citations all check out against the sources retrieved for this question — so instead of guessing, here is the verbatim source text itself:",
-    tail: "If this doesn't answer your question, try rephrasing it, or contact your state SNAP agency for a definitive answer.",
+    lead: "I could not check this one against the rules I have, so I am not going to give you a figure I cannot stand behind.",
+    tail: "What decides it is your household size, your income after the deductions you are entitled to, and your own state's limit — which is higher than the federal one in many states. Your state SNAP agency can give you the exact number for a household your size. You can also ask me something narrower and I will try again.",
   },
   es: {
-    lead: "No pude componer un resumen cuyas citas se verifiquen todas contra las fuentes recuperadas para esta pregunta — así que en lugar de adivinar, aquí está el texto fuente literal (en inglés):",
-    tail: "Si esto no responde tu pregunta, intenta reformularla o contacta a la agencia SNAP de tu estado para una respuesta definitiva.",
+    lead: "No pude verificar esto con las reglas que tengo, así que no te voy a dar una cifra que no pueda respaldar.",
+    tail: "Lo que lo decide es el tamaño de tu hogar, tus ingresos después de las deducciones a las que tienes derecho, y el límite de tu propio estado — que en muchos estados es más alto que el federal. La agencia de SNAP de tu estado puede darte la cifra exacta para un hogar de tu tamaño. También puedes preguntarme algo más específico y lo intentaré de nuevo.",
   },
   vi: {
-    lead: "Tôi không thể soạn một bản tóm tắt mà mọi trích dẫn đều được xác minh với các nguồn đã truy xuất cho câu hỏi này — vì vậy thay vì đoán, đây là nguyên văn nguồn (bằng tiếng Anh):",
-    tail: "Nếu điều này chưa trả lời câu hỏi của bạn, hãy thử diễn đạt lại, hoặc liên hệ cơ quan SNAP của tiểu bang bạn để có câu trả lời chính thức.",
+    lead: "Tôi không kiểm chứng được điều này với các quy định tôi có, nên tôi sẽ không đưa ra con số mà mình không thể bảo đảm.",
+    tail: "Điều quyết định là số người trong hộ, thu nhập của bạn sau khi trừ các khoản bạn được hưởng, và mức giới hạn của chính tiểu bang bạn — ở nhiều bang mức này cao hơn mức liên bang. Cơ quan SNAP của tiểu bang có thể cho bạn con số chính xác cho hộ có quy mô như bạn. Bạn cũng có thể hỏi tôi điều gì cụ thể hơn và tôi sẽ thử lại.",
   },
   zh: {
-    lead: "我无法给出一个所有引用都能与本问题检索到的来源核对一致的摘要——因此我不做猜测，下面是原始来源原文（英文）：",
-    tail: "如果这没有回答您的问题，请尝试换一种问法，或联系您所在州的 SNAP 机构获取权威答复。",
+    lead: "这一条我无法用手上的法规核实，所以我不会给您一个自己无法负责的数字。",
+    tail: "真正起作用的是您的家庭人数、扣除您应得项目后的收入，以及您所在州自己的上限——在许多州，这个上限高于联邦标准。您所在州的 SNAP 机构可以告诉您符合您家庭规模的确切数字。您也可以问我更具体的问题，我再试一次。",
   },
 };
 

@@ -110,7 +110,12 @@ describe("answerQuestion verifier ladder", () => {
     expect(outcomes).toEqual(["recomposed"]);
   });
 
-  it("fabricated citation twice degrades to verbatim sources and audits FAIL semantics", async () => {
+  it("fabricated citation twice degrades to an honest refusal, not a source dump", async () => {
+    // This asserted `toContain("verbatim source text")` — the old fallback
+    // pasted the whole retrieved block. In production that meant someone who
+    // typed "four people, $4k, Boston" received several hundred words of
+    // 7 CFR 273.8 on vehicle resource exclusions under an internal-sounding
+    // apology. Refusing to guess was right; that was not how to say so.
     sdk.stream.mockReturnValue(fakeStream(Array(12).fill(FABRICATED)));
     sdk.create.mockResolvedValue({
       content: [{ type: "text", text: FABRICATED }],
@@ -119,10 +124,24 @@ describe("answerQuestion verifier ladder", () => {
     const frames = await collect(baseRequest(audits, outcomes));
 
     const text = frames.filter((f) => f.type === "delta").map((f) => f.text).join("");
-    expect(text).toContain("verbatim source text");
+
+    // Still refuses the unverifiable claim — the guardrail is the point.
     expect(text).not.toContain("benefits double");
     expect(outcomes).toEqual(["degraded"]);
     expect(audits[0]!.verifierOutcome).toBe("degraded");
+
+    // Says what it could not do, and hands over.
+    expect(text).toMatch(/could not check this one/i);
+    expect(text).toMatch(/state SNAP agency/i);
+
+    // NO raw regulation, and NO invented figure — a static fallback cannot know
+    // the household size or the state, so any number here would be exactly the
+    // fabrication the gate just prevented.
+    expect(text).not.toContain("verbatim source text");
+    expect(text).not.toMatch(/§|eCFR, eff\./);
+    expect(text).not.toMatch(/\$\s?\d/);
+    // Short enough to read. The dump ran to several hundred words.
+    expect(text.split(/\s+/).length).toBeLessThan(120);
   });
 
   it("Spanish answers may echo the USER'S own numbers without tripping the gate", async () => {
