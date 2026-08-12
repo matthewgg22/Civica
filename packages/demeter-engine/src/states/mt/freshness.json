@@ -1,0 +1,44 @@
+{
+  "_provenance": {
+    "note": "Montana dated facts. Because Montana has NO existing packages/snap-rules StatePolicy entry, there is no engine constant to cross-check against — every entry below is either a routine COLA-cycle reminder, a disclosed research gap, or a warning about a fact this pack found time-sensitive or single-sourced.",
+    "extracted": "2026-08-12"
+  },
+  "entries": [
+    {
+      "key": "mt-homeless-shelter-and-excess-cap-figures-unconfirmed",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "This pack could not find the current dollar figures for Montana's homeless standard shelter deduction or its excess-shelter-deduction annual cap anywhere in the current SNAP 602-4 (Shelter Deductions) section text — that section states both figures are 'updated each year by 09/01' but does not itself publish the current numbers. This pack did NOT fabricate either figure. Re-verify directly against a DPHHS income-standards bulletin or by contacting a local Office of Public Assistance before stating either figure with confidence."
+    },
+    {
+      "key": "mt-2750-vs-3000-resource-limit-correction",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "This pack's income-and-resources supplement corrects a $2,750 non-elderly/disabled resource-limit figure several secondary sources repeat, in favor of Montana DPHHS's own currently-published $3,000 figure (SNAP 400, effective 10/01/2024). This correction tracks the federal general SNAP resource-limit COLA increase from $2,750 (FFY2024) to $3,000 (FFY2025 and current FFY2026). Re-verify against DPHHS's own SNAP 400 page directly after the FFY2027 COLA cycle begins (10/01/2026) before restating either figure with full confidence beyond that date."
+    },
+    {
+      "key": "mt-drug-felony-modifier-single-manual-source",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "This pack's criminal-justice-disqualifications supplement rests on the exact 'not complying with conditions of supervision' modifier text this pack found consistently in three separate DPHHS SNAP manual sections (SNAP 001, SNAP 304-1, SNAP 602-4) — a genuinely cross-checked finding within DPHHS's own manual — but this pack did NOT find a standalone Montana Code Annotated statute or Administrative Rule of Montana section stating this modifier in as many words (the MCA Title 53, Chapter 2, Part 9 sections index this pack directly fetched contains no drug-felony provision at all). Re-verify this modifier's continued operative status directly against a current DPHHS manual fetch, or by contacting a local Office of Public Assistance, before treating it as settled beyond this window."
+    },
+    {
+      "key": "mt-arm-citation-family-not-full-text-verified",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "This pack's authorities.json defines an 'ARM 37.76.x' citation family (Administrative Rules of Montana, Food Stamp Program) based on WebSearch corroboration of rules.mt.gov rule numbers and titles (37.76.101, 37.76.111, 37.76.122) — this pack did NOT independently fetch the full text of any specific ARM 37.76.x rule. Re-verify directly against rules.mt.gov before citing a specific ARM rule's substantive content with full confidence."
+    },
+    {
+      "key": "mt-restaurant-meals-program-websearch-only",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "This pack's restaurant-meals-program supplement's conclusion that Montana is absent from USDA's 9-state current RMP participant list rests on WebSearch corroboration only — a direct WebFetch attempt against fns.usda.gov's own Restaurant Meals Program page timed out (60 seconds) and this pack did not retry with a different fetch method. Re-verify directly against fns.usda.gov/snap/restaurant-meals-program before restating the 9-state list or Montana's absence from it with full confidence."
+    },
+    {
+      "key": "mt-ffy2027-cola-reminder",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "This pack's confirmed dollar figures (Standard Deduction $209/$209/$209/$223/$261/$299, Standard Utility Allowance $799, Limited Utility Allowance $267, One Utility Allowance $116, Telephone Allowance $34, Medical Expense Deduction threshold $35, resource limits $4,500/$3,000, and the income-eligibility tables by household size at 130%/100%/200%/165% FPG) are drawn from Montana DPHHS's current SNAP 001 (effective 10/01/2025-09/30/2026) and SNAP 602-2/602-4 (effective 10/01/2024 and 10/01/2025 respectively), matching the current FFY2026 cycle. The FFY2027 COLA cycle begins October 1, 2026 — under two months from this pack's fetch date. Check dphhs.mt.gov's SNAP 001 and SNAP 602-x sections after that date before restating any Montana-specific dollar figure with full confidence."
+    }
+  ]
+}
