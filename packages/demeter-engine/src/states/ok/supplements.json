@@ -1,0 +1,267 @@
+{
+  "_provenance": {
+    "note": "Oklahoma SNAP curated supplements. Oklahoma has NO existing packages/snap-rules StatePolicy entry and NO oracle-fixture coverage — a genuine blank slate, like North Carolina's, Ohio's, New Jersey's, Virginia's, Tennessee's, Indiana's, Missouri's, Maryland's, Colorado's, South Carolina's, Alabama's, Louisiana's, and Kentucky's prior corpus-only builds in this same roster. This pack is CORPUS-ONLY and does not touch packages/snap-rules or the oracle fixture. Drafted from direct curl fetches of OKDHS's own Appendix C-1/C-3 dollar-figure PDFs and the Oklahoma Legislature's own compiled Title 56 statute PDF, plus Cornell LII's regulatory mirror of OAC 340:50 individual sections (used after oklahoma.gov's own policy-library host 403'd on direct curl).",
+    "extracted": "2026-08-12",
+    "source_fact_check": "direct curl fetch (browser UA) of OKDHS Appendix C-3 (effective 10/1/2025, FFY2026 dollar figures) and Appendix C-1 (effective 7/1/2026), both converted with pdftotext -layout; direct curl fetch of the Oklahoma Legislature's own Title 56 compiled statute PDF, read in full for §§ 241-241.5 and cross-referenced against §§ 230.50-230.75; individual OAC 340:50 sections read via Cornell LII's regulatory mirror after oklahoma.gov's own host 403'd; direct fetch of USDA FNA's current Restaurant Meals Program state list; WebSearch convergent-corroboration cross-check for the 1997 drug-felony opt-out citation (two independent organizations converging on the identical session-law citation) against OAC 340:50's own current disqualification-category list; post-draft adversarial refute pass; findings and gaps recorded in PROVENANCE.md",
+    "access_note": "OKDHS's own HTML policy-library host (oklahoma.gov/okdhs/library/policy/...) returned HTTP 403 to direct curl on every attempt — a genuine, disclosed access barrier resolved via the Cornell Legal Information Institute's regulatory mirror, which republishes the same OAC 340:50 section text together with OKDHS's own official revision/effective dates. regulations.justia.com also 403'd (the now-familiar Justia-block pattern this roster has documented repeatedly). OKDHS's own dollar-figure appendix PDFs (Appendix C-1, C-3) and the Oklahoma Legislature's own compiled Title 56 statute PDF both returned clean HTTP 200 with no access barrier at all. This pack's single largest access finding is not a blocked fetch but a genuine DISCOVERABILITY gap: the specific 1997 session-law sections (H.B. 2170, ch. 414, §§ 28, 31) two independent secondary sources cite for Oklahoma's drug-felony opt-out could not be located as standalone, currently-numbered Title 56 sections in the Legislature's own current compiled text — resolved via convergent secondary corroboration cross-checked against the current regulation's own silence on drug-felony disqualification, disclosed explicitly rather than presented as a direct statute read this pack did not actually perform. See PROVENANCE.md Findings 0, 1, 2, 3."
+  },
+  "supplements": [
+    {
+      "key": "program-identity",
+      "kind": "supplement",
+      "terms": [
+        "how to apply",
+        "where do i apply",
+        "apply for snap",
+        "okdhslive",
+        "who runs",
+        "what agency",
+        "administers",
+        "okdhs",
+        "oklahoma human services",
+        "department of human services",
+        "ebt card",
+        "food stamps",
+        "access oklahoma card"
+      ],
+      "citation": "OKDHS SNAP consumer page (oklahoma.gov/okdhs/services/snap.html); OKDHS EBT Resource Center (oklahoma.gov/okdhs/ebt.html)",
+      "heading": "Oklahoma's SNAP agency was rebranded \"Oklahoma Human Services\" but its OWN statute and administrative code still say \"Department of Human Services\" — and the EBT card has a distinctive, confirmed name: the ACCESS Oklahoma Card",
+      "text": "Oklahoma calls its program plainly \"SNAP\" — there is no distinctive local brand like CalFresh (CA) or Basic Food (WA). The administering agency, historically \"Oklahoma Department of Human Services,\" was rebranded \"Oklahoma Human Services\" under Gov. Kevin Stitt; OKDHS's own current Appendix C-1 dollar-figure document (effective 7/1/2026) already uses the new name, \"The Oklahoma Human Services (OKDHS) determines eligibility...\" This pack found the rebrand has NOT propagated everywhere: Oklahoma's own current SNAP statute (56 O.S. § 241 et seq.) and its Administrative Code (OAC 340:50, e.g. 340:50-11-111's own text) both still refer throughout to the \"Department of Human Services (DHS)\" — a live, disclosed rebrand-lag inside Oklahoma's own primary sources, structurally similar to (though smaller in scope than) this roster's Kentucky finding (benefind→kynect) and Louisiana finding (DCFS→LDH, a full agency transfer rather than a rebrand). SNAP is administered through a network of local OKDHS Human Services Centers — Oklahoma is state-administered, not county-administered like CA/NY/MN/WI/VA. Applicants apply through OKDHSLIVE (okdhslive.org), by phone, by mail, or in person. Oklahoma's EBT card DOES carry a distinctive, confirmed name: the \"ACCESS Oklahoma Card\" — verified directly on OKDHS's own EBT Resource Center page (\"Oklahoma Human Services issues SNAP food benefits on a plastic card called the ACCESS Oklahoma Card, also referred to as an EBT card\"), a genuine departure from this roster's Kentucky finding (no distinctive card name) and closer to Louisiana's confirmed \"Louisiana Purchase Card\" finding. Oklahoma's SNAP Employment and Training program is separately branded \"OK SNAP Works\" (OAC 340:50-5-106).",
+      "source_url": "https://oklahoma.gov/okdhs/services/snap.html"
+    },
+    {
+      "key": "income-pathways",
+      "kind": "supplement",
+      "terms": [
+        "income limit",
+        "income limits",
+        "gross income limit",
+        "gross income ceiling",
+        "make too much",
+        "over income",
+        "bbce",
+        "broad based categorical eligibility",
+        "broadbased categorical eligibility",
+        "categorical eligibility",
+        "categorically eligible",
+        "expanded categorical eligibility",
+        "200 percent",
+        "200%",
+        "130 percent",
+        "130%",
+        "poverty level",
+        "ssi",
+        "tanf",
+        "2-1-1",
+        "211"
+      ],
+      "citation": "OAC 340:50-11-111 (Categorically eligible household) and OAC 340:50-9-1 (Determining the food benefit allotment) — categorical eligibility via TANF/SSI receipt OR '2-1-1 Oklahoma' referral removes BOTH the gross AND net income tests entirely, with NO percentage-of-FPL ceiling stated anywhere in the SNAP manual itself for the 2-1-1 track",
+      "heading": "STRUCTURAL DEPARTURE worth flagging: Oklahoma's categorical-eligibility pathway removes the income test entirely and publishes NO percentage-of-FPL ceiling for it — unlike this roster's other BBCE packs, which generally document an explicit 130%/165%/200% schedule",
+      "text": "A household is categorically eligible in Oklahoma when all members receive or are authorized to receive TANF cash assistance, a combination of SSI and TANF, SSI alone, OR services through \"2-1-1 Oklahoma\" (a TANF-MOE-funded information/referral service, with certain exclusions) (OAC 340:50-11-111(b)). OAC 340:50-11-111(d) states plainly: when all household members meet categorical eligibility, \"they do not have to meet either the gross or net income eligibility standards of SNAP\" — income is still verified to determine the benefit AMOUNT (OAC 340:50-9-1 governs benefit calculation when income exceeds the ordinary standard), but eligibility itself is not gated on any percentage-of-FPL figure for a categorically eligible household. This is a genuine structural departure from this roster's other BBCE-equivalent packs: Kentucky's ECE publishes an explicit dual-track 130%/200% schedule (MS 3160), Louisiana's flat 200% FPL, Alabama's dual-track 130%/200% — Oklahoma's own SNAP manual (OAC 340:50-11-111) states NO percentage ceiling at all for the 2-1-1 Oklahoma categorical-eligibility track. This pack could not locate a SNAP-manual-stated income cap for that pathway; the actual gate, if any, sits upstream in 2-1-1 Oklahoma's own TANF-MOE-funded service-eligibility determination, which is outside OKDHS's own SNAP policy and this pack's primary-source access — disclosed as a genuine gap, not silently assumed to match another state's pattern. A household that is NOT categorically eligible is subject to the ordinary gross income standard, 130% FPL (Table I, Appendix C-3: $1,696/month for a household of 1, $3,483 for a household of 4), and the ordinary net income standard, 100% FPL (Table II). A DISTINCT third income column, 165% FPL (Table III, Appendix C-3), applies specifically to the household members ASSISTING an elderly (60+) or disabled individual who cannot purchase/prepare their own food and is treated as a separate household (OAC 340:50-5-1(c)) — this governs the assisting household's OWN eligibility for that separate-household determination, structurally identical to Kentucky's MS 5200(B) mechanic, and should not be confused with a general elderly/disabled BBCE income relaxation, which Oklahoma's manual does not otherwise provide.",
+      "source_url": "https://www.law.cornell.edu/regulations/oklahoma/OAC-340-50-11-111"
+    },
+    {
+      "key": "asset-rule",
+      "kind": "supplement",
+      "terms": [
+        "asset limit",
+        "asset test",
+        "resource limit",
+        "resource test",
+        "resources",
+        "savings",
+        "savings limit",
+        "bank account",
+        "vehicle",
+        "car count",
+        "does my car count",
+        "second car",
+        "truck",
+        "lottery",
+        "gambling"
+      ],
+      "citation": "Appendix C-3 (effective 10/1/2025) — Resource Standards for Sponsored Aliens, Non-Categorically Eligible Households, and Lottery/Gambling Winners: $3,000 standard / $4,500 households with an elderly or disabled member; OAC 340:50-11-111(f) (what disqualifies a household from categorical-eligibility status: substantial lottery/gambling winnings, IPV, fleeing felon, work-registration noncompliance)",
+      "heading": "Oklahoma's resource test only reaches non-categorically-eligible and sponsored-alien households — most Oklahoma SNAP households, gated through TANF/SSI/2-1-1 categorical eligibility, never face it at all",
+      "text": "Oklahoma's current resource limits (Appendix C-3, effective October 1, 2025) are $3,000 for a household with no elderly or disabled member and $4,500 for a household that includes one — matching the current national FFY2026 figure this roster's Kentucky, Louisiana, Alabama, Missouri, Maryland, and Colorado packs have each independently confirmed. Critically, this test applies ONLY to sponsored-alien households and households that are NOT categorically eligible (Appendix C-3; OAC 340:50-11-111(f) lists what disqualifies a household from categorical-eligibility status in the first place: substantial lottery/gambling winnings, an intentional program violation, fleeing-felon status, or work-registration noncompliance) — households categorically eligible via TANF, SSI, or the 2-1-1 Oklahoma pathway (see income-pathways) have the resource test waived entirely, so most Oklahoma SNAP households never reach this limit. A distinctive Oklahoma feature this pack found: \"substantial lottery or gambling winnings\" carry their OWN resource-style standard — a household is DISQUALIFIED once its winnings reach $4,500, and must fall back under $3,000 ($4,500 with an elderly/disabled member) to regain eligibility (Appendix C-3) — a specific, numbered mechanic this pack did not find called out this explicitly in every prior state's pack in this roster (compare Kentucky's cryptocurrency/crowdfunding specificity, a different flavor of the same instinct to name edge-case countable resources precisely). This pack did NOT find an explicit statement that Oklahoma excludes all vehicles from the resource test the way Kentucky and Alabama do — OAC 340:50-7-1 (Resources considered) was accessible only via secondary summary during this pack's research, not a full verbatim read, so this pack does NOT assert a blanket vehicle exclusion for Oklahoma and flags this as an open item in freshness.json rather than guessing.",
+      "source_url": "https://oklahoma.gov/content/dam/ok/en/okdhs/documents/searchcenter/okdhsformresults/c-3.pdf"
+    },
+    {
+      "key": "criminal-justice-disqualifications",
+      "kind": "supplement",
+      "terms": [
+        "drug felony",
+        "felony conviction",
+        "criminal record",
+        "drug conviction",
+        "lifetime ban",
+        "fleeing felon",
+        "probation",
+        "parole",
+        "controlled substance",
+        "marijuana",
+        "cannabis"
+      ],
+      "citation": "1997 Okla. Sess. Laws ch. 414 (H.B. 2170), §§ 28, 31 — per convergent secondary corroboration (Collateral Consequences Resource Center; Prison Policy Initiative), cross-checked against OAC 340:50-11-111(f) and OAC 340:50's own current disqualification-category list, which lists no drug-felony category",
+      "heading": "FLAGSHIP FINDING, CONFIRMING the minority position with confidence, via disclosed convergent secondary corroboration: Oklahoma FULLY opted out of the federal drug-felony SNAP ban in 1997",
+      "text": "21 U.S.C. 862a(a)(2) sets a federal default: anyone convicted of a state or federal felony for possessing, using, or distributing a controlled substance is permanently ineligible for SNAP unless a state opts out or modifies the ban under 862a(d)(1). Oklahoma is among the minority of states that FULLY opted out, and did so unusually early — as part of the same 1997 omnibus welfare-reform act (H.B. 2170, 1997 Okla. Sess. Laws ch. 414) that created most of Oklahoma's modern TANF/SNAP statutory framework (56 O.S. §§ 230.50-230.75, 241-241.5, all traceable to the same chapter). This pack found TWO independent secondary sources converging on the IDENTICAL citation for the specific opt-out provision — the Collateral Consequences Resource Center's 50-state drug-conviction survey cites \"1997 Okla. Sess. Laws 414 § 28\"; the Prison Policy Initiative's 2026 SNAP-and-probation analysis independently cites \"1997 Okla. Sess. Law Serv. Ch. 414 (H.B. 2170) §§ 28, 31\" for the identical Oklahoma total-opt-out finding. DISCLOSED ACCESS GAP, not a fabricated statute read: this pack could NOT independently locate §§ 28 or 31 as standalone, currently-numbered Title 56 sections in the Oklahoma Legislature's own current compiled statute text (unlike neighboring sections of the same 1997 chapter, which ARE independently locatable and codified today as §§ 56-241.1, 241.3, and 230.71-230.73) — suggesting §§ 28 and 31 were likely uncodified, session-only provisions of the omnibus act rather than freestanding sections that persist as separately citable law today. This pack instead cross-checked the full-opt-out conclusion against OAC 340:50's own CURRENT disqualification-category list (OAC 340:50-11-111(f) and the household-eligibility provisions this pack read via Cornell LII): fleeing felon, intentional program violation (IPV), work-registration noncompliance, substantial lottery/gambling winnings, and certain violent-crime convictions after February 7, 2014 (7 CFR 273.11(r), matching this roster's Kentucky pack's own boilerplate finding about the \"high misdemeanor under the law of New Jersey\" fleeing-felon language, expected federal text every state's manual replicates) — NONE of these current disqualification categories mention a drug-felony conviction at all, independently corroborating the full-opt-out reading. This pack treats the convergent secondary corroboration plus the current regulation's own silence as sufficient confirmation, consistent with this roster's established practice (see Louisiana's Justia-403 resolution) of disclosing an access barrier and resolving it via convergent, independent secondary sourcing rather than fabricating a direct primary-source quote this pack could not obtain.",
+      "source_url": "https://ccresourcecenter.org/national-snap-tanf-drug-felony-study/"
+    },
+    {
+      "key": "shelter-utility-deductions",
+      "kind": "supplement",
+      "terms": [
+        "utility allowance",
+        "utility standard",
+        "shelter deduction",
+        "excess shelter",
+        "standard utility allowance",
+        "basic utility allowance",
+        "telephone allowance",
+        "standard deduction",
+        "sua",
+        "bua",
+        "homeless",
+        "homeless shelter deduction"
+      ],
+      "citation": "Appendix C-3 (effective 10/1/2025) — Standard Deduction $209 (household sizes 1-3), $223 (4), $261 (5), $299 (6+); Standard Utility Allowance (SUA) $412; Basic Utility Allowance (BUA) $354; Telephone Standard $49; maximum (capped) excess shelter deduction $744 (without an elderly/disabled member); Standard Homeless Shelter Deduction $199; OAC 340:50-7-31 (Deductions)",
+      "heading": "Oklahoma's Standard Utility Allowance ($412) and Basic Utility Allowance ($354) are distinct, state-specific dollar figures — a household can only use ONE, choosing the highest it qualifies for",
+      "text": "Oklahoma's Standard Deduction (Appendix C-3, effective October 1, 2025) is $209 for household sizes 1-3, $223 for 4, $261 for 5, $299 for 6 or more — matching the current national FFY2026 figures this roster's Kentucky, Louisiana, Alabama, and South Carolina packs independently confirmed. Oklahoma's Standard Utility Allowance is $412/month for a household incurring heating or cooling costs; a household billed for utilities but not heating/cooling instead uses the Basic Utility Allowance, $354/month; a household whose only utility expense is a telephone gets the standalone Telephone Standard, $49/month (Appendix C-3; OAC 340:50-7-31 confirms these figures are set per Appendix C-3 and that a household may only receive one standard utility allowance, choosing the highest one it qualifies for if more than one would apply). These SUA/BUA/telephone figures are genuinely state-specific — every state calculates its own based on local utility costs, so Oklahoma's $412/$354/$49 is a distinct set of numbers from Kentucky's $388/$331/$64. Oklahoma's capped excess shelter deduction is $744/month for households without an elderly or disabled member (uncapped, using full shelter costs exceeding 50% of income after other deductions, for households WITH an elderly or disabled member per OAC 340:50-7-31) — matching the same national FFY2026 figure this roster's Kentucky, Louisiana, and Alabama packs also confirmed. Oklahoma's Standard Homeless Shelter Deduction is $199/month (Appendix C-3) — the same national FFY2026 figure Kentucky's $199 and Louisiana's $198.99 also derive from, functionally identical across states using the current formula.",
+      "source_url": "https://oklahoma.gov/content/dam/ok/en/okdhs/documents/searchcenter/okdhsformresults/c-3.pdf"
+    },
+    {
+      "key": "medical-deduction",
+      "kind": "supplement",
+      "terms": [
+        "medical deduction",
+        "medical expense",
+        "medical expenses",
+        "medical bills",
+        "elderly deduction",
+        "disability deduction",
+        "excess medical",
+        "standard medical deduction"
+      ],
+      "citation": "OAC 340:50-7-31 (Deductions) — actual verified medical expenses exceeding $35/month for an elderly (60+) or disabled household member are deductible, with NO flat standard shortcut and no cap; the $35 threshold applies once per household, not once per elderly/disabled member",
+      "heading": "Oklahoma has NO flat standard medical deduction (SMD) shortcut — households deduct their actual verified expense minus $35, joining Maryland's and Indiana's actual-expense-only camp rather than Kentucky's, Louisiana's, South Carolina's, Missouri's, Colorado's, or Alabama's flat-dollar-shortcut camp",
+      "text": "OAC 340:50-7-31 allows a deduction for verified out-of-pocket medical expenses exceeding $35/month incurred by a household member who is elderly (60 or older) or disabled — other household members' medical costs are not deductible. Allowable expenses must be prescribed or approved by a state-licensed or qualified practitioner and include medical and dental care (including psychotherapy and rehabilitation services by a licensed or state-authorized practitioner), prescribed eyeglasses, and the reasonable cost of lodging and transportation to obtain medical treatment. The $35/month threshold is subtracted from the household's total qualifying medical expenses ONCE per household, not once per elderly/disabled member, when more than one household member qualifies. Distinctively, Oklahoma's manual does NOT offer a flat standard-medical-deduction shortcut at any expense tier — households deduct their actual verified expense minus $35, with no cap on the deductible amount and no simplified flat figure for a mid-range expense band. This places Oklahoma in the same actual-expense-only camp this roster's Maryland and Indiana packs document, rather than the flat-shortcut camp this roster's Kentucky ($137), Louisiana ($161), South Carolina ($175), Missouri ($135), Colorado ($165), and Alabama ($185) packs each document with their own distinct dollar figure.",
+      "source_url": "https://www.law.cornell.edu/regulations/oklahoma/OAC-340-50-7-31"
+    },
+    {
+      "key": "child-support-deduction",
+      "kind": "supplement",
+      "terms": [
+        "child support",
+        "support payments",
+        "child support deduction",
+        "arrearage",
+        "owe child support",
+        "behind on child support"
+      ],
+      "citation": "OAC 340:50-7-31 (Deductions) — Child Support Deduction is listed among the ORDINARY deductions (standard, earned income, medical, shelter, dependent care, child support), not an income exclusion applied before the gross income test; OAC 340:10-10-5 — SNAP applicants/recipients must cooperate to obtain child support as a condition of eligibility",
+      "heading": "Oklahoma treats legally binding child support PAID by a household member as an ordinary deduction — this pack found NO active child-support-ARREARS disqualification analogous to Kentucky's, only an ordinary cooperation-to-obtain-support requirement",
+      "text": "OAC 340:50-7-31 allows a deduction for verified, legally-binding child support payments a household member pays, or is obligated to pay, to or for a non-household member — listed within Oklahoma's ordinary § 340:50-7 \"Deductions\" chapter alongside the Standard, Earned Income, Medical, Shelter, and Dependent Care deductions, applied AFTER gross income has already been established, per the standard net-income calculation structure (7 CFR 273.9(d)(5)). This places Oklahoma in the same ordinary-deduction camp this roster's Kentucky, Louisiana, Maryland, Indiana, Tennessee, South Carolina, and Alabama packs document, rather than the income-exclusion mechanism (7 CFR 273.9(c)) this roster's Virginia, New Jersey, Illinois, Missouri, and Colorado packs document. Separately, OAC 340:10-10-5 requires SNAP applicants/recipients to cooperate with Oklahoma Child Support Services to establish and obtain child support owed TO the household, as an ordinary condition of eligibility (a federal requirement, not an Oklahoma-specific enhancement). This pack searched specifically for an active disqualification analogous to Kentucky's MS 2380/2385 (which disqualifies a member $500+ delinquent on child support THEY owe, via automated KASES matching) and found no evidence of an equivalent Oklahoma provision — this pack does not assert one exists, and treats its absence as a genuine, checked-for structural difference from Kentucky rather than an unexamined gap.",
+      "source_url": "https://www.law.cornell.edu/regulations/oklahoma/OAC-340-50-7-31"
+    },
+    {
+      "key": "abawd-work-requirement",
+      "kind": "supplement",
+      "terms": [
+        "abawd",
+        "able bodied adult",
+        "work requirement",
+        "3 month limit",
+        "work registration",
+        "waiver",
+        "waived area",
+        "rural county",
+        "time limit",
+        "oklahoma city",
+        "tulsa",
+        "ok snap works"
+      ],
+      "citation": "56 O.S. § 241.3 (Limitation of benefits) — subsection (A) states a stale \"18 to 50\" age band; subsection (C) STATUTORILY BARS OKDHS from requesting an ABAWD area waiver, effective Oct. 1, 2013 (Laws 2013, c. 178, § 1); OAC 340:50-5-100 (ABAWD, last amended Aug. 15, 2024, reflecting the 2023 Fiscal Responsibility Act's pre-OBBBA age table); OKDHS SNAP consumer page (states \"ages 18 to 53\", a third, different figure)",
+      "heading": "FLAGSHIP FINDING, STRUCTURAL AND TIME-SENSITIVE: Oklahoma is STATUTORILY BARRED from ever requesting an ABAWD waiver (since 2013) — and its own three primary sources cite THREE different, all-stale ABAWD age ranges, none matching the true current federal standard (18-64, effective since OBBBA's July 4, 2025 enactment)",
+      "text": "An able-bodied adult without dependents (ABAWD) is limited to three countable months of SNAP within a 36-month period absent 80 hours/month (20 hours/week, averaged monthly) of a qualifying work activity or an exemption (OAC 340:50-5-100; 56 O.S. § 241.3(A)). Oklahoma's single most consequential ABAWD fact is NOT a waiver-status question but a statutory one: 56 O.S. § 241.3(C), added by Laws 2013, c. 178, § 1, effective September 1, 2013, states in full, \"Beginning October 1, 2013, the Department of Human Services shall not request a waiver to provide Supplemental Nutrition Assistance Program services to able-bodied adults without dependents.\" This is a Oklahoma LEGISLATIVE self-restriction — OKDHS is barred by state law from ever requesting an area-based ABAWD waiver, regardless of local unemployment conditions — a structurally different, and more permanent, reason for Oklahoma's statewide absence of any ABAWD waiver than most states' simple failure to qualify under the federal 10%-unemployment threshold or a temporary lapse (compare Kentucky's active, narrow 5-county waiver, or Louisiana's \"no waiver — rule applies\" status, both of which COULD change with local conditions; Oklahoma's cannot, absent a legislative repeal of § 241.3(C)). SEPARATELY, and independently, this pack found a three-layer age-range staleness across Oklahoma's own primary sources: the 1997 statute itself, 56 O.S. § 241.3(A), still states the pre-2023 age band, \"eighteen (18) years of age to fifty (50) years of age\" (never amended since 2013); the administrative regulation, OAC 340:50-5-100 (last amended August 15, 2024, per the Oklahoma Register), instead reflects the 2023 federal Fiscal Responsibility Act's incremental age table (\"50 years of age and older before September 1, 2023\" through \"55 years of age or older on or after October 1, 2024\" — i.e., subject through age 54); and OKDHS's OWN current consumer-facing SNAP page states plainly, \"Meet work requirements (unemployed adults, ages 18 to 53),\" a THIRD, different figure matching neither the statute's 50 nor the regulation's 54. NONE of Oklahoma's three own sources reflect the TRUE current federal standard: the One Big Beautiful Bill Act (OBBBA), signed July 4, 2025, raised the ABAWD age ceiling to 64 (narrowing the caregiver exemption from under-18 to under-14 children) EFFECTIVE IMMEDIATELY upon enactment, with states directed to phase in full compliance by no later than June 2026 — well before this pack's August 12, 2026 fetch date. This pack treats OBBBA's 18-64 standard as the operative federal floor regardless of which stale figure a given Oklahoma source states, and discloses all three conflicting Oklahoma-specific figures explicitly rather than picking one silently (see freshness.json). Other ABAWD exemptions remain ordinary: medically unable to work, a household member under 14, pregnancy, homelessness, or already being exempt from general SNAP work registration.",
+      "source_url": "https://oklahoma.gov/okdhs/services/snap.html"
+    },
+    {
+      "key": "restaurant-meals-program",
+      "kind": "supplement",
+      "terms": [
+        "restaurant meals program",
+        "rmp",
+        "eat at a restaurant",
+        "use ebt at restaurant",
+        "hot meal",
+        "hot food",
+        "prepared food",
+        "hot foods waiver",
+        "disaster waiver"
+      ],
+      "citation": "USDA FNA's current Restaurant Meals Program state list: Arizona, California, Illinois (Cook/Franklin Counties), Maryland, Massachusetts, Michigan, New York, Rhode Island, Virginia — Oklahoma absent",
+      "heading": "Oklahoma does NOT operate a Restaurant Meals Program",
+      "text": "The Restaurant Meals Program (RMP) is a state OPTION under 7 CFR 274.7(g) letting elderly (60+), disabled, and homeless SNAP recipients buy prepared, hot meals from authorized restaurants with EBT year-round. USDA FNA's own current RMP state list (fetched directly, clean HTTP 200) names Arizona, California, Illinois (Cook and Franklin Counties only), Maryland, Massachusetts, Michigan, New York, Rhode Island, and Virginia — the same nine-state/jurisdiction list this roster's Kentucky pack independently confirmed. Oklahoma is ABSENT, and this pack found no secondary source claiming otherwise. OKDHS's own EBT Resource Center page (oklahoma.gov/okdhs/ebt.html) independently confirms the practical consequence: SNAP benefits cannot buy \"pet food, vitamins, medicine, alcohol, tobacco, fast food or food that will be heated and eaten in the store\" — a plain statement that hot/prepared restaurant food is not purchasable with Oklahoma EBT outside whatever narrower disaster hot-foods waiver might be separately and temporarily active (this pack did not find any current Oklahoma SNAP hot-foods disaster waiver active as of its fetch date, though — as with every state in this roster — this status can change quickly after a qualifying disaster declaration).",
+      "source_url": "https://www.fns.usda.gov/snap/retailer/restaurant-meals-program"
+    },
+    {
+      "key": "tribal-fdpir",
+      "kind": "supplement",
+      "terms": [
+        "tribal",
+        "reservation",
+        "indian",
+        "native american",
+        "fdpir",
+        "food distribution program",
+        "choctaw",
+        "cherokee",
+        "osage",
+        "chickasaw",
+        "muscogee"
+      ],
+      "citation": "USDA FNA, Food Distribution Program on Indian Reservations (FDPIR) — Oklahoma tribal nations (Choctaw, Sac and Fox, Osage, and others) operate FDPIR as a mutually-exclusive ALTERNATIVE to SNAP, not a supplement to it; SNAP itself remains entirely state-administered via OKDHS even on tribal land",
+      "heading": "CONFIRMATION, not a new structural variant: Oklahoma's 39 federally recognized tribal nations do NOT operate their own SNAP programs — SNAP stays entirely OKDHS-administered statewide, with several tribes instead running FDPIR as a household's alternative choice",
+      "text": "Oklahoma has substantial tribal land and 39 federally recognized tribal nations headquartered in the state — worth checking carefully given this roster's build guidance, and worth stating plainly rather than assuming a tribal-specific SNAP variant exists where this pack found none. SNAP itself remains entirely state-administered by OKDHS through its ordinary Human Services Center network, including for households living on tribal land — Oklahoma tribes do not operate their own SNAP agency the way some tribes elsewhere administer their own TANF programs under separate federal tribal-TANF authority. Instead, several Oklahoma tribal nations (Choctaw Nation, Sac and Fox Nation — jointly serving the Absentee Shawnee, Citizen Potawatomi, Iowa, and Kickapoo tribes' shared service area — Osage Nation, and others) operate the Food Distribution Program on Indian Reservations (FDPIR), a separate USDA commodity-foods program available to income-eligible households living on or near a reservation, or Native American households anywhere in Oklahoma. A household may NOT participate in FDPIR and SNAP at the same time — the two are mutually exclusive alternatives, a plain federal rule (not an Oklahoma-specific policy) this pack confirms rather than newly discovers. A household choosing between the two should weigh which better fits their circumstances (SNAP's EBT flexibility to shop at any authorized retailer versus FDPIR's monthly commodity-food package, often more locally accessible in rural tribal areas) rather than assume one is categorically better.",
+      "source_url": "https://www.fna.usda.gov/fdpir/food-distribution-program-indian-reservations"
+    },
+    {
+      "key": "expedited-service",
+      "kind": "supplement",
+      "terms": [
+        "expedited",
+        "expedited service",
+        "emergency",
+        "emergency food stamps",
+        "fast benefits",
+        "how fast",
+        "urgent",
+        "same day",
+        "5 day",
+        "7 day"
+      ],
+      "citation": "OAC 340:50-11-1/340:50-11-5 (Expedited service) — plain federal expedited-eligibility criteria and the plain federal 7-calendar-day processing ceiling; OAC 340:50-3-1 (ordinary processing: no later than 30 calendar days)",
+      "heading": "Oklahoma's expedited-service ceiling is the plain federal 7 calendar days — Oklahoma does NOT shorten it the way this roster's Kentucky pack found Kentucky does (5 days)",
+      "text": "A household qualifies for expedited service under the standard federal criteria: gross monthly income under $150 AND liquid resources of $100 or less, OR combined gross income and liquid resources less than actual monthly shelter expenses, OR a destitute migrant/seasonal farmworker household. When a household qualifies, OKDHS workers must complete the application within 7 calendar days (OAC 340:50-11-1), and may postpone verifying eligibility factors other than identity when they cannot be completed within that 7-day window (OAC 340:50-11-5). This is the plain federal ceiling, not an accelerated state-specific standard — a genuine contrast this pack found worth stating plainly against this roster's Kentucky pack, whose own internal processing standard (5 calendar days) exceeds the federal floor. Oklahoma's ORDINARY (non-expedited) processing standard is the federal default: no later than 30 calendar days from the date of a signed application (OAC 340:50-3-1).",
+      "source_url": "https://www.law.cornell.edu/regulations/oklahoma/OAC-340-50-3-1"
+    },
+    {
+      "key": "reporting-certification",
+      "kind": "supplement",
+      "terms": [
+        "certification period",
+        "approval period",
+        "recertification",
+        "redetermination",
+        "how long does snap last",
+        "how long does my snap approval last",
+        "how long does my approval last",
+        "redo",
+        "renew"
+      ],
+      "citation": "OAC 340:50-9-6 (Procedures relating to food benefit certification renewals) — 12-month standard certification period",
+      "heading": "Oklahoma's certification period is a flat 12 months — this pack found no evidence of Kentucky's tri-tier 4/12/36-month structure, or a shortened period specifically for ABAWD households",
+      "text": "OAC 340:50-9-6 requires a household to complete its benefit renewal and provide required verification by the last day of the 12th month of certification — establishing 12 months as Oklahoma's standard SNAP certification period. A household that renews on time is entitled to uninterrupted benefits by its normal issuance date the following month, provided it completes any required interview and provides verification by the applicable deadline. This pack specifically checked for a tri-tier structure analogous to Kentucky's (4 months for ABAWD households, 12 months default, 36 months for all-elderly/no-earned-income households) and found no evidence of one in Oklahoma's own certification-renewal regulation — this pack states the flat 12-month standard it confirmed and does NOT assert a shorter ABAWD-specific certification period exists, since it could not verify one, rather than assuming Oklahoma mirrors Kentucky's structure.",
+      "source_url": "https://www.law.cornell.edu/regulations/oklahoma/OAC-340-50-9-6"
+    }
+  ]
+}
