@@ -194,12 +194,12 @@ export const QUESTIONS: Record<string, string[]> = {
     "What is the ABAWD work requirement age range in Arkansas?",
     "Can I use my EBT card to buy a hot meal at a restaurant in Arkansas?",
   ],
-  NE: [
-    "What is the income limit for SNAP in Nebraska?",
-    "I have a drug felony conviction — can I still get SNAP in Nebraska?",
-    "Is the SNAP work-requirement time limit currently waived anywhere in Nebraska?",
-    "Can I buy soda with my SNAP benefits in Nebraska?",
-    "What is the SNAP resource limit in Nebraska, and can it be temporarily higher?",
+  MS: [
+    "Does Mississippi's categorical eligibility raise my SNAP income limit above the normal amount?",
+    "Is the SNAP work-requirement time limit currently waived anywhere in Mississippi?",
+    "I have a drug felony conviction — can I still get SNAP in Mississippi?",
+    "Does my car count against me for SNAP in Mississippi?",
+    "How long does my SNAP approval last in Mississippi if I'm 65 or older?",
   ],
   KS: [
     "Does Kansas have broad-based categorical eligibility for SNAP?",
@@ -207,5 +207,12 @@ export const QUESTIONS: Record<string, string[]> = {
     "I have a drug felony conviction — can I still get SNAP in Kansas?",
     "Is the SNAP work-requirement time limit currently waived anywhere in Kansas?",
     "Can I use my EBT card to buy a hot meal at a restaurant in Kansas?",
+  ],
+  NE: [
+    "What is the income limit for SNAP in Nebraska?",
+    "I have a drug felony conviction — can I still get SNAP in Nebraska?",
+    "Is the SNAP work-requirement time limit currently waived anywhere in Nebraska?",
+    "Can I buy soda with my SNAP benefits in Nebraska?",
+    "What is the SNAP resource limit in Nebraska, and can it be temporarily higher?",
   ],
 };
