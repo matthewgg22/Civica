@@ -114,15 +114,36 @@ function renderInline(line: string, keyBase: string): ReactNode[] {
  *  Returns the follow-ups only once the line is COMPLETE (a newline after it,
  *  or the stream has finished). Offering half a question would be worse than
  *  offering none. */
+/** Drops a freshness footer the MODEL wrote, keeping the one Civica appends.
+ *
+ *  The prompt tells it not to write its own "Sources as of" line. It sometimes
+ *  does anyway — seen in production, the same answer carrying the line twice —
+ *  and an instruction a model can ignore is not a guarantee. Ours is appended
+ *  last, in the trailer frame, so every occurrence but the final one goes. */
+function dropDuplicateFooter(text: string): string {
+  const marker = /^\s*(Sources as of|Fuentes al|Nguồn tính đến|来源截至)/;
+  const lines = text.split("\n");
+  const hits = lines.map((l, i) => (marker.test(l) ? i : -1)).filter((i) => i >= 0);
+  if (hits.length < 2) return text;
+  const keep = hits[hits.length - 1];
+  return lines.filter((_, i) => !hits.includes(i) || i === keep).join("\n");
+}
+
 export function splitFollowups(
-  text: string,
+  rawText: string,
   opts?: { streaming?: boolean },
 ): { body: string; followups: string[] } {
-  const at = text.lastIndexOf(`\n${FOLLOWUP_MARKER}`);
+  const text = dropDuplicateFooter(rawText);
+  // ANYWHERE, not only at the start of a line. This looked for "\n⟶", and the
+  // model does not reliably put the marker on its own line — when it wrote
+  // "…confirm those with your local district or OTDA. ⟶ What documents will I
+  // need? | …" the whole thing sailed through and the reader saw the raw arrow
+  // and the pipes printed in the answer. Seen in production.
+  const at = text.lastIndexOf(FOLLOWUP_MARKER);
   if (at < 0) return { body: text, followups: [] };
 
   const body = text.slice(0, at);
-  const rest = text.slice(at + 1 + FOLLOWUP_MARKER.length);
+  const rest = text.slice(at + FOLLOWUP_MARKER.length);
   const end = rest.indexOf("\n");
   const complete = end >= 0 || !opts?.streaming;
   if (!complete) return { body, followups: [] };
@@ -136,7 +157,7 @@ export function splitFollowups(
     .slice(0, 3);
 
   // Anything after the follow-ups line (the appended citation trailer) stays.
-  return { body: body + tail, followups };
+  return { body: (body.replace(/[ \t]+$/, "") + tail), followups };
 }
 
 /** The question Demeter is waiting on, if it ended by asking one.
@@ -238,6 +259,13 @@ export function renderAnswer(text: string, opts?: { streaming?: boolean }): Reac
 // Re-exported so existing imports of `T` from this file keep working.
 export { T };
 
+
+/** How fast a streamed answer is REVEALED — deliberately slower than it
+ *  arrives. ~40 characters a second at rest, ~120 catching up. Module scope so
+ *  the drain callback closes over a genuine constant, and one place to tune,
+ *  because "calm" is a judgement that will be revisited. */
+const STREAM_TICK_MS = 25;
+const STREAM_MAX_STEP = 3;
 
 export function DemeterChat({
   states,
@@ -353,14 +381,18 @@ export function DemeterChat({
     }
     // PROPORTIONAL WITH A CEILING, and the ceiling is the point.
     //
-    // Uncapped, `behind / 8` meant a long answer arrived at thousands of
-    // characters a second — technically "paced" and indistinguishable from a
-    // dump. This product is for someone frightened of losing food assistance,
-    // and text that lands faster than anyone can read it is not calm, it is
-    // urgent. So: ~125 characters a second at rest, ~250 when catching up.
-    // Around reading pace, deliberately, rather than around network pace.
+    // Uncapped, `behind / 8` meant thousands of characters a second —
+    // technically "paced", indistinguishable from a dump. The first cap (4 per
+    // 16ms = 250/sec) still cleared a short answer in about a second, which
+    // still read as a dump: answers got shorter at the same time the pacing
+    // landed, so the two changes cancelled out.
+    //
+    // Now ~40 characters a second at rest and ~120 catching up. That is slow
+    // next to how fast the tokens actually arrive, and that is the intent —
+    // this is for someone frightened of losing food assistance, and text
+    // landing faster than it can be read is not calm, it is urgent.
     const behind = full.length - shownRef.current;
-    const step = Math.min(4, Math.max(1, Math.ceil(behind / 40)));
+    const step = Math.min(STREAM_MAX_STEP, Math.max(1, Math.ceil(behind / 50)));
     shownRef.current = Math.min(full.length, shownRef.current + step);
     const text = full.slice(0, shownRef.current);
     setMessages((m) => {
@@ -375,7 +407,7 @@ export function DemeterChat({
       finishDrain();
       return;
     }
-    rafRef.current = window.setTimeout(drawStream, 16);
+    rafRef.current = window.setTimeout(drawStream, STREAM_TICK_MS);
   }, []);
 
   // A stream abandoned mid-flight must not keep painting into a component that

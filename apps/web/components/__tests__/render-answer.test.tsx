@@ -218,3 +218,45 @@ describe("the composer echoes the question Demeter asked", () => {
     );
   });
 });
+
+describe("the follow-up marker leaked into a real conversation", () => {
+  // Shipped and seen: the model put the marker INLINE after the last sentence
+  // rather than on its own line, and splitFollowups only ever looked for
+  // "\n⟶". So the reader got the raw arrow and the pipe separators printed in
+  // the middle of the answer.
+  const inline =
+    "I don't have New York's exact income limits loaded here, so confirm those with your local district or OTDA. ⟶ What documents will I need? | Do I qualify for expedited service? | What happens at the interview?";
+
+  it("strips the marker even when it is not at the start of a line", () => {
+    const { body, followups } = splitFollowups(inline);
+    expect(body).not.toContain("⟶");
+    expect(body).not.toContain("|");
+    expect(followups).toEqual([
+      "What documents will I need?",
+      "Do I qualify for expedited service?",
+      "What happens at the interview?",
+    ]);
+    expect(body.trim().endsWith("OTDA.")).toBe(true);
+  });
+
+  it("does not leave the marker in the composer placeholder either", () => {
+    expect(pendingQuestion(inline) ?? "").not.toContain("⟶");
+  });
+});
+
+describe("a duplicated freshness footer", () => {
+  it("keeps only the one Civica appends", () => {
+    // Seen in production: the model wrote its own "Sources as of" line despite
+    // the prompt telling it not to, so the answer carried it twice.
+    const doubled =
+      "In Nevada, SNAP is run by DWSS.\nSources as of: eCFR 2026-06-02.\nSources as of: eCFR 2026-06-02.";
+    const { body } = splitFollowups(doubled);
+    expect(body.match(/Sources as of/g)).toHaveLength(1);
+    expect(body).toContain("DWSS");
+  });
+
+  it("leaves a single footer alone", () => {
+    const one = "Answer.\nSources as of: eCFR 2026-06-02.";
+    expect(splitFollowups(one).body).toBe(one);
+  });
+});
