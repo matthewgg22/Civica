@@ -299,4 +299,13 @@ export const QUESTIONS: Record<string, string[]> = {
     "How long does my SNAP certification last in Delaware?",
     "Does Delaware have a Restaurant Meals Program for SNAP?",
   ],
+  AK: [
+    "What is the income limit for SNAP in Alaska?",
+    "Does Alaska have an asset or resource limit for SNAP?",
+    "I have a drug felony conviction — can I still get SNAP in Alaska?",
+    "Is the SNAP work-requirement time limit currently waived anywhere in Alaska?",
+    "What is the maximum SNAP benefit amount in rural Alaska?",
+    "What utility deduction can I get for SNAP in Alaska?",
+    "How do I apply for SNAP in Alaska?",
+  ],
 };
