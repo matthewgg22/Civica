@@ -39,6 +39,7 @@ import ctPack from "./states/ct/pack.json";
 import utPack from "./states/ut/pack.json";
 import iaPack from "./states/ia/pack.json";
 import arPack from "./states/ar/pack.json";
+import msPack from "./states/ms/pack.json";
 import ksPack from "./states/ks/pack.json";
 
 export interface PackVerification {
@@ -112,6 +113,7 @@ export const VERIFIED_STATES: PackMeta[] = [
   utPack,
   iaPack,
   arPack,
+  msPack,
   ksPack,
 ].map(meta);
 

@@ -1,0 +1,44 @@
+{
+  "_provenance": {
+    "note": "Mississippi dated facts. Because Mississippi has NO existing packages/snap-rules StatePolicy entry, there is no engine constant to cross-check against — every entry below is either a routine COLA-cycle reminder, a disclosed research gap, or a warning about a confirmed access/staleness trap this pack found.",
+    "extracted": "2026-08-12"
+  },
+  "entries": [
+    {
+      "key": "ms-abawd-disaster-waiver-gate-verify-current",
+      "kind": "expires",
+      "date": "2026-11-01",
+      "warning": "MDHS's own current SNAP Policy Manual (Rule 13.12, directly fetched) ties ABAWD waiver authority exclusively to a formal state or federal natural-disaster declaration with the Governor's approval (Miss. Code Ann. §43-12-19) — not the federal unemployment-rate waiver criteria most other states use. This pack found secondary-source confirmation (ABAWDMap.us) that Mississippi currently has no active ABAWD waiver anywhere in the state, including in historically waiver-eligible Delta counties (Bolivar, Coahoma, Humphreys, Issaquena, Leflore, Quitman, Sharkey, Sunflower, Tallahatchie, Tunica, Washington). This pack could NOT independently confirm whether Miss. Code Ann. §43-12-19's disaster-only framing is itself a recent (post-OBBBA) change or has read this way for longer — a materially different question from simply 'is a waiver currently active.' Before telling a Mississippi applicant whether ABAWD work rules currently apply in their county, re-check MDHS's current manual and Miss. Code Ann. §43-12-19 directly, and separately check for any active state/federal disaster declaration."
+    },
+    {
+      "key": "ms-sua-dollar-figure-gap",
+      "kind": "expires",
+      "date": "2026-09-15",
+      "warning": "This pack could NOT recover Mississippi's specific current-FY2026 Standard Utility Allowance (SUA), Basic Utility Allowance (BUA), or Standard Telephone Allowance dollar figures. MDHS's own manual (Rule 18.9) describes only the STRUCTURE of these allowances, not their dollar amounts, and USDA FNA's national FY2026 SUA-values PDF (which would carry Mississippi's specific figure) returned a live Akamai bot-detection block (HTTP 403) to every direct fetch attempt from usda.gov's guidance-documents subdomain. This is a disclosed, unresolved sourcing gap — this pack does NOT state a Mississippi SUA dollar figure anywhere. Before answering a Mississippi-specific utility-allowance dollar question with confidence, re-attempt a direct fetch of https://www.usda.gov/sites/default/files/guidance-documents/fns.snap-simplifiedProcess-fy26sua-values.pdf or contact MDHS directly for its current standards table."
+    },
+    {
+      "key": "ms-resource-limit-stale-secondary-source",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "This pack found multiple secondary sources (SNAP-calculator sites) reporting Mississippi's resource limits as $2,750 (standard) / $4,250 (elderly/disabled) — these are STALE FFY2025 (pre-COLA) figures. MDHS's own manual (Rule 16.1) defers directly to USDA's annually-posted national standard rather than printing its own figure, and this pack treats the current FFY2026 national standard ($3,000 / $4,500, effective October 1, 2025) as controlling, matching this roster's Connecticut and Arkansas packs' independently-confirmed figures. Re-verify against USDA's current published FY2026 resource-limit standard before restating either figure with confidence, especially after the FFY2027 COLA cycle begins."
+    },
+    {
+      "key": "ms-drug-felony-justia-403",
+      "kind": "expires",
+      "date": "2027-01-01",
+      "warning": "This pack could not fetch the raw text of Miss. Code Ann. §43-12-71 directly — law.justia.com returned an HTTP 403 Cloudflare bot-detection challenge to every direct attempt, the familiar Justia-403 pattern this roster has repeatedly documented for other states' statute lookups. This pack relies instead on MDHS's own current manual (Rule 22.14), which quotes the statute's effect and dates it precisely (opt-out effective July 1, 2019), as the controlling primary source, cross-checked against WebSearch corroboration. If a higher-confidence read of the statute's exact text is needed, re-attempt via the Internet Archive Wayback Machine or Mississippi's official legislature site (billstatus.ls.state.ms.us / law.mssos.us) rather than law.justia.com directly."
+    },
+    {
+      "key": "ms-ffy2027-cola-reminder",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "This pack's confirmed national-standard dollar figures (Standard Deduction $209/$209/$209/$223/$261/$299, capped excess shelter deduction $744, resource limits $3,000/$4,500, recreational-vehicle excess-value threshold $4,650, $35 medical-expense threshold) are drawn from the current FFY2026 cycle (October 1, 2025 - September 30, 2026), cross-checked against this roster's other independently-verified packs since MDHS's own manual does not republish these national figures directly. The FFY2027 COLA cycle begins October 1, 2026 — under two months from this pack's fetch date. Check MDHS's current SNAP Policy Manual and USDA FNA's published FY2027 cost-of-living figures for updates after that date before restating any Mississippi-specific dollar figure with full confidence."
+    },
+    {
+      "key": "ms-manual-revision-cadence",
+      "kind": "expires",
+      "date": "2026-11-01",
+      "warning": "MDHS's current SNAP Policy Manual (fetched directly) shows individual Rules revised on a rolling basis — most sections carry a 'Revised: March 2022' date, but Rule 13.1 (ABAWD age range) and several ABAWD-adjacent sections carry 'Revised: May 2026' or 'Revised: December 2025' dates, reflecting the post-OBBBA rollout. Because MDHS revises individual rules rather than reissuing the whole manual on a fixed cycle, a rule with an older 'Revised' date is not necessarily stale — but any Mississippi ABAWD-adjacent fact should be checked against its own Rule's specific Revised date before being treated as current, given how frequently this specific chapter has changed."
+    }
+  ]
+}
