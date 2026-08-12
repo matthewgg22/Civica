@@ -1,0 +1,56 @@
+{
+  "_provenance": {
+    "note": "U.S. Virgin Islands dated facts. Because USVI has NO existing packages/snap-rules StatePolicy entry, there is no engine constant to cross-check against — every entry below is either a routine COLA-cycle reminder, a disclosed research gap, or a warning about a fact this pack found genuinely time-sensitive, internally ambiguous within USVI's own materials, or simply unconfirmed after a real search attempt.",
+    "extracted": "2026-08-12"
+  },
+  "entries": [
+    {
+      "key": "vi-bbce-175-vs-200-column-ambiguity",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "DHS-VI's own FY2026 Monthly Allotments and Deductions table displays both a '175% of Poverty' income column and a '200% of Poverty' income column side by side, with no explanatory text distinguishing which households the 200% figure applies to. USDA's own current, live Broad-Based Categorical Eligibility policy page states a single, unambiguous 175% FPL gross-income gate for USVI with no bifurcation. This pack treated USDA's own BBCE page as authoritative and did not resolve what the DHS-VI table's second 200% column represents — it could be a distinct, narrower categorical-eligibility tier for a specific subgroup, a stale or superseded figure, or a different test entirely. Re-verify directly with DHS-VI's Division of Family Assistance before citing a 200% figure for any USVI household with confidence."
+    },
+    {
+      "key": "vi-abawd-march-2026-start-date-reason-unconfirmed",
+      "kind": "not-yet-effective",
+      "date": "2026-03-01",
+      "warning": "USVI DHS's own current materials (as of this pack's 2026-08-12 fetch) state that new post-OBBBA ABAWD work rules take effect March 1, 2026, roughly four months after the mainland's November 1, 2025 OBBBA effective date this roster's other packs confirm. This pack could not find an explicit USDA or DHS-VI statement explaining why USVI's date differs from the mainland's — it may reflect a formal territory-specific phase-in provision, the natural end date of USVI's prior area-wide ABAWD waiver, or another cause this pack did not locate. As of this pack's fetch date the March 1, 2026 date has already passed (fetch date 2026-08-12), so the new rules should be in effect; this entry is retained to flag the unconfirmed reason for the date, not the date's current effectiveness."
+    },
+    {
+      "key": "vi-sua-mandatory-vs-hardcoded-deduction-figures-tension",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "USDA's own 17th-edition State Options Report (Dec 2025, data as of 10/1/2024) lists USVI's 'Treatment of Utility Expenses' policy option as 'SUAs not mandatory' — meaning USVI is not required to use a flat Standard Utility Allowance methodology. But USVI DHS's own current FY2026 table hardcodes a $586.00 maximum shelter deduction and a $34.00 telephone deduction as if they function as standard allowances. This pack discloses the apparent tension between these two sources rather than resolving it — confirm directly with DHS-VI's DFA whether a specific household's shelter/utility costs are calculated via these table figures or via actual documented costs before citing either with full confidence."
+    },
+    {
+      "key": "vi-certification-period-assignment-rule-not-located",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "USDA's 17th-edition State Options Report confirms USVI uses 6-month, 12-month, and 24-month certification periods as available options, but this pack could not locate a USVI-specific document explaining which household circumstances receive which length (unlike, e.g., this roster's Delaware pack, which found DSSM 9068's own text specifying the 12-month/24-month split by household composition). Do not assume a specific USVI household's certification length without confirming directly with DHS-VI's DFA."
+    },
+    {
+      "key": "vi-drug-felony-statutory-citation-unlocated",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "USDA's own State Options Report confirms USVI's drug-felony SNAP disqualification policy is 'No disqualification' (a full opt-out), but this pack did not locate the specific USVI Code section or DHS regulation implementing that opt-out — DHS-VI's own public materials do not appear to cite it, and this pack found no codified, publicly posted USVI SNAP policy manual comparable to other states' administrative codes. The POLICY OUTCOME (no drug-felony disqualification applies) is confirmed via a primary federal source; the underlying territorial statutory citation is a disclosed, unresolved gap."
+    },
+    {
+      "key": "vi-noncitizen-federal-change-parity-unconfirmed",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "This roster's Delaware pack confirmed a federal noncitizen-eligibility-narrowing change took effect there on April 1, 2026. This pack found no USVI-specific confirmation that the same federal change applies on the same date (or at all) in the territory — DHS-VI's own current materials this pack fetched describe only the standard, longstanding citizen/qualified-alien/5-year-waiting-period framework, with no mention of an April 2026 change. Do not assume parity with mainland-state noncitizen-eligibility timelines without confirming directly with DHS-VI's DFA or a current federal source."
+    },
+    {
+      "key": "vi-fy2026-cola-reminder",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "This pack's confirmed income-eligibility dollar figures (100%/130%/165%/175%/200% FPL columns by household size, standard deduction, shelter/telephone/homeless-shelter deductions, minimum allotment) are drawn from DHS-VI's current Monthly Allotments and Deductions table, explicitly published for the period October 1, 2025 - September 30, 2026 (the FFY2026 cycle). The FFY2027 COLA cycle begins October 1, 2026 — under two months from this pack's fetch date. Check dhs.vi.gov/family-assistance-programs/ after that date before restating any USVI-specific income or benefit-amount figure with full confidence."
+    },
+    {
+      "key": "vi-abawd-time-window-close",
+      "kind": "expires",
+      "date": "2029-02-28",
+      "warning": "USVI DHS's own current materials state the ABAWD three-year time-limit window runs March 1, 2026 through February 28, 2029. Re-verify a new window has been announced after that date before restating this window as current."
+    }
+  ]
+}

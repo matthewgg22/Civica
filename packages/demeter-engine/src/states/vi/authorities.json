@@ -1,0 +1,35 @@
+{
+  "_provenance": {
+    "note": "U.S. Virgin Islands citation authorities. UNLIKE most of this roster's mainland-state packs, this pack did NOT locate a codified, numbered USVI SNAP policy manual (no equivalent of Delaware's DSSM or New Hampshire's FSM) — DHS-VI's own publicly posted materials are individually named PDF documents and consumer flyers rather than a section-numbered regulatory manual. This pack defines citation families around the two kinds of primary documents it actually found and fetched: USVI DHS's own named FY-dated program documents (e.g., the FY2026 Monthly Allotments and Deductions table, the FY2026 Simplified Reporting Requirements) and USDA's own State Options Report editions, which is where this pack's most consequential USVI-specific findings (BBCE adoption, drug-felony full opt-out, certification-period options, simplified-reporting-only status) were confirmed. This pack explicitly discloses the absence of a numbered USVI manual as a gap, not a silent omission — see freshness.json.",
+    "extracted": "2026-08-12"
+  },
+  "patterns": [
+    {
+      "key": "visor",
+      "regex": "\\b(State Options Report,?\\s?(?:17th|16th|15th)\\s?Edition)\\b",
+      "flags": "gi",
+      "template": "$1",
+      "normalize": "none",
+      "match": "exact",
+      "note": "USDA FNS/FNA SNAP State Options Report, cited by edition — this pack's primary source for USVI's BBCE adoption, drug-felony 'No disqualification' status, certification-period-length options (6/12/24 months), simplified-reporting-only status, and 'SUAs not mandatory' utility-treatment option. The 17th edition (December 2025, data as of 10/1/2024) is this pack's fetched edition."
+    },
+    {
+      "key": "vidfa",
+      "regex": "\\b(FY\\s?20(?:2[4-9]|3\\d)\\s?(?:COLA|Simplified Reporting|Monthly Allotments? and Deductions)[A-Za-z ]*)\\b",
+      "flags": "gi",
+      "template": "USVI DHS DFA $1",
+      "normalize": "none",
+      "match": "exact",
+      "note": "USVI DHS's own named, FY-dated program documents — e.g. 'FY2026 Monthly Allotments and Deductions' (income limits, standard deduction, shelter/telephone/homeless-shelter deduction, minimum allotment figures) and 'FY2026 Simplified Reporting Requirements' (the 130% FPL reporting-threshold table). These are individually published PDFs, not sections of one numbered manual — this pack found no evidence of a codified, section-numbered USVI SNAP regulatory manual comparable to other states' administrative codes."
+    }
+  ],
+  "known": {
+    "visor": [
+      { "value": "State Options Report, 17th Edition", "note": "USDA FNS/FNA, published December 2025, data as of 10/1/2024 — source for USVI's BBCE, drug-felony, certification-period, and reporting-requirement policy options" }
+    ],
+    "vidfa": [
+      { "value": "FY2026 Monthly Allotments and Deductions", "note": "USVI DHS DFA table, 10/1/2025-9/30/2026 — income-limit table by household size, standard deduction, $586.00 max shelter deduction, $34.00 telephone deduction, $198.99 homeless shelter deduction, $31 minimum allotment" },
+      { "value": "FY2026 Simplified Reporting Requirements", "note": "USVI DHS DFA document confirming all SNAP households are on simplified reporting, with a 130% FPL income-increase reporting threshold table by household size" }
+    ]
+  }
+}

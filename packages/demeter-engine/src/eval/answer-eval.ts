@@ -5345,6 +5345,104 @@ export const GU_GOLD: AnswerExpectation[] = [
   },
 ];
 
+/** Everything the live runner executes for the U.S. Virgin Islands. Named
+ *  USVI_GOLD, NOT VI_GOLD — VI_GOLD is already taken above for Vietnamese-
+ *  language gold cases (the ES_GOLD/VI_GOLD/ZH_GOLD language-eval trio),
+ *  unrelated to any state. The StateCode value itself is still the literal
+ *  string "VI" (a string value, not a variable name, so no collision there). */
+export const USVI_GOLD: AnswerExpectation[] = [
+  {
+    id: "usvi-bbce-175-confirmed-not-200",
+    // Guards the flagship confirmation: USVI's BBCE gross-income gate is
+    // 175% FPL (confirmed on USDA's own current BBCE page), not the second,
+    // unexplained 200% column that appears in DHS-VI's own FY2026 table.
+    question: "What is the income limit for SNAP in the U.S. Virgin Islands?",
+    state: "VI",
+    mustMention: "175",
+    mustDisclaim: true,
+  },
+  {
+    id: "usvi-no-asset-limit-confirmed",
+    // Guards the confirmation: USVI has NO resource/asset limit for any
+    // household, confirmed directly on USDA's own current BBCE page.
+    question: "Does the U.S. Virgin Islands have an asset or resource limit for SNAP?",
+    state: "VI",
+    mustMention: "no",
+    mustDisclaim: true,
+  },
+  {
+    id: "usvi-drug-felony-full-opt-out",
+    // Guards the flagship confirmation: USVI fully opted out of the federal
+    // drug-felony ban ("No disqualification" per USDA's 17th-edition State
+    // Options Report).
+    question: "I have a drug felony conviction — can I still get SNAP in the U.S. Virgin Islands?",
+    state: "VI",
+    mustMention: "not",
+    mustDisclaim: true,
+  },
+  {
+    id: "usvi-abawd-march-2026-start-date",
+    // Guards the structural/timing finding: USVI's post-OBBBA ABAWD work
+    // rules take effect March 1, 2026 — later than the mainland's 11/1/2025.
+    question: "When do the new ABAWD work requirements start in the U.S. Virgin Islands?",
+    state: "VI",
+    mustMention: "March",
+    mustDisclaim: true,
+  },
+  {
+    id: "usvi-abawd-age-range-current-federal",
+    question: "What is the ABAWD work requirement age range in the U.S. Virgin Islands?",
+    state: "VI",
+    mustMention: "64",
+    mustDisclaim: true,
+  },
+  {
+    id: "usvi-utility-deduction-sua-tension-disclosed",
+    // Guards the disclosed tension: "SUAs not mandatory" per USDA's State
+    // Options Report vs. DHS-VI's own hardcoded shelter/telephone figures.
+    question: "What utility deduction can I get for SNAP in the U.S. Virgin Islands?",
+    state: "VI",
+    mustDisclaim: true,
+  },
+  {
+    id: "usvi-restaurant-meals-program-not-available",
+    question: "Does the U.S. Virgin Islands have a Restaurant Meals Program for SNAP?",
+    state: "VI",
+    mustMention: "not",
+    mustDisclaim: true,
+  },
+  {
+    id: "usvi-how-to-apply-no-online-portal",
+    // Guards the structural finding: unlike most other packs in this roster,
+    // USVI has no online self-service SNAP application portal.
+    question: "How do I apply for SNAP in the U.S. Virgin Islands?",
+    state: "VI",
+    mustDisclaim: true,
+  },
+  {
+    id: "usvi-reporting-simplified-only",
+    question: "Do I have to report income changes for SNAP in the U.S. Virgin Islands?",
+    state: "VI",
+    mustMention: "simplified",
+    mustDisclaim: true,
+  },
+  {
+    id: "usvi-runs-standard-snap-not-nap",
+    // Guards Step 0's independent re-verification: USVI runs standard
+    // federal SNAP, not the NAP block grant that PR/AS/CNMI run instead.
+    question: "Does the U.S. Virgin Islands run SNAP or a different food assistance program?",
+    state: "VI",
+    mustMention: "SNAP",
+    mustDisclaim: true,
+  },
+  {
+    id: "usvi-federal-benefit",
+    question: "How is the monthly SNAP benefit amount calculated from net income in the U.S. Virgin Islands?",
+    state: "VI",
+    expectCitation: "273.10",
+    mustDisclaim: true,
+  },
+];
 
 export const ALL_GOLD: AnswerExpectation[] = [
   ...ANSWER_GOLD,
@@ -5400,4 +5498,5 @@ export const ALL_GOLD: AnswerExpectation[] = [
   ...DC_GOLD,
   ...AK_GOLD,
   ...GU_GOLD,
+  ...USVI_GOLD,
 ];

@@ -1,0 +1,75 @@
+{
+  "code": "VI",
+  "program": "SNAP",
+  "agency": "U.S. Virgin Islands Department of Human Services (DHS), Division of Family Assistance (DFA)",
+  "admin_model": "state",
+  "admin_note": "The U.S. Virgin Islands is a TERRITORY that runs standard federal SNAP directly — NOT the Nutrition Assistance Program (NAP) block grant that Puerto Rico, American Samoa, and the Northern Mariana Islands run instead. This pack independently re-confirmed that distinction from two primary USDA sources before building anything: USDA's own SNAP directory entry for the Virgin Islands (fns.usda.gov/snap-directory-entry/virgin-islands, page title 'Virgin Islands Supplemental Nutrition Assistance Program (SNAP)') and USDA's 17th-edition State Options Report (December 2025, data as of 10/1/2024), whose own introduction states plainly: 'SNAP State agencies include all 50 States, the District of Columbia, Guam, and the Virgin Islands.' DHS administers SNAP centrally through its Division of Family Assistance (DFA) across three district offices — St. Croix (STX), St. Thomas (STT), and St. John (STJ) — with no separate county-level policy authority, structurally similar to this roster's other state-administered packs (Delaware, Nebraska, Connecticut, etc.). GENUINE STRUCTURAL FINDING distinctive to this pack: unlike every prior state pack in this roster, this pack found NO online self-service SNAP application portal for the Virgin Islands (no equivalent of Delaware ASSIST, BenefitsCal, or a state-run web portal) — applicants must print or pick up a paper 'SNAP/Cash Assistance Combined Application,' then submit it in person, by mail, by email, by fax, or via a district-office drop box. This pack treats the absence of a digital portal as a genuine, disclosed access-model difference, not a research gap — DHS-VI's own Family Assistance Programs page lists these submission channels explicitly and describes no online submission option.",
+  "system": "DHS's Division of Family Assistance (DFA) administers SNAP centrally for the territory, with three district offices (St. Croix, St. Thomas, St. John), each with its own phone extension. USVI's EBT card carries a distinctive local nickname: DHS's own SNAP consumer content calls it the 'sun, sand & sea' card. USVI is one of only four SNAP jurisdictions (with Alaska, Hawaii, and Guam) that receives a COLA-adjusted income/deduction table structurally different from the 48 contiguous states plus DC, per USDA's own program-design note. USVI has adopted Broad-Based Categorical Eligibility (BBCE) at a 175% federal-poverty-guideline gross-income gate with NO resource/asset limit for any household — confirmed directly on USDA's own current BBCE policy page (fna.usda.gov/snap/broad-based-categorical-eligibility), not merely a secondary-source claim. USVI fully opted out of the federal drug-felony SNAP disqualification ('No disqualification'), confirmed via USDA's own 17th-edition State Options Report. All USVI SNAP households are on simplified reporting only, with certification periods of 6, 12, or 24 months depending on household circumstance (per the same USDA report); this pack could not locate a USVI-specific breakdown of which households receive which certification length and discloses this as a gap. USVI does NOT appear on USDA's current published list of states operating a Restaurant Meals Program.",
+  "update_channels": [
+    {
+      "name": "USDA FNS/FNA — Virgin Islands SNAP state directory entry (confirms VI runs standard SNAP, not NAP; SNAP website, local office list, EBT info line) — direct fetch, clean HTTP 200",
+      "url": "https://www.fns.usda.gov/snap-directory-entry/virgin-islands"
+    },
+    {
+      "name": "USDA FNS/FNA — SNAP State Popup for Virgin Islands (program name confirmation, contact numbers) — direct fetch, clean HTTP 200",
+      "url": "https://www.fns.usda.gov/snap/snap-state-popup/Virgin%20Islands"
+    },
+    {
+      "name": "USDA FNS/FNA — Broad-Based Categorical Eligibility (BBCE) official state-by-state table, current live page — direct fetch, clean HTTP 200; Virgin Islands listed 'All households eligible,' 'No limit on assets,' gross income limit '175%'",
+      "url": "https://www.fns.usda.gov/snap/broad-based-categorical-eligibility"
+    },
+    {
+      "name": "USDA FNS/FNA — SNAP State Options Report, 17th Edition (December 2025, data as of 10/1/2024) — Virgin Islands state summary page (p.135-136): BBCE, Drug Felony Disqualifications ('No disqualification'), Certification Period Lengths ('6 months, 12 months, 24 months'), Reporting Requirements ('Simplified reporting only'), Program Administration ('State-administered'), Treatment of Utility Expenses ('SUAs not mandatory') — direct fetch, clean HTTP 200",
+      "url": "https://www.fns.usda.gov/sites/default/files/resource-files/snap-stateOptionsReport-17edition-120925.pdf"
+    },
+    {
+      "name": "USVI Department of Human Services — Family Assistance Programs page (how to apply, no online portal, program description, forms library, administrator contact) — direct fetch, clean HTTP 200",
+      "url": "https://dhs.vi.gov/family-assistance-programs/"
+    },
+    {
+      "name": "USVI DHS — FY2026 SNAP Monthly Allotments and Deductions table (10/1/2025-9/30/2026): income limits by household size (100%/130%/165%/175%/200% FPL columns), standard deduction, shelter/telephone/homeless-shelter deductions, minimum allotment — direct fetch, clean HTTP 200",
+      "url": "https://dhs.vi.gov/wp-content/uploads/2025/10/DFA_FY-2026-COLA-ADJUSTMENTS-AND-DEDUCTIONS-TABLE.pdf"
+    },
+    {
+      "name": "USVI DHS — FY2026 Simplified Reporting Requirements (all households on simplified reporting; 130% FPL income-change reporting threshold table; $4,500 gambling-winnings reporting rule) — direct fetch, clean HTTP 200",
+      "url": "https://dhs.vi.gov/wp-content/uploads/2025/10/DFA_FY-2026-SIMPLIFIED-REPORTING-REQUIREMENT-1.pdf"
+    },
+    {
+      "name": "USVI DHS — SNAP Work Requirements / ABAWD webpage PDF (post-OBBBA general work registration and ABAWD rules, effective 3/1/2026) — direct fetch, clean HTTP 200",
+      "url": "https://dhs.vi.gov/wp-content/uploads/2026/04/DFA_ABAWD-Webpage_Rev.pdf"
+    },
+    {
+      "name": "USVI DHS — 'SNAP Benefits Are Changing' ABAWD flyer (current work-rule exemption list, district office contact numbers) — direct fetch, clean HTTP 200",
+      "url": "https://dhs.vi.gov/wp-content/uploads/2026/04/DFA_SNAP-BENEFITS-ARE-CHANGING-FLYER.pdf"
+    },
+    {
+      "name": "Government of the U.S. Virgin Islands (vi.gov) — official press release announcing the BBCE gross-income threshold increase from 130% to 175% FPL, effective 10/1/2024, quoting DHS Commissioner Averil George — direct fetch, clean HTTP 200",
+      "url": "https://www.vi.gov/department-of-human-services-announces-change-to-snap-income-guidelines/"
+    },
+    {
+      "name": "USDA FNS/FNA — SNAP Restaurant Meals Program page, current list of participating states (Arizona, Maryland, New York, California, Massachusetts, Rhode Island, Illinois, Michigan, and others) — Virgin Islands absent — direct fetch, clean HTTP 200",
+      "url": "https://www.fns.usda.gov/snap/retailer/restaurant-meals-program"
+    },
+    {
+      "name": "Food Research & Action Center (FRAC) — Broad-Based Categorical Eligibility compilation (secondary, USDA-sourced cross-check corroborating the 175% FPL / no-asset-limit figures) — direct fetch, clean HTTP 200",
+      "url": "https://frac.org/wp-content/uploads/Broad-Based-Categorical-Eligibility.pdf"
+    }
+  ],
+  "verification": {
+    "verified_on": "2026-08-12",
+    "method": "This pack's first and most consequential step was independently re-verifying the SNAP-vs-NAP distinction this codebase's packs.ts comment already asserts for the Virgin Islands, rather than trusting the existing comment at face value — confirmed via two separate primary USDA sources (the FNS/FNA SNAP state directory entry and the 17th-edition State Options Report's own introductory text). All USDA fns.usda.gov and dhs.vi.gov/vi.gov fetches returned clean HTTP 200 to a standard browser User-Agent with no WAF/bot-detection barrier of the kind several mainland-state packs in this roster encountered — a genuinely easier access profile than, e.g., New Hampshire or Maine. One naming/branding wrinkle noted: USDA's own site now displays 'Food and Nutrition Administration (FNA)' rather than 'Food and Nutrition Service (FNS)' as of a June 1, 2026 rename the site itself discloses via a banner ('As of June 1, 2026 the Food and Nutrition Service (FNS) is now the Food and Nutrition Administration (FNA)'); this pack cites the historical fns.usda.gov URLs since those are what currently resolve and were fetched, and notes the rename for future packs' awareness. The one substantive fetch judgment call: DHS-VI's own FY2026 COLA table contains an internally ambiguous income-column layout with BOTH a '175% of Poverty' and a '200% of Poverty' gross-income column side by side, whereas USDA's own official BBCE policy page states plainly and singularly that the Virgin Islands' BBCE gross-income gate is 175% FPL with no asset limit — this pack treats USDA's own official BBCE page as authoritative for the applicable categorical-eligibility gate and flags the DHS-VI table's second, unexplained 200% column as an unresolved internal ambiguity rather than guessing at its purpose.",
+    "gates": "No WAF or bot-detection barrier was encountered against fns.usda.gov, dhs.vi.gov, or vi.gov with a standard browser User-Agent; all served clean HTTP 200 responses to direct curl and WebFetch attempts, a notably easier profile than several mainland packs in this roster. All PDFs (the FY2026 COLA table, simplified-reporting requirements, ABAWD webpage and flyer PDFs, and the 114-page USDA 17th-edition State Options Report) fetched cleanly and converted cleanly with pdftotext -layout. No Wayback Machine fallback or reader-proxy workaround was needed for any USVI-specific source in this pack, unlike Delaware's usda.gov 403 or New Hampshire/Maine's WAF walls.",
+    "sources": [
+      "USDA FNS/FNA, Virgin Islands SNAP state directory entry — direct fetch, clean HTTP 200; confirms Virgin Islands runs 'Supplemental Nutrition Assistance Program (SNAP)' with EBT Card, not NAP",
+      "USDA FNS/FNA, SNAP State Options Report, 17th Edition (Dec 2025, data as of 10/1/2024) — direct fetch, clean HTTP 200; Virgin Islands state page (pp.135-136): BBCE adopted, Drug Felony Disqualifications 'No disqualification', Certification Period Lengths '6 months, 12 months, 24 months', Reporting Requirements 'Simplified reporting only', Program Administration 'State-administered', Treatment of Utility Expenses 'SUAs not mandatory', Voluntary-only E&T",
+      "USDA FNS/FNA, Broad-Based Categorical Eligibility current policy page — direct fetch, clean HTTP 200; Virgin Islands listed with 'All households' categorically eligible, 'No limit on assets', gross income limit '175%' of the federal poverty guideline",
+      "USVI DHS, Family Assistance Programs page — direct fetch, clean HTTP 200; SNAP program description, how-to-apply steps (no online portal — pickup/mail/print application), administrator contact (Natalie Bailey), EBT 'sun, sand & sea' card branding, 30-day/7-day-expedited processing timeline, 5-year non-citizen waiting period note, forms library with dated PDFs through April 2026",
+      "USVI DHS, FY2026 SNAP Monthly Allotments and Deductions table (10/1/2025-9/30/2026) — direct fetch, clean HTTP 200; full income-limit table by household size 1-8+ (100%/130%/165%/175%/200% FPL columns), standard deduction table ($184/$185/$223/$261/$299 by household-size tier), $586.00 maximum shelter deduction, $34.00 telephone deduction, $198.99 homeless shelter deduction, $31 minimum allotment for 1-2 person households",
+      "USVI DHS, FY2026 Simplified Reporting Requirements — direct fetch, clean HTTP 200; confirms ALL SNAP households are on simplified reporting, 130% FPL gross-income reporting-threshold table by household size, 10-day reporting window, $4,500 single-winning gambling/lottery reporting trigger",
+      "USVI DHS, SNAP Work Requirements/ABAWD webpage PDF and 'SNAP Benefits Are Changing' flyer — direct fetch, clean HTTP 200; confirms post-OBBBA general work-registration ages 16-59 and ABAWD ages 18-64, new work rules effective March 1, 2026 through February 28, 2029, full exemption list (child under 14 in household, pregnancy, Indian/Urban Indian/California Indian, physical/mental barrier, 30hrs/wk or $217.50/wk earnings, unemployment benefits, half-time school, drug/alcohol treatment program), three district-office contact numbers (STX/STT/STJ)",
+      "Government of the U.S. Virgin Islands (vi.gov), official press release — direct fetch, clean HTTP 200; DHS Commissioner Averil George's own quoted announcement that the gross-income threshold rose from 130% to 175% FPL effective October 1, 2024, plus the concurrent St. John Multipurpose Center opening announcement",
+      "USDA FNS/FNA, SNAP Restaurant Meals Program page — direct fetch, clean HTTP 200; current published list of RMP-participating states/territories (Arizona, California, Illinois, Maryland, Massachusetts, Michigan, New York, Rhode Island, and others) does not include the Virgin Islands",
+      "Food Research & Action Center (FRAC), Broad-Based Categorical Eligibility compilation PDF (secondary, but explicitly USDA-sourced and cross-checking the same 175%/no-asset-limit figures independently found on USDA's own current page) — direct fetch, clean HTTP 200"
+    ]
+  }
+}
