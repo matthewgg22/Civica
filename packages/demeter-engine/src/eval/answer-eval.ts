@@ -2018,6 +2018,122 @@ export const VA_GOLD: AnswerExpectation[] = [
   },
 ];
 
+export const TN_GOLD: AnswerExpectation[] = [
+  {
+    id: "tn-bbce-expanded-200-100-2026",
+    // The flagship structural finding of this pack: Tennessee only adopted
+    // BBCE via a rule amendment effective April 15, 2026, and kept a separate
+    // 100% FPL net-income overlay most BBCE states waive entirely.
+    question: "What is Expanded Categorical Eligibility and how does it affect my SNAP eligibility in Tennessee?",
+    state: "TN",
+    expectCitation: "1240-01-14-.15",
+    mustMention: "200",
+    mustDisclaim: true,
+  },
+  {
+    id: "tn-resource-limit-deferred-to-federal",
+    question: "What is the SNAP resource limit in Tennessee if I'm not categorically eligible?",
+    state: "TN",
+    expectCitation: "24.12",
+    mustMention: "3,000",
+    mustDisclaim: true,
+  },
+  {
+    id: "tn-boat-counts-as-resource",
+    // Guards the contrast with Virginia's/North Carolina's blanket vehicle
+    // exclusion in this roster: Tennessee's own Resources policy names boats
+    // as an example of countable equity.
+    question: "Does my boat count against me for SNAP in Tennessee?",
+    state: "TN",
+    expectCitation: "24.12",
+    mustMention: "boat",
+    mustDisclaim: true,
+  },
+  {
+    id: "tn-medical-deduction-standard",
+    question: "I'm disabled and have $50 a month in medical bills for Tennessee SNAP — do I get a deduction?",
+    state: "TN",
+    expectCitation: "24.18",
+    mustMention: "35",
+    mustDisclaim: true,
+  },
+  {
+    id: "tn-child-support-ordinary-deduction",
+    // Guards the mechanism-contrast finding: TN uses the ORDINARY DEDUCTION
+    // mechanism (majority pattern), unlike Virginia's/New Jersey's income
+    // exclusion.
+    question: "Does paying child support lower my countable income for SNAP in Tennessee?",
+    state: "TN",
+    expectCitation: "24.18",
+    mustMention: "deduct",
+    mustDisclaim: true,
+  },
+  {
+    id: "tn-abawd-age-range-current-federal",
+    // Second flagship finding: TN's own codified rule AND its own current
+    // policy document both still say 18-49 — guards against the model
+    // parroting either stale Tennessee document instead of the current
+    // federal 18-64 age range.
+    question: "What is the ABAWD work requirement age range in Tennessee?",
+    state: "TN",
+    expectCitation: "1240-01-03-.43",
+    mustNotMention: ["18 to 49", "18-49"],
+    mustDisclaim: true,
+  },
+  {
+    id: "tn-abawd-zero-waivers",
+    question: "Is the SNAP work-requirement time limit currently waived anywhere in Tennessee?",
+    state: "TN",
+    expectCitation: "1240-01-03-.43",
+    mustMention: "waiver",
+    mustDisclaim: true,
+  },
+  {
+    id: "tn-drug-felony-modified-ban",
+    // TN is a genuine MODIFIED ban — guards against the model overclaiming a
+    // full ban or a full opt-out.
+    question: "I have a drug felony conviction — can I still get SNAP in Tennessee?",
+    state: "TN",
+    expectCitation: "71-5-308",
+    mustMention: "class a",
+    mustDisclaim: true,
+  },
+  {
+    id: "tn-restaurant-meals-program-absent",
+    // Guards against overclaiming a Tennessee RMP exists.
+    question: "Can I use my EBT card to buy a hot meal at a restaurant in Tennessee?",
+    state: "TN",
+    mustMention: "no",
+    mustDisclaim: true,
+  },
+  {
+    id: "tn-expedited-service-7-day",
+    question: "How fast can I get emergency SNAP benefits in Tennessee?",
+    state: "TN",
+    expectCitation: "24.03",
+    mustMention: "7",
+    mustDisclaim: true,
+  },
+  {
+    id: "tn-cert-period-6-month-default",
+    // Guards the structural finding: TN's DEFAULT certification period is 6
+    // months, shorter than every other state in this roster (which default
+    // to 12).
+    question: "How long does my SNAP approval last in Tennessee?",
+    state: "TN",
+    expectCitation: "24.02",
+    mustMention: "6",
+    mustDisclaim: true,
+  },
+  {
+    id: "tn-federal-benefit",
+    question: "How is the monthly SNAP benefit amount calculated from net income in Tennessee?",
+    state: "TN",
+    expectCitation: "273.10",
+    mustDisclaim: true,
+  },
+];
+
 /** Everything the live runner executes. */
 export const ALL_GOLD: AnswerExpectation[] = [
   ...ANSWER_GOLD,
@@ -2040,4 +2156,5 @@ export const ALL_GOLD: AnswerExpectation[] = [
   ...NC_GOLD,
   ...NJ_GOLD,
   ...VA_GOLD,
+  ...TN_GOLD,
 ];

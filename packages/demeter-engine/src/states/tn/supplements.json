@@ -1,0 +1,244 @@
+{
+  "_provenance": {
+    "note": "Tennessee SNAP curated supplements. Tennessee has NO existing packages/snap-rules StatePolicy entry and NO oracle-fixture coverage — a genuinely blank slate, like North Carolina's, Ohio's, New Jersey's, and Virginia's prior corpus-only builds in this same roster. This pack is CORPUS-ONLY and does not touch packages/snap-rules or the oracle fixture. Drafted from a direct curl fetch (browser User-Agent) of the codified Tenn. Comp. R. & Regs. ch. 1240-01 rules (Secretary of State's own publication host) and TDHS's current numbered SNAP Policy series, cross-checked against USDA's ABAWD waiver index and (for the drug-felony provision only, after law.justia.com and casetext.com both returned HTTP 403 on every attempt) secondary legal-research corroboration.",
+    "extracted": "2026-08-11",
+    "source_fact_check": "direct curl fetch (browser UA) of Tenn. Comp. R. & Regs. 1240-01-14-.15, 1240-01-03-.43, 1240-01-04-.27, 1240-01-07-.01 from publications.tnsosfiles.com + direct fetch of TDHS SNAP Policies 24.02, 24.03, 24.11, 24.12, 24.13, 24.14, 24.18, 24.24 from tn.gov + direct fetch of USDA's FY2025-2029 ABAWD waiver-response index (Tennessee absent) + WebSearch/WebFetch corroboration of the April 2026 BBCE rule change (fox13memphis.com, lewisherald.com) + Public Health Law Center and Network for Public Health Law corroboration of the drug-felony provision + post-draft adversarial refute pass; findings and gaps recorded in PROVENANCE.md"
+  },
+  "supplements": [
+    {
+      "key": "income-pathways",
+      "kind": "supplement",
+      "terms": [
+        "income limit",
+        "income limits",
+        "gross income limit",
+        "gross income ceiling",
+        "make too much",
+        "over income",
+        "bbce",
+        "categorical eligibility",
+        "categorically eligible",
+        "broad-based categorical eligibility",
+        "expanded categorical eligibility",
+        "200 percent",
+        "200%",
+        "poverty level",
+        "families first",
+        "tanf",
+        "temporary assistance"
+      ],
+      "citation": "TN Rule 1240-01-14-.15(2) — Expanded Categorical Eligibility at 200% FPL gross income AND 100% FPL net income, amended January 15 2026, effective April 15 2026",
+      "heading": "Tennessee adopted Broad-Based Categorical Eligibility only in 2026 — one of the last states in the country to do so — and its version keeps a 100% FPL NET income test that most BBCE states waive entirely",
+      "text": "THIS PACK'S FLAGSHIP FINDING: Tennessee amended Tenn. Comp. R. & Regs. ch. 1240-01-14-.15 on January 15, 2026 (effective April 15, 2026) to add a brand-new subsection (2), \"Expanded Categorical Eligibility\": households containing a member who receives or is authorized to receive a non-cash or in-kind TANF-funded service (Tennessee's TANF program is Families First) are categorically eligible for SNAP without the ordinary resource test, PROVIDED the household's gross monthly income is at or below 200% of the Federal poverty level AND its net monthly income is at or below 100% of the Federal poverty level. This is a genuine and very recent policy change — as of this pack's build date (2026-08-11), the rule has been in effect for less than four months. News coverage from June 2026 (fox13memphis.com, quoting a University of Memphis researcher) accurately describes the headline change (\"Before it was 130%. Now the total household gross monthly income can be up to 200\"), but several SNAP-benefit calculator/explainer sites this pack checked during research still quote Tennessee's OLD 130% federal gross-income ceiling as current — a live, actionable secondary-source staleness risk given how recent this change is. WORTH FLAGGING SEPARATELY: unlike the plainer single gross-income-percentage BBCE screens this roster has documented for other states (Virginia's flat 200% FPL with no net-income overlay, New Jersey's flat 185% FPL), Tennessee's Expanded Categorical Eligibility rule keeps a SEPARATE 100% FPL NET income ceiling on top of the 200% gross ceiling — a household that clears the gross test but whose income after deductions still exceeds 100% FPL does not qualify under this pathway. Basic Categorical Eligibility (households consisting entirely of SSI and/or Families First recipients, TN Rule 1240-01-14-.15(1)) remains available with no income test at all, unchanged by the 2026 amendment. TDHS's own SNAP Policy 24.24 (Categorically Eligible SNAP Recipients), last reviewed 11/30/2023, has NOT yet been updated to describe this pathway at all — it still only describes Basic CE — a genuine, currently-live gap between TDHS's newest codified rule and its own older operational policy document, flagged distinctly in PROVENANCE.md.",
+      "source_url": "https://publications.tnsosfiles.com/rules/1240/1240-01/1240-01-14.20260415.pdf"
+    },
+    {
+      "key": "asset-rule",
+      "kind": "supplement",
+      "terms": [
+        "asset limit",
+        "asset test",
+        "resource limit",
+        "resource test",
+        "resources",
+        "savings",
+        "savings limit",
+        "bank account",
+        "vehicle",
+        "car count",
+        "does my car count",
+        "boat",
+        "motor home",
+        "lottery",
+        "gambling"
+      ],
+      "citation": "TDHS Policy 24.12 — uniform national resource standards ($3,000 standard / $4,500 elderly-or-disabled, deferred to federal figures), waived for categorically eligible households; boats, vacation homes, and mobile homes are named as countable non-liquid resource equity",
+      "heading": "Tennessee's resource test reaches only households that are not categorically eligible — and unlike Virginia's or North Carolina's blanket vehicle exclusion in this roster, Tennessee's own Resources policy names boats and vacation homes as examples of countable property",
+      "text": "TDHS Policy 24.12 (SNAP Resources) sets the household resource limit at the federally uniform national standard, with a higher limit for households containing an elderly or disabled member, and does not hardcode a specific dollar figure — it instead instructs staff to \"refer to the FA standards desk guide for the most up to date standard,\" the current federal figures being $3,000 (standard) / $4,500 (elderly-or-disabled household). Policy 24.12 confirms categorically eligible households do NOT have to meet the resource limit at all, \"unless the household receives a substantial lottery or gambling winnings\" (see the criminal-justice/lottery supplement below). WORTH FLAGGING: Policy 24.12's list of countable non-liquid resources explicitly includes, as an example of countable \"equity in real property,\" \"non-exempt buildings, non-exempt land, recreational properties, and property such as boats, vacation homes, or mobile homes\" — this pack reads this as a genuine departure from Virginia's and North Carolina's packs in this roster, both of which document a BLANKET vehicle exclusion (every vehicle excluded, no qualifier). Tennessee's policy text does not, in the sections this pack fetched, state a comparably blanket vehicle exclusion — it instead lists boats and similar recreational property among countable resource TYPES, subject to whatever specific exemptions exist elsewhere. A separate TDHS procedure document, \"Treatment of Vehicles,\" is referenced by Policy 24.12 as the authoritative source for how ordinary passenger vehicles specifically are treated, but this pack could NOT locate that document published on TDHS's public site in this pass — a genuine, disclosed gap, not an assumption that Tennessee counts every vehicle the way it counts boats. Before answering a specific \"does my car count\" question for Tennessee with confidence, a future pass should independently locate and fetch \"Treatment of Vehicles.\"",
+      "source_url": "https://www.tn.gov/content/dam/tn/human-services/documents/Policy_24.12_SNAP_Resources_-esigned.pdf"
+    },
+    {
+      "key": "sua-values",
+      "kind": "supplement",
+      "terms": [
+        "utility allowance",
+        "utility standard",
+        "shelter deduction",
+        "excess shelter",
+        "standard utility allowance",
+        "heating standard",
+        "cooling standard",
+        "telephone standard",
+        "phone standard",
+        "homeless shelter deduction",
+        "basic utility allowance"
+      ],
+      "citation": "TN Rule 1240-01-04-.27 Table V-A/V-B/VI — a THREE-tier utility-allowance structure (size-scaled Standard Utility Allowance, flat Basic Utility Allowance, flat Standard Telephone Allowance); current dollar figures are a disclosed gap, not independently confirmed",
+      "heading": "Tennessee's utility-allowance STRUCTURE is confirmed (three tiers, one size-scaled) — but this pack could NOT confirm a current, non-stale dollar figure for any of them, a genuine and disclosed gap unlike every other topic in this pack",
+      "text": "TN Rule 1240-01-04-.27 codifies a THREE-tier utility-allowance structure, matching the shape this roster's North Carolina pack documents (a size-scaled main tier plus two flat secondary tiers): Table V-A, the Standard Utility Allowance, scales by household size (1 through 10-or-more persons) for households incurring a heating or cooling cost; Table V-B, the Basic Utility Allowance, is a FLAT amount (the same figure regardless of household size) for households that incur utility costs (electricity for lighting, gas for cooking, water/sewerage, garbage pickup) but no major heating/cooling expense; and Table VI, the Standard Telephone Allowance, is a separate FLAT amount for households whose only utility expense is a telephone. A Table VII Homeless Shelter Allowance also exists, flat across household sizes. THIS PACK EXPLICITLY DECLINES TO STATE A CURRENT DOLLAR FIGURE for any of these four tables: the only publicly fetchable table (in the codified rule 1240-01-04-.27) carries strong internal evidence of being stale by roughly a decade or more — the SAME table's own Standard Deduction figures ($142/$142/$142/$153/$179/$205 by household size) and Maximum Coupon Allotment ($200 for a 1-person household) do not match ANY recent Fiscal Year's federal COLA-adjusted figures (compare Virginia's pack in this roster, whose current FFY2026 Standard Deduction is $209/$209/$209/$223/$261/$299 and whose current 1-person maximum allotment is far above $200). TDHS's own current policy series (Policy 24.18, Deductions from Income) does NOT restate these dollar figures at all — it explicitly defers them to an internal \"Family Assistance Standards Desk Guide\" this pack could not locate published anywhere on tn.gov, and USDA's national FY2026 SUA rollup page did not render fetchable per-state data in this pass either (the same disclosed limitation Virginia's pack in this roster recorded for the same USDA page). A future pass should obtain the current Desk Guide directly from TDHS or locate USDA's FY2026 SUA table through a channel this pack did not find, rather than quoting any dollar figure from the stale codified table as current.",
+      "source_url": "https://publications.tnsosfiles.com/rules/1240/1240-01/1240-01-04.20240520.pdf"
+    },
+    {
+      "key": "medical-deduction",
+      "kind": "supplement",
+      "terms": [
+        "medical deduction",
+        "medical expense",
+        "medical expenses",
+        "medical bills",
+        "elderly deduction",
+        "disability deduction",
+        "excess medical",
+        "service animal",
+        "transportation medical"
+      ],
+      "citation": "TDHS Policy 24.18(O)-(P) — plain federal $35/month threshold for elderly (60+) or disabled household members; NO Tennessee-specific flat Medical Standard Deduction, but a fully itemized allowable-expense list",
+      "heading": "Tennessee uses the plain federal actual-expense medical deduction — no state-specific flat Medical Standard Deduction like Virginia's — but publishes an unusually complete itemized list of what counts",
+      "text": "TDHS Policy 24.18 allows a deduction for the medical expenses of a household member who is age 60 or older or disabled, once the household's total non-reimbursable monthly medical cost for that member exceeds $35 — the plain federal mechanism (7 CFR 273.9(d)(3)) applied at the household level. Unlike Virginia's pack in this roster, which documents a state-option flat \"Medical Standard Deduction\" alternative to itemizing, Tennessee's Policy 24.18 offers only the actual-expense method: households itemize and verify real costs above the $35 threshold. WORTH NOTING AS A GENUINE PLUS for this pack's sourcing (in contrast with Virginia's own disclosed gap on this exact point): TDHS Policy 24.18(P) publishes a FULLY itemized allowable-medical-expense list this pack could confirm directly, including medical/dental/psychotherapy/rehabilitation care, hospitalization and nursing-home payments, prescription drugs AND over-the-counter medication/insulin when practitioner-approved, health/hospitalization insurance premiums, Medicare premiums and Medicaid cost-sharing, dentures/hearing aids/prosthetics, the cost of a specially trained service animal (including food and veterinary bills), eyeglasses/contact lenses, reasonable transportation and lodging costs to obtain medical treatment, monthly telephone amplifier/warning-signal fees and Video Relay Service fees for the deaf, prescribed special diets, and the cost of an attendant/homemaker/home health aide/child care necessitated by age or illness (with an added one-person-allotment-equivalent deduction if the household furnishes the majority of that attendant's meals).",
+      "source_url": "https://www.tn.gov/content/dam/tn/human-services/documents/Policy%2024.18%20SNAP%20Deductions%20from%20Income_Esigned.pdf"
+    },
+    {
+      "key": "child-support-deduction",
+      "kind": "supplement",
+      "terms": [
+        "child support",
+        "support payments",
+        "child support deduction",
+        "dependent care",
+        "child care deduction",
+        "daycare",
+        "alimony",
+        "arrearage"
+      ],
+      "citation": "TDHS Policy 24.18(L) — Child Support Payment Deduction, an ORDINARY DEDUCTION (not an income exclusion), matching the majority pattern in this roster",
+      "heading": "Tennessee treats legally obligated child support as an ordinary post-income DEDUCTION — the majority pattern in this roster, and the OPPOSITE of Virginia's, New Jersey's, and Illinois's income-exclusion mechanism",
+      "text": "TDHS Policy 24.18, Section F, lists the \"Child Support Payments Deduction\" among the \"Types of Expenses Allowed as Deductions\" (item 6), and Section L confirms: \"Court ordered child support payments paid by a SNAP HH member to or for an individual living outside the HH are an allowable deduction.\" This is the ORDINARY DEDUCTION mechanism (7 CFR 273.9(d)(5), subtracted after gross income is calculated) — matching this roster's North Carolina, Ohio, Georgia, Michigan, Minnesota, Oregon, Pennsylvania, and Wisconsin packs, and standing in direct CONTRAST to the INCOME-EXCLUSION mechanism (7 CFR 273.9(c), applied before gross income is even calculated) this roster's Virginia, New Jersey, and Illinois packs document for their own states. The practical difference matters for a household near a gross-income eligibility threshold: an income exclusion lowers gross income itself (potentially preserving eligibility under the 130%/200% gross income test), while an ordinary deduction like Tennessee's only lowers net income after the gross test has already been applied. Policy 24.18(N)(1) separately confirms a household's allowable child-support-payment deduction is divided proportionally when it is paid by or billed to an excluded household member (e.g. an ineligible alien), and continues to apply to the remaining household members even when the paying individual is disqualified for an Intentional Program Violation or work-requirement noncompliance.",
+      "source_url": "https://www.tn.gov/content/dam/tn/human-services/documents/Policy%2024.18%20SNAP%20Deductions%20from%20Income_Esigned.pdf"
+    },
+    {
+      "key": "abawd-work-requirement",
+      "kind": "supplement",
+      "terms": [
+        "abawd",
+        "able bodied adult",
+        "work requirement",
+        "time limit",
+        "3 month limit",
+        "work registration",
+        "waiver",
+        "waived area",
+        "memphis",
+        "nashville",
+        "appalachia"
+      ],
+      "citation": "TN Rule 1240-01-03-.43 (last amended 2004) and TDHS Policy 24.11 (last reviewed 2023) both still state an 18-49 ABAWD age range — a genuine, currently-live codification lag against the current 18-64 federal age range; USDA's FY2025-2029 waiver index confirms Tennessee holds ZERO active ABAWD waivers anywhere in the state",
+      "heading": "Tennessee's OWN codified rule AND its own current policy document both still say the ABAWD work requirement applies to ages 18-49 — TWO SEPARATE Tennessee documents, not just one, have not caught up with the current federal 18-64 age range",
+      "text": "THIS PACK'S SECOND FLAGSHIP FINDING: An able-bodied adult without dependents (ABAWD) is limited to three countable months of SNAP within a fixed 36-month period unless meeting a work-activity requirement, qualifying for an exemption, or living in a waived area (7 CFR 273.24). TN Rule 1240-01-03-.43(5)(a), last amended in May 2004, defines the affected population as a household member \"at least 18 years of age but not yet 51 years of age\" — i.e., ages 18-50 — and its Section (5)(b) exemption list correspondingly exempts anyone \"under 18 or over 50 years of age.\" TDHS's own current SNAP Policy 24.11 (Work Requirements), effective 03/01/2023 and last formally reviewed 11/30/2023, independently repeats the SAME stale range: work requirements apply to able-bodied adults \"at least age eighteen (18) but not yet fifty (50) years of age,\" with the exemption stated as \"Under age eighteen (18) or age fifty (50) or above.\" NEITHER of these two separately-maintained Tennessee documents reflects the 2023 Fiscal Responsibility Act's age increase to 54, let alone the current post-OBBBA federal age range of 18-64. By contrast, TDHS's own PUBLIC-FACING ABAWD outreach webpage (tn.gov/humanservices, fetched directly in this pass) correctly implies the CURRENT range, listing ABAWD exemptions as applying to individuals \"under 18 or 65+\" — meaning the work requirement itself applies 18-64, the current federal standard. This creates a genuine, currently-live three-way inconsistency across Tennessee's own public materials that this pack flags distinctly: the informational webpage is correct and current; the codified rule and the formal numbered policy document are BOTH stale, independently, by 15+ years of federal age-range changes. SEPARATELY, THIS PACK INDEPENDENTLY CONFIRMS Tennessee currently holds ZERO active ABAWD time-limit waivers anywhere in the state: TDHS's own ABAWD information page names no county or statewide waiver and directs individuals only to claim individual EXEMPTIONS (not area waivers), and this pack independently fetched USDA's official ABAWD Time Limit Waivers FY2025-2029 index directly (updated July 22, 2026) and confirmed Tennessee is ABSENT from the full list of states that submitted ANY waiver request for FY2025 or FY2026 — a list that includes over 20 other states and DC but not Tennessee, Kentucky, Alabama, Mississippi, Arkansas, or Georgia, its immediate neighbors. Every Tennessee county — including Memphis/Shelby County and Tennessee's rural Appalachian counties in the east — is currently subject to the standard 3-in-36-month time limit with no waiver exception.",
+      "source_url": "https://publications.tnsosfiles.com/rules/1240/1240-01/1240-01-03.pdf"
+    },
+    {
+      "key": "criminal-justice-disqualifications",
+      "kind": "supplement",
+      "terms": [
+        "drug felony",
+        "felony conviction",
+        "criminal record",
+        "drug conviction",
+        "drug test",
+        "drug testing",
+        "lifetime ban",
+        "fleeing felon",
+        "probation",
+        "parole",
+        "intentional program violation",
+        "controlled substance",
+        "class a felony"
+      ],
+      "citation": "Tenn. Code Ann. § 71-5-308 — a MODIFIED BAN: permanent ineligibility for a Class A felony drug conviction; conditional eligibility for other drug felonies via substance-abuse treatment compliance and court-obligation compliance",
+      "heading": "Tennessee neither fully bans nor fully opts out of the federal drug-felony SNAP ban — it is a MODIFIED ban with a hard permanent line at Class A felony drug convictions",
+      "text": "Tennessee is a MODIFIED BAN state under Tenn. Code Ann. § 71-5-308. THIS PACK DISCLOSES A GENUINE ACCESS LIMITATION UNLIKE ANY OTHER TOPIC IN THIS PACK: the primary statutory-text hosts this pack tried (law.justia.com and casetext.com) both returned HTTP 403 on every attempt — different User-Agents, both http and https for justia, and casetext's dedicated statute page — a genuine, disclosed barrier this pack could not work around, not a shortcut taken without trying. This finding instead rests on convergent corroboration from two independent legal-research sources fetched directly in this pass: the Public Health Law Center's SNAP Ban Opt-Out States Map (Tennessee entry) and the Network for Public Health Law's compiled 50-state SNAP felony-ban survey PDF, BOTH of which independently describe Tennessee as a modified-ban state under this same citation, with permanent ineligibility carved out specifically for Class A felony drug convictions. Per these sources, an individual convicted of a drug felony BELOW the Class A level may remain SNAP-eligible if they are (a) currently participating in a TDHS-approved substance-abuse treatment program, on a waiting list to enter one and will do so at the first opportunity, have satisfactorily completed one, or have been determined by a licensed provider not to need treatment, AND (b) complying with, or have already complied with, all obligations imposed by the criminal court. TDHS's OWN current rule, TN Rule 1240-01-14-.15(3)(a)3, independently corroborates that Tennessee disqualifies \"[a]ny member of the household ... ineligible under 7 C.F.R. § 273.11 by virtue of a conviction for a drug-related felony, for being a fleeing felon or a probation or parole violator, or for having a conviction of certain crimes and not being in compliance with the sentence\" from categorical eligibility specifically — consistent with, though not independently proving the full conditions of, the modified-ban structure the secondary sources describe. This pack treats the modified-ban characterization and the Class A carve-out as reasonably well-supported by convergent secondary corroboration, while flagging plainly that it could NOT independently verify the exact statutory text — a materially different sourcing posture from every OTHER finding in this pack, disclosed here rather than smoothed over.",
+      "source_url": "https://www.publichealthlawcenter.org/resources/snap-ban-opt-out-states-map/tn"
+    },
+    {
+      "key": "restaurant-meals-program",
+      "kind": "supplement",
+      "terms": [
+        "restaurant meals program",
+        "rmp",
+        "eat at a restaurant",
+        "use ebt at restaurant",
+        "hot meal",
+        "hot food"
+      ],
+      "citation": "No Tennessee Restaurant Meals Program exists — Tennessee is absent from USDA's own current national RMP participant list, and no TDHS material mentions one",
+      "heading": "Tennessee has no Restaurant Meals Program at all — not a bill in committee like New Jersey's pack in this roster, simply nothing",
+      "text": "The Restaurant Meals Program (RMP) is a state OPTION under 7 CFR 274.7(g) allowing elderly (60+), disabled, and homeless SNAP recipients (and their spouses) to buy prepared, hot meals from authorized restaurants with their EBT card. Tennessee does not operate one. This pack independently fetched USDA's own official \"States that Operate a Restaurant Meals Program\" list directly (fns.usda.gov/snap/retailer/restaurant-meals-program, page updated August 7, 2026 — current as of this pack's build date): Arizona, Maryland, New York, California, Massachusetts, Rhode Island, Illinois (Cook and Franklin Counties only), Michigan, and Virginia — nine states/jurisdictions total. Tennessee is absent, matching Virginia's own pack in this roster, which independently confirms its own presence on that same list. Unlike New Jersey's pack in this roster, which documents a Restaurant Meals Program bill introduced and left to die in committee across three separate legislative sessions, this pack found no evidence any Tennessee RMP bill has ever been introduced in the Tennessee General Assembly — this is a simpler absence, not a stalled legislative history. A Tennessee SNAP household's EBT card can be used only at authorized retailers for food intended to be prepared and eaten at home; hot, ready-to-eat food purchases remain restricted under the ordinary federal rule.",
+      "source_url": "https://www.fns.usda.gov/snap/retailer/restaurant-meals-program"
+    },
+    {
+      "key": "expedited-service",
+      "kind": "supplement",
+      "terms": [
+        "expedited",
+        "expedited service",
+        "emergency",
+        "emergency food stamps",
+        "fast benefits",
+        "how fast",
+        "urgent",
+        "same day",
+        "7 day",
+        "4 day"
+      ],
+      "citation": "TDHS Policy 24.03 — standard federal expedited-service gates ($150 gross income / $100 liquid resources) and the plain federal 7-calendar-day ceiling, PLUS a Tennessee-specific internal 4-calendar-day processing target",
+      "heading": "Tennessee uses the standard federal expedited-service gates and 7-day ceiling, with its own internal 4-day processing buffer — matching the pattern North Carolina's pack in this roster documents for its own state",
+      "text": "TDHS Policy 24.03 (Timeliness Standards) sets expedited-service eligibility to the federal standard: a household with less than $150 in countable monthly gross income AND total liquid resources of $100 or less, or a migrant/seasonal farmworker household meeting a parallel destitute-household test. The policy states the standard of promptness for expedited applications is seven (7) calendar days, matching the plain federal 7 CFR 273.2(i)(3)(i) ceiling. LIKE North Carolina's pack in this roster (and UNLIKE Virginia's or New Jersey's packs, both of which found no state-specific internal buffer), Tennessee's own policy states an internal operational target tighter than the 7-day legal ceiling: \"the application should be processed on or before the fourth (4th) calendar day to ensure that the card and benefits would be received by the seventh (7th) calendar day\" — a 4-day internal processing buffer built in specifically so that card mailing/activation time does not cause a household to miss the 7-day legal standard. A household prescreened as expedited-eligible loses that entitlement (and reverts to the standard 30-day timeline) if it fails to complete its interview within four calendar days of the application date — the same 4-day figure doing double duty as both an internal processing target and an interview deadline.",
+      "source_url": "https://www.tn.gov/content/dam/tn/human-services/documents/24.03%20SNAP%20Timeliness%20Standards.pdf"
+    },
+    {
+      "key": "reporting-certification",
+      "kind": "supplement",
+      "terms": [
+        "certification period",
+        "approval period",
+        "recertification",
+        "redetermination",
+        "how long does snap last",
+        "how long does my snap approval last",
+        "how long does my approval last",
+        "redo",
+        "renew",
+        "interim report",
+        "mid-certification report",
+        "simplified reporting",
+        "change reporting"
+      ],
+      "citation": "TDHS Policy 24.02 — 6 months is Tennessee's STANDARD/DEFAULT certification period (shorter than every other state this roster has documented), with 24 months available only for all-elderly/disabled/no-earned-income households not receiving Families First; conflicts with the still-published TN Rule 1240-01-07-.01 (1983), which caps certification at one year",
+      "heading": "Tennessee's DEFAULT certification period is just SIX months — the shortest default this roster has documented for any state — and its own still-active codified rule from 1983 has not caught up with the 24-month option TDHS now offers",
+      "text": "THIS PACK'S THIRD STRUCTURAL FINDING: TDHS Policy 24.02 (Application Processing), effective 12/01/2022, states plainly that \"the acceptable certification periods for an eligible household are six (6) months or less depending on the circumstances\" as the STANDARD case — a materially shorter default than every other state this roster has documented so far (Virginia and New Jersey both default to 12 months). A 24-month certification period IS available, but only for households where ALL adult members are elderly or disabled, WITH NO EARNED INCOME, AND the household is NOT receiving or applying for Families First — a narrower gate than Virginia's comparable 24-month provision (which does not add a Families-First exclusion). Households certified for 24 months must submit an HS-3412 Mid-Certification Report at the 12th month (mailed to the household in month 10, due the 1st of month 12) to continue receiving benefits for the second 12 months — functionally the same \"12-month interim report inside a 24-month certification\" shape this roster's Virginia and New Jersey packs both document, just reached through Tennessee's own distinct eligibility gate. Cases certified for 4 or more months (other than self-employment-only cases) are \"Simplified Reporting\" households, required to report only if income exceeds their household's gross income limit or an ABAWD member's work hours fall below the required threshold. Cases certified for 1-3 months, or households whose only earned income is self-employment (certified for up to 6 months), are \"Change Reporting\" households, required to report a longer list of changes (income-source changes over $125/month, resource changes exceeding the limit, acquiring a non-excludable licensed vehicle, household composition or residence changes, child-support-payment changes, an ABAWD member's hours falling below 80/month, or substantial lottery/gambling winnings) within 10 days. WORTH FLAGGING DISTINCTLY: the STILL-PUBLISHED codified rule TN Rule 1240-01-07-.01, last amended in September 1983, states \"[i]n no circumstances may a certification period extend beyond one year\" — a rule that has not been updated to reflect Policy 24.02's current 24-month elderly/disabled provision. This is a genuine, live conflict between Tennessee's own codified administrative rule (still legally in force, filed with the Secretary of State) and its own more current operational policy document — a more serious version of the same kind of internal-document inconsistency this roster's Virginia pack documents for a single stale footnote, here spanning two entirely separate, independently-numbered TDHS document families.",
+      "source_url": "https://www.tn.gov/content/dam/tn/human-services/documents/24.02%20SNAP%20Application%20Processing.pdf"
+    },
+    {
+      "key": "program-identity",
+      "kind": "supplement",
+      "terms": [
+        "how to apply",
+        "where do i apply",
+        "apply for snap",
+        "one dhs",
+        "onedhs",
+        "who runs",
+        "what agency",
+        "administers",
+        "tdhs",
+        "county office",
+        "ebt card",
+        "accent"
+      ],
+      "citation": "TDHS program materials — Tennessee calls the program plain \"SNAP\" and applies through the One DHS Customer Portal or a TDHS county office; Tennessee is STATE-administered, not county-administered",
+      "heading": "Tennessee applies through the One DHS Customer Portal or a TDHS county office; unlike Virginia's or North Carolina's packs in this roster, Tennessee's county offices are the STATE agency's own field offices, not independently governed county welfare departments",
+      "text": "Tennessee does not give SNAP its own state-specific brand name — TDHS materials and Tennessee's codified rules use the plain federal name \"SNAP\" (Supplemental Nutrition Assistance Program) throughout, alongside the older \"Food Stamp\" terminology that persists in several still-active codified rule titles from the 1980s-2000s (e.g. \"Food Stamp Program Work Requirements\"). Applications run through the One DHS Customer Portal (onedhs.tn.gov) or in person, by mail, fax, or phone at a TDHS county office — TDHS \"has offices to serve all 95 counties in Tennessee.\" CRITICALLY, and DIFFERENT from the administrative archetype this roster's Virginia, North Carolina, California, New York, Minnesota, Wisconsin, and Ohio packs all document: Tennessee is genuinely STATE-administered, not county-administered. TDHS's own county offices are the state agency's field arm — described in Policy 24.03 as the entity that \"will determine eligibility\" — not independently governed local welfare departments with their own governance the way Virginia's Local Departments of Social Services (one per city/county) or North Carolina's county Departments of Social Services are. This matches the administrative archetype this roster's Georgia pack documents (state agency operating through county field offices), not the county-administered archetype. Tennessee's eligibility caseworkers use the state's ACCENT case-management system. Benefits are issued on an EBT card, usable only at authorized retailers for food intended to be prepared and consumed at home (Tennessee has no Restaurant Meals Program, per the restaurant-meals-program supplement).",
+      "source_url": "https://www.tn.gov/humanservices/for-families/supplemental-nutrition-assistance-program-snap.html"
+    }
+  ]
+}

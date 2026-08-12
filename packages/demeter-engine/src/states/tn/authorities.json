@@ -1,0 +1,56 @@
+{
+  "_provenance": {
+    "note": "Tennessee citation authorities. Tennessee uniquely runs TWO PARALLEL, independently-dated citation families that this pack found genuinely OUT OF SYNC with each other: (1) the codified 'Rules of the Tennessee Department of Human Services' (Tenn. Comp. R. & Regs. ch. 1240-01), filed with the Secretary of State under the Uniform Administrative Procedures Act, cited by chapter-rule-.subsection (e.g. '1240-01-14-.15'), and (2) TDHS's own numbered internal 'SNAP Policy' series (24.01 through 24.31+), cited as 'Policy 24.XX', which restate and operationalize the codified rules in agency-friendly language. THIS IS A GENUINE STRUCTURAL DEPARTURE from every other state this roster has built: no prior state in this roster maintains two separately-numbered, separately-dated citation families for the SAME underlying rules, and this pack found the two families meaningfully OUT OF SYNC in BOTH directions — rule 1240-01-14-.15 was amended April 2026 to add Broad-Based Categorical Eligibility, AHEAD of Policy 24.24 (last reviewed 2023, still describing only the old narrow categorical-eligibility pathway); conversely, rule 1240-01-03-.43 (ABAWD) has not been amended since 2004 and Policy 24.11 (last reviewed 2023) still uses the same stale 18-49 age range, both BEHIND current federal law (18-64 post-OBBBA). This pack invents the short prefixes 'TN Rule' and 'TDHS Policy' to disambiguate the two families in running text — Tennessee's own documents do not use these exact short prefixes, matching this roster's convention of an invented short prefix per state (VA's 'VA SNAP Manual Part', NC's 'FNS', PA's 'PAH'). Statute citations use 'Tenn. Code Ann. §', matching Tennessee's own official citation convention.",
+    "extracted": "2026-08-11"
+  },
+  "patterns": [
+    {
+      "key": "tnrule",
+      "regex": "\\bTN\\s+Rule\\s+(1240-0?1-\\d{1,2}(?:-\\.\\d{1,2})?)\\b",
+      "flags": "gi",
+      "template": "TN Rule $1",
+      "normalize": "none",
+      "match": "exact",
+      "note": "Codified Rules of the Tennessee Department of Human Services, Chapter 1240-01 (Family Assistance Division), filed with the TN Secretary of State under the Uniform Administrative Procedures Act, cited by chapter-rule-.subsection, e.g. 1240-01-14-.15 (Categorically Eligible Households - SNAP Only, amended April 2026), 1240-01-03-.43 (ABAWD work requirements, last amended 2004), 1240-01-07-.01 (Periods of Eligibility, last amended 1983)."
+    },
+    {
+      "key": "tdhspolicy",
+      "regex": "\\bTDHS\\s+Policy\\s+(24\\.\\d{1,2})\\b",
+      "flags": "gi",
+      "template": "TDHS Policy $1",
+      "normalize": "none",
+      "match": "exact",
+      "note": "TDHS's own current, numbered SNAP Policy series (24.01 through 24.31+), published on the DHS Publications page — the agency's operational restatement of the codified 1240-01 rules, not always in sync with them (see _provenance)."
+    },
+    {
+      "key": "tncode",
+      "regex": "\\bTenn\\.?\\s?Code\\s?Ann\\.?\\s+§?\\s*(71-\\d{1,2}-\\d{2,4})\\b",
+      "flags": "gi",
+      "template": "Tenn. Code Ann. § $1",
+      "normalize": "none",
+      "match": "exact",
+      "note": "Tennessee Code Annotated, Title 71 (Welfare), sections governing SNAP, e.g. 71-5-308 (drug-related felony eligibility modification)."
+    }
+  ],
+  "known": {
+    "tnrule": [
+      { "value": "TN Rule 1240-01-14-.15", "note": "Categorically Eligible Households - SNAP Only — Basic CE (SSI/TANF-only households) and, as of the April 15 2026 amendment, Expanded Categorical Eligibility (200% FPL gross / 100% FPL net, BBCE)" },
+      { "value": "TN Rule 1240-01-03-.43", "note": "Food Stamp Program Work Requirements — Special Requirements for Non-Exempt Able-Bodied Adults Without Dependents; last amended May 2004, still states the pre-2023/pre-OBBBA 18-49 age range" },
+      { "value": "TN Rule 1240-01-04-.27", "note": "Financial Eligibility Requirements — Tables III (Maximum Coupon Allotment), IV-A/IV-B (Standard Deduction, Maximum Shelter Deduction), V-A (Standard Utility Allowance), V-B (Basic Utility Allowance), VI (Standard Telephone Allowance), VII (Homeless Shelter Allowance); dollar figures disclosed as stale in freshness.json" },
+      { "value": "TN Rule 1240-01-07-.01", "note": "Periods of Eligibility — last amended September 1983; caps certification periods at one year, conflicting with TDHS Policy 24.02's current 24-month elderly/disabled provision" }
+    ],
+    "tdhspolicy": [
+      { "value": "TDHS Policy 24.02", "note": "Application Processing — certification periods: 6 months standard/default, 24 months for all-elderly/disabled/no-earned-income households not on Families First, 1-3 months (or self-employment-only) as Change Reporting cases" },
+      { "value": "TDHS Policy 24.03", "note": "Timeliness Standards — expedited service ($150 gross income / $100 liquid resources gate), plain federal 7-calendar-day benefit ceiling, plus a TN-specific internal 4-calendar-day processing target" },
+      { "value": "TDHS Policy 24.11", "note": "Work Requirements — ABAWD provisions; still states the pre-2023/pre-OBBBA 18-49 age range as of its last review (11/30/2023), matching TN Rule 1240-01-03-.43's staleness" },
+      { "value": "TDHS Policy 24.12", "note": "Resources — defers exact dollar limits to the (non-public) Family Assistance Standards Desk Guide; confirms categorically eligible households are exempt from the resource test unless disqualified by substantial lottery/gambling winnings; lists boats, vacation homes, and mobile homes as examples of countable non-liquid resource equity" },
+      { "value": "TDHS Policy 24.13", "note": "Lottery or Gambling Winnings — disqualifying threshold is defined RELATIVE to the elderly/disabled household resource limit (auto-adjusts with it), not a separately hardcoded dollar figure" },
+      { "value": "TDHS Policy 24.14", "note": "Income — general income counting and exclusion rules" },
+      { "value": "TDHS Policy 24.18", "note": "Deductions from Income — Standard Deduction, Excess Medical Deduction ($35 federal threshold, actual-expense itemization only, fully itemized allowable-expense list), Standard Utility/Basic Utility/Telephone Allowances (dollar figures deferred to the Desk Guide), and the Child Support Payment Deduction (ordinary deduction mechanism)" },
+      { "value": "TDHS Policy 24.24", "note": "Categorically Eligible SNAP Recipients — describes only Basic CE (SSI/TANF-only); last reviewed 11/30/2023, predates and does not yet reflect TN Rule 1240-01-14-.15's April 2026 Expanded Categorical Eligibility (BBCE) amendment" }
+    ],
+    "tncode": [
+      { "value": "Tenn. Code Ann. § 71-5-308", "note": "Modified drug-felony SNAP ban — permanent ineligibility for a Class A felony drug conviction; conditional eligibility for other drug felonies via substance-abuse treatment participation/completion (or a licensed provider's no-need determination) plus compliance with court-imposed obligations. Primary statutory text host (law.justia.com, casetext.com) returned HTTP 403 on every fetch attempt in this pass; this citation and its content rest on convergent secondary legal-research corroboration (Public Health Law Center, Network for Public Health Law), disclosed as a genuine access barrier in PROVENANCE.md." }
+    ]
+  }
+}
