@@ -2372,6 +2372,131 @@ export const MO_GOLD: AnswerExpectation[] = [
   },
 ];
 
+export const MD_GOLD: AnswerExpectation[] = [
+  {
+    id: "md-bbce-200-percent-fpl",
+    // Confirms (rather than corrects) the widely-repeated secondary-source
+    // BBCE claim — guards against the model dropping down to the plain
+    // federal 130% FPL figure when Maryland's own 200% FPL ceiling applies.
+    question: "What is the income limit for SNAP in Maryland?",
+    state: "MD",
+    expectCitation: "Section 115",
+    mustMention: "200",
+    mustDisclaim: true,
+  },
+  {
+    id: "md-resource-limit-current-vs-stale",
+    // Guards the internal-contradiction finding: Section 600 states the
+    // current $3,000/$4,500 figures; Section 200 is stale. The model should
+    // reach for the current figure.
+    question: "What is the SNAP resource limit in Maryland if I'm not categorically eligible?",
+    state: "MD",
+    expectCitation: "Section 600",
+    mustMention: "3,000",
+    mustDisclaim: true,
+  },
+  {
+    id: "md-car-exempt-all-vehicles",
+    question: "Does my car count against me for SNAP in Maryland?",
+    state: "MD",
+    expectCitation: "Section 201",
+    mustMention: "exclude",
+    mustDisclaim: true,
+  },
+  {
+    id: "md-boat-exempt-all-vehicles",
+    // Guards the structural finding: Maryland excludes ALL vehicles,
+    // matching Missouri's blanket rule rather than Indiana's hybrid rule.
+    question: "Does my boat count against me for SNAP in Maryland?",
+    state: "MD",
+    expectCitation: "Section 201",
+    mustMention: "exclude",
+    mustDisclaim: true,
+  },
+  {
+    id: "md-medical-deduction-no-flat-shortcut",
+    question: "I'm disabled and have $50 a month in medical bills for Maryland SNAP — do I get a deduction?",
+    state: "MD",
+    expectCitation: "Section 212",
+    mustMention: "35",
+    mustDisclaim: true,
+  },
+  {
+    id: "md-child-support-ordinary-deduction",
+    // Guards the structural finding: Maryland treats child support as an
+    // ordinary post-gross deduction, not an income exclusion.
+    question: "Does paying child support lower my countable income for SNAP in Maryland?",
+    state: "MD",
+    expectCitation: "Section 212",
+    mustMention: "deduct",
+    mustDisclaim: true,
+  },
+  {
+    id: "md-abawd-age-range-current-federal",
+    question: "What is the ABAWD work requirement age range in Maryland?",
+    state: "MD",
+    expectCitation: "Section 106",
+    mustMention: "64",
+    mustDisclaim: true,
+  },
+  {
+    id: "md-abawd-zero-waivers",
+    // Guards against overclaiming a county-level ABAWD waiver anywhere in
+    // Maryland, urban or rural (Eastern Shore) — Maryland's own AT 26-09
+    // states no waiver applies statewide.
+    question: "Is the SNAP work-requirement time limit currently waived anywhere in Maryland?",
+    state: "MD",
+    mustMention: "waiver",
+    mustDisclaim: true,
+  },
+  {
+    id: "md-drug-felony-three-tier",
+    // MD's own manual reveals a three-tier structure, directly contradicting
+    // a secondary-source claim that Maryland eliminated drug testing —
+    // guards against the model repeating that claim.
+    question: "I have a drug felony conviction — can I still get SNAP in Maryland?",
+    state: "MD",
+    expectCitation: "Section 100",
+    mustMention: "treatment",
+    mustDisclaim: true,
+  },
+  {
+    id: "md-restaurant-meals-program-present",
+    // Guards against underclaiming: unlike most states in this roster,
+    // Maryland DOES have a Restaurant Meals Program (codified by statute).
+    question: "Can I use my EBT card to buy a hot meal at a restaurant in Maryland?",
+    state: "MD",
+    expectCitation: "5-505",
+    mustMention: "elderly",
+    mustDisclaim: true,
+  },
+  {
+    id: "md-expedited-service-7-day",
+    question: "How fast can I get emergency SNAP benefits in Maryland?",
+    state: "MD",
+    expectCitation: "Section 401",
+    mustMention: "7",
+    mustDisclaim: true,
+  },
+  {
+    id: "md-cert-period-12-month-mbr",
+    // Guards the structural finding: Maryland's standard cert is 12 months
+    // with a mandatory 6-month Maryland Benefit Review touchpoint.
+    question: "How long does my SNAP approval last in Maryland?",
+    state: "MD",
+    expectCitation: "Section 410",
+    mustMention: "12",
+    mustDisclaim: true,
+  },
+  {
+    id: "md-federal-benefit",
+    question: "How is the monthly SNAP benefit amount calculated from net income in Maryland?",
+    state: "MD",
+    expectCitation: "273.10",
+    mustDisclaim: true,
+  },
+];
+
 /** Everything the live runner executes. */
 export const ALL_GOLD: AnswerExpectation[] = [
   ...ANSWER_GOLD,
@@ -2397,4 +2522,5 @@ export const ALL_GOLD: AnswerExpectation[] = [
   ...TN_GOLD,
   ...IN_GOLD,
   ...MO_GOLD,
+  ...MD_GOLD,
 ];

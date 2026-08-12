@@ -1,0 +1,49 @@
+{
+  "_provenance": {
+    "note": "Maryland citation authorities. Maryland maintains a single primary citation family — the DHS SNAP Manual, published section-by-section (Sections 100-999) at dhs.maryland.gov, cited by section number and, where applicable, a decimal sub-part, e.g. 'Section 106', 'Section 100.62', 'Section 212.10'. This pack invents the short prefix 'MD SNAP Manual Section' to disambiguate in running text, matching this roster's convention of an invented short prefix per state (MO's 'MO IM Manual', IN's 'IN PPM', VA's 'VA SNAP Manual Part'). Maryland's own Human Services Article citations use the standard Maryland form 'Md. Code, Human Services §'.",
+    "extracted": "2026-08-11"
+  },
+  "patterns": [
+    {
+      "key": "mdsnapmanual",
+      "regex": "\\bMD\\s+SNAP\\s+Manual\\s+Section\\s+(\\d{2,3}(?:\\.\\d{1,3}){0,3})\\b",
+      "flags": "gi",
+      "template": "MD SNAP Manual Section $1",
+      "normalize": "none",
+      "match": "exact",
+      "note": "Maryland DHS SNAP Manual, cited by section number and optional decimal sub-part, e.g. Section 106 (ABAWDs), Section 115 (Categorical Eligibility), Section 100.62 (Disqualified Individuals)."
+    },
+    {
+      "key": "mdhs",
+      "regex": "\\bMd\\.\\s?Code,?\\s?Human\\s?Services\\s?§\\s?(\\d{1}-\\d{3})\\b",
+      "flags": "gi",
+      "template": "Md. Code, Human Services § $1",
+      "normalize": "none",
+      "match": "exact",
+      "note": "Maryland Code, Human Services Article, Title 5 (Public Assistance), Subtitle 5 (Food Stamps), e.g. § 5-501 (SNAP program authorization), § 5-505 (Restaurant Meals Program), § 5-506 (Heat and Eat Program)."
+    }
+  ],
+  "known": {
+    "mdsnapmanual": [
+      { "value": "MD SNAP Manual Section 100", "note": "Household Composition — incl. 100.62 Disqualified Individuals (drug felony, fleeing felon), 100.65 Fleeing Felons, 100.7 Special Eligibility Situations (drug-related felony 1-year disqualification plus 2-year testing/treatment)" },
+      { "value": "MD SNAP Manual Section 106", "note": "ABAWDs — current federal 18-64 age range per H.R. 1 (2025); zero active waivers anywhere in Maryland" },
+      { "value": "MD SNAP Manual Section 115", "note": "Categorical Eligibility — Broad-Based Categorical Eligibility (BBCE) at 200% FPL via a TANF-funded brochure; no resource or gross/net income test for CE households; $24 minimum benefit for 1-2 person CE households" },
+      { "value": "MD SNAP Manual Section 200", "note": "Resources — resource limit for non-categorically-eligible households, $2,250/$3,250 (elderly/disabled). NOT independently reconfirmed for FFY2026: CONTRADICTS Section 600's current $3,000/$4,500 figures — see PROVENANCE.md" },
+      { "value": "MD SNAP Manual Section 201", "note": "Treatment of Licensed Vehicles — all vehicles excluded as resources regardless of type (car, boat, recreational vehicle, airplane)" },
+      { "value": "MD SNAP Manual Section 211", "note": "Excluded Income — no child-support income exclusion found; child support is treated as an ordinary post-gross deduction (see Section 212.11)" },
+      { "value": "MD SNAP Manual Section 212", "note": "Deductions — incl. 212.8 Excess Medical Expense Deduction (actual expense over $35, no flat shortcut), 212.9 Excess Shelter Deduction, 212.10 Homeless Shelter Allowance ($148 stated here, CONTRADICTS Section 600's current $198.99 — see PROVENANCE.md), 212.11 Child Support Deduction (ordinary deduction, not exclusion)" },
+      { "value": "MD SNAP Manual Section 213", "note": "Determining Income Deductions — income conversion, averaging, child-support-deduction calculation examples, rounding rules" },
+      { "value": "MD SNAP Manual Section 214", "note": "Utility Allowances — SUA/LUA/telephone eligibility criteria (dollar figures live in Section 600)" },
+      { "value": "MD SNAP Manual Section 401", "note": "Screening for Expedited Service — plain federal criteria (gross income under $150, liquid resources $100 or less) and 7-calendar-day ceiling" },
+      { "value": "MD SNAP Manual Section 406", "note": "Normal Processing Standards — standard 30-day processing timeframe" },
+      { "value": "MD SNAP Manual Section 410", "note": "Certification Periods — 12-month standard with mandatory 6-month Maryland Benefit Review (MBR) touchpoint; 24 months for all-elderly/disabled no-earned-income households; 36 months for MSNAP/ESAP; 4-month minimum for migrant/seasonal farmworkers" },
+      { "value": "MD SNAP Manual Section 600", "note": "Standards for Income and Deductions — current FFY2026 income limits, Standard Deduction, Excess Shelter cap ($744), Homeless Shelter Allowance ($198.99), SUA ($572)/LUA ($350)/telephone ($40), and the current $3,000/$4,500 resource limit, effective 10/1/2025, cross-validated by FIA AT 26-05" }
+    ],
+    "mdhs": [
+      { "value": "Md. Code, Human Services § 5-501", "note": "Supplemental Nutrition Assistance Program — state authorization, administrative structure (local departments under state supervision), and the $50/month state supplement floor for households with a member 60 or older. Fetched directly from mgaleg.maryland.gov with no access barrier." },
+      { "value": "Md. Code, Human Services § 5-503", "note": "State-funded food supplement benefits for legal-immigrant minors otherwise ineligible for federal SNAP due to immigration status" },
+      { "value": "Md. Code, Human Services § 5-505", "note": "Restaurant Meals Program — establishes the program by statute; eligibility limited to homeless households or households of only elderly (60+)/government-designated-disabled individuals and their spouse" },
+      { "value": "Md. Code, Human Services § 5-506", "note": "Heat and Eat Program — one-time annual $21 payment triggering Standard Utility Allowance eligibility for 12 consecutive issuance months" }
+    ]
+  }
+}

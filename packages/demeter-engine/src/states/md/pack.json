@@ -1,0 +1,54 @@
+{
+  "code": "MD",
+  "program": "SNAP — Maryland's own public-facing DHS materials and its current manual folder path (dhs.maryland.gov/documents/FIA/Manuals/Supplemental Nutrition Assistance Program (SNAP)/) consistently use the plain federal name \"SNAP,\" but the governing Maryland Code, Human Services Article, Title 5 subtitle housing the program's statutes is still headed \"Food Stamps\" — a naming artifact that predates SNAP's 2008 federal rename, even though the lead section within that subtitle (§ 5-501) is itself titled \"Supplemental Nutrition Assistance Program.\" Worked examples inside the manual's own deduction-calculation sections still use the old \"FS\" abbreviation.",
+  "agency": "Maryland Department of Human Services (DHS), Family Investment Administration (FIA)",
+  "admin_model": "state",
+  "admin_note": "Maryland is STATE-supervised: SNAP is administered through 24 Local Departments of Social Services (LDSS) — one per county plus Baltimore City — but each LDSS executive director reports to the Secretary of Human Services, and Md. Code, Human Services § 5-501(c) requires every local department to administer SNAP \"under the supervision and control of the Department\" and \"in accordance with the regulations of the Department and federal law.\" This matches this roster's Georgia/Indiana/Tennessee/Missouri administrative archetype (a state agency operating through its own local offices), not Virginia's/North Carolina's independently governed county-welfare-department archetype — even though each county also has a local Social Services Board that advises the local director on the local application of state policy, a narrower role than an independently governing county board. Confirm current operative practice (exact local office procedures, wait times) with the applicant's own LDSS, the same caution this roster already carries for CA/NY/MN/WI/OH/NC/NJ/VA/GA/IN/TN/MO.",
+  "system": "Maryland's eligibility caseworkers use the Eligibility and Enrollment (E&E) system (part of the myMDTHINK platform), referenced throughout the manual by its own screen names (e.g. the Individual Details screen, the Shelter Expenses screen, the ABAWD screen); WORKS is the separate system used to track ABAWD/SNAP Employment and Training (E&T) work-activity compliance. Applicants apply online through MarylandBenefits.gov, or in person, by mail, or by fax at a Local Department of Social Services (LDSS).",
+  "portal": {
+    "name": "MarylandBenefits",
+    "url": "https://marylandbenefits.gov/home/#/"
+  },
+  "update_channels": [
+    {
+      "name": "Maryland DHS — Supplemental Nutrition Assistance Program (SNAP) Manual, published section-by-section (Sections 100–999)",
+      "url": "https://dhs.maryland.gov/supplemental-nutrition-assistance-program/food-supplement-program-manual/"
+    },
+    {
+      "name": "Maryland DHS — Family Investment Administration Programs, Income Guidelines (current FFY figures, all FIA programs)",
+      "url": "https://dhs.maryland.gov/documents/Supplemental%20Nutrition%20Assistance%20Program%20(SNAP)/October-2025-Income-Guidelines-revised-8.2025-1.pdf"
+    },
+    {
+      "name": "Maryland DHS — FIA Action Transmittal AT 26-09, H.R. 1 (2025) Modifications to SNAP Work Requirements for ABAWDs",
+      "url": "https://dhs.maryland.gov/documents/FIA/Action%20Transmittals-AT%20-%20Information%20Memo-IM/AT-IM2026/26-09%20AT%20H.R.%201%202025%20Modifications%20to%20SNAP%20Work%20Requirements%20for%20ABAWD%20combined%20new.pdf"
+    },
+    {
+      "name": "Maryland General Assembly — Code of Maryland, Human Services Article, Title 5, Subtitle 5 (Food Stamps)",
+      "url": "https://mgaleg.maryland.gov/mgawebsite/Laws/StatuteText?article=ghu&section=5-501&enactments=false"
+    },
+    {
+      "name": "USDA FNS ABAWD Time Limit Waivers FY 2025-2029 (state request/response index)",
+      "url": "https://www.fns.usda.gov/snap/waivers/timelimit/2025-2029"
+    }
+  ],
+  "verification": {
+    "verified_on": "2026-08-11",
+    "method": "Direct curl fetch (browser User-Agent) of thirteen current Maryland DHS SNAP-manual section files (a mix of PDF and .docx, the .docx files converted with macOS textutil) from dhs.maryland.gov/documents/FIA/Manuals/ — Sections 100 (Household Composition), 106 (ABAWDs), 115 (Categorical Eligibility), 200 (Resources), 201 (Vehicles), 211 (Excluded Income), 212 (Deductions), 213 (Determining Income Deductions), 214 (Utility Allowances), 401 (Expedited Service), 406 (Normal Processing Standards), 408 (Verification), and 600 (Standards for Income and Deductions) — every fetch a clean HTTP 200. Also fetched directly: the current DHS Family Investment Administration Income Guidelines (dated October 2025, revised 8/2025), FIA Action Transmittal AT 26-09 (H.R. 1 2025 ABAWD changes, issued October 16, 2025, effective November 1, 2025) including its embedded ABAWD FAQ and screening tool, FIA Action Transmittal AT 26-05 (SNAP Mass Changes for October 2025, issued October 3, 2025), and — via Maryland's own legislative statute-text lookup at mgaleg.maryland.gov, every fetch a clean HTTP 200 with NO access barrier — the Human Services Article §§ 5-501, 5-502, 5-503, 5-505, and 5-506. WebFetch was used for HTML pages (the manual index, the ABAWD program page, the Restaurant Meals Program page) and for the mgaleg statute-text pages; direct curl+pdftotext and curl+textutil were used for the PDF and .docx manual sections respectively. A single manual TOC listing page (law.justia.com's mirror of the Human Services Article) returned a 403 on both curl and WebFetch — resolved by locating the same statutory text directly through Maryland's own mgaleg.maryland.gov statute-text tool instead, with no loss of primary-source fidelity.",
+    "gates": "Maryland's manual proved GENUINELY MIXED, in a way distinct from any prior state in this roster: it is not merely that some sections are stale relative to a secondary source (this roster's Missouri pattern) — Maryland's OWN currently-published manual contains two direct, disclosed INTERNAL CONTRADICTIONS between an older, unrevised narrative section and a newer, explicitly COLA-revised standards table in the SAME manual. Section 200 (Resources), carrying a \"REVIEWED JUNE 2026\" footer, states a non-categorically-eligible resource limit of $2,250/$3,250 (elderly/disabled) — but Section 600 (Standards for Income and Deductions), \"REVISED AUGUST 2025\" and headed \"Effective October 1, 2025,\" states $3,000/$4,500, matching the current federal FFY2026 standard and independently cross-confirmed by FIA Action Transmittal AT 26-05 (issued October 3, 2025). Separately, Section 212.10 (Homeless Shelter Allowance), unrevised since a 2020 transmittal it cites by name (\"20-02 AT Homeless Shelter Deduction Increase\"), states $148 — but Section 600 states $198.99, again cross-confirmed by AT 26-05, which states the deduction \"increased to $198.99\" effective October 1, 2025. Both contradictions are disclosed plainly in freshness.json rather than silently resolved; this pack treats Section 600 (the explicitly-dated, COLA-cycle-revised standards table, triple-cross-validated against AT 26-05 and, for income limits, the October 2025 Income Guidelines) as authoritative. All other dollar figures checked — the income limits, the $209/$209/$209/$223/$261/$299 Standard Deduction, the $744 Excess Shelter cap, the $572 SUA / $350 LUA / $40 telephone allowances — are independently CONFIRMED CURRENT for FFY2026 across at least two of Maryland's own primary sources.",
+    "sources": [
+      "Maryland DHS SNAP Manual, Section 115 (Categorical Eligibility) — fetched directly, current",
+      "Maryland DHS SNAP Manual, Section 200 (Resources) and Section 201 (Vehicles) — fetched directly",
+      "Maryland DHS SNAP Manual, Section 211 (Excluded Income), 212 (Deductions), 213 (Determining Income Deductions), 214 (Utility Allowances) — fetched directly",
+      "Maryland DHS SNAP Manual, Section 600 (Standards for Income and Deductions) — fetched directly, Revised August 2025, effective October 1, 2025",
+      "Maryland DHS SNAP Manual, Section 100 (Household Composition, incl. 100.62 Disqualified Individuals, 100.65 Fleeing Felons, 100.7 Special Eligibility Situations) — fetched directly",
+      "Maryland DHS SNAP Manual, Section 106 (ABAWDs) — fetched directly, Revised September 2025",
+      "Maryland DHS SNAP Manual, Section 401 (Screening for Expedited Service), 406 (Normal Processing Standards), 408 (Verification), 410 (Certification Periods) — fetched directly",
+      "Maryland DHS, FIA Action Transmittal AT 26-09, H.R. 1 (2025) Modifications to SNAP Work Requirements for ABAWDs, including embedded FAQ and ABAWD Screening Tool — fetched directly, issued October 16, 2025, effective November 1, 2025",
+      "Maryland DHS, FIA Action Transmittal AT 26-05, SNAP Mass Changes for October 2025 — fetched directly, issued October 3, 2025",
+      "Maryland DHS, Family Investment Administration Programs Income Guidelines as of October 2025 — fetched directly",
+      "Maryland Code, Human Services Article §§ 5-501, 5-502, 5-503, 5-505, 5-506 — fetched directly via mgaleg.maryland.gov, no access barrier",
+      "Maryland DHS, Restaurant Meals Program page (dhs.maryland.gov/restaurant-meals-program/) — WebFetch, fetched 2026-08-11",
+      "Maryland DHS, Able-Bodied Adults Without Dependents (ABAWDs) program page — WebFetch, fetched 2026-08-11"
+    ]
+  }
+}
