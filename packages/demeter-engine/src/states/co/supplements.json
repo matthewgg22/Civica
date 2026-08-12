@@ -1,0 +1,295 @@
+{
+  "_provenance": {
+    "note": "Colorado SNAP curated supplements. Colorado has NO existing packages/snap-rules StatePolicy entry and NO oracle-fixture coverage — a genuinely blank slate, like North Carolina's, Ohio's, New Jersey's, Virginia's, Tennessee's, Indiana's, Missouri's, and Maryland's prior corpus-only builds in this same roster. This pack is CORPUS-ONLY and does not touch packages/snap-rules or the oracle fixture. Drafted from direct curl fetches (browser User-Agent) of Colorado's own formally promulgated administrative regulation (10 CCR 2506-1, mirrored current by Cornell Law's Legal Information Institute after the cached Secretary-of-State PDF proved a stale 2022 version), CDHS's own current SNAP/ABAWD/Healthy-Choice-Waiver web pages, Colorado Revised Statutes § 26-2-305 (via FindLaw), and SB25-169's bill-status page.",
+    "extracted": "2026-08-11",
+    "source_fact_check": "direct curl fetch (browser UA) of law.cornell.edu mirror of 10 CCR 2506-1 Sections 4.000, 4.206, 4.207, 4.208, 4.208.1, 4.311, 4.402, 4.407, 4.408, 4.409, 4.410 (all clean HTTP 200) + direct curl fetch of cdhs.colorado.gov/snap, cdhs.colorado.gov/snap/abawd, cdhs.colorado.gov/snap-healthy-choice-waiver (all clean HTTP 200) + WebFetch of codes.findlaw.com's mirror of C.R.S. § 26-2-305 and leg.colorado.gov/bills/sb25-169 + WebSearch cross-checks against abawdmap.us and USDA FNS/FNA waiver and Restaurant Meals Program indexes + post-draft adversarial refute pass; findings and gaps recorded in PROVENANCE.md",
+    "access_note": "cdhs.colorado.gov returned an HTTP 403 to WebFetch's fetcher on every attempt in this pack's research, but returned a clean HTTP 200 to direct curl with a browser User-Agent every time — a tooling artifact, not a real access barrier. See PROVENANCE.md Finding 0. The Secretary of State's own cached CCR PDF (coloradosos.gov/CCR/GenerateRulePdf.do) fetched cleanly but proved to be an outdated 2022 version; the CURRENT per-section text was located via Cornell Law's Legal Information Institute mirror instead, with no loss of primary-source fidelity."
+  },
+  "supplements": [
+    {
+      "key": "program-identity",
+      "kind": "supplement",
+      "terms": [
+        "how to apply",
+        "where do i apply",
+        "apply for snap",
+        "peak",
+        "colorado peak",
+        "mycobenefits",
+        "who runs",
+        "what agency",
+        "administers",
+        "cdhs",
+        "county human services",
+        "colorado works",
+        "cbms",
+        "ebt card",
+        "quest card",
+        "food stamps"
+      ],
+      "citation": "CDHS SNAP page and 10 CCR 2506-1-4.000 — Colorado uses the plain name \"SNAP\"/\"Food Assistance\"; Colorado is state-supervised, county-administered; applicants apply through Colorado PEAK, MyCOBenefits, or a county human services office; \"Colorado Works\" is Colorado's SEPARATE TANF program, not SNAP",
+      "heading": "Colorado has no distinctive local SNAP nickname, but IS county-administered — and \"Colorado Works\" is a commonly-confused SEPARATE program name (Colorado's TANF cash-assistance program), not another name for SNAP",
+      "text": "Colorado's Department of Human Services (CDHS), Division of Food and Energy Assistance, uses the plain federal name \"SNAP\" (also called \"Food Assistance\" on its own consumer-facing page) with no distinctive local brand name, unlike CalFresh (CA) or Basic Food (WA). Colorado is a STATE-SUPERVISED, COUNTY-ADMINISTERED state: CDHS's own description states Colorado \"operates as a state supervised, county administered human services system,\" and each of Colorado's 64 counties' human services department directly determines SNAP eligibility and authorizes benefits — matching this roster's Virginia/North Carolina independently-governed-county archetype rather than Georgia/Indiana/Tennessee/Missouri/Maryland's state-agency-with-local-offices archetype. A frequently confused point: \"Colorado Works\" is Colorado's own name for its SEPARATE Temporary Assistance for Needy Families (TANF) cash-assistance program, not another name for SNAP — though a household's Colorado Works participation IS one of the qualifying benefits that can confer Basic Categorical Eligibility for SNAP (see the categorical-eligibility finding). Applicants apply online through the Colorado PEAK portal, the MyCOBenefits mobile app, in person, by mail, or by fax at a county human services office. Caseworkers use the Colorado Benefits Management System (CBMS).",
+      "source_url": "https://cdhs.colorado.gov/snap"
+    },
+    {
+      "key": "manual-structure",
+      "kind": "supplement",
+      "terms": [
+        "policy manual",
+        "income maintenance manual",
+        "colorado income maintenance",
+        "rulemaking",
+        "ccr",
+        "code of colorado regulations",
+        "how often updated",
+        "outdated",
+        "state board"
+      ],
+      "citation": "Code of Colorado Regulations, 10 CCR 2506-1, RULE MANUAL VOLUME 4, SNAP — Colorado's operative SNAP policy text is a formally promulgated administrative regulation, not a separate narrative manual",
+      "heading": "STRUCTURAL DEPARTURE from this roster's pattern: Colorado has no separate SNAP policy manual apart from its own formally-promulgated administrative code — a likely explanation for why several of Colorado's own dollar figures and its ABAWD age range lag a full cycle behind CDHS's own website",
+      "text": "Every other state this roster has built so far maintains a narrative policy manual (Missouri's SNAP Manual, Maryland's SNAP Manual, Indiana's PPM, Virginia's SNAP Manual Part, etc.) published administratively, ALONGSIDE a separate statute — the manual is typically the fast-moving layer, revised by internal transmittal or memo series, while the statute changes only through legislative action. Colorado does not have this two-tier structure for its detailed operational policy. Colorado's SNAP policy — income limits, deduction formulas, categorical-eligibility rules, ABAWD work requirements, resource exemptions, all of it — lives directly inside 10 CCR 2506-1 (\"RULE MANUAL VOLUME 4, SNAP\"), a formally promulgated regulation under the Code of Colorado Regulations, subject to the State Board of Human Services' quarterly rulemaking cycle and published through the Colorado Secretary of State. There is no separate, faster-moving Colorado \"SNAP Manual\" this pack could locate. This appears to be the direct cause of a pattern this pack found nowhere else as cleanly: as of this pack's fetch date, EVERY dollar figure in 10 CCR 2506-1 is labeled \"Effective October 1, 2024\" (one full federal fiscal year stale), and 10 CCR 2506-1-4.311 (ABAWD Work Requirements) still recites the pre-OBBBA 18-54 age range and now-removed exemptions, even though its own header reads \"[Effective 1/4/2025]\" — the formal rulemaking process evidently has not yet caught up to either the FFY2026 COLA cycle or the 2025 federal OBBBA changes, while CDHS's own website content (which does not require formal rulemaking to update) already reflects both. See the freshness findings and PROVENANCE.md for the specific contradictions this caused.",
+      "source_url": "https://www.law.cornell.edu/regulations/colorado/department-2500/division-2506/10-CCR-2506-1"
+    },
+    {
+      "key": "income-pathways",
+      "kind": "supplement",
+      "terms": [
+        "income limit",
+        "income limits",
+        "gross income limit",
+        "gross income ceiling",
+        "make too much",
+        "over income",
+        "bbce",
+        "categorical eligibility",
+        "categorically eligible",
+        "broad-based categorical eligibility",
+        "expanded categorical eligibility",
+        "basic categorical eligibility",
+        "200 percent",
+        "200%",
+        "poverty level",
+        "colorado works",
+        "ssi",
+        "old age pension"
+      ],
+      "citation": "10 CCR 2506-1-4.206 — Expanded Categorical Eligibility (ECE) confers eligibility to all households with combined gross income at or below 200% of the federal poverty level; Basic Categorical Eligibility (BCE) covers households receiving Colorado Works, SSI, Old Age Pension, Aid to the Needy Disabled, or Aid to the Blind",
+      "heading": "CONFIRMED: Colorado has adopted Expanded Categorical Eligibility at 200% FPL, matching the widely-repeated secondary-source claim — Colorado's own regulation names the mechanism directly",
+      "text": "Colorado's own regulation, 10 CCR 2506-1-4.206, defines three categories of eligibility a SNAP household is evaluated under: Basic Categorical Eligibility (BCE), Expanded Categorical Eligibility (ECE), and Standard Eligibility (SE). ECE households are those with a combined gross income at or below 200% of the federal poverty level (Colorado's own income-limits table, independently cross-confirmed by CDHS's current SNAP page and matching this roster's Maryland pack's identical nationwide 200% FPL figures for FFY2026: $2,610/month for one person, $3,526 for two, $4,442 for three, $5,360 for four, rising by $918 per additional member). BCE households are those in which all members receive, or are authorized to receive, Colorado Works (Colorado's TANF cash-assistance program), Supplemental Security Income (SSI), Old Age Pension (OAP), Aid to the Needy Disabled (AND), Aid to the Blind (AB), or a combination. Households eligible under either BCE or ECE are deemed to have met the program's income and resource requirements and face no separate gross/net income test or asset test (beyond the limited re-verification described in 4.206(b)). Only a household that fails BOTH BCE and ECE — or is excluded from them by the disqualification carve-out in the asset-rule/drug-felony finding — is evaluated under Standard Eligibility (SE): 130% gross / 100% net FPL for households without an elderly or disabled member, or 100% net FPL alone for households with one, plus a resource test.",
+      "source_url": "https://www.law.cornell.edu/regulations/colorado/10-CCR-2506-1-4.206"
+    },
+    {
+      "key": "asset-rule",
+      "kind": "supplement",
+      "terms": [
+        "asset limit",
+        "asset test",
+        "resource limit",
+        "resource test",
+        "resources",
+        "savings",
+        "savings limit",
+        "bank account",
+        "vehicle",
+        "car count",
+        "does my car count",
+        "boat",
+        "camper",
+        "trailer",
+        "recreational vehicle",
+        "retirement account",
+        "401k",
+        "ira"
+      ],
+      "citation": "10 CCR 2506-1-4.410(A) — all of a household's licensed and unlicensed vehicles, including recreational and seasonal vehicles, are totally exempt as a resource; 10 CCR 2506-1-4.408(E) — resource limit is $3,000 (standard) / $4,500 (household with a member 60+ or disabled), current FFY2026 figures, applicable only to Standard Eligibility households",
+      "heading": "Colorado excludes ALL vehicles as resources, matching this roster's Missouri/Maryland blanket pattern — and the $3,000/$4,500 resource limit only ever applies to the small minority of households that fail BOTH categorical-eligibility pathways",
+      "text": "10 CCR 2506-1-4.410(A) states plainly: \"All of a household's licensed and unlicensed automobiles, motorcycles and vehicles, including recreational vehicles and seasonal vehicles, shall be totally exempt as a resource.\" This is the same no-equity-value-counting, all-vehicle-types-excluded pattern this roster's Missouri and Maryland packs document, not Indiana's hybrid rule (ordinary vehicles exempt, boats/campers counted). 10 CCR 2506-1-4.410(D) additionally exempts a comprehensive list of federally tax-preferred retirement accounts (401(k), IRA/Roth IRA/SIMPLE IRA, 403(a)/(b), 457, Keogh, federal Thrift Savings Plan, and more) and tax-deferred education accounts (529 plans, Coverdell ESAs, ABLE accounts) by name. HOWEVER — per the income-pathways finding — households eligible under Basic or Expanded Categorical Eligibility face NO resource test at all; the $3,000/$4,500 resource limit set out in 10 CCR 2506-1-4.408(E) (current for FFY2026, matching this roster's Missouri and Maryland packs' independently-confirmed figures) applies only to the smaller population evaluated under Standard Eligibility — households over 200% FPL, or disqualified from BCE/ECE for an Intentional Program Violation or the drug-related-felony carve-out described in the criminal-justice-disqualifications finding.",
+      "source_url": "https://www.law.cornell.edu/regulations/colorado/10-CCR-2506-1-4.410"
+    },
+    {
+      "key": "criminal-justice-disqualifications",
+      "kind": "supplement",
+      "terms": [
+        "drug felony",
+        "felony conviction",
+        "criminal record",
+        "drug conviction",
+        "drug test",
+        "lifetime ban",
+        "fleeing felon",
+        "probation",
+        "parole",
+        "controlled substance",
+        "marijuana",
+        "cannabis"
+      ],
+      "citation": "C.R.S. § 26-2-305(1)(c) — a drug-related felony conviction disqualifies a household member from SNAP for 2 years (first offense) or permanently (second offense) ONLY when the conviction is for using food stamp/SNAP benefits to purchase controlled substances and misuse of benefits is part of the court's findings; 10 CCR 2506-1-4.206(C) — the SAME narrow trigger separately removes a household from Basic/Expanded Categorical Eligibility, requiring the stricter Standard Eligibility income/resource test instead",
+      "heading": "FLAGSHIP FINDING: Colorado's drug-felony rule is much NARROWER than the widely-repeated secondary-source \"modified ban\" characterization suggests — the trigger is not simply having a drug felony, but a felony specifically for using SNAP benefits themselves to buy drugs",
+      "text": "Secondary sources broadly describe Colorado as a \"modified ban\" state for drug-felony SNAP disqualification, and note that Colorado's legislature removed a prior rehabilitation-steps requirement during its 2022 session. This pack's direct read of Colorado's own primary sources found something narrower and more specific than \"modified ban\" implies. Colorado Revised Statutes § 26-2-305(1)(c) disqualifies a household member from SNAP for two years for a first offense, and PERMANENTLY for a second offense — but only for a felony conviction (for possession, use, or distribution of a controlled substance, entered after July 1, 1997) where the conviction is \"directly related to the misuse of food stamp benefits\" AND that misuse is part of the court's own findings. In plain terms: this is not a general drug-felony ban — it is specifically triggered by using one's OWN SNAP benefits to buy drugs, a materially narrower category than \"any drug felony.\" Separately, 10 CCR 2506-1-4.206(C) applies the SAME narrow trigger (\"convicted of a drug-related felony where SNAP benefits were used to purchase drugs,\" citing 7 C.F.R. 273.11(m)) to a DIFFERENT consequence: it removes the household from Basic or Expanded Categorical Eligibility, pushing it into Standard Eligibility's stricter 130%/100% FPL income test, resource test, and asset limit — not necessarily an outright denial if the household still separately qualifies under those stricter standard rules. This pack disclosis, rather than fully reconciles, how the statute's disqualification period and the regulation's categorical-eligibility consequence interact for the same triggering conduct — see freshness.json. Simple possession, or a drug felony unrelated to misusing SNAP benefits specifically, appears in NEITHER provision as a disqualifying event.",
+      "source_url": "https://codes.findlaw.com/co/title-26-human-services-code/co-rev-st-sect-26-2-305/"
+    },
+    {
+      "key": "shelter-utility-deductions",
+      "kind": "supplement",
+      "terms": [
+        "utility allowance",
+        "utility standard",
+        "shelter deduction",
+        "excess shelter",
+        "standard utility allowance",
+        "heating standard",
+        "cooling standard",
+        "telephone standard",
+        "phone standard",
+        "homeless shelter deduction",
+        "homeless shelter allowance",
+        "standard deduction",
+        "hcua",
+        "bua",
+        "oua"
+      ],
+      "citation": "10 CCR 2506-1-4.407.1 through 4.407.31 — Standard Deduction $204/$204/$204/$217/$254/$291, Excess Shelter cap $712, Homeless Shelter Deduction $190.30, HCUA $578, BUA $367, OUA $69, Telephone Allowance $94 — ALL figures labeled \"Effective October 1, 2024,\" the FFY2025 COLA cycle, not the current FFY2026 cycle — see freshness.json",
+      "heading": "GENUINE, DISCLOSED STALENESS: every deduction and utility-allowance dollar figure in Colorado's own current regulation text is one full federal fiscal year behind — the broadest such gap this roster has found in any single state's primary source",
+      "text": "10 CCR 2506-1-4.407.1 (Standard Deduction, computed as 8.31% of the federal poverty guideline by household size), 4.407.3 (Excess Shelter Deduction, capped for households without an elderly or disabled member), and 4.407.31 (the Four-Tiered Mandatory Standard Utility Allowance: Heating/Cooling (HCUA), Basic (BUA), One Utility (OUA), and Telephone) each state figures explicitly labeled \"Effective October 1, 2024\": Standard Deduction $204 (household sizes 1-3), $217 (4), $254 (5), $291 (6+); Excess Shelter Deduction cap $712; Homeless Shelter Deduction $190.30; HCUA $578; BUA $367; OUA $69; Telephone Allowance $94. National FFY2026 figures (effective October 1, 2025 through September 30, 2026), independently confirmed via USDA's own FY26 COLA memo and cross-validated against this roster's Missouri and Maryland packs' own independently-confirmed figures, are higher: Standard Deduction $209/$209/$209/$223/$261/$299, Excess Shelter cap $744. This pack could not locate a Colorado-specific FFY2026 update to the four utility-allowance figures (HCUA/BUA/OUA/Telephone) or the Homeless Shelter Deduction despite a targeted search — a genuine, disclosed gap, not a smoothed-over assumption. Households SHOULD NOT be told Colorado's exact current dollar figures for these deductions with full confidence; the federal FFY2026 Standard Deduction and Excess Shelter cap figures above are the best available cross-validated substitute pending a fresher Colorado-specific source. See the manual-structure finding for this pack's hypothesis on why: Colorado's formal CCR rulemaking cycle has evidently not yet caught up to the FFY2026 COLA.",
+      "source_url": "https://www.law.cornell.edu/regulations/colorado/10-CCR-2506-1-4.407_v2"
+    },
+    {
+      "key": "medical-deduction",
+      "kind": "supplement",
+      "terms": [
+        "medical deduction",
+        "medical expense",
+        "medical expenses",
+        "medical bills",
+        "elderly deduction",
+        "disability deduction",
+        "excess medical",
+        "standard medical deduction",
+        "smed"
+      ],
+      "citation": "10 CCR 2506-1-4.407.6 and 4.407.61 — Excess Medical Deduction for total medical expenses over $35/month incurred by a household member 60+ or disabled; households may use either actual verified expenses OR a flat Standard Medical Expense Deduction (SMED) of $165 when total verified expenses are between $35.01 and $200",
+      "heading": "Colorado DOES have a flat Standard Medical Expense Deduction shortcut ($165) — matching this roster's Missouri finding rather than Maryland's actual-expense-only rule",
+      "text": "10 CCR 2506-1-4.407.6 (Excess Medical Deduction) allows a deduction for total medical expenses exceeding $35 per month incurred by a household member aged 60 or older or with a disability (other household members' medical costs are not deductible, even a spouse's). 10 CCR 2506-1-4.407.61 provides a flat shortcut: \"Beginning October 1, 2016, the SMED is one hundred sixty-five dollars ($165).\" A household with verified medical expenses greater than $35 and less than or equal to $200 (i.e., the $35 floor plus the $165 SMED) may claim the flat $165 deduction without itemizing; a household with verified expenses above $200 may claim actual expenses instead. This places Colorado in the same flat-shortcut camp as this roster's Missouri pack (whose SMED is $135 for a $35.01-$170 range) rather than Maryland's or Indiana's actual-expense-only mechanism. Because the SMED is a flat policy figure set in 2016 rather than a COLA-indexed one, it is less likely to be stale in the way the Standard Deduction and utility allowances are — but this pack could not independently confirm no intervening change and flags it for recheck in freshness.json. Explicitly NON-allowable per 4.407.6(B): special diet expenses, income-maintenance-style insurance premiums, insurance-reimbursable expenses, and — a Colorado-specific clarification worth noting given the state's legal marijuana market — medical marijuana, which is explicitly excluded from allowable medical expenses regardless of a medical recommendation.",
+      "source_url": "https://www.law.cornell.edu/regulations/colorado/10-CCR-2506-1-4.407_v2"
+    },
+    {
+      "key": "child-support-deduction",
+      "kind": "supplement",
+      "terms": [
+        "child support",
+        "support payments",
+        "child support deduction",
+        "child support exclusion",
+        "alimony",
+        "arrearage"
+      ],
+      "citation": "10 CCR 2506-1-4.407(D) and 4.407.5 — legally binding child support paid to or for a non-household member is an INCOME EXCLUSION, applied before any gross income test; alimony is NOT excluded",
+      "heading": "Colorado treats legally obligated child support as an INCOME EXCLUSION applied before the gross income test — matching this roster's Virginia/New Jersey/Illinois/Missouri mechanism, NOT the ordinary-post-gross-deduction mechanism this roster's Maryland/Indiana/Tennessee packs document",
+      "text": "10 CCR 2506-1-4.407(D) states plainly: \"Legally binding child support is considered an income exclusion.\" Section 4.407.5 (Child Support Expense Exclusion) confirms the mechanism: the exclusion is made \"from the household's total countable gross income and prior to any gross income test to determine eligibility\" — placing Colorado in the INCOME-EXCLUSION camp (7 CFR 273.9(c)) alongside this roster's Virginia, New Jersey, Illinois, and Missouri packs, in direct contrast to the ORDINARY-DEDUCTION mechanism (7 CFR 273.9(d)(5)) this roster's Maryland, Indiana, and Tennessee packs document. This distinction matters concretely for a household that would otherwise fail Colorado's gross income test: because the exclusion applies BEFORE the gross test, child support payments can determine SNAP eligibility itself, not merely the benefit amount. Legally obligated child support paid by a household member under 18 is allowable even if that child's own income is otherwise exempt. Payments to a third party (landlord, utility company, health insurer) under a support order count. Arrearage payments are allowed; alimony is explicitly NOT allowed as an exclusion. Households with a 3-month-or-longer payment history have their support averaged; newer payers have their anticipated payments estimated.",
+      "source_url": "https://www.law.cornell.edu/regulations/colorado/10-CCR-2506-1-4.407_v2"
+    },
+    {
+      "key": "abawd-work-requirement",
+      "kind": "supplement",
+      "terms": [
+        "abawd",
+        "able bodied adult",
+        "work requirement",
+        "3 month limit",
+        "work registration",
+        "waiver",
+        "waived area",
+        "denver",
+        "front range",
+        "mountain county",
+        "rural county",
+        "native american",
+        "tribal",
+        "time limit"
+      ],
+      "citation": "CDHS's current ABAWD FAQ page and February 2026 training desk aid — current federal 18-64 ABAWD age range, effective for applications/renewals submitted after November 1, 2025; Colorado holds ZERO ABAWD waivers ANYWHERE in the state per abawdmap.us; 10 CCR 2506-1-4.311 remains stale (pre-OBBBA 18-54 text) — see freshness.json",
+      "heading": "A genuine, disclosed internal contradiction between Colorado's own regulation text and Colorado's own website — the regulation still shows the pre-OBBBA 18-54 age range and REMOVED exemptions, while CDHS's dedicated ABAWD page and training desk aid already reflect the current 18-64 federal standard",
+      "text": "An able-bodied adult without dependents (ABAWD) is limited to three countable months of SNAP within a 36-month period (Colorado's current cycle resets every 36 calendar months starting July 1, 2023) unless meeting a work-activity requirement (80 hours/month or 20 hours/week of paid, unpaid, or in-kind work, or a qualifying work/training program) or an exemption. CDHS's own current, dedicated ABAWD FAQ page (cdhs.colorado.gov/snap/abawd) and its February 2026 training desk aid both state the CURRENT federal age range plainly: ABAWDs are \"between the ages of 18 and 64\" and \"not living with a child under the age of 14\" (the OBBBA-narrowed caregiver exception), with additional current exemptions for pregnancy, disability, half-time school/training enrollment, substance-treatment participation, unemployment-benefit status, caregiving for someone sick or disabled, meeting TANF/Colorado Works work rules, and identifying as Indian, Urban Indian, or California Indian. HOWEVER, Colorado's own formally-promulgated regulation, 10 CCR 2506-1-4.311 — despite a header reading \"[Effective 1/4/2025]\" — still defines an ABAWD as aged 18 through 54 and still lists exemptions H.R. 1/OBBBA REMOVED at the federal level: a blanket homelessness exemption, veteran status, and having aged out of foster care by 24. This is a genuine, disclosed internal contradiction between Colorado's own regulation and its own current website content — see the manual-structure finding for this pack's explanation (Colorado's formal CCR rulemaking cycle has not yet caught up to the 2025 federal OBBBA changes). CDHS's own main /snap page compounds the confusion further, stating the ABAWD age range as \"18 and 56\" in one place and \"18 to 64\" in another, alongside a leftover stale 2023 notice — see freshness.json. This pack treats 18-64 (CDHS's dedicated ABAWD page and February 2026 desk aid) as authoritative because those sources are the most specific, most recently dated, and most directly OBBBA-responsive. Colorado holds ZERO ABAWD waivers anywhere in the state, urban Front Range or rural mountain counties alike, per the independent abawdmap.us aggregator (\"No waiver — rule applies\") and the absence of any Colorado entry on USDA's own Time Limit Waivers FY 2025-2029 index.",
+      "source_url": "https://cdhs.colorado.gov/snap/abawd"
+    },
+    {
+      "key": "restaurant-meals-program",
+      "kind": "supplement",
+      "terms": [
+        "restaurant meals program",
+        "rmp",
+        "eat at a restaurant",
+        "use ebt at restaurant",
+        "hot meal",
+        "hot food",
+        "prepared food"
+      ],
+      "citation": "SB25-169 (signed May 13, 2025) — required CDHS to submit a Restaurant Meals Program application to USDA by January 1, 2026; CDHS's own current SNAP page states hot foods and food sold for on-premises consumption are NOT currently SNAP-eligible in Colorado — RMP is NOT yet operational as of this pack's fetch date",
+      "heading": "Colorado does NOT currently have a Restaurant Meals Program — but a 2025 state law requires CDHS to seek USDA approval for one, with a January 1, 2026 application deadline that has already passed as of this pack's fetch date without a confirmable public status update",
+      "text": "Unlike this roster's Maryland pack (which found an already-operating, statutorily-codified RMP), this pack found Colorado does NOT currently operate a Restaurant Meals Program. CDHS's own current SNAP page explicitly lists \"hot foods (or any food sold for on-premises consumption)\" and \"food that will be eaten in the store\" among items SNAP benefits CANNOT purchase in Colorado, with no RMP exception mentioned. However, SB25-169, signed into law May 13, 2025, directs CDHS to submit an application to USDA's Food and Nutrition Service by January 1, 2026 requesting authority to implement RMP for SNAP recipients who are 60+, disabled, or experiencing homelessness; after USDA approval, the law requires CDHS to publish an implementation plan and adopt further rules before the program actually launches. As of this pack's fetch date (2026-08-11), the statutory application deadline has already passed, but this pack could not locate a public CDHS status update confirming whether the application was submitted on time, is under USDA review, or has been approved — a genuine, disclosed gap. A Colorado applicant asking about buying hot restaurant food with EBT today should be told this is NOT currently possible, while flagging that a state law is actively moving Colorado toward eventually offering it.",
+      "source_url": "https://leg.colorado.gov/bills/sb25-169"
+    },
+    {
+      "key": "healthy-choice-waiver",
+      "kind": "supplement",
+      "terms": [
+        "soda",
+        "soft drink",
+        "candy",
+        "sugary drink",
+        "healthy choice waiver",
+        "snap restriction",
+        "food restriction",
+        "what can i buy",
+        "buy soda",
+        "buy candy",
+        "make america healthy again",
+        "maha"
+      ],
+      "citation": "CDHS's current SNAP Healthy Choice Waiver status page — CDHS is DISCONTINUING its effort to restrict SNAP soda/soft-drink purchases because \"federal policy currently prohibits states from piloting programs that restrict SNAP food and beverage purchases\"; CDHS's own current SNAP page confirms soft drinks, candy, cookies, snack crackers, and ice cream remain SNAP-eligible items in Colorado",
+      "heading": "FLAGSHIP FINDING, CORRECTING a widely-reported early-2026 news claim: Colorado's approved soda/candy SNAP purchase restriction will NOT take effect — CDHS discontinued it, and this pack's fetch-date primary source confirms nothing has changed at the register",
+      "text": "Multiple news outlets reported in January-March 2026 that USDA had approved Colorado's \"Healthy Choice Waiver\" — a state pilot excluding soft drinks (any beverage with natural or artificial sweeteners, or under 50% juice by volume) from SNAP-eligible purchases, originally scheduled to take effect around April 30, 2026 and later pushed to October 30, 2026. This pack's direct fetch of CDHS's own current, dedicated status page for this waiver (cdhs.colorado.gov/snap-healthy-choice-waiver) found the program has since been ABANDONED: \"The Colorado Department of Human Services (CDHS) is discontinuing its efforts to implement the SNAP Healthy Choice Waiver, as federal policy currently prohibits states from piloting programs that restrict SNAP food and beverage purchases... What's NOT Changing: SNAP products and eligibility requirements remain the same.\" CDHS's own current main SNAP page independently confirms this in its \"What foods can I buy?\" list, which affirmatively includes \"Soft drinks, candy, cookies, snack crackers, and ice cream\" as SNAP-eligible. A Colorado SNAP applicant or recipient asking today whether they can buy soda or candy with their EBT card should be told YES, unambiguously — despite what earlier 2026 news coverage reported about an approved restriction, that restriction is not going into effect. This pack disclosed, rather than smoothed over, a minor residual inconsistency: CDHS's main /snap page still carries an older alert banner describing this as merely a \"delayed final vote,\" a softer framing than the dedicated waiver page's explicit \"discontinuing\" language citing a federal-policy bar — see freshness.json.",
+      "source_url": "https://cdhs.colorado.gov/snap-healthy-choice-waiver"
+    },
+    {
+      "key": "expedited-service",
+      "kind": "supplement",
+      "terms": [
+        "expedited",
+        "expedited service",
+        "emergency",
+        "emergency food stamps",
+        "fast benefits",
+        "how fast",
+        "urgent",
+        "same day",
+        "7 day"
+      ],
+      "citation": "10 CCR 2506-1-4.205.1 — plain federal expedited-service criteria (gross income under $150 and liquid resources of $100 or less, OR combined income/resources less than rent/mortgage plus the applicable utility standard, OR destitute migrant/seasonal farmworker) and the standard 7-calendar-day ceiling",
+      "heading": "Colorado uses the standard federal expedited-service gates and 7-day ceiling, with no Colorado-specific modification found",
+      "text": "10 CCR 2506-1-4.205.1 (Processing Standards for Expedited Service) sets expedited eligibility to the standard federal criteria: households with liquid resources of $100 or less and gross monthly income under $150; households whose combined gross income and liquid resources are less than their anticipated monthly rent/mortgage plus the applicable utility standard (per 4.407.31); or destitute migrant/seasonal farmworker households with liquid resources of $100 or less. Eligible households must be able to access EBT benefits no later than the seventh calendar day following the date of application, and must complete their interview within that same 7-day window or lose expedited status. This pack found no Colorado-specific modification to these gates — Colorado's child support treatment is an income exclusion (see the child-support-deduction finding), but 4.205.1 makes no cross-reference to it modifying the expedited-income test specifically, unlike this roster's Missouri pack's documented mechanism.",
+      "source_url": "https://www.law.cornell.edu/regulations/colorado/10-CCR-2506-1-4.205.1"
+    },
+    {
+      "key": "reporting-certification",
+      "kind": "supplement",
+      "terms": [
+        "certification period",
+        "approval period",
+        "recertification",
+        "redetermination",
+        "how long does snap last",
+        "how long does my snap approval last",
+        "how long does my approval last",
+        "redo",
+        "renew",
+        "periodic report"
+      ],
+      "citation": "10 CCR 2506-1-4.208.1 — 6-month standard certification period for most households; 24-month certification (with a mandatory 12-month periodic report) for households in which all members are aged 60+ and/or disabled with no earned income",
+      "heading": "Colorado's certification-period structure sticks to the plain federal 6-month/24-month baseline — a simpler structure than this roster's Maryland pack's 12-month-with-6-month-Maryland-Benefit-Review mechanism or its 36-month MSNAP/ESAP track",
+      "text": "10 CCR 2506-1-4.208.1 assigns a 24-month certification period to households that contain only members aged 60 and older and/or disabled, with no earned income at the time of certification — these households must complete a periodic report form at the 12-month interval to report any changes (or confirm none occurred). All other households are assigned a 6-month certification period. Unlike this roster's Maryland pack, which documents a distinctive 12-month-certification-with-a-mandatory-6-month-\"Maryland-Benefit-Review\"-touchpoint mechanism, or a 36-month track for its own Elderly Simplified Application Project analog, Colorado's regulation describes only the plain federal two-tier 6-month/24-month structure with no Colorado-specific extension or simplified-reporting variant found. Households shall be assigned the longest certification period possible based on the predictability of the household's anticipated income and circumstances, per 10 CCR 2506-1-4.208(A).",
+      "source_url": "https://www.law.cornell.edu/regulations/colorado/10-CCR-2506-1-4.208"
+    }
+  ]
+}

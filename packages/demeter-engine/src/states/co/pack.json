@@ -1,0 +1,59 @@
+{
+  "code": "CO",
+  "program": "SNAP — no distinctive local nickname; CDHS calls it \"Food Assistance\" (see PROVENANCE.md)",
+  "agency": "Colorado Department of Human Services (CDHS), Division of Food and Energy Assistance",
+  "admin_model": "county",
+  "admin_note": "Colorado is STATE-SUPERVISED, COUNTY-ADMINISTERED: CDHS's own description states Colorado \"operates as a state supervised, county administered human services system,\" and each of Colorado's 64 counties' human services department is directly responsible for determining eligibility and authorizing SNAP benefits (SNAP Dispute Resolution Conferences happen at the county level; only Fair Hearings escalate to a state SNAP Hearings Unit). This matches this roster's Virginia/North Carolina independently-governed-county archetype, not Georgia/Indiana/Tennessee/Missouri/Maryland's state-agency-with-local-offices archetype. Confirm current operative practice (processing times, local outreach materials, exact office procedures) with the applicant's own county human services department, the same caution this roster already carries for CA/NY/MN/WI/OH/NC/NJ/VA/GA/IN/TN/MO/MD.",
+  "system": "Colorado's eligibility technicians use the Colorado Benefits Management System (CBMS); applicants apply online through the Colorado PEAK portal, by the MyCOBenefits mobile app, in person, by mail, or by fax at a county human services office. Colorado Works is a SEPARATE, distinctly-named program (Colorado's TANF cash-assistance program) — not another name for SNAP.",
+  "portal": {
+    "name": "Colorado PEAK",
+    "url": "https://peak.colorado.gov/"
+  },
+  "update_channels": [
+    {
+      "name": "Code of Colorado Regulations, 10 CCR 2506-1, Rule Manual Volume 4, SNAP — Colorado's SNAP policy IS its formally promulgated administrative rule text, published section-by-section (no separate narrative manual)",
+      "url": "https://www.law.cornell.edu/regulations/colorado/department-2500/division-2506/10-CCR-2506-1"
+    },
+    {
+      "name": "Colorado Department of Human Services — Supplemental Nutrition Assistance Program (SNAP)",
+      "url": "https://cdhs.colorado.gov/snap"
+    },
+    {
+      "name": "Colorado Department of Human Services — Able-Bodied Adults Without Dependents (ABAWDs) FAQ",
+      "url": "https://cdhs.colorado.gov/snap/abawd"
+    },
+    {
+      "name": "Colorado Department of Human Services — SNAP Healthy Choice Waiver (status page)",
+      "url": "https://cdhs.colorado.gov/snap-healthy-choice-waiver"
+    },
+    {
+      "name": "Colorado Revised Statutes, Title 26, Article 2, Part 3 (Food Stamps)",
+      "url": "https://codes.findlaw.com/co/title-26-human-services-code/co-rev-st-sect-26-2-305/"
+    },
+    {
+      "name": "USDA FNS ABAWD Time Limit Waivers FY 2025-2029 (state request/response index)",
+      "url": "https://www.fns.usda.gov/snap/waivers/timelimit/2025-2029"
+    }
+  ],
+  "verification": {
+    "verified_on": "2026-08-11",
+    "method": "Direct curl fetch (browser User-Agent) of Colorado's Code of Colorado Regulations, 10 CCR 2506-1 (Rule Manual Volume 4, SNAP) — the full ~1.9MB PDF via coloradosos.gov (converted with pdftotext -layout, 226 pages of quarterly-effective-date text at the version pinned November 30, 2022), and, because that cached PDF proved outdated, the CURRENT per-section text mirrored by Cornell Law's Legal Information Institute (law.cornell.edu/regulations/colorado/...), every fetch a clean HTTP 200: Sections 4.000 (Definitions), 4.206 (Categories of Eligibility — BCE/ECE/SE and the drug-felony categorical-eligibility carve-out), 4.207 (Newly-Certified and Ongoing Households — allotment tables), 4.208 (Certification Periods), 4.208.1, 4.311 (ABAWD Work Requirements, marked \"[Effective 1/4/2025]\" but still reciting the pre-OBBBA 18-54 age range), 4.402 (Household Income Eligibility), 4.407 (Deductions and Exclusions from Income, marked \"[Effective 1/4/2025]\"), 4.408 (Resource Eligibility Standards), 4.409 (Countable Resources), 4.410 (Exempt Resources — all vehicles excluded). Also fetched directly: CDHS's current SNAP page (cdhs.colorado.gov/snap), CDHS's current ABAWD FAQ page (cdhs.colorado.gov/snap/abawd), CDHS's current SNAP Healthy Choice Waiver status page (cdhs.colorado.gov/snap-healthy-choice-waiver), Colorado's own statute text via FindLaw's mirror of C.R.S. § 26-2-305, SB25-169 (Restaurant Meals Program) bill status via leg.colorado.gov, and abawdmap.us's Colorado-specific waiver-status entry. WebFetch (small-model summarization) was used for several HTML pages and returned two apparent date/detail errors this pack did NOT rely on without independent verification — see PROVENANCE.md Finding 0.",
+    "gates": "Colorado's own primary sources revealed the most extensive, most CLEARLY EXPLAINED staleness pattern this roster has documented: Colorado folds its entire operational SNAP policy directly into 10 CCR 2506-1, a FORMALLY PROMULGATED administrative regulation subject to Colorado's quarterly rulemaking cycle — unlike every other state in this roster, which maintains a separate, faster-to-revise narrative \"manual\" alongside its statute. This pack found NO separate Colorado manual; the CCR IS the manual. The likely consequence: as of this pack's fetch date, EVERY dollar figure in 10 CCR 2506-1 (maximum/minimum monthly allotments, the Standard Deduction, the Excess Shelter Deduction cap, the Homeless Shelter Deduction, and all four Standard Utility Allowances) is still labeled \"Effective October 1, 2024\" — the FFY2025 COLA cycle, one full federal fiscal year behind the current FFY2026 cycle (effective October 1, 2025) that this roster's other packs (MD, MO) independently confirmed via their own states' faster-moving transmittals. Only the 200% FPL income-limit table and the $3,000/$4,500 resource limits happen to be numerically identical between FFY2025 and FFY2026 nationally, so those two figures are confirmed CURRENT despite the CCR's own stale label. Separately and more strikingly, 10 CCR 2506-1-4.311 (ABAWD Work Requirements), despite its own header reading \"[Effective 1/4/2025],\" still defines an ABAWD as aged 18 through 54 and lists now-federally-REMOVED exemptions (homelessness, veteran status, aged-out-of-foster-care-by-24) — a genuine, disclosed internal contradiction against CDHS's own current, dated, OBBBA-updated ABAWD FAQ page and February 2026 training desk aid, both of which state the current federal 18-64 range. CDHS's own main /snap page compounds this: it states the ABAWD age range as \"18 and 56\" in one paragraph and \"18 to 64\" in another, on the SAME page, alongside a leftover stale 2023 Fiscal Responsibility Act notice — a genuine, disclosed, THREE-WAY internal contradiction on a single Colorado government page. This pack treats CDHS's dedicated ABAWD FAQ page and February 2026 desk aid as authoritative for the ABAWD age range (18-64) because they are the most specific, most recently dated, and most directly OBBBA-responsive sources found. Separately, Colorado's own drug-felony rule is narrower than this pack expected from secondary \"modified ban\" characterizations — see PROVENANCE.md Finding 2 — and Colorado's Restaurant Meals Program and Healthy Choice Waiver are both live, actively-changing situations disclosed in freshness.json rather than stated as settled fact.",
+    "sources": [
+      "10 CCR 2506-1-4.206 (Categories of Eligibility) — fetched directly via law.cornell.edu, current, no access barrier",
+      "10 CCR 2506-1-4.207 (Newly-Certified and Ongoing Households; Benefit Allotment) — fetched directly via law.cornell.edu; allotment table stale (FFY2025 figures)",
+      "10 CCR 2506-1-4.208 and 4.208.1 (Certification Periods) — fetched directly via law.cornell.edu",
+      "10 CCR 2506-1-4.311 (ABAWD Work Requirements) — fetched directly via law.cornell.edu; age range and exemptions stale (pre-OBBBA)",
+      "10 CCR 2506-1-4.402 (Household Income Eligibility) — fetched directly via law.cornell.edu",
+      "10 CCR 2506-1-4.407 (Deductions and Exclusions from Income) — fetched directly via law.cornell.edu; dollar figures stale (FFY2025)",
+      "10 CCR 2506-1-4.408, 4.409, 4.410 (Resource Eligibility Standards, Countable Resources, Exempt Resources) — fetched directly via law.cornell.edu",
+      "Colorado Department of Human Services, Supplemental Nutrition Assistance Program (SNAP) page (cdhs.colorado.gov/snap) — fetched directly 2026-08-11; contains internally-contradictory ABAWD age statements and a stale max-allotment table with its own accurate \"last updated Oct. 1, 2024\" disclosure",
+      "Colorado Department of Human Services, Able-Bodied Adults Without Dependents FAQ (cdhs.colorado.gov/snap/abawd) — fetched directly 2026-08-11, current, states 18-64 age range",
+      "Colorado Department of Human Services, SNAP Healthy Choice Waiver status page (cdhs.colorado.gov/snap-healthy-choice-waiver) — fetched directly 2026-08-11, discontinuation notice",
+      "Colorado Revised Statutes § 26-2-305 (Food stamp fraud; drug-related felony disqualification) — via FindLaw mirror, current",
+      "SB25-169 (Restaurant Meals Program), Colorado General Assembly bill-status page (leg.colorado.gov/bills/sb25-169) — signed into law May 13, 2025; USDA application deadline of January 1, 2026 has passed as of this pack's fetch date",
+      "abawdmap.us, Colorado state entry, fetched 2026-08-11 — \"No waiver — rule applies\"",
+      "USDA FNS/FNA, Time Limit Waivers FY 2025-2029 index page — no Colorado entry found"
+    ]
+  }
+}
