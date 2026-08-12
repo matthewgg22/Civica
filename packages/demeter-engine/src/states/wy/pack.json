@@ -1,0 +1,87 @@
+{
+  "code": "WY",
+  "program": "SNAP",
+  "agency": "Wyoming Department of Family Services (DFS)",
+  "admin_model": "state",
+  "admin_note": "Wyoming is a STATE-ADMINISTERED SNAP program — DFS administers directly through Field Offices, with no county-level policy variation, structurally similar to this roster's Delaware, Nebraska, Connecticut, North Carolina, Ohio, New Jersey, Tennessee, Indiana, Missouri, Maryland, Colorado, South Carolina, Alabama, Louisiana, Kentucky, Oklahoma, Utah, Iowa, Arkansas, Mississippi, Kansas, and New Mexico packs. GENUINE STRUCTURAL FLAGSHIP FINDING: Wyoming is one of a minority of only 9 states nationally that does NOT run Broad-Based Categorical Eligibility (BBCE) — confirmed independently by both USDA FNS's own 16th-edition SNAP State Options Report (June 2024, Wyoming listed under 'No BBCE (9)') and Wyoming's own DFS SNAP and POWER Policy Manual Section 502, which defines categorical eligibility narrowly as SSI/POWER/Tribal-TANF recipiency only, with no 200% FPL gross-income gate anywhere in the manual or in DFS's own published income-limit table. SECOND FLAGSHIP FINDING, a primary-source CORRECTION of a stale, template-style secondary-source claim this pack found repeated across several low-quality aggregator sites describing Wyoming as having a 'modified' drug-felony SNAP ban conditioned on sentence/treatment compliance: this pack fetched USDA FNS's own 16th-edition State Options Report directly and found Wyoming listed under 'No disqualification (28)' for the Drug Felony Disqualifications option, independently corroborated by the complete absence of any drug-felony-conviction disqualification section anywhere in DFS's own SNAP and POWER Policy Manual Section 600 series (which runs 601-610 covering age through fleeing-felon/probation-violator status, with no drug-felony section at all). Wyoming has FULLY opted out of the federal drug-felony SNAP ban, not modified it. THIRD FINDING (tribal land / FDPIR, specifically researched per this pack's scope): Wyoming's DFS manual explicitly lists 'is a member of an Indian tribe' as one of only seven categorical exemptions from the ABAWD (able-bodied adult without dependents) work-requirement time limit (Section 708(B)(7)) — relevant given the significant population of the Wind River Reservation (shared by the Eastern Shoshone and Northern Arapaho tribes) within Wyoming. Separately, DFS's manual (Section 402) confirms SNAP and the Food Distribution Program on Indian Reservations (FDPIR) are mutually exclusive: a household must choose one or the other, and 'under no circumstances shall any household participate simultaneously' in both. DFS's manual also directs enrolled Tribal members resident in Fremont or Hot Springs County (the two counties overlapping Wind River) applying for Tribal TANF to have that application processed at the appropriate Tribal TANF office. This pack found no DFS-published SNAP-specific administrative carve-out beyond these three points and discloses that scope explicitly rather than assuming either a broader or narrower tribal-administration structure exists.",
+  "system": "Wyoming DFS processes SNAP centrally through DFS Field Offices (no county offices with independent policy authority); Wyoming uses a PAPER application only (DFS 100 / DFS 100S Spanish) submitted in person, by mail, fax, or email to snappowerservice@wyo.gov — this pack found no online self-service SNAP application portal for Wyoming, a genuine structural contrast with most other states in this roster. Wyoming's standard SNAP certification period is capped at 12 months for ALL households, including all-elderly/disabled households with no earned income — Wyoming does NOT extend to a 24-month certification period the way several other states in this roster do (per DFS Manual Section 1201(J), effective January 1, 2016). Wyoming's own DFS manual is unusually current: its ABAWD section (708) already reflects the post-OBBBA age band (18-64 as of the OBBBA's July 4, 2025 effective date) and its citizenship section (606) already reflects the OBBBA noncitizen-eligibility restructuring, both with direct links to FNS implementation guidance embedded in the manual text itself — a notable contrast with this roster's Delaware pack, whose manual was found lagging DHSS's live consumer pages in multiple places.",
+  "portal": {
+    "name": "Wyoming DFS SNAP (paper application only — no online portal found)",
+    "url": "https://dfs.wyo.gov/assistance-programs/food-assistance/supplemental-nutrition-assistance-program-snap/"
+  },
+  "update_channels": [
+    {
+      "name": "Wyoming DFS — SNAP consumer page (how to apply, paper application, contact routing) — direct fetch, clean HTTP 200",
+      "url": "https://dfs.wyo.gov/assistance-programs/food-assistance/supplemental-nutrition-assistance-program-snap/"
+    },
+    {
+      "name": "Wyoming DFS — SNAP: Do I Qualify? consumer page (resource limits, deduction list) — direct fetch, clean HTTP 200; FLAGGED as carrying stale standard-deduction and shelter-cap dollar figures relative to DFS's own current Table I page, see freshness.json",
+      "url": "https://dfs.wyo.gov/assistance-programs/food-assistance/supplemental-nutrition-assistance-program-snap/snap-do-i-qualify/"
+    },
+    {
+      "name": "Wyoming DFS — Table I: SNAP Income Limits (current FFY2026 income/deduction/allotment table, published 10/1/2025-9/30/2026, plus historical FFY2025 and prior tables on the same page) — direct fetch, clean HTTP 200",
+      "url": "https://dfs.wyo.gov/about/policy-manuals/snap-and-power-policy-manual/table-i-snap-income-limits/"
+    },
+    {
+      "name": "Wyoming DFS SNAP and POWER Policy Manual, Section 500 (500 Extended Menu — Categorical Eligibility, Section 502) — direct fetch, clean HTTP 200",
+      "url": "https://dfs.wyo.gov/accordions/snap-and-power-policy-manual-500-extended-menu/"
+    },
+    {
+      "name": "Wyoming DFS SNAP and POWER Policy Manual, Section 600 (600 Extended Menu — Citizenship/Immigrant Status Section 606, Fleeing Felon/Probation Violator Section 610; no drug-felony disqualification section exists in this range) — direct fetch, clean HTTP 200",
+      "url": "https://dfs.wyo.gov/accordions/snap-and-power-policy-manual-600-extended-menu/"
+    },
+    {
+      "name": "Wyoming DFS SNAP and POWER Policy Manual, Section 700 (700 Extended Menu — Work Registration Section 702, ABAWD Requirements Section 708, current post-OBBBA age band and Indian-tribal-member exemption) — direct fetch, clean HTTP 200",
+      "url": "https://dfs.wyo.gov/accordions/snap-and-power-policy-manual-700-extended-menu/"
+    },
+    {
+      "name": "Wyoming DFS SNAP and POWER Policy Manual, Section 800 (800 Extended Menu — Asset Limits Section 800, Vehicle exemption Section 8xx) — direct fetch, clean HTTP 200",
+      "url": "https://dfs.wyo.gov/accordions/snap-and-power-policy-manual-800-extended-menu/"
+    },
+    {
+      "name": "Wyoming DFS SNAP and POWER Policy Manual, Section 300 (300 Extended Menu — Application/Intake Section 401, Client Rights Section 402 including the FDPIR/SNAP mutual-exclusion clause, ABAWD-related simplified-reporting notes) — direct fetch, clean HTTP 200",
+      "url": "https://dfs.wyo.gov/accordions/snap-and-power-policy-manual-300-extended-menu/"
+    },
+    {
+      "name": "Wyoming DFS SNAP and POWER Policy Manual, Section 1100 (1100 Extended Menu — Income eligibility tests, categorical-eligibility income-test exemption) — direct fetch, clean HTTP 200",
+      "url": "https://dfs.wyo.gov/accordions/snap-and-power-policy-manual-1100-extended-menu/"
+    },
+    {
+      "name": "Wyoming DFS SNAP and POWER Policy Manual, Section 1200 (1200 Extended Menu — Certification Period Section 1201, 12-month cap for all households)",
+      "url": "https://dfs.wyo.gov/accordions/snap-and-power-policy-manual-1200-extended-menu/"
+    },
+    {
+      "name": "USDA FNS/FNA, SNAP State Options Report, 16th Edition (June 2024) — direct fetch of the full 84-page PDF, clean HTTP 200, converted with pdftotext -layout; Drug Felony Disqualifications (p.17, Wyoming under 'No disqualification'), Broad-Based Categorical Eligibility (p.24, Wyoming under 'No BBCE'), Standard Medical Deduction Project (p.27, Wyoming under 'SMD')",
+      "url": "https://fns-prod.azureedge.us/sites/default/files/resource-files/snap-16th-state-options-report-june24.pdf"
+    },
+    {
+      "name": "USDA FNA — Wyoming SNAP Food Restriction Waiver Demonstration Project approval letter (dated 3/4/2026, requested 1/7/2026, approved for 2 years effective 2/1/2027, excludes 'sweetened, carbonated beverages' statewide from SNAP-eligible items) — direct fetch via a URL discovered through WebSearch (fna-bwbufwdzbabpezgc.z01.azurefd.us CDN), clean HTTP 200",
+      "url": "https://fna-bwbufwdzbabpezgc.z01.azurefd.us/sites/default/files/resource-files/wy-snapfoodrestrictionwaiver-approval.pdf"
+    },
+    {
+      "name": "USDA FNA — SNAP Time Limit (ABAWD) Waivers FY2025-2029 index (agency now rebranded from Food and Nutrition Service/FNS to Food and Nutrition Administration/FNA; old fns.usda.gov URLs 301-redirect to fna.usda.gov) — Wyoming does not appear anywhere on the state-response list, confirming no active or historical FY2025/FY2026 area waiver request on file",
+      "url": "https://www.fna.usda.gov/snap/waivers/timelimit/2025-2029"
+    }
+  ],
+  "verification": {
+    "verified_on": "2026-08-12",
+    "method": "dfs.wyo.gov returned clean HTTP 200 to every direct curl attempt with a standard browser User-Agent, including all nine SNAP-and-POWER-Policy-Manual accordion sub-pages this pack fetched (100, 300, 500, 600, 700, 800, 900, 1100, 1200) — no WAF/bot-detection barrier of the kind this roster's New Hampshire and Maine packs encountered against other state sites. Two accordion URL guesses (200, 400, 1000) returned clean HTTP 404s, meaning those section-number ranges are folded into adjacent accordion pages rather than genuinely missing content; this pack did not force-guess further numbering and instead confirmed full section-500 (Eligibility Factors index, listing every SNAP factor by section number) coverage as a cross-check that no numbered section was silently skipped. The one genuine access wrinkle this pack hit was fns.usda.gov's ABAWD waiver index and the SNAP State Options Report host both redirecting (HTTP 301) to a rebranded fna.usda.gov domain — reflecting a real USDA Food and Nutrition Service-to-Food and Nutrition Administration (FNS-to-FNA) agency rename this pack had not previously encountered in this roster; both redirects resolved cleanly to HTTP 200 on the new host with no content loss.",
+    "gates": "No WAF or bot-detection barrier was encountered against dfs.wyo.gov with a standard browser User-Agent; all fetches, including nine separate SNAP-and-POWER-Policy-Manual accordion sub-pages, returned clean HTTP 200. fns.usda.gov (SNAP State Options Report PDF host, and the ABAWD Time Limit Waivers index) returned clean HTTP 301 redirects to a new fna.usda.gov / fns-prod.azureedge.us host rather than any error or block — resolved by following the redirect directly, with the destination returning clean HTTP 200 both times. This pack found no PDF that appeared stale-mirrored or that needed a Wayback Machine cross-check: dfs.wyo.gov's own Table I page prominently self-dates its current table ('October 1, 2025 - September 30, 2026') immediately above the historical FFY2025 table on the same page, giving this pack an unusually easy in-page staleness check that most other states' packs in this roster did not have available.",
+    "sources": [
+      "Wyoming DFS, SNAP consumer page — direct fetch, clean HTTP 200; paper-application-only how-to-apply process, DFS 100/100S forms, contact routing by need",
+      "Wyoming DFS, SNAP: Do I Qualify? consumer page — direct fetch, clean HTTP 200; resource-limit statement ($4,500 elderly/disabled, $3,000 other), deduction list — FLAGGED as carrying standard-deduction figures ($177/$184/$215/$246 by AU-size tier) and a $569 shelter cap that are both stale relative to DFS's own current Table I page ($209/$223/$261/$299 and a $744 cap for the same FFY2026 cycle), see freshness.json",
+      "Wyoming DFS, Table I: SNAP Income Limits page — direct fetch, clean HTTP 200; current FFY2026 (10/1/2025-9/30/2026) income-eligibility table by household size 1-10+ (165% FPL elderly/disabled-separate gross, 130% FPL standard gross, 100% FPL net, Thrifty Food Plan maximum allotment), standard deduction ($209/$223/$261/$299), standard medical deduction ($175, for expenses over $35), maximum excess shelter cost for nonelderly/nondisabled ($744), utilities-only standard ($340), Standard Utility Allowance ($510), telephone-only allowance ($57), Homeless Shelter Deduction ($198.99, matching the current national FY2026 federal maximum exactly), 20% earned income deduction, categorically-eligible minimum benefit ($24 for AU size 1-2), mileage reimbursement rate ($0.725/mile, implemented 2/12/2026); also carries the full FFY2025 prior-cycle table on the same page for direct in-page comparison",
+      "Wyoming DFS SNAP and POWER Policy Manual, Section 500 (Categorical Eligibility) — direct fetch, clean HTTP 200; Section 502 confirms categorical eligibility is narrowly SSI/POWER/Tribal-TANF-recipiency-based only, with NO 200% FPL gross-income BBCE gate anywhere in this section or the income-limits table",
+      "Wyoming DFS SNAP and POWER Policy Manual, Section 600 (Citizenship/Fleeing Felon) — direct fetch, clean HTTP 200; Section 606 (current post-OBBBA noncitizen-eligibility table, with direct links to FNS implementation memo and Q&A embedded in the manual text), Section 610 (Fleeing Felons/Probation or Parole Violators); confirmed the 601-610 section range contains NO drug-felony-conviction disqualification section",
+      "Wyoming DFS SNAP and POWER Policy Manual, Section 700 (Work Requirements/ABAWD) — direct fetch, clean HTTP 200; Section 702 (Exemptions from Work Registration, 12 categories), Section 708 (ABAWD Requirements: current post-OBBBA age band 18-64 as of July 4, 2025, dependent-under-14 threshold, 36-month fixed period 10/1/2024-9/30/2027, seven exemption categories including 'is a member of an Indian tribe')",
+      "Wyoming DFS SNAP and POWER Policy Manual, Section 800 (Asset Limits) — direct fetch, clean HTTP 200; $3,000 (under 60, no disabled member) / $4,500 (60+ or disabled member) resource limit table matching the current federal FY2026 floor exactly (unlike this roster's Delaware pack, whose DSSM text was found below the federal floor); vehicle exemption confirmed as ALL licensed and unlicensed vehicles used for transportation exempt from any fair-market-value or equity test",
+      "Wyoming DFS SNAP and POWER Policy Manual, Section 300 (Application/Intake, Client Rights) — direct fetch, clean HTTP 200; Section 401 (application processing timelines, Tribal TANF routing for Fremont/Hot Springs County residents), Section 402 (FDPIR/SNAP mutual-exclusion clause verbatim: 'Under no circumstances shall any household participate simultaneously in the SNAP and the Food Distribution Program')",
+      "Wyoming DFS SNAP and POWER Policy Manual, Section 1100 (Income Tests) — direct fetch, clean HTTP 200; confirms categorically eligible assistance units are exempt from gross AND net income tests",
+      "Wyoming DFS SNAP and POWER Policy Manual, Section 1200 (Certification Periods) — direct fetch, clean HTTP 200; Section 1201(D)(1) caps ALL certification periods at 12 months (calendar-month basis), Section 1201(J) confirms NO extended 24-month period even for all-elderly/disabled no-earned-income households, effective January 1, 2016",
+      "USDA FNS/FNA, SNAP State Options Report, 16th Edition (June 2024) — direct fetch of the full 84-page PDF, clean HTTP 200 after a 301 redirect, converted with pdftotext -layout; Wyoming confirmed under 'No disqualification (28)' for Drug Felony Disqualifications (p.17), 'No BBCE (9)' for Broad-Based Categorical Eligibility (p.24), and 'SMD (25)' for the Standard Medical Deduction Project (p.27)",
+      "USDA FNA, Wyoming SNAP Food Restriction Waiver Demonstration Project approval letter — direct fetch, clean HTTP 200; confirms a 2-year demonstration project excluding 'sweetened, carbonated beverages' from SNAP-purchasable food statewide, approved 3/4/2026, effective 2/1/2027, no household opt-out permitted",
+      "USDA FNA, SNAP Time Limit (ABAWD) Waivers FY2025-2029 index — direct fetch, clean HTTP 200 after a 301 redirect from the legacy fns.usda.gov URL; Wyoming does not appear on the state-response list at all for either FY2025 or FY2026, corroborating DFS's own manual silence on any area-specific ABAWD waiver",
+      "WebSearch corroboration (secondary, not independently fetched, and in the drug-felony case actively CONTRADICTED by this pack's primary-source fetch) — a 'modified drug-felony ban... compliance with sentence... treatment requirements' claim this pack found repeated near-verbatim across several low-quality SNAP-aggregator sites, traced to no identifiable Wyoming-specific primary source and directly refuted by both the State Options Report and DFS's own manual; Restaurant Meals Program absence (cross-checked against DFS's silence on RMP anywhere in the fetched manual sections and consumer pages)"
+    ]
+  }
+}
