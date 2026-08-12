@@ -1,0 +1,50 @@
+{
+  "_provenance": {
+    "note": "Utah dated facts. Because Utah has NO existing packages/snap-rules StatePolicy entry, there is no engine constant to cross-check against — every entry below is either a routine COLA-cycle reminder, a disclosed research gap, or a warning about a confirmed time-sensitive item this pack found.",
+    "extracted": "2026-08-12"
+  },
+  "entries": [
+    {
+      "key": "ut-soft-drink-demonstration-two-year-window",
+      "kind": "expires",
+      "date": "2028-01-01",
+      "warning": "Utah's soft-drink SNAP purchase restriction (H.B. 403, 2025 General Session; FNA demonstration approval effective 1/1/2026) is explicitly APPROVED FOR TWO YEARS — it is a time-limited demonstration project, not a permanent rule change, and is due to expire or require FNA renewal around January 1, 2028. Before restating this restriction as settled Utah policy after that date, re-check USDA FNA's Utah SNAP Food Restriction Waiver page for a renewal, extension, or expiration."
+    },
+    {
+      "key": "ut-sua-dollar-figure-not-located",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "This pack could NOT locate Utah's current FFY2026 Standard Utility Allowance (SUA) dollar figure on any DWS-hosted public page, despite Utah Admin. Code R986-900-902(1)(d) confirming DWS uses a mandatory Simplified Standard Utility Allowance with three utility standards 'updated annually' and 'available upon request.' A stale $376 figure (effective 10/1/2021) appears in older secondary sources this pack found and explicitly did NOT reuse. Before answering a Utah-specific SUA-dollar-amount question with full confidence, contact DWS directly or attempt a fresh, more targeted search of the eligibility manual's Tables/Appendices section for a current SUA table."
+    },
+    {
+      "key": "ut-drug-felony-treatment-condition-scope-unclear",
+      "kind": "expires",
+      "date": "2026-12-01",
+      "warning": "Utah Code § 35A-3-311(2)(c)'s substance-abuse-treatment condition is textually scoped to 'cash assistance under this part,' while subsection (2)(b) extends the opt-out itself to both 'cash assistance and SNAP benefits.' This pack reads (2)(c) as NOT imposing the treatment condition on SNAP eligibility specifically, but the statute's drafting does not resolve this with total clarity. Before telling an applicant with a drug felony conviction that SNAP eligibility carries no treatment condition in Utah, confirm this reading directly with DWS."
+    },
+    {
+      "key": "ut-certification-period-range-not-narrowed",
+      "kind": "expires",
+      "date": "2026-11-01",
+      "warning": "DWS's own multi-program Reviews page states a general '6 to 12 months' case-review cycle without specifying where a given SNAP household falls in that range (beyond the separately-confirmed 3-year ESAP track for elderly/disabled households). This pack could not locate a SNAP-specific eligibility-manual chapter stating a single default figure (e.g., whether most working-age non-ESAP households are reviewed at 6 months, 12 months, or something in between) and did not guess. Before stating a Utah SNAP household's specific certification-period length with full confidence, verify with DWS or the household's own approval notice."
+    },
+    {
+      "key": "ut-medical-deduction-mechanism-unverified",
+      "kind": "expires",
+      "date": "2026-11-01",
+      "warning": "This pack found only secondary-source confirmation that Utah's elderly/disabled medical deduction uses the standard $35/month threshold — it could NOT locate a Utah-specific primary source confirming whether Utah offers a flat standard-medical-deduction (SMD) dollar shortcut (like this roster's Kentucky $137 or Alabama $185) or requires actual verified expense minus $35 with no shortcut (like this roster's Oklahoma, Maryland, and Indiana packs). This pack does NOT assert either mechanism for Utah and treats this as an open item rather than guessing."
+    },
+    {
+      "key": "ut-abawd-waiver-recheck",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "This pack found no active statewide or county-level Utah ABAWD waiver by directly scraping USDA FNA's Time Limit Waivers FY2025-2029 state-response index (Utah absent from the state list) as of 2026-08-12. Unlike this roster's Oklahoma pack (statutorily barred from ever requesting one), Utah's absence reflects only a current-quarter fact, not a permanent legal bar — Utah's rural/frontier counties could newly qualify for a waiver if local unemployment conditions change and DWS chooses to request one. Re-check FNA's ABAWD waiver page before stating Utah's waiver status with full confidence in a future quarter."
+    },
+    {
+      "key": "ut-ffy2027-cola-reminder",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "This pack's confirmed dollar figures (Table 2 income/allotment figures effective 10/1/2025; resource limits $3,000/$4,500; lottery/gambling disqualification threshold $4,500) are drawn from DWS's own FFY2026 cycle (October 1, 2025 - September 30, 2026). The FFY2027 COLA cycle begins October 1, 2026 — under two months from this pack's fetch date. Check DWS's eligibility-manual Table 2 (jobs.utah.gov/infosource/eligibilitymanual/...) for an updated version after that date before restating any Utah-specific dollar figure with full confidence."
+    }
+  ]
+}

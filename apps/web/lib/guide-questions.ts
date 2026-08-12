@@ -172,6 +172,14 @@ export const QUESTIONS: Record<string, string[]> = {
     "Does Connecticut have a Restaurant Meals Program for SNAP?",
     "Does Connecticut's categorical eligibility raise my SNAP income limit above the normal amount?",
   ],
+  UT: [
+    "What is the income limit for SNAP in Utah?",
+    "Can I buy soda with my SNAP benefits in Utah?",
+    "Does my car count against me for SNAP in Utah?",
+    "I have a drug felony conviction — can I still get SNAP in Utah?",
+    "Is the SNAP work-requirement time limit currently waived anywhere in Utah?",
+    "What is my EBT card called in Utah?",
+  ],
   IA: [
     "What is the income limit for SNAP in Iowa?",
     "I have a drug felony conviction — can I still get SNAP in Iowa?",

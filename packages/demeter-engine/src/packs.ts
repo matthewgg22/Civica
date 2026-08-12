@@ -36,6 +36,7 @@ import laPack from "./states/la/pack.json";
 import kyPack from "./states/ky/pack.json";
 import okPack from "./states/ok/pack.json";
 import ctPack from "./states/ct/pack.json";
+import utPack from "./states/ut/pack.json";
 import iaPack from "./states/ia/pack.json";
 import arPack from "./states/ar/pack.json";
 
@@ -107,6 +108,7 @@ export const VERIFIED_STATES: PackMeta[] = [
   kyPack,
   okPack,
   ctPack,
+  utPack,
   iaPack,
   arPack,
 ].map(meta);

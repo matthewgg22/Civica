@@ -1,0 +1,233 @@
+{
+  "_provenance": {
+    "note": "Utah SNAP curated supplements. Utah has NO existing packages/snap-rules StatePolicy entry and NO oracle-fixture coverage — a genuine blank slate, matching this roster's prior corpus-only builds (Oklahoma, Kentucky, Louisiana, Alabama, and others). This pack is CORPUS-ONLY and does not touch packages/snap-rules or the oracle fixture. Utah is part of this roster's new batch tier — smaller-population states built in parallel; this pack was drafted expecting a merge conflict on the shared registration files against concurrently-built Connecticut, Iowa, and Arkansas packs. Drafted from direct curl fetches of DWS's own numbered-chapter eligibility policy manual (jobs.utah.gov/infosource/eligibilitymanual/...), DWS's own consumer-facing SNAP pages, the Utah Legislature's own current compiled Utah Code § 35A-3-311, Utah Administrative Code R986-900-901/902 via Cornell LII's mirror, and USDA FNA's own waiver/RMP pages.",
+    "extracted": "2026-08-12",
+    "source_fact_check": "direct curl fetch (browser UA) of DWS's own eligibility-manual Table 2 (effective 10/1/2025, FFY2026 income/allotment figures), Policy 342 (effective 5/1/2026, ABAWD work requirements), and Policy 342-1A (effective 2/1/2026, federal exemptions); direct curl fetch of DWS's own consumer pages (deductions.html, requirements.html, index.html, ebt/index.html, reviews/index.html); direct curl fetch of the Utah Legislature's own current Utah Code § 35A-3-311 (effective 5/6/2026); Cornell LII mirror of Utah Admin. Code R986-900-901/902; direct curl fetch of USDA FNA's Utah SNAP Food Restriction Waiver approval letter and DWS's own December 2025 press release on the same soft-drink demonstration project; direct curl fetch of USDA FNA's current Restaurant Meals Program state list and ABAWD Time Limit Waivers FY2025-2029 state-response index (Utah absent from both); WebSearch cross-checks used to confirm or reject several widely-repeated secondary-source claims about Utah's BBCE and vehicle-resource-treatment status; post-draft adversarial refute pass; findings and gaps recorded in PROVENANCE.md",
+    "access_note": "No primary-source host 403'd or otherwise blocked direct curl access during this pack's research — every DWS, Utah Legislature, Cornell LII, and USDA FNA URL cited returned a clean HTTP 200. This pack's single largest research gap is a genuine DISCOVERABILITY gap, not an access barrier: Utah's current Standard Utility Allowance (SUA) dollar figure could not be located on any DWS-hosted public page, despite Utah's own regulation (R986-900-902(1)(d)) confirming the figures exist, are updated annually, and are simply not published in a location this pack could find — 'available upon request' per the regulation's own text. See PROVENANCE.md Finding 6 and freshness.json."
+  },
+  "supplements": [
+    {
+      "key": "program-identity",
+      "kind": "supplement",
+      "terms": [
+        "how to apply",
+        "where do i apply",
+        "apply for snap",
+        "mycase",
+        "who runs",
+        "what agency",
+        "administers",
+        "dws",
+        "department of workforce services",
+        "ebt card",
+        "food stamps",
+        "horizon card",
+        "utah horizon"
+      ],
+      "citation": "DWS SNAP consumer page (jobs.utah.gov/customereducation/services/foodstamps/index.html); DWS EBT Card (Horizon Card) Basic Instructions (jobs.utah.gov/customereducation/services/ebt/index.html)",
+      "heading": "Utah calls its program plainly \"SNAP\" — no rebrand-lag pattern here, but a genuinely distinctive, confirmed EBT card name: the Utah Horizon Card",
+      "text": "Utah has no distinctive local program brand like CalFresh (CA) or Basic Food (WA) — DWS's own consumer pages call the program plainly \"SNAP\" or \"Food Stamps.\" The administering agency, the Utah Department of Workforce Services (DWS), has held this name and structure since a 1997 state government reorganization; this pack found no rebrand-lag pattern in Utah's own current sources, a genuine CONTRAST to this roster's Oklahoma (DHS→OKDHS rebrand lag in statute/regulation text), Kentucky (benefind→kynect), and Louisiana (DCFS→LDH, a full agency transfer) findings. Utah's EBT card DOES carry a distinctive, directly-confirmed name: the \"Utah Horizon Card\" (also called the \"Horizon EBT card\"), verified directly on DWS's own EBT Card Basic Instructions page — \"Your Utah Horizon EBT card is how you get your food assistance (SNAP) or cash benefits.\" Applicants apply through myCase (jobs.utah.gov/mycase), in person at a DWS Employment Center, or by requesting a mailed application. Utah is state-administered — not county-administered like CA/NY/MN/WI/VA.",
+      "source_url": "https://jobs.utah.gov/customereducation/services/ebt/index.html"
+    },
+    {
+      "key": "income-pathways",
+      "kind": "supplement",
+      "terms": [
+        "income limit",
+        "income limits",
+        "gross income limit",
+        "gross income ceiling",
+        "make too much",
+        "over income",
+        "bbce",
+        "broad based categorical eligibility",
+        "broadbased categorical eligibility",
+        "categorical eligibility",
+        "categorically eligible",
+        "expanded categorical eligibility",
+        "200 percent",
+        "200%",
+        "130 percent",
+        "130%",
+        "poverty level",
+        "ssi",
+        "tanf",
+        "fep",
+        "family employment program"
+      ],
+      "citation": "DWS eligibility manual, Table 2 (SNAP Monthly Income Limits and Maximum Assistance Amounts, effective 10/1/2025); Utah Admin. Code R986-900-902 (Options and Waivers) — BBCE is not among the state's adopted options",
+      "heading": "CONFIRMED, not overclaimed: Utah has NOT adopted Broad-Based Categorical Eligibility — the plain federal 130%/100% FPL income tests apply, with no state-raised percentage band",
+      "text": "This pack confirms, via a direct read of Utah's own current sources, a widely-repeated secondary-source claim: Utah is among a small minority of states that has NOT adopted Broad-Based Categorical Eligibility (BBCE). DWS's own eligibility-manual Table 2 (effective October 1, 2025, current FFY2026 figures) publishes the plain federal Gross Monthly Income Limit at 130% of poverty ($1,696/month for a household of 1, $3,483 for a household of 4) and the Net Monthly Income Limit at 100% of poverty ($1,305/1, $2,680/4) — with no third, higher percentage-of-FPL band for a general BBCE-equivalent track, unlike this roster's Oklahoma (removes the income test entirely for its 2-1-1 pathway), Kentucky (130%/200% dual-track), Louisiana (flat 200%), and Alabama (130%/200% dual-track) packs. Utah Admin. Code R986-900-902's own list of federal options the Department has elected does not include a BBCE election. Table 2 ALSO publishes a distinct 165% of poverty column labeled \"Elderly/Disabled,\" but its own heading states it is \"Used only to determine household composition\" (cross-referencing manual sections 230-1 and 254) — a separate-household-determination mechanic structurally similar to this roster's Oklahoma and Kentucky packs' own elderly/disabled separate-household provisions, NOT a general income-limit relaxation for the whole household. Ordinary categorical eligibility still applies for households in which everyone receives Family Employment Program (FEP, Utah's TANF-funded cash-assistance program) or SSI — a plain federal mechanism this pack confirms rather than newly discovers, independent of the BBCE question.",
+      "source_url": "https://jobs.utah.gov/infosource/eligibilitymanual/Tables,_Appendicies,_and_Charts/Tables,_Appendicies,_and_Charts/Table_2_-_SNAP_Monthly_Income_Limits_and_Maximum_Assistance_Amounts.htm"
+    },
+    {
+      "key": "asset-rule",
+      "kind": "supplement",
+      "terms": [
+        "asset limit",
+        "asset test",
+        "resource limit",
+        "resource test",
+        "resources",
+        "savings",
+        "savings limit",
+        "bank account",
+        "vehicle",
+        "car count",
+        "does my car count",
+        "second car",
+        "truck",
+        "lottery",
+        "gambling"
+      ],
+      "citation": "DWS SNAP consumer page (jobs.utah.gov/customereducation/services/foodstamps/deductions.html) — Resource limits: $3,000 standard / $4,500 households with an elderly or disabled member; lottery/gambling disqualification at $4,500+ single-game cash prize; Utah Admin. Code R986-900-902(1)(h) — vehicle allowance uses Utah's TANF vehicle rule in conjunction with 7 CFR 273.8",
+      "heading": "CORRECTING a widely-repeated secondary-source claim: Utah's own DWS page states plainly that a car \"usually\" does NOT count toward the resource limit, despite Utah lacking BBCE",
+      "text": "Utah's current resource limits, confirmed directly on DWS's own consumer page, are $3,000 for a household with no elderly or disabled member and $4,500 for a household that includes one — matching the current national FFY2026 figure this roster's Oklahoma, Kentucky, Louisiana, Alabama, Missouri, Maryland, and Colorado packs have each independently confirmed. Because Utah has NOT adopted BBCE (see income-pathways), this test is NOT waived for the ordinary run of Utah SNAP households the way it effectively is in most other states in this roster — a genuine structural consequence of Utah's non-BBCE status worth stating plainly. HOWEVER, this pack found and CORRECTS a second widely-repeated secondary-source claim that Utah counts vehicle fair-market value against this limit because it lacks BBCE: DWS's own consumer page states plainly, \"For example, your car and any other motorized vehicles you own are usually not counted toward the resource limit,\" and Utah Admin. Code R986-900-902(1)(h) confirms the mechanism — \"The Department has opted to use Utah's TANF vehicle allowance rules in conjunction with the Food Stamp Program vehicle allowance regulations at 7 CFR 273.8, as authorized by Pub. L. No. 106-387 of the Agriculture Appropriations Act 2001.\" Several third-party SNAP-eligibility aggregator sites this pack found during research assert Utah counts vehicle value directly (reasoning from Utah's non-BBCE status alone) — this pack does NOT repeat that inference uncritically, since Utah's own primary source directly contradicts it: BBCE status and vehicle-resource treatment are two independently-elected federal options, and Utah elected the vehicle exclusion separately from (and despite not electing) BBCE. Lottery or gambling winnings carry their own standard: a household becomes immediately ineligible once it wins $4,500 or more (before taxes) from a single game, and must fall back under the ordinary resource limits to regain eligibility — the identical mechanic and dollar figure this roster's Oklahoma pack documents.",
+      "source_url": "https://jobs.utah.gov/customereducation/services/foodstamps/deductions.html"
+    },
+    {
+      "key": "criminal-justice-disqualifications",
+      "kind": "supplement",
+      "terms": [
+        "drug felony",
+        "felony conviction",
+        "criminal record",
+        "drug conviction",
+        "lifetime ban",
+        "fleeing felon",
+        "probation",
+        "parole",
+        "controlled substance",
+        "marijuana",
+        "cannabis"
+      ],
+      "citation": "Utah Code § 35A-3-311(2) (Cash assistance to noncitizen legal residents and drug dependent persons), current version effective 5/6/2026, amended by Chapter 362, 2026 General Session",
+      "heading": "FLAGSHIP FINDING, directly confirmed via primary source: Utah FULLY opted out of the federal drug-felony SNAP ban, with a treatment condition that Utah's own statute text ties specifically to CASH assistance, not SNAP",
+      "text": "21 U.S.C. § 862a(a)(2) sets a federal default: anyone convicted of a state or federal felony for possessing, using, or distributing a controlled substance is permanently ineligible for SNAP unless a state opts out or modifies the ban under § 862a(d)(1). Utah Code § 35A-3-311(2)(a) states plainly: \"The State exercises the opt out provision in Section 115 of the Personal Responsibility and Work Opportunity Reconciliation Act of 1996, Pub. L. No. 104-193.\" Subsection (2)(b), read directly from the Utah Legislature's own current compiled statute text, confirms the consequence: \"the department may provide cash assistance and SNAP benefits to a person who has been convicted of a felony involving a controlled substance, as defined in Section 58-37-101.\" This is a genuine FULL opt-out for SNAP specifically, directly confirmed by primary-source text (not inferred from a secondary aggregator). A precise structural nuance this pack found worth flagging: subsection (2)(c), the treatment-condition provision (\"a drug dependent person... shall (i) receive available treatment for the dependency; and (ii) make progress toward overcoming the dependency\"), is textually scoped to \"cash assistance under this part\" — NOT to \"cash assistance and SNAP benefits\" as subsection (2)(b) is phrased. This pack reads this as meaning the treatment condition applies to Family Employment Program (FEP) cash assistance, not as an added condition on SNAP eligibility itself — though this pack flags this precise scoping question as worth independent confirmation with DWS directly before treating it as fully settled (see freshness.json), since the statute's drafting does not make the distinction with total unambiguity.",
+      "source_url": "https://le.utah.gov/xcode/Title35a/Chapter3/35a-3-S311.html"
+    },
+    {
+      "key": "abawd-work-requirement",
+      "kind": "supplement",
+      "terms": [
+        "abawd",
+        "able bodied adult",
+        "work requirement",
+        "3 month limit",
+        "work registration",
+        "waiver",
+        "waived area",
+        "rural county",
+        "time limit",
+        "salt lake city",
+        "wasatch front",
+        "frontier county"
+      ],
+      "citation": "DWS eligibility manual, Policy 342 (SNAP Work Requirements), effective 5/1/2026 — states the current 18-64 ABAWD age range directly; USDA FNA Time Limit (ABAWD) Waivers FY2025-2029 state-response index — Utah absent; Utah Admin. Code R986-900-902(1)(b) — Department does not offer an ABAWD workfare option",
+      "heading": "GENUINE POSITIVE CONTRAST with several other states in this roster: Utah's OWN current policy manual ALREADY reflects the correct post-OBBBA 18-64 ABAWD age range — no statewide or county-level waiver is active, and Utah does not offer an alternative workfare track",
+      "text": "An able-bodied adult without dependents (ABAWD) is limited to three countable months of SNAP within a 36-month period absent 80 hours/month (20 hours/week, averaged monthly) of a qualifying work activity or an exemption. Unlike this roster's Oklahoma pack — which found THREE different, all-stale ABAWD age figures across Oklahoma's own primary sources — this pack found Utah's OWN current DWS policy manual (Policy 342, effective May 1, 2026) states the age range correctly and currently: \"An ABAWD is defined as a person able to work, between the ages of 18-64 and in a household with no dependent children.\" This directly reflects the true current federal standard set by the One Big Beautiful Bill Act (OBBBA), signed July 4, 2025, effective immediately upon enactment — a genuine, checked-for POSITIVE finding worth stating plainly, not merely the absence of a stale figure. This pack separately confirmed, by directly scraping USDA FNA's current Time Limit (ABAWD) Waivers FY2025-2029 state-response index, that Utah does NOT appear among the roughly 40 states that have submitted an ABAWD area-waiver request for FY2025 or FY2026 — Utah has neither a statewide nor a county-level ABAWD waiver active as of this pack's fetch date, including for its rural/frontier counties (this pack specifically checked, per this roster's build guidance, given Utah's mix of dense Wasatch Front urban areas and vast rural terrain — and found no waiver activity for either). Separately, Utah Admin. Code R986-900-902(1)(b) states plainly: \"The Department does not offer a workfare program for ABAWDs\" — meaning Utah does not create an alternative qualifying-activity slot to extend eligibility beyond the ordinary federal options (paid work, WIOA/Trade Act training, or a qualifying combination), a genuine, checked-for structural fact rather than an assumed absence.",
+      "source_url": "https://jobs.utah.gov/infosource/eligibilitymanual/300_Participation_Requirements/342_SNAP_Work_Requirements.htm"
+    },
+    {
+      "key": "soft-drink-restriction",
+      "kind": "supplement",
+      "terms": [
+        "soda",
+        "soft drink",
+        "sugary drink",
+        "can i buy soda",
+        "junk food",
+        "food restriction",
+        "what can i buy",
+        "what can't i buy",
+        "hb 403",
+        "demonstration project"
+      ],
+      "citation": "USDA FNA, Utah SNAP Food Restriction Waiver approval letter (approved 5/16/2025, effective 1/1/2026 for two years); DWS press release, \"New rules for SNAP/EBT purchasing of soft drinks\" (12/29/2025), citing Utah H.B. 403 (2025 General Session)",
+      "heading": "FLAGSHIP STRUCTURAL FINDING, GENUINE DEPARTURE from this roster's established pattern: Utah is one of a small handful of states now BARRED, by an active federal demonstration waiver, from letting SNAP buy soft drinks",
+      "text": "Effective January 1, 2026, Utah SNAP recipients can no longer use their benefits to buy \"soft drinks\" — a genuinely new, currently-active state-specific restriction with no precedent anywhere else in this roster's 29 previously-verified states. USDA's Food and Nutrition Administration (FNA) directly confirms, in its own approval letter (fetched directly, clean HTTP 200): \"FNS is pleased to approve the request dated May 16, 2025, from the Utah Department of Workforce Services to allow the state to operate a novel demonstration project to amend the statutory definition of food for purchase by Supplemental Nutrition Assistance Program (SNAP) recipients from 'any food or food product for home consumption' to exclude 'soft drinks.' This approval... is for two years, effective Jan. 1, 2026.\" The underlying state law is Utah H.B. 403 (2025 General Session), confirmed directly via DWS's own December 29, 2025 press release, which defines \"soft drink\" precisely: \"a flavored drink that has carbonated water and is sweetened with sugar or artificial sweeteners,\" explicitly EXCLUDING milk and milk-based drinks, milk-substitute drinks (soy, rice), and any drink that is more than half real fruit or vegetable juice by volume. This is NOT a reduction in benefit amount — DWS's own quoted public-information officer states plainly, \"This is not a change to the amount of SNAP benefits eligible individuals receive... It is a change to what the benefits can purchase.\" FNA's approval letter separately confirms Utah is one of several states (alongside Arkansas, Idaho, Indiana, Iowa, and Nebraska per FNA's own related-content listing) that received a similar food-restriction demonstration approval around the same period — Utah's is a genuinely live, dated, currently-operative restriction, not a proposal or a future possibility.",
+      "source_url": "https://www.fna.usda.gov/snap/waivers/foodrestriction/utah"
+    },
+    {
+      "key": "restaurant-meals-program",
+      "kind": "supplement",
+      "terms": [
+        "restaurant meals program",
+        "rmp",
+        "eat at a restaurant",
+        "use ebt at restaurant",
+        "hot meal",
+        "hot food",
+        "prepared food",
+        "hot foods waiver",
+        "disaster waiver"
+      ],
+      "citation": "USDA FNA's current Restaurant Meals Program state list: Arizona, California, Illinois (Cook/Franklin Counties), Maryland, Massachusetts, Michigan, New York, Rhode Island, Virginia — Utah absent",
+      "heading": "Utah does NOT operate a Restaurant Meals Program",
+      "text": "The Restaurant Meals Program (RMP) is a state OPTION under 7 CFR 274.7(g) letting elderly (60+), disabled, and homeless SNAP recipients buy prepared, hot meals from authorized restaurants with EBT year-round. USDA FNA's own current RMP state list (fetched directly, clean HTTP 200) names Arizona, California, Illinois (Cook and Franklin Counties only), Maryland, Massachusetts, Michigan, New York, Rhode Island, and Virginia — the same list this roster's Oklahoma and Kentucky packs independently confirmed. Utah is ABSENT, and this pack found no secondary source claiming otherwise. Separately, Utah Admin. Code R986-900-902(1)(e) states the Department \"does not use photo ID cards\" generally but makes ID cards available on request to homeless, disabled, and elderly clients — boilerplate federal-option language this pack found is not itself evidence of an active Utah RMP, since Utah does not appear on FNA's own current RMP list.",
+      "source_url": "https://www.fns.usda.gov/snap/retailer/restaurant-meals-program"
+    },
+    {
+      "key": "tribal-fdpir",
+      "kind": "supplement",
+      "terms": [
+        "tribal",
+        "reservation",
+        "indian",
+        "native american",
+        "fdpir",
+        "food distribution program",
+        "navajo",
+        "ute",
+        "goshute",
+        "paiute",
+        "shoshone"
+      ],
+      "citation": "USDA FNA, Food Distribution Program on Indian Reservations (FDPIR); Ute Indian Tribe of the Uintah and Ouray Reservation, Food Distribution page (utetribe.com/food-distribution) — Utah tribal nations operate FDPIR as a mutually-exclusive ALTERNATIVE to SNAP, not a supplement to it; SNAP itself remains entirely state-administered via DWS even on tribal land",
+      "heading": "CONFIRMATION, not a new structural variant: Utah's 8 federally recognized tribal nations do NOT operate their own SNAP programs — SNAP stays entirely DWS-administered statewide, with several tribes instead running FDPIR as a household's alternative choice",
+      "text": "Utah is home to 8 federally recognized tribal nations: the Confederated Tribes of the Goshute Reservation, the Navajo Nation (whose reservation extends into southeastern Utah), the Northwestern Band of the Shoshone Nation, the Paiute Indian Tribe of Utah, the San Juan Southern Paiute Tribe, the Skull Valley Band of Goshute Indians, the Ute Indian Tribe of the Uintah and Ouray Reservation, and the Ute Mountain Ute Tribe (White Mesa community) — worth checking carefully given this roster's build guidance, and worth stating plainly rather than assuming a tribal-specific SNAP variant exists where this pack found none. SNAP itself remains entirely state-administered by DWS through its ordinary Employment Center network, including for households living on tribal land. Instead, several Utah tribal nations operate the Food Distribution Program on Indian Reservations (FDPIR), a separate USDA commodity-foods program available to income-eligible households living on or near a reservation, or Native American households anywhere in Utah — the Ute Indian Tribe of the Uintah and Ouray Reservation directly confirms operating its own Food Distribution program (fetched directly from utetribe.com), and the Navajo Nation separately operates the Navajo Commodity Food Program covering its reservation land across Utah, Arizona, and New Mexico. A household may NOT participate in FDPIR and SNAP at the same time — the two are mutually exclusive alternatives, a plain federal rule (not a Utah-specific policy) this pack confirms rather than newly discovers, matching this roster's Oklahoma finding on the identical mutual-exclusivity mechanic.",
+      "source_url": "https://utetribe.com/food-distribution/"
+    },
+    {
+      "key": "expedited-service",
+      "kind": "supplement",
+      "terms": [
+        "expedited",
+        "expedited service",
+        "emergency",
+        "emergency food stamps",
+        "fast benefits",
+        "how fast",
+        "urgent",
+        "same day",
+        "5 day",
+        "7 day"
+      ],
+      "citation": "DWS, Basic Information for Food Stamp Applicants (jobs.utah.gov/customereducation/services/foodstamps/index.html) — plain federal expedited-eligibility criteria and the plain federal 7-calendar-day processing ceiling; DWS SNAP requirements page — ordinary processing standard",
+      "heading": "Utah's expedited-service ceiling is the plain federal 7 calendar days — Utah does NOT shorten it the way this roster's Kentucky pack found Kentucky does (5 days)",
+      "text": "DWS's own SNAP applicant page states directly: \"You might be able to get SNAP benefits within seven days if you qualify for something called 'expedited service.' If you do qualify for faster service, the only thing you'll need to show is your identity.\" This is the plain federal ceiling (gross monthly income under $150 and liquid resources of $100 or less, OR combined income/resources less than shelter costs, OR a destitute migrant/seasonal farmworker household) — not an accelerated state-specific standard, a genuine contrast this pack found worth stating plainly against this roster's Kentucky pack, whose own internal processing standard (5 calendar days) exceeds the federal floor. Utah's ORDINARY (non-expedited) processing standard is the federal default: no later than 30 calendar days from the date of a signed application. DWS's own page also confirms an applicant \"can even turn in an application that isn't completely filled out, as long as it has your name, address and signature\" — the ordinary federal minimum-application-content rule.",
+      "source_url": "https://jobs.utah.gov/customereducation/services/foodstamps/index.html"
+    },
+    {
+      "key": "reporting-certification",
+      "kind": "supplement",
+      "terms": [
+        "certification period",
+        "approval period",
+        "recertification",
+        "redetermination",
+        "how long does snap last",
+        "how long does my snap approval last",
+        "how long does my approval last",
+        "redo",
+        "renew",
+        "review",
+        "esap"
+      ],
+      "citation": "DWS, Reviews (jobs.utah.gov/customereducation/reviews/) — general 6-to-12-month multi-program review cycle; DWS SNAP requirements page — Elderly Simplified Application Project (ESAP), 3-year certification for elderly/disabled households",
+      "heading": "Utah's SNAP review cycle runs 6 to 12 months generally — with a distinctive, directly-confirmed 3-year (36-month) ESAP track for elderly/disabled households",
+      "text": "DWS's own Reviews page (covering SNAP alongside its other benefit programs) states directly: \"If you are receiving help through a program, we must review your case every 6 to 12 months in order to be sure that you should continue to receive help.\" This pack could not locate a SNAP-specific numbered eligibility-manual chapter stating a single fixed certification-period figure to further narrow this 6-to-12-month range (see freshness.json) — DWS's own page states the range itself, not a single default. Separately and more specifically, DWS's own SNAP requirements page directly confirms Utah operates an Elderly Simplified Application Project (ESAP): \"This program makes it easier for people who are elderly or have a disability to get and keep their benefits. With ESAP, your benefits are approved for a three-year period, and you only need to complete one interview when you first apply.\" ESAP is a federal option (7 CFR 273.2(l)) several states have adopted; this pack confirms Utah's own election of it directly, a genuine structural feature worth surfacing plainly for elderly/disabled applicants specifically, distinct from the general 6-to-12-month range that applies to other households.",
+      "source_url": "https://jobs.utah.gov/customereducation/services/foodstamps/requirements.html"
+    }
+  ]
+}
