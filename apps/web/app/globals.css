@@ -6542,9 +6542,21 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   display: inline-flex; align-items: center; border-radius: 999px;
 }
 .dmnav__tab:hover { color: var(--demeter-ink); background: rgba(0, 0, 0, 0.035); }
-/* The current tab is marked by weight and ink, not a background pill — a filled
-   tab next to the terracotta CTA would read as a second call to action. */
+/* The current tab is marked by weight and ink, not a background pill. */
 .dmnav__tab[aria-current="page"] { color: var(--demeter-ink); font-weight: 600; }
+
+/* ASK DEMETER IS THE PRODUCT. In a row of evenly-weighted text links, the one
+   thing someone came to use looked exactly like the reference page next to it.
+   Wheat — the logo colour, used nowhere else as a fill — so the eye lands here
+   first and it reads as the way in rather than as one of two tabs.
+   Ink on wheat, not paper: #EFB544 is a light gold and white text on it fails
+   contrast outright. */
+.dmnav__tab--primary {
+  background: var(--demeter-wheat); color: var(--demeter-ink); font-weight: 700;
+  padding: 0 1.1rem;
+}
+.dmnav__tab--primary:hover { background: var(--demeter-wheat); filter: brightness(0.94); }
+.dmnav__tab--primary[aria-current="page"] { color: var(--demeter-ink); }
 
 /* ═══ /chat — THE TOOL, FULL HEIGHT ══════════════════════════════════════════
    The whole reason this page exists. On the landing page the chat is a card in
@@ -6854,9 +6866,39 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 .demeter__para + .demeter__list { margin-top: 0.7em; }
 .demeter__list + .demeter__para { margin-top: 0.85em; }
 .dmchat .demeter__disclaimer { padding-bottom: 0.25rem; }
-/* The estimate rail keeps its own alignment: it is a panel that grows with
-   what it knows, not a column that should stretch to the fold. */
-.dmchat .dmw { align-self: start; }
+/* The standing-context column: the state picker, then the estimate panel.
+   STICKY, because it is what the answers depend on — losing sight of which
+   state you are scoped to while reading three screens of answers is how you end
+   up trusting a figure for somewhere you do not live.
+   `align-self: start` on the column (not the panel) is what lets sticky work at
+   all: a stretched grid item is already as tall as the row, so it has nothing
+   to travel within. */
+.dmchat .demeter__side {
+  align-self: start;
+  position: sticky;
+  top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  /* Never taller than the viewport, or the bottom of the panel becomes
+     unreachable — it scrolls within itself instead. */
+  max-height: calc(100dvh - 2rem);
+  overflow-y: auto;
+}
+/* `flex: 1 1 22rem` was written for the horizontal row this used to sit in, so
+   the 22rem basis meant WIDTH. In a column it means HEIGHT, and the picker
+   silently reserved 374px of empty air between itself and the estimate panel. */
+.dmchat .demeter__side .dmst { width: 100%; flex: 0 0 auto; }
+.dmchat .dmw { align-self: stretch; margin: 0; }
+
+@media (max-width: 900px) {
+  /* Stacked, and the picker goes FIRST — it is the thing to set before asking,
+     and burying it under the transcript would be worse than where it started.
+     Nothing sticks on a phone: a pinned panel there is just lost viewport. */
+  .dmchat .demeter__side {
+    position: static; max-height: none; overflow: visible; order: -1;
+  }
+}
 
 /* Visually hidden, still announced. The clip-rect technique rather than
    display:none or visibility:hidden — both of those remove the element from

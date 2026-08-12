@@ -973,14 +973,7 @@ export function DemeterChat({
               "How we verify" floating alone in the right column, belonging to
               neither. In here both columns begin on the same line. */}
         <div className="demeter__scope">
-          <DemeterStatePicker
-            states={states}
-            value={state}
-            onChange={changeState}
-            copy={t.picker}
-            hint={geoHint}
-            openSignal={openPicker}
-          />
+
           <a className="demeter__how" href="/verify">
             {t.howWeVerify}
           </a>
@@ -1276,6 +1269,21 @@ export function DemeterChat({
       <p className="demeter__piihint">{t.piiHint}</p>
       <p className="demeter__disclaimer">{t.disclaimer}</p>
         </div>
+        {/* THE RIGHT COLUMN IS THE STANDING CONTEXT: which state this is scoped
+            to, and what is known so far. The picker moved here from the
+            conversation column because it is not a control you press once — it
+            is the fact every figure in every answer depends on, and it should
+            stay in view while you scroll rather than sit at the top of a
+            transcript you have read past. */}
+        <div className="demeter__side">
+          <DemeterStatePicker
+            states={states}
+            value={state}
+            onChange={changeState}
+            copy={t.picker}
+            hint={geoHint}
+            openSignal={openPicker}
+          />
         <DemeterWorksheet
           classification={classification}
           stateSelected={state !== null}
@@ -1298,6 +1306,7 @@ export function DemeterChat({
             }
           }}
         />
+        </div>
       </div>
     </div>
   );

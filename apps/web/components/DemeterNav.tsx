@@ -55,8 +55,13 @@ export function DemeterNav({
         </Link>
 
         <nav className="dmnav__tabs" aria-label="Demeter">
+          {/* THE PRODUCT. Everything else in this bar is supporting material,
+              and a first-time visitor has no way to know that from a row of
+              evenly-weighted text links — the one thing they came to use looked
+              exactly like the reference page beside it. Filled, in the logo's
+              wheat, so the eye lands on it first. */}
           <Link
-            className="dmnav__tab"
+            className="dmnav__tab dmnav__tab--primary"
             href={p("/chat")}
             aria-current={active === "ask" ? "page" : undefined}
           >
