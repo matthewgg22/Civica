@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { isValidElement } from "react";
-import { renderAnswer, splitFollowups } from "../DemeterChat";
+import { renderAnswer, splitFollowups, pendingQuestion } from "../DemeterChat";
 
 // renderAnswer returns React nodes (no DOM needed): <p> paragraph blocks and
 // <hr>, with <strong>/<em>/text inside them for the markdown subset the engine
@@ -185,5 +185,36 @@ describe("suggested follow-ups", () => {
   it("caps at three, since a wall of buttons is still a wall", () => {
     const { followups } = splitFollowups("A.\n⟶ one? | two? | three? | four? | five?");
     expect(followups).toHaveLength(3);
+  });
+});
+
+describe("the composer echoes the question Demeter asked", () => {
+  it("uses the closing question", () => {
+    // A composer still saying "Happy to answer any questions about SNAP" after
+    // Demeter asked something has forgotten its own last sentence.
+    expect(
+      pendingQuestion("It depends which status you hold. Which of those is yours?"),
+    ).toBe("Which of those is yours?");
+  });
+
+  it("ignores an answer that did not ask anything", () => {
+    expect(pendingQuestion("SNAP is monthly help with groceries.")).toBeNull();
+  });
+
+  it("looks past the citation trailer and the follow-up chips", () => {
+    const answer =
+      "Which state are you in?\n⟶ How do I apply?\n---\n7 CFR 273.9";
+    expect(pendingQuestion(answer)).toBe("Which state are you in?");
+  });
+
+  it("declines a question too long to sit in a field", () => {
+    const long = "A".repeat(95) + "?";
+    expect(pendingQuestion(long)).toBeNull();
+  });
+
+  it("strips bold so the placeholder is plain text", () => {
+    expect(pendingQuestion("Tell me: **which state are you in**?")).toBe(
+      "Tell me: which state are you in?",
+    );
   });
 });

@@ -139,6 +139,30 @@ export function splitFollowups(
   return { body: body + tail, followups };
 }
 
+/** The question Demeter is waiting on, if it ended by asking one.
+ *
+ *  When an answer closes with "which of those is yours?", a composer that still
+ *  says "Happy to answer any questions about SNAP" has forgotten its own last
+ *  sentence — and the person has to scroll back up to see what was asked. The
+ *  placeholder becomes the question instead.
+ *
+ *  Only the FINAL sentence, only if it is a question, and only if it is short
+ *  enough to read in a field. Everything else falls back to the standing
+ *  placeholder rather than truncating something into nonsense. */
+export function pendingQuestion(answer: string): string | null {
+  // Body only — the citation trailer often ends in a question-free line, and
+  // the follow-up chips are not what we are looking for either.
+  const body = splitFollowups(answer).body.split(/\n-{3,}\n/)[0] ?? "";
+  const sentences = body
+    .replace(/\*\*/g, "")
+    .split(/(?<=[?.!])\s+/)
+    .map((x) => x.trim())
+    .filter(Boolean);
+  const last = sentences[sentences.length - 1] ?? "";
+  if (!last.endsWith("?") || last.length > 90) return null;
+  return last;
+}
+
 /** Answer text → nodes, with paragraphs as real <p> BLOCKS.
  *
  *  This used to emit one flat run of text and "\n" strings, leaning on the
@@ -736,6 +760,15 @@ export function DemeterChat({
 
   const hasChat = messages.length > 0;
 
+  // What the composer asks for. If Demeter's last answer ended in a question,
+  // that question — otherwise the standing invitation. Never while an answer is
+  // still arriving: the placeholder would change under the person mid-read.
+  const lastAssistant = busy
+    ? null
+    : [...messages].reverse().find((m) => m.role === "assistant" && m.content)?.content ?? null;
+  const composerPrompt =
+    (lastAssistant ? pendingQuestion(lastAssistant) : null) ?? t.inputPlaceholder;
+
   return (
     <div className="demeter">
       <header className="demeter__head">
@@ -1013,9 +1046,9 @@ export function DemeterChat({
               void send();
             }
           }}
-          placeholder={t.inputPlaceholder}
+          placeholder={composerPrompt}
           rows={1}
-          aria-label={t.inputPlaceholder}
+          aria-label={composerPrompt}
         />
         {busy ? (
           <button
