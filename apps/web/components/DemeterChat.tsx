@@ -104,16 +104,18 @@ function renderInline(line: string, keyBase: string): ReactNode[] {
  *
  *  Single newlines INSIDE a paragraph are preserved (bullets rely on them) and
  *  still render through pre-wrap. */
-export function renderAnswer(text: string): ReactNode[] {
+export function renderAnswer(text: string, opts?: { streaming?: boolean }): ReactNode[] {
   const out: ReactNode[] = [];
   let para: string[] = [];
   let n = 0;
+  let lastPara = -1;
 
   const flush = () => {
     if (para.length === 0) return;
     const lines = para;
     para = [];
     const key = n++;
+    lastPara = out.length;
     out.push(
       <p className="demeter__para" key={`p${key}`}>
         {lines.flatMap((line, i) => [
@@ -139,6 +141,23 @@ export function renderAnswer(text: string): ReactNode[] {
     para.push(line);
   }
   flush();
+
+  // The streaming cursor goes INSIDE the last paragraph, where a cursor
+  // belongs — appended after the paragraph it would sit on its own line, which
+  // reads as a stray mark rather than as "still writing".
+  //
+  // It exists because there was no signal at all once text started arriving:
+  // an answer that had finished and an answer that had stalled looked
+  // identical, and the only way to tell was to wait and see.
+  if (opts?.streaming && lastPara >= 0) {
+    const p = out[lastPara] as React.ReactElement<{ children?: ReactNode }>;
+    out[lastPara] = (
+      <p className="demeter__para" key={`p-stream`}>
+        {p.props.children}
+        <span className="demeter__caret" aria-hidden />
+      </p>
+    );
+  }
   return out;
 }
 
@@ -641,12 +660,24 @@ export function DemeterChat({
               <div className={`demeter__msg demeter__msg--${m.role}`}>
                 {m.content ? (
                   m.role === "assistant" ? (
-                    renderAnswer(m.content)
+                    renderAnswer(m.content, {
+                      streaming: busy && i === messages.length - 1,
+                    })
                   ) : (
                     m.content
                   )
                 ) : m.role === "assistant" && busy && i === messages.length - 1 ? (
-                  <span className="demeter__thinking">{t.thinking}</span>
+                  <span className="demeter__thinking">
+                    {t.thinking}
+                    {/* Three dots, so the wait has a heartbeat. The pulsing
+                        text alone reads as a static label someone forgot to
+                        remove when nothing arrives for a few seconds. */}
+                    <span className="demeter__dots" aria-hidden>
+                      <i />
+                      <i />
+                      <i />
+                    </span>
+                  </span>
                 ) : (
                   m.content
                 )}

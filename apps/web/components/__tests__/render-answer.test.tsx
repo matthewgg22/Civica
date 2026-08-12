@@ -105,3 +105,22 @@ describe("paragraphs are blocks, so they can be given space", () => {
     expect(paragraphs(nodes)).toBe(2);
   });
 });
+
+describe("the streaming cursor", () => {
+  it("sits inside the last paragraph, not after it", () => {
+    // Appended AFTER the paragraph it lands on its own line and reads as a
+    // stray mark rather than as the live end of the text.
+    const nodes = renderAnswer("First.\n\nStill writing", { streaming: true });
+    expect(paragraphs(nodes)).toBe(2);
+    expect(tags(nodes)).toEqual(["span"]);
+  });
+
+  it("is absent once the answer is finished", () => {
+    const nodes = renderAnswer("All done.");
+    expect(tags(nodes)).toEqual([]);
+  });
+
+  it("does not appear on an empty answer", () => {
+    expect(tags(renderAnswer("", { streaming: true }))).toEqual([]);
+  });
+});

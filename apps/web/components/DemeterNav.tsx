@@ -41,7 +41,10 @@ export function DemeterNav({
     <header className="dmnav">
       <div className="dmnav__inner">
         <Link className="dmnav__brand" href={p("/screen/ask")} aria-label="Demeter">
-          <DemeterMark size={30} />
+          {/* The mark carries the brand in a bar that is otherwise all text —
+              at 30px it sat below the wordmark-plus-subtitle stack it is meant
+              to anchor. 44 matches that stack's height. */}
+          <DemeterMark size={44} />
           <span className="dmnav__brandtext">
             <span className="dmnav__wordmark">Demeter</span>
             {/* A one-line subtitle, so the wordmark alone is not the only thing

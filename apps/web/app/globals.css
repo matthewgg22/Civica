@@ -6099,11 +6099,42 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 @keyframes dmThinking { 0%, 100% { opacity: 0.45 } 50% { opacity: 1 } }
 .demeter__thinking { animation: dmThinking 1.4s ease-in-out infinite; }
 
+/* The waiting heartbeat. Three dots on a stagger, so a pause of a few seconds
+   still looks like something is happening rather than like a label nobody
+   removed. */
+.demeter__dots { display: inline-flex; gap: 0.22rem; margin-left: 0.4rem; vertical-align: middle; }
+.demeter__dots i {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--demeter-terracotta-deep);
+  animation: dmDot 1.2s ease-in-out infinite;
+}
+.demeter__dots i:nth-child(2) { animation-delay: 0.16s; }
+.demeter__dots i:nth-child(3) { animation-delay: 0.32s; }
+@keyframes dmDot {
+  0%, 60%, 100% { opacity: 0.25; transform: translateY(0); }
+  30% { opacity: 1; transform: translateY(-2px); }
+}
+
+/* The streaming cursor. Once text starts arriving there was NO signal at all —
+   a finished answer and a stalled one looked identical. A block caret at the
+   live end of the text is the oldest and clearest way to say "still writing". */
+.demeter__caret {
+  display: inline-block; width: 0.5ch; height: 1em; margin-left: 0.1em;
+  background: var(--demeter-terracotta-deep); vertical-align: text-bottom;
+  animation: dmCaret 1s step-end infinite;
+}
+@keyframes dmCaret { 0%, 100% { opacity: 1 } 50% { opacity: 0 } }
+
 /* Vestibular safety: everything above is decoration, so all of it goes. */
 @media (prefers-reduced-motion: reduce) {
   .demeter__msg,
   .demeter__msg--assistant,
-  .demeter__thinking { animation: none; }
+  .demeter__thinking,
+  .demeter__dots i { animation: none; }
+  /* The caret stops BLINKING but stays visible — it is a status indicator, not
+     decoration, and removing it would take away the only sign that an answer is
+     still arriving. */
+  .demeter__caret { animation: none; opacity: 1; }
 }
 
 /* ═══ GRAPHITE FOOTER ════════════════════════════════════════════════════════
