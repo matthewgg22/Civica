@@ -1,0 +1,51 @@
+{
+  "_provenance": {
+    "note": "Colorado citation authorities. Colorado maintains a single primary citation family — 10 CCR 2506-1 (Code of Colorado Regulations, RULE MANUAL VOLUME 4, SNAP), cited by section number and decimal sub-part, e.g. '10 CCR 2506-1-4.206', '10 CCR 2506-1-4.407.1'. This is Colorado's OWN official citation format (used identically by the Secretary of State, Cornell Law's LII, and Justia) — unlike most of this roster's other states, this pack does not need to invent a short prefix, because Colorado's formally-promulgated regulation IS the manual (see the manual-structure supplement). Colorado's own statute citations use the standard form 'C.R.S. § 26-2-###'.",
+    "extracted": "2026-08-11"
+  },
+  "patterns": [
+    {
+      "key": "coccr",
+      "regex": "\\b10\\s?CCR\\s?2506-1-4\\.(\\d{2,3}(?:\\.\\d{1,2})?)\\b",
+      "flags": "gi",
+      "template": "10 CCR 2506-1-4.$1",
+      "normalize": "none",
+      "match": "exact",
+      "note": "Colorado's Code of Colorado Regulations, Rule Manual Volume 4, SNAP, cited by section and optional decimal sub-part, e.g. 4.206 (Categories of Eligibility), 4.311 (ABAWD Work Requirements), 4.407.1 (Standard Deduction)."
+    },
+    {
+      "key": "crs",
+      "regex": "\\bC\\.R\\.S\\.?\\s?§\\s?(26-2-\\d{3})\\b",
+      "flags": "gi",
+      "template": "C.R.S. § $1",
+      "normalize": "none",
+      "match": "exact",
+      "note": "Colorado Revised Statutes, Title 26 (Human Services Code), Article 2 (Public Assistance), Part 3 (Food Stamps), e.g. § 26-2-305 (Fraudulent acts; drug-related felony disqualification)."
+    }
+  ],
+  "known": {
+    "coccr": [
+      { "value": "10 CCR 2506-1-4.000", "note": "SNAP Definitions — incl. Able-Bodied Adult Without Dependents, Basic/Expanded Categorical Eligibility, Basic Utility Allowance" },
+      { "value": "10 CCR 2506-1-4.205.1", "note": "Processing Standards for Expedited Service — plain federal criteria (gross income under $150, liquid resources $100 or less) and 7-calendar-day ceiling" },
+      { "value": "10 CCR 2506-1-4.206", "note": "Categories of Eligibility — Basic Categorical Eligibility (BCE), Expanded Categorical Eligibility (ECE) at 200% FPL, and Standard Eligibility (SE); the drug-related-felony BCE/ECE disqualification carve-out at 4.206(C)(1)(c)/(C)(2)(c)/(C)(3)(a)(2)" },
+      { "value": "10 CCR 2506-1-4.207", "note": "Newly-Certified and Ongoing Households; Initial Month Allotment Prorating; Benefit Allotment formula (net income x 30%, subtracted from the max allotment) and the maximum/minimum monthly allotment tables. NOT independently reconfirmed for FFY2026 — the regulation's own tables are labeled 'Effective October 1, 2024' — see PROVENANCE.md" },
+      { "value": "10 CCR 2506-1-4.208", "note": "Certification Periods — general rules; longest predictable period assigned" },
+      { "value": "10 CCR 2506-1-4.208.1", "note": "Certification Period Guidelines — 24-month period for all-60+/disabled no-earned-income households (12-month periodic report required); 6-month period for all other households" },
+      { "value": "10 CCR 2506-1-4.311", "note": "ABAWD Work Requirements — header reads '[Effective 1/4/2025]' but text still recites the pre-OBBBA 18-54 age range and now-federally-removed homelessness/veteran/foster-care exemptions. NOT current — contradicts CDHS's own dedicated ABAWD FAQ page and February 2026 desk aid, both stating 18-64. See PROVENANCE.md" },
+      { "value": "10 CCR 2506-1-4.402", "note": "Household Income Eligibility — prospective budgeting, income conversion and averaging rules" },
+      { "value": "10 CCR 2506-1-4.407", "note": "Deductions and Exclusions from Income — header reads '[Effective 1/4/2025]'; lists the five allowable deductions (standard, earned income, excess shelter, dependent care, excess medical) and the child support income exclusion at 4.407(D)" },
+      { "value": "10 CCR 2506-1-4.407.1", "note": "Standard Deduction — computed as 8.31% of the federal poverty guideline by household size; dollar figures labeled 'Effective October 1, 2024' (FFY2025), NOT independently reconfirmed for FFY2026 — see PROVENANCE.md" },
+      { "value": "10 CCR 2506-1-4.407.3", "note": "Excess Shelter Deduction — cap for households without an elderly/disabled member; Homeless Shelter Deduction estimate; allowable shelter cost categories" },
+      { "value": "10 CCR 2506-1-4.407.31", "note": "Four-Tiered Mandatory Standard Utility Allowance — HCUA, BUA, OUA, and Telephone Allowance; all four dollar figures labeled 'Effective October 1, 2024' (FFY2025), NOT independently reconfirmed for FFY2026 — see PROVENANCE.md" },
+      { "value": "10 CCR 2506-1-4.407.5", "note": "Child Support Expense Exclusion — legally binding child support is an income exclusion applied before the gross income test, not an ordinary post-gross deduction" },
+      { "value": "10 CCR 2506-1-4.407.6", "note": "Excess Medical Deduction — actual verified expenses over $35/month for a member 60+ or disabled, OR the flat $165 Standard Medical Expense Deduction (SMED) for verified expenses between $35.01 and $200; medical marijuana explicitly non-allowable" },
+      { "value": "10 CCR 2506-1-4.407.61", "note": "Determining Monthly Medical Expenses — sets the $165 SMED figure, effective October 1, 2016" },
+      { "value": "10 CCR 2506-1-4.408", "note": "Resource Eligibility Standards — categorically eligible households are exempt from the resource test entirely; the $3,000 (standard) / $4,500 (60+ or disabled) resource limit applies only to Standard Eligibility households; sponsor-deeming and resource-transfer disqualification rules" },
+      { "value": "10 CCR 2506-1-4.409", "note": "Countable Resources — liquid vs. non-liquid resource valuation; jointly-owned and commingled-resource rules" },
+      { "value": "10 CCR 2506-1-4.410", "note": "Exempt Resources — all vehicles totally exempt regardless of type (4.410(A)); home and surrounding property; federally tax-preferred retirement accounts and tax-deferred education accounts named individually; income-producing property and vehicles" }
+    ],
+    "crs": [
+      { "value": "C.R.S. § 26-2-305", "note": "Fraudulent acts — penalties, including the drug-related-felony SNAP disqualification: 2 years (first offense) or permanent (second offense), but ONLY when the conviction is directly related to using SNAP/food stamp benefits to purchase controlled substances and that misuse is part of the court's own findings" }
+    ]
+  }
+}

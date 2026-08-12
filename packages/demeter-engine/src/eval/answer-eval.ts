@@ -2497,6 +2497,132 @@ export const MD_GOLD: AnswerExpectation[] = [
   },
 ];
 
+export const CO_GOLD: AnswerExpectation[] = [
+  {
+    id: "co-ece-200-percent-fpl",
+    // Confirms (rather than corrects) the widely-repeated secondary-source
+    // BBCE/ECE claim — guards against the model dropping down to the plain
+    // federal 130% FPL figure when Colorado's own 200% FPL ECE ceiling applies.
+    question: "What is the income limit for SNAP in Colorado?",
+    state: "CO",
+    expectCitation: "4.206",
+    mustMention: "200",
+    mustDisclaim: true,
+  },
+  {
+    id: "co-car-exempt-all-vehicles",
+    question: "Does my car count against me for SNAP in Colorado?",
+    state: "CO",
+    expectCitation: "4.410",
+    mustMention: "exempt",
+    mustDisclaim: true,
+  },
+  {
+    id: "co-boat-exempt-all-vehicles",
+    // Guards the structural finding: Colorado excludes ALL vehicles,
+    // matching Missouri's/Maryland's blanket rule rather than Indiana's
+    // hybrid rule.
+    question: "Does my boat count against me for SNAP in Colorado?",
+    state: "CO",
+    expectCitation: "4.410",
+    mustMention: "exempt",
+    mustDisclaim: true,
+  },
+  {
+    id: "co-drug-felony-narrow-trigger",
+    // Guards the flagship finding: Colorado's drug-felony rule is triggered
+    // ONLY by using SNAP benefits themselves to buy drugs, not by any drug
+    // felony generally — narrower than the "modified ban" secondary claim.
+    question: "I have a drug felony conviction — can I still get SNAP in Colorado?",
+    state: "CO",
+    expectCitation: "26-2-305",
+    mustMention: "purchase",
+    mustDisclaim: true,
+  },
+  {
+    id: "co-abawd-age-range-current-federal",
+    // Guards against the model reciting the STALE 10 CCR 2506-1-4.311 text
+    // (18-54) instead of CDHS's own current 18-64 FAQ/desk-aid position.
+    question: "What is the ABAWD work requirement age range in Colorado?",
+    state: "CO",
+    mustMention: "64",
+    mustDisclaim: true,
+  },
+  {
+    id: "co-abawd-zero-waivers",
+    // Guards against overclaiming a county-level ABAWD waiver anywhere in
+    // Colorado, dense Front Range or rural mountain counties alike.
+    question: "Is the SNAP work-requirement time limit currently waived anywhere in Colorado?",
+    state: "CO",
+    mustMention: "waiver",
+    mustDisclaim: true,
+  },
+  {
+    id: "co-healthy-choice-waiver-soda-allowed",
+    // Flagship finding: an approved soda/candy restriction was later
+    // discontinued by CDHS — guards against the model repeating stale
+    // early-2026 news coverage that the restriction is or will be in effect.
+    question: "Can I buy soda or candy with my SNAP EBT card in Colorado?",
+    state: "CO",
+    mustMention: "discontinu",
+    mustDisclaim: true,
+  },
+  {
+    id: "co-restaurant-meals-program-not-yet-available",
+    // Guards against overclaiming: unlike Maryland, Colorado does NOT
+    // currently have an operating Restaurant Meals Program.
+    question: "Can I use my EBT card to buy a hot meal at a restaurant in Colorado?",
+    state: "CO",
+    mustMention: "not",
+    mustDisclaim: true,
+  },
+  {
+    id: "co-child-support-income-exclusion",
+    // Guards the structural finding: Colorado treats child support as an
+    // income exclusion applied before the gross income test, not an
+    // ordinary post-gross deduction.
+    question: "Does paying child support lower my countable income for SNAP in Colorado?",
+    state: "CO",
+    expectCitation: "4.407",
+    mustMention: "exclu",
+    mustDisclaim: true,
+  },
+  {
+    id: "co-medical-deduction-smed-shortcut",
+    question: "I'm disabled and have $50 a month in medical bills for Colorado SNAP — do I get a deduction?",
+    state: "CO",
+    expectCitation: "4.407.6",
+    mustMention: "35",
+    mustDisclaim: true,
+  },
+  {
+    id: "co-expedited-service-7-day",
+    question: "How fast can I get emergency SNAP benefits in Colorado?",
+    state: "CO",
+    expectCitation: "4.205.1",
+    mustMention: "7",
+    mustDisclaim: true,
+  },
+  {
+    id: "co-cert-period-6-month-standard",
+    // Guards the structural finding: Colorado's standard cert is 6 months
+    // (24 months for all-elderly/disabled no-earned-income households),
+    // not a Maryland-style 12-month-with-touchpoint mechanism.
+    question: "How long does my SNAP approval last in Colorado?",
+    state: "CO",
+    expectCitation: "4.208",
+    mustMention: "6",
+    mustDisclaim: true,
+  },
+  {
+    id: "co-federal-benefit",
+    question: "How is the monthly SNAP benefit amount calculated from net income in Colorado?",
+    state: "CO",
+    expectCitation: "273.10",
+    mustDisclaim: true,
+  },
+];
+
 /** Everything the live runner executes. */
 export const ALL_GOLD: AnswerExpectation[] = [
   ...ANSWER_GOLD,
@@ -2523,4 +2649,5 @@ export const ALL_GOLD: AnswerExpectation[] = [
   ...IN_GOLD,
   ...MO_GOLD,
   ...MD_GOLD,
+  ...CO_GOLD,
 ];
