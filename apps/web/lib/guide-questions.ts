@@ -110,4 +110,9 @@ export const QUESTIONS: Record<string, string[]> = {
     "Is the SNAP work-requirement time limit currently waived anywhere in Tennessee?",
     "How long does my SNAP approval last in Tennessee?",
   ],
+  IN: [
+    "What is the income limit for SNAP in Indiana?",
+    "Does my boat count against me for SNAP in Indiana?",
+    "I have a drug felony conviction — can I still get SNAP in Indiana?",
+  ],
 };

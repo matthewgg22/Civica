@@ -1,0 +1,44 @@
+{
+  "_provenance": {
+    "note": "Indiana dated facts. Because Indiana has NO existing packages/snap-rules StatePolicy entry, there is no engine constant to cross-check against — unlike a state with prior engine work in this roster, every entry below is either a routine COLA-cycle reminder, a genuine disclosed research gap (the drug-felony statute text), or a re-verification trigger. Indiana's own Program Policy Manual proved unusually CURRENT across every topic this pack checked — a genuine departure from Tennessee's multi-document staleness pattern — so most entries below are simply the standard annual-refresh discipline this roster applies to every state, not disclosed defects.",
+    "extracted": "2026-08-11"
+  },
+  "entries": [
+    {
+      "key": "in-drug-felony-statute-text-not-independently-verified",
+      "kind": "expires",
+      "date": "2026-12-01",
+      "warning": "This pack's drug-felony-ban finding (Ind. Code Ann. § 12-14-30-3, a modified ban opted out of the federal lifetime ban effective 1/1/2020) rests on convergent secondary/quasi-primary corroboration (Indiana's own FAQ page, the Public Health Law Center, the Network for Public Health Law's 50-state survey), NOT on independently fetched primary statutory text — iga.in.gov is a client-side JavaScript SPA this pack's curl-based tooling could not execute (confirmed by inspecting the raw HTML: an empty root div and a bundled JS file only), and law.justia.com (HTTP 403) and casetext.com (HTTP 410) both failed outright. Before restating this finding's specific conditions as definitively current, a future pass should locate and fetch the statute's primary text directly — e.g. via a headless-browser-capable tool that can execute iga.in.gov's client-side JavaScript, or a Lexis/Westlaw-adjacent source this pack did not try."
+    },
+    {
+      "key": "in-abawd-waiver-status-recheck",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "This pack's finding that Indiana currently holds ZERO active ABAWD waivers anywhere in the state rests on Indiana's own Program Policy Manual ('there are currently no such designations'), USDA's official ABAWD Time Limit Waivers FY2025-2029 index, and the independent abawdmap.us aggregator, all checked 2026-08-11. USDA updates its waiver index quarterly and Indiana's own manual is updated on its own schedule. Before restating 'Indiana has no ABAWD waiver' after this date, re-fetch Indiana's Program Policy Manual Chapter 2400 directly and re-check USDA's index — unemployment conditions change."
+    },
+    {
+      "key": "in-sua-deduction-cola-cycle",
+      "kind": "expires",
+      "date": "2026-10-15",
+      "warning": "This pack's Standard Utility Allowance figures ($486/$283/$62/$36), Standard Deduction figures ($209/$209/$209/$223/$261/$299), Excess Shelter Expense Deduction cap ($744), and Homeless Shelter Deduction ($198.99) are all effective 10/01/2025 (FFY2026), confirmed directly from Indiana's own Program Policy Manual Chapter 3000. These are federal-COLA-cycle figures that typically update every October 1st. Re-fetch IN PPM Chapter 3000 directly from in.gov/fssa/dfr/files/3000.pdf after October 1, 2026 to confirm the FFY2027 figures before quoting these dollar amounts as current."
+    },
+    {
+      "key": "in-resource-limit-recheck",
+      "kind": "expires",
+      "date": "2027-01-01",
+      "warning": "Indiana's resource limits ($3,000 standard / $4,500 elderly-or-disabled) are stated as effective 10/01/2024 in Indiana's own manual and match the current FFY2026 federally uniform standard this roster's other states have independently confirmed. Federal resource limits are not adjusted every fiscal year; re-check IN PPM 3005.05.00 directly if a federal resource-limit change is announced, rather than assuming this figure updates annually the way the SUA/deduction figures do."
+    },
+    {
+      "key": "in-bbce-legislative-session-recheck",
+      "kind": "expires",
+      "date": "2027-05-01",
+      "warning": "This pack's flagship finding — Indiana has NOT adopted Broad-Based Categorical Eligibility, unlike roughly 40 other states — is confirmed by Indiana's own current Program Policy Manual (Chapter 2400's Categorical Eligibility section and Chapter 3000's Income Standards section, both fetched directly 2026-08-11). The Indiana General Assembly convenes annually; BBCE adoption is a state administrative-rule or legislative choice that could change in a future session (as Tennessee's pack in this roster documents happened there in January 2026). Re-fetch IN PPM 2414.10.05 and 3010.05.00 directly before a future legislative session's changes might take effect, rather than assuming this pack's no-BBCE finding is permanent."
+    },
+    {
+      "key": "in-vehicle-non-exempt-fmv-threshold-single-source",
+      "kind": "expires",
+      "date": "2026-12-01",
+      "warning": "This pack's finding that non-exempt licensed vehicles not used for transportation must have a fair market value exceeding $4,650 before any amount counts as a resource (IN PPM 2615.60.10.05) was confirmed from a single fetched section of Indiana's Resources chapter and not independently cross-checked against a second Indiana source or the federal regulation it implements. Before quoting this $4,650 figure as current, a future pass should re-fetch IN PPM Chapter 2600 directly and check whether this figure has since been updated."
+    }
+  ]
+}
