@@ -4772,8 +4772,13 @@ html {
 .demeter__input {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   flex: 1; resize: none; border: 1px solid var(--demeter-rule-strong); border-radius: 1rem; background: var(--demeter-card);
-  padding: 0.75rem 1rem; font-size: 1rem; color: var(--demeter-ink); min-height: 48px; max-height: 8rem;
+  padding: 0.75rem 1rem; font-size: 1rem; color: var(--demeter-ink); min-height: 48px; max-height: 12rem;
 }
+/* Taller on the chat page, where the composer is the main thing you act on
+   rather than a field at the end of a card. It also GROWS with what you type —
+   `rows={1}` with a fixed min-height meant a long question scrolled inside two
+   visible lines while the page had room to show all of it. */
+.dmchat .demeter__input { min-height: 68px; }
 .demeter__input:focus { outline: 2px solid var(--demeter-terracotta); outline-offset: 1px; }
 .demeter__send {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
@@ -6233,9 +6238,15 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
    viewport and the composer is always in view, which is the difference between
    something that looks like a chatbot and something that looks like a form. */
 .dmchat { min-height: 100dvh; display: flex; flex-direction: column; background: var(--demeter-paper); }
+/* MEASURED, on a 1440 viewport, before this changed:
+     940px page cap → 515px conversation column → 380px message → 41 CHARACTERS
+     PER LINE, with ~570px of the window unused.
+   Comfortable prose is 60–75 characters a line, so the text was arriving in a
+   column barely half the width it wanted, in a page that had the room. Three
+   caps were compounding, and all three had to move. */
 .dmchat__body {
   flex: 1; min-height: 0;
-  width: 100%; max-width: 940px; margin: 0 auto;
+  width: 100%; max-width: 1280px; margin: 0 auto;
   padding: clamp(0.75rem, 2vw, 1.5rem) clamp(1rem, 4vw, 2rem) calc(1rem + env(safe-area-inset-bottom));
   display: flex; flex-direction: column;
 }
@@ -6334,6 +6345,48 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 .dmchat .demeter__body { flex: 1; min-height: 0; align-items: stretch; }
 .dmchat .demeter__main { flex: 1; min-height: 0; }
 .dmchat .demeter__scroll { flex: 1; min-height: 0; }
+
+/* The rail took 1fr of a 1.55fr/1fr split — 39% of the page — to show, most of
+   the time, "Pick your state above". The conversation is the page; the rail is
+   a panel beside it. It gets a fixed sensible width and the transcript takes
+   every pixel that is left.
+   INSIDE a min-width query, and that is load-bearing: `.dmchat .demeter__body`
+   outranks the `max-width: 900px` rule that collapses this to one column, so
+   unscoped it kept two columns on a phone and handed 21rem of a 356px screen
+   to the rail — measured, .demeter__main came out 0px wide. */
+@media (min-width: 901px) {
+  .dmchat .demeter__body { grid-template-columns: minmax(0, 1fr) minmax(0, 21rem); }
+}
+
+/* The measure, capped in CHARACTERS rather than as a percentage of whatever the
+   column happens to be. A percentage cap means the line length drifts with the
+   window; `ch` pins it where prose is actually readable, and `min()` keeps
+   short replies from stretching to the full width on a wide screen. */
+.dmchat .demeter__msg { max-width: min(92%, 68ch); }
+
+/* The suggested questions are BUTTONS, and a button should be the size of its
+   label. In a narrow column, stretching to fill was harmless; across a wide one
+   it makes three questions look like three empty banners.
+   ONLY above the two-column breakpoint: on a phone a wrapping row shrinks them
+   to slivers, and full-width stacked is the right shape there anyway. */
+@media (min-width: 901px) {
+  .dmchat .demeter__empty {
+    flex-direction: row; flex-wrap: wrap; gap: 0.6rem; align-items: flex-start;
+  }
+  .dmchat .demeter__suggest { flex: 0 0 auto; max-width: 100%; }
+}
+
+/* Set for READING, not for fitting. An answer is several sentences of prose a
+   worried person reads once, on a phone — 1.5 line-height at 0.97rem packs it
+   tighter than any other body copy in the product. */
+.dmchat .demeter__msg--assistant {
+  font-size: 1.02rem; line-height: 1.68; padding: 1rem 1.15rem;
+}
+/* Room between paragraphs. renderAnswer emits real <p> blocks now, precisely so
+   this is possible: a blank line under `white-space: pre-wrap` is one empty
+   line-height, which is not enough to separate two paragraphs of prose. */
+.demeter__para { margin: 0; }
+.demeter__para + .demeter__para { margin-top: 0.85em; }
 .dmchat .demeter__disclaimer { padding-bottom: 0.25rem; }
 /* The estimate rail keeps its own alignment: it is a panel that grows with
    what it knows, not a column that should stretch to the fold. */

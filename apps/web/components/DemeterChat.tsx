@@ -93,17 +93,52 @@ function renderInline(line: string, keyBase: string): ReactNode[] {
   });
 }
 
+/** Answer text → nodes, with paragraphs as real <p> BLOCKS.
+ *
+ *  This used to emit one flat run of text and "\n" strings, leaning on the
+ *  bubble's `white-space: pre-wrap` to do the breaking. That renders a blank
+ *  line as exactly one empty line-height, so an answer that was correctly
+ *  broken into paragraphs still read as a single block — most of what made
+ *  answers look like a wall even when their shape was right. Paragraphs can't
+ *  be given space until they're elements, so now they are.
+ *
+ *  Single newlines INSIDE a paragraph are preserved (bullets rely on them) and
+ *  still render through pre-wrap. */
 export function renderAnswer(text: string): ReactNode[] {
   const out: ReactNode[] = [];
-  const lines = text.split("\n");
-  lines.forEach((line, i) => {
+  let para: string[] = [];
+  let n = 0;
+
+  const flush = () => {
+    if (para.length === 0) return;
+    const lines = para;
+    para = [];
+    const key = n++;
+    out.push(
+      <p className="demeter__para" key={`p${key}`}>
+        {lines.flatMap((line, i) => [
+          ...(i > 0 ? ["\n"] : []),
+          ...renderInline(line, `p${key}l${i}`),
+        ])}
+      </p>,
+    );
+  };
+
+  for (const line of text.split("\n")) {
+    // A standalone rule separates the answer from the citation trailer; it is
+    // not part of either paragraph, so it closes the one before it.
     if (line.trim() === "---") {
-      out.push(<hr key={`hr${i}`} className="demeter__rule" />);
-      return;
+      flush();
+      out.push(<hr key={`hr${n++}`} className="demeter__rule" />);
+      continue;
     }
-    if (i > 0 && lines[i - 1]?.trim() !== "---") out.push("\n");
-    out.push(...renderInline(line, `l${i}`));
-  });
+    if (line.trim() === "") {
+      flush();
+      continue;
+    }
+    para.push(line);
+  }
+  flush();
   return out;
 }
 
@@ -176,6 +211,13 @@ export function DemeterChat({
   }
   const abortRef = useRef<AbortController | null>(null);
   const scrollRef = useRef<HTMLDivElement | null>(null);
+  const inputRef = useRef<HTMLTextAreaElement | null>(null);
+  /** Back to one row. The composer grows as you type, so clearing the value
+   *  without clearing the inline height leaves an empty box the size of the
+   *  question you just sent. */
+  const resetInputHeight = useCallback(() => {
+    if (inputRef.current) inputRef.current.style.height = "";
+  }, []);
   const t = T[lang];
 
   // What the live region below the transcript currently holds. Set ONLY when a
@@ -244,6 +286,7 @@ export function DemeterChat({
   const clearConversation = useCallback(() => {
     setMessages([]);
     setInput("");
+    resetInputHeight();
     setError(null);
     setClassification(null);
     factsRef.current = {};
@@ -303,6 +346,7 @@ export function DemeterChat({
     setError(null);
     setBusy(true);
     setInput("");
+    resetInputHeight();
 
     const chatTurns = messages.filter(
       (m): m is { role: "user" | "assistant"; content: string } => m.role !== "divider",
@@ -660,8 +704,18 @@ export function DemeterChat({
       >
         <textarea
           className="demeter__input"
+          ref={inputRef}
           value={input}
-          onChange={(e) => setInput(e.target.value)}
+          onChange={(e) => {
+            setInput(e.target.value);
+            // Grow with the question. `rows={1}` and a fixed min-height meant a
+            // long question scrolled inside two visible lines on a page with
+            // room to show all of it. Reset to auto first or the box can only
+            // ever get taller, never shorter.
+            const el = e.currentTarget;
+            el.style.height = "auto";
+            el.style.height = `${el.scrollHeight}px`;
+          }}
           onKeyDown={(e) => {
             if (e.key === "Enter" && !e.shiftKey) {
               e.preventDefault();

@@ -2,17 +2,53 @@ import { describe, it, expect } from "vitest";
 import { isValidElement } from "react";
 import { renderAnswer } from "../DemeterChat";
 
-// renderAnswer returns React nodes (no DOM needed): strings for plain text,
-// <strong>/<em>/<hr> elements for the markdown subset the engine emits.
-function tags(nodes: ReturnType<typeof renderAnswer>): string[] {
-  return nodes.filter(isValidElement).map((el) => el.type as string);
+// renderAnswer returns React nodes (no DOM needed): <p> paragraph blocks and
+// <hr>, with <strong>/<em>/text inside them for the markdown subset the engine
+// emits.
+//
+// These helpers used to look exactly ONE level deep, which worked only while
+// the output was a flat run of text and newline strings. Paragraphs are real
+// elements now, so a one-level walk would report every answer as "one <p>" and
+// quietly stop checking the things these tests exist for — that bold renders,
+// and that HTML-looking content stays inert. They recurse.
+type Nodes = ReturnType<typeof renderAnswer>;
+
+function walk(nodes: unknown, visit: (n: unknown) => void): void {
+  for (const n of Array.isArray(nodes) ? nodes : [nodes]) {
+    visit(n);
+    if (isValidElement(n)) {
+      walk((n.props as { children?: unknown }).children ?? [], visit);
+    }
+  }
 }
-function texts(nodes: ReturnType<typeof renderAnswer>): string {
-  return nodes
-    .map((n) =>
-      isValidElement(n) ? String((n.props as { children?: unknown }).children ?? "") : String(n),
-    )
-    .join("");
+
+/** Element tags in document order, paragraph wrappers excluded — the tests care
+ *  about the markup INSIDE a paragraph, and about <hr>. */
+function tags(nodes: Nodes): string[] {
+  const out: string[] = [];
+  walk(nodes, (n) => {
+    if (isValidElement(n) && n.type !== "p") out.push(n.type as string);
+  });
+  return out;
+}
+
+/** All text, from any depth. */
+function texts(nodes: Nodes): string {
+  let out = "";
+  walk(nodes, (n) => {
+    if (typeof n === "string") out += n;
+  });
+  return out;
+}
+
+/** How many paragraph blocks an answer renders as — the readability property
+ *  the <p> change exists for. */
+function paragraphs(nodes: Nodes): number {
+  let count = 0;
+  walk(nodes, (n) => {
+    if (isValidElement(n) && n.type === "p") count++;
+  });
+  return count;
 }
 
 describe("renderAnswer (chat markdown subset)", () => {
@@ -40,5 +76,32 @@ describe("renderAnswer (chat markdown subset)", () => {
     const nodes = renderAnswer("net income - deductions; 2 * 3 = 6");
     expect(tags(nodes)).toEqual([]);
     expect(texts(nodes)).toBe("net income - deductions; 2 * 3 = 6");
+  });
+});
+
+describe("paragraphs are blocks, so they can be given space", () => {
+  it("splits on a blank line", () => {
+    // A blank line under `white-space: pre-wrap` is one empty line-height,
+    // which is not enough to separate two paragraphs of prose — which is most
+    // of what made a correctly-shaped answer still read as a wall.
+    const nodes = renderAnswer("First point.\n\nSecond point.\n\nThird.");
+    expect(paragraphs(nodes)).toBe(3);
+  });
+
+  it("keeps a single newline inside its paragraph, so bullets stay together", () => {
+    const nodes = renderAnswer("Bring:\n- ID\n- Proof of rent");
+    expect(paragraphs(nodes)).toBe(1);
+    expect(texts(nodes)).toContain("- ID\n- Proof of rent");
+  });
+
+  it("does not emit an empty paragraph for trailing or repeated blank lines", () => {
+    expect(paragraphs(renderAnswer("Just this.\n\n\n\n"))).toBe(1);
+    expect(paragraphs(renderAnswer(""))).toBe(0);
+  });
+
+  it("the citation rule closes the paragraph before it", () => {
+    const nodes = renderAnswer("The answer.\n---\n7 CFR 273.9");
+    expect(tags(nodes)).toContain("hr");
+    expect(paragraphs(nodes)).toBe(2);
   });
 });
