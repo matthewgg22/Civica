@@ -32,6 +32,7 @@ import mdPack from "./states/md/pack.json";
 import coPack from "./states/co/pack.json";
 import scPack from "./states/sc/pack.json";
 import alPack from "./states/al/pack.json";
+import laPack from "./states/la/pack.json";
 
 export interface PackVerification {
   verified_on: string;
@@ -97,6 +98,7 @@ export const VERIFIED_STATES: PackMeta[] = [
   coPack,
   scPack,
   alPack,
+  laPack,
 ].map(meta);
 
 export const VERIFIED_STATE_CODES: string[] = VERIFIED_STATES.map((s) => s.code);
