@@ -1,0 +1,56 @@
+{
+  "_provenance": {
+    "note": "Vermont dated facts. Because Vermont has NO existing packages/snap-rules StatePolicy entry, there is no engine constant to cross-check against — every entry below is either a routine COLA-cycle reminder, a disclosed research gap, or a warning about a fact this pack found time-sensitive, single-sourced, or access-constrained.",
+    "extracted": "2026-08-12"
+  },
+  "entries": [
+    {
+      "key": "vt-cvr-mirror-stale-legacy-text",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "The Code of Vermont Rules 13-170-005 text mirrored on law.cornell.edu (and identically, but Cloudflare-gated, on regulations.justia.com) is a stale, generic reprint of the pre-2010s 7 CFR 273 federal base rule — it cites 'the Food Stamp Act of 1977,' shows internal effective-date markers no later than 'November 1, 1998,' states a base $3,000 general resource limit with no Vermont-specific COLA-adjusted update, and contains NO trace anywhere in its full 663,000-character text of Vermont's own 185% FPL BBCE gate, the VT-EITC categorical-eligibility mechanism, the cash-out option, or current OBBBA-era ABAWD criteria. This pack relied on DCF's live consumer pages and DCF's own dated legislative testimony as authoritative wherever they diverge from this mirror. Do not cite a Vermont-specific dollar figure or policy detail to CVR 13-170-005 directly without independently re-verifying it against a current DCF source first."
+    },
+    {
+      "key": "vt-program-manual-inaccessible",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "Vermont's own primary '3SquaresVT Program Manual,' hosted on ahsnet.ahs.state.vt.us, is a client-side JavaScript RoboHelp/MadCap application that rendered no server-side content to this pack's fetch attempts, and this pack could not locate a working underlying content/search-index API endpoint (its guessed Data/Toc.js and search-index paths all 404'd). WebSearch results independently describe at least some content on this host as restricted to authorized AHS/DCF users. This pack substituted DCF's own live public consumer pages and DCF's own dated legislative testimony/slide decks as the operative source instead — a genuine, disclosed access gap, not a fabricated substitute. Re-attempt this manual directly (or request internal AHS access) before treating this pack's coverage as exhaustive of Vermont's full internal policy manual."
+    },
+    {
+      "key": "vt-sua-single-source-not-cross-verified",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "This pack's current utility-allowance dollar figures ($1,096 heating/cooling SUA, $311 Basic Utility Allowance, $37 telephone allowance, effective 10/1/2025) come from a single primary source: DCF's own dated 10/30/2025 legislative slide deck. This is DCF's own official, named, dated testimony to the Legislature — a strong primary source — but this pack could not independently cross-verify these three specific dollar figures against a second, fully separate primary document (e.g., a standalone published DCF COLA notice). Re-verify directly with DCF/ESD before citing these figures with the same confidence as this pack's income-limit figures, which ARE independently cross-checked against DCF's separately-published Income Guidelines page."
+    },
+    {
+      "key": "vt-abawd-waiver-status-fy2026-not-confirmed",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "This pack's conclusion that Vermont currently has no ABAWD waiver anywhere in the state rests on (a) USDA FNS's ABAWD Time Limit Waivers FY2025-2029 index showing NO Vermont entry at all as of this pack's fetch, and (b) WebSearch corroboration describing Vermont as lacking an active waiver as of FY2024 Q4 and as not among the small group of states with an active statewide waiver through mid-2026. Re-check https://www.fns.usda.gov/snap/abawd/waivers/2025-2029 directly before restating this with full confidence beyond this window, since Vermont could submit and receive a waiver request at any time, particularly given elevated unemployment in specific counties."
+    },
+    {
+      "key": "vt-november-2025-shutdown-state-response-time-limited",
+      "kind": "expires",
+      "date": "2026-09-01",
+      "warning": "DCF's own 10/30/2025 slide deck states the Eboard/Administration decided to state-fund the first 15 days of eligible households' November 2025 3SquaresVT benefits (expected issuance around 11/7/2025) plus $250,000 to the Vermont Foodbank, in response to a federal-shutdown-driven pause in new benefit issuance. This was an explicitly dated, one-month, already-resolved state response as of this pack's fetch date (2026-08-12) — do not confuse it with an ongoing or recurring Vermont policy."
+    },
+    {
+      "key": "vt-hr1-cost-sharing-timeline",
+      "kind": "not-yet-effective",
+      "date": "2026-10-01",
+      "warning": "DCF's own 10/30/2025 slide deck describes two future HR1/OBBBA state-fiscal cost-sharing changes not yet in effect as of this pack's fetch date: administrative cost-sharing shifts from 50% federal/50% state to 25% federal/75% state effective 10/1/2026 (FFY27, an estimated $8 million/year extra state obligation), and benefit cost-sharing tied to Vermont's own SNAP Payment Error Rate (PER) becomes effective 10/1/2027 (FFY28) — Vermont's own FFY24 PER was 5.13% (0% state match tier) and its unofficial cumulative FFY25 PER through May was 5.93% (still within the 0% match tier, which requires PER below 6%). Neither change is operative yet; re-verify Vermont's then-current PER and the cost-sharing tier it falls into before citing a specific state benefit-cost-share percentage after these effective dates."
+    },
+    {
+      "key": "vt-ffy2026-cola-reminder",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "This pack's confirmed income-eligibility dollar figures (185%/100% FPL table by household size) are drawn from Vermont DCF's current Income Guidelines page, explicitly published for 'October 2025' (the FFY2026 cycle), and independently cross-checked against DCF's own 10/30/2025 legislative slide deck, which states the same figures with 'was' comparisons to the prior FFY2025 amounts. The FFY2027 COLA cycle begins October 1, 2026 — under two months from this pack's fetch date. Check dcf.vermont.gov/benefits/3SquaresVT/income-guidelines after that date before restating any Vermont-specific income or benefit-amount figure with full confidence."
+    },
+    {
+      "key": "vt-secondary-source-income-limit-error-corrected",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "A secondary aggregator (snapbenefitcalculator.com) states Vermont's household-size-1 gross income limit as approximately $2,461; DCF's own current published October 2025 Income Guidelines table states $2,413, independently cross-checked against DCF's own 10/30/2025 legislative slide deck (which states the same $2,413 figure). This pack treats the two independently-cross-checked DCF primary sources as authoritative and flags the secondary aggregator's figure as incorrect. Re-verify against the FFY2027 income table after 10/1/2026 rather than restating the FFY2026 $2,413 figure as still current."
+    }
+  ]
+}
