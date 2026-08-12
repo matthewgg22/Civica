@@ -27,6 +27,7 @@ import njPack from "./states/nj/pack.json";
 import vaPack from "./states/va/pack.json";
 import tnPack from "./states/tn/pack.json";
 import inPack from "./states/in/pack.json";
+import moPack from "./states/mo/pack.json";
 
 export interface PackVerification {
   verified_on: string;
@@ -87,6 +88,7 @@ export const VERIFIED_STATES: PackMeta[] = [
   vaPack,
   tnPack,
   inPack,
+  moPack,
 ].map(meta);
 
 export const VERIFIED_STATE_CODES: string[] = VERIFIED_STATES.map((s) => s.code);
