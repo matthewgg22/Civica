@@ -211,13 +211,17 @@ import vtPack from "./vt/pack.json";
 import vtSupplements from "./vt/supplements.json";
 import vtAuthorities from "./vt/authorities.json";
 import vtFreshness from "./vt/freshness.json";
+import dcPack from "./dc/pack.json";
+import dcSupplements from "./dc/supplements.json";
+import dcAuthorities from "./dc/authorities.json";
+import dcFreshness from "./dc/freshness.json";
 import guPack from "./gu/pack.json";
 import guSupplements from "./gu/supplements.json";
 import guAuthorities from "./gu/authorities.json";
 import guFreshness from "./gu/freshness.json";
 
 /** Registered pack codes. Widens as Wave 1+ states land (WA, TX, NY, …). */
-export type StateCode = "CA" | "WA" | "TX" | "NY" | "GA" | "MI" | "IL" | "FL" | "MA" | "NV" | "AZ" | "OR" | "WI" | "MN" | "PA" | "OH" | "NC" | "NJ" | "VA" | "TN" | "IN" | "MO" | "MD" | "CO" | "SC" | "AL" | "LA" | "KY" | "OK" | "CT" | "UT" | "IA" | "AR" | "MS" | "KS" | "NM" | "NE" | "ID" | "WV" | "HI" | "ME" | "NH" | "SD" | "MT" | "RI" | "ND" | "DE" | "WY" | "VT" | "GU";
+export type StateCode = "CA" | "WA" | "TX" | "NY" | "GA" | "MI" | "IL" | "FL" | "MA" | "NV" | "AZ" | "OR" | "WI" | "MN" | "PA" | "OH" | "NC" | "NJ" | "VA" | "TN" | "IN" | "MO" | "MD" | "CO" | "SC" | "AL" | "LA" | "KY" | "OK" | "CT" | "UT" | "IA" | "AR" | "MS" | "KS" | "NM" | "NE" | "ID" | "WV" | "HI" | "ME" | "NH" | "SD" | "MT" | "RI" | "ND" | "DE" | "WY" | "VT" | "DC" | "GU";
 
 /** Launch state; used when a caller does not specify. Preserves the pre-pack
  *  behavior in which the (then-hardcoded) CA content applied to every query. */
@@ -602,6 +606,12 @@ const REGISTRY: Record<StateCode, StatePack> = {
     vtSupplements as { supplements: PackTopic[]; supersessions?: Record<string, string> },
     vtAuthorities as unknown as RawAuthorities,
     vtFreshness as { entries: PackFreshnessEntry[] },
+  ),
+  DC: buildPack(
+    dcPack as Omit<StatePack, "topics" | "authorities" | "freshness" | "supersessions">,
+    dcSupplements as { supplements: PackTopic[]; supersessions?: Record<string, string> },
+    dcAuthorities as unknown as RawAuthorities,
+    dcFreshness as { entries: PackFreshnessEntry[] },
   ),
   GU: buildPack(
     guPack as Omit<StatePack, "topics" | "authorities" | "freshness" | "supersessions">,

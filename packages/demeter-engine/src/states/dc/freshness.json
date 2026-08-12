@@ -1,0 +1,44 @@
+{
+  "_provenance": {
+    "note": "District of Columbia dated facts. Because DC has NO existing packages/snap-rules StatePolicy entry, there is no engine constant to cross-check against — every entry below is either a routine COLA-cycle reminder, a disclosed research gap, or a warning about a fact this pack found time-sensitive, a genuine secondary-source correction, or access-constrained.",
+    "extracted": "2026-08-12"
+  },
+  "entries": [
+    {
+      "key": "dc-abawd-implementation-started-june-2026",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "DC's ABAWD work-requirement implementation STARTED June 1, 2026, per DHS's own live SNAP Work Requirements page, with a fixed 36-month clock running June 1, 2026 through May 31, 2029. This is a genuine, recent change from DC's long-standing districtwide waiver — several secondary sources this pack found still describe DC as having an active, ongoing districtwide waiver with work requirements 'not being enforced anywhere in the District.' This pack independently corroborated the DHS page's claim against USDA FNS's own ABAWD Time Limit Waivers FY2025-2029 index, which shows DC's most recent posted waiver-response entry as FY2025 (05/21/2025) with no FY2026 entry. Re-verify directly against dhs.dc.gov/page/snap-work-requirements before restating DC's ABAWD status, since the implementation is recent (within roughly 2 months of this pack's fetch date) and further changes are plausible."
+    },
+    {
+      "key": "dc-no-restaurant-meals-program",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "DC does NOT currently operate a Restaurant Meals Program (RMP), per USDA FNS's own official 'States that Operate a Restaurant Meals Program' list (AZ, MD, NY, CA, MA, RI, IL-Cook/Franklin-only, MI, VA — DC absent), cross-checked against DHS's own consumer page listing 'Hot foods' and 'Prepared Foods' as non-purchasable with no RMP exception. Several secondary sources incorrectly state that DC does operate an RMP, likely conflating DC with its RMP-operating neighbors Maryland and Virginia. Re-check https://www.fns.usda.gov/snap/retailer/restaurant-meals-program directly before restating this, since a state option like RMP can be newly adopted at any time."
+    },
+    {
+      "key": "dc-ffy2026-cola-reminder",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "This pack's confirmed income-eligibility dollar figures (130%/200%/100% FPL table by household size, resource limits, standard deduction, excess shelter cap, standard utility allowance, maximum monthly allotment table) are drawn from DC DHS's current tables, explicitly published for the period October 1, 2025 - September 30, 2026 (the FFY2026 cycle). The FFY2027 COLA cycle begins October 1, 2026 — under two months from this pack's fetch date. Check dhs.dc.gov/service/snap-eligibility-general-requirements and dhs.dc.gov/service/snap-monthly-benefit after that date before restating any DC-specific income, resource, deduction, or benefit-amount figure with full confidence."
+    },
+    {
+      "key": "dc-standard-deduction-4-person-tier-not-independently-quoted",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "DHS's own SNAP Eligibility Requirements page states the Standard Deduction as '$204 for households with 1 to 3 individuals, $254 for a household of 5, and $291 for households with 6 or more individuals' — DHS's own quoted text does not separately state the 4-person-household figure. This pack did not independently locate DC's specific 4-person Standard Deduction dollar figure beyond inferring it sits between $204 and $254 consistent with the standard national FY2026 Standard Deduction schedule (which is typically $209 for a 4-person household nationally); DC's own page simply does not state it explicitly. Do not cite a specific DC 4-person Standard Deduction dollar figure without confirming it directly against a current DC COLA notice or the federal FY2026 Standard Deduction table."
+    },
+    {
+      "key": "dc-access-ebt-card-name-unconfirmed",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "Several secondary sources refer to DC's EBT card by the branded name 'DC Access' card. This pack fetched DHS's own live EBT Card page directly and could not find that specific branded name in DHS's own primary-source text, which refers to it only generically as 'your EBT card.' This pack discloses 'DC Access' as an unconfirmed secondary-source claim rather than stating it as a DHS-confirmed program name. Re-verify directly against dhs.dc.gov before citing a specific DC EBT card brand name with full confidence."
+    },
+    {
+      "key": "dc-no-dedicated-dcmr-snap-chapter-located",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "Unlike Delaware's consolidated DSSM 9000 manual or many other states' agency-issued SNAP manuals, this pack could not locate a dedicated DCMR (DC Municipal Regulations) Title 29 chapter specifically covering SNAP eligibility rules — Title 29 ('Public Welfare') has chapters for TANF, Medicaid, and other public-assistance programs, but no chapter this pack found titled for food stamps/SNAP eligibility specifically. DC's state-specific SNAP policy instead lives primarily in DC Code Title 4, Chapter 2B (a codified statute) plus DHS's own live consumer pages. This pack's search used dcrules.elaws.us (an unofficial mirror confirmed stale via its own 'Last Updated: September 13, 2017' page metadata) only for chapter-numbering structure, not content — a more thorough search of the current official DC Register / dcregs system by a future build might locate SNAP-specific procedural rules (e.g., the 'Rules 2970-2979' public-benefits hearing procedures this pack found referenced by DC's Office of Administrative Hearings) that this pack did not independently fetch and verify."
+    }
+  ]
+}
