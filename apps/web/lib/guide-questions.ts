@@ -100,4 +100,9 @@ export const QUESTIONS: Record<string, string[]> = {
     "Does my boat count against me for SNAP in New Jersey?",
     "Is the SNAP work-requirement time limit currently waived anywhere in New Jersey?",
   ],
+  VA: [
+    "Is the SNAP work-requirement time limit currently waived anywhere in Virginia?",
+    "Can I use my EBT card to buy a hot meal at a restaurant in Virginia?",
+    "I have a drug felony conviction — can I still get SNAP in Virginia?",
+  ],
 };

@@ -1,0 +1,50 @@
+{
+  "code": "VA",
+  "program": "SNAP — Virginia uses the plain federal program name throughout its own SNAP Manual and DSS public materials; NOTE that Virginia's manual glossary defines \"FNS\" as the FEDERAL USDA Food and Nutrition Service, the same convention this roster's New Jersey pack documents and the OPPOSITE of North Carolina's pack, where \"FNS\" means the state's own manual/program",
+  "agency": "Virginia Department of Social Services (VDSS)",
+  "admin_model": "county",
+  "admin_note": "Virginia runs a state-supervised, LOCALLY-administered system: VDSS writes the statewide SNAP Manual (Volume V) and Title 63.2 of the Code of Virginia sets the governing statute, but day-to-day eligibility determination is handled by each Local Department of Social Services (LDSS) — one per city/county — staffed by caseworkers the manual itself calls \"Benefit Programs Specialists\" (BPS). Confirm current operative practice (processing times, local outreach materials, exact office procedures) with the applicant's own LDSS, the same caution this roster already carries for CA/NY/MN/WI/OH/NC/NJ.",
+  "system": "Virginia's eligibility caseworkers use the state's benefits system; applicants apply through the CommonHelp self-service portal or in person/by mail/fax at their LDSS",
+  "portal": {
+    "name": "CommonHelp",
+    "url": "https://commonhelp.virginia.gov"
+  },
+  "update_channels": [
+    {
+      "name": "Virginia SNAP Manual (Volume V) — VDSS's authoritative eligibility policy manual, current through Transmittal #36 (10/25)",
+      "url": "https://www.dss.virginia.gov/media/vdss/benefit-programs/documents/snap/snap-manual/Entire-Manual-eff-10012025.pdf"
+    },
+    {
+      "name": "Code of Virginia, Title 63.2 (Welfare/Social Services), Chapters 5 and 8 — statutory authority for SNAP eligibility, BBCE, and the Restaurant Meals Program",
+      "url": "https://law.lis.virginia.gov/vacode/title63.2/"
+    },
+    {
+      "name": "VDSS SNAP program page",
+      "url": "https://www.dss.virginia.gov/relief/food-assistance/snap/"
+    },
+    {
+      "name": "USDA FNS/FNA ABAWD Time Limit Waivers FY 2025-2029 (state approval/denial letters and full state list)",
+      "url": "https://www.fns.usda.gov/snap/waivers/timelimit/2025-2029"
+    }
+  ],
+  "verification": {
+    "verified_on": "2026-08-11",
+    "method": "Direct curl fetch (with a standard browser User-Agent header) of the CURRENT, complete Virginia SNAP Manual PDF (Entire-Manual-eff-10012025.pdf, 8.1 MB, 33,131 lines after pdftotext -layout extraction) directly from dss.virginia.gov — no tooling barrier encountered at any point in this build; every dss.virginia.gov and law.lis.virginia.gov URL tried returned a clean 200 on the first plain curl attempt. This is a genuine departure from PA/NC/NJ's build experience in this roster (each hit at least one moved link or bot-mitigation artifact) and is disclosed explicitly as a negative result in PROVENANCE.md. Covered categorical eligibility/BBCE (Part II.G.3), resources (Part IX.A-D), income deductions (Part X.A.1-6), income exclusions (Part XI.F.17), certification periods (Part IV.A), expedited service (Part V.A, C), the work requirement/ABAWD provisions and the Appendix I waived-locality history table (Part XV.A, Appendix I), and benefit issuance/VRMP (Part I.C). Cross-checked against Va. Code §§ 63.2-505.2 (drug-felony opt-out) and 63.2-801 (BBCE, no asset limit, mandatory statewide Restaurant Meals Program participation, no in-person renewal requirement), both fetched directly from law.lis.virginia.gov, and USDA's official ABAWD waiver-response index for FY2025-2029 (fetched directly, page updated July 22, 2026), which does not list Virginia among the states that submitted any waiver request in this cycle.",
+    "gates": "Every dollar figure that is federally uniform (standard deduction, maximum excess shelter deduction, homeless shelter deduction, maximum asset limits) matches the current federal FY2026 table exactly as printed in Virginia's own manual (Transmittal #36, 10/25) — no independent USDA table fetch was needed to cross-check these since Virginia's manual states them directly and they match every other state this roster has already verified against that table. Virginia's own state-specific Standard Utility Allowance and Medical Standard Deduction dollar figures are traced directly to VDSS's own manual text (not a secondary source) — a genuine improvement in source strength over NJ's SUA gap in this same roster, though this pack could not additionally cross-verify VA's SUA figure against USDA's national FY26 SUA values page, which did not render its data in fetchable inline HTML text in this pass (disclosed in freshness.json as a nice-to-have re-check, not a live gap, since VDSS's own manual is already the stronger primary source). Adversarial refute pass recorded in PROVENANCE.md.",
+    "sources": [
+      "Virginia SNAP Manual (Volume V), Part I.C, Benefit Issuance and Use (VRMP)",
+      "Virginia SNAP Manual (Volume V), Part II.G.3, Categorical Eligibility for PA Households (7 CFR 273.2(j)(2))",
+      "Virginia SNAP Manual (Volume V), Part IV.A, Certification Periods (7 CFR 273.10(f))",
+      "Virginia SNAP Manual (Volume V), Part V.A, C, Expedited Services — Entitlement and Processing Standards (7 CFR 273.2(i))",
+      "Virginia SNAP Manual (Volume V), Part IX.A-D, Resources (7 CFR 273.8)",
+      "Virginia SNAP Manual (Volume V), Part X.A.1-6, Income Deductions (7 CFR 273.9(d))",
+      "Virginia SNAP Manual (Volume V), Part XI.F.17, Legally Obligated Child Support Payments",
+      "Virginia SNAP Manual (Volume V), Part XV.A and Appendix I, Work Requirement / ABAWD Time Limit and Waived-Locality History Table",
+      "Va. Code § 63.2-505.2, Eligibility for food stamps; drug-related felonies (2005, c. 576; amended 2020, cc. 221, 361), fetched directly from law.lis.virginia.gov",
+      "Va. Code § 63.2-801, SNAP benefits program (BBCE at 200% FPL, no asset limit, mandatory statewide Restaurant Meals Program participation, no in-person renewal requirement), fetched directly from law.lis.virginia.gov",
+      "USDA FNS/FNA, Time Limit Waivers FY 2025-2029 index, fetched directly 2026-08-11 (page updated July 22, 2026) — Virginia absent from the list of states with any submitted waiver request",
+      "VDSS, Virginia Restaurant Meals Program (VRMP) public page and eligibility page, fetched directly 2026-08-11",
+      "Virginia Legislature's Regulatory Town Hall / rga.lis.virginia.gov record for SB1020 (2025), Chapter 321, approved March 21, 2025, effective July 1, 2025"
+    ]
+  }
+}

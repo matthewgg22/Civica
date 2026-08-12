@@ -1901,6 +1901,123 @@ export const NJ_GOLD: AnswerExpectation[] = [
   },
 ];
 
+export const VA_GOLD: AnswerExpectation[] = [
+  {
+    id: "va-bbce-200-pct-statutory",
+    // The flagship structural finding of this pack: Virginia's 200% FPL BBCE
+    // threshold and no-asset-limit rule are codified directly in STATUTE
+    // (Va. Code § 63.2-801(B)), not just agency manual policy.
+    question: "What is Expanded Categorical Eligibility and how does it affect my SNAP eligibility in Virginia?",
+    state: "VA",
+    expectCitation: "63.2-801(B)",
+    mustMention: "200",
+    mustDisclaim: true,
+  },
+  {
+    id: "va-resource-limit-vehicles-excluded",
+    question: "What is the SNAP resource limit in Virginia if I'm not categorically eligible?",
+    state: "VA",
+    expectCitation: "IX.A-D",
+    mustMention: "3,000",
+    mustDisclaim: true,
+  },
+  {
+    id: "va-vehicle-not-counted",
+    // Guards the contrast with New Jersey's pack in this roster: Virginia
+    // excludes ALL vehicles unconditionally, including boats/motor homes.
+    question: "Does my boat count against me for SNAP in Virginia?",
+    state: "VA",
+    expectCitation: "IX.A-D",
+    mustMention: "vehicle",
+    mustDisclaim: true,
+  },
+  {
+    id: "va-sua-size-scaled-value",
+    // Guards the structural finding: Virginia's utility standard scales by
+    // household size in two bands, unlike most flat-SUA states this roster
+    // has documented.
+    question: "What is the standard utility allowance for SNAP in Virginia?",
+    state: "VA",
+    expectCitation: "X.A.4.e-f",
+    mustMention: "375",
+    mustDisclaim: true,
+  },
+  {
+    id: "va-medical-deduction-standard",
+    question: "I'm disabled and have $50 a month in medical bills for Virginia SNAP — do I get a deduction?",
+    state: "VA",
+    expectCitation: "X.A.5",
+    mustMention: "35",
+    mustDisclaim: true,
+  },
+  {
+    id: "va-child-support-income-exclusion",
+    // Guards the mechanism-contrast finding: VA EXCLUDES child support from
+    // income (Illinois/New-Jersey-style), unlike most of this roster's
+    // ordinary-deduction states.
+    question: "Does paying child support lower my countable income for SNAP in Virginia?",
+    state: "VA",
+    expectCitation: "XI.F.17",
+    mustMention: "exclud",
+    mustDisclaim: true,
+  },
+  {
+    id: "va-abawd-zero-waivers",
+    // Second flagship finding: Virginia currently holds ZERO ABAWD waivers
+    // anywhere in the Commonwealth, a reversal from its own multi-year
+    // waiver history through mid-2025.
+    question: "Is the SNAP work-requirement time limit currently waived anywhere in Virginia?",
+    state: "VA",
+    expectCitation: "XV.A",
+    mustMention: "waiver",
+    mustDisclaim: true,
+  },
+  {
+    id: "va-drug-felony-full-opt-out",
+    // VA is a genuine FULL opt-out — guards against the model overclaiming a
+    // permanent ban or a modified/conditional ban the way NC's pack documents.
+    question: "I have a drug felony conviction — can I still get SNAP in Virginia?",
+    state: "VA",
+    expectCitation: "63.2-505.2",
+    mustMention: "not",
+    mustDisclaim: true,
+  },
+  {
+    id: "va-restaurant-meals-program-active",
+    // Guards the contrast with New Jersey's pack in this roster: Virginia's
+    // Restaurant Meals Program is real, current, and statutorily mandatory —
+    // not a died-in-committee bill.
+    question: "Can I use my EBT card to buy a hot meal at a restaurant in Virginia?",
+    state: "VA",
+    expectCitation: "63.2-801(A)",
+    mustMention: "yes",
+    mustDisclaim: true,
+  },
+  {
+    id: "va-expedited-service-7-day",
+    question: "How fast can I get emergency SNAP benefits in Virginia?",
+    state: "VA",
+    expectCitation: "Part V",
+    mustMention: "7",
+    mustDisclaim: true,
+  },
+  {
+    id: "va-cert-period-12-month-default",
+    question: "How long does my SNAP approval last in Virginia?",
+    state: "VA",
+    expectCitation: "Part IV.A",
+    mustMention: "12",
+    mustDisclaim: true,
+  },
+  {
+    id: "va-federal-benefit",
+    question: "How is the monthly SNAP benefit amount calculated from net income in Virginia?",
+    state: "VA",
+    expectCitation: "273.10",
+    mustDisclaim: true,
+  },
+];
+
 /** Everything the live runner executes. */
 export const ALL_GOLD: AnswerExpectation[] = [
   ...ANSWER_GOLD,
@@ -1922,4 +2039,5 @@ export const ALL_GOLD: AnswerExpectation[] = [
   ...OH_GOLD,
   ...NC_GOLD,
   ...NJ_GOLD,
+  ...VA_GOLD,
 ];
