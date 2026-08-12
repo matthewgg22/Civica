@@ -85,7 +85,10 @@ test.describe("chat surface", () => {
     const picker = page.getByRole("button", { name: "Your state", exact: true });
     await expect(picker).toContainText("All states");
     await expect(composer(page)).toBeVisible();
-    await expect(page.getByRole("button", { name: /income limit for my household/i })).toBeVisible();
+    // By what they ARE, not by what they say — this asserted one suggestion's
+    // exact wording, so rephrasing the three starter questions broke a test
+    // that was checking they render at all.
+    await expect(page.locator(".demeter__suggest")).toHaveCount(3);
     // Opening the picker reveals every verified pack — under its DISPLAY name.
     // The raw corpus field carries annotation prose ("SNAP (no state-specific
     // branding)"), which is written for retrieval, not for a list you scan.

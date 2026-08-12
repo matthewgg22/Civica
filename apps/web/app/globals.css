@@ -4746,7 +4746,11 @@ html {
 .demeter__state.is-active .demeter__badge { color: var(--demeter-paper); }
 .demeter__how { font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif; flex: none; font-size: 0.8rem; color: var(--demeter-terracotta-deep); text-decoration: underline; padding: 0.4rem; min-height: 44px; display: inline-flex; align-items: center; }
 .demeter__scroll { flex: 1; overflow-y: auto; padding: 0.5rem 0.25rem; display: flex; flex-direction: column; gap: 0.6rem; }
-.demeter__empty { display: flex; flex-direction: column; gap: 0.5rem; margin: auto 0; padding: 1rem 0; }
+/* Pushed to the BOTTOM of the transcript, so the suggestions sit just above the
+   composer. `margin: auto 0` floated them in the vertical middle of an empty
+   scroll area, marooned in whitespace with nothing above or below them — they
+   read as stray buttons rather than as the first thing you might say. */
+.demeter__empty { display: flex; flex-direction: column; gap: 0.5rem; margin: auto 0 0; padding: 1rem 0; }
 .demeter__suggest {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   text-align: left; border: 1px solid var(--demeter-rule-strong); background: var(--demeter-card); color: var(--demeter-ink);
@@ -5515,42 +5519,37 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   font-size: 0.78rem; line-height: 1.5; color: var(--demeter-muted); max-width: 46ch;
 }
 
-/* The application timeline. A left rail with the deadline in it, so the whole
-   sequence can be read down the "when" column alone — which is how someone
-   working out whether they can wait actually reads it. */
-.dmtl { list-style: none; margin: 1.75rem 0 0; padding: 0; }
-.dmtl__step {
-  display: grid; grid-template-columns: 8.5rem minmax(0, 1fr);
-  gap: 0 1.75rem; padding-bottom: 1.75rem; position: relative;
+/* The application timeline, read LEFT TO RIGHT: each step is a column with its
+   deadline as the header on top and the detail underneath.
+   Was a vertical left rail — accurate, but it made six steps into a tall
+   scroll, and a sequence you scroll is one you experience as long rather than
+   as ordered.
+   Wrapping rather than one unbroken row on purpose: six columns across 1180px
+   is ~196px each, about twenty characters a line, which is not a timeline
+   anyone can read. Three across, wrapping to two rows, keeps the left-to-right
+   reading and keeps the prose legible. */
+.dmtl {
+  list-style: none; margin: 1.75rem 0 0; padding: 0;
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  gap: 1.75rem;
 }
-/* The connecting line, in the GUTTER between the two columns — column one ends
-   at 8.5rem and column two starts after a 1.75rem gap, so 9.375rem is the
-   middle of that gap and the only place the rule clears both. Offset into the
-   label column instead and it draws straight through "WITHIN DAYS".
-   Stops at the last step, so the sequence has a visible end. */
+/* The rule across the top of each step IS the timeline — a continuous line
+   cannot survive wrapping, but a segment per step reads as one band and marks
+   where each stage begins. */
+.dmtl__step { position: relative; padding-top: 1.15rem; border-top: 2px solid var(--demeter-rule); }
 .dmtl__step::before {
-  content: ""; position: absolute; left: 9.375rem; top: 0.55rem; bottom: 0;
-  border-left: 1px solid var(--demeter-rule);
+  content: ""; position: absolute; top: -6px; left: 0;
+  width: 10px; height: 10px; border-radius: 50%;
+  background: var(--demeter-terracotta-deep);
 }
-.dmtl__step:last-child { padding-bottom: 0; }
-.dmtl__step:last-child::before { display: none; }
 .dmtl__when {
+  display: block; margin-bottom: 0.4rem;
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   font-size: 0.72rem; letter-spacing: 0.09em; text-transform: uppercase;
   font-weight: 600; color: var(--demeter-terracotta-deep);
-  padding-top: 0.22rem; text-align: right;
 }
-.dmtl__body .dmx__body { margin-bottom: 0; }
-.dmtl__body .dmx__h3 { margin-bottom: 0.3rem; }
-
-@media (max-width: 700px) {
-  /* Stacked: an 8.5rem rail beside a paragraph leaves the paragraph about
-     nine words wide on a phone. The deadline reads as a label above its step,
-     which is the same information in the order you would say it aloud. */
-  .dmtl__step { grid-template-columns: 1fr; gap: 0.3rem; padding-left: 0; }
-  .dmtl__step::before { display: none; }
-  .dmtl__when { text-align: left; padding-top: 0; }
-}
+.dmtl__body .dmx__body { margin-bottom: 0; max-width: none; }
+.dmtl__body .dmx__h3 { margin-bottom: 0.35rem; }
 
 .dmx__defs { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(15rem, 100%), 1fr)); gap: 1.75rem; margin: 1.5rem 0 0; }
 .dmx__def dt {
