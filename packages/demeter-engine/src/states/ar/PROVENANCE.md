@@ -230,10 +230,14 @@ Colorado's, South Carolina's, Alabama's, Louisiana's, Kentucky's, and Oklahoma's
 this same roster.
 
 Arkansas was built in this roster's new "batch tier" alongside Connecticut, Utah, and Iowa, each
-built concurrently by a separate agent. All four touch the same four shared registration files.
-[Filled in at PR time once the actual merge outcome — clean fast-forward push, or a conflict
-resolved by combining every state's entries — is known; see the PR description for the final
-disposition.]
+intended to build concurrently by a separate agent. In practice, this pack's own push landed
+CLEANLY — a `git fetch` immediately before the final push (after a `git rebase` onto the latest
+`codex/rebuild-feb18`, which itself only picked up an unrelated citation-verifier fix, #773) showed
+no Connecticut, Utah, or Iowa commits had landed yet on any of the four shared registration files
+(`states/index.ts`, `packs.ts`, `apps/web/lib/guide-questions.ts`, `eval/answer-eval.ts`). No merge
+conflict occurred; this pack was first to land in the batch. Both suites were re-run after the
+rebase to confirm nothing regressed (demeter-engine: 328/328 passing incl. 2 skipped; apps/web:
+463/463 passing incl. 15 skipped) before the final push.
 
 `packages/snap-rules` stays fully parked per the standing rule
 (`feedback_dashboard_snap_rules_parked`) — this pack does not modify it and does not request an
