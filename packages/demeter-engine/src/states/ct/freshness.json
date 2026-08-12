@@ -1,0 +1,44 @@
+{
+  "_provenance": {
+    "note": "Connecticut dated facts. Because Connecticut has NO existing packages/snap-rules StatePolicy entry, there is no engine constant to cross-check against — every entry below is either a routine COLA-cycle reminder, a disclosed research gap, or a warning about a confirmed access/staleness trap this pack found.",
+    "extracted": "2026-08-12"
+  },
+  "entries": [
+    {
+      "key": "ct-abawd-no-waiver-verify-current",
+      "kind": "expires",
+      "date": "2026-11-01",
+      "warning": "Connecticut's own SNAP Work Rules Pre-screener page (portal.ct.gov, fetched directly) states plainly, 'Starting December 1, 2025, all towns in Connecticut will now follow special SNAP work rules for adults' — meaning there is currently NO ABAWD waiver anywhere in the state. This directly CONTRADICTS multiple secondary sources and AI-generated SNAP-calculator summaries this pack found, which describe Connecticut as having 'a statewide ABAWD waiver' with work requirements 'not enforced anywhere.' This pack treats Connecticut's own current page as authoritative for its December 2025 effective date, but county/statewide ABAWD waiver status is among the most volatile SNAP policy facts that exist and can change on short notice, especially tied to unemployment-rate redeterminations. Before telling a Connecticut applicant whether ABAWD work rules currently apply, re-check portal.ct.gov/dss/snap/able-bodied-adults-without-dependents-or-abawds directly."
+    },
+    {
+      "key": "ct-portaldir-bot-block-recheck",
+      "kind": "expires",
+      "date": "2026-09-15",
+      "warning": "This pack's current FFY2026 dollar figures (income limits, asset limits, standard/utility/shelter/homeless deductions) were recovered from portaldir.ct.gov — a Connecticut DSS subdomain that returned an active Radware/TSPD bot-detection challenge to every direct curl attempt this pack made — via an Internet Archive Wayback Machine snapshot dated 2026-03-07 rather than a live fetch. If portaldir.ct.gov's bot-detection posture changes (or the live host is retired/replaced), this pack's dollar-figure citations should be re-verified against a live, current source rather than continuing to rely on an aging snapshot. Re-attempt a direct fetch of https://portaldir.ct.gov/dss/snap/Tables.html before treating this pack's dollar figures as current beyond this window."
+    },
+    {
+      "key": "ct-restaurant-meals-sb1475-status-unconfirmed",
+      "kind": "expires",
+      "date": "2026-12-01",
+      "warning": "2025 Connecticut Senate Bill 1475, as introduced, would require the DSS Commissioner to develop a Restaurant Meals Program and submit a formal USDA application by December 1, 2025. This pack could NOT confirm through direct primary-source verification whether SB 1475 was enacted as a Public Act, whether DSS met the December 1, 2025 application deadline, or the application's current status — USDA FNA's own current Restaurant Meals Program state list (fetched directly, updated as recently as August 7, 2026 per its own metadata) still does not include Connecticut. Before telling a Connecticut applicant whether a Restaurant Meals Program is available, re-check fns.usda.gov/snap/retailer/restaurant-meals-program directly, and separately check cga.ct.gov for SB 1475's enacted status."
+    },
+    {
+      "key": "ct-cert-period-sourcing-gap",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "This pack's reporting-certification supplement (12-month default certification, 6-month Periodic Report Form, ESAP PRF exemption) is corroborated by secondary sources and a DSS fair-hearing decision document, NOT by a directly-fetched, dated UPM6 (Calculation of Benefits/Benefit Issuance) section the way this pack's other findings are. This is a disclosed sourcing gap, not a confirmed fact at the same evidentiary standard as this pack's other supplements. Before restating Connecticut's certification-period structure with full confidence, locate and fetch the current UPM6 certification-period section directly."
+    },
+    {
+      "key": "ct-sua-976-cross-check",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "This pack's Standard Utility Allowance figure for Connecticut, $976/month flat, is more than double most of this roster's other states' SUA figures (e.g. Kentucky's $388). This pack sourced it directly from Connecticut DSS's own current Tables page (via Wayback Machine snapshot, effective 10/1/2025) and did not find an internal inconsistency, but flags it explicitly for independent cross-checking given how much of an outlier it is relative to this roster's other states, rather than assuming it is necessarily a transcription artifact on DSS's own part."
+    },
+    {
+      "key": "ct-ffy2027-cola-reminder",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "This pack's confirmed dollar figures (Standard Deduction $209/$209/$209/$223/$261/$299, SUA $976, LUA $430, TUA $36, capped excess shelter $744, Homeless Shelter Deduction $198.99, elderly/disabled-over-200%-FPL asset limit $4,500, and the income-eligibility table by EDG size) are drawn from Connecticut DSS's own current Tables page, effective October 1, 2025, matching the current FFY2026 cycle (October 1, 2025 - September 30, 2026). The FFY2027 COLA cycle begins October 1, 2026 — under two months from this pack's fetch date. Check portal.ct.gov/dss and portaldir.ct.gov/dss/snap/Tables.html for updated figures after that date before restating any Connecticut-specific dollar figure with full confidence."
+    }
+  ]
+}

@@ -165,6 +165,13 @@ export const QUESTIONS: Record<string, string[]> = {
     "What is the ABAWD work requirement age range in Oklahoma?",
     "Can I use my EBT card to buy a hot meal at a restaurant in Oklahoma?",
   ],
+  CT: [
+    "What is the income limit for SNAP in Connecticut?",
+    "I have a drug felony conviction — can I still get SNAP in Connecticut?",
+    "Is the SNAP work-requirement time limit currently waived anywhere in Connecticut?",
+    "Does Connecticut have a Restaurant Meals Program for SNAP?",
+    "Does Connecticut's categorical eligibility raise my SNAP income limit above the normal amount?",
+  ],
   UT: [
     "What is the income limit for SNAP in Utah?",
     "Can I buy soda with my SNAP benefits in Utah?",
