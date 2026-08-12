@@ -96,14 +96,20 @@ function renderInline(line: string, keyBase: string): ReactNode[] {
     /(\[[^\]]+\]\(https?:\/\/[^\s)]+\)|\*\*[^*]+\*\*|\*[^*\s][^*]*\*|\b_[^_\s][^_]*_\b)/g,
   );
   return parts.map((p, j) => {
+    // EMPHASIS RECURSES. The freshness footer is emitted as
+    // `*Source: [label](url).*` — the whole line, link included, inside one
+    // pair of asterisks. Rendering the emphasis contents as a raw string meant
+    // the link inside was never parsed, so every answer ended with its source
+    // URL printed in brackets and parentheses as literal text. Visible on
+    // every cited answer, which is all of them.
     if (p.startsWith("**") && p.endsWith("**") && p.length > 4) {
-      return <strong key={`${keyBase}b${j}`}>{p.slice(2, -2)}</strong>;
+      return <strong key={`${keyBase}b${j}`}>{renderInline(p.slice(2, -2), `${keyBase}b${j}`)}</strong>;
     }
     if (p.startsWith("*") && p.endsWith("*") && p.length > 2) {
-      return <em key={`${keyBase}i${j}`}>{p.slice(1, -1)}</em>;
+      return <em key={`${keyBase}i${j}`}>{renderInline(p.slice(1, -1), `${keyBase}i${j}`)}</em>;
     }
     if (p.startsWith("_") && p.endsWith("_") && p.length > 2) {
-      return <em key={`${keyBase}u${j}`}>{p.slice(1, -1)}</em>;
+      return <em key={`${keyBase}u${j}`}>{renderInline(p.slice(1, -1), `${keyBase}u${j}`)}</em>;
     }
     // [label](https://…). Only http(s), matched by the split above, so nothing
     // else can become an href — no javascript:, no data:, no relative paths.
@@ -205,7 +211,10 @@ export function pendingQuestion(answer: string): string | null {
     .filter(Boolean);
   const last = sentences[sentences.length - 1] ?? "";
   if (!last.endsWith("?") || last.length > 90) return null;
-  return last;
+  // A closing question is very often the last BULLET, and the marker came with
+  // it — the composer read "- Otherwise, are you ready to apply now?", a stray
+  // hyphen at the start of the field on any answer that ended in a list.
+  return last.replace(/^[-•*]\s+/, "");
 }
 
 /** Answer text → nodes, with paragraphs as real <p> BLOCKS.
@@ -429,6 +438,10 @@ export function DemeterChat({
    *  unreasonable thing to do quietly to someone who came to find out how the
    *  system works before telling it anything about themselves. */
   const [worksheetMode, setWorksheetMode] = useState<WorksheetMode>("ask");
+  /** Whether the "just asking, or shall I work out a figure?" offer has been
+   *  answered or waved away. Asked ONCE, after the first answer — see the
+   *  callout above the composer. */
+  const [modeAsked, setModeAsked] = useState(false);
 
   // A place named in the chat, waiting to be confirmed. An OFFER, never an
   // automatic switch: someone typed "im in boston" and the scope stayed on
@@ -1001,6 +1014,9 @@ export function DemeterChat({
   }, [input, busy, messages, state, lang, t, refreshWorksheet, resetInputHeight, worksheetMode, drawStream]);
 
   const hasChat = messages.length > 0;
+  /** At least one answer has finished. The mode offer waits for this: before an
+   *  answer exists there is nothing to have an opinion about. */
+  const answeredOnce = messages.some((m) => m.role === "assistant" && m.content !== "");
 
   // What the composer asks for. If Demeter's last answer ended in a question,
   // that question — otherwise the standing invitation. Never while an answer is
@@ -1204,6 +1220,50 @@ export function DemeterChat({
       <div className="demeter__sr" aria-live="polite" aria-atomic="true">
         {announcement}
       </div>
+
+      {/* WHICH OF THE TWO THINGS THIS IS, asked once, after the first answer.
+          The toggle for it lives in the right-hand panel, which nobody looks at
+          while reading their first reply — so the product's two modes were a
+          control most people never knowingly chose between, and everyone stayed
+          in "just asking" by default even when they wanted a number.
+
+          After the FIRST answer, deliberately: before one, there is nothing to
+          have an opinion about; much later, the conversation has already taken
+          a shape. Choosing "work out a figure" opens the state picker straight
+          away, because an estimate without a state is a federal-floor guess and
+          the picker is the next thing needed either way. */}
+      {answeredOnce && !busy && !modeAsked && worksheetMode === "ask" && (
+        <div
+          className="demeter__modeoffer"
+          role="group"
+          aria-label={t.modeOffer}
+        >
+          <span className="demeter__modeoffer-text">{t.modeOffer}</span>
+          <span className="demeter__modeoffer-actions">
+            <button
+              type="button"
+              className="demeter__modeoffer-yes"
+              onClick={() => {
+                setWorksheetMode("estimate");
+                setModeAsked(true);
+                setAnnouncement(t.modeOfferEstimate);
+                // An estimate is scoped to a state or it is a federal-floor
+                // guess wearing a figure's confidence.
+                if (state === null) setOpenPicker((n) => n + 1);
+              }}
+            >
+              {t.modeOfferEstimate}
+            </button>
+            <button
+              type="button"
+              className="demeter__modeoffer-no"
+              onClick={() => setModeAsked(true)}
+            >
+              {t.modeOfferAsk}
+            </button>
+          </span>
+        </div>
+      )}
 
       {/* THE OFFER. Sits above the composer, where the next thing you would do
           is, and disappears either way once answered. It does not switch the

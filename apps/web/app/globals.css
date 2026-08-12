@@ -6356,34 +6356,38 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
    So nothing sits beside the words now: a slow light passes across the words
    themselves, left to right. One element, no jumping, nothing that implies a
    percentage. Under prefers-reduced-motion it is simply the text. */
+/* Fourth attempt, and the simplest. Dots read as a stall. A filling rule read
+   as a progress bar lying about progress. A light travelling across the letters
+   was still something moving THROUGH the words, which draws the eye along a
+   line it is not meant to read.
+
+   Now the words simply breathe: a small swell and fade, in place, slow enough
+   to sit under the threshold where motion becomes a demand for attention.
+   Nothing travels, nothing fills, nothing implies a percentage. */
 .demeter__thinkingtext {
-  background-image: linear-gradient(
-    100deg,
-    var(--demeter-muted) 0%, var(--demeter-muted) 38%,
-    var(--demeter-ink) 50%,
-    var(--demeter-muted) 62%, var(--demeter-muted) 100%
-  );
-  background-size: 260% 100%;
-  background-repeat: no-repeat;
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  animation: dmWait 2.4s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+  display: inline-block; color: var(--demeter-muted);
+  transform-origin: left center;
+  animation: dmWait 2.6s cubic-bezier(0.45, 0, 0.55, 1) infinite;
 }
 @keyframes dmWait {
-  from { background-position: 130% 0; }
-  to   { background-position: -30% 0; }
+  0%, 100% { opacity: 0.55; transform: scale(0.985); }
+  50%      { opacity: 1;    transform: scale(1.015); }
 }
 
 /* The streaming cursor. Once text starts arriving there was NO signal at all —
    a finished answer and a stalled one looked identical. A block caret at the
    live end of the text is the oldest and clearest way to say "still writing". */
+/* A SOFT END, not a blinking block. A solid bar hard-switching on and off at
+   1Hz is the loudest thing on a page of quiet type, and it sat at the end of
+   every sentence as it arrived. Narrower, softer, and it breathes rather than
+   blinks — still says "more is coming", without shouting it. */
 .demeter__caret {
-  display: inline-block; width: 0.5ch; height: 1em; margin-left: 0.1em;
-  background: var(--demeter-terracotta-deep); vertical-align: text-bottom;
-  animation: dmCaret 1s step-end infinite;
+  display: inline-block; width: 0.28ch; height: 0.95em; margin-left: 0.12em;
+  border-radius: 1px;
+  background: var(--demeter-muted); vertical-align: text-bottom;
+  animation: dmCaret 1.9s cubic-bezier(0.45, 0, 0.55, 1) infinite;
 }
-@keyframes dmCaret { 0%, 100% { opacity: 1 } 50% { opacity: 0 } }
+@keyframes dmCaret { 0%, 100% { opacity: 0.15 } 50% { opacity: 0.75 } }
 
 /* THE THINKING BUBBLE holds roughly the height of the first line of an answer,
    so the moment the first token lands the bubble does not collapse and re-grow
@@ -6467,7 +6471,7 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   .demeter__msg--assistant,
   .demeter__thinking,
   .dmst__scope,
-  .demeter__thinkingtext { animation: none; background: none; color: var(--demeter-muted); }
+  .demeter__thinkingtext { animation: none; transform: none; opacity: 1; }
   .dmnav__tab { transition: none; }
   .dmnav__tab:active { transform: none; }
   /* The caret stops BLINKING but stays visible — it is a status indicator, not
@@ -6664,14 +6668,12 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   padding-inline: clamp(1rem, 4vw, 2rem);
 }
 
-/* And it is shorter here. There is no page scroll on this surface to collapse
-   a header on — the transcript scrolls inside itself, the document does not
-   move — so the height has to be given back permanently rather than on a
-   gesture that never fires. The subtitle is what goes: it exists to tell a
-   first-time visitor what Demeter is, and someone already in the conversation
-   has been told. The mark and the wordmark stay, always visible. */
-.dmchat .dmnav__subtitle { display: none; }
-.dmchat .dmnav__inner { min-height: 52px; }
+/* The subtitle stays here too. It was hidden on this surface to buy height,
+   but it is the one line telling a first-time visitor what Demeter is — and
+   someone can land on /chat first, from a link or a search result, without
+   ever seeing the landing page. It is set smaller here instead. */
+.dmchat .dmnav__subtitle { font-size: 0.62rem; letter-spacing: 0.08em; }
+.dmchat .dmnav__inner { min-height: 56px; }
 
 /* Undo the landing page's card chrome: on its own page the chat IS the page,
    so it needs no border, no shadow, and no capped scroll height. */
@@ -6871,6 +6873,38 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 
 /* The state offer. Sits above the composer, tinted so it reads as the product
    asking rather than as another answer, and it never switches by itself. */
+/* WHICH OF THE TWO THINGS THIS IS. Same shape as the state offer directly
+   below it — both are one question with two answers, above the composer, gone
+   once answered — but in the quieter rule rather than wheat, because it is an
+   invitation and the state offer is a correction to something already assumed. */
+.demeter__modeoffer {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 0.9rem;
+  margin: 0.6rem 0 0; padding: 0.7rem 0.9rem;
+  border: 1px solid var(--demeter-rule-strong); border-radius: 14px;
+  background: var(--demeter-card);
+  animation: dmTrailerIn 220ms ease-out both;
+}
+.demeter__modeoffer-text {
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+  font-size: 0.98rem; color: var(--demeter-ink); flex: 1 1 16rem;
+}
+.demeter__modeoffer-actions { display: flex; gap: 0.5rem; margin-left: auto; }
+.demeter__modeoffer-yes, .demeter__modeoffer-no {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.85rem; font-weight: 600; min-height: 36px; padding: 0 0.9rem;
+  border-radius: 999px; cursor: pointer; white-space: nowrap;
+}
+.demeter__modeoffer-yes {
+  background: var(--demeter-wheat); color: var(--demeter-ink); border: 0;
+}
+.demeter__modeoffer-yes:hover { filter: brightness(0.94); }
+.demeter__modeoffer-no {
+  background: transparent; color: var(--demeter-body);
+  border: 1px solid var(--demeter-rule-strong);
+}
+.demeter__modeoffer-no:hover { color: var(--demeter-ink); border-color: var(--demeter-muted); }
+@media (prefers-reduced-motion: reduce) { .demeter__modeoffer { animation: none; } }
+
 .demeter__stateoffer {
   display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 0.9rem;
   margin: 0.6rem 0 0; padding: 0.7rem 0.9rem;
@@ -7003,11 +7037,33 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   display: flex; gap: 0.5rem; align-items: stretch; flex-wrap: wrap;
 }
 .dmchat .demeter__sidebtns > * { flex: 1 1 0; min-width: 8.5rem; }
+/* ONE DESIGN FOR BOTH. They were a terracotta-text button and a muted-text
+   button with different borders — side by side that read as one real control
+   and one disabled placeholder, when they are two equal choices about the same
+   conversation. Same outline, same weight, same ink; neither is filled,
+   because a fill here would compete with the composer's Send. */
 .dmchat .demeter__sidebtns .demeter__save,
 .dmchat .demeter__sidebtns .demeter__clear {
   min-height: 40px; justify-content: center; text-align: center;
-  font-size: 0.78rem; padding: 0 0.6rem;
+  font-size: 0.78rem; font-weight: 600; padding: 0 0.6rem;
+  color: var(--demeter-body); background: transparent;
+  border: 1px solid var(--demeter-rule-strong); border-radius: 999px;
 }
+.dmchat .demeter__sidebtns .demeter__save:hover:not(:disabled),
+.dmchat .demeter__sidebtns .demeter__clear:hover {
+  color: var(--demeter-ink); border-color: var(--demeter-muted);
+}
+/* The save button is wrapped, so the wrapper is the flex child — without this
+   the button inside it does not fill its half of the row. */
+.dmchat .demeter__sidebtns .demeter__savewrap { display: flex; flex-direction: column; gap: 0.35rem; }
+.dmchat .demeter__sidebtns .demeter__savewrap .demeter__save { width: 100%; }
+/* The failure message gets its own line. Inside the row it was squeezed into a
+   third column between the two buttons, wrapping one word per line. */
+.dmchat .demeter__sidebtns .demeter__save-error {
+  flex: 1 1 100%; font-size: 0.74rem; line-height: 1.4;
+  color: var(--demeter-terracotta-deep);
+}
+.demeter__save-code { color: var(--demeter-muted); font-variant-numeric: tabular-nums; }
 /* The confirm step needs the whole row — it carries a sentence, not a label. */
 .dmchat .demeter__sidebtns .demeter__clearconfirm { flex: 1 1 100%; }
 /* Quieter than either button, and last: a standing promise about how answers

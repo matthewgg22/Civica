@@ -46,6 +46,11 @@ export const T = {
     // automatic switch: re-scoping on a guess answers the wrong state with more
     // confidence than before.
     stateOffer: "You mentioned {place}. Answer for {state}?",
+    // Asked once, after the first answer — the toggle for this lives in the
+    // right-hand panel, which nobody reads while taking in their first reply.
+    modeOffer: "Would you like me to work out a rough figure for you, or are you just after answers for now?",
+    modeOfferEstimate: "Work out a figure",
+    modeOfferAsk: "Just answers for now",
     // Shown in the transcript when a state is picked. The portal is where the
     // application actually goes; this is the one moment we know exactly which
     // link that is, so it should not be something they have to ask for.
@@ -179,6 +184,9 @@ export const T = {
       "Por favor no escribas tu número de Seguro Social, datos bancarios ni un nombre completo.",
     clear: "Empezar una conversación nueva",
     stateOffer: "Mencionaste {place}. ¿Respondo para {state}?",
+    modeOffer: "¿Quieres que calcule una cifra aproximada, o por ahora solo buscas respuestas?",
+    modeOfferEstimate: "Calcular una cifra",
+    modeOfferAsk: "Solo respuestas por ahora",
     portalLead: "En {state}, la solicitud se hace a través de {agency}.",
     portalCta: "Solicitar en {portal}",
     portalStay:
@@ -292,6 +300,9 @@ export const T = {
     piiHint: "Xin đừng nhập số An sinh Xã hội, thông tin ngân hàng hay họ tên đầy đủ.",
     clear: "Bắt đầu cuộc trò chuyện mới",
     stateOffer: "Bạn có nhắc đến {place}. Trả lời cho {state} nhé?",
+    modeOffer: "Bạn có muốn tôi ước tính một con số không, hay hiện giờ chỉ cần câu trả lời?",
+    modeOfferEstimate: "Ước tính một con số",
+    modeOfferAsk: "Chỉ cần câu trả lời",
     portalLead: "Ở {state}, bạn nộp đơn qua {agency}.",
     portalCta: "Nộp đơn tại {portal}",
     portalStay:
@@ -402,6 +413,9 @@ export const T = {
     piiHint: "请不要输入社会安全号码、银行信息或完整姓名。",
     clear: "开始新的对话",
     stateOffer: "您提到了 {place}。要按 {state} 来回答吗？",
+    modeOffer: "需要我帮您估算一个大致金额吗？还是目前只想先了解情况？",
+    modeOfferEstimate: "帮我估算金额",
+    modeOfferAsk: "先只要答案",
     portalLead: "在{state}，申请通过{agency}办理。",
     portalCta: "前往 {portal} 申请",
     portalStay:

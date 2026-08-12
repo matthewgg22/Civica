@@ -51,7 +51,27 @@ function admissibleFromUser(userText: string): Set<number> {
     admissible.add(Math.round(v));
     admissible.add(Math.round(v / 10) * 10);
   };
-  for (const v of spokenValues(userText)) {
+  // Their figures, and what those figures make when put together.
+  //
+  // SUBTRACTION IS THE POINT. A rideshare driver said they made 3 k last month
+  // and spent 300 on gas; SNAP counts self-employment income as receipts minus
+  // business costs, so the only useful answer contains $2,700 — a number that
+  // appears nowhere, in no regulation, and could only be arrived at by doing
+  // the arithmetic the programme requires. Refusing it deadlocked that
+  // conversation exactly as the last one deadlocked.
+  //
+  // Bounded to PAIRS of things they actually said. That admits 2,700 and 3,300
+  // from {3,000, 300} and nothing else — not the $3,380 gross limit, not the
+  // $204 standard deduction, which are policy figures and still have to be
+  // retrieved before they can be stated.
+  const said = spokenValues(userText).filter((v) => v > 0);
+  const combos = [...said];
+  for (let i = 0; i < said.length; i++) {
+    for (let j = i + 1; j < said.length; j++) {
+      combos.push(said[i]! + said[j]!, Math.abs(said[i]! - said[j]!));
+    }
+  }
+  for (const v of combos) {
     add(v);
     for (const f of CADENCE_FACTORS) {
       add(v * f);
