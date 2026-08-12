@@ -13,6 +13,7 @@
 import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import {
   RECOMPOSE_MARKER,
+  FOLLOWUP_MARKER,
   ANSWER_LANGS,
   LANG_NATIVE_NAME,
   type PackMeta,
@@ -81,7 +82,14 @@ type Msg = SavedMsg;
 // React nodes — never raw HTML, so streamed content has no injection surface.
 // Bullets and line breaks come free from the bubble's `white-space: pre-wrap`.
 function renderInline(line: string, keyBase: string): ReactNode[] {
-  const parts = line.split(/(\*\*[^*]+\*\*|\*[^*\s][^*]*\*)/g);
+  // _underscores_ as well as *asterisks*. The system-appended trailer writes
+  // "_Check it yourself:_", which rendered with its underscores showing —
+  // visible in the product, on every cited answer, for as long as that trailer
+  // has existed.
+  //
+  // Underscores are matched only at a word boundary, so snake_case identifiers
+  // in a citation (7_CFR_273) are not mistaken for emphasis.
+  const parts = line.split(/(\*\*[^*]+\*\*|\*[^*\s][^*]*\*|\b_[^_\s][^_]*_\b)/g);
   return parts.map((p, j) => {
     if (p.startsWith("**") && p.endsWith("**") && p.length > 4) {
       return <strong key={`${keyBase}b${j}`}>{p.slice(2, -2)}</strong>;
@@ -89,8 +97,46 @@ function renderInline(line: string, keyBase: string): ReactNode[] {
     if (p.startsWith("*") && p.endsWith("*") && p.length > 2) {
       return <em key={`${keyBase}i${j}`}>{p.slice(1, -1)}</em>;
     }
+    if (p.startsWith("_") && p.endsWith("_") && p.length > 2) {
+      return <em key={`${keyBase}u${j}`}>{p.slice(1, -1)}</em>;
+    }
     return p;
   });
+}
+
+/** Splits the model's suggested follow-ups off the visible answer.
+ *
+ *  The model ends with "⟶ one | two | three". Those become buttons, so the
+ *  marker line must never render as text — and it must be stripped even when
+ *  the line is still half-streamed, or the reader watches a stray arrow and a
+ *  pipe character type themselves out mid-answer.
+ *
+ *  Returns the follow-ups only once the line is COMPLETE (a newline after it,
+ *  or the stream has finished). Offering half a question would be worse than
+ *  offering none. */
+export function splitFollowups(
+  text: string,
+  opts?: { streaming?: boolean },
+): { body: string; followups: string[] } {
+  const at = text.lastIndexOf(`\n${FOLLOWUP_MARKER}`);
+  if (at < 0) return { body: text, followups: [] };
+
+  const body = text.slice(0, at);
+  const rest = text.slice(at + 1 + FOLLOWUP_MARKER.length);
+  const end = rest.indexOf("\n");
+  const complete = end >= 0 || !opts?.streaming;
+  if (!complete) return { body, followups: [] };
+
+  const line = end >= 0 ? rest.slice(0, end) : rest;
+  const tail = end >= 0 ? rest.slice(end) : "";
+  const followups = line
+    .split("|")
+    .map((q) => q.trim())
+    .filter((q) => q.length > 1 && q.length <= 80)
+    .slice(0, 3);
+
+  // Anything after the follow-ups line (the appended citation trailer) stays.
+  return { body: body + tail, followups };
 }
 
 /** Answer text → nodes, with paragraphs as real <p> BLOCKS.
@@ -281,13 +327,17 @@ export function DemeterChat({
       finishDrain();
       return;
     }
-    // PROPORTIONAL, not a fixed rate. A fixed characters-per-frame either lags
-    // badly behind a fast answer or crawls through a slow one; taking a
-    // fraction of the backlog each frame drains fast when far behind and eases
-    // as it catches up, which is what makes it read as typing rather than as a
-    // progress bar. The floor keeps it moving on the last few characters.
+    // PROPORTIONAL WITH A CEILING, and the ceiling is the point.
+    //
+    // Uncapped, `behind / 8` meant a long answer arrived at thousands of
+    // characters a second — technically "paced" and indistinguishable from a
+    // dump. This product is for someone frightened of losing food assistance,
+    // and text that lands faster than anyone can read it is not calm, it is
+    // urgent. So: ~125 characters a second at rest, ~250 when catching up.
+    // Around reading pace, deliberately, rather than around network pace.
     const behind = full.length - shownRef.current;
-    shownRef.current = Math.min(full.length, shownRef.current + Math.max(2, Math.ceil(behind / 8)));
+    const step = Math.min(4, Math.max(1, Math.ceil(behind / 40)));
+    shownRef.current = Math.min(full.length, shownRef.current + step);
     const text = full.slice(0, shownRef.current);
     setMessages((m) => {
       const copy = m.slice();
@@ -626,12 +676,29 @@ export function DemeterChat({
       // throttled hard there, and an unbounded wait would leave busy stuck on —
       // Stop showing instead of Send — for as long as the tab stayed hidden.
       if (shownRef.current < fullRef.current.length) {
+        // A STALL WATCHDOG, not a deadline. A fixed ceiling would truncate a
+        // long answer that is pacing correctly — at reading pace a 2,000
+        // character reply legitimately takes eight seconds. What actually needs
+        // catching is the timer STOPPING (a hidden tab throttles it to
+        // nothing), so this watches for no progress rather than for elapsed
+        // time.
+        let watchdog = 0;
         await Promise.race([
           new Promise<void>((resolve) => {
             drainedRef.current = resolve;
           }),
-          new Promise<void>((resolve) => setTimeout(resolve, 3000)),
+          new Promise<void>((resolve) => {
+            let last = shownRef.current;
+            watchdog = window.setInterval(() => {
+              if (shownRef.current !== last) {
+                last = shownRef.current;
+                return;
+              }
+              resolve();
+            }, 1200);
+          }),
         ]);
+        clearInterval(watchdog);
       }
       if (shownRef.current < fullRef.current.length) {
         clearTimeout(rafRef.current);
@@ -814,9 +881,11 @@ export function DemeterChat({
               <div className={`demeter__msg demeter__msg--${m.role}`}>
                 {m.content ? (
                   m.role === "assistant" ? (
-                    renderAnswer(m.content, {
-                      streaming: busy && i === messages.length - 1,
-                    })
+                    renderAnswer(
+                      splitFollowups(m.content, { streaming: busy && i === messages.length - 1 })
+                        .body,
+                      { streaming: busy && i === messages.length - 1 },
+                    )
                   ) : (
                     m.content
                   )
@@ -840,6 +909,34 @@ export function DemeterChat({
                   to have arrived (readCertainty returns null until it does),
                   and asking someone to rate a half-streamed answer is asking
                   about something they haven't read. */}
+              {/* Suggested follow-ups, on a FINISHED answer only — offering
+                  the next question while the current one is still arriving
+                  reads as being hurried along.
+                  They populate the composer rather than sending, matching the
+                  starter questions: a suggestion you can edit before asking is
+                  a suggestion, and one that fires on touch is a decision made
+                  for you. */}
+              {m.role === "assistant" && m.content && !(busy && i === messages.length - 1) && (
+                <>
+                  {splitFollowups(m.content).followups.length > 0 && (
+                    <div className="demeter__followups">
+                      {splitFollowups(m.content).followups.map((q) => (
+                        <button
+                          key={q}
+                          type="button"
+                          className="demeter__followup"
+                          onClick={() => {
+                            setInput(q);
+                            inputRef.current?.focus();
+                          }}
+                        >
+                          {q}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </>
+              )}
               {m.role === "assistant" && m.content && !(busy && i === messages.length - 1) && (
                 <DemeterFeedback
                   question={

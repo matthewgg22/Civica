@@ -4805,12 +4805,15 @@ html {
    shared a line and the pair read as misaligned.
    It still grows correctly: the auto-grow sets height from scrollHeight, which
    includes this padding, so line two lands at exactly 68 + 24. */
-/* 24 (one line) + 21 + 21 (padding) + 1 + 1 (border) = 68, matching Send
+/* 24 (one line) + 13 + 13 (padding) + 1 + 1 (border) = 52, matching Send
    exactly. In PX, not rem or a unitless ratio: the root font-size here is 17px,
-   so `line-height: 1.5` computes to 25.5 and the field came out 71.5 against
-   Send's 68 — my first attempt at this made the mismatch worse, in the other
-   direction. */
-.dmchat .demeter__input { min-height: 68px; line-height: 24px; padding: 21px 1rem; }
+   so `line-height: 1.5` computes to 25.5 rather than 24 and the arithmetic
+   stops landing.
+   52 rather than the 68 this was: a composer taller than it needs to be reads
+   as a form field waiting to be filled in, and it was eating vertical space
+   from the transcript on every screen. Still well clear of the 44px target
+   minimum, and it still grows a clean 24px per line. */
+.dmchat .demeter__input { min-height: 52px; line-height: 24px; padding: 13px 1rem; }
 .demeter__input:focus { outline: 2px solid var(--demeter-terracotta); outline-offset: 1px; }
 .demeter__send {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
@@ -6572,7 +6575,7 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   /* Flush with the composer at rest, so the two read as one control rather than
      a tall box with a short button parked at its corner. They stay bottom
      aligned as the composer grows. */
-  .dmchat .demeter__send { min-height: 68px; border-radius: 1rem; padding: 0 1.6rem; }
+  .dmchat .demeter__send { min-height: 52px; border-radius: 1rem; padding: 0 1.6rem; }
 }
 
 /* The measure, capped in CHARACTERS rather than as a percentage of whatever the
@@ -6610,6 +6613,29 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
    here. */
 .dmnav__tab { transition: color 120ms ease-out, background-color 120ms ease-out; }
 .dmnav__tab:active { transform: translateY(1px); }
+
+/* Suggested follow-ups under a finished answer. Quieter than the starter
+   questions on the empty screen — those are an invitation to begin, these are
+   an aside after something has already been said, and they should not compete
+   with the answer above them. */
+.demeter__followups {
+  display: flex; flex-wrap: wrap; gap: 0.45rem; margin: 0.7rem 0 0;
+  animation: dmTrailerIn 260ms ease-out both;
+}
+.demeter__followup {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.86rem; line-height: 1.3; text-align: left; cursor: pointer;
+  color: var(--demeter-terracotta-deep); background: transparent;
+  border: 1px solid var(--demeter-rule-strong); border-radius: 999px;
+  padding: 0.45rem 0.85rem; min-height: 36px;
+  transition: border-color 140ms ease-out, background-color 140ms ease-out;
+}
+.demeter__followup:hover { border-color: var(--demeter-terracotta); background: var(--demeter-card); }
+.demeter__followup:focus-visible { outline: 2px solid var(--demeter-ink); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) {
+  .demeter__followups { animation: none; }
+  .demeter__followup { transition: none; }
+}
 
 .demeter__turn { display: flex; flex-direction: column; }
 .demeter__turn--user { align-items: flex-end; }

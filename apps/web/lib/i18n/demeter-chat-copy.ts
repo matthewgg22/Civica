@@ -54,7 +54,7 @@ export const T = {
       "Demeter is at capacity for the month. For SNAP help right now, call 211 or your state SNAP agency.",
     errConfig: "Demeter isn't available yet — please check back soon.",
     errNetwork: "Something went wrong. Please try again.",
-    thinking: "Reading the rules…",
+    thinking: "Checking the rules for you…",
     // The empty chat's own words. Three bare buttons floating in 414px of
     // measured whitespace read as stray controls; a mark, a line, and the
     // questions grouped under it read as an invitation.
@@ -171,7 +171,7 @@ export const T = {
       "Demeter llegó a su capacidad del mes. Para ayuda con SNAP ahora, llama al 211 o a tu agencia estatal.",
     errConfig: "Demeter aún no está disponible — vuelve pronto.",
     errNetwork: "Algo salió mal. Intenta de nuevo.",
-    thinking: "Leyendo las reglas…",
+    thinking: "Consultando las reglas por ti…",
     emptyTitle: "¿Qué te gustaría saber?",
     emptyLede: "Cada respuesta cita la regla de la que proviene, para que puedas comprobarla.",
     empty1: "¿Gano demasiado para calificar?",
@@ -275,7 +275,7 @@ export const T = {
       "Demeter đã đạt giới hạn của tháng. Để được trợ giúp về SNAP ngay bây giờ, hãy gọi 211 hoặc cơ quan SNAP của tiểu bang bạn.",
     errConfig: "Demeter chưa sẵn sàng — vui lòng quay lại sau.",
     errNetwork: "Đã xảy ra lỗi. Vui lòng thử lại.",
-    thinking: "Đang đọc các quy định…",
+    thinking: "Đang tra quy định giúp bạn…",
     emptyTitle: "Bạn muốn biết điều gì?",
     emptyLede: "Mỗi câu trả lời đều trích dẫn điều luật mà nó dựa vào, để bạn tự kiểm chứng được.",
     empty1: "Tôi kiếm được nhiều quá thì có còn đủ điều kiện không?",
@@ -374,7 +374,7 @@ export const T = {
       "Demeter 本月已达使用上限。如需即时的 SNAP 帮助，请拨打 211 或联系您所在州的 SNAP 机构。",
     errConfig: "Demeter 尚未开放——请稍后再来。",
     errNetwork: "出了点问题。请再试一次。",
-    thinking: "正在查阅法规…",
+    thinking: "正在为您查阅法规…",
     emptyTitle: "您想了解什么？",
     emptyLede: "每条回答都会引用其依据的条文，方便您自行核对。",
     empty1: "我赚得太多，就不符合条件了吗？",

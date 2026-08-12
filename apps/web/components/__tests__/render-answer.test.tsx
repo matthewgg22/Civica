@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { isValidElement } from "react";
-import { renderAnswer } from "../DemeterChat";
+import { renderAnswer, splitFollowups } from "../DemeterChat";
 
 // renderAnswer returns React nodes (no DOM needed): <p> paragraph blocks and
 // <hr>, with <strong>/<em>/text inside them for the markdown subset the engine
@@ -122,5 +122,68 @@ describe("the streaming cursor", () => {
 
   it("does not appear on an empty answer", () => {
     expect(tags(renderAnswer("", { streaming: true }))).toEqual([]);
+  });
+});
+
+describe("underscore emphasis", () => {
+  it("renders _italics_, which the appended trailer actually uses", () => {
+    // "_Check it yourself:_" shipped with its underscores showing on every
+    // cited answer — the renderer only knew about asterisks.
+    const nodes = renderAnswer("_Check it yourself:_ Pub. L. 119-21");
+    expect(tags(nodes)).toEqual(["em"]);
+    expect(texts(nodes)).not.toContain("_");
+    expect(texts(nodes)).toContain("Check it yourself:");
+  });
+
+  it("leaves snake_case identifiers alone", () => {
+    // A citation like 7_CFR_273 is not emphasis, and turning half of it italic
+    // would corrupt the one thing on the line that has to stay exact.
+    const nodes = renderAnswer("see 7_CFR_273 for the rule");
+    expect(tags(nodes)).toEqual([]);
+    expect(texts(nodes)).toBe("see 7_CFR_273 for the rule");
+  });
+});
+
+describe("suggested follow-ups", () => {
+  it("takes the line off the answer and returns the questions", () => {
+    const { body, followups } = splitFollowups(
+      "SNAP is monthly help with groceries.\n⟶ How do I apply? | What counts as income?",
+    );
+    expect(followups).toEqual(["How do I apply?", "What counts as income?"]);
+    expect(body).not.toContain("⟶");
+    expect(body).not.toContain("|");
+  });
+
+  it("keeps the citation trailer that follows it", () => {
+    // The trailer is appended by the server AFTER the model's answer, so the
+    // follow-ups line lands in the middle. Cutting to the end would take the
+    // citations with it.
+    const { body, followups } = splitFollowups(
+      "Answer.\n⟶ How do I apply?\n---\n7 CFR 273.9",
+    );
+    expect(followups).toEqual(["How do I apply?"]);
+    expect(body).toContain("7 CFR 273.9");
+    expect(body).toContain("---");
+  });
+
+  it("offers nothing while the line is still streaming", () => {
+    // Half a question is worse than no question — and the raw marker must not
+    // type itself out in the answer either.
+    const { body, followups } = splitFollowups("Answer.\n⟶ How do I app", {
+      streaming: true,
+    });
+    expect(followups).toEqual([]);
+    expect(body).not.toContain("⟶");
+  });
+
+  it("leaves an answer without the marker untouched", () => {
+    const { body, followups } = splitFollowups("Just an answer.");
+    expect(followups).toEqual([]);
+    expect(body).toBe("Just an answer.");
+  });
+
+  it("caps at three, since a wall of buttons is still a wall", () => {
+    const { followups } = splitFollowups("A.\n⟶ one? | two? | three? | four? | five?");
+    expect(followups).toHaveLength(3);
   });
 });
