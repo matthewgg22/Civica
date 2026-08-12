@@ -1,0 +1,51 @@
+{
+  "code": "ID",
+  "program": "SNAP — Idaho DHW's own consumer pages use plain \"SNAP\" (formerly Food Stamps); the administrative code's own title is \"Idaho Food Stamp Program\" (IDAPA 16.03.04), see PROVENANCE.md",
+  "agency": "Idaho Department of Health and Welfare (DHW), Self-Reliance Programs division",
+  "admin_model": "state",
+  "admin_note": "Idaho is a STATE-ADMINISTERED SNAP program (no county option-in like CA/NY/MN/WI/VA) — DHW's Self-Reliance Programs division administers directly through field offices statewide, with no county-level policy variation. GENUINE FLAGSHIP CORRECTION this pack found: several secondary/aggregator sources (and this pack's own preliminary search synthesis) describe Idaho's Broad-Based Categorical Eligibility (BBCE) as having \"no resource limit,\" claiming a car's value \"does not affect eligibility.\" Idaho's own administrative code directly contradicts this: IDAPA 16.03.04.010.09 defines BBCE households as \"also subject to resource, gross, and net income eligibility standards\" — NOT exempt — and IDAPA 16.03.04.305 sets that BBCE resource limit at a flat five thousand dollars ($5,000), independently confirmed on DHW's own consumer-facing Apply for SNAP page (\"For most households, resources must be under $5,000 to qualify for SNAP\"). This is a real, elevated limit above the plain federal $3,000/$4,500 baseline (available to non-BBCE households per FNS-published figures), but it is a limit, not a waiver — a true asset-test waiver in Idaho is reserved for the narrower Categorical Eligibility (CE) pathway (all household members receiving TAFI/AABD/SSI, IDAPA 178), which IS fully exempt from resource, gross, and net income standards. SEPARATE TIME-SENSITIVE FLAGSHIP FINDING: Idaho's SNAP candy-and-soda purchase restriction (approved under Idaho House Bill 109, effective February 15, 2026) was NOT among the waivers vacated by the June 22, 2026 federal court order in Aragon et al. v. Rollins et al. (that order struck down Colorado's, Iowa's, Nebraska's, Tennessee's, and West Virginia's food-restriction waivers specifically) — Idaho's own retailer-facing page, last updated April 27, 2026 (five weeks after the court order), describes the restriction as actively in force with no medical exemptions, and secondary reporting corroborates Idaho state officials asserting the ruling does not apply to them since Idaho was not a party to that suit. Confirm current operative practice with DHW directly before treating either finding as permanently settled, the same caution this roster already carries for CA/NY/MN/WI/OH/NC/NJ/VA/GA/IN/TN/MO/MD/CO/SC/AL/LA/KY/OK/CT/NE.",
+  "system": "DHW's Self-Reliance Programs division processes SNAP centrally through field offices (no county offices with independent policy authority); applicants apply online through Idalink (idalink.idaho.gov, DHW's self-service portal covering SNAP, Medicaid, cash, and child care assistance in one account), by phone or in person through DHW's toll-free line (1-877-456-1233) and closest field office, or by mail/email/fax (Self-Reliance Programs, PO Box 83720, Boise, ID 83720-0026; MyBenefits@dhw.idaho.gov; fax 1-866-434-8278). An interview (face-to-face or telephone) is required with every application and, per IDAPA 16.03.04.120, must recur at least once every 24 months for households certified for a 24-month period, and every 12 months for all other households — this pack flags the underlying certification-period LENGTHS themselves (which households qualify for a 24-month vs. shorter certification) as lower-confidence, see freshness.json.",
+  "portal": {
+    "name": "Idalink",
+    "url": "https://idalink.idaho.gov/"
+  },
+  "update_channels": [
+    {
+      "name": "Idaho DHW — About SNAP consumer page (program overview, candy/soda restriction effective 2/15/2026, what SNAP can/cannot buy) — direct curl fetch, clean HTTP 200",
+      "url": "https://healthandwelfare.idaho.gov/services-programs/food-assistance/about-snap"
+    },
+    {
+      "name": "Idaho DHW — Apply for SNAP consumer page (current October 2025 monthly income limits by household size, $5,000 resource limit, application channels) — direct curl fetch, clean HTTP 200",
+      "url": "https://healthandwelfare.idaho.gov/services-programs/food-assistance/apply-snap"
+    },
+    {
+      "name": "Idaho DHW — SNAP Retailer Information Page / Candy and Soda Restrictions (Idaho House Bill 109 candy/soda definitions, effective 2/15/2026, no medical exemptions, updated 4/27/2026 — five weeks after the Aragon v. Rollins court order) — direct curl fetch, clean HTTP 200",
+      "url": "https://healthandwelfare.idaho.gov/providers/snap-candy-and-soda-restrictions/idaho-snap-retailer-information-page"
+    },
+    {
+      "name": "IDAPA 16.03.04, Idaho Food Stamp Program (full administrative code, 70 pages, effective 7-1-24) — direct curl fetch via adminrules.idaho.gov, clean HTTP 200 after following a 301 redirect, converted with pdftotext -layout",
+      "url": "https://adminrules.idaho.gov/rules/current/16/160304.pdf"
+    },
+    {
+      "name": "USDA FNS — Idaho SNAP Food Restriction Waiver page",
+      "url": "https://www.fna.usda.gov/snap/waivers/foodrestriction/idaho"
+    },
+    {
+      "name": "Covington & Burling LLP — Federal District Court Vacates USDA SNAP Food Restriction Waivers (Aragon et al. v. Rollins et al., June 22, 2026 — names the five states whose waivers were vacated; Idaho is not among them)",
+      "url": "https://www.cov.com/en/news-and-insights/insights/2026/06/federal-district-court-vacates-usda-snap-food-restriction-waivers"
+    }
+  ],
+  "verification": {
+    "verified_on": "2026-08-12",
+    "method": "Direct curl fetch (browser User-Agent) of Idaho DHW's consumer-facing About SNAP and Apply for SNAP pages (clean HTTP 200) and the SNAP Retailer Information / Candy and Soda Restrictions page (clean HTTP 200, page dated 4/27/2026 — after the Aragon v. Rollins court order, confirming the restriction's continued operative status). Also directly fetched IDAPA 16.03.04 (Idaho Food Stamp Program), Idaho's full administrative code for the program, via adminrules.idaho.gov — an initial fetch attempt returned a 301 redirect (a tooling non-issue, resolved with curl -L) to a clean 1.2MB, 70-page PDF, converted locally with pdftotext -layout. Cross-checked USDA FNS's own Idaho food-restriction-waiver page and Covington & Burling LLP's legal-analysis summary of the June 22, 2026 Aragon v. Rollins order (which names Colorado, Iowa, Nebraska, Tennessee, and West Virginia as the vacated states, Idaho notably absent) via WebSearch corroboration.",
+    "gates": "healthandwelfare.idaho.gov returned clean HTTP 200 to every direct curl attempt with a browser User-Agent, across three separate consumer/retailer pages. adminrules.idaho.gov returned a 301 redirect on the first IDAPA 16.03.04 PDF fetch attempt (resolved trivially with curl -L, a genuine but minor tooling wrinkle, not a bot-detection wall) and then a clean HTTP 200 on the redirect target. This pack found NO bot-detection wall anywhere in its Idaho research — a contrast with this roster's Connecticut, Arkansas, and several other prior packs' Justia/Radware patterns, though consistent with Nebraska's, this roster's most recently built state.",
+    "sources": [
+      "Idaho DHW, About SNAP consumer page — direct curl fetch, clean HTTP 200; program overview, what SNAP can/cannot buy, candy/soda restriction effective 2/15/2026, page dated 3-12-2026",
+      "Idaho DHW, Apply for SNAP consumer page — direct curl fetch, clean HTTP 200; current October 2025 monthly gross income limits by household size ($1,696 for household size 1 through $5,867 for size 8, +$596 each additional member), $5,000 resource limit statement, application channels, page dated 4-14-2026",
+      "Idaho DHW, SNAP Retailer Information Page / Candy and Soda Restrictions — direct curl fetch, clean HTTP 200; Idaho House Bill 109's candy/soda definitions, no medical exemptions, page dated 4-27-2026 (five weeks after the Aragon v. Rollins court order, with no indication of a rollback)",
+      "IDAPA 16.03.04, Idaho Food Stamp Program — direct curl fetch (via adminrules.idaho.gov, following a 301 redirect), clean HTTP 200, converted with pdftotext -layout; full 70-page administrative code text read directly for BBCE definition/resource limit (Sections 010.09, 178-181, 305), drug-felony modified ban (Section 287), ABAWD work requirement and exemptions (Sections 251-258), utility allowance definitions (Sections 010-011, 543), medical/shelter/other deductions (Sections 533-538), interview frequency (Section 120)",
+      "USDA FNS, Idaho SNAP Food Restriction Waiver page — direct fetch corroboration for the candy/soda waiver's approval and implementation-date-change history (1/1/2026 to 2/15/2026, approved 12/12/2025)",
+      "Covington & Burling LLP, legal-analysis summary of Aragon et al. v. Rollins et al. (D.D.C., June 22, 2026) — WebSearch/WebFetch corroboration naming Colorado, Iowa, Nebraska, Tennessee, and West Virginia as the specific states whose food-restriction waivers were vacated; Idaho, Texas, Florida, Louisiana, Oklahoma, Indiana, and Utah were not parties and continue enforcing their own restrictions"
+    ]
+  }
+}
