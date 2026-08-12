@@ -1,0 +1,103 @@
+{
+  "code": "MT",
+  "program": "SNAP",
+  "agency": "Montana Department of Public Health and Human Services (DPHHS), Human and Community Services Division (HCSD)",
+  "admin_model": "state",
+  "admin_note": "Montana is a STATE-ADMINISTERED SNAP program — DPHHS's Human and Community Services Division (HCSD) administers directly through local Offices of Public Assistance (OPA), with no county-level policy variation, structurally similar to this roster's Nebraska, Connecticut, North Carolina, Ohio, New Jersey, Tennessee, Indiana, Missouri, Maryland, Colorado, South Carolina, Alabama, Louisiana, Kentucky, Oklahoma, Utah, Iowa, Arkansas, Mississippi, Kansas, New Mexico, New Hampshire, Idaho, West Virginia, Hawaii, and Maine packs. GENUINE STRUCTURAL FLAGSHIP FINDING (a correction of a widely-repeated secondary-source oversimplification): several secondary sources (e.g. Propel's own Montana guide) state flatly that \"Montana won't disqualify you [from SNAP] because of a drug felony.\" This pack fetched Montana DPHHS's own current SNAP manual directly (SNAP 304-1, SNAP 001, SNAP 602-4, all effective/current as of the 07/01/2026 Table of Contents) and found the actual rule is a MODIFIED ban, not a full opt-out: an individual convicted after 08/22/96 of a federal or state felony for possession, use, or distribution of illegal drugs is disqualified ONLY IF they are also \"not complying with conditions of supervision\" (e.g., probation/parole terms, which commonly include treatment-program participation) — an individual who IS complying with supervision conditions is not disqualified on this basis. This pack treats the secondary-source \"won't disqualify you\" framing as an overclaim that omits the supervision-compliance condition, and reads Montana's actual rule as retaining a real, live disqualification pathway for noncompliant drug felons rather than a genuine full opt-out like this roster's New Hampshire or Maine packs found; see criminal-justice-disqualifications supplement. SECOND FLAGSHIP FINDING: Montana's own DPHHS SNAP 400 (Resources Overview, effective 10/01/2024, current per the 07/01/2026 TOC) states the non-categorically-eligible resource limit is $3,000 for a household with no elderly/disabled member — several secondary sources this pack found instead cite $2,750, a stale figure from an earlier COLA cycle (the federal general SNAP resource limit rose from $2,750 to $3,000 effective the FFY2025 cycle). This pack flags the $2,750 figure as OUTDATED and confirms $3,000/$4,500 (elderly/disabled) as Montana's own currently-published figures; see income-and-resources supplement. THIRD FINDING: Montana operates a genuine Broad-Based-style Expanded Categorical Eligibility (ECE) track at 200% FPG gross income with no resource test, alongside a narrower Traditional Categorical Eligibility (CE, TANF/Tribal TANF/SSI recipients) track and a residual non-CE/non-ECE track that does face the $3,000/$4,500 resource limits and the underlying 130%/100% FPG income tests — a three-track structure this pack reads precisely rather than compressing into a flat \"no asset test\" claim, matching the same structural caution this roster's New Hampshire pack applied; see income-and-resources supplement. FOURTH FINDING: Montana currently has NO approved ABAWD geographic waivers anywhere in the state, confirmed directly and unambiguously by DPHHS's own SNAP 802-1 (\"As of 11/01/2025, there are no areas within Montana with approved ABAWD geographic waivers\") — a cleaner, more directly-confirmed finding than several other states in this roster where waiver absence had to be inferred from a waiver index's lack of a current entry. Confirm current operative practice with the applicant's own local Office of Public Assistance, the same caution this roster already carries for its other built states.",
+  "system": "DPHHS's Human and Community Services Division (HCSD) processes SNAP centrally through local Offices of Public Assistance (OPA, no county offices with independent policy authority); applicants apply online through apply.mt.gov, by calling the Public Assistance Helpline (1-888-706-1535, which can mail a paper application), by emailing a request for a PDF application to hhssspapplicationcustomersupport@mt.gov, by mail, or in person at a local OPA. A phone interview is required to complete the application. SNAP benefits are issued on the Montana Access Card (Montana's state-branded EBT card). Households in which all members are elderly (60+) or disabled with no earned income are certified for 24 months; all other households are certified for 12 months (Simplified Reporting) or, for change-reporting households, up to 24 months with at least one contact required every 12 months — a more conventional certification structure than this roster's New Hampshire pack (6-month standard) or Maine pack.",
+  "portal": {
+    "name": "apply.mt.gov",
+    "url": "https://apply.mt.gov/"
+  },
+  "update_channels": [
+    {
+      "name": "Montana DPHHS — State of Montana SNAP Program Overview (how to apply, income/resource limit summary, EBT/Montana Access Card, work requirements overview) — direct fetch, clean HTTP 200",
+      "url": "https://dphhs.mt.gov/hcsd/SNAP/"
+    },
+    {
+      "name": "Montana DPHHS — Supplemental Nutrition Assistance Program Policy Manual, full section index (Table of Contents current through 07/01/2026) — direct fetch, clean",
+      "url": "https://dphhs.mt.gov/hcsd/Manuals/SNAPmanual"
+    },
+    {
+      "name": "Montana DPHHS SNAP 001, Gross and Net Income: Standards/Thrifty Food Plan (current FFY2026 GMI/NMI/ECE tables by household size, plus the drug-felony-disqualification supervision-compliance modifier) — direct PDF fetch, clean",
+      "url": "https://dphhs.mt.gov/assets/hcsd/snapmanual/SNAP001.pdf"
+    },
+    {
+      "name": "Montana DPHHS SNAP 400, Resources Overview ($3,000/$4,500 resource limits, CE/ECE resource-test exclusion) — direct PDF fetch, clean",
+      "url": "https://dphhs.mt.gov/assets/hcsd/snapmanual/SNAP400.pdf"
+    },
+    {
+      "name": "Montana DPHHS SNAP 304-1, Non-Financial Requirements: Categorical and Expanded Categorical Eligibility (CE/ECE structure, 200% FPG ECE gross test, drug-felony-conviction CE/ECE exclusion condition) — direct PDF fetch, clean",
+      "url": "https://dphhs.mt.gov/assets/hcsd/snapmanual/SNAP304.1.pdf"
+    },
+    {
+      "name": "Montana DPHHS SNAP 402-1, Resources: Countable and Excluded Resources — direct PDF fetch, clean",
+      "url": "https://dphhs.mt.gov/assets/hcsd/snapmanual/SNAP402-1.pdf"
+    },
+    {
+      "name": "Montana DPHHS SNAP 403-1, Resources: Vehicles (one-vehicle-highest-equity-value exclusion, federal-baseline structure) — direct PDF fetch, clean",
+      "url": "https://dphhs.mt.gov/assets/hcsd/snapmanual/SNAP403.1.pdf"
+    },
+    {
+      "name": "Montana DPHHS SNAP 602-2, Deductions (Earned, Standard, Dependent Care, Child Support) — direct PDF fetch, clean",
+      "url": "https://dphhs.mt.gov/assets/hcsd/snapmanual/SNAP602.2.pdf"
+    },
+    {
+      "name": "Montana DPHHS SNAP 602-3, Deductions (Medical) — $35/month threshold, actual-expense-only (no flat shortcut) — direct PDF fetch, clean",
+      "url": "https://dphhs.mt.gov/assets/hcsd/snapmanual/SNAP602-3.pdf"
+    },
+    {
+      "name": "Montana DPHHS SNAP 602-4, Shelter Deductions (Standard Utility Allowance $799, Limited Utility Allowance $267, One Utility Allowance $116, Telephone Allowance $34; homeless standard shelter deduction; drug-felony-disqualification shelter-deduction carve-out language) — direct PDF fetch, clean",
+      "url": "https://dphhs.mt.gov/assets/hcsd/snapmanual/SNAP602.4.pdf"
+    },
+    {
+      "name": "Montana DPHHS SNAP 801-1, ABAWD Countable Months/Exemptions (current, post-11/1/2025 OBBBA text: age 65+ exemption threshold raised from 55, child under 14, pregnancy, Indian/Indigenous IHS exemption) — direct PDF fetch, clean",
+      "url": "https://dphhs.mt.gov/assets/hcsd/snapmanual/SNAP801.1.pdf"
+    },
+    {
+      "name": "Montana DPHHS SNAP 802-1, ABAWD Geographic Waiver — states plainly \"As of 11/01/2025, there are no areas within Montana with approved ABAWD geographic waivers\" — direct PDF fetch, clean",
+      "url": "https://dphhs.mt.gov/assets/hcsd/snapmanual/SNAP802.1.pdf"
+    },
+    {
+      "name": "Montana DPHHS SNAP 1502-1, Recertification (12-month standard, 24-month elderly/disabled-no-earned-income) — direct PDF fetch, clean",
+      "url": "https://dphhs.mt.gov/assets/hcsd/snapmanual/SNAP1502.1.pdf"
+    },
+    {
+      "name": "Montana DPHHS SNAP 0-3, Introduction (program overview, Montana Access Card naming, federal/state cooperative administration, congregate/meal-delivery prepared-meals provision distinct from a full Restaurant Meals Program) — direct PDF fetch, clean",
+      "url": "https://dphhs.mt.gov/assets/hcsd/snapmanual/SNAP0-3April012019.pdf"
+    },
+    {
+      "name": "Montana DPHHS SNAP 103-1, Application Filing/Interview Process (apply.mt.gov, phone/mail/in-person filing, name+address+signature minimum filing standard) — direct PDF fetch, clean",
+      "url": "https://dphhs.mt.gov/assets/hcsd/snapmanual/SNAP103-1July012018.pdf"
+    },
+    {
+      "name": "USDA FNS SNAP Restaurant Meals Program — nine currently participating states (AZ, CA, IL, MD, MA, MI, NY, RI, VA) do not include Montana — WebSearch corroboration, not independently fetched (fns.usda.gov RMP page timed out on direct WebFetch)",
+      "url": "https://www.fns.usda.gov/snap/restaurant-meals-program"
+    }
+  ],
+  "verification": {
+    "verified_on": "2026-08-12",
+    "method": "dphhs.mt.gov served every page and PDF this pack needed with a clean, direct HTTP 200 response to a standard browser User-Agent — NO WAF/bot-detection barrier of the kind this roster's New Hampshire and several other packs encountered. This pack located Montana's SNAP manual via its actual current path (dphhs.mt.gov/hcsd/Manuals/SNAPmanual — a case- and path-sensitive URL that differs from an initially-guessed dphhs.mt.gov/HCSD/snapmanual, which 404's) and fetched the current Table of Contents (SNAPTOC7.2026.pdf, dated 07.01.26) to confirm exactly which section numbers and effective dates are currently operative before fetching each individual section PDF directly. All section PDFs this pack fetched (SNAP001, SNAP304-1, SNAP400, SNAP402-1, SNAP403-1, SNAP602-2, SNAP602-3, SNAP602-4, SNAP801-1, SNAP802-1, SNAP1502-1, SNAP0-3, SNAP103-1, SNAP705-1) opened cleanly with pdftotext -layout with no corruption; the one URL-guess miss (SNAP801-1.pdf, which does not exist — the real file is SNAP801.1.pdf) was caught immediately via a file-type check (the failed fetch returned an HTML 404 page, not a PDF) and corrected on retry.",
+    "gates": "No access barrier of any kind was found at dphhs.mt.gov — every direct curl attempt with a standard browser User-Agent returned a clean HTTP 200, and no Wayback Machine or reader-proxy fallback was needed. The Montana Legislature's mca.legmt.gov site required following two chained 301 redirects (leg.mt.gov -> archive.legmt.gov -> mca.legmt.gov) to reach the current Food Stamp Program statute index (Title 53, Chapter 2, Part 9), which this pack followed successfully; no drug-felony-specific state statute was found there (only 53-2-901 rulemaking authority, 53-2-902 definitions, 53-2-903 E&T, 53-2-904 income/resource exclusions for FAIM participants), consistent with Montana's drug-felony disqualification being implemented through DPHHS administrative rule/policy manual rather than a standalone opt-out statute. fns.usda.gov's Restaurant Meals Program page timed out on direct WebFetch (60s); this pack fell back to WebSearch corroboration for the 9-state RMP list and flags this explicitly as a WebSearch-only source in freshness.json rather than silently treating it as independently fetched.",
+    "sources": [
+      "Montana DPHHS, State of Montana SNAP Program Overview (dphhs.mt.gov/hcsd/SNAP/) — direct fetch, clean; how-to-apply methods, Montana Access Card naming, income/resource limit summary, work requirements overview",
+      "Montana DPHHS, Supplemental Nutrition Assistance Program Policy Manual Table of Contents (SNAPTOC7.2026.pdf, dated 07.01.26) — direct PDF fetch via pdftotext -layout, clean; confirms every section number and most-recent effective/revision date this pack relied on",
+      "Montana DPHHS SNAP 001, Gross and Net Income: Standards/Thrifty Food Plan (effective 10/01/2025-09/30/2026) — direct PDF fetch, clean; ECE 200% FPG gross table ($2,610-$9,026 by household size 1-8), 130% FPG gross table ($1,696-$5,867), 165% FPG elderly/disabled-separate-household table, 100% FPG net table ($1,305-$4,513); the exact drug-felony-disqualification supervision-compliance modifier text (\"convicted after 08/22/96...and not complying with conditions of supervision\")",
+      "Montana DPHHS SNAP 400, Resources Overview (effective 10/01/2024) — direct PDF fetch, clean; CE/ECE households excluded from resource test; non-CE/non-ECE resource limits $4,500 (elderly/disabled) / $3,000 (all other households) — this pack's primary source for correcting the stale $2,750 figure several secondary sources repeat",
+      "Montana DPHHS SNAP 304-1, Non-Financial Requirements: Categorical and Expanded Categorical Eligibility (effective 10/01/2024) — direct PDF fetch, clean; CE (TANF/Tribal TANF/SSI cash) vs ECE (TANF Information and Referral Services brochure, non-cash) definitions; ECE 200% FPG gross-income-only test; the drug-felony-conviction CE/ECE-exclusion condition text",
+      "Montana DPHHS SNAP 402-1, Resources: Countable and Excluded Resources — direct PDF fetch, clean; alphabetical resource-exclusion catalog (ABLE accounts, burial exclusions up to $1,500, business/self-employment accounts, etc.)",
+      "Montana DPHHS SNAP 403-1, Resources: Vehicles (effective 10/01/2022) — direct PDF fetch, clean; federal-baseline vehicle-exclusion structure (one vehicle with the highest equity value, income-producing vehicles, vehicle used as a home) — this pack flags this as NOT the \"one vehicle per adult\" structure this roster's New Hampshire pack found, a genuine state-to-state structural difference",
+      "Montana DPHHS SNAP 602-2, Deductions (Earned, Standard, Dependent Care, Child Support) — direct PDF fetch, clean; Standard Deduction $209 (household size 1-3), $223 (4), $261 (5), $299 (6+) — matching the current national FFY2026 figures this roster's other states have confirmed",
+      "Montana DPHHS SNAP 602-3, Deductions (Medical), effective/current per TOC — direct PDF fetch, clean; $35/month threshold, actual-expense-only (no flat shortcut) medical deduction for elderly/disabled household members",
+      "Montana DPHHS SNAP 602-4, Shelter Deductions (effective 10/01/2025) — direct PDF fetch, clean; Standard Utility Allowance $799, Limited Utility Allowance $267, One Utility Allowance $116, Telephone Allowance $34; homeless standard shelter deduction (dollar figure not stated in this section, updated annually by 09/01, flagged as an unconfirmed gap in freshness.json); shelter deduction cap language (uncapped for elderly/disabled households, capped dollar figure not stated in this section, same gap)",
+      "Montana DPHHS SNAP 801-1, ABAWD Countable Months/Exemptions (effective 10/01/2025) — direct PDF fetch, clean; current post-11/1/2025 OBBBA exemption list (age 65+ threshold raised from 55, parent/resident of household member under 14, pregnancy, physically/mentally unfit, Indian/Urban Indian/California Indian IHS-eligible); explicitly states the age threshold changed from 55 to 65 effective 11/01/2025",
+      "Montana DPHHS SNAP 802-1, ABAWD Geographic Waiver (effective 11/01/2025) — direct PDF fetch, clean; states plainly and unambiguously \"As of 11/01/2025, there are no areas within Montana with approved ABAWD geographic waivers\"",
+      "Montana DPHHS SNAP 1502-1, Recertification — direct PDF fetch, clean; 24-month certification for all-elderly/disabled-no-earned-income households, 12-month standard for Simplified Reporting households, up to 24-month for change-reporting households with a required 12-month contact",
+      "Montana DPHHS SNAP 0-3, Introduction — direct PDF fetch, clean; \"Montana Access (EBT) card\" naming; federal/state cooperative administration structure; explicit distinction between the standard SNAP eligible-foods restriction (no hot prepared foods) and a narrow federal congregate/meal-delivery-service provision for elderly/SSI households, which this pack reads as distinct from a full state-option Restaurant Meals Program",
+      "Montana DPHHS SNAP 103-1, Application Filing/Interview Process (Reference: 7 CFR 273.2; 7 CFR 273.14) — direct PDF fetch, clean; apply.mt.gov online filing, phone/mail/in-person filing, name+address+signature minimum filing standard, mandatory phone interview",
+      "Montana DPHHS SNAP 705-1, Work Registration Disqualification — direct PDF fetch, clean; progressive penalty periods (1/3/6/6 months) for voluntary quit/hour reduction without good cause — this pack fetched this section specifically to confirm it is DISTINCT from the drug-felony-conviction disqualification pathway, not a source for it",
+      "Montana Legislature, MCA Title 53, Chapter 2, Part 9 (Food Stamp Program) sections index — direct fetch via two chained redirects (leg.mt.gov -> archive.legmt.gov -> mca.legmt.gov), clean; confirms no standalone Montana drug-felony-ban opt-out statute exists in this part (only 53-2-901 rulemaking authority, 53-2-902 definitions, 53-2-903 E&T, 53-2-904 income/resource exclusions), consistent with the ban being implemented through DPHHS administrative policy rather than statute",
+      "WebSearch corroboration (secondary, not independently fetched) — Propel's Montana SNAP guide's \"won't disqualify you because of a drug felony\" claim, which this pack found to be an oversimplification of the actual supervision-compliance-conditioned rule once cross-checked against DPHHS's own SNAP 001/304-1/602-4 text; the 9-state USDA Restaurant Meals Program participant list (AZ, CA, IL, MD, MA, MI, NY, RI, VA), fetched via WebSearch after a direct WebFetch of fns.usda.gov timed out"
+    ]
+  }
+}

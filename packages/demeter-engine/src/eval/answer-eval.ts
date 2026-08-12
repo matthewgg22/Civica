@@ -4455,6 +4455,94 @@ export const ME_GOLD: AnswerExpectation[] = [
 ];
 
 
+/** Everything the live runner executes for Montana. */
+export const MT_GOLD: AnswerExpectation[] = [
+  {
+    id: "mt-resource-limit-3000-not-2750",
+    // Guards the correction finding: MT's current resource limit is $3,000,
+    // not the stale $2,750 figure several secondary sources repeat.
+    question: "Does Montana have an asset or resource limit for SNAP?",
+    state: "MT",
+    mustMention: "3,000",
+    mustDisclaim: true,
+  },
+  {
+    id: "mt-ece-200-not-blanket-no-asset-test",
+    question: "What is the income limit for SNAP in Montana?",
+    state: "MT",
+    mustMention: "200",
+    mustDisclaim: true,
+  },
+  {
+    id: "mt-drug-felony-modified-supervision-compliance",
+    // Guards the flagship correction: MT's ban is MODIFIED (conditioned on
+    // supervision compliance), not a flat "won't disqualify you" as a
+    // secondary source claims.
+    question: "I have a drug felony conviction — can I still get SNAP in Montana?",
+    state: "MT",
+    mustMention: "supervision",
+    mustDisclaim: true,
+  },
+  {
+    id: "mt-abawd-waiver-none-active",
+    // Guards the clean primary-source confirmation: SNAP 802-1 states
+    // directly no ABAWD geographic waivers exist anywhere in Montana.
+    question: "Is the SNAP work-requirement time limit currently waived anywhere in Montana?",
+    state: "MT",
+    mustMention: "no",
+    mustDisclaim: true,
+  },
+  {
+    id: "mt-abawd-age-range-current-federal",
+    question: "What is the ABAWD work requirement age range in Montana?",
+    state: "MT",
+    mustMention: "64",
+    mustDisclaim: true,
+  },
+  {
+    id: "mt-utility-allowance-sua-799",
+    question: "What utility deduction can I get for SNAP in Montana?",
+    state: "MT",
+    mustMention: "799",
+    mustDisclaim: true,
+  },
+  {
+    id: "mt-cert-period-12-months-standard",
+    question: "How long does my SNAP certification last in Montana?",
+    state: "MT",
+    mustMention: "12",
+    mustDisclaim: true,
+  },
+  {
+    id: "mt-restaurant-meals-program-not-available",
+    question: "Does Montana have a Restaurant Meals Program for SNAP?",
+    state: "MT",
+    mustMention: "not",
+    mustDisclaim: true,
+  },
+  {
+    id: "mt-how-to-apply-apply-mt-gov",
+    question: "How do I apply for SNAP in Montana?",
+    state: "MT",
+    mustDisclaim: true,
+  },
+  {
+    id: "mt-medical-deduction-actual-expense-no-shortcut",
+    question: "I'm disabled and have $50 a month in medical bills for Montana SNAP — do I get a deduction?",
+    state: "MT",
+    mustMention: "35",
+    mustDisclaim: true,
+  },
+  {
+    id: "mt-federal-benefit",
+    question: "How is the monthly SNAP benefit amount calculated from net income in Montana?",
+    state: "MT",
+    expectCitation: "273.10",
+    mustDisclaim: true,
+  },
+];
+
+
 export const ALL_GOLD: AnswerExpectation[] = [
   ...ANSWER_GOLD,
   ...ES_GOLD,
@@ -4499,4 +4587,5 @@ export const ALL_GOLD: AnswerExpectation[] = [
   ...HI_GOLD,
   ...ME_GOLD,
   ...NH_GOLD,
+  ...MT_GOLD,
 ];

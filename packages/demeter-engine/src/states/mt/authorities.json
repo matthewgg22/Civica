@@ -1,0 +1,64 @@
+{
+  "_provenance": {
+    "note": "Montana citation authorities. Montana's operative SNAP policy manual is DPHHS's Supplemental Nutrition Assistance Program Policy Manual, cited by a numbered-section convention such as 'SNAP 304-1' (Categorical and Expanded Categorical Eligibility) or 'SNAP 801-1' (ABAWD Countable Months/Exemptions). Each section's own References line typically cites the parallel federal 7 CFR authority. This pack defines a SECOND citation family, 'arm', for Montana's Administrative Rules of Montana (ARM Title 37, chapter 76, the Food Stamp Program's administrative-rule codification this pack found via WebSearch corroboration, e.g. ARM 37.76.101), matching this roster's New Hampshire, Nebraska, Connecticut, Kentucky, Alabama, and Louisiana packs' multi-family pattern, though this pack notes it did not independently fetch the full text of any specific ARM 37.76.x rule beyond confirming the citation family's existence and rule-number format via WebSearch — flagged in freshness.json.",
+    "extracted": "2026-08-12"
+  },
+  "patterns": [
+    {
+      "key": "mtsnap",
+      "regex": "\\bSNAP\\s?(\\d{1,4}(?:-\\d{1,2})?(?:\\.\\d{1,2})?)\\b",
+      "flags": "gi",
+      "template": "SNAP $1",
+      "normalize": "none",
+      "match": "exact",
+      "note": "Montana DPHHS Supplemental Nutrition Assistance Program Policy Manual, cited with the section number directly following the literal prefix 'SNAP' (matching DPHHS's own section-title convention, e.g. 'SNAP 304-1', 'SNAP 801-1', 'SNAP 1502-1'). This is the manual's own native citation format, unlike this roster's New Hampshire pack, which had to invent a disambiguating 'FSM' short prefix for a manual that does not use one internally."
+    },
+    {
+      "key": "mtarm",
+      "regex": "\\bARM\\s?(37\\.76\\.\\d{2,4})\\b",
+      "flags": "gi",
+      "template": "ARM $1",
+      "normalize": "none",
+      "match": "exact",
+      "note": "Administrative Rules of Montana, Title 37 (Public Health and Human Services), Chapter 76 (Food Stamp Program). This pack confirmed the ARM 37.76.x citation family exists and covers the Food Stamp/SNAP program (e.g. ARM 37.76.101, ARM 37.76.111, ARM 37.76.122) via WebSearch corroboration of rules.mt.gov, but did NOT independently fetch the full text of any specific ARM 37.76.x rule — flagged in freshness.json as a citation-family confirmation without full-text verification."
+    },
+    {
+      "key": "mtmca",
+      "regex": "\\b53-2-90(1|2|3|4)\\b",
+      "flags": "g",
+      "template": "MCA 53-2-90$1",
+      "normalize": "none",
+      "match": "exact",
+      "note": "Montana Code Annotated, Title 53 (Social Services and Institutions), Chapter 2 (Administration of Public Assistance), Part 9 (Food Stamp Program): 53-2-901 (Administration of food stamp program — rulemaking authority), 53-2-902 (Definitions), 53-2-903 (Employment and training program), 53-2-904 (Income and resource exclusions — FAIM participants). This pack directly fetched this part's section index via mca.legmt.gov and confirmed no standalone drug-felony-ban opt-out statute exists among these four sections — the drug-felony disqualification modifier is implemented through DPHHS administrative policy (SNAP 001/304-1/602-4), not through this statutory part."
+    }
+  ],
+  "known": {
+    "mtsnap": [
+      { "value": "SNAP 0-3", "note": "Introduction — program overview, Montana Access Card naming, federal/state cooperative administration, congregate/meal-delivery prepared-meals provision" },
+      { "value": "SNAP 001", "note": "Gross and Net Income: Standards/Thrifty Food Plan — current FFY2026 GMI/NMI/ECE tables; drug-felony-disqualification supervision-compliance modifier text" },
+      { "value": "SNAP 103-1", "note": "Application Filing/Interview Process — apply.mt.gov, phone/mail/in-person filing, name+address+signature minimum filing standard" },
+      { "value": "SNAP 304-1", "note": "Non-Financial Requirements: Categorical and Expanded Categorical Eligibility — CE (TANF/Tribal TANF/SSI) vs ECE (200% FPG, non-cash) structure; drug-felony CE/ECE-exclusion condition" },
+      { "value": "SNAP 400", "note": "Resources Overview — resource limits $4,500 (elderly/disabled) / $3,000 (all other non-CE/non-ECE households); corrects the stale $2,750 figure several secondary sources repeat" },
+      { "value": "SNAP 402-1", "note": "Resources: Countable and Excluded Resources — alphabetical resource-exclusion catalog" },
+      { "value": "SNAP 403-1", "note": "Resources: Vehicles — federal-baseline exclusion (one vehicle, highest equity value), not a per-adult exclusion" },
+      { "value": "SNAP 602-2", "note": "Deductions (Earned, Standard, Dependent Care, Child Support) — Standard Deduction $209/$209/$209/$223/$261/$299 by household size" },
+      { "value": "SNAP 602-3", "note": "Deductions (Medical) — $35/month threshold, actual-expense-only, no flat shortcut" },
+      { "value": "SNAP 602-4", "note": "Shelter Deductions — SUA $799, LUA $267, OUA $116, Telephone $34; homeless standard shelter deduction and excess-shelter cap figures not published in this section (flagged gap)" },
+      { "value": "SNAP 705-1", "note": "Work Registration Disqualification — voluntary-quit/hour-reduction progressive penalty periods, distinct from the drug-felony-conviction disqualification" },
+      { "value": "SNAP 801-1", "note": "ABAWD Countable Months/Exemptions — current post-11/1/2025 exemption list; age-65 threshold explicitly stated as raised from 55 effective 11/01/2025" },
+      { "value": "SNAP 802-1", "note": "ABAWD Geographic Waiver — states directly: no approved ABAWD geographic waivers anywhere in Montana as of 11/01/2025" },
+      { "value": "SNAP 1502-1", "note": "Recertification — 24 months (all-elderly/disabled no earned income), 12 months (Simplified Reporting), up to 24 months (change reporting, 12-month contact required)" }
+    ],
+    "mtarm": [
+      { "value": "ARM 37.76.101", "note": "Food Stamp Program — general administrative-rule authority (WebSearch-confirmed citation family, full text not independently fetched)" },
+      { "value": "ARM 37.76.111", "note": "Food Stamps, Determining Eligibility and Benefits (WebSearch-confirmed citation family, full text not independently fetched)" },
+      { "value": "ARM 37.76.122", "note": "Food Stamps, Transfer of Resources (WebSearch-confirmed citation family, full text not independently fetched)" }
+    ],
+    "mtmca": [
+      { "value": "MCA 53-2-901", "note": "Administration of food stamp program — rulemaking authority" },
+      { "value": "MCA 53-2-902", "note": "Definitions" },
+      { "value": "MCA 53-2-903", "note": "Employment and training program" },
+      { "value": "MCA 53-2-904", "note": "Income and resource exclusions — FAIM participants" }
+    ]
+  }
+}
