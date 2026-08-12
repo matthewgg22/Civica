@@ -1,0 +1,29 @@
+{
+  "_provenance": {
+    "note": "Iowa citation authorities. Iowa's operative SNAP policy lives across two parallel citation systems: the Iowa HHS Employees' Manual, cited by Title/Chapter (e.g. '7-C, Categorical Eligibility', '7-E, Deductions', '7-I, Able-Bodied Adults Without Dependents'), and the Iowa Administrative Code (IAC), cited '441—65.X(234)' in Iowa's own official format (e.g. '441—65.11(234)' for Work Requirements). This pack defines a citation family for the IAC form since it is Iowa's own numbered regulatory citation, matching this roster's general convention of citing the state's own numbered code where one exists. The Employees' Manual's own chapter/topic references (e.g. '7-C', '7-D') are NOT numbered in a way that supports a reliable regex match — Iowa's manual organizes by topic heading within a lettered chapter, not by a decimal-numbered subsection the way Oklahoma's OAC 340:50-X-Y or Kentucky's MS-numbered sections do — so this pack cites Employees' Manual chapters in prose only (e.g. 'Employees' Manual 7-E, Standard Deduction') rather than as a machine-matched authority family, a genuine STRUCTURAL DEPARTURE from every prior state in this roster, each of which had at least one reliably-numbered state-specific citation format beyond IAC/statute. This pack ALSO defines a family for Iowa Code Chapter 234 (Human Services — Administration), the enabling statute the Employees' Manual and IAC 441-65 both reference as '(234)', though this pack did not find Iowa Code 234 to contain SNAP-specific dollar or eligibility detail beyond general HHS administrative authority.",
+    "extracted": "2026-08-12"
+  },
+  "patterns": [
+    {
+      "key": "iaiac",
+      "regex": "\\b441[—\\-]\\s?65\\.(\\d{1,3})\\((234)\\)",
+      "flags": "gi",
+      "template": "441—65.$1(234)",
+      "normalize": "none",
+      "match": "exact",
+      "note": "Iowa Administrative Code, Agency 441 (Health and Human Services Department), Chapter 65 (Supplemental Nutrition Assistance Program Administration), rule number, e.g. 441-65.11(234) (Work requirements), 441-65.13(234) (Homeless standard deduction), 441-65.30(234) (Resource limits, referenced in the Employees' Manual though not independently re-verified as still numbered .30 in the current IAC text this pack fetched — see freshness.json)."
+    }
+  ],
+  "known": {
+    "iaiac": [
+      { "value": "441—65.1(234)", "note": "Definitions — SNAP means benefits under 7 CFR Parts 270-283" },
+      { "value": "441—65.2(234)", "note": "Administration of program — SNAP administered per the Food and Nutrition Act of 2008 and 7 CFR Parts 270-283" },
+      { "value": "441—65.3(234)", "note": "State options — Iowa's selected SNAP state options per the USDA State Options Report" },
+      { "value": "441—65.9(234)", "note": "Prospective budgeting — weekly/biweekly income conversion and income averaging" },
+      { "value": "441—65.11(234)", "note": "Work requirements — condition of eligibility for nonexempt members; deregistration and E&T program authority" },
+      { "value": "441—65.12(234)", "note": "Income — treatment of educational income exclusions" },
+      { "value": "441—65.13(234)", "note": "Deductions — the homeless standard deduction option for all-homeless households; amount set by FNS and adjusted (see Employees' Manual 7-E for the current dollar figure, $198.99)" },
+      { "value": "441—65.15(234)", "note": "Reinstatement — when assistance canceled for failure to provide requested verification" }
+    ]
+  }
+}

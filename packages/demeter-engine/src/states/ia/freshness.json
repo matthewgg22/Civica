@@ -1,0 +1,44 @@
+{
+  "_provenance": {
+    "note": "Iowa dated facts. Because Iowa has NO existing packages/snap-rules StatePolicy entry, there is no engine constant to cross-check against — every entry below is either a routine COLA-cycle reminder, a disclosed research gap, or a warning about a confirmed staleness/discrepancy trap this pack found.",
+    "extracted": "2026-08-12"
+  },
+  "entries": [
+    {
+      "key": "ia-income-limit-comm002-stale-ffy2025-cycle",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "Iowa HHS's own consumer-facing income-guidelines flyer, Comm. 002 (Facts About SNAP — Income Guidelines), is stamped Rev. 09/24 and states gross/net monthly income limits of $1,632/$1,255 for a household of one — but this pack's independent WebSearch cross-check found multiple independent SNAP-benefits trackers converging on $1,696/$1,305 as the true CURRENT FFY2026 figures for a household of one (the same 130%/100% FPL cycle this roster's Oklahoma pack independently confirmed at $1,696 for OK). Iowa HHS's own Employees' Manual Chapter E (Standard Deduction $209/$223/$261/$299, revised February 13, 2026) DOES already reflect the current FFY2026 cycle — meaning Comm. 002 itself, and Chapter C's PHMP 160%/elderly-disabled 165% percentage tables (also last revised September 27, 2024), are the stale outliers within Iowa's own primary-source set, not this pack's own error. Before quoting an exact Iowa dollar income limit with full confidence, check whether Iowa HHS has since republished Comm. 002 with FFY2026 figures, and treat $1,696/$1,305 (HH1) as the more likely current figure in the interim."
+    },
+    {
+      "key": "ia-phmp-160-percent-table-same-stale-cycle",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "The Promoting Awareness of the Benefits of a Healthy Marriage Program (PHMP) 160%-FPL categorical-eligibility income chart in Employees' Manual 7-C ($2,008/month for a household of one) and the Elderly Members Who Are Disabled 165%-FPL separate-household chart in the same chapter ($2,071/month for a household of one) are BOTH stamped 'Revised September 27, 2024' — the same COLA cycle this pack flags as stale for Comm. 002 (see ia-income-limit-comm002-stale-ffy2025-cycle). Before quoting either the PHMP or the elderly/disabled-assistant income ceiling with full confidence, re-check whether Chapter C has since been revised to the FFY2026 cycle the way Chapters E and I already have."
+    },
+    {
+      "key": "ia-abawd-waiver-absence-not-independently-verified-as-statutory",
+      "kind": "expires",
+      "date": "2027-01-01",
+      "warning": "This pack found Iowa entirely absent from USDA FNA's current ABAWD Time Limit Waivers FY2025-2029 state-request and response index (fetched directly, clean HTTP 200) — meaning Iowa has not requested an ABAWD area waiver in the current window. Unlike Oklahoma (56 O.S. § 241.3(C), a found and directly-read statutory bar on ever requesting one), this pack did NOT locate an Iowa-specific statutory or regulatory provision that would prevent Iowa HHS from requesting a waiver in the future if local unemployment conditions qualified. Before stating with full confidence that Iowa 'cannot' get an ABAWD waiver (as opposed to simply not currently having or having requested one), re-check the FNA waiver index directly and search specifically for any Iowa Code or IAC provision analogous to Oklahoma's."
+    },
+    {
+      "key": "ia-fdpir-meskwaki-status-unconfirmed",
+      "kind": "expires",
+      "date": "2026-12-01",
+      "warning": "This pack could NOT independently confirm whether the Sac and Fox Tribe of the Mississippi in Iowa (Meskwaki Nation, near Tama) currently operates the Food Distribution Program on Indian Reservations (FDPIR) as an alternative to SNAP. WebSearch found the tribe operates a separate 'Meskwaki Food Sovereignty Initiative' (a traditional-agriculture program, not confirmed as FDPIR), but this pack did not locate a direct USDA or tribal primary-source page confirming or denying FDPIR administering-agency status for the Meskwaki Settlement. Before answering a Meskwaki-specific FDPIR-availability question with full confidence, check USDA FNA's current FDPIR administering-agency directory directly."
+    },
+    {
+      "key": "ia-iac-65-30-numbering-not-independently-verified-current",
+      "kind": "expires",
+      "date": "2026-11-01",
+      "warning": "The Employees' Manual (7-D, Resources) cites '441 IAC 65.30(2)' as the legal reference for Iowa's resource limits, but the current Iowa Administrative Code 441-Chapter 65 text this pack directly fetched from the Iowa Legislature's own host (current through IAC Supplement 6/10/26) shows numbered rules only through 441-65.15(234) in its main body, with 65.30 and 65.130 appearing only in an amendment-history footnote referencing changes effective 10/1/96 — suggesting the current rule numbering may have shifted, or that this pack's fetched IAC chapter excerpt did not capture the rule's current location. This pack did NOT re-derive or guess a corrected citation — it reports the Employees' Manual's own stated legal reference as-is and flags this numbering discrepancy as an open item rather than silently resolving it. Before citing 441 IAC 65.30(2) as an exact current rule locator, re-fetch the full current IAC Chapter 65 text and confirm the resource-limits rule's present numbering."
+    },
+    {
+      "key": "ia-ffy2027-cola-reminder",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "This pack's confirmed CURRENT-cycle dollar figures (Standard Deduction $209/$209/$209/$223/$261/$299, Big SUA $554, Little SUA $292, Telephone SUA $36, capped excess shelter $744, Homeless Standard Deduction $198.99, Standard Medical Deduction $175, resource limits $3,000/$4,500, vehicle fair-market-value threshold $4,650) are drawn from Iowa HHS Employees' Manual Chapter E, revised February 13, 2026, and Chapter D, revised September 27, 2024 (resource limits, which do not change annually the way deduction figures do). The FFY2027 COLA cycle begins October 1, 2026 — under two months from this pack's fetch date. Check Iowa HHS's Employees' Manual (hhs.iowa.gov) for updated chapter revisions after that date before restating any Iowa-specific dollar figure with full confidence."
+    }
+  ]
+}
