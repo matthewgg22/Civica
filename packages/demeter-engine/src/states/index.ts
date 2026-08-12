@@ -135,9 +135,13 @@ import iaPack from "./ia/pack.json";
 import iaSupplements from "./ia/supplements.json";
 import iaAuthorities from "./ia/authorities.json";
 import iaFreshness from "./ia/freshness.json";
+import arPack from "./ar/pack.json";
+import arSupplements from "./ar/supplements.json";
+import arAuthorities from "./ar/authorities.json";
+import arFreshness from "./ar/freshness.json";
 
 /** Registered pack codes. Widens as Wave 1+ states land (WA, TX, NY, …). */
-export type StateCode = "CA" | "WA" | "TX" | "NY" | "GA" | "MI" | "IL" | "FL" | "MA" | "NV" | "AZ" | "OR" | "WI" | "MN" | "PA" | "OH" | "NC" | "NJ" | "VA" | "TN" | "IN" | "MO" | "MD" | "CO" | "SC" | "AL" | "LA" | "KY" | "OK" | "IA";
+export type StateCode = "CA" | "WA" | "TX" | "NY" | "GA" | "MI" | "IL" | "FL" | "MA" | "NV" | "AZ" | "OR" | "WI" | "MN" | "PA" | "OH" | "NC" | "NJ" | "VA" | "TN" | "IN" | "MO" | "MD" | "CO" | "SC" | "AL" | "LA" | "KY" | "OK" | "IA" | "AR";
 
 /** Launch state; used when a caller does not specify. Preserves the pre-pack
  *  behavior in which the (then-hardcoded) CA content applied to every query. */
@@ -408,6 +412,12 @@ const REGISTRY: Record<StateCode, StatePack> = {
     iaSupplements as { supplements: PackTopic[]; supersessions?: Record<string, string> },
     iaAuthorities as unknown as RawAuthorities,
     iaFreshness as { entries: PackFreshnessEntry[] },
+  ),
+  AR: buildPack(
+    arPack as Omit<StatePack, "topics" | "authorities" | "freshness" | "supersessions">,
+    arSupplements as { supplements: PackTopic[]; supersessions?: Record<string, string> },
+    arAuthorities as unknown as RawAuthorities,
+    arFreshness as { entries: PackFreshnessEntry[] },
   ),
 };
 

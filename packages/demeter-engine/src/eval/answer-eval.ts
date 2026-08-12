@@ -3341,6 +3341,120 @@ export const IA_GOLD: AnswerExpectation[] = [
   },
 ];
 
+
+export const AR_GOLD: AnswerExpectation[] = [
+  {
+    id: "ar-bbce-resource-only-statutory-cap",
+    // Guards the flagship structural finding: Arkansas law bars income-based
+    // BBCE and caps its resource-based categorical-eligibility exemption to a
+    // temporary $5,500 limit, once every 5 years (Ark. Code § 20-76-115).
+    question: "Does Arkansas's categorical eligibility raise my SNAP income limit above the normal amount?",
+    state: "AR",
+    expectCitation: "20-76-115",
+    mustMention: "5,500",
+    mustDisclaim: true,
+  },
+  {
+    id: "ar-resource-limit-temporary-increase",
+    question: "What is the SNAP resource limit in Arkansas, and can it be temporarily higher?",
+    state: "AR",
+    mustMention: "5,500",
+    mustDisclaim: true,
+  },
+  {
+    id: "ar-drug-felony-full-opt-out",
+    // Guards the flagship CONFIRMATION finding: Arkansas fully opted out of
+    // the federal drug-felony ban (Ark. Code § 20-76-409).
+    question: "I have a drug felony conviction — can I still get SNAP in Arkansas?",
+    state: "AR",
+    expectCitation: "20-76-409",
+    mustMention: "eligible",
+    mustDisclaim: true,
+  },
+  {
+    id: "ar-abawd-age-range-current-federal-not-55",
+    // Guards against importing Arkansas's own stale "55" figure (Manual
+    // § 3100) — the true current federal ceiling is 64 (OBBBA).
+    question: "What is the ABAWD work requirement age range in Arkansas?",
+    state: "AR",
+    expectCitation: "3100",
+    mustMention: "64",
+    mustDisclaim: true,
+  },
+  {
+    id: "ar-abawd-waiver-status-stale-source",
+    // Guards against overclaiming current statewide waiver-free status from
+    // Arkansas's own nine-years-stale Manual § 3501.
+    question: "Is the SNAP work-requirement time limit currently waived anywhere in Arkansas?",
+    state: "AR",
+    expectCitation: "3501",
+    mustDisclaim: true,
+  },
+  {
+    id: "ar-vehicle-one-excluded-outright",
+    question: "Does my car count against me for SNAP in Arkansas?",
+    state: "AR",
+    expectCitation: "4840",
+    mustMention: "one",
+    mustDisclaim: true,
+  },
+  {
+    id: "ar-medical-deduction-standard-190",
+    question: "I'm disabled and have $50 a month in medical bills for Arkansas SNAP — do I get a deduction?",
+    state: "AR",
+    expectCitation: "6520",
+    mustMention: "35",
+    mustDisclaim: true,
+  },
+  {
+    id: "ar-expedited-service-7-day-federal",
+    question: "How fast can I get emergency SNAP benefits in Arkansas?",
+    state: "AR",
+    expectCitation: "9100",
+    mustMention: "7",
+    mustDisclaim: true,
+  },
+  {
+    id: "ar-restaurant-meals-homeless-contracted-only",
+    // Guards the structural nuance: Arkansas is absent from full RMP but has
+    // a narrower DHS-contracted meal option for homeless households.
+    question: "Can I use my EBT card to buy a hot meal at a restaurant in Arkansas?",
+    state: "AR",
+    mustMention: "homeless",
+    mustDisclaim: true,
+  },
+  {
+    id: "ar-ebt-card-no-distinctive-name",
+    // Guards against fabricating a branded card name this pack could not
+    // verify, unlike Oklahoma's confirmed "ACCESS Oklahoma Card".
+    question: "What is my EBT card called in Arkansas?",
+    state: "AR",
+    mustDisclaim: true,
+  },
+  {
+    id: "ar-cert-period-36-month-minor-dependent-gate",
+    question: "How long does my SNAP approval last in Arkansas if I'm disabled and have a young child?",
+    state: "AR",
+    expectCitation: "3320",
+    mustMention: "36",
+    mustDisclaim: true,
+  },
+  {
+    id: "ar-no-tribal-reservation",
+    question: "I live on tribal land in Arkansas — can I get both SNAP and FDPIR at the same time?",
+    state: "AR",
+    mustDisclaim: true,
+  },
+  {
+    id: "ar-federal-benefit",
+    question: "How is the monthly SNAP benefit amount calculated from net income in Arkansas?",
+    state: "AR",
+    expectCitation: "273.10",
+    mustDisclaim: true,
+  },
+];
+
+
 /** Everything the live runner executes. */
 export const ALL_GOLD: AnswerExpectation[] = [
   ...ANSWER_GOLD,
@@ -3374,4 +3488,5 @@ export const ALL_GOLD: AnswerExpectation[] = [
   ...KY_GOLD,
   ...OK_GOLD,
   ...IA_GOLD,
+  ...AR_GOLD,
 ];
