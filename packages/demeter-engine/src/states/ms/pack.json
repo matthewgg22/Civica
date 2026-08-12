@@ -1,0 +1,55 @@
+{
+  "code": "MS",
+  "program": "SNAP — Mississippi has no distinctive local program nickname; MDHS's own manual and consumer pages use plain \"SNAP\" throughout (see PROVENANCE.md)",
+  "agency": "Mississippi Department of Human Services (MDHS)",
+  "admin_model": "state",
+  "admin_note": "Mississippi is a STATE-ADMINISTERED SNAP program — MDHS administers directly through 82 county offices with no county-level policy authority (an applicant's county determines which physical office serves them, not which rules apply, the same non-devolved structure as Connecticut's DSS). GENUINE STRUCTURAL DEPARTURE this pack found: Mississippi's own current SNAP Policy Manual (Title 18, Part 14, revised through May 2026 — directly fetched, no access barrier) confirms Mississippi does NOT operate any form of Broad-Based or Expanded Categorical Eligibility. Rule 15.1 limits categorical eligibility strictly to households where every member receives or is eligible for TANF and/or SSI — there is no income-based BBCE track raising the gross-income ceiling for other households, unlike the large majority of this roster's other states. A second genuine departure: Rule 13.12 ties Mississippi's ABAWD waiver authority to a formal state or federal natural-disaster declaration with the Governor's approval (Miss. Code Ann. §43-12-19) — not the federal unemployment-rate waiver criteria most other states' packs in this roster describe. Confirm current operative practice with the applicant's own local MDHS county office, the same caution this roster already carries for CA/NY/MN/WI/OH/NC/NJ/VA/GA/IN/TN/MO/MD/CO/SC/AL/LA/KY/CT.",
+  "system": "MDHS processes SNAP through 82 county offices with no independent county policy authority; applicants apply online through the Access Mississippi self-service portal (access.ms.gov), by phone through Economic Assistance Eligibility Client Services (1-800-948-3050), in person at a county MDHS office, or by mailing, faxing, or emailing a paper application. Most households recertify every 12 months (up to 24 months if the household is all-elderly/disabled); ESAP households (all members 65+, no earned income) get a 36-month certification period with an annual interim-contact form instead of a full recertification; MSCAP households also get a 36-month certification period.",
+  "portal": {
+    "name": "Access Mississippi",
+    "url": "https://www.access.ms.gov/consumer/home"
+  },
+  "update_channels": [
+    {
+      "name": "MDHS — SNAP Policy Manual (Title 18, Part 14), revised May 1, 2026 — directly fetched PDF, converted with pdftotext",
+      "url": "https://www.mdhs.ms.gov/wp-content/uploads/2026/07/SNAP-Policy-Manual-May-2026-1.pdf"
+    },
+    {
+      "name": "MDHS — SNAP program landing page",
+      "url": "https://www.mdhs.ms.gov/help/snap/"
+    },
+    {
+      "name": "MDHS — Applying for SNAP",
+      "url": "https://www.mdhs.ms.gov/help/snap/apply/"
+    },
+    {
+      "name": "MDHS — EBT Card page",
+      "url": "https://www.mdhs.ms.gov/help/snap/ebt/"
+    },
+    {
+      "name": "USDA FNA — SNAP Restaurant Meals Program state list (Mississippi absent)",
+      "url": "https://www.fna.usda.gov/snap/retailer/restaurant-meals-program"
+    },
+    {
+      "name": "USDA FNA — SNAP Simplified Process FY2026 Standard Utility Allowance (SUA) values (returned a live bot-detection block to direct fetch; national dollar-figure source only — see PROVENANCE.md)",
+      "url": "https://www.fna.usda.gov/snap/admin/sua-fy26"
+    },
+    {
+      "name": "Mississippi Code Annotated §43-12-71 (drug-related felony SNAP eligibility, opt-out effective July 1, 2019) and §43-12-19 (ABAWD waiver authority)",
+      "url": "https://law.justia.com/codes/mississippi/title-43/chapter-12/miscellaneous-provisions/section-43-12-71/"
+    }
+  ],
+  "verification": {
+    "verified_on": "2026-08-12",
+    "method": "Direct curl fetch (browser User-Agent) of MDHS's current SNAP Policy Manual PDF (Title 18, Part 14, revised May 1, 2026, 166 pages), converted to text with pdftotext -layout and read chapter-by-chapter, covering Chapter 4 (Expedited Service), Chapter 12 (General Work Requirements), Chapter 13 (ABAWDs), Chapter 15 (Categorically Eligible Households), Chapter 16 (Resources), Chapter 17 (Income), Chapter 18 (Expenses and Deductions), Chapter 19 (Choctaw Food Distribution Program), Chapter 22 (Households with Excluded Members — drug-related felony provision), Chapter 28 (ESAP), Chapter 29 (MSCAP), and Chapter 33 (Recertification). Also directly fetched MDHS's SNAP landing, Applying for SNAP, and EBT Card consumer pages, and USDA FNA's current Restaurant Meals Program state list (clean HTTP 200, page metadata dated August 7, 2026, Mississippi absent). WebSearch cross-checks corroborated the Mississippi Code Ann. §43-12-71 drug-felony opt-out (effective July 1, 2019, formerly HB 1352) and the current FFY2026 national standard-deduction/resource-limit figures this roster's other packs have independently confirmed; Mississippi's own manual does not republish these national dollar figures in its own text (see PROVENANCE.md Finding 4).",
+    "gates": "mdhs.ms.gov returned clean HTTP 200 to every direct curl fetch with a browser User-Agent, including the full 1.16MB current Policy Manual PDF itself and every consumer-facing SNAP page — no access barrier of any kind on Mississippi's own primary source, a genuine departure from this roster's now-familiar host-blocking pattern. The access barriers this pack did find were both on THIRD-PARTY hosts, not MDHS's own site: (1) law.justia.com returned an HTTP 403 Cloudflare bot-detection challenge to a direct fetch of Miss. Code Ann. §43-12-71's raw statute text — the now-familiar Justia-403 pattern this roster has repeatedly documented for other states' statute lookups; this pack relies instead on MDHS's own manual (Rule 22.14), which quotes and dates the statute directly, as the controlling primary source. (2) usda.gov's guidance-documents subdomain returned an HTTP 403 Akamai bot-detection block to a direct fetch of the national FY2026 Standard Utility Allowance values PDF (a document that would carry Mississippi's specific dollar SUA figure) — this pack discloses this as a genuine, unresolved sourcing gap rather than fabricating a number, see PROVENANCE.md Finding 7 and freshness.json.",
+    "sources": [
+      "MDHS SNAP Policy Manual (Title 18, Part 14), revised May 1, 2026 — direct curl fetch, clean HTTP 200, full 166-page PDF read via pdftotext",
+      "MDHS SNAP landing page, Applying for SNAP page, EBT Card page — direct curl fetch and WebFetch, clean HTTP 200",
+      "USDA FNA, SNAP Restaurant Meals Program state list — direct curl fetch, clean HTTP 200, page metadata dated August 7, 2026, Mississippi absent",
+      "Mississippi Code Ann. §43-12-71 (drug-related felony SNAP eligibility) — cited and dated directly inside MDHS's own manual (Rule 22.14); raw statute text itself blocked by law.justia.com's Cloudflare challenge, WebSearch-corroborated via Public Health Law Center, Collateral Consequences Resource Center, and 2019 contemporaneous news coverage (WLBT)",
+      "USDA FNA, SNAP Simplified Process FY2026 Standard Utility Allowance (SUA) values PDF — direct curl fetch returned a live Akamai bot-detection block (HTTP 403); Mississippi-specific SUA dollar figure NOT recovered, disclosed as a sourcing gap in freshness.json",
+      "FFY2026 national standard-deduction, resource-limit, and excess-shelter-cap figures — WebSearch cross-checked against this roster's other independently-verified FFY2026 packs (e.g. Connecticut, Arkansas), not MS-specific text (MDHS's own manual defers to USDA's annually-posted national figures rather than republishing them, see PROVENANCE.md Finding 4)"
+    ]
+  }
+}

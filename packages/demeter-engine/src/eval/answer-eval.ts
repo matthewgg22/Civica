@@ -3653,6 +3653,106 @@ export const AR_GOLD: AnswerExpectation[] = [
   },
 ];
 
+export const MS_GOLD: AnswerExpectation[] = [
+  {
+    id: "ms-no-bbce-tanf-ssi-only",
+    // Guards the flagship CONFIRMATION finding: Mississippi has NO income-based
+    // BBCE track — categorical eligibility is limited to TANF/SSI households.
+    question: "Does Mississippi's categorical eligibility raise my SNAP income limit above the normal amount?",
+    state: "MS",
+    expectCitation: "15.1",
+    mustMention: "TANF",
+    mustDisclaim: true,
+  },
+  {
+    id: "ms-abawd-waiver-disaster-gate",
+    // Guards the flagship structural finding: MS ties ABAWD waiver authority to
+    // a natural-disaster declaration, not the federal unemployment-rate test.
+    question: "Is the SNAP work-requirement time limit currently waived anywhere in Mississippi?",
+    state: "MS",
+    expectCitation: "13.12",
+    mustDisclaim: true,
+  },
+  {
+    id: "ms-drug-felony-full-opt-out",
+    // Guards the flagship CONFIRMATION finding: Mississippi fully opted out of
+    // the federal drug-felony ban (Miss. Code Ann. §43-12-71, July 1, 2019).
+    question: "I have a drug felony conviction — can I still get SNAP in Mississippi?",
+    state: "MS",
+    expectCitation: "43-12-71",
+    mustMention: "eligible",
+    mustDisclaim: true,
+  },
+  {
+    id: "ms-vehicle-broad-exclusion",
+    question: "Does my car count against me for SNAP in Mississippi?",
+    state: "MS",
+    expectCitation: "16.4",
+    mustDisclaim: true,
+  },
+  {
+    id: "ms-esap-age-65-not-60",
+    // Guards against importing the more common 60+ ESAP threshold this roster's
+    // other states use — Mississippi's ESAP requires all members 65+.
+    question: "How long does my SNAP approval last in Mississippi if I'm 65 or older?",
+    state: "MS",
+    expectCitation: "28.5",
+    mustMention: "36",
+    mustDisclaim: true,
+  },
+  {
+    id: "ms-abawd-age-range-current-federal-64",
+    question: "What is the ABAWD work requirement age range in Mississippi?",
+    state: "MS",
+    expectCitation: "13.1",
+    mustMention: "64",
+    mustDisclaim: true,
+  },
+  {
+    id: "ms-medical-deduction-actual-expense-35",
+    question: "I'm disabled and have $50 a month in medical bills for Mississippi SNAP — do I get a deduction?",
+    state: "MS",
+    expectCitation: "18.4",
+    mustMention: "35",
+    mustDisclaim: true,
+  },
+  {
+    id: "ms-expedited-service-criteria",
+    question: "How fast can I get emergency SNAP benefits in Mississippi?",
+    state: "MS",
+    expectCitation: "4.2",
+    mustDisclaim: true,
+  },
+  {
+    id: "ms-restaurant-meals-absent",
+    question: "Can I use my EBT card to buy a hot meal at a restaurant in Mississippi?",
+    state: "MS",
+    mustDisclaim: true,
+  },
+  {
+    id: "ms-ebt-card-no-distinctive-name",
+    // Guards against fabricating a branded card name this pack could not
+    // verify, unlike Texas's confirmed "Lone Star Card".
+    question: "What is my EBT card called in Mississippi?",
+    state: "MS",
+    mustDisclaim: true,
+  },
+  {
+    id: "ms-choctaw-fdp-alternative",
+    question: "I live on the Choctaw reservation in Mississippi — can I get both SNAP and food distribution benefits at the same time?",
+    state: "MS",
+    mustDisclaim: true,
+  },
+  {
+    id: "ms-sua-dollar-figure-gap",
+    // Guards against fabricating a Mississippi-specific SUA dollar figure this
+    // pack could not recover (usda.gov guidance-documents subdomain 403'd).
+    question: "What is the standard utility allowance amount for SNAP in Mississippi?",
+    state: "MS",
+    mustDisclaim: true,
+  },
+];
+
 
 export const NM_GOLD: AnswerExpectation[] = [
   {
@@ -3741,6 +3841,76 @@ export const NM_GOLD: AnswerExpectation[] = [
 
 
 /** Everything the live runner executes. */
+export const KS_GOLD: AnswerExpectation[] = [
+  {
+    id: "ks-no-bbce-confirmed",
+    // Guards the flagship CONFIRMATION finding: Kansas has NOT adopted BBCE —
+    // this pack's independent research confirms the existing packages/snap-rules
+    // "archetype" entry's bbce:false as accurate, not merely a placeholder guess.
+    question: "Does Kansas have broad-based categorical eligibility for SNAP?",
+    state: "KS",
+    expectCitation: "KEESM 2510",
+    mustMention: "not",
+    mustDisclaim: true,
+  },
+  {
+    id: "ks-asset-limit-sourcing-gap",
+    // Guards against overclaiming a directly-fetched dollar figure this pack
+    // only corroborated via WebSearch aggregators — see freshness.json.
+    question: "What is the SNAP asset or resource limit in Kansas?",
+    state: "KS",
+    mustMention: "3,000",
+    mustDisclaim: true,
+  },
+  {
+    id: "ks-drug-felony-modified-not-lifetime-ban",
+    // Guards the correction finding: K.S.A. 39-709e is a MODIFIED,
+    // assessment/treatment-conditioned opt-out, not the "banned for life"
+    // framing a 2022 secondary source repeats.
+    question: "I have a drug felony conviction — can I still get SNAP in Kansas?",
+    state: "KS",
+    expectCitation: "39-709e",
+    mustMention: "treatment",
+    mustDisclaim: true,
+  },
+  {
+    id: "ks-abawd-no-waiver-current",
+    question: "Is the SNAP work-requirement time limit currently waived anywhere in Kansas?",
+    state: "KS",
+    mustMention: "no",
+    mustDisclaim: true,
+  },
+  {
+    id: "ks-sua-flat-469",
+    question: "What utility deduction can I get for SNAP in Kansas?",
+    state: "KS",
+    mustMention: "469",
+    mustDisclaim: true,
+  },
+  {
+    id: "ks-restaurant-meals-program-not-available",
+    question: "Can I use my EBT card to buy a hot meal at a restaurant in Kansas?",
+    state: "KS",
+    mustMention: "not",
+    mustDisclaim: true,
+  },
+  {
+    id: "ks-program-name-food-assistance",
+    question: "How do I apply for SNAP in Kansas?",
+    state: "KS",
+    mustMention: "KEES",
+    mustDisclaim: true,
+  },
+  {
+    id: "ks-federal-benefit",
+    question: "How is the monthly SNAP benefit amount calculated from net income in Kansas?",
+    state: "KS",
+    expectCitation: "273.10",
+    mustDisclaim: true,
+  },
+];
+
+
 export const ALL_GOLD: AnswerExpectation[] = [
   ...ANSWER_GOLD,
   ...ES_GOLD,
@@ -3776,5 +3946,7 @@ export const ALL_GOLD: AnswerExpectation[] = [
   ...UT_GOLD,
   ...IA_GOLD,
   ...AR_GOLD,
+  ...MS_GOLD,
+  ...KS_GOLD,
   ...NM_GOLD,
 ];

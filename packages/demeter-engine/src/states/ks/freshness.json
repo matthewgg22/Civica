@@ -1,0 +1,44 @@
+{
+  "_provenance": {
+    "note": "Kansas dated facts. Kansas ALREADY has an existing packages/snap-rules StatePolicy entry (labeled 'Non-BBCE archetype' and flagged as an illustrative SUA placeholder in that file's own top comment) and full oracle-fixture coverage — this pack's discrepancy-check finding (independent research confirms the placeholder's bbce:false, asset_waiver:false, and SUA figures as accurate to real Kansas policy) is recorded in pack.json's admin_note and PROVENANCE.md, not repeated here. Every entry below is either a routine COLA-cycle reminder or a disclosed research gap this pack could not close within its fetch window.",
+    "extracted": "2026-08-12"
+  },
+  "entries": [
+    {
+      "key": "ks-abawd-waiver-verify-current",
+      "kind": "expires",
+      "date": "2026-11-01",
+      "warning": "This pack's finding that Kansas has NO ABAWD waiver anywhere in the state (all 105 counties enforce work requirements) rests on WebSearch cross-checks, not a successful direct fetch of FNS's live FY2025-2029 quarterly waiver list (the fetch attempt timed out within this pack's window). County/statewide ABAWD waiver status is among the most volatile SNAP policy facts that exist and can change quarterly, tied to unemployment-rate redeterminations. Before telling a Kansas applicant whether ABAWD work rules currently apply anywhere in the state, re-fetch https://www.fns.usda.gov/snap/abawd/waivers/2025-2029 directly and check for a Kansas-specific entry."
+    },
+    {
+      "key": "ks-asset-limit-sourcing-gap",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "This pack's resource/asset-limit figures ($3,000 standard, $4,500 elderly/disabled) are WebSearch-aggregator-corroborated only, NOT grounded in a single directly-fetched, dated KEESM section the way this pack's SUA, income-limit, and deduction figures are. Several individual KEESM numbered sections in the 5000-5300 series either 404'd or did not state the dollar figure explicitly within this pack's fetch window. Before restating Kansas's asset-limit figures with full confidence, locate and fetch the current, dated KEESM resource-limit section directly (likely in the 5100-5300 range, adjacent to the fetched 5200/5430 sections)."
+    },
+    {
+      "key": "ks-cert-period-sourcing-gap",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "This pack's certification-period statement (12-month default for non-elderly/non-disabled households) is a general SNAP-program inference, NOT grounded in a directly-fetched, dated KEESM certification-period section — this pack could not locate and fetch that specific section within its window. Before restating Kansas's certification-period structure (including whether Kansas has an interim/periodic-report requirement analogous to Connecticut's PRF or an ESAP-style simplified track for elderly/disabled households), locate and fetch the current KEESM certification-period section directly."
+    },
+    {
+      "key": "ks-drug-felony-2022-article-vs-current-statute",
+      "kind": "expires",
+      "date": "2026-12-01",
+      "warning": "This pack found and corrected a 2022 news article claiming Kansans with drug felonies remain \"banned for life\" from SNAP, against this pack's own direct read of the CURRENT K.S.A. 39-709e text (a modified, assessment/treatment-conditioned opt-out, not an unconditional lifetime ban). This pack could not determine whether the 2022 article was describing a since-superseded earlier version of Kansas law or was simply imprecise. Before restating Kansas's drug-felony policy with full confidence, re-fetch K.S.A. 39-709e directly and check for any amendment since this pack's 2026-08-12 fetch date."
+    },
+    {
+      "key": "ks-existing-archetype-entry-reconciliation",
+      "kind": "expires",
+      "date": "2026-09-15",
+      "warning": "This repo's existing packages/snap-rules KS StatePolicy entry carries TWO inconsistent internal signals: a top-of-file comment (states.ts ~line 128) calling KS an 'archetype' with 'illustrative' SUA values, and a separate, undated in-code comment directly above the KS entry (states.ts ~lines 1037-1042) claiming the same SUA figures were 'confirmed live 2026-08-09' via KEESM §7226. This pack's own independent research (fetched 2026-08-12, three days after that claimed confirmation date) corroborates the SUA figures as accurate, but this pack did NOT modify packages/snap-rules (out of scope, corpus-only) and flags this internal inconsistency for whoever next touches that file to reconcile the 'archetype'/'illustrative' framing with the apparently-already-partially-corrected entry, rather than silently trusting either signal alone."
+    },
+    {
+      "key": "ks-ffy2027-cola-reminder",
+      "kind": "expires",
+      "date": "2026-10-01",
+      "warning": "This pack's confirmed dollar figures (Standard Deduction $209/$209/$209/$223/$261/$299, SUA $469, LUA $345, Telephone Standard $44, capped excess shelter $744, Homeless Shelter Expense $198.99, Standard Medical Deduction $175, and the gross/net income-eligibility table by household size) are drawn from KEESM Appendix F-2, effective October 1, 2025, matching the current FFY2026 cycle (October 1, 2025 - September 30, 2026). The FFY2027 COLA cycle begins October 1, 2026 — under two months from this pack's fetch date. Check content.dcf.ks.gov/EES/KEESM/Appendix/ for an updated F-2 table after that date before restating any Kansas-specific dollar figure with full confidence."
+    }
+  ]
+}

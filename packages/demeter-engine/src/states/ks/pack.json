@@ -1,0 +1,55 @@
+{
+  "code": "KS",
+  "program": "SNAP — Kansas calls it the Food Assistance program; DCF's own consumer pages use \"Food Assistance,\" not \"SNAP,\" as the primary label (see PROVENANCE.md)",
+  "agency": "Kansas Department for Children and Families (DCF)",
+  "admin_model": "state",
+  "admin_note": "Kansas is a STATE-ADMINISTERED SNAP program — DCF administers directly through the Kansas Eligibility Enforcement System (KEES), with no county option-in like CA/NY/MN/WI/VA. This pack found a genuinely consequential DISCREPANCY worth flagging up front: this repo's existing packages/snap-rules StatePolicy entry for KS is explicitly labeled \"Non-BBCE archetype (e.g. KS)\" in its own `label` field, and the file's top-of-file comment (states.ts line ~128) states \"Other states (TX/KS/AK) are policy archetypes used by the fixture; their SUA values are illustrative until the FNS-published values are loaded\" — language signaling a SYNTHETIC placeholder, not independently researched real Kansas policy. This pack's own independent primary-source research (KEESM, the Kansas Economic and Employment Support Manual, plus the current KEESM Appendix F-2 Food Assistance Program Standards PDF, effective 10/1/2025-9/30/2026, and K.S.A. 39-709e) CONFIRMS the existing engine's `bbce: false`, `asset_waiver: false`, and SUA figures (HCSUA $469 / LUA $345 / phone $44) as ACCURATE, current, real Kansas policy, not an arbitrary placeholder — real Kansas SUA figures happen to exactly match what a synthetic-archetype label implied. This pack also found a SEPARATE, undated in-code comment directly above the KS entry (states.ts lines ~1037-1042) that already claims \"confirmed live 2026-08-09\" for the SUA figures via KEESM §7226 — an apparent partial, undocumented prior correction that was never reconciled with the file's own \"archetype\"/\"illustrative\" language one screen above it. See PROVENANCE.md for the full discrepancy-resolution writeup; packages/snap-rules is NOT touched by this corpus-only pack.",
+  "system": "DCF processes Food Assistance centrally through KEES (Kansas Eligibility Enforcement System); applicants apply online at cssp.kees.ks.gov, by phone through the DCF Consumer Assistance Line (1-888-369-4777), in person at a local DCF service center, or by mailing a paper Application for Benefits (ES-3100). Most non-elderly/non-disabled households recertify on a 12-month cycle; this pack could not confirm a Kansas-specific interim/periodic-report structure with primary-source confidence (see freshness.json).",
+  "portal": {
+    "name": "KEES (Kansas Eligibility Enforcement System)",
+    "url": "https://cssp.kees.ks.gov/apspssp/sspNonMed.portal"
+  },
+  "update_channels": [
+    {
+      "name": "Kansas DCF — Kansas Economic and Employment Support Manual (KEESM), Appendix F-2, Food Assistance Program Standards (effective 10/1/2025-9/30/2026) — direct fetch, clean HTTP 200, primary source for all current dollar figures",
+      "url": "https://content.dcf.ks.gov/EES/KEESM/Appendix/F-2%20FA%20Program%20Standards.pdf"
+    },
+    {
+      "name": "Kansas DCF — KEESM 2510, Categorically Eligible Households (BBCE/categorical-eligibility scope)",
+      "url": "https://content.dcf.ks.gov/ees/KEESM/current/keesm2510.htm"
+    },
+    {
+      "name": "Kansas DCF — KEESM Appendix Table of Contents",
+      "url": "https://content.dcf.ks.gov/ees/keesm/appendix/appendix.html"
+    },
+    {
+      "name": "Kansas Statutes, K.S.A. 39-709e — drug felony conviction eligibility for public assistance",
+      "url": "https://ksrevisor.gov/statutes/chapters/ch39/039_007_0009e.html"
+    },
+    {
+      "name": "Kansas DCF — Food Assistance program page (agency, apply channels, KEES portal)",
+      "url": "https://www.dcf.ks.gov/services/ees/pages/food/foodassistance.aspx"
+    },
+    {
+      "name": "USDA FNS — SNAP Restaurant Meals Program state list (Kansas absent)",
+      "url": "https://www.fns.usda.gov/snap/retailer/restaurant-meals-program"
+    },
+    {
+      "name": "USDA FNS — ABAWD Waivers FY2025-2029 (Kansas current status: no statewide or county waiver)",
+      "url": "https://www.fns.usda.gov/snap/abawd/waivers/2025-2029"
+    }
+  ],
+  "verification": {
+    "verified_on": "2026-08-12",
+    "method": "Direct fetch (WebFetch, no access barrier encountered) of Kansas DCF's KEESM Appendix F-2 Food Assistance Program Standards PDF (the manual's current, dated dollar-figure table, effective 10/1/2025-9/30/2026) and KEESM 2510 (Categorically Eligible Households). Direct fetch of K.S.A. 39-709e from ksrevisor.gov (Kansas's own statute database, no access barrier — a genuine departure from this roster's now-familiar Justia-403 pattern). Direct fetch of DCF's Food Assistance program page for agency/portal/apply-channel facts. WebSearch cross-checks (multiple independent current SNAP-calculator aggregators, all converging) for the resource/asset limit figures, which this pack could not locate in a directly-fetched, dated KEESM section within its fetch window. WebSearch corroboration for current statewide ABAWD non-waiver status (no FNS quarterly-list direct fetch succeeded — see PROVENANCE.md) and for Restaurant Meals Program absence (cross-checked against USDA's own RMP state list, direct fetch). This pack's central task was a discrepancy check against this repo's own EXISTING packages/snap-rules KS StatePolicy entry, which is labeled \"Non-BBCE archetype\" and flagged in-file as an illustrative placeholder — this pack's independent research confirms the existing bbce:false, asset_waiver:false, and SUA figures (469/345/44) as accurate to real, current Kansas policy, not merely a coincidentally-matching placeholder guess (see PROVENANCE.md for the full reconciliation).",
+    "gates": "content.dcf.ks.gov and ksrevisor.gov returned clean, direct-fetchable content with no bot-detection or paywall encountered — a genuine departure from this roster's recurring portaldir.ct.gov/Justia-403 access-barrier pattern. The one access gap this pack disclosed rather than papering over: several individual KEESM numbered sections this pack attempted to fetch directly for the resource/asset limit (the 5000-5300 series) returned either 404 or content that did not state the dollar figure explicitly in the fetched excerpt, so this pack's $3,000/$4,500 asset-limit figures are WebSearch-aggregator-corroborated (multiple independent current sources converging on the same figures, matching this roster's already-confirmed FFY2026 national default) rather than a single directly-fetched, dated KEESM citation the way the SUA and income-limit figures are. This is disclosed explicitly in freshness.json and PROVENANCE.md, not silently upgraded to full-confidence sourcing.",
+    "sources": [
+      "KEESM Appendix F-2, Food Assistance Program Standards, effective October 1, 2025 - September 30, 2026 — direct fetch, clean, PDF parsed directly by this pack's own tooling (not just a text-extraction summary) — SUA $469, LUA $345, Telephone Standard $44, Standard Deduction $209/$223/$261/$299, Maximum Excess Shelter Deduction $744, Homeless Shelter Expense $198.99, Standard Medical Deduction $175 (a FLAT shortcut, distinct from Connecticut's actual-expense-only mechanism), gross income limit table matching the plain 130% FPL federal default (no BBCE elevation), net income limit table matching the plain 100% FPL federal default",
+      "KEESM 2510, Categorically Eligible Households — direct fetch, clean — categorical eligibility restricted to TANF/SSI-authorized households and a narrow work-support-services track, with NO broad-based (income-threshold-only) categorical eligibility track found — this is the pack's primary confirming evidence for bbce:false",
+      "K.S.A. 39-709e — direct fetch of ksrevisor.gov, clean, full statute text read directly — a MODIFIED opt-out (treatment-assessment/compliance conditions), not a full opt-out and not the simple \"lifetime ban\" framing found in one dated (2022) secondary source",
+      "Kansas DCF Food Assistance program page — direct fetch, clean — confirms \"Food Assistance\" as the program's own consumer-facing name, DCF as agency, KEES (cssp.kees.ks.gov) as the application portal, 1-888-369-4777 as the phone line",
+      "USDA FNS SNAP Restaurant Meals Program state list — cross-checked via WebSearch against the roster's already-confirmed current 9-state RMP list; Kansas absent",
+      "Multiple independent current SNAP-calculator aggregators (Propel, snapscreener, povertylevelcalculator) — WebSearch corroboration only, converging on $3,000/$4,500 as the current standard/elderly-disabled resource limit, matching this roster's already-confirmed FFY2026 national-default figures; NOT independently confirmed via a single directly-fetched, dated KEESM section — disclosed as a lower-confidence finding in freshness.json"
+    ]
+  }
+}
