@@ -1,0 +1,48 @@
+{
+  "_provenance": {
+    "note": "Alaska citation authorities. Alaska's SNAP regulations are cited via the Alaska Administrative Code convention '7 AAC 46.NNN' (e.g. 7 AAC 46.021, State Options), and its cross-program disqualification statute is cited via the Alaska Statutes convention 'AS 47.27.NNN' (e.g. AS 47.27.015, Disqualifying conditions). This pack defines a THIRD, non-regulatory citation family, 'akdohpdf', matching Alaska DOH's own dated PDF publications (e.g. 'FSP 77'), since this pack's most load-bearing, most-current dollar figures come from a DOH-published standards PDF rather than either the AAC or a statute, and this pack expects that citation form to appear in generated answers alongside the regulatory forms.",
+    "extracted": "2026-08-12"
+  },
+  "patterns": [
+    {
+      "key": "akaac",
+      "regex": "\\b(7\\s?AAC\\s?\\d{2}\\.\\d{3})\\b",
+      "flags": "gi",
+      "template": "$1",
+      "normalize": "none",
+      "match": "exact",
+      "note": "Alaska Administrative Code, Title 7 (Health and Social Services), Chapter 46 (Food Stamp Program), cited with its own subsection number, e.g. 7 AAC 46.021 (State Options), 7 AAC 46.010 (Administration of program; scope of regulations). Governs procedural/administrative options; does not itself hardcode dollar figures, which come from DOH's own annual standards PDF instead."
+    },
+    {
+      "key": "akstat",
+      "regex": "\\b(AS\\s?\\d{2}\\.\\d{2}\\.\\d{3})\\b",
+      "flags": "gi",
+      "template": "$1",
+      "normalize": "none",
+      "match": "exact",
+      "note": "Alaska Statutes, cited e.g. AS 47.27.015 (Disqualifying conditions — the drug-related-felony modified-ban provision)."
+    },
+    {
+      "key": "akdohpdf",
+      "regex": "\\b(FSP\\s?\\d{1,3})\\b",
+      "flags": "gi",
+      "template": "$1",
+      "normalize": "none",
+      "match": "exact",
+      "note": "Alaska DOH-published SNAP standards PDF form number, e.g. FSP 77 (the 'Alaska SNAP Standards: Income Limits and Standard Deductions' publication, revision date printed on the form itself, e.g. 'rev 09/25')."
+    }
+  ],
+  "known": {
+    "akaac": [
+      { "value": "7 AAC 46.010", "note": "Administration of program; scope of regulations — adopts 7 CFR 271-274 (federal SNAP regulations) by reference" },
+      { "value": "7 AAC 46.021", "note": "State options — household-determination, verification, processing-timeline, and income-calculation options committed to state discretion; last amended 1991; does not hardcode dollar figures" }
+    ],
+    "akstat": [
+      { "value": "AS 47.25", "note": "Alaska's food stamp statute chapter (cross-referenced by AS 47.27.015's disqualification provision); this pack did not fetch AS 47.25's own full text directly" },
+      { "value": "AS 47.27.015", "note": "Disqualifying conditions — the modified drug-felony SNAP/TANF ban: disqualified unless the person is serving/completed probation or parole, in/completed mandatory drug or alcohol treatment, has taken rehabilitation action, or is complying with a reentry plan. Text cross-corroborated via FindLaw/Justia/CLASP secondary excerpts after a direct 403 on law.justia.com and codes.findlaw.com; not independently primary-fetched" }
+    ],
+    "akdohpdf": [
+      { "value": "FSP 77", "note": "'Alaska SNAP Standards: Income Limits and Standard Deductions,' rev 09/25, effective 10/1/2025 — the primary source for this pack's income-limit, deduction, allotment, and utility-allowance dollar figures" }
+    ]
+  }
+}

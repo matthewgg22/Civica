@@ -56,6 +56,7 @@ import dePack from "./states/de/pack.json";
 import wyPack from "./states/wy/pack.json";
 import vtPack from "./states/vt/pack.json";
 import dcPack from "./states/dc/pack.json";
+import akPack from "./states/ak/pack.json";
 
 export interface PackVerification {
   verified_on: string;
@@ -145,6 +146,7 @@ export const VERIFIED_STATES: PackMeta[] = [
   wyPack,
   vtPack,
   dcPack,
+  akPack,
 ].map(meta);
 
 export const VERIFIED_STATE_CODES: string[] = VERIFIED_STATES.map((s) => s.code);
