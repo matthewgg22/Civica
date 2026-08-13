@@ -490,6 +490,14 @@ export function DemeterChat({
    *  answered or waved away. Asked ONCE, after the first answer — see the
    *  callout above the composer. */
   const [modeAsked, setModeAsked] = useState(false);
+  /** Emailing the outline to yourself: idle → sending → sent | signin | error.
+   *  Mirrors DemeterSave's shape deliberately — they are the same decision
+   *  ("keep this") reached from two directions, and behaving differently would
+   *  make one of them look broken. */
+  const [emailState, setEmailState] = useState<"idle" | "sending" | "sent" | "signin" | "error">(
+    "idle",
+  );
+  const [emailDetail, setEmailDetail] = useState<string | null>(null);
 
   // A place named in the chat, waiting to be confirmed. An OFFER, never an
   // automatic switch: someone typed "im in boston" and the scope stayed on
@@ -780,6 +788,45 @@ export function DemeterChat({
     clearChatSession();
     setAnnouncement(t.cleared);
   }, [t, resetInputHeight]);
+
+  /** Send the outlined application to the address on the account.
+   *
+   *  NEVER takes an address: the route reads it from the session, so there is
+   *  no field to mistype and no way to mail one person's household and income
+   *  to another. That also means a signed-out reader gets the sign-in panel
+   *  rather than a form, which is the honest order — you cannot be sent
+   *  something until we know where.
+   */
+  const emailOutline = useCallback(async () => {
+    setEmailState("sending");
+    setEmailDetail(null);
+    try {
+      const pack = state ? states.find((x) => x.code === state) ?? null : null;
+      const res = await fetch("/api/demeter/email-outline", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          facts: factsRef.current,
+          stillNeeded: classification?.completeness?.stillNeeded ?? [],
+          stateName: state ? stateName(state) : null,
+          agency: pack?.agency ?? null,
+          portalName: pack?.portal?.name ?? null,
+          portalUrl: pack?.portal?.url ?? null,
+        }),
+      });
+      if (res.status === 401) return setEmailState("signin");
+      if (!res.ok) {
+        const b = (await res.json().catch(() => ({}))) as { error?: string; reason?: string };
+        setEmailDetail(b.reason ?? b.error ?? `http_${res.status}`);
+        return setEmailState("error");
+      }
+      setEmailState("sent");
+      setAnnouncement(t.emailSent);
+    } catch {
+      setEmailDetail("network");
+      setEmailState("error");
+    }
+  }, [state, states, classification, t]);
 
   const restoreConversation = useCallback(
     (restored: Msg[], restoredState: string | null, restoredLang: AnswerLang) => {
@@ -1543,6 +1590,38 @@ export function DemeterChat({
               </button>
             ))}
           </div>
+          {/* TAKE IT WITH YOU. The outline existed only on the screen it was
+              built on — close the tab and the one thing someone most wants to
+              keep was the one thing they could not carry away. Shown only once
+              there is something in it: mailing an empty template reads as the
+              product failing rather than as there being nothing yet. */}
+          {worksheetMode === "estimate" && (factsRef.current.household?.length ?? 0) > 0 && (
+            <div className="demeter__emailrow">
+              <button
+                type="button"
+                className="demeter__emailbtn"
+                onClick={() => void emailOutline()}
+                disabled={emailState === "sending" || emailState === "sent"}
+              >
+                {emailState === "sending"
+                  ? t.emailSending
+                  : emailState === "sent"
+                    ? t.emailSent
+                    : t.emailOutline}
+              </button>
+              {emailState === "signin" && (
+                <a className="demeter__emailsignin" href="/sign-in?next=/chat">
+                  {t.emailSignIn}
+                </a>
+              )}
+              {emailState === "error" && (
+                <span className="demeter__save-error" role="alert">
+                  {t.emailError}
+                  {emailDetail && <span className="demeter__save-code"> ({emailDetail})</span>}
+                </span>
+              )}
+            </div>
+          )}
           {/* Underneath both, quieter than either: this is the standing promise
               about how answers are checked, not something you do right now. */}
           <a className="demeter__how" href="/verify">

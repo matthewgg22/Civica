@@ -7084,6 +7084,25 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 .demeter__save-code { color: var(--demeter-muted); font-variant-numeric: tabular-nums; }
 /* The confirm step needs the whole row — it carries a sentence, not a label. */
 .dmchat .demeter__sidebtns .demeter__clearconfirm { flex: 1 1 100%; }
+/* TAKE IT WITH YOU. Sits under the two conversation buttons because it is the
+   third thing you can do with a conversation — and the only one that leaves
+   with you. Wheat, because unlike Save and Start-new this one is a step
+   forward rather than housekeeping. */
+.dmchat .demeter__emailrow { display: flex; flex-direction: column; gap: 0.35rem; }
+.dmchat .demeter__emailbtn {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  width: 100%; min-height: 40px; border: 0; border-radius: 999px; cursor: pointer;
+  background: var(--demeter-wheat); color: var(--demeter-ink);
+  font-size: 0.78rem; font-weight: 700;
+}
+.dmchat .demeter__emailbtn:hover:not(:disabled) { filter: brightness(0.94); }
+.dmchat .demeter__emailbtn:disabled { opacity: 0.75; cursor: default; }
+.dmchat .demeter__emailsignin {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.74rem; color: var(--demeter-terracotta-deep); text-decoration: underline;
+  align-self: flex-start;
+}
+
 /* Quieter than either button, and last: a standing promise about how answers
    are checked, not something to do right now. */
 .dmchat .demeter__sidetools .demeter__how {

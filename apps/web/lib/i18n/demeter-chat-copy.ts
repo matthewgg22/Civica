@@ -104,6 +104,12 @@ export const T = {
       scopeAgency: "Answers from",
       scopeApply: "Apply at",
     },
+    // TAKE IT WITH YOU. The outline lived only on the screen it was built on.
+    emailOutline: "Email this to me",
+    emailSending: "Sending…",
+    emailSent: "Sent to your inbox",
+    emailSignIn: "Sign in to send it",
+    emailError: "That didn't send.",
     howWeVerify: "How we verify",
     languageLabel: "Language",
     feedback: {
@@ -238,6 +244,11 @@ export const T = {
       scopeAgency: "Respuestas de",
       scopeApply: "Solicita en",
     },
+    emailOutline: "Envíamelo por correo",
+    emailSending: "Enviando…",
+    emailSent: "Enviado a tu correo",
+    emailSignIn: "Inicia sesión para enviarlo",
+    emailError: "No se pudo enviar.",
     howWeVerify: "Cómo verificamos",
     languageLabel: "Idioma",
     feedback: {
@@ -356,6 +367,11 @@ export const T = {
       scopeAgency: "Câu trả lời dựa trên",
       scopeApply: "Nộp đơn tại",
     },
+    emailOutline: "Gửi bản này cho tôi",
+    emailSending: "Đang gửi…",
+    emailSent: "Đã gửi vào hộp thư của bạn",
+    emailSignIn: "Đăng nhập để gửi",
+    emailError: "Chưa gửi được.",
     howWeVerify: "Cách chúng tôi xác minh",
     languageLabel: "Ngôn ngữ",
     feedback: {
@@ -469,6 +485,11 @@ export const T = {
       scopeAgency: "答案来源",
       scopeApply: "申请入口",
     },
+    emailOutline: "把这份发到我的邮箱",
+    emailSending: "发送中…",
+    emailSent: "已发送到您的邮箱",
+    emailSignIn: "登录后发送",
+    emailError: "没能发送。",
     howWeVerify: "我们如何核实",
     languageLabel: "语言",
     feedback: {
