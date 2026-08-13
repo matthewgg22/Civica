@@ -4974,6 +4974,101 @@ html {
 }
 .vstat__note { color: var(--demeter-muted); }
 
+/* ── /verify, the pass ──────────────────────────────────────────────────────
+   Many of this page's conventions had drifted from the rest of the surface:
+   headings at page-title weight inside cards, labels in the serif that is
+   reserved for prose, and a grid whose cards each ended wherever their own
+   content did. */
+
+/* #21 — the page breathes. Sections ran into each other at a uniform 1rem, so
+   nothing signalled where one idea ended. */
+.vpage { padding-top: 2.5rem; }
+.vpage__head { margin-bottom: 2.75rem; }
+.vpage__lede { margin-bottom: 1.1rem; }
+/* The opening paragraph carries the page's reason for existing and is set to
+   be read first — larger, darker, and given room under it. */
+.vpage__lede--lead {
+  font-size: 1.16rem; line-height: 1.55; color: var(--demeter-ink);
+  margin-bottom: 1.4rem;
+}
+.vstat { margin-top: 2rem; }
+
+/* #25 — THE UMBRELLA. Full width above the grid, in paper rather than card
+   white, so it reads as the ground the cards sit on rather than as a
+   fifty-fourth card. */
+.vusda {
+  margin: 2.25rem 0 1.25rem; padding: 1.15rem 1.35rem;
+  background: var(--demeter-paper); border: 1px solid var(--demeter-rule);
+  border-radius: 16px;
+}
+.vusda__eyebrow {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.66rem; font-weight: 600; letter-spacing: 0.09em; text-transform: uppercase;
+  color: var(--demeter-muted); margin: 0 0 0.45rem;
+}
+.vusda__body {
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+  font-size: 1rem; line-height: 1.6; color: var(--demeter-body); margin: 0; max-width: 68ch;
+}
+.vusda__link { color: var(--demeter-terracotta-deep); }
+
+/* #26 — EQUAL HEIGHTS. `align-items: start` let every card end wherever its
+   own content did, so a row read as a ragged edge rather than as a set of
+   comparable things. Stretch, and the actions block pins to the bottom. */
+.vpage__grid { align-items: stretch; gap: 1.15rem; margin: 1.25rem 0 2.25rem; }
+.vcard { height: 100%; }
+
+/* #22b — the state's name, spelled out, with a bigger flag beside it. */
+.vcard__head { align-items: flex-start; gap: 0.7rem; }
+.vcard__state { display: flex; align-items: center; gap: 0.65rem; }
+.vcard__statename {
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+  font-size: 1.15rem; font-weight: 600; letter-spacing: -0.01em; color: var(--demeter-ink);
+  line-height: 1.2;
+}
+.vcard__statecode { color: var(--demeter-muted); font-weight: 400; }
+/* The flag component prints the code too; with the name beside it that is the
+   same fact twice. */
+.vcard__state .dmflag__code { display: none; }
+
+/* #24 — the badge is FILLED. An outline in terracotta read as one more label
+   among the card's other labels; this is the page's only claim of status and
+   should look like a stamp. */
+.vcard__badge {
+  display: inline-flex; align-items: center; gap: 0.25rem;
+  color: var(--demeter-paper); background: var(--demeter-terracotta-deep);
+  border: 0; flex: none;
+}
+
+/* #22a — two doors, side by side, sitting on the bottom edge of every card. */
+.vcard__actions {
+  margin-top: auto; padding-top: 0.9rem;
+  display: flex; flex-wrap: wrap; gap: 0.5rem;
+}
+.vcard__cta { margin-top: 0; }
+/* Ask is the wheat one — it is the product. The agency is terracotta and
+   outlined: a real destination, but not the thing this page is for. */
+.vcard__cta {
+  background: var(--demeter-wheat); color: var(--demeter-ink); font-weight: 700;
+}
+.vcard__cta:hover { background: var(--demeter-wheat); filter: brightness(0.94); }
+.vcard__cta--agency {
+  background: transparent; color: var(--demeter-terracotta-deep);
+  border: 1px solid var(--demeter-terracotta); font-weight: 600;
+}
+.vcard__cta--agency:hover {
+  background: var(--demeter-paper); filter: none; color: var(--demeter-terracotta-deep);
+}
+
+/* #27 — the tail is prose now, and the graphite footer closes the page. */
+.vpage__foot {
+  border-top: 1px solid var(--demeter-rule);
+  padding-top: 1.5rem; margin-top: 2.5rem;
+  font-size: 0.95rem;
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+}
+.vpage__foot p + p { margin-top: 0.9rem; }
+
 /* ── Demeter identity tokens (Demeter AI Design Spec, Turn 3 — "sibling not
    twin") ──────────────────────────────────────────────────────────────
    Scoped to .screening* — NOT the shared --civica-* tokens, which the older

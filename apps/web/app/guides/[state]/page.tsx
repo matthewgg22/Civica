@@ -9,6 +9,7 @@ import { notFound } from "next/navigation";
 import { QUESTIONS } from "../../../lib/guide-questions";
 import { absoluteUrl } from "../../../lib/site-url";
 import { VERIFIED_STATES } from "@civica/demeter-engine/packs";
+import { DemeterFooter } from "../../../components/DemeterFooter";
 
 export const dynamicParams = false;
 
@@ -67,7 +68,8 @@ export default async function GuidePage({
   };
 
   return (
-    <main className="gpage">
+    <>
+      <main className="gpage">
       <script
         type="application/ld+json"
         // Content is built from our own pack data, not user input.
@@ -138,5 +140,7 @@ export default async function GuidePage({
         </p>
       </footer>
     </main>
+      <DemeterFooter />
+    </>
   );
 }
