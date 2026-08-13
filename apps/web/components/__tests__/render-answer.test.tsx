@@ -17,6 +17,15 @@ type Nodes = ReturnType<typeof renderAnswer>;
 
 function walk(nodes: unknown, visit: (n: unknown) => void): void {
   for (const n of Array.isArray(nodes) ? nodes : [nodes]) {
+    // NESTED ARRAYS. A child can itself be an array — renderInline returns
+    // one, so `children` is routinely [[...strings], <span/>]. This used to
+    // visit the array itself, find it was not an element, and stop, silently
+    // skipping every node inside it. It reported a paragraph as missing text
+    // that was in fact rendering perfectly.
+    if (Array.isArray(n)) {
+      walk(n, visit);
+      continue;
+    }
     visit(n);
     if (isValidElement(n)) {
       walk((n.props as { children?: unknown }).children ?? [], visit);
@@ -174,18 +183,38 @@ describe("the question the composer echoes", () => {
   });
 });
 
-describe("the streaming cursor", () => {
-  it("sits inside the last paragraph, not after it", () => {
-    // Appended AFTER the paragraph it lands on its own line and reads as a
-    // stray mark rather than as the live end of the text.
+describe("the streaming edge", () => {
+  // Was a blinking block caret — the loudest thing on a page of quiet type,
+  // sitting at the end of every sentence as it arrived. A cursor belongs in a
+  // field you type into, not in prose being read to you. The newest word now
+  // arrives dimmed and settles instead.
+  it("wraps the newest word, inside the last paragraph", () => {
     const nodes = renderAnswer("First.\n\nStill writing", { streaming: true });
     expect(paragraphs(nodes)).toBe(2);
     expect(tags(nodes)).toEqual(["span"]);
   });
 
+  it("keeps every word — the edge is a wrapper, not a truncation", () => {
+    // The tail is split off the last paragraph and re-rendered. If that split
+    // dropped or duplicated a word the reader would watch text corrupt itself
+    // in front of them, which is worse than any caret.
+    const nodes = renderAnswer("First.\n\nStill writing here", { streaming: true });
+    expect(texts(nodes).replace(/\s+/g, " ")).toContain("Still writing here");
+  });
+
+  it("handles a last paragraph that is a single word", () => {
+    const nodes = renderAnswer("Sure", { streaming: true });
+    expect(texts(nodes)).toContain("Sure");
+  });
+
   it("is absent once the answer is finished", () => {
     const nodes = renderAnswer("All done.");
     expect(tags(nodes)).toEqual([]);
+  });
+
+  it("does not render a caret — that was the thing being replaced", () => {
+    const nodes = renderAnswer("Still writing", { streaming: true });
+    expect(JSON.stringify(nodes)).not.toContain("demeter__caret");
   });
 
   it("does not appear on an empty answer", () => {
