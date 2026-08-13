@@ -99,4 +99,34 @@ describe("the outlined application", () => {
     expect(hh.lines[0]).toContain("2 people");
     expect(hh.lines.join(" ")).not.toMatch(/household\.\d|member_id:/);
   });
+
+  // Caught by LOOKING at the rendered PDF: household members printed as
+  // "applicant" and "child_1" — the extractor's own slugs, on a page someone
+  // hands to a caseworker. A slug there is worse than a generic label; it
+  // reads as a reference number they are supposed to recognise.
+  it("never prints the extractor's member_id slugs", () => {
+    const text = outlineToText(full);
+    expect(text).not.toContain("applicant");
+    expect(text).not.toContain("child_1");
+    expect(text).toContain("You — age 34");
+    expect(text).toContain("Child — age 6");
+  });
+
+  it("names whose income it is by role, not by slug", () => {
+    const income = buildOutline(full).find((s) => s.heading === "Income, before tax")!;
+    expect(income.lines[0]).toContain("(You)");
+    expect(income.lines[0]).not.toContain("applicant");
+  });
+
+  it("does not label income at all in a one-person household", () => {
+    const solo = {
+      ...full,
+      facts: {
+        ...full.facts,
+        household: [{ member_id: "applicant", age: 34, role: "head", immigration: "citizen" }],
+      },
+    };
+    const income = buildOutline(solo).find((s) => s.heading === "Income, before tax")!;
+    expect(income.lines[0]).not.toContain("(");
+  });
 });
