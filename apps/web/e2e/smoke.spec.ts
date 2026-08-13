@@ -80,15 +80,20 @@ test.describe("chat surface", () => {
     await expect(composer(page)).toHaveCount(0);
   });
 
-  test("the chat itself carries the picker, the composer and the suggestions", async ({ page }) => {
+  test("the chat itself carries the picker and the composer, and no starter chips", async ({
+    page,
+  }) => {
     await page.goto("/chat");
     const picker = page.getByRole("button", { name: "Your state", exact: true });
     await expect(picker).toContainText("All states");
     await expect(composer(page)).toBeVisible();
-    // By what they ARE, not by what they say — this asserted one suggestion's
-    // exact wording, so rephrasing the three starter questions broke a test
-    // that was checking they render at all.
-    await expect(page.locator(".demeter__suggest")).toHaveCount(3);
+    // THE STARTERS ARE GONE, deliberately. There were three, and none was what
+    // someone actually opens with; two carried a discouraging premise before a
+    // word had been exchanged ("Do I earn too much to qualify?", "Will I have
+    // to do an interview?"). Putting those in front of a person who has not yet
+    // decided whether they are allowed to ask is a way to lose them at the
+    // door. Asserted at zero so they cannot quietly return.
+    await expect(page.locator(".demeter__suggest")).toHaveCount(0);
     // Opening the picker reveals every verified pack — under its DISPLAY name.
     // The raw corpus field carries annotation prose ("SNAP (no state-specific
     // branding)"), which is written for retrieval, not for a list you scan.
