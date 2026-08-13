@@ -4822,7 +4822,9 @@ html {
 }
 .demeter__send:disabled { opacity: 0.5; }
 .demeter__send--stop { background: var(--demeter-terracotta-deep); }
-.demeter__disclaimer { font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif; font-size: 0.72rem; color: var(--demeter-muted); text-align: center; padding: 0.5rem 1rem 0; }
+/* Tight to the line above it: the two belong together as one footnote, and a
+   half-rem gap made them read as two separate warnings. */
+.demeter__disclaimer { font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif; font-size: 0.72rem; color: var(--demeter-muted); text-align: center; padding: 0.15rem 1rem 0; }
 @media (min-width: 720px) {
   .demeter { padding: 1.25rem; }
   .demeter__msg { max-width: 75%; }
@@ -5320,6 +5322,13 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   font-size: 0.95rem; font-weight: 500; color: var(--demeter-ink);
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
+/* The tick is GONE from the trigger. A checkmark next to the state read as
+   "this has been verified/confirmed by you" when it only ever meant "a verified
+   pack exists" — and the picker already says that, in words, in the panel
+   underneath. Two marks for one fact, one of them ambiguous.
+   Still used inside the OPTION list, where it distinguishes verified packs
+   from the federal floor and has something to contrast against. */
+.dmst__trigger .dmst__check { display: none; }
 .dmst__check { color: var(--demeter-terracotta-deep); font-weight: 700; flex: none; }
 .dmst__caret { color: var(--demeter-muted); flex: none; font-size: 0.8rem; }
 
@@ -5932,7 +5941,21 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   margin: 0.75rem 0 0.9rem; padding: 0.25rem;
   background: var(--demeter-paper); border: 1px solid var(--demeter-rule);
   border-radius: 999px;
+  position: relative;
 }
+/* THE THUMB MOVES. The filled pill used to appear on the other half instantly,
+   which reads as two separate buttons lighting up rather than as one switch
+   being thrown — and this switch changes what the product does with everything
+   you type, so it is worth being legible as a switch. */
+.dmw__mode::before {
+  content: ""; position: absolute; z-index: 0;
+  top: 0.25rem; bottom: 0.25rem; left: 0.25rem;
+  width: calc(50% - 0.375rem);
+  background: var(--demeter-terracotta-deep); border-radius: 999px;
+  transition: transform 260ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.dmw__mode[data-mode="estimate"]::before { transform: translateX(calc(100% + 0.25rem)); }
+@media (prefers-reduced-motion: reduce) { .dmw__mode::before { transition: none; } }
 .dmw__modeopt {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   font-size: 0.78rem; font-weight: 600; line-height: 1.2;
@@ -5940,9 +5963,10 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   background: transparent; color: var(--demeter-muted); cursor: pointer;
   transition: background 140ms ease-out, color 140ms ease-out;
 }
-.dmw__modeopt[data-on] {
-  background: var(--demeter-terracotta-deep); color: var(--demeter-paper);
-}
+/* The label sits ABOVE the thumb and only changes colour — the fill is the
+   thumb's job now, or the two would cross-fade against each other mid-slide. */
+.dmw__modeopt { position: relative; z-index: 1; }
+.dmw__modeopt[data-on] { background: transparent; color: var(--demeter-paper); }
 .dmw__modeopt:focus-visible { outline: 2px solid var(--demeter-ink); outline-offset: 2px; }
 
 /* THE 105px JUMP. Measured: the rail is 328px in "Just asking" and 433px in
@@ -6087,7 +6111,10 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 
 /* The rail's "pick a state" is a BUTTON: without a state there is no
    calculation at all, so this is a dead-rail fix, not decoration. */
-.dmw__pick { display: flex; flex-direction: column; gap: 0.6rem; align-items: flex-start; }
+/* CENTRED. Left-aligned it sat under the mode toggle looking like a stray
+   caption; this is the panel's whole content while no state is set, and the one
+   thing to do next. */
+.dmw__pick { display: flex; flex-direction: column; gap: 0.6rem; align-items: center; text-align: center; }
 .dmw__pickbtn {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   font-size: 0.82rem; font-weight: 500; min-height: 40px; padding: 0.4rem 1rem;
@@ -7188,8 +7215,11 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
    burying that in a tooltip would make the button a smaller version of the
    retention lie #703 fixed. */
 .demeter__clearconfirm {
-  display: inline-flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;
-  padding: 0.4rem 0.6rem; border-radius: 14px;
+  /* It carries a SENTENCE plus two buttons, so it was being read as a cramped
+     strip rather than as a question. Room to breathe, and the note gets its own
+     line above the choices rather than competing with them. */
+  display: flex; flex-direction: column; align-items: stretch; gap: 0.6rem;
+  padding: 0.8rem 0.9rem; border-radius: 14px;
   background: var(--demeter-paper); border: 1px solid var(--demeter-rule-strong);
 }
 .demeter__clearnote {
@@ -7216,7 +7246,7 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 .demeter__piihint {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   font-size: 0.74rem; line-height: 1.5; color: var(--demeter-muted);
-  text-align: center; padding: 0.4rem 1rem 0; margin: 0; max-width: 56ch;
+  text-align: center; padding: 0.35rem 1rem 0; margin: 0; max-width: 56ch;
   margin-left: auto; margin-right: auto;
 }
 /* One line. 56ch broke it across two at ~476px when the column had 830 to give,

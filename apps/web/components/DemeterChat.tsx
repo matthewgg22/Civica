@@ -1179,6 +1179,14 @@ export function DemeterChat({
     // send would silently hold a stale copy with no warning.
   }, [input, busy, messages, state, lang, t, refreshWorksheet, resetInputHeight, worksheetMode, drawStream]);
 
+  /** The agency the disclaimer points at. Their own state's, once one is set —
+   *  a generic "your state agency" is exactly the sort of advice that sounds
+   *  complete and leaves someone with nowhere to go. */
+  const agencyHref = (() => {
+    const pack = state ? states.find((x) => x.code === state) ?? null : null;
+    return pack?.portal?.url ?? "/verify";
+  })();
+
   const hasChat = messages.length > 0;
   /** At least one answer has finished. The mode offer waits for this: before an
    *  answer exists there is nothing to have an opinion about. */
@@ -1190,8 +1198,14 @@ export function DemeterChat({
   const lastAssistant = busy
     ? null
     : [...messages].reverse().find((m) => m.role === "assistant" && m.content)?.content ?? null;
+  // The standing invitation, worded for the mode you are actually in. The two
+  // modes do different things with what you type — one gathers it into a
+  // document, one deliberately does not — and the box you type into was the
+  // one place that never said which was happening.
+  const standingPrompt =
+    worksheetMode === "estimate" ? t.inputPlaceholderEstimate : t.inputPlaceholder;
   const composerPrompt =
-    (lastAssistant ? pendingQuestion(lastAssistant) : null) ?? t.inputPlaceholder;
+    (lastAssistant ? pendingQuestion(lastAssistant) : null) ?? standingPrompt;
 
   return (
     <div className="demeter">
@@ -1251,18 +1265,18 @@ export function DemeterChat({
             <DemeterMark size={52} />
             <h2 className="demeter__emptytitle">{t.emptyTitle}</h2>
             <p className="demeter__emptylede">{t.emptyLede}</p>
-            <div className="demeter__suggests">
-              {[t.empty1, t.empty2, t.empty3].map((q) => (
-                <button
-                  key={q}
-                  type="button"
-                  className="demeter__suggest"
-                  onClick={() => setInput(q)}
-                >
-                  {q}
-                </button>
-              ))}
-            </div>
+            {/* NO STARTER QUESTIONS. There were three — "Do I earn too much to
+                qualify?", "I need food this week", "Will I have to do an
+                interview?" — and none of them is what someone actually opens
+                with. Two carry a discouraging premise before a word has been
+                exchanged: that they probably earn too much, or that an
+                interview is looming. Putting those in front of a person who
+                has not yet decided whether they are allowed to ask is a way to
+                lose them at the door.
+
+                An empty composer asks nothing of anyone. The model's own
+                opening question does the guiding, where it can respond to what
+                the person actually says. */}
           </div>
         )}
         {messages.map((m, i) =>
@@ -1474,7 +1488,7 @@ export function DemeterChat({
           halfway through a long reply had nothing on screen telling them what
           was asked. Shown only while there is something in the box, so an empty
           composer is not carrying a second copy of its own placeholder. */}
-      {input.trim().length > 0 && composerPrompt !== t.inputPlaceholder && (
+      {input.trim().length > 0 && composerPrompt !== standingPrompt && (
         <p className="demeter__answering">{composerPrompt}</p>
       )}
 
@@ -1545,7 +1559,23 @@ export function DemeterChat({
           redactPii strips structured identifiers but deliberately NOT names, so
           this asks rather than promises. */}
       <p className="demeter__piihint">{t.piiHint}</p>
-      <p className="demeter__disclaimer">{t.disclaimer}</p>
+      {/* "Demeter is AI" leads, because someone who knows that reads
+          everything above it differently. And the agency is a real link:
+          telling somebody to check with an office without saying which office
+          is the same as not telling them. It points at their own state's
+          agency once one is set, and at the directory otherwise. */}
+      <p className="demeter__disclaimer">
+        {t.disclaimer}{" "}
+        <a
+          className="demeter__link"
+          href={agencyHref}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {t.disclaimerAgency}
+        </a>
+        .
+      </p>
         </div>
         {/* THE RIGHT COLUMN IS THE STANDING CONTEXT: which state this is scoped
             to, and what is known so far. The picker moved here from the

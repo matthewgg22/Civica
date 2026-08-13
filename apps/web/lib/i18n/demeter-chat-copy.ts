@@ -21,6 +21,7 @@ export const T = {
     title: "Demeter",
     tagline: "Verified answers about SNAP — for any state.",
     inputPlaceholder: "Happy to answer any questions about SNAP…",
+    inputPlaceholderEstimate: "Tell me about your household, and I'll build it up…",
     send: "Send",
     stop: "Stop",
     stateLabel: "Your state",
@@ -31,8 +32,11 @@ export const T = {
     dividerFederal: "Now answering with federal rules only — earlier answers may not apply.",
     dividerUncovered: (place: string) =>
       `Demeter does not cover ${place} yet — answers below use federal rules, and your local agency is the one to confirm with.`,
-    disclaimer:
-      "Demeter gives information, not legal advice. Confirm decisions with your SNAP agency.",
+    // "Demeter is AI" up front, because someone who knows that reads the rest
+    // differently. The agency is a LINK: telling somebody to check with an
+    // office without saying which one is the same as not telling them.
+    disclaimer: "Demeter is AI and can make mistakes. Please double-check cited sources and",
+    disclaimerAgency: "your state agency",
     // Sits under the composer, where the decision to type is made — not in the
     // estimate rail, where it used to live and where it vanished entirely at
     // narrow widths. Names the three things redactPii cannot save someone from
@@ -50,14 +54,14 @@ export const T = {
     // right-hand panel, which nobody reads while taking in their first reply.
     modeOffer: "Shall I start gathering your answers as we go, so you can take them to the application? Or keep this as just questions for now?",
     modeOfferEstimate: "Gather my answers",
-    modeOfferAsk: "Just questions",
+    modeOfferAsk: "Just asking",
     // Shown in the transcript when a state is picked. The portal is where the
     // application actually goes; this is the one moment we know exactly which
     // link that is, so it should not be something they have to ask for.
     portalLead: "In {state}, you apply through {agency}.",
     portalCta: "Apply at {portal}",
     portalStay:
-      "That is where the application is formally submitted. I'll be here the whole time — ask me anything as you go, and we can work through what it asks for together.",
+      "That is where the application is formally submitted, and the link is on your outlined application too, so you will not have to find it again.\n\n**_Shall we start working through what it asks for?_**",
     stateOfferYes: "Yes, use {state}",
     stateOfferNo: "No, keep as is",
     clearNote:
@@ -150,7 +154,7 @@ export const T = {
       error: "That didn't save. Please try again.",
     },
     worksheet: {
-      title: "What we know so far",
+      title: "Your outlined application",
       subtitle: "Builds as you talk",
       result: "Where this lands",
       estimate: "Estimated monthly benefit:",
@@ -185,7 +189,7 @@ export const T = {
       modeAsk: "Just asking",
       modeEstimate: "Build my estimate",
       modeAskNote:
-        "Nothing you say here is gathered or kept. Switch to this any time you want to ask a what-if, or about someone else, without it counting toward your own answers.",
+        "Nothing you say here goes into the document Demeter is building for you. Switch to this any time you want to ask a what-if, or about someone else, without it counting toward your own answers. (We still keep the question and answer to check our accuracy — that is true in both modes.)",
       switchedToAsk: "Nothing is being gathered. Ask anything.",
     },
   },
@@ -193,6 +197,7 @@ export const T = {
     title: "Demeter",
     tagline: "Respuestas verificadas sobre SNAP — para cualquier estado.",
     inputPlaceholder: "Con gusto respondo cualquier pregunta sobre SNAP…",
+    inputPlaceholderEstimate: "Cuéntame sobre tu hogar y lo voy armando…",
     send: "Enviar",
     stop: "Parar",
     stateLabel: "Tu estado",
@@ -205,19 +210,19 @@ export const T = {
       "Ahora respondiendo solo con reglas federales — las respuestas anteriores pueden no aplicar.",
     dividerUncovered: (place: string) =>
       `Demeter todavía no cubre ${place} — las respuestas de abajo usan reglas federales, y tu agencia local es la que debe confirmarlo.`,
-    disclaimer:
-      "Demeter da información, no asesoría legal. Confirma las decisiones con tu agencia de SNAP.",
+    disclaimer: "Demeter es IA y puede equivocarse. Verifica las fuentes citadas y",
+    disclaimerAgency: "tu agencia estatal",
     piiHint:
       "Por favor no escribas tu número de Seguro Social, datos bancarios ni un nombre completo.",
     clear: "Empezar una conversación nueva",
     stateOffer: "Mencionaste {place}. ¿Respondo para {state}?",
     modeOffer: "¿Quieres que calcule una cifra aproximada, o por ahora solo buscas respuestas?",
     modeOfferEstimate: "Calcular una cifra",
-    modeOfferAsk: "Solo respuestas por ahora",
+    modeOfferAsk: "Solo preguntas",
     portalLead: "En {state}, la solicitud se hace a través de {agency}.",
     portalCta: "Solicitar en {portal}",
     portalStay:
-      "Ahí es donde se presenta formalmente la solicitud. Yo sigo aquí todo el tiempo — pregúntame lo que quieras sobre la marcha y vemos juntos lo que te pide.",
+      "Ahí es donde se presenta formalmente la solicitud, y el enlace también está en tu solicitud esbozada, así que no tendrás que buscarlo otra vez.\n\n**_¿Empezamos a repasar lo que te pide?_**",
     stateOfferYes: "Sí, usa {state}",
     stateOfferNo: "No, déjalo así",
     clearNote:
@@ -294,7 +299,7 @@ export const T = {
       error: "No se pudo guardar. Intenta de nuevo.",
     },
     worksheet: {
-      title: "Lo que sabemos hasta ahora",
+      title: "Tu solicitud esbozada",
       subtitle: "Se arma mientras conversas",
       result: "Dónde queda esto",
       estimate: "Beneficio mensual estimado:",
@@ -313,7 +318,7 @@ export const T = {
       modeAsk: "Solo preguntar",
       modeEstimate: "Calcular mi estimado",
       modeAskNote:
-        "Aquí no se recoge ni se guarda nada de lo que digas. Cámbiate a esto cuando quieras preguntar un supuesto, o por otra persona, sin que cuente para tus propias respuestas.",
+        "Nada de lo que digas aquí entra en el documento que Demeter arma para ti. Cámbiate a esto cuando quieras preguntar un supuesto, o por otra persona, sin que cuente para tus propias respuestas. (Igual guardamos la pregunta y la respuesta para verificar nuestra exactitud — eso vale en los dos modos.)",
       switchedToAsk: "Estimado borrado. No se está recogiendo nada.",
     },
   },
@@ -321,6 +326,7 @@ export const T = {
     title: "Demeter",
     tagline: "Câu trả lời đã được xác minh về SNAP — cho mọi tiểu bang.",
     inputPlaceholder: "Rất sẵn lòng giải đáp mọi câu hỏi về SNAP…",
+    inputPlaceholderEstimate: "Kể cho tôi về hộ của bạn, tôi sẽ dựng dần lên…",
     send: "Gửi",
     stop: "Dừng",
     stateLabel: "Tiểu bang của bạn",
@@ -333,18 +339,18 @@ export const T = {
       "Bây giờ chỉ trả lời theo quy định liên bang — các câu trả lời trước có thể không còn áp dụng.",
     dividerUncovered: (place: string) =>
       `Demeter chưa hỗ trợ ${place} — các câu trả lời dưới đây theo quy định liên bang, và cơ quan địa phương của bạn mới là nơi xác nhận.`,
-    disclaimer:
-      "Demeter cung cấp thông tin, không phải tư vấn pháp lý. Hãy xác nhận quyết định với cơ quan SNAP của bạn.",
+    disclaimer: "Demeter là AI và có thể sai. Vui lòng kiểm tra lại các nguồn được trích dẫn và",
+    disclaimerAgency: "cơ quan tiểu bang của bạn",
     piiHint: "Xin đừng nhập số An sinh Xã hội, thông tin ngân hàng hay họ tên đầy đủ.",
     clear: "Bắt đầu cuộc trò chuyện mới",
     stateOffer: "Bạn có nhắc đến {place}. Trả lời cho {state} nhé?",
     modeOffer: "Bạn có muốn tôi ước tính một con số không, hay hiện giờ chỉ cần câu trả lời?",
     modeOfferEstimate: "Ước tính một con số",
-    modeOfferAsk: "Chỉ cần câu trả lời",
+    modeOfferAsk: "Chỉ hỏi thôi",
     portalLead: "Ở {state}, bạn nộp đơn qua {agency}.",
     portalCta: "Nộp đơn tại {portal}",
     portalStay:
-      "Đó là nơi nộp đơn chính thức. Tôi vẫn ở đây suốt — cứ hỏi tôi bất cứ điều gì trong lúc làm, chúng ta cùng xem đơn yêu cầu những gì.",
+      "Đó là nơi nộp đơn chính thức, và đường dẫn cũng có trong bản phác thảo đơn của bạn, nên bạn sẽ không phải tìm lại.\n\n**_Chúng ta bắt đầu xem đơn yêu cầu những gì nhé?_**",
     stateOfferYes: "Vâng, dùng {state}",
     stateOfferNo: "Không, giữ nguyên",
     clearNote:
@@ -421,7 +427,7 @@ export const T = {
       error: "Không lưu được. Vui lòng thử lại.",
     },
     worksheet: {
-      title: "Những gì chúng tôi biết đến giờ",
+      title: "Bản phác thảo đơn của bạn",
       subtitle: "Được xây dựng khi bạn trò chuyện",
       result: "Kết quả tạm tính",
       estimate: "Trợ cấp hàng tháng ước tính:",
@@ -440,7 +446,7 @@ export const T = {
       modeAsk: "Chỉ hỏi thôi",
       modeEstimate: "Tính mức ước tính",
       modeAskNote:
-        "Ở đây không có gì bạn nói được thu thập hay lưu lại. Hãy chuyển sang mục này khi bạn muốn hỏi giả định, hoặc hỏi giúp người khác, mà không ảnh hưởng đến câu trả lời của chính bạn.",
+        "Những gì bạn nói ở đây không được đưa vào bản tài liệu Demeter đang lập cho bạn. Hãy chuyển sang mục này khi bạn muốn hỏi giả định, hoặc hỏi giúp người khác, mà không ảnh hưởng đến hồ sơ của chính bạn. (Chúng tôi vẫn lưu câu hỏi và câu trả lời để kiểm tra độ chính xác — điều này đúng với cả hai chế độ.)",
       switchedToAsk: "Đã xóa ước tính. Không có gì đang được thu thập.",
     },
   },
@@ -448,6 +454,7 @@ export const T = {
     title: "Demeter",
     tagline: "经过核实的 SNAP 答案——适用于任何州。",
     inputPlaceholder: "关于 SNAP 的任何问题，都很乐意解答…",
+    inputPlaceholderEstimate: "跟我说说您的家庭情况，我来逐步整理…",
     send: "发送",
     stop: "停止",
     stateLabel: "您所在的州",
@@ -458,17 +465,18 @@ export const T = {
     dividerFederal: "现在仅按联邦规定回答——之前的回答可能不再适用。",
     dividerUncovered: (place: string) =>
       `Demeter 尚未覆盖${place}——下面的回答按联邦规定，请以您当地机构的说法为准。`,
-    disclaimer: "Demeter 提供信息，而非法律建议。请与您所在州的 SNAP 机构确认。",
+    disclaimer: "Demeter 是 AI，可能出错。请核对引用的来源，并咨询",
+    disclaimerAgency: "您所在州的机构",
     piiHint: "请不要输入社会安全号码、银行信息或完整姓名。",
     clear: "开始新的对话",
     stateOffer: "您提到了 {place}。要按 {state} 来回答吗？",
     modeOffer: "需要我帮您估算一个大致金额吗？还是目前只想先了解情况？",
     modeOfferEstimate: "帮我估算金额",
-    modeOfferAsk: "先只要答案",
+    modeOfferAsk: "只是问问",
     portalLead: "在{state}，申请通过{agency}办理。",
     portalCta: "前往 {portal} 申请",
     portalStay:
-      "那里是正式提交申请的地方。我一直都在——填的过程中有任何问题都可以问我，我们一起把表格要求的内容弄清楚。",
+      "那里是正式提交申请的地方，这个链接也在您的申请提纲里，您不用再去找一遍。\n\n**_我们现在开始逐项看看表格会问什么，好吗？_**",
     stateOfferYes: "好，用 {state}",
     stateOfferNo: "不用，保持不变",
     clearNote: "仅从此浏览器中清除。我们仍会保留问题和回答以核查准确性。",
@@ -542,7 +550,7 @@ export const T = {
       error: "保存失败，请再试一次。",
     },
     worksheet: {
-      title: "目前已知的情况",
+      title: "您的申请提纲",
       subtitle: "随着对话逐步生成",
       result: "初步结果",
       estimate: "每月估计补助：",
@@ -560,7 +568,7 @@ export const T = {
       modeLabel: "您希望在这里得到什么？",
       modeAsk: "只是问问",
       modeEstimate: "帮我算估算",
-      modeAskNote: "这里不会收集或保留您说的任何内容。任何时候想问假设情况、或替别人问，都可以切到这里，不会影响您自己的答案。",
+      modeAskNote: "您在这里说的内容不会进入 Demeter 为您整理的那份文件。任何时候想问假设情况、或替别人问，都可以切到这里，不会影响您自己的材料。（我们仍会保留问题和回答以核查准确性——两种模式都是如此。）",
       switchedToAsk: "估算已清除。没有在收集任何内容。",
     },
   },
