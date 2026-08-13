@@ -416,9 +416,22 @@ export async function* answerQuestion(req: AnswerRequest): AsyncGenerator<Answer
     },
     lang,
   );
-  const banner = formatCertaintyBanner(verdict, lang);
+  // A DEGRADED ANSWER GETS NO APPARATUS. The whole content of one is "I could
+  // not check this against the rules I have" — so a certainty banner, a list of
+  // sections we checked, and a dated source line attached underneath are
+  // citations for a claim that was never made. In a real transcript the same
+  // person received that furniture five times in a row beneath five identical
+  // refusals, which is most of what made it read as a machine going through
+  // motions rather than a thing that had run out of road.
+  //
+  // The freshness line stays: it is one short sentence, it is true of the
+  // conversation rather than of this answer, and it carries the source link.
+  const degraded = outcome === "degraded";
+  const banner = degraded ? "" : formatCertaintyBanner(verdict, lang);
   // Both open with a horizontal rule; only the first one should keep it.
-  const trailer = formatCitationTrailer(finalChecks, lang).replace(/^\n\n---\n/, "");
+  const trailer = degraded
+    ? ""
+    : formatCitationTrailer(finalChecks, lang).replace(/^\n\n---\n/, "");
   const freshness = formatFreshnessFooter(new Date(), CORPUS_EFFECTIVE_DATE, state, lang);
   const trailerText = [banner, trailer ? `\n\n${trailer}` : "", freshness].filter(Boolean).join("");
   if (trailerText) yield { type: "trailer", text: trailerText };
@@ -453,6 +466,11 @@ export async function* answerQuestion(req: AnswerRequest): AsyncGenerator<Answer
     certaintyCode: verdict.code,
     retrievalMode: retrievalMode(),
     distress: distressed,
+    // Summed over the whole answer, retry included — see MaeAuditRecord. Until
+    // this landed, spend could not be attributed to a turn, a state, the retry
+    // path, or the separate extraction call.
+    inputTokens: usageIn,
+    outputTokens: usageOut,
   };
   try {
     await audit(record);

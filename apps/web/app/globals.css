@@ -6382,17 +6382,22 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 /* The streaming cursor. Once text starts arriving there was NO signal at all —
    a finished answer and a stalled one looked identical. A block caret at the
    live end of the text is the oldest and clearest way to say "still writing". */
-/* A SOFT END, not a blinking block. A solid bar hard-switching on and off at
-   1Hz is the loudest thing on a page of quiet type, and it sat at the end of
-   every sentence as it arrived. Narrower, softer, and it breathes rather than
-   blinks — still says "more is coming", without shouting it. */
-.demeter__caret {
-  display: inline-block; width: 0.28ch; height: 0.95em; margin-left: 0.12em;
-  border-radius: 1px;
-  background: var(--demeter-muted); vertical-align: text-bottom;
-  animation: dmCaret 1.9s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+/* THE STREAMING EDGE. There was a blinking block caret here — the loudest
+   thing on a page of quiet type, at the end of every sentence as it arrived.
+   A cursor belongs in a field you type into, not in prose being read to you.
+
+   The newest word arrives dimmed and settles instead. Combined with revealing
+   on word boundaries, text arrives the way it is read rather than the way it
+   is typed — and a word still settling is enough to say more is coming, which
+   is the one thing the caret was genuinely there for. */
+.demeter__streamtail {
+  opacity: 0.35;
+  animation: dmSettle 420ms ease-out forwards;
 }
-@keyframes dmCaret { 0%, 100% { opacity: 0.15 } 50% { opacity: 0.75 } }
+@keyframes dmSettle { to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) {
+  .demeter__streamtail { animation: none; opacity: 1; }
+}
 
 /* THE THINKING BUBBLE holds roughly the height of the first line of an answer,
    so the moment the first token lands the bubble does not collapse and re-grow
@@ -6482,7 +6487,6 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   /* The caret stops BLINKING but stays visible — it is a status indicator, not
      decoration, and removing it would take away the only sign that an answer is
      still arriving. */
-  .demeter__caret { animation: none; opacity: 1; }
 }
 
 /* ═══ GRAPHITE FOOTER ════════════════════════════════════════════════════════

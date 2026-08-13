@@ -263,6 +263,9 @@ export function renderAnswer(text: string, opts?: { streaming?: boolean }): Reac
   let para: string[] = [];
   let n = 0;
   let lastPara = -1;
+  /** The source lines of the paragraph at `lastPara`, kept so the streaming
+   *  edge can be re-rendered with its final word faded — see below. */
+  let lastParaLines: string[] = [];
 
   /** A run of "- " lines is a LIST, and should be one.
    *
@@ -326,6 +329,7 @@ export function renderAnswer(text: string, opts?: { streaming?: boolean }): Reac
       const p = prose;
       prose = [];
       lastPara = out.length;
+      lastParaLines = p;
       out.push(
         <p className="demeter__para" key={`p${key}-${out.length}`}>
           {p.flatMap((line, i) => [
@@ -368,19 +372,33 @@ export function renderAnswer(text: string, opts?: { streaming?: boolean }): Reac
   }
   flush();
 
-  // The streaming cursor goes INSIDE the last paragraph, where a cursor
-  // belongs — appended after the paragraph it would sit on its own line, which
-  // reads as a stray mark rather than as "still writing".
+  // THE EDGE FADES IN. There used to be a blinking block caret here, which was
+  // the loudest thing on a page of quiet type and sat at the end of every
+  // sentence as it arrived — a cursor is right for a thing you are typing into
+  // and wrong for a thing being read to you.
   //
-  // It exists because there was no signal at all once text started arriving:
-  // an answer that had finished and an answer that had stalled looked
-  // identical, and the only way to tell was to wait and see.
-  if (opts?.streaming && lastPara >= 0) {
-    const p = out[lastPara] as React.ReactElement<{ children?: ReactNode }>;
+  // Instead the newest word arrives dimmed and settles. Reveal is on WORD
+  // boundaries too (see drawStream), so words appear whole rather than letter
+  // by letter; between the two, text arrives the way it is read rather than
+  // the way it is typed. Something still has to say "more is coming" — an
+  // answer that had finished and one that had stalled used to look identical —
+  // and a word that has not finished settling says it without a mark.
+  if (opts?.streaming && lastPara >= 0 && lastParaLines.length > 0) {
+    const lines = lastParaLines.slice();
+    const last = lines[lines.length - 1] ?? "";
+    const cut = last.lastIndexOf(" ");
+    const head = cut > 0 ? last.slice(0, cut) : "";
+    const tail = cut > 0 ? last.slice(cut) : last;
+    lines[lines.length - 1] = head;
     out[lastPara] = (
-      <p className="demeter__para" key={`p-stream`}>
-        {p.props.children}
-        <span className="demeter__caret" aria-hidden />
+      <p className="demeter__para" key="p-stream">
+        {lines.flatMap((line, i) => [
+          ...(i > 0 ? ["\n"] : []),
+          ...renderInline(line, `pstream${i}`),
+        ])}
+        <span className="demeter__streamtail" key="tail">
+          {tail}
+        </span>
       </p>
     );
   }
@@ -418,8 +436,8 @@ export { T };
  *  arrives. ~40 characters a second at rest, ~120 catching up. Module scope so
  *  the drain callback closes over a genuine constant, and one place to tune,
  *  because "calm" is a judgement that will be revisited. */
-const STREAM_TICK_MS = 25;
-const STREAM_MAX_STEP = 3;
+const STREAM_TICK_MS = 34;
+const STREAM_MAX_STEP = 2;
 
 export function DemeterChat({
   states,
@@ -559,7 +577,18 @@ export function DemeterChat({
     const behind = full.length - shownRef.current;
     const step = Math.min(STREAM_MAX_STEP, Math.max(1, Math.ceil(behind / 50)));
     shownRef.current = Math.min(full.length, shownRef.current + step);
-    const text = full.slice(0, shownRef.current);
+    // WORD BOUNDARIES. Revealing mid-word is what made this read as typing:
+    // the eye tries to read a fragment, fails, and waits. Backing up to the
+    // last space costs at most a few characters of latency and means words
+    // arrive whole. Never backs past what is already on screen, so text cannot
+    // appear to un-type itself, and never holds back the final word once the
+    // whole answer has arrived.
+    let cut = shownRef.current;
+    if (cut < full.length) {
+      const space = full.lastIndexOf(" ", cut);
+      if (space > 0) cut = space + 1;
+    }
+    const text = full.slice(0, cut);
     setMessages((m) => {
       const copy = m.slice();
       const last = copy[copy.length - 1];
@@ -918,6 +947,12 @@ export function DemeterChat({
         // was told to wait a minute for something that resets tomorrow, and
         // would sit there retrying. The route's own comment calls the two
         // "distinct ON PURPOSE"; this is where that distinction was being lost.
+        //
+        // WHOSE FAULT IT IS. Everything unmapped used to fall through to
+        // "Something went wrong. Please try again." — which was also the copy
+        // for a genuine connection failure, so a 500 on our side and a dropped
+        // wifi connection were indistinguishable. They call for different
+        // actions, and neither reader could tell which they had.
         const message =
           reason === "at_capacity"
             ? t.errCapacity
@@ -927,13 +962,18 @@ export function DemeterChat({
                 ? t.err429
                 : res.status === 503
                   ? t.errConfig
-                  : t.errNetwork;
-        setError(message);
+                  : res.status >= 500
+                    ? t.errServer
+                    : t.errRequest;
+        // The code, so a report is actionable. Same reasoning as the save
+        // failure: "it says something went wrong" cannot be acted on by
+        // anybody, and the reader is the only one who can see it.
+        setError(`${message} (${reason || `http_${res.status}`})`);
         // Hand the question back only where trying again can actually work.
         // A per-minute limit clears; a daily cap, a spent monthly budget and an
         // unconfigured service do not, and offering a retry there loops someone
         // instead of sending them to the 211 number the message gives them.
-        const retryable = message === t.err429 || message === t.errNetwork;
+        const retryable = message === t.err429 || message === t.errServer;
         if (retryable) handBackForRetry();
         return;
       }

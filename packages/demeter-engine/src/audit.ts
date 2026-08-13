@@ -48,6 +48,21 @@ export interface MaeAuditRecord {
   retrievalMode?: string | undefined;
   /** True when the distress gate fired on this question. */
   distress?: boolean | undefined;
+  /** TOKENS, so spend can be attributed to something.
+   *
+   *  Reported: fewer than 30 short prompts cost about a dollar. That could not
+   *  be investigated, because this record had twenty fields and none of them
+   *  was a token count — the orchestrator computed usage, handed it to
+   *  events.onUsage, and nothing wrote it down. Spend therefore attributed to
+   *  no state, no turn, no retry, and no extraction call, and any trimming
+   *  would have been guesswork nobody could check afterwards.
+   *
+   *  Both are SUMMED over the answer, so a citation-failure retry — a second
+   *  full generation — shows up as one expensive row rather than disappearing.
+   *  Zero when attempt 1 was aborted mid-stream and no final message arrived;
+   *  see AnswerEvents.onUsage. */
+  inputTokens?: number | undefined;
+  outputTokens?: number | undefined;
 }
 
 /** Persistence hook. Implementations must be best-effort and never throw. */

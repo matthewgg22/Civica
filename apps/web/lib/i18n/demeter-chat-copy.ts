@@ -73,7 +73,14 @@ export const T = {
     errCapacity:
       "Demeter is at capacity for the month. For SNAP help right now, call 211 or your state SNAP agency.",
     errConfig: "Demeter isn't available yet — please check back soon.",
-    errNetwork: "Something went wrong. Please try again.",
+    // WHOSE FAULT IT IS, because "something went wrong" told nobody anything —
+     // not the reader deciding whether to retry, and not us when it was
+     // reported. A failure on our side is worth retrying and worth telling us
+     // about; a connection failure is worth checking their network for; a
+     // request we could not read needs a different action entirely.
+    errServer: "That failed on our side, not yours. Trying again usually works — if it keeps happening, please tell us.",
+    errNetwork: "We couldn't reach Demeter. Check your connection and try again.",
+    errRequest: "Demeter couldn't read that. Starting a new conversation usually clears it — a very long chat is the commonest cause.",
     thinking: "One moment",
     // The empty chat's own words. Three bare buttons floating in 414px of
     // measured whitespace read as stray controls; a mark, a line, and the
@@ -210,7 +217,9 @@ export const T = {
     errCapacity:
       "Demeter llegó a su capacidad del mes. Para ayuda con SNAP ahora, llama al 211 o a tu agencia estatal.",
     errConfig: "Demeter aún no está disponible — vuelve pronto.",
-    errNetwork: "Algo salió mal. Intenta de nuevo.",
+    errServer: "Eso falló de nuestro lado, no del tuyo. Volver a intentarlo suele funcionar — si sigue pasando, avísanos.",
+    errNetwork: "No pudimos conectar con Demeter. Revisa tu conexión e intenta de nuevo.",
+    errRequest: "Demeter no pudo leer eso. Empezar una conversación nueva suele resolverlo — una conversación muy larga es la causa más común.",
     thinking: "Un momento",
     emptyTitle: "¿Qué te gustaría saber?",
     emptyLede: "Cada respuesta cita la regla de la que proviene, para que puedas comprobarla.",
@@ -326,7 +335,9 @@ export const T = {
     errCapacity:
       "Demeter đã đạt giới hạn của tháng. Để được trợ giúp về SNAP ngay bây giờ, hãy gọi 211 hoặc cơ quan SNAP của tiểu bang bạn.",
     errConfig: "Demeter chưa sẵn sàng — vui lòng quay lại sau.",
-    errNetwork: "Đã xảy ra lỗi. Vui lòng thử lại.",
+    errServer: "Lỗi này ở phía chúng tôi, không phải của bạn. Thử lại thường được — nếu vẫn vậy, hãy báo cho chúng tôi.",
+    errNetwork: "Không kết nối được với Demeter. Hãy kiểm tra mạng và thử lại.",
+    errRequest: "Demeter không đọc được nội dung đó. Bắt đầu cuộc trò chuyện mới thường xử lý được — nguyên nhân hay gặp là cuộc trò chuyện quá dài.",
     thinking: "Chờ một chút",
     emptyTitle: "Bạn muốn biết điều gì?",
     emptyLede: "Mỗi câu trả lời đều trích dẫn điều luật mà nó dựa vào, để bạn tự kiểm chứng được.",
@@ -437,7 +448,9 @@ export const T = {
     errCapacity:
       "Demeter 本月已达使用上限。如需即时的 SNAP 帮助，请拨打 211 或联系您所在州的 SNAP 机构。",
     errConfig: "Demeter 尚未开放——请稍后再来。",
-    errNetwork: "出了点问题。请再试一次。",
+    errServer: "这是我们这边出的问题，不是您的。再试一次通常就好了——如果一直这样，请告诉我们。",
+    errNetwork: "连接不上 Demeter。请检查网络后再试一次。",
+    errRequest: "Demeter 读不了这条内容。开始新的对话通常就能解决——最常见的原因是对话太长。",
     thinking: "请稍候",
     emptyTitle: "您想了解什么？",
     emptyLede: "每条回答都会引用其依据的条文，方便您自行核对。",
