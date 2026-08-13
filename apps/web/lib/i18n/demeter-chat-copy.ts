@@ -110,6 +110,12 @@ export const T = {
     emailSent: "Sent to your inbox",
     emailSignIn: "Sign in to send it",
     emailError: "That didn't send.",
+    // No account needed for this one — for someone who does not want to hand
+    // over an address, it is the whole deliverable.
+    pdfDownload: "Download as PDF",
+    pdfWorking: "Preparing…",
+    pdfDownloaded: "Your outlined application has downloaded.",
+    pdfError: "That didn't download. Please try again.",
     howWeVerify: "How we verify",
     languageLabel: "Language",
     feedback: {
@@ -249,6 +255,10 @@ export const T = {
     emailSent: "Enviado a tu correo",
     emailSignIn: "Inicia sesión para enviarlo",
     emailError: "No se pudo enviar.",
+    pdfDownload: "Descargar en PDF",
+    pdfWorking: "Preparando…",
+    pdfDownloaded: "Se descargó tu solicitud esbozada.",
+    pdfError: "No se pudo descargar. Intenta de nuevo.",
     howWeVerify: "Cómo verificamos",
     languageLabel: "Idioma",
     feedback: {
@@ -372,6 +382,10 @@ export const T = {
     emailSent: "Đã gửi vào hộp thư của bạn",
     emailSignIn: "Đăng nhập để gửi",
     emailError: "Chưa gửi được.",
+    pdfDownload: "Tải về dạng PDF",
+    pdfWorking: "Đang chuẩn bị…",
+    pdfDownloaded: "Bản phác thảo đơn của bạn đã tải về.",
+    pdfError: "Chưa tải về được. Vui lòng thử lại.",
     howWeVerify: "Cách chúng tôi xác minh",
     languageLabel: "Ngôn ngữ",
     feedback: {
@@ -490,6 +504,10 @@ export const T = {
     emailSent: "已发送到您的邮箱",
     emailSignIn: "登录后发送",
     emailError: "没能发送。",
+    pdfDownload: "下载 PDF",
+    pdfWorking: "正在准备…",
+    pdfDownloaded: "您的申请提纲已下载。",
+    pdfError: "没能下载，请再试一次。",
     howWeVerify: "我们如何核实",
     languageLabel: "语言",
     feedback: {

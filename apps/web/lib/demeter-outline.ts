@@ -32,6 +32,30 @@ export interface OutlineSection {
   lines: string[];
 }
 
+/** How to name a household member on a document someone hands to a caseworker.
+ *
+ *  NEVER member_id. That field is documented in facts-extraction.ts as "a
+ *  stable slug you assign", so it holds things like "applicant" and "child_1"
+ *  — and those were being printed as people's names, in the same class of leak
+ *  as the "Missing: household.0.age" the panel used to show. A slug on a page
+ *  someone takes to an office is worse than a generic label: it looks like a
+ *  reference number they are supposed to recognise.
+ *
+ *  The role is what a person would say anyway, and the position is a reliable
+ *  fallback because the household list is ordered. */
+function memberLabel(role: string | undefined, index: number): string {
+  switch (role) {
+    case "head":
+      return "You";
+    case "spouse":
+      return "Your spouse or partner";
+    case "child":
+      return "Child";
+    default:
+      return `Person ${index + 1}`;
+  }
+}
+
 const money = (n: number) => `$${n.toLocaleString("en-US")}`;
 
 /** Frequency as someone says it, not as the schema stores it. */
@@ -75,10 +99,18 @@ export function buildOutline(input: OutlineInput): OutlineSection[] {
   const { facts, stateName, agency, portalName, stillNeeded } = input;
   const sections: OutlineSection[] = [];
 
+  // ONE SECTION, not two. The portal appeared here as "Apply at: MyACCESS
+  // Florida" and again at the bottom as a "Where to apply" block with the URL —
+  // the same fact twice, and the second copy was heavy enough to push itself
+  // onto a second page. Stranding the link is the worst possible thing to
+  // strand: someone prints page one and loses the only address that matters.
   const where: string[] = [];
   if (stateName) where.push(`State: ${stateName}`);
   if (agency) where.push(`Agency: ${agency}`);
-  if (portalName) where.push(`Apply at: ${portalName}`);
+  if (portalName || input.portalUrl) {
+    where.push(`Apply at: ${portalName ?? "your state's portal"}`);
+    if (input.portalUrl) where.push(input.portalUrl);
+  }
   if (where.length) sections.push({ heading: "Where this application goes", lines: where });
 
   const household = facts.household ?? [];
@@ -90,11 +122,10 @@ export function buildOutline(input: OutlineInput): OutlineSection[] {
         ...household.map((m, i) => {
           const bits: string[] = [];
           if (m.age !== undefined) bits.push(`age ${m.age}`);
-          if (m.role) bits.push(String(m.role));
           if (m.student) bits.push("student");
           if (m.disability) bits.push("has a disability");
           if (m.elderly) bits.push("60 or over");
-          const who = m.member_id || `Person ${i + 1}`;
+          const who = memberLabel(m.role, i);
           return bits.length ? `${who} — ${bits.join(", ")}` : who;
         }),
       ],
@@ -106,11 +137,17 @@ export function buildOutline(input: OutlineInput): OutlineSection[] {
     sections.push({
       heading: "Income, before tax",
       lines: [
-        ...income.map(
-          (r) =>
-            `${incomeLabel(r.type)}${r.member ? ` (${r.member})` : ""}: ` +
-            `${money(r.amount)} ${freqLabel(r.freq)}`,
-        ),
+        // Whose income it is, resolved back through the household rather than
+        // printed as the slug the extractor assigned. "Self-employment
+        // (applicant)" is the same leak as naming a household member
+        // "child_1". Omitted entirely for a one-person household, where it
+        // says nothing.
+        ...income.map((r) => {
+          const idx = household.findIndex((m) => m.member_id === r.member);
+          const who =
+            household.length > 1 && idx >= 0 ? ` (${memberLabel(household[idx]!.role, idx)})` : "";
+          return `${incomeLabel(r.type)}${who}: ${money(r.amount)} ${freqLabel(r.freq)}`;
+        }),
         "SNAP is tested on income BEFORE tax and deductions, not on take-home pay.",
       ],
     });
@@ -163,13 +200,6 @@ export function outlineToText(input: OutlineInput): string {
   ];
   for (const s of sections) {
     out.push(s.heading.toUpperCase(), ...s.lines.map((l) => `  ${l}`), "");
-  }
-  if (input.portalUrl) {
-    out.push(
-      "WHERE TO APPLY",
-      `  ${input.portalName ?? "Your state's portal"}: ${input.portalUrl}`,
-      "",
-    );
   }
   out.push(
     "Demeter is AI and can make mistakes. Check anything you rely on against",

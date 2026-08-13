@@ -498,6 +498,7 @@ export function DemeterChat({
     "idle",
   );
   const [emailDetail, setEmailDetail] = useState<string | null>(null);
+  const [pdfState, setPdfState] = useState<"idle" | "working" | "error">("idle");
 
   // A place named in the chat, waiting to be confirmed. An OFFER, never an
   // automatic switch: someone typed "im in boston" and the scope stayed on
@@ -825,6 +826,54 @@ export function DemeterChat({
     } catch {
       setEmailDetail("network");
       setEmailState("error");
+    }
+  }, [state, states, classification, t]);
+
+  /** Download the outline as a PDF.
+   *
+   *  No account needed, unlike the emailed copy. The document is built from
+   *  the facts already on this screen and nothing is read from or written to
+   *  the database — so locking the one artefact someone can walk away with
+   *  behind a sign-in would be exactly the wrong thing to gate for a person
+   *  who came here worried about being tracked.
+   */
+  const downloadOutline = useCallback(async () => {
+    setPdfState("working");
+    try {
+      const pack = state ? states.find((x) => x.code === state) ?? null : null;
+      const res = await fetch("/api/demeter/outline-pdf", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          facts: factsRef.current,
+          stillNeeded: classification?.completeness?.stillNeeded ?? [],
+          stateName: state ? stateName(state) : null,
+          agency: pack?.agency ?? null,
+          portalName: pack?.portal?.name ?? null,
+          portalUrl: pack?.portal?.url ?? null,
+        }),
+      });
+      if (!res.ok) return setPdfState("error");
+      // Read the filename the route chose rather than inventing one here —
+      // it carries the state and date, and two copies of that logic would
+      // drift.
+      const disposition = res.headers.get("Content-Disposition") ?? "";
+      const named = /filename="([^"]+)"/.exec(disposition)?.[1];
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = named ?? "outlined-application.pdf";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      // Revoking immediately can cancel the download in some browsers; a beat
+      // later is safe and the object is gone with the tab regardless.
+      window.setTimeout(() => URL.revokeObjectURL(url), 30_000);
+      setPdfState("idle");
+      setAnnouncement(t.pdfDownloaded);
+    } catch {
+      setPdfState("error");
     }
   }, [state, states, classification, t]);
 
@@ -1618,6 +1667,23 @@ export function DemeterChat({
                 <span className="demeter__save-error" role="alert">
                   {t.emailError}
                   {emailDetail && <span className="demeter__save-code"> ({emailDetail})</span>}
+                </span>
+              )}
+              {/* The copy that needs no account. Quieter than the emailed one
+                  only because it is the second line, not because it matters
+                  less — for someone who does not want to hand over an address,
+                  this is the whole deliverable. */}
+              <button
+                type="button"
+                className="demeter__pdfbtn"
+                onClick={() => void downloadOutline()}
+                disabled={pdfState === "working"}
+              >
+                {pdfState === "working" ? t.pdfWorking : t.pdfDownload}
+              </button>
+              {pdfState === "error" && (
+                <span className="demeter__save-error" role="alert">
+                  {t.pdfError}
                 </span>
               )}
             </div>

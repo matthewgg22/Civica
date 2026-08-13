@@ -7097,6 +7097,21 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 }
 .dmchat .demeter__emailbtn:hover:not(:disabled) { filter: brightness(0.94); }
 .dmchat .demeter__emailbtn:disabled { opacity: 0.75; cursor: default; }
+/* The no-account copy. Outline rather than fill: it sits directly under the
+   wheat button and two fills stacked would read as two competing actions when
+   they are the same document by two routes. */
+.dmchat .demeter__pdfbtn {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  width: 100%; min-height: 36px; border-radius: 999px; cursor: pointer;
+  background: var(--demeter-card); color: var(--demeter-body);
+  border: 1px solid var(--demeter-rule-strong);
+  font-size: 0.76rem; font-weight: 600;
+}
+.dmchat .demeter__pdfbtn:hover:not(:disabled) {
+  color: var(--demeter-ink); border-color: var(--demeter-muted);
+}
+.dmchat .demeter__pdfbtn:disabled { opacity: 0.7; cursor: default; }
+
 .dmchat .demeter__emailsignin {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   font-size: 0.74rem; color: var(--demeter-terracotta-deep); text-decoration: underline;
