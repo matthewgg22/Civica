@@ -214,10 +214,33 @@ test.describe("growth surfaces", () => {
   test("/verify renders verification cards with real gate numbers", async ({ page }) => {
     await page.goto("/verify");
     await expect(page.getByRole("heading", { name: "How we verify" })).toBeVisible();
-    // At least the four launch states' cards, each linking into the chat.
-    for (const code of ["CA", "WA", "TX", "NY"]) {
-      await expect(page.getByRole("link", { name: new RegExp(`Ask about ${code}`) })).toBeVisible();
+
+    // Each card links into the CHAT, scoped to its state. It used to link to
+    // the landing page, so a reader who had just decided to ask about this
+    // state was returned to the start.
+    //
+    // Matched on the ACCESSIBLE name, which carries the state, not on the
+    // visible label, which deliberately does not: thirty cards reading "Ask
+    // Demeter about Rhode Island" is a wall, and thirty links all announcing
+    // "Ask Demeter" to a screen reader is thirty indistinguishable
+    // destinations. The two jobs need different strings.
+    for (const [code, name] of [
+      ["CA", "California"],
+      ["WA", "Washington"],
+      ["TX", "Texas"],
+      ["NY", "New York"],
+    ]) {
+      const link = page.getByRole("link", { name: `Ask Demeter about ${name}` });
+      await expect(link).toBeVisible();
+      await expect(link).toHaveAttribute("href", `/chat?state=${code}`);
     }
+
+    // The page is part of the product, not a document someone linked to.
+    await expect(page.locator(".dmnav")).toBeVisible();
+    await expect(page.locator(".dmft")).toBeVisible();
+    // And the line that was true of every card, and therefore told you nothing
+    // about any of them, is gone.
+    await expect(page.getByText("Passed an adversarial refute gate")).toHaveCount(0);
   });
 
   test("/guides/tx is statically served and deep-links into the chat", async ({ page }) => {
