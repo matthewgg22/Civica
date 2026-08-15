@@ -357,9 +357,9 @@ const en: PageCopy = {
       img: "2-fast",
     },
     {
-      when: "Within days",
+      when: "No set deadline",
       t: "The interview, and what you prove",
-      d: "Usually a phone call, and nobody is approved without one. The agency then asks for what it cannot check itself; you get at least 10 days.",
+      d: "Usually a phone call, and nobody is approved without one — but federal rules set no deadline for it, only for the decision. Waiting weeks is normal. Expedited cases are interviewed inside the 7 days. Miss it and you can reschedule.",
       img: "3-proof",
     },
     {
@@ -376,7 +376,7 @@ const en: PageCopy = {
     },
   ],
   timelineNote:
-    "Appealing a denial is free. Missing your recertification deadline is one of the most common ways people lose benefits they still qualify for. Federal floor, from 7 CFR 273.2. Your state may add steps of its own — ask Demeter about yours and the answer will cite that state's manual where we have verified one.",
+    "Appealing a denial is free. If you miss your interview the agency must tell you so, and must schedule a second one if you get in touch within the 30 days — a missed interview is not a denial. Missing your recertification deadline is one of the most common ways people lose benefits they still qualify for. Federal floor, from 7 CFR 273.2. Your state may add steps of its own — ask Demeter about yours and the answer will cite that state's manual where we have verified one.",
   brandSubtitle: "SNAP Enrollment and Eligibility Assistance",
   navAsk: "Ask Demeter",
   navQuestions: "Application questions",
@@ -592,9 +592,9 @@ const es: PageCopy = {
       img: "2-fast",
     },
     {
-      when: "En pocos días",
+      when: "Sin plazo fijo",
       t: "La entrevista, y lo que compruebas",
-      d: "Suele ser una llamada, y nadie es aprobado sin ella. Después la agencia pide lo que no puede verificar sola; tienes al menos 10 días.",
+      d: "Suele ser una llamada, y nadie es aprobado sin ella — pero las reglas federales no le ponen plazo, solo a la decisión. Esperar semanas es normal. Los casos acelerados se entrevistan dentro de los 7 días. Si la pierdes, puedes reprogramarla.",
       img: "3-proof",
     },
     {
@@ -611,7 +611,7 @@ const es: PageCopy = {
     },
   ],
   timelineNote:
-    "Apelar una denegación es gratis. Perder el plazo de recertificación es una de las formas más comunes de perder beneficios a los que todavía tienes derecho. Base federal, del 7 CFR 273.2. Tu estado puede añadir pasos propios — pregúntale a Demeter por el tuyo y la respuesta citará el manual de ese estado cuando lo hayamos verificado.",
+    "Apelar una denegación es gratis. Si pierdes la entrevista, la agencia debe avisarte y debe programar una segunda si te comunicas dentro de los 30 días — perder la entrevista no es una denegación. Perder el plazo de recertificación es una de las formas más comunes de perder beneficios a los que todavía tienes derecho. Base federal, del 7 CFR 273.2. Tu estado puede añadir pasos propios — pregúntale a Demeter por el tuyo y la respuesta citará el manual de ese estado cuando lo hayamos verificado.",
   brandSubtitle: "Asistencia de inscripción y elegibilidad de SNAP",
   navAsk: "Pregúntale a Demeter",
   navQuestions: "Preguntas de la solicitud",
@@ -828,9 +828,9 @@ const vi: PageCopy = {
       img: "2-fast",
     },
     {
-      when: "Trong vài ngày",
+      when: "Không có hạn cố định",
       t: "Phỏng vấn, và những gì bạn chứng minh",
-      d: "Thường là một cuộc gọi, và không ai được duyệt mà bỏ bước này. Sau đó cơ quan hỏi những gì họ không tự xác minh được; bạn có ít nhất 10 ngày.",
+      d: "Thường là một cuộc gọi, và không ai được duyệt mà bỏ bước này — nhưng quy định liên bang không đặt hạn cho buổi phỏng vấn, chỉ đặt hạn cho quyết định. Chờ vài tuần là bình thường. Hồ sơ khẩn được phỏng vấn trong 7 ngày. Lỡ hẹn thì bạn hẹn lại được.",
       img: "3-proof",
     },
     {
@@ -847,7 +847,7 @@ const vi: PageCopy = {
     },
   ],
   timelineNote:
-    "Khiếu nại khi bị từ chối là miễn phí. Bỏ lỡ hạn tái chứng nhận là một trong những lý do phổ biến nhất khiến người ta mất trợ cấp mà vẫn còn đủ điều kiện. Mức sàn liên bang, theo 7 CFR 273.2. Tiểu bang của bạn có thể có thêm bước riêng — hãy hỏi Demeter về tiểu bang đó, câu trả lời sẽ trích dẫn cẩm nang của bang khi chúng tôi đã xác minh.",
+    "Khiếu nại khi bị từ chối là miễn phí. Nếu bạn lỡ buổi phỏng vấn, cơ quan phải báo cho bạn biết và phải xếp lịch buổi thứ hai nếu bạn liên hệ trong vòng 30 ngày — lỡ phỏng vấn không phải là bị từ chối. Bỏ lỡ hạn tái chứng nhận là một trong những lý do phổ biến nhất khiến người ta mất trợ cấp mà vẫn còn đủ điều kiện. Mức sàn liên bang, theo 7 CFR 273.2. Tiểu bang của bạn có thể có thêm bước riêng — hãy hỏi Demeter về tiểu bang đó, câu trả lời sẽ trích dẫn cẩm nang của bang khi chúng tôi đã xác minh.",
   brandSubtitle: "Hỗ trợ ghi danh và điều kiện SNAP",
   navAsk: "Hỏi Demeter",
   navQuestions: "Câu hỏi trên đơn",
@@ -1063,9 +1063,9 @@ const zh: PageCopy = {
       img: "2-fast",
     },
     {
-      when: "几天之内",
+      when: "没有固定期限",
       t: "面谈，以及您要提供的证明",
-      d: "通常只是一通电话，没有面谈就不会获批。之后机构会索取它无法自行核实的部分；您至少有 10 天时间提交。",
+      d: "通常只是一通电话，没有面谈就不会获批——但联邦规定并未给面谈设期限，只给决定设了期限。等上几周是常事。加急案件会在 7 天内完成面谈。错过了也可以重新预约。",
       img: "3-proof",
     },
     {
@@ -1082,7 +1082,7 @@ const zh: PageCopy = {
     },
   ],
   timelineNote:
-    "申诉被拒决定是免费的。错过复审期限，是人们明明仍符合条件却失去补助的最常见原因之一。 联邦底线，出自 7 CFR 273.2。您所在的州可能另有步骤——就该州询问 Demeter，凡我们已核实的，回答都会引用该州手册。",
+    "申诉被拒决定是免费的。如果您错过面谈，机构必须通知您，并且只要您在 30 天内联系，就必须再安排一次——错过面谈并不等于被拒。错过复审期限，是人们明明仍符合条件却失去补助的最常见原因之一。 联邦底线，出自 7 CFR 273.2。您所在的州可能另有步骤——就该州询问 Demeter，凡我们已核实的，回答都会引用该州手册。",
   brandSubtitle: "SNAP 申请与资格协助",
   navAsk: "询问 Demeter",
   navQuestions: "申请表问题",
