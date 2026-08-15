@@ -23,11 +23,9 @@ import { RetailerSearch } from "./RetailerSearch";
 
 export function RetailerMapSearch({
   lang = "en",
-  retailersByState,
   children,
 }: {
   lang?: AnswerLang;
-  retailersByState: Record<string, number>;
   children: ReactNode;
 }) {
   const [stores, setStores] = useState<RetailerHit[] | null>(null);
@@ -37,7 +35,7 @@ export function RetailerMapSearch({
         {children}
         <RetailerSearch lang={lang} onResults={setStores} />
       </div>
-      <RetailerLiveMap retailersByState={retailersByState} stores={stores} />
+      <RetailerLiveMap stores={stores} />
     </div>
   );
 }

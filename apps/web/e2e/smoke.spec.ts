@@ -321,12 +321,14 @@ test.describe("the live retailer map", () => {
     await page.getByRole("button", { name: /find stores/i }).click();
     await expect(page.locator(".dmret__pin")).toHaveCount(MOCK_STORES.length);
 
-    // POLLED, not a one-shot read: flyToBounds animates the zoom over 600ms
-    // and the fade only fires on the animation's own 'zoomend' event once it
-    // actually completes — a single evaluate() right after the pins appear
-    // reads the state from before that animation has finished and reports the
-    // old, still-tinted value. Caught by running this test and looking at why
-    // it failed, not by reasoning about the code.
+    // POLLED, not a one-shot read: flyToBounds animates the zoom over
+    // FLY_DURATION_S (1.8s — slowed from 0.6s on live feedback that the
+    // original flight "read as a snap"), and the fade only fires on the
+    // animation's own 'zoomend' event once it actually completes, followed by
+    // the fade's own 500ms CSS transition. A single evaluate() right after the
+    // pins appear reads the state from before that animation has finished and
+    // reports the old, still-tinted value. Timeout budgeted for flight +
+    // transition + CI slack, not just the flight alone.
     await expect
       .poll(
         () =>
@@ -334,8 +336,49 @@ test.describe("the live retailer map", () => {
             .locator(".dmret__livemap path.leaflet-interactive")
             .first()
             .evaluate((el) => getComputedStyle(el).fillOpacity),
-        { timeout: 3000 },
+        { timeout: 5000 },
       )
       .toBe("0");
+  });
+
+  test("pins land at their own position on the map, not stacked at one corner", async ({ page }) => {
+    // THE BUG THIS PINS: the settle-in animation's `transform` keyframes were
+    // declared on `.dmret__pin` itself — the exact element Leaflet repositions
+    // with its own inline `transform: translate3d(...)` on every pan and zoom.
+    // A CSS animation touching `transform` on that element wins over Leaflet's
+    // inline style for as long as it runs, and this one ended on
+    // `transform: none` — permanently erasing Leaflet's positioning once the
+    // animation finished. Every pin rendered at the container's origin,
+    // exactly on top of every other pin, instead of at its own store. The pin
+    // COUNT assertion above still passed throughout — this only showed up by
+    // reading each pin's actual screen position off a rendered page.
+    await page.route("**/api/snap-retailers*", (route) =>
+      route.fulfill({ json: { stores: MOCK_STORES, truncated: false } }),
+    );
+    await page.goto("/screen/ask");
+    await page.locator(".dmret__livemap").scrollIntoViewIfNeeded();
+
+    await page.locator("#dmret-zip").fill("90001");
+    await page.getByRole("button", { name: /find stores/i }).click();
+    await expect(page.locator(".dmret__pin")).toHaveCount(MOCK_STORES.length);
+    // Past the fly animation and the settle-in animation both.
+    await page.waitForTimeout(2500);
+
+    const rects = await page
+      .locator(".dmret__pin")
+      .evaluateAll((els) => els.map((el) => el.getBoundingClientRect()));
+    const mapRect = await page.locator(".dmret__livemap").evaluate((el) => el.getBoundingClientRect());
+
+    // Every pin sits inside the map's own box…
+    for (const r of rects) {
+      expect(r.left).toBeGreaterThanOrEqual(mapRect.left - 1);
+      expect(r.top).toBeGreaterThanOrEqual(mapRect.top - 1);
+      expect(r.right).toBeLessThanOrEqual(mapRect.right + 1);
+      expect(r.bottom).toBeLessThanOrEqual(mapRect.bottom + 1);
+    }
+    // …and at DISTINCT positions from one another — the stacked-at-the-origin
+    // bug put all six at the identical rect.
+    const uniquePositions = new Set(rects.map((r) => `${Math.round(r.left)},${Math.round(r.top)}`));
+    expect(uniquePositions.size).toBe(MOCK_STORES.length);
   });
 });

@@ -293,8 +293,7 @@ const en: PageCopy = {
   retailersH3: "Where you can use your EBT card",
   retailersBody:
     "{n} stores across every state and territory accept EBT — supermarkets, corner shops, many farmers markets, and online at some retailers.",
-  retailersNote:
-    "Store counts published by USDA, as of {date}. More stores in a state does not mean one is easier to reach.",
+  retailersNote: "Store counts published by USDA, as of {date}.",
   foodNowLabel: "Need food this week?",
   foodNowBody:
     "SNAP takes at least seven days even when it is urgent. A food bank can help now, and 211 will find one near you.",
@@ -537,8 +536,7 @@ const es: PageCopy = {
   retailersH3: "Dónde puedes usar tu tarjeta EBT",
   retailersBody:
     "{n} tiendas en todos los estados y territorios aceptan EBT: supermercados, tiendas de barrio, muchos mercados de agricultores y, en algunos comercios, compras en línea.",
-  retailersNote:
-    "Conteo de tiendas publicado por el USDA, al {date}. Más tiendas en un estado no significa que sea más fácil llegar a una.",
+  retailersNote: "Conteo de tiendas publicado por el USDA, al {date}.",
   foodNowLabel: "\u00bfNecesitas comida esta semana?",
   foodNowBody:
     "SNAP tarda al menos siete d\u00edas incluso cuando es urgente. Un banco de alimentos puede ayudarte ahora, y el 211 te encuentra uno cerca.",
@@ -766,8 +764,7 @@ const vi: PageCopy = {
   retailersH3: "Bạn có thể dùng thẻ EBT ở đâu",
   retailersBody:
     "{n} cửa hàng trên khắp các tiểu bang và vùng lãnh thổ chấp nhận EBT — siêu thị, cửa hàng tạp hóa, nhiều chợ nông sản, và mua trực tuyến ở một số nơi.",
-  retailersNote:
-    "Số liệu cửa hàng do Bộ Nông nghiệp Hoa Kỳ công bố, tính đến {date}. Một bang có nhiều cửa hàng hơn không có nghĩa là dễ đến hơn.",
+  retailersNote: "Số liệu cửa hàng do Bộ Nông nghiệp Hoa Kỳ công bố, tính đến {date}.",
   foodNowLabel: "Cần thực phẩm ngay tuần này?",
   foodNowBody:
     "SNAP mất ít nhất bảy ngày ngay cả khi khẩn cấp. Ngân hàng thực phẩm có thể giúp ngay, và tổng đài 211 sẽ tìm giúp bạn một nơi gần nhà.",
@@ -996,8 +993,7 @@ const zh: PageCopy = {
   retailersH3: "您可以在哪里使用 EBT 卡",
   retailersBody:
     "全美各州和各领地共有 {n} 家商店接受 EBT——超市、街角小店、许多农夫市集，部分商家还支持网上购买。",
-  retailersNote:
-    "商店数量由美国农业部公布，截至 {date}。某个州商店多，并不代表更容易到达。",
+  retailersNote: "商店数量由美国农业部公布，截至 {date}。",
   foodNowLabel: "这周就需要食物？",
   foodNowBody:
     "即使情况紧急，SNAP 也至少需要七天。食物银行现在就能帮忙，211 可以帮您找到附近的一家。",

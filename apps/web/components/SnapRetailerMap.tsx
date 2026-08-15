@@ -14,7 +14,7 @@
 
 import type { AnswerLang } from "@civica/demeter-engine/packs";
 import { PAGE_COPY } from "../lib/i18n/snap-page";
-import { RETAILERS_BY_STATE, RETAILER_TOTAL, RETAILERS_AS_OF } from "../lib/snap-retailers";
+import { RETAILER_TOTAL, RETAILERS_AS_OF } from "../lib/snap-retailers";
 import { RetailerMapSearch } from "./RetailerMapSearch";
 
 export function SnapRetailerMap({ lang = "en" }: { lang?: AnswerLang }) {
@@ -24,7 +24,7 @@ export function SnapRetailerMap({ lang = "en" }: { lang?: AnswerLang }) {
   const total = RETAILER_TOTAL.toLocaleString(lang === "zh" ? "zh-CN" : lang);
 
   return (
-    <RetailerMapSearch lang={lang} retailersByState={RETAILERS_BY_STATE}>
+    <RetailerMapSearch lang={lang}>
       <h3 className="dmx__h3">{c.retailersH3}</h3>
       <p className="dmx__body">{c.retailersBody.replace("{n}", total)}</p>
       <p className="dmx__note">{c.retailersNote.replace("{date}", RETAILERS_AS_OF)}</p>
