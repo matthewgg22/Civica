@@ -5535,6 +5535,14 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   display: block; text-decoration: none; background: var(--demeter-card);
   border: 1px solid var(--demeter-rule); border-radius: 20px;
   padding: clamp(1.25rem, 2.5vw, 1.75rem);
+  /* CAPPED, not full section width. Every outlink card's own text stops at
+     52ch (.dmx__outlink-body) — the card's border and background used to
+     stretch the full section width regardless, leaving a wide band of plain
+     background beside a couple of short lines. Found on direct feedback
+     against one instance (the ask-Demeter CTA), then confirmed the same gap
+     on every other card using this class once actually measured — it was
+     the class's own rule that needed the fix, not one card's override. */
+  max-width: 40rem;
 }
 .dmx__outlink:hover { border-color: var(--demeter-terracotta); }
 .dmx__outlink-label {
@@ -5557,13 +5565,6 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 .dmx--fearscta .dmx__outlink {
   background: var(--demeter-wheat); border-color: transparent;
 }
-/* NARROWER, on direct feedback — its own text tops out at 52ch
-   (.dmx__outlink-body) but the card's border and background used to stretch
-   the full section width regardless, leaving a wide band of plain wheat
-   beside a couple of short lines. Scoped to just the ask-Demeter CTA, the
-   one this feedback was about — not the /questions outlink or the fears CTA,
-   which were not flagged and are left at full width unless that changes. */
-.dmx--askcta .dmx__outlink { max-width: 40rem; }
 .dmx--askcta .dmx__outlink:hover,
 .dmx--fearscta .dmx__outlink:hover { filter: brightness(0.96); border-color: transparent; }
 .dmx--askcta .dmx__outlink-label,
@@ -5653,6 +5654,12 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   background: var(--demeter-card);
   display: grid; grid-template-columns: auto minmax(0, 1fr);
   column-gap: clamp(1.25rem, 3vw, 2rem); row-gap: 0; align-items: center;
+  /* CAPPED — the content column's `1fr` track stretched to fill the section's
+     full width, but `.dmx__note`'s own 52ch measure stopped well short of
+     it, leaving ~270px of plain background between the note/links and the
+     box's own right edge (measured, not eyeballed). The box was sized to
+     the section, not to what's actually in it. */
+  max-width: 54rem;
 }
 .dmx__official .dmx__note { margin-top: 0.35rem; }
 .dmx__official-content { min-width: 0; }
@@ -5781,6 +5788,11 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   font-size: 0.68rem; background: rgba(247, 246, 244, 0.85);
 }
+/* The credit text itself got themed above; its LINKS did not — Leaflet,
+   OpenStreetMap and CARTO all rendered in the library's own default blue,
+   the one place on the page not using the site's own link color. Every
+   other link on this page is terracotta. */
+.dmret__livemap .leaflet-control-attribution a { color: var(--demeter-terracotta-deep); }
 .dmret__livemap .leaflet-popup-content {
   font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
   font-size: 0.88rem; color: var(--demeter-ink); line-height: 1.5;
