@@ -233,5 +233,19 @@ all of it.
   as old `true`; everything else fails open, same as old `false`) — this fixed what the
   value *claims*, not what the gate *does*. 279/279 snap-rules tests + 44/47
   profile-harness tests (3 pre-existing skips) passing, `tsc --noEmit` clean. PR
-  [#807](https://github.com/matthewgg22/Civica/pull/807), CI running, awaiting merge
+  [#807](https://github.com/matthewgg22/Civica/pull/807), CI green, awaiting merge
   go-ahead.
+- **#806 (effective-date banding)** — reused `federal-tables.ts`'s already-proven
+  `FederalTableSnapshot` pattern for `StatePolicy`: added `effective_start`/`effective_end`,
+  `STATES` became `Record<string, StatePolicy[]>`, `statePolicyFor(state, asOf)` now
+  requires a date. Every existing entry got exactly ONE snapshot spanning 2020-2099 — a
+  data-shape-only migration, zero policy values changed. Threaded `asOf` through all 7 real
+  call sites (`verdict.ts`, `benefit-calc.ts`, 4 gates, `constants/index.ts`); confirmed via
+  repo-wide grep that 3 other references outside `packages/snap-rules` are comment-only, no
+  real blast radius beyond the package. `composeVerdict` gracefully catches the new
+  `NoStatePolicyForDateError` the same way it already caught `UnknownStateError`. 279/279
+  snap-rules tests + 44/47 profile-harness tests (3 pre-existing skips) passing, `tsc
+  --noEmit` clean. Built independently off `origin/codex/rebuild-feb18` (predates #807) —
+  will need a rebase against #807 once that merges, same N-way pattern the corpus expansion
+  used repeatedly. PR [#808](https://github.com/matthewgg22/Civica/pull/808), CI running,
+  awaiting merge go-ahead.
