@@ -5687,14 +5687,60 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 }
 
 /* Where the card works. The sentence carries the fact; the map is the picture
-   of it, so text leads and the map takes the space left over. */
+   of it, so text leads and the map takes the space left over.
+   START, not centre: the map is a fixed-height box now, and once a search
+   returns a long results list the text column can run well past it — centring
+   a fixed box against a growing one drifts it away from the heading it
+   belongs beside. */
 .dmret {
   display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 22rem);
-  gap: clamp(1rem, 3vw, 2.5rem); align-items: center; margin: 2rem 0 0;
+  gap: clamp(1rem, 3vw, 2.5rem); align-items: start; margin: 2rem 0 0;
 }
 .dmret__text .dmx__body { margin-bottom: 0.5rem; }
-.dmret__text .dmx__note { margin-top: 0.5rem; }
-.dmret__svg { width: 100%; height: auto; display: block; }
+/* A CITATION, not a second paragraph. .dmx__note was already smaller and
+   sans (0.85rem vs the body's 17px serif) — real, measured — but same weight
+   and near-identical muted brown meant it still read as "more prose" rather
+   than "source line," which is exactly the complaint: the count's own
+   attribution was competing with the count for attention instead of sitting
+   quietly under it. Matches the page's OWN existing citation treatment
+   (.dmx__servicemark, by the USDA logo below) rather than inventing a new
+   one: smaller again, and set apart by a rule rather than by size alone. */
+.dmret__text .dmx__note {
+  margin-top: 1rem; padding-top: 0.65rem;
+  border-top: 1px solid var(--demeter-rule);
+  font-size: 0.74rem; line-height: 1.5;
+}
+/* THE LIVE MAP. Was an SVG that sized itself off its own viewBox; Leaflet
+   needs an explicit pixel height on its container instead — a slippy map has
+   no intrinsic aspect ratio, it is a viewport onto something much bigger.
+   360px is enough room to tell CONUS from a fitted close-up once a search
+   flies in, without letting the map outgrow the text column beside it on a
+   normal-height search result. */
+.dmret__livemap {
+  width: 100%; height: 360px; border-radius: 14px; overflow: hidden;
+  border: 1px solid var(--demeter-rule);
+  background: var(--demeter-paper); /* shows while tiles are still loading */
+}
+/* Leaflet's own chrome, restrained to the page's palette rather than left at
+   its library defaults (a saturated blue focus ring, black-on-white
+   attribution) — the one place on the page that would otherwise look like an
+   embedded widget instead of part of it. */
+.dmret__livemap .leaflet-control-zoom a {
+  color: var(--demeter-ink); border-color: var(--demeter-rule) !important;
+}
+.dmret__livemap .leaflet-control-attribution {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.68rem; background: rgba(247, 246, 244, 0.85);
+}
+.dmret__livemap .leaflet-popup-content {
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+  font-size: 0.88rem; color: var(--demeter-ink); line-height: 1.5;
+}
+/* THE PIN. Leaflet's div-icon wrapper adds no chrome of its own by default,
+   but reset explicitly rather than trust that — an inline SVG pin sitting
+   inside an unexpected box is exactly the kind of thing only rendering it
+   catches. */
+.dmret__pin { background: none; border: none; }
 
 /* The ZIP lookup. The map above it is the claim; this is the answer. */
 .dmret__search { margin: 1.25rem 0 0; }
@@ -5751,6 +5797,12 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 }
 @media (max-width: 860px) {
   .dmret { grid-template-columns: 1fr; }
+  /* Stacked below the text and results now rather than beside them, so it can
+     afford to be a little shorter — nothing beside it is setting its height
+     anymore. It comes last in DOM order (it is aria-hidden, so that carries
+     no accessibility cost either way) — the search form and results list are
+     the task; the map is what someone scrolls to once they have them. */
+  .dmret__livemap { height: 280px; }
 }
 
 /* "I need food this week." Quiet but unmissable — a tinted band, not a card in
@@ -5825,42 +5877,104 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 }
 @media (prefers-reduced-motion: reduce) { .dmfear__q::after { transition: none; } }
 
-/* The application timeline: ONE ROW, six columns, read left to right.
-   Six across 1180px is ~196px each — about 26 characters a line — so the step
-   copy was shortened to suit. That is the trade a single row demands, and the
-   two facts worth not losing (appealing is free; a missed recertification is a
-   top cause of losing benefits) moved into the note beneath rather than being
-   cut.
-   It scrolls sideways below the point where a column would stop being readable,
-   rather than wrapping — a wrapped "one line" is not one line. */
+/* The application timeline: ONE ROW, four columns, read left to right.
+   Was six, then five — two columns (the 7-day expedited route and the
+   ordinary interview) were fighting over the same beat, timing before the
+   decision, and the interview column alone ran to 45 words in a 1/5-width
+   slot: the densest text on the page. Merged to one interview step that
+   covers both cases; four columns divide the row more generously than five
+   did.
+   It scrolls sideways below the point where a column would stop being
+   readable, rather than wrapping — a wrapped "one line" is not one line. */
 .dmtl {
-  list-style: none; margin: 1.75rem 0 0; padding: 0 0 0.5rem;
+  position: relative;
+  list-style: none; margin: 2rem 0 0; padding: 2px 0 0.5rem;
   display: grid; grid-auto-flow: column;
-  /* NARROW: a 13rem floor, so the columns stay readable and the row scrolls
-     sideways instead of crushing six steps into 50px each. */
-  grid-auto-columns: minmax(14rem, 1fr);
-  gap: 1.25rem; overflow-x: auto;
+  /* NARROW: a floor, so columns stay readable and the row scrolls sideways
+     instead of crushing four steps into an unreadable width. */
+  grid-auto-columns: minmax(15rem, 1fr);
+  gap: 1.5rem; overflow-x: auto;
+  /* ONE SOURCE for the marker size, read by both the image and the track's
+     vertical offset below — so the two can never drift apart the way a
+     hand-guessed px constant would the moment the image size changes. */
+  --dmtl-mark: 140px;
 }
-@media (min-width: 1000px) {
-  /* WIDE: no floor, so six columns divide the width EXACTLY and there is no
-     scrollbar at all. Measured with the 11rem floor still in place: 1250px of
-     content in a 1065px box — one row, but 185px of it off-screen, which is not
-     what "fits on one line" means. */
-  .dmtl { grid-auto-columns: minmax(0, 1fr); gap: 1.35rem; overflow-x: visible; }
+@media (min-width: 900px) {
+  /* WIDE: no floor, so four columns divide the width exactly and there is no
+     scrollbar at all. */
+  .dmtl { grid-auto-columns: minmax(0, 1fr); gap: 1.75rem; overflow-x: visible; }
 }
-/* The rule across the top of each step IS the timeline, and the marker on it
-   is now a DRAWING rather than a terracotta dot. Five steps, five
-   illustrations in the house line-art: a step someone can recognise before
-   reading is a step they are more likely to read.
+@media (max-width: 480px) {
+  /* A phone's own column is already narrower than the 140px mark reads
+     comfortably in — smaller here, and the track/dot follow automatically
+     since they read the same custom property. */
+  .dmtl { --dmtl-mark: 104px; }
+}
 
-   The dot goes. A picture and a dot on the same rule are two markers for one
-   moment, and the dot was the weaker of them. */
-.dmtl__step {
-  position: relative; padding-top: 0.9rem; border-top: 2px solid var(--demeter-rule);
+/* ONE LINE, not four. Each step used to carry its OWN top border, which the
+   grid's gaps broke into four disconnected shelves — the opposite of a
+   timeline. This is a single strip, absolutely positioned across the whole
+   row at the height where the images end, so every step's dot sits on the
+   same unbroken line. Sized as a percentage of `.dmtl`'s own content box, so
+   on a narrow phone (where `.dmtl` scrolls sideways) it spans exactly the
+   scrollable content and travels with it, rather than being clipped to the
+   visible viewport. */
+.dmtl__track {
+  position: absolute; left: 0; right: 0;
+  /* Exact regardless of root font size, because it is a real calc() and not a
+     guessed constant: .dmtl's own top padding (2px), then the step's own
+     top padding (1.4rem) before its image starts, then the image's height
+     (the same --dmtl-mark the image itself uses), then a small gap. */
+  top: calc(2px + 1.4rem + var(--dmtl-mark) + 0.85rem);
+  height: 2px; background: var(--demeter-rule);
+  pointer-events: none;
 }
+/* THE MOVEMENT. A highlighted fill grows left-to-right as the row scrolls
+   into view, timed to the SAME viewport entry as the step fade below — so the
+   line visibly draws itself while the steps rise into place, and the page
+   performs the forward motion the copy describes instead of only describing
+   it. `transform-origin: left` plus a scaleX from 0 keeps this to compositor
+   properties, no layout thrash. */
+.dmtl__track::after {
+  content: ""; position: absolute; inset: 0;
+  background: var(--demeter-terracotta-deep);
+  transform: scaleX(0); transform-origin: left center;
+}
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .dmtl__track::after {
+      animation: dmtlFill linear both;
+      animation-timeline: view();
+      animation-range: entry 10% cover 60%;
+    }
+  }
+}
+@keyframes dmtlFill { to { transform: scaleX(1); } }
+@media (prefers-reduced-motion: reduce) {
+  /* Static but still legible as progress: fully filled rather than empty. */
+  .dmtl__track::after { transform: scaleX(1); }
+}
+
+.dmtl__step { position: relative; padding-top: 1.4rem; }
+/* THE DOT lives on the track, at each step's left edge — evenly spaced
+   because the columns are, which is what makes it read as one journey with
+   four stops rather than four separate objects. */
+.dmtl__dot {
+  position: absolute; left: 0;
+  top: calc(2px + 1.4rem + var(--dmtl-mark) + 0.85rem);
+  width: 10px; height: 10px; margin: -4px 0 0 -4px; border-radius: 50%;
+  background: var(--demeter-terracotta-deep);
+  box-shadow: 0 0 0 3px var(--demeter-paper);
+}
+/* THE MARKER IS A DRAWING, sitting ABOVE the track — image, then the line
+   the step sits on, then the date and the words. Four steps, four
+   illustrations in the house line-art: a step someone can recognise before
+   reading is a step they are more likely to read. Bigger than the first
+   pass — 74px read as an afterthought next to the amount of body copy below
+   it; art meant to carry a step needs to be seen before the text is. */
 .dmtl__mark {
-  display: block; width: 74px; height: 74px; object-fit: contain;
-  margin: 0.35rem 0 0.5rem -6px;
+  display: block; width: var(--dmtl-mark); height: var(--dmtl-mark);
+  object-fit: contain; margin: 0 0 0 -8px;
   /* The ground is knocked out to transparency in the asset itself, and the art
      cropped to its own ink — a blend mode could not do it, because the
      drawings are made on a warmer white than the page and multiply darkens
@@ -5868,14 +5982,22 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
      visible rectangle until the alpha was real. */
 }
 .dmtl__when {
-  display: block; margin-bottom: 0.4rem;
+  display: block;
+  /* CLEARS THE DOT. This used almost the same offset as .dmtl__track's own
+     `top` — both measured from the image's bottom edge — so the label and the
+     dot landed on nearly the same line and the dot sat on top of the label's
+     first letter ("AY 0" instead of "DAY 0"). Only visible by rendering it;
+     the two numbers looked unrelated on the page. This adds the dot's own
+     radius plus real breathing room on top of the track's offset, so the
+     label starts safely below both. */
+  margin: calc(0.85rem + 18px) 0 0.4rem;
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
-  font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase;
-  font-weight: 600; color: var(--demeter-terracotta-deep);
+  font-size: 0.68rem; letter-spacing: 0.06em; text-transform: uppercase;
+  font-weight: 600; color: var(--demeter-terracotta-deep); line-height: 1.4;
 }
-.dmtl__body .dmx__h3 { font-size: 1rem; margin-bottom: 0.3rem; }
+.dmtl__body .dmx__h3 { font-size: 1rem; margin-bottom: 0.35rem; }
 .dmtl__body .dmx__body {
-  margin-bottom: 0; max-width: none; font-size: 0.88rem; line-height: 1.5;
+  margin-bottom: 0; max-width: none; font-size: 0.88rem; line-height: 1.55;
 }
 
 /* Each step fades and rises as it comes into view.

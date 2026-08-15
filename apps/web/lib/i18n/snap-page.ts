@@ -290,7 +290,7 @@ const en: PageCopy = {
     "That lookup did not come back. It does not mean there are no stores near you — try again, or check USDA's own locator.",
   retailSearchMore: "Showing the first {n}. There are more.",
   retailSearchOpenMap: "Open in maps",
-  retailersH3: "Where the card works",
+  retailersH3: "Where you can use your EBT card",
   retailersBody:
     "{n} stores across every state and territory accept EBT — supermarkets, corner shops, many farmers markets, and online at some retailers.",
   retailersNote:
@@ -343,6 +343,12 @@ const en: PageCopy = {
   // The interview and the verification requests merged: they are one exchange
   // from the applicant's side — the agency asks, you answer — and splitting
   // them spent two of six columns on the same beat.
+  // FOUR STEPS, not five. "By day 7" (expedited) and "no set deadline" (the
+  // ordinary interview) were two columns fighting over the same beat — timing
+  // before the decision — and the second one ran to 45 words in a 1/5-width
+  // column, the densest text on the page. Folded into one: the interview step
+  // now carries both the ordinary case and the urgent one, with more room to
+  // say each plainly because there are four columns instead of five.
   timeline: [
     {
       when: "Day 0",
@@ -351,15 +357,9 @@ const en: PageCopy = {
       img: "1-file",
     },
     {
-      when: "By day 7",
-      t: "If you have almost nothing coming in",
-      d: "Benefits can arrive within a week. Same application — say so when you file.",
-      img: "2-fast",
-    },
-    {
-      when: "No set deadline",
-      t: "The interview, and what you prove",
-      d: "Usually a phone call, and nobody is approved without one — but federal rules set no deadline for it, only for the decision. Waiting weeks is normal. Expedited cases are interviewed inside the 7 days. Miss it and you can reschedule.",
+      when: "No deadline — 7 days if urgent",
+      t: "The interview",
+      d: "Usually a phone call, and nobody is approved without one. Federal rules set no deadline for it, so waiting weeks is normal — unless you have almost nothing coming in. Say so when you file: both the interview and your benefits land within 7 days, and missing one just means rescheduling.",
       img: "3-proof",
     },
     {
@@ -376,7 +376,7 @@ const en: PageCopy = {
     },
   ],
   timelineNote:
-    "Appealing a denial is free. If you miss your interview the agency must tell you so, and must schedule a second one if you get in touch within the 30 days — a missed interview is not a denial. Missing your recertification deadline is one of the most common ways people lose benefits they still qualify for. Federal floor, from 7 CFR 273.2. Your state may add steps of its own — ask Demeter about yours and the answer will cite that state's manual where we have verified one.",
+    "Appealing a denial is free. Missing your recertification deadline is one of the most common ways people lose benefits they still qualify for. Federal floor, from 7 CFR 273.2. Your state may add steps of its own — ask Demeter about yours and the answer will cite that state's manual where we have verified one.",
   brandSubtitle: "SNAP Enrollment and Eligibility Assistance",
   navAsk: "Ask Demeter",
   navQuestions: "Application questions",
@@ -534,7 +534,7 @@ const es: PageCopy = {
     "Esa búsqueda no respondió. No significa que no haya tiendas cerca de ti: inténtalo otra vez o consulta el localizador del USDA.",
   retailSearchMore: "Se muestran las primeras {n}. Hay más.",
   retailSearchOpenMap: "Abrir en mapas",
-  retailersH3: "Dónde funciona la tarjeta",
+  retailersH3: "Dónde puedes usar tu tarjeta EBT",
   retailersBody:
     "{n} tiendas en todos los estados y territorios aceptan EBT: supermercados, tiendas de barrio, muchos mercados de agricultores y, en algunos comercios, compras en línea.",
   retailersNote:
@@ -586,15 +586,9 @@ const es: PageCopy = {
       img: "1-file",
     },
     {
-      when: "Antes del día 7",
-      t: "Si casi no tienes nada entrando",
-      d: "Los beneficios pueden llegar en una semana. Es la misma solicitud — dilo al presentarla.",
-      img: "2-fast",
-    },
-    {
-      when: "Sin plazo fijo",
-      t: "La entrevista, y lo que compruebas",
-      d: "Suele ser una llamada, y nadie es aprobado sin ella — pero las reglas federales no le ponen plazo, solo a la decisión. Esperar semanas es normal. Los casos acelerados se entrevistan dentro de los 7 días. Si la pierdes, puedes reprogramarla.",
+      when: "Sin plazo fijo — 7 días si es urgente",
+      t: "La entrevista",
+      d: "Suele ser una llamada, y nadie es aprobado sin ella. Las reglas federales no le ponen plazo, así que esperar semanas es normal — a menos que casi no tengas ingresos. Dilo al presentar la solicitud: la entrevista y tus beneficios llegan en 7 días, y si la pierdes, solo tienes que reprogramarla.",
       img: "3-proof",
     },
     {
@@ -611,7 +605,7 @@ const es: PageCopy = {
     },
   ],
   timelineNote:
-    "Apelar una denegación es gratis. Si pierdes la entrevista, la agencia debe avisarte y debe programar una segunda si te comunicas dentro de los 30 días — perder la entrevista no es una denegación. Perder el plazo de recertificación es una de las formas más comunes de perder beneficios a los que todavía tienes derecho. Base federal, del 7 CFR 273.2. Tu estado puede añadir pasos propios — pregúntale a Demeter por el tuyo y la respuesta citará el manual de ese estado cuando lo hayamos verificado.",
+    "Apelar una denegación es gratis. Perder el plazo de recertificación es una de las formas más comunes de perder beneficios a los que todavía tienes derecho. Base federal, del 7 CFR 273.2. Tu estado puede añadir pasos propios — pregúntale a Demeter por el tuyo y la respuesta citará el manual de ese estado cuando lo hayamos verificado.",
   brandSubtitle: "Asistencia de inscripción y elegibilidad de SNAP",
   navAsk: "Pregúntale a Demeter",
   navQuestions: "Preguntas de la solicitud",
@@ -769,7 +763,7 @@ const vi: PageCopy = {
     "Lượt tra cứu không phản hồi. Điều đó không có nghĩa là quanh bạn không có cửa hàng — hãy thử lại, hoặc xem công cụ tra cứu của USDA.",
   retailSearchMore: "Đang hiển thị {n} kết quả đầu. Còn nữa.",
   retailSearchOpenMap: "Mở trong bản đồ",
-  retailersH3: "Thẻ dùng được ở đâu",
+  retailersH3: "Bạn có thể dùng thẻ EBT ở đâu",
   retailersBody:
     "{n} cửa hàng trên khắp các tiểu bang và vùng lãnh thổ chấp nhận EBT — siêu thị, cửa hàng tạp hóa, nhiều chợ nông sản, và mua trực tuyến ở một số nơi.",
   retailersNote:
@@ -822,15 +816,9 @@ const vi: PageCopy = {
       img: "1-file",
     },
     {
-      when: "Trước ngày thứ 7",
-      t: "Nếu bạn gần như không có nguồn thu nào",
-      d: "Trợ cấp có thể đến trong một tuần. Vẫn là đơn đó — hãy nói rõ khi nộp.",
-      img: "2-fast",
-    },
-    {
-      when: "Không có hạn cố định",
-      t: "Phỏng vấn, và những gì bạn chứng minh",
-      d: "Thường là một cuộc gọi, và không ai được duyệt mà bỏ bước này — nhưng quy định liên bang không đặt hạn cho buổi phỏng vấn, chỉ đặt hạn cho quyết định. Chờ vài tuần là bình thường. Hồ sơ khẩn được phỏng vấn trong 7 ngày. Lỡ hẹn thì bạn hẹn lại được.",
+      when: "Không có hạn — 7 ngày nếu khẩn",
+      t: "Phỏng vấn",
+      d: "Thường là một cuộc gọi, và không ai được duyệt mà bỏ bước này. Quy định liên bang không đặt hạn cho việc này, nên chờ vài tuần là bình thường — trừ khi bạn gần như không có thu nhập. Hãy nói rõ khi nộp đơn: cả buổi phỏng vấn lẫn trợ cấp đều đến trong 7 ngày, và nếu lỡ hẹn thì chỉ cần hẹn lại.",
       img: "3-proof",
     },
     {
@@ -847,7 +835,7 @@ const vi: PageCopy = {
     },
   ],
   timelineNote:
-    "Khiếu nại khi bị từ chối là miễn phí. Nếu bạn lỡ buổi phỏng vấn, cơ quan phải báo cho bạn biết và phải xếp lịch buổi thứ hai nếu bạn liên hệ trong vòng 30 ngày — lỡ phỏng vấn không phải là bị từ chối. Bỏ lỡ hạn tái chứng nhận là một trong những lý do phổ biến nhất khiến người ta mất trợ cấp mà vẫn còn đủ điều kiện. Mức sàn liên bang, theo 7 CFR 273.2. Tiểu bang của bạn có thể có thêm bước riêng — hãy hỏi Demeter về tiểu bang đó, câu trả lời sẽ trích dẫn cẩm nang của bang khi chúng tôi đã xác minh.",
+    "Khiếu nại khi bị từ chối là miễn phí. Bỏ lỡ hạn tái chứng nhận là một trong những lý do phổ biến nhất khiến người ta mất trợ cấp mà vẫn còn đủ điều kiện. Mức sàn liên bang, theo 7 CFR 273.2. Tiểu bang của bạn có thể có thêm bước riêng — hãy hỏi Demeter về tiểu bang đó, câu trả lời sẽ trích dẫn cẩm nang của bang khi chúng tôi đã xác minh.",
   brandSubtitle: "Hỗ trợ ghi danh và điều kiện SNAP",
   navAsk: "Hỏi Demeter",
   navQuestions: "Câu hỏi trên đơn",
@@ -1005,7 +993,7 @@ const zh: PageCopy = {
     "这次查询没有返回结果。这并不代表您附近没有商店——请再试一次，或查看美国农业部自己的查询工具。",
   retailSearchMore: "仅显示前 {n} 家，还有更多。",
   retailSearchOpenMap: "在地图中打开",
-  retailersH3: "这张卡在哪里能用",
+  retailersH3: "您可以在哪里使用 EBT 卡",
   retailersBody:
     "全美各州和各领地共有 {n} 家商店接受 EBT——超市、街角小店、许多农夫市集，部分商家还支持网上购买。",
   retailersNote:
@@ -1057,15 +1045,9 @@ const zh: PageCopy = {
       img: "1-file",
     },
     {
-      when: "第 7 天之前",
-      t: "如果您几乎没有任何进项",
-      d: "补助最快可在一周内到账，用的还是同一份申请——递交时说明情况即可。",
-      img: "2-fast",
-    },
-    {
-      when: "没有固定期限",
-      t: "面谈，以及您要提供的证明",
-      d: "通常只是一通电话，没有面谈就不会获批——但联邦规定并未给面谈设期限，只给决定设了期限。等上几周是常事。加急案件会在 7 天内完成面谈。错过了也可以重新预约。",
+      when: "没有固定期限——紧急则 7 天内",
+      t: "面谈",
+      d: "通常只是一通电话，没有面谈就不会获批。联邦规定并未给面谈设期限，等上几周是常事——除非您几乎没有任何进项。递交时说明情况：面谈和补助都会在 7 天内到位，错过了重新预约就行。",
       img: "3-proof",
     },
     {
@@ -1082,7 +1064,7 @@ const zh: PageCopy = {
     },
   ],
   timelineNote:
-    "申诉被拒决定是免费的。如果您错过面谈，机构必须通知您，并且只要您在 30 天内联系，就必须再安排一次——错过面谈并不等于被拒。错过复审期限，是人们明明仍符合条件却失去补助的最常见原因之一。 联邦底线，出自 7 CFR 273.2。您所在的州可能另有步骤——就该州询问 Demeter，凡我们已核实的，回答都会引用该州手册。",
+    "申诉被拒决定是免费的。错过复审期限，是人们明明仍符合条件却失去补助的最常见原因之一。联邦底线，出自 7 CFR 273.2。您所在的州可能另有步骤——就该州询问 Demeter，凡我们已核实的，回答都会引用该州手册。",
   brandSubtitle: "SNAP 申请与资格协助",
   navAsk: "询问 Demeter",
   navQuestions: "申请表问题",

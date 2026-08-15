@@ -493,24 +493,34 @@ export function SnapTimeline({ lang = "en" }: { lang?: AnswerLang }) {
       </h2>
       <p className="dmx__body">{c.timelineBody}</p>
       {/* An ordered list, because it is genuinely a sequence — a screen reader
-          announcing "3 of 6" is carrying the same information the rail does. */}
+          announcing "3 of 5" is carrying the same information the rail does.
+          `.dmtl__track` is a SINGLE line spanning every step, not one border
+          per column — five separate 2px rules broken by the grid's gaps never
+          read as one journey; they read as five unrelated shelves. One line,
+          with a dot per step sitting on it, is what "timeline" was supposed
+          to mean. It fills in left to right as the row scrolls into view (see
+          the CSS) so the page itself performs the forward motion the content
+          describes. */}
       <ol className="dmtl">
+        <span className="dmtl__track" aria-hidden />
         {c.timeline.map((step) => (
           <li className="dmtl__step" key={step.t}>
-            {/* THE MARKER IS A DRAWING, not a numbered dot. Five steps, five
-                illustrations, in the house line-art. Decorative on purpose:
-                the step's heading and its date sit immediately beside it and
-                say everything the picture does, so alt text would be a second
-                announcement of the same beat and a stray tab stop in a list a
-                screen reader already numbers "3 of 5". */}
+            {/* THE MARKER IS A DRAWING, not a numbered dot — the dot lives on
+                the track now, separately. Four steps, four illustrations, in
+                the house line-art. Decorative on purpose: the step's heading
+                and its date sit immediately beside it and say everything the
+                picture does, so alt text would be a second announcement of
+                the same beat and a stray tab stop in a list a screen reader
+                already numbers "3 of 4". */}
             <Image
               className="dmtl__mark"
               src={`/timeline/${step.img}.png`}
               alt=""
               aria-hidden
-              width={128}
-              height={128}
+              width={192}
+              height={192}
             />
+            <span className="dmtl__dot" aria-hidden />
             <span className="dmtl__when">{step.when}</span>
             <div className="dmtl__body">
               <h3 className="dmx__h3">{step.t}</h3>

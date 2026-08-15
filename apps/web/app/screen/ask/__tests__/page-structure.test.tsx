@@ -230,14 +230,27 @@ describe("hreflang — each page family annotates its own set", () => {
 });
 
 describe("the application timeline", () => {
-  it("runs in chronological order, with expedited before the 30-day decision", () => {
-    // Seven days is the most useful fact here for someone out of food this
-    // week. Ordering it after the thirty-day decision is how it gets missed.
+  it("runs in chronological order, four steps, expedited folded into the interview", () => {
+    // Was six steps, then five: the 7-day expedited route and the ordinary
+    // interview were two columns on the same beat (timing before the
+    // decision), and the interview column alone ran to 45 words in a
+    // 1/5-width slot. Folded into one interview step that carries both facts,
+    // so this now asserts the MERGED step contains the urgent-case fact and
+    // still lands before the 30-day decision — not a literal "By day 7"
+    // label, which no longer exists on its own and would make this pass
+    // vacuously (indexOf returning -1 is "less than" any real index).
     const { container } = render(<SnapTimeline />);
     const whens = [...container.querySelectorAll(".dmtl__when")].map((n) => n.textContent);
     expect(whens).toEqual(PAGE_COPY.en.timeline.map((s) => s.when));
+    expect(whens).toHaveLength(4);
     const text = container.textContent ?? "";
-    expect(text.indexOf("By day 7")).toBeLessThan(text.indexOf("By day 30"));
+    expect(text).toContain("Day 0");
+    expect(text.indexOf("interview")).toBeGreaterThan(-1);
+    expect(text.indexOf("within 7 days")).toBeLessThan(text.indexOf("By day 30"));
+    // Both facts survive the merge: the ordinary no-deadline case, and the
+    // urgent 7-day one it used to take a whole second column to say.
+    expect(text).toMatch(/no deadline/i);
+    expect(text).toMatch(/7 days/);
   });
 
   it("is an ordered list, because it is a sequence", () => {
@@ -246,6 +259,16 @@ describe("the application timeline", () => {
     expect(container.querySelectorAll("ol.dmtl > li")).toHaveLength(
       PAGE_COPY.en.timeline.length,
     );
+  });
+
+  it("is ONE continuous track with a dot per step, not one border per column", () => {
+    // The original marker was a `border-top` on each <li>, which the grid's
+    // own gaps broke into as many disconnected shelves as there were steps —
+    // the opposite of a timeline. There is exactly one track element now,
+    // shared across the whole row, plus one dot per step sitting on it.
+    const { container } = render(<SnapTimeline />);
+    expect(container.querySelectorAll(".dmtl__track")).toHaveLength(1);
+    expect(container.querySelectorAll(".dmtl__dot")).toHaveLength(PAGE_COPY.en.timeline.length);
   });
 
   it("states no dollar figures, in any language", () => {

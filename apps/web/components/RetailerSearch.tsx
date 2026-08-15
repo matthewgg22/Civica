@@ -5,15 +5,18 @@
 // The national map answers "is it everywhere" — which is worth saying once, and
 // then tells nobody where. This is the lookup: a ZIP, and the stores in it.
 //
-// NO BASEMAP, on purpose. A street map needs a tile provider — a third-party
-// host in the page's CSP, a key to rotate, and a usage policy to stay inside —
-// and it would earn its keep only if we were plotting a route. What someone
-// needs here is the NAME of a shop they recognise and its address; the phone
-// they are reading this on already has a maps app that does the rest better
-// than we would. So each result hands off to it.
-//
-// Plotting pins on a blank rectangle was the other option and is worse than
-// either: it looks like a map and locates nothing.
+// THIS USED TO HAVE NO BASEMAP, on purpose — a prior version of this comment
+// argued that a street map needs a tile provider, a key to rotate, and a
+// usage policy, and would only earn its keep if we were plotting a route.
+// That held until live feedback on the rendered page: a political choropleth
+// that cannot zoom into an actual neighbourhood was the wrong artifact for
+// "show me where," and free, keyless tiles (see RetailerLiveMap.tsx) remove
+// the cost/rotation objection entirely. This component still does not draw
+// the map — it reports its results upward via `onResults` so a parent can
+// hand them to one — but the list here is unchanged and stays the accessible,
+// authoritative interface either way. Each result still hands off to the
+// phone's own maps app for turn-by-turn; a slippy map on this page is for
+// orientation, not routing.
 
 import { useState } from "react";
 import type { AnswerLang } from "@civica/demeter-engine/packs";
@@ -26,7 +29,17 @@ type State =
   | { kind: "done"; zip: string; stores: RetailerHit[]; truncated: boolean }
   | { kind: "error" };
 
-export function RetailerSearch({ lang = "en" }: { lang?: AnswerLang }) {
+export function RetailerSearch({
+  lang = "en",
+  onResults,
+}: {
+  lang?: AnswerLang;
+  /** Fired with the fetched stores on a successful search, and with `null` on
+   *  every other transition (idle, loading, error) — so a parent map clears
+   *  its pins rather than showing a stale result set while a new search is
+   *  in flight or has failed. */
+  onResults?: (stores: RetailerHit[] | null) => void;
+}) {
   const c = PAGE_COPY[lang];
   const [zip, setZip] = useState("");
   const [state, setState] = useState<State>({ kind: "idle" });
@@ -35,16 +48,19 @@ export function RetailerSearch({ lang = "en" }: { lang?: AnswerLang }) {
     const q = zip.trim();
     if (!/^\d{5}$/.test(q)) return;
     setState({ kind: "loading" });
+    onResults?.(null);
     try {
       const res = await fetch(`/api/snap-retailers?zip=${q}`);
       if (!res.ok) throw new Error(String(res.status));
       const data = (await res.json()) as { stores: RetailerHit[]; truncated?: boolean };
       setState({ kind: "done", zip: q, stores: data.stores, truncated: !!data.truncated });
+      onResults?.(data.stores);
     } catch {
       // Distinct from "no stores found" — see the copy. Telling someone there
       // is nowhere to shop near them, when really the lookup failed, would be
       // the worst possible way for this to break.
       setState({ kind: "error" });
+      onResults?.(null);
     }
   };
 
