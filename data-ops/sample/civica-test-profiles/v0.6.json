@@ -8636,11 +8636,13 @@
               "income.0.source_status": "ongoing"
             },
             "verdict": "DENY",
+            "note": "$4,500 gross HH3: GA/FL/IL/OH stay DENY (federal-130%/other-archetype states, unaffected by this change). AK is BBCE-200 (like CA/MA/TX/FL) effective 7/1/2025 (#804). Before #812, federal-tables.ts wrongly applied the 48-contiguous FPL table to AK, giving a 200% HH3 threshold of $4,442 (floor($26,660/12) x 2) -- $4,500 > $4,442, DENY, which is what this variant's stored DENY verdict reflects. #812 fixed AK to use its own, higher HHS poverty guideline: AK's real 200% HH3 threshold is $5,552 (ceil($33,310/12) x 2 -- AK's own published SNAP Standards table uses ceiling, not floor, see federal-tables.ts's RegionalFplTable doc-comment). $4,500 <= $5,552, so AK flips to APPROVE here even though the generic DENY bucket (and GA/FL/IL/OH) is unchanged.",
             "verdict_by_state": {
               "GA": "DENY",
               "FL": "DENY",
               "IL": "DENY",
-              "OH": "DENY"
+              "OH": "DENY",
+              "AK": "APPROVE"
             }
           }
         }
