@@ -1880,6 +1880,192 @@ const STATES: Record<string, StatePolicy[]> = {
       rmp_operated: true,
     },
   ],
+
+  // Tennessee — TDHS. Fourth "individual tier" build (docs/plans/snap-rules-
+  // 50-state-engine-completion.md §6, after NC/NJ/VA) — a genuine blank
+  // slate, no prior StatePolicy or oracle coverage existed. Every axis below
+  // is TRANSLATED from the already-cited primary-source findings in the
+  // merged Demeter corpus pack (packages/demeter-engine/src/states/tn/
+  // PROVENANCE.md + supplements.json + authorities.json), built and merged
+  // 2026-08-11 — re-verification, not fresh research.
+  //
+  // TENNESSEE UNIQUELY RUNS TWO PARALLEL, INDEPENDENTLY-DATED CITATION
+  // FAMILIES that the corpus pack found genuinely OUT OF SYNC in BOTH
+  // directions (its own authorities.json _provenance note, verbatim): (1)
+  // the codified "TN Rule" 1240-01 series, filed with the TN Secretary of
+  // State, and (2) TDHS's own operational "TDHS Policy" 24.xx series. No
+  // other state in this file maintains two separately-numbered, separately-
+  // dated families for the SAME underlying rules — every citation below
+  // names which family it draws from, and where the two disagree, which one
+  // this entry follows and why.
+  //
+  // BBCE (TN Rule 1240-01-14-.15(2), "Expanded Categorical Eligibility",
+  // amended 1/15/2026, EFFECTIVE 4/15/2026 — under 4 months old at this
+  // build): a flat 200% FPL GROSS screen — NOT the stale 130% several
+  // calculator/explainer sites (snapscreener.com, the Sycamore Institute's
+  // own page) still quote, per the corpus pack's own live cross-check
+  // against fox13memphis.com's June 2026 coverage ("Before it was 130%. Now
+  // the total household gross monthly income can be up to 200"). TDHS's own
+  // OLDER "TDHS Policy 24.24" (Categorically Eligible SNAP Recipients, last
+  // reviewed 11/30/2023) has NOT been updated to describe this pathway at
+  // all — the rule is ahead of the policy here, the FIRST of three
+  // documented conflicts between TN's two families (corpus pack Finding 2).
+  // bbce_fpl_basis: "federal_fiscal_year" — TN's rule text does not itself
+  // state an FFY-vs-calendar-year framing (unlike AK's/NC's/VA's explicit
+  // "effective October 1" captions); this follows the roster's established
+  // default (every state but MA is federal_fiscal_year) absent contrary
+  // evidence, an honest inference rather than a confirmed citation.
+  //
+  // *** GENUINE STRUCTURAL FINDING, this file's ONLY instance so far, filed
+  // as issue #830 rather than silently encoded: TN's Expanded CE ALSO
+  // requires net monthly income ≤ 100% FPL — a SEPARATE ceiling on top of
+  // the 200% gross screen that every other flat-percentage BBCE state in
+  // this file (VA's 200%, NJ's 185%, WI's 200%, etc.) does NOT carry.
+  // `StatePolicy` has no axis for a BBCE state that keeps a net-income
+  // overlay, and `verdict.ts`'s `bbceConferred` logic unconditionally skips
+  // BOTH remaining income tests for every BBCE state alike once the
+  // (possibly raised) gross threshold clears — this is an ENGINE
+  // architecture gap, not a per-state value this entry's schema can
+  // express, so `bbce_threshold_pct: 200` below correctly encodes TN's
+  // GROSS screen but the engine will not enforce TN's net ceiling until
+  // #830 is addressed. Independently verified impact (Python calculator,
+  // #636 methodology, sourced from this same PROVENANCE.md + a byte-for-
+  // byte port of verdict.ts/benefit-calc.ts's own logic): of the 92 v0.6
+  // profiles the engine can actually COMPUTE for TN today (34 of 92 — the
+  // rest SKIP on the null sua_by_tier gap below, before ever reaching the
+  // income tests), ZERO show a divergence between the engine's actual
+  // (net-test-skipped) architecture and TN's true (net-test-enforced)
+  // policy — this gap has no live effect on any profile the engine can
+  // currently grade. It DOES surface once null-SUA is compounded with a
+  // household engineered to clear 200% gross narrowly while carrying enough
+  // net income to fail the true 100% net ceiling: see `MX4-bbce-max-income-
+  // with-any-benefit`'s oracle-authoring note below, and 3 profiles left
+  // deliberately UNAUTHORED in `expected_by_state.TN` because the true
+  // verdict is genuinely indeterminate without a real SUA figure (#830 has
+  // the full list and math).
+  //
+  // asset_waiver: true — TDHS Policy 24.12 confirms categorically eligible
+  // households (Basic OR Expanded CE) do not have to meet the resource
+  // limit "unless the household receives a substantial lottery or gambling
+  // winnings" — the same full-waiver-for-the-majority shape every BBCE
+  // state above uses; the federal $3,000/$4,500 limit (read from
+  // federal-tables.ts) still applies to the tested minority.
+  //
+  // sua_by_tier: null — a genuine, disclosed gap, same discipline as PA's/
+  // NJ's/MN's null entries, NOT a guess. TDHS Policy 24.12 and Policy 24.18
+  // BOTH explicitly defer exact dollar figures to an internal "Family
+  // Assistance Standards Desk Guide" the corpus pack could not locate
+  // published anywhere on tn.gov. The ONLY publicly fetchable dollar table
+  // — the codified TN Rule 1240-01-04-.27 — carries strong internal
+  // evidence of being stale by a decade or more: that SAME table's Standard
+  // Deduction figures ($142-$205) and 1-person Maximum Coupon Allotment
+  // ($200) do not match ANY recent FY's federal COLA-adjusted figures
+  // (compare this file's VA entry: current FFY2026 Standard Deduction
+  // $209-$299, 1-person max allotment far above $200 — VA's own manual
+  // reproduces federal-tables.ts's FY26 snapshot exactly, the strongest
+  // available signal TN Rule 1240-01-04-.27's table is the stale one, not
+  // VA's or the federal table). USDA's national FY2026 SUA rollup page also
+  // did not render fetchable per-state data for TN in the corpus pack's
+  // pass — the same disclosed limitation VA's and PA's own builds recorded
+  // for that identical USDA page. `sua_by_tier` requires all four slots
+  // (HCSUA/LUA/phone/none); authoring one from a table already shown stale
+  // and guessing the rest would be worse than the honest null.
+  //
+  // drug_felony_ban: "modified" — Tenn. Code Ann. § 71-5-308: permanent
+  // ineligibility for a Class A felony drug conviction; conditional
+  // eligibility for other drug felonies contingent on substance-abuse-
+  // treatment participation/completion (or a licensed provider's no-need
+  // determination) plus compliance with court-imposed obligations. UNLIKE
+  // every other citation in this entry, the corpus pack could NOT
+  // independently fetch this statute's primary text — law.justia.com and
+  // casetext.com both returned HTTP 403 on every attempt (multiple
+  // User-Agents, http and https) — a genuine, disclosed access barrier, not
+  // a shortcut taken without trying. This classification instead rests on
+  // convergent corroboration from two independent legal-research sources
+  // (the Public Health Law Center's SNAP Ban Opt-Out States Map and the
+  // Network for Public Health Law's compiled 50-state survey), both fetched
+  // directly, CROSS-CHECKED against TDHS's own current rule (TN Rule
+  // 1240-01-14-.15(3)(a)3), which independently corroborates the existence
+  // of a "drug-related felony" categorical-eligibility exception under 7
+  // CFR 273.11 (consistent with, though not itself proving every condition
+  // of, the modified-ban structure the secondary sources describe).
+  // "modified" (not "full") is still correct under #805's rule: setting
+  // "full" would gate every TN drug-felony household, but the statute's
+  // conditional-eligibility path for non-Class-A convictions means it does
+  // NOT uniformly bar all of them.
+  //
+  // abawd_waiver_avail: false — an AFFIRMATIVELY SOURCED, currently-zero
+  // finding, not a fail-open default. The corpus pack independently fetched
+  // USDA's official ABAWD Time Limit Waivers FY2025-2029 index directly
+  // (updated 7/22/2026) and confirmed Tennessee is ABSENT from the full
+  // list of states that submitted ANY waiver request for FY2025 or FY2026 —
+  // a list that includes 20+ other states and DC but not Tennessee or any
+  // of its immediate neighbors (Kentucky, Alabama, Mississippi, Arkansas,
+  // Georgia). TDHS's own ABAWD information page independently corroborates:
+  // it names no county or statewide waiver and directs individuals only to
+  // claim individual EXEMPTIONS, never an area waiver. No TN_WAIVER_
+  // COUNTY_FIPS lookup exists (nor would one be meaningful — the answer is
+  // "nowhere," the same MA-empty-set/VA-empty-set reasoning already
+  // established in this file), so this boolean IS the complete, correct
+  // answer for every TN household today, not a permissive fallback papering
+  // over unlookupable county-level nuance. Independently verified: this
+  // axis is the SOLE reason `M12-abawd-in-a-waived-area` denies for TN
+  // (matching NC's and VA's DENY, diverging from PA's and NJ's APPROVE,
+  // both of which hold abawd_waiver_avail: true) — the household's
+  // "abawd_exempt:waiver_county" claim can't hold in a state with no
+  // waivers anywhere, so the member stays subject to the time limit and has
+  // already exhausted it.
+  //
+  // rmp_operated: false — the corpus pack independently fetched USDA's own
+  // "States that Operate a Restaurant Meals Program" list directly (updated
+  // 8/7/2026): AZ/CA/IL(Cook+Franklin only)/MD/MA/MI/NY/RI/VA, no TN. The
+  // corpus pack found no evidence any TN RMP bill has ever been introduced
+  // in the General Assembly — a simpler absence than NJ's thrice-died-in-
+  // committee bill history.
+  //
+  // allotment_tier: "48" — no TN-specific elevated max-allotment schedule
+  // found or expected; TN Rule 1240-01-04-.27's OWN dollar table is the
+  // one flagged stale above (see sua_by_tier), not evidence of a genuinely
+  // elevated table the way AK's/HI's real tables are.
+  //
+  // INFORMATIONAL, no engine axis exists for this: TDHS Policy 24.02 sets
+  // TN's DEFAULT certification period at just 6 months — the shortest
+  // default this roster has documented (VA and NJ both default to 12
+  // months) — conflicting with the still-published TN Rule 1240-01-07-.01
+  // (1983), which caps certification at one year; TDHS's newer Policy 24.02
+  // is treated as operative (the SECOND of the two families' three
+  // documented conflicts). Not modeled — `StatePolicy` has no certification-
+  // period axis for any state in this file.
+  //
+  // SCHEMA GAP already documented for NJ (#824), NOT re-filed: TDHS Policy
+  // 24.12 names "boats, vacation homes, or mobile homes" as countable
+  // non-liquid resource equity — a departure from VA's/NC's blanket vehicle
+  // exclusion in this same file. `Facts.assets` has no per-asset-type
+  // breakdown (a single flat number or sentinel), so this is the same
+  // pre-existing Facts-shape gap NJ's entry already discloses, not a new
+  // one. Zero of the 92 v0.6 profiles model a boat/vacation-home resource,
+  // so this has no practical effect on TN's oracle coverage today. The
+  // corpus pack separately, narrowly declines to extend this finding to
+  // ORDINARY passenger vehicles (TDHS's separate "Treatment of Vehicles"
+  // procedure document could not be located) — not assumed to follow the
+  // boat rule.
+  TN: [
+    {
+      effective_start: new Date(Date.UTC(2020, 0, 1)),
+      effective_end: new Date(Date.UTC(2099, 11, 31)),
+      state_code: "TN",
+      label: "Tennessee / TDHS",
+      bbce: true,
+      bbce_threshold_pct: 200,
+      bbce_fpl_basis: "federal_fiscal_year",
+      asset_waiver: true,
+      sua_by_tier: null,
+      allotment_tier: "48",
+      drug_felony_ban: "modified",
+      abawd_waiver_avail: false,
+      rmp_operated: false,
+    },
+  ],
 };
 
 export class UnknownStateError extends Error {
