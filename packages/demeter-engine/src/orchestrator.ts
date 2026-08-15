@@ -85,7 +85,22 @@ export function parseMessages(raw: unknown): { messages: ChatMessage[] } | { err
   if (totalChars > MAX_TOTAL_CHARS) {
     return { error: "Conversation is too long — start a new chat" };
   }
-  if (messages[0]!.role !== "user") return { error: "Conversation must start with a user message" };
+
+  // A client windowing a long conversation to the last N raw messages (as
+  // apps/web does, sending only the tail so the request stays bounded) can
+  // land on an even split and hand us an assistant message first — half of
+  // a still-valid exchange, not a malformed request. Trimming the dangling
+  // leader self-heals that instead of hard-rejecting it: once a real
+  // conversation crosses MAX_MESSAGES exchanges, a naive tail-slice on the
+  // client hits this on EVERY subsequent turn, permanently, so failing
+  // closed here would permanently lock the user out rather than degrade
+  // gracefully by losing one extra turn of context (#833).
+  while (messages.length > 0 && messages[0]!.role !== "user") {
+    messages.shift();
+  }
+  if (messages.length === 0) {
+    return { error: "Conversation must start with a user message" };
+  }
   if (messages[messages.length - 1]!.role !== "user") {
     return { error: "The last message must be from the user" };
   }
