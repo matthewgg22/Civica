@@ -118,6 +118,17 @@ export function verifyNumericEquivalence(
 
   const mismatches: string[] = [];
   for (const m of answer.match(MONEY_RE) ?? []) {
+    // $0 is never a fabrication risk. It is a structurally different claim
+    // from a specific benefit/threshold figure this gate exists to catch —
+    // there is no wrong way to say "nothing" — but admissibleFromUser()
+    // deliberately filters v <= 0 (a furloughed worker doesn't SAY "$0"; they
+    // say "no paycheck"), and no regulation spells out "$0" as a figure
+    // either, so this was structurally impossible to ever satisfy. Found
+    // live: "furloughed, no paycheck, backpay coming" degraded 4/4 identical
+    // runs on the answer's own "countable income is $0" — a true, safe
+    // statement the gate could never have accepted no matter how it was
+    // phrased.
+    if (Number(m.replace(/[^0-9.]/g, "")) === 0) continue;
     if (!groundMoney.has(normalizeMoney(m)) && !userSaid(m)) mismatches.push(m.trim());
   }
   for (const p of answer.match(PERCENT_RE) ?? []) {

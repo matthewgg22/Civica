@@ -69,6 +69,24 @@ const TOPIC_HINTS: { terms: string[]; cites: string[] }[] = [
   { terms: ["fleeing felon", "fleeing to avoid", "outstanding warrant", "felony warrant", "probation violator", "parole violator", "wanted by police", "active warrant"], cites: ["273.11(n)"] },
   { terms: ["lottery", "gambling", "winnings"], cites: ["272.17", "273.11"] },
   { terms: ["who is in the household", "living together", "boarder", "roomer", "household composition", "household member", "household concept", "purchase and prepare"], cites: ["273.1"] },
+  // Edge-case taxonomy audit, 2026-08-15: corpus has full text on strikers
+  // (their own chunk, 273.1(e)) and live-in attendants + DV-shelter
+  // household separation (both bundled inside the single 273.1(b) chunk,
+  // alongside boarders/roomers/foster care), but — unlike boarder/roomer
+  // above — no term ever routed a query there. Citation-level, not just
+  // section-level: 273.1's five subsections are five SEPARATE corpus
+  // chunks (confirmed against the corpus directly), and a bare "273.1"
+  // hint boosts all five equally regardless of which one actually answers
+  // the question — live-checked without this fix, a strike question's top
+  // hits were 273.1(a)/(b)/(d), never reaching the striker-specific (e).
+  { terms: ["strike", "striker", "on strike", "labor strike", "union strike", "picket line", "picketing"], cites: ["273.1(e)"] },
+  { terms: ["live-in attendant", "live-in aide", "live in attendant", "live in aide", "caregiver living with me", "home health aide living with us"], cites: ["273.1(b)"] },
+  { terms: ["domestic violence", "domestic abuse", "abusive husband", "abusive wife", "abusive partner", "fleeing abuse", "dv shelter", "battered women shelter", "battered woman", "left my abuser", "escaped my abuser"], cites: ["273.1(b)"] },
+  // Sponsor deeming (273.4(c)) — distinct enough from the general
+  // immigration-eligibility hint above (273.4 broadly) to warrant its own
+  // terms: someone asking about a sponsor's income is usually well past the
+  // "am I eligible" question and into a deeming-specific one.
+  { terms: ["sponsor", "sponsored me", "sponsor's income", "affidavit of support", "i-864", "sponsor deeming", "deemed income", "my sponsor"], cites: ["273.4"] },
   { terms: ["interview", "phone interview", "interview waiver"], cites: ["273.2(e)"] },
   { terms: ["what documents", "documents do i need", "still apply", "without a pay stub", "do not have", "don't have", "missing document", "incomplete application", "right to file"], cites: ["273.2(f)", "273.2(c)"] },
   { terms: ["paid in cash", "cash income", "pay stub", "paystub", "prove income", "proof of income", "employer won't", "employer will not", "letter from employer", "what counts instead", "alternative proof", "how do i prove"], cites: ["273.2(f)"] },

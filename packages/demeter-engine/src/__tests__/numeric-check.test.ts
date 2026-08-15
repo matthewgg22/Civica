@@ -126,3 +126,36 @@ describe("the plain grounding behaviour is unchanged", () => {
     expect(verifyNumericEquivalence("Your income is above the limit.", "").pass).toBe(true);
   });
 });
+
+// Regression (live conversational QA, 2026-08-15): a furloughed-worker
+// question ("no paychecks right now, backpay eventually") degraded 4/4
+// identical live runs. The retrieved citations were fine every time — every
+// run failed on the SAME thing: the answer correctly says the person's
+// countable income is "$0" this month, and that figure could never satisfy
+// the gate. admissibleFromUser() deliberately filters v <= 0 (nobody types
+// "I make $0" — they describe having no paycheck), and no regulation states
+// "$0" as a figure either, so this was structurally unsatisfiable no matter
+// how the true, safe statement was phrased.
+describe("zero is never treated as a fabrication", () => {
+  it("accepts $0 with no grounding and no user-stated figure at all", () => {
+    const r = verifyNumericEquivalence(
+      "Your countable income is $0 this month since you're not receiving a paycheck.",
+      "",
+      "I'm furloughed, no paychecks right now",
+    );
+    expect(r.mismatches).toEqual([]);
+    expect(r.pass).toBe(true);
+  });
+
+  it("does not let $0 launder an UNRELATED invented figure in the same answer", () => {
+    // The fix targets the literal "$0" match only — a real fabrication
+    // elsewhere in the same answer must still be caught.
+    const r = verifyNumericEquivalence(
+      "Your countable income is $0 this month, and the limit is $9,999.",
+      "",
+      "I'm furloughed, no paychecks right now",
+    );
+    expect(r.mismatches).toEqual(["$9,999"]);
+    expect(r.pass).toBe(false);
+  });
+});

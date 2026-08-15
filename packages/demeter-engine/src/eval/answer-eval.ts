@@ -107,6 +107,20 @@ export const ANSWER_GOLD: AnswerExpectation[] = [
     mustDisclaim: true,
   },
   {
+    // Guards a live conversational-QA finding (2026-08-15): the model
+    // stated the pregnancy ABAWD exemption as fact with ZERO citation —
+    // certainty.ts's own "no_claim_to_verify" branch fired identically to
+    // an off-scope refusal, giving the reader no way to check a real rule.
+    // Same shape hit the administrative-leave income-counting case. Fixed
+    // with an explicit "always name a citation for a stated rule" prompt
+    // instruction plus embedding "(7 CFR 273.24)" directly at the pregnancy
+    // exemption's first mention in both prompts' CA-ABAWD paragraphs.
+    id: "abawd-pregnancy-exemption",
+    question: "I'm 3 months pregnant and currently unemployed. Do I still have to meet work requirements to get SNAP?",
+    expectCitation: "273.24",
+    mustDisclaim: true,
+  },
+  {
     id: "public-charge-defer",
     question: "Will applying for SNAP hurt my client's immigration status or count as public charge?",
     mustMention: "not counted",

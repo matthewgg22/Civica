@@ -39,6 +39,37 @@ describe("Mae eCFR retrieval", { timeout: 60_000 }, () => {
     expect(await topCite("do I count my roommate if we don't buy and cook food together?")).toContain("273.1");
   });
 
+  // Edge-case taxonomy audit (2026-08-15): these five topics have real
+  // corpus text (strikers is its own chunk, 273.1(e); live-in attendants,
+  // DV-shelter separation, and boarders/roomers are all bundled inside the
+  // single 273.1(b) chunk) but had zero retrieval hint before this — live
+  // testing found the model handling them reasonably well anyway via
+  // semantic retrieval alone, but a bare-facts or terse phrasing (the #766
+  // failure shape) has no lexical hint to fall back on without this.
+  it("routes strikers to the striker-specific subsection, not just anywhere in 273.1", async () => {
+    // 273.1's five subsections are five separate corpus chunks sharing one
+    // coarse `section` field — a bare "273.1" hint would boost all five
+    // equally and this specifically checks the sharpened citation-level hint
+    // actually wins, not just that SOME household-composition text surfaces.
+    expect(await topCite("I'm a union worker on strike right now, no paycheck. Can I still get SNAP?")).toBe(
+      "7 CFR 273.1(e)",
+    );
+  });
+
+  it("surfaces 273.1(b) for live-in attendants and DV-shelter household separation", async () => {
+    const attendantHits = await retrieve("I rent a spare room to someone who provides live-in caregiving for my mother", { k: 4 });
+    expect(attendantHits.some((h) => h.citation === "7 CFR 273.1(b)")).toBe(true);
+
+    const dvHits = await retrieve("I left my abusive husband and I'm staying at a domestic violence shelter now", { k: 4 });
+    expect(dvHits.some((h) => h.citation === "7 CFR 273.1(b)")).toBe(true);
+  });
+
+  it("routes sponsor-deeming questions to 273.4(c), not the general immigration hint", async () => {
+    expect(
+      await topCite("My sister sponsored me with an affidavit of support. Does her income count against me?"),
+    ).toBe("7 CFR 273.4(c)");
+  });
+
   it("honors an explicitly typed section number", async () => {
     const hits = await retrieve("explain 7 CFR 273.10(e)(2)", { k: 3 });
     expect(hits.some((h) => h.citation.startsWith("7 CFR 273.10(e)"))).toBe(true);
