@@ -31,16 +31,17 @@ at all; today, most do.
 this plan's own individual-tier landings)
 
 `StatePolicy` (the calculator's per-state config — `packages/snap-rules/src/constants/
-states.ts`) exists for **21 states**: CA, WA, TX, NY, GA, MI, IL, FL, MA, NV, AZ, OR, WI,
-MN, OH, KS, PA, AK, NC, NJ, VA.
+states.ts`) exists for **22 states**: CA, WA, TX, NY, GA, MI, IL, FL, MA, NV, AZ, OR, WI,
+MN, OH, KS, PA, AK, NC, NJ, VA, IN.
 
 The oracle fixture (`data-ops/sample/civica-test-profiles/v0.6.json`, `expected_by_state`)
 — the independently-computed ground truth every `/profile-simulation` run grades the
-engine against — has full 92-case coverage for **19 of those 21**: CA, WA, TX, NY, GA, MI,
-IL, FL, MA, NV, AZ, OR, WI, KS, OH, AK, NC, VA. (PA and NJ also have all 92 rows authored,
-per the execution log's PA/NJ entries below, but both grade 34/0/95 — most of their
-profiles legitimately SKIP on the null-SUA gap, not a coverage gap, so neither is counted
-as "clean" here.)
+engine against — has full 92-case coverage for **21 of those 22** (only MN is missing
+coverage): CA, WA, TX, NY, GA, MI, IL, FL, MA, NV, AZ, OR, WI, KS, OH, AK, NC, VA, IN clear
+CLEAN (129/0/0 or a documented pre-existing partial); PA and NJ also have all 92 rows
+authored, per the execution log's PA/NJ entries below, but both grade 34/0/95 — most of
+their profiles legitimately SKIP on the null-SUA gap, not a coverage gap, so neither is
+counted as "clean" here.
 
 Two states have a `StatePolicy` but no oracle coverage yet, for different reasons:
 
@@ -60,10 +61,11 @@ One state's `StatePolicy` is present, oracle-covered, and **looks wrong**:
   the engine today and, if used for a real determination, would wrongly deny categorical
   eligibility to AK households between 130%–200% FPL.
 
-**32 states have neither** `StatePolicy` nor oracle coverage — the full remaining scope:
-AL, AR, CO, CT, DC, DE, GU, HI, IA, ID, IN, KY, LA, MD, ME, MO, MS, MT, ND, NE, NH,
-NM, OK, RI, SC, SD, TN, UT, VI, VT, WV, WY. (NC, NJ, and VA — the first three "individual
-tier" states, §6 — are DONE; see the execution log's NC/NJ/VA entries.)
+**31 states have neither** `StatePolicy` nor oracle coverage — the full remaining scope:
+AL, AR, CO, CT, DC, DE, GU, HI, IA, ID, KY, LA, MD, ME, MO, MS, MT, ND, NE, NH,
+NM, OK, RI, SC, SD, TN, UT, VI, VT, WV, WY. (NC, NJ, VA, and IN — the first four
+"individual tier" states, §6 — are DONE; see the execution log's NC/NJ/VA/IN entries. TN's
+build is a separate, concurrently-in-flight PR — see that PR for its own status.)
 
 ## 3. Structural design: what's universal (fix once) vs. what's genuinely per-state (author 53×)
 
@@ -188,7 +190,8 @@ exists and only oracle authoring is outstanding):
    PROVENANCE.md, regenerate all 92 oracle rows since a `bbce` flip changes categorical-
    eligibility outcomes across a large share of the profile set — treat as a full rebuild,
    not a one-line patch, precisely because it's already shipped and wrong)
-3. Individual tier (~4M+ population): ~~NC~~ (done), ~~NJ~~ (done), ~~VA~~ (done), TN, IN, MO, MD, CO, SC, AL, LA, KY, OK
+3. Individual tier (~4M+ population): ~~NC~~ (done), ~~NJ~~ (done), ~~VA~~ (done), TN,
+   ~~IN~~ (done), MO, MD, CO, SC, AL, LA, KY, OK
 4. Schema step: extend `AllotmentTier` for HI/GU (own small PR, own go-ahead)
 5. HI, GU (now unblocked)
 6. Batch tier (<4M population, N≤3 per batch): CT, UT, IA, AR / MS, NM, NE / ID, WV, NH /
@@ -613,3 +616,89 @@ all of it.
   pass (3 pre-existing skips). Did not touch `packages/demeter-engine` (VA's corpus was
   already complete and out of scope) or any other state's `StatePolicy`/oracle coverage. PR
   [#829](https://github.com/matthewgg22/Civica/pull/829), awaiting merge go-ahead.
+
+- **IN (individual tier, §6 step 3, fourth state after NC/NJ/VA — TN's build is a separate,
+  concurrently-in-flight PR, not this one)** — built Indiana's `StatePolicy` entry AND full
+  92-profile oracle coverage from scratch (IN had neither before this PR), translating
+  Indiana's already-merged Demeter corpus pack
+  (`packages/demeter-engine/src/states/in/`, PROVENANCE.md + supplements.json), built
+  2026-08-11, into the engine's stricter typed shape per §5's process.
+
+  `bbce: false` — Indiana's own flagship corpus finding, and a genuine MINORITY position in
+  this roster (most already-built states have adopted some form of BBCE): IN PPM 3010.05.00
+  states the plain 130%/100% FPL federal test directly, independently cross-checked against
+  IN PPM 2414.10.05's narrow Basic-CE-only (SSI/TANF) categorical-eligibility definition —
+  no expanded/broad-based pathway anywhere in Chapter 2400 or 3000. This CONFIRMS (does not
+  correct) a claim several SNAP-calculator sites already make about Indiana. Because bbce is
+  false, `bbce_threshold_pct` is omitted and `bbce_fpl_basis` is null — the same shape this
+  file's KS entry established for a non-BBCE state. `asset_waiver: false` — the narrow
+  SSI/TANF-only minority is exempt via ordinary federal cat-elig, but the general-case NPA
+  household faces the plain federal $3,000/$4,500 resource limit (IN PPM 3005.05.00), same
+  posture as KS. `drug_felony_ban: "modified"` — Ind. Code Ann. § 12-14-30-3, a genuine
+  opt-out from the federal LIFETIME ban (eff. 1/1/2020) conditioned on completion of or
+  current compliance with probation/parole/community-corrections/reentry-court supervision;
+  Indiana's own statute-lookup site (iga.in.gov) is an unexecutable client-side JS SPA and
+  two third-party mirrors both failed outright (justia 403, casetext 410) — this finding
+  rests on three convergent secondary sources (IN's own FSSA FAQ, the Public Health Law
+  Center, the Network for Public Health Law's 50-state survey), disclosed as a genuine access
+  barrier rather than smoothed over, same discipline as this file's PA entry.
+  `abawd_waiver_avail: false` — an AFFIRMATIVELY SOURCED zero finding (IN PPM 2438.17.05:
+  "there are currently no such designations"), cross-checked against USDA's official waiver
+  index and the independent abawdmap.us aggregator; no per-county lookup needed since the
+  real answer is a genuine statewide zero, same shape as MA/NC/VA's `false` entries.
+  `rmp_operated: false` — Indiana absent from USDA's current RMP state list, no pending IN
+  RMP bill found. `allotment_tier: "48"` — IN's Standard Deduction/shelter cap/homeless
+  allowance figures reproduce federal-tables.ts's FY26 snapshot exactly, the same
+  "shared-source signal" NC's/VA's entries use.
+
+  `sua_by_tier` — FULLY POPULATED, not null, a genuine contrast with this file's PA/NJ/MN
+  null entries: IN PPM 3020.00.00's four flat-dollar tiers are current (dated 10/01/2025),
+  cross-checked two ways (the manual's own prior-period COLA-step column, AND an exact match
+  against VA's already-independently-confirmed FFY2026 Standard Deduction figures). HCSUA
+  ($486), LUA ($283), and phone ($36) map cleanly onto IN's SUA-1/SUA-2/SUA-4 tiers; IN's
+  SUA-3 ("single utility," $62, exactly one non-heating/non-telephone utility) has no slot in
+  this schema — same documented gap as IL's/OH's/NV's/AZ's single-utility cases, falling
+  through to NONE ($0).
+
+  Not representable in this schema, and not silently dropped: Indiana's vehicle-resource rule
+  is a genuine HYBRID this roster hadn't seen combined before — a blanket exclusion for
+  ordinary transportation vehicles (IN PPM 2615.60.10, matching NC's/VA's pattern) but boats/
+  campers/trailers counted at equity value (IN PPM 2615.60.25, matching TN's pattern). This is
+  the SAME pre-existing gap already filed as #824 (`Facts.assets` has no per-asset-type
+  breakdown; no `StatePolicy` axis for vehicle treatment) — not re-filed, just newly confirmed
+  present for Indiana; zero of the 92 oracle profiles model a boat/camper resource, so no
+  practical effect today. (Informational only, no engine axis: IN's Elderly Simplified
+  Application Project offers a 36-month certification period — the longest such period this
+  roster has documented; this engine does not model certification-period length for any
+  state.)
+
+  Oracle: KS is Indiana's closest axis-twin among registered states — identical `bbce: false`,
+  `bbce_threshold_pct: undefined`, `bbce_fpl_basis: null`, `asset_waiver: false`,
+  `drug_felony_ban: "modified"`, `abawd_waiver_avail: false`, `allotment_tier: "48"`, and
+  `rmp_operated: false` (differing only in SUA dollar figures and label). Built a fresh,
+  independent Python calculator (not derived from engine output) from the same CFR / federal-
+  tables.ts citations documented in verdict.ts/benefit-calc.ts. Cross-validated 92/92 exact
+  match (verdict AND benefit) reproducing KS's already-graded `expected_by_state.KS` oracle
+  under KS's own policy params, PLUS all 37 non-`expected_by_state` variant rows (same #636
+  discipline NC's/VA's builds used — 0 mismatches against KS's already-graded
+  `verdict_by_state` overrides), before trusting the calculator for Indiana. Authored all 92
+  `expected_by_state.IN` entries: verdicts came back IDENTICAL to KS's on all 92 profiles (0
+  divergence — expected, since every verdict-controlling axis is identical between the two
+  states; only benefit-dollar figures differ, driven by the SUA value differences). Of the 37
+  variant rows, exactly 2 (`M23-variable-gig-income-anticipation`'s "averaged" and
+  "recent_high_month" variants) needed an IN-specific `verdict_by_state` override — DENY,
+  matching KS's own value exactly, since both are non-BBCE federal-130%-gross-test states
+  where several BBCE states above 130% approve; every other variant row uses the shared
+  default `verdict`, zero further divergence found.
+
+  Verification: `/profile-simulation state=IN` — 129/129 PASS, 0 FAIL, 0 SKIP (clean,
+  matching CA/MA/TX/WA/GA/FL/IL/OH/MI/NV/OR/WI/KS/AK/NC/VA's bar, not PA's/NJ's/MN's
+  SKIP-heavy shape). Every other registered state's harness run reconfirmed unchanged from
+  its documented baseline (CA/MA/TX/WA/GA/FL/IL/OH/MI/NV/OR/WI/KS/AK/NC/VA all 129/0/0; NY
+  127/2/0; AZ 128/1/0; MN 0/0/129; PA 34/0/95; NJ 34/0/95 — all pre-existing, none newly
+  introduced). `tsc --noEmit -p packages/snap-rules` clean, 323/323 snap-rules tests pass (0
+  new — a schema-conformant pure addition needed no new unit tests), 44/47 profile-harness
+  tests pass (3 pre-existing skips). Did not touch `packages/demeter-engine` (IN's corpus was
+  already complete and out of scope), TN's concurrently-in-flight PR, or any other state's
+  `StatePolicy`/oracle coverage. PR
+  [#833](https://github.com/matthewgg22/Civica/pull/833), awaiting merge go-ahead.
