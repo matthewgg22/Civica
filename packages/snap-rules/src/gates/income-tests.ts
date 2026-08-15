@@ -40,7 +40,7 @@ export function grossIncomeTest(facts: Facts, state: string, asOf: Date): Income
   // ELIGIBLE-only HH size; ineligible-alien income counts in full
   // (Read A — see facts.aggregateIncomeForCalc).
   const size = eligibleHouseholdSize(facts, asOf);
-  const fpl = fplMonthly(size, asOf);
+  const fpl = fplMonthly(size, asOf, state);
   const policy = statePolicyFor(state, asOf);
 
   // BBCE raises the threshold; non-BBCE uses 130% federal.
@@ -65,10 +65,11 @@ export function netIncomeTest(
   facts: Facts,
   netMonthly: Decimal,
   asOf: Date,
+  state: string,
 ): IncomeTestResult {
   // 7 CFR 273.11(c)(1)(i)(B): net-test FPL also uses eligible-only size.
   const size = eligibleHouseholdSize(facts, asOf);
-  const fpl = fplMonthly(size, asOf);
+  const fpl = fplMonthly(size, asOf, state);
   const threshold = fpl.mul(NET_INCOME_TEST_RATIO).roundDollar();
   const actual = netMonthly.roundDollar();
   const passes = actual.lte(threshold);

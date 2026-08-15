@@ -19,7 +19,7 @@ describe("getEngineParams FPL row (#601)", () => {
   it("is identical to the canonical fplMonthly at every household size", () => {
     const p = getEngineParams("CA", ASOF);
     for (let n = 1; n <= 8; n++) {
-      expect(p.fpl![String(n)], `HH${n}`).toBe(fplMonthly(n, ASOF).toNumber());
+      expect(p.fpl![String(n)], `HH${n}`).toBe(fplMonthly(n, ASOF, "CA").toNumber());
     }
   });
 
@@ -42,10 +42,10 @@ describe("getEngineParams FPL row (#601)", () => {
   });
 
   it("holds for every registered state, not just CA", () => {
-    for (const state of ["CA", "MA", "TX"]) {
+    for (const state of ["CA", "MA", "TX", "AK"]) {
       const p = getEngineParams(state, ASOF);
       for (let n = 1; n <= 8; n++) {
-        expect(p.fpl![String(n)], `${state} HH${n}`).toBe(fplMonthly(n, ASOF).toNumber());
+        expect(p.fpl![String(n)], `${state} HH${n}`).toBe(fplMonthly(n, ASOF, state).toNumber());
       }
     }
   });

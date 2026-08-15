@@ -83,6 +83,20 @@ export class Decimal {
   floorDollar(): Decimal {
     return new Decimal(Math.floor(this.v));
   }
+
+  /**
+   * Ceiling to whole dollars (round UP for any positive fractional cents).
+   * Used for Alaska's FPL monthly derivation: `ceil((AK annual FPL) / 12)`
+   * — the opposite direction from the 48-contiguous/DC `floorDollar()`
+   * convention above. Confirmed by reproducing Alaska DOH's own published
+   * SNAP Standards table exactly at three independent income columns (100%,
+   * 130%, 165%) from the raw HHS annual guideline. See fplMonthly() /
+   * RegionalFplTable in federal-tables.ts (#812) for the full derivation
+   * and citations.
+   */
+  ceilDollar(): Decimal {
+    return new Decimal(Math.ceil(this.v));
+  }
 }
 
 export function dec(value: number | string): Decimal {
