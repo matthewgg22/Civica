@@ -9,6 +9,30 @@
 
 ---
 
+## General overview: what's actually in the 404 pages
+
+A rough chronological document index, reconstructed from the four agents' reports plus a direct read of the FNS letter (the one exhibit legible without `pdftotext`). Bates ranges are approximate — documents don't always start/end on a stamp boundary the agents called out explicitly.
+
+| Document | Date | Approx. Bates range |
+|---|---|---|
+| FNS → CDSS: ABAWD waiver rescission/reissue (2yr→1yr) | ~Feb 2026 | COLA002133–36 |
+| CDSS ACL No. 25-93 — ABAWD dependent-child exemption, original | Dec 31, 2025 | COLA002140s–2190s |
+| CDSS ACL No. 25-93E — errata narrowing the above | April 1, 2026 | COLA002160s |
+| FNS → CDSS: approval of a waiver modification (4 additional counties) | Feb 10, 2026 | COLA002190–94 |
+| CDSS ACL No. 26-26 — revised CalFresh Work Rules Oral Script | April 10, 2026 | COLA002195–202 |
+| CDSS ACL No. 26-29 — **CalFresh ABAWD Time Limit Handbook v3.0** (the largest single document — work registration, exemptions, workfare, ESAP, discretionary exemptions, noticing) | April 15, 2026 | COLA002203–~2340s |
+| CDSS ACL No. 25-50 — general HR1/OBBBA impact notice, covering ALL of §§10102–10108 (not just ABAWD) | July 14, 2025 (same day HR1 was signed) | ~COLA002270–2290 |
+| DPSS internal "Federal and State Changes to DPSS Programs" briefing deck | undated, ~2025–26 | COLA002467–2489 |
+| "CalFresh ABAWD/Work and Community Engagement" eligibility-worker training deck | undated | COLA002346–2466 |
+| CDSS "H.R. 1 CalFresh Implementation Advisory Group" meeting deck | Nov 2025 | COLA002490–2535 |
+| "ABAWD Work and Community Engagement Webinar" deck | May 5, 2026 | tail of the 5151–7700 range |
+
+**The genuinely important structural finding: this is almost entirely CDSS's statewide broadcast guidance, not LA-specific correspondence.** Targeted searches across the full text for `"Board of Supervisors"` and `"CWDA"` — both explicitly named in the request itself ("communications between DPSS and CDSS, CWDA, other counties, or the LA County Board of Supervisors") — return **zero hits, in all 404 pages.** `"Los Angeles County"` itself appears only twice (same content, duplicated), and it's not deliberative correspondence — it's a list of LA-specific outreach partners in an ACL-adjacent slide (COLA002285, COLA002471): Department of Health Services, the CEO's Center for Strategic Partnerships, LA County Library, City of LA's Community Investment for Families Department, Department of Economic Opportunity, Imagine LA, and LA County of Education (LACOE). That's the entire LA-specific content found by targeted search — everything else is generic-to-every-county CDSS material that would look identical in a production to any other county in the state.
+
+This doesn't necessarily mean nothing else exists — the county's own letter says only that "DPSS has located responsive, disclosable records" (not "all records," and CPRA productions can legitimately withhold deliberative/privileged material without saying so beyond the standard non-waiver boilerplate at the end of the cover letter). But as a factual matter, **the actual internal deliberation, Board-level discussion, or CWDA coordination that Request 6 was written to surface does not appear to be in what was produced.** Worth deciding whether that's worth a follow-up request narrowly scoped to "any record showing DPSS declined to produce, or found none, specific to Board of Supervisors or CWDA communications" — that's a different, sharper question than the original broad request, and CPRA responses sometimes answer a narrow follow-up more directly than a broad initial one.
+
+---
+
 ## Cross-reference against the edge-case taxonomy
 
 ### 1. Household composition
@@ -74,8 +98,11 @@
 
 These are explicit "forthcoming guidance," "TBD," or "pending FNS approval" statements found in the production — genuinely open as of the documents' own dates, not resolved anywhere else in the 404 pages:
 
-1. **OBBBA §10105 (Payment Error Rate funding match)** — "CWD action will be required. Additional policy and implementation guidance is forthcoming." (COLA002278/6711-12). **Not resolved anywhere else in the production.**
-2. **OBBBA §10106 (Administrative Cost Sharing)** — same "forthcoming" language (COLA002278/6747-48), plus "a CFL [County Fiscal Letter] will be drafted to provide additional guidance" (COLA002504/9891-93). **Not resolved anywhere else in the production.**
+1. **OBBBA §10105 (Payment Error Rate funding match)** — CORRECTION to how this was first characterized here: the *county-level implementation mechanics* are genuinely still "CWD action will be required. Additional policy and implementation guidance is forthcoming" (COLA002278/6711-12) — but the underlying **federal statutory formula is fully specified already**, and it matters a lot. Verbatim (ACL 25-50, COLA002278):
+   > "Effective FFY 2028 (October 1, 2027), state agencies will be required to pay a percentage of CalFresh benefit allotments, on the sliding scale set forth below, if they have a PER above 6.00 percent... For states with a PER below 6.00 percent there is a 0.00 percent state match; PER 6.00–7.99 percent → 5.00 percent state match; PER 8.00–9.99 percent → 10.00 percent state match; PER at 10.00 percent or higher → 15.00 percent state match. For FFY 2028, states are allowed to choose between using their PER in FFY 2025 or FFY 2026 to calculate their match percentage... If, for FFY 2025, the PER of a state multiplied by 1.5 is equal to or above 20 percent, the initial implementation date of a state match shall be FFY 2029 (instead of FFY 2028)."
+
+   **This is directly relevant to the existing PER research thread** (`project_pra_productions_2026_07_23` auto-memory): CA's honest (Federal-series) PER has run 10.50/12.47/9.69‡/11.01 across FFY22–25 — every one of those years is at or above the 8.00% band, several above 10.00%. If that pattern holds into FFY2025/2026 (the years CA gets to choose from for its first match calculation), **California is looking at a 10–15% state match on CalFresh benefit allotments starting FFY2028** under the Act's own formula — a real, dollar-denominated fiscal consequence of the error-rate problem this research has been documenting, not an abstract compliance concern. Worth flagging to whoever owns the PER research thread. Question contact for whenever the county-level implementation guidance actually lands: **CalFreshPolicy@dss.ca.gov** (also the general contact named at the foot of ACL 25-50, COLA002280).
+2. **OBBBA §10106 (Administrative Cost Sharing)** — same pattern: the federal formula is already fully known (COLA002278): "the federal portion of administrative costs will be reduced from 50 percent to 25 percent" effective FFY2027 (Oct 1, 2026), meaning "the state will be responsible for 52.5 percent and the counties will be responsible for 22.5 percent of the total cost" under California's existing 70/30 state/county split (WIC §18906.5). What's actually pending is the *county fiscal letter* implementing this — "a CFL will be drafted to provide additional guidance" (COLA002504/9891-93).
 3. **Discretionary-exemption allocation mechanism** — "there are currently zero discretionary exemptions available for county use. Counties may not apply discretionary exemptions at this time... Once California has been allocated a new number of discretionary exemptions, CDSS will release a separate letter with further instructions" (COLA002184/2367-83). Open as of the most recent ACL in this production.
 4. **Waiver-request criteria changes under HR1** — "A forthcoming ACL will provide more information on federal changes to the criteria for requesting a waiver of the time limit" (COLA002175/1895-96).
 5. **FFY2026 SUA methodology** — CDSS committed to submit a new SUA methodology to FNS for approval "prior to October 1, 2025" (COLA002277/6696-97) — worth confirming whether that submission/approval has since surfaced in a later document not yet in hand.
