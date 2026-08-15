@@ -132,7 +132,15 @@ export function DemeterWorksheet({
       {/* A radiogroup, not two toggle buttons: it is one exclusive choice, and
           a screen reader should hear "2 of 2" rather than two unrelated
           pressed/unpressed states. */}
-      <div className="dmw__mode" role="radiogroup" aria-label={copy.modeLabel}>
+      {/* data-mode drives the sliding thumb in CSS. The selected pill used to
+          appear on the other half instantly, which reads as two separate
+          buttons lighting up rather than as one switch being moved. */}
+      <div
+        className="dmw__mode"
+        data-mode={mode}
+        role="radiogroup"
+        aria-label={copy.modeLabel}
+      >
         {(
           [
             ["ask", copy.modeAsk],

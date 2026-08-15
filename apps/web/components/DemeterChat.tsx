@@ -30,8 +30,9 @@ import { DemeterFeedback } from "./DemeterFeedback";
 import { DemeterSave } from "./DemeterSave";
 import { T } from "../lib/i18n/demeter-chat-copy";
 import { stateName } from "../lib/state-names";
-import { detectState, type StateMention } from "../lib/detect-state";
+import { detectState, detectUncoveredPlace, type StateMention } from "../lib/detect-state";
 import type { SavedMsg } from "../lib/demeter-conversations";
+import { saveChatSession, readChatSession, clearChatSession } from "../lib/chat-session";
 
 /** Read the certainty verdict back off a finished answer.
  *
@@ -91,16 +92,41 @@ function renderInline(line: string, keyBase: string): ReactNode[] {
   //
   // Underscores are matched only at a word boundary, so snake_case identifiers
   // in a citation (7_CFR_273) are not mistaken for emphasis.
-  const parts = line.split(/(\*\*[^*]+\*\*|\*[^*\s][^*]*\*|\b_[^_\s][^_]*_\b)/g);
+  const parts = line.split(
+    /(\[[^\]]+\]\(https?:\/\/[^\s)]+\)|\*\*[^*]+\*\*|\*[^*\s][^*]*\*|\b_[^_\s][^_]*_\b)/g,
+  );
   return parts.map((p, j) => {
+    // EMPHASIS RECURSES. The freshness footer is emitted as
+    // `*Source: [label](url).*` — the whole line, link included, inside one
+    // pair of asterisks. Rendering the emphasis contents as a raw string meant
+    // the link inside was never parsed, so every answer ended with its source
+    // URL printed in brackets and parentheses as literal text. Visible on
+    // every cited answer, which is all of them.
     if (p.startsWith("**") && p.endsWith("**") && p.length > 4) {
-      return <strong key={`${keyBase}b${j}`}>{p.slice(2, -2)}</strong>;
+      return <strong key={`${keyBase}b${j}`}>{renderInline(p.slice(2, -2), `${keyBase}b${j}`)}</strong>;
     }
     if (p.startsWith("*") && p.endsWith("*") && p.length > 2) {
-      return <em key={`${keyBase}i${j}`}>{p.slice(1, -1)}</em>;
+      return <em key={`${keyBase}i${j}`}>{renderInline(p.slice(1, -1), `${keyBase}i${j}`)}</em>;
     }
     if (p.startsWith("_") && p.endsWith("_") && p.length > 2) {
-      return <em key={`${keyBase}u${j}`}>{p.slice(1, -1)}</em>;
+      return <em key={`${keyBase}u${j}`}>{renderInline(p.slice(1, -1), `${keyBase}u${j}`)}</em>;
+    }
+    // [label](https://…). Only http(s), matched by the split above, so nothing
+    // else can become an href — no javascript:, no data:, no relative paths.
+    // Citations are worth nothing if the reader cannot go and look.
+    const link = /^\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)$/.exec(p);
+    if (link) {
+      return (
+        <a
+          key={`${keyBase}a${j}`}
+          className="demeter__link"
+          href={link[2]}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {link[1]}
+        </a>
+      );
     }
     return p;
   });
@@ -122,8 +148,40 @@ function renderInline(line: string, keyBase: string): ReactNode[] {
  *  does anyway — seen in production, the same answer carrying the line twice —
  *  and an instruction a model can ignore is not a guarantee. Ours is appended
  *  last, in the trailer frame, so every occurrence but the final one goes. */
+/** Drops trailer lines the MODEL wrote, keeping the ones Civica appends.
+ *
+ *  Seen in production: an answer carrying TWO certainty banners — its own
+ *  "⚠ UNCERTAIN — do not treat as settled; confirm with your county caseworker"
+ *  and ours immediately under it — plus two "Check it yourself" lines. The
+ *  reader is told the same caveat twice in two different wordings, which reads
+ *  less like care and more like the page arguing with itself.
+ *
+ *  Ours is appended LAST, in the trailer frame, so for each of these the final
+ *  occurrence is the one that survives. Same rule as the source footer below,
+ *  applied to the two other lines the model imitates. */
+function dropDuplicateTrailerLines(text: string): string {
+  const MARKERS = [
+    // Certainty banner: keyed off the MARK, which certainty.ts does not
+    // localize, so this holds as languages are added.
+    /^\s*[✓⚠]\s/,
+    // "Check it yourself:" and its translations, with or without emphasis.
+    /^\s*[*_]?(Check it yourself|Compruébalo tú mismo|Tự kiểm tra|自己核对)/i,
+  ];
+  let out = text;
+  for (const marker of MARKERS) {
+    const lines = out.split("\n");
+    const hits = lines.map((l, i) => (marker.test(l) ? i : -1)).filter((i) => i >= 0);
+    if (hits.length < 2) continue;
+    const keep = hits[hits.length - 1];
+    out = lines.filter((_, i) => !hits.includes(i) || i === keep).join("\n");
+  }
+  return out;
+}
+
 function dropDuplicateFooter(text: string): string {
-  const marker = /^\s*(Sources as of|Fuentes al|Nguồn tính đến|来源截至)/;
+  // Both labels: the footer was shortened from "Sources as of" to "Source", and
+  // a saved conversation can still hold answers written under the old one.
+  const marker = /^\s*\*?(Sources? as of|Source|Fuentes? al|Fuente|Nguồn|来源)\b/;
   const lines = text.split("\n");
   const hits = lines.map((l, i) => (marker.test(l) ? i : -1)).filter((i) => i >= 0);
   if (hits.length < 2) return text;
@@ -135,7 +193,7 @@ export function splitFollowups(
   rawText: string,
   opts?: { streaming?: boolean },
 ): { body: string; followups: string[] } {
-  const text = dropDuplicateFooter(rawText);
+  const text = dropDuplicateTrailerLines(dropDuplicateFooter(rawText));
   // ANYWHERE, not only at the start of a line. This looked for "\n⟶", and the
   // model does not reliably put the marker on its own line — when it wrote
   // "…confirm those with your local district or OTDA. ⟶ What documents will I
@@ -183,7 +241,10 @@ export function pendingQuestion(answer: string): string | null {
     .filter(Boolean);
   const last = sentences[sentences.length - 1] ?? "";
   if (!last.endsWith("?") || last.length > 90) return null;
-  return last;
+  // A closing question is very often the last BULLET, and the marker came with
+  // it — the composer read "- Otherwise, are you ready to apply now?", a stray
+  // hyphen at the start of the field on any answer that ended in a list.
+  return last.replace(/^[-•*]\s+/, "");
 }
 
 /** Answer text → nodes, with paragraphs as real <p> BLOCKS.
@@ -202,21 +263,97 @@ export function renderAnswer(text: string, opts?: { streaming?: boolean }): Reac
   let para: string[] = [];
   let n = 0;
   let lastPara = -1;
+  /** The source lines of the paragraph at `lastPara`, kept so the streaming
+   *  edge can be re-rendered with its final word faded — see below. */
+  let lastParaLines: string[] = [];
+
+  /** A run of "- " lines is a LIST, and should be one.
+   *
+   *  These used to fall through as ordinary text, so the reader saw literal
+   *  hyphens down the left of the answer with no indent and no hanging
+   *  alignment — a wrapped item lined up under the dash instead of under its
+   *  own first word, which is most of why a three-item list read as a wall. */
+  const BULLET = /^[-•*]\s+/;
+
+  const flushBullets = (items: string[], key: number) => {
+    lastPara = out.length;
+    out.push(
+      <ul className="demeter__list" key={`ul${key}`}>
+        {items.map((item, i) => (
+          <li key={`ul${key}i${i}`}>{renderInline(item.replace(BULLET, ""), `ul${key}i${i}`)}</li>
+        ))}
+      </ul>,
+    );
+  };
 
   const flush = () => {
     if (para.length === 0) return;
     const lines = para;
     para = [];
     const key = n++;
-    lastPara = out.length;
-    out.push(
-      <p className="demeter__para" key={`p${key}`}>
-        {lines.flatMap((line, i) => [
-          ...(i > 0 ? ["\n"] : []),
-          ...renderInline(line, `p${key}l${i}`),
-        ])}
-      </p>,
-    );
+
+    // A paragraph can open with prose and then list ("You can apply:" followed
+    // by four options), so the two are split rather than the whole block being
+    // treated as one or the other.
+    let run: string[] = [];
+    let prose: string[] = [];
+    /** A line that is NOTHING BUT a link is a place to go, not a sentence.
+     *
+     *  The one that matters is the state portal, handed over the moment a state
+     *  is chosen — the single most consequential link in the product, and it
+     *  rendered as underlined text in the middle of a paragraph, looking like
+     *  any citation. As a filled block in the logo's wheat it reads as the door
+     *  it is. Structural rather than a special message type, so it needs no new
+     *  role in the saved-conversation shape. */
+    const SOLE_LINK = /^\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)$/;
+
+    const flushProse = () => {
+      if (prose.length === 0) return;
+      const solo = prose.length === 1 ? SOLE_LINK.exec(prose[0]!.trim()) : null;
+      if (solo) {
+        prose = [];
+        out.push(
+          <a
+            className="demeter__gocta"
+            key={`cta${key}-${out.length}`}
+            href={solo[2]}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {solo[1]}
+            <span aria-hidden> →</span>
+          </a>,
+        );
+        return;
+      }
+      const p = prose;
+      prose = [];
+      lastPara = out.length;
+      lastParaLines = p;
+      out.push(
+        <p className="demeter__para" key={`p${key}-${out.length}`}>
+          {p.flatMap((line, i) => [
+            ...(i > 0 ? ["\n"] : []),
+            ...renderInline(line, `p${key}l${i}`),
+          ])}
+        </p>,
+      );
+    };
+
+    for (const line of lines) {
+      if (BULLET.test(line)) {
+        flushProse();
+        run.push(line);
+      } else {
+        if (run.length) {
+          flushBullets(run, out.length);
+          run = [];
+        }
+        prose.push(line);
+      }
+    }
+    if (run.length) flushBullets(run, out.length);
+    flushProse();
   };
 
   for (const line of text.split("\n")) {
@@ -235,23 +372,56 @@ export function renderAnswer(text: string, opts?: { streaming?: boolean }): Reac
   }
   flush();
 
-  // The streaming cursor goes INSIDE the last paragraph, where a cursor
-  // belongs — appended after the paragraph it would sit on its own line, which
-  // reads as a stray mark rather than as "still writing".
+  // THE EDGE FADES IN. There used to be a blinking block caret here, which was
+  // the loudest thing on a page of quiet type and sat at the end of every
+  // sentence as it arrived — a cursor is right for a thing you are typing into
+  // and wrong for a thing being read to you.
   //
-  // It exists because there was no signal at all once text started arriving:
-  // an answer that had finished and an answer that had stalled looked
-  // identical, and the only way to tell was to wait and see.
-  if (opts?.streaming && lastPara >= 0) {
-    const p = out[lastPara] as React.ReactElement<{ children?: ReactNode }>;
+  // Instead the newest word arrives dimmed and settles. Reveal is on WORD
+  // boundaries too (see drawStream), so words appear whole rather than letter
+  // by letter; between the two, text arrives the way it is read rather than
+  // the way it is typed. Something still has to say "more is coming" — an
+  // answer that had finished and one that had stalled used to look identical —
+  // and a word that has not finished settling says it without a mark.
+  if (opts?.streaming && lastPara >= 0 && lastParaLines.length > 0) {
+    const lines = lastParaLines.slice();
+    const last = lines[lines.length - 1] ?? "";
+    const cut = last.lastIndexOf(" ");
+    const head = cut > 0 ? last.slice(0, cut) : "";
+    const tail = cut > 0 ? last.slice(cut) : last;
+    lines[lines.length - 1] = head;
     out[lastPara] = (
-      <p className="demeter__para" key={`p-stream`}>
-        {p.props.children}
-        <span className="demeter__caret" aria-hidden />
+      <p className="demeter__para" key="p-stream">
+        {lines.flatMap((line, i) => [
+          ...(i > 0 ? ["\n"] : []),
+          ...renderInline(line, `pstream${i}`),
+        ])}
+        <span className="demeter__streamtail" key="tail">
+          {tail}
+        </span>
       </p>
     );
   }
-  return out;
+
+  // THE TRAILER IS A FOOTNOTE, not more answer. Certainty, the sections we
+  // checked, and where they came from were set in the same face and size as
+  // the answer itself, so every reply ended in four lines of apparatus
+  // competing with the thing the reader came for. It is not less important —
+  // it is what makes the answer checkable — but it is reference, and
+  // reference is read differently from prose.
+  //
+  // Split at the rule the engine already emits, so nothing here has to know
+  // what the trailer contains.
+  const cut = out.findIndex(
+    (n) => (n as React.ReactElement<{ className?: string }>)?.props?.className === "demeter__rule",
+  );
+  if (cut === -1) return out;
+  return [
+    ...out.slice(0, cut),
+    <div className="demeter__footnote" key="footnote">
+      {out.slice(cut + 1)}
+    </div>,
+  ];
 }
 
 // The copy table lives in lib/i18n/demeter-chat-copy.ts, NOT here.
@@ -266,8 +436,8 @@ export { T };
  *  arrives. ~40 characters a second at rest, ~120 catching up. Module scope so
  *  the drain callback closes over a genuine constant, and one place to tune,
  *  because "calm" is a judgement that will be revisited. */
-const STREAM_TICK_MS = 25;
-const STREAM_MAX_STEP = 3;
+const STREAM_TICK_MS = 34;
+const STREAM_MAX_STEP = 2;
 
 export function DemeterChat({
   states,
@@ -316,6 +486,19 @@ export function DemeterChat({
    *  unreasonable thing to do quietly to someone who came to find out how the
    *  system works before telling it anything about themselves. */
   const [worksheetMode, setWorksheetMode] = useState<WorksheetMode>("ask");
+  /** Whether the "just asking, or shall I work out a figure?" offer has been
+   *  answered or waved away. Asked ONCE, after the first answer — see the
+   *  callout above the composer. */
+  const [modeAsked, setModeAsked] = useState(false);
+  /** Emailing the outline to yourself: idle → sending → sent | signin | error.
+   *  Mirrors DemeterSave's shape deliberately — they are the same decision
+   *  ("keep this") reached from two directions, and behaving differently would
+   *  make one of them look broken. */
+  const [emailState, setEmailState] = useState<"idle" | "sending" | "sent" | "signin" | "error">(
+    "idle",
+  );
+  const [emailDetail, setEmailDetail] = useState<string | null>(null);
+  const [pdfState, setPdfState] = useState<"idle" | "working" | "error">("idle");
 
   // A place named in the chat, waiting to be confirmed. An OFFER, never an
   // automatic switch: someone typed "im in boston" and the scope stayed on
@@ -403,7 +586,18 @@ export function DemeterChat({
     const behind = full.length - shownRef.current;
     const step = Math.min(STREAM_MAX_STEP, Math.max(1, Math.ceil(behind / 50)));
     shownRef.current = Math.min(full.length, shownRef.current + step);
-    const text = full.slice(0, shownRef.current);
+    // WORD BOUNDARIES. Revealing mid-word is what made this read as typing:
+    // the eye tries to read a fragment, fails, and waits. Backing up to the
+    // last space costs at most a few characters of latency and means words
+    // arrive whole. Never backs past what is already on screen, so text cannot
+    // appear to un-type itself, and never holds back the final word once the
+    // whole answer has arrived.
+    let cut = shownRef.current;
+    if (cut < full.length) {
+      const space = full.lastIndexOf(" ", cut);
+      if (space > 0) cut = space + 1;
+    }
+    const text = full.slice(0, cut);
     setMessages((m) => {
       const copy = m.slice();
       const last = copy[copy.length - 1];
@@ -421,6 +615,30 @@ export function DemeterChat({
 
   // A stream abandoned mid-flight must not keep painting into a component that
   // has moved on.
+  // SURVIVE A PAGE CHANGE. Reading the header's other tab and coming back used
+  // to destroy the conversation silently — see lib/chat-session.ts on why a
+  // beforeunload warning would not have caught that case. Restores only when
+  // this render started empty, so a saved conversation opened by id and a
+  // ?q= deep link both still win.
+  const restoredRef = useRef(false);
+  useEffect(() => {
+    if (restoredRef.current) return;
+    restoredRef.current = true;
+    if (initialMessages.length > 0) return;
+    const prior = readChatSession();
+    if (!prior) return;
+    setMessages(prior.messages);
+    setState(prior.state);
+    setLang(prior.lang as AnswerLang);
+  }, [initialMessages]);
+
+  // Written on every change rather than on unload, because a client-side
+  // navigation gives no unload to hook.
+  useEffect(() => {
+    if (busy) return; // mid-stream, the last message is a half-typed answer
+    saveChatSession({ messages, state, lang });
+  }, [messages, state, lang, busy]);
+
   useEffect(() => () => clearTimeout(rafRef.current), []);
   /** Back to one row. The composer grows as you type, so clearing the value
    *  without clearing the inline height leaves an empty box the size of the
@@ -489,7 +707,12 @@ export function DemeterChat({
     // survive (household size and income don't change with the scope); only
     // the computed outcome is dropped, and the next turn recomputes it.
     setClassification(null);
-    if (messages.some((m) => m.role !== "divider")) {
+    // The DIVIDER is only meaningful once something has been said — it warns
+    // that earlier answers may not apply. The PORTAL message is not: picking a
+    // state before asking anything is the commonest way in, and that is exactly
+    // when someone most wants to know where the application goes. So the two
+    // are emitted on different conditions.
+    {
       // The STATE's name. This used the pack's `program` field, which for
       // Massachusetts is the annotated corpus string — so the divider read
       // "Now answering for Supplemental Nutrition Assistance Program (SNAP) —
@@ -498,9 +721,40 @@ export function DemeterChat({
       // 2008) — earlier answers may not apply." Nobody needs the program's
       // etymology to be told the scope changed. They need "Massachusetts".
       const name = next ? stateName(next) : null;
+      const pack = next ? states.find((x) => x.code === next) ?? null : null;
+
+      // WHERE THE APPLICATION ACTUALLY GOES. This is the one moment we know
+      // exactly which portal that is, so it should not be something the reader
+      // has to ask for — and the answer they would otherwise get is a general
+      // one about "your state's agency".
+      //
+      // With the invitation to stay attached, deliberately. Handing someone a
+      // link to a government form and going quiet is the point at which most
+      // people stop; the useful thing this can do is let them find out what
+      // they will be asked before they are sitting in front of it.
+      const portal =
+        pack?.portal && name
+          ? [
+              t.portalLead.replace("{state}", name).replace("{agency}", pack.agency),
+              t.portalCta
+                .replace("{portal}", pack.portal.name)
+                .replace(/^(.*)$/, `[$1](${pack.portal.url})`),
+              t.portalStay,
+            ].join("\n\n")
+          : null;
+
+      const hasSaidSomething = messages.some((m) => m.role !== "divider");
       setMessages((m) => [
         ...m,
-        { role: "divider", content: name ? t.dividerTo(name) : t.dividerFederal },
+        ...(hasSaidSomething
+          ? [
+              {
+                role: "divider" as const,
+                content: name ? t.dividerTo(name) : t.dividerFederal,
+              },
+            ]
+          : []),
+        ...(portal ? [{ role: "assistant" as const, content: portal }] : []),
       ]);
     }
   };
@@ -530,8 +784,98 @@ export function DemeterChat({
     } catch {
       /* storage disabled — nothing was stored either */
     }
+    // And the per-tab copy, or "start a new conversation" would hand the next
+    // page load the old one straight back.
+    clearChatSession();
     setAnnouncement(t.cleared);
   }, [t, resetInputHeight]);
+
+  /** Send the outlined application to the address on the account.
+   *
+   *  NEVER takes an address: the route reads it from the session, so there is
+   *  no field to mistype and no way to mail one person's household and income
+   *  to another. That also means a signed-out reader gets the sign-in panel
+   *  rather than a form, which is the honest order — you cannot be sent
+   *  something until we know where.
+   */
+  const emailOutline = useCallback(async () => {
+    setEmailState("sending");
+    setEmailDetail(null);
+    try {
+      const pack = state ? states.find((x) => x.code === state) ?? null : null;
+      const res = await fetch("/api/demeter/email-outline", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          facts: factsRef.current,
+          stillNeeded: classification?.completeness?.stillNeeded ?? [],
+          stateName: state ? stateName(state) : null,
+          agency: pack?.agency ?? null,
+          portalName: pack?.portal?.name ?? null,
+          portalUrl: pack?.portal?.url ?? null,
+        }),
+      });
+      if (res.status === 401) return setEmailState("signin");
+      if (!res.ok) {
+        const b = (await res.json().catch(() => ({}))) as { error?: string; reason?: string };
+        setEmailDetail(b.reason ?? b.error ?? `http_${res.status}`);
+        return setEmailState("error");
+      }
+      setEmailState("sent");
+      setAnnouncement(t.emailSent);
+    } catch {
+      setEmailDetail("network");
+      setEmailState("error");
+    }
+  }, [state, states, classification, t]);
+
+  /** Download the outline as a PDF.
+   *
+   *  No account needed, unlike the emailed copy. The document is built from
+   *  the facts already on this screen and nothing is read from or written to
+   *  the database — so locking the one artefact someone can walk away with
+   *  behind a sign-in would be exactly the wrong thing to gate for a person
+   *  who came here worried about being tracked.
+   */
+  const downloadOutline = useCallback(async () => {
+    setPdfState("working");
+    try {
+      const pack = state ? states.find((x) => x.code === state) ?? null : null;
+      const res = await fetch("/api/demeter/outline-pdf", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          facts: factsRef.current,
+          stillNeeded: classification?.completeness?.stillNeeded ?? [],
+          stateName: state ? stateName(state) : null,
+          agency: pack?.agency ?? null,
+          portalName: pack?.portal?.name ?? null,
+          portalUrl: pack?.portal?.url ?? null,
+        }),
+      });
+      if (!res.ok) return setPdfState("error");
+      // Read the filename the route chose rather than inventing one here —
+      // it carries the state and date, and two copies of that logic would
+      // drift.
+      const disposition = res.headers.get("Content-Disposition") ?? "";
+      const named = /filename="([^"]+)"/.exec(disposition)?.[1];
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = named ?? "outlined-application.pdf";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      // Revoking immediately can cancel the download in some browsers; a beat
+      // later is safe and the object is gone with the tab regardless.
+      window.setTimeout(() => URL.revokeObjectURL(url), 30_000);
+      setPdfState("idle");
+      setAnnouncement(t.pdfDownloaded);
+    } catch {
+      setPdfState("error");
+    }
+  }, [state, states, classification, t]);
 
   const restoreConversation = useCallback(
     (restored: Msg[], restoredState: string | null, restoredLang: AnswerLang) => {
@@ -587,6 +931,16 @@ export function DemeterChat({
     const mentioned = detectState(question);
     setStateOffer(mentioned && mentioned.code !== state ? mentioned : null);
 
+    // A place we do NOT cover has to be said out loud. "Washington DC" used to
+    // match the word "washington" and quietly answer for Washington State — a
+    // different agency, a different portal, different figures, and nothing on
+    // screen admitting it. Saying "not yet, here is what still applies" is a
+    // worse answer and a far better outcome than a confident wrong one.
+    const uncovered = detectUncoveredPlace(question);
+    const alreadySaid =
+      uncovered !== null &&
+      messages.some((m) => m.role === "divider" && m.content.includes(uncovered));
+
     // Fresh buffer per answer, or the next one types out on top of the last.
     clearTimeout(rafRef.current);
     rafRef.current = 0;
@@ -597,6 +951,9 @@ export function DemeterChat({
     setMessages((m) => [
       ...m,
       { role: "user", content: question },
+      ...(uncovered && !alreadySaid
+        ? [{ role: "divider" as const, content: t.dividerUncovered(uncovered) }]
+        : []),
       { role: "assistant", content: "" },
     ]);
 
@@ -686,6 +1043,12 @@ export function DemeterChat({
         // was told to wait a minute for something that resets tomorrow, and
         // would sit there retrying. The route's own comment calls the two
         // "distinct ON PURPOSE"; this is where that distinction was being lost.
+        //
+        // WHOSE FAULT IT IS. Everything unmapped used to fall through to
+        // "Something went wrong. Please try again." — which was also the copy
+        // for a genuine connection failure, so a 500 on our side and a dropped
+        // wifi connection were indistinguishable. They call for different
+        // actions, and neither reader could tell which they had.
         const message =
           reason === "at_capacity"
             ? t.errCapacity
@@ -695,13 +1058,18 @@ export function DemeterChat({
                 ? t.err429
                 : res.status === 503
                   ? t.errConfig
-                  : t.errNetwork;
-        setError(message);
+                  : res.status >= 500
+                    ? t.errServer
+                    : t.errRequest;
+        // The code, so a report is actionable. Same reasoning as the save
+        // failure: "it says something went wrong" cannot be acted on by
+        // anybody, and the reader is the only one who can see it.
+        setError(`${message} (${reason || `http_${res.status}`})`);
         // Hand the question back only where trying again can actually work.
         // A per-minute limit clears; a daily cap, a spent monthly budget and an
         // unconfigured service do not, and offering a retry there loops someone
         // instead of sending them to the 211 number the message gives them.
-        const retryable = message === t.err429 || message === t.errNetwork;
+        const retryable = message === t.err429 || message === t.errServer;
         if (retryable) handBackForRetry();
         return;
       }
@@ -811,7 +1179,18 @@ export function DemeterChat({
     // send would silently hold a stale copy with no warning.
   }, [input, busy, messages, state, lang, t, refreshWorksheet, resetInputHeight, worksheetMode, drawStream]);
 
+  /** The agency the disclaimer points at. Their own state's, once one is set —
+   *  a generic "your state agency" is exactly the sort of advice that sounds
+   *  complete and leaves someone with nowhere to go. */
+  const agencyHref = (() => {
+    const pack = state ? states.find((x) => x.code === state) ?? null : null;
+    return pack?.portal?.url ?? "/verify";
+  })();
+
   const hasChat = messages.length > 0;
+  /** At least one answer has finished. The mode offer waits for this: before an
+   *  answer exists there is nothing to have an opinion about. */
+  const answeredOnce = messages.some((m) => m.role === "assistant" && m.content !== "");
 
   // What the composer asks for. If Demeter's last answer ended in a question,
   // that question — otherwise the standing invitation. Never while an answer is
@@ -819,8 +1198,14 @@ export function DemeterChat({
   const lastAssistant = busy
     ? null
     : [...messages].reverse().find((m) => m.role === "assistant" && m.content)?.content ?? null;
+  // The standing invitation, worded for the mode you are actually in. The two
+  // modes do different things with what you type — one gathers it into a
+  // document, one deliberately does not — and the box you type into was the
+  // one place that never said which was happening.
+  const standingPrompt =
+    worksheetMode === "estimate" ? t.inputPlaceholderEstimate : t.inputPlaceholder;
   const composerPrompt =
-    (lastAssistant ? pendingQuestion(lastAssistant) : null) ?? t.inputPlaceholder;
+    (lastAssistant ? pendingQuestion(lastAssistant) : null) ?? standingPrompt;
 
   return (
     <div className="demeter">
@@ -870,64 +1255,6 @@ export function DemeterChat({
               row above it. Out here they started 68px above the rail and left
               "How we verify" floating alone in the right column, belonging to
               neither. In here both columns begin on the same line. */}
-        <div className="demeter__scope">
-          <DemeterStatePicker
-            states={states}
-            value={state}
-            onChange={changeState}
-            copy={t.picker}
-            hint={geoHint}
-            openSignal={openPicker}
-          />
-          <a className="demeter__how" href="/verify">
-            {t.howWeVerify}
-          </a>
-          {/* Sits with the scope controls rather than under the composer: it acts
-              on the WHOLE conversation, like the state and language pickers, not
-              on the next thing typed. Renders nothing until an answer exists. */}
-          <DemeterSave
-            messages={messages}
-            state={state}
-            lang={lang}
-            busy={busy}
-            pendingSave={pendingSave}
-            initialSavedId={savedConversationId}
-            onRestore={restoreConversation}
-            // Plain setter, not an inline arrow: it lands in an effect's
-            // dependency list in DemeterSave, and React guarantees a state
-            // setter's identity is stable across renders.
-            onSavedChange={setConversationSaved}
-            copy={t.save}
-          />
-          {/* CLEAR, for shared and public machines. On a library terminal the
-              next person otherwise sees the previous person's questions about
-              their income, their household, their felony record.
-              Renders only once there is something to clear. */}
-          {hasChat &&
-            (confirmClear ? (
-              <span className="demeter__clearconfirm" role="group" aria-label={t.clear}>
-                <span className="demeter__clearnote">{t.clearNote}</span>
-                <button type="button" className="demeter__clearyes" onClick={clearConversation}>
-                  {t.clear}
-                </button>
-                <button
-                  type="button"
-                  className="demeter__clearno"
-                  onClick={() => setConfirmClear(false)}
-                >
-                  {t.save.panelDismiss}
-                </button>
-              </span>
-            ) : (
-              <button
-                type="button"
-                className="demeter__clear"
-                onClick={() => setConfirmClear(true)}
-              >
-                {t.clear}
-              </button>
-            ))}
-        </div>
       <div className="demeter__scroll" ref={scrollRef}>
         {!hasChat && (
           // A composed block, centred in the space rather than three buttons
@@ -938,18 +1265,18 @@ export function DemeterChat({
             <DemeterMark size={52} />
             <h2 className="demeter__emptytitle">{t.emptyTitle}</h2>
             <p className="demeter__emptylede">{t.emptyLede}</p>
-            <div className="demeter__suggests">
-              {[t.empty1, t.empty2, t.empty3].map((q) => (
-                <button
-                  key={q}
-                  type="button"
-                  className="demeter__suggest"
-                  onClick={() => setInput(q)}
-                >
-                  {q}
-                </button>
-              ))}
-            </div>
+            {/* NO STARTER QUESTIONS. There were three — "Do I earn too much to
+                qualify?", "I need food this week", "Will I have to do an
+                interview?" — and none of them is what someone actually opens
+                with. Two carry a discouraging premise before a word has been
+                exchanged: that they probably earn too much, or that an
+                interview is looming. Putting those in front of a person who
+                has not yet decided whether they are allowed to ask is a way to
+                lose them at the door.
+
+                An empty composer asks nothing of anyone. The model's own
+                opening question does the guiding, where it can respond to what
+                the person actually says. */}
           </div>
         )}
         {messages.map((m, i) =>
@@ -977,15 +1304,17 @@ export function DemeterChat({
                   )
                 ) : m.role === "assistant" && busy && i === messages.length - 1 ? (
                   <span className="demeter__thinking">
-                    {t.thinking}
-                    {/* Three dots, so the wait has a heartbeat. The pulsing
-                        text alone reads as a static label someone forgot to
-                        remove when nothing arrives for a few seconds. */}
-                    <span className="demeter__dots" aria-hidden>
-                      <i />
-                      <i />
-                      <i />
-                    </span>
+                    {/* THIRD ATTEMPT. Three dots read as a stall; a rule that
+                        filled and receded read as a progress bar lying about
+                        progress — both were separate objects next to the words,
+                        competing for the eye while nothing happened.
+
+                        Nothing is added here now. The words themselves carry a
+                        slow light across them, left to right, the way something
+                        working looks rather than the way something loading
+                        looks. One element, no jumping, and under
+                        prefers-reduced-motion it is simply the text. */}
+                    <span className="demeter__thinkingtext">{t.thinking}</span>
                   </span>
                 ) : (
                   m.content
@@ -1072,6 +1401,54 @@ export function DemeterChat({
         {announcement}
       </div>
 
+      {/* WHICH OF THE TWO THINGS THIS IS, asked once, after the first answer.
+          The toggle for it lives in the right-hand panel, which nobody looks at
+          while reading their first reply — so the product's two modes were a
+          control most people never knowingly chose between, and everyone stayed
+          in "just asking" by default even when they wanted a number.
+
+          After the FIRST answer, deliberately: before one, there is nothing to
+          have an opinion about; much later, the conversation has already taken
+          a shape. Choosing "work out a figure" opens the state picker straight
+          away, because an estimate without a state is a federal-floor guess and
+          the picker is the next thing needed either way. */}
+      {answeredOnce && !busy && !modeAsked && worksheetMode === "ask" && (
+        <div
+          className="demeter__modeoffer"
+          role="group"
+          aria-label={t.modeOffer}
+        >
+          <span className="demeter__modeoffer-text">{t.modeOffer}</span>
+          <span className="demeter__modeoffer-actions">
+            {/* ORDER MIRRORS THE PANEL. The toggle in the right-hand column
+                reads "Just asking | Build my estimate"; this read the other way
+                round, so the same choice appeared twice on one screen with its
+                sides swapped. */}
+            <button
+              type="button"
+              className="demeter__modeoffer-no"
+              onClick={() => setModeAsked(true)}
+            >
+              {t.modeOfferAsk}
+            </button>
+            <button
+              type="button"
+              className="demeter__modeoffer-yes"
+              onClick={() => {
+                setWorksheetMode("estimate");
+                setModeAsked(true);
+                setAnnouncement(t.modeOfferEstimate);
+                // An estimate is scoped to a state or it is a federal-floor
+                // guess wearing a figure's confidence.
+                if (state === null) setOpenPicker((n) => n + 1);
+              }}
+            >
+              {t.modeOfferEstimate}
+            </button>
+          </span>
+        </div>
+      )}
+
       {/* THE OFFER. Sits above the composer, where the next thing you would do
           is, and disappears either way once answered. It does not switch the
           scope by itself — see detect-state.ts: a silent re-scope on a guess
@@ -1103,6 +1480,16 @@ export function DemeterChat({
             </button>
           </span>
         </div>
+      )}
+
+      {/* THE QUESTION YOU ARE ANSWERING, kept visible while you answer it.
+          It was already the composer's placeholder — which disappears the
+          instant you start typing, i.e. exactly when you need it. Someone
+          halfway through a long reply had nothing on screen telling them what
+          was asked. Shown only while there is something in the box, so an empty
+          composer is not carrying a second copy of its own placeholder. */}
+      {input.trim().length > 0 && composerPrompt !== standingPrompt && (
+        <p className="demeter__answering">{composerPrompt}</p>
       )}
 
       <form
@@ -1172,8 +1559,39 @@ export function DemeterChat({
           redactPii strips structured identifiers but deliberately NOT names, so
           this asks rather than promises. */}
       <p className="demeter__piihint">{t.piiHint}</p>
-      <p className="demeter__disclaimer">{t.disclaimer}</p>
+      {/* "Demeter is AI" leads, because someone who knows that reads
+          everything above it differently. And the agency is a real link:
+          telling somebody to check with an office without saying which office
+          is the same as not telling them. It points at their own state's
+          agency once one is set, and at the directory otherwise. */}
+      <p className="demeter__disclaimer">
+        {t.disclaimer}{" "}
+        <a
+          className="demeter__link"
+          href={agencyHref}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {t.disclaimerAgency}
+        </a>
+        .
+      </p>
         </div>
+        {/* THE RIGHT COLUMN IS THE STANDING CONTEXT: which state this is scoped
+            to, and what is known so far. The picker moved here from the
+            conversation column because it is not a control you press once — it
+            is the fact every figure in every answer depends on, and it should
+            stay in view while you scroll rather than sit at the top of a
+            transcript you have read past. */}
+        <div className="demeter__side">
+          <DemeterStatePicker
+            states={states}
+            value={state}
+            onChange={changeState}
+            copy={t.picker}
+            hint={geoHint}
+            openSignal={openPicker}
+          />
         <DemeterWorksheet
           classification={classification}
           stateSelected={state !== null}
@@ -1196,6 +1614,117 @@ export function DemeterChat({
             }
           }}
         />
+        {/* WHAT YOU DO WITH THE CONVERSATION, under what it knows about it.
+            These used to sit above the transcript with the scope controls. A
+            reader lost an entire conversation by navigating away, having never
+            passed anything that offered to keep it — the offer was up at the
+            top, before there was anything to save, and scrolled off before
+            there was. Down here it stays beside the thing it acts on. */}
+        <div className="demeter__sidetools">
+          {/* Two small buttons on one line: keeping this, and starting over.
+              Both act on the WHOLE conversation, which is why they belong to
+              the panel that tracks it rather than under the composer, which
+              acts on the next thing typed. */}
+          <div className="demeter__sidebtns">
+          <DemeterSave
+            messages={messages}
+            state={state}
+            lang={lang}
+            busy={busy}
+            pendingSave={pendingSave}
+            initialSavedId={savedConversationId}
+            onRestore={restoreConversation}
+            // Plain setter, not an inline arrow: it lands in an effect's
+            // dependency list in DemeterSave, and React guarantees a state
+            // setter's identity is stable across renders.
+            onSavedChange={setConversationSaved}
+            copy={t.save}
+          />
+          {/* CLEAR, for shared and public machines. On a library terminal the
+              next person otherwise sees the previous person's questions about
+              their income, their household, their felony record.
+              Renders only once there is something to clear. */}
+          {hasChat &&
+            (confirmClear ? (
+              <span className="demeter__clearconfirm" role="group" aria-label={t.clear}>
+                <span className="demeter__clearnote">{t.clearNote}</span>
+                <button type="button" className="demeter__clearyes" onClick={clearConversation}>
+                  {t.clear}
+                </button>
+                <button
+                  type="button"
+                  className="demeter__clearno"
+                  onClick={() => setConfirmClear(false)}
+                >
+                  {t.save.panelDismiss}
+                </button>
+              </span>
+            ) : (
+              <button
+                type="button"
+                className="demeter__clear"
+                onClick={() => setConfirmClear(true)}
+              >
+                {t.clear}
+              </button>
+            ))}
+          </div>
+          {/* TAKE IT WITH YOU. The outline existed only on the screen it was
+              built on — close the tab and the one thing someone most wants to
+              keep was the one thing they could not carry away. Shown only once
+              there is something in it: mailing an empty template reads as the
+              product failing rather than as there being nothing yet. */}
+          {worksheetMode === "estimate" && (factsRef.current.household?.length ?? 0) > 0 && (
+            <div className="demeter__emailrow">
+              <button
+                type="button"
+                className="demeter__emailbtn"
+                onClick={() => void emailOutline()}
+                disabled={emailState === "sending" || emailState === "sent"}
+              >
+                {emailState === "sending"
+                  ? t.emailSending
+                  : emailState === "sent"
+                    ? t.emailSent
+                    : t.emailOutline}
+              </button>
+              {emailState === "signin" && (
+                <a className="demeter__emailsignin" href="/sign-in?next=/chat">
+                  {t.emailSignIn}
+                </a>
+              )}
+              {emailState === "error" && (
+                <span className="demeter__save-error" role="alert">
+                  {t.emailError}
+                  {emailDetail && <span className="demeter__save-code"> ({emailDetail})</span>}
+                </span>
+              )}
+              {/* The copy that needs no account. Quieter than the emailed one
+                  only because it is the second line, not because it matters
+                  less — for someone who does not want to hand over an address,
+                  this is the whole deliverable. */}
+              <button
+                type="button"
+                className="demeter__pdfbtn"
+                onClick={() => void downloadOutline()}
+                disabled={pdfState === "working"}
+              >
+                {pdfState === "working" ? t.pdfWorking : t.pdfDownload}
+              </button>
+              {pdfState === "error" && (
+                <span className="demeter__save-error" role="alert">
+                  {t.pdfError}
+                </span>
+              )}
+            </div>
+          )}
+          {/* Underneath both, quieter than either: this is the standing promise
+              about how answers are checked, not something you do right now. */}
+          <a className="demeter__how" href="/verify">
+            {t.howWeVerify}
+          </a>
+        </div>
+        </div>
       </div>
     </div>
   );

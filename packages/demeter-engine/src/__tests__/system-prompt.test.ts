@@ -162,4 +162,29 @@ describe("public system prompt — persona-specific", () => {
     expect(p).toMatch(/no access to (anyone's )?(actual )?case/);
     expect(p).toMatch(/state's online portal|snap agency phone line/);
   });
+
+  // From a real transcript: someone said they live with a partner who is a
+  // student with no income, and got an answer that treated it as a household
+  // of two throughout. Household size sets every threshold downstream and the
+  // reader never sees the assumption, so both halves of this have to be said.
+  it("does not let living together become being one household", () => {
+    const p = PUBLIC_SYSTEM_PROMPT.toLowerCase();
+    expect(p).toMatch(/purchase food and prepare meals together|buy and cook food together/);
+    expect(p).toContain("273.1");
+    // The counter-intuitive half: an ineligible student makes the household
+    // SMALLER, which lowers the limit rather than raising it.
+    expect(p).toContain("273.5");
+    expect(p).toMatch(/smaller/);
+  });
+
+  it("corrects take-home pay to gross, unprompted", () => {
+    const p = PUBLIC_SYSTEM_PROMPT.toLowerCase();
+    expect(p).toMatch(/tested on gross income|test is gross/);
+    expect(p).toMatch(/before tax/);
+  });
+
+  it("reads back a figure that cannot be right rather than computing on it", () => {
+    const p = PUBLIC_SYSTEM_PROMPT.toLowerCase();
+    expect(p).toMatch(/cannot be right|slip, not a new fact/);
+  });
 });

@@ -266,19 +266,34 @@ describe("when saving cannot succeed", () => {
     );
   });
 
-  it("says so plainly on a server error, and leaves the button usable", async () => {
+  // A reader reported "it says that didn't save" and there was no way to act on
+  // that: a rejected payload, a database failure and a dropped connection all
+  // produced the same sentence, and "please try again" is the right advice for
+  // exactly one of them. The reason now travels with the message.
+  it("names the server's reason on a server error, and leaves the button usable", async () => {
     fetchMock.mockResolvedValue(jsonResponse(500, { error: "save_failed" }));
     renderSave();
     fireEvent.click(screen.getByRole("button", { name: COPY.save }));
 
-    expect(await screen.findByRole("alert")).toHaveProperty("textContent", COPY.error);
+    const alert = await screen.findByRole("alert");
+    expect(alert.textContent).toContain(COPY.error);
+    expect(alert.textContent).toContain("save_failed");
     expect(screen.getByRole("button", { name: COPY.save })).toHaveProperty("disabled", false);
   });
 
-  it("survives the network being gone", async () => {
+  it("falls back to the status code when the body carries no reason", async () => {
+    fetchMock.mockResolvedValue(jsonResponse(502, {}));
+    renderSave();
+    fireEvent.click(screen.getByRole("button", { name: COPY.save }));
+    expect((await screen.findByRole("alert")).textContent).toContain("http_502");
+  });
+
+  it("survives the network being gone, and says that is what happened", async () => {
     fetchMock.mockRejectedValue(new Error("offline"));
     renderSave();
     fireEvent.click(screen.getByRole("button", { name: COPY.save }));
-    expect(await screen.findByRole("alert")).toHaveProperty("textContent", COPY.error);
+    const alert = await screen.findByRole("alert");
+    expect(alert.textContent).toContain(COPY.error);
+    expect(alert.textContent).toContain("network");
   });
 });

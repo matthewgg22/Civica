@@ -130,9 +130,20 @@ describe("answerQuestion verifier ladder", () => {
     expect(outcomes).toEqual(["degraded"]);
     expect(audits[0]!.verifierOutcome).toBe("degraded");
 
-    // Says what it could not do, and hands over.
-    expect(text).toMatch(/could not check this one/i);
-    expect(text).toMatch(/state SNAP agency/i);
+    // Says what it could not do, hands over to someone who can, AND offers to
+    // keep working. Matched as behaviour rather than as a sentence: the copy
+    // was rewritten because the old version put the burden back on the reader
+    // ("ask me something narrower") and the version after that told them it
+    // did not want to repeat itself while repeating itself. What has to stay
+    // true is the shape — no number, a real place to go, and a way to continue
+    // here.
+    expect(text).toMatch(/can'?t|cannot|not going to guess/i);
+    expect(text).toMatch(/state agency|SNAP agency|caseworker/i);
+    // It must not end the conversation. A refusal that offers nothing next is
+    // where people leave.
+    expect(text).toMatch(/application|documents|interview/i);
+    // And it must not blame the reader or make them manage our failure.
+    expect(text).not.toMatch(/ask me something narrower|preguntarme algo más específico/i);
 
     // NO raw regulation, and NO invented figure — a static fallback cannot know
     // the household size or the state, so any number here would be exactly the

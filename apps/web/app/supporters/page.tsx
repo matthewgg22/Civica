@@ -7,6 +7,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { supabaseAdmin } from "../../lib/supabase-server";
 import { SupporterSignOn } from "../../components/SupporterSignOn";
+import { DemeterFooter } from "../../components/DemeterFooter";
 
 export const revalidate = 300;
 
@@ -42,7 +43,8 @@ async function approvedSupporters(): Promise<SupporterRow[]> {
 export default async function SupportersPage() {
   const supporters = await approvedSupporters();
   return (
-    <main className="spage">
+    <>
+      <main className="spage">
       <header className="spage__head">
         <h1 className="spage__title">Demeter Supporters</h1>
         <p className="spage__definition">
@@ -97,5 +99,7 @@ export default async function SupportersPage() {
         </p>
       </footer>
     </main>
+      <DemeterFooter />
+    </>
   );
 }

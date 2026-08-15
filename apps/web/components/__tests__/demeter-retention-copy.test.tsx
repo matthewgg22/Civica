@@ -64,16 +64,30 @@ describe("retention copy — the estimate rail must not understate what is kept"
   it("every locale says a record is kept, in both variants", () => {
     // Language-specific because there is no locale-agnostic way to assert a
     // meaning. Each fragment is the "we keep it" clause of its own sentence.
-    const KEEPS: Record<(typeof LOCALES)[number], string> = {
-      en: "We keep the question and answer",
-      es: "Guardamos la pregunta y la respuesta",
-      vi: "Chúng tôi lưu câu hỏi và câu trả lời",
-      zh: "我们会保留问题和回答",
+    // The clause was shortened — the panel was two paragraphs of chrome under
+    // an estimate — from "we keep the question and answer" to "we keep the
+    // text". That is the same admission, and if anything a broader one, so
+    // what is pinned is the ADMISSION, not the wording: it must still say we
+    // keep something, and say why. Loosening this is only safe in that
+    // direction; a version that says we keep NOTHING has to keep failing.
+    const KEEPS: Record<(typeof LOCALES)[number], RegExp> = {
+      en: /We keep the (question and answer|text)/,
+      es: /Guardamos (la pregunta y la respuesta|el texto)/,
+      vi: /Chúng tôi (lưu|giữ) (câu hỏi và câu trả lời|nội dung)/,
+      zh: /(我们会保留问题和回答|我们保留文字)/,
+    };
+    const WHY: Record<(typeof LOCALES)[number], RegExp> = {
+      en: /check our accuracy/,
+      es: /verificar nuestra exactitud/,
+      vi: /kiểm tra độ chính xác/,
+      zh: /核查准确性/,
     };
     for (const locale of LOCALES) {
       const copy = T[locale].worksheet;
-      expect(copy.privacy, `${locale} unsaved`).toContain(KEEPS[locale]);
-      expect(copy.privacySaved, `${locale} saved`).toContain(KEEPS[locale]);
+      expect(copy.privacy, `${locale} unsaved`).toMatch(KEEPS[locale]);
+      expect(copy.privacySaved, `${locale} saved`).toMatch(KEEPS[locale]);
+      expect(copy.privacy, `${locale} unsaved why`).toMatch(WHY[locale]);
+      expect(copy.privacySaved, `${locale} saved why`).toMatch(WHY[locale]);
     }
   });
 
@@ -82,15 +96,17 @@ describe("retention copy — the estimate rail must not understate what is kept"
     // names are deliberately NOT detected ("a privacy control, not a
     // guarantee; pair it with the 'don't paste PII' prompt"). This copy is
     // that pairing, so the ask has to survive translation edits.
-    const ASKS: Record<(typeof LOCALES)[number], string> = {
-      en: "avoid typing names",
-      es: "evita escribir nombres",
-      vi: "đừng nhập tên",
-      zh: "请勿输入姓名",
+    // Shortened to "avoid names" / "evita nombres" — the ask survives, the
+    // verb went. Matched as a pattern so the ask is what is pinned.
+    const ASKS: Record<(typeof LOCALES)[number], RegExp> = {
+      en: /avoid (typing )?names/,
+      es: /evita (escribir )?nombres/,
+      vi: /đừng nhập tên/,
+      zh: /请勿输入姓名/,
     };
     for (const locale of LOCALES) {
-      expect(T[locale].worksheet.privacy, locale).toContain(ASKS[locale]);
-      expect(T[locale].worksheet.privacySaved, locale).toContain(ASKS[locale]);
+      expect(T[locale].worksheet.privacy, locale).toMatch(ASKS[locale]);
+      expect(T[locale].worksheet.privacySaved, locale).toMatch(ASKS[locale]);
     }
   });
 

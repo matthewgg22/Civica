@@ -4822,7 +4822,9 @@ html {
 }
 .demeter__send:disabled { opacity: 0.5; }
 .demeter__send--stop { background: var(--demeter-terracotta-deep); }
-.demeter__disclaimer { font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif; font-size: 0.72rem; color: var(--demeter-muted); text-align: center; padding: 0.5rem 1rem 0; }
+/* Tight to the line above it: the two belong together as one footnote, and a
+   half-rem gap made them read as two separate warnings. */
+.demeter__disclaimer { font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif; font-size: 0.72rem; color: var(--demeter-muted); text-align: center; padding: 0.15rem 1rem 0; }
 @media (min-width: 720px) {
   .demeter { padding: 1.25rem; }
   .demeter__msg { max-width: 75%; }
@@ -4972,6 +4974,101 @@ html {
 }
 .vstat__note { color: var(--demeter-muted); }
 
+/* ── /verify, the pass ──────────────────────────────────────────────────────
+   Many of this page's conventions had drifted from the rest of the surface:
+   headings at page-title weight inside cards, labels in the serif that is
+   reserved for prose, and a grid whose cards each ended wherever their own
+   content did. */
+
+/* #21 — the page breathes. Sections ran into each other at a uniform 1rem, so
+   nothing signalled where one idea ended. */
+.vpage { padding-top: 2.5rem; }
+.vpage__head { margin-bottom: 2.75rem; }
+.vpage__lede { margin-bottom: 1.1rem; }
+/* The opening paragraph carries the page's reason for existing and is set to
+   be read first — larger, darker, and given room under it. */
+.vpage__lede--lead {
+  font-size: 1.16rem; line-height: 1.55; color: var(--demeter-ink);
+  margin-bottom: 1.4rem;
+}
+.vstat { margin-top: 2rem; }
+
+/* #25 — THE UMBRELLA. Full width above the grid, in paper rather than card
+   white, so it reads as the ground the cards sit on rather than as a
+   fifty-fourth card. */
+.vusda {
+  margin: 2.25rem 0 1.25rem; padding: 1.15rem 1.35rem;
+  background: var(--demeter-paper); border: 1px solid var(--demeter-rule);
+  border-radius: 16px;
+}
+.vusda__eyebrow {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.66rem; font-weight: 600; letter-spacing: 0.09em; text-transform: uppercase;
+  color: var(--demeter-muted); margin: 0 0 0.45rem;
+}
+.vusda__body {
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+  font-size: 1rem; line-height: 1.6; color: var(--demeter-body); margin: 0; max-width: 68ch;
+}
+.vusda__link { color: var(--demeter-terracotta-deep); }
+
+/* #26 — EQUAL HEIGHTS. `align-items: start` let every card end wherever its
+   own content did, so a row read as a ragged edge rather than as a set of
+   comparable things. Stretch, and the actions block pins to the bottom. */
+.vpage__grid { align-items: stretch; gap: 1.15rem; margin: 1.25rem 0 2.25rem; }
+.vcard { height: 100%; }
+
+/* #22b — the state's name, spelled out, with a bigger flag beside it. */
+.vcard__head { align-items: flex-start; gap: 0.7rem; }
+.vcard__state { display: flex; align-items: center; gap: 0.65rem; }
+.vcard__statename {
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+  font-size: 1.15rem; font-weight: 600; letter-spacing: -0.01em; color: var(--demeter-ink);
+  line-height: 1.2;
+}
+.vcard__statecode { color: var(--demeter-muted); font-weight: 400; }
+/* The flag component prints the code too; with the name beside it that is the
+   same fact twice. */
+.vcard__state .dmflag__code { display: none; }
+
+/* #24 — the badge is FILLED. An outline in terracotta read as one more label
+   among the card's other labels; this is the page's only claim of status and
+   should look like a stamp. */
+.vcard__badge {
+  display: inline-flex; align-items: center; gap: 0.25rem;
+  color: var(--demeter-paper); background: var(--demeter-terracotta-deep);
+  border: 0; flex: none;
+}
+
+/* #22a — two doors, side by side, sitting on the bottom edge of every card. */
+.vcard__actions {
+  margin-top: auto; padding-top: 0.9rem;
+  display: flex; flex-wrap: wrap; gap: 0.5rem;
+}
+.vcard__cta { margin-top: 0; }
+/* Ask is the wheat one — it is the product. The agency is terracotta and
+   outlined: a real destination, but not the thing this page is for. */
+.vcard__cta {
+  background: var(--demeter-wheat); color: var(--demeter-ink); font-weight: 700;
+}
+.vcard__cta:hover { background: var(--demeter-wheat); filter: brightness(0.94); }
+.vcard__cta--agency {
+  background: transparent; color: var(--demeter-terracotta-deep);
+  border: 1px solid var(--demeter-terracotta); font-weight: 600;
+}
+.vcard__cta--agency:hover {
+  background: var(--demeter-paper); filter: none; color: var(--demeter-terracotta-deep);
+}
+
+/* #27 — the tail is prose now, and the graphite footer closes the page. */
+.vpage__foot {
+  border-top: 1px solid var(--demeter-rule);
+  padding-top: 1.5rem; margin-top: 2.5rem;
+  font-size: 0.95rem;
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+}
+.vpage__foot p + p { margin-top: 0.9rem; }
+
 /* ── Demeter identity tokens (Demeter AI Design Spec, Turn 3 — "sibling not
    twin") ──────────────────────────────────────────────────────────────
    Scoped to .screening* — NOT the shared --civica-* tokens, which the older
@@ -5002,7 +5099,14 @@ html {
 :root {
   --demeter-terracotta: #C0553B;      /* unchanged — CTAs, links, marks */
   --demeter-terracotta-deep: #8E3A26; /* unchanged — wordmark "AI", hover, error, small text */
-  --demeter-wheat: #EFB544; /* logo mark + a 2px rule under a source link — nowhere else, never a fill or text */
+  /* MEASURED OFF THE MARK, not chosen next to it. This was #EFB544, a guess
+     that sat visibly more orange than the logo it was named for — obvious the
+     moment the nav tab was filled with it and put beside the wheat mark.
+     Sampling public/demeter-wheat-mark.png: 166,977 of its opaque pixels are
+     #E8C547, so that is the brand gold. Ink on it measures ~10:1.
+     Uses: the mark, the nav's primary tab, a 2px rule under a source link, and
+     the state-confirmation Yes. Never as text, never on white. */
+  --demeter-wheat: #E8C547;
   --demeter-ink: #241E1A;             /* was #2A211C — headings, answers */
   --demeter-body: #55504C;            /* was #5E4F45 — running text */
   --demeter-muted: #6E655E;           /* replaces secondary/mono/placeholder — labels, placeholder text */
@@ -5313,6 +5417,13 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   font-size: 0.95rem; font-weight: 500; color: var(--demeter-ink);
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
+/* The tick is GONE from the trigger. A checkmark next to the state read as
+   "this has been verified/confirmed by you" when it only ever meant "a verified
+   pack exists" — and the picker already says that, in words, in the panel
+   underneath. Two marks for one fact, one of them ambiguous.
+   Still used inside the OPTION list, where it distinguishes verified packs
+   from the federal floor and has something to contrast against. */
+.dmst__trigger .dmst__check { display: none; }
 .dmst__check { color: var(--demeter-terracotta-deep); font-weight: 700; flex: none; }
 .dmst__caret { color: var(--demeter-muted); flex: none; font-size: 0.8rem; }
 
@@ -5433,6 +5544,26 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   font-weight: 600; color: var(--demeter-terracotta-deep); margin-bottom: 0.4rem;
   text-decoration: underline; text-underline-offset: 3px;
 }
+/* THE TWO CALLS TO ACTION ARE WHEAT. They were white cards with an underlined
+   terracotta heading — the same treatment as every other card on a page made
+   of cards, so the one thing the page is trying to get someone to do looked
+   exactly like the reading material around it. Wheat is the next action (see
+   DEMETER-DESIGN.md §3); these are the only two on this page, and they are the
+   page's whole purpose.
+
+   Ink on wheat, never paper: #E8C547 is a light gold and white on it fails
+   contrast outright. */
+.dmx--askcta .dmx__outlink,
+.dmx--fearscta .dmx__outlink {
+  background: var(--demeter-wheat); border-color: transparent;
+}
+.dmx--askcta .dmx__outlink:hover,
+.dmx--fearscta .dmx__outlink:hover { filter: brightness(0.96); border-color: transparent; }
+.dmx--askcta .dmx__outlink-label,
+.dmx--fearscta .dmx__outlink-label { color: var(--demeter-ink); text-decoration: none; }
+.dmx--askcta .dmx__outlink-body,
+.dmx--fearscta .dmx__outlink-body { color: var(--demeter-ink); opacity: 0.82; }
+
 .dmx__outlink-body {
   display: block;
   font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
@@ -5672,20 +5803,25 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   font-size: 0.98rem; line-height: 1.62; color: var(--demeter-body);
   margin: 0 0 1.1rem; max-width: 68ch; text-wrap: pretty;
 }
+/* WHEAT, and full width. This closes the last section on the page — the point
+   at which someone has read every answer we chose in advance and still has
+   their own question — so it is the page's final and most earned call to
+   action. An outlined card the width of its own text read as one more item in
+   the list above it. */
 .dmfear__cta {
-  display: inline-flex; flex-direction: column; gap: 0.2rem;
-  margin: 1.5rem 0 0; padding: 0.9rem 1.2rem;
-  border: 1px solid var(--demeter-terracotta); border-radius: 14px;
-  text-decoration: none; background: var(--demeter-card);
+  display: flex; flex-direction: column; gap: 0.2rem;
+  margin: 1.75rem 0 0; padding: 1.1rem 1.35rem;
+  border: 0; border-radius: 16px;
+  text-decoration: none; background: var(--demeter-wheat);
 }
-.dmfear__cta:hover { border-color: var(--demeter-terracotta-deep); }
+.dmfear__cta:hover { filter: brightness(0.96); }
 .dmfear__ctalabel {
   font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
-  font-size: 1.05rem; font-weight: 600; color: var(--demeter-terracotta-deep);
+  font-size: 1.15rem; font-weight: 600; color: var(--demeter-ink);
 }
 .dmfear__ctanote {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
-  font-size: 0.82rem; color: var(--demeter-muted);
+  font-size: 0.82rem; color: var(--demeter-ink); opacity: 0.75;
 }
 @media (prefers-reduced-motion: reduce) { .dmfear__q::after { transition: none; } }
 
@@ -5702,7 +5838,7 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   display: grid; grid-auto-flow: column;
   /* NARROW: a 13rem floor, so the columns stay readable and the row scrolls
      sideways instead of crushing six steps into 50px each. */
-  grid-auto-columns: minmax(13rem, 1fr);
+  grid-auto-columns: minmax(14rem, 1fr);
   gap: 1.25rem; overflow-x: auto;
 }
 @media (min-width: 1000px) {
@@ -5710,14 +5846,26 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
      scrollbar at all. Measured with the 11rem floor still in place: 1250px of
      content in a 1065px box — one row, but 185px of it off-screen, which is not
      what "fits on one line" means. */
-  .dmtl { grid-auto-columns: minmax(0, 1fr); gap: 1rem; overflow-x: visible; }
+  .dmtl { grid-auto-columns: minmax(0, 1fr); gap: 1.35rem; overflow-x: visible; }
 }
-/* The rule across the top of each step IS the timeline. */
-.dmtl__step { position: relative; padding-top: 1.15rem; border-top: 2px solid var(--demeter-rule); }
-.dmtl__step::before {
-  content: ""; position: absolute; top: -6px; left: 0;
-  width: 10px; height: 10px; border-radius: 50%;
-  background: var(--demeter-terracotta-deep);
+/* The rule across the top of each step IS the timeline, and the marker on it
+   is now a DRAWING rather than a terracotta dot. Five steps, five
+   illustrations in the house line-art: a step someone can recognise before
+   reading is a step they are more likely to read.
+
+   The dot goes. A picture and a dot on the same rule are two markers for one
+   moment, and the dot was the weaker of them. */
+.dmtl__step {
+  position: relative; padding-top: 0.9rem; border-top: 2px solid var(--demeter-rule);
+}
+.dmtl__mark {
+  display: block; width: 74px; height: 74px; object-fit: contain;
+  margin: 0.35rem 0 0.5rem -6px;
+  /* The ground is knocked out to transparency in the asset itself, and the art
+     cropped to its own ink — a blend mode could not do it, because the
+     drawings are made on a warmer white than the page and multiply darkens
+     that difference rather than removing it. Every marker sat in a faintly
+     visible rectangle until the alpha was real. */
 }
 .dmtl__when {
   display: block; margin-bottom: 0.4rem;
@@ -5845,8 +5993,12 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 .demeter__body { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); gap: 1.5rem; align-items: start; }
 .demeter__main { display: flex; flex-direction: column; min-width: 0; }
 
+/* Card white, matching the picker directly above it. On --demeter-paper it was
+   a shade off the page rather than a surface on it, and next to the picker in
+   the same column the two read as different kinds of thing when they are the
+   same kind of thing: standing context about this conversation. */
 .dmw {
-  background: var(--demeter-paper); border: 1px solid var(--demeter-rule);
+  background: var(--demeter-card); border: 1px solid var(--demeter-rule);
   border-radius: 16px; padding: 1.1rem; display: flex; flex-direction: column; gap: 1rem;
   position: sticky; top: 1rem;
 }
@@ -5864,7 +6016,12 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   font-size: 0.8rem; line-height: 1.6; color: var(--demeter-muted); margin: 0;
 }
-.dmw__privacy { padding-top: 0.75rem; border-top: 1px solid var(--demeter-rule); }
+/* The standing caveats, smaller and tighter than the panel's own content. They
+   are true and they have to be there, but they were set at the same size as the
+   estimate and ran to two full paragraphs — more room than the thing they
+   qualify. Quieter, not gone. */
+.dmw__privacy, .dmw__disclaimer { font-size: 0.72rem; line-height: 1.45; }
+.dmw__privacy { padding-top: 0.65rem; border-top: 1px solid var(--demeter-rule); }
 
 .dmw__result { border-radius: 12px; padding: 0.85rem; border: 1px solid var(--demeter-rule); background: var(--demeter-card); }
 .dmw__result--certain { border-color: #C9DCC4; background: #F3F8F1; }
@@ -5916,7 +6073,21 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   margin: 0.75rem 0 0.9rem; padding: 0.25rem;
   background: var(--demeter-paper); border: 1px solid var(--demeter-rule);
   border-radius: 999px;
+  position: relative;
 }
+/* THE THUMB MOVES. The filled pill used to appear on the other half instantly,
+   which reads as two separate buttons lighting up rather than as one switch
+   being thrown — and this switch changes what the product does with everything
+   you type, so it is worth being legible as a switch. */
+.dmw__mode::before {
+  content: ""; position: absolute; z-index: 0;
+  top: 0.25rem; bottom: 0.25rem; left: 0.25rem;
+  width: calc(50% - 0.375rem);
+  background: var(--demeter-terracotta-deep); border-radius: 999px;
+  transition: transform 260ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.dmw__mode[data-mode="estimate"]::before { transform: translateX(calc(100% + 0.25rem)); }
+@media (prefers-reduced-motion: reduce) { .dmw__mode::before { transition: none; } }
 .dmw__modeopt {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   font-size: 0.78rem; font-weight: 600; line-height: 1.2;
@@ -5924,9 +6095,10 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   background: transparent; color: var(--demeter-muted); cursor: pointer;
   transition: background 140ms ease-out, color 140ms ease-out;
 }
-.dmw__modeopt[data-on] {
-  background: var(--demeter-terracotta-deep); color: var(--demeter-paper);
-}
+/* The label sits ABOVE the thumb and only changes colour — the fill is the
+   thumb's job now, or the two would cross-fade against each other mid-slide. */
+.dmw__modeopt { position: relative; z-index: 1; }
+.dmw__modeopt[data-on] { background: transparent; color: var(--demeter-paper); }
 .dmw__modeopt:focus-visible { outline: 2px solid var(--demeter-ink); outline-offset: 2px; }
 
 /* THE 105px JUMP. Measured: the rail is 328px in "Just asking" and 433px in
@@ -6071,7 +6243,10 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 
 /* The rail's "pick a state" is a BUTTON: without a state there is no
    calculation at all, so this is a dead-rail fix, not decoration. */
-.dmw__pick { display: flex; flex-direction: column; gap: 0.6rem; align-items: flex-start; }
+/* CENTRED. Left-aligned it sat under the mode toggle looking like a stray
+   caption; this is the panel's whole content while no state is set, and the one
+   thing to do next. */
+.dmw__pick { display: flex; flex-direction: column; gap: 0.6rem; align-items: center; text-align: center; }
 .dmw__pickbtn {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   font-size: 0.82rem; font-weight: 500; min-height: 40px; padding: 0.4rem 1rem;
@@ -6333,28 +6508,55 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 /* The waiting heartbeat. Three dots on a stagger, so a pause of a few seconds
    still looks like something is happening rather than like a label nobody
    removed. */
-.demeter__dots { display: inline-flex; gap: 0.22rem; margin-left: 0.4rem; vertical-align: middle; }
-.demeter__dots i {
-  width: 5px; height: 5px; border-radius: 50%;
-  background: var(--demeter-terracotta-deep);
-  animation: dmDot 1.2s ease-in-out infinite;
+/* The wait. Three bouncing dots is the default every chat ships with, and it
+   reads as exactly that — a placeholder nobody chose. This is a single line
+   that fills and recedes: one continuous motion instead of three discrete
+   bounces, quiet enough to sit under a sentence without competing with it. */
+/* WAITING, third attempt. Three dots read as a stall. A rule that filled and
+   receded read as a progress bar lying about progress — and both were separate
+   objects sitting beside the words, drawing the eye to the one place where
+   nothing was happening.
+
+   So nothing sits beside the words now: a slow light passes across the words
+   themselves, left to right. One element, no jumping, nothing that implies a
+   percentage. Under prefers-reduced-motion it is simply the text. */
+/* Fourth attempt, and the simplest. Dots read as a stall. A filling rule read
+   as a progress bar lying about progress. A light travelling across the letters
+   was still something moving THROUGH the words, which draws the eye along a
+   line it is not meant to read.
+
+   Now the words simply breathe: a small swell and fade, in place, slow enough
+   to sit under the threshold where motion becomes a demand for attention.
+   Nothing travels, nothing fills, nothing implies a percentage. */
+.demeter__thinkingtext {
+  display: inline-block; color: var(--demeter-muted);
+  transform-origin: left center;
+  animation: dmWait 2.6s cubic-bezier(0.45, 0, 0.55, 1) infinite;
 }
-.demeter__dots i:nth-child(2) { animation-delay: 0.16s; }
-.demeter__dots i:nth-child(3) { animation-delay: 0.32s; }
-@keyframes dmDot {
-  0%, 60%, 100% { opacity: 0.25; transform: translateY(0); }
-  30% { opacity: 1; transform: translateY(-2px); }
+@keyframes dmWait {
+  0%, 100% { opacity: 0.55; transform: scale(0.985); }
+  50%      { opacity: 1;    transform: scale(1.015); }
 }
 
 /* The streaming cursor. Once text starts arriving there was NO signal at all —
    a finished answer and a stalled one looked identical. A block caret at the
    live end of the text is the oldest and clearest way to say "still writing". */
-.demeter__caret {
-  display: inline-block; width: 0.5ch; height: 1em; margin-left: 0.1em;
-  background: var(--demeter-terracotta-deep); vertical-align: text-bottom;
-  animation: dmCaret 1s step-end infinite;
+/* THE STREAMING EDGE. There was a blinking block caret here — the loudest
+   thing on a page of quiet type, at the end of every sentence as it arrived.
+   A cursor belongs in a field you type into, not in prose being read to you.
+
+   The newest word arrives dimmed and settles instead. Combined with revealing
+   on word boundaries, text arrives the way it is read rather than the way it
+   is typed — and a word still settling is enough to say more is coming, which
+   is the one thing the caret was genuinely there for. */
+.demeter__streamtail {
+  opacity: 0.35;
+  animation: dmSettle 420ms ease-out forwards;
 }
-@keyframes dmCaret { 0%, 100% { opacity: 1 } 50% { opacity: 0 } }
+@keyframes dmSettle { to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) {
+  .demeter__streamtail { animation: none; opacity: 1; }
+}
 
 /* THE THINKING BUBBLE holds roughly the height of the first line of an answer,
    so the moment the first token lands the bubble does not collapse and re-grow
@@ -6365,15 +6567,72 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
    been read, and both used to appear instantly, shifting everything above them.
    They fade in instead — they are additions to a finished answer, not part of
    its arrival. */
-.demeter__msg--assistant .demeter__rule ~ *,
+.demeter__msg--assistant .demeter__footnote,
 .demeter__turn--assistant > .dmfb {
   animation: dmTrailerIn 260ms ease-out both;
 }
 @keyframes dmTrailerIn { from { opacity: 0 } to { opacity: 1 } }
 @media (prefers-reduced-motion: reduce) {
-  .demeter__msg--assistant .demeter__rule ~ *,
+  .demeter__msg--assistant .demeter__footnote,
   .demeter__turn--assistant > .dmfb { animation: none; }
 }
+
+/* What you are answering, above the box you answer it in. The placeholder said
+   it and then vanished on the first keystroke — exactly when it was needed. */
+.demeter__answering {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  margin: 0 0 0.35rem; font-size: 0.78rem; color: var(--demeter-muted);
+  display: flex; align-items: baseline; gap: 0.4rem;
+}
+/* terracotta-deep, not terracotta: the palette contrast test catches the light
+   one as text, and it is right to — this glyph is small and decorative but it
+   is still ink on paper. */
+.demeter__answering::before { content: "↳"; color: var(--demeter-terracotta-deep); }
+
+/* A LINE THAT IS NOTHING BUT A LINK IS A DOOR.
+   The state portal is the most consequential link in the product — it is where
+   the application actually goes — and it rendered as underlined text in the
+   middle of a paragraph, indistinguishable from a citation. Filled in the mark's
+   wheat, with ink on it, so it reads as the thing to press. Never terracotta:
+   that is the composer's Send, and two primary actions on one screen is how
+   someone presses the wrong one. */
+.demeter__gocta {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  align-self: flex-start; display: inline-flex; align-items: center; gap: 0.15rem;
+  background: var(--demeter-wheat); color: var(--demeter-ink);
+  font-weight: 700; font-size: 0.9rem; text-decoration: none;
+  border-radius: 999px; padding: 0 1.05rem; min-height: 44px;
+  margin: 0.35rem 0;
+}
+.demeter__gocta:hover { filter: brightness(0.94); }
+.demeter__gocta:focus-visible { outline: 2px solid var(--demeter-ink); outline-offset: 2px; }
+/* Inside the footnote it stays a plain link — a source is to check, not a door. */
+.demeter__footnote .demeter__gocta {
+  background: transparent; color: var(--demeter-terracotta-deep);
+  font-weight: 500; font-size: inherit; min-height: 0; padding: 0;
+  text-decoration: underline; margin: 0;
+}
+
+/* THE FOOTNOTE. Certainty, the sections checked, and where they came from used
+   to be set exactly like the answer — same face, same size, same ink — so every
+   reply ended in four lines of apparatus arguing with the thing the reader came
+   for. It is not less important; it is what makes the answer checkable. But it
+   is reference, and reference is read differently from prose: smaller, quieter,
+   set in the sans the rest of the chrome uses, and held off from the answer by
+   space and a hairline rather than running straight on from it. */
+.demeter__footnote {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.78rem; line-height: 1.5; color: var(--demeter-muted);
+  margin-top: 0.9rem; padding-top: 0.7rem;
+  border-top: 1px solid var(--demeter-rule);
+  display: flex; flex-direction: column; gap: 0.3rem;
+}
+.demeter__footnote .demeter__para { margin: 0; font-size: inherit; line-height: inherit; }
+.demeter__footnote .demeter__list { margin: 0; font-size: inherit; }
+.demeter__footnote strong { font-weight: 600; color: var(--demeter-body); }
+/* The link is the point of a footnote — it has to be reachable, so it keeps
+   its colour and its underline while everything around it recedes. */
+.demeter__footnote .demeter__link { color: var(--demeter-terracotta-deep); }
 
 /* Vestibular safety: everything above is decoration, so all of it goes. */
 @media (prefers-reduced-motion: reduce) {
@@ -6381,13 +6640,12 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   .demeter__msg--assistant,
   .demeter__thinking,
   .dmst__scope,
-  .demeter__dots i { animation: none; }
+  .demeter__thinkingtext { animation: none; transform: none; opacity: 1; }
   .dmnav__tab { transition: none; }
   .dmnav__tab:active { transform: none; }
   /* The caret stops BLINKING but stays visible — it is a status indicator, not
      decoration, and removing it would take away the only sign that an answer is
      still arriving. */
-  .demeter__caret { animation: none; opacity: 1; }
 }
 
 /* ═══ GRAPHITE FOOTER ════════════════════════════════════════════════════════
@@ -6532,9 +6790,21 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   display: inline-flex; align-items: center; border-radius: 999px;
 }
 .dmnav__tab:hover { color: var(--demeter-ink); background: rgba(0, 0, 0, 0.035); }
-/* The current tab is marked by weight and ink, not a background pill — a filled
-   tab next to the terracotta CTA would read as a second call to action. */
+/* The current tab is marked by weight and ink, not a background pill. */
 .dmnav__tab[aria-current="page"] { color: var(--demeter-ink); font-weight: 600; }
+
+/* ASK DEMETER IS THE PRODUCT. In a row of evenly-weighted text links, the one
+   thing someone came to use looked exactly like the reference page next to it.
+   Wheat — the logo colour, used nowhere else as a fill — so the eye lands here
+   first and it reads as the way in rather than as one of two tabs.
+   Ink on wheat, not paper: #EFB544 is a light gold and white text on it fails
+   contrast outright. */
+.dmnav__tab--primary {
+  background: var(--demeter-wheat); color: var(--demeter-ink); font-weight: 700;
+  padding: 0 1.1rem;
+}
+.dmnav__tab--primary:hover { background: var(--demeter-wheat); filter: brightness(0.94); }
+.dmnav__tab--primary[aria-current="page"] { color: var(--demeter-ink); }
 
 /* ═══ /chat — THE TOOL, FULL HEIGHT ══════════════════════════════════════════
    The whole reason this page exists. On the landing page the chat is a card in
@@ -6555,6 +6825,24 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   padding: clamp(0.75rem, 2vw, 1.5rem) clamp(1rem, 4vw, 2rem) calc(1rem + env(safe-area-inset-bottom));
   display: flex; flex-direction: column;
 }
+/* THE HEADER LINES UP WITH THE CHAT. Measured at 1440: the nav's 1180px cap
+   started the wheat mark at x=188 while the conversation started at x=74, so
+   the brand floated 114px inboard of the thing it belongs to and the eye had
+   two different left edges to settle on. On this surface the nav takes the
+   chat's own geometry, and the mark's left edge is the transcript's left edge.
+   Only here — the reference pages are 1180px measures and should stay that. */
+.dmchat .dmnav__inner {
+  max-width: 1360px;
+  padding-inline: clamp(1rem, 4vw, 2rem);
+}
+
+/* The subtitle stays here too. It was hidden on this surface to buy height,
+   but it is the one line telling a first-time visitor what Demeter is — and
+   someone can land on /chat first, from a link or a search result, without
+   ever seeing the landing page. It is set smaller here instead. */
+.dmchat .dmnav__subtitle { font-size: 0.62rem; letter-spacing: 0.08em; }
+.dmchat .dmnav__inner { min-height: 56px; }
+
 /* Undo the landing page's card chrome: on its own page the chat IS the page,
    so it needs no border, no shadow, and no capped scroll height. */
 .dmchat__body .demeter { max-width: none; min-height: 0; margin: 0; padding: 0; flex: 1; }
@@ -6753,6 +7041,47 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 
 /* The state offer. Sits above the composer, tinted so it reads as the product
    asking rather than as another answer, and it never switches by itself. */
+/* WHICH OF THE TWO THINGS THIS IS. Same shape as the state offer directly
+   below it — both are one question with two answers, above the composer, gone
+   once answered — but in the quieter rule rather than wheat, because it is an
+   invitation and the state offer is a correction to something already assumed. */
+.demeter__modeoffer {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 0.9rem;
+  margin: 0.6rem 0 0; padding: 0.7rem 0.9rem;
+  border: 1px solid var(--demeter-rule-strong); border-radius: 14px;
+  background: var(--demeter-card);
+  /* IT ARRIVES, it does not appear. A plain fade on a block that also pushes
+     the composer down reads as a jump — the thing you were about to type into
+     moves while you are looking at it. Growing from nothing carries the layout
+     with it, slowly enough to follow. */
+  animation: dmOfferIn 340ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  transform-origin: bottom center;
+}
+@keyframes dmOfferIn {
+  from { opacity: 0; transform: translateY(6px) scale(0.99); }
+  to   { opacity: 1; transform: none; }
+}
+.demeter__modeoffer-text {
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+  font-size: 0.98rem; color: var(--demeter-ink); flex: 1 1 16rem;
+}
+.demeter__modeoffer-actions { display: flex; gap: 0.5rem; margin-left: auto; }
+.demeter__modeoffer-yes, .demeter__modeoffer-no {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.85rem; font-weight: 600; min-height: 36px; padding: 0 0.9rem;
+  border-radius: 999px; cursor: pointer; white-space: nowrap;
+}
+.demeter__modeoffer-yes {
+  background: var(--demeter-wheat); color: var(--demeter-ink); border: 0;
+}
+.demeter__modeoffer-yes:hover { filter: brightness(0.94); }
+.demeter__modeoffer-no {
+  background: transparent; color: var(--demeter-body);
+  border: 1px solid var(--demeter-rule-strong);
+}
+.demeter__modeoffer-no:hover { color: var(--demeter-ink); border-color: var(--demeter-muted); }
+@media (prefers-reduced-motion: reduce) { .demeter__modeoffer { animation: none; } }
+
 .demeter__stateoffer {
   display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 0.9rem;
   margin: 0.6rem 0 0; padding: 0.7rem 0.9rem;
@@ -6770,9 +7099,16 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   font-size: 0.85rem; font-weight: 600; min-height: 36px; padding: 0 0.9rem;
   border-radius: 999px; cursor: pointer;
 }
+/* WHEAT — the logo colour — because this is the one place the product asks the
+   reader for something rather than telling them. Terracotta is used for every
+   other action here, so the ask needs to read differently from the answers
+   around it. Dark ink on wheat rather than paper: #EFB544 is a light gold and
+   white text on it fails contrast outright. */
 .demeter__stateoffer-yes {
-  border: 0; background: var(--demeter-terracotta-deep); color: var(--demeter-paper);
+  border: 0; background: var(--demeter-wheat); color: var(--demeter-ink); font-weight: 700;
 }
+.demeter__stateoffer-yes:hover { filter: brightness(0.94); }
+.demeter__stateoffer { border-color: var(--demeter-wheat); }
 .demeter__stateoffer-no {
   border: 1px solid var(--demeter-rule-strong); background: transparent;
   color: var(--demeter-muted);
@@ -6809,12 +7145,152 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 /* Room between paragraphs. renderAnswer emits real <p> blocks now, precisely so
    this is possible: a blank line under `white-space: pre-wrap` is one empty
    line-height, which is not enough to separate two paragraphs of prose. */
+/* Links inside an answer. Underlined rather than colour-only: colour alone is
+   not a link affordance for anyone who cannot distinguish it. */
+.demeter__link {
+  color: var(--demeter-terracotta-deep); text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
 .demeter__para { margin: 0; }
 .demeter__para + .demeter__para { margin-top: 0.85em; }
+
+/* Real bullets, with hanging indent. Rendered as plain text these were literal
+   hyphens down the left edge, and a wrapped item aligned under the DASH rather
+   than under its own first word — which is most of why three options read as a
+   wall rather than as three options. */
+.demeter__msg .demeter__list {
+  margin: 0.7em 0 0; padding: 0; list-style: none;
+  display: flex; flex-direction: column; gap: 0.4em;
+}
+.demeter__msg .demeter__list li {
+  position: relative; padding-left: 1.15em;
+}
+.demeter__msg .demeter__list li::before {
+  content: "•"; position: absolute; left: 0.15em; top: 0;
+  color: var(--demeter-terracotta-deep);
+}
+.demeter__para + .demeter__list { margin-top: 0.7em; }
+.demeter__list + .demeter__para { margin-top: 0.85em; }
 .dmchat .demeter__disclaimer { padding-bottom: 0.25rem; }
-/* The estimate rail keeps its own alignment: it is a panel that grows with
-   what it knows, not a column that should stretch to the fold. */
-.dmchat .dmw { align-self: start; }
+/* The standing-context column: the state picker, then the estimate panel.
+   STICKY, because it is what the answers depend on — losing sight of which
+   state you are scoped to while reading three screens of answers is how you end
+   up trusting a figure for somewhere you do not live.
+   `align-self: start` on the column (not the panel) is what lets sticky work at
+   all: a stretched grid item is already as tall as the row, so it has nothing
+   to travel within. */
+.dmchat .demeter__side {
+  align-self: start;
+  position: sticky;
+  top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  /* Never taller than the viewport, or the bottom of the panel becomes
+     unreachable — it scrolls within itself instead. */
+  max-height: calc(100dvh - 2rem);
+  overflow-y: auto;
+}
+/* `flex: 1 1 22rem` was written for the horizontal row this used to sit in, so
+   the 22rem basis meant WIDTH. In a column it means HEIGHT, and the picker
+   silently reserved 374px of empty air between itself and the estimate panel. */
+.dmchat .demeter__side .dmst { width: 100%; flex: 0 0 auto; }
+.dmchat .dmw { align-self: stretch; margin: 0; }
+
+/* WHAT YOU DO WITH THE CONVERSATION, beneath what is known about it.
+   These lived above the transcript, alongside the scope controls — which put
+   "save this" on screen before there was anything to save, and scrolled it
+   away once there was. Someone lost a long conversation to a header link
+   having never passed an offer to keep it. */
+.dmchat .demeter__sidetools {
+  display: flex; flex-direction: column; gap: 0.6rem;
+  padding: 0 0.15rem;
+}
+/* Two small buttons on one line. They share a row because they are the pair of
+   choices about the same thing — keep this, or begin again — and each is
+   narrower than the panel above, so neither reads as the panel's own action. */
+.dmchat .demeter__sidebtns {
+  display: flex; gap: 0.5rem; align-items: stretch; flex-wrap: wrap;
+}
+.dmchat .demeter__sidebtns > * { flex: 1 1 0; min-width: 8.5rem; }
+/* ONE DESIGN FOR BOTH. They were a terracotta-text button and a muted-text
+   button with different borders — side by side that read as one real control
+   and one disabled placeholder, when they are two equal choices about the same
+   conversation. Same outline, same weight, same ink; neither is filled,
+   because a fill here would compete with the composer's Send. */
+.dmchat .demeter__sidebtns .demeter__save,
+.dmchat .demeter__sidebtns .demeter__clear {
+  min-height: 40px; justify-content: center; text-align: center;
+  font-size: 0.78rem; font-weight: 600; padding: 0 0.6rem;
+  color: var(--demeter-body); background: var(--demeter-card);
+  border: 1px solid var(--demeter-rule-strong); border-radius: 999px;
+}
+.dmchat .demeter__sidebtns .demeter__save:hover:not(:disabled),
+.dmchat .demeter__sidebtns .demeter__clear:hover {
+  color: var(--demeter-ink); border-color: var(--demeter-muted);
+}
+/* The save button is wrapped, so the wrapper is the flex child — without this
+   the button inside it does not fill its half of the row. */
+.dmchat .demeter__sidebtns .demeter__savewrap { display: flex; flex-direction: column; gap: 0.35rem; }
+.dmchat .demeter__sidebtns .demeter__savewrap .demeter__save { width: 100%; }
+/* The failure message gets its own line. Inside the row it was squeezed into a
+   third column between the two buttons, wrapping one word per line. */
+.dmchat .demeter__sidebtns .demeter__save-error {
+  flex: 1 1 100%; font-size: 0.74rem; line-height: 1.4;
+  color: var(--demeter-terracotta-deep);
+}
+.demeter__save-code { color: var(--demeter-muted); font-variant-numeric: tabular-nums; }
+/* The confirm step needs the whole row — it carries a sentence, not a label. */
+.dmchat .demeter__sidebtns .demeter__clearconfirm { flex: 1 1 100%; }
+/* TAKE IT WITH YOU. Sits under the two conversation buttons because it is the
+   third thing you can do with a conversation — and the only one that leaves
+   with you. Wheat, because unlike Save and Start-new this one is a step
+   forward rather than housekeeping. */
+.dmchat .demeter__emailrow { display: flex; flex-direction: column; gap: 0.35rem; }
+.dmchat .demeter__emailbtn {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  width: 100%; min-height: 40px; border: 0; border-radius: 999px; cursor: pointer;
+  background: var(--demeter-wheat); color: var(--demeter-ink);
+  font-size: 0.78rem; font-weight: 700;
+}
+.dmchat .demeter__emailbtn:hover:not(:disabled) { filter: brightness(0.94); }
+.dmchat .demeter__emailbtn:disabled { opacity: 0.75; cursor: default; }
+/* The no-account copy. Outline rather than fill: it sits directly under the
+   wheat button and two fills stacked would read as two competing actions when
+   they are the same document by two routes. */
+.dmchat .demeter__pdfbtn {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  width: 100%; min-height: 36px; border-radius: 999px; cursor: pointer;
+  background: var(--demeter-card); color: var(--demeter-body);
+  border: 1px solid var(--demeter-rule-strong);
+  font-size: 0.76rem; font-weight: 600;
+}
+.dmchat .demeter__pdfbtn:hover:not(:disabled) {
+  color: var(--demeter-ink); border-color: var(--demeter-muted);
+}
+.dmchat .demeter__pdfbtn:disabled { opacity: 0.7; cursor: default; }
+
+.dmchat .demeter__emailsignin {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.74rem; color: var(--demeter-terracotta-deep); text-decoration: underline;
+  align-self: flex-start;
+}
+
+/* Quieter than either button, and last: a standing promise about how answers
+   are checked, not something to do right now. */
+.dmchat .demeter__sidetools .demeter__how {
+  min-height: 0; padding: 0; font-size: 0.78rem; align-self: flex-start;
+}
+
+@media (max-width: 900px) {
+  /* Stacked, and the picker goes FIRST — it is the thing to set before asking,
+     and burying it under the transcript would be worse than where it started.
+     Nothing sticks on a phone: a pinned panel there is just lost viewport. */
+  .dmchat .demeter__side {
+    position: static; max-height: none; overflow: visible; order: -1;
+  }
+}
 
 /* Visually hidden, still announced. The clip-rect technique rather than
    display:none or visibility:hidden — both of those remove the element from
@@ -6871,8 +7347,11 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
    burying that in a tooltip would make the button a smaller version of the
    retention lie #703 fixed. */
 .demeter__clearconfirm {
-  display: inline-flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;
-  padding: 0.4rem 0.6rem; border-radius: 14px;
+  /* It carries a SENTENCE plus two buttons, so it was being read as a cramped
+     strip rather than as a question. Room to breathe, and the note gets its own
+     line above the choices rather than competing with them. */
+  display: flex; flex-direction: column; align-items: stretch; gap: 0.6rem;
+  padding: 0.8rem 0.9rem; border-radius: 14px;
   background: var(--demeter-paper); border: 1px solid var(--demeter-rule-strong);
 }
 .demeter__clearnote {
@@ -6899,7 +7378,7 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 .demeter__piihint {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   font-size: 0.74rem; line-height: 1.5; color: var(--demeter-muted);
-  text-align: center; padding: 0.4rem 1rem 0; margin: 0; max-width: 56ch;
+  text-align: center; padding: 0.35rem 1rem 0; margin: 0; max-width: 56ch;
   margin-left: auto; margin-right: auto;
 }
 /* One line. 56ch broke it across two at ~476px when the column had 830 to give,

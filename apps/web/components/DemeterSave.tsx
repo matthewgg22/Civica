@@ -130,6 +130,9 @@ export function DemeterSave({
   // speaker onto the English page as the reward for making an account. Resolved
   // after mount; the server-rendered default is the English path, which is
   // correct for the page that default is rendered on.
+  /** The server's own reason for a failed save, shown to the reader and
+   *  therefore reportable. Null until something fails. */
+  const [failure, setFailure] = useState<string | null>(null);
   const [limitValue, setLimitValue] = useState(MAX_CONVERSATIONS);
   const [returnPath, setReturnPath] = useState("/screen/ask");
   useEffect(() => setReturnPath(window.location.pathname), []);
@@ -157,7 +160,16 @@ export function DemeterSave({
           if (typeof body.limit === "number") setLimitValue(body.limit);
           return "limit";
         }
-        if (!res.ok) return "error";
+        if (!res.ok) {
+          // WHY it failed, kept. Every non-401 failure produced the same
+          // sentence — "That didn't save. Please try again." — so a rejected
+          // payload, a database error and a dropped connection were
+          // indistinguishable to the reader AND to anyone they reported it to.
+          // Retrying is the right advice for exactly one of those three.
+          const body = (await res.json().catch(() => ({}))) as { error?: string };
+          setFailure(body.error ?? `http_${res.status}`);
+          return "error";
+        }
         const data = (await res.json()) as { conversation?: { id?: string } };
         if (data.conversation?.id) {
           setSavedId(data.conversation.id);
@@ -165,6 +177,7 @@ export function DemeterSave({
         }
         return "ok";
       } catch {
+        setFailure("network");
         return "error";
       }
     },
@@ -270,6 +283,9 @@ export function DemeterSave({
       {(status === "limit" || status === "error") && (
         <span className="demeter__save-error" role="alert">
           {status === "limit" ? copy.limit(limitValue) : copy.error}
+          {status === "error" && failure && (
+            <span className="demeter__save-code"> ({failure})</span>
+          )}
         </span>
       )}
     </span>

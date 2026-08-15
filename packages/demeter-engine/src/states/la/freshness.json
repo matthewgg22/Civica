@@ -1,14 +1,14 @@
 {
   "_provenance": {
-    "note": "Louisiana dated facts. Because Louisiana has NO existing packages/snap-rules StatePolicy entry, there is no engine constant to cross-check against — every entry below is either a routine COLA-cycle reminder, a disclosed research gap, or a warning about a confirmed access/staleness trap this pack found.",
+    "note": "Louisiana dated facts. Because Louisiana has NO existing packages/snap-rules StatePolicy entry, there is no engine constant to cross-check against — every entry below is either a routine COLA-cycle reminder, a disclosed research gap, or a warning about a confirmed access/staleness trap this pack found. Re-verified 2026-08-15: the Tropical Storm Arthur hot-foods waiver reached its stated end date (2026-08-13) with no confirmable extension; its entry now states the lapsed position and fails safe.",
     "extracted": "2026-08-12"
   },
   "entries": [
     {
-      "key": "la-hot-foods-waiver-tropical-storm-arthur-imminent-expiration",
+      "key": "la-hot-foods-waiver-tropical-storm-arthur-lapsed",
       "kind": "expires",
-      "date": "2026-08-13",
-      "warning": "LDH announced (July 20, 2026) a temporary, STATEWIDE waiver allowing ALL Louisiana SNAP participants — not just elderly/disabled/homeless — to buy hot or prepared foods (not restaurant meals) at any authorized SNAP retailer, following Tropical Storm Arthur, stated as effective through August 13, 2026. This pack's own fetch date is August 12, 2026 — ONE DAY before that stated expiration. By the time this pack is read, the waiver has very likely already expired, or been extended (Louisiana has a documented history of extending post-disaster hot-foods waivers). Before telling any Louisiana SNAP applicant they can currently buy hot/prepared foods with EBT outside the standing Restaurant Meals Program (which Louisiana does not operate — see the restaurant-meals-program supplement), check ldh.la.gov's current news for the live status of this specific waiver."
+      "date": "2026-10-01",
+      "warning": "LAPSED, as far as we can confirm. LDH announced (July 20, 2026) a temporary, STATEWIDE waiver letting ALL Louisiana SNAP participants — not only elderly/disabled/homeless — buy hot or prepared foods (not restaurant meals) at authorized SNAP retailers after Tropical Storm Arthur, stated as effective THROUGH AUGUST 13, 2026 (ldh.la.gov/news/7685). Re-checked 2026-08-15: no extension of the Arthur waiver was found. Louisiana has a documented history of extending post-disaster hot-foods waivers, so an extension is possible and would not necessarily be easy to find — but an unconfirmed extension is not a basis for telling anyone their benefits will cover a hot meal. FAIL SAFE: do NOT tell a Louisiana applicant they can currently buy hot or prepared foods with SNAP. Louisiana does not operate a standing Restaurant Meals Program (see the restaurant-meals-program supplement), so outside an active waiver hot foods are not eligible. Point people at ldh.la.gov's current news for live status."
     },
     {
       "key": "la-dcfs-stale-hot-foods-article-2021-hurricane-ida",

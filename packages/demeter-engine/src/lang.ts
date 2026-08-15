@@ -204,25 +204,59 @@ export function answerInstruction(lang: AnswerLang): string | null {
 // fabrication the gate just prevented.
 const DEGRADE: Record<AnswerLang, { lead: string; tail: string }> = {
   en: {
-    lead: "I could not check this one against the rules I have, so I am not going to give you a figure I cannot stand behind.",
-    tail: "What decides it is your household size, your income after the deductions you are entitled to, and your own state's limit — which is higher than the federal one in many states. Your state SNAP agency can give you the exact number for a household your size. You can also ask me something narrower and I will try again.",
+    lead: "I can't put a number on this one — I don't have the figure in front of me and I'm not going to guess at yours.",
+    tail: "Here is what I can do. The things that decide it are your household size, your income after the deductions you're entitled to, and your own state's limit, which is higher than the federal one in many states. I can walk you through what the application asks for, which documents to have ready, and how the interview works — and the caseworker who runs your actual numbers will do it in minutes with those in hand. Tell me where you'd like to pick up.",
   },
   es: {
-    lead: "No pude verificar esto con las reglas que tengo, así que no te voy a dar una cifra que no pueda respaldar.",
-    tail: "Lo que lo decide es el tamaño de tu hogar, tus ingresos después de las deducciones a las que tienes derecho, y el límite de tu propio estado — que en muchos estados es más alto que el federal. La agencia de SNAP de tu estado puede darte la cifra exacta para un hogar de tu tamaño. También puedes preguntarme algo más específico y lo intentaré de nuevo.",
+    lead: "No puedo darte una cifra en este caso — no la tengo delante y no voy a adivinar la tuya.",
+    tail: "Esto sí puedo hacerlo. Lo que decide el resultado es el tamaño de tu hogar, tus ingresos después de las deducciones a las que tienes derecho, y el límite de tu estado, que en muchos estados es más alto que el federal. Puedo explicarte qué pide la solicitud, qué documentos conviene tener listos y cómo funciona la entrevista — y con eso en la mano, la persona que calcule tus números reales lo hará en minutos. Dime por dónde quieres seguir.",
   },
   vi: {
-    lead: "Tôi không kiểm chứng được điều này với các quy định tôi có, nên tôi sẽ không đưa ra con số mà mình không thể bảo đảm.",
-    tail: "Điều quyết định là số người trong hộ, thu nhập của bạn sau khi trừ các khoản bạn được hưởng, và mức giới hạn của chính tiểu bang bạn — ở nhiều bang mức này cao hơn mức liên bang. Cơ quan SNAP của tiểu bang có thể cho bạn con số chính xác cho hộ có quy mô như bạn. Bạn cũng có thể hỏi tôi điều gì cụ thể hơn và tôi sẽ thử lại.",
+    lead: "Tôi chưa thể đưa ra con số cho trường hợp này — tôi không có sẵn con số đó và cũng không muốn đoán bừa.",
+    tail: "Nhưng đây là những gì tôi làm được. Quyết định kết quả là số người trong hộ, thu nhập sau khi trừ các khoản bạn được hưởng, và mức giới hạn của tiểu bang bạn, ở nhiều bang cao hơn mức liên bang. Tôi có thể hướng dẫn bạn đơn hỏi những gì, cần chuẩn bị giấy tờ nào, và buổi phỏng vấn ra sao — có sẵn những thứ đó, người xét hồ sơ sẽ tính ra con số thật chỉ trong vài phút. Bạn muốn bắt đầu từ đâu?",
   },
   zh: {
-    lead: "这一条我无法用手上的法规核实，所以我不会给您一个自己无法负责的数字。",
-    tail: "真正起作用的是您的家庭人数、扣除您应得项目后的收入，以及您所在州自己的上限——在许多州，这个上限高于联邦标准。您所在州的 SNAP 机构可以告诉您符合您家庭规模的确切数字。您也可以问我更具体的问题，我再试一次。",
+    lead: "这一条我给不了具体数字——我手上没有这个数，也不想凭空猜您的情况。",
+    tail: "但我能做的是这些。真正决定结果的是您的家庭人数、扣除应得项目后的收入，以及您所在州的上限（许多州高于联邦标准）。我可以带您看申请表会问什么、需要准备哪些材料、面谈是怎么进行的——把这些准备好，负责核算的人几分钟就能算出真实数字。您想从哪一部分开始？",
   },
 };
 
-export function degradeWrapper(lang: AnswerLang): { lead: string; tail: string } {
-  return DEGRADE[lang];
+// SAYING THE SAME THING TWICE IS A DIFFERENT FAILURE FROM SAYING IT ONCE.
+//
+// A real conversation received the paragraph above five consecutive times. The
+// person kept answering it — they gave their state, their household size, their
+// income, their rent — and each time got back a sentence telling them to ask
+// something narrower, worded identically. By the third one it no longer reads
+// as care about accuracy; it reads as a machine that has stopped listening, and
+// the honest thing at that point is to say so and hand over properly rather
+// than invite a fourth attempt at a door that is not opening.
+const DEGRADE_AGAIN: Record<AnswerLang, { lead: string; tail: string }> = {
+  en: {
+    lead: "I'm still stuck on the number, and you've given me everything I asked for — so the problem is mine, not yours.",
+    tail: "Let's not spend more of your time on it. Two things will actually move you forward. Your state agency can run these exact numbers on the spot, and they will, so it's worth the call. And in the meantime I can get you ready for it: what the form asks, which documents to gather, what happens at the interview. Say the word and we'll start on that.",
+  },
+  es: {
+    lead: "Sigo atascado con la cifra, y tú ya me diste todo lo que te pedí — así que el problema es mío, no tuyo.",
+    tail: "No gastemos más de tu tiempo en esto. Dos cosas sí te hacen avanzar. La agencia de tu estado puede calcular estos números en el momento, y lo hará, así que vale la pena llamar. Y mientras tanto puedo dejarte listo: qué pide el formulario, qué documentos reunir, qué pasa en la entrevista. Dime y empezamos por ahí.",
+  },
+  vi: {
+    lead: "Tôi vẫn tắc ở con số, mà bạn thì đã cung cấp đủ mọi thứ tôi hỏi — nên đây là hạn chế của tôi, không phải của bạn.",
+    tail: "Đừng để việc này lấy thêm thời gian của bạn nữa. Có hai việc thực sự giúp bạn tiến lên. Cơ quan tiểu bang có thể tính ngay những con số này, nên rất đáng để gọi. Và trong lúc đó tôi có thể giúp bạn chuẩn bị sẵn: đơn hỏi gì, cần gom giấy tờ nào, buổi phỏng vấn ra sao. Bạn nói một tiếng là chúng ta bắt đầu.",
+  },
+  zh: {
+    lead: "这个数字我还是卡住了，而您已经把我问的都告诉我了——所以是我这边的问题，不是您的。",
+    tail: "别再让这件事耽误您的时间。有两件事真的能让您往前走。您所在州的机构当场就能算出这些数字，值得打这个电话。在那之前我可以帮您把该准备的准备好：表格会问什么、要收集哪些材料、面谈怎么进行。您说一声，我们就从这里开始。",
+  },
+};
+
+/** `repeated` — has this conversation already degraded at least once? */
+export function degradeWrapper(lang: AnswerLang, repeated = false): { lead: string; tail: string } {
+  return (repeated ? DEGRADE_AGAIN : DEGRADE)[lang];
+}
+
+/** The lead sentences, for spotting a prior degrade in a transcript. */
+export function degradeLeads(lang: AnswerLang): string[] {
+  return [DEGRADE[lang].lead, DEGRADE_AGAIN[lang].lead];
 }
 
 // ── Chrome copy: citation trailer + freshness footer ────────────────────────

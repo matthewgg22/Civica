@@ -29,19 +29,19 @@ describe("Mae freshness monitoring", () => {
 
   it("footer always carries an 'as of' line and renders warnings", () => {
     const fresh = formatFreshnessFooter(new Date("2026-06-15T00:00:00Z"), CORPUS);
-    expect(fresh).toContain("Sources as of");
+    expect(fresh).toContain("Source:");
     expect(fresh).not.toContain("⚠️");
 
     const stale = formatFreshnessFooter(new Date("2026-11-15T00:00:00Z"), CORPUS);
-    expect(stale).toContain("Sources as of");
+    expect(stale).toContain("Source:");
     expect(stale).toContain("⚠️");
   });
 
   it("localizes the as-of line for Spanish answers", () => {
     const es = formatFreshnessFooter(new Date("2026-06-15T00:00:00Z"), CORPUS, undefined, "es");
-    expect(es).toContain("Fuentes al");
+    expect(es).toContain("Fuente:");
     expect(es).toContain("cifras federales FY26 (vigentes hasta");
-    expect(es).not.toContain("Sources as of");
+    expect(es).not.toContain("Source:");
   });
 
   it("warns before 2026-06-01 that CA ABAWD screening is not yet in effect, and is silent after", () => {

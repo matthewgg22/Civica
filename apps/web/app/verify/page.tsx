@@ -11,6 +11,9 @@ import { certaintyStats, REASON_LABEL } from "../../lib/certainty-stats";
 import { publicVerification } from "../../lib/verification-summary";
 import { programDisplayName } from "../../lib/program-name";
 import { StateFlag } from "../../components/StateFlag";
+import { DemeterNav } from "../../components/DemeterNav";
+import { DemeterFooter } from "../../components/DemeterFooter";
+import { stateName } from "../../lib/state-names";
 
 // The measured rate refreshes without a deploy; the pack cards don't move.
 export const revalidate = 300;
@@ -24,16 +27,35 @@ export const metadata: Metadata = {
 export default async function VerifyPage() {
   const stats = await certaintyStats(30);
   return (
-    <main className="vpage">
+    <>
+      {/* THE PAGE HAD NO HEADER. It was reachable from every other surface and
+          then stranded you there: no way back to the chat, no language links,
+          no sign that this was part of a product rather than a document
+          somebody had linked to. */}
+      <DemeterNav path="/verify" />
+      <main className="vpage">
       <header className="vpage__head">
         <h1 className="vpage__title">How we verify</h1>
+        {/* WHY THIS PAGE EXISTS COMES FIRST. It used to open on the machinery —
+            vendored regulations, eval suites, refute gates — which is the
+            answer to a question nobody had asked yet. Someone reads this page
+            because they are deciding whether to trust a machine with something
+            that decides whether their family eats. That is the thing to
+            acknowledge, before any of the apparatus. */}
+        <p className="vpage__lede vpage__lede--lead">
+          Looking for help with food assistance means trusting someone with a
+          decision that matters enormously, often while already under strain. We
+          think that deserves accuracy and honesty rather than confidence — which
+          also means being open about how the answers are produced, and admitting
+          that a system like this can still be wrong.
+        </p>
         <p className="vpage__lede">
-          Demeter answers from the actual rules: the federal SNAP regulations (7 CFR 273,
-          vendored and dated) plus per-state policy packs built from each state&apos;s own
-          primary sources. Before a state ships, its pack goes through an adversarial
-          pipeline — independent cross-checking, an eval suite, and a refute gate whose
-          only job is to prove the draft wrong. Corrections are applied before
-          publication, and every answer carries citations you can check.
+          So: Demeter answers from the actual rules — the federal SNAP regulations
+          (7 CFR 273, vendored and dated) plus per-state policy packs built from each
+          state&apos;s own primary sources. Before a state ships, its pack goes through
+          an adversarial pipeline: independent cross-checking, an eval suite, and a
+          refute gate whose only job is to prove the draft wrong. Corrections are
+          applied before publication, and every answer carries citations you can check.
         </p>
         <section className="vstat" aria-label="Measured grounded rate">
           {stats.measured ? (
@@ -90,18 +112,54 @@ export default async function VerifyPage() {
           on this date, with this many corrections forced before it shipped.
           The sources are not hidden: every answer cites the rule it actually
           used, to the person who asked, for the question they asked. */}
+      {/* THE UMBRELLA. Every state below administers ONE federal programme, and
+          a grid of state cards on its own implies fifty-three separate schemes.
+          Full width above them, because that is the relationship: the rules are
+          federal, the administration is not. */}
+      <section className="vusda" aria-label="Programme authority">
+        <p className="vusda__eyebrow">The programme itself</p>
+        <p className="vusda__body">
+          SNAP is a federal programme, authorised by Congress and governed by{" "}
+          <a
+            className="vusda__link"
+            href="https://www.ecfr.gov/current/title-7/part-273"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            7 CFR Part 273
+          </a>
+          , administered nationally by the{" "}
+          <a
+            className="vusda__link"
+            href="https://www.fns.usda.gov/snap"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            USDA Food and Nutrition Service
+          </a>
+          . Every agency below runs that same programme in its own state.
+        </p>
+      </section>
+
       <section className="vpage__grid" aria-label="Verified states">
         {VERIFIED_STATES.map((s) => {
           const v = publicVerification(s);
           return (
             <article key={s.code} className="vcard">
               <div className="vcard__head">
-                {/* StateFlag renders the code itself — the heading IS the flag
-                    and its code, not the flag plus a second copy of it. */}
+                {/* THE STATE'S NAME, spelled out. The heading was the flag and
+                    the two-letter code alone, which asks a reader to decode
+                    "MI" and "MN" and "MS" at a glance on a page whose whole
+                    purpose is being trustworthy about detail. */}
                 <h2 className="vcard__state">
-                  <StateFlag code={s.code} size={34} />
+                  <StateFlag code={s.code} size={44} />
+                  <span className="vcard__statename">
+                    {stateName(s.code)} <span className="vcard__statecode">({s.code})</span>
+                  </span>
                 </h2>
-                <span className="vcard__badge">Verified</span>
+                <span className="vcard__badge">
+                  <span aria-hidden>✓</span> Verified
+                </span>
               </div>
               <p className="vcard__program">{programDisplayName(s.program)}</p>
               <dl className="vcard__facts">
@@ -116,32 +174,61 @@ export default async function VerifyPage() {
                     from the agency&apos;s own published rules
                   </dd>
                 </div>
-                <div>
-                  <dt>Before it shipped</dt>
-                  <dd>
-                    {/* A number is credibility. The list of what each correction
-                        was is a map of where the hard parts are. */}
-                    {v.corrections === null
-                      ? "Passed an adversarial refute gate."
-                      : `Passed an adversarial refute gate, which forced ${v.corrections} ${
-                          v.corrections === 1 ? "correction" : "corrections"
-                        } before publication.`}
-                  </dd>
-                </div>
+                {/* "Passed an adversarial refute gate" appeared on EVERY card
+                    with nothing else in it — a line that is true of all of them
+                    and therefore distinguishes none of them, said once in the
+                    lede above. What survives here is the part that varies: how
+                    many corrections that gate actually forced. */}
+                {v.corrections !== null && (
+                  <div>
+                    <dt>Corrections forced</dt>
+                    <dd>
+                      {v.corrections} {v.corrections === 1 ? "correction" : "corrections"} caught
+                      and applied before publication
+                    </dd>
+                  </div>
+                )}
                 <div>
                   <dt>Last verified</dt>
                   <dd>{v.verifiedOn}</dd>
                 </div>
               </dl>
-              <Link className="vcard__cta" href={`/screen/ask?state=${s.code}`}>
-                Ask about {s.code} →
-              </Link>
+              {/* TWO DOORS, and neither of them used to exist properly: the one
+                  CTA went to the landing page rather than the chat, so a reader
+                  who wanted to ask about this state was returned to the start.
+                  Ask goes to the chat scoped to the state; the agency link goes
+                  to where the application is actually filed. */}
+              <div className="vcard__actions">
+                {/* The VISIBLE label is short, because thirty cards of "Ask
+                    Demeter about Rhode Island" is a wall. The accessible name
+                    carries the state, because thirty links all announcing "Ask
+                    Demeter" is worse than a wall — it is thirty
+                    indistinguishable destinations. */}
+                <Link
+                  className="vcard__cta"
+                  href={`/chat?state=${s.code}`}
+                  aria-label={`Ask Demeter about ${stateName(s.code)}`}
+                >
+                  Ask Demeter <span aria-hidden>→</span>
+                </Link>
+                {s.portal && (
+                  <a
+                    className="vcard__cta vcard__cta--agency"
+                    href={s.portal.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`${s.portal.name} — apply in ${stateName(s.code)} (opens in a new tab)`}
+                  >
+                    {s.portal.name} <span aria-hidden>↗</span>
+                  </a>
+                )}
+              </div>
             </article>
           );
         })}
       </section>
 
-      <footer className="vpage__foot">
+      <section className="vpage__foot">
         <p>
           This page counts the sources behind each state rather than listing them,
           because a citation is worth something when it is attached to the claim it
@@ -149,12 +236,22 @@ export default async function VerifyPage() {
           the federal regulation, and your state&apos;s own manual where we have
           verified one — linked, so you can read it yourself.
         </p>
+        {/* CLOSING ON AN INVITATION TO CORRECT US, which is the only honest end
+            for a page that has just spent several hundred words explaining why
+            it might still be wrong. */}
         <p>
-          New states are verified and added continuously — each one ships only after its
-          refute gate passes. <Link href="/screen/ask">Ask Demeter a question</Link> or see
-          the <Link href="/supporters">organizations supporting this work</Link>.
+          New states are verified and added continuously, and this work is not
+          finished. If you find something here that does not match what your agency
+          told you, we want to know — that is how the next correction gets caught.{" "}
+          <Link href="/chat">Ask Demeter a question</Link>, or tell us what we got
+          wrong through the <Link href="/supporters">organizations supporting this work</Link>.
         </p>
-      </footer>
-    </main>
+      </section>
+      </main>
+      {/* THE SAME GRAPHITE FOOTER AS EVERY OTHER SURFACE. This page ended on
+          the paper it started on, which read as running out rather than
+          finishing — and it was the one page missing the obligations band. */}
+      <DemeterFooter />
+    </>
   );
 }

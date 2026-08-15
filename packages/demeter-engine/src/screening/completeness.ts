@@ -55,6 +55,54 @@ export interface CompletenessResult {
   rawErrors: string[];
 }
 
+/** A Zod path turned into something a person can act on, or null.
+ *
+ *  These went to the reader verbatim. A panel headed "Still needed" listed
+ *  "Missing: household.0.age" and "Missing: household.1.age" — internal field
+ *  paths, one per household member, in a list otherwise written in English.
+ *  It told someone nothing about what to say next, and it leaked the shape of
+ *  our own data model into a page aimed at people applying for food
+ *  assistance.
+ *
+ *  The array index is stripped first, so two members missing an age collapse
+ *  into one line rather than counting twice against the "still needed" badge.
+ *
+ *  Anything unrecognised returns NULL and is dropped from the visible list —
+ *  it stays in rawErrors, where the diagnostics belong. A field we forgot to
+ *  name here is a gap in this table, and showing the reader its internal name
+ *  does not fill it. */
+/** Shown when a malformed field has no human name in the table below. Says
+ *  that something is outstanding without naming an internal field. */
+const UNNAMED = "One detail we recorded does not look right — tell Demeter again in your own words";
+
+function humanLabel(path: string): string | null {
+  const generic = path.replace(/\.\d+\./g, ".").replace(/\.\d+$/, "");
+  const LABELS: Record<string, string> = {
+    "household": "Who lives with you",
+    "household.age": "Everyone's age",
+    "household.member_id": "Who lives with you",
+    "household.role": "How each person is related to you",
+    "household.disability": "Whether anyone has a disability",
+    "household.elderly": "Whether anyone is 60 or over",
+    "household.student": "Whether anyone is a student",
+    "household.immigration": "Citizenship or qualified status",
+    "income": "Income, and how often it is paid",
+    "income.amount": "How much the income is",
+    "income.freq": "How often that income is paid",
+    "income.type": "What kind of income it is",
+    "income.member": "Who the income belongs to",
+    "shelter": "Rent or shelter cost",
+    "shelter.rent": "Rent or shelter cost",
+    "shelter.homeless_deduction": "Whether the household is homeless",
+    "deductions.dependent_care": "Childcare or dependent care costs",
+    "deductions.medical_unreimbursed": "Out-of-pocket medical costs",
+    "deductions.child_support_paid": "Child support you pay",
+    "assets": "Countable assets, if any",
+    "cat_elig": "Whether the household receives SSI or TANF",
+  };
+  return LABELS[generic] ?? null;
+}
+
 export function assessCompleteness(facts: PartialFacts): CompletenessResult {
   const stillNeeded: string[] = [];
 
@@ -80,10 +128,16 @@ export function assessCompleteness(facts: PartialFacts): CompletenessResult {
   // look answered.
   const rawErrors = validateFacts(completeFactsShape(facts)) ?? [];
   for (const err of rawErrors) {
-    const path = err.split(":")[0]!.trim();
-    const label = `Missing: ${path}`;
+    // An unmapped path still has to SURFACE — dropping it silently would let
+    // stillNeeded empty out while the facts are malformed, and composeVerdict
+    // would then be asked to run on data Zod has already rejected. It surfaces
+    // as a sentence rather than as a field path.
+    const label = humanLabel(err.split(":")[0]!.trim()) ?? UNNAMED;
     if (!stillNeeded.includes(label)) stillNeeded.push(label);
   }
 
-  return { computable: stillNeeded.length === 0, stillNeeded, rawErrors };
+  // rawErrors is checked SEPARATELY from the visible list. They are no longer
+  // the same thing now that labels are deduplicated and humanised, and
+  // "computable" is a claim about the data, not about the panel.
+  return { computable: stillNeeded.length === 0 && rawErrors.length === 0, stillNeeded, rawErrors };
 }

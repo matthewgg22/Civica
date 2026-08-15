@@ -58,6 +58,11 @@ Element.prototype.scrollTo = vi.fn() as unknown as typeof Element.prototype.scro
 beforeEach(() => {
   fetchMock.mockReset().mockImplementation(async () => streamedResponse("an answer"));
   vi.stubGlobal("fetch", fetchMock);
+  // The chat now survives a page change by writing the transcript to
+  // sessionStorage (lib/chat-session.ts). Every real browser tab starts empty;
+  // jsdom carries one store across the whole file, so without this each test
+  // would restore the previous test's conversation and assert against it.
+  window.sessionStorage.clear();
 });
 afterEach(() => {
   cleanup();

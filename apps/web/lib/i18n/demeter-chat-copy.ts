@@ -21,6 +21,7 @@ export const T = {
     title: "Demeter",
     tagline: "Verified answers about SNAP — for any state.",
     inputPlaceholder: "Happy to answer any questions about SNAP…",
+    inputPlaceholderEstimate: "Tell me about your household, and I'll build it up…",
     send: "Send",
     stop: "Stop",
     stateLabel: "Your state",
@@ -29,8 +30,13 @@ export const T = {
     federalBadge: "Federal guidance",
     dividerTo: (name: string) => `Now answering for ${name} — earlier answers may not apply.`,
     dividerFederal: "Now answering with federal rules only — earlier answers may not apply.",
-    disclaimer:
-      "Demeter gives information, not legal advice. Confirm decisions with your SNAP agency.",
+    dividerUncovered: (place: string) =>
+      `Demeter does not cover ${place} yet — answers below use federal rules, and your local agency is the one to confirm with.`,
+    // "Demeter is AI" up front, because someone who knows that reads the rest
+    // differently. The agency is a LINK: telling somebody to check with an
+    // office without saying which one is the same as not telling them.
+    disclaimer: "Demeter is AI and can make mistakes. Please double-check cited sources and",
+    disclaimerAgency: "your state agency",
     // Sits under the composer, where the decision to type is made — not in the
     // estimate rail, where it used to live and where it vanished entirely at
     // narrow widths. Names the three things redactPii cannot save someone from
@@ -39,11 +45,23 @@ export const T = {
     // The wording is load-bearing. This clears THIS BROWSER; every question and
     // answer is still written to mae_query_log. Saying "clear" without saying
     // that would be the retention lie #703 fixed, rebuilt as a button.
-    clear: "Clear this conversation",
+    clear: "Start a new conversation",
     // Offered when someone names a place in the chat. An OFFER, never an
     // automatic switch: re-scoping on a guess answers the wrong state with more
     // confidence than before.
     stateOffer: "You mentioned {place}. Answer for {state}?",
+    // Asked once, after the first answer — the toggle for this lives in the
+    // right-hand panel, which nobody reads while taking in their first reply.
+    modeOffer: "Shall I start gathering your answers as we go, so you can take them to the application? Or keep this as just questions for now?",
+    modeOfferEstimate: "Gather my answers",
+    modeOfferAsk: "Just asking",
+    // Shown in the transcript when a state is picked. The portal is where the
+    // application actually goes; this is the one moment we know exactly which
+    // link that is, so it should not be something they have to ask for.
+    portalLead: "In {state}, you apply through {agency}.",
+    portalCta: "Apply at {portal}",
+    portalStay:
+      "That is where the application is formally submitted, and the link is on your outlined application too, so you will not have to find it again.\n\n**_Shall we start working through what it asks for?_**",
     stateOfferYes: "Yes, use {state}",
     stateOfferNo: "No, keep as is",
     clearNote:
@@ -59,7 +77,14 @@ export const T = {
     errCapacity:
       "Demeter is at capacity for the month. For SNAP help right now, call 211 or your state SNAP agency.",
     errConfig: "Demeter isn't available yet — please check back soon.",
-    errNetwork: "Something went wrong. Please try again.",
+    // WHOSE FAULT IT IS, because "something went wrong" told nobody anything —
+     // not the reader deciding whether to retry, and not us when it was
+     // reported. A failure on our side is worth retrying and worth telling us
+     // about; a connection failure is worth checking their network for; a
+     // request we could not read needs a different action entirely.
+    errServer: "That failed on our side, not yours. Trying again usually works — if it keeps happening, please tell us.",
+    errNetwork: "We couldn't reach Demeter. Check your connection and try again.",
+    errRequest: "Demeter couldn't read that. Starting a new conversation usually clears it — a very long chat is the commonest cause.",
     thinking: "One moment",
     // The empty chat's own words. Three bare buttons floating in 414px of
     // measured whitespace read as stray controls; a mark, a line, and the
@@ -83,6 +108,18 @@ export const T = {
       scopeAgency: "Answers from",
       scopeApply: "Apply at",
     },
+    // TAKE IT WITH YOU. The outline lived only on the screen it was built on.
+    emailOutline: "Email this to me",
+    emailSending: "Sending…",
+    emailSent: "Sent to your inbox",
+    emailSignIn: "Sign in to send it",
+    emailError: "That didn't send.",
+    // No account needed for this one — for someone who does not want to hand
+    // over an address, it is the whole deliverable.
+    pdfDownload: "Download as PDF",
+    pdfWorking: "Preparing…",
+    pdfDownloaded: "Your outlined application has downloaded.",
+    pdfError: "That didn't download. Please try again.",
     howWeVerify: "How we verify",
     languageLabel: "Language",
     feedback: {
@@ -117,7 +154,7 @@ export const T = {
       error: "That didn't save. Please try again.",
     },
     worksheet: {
-      title: "Your estimate",
+      title: "Your outlined application",
       subtitle: "Builds as you talk",
       result: "Where this lands",
       estimate: "Estimated monthly benefit:",
@@ -129,29 +166,38 @@ export const T = {
       // second sentence is the honest version of a claim we cannot make:
       // redactPii strips structured identifiers but deliberately NOT names, and
       // says so in its own header, so this asks rather than promises.
-      privacy:
-        "Close this tab and you cannot return to this conversation. We keep the question and answer to check our accuracy, so please avoid typing names or personal details.",
-      privacySaved:
-        "Saved to your account — you can come back to it or delete it. We keep the question and answer to check our accuracy, so please avoid typing names or personal details.",
-      disclaimer: "An estimate, not a decision. Your county agency decides.",
+      // SHORT. This was two full paragraphs plus a disclaimer under the panel,
+      // taking more room than the estimate it qualified. Every clause that was
+      // load-bearing is still here: it goes when the tab closes, we keep the
+      // text, and this is not a decision.
+      privacy: "Closing the tab ends this. We keep the text to check our accuracy — avoid names.",
+      privacySaved: "Saved to your account. We keep the text to check our accuracy — avoid names.",
+      disclaimer: "An estimate, not a decision.",
       pickState: "Pick your state above and your estimate can build here as you talk.",
       pickStateCta: "Choose your state",
-      // The two-way switch at the top of the rail. "Just asking" is the
-      // DEFAULT: the panel used to gather household facts from the conversation
-      // whether or not anyone asked it to, which is a thing to offer rather
-      // than a thing to do quietly to someone already nervous about the system.
+      // THE TWO MODES, described for what they actually do.
+      //
+      // "Build my estimate" gathers what you say into something you can keep
+      // and take to the portal. "Just asking" gathers NOTHING — and that is the
+      // point of it: it is the mode you switch to mid-conversation to ask a
+      // hypothetical, or about a situation that might not be yours, without it
+      // being written into your case. Describing it as merely "no estimate is
+      // worked out" made it sound like the lesser of the two. It is the escape
+      // hatch, and people who are nervous about the system need to know it is
+      // there.
       modeLabel: "What do you want from this?",
       modeAsk: "Just asking",
       modeEstimate: "Build my estimate",
       modeAskNote:
-        "Ask anything. Nothing you say is gathered here, and no estimate is worked out.",
-      switchedToAsk: "Estimate cleared. Nothing is being gathered.",
+        "Nothing you say here goes into the document Demeter is building for you. Switch to this any time you want to ask a what-if, or about someone else, without it counting toward your own answers. (We still keep the question and answer to check our accuracy — that is true in both modes.)",
+      switchedToAsk: "Nothing is being gathered. Ask anything.",
     },
   },
   es: {
     title: "Demeter",
     tagline: "Respuestas verificadas sobre SNAP — para cualquier estado.",
     inputPlaceholder: "Con gusto respondo cualquier pregunta sobre SNAP…",
+    inputPlaceholderEstimate: "Cuéntame sobre tu hogar y lo voy armando…",
     send: "Enviar",
     stop: "Parar",
     stateLabel: "Tu estado",
@@ -162,12 +208,21 @@ export const T = {
       `Ahora respondiendo para ${name} — las respuestas anteriores pueden no aplicar.`,
     dividerFederal:
       "Ahora respondiendo solo con reglas federales — las respuestas anteriores pueden no aplicar.",
-    disclaimer:
-      "Demeter da información, no asesoría legal. Confirma las decisiones con tu agencia de SNAP.",
+    dividerUncovered: (place: string) =>
+      `Demeter todavía no cubre ${place} — las respuestas de abajo usan reglas federales, y tu agencia local es la que debe confirmarlo.`,
+    disclaimer: "Demeter es IA y puede equivocarse. Verifica las fuentes citadas y",
+    disclaimerAgency: "tu agencia estatal",
     piiHint:
       "Por favor no escribas tu número de Seguro Social, datos bancarios ni un nombre completo.",
-    clear: "Borrar esta conversación",
+    clear: "Empezar una conversación nueva",
     stateOffer: "Mencionaste {place}. ¿Respondo para {state}?",
+    modeOffer: "¿Quieres que calcule una cifra aproximada, o por ahora solo buscas respuestas?",
+    modeOfferEstimate: "Calcular una cifra",
+    modeOfferAsk: "Solo preguntas",
+    portalLead: "En {state}, la solicitud se hace a través de {agency}.",
+    portalCta: "Solicitar en {portal}",
+    portalStay:
+      "Ahí es donde se presenta formalmente la solicitud, y el enlace también está en tu solicitud esbozada, así que no tendrás que buscarlo otra vez.\n\n**_¿Empezamos a repasar lo que te pide?_**",
     stateOfferYes: "Sí, usa {state}",
     stateOfferNo: "No, déjalo así",
     clearNote:
@@ -179,7 +234,9 @@ export const T = {
     errCapacity:
       "Demeter llegó a su capacidad del mes. Para ayuda con SNAP ahora, llama al 211 o a tu agencia estatal.",
     errConfig: "Demeter aún no está disponible — vuelve pronto.",
-    errNetwork: "Algo salió mal. Intenta de nuevo.",
+    errServer: "Eso falló de nuestro lado, no del tuyo. Volver a intentarlo suele funcionar — si sigue pasando, avísanos.",
+    errNetwork: "No pudimos conectar con Demeter. Revisa tu conexión e intenta de nuevo.",
+    errRequest: "Demeter no pudo leer eso. Empezar una conversación nueva suele resolverlo — una conversación muy larga es la causa más común.",
     thinking: "Un momento",
     emptyTitle: "¿Qué te gustaría saber?",
     emptyLede: "Cada respuesta cita la regla de la que proviene, para que puedas comprobarla.",
@@ -198,6 +255,15 @@ export const T = {
       scopeAgency: "Respuestas de",
       scopeApply: "Solicita en",
     },
+    emailOutline: "Envíamelo por correo",
+    emailSending: "Enviando…",
+    emailSent: "Enviado a tu correo",
+    emailSignIn: "Inicia sesión para enviarlo",
+    emailError: "No se pudo enviar.",
+    pdfDownload: "Descargar en PDF",
+    pdfWorking: "Preparando…",
+    pdfDownloaded: "Se descargó tu solicitud esbozada.",
+    pdfError: "No se pudo descargar. Intenta de nuevo.",
     howWeVerify: "Cómo verificamos",
     languageLabel: "Idioma",
     feedback: {
@@ -233,7 +299,7 @@ export const T = {
       error: "No se pudo guardar. Intenta de nuevo.",
     },
     worksheet: {
-      title: "Tu estimado",
+      title: "Tu solicitud esbozada",
       subtitle: "Se arma mientras conversas",
       result: "Dónde queda esto",
       estimate: "Beneficio mensual estimado:",
@@ -242,17 +308,17 @@ export const T = {
       empty:
         "Cuéntale a Demeter sobre tu hogar — quién vive contigo, cuánto ganas, cuánto pagas de renta — y tu estimado se arma aquí.",
       privacy:
-        "Cierra esta pestaña y no podrás volver a esta conversación. Guardamos la pregunta y la respuesta para verificar nuestra exactitud, así que evita escribir nombres o datos personales.",
+        "Cerrar la pestaña termina esto. Guardamos el texto para verificar nuestra exactitud — evita nombres.",
       privacySaved:
-        "Guardada en tu cuenta — puedes volver a ella o borrarla. Guardamos la pregunta y la respuesta para verificar nuestra exactitud, así que evita escribir nombres o datos personales.",
-      disclaimer: "Un estimado, no una decisión. Tu agencia del condado decide.",
+        "Guardada en tu cuenta. Guardamos el texto para verificar nuestra exactitud — evita nombres.",
+      disclaimer: "Un estimado, no una decisión.",
       pickState: "Elige tu estado arriba y tu estimado se irá armando aquí.",
       pickStateCta: "Elige tu estado",
       modeLabel: "¿Qué buscas aquí?",
       modeAsk: "Solo preguntar",
       modeEstimate: "Calcular mi estimado",
       modeAskNote:
-        "Pregunta lo que quieras. Nada de lo que digas se recoge aquí y no se calcula ningún estimado.",
+        "Nada de lo que digas aquí entra en el documento que Demeter arma para ti. Cámbiate a esto cuando quieras preguntar un supuesto, o por otra persona, sin que cuente para tus propias respuestas. (Igual guardamos la pregunta y la respuesta para verificar nuestra exactitud — eso vale en los dos modos.)",
       switchedToAsk: "Estimado borrado. No se está recogiendo nada.",
     },
   },
@@ -260,6 +326,7 @@ export const T = {
     title: "Demeter",
     tagline: "Câu trả lời đã được xác minh về SNAP — cho mọi tiểu bang.",
     inputPlaceholder: "Rất sẵn lòng giải đáp mọi câu hỏi về SNAP…",
+    inputPlaceholderEstimate: "Kể cho tôi về hộ của bạn, tôi sẽ dựng dần lên…",
     send: "Gửi",
     stop: "Dừng",
     stateLabel: "Tiểu bang của bạn",
@@ -270,11 +337,20 @@ export const T = {
       `Bây giờ đang trả lời cho ${name} — các câu trả lời trước có thể không còn áp dụng.`,
     dividerFederal:
       "Bây giờ chỉ trả lời theo quy định liên bang — các câu trả lời trước có thể không còn áp dụng.",
-    disclaimer:
-      "Demeter cung cấp thông tin, không phải tư vấn pháp lý. Hãy xác nhận quyết định với cơ quan SNAP của bạn.",
+    dividerUncovered: (place: string) =>
+      `Demeter chưa hỗ trợ ${place} — các câu trả lời dưới đây theo quy định liên bang, và cơ quan địa phương của bạn mới là nơi xác nhận.`,
+    disclaimer: "Demeter là AI và có thể sai. Vui lòng kiểm tra lại các nguồn được trích dẫn và",
+    disclaimerAgency: "cơ quan tiểu bang của bạn",
     piiHint: "Xin đừng nhập số An sinh Xã hội, thông tin ngân hàng hay họ tên đầy đủ.",
-    clear: "Xóa cuộc trò chuyện này",
+    clear: "Bắt đầu cuộc trò chuyện mới",
     stateOffer: "Bạn có nhắc đến {place}. Trả lời cho {state} nhé?",
+    modeOffer: "Bạn có muốn tôi ước tính một con số không, hay hiện giờ chỉ cần câu trả lời?",
+    modeOfferEstimate: "Ước tính một con số",
+    modeOfferAsk: "Chỉ hỏi thôi",
+    portalLead: "Ở {state}, bạn nộp đơn qua {agency}.",
+    portalCta: "Nộp đơn tại {portal}",
+    portalStay:
+      "Đó là nơi nộp đơn chính thức, và đường dẫn cũng có trong bản phác thảo đơn của bạn, nên bạn sẽ không phải tìm lại.\n\n**_Chúng ta bắt đầu xem đơn yêu cầu những gì nhé?_**",
     stateOfferYes: "Vâng, dùng {state}",
     stateOfferNo: "Không, giữ nguyên",
     clearNote:
@@ -286,7 +362,9 @@ export const T = {
     errCapacity:
       "Demeter đã đạt giới hạn của tháng. Để được trợ giúp về SNAP ngay bây giờ, hãy gọi 211 hoặc cơ quan SNAP của tiểu bang bạn.",
     errConfig: "Demeter chưa sẵn sàng — vui lòng quay lại sau.",
-    errNetwork: "Đã xảy ra lỗi. Vui lòng thử lại.",
+    errServer: "Lỗi này ở phía chúng tôi, không phải của bạn. Thử lại thường được — nếu vẫn vậy, hãy báo cho chúng tôi.",
+    errNetwork: "Không kết nối được với Demeter. Hãy kiểm tra mạng và thử lại.",
+    errRequest: "Demeter không đọc được nội dung đó. Bắt đầu cuộc trò chuyện mới thường xử lý được — nguyên nhân hay gặp là cuộc trò chuyện quá dài.",
     thinking: "Chờ một chút",
     emptyTitle: "Bạn muốn biết điều gì?",
     emptyLede: "Mỗi câu trả lời đều trích dẫn điều luật mà nó dựa vào, để bạn tự kiểm chứng được.",
@@ -305,6 +383,15 @@ export const T = {
       scopeAgency: "Câu trả lời dựa trên",
       scopeApply: "Nộp đơn tại",
     },
+    emailOutline: "Gửi bản này cho tôi",
+    emailSending: "Đang gửi…",
+    emailSent: "Đã gửi vào hộp thư của bạn",
+    emailSignIn: "Đăng nhập để gửi",
+    emailError: "Chưa gửi được.",
+    pdfDownload: "Tải về dạng PDF",
+    pdfWorking: "Đang chuẩn bị…",
+    pdfDownloaded: "Bản phác thảo đơn của bạn đã tải về.",
+    pdfError: "Chưa tải về được. Vui lòng thử lại.",
     howWeVerify: "Cách chúng tôi xác minh",
     languageLabel: "Ngôn ngữ",
     feedback: {
@@ -340,7 +427,7 @@ export const T = {
       error: "Không lưu được. Vui lòng thử lại.",
     },
     worksheet: {
-      title: "Ước tính của bạn",
+      title: "Bản phác thảo đơn của bạn",
       subtitle: "Được xây dựng khi bạn trò chuyện",
       result: "Kết quả tạm tính",
       estimate: "Trợ cấp hàng tháng ước tính:",
@@ -349,17 +436,17 @@ export const T = {
       empty:
         "Hãy cho Demeter biết về hộ gia đình của bạn — ai sống cùng bạn, bạn kiếm được bao nhiêu, bạn trả bao nhiêu tiền thuê nhà — và ước tính sẽ hiện ở đây.",
       privacy:
-        "Đóng tab này thì bạn không thể quay lại cuộc trò chuyện này. Chúng tôi lưu câu hỏi và câu trả lời để kiểm tra độ chính xác, vì vậy xin đừng nhập tên hay thông tin cá nhân.",
+        "Đóng tab là kết thúc. Chúng tôi lưu nội dung để kiểm tra độ chính xác — đừng nhập tên.",
       privacySaved:
-        "Đã lưu vào tài khoản của bạn — bạn có thể quay lại hoặc xóa đi. Chúng tôi lưu câu hỏi và câu trả lời để kiểm tra độ chính xác, vì vậy xin đừng nhập tên hay thông tin cá nhân.",
-      disclaimer: "Chỉ là ước tính, không phải quyết định. Cơ quan quận của bạn mới là nơi quyết định.",
+        "Đã lưu vào tài khoản của bạn. Chúng tôi lưu nội dung để kiểm tra độ chính xác — đừng nhập tên.",
+      disclaimer: "Chỉ là ước tính, không phải quyết định.",
       pickState: "Chọn tiểu bang của bạn ở trên để ước tính có thể hiện ở đây.",
       pickStateCta: "Chọn tiểu bang",
       modeLabel: "Bạn muốn gì ở đây?",
       modeAsk: "Chỉ hỏi thôi",
       modeEstimate: "Tính mức ước tính",
       modeAskNote:
-        "Cứ hỏi thoải mái. Không điều gì bạn nói được thu thập ở đây, và không có ước tính nào được tính.",
+        "Những gì bạn nói ở đây không được đưa vào bản tài liệu Demeter đang lập cho bạn. Hãy chuyển sang mục này khi bạn muốn hỏi giả định, hoặc hỏi giúp người khác, mà không ảnh hưởng đến hồ sơ của chính bạn. (Chúng tôi vẫn lưu câu hỏi và câu trả lời để kiểm tra độ chính xác — điều này đúng với cả hai chế độ.)",
       switchedToAsk: "Đã xóa ước tính. Không có gì đang được thu thập.",
     },
   },
@@ -367,6 +454,7 @@ export const T = {
     title: "Demeter",
     tagline: "经过核实的 SNAP 答案——适用于任何州。",
     inputPlaceholder: "关于 SNAP 的任何问题，都很乐意解答…",
+    inputPlaceholderEstimate: "跟我说说您的家庭情况，我来逐步整理…",
     send: "发送",
     stop: "停止",
     stateLabel: "您所在的州",
@@ -375,10 +463,20 @@ export const T = {
     federalBadge: "联邦指引",
     dividerTo: (name: string) => `现在按 ${name} 的规定回答——之前的回答可能不再适用。`,
     dividerFederal: "现在仅按联邦规定回答——之前的回答可能不再适用。",
-    disclaimer: "Demeter 提供信息，而非法律建议。请与您所在州的 SNAP 机构确认。",
+    dividerUncovered: (place: string) =>
+      `Demeter 尚未覆盖${place}——下面的回答按联邦规定，请以您当地机构的说法为准。`,
+    disclaimer: "Demeter 是 AI，可能出错。请核对引用的来源，并咨询",
+    disclaimerAgency: "您所在州的机构",
     piiHint: "请不要输入社会安全号码、银行信息或完整姓名。",
-    clear: "清除本次对话",
+    clear: "开始新的对话",
     stateOffer: "您提到了 {place}。要按 {state} 来回答吗？",
+    modeOffer: "需要我帮您估算一个大致金额吗？还是目前只想先了解情况？",
+    modeOfferEstimate: "帮我估算金额",
+    modeOfferAsk: "只是问问",
+    portalLead: "在{state}，申请通过{agency}办理。",
+    portalCta: "前往 {portal} 申请",
+    portalStay:
+      "那里是正式提交申请的地方，这个链接也在您的申请提纲里，您不用再去找一遍。\n\n**_我们现在开始逐项看看表格会问什么，好吗？_**",
     stateOfferYes: "好，用 {state}",
     stateOfferNo: "不用，保持不变",
     clearNote: "仅从此浏览器中清除。我们仍会保留问题和回答以核查准确性。",
@@ -388,7 +486,9 @@ export const T = {
     errCapacity:
       "Demeter 本月已达使用上限。如需即时的 SNAP 帮助，请拨打 211 或联系您所在州的 SNAP 机构。",
     errConfig: "Demeter 尚未开放——请稍后再来。",
-    errNetwork: "出了点问题。请再试一次。",
+    errServer: "这是我们这边出的问题，不是您的。再试一次通常就好了——如果一直这样，请告诉我们。",
+    errNetwork: "连接不上 Demeter。请检查网络后再试一次。",
+    errRequest: "Demeter 读不了这条内容。开始新的对话通常就能解决——最常见的原因是对话太长。",
     thinking: "请稍候",
     emptyTitle: "您想了解什么？",
     emptyLede: "每条回答都会引用其依据的条文，方便您自行核对。",
@@ -407,6 +507,15 @@ export const T = {
       scopeAgency: "答案来源",
       scopeApply: "申请入口",
     },
+    emailOutline: "把这份发到我的邮箱",
+    emailSending: "发送中…",
+    emailSent: "已发送到您的邮箱",
+    emailSignIn: "登录后发送",
+    emailError: "没能发送。",
+    pdfDownload: "下载 PDF",
+    pdfWorking: "正在准备…",
+    pdfDownloaded: "您的申请提纲已下载。",
+    pdfError: "没能下载，请再试一次。",
     howWeVerify: "我们如何核实",
     languageLabel: "语言",
     feedback: {
@@ -441,7 +550,7 @@ export const T = {
       error: "保存失败，请再试一次。",
     },
     worksheet: {
-      title: "您的估算",
+      title: "您的申请提纲",
       subtitle: "随着对话逐步生成",
       result: "初步结果",
       estimate: "每月估计补助：",
@@ -450,16 +559,16 @@ export const T = {
       empty:
         "告诉 Demeter 您的家庭情况——谁和您同住、收入多少、房租多少——估算就会在这里逐步生成。",
       privacy:
-        "关闭此页面后将无法返回本次对话。我们会保留问题和回答以核查准确性，因此请勿输入姓名或个人信息。",
+        "关闭标签页即结束。我们保留文字以核查准确性——请勿输入姓名。",
       privacySaved:
-        "已保存到您的账户 — 您可以随时返回或删除。我们会保留问题和回答以核查准确性，因此请勿输入姓名或个人信息。",
-      disclaimer: "这只是估算，不是决定。最终由您所在县的机构裁定。",
+        "已保存到您的账户。我们保留文字以核查准确性——请勿输入姓名。",
+      disclaimer: "这只是估算，不是决定。",
       pickState: "请在上方选择您所在的州，估算就能在这里生成。",
       pickStateCta: "选择您所在的州",
       modeLabel: "您希望在这里得到什么？",
       modeAsk: "只是问问",
       modeEstimate: "帮我算估算",
-      modeAskNote: "随便问。您说的内容不会在这里被收集，也不会计算任何估算。",
+      modeAskNote: "您在这里说的内容不会进入 Demeter 为您整理的那份文件。任何时候想问假设情况、或替别人问，都可以切到这里，不会影响您自己的材料。（我们仍会保留问题和回答以核查准确性——两种模式都是如此。）",
       switchedToAsk: "估算已清除。没有在收集任何内容。",
     },
   },

@@ -35,6 +35,13 @@ export const publicAuditSink: MaeAuditSink = async (rec: MaeAuditRecord) => {
         certainty_code: rec.certaintyCode ?? null,
         verifier_outcome: rec.verifierOutcome ?? null,
         retrieval_mode: rec.retrievalMode ?? null,
+        // COST. Fewer than 30 short prompts cost about a dollar and there was
+        // no way to find out why, because this table had no token counts at
+        // all — spend attributed to no state, no turn, and no retry. Summed
+        // over the answer, so a citation-failure retry (a second full
+        // generation) shows as one expensive row rather than vanishing.
+        input_tokens: rec.inputTokens ?? null,
+        output_tokens: rec.outputTokens ?? null,
       });
     if (error) throw error;
   } catch (err) {

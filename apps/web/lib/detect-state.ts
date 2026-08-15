@@ -36,6 +36,34 @@ const CITY_STATE: Record<string, string> = {
   "salt lake city": "UT", "boise": "ID", "des moines": "IA", "wichita": "KS",
 };
 
+/** PLACES THAT ARE NOT ONE OF THE STATES WE COVER, and that a naive substring
+ *  match gets actively wrong.
+ *
+ *  "Washington DC" contains the word "washington", so someone in the District
+ *  was told about Washington State's program — a different agency, a different
+ *  portal, different figures — and nothing in the interface said otherwise.
+ *  Silently answering the wrong jurisdiction is the worst outcome available
+ *  here, worse than admitting the gap.
+ *
+ *  Puerto Rico is here for a different reason: it does not run SNAP. It runs
+ *  NAP, a block grant with its own rules, so every figure on this site is
+ *  wrong there in a way no state pack would fix. */
+const NOT_COVERED: Array<[RegExp, string]> = [
+  [/\bwashington,?\s*d\.?\s?c\.?\b|\bdistrict of columbia\b|\bd\.c\.\b/i, "Washington, D.C."],
+  [/\bpuerto rico\b/i, "Puerto Rico"],
+  [/\bguam\b/i, "Guam"],
+  [/\b(us |u\.s\. )?virgin islands\b/i, "the U.S. Virgin Islands"],
+  [/\bamerican samoa\b/i, "American Samoa"],
+];
+
+/** A place they named that this product does not cover. Distinct from "no
+ *  state mentioned": the chat should say so rather than carry on silently. */
+export function detectUncoveredPlace(text: string): string | null {
+  if (!text) return null;
+  for (const [re, name] of NOT_COVERED) if (re.test(text)) return name;
+  return null;
+}
+
 /** Phrases that mean the place is NOT where they live. "If I moved to Texas"
  *  must never re-scope anything. */
 const HYPOTHETICAL = /\b(if i|if we|were i|thinking (about|of)|planning to|moving to|move to|what about|how about|used to|last year|when i lived)\b/i;
@@ -55,7 +83,9 @@ export interface StateMention {
  * about the wrong one is worse than not asking.
  */
 export function detectState(text: string): StateMention | null {
-  if (!text || HYPOTHETICAL.test(text)) return null;
+  // An uncovered place wins outright. "Washington DC" must never fall through
+  // to the substring pass and come back as Washington State.
+  if (!text || HYPOTHETICAL.test(text) || detectUncoveredPlace(text)) return null;
   const hay = ` ${text.toLowerCase().replace(/[.,!?;:()"']/g, " ").replace(/\s+/g, " ")} `;
 
   const hits = new Map<string, string>();
@@ -72,9 +102,24 @@ export function detectState(text: string): StateMention | null {
   // Two-letter codes ONLY when written as a standalone capitalised token in the
   // original text — "in MA" is a state, "la" in "la comida" is not, and "in"
   // and "or" and "me" are all state codes.
+  //
+  // AND NOT WHEN THE CODE IS AN ACRONYM FOR SOMETHING ELSE. "he gets VA
+  // benefits" is Veterans Affairs, and it offered to re-scope the whole
+  // conversation to Virginia — mid-answer, to someone who had already said
+  // California. Veterans are a population this product cannot afford to
+  // mishandle: VA income, VA disability and VA health care all come up in SNAP
+  // screening constantly, and every one of them reads as a state code.
+  //
+  // "IN" and "OK" and "OR" are worse still as bare words, but those are already
+  // excluded by the capitalisation rule in ordinary prose.
+  const ACRONYM_CONTEXT =
+    /\b(VA|DE|MD|OK|IN|OR|ME|HI|LA|MS|MT|PA)\s+(benefits?|disability|claim|loan|health|hospital|care|clinic|rating|pension|form|office|department)\b/gi;
+  const acronyms = new Set(
+    [...text.matchAll(ACRONYM_CONTEXT)].map((m) => m[1]!.toUpperCase()),
+  );
   for (const m of text.matchAll(/\b([A-Z]{2})\b/g)) {
     const code = m[1]!;
-    if (STATE_NAMES[code]) hits.set(code, code);
+    if (STATE_NAMES[code] && !acronyms.has(code)) hits.set(code, code);
   }
 
   if (hits.size !== 1) return null;

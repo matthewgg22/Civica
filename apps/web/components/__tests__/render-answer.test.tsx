@@ -17,6 +17,15 @@ type Nodes = ReturnType<typeof renderAnswer>;
 
 function walk(nodes: unknown, visit: (n: unknown) => void): void {
   for (const n of Array.isArray(nodes) ? nodes : [nodes]) {
+    // NESTED ARRAYS. A child can itself be an array — renderInline returns
+    // one, so `children` is routinely [[...strings], <span/>]. This used to
+    // visit the array itself, find it was not an element, and stop, silently
+    // skipping every node inside it. It reported a paragraph as missing text
+    // that was in fact rendering perfectly.
+    if (Array.isArray(n)) {
+      walk(n, visit);
+      continue;
+    }
     visit(n);
     if (isValidElement(n)) {
       walk((n.props as { children?: unknown }).children ?? [], visit);
@@ -61,10 +70,22 @@ describe("renderAnswer (chat markdown subset)", () => {
     expect(texts(nodes)).toContain("$22,500 is exempt");
   });
 
-  it("turns a standalone --- line into an <hr> (the citation-trailer rule)", () => {
+  it("moves everything after --- into the footnote block", () => {
+    // The rule used to render as an <hr> with the trailer running on beneath
+    // it in the answer's own face and size. It is reference, not answer, so it
+    // is now a block of its own — the hairline is that block's top border.
     const nodes = renderAnswer("answer body\n\n---\n**Citation:**\n- ✓ ok");
-    expect(tags(nodes)).toContain("hr");
+    expect(tags(nodes)).toContain("div");
+    expect(tags(nodes)).not.toContain("hr");
+    // The content is all still there, and still marked up.
     expect(tags(nodes)).toContain("strong");
+    expect(texts(nodes)).toContain("Citation:");
+    expect(texts(nodes)).toContain("answer body");
+  });
+
+  it("leaves an answer with no trailer entirely alone", () => {
+    const nodes = renderAnswer("just an answer");
+    expect(tags(nodes)).not.toContain("div");
   });
 
   it("keeps HTML-looking content as inert text (no injection surface)", () => {
@@ -90,10 +111,10 @@ describe("paragraphs are blocks, so they can be given space", () => {
     expect(paragraphs(nodes)).toBe(3);
   });
 
-  it("keeps a single newline inside its paragraph, so bullets stay together", () => {
-    const nodes = renderAnswer("Bring:\n- ID\n- Proof of rent");
+  it("keeps a single newline inside a paragraph of prose", () => {
+    const nodes = renderAnswer("Line one\ncontinues here");
     expect(paragraphs(nodes)).toBe(1);
-    expect(texts(nodes)).toContain("- ID\n- Proof of rent");
+    expect(texts(nodes)).toContain("Line one\ncontinues here");
   });
 
   it("does not emit an empty paragraph for trailing or repeated blank lines", () => {
@@ -103,23 +124,97 @@ describe("paragraphs are blocks, so they can be given space", () => {
 
   it("the citation rule closes the paragraph before it", () => {
     const nodes = renderAnswer("The answer.\n---\n7 CFR 273.9");
-    expect(tags(nodes)).toContain("hr");
+    // Still two paragraphs — one in the answer, one inside the footnote.
     expect(paragraphs(nodes)).toBe(2);
+    expect(tags(nodes)).toContain("div");
   });
 });
 
-describe("the streaming cursor", () => {
-  it("sits inside the last paragraph, not after it", () => {
-    // Appended AFTER the paragraph it lands on its own line and reads as a
-    // stray mark rather than as the live end of the text.
+// Seen in production: an answer carrying TWO certainty banners — its own
+// "⚠ UNCERTAIN — do not treat as settled; confirm with your county caseworker"
+// and ours right under it — plus two "Check it yourself" lines. Told the same
+// caveat twice in two wordings, which reads as the page arguing with itself.
+describe("a trailer the model wrote alongside ours", () => {
+  const doubled = [
+    "The answer.",
+    "",
+    "⚠ UNCERTAIN — do not treat as settled; confirm with your county caseworker.",
+    "Check it yourself: 7 CFR 273.11",
+    "---",
+    "⚠ **UNCERTAIN** — These are real authorities, but we did not have their text.",
+    "_Check it yourself:_ 7 CFR 273.11",
+  ].join("\n");
+
+  it("keeps one certainty banner — ours, which is appended last", () => {
+    const { body } = splitFollowups(doubled);
+    expect(body).toContain("These are real authorities");
+    expect(body).not.toContain("do not treat as settled");
+  });
+
+  it("keeps one Check it yourself line", () => {
+    expect(splitFollowups(doubled).body.match(/Check it yourself/g) ?? []).toHaveLength(1);
+  });
+
+  it("leaves an answer with a single trailer untouched", () => {
+    const single = "The answer.\n---\n✓ **CERTAIN** — checked.\n_Check it yourself:_ 7 CFR 273.9";
+    const { body } = splitFollowups(single);
+    expect(body).toContain("CERTAIN");
+    expect(body.match(/Check it yourself/g) ?? []).toHaveLength(1);
+  });
+});
+
+describe("the question the composer echoes", () => {
+  it("drops the bullet marker when the closing question is a list item", () => {
+    // Answers very often end in a list of options, so the last sentence is the
+    // last bullet — and the marker came with it, putting a stray hyphen at the
+    // start of the composer on a large share of real answers.
+    const q = pendingQuestion("Some answer.\n\n- One thing?\n- Are you ready to apply now?");
+    expect(q).toBe("Are you ready to apply now?");
+  });
+
+  it("leaves an ordinary closing question alone", () => {
+    expect(pendingQuestion("A sentence. Which state are you in?")).toBe(
+      "Which state are you in?",
+    );
+  });
+
+  it("returns null when the answer does not end in a question", () => {
+    expect(pendingQuestion("A statement, and then another.")).toBeNull();
+  });
+});
+
+describe("the streaming edge", () => {
+  // Was a blinking block caret — the loudest thing on a page of quiet type,
+  // sitting at the end of every sentence as it arrived. A cursor belongs in a
+  // field you type into, not in prose being read to you. The newest word now
+  // arrives dimmed and settles instead.
+  it("wraps the newest word, inside the last paragraph", () => {
     const nodes = renderAnswer("First.\n\nStill writing", { streaming: true });
     expect(paragraphs(nodes)).toBe(2);
     expect(tags(nodes)).toEqual(["span"]);
   });
 
+  it("keeps every word — the edge is a wrapper, not a truncation", () => {
+    // The tail is split off the last paragraph and re-rendered. If that split
+    // dropped or duplicated a word the reader would watch text corrupt itself
+    // in front of them, which is worse than any caret.
+    const nodes = renderAnswer("First.\n\nStill writing here", { streaming: true });
+    expect(texts(nodes).replace(/\s+/g, " ")).toContain("Still writing here");
+  });
+
+  it("handles a last paragraph that is a single word", () => {
+    const nodes = renderAnswer("Sure", { streaming: true });
+    expect(texts(nodes)).toContain("Sure");
+  });
+
   it("is absent once the answer is finished", () => {
     const nodes = renderAnswer("All done.");
     expect(tags(nodes)).toEqual([]);
+  });
+
+  it("does not render a caret — that was the thing being replaced", () => {
+    const nodes = renderAnswer("Still writing", { streaming: true });
+    expect(JSON.stringify(nodes)).not.toContain("demeter__caret");
   });
 
   it("does not appear on an empty answer", () => {
@@ -281,5 +376,43 @@ describe("the scope divider names a STATE", () => {
       expect(n.length, `${p.code} → ${n}`).toBeLessThanOrEqual(24);
       expect(n, `${p.code} kept an annotation`).not.toMatch(/—|\(/);
     }
+  });
+});
+
+describe("bullets are a real list", () => {
+  // Shipped as literal hyphens in a pre-wrap paragraph: no indent, no hanging
+  // alignment, so a wrapped item lined up under the dash instead of under its
+  // own first word. Three options read as a wall.
+  it("turns a run of - lines into <ul><li>", () => {
+    const nodes = renderAnswer("You can apply:\n- Online at DTAConnect.com\n- By phone\n- In person");
+    expect(tags(nodes)).toEqual(["ul", "li", "li", "li"]);
+    expect(texts(nodes)).not.toContain("- Online");
+    expect(texts(nodes)).toContain("Online at DTAConnect.com");
+  });
+
+  it("keeps the prose that introduces the list as its own paragraph", () => {
+    const nodes = renderAnswer("You can apply:\n- Online\n- By phone");
+    expect(paragraphs(nodes)).toBe(1);
+    expect(texts(nodes)).toContain("You can apply:");
+  });
+
+  it("resumes prose after the list", () => {
+    const nodes = renderAnswer("Ways:\n- One\n- Two\nThe filing date is what counts.");
+    expect(tags(nodes)).toContain("ul");
+    expect(texts(nodes)).toContain("The filing date is what counts.");
+  });
+
+  it("renders markdown inside an item", () => {
+    const nodes = renderAnswer("- **How many people** are in your household");
+    expect(tags(nodes)).toEqual(["ul", "li", "strong"]);
+  });
+
+  it("accepts • and * as bullets too", () => {
+    expect(tags(renderAnswer("• One\n• Two"))).toEqual(["ul", "li", "li"]);
+  });
+
+  it("does not treat a lone hyphenated sentence as a list", () => {
+    // "net income - deductions" has no leading dash, so nothing changes.
+    expect(tags(renderAnswer("net income - deductions"))).toEqual([]);
   });
 });

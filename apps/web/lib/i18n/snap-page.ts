@@ -126,7 +126,10 @@ export interface PageCopy {
    *  the dollar figures, which vary and change every October. */
   timelineH2: string;
   timelineBody: string;
-  timeline: { when: string; t: string; d: string }[];
+  /** `img` names a file in public/timeline/ — the step's illustration. Five
+   *  steps, five drawings, so the marker is a picture of the moment rather
+   *  than a numbered dot. */
+  timeline: { when: string; t: string; d: string; img: string }[];
   timelineNote: string;
   /** The graphite footer. `footerDisclaimer` is the load-bearing one: it is the
    *  last thing anyone reads before acting on an answer, so it says plainly
@@ -157,7 +160,7 @@ export interface PageCopy {
 const en: PageCopy = {
   h1: "Ask about SNAP and get the actual rule.",
   productLede:
-    "Demeter answers in plain language and quotes the federal regulation behind every claim — plus your state’s own manual, where we have verified one.",
+    "Demeter answers in plain language and quotes the federal regulation behind every claim and your state’s own manual, to help explain the benefit programme to you.",
   snapLine:
     "SNAP is monthly money for groceries, paid onto an EBT card. Formerly called food stamps. Applying is free.",
   eyebrow: "Supplemental Nutrition Assistance Program",
@@ -203,9 +206,9 @@ const en: PageCopy = {
     "Demeter is not a government agency, and is not affiliated with or endorsed by USDA. For the official program and to find your own state agency:",
   officialFns: "USDA Food and Nutrition Service — SNAP",
   officialDirectory: "SNAP state directory — find your agency",
-  evidenceH2: "Why we show you the rule instead of just answering",
+  evidenceH2: "Better answers than a general AI assistant",
   evidenceBody:
-    "Georgetown University’s Beeck Center ran twelve experiments on turning benefits policy into working code with AI. Their conclusion was not that it cannot be done — it was that models handling genuinely complex policy logic still need outside knowledge and a person checking the result. A language model is fluent enough to be wrong convincingly, and benefits rules are exactly where that costs someone money. So Demeter quotes the regulation behind every claim and links it. You do not have to trust the answer; you can read what it came from.",
+    "Ask a general assistant about SNAP and you get a fluent answer with nothing behind it. That is the specific failure Georgetown University’s Beeck Center found across twelve experiments on turning benefits policy into working code: models handling genuinely complex policy logic still need outside knowledge and a person checking the result. A language model is fluent enough to be wrong convincingly, and benefits rules are exactly where that costs someone money — a wrong income limit is a family that does not apply. So Demeter reads the actual regulation for each question, quotes the rule behind every claim, links it, and refuses to state a figure it could not verify. You do not have to trust the answer; you can read what it came from.",
   evidenceQuote: "still require external knowledge and human oversight",
   evidenceAttrib:
     "Beeck Center for Social Impact + Innovation, Georgetown University — AI-Powered Rules as Code, February 2025",
@@ -213,7 +216,7 @@ const en: PageCopy = {
   evidenceDemoDay: "The twelve Policy2Code experiments",
   decidesH2: "What actually decides whether you qualify",
   decidesBody:
-    "Not your income alone — that is the most common reason people who qualify never apply. Eligibility turns on what is left after the deductions you are entitled to, and on a short list of category rules.",
+    "Not your income alone — that is the most common reason people who qualify never apply. Eligibility turns on what is left after the deductions you are entitled to, and on a short list of category rules.\n\nAnd this is why a straight answer is genuinely hard to find anywhere: almost everyone is an edge case. A student who works twenty hours, a household where one person is not eligible, self-employment income that changes every month, a parent applying for citizen children — each of those changes the arithmetic, and a general answer written for nobody in particular is wrong for most of them. That is the gap a conversation can close and a web page cannot.",
   defs: [
     {
       t: "Household size",
@@ -297,9 +300,9 @@ const en: PageCopy = {
     "SNAP takes at least seven days even when it is urgent. A food bank can help now, and 211 will find one near you.",
   foodNowBank: "Find a food bank",
   foodNow211: "Call or visit 211",
-  fearsH2: "The reasons people don\u2019t apply",
+  fearsH2: "The questions people actually ask first",
   fearsBody:
-    "These are the worries that stop people who would qualify. Here is what is actually true \u2014 including the one we cannot give you a flat answer on.",
+    "Almost nobody starts with the income limits. These come up first, in about this order \u2014 and they are reasonable things to want settled before you hand a government agency your details. Here is what is actually true, including the one we cannot give you a flat answer on.",
   fears: [
     {
       q: "Does this affect my immigration status?",
@@ -331,40 +334,49 @@ const en: PageCopy = {
   timelineH2: "What happens after you apply",
   timelineBody:
     "The deadlines below are federal, so they hold in every state. Your agency may move faster; it is not allowed to move slower without telling you why.",
+  // FIVE STEPS, IN THE ORDER THEY HAPPEN. Was six, with the seven-day
+  // expedited route sitting FOURTH — after the ten-day verification step it
+  // actually precedes. Someone out of food this week met the paperwork before
+  // the fast track, which is the wrong way round for the reader who needs it
+  // most. It is now second, where it belongs on the clock.
+  //
+  // The interview and the verification requests merged: they are one exchange
+  // from the applicant's side — the agency asks, you answer — and splitting
+  // them spent two of six columns on the same beat.
   timeline: [
     {
       when: "Day 0",
       t: "You file",
       d: "The date you file is what counts. Benefits are figured from it, not from the day you finish.",
-    },
-    {
-      when: "Within days",
-      t: "The interview",
-      d: "Nobody is approved without one. Usually a phone call. Missing it is not a denial on its own.",
-    },
-    {
-      when: "At least 10 days",
-      t: "What you have to prove",
-      d: "The agency asks for what it cannot verify itself. You get at least 10 days to produce it.",
+      img: "1-file",
     },
     {
       when: "By day 7",
       t: "If you have almost nothing coming in",
-      d: "Almost nothing coming in? Benefits can arrive within a week. It is the same application.",
+      d: "Benefits can arrive within a week. Same application — say so when you file.",
+      img: "2-fast",
+    },
+    {
+      when: "No set deadline",
+      t: "The interview, and what you prove",
+      d: "Usually a phone call, and nobody is approved without one — but federal rules set no deadline for it, only for the decision. Waiting weeks is normal. Expedited cases are interviewed inside the 7 days. Miss it and you can reschedule.",
+      img: "3-proof",
     },
     {
       when: "By day 30",
       t: "The decision",
       d: "Thirty days from filing, the agency must approve or deny — and say why if it denies.",
+      img: "4-decision",
     },
     {
       when: "Then, ongoing",
       t: "Benefits, and keeping them",
       d: "Benefits land monthly on an EBT card. Recertify before your period runs out.",
+      img: "5-ongoing",
     },
   ],
   timelineNote:
-    "Appealing a denial is free. Missing your recertification deadline is one of the most common ways people lose benefits they still qualify for. Federal floor, from 7 CFR 273.2. Your state may add steps of its own — ask Demeter about yours and the answer will cite that state's manual where we have verified one.",
+    "Appealing a denial is free. If you miss your interview the agency must tell you so, and must schedule a second one if you get in touch within the 30 days — a missed interview is not a denial. Missing your recertification deadline is one of the most common ways people lose benefits they still qualify for. Federal floor, from 7 CFR 273.2. Your state may add steps of its own — ask Demeter about yours and the answer will cite that state's manual where we have verified one.",
   brandSubtitle: "SNAP Enrollment and Eligibility Assistance",
   navAsk: "Ask Demeter",
   navQuestions: "Application questions",
@@ -571,35 +583,35 @@ const es: PageCopy = {
       when: "Día 0",
       t: "Presentas la solicitud",
       d: "La fecha en que presentas es la que cuenta. Los beneficios se calculan desde ahí.",
-    },
-    {
-      when: "En pocos días",
-      t: "La entrevista",
-      d: "Nadie es aprobado sin ella. Suele ser una llamada. Perderla no es, por sí sola, una denegación.",
-    },
-    {
-      when: "Al menos 10 días",
-      t: "Lo que tienes que comprobar",
-      d: "La agencia pide lo que no puede verificar sola. Tienes al menos 10 días para entregarlo.",
+      img: "1-file",
     },
     {
       when: "Antes del día 7",
       t: "Si casi no tienes nada entrando",
-      d: "¿Casi nada entrando? Los beneficios pueden llegar en una semana. Es la misma solicitud.",
+      d: "Los beneficios pueden llegar en una semana. Es la misma solicitud — dilo al presentarla.",
+      img: "2-fast",
+    },
+    {
+      when: "Sin plazo fijo",
+      t: "La entrevista, y lo que compruebas",
+      d: "Suele ser una llamada, y nadie es aprobado sin ella — pero las reglas federales no le ponen plazo, solo a la decisión. Esperar semanas es normal. Los casos acelerados se entrevistan dentro de los 7 días. Si la pierdes, puedes reprogramarla.",
+      img: "3-proof",
     },
     {
       when: "Antes del día 30",
       t: "La decisión",
       d: "A los treinta días, la agencia debe aprobar o denegar — y decir por qué si deniega.",
+      img: "4-decision",
     },
     {
       when: "Después, de forma continua",
       t: "Los beneficios, y cómo conservarlos",
       d: "Los beneficios llegan cada mes a una tarjeta EBT. Recertifica antes de que termine tu período.",
+      img: "5-ongoing",
     },
   ],
   timelineNote:
-    "Apelar una denegación es gratis. Perder el plazo de recertificación es una de las formas más comunes de perder beneficios a los que todavía tienes derecho. Base federal, del 7 CFR 273.2. Tu estado puede añadir pasos propios — pregúntale a Demeter por el tuyo y la respuesta citará el manual de ese estado cuando lo hayamos verificado.",
+    "Apelar una denegación es gratis. Si pierdes la entrevista, la agencia debe avisarte y debe programar una segunda si te comunicas dentro de los 30 días — perder la entrevista no es una denegación. Perder el plazo de recertificación es una de las formas más comunes de perder beneficios a los que todavía tienes derecho. Base federal, del 7 CFR 273.2. Tu estado puede añadir pasos propios — pregúntale a Demeter por el tuyo y la respuesta citará el manual de ese estado cuando lo hayamos verificado.",
   brandSubtitle: "Asistencia de inscripción y elegibilidad de SNAP",
   navAsk: "Pregúntale a Demeter",
   navQuestions: "Preguntas de la solicitud",
@@ -807,35 +819,35 @@ const vi: PageCopy = {
       when: "Ngày 0",
       t: "Bạn nộp đơn",
       d: "Ngày bạn nộp mới là ngày được tính. Trợ cấp tính từ mốc đó, không phải khi bạn điền xong.",
-    },
-    {
-      when: "Trong vài ngày",
-      t: "Buổi phỏng vấn",
-      d: "Không ai được duyệt mà bỏ bước này. Thường là một cuộc gọi. Lỡ hẹn không phải là bị từ chối.",
-    },
-    {
-      when: "Ít nhất 10 ngày",
-      t: "Những gì bạn phải chứng minh",
-      d: "Cơ quan chỉ hỏi những gì họ không tự xác minh được. Bạn có ít nhất 10 ngày để nộp.",
+      img: "1-file",
     },
     {
       when: "Trước ngày thứ 7",
       t: "Nếu bạn gần như không có nguồn thu nào",
-      d: "Gần như không có thu nhập? Trợ cấp có thể đến trong một tuần. Vẫn là đơn đó.",
+      d: "Trợ cấp có thể đến trong một tuần. Vẫn là đơn đó — hãy nói rõ khi nộp.",
+      img: "2-fast",
+    },
+    {
+      when: "Không có hạn cố định",
+      t: "Phỏng vấn, và những gì bạn chứng minh",
+      d: "Thường là một cuộc gọi, và không ai được duyệt mà bỏ bước này — nhưng quy định liên bang không đặt hạn cho buổi phỏng vấn, chỉ đặt hạn cho quyết định. Chờ vài tuần là bình thường. Hồ sơ khẩn được phỏng vấn trong 7 ngày. Lỡ hẹn thì bạn hẹn lại được.",
+      img: "3-proof",
     },
     {
       when: "Trước ngày thứ 30",
       t: "Quyết định",
       d: "Ba mươi ngày kể từ khi nộp, cơ quan phải duyệt hoặc từ chối — và nêu rõ lý do.",
+      img: "4-decision",
     },
     {
       when: "Sau đó, lâu dài",
       t: "Nhận trợ cấp, và giữ được nó",
       d: "Trợ cấp vào thẻ EBT hằng tháng. Hãy tái chứng nhận trước khi hết kỳ hạn.",
+      img: "5-ongoing",
     },
   ],
   timelineNote:
-    "Khiếu nại khi bị từ chối là miễn phí. Bỏ lỡ hạn tái chứng nhận là một trong những lý do phổ biến nhất khiến người ta mất trợ cấp mà vẫn còn đủ điều kiện. Mức sàn liên bang, theo 7 CFR 273.2. Tiểu bang của bạn có thể có thêm bước riêng — hãy hỏi Demeter về tiểu bang đó, câu trả lời sẽ trích dẫn cẩm nang của bang khi chúng tôi đã xác minh.",
+    "Khiếu nại khi bị từ chối là miễn phí. Nếu bạn lỡ buổi phỏng vấn, cơ quan phải báo cho bạn biết và phải xếp lịch buổi thứ hai nếu bạn liên hệ trong vòng 30 ngày — lỡ phỏng vấn không phải là bị từ chối. Bỏ lỡ hạn tái chứng nhận là một trong những lý do phổ biến nhất khiến người ta mất trợ cấp mà vẫn còn đủ điều kiện. Mức sàn liên bang, theo 7 CFR 273.2. Tiểu bang của bạn có thể có thêm bước riêng — hãy hỏi Demeter về tiểu bang đó, câu trả lời sẽ trích dẫn cẩm nang của bang khi chúng tôi đã xác minh.",
   brandSubtitle: "Hỗ trợ ghi danh và điều kiện SNAP",
   navAsk: "Hỏi Demeter",
   navQuestions: "Câu hỏi trên đơn",
@@ -1042,35 +1054,35 @@ const zh: PageCopy = {
       when: "第 0 天",
       t: "您递交申请",
       d: "递交那天才是起算日。补助从那天开始计算，而不是您填完表格的那天。",
-    },
-    {
-      when: "几天之内",
-      t: "面谈",
-      d: "没有面谈就不会获批。通常只是一通电话。错过面谈本身并不等于被拒。",
-    },
-    {
-      when: "至少 10 天",
-      t: "您需要提供的证明",
-      d: "机构只会索取它无法自行核实的部分。提出要求后，您至少有 10 天时间提交。",
+      img: "1-file",
     },
     {
       when: "第 7 天之前",
       t: "如果您几乎没有任何进项",
-      d: "几乎没有进项？补助最快可在一周内到账，用的还是同一份申请。",
+      d: "补助最快可在一周内到账，用的还是同一份申请——递交时说明情况即可。",
+      img: "2-fast",
+    },
+    {
+      when: "没有固定期限",
+      t: "面谈，以及您要提供的证明",
+      d: "通常只是一通电话，没有面谈就不会获批——但联邦规定并未给面谈设期限，只给决定设了期限。等上几周是常事。加急案件会在 7 天内完成面谈。错过了也可以重新预约。",
+      img: "3-proof",
     },
     {
       when: "第 30 天之前",
       t: "作出决定",
-      d: "自递交起三十天内，机构必须批准或拒绝——若拒绝，还要说明原因。",
+      d: "自递交起三十天内，机构必须批准或拒绝——拒绝时必须说明理由。",
+      img: "4-decision",
     },
     {
       when: "之后，持续进行",
-      t: "领取补助，以及如何保住它",
-      d: "补助每月存入 EBT 卡。请在认证期满前办理复审。",
+      t: "领取补助，并保住它",
+      d: "补助每月打入 EBT 卡。请在认证期结束前完成重新认证。",
+      img: "5-ongoing",
     },
   ],
   timelineNote:
-    "申诉被拒决定是免费的。错过复审期限，是人们明明仍符合条件却失去补助的最常见原因之一。 联邦底线，出自 7 CFR 273.2。您所在的州可能另有步骤——就该州询问 Demeter，凡我们已核实的，回答都会引用该州手册。",
+    "申诉被拒决定是免费的。如果您错过面谈，机构必须通知您，并且只要您在 30 天内联系，就必须再安排一次——错过面谈并不等于被拒。错过复审期限，是人们明明仍符合条件却失去补助的最常见原因之一。 联邦底线，出自 7 CFR 273.2。您所在的州可能另有步骤——就该州询问 Demeter，凡我们已核实的，回答都会引用该州手册。",
   brandSubtitle: "SNAP 申请与资格协助",
   navAsk: "询问 Demeter",
   navQuestions: "申请表问题",

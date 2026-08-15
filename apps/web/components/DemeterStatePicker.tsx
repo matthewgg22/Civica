@@ -86,10 +86,16 @@ export function DemeterStatePicker({
   const matches = useMemo(() => {
     const q = query.trim().toLowerCase();
     if (!q) return states;
-    // Match on code, program, and agency — someone types "CalFresh" or
-    // "Texas" or "ODJFS" and any of the three should find the row.
+    // Match on the state's NAME as well as code, program and agency. The name
+    // was missing, so typing "Massachusetts" into a state picker found nothing
+    // — MA's program is "Supplemental Nutrition Assistance Program" and its
+    // agency is "Department of Transitional Assistance", neither of which
+    // contains the word. The most obvious thing anyone would type was the one
+    // thing that did not work.
     return states.filter((s) =>
-      [s.code, s.program, s.agency].some((f) => f.toLowerCase().includes(q)),
+      [s.code, stateName(s.code), s.program, s.agency].some((f) =>
+        f.toLowerCase().includes(q),
+      ),
     );
   }, [states, query]);
 
