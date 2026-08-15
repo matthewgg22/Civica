@@ -19,7 +19,7 @@ describe("Tranche 1 income screens (FNS BBCE chart, June 2026)", () => {
     ["PA", 200],
     ["OH", 130],
   ])("%s screens at %i%% FPL", (code, pct) => {
-    const p = statePolicyFor(code);
+    const p = statePolicyFor(code, ASOF);
     expect(p.bbce).toBe(true);
     expect(p.bbce_threshold_pct).toBe(pct);
     expect(p.asset_waiver).toBe(true); // "No limit on assets" for all four
@@ -29,14 +29,14 @@ describe("Tranche 1 income screens (FNS BBCE chart, June 2026)", () => {
     // Same archetype as Georgia: categorical eligibility that drops the asset
     // test without raising the income screen. Anyone assuming BBCE ⇒ 200%
     // would over-approve every Ohio household between 130% and 200% FPL.
-    expect(statePolicyFor("OH").bbce_threshold_pct).toBe(130);
-    expect(statePolicyFor("OH").asset_waiver).toBe(true);
-    expect(statePolicyFor("IL").bbce_threshold_pct).toBe(165);
+    expect(statePolicyFor("OH", ASOF).bbce_threshold_pct).toBe(130);
+    expect(statePolicyFor("OH", ASOF).asset_waiver).toBe(true);
+    expect(statePolicyFor("IL", ASOF).bbce_threshold_pct).toBe(165);
   });
 
   it("all four use the 48-state allotment table", () => {
     for (const c of ["FL", "IL", "PA", "OH"]) {
-      expect(statePolicyFor(c).allotment_tier).toBe("48");
+      expect(statePolicyFor(c, ASOF).allotment_tier).toBe("48");
     }
   });
 });
@@ -47,7 +47,7 @@ describe("Tranche 1 SUA — FL/IL/OH sourced, PA a logged verification gap (#619
     ["IL", 546, 457, 67],
     ["OH", 766, 479, 46],
   ])("%s's authored SUA computes a real shelter deduction (HCSUA $%i)", (code, hcsua, lua, phone) => {
-    const p = statePolicyFor(code);
+    const p = statePolicyFor(code, ASOF);
     expect(p.sua_by_tier).not.toBeNull();
     expect(p.sua_by_tier!.HCSUA.toNumber()).toBe(hcsua);
     expect(p.sua_by_tier!.LUA.toNumber()).toBe(lua);
@@ -67,7 +67,7 @@ describe("Tranche 1 SUA — FL/IL/OH sourced, PA a logged verification gap (#619
 
   it("PA has NO authored SUA — a logged verification gap, not an oversight", () => {
     expect(
-      statePolicyFor("PA").sua_by_tier,
+      statePolicyFor("PA", ASOF).sua_by_tier,
       "PA SUA stays null until a working primary source is reached (#619) — see the states.ts comment for what was tried",
     ).toBeNull();
   });
@@ -95,7 +95,7 @@ describe("Tranche 1 unsourced axes stay honest", () => {
     // answer for these three, so they stay true. See the states.ts block
     // comment for why the real fix is county sets, not a boolean flip.
     for (const c of ["FL", "PA", "OH"]) {
-      expect(statePolicyFor(c).abawd_waiver_avail, `${c} waiver flag`).toBe(true);
+      expect(statePolicyFor(c, ASOF).abawd_waiver_avail, `${c} waiver flag`).toBe(true);
     }
   });
 
@@ -104,12 +104,12 @@ describe("Tranche 1 unsourced axes stay honest", () => {
     // SNAP Benefits..." (10/16/2025) states the waiver ends November 2025,
     // corroborated by the active fixed 3-year clock already assigning
     // countable months. See the states.ts IL block comment.
-    expect(statePolicyFor("IL").abawd_waiver_avail).toBe(false);
+    expect(statePolicyFor("IL", ASOF).abawd_waiver_avail).toBe(false);
   });
 
   it("Illinois RMP stays false — it runs in Cook and Franklin counties only", () => {
     // Under-claiming a real county program beats advertising it statewide.
-    expect(statePolicyFor("IL").rmp_operated).toBe(false);
+    expect(statePolicyFor("IL", ASOF).rmp_operated).toBe(false);
   });
 });
 
@@ -122,8 +122,8 @@ describe("Tranche 1 drug felony bans are sourced, not defaulted", () => {
     //     stamps … based upon a conviction of any felony", unconditional.
     // OH: Ohio Rev. Code 5101.84 — 21 U.S.C. 862a(a) does not apply.
     // Both read against primary statute text on 2026-08-11.
-    expect(statePolicyFor("IL").drug_felony_ban).toBe(false);
-    expect(statePolicyFor("OH").drug_felony_ban).toBe(false);
+    expect(statePolicyFor("IL", ASOF).drug_felony_ban).toBe(false);
+    expect(statePolicyFor("OH", ASOF).drug_felony_ban).toBe(false);
   });
 
   it("FL and PA are MODIFIED bans the boolean cannot express, so it under-claims", () => {
@@ -133,7 +133,7 @@ describe("Tranche 1 drug felony bans are sourced, not defaulted", () => {
     // would disqualify every drug-felony household in the state, including
     // the majority each statute protects — the direction of error that #608
     // forbids. Under-claiming a narrow real ban is the lesser harm.
-    expect(statePolicyFor("FL").drug_felony_ban).toBe(false);
-    expect(statePolicyFor("PA").drug_felony_ban).toBe(false);
+    expect(statePolicyFor("FL", ASOF).drug_felony_ban).toBe(false);
+    expect(statePolicyFor("PA", ASOF).drug_felony_ban).toBe(false);
   });
 });

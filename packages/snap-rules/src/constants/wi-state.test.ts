@@ -15,7 +15,7 @@ const ASOF = new Date("2026-08-11");
 
 describe("Wisconsin — flat 200% BBCE (EBD's no-gross-limit exception not modeled)", () => {
   it("bbce_threshold_pct is 200, asset test waived for the categorical majority", () => {
-    const p = statePolicyFor("WI");
+    const p = statePolicyFor("WI", ASOF);
     expect(p.bbce).toBe(true);
     expect(p.bbce_threshold_pct).toBe(200);
     expect(p.asset_waiver).toBe(true);
@@ -25,7 +25,7 @@ describe("Wisconsin — flat 200% BBCE (EBD's no-gross-limit exception not model
 
 describe("Wisconsin SUA — only 3 of 7 real tiers have a schema slot", () => {
   it("pins the 3 mapped tiers (FSH 4.6.7.3 / 8.1.3, eff. 10/1/2025)", () => {
-    const p = statePolicyFor("WI");
+    const p = statePolicyFor("WI", ASOF);
     expect(p.sua_by_tier).not.toBeNull();
     expect(p.sua_by_tier!.HCSUA.toNumber()).toBe(553);
     expect(p.sua_by_tier!.LUA.toNumber()).toBe(385);
@@ -37,7 +37,7 @@ describe("Wisconsin SUA — only 3 of 7 real tiers have a schema slot", () => {
     // deduction under this engine at all — the biggest single-tier loss in
     // this file. Pinning that none of the 3 mapped slots holds one of these
     // 4 values catches a future mis-mapping, not just documents the gap.
-    const p = statePolicyFor("WI");
+    const p = statePolicyFor("WI", ASOF);
     const mapped = [p.sua_by_tier!.HCSUA.toNumber(), p.sua_by_tier!.LUA.toNumber(), p.sua_by_tier!.phone.toNumber()];
     for (const unmapped of [155, 106, 48, 28]) {
       expect(mapped).not.toContain(unmapped);
@@ -64,14 +64,14 @@ describe("Wisconsin unsourced/simplified axes stay honest", () => {
     // can't express — same under-claim reasoning as AZ's/FL's/PA's entries:
     // most affected people (conviction 5+ years old, or a passed test) face
     // no restriction, so `true` would wrongly deny that majority.
-    expect(statePolicyFor("WI").drug_felony_ban).toBe(false);
+    expect(statePolicyFor("WI", ASOF).drug_felony_ban).toBe(false);
   });
 
   it("ABAWD waiver flag is false — the WI corpus pack found NO confirmed currently-waived county", () => {
-    expect(statePolicyFor("WI").abawd_waiver_avail).toBe(false);
+    expect(statePolicyFor("WI", ASOF).abawd_waiver_avail).toBe(false);
   });
 
   it("RMP is false — confirmed absent from USDA's list via direct curl, not an AI-summarized fetch", () => {
-    expect(statePolicyFor("WI").rmp_operated).toBe(false);
+    expect(statePolicyFor("WI", ASOF).rmp_operated).toBe(false);
   });
 });

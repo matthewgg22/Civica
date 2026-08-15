@@ -16,24 +16,24 @@ const ASOF = new Date("2026-08-11");
 
 describe("Nevada — flat 200% BBCE, no tiering", () => {
   it("bbce_threshold_pct is 200 (not 165/130 — NV doesn't tier like IL/GA)", () => {
-    const p = statePolicyFor("NV");
+    const p = statePolicyFor("NV", ASOF);
     expect(p.bbce).toBe(true);
     expect(p.bbce_threshold_pct).toBe(200);
     expect(p.bbce_fpl_basis).toBe("federal_fiscal_year");
   });
 
   it("asset test is waived for categorically eligible households", () => {
-    expect(statePolicyFor("NV").asset_waiver).toBe(true);
+    expect(statePolicyFor("NV", ASOF).asset_waiver).toBe(true);
   });
 
   it("uses the 48-state allotment table", () => {
-    expect(statePolicyFor("NV").allotment_tier).toBe("48");
+    expect(statePolicyFor("NV", ASOF).allotment_tier).toBe("48");
   });
 });
 
 describe("Nevada SUA — SUA→HCSUA, LUA→LUA, TUA→phone map directly; IUA has no slot", () => {
   it("pins the 3 mapped tiers (E&P MS A-660.5.1.1 / C-210.3, eff. 10/1/2025)", () => {
-    const p = statePolicyFor("NV");
+    const p = statePolicyFor("NV", ASOF);
     expect(p.sua_by_tier).not.toBeNull();
     expect(p.sua_by_tier!.HCSUA.toNumber()).toBe(446);
     expect(p.sua_by_tier!.LUA.toNumber()).toBe(361);
@@ -59,7 +59,7 @@ describe("Nevada SUA — SUA→HCSUA, LUA→LUA, TUA→phone map directly; IUA h
     // deduction under this engine, the same documented gap as IL's Single
     // Utility and OH's Single SUA. Pinning that none of the 3 mapped tiers
     // was accidentally set to 77 catches a future "helpful" mis-mapping.
-    const p = statePolicyFor("NV");
+    const p = statePolicyFor("NV", ASOF);
     expect(p.sua_by_tier!.HCSUA.toNumber()).not.toBe(77);
     expect(p.sua_by_tier!.LUA.toNumber()).not.toBe(77);
     expect(p.sua_by_tier!.phone.toNumber()).not.toBe(77);
@@ -71,7 +71,7 @@ describe("Nevada unsourced/simplified axes stay honest", () => {
     // NRS 422A.345, checked directly against leg.state.nv.us after an
     // initial secondary source described a now-repealed (pre-2021) treatment
     // condition as current policy. See the states.ts NV block comment.
-    expect(statePolicyFor("NV").drug_felony_ban).toBe(false);
+    expect(statePolicyFor("NV", ASOF).drug_felony_ban).toBe(false);
   });
 
   it("ABAWD waiver flag is true — 12 real waived areas exist post-statewide-expiration", () => {
@@ -81,10 +81,10 @@ describe("Nevada unsourced/simplified axes stay honest", () => {
     // is the worse error" reasoning rather than NY's "essentially unwaived"
     // one. No per-area lookup exists, so this boolean governs every NV
     // household, not just an unknown-area fallback.
-    expect(statePolicyFor("NV").abawd_waiver_avail).toBe(true);
+    expect(statePolicyFor("NV", ASOF).abawd_waiver_avail).toBe(true);
   });
 
   it("RMP is false — Nevada is confirmed absent from USDA FNA's own RMP state list", () => {
-    expect(statePolicyFor("NV").rmp_operated).toBe(false);
+    expect(statePolicyFor("NV", ASOF).rmp_operated).toBe(false);
   });
 });

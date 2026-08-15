@@ -16,7 +16,7 @@ const ASOF = new Date("2026-08-11");
 
 describe("Oregon — flat 200% BBCE, no tiering", () => {
   it("bbce_threshold_pct is 200, asset test waived for the categorical majority", () => {
-    const p = statePolicyFor("OR");
+    const p = statePolicyFor("OR", ASOF);
     expect(p.bbce).toBe(true);
     expect(p.bbce_threshold_pct).toBe(200);
     expect(p.asset_waiver).toBe(true);
@@ -26,7 +26,7 @@ describe("Oregon — flat 200% BBCE, no tiering", () => {
 
 describe("Oregon SUA — 4-tier ladder maps cleanly onto HCSUA/LUA/phone", () => {
   it("pins the mapped tiers (OAR 461-160-0420, current as of the temp-rule window)", () => {
-    const p = statePolicyFor("OR");
+    const p = statePolicyFor("OR", ASOF);
     expect(p.sua_by_tier).not.toBeNull();
     expect(p.sua_by_tier!.HCSUA.toNumber()).toBe(515);
     expect(p.sua_by_tier!.LUA.toNumber()).toBe(404);
@@ -52,17 +52,17 @@ describe("Oregon unsourced/simplified axes stay honest", () => {
     // ORS 411.119(1) is a real, currently-operative opt-out (unlike AZ's
     // conditional ban); the narrow discretionary suspension path doesn't
     // change the base-case answer for most OR drug-felony households.
-    expect(statePolicyFor("OR").drug_felony_ban).toBe(false);
+    expect(statePolicyFor("OR", ASOF).drug_felony_ban).toBe(false);
   });
 
   it("ABAWD waiver flag is false — real exempt areas are 5 Tribal jurisdictions, not counties", () => {
     // Deliberately the OPPOSITE call from NV's/AZ's `true`: OR's real area
     // exemption is narrow enough (5 of many Tribal jurisdictions, no county
     // is waived) that `false` follows NY's reasoning, not NV's/AZ's/MI's.
-    expect(statePolicyFor("OR").abawd_waiver_avail).toBe(false);
+    expect(statePolicyFor("OR", ASOF).abawd_waiver_avail).toBe(false);
   });
 
   it("RMP is false — confirmed absent from USDA's list; a pilot exists but hasn't launched", () => {
-    expect(statePolicyFor("OR").rmp_operated).toBe(false);
+    expect(statePolicyFor("OR", ASOF).rmp_operated).toBe(false);
   });
 });

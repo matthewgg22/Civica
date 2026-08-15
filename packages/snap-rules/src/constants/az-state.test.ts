@@ -15,7 +15,7 @@ const ASOF = new Date("2026-08-11");
 
 describe("Arizona — flat 200% BBCE, no tiering", () => {
   it("bbce_threshold_pct is 200, asset test waived for the categorical majority", () => {
-    const p = statePolicyFor("AZ");
+    const p = statePolicyFor("AZ", ASOF);
     expect(p.bbce).toBe(true);
     expect(p.bbce_threshold_pct).toBe(200);
     expect(p.asset_waiver).toBe(true);
@@ -25,7 +25,7 @@ describe("Arizona — flat 200% BBCE, no tiering", () => {
 
 describe("Arizona SUA — 1-3 participant band pinned, NOT the 4+ band", () => {
   it("pins the 1-3 band (CNAP FAA6.J.09, eff. 10/1/2025)", () => {
-    const p = statePolicyFor("AZ");
+    const p = statePolicyFor("AZ", ASOF);
     expect(p.sua_by_tier).not.toBeNull();
     expect(p.sua_by_tier!.HCSUA.toNumber()).toBe(323);
     expect(p.sua_by_tier!.LUA.toNumber()).toBe(149);
@@ -33,7 +33,7 @@ describe("Arizona SUA — 1-3 participant band pinned, NOT the 4+ band", () => {
   });
 
   it("does NOT accidentally encode the 4+ band's higher figures ($438/$201)", () => {
-    const p = statePolicyFor("AZ");
+    const p = statePolicyFor("AZ", ASOF);
     expect(p.sua_by_tier!.HCSUA.toNumber()).not.toBe(438);
     expect(p.sua_by_tier!.LUA.toNumber()).not.toBe(201);
   });
@@ -58,14 +58,14 @@ describe("Arizona unsourced/simplified axes stay honest", () => {
     // treatment/compliance conditions) that this boolean cannot express —
     // same FL/PA under-claim reasoning: `true` would deny everyone who
     // qualifies for removal too. See the states.ts AZ block comment.
-    expect(statePolicyFor("AZ").drug_felony_ban).toBe(false);
+    expect(statePolicyFor("AZ", ASOF).drug_felony_ban).toBe(false);
   });
 
   it("ABAWD waiver flag is true — 7 real currently-waived areas exist (Yuma County + 6 Tribal areas)", () => {
-    expect(statePolicyFor("AZ").abawd_waiver_avail).toBe(true);
+    expect(statePolicyFor("AZ", ASOF).abawd_waiver_avail).toBe(true);
   });
 
   it("RMP is true — Arizona is one of only 9 states on USDA FNA's own RMP list", () => {
-    expect(statePolicyFor("AZ").rmp_operated).toBe(true);
+    expect(statePolicyFor("AZ", ASOF).rmp_operated).toBe(true);
   });
 });
