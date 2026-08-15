@@ -31,14 +31,14 @@ at all; today, most do.
 this plan's own individual-tier landings)
 
 `StatePolicy` (the calculator's per-state config — `packages/snap-rules/src/constants/
-states.ts`) exists for **25 states**: CA, WA, TX, NY, GA, MI, IL, FL, MA, NV, AZ, OR, WI,
-MN, OH, KS, PA, AK, NC, NJ, VA, TN, IN, MO, MD.
+states.ts`) exists for **26 states**: CA, WA, TX, NY, GA, MI, IL, FL, MA, NV, AZ, OR, WI,
+MN, OH, KS, PA, AK, NC, NJ, VA, TN, IN, MO, MD, CO.
 
 The oracle fixture (`data-ops/sample/civica-test-profiles/v0.6.json`, `expected_by_state`)
 — the independently-computed ground truth every `/profile-simulation` run grades the
 engine against — has full 92-case coverage (minus TN's 3 deliberately-unauthored
-genuinely-indeterminate profiles, see below) for **23 of those 25**: CA, WA, TX, NY, GA,
-MI, IL, FL, MA, NV, AZ, OR, WI, KS, OH, AK, NC, VA, IN, MO, MD clear CLEAN (129/0/0 or a
+genuinely-indeterminate profiles, see below) for **24 of those 26**: CA, WA, TX, NY, GA,
+MI, IL, FL, MA, NV, AZ, OR, WI, KS, OH, AK, NC, VA, IN, MO, MD, CO clear CLEAN (129/0/0 or a
 documented pre-existing partial); PA, NJ, and TN also have all 92 (or 89, for TN) rows
 authored, per the execution log's PA/NJ/TN entries below, but all three grade 34/0/95 —
 most of their profiles legitimately SKIP on the null-SUA gap, not a coverage gap, so none
@@ -62,11 +62,11 @@ One state's `StatePolicy` is present, oracle-covered, and **looks wrong**:
   the engine today and, if used for a real determination, would wrongly deny categorical
   eligibility to AK households between 130%–200% FPL.
 
-**28 states have neither** `StatePolicy` nor oracle coverage — the full remaining scope:
-AL, AR, CO, CT, DC, DE, GU, HI, IA, ID, KY, LA, ME, MS, MT, ND, NE, NH,
-NM, OK, RI, SC, SD, UT, VI, VT, WV, WY. (NC, NJ, VA, TN, IN, MO, and MD — the first seven
-"individual tier" states, §6 — are DONE; see the execution log's NC/NJ/VA/TN/IN/MO/MD
-entries.)
+**27 states have neither** `StatePolicy` nor oracle coverage — the full remaining scope:
+AL, AR, CT, DC, DE, GU, HI, IA, ID, KY, LA, ME, MS, MT, ND, NE, NH,
+NM, OK, RI, SC, SD, UT, VI, VT, WV, WY. (NC, NJ, VA, TN, IN, MO, MD, and CO — the first
+eight "individual tier" states, §6 — are DONE; see the execution log's
+NC/NJ/VA/TN/IN/MO/MD/CO entries.)
 
 ## 3. Structural design: what's universal (fix once) vs. what's genuinely per-state (author 53×)
 
@@ -192,7 +192,7 @@ exists and only oracle authoring is outstanding):
    eligibility outcomes across a large share of the profile set — treat as a full rebuild,
    not a one-line patch, precisely because it's already shipped and wrong)
 3. Individual tier (~4M+ population): ~~NC~~ (done), ~~NJ~~ (done), ~~VA~~ (done),
-   ~~TN~~ (done), ~~IN~~ (done), ~~MO~~ (done), ~~MD~~ (done), CO, SC, AL, LA, KY, OK
+   ~~TN~~ (done), ~~IN~~ (done), ~~MO~~ (done), ~~MD~~ (done), ~~CO~~ (done), SC, AL, LA, KY, OK
 4. Schema step: extend `AllotmentTier` for HI/GU (own small PR, own go-ahead)
 5. HI, GU (now unblocked)
 6. Batch tier (<4M population, N≤3 per batch): CT, UT, IA, AR / MS, NM, NE / ID, WV, NH /
@@ -1047,3 +1047,134 @@ all of it.
   contradictions, the drug-felony date inconsistency) is a per-state disclosed gap of an
   already-documented class (#824-style Facts-shape/mechanism gaps), not a new engine
   architecture gap, per this task's own instruction. PR TBD, awaiting merge go-ahead.
+
+- **CO (individual tier, §6 step 3, eighth state after NC/NJ/VA/TN/IN/MO/MD)** — built
+  Colorado's `StatePolicy` entry AND full 92-profile oracle coverage from scratch (CO had
+  neither before this PR), translating CO's already-merged Demeter corpus pack
+  (`packages/demeter-engine/src/states/co/`, PROVENANCE.md + supplements.json +
+  authorities.json, built 2026-08-11) into the engine's stricter typed shape per §5's
+  process.
+
+  STRUCTURAL DEPARTURE this file had not seen before, load-bearing for every dollar-figure
+  axis in this entry: Colorado has NO separate narrative policy manual — unlike every
+  prior state in this roster (MO's SNAP Manual, MD's SNAP Manual, IN's PPM, VA's SNAP
+  Manual Part, etc.), Colorado's ENTIRE detailed SNAP policy lives directly inside 10 CCR
+  2506-1 ("RULE MANUAL VOLUME 4, SNAP"), a formally promulgated regulation subject to the
+  State Board of Human Services' quarterly rulemaking cycle. The corpus pack's own
+  hypothesis (stated as a hypothesis, not confirmed causation): this slower
+  formal-rulemaking path is why Colorado's own regulation text lags a full cycle behind
+  CDHS's own website on BOTH the FFY2026 COLA (every dollar figure in 10 CCR
+  2506-1-4.207/4.407 is labeled "Effective October 1, 2024," FFY2025) AND the 2025 OBBBA
+  changes (10 CCR 2506-1-4.311's ABAWD text still recites the pre-OBBBA 18-54 age range
+  despite a "[Effective 1/4/2025]" header).
+
+  `bbce: true` / `bbce_threshold_pct: 200` / `bbce_fpl_basis: federal_fiscal_year` —
+  CONFIRMED, not corrected: 10 CCR 2506-1-4.206 names Expanded Categorical Eligibility
+  (ECE) directly at 200% FPL, cross-validated against this file's Maryland entry's
+  identical nationwide FFY2026 figures. `asset_waiver: true` follows directly (10 CCR
+  2506-1-4.408(E): the $3,000/$4,500 resource limit applies only to the smaller Standard
+  Eligibility population). `allotment_tier: "48"` — no Colorado-specific elevated
+  max-allotment schedule found (the regulation's own table is the section already flagged
+  stale below, not evidence of a genuinely elevated table).
+
+  `sua_by_tier` — POPULATED WITH DISCLOSED STALENESS, not null, a genuinely BROADER
+  staleness gap than any prior state's disclosed SUA finding: Colorado's own regulation
+  (10 CCR 2506-1-4.407.31) publishes a real FOUR-tier SUA — HCUA (Heating/Cooling) $578,
+  BUA (Basic, 2+ non-heat utilities) $367, OUA (One Utility) $69, Telephone $94 — but EVERY
+  one of the four figures is explicitly labeled "Effective October 1, 2024" (FFY2025), and
+  the corpus pack's targeted search could not locate a Colorado-specific FFY2026 update to
+  any of them. Populated anyway per MO's disclosed-confidence precedent (a real, if
+  one-cycle-stale, sourced figure is materially different from PA's/NJ's/TN's/MN's "no
+  figure exists at all" null gap) — but flagged as the broadest single-state staleness risk
+  this file has recorded, worth re-verification before trusted for a real determination.
+  Also surfaced the SAME naming-collision mapping trap this file's OH and MO entries
+  already document: `determineSUATier`'s single LIMITED branch has no utility-COUNT
+  distinction, so Colorado's own $367 BUA (2+ utilities) tier maps to this schema's `LUA`
+  slot, NOT Colorado's own differently-scoped $69 OUA (exactly one utility) tier, which is
+  the disclosed, unmapped 4th tier — same treatment as OH's $108 Single SUA, IL's $78
+  Single Utility, MO's own $158 one-utility tier.
+
+  `drug_felony_ban: "modified"` — a genuine, disclosed NARROWING of the widely-repeated
+  secondary-source "modified ban" characterization: C.R.S. § 26-2-305(1)(c) disqualifies a
+  household member ONLY for a felony conviction DIRECTLY RELATED to using SNAP benefits
+  themselves to purchase controlled substances, where that misuse is part of the court's
+  own findings — materially narrower than "any drug felony." "Modified" remains the
+  correct #805 classification (a real, conditional restriction this engine does not yet
+  model at the facts level); gate behavior unchanged (fails open) — see #805.
+
+  `abawd_waiver_avail: false` — an AFFIRMATIVELY SOURCED, currently-zero finding: Colorado
+  holds ZERO ABAWD waivers anywhere in the state per the independent abawdmap.us
+  aggregator and the absence of any Colorado entry on USDA's Time Limit Waivers FY
+  2025-2029 index — same uniform-statewide-zero-waiver shape as this file's VA/MO/TN/MD
+  entries, no county lookup needed. Disclosed, not re-resolved: a genuine THREE-WAY
+  internal contradiction on Colorado's own ABAWD age range (10 CCR 2506-1-4.311's stale
+  18-54/pre-OBBBA text vs. CDHS's dedicated ABAWD FAQ's current 18-64 vs. CDHS's own main
+  `/snap` page stating BOTH "18 and 56" and "18 to 64" in different paragraphs) — this
+  engine's ABAWD gate already applies the correct federal 18-64 ceiling post-OBBBA
+  independent of any state axis, so the contradiction has no engine consumer regardless.
+
+  `rmp_operated: false` — Colorado does NOT currently operate a Restaurant Meals Program
+  (CDHS's own current SNAP page lists hot/on-premises foods as NOT SNAP-eligible, no RMP
+  exception). Disclosed as a genuinely LIVE, actively-moving axis rather than a settled
+  zero: SB25-169 (signed 5/13/2025) required a USDA RMP application by January 1, 2026 — a
+  deadline that has passed as of this pack's fetch date without a locatable public status
+  update, unlike VA's/MO's/TN's/MD's-ABAWD-style settled-zero findings.
+
+  Not representable in this schema, and not silently dropped — the SAME pre-existing gaps
+  already filed as #824, not re-filed, just newly confirmed present for Colorado: (a) all
+  vehicles excluded as a resource regardless of type (10 CCR 2506-1-4.410(A), matching
+  MO's/MD's blanket pattern; immaterial regardless since `asset_waiver: true` means the
+  resource test never runs); (b) legally obligated child support treated as an INCOME
+  EXCLUSION applied before the gross test (10 CCR 2506-1-4.407(D)/4.407.5, matching
+  VA/NJ/IL/MO's mechanism, not modeled by `benefit-calc.ts`'s engine-wide
+  ordinary-deduction-only mechanism; A08's $300 child-support profile's CO verdict is
+  unaffected either way, same acceptance as NJ's/MO's A08 entries); (c) a flat $165
+  Standard Medical Expense Deduction (SMED) shortcut for verified expenses $35.01-$200 (10
+  CCR 2506-1-4.407.61, matching MO's flat-shortcut pattern, not modeled by
+  `benefit-calc.ts`'s actual-expense-only mechanism; independently verified zero of the 92
+  profiles are affected); (d) no engine axis exists for certification-period length
+  (Colorado's 6-month/24-month structure, 10 CCR 2506-1-4.208.1).
+
+  Oracle: CO's closest structural axis-twin among all 25 already-registered states is NORTH
+  CAROLINA — identical bbce (true/200/federal_fiscal_year), identical asset_waiver (true),
+  identical drug_felony_ban ("modified"), identical abawd_waiver_avail (false), identical
+  allotment_tier ("48"), identical rmp_operated (false); both also carry a real, non-null
+  `sua_by_tier` needing the full shelter/SUA/benefit-calc pathway exercised (unlike
+  NJ's/PA's/TN's null-SUA-blocked entries), differing only in the SUA dollar figures
+  themselves. Built a fresh, independent Python calculator (not derived from engine output,
+  per #636) directly from `verdict.ts`/`benefit-calc.ts`/`gates/{income-tests,asset-test,
+  abawd,student,composition,immigration,disqualifications,categorical}.ts`/`facts.ts`/
+  `constants/federal-tables.ts`'s own read source (not just their doc-comments), mirroring
+  every gate and the benefit-calc formula exactly, including `decimal.ts`'s half-up
+  (`roundDollar`) and floor (`floorDollar`) rounding conventions. Cross-validated BEFORE
+  trusting it for CO: 92/92 exact match (verdict AND benefit) reproducing NC's
+  already-graded oracle under NC's own `StatePolicy` params, PLUS all 37
+  non-`expected_by_state` variant rows (0 mismatches), before applying CO's own policy
+  params. Also checked all 37 variant rows directly under CO's own params for a
+  CO-specific `verdict_by_state` override, the same discipline every prior state's build
+  used — found ZERO divergence from the shared default verdict (matching NC's/VA's/MD's
+  zero-override result): CO's computed verdicts are IDENTICAL to NC's across all 92 base
+  profiles and all 37 variant rows (80 APPROVE / 12 DENY, the same DENY set as NC's/VA's/
+  MD's, since all four states share every financial-gate-relevant axis exactly), differing
+  only in benefit dollar amount where SUA values diverge. Authored all 92
+  `expected_by_state.CO` entries.
+
+  Verification: `/profile-simulation state=CO` — 129/129 PASS, 0 FAIL, 0 SKIP (clean,
+  matching CA/MA/TX/WA/GA/FL/IL/OH/MI/NV/OR/WI/KS/AK/NC/VA/IN/MO/MD's bar, not PA's/NJ's/
+  TN's/MN's SKIP-heavy shape — CO's real, disclosed-confidence SUA figures mean it did not
+  need PA's/NJ's/TN's null-SUA fallback). Every other registered state's harness run
+  reconfirmed unchanged from its documented baseline, all 25 pre-existing states checked
+  individually (not spot-checked): CA/WA/TX/GA/MI/IL/FL/MA/NV/OR/WI/OH/KS/AK/NC/VA/IN/MO/MD
+  all 129/0/0; NY 127/2/0; AZ 128/1/0; MN 0/0/129; PA/NJ/TN all 34/0/95 — every one
+  identical to its pre-CO documented baseline, zero regressions. `tsc --noEmit -p
+  packages/snap-rules` clean, 323/323 snap-rules tests pass (0 new — a schema-conformant
+  pure addition needed no new unit tests), 44/47 profile-harness tests pass (3
+  pre-existing skips). Did not touch `packages/demeter-engine` (CO's corpus was already
+  complete and out of scope) or any other state's `StatePolicy`/oracle coverage. No new
+  GitHub issue filed — every gap found (the four-tier-stale SUA figures, the ABAWD
+  three-way internal contradiction, the RMP pending-application status, the narrower
+  drug-felony trigger, the SMED/child-support-exclusion/vehicle-exclusion/certification-
+  period gaps) is a per-state disclosed gap of an already-documented class (#824-style
+  Facts-shape/mechanism gaps, or a genuinely time-sensitive fact worth re-checking later,
+  not an engine architecture gap), per this task's own instruction. PR TBD, awaiting merge
+  go-ahead.
