@@ -272,3 +272,70 @@ test.describe("growth surfaces", () => {
     await expect(page.getByRole("button", { name: "Sign on" })).toBeVisible();
   });
 });
+
+// The live retailer map (replaced a static SVG choropleth on direct feedback
+// after looking at the rendered page — see the component's own comments).
+// Leaflet needs a real browser: jsdom has no layout engine, so a zoomend
+// listener toggling a GeoJSON layer's fillOpacity cannot be exercised in
+// vitest at all. This is the one place that behaviour can be pinned.
+//
+// The USDA search itself is MOCKED, not live — a live third-party API call in
+// a CI smoke test is a flaky test waiting to happen, and the point of this
+// suite is the map's own logic, not USDA's uptime.
+test.describe("the live retailer map", () => {
+  const MOCK_STORES = Array.from({ length: 6 }, (_, i) => ({
+    name: `Test Store ${i + 1}`,
+    address: `${100 + i} Main St`,
+    city: "Los Angeles",
+    state: "CA",
+    zip: "90001",
+    type: "Supermarket",
+    lat: 33.97 + i * 0.001,
+    lon: -118.25 + i * 0.001,
+  }));
+
+  test("renders real tiles and a tinted state layer by default", async ({ page }) => {
+    await page.goto("/screen/ask");
+    const map = page.locator(".dmret__livemap");
+    await map.scrollIntoViewIfNeeded();
+    // 51 = every state + DC, same coverage as the static map it replaced.
+    await expect(page.locator(".dmret__livemap path.leaflet-interactive")).toHaveCount(51);
+    await expect(page.locator(".dmret__livemap .leaflet-tile").first()).toBeVisible();
+  });
+
+  test("a search drops pins and flies in — and the state tint fades once zoomed past it", async ({
+    page,
+  }) => {
+    // THE BUG THIS PINS: the state's own fill polygon sat opaque over the
+    // whole viewport once zoomed in past city scale, because a close-up view
+    // sits entirely inside one state's shape — hiding the tiles, the streets,
+    // and the pins it was supposed to be showing off. Only visible by
+    // rendering a real search and looking at the result.
+    await page.route("**/api/snap-retailers*", (route) =>
+      route.fulfill({ json: { stores: MOCK_STORES, truncated: false } }),
+    );
+    await page.goto("/screen/ask");
+    await page.locator(".dmret__livemap").scrollIntoViewIfNeeded();
+
+    await page.locator("#dmret-zip").fill("90001");
+    await page.getByRole("button", { name: /find stores/i }).click();
+    await expect(page.locator(".dmret__pin")).toHaveCount(MOCK_STORES.length);
+
+    // POLLED, not a one-shot read: flyToBounds animates the zoom over 600ms
+    // and the fade only fires on the animation's own 'zoomend' event once it
+    // actually completes — a single evaluate() right after the pins appear
+    // reads the state from before that animation has finished and reports the
+    // old, still-tinted value. Caught by running this test and looking at why
+    // it failed, not by reasoning about the code.
+    await expect
+      .poll(
+        () =>
+          page
+            .locator(".dmret__livemap path.leaflet-interactive")
+            .first()
+            .evaluate((el) => getComputedStyle(el).fillOpacity),
+        { timeout: 3000 },
+      )
+      .toBe("0");
+  });
+});
