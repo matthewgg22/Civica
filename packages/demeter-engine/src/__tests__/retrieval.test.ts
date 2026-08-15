@@ -60,6 +60,39 @@ describe("Mae eCFR retrieval", { timeout: 60_000 }, () => {
     expect(block).toContain("ecfr.gov");
   });
 
+  // Regression (2026-08-15, LA County DPSS CPRA production / CDSS ACL 25-50):
+  // Demeter was explaining the pre-OBBBA "any LIHEAP payment triggers the
+  // full Heating/Cooling SUA" rule as current — OBBBA §10103 narrowed that,
+  // eff. 2025-10-31, to households with an elderly or disabled member. The
+  // fix is a citation-level entry in retrieval.ts's OBBBA_SUPERSEDED map, NOT
+  // a section-level one, because 273.9(d)(6) shares its coarse `section`
+  // field ("273.9") with 34 OTHER corpus chunks (income counting, every
+  // other deduction) that OBBBA never touched — a section-level key would
+  // manufacture false uncertainty on all of them.
+  it("flags the LIHEAP/heat-and-eat SUA subsection as superseded, without over-broadening to sibling 273.9 subsections", async () => {
+    // The block's own boilerplate header always mentions the PHRASE
+    // "SUPERSEDED IN PART" (explaining what the marker means generically) —
+    // the actual per-chunk injected warning is the only place "⚠️" appears,
+    // so that's what distinguishes "this chunk is flagged" from "the block
+    // explains the concept exists."
+    const shelterHits = await retrieve("what counts as a shelter deduction?", { k: 1 });
+    expect(shelterHits[0]?.citation).toBe("7 CFR 273.9(d)(6)");
+    const shelterBlock = formatRetrievedSources(shelterHits);
+    expect(shelterBlock).toContain("⚠️");
+    expect(shelterBlock).toContain("LIHEAP");
+    expect(shelterBlock).toContain("elderly or disabled");
+
+    // Same section, an OBBBA-untouched subsection — must NOT inherit the
+    // warning. This is the actual regression guard: it fails if the fix is
+    // ever "simplified" back to a section-level key.
+    const medicalHits = await retrieve("unreimbursed medical expense deduction for elderly household", {
+      k: 3,
+    });
+    expect(medicalHits.some((h) => h.citation.includes("273.9(d)(3)"))).toBe(true);
+    const medicalBlock = formatRetrievedSources(medicalHits.filter((h) => h.citation.includes("273.9(d)(3)")));
+    expect(medicalBlock).not.toContain("⚠️");
+  });
+
   it("respects the char budget", async () => {
     const hits = await retrieve("income deductions shelter expedited verification", { charBudget: 4000 });
     const total = hits.reduce((n, h) => n + h.text.length, 0);
