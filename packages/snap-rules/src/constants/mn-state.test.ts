@@ -52,7 +52,7 @@ describe("Minnesota unsourced/simplified axes stay honest", () => {
     // boolean can't express), MN's is a clean, unconditional finding: CM
     // 0011.27.03 explicitly bars using a failed/refused test to deny or
     // terminate benefits. Same shape as IL's/NV's entries above.
-    expect(statePolicyFor("MN").drug_felony_ban).toBe(false);
+    expect(statePolicyFor("MN").drug_felony_ban).toBe("none");
   });
 
   it("ABAWD waiver flag is false — the MN corpus pack's own instruction: presumptively unwaived pending confirmation", () => {

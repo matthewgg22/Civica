@@ -71,7 +71,7 @@ describe("Nevada unsourced/simplified axes stay honest", () => {
     // NRS 422A.345, checked directly against leg.state.nv.us after an
     // initial secondary source described a now-repealed (pre-2021) treatment
     // condition as current policy. See the states.ts NV block comment.
-    expect(statePolicyFor("NV").drug_felony_ban).toBe(false);
+    expect(statePolicyFor("NV").drug_felony_ban).toBe("none");
   });
 
   it("ABAWD waiver flag is true — 12 real waived areas exist post-statewide-expiration", () => {

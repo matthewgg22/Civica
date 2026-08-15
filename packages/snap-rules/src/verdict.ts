@@ -117,7 +117,8 @@ export function composeVerdict(facts: Facts, state: string, asOf: Date): Verdict
 
   // ── HH-level disqualifications (lottery / IPV / fleeing felon / drug) ─
   // Per 7 CFR 272.17, 273.16, 273.11(m,n). State-option drug-felony ban
-  // is honored via policy.drug_felony_ban.
+  // is honored via policy.drug_felony_ban (a 3-state classification since
+  // #805: "none" | "modified" | "full" | "unconfirmed" — only "full" gates).
   const disq = evaluateDisqualifications(facts, state, asOf);
   trace.disqualifications = disq;
   if (!disq.passes) {
