@@ -107,7 +107,37 @@ describe("staff system prompt — persona-specific", () => {
 
   it("states the CA ABAWD operative forms and the pending-guidance caveat", () => {
     expect(STAFF_SYSTEM_PROMPT).toContain("CF 886");
-    expect(STAFF_SYSTEM_PROMPT.toLowerCase()).toContain("pending fns guidance");
+    // The tribal-exemption and child-under-14 items this used to flag as
+    // "pending FNS guidance" were resolved by later ACLs (self-attestation;
+    // same-CalFresh-household requirement) — see the LA County DPSS CPRA
+    // findings, 2026-08-15. §10105/§10106 remain genuinely unresolved as of
+    // the newest guidance on file; the caveat now names those instead.
+    expect(STAFF_SYSTEM_PROMPT.toLowerCase()).toContain("implementation guidance is forthcoming");
+  });
+
+  // Regression (LA County DPSS CPRA production, Bates COLA002162/COLA002298/
+  // COLA002520, 2026-08-15): the prompt was stale or silent on several
+  // ABAWD specifics a real CDSS ACL has since pinned down.
+  it("states the current CA ABAWD waiver counties, the VA any-rating exemption, and the household-membership requirement", () => {
+    // California's statewide waiver ended 2026-01-31; a separate waiver
+    // covers exactly these 7 counties through 2026-10-31 — an earlier
+    // "confirm the specific county" hedge with no names risked staff never
+    // learning this list exists at all.
+    for (const county of ["Colusa", "Imperial", "Tulare", "Alpine", "Merced", "Monterey", "Plumas"]) {
+      expect(STAFF_SYSTEM_PROMPT).toContain(county);
+    }
+    // Any VA disability rating — even 0-10% — meets the ABAWD unfitness
+    // threshold; this is narrower for Medi-Cal (100%/total), a real
+    // cross-program mismatch worth being precise about.
+    expect(STAFF_SYSTEM_PROMPT.toLowerCase()).toContain("any percentage rating");
+    expect(STAFF_SYSTEM_PROMPT).toContain("Medi-Cal");
+    // ACL 25-93E (April 2026) narrowed the dependent-child-under-14
+    // exemption to require the child share the adult's OWN CalFresh
+    // household — an earlier ACL 25-93 (Dec 2025) reading allowed informal,
+    // non-co-resident caregiving to qualify. Stating the exemption the old
+    // way is now wrong, and directly mismatches a joint/shared-custody
+    // household that isn't the child's primary CalFresh household.
+    expect(STAFF_SYSTEM_PROMPT.toLowerCase()).toContain("same calfresh household");
   });
 
   it("addresses trained staff, not the applicant", () => {
@@ -167,6 +197,20 @@ describe("public system prompt — persona-specific", () => {
   // student with no income, and got an answer that treated it as a household
   // of two throughout. Household size sets every threshold downstream and the
   // reader never sees the assumption, so both halves of this have to be said.
+  // Regression (LA County DPSS CPRA production, Bates COLA002279-80/
+  // COLA002277, 2026-08-15): the public prompt deferred to "given below for
+  // ABAWD" for the current non-citizen-eligibility rule, but the ABAWD
+  // section never actually stated it — a reader asking specifically about
+  // refugee/asylee/parolee eligibility got no override fact at all. Also
+  // adds the LIHEAP/"heat and eat" narrowing, in plain language.
+  it("states the current non-citizen eligible categories and the narrowed LIHEAP/heat-and-eat rule, in plain language", () => {
+    const p = PUBLIC_SYSTEM_PROMPT.toLowerCase();
+    expect(p).toContain("compact of free association");
+    expect(p).toMatch(/parole|parolees/);
+    expect(p).toContain("liheap");
+    expect(p).toMatch(/elderly or disabled/);
+  });
+
   it("does not let living together become being one household", () => {
     const p = PUBLIC_SYSTEM_PROMPT.toLowerCase();
     expect(p).toMatch(/purchase food and prepare meals together|buy and cook food together/);

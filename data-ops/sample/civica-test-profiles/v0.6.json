@@ -120,14 +120,14 @@
         "drug_felony_ban": false,
         "abawd_waiver_avail": true,
         "max_allotment_table": {
-          "1": 378,
-          "2": 693,
-          "3": 997,
-          "4": 1262,
-          "5": 1502,
-          "6": 1805,
-          "7": 1995,
-          "8": 2272
+          "1": 385,
+          "2": 707,
+          "3": 1015,
+          "4": 1285,
+          "5": 1529,
+          "6": 1838,
+          "7": 2031,
+          "8": 2314
         },
         "sua_by_tier": null
       }
@@ -204,14 +204,14 @@
           "8": 1789
         },
         "AK": {
-          "1": 378,
-          "2": 693,
-          "3": 997,
-          "4": 1262,
-          "5": 1502,
-          "6": 1805,
-          "7": 1995,
-          "8": 2272
+          "1": 385,
+          "2": 707,
+          "3": 1015,
+          "4": 1285,
+          "5": 1529,
+          "6": 1838,
+          "7": 2031,
+          "8": 2314
         }
       },
       "fpl_basis": "FLOOR(annual FPL / 12) before applying BBCE/130%/100% multipliers — the FNS/CalFresh published convention. Reconciled to CDSS ACIN I-46-25 (FFY2026) Attachment I; HALF_UP rounding here drifts +$1 at HH2/3/5/6/7/8 and breaks the published table (#606)."
@@ -350,7 +350,7 @@
         "AK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": null
+          "benefit": 989
         },
         "WA": {
           "verdict": "APPROVE",
@@ -515,7 +515,7 @@
         "AK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": null
+          "benefit": 385
         },
         "WA": {
           "verdict": "APPROVE",
@@ -713,7 +713,7 @@
         "AK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": null
+          "benefit": 1095
         },
         "WA": {
           "verdict": "APPROVE",
@@ -857,7 +857,7 @@
         "AK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": null
+          "benefit": 385
         },
         "WA": {
           "verdict": "APPROVE",
@@ -1028,7 +1028,7 @@
         "AK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": null
+          "benefit": 707
         },
         "WA": {
           "verdict": "APPROVE",
@@ -1197,7 +1197,7 @@
         "AK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": null
+          "benefit": 707
         },
         "WA": {
           "verdict": "APPROVE",
@@ -1353,7 +1353,7 @@
         "AK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": null
+          "benefit": 333
         },
         "WA": {
           "verdict": "APPROVE",
@@ -1537,7 +1537,7 @@
         "AK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": null
+          "benefit": 1015
         },
         "WA": {
           "verdict": "APPROVE",
@@ -1706,7 +1706,7 @@
         "AK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": null
+          "benefit": 633
         },
         "WA": {
           "verdict": "APPROVE",
@@ -1890,7 +1890,7 @@
         "AK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": null
+          "benefit": 1013
         },
         "WA": {
           "verdict": "APPROVE",
@@ -2043,7 +2043,7 @@
         "AK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": null
+          "benefit": 55
         },
         "WA": {
           "verdict": "APPROVE",
@@ -2196,7 +2196,7 @@
         "AK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": null
+          "benefit": 385
         },
         "WA": {
           "verdict": "APPROVE",
@@ -3692,7 +3692,7 @@
         "AK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": null
+          "benefit": 337
         },
         "WA": {
           "verdict": "APPROVE",
@@ -3860,7 +3860,7 @@
         "AK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": null
+          "benefit": 657
         },
         "WA": {
           "verdict": "APPROVE",
@@ -4043,7 +4043,7 @@
         "AK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": null
+          "benefit": 406
         },
         "WA": {
           "verdict": "APPROVE",
@@ -4221,7 +4221,7 @@
         "AK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": null
+          "benefit": 417
         },
         "WA": {
           "verdict": "APPROVE",
@@ -4377,7 +4377,7 @@
         "AK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": null
+          "benefit": 385
         },
         "WA": {
           "verdict": "APPROVE",
@@ -4560,7 +4560,7 @@
         "AK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": null
+          "benefit": 557
         },
         "WA": {
           "verdict": "APPROVE",
@@ -4752,7 +4752,7 @@
         "AK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": null
+          "benefit": 653
         },
         "WA": {
           "verdict": "APPROVE",
@@ -4929,7 +4929,7 @@
         "AK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": null
+          "benefit": 585
         },
         "WA": {
           "verdict": "APPROVE",
@@ -5122,7 +5122,7 @@
         "AK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": null
+          "benefit": 917
         },
         "WA": {
           "verdict": "APPROVE",
@@ -5308,7 +5308,7 @@
         "AK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": null
+          "benefit": 1015
         },
         "WA": {
           "verdict": "APPROVE",
@@ -5475,7 +5475,7 @@
         "AK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": null
+          "benefit": 338
         },
         "WA": {
           "verdict": "APPROVE",
@@ -5619,7 +5619,7 @@
         "AK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": null
+          "benefit": 385
         },
         "WA": {
           "verdict": "APPROVE",
@@ -5778,7 +5778,7 @@
         "AK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": null
+          "benefit": 385
         },
         "WA": {
           "verdict": "APPROVE",
@@ -6008,7 +6008,7 @@
         "AK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": null
+          "benefit": 385
         },
         "WA": {
           "verdict": "APPROVE",
@@ -6385,7 +6385,7 @@
         "AK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": null
+          "benefit": 513
         },
         "WA": {
           "verdict": "APPROVE",
@@ -6708,7 +6708,7 @@
         "AK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": null
+          "benefit": 681
         },
         "WA": {
           "verdict": "APPROVE",
@@ -7162,7 +7162,7 @@
         "AK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": null
+          "benefit": 1015
         },
         "WA": {
           "verdict": "APPROVE",
@@ -7304,7 +7304,7 @@
         "AK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": null
+          "benefit": 385
         },
         "WA": {
           "verdict": "APPROVE",
@@ -7472,7 +7472,7 @@
         "AK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": null
+          "benefit": 707
         },
         "WA": {
           "verdict": "APPROVE",
@@ -7870,7 +7870,7 @@
         "AK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": null
+          "benefit": 705
         },
         "WA": {
           "verdict": "APPROVE",
@@ -8736,7 +8736,7 @@
         "AK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": null
+          "benefit": 290
         },
         "WA": {
           "verdict": "APPROVE",
@@ -8996,7 +8996,7 @@
         "AK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": null
+          "benefit": 87
         },
         "WA": {
           "verdict": "APPROVE",
@@ -9239,7 +9239,7 @@
         "AK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": null
+          "benefit": 1744
         },
         "WA": {
           "verdict": "APPROVE",
@@ -9412,7 +9412,7 @@
         "AK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": null
+          "benefit": 1015
         },
         "WA": {
           "verdict": "APPROVE",
@@ -9570,7 +9570,7 @@
         "AK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": null
+          "benefit": 707
         },
         "WA": {
           "verdict": "APPROVE",
@@ -9752,7 +9752,7 @@
         "AK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": null
+          "benefit": 1015
         },
         "WA": {
           "verdict": "APPROVE",
@@ -9934,7 +9934,7 @@
         "AK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": null
+          "benefit": 1015
         },
         "WA": {
           "verdict": "APPROVE",
@@ -10116,7 +10116,7 @@
         "AK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": null
+          "benefit": 869
         },
         "WA": {
           "verdict": "APPROVE",
@@ -10298,7 +10298,7 @@
         "AK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": null
+          "benefit": 689
         },
         "WA": {
           "verdict": "APPROVE",
@@ -10480,7 +10480,7 @@
         "AK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": null
+          "benefit": 509
         },
         "WA": {
           "verdict": "APPROVE",
@@ -10663,7 +10663,7 @@
         "AK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": null
+          "benefit": 385
         },
         "WA": {
           "verdict": "APPROVE",
@@ -10815,7 +10815,7 @@
         "AK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": null
+          "benefit": 385
         },
         "WA": {
           "verdict": "APPROVE",
@@ -10967,7 +10967,7 @@
         "AK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": null
+          "benefit": 299
         },
         "WA": {
           "verdict": "APPROVE",
@@ -11119,7 +11119,7 @@
         "AK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": null
+          "benefit": 191
         },
         "WA": {
           "verdict": "APPROVE",
@@ -11271,7 +11271,7 @@
         "AK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": null
+          "benefit": 119
         },
         "WA": {
           "verdict": "APPROVE",
@@ -11423,7 +11423,7 @@
         "AK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": null
+          "benefit": 65
         },
         "WA": {
           "verdict": "APPROVE",
@@ -11605,7 +11605,7 @@
         "AK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": null
+          "benefit": 689
         },
         "WA": {
           "verdict": "APPROVE",
@@ -11787,7 +11787,7 @@
         "AK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": null
+          "benefit": 821
         },
         "WA": {
           "verdict": "APPROVE",
@@ -11972,7 +11972,7 @@
         "AK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": null
+          "benefit": 689
         },
         "WA": {
           "verdict": "APPROVE",
@@ -12142,7 +12142,7 @@
         "AK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": null
+          "benefit": 707
         },
         "WA": {
           "verdict": "APPROVE",
@@ -12390,7 +12390,7 @@
         "AK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": null
+          "benefit": 2314
         },
         "WA": {
           "verdict": "APPROVE",
@@ -12557,7 +12557,7 @@
         "AK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": null
+          "benefit": 273
         },
         "WA": {
           "verdict": "APPROVE",
@@ -12740,7 +12740,7 @@
         "AK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": null
+          "benefit": 12
         },
         "WA": {
           "verdict": "APPROVE",
@@ -12922,7 +12922,7 @@
         "AK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": null
+          "benefit": 646
         },
         "WA": {
           "verdict": "APPROVE",
@@ -13104,7 +13104,7 @@
         "AK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": null
+          "benefit": 701
         },
         "WA": {
           "verdict": "APPROVE",
@@ -13286,7 +13286,7 @@
         "AK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": null
+          "benefit": 821
         },
         "WA": {
           "verdict": "APPROVE",
@@ -13468,7 +13468,7 @@
         "AK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": null
+          "benefit": 869
         },
         "WA": {
           "verdict": "APPROVE",
@@ -13650,7 +13650,7 @@
         "AK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": null
+          "benefit": 869
         },
         "WA": {
           "verdict": "APPROVE",
@@ -13832,7 +13832,7 @@
         "AK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": null
+          "benefit": 869
         },
         "WA": {
           "verdict": "APPROVE",
@@ -14017,7 +14017,7 @@
         "AK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": null
+          "benefit": 538
         },
         "WA": {
           "verdict": "APPROVE",
@@ -14202,7 +14202,7 @@
         "AK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": null
+          "benefit": 659
         },
         "WA": {
           "verdict": "APPROVE",
@@ -14387,7 +14387,7 @@
         "AK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": null
+          "benefit": 707
         },
         "WA": {
           "verdict": "APPROVE",
@@ -14572,7 +14572,7 @@
         "AK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": null
+          "benefit": 899
         },
         "WA": {
           "verdict": "APPROVE",
@@ -14757,7 +14757,7 @@
         "AK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": null
+          "benefit": 1015
         },
         "WA": {
           "verdict": "APPROVE",
@@ -14942,7 +14942,7 @@
         "AK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": null
+          "benefit": 1015
         },
         "WA": {
           "verdict": "APPROVE",
@@ -15288,7 +15288,7 @@
         "AK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": null
+          "benefit": 1012
         },
         "WA": {
           "verdict": "APPROVE",
@@ -15511,7 +15511,7 @@
         "AK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": null
+          "benefit": 1302
         },
         "WA": {
           "verdict": "APPROVE",
@@ -15689,7 +15689,7 @@
         "AK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": null
+          "benefit": 707
         },
         "WA": {
           "verdict": "APPROVE",
@@ -15838,7 +15838,7 @@
         "AK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": null
+          "benefit": 385
         },
         "WA": {
           "verdict": "APPROVE",
@@ -16000,7 +16000,7 @@
         "AK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": null
+          "benefit": 290
         },
         "WA": {
           "verdict": "APPROVE",
@@ -16162,7 +16162,7 @@
         "AK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": null
+          "benefit": 385
         },
         "WA": {
           "verdict": "APPROVE",
@@ -16412,7 +16412,7 @@
         "AK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": null
+          "benefit": 385
         },
         "WA": {
           "verdict": "APPROVE",
@@ -16710,7 +16710,7 @@
         "AK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": null
+          "benefit": 385
         },
         "WA": {
           "verdict": "APPROVE",
@@ -16864,7 +16864,7 @@
         "AK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": null
+          "benefit": 385
         },
         "WA": {
           "verdict": "APPROVE",
@@ -17182,7 +17182,7 @@
         "AK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": null
+          "benefit": 1015
         },
         "WA": {
           "verdict": "APPROVE",
@@ -17351,7 +17351,7 @@
         "AK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": null
+          "benefit": 705
         },
         "WA": {
           "verdict": "APPROVE",
@@ -17521,7 +17521,7 @@
         "AK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": null
+          "benefit": 707
         },
         "WA": {
           "verdict": "APPROVE",
@@ -17675,7 +17675,7 @@
         "AK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": null
+          "benefit": 385
         },
         "WA": {
           "verdict": "APPROVE",
@@ -17829,7 +17829,7 @@
         "AK": {
           "verdict": "APPROVE",
           "eligible": true,
-          "benefit": null
+          "benefit": 385
         },
         "WA": {
           "verdict": "APPROVE",

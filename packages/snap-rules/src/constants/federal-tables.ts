@@ -13,6 +13,7 @@
 // reads from here. No constant lives in two places.
 
 import { Decimal } from "../decimal";
+import { akAllotmentZoneFor, AK_URBAN } from "./ak-allotment-zones";
 
 // ─── Per-region FPL table (#812) ───────────────────────────────────────────
 //
@@ -328,9 +329,47 @@ export function standardDeductionFor(size: number, asOf: Date): Decimal {
   return s.standard_deduction.get(6)!;
 }
 
-export function maxAllotmentFor(size: number, asOf: Date): Decimal {
-  const s = snapshotFor(asOf);
+/**
+ * FNS max allotment for a household size. `state`/`countyFips` are OPTIONAL
+ * and, for every state except Alaska, change NOTHING — this function's
+ * behavior for the other 49 states + DC/territories is byte-identical to
+ * before #814 (verified: git-stash diff comparison, see PR description).
+ *
+ * Alaska (#814): AK's real FNS maximum allotments are zone-specific
+ * (Urban/Rural I/Rural II — packages/snap-rules/src/constants/
+ * ak-allotment-zones.ts, sourced from USDA FNS's own AK-specific FY26
+ * table), meaningfully higher than the 48-contiguous table this function
+ * previously always returned for every state including AK. When
+ * `state === "AK"`, this resolves the household's real zone from
+ * `countyFips` FIRST (ak-allotment-zones.ts's akAllotmentZoneFor) and falls
+ * back to the Urban zone — Alaska's most populous, per DOH's own framing —
+ * only when `countyFips` is absent or unrecognized, the SAME two-tier
+ * pattern benefit-calc.ts already uses for AK's SUA (#631) and the ABAWD
+ * gate already uses for CA's waiver counties (#614).
+ *
+ * The `s.max_allotment` national snapshot lookup below is intentionally
+ * UNCHANGED and still runs for every non-AK state (and is still what
+ * validates `asOf` falls within a loaded fiscal year via snapshotFor,
+ * which the AK zone table doesn't duplicate — ak-allotment-zones.ts has
+ * only one FY26 figure set today, the same simplification AK's other
+ * StatePolicy fields already accept, see states.ts's AK entries).
+ */
+export function maxAllotmentFor(size: number, asOf: Date, state?: string, countyFips?: string): Decimal {
+  const s = snapshotFor(asOf); // still validates asOf has a loaded fiscal year, for every state
   if (size < 1) throw new Error("Household size must be >= 1");
+
+  if (state === "AK") {
+    const zone = akAllotmentZoneFor(countyFips) ?? AK_URBAN;
+    const exactAk = zone.max_allotment.get(size);
+    if (exactAk) return exactAk;
+    const largestAk = Math.max(...zone.max_allotment.keys());
+    if (size > largestAk) {
+      const baseAk = zone.max_allotment.get(largestAk)!;
+      return baseAk.add(zone.max_allotment_each_additional.mul(size - largestAk));
+    }
+    throw new Error(`No max_allotment for size ${size} (AK zone ${zone.zone})`);
+  }
+
   const exact = s.max_allotment.get(size);
   if (exact) return exact;
   const largest = Math.max(...s.max_allotment.keys());
@@ -350,8 +389,23 @@ export function shelterCapFor(asOf: Date): Decimal {
   return snapshotFor(asOf).shelter_cap;
 }
 
-export function minimumBenefitFor(asOf: Date): Decimal {
-  return snapshotFor(asOf).minimum_benefit;
+/**
+ * Federal minimum-benefit floor (HH1-2 eligible households), 48-contiguous
+ * default unless `state === "AK"`. #814: Alaska sets its OWN, higher,
+ * zone-specific minimum-benefit floor ($31 Urban / $39 Rural I / $48 Rural
+ * II FY26, vs. the $24 national default) per the same USDA FNS "MINIMUM
+ * SNAP ALLOTMENTS" table ak-allotment-zones.ts's max-allotment figures are
+ * sourced from. Same two-tier county_fips → zone resolution as
+ * maxAllotmentFor above; `state`/`countyFips` change nothing for any other
+ * state.
+ */
+export function minimumBenefitFor(asOf: Date, state?: string, countyFips?: string): Decimal {
+  const s = snapshotFor(asOf);
+  if (state === "AK") {
+    const zone = akAllotmentZoneFor(countyFips) ?? AK_URBAN;
+    return zone.minimum_benefit;
+  }
+  return s.minimum_benefit;
 }
 
 export function homelessDeductionFor(asOf: Date): Decimal {
