@@ -102,6 +102,7 @@ export function DemeterSave({
   initialSavedId,
   onRestore,
   onSavedChange,
+  triggerSave,
   copy,
 }: {
   messages: SavedMsg[];
@@ -118,6 +119,13 @@ export function DemeterSave({
    *  notification, not a lift: whether a row exists is this component's fact,
    *  and a second copy of it in the parent is a second thing to get wrong. */
   onSavedChange?: (saved: boolean) => void;
+  /** Bumped by the composer's own save-nudge banner (#833 audit,
+   *  2026-08-15) — the Save button lives in a side rail nobody notices
+   *  mid-conversation, so pressing "Save it" on the inline nudge has to
+   *  reach this button's own `save()` without duplicating its logic.
+   *  Mirrors openPicker's signal-number pattern: any CHANGE triggers a
+   *  save, the value itself is meaningless. Undefined/unset never fires. */
+  triggerSave?: number;
   copy: SaveCopy;
 }) {
   const [savedId, setSavedId] = useState<string | null>(initialSavedId);
@@ -195,6 +203,18 @@ export function DemeterSave({
     }
     setStatus(outcome === "limit" ? "limit" : "error");
   }, [messages, state, lang, savedId, post]);
+
+  // Fired by the composer's inline save-nudge banner (#833 audit,
+  // 2026-08-15). A ref, not state, tracks the last value acted on: this
+  // only reacts to a CHANGE (mirrors DemeterChat's openPicker signal),
+  // so the effect doesn't re-fire on every unrelated re-render just
+  // because `triggerSave` is still the same number it was last render.
+  const lastTriggerRef = useRef(triggerSave);
+  useEffect(() => {
+    if (triggerSave === undefined || triggerSave === lastTriggerRef.current) return;
+    lastTriggerRef.current = triggerSave;
+    void save();
+  }, [triggerSave, save]);
 
   // Coming back from sign-in: put the conversation back on screen FIRST, then
   // save it. Landing on an empty chat with a "saved" badge would be a worse
