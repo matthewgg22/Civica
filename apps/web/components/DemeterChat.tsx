@@ -925,7 +925,20 @@ export function DemeterChat({
     const chatTurns = messages.filter(
       (m): m is { role: "user" | "assistant"; content: string } => m.role !== "divider",
     );
-    const apiMessages = [...chatTurns, { role: "user" as const, content: question }].slice(-20);
+    // Tail-window to the server's MAX_MESSAGES (20). A strictly alternating,
+    // user-first history is ALWAYS odd length once the new question is
+    // appended, and slicing an odd-length array to an even window (20) drops
+    // an odd number of leading elements — meaning the surviving array starts
+    // with the assistant every single time this branch is taken, forever,
+    // for any conversation that ever reaches 10 exchanges. Server-side,
+    // that's a hard 400 ("Conversation must start with a user message") on
+    // every following turn, permanently locking the chat (#833). Dropping
+    // one more leading message when the slice lands on assistant keeps the
+    // window user-first without the server ever seeing it.
+    let apiMessages = [...chatTurns, { role: "user" as const, content: question }].slice(-20);
+    if (apiMessages[0]?.role !== "user") {
+      apiMessages = apiMessages.slice(1);
+    }
     // Did they name somewhere? Offered, not applied — and only when it
     // disagrees with the scope they are already on.
     const mentioned = detectState(question);
