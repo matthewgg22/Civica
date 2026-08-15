@@ -101,13 +101,20 @@ describe("the location hint is an offer, never a selection", () => {
 });
 
 describe("what you are told after choosing", () => {
-  it("names the agency AND where to apply", () => {
-    // Both already existed in the pack and were rendered only at the bottom of
-    // the landing page, hundreds of pixels from the decision.
+  it("names the agency", () => {
+    // Already existed in the pack and was rendered only at the bottom of the
+    // landing page, hundreds of pixels from the decision.
     render(<DemeterStatePicker states={STATES} value="CA" onChange={vi.fn()} copy={COPY} />);
     expect(screen.getByText(/California Department of Social Services/)).toBeTruthy();
-    const portal = screen.getByRole("link", { name: /BenefitsCal/ });
-    expect(portal.getAttribute("href")).toBe("https://benefitscal.com/");
+  });
+
+  // "Apply at {portal}" used to render here too, stacked under the agency
+  // line — moved to DemeterChat's side rail, next to "How we verify" (real
+  // feedback, 2026-08-15: the two lines here crowded the confirmation card).
+  // This component's job is now just the agency confirmation.
+  it("no longer renders the portal link itself", () => {
+    render(<DemeterStatePicker states={STATES} value="CA" onChange={vi.fn()} copy={COPY} />);
+    expect(screen.queryByRole("link", { name: /BenefitsCal/ })).toBeNull();
   });
 
   it("states the difference for a NAP territory", () => {

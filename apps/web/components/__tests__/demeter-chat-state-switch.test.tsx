@@ -70,7 +70,8 @@ afterEach(() => {
 });
 
 async function sendQuestion(text: string) {
-  fireEvent.change(screen.getByPlaceholderText(T.en.inputPlaceholder), {
+  // role, not placeholder text: the placeholder changes turn to turn.
+  fireEvent.change(screen.getByRole("textbox"), {
     target: { value: text },
   });
   fireEvent.click(screen.getByRole("button", { name: "Send" }));
@@ -84,6 +85,32 @@ function pickState(name: RegExp) {
 }
 
 describe("DemeterChat state switching", () => {
+  // "Apply at BenefitsCal ↗" used to render right under the state picker,
+  // stacked with the "Answers from" agency line — moved down next to "How
+  // we verify" in the side rail (real feedback, 2026-08-15). Guards the
+  // move actually landed, not just that the old spot lost it.
+  it("puts the 'Apply at' link next to 'How we verify', not under the picker", async () => {
+    render(<DemeterChat states={STATES} initialState="CA" />);
+    const link = screen.getByRole("link", { name: /BenefitsCal/ });
+    expect(link.getAttribute("href")).toBe("https://benefitscal.com");
+    // Same parent as "How we verify" — i.e. actually relocated there, not
+    // just present somewhere else on the page by coincidence.
+    expect(link.parentElement).toBe(screen.getByText(T.en.howWeVerify).parentElement);
+  });
+
+  // Real feedback, 2026-08-15: once the chat was already going, a plain
+  // answer with no closing question to fall back on reverted the composer to
+  // the FIRST-TIME invitation ("Happy to answer any questions about
+  // SNAP…") — reading as though Demeter had forgotten the conversation was
+  // happening. It should read as mid-conversation instead.
+  it("uses a conversation-aware placeholder once chatting, not the first-time invitation", async () => {
+    render(<DemeterChat states={STATES} />);
+    expect(screen.getByPlaceholderText(T.en.inputPlaceholder)).toBeTruthy();
+    await sendQuestion("What is SNAP?"); // mock reply "an answer" — no closing "?"
+    expect(screen.getByPlaceholderText(T.en.inputPlaceholderContinue)).toBeTruthy();
+    expect(screen.queryByPlaceholderText(T.en.inputPlaceholder)).toBeNull();
+  });
+
   it("starts on the federal floor and sends state: null", async () => {
     render(<DemeterChat states={STATES} />);
     expect(screen.getByRole("button", { name: "Your state" }).textContent).toContain(
@@ -146,7 +173,7 @@ describe("DemeterChat state switching", () => {
     fetchMock.mockResolvedValueOnce(
       new Response(JSON.stringify({ reason: "rate_limited" }), { status: 429 }),
     );
-    fireEvent.change(screen.getByPlaceholderText(T.en.inputPlaceholder), {
+    fireEvent.change(screen.getByRole("textbox"), {
       target: { value: "rejected" },
     });
     fireEvent.click(screen.getByRole("button", { name: "Send" }));
