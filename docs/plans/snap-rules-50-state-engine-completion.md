@@ -30,13 +30,15 @@ at all; today, most do.
 ## 2. Current state of the calculator (verified against `origin/codex/rebuild-feb18`)
 
 `StatePolicy` (the calculator's per-state config — `packages/snap-rules/src/constants/
-states.ts`) exists for **18 states**: CA, WA, TX, NY, GA, MI, IL, FL, MA, NV, AZ, OR, WI,
-MN, OH, KS, PA, AK.
+states.ts`) exists for **19 states**: CA, WA, TX, NY, GA, MI, IL, FL, MA, NV, AZ, OR, WI,
+MN, OH, KS, PA, AK, NC.
 
 The oracle fixture (`data-ops/sample/civica-test-profiles/v0.6.json`, `expected_by_state`)
 — the independently-computed ground truth every `/profile-simulation` run grades the
-engine against — has full 92-case coverage for **16 of those 18**: CA, WA, TX, NY, GA, MI,
-IL, FL, MA, NV, AZ, OR, WI, KS, OH, AK.
+engine against — has full 92-case coverage for **17 of those 19**: CA, WA, TX, NY, GA, MI,
+IL, FL, MA, NV, AZ, OR, WI, KS, OH, AK, NC. (PA also has all 92 rows authored, per the
+execution log's PA entry below, but grades 34/0/95 — most PA profiles legitimately SKIP on
+the null-SUA gap, not a coverage gap, so it isn't counted as "clean" here.)
 
 Two states have a `StatePolicy` but no oracle coverage yet, for different reasons:
 
@@ -56,9 +58,10 @@ One state's `StatePolicy` is present, oracle-covered, and **looks wrong**:
   the engine today and, if used for a real determination, would wrongly deny categorical
   eligibility to AK households between 130%–200% FPL.
 
-**35 states have neither** `StatePolicy` nor oracle coverage — the full remaining scope:
-AL, AR, CO, CT, DC, DE, GU, HI, IA, ID, IN, KY, LA, MD, ME, MO, MS, MT, NC, ND, NE, NH, NJ,
-NM, OK, RI, SC, SD, TN, UT, VA, VI, VT, WV, WY.
+**34 states have neither** `StatePolicy` nor oracle coverage — the full remaining scope:
+AL, AR, CO, CT, DC, DE, GU, HI, IA, ID, IN, KY, LA, MD, ME, MO, MS, MT, ND, NE, NH, NJ,
+NM, OK, RI, SC, SD, TN, UT, VA, VI, VT, WV, WY. (NC — the first "individual tier" state,
+§6 — is DONE; see the execution log's NC entry.)
 
 ## 3. Structural design: what's universal (fix once) vs. what's genuinely per-state (author 53×)
 
@@ -183,7 +186,7 @@ exists and only oracle authoring is outstanding):
    PROVENANCE.md, regenerate all 92 oracle rows since a `bbce` flip changes categorical-
    eligibility outcomes across a large share of the profile set — treat as a full rebuild,
    not a one-line patch, precisely because it's already shipped and wrong)
-3. Individual tier (~4M+ population): NC, NJ, VA, TN, IN, MO, MD, CO, SC, AL, LA, KY, OK
+3. Individual tier (~4M+ population): ~~NC~~ (done), NJ, VA, TN, IN, MO, MD, CO, SC, AL, LA, KY, OK
 4. Schema step: extend `AllotmentTier` for HI/GU (own small PR, own go-ahead)
 5. HI, GU (now unblocked)
 6. Batch tier (<4M population, N≤3 per batch): CT, UT, IA, AR / MS, NM, NE / ID, WV, NH /
@@ -409,6 +412,62 @@ all of it.
   scope; only the table SHAPE is HI-ready). PR
   [#819](https://github.com/matthewgg22/Civica/pull/819), awaiting merge go-ahead.
 
+- **NC (StatePolicy + full oracle authoring, first "individual tier" state, §6)** — North
+  Carolina was a genuine blank slate: no `StatePolicy`, no oracle coverage at all, unlike
+  every state above (which at minimum had a `StatePolicy` to correct). Every axis was
+  TRANSLATED from the already-cited primary-source findings in the merged Demeter corpus
+  pack (`packages/demeter-engine/src/states/nc/`, built and merged 2026-08-11) into the
+  engine's stricter typed shape — re-verification against the corpus's own primary sources,
+  not fresh research. `bbce: true` / `200%` / `federal_fiscal_year` (FNS 220.02(E) "Expanded
+  (200%) Categorical Eligibility," conferred via a TANF-services notice printed on the
+  application itself); `asset_waiver: true` (FNS 220.05 waives resource + gross + net income
+  tests for cat-elig households, stronger than an asset-only waiver); `drug_felony_ban:
+  "modified"` (FNS 270.01's DEFAULT is permanent disqualification, with a narrow Class-H/I
+  in-state reinstatement path — NC's default-is-disqualification shape is meaningfully
+  different from FL's/PA's/AZ's/WI's default-is-eligible modified bans, but "modified" is
+  still the correct classification per #805's rule since the ban isn't unconditional);
+  `abawd_waiver_avail: false` (N.C. Gen. Stat. § 108A-51.1, a statutory bar on NCDHHS ever
+  seeking an ABAWD waiver, in continuous effect since 2015-10-01 — the longest-standing such
+  prohibition in this file, and an affirmatively sourced `false`, not a fail-open default);
+  `rmp_operated: false` (a genuine secondary-source correction — NC has no ongoing
+  Restaurant Meals Program; third-party sites conflate it with an already-expired,
+  restaurant-excluded 2024 Hurricane Helene hot-foods waiver); `allotment_tier: "48"`.
+
+  `sua_by_tier` surfaced a NEW schema-mismatch shape this file hadn't seen before: not a
+  missing utility TIER (AZ/OH/IL/MI/WI/NV's documented gaps) but a missing HOUSEHOLD-SIZE
+  DIMENSION inside an existing tier — NC's real SUA/BUA table (FNS 340.09/360.01) scales
+  continuously across 5 size bands ($637→$912 HCSUA, $392→$564 LUA), not just a 2-band split
+  like AZ's. Encoded the household-size-1 ("base figure") values, the same "first person"
+  convention every other size-scaled federal table in this codebase already uses, and
+  disclosed the resulting under-statement for size-2+ households in a code comment —
+  independently verified this changes only a small, disclosed subset of the 92 oracle
+  profiles' benefit dollar amounts (most multi-person households' excess-shelter deduction
+  is already clamped at the federal $744 shelter cap regardless of the exact SUA figure fed
+  in, so the approximation is invisible for them).
+
+  Oracle: built a fresh, independent Python calculator (not derived from engine output) from
+  the same 7 CFR / federal-tables.ts citations documented in verdict.ts/benefit-calc.ts's own
+  comments. Cross-validated 92/92 exact match against WI's already-graded oracle run under
+  WI's own StatePolicy params before trusting it for NC — WI is NC's closest axis-twin in
+  this file (identical bbce/200%/federal_fiscal_year, asset_waiver, drug_felony_ban
+  "modified", abawd_waiver_avail false, allotment_tier "48"; only the SUA dollar figures and
+  the underlying policy citations differ). Also checked all 37 rows across the 18
+  non-`expected_by_state` variant profiles (facts_patch A/B pairs) for an NC-specific
+  `verdict_by_state` override, the same discipline AK's M23/P56 overrides needed — found
+  zero divergence from the shared default `verdict` for NC, so no override was authored.
+  Authored all 92 `expected_by_state.NC` entries.
+
+  Verification: `/profile-simulation state=NC` — 129/129 PASS, 0 FAIL, 0 SKIP (clean,
+  matching CA/MA/TX/WA/GA/FL/IL/OH/MI/NV/OR/WI/KS/AK's bar, not PA's/MN's SKIP-heavy grade).
+  Every other registered state's harness run reconfirmed unchanged from its documented
+  baseline (CA/MA/TX/WA/GA/FL/IL/OH/MI/NV/OR/WI/KS/AK all 129/0/0; PA 34/0/95; NY 127/2/0;
+  AZ 128/1/0; MN 0/0/129 all-skip). `tsc --noEmit -p packages/snap-rules` clean, 323/323
+  snap-rules tests pass (0 new — a schema-conformant pure addition needed no new unit
+  tests), 44/47 profile-harness tests pass (3 pre-existing skips). Did not touch
+  `packages/demeter-engine` (NC's corpus was already complete and out of scope) or any other
+  state's `StatePolicy`/oracle coverage. PR
+  [#822](https://github.com/matthewgg22/Civica/pull/822), **merged**.
+
 - **NJ (individual tier, §6 step 3)** — built New Jersey's `StatePolicy` entry AND full
   92-profile oracle coverage from scratch (NJ had neither before this PR), translating
   NJ's already-merged Demeter corpus pack (`packages/demeter-engine/src/states/nj/`,
@@ -480,4 +539,5 @@ all of it.
   from its documented baseline (CA/MA/TX/WA/GA/FL/IL/OH/MI/NV/OR/WI/KS all 129/0/0; PA
   34/0/95; NY 127/2/0; AZ 128/1/0; MN 0/0/129 — all pre-existing, none newly introduced).
   `tsc --noEmit -p packages/snap-rules` clean, 323/323 snap-rules tests pass, 44/47
-  profile-harness tests pass (3 pre-existing skips). PR TBD, awaiting merge go-ahead.
+  profile-harness tests pass (3 pre-existing skips). PR
+  [#826](https://github.com/matthewgg22/Civica/pull/826), awaiting merge go-ahead.

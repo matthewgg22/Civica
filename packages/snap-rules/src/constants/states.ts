@@ -1520,6 +1520,154 @@ const STATES: Record<string, StatePolicy[]> = {
       rmp_operated: false,
     },
   ],
+
+  // North Carolina — NCDHHS / "Food and Nutrition Services" (FNS in NC's
+  // OWN manual means the state program, not the federal USDA agency of the
+  // same acronym — see the NC corpus pack's program-identity supplement).
+  // First "individual tier" build (docs/plans/snap-rules-50-state-engine-
+  // completion.md §6) — a genuine blank slate, no prior StatePolicy or
+  // oracle coverage existed. Every axis below is TRANSLATED from the
+  // already-cited primary-source findings in the merged Demeter corpus pack
+  // (packages/demeter-engine/src/states/nc/PROVENANCE.md +
+  // supplements.json), built and merged 2026-08-11 — re-verification, not
+  // fresh research; see that pack's own Sources table for the underlying
+  // fetch method (direct curl w/ browser User-Agent; policies.ncdhhs.gov
+  // 403s a bare WebFetch, same lightweight-bot-mitigation shape as other
+  // states in this file, NOT an auth wall).
+  //
+  // BBCE (FNS 220.02(E), "Expanded (200%) Categorical Eligibility"): a flat
+  // 200% FPL screen conferred via a TANF-services notice FNS 220.02(E)(4)
+  // says "is included on all state approved applications" — the SAME
+  // conferral-vehicle family as GA's TCOS pamphlet / MI's DVPS enrollment /
+  // NV's "This Is Your Copy" page, but lower-friction still: the notice is
+  // language on the application form itself, not a separate mailing.
+  // bbce_fpl_basis: "federal_fiscal_year" — NC's dollar tables (FNS 360.01)
+  // are captioned "effective October 1, 2025," the same FFY framing CA/WA/
+  // FL/AZ/OR/WI/post-BBCE-AK already use in this file (contrast MA's
+  // calendar_year).
+  //
+  // asset_waiver: true — FNS 220.05 confirms a categorically-eligible unit
+  // (narrow OR expanded pathway) "automatically passes" ALL THREE of the
+  // resource test, gross income test, AND net income test — the same full-
+  // waiver breadth MN's entry documents (stronger than an asset-only
+  // waiver), though this engine's schema only has one boolean slot for it,
+  // same limitation every BBCE state above accepts.
+  //
+  // drug_felony_ban: "modified" — FNS 270.01 makes PERMANENT DISQUALIFICATION
+  // the DEFAULT for any controlled-substance felony conviction (state or
+  // federal) since 8/23/1996 — NC's default is disqualification, not
+  // eligibility, a meaningfully different starting point from FL's/PA's/
+  // AZ's/WI's "eligible unless a specific trigger fires" modified bans. The
+  // ONLY reinstatement path (FNS 270.02) is doubly narrow: (a) the
+  // conviction must be classified as a North Carolina Class H or I felony
+  // (the state's two LEAST serious classes — any higher class stays
+  // permanently disqualifying), AND (b) the conviction must have occurred
+  // IN North Carolina specifically (FNS 270's own worked example: an
+  // out-of-state conviction of equivalent severity stays permanently
+  // disqualifying). Even inside that path: 6-month minimum wait + an Area
+  // Mental Health Authority (AMHA) treatment-compliance determination that
+  // can re-disqualify later. "modified" (not "full") is still the correct
+  // classification under this file's #805 rule: setting "full" would gate
+  // EVERY drug-felony household, but the Class-H/I-in-state reinstatement
+  // path means the statute does NOT uniformly bar all of them the way TX's
+  // genuine "full" entry does — same under-claim-is-the-lesser-harm
+  // reasoning as FL/PA/AZ/WI's entries. The NC corpus pack explicitly
+  // checked this against 3 independent secondary sources (NC Justice
+  // Center, Collateral Consequences Resource Center, Public Health Law
+  // Center) before drafting — this is a CONFIRMATION of already-accurate
+  // secondary reporting, not a correction (contrast the RMP finding below).
+  // A pending 2025-2026 session bill (SB 564 / HB 682) would eliminate both
+  // disqualification tiers entirely but had not passed as of the corpus
+  // pack's build date — not reflected here; re-verify if it enacts.
+  //
+  // abawd_waiver_avail: false — NOT a fail-open default; an affirmatively
+  // sourced, decade-old STATUTORY BAR. N.C. Gen. Stat. § 108A-51.1
+  // ("Prohibition on certain waivers," enacted S.L. 2015-294 § 16(a), eff.
+  // 10/1/2015, fetched directly from ncleg.gov's current codified-statute
+  // page AND the original 2015 session-law text) bars NCDHHS from ever
+  // seeking an ABAWD geographic time-limit waiver, except for D-SNAP
+  // waivers tied to a Presidential disaster declaration — a narrow carve-
+  // out this engine doesn't model (D-SNAP is a different program). This is
+  // the LONGEST-STANDING of any ABAWD-waiver prohibition in this file (OH's
+  // comparable ORC § 5101.548 is eff. 2025; NC's predates it by a decade).
+  // Independently corroborated: NCDHHS's own ABAWD program page states the
+  // 3-month limit applies uniformly statewide, and USDA's current waiver
+  // tracking names only MN/MT/ND as holding active statewide waivers — NC
+  // is not among them. No NC_WAIVER_COUNTY_FIPS lookup exists (nor would
+  // one be meaningful — the statute is a blanket state-level bar, not a
+  // county patchwork), so this boolean IS the real, complete answer for
+  // every NC household, unlike CA's/MI's/NV's/AZ's `true` entries above
+  // (which are permissive fallbacks papering over real county-level
+  // waivers this engine can't yet look up). `false` here denies an ABAWD
+  // exemption claim outright — the correct, sourced result, not a
+  // conservative guess.
+  //
+  // rmp_operated: false — a genuine SECONDARY-SOURCE CORRECTION (the RMP
+  // finding's own shape, distinct from the drug-felony confirmation above).
+  // USDA's current RMP state list (AZ/CA/IL Cook-Franklin/MD/MA/MI/NY/RI/VA)
+  // does not include NC, and the NC corpus pack traced the likely source of
+  // third-party confusion: NCDHHS's 10/4/2024 press release let FNS
+  // participants buy hot prepared food from EBT-authorized VENDORS (gas
+  // stations, grocery deli counters) after Hurricane Helene — a temporary,
+  // ALREADY-EXPIRED (10/4-11/3/2024) federal disaster hot-foods waiver that
+  // explicitly EXCLUDED restaurants, a different statutory mechanism from
+  // the ongoing RMP option under 7 CFR 274.7(g). Several SNAP-explainer
+  // sites conflate the two; this engine does not.
+  //
+  // allotment_tier: "48" — NC uses the federal 48-contiguous max-allotment
+  // table; the corpus pack found no NC-specific elevated schedule (unlike
+  // AK/HI's genuinely higher tables) — confirmed via FNS 360.01's own FY26
+  // dollar table, which reproduces the shared federal figures exactly for
+  // NC's Standard Deduction ($209/$223/$261/$299 — identical to
+  // federal-tables.ts's FY26 standard_deduction map), the strongest
+  // available signal NC's allotment table isn't independently elevated
+  // either (both figures come from the same FNS 360.01 table).
+  //
+  // sua_by_tier — A NEW SCHEMA MISMATCH SHAPE not yet seen in this file:
+  // NOT a missing tier (AZ/OH/IL/MI/WI/NV's gap) but a missing HOUSEHOLD-
+  // SIZE DIMENSION inside an existing tier. FNS 340.09 / FNS 360.01 (eff.
+  // 10/1/2025) scale NC's SUA continuously by household size — HCSUA $637
+  // (size 1) / $699 (2) / $768 (3) / $837 (4) / $912 (5+); BUA (this
+  // engine's LUA slot) $392 / $431 / $474 / $518 / $564 over the same
+  // tiers; only the Telephone Utility Allowance (this engine's `phone`
+  // slot) is genuinely flat at $42 regardless of size. This schema's
+  // `sua_by_tier` has exactly one scalar per tier, no size dimension at
+  // all (the closest precedent, AZ's SUA, is only a 2-BAND split — 1-3 vs
+  // 4+ — not a continuous 5-tier scale). Values below are NC's real
+  // household-SIZE-1 figures — the same "first person" base-figure
+  // convention this codebase already uses everywhere else a federal table
+  // has a "base + each additional" shape (FPL, standard deduction, max
+  // allotment) — chosen for structural consistency, not because size-1 is
+  // uniquely more "correct" than size-2 or size-3. A household of size 2+
+  // gets an UNDER-STATED SUA/LUA from this engine until the schema grows a
+  // size dimension; independently verified this materially changes very
+  // few of the 92 oracle profiles' outcomes in practice, because most
+  // multi-person households' excess-shelter deduction is already clamped
+  // at the federal shelter cap ($744 FY26) regardless of the exact SUA
+  // figure fed in — see the oracle-authoring commit's own note for which
+  // profiles this DOES change (a small, disclosed set, not zero).
+  NC: [
+    {
+      effective_start: new Date(Date.UTC(2020, 0, 1)),
+      effective_end: new Date(Date.UTC(2099, 11, 31)),
+      state_code: "NC",
+      label: "North Carolina / NCDHHS — Food and Nutrition Services",
+      bbce: true,
+      bbce_threshold_pct: 200,
+      bbce_fpl_basis: "federal_fiscal_year",
+      asset_waiver: true,
+      sua_by_tier: {
+        HCSUA: new Decimal("637"),
+        LUA: new Decimal("392"),
+        phone: new Decimal("42"),
+        none: new Decimal("0"),
+      },
+      allotment_tier: "48",
+      drug_felony_ban: "modified",
+      abawd_waiver_avail: false,
+      rmp_operated: false,
+    },
+  ],
 };
 
 export class UnknownStateError extends Error {
