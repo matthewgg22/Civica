@@ -31,14 +31,14 @@ at all; today, most do.
 this plan's own individual-tier landings)
 
 `StatePolicy` (the calculator's per-state config — `packages/snap-rules/src/constants/
-states.ts`) exists for **23 states**: CA, WA, TX, NY, GA, MI, IL, FL, MA, NV, AZ, OR, WI,
-MN, OH, KS, PA, AK, NC, NJ, VA, TN, IN.
+states.ts`) exists for **24 states**: CA, WA, TX, NY, GA, MI, IL, FL, MA, NV, AZ, OR, WI,
+MN, OH, KS, PA, AK, NC, NJ, VA, TN, IN, MO.
 
 The oracle fixture (`data-ops/sample/civica-test-profiles/v0.6.json`, `expected_by_state`)
 — the independently-computed ground truth every `/profile-simulation` run grades the
 engine against — has full 92-case coverage (minus TN's 3 deliberately-unauthored
-genuinely-indeterminate profiles, see below) for **21 of those 23**: CA, WA, TX, NY, GA,
-MI, IL, FL, MA, NV, AZ, OR, WI, KS, OH, AK, NC, VA, IN clear CLEAN (129/0/0 or a
+genuinely-indeterminate profiles, see below) for **22 of those 24**: CA, WA, TX, NY, GA,
+MI, IL, FL, MA, NV, AZ, OR, WI, KS, OH, AK, NC, VA, IN, MO clear CLEAN (129/0/0 or a
 documented pre-existing partial); PA, NJ, and TN also have all 92 (or 89, for TN) rows
 authored, per the execution log's PA/NJ/TN entries below, but all three grade 34/0/95 —
 most of their profiles legitimately SKIP on the null-SUA gap, not a coverage gap, so none
@@ -62,11 +62,11 @@ One state's `StatePolicy` is present, oracle-covered, and **looks wrong**:
   the engine today and, if used for a real determination, would wrongly deny categorical
   eligibility to AK households between 130%–200% FPL.
 
-**30 states have neither** `StatePolicy` nor oracle coverage — the full remaining scope:
-AL, AR, CO, CT, DC, DE, GU, HI, IA, ID, KY, LA, MD, ME, MO, MS, MT, ND, NE, NH,
-NM, OK, RI, SC, SD, UT, VI, VT, WV, WY. (NC, NJ, VA, TN, and IN — the first five
-"individual tier" states, §6 — are DONE; see the execution log's NC/NJ/VA/TN/IN entries.
-MO's build is a separate, concurrently-in-flight PR — see that PR for its own status.)
+**29 states have neither** `StatePolicy` nor oracle coverage — the full remaining scope:
+AL, AR, CO, CT, DC, DE, GU, HI, IA, ID, KY, LA, MD, ME, MS, MT, ND, NE, NH,
+NM, OK, RI, SC, SD, UT, VI, VT, WV, WY. (NC, NJ, VA, TN, IN, and MO — the first six
+"individual tier" states, §6 — are DONE; see the execution log's NC/NJ/VA/TN/IN/MO
+entries.)
 
 ## 3. Structural design: what's universal (fix once) vs. what's genuinely per-state (author 53×)
 
@@ -192,7 +192,7 @@ exists and only oracle authoring is outstanding):
    eligibility outcomes across a large share of the profile set — treat as a full rebuild,
    not a one-line patch, precisely because it's already shipped and wrong)
 3. Individual tier (~4M+ population): ~~NC~~ (done), ~~NJ~~ (done), ~~VA~~ (done),
-   ~~TN~~ (done), ~~IN~~ (done), MO, MD, CO, SC, AL, LA, KY, OK
+   ~~TN~~ (done), ~~IN~~ (done), ~~MO~~ (done), MD, CO, SC, AL, LA, KY, OK
 4. Schema step: extend `AllotmentTier` for HI/GU (own small PR, own go-ahead)
 5. HI, GU (now unblocked)
 6. Batch tier (<4M population, N≤3 per batch): CT, UT, IA, AR / MS, NM, NE / ID, WV, NH /
@@ -827,3 +827,112 @@ all of it.
   already complete and out of scope), TN, or any other state's
   `StatePolicy`/oracle coverage. PR
   [#833](https://github.com/matthewgg22/Civica/pull/833), **merged**.
+
+- **MO (individual tier, §6 step 3, sixth state after NC/NJ/VA/TN/IN — TN's PR #831 and
+  IN's PR #833 were both open and CI-green but not yet merged as of this build; not
+  coordinated with, per the task's own instruction that a human reconciles the eventual
+  rebase — this entry now sits after both in the log to reflect the actual merge order once
+  reconciled)** — built Missouri's
+  `StatePolicy` entry AND full 92-profile oracle coverage from scratch (MO had neither
+  before this PR), translating MO's already-merged Demeter corpus pack
+  (`packages/demeter-engine/src/states/mo/`, PROVENANCE.md + supplements.json, built
+  2026-08-11) into the engine's stricter typed shape per §5's process.
+
+  `bbce: false` — THIS PACK'S FLAGSHIP FINDING, a genuine secondary-source CORRECTION
+  (several calculator sites wrongly claim MO runs 200% FPL BBCE): MO's own current
+  income-limit table (MO IM Manual 1115.099.00, cross-checked against the DSS SNAP Program
+  Changes Flyer dated 10/2025) publishes only the plain federal 130%/100% FPL columns, no
+  BBCE tier anywhere — MO's own analog to this file's KS/IN no-BBCE archetype, but sharper
+  because it disproves an actively wrong numbered claim rather than merely confirming an
+  accurate absence. `asset_waiver: false` — a genuine THIRD categorical-eligibility
+  structural pattern this file had not yet documented: MO IM Manual 1135.035.00 extends CE
+  to households receiving specific TANF-funded "special support services" (Child Care
+  assistance, Community Partnerships), broader than Basic-CE-only (IN's pattern) but
+  SERVICES-CONDITIONED rather than a blanket income-ceiling raise (BBCE's mechanism) —
+  this schema has no slot for that distinct axis, so `asset_waiver: false` correctly
+  describes the general (non-cat-elig) population, documented at length inline rather than
+  silently assumed. `drug_felony_ban: "modified"` — MO's own statute (RSMo § 208.247) was
+  fetched directly and in full from revisor.mo.gov with NO access barrier (a genuine plus
+  over IN's equivalent, which needed secondary corroboration); the modified-ban condition
+  is genuinely STRICTER than IN's — requiring participant-PAID voluntary urinalysis testing
+  in addition to treatment-compliance and no-additional-conviction conditions IN's own ban
+  does not require. `abawd_waiver_avail: false` — affirmatively sourced from three
+  convergent sources (USDA's waiver index, the abawdmap.us aggregator, MO's own 3.7%
+  unemployment rate) despite MO's own manual being silent on waiver status (a slightly
+  weaker evidentiary posture than VA's affirmative "No exempt areas" text, still preferred
+  over guessing). `rmp_operated: false` — confirmed absent from USDA's RMP list, with the
+  same repeated-dead-legislative-bill pattern (four sessions, 2022-2025) this file's NJ
+  entry documents. `allotment_tier: "48"`.
+
+  `sua_by_tier` — POPULATED with disclosed confidence rather than set to `null`: MO's own
+  manual (1115.035.25.15) publishes SUA $495 / NHCS $363 / LUA $158 / telephone $79, dated
+  to IM-50 (Sept 2024, FFY2025) with no confirmed FFY2026 update located despite a targeted
+  search — a "sourced but possibly one FY stale" figure, not PA's/NJ's/MN's "no figure
+  exists at all" gap, so populated with the staleness risk disclosed inline (same
+  discipline as MA's already-PENDING-VERIFICATION entry) rather than blocking benefit
+  computation. Also surfaced a genuine NAMING-COLLISION mapping trap: MO's own manual calls
+  its $158 (exactly-one-utility) tier "LUA," but this schema's `LUA` slot instead maps to
+  MO's differently-named $363 NHCS (2+-utilities) tier — mirroring OH's exact precedent in
+  this file (OH's own "LUA" = 2+ utilities, mapped; OH's separately-named "Single SUA" =
+  one utility, unmapped) rather than MO's literal label, since the schema's `LUA` field
+  functionally represents whichever tier `determineSUATier`'s single LIMITED branch
+  (`has_electric_or_gas === "yes"`, no distinction of utility COUNT) actually reaches. MO's
+  own $158 one-utility tier is the disclosed, unmapped 4th tier, same treatment as OH's
+  $108 Single SUA and IL's $78 Single Utility.
+
+  Two already-known, already-filed gaps recur for MO and were NOT re-filed, per the task's
+  own instruction: the blanket "exclude the value of all vehicles" resource rule (broader
+  than any prior state in this file, including IN's hybrid rule) has no `Facts.assets`
+  slot (#824's shape); MO's child-support EXCLUSION mechanism (MO IM Manual 1115.035.20,
+  applied even to the gross 130% FPL test itself, matching this file's VA/NJ/IL pattern)
+  is not modeled by `benefit-calc.ts`'s engine-wide ordinary-deduction-only mechanism
+  (also #824) — exactly one of the 92 profiles (A08, $300 child support) is affected, its
+  MO entry uses the engine's standard mechanic since A08's verdict is unaffected either
+  way, the same acceptance NJ's A08 entry already documents. The resource-limit dollar
+  figure itself ($3,000/$4,500) rests on secondary corroboration only (MO IM Manual
+  1110.005.00 returned a password wall, sibling Vehicles subsection did not) but is
+  immaterial to the engine regardless — the figure is the plain federal standard read from
+  `federal-tables.ts`, not a per-state `StatePolicy` field, and MO's secondary-sourced
+  figure matches it exactly.
+
+  Oracle: built a fresh, independent Python calculator (not derived from engine output,
+  per #636) directly from `verdict.ts`/`benefit-calc.ts`/`income-tests.ts`/`asset-test.ts`/
+  `abawd.ts`/`disqualifications.ts`/`student.ts`/`composition.ts`/`immigration.ts`/
+  `facts.ts`/`federal-tables.ts`'s own read source (not just their doc-comments), mirroring
+  every gate and the benefit-calc formula exactly, including the half-up rounding
+  (`roundDollar`) and floor rounding (`floorDollar`) conventions from `decimal.ts`.
+  Cross-validated BEFORE trusting it for MO, in two directions since MO (unlike NJ/PA) has
+  a real, non-null SUA needing full benefit-calc exercise: (1) 92/92 exact match (verdict
+  AND benefit) reproducing VA's already-graded oracle under VA's own StatePolicy params —
+  VA is MO's structural benefit-calc twin in this file (both need the full shelter/SUA/
+  benefit pathway exercised, unlike NJ's/PA's null-SUA-blocked entries); (2) 92/92 verdict
+  match (KS ships no real benefit figures, so verdict-only) reproducing KS's already-graded
+  oracle under KS's own StatePolicy params — KS is MO's structural GATING twin (both
+  non-BBCE, both `asset_waiver: false`, both facing the plain federal 130%/100% test).
+  Independently confirmed KS and MO's own computed verdicts are IDENTICAL across all 92
+  profiles under their respective real policy params (differing only in benefit dollar
+  amount, since MO's own SUA figures are higher than KS's) — a strong internal-consistency
+  signal beyond the two cross-validations themselves. Also checked all 37 rows across the
+  18 non-`expected_by_state` variant profiles (facts_patch A/B pairs) for an MO-specific
+  `verdict_by_state` override, the same discipline NC's/VA's builds used — found ONE real
+  divergence (unlike NC's/VA's zero): `M23-variable-gig-income-anticipation`'s two variants
+  ($1,800 and $2,200 gross HH1) both clear every BBCE-200/185/165 state's threshold but
+  fail MO's plain federal 130% screen ($1,696/97) — the same direction KS/OH/GA already
+  fail for the identical reason; authored `"MO": "DENY"` into both variants'
+  `verdict_by_state` blocks, matching KS's already-authored value exactly (an independent
+  confirmation the divergence is real, not a calculator bug). Authored all 92
+  `expected_by_state.MO` entries: 70 APPROVE / 22 DENY.
+
+  Verification: `/profile-simulation state=MO` — 129/129 PASS, 0 FAIL, 0 SKIP (clean,
+  matching CA/MA/TX/WA/GA/FL/IL/OH/MI/NV/OR/WI/KS/AK/NC/VA's bar, not PA's/NJ's/MN's
+  SKIP-heavy shape — MO's real, disclosed-confidence SUA figures mean it did not need
+  PA's/NJ's null-SUA fallback). Every other registered state's harness run reconfirmed
+  unchanged from its documented baseline, all 21 pre-existing states checked individually
+  (not just spot-checked): CA/MA/TX/WA/GA/FL/IL/OH/MI/NV/OR/WI/KS/AK/NC/VA all 129/0/0; AZ
+  128/1/0; MN 0/0/129; PA 34/0/95; NJ 34/0/95 — every one identical to its pre-MO
+  documented baseline, zero regressions. `tsc --noEmit -p packages/snap-rules` clean,
+  323/323 snap-rules tests pass (0 new — a schema-conformant pure addition needed no new
+  unit tests), 44/47 profile-harness tests pass (3 pre-existing skips). Did not touch
+  `packages/demeter-engine` (MO's corpus was already complete and out of scope) or any
+  other state's `StatePolicy`/oracle coverage, including TN's or IN's in-flight PRs. PR
+  [#835](https://github.com/matthewgg22/Civica/pull/835), awaiting merge go-ahead.
