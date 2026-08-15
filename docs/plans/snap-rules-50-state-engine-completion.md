@@ -339,5 +339,5 @@ all of it.
   KS/WI clean 129/0/0; NY 127/2 and AZ 128/1 pre-existing known fails; MN all-SKIP;
   PA 34/0/95 — all identical to pre-#814). 316/316 snap-rules tests (279 pre-existing + 37
   new), 44/47 profile-harness tests (3 pre-existing skips), `tsc --noEmit` clean. PR
-  [#814-fix](https://github.com/matthewgg22/Civica/pull/000), branch
-  `fix/ak-allotment-tier-not-consumed`.
+  [#817](https://github.com/matthewgg22/Civica/pull/817), branch
+  `fix/ak-allotment-tier-not-consumed`, awaiting review.
