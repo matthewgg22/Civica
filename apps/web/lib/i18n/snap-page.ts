@@ -290,7 +290,7 @@ const en: PageCopy = {
     "That lookup did not come back. It does not mean there are no stores near you — try again, or check USDA's own locator.",
   retailSearchMore: "Showing the first {n}. There are more.",
   retailSearchOpenMap: "Open in maps",
-  retailersH3: "Where the card works",
+  retailersH3: "Where you can use your EBT card",
   retailersBody:
     "{n} stores across every state and territory accept EBT — supermarkets, corner shops, many farmers markets, and online at some retailers.",
   retailersNote:
@@ -534,7 +534,7 @@ const es: PageCopy = {
     "Esa búsqueda no respondió. No significa que no haya tiendas cerca de ti: inténtalo otra vez o consulta el localizador del USDA.",
   retailSearchMore: "Se muestran las primeras {n}. Hay más.",
   retailSearchOpenMap: "Abrir en mapas",
-  retailersH3: "Dónde funciona la tarjeta",
+  retailersH3: "Dónde puedes usar tu tarjeta EBT",
   retailersBody:
     "{n} tiendas en todos los estados y territorios aceptan EBT: supermercados, tiendas de barrio, muchos mercados de agricultores y, en algunos comercios, compras en línea.",
   retailersNote:
@@ -763,7 +763,7 @@ const vi: PageCopy = {
     "Lượt tra cứu không phản hồi. Điều đó không có nghĩa là quanh bạn không có cửa hàng — hãy thử lại, hoặc xem công cụ tra cứu của USDA.",
   retailSearchMore: "Đang hiển thị {n} kết quả đầu. Còn nữa.",
   retailSearchOpenMap: "Mở trong bản đồ",
-  retailersH3: "Thẻ dùng được ở đâu",
+  retailersH3: "Bạn có thể dùng thẻ EBT ở đâu",
   retailersBody:
     "{n} cửa hàng trên khắp các tiểu bang và vùng lãnh thổ chấp nhận EBT — siêu thị, cửa hàng tạp hóa, nhiều chợ nông sản, và mua trực tuyến ở một số nơi.",
   retailersNote:
@@ -993,7 +993,7 @@ const zh: PageCopy = {
     "这次查询没有返回结果。这并不代表您附近没有商店——请再试一次，或查看美国农业部自己的查询工具。",
   retailSearchMore: "仅显示前 {n} 家，还有更多。",
   retailSearchOpenMap: "在地图中打开",
-  retailersH3: "这张卡在哪里能用",
+  retailersH3: "您可以在哪里使用 EBT 卡",
   retailersBody:
     "全美各州和各领地共有 {n} 家商店接受 EBT——超市、街角小店、许多农夫市集，部分商家还支持网上购买。",
   retailersNote:

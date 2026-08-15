@@ -5693,7 +5693,19 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   gap: clamp(1rem, 3vw, 2.5rem); align-items: center; margin: 2rem 0 0;
 }
 .dmret__text .dmx__body { margin-bottom: 0.5rem; }
-.dmret__text .dmx__note { margin-top: 0.5rem; }
+/* A CITATION, not a second paragraph. .dmx__note was already smaller and
+   sans (0.85rem vs the body's 17px serif) — real, measured — but same weight
+   and near-identical muted brown meant it still read as "more prose" rather
+   than "source line," which is exactly the complaint: the count's own
+   attribution was competing with the count for attention instead of sitting
+   quietly under it. Matches the page's OWN existing citation treatment
+   (.dmx__servicemark, by the USDA logo below) rather than inventing a new
+   one: smaller again, and set apart by a rule rather than by size alone. */
+.dmret__text .dmx__note {
+  margin-top: 1rem; padding-top: 0.65rem;
+  border-top: 1px solid var(--demeter-rule);
+  font-size: 0.74rem; line-height: 1.5;
+}
 .dmret__svg { width: 100%; height: auto; display: block; }
 
 /* The ZIP lookup. The map above it is the claim; this is the answer. */
