@@ -39,6 +39,11 @@ export interface PageCopy {
   h2: string;
   lede: string;
   trust: Pair[];
+  /** The verified-jurisdiction count used to fold DC, Guam and the U.S. Virgin
+   *  Islands into "N States verified" — true of the count, false of the word.
+   *  trust[2] now counts actual states only; this names the rest, wherever
+   *  that count is shown (the hero badge and the trust list both use it). */
+  statesAlsoVerified: string;
   /** Heading for the trust rows once they moved below the chat. They used to be
    *  an unlabelled <aside> in the lede, borrowing howH2 for its aria-label —
    *  which, as a real section heading, printed "How Demeter answers" twice on
@@ -105,6 +110,11 @@ export interface PageCopy {
   retailSearchError: string;
   retailSearchMore: string;
   retailSearchOpenMap: string;
+  /** A permanent link, not just an error-state fallback — sits under the map
+   *  so a search that comes up short (or the map's own 40-result cap) always
+   *  has a next place to look, not just "try again." */
+  retailMoreLabel: string;
+  retailMoreLink: string;
   retailersH3: string;
   retailersBody: string;
   retailersNote: string;
@@ -179,6 +189,7 @@ const en: PageCopy = {
       d: "Federal rules still answer. Figures that vary by state are deferred to your agency rather than guessed.",
     },
   ],
+  statesAlsoVerified: "DC and the territories are verified too.",
   trustH2: "Free, cited, and clear about its limits",
   snapH2: "What SNAP is",
   snapBody:
@@ -290,6 +301,8 @@ const en: PageCopy = {
     "That lookup did not come back. It does not mean there are no stores near you — try again, or check USDA's own locator.",
   retailSearchMore: "Showing the first {n}. There are more.",
   retailSearchOpenMap: "Open in maps",
+  retailMoreLabel: "Not seeing your store?",
+  retailMoreLink: "Check USDA's SNAP Retailer Locator",
   retailersH3: "Where you can use your EBT card",
   retailersBody:
     "{n} stores across every state and territory accept EBT — supermarkets, corner shops, many farmers markets, and online at some retailers.",
@@ -422,6 +435,7 @@ const es: PageCopy = {
       d: "Las reglas federales siguen respondiendo. Las cifras que varían por estado se remiten a tu agencia en vez de adivinarse.",
     },
   ],
+  statesAlsoVerified: "El Distrito de Columbia y los territorios también están verificados.",
   trustH2: "Gratis, con fuentes, y claro sobre sus límites",
   snapH2: "Qué es SNAP",
   snapBody:
@@ -533,6 +547,8 @@ const es: PageCopy = {
     "Esa búsqueda no respondió. No significa que no haya tiendas cerca de ti: inténtalo otra vez o consulta el localizador del USDA.",
   retailSearchMore: "Se muestran las primeras {n}. Hay más.",
   retailSearchOpenMap: "Abrir en mapas",
+  retailMoreLabel: "¿No ves tu tienda?",
+  retailMoreLink: "Consulta el localizador de tiendas SNAP del USDA",
   retailersH3: "Dónde puedes usar tu tarjeta EBT",
   retailersBody:
     "{n} tiendas en todos los estados y territorios aceptan EBT: supermercados, tiendas de barrio, muchos mercados de agricultores y, en algunos comercios, compras en línea.",
@@ -650,6 +666,7 @@ const vi: PageCopy = {
       d: "Quy định liên bang vẫn trả lời được. Những con số khác nhau theo tiểu bang sẽ được chuyển về cơ quan của bạn thay vì đoán.",
     },
   ],
+  statesAlsoVerified: "DC và các vùng lãnh thổ cũng đã được xác minh.",
   trustH2: "Miễn phí, có trích dẫn, và nói rõ giới hạn",
   snapH2: "SNAP là gì",
   snapBody:
@@ -761,6 +778,8 @@ const vi: PageCopy = {
     "Lượt tra cứu không phản hồi. Điều đó không có nghĩa là quanh bạn không có cửa hàng — hãy thử lại, hoặc xem công cụ tra cứu của USDA.",
   retailSearchMore: "Đang hiển thị {n} kết quả đầu. Còn nữa.",
   retailSearchOpenMap: "Mở trong bản đồ",
+  retailMoreLabel: "Không thấy cửa hàng của bạn?",
+  retailMoreLink: "Xem công cụ tra cứu cửa hàng SNAP của USDA",
   retailersH3: "Bạn có thể dùng thẻ EBT ở đâu",
   retailersBody:
     "{n} cửa hàng trên khắp các tiểu bang và vùng lãnh thổ chấp nhận EBT — siêu thị, cửa hàng tạp hóa, nhiều chợ nông sản, và mua trực tuyến ở một số nơi.",
@@ -879,6 +898,7 @@ const zh: PageCopy = {
       d: "联邦规定依然可以回答。各州不同的具体金额会转交您所在机构，而不是猜测。",
     },
   ],
+  statesAlsoVerified: "哥伦比亚特区和各领地也已核实。",
   trustH2: "免费、有出处，并如实说明局限",
   snapH2: "SNAP 是什么",
   snapBody:
@@ -990,6 +1010,8 @@ const zh: PageCopy = {
     "这次查询没有返回结果。这并不代表您附近没有商店——请再试一次，或查看美国农业部自己的查询工具。",
   retailSearchMore: "仅显示前 {n} 家，还有更多。",
   retailSearchOpenMap: "在地图中打开",
+  retailMoreLabel: "没看到您常去的商店？",
+  retailMoreLink: "查看美国农业部的 SNAP 商店查询工具",
   retailersH3: "您可以在哪里使用 EBT 卡",
   retailersBody:
     "全美各州和各领地共有 {n} 家商店接受 EBT——超市、街角小店、许多农夫市集，部分商家还支持网上购买。",

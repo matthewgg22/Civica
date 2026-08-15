@@ -5557,6 +5557,13 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 .dmx--fearscta .dmx__outlink {
   background: var(--demeter-wheat); border-color: transparent;
 }
+/* NARROWER, on direct feedback — its own text tops out at 52ch
+   (.dmx__outlink-body) but the card's border and background used to stretch
+   the full section width regardless, leaving a wide band of plain wheat
+   beside a couple of short lines. Scoped to just the ask-Demeter CTA, the
+   one this feedback was about — not the /questions outlink or the fears CTA,
+   which were not flagged and are left at full width unless that changes. */
+.dmx--askcta .dmx__outlink { max-width: 40rem; }
 .dmx--askcta .dmx__outlink:hover,
 .dmx--fearscta .dmx__outlink:hover { filter: brightness(0.96); border-color: transparent; }
 .dmx--askcta .dmx__outlink-label,
@@ -5611,6 +5618,16 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   font-size: 1rem; line-height: 1.65; color: var(--demeter-body); margin: 0 0 1rem;
   max-width: 46ch; text-wrap: pretty;
 }
+/* WIDER when a full-width facts grid follows immediately — "What SNAP is" and
+   "What actually decides" both open with one paragraph, then a `.dmx__defs`
+   grid that spans the whole section width. At the shared 46ch, that paragraph
+   sat in a narrow left sliver with the rest of the section's width empty
+   beside it, then a wide grid directly under it — an imbalance only visible
+   once rendered, not from the CSS alone. Scoped with :has() rather than
+   raised everywhere: most `.dmx__body` paragraphs on this page sit ABOVE
+   something else narrow (a step, a card, a quote) and read better held to
+   46ch; only the ones leading into a wide grid needed the extra room. */
+.dmx__body:has(+ .dmx__defs) { max-width: 66ch; }
 .dmx__note {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   font-size: 0.85rem; line-height: 1.6; color: var(--demeter-muted); margin: 1.25rem 0 0;
@@ -5624,28 +5641,29 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 
 /* Official program links, and the non-affiliation line that has to travel with
    them. Set apart from the section body so it reads as a hand-off outward, not
-   as more of our own copy. */
+   as more of our own copy.
+   THE LOGO IS ITS OWN COLUMN now — large, at the box's left edge, sized to
+   the content column's own height rather than sitting as a small thumbnail
+   inside the links list. That used to leave the mark USDA requires be shown
+   reading as an afterthought; leading with it says what the box is before
+   the heading does. */
 .dmx__official {
   margin: 2rem 0 0; padding: 1.25rem 1.35rem;
   border: 1px solid var(--demeter-rule); border-radius: 14px;
   background: var(--demeter-card);
-  /* Links BESIDE the disclaimer, not under it. Stacked, this box put both in a
-     narrow left column and left half of itself empty. */
-  display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
-  /* COLUMN gap only. `gap` sets both axes, so the 40px meant for the space
-     between the columns was also padding the service-mark row away from the
-     content above it — measured 60px of dead space there.
-     Centred, not start-aligned: the note is 101px against the logo-and-links
-     column's 176px, so aligning tops left an obvious hole under the text. */
-  column-gap: clamp(1rem, 3vw, 2.5rem); row-gap: 0; align-items: center;
+  display: grid; grid-template-columns: auto minmax(0, 1fr);
+  column-gap: clamp(1.25rem, 3vw, 2rem); row-gap: 0; align-items: center;
 }
 .dmx__official .dmx__note { margin-top: 0.35rem; }
-.dmx__official .dmx__officiallinks { margin-top: 0.2rem; }
+.dmx__official-content { min-width: 0; }
+.dmx__official .dmx__officiallinks { margin-top: 0.65rem; }
 /* The mark itself: never restyled, never recoloured, never given a filter —
    using it unaltered is a condition, not a preference. Only its box size is
-   ours to set. */
-.dmx__snaplogo { margin-bottom: 0.35rem; }
-.dmx__snaplogo img { width: 148px; height: auto; display: block; }
+   ours to set. Sized to roughly the height of the heading + note + two links
+   beside it, so the mark reads as filling the box rather than floating small
+   in a corner of it. */
+.dmx__official-logo { display: flex; align-items: center; justify-content: center; }
+.dmx__official-logo img { width: 100%; max-width: 230px; height: auto; display: block; }
 /* Required notice. Small, because it is a legal footnote — but it sits with the
    logo and stays legible: --demeter-muted on --demeter-card is a checked pair. */
 .dmx__servicemark {
@@ -5710,6 +5728,20 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   border-top: 1px solid var(--demeter-rule);
   font-size: 0.74rem; line-height: 1.5;
 }
+/* THE MAP COLUMN, not the map itself, carries the sticky positioning. The
+   results list beside it can run far longer than the map is tall — a real
+   search on a common ZIP returns dozens of stores — and pinning ONLY the map
+   left a wide band of plain background sitting under it once it had stuck:
+   the map is a fixed height, the list is not, and nothing else lived in that
+   column to meet it. `.dmret__mapcol` wraps the map AND the "another way to
+   check" panel below it, so the two stick and unstick TOGETHER — the panel
+   fills exactly the space that used to be empty. `top` clears the sticky nav
+   bar plus a little air. Cancelled on the narrow layout below, where the
+   column stacks above the list instead of beside it and sticky would just
+   pin it uselessly off-screen. */
+.dmret__mapcol {
+  position: sticky; top: 5.5rem;
+}
 /* THE LIVE MAP. Was an SVG that sized itself off its own viewBox; Leaflet
    needs an explicit pixel height on its container instead — a slippy map has
    no intrinsic aspect ratio, it is a viewport onto something much bigger.
@@ -5720,16 +5752,23 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   width: 100%; height: 360px; border-radius: 14px; overflow: hidden;
   border: 1px solid var(--demeter-rule);
   background: var(--demeter-paper); /* shows while tiles are still loading */
-  /* STICKY on desktop. The results list beside it can run far longer than
-     360px — a real search on a common ZIP returns dozens of stores — and a
-     fixed-height map anchored to the TOP of a long list left a wide band of
-     empty page beside everything past the map's own bottom edge. Pinning it
-     means the map stays in view for exactly as long as there is a list to
-     read beside it, rather than being scrolled past in the first few rows.
-     `top` clears the sticky nav bar plus a little air. Cancelled on the
-     narrow layout below, where the map stacks above the list instead of
-     beside it and sticky would just pin it uselessly off-screen. */
-  position: sticky; top: 5.5rem;
+}
+/* THE PANEL UNDER THE MAP. A permanent link, not a fallback that only shows
+   up when a search comes up empty — the map's own 40-result cap and the
+   40-mile-wide world outside a 10-mile radius query both mean "not here"
+   sometimes really is "try somewhere else," and USDA's own locator is that
+   somewhere else. Filling the space sticky positioning would otherwise leave
+   blank is a side effect of adding this, not the reason for it. */
+.dmret__more {
+  margin: 0.85rem 0 0; padding: 0.85rem 1rem;
+  border: 1px solid var(--demeter-rule); border-radius: 12px;
+  background: var(--demeter-paper);
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.82rem; color: var(--demeter-muted); line-height: 1.5;
+}
+.dmret__more a {
+  color: var(--demeter-terracotta-deep); text-decoration: underline;
+  text-underline-offset: 2px; font-weight: 600;
 }
 /* Leaflet's own chrome, restrained to the page's palette rather than left at
    its library defaults (a saturated blue focus ring, black-on-white
@@ -5856,9 +5895,10 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
      no accessibility cost either way) — the search form and results list are
      the task; the map is what someone scrolls to once they have them.
      Sticky is a DESKTOP fix for a wide gap beside a long list; stacked, there
-     is no gap to fix, and a sticky map here would just pin itself uselessly
-     partway down the page as the list scrolls past above it. */
-  .dmret__livemap { height: 280px; position: static; }
+     is no gap to fix, and a sticky map+panel here would just pin themselves
+     uselessly partway down the page as the list scrolls past above them. */
+  .dmret__mapcol { position: static; }
+  .dmret__livemap { height: 280px; }
 }
 
 /* "I need food this week." Quiet but unmissable — a tinted band, not a card in
@@ -5869,6 +5909,11 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   margin: 1.5rem 0 0; padding: 1rem 1.2rem;
   border-left: 3px solid var(--demeter-terracotta-deep);
   background: var(--demeter-card); border-radius: 0 12px 12px 0;
+  /* NARROWER, on direct feedback, matching .dmx--askcta .dmx__outlink beside
+     it — the body text already stopped at 62ch (.dmnow__body) but the tinted
+     background kept going, leaving a wide plain band next to two short
+     lines and a pair of links. */
+  max-width: 40rem;
 }
 .dmnow__label {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
@@ -6154,6 +6199,11 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   gap: 1.75rem; margin-top: 1.5rem;
 }
 .dmx__trustrow { display: flex; flex-direction: column; gap: 0.25rem; }
+/* The states-verified row spans every column .dmx__trustlist--wide auto-fits
+   — see the comment where this class is applied. `grid-column: 1 / -1` spans
+   from the first to the last generated track regardless of how many
+   `auto-fit` actually produced at a given width. */
+.dmx__trustrow--states { grid-column: 1 / -1; }
 .dmx__trustrow dt {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase;
@@ -6897,25 +6947,14 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   .dmft__nav { flex-direction: row; flex-wrap: wrap; gap: 0.25rem 1.25rem; }
 }
 
-/* ═══ ORIENTATION BAR: TWO COLUMNS ═══════════════════════════════════════════
-   A single left-aligned column left 579px of the 1180px container empty at
-   1440 — 49% of the page width, at the very top. Uniform emptiness is the
-   strongest "generated page" tell there is.
-
-   The right column carries the verified-state monograms: the one claim on this
-   page that is countable, and the answer to the question a first-time visitor
-   actually has ("does this know about MY state?") before any prose. */
-.dmo--split {
-  display: grid;
-  grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.75fr);
-  gap: clamp(2rem, 5vw, 4rem);
-  align-items: start;
-}
-.dmo__text { min-width: 0; }
-.dmo__states {
-  border-left: 1px solid var(--demeter-rule);
-  padding-left: clamp(1.25rem, 2.5vw, 2rem);
-}
+/* ═══ VERIFIED-STATE FLAGS ═══════════════════════════════════════════════════
+   Used to be a second column beside the orientation h1 (a `.dmo--split` grid,
+   with its own `.dmo__states` aside). Moved down into the trust list's own
+   "N States verified" row on direct feedback — fifty flags ahead of a single
+   word of orientation buried the actual claim, and the trust list already
+   exists to make this case once there is something to trust yet. These three
+   classes are what's left: still the flags, still this shape, just inside a
+   `<dd>` in `.dmx__trustlist` now instead of an `<aside>` up top. */
 .dmo__states-label {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
   font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase;
@@ -6925,16 +6964,21 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   list-style: none; margin: 0 0 1rem; padding: 0;
   display: flex; flex-wrap: wrap; gap: 0.45rem;
 }
-.dmo__states-note {
-  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
-  font-size: 0.88rem; line-height: 1.55; color: var(--demeter-muted);
-  margin: 0; max-width: 34ch;
+/* DC/Guam/USVI's own line — smaller and unlabelled-as-"states" on purpose,
+   sitting between the 50-state grid and the one after it. Same family as
+   .dmo__states-label but not shouting: it is a footnote to the count above,
+   not a second headline. */
+.dmo__states-also {
+  font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
+  font-size: 0.72rem; color: var(--demeter-muted); margin: -0.4rem 0 0.6rem;
 }
-/* Below 900 the second column would squeeze the h1 measure past readability,
-   so it stacks. The monograms stay — they are the point, not decoration. */
-@media (max-width: 900px) {
-  .dmo--split { grid-template-columns: 1fr; gap: 1.75rem; }
-  .dmo__states { border-left: 0; padding-left: 0; border-top: 1px solid var(--demeter-rule); padding-top: 1.25rem; }
+/* The row's own static copy ("each checked against that agency's own
+   published rules before going live"), printed under the flags rather than
+   beside them now that this lives in a <dd> instead of a narrow sidebar. */
+.dmo__states-detail {
+  font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
+  font-size: 0.97rem; line-height: 1.62; color: var(--demeter-body);
+  margin: 0; max-width: 46ch;
 }
 
 /* ═══ HEADER NAV ═════════════════════════════════════════════════════════════

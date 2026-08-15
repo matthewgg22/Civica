@@ -104,11 +104,12 @@ export default async function LocalizedAskPage({
     <main className="dmpage" lang={LANG_TAG[l]}>
       <DemeterNav lang={l} path="/screen/ask" />
       <div className="dmpage__inner">
-        <SnapOrientation lang={l} states={VERIFIED_STATES} />
-        <SnapFoodNow lang={l} />
+        <SnapOrientation lang={l} />
         {/* Composer, picker and suggestions all live on /chat now — same
-            as the English page. This one explains and hands over. */}
+            as the English page. This one explains and hands over. Ahead of
+            the urgent-need aside — same reasoning as the English page. */}
         <SnapAskCta lang={l} state={initialState} />
+        <SnapFoodNow lang={l} />
         <SnapDetail states={VERIFIED_STATES} lang={l} />
         <SnapFears lang={l} />
       </div>

@@ -28,6 +28,21 @@ import { StateFlag } from "./StateFlag";
 import { UsCoverageMap } from "./UsCoverageMap";
 import { SnapRetailerMap } from "./SnapRetailerMap";
 
+/** The three verified codes in VERIFIED_STATES that are not states — DC is a
+ *  federal district, Guam and the U.S. Virgin Islands are territories. Both
+ *  places below used to fold all of them into "{53} States verified", which
+ *  was accurate about the count and wrong about the word. Splitting on this
+ *  set keeps the "states" count and label actually true, without dropping
+ *  DC/GU/VI from the page — they get their own, correctly-named mention. */
+const NON_STATE_CODES = new Set(["DC", "GU", "VI"]);
+
+function splitJurisdictions(states: PackMeta[]) {
+  return {
+    actualStates: states.filter((s) => !NON_STATE_CODES.has(s.code)),
+    otherJurisdictions: states.filter((s) => NON_STATE_CODES.has(s.code)),
+  };
+}
+
 /** REQUIRED VERBATIM by FNS wherever an organisation outside USDA uses the SNAP
  *  logo. Not our sentence to reword, and deliberately NOT in the localized copy
  *  table — a mandated legal notice that can be translated is a mandated legal
@@ -99,28 +114,17 @@ export function formQuestionAnswer(q: FormQuestion, lang: AnswerLang = "en"): st
  *  Not deleted — every word is still server-rendered on this URL. They are
  *  credibility, and credibility is what you read after you see the thing, not
  *  the wall you climb to reach it. */
-export function SnapOrientation({
-  lang = "en",
-  states = [],
-}: {
-  lang?: AnswerLang;
-  states?: PackMeta[];
-}) {
+export function SnapOrientation({ lang = "en" }: { lang?: AnswerLang }) {
   const c = PAGE_COPY[lang];
   return (
-    // TWO COLUMNS. Measured at 1440: a single left-aligned column left 579px of
-    // the 1180px container empty — 49% of the page width, at the very top.
-    // Uniform emptiness is the strongest "generated page" tell there is, and it
-    // was the largest single contributor to this page reading as slop.
-    //
-    // The right column is not filler. Verified-state monograms are the one
-    // claim on this page that is countable and checkable, and they answer the
-    // question a first-time visitor actually has — "does this know about MY
-    // state?" — at a glance, before any prose.
-    <section
-      className={states.length > 0 ? "dmo dmo--split" : "dmo"}
-      aria-labelledby="demeter-h1"
-    >
+    // SINGLE COLUMN, deliberately. This used to carry a second column of
+    // verified-state flags beside the h1 — moved down into the trust list
+    // (SnapDetail) on direct feedback: leading with fifty flags before a
+    // single word of orientation buried the actual claim in decoration, and
+    // the trust list already existed to make exactly that case, later, once
+    // there was something to trust yet. Nothing here needed `states` for
+    // anything else, so the prop is gone rather than kept and ignored.
+    <section className="dmo" aria-labelledby="demeter-h1">
       <div className="dmo__text">
         <p className="dmo__eyebrow">{c.eyebrow}</p>
         <h1 id="demeter-h1" className="dmo__h1">
@@ -129,21 +133,6 @@ export function SnapOrientation({
         <p className="dmo__lede">{c.productLede}</p>
         <p className="dmo__snap">{c.snapLine}</p>
       </div>
-      {states.length > 0 && (
-        <aside className="dmo__states" aria-label={c.trust[2]?.t}>
-          <p className="dmo__states-label">
-            {states.length} {c.trust[2]?.t}
-          </p>
-          <ul className="dmo__states-grid">
-            {states.map((s) => (
-              <li key={s.code}>
-                <StateFlag code={s.code} />
-              </li>
-            ))}
-          </ul>
-          <p className="dmo__states-note">{c.trust[3]?.d}</p>
-        </aside>
-      )}
     </section>
   );
 }
@@ -162,6 +151,7 @@ export function SnapOrientation({
  *  bar. */
 export function SnapDetail({ states, lang = "en" }: { states: PackMeta[]; lang?: AnswerLang }) {
   const c = PAGE_COPY[lang];
+  const { actualStates, otherJurisdictions } = splitJurisdictions(states);
   return (
     <>
       {/* Trust, relocated from the old lede. Same four claims, same words. */}
@@ -170,17 +160,55 @@ export function SnapDetail({ states, lang = "en" }: { states: PackMeta[]; lang?:
           {c.trustH2}
         </h2>
         <dl className="dmx__trustlist dmx__trustlist--wide">
-          {c.trust.map((row, i) => (
-            <div className="dmx__trustrow" key={row.t}>
-              {/* The third row counts the packs, so its term carries the
-                  number and its detail lists the codes — everything else is
-                  static copy. */}
-              <dt>{i === 2 ? `${states.length} ${row.t}` : row.t}</dt>
-              <dd>
-                {i === 2 ? `${states.map((s) => s.code).join(" · ")} — ${row.d}` : row.d}
-              </dd>
-            </div>
-          ))}
+          {c.trust.map((row, i) => {
+            // The third row carries the verified-state flags now — moved
+            // here from the hero orientation bar on direct feedback (see
+            // SnapOrientation). Counted on actual STATES only: DC/GU/VI are
+            // real, verified jurisdictions but not states, and folding them
+            // into this count made the label wrong even though the number
+            // was right. They still get named, just not as one of the 50.
+            if (i === 2) {
+              return (
+                // FULL WIDTH, not squeezed into one auto-fit cell like the
+                // other three rows — fifty flags need the room the hero
+                // aside used to give them; a 15rem-minimum grid cell would
+                // wrap them into a cramped narrow column instead.
+                <div className="dmx__trustrow dmx__trustrow--states" key={row.t}>
+                  <dt>
+                    {actualStates.length} {row.t}
+                  </dt>
+                  <dd>
+                    <ul className="dmo__states-grid">
+                      {actualStates.map((s) => (
+                        <li key={s.code}>
+                          <StateFlag code={s.code} />
+                        </li>
+                      ))}
+                    </ul>
+                    {otherJurisdictions.length > 0 && (
+                      <>
+                        <p className="dmo__states-also">{c.statesAlsoVerified}</p>
+                        <ul className="dmo__states-grid">
+                          {otherJurisdictions.map((s) => (
+                            <li key={s.code}>
+                              <StateFlag code={s.code} />
+                            </li>
+                          ))}
+                        </ul>
+                      </>
+                    )}
+                    <p className="dmo__states-detail">{row.d}</p>
+                  </dd>
+                </div>
+              );
+            }
+            return (
+              <div className="dmx__trustrow" key={row.t}>
+                <dt>{row.t}</dt>
+                <dd>{row.d}</dd>
+              </div>
+            );
+          })}
         </dl>
       </section>
 
@@ -205,42 +233,49 @@ export function SnapDetail({ states, lang = "en" }: { states: PackMeta[]; lang?:
 
         {/* Pointing at USDA is exactly the place to say we are not USDA. A
             benefits site that links the federal program without disclaiming
-            affiliation is one a worried applicant can easily read as official. */}
+            affiliation is one a worried applicant can easily read as official.
+            THE LOGO LEADS now — large, on its own, at the box's left edge —
+            rather than sitting inside the links list as one more line item
+            among three. It was a 148px thumbnail sharing a narrow column with
+            two plain-text links, which read as an afterthought for a mark
+            USDA requires be displayed; making it the thing the box opens with
+            instead says what this box actually is before a word of it is
+            read. */}
         <div className="dmx__official">
-          <div>
+          <div className="dmx__official-logo">
+            {/* Decorative on purpose: it sits immediately beside the heading
+                that names it, so alt text would announce the same thing twice.
+                Rendered at its true 663:460 ratio and otherwise untouched —
+                "the logo cannot be altered" is a condition of being allowed
+                to use it; only its box size is ours to set. */}
+            <Image src="/snap-logo.png" alt="" aria-hidden width={230} height={160} />
+          </div>
+          <div className="dmx__official-content">
             <h3 className="dmx__h3">{c.officialH3}</h3>
             <p className="dmx__note">{c.officialNote}</p>
+            <ul className="dmx__officiallinks">
+              <li>
+                <a
+                  className="dmx__link"
+                  href="https://www.fns.usda.gov/snap"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {c.officialFns}&nbsp;↗
+                </a>
+              </li>
+              <li>
+                <a
+                  className="dmx__link"
+                  href="https://www.fns.usda.gov/snap/state-directory"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {c.officialDirectory}&nbsp;↗
+                </a>
+              </li>
+            </ul>
           </div>
-          <ul className="dmx__officiallinks">
-            {/* Decorative on purpose: it sits immediately beside a labelled link
-                to the same destination, so alt text would announce that
-                destination twice and add a duplicate tab stop. Rendered at its
-                true 663:460 ratio and otherwise untouched — "the logo cannot be
-                altered" is a condition of being allowed to use it. */}
-            <li className="dmx__snaplogo">
-              <Image src="/snap-logo.png" alt="" aria-hidden width={148} height={103} />
-            </li>
-            <li>
-              <a
-                className="dmx__link"
-                href="https://www.fns.usda.gov/snap"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                {c.officialFns}&nbsp;↗
-              </a>
-            </li>
-            <li>
-              <a
-                className="dmx__link"
-                href="https://www.fns.usda.gov/snap/state-directory"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                {c.officialDirectory}&nbsp;↗
-              </a>
-            </li>
-          </ul>
           {/* Must appear on any material where an organisation outside USDA
               uses the mark. It lives inside this box, next to the logo, rather
               than in the page footer — a required notice about a specific mark

@@ -13,11 +13,21 @@
 // before (.dmret > .dmret__text with the search inside it, plus one element
 // in the second grid column) so none of .dmret's existing grid CSS needed to
 // change — only what fills the second column did.
+//
+// THE MAP COLUMN CARRIES TWO THINGS NOW, not one: the map itself, and a small
+// "another way to check" panel underneath it, both wrapped in `.dmret__mapcol`
+// so they stick together as one unit (see globals.css). On live feedback, a
+// long results list left a tall block of plain background sitting under the
+// map once it had stuck near the top — the map is a fixed 360px and the list
+// beside it routinely isn't. Rather than stretch the map to chase a height
+// that changes with every search, that space now holds something genuinely
+// useful: a link to USDA's own locator, for a store this search didn't find.
 
 import { useState } from "react";
 import type { ReactNode } from "react";
 import type { AnswerLang } from "@civica/demeter-engine/packs";
 import type { RetailerHit } from "../app/api/snap-retailers/route";
+import { PAGE_COPY } from "../lib/i18n/snap-page";
 import { RetailerLiveMap } from "./RetailerLiveMap";
 import { RetailerSearch } from "./RetailerSearch";
 
@@ -28,6 +38,7 @@ export function RetailerMapSearch({
   lang?: AnswerLang;
   children: ReactNode;
 }) {
+  const c = PAGE_COPY[lang];
   const [stores, setStores] = useState<RetailerHit[] | null>(null);
   return (
     <div className="dmret">
@@ -35,7 +46,19 @@ export function RetailerMapSearch({
         {children}
         <RetailerSearch lang={lang} onResults={setStores} />
       </div>
-      <RetailerLiveMap stores={stores} />
+      <div className="dmret__mapcol">
+        <RetailerLiveMap stores={stores} />
+        <p className="dmret__more">
+          {c.retailMoreLabel}{" "}
+          <a
+            href="https://www.fns.usda.gov/snap/retailer-locator"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {c.retailMoreLink} ↗
+          </a>
+        </p>
+      </div>
     </div>
   );
 }

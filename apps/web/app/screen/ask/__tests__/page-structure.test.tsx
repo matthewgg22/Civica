@@ -81,6 +81,48 @@ describe("orientation bar — the page names the product before it explains SNAP
   });
 });
 
+describe("the states-verified count — DC/Guam/USVI are not states", () => {
+  // THE BUG THIS PINS: VERIFIED_STATES is 53 entries (50 states + DC + Guam +
+  // the U.S. Virgin Islands), and both places that count it used to print
+  // "{53} States verified" — an accurate number attached to the wrong word.
+  // Nobody would call DC a state; the count just silently included it anyway.
+  const NON_STATE_CODES = new Set(["DC", "GU", "VI"]);
+  const actualStateCount = VERIFIED_STATES.filter((s) => !NON_STATE_CODES.has(s.code)).length;
+  const otherCount = VERIFIED_STATES.length - actualStateCount;
+
+  it("VERIFIED_STATES actually contains DC, GU, and VI (guards the test itself)", () => {
+    // If a future corpus change ever drops these, the count-based assertions
+    // below would pass vacuously — this pins the premise, not just the fix.
+    for (const code of NON_STATE_CODES) {
+      expect(VERIFIED_STATES.some((s) => s.code === code), code).toBe(true);
+    }
+    expect(otherCount).toBe(3);
+  });
+
+  it("the trust list — not the hero bar — carries the flags, counted on actual states only, in every language", () => {
+    // The flags used to live in a `.dmo__states` aside beside the h1
+    // (SnapOrientation), moved down into this trust-list row on direct
+    // feedback: fifty flags ahead of a single word of orientation buried the
+    // actual claim, and the trust list already exists to make it once there
+    // is something to trust yet. Rendering SnapOrientation with no `states`
+    // prop at all (it no longer accepts one) is itself part of the pin — a
+    // stale caller passing `states` again would be a TypeScript error, not a
+    // silently-ignored prop.
+    render(<SnapOrientation />);
+    expect(screen.queryByText(/States verified/)).toBeNull();
+
+    for (const lang of ANSWER_LANGS) {
+      const c = PAGE_COPY[lang];
+      const { container, unmount } = render(<SnapDetail states={VERIFIED_STATES} lang={lang} />);
+      const text = container.textContent ?? "";
+      expect(text, lang).toContain(`${actualStateCount} ${c.trust[2]?.t}`);
+      expect(text, lang).not.toContain(`${VERIFIED_STATES.length} ${c.trust[2]?.t}`);
+      expect(text, lang).toContain(c.statesAlsoVerified);
+      unmount();
+    }
+  });
+});
+
 describe("the chat page's depth — trimmed, and nothing orphaned", () => {
   it("no longer renders the 17 form-question cards", () => {
     render(<SnapDetail states={VERIFIED_STATES} />);
