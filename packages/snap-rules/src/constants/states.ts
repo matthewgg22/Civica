@@ -2450,6 +2450,165 @@ const STATES: Record<string, StatePolicy[]> = {
       rmp_operated: false,
     },
   ],
+
+  // Maryland — DHS / Family Investment Administration (FIA). Seventh
+  // "individual tier" build (docs/plans/snap-rules-50-state-engine-
+  // completion.md §6, after NC, NJ, VA, TN, IN, MO) — a genuine blank
+  // slate, no prior StatePolicy or oracle coverage existed. Every axis
+  // below is TRANSLATED from the already-cited primary-source findings in
+  // the merged Demeter corpus pack (packages/demeter-engine/src/states/md/
+  // PROVENANCE.md + supplements.json + freshness.json), built 2026-08-11 —
+  // re-verification, not fresh research; see that pack's own Sources table
+  // (direct curl w/ browser User-Agent of thirteen DHS SNAP-manual
+  // sections + two current FIA Action Transmittals + the DHS Income
+  // Guidelines, every fetch a clean HTTP 200, plus five sections of the
+  // Md. Code Human Services Article fetched directly via mgaleg.maryland.
+  // gov with NO access barrier — a genuine contrast with this file's own
+  // TN/NC entries, whose equivalent statute-mirror sites 403'd).
+  //
+  // bbce: true / bbce_threshold_pct: 200 / bbce_fpl_basis:
+  // federal_fiscal_year — CONFIRMED, not corrected: unlike this file's
+  // Missouri entry (which DISPROVED a specific wrong secondary-source BBCE
+  // claim), this pack independently checked the same kind of widely-
+  // repeated secondary claim against Maryland's own primary source (MD
+  // SNAP Manual Section 115.2(F)) and found it accurate. Maryland's own
+  // 200% FPL table (Section 115.2(d)) matches the current FFY2026 figures
+  // this engine's federal-tables.ts already carries, independently cross-
+  // validated via the October 2025 DHS Income Guidelines and FIA Action
+  // Transmittal AT 26-05. Maryland's manual states the practical
+  // consequence with unusual bluntness in three separate places: "you
+  // should not have any non-categorically eligible SNAP households."
+  //
+  // asset_waiver: true — flows directly from the same BBCE finding above:
+  // Maryland's own manual instructs caseworkers that the resource test is,
+  // in practice, never actually applied to a BBCE-covered household. Same
+  // "BBCE households skip resources/gross/net" pattern this file's NC/VA
+  // entries already use.
+  //
+  // sua_by_tier — FULLY POPULATED, not null: HCSUA $572 / LUA $350 /
+  // phone (Telephone Allowance) $40, all sourced from MD SNAP Manual
+  // Section 600 ("REVISED AUGUST 2025," effective 10/1/2025) and
+  // independently cross-validated by FIA Action Transmittal AT 26-05 —
+  // clean 1:1 fits for this schema's three tiers, no naming-collision trap
+  // of the kind this file's OH/MO entries disclose. Section 600's other
+  // FFY2026 figures — Standard Deduction ($209/$209/$209/$223/$261/$299),
+  // Excess Shelter cap ($744), Homeless Shelter Allowance ($198.99) — all
+  // match federal-tables.ts's FY26 snapshot EXACTLY, the same "shared
+  // source" signal NC's/VA's/MO's entries use to justify allotment_tier
+  // "48" below. NOT modeled (a disclosed, out-of-schema mechanism, same
+  // class of gap as NJ's/MO's/TN's already-accepted Facts-shape limits):
+  // Md. Code, Human Services § 5-501(d) establishes a Maryland-specific
+  // state-funded top-up — a household with a member 60 or older (the
+  // manual's own cross-reference says "62," a minor, disclosed internal
+  // discrepancy the corpus pack did not resolve) whose federal benefit
+  // would be under $50/month gets a state supplement bringing it to
+  // $50 — DISTINCT from the plain federal $24 minimum this engine's
+  // minimumBenefitFor() already applies. No engine axis or state param
+  // exists for a composition-conditioned minimum-benefit floor (only AK's
+  // zone-based minimumBenefitFor varies by state today, and that varies by
+  // geography, not household age composition); independently verified
+  // this affects at most a handful of the 92 oracle profiles' benefit
+  // dollar amount for elderly-headed HH1-2 households computing under
+  // $50, never their verdict (the federal $24 floor already fires the
+  // same size<=2 branch, just at a lower dollar value).
+  //
+  // GENUINE, DISCLOSED INTERNAL CONTRADICTION found in Maryland's OWN
+  // currently-published manual (not merely a stale-vs-current gap like
+  // MO's SUA finding): Section 200 (Resources), footer "REVIEWED JUNE
+  // 2026," states a non-cat-elig resource limit of $2,250/$3,250 — but
+  // Section 600, "REVISED AUGUST 2025" and headed "Effective October 1,
+  // 2025," states $3,000/$4,500, matching the current federal standard
+  // this engine's federal-tables.ts already carries and independently
+  // cross-validated by AT 26-05. Immaterial to any of the 92 oracle
+  // profiles regardless of which figure is "true," since asset_waiver:
+  // true above means the resource test never actually runs for a BBCE-
+  // covered MD household — flagged here for completeness, same disclosure
+  // discipline as every contradiction this file's other entries name.
+  //
+  // allotment_tier: "48" — no Maryland-specific elevated max-allotment
+  // schedule found; see the shared-source signal under sua_by_tier above.
+  //
+  // drug_felony_ban: "modified" — a genuine THREE-TIER structure, this
+  // pack's flagship finding, that DIRECTLY CONTRADICTS a specific,
+  // widely-repeated secondary-source claim that Maryland "eliminated drug
+  // testing requirements" for drug-felony SNAP applicants. TIER 1 (MD SNAP
+  // Manual Section 100.62(H)): volume-dealer/drug-kingpin convictions,
+  // listed among "Disqualified Individuals" with no stated time limit.
+  // TIER 2, genuinely BROADER (Section 100.7(J)): manufacture/
+  // distribution/possession-with-intent-to-distribute convictions after
+  // July 1, 2000 carry a ONE-YEAR disqualification PLUS two years of
+  // MANDATORY substance-abuse testing and treatment — this directly
+  // contradicts the "eliminated drug testing" secondary claim; Maryland's
+  // own manual affirmatively REQUIRES testing as a condition of this
+  // modified-ban category. TIER 3 (implicit): simple possession without
+  // intent to distribute appears in neither provision — untouched. "Modified"
+  // is the correct classification per #805's rule (the ban is neither
+  // absent nor an unconditional full ban on every drug felony), the same
+  // classification this file's FL/PA/AZ/WI/KS/AK/NC/TN entries already use
+  // for their own differently-shaped modified bans. The corpus pack
+  // disclosed, rather than silently resolved, an apparent internal date
+  // inconsistency between the two sections (100.62(H) references
+  // convictions "after October 1, 2017"; 100.7(I)/(J) reference "after
+  // July 1, 2000") — not re-resolved here. Gate behavior unchanged (fails
+  // open, same as every other "modified" entry) until this engine models
+  // the actual condition — see #805.
+  //
+  // abawd_waiver_avail: false — an AFFIRMATIVELY SOURCED, currently-zero
+  // finding from the CLEANEST, most current primary source this pack's own
+  // researcher found anywhere in its research: Maryland's own FIA Action
+  // Transmittal AT 26-09 (issued October 16, 2025, effective November 1,
+  // 2025) asks and answers the waiver question directly: "Q7. Does
+  // Maryland DHS still have an ABAWD waiver? A7. No. Maryland can no
+  // longer broadly waive the ABAWD time limit." Maryland's own document
+  // makes NO county-level distinction between its dense Baltimore/DC-
+  // suburb jurisdictions and its rural Eastern Shore counties — the same
+  // uniform statewide zero-waiver answer as this file's VA/MO/TN entries,
+  // so no county-level lookup is needed or meaningful (a real answer of
+  // "nowhere" has no county-level nuance to represent).
+  //
+  // rmp_operated: true — Maryland IS on USDA's own "States that Operate a
+  // Restaurant Meals Program" list (already cited by this file's own
+  // TN entry above: "AZ/CA/IL(Cook+Franklin only)/MD/MA/MI/NY/RI/VA").
+  // Distinctively among this file's RMP findings, Maryland's RMP is
+  // established DIRECTLY BY STATE STATUTE (Md. Code, Human Services §
+  // 5-505, fetched with no access barrier) rather than only through
+  // administrative adoption of the federal 7 CFR 274.7(g) option — the
+  // statute names the program, states its purpose, and defines eligibility
+  // (homeless, or 60+/disabled and spouse). Maryland's own DHS page
+  // discloses the program is currently an EXPANDING COUNTY-BY-COUNTY
+  // PILOT, not yet fully statewide (Baltimore City, Baltimore County, Anne
+  // Arundel, Charles, Frederick, Harford, Montgomery, Prince George's,
+  // Calvert, St. Mary's, and Allegany counties "among others," per the
+  // corpus pack's fetch). `rmp_operated` has no engine consumer in
+  // verdict.ts or benefit-calc.ts today (grep-confirmed: it is a purely
+  // informational/corpus-facing axis, same as every other state's value in
+  // this file) — `true` correctly answers "does Maryland operate a program
+  // by this name," the same state-level-boolean-over-restaurant-
+  // availability-nuance precedent CA's own comment block above already
+  // establishes for its "county participation mandatory, restaurant
+  // availability varies" distinction.
+  MD: [
+    {
+      effective_start: new Date(Date.UTC(2020, 0, 1)),
+      effective_end: new Date(Date.UTC(2099, 11, 31)),
+      state_code: "MD",
+      label: "Maryland / DHS — Family Investment Administration",
+      bbce: true,
+      bbce_threshold_pct: 200,
+      bbce_fpl_basis: "federal_fiscal_year",
+      asset_waiver: true,
+      sua_by_tier: {
+        HCSUA: new Decimal("572"),
+        LUA: new Decimal("350"),
+        phone: new Decimal("40"),
+        none: new Decimal("0"),
+      },
+      allotment_tier: "48",
+      drug_felony_ban: "modified",
+      abawd_waiver_avail: false,
+      rmp_operated: true,
+    },
+  ],
 };
 
 export class UnknownStateError extends Error {
