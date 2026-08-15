@@ -1254,12 +1254,42 @@ const STATES: Record<string, StatePolicy[]> = {
   // it has its own tier). If AK's actual LUA-equivalent determination
   // combines these differently, every region needs the same correction,
   // not just Central — see ak-utility-regions.ts's own caveat.
+  // Issue #804 / #806: AK is the FIRST real use of the dated-snapshot
+  // capability #806 built — a genuine, dateable state policy change, not a
+  // hypothetical. Split into two snapshots instead of editing the old
+  // placeholder in place, so a determination for a household that applied
+  // BEFORE the change still replays correctly against pre-BBCE rules.
+  //
+  // Primary sources (packages/demeter-engine/src/states/ak/, corpus pack
+  // built and merged this session — see PROVENANCE.md Finding 1 and the
+  // "income-and-bbce" supplement in supplements.json):
+  //   - Alaska DOH BBCE FAQ (dated 06/26/25): BBCE applies only to
+  //     households that apply or recertify ON OR AFTER JULY 1, 2025 — a
+  //     recent policy change, not a longstanding AK feature. "Most of our
+  //     SNAP households are BBCE" per DOH's own FAQ language.
+  //   - Alaska DOH "Alaska SNAP Standards" PDF (FSP 77, rev 09/25),
+  //     "effective October 1, 2025 - September 30, 2026" — this phrasing
+  //     is itself the evidence for bbce_fpl_basis: "federal_fiscal_year"
+  //     (not calendar year), and shows the 200% FPL BBCE gross-income
+  //     column now in use.
+  //   - A household NOT eligible for BBCE (drug-felony exclusion,
+  //     work-requirement noncompliance, lottery/gambling DQ, IPV,
+  //     fleeing-felon/probation-parole-violator status, trafficking) still
+  //     faces the standard federal 130%/100% FPL test AND the $3,000/
+  //     $4,500 resource test — but that per-household carve-out isn't
+  //     modeled at the facts level here, same state-level-boolean
+  //     limitation every other BBCE state in this file already accepts
+  //     (CA/MA/WA/TX/WI all set asset_waiver state-wide, not conditioned
+  //     on a specific household's BBCE conferral).
   AK: [
     {
+      // Pre-BBCE snapshot — preserves what was actually true before the
+      // change, for correct historical replay of any determination dated
+      // before 2025-07-01. Same start date as the pre-#806 placeholder.
       effective_start: new Date(Date.UTC(2020, 0, 1)),
-      effective_end: new Date(Date.UTC(2099, 11, 31)),
+      effective_end: new Date(Date.UTC(2025, 5, 30)), // 2025-06-30
       state_code: "AK",
-      label: "Alaska (non-BBCE, higher allotments)",
+      label: "Alaska (pre-BBCE, higher allotments)",
       bbce: false,
       bbce_fpl_basis: null,
       asset_waiver: false,
@@ -1277,6 +1307,33 @@ const STATES: Record<string, StatePolicy[]> = {
       // treatment participation, or reentry-plan compliance. This
       // classification is independent of the bbce/asset_waiver correction
       // tracked separately in #804 — do not conflate the two when fixing #804.
+      drug_felony_ban: "modified",
+      abawd_waiver_avail: true,
+      rmp_operated: false,
+    },
+    {
+      // Post-BBCE snapshot — effective 2025-07-01 per DOH's BBCE FAQ
+      // (06/26/25): applies to households that apply/recertify on or after
+      // this date. Every field EXCEPT bbce/bbce_threshold_pct/
+      // bbce_fpl_basis/asset_waiver is IDENTICAL to the pre-BBCE snapshot —
+      // this correction is scoped to those four fields only (#804).
+      effective_start: new Date(Date.UTC(2025, 6, 1)), // 2025-07-01
+      effective_end: new Date(Date.UTC(2099, 11, 31)),
+      state_code: "AK",
+      label: "Alaska (BBCE-200, higher allotments)",
+      bbce: true,
+      bbce_threshold_pct: 200,
+      // "effective October 1, 2025 - September 30, 2026" (FSP 77 rev 09/25)
+      // is a federal-fiscal-year framing, not a calendar-year one.
+      bbce_fpl_basis: "federal_fiscal_year",
+      asset_waiver: true,
+      sua_by_tier: {
+        HCSUA: new Decimal("625"),
+        LUA: new Decimal("254"),
+        phone: new Decimal("26"),
+        none: new Decimal("0"),
+      },
+      allotment_tier: "AK",
       drug_felony_ban: "modified",
       abawd_waiver_avail: true,
       rmp_operated: false,
