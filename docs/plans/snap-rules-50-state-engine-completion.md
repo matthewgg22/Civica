@@ -278,3 +278,66 @@ all of it.
   correctly scoped to #806's real incremental changes only. PR
   [#808](https://github.com/matthewgg22/Civica/pull/808), CI running, awaiting merge
   go-ahead.
+
+- **PA oracle-authoring (#636 methodology)** — authored `expected_by_state.PA` for all 92
+  `expected_by_state`-shaped v0.6 profiles, following the NY/NV/AZ/OR/WI methodology.
+  Fixture-only; PA's `StatePolicy` untouched (out of scope per the standing
+  snap-rules-parked rule). Independent calculator built fresh (not derived from
+  `packages/snap-rules` output), cross-validated against WI's already-graded oracle
+  (PA's near-twin on every axis except `abawd_waiver_avail`/SUA presence): 92/92 exact
+  match running the calculator under WI's policy params before trusting it for PA. PA's
+  null-SUA gap (`StatePolicy.sua_by_tier: null`) means 58 of 92 profiles legitimately SKIP
+  in real grading (`composeVerdict` bails before any gate runs); those keep `benefit: null`
+  and only get a `verdict` when independently proven SUA-invariant across a $0-$1000 sweep
+  (0 profiles were genuinely indeterminate). Verification: 34 PASS / 0 FAIL / 95 SKIP,
+  every SKIP attributable to the documented null-SUA gap. 279/279 snap-rules tests, `tsc
+  --noEmit` clean. PR [#809](https://github.com/matthewgg22/Civica/pull/809), **merged**.
+
+- **AK bbce/asset_waiver correction + oracle rebuild (#804)** — `StatePolicy.AK` carried
+  `bbce: false`, but AK's Demeter corpus pack (built and merged the same session)
+  independently confirmed AK adopted BBCE effective 2025-07-01 (DOH's own BBCE FAQ,
+  06/26/25). First real use of #806's effective-dated-snapshot capability: split into a
+  pre-BBCE snapshot (2020-01-01..2025-06-30, unchanged) and a post-BBCE snapshot
+  (2025-07-01 onward, `bbce: true`, `bbce_threshold_pct: 200`, `asset_waiver: true`) rather
+  than editing the single placeholder in place. All 92 `expected_by_state.AK` entries
+  rebuilt (not patched) under an independent Python calculator, self-validated by
+  reproducing all 92 pre-fix verdicts exactly under the old `bbce: false` assumption, and
+  cross-validated against WI's already-graded BBCE-200 oracle (10 DENY→APPROVE flips, all
+  matching WI's mechanics; 3 unflipped DENYs matching WI's too). `benefit` stayed `null`
+  throughout — AK's benefit-amount math had its own separately-tracked gap, filed as #814.
+  Verification: 129/129 PASS, 0 FAIL, 0 SKIP (verdict-only). 279/279 snap-rules tests,
+  44/47 profile-harness tests (3 pre-existing skips), `tsc --noEmit` clean. PR
+  [#815](https://github.com/matthewgg22/Civica/pull/815), **merged**.
+
+- **#814 (AK zone-based max allotment + minimum benefit)** — `StatePolicy.allotment_tier`
+  was correctly authored `"AK"` since #806, but `maxAllotmentFor()`/`minimumBenefitFor()` in
+  `federal-tables.ts` took no state parameter at all and always returned the single
+  48-contiguous national table, silently understating every AK household's benefit ceiling
+  (and floor) across all three of AK's real geographic zones (Urban/Rural I/Rural II).
+  Fixed by mirroring `ak-utility-regions.ts`'s (#631) two-tier pattern: a new
+  `constants/ak-allotment-zones.ts` module holds AK's real zone-keyed max-allotment and
+  minimum-benefit tables (sourced from USDA FNS's own AK-specific FY26 table, cross-checked
+  against `packages/demeter-engine`'s AK corpus pack) plus a `county_fips` → zone resolver
+  built from 7 CFR 272.7(b)'s federal zone-geography definitions — a DIFFERENT source than
+  the dollar figures, since neither AK DOH nor the corpus pack had a single published
+  community-to-zone master list. `maxAllotmentFor`/`minimumBenefitFor` gained optional
+  `state`/`countyFips` params that are a no-op for every non-AK state (verified via a
+  1,472-comparison git-stash diff: byte-identical output before/after across 17 states × 4
+  dates × 10 sizes). Zone geography coverage is partial and disclosed: 23 of AK's 30
+  boroughs/census areas resolve with either an unambiguous or a documented majority-share
+  judgment call; one (Chugach Census Area) is deliberately left unmapped (genuine
+  Valdez/Cordova split) and falls through to the Urban default. AK's own zone-specific
+  minimum-benefit floors ($31/$39/$48 vs the $24 federal default) got the same fix in the
+  same PR — in scope, not deferred. AK's own $358/$374 standard deduction (vs. the federal
+  table this engine still uses for every state) stayed OUT of scope — a separate, disclosed
+  gap. Oracle: rebuilt AK's benefit-dollar-amount oracle for all 81 APPROVE profiles (11
+  DENY profiles keep `benefit: null` — no benefit to compute) via an independent Python
+  calculator (not derived from engine output), cross-validated 81/81 exact match against
+  the live engine post-fix. Verification: 129/129 PASS, 0 FAIL, 0 SKIP, now exercising real
+  benefit-dollar assertions (not verdict-only) with no PARAMS_MISMATCH. Every other
+  registered state's harness totals unchanged from baseline (CA/MA/TX/WA/GA/FL/IL/OH/MI/
+  KS/WI clean 129/0/0; NY 127/2 and AZ 128/1 pre-existing known fails; MN all-SKIP;
+  PA 34/0/95 — all identical to pre-#814). 316/316 snap-rules tests (279 pre-existing + 37
+  new), 44/47 profile-harness tests (3 pre-existing skips), `tsc --noEmit` clean. PR
+  [#814-fix](https://github.com/matthewgg22/Civica/pull/000), branch
+  `fix/ak-allotment-tier-not-consumed`.
