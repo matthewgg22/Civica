@@ -197,7 +197,7 @@ export function composeVerdict(facts: Facts, state: string, asOf: Date): Verdict
   // Net income test — skipped for cat-elig path AND BBCE-conferred HHs.
   // Federal floor applies only to non-cat-elig, non-BBCE households.
   if (!cat.skip_gross_test && !bbceConferred) {
-    const net = netIncomeTest(facts, new Decimal(detail.net_monthly_income), asOf);
+    const net = netIncomeTest(facts, new Decimal(detail.net_monthly_income), asOf, state);
     trace.net_income_test = net;
     if (!net.passes) {
       return { verdict: "DENY", benefit: null, reason: net.reason, trace };

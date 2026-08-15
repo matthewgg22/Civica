@@ -278,7 +278,6 @@ all of it.
   correctly scoped to #806's real incremental changes only. PR
   [#808](https://github.com/matthewgg22/Civica/pull/808), CI running, awaiting merge
   go-ahead.
-
 - **PA oracle-authoring (#636 methodology)** — authored `expected_by_state.PA` for all 92
   `expected_by_state`-shaped v0.6 profiles, following the NY/NV/AZ/OR/WI methodology.
   Fixture-only; PA's `StatePolicy` untouched (out of scope per the standing
@@ -340,4 +339,72 @@ all of it.
   PA 34/0/95 — all identical to pre-#814). 316/316 snap-rules tests (279 pre-existing + 37
   new), 44/47 profile-harness tests (3 pre-existing skips), `tsc --noEmit` clean. PR
   [#817](https://github.com/matthewgg22/Civica/pull/817), branch
-  `fix/ak-allotment-tier-not-consumed`, awaiting review.
+  `fix/ak-allotment-tier-not-consumed`, **merged**.
+
+- **#812 (AK's own FPL table, not the 48-contiguous one)** — `federal-tables.ts`'s
+  `FederalTableSnapshot` carried a single `fpl_annual_first_person`/`fpl_annual_each_additional`
+  pair documented as "48 contiguous states + DC," and `fplMonthly()` applied it to every
+  state, including AK. HHS publishes separate, higher poverty guidelines for AK (and HI)
+  every year in the same Federal Register notice — this was an eligibility-verdict bug (both
+  the gross AND net income tests in `gates/income-tests.ts` screened AK households against
+  the wrong, lower FPL), not just a benefit-amount bug like #814/#817's max-allotment gap.
+  Replaced the flat fields with a `fpl_by_region: { contiguous, ak, hi }` axis
+  (`RegionalFplTable`, each region carrying its own annual figures AND its own
+  monthly-rounding convention); `fplMonthly(size, asOf, state)` now takes `state` and selects
+  the region. `hi` is `null` (HI has no `StatePolicy` registered yet, out of scope here) with
+  a `NoFplTableForRegionError` thrown if ever reached, not a silent copy of the contiguous
+  figures.
+
+  Sourced AK's real annual guideline directly from the Federal Register notices themselves
+  (govinfo.gov, not a secondary aggregator): FY26 = $19,550 first person / $6,880 each
+  additional (90 FR 5917, Jan 17 2025); FY25 = $18,810 / $6,730 (89 FR 2962, Jan 17 2024).
+  Cross-checking those against AK's own published SNAP Standards table (already sourced in
+  `packages/demeter-engine/src/states/ak/supplements.json`) surfaced a genuinely non-obvious
+  finding: **Alaska's own table rounds the annual→monthly step UP (ceiling), not down —
+  the opposite of the 48-contiguous/CDSS ACIN `floor()` convention this function already
+  used.** Confirmed by reproducing AK's real published table exactly at 5 independent
+  income-standard figures (100%/130%/165% columns, HH1 and HH4) — `floor()` at those same
+  inputs would have missed every one of them by $1. AK's 200%-BBCE column ($3,260 HH1,
+  $6,700 HH4) needed no special-casing at all: it's exactly the state's own rounded 100%
+  monthly figure doubled, which is exactly what `gates/income-tests.ts` already does
+  downstream (`fpl.mul(ratio)`).
+
+  Independent-calculator verification against all 92 `expected_by_state.AK` entries in
+  `data-ops/sample/civica-test-profiles/v0.6.json` (same #636/#804 methodology: recomputed
+  AK's corrected gross/net thresholds from the sourced HHS figures, compared against each
+  profile's raw income facts — not derived by running the engine and copying output) found
+  **zero verdict flips** among those 92: every income-based DENY in the current AK oracle
+  (D08 HH4 $7,500, D10 HH2 $5,000, M19 HH1 $5,600-after-sponsor-deeming) has gross income
+  far above even the corrected, higher AK threshold, and the other 8 DENYs are unrelated
+  (ABAWD/student/immigration/lottery/disqualification) — AK's real FPL is strictly higher
+  than the 48-contiguous table at every household size, so a threshold increase can only
+  flip DENY→APPROVE, never the reverse, matching the same directional proof #804/#815 used
+  for AK's BBCE correction. One genuine flip WAS found, but not among the 92 direct
+  `expected_by_state.AK` entries — a variant profile (`P56` "ongoing_anticipated", HH3
+  gross $4,500) whose AK verdict fell back to a generic (non-AK-specific) stored `DENY`
+  computed under the old, wrong 48-contiguous-derived $4,442 threshold; AK's real threshold
+  is $5,552, so $4,500 now clears it. Added an explicit `AK: APPROVE` override + note to that
+  variant, following the M23 pattern #804/#815 established.
+
+  Threaded `state` through every `fplMonthly` call site (`gates/income-tests.ts`'s
+  `grossIncomeTest` — already had `state`; `netIncomeTest` — added a new `state` param,
+  updated its one caller in `verdict.ts`; `constants/index.ts`'s `getEngineParams` — already
+  had `state`). Explicit byte-identical regression check (same technique #815/#817 used):
+  1,428 (state × date × size) combinations across all 17 other registered states produced
+  IDENTICAL output to the pre-fix formula, 0 mismatches. `/profile-simulation state=AK`:
+  129/129 PASS, 0 FAIL, 0 SKIP. Every other state's harness run unchanged from its documented
+  baseline (CA/MA/TX/WA/GA/FL/IL/OH/MI/NV/OR/WI/KS all 129/0/0; PA 34/0/95 all-skip; NY
+  127/2/0; AZ 128/1/0; MN 0/0/129 all-skip — all pre-existing, none newly introduced).
+  `tsc --noEmit -p packages/snap-rules` clean, 286/286 snap-rules tests pass (7 new in a new
+  `federal-tables.test.ts`), 44/47 profile-harness tests pass (3 pre-existing skips). Found
+  one further, smaller residual discrepancy while reconciling AK's 130%/165% columns (the
+  shared "round monthly FPL once, multiply by ratio downstream" architecture leaves AK's
+  federal-130% non-BBCE gross test $1 below AK's own published figure — only reachable for
+  AK determinations dated before its 7/1/2025 BBCE effective date, or a per-individual
+  BBCE-exclusion category the engine doesn't model yet) — filed as
+  [#818](https://github.com/matthewgg22/Civica/issues/818) rather than expanding this fix's
+  scope. Did NOT touch #814/#817's `maxAllotmentFor`/
+  `minimumBenefitFor`/`ak-allotment-zones.ts` work (separate, already in flight) and did NOT
+  build any part of HI's `StatePolicy`, corpus registration, or oracle coverage (out of
+  scope; only the table SHAPE is HI-ready). PR
+  [#819](https://github.com/matthewgg22/Civica/pull/819), awaiting merge go-ahead.

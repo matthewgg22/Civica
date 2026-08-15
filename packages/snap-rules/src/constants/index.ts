@@ -45,7 +45,8 @@ export function getEngineParams(state: string, asOf: Date): EngineParams {
     // instead of fplMonthly's floorDollar() put this row +$1 above the gates
     // at HH3 and HH6 in FY26, so anything quoting these params disagreed with
     // the engine's own determination and with CDSS ACIN I-46-25. See #601.
-    fpl[String(n)] = fplMonthly(n, asOf).toNumber();
+    // `state` also selects the region (#812) — AK gets its own, higher FPL.
+    fpl[String(n)] = fplMonthly(n, asOf, state).toNumber();
   }
   const maxA: Record<string, number> = {};
   for (let n = 1; n <= 8; n++) {
