@@ -30,6 +30,10 @@ describe.skipIf(!hasKey)("Demeter live multi-turn conversation eval", { timeout:
     for (const r of results) {
       expect(r.duplicateTrailerTurns, `${r.id}: duplicated trailer apparatus`).toEqual([]);
       expect(r.repeatedAskTurns, `${r.id}: same bolded ask repeated verbatim`).toEqual([]);
+      expect(
+        r.namedStateWithNoStateSetTurns,
+        `${r.id}: named a state's program alias with no state ever set`,
+      ).toEqual([]);
     }
   });
 });

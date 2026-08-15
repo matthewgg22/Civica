@@ -27,6 +27,7 @@
 
 import { answerQuestion, STREAM_RECOMPOSE_MARKER, type ChatMessage } from "../orchestrator";
 import type { AnswerLang } from "../lang";
+import { VERIFIED_STATES } from "../packs";
 
 export interface ConversationTurn {
   /** A user message. Mutually exclusive with `setState`. */
@@ -71,6 +72,10 @@ export interface ConversationResult {
    *  Security numbers**") is not mistaken for a repeated clarifying
    *  question. Empty when clean. */
   repeatedAskTurns: number[];
+  /** Turn indices where state was null (no state ever given) but the
+   *  answer names a specific state's program alias anyway — see
+   *  namesStateProgramAlias. Empty when clean. */
+  namedStateWithNoStateSetTurns: number[];
 }
 
 // Same signature the model's own trailer uses (see orchestrator.ts
@@ -85,6 +90,31 @@ function countTrailerBanners(answer: string): number {
 function countCitationHeadings(answer: string): number {
   return answer.split("\n").filter((l) => /^\*\*(Citation|Citas|Trích dẫn|引用)[：:]\*\*/.test(l.trim()))
     .length;
+}
+
+// Regression guard for a real production transcript (2026-08-15, #833's
+// companion finding): asked "is SNAP available to me?" with NO state ever
+// given, the answer opened "SNAP (called CalFresh in California) is
+// available to most people..." — singling out one state's program name is
+// the same "reached for California as if it were the rule" error the
+// system prompt already forbade for income-limit figures, just in program-
+// naming form instead. A live 4-run reproduction found it in 1/4 runs
+// before the prompt fix (system-prompt.ts's "WHEN NO STATE IS SET" rule)
+// and 0/4 after. This regexes every VERIFIED_STATES program alias
+// ("CalFresh", "Basic Food", ...) so the check generalizes to any state's
+// name being reached for, not just California's.
+const STATE_PROGRAM_NAMES = VERIFIED_STATES.map((s) => s.program).filter(
+  // "SNAP" itself, and any state's plain generic label, is the correct
+  // no-state answer — only a DISTINCTIVE alias (one that isn't just "SNAP")
+  // is evidence a specific state was named.
+  (p) => p.trim().toUpperCase() !== "SNAP",
+);
+const STATE_PROGRAM_NAME_RE = new RegExp(
+  `\\b(${STATE_PROGRAM_NAMES.map((p) => p.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|")})\\b`,
+  "i",
+);
+function namesStateProgramAlias(answer: string): boolean {
+  return STATE_PROGRAM_NAME_RE.test(answer);
 }
 
 // Only bolded spans long enough to be a genuine clarifying-question ASK
@@ -171,7 +201,18 @@ export async function runConversation(
     if (thisAsk && thisAsk === prevAsk) repeatedAskTurns.push(turns[i]!.turnIndex);
   }
 
-  return { id: script.id, description: script.description, turns, duplicateTrailerTurns, repeatedAskTurns };
+  const namedStateWithNoStateSetTurns = turns
+    .filter((t) => t.state === null && namesStateProgramAlias(t.answer))
+    .map((t) => t.turnIndex);
+
+  return {
+    id: script.id,
+    description: script.description,
+    turns,
+    duplicateTrailerTurns,
+    repeatedAskTurns,
+    namedStateWithNoStateSetTurns,
+  };
 }
 
 export async function runConversations(
@@ -197,6 +238,11 @@ export function formatTranscript(r: ConversationResult): string {
   }
   if (r.repeatedAskTurns.length) {
     lines.push(`⚠ repeated bolded ask on turn(s): ${r.repeatedAskTurns.join(", ")}`);
+  }
+  if (r.namedStateWithNoStateSetTurns.length) {
+    lines.push(
+      `⚠ named a state's program alias with no state set on turn(s): ${r.namedStateWithNoStateSetTurns.join(", ")}`,
+    );
   }
   return lines.join("\n");
 }
@@ -303,5 +349,11 @@ export const CONVERSATION_GOLD: ConversationScript[] = [
       },
       { user: "does she count toward the household or not" },
     ],
+  },
+  {
+    id: "no-state-set-program-naming",
+    description:
+      "no state ever given (real transcript shape, 2026-08-15) — the model must not reach for one state's program alias (e.g. \"CalFresh\") as if it were the answer; guards the fix for a real production failure the reader had to call out three times before it stopped",
+    turns: [{ user: "is snap available to me?" }],
   },
 ];
