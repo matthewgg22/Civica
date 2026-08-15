@@ -165,6 +165,79 @@ function hasUnrecognized(checks: CitationCheck[]): boolean {
   return checks.some((c) => c.status === "unrecognized");
 }
 
+// Trailer apparatus the pipeline appends AFTER a model's answer — the
+// certainty banner, "Check it yourself" line, "Citation:" checklist, and
+// freshness/source footer (see formatCertaintyBanner/certainty.ts,
+// formatCitationTrailer/citation-verifier.ts, formatFreshnessFooter/
+// freshness.ts). Matched line-by-line rather than as one trailing block,
+// because production has seen the model reproduce these lines individually,
+// not only as a copied suffix — see stripAppendedTrailer below.
+//
+// The mark characters (✓ ⚠ ◑) are language-invariant by design (certainty.ts:
+// "the mark is the same in every language"); the small set of headings is
+// enumerated across the four supported languages, mirroring the client's own
+// dropDuplicateTrailerLines/dropDuplicateFooter (DemeterChat.tsx), which
+// exists for the identical reason on the display side.
+const TRAILER_LINE_MARKERS: RegExp[] = [
+  // The horizontal rule that always opens the trailer (formatCertaintyBanner
+  // / formatCitationTrailer). Real answer prose has no reason to write one —
+  // the prompt tells the model this apparatus is appended for it.
+  /^-{3,}$/,
+  // Certainty banner: "✓ **CERTAIN** — …" / "⚠ **UNCERTAIN** — …" — and any
+  // mark-shaped line a model improvises in the same visual language. Live QA
+  // caught an invented "◑ **HIGH CONFIDENCE**" that matches NEITHER real
+  // label; the shape (mark, then a bolded word) is itself the tell.
+  /^[✓⚠◑]\s*\*\*/,
+  // "_Check it yourself:_" and its localizations (certainty.ts COPY).
+  /^_?(Check it yourself|Compruébalo tú mismo|Tự kiểm tra|自己核对)/i,
+  // "**Citation:**" heading, all four languages (citation-verifier.ts
+  // TRAILER_STRINGS).
+  /^\*\*(Citation|Citas|Trích dẫn|引用)[：:]\*\*/,
+  // Citation checklist bullets: "- ✓ …", "- ◑ …", "- ⚠️ …".
+  /^-\s*(✓|◑|⚠️)/,
+  // Freshness/source footer — both the current "Source" label and the
+  // retired "Sources as of" one (a saved conversation can still hold it).
+  /^\*?(Sources? as of|Source|Fuentes? al|Fuente|Nguồn|来源)\b/i,
+  // Freshness warning line (formatFreshnessFooter).
+  /^>\s*⚠️/,
+];
+
+/** Strip the pipeline-appended trailer from an assistant turn before it goes
+ *  back into the NEXT call's conversation history.
+ *
+ *  Live conversational QA (2026-08-15) found the model reproducing its own
+ *  prior-turn trailer — a second certainty banner, a duplicate "Citation:"
+ *  checklist, even an invented banner label matching neither real verdict —
+ *  inside a LATER answer. The cause: the pipeline's own appended trailer is
+ *  exactly what a caller stores as that turn's rendered content and exactly
+ *  what gets resent as conversation history on the next call (apps/web
+ *  stores and resends the full streamed text, delta and trailer frames
+ *  alike). The model seeing its own "past turn" already wearing the house
+ *  citation-apparatus format is what taught it to reproduce the format — a
+ *  system-prompt instruction not to write this section cannot survive its
+ *  own violation sitting in the transcript as an example to follow.
+ *
+ *  The client already de-duplicates this for DISPLAY (DemeterChat.tsx's
+ *  dropDuplicateTrailerLines/dropDuplicateFooter), which hides the symptom
+ *  on screen but leaves the cause untouched — this removes the example
+ *  itself, at the one place ALL callers' history passes through.
+ *
+ *  Only ever applied to ASSISTANT history. Civica's real trailer for the
+ *  CURRENT turn is computed and yielded separately, downstream in this file,
+ *  after this function has already run on the messages sent to the model. */
+export function stripAppendedTrailer(text: string): string {
+  const stripped = text
+    .split("\n")
+    .filter((line) => !TRAILER_LINE_MARKERS.some((re) => re.test(line.trim())))
+    .join("\n")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+  // A message that is ENTIRELY trailer is pathological, not the case this
+  // exists for — never hand the SDK an empty message; keep the original
+  // rather than error the whole turn over a history-hygiene fix.
+  return stripped || text;
+}
+
 /** What a reader gets when generation cannot be verified twice.
  *
  *  The guardrail is WORKING when this fires — it has stopped the model asserting
@@ -197,9 +270,13 @@ export async function* answerQuestion(req: AnswerRequest): AsyncGenerator<Answer
   const audit = events?.audit ?? consoleAuditSink;
 
   // --- Redact PII before anything leaves the process ------------------------
+  // Assistant history is stripped of the appended trailer FIRST — see
+  // stripAppendedTrailer — so the model's own past answers, as sent back to
+  // it, never contain the citation apparatus it is being asked not to write.
   let piiRedactions = 0;
   const messages = req.messages.map((m) => {
-    const { redacted, found } = redactPii(m.content);
+    const source = m.role === "assistant" ? stripAppendedTrailer(m.content) : m.content;
+    const { redacted, found } = redactPii(source);
     piiRedactions += found;
     return { role: m.role, content: redacted };
   });
