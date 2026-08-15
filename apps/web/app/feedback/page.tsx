@@ -12,7 +12,7 @@ import { DemeterFooter } from "../../components/DemeterFooter";
 import { SiteFeedbackForm } from "../../components/SiteFeedbackForm";
 
 export const metadata: Metadata = {
-  title: "Feedback — Demeter",
+  title: "Demeter Feedback",
   description:
     "Tell Demeter what's working, what's broken, or what's missing. Read by the team that builds it.",
 };
@@ -25,8 +25,8 @@ export default function FeedbackPage() {
         <header className="vpage__head">
           <h1 className="vpage__title">Feedback</h1>
           <p className="vpage__lede vpage__lede--lead">
-            Tell us what&apos;s working, what&apos;s broken, or what&apos;s missing. A
-            real person reads every message — this isn&apos;t a rating on one answer, it&apos;s
+            Tell us what&apos;s working, what&apos;s broken, or what&apos;s missing. A real
+            person reads every message. This isn&apos;t a rating on one answer; it&apos;s
             anything else you want to say about the product.
           </p>
         </header>
@@ -35,7 +35,7 @@ export default function FeedbackPage() {
           <p>
             Reporting a specific wrong answer? The thumbs up/down under any answer in{" "}
             <a href="/chat">the chat</a> reaches the same team, with the actual question and
-            answer attached — faster than describing it here from memory.
+            answer already attached. That&apos;s faster than describing it here from memory.
           </p>
         </section>
       </main>
