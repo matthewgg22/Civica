@@ -5551,6 +5551,37 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 }
 .dmo__cta:hover { background: var(--demeter-terracotta-deep); }
 
+/* THE ASK-DEMETER CTA AND THE FOOD-BANK ASIDE, SIDE BY SIDE — not stacked.
+   Direct feedback, twice, on the rendered page: a narrow single column here
+   with nothing beside it left the top of the page looking unfinished next
+   to every section below it, which all pair narrow text with something
+   wide. Two tries at re-sizing the individual cards (first the general
+   .dmx__outlink cap, then aligning to the hero text) both missed — the
+   problem was never the alignment, it was that nothing filled the row.
+   Reusing the page's own established 2-up pattern (see .dmx__trustlist--wide,
+   .dmx__defs) instead of inventing a new one. `align-items: start` — the two
+   cards are naturally different heights (the CTA is two lines; the aside is
+   two lines plus two links), and stretching the shorter one to match would
+   put empty space back inside a box, the exact thing already fixed once. */
+.dmherorow {
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: clamp(1rem, 3vw, 2rem); align-items: start; margin-top: 1.5rem;
+}
+/* .dmx--askcta's OWN vertical section padding and top divider (from the
+   base .dmx / .dmx--outlink classes, meant for a standalone full-width
+   "door" section elsewhere on the page) would push just this card down
+   inside the grid row and draw a rule above only the left column — the row
+   itself supplies the spacing now, and a divider under only one of two
+   side-by-side columns would read as a layout bug, not a design. */
+.dmherorow .dmx--outlink { padding: 0; border-top: 0; }
+@media (max-width: 700px) {
+  /* Two 500px-ish columns become two cramped ~330px ones before the page's
+     own 860px stack point for other 2-up sections — stack earlier here,
+     specifically, rather than letting either card get uncomfortably narrow
+     first. */
+  .dmherorow { grid-template-columns: 1fr; }
+}
+
 /* 600px, not the 560 I first guessed. Measured on the deployed page: the
    tagline needs 299px to sit on one line and gets 266px at a 561px viewport
    (the header is 41px avatar + 150px language picker + 23px gaps before any
@@ -5619,15 +5650,14 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 .dmx--fearscta .dmx__outlink {
   background: var(--demeter-wheat); border-color: transparent;
 }
-/* NARROWER STILL than the general .dmx__outlink cap, and for a different
-   reason: this card and .dmnow right below it sit directly under the hero
-   text, which wraps at .dmo__h1's 20ch / .dmo__lede's 52ch — roughly 600-
-   625px measured. At the general 40rem (640px) cap, this card's own right
-   edge sat 40-60px past the text above it, a ragged edge that read as the
-   card not belonging to the column it was in rather than as a card that was
-   simply narrower than the page. Matched to the hero column's own width
-   instead of an independent value. */
-.dmx--askcta .dmx__outlink { max-width: 36rem; }
+/* NOT independently capped anymore — .dmherorow (the grid this card and
+   .dmnow now sit in as two columns) sets their width instead. An
+   independent max-width here was tried twice: first at the general
+   .dmx__outlink cap (40rem), then narrowed to align with the hero text
+   above it (36rem) — both left a narrow single column with nothing beside
+   it, which is what actually read as "off," not the alignment. Filling the
+   row with both cards side by side fixed it; this card no longer needs an
+   opinion about its own width, the grid column supplies one. */
 .dmx--askcta .dmx__outlink:hover,
 .dmx--fearscta .dmx__outlink:hover { filter: brightness(0.96); border-color: transparent; }
 .dmx--askcta .dmx__outlink-label,
@@ -5977,21 +6007,16 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
 }
 
 /* "I need food this week." Quiet but unmissable — a tinted band, not a card in
-   the flow, because it is an interruption on purpose. It sits directly under
-   the orientation so someone who is out of food never has to read a page about
-   eligibility rules to find it. */
+   the flow, because it is an interruption on purpose. Sits BESIDE the ask-
+   Demeter CTA now (.dmherorow), not under it — see that class. No margin-top:
+   the grid's own gap handles the space between the two columns; a margin
+   here would only push this one down out of alignment with the CTA beside
+   it. Not independently width-capped either, for the same reason as
+   .dmx--askcta .dmx__outlink — the grid column supplies the width. */
 .dmnow {
-  margin: 1.5rem 0 0; padding: 1rem 1.2rem;
+  padding: 1rem 1.2rem;
   border-left: 3px solid var(--demeter-terracotta-deep);
   background: var(--demeter-card); border-radius: 0 12px 12px 0;
-  /* NARROWER, on direct feedback, matching .dmx--askcta .dmx__outlink above
-     it — the body text already stopped at 62ch (.dmnow__body) but the tinted
-     background kept going, leaving a wide plain band next to two short
-     lines and a pair of links. 36rem (not the CTA's original 40rem) so this
-     box's own right edge lines up with the CTA's and with the hero text
-     above both of them, instead of each picking a slightly different width
-     and leaving a ragged, unaligned right edge down the column. */
-  max-width: 36rem;
 }
 .dmnow__label {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;

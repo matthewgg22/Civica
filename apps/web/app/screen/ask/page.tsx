@@ -86,16 +86,21 @@ export default async function ScreenAskPage({
       <DemeterNav />
       <div className="dmpage__inner">
         <SnapOrientation />
-        {/* The composer, the state picker and the suggested questions all live
-            on /chat now. This page explains and hands over; it does not start
-            the conversation and then forward it. First action before the
-            urgent-need aside, on direct feedback — most readers are not in a
-            food emergency, and the tool this whole page leads to should not
-            follow a callout aimed at the ones who are. */}
-        <SnapAskCta state={initialState} />
-        {/* Still high, and not behind a click: SNAP takes at least seven days
-            even when it is urgent. */}
-        <SnapFoodNow />
+        {/* SIDE BY SIDE, not stacked — direct feedback on the rendered page,
+            twice: a narrow single column here, with nothing beside it, left
+            the whole top of the page reading as unfinished next to every
+            OTHER section below it (which all pair narrow text with something
+            wide — the facts grids, the flags row). Reuses that same pattern
+            rather than widening either card's own text past what it needs,
+            which would have reopened the dead-space-in-a-box problem fixed
+            last round. Ask Demeter is still first in DOM order — most
+            readers are not in a food emergency, and the tool this whole page
+            leads to should not read as secondary to a callout aimed at the
+            ones who are — the grid places them side by side, not stacked. */}
+        <div className="dmherorow">
+          <SnapAskCta state={initialState} />
+          <SnapFoodNow />
+        </div>
         <SnapDetail states={VERIFIED_STATES} />
         {/* Last: the fears are the final thing between reading and acting. */}
         <SnapFears />

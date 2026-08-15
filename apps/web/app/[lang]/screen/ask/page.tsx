@@ -105,11 +105,13 @@ export default async function LocalizedAskPage({
       <DemeterNav lang={l} path="/screen/ask" />
       <div className="dmpage__inner">
         <SnapOrientation lang={l} />
-        {/* Composer, picker and suggestions all live on /chat now — same
-            as the English page. This one explains and hands over. Ahead of
-            the urgent-need aside — same reasoning as the English page. */}
-        <SnapAskCta lang={l} state={initialState} />
-        <SnapFoodNow lang={l} />
+        {/* Side by side, not stacked — same reasoning as the English page's
+            .dmherorow (see that comment). Composer, picker and suggestions
+            all live on /chat now; this one explains and hands over. */}
+        <div className="dmherorow">
+          <SnapAskCta lang={l} state={initialState} />
+          <SnapFoodNow lang={l} />
+        </div>
         <SnapDetail states={VERIFIED_STATES} lang={l} />
         <SnapFears lang={l} />
       </div>
