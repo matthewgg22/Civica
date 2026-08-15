@@ -55,6 +55,14 @@ export const T = {
     modeOffer: "Shall I start gathering your answers as we go, so you can take them to the application? Or keep this as just questions for now?",
     modeOfferEstimate: "Gather my answers",
     modeOfferAsk: "Just asking",
+    // Shown after several turns if the conversation hasn't been saved yet.
+    // The Save button lives in the right-hand panel — same problem as
+    // modeOffer above, nobody notices it there — and a real 15-turn
+    // conversation with real content in it never once got an inline nudge
+    // to keep it (#833 audit, 2026-08-15).
+    saveNudge: "This is a long conversation to lose if you close the tab. Save it so you can come back to it?",
+    saveNudgeYes: "Save it",
+    saveNudgeNo: "Not now",
     // Shown in the transcript when a state is picked. The portal is where the
     // application actually goes; this is the one moment we know exactly which
     // link that is, so it should not be something they have to ask for.
@@ -219,6 +227,9 @@ export const T = {
     modeOffer: "¿Quieres que calcule una cifra aproximada, o por ahora solo buscas respuestas?",
     modeOfferEstimate: "Calcular una cifra",
     modeOfferAsk: "Solo preguntas",
+    saveNudge: "Esta es una conversación larga para perderla si cierras la pestaña. ¿La guardo para que puedas volver a ella?",
+    saveNudgeYes: "Guardarla",
+    saveNudgeNo: "Ahora no",
     portalLead: "En {state}, la solicitud se hace a través de {agency}.",
     portalCta: "Solicitar en {portal}",
     portalStay:
@@ -347,6 +358,9 @@ export const T = {
     modeOffer: "Bạn có muốn tôi ước tính một con số không, hay hiện giờ chỉ cần câu trả lời?",
     modeOfferEstimate: "Ước tính một con số",
     modeOfferAsk: "Chỉ hỏi thôi",
+    saveNudge: "Đây là một cuộc trò chuyện dài, sẽ mất nếu bạn đóng tab. Lưu lại để bạn có thể quay lại sau?",
+    saveNudgeYes: "Lưu lại",
+    saveNudgeNo: "Để sau",
     portalLead: "Ở {state}, bạn nộp đơn qua {agency}.",
     portalCta: "Nộp đơn tại {portal}",
     portalStay:
@@ -473,6 +487,9 @@ export const T = {
     modeOffer: "需要我帮您估算一个大致金额吗？还是目前只想先了解情况？",
     modeOfferEstimate: "帮我估算金额",
     modeOfferAsk: "只是问问",
+    saveNudge: "这段对话很长，关闭标签页就会丢失。要保存下来，方便以后继续吗？",
+    saveNudgeYes: "保存",
+    saveNudgeNo: "暂不",
     portalLead: "在{state}，申请通过{agency}办理。",
     portalCta: "前往 {portal} 申请",
     portalStay:

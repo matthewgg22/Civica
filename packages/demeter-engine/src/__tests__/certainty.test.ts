@@ -141,12 +141,19 @@ describe("assessCertainty", () => {
 });
 
 describe("formatCertaintyBanner", () => {
-  it("leads with a label a non-expert can read, then what to check", () => {
+  it("leads with a label a non-expert can read", () => {
     const v = assessCertainty({ ...base, checks: [inSrc("7 CFR 273.10")] });
     const out = formatCertaintyBanner(v);
     expect(out).toContain("**CERTAIN**");
-    expect(out).toContain("Check it yourself");
-    expect(out).toContain("7 CFR 273.10");
+    // Does NOT list its own citations — formatCitationTrailer (which always
+    // follows this banner in orchestrator.ts) is the one place citations are
+    // enumerated. Duplicating them here was a real production defect (#833
+    // audit, 2026-08-15) — see trailer-no-duplicate-citations.test.ts.
+    expect(out).not.toContain("Check it yourself");
+    expect(out).not.toContain("7 CFR 273.10");
+    // The verdict OBJECT still carries the basis for anyone downstream who
+    // wants it (e.g. analytics) — only the rendered banner text dropped it.
+    expect(v.basis).toContain("7 CFR 273.10");
   });
 
   it("marks an uncertain answer visibly rather than burying it", () => {
@@ -161,7 +168,6 @@ describe("formatCertaintyBanner", () => {
     const v = assessCertainty({ ...base, checks: [inSrc("7 CFR 273.10")] }, "es");
     const out = formatCertaintyBanner(v, "es");
     expect(out).toContain("**SEGURO**");
-    expect(out).toContain("Compruébalo tú mismo");
     expect(out).not.toContain("CERTAIN");
   });
 });

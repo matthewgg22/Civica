@@ -115,6 +115,34 @@ describe("signed in", () => {
     expect(bodyOf()).toMatchObject({ messages: CONVERSATION, state: "CA", lang: "en" });
   });
 
+  it("saves when triggerSave changes, without a click on its own button (#833 audit)", async () => {
+    // The chat's inline save-nudge banner has no way to press THIS button —
+    // it lives in a side panel the reader may never have scrolled to. This
+    // is the plumbing that lets "Save it" on the nudge reach the same
+    // save() the button itself calls, without a second, drifting copy of
+    // the save logic living in DemeterChat.
+    fetchMock.mockResolvedValue(jsonResponse(201, { conversation: { id: "conv-1" } }));
+    const { rerender } = renderSave({ triggerSave: 0 });
+    expect(fetchMock).not.toHaveBeenCalled();
+
+    rerender(
+      <DemeterSave
+        messages={CONVERSATION}
+        state="CA"
+        lang="en"
+        busy={false}
+        pendingSave={false}
+        initialSavedId={null}
+        onRestore={() => {}}
+        triggerSave={1}
+        copy={COPY}
+      />,
+    );
+
+    await screen.findByText(COPY.saved);
+    expect(bodyOf()).toMatchObject({ messages: CONVERSATION, state: "CA", lang: "en" });
+  });
+
   it("keeps the saved conversation up to date as the chat continues", async () => {
     // Saving a prefix and never updating it would mean resume shows the
     // conversation as it was at the moment they pressed the button, not as

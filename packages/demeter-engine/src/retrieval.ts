@@ -81,6 +81,15 @@ const TOPIC_HINTS: { terms: string[]; cites: string[] }[] = [
   // hits were 273.1(a)/(b)/(d), never reaching the striker-specific (e).
   { terms: ["strike", "striker", "on strike", "labor strike", "union strike", "picket line", "picketing"], cites: ["273.1(e)"] },
   { terms: ["live-in attendant", "live-in aide", "live in attendant", "live in aide", "caregiver living with me", "home health aide living with us"], cites: ["273.1(b)"] },
+  // Elderly/disabled separate-household provision (273.1(b)(2), inside the
+  // same 273.1(b) chunk as boarders/roomers/live-in attendants above) —
+  // engine-encoded (composition.ts's coresident_income_pct > 165 branch) but
+  // had NO retrieval hint of its own, so a live conversation about moving in
+  // with/caring for an elderly parent never surfaced it: the general
+  // household-composition hint below routes to bare "273.1", which (per the
+  // strikers fix above) boosts all five subsections equally rather than
+  // reaching for (b) specifically. Audit finding, 2026-08-15 real transcript.
+  { terms: ["elderly mother", "elderly father", "elderly parent", "aging mother", "aging father", "aging parent", "older mother", "older father", "older parent", "elderly relative", "disabled relative", "caring for my mother", "caring for my father", "taking care of my mother", "taking care of my father", "can't cook for herself", "cannot cook for herself", "can't cook for himself", "cannot cook for himself", "unable to prepare her own meals", "unable to prepare his own meals", "dementia"], cites: ["273.1(b)"] },
   { terms: ["domestic violence", "domestic abuse", "abusive husband", "abusive wife", "abusive partner", "fleeing abuse", "dv shelter", "battered women shelter", "battered woman", "left my abuser", "escaped my abuser"], cites: ["273.1(b)"] },
   // Sponsor deeming (273.4(c)) — distinct enough from the general
   // immigration-eligibility hint above (273.4 broadly) to warrant its own

@@ -487,9 +487,24 @@ export function DemeterChat({
    *  system works before telling it anything about themselves. */
   const [worksheetMode, setWorksheetMode] = useState<WorksheetMode>("ask");
   /** Whether the "just asking, or shall I work out a figure?" offer has been
-   *  answered or waved away. Asked ONCE, after the first answer — see the
-   *  callout above the composer. */
+   *  answered or waved away at least once — see the callout above the
+   *  composer. Dismissing it no longer retires it forever: see
+   *  modeReoffered/MODE_REOFFER_AFTER_TURNS below. A real 15-turn
+   *  conversation waved this away at turn 2 and never saw it again, even
+   *  after asking "then what's next?" with a full income and household
+   *  already established (#833 audit, 2026-08-15) — the offer used to be a
+   *  true one-shot with nothing bringing it back. */
   const [modeAsked, setModeAsked] = useState(false);
+  /** True once the RE-offer (not the original) has itself been dismissed —
+   *  after this, it stays gone for good. Asking a third time reads as
+   *  nagging rather than a considered second chance. */
+  const [modeReoffered, setModeReoffered] = useState(false);
+  /** The answered-turn count at the moment the offer was first dismissed —
+   *  compared against the current count to decide when enough of the
+   *  conversation has happened that asking again is worth it, not a ref that
+   *  needs to trigger its own render: answeredCount already re-renders this
+   *  component as new answers land. */
+  const modeOfferedAtTurnRef = useRef<number | null>(null);
   /** Emailing the outline to yourself: idle → sending → sent | signin | error.
    *  Mirrors DemeterSave's shape deliberately — they are the same decision
    *  ("keep this") reached from two directions, and behaving differently would
@@ -515,6 +530,13 @@ export function DemeterChat({
   // the moment a row exists (#703). Seeded from the prop so resuming a saved
   // conversation reads correctly on the very first paint.
   const [conversationSaved, setConversationSaved] = useState(savedConversationId !== null);
+  /** Whether the inline save-nudge banner has been waved off. The Save
+   *  button itself is never hidden — this only retires the PROMPT, so
+   *  someone who dismisses it can still save later from the side panel. */
+  const [saveNudgeDismissed, setSaveNudgeDismissed] = useState(false);
+  /** Bumped to tell DemeterSave "save now" from outside itself — see
+   *  DemeterSave's triggerSave prop. Mirrors openPicker below. */
+  const [saveSignal, setSaveSignal] = useState(0);
   // Anonymous funnel key. Random, per-tab, dies with the tab, never sent to
   // the model — it exists only so the log can tell "asked once and left" from
   // "stayed and got somewhere", which nothing could distinguish before.
@@ -1204,6 +1226,30 @@ export function DemeterChat({
   /** At least one answer has finished. The mode offer waits for this: before an
    *  answer exists there is nothing to have an opinion about. */
   const answeredOnce = messages.some((m) => m.role === "assistant" && m.content !== "");
+  const answeredCount = messages.filter((m) => m.role === "assistant" && m.content !== "").length;
+  /** How much more conversation has to happen, after a "just asking" dismissal,
+   *  before it is worth asking again. Six answered turns is deliberately a
+   *  while — this must not feel like nagging — but not "never": the real
+   *  transcript that found this gap ran fifteen turns deep with a full income
+   *  and household established and was never asked a second time. */
+  const MODE_REOFFER_AFTER_TURNS = 6;
+  const showModeOffer =
+    answeredOnce &&
+    !busy &&
+    worksheetMode === "ask" &&
+    (!modeAsked ||
+      (!modeReoffered &&
+        modeOfferedAtTurnRef.current !== null &&
+        answeredCount - modeOfferedAtTurnRef.current >= MODE_REOFFER_AFTER_TURNS));
+  /** How many answered turns before the save nudge earns its place. Lower
+   *  than MODE_REOFFER_AFTER_TURNS deliberately: losing the WHOLE
+   *  conversation is a bigger loss than not getting a structured estimate,
+   *  so it is worth mentioning sooner. A real 15-turn conversation with real
+   *  content in it never once saw this (#833 audit, 2026-08-15) — the Save
+   *  button existed the whole time, tucked in the side panel. */
+  const SAVE_NUDGE_AFTER_TURNS = 4;
+  const showSaveNudge =
+    !busy && !conversationSaved && !saveNudgeDismissed && answeredCount >= SAVE_NUDGE_AFTER_TURNS;
 
   // What the composer asks for. If Demeter's last answer ended in a question,
   // that question — otherwise the standing invitation. Never while an answer is
@@ -1414,18 +1460,26 @@ export function DemeterChat({
         {announcement}
       </div>
 
-      {/* WHICH OF THE TWO THINGS THIS IS, asked once, after the first answer.
-          The toggle for it lives in the right-hand panel, which nobody looks at
-          while reading their first reply — so the product's two modes were a
-          control most people never knowingly chose between, and everyone stayed
-          in "just asking" by default even when they wanted a number.
+      {/* WHICH OF THE TWO THINGS THIS IS, asked after the first answer — and
+          again, once, later on. The toggle for it lives in the right-hand
+          panel, which nobody looks at while reading their first reply — so
+          the product's two modes were a control most people never knowingly
+          chose between, and everyone stayed in "just asking" by default even
+          when they wanted a number.
 
           After the FIRST answer, deliberately: before one, there is nothing to
-          have an opinion about; much later, the conversation has already taken
-          a shape. Choosing "work out a figure" opens the state picker straight
-          away, because an estimate without a state is a federal-floor guess and
-          the picker is the next thing needed either way. */}
-      {answeredOnce && !busy && !modeAsked && worksheetMode === "ask" && (
+          have an opinion about. But "just asking" dismissed once does not mean
+          "never offer again" — a real conversation ran fifteen turns deep,
+          with a full income and household established, asked "then what's
+          next?", and was never offered this a second time even though it was
+          exactly the moment it would have helped (#833 audit, 2026-08-15). So
+          this re-offers ONCE more after MODE_REOFFER_AFTER_TURNS further
+          answers, then stays quiet for good if waved away again — a second
+          considered chance, not a nag. Choosing "work out a figure" opens the
+          state picker straight away, because an estimate without a state is a
+          federal-floor guess and the picker is the next thing needed either
+          way. */}
+      {showModeOffer && (
         <div
           className="demeter__modeoffer"
           role="group"
@@ -1440,7 +1494,15 @@ export function DemeterChat({
             <button
               type="button"
               className="demeter__modeoffer-no"
-              onClick={() => setModeAsked(true)}
+              onClick={() => {
+                if (modeAsked) {
+                  // This IS the re-offer — dismissing it retires it for good.
+                  setModeReoffered(true);
+                } else {
+                  modeOfferedAtTurnRef.current = answeredCount;
+                  setModeAsked(true);
+                }
+              }}
             >
               {t.modeOfferAsk}
             </button>
@@ -1450,6 +1512,7 @@ export function DemeterChat({
               onClick={() => {
                 setWorksheetMode("estimate");
                 setModeAsked(true);
+                setModeReoffered(true);
                 setAnnouncement(t.modeOfferEstimate);
                 // An estimate is scoped to a state or it is a federal-floor
                 // guess wearing a figure's confidence.
@@ -1457,6 +1520,40 @@ export function DemeterChat({
               }}
             >
               {t.modeOfferEstimate}
+            </button>
+          </span>
+        </div>
+      )}
+
+      {/* THE SAVE NUDGE. Reuses the mode-offer's own classes deliberately —
+          same banner shape, no new CSS, and the reader has already learned
+          what this row looks like from the offer above. The Save button
+          itself lives in the side panel (see demeter__side below) and stays
+          there; this is a second, INLINE way to reach the same action for
+          the person who never notices a rail while reading a reply — the
+          exact gap a real 15-turn, never-saved conversation exposed (#833
+          audit, 2026-08-15). Dismissing it only retires the PROMPT, not the
+          button — there is no cost to waving it off. */}
+      {showSaveNudge && (
+        <div className="demeter__modeoffer" role="group" aria-label={t.saveNudge}>
+          <span className="demeter__modeoffer-text">{t.saveNudge}</span>
+          <span className="demeter__modeoffer-actions">
+            <button
+              type="button"
+              className="demeter__modeoffer-no"
+              onClick={() => setSaveNudgeDismissed(true)}
+            >
+              {t.saveNudgeNo}
+            </button>
+            <button
+              type="button"
+              className="demeter__modeoffer-yes"
+              onClick={() => {
+                setSaveNudgeDismissed(true);
+                setSaveSignal((n) => n + 1);
+              }}
+            >
+              {t.saveNudgeYes}
             </button>
           </span>
         </div>
@@ -1651,6 +1748,7 @@ export function DemeterChat({
             // dependency list in DemeterSave, and React guarantees a state
             // setter's identity is stable across renders.
             onSavedChange={setConversationSaved}
+            triggerSave={saveSignal}
             copy={t.save}
           />
           {/* CLEAR, for shared and public machines. On a library terminal the
