@@ -157,7 +157,7 @@ export interface PageCopy {
 const en: PageCopy = {
   h1: "Ask about SNAP and get the actual rule.",
   productLede:
-    "Demeter answers in plain language and quotes the federal regulation behind every claim — plus your state’s own manual, where we have verified one.",
+    "Demeter answers in plain language and quotes the federal regulation behind every claim and your state’s own manual, to help explain the benefit programme to you.",
   snapLine:
     "SNAP is monthly money for groceries, paid onto an EBT card. Formerly called food stamps. Applying is free.",
   eyebrow: "Supplemental Nutrition Assistance Program",
@@ -203,9 +203,9 @@ const en: PageCopy = {
     "Demeter is not a government agency, and is not affiliated with or endorsed by USDA. For the official program and to find your own state agency:",
   officialFns: "USDA Food and Nutrition Service — SNAP",
   officialDirectory: "SNAP state directory — find your agency",
-  evidenceH2: "Why we show you the rule instead of just answering",
+  evidenceH2: "Better answers than a general AI assistant",
   evidenceBody:
-    "Georgetown University’s Beeck Center ran twelve experiments on turning benefits policy into working code with AI. Their conclusion was not that it cannot be done — it was that models handling genuinely complex policy logic still need outside knowledge and a person checking the result. A language model is fluent enough to be wrong convincingly, and benefits rules are exactly where that costs someone money. So Demeter quotes the regulation behind every claim and links it. You do not have to trust the answer; you can read what it came from.",
+    "Ask a general assistant about SNAP and you get a fluent answer with nothing behind it. That is the specific failure Georgetown University’s Beeck Center found across twelve experiments on turning benefits policy into working code: models handling genuinely complex policy logic still need outside knowledge and a person checking the result. A language model is fluent enough to be wrong convincingly, and benefits rules are exactly where that costs someone money — a wrong income limit is a family that does not apply. So Demeter reads the actual regulation for each question, quotes the rule behind every claim, links it, and refuses to state a figure it could not verify. You do not have to trust the answer; you can read what it came from.",
   evidenceQuote: "still require external knowledge and human oversight",
   evidenceAttrib:
     "Beeck Center for Social Impact + Innovation, Georgetown University — AI-Powered Rules as Code, February 2025",
@@ -213,7 +213,7 @@ const en: PageCopy = {
   evidenceDemoDay: "The twelve Policy2Code experiments",
   decidesH2: "What actually decides whether you qualify",
   decidesBody:
-    "Not your income alone — that is the most common reason people who qualify never apply. Eligibility turns on what is left after the deductions you are entitled to, and on a short list of category rules.",
+    "Not your income alone — that is the most common reason people who qualify never apply. Eligibility turns on what is left after the deductions you are entitled to, and on a short list of category rules.\n\nAnd this is why a straight answer is genuinely hard to find anywhere: almost everyone is an edge case. A student who works twenty hours, a household where one person is not eligible, self-employment income that changes every month, a parent applying for citizen children — each of those changes the arithmetic, and a general answer written for nobody in particular is wrong for most of them. That is the gap a conversation can close and a web page cannot.",
   defs: [
     {
       t: "Household size",
@@ -297,9 +297,9 @@ const en: PageCopy = {
     "SNAP takes at least seven days even when it is urgent. A food bank can help now, and 211 will find one near you.",
   foodNowBank: "Find a food bank",
   foodNow211: "Call or visit 211",
-  fearsH2: "The reasons people don\u2019t apply",
+  fearsH2: "The questions people actually ask first",
   fearsBody:
-    "These are the worries that stop people who would qualify. Here is what is actually true \u2014 including the one we cannot give you a flat answer on.",
+    "Almost nobody starts with the income limits. These come up first, in about this order \u2014 and they are reasonable things to want settled before you hand a government agency your details. Here is what is actually true, including the one we cannot give you a flat answer on.",
   fears: [
     {
       q: "Does this affect my immigration status?",

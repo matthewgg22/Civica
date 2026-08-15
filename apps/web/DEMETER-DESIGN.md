@@ -77,7 +77,7 @@ not add an eleventh without deleting one.
 |---|---|---|
 | `--demeter-terracotta` | `#C0553B` | CTAs, links, marks |
 | `--demeter-terracotta-deep` | `#8E3A26` | wordmark "AI", hover, error, small text |
-| `--demeter-wheat` | `#EFB544` | **logo mark + a 2px rule under a source link. Nothing else. Never a fill, never text.** |
+| `--demeter-wheat` | `#E8C547` | logo mark, a 2px rule under a source link, **and the next action** (nav "Ask Demeter" + one in-content CTA at a time). Never text. |
 | `--demeter-ink` | `#241E1A` | headings, answers |
 | `--demeter-body` | `#55504C` | running text |
 | `--demeter-muted` | `#6E655E` | labels, placeholder text |
@@ -86,9 +86,30 @@ not add an eleventh without deleting one.
 | `--demeter-rule` | `#E3E0DB` | cards, dividers |
 | `--demeter-rule-strong` | `#C9C4BD` | inputs, table heads |
 
-**Approach: restrained.** One accent (terracotta) plus warm neutrals. Wheat is a
-signature, not a palette member — the moment it becomes a background fill the mark
-stops meaning anything.
+**Approach: restrained.** One accent (terracotta) plus warm neutrals.
+
+**Wheat changed roles on 2026-08-12** (see the decisions log). It was reserved for the
+mark alone, on the reasoning that a signature stops meaning anything the moment it
+becomes a background fill. What that produced in practice was a product whose single
+most important action — "Ask Demeter", the thing the whole surface exists to lead
+someone to — was visually indistinguishable from the reference page beside it, because
+terracotta was already spent on every link, every Send button and every secondary CTA.
+
+So wheat is now the fill for **the next action**, and nothing else. The discipline moved
+rather than disappeared: the nav's "Ask Demeter" is the standing way in, and within a
+page exactly one in-content wheat fill is live at a time — the portal link once a state
+is set, "email this to me" once there is something to send, the affirmative when a
+choice is on screen. Two competing at the same moment recreates the problem this
+solves.
+
+Ink on wheat, never paper — `#E8C547` is a light gold and white on it fails contrast
+outright. Ink measures about 10:1.
+
+**The hex is measured, not chosen.** It was `#EFB544`, which was a guess that sat
+visibly more orange than the mark it was named after — invisible until a tab was filled
+with it and set beside the logo. Sampling `public/demeter-wheat-mark.png`: 166,977 of
+its opaque pixels are `#E8C547`. If the mark is ever redrawn, re-sample; do not
+eyeball it.
 
 **Semantic tints** are literal hexes at their use sites, not tokens, because there are
 only four: `#F3F8F1`/`#C9DCC4` (certain), `#FBF6EA`/`#E6D3A9` (warning),
@@ -242,7 +263,13 @@ text printed on the form the reader is holding.
 Do not ship:
 
 - A second `<h1>`, or a component that emits one.
-- Wheat as a fill or as text.
+- Wheat as text, ever.
+- **A second wheat fill competing at the same decision point.** The nav's "Ask Demeter"
+  is the standing one and is exempt — it is the way into the product from anywhere. In
+  content, wheat marks the single next action in the flow someone is currently in: the
+  state portal when a state is chosen, "email this to me" when there is something to
+  send, the affirmative when a choice is offered. Two of those live at once means
+  neither is the next thing.
 - A mono face.
 - A dollar figure in static copy.
 - Full-width running text (missing `max-width`).
@@ -260,6 +287,9 @@ Do not ship:
 
 | Date | Decision | Rationale |
 |---|---|---|
+| 2026-08-12 | Wheat becomes the fill for the one primary action per surface | The product's central action was indistinguishable from a reference link; terracotta was already spent on links, Send and secondary CTAs. Discipline moved (one per screen), it did not go. |
+| 2026-08-12 | `--demeter-wheat` corrected `#EFB544` → `#E8C547` | Measured off the mark: 166,977 of its opaque pixels. The old value was a guess and read visibly more orange than the logo beside it. |
+| 2026-08-12 | `/verify` gains the nav and the graphite footer | It was linked from every surface and then stranded the reader — no route back, no language links. |
 | 2026-08-11 | Fonts self-hosted; `next/font/google` banned | The build downloaded them, so a Google outage failed the deploy (#697). CJK stays on `@fontsource` for `unicode-range`. |
 | 2026-08-11 | This file created | Three surfaces had drifted with no written system; `/design-consultation` |
 | 2026-08-11 | Orientation bar carries the h1; product stated before SNAP | Fixed an inverted heading hierarchy; category research (GetCalFresh vs mRelief/Consensus) |

@@ -5544,6 +5544,26 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   font-weight: 600; color: var(--demeter-terracotta-deep); margin-bottom: 0.4rem;
   text-decoration: underline; text-underline-offset: 3px;
 }
+/* THE TWO CALLS TO ACTION ARE WHEAT. They were white cards with an underlined
+   terracotta heading — the same treatment as every other card on a page made
+   of cards, so the one thing the page is trying to get someone to do looked
+   exactly like the reading material around it. Wheat is the next action (see
+   DEMETER-DESIGN.md §3); these are the only two on this page, and they are the
+   page's whole purpose.
+
+   Ink on wheat, never paper: #E8C547 is a light gold and white on it fails
+   contrast outright. */
+.dmx--askcta .dmx__outlink,
+.dmx--fearscta .dmx__outlink {
+  background: var(--demeter-wheat); border-color: transparent;
+}
+.dmx--askcta .dmx__outlink:hover,
+.dmx--fearscta .dmx__outlink:hover { filter: brightness(0.96); border-color: transparent; }
+.dmx--askcta .dmx__outlink-label,
+.dmx--fearscta .dmx__outlink-label { color: var(--demeter-ink); text-decoration: none; }
+.dmx--askcta .dmx__outlink-body,
+.dmx--fearscta .dmx__outlink-body { color: var(--demeter-ink); opacity: 0.82; }
+
 .dmx__outlink-body {
   display: block;
   font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
@@ -5783,20 +5803,25 @@ a.worksheet__export:hover { background: var(--demeter-terracotta-deep); }
   font-size: 0.98rem; line-height: 1.62; color: var(--demeter-body);
   margin: 0 0 1.1rem; max-width: 68ch; text-wrap: pretty;
 }
+/* WHEAT, and full width. This closes the last section on the page — the point
+   at which someone has read every answer we chose in advance and still has
+   their own question — so it is the page's final and most earned call to
+   action. An outlined card the width of its own text read as one more item in
+   the list above it. */
 .dmfear__cta {
-  display: inline-flex; flex-direction: column; gap: 0.2rem;
-  margin: 1.5rem 0 0; padding: 0.9rem 1.2rem;
-  border: 1px solid var(--demeter-terracotta); border-radius: 14px;
-  text-decoration: none; background: var(--demeter-card);
+  display: flex; flex-direction: column; gap: 0.2rem;
+  margin: 1.75rem 0 0; padding: 1.1rem 1.35rem;
+  border: 0; border-radius: 16px;
+  text-decoration: none; background: var(--demeter-wheat);
 }
-.dmfear__cta:hover { border-color: var(--demeter-terracotta-deep); }
+.dmfear__cta:hover { filter: brightness(0.96); }
 .dmfear__ctalabel {
   font-family: var(--demeter-font-display), var(--demeter-font-serif-cjk), Georgia, serif;
-  font-size: 1.05rem; font-weight: 600; color: var(--demeter-terracotta-deep);
+  font-size: 1.15rem; font-weight: 600; color: var(--demeter-ink);
 }
 .dmfear__ctanote {
   font-family: var(--demeter-font-sans), var(--demeter-font-sans-cjk), system-ui, sans-serif;
-  font-size: 0.82rem; color: var(--demeter-muted);
+  font-size: 0.82rem; color: var(--demeter-ink); opacity: 0.75;
 }
 @media (prefers-reduced-motion: reduce) { .dmfear__q::after { transition: none; } }
 

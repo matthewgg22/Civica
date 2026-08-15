@@ -203,10 +203,6 @@ export function SnapDetail({ states, lang = "en" }: { states: PackMeta[]; lang?:
           ))}
         </dl>
 
-        {/* Answers "where can I actually use this?", which the facts above
-            raise and do not settle. */}
-        <SnapRetailerMap lang={lang} />
-
         {/* Pointing at USDA is exactly the place to say we are not USDA. A
             benefits site that links the federal program without disclaiming
             affiliation is one a worried applicant can easily read as official. */}
@@ -253,6 +249,46 @@ export function SnapDetail({ states, lang = "en" }: { states: PackMeta[]; lang?:
         </div>
       </section>
 
+      {/* WHO ACTUALLY DECIDES, immediately after what the programme is.
+          A reader's questions arrive in an order — what is this, who decides
+          it, how do I use it — and the page answered the third before the
+          second. Knowing your own state runs this, and which agency, is what
+          makes every rule below concrete rather than abstract. */}
+      <section className="dmx" aria-labelledby="agencies">
+        <h2 id="agencies" className="dmx__h2">
+          {c.agenciesH2}
+        </h2>
+        <p className="dmx__body">{c.agenciesBody}</p>
+        {/* A map, not a stack of fourteen cards. The list was accurate and
+            unusable: to answer "is MY state here?" you had to read all of it.
+            A map answers that before you read anything.
+
+            The cards' content is not lost — it moves into the panel beside the
+            map, one state at a time, which is how many anyone ever needed. */}
+        <UsCoverageMap states={states} copy={c.map} />
+        <p className="dmx__note">{c.agenciesNote}</p>
+
+        {/* Every state, still in the HTML. The map is a CLIENT component, so
+            its labels are invisible to a crawler that does not execute JS —
+            and this section is how a generative engine learns that Demeter
+            covers CalFresh, Basic Food, FoodShare and the rest by name. Visually
+            hidden, deliberately not display:none, so it stays in the
+            accessibility tree as a plain readable list for anyone who would
+            rather not poke at a map. */}
+        <ul className="dmx__sronly">
+          {states.map((s) => (
+            <li key={s.code}>
+              {s.code} — {s.program}, {s.agency}
+              {s.portal ? `, ${s.portal.name} (${s.portal.url})` : ""}
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      {/* The one internal link out. The form-question cards are the content a
+          generative engine is most likely to quote, so they need a crawlable
+          path from the page that already ranks — a moved section with no link
+          into it is a deleted section as far as discovery is concerned. */}
       <section className="dmx" aria-labelledby="what-decides">
         <h2 id="what-decides" className="dmx__h2">
           {c.decidesH2}
@@ -339,47 +375,19 @@ export function SnapDetail({ states, lang = "en" }: { states: PackMeta[]; lang?:
         </div>
       </section>
 
-      <section className="dmx" aria-labelledby="agencies">
-        <h2 id="agencies" className="dmx__h2">
-          {c.agenciesH2}
-        </h2>
-        <p className="dmx__body">{c.agenciesBody}</p>
-        {/* A map, not a stack of fourteen cards. The list was accurate and
-            unusable: to answer "is MY state here?" you had to read all of it.
-            A map answers that before you read anything.
-
-            The cards' content is not lost — it moves into the panel beside the
-            map, one state at a time, which is how many anyone ever needed. */}
-        <UsCoverageMap states={states} copy={c.map} />
-        <p className="dmx__note">{c.agenciesNote}</p>
-
-        {/* Every state, still in the HTML. The map is a CLIENT component, so
-            its labels are invisible to a crawler that does not execute JS —
-            and this section is how a generative engine learns that Demeter
-            covers CalFresh, Basic Food, FoodShare and the rest by name. Visually
-            hidden, deliberately not display:none, so it stays in the
-            accessibility tree as a plain readable list for anyone who would
-            rather not poke at a map. */}
-        <ul className="dmx__sronly">
-          {states.map((s) => (
-            <li key={s.code}>
-              {s.code} — {s.program}, {s.agency}
-              {s.portal ? `, ${s.portal.name} (${s.portal.url})` : ""}
-            </li>
-          ))}
-        </ul>
-      </section>
-
-      {/* The one internal link out. The form-question cards are the content a
-          generative engine is most likely to quote, so they need a crawlable
-          path from the page that already ranks — a moved section with no link
-          into it is a deleted section as far as discovery is concerned. */}
       <section className="dmx dmx--outlink">
         <a className="dmx__outlink" href={questionsHref(lang)}>
           <span className="dmx__outlink-label">{c.questionsLink}</span>
           <span className="dmx__outlink-body">{c.questionsIntro}</span>
         </a>
       </section>
+      {/* WHERE THE CARD WORKS, last. It used to sit inside "what SNAP is",
+          which put "here are 252,000 shops" in front of someone who had not yet
+          established whether they could get the card at all. It is the final
+          question in the sequence — what it is, who decides, then how you use
+          it — and it reads as a payoff there rather than as a detour. */}
+      <SnapRetailerMap lang={lang} />
+
     </>
   );
 }
