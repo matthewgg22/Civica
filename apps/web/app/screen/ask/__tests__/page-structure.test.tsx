@@ -81,6 +81,45 @@ describe("orientation bar — the page names the product before it explains SNAP
   });
 });
 
+describe("the states-verified count — DC/Guam/USVI are not states", () => {
+  // THE BUG THIS PINS: VERIFIED_STATES is 53 entries (50 states + DC + Guam +
+  // the U.S. Virgin Islands), and both places that count it used to print
+  // "{53} States verified" — an accurate number attached to the wrong word.
+  // Nobody would call DC a state; the count just silently included it anyway.
+  const NON_STATE_CODES = new Set(["DC", "GU", "VI"]);
+  const actualStateCount = VERIFIED_STATES.filter((s) => !NON_STATE_CODES.has(s.code)).length;
+  const otherCount = VERIFIED_STATES.length - actualStateCount;
+
+  it("VERIFIED_STATES actually contains DC, GU, and VI (guards the test itself)", () => {
+    // If a future corpus change ever drops these, the count-based assertions
+    // below would pass vacuously — this pins the premise, not just the fix.
+    for (const code of NON_STATE_CODES) {
+      expect(VERIFIED_STATES.some((s) => s.code === code), code).toBe(true);
+    }
+    expect(otherCount).toBe(3);
+  });
+
+  it("the hero badge counts actual states only, and names DC/territories separately", () => {
+    render(<SnapOrientation states={VERIFIED_STATES} />);
+    expect(screen.getByText(`${actualStateCount} States verified`)).toBeTruthy();
+    // The old, wrong count must not appear anywhere on the page.
+    expect(screen.queryByText(`${VERIFIED_STATES.length} States verified`)).toBeNull();
+    expect(screen.getByText(PAGE_COPY.en.statesAlsoVerified)).toBeTruthy();
+  });
+
+  it("the trust list counts actual states only, in every language", () => {
+    for (const lang of ANSWER_LANGS) {
+      const c = PAGE_COPY[lang];
+      const { container, unmount } = render(<SnapDetail states={VERIFIED_STATES} lang={lang} />);
+      const text = container.textContent ?? "";
+      expect(text, lang).toContain(`${actualStateCount} ${c.trust[2]?.t}`);
+      expect(text, lang).not.toContain(`${VERIFIED_STATES.length} ${c.trust[2]?.t}`);
+      expect(text, lang).toContain(c.statesAlsoVerified);
+      unmount();
+    }
+  });
+});
+
 describe("the chat page's depth — trimmed, and nothing orphaned", () => {
   it("no longer renders the 17 form-question cards", () => {
     render(<SnapDetail states={VERIFIED_STATES} />);
