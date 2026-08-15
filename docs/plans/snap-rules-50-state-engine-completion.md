@@ -27,18 +27,20 @@ at all; today, most do.
                                              1 / 18 (AK) has a policy axis that looks stale
 ```
 
-## 2. Current state of the calculator (verified against `origin/codex/rebuild-feb18`)
+## 2. Current state of the calculator (verified against `origin/codex/rebuild-feb18`, plus
+this plan's own individual-tier landings)
 
 `StatePolicy` (the calculator's per-state config — `packages/snap-rules/src/constants/
-states.ts`) exists for **19 states**: CA, WA, TX, NY, GA, MI, IL, FL, MA, NV, AZ, OR, WI,
-MN, OH, KS, PA, AK, NC.
+states.ts`) exists for **21 states**: CA, WA, TX, NY, GA, MI, IL, FL, MA, NV, AZ, OR, WI,
+MN, OH, KS, PA, AK, NC, NJ, VA.
 
 The oracle fixture (`data-ops/sample/civica-test-profiles/v0.6.json`, `expected_by_state`)
 — the independently-computed ground truth every `/profile-simulation` run grades the
-engine against — has full 92-case coverage for **17 of those 19**: CA, WA, TX, NY, GA, MI,
-IL, FL, MA, NV, AZ, OR, WI, KS, OH, AK, NC. (PA also has all 92 rows authored, per the
-execution log's PA entry below, but grades 34/0/95 — most PA profiles legitimately SKIP on
-the null-SUA gap, not a coverage gap, so it isn't counted as "clean" here.)
+engine against — has full 92-case coverage for **19 of those 21**: CA, WA, TX, NY, GA, MI,
+IL, FL, MA, NV, AZ, OR, WI, KS, OH, AK, NC, VA. (PA and NJ also have all 92 rows authored,
+per the execution log's PA/NJ entries below, but both grade 34/0/95 — most of their
+profiles legitimately SKIP on the null-SUA gap, not a coverage gap, so neither is counted
+as "clean" here.)
 
 Two states have a `StatePolicy` but no oracle coverage yet, for different reasons:
 
@@ -58,10 +60,10 @@ One state's `StatePolicy` is present, oracle-covered, and **looks wrong**:
   the engine today and, if used for a real determination, would wrongly deny categorical
   eligibility to AK households between 130%–200% FPL.
 
-**34 states have neither** `StatePolicy` nor oracle coverage — the full remaining scope:
-AL, AR, CO, CT, DC, DE, GU, HI, IA, ID, IN, KY, LA, MD, ME, MO, MS, MT, ND, NE, NH, NJ,
-NM, OK, RI, SC, SD, TN, UT, VA, VI, VT, WV, WY. (NC — the first "individual tier" state,
-§6 — is DONE; see the execution log's NC entry.)
+**32 states have neither** `StatePolicy` nor oracle coverage — the full remaining scope:
+AL, AR, CO, CT, DC, DE, GU, HI, IA, ID, IN, KY, LA, MD, ME, MO, MS, MT, ND, NE, NH,
+NM, OK, RI, SC, SD, TN, UT, VI, VT, WV, WY. (NC, NJ, and VA — the first three "individual
+tier" states, §6 — are DONE; see the execution log's NC/NJ/VA entries.)
 
 ## 3. Structural design: what's universal (fix once) vs. what's genuinely per-state (author 53×)
 
@@ -186,7 +188,7 @@ exists and only oracle authoring is outstanding):
    PROVENANCE.md, regenerate all 92 oracle rows since a `bbce` flip changes categorical-
    eligibility outcomes across a large share of the profile set — treat as a full rebuild,
    not a one-line patch, precisely because it's already shipped and wrong)
-3. Individual tier (~4M+ population): ~~NC~~ (done), NJ, VA, TN, IN, MO, MD, CO, SC, AL, LA, KY, OK
+3. Individual tier (~4M+ population): ~~NC~~ (done), ~~NJ~~ (done), ~~VA~~ (done), TN, IN, MO, MD, CO, SC, AL, LA, KY, OK
 4. Schema step: extend `AllotmentTier` for HI/GU (own small PR, own go-ahead)
 5. HI, GU (now unblocked)
 6. Batch tier (<4M population, N≤3 per batch): CT, UT, IA, AR / MS, NM, NE / ID, WV, NH /
@@ -541,3 +543,73 @@ all of it.
   `tsc --noEmit -p packages/snap-rules` clean, 323/323 snap-rules tests pass, 44/47
   profile-harness tests pass (3 pre-existing skips). PR
   [#826](https://github.com/matthewgg22/Civica/pull/826), awaiting merge go-ahead.
+
+- **VA (individual tier, §6 step 3, third state after NC and NJ)** — built Virginia's
+  `StatePolicy` entry AND full 92-profile oracle coverage from scratch (VA had neither
+  before this PR), translating VA's already-merged Demeter corpus pack
+  (`packages/demeter-engine/src/states/va/`, PROVENANCE.md), built 2026-08-11, into the
+  engine's stricter typed shape per §5's process. bbce: true, bbce_threshold_pct: 200,
+  bbce_fpl_basis: federal_fiscal_year (VA SNAP Manual Part II.G.3) — a genuinely unusual
+  structural finding for this roster: VA's 200% threshold AND its no-asset-limit rule are
+  codified DIRECTLY IN STATUTE (Va. Code § 63.2-801(B)), not just agency policy/regulation
+  the way every other BBCE state in this file sets it; asset_waiver: true (Part IX.B);
+  drug_felony_ban: "none" — a VERIFIED FULL STATUTORY OPT-OUT (Va. Code § 63.2-505.2,
+  amended 2020 cc. 221/361, corroborated by contemporaneous Virginia Mercury/VPM coverage);
+  abawd_waiver_avail: false — VA holds ZERO ABAWD waivers anywhere in the Commonwealth as
+  of this build, a genuine reversal from its own multi-year waiver history through mid-2025,
+  independently corroborated by two sources (VA's own manual's Appendix I AND USDA's
+  official FY2025-2029 waiver-response index); no county-level lookup was needed or added,
+  since a real answer of "nowhere" has no county-level nuance for a lookup to represent, the
+  same MA-empty-set reasoning already established in this file; rmp_operated: true — VRMP is
+  statutorily MANDATORY statewide (Va. Code § 63.2-801(A)), confirmed on USDA's own RMP
+  state list — a direct contrast with this file's NJ entry, where a similarly-worded bill
+  has died in committee three separate sessions; allotment_tier: "48" (VA's own Standard
+  Deduction/shelter cap/homeless allowance figures match federal-tables.ts's FY26 snapshot
+  exactly, the same "shared source" signal NC's entry used).
+
+  sua_by_tier surfaced a NEW kind of schema-mismatch gap this file hadn't seen: not a state
+  publishing a real standard the engine's schema merely has no SLOT for (IL/OH/NV/MI/WI's
+  documented gaps), but a state whose own policy has literally no LUA-equivalent standard at
+  all — VA's utility standard bundles heat/cooling/electric/water/phone into ONE tier
+  ($375 for 1-3 persons / $476 for 4+, size-scaled like NC but only two bands and, distinctly,
+  only two tiers total), and a household without a heating/cooling expense uses ACTUAL costs
+  in real VA practice rather than a second published standard — a mechanism this engine's
+  `Facts` shape doesn't carry, the same category of accepted limitation as NJ's boat/
+  motor-home and child-support-exclusion gaps (#824). HCSUA encodes VA's 1-3-person band
+  ($375, AZ-style 2-band precedent — this schema has no household-size dimension); phone
+  maps VA's flat $54 standard cleanly; LUA is set to $0 (never fabricated) rather than
+  guessed, disclosed at length inline — independently verified this affects exactly 2 of the
+  92 oracle profiles' benefit-dollar amount (A02, A09; both LUA-tier in the base fixture),
+  never their verdict. Also disclosed: 6 of 92 profiles are 4+-person households on the
+  HCSUA tier, where the 1-3-band approximation under-states VA's real $476 figure by
+  $101/month — independently verified none of their verdicts flip either.
+
+  Oracle: built a fresh, independent Python calculator (not derived from engine output) from
+  the same CFR / federal-tables.ts citations documented in verdict.ts/benefit-calc.ts.
+  Cross-validated 92/92 exact match (verdict AND benefit) against NC's already-graded oracle
+  run under NC's own StatePolicy params before trusting it for VA — NC is VA's closest
+  structural axis-twin in this file (both 200%/federal_fiscal_year BBCE, both asset_waiver
+  true, both a real non-null sua_by_tier, both abawd_waiver_avail false), a materially
+  stronger cross-validation than NJ's null-SUA-blocked entry would allow since VA needed the
+  full benefit-calc pathway exercised, not just verdict-level agreement. Also checked all 37
+  rows across the 18 non-`expected_by_state` variant profiles (facts_patch A/B pairs) for a
+  VA-specific `verdict_by_state` override, the same discipline NC's/AK's builds used — found
+  zero divergence from the shared default verdict for VA, so no override was authored.
+  Authored all 92 `expected_by_state.VA` entries: 80 APPROVE / 12 DENY, with the DENY set
+  IDENTICAL to NC's (both share bbce/asset_waiver/abawd_waiver_avail exactly, so no
+  financial-gate divergence exists between them). 12 of the 92 APPROVE profiles carry a
+  lower benefit dollar figure than NC's/WI's equivalent entries, purely a function of VA's
+  lower HCSUA — no verdict ever flips as a result of any SUA-dollar difference, since every
+  BBCE state in this file skips the net income test once the raised gross threshold clears,
+  so the SUA value only ever changes the benefit AMOUNT, never eligibility.
+
+  Verification: `/profile-simulation state=VA` — 129/129 PASS, 0 FAIL, 0 SKIP (clean,
+  matching CA/MA/TX/WA/GA/FL/IL/OH/MI/NV/OR/WI/KS/AK/NC's bar, not PA's/NJ's/MN's SKIP-heavy
+  shape). Every other registered state's harness run reconfirmed unchanged from its
+  documented baseline (CA/MA/TX/WA/GA/FL/IL/OH/MI/NV/OR/WI/KS/AK/NC all 129/0/0; NY 127/2/0;
+  AZ 128/1/0; MN 0/0/129; PA 34/0/95; NJ 34/0/95 — all pre-existing, none newly introduced).
+  `tsc --noEmit -p packages/snap-rules` clean, 323/323 snap-rules tests pass (0 new — a
+  schema-conformant pure addition needed no new unit tests), 44/47 profile-harness tests
+  pass (3 pre-existing skips). Did not touch `packages/demeter-engine` (VA's corpus was
+  already complete and out of scope) or any other state's `StatePolicy`/oracle coverage. PR
+  [#829](https://github.com/matthewgg22/Civica/pull/829), awaiting merge go-ahead.
