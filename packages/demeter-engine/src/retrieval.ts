@@ -425,11 +425,43 @@ export async function retrieve(rawQuery: string, opts: RetrieveOptions = {}): Pr
 // excerpt telling Mae the OBBBA notes control. Verified against the corpus
 // 2026-06-07: 273.24(c) still reads "55 years of age or older" + lists the
 // repealed veteran/homeless/foster exemptions; 273.4 still lists refugees/asylees.
+//
+// Keyed at TWO granularities — see formatRetrievedSources below, which tries
+// the full citation ("273.9(d)(6)") before falling back to the coarse
+// `chunk.section` ("273.9"). The section field groups every subsection of a
+// federal rule into one bucket (273.9 alone covers 35 distinct corpus chunks
+// — income counting, every deduction, all of it) — a section-level entry
+// warns EVERY one of those chunks, which is correct for 273.24/273.4 (the
+// whole section really is superseded) but would be badly wrong for 273.9:
+// only the SUA-from-LIHEAP subsection changed, and slapping "SUPERSEDED" on
+// the medical deduction or income-counting chunks would manufacture false
+// uncertainty on rules OBBBA never touched. Citation-level keys exist for
+// exactly this reason — add new single-subsection supersessions there, not
+// as a new section-level key, unless the WHOLE section is actually stale.
 const OBBBA_SUPERSEDED: Record<string, string> = {
   "273.24":
     "⚠️ SUPERSEDED IN PART by H.R.1 / OBBBA (Pub. L. 119-21, eff. 2025-07-04). The eCFR text below PREDATES the statute and is outdated on age and exemptions: the ABAWD time-limit age ceiling is now 64 (exempt only if under 18 or 65+) — the \"55 years of age or older\" exemption below is NO LONGER CURRENT; and the exemptions for veterans, people experiencing homelessness, and former foster youth were ELIMINATED (an exemption for Indian / Urban Indian / California Indian individuals was added). The 80-hour work definition is unchanged. Cite the statute / current FNS ABAWD memo for age and exemptions — do NOT quote this subsection as current.",
   "273.4":
-    "⚠️ SUPERSEDED IN PART by H.R.1 / OBBBA (Pub. L. 119-21). The eligible non-citizen categories in the text below PREDATE the statute: eligibility was narrowed — refugees, asylees, and TPS holders were REMOVED. The current eligible set is U.S. nationals, LPRs, Cuban/Haitian entrants, and COFA migrants (FNS Alien Eligibility memo, 2025-10-31). Do not state refugee/asylee eligibility from this text as current.",
+    // Category list confirmed 2026-08-15 against the source ACL itself (CDSS
+    // ACL 25-50, via a LA County DPSS CPRA production, Bates COLA002279-80):
+    // "federal SNAP benefits were available to certain lawfully present
+    // noncitizens, such as asylees, refugees, parolees, battered noncitizens,
+    // trafficking victims, and others... no longer eligible for CalFresh."
+    // Previously this only named refugees/asylees/TPS — parolees, battered
+    // non-citizens, and trafficking victims were removed too and are now
+    // named explicitly rather than left to "and others."
+    "⚠️ SUPERSEDED IN PART by H.R.1 / OBBBA (Pub. L. 119-21). The eligible non-citizen categories in the text below PREDATE the statute: eligibility was narrowed — refugees, asylees, TPS holders, parolees, battered non-citizens, and trafficking victims were REMOVED. The current eligible set is U.S. nationals, LPRs, Cuban/Haitian entrants, and COFA migrants (FNS Alien Eligibility memo, 2025-10-31; CDSS ACL 25-50). Do not state refugee/asylee/parolee eligibility from this text as current.",
+  // LIHEAP/"heat and eat": OBBBA §10103 narrowed the automatic full Heating/
+  // Cooling SUA that used to follow ANY LIHEAP-funded payment, to households
+  // with an elderly or disabled member only — eff. 2025-10-31. Confirmed
+  // against the same LA County DPSS production (CDSS ACL 25-50, Bates
+  // COLA002277: "limits the automatic application of the SUA based on
+  // receipt of a LIHEAP funded benefit to households with elderly or
+  // disabled members... implemented in California as SUAS"). Citation-level
+  // only — see the header comment above for why 273.9 as a whole must not
+  // carry this warning.
+  "273.9(d)(6)":
+    "⚠️ SUPERSEDED IN PART by H.R.1 / OBBBA (Pub. L. 119-21) §10103, eff. 2025-10-31. The automatic full Heating/Cooling Standard Utility Allowance for ANY household that received a LIHEAP-funded payment, described below, is NO LONGER CURRENT for most households: OBBBA narrowed the automatic trigger to households with an elderly or disabled member. A household without an elderly or disabled member no longer gets the full HCSUA automatically from a LIHEAP payment alone — cite current FNS/state guidance (California implements the narrowed rule as SUAS) rather than this subsection as if it still applied to every household.",
 };
 
 /** Format retrieved chunks as an authoritative source block for the prompt.
@@ -442,7 +474,10 @@ export function formatRetrievedSources(chunks: RegChunk[], state?: string | null
   const pack = getStatePack(state);
   const body = chunks
     .map((c) => {
-      const federalWarn = OBBBA_SUPERSEDED[c.section];
+      // Citation-level match first ("273.9(d)(6)"), section-level fallback
+      // ("273.24") — see OBBBA_SUPERSEDED's header comment.
+      const citationKey = c.citation.replace(/^7 CFR\s+/, "");
+      const federalWarn = OBBBA_SUPERSEDED[citationKey] ?? OBBBA_SUPERSEDED[c.section];
       const stateNote = pack?.supersessions?.[c.section];
       const warn = federalWarn
         ? stateNote ? `${federalWarn} ${stateNote}` : federalWarn
