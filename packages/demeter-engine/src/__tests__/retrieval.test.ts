@@ -64,6 +64,19 @@ describe("Mae eCFR retrieval", { timeout: 60_000 }, () => {
     expect(dvHits.some((h) => h.citation === "7 CFR 273.1(b)")).toBe(true);
   });
 
+  // Regression: a real production transcript (2026-08-15) asked about moving
+  // in with/caring for an "older mother" and never surfaced 273.1(b)(2), the
+  // elderly/disabled separate-household provision — engine-encoded
+  // (composition.ts) but with no retrieval hint of its own before this fix,
+  // so it depended entirely on the semantic layer reaching for it unprompted.
+  it("surfaces 273.1(b) for an elderly/disabled relative living together", async () => {
+    const hits = await retrieve(
+      "I just moved to take care of my older mother, does living with her make us one household?",
+      { k: 4 },
+    );
+    expect(hits.some((h) => h.citation === "7 CFR 273.1(b)")).toBe(true);
+  });
+
   it("routes sponsor-deeming questions to 273.4(c), not the general immigration hint", async () => {
     expect(
       await topCite("My sister sponsored me with an affidavit of support. Does her income count against me?"),
