@@ -50,7 +50,6 @@ const COPY = {
       "This is the federal baseline. Your state's own rules may differ, and we have not verified that state's policy yet.",
     labelCertain: "CERTAIN",
     labelUncertain: "UNCERTAIN",
-    checkHeading: "Check it yourself",
   },
   es: {
     certain:
@@ -65,7 +64,6 @@ const COPY = {
       "Esta es la base federal. Las reglas de tu estado pueden diferir, y todavía no hemos verificado la política de ese estado.",
     labelCertain: "SEGURO",
     labelUncertain: "NO CONFIRMADO",
-    checkHeading: "Compruébalo tú mismo",
   },
   vi: {
     certain:
@@ -80,7 +78,6 @@ const COPY = {
       "Đây là mức cơ bản của liên bang. Quy định riêng của tiểu bang bạn có thể khác, và chúng tôi chưa xác minh chính sách của tiểu bang đó.",
     labelCertain: "CHẮC CHẮN",
     labelUncertain: "CHƯA CHẮC",
-    checkHeading: "Tự kiểm tra",
   },
   zh: {
     certain:
@@ -95,7 +92,6 @@ const COPY = {
       "这是联邦最低标准。您所在州的规定可能不同，我们尚未核实该州的政策。",
     labelCertain: "确定",
     labelUncertain: "不确定",
-    checkHeading: "自行核对",
   },
 } as const;
 
@@ -218,9 +214,15 @@ export function formatCertaintyBanner(v: CertaintyVerdict, lang: AnswerLang = "e
   const t = COPY[lang];
   const label = v.level === "certain" ? t.labelCertain : t.labelUncertain;
   const mark = v.level === "certain" ? "✓" : "⚠";
-  const lines = [`\n\n---`, `${mark} **${label}** — ${v.reason}`];
-  if (v.basis.length) {
-    lines.push(`\n_${t.checkHeading}:_ ${v.basis.join(" · ")}`);
-  }
-  return lines.join("\n");
+  // NO CITATION LIST HERE. This banner used to also print its own
+  // "_Check it yourself:_ 7 CFR 273.1" line — but orchestrator.ts always
+  // follows this banner with formatCitationTrailer's own "**Citation:**"
+  // breakdown of the SAME citations (both are gated on the same `degraded`
+  // flag and built from the same checks, so one never appears without the
+  // other — see orchestrator.ts's trailer composition). A real transcript
+  // showed every answer naming the same section twice, back to back, in two
+  // different bullet styles (#833 audit, 2026-08-15). "check it yourself
+  // below" already points at the trailer that follows; this banner's job is
+  // the one-sentence verdict, not a second copy of the citation list.
+  return [`\n\n---`, `${mark} **${label}** — ${v.reason}`].join("\n");
 }
